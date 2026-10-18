@@ -526,7 +526,7 @@ function buildBarriers(list: SceneryJson['barriers']): THREE.Group {
         posts.push(new THREE.Matrix4().compose(v3(P[i][0], P[i][1], P[i][2] + 0.38), new THREE.Quaternion(), new THREE.Vector3(1, 1, 1)));
       }
     } else if (b.kind === 'tyres') {
-      // stacks of 4 tyres every 0.62 m, two staggered rows; painted white/black in blocks of three stacks
+      // stacks of 4 tyres every 0.58 m (slightly overlapping, so the wall reads continuous from above), two staggered rows
       let acc = 0, k = 0;
       for (let i = 0; i < P.length - 1; i++) {
         const a = P[i], c = P[i + 1];
@@ -538,10 +538,10 @@ function buildBarriers(list: SceneryJson['barriers']): THREE.Group {
           for (const row of [0, 1]) {
             const off = row * 0.6, sh = row * 0.31;
             const px = x + nx * off + ((c[0] - a[0]) / seg) * sh, py = y + ny * off + ((c[1] - a[1]) / seg) * sh;
-            tyres.push({ m: new THREE.Matrix4().makeTranslation(px, z, -py), white: Math.floor(k / 3) % 2 === 0 });
+            tyres.push({ m: new THREE.Matrix4().makeTranslation(px, z, -py), white: k % 12 < 2 });   // mostly black with a white pair every 12 stacks: a continuous wall from above, not a dotted line
           }
           k++;
-          acc += 0.62;
+          acc += 0.58;
         }
         acc -= seg;
       }

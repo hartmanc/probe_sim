@@ -126,7 +126,7 @@ function groundMaterial(p: THREE.MeshLambertMaterialParameters, roughness = 0.95
   return PBR_GROUND ? new THREE.MeshStandardMaterial({ ...p, metalness: 0, roughness }) : new THREE.MeshLambertMaterial(p);
 }
 
-export function photoGround(mat: GroundMaterial, opts: { grain?: number; ground: GroundDetail; asphalt?: GroundDetail; asphaltAttr?: boolean; paint?: THREE.Texture; rubber?: boolean }): void {
+export function photoGround(mat: GroundMaterial, opts: { grain?: number; ground: GroundDetail; asphalt?: GroundDetail; asphaltAttr?: boolean; paint?: THREE.Texture; rubber?: boolean; /** paved runoff: pale, sun-bleached asphalt, not the dark racing surface */ runoff?: boolean }): void {
   const grain = opts.grain ?? 0.12;
   const G = opts.ground, A = opts.asphalt;
   const hasA = opts.asphaltAttr && A ? 1 : 0;
@@ -134,6 +134,8 @@ export function photoGround(mat: GroundMaterial, opts: { grain?: number; ground:
   const hasP = hasA && opts.paint ? 1 : 0;
   // rubbered racing line: needs `pgD` (lateral offset from the line, m)
   const hasR = hasA && opts.rubber ? 1 : 0;
+  // paved runoff zones: the real ones are pale grey (GPT judge, 18 Oct 2026: "dark asphalt lobes in the T9/T10 runoff")
+  const hasO = hasA && opts.runoff ? 1 : 0;
   mat.normalMap = G.normal;   // uv1 = world / G.tile (see addDetailUV); gives the tangent frame
   G.normal.channel = 1;
   mat.normalScale.set(1, 1);
@@ -212,6 +214,9 @@ vec3 pgTileN(sampler2D t, vec2 uv) {
     float paint = smoothstep(0.58, 0.80, l);
     vec3 asph = vec3(min(l, 0.5)) * vec3(0.50, 0.53, 0.58) + vec3(0.004, 0.005, 0.007);
     diffuseColor.rgb = mix(diffuseColor.rgb, mix(asph, vec3(l) * 1.05, paint), w);
+#if ${hasO}
+    diffuseColor.rgb = mix(diffuseColor.rgb, vec3(l) * 1.15 + vec3(0.11, 0.11, 0.10), 0.8 * w);
+#endif
 #if ${hasR}
     // rubber on the racing line: two darker strips at the tyre tracks over a wider, lighter darkening
     {
@@ -248,7 +253,7 @@ vec3 pgTileN(sampler2D t, vec2 uv) {
   }
 #endif`);
   };
-  mat.customProgramCacheKey = () => `pg${hasA}${hasP}${hasR}${grain}`;
+  mat.customProgramCacheKey = () => `pg${hasA}${hasP}${hasR}${hasO}${grain}`;
 }
 
 export interface World {
@@ -519,7 +524,7 @@ function forRibbonSamples(rs: RibbonSections, fn: (x: number, y: number, z: numb
  * sampled 1.2 m away from it (inward on the asphalt, outward on the shoulder), because at 0.6 m/px it smears asphalt
  * and dirt into each other; the first metre of shoulder is darkened like packed dirt/gravel.
  */
-function buildRibbon(track: TrackJson, tex: THREE.Texture, rs: RibbonSections, asphalt: GroundDetail, groundDetail: GroundDetail, name = 'track', offsetUnits = -2): THREE.Mesh {
+function buildRibbon(track: TrackJson, tex: THREE.Texture, rs: RibbonSections, asphalt: GroundDetail, groundDetail: GroundDetail, name = 'track', offsetUnits = -2, runoff = false): THREE.Mesh {
   const n = rs.n, K = rs.K;
   const pos = new Float32Array(n * K * 3);
   const uv = new Float32Array(n * K * 2);
@@ -555,7 +560,7 @@ function buildRibbon(track: TrackJson, tex: THREE.Texture, rs: RibbonSections, a
   geo.computeVertexNormals();
   addDetailUV(geo, groundDetail.tile);
   const mat = groundMaterial({ map: tex, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: offsetUnits }, 0.9);
-  photoGround(mat, { grain: 0.12, ground: groundDetail, asphalt, asphaltAttr: true, rubber: !!rs.D });
+  photoGround(mat, { grain: 0.12, ground: groundDetail, asphalt, asphaltAttr: true, rubber: !!rs.D, runoff });
   const mesh = new THREE.Mesh(geo, mat);
   mesh.receiveShadow = true;
   mesh.name = name;
@@ -781,7 +786,7 @@ export function buildWorld(track: TrackJson, hf: Float32Array, ortho: THREE.Text
   scene.add(ribbon);
   // pit lane: drawn over the track's shoulder where they overlap (stronger polygon offset)
   const nPit = (pit?.parts ?? []).filter((p) => p.n >= 2).length;
-  secs.slice(1).forEach((sec, k) => scene.add(buildRibbon(track, ortho, sec, asphaltDetail, groundDetail, k < nPit ? `pit_lane_${k}` : `paved_runoff_${k - nPit}`, -6)));
+  secs.slice(1).forEach((sec, k) => scene.add(buildRibbon(track, ortho, sec, asphaltDetail, groundDetail, k < nPit ? `pit_lane_${k}` : `paved_runoff_${k - nPit}`, -6, k >= nPit)));
   if (pit) { const m = buildPitPaint(pit, ground); if (m) scene.add(m); }
   const seam = seamReport(secs, grid.surfaceZ);
   scene.add(buildStartLine(track, ground));
