@@ -618,7 +618,13 @@ function buildBarriers(list: SceneryJson['barriers']): THREE.Group {
 
 // ------------------------------------------------------------------ sausage kerbs
 /** Yellow sausage kerbs: a tube of 7 cross-section rows per metre along each strip. With `ground` = the physics
- *  surface (which carries the hump) the mesh follows the exact profile the wheels feel. */
+ *  surface (which carries the hump) the mesh follows the exact profile the wheels feel.
+ *  Drawn 15 mm above that surface with the strongest polygon offset of the ground layers (18 Oct 2026: the tubes were
+ *  invisible at T2, T8-T11): every ground mesh samples the same humped surface at its own sparse columns, and the
+ *  ribbon's first shoulder column (0.5 m out) and the green verge paint's 0.5 m column (dz 0.01, units -8) sit right
+ *  on the crest, so their straight tents between columns covered the tube's 4 mm lift; their polygon offsets won the
+ *  rest. Outer rows are tucked down to the surface so the lifted tube has no floating lip. */
+const SAUSAGE_LIFT_M = 0.015;
 function buildSausages(track: TrackJson, j: SausageJson, ground?: (x: number, y: number) => number): THREE.Mesh | null {
   const n = track.n, sp = track.spacing_m || 1, ROWS = 7, Wh = j.width / 2;
   const off = j.kerb_width + j.gap + Wh;
@@ -641,7 +647,7 @@ function buildSausages(track: TrackJson, j: SausageJson, ground?: (x: number, y:
         const x = cx + nx * d, y = cy + ny * d;
         // without a physics ground the hump is drawn as its own half-ellipse (the physics ground carries the real, tyre-smoothed profile)
         const z = ground ? ground(x, y) : zc + j.height * Math.sqrt(Math.max(0, 1 - (d / Wh) ** 2));
-        pos.push(x, z + 0.004, -y);
+        pos.push(x, z + (r === 0 || r === ROWS - 1 ? 0.003 : SAUSAGE_LIFT_M), -y);
       }
     }
     for (let k = 0; k < m - 1; k++) for (let r = 0; r < ROWS - 1; r++) {
@@ -654,7 +660,8 @@ function buildSausages(track: TrackJson, j: SausageJson, ground?: (x: number, y:
   g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
   g.setIndex(idx);
   g.computeVertexNormals();
-  const mesh = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ color: 0xe8c227, roughness: 0.62, metalness: 0, side: THREE.DoubleSide }));
+  // ground layers use factor -1..-2, units -2..-10: the tube must win against all of them
+  const mesh = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ color: 0xe8c227, roughness: 0.62, metalness: 0, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -16 }));
   mesh.castShadow = true; mesh.receiveShadow = true;
   mesh.name = 'sausage_kerbs';
   return mesh;
