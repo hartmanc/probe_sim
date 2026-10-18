@@ -620,7 +620,7 @@ function buildSausages(track: TrackJson, j: SausageJson, ground?: (x: number, y:
       for (let r = 0; r < ROWS; r++) {
         const d = -Wh + (2 * Wh * r) / (ROWS - 1);
         const x = cx + nx * d, y = cy + ny * d;
-        // without a physics ground the hump is drawn as its own half-ellipse
+        // without a physics ground the hump is drawn as its own half-ellipse (the physics ground carries the real, tyre-smoothed profile)
         const z = ground ? ground(x, y) : zc + j.height * Math.sqrt(Math.max(0, 1 - (d / Wh) ** 2));
         pos.push(x, z + 0.004, -y);
       }

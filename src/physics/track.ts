@@ -73,11 +73,16 @@ function buildSausageStrips(track: TrackJson, j: SausageJson): SausageStrip[] {
 
 /** Ends ramp down over this length (m). */
 export const SAUSAGE_RAMP_M = 1.5;
+/** The wheel is a point contact, so the hump is widened by the tyre's footprint on a step of its height (a 0.3 m tyre
+ *  starts climbing a 6 cm hump ~0.19 m before its centre reaches it) and shaped as a raised cosine: the car feels a
+ *  bump, not a wall. (Owner, 18 Oct 2026: 13 cm with steep flanks rolled the car every time.) */
+export const SAUSAGE_TYRE_R = 0.3;
+export const SAUSAGE_MAX_SLOPE = 0.6;
 
 /** Hump height and world gradient at (x, y); h = 0 when clear of every strip. */
 function sausageAt(strips: SausageStrip[], j: SausageJson, x: number, y: number, out: { h: number; gx: number; gy: number }): void {
   out.h = 0; out.gx = 0; out.gy = 0;
-  const Wh = j.width / 2;
+  const Wh = j.width / 2 + Math.sqrt(2 * SAUSAGE_TYRE_R * j.height);
   for (const s of strips) {
     if (x < s.minx || x > s.maxx || y < s.miny || y > s.maxy) continue;
     let bestD = Infinity, bk = -1, bt = 0, u = 0, acc = 0;
@@ -97,10 +102,10 @@ function sausageAt(strips: SausageStrip[], j: SausageJson, x: number, y: number,
     if (q <= -1 || q >= 1) continue;
     const ramp = Math.min(1, Math.min(u, s.L - u) / SAUSAGE_RAMP_M);
     if (ramp <= 0) continue;
-    const root = Math.sqrt(1 - q * q);
-    const h = j.height * root * ramp;
-    let slope = -j.height * q / (Wh * Math.max(root, 0.05)) * ramp;   // dh/dd, capped at the hump's edge
-    if (slope > 2.5) slope = 2.5; else if (slope < -2.5) slope = -2.5;
+    // raised cosine over the tyre-widened half-width: continuous height and slope at the edges
+    const h = j.height * 0.5 * (1 + Math.cos(Math.PI * q)) * ramp;
+    let slope = -j.height * 0.5 * Math.PI * Math.sin(Math.PI * q) / Wh * ramp;   // dh/dd
+    if (slope > SAUSAGE_MAX_SLOPE) slope = SAUSAGE_MAX_SLOPE; else if (slope < -SAUSAGE_MAX_SLOPE) slope = -SAUSAGE_MAX_SLOPE;
     if (h > out.h) { out.h = h; out.gx = slope * -s.ty[bk]; out.gy = slope * s.tx[bk]; }
   }
 }
