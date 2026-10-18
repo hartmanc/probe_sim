@@ -23,8 +23,6 @@ import type { Traffic } from './traffic';
 import { Rng } from './rng';
 
 const G = 9.81;
-// TEMP tuning knobs (removed before commit)
-const KN = (k: string, d: number): number => { const e = (globalThis as any).process?.env?.[k]; return e !== undefined && e !== '' ? Number(e) : d; };
 
 export interface AiDriverParams {
   number: string;
@@ -79,7 +77,8 @@ const REAR_SLIP0 = 0.08, REAR_SLIPK = 6; // rad, 1/rad: ease the brake when the 
 // lane model (NOTES "Racecraft (the lane model) and mishaps")
 const LANE_CLR = 0.3;      // m each side of a car's span in lane-occupancy checks (adjacent lanes leave >= 0.6 m)
 const FOLLOW_CLR = 0.4;    // m edge to edge: a car ahead closer than this laterally is in my lane and followed
-const ALONG_CLR = KN('ALONG_CLR', 0.45);    // m corridor margin beside a car alongside (inside the lane gap)
+const ALONG_CLR = 0.7;     // m corridor margin beside a car alongside (0.45 until 18 Oct 2026: on the painted-road widths
+                           // yawed cars side by side at 0.1-0.4 m touched in T3, T9 and T10)
 const GIVE_CLR = 0.2;      // m of that margin eaten before the car further back gives way
 const PLAN_EVERY = 0.2;    // s between pass plans / lane checks
 const PLAN_T = 10;         // s plan horizon for the occupancy projection
@@ -91,6 +90,9 @@ const PASS_HEADWAY = 0.3;  // s: following the car I am passing (held in behind 
 const PASS_T_MAX = 30;     // s: give up a pass after this long
 const PASS_SHIFT = 1.3;    // lane changes for a pass: x the shift rate
 const PASS_EDGE = 0.5;     // m from the track edge (car side) a pass lane is clamped to
+/** m ahead in which a car in the racing lane delays the merge back (it was front + 7 m + 0.2 s: merging at 9-14 m/s
+ *  closing onto a slower car 20 m ahead rear-ended it; the 1.5 s occupancy projection decides within this range) */
+const MERGE_AHEAD = 60;
 const SHIFT_RATE = 2.2;                    // m/s lateral change of the target offset
 const KR = 0.25, LD0 = 3, LDK = 0.25;
 
@@ -179,6 +181,7 @@ export class AiDriver {
     this.vehicle = vehicle; this.line = line; this.perf = perf; this.profile = driverProfile(line, perf, profile);
     this.params = params; this.idx = idx; this.traffic = traffic;
     this.rng = new Rng(params.seed);
+    this.corkscrew = line.corners.findIndex((c) => /corkscrew/i.test(c.name));
     void spec;
   }
 
@@ -206,6 +209,20 @@ export class AiDriver {
   }
 
   /** The next passable corner whose braking point is 0..maxD m ahead of s (index), or -1. */
+  /**
+   * No passing through the Corkscrew (from 120 m before its braking point to 90 m past the apex): the line runs edge
+   * to edge over a blind crest there, so a lane measured from it is not a usable path on the painted-road widths
+   * (18 Oct 2026: pass lanes on the outside of T8 merged back wide at the T8A exit and left the road). A pass still
+   * behind its car is given up there; the merge back waits for a free racing lane until the braking point (`before` 0).
+   */
+  private noPassZone(s: number, before = 120): boolean {
+    const k = this.corkscrew;
+    if (k < 0) return false;
+    const c = this.line.corners[k];
+    return this.ahead(s, c.brake) <= before && this.ahead(s, c.apex) >= -90;
+  }
+  private readonly corkscrew: number = -1;
+
   private passableAhead(s: number, maxD: number, minD = 0): number {
     const cs = this.line.corners;
     for (let k = 0; k < cs.length; k++) {
@@ -299,9 +316,10 @@ export class AiDriver {
     }
     if (ctl.speedCap < vCmd) { vCmd = ctl.speedCap; this.limiter = 'cap'; }
     // the path I am steering for (last tick's pure-pursuit curvature) must stay within the tyres' grip
-    // (in a pass lane: the lane's own curvature, not the transient of a lane change, plus a small allowance)
+    // (in a pass lane: the lane's own curvature, not the transient of a lane change, plus a small allowance; merging back
+    // onto the line the full commanded curvature: corner-exit merges carried cars off at the Corkscrew)
     let kG = Math.abs(this.kCmd);
-    if (this.passPhase !== 0 && !(KN('MERGE_GRIP', 0) && this.passPhase === 3)) { const kl = line.at(line.curv, sp); kG = Math.min(kG, Math.abs(kl) / Math.max(0.5, 1 - kl * this.shift) + 0.004); }
+    if (this.passPhase === 1 || this.passPhase === 2) { const kl = line.at(line.curv, sp); kG = Math.min(kG, Math.abs(kl) / Math.max(0.5, 1 - kl * this.shift) + 0.004); }
     if (kG > 2e-3) {
       const vk = Math.sqrt(GRIP_LIMIT * bankedG(perf.alat, line, Math.min(line.N - 1, Math.floor(line.wrap(sp) / line.spacing)), v) * G / kG);
       if (vk < vCmd) { vCmd = Math.max(0.95 * v, vk); this.limiter = 'grip'; aref = Math.min(aref, 0); }
@@ -434,7 +452,7 @@ export class AiDriver {
       // clearly faster; a car that is off / nearly stopped; or quicker on pace and stuck behind it (a car held up in a
       // train is not a reason: everybody behind it would pull out at once)
       const want = clearly || tr.off[j] === 1 || vj < 0.5 * myPot || (tr.pace[i] < tr.pace[j] && this.stuckTimer > STUCK_T[this.params.aggression]);
-      if (want && this.passCool <= 0 && this.planTimer <= 0 && leadGap < Math.max(30, 0.9 * v)) {
+      if (want && this.passCool <= 0 && this.planTimer <= 0 && leadGap < Math.max(30, 0.9 * v) && !this.noPassZone(s)) {
         this.planTimer = PLAN_EVERY;
         const e = this.planLane(j, v, pf, NaN);
         if (!Number.isNaN(e)) {
@@ -536,7 +554,7 @@ export class AiDriver {
       const d = -tr.ds(i, j);
       if (d < 0 || d > 25) break;
       if (tr.passing[j] !== i || tr.away[j]) continue;
-      const need = hwI + tr.hw[j] + ALONG_CLR + KN('RES_YAW', 0) * yc, ej = tr.eT[j];
+      const need = hwI + tr.hw[j] + ALONG_CLR, ej = tr.eT[j];
       if (Math.abs(ej - eMe) < need - 0.3) continue;   // straight behind me in my lane: nothing reserved yet
       if (ej > eMe) corHiE = Math.min(corHiE, ej - need); else corLoE = Math.max(corLoE, ej + need);
     }
@@ -863,6 +881,7 @@ export class AiDriver {
       else if (tr.away[j]) end = 'away';
       else if (d > DROP_BACK) end = 'dropped';
       else if (this.passTimer > PASS_T_MAX) end = 'timeout';
+      else if (this.noPassZone(tr.s[i]) && d > 0) end = 'corkscrew';   // still behind it: give it up, merge back
       if (end) { this.passEnd = end; this.passCool = 1.5; this.passPhase = 2; this.passTarget = -1; this.stuckTimer = 0; return; }
       if (d < -(tr.rear[i] + tr.front[j] + 1)) {
         // clear of j: a train? the next car ahead in the racing lane that I am catching → pass it in the same lane
@@ -898,7 +917,7 @@ export class AiDriver {
       // back to the racing line once its lane is free around me (or straight away under a flag)
       const lo = Math.min(0, eMe) - hwI - LANE_CLR, hi = Math.max(0, eMe) + hwI + LANE_CLR;
       // (cars behind / alongside in it must not reach me; a car ahead in it is simply followed once I am back)
-      if (!green || this.offTrack || this.mishap !== null || this.laneBlock(lo, hi, 1.5, v, Math.max(tr.front[i] + 7 + 0.2 * v, KN('MERGE_AHEAD', 0)), 60, -1) > 1.5) this.passPhase = 3;
+      if (!green || this.offTrack || this.mishap !== null || this.noPassZone(tr.s[i], 0) || this.laneBlock(lo, hi, 1.5, v, MERGE_AHEAD, 60, -1) > 1.5) this.passPhase = 3;
       return;
     }
     // 3: merging

@@ -9,7 +9,7 @@ import type { RaceLine } from './line';
 import { Rng, hashSeed } from './rng';
 
 /** Bump whenever the AI driver or the calibration changes behaviour (pace.json scales are then stale). */
-export const AI_VERSION = 7; // 7: lateral mu capped at 1.20 (pace above it from power); profiles credit banking and the crest/dip load; driver margins 0.97 lateral / 0.85 braking, grip limiter at 1.5x. 6: 6: CG lowered with the fitted grip (T/2h >= 1.15 x lateral mu: quick cars rolled over at T2 on the painted-road track). 5: 5: pace fit split into grip (corners) and power (straights): power follows the powertrain
+export const AI_VERSION = 7; // 7: lateral mu capped at 1.20 (pace above it from power); profiles credit banking and the crest/dip load; driver margins 0.97 lateral / 0.85 braking, grip limiter at 1.5x, engine-braking blip for sliding RWD cars. 6: CG lowered with the fitted grip (T/2h >= 1.15 x lateral mu: quick cars rolled over at T2 on the painted-road track). 5: pace fit split into grip (corners) and power (straights): power follows the powertrain
 // 4: per-stint driver pace (each race draws one real stint per car), stint outlier rules
 // 3: #49 Mayflower re-specced as a Honda K24 swap (owner), recalibrated
 

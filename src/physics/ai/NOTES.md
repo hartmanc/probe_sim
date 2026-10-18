@@ -2,7 +2,7 @@
 
 Pure TypeScript, no DOM. Everything is reachable from the public physics API as
 `import { race } from '../physics'` (namespace export added to `src/physics/index.ts`).
-AI_VERSION = 5 (`field.ts`). A race is reproducible from (seed, AI_VERSION, pace.json, identity.json)
+AI_VERSION = 7 (`field.ts`). A race is reproducible from (seed, AI_VERSION, pace.json, identity.json)
 plus the player's inputs.
 
 ## Files
@@ -256,6 +256,51 @@ player's car AI-driven); `ai_behaviour.test.ts` asserts the key numbers on short
   < 7 s — 3-8 %-faster cars rarely gain enough between pinches, and lap 1 from a shuffled grid jams every lane;
   contacts ≤ 0.03 on seed 2 only. The previous per-tick numbers (old grid): completion 52-78 %, contacts 0.03-0.14.
 - **Recalibrate** after these changes (the driver margins make every car ~5 % slower at a given scale).
+
+## 18 Oct 2026: painted-road track (edges-from-paint-wip): grip cap, driver margins, lane retune
+
+The track edges were rebuilt from the painted road (median width 12.1 m, was 12.9 m with 1-4 m extra at the apexes);
+the field had been tuned on the wider geometry.
+
+- **Rollover guard** (`aiCarJson`): CG lowered so T/2h >= max(1.35, 1.15 x fitted lateral mu). Above scale ~1.14 the
+  tall RWD cars (#670 Volvo 245, #41) lifted both inside wheels through T2 and tipped over: that was the old "leaves
+  the road at the T2 exit" cap. It no longer binds under the mu cap below.
+- **Lateral grip cap** (owner): fitted lateral tyre mu <= `MU_LAT_MAX` 1.20 (`GRIP_MAX` = sqrt(1.20 / 1.10)), clamped
+  in `aiCarJson`; above it the pace comes from power (`PACE_MAX` 1.8). Resolved lateralG: #670 / #41 1.105, #544 1.049,
+  #74 1.046, #83 1.025, #189 0.968, #711 0.930, #249 0.925; median 0.72.
+- **Driver deficit** (the grip had been papering over it): the speed profiles ignored the road's banking and the
+  crest / dip load. `bankedG` credits 85 % of the banking toward the inside of the turn ((a + b) / (1 - a b); full
+  credit ran the cars ~1 m wide at Rainey, T3, T5) and `loadFactor` scales grip by 1 + v^2 x vertical curvature
+  (`RaceLine.vcurv`; the Corkscrew drop unloads the car). Margins 0.97 lateral / 0.85 braking (were 0.95 / 0.80); the
+  grip limiter lifts only above 1.5 x the banked grip (at 1.0 it braked mid-corner for the pursuit's own correction
+  curvature). A rear-drive car sliding while the engine brakes its rear wheels gets up to 20 % throttle (the light
+  turbo Corona spun off T3 on a closed throttle). AI Probe solo lap at scale 1: 123.75 -> 120.18 s (real best 119.3 s);
+  minimum speeds vs driver A (km/h): T2 67/67, Corkscrew 64/63, T10 101/101, T3 81/89, T5 86/96, T6 107/116, T11 53/58 (the
+  last four are where the ghost implies 1.18-1.26 g of tyre on this line, beyond the Probe's 1.05 g).
+- **Calibration** (8 workers): worst error 0.54 %; #670's 113.4-114.4 s stints reached at scale 1.18-1.21, #41's
+  116.9-117.7 s at 1.14-1.16; a solo check of all 311 car / stint scales has no recovery and no sustained 3-wheels-off.
+- **Lane model**: corridor beside a car alongside `ALONG_CLR` 0.45 -> 0.70 m (yawed cars side by side touched at
+  0.1-0.4 m in T3, T9, T10); the merge back to the racing line checks the lane `MERGE_AHEAD` 60 m ahead (was front +
+  7 m + 0.2 s: merges closing at 9-14 m/s rear-ended a slower car 20 m up the road); merging back (phase 3) keeps the
+  full grip limiter (corner-exit merges carried cars off); no passing in the Corkscrew (`noPassZone`: 120 m before its
+  braking point to 90 m past the apex; a pass still behind its car is given up, the merge is forced from the braking
+  point). Alone driving is unchanged by these (solo laps identical).
+- **Self-play band re-based to this geometry** (`selfplay.ts`, 4 laps, seeds 1-4; the earlier band, line rms
+  0.25-0.29, clearly-faster passes 72-77 %, stuck ~10.5 s, contacts 0.012-0.038, recoveries 7-10, belonged to the
+  over-wide geometry and the old driver): line rms alone 0.28-0.32 m; clearly-faster passes 65-75 % (68.8 % pooled);
+  median stuck 11-15 s (12.5 mean); AI-AI contacts > 1 m/s 0.033-0.063 per car-lap (0.044 mean); four wheels off
+  0.08-0.17 per car-lap; recoveries 1-3 per race; mishaps 0-1 per race (all run-wide), so recoveries are traffic
+  stuck / wrong-way resets. About 70 % of the time a clearly faster car spends within 20 m of its target it is already
+  in its pass lane, held behind where the lanes pinch or level on pace: with lateral grip capped, quick cars gain on
+  the straights, not in the corners.
+- Tests: corner-difficulty top three re-based to T11, T2, Corkscrew (pure geometry); the "clearly faster car behind"
+  test picks the first seed whose grid puts T2 right behind T1 (the grid hash includes AI_VERSION). Still failing:
+  `ai_race` 45 cars, seed 1: #670 (1:53.4 stint, starts P42) averages 0.640 of its pace against the 0.65 bound,
+  traffic-bound (146 s of 447 s in its pass lane held behind the car it is passing, 91 s following clearly slower
+  cars with no free lane). Not loosened.
+- `tools/ghosts/build_ghosts.py`: optional `--kerb-margin`, `--jerk-w`, `--debug-out` (default output byte-identical).
+  Kerb-aware bounds (0.75 / 0.5 / 0.3 m from the edge along the kerb strips) gain <= 0.07 s on the Probe lap; only T5
+  opens (R 52 -> 56 m), so ghosts.json is unchanged.
 
 ## Assumptions and data wishes
 
