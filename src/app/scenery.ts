@@ -24,7 +24,7 @@ export interface SceneryJson {
   buildings: { kind: string; name: string; z: number; h: number; footprint: V2[]; src: string }[];
   bridges: { id: string; kind: string; name: string; s: number; deck_z: number; a: V2; b: V2; width: number; banners: string[][]; style?: 'deck' | 'arch' | 'sign' }[];
   barriers: { kind: 'concrete' | 'armco' | 'tyres' | 'pitwall' | 'fence'; h: number; fence: number; pts: V3[]; src: string }[];
-  kerbs: { width: number; inside?: boolean; stripe_m: number; strips: { side: number; s0: number; s1: number; kind: string; paint?: number; inset?: number }[] };
+  kerbs: { width: number; inside?: boolean; stripe_m: number; strips: { side: number; s0: number; s1: number; kind: string; paint?: number; inset?: number ; /** verge: white line on the outer edge (default on) */ edge?: boolean }[] };
   /** raised yellow sausage kerbs beyond the apex kerbs (physics: src/physics/track.ts) */
   sausages?: SausageJson | null;
   edge_lines?: { width: number; inset: number; runs: { side: number; s0: number; s1: number }[] };
@@ -421,9 +421,28 @@ function buildBuildings(track: TrackJson, list: SceneryJson['buildings'], stands
     const dist = stands ? fp.map((p) => dTrack(p.x, p.y)) : null;
     const dmin = dist ? Math.min(...dist) : 0;
     const rowUV = (i: number): [number, number] => [0.5, dist ? (dist[i] - dmin) / 0.85 : 0];
-    for (const [i, j, k] of tris) {
-      tri(v3(fp[i].x, fp[i].y, top[i]), v3(fp[j].x, fp[j].y, top[j]), v3(fp[k].x, fp[k].y, top[k]), stands ? c : cr,
-        stands ? [rowUV(i), rowUV(j), rowUV(k)] : undefined);
+    if (stands && dist && fp.length === 4) {
+      // stepped seating: tiers of 0.85 m rising from the front edge (nearest the track) to the back (GPT judge, 18 Oct 2026)
+      const order = [0, 1, 2, 3].sort((a, b2) => dist[a] - dist[b2]);
+      const front = [fp[order[0]], fp[order[1]]], back = [fp[order[2]], fp[order[3]]];
+      if (front[0].distanceTo(back[0]) + front[1].distanceTo(back[1]) > front[0].distanceTo(back[1]) + front[1].distanceTo(back[0])) back.reverse();
+      const zf = Math.min(...top), zb = Math.max(...top);
+      const depth = Math.max(front[0].distanceTo(back[0]), front[1].distanceTo(back[1]));
+      const N = Math.max(2, Math.min(24, Math.round(depth / 0.85)));
+      const at = (t: number, e: 0 | 1) => front[e].clone().lerp(back[e], t);
+      for (let r = 0; r < N; r++) {
+        const t0 = r / N, t1 = (r + 1) / N, z = zf + (zb - zf) * (r + 1) / N, zl = zf + (zb - zf) * r / N;
+        const a0 = at(t0, 0), a1 = at(t0, 1), b0 = at(t1, 0), b1 = at(t1, 1);
+        const seat = r % 2 ? c : cr;
+        tri(v3(a0.x, a0.y, zl), v3(a1.x, a1.y, zl), v3(a1.x, a1.y, z), cr); tri(v3(a0.x, a0.y, zl), v3(a1.x, a1.y, z), v3(a0.x, a0.y, z), cr);
+        tri(v3(a0.x, a0.y, z), v3(a1.x, a1.y, z), v3(b1.x, b1.y, z), seat, [[0.5, r], [0.5, r], [0.5, r + 1]]);
+        tri(v3(a0.x, a0.y, z), v3(b1.x, b1.y, z), v3(b0.x, b0.y, z), seat, [[0.5, r], [0.5, r + 1], [0.5, r + 1]]);
+      }
+    } else {
+      for (const [i, j, k] of tris) {
+        tri(v3(fp[i].x, fp[i].y, top[i]), v3(fp[j].x, fp[j].y, top[j]), v3(fp[k].x, fp[k].y, top[k]), stands ? c : cr,
+          stands ? [rowUV(i), rowUV(j), rowUV(k)] : undefined);
+      }
     }
     // hangar: gabled roof over a 4-corner footprint, ridge along the long axis, 0.3 x the short side high
     if (b.kind === 'hangar' && fp.length === 4) {
@@ -817,6 +836,8 @@ function buildKerbs(track: TrackJson, k: SceneryJson['kerbs'], ground?: (x: numb
       const base = s.kind === 'verge' ? o1 - (s.inset ?? 0) : o1;
       const cols = [0, 0.5, 1.0, P].filter((o) => o <= P).map((o) => ({ out: base + o, dz: 0.01, v: PAINT_V('green', o / P) }));
       st.add(s.side, s.s0, s.s1, cols, o0 - 1.2, u0);
+      // the real green aprons carry a white line along their outer edge (GPT judge, 18 Oct 2026)
+      if (s.kind === 'verge' && s.edge !== false) st.add(s.side, s.s0, s.s1, [{ out: base + P, dz: 0.012, v: PAINT_V('line', 0) }, { out: base + P + 0.12, dz: 0.012, v: PAINT_V('line', 1) }], o0 - 1.2, u0);
     }
   });
   return st.build(kerbPaintTexture(k.stripe_m), 'kerbs', -8);
