@@ -7,7 +7,7 @@
  * far terrain), ghosts.json (gear schedules, line offsets) or the sim loop in src/scoreboard/sim.ts.
  * It feeds physicsVersion(), so a bump also opens fresh boards.
  */
-export const PHYSICS_VERSION = 'probe-sim-2026-10-18-sausages';
+export const PHYSICS_VERSION = 'probe-sim-2026-10-18-edges';
 
 /** Input-trace format version (InputTrace.v). */
 export const TRACE_FORMAT = 1;
@@ -47,7 +47,7 @@ export const INPUT_TYPES: readonly InputType[] = ['pad', 'keys', 'phone'];
 
 /** Whitelisted tracks. `dir` is relative to public/ (client fetch base and server file root). */
 export const TRACKS: Readonly<Record<string, { dir: string; length_m: number }>> = {
-  laguna_seca: { dir: 'tracks/laguna_seca/', length_m: 3560 },
+  laguna_seca: { dir: 'tracks/laguna_seca/', length_m: 3588.048 },
 };
 /** Whitelisted cars. */
 export const CARS: Readonly<Record<string, { dir: string }>> = {

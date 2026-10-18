@@ -24,8 +24,8 @@
      "targetLap": 168.908,
      "bestLap": 158.495,
      "sigma": 12.279,
-     "scale": 0.43648,
-     "achievedLap": 169.154
+     "scale": 0.45632,
+     "achievedLap": 168.673
     },
     {
      "index": 1,
@@ -34,8 +34,8 @@
      "targetLap": 180.207,
      "bestLap": 168.794,
      "sigma": 2.265,
-     "scale": 0.39151,
-     "achievedLap": 180.193
+     "scale": 0.40458,
+     "achievedLap": 180.165
     },
     {
      "index": 2,
@@ -44,8 +44,8 @@
      "targetLap": 183.106,
      "bestLap": 177.642,
      "sigma": 1.053,
-     "scale": 0.38202,
-     "achievedLap": 183.107
+     "scale": 0.39378,
+     "achievedLap": 183.097
     },
     {
      "index": 3,
@@ -54,8 +54,8 @@
      "targetLap": 165.314,
      "bestLap": 161.593,
      "sigma": 2.495,
-     "scale": 0.45602,
-     "achievedLap": 165.55
+     "scale": 0.47741,
+     "achievedLap": 165.234
     },
     {
      "index": 4,
@@ -64,8 +64,8 @@
      "targetLap": 163.895,
      "bestLap": 158.76,
      "sigma": 4.844,
-     "scale": 0.46433,
-     "achievedLap": 164.123
+     "scale": 0.48604,
+     "achievedLap": 163.676
     },
     {
      "index": 5,
@@ -74,12 +74,12 @@
      "targetLap": 172.646,
      "bestLap": 169.732,
      "sigma": 2.773,
-     "scale": 0.41984,
-     "achievedLap": 172.525
+     "scale": 0.4383,
+     "achievedLap": 172.448
     }
    ],
-   "scale": 0.42466,
-   "achievedLap": 171.672,
+   "scale": 0.44306,
+   "achievedLap": 171.264,
    "resolved": {
     "make": "Chrysler",
     "model": "LeBaron Town & Country wagon",
@@ -93,19 +93,19 @@
     "shiftRpm": 5300,
     "gears": 5,
     "gearRatios": [
-     18.9736,
-     13.1356,
-     9.2283,
-     6.6237,
-     4.9931
+     18.0966,
+     12.5284,
+     8.8017,
+     6.3175,
+     4.7623
     ],
     "massKg": 1200,
-    "powerKw": 35.5,
+    "powerKw": 40.3,
     "stockPowerKw": 72,
     "gripScale": 0.55,
-    "powerScale": 0.4603,
+    "powerScale": 0.5228,
     "lateralG": 0.567,
-    "topSpeedKph": 121.6,
+    "topSpeedKph": 127.5,
     "exhaustNote": "stock muffler",
     "probeFallback": false
    }
@@ -131,8 +131,8 @@
      "targetLap": 125.176,
      "bestLap": 121.479,
      "sigma": 4.566,
-     "scale": 0.7592,
-     "achievedLap": 125.099
+     "scale": 0.79612,
+     "achievedLap": 125.04
     },
     {
      "index": 1,
@@ -141,8 +141,8 @@
      "targetLap": 125.964,
      "bestLap": 119.088,
      "sigma": 3.161,
-     "scale": 0.75175,
-     "achievedLap": 125.813
+     "scale": 0.78293,
+     "achievedLap": 125.942
     },
     {
      "index": 2,
@@ -151,8 +151,8 @@
      "targetLap": 130.838,
      "bestLap": 120.742,
      "sigma": 5.664,
-     "scale": 0.69538,
-     "achievedLap": 130.668
+     "scale": 0.71841,
+     "achievedLap": 130.86
     },
     {
      "index": 3,
@@ -161,8 +161,8 @@
      "targetLap": 129.179,
      "bestLap": 115.847,
      "sigma": 9.205,
-     "scale": 0.71386,
-     "achievedLap": 129.084
+     "scale": 0.74142,
+     "achievedLap": 128.958
     },
     {
      "index": 4,
@@ -171,8 +171,8 @@
      "targetLap": 142.969,
      "bestLap": 130.349,
      "sigma": 11.088,
-     "scale": 0.59025,
-     "achievedLap": 142.836
+     "scale": 0.60858,
+     "achievedLap": 142.824
     },
     {
      "index": 5,
@@ -181,8 +181,8 @@
      "targetLap": 116,
      "bestLap": 112.619,
      "sigma": 2.827,
-     "scale": 0.90853,
-     "achievedLap": 116.192
+     "scale": 0.96299,
+     "achievedLap": 115.878
     },
     {
      "index": 6,
@@ -191,8 +191,8 @@
      "targetLap": 130.491,
      "bestLap": 126.228,
      "sigma": 0.329,
-     "scale": 0.69843,
-     "achievedLap": 130.396
+     "scale": 0.72471,
+     "achievedLap": 130.448
     },
     {
      "index": 7,
@@ -201,12 +201,12 @@
      "targetLap": 120.525,
      "bestLap": 119.751,
      "sigma": 1.11,
-     "scale": 0.83028,
-     "achievedLap": 120.586
+     "scale": 0.86688,
+     "achievedLap": 120.449
     }
    ],
-   "scale": 0.6998,
-   "achievedLap": 130.273,
+   "scale": 0.725,
+   "achievedLap": 130.324,
    "resolved": {
     "make": "Toyota",
     "model": "Corona",
@@ -228,9 +228,9 @@
     "massKg": 1000,
     "powerKw": 150,
     "stockPowerKw": 206,
-    "gripScale": 0.6998,
+    "gripScale": 0.725,
     "powerScale": 1,
-    "lateralG": 0.703,
+    "lateralG": 0.728,
     "topSpeedKph": 208.2,
     "exhaustNote": "loud open",
     "probeFallback": false
@@ -250,8 +250,8 @@
    "sigma": 4.456,
    "aggression": 0,
    "stints": [],
-   "scale": 0.77707,
-   "achievedLap": 127.26,
+   "scale": 0.81619,
+   "achievedLap": 127.071,
    "resolved": {
     "make": "Mini",
     "model": "Cooper S",
@@ -274,9 +274,9 @@
     "massKg": 1140,
     "powerKw": 120,
     "stockPowerKw": 120,
-    "gripScale": 0.7771,
+    "gripScale": 0.8162,
     "powerScale": 1,
-    "lateralG": 0.792,
+    "lateralG": 0.832,
     "topSpeedKph": 187.1,
     "exhaustNote": "stock muffler",
     "probeFallback": false
@@ -303,8 +303,8 @@
      "targetLap": 138.427,
      "bestLap": 128.296,
      "sigma": 3.01,
-     "scale": 0.72679,
-     "achievedLap": 138.603
+     "scale": 0.78648,
+     "achievedLap": 138.22
     },
     {
      "index": 1,
@@ -313,8 +313,8 @@
      "targetLap": 125.082,
      "bestLap": 119.852,
      "sigma": 3.316,
-     "scale": 1.00331,
-     "achievedLap": 125.258
+     "scale": 1.06831,
+     "achievedLap": 124.89
     },
     {
      "index": 2,
@@ -323,8 +323,8 @@
      "targetLap": 141.007,
      "bestLap": 137.347,
      "sigma": 1.351,
-     "scale": 0.68885,
-     "achievedLap": 141.104
+     "scale": 0.73851,
+     "achievedLap": 140.744
     },
     {
      "index": 3,
@@ -333,8 +333,8 @@
      "targetLap": 164.827,
      "bestLap": 155.84,
      "sigma": 4.443,
-     "scale": 0.46359,
-     "achievedLap": 165.027
+     "scale": 0.48437,
+     "achievedLap": 164.684
     },
     {
      "index": 4,
@@ -343,8 +343,8 @@
      "targetLap": 132.529,
      "bestLap": 127.29,
      "sigma": 3.554,
-     "scale": 0.82556,
-     "achievedLap": 132.788
+     "scale": 0.91077,
+     "achievedLap": 132.331
     },
     {
      "index": 5,
@@ -353,8 +353,8 @@
      "targetLap": 141.328,
      "bestLap": 138.962,
      "sigma": 2.454,
-     "scale": 0.68455,
-     "achievedLap": 141.42
+     "scale": 0.73057,
+     "achievedLap": 141.232
     },
     {
      "index": 6,
@@ -363,8 +363,8 @@
      "targetLap": 129.954,
      "bestLap": 126.593,
      "sigma": 3.265,
-     "scale": 0.87834,
-     "achievedLap": 130.166
+     "scale": 0.97908,
+     "achievedLap": 129.835
     },
     {
      "index": 7,
@@ -373,12 +373,12 @@
      "targetLap": 124.503,
      "bestLap": 121.951,
      "sigma": 1.717,
-     "scale": 1.0189,
-     "achievedLap": 124.542
+     "scale": 1.07311,
+     "achievedLap": 124.568
     }
    ],
-   "scale": 0.80847,
-   "achievedLap": 133.648,
+   "scale": 0.89059,
+   "achievedLap": 133.198,
    "resolved": {
     "make": "Ford",
     "model": "Pinto",
@@ -401,9 +401,9 @@
     "massKg": 1100,
     "powerKw": 70.6,
     "stockPowerKw": 66,
-    "gripScale": 0.8085,
+    "gripScale": 0.8906,
     "powerScale": 1,
-    "lateralG": 0.825,
+    "lateralG": 0.908,
     "topSpeedKph": 157.3,
     "exhaustNote": "stock muffler",
     "probeFallback": false
@@ -430,8 +430,8 @@
      "targetLap": 122.446,
      "bestLap": 117.196,
      "sigma": 3.681,
-     "scale": 1.05019,
-     "achievedLap": 122.393
+     "scale": 1.11223,
+     "achievedLap": 122.329
     },
     {
      "index": 1,
@@ -440,8 +440,8 @@
      "targetLap": 114.365,
      "bestLap": 111.869,
      "sigma": 1.884,
-     "scale": 1.1334,
-     "achievedLap": 117.772
+     "scale": 1.14285,
+     "achievedLap": 120.752
     },
     {
      "index": 2,
@@ -450,8 +450,8 @@
      "targetLap": 113.439,
      "bestLap": 111.061,
      "sigma": 1.057,
-     "scale": 1.13419,
-     "achievedLap": 117.736
+     "scale": 1.1418,
+     "achievedLap": 120.773
     },
     {
      "index": 3,
@@ -460,8 +460,8 @@
      "targetLap": 114.106,
      "bestLap": 111.585,
      "sigma": 2.678,
-     "scale": 1.13356,
-     "achievedLap": 117.767
+     "scale": 1.14224,
+     "achievedLap": 120.765
     },
     {
      "index": 4,
@@ -470,8 +470,8 @@
      "targetLap": 121.722,
      "bestLap": 118.675,
      "sigma": 2.141,
-     "scale": 1.06324,
-     "achievedLap": 121.544
+     "scale": 1.1277,
+     "achievedLap": 121.521
     },
     {
      "index": 5,
@@ -480,12 +480,12 @@
      "targetLap": 123.225,
      "bestLap": 119.907,
      "sigma": 3.569,
-     "scale": 1.03188,
-     "achievedLap": 123.365
+     "scale": 1.10019,
+     "achievedLap": 123.036
     }
    ],
-   "scale": 1.07159,
-   "achievedLap": 121.154,
+   "scale": 1.13473,
+   "achievedLap": 121.146,
    "resolved": {
     "make": "Volvo",
     "model": "245 wagon",
@@ -508,9 +508,9 @@
     "massKg": 1340,
     "powerKw": 86.1,
     "stockPowerKw": 85,
-    "gripScale": 1.0716,
+    "gripScale": 1.1347,
     "powerScale": 1,
-    "lateralG": 1.153,
+    "lateralG": 1.293,
     "topSpeedKph": 163.2,
     "exhaustNote": "stock muffler",
     "probeFallback": false
@@ -537,8 +537,8 @@
      "targetLap": 119.793,
      "bestLap": 116.316,
      "sigma": 4.116,
-     "scale": 0.94089,
-     "achievedLap": 119.725
+     "scale": 1.00549,
+     "achievedLap": 119.948
     },
     {
      "index": 1,
@@ -547,8 +547,8 @@
      "targetLap": 124.39,
      "bestLap": 118.714,
      "sigma": 4.265,
-     "scale": 0.83899,
-     "achievedLap": 124.308
+     "scale": 0.88243,
+     "achievedLap": 124.318
     },
     {
      "index": 2,
@@ -557,8 +557,8 @@
      "targetLap": 121.469,
      "bestLap": 118.08,
      "sigma": 3.327,
-     "scale": 0.90904,
-     "achievedLap": 121.281
+     "scale": 0.96993,
+     "achievedLap": 121.257
     },
     {
      "index": 3,
@@ -567,8 +567,8 @@
      "targetLap": 124.195,
      "bestLap": 122.304,
      "sigma": 1.918,
-     "scale": 0.84314,
-     "achievedLap": 124.088
+     "scale": 0.88643,
+     "achievedLap": 124.125
     },
     {
      "index": 4,
@@ -577,8 +577,8 @@
      "targetLap": 132.269,
      "bestLap": 127.943,
      "sigma": 6.144,
-     "scale": 0.70945,
-     "achievedLap": 132.112
+     "scale": 0.74127,
+     "achievedLap": 132.212
     },
     {
      "index": 5,
@@ -587,8 +587,8 @@
      "targetLap": 132.706,
      "bestLap": 129.167,
      "sigma": 3.742,
-     "scale": 0.70358,
-     "achievedLap": 132.42
+     "scale": 0.73512,
+     "achievedLap": 132.637
     },
     {
      "index": 6,
@@ -597,12 +597,12 @@
      "targetLap": 119.098,
      "bestLap": 115.079,
      "sigma": 2.495,
-     "scale": 0.95743,
-     "achievedLap": 118.946
+     "scale": 1.02027,
+     "achievedLap": 118.977
     }
    ],
-   "scale": 0.85282,
-   "achievedLap": 123.592,
+   "scale": 0.89724,
+   "achievedLap": 123.605,
    "resolved": {
     "make": "BMW",
     "model": "3 Series (E30) 4-door",
@@ -625,9 +625,9 @@
     "massKg": 1200,
     "powerKw": 125,
     "stockPowerKw": 125,
-    "gripScale": 0.8528,
+    "gripScale": 0.8972,
     "powerScale": 1,
-    "lateralG": 0.862,
+    "lateralG": 0.907,
     "topSpeedKph": 192.7,
     "exhaustNote": "loud open",
     "probeFallback": false
@@ -654,8 +654,8 @@
      "targetLap": 112.174,
      "bestLap": 109.158,
      "sigma": 2.4,
-     "scale": 1.12975,
-     "achievedLap": 112.139
+     "scale": 1.17288,
+     "achievedLap": 112.595
     },
     {
      "index": 1,
@@ -664,8 +664,8 @@
      "targetLap": 120.253,
      "bestLap": 113.122,
      "sigma": 4.678,
-     "scale": 0.97886,
-     "achievedLap": 120.157
+     "scale": 1.03827,
+     "achievedLap": 120.074
     },
     {
      "index": 2,
@@ -674,12 +674,12 @@
      "targetLap": 124.651,
      "bestLap": 119.845,
      "sigma": 3.696,
-     "scale": 0.88076,
-     "achievedLap": 124.569
+     "scale": 0.9587,
+     "achievedLap": 124.458
     }
    ],
-   "scale": 0.96987,
-   "achievedLap": 120.527,
+   "scale": 1.02776,
+   "achievedLap": 120.772,
    "resolved": {
     "make": "Mazda",
     "model": "MX-5 Miata",
@@ -702,9 +702,9 @@
     "massKg": 960,
     "powerKw": 86,
     "stockPowerKw": 86,
-    "gripScale": 0.9699,
+    "gripScale": 1.0278,
     "powerScale": 1,
-    "lateralG": 1.004,
+    "lateralG": 1.093,
     "topSpeedKph": 175.7,
     "exhaustNote": "loud open",
     "probeFallback": false
@@ -731,8 +731,8 @@
      "targetLap": 134.594,
      "bestLap": 127.848,
      "sigma": 3.153,
-     "scale": 0.76683,
-     "achievedLap": 134.762
+     "scale": 0.82834,
+     "achievedLap": 134.334
     },
     {
      "index": 1,
@@ -741,8 +741,8 @@
      "targetLap": 130.254,
      "bestLap": 126.798,
      "sigma": 2.752,
-     "scale": 0.84572,
-     "achievedLap": 130.465
+     "scale": 0.92945,
+     "achievedLap": 130.072
     },
     {
      "index": 2,
@@ -751,8 +751,8 @@
      "targetLap": 153.678,
      "bestLap": 147.907,
      "sigma": 5.434,
-     "scale": 0.54033,
-     "achievedLap": 153.696
+     "scale": 0.56283,
+     "achievedLap": 153.58
     },
     {
      "index": 3,
@@ -761,8 +761,8 @@
      "targetLap": 141.97,
      "bestLap": 137.154,
      "sigma": 2.833,
-     "scale": 0.65882,
-     "achievedLap": 142.01
+     "scale": 0.69937,
+     "achievedLap": 141.776
     },
     {
      "index": 4,
@@ -771,8 +771,8 @@
      "targetLap": 142.312,
      "bestLap": 139.23,
      "sigma": 1.841,
-     "scale": 0.65815,
-     "achievedLap": 142.204
+     "scale": 0.69423,
+     "achievedLap": 142.114
     },
     {
      "index": 5,
@@ -781,8 +781,8 @@
      "targetLap": 135.474,
      "bestLap": 128.332,
      "sigma": 6.254,
-     "scale": 0.75206,
-     "achievedLap": 135.637
+     "scale": 0.8087,
+     "achievedLap": 135.348
     },
     {
      "index": 6,
@@ -791,8 +791,8 @@
      "targetLap": 137.225,
      "bestLap": 130.995,
      "sigma": 4.52,
-     "scale": 0.72413,
-     "achievedLap": 137.407
+     "scale": 0.77833,
+     "achievedLap": 137.038
     },
     {
      "index": 7,
@@ -801,12 +801,12 @@
      "targetLap": 139.145,
      "bestLap": 130.592,
      "sigma": 5.747,
-     "scale": 0.69365,
-     "achievedLap": 139.406
+     "scale": 0.74543,
+     "achievedLap": 138.906
     }
    ],
-   "scale": 0.68228,
-   "achievedLap": 140.248,
+   "scale": 0.73131,
+   "achievedLap": 139.816,
    "resolved": {
     "make": "Datsun",
     "model": "620 pickup",
@@ -829,9 +829,9 @@
     "massKg": 1150,
     "powerKw": 82,
     "stockPowerKw": 82,
-    "gripScale": 0.6823,
+    "gripScale": 0.7313,
     "powerScale": 1,
-    "lateralG": 0.685,
+    "lateralG": 0.735,
     "topSpeedKph": 161.9,
     "exhaustNote": "loud open",
     "probeFallback": false
@@ -858,8 +858,8 @@
      "targetLap": 122.667,
      "bestLap": 119.376,
      "sigma": 2.682,
-     "scale": 0.94269,
-     "achievedLap": 122.849
+     "scale": 1.01268,
+     "achievedLap": 122.729
     },
     {
      "index": 1,
@@ -868,8 +868,8 @@
      "targetLap": 131.069,
      "bestLap": 127.083,
      "sigma": 3.463,
-     "scale": 0.7676,
-     "achievedLap": 131.262
+     "scale": 0.81995,
+     "achievedLap": 130.846
     },
     {
      "index": 2,
@@ -878,8 +878,8 @@
      "targetLap": 132.623,
      "bestLap": 125.632,
      "sigma": 3.431,
-     "scale": 0.74238,
-     "achievedLap": 132.751
+     "scale": 0.78341,
+     "achievedLap": 132.421
     },
     {
      "index": 3,
@@ -888,8 +888,8 @@
      "targetLap": 158.041,
      "bestLap": 149.783,
      "sigma": 6.562,
-     "scale": 0.46147,
-     "achievedLap": 158.343
+     "scale": 0.48387,
+     "achievedLap": 157.814
     },
     {
      "index": 4,
@@ -898,8 +898,8 @@
      "targetLap": 136.52,
      "bestLap": 127.408,
      "sigma": 3.486,
-     "scale": 0.68465,
-     "achievedLap": 136.594
+     "scale": 0.71515,
+     "achievedLap": 136.324
     },
     {
      "index": 5,
@@ -908,8 +908,8 @@
      "targetLap": 131.585,
      "bestLap": 127.761,
      "sigma": 3.96,
-     "scale": 0.75896,
-     "achievedLap": 131.768
+     "scale": 0.80964,
+     "achievedLap": 131.363
     },
     {
      "index": 6,
@@ -918,8 +918,8 @@
      "targetLap": 123.66,
      "bestLap": 120.425,
      "sigma": 2.503,
-     "scale": 0.92,
-     "achievedLap": 123.862
+     "scale": 0.99933,
+     "achievedLap": 123.667
     },
     {
      "index": 7,
@@ -928,12 +928,12 @@
      "targetLap": 124.356,
      "bestLap": 119.471,
      "sigma": 3.789,
-     "scale": 0.90521,
-     "achievedLap": 124.534
+     "scale": 0.98456,
+     "achievedLap": 124.29
     }
    ],
-   "scale": 0.78719,
-   "achievedLap": 130.314,
+   "scale": 0.84124,
+   "achievedLap": 130.066,
    "resolved": {
     "make": "Hyundai",
     "model": "Elantra",
@@ -957,9 +957,9 @@
     "massKg": 1250,
     "powerKw": 103,
     "stockPowerKw": 103,
-    "gripScale": 0.7872,
+    "gripScale": 0.8412,
     "powerScale": 1,
-    "lateralG": 0.81,
+    "lateralG": 0.866,
     "topSpeedKph": 175.4,
     "exhaustNote": "stock muffler",
     "probeFallback": false
@@ -986,8 +986,8 @@
      "targetLap": 137.821,
      "bestLap": 131.888,
      "sigma": 5.936,
-     "scale": 0.6585,
-     "achievedLap": 137.687
+     "scale": 0.68047,
+     "achievedLap": 137.625
     },
     {
      "index": 1,
@@ -996,8 +996,8 @@
      "targetLap": 123.655,
      "bestLap": 118.971,
      "sigma": 2.861,
-     "scale": 0.87701,
-     "achievedLap": 123.508
+     "scale": 0.94051,
+     "achievedLap": 123.538
     },
     {
      "index": 2,
@@ -1006,8 +1006,8 @@
      "targetLap": 134.104,
      "bestLap": 123.557,
      "sigma": 4.909,
-     "scale": 0.70122,
-     "achievedLap": 133.953
+     "scale": 0.73211,
+     "achievedLap": 133.954
     },
     {
      "index": 3,
@@ -1016,8 +1016,8 @@
      "targetLap": 124.554,
      "bestLap": 120.252,
      "sigma": 2.31,
-     "scale": 0.85959,
-     "achievedLap": 124.375
+     "scale": 0.91867,
+     "achievedLap": 124.452
     },
     {
      "index": 4,
@@ -1026,12 +1026,12 @@
      "targetLap": 126.551,
      "bestLap": 123.005,
      "sigma": 4.016,
-     "scale": 0.81893,
-     "achievedLap": 126.35
+     "scale": 0.87742,
+     "achievedLap": 126.46
     }
    ],
-   "scale": 0.77187,
-   "achievedLap": 129.092,
+   "scale": 0.81832,
+   "achievedLap": 129.026,
    "resolved": {
     "make": "Edsel",
     "model": "Ranger",
@@ -1053,9 +1053,9 @@
     "massKg": 1700,
     "powerKw": 149,
     "stockPowerKw": 149,
-    "gripScale": 0.7719,
+    "gripScale": 0.8183,
     "powerScale": 1,
-    "lateralG": 0.792,
+    "lateralG": 0.84,
     "topSpeedKph": 186.9,
     "exhaustNote": "loud open",
     "probeFallback": false
@@ -1082,8 +1082,8 @@
      "targetLap": 130.572,
      "bestLap": 127.283,
      "sigma": 2.611,
-     "scale": 0.80338,
-     "achievedLap": 130.434
+     "scale": 0.8472,
+     "achievedLap": 130.407
     },
     {
      "index": 1,
@@ -1092,8 +1092,8 @@
      "targetLap": 127.603,
      "bestLap": 122.191,
      "sigma": 5.351,
-     "scale": 0.85551,
-     "achievedLap": 127.523
+     "scale": 0.92982,
+     "achievedLap": 127.544
     },
     {
      "index": 2,
@@ -1102,8 +1102,8 @@
      "targetLap": 123.626,
      "bestLap": 121.054,
      "sigma": 1.967,
-     "scale": 0.93706,
-     "achievedLap": 123.535
+     "scale": 1.02013,
+     "achievedLap": 123.41
     },
     {
      "index": 3,
@@ -1112,8 +1112,8 @@
      "targetLap": 125.789,
      "bestLap": 122.287,
      "sigma": 3.245,
-     "scale": 0.89341,
-     "achievedLap": 125.569
+     "scale": 0.98715,
+     "achievedLap": 125.561
     },
     {
      "index": 4,
@@ -1122,12 +1122,12 @@
      "targetLap": 121.485,
      "bestLap": 118.437,
      "sigma": 2.604,
-     "scale": 0.98818,
-     "achievedLap": 121.397
+     "scale": 1.04516,
+     "achievedLap": 121.49
     }
    ],
-   "scale": 0.85636,
-   "achievedLap": 127.478,
+   "scale": 0.93098,
+   "achievedLap": 127.496,
    "resolved": {
     "make": "Toyota",
     "model": "MR2",
@@ -1150,9 +1150,9 @@
     "massKg": 1050,
     "powerKw": 84,
     "stockPowerKw": 84,
-    "gripScale": 0.8564,
+    "gripScale": 0.931,
     "powerScale": 1,
-    "lateralG": 0.89,
+    "lateralG": 0.968,
     "topSpeedKph": 173,
     "exhaustNote": "loud open",
     "probeFallback": false
@@ -1179,8 +1179,8 @@
      "targetLap": 112.892,
      "bestLap": 109.941,
      "sigma": 1.756,
-     "scale": 1.03515,
-     "achievedLap": 112.793
+     "scale": 1.09179,
+     "achievedLap": 112.722
     },
     {
      "index": 1,
@@ -1189,8 +1189,8 @@
      "targetLap": 116.765,
      "bestLap": 112.65,
      "sigma": 3.379,
-     "scale": 0.96728,
-     "achievedLap": 116.559
+     "scale": 1.02023,
+     "achievedLap": 116.566
     },
     {
      "index": 2,
@@ -1199,8 +1199,8 @@
      "targetLap": 114.898,
      "bestLap": 109.802,
      "sigma": 3.535,
-     "scale": 1.0076,
-     "achievedLap": 114.693
+     "scale": 1.05496,
+     "achievedLap": 114.788
     },
     {
      "index": 3,
@@ -1209,8 +1209,8 @@
      "targetLap": 112.518,
      "bestLap": 107.423,
      "sigma": 2.143,
-     "scale": 1.04296,
-     "achievedLap": 112.331
+     "scale": 1.09822,
+     "achievedLap": 112.302
     },
     {
      "index": 4,
@@ -1219,8 +1219,8 @@
      "targetLap": 112.612,
      "bestLap": 106.525,
      "sigma": 2.168,
-     "scale": 1.03809,
-     "achievedLap": 112.57
+     "scale": 1.09585,
+     "achievedLap": 112.472
     },
     {
      "index": 5,
@@ -1229,12 +1229,12 @@
      "targetLap": 114.416,
      "bestLap": 109.436,
      "sigma": 3.782,
-     "scale": 1.01197,
-     "achievedLap": 114.31
+     "scale": 1.06295,
+     "achievedLap": 114.267
     }
    ],
-   "scale": 1.01405,
-   "achievedLap": 114.163,
+   "scale": 1.06613,
+   "achievedLap": 114.087,
    "resolved": {
     "make": "Lotus",
     "model": "Elite 'Chotus' (Chevy V8 swap)",
@@ -1256,9 +1256,9 @@
     "massKg": 1150,
     "powerKw": 119,
     "stockPowerKw": 119,
-    "gripScale": 1.014,
+    "gripScale": 1.0661,
     "powerScale": 1,
-    "lateralG": 1.08,
+    "lateralG": 1.194,
     "topSpeedKph": 191.5,
     "exhaustNote": "loud open",
     "probeFallback": false
@@ -1285,12 +1285,12 @@
      "targetLap": 146.105,
      "bestLap": 140.982,
      "sigma": 1.522,
-     "scale": 0.56215,
-     "achievedLap": 146.243
+     "scale": 0.56576,
+     "achievedLap": 145.941
     }
    ],
-   "scale": 0.55866,
-   "achievedLap": 146.6,
+   "scale": 0.56074,
+   "achievedLap": 146.56,
    "resolved": {
     "make": "Aston Martin",
     "model": "DB7 Vantage coupe (\"Half-Asston\")",
@@ -1314,9 +1314,9 @@
     "massKg": 1780,
     "powerKw": 267,
     "stockPowerKw": 313,
-    "gripScale": 0.5587,
+    "gripScale": 0.5607,
     "powerScale": 1,
-    "lateralG": 0.587,
+    "lateralG": 0.589,
     "topSpeedKph": 249,
     "exhaustNote": "loud open",
     "probeFallback": false
@@ -1343,8 +1343,8 @@
      "targetLap": 113.912,
      "bestLap": 110.314,
      "sigma": 1.735,
-     "scale": 0.9233,
-     "achievedLap": 113.867
+     "scale": 0.97752,
+     "achievedLap": 113.758
     },
     {
      "index": 1,
@@ -1353,8 +1353,8 @@
      "targetLap": 112.849,
      "bestLap": 111.097,
      "sigma": 1.763,
-     "scale": 0.94576,
-     "achievedLap": 112.907
+     "scale": 1.00118,
+     "achievedLap": 112.89
     },
     {
      "index": 2,
@@ -1363,8 +1363,8 @@
      "targetLap": 112.15,
      "bestLap": 108.15,
      "sigma": 3.797,
-     "scale": 0.96418,
-     "achievedLap": 112.078
+     "scale": 1.01035,
+     "achievedLap": 112.19
     },
     {
      "index": 3,
@@ -1373,8 +1373,8 @@
      "targetLap": 110.795,
      "bestLap": 108.391,
      "sigma": 2.061,
-     "scale": 0.99679,
-     "achievedLap": 110.846
+     "scale": 1.02889,
+     "achievedLap": 110.8
     },
     {
      "index": 4,
@@ -1383,8 +1383,8 @@
      "targetLap": 113.625,
      "bestLap": 111.464,
      "sigma": 1.723,
-     "scale": 0.92972,
-     "achievedLap": 113.596
+     "scale": 0.98354,
+     "achievedLap": 113.53
     },
     {
      "index": 5,
@@ -1393,12 +1393,12 @@
      "targetLap": 116.245,
      "bestLap": 110.632,
      "sigma": 3.515,
-     "scale": 0.87692,
-     "achievedLap": 116.217
+     "scale": 0.92075,
+     "achievedLap": 116.295
     }
    ],
-   "scale": 0.92604,
-   "achievedLap": 113.749,
+   "scale": 0.98041,
+   "achievedLap": 113.64,
    "resolved": {
     "make": "Mazda",
     "model": "MX-5 Miata",
@@ -1421,9 +1421,9 @@
     "massKg": 990,
     "powerKw": 148.5,
     "stockPowerKw": 150,
-    "gripScale": 0.926,
+    "gripScale": 0.9804,
     "powerScale": 1,
-    "lateralG": 0.959,
+    "lateralG": 1.015,
     "topSpeedKph": 212.4,
     "exhaustNote": "loud open",
     "probeFallback": false
@@ -1450,8 +1450,8 @@
      "targetLap": 124.088,
      "bestLap": 120.758,
      "sigma": 2.444,
-     "scale": 0.96354,
-     "achievedLap": 123.918
+     "scale": 1.03232,
+     "achievedLap": 124.023
     },
     {
      "index": 1,
@@ -1460,8 +1460,8 @@
      "targetLap": 141.887,
      "bestLap": 138.15,
      "sigma": 2.401,
-     "scale": 0.64974,
-     "achievedLap": 141.698
+     "scale": 0.67823,
+     "achievedLap": 141.675
     },
     {
      "index": 2,
@@ -1470,8 +1470,8 @@
      "targetLap": 125.489,
      "bestLap": 120.864,
      "sigma": 3.936,
-     "scale": 0.92734,
-     "achievedLap": 125.382
+     "scale": 1.01153,
+     "achievedLap": 125.44
     },
     {
      "index": 3,
@@ -1480,8 +1480,8 @@
      "targetLap": 144.978,
      "bestLap": 140.298,
      "sigma": 5.271,
-     "scale": 0.61246,
-     "achievedLap": 144.758
+     "scale": 0.63569,
+     "achievedLap": 144.839
     },
     {
      "index": 4,
@@ -1490,8 +1490,8 @@
      "targetLap": 131.932,
      "bestLap": 125.398,
      "sigma": 4.767,
-     "scale": 0.80186,
-     "achievedLap": 131.695
+     "scale": 0.86056,
+     "achievedLap": 131.776
     },
     {
      "index": 5,
@@ -1500,8 +1500,8 @@
      "targetLap": 128.252,
      "bestLap": 125.129,
      "sigma": 3.234,
-     "scale": 0.87009,
-     "achievedLap": 128.03
+     "scale": 0.9511,
+     "achievedLap": 128.144
     },
     {
      "index": 6,
@@ -1510,8 +1510,8 @@
      "targetLap": 133.216,
      "bestLap": 129.018,
      "sigma": 3.014,
-     "scale": 0.77696,
-     "achievedLap": 133.065
+     "scale": 0.83211,
+     "achievedLap": 133.061
     },
     {
      "index": 7,
@@ -1520,8 +1520,8 @@
      "targetLap": 137.626,
      "bestLap": 133.934,
      "sigma": 3.727,
-     "scale": 0.70741,
-     "achievedLap": 137.499
+     "scale": 0.7463,
+     "achievedLap": 137.533
     },
     {
      "index": 8,
@@ -1530,8 +1530,8 @@
      "targetLap": 139.568,
      "bestLap": 134.166,
      "sigma": 4.805,
-     "scale": 0.67963,
-     "achievedLap": 139.42
+     "scale": 0.71202,
+     "achievedLap": 139.479
     },
     {
      "index": 9,
@@ -1540,12 +1540,12 @@
      "targetLap": 120.984,
      "bestLap": 117.497,
      "sigma": 3.664,
-     "scale": 1.02592,
-     "achievedLap": 121.026
+     "scale": 1.08257,
+     "achievedLap": 120.922
     }
    ],
-   "scale": 0.78999,
-   "achievedLap": 132.367,
+   "scale": 0.84902,
+   "achievedLap": 132.286,
    "resolved": {
     "make": "Chevrolet",
     "model": "El Camino",
@@ -1568,9 +1568,9 @@
     "massKg": 1700,
     "powerKw": 109.2,
     "stockPowerKw": 108,
-    "gripScale": 0.79,
+    "gripScale": 0.849,
     "powerScale": 1,
-    "lateralG": 0.83,
+    "lateralG": 0.892,
     "topSpeedKph": 173.2,
     "exhaustNote": "loud open",
     "probeFallback": false
@@ -1597,8 +1597,8 @@
      "targetLap": 151.962,
      "bestLap": 150.551,
      "sigma": 1.398,
-     "scale": 0.57005,
-     "achievedLap": 152.163
+     "scale": 0.59251,
+     "achievedLap": 151.898
     },
     {
      "index": 1,
@@ -1607,8 +1607,8 @@
      "targetLap": 189.221,
      "bestLap": 186.281,
      "sigma": 2.166,
-     "scale": 0.3647,
-     "achievedLap": 189.44
+     "scale": 0.37574,
+     "achievedLap": 188.952
     },
     {
      "index": 2,
@@ -1617,8 +1617,8 @@
      "targetLap": 186.679,
      "bestLap": 183.273,
      "sigma": 2.443,
-     "scale": 0.37228,
-     "achievedLap": 186.384
+     "scale": 0.38151,
+     "achievedLap": 186.77
     },
     {
      "index": 3,
@@ -1627,8 +1627,8 @@
      "targetLap": 152.697,
      "bestLap": 149.508,
      "sigma": 3.83,
-     "scale": 0.56322,
-     "achievedLap": 152.941
+     "scale": 0.5853,
+     "achievedLap": 152.613
     },
     {
      "index": 4,
@@ -1637,8 +1637,8 @@
      "targetLap": 180.702,
      "bestLap": 175.323,
      "sigma": 4.67,
-     "scale": 0.38776,
-     "achievedLap": 180.937
+     "scale": 0.40215,
+     "achievedLap": 180.556
     },
     {
      "index": 5,
@@ -1647,8 +1647,8 @@
      "targetLap": 181.253,
      "bestLap": 173.561,
      "sigma": 3.877,
-     "scale": 0.38706,
-     "achievedLap": 181.124
+     "scale": 0.39997,
+     "achievedLap": 181.209
     },
     {
      "index": 6,
@@ -1657,12 +1657,12 @@
      "targetLap": 149.745,
      "bestLap": 144.973,
      "sigma": 3.851,
-     "scale": 0.59019,
-     "achievedLap": 149.952
+     "scale": 0.61613,
+     "achievedLap": 149.601
     }
    ],
-   "scale": 0.40299,
-   "achievedLap": 176.352,
+   "scale": 0.41868,
+   "achievedLap": 176.368,
    "resolved": {
     "make": "Hudson",
     "model": "Hornet",
@@ -1676,17 +1676,17 @@
     "shiftRpm": 3550,
     "gears": 3,
     "gearRatios": [
-     8.9838,
-     5.3631,
-     3.4553
+     8.6043,
+     5.1365,
+     3.3093
     ],
     "massKg": 1642,
-    "powerKw": 42.5,
+    "powerKw": 47.6,
     "stockPowerKw": 108,
     "gripScale": 0.55,
-    "powerScale": 0.3934,
+    "powerScale": 0.4411,
     "lateralG": 0.557,
-    "topSpeedKph": 117.7,
+    "topSpeedKph": 122.9,
     "exhaustNote": "loud open",
     "probeFallback": false
    }
@@ -1712,8 +1712,8 @@
      "targetLap": 138.615,
      "bestLap": 133.583,
      "sigma": 3.297,
-     "scale": 0.63005,
-     "achievedLap": 138.57
+     "scale": 0.64974,
+     "achievedLap": 138.636
     },
     {
      "index": 1,
@@ -1722,8 +1722,8 @@
      "targetLap": 134.168,
      "bestLap": 125.764,
      "sigma": 3.751,
-     "scale": 0.66982,
-     "achievedLap": 134.036
+     "scale": 0.68836,
+     "achievedLap": 134.012
     },
     {
      "index": 2,
@@ -1732,8 +1732,8 @@
      "targetLap": 130.209,
      "bestLap": 124.385,
      "sigma": 3.401,
-     "scale": 0.70702,
-     "achievedLap": 130.316
+     "scale": 0.73424,
+     "achievedLap": 130.099
     },
     {
      "index": 3,
@@ -1742,8 +1742,8 @@
      "targetLap": 131.366,
      "bestLap": 125.516,
      "sigma": 4.169,
-     "scale": 0.69296,
-     "achievedLap": 131.574
+     "scale": 0.72044,
+     "achievedLap": 131.135
     },
     {
      "index": 4,
@@ -1752,8 +1752,8 @@
      "targetLap": 125.239,
      "bestLap": 120.03,
      "sigma": 2.91,
-     "scale": 0.76835,
-     "achievedLap": 125.124
+     "scale": 0.80389,
+     "achievedLap": 125.19
     },
     {
      "index": 5,
@@ -1762,8 +1762,8 @@
      "targetLap": 128.381,
      "bestLap": 123.6,
      "sigma": 3.134,
-     "scale": 0.72771,
-     "achievedLap": 128.39
+     "scale": 0.75886,
+     "achievedLap": 128.257
     },
     {
      "index": 6,
@@ -1772,8 +1772,8 @@
      "targetLap": 128.829,
      "bestLap": 123.414,
      "sigma": 4.265,
-     "scale": 0.72376,
-     "achievedLap": 128.716
+     "scale": 0.75306,
+     "achievedLap": 128.689
     },
     {
      "index": 7,
@@ -1782,12 +1782,12 @@
      "targetLap": 150.019,
      "bestLap": 148.83,
      "sigma": 1.58,
-     "scale": 0.49109,
-     "achievedLap": 149.746
+     "scale": 0.56084,
+     "achievedLap": 150.018
     }
    ],
-   "scale": 0.68962,
-   "achievedLap": 131.879,
+   "scale": 0.71636,
+   "achievedLap": 131.605,
    "resolved": {
     "make": "Triumph",
     "model": "Mayflower",
@@ -1811,9 +1811,9 @@
     "massKg": 914,
     "powerKw": 137.1,
     "stockPowerKw": 140,
-    "gripScale": 0.6896,
+    "gripScale": 0.7164,
     "powerScale": 1,
-    "lateralG": 0.693,
+    "lateralG": 0.72,
     "topSpeedKph": 196.5,
     "exhaustNote": "loud open",
     "probeFallback": false
@@ -1840,8 +1840,8 @@
      "targetLap": 118.028,
      "bestLap": 115.743,
      "sigma": 2.083,
-     "scale": 1.1227,
-     "achievedLap": 119.912
+     "scale": 1.15085,
+     "achievedLap": 121.279
     },
     {
      "index": 1,
@@ -1850,8 +1850,8 @@
      "targetLap": 123.596,
      "bestLap": 119.322,
      "sigma": 3.285,
-     "scale": 1.05649,
-     "achievedLap": 123.522
+     "scale": 1.10686,
+     "achievedLap": 123.508
     },
     {
      "index": 2,
@@ -1860,12 +1860,12 @@
      "targetLap": 128.799,
      "bestLap": 123.069,
      "sigma": 2.639,
-     "scale": 0.93693,
-     "achievedLap": 128.958
+     "scale": 1.02318,
+     "achievedLap": 128.818
     }
    ],
-   "scale": 1.04765,
-   "achievedLap": 123.944,
+   "scale": 1.09618,
+   "achievedLap": 124.138,
    "resolved": {
     "make": "Volvo",
     "model": "PV544",
@@ -1887,9 +1887,9 @@
     "massKg": 1000,
     "powerKw": 67,
     "stockPowerKw": 67,
-    "gripScale": 1.0476,
+    "gripScale": 1.0962,
     "powerScale": 1,
-    "lateralG": 1.102,
+    "lateralG": 1.207,
     "topSpeedKph": 151.1,
     "exhaustNote": "loud open",
     "probeFallback": false
@@ -1916,8 +1916,8 @@
      "targetLap": 131.636,
      "bestLap": 126.479,
      "sigma": 3.792,
-     "scale": 0.88955,
-     "achievedLap": 131.888
+     "scale": 0.99343,
+     "achievedLap": 131.547
     },
     {
      "index": 1,
@@ -1926,8 +1926,8 @@
      "targetLap": 129.928,
      "bestLap": 126.16,
      "sigma": 3.005,
-     "scale": 0.93676,
-     "achievedLap": 130.162
+     "scale": 1.0207,
+     "achievedLap": 129.752
     },
     {
      "index": 2,
@@ -1936,8 +1936,8 @@
      "targetLap": 125.271,
      "bestLap": 121.314,
      "sigma": 2.637,
-     "scale": 1.04357,
-     "achievedLap": 125.312
+     "scale": 1.12927,
+     "achievedLap": 125.047
     },
     {
      "index": 3,
@@ -1946,8 +1946,8 @@
      "targetLap": 126.068,
      "bestLap": 122.156,
      "sigma": 2.992,
-     "scale": 1.03255,
-     "achievedLap": 126.062
+     "scale": 1.09082,
+     "achievedLap": 125.902
     },
     {
      "index": 4,
@@ -1956,8 +1956,8 @@
      "targetLap": 124.669,
      "bestLap": 120.934,
      "sigma": 4.142,
-     "scale": 1.05443,
-     "achievedLap": 124.86
+     "scale": 1.1488,
+     "achievedLap": 124.505
     },
     {
      "index": 5,
@@ -1966,12 +1966,12 @@
      "targetLap": 121.776,
      "bestLap": 117.157,
      "sigma": 2.619,
-     "scale": 1.15016,
-     "achievedLap": 121.93
+     "scale": 1.16543,
+     "achievedLap": 124.104
     }
    ],
-   "scale": 1.02916,
-   "achievedLap": 126.335,
+   "scale": 1.08977,
+   "achievedLap": 125.949,
    "resolved": {
     "make": "Volkswagen",
     "model": "Rabbit (Golf Mk1)",
@@ -1994,9 +1994,9 @@
     "massKg": 860,
     "powerKw": 55.2,
     "stockPowerKw": 55,
-    "gripScale": 1.0292,
+    "gripScale": 1.0898,
     "powerScale": 1,
-    "lateralG": 1.064,
+    "lateralG": 1.193,
     "topSpeedKph": 146.6,
     "exhaustNote": "loud open",
     "probeFallback": false
@@ -2024,8 +2024,8 @@
      "targetLap": 144.922,
      "bestLap": 140.434,
      "sigma": 4.476,
-     "scale": 0.59519,
-     "achievedLap": 145.048
+     "scale": 0.61755,
+     "achievedLap": 144.992
     },
     {
      "index": 1,
@@ -2034,8 +2034,8 @@
      "targetLap": 125.773,
      "bestLap": 121.584,
      "sigma": 3.192,
-     "scale": 0.87155,
-     "achievedLap": 125.933
+     "scale": 0.94703,
+     "achievedLap": 125.655
     },
     {
      "index": 2,
@@ -2044,8 +2044,8 @@
      "targetLap": 125.875,
      "bestLap": 120.627,
      "sigma": 2.898,
-     "scale": 0.86947,
-     "achievedLap": 126.035
+     "scale": 0.94446,
+     "achievedLap": 125.756
     },
     {
      "index": 3,
@@ -2054,8 +2054,8 @@
      "targetLap": 132.368,
      "bestLap": 126.897,
      "sigma": 3.761,
-     "scale": 0.75263,
-     "achievedLap": 132.508
+     "scale": 0.80351,
+     "achievedLap": 132.156
     },
     {
      "index": 4,
@@ -2064,12 +2064,12 @@
      "targetLap": 122.359,
      "bestLap": 119.323,
      "sigma": 1.945,
-     "scale": 0.9442,
-     "achievedLap": 122.492
+     "scale": 1.02441,
+     "achievedLap": 122.352
     }
    ],
-   "scale": 0.81426,
-   "achievedLap": 128.89,
+   "scale": 0.878,
+   "achievedLap": 128.56,
    "resolved": {
     "make": null,
     "model": null,
@@ -2092,9 +2092,9 @@
     "massKg": 1380,
     "powerKw": 126.6,
     "stockPowerKw": 126.6,
-    "gripScale": 0.8143,
+    "gripScale": 0.878,
     "powerScale": 1,
-    "lateralG": 0.855,
+    "lateralG": 0.922,
     "topSpeedKph": 193.3,
     "exhaustNote": null,
     "probeFallback": true
@@ -2121,8 +2121,8 @@
      "targetLap": 129.016,
      "bestLap": 122.548,
      "sigma": 0.649,
-     "scale": 0.75323,
-     "achievedLap": 128.824
+     "scale": 0.79508,
+     "achievedLap": 128.826
     },
     {
      "index": 1,
@@ -2131,8 +2131,8 @@
      "targetLap": 123.093,
      "bestLap": 121.059,
      "sigma": 1.385,
-     "scale": 0.86468,
-     "achievedLap": 122.987
+     "scale": 0.90991,
+     "achievedLap": 123.011
     },
     {
      "index": 2,
@@ -2141,8 +2141,8 @@
      "targetLap": 121.02,
      "bestLap": 115.842,
      "sigma": 2.697,
-     "scale": 0.91742,
-     "achievedLap": 120.904
+     "scale": 0.9795,
+     "achievedLap": 120.925
     },
     {
      "index": 3,
@@ -2151,8 +2151,8 @@
      "targetLap": 127.936,
      "bestLap": 122.704,
      "sigma": 4.398,
-     "scale": 0.7705,
-     "achievedLap": 127.702
+     "scale": 0.81191,
+     "achievedLap": 127.849
     },
     {
      "index": 4,
@@ -2161,12 +2161,12 @@
      "targetLap": 118.42,
      "bestLap": 113.908,
      "sigma": 2.309,
-     "scale": 0.97083,
-     "achievedLap": 118.301
+     "scale": 1.03189,
+     "achievedLap": 118.448
     }
    ],
-   "scale": 0.86837,
-   "achievedLap": 122.802,
+   "scale": 0.91551,
+   "achievedLap": 122.768,
    "resolved": {
     "make": "BMW",
     "model": "3 Series (E30) 4-door dressed as 'The Homer'",
@@ -2189,9 +2189,9 @@
     "massKg": 1200,
     "powerKw": 125,
     "stockPowerKw": 125,
-    "gripScale": 0.8684,
+    "gripScale": 0.9155,
     "powerScale": 1,
-    "lateralG": 0.878,
+    "lateralG": 0.925,
     "topSpeedKph": 192.7,
     "exhaustNote": "loud open",
     "probeFallback": false
@@ -2218,8 +2218,8 @@
      "targetLap": 136.545,
      "bestLap": 132.362,
      "sigma": 3.661,
-     "scale": 0.66191,
-     "achievedLap": 136.704
+     "scale": 0.69616,
+     "achievedLap": 136.392
     },
     {
      "index": 1,
@@ -2228,8 +2228,8 @@
      "targetLap": 130.623,
      "bestLap": 125.866,
      "sigma": 3.623,
-     "scale": 0.74782,
-     "achievedLap": 130.715
+     "scale": 0.7888,
+     "achievedLap": 130.383
     },
     {
      "index": 2,
@@ -2238,8 +2238,8 @@
      "targetLap": 130.48,
      "bestLap": 127.659,
      "sigma": 3.1,
-     "scale": 0.75025,
-     "achievedLap": 130.568
+     "scale": 0.79148,
+     "achievedLap": 130.317
     },
     {
      "index": 3,
@@ -2248,8 +2248,8 @@
      "targetLap": 132.615,
      "bestLap": 128.286,
      "sigma": 5.472,
-     "scale": 0.71456,
-     "achievedLap": 132.825
+     "scale": 0.75258,
+     "achievedLap": 132.444
     },
     {
      "index": 4,
@@ -2258,8 +2258,8 @@
      "targetLap": 129.712,
      "bestLap": 123.924,
      "sigma": 3.036,
-     "scale": 0.76309,
-     "achievedLap": 129.797
+     "scale": 0.80854,
+     "achievedLap": 129.56
     },
     {
      "index": 5,
@@ -2268,12 +2268,12 @@
      "targetLap": 128.228,
      "bestLap": 124.675,
      "sigma": 3.399,
-     "scale": 0.78445,
-     "achievedLap": 128.48
+     "scale": 0.83904,
+     "achievedLap": 128.031
     }
    ],
-   "scale": 0.75017,
-   "achievedLap": 130.572,
+   "scale": 0.79264,
+   "achievedLap": 130.252,
    "resolved": {
     "make": "Mercury",
     "model": "Milan",
@@ -2297,9 +2297,9 @@
     "massKg": 1500,
     "powerKw": 130,
     "stockPowerKw": 130,
-    "gripScale": 0.7502,
+    "gripScale": 0.7926,
     "powerScale": 1,
-    "lateralG": 0.782,
+    "lateralG": 0.826,
     "topSpeedKph": 184.6,
     "exhaustNote": "stock muffler",
     "probeFallback": false
@@ -2326,8 +2326,8 @@
      "targetLap": 138.383,
      "bestLap": 130.801,
      "sigma": 4.197,
-     "scale": 0.75318,
-     "achievedLap": 138.54
+     "scale": 0.80915,
+     "achievedLap": 138.246
     },
     {
      "index": 1,
@@ -2336,8 +2336,8 @@
      "targetLap": 142.918,
      "bestLap": 135.744,
      "sigma": 5.955,
-     "scale": 0.68284,
-     "achievedLap": 143.165
+     "scale": 0.72396,
+     "achievedLap": 142.943
     },
     {
      "index": 2,
@@ -2346,12 +2346,12 @@
      "targetLap": 140.818,
      "bestLap": 136.85,
      "sigma": 3.208,
-     "scale": 0.71152,
-     "achievedLap": 141.065
+     "scale": 0.75954,
+     "achievedLap": 140.718
     }
    ],
-   "scale": 0.70985,
-   "achievedLap": 141.174,
+   "scale": 0.76039,
+   "achievedLap": 140.664,
    "resolved": {
     "make": "Chevrolet",
     "model": "Stylemaster",
@@ -2372,9 +2372,9 @@
     "massKg": 1450,
     "powerKw": 93.1,
     "stockPowerKw": 67,
-    "gripScale": 0.7098,
+    "gripScale": 0.7604,
     "powerScale": 1,
-    "lateralG": 0.713,
+    "lateralG": 0.764,
     "topSpeedKph": 153.8,
     "exhaustNote": "loud open",
     "probeFallback": false
@@ -2401,8 +2401,8 @@
      "targetLap": 131.028,
      "bestLap": 125.776,
      "sigma": 2.903,
-     "scale": 0.94191,
-     "achievedLap": 131.252
+     "scale": 1.02259,
+     "achievedLap": 130.99
     },
     {
      "index": 1,
@@ -2411,8 +2411,8 @@
      "targetLap": 140.187,
      "bestLap": 134.571,
      "sigma": 5.785,
-     "scale": 0.74188,
-     "achievedLap": 140.324
+     "scale": 0.81036,
+     "achievedLap": 140.004
     },
     {
      "index": 2,
@@ -2421,8 +2421,8 @@
      "targetLap": 137.023,
      "bestLap": 132.113,
      "sigma": 4.136,
-     "scale": 0.80258,
-     "achievedLap": 137.119
+     "scale": 0.88518,
+     "achievedLap": 136.782
     },
     {
      "index": 3,
@@ -2431,8 +2431,8 @@
      "targetLap": 126.381,
      "bestLap": 119.222,
      "sigma": 4.939,
-     "scale": 1.04334,
-     "achievedLap": 126.189
+     "scale": 1.12289,
+     "achievedLap": 126.142
     },
     {
      "index": 4,
@@ -2441,12 +2441,12 @@
      "targetLap": 132.736,
      "bestLap": 129.157,
      "sigma": 2.363,
-     "scale": 0.89611,
-     "achievedLap": 132.932
+     "scale": 0.99685,
+     "achievedLap": 132.517
     }
    ],
-   "scale": 0.87756,
-   "achievedLap": 133.641,
+   "scale": 0.97901,
+   "achievedLap": 133.224,
    "resolved": {
     "make": "Geo",
     "model": "Metro (Mercedes face)",
@@ -2469,9 +2469,9 @@
     "massKg": 750,
     "powerKw": 48.2,
     "stockPowerKw": 41,
-    "gripScale": 0.8776,
+    "gripScale": 0.979,
     "powerScale": 1,
-    "lateralG": 0.881,
+    "lateralG": 0.983,
     "topSpeedKph": 142.1,
     "exhaustNote": "loud open",
     "probeFallback": false
@@ -2498,12 +2498,12 @@
      "targetLap": 135.203,
      "bestLap": 129.917,
      "sigma": 5.791,
-     "scale": 0.84249,
-     "achievedLap": 135.46
+     "scale": 0.93303,
+     "achievedLap": 134.976
     }
    ],
-   "scale": 0.72414,
-   "achievedLap": 141.67,
+   "scale": 0.77599,
+   "achievedLap": 141.665,
    "resolved": {
     "make": "Volkswagen",
     "model": "Beetle",
@@ -2525,9 +2525,9 @@
     "massKg": 780,
     "powerKw": 50.1,
     "stockPowerKw": 30,
-    "gripScale": 0.7241,
+    "gripScale": 0.776,
     "powerScale": 1,
-    "lateralG": 0.727,
+    "lateralG": 0.779,
     "topSpeedKph": 140.6,
     "exhaustNote": "loud open",
     "probeFallback": false
@@ -2554,8 +2554,8 @@
      "targetLap": 133.711,
      "bestLap": 126.619,
      "sigma": 4.112,
-     "scale": 0.75418,
-     "achievedLap": 133.508
+     "scale": 0.80249,
+     "achievedLap": 133.502
     },
     {
      "index": 1,
@@ -2564,8 +2564,8 @@
      "targetLap": 136.898,
      "bestLap": 130.591,
      "sigma": 4.031,
-     "scale": 0.70429,
-     "achievedLap": 136.99
+     "scale": 0.7455,
+     "achievedLap": 136.673
     },
     {
      "index": 2,
@@ -2574,8 +2574,8 @@
      "targetLap": 130.798,
      "bestLap": 125.46,
      "sigma": 4.872,
-     "scale": 0.80742,
-     "achievedLap": 130.538
+     "scale": 0.86073,
+     "achievedLap": 130.664
     },
     {
      "index": 3,
@@ -2584,8 +2584,8 @@
      "targetLap": 133.047,
      "bestLap": 126.97,
      "sigma": 3.709,
-     "scale": 0.76495,
-     "achievedLap": 132.864
+     "scale": 0.81554,
+     "achievedLap": 132.837
     },
     {
      "index": 4,
@@ -2594,8 +2594,8 @@
      "targetLap": 138.983,
      "bestLap": 134.335,
      "sigma": 3.822,
-     "scale": 0.67349,
-     "achievedLap": 139.175
+     "scale": 0.70666,
+     "achievedLap": 138.85
     },
     {
      "index": 5,
@@ -2604,12 +2604,12 @@
      "targetLap": 143.115,
      "bestLap": 136.029,
      "sigma": 2.16,
-     "scale": 0.62179,
-     "achievedLap": 143.251
+     "scale": 0.64899,
+     "achievedLap": 143.033
     }
    ],
-   "scale": 0.71716,
-   "achievedLap": 136.18,
+   "scale": 0.76112,
+   "achievedLap": 135.835,
    "resolved": {
     "make": "Toyota",
     "model": "Celica GT-S liftback",
@@ -2632,9 +2632,9 @@
     "massKg": 1150,
     "powerKw": 86,
     "stockPowerKw": 86,
-    "gripScale": 0.7172,
+    "gripScale": 0.7611,
     "powerScale": 1,
-    "lateralG": 0.738,
+    "lateralG": 0.783,
     "topSpeedKph": 171.2,
     "exhaustNote": "loud open",
     "probeFallback": false
@@ -2661,8 +2661,8 @@
      "targetLap": 166.79,
      "bestLap": 165.074,
      "sigma": 1.569,
-     "scale": 0.45912,
-     "achievedLap": 166.984
+     "scale": 0.47925,
+     "achievedLap": 166.895
     },
     {
      "index": 1,
@@ -2671,8 +2671,8 @@
      "targetLap": 133.577,
      "bestLap": 128.403,
      "sigma": 2.95,
-     "scale": 0.82521,
-     "achievedLap": 133.822
+     "scale": 0.91873,
+     "achievedLap": 133.406
     },
     {
      "index": 2,
@@ -2681,8 +2681,8 @@
      "targetLap": 150.238,
      "bestLap": 145.946,
      "sigma": 5.022,
-     "scale": 0.5927,
-     "achievedLap": 150.08
+     "scale": 0.62062,
+     "achievedLap": 150.094
     },
     {
      "index": 3,
@@ -2691,8 +2691,8 @@
      "targetLap": 133.039,
      "bestLap": 128.463,
      "sigma": 4.205,
-     "scale": 0.83455,
-     "achievedLap": 133.282
+     "scale": 0.93146,
+     "achievedLap": 132.878
     },
     {
      "index": 4,
@@ -2701,8 +2701,8 @@
      "targetLap": 125.324,
      "bestLap": 122.289,
      "sigma": 4.5,
-     "scale": 1.02279,
-     "achievedLap": 125.315
+     "scale": 1.07702,
+     "achievedLap": 125.4
     },
     {
      "index": 5,
@@ -2711,8 +2711,8 @@
      "targetLap": 135.995,
      "bestLap": 129.225,
      "sigma": 6.098,
-     "scale": 0.78074,
-     "achievedLap": 136.247
+     "scale": 0.85462,
+     "achievedLap": 135.754
     },
     {
      "index": 6,
@@ -2721,8 +2721,8 @@
      "targetLap": 151.779,
      "bestLap": 147.47,
      "sigma": 2.689,
-     "scale": 0.5751,
-     "achievedLap": 151.926
+     "scale": 0.60208,
+     "achievedLap": 151.649
     },
     {
      "index": 7,
@@ -2731,8 +2731,8 @@
      "targetLap": 130.43,
      "bestLap": 127.316,
      "sigma": 2.684,
-     "scale": 0.89293,
-     "achievedLap": 130.69
+     "scale": 1.00424,
+     "achievedLap": 130.24
     },
     {
      "index": 8,
@@ -2741,12 +2741,12 @@
      "targetLap": 132.072,
      "bestLap": 128.912,
      "sigma": 3.348,
-     "scale": 0.8533,
-     "achievedLap": 132.32
+     "scale": 0.95471,
+     "achievedLap": 131.938
     }
    ],
-   "scale": 0.69427,
-   "achievedLap": 141.719,
+   "scale": 0.75041,
+   "achievedLap": 141.225,
    "resolved": {
     "make": "Toyota",
     "model": "Corolla wagon",
@@ -2769,9 +2769,9 @@
     "massKg": 950,
     "powerKw": 61,
     "stockPowerKw": 56,
-    "gripScale": 0.6943,
+    "gripScale": 0.7504,
     "powerScale": 1,
-    "lateralG": 0.697,
+    "lateralG": 0.754,
     "topSpeedKph": 151.7,
     "exhaustNote": "loud open",
     "probeFallback": false
@@ -2798,8 +2798,8 @@
      "targetLap": 132.19,
      "bestLap": 126.178,
      "sigma": 6.752,
-     "scale": 0.77509,
-     "achievedLap": 132.411
+     "scale": 0.83015,
+     "achievedLap": 131.989
     },
     {
      "index": 1,
@@ -2808,8 +2808,8 @@
      "targetLap": 133.478,
      "bestLap": 126.201,
      "sigma": 4.225,
-     "scale": 0.75634,
-     "achievedLap": 133.6
+     "scale": 0.80113,
+     "achievedLap": 133.291
     },
     {
      "index": 2,
@@ -2818,8 +2818,8 @@
      "targetLap": 127.608,
      "bestLap": 123.46,
      "sigma": 2.855,
-     "scale": 0.8564,
-     "achievedLap": 127.814
+     "scale": 0.93924,
+     "achievedLap": 127.444
     },
     {
      "index": 3,
@@ -2828,8 +2828,8 @@
      "targetLap": 128.94,
      "bestLap": 125.308,
      "sigma": 2.454,
-     "scale": 0.83091,
-     "achievedLap": 129.174
+     "scale": 0.90841,
+     "achievedLap": 128.736
     },
     {
      "index": 4,
@@ -2838,8 +2838,8 @@
      "targetLap": 122.784,
      "bestLap": 119.477,
      "sigma": 2.684,
-     "scale": 0.95883,
-     "achievedLap": 122.96
+     "scale": 1.02722,
+     "achievedLap": 122.764
     },
     {
      "index": 5,
@@ -2848,12 +2848,12 @@
      "targetLap": 130.358,
      "bestLap": 126.533,
      "sigma": 3.827,
-     "scale": 0.80544,
-     "achievedLap": 130.606
+     "scale": 0.86883,
+     "achievedLap": 130.19
     }
    ],
-   "scale": 0.82258,
-   "achievedLap": 129.634,
+   "scale": 0.89063,
+   "achievedLap": 129.161,
    "resolved": {
     "make": "Kia",
     "model": "Sephia",
@@ -2876,9 +2876,9 @@
     "massKg": 1150,
     "powerKw": 93,
     "stockPowerKw": 93,
-    "gripScale": 0.8226,
+    "gripScale": 0.8906,
     "powerScale": 1,
-    "lateralG": 0.835,
+    "lateralG": 0.904,
     "topSpeedKph": 170.8,
     "exhaustNote": "stock muffler",
     "probeFallback": false
@@ -2905,8 +2905,8 @@
      "targetLap": 136.013,
      "bestLap": 129.676,
      "sigma": 3.729,
-     "scale": 0.69506,
-     "achievedLap": 135.671
+     "scale": 0.73014,
+     "achievedLap": 135.911
     },
     {
      "index": 1,
@@ -2915,8 +2915,8 @@
      "targetLap": 133.861,
      "bestLap": 126.932,
      "sigma": 5.168,
-     "scale": 0.72602,
-     "achievedLap": 133.671
+     "scale": 0.76934,
+     "achievedLap": 133.658
     },
     {
      "index": 2,
@@ -2925,8 +2925,8 @@
      "targetLap": 133.242,
      "bestLap": 128.031,
      "sigma": 5.555,
-     "scale": 0.7351,
-     "achievedLap": 133.063
+     "scale": 0.77949,
+     "achievedLap": 133.064
     },
     {
      "index": 3,
@@ -2935,12 +2935,12 @@
      "targetLap": 140.913,
      "bestLap": 135.901,
      "sigma": 3.637,
-     "scale": 0.63225,
-     "achievedLap": 141.097
+     "scale": 0.6604,
+     "achievedLap": 140.705
     }
    ],
-   "scale": 0.70563,
-   "achievedLap": 135.086,
+   "scale": 0.74621,
+   "achievedLap": 135.071,
    "resolved": {
     "make": "Plymouth",
     "model": "Valiant",
@@ -2962,9 +2962,9 @@
     "massKg": 1250,
     "powerKw": 108,
     "stockPowerKw": 108,
-    "gripScale": 0.7056,
+    "gripScale": 0.7462,
     "powerScale": 1,
-    "lateralG": 0.714,
+    "lateralG": 0.755,
     "topSpeedKph": 178.3,
     "exhaustNote": "loud open",
     "probeFallback": false
@@ -2991,8 +2991,8 @@
      "targetLap": 127.603,
      "bestLap": 124.729,
      "sigma": 2.341,
-     "scale": 0.86694,
-     "achievedLap": 127.839
+     "scale": 0.94841,
+     "achievedLap": 127.395
     },
     {
      "index": 1,
@@ -3001,8 +3001,8 @@
      "targetLap": 131.517,
      "bestLap": 128.189,
      "sigma": 2.277,
-     "scale": 0.78928,
-     "achievedLap": 131.61
+     "scale": 0.84418,
+     "achievedLap": 131.305
     },
     {
      "index": 2,
@@ -3011,8 +3011,8 @@
      "targetLap": 133.391,
      "bestLap": 123.866,
      "sigma": 6.506,
-     "scale": 0.76123,
-     "achievedLap": 133.474
+     "scale": 0.80578,
+     "achievedLap": 133.24
     },
     {
      "index": 3,
@@ -3021,8 +3021,8 @@
      "targetLap": 145.594,
      "bestLap": 137.971,
      "sigma": 9.422,
-     "scale": 0.59793,
-     "achievedLap": 145.855
+     "scale": 0.62196,
+     "achievedLap": 145.544
     },
     {
      "index": 4,
@@ -3031,12 +3031,12 @@
      "targetLap": 143.393,
      "bestLap": 127.811,
      "sigma": 4.962,
-     "scale": 0.61901,
-     "achievedLap": 143.23
+     "scale": 0.64978,
+     "achievedLap": 143.142
     }
    ],
-   "scale": 0.75254,
-   "achievedLap": 133.881,
+   "scale": 0.79921,
+   "achievedLap": 133.591,
    "resolved": {
     "make": "Alfa Romeo",
     "model": "Spider",
@@ -3059,9 +3059,9 @@
     "massKg": 1110,
     "powerKw": 88,
     "stockPowerKw": 88,
-    "gripScale": 0.7525,
+    "gripScale": 0.7992,
     "powerScale": 1,
-    "lateralG": 0.756,
+    "lateralG": 0.803,
     "topSpeedKph": 175,
     "exhaustNote": "loud open",
     "probeFallback": false
@@ -3088,8 +3088,8 @@
      "targetLap": 127.04,
      "bestLap": 121.986,
      "sigma": 5.3,
-     "scale": 0.86754,
-     "achievedLap": 127.222
+     "scale": 0.94203,
+     "achievedLap": 126.944
     },
     {
      "index": 1,
@@ -3098,8 +3098,8 @@
      "targetLap": 135.861,
      "bestLap": 130.05,
      "sigma": 3.533,
-     "scale": 0.71953,
-     "achievedLap": 136.045
+     "scale": 0.76783,
+     "achievedLap": 135.735
     },
     {
      "index": 2,
@@ -3108,8 +3108,8 @@
      "targetLap": 151.883,
      "bestLap": 145.344,
      "sigma": 5.125,
-     "scale": 0.55202,
-     "achievedLap": 151.716
+     "scale": 0.56636,
+     "achievedLap": 151.794
     },
     {
      "index": 3,
@@ -3118,8 +3118,8 @@
      "targetLap": 141.722,
      "bestLap": 139.229,
      "sigma": 2.105,
-     "scale": 0.64174,
-     "achievedLap": 141.628
+     "scale": 0.67151,
+     "achievedLap": 141.511
     },
     {
      "index": 4,
@@ -3128,12 +3128,12 @@
      "targetLap": 139.163,
      "bestLap": 138.392,
      "sigma": 1.141,
-     "scale": 0.67809,
-     "achievedLap": 138.992
+     "scale": 0.71055,
+     "achievedLap": 139.066
     }
    ],
-   "scale": 0.70251,
-   "achievedLap": 137.181,
+   "scale": 0.74999,
+   "achievedLap": 136.817,
    "resolved": {
     "make": "Opel",
     "model": "GT 'Tinyvette'",
@@ -3155,9 +3155,9 @@
     "massKg": 940,
     "powerKw": 76,
     "stockPowerKw": 76,
-    "gripScale": 0.7025,
+    "gripScale": 0.75,
     "powerScale": 1,
-    "lateralG": 0.706,
+    "lateralG": 0.753,
     "topSpeedKph": 171.7,
     "exhaustNote": "loud open",
     "probeFallback": false
@@ -3184,8 +3184,8 @@
      "targetLap": 117.713,
      "bestLap": 115.19,
      "sigma": 3.509,
-     "scale": 1.1413,
-     "achievedLap": 119.391
+     "scale": 1.15598,
+     "achievedLap": 121.96
     },
     {
      "index": 1,
@@ -3194,8 +3194,8 @@
      "targetLap": 125.857,
      "bestLap": 121.966,
      "sigma": 3.185,
-     "scale": 1.02285,
-     "achievedLap": 125.888
+     "scale": 1.08613,
+     "achievedLap": 125.704
     },
     {
      "index": 2,
@@ -3204,8 +3204,8 @@
      "targetLap": 124.829,
      "bestLap": 122.395,
      "sigma": 2.257,
-     "scale": 1.03908,
-     "achievedLap": 124.803
+     "scale": 1.11003,
+     "achievedLap": 124.59
     },
     {
      "index": 3,
@@ -3214,8 +3214,8 @@
      "targetLap": 116.929,
      "bestLap": 115.816,
      "sigma": 1.65,
-     "scale": 1.14001,
-     "achievedLap": 119.472
+     "scale": 1.15807,
+     "achievedLap": 127.766
     },
     {
      "index": 4,
@@ -3224,8 +3224,8 @@
      "targetLap": 116.908,
      "bestLap": 116.656,
      "sigma": 0.374,
-     "scale": 1.14033,
-     "achievedLap": 119.451
+     "scale": 1.15535,
+     "achievedLap": 121.994
     },
     {
      "index": 5,
@@ -3234,8 +3234,8 @@
      "targetLap": 124.933,
      "bestLap": 121.37,
      "sigma": 2.619,
-     "scale": 1.0367,
-     "achievedLap": 124.959
+     "scale": 1.10368,
+     "achievedLap": 124.83
     },
     {
      "index": 6,
@@ -3244,8 +3244,8 @@
      "targetLap": 120.351,
      "bestLap": 114.258,
      "sigma": 6.128,
-     "scale": 1.12177,
-     "achievedLap": 120.578
+     "scale": 1.15638,
+     "achievedLap": 121.951
     },
     {
      "index": 7,
@@ -3254,8 +3254,8 @@
      "targetLap": 117.734,
      "bestLap": 115.214,
      "sigma": 1.437,
-     "scale": 1.14074,
-     "achievedLap": 119.426
+     "scale": 1.15643,
+     "achievedLap": 121.956
     },
     {
      "index": 8,
@@ -3264,8 +3264,8 @@
      "targetLap": 125.545,
      "bestLap": 122.929,
      "sigma": 3.878,
-     "scale": 1.02626,
-     "achievedLap": 125.656
+     "scale": 1.09167,
+     "achievedLap": 125.469
     },
     {
      "index": 9,
@@ -3274,8 +3274,8 @@
      "targetLap": 119.537,
      "bestLap": 116.871,
      "sigma": 1.363,
-     "scale": 1.13777,
-     "achievedLap": 119.605
+     "scale": 1.15762,
+     "achievedLap": 127.82
     },
     {
      "index": 10,
@@ -3284,8 +3284,8 @@
      "targetLap": 121.445,
      "bestLap": 118.419,
      "sigma": 3.669,
-     "scale": 1.10502,
-     "achievedLap": 121.583
+     "scale": 1.15643,
+     "achievedLap": 121.954
     },
     {
      "index": 11,
@@ -3294,12 +3294,12 @@
      "targetLap": 127.057,
      "bestLap": 122.463,
      "sigma": 2.657,
-     "scale": 1.00217,
-     "achievedLap": 127.256
+     "scale": 1.06435,
+     "achievedLap": 126.992
     }
    ],
-   "scale": 1.07171,
-   "achievedLap": 123.074,
+   "scale": 1.13445,
+   "achievedLap": 123.201,
    "resolved": {
     "make": "Ford",
     "model": "Super Deluxe",
@@ -3320,9 +3320,9 @@
     "massKg": 1400,
     "powerKw": 89.9,
     "stockPowerKw": 67,
-    "gripScale": 1.0717,
+    "gripScale": 1.1344,
     "powerScale": 1,
-    "lateralG": 1.154,
+    "lateralG": 1.293,
     "topSpeedKph": 152.6,
     "exhaustNote": "side-exit, loud",
     "probeFallback": false
@@ -3349,8 +3349,8 @@
      "targetLap": 139.746,
      "bestLap": 133.55,
      "sigma": 4.618,
-     "scale": 0.63986,
-     "achievedLap": 140.023
+     "scale": 0.66845,
+     "achievedLap": 139.637
     },
     {
      "index": 1,
@@ -3359,8 +3359,8 @@
      "targetLap": 145.201,
      "bestLap": 139.592,
      "sigma": 3.846,
-     "scale": 0.59019,
-     "achievedLap": 144.973
+     "scale": 0.61045,
+     "achievedLap": 145.338
     },
     {
      "index": 2,
@@ -3369,8 +3369,8 @@
      "targetLap": 133.521,
      "bestLap": 127.108,
      "sigma": 5.874,
-     "scale": 0.72395,
-     "achievedLap": 133.676
+     "scale": 0.76513,
+     "achievedLap": 133.276
     },
     {
      "index": 3,
@@ -3379,8 +3379,8 @@
      "targetLap": 131.084,
      "bestLap": 126.51,
      "sigma": 2.867,
-     "scale": 0.76405,
-     "achievedLap": 131.217
+     "scale": 0.81135,
+     "achievedLap": 130.999
     },
     {
      "index": 4,
@@ -3389,8 +3389,8 @@
      "targetLap": 140.641,
      "bestLap": 133.155,
      "sigma": 2.933,
-     "scale": 0.63009,
-     "achievedLap": 140.917
+     "scale": 0.65513,
+     "achievedLap": 140.58
     },
     {
      "index": 5,
@@ -3399,8 +3399,8 @@
      "targetLap": 144.34,
      "bestLap": 136.974,
      "sigma": 7.766,
-     "scale": 0.59465,
-     "achievedLap": 144.48
+     "scale": 0.61867,
+     "achievedLap": 144.205
     },
     {
      "index": 6,
@@ -3409,8 +3409,8 @@
      "targetLap": 143.072,
      "bestLap": 133.586,
      "sigma": 4.495,
-     "scale": 0.60556,
-     "achievedLap": 143.183
+     "scale": 0.63001,
+     "achievedLap": 142.991
     },
     {
      "index": 7,
@@ -3419,12 +3419,12 @@
      "targetLap": 139.992,
      "bestLap": 132.235,
      "sigma": 4.107,
-     "scale": 0.63721,
-     "achievedLap": 140.268
+     "scale": 0.66653,
+     "achievedLap": 139.785
     }
    ],
-   "scale": 0.63986,
-   "achievedLap": 140.023,
+   "scale": 0.66845,
+   "achievedLap": 139.637,
    "resolved": {
     "make": "Ford",
     "model": "Focus ZX3",
@@ -3448,9 +3448,9 @@
     "massKg": 1150,
     "powerKw": 101,
     "stockPowerKw": 101,
-    "gripScale": 0.6399,
+    "gripScale": 0.6684,
     "powerScale": 1,
-    "lateralG": 0.657,
+    "lateralG": 0.686,
     "topSpeedKph": 175.1,
     "exhaustNote": "stock muffler",
     "probeFallback": false
@@ -3477,8 +3477,8 @@
      "targetLap": 131.179,
      "bestLap": 124.145,
      "sigma": 3.795,
-     "scale": 0.73566,
-     "achievedLap": 131.003
+     "scale": 0.76787,
+     "achievedLap": 131.076
     },
     {
      "index": 1,
@@ -3487,8 +3487,8 @@
      "targetLap": 136.262,
      "bestLap": 132.506,
      "sigma": 2.213,
-     "scale": 0.65637,
-     "achievedLap": 136.176
+     "scale": 0.69242,
+     "achievedLap": 136.008
     },
     {
      "index": 2,
@@ -3497,8 +3497,8 @@
      "targetLap": 133.988,
      "bestLap": 125.621,
      "sigma": 5.941,
-     "scale": 0.68703,
-     "achievedLap": 133.816
+     "scale": 0.72277,
+     "achievedLap": 133.865
     },
     {
      "index": 3,
@@ -3507,8 +3507,8 @@
      "targetLap": 157.811,
      "bestLap": 148.354,
      "sigma": 8.376,
-     "scale": 0.4468,
-     "achievedLap": 157.545
+     "scale": 0.46396,
+     "achievedLap": 157.91
     },
     {
      "index": 4,
@@ -3517,8 +3517,8 @@
      "targetLap": 134.852,
      "bestLap": 127.262,
      "sigma": 8.141,
-     "scale": 0.67486,
-     "achievedLap": 134.737
+     "scale": 0.71005,
+     "achievedLap": 134.738
     },
     {
      "index": 5,
@@ -3527,12 +3527,12 @@
      "targetLap": 135.552,
      "bestLap": 128.496,
      "sigma": 3.781,
-     "scale": 0.6657,
-     "achievedLap": 135.394
+     "scale": 0.70001,
+     "achievedLap": 135.456
     }
    ],
-   "scale": 0.66353,
-   "achievedLap": 135.568,
+   "scale": 0.69797,
+   "achievedLap": 135.605,
    "resolved": {
     "make": "Pontiac",
     "model": "Fiero",
@@ -3555,9 +3555,9 @@
     "massKg": 1150,
     "powerKw": 104,
     "stockPowerKw": 104,
-    "gripScale": 0.6635,
+    "gripScale": 0.698,
     "powerScale": 1,
-    "lateralG": 0.697,
+    "lateralG": 0.733,
     "topSpeedKph": 186,
     "exhaustNote": "loud open",
     "probeFallback": false
@@ -3584,8 +3584,8 @@
      "targetLap": 130.072,
      "bestLap": 123.107,
      "sigma": 4.924,
-     "scale": 0.80963,
-     "achievedLap": 130.321
+     "scale": 0.88031,
+     "achievedLap": 130.004
     },
     {
      "index": 1,
@@ -3594,8 +3594,8 @@
      "targetLap": 129.107,
      "bestLap": 126.495,
      "sigma": 3.588,
-     "scale": 0.82709,
-     "achievedLap": 129.344
+     "scale": 0.90343,
+     "achievedLap": 128.93
     },
     {
      "index": 2,
@@ -3604,8 +3604,8 @@
      "targetLap": 129.806,
      "bestLap": 125.069,
      "sigma": 2.056,
-     "scale": 0.81442,
-     "achievedLap": 130.05
+     "scale": 0.88857,
+     "achievedLap": 129.609
     },
     {
      "index": 3,
@@ -3614,8 +3614,8 @@
      "targetLap": 125.95,
      "bestLap": 121.158,
      "sigma": 4.069,
-     "scale": 0.89074,
-     "achievedLap": 126.036
+     "scale": 0.97393,
+     "achievedLap": 125.782
     },
     {
      "index": 4,
@@ -3624,8 +3624,8 @@
      "targetLap": 130.733,
      "bestLap": 126.042,
      "sigma": 3.747,
-     "scale": 0.79825,
-     "achievedLap": 130.976
+     "scale": 0.86911,
+     "achievedLap": 130.512
     },
     {
      "index": 5,
@@ -3634,8 +3634,8 @@
      "targetLap": 163.376,
      "bestLap": 158.207,
      "sigma": 3.787,
-     "scale": 0.44179,
-     "achievedLap": 163.587
+     "scale": 0.46444,
+     "achievedLap": 163.322
     },
     {
      "index": 6,
@@ -3644,8 +3644,8 @@
      "targetLap": 165.637,
      "bestLap": 163.24,
      "sigma": 2.484,
-     "scale": 0.42868,
-     "achievedLap": 165.762
+     "scale": 0.45206,
+     "achievedLap": 165.706
     },
     {
      "index": 7,
@@ -3654,12 +3654,12 @@
      "targetLap": 125.849,
      "bestLap": 122.464,
      "sigma": 3.549,
-     "scale": 0.89277,
-     "achievedLap": 125.936
+     "scale": 0.97631,
+     "achievedLap": 125.682
     }
    ],
-   "scale": 0.8013,
-   "achievedLap": 130.798,
+   "scale": 0.87286,
+   "achievedLap": 130.343,
    "resolved": {
     "make": "Nissan",
     "model": "Sentra (cut into a ute)",
@@ -3682,9 +3682,9 @@
     "massKg": 1000,
     "powerKw": 82,
     "stockPowerKw": 82,
-    "gripScale": 0.8013,
+    "gripScale": 0.8729,
     "powerScale": 1,
-    "lateralG": 0.815,
+    "lateralG": 0.887,
     "topSpeedKph": 167,
     "exhaustNote": "stock muffler",
     "probeFallback": false
@@ -3711,8 +3711,8 @@
      "targetLap": 137.285,
      "bestLap": 133.871,
      "sigma": 3.434,
-     "scale": 0.82865,
-     "achievedLap": 137.535
+     "scale": 0.90652,
+     "achievedLap": 137.296
     },
     {
      "index": 1,
@@ -3721,8 +3721,8 @@
      "targetLap": 164.75,
      "bestLap": 154.704,
      "sigma": 7.81,
-     "scale": 0.50029,
-     "achievedLap": 164.78
+     "scale": 0.51307,
+     "achievedLap": 164.765
     },
     {
      "index": 2,
@@ -3731,8 +3731,8 @@
      "targetLap": 155.947,
      "bestLap": 152.88,
      "sigma": 2.484,
-     "scale": 0.56233,
-     "achievedLap": 155.658
+     "scale": 0.59059,
+     "achievedLap": 155.87
     },
     {
      "index": 3,
@@ -3741,8 +3741,8 @@
      "targetLap": 141.658,
      "bestLap": 135.26,
      "sigma": 6.311,
-     "scale": 0.73927,
-     "achievedLap": 141.898
+     "scale": 0.80802,
+     "achievedLap": 141.394
     },
     {
      "index": 4,
@@ -3751,8 +3751,8 @@
      "targetLap": 152.274,
      "bestLap": 143.127,
      "sigma": 2.941,
-     "scale": 0.59456,
-     "achievedLap": 152.506
+     "scale": 0.62678,
+     "achievedLap": 152.023
     },
     {
      "index": 5,
@@ -3761,12 +3761,12 @@
      "targetLap": 142.542,
      "bestLap": 138.378,
      "sigma": 1.744,
-     "scale": 0.72465,
-     "achievedLap": 142.745
+     "scale": 0.79,
+     "achievedLap": 142.311
     }
    ],
-   "scale": 0.6434,
-   "achievedLap": 148.124,
+   "scale": 0.68976,
+   "achievedLap": 147.727,
    "resolved": {
     "make": "Austin",
     "model": "Mini",
@@ -3788,9 +3788,9 @@
     "massKg": 620,
     "powerKw": 39.8,
     "stockPowerKw": 25,
-    "gripScale": 0.6434,
+    "gripScale": 0.6898,
     "powerScale": 1,
-    "lateralG": 0.646,
+    "lateralG": 0.693,
     "topSpeedKph": 138.9,
     "exhaustNote": "loud open",
     "probeFallback": false
@@ -3817,8 +3817,8 @@
      "targetLap": 132.455,
      "bestLap": 125.372,
      "sigma": 4.474,
-     "scale": 0.75391,
-     "achievedLap": 132.591
+     "scale": 0.80883,
+     "achievedLap": 132.301
     },
     {
      "index": 1,
@@ -3827,8 +3827,8 @@
      "targetLap": 130.441,
      "bestLap": 124.615,
      "sigma": 3.449,
-     "scale": 0.78503,
-     "achievedLap": 130.656
+     "scale": 0.8471,
+     "achievedLap": 130.361
     },
     {
      "index": 2,
@@ -3837,8 +3837,8 @@
      "targetLap": 124.079,
      "bestLap": 119.61,
      "sigma": 3.388,
-     "scale": 0.90599,
-     "achievedLap": 124.224
+     "scale": 0.99237,
+     "achievedLap": 123.924
     },
     {
      "index": 3,
@@ -3847,8 +3847,8 @@
      "targetLap": 150.557,
      "bestLap": 148.496,
      "sigma": 1.314,
-     "scale": 0.53825,
-     "achievedLap": 150.858
+     "scale": 0.56217,
+     "achievedLap": 150.487
     },
     {
      "index": 4,
@@ -3857,8 +3857,8 @@
      "targetLap": 154.966,
      "bestLap": 145.363,
      "sigma": 6.85,
-     "scale": 0.49023,
-     "achievedLap": 155.096
+     "scale": 0.51221,
+     "achievedLap": 154.975
     },
     {
      "index": 5,
@@ -3867,8 +3867,8 @@
      "targetLap": 125.257,
      "bestLap": 119.71,
      "sigma": 3.191,
-     "scale": 0.87994,
-     "achievedLap": 125.456
+     "scale": 0.96421,
+     "achievedLap": 125.088
     },
     {
      "index": 6,
@@ -3877,8 +3877,8 @@
      "targetLap": 139.367,
      "bestLap": 134.07,
      "sigma": 3.227,
-     "scale": 0.65151,
-     "achievedLap": 139.605
+     "scale": 0.68106,
+     "achievedLap": 139.289
     },
     {
      "index": 7,
@@ -3887,8 +3887,8 @@
      "targetLap": 122.859,
      "bestLap": 119.059,
      "sigma": 2.024,
-     "scale": 0.93505,
-     "achievedLap": 122.951
+     "scale": 1.00858,
+     "achievedLap": 122.946
     },
     {
      "index": 8,
@@ -3897,12 +3897,12 @@
      "targetLap": 157.977,
      "bestLap": 135.432,
      "sigma": 12.008,
-     "scale": 0.4676,
-     "achievedLap": 158.085
+     "scale": 0.48957,
+     "achievedLap": 157.824
     }
    ],
-   "scale": 0.70728,
-   "achievedLap": 135.901,
+   "scale": 0.75258,
+   "achievedLap": 135.591,
    "resolved": {
     "make": "Saturn",
     "model": "SL2 sedan",
@@ -3925,9 +3925,9 @@
     "massKg": 1080,
     "powerKw": 93,
     "stockPowerKw": 93,
-    "gripScale": 0.7073,
+    "gripScale": 0.7526,
     "powerScale": 1,
-    "lateralG": 0.723,
+    "lateralG": 0.769,
     "topSpeedKph": 172.7,
     "exhaustNote": "stock muffler",
     "probeFallback": false
@@ -3954,8 +3954,8 @@
      "targetLap": 165.861,
      "bestLap": 165.297,
      "sigma": 0.836,
-     "scale": 0.45421,
-     "achievedLap": 165.919
+     "scale": 0.473,
+     "achievedLap": 165.895
     },
     {
      "index": 1,
@@ -3964,8 +3964,8 @@
      "targetLap": 185.496,
      "bestLap": 179.292,
      "sigma": 7.711,
-     "scale": 0.37427,
-     "achievedLap": 185.428
+     "scale": 0.38593,
+     "achievedLap": 185.394
     },
     {
      "index": 2,
@@ -3974,8 +3974,8 @@
      "targetLap": 158.194,
      "bestLap": 147.86,
      "sigma": 5.34,
-     "scale": 0.50603,
-     "achievedLap": 158.247
+     "scale": 0.53138,
+     "achievedLap": 158.017
     },
     {
      "index": 3,
@@ -3984,8 +3984,8 @@
      "targetLap": 156.412,
      "bestLap": 150.832,
      "sigma": 6.556,
-     "scale": 0.52387,
-     "achievedLap": 156.569
+     "scale": 0.54649,
+     "achievedLap": 156.272
     },
     {
      "index": 4,
@@ -3994,8 +3994,8 @@
      "targetLap": 158.331,
      "bestLap": 148.181,
      "sigma": 6.349,
-     "scale": 0.50492,
-     "achievedLap": 158.348
+     "scale": 0.52919,
+     "achievedLap": 158.218
     },
     {
      "index": 5,
@@ -4004,8 +4004,8 @@
      "targetLap": 175.192,
      "bestLap": 166.204,
      "sigma": 6.842,
-     "scale": 0.40768,
-     "achievedLap": 175.498
+     "scale": 0.42585,
+     "achievedLap": 175.088
     },
     {
      "index": 6,
@@ -4014,8 +4014,8 @@
      "targetLap": 197.56,
      "bestLap": 193.419,
      "sigma": 1.55,
-     "scale": 0.34404,
-     "achievedLap": 197.445
+     "scale": 0.35282,
+     "achievedLap": 197.219
     },
     {
      "index": 7,
@@ -4024,8 +4024,8 @@
      "targetLap": 153.738,
      "bestLap": 147.597,
      "sigma": 3.959,
-     "scale": 0.54832,
-     "achievedLap": 153.906
+     "scale": 0.57254,
+     "achievedLap": 153.62
     },
     {
      "index": 8,
@@ -4034,8 +4034,8 @@
      "targetLap": 162.948,
      "bestLap": 160.389,
      "sigma": 2.578,
-     "scale": 0.47226,
-     "achievedLap": 163.13
+     "scale": 0.49153,
+     "achievedLap": 162.795
     },
     {
      "index": 9,
@@ -4044,12 +4044,12 @@
      "targetLap": 153.962,
      "bestLap": 149.523,
      "sigma": 2.615,
-     "scale": 0.5462,
-     "achievedLap": 154.09
+     "scale": 0.56823,
+     "achievedLap": 154.076
     }
    ],
-   "scale": 0.47367,
-   "achievedLap": 162.843,
+   "scale": 0.49385,
+   "achievedLap": 162.758,
    "resolved": {
     "make": "Ford",
     "model": "Aerostar",
@@ -4063,19 +4063,19 @@
     "shiftRpm": 5100,
     "gears": 5,
     "gearRatios": [
-     16.3233,
-     11.3007,
-     7.9392,
-     5.6984,
-     4.2956
+     15.5999,
+     10.7999,
+     7.5874,
+     5.4459,
+     4.1052
     ],
     "massKg": 1600,
-    "powerKw": 69,
+    "powerKw": 78.2,
     "stockPowerKw": 108,
     "gripScale": 0.55,
-    "powerScale": 0.6388,
+    "powerScale": 0.7239,
     "lateralG": 0.552,
-    "topSpeedKph": 136,
+    "topSpeedKph": 142.3,
     "exhaustNote": "stock muffler",
     "probeFallback": false
    }
@@ -4101,8 +4101,8 @@
      "targetLap": 133.398,
      "bestLap": 129.142,
      "sigma": 2.876,
-     "scale": 0.77708,
-     "achievedLap": 133.596
+     "scale": 0.83906,
+     "achievedLap": 133.3
     },
     {
      "index": 1,
@@ -4111,8 +4111,8 @@
      "targetLap": 146.178,
      "bestLap": 142.524,
      "sigma": 3.904,
-     "scale": 0.60503,
-     "achievedLap": 146.344
+     "scale": 0.63844,
+     "achievedLap": 145.912
     },
     {
      "index": 2,
@@ -4121,8 +4121,8 @@
      "targetLap": 146.608,
      "bestLap": 141.412,
      "sigma": 3.638,
-     "scale": 0.60069,
-     "achievedLap": 146.766
+     "scale": 0.62888,
+     "achievedLap": 146.495
     },
     {
      "index": 3,
@@ -4131,8 +4131,8 @@
      "targetLap": 136.169,
      "bestLap": 130.172,
      "sigma": 4.715,
-     "scale": 0.73379,
-     "achievedLap": 136.338
+     "scale": 0.78951,
+     "achievedLap": 135.934
     },
     {
      "index": 4,
@@ -4141,12 +4141,12 @@
      "targetLap": 132.176,
      "bestLap": 131.008,
      "sigma": 0.34,
-     "scale": 0.79728,
-     "achievedLap": 132.391
+     "scale": 0.86787,
+     "achievedLap": 131.936
     }
    ],
-   "scale": 0.64323,
-   "achievedLap": 142.9,
+   "scale": 0.68148,
+   "achievedLap": 142.58,
    "resolved": {
     "make": "Rambler",
     "model": "Classic",
@@ -4168,9 +4168,9 @@
     "massKg": 1350,
     "powerKw": 95,
     "stockPowerKw": 95,
-    "gripScale": 0.6432,
+    "gripScale": 0.6815,
     "powerScale": 1,
-    "lateralG": 0.655,
+    "lateralG": 0.694,
     "topSpeedKph": 165.7,
     "exhaustNote": "loud open",
     "probeFallback": false
@@ -4197,8 +4197,8 @@
      "targetLap": 147.533,
      "bestLap": 143.991,
      "sigma": 3.072,
-     "scale": 0.57055,
-     "achievedLap": 147.702
+     "scale": 0.59041,
+     "achievedLap": 147.526
     },
     {
      "index": 1,
@@ -4207,8 +4207,8 @@
      "targetLap": 161.467,
      "bestLap": 152.34,
      "sigma": 6.099,
-     "scale": 0.44623,
-     "achievedLap": 161.435
+     "scale": 0.46693,
+     "achievedLap": 161.173
     },
     {
      "index": 2,
@@ -4217,8 +4217,8 @@
      "targetLap": 145.539,
      "bestLap": 141.421,
      "sigma": 4.595,
-     "scale": 0.58782,
-     "achievedLap": 145.722
+     "scale": 0.60942,
+     "achievedLap": 145.423
     },
     {
      "index": 3,
@@ -4227,8 +4227,8 @@
      "targetLap": 159.13,
      "bestLap": 147.318,
      "sigma": 12.556,
-     "scale": 0.46233,
-     "achievedLap": 159.294
+     "scale": 0.48164,
+     "achievedLap": 158.975
     },
     {
      "index": 4,
@@ -4237,8 +4237,8 @@
      "targetLap": 146.575,
      "bestLap": 141.109,
      "sigma": 6.085,
-     "scale": 0.57861,
-     "achievedLap": 146.803
+     "scale": 0.60226,
+     "achievedLap": 146.338
     },
     {
      "index": 5,
@@ -4247,8 +4247,8 @@
      "targetLap": 184.048,
      "bestLap": 177.07,
      "sigma": 5.609,
-     "scale": 0.35332,
-     "achievedLap": 184.348
+     "scale": 0.36516,
+     "achievedLap": 183.918
     },
     {
      "index": 6,
@@ -4257,8 +4257,8 @@
      "targetLap": 143.064,
      "bestLap": 136.363,
      "sigma": 3.827,
-     "scale": 0.61033,
-     "achievedLap": 143.331
+     "scale": 0.63598,
+     "achievedLap": 143.048
     },
     {
      "index": 7,
@@ -4267,12 +4267,12 @@
      "targetLap": 140.471,
      "bestLap": 136.357,
      "sigma": 4.614,
-     "scale": 0.63811,
-     "achievedLap": 140.669
+     "scale": 0.66729,
+     "achievedLap": 140.345
     }
    ],
-   "scale": 0.56509,
-   "achievedLap": 148.424,
+   "scale": 0.58486,
+   "achievedLap": 148.136,
    "resolved": {
     "make": "Lincoln",
     "model": "Continental",
@@ -4295,9 +4295,9 @@
     "massKg": 2300,
     "powerKw": 160,
     "stockPowerKw": 160,
-    "gripScale": 0.5651,
+    "gripScale": 0.5849,
     "powerScale": 1,
-    "lateralG": 0.594,
+    "lateralG": 0.614,
     "topSpeedKph": 191.6,
     "exhaustNote": "loud open",
     "probeFallback": false
@@ -4324,8 +4324,8 @@
      "targetLap": 133.527,
      "bestLap": 127.804,
      "sigma": 2.632,
-     "scale": 0.66825,
-     "achievedLap": 133.484
+     "scale": 0.69401,
+     "achievedLap": 133.35
     },
     {
      "index": 1,
@@ -4334,12 +4334,12 @@
      "targetLap": 135.731,
      "bestLap": 126.805,
      "sigma": 7.418,
-     "scale": 0.64844,
-     "achievedLap": 135.49
+     "scale": 0.66904,
+     "achievedLap": 135.576
     }
    ],
-   "scale": 0.65717,
-   "achievedLap": 134.606,
+   "scale": 0.67874,
+   "achievedLap": 134.749,
    "resolved": {
     "make": "Plymouth",
     "model": "Belvedere II",
@@ -4361,9 +4361,9 @@
     "massKg": 1550,
     "powerKw": 172,
     "stockPowerKw": 172,
-    "gripScale": 0.6572,
+    "gripScale": 0.6787,
     "powerScale": 1,
-    "lateralG": 0.682,
+    "lateralG": 0.704,
     "topSpeedKph": 204.1,
     "exhaustNote": "loud open",
     "probeFallback": false
@@ -4390,8 +4390,8 @@
      "targetLap": 123.851,
      "bestLap": 119.056,
      "sigma": 2.804,
-     "scale": 0.95815,
-     "achievedLap": 123.658
+     "scale": 1.02539,
+     "achievedLap": 123.808
     },
     {
      "index": 1,
@@ -4400,8 +4400,8 @@
      "targetLap": 133.322,
      "bestLap": 128.882,
      "sigma": 3.189,
-     "scale": 0.76262,
-     "achievedLap": 133.556
+     "scale": 0.82057,
+     "achievedLap": 133.2
     },
     {
      "index": 2,
@@ -4410,8 +4410,8 @@
      "targetLap": 125.625,
      "bestLap": 120.554,
      "sigma": 3.413,
-     "scale": 0.91578,
-     "achievedLap": 125.403
+     "scale": 1.0003,
+     "achievedLap": 125.644
     },
     {
      "index": 3,
@@ -4420,8 +4420,8 @@
      "targetLap": 119.034,
      "bestLap": 115.805,
      "sigma": 3.261,
-     "scale": 1.04643,
-     "achievedLap": 118.999
+     "scale": 1.10892,
+     "achievedLap": 118.818
     },
     {
      "index": 4,
@@ -4430,12 +4430,12 @@
      "targetLap": 124.997,
      "bestLap": 123.378,
      "sigma": 2.012,
-     "scale": 0.92866,
-     "achievedLap": 124.822
+     "scale": 1.00932,
+     "achievedLap": 124.974
     }
    ],
-   "scale": 0.92797,
-   "achievedLap": 124.854,
+   "scale": 1.00871,
+   "achievedLap": 125.02,
    "resolved": {
     "make": "Oldsmobile",
     "model": "Cutlass Supreme",
@@ -4458,9 +4458,9 @@
     "massKg": 1500,
     "powerKw": 104,
     "stockPowerKw": 104,
-    "gripScale": 0.928,
+    "gripScale": 1.0087,
     "powerScale": 1,
-    "lateralG": 0.958,
+    "lateralG": 1.05,
     "topSpeedKph": 173.2,
     "exhaustNote": "loud open",
     "probeFallback": false
@@ -4487,8 +4487,8 @@
      "targetLap": 140.113,
      "bestLap": 134.094,
      "sigma": 5.245,
-     "scale": 0.72081,
-     "achievedLap": 140.312
+     "scale": 0.77729,
+     "achievedLap": 139.868
     },
     {
      "index": 1,
@@ -4497,12 +4497,12 @@
      "targetLap": 134.714,
      "bestLap": 133.364,
      "sigma": 1.981,
-     "scale": 0.80966,
-     "achievedLap": 134.866
+     "scale": 0.89717,
+     "achievedLap": 134.686
     }
    ],
-   "scale": 0.64438,
-   "achievedLap": 145.86,
+   "scale": 0.6891,
+   "achievedLap": 145.547,
    "resolved": {
     "make": "Mitsuoka",
     "model": "Viewt",
@@ -4525,9 +4525,9 @@
     "massKg": 870,
     "powerKw": 58,
     "stockPowerKw": 58,
-    "gripScale": 0.6444,
+    "gripScale": 0.6891,
     "powerScale": 1,
-    "lateralG": 0.647,
+    "lateralG": 0.692,
     "topSpeedKph": 147,
     "exhaustNote": "stock muffler",
     "probeFallback": false
@@ -4554,8 +4554,8 @@
      "targetLap": 160.319,
      "bestLap": 157.528,
      "sigma": 3.465,
-     "scale": 0.50375,
-     "achievedLap": 160.586
+     "scale": 0.52807,
+     "achievedLap": 160.109
     },
     {
      "index": 1,
@@ -4564,8 +4564,8 @@
      "targetLap": 147.169,
      "bestLap": 141.989,
      "sigma": 5.128,
-     "scale": 0.62969,
-     "achievedLap": 147.362
+     "scale": 0.66345,
+     "achievedLap": 147.074
     },
     {
      "index": 2,
@@ -4574,8 +4574,8 @@
      "targetLap": 163.548,
      "bestLap": 158.669,
      "sigma": 5.579,
-     "scale": 0.47896,
-     "achievedLap": 163.846
+     "scale": 0.50223,
+     "achievedLap": 163.354
     },
     {
      "index": 3,
@@ -4584,12 +4584,12 @@
      "targetLap": 152.653,
      "bestLap": 147.5,
      "sigma": 4.249,
-     "scale": 0.57541,
-     "achievedLap": 152.801
+     "scale": 0.60026,
+     "achievedLap": 152.572
     }
    ],
-   "scale": 0.51563,
-   "achievedLap": 159.021,
+   "scale": 0.54063,
+   "achievedLap": 158.738,
    "resolved": {
     "make": "Dodge",
     "model": "B-series pickup",
@@ -4603,17 +4603,17 @@
     "shiftRpm": 3350,
     "gears": 3,
     "gearRatios": [
-     6.892,
-     4.1143,
-     2.6508
+     6.5504,
+     3.9104,
+     2.5194
     ],
     "massKg": 1500,
-    "powerKw": 79.4,
+    "powerKw": 91.5,
     "stockPowerKw": 71,
     "gripScale": 0.55,
-    "powerScale": 0.824,
+    "powerScale": 0.9498,
     "lateralG": 0.552,
-    "topSpeedKph": 144.8,
+    "topSpeedKph": 152.3,
     "exhaustNote": "straight pipe (stacks)",
     "probeFallback": false
    }
@@ -4639,8 +4639,8 @@
      "targetLap": 118.398,
      "bestLap": 112.881,
      "sigma": 2.592,
-     "scale": 0.89173,
-     "achievedLap": 118.33
+     "scale": 0.96525,
+     "achievedLap": 118.19
     },
     {
      "index": 1,
@@ -4649,8 +4649,8 @@
      "targetLap": 114.335,
      "bestLap": 108.622,
      "sigma": 2.553,
-     "scale": 0.99998,
-     "achievedLap": 114.145
+     "scale": 1.0661,
+     "achievedLap": 114.225
     },
     {
      "index": 2,
@@ -4659,8 +4659,8 @@
      "targetLap": 121.117,
      "bestLap": 115.285,
      "sigma": 4.691,
-     "scale": 0.84325,
-     "achievedLap": 120.88
+     "scale": 0.89968,
+     "achievedLap": 121.064
     },
     {
      "index": 3,
@@ -4669,8 +4669,8 @@
      "targetLap": 129.814,
      "bestLap": 121.774,
      "sigma": 4.939,
-     "scale": 0.70965,
-     "achievedLap": 129.6
+     "scale": 0.73718,
+     "achievedLap": 129.632
     },
     {
      "index": 4,
@@ -4679,8 +4679,8 @@
      "targetLap": 127.849,
      "bestLap": 122.374,
      "sigma": 5.88,
-     "scale": 0.73238,
-     "achievedLap": 127.803
+     "scale": 0.77809,
+     "achievedLap": 127.744
     },
     {
      "index": 5,
@@ -4689,8 +4689,8 @@
      "targetLap": 139.459,
      "bestLap": 131.226,
      "sigma": 7.699,
-     "scale": 0.63278,
-     "achievedLap": 139.434
+     "scale": 0.62473,
+     "achievedLap": 139.548
     },
     {
      "index": 6,
@@ -4699,8 +4699,8 @@
      "targetLap": 127.567,
      "bestLap": 120.706,
      "sigma": 8.193,
-     "scale": 0.73588,
-     "achievedLap": 127.496
+     "scale": 0.78257,
+     "achievedLap": 127.456
     },
     {
      "index": 7,
@@ -4709,8 +4709,8 @@
      "targetLap": 141.335,
      "bestLap": 134.963,
      "sigma": 6.258,
-     "scale": 0.62689,
-     "achievedLap": 141.024
+     "scale": 0.60928,
+     "achievedLap": 141.509
     },
     {
      "index": 8,
@@ -4719,8 +4719,8 @@
      "targetLap": 113.967,
      "bestLap": 110.573,
      "sigma": 2.31,
-     "scale": 1.01526,
-     "achievedLap": 114.004
+     "scale": 1.07009,
+     "achievedLap": 114.022
     },
     {
      "index": 9,
@@ -4729,12 +4729,12 @@
      "targetLap": 133.048,
      "bestLap": 117.861,
      "sigma": 10.532,
-     "scale": 0.67261,
-     "achievedLap": 132.917
+     "scale": 0.68855,
+     "achievedLap": 132.885
     }
    ],
-   "scale": 0.76624,
-   "achievedLap": 125.577,
+   "scale": 0.81374,
+   "achievedLap": 125.508,
    "resolved": {
     "make": "Scion",
     "model": "FR-S / Toyota 86",
@@ -4758,9 +4758,9 @@
     "massKg": 1250,
     "powerKw": 149,
     "stockPowerKw": 149,
-    "gripScale": 0.7662,
+    "gripScale": 0.8137,
     "powerScale": 1,
-    "lateralG": 0.805,
+    "lateralG": 0.855,
     "topSpeedKph": 204.4,
     "exhaustNote": "stock muffler",
     "probeFallback": false

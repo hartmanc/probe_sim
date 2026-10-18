@@ -773,9 +773,11 @@ export function kerbPaintTexture(stripeM: number): THREE.Texture {
  *  and dirt at the edge, like the ribbon's edge columns), and pgPaintUv into the paint atlas. One merged mesh. */
 class PaintStrips {
   pos: number[] = []; uv: number[] = []; src: number[] = []; puv: number[] = []; idx: number[] = [];
-  constructor(private at: ReturnType<typeof edgeFrame>, private surf: PaintSurface | undefined) {}
-  add(side: number, s0: number, s1: number, cols: { out: number; dz: number; v: number }[], srcOut: number, u0: number): void {
+  /** `spacing` = track.spacing_m: strip ranges s0..s1 are metres along the lap (station = s / spacing). */
+  constructor(private at: ReturnType<typeof edgeFrame>, private surf: PaintSurface | undefined, private spacing = 1) {}
+  add(side: number, sm0: number, sm1: number, cols: { out: number; dz: number; v: number }[], srcOut: number, u0: number): void {
     const base = this.pos.length / 3, K = cols.length;
+    const s0 = Math.round(sm0 / this.spacing), s1 = Math.round(sm1 / this.spacing);
     for (let i = s0; i <= s1; i++) {
       const sp = this.at(i, side, srcOut, 0);
       const su = this.surf ? this.surf.uv(sp[0], sp[1]) : [0, 0];
@@ -786,7 +788,7 @@ class PaintStrips {
         const uv = this.surf ? this.surf.uv(x, y) : [0, 0];
         this.uv.push(uv[0], uv[1]);
         this.src.push(su[0], su[1]);
-        this.puv.push((u0 + i - s0) / PAINT_TILE_M, c.v);
+        this.puv.push((u0 + (i - s0) * this.spacing) / PAINT_TILE_M, c.v);
       }
     }
     for (let i = 0; i < s1 - s0; i++) for (let k = 0; k < K - 1; k++) {
@@ -820,7 +822,7 @@ class PaintStrips {
  *  surface comes from track.json), red/white every stripe_m, inside the edge on the v2 track (its edges include the
  *  kerbs), with optional green verge paint beyond. One merged mesh for kerbs and verge paint. */
 function buildKerbs(track: TrackJson, k: SceneryJson['kerbs'], ground?: (x: number, y: number) => number, surf?: PaintSurface): THREE.Mesh | null {
-  const st = new PaintStrips(edgeFrame(track, ground), surf);
+  const st = new PaintStrips(edgeFrame(track, ground), surf, track.spacing_m || 1);
   const w = k.width;
   const o0 = k.inside ? -w : -0.1, o1 = k.inside ? 0 : w;   // kerb band across the edge
   const period = 2 * k.stripe_m;
@@ -865,7 +867,7 @@ export function paintWearTexture(): THREE.Texture {
 
 /** White edge lines, painted on the driven surface with the same shading as the kerbs. */
 function buildEdgeLines(track: TrackJson, el: NonNullable<SceneryJson['edge_lines']>, ground?: (x: number, y: number) => number, surf?: PaintSurface, stripeM = 2): THREE.Mesh | null {
-  const st = new PaintStrips(edgeFrame(track, ground), surf);
+  const st = new PaintStrips(edgeFrame(track, ground), surf, track.spacing_m || 1);
   const o1 = -el.inset, o0 = -el.inset - el.width;
   for (const r of el.runs) {
     st.add(r.side, r.s0, r.s1, [{ out: o0, dz: 0.008, v: PAINT_V('line', 0) }, { out: o1, dz: 0.008, v: PAINT_V('line', 1) }], o0 - 1.2, r.s0);

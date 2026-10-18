@@ -26,7 +26,7 @@ test('api/scores.ts: discovery GET, empty board, rejected POST, assets read from
 test('loadSimAssets decodes the same assets the client uses', async () => {
   const { loadSimAssets, serverPhysics } = await import('../_lib/assets');
   const a = await loadSimAssets('laguna_seca', 'probe_gt');
-  expect(a.track.length_m).toBe(3560);
+  expect(a.track.length_m).toBe((await import('../../src/scoreboard/config')).TRACKS.laguna_seca.length_m);
   expect(a.heightfield.length).toBe(a.track.heightfield.nx * a.track.heightfield.ny);
   expect(a.farHeightfield?.length).toBe(501 * 501);
   expect(a.ghosts.laps.length).toBeGreaterThan(0);

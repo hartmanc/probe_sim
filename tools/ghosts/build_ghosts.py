@@ -372,7 +372,8 @@ def main():
     log(f"     line curvature: sum k^2 {np.sum(kap_line ** 2):.4f} vs centre {np.sum(kap_c ** 2):.4f}; "
         f"offset range {e.min():+.2f}..{e.max():+.2f} m")
 
-    ghosts = {"track": "laguna_seca", "s_grid_m": DS,
+    # entries sit every DS stations; consumers index by metres (s = station * spacing_m), so the grid step is in metres
+    ghosts = {"track": "laguna_seca", "s_grid_m": round(DS * float(track.get("spacing_m", 1.0)), 6),
               "line": {"offset_m": np.round(e, 3).tolist(),
                        "method": f"min-curvature within edges less {MARGIN} m, nudged {NUDGE:.0%} toward measured lines"},
               "laps": out_laps}
@@ -465,14 +466,15 @@ def implied_g(track, grid, R, e, laps, check, sigma_m=4.0):
     for c in track["corners"]:
         if c.get("turn") not in CORNER_TURNS:
             continue
-        w = np.abs((grid - c["s"] + track["n"] / 2) % track["n"] - track["n"] / 2) <= 40
+        cs = c["s"] / float(track.get("spacing_m", 1.0))  # corner s is metres; grid is stations
+        w = np.abs((grid - cs + track["n"] / 2) % track["n"] - track["n"] / 2) <= 40
         j = np.where(w)[0][np.argmax(ref[0]["g_tyre"][w])]
         vals = [(lp["g_plain"][w].max(), lp["g_tyre"][w].max()) for lp in ref]
         r = 1 / np.abs(k[w]).max()
         rows.append({"turn": c["turn"], "s": c["s"], "R_line": round(float(r), 1), "bank_pct": round(float(tb[j] * 100), 1),
                      **{f"{lp['id']}_{kind}": round(float(v[q]), 2) for lp, v in zip(ref, vals)
                         for q, kind in ((0, "plain"), (1, "tyre"))}})
-        log(f"     {c['turn']:6s} {c['s']:5d} {r:6.1f}  {tb[j] * 100:+5.1f}   " +
+        log(f"     {c['turn']:6s} {c['s']:7.1f} {r:6.1f}  {tb[j] * 100:+5.1f}   " +
             "   ".join(f"{p:5.2f} / {t:4.2f}     " for p, t in vals))
         # too tight: the tyres would need > 1.3 g after banking; too straight: v^2 k / g < 0.9 at a real corner
         if c["turn"] != "T7" and not all(t <= 1.3 and p >= 0.9 for p, t in vals):  # T7 is a flat-out kink
@@ -543,7 +545,7 @@ def preview(track, grid, P, nlg, hw, e, e_mc, e_gps, laps, path):
     M = P + e_gps[:, None] * nlg
     ax.plot(loop(M)[:, 0], loop(M)[:, 1], color="#30d158", lw=0.6, ls="--", label="measured (good-GPS laps)")
     for c in track["corners"]:
-        ax.annotate(c.get("turn") or c["name"], np.array(track["center"][c["s"]][:2]), color="white", fontsize=8,
+        ax.annotate(c.get("turn") or c["name"], np.array(track["center"][int(round(c["s"] / float(track.get("spacing_m", 1.0)))) % track["n"]][:2]), color="white", fontsize=8,
                     xytext=(8, -10), textcoords="offset points",
                     bbox=dict(boxstyle="round,pad=0.2", fc="black", alpha=0.6, lw=0))
     lo, hi = P.min(0) - 40, P.max(0) + 40

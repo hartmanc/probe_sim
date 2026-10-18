@@ -2,7 +2,7 @@ import { beforeAll, describe, expect, test } from 'vitest';
 import { HotlapSim } from '../sim';
 import { checkTrace, replayTrace, verifyHotlap } from '../replay';
 import { physicsVersion } from '../hash';
-import { LIMITS, SAMPLE_EVERY } from '../config';
+import { LIMITS, SAMPLE_EVERY, TRACKS } from '../config';
 import type { Lap } from '../../app/timing';
 import type { InputTrace } from '../types';
 import { autopilot, lagunaAssets } from './fixtures';
@@ -41,7 +41,7 @@ describe('hot-lap trace', () => {
 
   test('trace format: grid-aligned integer rows, header filled in', () => {
     expect(checkTrace(trace)).toEqual([]);
-    expect(trace.physics).toBe(physicsVersion(lagunaAssets().carJson, 3560));
+    expect(trace.physics).toBe(physicsVersion(lagunaAssets().carJson, TRACKS.laguna_seca.length_m));
     expect(trace.steps).toBe(live.stepIndex);
     expect(trace.rows[0][0]).toBe(0);
     expect(trace.rows.every((r) => r[0] % SAMPLE_EVERY === 0)).toBe(true);

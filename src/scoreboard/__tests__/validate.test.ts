@@ -2,6 +2,10 @@ import { describe, expect, test } from 'vitest';
 import { boardKey, normalizeName, parseBoardKey, validateSubmission, nameKey } from '../validate';
 import { physicsVersion, canonicalJson } from '../hash';
 import type { InputTrace } from '../types';
+import { TRACKS } from '../config';
+
+/** 5 laps of the registry's Laguna Seca length (the race distance the metres rule is built on) */
+const FIVE_LAPS = Math.round(5 * TRACKS.laguna_seca.length_m);
 
 const trace = (over: Partial<InputTrace> = {}): InputTrace => ({
   v: 1, physics: 'abc123', track: 'laguna_seca', car: 'probe_gt', hz: 100, dt: 0.001,
@@ -14,7 +18,7 @@ const hot = (over: Record<string, unknown> = {}) => ({
 });
 const race = (over: Record<string, unknown> = {}) => ({
   mode: 'race', track: 'laguna_seca', car: 'probe_gt', physics: 'abc123', name: 'Coby', input: 'keys',
-  ai_version: 'ai-1', metres: 17_800, laps: 5, finished: true, time: 640, ...over,
+  ai_version: 'ai-1', metres: FIVE_LAPS, laps: 5, finished: true, time: 640, ...over,
 });
 const reasons = (b: unknown, sp?: string) => validateSubmission(b, sp ? () => sp : undefined).reasons.join(' | ');
 
@@ -93,8 +97,8 @@ describe('race plausibility', () => {
   });
   test('metres within 0 < m <= 5 laps + margin, laps consistent, finishers carry a race time', () => {
     expect(reasons(race({ metres: 0 }))).toMatch(/metres/);
-    expect(reasons(race({ metres: 17_800 + 251 }))).toMatch(/metres/);
-    expect(reasons(race({ metres: 17_800 + 249 }))).toBe('');
+    expect(reasons(race({ metres: 5 * TRACKS.laguna_seca.length_m + 251 }))).toMatch(/metres/);
+    expect(reasons(race({ metres: 5 * TRACKS.laguna_seca.length_m + 249 }))).toBe('');
     expect(reasons(race({ laps: 3, metres: 16_000, finished: false, time: undefined }))).toMatch(/inconsistent/);
     expect(reasons(race({ laps: 3, metres: 12_000, finished: false, time: undefined }))).toBe('');
     expect(reasons(race({ laps: 6 }))).toMatch(/laps must/);
