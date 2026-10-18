@@ -7,7 +7,7 @@ import {
   deriveGearSchedule, scheduleTargetAt,
   type CarSpec, type DriverInput, type Surface, type TrackJson, type PitLaneJson, type SceneryCollisionJson, type CollisionWorld,
   type GearSchedule,
-} from '../physics';
+  type SausageJson } from '../physics';
 import { LapTimer, type Lap } from '../app/timing';
 import {
   STEP, SAMPLE_EVERY, TIMING_EVERY, ROLLING_START_BEFORE_T11_M, ROLLING_START_SPEED, START_BACK_M,
@@ -21,6 +21,8 @@ export interface SceneryLike extends SceneryCollisionJson {
   far?: { heightfield?: { file?: string; x0: number; y0: number; dx: number; nx: number; ny: number } | null } | null;
   pit_lane?: { fractions: number[]; parts: PitLaneJson['parts'] } | null;
   paved_zones?: { fractions: number[]; parts: PitLaneJson['parts'] } | null;
+  /** raised sausage kerbs (physics: src/physics/track.ts) */
+  sausages?: SausageJson | null;
 }
 
 /** ghosts.json fields the sim uses. */
@@ -170,7 +172,7 @@ export class HotlapSim {
     this.vehicle = new Vehicle(this.spec, { autoShift: this.autoShift });
     this.vehicle.abs = this.abs;
     this.vehicle.setCollisionWorld(this.collision);
-    this.surface = createTrackSurface(a.track, a.heightfield, { far: this.far, pitLane: this.pitLane });
+    this.surface = createTrackSurface(a.track, a.heightfield, { far: this.far, pitLane: this.pitLane, sausages: a.scenery?.sausages ?? null });
     const r = canonicalReset(a.track, (s) => this.lineOffsetAt(s));
     this.vehicle.reset(r.pos, r.heading, r.speed);
     this.resetInfo = r;

@@ -78,7 +78,7 @@ export function surfaceFactory(a: SimAssets): () => Surface {
   const pitLane: PitLaneJson | null = pit || zones
     ? { spacing_m: 1, fractions: (pit ?? zones)!.fractions, parts: [...(pit?.parts ?? []), ...(zones?.parts ?? [])] }
     : null;
-  return () => createTrackSurface(a.track, a.heightfield, { far, pitLane });
+  return () => createTrackSurface(a.track, a.heightfield, { far, pitLane, sausages: a.scenery?.sausages ?? null });
 }
 
 const lineCache = new WeakMap<object, RaceLine>();

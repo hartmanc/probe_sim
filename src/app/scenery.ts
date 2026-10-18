@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { trackDistance } from './quality';
 import { mergeGeometries, mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
-import type { PitLaneJson, TrackJson } from './physics-types';
+import type { PitLaneJson, SausageJson, TrackJson } from './physics-types';
 import { PitExitCones, type PitExitConesJson } from './trackmath';
 
 type V2 = [number, number];
@@ -25,6 +25,8 @@ export interface SceneryJson {
   bridges: { id: string; kind: string; name: string; s: number; deck_z: number; a: V2; b: V2; width: number; banners: string[][]; style?: 'deck' | 'arch' }[];
   barriers: { kind: 'concrete' | 'armco' | 'tyres' | 'pitwall' | 'fence'; h: number; fence: number; pts: V3[]; src: string }[];
   kerbs: { width: number; inside?: boolean; stripe_m: number; strips: { side: number; s0: number; s1: number; kind: string; paint?: number }[] };
+  /** raised yellow sausage kerbs beyond the apex kerbs (physics: src/physics/track.ts) */
+  sausages?: SausageJson | null;
   edge_lines?: { width: number; inset: number; runs: { side: number; s0: number; s1: number }[] };
   /** Paved pit lane (CONTRACTS §2b); the physics reads the same block. gap_* = free width to the track edge. */
   pit_lane?: { spacing_m: number; fractions: number[]; open?: boolean; parts: (PitLaneJson['parts'][number] & { gap_left: number[]; gap_right: number[]; track_s: number[] })[] } | null;
@@ -593,6 +595,50 @@ function buildBarriers(list: SceneryJson['barriers']): THREE.Group {
     group.add(im);
   }
   return group;
+}
+
+// ------------------------------------------------------------------ sausage kerbs
+/** Yellow sausage kerbs: a tube of 7 cross-section rows per metre along each strip. With `ground` = the physics
+ *  surface (which carries the hump) the mesh follows the exact profile the wheels feel. */
+function buildSausages(track: TrackJson, j: SausageJson, ground?: (x: number, y: number) => number): THREE.Mesh | null {
+  const n = track.n, sp = track.spacing_m || 1, ROWS = 7, Wh = j.width / 2;
+  const off = j.kerb_width + j.gap + Wh;
+  const pos: number[] = [], idx: number[] = [];
+  for (const st of j.strips) {
+    const i0 = Math.round(st.s0 / sp), i1 = Math.round(st.s1 / sp);
+    const m = i1 - i0 + 1;
+    if (m < 2) continue;
+    const base = pos.length / 3;
+    for (let k = 0; k < m; k++) {
+      const i = (((i0 + k) % n) + n) % n;
+      const a = track.center[(i - 1 + n) % n], b = track.center[(i + 1) % n];
+      const dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1;
+      const nx = -dy / l, ny = dx / l;
+      const e = st.side > 0 ? track.left[i] : track.right[i];
+      const cx = e[0] + nx * st.side * off, cy = e[1] + ny * st.side * off;
+      const zc = ground ? ground(cx, cy) : (st.side > 0 ? track.profile.z[i][0] : track.profile.z[i][track.profile.z[i].length - 1]);
+      for (let r = 0; r < ROWS; r++) {
+        const d = -Wh + (2 * Wh * r) / (ROWS - 1);
+        const x = cx + nx * d, y = cy + ny * d;
+        // without a physics ground the hump is drawn as its own half-ellipse
+        const z = ground ? ground(x, y) : zc + j.height * Math.sqrt(Math.max(0, 1 - (d / Wh) ** 2));
+        pos.push(x, z + 0.004, -y);
+      }
+    }
+    for (let k = 0; k < m - 1; k++) for (let r = 0; r < ROWS - 1; r++) {
+      const a = base + k * ROWS + r, b = a + 1, c = a + ROWS, d = c + 1;
+      idx.push(a, c, b, b, c, d);
+    }
+  }
+  if (!pos.length) return null;
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setIndex(idx);
+  g.computeVertexNormals();
+  const mesh = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ color: 0xe8c227, roughness: 0.62, metalness: 0, side: THREE.DoubleSide }));
+  mesh.castShadow = true; mesh.receiveShadow = true;
+  mesh.name = 'sausage_kerbs';
+  return mesh;
 }
 
 // ------------------------------------------------------------------ kerbs, verge paint, edge lines
@@ -1165,6 +1211,7 @@ export function buildScenery(track: TrackJson, _hf: Float32Array, sc: SceneryAss
   // barrier feet and kerbs follow the drawn/driven surface (the track shoulder differs from the raw heightfield)
   const snap = (P: V3[]): V3[] => (ground ? P.map(([x, y]) => [x, y, ground(x, y)] as V3) : P);
   if (j.barriers?.length) root.add(buildBarriers(j.barriers.map((b) => ({ ...b, pts: snap(b.pts) }))));
+  if (j.sausages?.strips?.length) { const m = buildSausages(track, j.sausages, ground); if (m) root.add(m); }
   const kerbs = j.kerbs ? buildKerbs(track, j.kerbs, ground, paint) : null;
   if (kerbs) root.add(kerbs);
   const lines = j.edge_lines ? buildEdgeLines(track, j.edge_lines, ground, paint, j.kerbs?.stripe_m) : null;

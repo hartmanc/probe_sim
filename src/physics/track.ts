@@ -30,7 +30,84 @@ export interface PitLaneJson {
   parts: { n: number; center: Vec3[]; left: Vec3[]; right: Vec3[]; profile_z: number[][] }[];
 }
 
+/** Raised "sausage" kerbs (scenery.json `sausages`): a half-elliptical concrete hump `width` m wide and `height` m
+ *  high laid `gap` m beyond the painted kerb (`kerb_width`) on the inside of an apex, between stations s0..s1 on
+ *  `side` (+1 left). Running over one lifts the wheel by up to `height` with a steep normal: it upsets the car. */
+export interface SausageJson {
+  width: number; height: number; gap: number; kerb_width: number;
+  strips: { side: number; s0: number; s1: number; corner?: string }[];
+}
+
+interface SausageStrip { xs: Float64Array; ys: Float64Array; tx: Float64Array; ty: Float64Array; len: Float64Array; L: number; minx: number; maxx: number; miny: number; maxy: number }
+
+/** Each strip's centreline (1 m points) from the track edges, plus a bounding box for the cheap reject. */
+function buildSausageStrips(track: TrackJson, j: SausageJson): SausageStrip[] {
+  const n = track.n, sp = track.spacing_m || 1;
+  const off = j.kerb_width + j.gap + j.width / 2;
+  const out: SausageStrip[] = [];
+  for (const st of j.strips) {
+    const i0 = Math.round(st.s0 / sp), i1 = Math.round(st.s1 / sp);
+    const m = i1 - i0 + 1;
+    if (m < 2) continue;
+    const xs = new Float64Array(m), ys = new Float64Array(m);
+    for (let k = 0; k < m; k++) {
+      const i = (((i0 + k) % n) + n) % n;
+      const a = track.center[(i - 1 + n) % n], b = track.center[(i + 1) % n];
+      const dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1;
+      const e = st.side > 0 ? track.left[i] : track.right[i];
+      xs[k] = e[0] + (-dy / l) * st.side * off;
+      ys[k] = e[1] + (dx / l) * st.side * off;
+    }
+    const tx = new Float64Array(m - 1), ty = new Float64Array(m - 1), len = new Float64Array(m - 1);
+    let L = 0, minx = Infinity, maxx = -Infinity, miny = Infinity, maxy = -Infinity;
+    for (let k = 0; k < m - 1; k++) {
+      const dx = xs[k + 1] - xs[k], dy = ys[k + 1] - ys[k], l = Math.hypot(dx, dy) || 1e-6;
+      tx[k] = dx / l; ty[k] = dy / l; len[k] = l; L += l;
+    }
+    for (let k = 0; k < m; k++) { minx = Math.min(minx, xs[k]); maxx = Math.max(maxx, xs[k]); miny = Math.min(miny, ys[k]); maxy = Math.max(maxy, ys[k]); }
+    const pad = j.width / 2 + 0.5;
+    out.push({ xs, ys, tx, ty, len, L, minx: minx - pad, maxx: maxx + pad, miny: miny - pad, maxy: maxy + pad });
+  }
+  return out;
+}
+
+/** Ends ramp down over this length (m). */
+export const SAUSAGE_RAMP_M = 1.5;
+
+/** Hump height and world gradient at (x, y); h = 0 when clear of every strip. */
+function sausageAt(strips: SausageStrip[], j: SausageJson, x: number, y: number, out: { h: number; gx: number; gy: number }): void {
+  out.h = 0; out.gx = 0; out.gy = 0;
+  const Wh = j.width / 2;
+  for (const s of strips) {
+    if (x < s.minx || x > s.maxx || y < s.miny || y > s.maxy) continue;
+    let bestD = Infinity, bk = -1, bt = 0, u = 0, acc = 0;
+    for (let k = 0; k < s.len.length; k++) {
+      const dx = x - s.xs[k], dy = y - s.ys[k];
+      let t = (dx * s.tx[k] + dy * s.ty[k]) / s.len[k];
+      t = t < 0 ? 0 : t > 1 ? 1 : t;
+      const px = dx - t * s.len[k] * s.tx[k], py = dy - t * s.len[k] * s.ty[k];
+      const d2 = px * px + py * py;
+      if (d2 < bestD) { bestD = d2; bk = k; bt = t; u = acc + t * s.len[k]; }
+      acc += s.len[k];
+    }
+    if (bk < 0) continue;
+    const dx = x - s.xs[bk], dy = y - s.ys[bk];
+    const d = -dx * s.ty[bk] + dy * s.tx[bk];            // signed lateral distance (+left of the strip)
+    const q = d / Wh;
+    if (q <= -1 || q >= 1) continue;
+    const ramp = Math.min(1, Math.min(u, s.L - u) / SAUSAGE_RAMP_M);
+    if (ramp <= 0) continue;
+    const root = Math.sqrt(1 - q * q);
+    const h = j.height * root * ramp;
+    let slope = -j.height * q / (Wh * Math.max(root, 0.05)) * ramp;   // dh/dd, capped at the hump's edge
+    if (slope > 2.5) slope = 2.5; else if (slope < -2.5) slope = -2.5;
+    if (h > out.h) { out.h = h; out.gx = slope * -s.ty[bk]; out.gy = slope * s.tx[bk]; }
+  }
+}
+
 export interface TrackSurfaceOptions {
+  /** Raised sausage kerbs beyond the apex kerbs (scenery.json `sausages`); null / absent = none. */
+  sausages?: SausageJson | null;
   /** Paved pit lane: mu = muOnTrack and profile heights inside its footprint; it blends to the heightfield over the
    *  same shoulder width as the track. onTrack stays false there; `paved` is true. */
   pitLane?: PitLaneJson | null;
@@ -359,8 +436,10 @@ export function createTrackSurface(track: TrackJson, heightfield: Float32Array, 
     const l = 1 / Math.sqrt(gxw * gxw + gyw * gyw + 1);
     out.nx = -gxw * l; out.ny = -gyw * l; out.nz = l;
   };
+  const strips = opts.sausages && opts.sausages.strips?.length ? buildSausageStrips(track, opts.sausages) : null;
+  const bump = { h: 0, gx: 0, gy: 0 };
 
-  return {
+  const base: Surface = {
     sample(x: number, y: number): SurfaceSample {
       // locate: try the cached station's neighbourhood first, else the hash
       let s = -1;
@@ -457,6 +536,22 @@ export function createTrackSurface(track: TrackJson, heightfield: Float32Array, 
       // smoothstep across the shoulder: no slope break at the paved edge or where it meets the heightfield
       const u = 1 - Math.max(wT, wP);
       out.z = zE + u * u * (3 - 2 * u) * (hf.z - zE) + rz;
+      return out;
+    },
+  };
+  if (!strips) return base;
+  // sausage kerbs ride on top of whatever is under them (shoulder, kerb paint, pavement): add the hump and tilt the normal
+  return {
+    sample(x: number, y: number): SurfaceSample {
+      base.sample(x, y);
+      sausageAt(strips, opts.sausages!, x, y, bump);
+      if (bump.h > 0) {
+        const gx = -out.nx / out.nz + bump.gx, gy = -out.ny / out.nz + bump.gy;
+        out.z += bump.h;
+        setNormal(gx, gy);
+        // painted concrete: full grip, no dust
+        out.mu = out.muPaved ?? muOn; out.dirt = 0;
+      }
       return out;
     },
   };

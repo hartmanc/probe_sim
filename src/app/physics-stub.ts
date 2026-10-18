@@ -68,7 +68,7 @@ export function createTrackProjector(track: TrackJson): TrackProjector {
 
 // ---------------------------------------------------------------- surface
 
-export function createTrackSurface(track: TrackJson, heightfield: Float32Array): Surface {
+export function createTrackSurface(track: TrackJson, heightfield: Float32Array, _opts?: unknown): Surface {
   const hf = track.heightfield;
   const proj = createTrackProjector(track);
   const ground = (x: number, y: number) => {

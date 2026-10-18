@@ -7,7 +7,7 @@
  * far terrain), ghosts.json (gear schedules, line offsets) or the sim loop in src/scoreboard/sim.ts.
  * It feeds physicsVersion(), so a bump also opens fresh boards.
  */
-export const PHYSICS_VERSION = 'probe-sim-2026-10-17-surface';
+export const PHYSICS_VERSION = 'probe-sim-2026-10-18-sausages';
 
 /** Input-trace format version (InputTrace.v). */
 export const TRACE_FORMAT = 1;
