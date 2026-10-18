@@ -9,6 +9,7 @@
 //   mode.frame(dt, now); hud.update({...core, ...mode.hud()}); render
 // While a menu is open nothing is stepped and audio is suspended.
 import type * as THREE from 'three';
+import type { TrackMarks } from '../marks';
 import type { MenuEntry } from '../menu';
 import type { GhostLap, GhostsJson, PhysicsApi, TrackJson, VehicleLike } from '../physics-types';
 import type { GhostManager } from '../ghosts';
@@ -118,6 +119,8 @@ export interface ModeContext {
   toast(msg: string): void;
   /** Race-only services (see RaceServices). */
   race?: RaceServices;
+  /** Tyre marks, dust and smoke (marks.ts): a mode feeds it the AI cars it draws. */
+  marks?: TrackMarks;
 }
 
 export interface GameMode {

@@ -1,4 +1,4 @@
-// World: terrain from the heightfield, track ribbon, sky, lights, fog,
+// World: terrain from the heightfield, track ribbon, lights, fog (the sky, environment and the look live in look.ts),
 // corner signboards (only without scenery.json). ENU -> three: X = x, Y = z, Z = -y.
 import * as THREE from 'three';
 import type { TrackJson } from './physics-types';
@@ -7,7 +7,6 @@ import { SHOULDER_WIDTH_M } from '../physics';
 import { buildScenery, paintWearTexture, type PaintSurface, type SceneryAssets } from './scenery';
 
 // Sunny Monterey afternoon. Colours are sRGB hex; three converts them to linear.
-const SKY_TOP = new THREE.Color(0x2f6fc4);
 const SKY_HORIZON = new THREE.Color(0xb9d0e6);
 const HAZE = new THREE.Color(0xc4d3e0);
 const TERRAIN_STEP_M = 3;
@@ -120,12 +119,21 @@ function addDetailUV(geo: THREE.BufferGeometry, tile: number): void {
  * the asphalt grade (desaturate, darken, cool; painted lines kept) and the asphalt detail instead of the ground
  * detail, so the ribbon's shoulder looks exactly like the terrain it joins.
  */
-export function photoGround(mat: THREE.MeshLambertMaterial, opts: { grain?: number; ground: GroundDetail; asphalt?: GroundDetail; asphaltAttr?: boolean; paint?: THREE.Texture }): void {
+export type GroundMaterial = THREE.MeshLambertMaterial | THREE.MeshStandardMaterial;
+/** Desktop: physically shaded ground (sun sheen on the asphalt, environment fill); phone: Lambert. Set by buildWorld. */
+let PBR_GROUND = false;
+function groundMaterial(p: THREE.MeshLambertMaterialParameters, roughness = 0.95): GroundMaterial {
+  return PBR_GROUND ? new THREE.MeshStandardMaterial({ ...p, metalness: 0, roughness }) : new THREE.MeshLambertMaterial(p);
+}
+
+export function photoGround(mat: GroundMaterial, opts: { grain?: number; ground: GroundDetail; asphalt?: GroundDetail; asphaltAttr?: boolean; paint?: THREE.Texture; rubber?: boolean }): void {
   const grain = opts.grain ?? 0.12;
   const G = opts.ground, A = opts.asphalt;
   const hasA = opts.asphaltAttr && A ? 1 : 0;
   // painted overlay (kerbs, verge paint, edge lines): needs the asphalt attributes plus `pgPaintUv`
   const hasP = hasA && opts.paint ? 1 : 0;
+  // rubbered racing line: needs `pgD` (lateral offset from the line, m)
+  const hasR = hasA && opts.rubber ? 1 : 0;
   mat.normalMap = G.normal;   // uv1 = world / G.tile (see addDetailUV); gives the tangent frame
   G.normal.channel = 1;
   mat.normalScale.set(1, 1);
@@ -143,14 +151,17 @@ varying float vPgA;
 varying float vPgE;
 varying vec2 vPgUvSrc;
 varying vec2 vPgPaintUv;
+varying float vPgD;
 ${hasA ? 'attribute float pgA; attribute float pgE; attribute vec2 pgUvSrc;' : ''}
-${hasP ? 'attribute vec2 pgPaintUv;' : ''}`)
+${hasP ? 'attribute vec2 pgPaintUv;' : ''}
+${hasR ? 'attribute float pgD;' : ''}`)
       .replace('#include <worldpos_vertex>', `#include <worldpos_vertex>
 vPgW = (modelMatrix * vec4(transformed, 1.0)).xyz;
 vPgA = ${hasA ? 'pgA' : '0.0'};
 vPgE = ${hasA ? 'pgE' : '0.0'};
 vPgUvSrc = ${hasA ? 'pgUvSrc' : 'vec2(0.0)'};
-vPgPaintUv = ${hasP ? 'pgPaintUv' : 'vec2(0.0)'};`);
+vPgPaintUv = ${hasP ? 'pgPaintUv' : 'vec2(0.0)'};
+vPgD = ${hasR ? 'pgD' : '1000.0'};`);
     sh.fragmentShader = sh.fragmentShader
       .replace('#include <common>', `#include <common>
 varying vec3 vPgW;
@@ -158,6 +169,8 @@ varying float vPgA;
 varying float vPgE;
 varying vec2 vPgUvSrc;
 varying vec2 vPgPaintUv;
+varying float vPgD;
+float pgRub = 0.0;
 uniform sampler2D pgAlbG, pgAlbA, pgNorA, pgPaint;
 uniform float pgTileG, pgTileA;
 float pgHash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
@@ -188,6 +201,14 @@ float pgFade() { return 1.0 - smoothstep(30.0, 80.0, length(vPgW - cameraPositio
     float paint = smoothstep(0.58, 0.80, l);
     vec3 asph = vec3(min(l, 0.5)) * vec3(0.50, 0.53, 0.58) + vec3(0.004, 0.005, 0.007);
     diffuseColor.rgb = mix(diffuseColor.rgb, mix(asph, vec3(l) * 1.05, paint), w);
+#if ${hasR}
+    // rubber on the racing line: two darker strips at the tyre tracks over a wider, lighter darkening
+    {
+      float rub = 0.75 * (exp(-pow((vPgD - 0.75) / 0.42, 2.0)) + exp(-pow((vPgD + 0.75) / 0.42, 2.0))) + 0.3 * exp(-pow(vPgD / 1.3, 2.0));
+      pgRub = clamp(rub, 0.0, 1.0) * w * (0.7 + 0.3 * pgNoise(wp * 0.15)) * (1.0 - paint);
+      diffuseColor.rgb *= 1.0 - 0.3 * pgRub;
+    }
+#endif
 #if ${hasP}
     // paint laid on that graded surface: it keeps the aerial's local light/dark (shade, dirt, rubber) relative to
     // the mean asphalt tone, so kerbs and lines sit in the same photograph as the road
@@ -202,6 +223,8 @@ float pgFade() { return 1.0 - smoothstep(30.0, 80.0, length(vPgW - cameraPositio
   float dA = texture2D(pgAlbA, wuv / pgTileA).r * 2.0;
   diffuseColor.rgb *= mix(1.0, mix(dG, dA, w), pgFade() * mix(0.5, 0.9, w) * (1.0 - 0.45 * pgPa));
 }`)
+      .replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>
+  roughnessFactor = mix(roughnessFactor, 0.72, clamp(vPgA, 0.0, 1.0)) - 0.2 * pgRub;`)
       .replace('#include <normal_fragment_maps>', `
 #ifdef USE_NORMALMAP_TANGENTSPACE
   {
@@ -214,17 +237,19 @@ float pgFade() { return 1.0 - smoothstep(30.0, 80.0, length(vPgW - cameraPositio
   }
 #endif`);
   };
-  mat.customProgramCacheKey = () => `pg${hasA}${hasP}${grain}`;
+  mat.customProgramCacheKey = () => `pg${hasA}${hasP}${hasR}${grain}`;
 }
 
 export interface World {
   scene: THREE.Scene;
   sun: THREE.DirectionalLight;
-  sky: THREE.Mesh;
+  hemi: THREE.HemisphereLight;
+  /** Direction toward the sun (three coordinates); the Look (look.ts) sets it for the time of day. */
+  sunDir: THREE.Vector3;
   /** Ribbon/terrain seam check (see seamReport), for debugging from the console. */
   seam: SeamReport;
-  /** Keep the sun's shadow box on the car and the sky around the camera. */
-  follow(target: THREE.Vector3, camera: THREE.Camera): void;
+  /** Keep the sun's shadow box on the car. */
+  follow(target: THREE.Vector3, camera?: THREE.Camera): void;
 }
 
 function orthoUV(track: TrackJson, x: number, y: number): [number, number] {
@@ -355,7 +380,7 @@ function terrainMesh(track: TrackJson, g: TerrainGrid, tex: THREE.Texture, detai
   geo.setIndex(new THREE.BufferAttribute(idx, 1));
   geo.computeVertexNormals();
   addDetailUV(geo, detail.tile);
-  const mat = new THREE.MeshLambertMaterial({ map: tex });
+  const mat = groundMaterial({ map: tex }, 0.95);
   photoGround(mat, { grain: 0.16, ground: detail });
   const mesh = new THREE.Mesh(geo, mat);
   mesh.receiveShadow = true;
@@ -371,6 +396,7 @@ interface RibbonSections {
   A: Float32Array;         // 1 = racing surface, 0 = shoulder (hard switch at the duplicated edge columns)
   E: Float32Array;         // near-edge weight: 1 at the edge, 0 at 0.5 m inside / 1.5 m outside
   src: Float32Array;       // ENU x, y to sample the aerial image from near the edge (1.2 m away from the blurred edge)
+  D?: Float32Array;        // lateral offset from the racing line (m, +left); the track ribbon only
 }
 
 /** A ribbon's stations: the closed track, or an open pit-lane part. Gaps are the free width beyond each edge before
@@ -413,7 +439,7 @@ function pitStrand(part: PitPart, fractions: number[]): Strand {
  *  the edge, the profile's interior columns, the same mirrored on the right. Racing-surface columns are placed as
  *  the physics maps the profile (lateral = -f x that side's half-width from the centre station); heights come from
  *  `ground` (the physics surface); the outermost shoulder rows lie on the terrain mesh. */
-function ribbonSections(st: Strand, ground: Ground, terrainZ: Ground): RibbonSections {
+function ribbonSections(st: Strand, ground: Ground, terrainZ: Ground, lineOff?: (i: number) => number): RibbonSections {
   const n = st.n, S = SHOULDER_D.length;
   const fr = st.fractions;
   const interior = fr.filter((f) => f > fr[0] && f < fr[fr.length - 1]);
@@ -435,6 +461,7 @@ function ribbonSections(st: Strand, ground: Ground, terrainZ: Ground): RibbonSec
   };
   const K = plan(5, 5, Infinity, Infinity).length;
   const pos = new Float32Array(n * K * 3), A = new Float32Array(n * K), E = new Float32Array(n * K), src = new Float32Array(n * K * 2);
+  const D = lineOff ? new Float32Array(n * K) : undefined;
   for (let i = 0; i < n; i++) {
     const f = st.at(i);
     let cols = plan(f.hl, f.hr, f.gapL, f.gapR);
@@ -447,12 +474,13 @@ function ribbonSections(st: Strand, ground: Ground, terrainZ: Ground): RibbonSec
       const outer = k === 0 || k === K - 1;
       pos[q * 3] = x; pos[q * 3 + 1] = y; pos[q * 3 + 2] = outer ? terrainZ(x, y) : ground(x, y);
       A[q] = a; E[q] = e;
+      if (D) D[q] = lat - lineOff!(i);
       // source point for the aerial image: `shift` is along +lat (left), already signed outward/inward per column
       src[q * 2] = f.cx + f.nx * (lat + shift);
       src[q * 2 + 1] = f.cy + f.ny * (lat + shift);
     });
   }
-  return { K, n, closed: st.closed, pos, A, E, src };
+  return { K, n, closed: st.closed, pos, A, E, src, D };
 }
 
 /** Visit sample points on every ribbon quad (both triangles, interior points and edge midpoints). */
@@ -511,11 +539,12 @@ function buildRibbon(track: TrackJson, tex: THREE.Texture, rs: RibbonSections, a
   geo.setAttribute('pgA', new THREE.BufferAttribute(rs.A, 1));
   geo.setAttribute('pgE', new THREE.BufferAttribute(rs.E, 1));
   geo.setAttribute('pgUvSrc', new THREE.BufferAttribute(uvSrc, 2));
+  if (rs.D) geo.setAttribute('pgD', new THREE.BufferAttribute(rs.D, 1));
   geo.setIndex(new THREE.BufferAttribute(idx, 1));
   geo.computeVertexNormals();
   addDetailUV(geo, groundDetail.tile);
-  const mat = new THREE.MeshLambertMaterial({ map: tex, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: offsetUnits });
-  photoGround(mat, { grain: 0.12, ground: groundDetail, asphalt, asphaltAttr: true });
+  const mat = groundMaterial({ map: tex, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: offsetUnits }, 0.9);
+  photoGround(mat, { grain: 0.12, ground: groundDetail, asphalt, asphaltAttr: true, rubber: !!rs.D });
   const mesh = new THREE.Mesh(geo, mat);
   mesh.receiveShadow = true;
   mesh.name = name;
@@ -551,7 +580,7 @@ function paintSurface(track: TrackJson, ortho: THREE.Texture, asphalt: GroundDet
     uv: (x, y) => orthoUV(track, x, y),
     mesh(geo, paint, name, offsetUnits) {
       addDetailUV(geo, groundDetail.tile);
-      const mat = new THREE.MeshLambertMaterial({ map: ortho, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: offsetUnits });
+      const mat = groundMaterial({ map: ortho, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: offsetUnits }, 0.9);
       photoGround(mat, { grain: 0.12, ground: groundDetail, asphalt, asphaltAttr: true, paint });
       const mesh = new THREE.Mesh(geo, mat);
       mesh.receiveShadow = true;
@@ -680,31 +709,25 @@ function buildCornerSigns(track: TrackJson): THREE.Group {
   return group;
 }
 
-function buildSky(): THREE.Mesh {
-  const geo = new THREE.SphereGeometry(6000, 32, 16);
-  const mat = new THREE.ShaderMaterial({
-    side: THREE.BackSide, depthWrite: false, fog: false,
-    uniforms: { top: { value: SKY_TOP }, horizon: { value: SKY_HORIZON }, sunDir: { value: SUN_DIR }, warm: { value: new THREE.Color(0xffe6c4) } },
-    vertexShader: `varying vec3 vDir; void main(){ vDir = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
-    fragmentShader: `uniform vec3 top; uniform vec3 horizon; uniform vec3 sunDir; uniform vec3 warm; varying vec3 vDir;
-      void main(){ vec3 d = normalize(vDir); float h = max(d.y, 0.0);
-      vec3 c = mix(horizon, top, pow(h, 0.45));
-      float s = max(dot(d, sunDir), 0.0);
-      c = mix(c, warm, pow(s, 6.0) * 0.45 * (1.0 - h * 0.6));   // warm glow around the low sun
-      c += vec3(1.0, 0.93, 0.8) * pow(s, 900.0) * 4.0;            // sun disc
-      if (d.y < 0.0) c = horizon;
-      gl_FragColor = vec4(c, 1.0);
-      #include <tonemapping_fragment>
-      #include <colorspace_fragment>
-      }`,
-  });
-  const m = new THREE.Mesh(geo, mat);
-  m.frustumCulled = false;
-  m.renderOrder = -1;
-  return m;
+export interface WorldOptions {
+  /** Physically shaded ground (desktop tier): sun sheen on the asphalt, environment fill. */
+  pbr?: boolean;
+  /** The racing line (ghosts.json `line`) for the rubbered band on the track. */
+  line?: { s_grid_m: number; offset_m: number[] } | null;
 }
 
-export function buildWorld(track: TrackJson, hf: Float32Array, ortho: THREE.Texture, maxAniso: number, scenery?: SceneryAssets | null, groundIn?: Ground): World {
+/** Racing-line lateral offset (+left, m) at station i from ghosts.json's line (a coarser grid, wrapped). */
+function lineOffsetFn(line: { s_grid_m: number; offset_m: number[] }, track: TrackJson): (i: number) => number {
+  const g = line.s_grid_m, offs = line.offset_m, N = offs.length;
+  return (i) => {
+    const u = (i * track.spacing_m) / g, k = Math.floor(u), t = u - k;
+    return offs[((k % N) + N) % N] * (1 - t) + offs[(((k + 1) % N) + N) % N] * t;
+  };
+}
+
+export function buildWorld(track: TrackJson, hf: Float32Array, ortho: THREE.Texture, maxAniso: number, scenery?: SceneryAssets | null, groundIn?: Ground, opts: WorldOptions = {}): World {
+  PBR_GROUND = !!opts.pbr;
+  const lineOff = opts.line && opts.line.offset_m?.length ? lineOffsetFn(opts.line, track) : undefined;
   const scene = new THREE.Scene();
   scene.background = SKY_HORIZON.clone();
   // light aerial haze: ~9 % at 2.5 km, ~30 % at 5 km
@@ -728,7 +751,7 @@ export function buildWorld(track: TrackJson, hf: Float32Array, ortho: THREE.Text
   const grid = terrainGrid(track, hf, ground, strands);
   // Stitch: the outer shoulder rows sit on the terrain; wherever the terrain still comes within 2 cm of a ribbon or
   // shoulder (a 4 m terrain triangle can reach under it from outside), lower that triangle and re-stitch.
-  let secs = strands.map((st) => ribbonSections(st, ground, grid.surfaceZ));
+  let secs = strands.map((st, k) => ribbonSections(st, ground, grid.surfaceZ, k === 0 ? lineOff : undefined));
   for (let it = 0; it < 8; it++) {
     let fixes = 0;
     for (const sec of secs) {
@@ -738,7 +761,7 @@ export function buildWorld(track: TrackJson, hf: Float32Array, ortho: THREE.Text
         if (poke > 0) { grid.lowerAt(x, y, poke + 0.03); fixes++; }
       });
     }
-    secs = strands.map((st) => ribbonSections(st, ground, grid.surfaceZ));
+    secs = strands.map((st, k) => ribbonSections(st, ground, grid.surfaceZ, k === 0 ? lineOff : undefined));
     if (!fixes) break;
   }
   scene.add(terrainMesh(track, grid, ortho, groundDetail));
@@ -753,9 +776,6 @@ export function buildWorld(track: TrackJson, hf: Float32Array, ortho: THREE.Text
   scene.add(buildStartLine(track, ground));
   if (scenery) scene.add(buildScenery(track, hf, scenery, maxAniso, ground, paintSurface(track, ortho, asphaltDetail, groundDetail)));
   else scene.add(buildCornerSigns(track));
-  const sky = buildSky();
-  scene.add(sky);
-
   // Lambert BRDF is albedo/pi: sun 3.4 at 38 deg elevation + sky fill ~ 0.9 x albedo on flat ground, so the
   // ortho shows close to its own colours under ACES at exposure 1.
   const hemi = new THREE.HemisphereLight(0xb4cbe8, 0x7a6448, 0.95);
@@ -770,15 +790,14 @@ export function buildWorld(track: TrackJson, hf: Float32Array, ortho: THREE.Text
   sun.shadow.normalBias = 0.02;
   sun.shadow.radius = 4;
   scene.add(sun, sun.target);
-  const sunDir = SUN_DIR;
+  const sunDir = SUN_DIR.clone();
 
   return {
-    scene, sun, sky, seam,
-    follow(target, camera) {
+    scene, sun, hemi, sunDir, seam,
+    follow(target) {
       sun.target.position.copy(target);
       sun.position.copy(target).addScaledVector(sunDir, 40);
       sun.target.updateMatrixWorld();
-      sky.position.copy(camera.position);
     },
   };
 }

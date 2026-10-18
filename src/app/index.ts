@@ -7,6 +7,10 @@ import { physics, usingStub } from './physics-loader';
 import type { GhostLap, Surface, TrackJson, VehicleLike } from './physics-types';
 import { loadAssets, type Assets } from './loader';
 import { buildWorld, type World } from './scene';
+import { Look, postUrlOff, sunFromUrl } from './look';
+import { upgradeCarMaterials } from './car-materials';
+import { TrackMarks } from './marks';
+import { setFieldLook } from './field-cars';
 import { CarRig } from './car';
 import { GhostManager } from './ghosts';
 import { CAMERA_MODES, CameraRig, DRIVER_VIEW_DEFAULTS, EYE_RANGE, FOV_CHOICES, OFFSET_STEP, SEAT_RANGE, type CameraMode } from './cameras';
@@ -270,8 +274,11 @@ function createSim(assets: Assets) {
   /** A wheel is off track only if it is on neither the track nor the paved pit lane. */
   const wheelOff = (w: { onTrack: boolean; pos: [number, number, number] }) => !w.onTrack && !surface.sample(w.pos[0], w.pos[1]).paved;
   const world: World = buildWorld(track, heightfield, assets.ortho, Math.min(quality.maxAnisotropy, renderer.capabilities.getMaxAnisotropy()), assets.scenery,
-    (x, y) => surface.sample(x, y).z);
+    (x, y) => surface.sample(x, y).z, { pbr: quality.tier !== 'phone', line: assets.ghosts?.line ? { s_grid_m: assets.ghosts.s_grid_m, offset_m: assets.ghosts.line.offset_m } : null });
   const thinned: ThinReport | null = applyQuality(quality, renderer, world, track);
+  // the look (look.ts): clear-coated paint on the player's car and the field, reflections from the sky's environment
+  upgradeCarMaterials(assets.carModel, { clearcoat: quality.tier !== 'phone' });
+  setFieldLook({ clearcoat: quality.tier !== 'phone', sceneEnv: true });
   const ghostTemplate = assets.carModel.clone(true);
   const car = new CarRig(assets.carModel);
   world.scene.add(car.root);
@@ -305,6 +312,9 @@ function createSim(assets: Assets) {
   world.scene.add(ghosts.group);
 
   const cams = new CameraRig(window.innerWidth / window.innerHeight);
+  const look = new Look(renderer, world, cams.camera, quality, { sun: sunFromUrl(location.search), post: !postUrlOff(location.search), fogHeightM: track.center[0][2] });
+  // tyre marks, dust and smoke for the player (here) and the AI field (race.ts), on the rendering surface
+  const marks = new TrackMarks(world.scene, (x, y) => surface.sample(x, y));
 
   // space-launch easter egg: camera follows the car up, GAME OVER after 2.5 s, reset clears it
   let launchSeenAt = -1, gameOverShown = false, lastImpactT = -1;
@@ -348,6 +358,7 @@ function createSim(assets: Assets) {
   let offeredBest: number | null = null;
 
   const ctx: ModeContext = {
+    marks,
     physics, track, timer, ghosts, ghostData: assets.ghosts, hud, input,
     get vehicle() { return veh(); },
     simTime: () => hsim.simTime,
@@ -378,8 +389,7 @@ function createSim(assets: Assets) {
   app.appendChild(pausedEl);
 
   window.addEventListener('resize', () => {
-    renderer.setPixelRatio(pixelRatioFor(quality, window.devicePixelRatio, window.innerWidth, window.innerHeight));
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    look.resize(window.innerWidth, window.innerHeight);
     cams.resize(window.innerWidth / window.innerHeight);
     dirty = true;
   });
@@ -494,7 +504,7 @@ function createSim(assets: Assets) {
     car.pose(vehicle.state);
     cams.update(car, 1 / 60, 0, vehicle.state.speed);
     world.follow(car.root.position, cams.camera);
-    renderer.render(world.scene, cams.camera);
+    look.render(0, vehicle.state.speed);
   };
 
   /** One rendered frame; called from the UI loop. paused: a menu / panel is open or the tab is hidden. */
@@ -553,6 +563,7 @@ function createSim(assets: Assets) {
       });
     }
     car.pose(st);
+    marks.car(0, st, dt);
     car.setBrakeLights(hsim.input.brake > 0.05);
     mode()?.frame(dt, now);
     cams.setLook(input.lookX, input.lookY, input.lookBack);
@@ -569,7 +580,8 @@ function createSim(assets: Assets) {
       offTrack: st.wheels.some(wheelOff), invalid: timer.started && !timer.currentValid,
       absActive: st.absActive, timing: mh.timing, showDelta: mh.showDelta,
     });
-    renderer.render(world.scene, cams.camera);
+    marks.update(dt, cams.camera, renderer.domElement.height);
+    look.render(dt, st.speed);
   };
 
   const setMode = (id: ModeId) => {

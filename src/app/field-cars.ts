@@ -7,6 +7,7 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { CarRig } from './car';
+import { upgradeCarMaterials } from './car-materials';
 import type { VehicleState } from './physics-types';
 
 // ---------------------------------------------------------------- pure helpers (unit-tested)
@@ -223,6 +224,9 @@ export function fieldEnvMap(): THREE.CubeTexture | null {
 }
 /** envMap intensity on AI car materials (diffuse + specular sky fill). */
 export const FIELD_ENV_INTENSITY = 1.0;
+/** The look (look.ts): with `sceneEnv` the cars reflect scene.environment instead of the canvas cube; `clearcoat` upgrades their paint. */
+let fieldLook = { clearcoat: false, sceneEnv: false };
+export function setFieldLook(l: { clearcoat: boolean; sceneEnv: boolean }): void { fieldLook = l; }
 
 /** Field-car material normalisation: sky env fill, no metal on painted surfaces (glTF defaults metallic to 1). */
 export function prepareCarMaterials(root: THREE.Object3D, env: THREE.Texture | null = fieldEnvMap()): void {
@@ -234,10 +238,11 @@ export function prepareCarMaterials(root: THREE.Object3D, env: THREE.Texture | n
       if (!st.isMeshStandardMaterial || st.userData.fieldPrepared) continue;
       st.userData.fieldPrepared = true;
       if (!st.transparent && st.metalness > 0.2) st.metalness = 0;
-      if (env) { st.envMap = env; st.envMapIntensity = FIELD_ENV_INTENSITY; }
+      if (env && !fieldLook.sceneEnv) { st.envMap = env; st.envMapIntensity = FIELD_ENV_INTENSITY; }
       st.needsUpdate = true;
     }
   });
+  upgradeCarMaterials(root, { clearcoat: fieldLook.clearcoat });
 }
 
 let blobTex: THREE.Texture | null | undefined;

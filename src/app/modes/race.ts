@@ -571,7 +571,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
       }
     },
     onLap() { /* laps come from the director (race distance), not the hot-lap timer */ },
-    frame(_dt, now) {
+    frame(dt, now) {
       const dir = d;
       if (!dir) return;
       const h = dir.hud();
@@ -587,6 +587,10 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
       if (fieldCars) {
         const poses = dir.poses();
         fieldCars.update(poses.map((p) => p.state), dir.traffic.s, P.idx, dir.line.L, poses.map((p) => p.brake));
+        if (ctx.marks) {
+          const pp = st.pos;
+          poses.forEach((p, i) => { if (i !== P.idx && Math.hypot(p.state.pos[0] - pp[0], p.state.pos[1] - pp[1]) < 160) ctx.marks!.car(i + 1, p.state, dt); });
+        }
       }
       if (thump > 0 && sv && now - lastThumpAt > 150) { sv.impact(thump); lastThumpAt = now; thump = 0; }
       updateAudio(dir, now);
