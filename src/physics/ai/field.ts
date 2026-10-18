@@ -9,7 +9,7 @@ import type { RaceLine } from './line';
 import { Rng, hashSeed } from './rng';
 
 /** Bump whenever the AI driver or the calibration changes behaviour (pace.json scales are then stale). */
-export const AI_VERSION = 5; // 5: pace fit split into grip (corners) and power (straights): power follows the powertrain
+export const AI_VERSION = 6; // 6: CG lowered with the fitted grip (T/2h >= 1.15 x lateral mu: quick cars rolled over at T2 on the painted-road track). 5: 5: pace fit split into grip (corners) and power (straights): power follows the powertrain
 // 4: per-stint driver pace (each race draws one real stint per car), stint outlier rules
 // 3: #49 Mayflower re-specced as a Honda K24 swap (owner), recalibrated
 
@@ -267,6 +267,8 @@ function torqueShape(t: CarType): { rpm: number[]; tq: number[] } {
 const PROBE_LENGTH = 4.52; // hull front - rear of the Probe car.json
 
 /** Pace scalar range the calibration may use, and the grip range it trims before touching power. */
+/** Static rollover threshold T/2h kept at least this multiple of the AI car's fitted lateral tyre mu (aiCarJson). */
+export const ROLL_GRIP = 1.15;
 export const PACE_MIN = 0.3, PACE_MAX = 1.6, GRIP_MIN = 0.55, GRIP_MAX = 1.25;
 /** Power-to-weight ceiling for AI cars, kW per tonne (see aiCarJson). */
 export const KWT_MAX = 150;
@@ -406,6 +408,13 @@ export function aiCarJson(probeJson: any, identity: IdentityCar | null | undefin
   j.drivetrain.clutch.maxTorque = Math.max(j.drivetrain.clutch.maxTorque, 2 * Math.max(...j.engine.torqueCurve.torque));
   j.tyre.lateral.mu0 *= p2;
   j.tyre.longitudinal.mu0 *= p2;
+  // ... and the CG race-lowered further when the fitted grip exceeds that: the static rollover threshold T/2h stays
+  // ROLL_GRIP x the lateral mu, so a high-grip car cannot lift both inside wheels and tip over in a long corner
+  // (18 Oct 2026, painted-road track: the quick stints need grip scale > 1.14, where tall cars rolled over at T2)
+  {
+    const tAvg = 0.5 * (j.trackFront + j.trackRear), rt = Math.max(1.35, ROLL_GRIP * j.tyre.lateral.mu0);
+    j.cgHeight = Math.min(j.cgHeight, tAvg / (2 * rt));
+  }
   j.brakes.maxTorque *= p2;
   j.tyre.speedSensitivity.refSpeed *= p;
   j.tyre.speedSensitivity.slope /= p;

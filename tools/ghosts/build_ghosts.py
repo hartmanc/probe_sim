@@ -127,12 +127,14 @@ def project(P, Q):
     return (i + (rel * t[i]).sum(1) / seg[i]) % len(P), (rel * nl[i]).sum(1)
 
 
-def min_curvature_offsets(P, nl, lo, hi, smooth_w=1e-3, jerk_w=LINE_JERK_W, target=None):
+def min_curvature_offsets(P, nl, lo, hi, smooth_w=1e-3, jerk_w=None, target=None):
     """Offsets e (along nl) minimising the squared second differences (curvature) of P + e*nl, plus jerk_w times
     the squared third differences (curvature change, keeps the line from kinking where it rides a bound), with
     lo <= e <= hi (linearised minimum-curvature line; bounded linear least squares)."""
     m = len(P)
     I = np.arange(m)
+    if jerk_w is None:
+        jerk_w = LINE_JERK_W
 
     def op(coefs):
         rows, cols, vals = [], [], []
@@ -198,7 +200,15 @@ def main():
     ap.add_argument("--track-dir", default=TRACK_DIR, help="track package to read track.json from and write ghosts.json to")
     ap.add_argument("--write-on-fail", action="store_true", help="write ghosts.json even if validation fails")
     ap.add_argument("--preview-dir", default=None, help="where preview_ghosts.png goes (default tools/track/previews)")
+    ap.add_argument("--kerb-margin", type=float, default=None,
+                    help="line bound (m from the edge) along the red/white kerb strips of scenery.json (apex / exit kerbs, "
+                         "pavement inside the edge); default: MARGIN everywhere")
+    ap.add_argument("--jerk-w", type=float, default=None, help="curvature-change weight (default LINE_JERK_W)")
+    ap.add_argument("--debug-out", default=None, help="where ghost_line_debug.npz goes (default tools/track/cache)")
     args = ap.parse_args()
+    global LINE_JERK_W
+    if args.jerk_w is not None:
+        LINE_JERK_W = args.jerk_w
     TRACK_DIR = os.path.abspath(args.track_dir)
     preview_dir = args.preview_dir or os.path.join(HERE, "..", "track", "previews")
     track = json.load(open(os.path.join(TRACK_DIR, "track.json")))
@@ -291,8 +301,28 @@ def main():
     hwr = hr_full[gi]
     P = C[gi]
     nlg, _ = left_normals(P)
+    # per-side margin: MARGIN, or --kerb-margin along the kerb strips (the kerbs are pavement inside the painted edge,
+    # so the line may put the outside wheels on them; 18 Oct 2026 rebuild to the painted road width)
+    mL = np.full(m, MARGIN)
+    mR = np.full(m, MARGIN)
+    if args.kerb_margin is not None:
+        sc_path = os.path.join(TRACK_DIR, "scenery.json")
+        strips = json.load(open(sc_path)).get("kerbs", {}).get("strips", []) if os.path.exists(sc_path) else []
+        s_m = grid * float(track.get("spacing_m", 1.0))
+        nk = 0
+        for st in strips:
+            if st.get("kind") not in ("apex", "exit"):
+                continue
+            on = (s_m >= st["s0"] - 2) & (s_m <= st["s1"] + 2)
+            (mL if st["side"] > 0 else mR)[on] = min(MARGIN, args.kerb_margin)
+            nk += 1
+        log(f"     kerb margin {args.kerb_margin} m along {nk} kerb strips ({np.sum(mL < MARGIN) + np.sum(mR < MARGIN)} side-points)")
+    # (the kerb relaxation is added after the edge envelope, ramped in over ~4 m, never past edge - kerb margin)
     lim = smooth_bound(np.maximum(hw - MARGIN, 0.5))  # left bound (+)
     limr = smooth_bound(np.maximum(hwr - MARGIN, 0.5))  # right bound (-)
+    if (mL < MARGIN).any() or (mR < MARGIN).any():
+        lim = np.minimum(lim + gaussian_filter1d(MARGIN - mL, 1.0, mode="wrap"), np.maximum(hw - mL, 0.5))
+        limr = np.minimum(limr + gaussian_filter1d(MARGIN - mR, 1.0, mode="wrap"), np.maximum(hwr - mR, 0.5))
     # the drivers' measured line: fastest real laps from good-GPS files, plus the optimal pieces (all good-GPS)
     meas = []
     for lp in laps:
@@ -314,8 +344,8 @@ def main():
     # Where the drivers' measured line ran closer than MARGIN to an edge (kerb use, e.g. T5 exit), the bound follows
     # it out to at most KERB_MARGIN from the edge; everywhere else the line keeps MARGIN.
     lim_n, limr_n = lim, limr
-    lim = np.maximum(lim_n, np.minimum(e_gps, hw - KERB_MARGIN))
-    limr = np.maximum(limr_n, np.minimum(-e_gps, hwr - KERB_MARGIN))
+    lim = np.maximum(lim_n, np.minimum(e_gps, hw - np.minimum(KERB_MARGIN, mL)))
+    limr = np.maximum(limr_n, np.minimum(-e_gps, hwr - np.minimum(KERB_MARGIN, mR)))
     relaxed = (lim > lim_n + 0.05) | (limr > limr_n + 0.05)
     e_mc = min_curvature_line(P, nlg, -limr, lim)
     log(f"     bounds relaxed toward the measured line at {relaxed.sum()} of {m} grid points "
@@ -362,7 +392,8 @@ def main():
             out.update({"pieces": lp["pieces"]})
         out_laps.append(out)
     clear = np.minimum(hw - e, hwr + e)
-    check("line inside edges", clear.min() >= KERB_MARGIN - 1e-6 and (clear[~relaxed] >= MARGIN - 1e-6).all(),
+    kmin = min(KERB_MARGIN, float(np.minimum(mL, mR).min()))
+    check("line inside edges", clear.min() >= kmin - 1e-6 and (np.minimum(hw - e - mL, hwr + e - mR)[~relaxed] >= -1e-6).all(),
           f"min clearance to edge {clear.min():.2f} m; {MARGIN} m kept except {np.sum(clear < MARGIN - 1e-6) * DS:.0f} m "
           f"of track where the drivers ran closer (>= {KERB_MARGIN} m)")
     g_rows = implied_g(track, grid, P + e[:, None] * nlg, e, laps, check)
@@ -377,7 +408,7 @@ def main():
               "line": {"offset_m": np.round(e, 3).tolist(),
                        "method": f"min-curvature within edges less {MARGIN} m, nudged {NUDGE:.0%} toward measured lines"},
               "laps": out_laps}
-    np.savez(os.path.join(HERE, "..", "track", "cache", "ghost_line_debug.npz"), e=e, e_mc=e_mc, e_gps=e_gps,
+    np.savez(args.debug_out or os.path.join(HERE, "..", "track", "cache", "ghost_line_debug.npz"), e=e, e_mc=e_mc, e_gps=e_gps,
              lim=lim, limr=limr, grid=grid)
     if fails:
         log("\nGHOST VALIDATION FAILED:", fails)

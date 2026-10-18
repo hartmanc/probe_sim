@@ -23,13 +23,16 @@ function field(rows: { number: string; targetLap: number; aggression?: 0 | 1 | 2
   }, { seed: 1, playerAi: true, greenWindow: [3, 4], ...cfg });
 }
 
-test('corner difficulty table: mean 1, the Corkscrew, T2 and T9 hardest', () => {
+test('corner difficulty table: mean 1, T11, T2 and the Corkscrew hardest', () => {
   const cs = pack().line.corners;
   expect(cs.length).toBeGreaterThanOrEqual(8);
   const mean = cs.reduce((a, c) => a + c.difficulty, 0) / cs.length;
   expect(mean).toBeCloseTo(1, 6);
   const top = [...cs].sort((a, b) => b.difficulty - a.difficulty).slice(0, 3).map((c) => c.name).sort();
-  expect(top).toEqual(['T2', 'T8 Corkscrew', 'T9']);
+  // Re-based 18 Oct 2026 for the painted-road edges: difficulty is pure geometry (racing-line curvature x the real ghost
+  // speeds), and on the real road T11's line radius fell from 27.5 to 21.4 m (Corkscrew 36 -> 28 m) while T9 kept ~69 m,
+  // so T11 replaced T9 in the top three (was T2, the Corkscrew, T9 on the old, 1-4 m wider apexes).
+  expect(top).toEqual(['T11', 'T2', 'T8 Corkscrew'].sort());
 });
 
 test('alone on track: racing line rms < 0.5 m', () => {
