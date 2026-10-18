@@ -22,9 +22,9 @@ export interface SceneryJson {
   trees: PackedTrees;
   far_trees?: PackedTrees;
   buildings: { kind: string; name: string; z: number; h: number; footprint: V2[]; src: string }[];
-  bridges: { id: string; kind: string; name: string; s: number; deck_z: number; a: V2; b: V2; width: number; banners: string[][]; style?: 'deck' | 'arch' }[];
+  bridges: { id: string; kind: string; name: string; s: number; deck_z: number; a: V2; b: V2; width: number; banners: string[][]; style?: 'deck' | 'arch' | 'sign' }[];
   barriers: { kind: 'concrete' | 'armco' | 'tyres' | 'pitwall' | 'fence'; h: number; fence: number; pts: V3[]; src: string }[];
-  kerbs: { width: number; inside?: boolean; stripe_m: number; strips: { side: number; s0: number; s1: number; kind: string; paint?: number }[] };
+  kerbs: { width: number; inside?: boolean; stripe_m: number; strips: { side: number; s0: number; s1: number; kind: string; paint?: number; inset?: number }[] };
   /** raised yellow sausage kerbs beyond the apex kerbs (physics: src/physics/track.ts) */
   sausages?: SausageJson | null;
   edge_lines?: { width: number; inset: number; runs: { side: number; s0: number; s1: number }[] };
@@ -36,7 +36,7 @@ export interface SceneryJson {
   pit_exit_cones?: PitExitConesJson | null;
   /** kinds: brake | corner | flagstand | oak | banner (ad board facing the track) | sign (on a wall at z) | gantry (two
    *  lattice towers at (x, y, z) and (x2, y2, z2) with cables across the track) */
-  landmarks: { kind: string; text: string; x: number; y: number; z: number; heading: number; h: number; w: number; x2?: number; y2?: number; z2?: number }[];
+  landmarks: { kind: string; text: string; x: number; y: number; z: number; heading: number; h: number; w: number; x2?: number; y2?: number; z2?: number; color?: string }[];
 }
 export interface SceneryAssets { json: SceneryJson; farHeightfield: Float32Array | null; farOrtho: THREE.Texture | null }
 
@@ -813,7 +813,9 @@ function buildKerbs(track: TrackJson, k: SceneryJson['kerbs'], ground?: (x: numb
     if (s.kind !== 'verge') st.add(s.side, s.s0, s.s1, across.map((o) => ({ out: o, dz: 0.008 + 0.002 * (o - o0) / (o1 - o0), v: PAINT_V('kerb', (o - o0) / (o1 - o0)) })), o0 - 1.2, u0);
     if (s.paint) {
       const P = s.paint;
-      const cols = [0, 0.5, 1.0, P].filter((o) => o <= P).map((o) => ({ out: o1 + o, dz: 0.01, v: PAINT_V('green', o / P) }));
+      // verge strips may start `inset` m inside the edge (the v2 edge is wider than the painted road in places)
+      const base = s.kind === 'verge' ? o1 - (s.inset ?? 0) : o1;
+      const cols = [0, 0.5, 1.0, P].filter((o) => o <= P).map((o) => ({ out: base + o, dz: 0.01, v: PAINT_V('green', o / P) }));
       st.add(s.side, s.s0, s.s1, cols, o0 - 1.2, u0);
     }
   });
@@ -939,13 +941,14 @@ const BANNER_STYLE: Record<string, [string, string]> = {
   'TIRE RACK': ['#20262e', '#ffffff'], 'AUTO. HOME. PET. FIND YOUR FIT.': ['#f5f5f2', '#1f3d7a'],
   MOTUL: ['#d71920', '#ffffff'], MICHELIN: ['#27509b', '#ffd400'], kinetic: ['#e9eaeb', '#3a4654'],
 };
-function bannerTexture(texts: string[], spanM: number, hM: number): THREE.Texture {
+/** `bg` overrides the board colour (plain coloured ad boards: text '' draws no lettering). */
+function bannerTexture(texts: string[], spanM: number, hM: number, bg?: string): THREE.Texture {
   const W = 2048, H = Math.max(64, Math.round((W * hM) / spanM));
-  return canvasTex(`banner:${texts.join('|')}:${W}x${H}`, W, H, (g) => {
+  return canvasTex(`banner:${texts.join('|')}:${W}x${H}:${bg ?? ''}`, W, H, (g) => {
     const seg = W / texts.length;
     texts.forEach((t, i) => {
-      const [bg, fg] = BANNER_STYLE[t] ?? ['#1d2a3a', '#f3f3f0'];
-      g.fillStyle = bg; g.fillRect(i * seg, 0, seg, H);
+      const [bg0, fg] = BANNER_STYLE[t] ?? ['#1d2a3a', '#f3f3f0'];
+      g.fillStyle = bg ?? bg0; g.fillRect(i * seg, 0, seg, H);
       g.fillStyle = 'rgba(255,255,255,0.25)'; g.fillRect(i * seg, 0, 3, H);
       g.fillStyle = fg; g.textAlign = 'center'; g.textBaseline = 'middle';
       let size = H * 0.72;
@@ -1009,6 +1012,7 @@ function buildBridges(list: SceneryJson['bridges'], ground?: (x: number, y: numb
   group.name = 'bridges';
   const steel = new THREE.MeshLambertMaterial({ color: 0x9ea3a8 });
   const concrete = new THREE.MeshLambertMaterial({ color: 0xbfbab0 });
+  const dark = new THREE.MeshLambertMaterial({ color: 0x2a2d31 });
   for (const b of list) {
     if (b.style === 'arch') { group.add(buildArchBridge(b, ground)); continue; }
     const ax = b.a[0], ay = b.a[1], bx = b.b[0], by = b.b[1];
@@ -1016,20 +1020,22 @@ function buildBridges(list: SceneryJson['bridges'], ground?: (x: number, y: numb
     const head = Math.atan2(by - ay, bx - ax);       // ENU direction along the span
     const yaw = yawFor(head) - Math.PI / 2;          // box X axis along the span
     const mid = v3((ax + bx) / 2, (ay + by) / 2, b.deck_z);
-    const foot = b.kind === 'foot';
-    const deckT = foot ? 0.9 : 1.3;
+    // style 'sign': an advertising gantry over the track (thin dark truss, a deep banner on both faces, slim legs)
+    const sign = b.style === 'sign';
+    const foot = b.kind === 'foot' && !sign;
+    const deckT = sign ? 0.5 : foot ? 0.9 : 1.3;
     const w = b.width;
     const g = new THREE.Group();
     g.position.copy(mid);
     g.rotation.y = yaw;
     // deck (top at deck_z)
-    const deck = new THREE.Mesh(new THREE.BoxGeometry(span, deckT, w), foot ? steel : concrete);
+    const deck = new THREE.Mesh(new THREE.BoxGeometry(span, deckT, w), sign ? dark : foot ? steel : concrete);
     deck.position.y = -deckT / 2;
     g.add(deck);
     // side screens with banners from the deck soffit up to the handrail (foot) / parapet (road)
     // footbridge banners hang from the handrail to below the soffit (about 3.6 m, as on the S/F bridge)
-    const bh = foot ? 3.6 : 1.6;
-    const bannerY = foot ? 1.1 - bh / 2 : -deckT / 2 + 0.3;
+    const bh = sign ? 2.6 : foot ? 3.6 : 1.6;
+    const bannerY = sign ? -bh / 2 + 0.25 : foot ? 1.1 - bh / 2 : -deckT / 2 + 0.3;
     [0, 1].forEach((face) => {
       const texts = b.banners[face] ?? b.banners[0] ?? ['LAGUNA SECA'];
       const mat = new THREE.MeshLambertMaterial({ map: bannerTexture(texts, span, bh) });
@@ -1055,7 +1061,7 @@ function buildBridges(list: SceneryJson['bridges'], ground?: (x: number, y: numb
     // piers at both ends, down to well below ground (terrain is lower than the deck everywhere near a bridge)
     for (const [x, y] of [b.a, b.b]) {
       const pierH = 30;
-      const pier = new THREE.Mesh(new THREE.BoxGeometry(foot ? 0.6 : 1.2, pierH, foot ? 0.6 : w * 0.8), foot ? steel : concrete);
+      const pier = new THREE.Mesh(new THREE.BoxGeometry(foot || sign ? 0.6 : 1.2, pierH, foot || sign ? 0.6 : w * 0.8), sign ? dark : foot ? steel : concrete);
       pier.position.copy(v3(x, y, b.deck_z - deckT - pierH / 2));
       pier.rotation.y = yaw;
       group.add(pier);
@@ -1164,7 +1170,7 @@ function buildLandmarks(list: SceneryJson['landmarks']): THREE.Group {
     } else if (m.kind === 'banner' || m.kind === 'sign') {
       // ad board facing the track (two posts) or a sign on a wall at z (no posts)
       const bottom = m.kind === 'banner' ? 0.25 : 0;
-      const tex = bannerTexture([m.text], m.w, m.h);
+      const tex = bannerTexture([m.text], m.w, m.h, m.color);
       const face = new THREE.Mesh(new THREE.PlaneGeometry(m.w, m.h), new THREE.MeshLambertMaterial({ map: tex, side: THREE.DoubleSide }));
       face.position.set(0, bottom + m.h / 2, 0.04);
       g.add(face);
