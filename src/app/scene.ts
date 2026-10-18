@@ -215,7 +215,9 @@ vec3 pgTileN(sampler2D t, vec2 uv) {
     vec3 asph = vec3(min(l, 0.5)) * vec3(0.50, 0.53, 0.58) + vec3(0.004, 0.005, 0.007);
     diffuseColor.rgb = mix(diffuseColor.rgb, mix(asph, vec3(l) * 1.05, paint), w);
 #if ${hasO}
-    diffuseColor.rgb = mix(diffuseColor.rgb, vec3(l) * 1.15 + vec3(0.11, 0.11, 0.10), 0.8 * w);
+    // paved runoff keeps the aerial photo's own colour (the sources disagree on its tone: the 2026 footage shows
+    // asphalt, the satellite tan), so it reads as whatever the imagery shows, with only a little asphalt grade
+    diffuseColor.rgb = mix(diffuseColor.rgb, diffuse * texture2D(map, vPgUvSrc).rgb * mix(1.0, 0.92, w), 0.85 * w);
 #endif
 #if ${hasR}
     // rubber on the racing line: two darker strips at the tyre tracks over a wider, lighter darkening
