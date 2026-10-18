@@ -809,7 +809,8 @@ function buildKerbs(track: TrackJson, k: SceneryJson['kerbs'], ground?: (x: numb
     const u0 = (j * 3 % 4) * period;                        // vary the wear pattern between kerbs, keep red first
     // columns on the ribbon's own columns where possible (edge, 0.5 m inside) so the paint follows its surface
     const across = [o0, o1 - 0.5 > o0 + 0.1 ? o1 - 0.5 : (o0 + o1) / 2, o1];
-    st.add(s.side, s.s0, s.s1, across.map((o) => ({ out: o, dz: 0.008 + 0.002 * (o - o0) / (o1 - o0), v: PAINT_V('kerb', (o - o0) / (o1 - o0)) })), o0 - 1.2, u0);
+    // kind 'verge': green verge paint only (no red/white kerb), e.g. the long painted aprons seen on satellite imagery
+    if (s.kind !== 'verge') st.add(s.side, s.s0, s.s1, across.map((o) => ({ out: o, dz: 0.008 + 0.002 * (o - o0) / (o1 - o0), v: PAINT_V('kerb', (o - o0) / (o1 - o0)) })), o0 - 1.2, u0);
     if (s.paint) {
       const P = s.paint;
       const cols = [0, 0.5, 1.0, P].filter((o) => o <= P).map((o) => ({ out: o1 + o, dz: 0.01, v: PAINT_V('green', o / P) }));
