@@ -1,0 +1,2790 @@
+{
+ "about": "Field car models built by tools/cars/build_car.py. Frame as CONTRACTS.md \u00a71/\u00a73: glTF +Z nose, +Y up, +X left, metres; nodes body + wheel_fl/fr/rl/rr (hub pivots, axle local +X). hubs are glTF translations; tyre_radius_m is the wheel mesh radius.",
+ "cars": [
+  {
+   "number": "0",
+   "file": "models/0.glb",
+   "tris": 10086,
+   "bytes": 694084,
+   "materials": 2,
+   "length_m": 3.935,
+   "width_m": 1.57,
+   "height_m": 1.4,
+   "bbox_m": [
+    4.092,
+    1.76,
+    1.538
+   ],
+   "wheelbase_m": 2.42,
+   "track_front_m": 1.42,
+   "track_rear_m": 1.44,
+   "tyre_radius_m": 0.29,
+   "tyre_radius_rear_m": 0.29,
+   "hubs": {
+    "wheel_fl": [
+     0.71,
+     0.29,
+     1.21
+    ],
+    "wheel_fr": [
+     -0.71,
+     0.29,
+     1.21
+    ],
+    "wheel_rl": [
+     0.72,
+     0.29,
+     -1.21
+    ],
+    "wheel_rr": [
+     -0.72,
+     0.29,
+     -1.21
+    ]
+   },
+   "team": "The Supranos",
+   "car": "1970 Toyota Corona 4-door sedan (1JZ-GTE swap)",
+   "brake_lamps": [
+    [
+     0.58,
+     0.84,
+     -2.1192,
+     0.11
+    ],
+    [
+     -0.58,
+     0.84,
+     -2.1191,
+     0.11
+    ]
+   ]
+  },
+  {
+   "number": "1",
+   "file": "models/1.glb",
+   "tris": 10526,
+   "bytes": 626608,
+   "materials": 2,
+   "length_m": 3.039,
+   "width_m": 1.41,
+   "height_m": 1.35,
+   "bbox_m": [
+    3.16,
+    1.367,
+    1.572
+   ],
+   "wheelbase_m": 2.036,
+   "track_front_m": 1.21,
+   "track_rear_m": 1.17,
+   "tyre_radius_m": 0.262,
+   "tyre_radius_rear_m": 0.262,
+   "hubs": {
+    "wheel_fl": [
+     0.605,
+     0.262,
+     1.018
+    ],
+    "wheel_fr": [
+     -0.605,
+     0.262,
+     1.018
+    ],
+    "wheel_rl": [
+     0.585,
+     0.262,
+     -1.018
+    ],
+    "wheel_rr": [
+     -0.585,
+     0.262,
+     -1.018
+    ]
+   },
+   "team": "Team Bean Redux",
+   "car": "1962 Austin Mini (Mk1)",
+   "brake_lamps": [
+    [
+     0.3745,
+     0.4822,
+     -1.4285,
+     0.06
+    ],
+    [
+     -0.3745,
+     0.4822,
+     -1.4285,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "named wheel parts",
+    "scale": 0.9892125971378225,
+    "source_tris": 39506,
+    "model_track": 1.191,
+    "model_tyre_radius": 0.24,
+    "hub_z_front": 0.262,
+    "hub_z_rear": 0.262,
+    "model_length": 3.087,
+    "model_width": 1.412,
+    "model_height": 1.359,
+    "tris": 6996,
+    "file": "tools/cars/kit/downloads/1/model.glb"
+   }
+  },
+  {
+   "number": "2",
+   "file": "models/2.glb",
+   "tris": 9274,
+   "bytes": 502432,
+   "materials": 2,
+   "length_m": 4.4,
+   "width_m": 1.69,
+   "height_m": 1.38,
+   "bbox_m": [
+    4.5,
+    1.848,
+    1.563
+   ],
+   "wheelbase_m": 2.6,
+   "track_front_m": 1.45,
+   "track_rear_m": 1.43,
+   "tyre_radius_m": 0.3,
+   "tyre_radius_rear_m": 0.3,
+   "hubs": {
+    "wheel_fl": [
+     0.725,
+     0.3,
+     1.3
+    ],
+    "wheel_fr": [
+     -0.725,
+     0.3,
+     1.3
+    ],
+    "wheel_rl": [
+     0.715,
+     0.3,
+     -1.3
+    ],
+    "wheel_rr": [
+     -0.715,
+     0.3,
+     -1.3
+    ]
+   },
+   "team": "I Soar Racing",
+   "car": "1997 Saturn SL2 sedan",
+   "brake_lamps": [
+    [
+     0.62,
+     0.88,
+     -2.2816,
+     0.11
+    ],
+    [
+     -0.62,
+     0.88,
+     -2.2817,
+     0.11
+    ]
+   ]
+  },
+  {
+   "number": "8",
+   "file": "models/8.glb",
+   "tris": 8895,
+   "bytes": 485808,
+   "materials": 2,
+   "length_m": 4.123,
+   "width_m": 1.58,
+   "height_m": 1.22,
+   "bbox_m": [
+    4.153,
+    1.62,
+    1.228
+   ],
+   "wheelbase_m": 2.43,
+   "track_front_m": 1.26,
+   "track_rear_m": 1.27,
+   "tyre_radius_m": 0.3,
+   "tyre_radius_rear_m": 0.3,
+   "hubs": {
+    "wheel_fl": [
+     0.63,
+     0.3,
+     1.215
+    ],
+    "wheel_fr": [
+     -0.63,
+     0.3,
+     1.215
+    ],
+    "wheel_rl": [
+     0.635,
+     0.3,
+     -1.215
+    ],
+    "wheel_rr": [
+     -0.635,
+     0.3,
+     -1.215
+    ]
+   },
+   "team": "Team Tinyvette",
+   "car": "1970 Opel GT 'Tinyvette'",
+   "brake_lamps": [
+    [
+     0.4042,
+     0.5694,
+     -1.8605,
+     0.06
+    ],
+    [
+     -0.4042,
+     0.5694,
+     -1.8605,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "named wheel parts",
+    "scale": 0.15157095855241282,
+    "source_tris": 11654,
+    "model_track": 1.266,
+    "model_tyre_radius": 0.322,
+    "hub_z_front": 0.285,
+    "hub_z_rear": 0.315,
+    "model_length": 5.125,
+    "model_width": 2.734,
+    "model_height": 1.226,
+    "tris": 6057,
+    "file": "tools/cars/kit/downloads/8/model.glb"
+   }
+  },
+  {
+   "number": "9",
+   "file": "models/9.glb",
+   "tris": 8182,
+   "bytes": 548220,
+   "materials": 2,
+   "length_m": 4.22,
+   "width_m": 1.58,
+   "height_m": 1.45,
+   "bbox_m": [
+    4.53,
+    1.867,
+    1.47
+   ],
+   "wheelbase_m": 2.545,
+   "track_front_m": 1.34,
+   "track_rear_m": 1.32,
+   "tyre_radius_m": 0.28,
+   "tyre_radius_rear_m": 0.28,
+   "hubs": {
+    "wheel_fl": [
+     0.67,
+     0.28,
+     1.2725
+    ],
+    "wheel_fr": [
+     -0.67,
+     0.28,
+     1.2725
+    ],
+    "wheel_rl": [
+     0.66,
+     0.28,
+     -1.2725
+    ],
+    "wheel_rr": [
+     -0.66,
+     0.28,
+     -1.2725
+    ]
+   },
+   "team": "Arc Blast",
+   "car": "1976 Datsun 620 short-bed pickup",
+   "brake_lamps": [
+    [
+     0.7,
+     0.6,
+     -2.3885,
+     0.1
+    ],
+    [
+     -0.7,
+     0.6,
+     -2.3887,
+     0.1
+    ]
+   ]
+  },
+  {
+   "number": "16",
+   "file": "models/16.glb",
+   "tris": 11329,
+   "bytes": 843032,
+   "materials": 3,
+   "length_m": 3.88,
+   "width_m": 1.54,
+   "height_m": 1.5,
+   "bbox_m": [
+    4.18,
+    1.578,
+    1.561
+   ],
+   "wheelbase_m": 2.4,
+   "track_front_m": 1.31,
+   "track_rear_m": 1.35,
+   "tyre_radius_m": 0.31,
+   "tyre_radius_rear_m": 0.31,
+   "hubs": {
+    "wheel_fl": [
+     0.655,
+     0.31,
+     1.2
+    ],
+    "wheel_fr": [
+     -0.655,
+     0.31,
+     1.2
+    ],
+    "wheel_rl": [
+     0.675,
+     0.31,
+     -1.2
+    ],
+    "wheel_rr": [
+     -0.675,
+     0.31,
+     -1.2
+    ]
+   },
+   "team": "Scrubbing Bubbles",
+   "car": "1965 Volkswagen Beetle sedan",
+   "brake_lamps": [
+    [
+     0.62,
+     0.58,
+     -1.6266,
+     0.05
+    ],
+    [
+     -0.62,
+     0.58,
+     -1.6269,
+     0.05
+    ]
+   ],
+   "import": {
+    "method": "named wheel parts",
+    "scale": 99.5850460651804,
+    "source_tris": 33764,
+    "model_track": 1.413,
+    "model_tyre_radius": 0.32,
+    "hub_z_front": 0.31,
+    "hub_z_rear": 0.31,
+    "model_length": 4.03,
+    "model_width": 1.633,
+    "model_height": 1.462,
+    "tris": 6997,
+    "file": "tools/cars/kit/downloads/16_dd/model.glb"
+   }
+  },
+  {
+   "number": "20",
+   "file": "models/20.glb",
+   "tris": 10186,
+   "bytes": 651852,
+   "materials": 2,
+   "length_m": 4.43,
+   "width_m": 1.73,
+   "height_m": 1.34,
+   "bbox_m": [
+    4.856,
+    2.088,
+    1.891
+   ],
+   "wheelbase_m": 2.53,
+   "track_front_m": 1.46,
+   "track_rear_m": 1.46,
+   "tyre_radius_m": 0.308,
+   "tyre_radius_rear_m": 0.308,
+   "hubs": {
+    "wheel_fl": [
+     0.73,
+     0.308,
+     1.265
+    ],
+    "wheel_fr": [
+     -0.73,
+     0.308,
+     1.265
+    ],
+    "wheel_rl": [
+     0.73,
+     0.308,
+     -1.265
+    ],
+    "wheel_rr": [
+     -0.73,
+     0.308,
+     -1.265
+    ]
+   },
+   "team": "NSF Racing",
+   "car": "1985 Chrysler LeBaron Town & Country wagon",
+   "brake_lamps": [
+    [
+     0.76,
+     0.97,
+     -2.2426,
+     0.15
+    ],
+    [
+     -0.76,
+     0.97,
+     -2.2426,
+     0.15
+    ]
+   ]
+  },
+  {
+   "number": "34",
+   "file": "models/34.glb",
+   "tris": 9880,
+   "bytes": 579952,
+   "materials": 3,
+   "length_m": 3.645,
+   "width_m": 1.575,
+   "height_m": 1.35,
+   "bbox_m": [
+    3.775,
+    1.789,
+    1.57
+   ],
+   "wheelbase_m": 2.265,
+   "track_front_m": 1.37,
+   "track_rear_m": 1.36,
+   "tyre_radius_m": 0.285,
+   "tyre_radius_rear_m": 0.285,
+   "hubs": {
+    "wheel_fl": [
+     0.685,
+     0.285,
+     1.1325
+    ],
+    "wheel_fr": [
+     -0.685,
+     0.285,
+     1.1325
+    ],
+    "wheel_rl": [
+     0.68,
+     0.285,
+     -1.1325
+    ],
+    "wheel_rr": [
+     -0.68,
+     0.285,
+     -1.1325
+    ]
+   },
+   "team": "KnoxVegas LowBallerssss",
+   "car": "1990 Geo Metro 3-door hatch (Mercedes nose)",
+   "brake_lamps": [
+    [
+     0.58,
+     0.78,
+     -1.7705,
+     0.13
+    ],
+    [
+     -0.58,
+     0.78,
+     -1.7705,
+     0.13
+    ]
+   ]
+  },
+  {
+   "number": "37",
+   "file": "models/37.glb",
+   "tris": 10284,
+   "bytes": 566656,
+   "materials": 2,
+   "length_m": 4.198,
+   "width_m": 1.645,
+   "height_m": 1.38,
+   "bbox_m": [
+    4.518,
+    1.651,
+    1.713
+   ],
+   "wheelbase_m": 2.57,
+   "track_front_m": 1.41,
+   "track_rear_m": 1.41,
+   "tyre_radius_m": 0.295,
+   "tyre_radius_rear_m": 0.295,
+   "hubs": {
+    "wheel_fl": [
+     0.705,
+     0.295,
+     1.285
+    ],
+    "wheel_fr": [
+     -0.705,
+     0.295,
+     1.285
+    ],
+    "wheel_rl": [
+     0.705,
+     0.295,
+     -1.285
+    ],
+    "wheel_rr": [
+     -0.705,
+     0.295,
+     -1.285
+    ]
+   },
+   "team": "Caffeine Unlimited",
+   "car": "1987 BMW E30 4-door sedan, black with yellow CAFFEINE lettering",
+   "brake_lamps": [
+    [
+     0.62,
+     0.92,
+     -1.9231,
+     0.13
+    ],
+    [
+     -0.62,
+     0.92,
+     -1.9509,
+     0.13
+    ]
+   ]
+  },
+  {
+   "number": "38",
+   "file": "models/38.glb",
+   "tris": 8280,
+   "bytes": 607920,
+   "materials": 2,
+   "length_m": 4.38,
+   "width_m": 1.72,
+   "height_m": 1.425,
+   "bbox_m": [
+    4.52,
+    1.94,
+    2.35
+   ],
+   "wheelbase_m": 2.61,
+   "track_front_m": 1.47,
+   "track_rear_m": 1.46,
+   "tyre_radius_m": 0.3,
+   "tyre_radius_rear_m": 0.3,
+   "hubs": {
+    "wheel_fl": [
+     0.735,
+     0.3,
+     1.305
+    ],
+    "wheel_fr": [
+     -0.735,
+     0.3,
+     1.305
+    ],
+    "wheel_rl": [
+     0.73,
+     0.3,
+     -1.305
+    ],
+    "wheel_rr": [
+     -0.73,
+     0.3,
+     -1.305
+    ]
+   },
+   "team": "Another Fine Mess",
+   "car": "2005 Hyundai Elantra (XD) 4-door sedan, roof removed",
+   "brake_lamps": [
+    [
+     0.62,
+     0.93,
+     -2.2457,
+     0.12
+    ],
+    [
+     -0.62,
+     0.93,
+     -2.2457,
+     0.12
+    ]
+   ]
+  },
+  {
+   "number": "40",
+   "file": "models/40.glb",
+   "tris": 11340,
+   "bytes": 944740,
+   "materials": 3,
+   "length_m": 4.37,
+   "width_m": 1.7,
+   "height_m": 1.41,
+   "bbox_m": [
+    4.517,
+    1.913,
+    1.7
+   ],
+   "wheelbase_m": 2.56,
+   "track_front_m": 1.46,
+   "track_rear_m": 1.44,
+   "tyre_radius_m": 0.295,
+   "tyre_radius_rear_m": 0.295,
+   "hubs": {
+    "wheel_fl": [
+     0.73,
+     0.295,
+     1.28
+    ],
+    "wheel_fr": [
+     -0.73,
+     0.295,
+     1.28
+    ],
+    "wheel_rl": [
+     0.72,
+     0.295,
+     -1.28
+    ],
+    "wheel_rr": [
+     -0.72,
+     0.295,
+     -1.28
+    ]
+   },
+   "team": "Mock Grass Racing",
+   "car": "1998 Kia Sephia 4-door sedan",
+   "brake_lamps": [
+    [
+     0.6,
+     0.93,
+     -2.4498,
+     0.1
+    ],
+    [
+     -0.6,
+     0.93,
+     -2.4498,
+     0.1
+    ]
+   ]
+  },
+  {
+   "number": "41",
+   "file": "models/41.glb",
+   "tris": 10672,
+   "bytes": 641984,
+   "materials": 3,
+   "length_m": 4.699,
+   "width_m": 1.86,
+   "height_m": 1.73,
+   "bbox_m": [
+    5.12,
+    2.277,
+    2.534
+   ],
+   "wheelbase_m": 2.896,
+   "track_front_m": 1.48,
+   "track_rear_m": 1.5,
+   "tyre_radius_m": 0.355,
+   "tyre_radius_rear_m": 0.355,
+   "hubs": {
+    "wheel_fl": [
+     0.74,
+     0.355,
+     1.448
+    ],
+    "wheel_fr": [
+     -0.74,
+     0.355,
+     1.448
+    ],
+    "wheel_rl": [
+     0.75,
+     0.355,
+     -1.448
+    ],
+    "wheel_rr": [
+     -0.75,
+     0.355,
+     -1.448
+    ]
+   },
+   "team": "Distilled Racing",
+   "car": "1941 Ford Super Deluxe Tudor sedan",
+   "brake_lamps": [
+    [
+     0.56,
+     0.74,
+     -2.1536,
+     0.04
+    ],
+    [
+     -0.56,
+     0.74,
+     -2.1539,
+     0.04
+    ]
+   ]
+  },
+  {
+   "number": "42",
+   "file": "models/42.glb",
+   "tris": 8660,
+   "bytes": 518264,
+   "materials": 3,
+   "length_m": 4.636,
+   "width_m": 1.79,
+   "height_m": 1.37,
+   "bbox_m": [
+    4.766,
+    1.926,
+    1.37
+   ],
+   "wheelbase_m": 2.692,
+   "track_front_m": 1.41,
+   "track_rear_m": 1.4,
+   "tyre_radius_m": 0.3,
+   "tyre_radius_rear_m": 0.3,
+   "hubs": {
+    "wheel_fl": [
+     0.705,
+     0.3,
+     1.346
+    ],
+    "wheel_fr": [
+     -0.705,
+     0.3,
+     1.346
+    ],
+    "wheel_rl": [
+     0.7,
+     0.3,
+     -1.346
+    ],
+    "wheel_rr": [
+     -0.7,
+     0.3,
+     -1.346
+    ]
+   },
+   "team": "Team Valiant Effort",
+   "car": "1963 Plymouth Valiant 4-door sedan",
+   "brake_lamps": [
+    [
+     0.74,
+     0.86,
+     -2.521,
+     0.05
+    ],
+    [
+     -0.74,
+     0.86,
+     -2.521,
+     0.05
+    ]
+   ]
+  },
+  {
+   "number": "43",
+   "file": "models/43.glb",
+   "tris": 9854,
+   "bytes": 673100,
+   "materials": 4,
+   "length_m": 4.99,
+   "width_m": 1.92,
+   "height_m": 1.39,
+   "bbox_m": [
+    5.52,
+    2.135,
+    2.372
+   ],
+   "wheelbase_m": 2.946,
+   "track_front_m": 1.5,
+   "track_rear_m": 1.5,
+   "tyre_radius_m": 0.315,
+   "tyre_radius_rear_m": 0.315,
+   "hubs": {
+    "wheel_fl": [
+     0.75,
+     0.315,
+     1.473
+    ],
+    "wheel_fr": [
+     -0.75,
+     0.315,
+     1.473
+    ],
+    "wheel_rl": [
+     0.75,
+     0.315,
+     -1.473
+    ],
+    "wheel_rr": [
+     -0.75,
+     0.315,
+     -1.473
+    ]
+   },
+   "team": "Faster Farms",
+   "car": "1966 Plymouth Belvedere II 4-door sedan",
+   "brake_lamps": [
+    [
+     0.74,
+     0.8,
+     -2.647,
+     0.1
+    ],
+    [
+     -0.74,
+     0.8,
+     -2.647,
+     0.1
+    ]
+   ]
+  },
+  {
+   "number": "49",
+   "file": "models/49.glb",
+   "tris": 10696,
+   "bytes": 642676,
+   "materials": 3,
+   "length_m": 3.843,
+   "width_m": 1.64,
+   "height_m": 1.57,
+   "bbox_m": [
+    3.973,
+    1.743,
+    1.648
+   ],
+   "wheelbase_m": 2.134,
+   "track_front_m": 1.28,
+   "track_rear_m": 1.28,
+   "tyre_radius_m": 0.28,
+   "tyre_radius_rear_m": 0.28,
+   "hubs": {
+    "wheel_fl": [
+     0.64,
+     0.28,
+     1.067
+    ],
+    "wheel_fr": [
+     -0.64,
+     0.28,
+     1.067
+    ],
+    "wheel_rl": [
+     0.64,
+     0.28,
+     -1.067
+    ],
+    "wheel_rr": [
+     -0.64,
+     0.28,
+     -1.067
+    ]
+   },
+   "team": "Ran When Parked Racing Entry C",
+   "car": "1951 Triumph Mayflower saloon",
+   "brake_lamps": [
+    [
+     0.54,
+     0.6,
+     -1.9996,
+     0.045
+    ],
+    [
+     -0.54,
+     0.6,
+     -1.9994,
+     0.045
+    ]
+   ]
+  },
+  {
+   "number": "51",
+   "file": "models/51.glb",
+   "tris": 11966,
+   "bytes": 688080,
+   "materials": 3,
+   "length_m": 5.124,
+   "width_m": 1.95,
+   "height_m": 1.524,
+   "bbox_m": [
+    5.34,
+    1.98,
+    1.548
+   ],
+   "wheelbase_m": 3.15,
+   "track_front_m": 1.49,
+   "track_rear_m": 1.49,
+   "tyre_radius_m": 0.325,
+   "tyre_radius_rear_m": 0.325,
+   "hubs": {
+    "wheel_fl": [
+     0.745,
+     0.325,
+     1.575
+    ],
+    "wheel_fr": [
+     -0.745,
+     0.325,
+     1.575
+    ],
+    "wheel_rl": [
+     0.745,
+     0.325,
+     -1.575
+    ],
+    "wheel_rr": [
+     -0.745,
+     0.325,
+     -1.575
+    ]
+   },
+   "team": "Chase Race: The Best Damn Garage in LeMons",
+   "car": "1952 Hudson Hornet (Doc Hudson)",
+   "brake_lamps": [
+    [
+     0.504,
+     0.4988,
+     -2.7196,
+     0.06
+    ],
+    [
+     -0.504,
+     0.4988,
+     -2.7198,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "named wheel parts",
+    "scale": 0.8982859212856936,
+    "source_tris": 98653,
+    "model_track": 1.759,
+    "model_tyre_radius": 0.351,
+    "hub_z_front": 0.325,
+    "hub_z_rear": 0.325,
+    "model_length": 5.337,
+    "model_width": 1.981,
+    "model_height": 1.548,
+    "tris": 8250,
+    "file": "tools/cars/kit/downloads/51/model.glb"
+   }
+  },
+  {
+   "number": "55",
+   "file": "models/55.glb",
+   "tris": 11916,
+   "bytes": 631016,
+   "materials": 3,
+   "length_m": 4.629,
+   "width_m": 1.86,
+   "height_m": 1.75,
+   "bbox_m": [
+    4.886,
+    2.2,
+    2.104
+   ],
+   "wheelbase_m": 2.946,
+   "track_front_m": 1.46,
+   "track_rear_m": 1.5,
+   "tyre_radius_m": 0.33,
+   "tyre_radius_rear_m": 0.33,
+   "hubs": {
+    "wheel_fl": [
+     0.73,
+     0.33,
+     1.473
+    ],
+    "wheel_fr": [
+     -0.73,
+     0.33,
+     1.473
+    ],
+    "wheel_rl": [
+     0.75,
+     0.33,
+     -1.473
+    ],
+    "wheel_rr": [
+     -0.75,
+     0.33,
+     -1.473
+    ]
+   },
+   "team": "I Snore Racing",
+   "car": "1953 Dodge B-4 half-ton pickup (116 in wheelbase, stepside)",
+   "brake_lamps": [
+    [
+     0.6,
+     0.86,
+     -2.3828,
+     0.07
+    ],
+    [
+     -0.6,
+     0.86,
+     -2.3828,
+     0.07
+    ],
+    [
+     0.6,
+     0.62,
+     -2.3946,
+     0.03
+    ],
+    [
+     -0.6,
+     0.62,
+     -2.3945,
+     0.03
+    ]
+   ]
+  },
+  {
+   "number": "58",
+   "file": "models/58.glb",
+   "tris": 11805,
+   "bytes": 602940,
+   "materials": 3,
+   "length_m": 3.655,
+   "width_m": 1.688,
+   "height_m": 1.416,
+   "bbox_m": [
+    3.698,
+    1.874,
+    2.475
+   ],
+   "wheelbase_m": 2.467,
+   "track_front_m": 1.46,
+   "track_rear_m": 1.46,
+   "tyre_radius_m": 0.322,
+   "tyre_radius_rear_m": 0.322,
+   "hubs": {
+    "wheel_fl": [
+     0.73,
+     0.322,
+     1.2335
+    ],
+    "wheel_fr": [
+     -0.73,
+     0.322,
+     1.2335
+    ],
+    "wheel_rl": [
+     0.73,
+     0.322,
+     -1.2335
+    ],
+    "wheel_rr": [
+     -0.73,
+     0.322,
+     -1.2335
+    ]
+   },
+   "team": "Italian job racing",
+   "car": "2003 Mini Cooper S (R53)",
+   "brake_lamps": [
+    [
+     0.4101,
+     0.4329,
+     -1.7532,
+     0.06
+    ],
+    [
+     -0.4101,
+     0.4329,
+     -1.7532,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "named wheel parts",
+    "scale": 0.05000000661038982,
+    "source_tris": 34953,
+    "model_track": 1.453,
+    "model_tyre_radius": 0.317,
+    "hub_z_front": 0.322,
+    "hub_z_rear": 0.322,
+    "model_length": 3.699,
+    "model_width": 1.875,
+    "model_height": 1.433,
+    "tris": 5999,
+    "file": "tools/cars/kit/downloads/58/model_clean.glb"
+   }
+  },
+  {
+   "number": "67",
+   "file": "models/67.glb",
+   "tris": 10284,
+   "bytes": 592932,
+   "materials": 3,
+   "length_m": 4.141,
+   "width_m": 1.64,
+   "height_m": 1.45,
+   "bbox_m": [
+    4.431,
+    1.845,
+    1.886
+   ],
+   "wheelbase_m": 2.36,
+   "track_front_m": 1.38,
+   "track_rear_m": 1.36,
+   "tyre_radius_m": 0.29,
+   "tyre_radius_rear_m": 0.29,
+   "hubs": {
+    "wheel_fl": [
+     0.69,
+     0.29,
+     1.18
+    ],
+    "wheel_fr": [
+     -0.69,
+     0.29,
+     1.18
+    ],
+    "wheel_rl": [
+     0.68,
+     0.29,
+     -1.18
+    ],
+    "wheel_rr": [
+     -0.68,
+     0.29,
+     -1.18
+    ]
+   },
+   "team": "Lost in Translation",
+   "car": "1995 Mitsuoka Viewt (Nissan Micra K11) sedan",
+   "brake_lamps": [
+    [
+     0.66,
+     0.72,
+     -1.975,
+     0.04
+    ],
+    [
+     -0.66,
+     0.72,
+     -1.9751,
+     0.04
+    ],
+    [
+     0.66,
+     0.62,
+     -1.9797,
+     0.04
+    ],
+    [
+     -0.66,
+     0.62,
+     -1.9797,
+     0.04
+    ]
+   ]
+  },
+  {
+   "number": "74",
+   "file": "models/74.glb",
+   "tris": 10106,
+   "bytes": 695132,
+   "materials": 2,
+   "length_m": 4.36,
+   "width_m": 1.8,
+   "height_m": 1.21,
+   "bbox_m": [
+    4.492,
+    1.89,
+    1.58
+   ],
+   "wheelbase_m": 2.49,
+   "track_front_m": 1.47,
+   "track_rear_m": 1.49,
+   "tyre_radius_m": 0.3,
+   "tyre_radius_rear_m": 0.3,
+   "hubs": {
+    "wheel_fl": [
+     0.735,
+     0.3,
+     1.245
+    ],
+    "wheel_fr": [
+     -0.735,
+     0.3,
+     1.245
+    ],
+    "wheel_rl": [
+     0.745,
+     0.3,
+     -1.245
+    ],
+    "wheel_rr": [
+     -0.745,
+     0.3,
+     -1.245
+    ]
+   },
+   "team": "B Team - Just Plain Stupid",
+   "car": "1974 Lotus Elite (Type 75) \"Chotus\", Chevy V8",
+   "brake_lamps": [
+    [
+     0.52,
+     0.665,
+     -2.205,
+     0.17
+    ],
+    [
+     -0.52,
+     0.665,
+     -2.2048,
+     0.17
+    ]
+   ]
+  },
+  {
+   "number": "76",
+   "file": "models/76.glb",
+   "tris": 10119,
+   "bytes": 620656,
+   "materials": 2,
+   "length_m": 4.124,
+   "width_m": 1.75,
+   "height_m": 1.19,
+   "bbox_m": [
+    4.091,
+    1.931,
+    1.215
+   ],
+   "wheelbase_m": 2.375,
+   "track_front_m": 1.47,
+   "track_rear_m": 1.5,
+   "tyre_radius_m": 0.3,
+   "tyre_radius_rear_m": 0.31,
+   "hubs": {
+    "wheel_fl": [
+     0.735,
+     0.3,
+     1.1875
+    ],
+    "wheel_fr": [
+     -0.735,
+     0.3,
+     1.1875
+    ],
+    "wheel_rl": [
+     0.75,
+     0.31,
+     -1.1875
+    ],
+    "wheel_rr": [
+     -0.75,
+     0.31,
+     -1.1875
+    ]
+   },
+   "team": "Salty Thunder Racing",
+   "car": "1985 Pontiac Fiero",
+   "brake_lamps": [
+    [
+     0.507,
+     0.472,
+     -2.0521,
+     0.06
+    ],
+    [
+     -0.507,
+     0.472,
+     -2.0523,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "named wheel parts",
+    "scale": 0.22751447026211388,
+    "source_tris": 364048,
+    "model_track": 1.666,
+    "model_tyre_radius": 0.195,
+    "hub_z_front": 0.302,
+    "hub_z_rear": 0.308,
+    "model_length": 4.09,
+    "model_width": 1.933,
+    "model_height": 1.215,
+    "tris": 7499,
+    "file": "tools/cars/kit/downloads/76/model.glb"
+   }
+  },
+  {
+   "number": "83",
+   "file": "models/83.glb",
+   "tris": 11973,
+   "bytes": 659512,
+   "materials": 2,
+   "length_m": 3.8,
+   "width_m": 1.61,
+   "height_m": 1.39,
+   "bbox_m": [
+    3.968,
+    1.656,
+    1.999
+   ],
+   "wheelbase_m": 2.4,
+   "track_front_m": 1.39,
+   "track_rear_m": 1.37,
+   "tyre_radius_m": 0.29,
+   "tyre_radius_rear_m": 0.29,
+   "hubs": {
+    "wheel_fl": [
+     0.695,
+     0.29,
+     1.2
+    ],
+    "wheel_fr": [
+     -0.695,
+     0.29,
+     1.2
+    ],
+    "wheel_rl": [
+     0.685,
+     0.29,
+     -1.2
+    ],
+    "wheel_rr": [
+     -0.685,
+     0.29,
+     -1.2
+    ]
+   },
+   "team": "Dirty Duck Racing",
+   "car": "1983 Volkswagen Rabbit (Golf Mk1) 3-door hatchback",
+   "brake_lamps": [
+    [
+     0.4282,
+     0.5108,
+     -1.8382,
+     0.06
+    ],
+    [
+     -0.4282,
+     0.5108,
+     -1.8382,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 101.35563157227924,
+    "source_tris": 48414,
+    "model_length": 3.864,
+    "model_width": 1.657,
+    "model_height": 1.357,
+    "tris": 7299,
+    "file": "tools/cars/kit/downloads/83/model.glb"
+   }
+  },
+  {
+   "number": "89",
+   "file": "models/89.glb",
+   "tris": 11906,
+   "bytes": 666600,
+   "materials": 5,
+   "length_m": 4.198,
+   "width_m": 1.645,
+   "height_m": 1.38,
+   "bbox_m": [
+    4.601,
+    2.045,
+    2.08
+   ],
+   "wheelbase_m": 2.57,
+   "track_front_m": 1.41,
+   "track_rear_m": 1.41,
+   "tyre_radius_m": 0.295,
+   "tyre_radius_rear_m": 0.295,
+   "hubs": {
+    "wheel_fl": [
+     0.705,
+     0.295,
+     1.285
+    ],
+    "wheel_fr": [
+     -0.705,
+     0.295,
+     1.285
+    ],
+    "wheel_rl": [
+     0.705,
+     0.295,
+     -1.285
+    ],
+    "wheel_rr": [
+     -0.705,
+     0.295,
+     -1.285
+    ]
+   },
+   "team": "The Homer by Porcubimmer",
+   "car": "1987 BMW E30 4-door sedan dressed as The Homer",
+   "brake_lamps": [
+    [
+     0.55,
+     0.64,
+     -2.192,
+     0.1
+    ],
+    [
+     -0.55,
+     0.64,
+     -2.192,
+     0.1
+    ]
+   ]
+  },
+  {
+   "number": "97",
+   "file": "models/97.glb",
+   "tris": 8618,
+   "bytes": 532860,
+   "materials": 3,
+   "length_m": 4.09,
+   "width_m": 1.76,
+   "height_m": 1.27,
+   "bbox_m": [
+    4.407,
+    1.965,
+    1.472
+   ],
+   "wheelbase_m": 2.388,
+   "track_front_m": 1.4,
+   "track_rear_m": 1.4,
+   "tyre_radius_m": 0.295,
+   "tyre_radius_rear_m": 0.295,
+   "hubs": {
+    "wheel_fl": [
+     0.7,
+     0.295,
+     1.194
+    ],
+    "wheel_fr": [
+     -0.7,
+     0.295,
+     1.194
+    ],
+    "wheel_rl": [
+     0.7,
+     0.295,
+     -1.194
+    ],
+    "wheel_rr": [
+     -0.7,
+     0.295,
+     -1.194
+    ]
+   },
+   "team": "Louballers",
+   "car": "1975 Ford Pinto Runabout",
+   "brake_lamps": [
+    [
+     0.62,
+     0.76,
+     -1.9097,
+     0.12
+    ],
+    [
+     -0.62,
+     0.76,
+     -1.9098,
+     0.12
+    ]
+   ]
+  },
+  {
+   "number": "100",
+   "file": "models/100.glb",
+   "tris": 8666,
+   "bytes": 588656,
+   "materials": 3,
+   "length_m": 5.11,
+   "width_m": 1.95,
+   "height_m": 1.37,
+   "bbox_m": [
+    5.395,
+    2.187,
+    1.37
+   ],
+   "wheelbase_m": 2.946,
+   "track_front_m": 1.5,
+   "track_rear_m": 1.49,
+   "tyre_radius_m": 0.345,
+   "tyre_radius_rear_m": 0.345,
+   "hubs": {
+    "wheel_fl": [
+     0.75,
+     0.345,
+     1.473
+    ],
+    "wheel_fr": [
+     -0.75,
+     0.345,
+     1.473
+    ],
+    "wheel_rl": [
+     0.745,
+     0.345,
+     -1.473
+    ],
+    "wheel_rr": [
+     -0.745,
+     0.345,
+     -1.473
+    ]
+   },
+   "team": "Sorry For Party Racing",
+   "car": "~1975 Chevrolet El Camino (4th gen, 1973-77)",
+   "brake_lamps": [
+    [
+     0.7,
+     0.7,
+     -2.837,
+     0.13
+    ],
+    [
+     -0.7,
+     0.7,
+     -2.837,
+     0.13
+    ]
+   ]
+  },
+  {
+   "number": "105",
+   "file": "models/105.glb",
+   "tris": 10559,
+   "bytes": 667384,
+   "materials": 3,
+   "length_m": 4.427,
+   "width_m": 1.63,
+   "height_m": 1.29,
+   "bbox_m": [
+    4.302,
+    1.607,
+    1.381
+   ],
+   "wheelbase_m": 2.25,
+   "track_front_m": 1.33,
+   "track_rear_m": 1.32,
+   "tyre_radius_m": 0.3,
+   "tyre_radius_rear_m": 0.3,
+   "hubs": {
+    "wheel_fl": [
+     0.665,
+     0.3,
+     1.125
+    ],
+    "wheel_fr": [
+     -0.665,
+     0.3,
+     1.125
+    ],
+    "wheel_rl": [
+     0.66,
+     0.3,
+     -1.125
+    ],
+    "wheel_rr": [
+     -0.66,
+     0.3,
+     -1.125
+    ]
+   },
+   "team": "Scuderia Limoni",
+   "car": "1990 Alfa Romeo Spider (Series 3)",
+   "brake_lamps": [
+    [
+     0.4339,
+     0.574,
+     -2.0847,
+     0.06
+    ],
+    [
+     -0.4339,
+     0.574,
+     -2.0847,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 2.0270270270270268,
+    "source_tris": 808822,
+    "model_length": 4.297,
+    "model_width": 1.604,
+    "model_height": 1.299,
+    "tris": 7498,
+    "file": "tools/cars/kit/downloads/105/model.glb"
+   }
+  },
+  {
+   "number": "143",
+   "file": "models/143.glb",
+   "tris": 11824,
+   "bytes": 889520,
+   "materials": 4,
+   "length_m": 5.766,
+   "width_m": 2.03,
+   "height_m": 1.4,
+   "bbox_m": [
+    5.916,
+    2.357,
+    2.93
+   ],
+   "wheelbase_m": 3.24,
+   "track_front_m": 1.64,
+   "track_rear_m": 1.63,
+   "tyre_radius_m": 0.355,
+   "tyre_radius_rear_m": 0.355,
+   "hubs": {
+    "wheel_fl": [
+     0.82,
+     0.355,
+     1.62
+    ],
+    "wheel_fr": [
+     -0.82,
+     0.355,
+     1.62
+    ],
+    "wheel_rl": [
+     0.815,
+     0.355,
+     -1.62
+    ],
+    "wheel_rr": [
+     -0.815,
+     0.355,
+     -1.62
+    ]
+   },
+   "team": "PIT CREW REVENGE",
+   "car": "1975 Lincoln Continental 4-door sedan",
+   "brake_lamps": [
+    [
+     0.86,
+     0.72,
+     -3.095,
+     0.11
+    ],
+    [
+     -0.86,
+     0.72,
+     -3.095,
+     0.11
+    ]
+   ]
+  },
+  {
+   "number": "156",
+   "file": "models/156.glb",
+   "tris": 10188,
+   "bytes": 596240,
+   "materials": 3,
+   "length_m": 4.87,
+   "width_m": 1.83,
+   "height_m": 1.45,
+   "bbox_m": [
+    4.982,
+    2.065,
+    1.697
+   ],
+   "wheelbase_m": 2.725,
+   "track_front_m": 1.56,
+   "track_rear_m": 1.55,
+   "tyre_radius_m": 0.33,
+   "tyre_radius_rear_m": 0.33,
+   "hubs": {
+    "wheel_fl": [
+     0.78,
+     0.33,
+     1.3625
+    ],
+    "wheel_fr": [
+     -0.78,
+     0.33,
+     1.3625
+    ],
+    "wheel_rl": [
+     0.775,
+     0.33,
+     -1.3625
+    ],
+    "wheel_rr": [
+     -0.775,
+     0.33,
+     -1.3625
+    ]
+   },
+   "team": "TPF Racing",
+   "car": "2010 Mercury Milan 4-door sedan",
+   "brake_lamps": [
+    [
+     0.6007,
+     0.8,
+     -2.3275,
+     0.06
+    ],
+    [
+     -0.6007,
+     0.8,
+     -2.3275,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true
+  },
+  {
+   "number": "169",
+   "file": "models/169.glb",
+   "tris": 10246,
+   "bytes": 585024,
+   "materials": 2,
+   "length_m": 4.124,
+   "width_m": 1.61,
+   "height_m": 1.445,
+   "bbox_m": [
+    4.244,
+    1.724,
+    1.604
+   ],
+   "wheelbase_m": 2.4,
+   "track_front_m": 1.32,
+   "track_rear_m": 1.31,
+   "tyre_radius_m": 0.29,
+   "tyre_radius_rear_m": 0.29,
+   "hubs": {
+    "wheel_fl": [
+     0.66,
+     0.29,
+     1.2
+    ],
+    "wheel_fr": [
+     -0.66,
+     0.29,
+     1.2
+    ],
+    "wheel_rl": [
+     0.655,
+     0.29,
+     -1.2
+    ],
+    "wheel_rr": [
+     -0.655,
+     0.29,
+     -1.2
+    ]
+   },
+   "team": "Mal\u00f6rt Racing Development (MRD)",
+   "car": "1981 Toyota Corolla (E70) wagon",
+   "brake_lamps": [
+    [
+     0.68,
+     0.78,
+     -2.1413,
+     0.09
+    ],
+    [
+     -0.68,
+     0.78,
+     -2.1416,
+     0.09
+    ]
+   ]
+  },
+  {
+   "number": "189",
+   "file": "models/189.glb",
+   "tris": 7908,
+   "bytes": 511964,
+   "materials": 3,
+   "length_m": 3.95,
+   "width_m": 1.675,
+   "height_m": 1.23,
+   "bbox_m": [
+    4.041,
+    1.916,
+    1.666
+   ],
+   "wheelbase_m": 2.265,
+   "track_front_m": 1.41,
+   "track_rear_m": 1.43,
+   "tyre_radius_m": 0.293,
+   "tyre_radius_rear_m": 0.293,
+   "hubs": {
+    "wheel_fl": [
+     0.705,
+     0.293,
+     1.1325
+    ],
+    "wheel_fr": [
+     -0.705,
+     0.293,
+     1.1325
+    ],
+    "wheel_rl": [
+     0.715,
+     0.293,
+     -1.1325
+    ],
+    "wheel_rr": [
+     -0.715,
+     0.293,
+     -1.1325
+    ]
+   },
+   "team": "Tired Iron Racing",
+   "car": "1990-97 Mazda MX-5 Miata (NA), factory hardtop",
+   "brake_lamps": [
+    [
+     0.56,
+     0.64,
+     -1.8982,
+     0.15
+    ],
+    [
+     -0.56,
+     0.64,
+     -1.8982,
+     0.15
+    ]
+   ]
+  },
+  {
+   "number": "200",
+   "file": "models/200.glb",
+   "tris": 10728,
+   "bytes": 677644,
+   "materials": 2,
+   "length_m": 4.24,
+   "width_m": 1.775,
+   "height_m": 1.285,
+   "bbox_m": [
+    4.23,
+    1.972,
+    1.273
+   ],
+   "wheelbase_m": 2.57,
+   "track_front_m": 1.52,
+   "track_rear_m": 1.54,
+   "tyre_radius_m": 0.313,
+   "tyre_radius_rear_m": 0.313,
+   "hubs": {
+    "wheel_fl": [
+     0.76,
+     0.313,
+     1.285
+    ],
+    "wheel_fr": [
+     -0.76,
+     0.313,
+     1.285
+    ],
+    "wheel_rl": [
+     0.77,
+     0.313,
+     -1.285
+    ],
+    "wheel_rr": [
+     -0.77,
+     0.313,
+     -1.285
+    ]
+   },
+   "team": "Aggressively Adequate (R)",
+   "car": "2013 Scion FR-S (BRZ body)",
+   "brake_lamps": [
+    [
+     0.3701,
+     0.5972,
+     -2.0779,
+     0.06
+    ],
+    [
+     -0.3701,
+     0.5972,
+     -2.0779,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "named wheel parts",
+    "scale": 0.00868658971867187,
+    "source_tris": 148158,
+    "model_track": 1.545,
+    "model_tyre_radius": 0.312,
+    "hub_z_front": 0.313,
+    "hub_z_rear": 0.313,
+    "model_length": 4.235,
+    "model_width": 1.986,
+    "model_height": 1.412,
+    "tris": 8199,
+    "file": "tools/cars/kit/downloads/200/model.glb"
+   }
+  },
+  {
+   "number": "202",
+   "file": "models/202.glb",
+   "tris": 10558,
+   "bytes": 659604,
+   "materials": 2,
+   "length_m": 4.362,
+   "width_m": 1.821,
+   "height_m": 1.85,
+   "bbox_m": [
+    4.497,
+    2.175,
+    2.349
+   ],
+   "wheelbase_m": 3.02,
+   "track_front_m": 1.562,
+   "track_rear_m": 1.524,
+   "tyre_radius_m": 0.328,
+   "tyre_radius_rear_m": 0.328,
+   "hubs": {
+    "wheel_fl": [
+     0.781,
+     0.328,
+     1.51
+    ],
+    "wheel_fr": [
+     -0.781,
+     0.328,
+     1.51
+    ],
+    "wheel_rl": [
+     0.762,
+     0.328,
+     -1.51
+    ],
+    "wheel_rr": [
+     -0.762,
+     0.328,
+     -1.51
+    ]
+   },
+   "team": "Ur Moms Minivan Racing",
+   "car": "1986-97 Ford Aerostar (regular length)",
+   "brake_lamps": [
+    [
+     0.8,
+     1.05,
+     -2.1354,
+     0.18
+    ],
+    [
+     -0.8,
+     1.05,
+     -2.1355,
+     0.18
+    ]
+   ]
+  },
+  {
+   "number": "249",
+   "file": "models/249.glb",
+   "tris": 11308,
+   "bytes": 705344,
+   "materials": 4,
+   "length_m": 5.072,
+   "width_m": 1.82,
+   "height_m": 1.39,
+   "bbox_m": [
+    5.108,
+    1.98,
+    1.858
+   ],
+   "wheelbase_m": 2.74,
+   "track_front_m": 1.49,
+   "track_rear_m": 1.48,
+   "tyre_radius_m": 0.33,
+   "tyre_radius_rear_m": 0.33,
+   "hubs": {
+    "wheel_fl": [
+     0.745,
+     0.33,
+     1.37
+    ],
+    "wheel_fr": [
+     -0.745,
+     0.33,
+     1.37
+    ],
+    "wheel_rl": [
+     0.74,
+     0.33,
+     -1.37
+    ],
+    "wheel_rr": [
+     -0.74,
+     0.33,
+     -1.37
+    ]
+   },
+   "team": "Pony Keg",
+   "car": "1986 Oldsmobile Cutlass Supreme coupe",
+   "brake_lamps": [
+    [
+     0.5604,
+     0.4026,
+     -2.665,
+     0.06
+    ],
+    [
+     -0.5604,
+     0.4026,
+     -2.6681,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 0.24773960216998192,
+    "source_tris": 145509,
+    "model_length": 5.155,
+    "model_width": 1.968,
+    "model_height": 1.877,
+    "tris": 7197,
+    "file": "tools/cars/kit/downloads/249/model.glb"
+   }
+  },
+  {
+   "number": "319",
+   "file": "models/319.glb",
+   "tris": 10624,
+   "bytes": 679272,
+   "materials": 2,
+   "length_m": 4.26,
+   "width_m": 1.7,
+   "height_m": 1.46,
+   "bbox_m": [
+    4.294,
+    1.966,
+    1.495
+   ],
+   "wheelbase_m": 2.615,
+   "track_front_m": 1.48,
+   "track_rear_m": 1.49,
+   "tyre_radius_m": 0.31,
+   "tyre_radius_rear_m": 0.31,
+   "hubs": {
+    "wheel_fl": [
+     0.74,
+     0.31,
+     1.3075
+    ],
+    "wheel_fr": [
+     -0.74,
+     0.31,
+     1.3075
+    ],
+    "wheel_rl": [
+     0.745,
+     0.31,
+     -1.3075
+    ],
+    "wheel_rr": [
+     -0.745,
+     0.31,
+     -1.3075
+    ]
+   },
+   "team": "Fancy Chicken Racing",
+   "car": "2006 Ford Focus ZX3",
+   "brake_lamps": [
+    [
+     0.63,
+     1.18,
+     -1.5397,
+     0.12
+    ],
+    [
+     -0.63,
+     1.18,
+     -1.5411,
+     0.12
+    ]
+   ]
+  },
+  {
+   "number": "544",
+   "file": "models/544.glb",
+   "tris": 9791,
+   "bytes": 611168,
+   "materials": 3,
+   "length_m": 4.22,
+   "width_m": 1.58,
+   "height_m": 1.54,
+   "bbox_m": [
+    4.364,
+    1.692,
+    1.519
+   ],
+   "wheelbase_m": 2.6,
+   "track_front_m": 1.32,
+   "track_rear_m": 1.32,
+   "tyre_radius_m": 0.325,
+   "tyre_radius_rear_m": 0.325,
+   "hubs": {
+    "wheel_fl": [
+     0.66,
+     0.325,
+     1.3
+    ],
+    "wheel_fr": [
+     -0.66,
+     0.325,
+     1.3
+    ],
+    "wheel_rl": [
+     0.66,
+     0.325,
+     -1.3
+    ],
+    "wheel_rr": [
+     -0.66,
+     0.325,
+     -1.3
+    ]
+   },
+   "team": "ONSET/Tetanus Racing",
+   "car": "1963 Volvo PV544 two-door fastback",
+   "brake_lamps": [
+    [
+     0.56,
+     0.64,
+     -2.0644,
+     0.1
+    ],
+    [
+     -0.56,
+     0.64,
+     -2.0639,
+     0.1
+    ]
+   ]
+  },
+  {
+   "number": "664",
+   "file": "models/664.glb",
+   "tris": 11355,
+   "bytes": 712632,
+   "materials": 2,
+   "length_m": 4.326,
+   "width_m": 1.68,
+   "height_m": 1.31,
+   "bbox_m": [
+    4.404,
+    1.7,
+    1.316
+   ],
+   "wheelbase_m": 2.5,
+   "track_front_m": 1.43,
+   "track_rear_m": 1.42,
+   "tyre_radius_m": 0.3,
+   "tyre_radius_rear_m": 0.3,
+   "hubs": {
+    "wheel_fl": [
+     0.715,
+     0.3,
+     1.25
+    ],
+    "wheel_fr": [
+     -0.715,
+     0.3,
+     1.25
+    ],
+    "wheel_rl": [
+     0.71,
+     0.3,
+     -1.25
+    ],
+    "wheel_rr": [
+     -0.71,
+     0.3,
+     -1.25
+    ]
+   },
+   "team": "NachoFriend Racing",
+   "car": "1985 Toyota Celica GT-S liftback",
+   "brake_lamps": [
+    [
+     0.4786,
+     0.5979,
+     -2.0178,
+     0.06
+    ],
+    [
+     -0.4786,
+     0.5979,
+     -2.0178,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "named wheel parts",
+    "scale": 0.9642891877691953,
+    "source_tris": 22062,
+    "model_track": 1.337,
+    "model_tyre_radius": 0.312,
+    "hub_z_front": 0.305,
+    "hub_z_rear": 0.295,
+    "model_length": 4.404,
+    "model_width": 1.671,
+    "model_height": 1.31,
+    "tris": 8497,
+    "file": "tools/cars/kit/downloads/664/model.glb"
+   }
+  },
+  {
+   "number": "670",
+   "file": "models/670.glb",
+   "tris": 10070,
+   "bytes": 565476,
+   "materials": 2,
+   "length_m": 4.48,
+   "width_m": 1.71,
+   "height_m": 1.43,
+   "bbox_m": [
+    4.77,
+    2.261,
+    1.994
+   ],
+   "wheelbase_m": 2.64,
+   "track_front_m": 1.42,
+   "track_rear_m": 1.42,
+   "tyre_radius_m": 0.325,
+   "tyre_radius_rear_m": 0.325,
+   "hubs": {
+    "wheel_fl": [
+     0.71,
+     0.325,
+     1.32
+    ],
+    "wheel_fr": [
+     -0.71,
+     0.325,
+     1.32
+    ],
+    "wheel_rl": [
+     0.71,
+     0.325,
+     -1.32
+    ],
+    "wheel_rr": [
+     -0.71,
+     0.325,
+     -1.32
+    ]
+   },
+   "team": "Bernal Dads Racing",
+   "car": "1992 Volvo 245 wagon",
+   "brake_lamps": [
+    [
+     0.8,
+     0.78,
+     -2.3947,
+     0.17
+    ],
+    [
+     -0.8,
+     0.78,
+     -2.3943,
+     0.17
+    ]
+   ]
+  },
+  {
+   "number": "700",
+   "file": "models/700.glb",
+   "tris": 8678,
+   "bytes": 484700,
+   "materials": 3,
+   "length_m": 4.692,
+   "width_m": 1.83,
+   "height_m": 1.238,
+   "bbox_m": [
+    5.028,
+    1.998,
+    1.59
+   ],
+   "wheelbase_m": 2.591,
+   "track_front_m": 1.524,
+   "track_rear_m": 1.54,
+   "tyre_radius_m": 0.32,
+   "tyre_radius_rear_m": 0.32,
+   "hubs": {
+    "wheel_fl": [
+     0.762,
+     0.32,
+     1.2955
+    ],
+    "wheel_fr": [
+     -0.762,
+     0.32,
+     1.2955
+    ],
+    "wheel_rl": [
+     0.77,
+     0.32,
+     -1.2955
+    ],
+    "wheel_rr": [
+     -0.77,
+     0.32,
+     -1.2955
+    ]
+   },
+   "team": "SKINNY KOYOTE RACING Team A",
+   "car": "2001 Aston Martin DB7 Vantage coupe \"Half-Asston\"",
+   "brake_lamps": [
+    [
+     0.62,
+     0.82,
+     -2.3666,
+     0.17
+    ],
+    [
+     -0.62,
+     0.82,
+     -2.3667,
+     0.17
+    ]
+   ]
+  },
+  {
+   "number": "711",
+   "file": "models/711.glb",
+   "tris": 11360,
+   "bytes": 738020,
+   "materials": 2,
+   "length_m": 3.992,
+   "width_m": 1.675,
+   "height_m": 1.225,
+   "bbox_m": [
+    3.967,
+    1.78,
+    1.935
+   ],
+   "wheelbase_m": 2.265,
+   "track_front_m": 1.41,
+   "track_rear_m": 1.43,
+   "tyre_radius_m": 0.293,
+   "tyre_radius_rear_m": 0.293,
+   "hubs": {
+    "wheel_fl": [
+     0.705,
+     0.293,
+     1.1325
+    ],
+    "wheel_fr": [
+     -0.705,
+     0.293,
+     1.1325
+    ],
+    "wheel_rl": [
+     0.715,
+     0.293,
+     -1.1325
+    ],
+    "wheel_rr": [
+     -0.715,
+     0.293,
+     -1.1325
+    ]
+   },
+   "team": "Eyesore Racing",
+   "car": "1994 Mazda MX-5 Miata (NA), hardtop + hub-mounted plank wing",
+   "brake_lamps": [
+    [
+     0.3285,
+     0.4268,
+     -1.8987,
+     0.06
+    ],
+    [
+     -0.3285,
+     0.4268,
+     -1.8979,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 0.5683814303638646,
+    "source_tris": 114673,
+    "model_length": 3.968,
+    "model_width": 1.785,
+    "model_height": 1.176,
+    "tris": 7998,
+    "file": "tools/cars/kit/downloads/711/model.glb"
+   }
+  },
+  {
+   "number": "759",
+   "file": "models/759.glb",
+   "tris": 10236,
+   "bytes": 661428,
+   "materials": 3,
+   "length_m": 5.26,
+   "width_m": 2.02,
+   "height_m": 1.46,
+   "bbox_m": [
+    5.53,
+    2.231,
+    2.26
+   ],
+   "wheelbase_m": 3.05,
+   "track_front_m": 1.52,
+   "track_rear_m": 1.5,
+   "tyre_radius_m": 0.322,
+   "tyre_radius_rear_m": 0.322,
+   "hubs": {
+    "wheel_fl": [
+     0.76,
+     0.322,
+     1.525
+    ],
+    "wheel_fr": [
+     -0.76,
+     0.322,
+     1.525
+    ],
+    "wheel_rl": [
+     0.75,
+     0.322,
+     -1.525
+    ],
+    "wheel_rr": [
+     -0.75,
+     0.322,
+     -1.525
+    ]
+   },
+   "team": "In search of Edselance",
+   "car": "1959 Edsel Ranger 4-door hardtop",
+   "brake_lamps": [
+    [
+     0.38,
+     0.83,
+     -2.935,
+     0.035
+    ],
+    [
+     -0.38,
+     0.83,
+     -2.935,
+     0.035
+    ]
+   ]
+  },
+  {
+   "number": "785",
+   "file": "models/785.glb",
+   "tris": 9384,
+   "bytes": 663208,
+   "materials": 3,
+   "length_m": 4.538,
+   "width_m": 1.84,
+   "height_m": 1.51,
+   "bbox_m": [
+    4.717,
+    2.132,
+    1.789
+   ],
+   "wheelbase_m": 2.743,
+   "track_front_m": 1.42,
+   "track_rear_m": 1.42,
+   "tyre_radius_m": 0.27,
+   "tyre_radius_rear_m": 0.27,
+   "hubs": {
+    "wheel_fl": [
+     0.71,
+     0.27,
+     1.3715
+    ],
+    "wheel_fr": [
+     -0.71,
+     0.27,
+     1.3715
+    ],
+    "wheel_rl": [
+     0.71,
+     0.27,
+     -1.3715
+    ],
+    "wheel_rr": [
+     -0.71,
+     0.27,
+     -1.3715
+    ]
+   },
+   "team": "Race Rambler",
+   "car": "1962 Rambler Classic 4-door sedan",
+   "brake_lamps": [
+    [
+     0.8,
+     0.8,
+     -2.4785,
+     0.07
+    ],
+    [
+     -0.8,
+     0.8,
+     -2.4785,
+     0.07
+    ]
+   ]
+  },
+  {
+   "number": "801",
+   "file": "models/801.glb",
+   "tris": 4726,
+   "bytes": 451116,
+   "materials": 2,
+   "length_m": 3.925,
+   "width_m": 1.665,
+   "height_m": 1.25,
+   "bbox_m": [
+    4.05,
+    1.911,
+    1.289
+   ],
+   "wheelbase_m": 2.32,
+   "track_front_m": 1.44,
+   "track_rear_m": 1.43,
+   "tyre_radius_m": 0.29,
+   "tyre_radius_rear_m": 0.29,
+   "hubs": {
+    "wheel_fl": [
+     0.72,
+     0.29,
+     1.16
+    ],
+    "wheel_fr": [
+     -0.72,
+     0.29,
+     1.16
+    ],
+    "wheel_rl": [
+     0.715,
+     0.29,
+     -1.16
+    ],
+    "wheel_rr": [
+     -0.715,
+     0.29,
+     -1.16
+    ]
+   },
+   "team": "Volatile RAM",
+   "car": "1988 Toyota MR2 (AW11)",
+   "brake_lamps": [
+    [
+     0.4953,
+     0.6217,
+     -1.799,
+     0.06
+    ],
+    [
+     -0.4953,
+     0.6217,
+     -1.8002,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "named wheel parts",
+    "scale": 0.8285240676938161,
+    "source_tris": 10118,
+    "model_track": 1.413,
+    "model_tyre_radius": 0.274,
+    "hub_z_front": 0.29,
+    "hub_z_rear": 0.29,
+    "model_length": 4.026,
+    "model_width": 1.911,
+    "model_height": 1.252,
+    "tris": 2184,
+    "file": "tools/cars/kit/downloads/801/model.glb"
+   }
+  },
+  {
+   "number": "906",
+   "file": "models/906.glb",
+   "tris": 11798,
+   "bytes": 597564,
+   "materials": 3,
+   "length_m": 5.317,
+   "width_m": 1.88,
+   "height_m": 1.7,
+   "bbox_m": [
+    5.041,
+    2.1,
+    1.772
+   ],
+   "wheelbase_m": 2.94,
+   "track_front_m": 1.46,
+   "track_rear_m": 1.52,
+   "tyre_radius_m": 0.335,
+   "tyre_radius_rear_m": 0.335,
+   "hubs": {
+    "wheel_fl": [
+     0.73,
+     0.335,
+     1.47
+    ],
+    "wheel_fr": [
+     -0.73,
+     0.335,
+     1.47
+    ],
+    "wheel_rl": [
+     0.76,
+     0.335,
+     -1.47
+    ],
+    "wheel_rr": [
+     -0.76,
+     0.335,
+     -1.47
+    ]
+   },
+   "team": "Low Road Racing",
+   "car": "1947 Chevrolet Stylemaster",
+   "brake_lamps": [
+    [
+     0.2943,
+     0.4884,
+     -2.5865,
+     0.06
+    ],
+    [
+     -0.2943,
+     0.4884,
+     -2.5864,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "named wheel parts",
+    "scale": 0.9609339608978605,
+    "source_tris": 77069,
+    "model_track": 1.577,
+    "model_tyre_radius": 0.346,
+    "hub_z_front": 0.335,
+    "hub_z_rear": 0.335,
+    "model_length": 7.53,
+    "model_width": 7.118,
+    "model_height": 1.771,
+    "tris": 8600,
+    "file": "tools/cars/kit/downloads/906/model.glb"
+   }
+  },
+  {
+   "number": "963",
+   "file": "models/963.glb",
+   "tris": 8844,
+   "bytes": 529284,
+   "materials": 2,
+   "length_m": 4.16,
+   "width_m": 1.645,
+   "height_m": 1.38,
+   "bbox_m": [
+    4.379,
+    1.986,
+    1.58
+   ],
+   "wheelbase_m": 2.43,
+   "track_front_m": 1.43,
+   "track_rear_m": 1.42,
+   "tyre_radius_m": 0.29,
+   "tyre_radius_rear_m": 0.29,
+   "hubs": {
+    "wheel_fl": [
+     0.715,
+     0.29,
+     1.215
+    ],
+    "wheel_fr": [
+     -0.715,
+     0.29,
+     1.215
+    ],
+    "wheel_rl": [
+     0.71,
+     0.29,
+     -1.215
+    ],
+    "wheel_rr": [
+     -0.71,
+     0.29,
+     -1.215
+    ]
+   },
+   "team": "Borsche AG",
+   "car": "1991 Nissan Sentra (B13) cut into a ute",
+   "brake_lamps": [
+    [
+     0.558,
+     0.5034,
+     -2.2257,
+     0.06
+    ],
+    [
+     -0.558,
+     0.5034,
+     -2.2257,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "named wheel parts",
+    "scale": 0.270329404763189,
+    "source_tris": 32513,
+    "model_track": 1.311,
+    "model_tyre_radius": 0.307,
+    "hub_z_front": 0.29,
+    "hub_z_rear": 0.29,
+    "model_length": 4.303,
+    "model_width": 1.986,
+    "model_height": 1.383,
+    "tris": 6088,
+    "file": "tools/cars/kit/downloads/963/model.glb"
+   }
+  }
+ ]
+}

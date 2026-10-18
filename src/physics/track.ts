@@ -1,0 +1,511 @@
+// Track geometry: Surface from track.json + heightfield, projector, lineToWorld.
+
+import type { Surface, SurfaceSample, Vec3 } from './types';
+
+/** Mirrors public/tracks/<track>/track.json (CONTRACTS.md §2). */
+export interface TrackJson {
+  name: string;
+  origin: { lat: number; lon: number };
+  z0_navd88: number;
+  direction: string;
+  spacing_m: number;
+  n: number;
+  length_m: number;
+  center: Vec3[];
+  left: Vec3[];
+  right: Vec3[];
+  profile: { fractions: number[]; z: number[][] };
+  start_finish: { index: number };
+  corners: { name: string; s: number }[];
+  heightfield: { file: string; x0: number; y0: number; dx: number; nx: number; ny: number };
+  ortho?: { file: string; x0: number; y0: number; x1: number; y1: number; width_px: number; height_px: number };
+  sources?: string;
+}
+
+/** Pit lane (scenery.json `pit_lane`, CONTRACTS §2b): open polylines with the track's centre/left/right/profile
+ *  layout (one 7-value profile row per station, fractions as the track's). */
+export interface PitLaneJson {
+  spacing_m: number;
+  fractions: number[];
+  parts: { n: number; center: Vec3[]; left: Vec3[]; right: Vec3[]; profile_z: number[][] }[];
+}
+
+export interface TrackSurfaceOptions {
+  /** Paved pit lane: mu = muOnTrack and profile heights inside its footprint; it blends to the heightfield over the
+   *  same shoulder width as the track. onTrack stays false there; `paved` is true. */
+  pitLane?: PitLaneJson | null;
+  /** Far heightfield (scenery.json `far.heightfield` grid + decoded far_heightfield.bin), used outside the near grid. */
+  far?: { heightfield: Float32Array; x0: number; y0: number; dx: number; nx: number; ny: number } | null;
+  /** Friction multiplier on the racing surface. Default 1.0. */
+  muOnTrack?: number;
+  /** Friction multiplier off pavement (dry Laguna dirt / dry grass). Default OFF_PAVEMENT_MU (0.72). A car's
+   *  car.json `surfaces.offPavementMu` overrides it in the Vehicle (see NOTES-surface.md). */
+  muOffTrack?: number;
+  /** Width past the paved edge over which mu (and the `dirt` weight) blend from pavement to dirt, m.
+   *  Default SURFACE_GRIP_BLEND_M (1 m). */
+  gripBlend?: number;
+  /** Peak amplitude of the low-frequency ground roughness off pavement, m (0 disables). Default DIRT_ROUGHNESS_M. */
+  roughness?: number;
+  /** Width beyond the edge over which the height blends from the profile edge to the heightfield, m.
+   *  Default SHOULDER_WIDTH_M (5 m), the same shoulder the app renders, so the car drives on what is drawn. */
+  edgeBlend?: number;
+}
+
+/** Shoulder width outside each track edge: heights blend linearly from the ribbon edge to the heightfield.
+ *  The app's ribbon shoulder (src/app/scene.ts) samples this surface, so keep the two in step. */
+export const SHOULDER_WIDTH_M = 5.0;
+
+/** Off-pavement friction relative to pavement: a 200-treadwear street tyre on dry hard-packed dirt / dry grass
+ *  keeps roughly 0.65-0.8 of its asphalt grip (see NOTES-surface.md). */
+export const OFF_PAVEMENT_MU = 0.72;
+/** Grip blends from pavement to dirt over this distance past the paved edge (smoothstep), m. */
+export const SURFACE_GRIP_BLEND_M = 1.0;
+/** Peak amplitude of the off-pavement ground undulation, m (three long-wavelength waves, seeded by position). */
+export const DIRT_ROUGHNESS_M = 0.012;
+
+// Roughness: three plane waves (wavelengths 3.7, 5.3 and 8.9 m, odd directions so the pattern never lines up with
+// the track), amplitude split 0.4/0.35/0.25. Deterministic in (x, y); faded in with the dirt weight.
+const RW = [
+  { kx: (2 * Math.PI / 3.7) * Math.cos(0.41), ky: (2 * Math.PI / 3.7) * Math.sin(0.41), a: 0.4, ph: 1.3 },
+  { kx: (2 * Math.PI / 5.3) * Math.cos(2.17), ky: (2 * Math.PI / 5.3) * Math.sin(2.17), a: 0.35, ph: 4.1 },
+  { kx: (2 * Math.PI / 8.9) * Math.cos(-1.05), ky: (2 * Math.PI / 8.9) * Math.sin(-1.05), a: 0.25, ph: 2.6 },
+];
+
+/** Decode heightfield.bin (float32 little-endian). */
+export function loadHeightfield(buffer: ArrayBuffer): Float32Array {
+  if (buffer.byteLength % 4 !== 0) throw new Error('heightfield: byte length is not a multiple of 4');
+  const n = buffer.byteLength / 4;
+  const out = new Float32Array(n);
+  const dv = new DataView(buffer);
+  for (let i = 0; i < n; i++) out[i] = dv.getFloat32(4 * i, true);
+  return out;
+}
+
+// ---------------------------------------------------------------------------
+// Precomputed geometry, cached per TrackJson object.
+
+interface Geo {
+  n: number;
+  spacing: number;
+  length: number;
+  cx: Float64Array; cy: Float64Array;
+  tx: Float64Array; ty: Float64Array;   // unit direction of segment i → i+1
+  segLen: Float64Array;
+  halfL: Float64Array; halfR: Float64Array;
+  nf: number;
+  fr: Float64Array;                      // profile fractions
+  pz: Float64Array;                      // profile z, n × nf
+  // spatial hash over station positions
+  cell: number; gx0: number; gy0: number; gnx: number; gny: number;
+  cellStart: Int32Array; cellItems: Int32Array;
+  maxHalf: number;
+}
+
+const geoCache = new WeakMap<TrackJson, Geo>();
+
+function getGeo(track: TrackJson): Geo {
+  let g = geoCache.get(track);
+  if (!g) { g = buildGeo(track); geoCache.set(track, g); }
+  return g;
+}
+
+function buildGeo(t: TrackJson): Geo {
+  const n = t.n | 0;
+  if (!(n >= 3) || t.center.length < n || t.left.length < n || t.right.length < n || t.profile.z.length < n) {
+    throw new Error('track.json: n and the station arrays are inconsistent');
+  }
+  const cx = new Float64Array(n), cy = new Float64Array(n);
+  for (let i = 0; i < n; i++) { cx[i] = t.center[i][0]; cy[i] = t.center[i][1]; }
+  const tx = new Float64Array(n), ty = new Float64Array(n), segLen = new Float64Array(n);
+  for (let i = 0; i < n; i++) {
+    const j = (i + 1) % n;
+    const dx = cx[j] - cx[i], dy = cy[j] - cy[i];
+    const l = Math.hypot(dx, dy) || 1e-9;
+    tx[i] = dx / l; ty[i] = dy / l; segLen[i] = l;
+  }
+  const halfL = new Float64Array(n), halfR = new Float64Array(n);
+  let maxHalf = 0;
+  for (let i = 0; i < n; i++) {
+    halfL[i] = Math.max(0.5, Math.hypot(t.left[i][0] - cx[i], t.left[i][1] - cy[i]));
+    halfR[i] = Math.max(0.5, Math.hypot(t.right[i][0] - cx[i], t.right[i][1] - cy[i]));
+    maxHalf = Math.max(maxHalf, halfL[i], halfR[i]);
+  }
+  const fr = Float64Array.from(t.profile.fractions);
+  const nf = fr.length;
+  const pz = new Float64Array(n * nf);
+  for (let i = 0; i < n; i++) for (let k = 0; k < nf; k++) pz[i * nf + k] = t.profile.z[i][k];
+
+  // hash: cell large enough that a point within (maxHalf + margin) of a station
+  // finds it in the 3×3 neighbourhood
+  const spacing = t.spacing_m;
+  const cell = Math.max(8, maxHalf + 2 * spacing + 4);
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  for (let i = 0; i < n; i++) { x0 = Math.min(x0, cx[i]); y0 = Math.min(y0, cy[i]); x1 = Math.max(x1, cx[i]); y1 = Math.max(y1, cy[i]); }
+  const gx0 = x0 - cell, gy0 = y0 - cell;
+  const gnx = Math.ceil((x1 - gx0) / cell) + 2, gny = Math.ceil((y1 - gy0) / cell) + 2;
+  const counts = new Int32Array(gnx * gny + 1);
+  const cellOf = (i: number) => Math.floor((cx[i] - gx0) / cell) + gnx * Math.floor((cy[i] - gy0) / cell);
+  for (let i = 0; i < n; i++) counts[cellOf(i) + 1]++;
+  for (let c = 0; c < gnx * gny; c++) counts[c + 1] += counts[c];
+  const cellStart = counts;
+  const fill = cellStart.slice(0, gnx * gny);
+  const cellItems = new Int32Array(n);
+  for (let i = 0; i < n; i++) cellItems[fill[cellOf(i)]++] = i;
+  return { n, spacing, length: t.length_m, cx, cy, tx, ty, segLen, halfL, halfR, nf, fr, pz, cell, gx0, gy0, gnx, gny, cellStart, cellItems, maxHalf };
+}
+
+/** Result of locating a point against the centreline (reused object). */
+interface Loc { found: boolean; seg: number; t: number; lateral: number }
+
+/** Nearest station via the hash (−1 if none within one cell size). */
+function nearestStation(g: Geo, x: number, y: number): number {
+  const ci = Math.floor((x - g.gx0) / g.cell), cj = Math.floor((y - g.gy0) / g.cell);
+  let best = -1, bd = Infinity;
+  for (let dj = -1; dj <= 1; dj++) {
+    const jj = cj + dj;
+    if (jj < 0 || jj >= g.gny) continue;
+    for (let di = -1; di <= 1; di++) {
+      const ii = ci + di;
+      if (ii < 0 || ii >= g.gnx) continue;
+      const c = ii + g.gnx * jj;
+      for (let k = g.cellStart[c], e = g.cellStart[c + 1]; k < e; k++) {
+        const s = g.cellItems[k];
+        const dx = x - g.cx[s], dy = y - g.cy[s];
+        const d = dx * dx + dy * dy;
+        if (d < bd) { bd = d; best = s; }
+      }
+    }
+  }
+  // Only exact if within the radius the 3×3 neighbourhood is guaranteed to cover.
+  return bd <= g.cell * g.cell ? best : -1;
+}
+
+function nearestStationBrute(g: Geo, x: number, y: number): number {
+  let best = 0, bd = Infinity;
+  for (let s = 0; s < g.n; s++) {
+    const dx = x - g.cx[s], dy = y - g.cy[s];
+    const d = dx * dx + dy * dy;
+    if (d < bd) { bd = d; best = s; }
+  }
+  return best;
+}
+
+/** Project onto the two segments adjacent to station s; pick the closer. */
+function locateAt(g: Geo, x: number, y: number, s: number, out: Loc): void {
+  const n = g.n;
+  let bestD = Infinity;
+  for (let k = 0; k < 2; k++) {
+    const seg = k === 0 ? (s - 1 + n) % n : s;
+    const dx = x - g.cx[seg], dy = y - g.cy[seg];
+    let t = (dx * g.tx[seg] + dy * g.ty[seg]) / g.segLen[seg];
+    const tc = t < 0 ? 0 : t > 1 ? 1 : t;
+    const px = dx - tc * g.segLen[seg] * g.tx[seg], py = dy - tc * g.segLen[seg] * g.ty[seg];
+    const d = px * px + py * py;
+    if (d < bestD) {
+      bestD = d;
+      out.seg = seg; out.t = tc;
+      out.lateral = -dx * g.ty[seg] + dy * g.tx[seg]; // left normal (−ty, tx)
+    }
+  }
+  out.found = true;
+}
+
+/** Profile height at segment seg, param t, signed lateral (+left). Also returns slopes. */
+interface ProfileOut { z: number; dzds: number; dzdl: number; f: number }
+
+function profileAt(g: Geo, seg: number, t: number, lateral: number, out: ProfileOut, clampF: boolean): void {
+  const n = g.n, nf = g.nf, fr = g.fr, pz = g.pz;
+  const j = (seg + 1) % n;
+  const hL = g.halfL[seg] + t * (g.halfL[j] - g.halfL[seg]);
+  const hR = g.halfR[seg] + t * (g.halfR[j] - g.halfR[seg]);
+  // fraction −1 = left edge, +1 = right edge; lateral is +left
+  const half = lateral > 0 ? hL : hR;
+  let f = -lateral / half;
+  out.f = f;
+  if (clampF || f < fr[0] || f > fr[nf - 1]) f = f < fr[0] ? fr[0] : f > fr[nf - 1] ? fr[nf - 1] : f;
+  let k = 0;
+  while (k < nf - 2 && f > fr[k + 1]) k++;
+  const df = fr[k + 1] - fr[k];
+  const a = (f - fr[k]) / df;
+  const i0 = seg * nf + k, j0 = j * nf + k;
+  const z0 = pz[i0] + a * (pz[i0 + 1] - pz[i0]);
+  const z1 = pz[j0] + a * (pz[j0 + 1] - pz[j0]);
+  out.z = z0 + t * (z1 - z0);
+  out.dzds = (z1 - z0) / g.segLen[seg];
+  const dzdf = ((pz[i0 + 1] - pz[i0]) * (1 - t) + (pz[j0 + 1] - pz[j0]) * t) / df;
+  out.dzdl = (dzdf * -1) / half;
+}
+
+// ---------------------------------------------------------------------------
+
+class HeightField {
+  constructor(private d: Float32Array, private x0: number, private y0: number, private dx: number, private nx: number, private ny: number) {
+    if (d.length < nx * ny) throw new Error(`heightfield: expected ${nx * ny} values, got ${d.length}`);
+  }
+  z = 0; gx = 0; gy = 0;
+  sample(x: number, y: number): void {
+    let fx = (x - this.x0) / this.dx, fy = (y - this.y0) / this.dx;
+    const mx = this.nx - 1.000001, my = this.ny - 1.000001;
+    let edge = false;
+    if (fx < 0) { fx = 0; edge = true; } else if (fx > mx) { fx = mx; edge = true; }
+    if (fy < 0) { fy = 0; edge = true; } else if (fy > my) { fy = my; edge = true; }
+    const j = Math.floor(fx), i = Math.floor(fy);
+    const tx = fx - j, ty = fy - i;
+    const k = i * this.nx + j, d = this.d;
+    const z00 = d[k], z01 = d[k + 1], z10 = d[k + this.nx], z11 = d[k + this.nx + 1];
+    const za = z00 + tx * (z01 - z00), zb = z10 + tx * (z11 - z10);
+    this.z = za + ty * (zb - za);
+    if (edge) { this.gx = 0; this.gy = 0; return; }
+    this.gx = ((z01 - z00) * (1 - ty) + (z11 - z10) * ty) / this.dx;
+    this.gy = (zb - za) / this.dx;
+  }
+}
+
+/** Grid description shared by heightfield.bin and far_heightfield.bin. */
+export interface HeightGrid { x0: number; y0: number; dx: number; nx: number; ny: number }
+
+/** Near heightfield with an optional coarser far heightfield around it. Never returns a bogus height. */
+class Terrain {
+  z = 0; gx = 0; gy = 0;
+  constructor(private near: HeightField, private nearGrid: HeightGrid, private far: HeightField | null, private farGrid: HeightGrid | null) {}
+  private static inside(g: HeightGrid, x: number, y: number): boolean {
+    const fx = (x - g.x0) / g.dx, fy = (y - g.y0) / g.dx;
+    return fx >= 0 && fy >= 0 && fx <= g.nx - 1 && fy <= g.ny - 1;
+  }
+  sample(x: number, y: number): void {
+    // near grid where it exists; far grid (clamped at its edge) everywhere else
+    const src = this.far && !Terrain.inside(this.nearGrid, x, y) ? this.far : this.near;
+    src.sample(x, y);
+    this.z = src.z; this.gx = src.gx; this.gy = src.gy;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Pit lane: the parts are concatenated into one Geo (same arrays as the track, so profileAt works); segments that
+// would join the end of one part to the start of the next (or wrap) are marked invalid.
+
+interface PitGeo { g: Geo; valid: Uint8Array; first: Uint8Array; last: Uint8Array }
+
+function buildPitGeo(p: PitLaneJson): PitGeo | null {
+  const parts = p.parts.filter((q) => q.n >= 2);
+  const n = parts.reduce((a, q) => a + q.n, 0);
+  if (n < 3) return null;
+  const center: Vec3[] = [], left: Vec3[] = [], right: Vec3[] = [], z: number[][] = [];
+  const valid = new Uint8Array(n), first = new Uint8Array(n), last = new Uint8Array(n);
+  let k = 0;
+  for (const q of parts) {
+    for (let i = 0; i < q.n; i++, k++) {
+      center.push(q.center[i]); left.push(q.left[i]); right.push(q.right[i]); z.push(q.profile_z[i]);
+      valid[k] = i < q.n - 1 ? 1 : 0;
+      first[k] = i === 0 ? 1 : 0;
+      last[k] = i === q.n - 2 ? 1 : 0;
+    }
+  }
+  const pseudo = { n, spacing_m: p.spacing_m, length_m: n * p.spacing_m, center, left, right,
+    profile: { fractions: p.fractions, z } } as unknown as TrackJson;
+  return { g: buildGeo(pseudo), valid, first, last };
+}
+
+interface PitLoc { seg: number; t: number; lateral: number; over: number }
+
+/** Project onto the valid segments next to station s; `over` = distance beyond the end of a part (0 inside). */
+function locatePit(pg: PitGeo, x: number, y: number, s: number, out: PitLoc): boolean {
+  const g = pg.g, n = g.n;
+  let bestD = Infinity, found = false;
+  for (let k = 0; k < 2; k++) {
+    const seg = k === 0 ? s - 1 : s;
+    if (seg < 0 || seg >= n || !pg.valid[seg]) continue;
+    const dx = x - g.cx[seg], dy = y - g.cy[seg];
+    const t = (dx * g.tx[seg] + dy * g.ty[seg]) / g.segLen[seg];
+    const tc = t < 0 ? 0 : t > 1 ? 1 : t;
+    const px = dx - tc * g.segLen[seg] * g.tx[seg], py = dy - tc * g.segLen[seg] * g.ty[seg];
+    const d = px * px + py * py;
+    if (d < bestD) {
+      bestD = d; found = true;
+      out.seg = seg; out.t = tc;
+      out.lateral = -dx * g.ty[seg] + dy * g.tx[seg];
+      out.over = pg.first[seg] && t < 0 ? -t * g.segLen[seg] : pg.last[seg] && t > 1 ? (t - 1) * g.segLen[seg] : 0;
+    }
+  }
+  return found;
+}
+
+/**
+ * Surface for a track package. sample() returns a reused object.
+ * Outside the near heightfield it falls back to `opts.far` (far_heightfield.bin,
+ * CONTRACTS §2b) when given; beyond every grid it holds the edge height.
+ */
+export function createTrackSurface(track: TrackJson, heightfield: Float32Array, opts: TrackSurfaceOptions = {}): Surface {
+  const g = getGeo(track);
+  const h = track.heightfield;
+  const nearHf = new HeightField(heightfield, h.x0, h.y0, h.dx, h.nx, h.ny);
+  const f = opts.far ?? null;
+  const farHf = f ? new HeightField(f.heightfield, f.x0, f.y0, f.dx, f.nx, f.ny) : null;
+  const hf = new Terrain(nearHf, h, farHf, f);
+  const muOn = opts.muOnTrack ?? 1.0;
+  const muOff = opts.muOffTrack ?? OFF_PAVEMENT_MU;
+  const blend = Math.max(0, opts.edgeBlend ?? SHOULDER_WIDTH_M);
+  const gripBlend = Math.max(1e-6, opts.gripBlend ?? SURFACE_GRIP_BLEND_M);
+  const rough = Math.max(0, opts.roughness ?? DIRT_ROUGHNESS_M);
+  const out: SurfaceSample = { z: 0, nx: 0, ny: 0, nz: 1, onTrack: false, mu: muOff, paved: false, dirt: 1, muPaved: muOn };
+  const loc: Loc = { found: false, seg: 0, t: 0, lateral: 0 };
+  const prof: ProfileOut = { z: 0, dzds: 0, dzdl: 0, f: 0 };
+  let cache = -1;
+  const near = g.maxHalf + blend + 2 * g.spacing;
+  const pit = opts.pitLane ? buildPitGeo(opts.pitLane) : null;
+  const ploc: PitLoc = { seg: 0, t: 0, lateral: 0, over: 0 };
+
+  const setNormal = (gxw: number, gyw: number) => {
+    const l = 1 / Math.sqrt(gxw * gxw + gyw * gyw + 1);
+    out.nx = -gxw * l; out.ny = -gyw * l; out.nz = l;
+  };
+
+  return {
+    sample(x: number, y: number): SurfaceSample {
+      // locate: try the cached station's neighbourhood first, else the hash
+      let s = -1;
+      if (cache >= 0) {
+        // walk downhill in distance from the cached station (cheap for nearby queries)
+        let best = cache;
+        let bd = (x - g.cx[best]) ** 2 + (y - g.cy[best]) ** 2;
+        let converged = false;
+        for (let step = 0; step < 24; step++) {
+          const a = (best + 1) % g.n, b = (best - 1 + g.n) % g.n;
+          const da = (x - g.cx[a]) ** 2 + (y - g.cy[a]) ** 2;
+          const db = (x - g.cx[b]) ** 2 + (y - g.cy[b]) ** 2;
+          if (da < bd && da <= db) { best = a; bd = da; } else if (db < bd) { best = b; bd = db; } else { converged = true; break; }
+        }
+        if (converged && bd <= near * near) s = best;
+      }
+      if (s < 0) s = nearestStation(g, x, y);
+      cache = s;
+      // track: on the racing surface -> profile; else remember the edge height and distance beyond the edge
+      let dOutT = Infinity, zT = 0;
+      if (s >= 0) {
+        locateAt(g, x, y, s, loc);
+        profileAt(g, loc.seg, loc.t, loc.lateral, prof, false);
+        const af = Math.abs(prof.f);
+        if (af <= 1) {
+          out.z = prof.z;
+          const tx = g.tx[loc.seg], ty = g.ty[loc.seg];
+          // world gradient = dz/ds·T + dz/dlat·N, N = (−ty, tx)
+          setNormal(prof.dzds * tx - prof.dzdl * ty, prof.dzds * ty + prof.dzdl * tx);
+          out.onTrack = true;
+          out.paved = true;
+          out.mu = muOn;
+          out.dirt = 0;
+          return out;
+        }
+        const half = loc.lateral > 0
+          ? g.halfL[loc.seg] + loc.t * (g.halfL[(loc.seg + 1) % g.n] - g.halfL[loc.seg])
+          : g.halfR[loc.seg] + loc.t * (g.halfR[(loc.seg + 1) % g.n] - g.halfR[loc.seg]);
+        dOutT = (af - 1) * half;
+        if (dOutT < blend) { profileAt(g, loc.seg, loc.t, loc.lateral, prof, true); zT = prof.z; }
+      }
+      // pit lane: paved footprint -> its profile; else edge height and distance for the blend
+      let dOutP = Infinity, zP = 0;
+      if (pit) {
+        const sp = nearestStation(pit.g, x, y);
+        if (sp >= 0 && locatePit(pit, x, y, sp, ploc)) {
+          const pg = pit.g;
+          profileAt(pg, ploc.seg, ploc.t, ploc.lateral, prof, false);
+          const half = ploc.lateral > 0
+            ? pg.halfL[ploc.seg] + ploc.t * (pg.halfL[ploc.seg + 1] - pg.halfL[ploc.seg])
+            : pg.halfR[ploc.seg] + ploc.t * (pg.halfR[ploc.seg + 1] - pg.halfR[ploc.seg]);
+          dOutP = Math.max((Math.abs(prof.f) - 1) * half, ploc.over);
+          if (dOutP <= 0) {
+            out.z = prof.z;
+            const tx = pg.tx[ploc.seg], ty = pg.ty[ploc.seg];
+            setNormal(prof.dzds * tx - prof.dzdl * ty, prof.dzds * ty + prof.dzdl * tx);
+            out.onTrack = false;
+            out.paved = true;
+            out.mu = muOn;
+            out.dirt = 0;
+            return out;
+          }
+          if (dOutP < blend) { profileAt(pg, ploc.seg, ploc.t, ploc.lateral, prof, true); zP = prof.z; }
+        }
+      }
+      hf.sample(x, y);
+      out.onTrack = false;
+      out.paved = false;
+      // grip: smoothstep from pavement to dirt over the first `gripBlend` m past the nearest paved edge
+      const dOut = dOutT < dOutP ? dOutT : dOutP;
+      const g01 = dOut >= gripBlend ? 1 : dOut / gripBlend;
+      const dirt = g01 * g01 * (3 - 2 * g01);
+      out.dirt = dirt;
+      out.mu = muOn + dirt * (muOff - muOn);
+      // low-frequency roughness, faded in with the dirt weight (zero at the paved edge, so heights stay continuous)
+      let rz = 0, rgx = 0, rgy = 0;
+      if (rough > 0 && dirt > 0) {
+        for (let k = 0; k < 3; k++) {
+          const wv = RW[k], ph = wv.kx * x + wv.ky * y + wv.ph, amp = rough * dirt * wv.a;
+          rz += amp * Math.sin(ph);
+          const c = amp * Math.cos(ph);
+          rgx += c * wv.kx; rgy += c * wv.ky;
+        }
+      }
+      setNormal(hf.gx + rgx, hf.gy + rgy);
+      // shoulder: blend from the nearest paved edge(s) to the heightfield over `blend` m. With one source this is
+      // edge + smoothstep(d/blend)(hf - edge); with two, each edge dominates at its own edge (w/(1-w) weights), so the
+      // height stays continuous where the pit lane runs close to the track.
+      const wT = dOutT < blend ? 1 - dOutT / blend : 0;
+      const wP = dOutP < blend ? 1 - dOutP / blend : 0;
+      if (wT <= 0 && wP <= 0) { out.z = hf.z + rz; return out; }
+      const kT = wT / (1 - wT + 1e-6), kP = wP / (1 - wP + 1e-6);
+      const zE = (kT * zT + kP * zP) / (kT + kP);
+      // smoothstep across the shoulder: no slope break at the paved edge or where it meets the heightfield
+      const u = 1 - Math.max(wT, wP);
+      out.z = zE + u * u * (3 - 2 * u) * (hf.z - zE) + rz;
+      return out;
+    },
+  };
+}
+
+export interface TrackProjection { s: number; lateral: number; index: number }
+
+export function createTrackProjector(track: TrackJson): { project(x: number, y: number): TrackProjection } {
+  const g = getGeo(track);
+  const loc: Loc = { found: false, seg: 0, t: 0, lateral: 0 };
+  return {
+    project(x: number, y: number): TrackProjection {
+      let s = nearestStation(g, x, y);
+      if (s < 0) s = nearestStationBrute(g, x, y);
+      locateAt(g, x, y, s, loc);
+      let sm = (loc.seg + loc.t) * g.spacing;
+      sm %= g.length; if (sm < 0) sm += g.length;
+      return { s: sm, lateral: loc.lateral, index: loc.seg };
+    },
+  };
+}
+
+/** Centreline position at s (m, wrapped) offset laterally (+left) along the segment's left normal. */
+function lineXY(g: Geo, offsetAtS: (s: number) => number, s: number, out: { x: number; y: number; seg: number; t: number; off: number }): void {
+  let sw = s % g.length; if (sw < 0) sw += g.length;
+  let u = sw / g.spacing;
+  let seg = Math.floor(u);
+  if (seg >= g.n) seg = g.n - 1;
+  const t = u - seg;
+  const j = (seg + 1) % g.n;
+  const x = g.cx[seg] + t * (g.cx[j] - g.cx[seg]);
+  const y = g.cy[seg] + t * (g.cy[j] - g.cy[seg]);
+  const off = offsetAtS(sw);
+  out.x = x - off * g.ty[seg];
+  out.y = y + off * g.tx[seg];
+  out.seg = seg; out.t = t; out.off = off;
+}
+
+export function lineToWorld(track: TrackJson, offsetAtS: (s: number) => number, s: number): { pos: [number, number, number]; heading: number } {
+  const g = getGeo(track);
+  const a = { x: 0, y: 0, seg: 0, t: 0, off: 0 };
+  const b = { x: 0, y: 0, seg: 0, t: 0, off: 0 };
+  const c = { x: 0, y: 0, seg: 0, t: 0, off: 0 };
+  lineXY(g, offsetAtS, s, c);
+  const prof: ProfileOut = { z: 0, dzds: 0, dzdl: 0, f: 0 };
+  profileAt(g, c.seg, c.t, c.off, prof, true);
+  const ds = 0.5 * g.spacing;
+  lineXY(g, offsetAtS, s - ds, a);
+  lineXY(g, offsetAtS, s + ds, b);
+  const heading = Math.atan2(b.y - a.y, b.x - a.x);
+  return { pos: [c.x, c.y, prof.z], heading };
+}

@@ -1,0 +1,8 @@
+{
+ "offset": 0.15,
+ "duration": 1.15,
+ "f0": 1136.7,
+ "source": "GL030045 @ 1521.98 s (+1.30 s), a_lat 12.0 m/s2, tone prominence 11.7 dB",
+ "route": "extracted from the footage (spectral subtraction against the pre-squeal 0.8 s)",
+ "seam_corr": 0.0
+}

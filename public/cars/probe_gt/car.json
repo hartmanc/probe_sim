@@ -1,0 +1,188 @@
+{
+  "_schema": "src/physics/spec.ts (CarSpec). SI units. Keys starting with _ are comments.",
+  "name": "1993 Ford Probe GT (24 Hours of Lemons #619)",
+  "mass": 1380,
+  "_mass": "incl. driver and fuel",
+  "cgHeight": 0.5,
+  "frontWeightFraction": 0.62,
+  "wheelbase": 2.614,
+  "trackFront": 1.514,
+  "trackRear": 1.509,
+  "inertia": {
+    "roll": 550,
+    "pitch": 2000,
+    "yaw": 2200
+  },
+  "unsprungMassPerCorner": 40,
+  "wheel": {
+    "radius": 0.316,
+    "spinInertia": 1.2
+  },
+  "suspension": {
+    "_rates": "wheel rates. Rear ARB is the ~18 mm Contour/Mystique bar.",
+    "front": {
+      "springRate": 30000,
+      "damperBump": 3000,
+      "damperRebound": 4500,
+      "antiRollRate": 32000,
+      "staticCompression": 0.07,
+      "complianceSteerDegPerKN": 0.4
+    },
+    "rear": {
+      "springRate": 25000,
+      "damperBump": 2500,
+      "damperRebound": 3750,
+      "antiRollRate": 16000,
+      "staticCompression": 0.07,
+      "complianceSteerDegPerKN": 0.12
+    },
+    "_balance": "Balance pass (Oct 2026): front bar 18000 -> 32000 N/m (front diameter unknown; a stock GT front bar is much stiffer than the 18 mm rear) and lateral compliance steer (front 0.4 deg/kN toe-out of the turn, rear 0.12 deg/kN in phase). Before: ~0.4 deg/g understeer gradient and a lift at 0.9 g took the rear to 11.7 deg slip; after ~2 deg/g and 3.7 deg. See improvements.md Balance.",
+    "travel": 0.16,
+    "_travel": "Calibrated: 70 mm droop + 90 mm bump (was 35 + 55). With 35 mm droop the inside rear hit full droop under trail braking and lifted.",
+    "bumpStopRange": 0.02,
+    "bumpStopForceAtFull": 25000,
+    "tyreVerticalRate": 250000
+  },
+  "tyre": {
+    "_tyre": "225/50R16 200-treadwear street tyre. Calibrated: lateral mu0 1.25 (\u22481.2 g steady state), longitudinal mu0 1.20, longitudinal C 1.45 (locked tyre keeps ~75 % of peak, not 52 %).",
+    "Fz0": 3500,
+    "loadSensitivity": -0.1,
+    "lateral": {
+      "mu0": 1.1,
+      "C": 1.3,
+      "E": -1.0,
+      "peakSlipAngleDeg": 7.0,
+      "relaxationLength": 0.3
+    },
+    "longitudinal": {
+      "mu0": 1.08,
+      "C": 1.45,
+      "E": -0.5,
+      "peakSlipRatio": 0.12,
+      "relaxationLength": 0.15
+    },
+    "speedSensitivity": { "refSpeed": 28, "slope": 0.018, "_note": "lateral friction peak only: -5 % at 110 km/h (T4), -10 % at 121 km/h (T6), none below 100 km/h; brings the autopilot T6 to ~116 km/h (driver A 116), see improvements.md Balance" },
+    "lowSpeed": {
+      "velocityFloor": 1.0,
+      "blendSpeed": 1.0,
+      "dampingLong": 3000,
+      "dampingLat": 8000
+    },
+    "_grip_note": "mu0 lowered from 1.25/1.20 after the v2 centreline rebuild: with real corner radii the logger implies 0.8-1.1 g in most corners (1.2 at T5 after banking), and Coby felt the sim cornered too fast at 1.25."
+  },
+  "engine": {
+    "_engine": "Mazda KL-DE 2.5 L V6",
+    "torqueCurve": {
+      "rpm": [
+        1000,
+        2000,
+        3000,
+        4000,
+        4800,
+        5600,
+        6200,
+        6600,
+        7000
+      ],
+      "torque": [
+        150,
+        180,
+        200,
+        210,
+        212,
+        208,
+        195,
+        182,
+        160
+      ]
+    },
+    "idleRpm": 850,
+    "revLimitRpm": 6900,
+    "limiterCutTime": 0.03,
+    "inertia": 0.15,
+    "brakingTorqueIdle": -25,
+    "brakingTorqueLimit": -60
+  },
+  "drivetrain": {
+    "layout": "fwd",
+    "_ratios": "overall ratios = engine rpm per mph / 13.5092 (wheel rpm per mph at r = 0.316 m). Measured 3rd 82, 4th 63, 5th 48.5 rpm/mph; 1st and 2nd from gearbox ratios 3.307/1.310 and 1.833/1.310 times 3rd (207.0 and 114.7 rpm/mph). Reverse like 1st.",
+    "gearRatios": [
+      15.3232,
+      8.4933,
+      6.07,
+      4.6635,
+      3.5902
+    ],
+    "reverseRatio": 15.3232,
+    "efficiency": 0.9,
+    "shiftTime": 0.15,
+    "clutch": {
+      "maxTorque": 400,
+      "engageRpm": 900,
+      "fullRpm": 1200,
+      "launchRpmBoost": 1000,
+      "engageTime": 0.2
+    },
+    "autoShift": {
+      "upshiftRpm": 5000,
+      "downshiftRpm": 2600,
+      "downshiftMaxRpm": 5000,
+      "minInterval": 0.5,
+      "kickdownThrottle": 0.8,
+      "kickdownRpm": 4100,
+      "kickdownAccel": 0.15,
+      "kickdownHoldRpm": 5450,
+      "_kickdown": "Balance/power pass: at 125 km/h in 5th (3800 rpm) on the Rahal climb, full throttle kicks down to 4th (4900 rpm), as driver A's rpm trace shows (4th up the hill to ~5150). After a kickdown the next upshift waits for 5450 rpm, which lands 5th at ~4200, above the 4100 kickdown threshold, so it does not hunt.",
+      "_note": "Upshift at 5000 rpm, the median shift point of the team at Laguna (they short-shifted; nobody ran to the 6900 limiter). Downshift below 2600 only if the lower gear lands at or under 5000."
+    }
+  },
+  "brakes": {
+    "maxTorque": 6000,
+    "frontBias": 0.7,
+    "handbrakeTorque": 1500,
+    "proportioningKnee": 0.25,
+    "proportioningSlope": 0.3,
+    "abs": { "enabled": 1, "wakeDelay": 0.45, "lockSlip": 0.35, "releaseSlip": 0.25, "releaseFactor": 0.3, "applyRate": 7, "holdTime": 0.04, "minSpeed": 2.2,
+      "_abs": "Coby: the race car has ABS but it is crude; a front can lock for about half a second before it acts. Early-90s 3-channel logic, see src/physics/README.md ABS." },
+    "_brakes": "Calibrated (tools/calibrate): 70 % front below the proportioning-valve knee (pedal 0.25, ~0.35 g), ~80 % front at full pedal, close to the ideal split for this CG; 6000 N\u00b7m (performance pads) so threshold braking is grip-limited at ~1.02 g, 11 % above the logger's peak 0.92 g"
+  },
+  "aero": {
+    "cd": 0.5,
+    "frontalArea": 2.25,
+    "airDensity": 1.2,
+    "_aero": "Calibrated to the logger full-throttle acceleration (tools/calibrate/accel_fit.py): CdA 1.125 m\u00b2 vs stock 0.66. Roof rack + ray-gun sculpture + inflatable aliens add bluff area, windows out add drag."
+  },
+  "rollingResistance": 0.013,
+  "rollingResistanceSpeed": 5.2e-07,
+  "surfaces": {
+    "_surfaces": "Off pavement (dirt / dry grass past the paved edge; track, pit lane and paved runoff stay at full grip). Each effect fades in over the first 1 m past the edge. See src/physics/NOTES-surface.md.",
+    "offPavementMu": 0.72,
+    "_offPavementMu": "tyre friction on dry Laguna dirt / dry grass relative to pavement (street tyre on firm dry dirt: ~0.65-0.8). Lower = slipperier; 0.5 would be wet-grass territory.",
+    "offPavementLateralStiffness": 0.65,
+    "_offPavementLateralStiffness": "cornering stiffness factor on dirt: the lateral peak moves from 7 to ~10.8 deg slip, so the car slides progressively instead of snapping",
+    "offPavementRollingResistance": 0.04,
+    "offPavementRollingResistanceSpeed": 0.0015,
+    "_offPavementRollingResistance": "extra rolling resistance / sinkage drag on dirt: dCrr = 0.04 + 0.0015 * v (m/s), per wheel x load; ~0.07 g extra drag at 90 km/h (coast 5 s from 90 km/h: 3.3 m/s more speed lost than on pavement)"
+  },
+  "steering": {
+    "maxAngleDeg": 32,
+    "ackermann": 0.6,
+    "shapingSpeed": 18.0,
+    "minAngleDeg": 1.5,
+    "rate": 8.0,
+    "rateSpeed": 20.0,
+    "_shaping": "full stick: 32 deg at rest, 20 deg at 50 km/h, 7.7 deg at 116 km/h, 5 deg at 150 km/h (shapingSpeed raised from 13.4 to 18 so T6 can be driven at the limit on a gamepad); lock-to-lock flick 0.25 s at rest, 0.6 s at 100 km/h, 0.75 s at 150 km/h (rateSpeed 30 -> 20 in the balance pass)"
+  },
+  "hull": {
+    "front": 2.28,
+    "rear": -2.24,
+    "halfWidth": 0.86,
+    "floor": 0.14,
+    "roof": 1.3,
+    "friction": 0.5,
+    "bumper": 0.45,
+    "roofFront": 0.6,
+    "roofRear": -1.3,
+    "_hull": "box for ground contacts; bumper-line ring + roof corners for walls, trees and buildings"
+  }
+}

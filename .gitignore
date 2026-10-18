@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.DS_Store
+*.log
+tools/**/cache/
+tools/**/__pycache__/
+.venv/
+.vercel
+.env*
+tools/cars/kit/downloads/
+tools/cars/field/album/
+tools/cars/field/photos/*/owner_*

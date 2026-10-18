@@ -1,0 +1,3121 @@
+[
+  {
+    "number": "711",
+    "team": "Eyesore Racing",
+    "class": "A",
+    "grid": 14,
+    "finish": 1,
+    "class_finish": 1,
+    "laps": 203,
+    "best_lap_s": 108.15,
+    "make": "Mazda",
+    "model": "MX-5 Miata",
+    "generation": "NA (1989-97)",
+    "year": 1994,
+    "body": "roadster",
+    "confidence": "high",
+    "evidence": "Lemons award page: '1994 Mazda Miata'; photos show hardtopped NA Miata, pop-ups [https://24hoursoflemons.com/results-2/?id=457]",
+    "dims": {
+      "wheelbase_m": 2.265,
+      "length_m": 3.95,
+      "width_m": 1.675,
+      "height_m": 1.225,
+      "track_m": 1.41,
+      "mass_kg": 990,
+      "power_kw": 96,
+      "source": "https://en.wikipedia.org/wiki/Mazda_MX-5_(NA)",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Mazda BP 1.8 I4 turbo",
+      "cylinders": 4,
+      "layout": "I4",
+      "displacement_l": 1.8,
+      "aspiration": "turbo",
+      "redline_rpm": 7000,
+      "stock_power_kw": 150,
+      "exhaust_note": "loud open",
+      "confidence": "high",
+      "evidence": "Owner (17 Oct 2026): the Eyesore Miata runs a turbocharged 1.8; ~150 kW assumed for a modest-boost BP turbo. Class A winner pace."
+    },
+    "colors": {
+      "primary": "#7a5a3a",
+      "secondary": "#c9a26a",
+      "accents": [
+        "#2a2a2a"
+      ]
+    },
+    "numbers": {
+      "color": "white/black on rust",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "Faux-rust/patina brown paint, bolt-on 'vintage' bits, tall roof-mounted rack wing on stalks",
+    "theme": "Rat-rod Miata with a goofy wing frame over the roof; '711' (7-Eleven joke)",
+    "photos": [
+      "IMG_8267.jpg",
+      "IMG_8407.jpg",
+      "IMG_8428.jpg",
+      "IMG_8292.jpg",
+      "IMG_7177.jpg",
+      "IMG_8267_XL.jpg",
+      "IMG_8407_XL.jpg",
+      "IMG_8428_XL.jpg",
+      "IMG_8292_XL.jpg",
+      "IMG_7177_XL.jpg"
+    ],
+    "photo_sightings": 19
+  },
+  {
+    "number": "189",
+    "team": "Tired Iron Racing",
+    "class": "A",
+    "grid": 7,
+    "finish": 2,
+    "class_finish": 2,
+    "laps": 203,
+    "best_lap_s": 109.158,
+    "make": "Mazda",
+    "model": "MX-5 Miata",
+    "generation": "NA (1989-97)",
+    "year": 1991,
+    "body": "roadster",
+    "confidence": "high",
+    "evidence": "Prior Lemons awards: Tired Iron Racing #189 '1991 Mazda Miata'; photos: orange NA Miata, hardtop, big wing",
+    "dims": {
+      "wheelbase_m": 2.265,
+      "length_m": 3.95,
+      "width_m": 1.675,
+      "height_m": 1.225,
+      "track_m": 1.41,
+      "mass_kg": 960,
+      "power_kw": 86,
+      "source": "https://en.wikipedia.org/wiki/Mazda_MX-5_(NA)",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Mazda B6 1.6 I4",
+      "cylinders": 4,
+      "layout": "I4",
+      "displacement_l": 1.6,
+      "aspiration": "NA",
+      "redline_rpm": 7200,
+      "stock_power_kw": 86,
+      "exhaust_note": "loud open",
+      "confidence": "high",
+      "evidence": "1991 = 1.6 B6"
+    },
+    "colors": {
+      "primary": "#d98a4a",
+      "secondary": "#e8b070",
+      "accents": [
+        "#222222"
+      ]
+    },
+    "numbers": {
+      "color": "black on white roundel/board",
+      "boards": [
+        "door",
+        "rear wing endplate"
+      ]
+    },
+    "livery": "All-over orange-tan 'pumpkin/cookie' finish with carved-face nose, black wing",
+    "theme": "Halloween pumpkin / gingerbread face on the nose",
+    "photos": [
+      "IMG_8207.jpg",
+      "IMG_8208.jpg",
+      "IMG_8277.jpg",
+      "IMG_8084.jpg",
+      "JSG_3280.jpg",
+      "IMG_8207_XL.jpg",
+      "IMG_8208_XL.jpg",
+      "IMG_8277_XL.jpg",
+      "IMG_8084_XL.jpg",
+      "JSG_3280_XL.jpg"
+    ],
+    "photo_sightings": 18
+  },
+  {
+    "number": "89",
+    "team": "The Homer by Porcubimmer….",
+    "class": "A",
+    "grid": 21,
+    "finish": 3,
+    "class_finish": 3,
+    "laps": 189,
+    "best_lap_s": 113.908,
+    "make": "BMW",
+    "model": "3 Series (E30) 4-door dressed as 'The Homer'",
+    "generation": "E30 (1982-94)",
+    "year": 1987,
+    "body": "sedan",
+    "confidence": "high",
+    "evidence": "Team 'The Homer by Porcubimmer'; Porcubimmer built The Homer on a 1987 BMW E30 (Autoblog 2013); photos show lime-green Homer body with bubble dome, tail fins, chrome grille",
+    "dims": {
+      "wheelbase_m": 2.57,
+      "length_m": 4.325,
+      "width_m": 1.645,
+      "height_m": 1.38,
+      "track_m": 1.41,
+      "mass_kg": 1200,
+      "power_kw": 125,
+      "source": "https://en.wikipedia.org/wiki/BMW_3_Series_(E30)",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "BMW M20 2.5 I6",
+      "cylinders": 6,
+      "layout": "I6",
+      "displacement_l": 2.5,
+      "aspiration": "NA",
+      "redline_rpm": 6500,
+      "stock_power_kw": 125,
+      "exhaust_note": "loud open",
+      "confidence": "medium",
+      "evidence": "Porcubimmer runs E30s; M20 assumed"
+    },
+    "colors": {
+      "primary": "#8ad13a",
+      "secondary": "#2f7d2a",
+      "accents": [
+        "#c0c0c0",
+        "#ffffff"
+      ]
+    },
+    "numbers": {
+      "color": "black on white",
+      "boards": [
+        "door",
+        "rear fin"
+      ]
+    },
+    "livery": "Lime-green E30 4-door with bolt-on Homer parts: Rolls-style chrome grille, clear bubble dome on the roof, tall rear tail fins, hood scoop",
+    "theme": "Homer Simpson's car 'The Homer' (The Simpsons) built over a BMW",
+    "photos": [
+      "JSG_3322.jpg",
+      "JSG_3246.jpg",
+      "IMG_8283.jpg",
+      "IMG_8088.jpg",
+      "IMG_8422.jpg",
+      "JSG_3322_XL.jpg",
+      "JSG_3246_XL.jpg",
+      "IMG_8283_XL.jpg",
+      "IMG_8088_XL.jpg",
+      "IMG_8422_XL.jpg"
+    ],
+    "photo_sightings": 20
+  },
+  {
+    "number": "83",
+    "team": "Dirty Duck Racing",
+    "class": "B",
+    "grid": 19,
+    "finish": 4,
+    "class_finish": 1,
+    "laps": 188,
+    "best_lap_s": 117.157,
+    "make": "Volkswagen",
+    "model": "Rabbit (Golf Mk1)",
+    "generation": "Mk1 (1974-84)",
+    "year": 1983,
+    "body": "hatch",
+    "confidence": "high",
+    "evidence": "Lemons award page: '1983 VW Rabbit' (Class B winner); photos show square Mk1 hatch [https://24hoursoflemons.com/results-2/?id=457]",
+    "dims": {
+      "wheelbase_m": 2.4,
+      "length_m": 3.96,
+      "width_m": 1.61,
+      "height_m": 1.39,
+      "track_m": 1.39,
+      "mass_kg": 860,
+      "power_kw": 55,
+      "source": "https://en.wikipedia.org/wiki/Volkswagen_Golf_Mk1",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "VW EA827 1.7 I4",
+      "cylinders": 4,
+      "layout": "I4",
+      "displacement_l": 1.7,
+      "aspiration": "NA",
+      "redline_rpm": 6000,
+      "stock_power_kw": 55,
+      "exhaust_note": "loud open",
+      "confidence": "high",
+      "evidence": "VW 1.7 8v I4; diesel possible but award pace suggests gas"
+    },
+    "colors": {
+      "primary": "#3a3530",
+      "secondary": "#c9b48a",
+      "accents": [
+        "#d02020"
+      ]
+    },
+    "numbers": {
+      "color": "black on white board",
+      "boards": [
+        "door",
+        "rear quarter"
+      ]
+    },
+    "livery": "Dark brown/black with stencilled newspaper/collage camo, 'ABRACADABRA' banner on windscreen",
+    "theme": "Magic act: a red F1 car model mounted upside on the roof ('abracadabra')",
+    "photos": [
+      "JSG_3325.jpg",
+      "IMG_8370.jpg",
+      "IMG_8282.jpg",
+      "IMG_8086.jpg",
+      "IMG_8173.jpg",
+      "JSG_3325_XL.jpg",
+      "IMG_8370_XL.jpg",
+      "IMG_8282_XL.jpg",
+      "IMG_8086_XL.jpg",
+      "IMG_8173_XL.jpg"
+    ],
+    "photo_sightings": 20
+  },
+  {
+    "number": "41",
+    "team": "Distilled Racing",
+    "class": "B",
+    "grid": 32,
+    "finish": 5,
+    "class_finish": 2,
+    "laps": 179,
+    "best_lap_s": 114.258,
+    "make": "Ford",
+    "model": "Super Deluxe",
+    "generation": "1941 Ford",
+    "year": 1941,
+    "body": "sedan",
+    "confidence": "high",
+    "evidence": "Prior Lemons award: Distilled Racing #41 '1941 Ford Coupe'; photos show black 1941 Ford with 'Distilled Racing' moonshine logo",
+    "dims": {
+      "wheelbase_m": 2.9,
+      "length_m": 4.94,
+      "width_m": 1.86,
+      "height_m": 1.73,
+      "track_m": 1.48,
+      "mass_kg": 1400,
+      "power_kw": 67,
+      "source": "https://en.wikipedia.org/wiki/1941_Ford",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Ford flathead 3.9 V8",
+      "cylinders": 8,
+      "layout": "V8",
+      "displacement_l": 3.9,
+      "aspiration": "NA",
+      "redline_rpm": 3800,
+      "stock_power_kw": 67,
+      "exhaust_note": "side-exit, loud",
+      "confidence": "low",
+      "evidence": "Almost certainly not flathead; Lemons '41 Fords usually carry a modern V8 or Miata/BMW driveline swap. Photos show a large exhaust pipe exiting the rear quarter (side exit)"
+    },
+    "colors": {
+      "primary": "#1a1a1a",
+      "secondary": "#7a3a20",
+      "accents": [
+        "#d8c070"
+      ]
+    },
+    "numbers": {
+      "color": "white",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "Black with rust patches, 'DISTILLED RACING' whiskey-label door logo, side-mounted spare/ram horns",
+    "theme": "Moonshine runner (prohibition bootlegger)",
+    "photos": [
+      "IMG_8244.jpg",
+      "IMG_8430.jpg",
+      "JSG_3279.jpg",
+      "IMG_8063.jpg",
+      "IMG_7092.jpg",
+      "IMG_8244_XL.jpg",
+      "IMG_8430_XL.jpg",
+      "JSG_3279_XL.jpg",
+      "IMG_8063_XL.jpg",
+      "IMG_7092_XL.jpg"
+    ],
+    "photo_sightings": 25
+  },
+  {
+    "number": "38",
+    "team": "Another Fine Mess",
+    "class": "B",
+    "grid": 9,
+    "finish": 6,
+    "class_finish": 3,
+    "laps": 172,
+    "best_lap_s": 119.376,
+    "make": "Hyundai",
+    "model": "Elantra",
+    "generation": "XD (2001-06)",
+    "year": 2005,
+    "body": "sedan",
+    "confidence": "high",
+    "evidence": "Prior Lemons award: Another Fine Mess #38 '2005 Hyundai Elantra'; photos show small sedan in white/blue/red BMW-Motorsport-like stripes, roof sign",
+    "dims": {
+      "wheelbase_m": 2.61,
+      "length_m": 4.52,
+      "width_m": 1.72,
+      "height_m": 1.425,
+      "track_m": 1.5,
+      "mass_kg": 1250,
+      "power_kw": 103,
+      "source": "https://en.wikipedia.org/wiki/Hyundai_Elantra_(XD)",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Hyundai Beta 2.0 I4",
+      "cylinders": 4,
+      "layout": "I4",
+      "displacement_l": 2.0,
+      "aspiration": "NA",
+      "redline_rpm": 6500,
+      "stock_power_kw": 103,
+      "exhaust_note": "stock muffler",
+      "confidence": "high",
+      "evidence": "Stock 2.0 Beta"
+    },
+    "colors": {
+      "primary": "#ffffff",
+      "secondary": "#1f4fa8",
+      "accents": [
+        "#d02020"
+      ]
+    },
+    "numbers": {
+      "color": "black on white roundel",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "White with blue/red BMW M-style stripes, flag on the roof and a framed picture/sign on the roof",
+    "theme": "Laurel-and-Hardy 'another fine mess' picture frame on the roof",
+    "photos": [
+      "IMG_8248.jpg",
+      "JSG_3247.jpg",
+      "IMG_8272.jpg",
+      "IMG_8434.jpg",
+      "JSG_3339.jpg",
+      "IMG_8248_XL.jpg",
+      "JSG_3247_XL.jpg",
+      "IMG_8272_XL.jpg",
+      "IMG_8434_XL.jpg",
+      "JSG_3339_XL.jpg"
+    ],
+    "photo_sightings": 19
+  },
+  {
+    "number": "619",
+    "team": "Anal Corkscrew Probe",
+    "class": "B",
+    "grid": 20,
+    "finish": 7,
+    "class_finish": 4,
+    "laps": 170,
+    "best_lap_s": 119.323,
+    "make": "Ford",
+    "model": "Probe GT",
+    "generation": "2nd gen (1993-97)",
+    "year": 1993,
+    "body": "hatch",
+    "confidence": "high",
+    "evidence": "Player car (already modelled)",
+    "dims": {
+      "wheelbase_m": 2.61,
+      "length_m": 4.54,
+      "width_m": 1.77,
+      "height_m": 1.31,
+      "track_m": 1.52,
+      "mass_kg": 1270,
+      "power_kw": 122,
+      "source": "https://en.wikipedia.org/wiki/Ford_Probe",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Mazda KL-DE 2.5 V6",
+      "cylinders": 6,
+      "layout": "V6",
+      "displacement_l": 2.5,
+      "aspiration": "NA",
+      "redline_rpm": 6500,
+      "stock_power_kw": 122,
+      "exhaust_note": "loud open",
+      "confidence": "high",
+      "evidence": "Known"
+    },
+    "colors": {
+      "primary": "#3a3a3a",
+      "secondary": "#40a040",
+      "accents": [
+        "#3080d0"
+      ]
+    },
+    "numbers": {
+      "color": "white",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "Player car",
+    "theme": "Player car",
+    "photos": [
+      "JSG_3352.jpg",
+      "JSG_3213.jpg",
+      "IMG_8285.jpg",
+      "IMG_7104.jpg",
+      "JSG_3352_XL.jpg",
+      "JSG_3213_XL.jpg",
+      "IMG_8285_XL.jpg",
+      "IMG_7104_XL.jpg"
+    ],
+    "photo_sightings": 18
+  },
+  {
+    "number": "156",
+    "team": "TPF Racing",
+    "class": "C",
+    "grid": 22,
+    "finish": 8,
+    "class_finish": 1,
+    "laps": 168,
+    "best_lap_s": 123.924,
+    "make": "Mercury",
+    "model": "Milan",
+    "generation": "1st gen (2006-11)",
+    "year": 2010,
+    "body": "sedan",
+    "confidence": "high",
+    "evidence": "Lemons award page: '2010 Mercury Milan' (Class C winner); photos match [https://24hoursoflemons.com/results-2/?id=457]",
+    "dims": {
+      "wheelbase_m": 2.725,
+      "length_m": 4.87,
+      "width_m": 1.83,
+      "height_m": 1.45,
+      "track_m": 1.56,
+      "mass_kg": 1500,
+      "power_kw": 130,
+      "source": "https://en.wikipedia.org/wiki/Mercury_Milan",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Ford Duratec 2.5 I4",
+      "cylinders": 4,
+      "layout": "I4",
+      "displacement_l": 2.5,
+      "aspiration": "NA",
+      "redline_rpm": 6700,
+      "stock_power_kw": 130,
+      "exhaust_note": "stock muffler",
+      "confidence": "medium",
+      "evidence": "Base 2.5 I4 assumed (3.0 V6 also offered)"
+    },
+    "colors": {
+      "primary": "#c8c8c8",
+      "secondary": "#5a3a20",
+      "accents": [
+        "#d0a040"
+      ]
+    },
+    "numbers": {
+      "color": "brown/gold script on silver",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "Silver with a brown stripe and gold script '156', cartoon cowboy/prospector art",
+    "theme": "Old-West / gold-rush cartoon characters",
+    "photos": [
+      "IMG_8235.jpg",
+      "IMG_8236.jpg",
+      "IMG_8090.jpg",
+      "IMG_8178.jpg",
+      "JSG_3289.jpg",
+      "IMG_8235_XL.jpg",
+      "IMG_8236_XL.jpg",
+      "IMG_8090_XL.jpg",
+      "IMG_8178_XL.jpg",
+      "JSG_3289_XL.jpg"
+    ],
+    "photo_sightings": 13
+  },
+  {
+    "number": "100",
+    "team": "Sorry For Party Racing",
+    "class": "C",
+    "grid": 15,
+    "finish": 9,
+    "class_finish": 2,
+    "laps": 165,
+    "best_lap_s": 117.497,
+    "make": "Chevrolet",
+    "model": "El Camino",
+    "generation": "4th gen Colonnade (1973-77)",
+    "year": 1975,
+    "body": "truck",
+    "confidence": "medium",
+    "evidence": "Photos: long brown coupe-utility with quad headlights and bed; team history includes Chevrolet LUV and Corvette",
+    "dims": {
+      "wheelbase_m": 2.95,
+      "length_m": 5.38,
+      "width_m": 1.95,
+      "height_m": 1.35,
+      "track_m": 1.56,
+      "mass_kg": 1700,
+      "power_kw": 108,
+      "source": "https://en.wikipedia.org/wiki/Chevrolet_El_Camino",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "GM small-block 5.7 V8",
+      "cylinders": 8,
+      "layout": "V8",
+      "displacement_l": 5.7,
+      "aspiration": "NA",
+      "redline_rpm": 5000,
+      "stock_power_kw": 108,
+      "exhaust_note": "loud open",
+      "confidence": "medium",
+      "evidence": "Lemons V8 El Camino; small-block assumed"
+    },
+    "colors": {
+      "primary": "#6a4a35",
+      "secondary": "#b8b0a0",
+      "accents": [
+        "#f0a020",
+        "#d03030"
+      ]
+    },
+    "numbers": {
+      "color": "orange/yellow '100' with outline",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "Rusty brown with primer-grey/pink roof, gold wheels",
+    "theme": "Rat-rod 70s El Camino",
+    "photos": [
+      "IMG_8202.jpg",
+      "IMG_8203.jpg",
+      "IMG_8271.jpg",
+      "IMG_8302.jpg",
+      "JSG_2696.jpg",
+      "IMG_8202_XL.jpg",
+      "IMG_8203_XL.jpg",
+      "IMG_8271_XL.jpg",
+      "IMG_8302_XL.jpg",
+      "JSG_2696_XL.jpg"
+    ],
+    "photo_sightings": 18
+  },
+  {
+    "number": "76",
+    "team": "Salty Thunder Racing",
+    "class": "B",
+    "grid": 34,
+    "finish": 10,
+    "class_finish": 5,
+    "laps": 164,
+    "best_lap_s": 124.145,
+    "make": "Pontiac",
+    "model": "Fiero",
+    "generation": "1984-88",
+    "year": 1985,
+    "body": "coupe",
+    "confidence": "high",
+    "evidence": "Prior awards: Salty Thunder Racing '1985 Pontiac Fiero' (#90); photos: 'PONTIAC' nose, mid-engine wedge",
+    "dims": {
+      "wheelbase_m": 2.375,
+      "length_m": 4.07,
+      "width_m": 1.75,
+      "height_m": 1.19,
+      "track_m": 1.47,
+      "mass_kg": 1150,
+      "power_kw": 104,
+      "source": "https://en.wikipedia.org/wiki/Pontiac_Fiero",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "GM 60-degree 2.8 V6",
+      "cylinders": 6,
+      "layout": "V6",
+      "displacement_l": 2.8,
+      "aspiration": "NA",
+      "redline_rpm": 5800,
+      "stock_power_kw": 104,
+      "exhaust_note": "loud open",
+      "confidence": "low",
+      "evidence": "Iron Duke 2.5 I4 or 2.8 V6; V6 guessed"
+    },
+    "colors": {
+      "primary": "#f0b820",
+      "secondary": "#2a3a8a",
+      "accents": [
+        "#ffffff"
+      ]
+    },
+    "numbers": {
+      "color": "blue on yellow",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "Yellow with blue/white Pontiac-factory-style stripes, 'PONTIAC' across nose",
+    "theme": "IMSA/GT-style factory racer homage",
+    "photos": [
+      "IMG_8275.jpg",
+      "JSG_3255.jpg",
+      "JSG_3335.jpg",
+      "IMG_8103.jpg",
+      "IMG_8135.jpg",
+      "IMG_8275_XL.jpg",
+      "JSG_3255_XL.jpg",
+      "JSG_3335_XL.jpg",
+      "IMG_8103_XL.jpg",
+      "IMG_8135_XL.jpg"
+    ],
+    "photo_sightings": 15
+  },
+  {
+    "number": "58",
+    "team": "Italian job racing",
+    "class": "B",
+    "grid": 3,
+    "finish": 11,
+    "class_finish": 6,
+    "laps": 163,
+    "best_lap_s": 125.286,
+    "make": "Mini",
+    "model": "Cooper S",
+    "generation": "R53 (2002-06)",
+    "year": 2003,
+    "body": "hatch",
+    "confidence": "high",
+    "evidence": "Lemons award page: '2003 mini cooper s'; photos match [https://24hoursoflemons.com/results-2/?id=457]",
+    "dims": {
+      "wheelbase_m": 2.467,
+      "length_m": 3.655,
+      "width_m": 1.688,
+      "height_m": 1.416,
+      "track_m": 1.46,
+      "mass_kg": 1140,
+      "power_kw": 120,
+      "source": "https://en.wikipedia.org/wiki/Mini_Hatch_(R50)",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Tritec 1.6 I4 supercharged",
+      "cylinders": 4,
+      "layout": "I4",
+      "displacement_l": 1.6,
+      "aspiration": "super",
+      "redline_rpm": 6750,
+      "stock_power_kw": 120,
+      "exhaust_note": "stock muffler",
+      "confidence": "high",
+      "evidence": "Stock supercharged 1.6"
+    },
+    "colors": {
+      "primary": "#2a3a8a",
+      "secondary": "#909090",
+      "accents": [
+        "#d02020",
+        "#f0c020"
+      ]
+    },
+    "numbers": {
+      "color": "black on white roundel",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "Blue front half / grey rear, Union-Jack-ish details, tons of stickers",
+    "theme": "Halloween: giant gold/red 'treasure' or carnival pile with a skeletal hand on the roof (won 'Halloween Meets Gasoline')",
+    "photos": [
+      "IMG_8228.jpg",
+      "IMG_8230.jpg",
+      "IMG_8300.jpg",
+      "JSG_3368.jpg",
+      "IMG_7178.jpg",
+      "IMG_8228_XL.jpg",
+      "IMG_8230_XL.jpg",
+      "IMG_8300_XL.jpg",
+      "JSG_3368_XL.jpg",
+      "IMG_7178_XL.jpg"
+    ],
+    "photo_sightings": 21
+  },
+  {
+    "number": "37",
+    "team": "Caffeine Unlimited",
+    "class": "A",
+    "grid": 6,
+    "finish": 12,
+    "class_finish": 4,
+    "laps": 162,
+    "best_lap_s": 115.079,
+    "make": "BMW",
+    "model": "3 Series (E30) 4-door",
+    "generation": "E30 (1982-94)",
+    "year": 1987,
+    "body": "sedan",
+    "confidence": "medium",
+    "evidence": "Jalopnik lists 'Caffeine Unlimited, BMW E30'; photos show black E30 4-door with 'CAFFEINE' text",
+    "dims": {
+      "wheelbase_m": 2.57,
+      "length_m": 4.325,
+      "width_m": 1.645,
+      "height_m": 1.38,
+      "track_m": 1.41,
+      "mass_kg": 1200,
+      "power_kw": 125,
+      "source": "https://en.wikipedia.org/wiki/BMW_3_Series_(E30)",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "BMW M20 2.5 I6",
+      "cylinders": 6,
+      "layout": "I6",
+      "displacement_l": 2.5,
+      "aspiration": "NA",
+      "redline_rpm": 6500,
+      "stock_power_kw": 125,
+      "exhaust_note": "loud open",
+      "confidence": "medium",
+      "evidence": "Typical E30 M20 2.5"
+    },
+    "colors": {
+      "primary": "#1a1a1a",
+      "secondary": "#f0d020",
+      "accents": [
+        "#ffffff"
+      ]
+    },
+    "numbers": {
+      "color": "white",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "Black with big yellow 'CAFFEINE' lettering, 'VENI VIDI VENTI' windscreen banner",
+    "theme": "Coffee: Starbucks-size cups on the roof",
+    "photos": [
+      "IMG_8280.jpg",
+      "IMG_8115.jpg",
+      "IMG_8107.jpg",
+      "JSG_3105.jpg",
+      "JSG_2721.jpg",
+      "IMG_8280_XL.jpg",
+      "IMG_8115_XL.jpg",
+      "IMG_8107_XL.jpg",
+      "JSG_3105_XL.jpg",
+      "JSG_2721_XL.jpg"
+    ],
+    "photo_sightings": 12
+  },
+  {
+    "number": "801",
+    "team": "Volatile RAM",
+    "class": "B",
+    "grid": 11,
+    "finish": 13,
+    "class_finish": 7,
+    "laps": 162,
+    "best_lap_s": 118.437,
+    "make": "Toyota",
+    "model": "MR2",
+    "generation": "AW11 (1984-89)",
+    "year": 1988,
+    "body": "coupe",
+    "confidence": "high",
+    "evidence": "Prior awards: Volatile RAM #801 '1988 Toyota MR2'; photos: small mid-engine wedge, black/red with yellow",
+    "dims": {
+      "wheelbase_m": 2.32,
+      "length_m": 3.925,
+      "width_m": 1.665,
+      "height_m": 1.25,
+      "track_m": 1.44,
+      "mass_kg": 1050,
+      "power_kw": 84,
+      "source": "https://en.wikipedia.org/wiki/Toyota_MR2_(W10)",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Toyota 4A-GE 1.6 I4",
+      "cylinders": 4,
+      "layout": "I4",
+      "displacement_l": 1.6,
+      "aspiration": "NA",
+      "redline_rpm": 7600,
+      "stock_power_kw": 84,
+      "exhaust_note": "loud open",
+      "confidence": "high",
+      "evidence": "4A-GE stock"
+    },
+    "colors": {
+      "primary": "#f0d040",
+      "secondary": "#d02020",
+      "accents": [
+        "#2a4aa0",
+        "#1a1a1a"
+      ]
+    },
+    "numbers": {
+      "color": "black on white board",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "Yellow hood/roof, red and blue lower body (patchwork), '801' on white board",
+    "theme": "Computer-memory pun team name",
+    "photos": [
+      "IMG_8281.jpg",
+      "JSG_3332.jpg",
+      "JSG_3256.jpg",
+      "IMG_7996.jpg",
+      "IMG_8311.jpg",
+      "IMG_8281_XL.jpg",
+      "JSG_3332_XL.jpg",
+      "JSG_3256_XL.jpg",
+      "IMG_7996_XL.jpg",
+      "IMG_8311_XL.jpg"
+    ],
+    "photo_sightings": 10
+  },
+  {
+    "number": "670",
+    "team": "Bernal Dads Racing",
+    "class": "A",
+    "grid": 5,
+    "finish": 14,
+    "class_finish": 5,
+    "laps": 161,
+    "best_lap_s": 111.061,
+    "make": "Volvo",
+    "model": "245 wagon",
+    "generation": "200 series (1974-93)",
+    "year": 1992,
+    "body": "wagon",
+    "confidence": "high",
+    "evidence": "Prior awards: Bernal Dads Racing #670 '1992 Volvo 245'; photos: white brick wagon",
+    "dims": {
+      "wheelbase_m": 2.64,
+      "length_m": 4.785,
+      "width_m": 1.71,
+      "height_m": 1.46,
+      "track_m": 1.42,
+      "mass_kg": 1340,
+      "power_kw": 85,
+      "source": "https://en.wikipedia.org/wiki/Volvo_200_Series",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Volvo B230F 2.3 I4",
+      "cylinders": 4,
+      "layout": "I4",
+      "displacement_l": 2.3,
+      "aspiration": "NA",
+      "redline_rpm": 6000,
+      "stock_power_kw": 85,
+      "exhaust_note": "stock muffler",
+      "confidence": "high",
+      "evidence": "B230F"
+    },
+    "colors": {
+      "primary": "#f2f2f2",
+      "secondary": "#1a1a1a",
+      "accents": [
+        "#d02020",
+        "#f0a020"
+      ]
+    },
+    "numbers": {
+      "color": "black outline numbers",
+      "boards": [
+        "door",
+        "rear door"
+      ]
+    },
+    "livery": "White wagon, black hood stripes, red '670' Volvo-logo style",
+    "theme": "Dad-wagon; car seat/booster and toys on the roof rack",
+    "photos": [
+      "IMG_8204.jpg",
+      "IMG_8205.jpg",
+      "IMG_8436.jpg",
+      "IMG_8102.jpg",
+      "JSG_3328.jpg",
+      "IMG_8204_XL.jpg",
+      "IMG_8205_XL.jpg",
+      "IMG_8436_XL.jpg",
+      "IMG_8102_XL.jpg",
+      "JSG_3328_XL.jpg"
+    ],
+    "photo_sightings": 16
+  },
+  {
+    "number": "49",
+    "team": "Ran When Parked Racing Entry C",
+    "class": "C",
+    "grid": 17,
+    "finish": 15,
+    "class_finish": 3,
+    "laps": 161,
+    "best_lap_s": 120.03,
+    "make": "Triumph",
+    "model": "Mayflower",
+    "generation": "1949-53",
+    "year": 1951,
+    "body": "sedan",
+    "confidence": "high",
+    "evidence": "Lemons award page: '1951 Triumph Mayflower' (Judges' Choice); photos: razor-edge silver-grey upright sedan with wide flares [https://24hoursoflemons.com/results-2/?id=457]",
+    "dims": {
+      "wheelbase_m": 2.134,
+      "length_m": 3.962,
+      "width_m": 1.575,
+      "height_m": 1.524,
+      "track_m": 1.14,
+      "mass_kg": 914,
+      "power_kw": 28,
+      "source": "https://en.wikipedia.org/wiki/Triumph_Mayflower",
+      "verified_this_run": true,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Honda K24 2.4 I4 (swap; owner confirmed)",
+      "cylinders": 4,
+      "layout": "I4",
+      "displacement_l": 2.4,
+      "aspiration": "NA",
+      "redline_rpm": 7000,
+      "stock_power_kw": 140,
+      "exhaust_note": "loud open",
+      "confidence": "high",
+      "evidence": "Owner (Coby) stated the Mayflower runs a Honda K24; stock Triumph 1.25 sidevalve replaced; K-swap assumed with a 6-speed Honda gearbox",
+      "gears": 6
+    },
+    "colors": {
+      "primary": "#c8c8cc",
+      "secondary": "#e8e8e8",
+      "accents": [
+        "#202020"
+      ]
+    },
+    "numbers": {
+      "color": "black on white roundel",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "Silver-grey, razor-edge Rolls-style body, 'Ran When Parked' script",
+    "theme": "British stately sedan; team in Tudor/royal costumes",
+    "photos": [
+      "IMG_8252.jpg",
+      "IMG_8270.jpg",
+      "IMG_8413.jpg",
+      "IMG_8448.jpg",
+      "JSG_3269.jpg",
+      "IMG_8252_XL.jpg",
+      "IMG_8270_XL.jpg",
+      "IMG_8413_XL.jpg",
+      "IMG_8448_XL.jpg",
+      "JSG_3269_XL.jpg"
+    ],
+    "photo_sightings": 16
+  },
+  {
+    "number": "2",
+    "team": "I Soar Racing",
+    "class": "C",
+    "grid": 37,
+    "finish": 16,
+    "class_finish": 4,
+    "laps": 160,
+    "best_lap_s": 119.059,
+    "make": "Saturn",
+    "model": "SL2 sedan",
+    "generation": "S-Series 2nd gen (1996-99)",
+    "year": 1997,
+    "body": "sedan",
+    "confidence": "medium",
+    "evidence": "Photos: pink Saturn S-series sedan with 'Barbie' hood logo; team history lists Miata/BMW/AMC (no Saturn)",
+    "dims": {
+      "wheelbase_m": 2.6,
+      "length_m": 4.5,
+      "width_m": 1.69,
+      "height_m": 1.38,
+      "track_m": 1.45,
+      "mass_kg": 1080,
+      "power_kw": 93,
+      "source": "https://en.wikipedia.org/wiki/Saturn_S-Series",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Saturn 1.9 DOHC I4",
+      "cylinders": 4,
+      "layout": "I4",
+      "displacement_l": 1.9,
+      "aspiration": "NA",
+      "redline_rpm": 6500,
+      "stock_power_kw": 93,
+      "exhaust_note": "stock muffler",
+      "confidence": "medium",
+      "evidence": "DOHC 1.9 assumed"
+    },
+    "colors": {
+      "primary": "#d02a7a",
+      "secondary": "#f070b0",
+      "accents": [
+        "#ffffff"
+      ]
+    },
+    "numbers": {
+      "color": "pink on white board",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "Hot-pink 'Barbie' paint with Barbie script on hood",
+    "theme": "Barbie car",
+    "photos": [
+      "IMG_8217.jpg",
+      "IMG_8218.jpg",
+      "IMG_8279.jpg",
+      "IMG_8112.jpg",
+      "JSG_3303.jpg",
+      "IMG_8217_XL.jpg",
+      "IMG_8218_XL.jpg",
+      "IMG_8279_XL.jpg",
+      "IMG_8112_XL.jpg",
+      "JSG_3303_XL.jpg"
+    ],
+    "photo_sightings": 16
+  },
+  {
+    "number": "42",
+    "team": "Team Valiant Effort",
+    "class": "C",
+    "grid": 29,
+    "finish": 17,
+    "class_finish": 5,
+    "laps": 157,
+    "best_lap_s": 126.932,
+    "make": "Plymouth",
+    "model": "Valiant",
+    "generation": "2nd gen (1963-66)",
+    "year": 1963,
+    "body": "sedan",
+    "confidence": "high",
+    "evidence": "Prior awards: Team Valiant Effort #42 '1963 Plymouth Valiant'; photos match",
+    "dims": {
+      "wheelbase_m": 2.7,
+      "length_m": 4.71,
+      "width_m": 1.79,
+      "height_m": 1.37,
+      "track_m": 1.41,
+      "mass_kg": 1250,
+      "power_kw": 108,
+      "source": "https://en.wikipedia.org/wiki/Plymouth_Valiant",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Chrysler slant-6 225 3.7 I6",
+      "cylinders": 6,
+      "layout": "I6",
+      "displacement_l": 3.7,
+      "aspiration": "NA",
+      "redline_rpm": 4800,
+      "stock_power_kw": 108,
+      "exhaust_note": "loud open",
+      "confidence": "medium",
+      "evidence": "Slant-6 likely; could be 318 V8"
+    },
+    "colors": {
+      "primary": "#2e3a30",
+      "secondary": "#9a8a70",
+      "accents": [
+        "#30a050",
+        "#d03030"
+      ]
+    },
+    "numbers": {
+      "color": "white on dark",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "Faded dark green/grey with Italian-flag stripe and patina",
+    "theme": "Patina survivor",
+    "photos": [
+      "IMG_8269.jpg",
+      "IMG_8446.jpg",
+      "IMG_8124.jpg",
+      "JSG_2813.jpg",
+      "JSG_3259.jpg",
+      "IMG_8269_XL.jpg",
+      "IMG_8446_XL.jpg",
+      "IMG_8124_XL.jpg",
+      "JSG_2813_XL.jpg",
+      "JSG_3259_XL.jpg"
+    ],
+    "photo_sightings": 13
+  },
+  {
+    "number": "664",
+    "team": "NachoFriend Racing",
+    "class": "C",
+    "grid": 26,
+    "finish": 18,
+    "class_finish": 6,
+    "laps": 157,
+    "best_lap_s": 125.46,
+    "make": "Toyota",
+    "model": "Celica GT-S liftback",
+    "generation": "A60 (1982-85)",
+    "year": 1985,
+    "body": "hatch",
+    "confidence": "high",
+    "evidence": "Prior awards: NachoFriend Racing #664 '1985 Toyota Celica GT-S'; photos match",
+    "dims": {
+      "wheelbase_m": 2.5,
+      "length_m": 4.44,
+      "width_m": 1.68,
+      "height_m": 1.3,
+      "track_m": 1.43,
+      "mass_kg": 1150,
+      "power_kw": 86,
+      "source": "https://en.wikipedia.org/wiki/Toyota_Celica_(A60)",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Toyota 22R-E 2.4 I4",
+      "cylinders": 4,
+      "layout": "I4",
+      "displacement_l": 2.4,
+      "aspiration": "NA",
+      "redline_rpm": 5500,
+      "stock_power_kw": 86,
+      "exhaust_note": "loud open",
+      "confidence": "high",
+      "evidence": "22R-E"
+    },
+    "colors": {
+      "primary": "#1a1a1a",
+      "secondary": "#d02020",
+      "accents": [
+        "#f0d020",
+        "#ffffff"
+      ]
+    },
+    "numbers": {
+      "color": "white on black",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "Black with red/yellow dripping-blood border, cartoon monsters",
+    "theme": "Horror / 'number of the beast' minus two (664)",
+    "photos": [
+      "IMG_8199.jpg",
+      "IMG_8198.jpg",
+      "IMG_8095.jpg",
+      "IMG_8410.jpg",
+      "JSG_3375.jpg",
+      "IMG_8199_XL.jpg",
+      "IMG_8198_XL.jpg",
+      "IMG_8095_XL.jpg",
+      "IMG_8410_XL.jpg",
+      "JSG_3375_XL.jpg"
+    ],
+    "photo_sightings": 20
+  },
+  {
+    "number": "963",
+    "team": "Borsche AG",
+    "class": "C",
+    "grid": 35,
+    "finish": 19,
+    "class_finish": 7,
+    "laps": 157,
+    "best_lap_s": 121.158,
+    "make": "Nissan",
+    "model": "Sentra (cut into a ute)",
+    "generation": "B13 (1991-94)",
+    "year": 1991,
+    "body": "truck",
+    "confidence": "medium",
+    "evidence": "Prior awards: Borsche AG '1991 Nissan Sentra'; photos show Sentra B13 face with roof chopped behind B-pillar into a pickup bed",
+    "dims": {
+      "wheelbase_m": 2.43,
+      "length_m": 4.32,
+      "width_m": 1.645,
+      "height_m": 1.38,
+      "track_m": 1.43,
+      "mass_kg": 1000,
+      "power_kw": 82,
+      "source": "https://en.wikipedia.org/wiki/Nissan_Sentra_(B13)",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Nissan GA16DE 1.6 I4",
+      "cylinders": 4,
+      "layout": "I4",
+      "displacement_l": 1.6,
+      "aspiration": "NA",
+      "redline_rpm": 6500,
+      "stock_power_kw": 82,
+      "exhaust_note": "stock muffler",
+      "confidence": "high",
+      "evidence": "GA16DE"
+    },
+    "colors": {
+      "primary": "#f2f2f2",
+      "secondary": "#3060c0",
+      "accents": [
+        "#f0c020"
+      ]
+    },
+    "numbers": {
+      "color": "blue on white",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "White with blue/yellow '963' (a Porsche 963 joke)",
+    "theme": "'Borsche' = Porsche 963 parody on a Sentra ute",
+    "photos": [
+      "IMG_8274.jpg",
+      "IMG_8134.jpg",
+      "JSG_3300.jpg",
+      "IMG_7950.jpg",
+      "JSG_2913.jpg",
+      "IMG_8274_XL.jpg",
+      "IMG_8134_XL.jpg",
+      "JSG_3300_XL.jpg",
+      "IMG_7950_XL.jpg",
+      "JSG_2913_XL.jpg"
+    ],
+    "photo_sightings": 14
+  },
+  {
+    "number": "74",
+    "team": "B Team - Just Plain Stupid",
+    "class": "A",
+    "grid": 12,
+    "finish": 20,
+    "class_finish": 6,
+    "laps": 156,
+    "best_lap_s": 106.525,
+    "make": "Lotus",
+    "model": "Elite 'Chotus' (Chevy V8 swap)",
+    "generation": "Type 75 (1974-82)",
+    "year": 1974,
+    "body": "hatch",
+    "confidence": "medium",
+    "evidence": "Prior awards: B Team - Just Plain Stupid #74 '1974 Lotus Chotus'; photos: yellow wedge shooting-brake with 'Chevrolet' and 'LLAMA' decals",
+    "dims": {
+      "wheelbase_m": 2.48,
+      "length_m": 4.47,
+      "width_m": 1.82,
+      "height_m": 1.21,
+      "track_m": 1.49,
+      "mass_kg": 1150,
+      "power_kw": 119,
+      "source": "https://en.wikipedia.org/wiki/Lotus_Elite_(1974)",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "GM small-block 5.7 V8 (swap; stock was Lotus 907 2.0)",
+      "cylinders": 8,
+      "layout": "V8",
+      "displacement_l": 5.7,
+      "aspiration": "NA",
+      "redline_rpm": 6000,
+      "stock_power_kw": 119,
+      "exhaust_note": "loud open",
+      "confidence": "medium",
+      "evidence": "'Chotus' name + 'Chevrolet' decal => GM V8 swap; fastest lap of the race (1:46.5)"
+    },
+    "colors": {
+      "primary": "#f0d020",
+      "secondary": "#1a3a8a",
+      "accents": [
+        "#d02020"
+      ]
+    },
+    "numbers": {
+      "color": "blue on yellow",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "Yellow with blue/red trim, 'LLAMA' and 'Chevrolet' script, DeLorean-style sticker",
+    "theme": "Llama mascot; Lotus+Chevy 'Chotus'",
+    "photos": [
+      "IMG_8225.jpg",
+      "IMG_8226.jpg",
+      "IMG_8096.jpg",
+      "IMG_7963.jpg",
+      "IMG_7991.jpg",
+      "IMG_8225_XL.jpg",
+      "IMG_8226_XL.jpg",
+      "IMG_8096_XL.jpg",
+      "IMG_7963_XL.jpg",
+      "IMG_7991_XL.jpg"
+    ],
+    "photo_sightings": 9
+  },
+  {
+    "number": "40",
+    "team": "Mock Grass Racing",
+    "class": "C",
+    "grid": 28,
+    "finish": 21,
+    "class_finish": 8,
+    "laps": 152,
+    "best_lap_s": 119.477,
+    "make": "Kia",
+    "model": "Sephia",
+    "generation": "1st gen (1993-97)/2nd (1998-2003)",
+    "year": 1998,
+    "body": "sedan",
+    "confidence": "high",
+    "evidence": "Prior awards: Mock Grass Racing #40 '1998 Kia Sephia'; photos: small sedan painted as a football field",
+    "dims": {
+      "wheelbase_m": 2.56,
+      "length_m": 4.48,
+      "width_m": 1.7,
+      "height_m": 1.41,
+      "track_m": 1.44,
+      "mass_kg": 1150,
+      "power_kw": 93,
+      "source": "https://en.wikipedia.org/wiki/Kia_Sephia",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Kia T8D 1.8 I4",
+      "cylinders": 4,
+      "layout": "I4",
+      "displacement_l": 1.8,
+      "aspiration": "NA",
+      "redline_rpm": 6500,
+      "stock_power_kw": 93,
+      "exhaust_note": "stock muffler",
+      "confidence": "high",
+      "evidence": "Stock 1.8"
+    },
+    "colors": {
+      "primary": "#2a8a3a",
+      "secondary": "#ffffff",
+      "accents": [
+        "#f0c020"
+      ]
+    },
+    "numbers": {
+      "color": "white '40' yard-line style",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "Green 'astroturf' with white yard lines and hash marks, goal-post uprights on the trunk",
+    "theme": "American football field (mock grass)",
+    "photos": [
+      "IMG_8195.jpg",
+      "IMG_8196.jpg",
+      "IMG_8061.jpg",
+      "IMG_8082.jpg",
+      "JSG_3349.jpg",
+      "IMG_8195_XL.jpg",
+      "IMG_8196_XL.jpg",
+      "IMG_8061_XL.jpg",
+      "IMG_8082_XL.jpg",
+      "JSG_3349_XL.jpg"
+    ],
+    "photo_sightings": 15
+  },
+  {
+    "number": "200",
+    "team": "Aggressively Adequate (R)",
+    "class": "A",
+    "grid": 45,
+    "finish": 22,
+    "class_finish": 7,
+    "laps": 151,
+    "best_lap_s": 108.622,
+    "make": "Scion",
+    "model": "FR-S / Toyota 86",
+    "generation": "ZN6 (2012-20)",
+    "year": 2013,
+    "body": "coupe",
+    "confidence": "medium",
+    "evidence": "Photos: white ZN6 86/FR-S coupe with wrecked front and 'THEME' scrawled all over; team name unknown in archives (Aggressively '80s ran a Firebird #50)",
+    "dims": {
+      "wheelbase_m": 2.57,
+      "length_m": 4.24,
+      "width_m": 1.775,
+      "height_m": 1.285,
+      "track_m": 1.52,
+      "mass_kg": 1250,
+      "power_kw": 149,
+      "source": "https://en.wikipedia.org/wiki/Toyota_86",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Subaru FA20 2.0 flat-4",
+      "cylinders": 4,
+      "layout": "flat4",
+      "displacement_l": 2.0,
+      "aspiration": "NA",
+      "redline_rpm": 7450,
+      "stock_power_kw": 149,
+      "exhaust_note": "stock muffler",
+      "confidence": "medium",
+      "evidence": "FA20 stock"
+    },
+    "colors": {
+      "primary": "#f2f2f2",
+      "secondary": "#1a1a1a",
+      "accents": []
+    },
+    "numbers": {
+      "color": "black on white",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "White, black hand-lettered 'THEME' text everywhere, bodywork crunched",
+    "theme": "Self-referential 'this is our theme' joke",
+    "photos": [
+      "IMG_8250.jpg",
+      "IMG_8249.jpg",
+      "IMG_8414.jpg",
+      "JSG_3296.jpg",
+      "JSG_2774.jpg",
+      "IMG_8250_XL.jpg",
+      "IMG_8249_XL.jpg",
+      "IMG_8414_XL.jpg",
+      "JSG_3296_XL.jpg",
+      "JSG_2774_XL.jpg"
+    ],
+    "photo_sightings": 8
+  },
+  {
+    "number": "9",
+    "team": "Arc Blast",
+    "class": "C",
+    "grid": 8,
+    "finish": 23,
+    "class_finish": 9,
+    "laps": 144,
+    "best_lap_s": 126.798,
+    "make": "Datsun",
+    "model": "620 pickup",
+    "generation": "620 (1972-79)",
+    "year": 1976,
+    "body": "truck",
+    "confidence": "high",
+    "evidence": "Prior awards: Arc Blast #9 '1976 Datsun 620'; photos: light-blue 620 with BRE-style livery",
+    "dims": {
+      "wheelbase_m": 2.53,
+      "length_m": 4.3,
+      "width_m": 1.59,
+      "height_m": 1.55,
+      "track_m": 1.3,
+      "mass_kg": 1150,
+      "power_kw": 82,
+      "source": "https://en.wikipedia.org/wiki/Datsun_620",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Nissan L20B 2.0 I4",
+      "cylinders": 4,
+      "layout": "I4",
+      "displacement_l": 2.0,
+      "aspiration": "NA",
+      "redline_rpm": 6000,
+      "stock_power_kw": 82,
+      "exhaust_note": "loud open",
+      "confidence": "medium",
+      "evidence": "L-series; L20B assumed"
+    },
+    "colors": {
+      "primary": "#8ac8e8",
+      "secondary": "#ffffff",
+      "accents": [
+        "#d03020",
+        "#f07020"
+      ]
+    },
+    "numbers": {
+      "color": "black on white",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "Light blue/white BRE Datsun homage with red/orange stripes, orange wheels, 'ARCBLAST' tailgate",
+    "theme": "BRE (Brock Racing) Datsun tribute",
+    "photos": [
+      "IMG_8290.jpg",
+      "IMG_8431.jpg",
+      "IMG_8056.jpg",
+      "JSG_3293.jpg",
+      "JSG_3387.jpg",
+      "IMG_8290_XL.jpg",
+      "IMG_8431_XL.jpg",
+      "IMG_8056_XL.jpg",
+      "JSG_3293_XL.jpg",
+      "JSG_3387_XL.jpg"
+    ],
+    "photo_sightings": 12
+  },
+  {
+    "number": "544",
+    "team": "ONSET/Tetanus Racing",
+    "class": "B",
+    "grid": 18,
+    "finish": 24,
+    "class_finish": 8,
+    "laps": 136,
+    "best_lap_s": 115.743,
+    "make": "Volvo",
+    "model": "PV544",
+    "generation": "PV544 (1958-65)",
+    "year": 1963,
+    "body": "sedan",
+    "confidence": "high",
+    "evidence": "Prior awards: ONSET/Tetanus Racing #544 '1963 Volvo PV544'; photos: maroon PV544",
+    "dims": {
+      "wheelbase_m": 2.6,
+      "length_m": 4.45,
+      "width_m": 1.58,
+      "height_m": 1.57,
+      "track_m": 1.32,
+      "mass_kg": 1000,
+      "power_kw": 67,
+      "source": "https://en.wikipedia.org/wiki/Volvo_PV444/544",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Volvo B18 1.8 I4",
+      "cylinders": 4,
+      "layout": "I4",
+      "displacement_l": 1.8,
+      "aspiration": "NA",
+      "redline_rpm": 6000,
+      "stock_power_kw": 67,
+      "exhaust_note": "loud open",
+      "confidence": "low",
+      "evidence": "B18/B20 or modern swap (team name implies rusty stock); B18 guessed"
+    },
+    "colors": {
+      "primary": "#8a2a2a",
+      "secondary": "#5a1a1a",
+      "accents": [
+        "#d0d0d0"
+      ]
+    },
+    "numbers": {
+      "color": "white on black board",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "Faded maroon with rust, cartoon eyes on the grille",
+    "theme": "Rust/tetanus",
+    "photos": [
+      "IMG_8233.jpg",
+      "IMG_8234.jpg",
+      "IMG_8287.jpg",
+      "IMG_8110.jpg",
+      "IMG_8424.jpg",
+      "IMG_8233_XL.jpg",
+      "IMG_8234_XL.jpg",
+      "IMG_8287_XL.jpg",
+      "IMG_8110_XL.jpg",
+      "IMG_8424_XL.jpg"
+    ],
+    "photo_sightings": 17
+  },
+  {
+    "number": "169",
+    "team": "Malört Racing Development (MRD)",
+    "class": "C",
+    "grid": 27,
+    "finish": 25,
+    "class_finish": 10,
+    "laps": 136,
+    "best_lap_s": 122.289,
+    "make": "Toyota",
+    "model": "Corolla wagon",
+    "generation": "E70 (1979-83)",
+    "year": 1981,
+    "body": "wagon",
+    "confidence": "medium",
+    "evidence": "Photos: boxy early-80s wagon with 'TOYOTA' rear-quarter script, Jeppson's Malört livery; no prior award record",
+    "dims": {
+      "wheelbase_m": 2.4,
+      "length_m": 4.24,
+      "width_m": 1.61,
+      "height_m": 1.38,
+      "track_m": 1.32,
+      "mass_kg": 950,
+      "power_kw": 56,
+      "source": "https://en.wikipedia.org/wiki/Toyota_Corolla_(E70)",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Toyota 3T-C 1.8 I4",
+      "cylinders": 4,
+      "layout": "I4",
+      "displacement_l": 1.8,
+      "aspiration": "NA",
+      "redline_rpm": 5600,
+      "stock_power_kw": 56,
+      "exhaust_note": "loud open",
+      "confidence": "low",
+      "evidence": "3T-C/2T guessed"
+    },
+    "colors": {
+      "primary": "#f2f2f2",
+      "secondary": "#d02020",
+      "accents": [
+        "#1a1a1a"
+      ]
+    },
+    "numbers": {
+      "color": "black on white",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "White/red Jeppson's Malört bottle livery, big rear wing",
+    "theme": "Malört (Chicago bitter liqueur)",
+    "photos": [
+      "IMG_8253.jpg",
+      "IMG_8254.jpg",
+      "IMG_8291.jpg",
+      "JSG_3371.jpg",
+      "IMG_7150.jpg",
+      "IMG_8253_XL.jpg",
+      "IMG_8254_XL.jpg",
+      "IMG_8291_XL.jpg",
+      "JSG_3371_XL.jpg",
+      "IMG_7150_XL.jpg"
+    ],
+    "photo_sightings": 15
+  },
+  {
+    "number": "105",
+    "team": "Scuderia Limoni",
+    "class": "C",
+    "grid": 30,
+    "finish": 26,
+    "class_finish": 11,
+    "laps": 135,
+    "best_lap_s": 123.866,
+    "make": "Alfa Romeo",
+    "model": "Spider",
+    "generation": "Series 3/4 (1983-93)",
+    "year": 1990,
+    "body": "roadster",
+    "confidence": "medium",
+    "evidence": "Prior awards: Scuderia Limoni runs Alfas (Milano, Berlina); photos: grey-silver Alfa Spider with roll hoop",
+    "dims": {
+      "wheelbase_m": 2.25,
+      "length_m": 4.26,
+      "width_m": 1.63,
+      "height_m": 1.29,
+      "track_m": 1.32,
+      "mass_kg": 1110,
+      "power_kw": 88,
+      "source": "https://en.wikipedia.org/wiki/Alfa_Romeo_Spider",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Alfa Romeo twin-cam 2.0 I4",
+      "cylinders": 4,
+      "layout": "I4",
+      "displacement_l": 2.0,
+      "aspiration": "NA",
+      "redline_rpm": 6200,
+      "stock_power_kw": 88,
+      "exhaust_note": "loud open",
+      "confidence": "high",
+      "evidence": "Alfa twin-cam 2.0"
+    },
+    "colors": {
+      "primary": "#b0b0b0",
+      "secondary": "#f0d020",
+      "accents": [
+        "#d02020"
+      ]
+    },
+    "numbers": {
+      "color": "black on yellow lemon",
+      "boards": [
+        "door",
+        "hood"
+      ]
+    },
+    "livery": "Silver with yellow lemon-shaped number roundel",
+    "theme": "Lemon (Scuderia Limoni)",
+    "photos": [
+      "JSG_3363.jpg",
+      "JSG_3210.jpg",
+      "IMG_8058.jpg",
+      "IMG_8420.jpg",
+      "IMG_8298.jpg",
+      "JSG_3363_XL.jpg",
+      "JSG_3210_XL.jpg",
+      "IMG_8058_XL.jpg",
+      "IMG_8420_XL.jpg",
+      "IMG_8298_XL.jpg"
+    ],
+    "photo_sightings": 16
+  },
+  {
+    "number": "34",
+    "team": "KnoxVegas LowBallerssss",
+    "class": "B",
+    "grid": 24,
+    "finish": 27,
+    "class_finish": 9,
+    "laps": 129,
+    "best_lap_s": 119.222,
+    "make": "Geo",
+    "model": "Metro (Mercedes face)",
+    "generation": "2nd gen (1989-94)",
+    "year": 1990,
+    "body": "hatch",
+    "confidence": "low",
+    "evidence": "Prior awards: Knoxvegas Lowballers ran '1990 Geo Metro SVT' and '1988 Mercedes 560SL'; photos: small 3-door hatch wearing a Mercedes grille, Gulf-style orange/black",
+    "dims": {
+      "wheelbase_m": 2.25,
+      "length_m": 3.79,
+      "width_m": 1.59,
+      "height_m": 1.35,
+      "track_m": 1.37,
+      "mass_kg": 750,
+      "power_kw": 41,
+      "source": "https://en.wikipedia.org/wiki/Suzuki_Cultus",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Suzuki G10 1.0 I3",
+      "cylinders": 3,
+      "layout": "I3",
+      "displacement_l": 1.0,
+      "aspiration": "NA",
+      "redline_rpm": 6000,
+      "stock_power_kw": 41,
+      "exhaust_note": "loud open",
+      "confidence": "low",
+      "evidence": "G10 three-cylinder (unless swapped)"
+    },
+    "colors": {
+      "primary": "#1a1a1a",
+      "secondary": "#f07020",
+      "accents": [
+        "#f0d020"
+      ]
+    },
+    "numbers": {
+      "color": "black on orange/yellow",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "Black front, orange rear, Gulf-like stripes, Mercedes grille grafted on, big wing",
+    "theme": "Mini-Mercedes / 'AMG' joke on a Metro",
+    "photos": [
+      "IMG_8297.jpg",
+      "IMG_8427.jpg",
+      "IMG_8372.jpg",
+      "JSG_3319.jpg",
+      "IMG_8101.jpg",
+      "IMG_8297_XL.jpg",
+      "IMG_8427_XL.jpg",
+      "IMG_8372_XL.jpg",
+      "JSG_3319_XL.jpg",
+      "IMG_8101_XL.jpg"
+    ],
+    "photo_sightings": 12
+  },
+  {
+    "number": "97",
+    "team": "Louballers",
+    "class": "C",
+    "grid": 4,
+    "finish": 28,
+    "class_finish": 12,
+    "laps": 128,
+    "best_lap_s": 119.852,
+    "make": "Ford",
+    "model": "Pinto",
+    "generation": "1st gen (1971-80)",
+    "year": 1975,
+    "body": "sedan",
+    "confidence": "medium",
+    "evidence": "Photos (unassigned set): light-blue 2-door Pinto sedan with black hood, '97' on yellow-green panel; no archive record for Louballers",
+    "dims": {
+      "wheelbase_m": 2.39,
+      "length_m": 4.39,
+      "width_m": 1.77,
+      "height_m": 1.3,
+      "track_m": 1.4,
+      "mass_kg": 1100,
+      "power_kw": 66,
+      "source": "https://en.wikipedia.org/wiki/Ford_Pinto",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Ford Lima 2.3 I4",
+      "cylinders": 4,
+      "layout": "I4",
+      "displacement_l": 2.3,
+      "aspiration": "NA",
+      "redline_rpm": 5500,
+      "stock_power_kw": 66,
+      "exhaust_note": "stock muffler",
+      "confidence": "medium",
+      "evidence": "Lima 2.3 I4"
+    },
+    "colors": {
+      "primary": "#9ac8e8",
+      "secondary": "#1a1a1a",
+      "accents": [
+        "#c8e040"
+      ]
+    },
+    "numbers": {
+      "color": "black on yellow-green panel",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "Baby blue with flat-black hood",
+    "theme": "None obvious",
+    "photos": [
+      "IMG_8299.jpg",
+      "IMG_8341.jpg",
+      "JSG_2898.jpg",
+      "IMG_7988.jpg",
+      "IMG_8027.jpg",
+      "IMG_8299_XL.jpg",
+      "IMG_8341_XL.jpg",
+      "JSG_2898_XL.jpg",
+      "IMG_7988_XL.jpg",
+      "IMG_8027_XL.jpg"
+    ],
+    "photo_sightings": 6
+  },
+  {
+    "number": "759",
+    "team": "In search of Edselance",
+    "class": "B",
+    "grid": 10,
+    "finish": 29,
+    "class_finish": 10,
+    "laps": 127,
+    "best_lap_s": 118.971,
+    "make": "Edsel",
+    "model": "Ranger",
+    "generation": "1959",
+    "year": 1959,
+    "body": "sedan",
+    "confidence": "high",
+    "evidence": "Prior awards: 'In Search of Edselence' #759 '1959 Edsel Ranger'; photos: rusty peach 1959 Edsel",
+    "dims": {
+      "wheelbase_m": 3.05,
+      "length_m": 5.38,
+      "width_m": 2.02,
+      "height_m": 1.45,
+      "track_m": 1.5,
+      "mass_kg": 1700,
+      "power_kw": 149,
+      "source": "https://en.wikipedia.org/wiki/Edsel_Ranger",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Ford Y-block 292 4.8 V8",
+      "cylinders": 8,
+      "layout": "V8",
+      "displacement_l": 4.8,
+      "aspiration": "NA",
+      "redline_rpm": 4800,
+      "stock_power_kw": 149,
+      "exhaust_note": "loud open",
+      "confidence": "medium",
+      "evidence": "292 Y-block assumed"
+    },
+    "colors": {
+      "primary": "#e8b890",
+      "secondary": "#8a5a3a",
+      "accents": [
+        "#30b0a0"
+      ]
+    },
+    "numbers": {
+      "color": "teal script",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "Peach/rust patina, teal hand-lettered number",
+    "theme": "Edsel failure jokes",
+    "photos": [
+      "IMG_8242.jpg",
+      "IMG_8241.jpg",
+      "IMG_8284.jpg",
+      "IMG_7084.jpg",
+      "JSG_3262.jpg",
+      "IMG_8242_XL.jpg",
+      "IMG_8241_XL.jpg",
+      "IMG_8284_XL.jpg",
+      "IMG_7084_XL.jpg",
+      "JSG_3262_XL.jpg"
+    ],
+    "photo_sightings": 13
+  },
+  {
+    "number": "319",
+    "team": "Fancy Chicken Racing",
+    "class": "C",
+    "grid": 33,
+    "finish": 30,
+    "class_finish": 13,
+    "laps": 126,
+    "best_lap_s": 126.51,
+    "make": "Ford",
+    "model": "Focus ZX3",
+    "generation": "1st gen (2000-07)",
+    "year": 2006,
+    "body": "hatch",
+    "confidence": "high",
+    "evidence": "Prior awards: Fancy Chicken Racing '2006 Ford Focus ZX3'; photos: yellow 3-door Focus",
+    "dims": {
+      "wheelbase_m": 2.615,
+      "length_m": 4.17,
+      "width_m": 1.7,
+      "height_m": 1.43,
+      "track_m": 1.49,
+      "mass_kg": 1150,
+      "power_kw": 101,
+      "source": "https://en.wikipedia.org/wiki/Ford_Focus_(first_generation)",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Ford Duratec 2.0 I4",
+      "cylinders": 4,
+      "layout": "I4",
+      "displacement_l": 2.0,
+      "aspiration": "NA",
+      "redline_rpm": 6750,
+      "stock_power_kw": 101,
+      "exhaust_note": "stock muffler",
+      "confidence": "high",
+      "evidence": "Duratec 2.0"
+    },
+    "colors": {
+      "primary": "#f0d020",
+      "secondary": "#1a1a1a",
+      "accents": [
+        "#ffffff"
+      ]
+    },
+    "numbers": {
+      "color": "black",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "Yellow with chicken decals",
+    "theme": "Fancy chicken",
+    "photos": [
+      "JSG_3341.jpg",
+      "IMG_8415.jpg",
+      "IMG_8016.jpg",
+      "IMG_7948.jpg",
+      "JSG_2803.jpg",
+      "JSG_3341_XL.jpg",
+      "IMG_8415_XL.jpg",
+      "IMG_8016_XL.jpg",
+      "IMG_7948_XL.jpg",
+      "JSG_2803_XL.jpg"
+    ],
+    "photo_sightings": 9
+  },
+  {
+    "number": "202",
+    "team": "Ur Moms Minivan Racing",
+    "class": "C",
+    "grid": 38,
+    "finish": 31,
+    "class_finish": 14,
+    "laps": 124,
+    "best_lap_s": 147.597,
+    "make": "Ford",
+    "model": "Aerostar",
+    "generation": "1986-97",
+    "year": 1990,
+    "body": "van",
+    "confidence": "high",
+    "evidence": "Photos: Ford-badged Aerostar minivan with stars-and-stripes nose, wing",
+    "dims": {
+      "wheelbase_m": 3.02,
+      "length_m": 4.44,
+      "width_m": 1.82,
+      "height_m": 1.85,
+      "track_m": 1.55,
+      "mass_kg": 1600,
+      "power_kw": 108,
+      "source": "https://en.wikipedia.org/wiki/Ford_Aerostar",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Ford Vulcan 3.0 V6",
+      "cylinders": 6,
+      "layout": "V6",
+      "displacement_l": 3.0,
+      "aspiration": "NA",
+      "redline_rpm": 5500,
+      "stock_power_kw": 108,
+      "exhaust_note": "stock muffler",
+      "confidence": "medium",
+      "evidence": "Vulcan 3.0 assumed (4.0 also possible)"
+    },
+    "colors": {
+      "primary": "#f2f2f2",
+      "secondary": "#1a3a8a",
+      "accents": [
+        "#d02020"
+      ]
+    },
+    "numbers": {
+      "color": "blue on white",
+      "boards": [
+        "door",
+        "nose"
+      ]
+    },
+    "livery": "White with US-flag stars on the nose, red lower front, rear wing",
+    "theme": "Ur Mom's minivan, patriotic",
+    "photos": [
+      "IMG_8221.jpg",
+      "IMG_8220.jpg",
+      "IMG_8288.jpg",
+      "IMG_7982.jpg",
+      "IMG_8072.jpg",
+      "IMG_8221_XL.jpg",
+      "IMG_8220_XL.jpg",
+      "IMG_8288_XL.jpg",
+      "IMG_7982_XL.jpg",
+      "IMG_8072_XL.jpg"
+    ],
+    "photo_sightings": 17
+  },
+  {
+    "number": "785",
+    "team": "Race Rambler",
+    "class": "C",
+    "grid": 39,
+    "finish": 32,
+    "class_finish": 15,
+    "laps": 122,
+    "best_lap_s": 129.142,
+    "make": "Rambler",
+    "model": "Classic",
+    "generation": "2nd gen (1961-62)",
+    "year": 1962,
+    "body": "sedan",
+    "confidence": "medium",
+    "evidence": "Photos: early-60s Rambler sedan, 'RAMBLER' text on rear quarter",
+    "dims": {
+      "wheelbase_m": 2.74,
+      "length_m": 4.75,
+      "width_m": 1.83,
+      "height_m": 1.45,
+      "track_m": 1.47,
+      "mass_kg": 1350,
+      "power_kw": 95,
+      "source": "https://en.wikipedia.org/wiki/Rambler_Classic",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "AMC 196 OHV 3.2 I6",
+      "cylinders": 6,
+      "layout": "I6",
+      "displacement_l": 3.2,
+      "aspiration": "NA",
+      "redline_rpm": 4700,
+      "stock_power_kw": 95,
+      "exhaust_note": "loud open",
+      "confidence": "medium",
+      "evidence": "196 OHV six"
+    },
+    "colors": {
+      "primary": "#d8d0b0",
+      "secondary": "#8a8a7a",
+      "accents": [
+        "#d02020"
+      ]
+    },
+    "numbers": {
+      "color": "black on white",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "Cream/primer with green-text windscreen banner",
+    "theme": "Classic Rambler",
+    "photos": [
+      "IMG_8123.jpg",
+      "IMG_8153.jpg",
+      "IMG_8078.jpg",
+      "JSG_2764.jpg",
+      "IMG_8123_XL.jpg",
+      "IMG_8153_XL.jpg",
+      "IMG_8078_XL.jpg",
+      "JSG_2764_XL.jpg"
+    ],
+    "photo_sightings": 5
+  },
+  {
+    "number": "20",
+    "team": "NSF Racing",
+    "class": "C",
+    "grid": 1,
+    "finish": 33,
+    "class_finish": 16,
+    "laps": 116,
+    "best_lap_s": 158.495,
+    "make": "Chrysler",
+    "model": "LeBaron Town & Country wagon",
+    "generation": "K-car (1982-88)",
+    "year": 1985,
+    "body": "wagon",
+    "confidence": "medium",
+    "evidence": "Lemons award: NSF Racing '1951 Ford Mach 1' (joke name); photos show a woodgrain Chrysler K-wagon with US-flag hood [https://24hoursoflemons.com/results-2/?id=457]",
+    "dims": {
+      "wheelbase_m": 2.53,
+      "length_m": 4.59,
+      "width_m": 1.73,
+      "height_m": 1.34,
+      "track_m": 1.46,
+      "mass_kg": 1200,
+      "power_kw": 72,
+      "source": "https://en.wikipedia.org/wiki/Chrysler_LeBaron",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Chrysler 2.2 I4",
+      "cylinders": 4,
+      "layout": "I4",
+      "displacement_l": 2.2,
+      "aspiration": "NA",
+      "redline_rpm": 5500,
+      "stock_power_kw": 72,
+      "exhaust_note": "stock muffler",
+      "confidence": "medium",
+      "evidence": "2.2 I4 (or Mitsubishi 2.6)"
+    },
+    "colors": {
+      "primary": "#c8a070",
+      "secondary": "#1a3a8a",
+      "accents": [
+        "#d02020",
+        "#ffffff"
+      ]
+    },
+    "numbers": {
+      "color": "white on red board",
+      "boards": [
+        "roof board",
+        "door"
+      ]
+    },
+    "livery": "Wood-grain sides, stars-and-stripes hood/roof, red roof number board",
+    "theme": "'Mach 1' Mustang parody on a Chrysler woodie wagon",
+    "photos": [
+      "IMG_7172.jpg",
+      "IMG_8309.jpg",
+      "JSG_2866.jpg",
+      "IMG_8073.jpg",
+      "JSG_2746.jpg",
+      "IMG_7172_XL.jpg",
+      "IMG_8309_XL.jpg",
+      "JSG_2866_XL.jpg",
+      "IMG_8073_XL.jpg",
+      "JSG_2746_XL.jpg"
+    ],
+    "photo_sightings": 10
+  },
+  {
+    "number": "143",
+    "team": "PIT CREW REVENGE ….",
+    "class": "C",
+    "grid": 40,
+    "finish": 34,
+    "class_finish": 17,
+    "laps": 112,
+    "best_lap_s": 136.357,
+    "make": "Lincoln",
+    "model": "Continental",
+    "generation": "5th gen (1970-79)",
+    "year": 1975,
+    "body": "sedan",
+    "confidence": "high",
+    "evidence": "Prior awards: PIT CREW REVENGE RACING BUTTER '75 Lincoln Continental'; photos match",
+    "dims": {
+      "wheelbase_m": 3.24,
+      "length_m": 5.88,
+      "width_m": 2.03,
+      "height_m": 1.4,
+      "track_m": 1.63,
+      "mass_kg": 2300,
+      "power_kw": 160,
+      "source": "https://en.wikipedia.org/wiki/Lincoln_Continental_(fifth_generation)",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Ford 385 460 7.5 V8",
+      "cylinders": 8,
+      "layout": "V8",
+      "displacement_l": 7.5,
+      "aspiration": "NA",
+      "redline_rpm": 4400,
+      "stock_power_kw": 160,
+      "exhaust_note": "loud open",
+      "confidence": "high",
+      "evidence": "460 V8"
+    },
+    "colors": {
+      "primary": "#c8a870",
+      "secondary": "#8a6a40",
+      "accents": [
+        "#f0d020"
+      ]
+    },
+    "numbers": {
+      "color": "dark brown",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "Butter-yellow/tan patina, lemon '24' sign, life-size cowboy riding a horse statue on the roof",
+    "theme": "Rodeo / cowboy on a horse",
+    "photos": [
+      "IMG_8216.jpg",
+      "IMG_8215.jpg",
+      "IMG_8439.jpg",
+      "JSG_3351.jpg",
+      "IMG_7171.jpg",
+      "IMG_8216_XL.jpg",
+      "IMG_8215_XL.jpg",
+      "IMG_8439_XL.jpg",
+      "JSG_3351_XL.jpg",
+      "IMG_7171_XL.jpg"
+    ],
+    "photo_sightings": 24
+  },
+  {
+    "number": "67",
+    "team": "Lost in Translation",
+    "class": "C",
+    "grid": 43,
+    "finish": 35,
+    "class_finish": 18,
+    "laps": 110,
+    "best_lap_s": 130.878,
+    "make": "Mitsuoka",
+    "model": "Viewt",
+    "generation": "K11-based (1993-2002)",
+    "year": 1995,
+    "body": "sedan",
+    "confidence": "high",
+    "evidence": "Lemons award page: '1995 Mitsuoka Viewt' (Heroic Fix); photos: Jaguar-Mk2-faced micro sedan [https://24hoursoflemons.com/results-2/?id=457]",
+    "dims": {
+      "wheelbase_m": 2.36,
+      "length_m": 4.25,
+      "width_m": 1.64,
+      "height_m": 1.425,
+      "track_m": 1.37,
+      "mass_kg": 870,
+      "power_kw": 58,
+      "source": "https://en.wikipedia.org/wiki/Mitsuoka_Viewt",
+      "verified_this_run": true,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Nissan CG13DE 1.3 I4",
+      "cylinders": 4,
+      "layout": "I4",
+      "displacement_l": 1.3,
+      "aspiration": "NA",
+      "redline_rpm": 6500,
+      "stock_power_kw": 58,
+      "exhaust_note": "stock muffler",
+      "confidence": "high",
+      "evidence": "CG13DE"
+    },
+    "colors": {
+      "primary": "#d02020",
+      "secondary": "#ffffff",
+      "accents": [
+        "#1a4a2a"
+      ]
+    },
+    "numbers": {
+      "color": "white on red",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "Red/white rising-sun rays, green Jaguar-style nose",
+    "theme": "Japanese rising sun on a Jaguar-faced Nissan March",
+    "photos": [
+      "IMG_8212.jpg",
+      "IMG_8211.jpg",
+      "IMG_8278.jpg",
+      "IMG_8313.jpg",
+      "IMG_8131.jpg",
+      "IMG_8212_XL.jpg",
+      "IMG_8211_XL.jpg",
+      "IMG_8278_XL.jpg",
+      "IMG_8313_XL.jpg",
+      "IMG_8131_XL.jpg"
+    ],
+    "photo_sightings": 14
+  },
+  {
+    "number": "1",
+    "team": "Team Bean Redux",
+    "class": "C",
+    "grid": 36,
+    "finish": 36,
+    "class_finish": 19,
+    "laps": 108,
+    "best_lap_s": 133.871,
+    "make": "Austin",
+    "model": "Mini",
+    "generation": "Mk1 (1959-67)",
+    "year": 1962,
+    "body": "hatch",
+    "confidence": "high",
+    "evidence": "Lemons award page: '1962 Austin Mini' (Organizers' Choice); photos: lime-green Mini [https://24hoursoflemons.com/results-2/?id=457]",
+    "dims": {
+      "wheelbase_m": 2.036,
+      "length_m": 3.05,
+      "width_m": 1.41,
+      "height_m": 1.35,
+      "track_m": 1.21,
+      "mass_kg": 620,
+      "power_kw": 25,
+      "source": "https://en.wikipedia.org/wiki/Mini",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "BMC A-series 0.85-1.3 I4",
+      "cylinders": 4,
+      "layout": "I4",
+      "displacement_l": 1.0,
+      "aspiration": "NA",
+      "redline_rpm": 6500,
+      "stock_power_kw": 25,
+      "exhaust_note": "loud open",
+      "confidence": "medium",
+      "evidence": "A-series, size unknown"
+    },
+    "colors": {
+      "primary": "#8ad040",
+      "secondary": "#ffffff",
+      "accents": [
+        "#1a1a1a"
+      ]
+    },
+    "numbers": {
+      "color": "black on white",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "Lime green with white roof",
+    "theme": "Tiny classic Mini",
+    "photos": [
+      "JSG_3268.jpg",
+      "IMG_7144.jpg",
+      "IMG_7146.jpg",
+      "IMG_8266.jpg",
+      "IMG_7109.jpg",
+      "JSG_3268_XL.jpg",
+      "IMG_7144_XL.jpg",
+      "IMG_7146_XL.jpg",
+      "IMG_8266_XL.jpg",
+      "IMG_7109_XL.jpg"
+    ],
+    "photo_sightings": 15
+  },
+  {
+    "number": "8",
+    "team": "Team Tinyvette",
+    "class": "C",
+    "grid": 31,
+    "finish": 37,
+    "class_finish": 20,
+    "laps": 107,
+    "best_lap_s": 121.986,
+    "make": "Opel",
+    "model": "GT 'Tinyvette'",
+    "generation": "1968-73",
+    "year": 1970,
+    "body": "coupe",
+    "confidence": "high",
+    "evidence": "Team Tinyvette (Grassroots Motorsports): Opel GT in Corvette Racing livery; photos: yellow Opel GT 'Compuware'",
+    "dims": {
+      "wheelbase_m": 2.43,
+      "length_m": 4.11,
+      "width_m": 1.58,
+      "height_m": 1.22,
+      "track_m": 1.25,
+      "mass_kg": 940,
+      "power_kw": 76,
+      "source": "https://en.wikipedia.org/wiki/Opel_GT",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Opel CIH 1.9 I4 (team-built 2.5 stroker)",
+      "cylinders": 4,
+      "layout": "I4",
+      "displacement_l": 2.5,
+      "aspiration": "NA",
+      "redline_rpm": 6000,
+      "stock_power_kw": 76,
+      "exhaust_note": "loud open",
+      "confidence": "high",
+      "evidence": "GRM: homebuilt 2.5 Opel CIH stroker"
+    },
+    "colors": {
+      "primary": "#f0d020",
+      "secondary": "#1a1a1a",
+      "accents": [
+        "#d02020"
+      ]
+    },
+    "numbers": {
+      "color": "black on yellow/white",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "Corvette Racing yellow with Compuware sponsor decals",
+    "theme": "Miniature C5-R Le Mans Corvette",
+    "photos": [
+      "IMG_8268.jpg",
+      "JSG_3382.jpg",
+      "IMG_8108.jpg",
+      "IMG_8111.jpg",
+      "JSG_3122.jpg",
+      "IMG_8268_XL.jpg",
+      "JSG_3382_XL.jpg",
+      "IMG_8108_XL.jpg",
+      "IMG_8111_XL.jpg",
+      "JSG_3122_XL.jpg"
+    ],
+    "photo_sightings": 10
+  },
+  {
+    "number": "0",
+    "team": "The Supranos",
+    "class": "A",
+    "grid": 2,
+    "finish": 38,
+    "class_finish": 8,
+    "laps": 104,
+    "best_lap_s": 112.619,
+    "make": "Toyota",
+    "model": "Corona",
+    "generation": "3rd/4th gen (1964-73)",
+    "year": 1970,
+    "body": "sedan",
+    "confidence": "high",
+    "evidence": "Prior awards: The Supranos '1970 Toyota Corona'; GRM article: box-flared, 1JZ-GTE Corona",
+    "dims": {
+      "wheelbase_m": 2.42,
+      "length_m": 4.17,
+      "width_m": 1.55,
+      "height_m": 1.42,
+      "track_m": 1.27,
+      "mass_kg": 1000,
+      "power_kw": 206,
+      "source": "https://en.wikipedia.org/wiki/Toyota_Corona",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Toyota 1JZ-GTE 2.5 I6 turbo (swap)",
+      "cylinders": 6,
+      "layout": "I6",
+      "displacement_l": 2.5,
+      "aspiration": "turbo",
+      "redline_rpm": 7000,
+      "stock_power_kw": 206,
+      "exhaust_note": "loud open",
+      "confidence": "high",
+      "evidence": "GRM: 1JZ-GTE turbo swap"
+    },
+    "colors": {
+      "primary": "#f2f2f2",
+      "secondary": "#1a1a1a",
+      "accents": [
+        "#d02020",
+        "#f07020"
+      ]
+    },
+    "numbers": {
+      "color": "black on white",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "White with black/red stripes, box flares, orange wheels",
+    "theme": "Sopranos mob joke",
+    "photos": [
+      "JSG_3237.jpg",
+      "IMG_8286.jpg",
+      "IMG_8097.jpg",
+      "IMG_8098.jpg",
+      "IMG_7984.jpg",
+      "JSG_3237_XL.jpg",
+      "IMG_8286_XL.jpg",
+      "IMG_8097_XL.jpg",
+      "IMG_8098_XL.jpg",
+      "IMG_7984_XL.jpg"
+    ],
+    "photo_sightings": 8
+  },
+  {
+    "number": "51",
+    "team": "Chase Race: The Best Damn….",
+    "class": "C",
+    "grid": 16,
+    "finish": 39,
+    "class_finish": 21,
+    "laps": 96,
+    "best_lap_s": 144.973,
+    "make": "Hudson",
+    "model": "Hornet",
+    "generation": "1951-54",
+    "year": 1952,
+    "body": "sedan",
+    "confidence": "high",
+    "evidence": "Lemons award page: '1952 Hudson Hornet'; photos: dark-blue 'Fabulous Hudson Hornet' with cartoon eyes [https://24hoursoflemons.com/results-2/?id=457]",
+    "dims": {
+      "wheelbase_m": 3.15,
+      "length_m": 5.283,
+      "width_m": 1.968,
+      "height_m": 1.524,
+      "track_m": 1.49,
+      "mass_kg": 1642,
+      "power_kw": 108,
+      "source": "https://en.wikipedia.org/wiki/Hudson_Hornet",
+      "verified_this_run": true,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Hudson H-145 308 5.0 I6",
+      "cylinders": 6,
+      "layout": "I6",
+      "displacement_l": 5.0,
+      "aspiration": "NA",
+      "redline_rpm": 3800,
+      "stock_power_kw": 108,
+      "exhaust_note": "loud open",
+      "confidence": "low",
+      "evidence": "Original 308 six unlikely to survive; swap unknown"
+    },
+    "colors": {
+      "primary": "#1e3a8a",
+      "secondary": "#f0c020",
+      "accents": [
+        "#ffffff"
+      ]
+    },
+    "numbers": {
+      "color": "white",
+      "boards": [
+        "door",
+        "front fender"
+      ]
+    },
+    "livery": "Doc Hudson from Pixar 'Cars': dark blue, 'FABULOUS HUDSON HORNET' in yellow, eyes on windscreen",
+    "theme": "Doc Hudson (Cars movie)",
+    "photos": [
+      "IMG_8333.jpg",
+      "IMG_8122.jpg",
+      "JSG_2884.jpg",
+      "IMG_8074.jpg",
+      "IMG_7093.jpg",
+      "IMG_8333_XL.jpg",
+      "IMG_8122_XL.jpg",
+      "JSG_2884_XL.jpg",
+      "IMG_8074_XL.jpg",
+      "IMG_7093_XL.jpg"
+    ],
+    "photo_sightings": 16
+  },
+  {
+    "number": "249",
+    "team": "Pony Keg",
+    "class": "C",
+    "grid": 42,
+    "finish": 40,
+    "class_finish": 22,
+    "laps": 85,
+    "best_lap_s": 115.805,
+    "make": "Oldsmobile",
+    "model": "Cutlass Supreme",
+    "generation": "G-body (1981-88)",
+    "year": 1986,
+    "body": "sedan",
+    "confidence": "high",
+    "evidence": "Prior awards: Pony Keg #249 '1986 Oldsmobile Cutlass Supreme Brougham'; photos: furry horse-hide Cutlass with horse head on the roof",
+    "dims": {
+      "wheelbase_m": 2.74,
+      "length_m": 5.08,
+      "width_m": 1.82,
+      "height_m": 1.39,
+      "track_m": 1.49,
+      "mass_kg": 1500,
+      "power_kw": 104,
+      "source": "https://en.wikipedia.org/wiki/Oldsmobile_Cutlass_Supreme",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Oldsmobile 307 5.0 V8",
+      "cylinders": 8,
+      "layout": "V8",
+      "displacement_l": 5.0,
+      "aspiration": "NA",
+      "redline_rpm": 4500,
+      "stock_power_kw": 104,
+      "exhaust_note": "loud open",
+      "confidence": "medium",
+      "evidence": "Olds 307 or 3.8 V6; 307 assumed"
+    },
+    "colors": {
+      "primary": "#5a4a3a",
+      "secondary": "#a08a6a",
+      "accents": [
+        "#d0d0d0"
+      ]
+    },
+    "numbers": {
+      "color": "white on black board",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "Covered in brown fur/hide, horse head on the roof, horse tail",
+    "theme": "Pony (horse) car",
+    "photos": [
+      "IMG_8240.jpg",
+      "JSG_2536.jpg",
+      "IMG_8435.jpg",
+      "IMG_8294.jpg",
+      "JSG_3393.jpg",
+      "IMG_8240_XL.jpg",
+      "JSG_2536_XL.jpg",
+      "IMG_8435_XL.jpg",
+      "IMG_8294_XL.jpg",
+      "JSG_3393_XL.jpg"
+    ],
+    "photo_sightings": 17
+  },
+  {
+    "number": "55",
+    "team": "I Snore Racing",
+    "class": "C",
+    "grid": 44,
+    "finish": 41,
+    "class_finish": 23,
+    "laps": 85,
+    "best_lap_s": 141.989,
+    "make": "Dodge",
+    "model": "B-series pickup",
+    "generation": "B-series (1948-53)",
+    "year": 1950,
+    "body": "truck",
+    "confidence": "low",
+    "evidence": "Photos: rounded late-40s pickup with horizontal grille bars, twin exhaust stacks behind the cab, bed with pillows/mattress; no archive record",
+    "dims": {
+      "wheelbase_m": 2.95,
+      "length_m": 4.83,
+      "width_m": 1.87,
+      "height_m": 1.75,
+      "track_m": 1.5,
+      "mass_kg": 1500,
+      "power_kw": 71,
+      "source": "https://en.wikipedia.org/wiki/Dodge_B_series_(1948)",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Chrysler flathead 230 3.8 I6",
+      "cylinders": 6,
+      "layout": "I6",
+      "displacement_l": 3.8,
+      "aspiration": "NA",
+      "redline_rpm": 3600,
+      "stock_power_kw": 71,
+      "exhaust_note": "straight pipe (stacks)",
+      "confidence": "low",
+      "evidence": "Stacks visible => open exhaust; engine probably swapped"
+    },
+    "colors": {
+      "primary": "#2a4a9a",
+      "secondary": "#c86030",
+      "accents": [
+        "#40c040"
+      ]
+    },
+    "numbers": {
+      "color": "black on green board",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "Blue patina with orange rust splashes, green door board, exhaust stacks",
+    "theme": "Bed in the bed ('I snore')",
+    "photos": [
+      "JSG_3308.jpg",
+      "JSG_3230.jpg",
+      "JSG_3409.jpg",
+      "IMG_8296.jpg",
+      "IMG_7087.jpg",
+      "JSG_3308_XL.jpg",
+      "JSG_3230_XL.jpg",
+      "JSG_3409_XL.jpg",
+      "IMG_8296_XL.jpg",
+      "IMG_7087_XL.jpg"
+    ],
+    "photo_sightings": 11
+  },
+  {
+    "number": "906",
+    "team": "Low Road Racing",
+    "class": "C",
+    "grid": 23,
+    "finish": 42,
+    "class_finish": 24,
+    "laps": 70,
+    "best_lap_s": 130.801,
+    "make": "Chevrolet",
+    "model": "Stylemaster",
+    "generation": "1946-48",
+    "year": 1947,
+    "body": "sedan",
+    "confidence": "high",
+    "evidence": "Prior awards: Low Road Racing #906 '1947 Chevy Stylemaster'; photos match",
+    "dims": {
+      "wheelbase_m": 2.94,
+      "length_m": 5.13,
+      "width_m": 1.88,
+      "height_m": 1.73,
+      "track_m": 1.47,
+      "mass_kg": 1450,
+      "power_kw": 67,
+      "source": "https://en.wikipedia.org/wiki/Chevrolet_Stylemaster",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Chevrolet Stovebolt 216 3.5 I6",
+      "cylinders": 6,
+      "layout": "I6",
+      "displacement_l": 3.5,
+      "aspiration": "NA",
+      "redline_rpm": 3800,
+      "stock_power_kw": 67,
+      "exhaust_note": "loud open",
+      "confidence": "low",
+      "evidence": "Likely swapped; Stovebolt six listed"
+    },
+    "colors": {
+      "primary": "#7aaad0",
+      "secondary": "#c0c0c0",
+      "accents": [
+        "#ffffff"
+      ]
+    },
+    "numbers": {
+      "color": "white arrow roundel",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "Faded powder blue, 'LOW ROAD RACING' script",
+    "theme": "Post-war hot rod",
+    "photos": [
+      "IMG_8222.jpg",
+      "IMG_8223.jpg",
+      "IMG_8067.jpg",
+      "IMG_8132.jpg",
+      "JSG_2714.jpg",
+      "IMG_8222_XL.jpg",
+      "IMG_8223_XL.jpg",
+      "IMG_8067_XL.jpg",
+      "IMG_8132_XL.jpg",
+      "JSG_2714_XL.jpg"
+    ],
+    "photo_sightings": 12
+  },
+  {
+    "number": "43",
+    "team": "Faster Farms: 18 years of….",
+    "class": "C",
+    "grid": 41,
+    "finish": 43,
+    "class_finish": 25,
+    "laps": 32,
+    "best_lap_s": 126.805,
+    "make": "Plymouth",
+    "model": "Belvedere II",
+    "generation": "1965-67",
+    "year": 1966,
+    "body": "sedan",
+    "confidence": "high",
+    "evidence": "Prior awards: Faster Farms #43 '1966 Plymouth Belvedere II'; photos match",
+    "dims": {
+      "wheelbase_m": 2.95,
+      "length_m": 5.13,
+      "width_m": 1.92,
+      "height_m": 1.37,
+      "track_m": 1.5,
+      "mass_kg": 1550,
+      "power_kw": 172,
+      "source": "https://en.wikipedia.org/wiki/Plymouth_Belvedere",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "Chrysler LA 318 5.2 V8",
+      "cylinders": 8,
+      "layout": "V8",
+      "displacement_l": 5.2,
+      "aspiration": "NA",
+      "redline_rpm": 4800,
+      "stock_power_kw": 172,
+      "exhaust_note": "loud open",
+      "confidence": "medium",
+      "evidence": "318 V8 guess"
+    },
+    "colors": {
+      "primary": "#a8c8e0",
+      "secondary": "#c8a050",
+      "accents": [
+        "#d02020"
+      ]
+    },
+    "numbers": {
+      "color": "black outline",
+      "boards": [
+        "door"
+      ]
+    },
+    "livery": "Light-blue patina with rust, hand-written slogans, hood/trunk flipped up on struts, chicken costumes",
+    "theme": "Farm / chickens; 18 years of Lemons",
+    "photos": [
+      "IMG_8245.jpg",
+      "IMG_8247.jpg",
+      "IMG_8151.jpg",
+      "IMG_8192.jpg",
+      "IMG_7115.jpg",
+      "IMG_8245_XL.jpg",
+      "IMG_8247_XL.jpg",
+      "IMG_8151_XL.jpg",
+      "IMG_8192_XL.jpg",
+      "IMG_7115_XL.jpg"
+    ],
+    "photo_sightings": 8
+  },
+  {
+    "number": "700",
+    "team": "SKINNY KOYOTE RACING Team A",
+    "class": "C",
+    "grid": 13,
+    "finish": 44,
+    "class_finish": 26,
+    "laps": 24,
+    "best_lap_s": 140.971,
+    "make": "Aston Martin",
+    "model": "DB7 Vantage coupe (\"Half-Asston\")",
+    "generation": "DB7 (1994-2004), V12 Vantage from 1999",
+    "year": 2001,
+    "body": "coupe",
+    "confidence": "high",
+    "evidence": "Owner (Coby) confirms it is a real Aston Martin DB7, not a Miata; award page lists \"2001 Aston Martin HALF-ASSTON\"",
+    "dims": {
+      "wheelbase_m": 2.591,
+      "length_m": 4.692,
+      "width_m": 1.83,
+      "height_m": 1.238,
+      "track_m": 1.524,
+      "mass_kg": 1780,
+      "power_kw": 313,
+      "source": "https://en.wikipedia.org/wiki/Aston_Martin_DB7 (DB7 Vantage)"
+    },
+    "engine": {
+      "family": "Aston Martin AM2 5.9 V12",
+      "cylinders": 12,
+      "layout": "V12",
+      "displacement_l": 5.9,
+      "aspiration": "NA",
+      "redline_rpm": 7000,
+      "stock_power_kw": 313,
+      "exhaust_note": "loud open",
+      "confidence": "high",
+      "evidence": "2001 DB7 = Vantage, 5.9 L V12 standard",
+      "gears": 6
+    },
+    "colors": {
+      "primary": "#1a1a1a",
+      "secondary": "#ffffff",
+      "accents": [
+        "#d02020"
+      ]
+    },
+    "numbers": {
+      "color": "white",
+      "boards": [
+        "door",
+        "nose"
+      ]
+    },
+    "livery": "Matte black, white 007-style tuxedo shirt/bow-tie on the hood",
+    "theme": "James Bond 007 Aston Martin",
+    "photos": [
+      "IMG_8062.jpg",
+      "IMG_8089.jpg",
+      "IMG_7141.jpg",
+      "JSG_2868.jpg",
+      "JSG_2782.jpg",
+      "IMG_8062_XL.jpg",
+      "IMG_8089_XL.jpg",
+      "IMG_7141_XL.jpg",
+      "JSG_2868_XL.jpg",
+      "JSG_2782_XL.jpg"
+    ],
+    "photo_sightings": 9
+  },
+  {
+    "number": "16",
+    "team": "Scrubbing Bubbles",
+    "class": "C",
+    "grid": 25,
+    "finish": 45,
+    "class_finish": 27,
+    "laps": 16,
+    "best_lap_s": 129.917,
+    "make": "Volkswagen",
+    "model": "Beetle",
+    "generation": "Type 1 (1938-2003)",
+    "year": 1965,
+    "body": "sedan",
+    "confidence": "high",
+    "evidence": "Lemons award: '1965 VW Scrubbing Bubble'; photos: light-blue Beetle with scrub-brush bristles along the sills [https://24hoursoflemons.com/results-2/?id=457]",
+    "dims": {
+      "wheelbase_m": 2.4,
+      "length_m": 4.07,
+      "width_m": 1.54,
+      "height_m": 1.5,
+      "track_m": 1.31,
+      "mass_kg": 780,
+      "power_kw": 30,
+      "source": "https://en.wikipedia.org/wiki/Volkswagen_Beetle",
+      "verified_this_run": false,
+      "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+    },
+    "engine": {
+      "family": "VW Type 1 1.2-1.6 flat-4",
+      "cylinders": 4,
+      "layout": "flat4",
+      "displacement_l": 1.3,
+      "aspiration": "NA",
+      "redline_rpm": 4600,
+      "stock_power_kw": 30,
+      "exhaust_note": "loud open",
+      "confidence": "medium",
+      "evidence": "Type 1 flat-4"
+    },
+    "colors": {
+      "primary": "#8ac8e0",
+      "secondary": "#c8b070",
+      "accents": [
+        "#1a1a1a"
+      ]
+    },
+    "numbers": {
+      "color": "black hand-painted",
+      "boards": [
+        "hood",
+        "door"
+      ]
+    },
+    "livery": "Light blue with yellow scrub-brush fringe and rubber-duck/bubble decorations",
+    "theme": "Scrubbing Bubbles bathroom cleaner",
+    "photos": [
+      "IMG_7091.jpg",
+      "IMG_7147.jpg",
+      "IMG_8366.jpg",
+      "IMG_7971.jpg",
+      "IMG_8401.jpg",
+      "IMG_7091_XL.jpg",
+      "IMG_7147_XL.jpg",
+      "IMG_8366_XL.jpg",
+      "IMG_7971_XL.jpg",
+      "IMG_8401_XL.jpg"
+    ],
+    "photo_sightings": 10
+  }
+]

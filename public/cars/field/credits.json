@@ -1,0 +1,149 @@
+{
+ "about": "Third-party 3D models used as the base of field cars (tools/cars/kit/import_model.py). Shown in the app credits. Each was decimated, re-textured with the race livery and given the kit wheels, cabin and props.",
+ "cars": {
+  "1": {
+   "title": "Mini Cooper Mk1",
+   "author": "Ivan_WSK",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/mini-cooper-mk1-0b032262d5a34360ae55390eb23b36f7",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "801": {
+   "title": "Mid engine coupe from the late 80s",
+   "author": "MaG80",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/a7b458168b2945d89d2d5250c3c79c55",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "200": {
+   "title": "Subaru BRZ (ZC6)",
+   "author": "Mona x Supercars",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/subaru-brz-zc6-321a9ece66bb4616872892c01d279542",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "58": {
+   "title": "Mini Cooper S",
+   "author": "cenobyte",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/mini-cooper-s-b262744901a04cda823f17289d1a4847",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "37": {
+   "title": "Bmw E301980",
+   "author": "driver_b194",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/bmw-e301980-a3ec7f3afe104bb188aa6a362e1aeb7a",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "41": {
+   "title": "1940_ford_v8",
+   "author": "Saurav Maity",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/1940-ford-v8-d9e2efb283534eebae96cf0963820d35",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "76": {
+   "title": "1986 Pontiac Fiero",
+   "author": "Romanov_13",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/1986-pontiac-fiero-723ae108310a45e3a9086b7adfa0a1a3",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "8": {
+   "title": "Opel GT Retopo",
+   "author": "Vertex Farm",
+   "licence": "CC-BY-NC-SA-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by-nc-sa/4.0/",
+   "url": "https://sketchfab.com/3d-models/opel-gt-retopo-badcab3c8a3d42359c8416db8a7427fe",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "711": {
+   "title": "1990 Mazda Miata NA",
+   "author": "Ricy (ngon_3d)",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/1990-mazda-miata-na-7acee5044310499f85df631b203227b5",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "906": {
+   "title": "Almost 1948 Mercury",
+   "author": "Libau Media (robinmikart)",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/almost-1948-mercury-f9d327ad3f984899808dbbc845a10506",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "51": {
+   "title": "FREE 1950s American Sedan 4 (Hudson Hornet)",
+   "author": "Libau Media (robinmikart)",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/free-1950s-american-sedan-4-hudson-hornet-0bb9ddc5ac9c4088bca39cd603d0100e",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "670": {
+   "title": "The Womp Wagon - 1986 Volvo 245",
+   "author": "CobyPal (cobyp)",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/the-womp-wagon-1986-volvo-245-df2cadfbe6714c528fed6c1fdf24b0f0",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "249": {
+   "title": "1987 Chevrolet Monte Carlo SS",
+   "author": "Randomness (throwbackthursdaymodels)",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/1987-chevrolet-monte-carlo-ss-58fa9d7b3029486a8c45a169d1c4a091",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "105": {
+   "title": "Alfa romeo spider serie 3",
+   "author": "maxipub (Configcars)",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/alfa-romeo-spider-serie-3-cbafa2d9c8884c6d88b10f425206d8ef",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "16": {
+   "title": "1963 Volkswagen Beetle 1200 Deluxe",
+   "author": "Ddiaz Design",
+   "licence": "CC-BY-NC-SA-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by-nc-sa/4.0/",
+   "url": "https://sketchfab.com/3d-models/b19433b592b24522b16acfe87da58771",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "664": {
+   "title": "Toyota Celica Supra XX",
+   "author": "penb",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/toyota-celica-supra-xx-b87e197f1b8e4b0da81da6d7f8f5655a",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "83": {
+   "title": "1976 Volkswagen Golf GTI Mk1",
+   "author": "Ddiaz Design",
+   "licence": "CC-BY-NC-SA-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by-nc-sa/4.0/",
+   "url": "https://sketchfab.com/3d-models/1976-volkswagen-golf-gti-mk1-1fc46cb37bd748e3bb9355fcedaf3817",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "963": {
+   "title": "Nissan Tsuru",
+   "author": "kotris666 (Meet The Colors the User TAD)",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/nissan-tsuru-59d6b88fbdc24041a2652b12eab7ceb6",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  }
+ }
+}

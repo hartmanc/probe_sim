@@ -1,0 +1,9 @@
+tools/
+docs/
+dist/
+scratch/
+*.log
+.venv/
+**/__pycache__/
+**/cache/
+*.tgz
