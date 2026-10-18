@@ -18,11 +18,13 @@ import type { DriverInput } from '../types';
 import type { Vehicle } from '../vehicle';
 import type { CarSpec } from '../spec';
 import type { RaceLine } from './line';
-import { accAt, coastDecel, type CarPerf } from './field';
+import { accAt, bankedG, coastDecel, loadFactor, type CarPerf } from './field';
 import type { Traffic } from './traffic';
 import { Rng } from './rng';
 
 const G = 9.81;
+// TEMP tuning knobs (removed before commit)
+const KN = (k: string, d: number): number => { const e = (globalThis as any).process?.env?.[k]; return e !== undefined && e !== '' ? Number(e) : d; };
 
 export interface AiDriverParams {
   number: string;
@@ -69,12 +71,15 @@ export const MISHAP_AGGRESSION = [0.6, 1, 1.5];
 const MISHAP_WIDE = 0.7;
 /** Run-wide slow phase: hold = HOLD0 + HOLDK x drawn loss (3-8 s), fitted with tools/race/selfplay.ts. */
 const MISHAP_HOLD0 = -2.5, MISHAP_HOLDK = 1.4;
-const CORNER_MARGIN = 0.95, BRAKE_MARGIN = 0.8;     // driverProfile: share of the lateral grip / braking used
+const CORNER_MARGIN = 0.97, BRAKE_MARGIN = 0.85;    // driverProfile: share of the lateral grip / braking used (0.95 / 0.8 until 18 Oct 2026)
+/** The grip limiter lifts only when the commanded path needs more than this multiple of the (banked) lateral grip (1 until
+ *  18 Oct 2026: at 1 it braked mid-corner for the pursuit's own correction curvature, ~1.5 s a lap on the Probe). */
+const GRIP_LIMIT = 1.5;
 const REAR_SLIP0 = 0.08, REAR_SLIPK = 6; // rad, 1/rad: ease the brake when the rear slides
 // lane model (NOTES "Racecraft (the lane model) and mishaps")
 const LANE_CLR = 0.3;      // m each side of a car's span in lane-occupancy checks (adjacent lanes leave >= 0.6 m)
 const FOLLOW_CLR = 0.4;    // m edge to edge: a car ahead closer than this laterally is in my lane and followed
-const ALONG_CLR = 0.45;    // m corridor margin beside a car alongside (inside the lane gap)
+const ALONG_CLR = KN('ALONG_CLR', 0.45);    // m corridor margin beside a car alongside (inside the lane gap)
 const GIVE_CLR = 0.2;      // m of that margin eaten before the car further back gives way
 const PLAN_EVERY = 0.2;    // s between pass plans / lane checks
 const PLAN_T = 10;         // s plan horizon for the occupancy projection
@@ -98,11 +103,16 @@ export function driverProfile(line: RaceLine, perf: CarPerf, prof: Float64Array)
   const N = line.N, curv = line.curv, grade = line.grade, ds = line.ds;
   const out = Float64Array.from(prof);
   const alat = CORNER_MARGIN * perf.alat;
-  for (let i = 0; i < N; i++) out[i] = Math.min(out[i], Math.sqrt(alat * G / Math.max(1e-5, Math.abs(curv[i]))));
+  for (let i = 0; i < N; i++) {
+    const k = Math.max(1e-5, Math.abs(curv[i]));
+    let v = out[i];
+    for (let it = 0; it < 4; it++) v = Math.min(out[i], Math.sqrt(bankedG(alat, line, i, v) * G / k));
+    out[i] = v;
+  }
   for (let k = 2 * N; k > 0; k--) {
     const j = k % N, i = (j - 1 + N) % N, v = out[j];
-    const u = Math.min(1, (v * v * Math.abs(curv[j])) / (perf.alat * G));
-    const d = BRAKE_MARGIN * perf.abrake * G * Math.sqrt(Math.max(0, 1 - u * u)) + G * grade[i];
+    const u = Math.min(1, (v * v * Math.abs(curv[j])) / (bankedG(perf.alat, line, j, v) * G));
+    const d = BRAKE_MARGIN * perf.abrake * G * loadFactor(line, j, v) * Math.sqrt(Math.max(0, 1 - u * u)) + G * grade[i];
     const vp = Math.sqrt(Math.max(0, v * v + 2 * Math.max(0.5, d) * ds[i]));
     if (vp < out[i]) out[i] = vp;
   }
@@ -291,9 +301,9 @@ export class AiDriver {
     // the path I am steering for (last tick's pure-pursuit curvature) must stay within the tyres' grip
     // (in a pass lane: the lane's own curvature, not the transient of a lane change, plus a small allowance)
     let kG = Math.abs(this.kCmd);
-    if (this.passPhase !== 0) { const kl = line.at(line.curv, sp); kG = Math.min(kG, Math.abs(kl) / Math.max(0.5, 1 - kl * this.shift) + 0.004); }
+    if (this.passPhase !== 0 && !(KN('MERGE_GRIP', 0) && this.passPhase === 3)) { const kl = line.at(line.curv, sp); kG = Math.min(kG, Math.abs(kl) / Math.max(0.5, 1 - kl * this.shift) + 0.004); }
     if (kG > 2e-3) {
-      const vk = Math.sqrt(perf.alat * G / kG);
+      const vk = Math.sqrt(GRIP_LIMIT * bankedG(perf.alat, line, Math.min(line.N - 1, Math.floor(line.wrap(sp) / line.spacing)), v) * G / kG);
       if (vk < vCmd) { vCmd = Math.max(0.95 * v, vk); this.limiter = 'grip'; aref = Math.min(aref, 0); }
     }
     // held off the line on the inside of a corner coming up: brake in time for its tighter radius
@@ -526,7 +536,7 @@ export class AiDriver {
       const d = -tr.ds(i, j);
       if (d < 0 || d > 25) break;
       if (tr.passing[j] !== i || tr.away[j]) continue;
-      const need = hwI + tr.hw[j] + ALONG_CLR, ej = tr.eT[j];
+      const need = hwI + tr.hw[j] + ALONG_CLR + KN('RES_YAW', 0) * yc, ej = tr.eT[j];
       if (Math.abs(ej - eMe) < need - 0.3) continue;   // straight behind me in my lane: nothing reserved yet
       if (ej > eMe) corHiE = Math.min(corHiE, ej - need); else corLoE = Math.max(corLoE, ej + need);
     }
@@ -882,7 +892,7 @@ export class AiDriver {
       // back to the racing line once its lane is free around me (or straight away under a flag)
       const lo = Math.min(0, eMe) - hwI - LANE_CLR, hi = Math.max(0, eMe) + hwI + LANE_CLR;
       // (cars behind / alongside in it must not reach me; a car ahead in it is simply followed once I am back)
-      if (!green || this.offTrack || this.mishap !== null || this.laneBlock(lo, hi, 1.5, v, tr.front[i] + 7 + 0.2 * v, 60, -1) > 1.5) this.passPhase = 3;
+      if (!green || this.offTrack || this.mishap !== null || this.laneBlock(lo, hi, 1.5, v, Math.max(tr.front[i] + 7 + 0.2 * v, KN('MERGE_AHEAD', 0)), 60, -1) > 1.5) this.passPhase = 3;
       return;
     }
     // 3: merging

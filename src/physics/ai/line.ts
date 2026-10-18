@@ -66,6 +66,8 @@ export class RaceLine {
   readonly off: Float64Array; readonly lx: Float64Array; readonly ly: Float64Array; readonly lz: Float64Array; readonly ds: Float64Array;
   /** racing line curvature (1/m, + = left), grade (dz/ds), road bank toward the left (tan) */
   readonly curv: Float64Array; readonly grade: Float64Array; readonly bank: Float64Array;
+  /** vertical curvature of the line, d(grade)/ds (1/m; negative over a crest, where the car goes light) */
+  readonly vcurv: Float64Array;
   /** ghost speed shape per station (m/s), from ghosts.json (default driver_a_best) */
   readonly ghostV: Float64Array;
   readonly ghostLap: number;
@@ -124,6 +126,9 @@ export class RaceLine {
     }
     this.curv = smoothPeriodic(kRaw, 4);
     this.grade = smoothPeriodic(gRaw, 3);
+    const vRaw = new Float64Array(N);
+    for (let i = 0; i < N; i++) { const a = (i - 3 + N) % N, b = (i + 3) % N; vRaw[i] = (this.grade[b] - this.grade[a]) / (6 * this.spacing); }
+    this.vcurv = smoothPeriodic(vRaw, 2);
     this.bank = new Float64Array(N);
     const fr = track.profile.fractions;
     for (let i = 0; i < N; i++) {

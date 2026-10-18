@@ -45,7 +45,14 @@ test('alone on track: racing line rms < 0.5 m', () => {
 
 test('clearly faster car behind: goes for it and passes, the car ahead does not defend, no contact', () => {
   // T1 (2:20) leads, T2 (2:05, > 3 % quicker, with the grip to match) starts right behind it; the player car is far slower, last
-  const d = field([{ number: 'T1', targetLap: 140, scale: 0.5 }, { number: 'T2', targetLap: 125, scale: 1.0 }, { number: '619', targetLap: 170, scale: 0.4 }], { laps: 3, mishapRate: 0 });
+  // (the grid is a seeded shuffle hashed with AI_VERSION: take the first seed that starts T2 right behind T1, as below)
+  const rows = [{ number: 'T1', targetLap: 140, scale: 0.5 }, { number: 'T2', targetLap: 125, scale: 1.0 }, { number: '619', targetLap: 170, scale: 0.4 }];
+  let d = field(rows, { laps: 3, mishapRate: 0 });
+  for (let seed = 2; seed < 40; seed++) {
+    const g = (n: string) => d.cars.find((c) => c.number === n)!.grid;
+    if (g('T2') === g('T1') + 1) break;
+    d = field(rows, { laps: 3, mishapRate: 0, seed });
+  }
   const m = runSelfplay(d, pack().makeSurface());
   const t1 = d.cars.find((c) => c.number === 'T1')!, t2 = d.cars.find((c) => c.number === 'T2')!;
   expect(t2.U).toBeGreaterThan(t1.U);                         // the pass happened

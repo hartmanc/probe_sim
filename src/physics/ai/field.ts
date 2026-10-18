@@ -9,7 +9,7 @@ import type { RaceLine } from './line';
 import { Rng, hashSeed } from './rng';
 
 /** Bump whenever the AI driver or the calibration changes behaviour (pace.json scales are then stale). */
-export const AI_VERSION = 6; // 6: CG lowered with the fitted grip (T/2h >= 1.15 x lateral mu: quick cars rolled over at T2 on the painted-road track). 5: 5: pace fit split into grip (corners) and power (straights): power follows the powertrain
+export const AI_VERSION = 7; // 7: lateral mu capped at 1.20 (pace above it from power); profiles credit banking and the crest/dip load; driver margins 0.97 lateral / 0.85 braking, grip limiter at 1.5x. 6: 6: CG lowered with the fitted grip (T/2h >= 1.15 x lateral mu: quick cars rolled over at T2 on the painted-road track). 5: 5: pace fit split into grip (corners) and power (straights): power follows the powertrain
 // 4: per-stint driver pace (each race draws one real stint per car), stint outlier rules
 // 3: #49 Mayflower re-specced as a Honda K24 swap (owner), recalibrated
 
@@ -266,10 +266,16 @@ function torqueShape(t: CarType): { rpm: number[]; tq: number[] } {
 
 const PROBE_LENGTH = 4.52; // hull front - rear of the Probe car.json
 
-/** Pace scalar range the calibration may use, and the grip range it trims before touching power. */
 /** Static rollover threshold T/2h kept at least this multiple of the AI car's fitted lateral tyre mu (aiCarJson). */
 export const ROLL_GRIP = 1.15;
-export const PACE_MIN = 0.3, PACE_MAX = 1.6, GRIP_MIN = 0.55, GRIP_MAX = 1.25;
+/**
+ * Ceiling on an AI car's fitted lateral tyre mu (owner, 18 Oct 2026: Lemons cars on 200-treadwear tyres; 1.28-1.48 g
+ * fits were not physical). The Probe car.json base is 1.10, so grip (x g^2) stops at sqrt(1.20 / 1.10); above that the
+ * pace comes from power. aiCarJson also clamps the fitted mu.
+ */
+export const MU_LAT_MAX = 1.2, PROBE_MU_LAT = 1.1;
+/** Pace scalar range the calibration may use, and the grip range it trims before touching power. */
+export const PACE_MIN = 0.3, PACE_MAX = 1.8, GRIP_MIN = 0.55, GRIP_MAX = Math.sqrt(MU_LAT_MAX / PROBE_MU_LAT);
 /** Power-to-weight ceiling for AI cars, kW per tonne (see aiCarJson). */
 export const KWT_MAX = 150;
 
@@ -408,6 +414,7 @@ export function aiCarJson(probeJson: any, identity: IdentityCar | null | undefin
   j.drivetrain.clutch.maxTorque = Math.max(j.drivetrain.clutch.maxTorque, 2 * Math.max(...j.engine.torqueCurve.torque));
   j.tyre.lateral.mu0 *= p2;
   j.tyre.longitudinal.mu0 *= p2;
+  if (j.tyre.lateral.mu0 > MU_LAT_MAX) { const c = MU_LAT_MAX / j.tyre.lateral.mu0; j.tyre.lateral.mu0 = MU_LAT_MAX; j.tyre.longitudinal.mu0 *= c; }
   // ... and the CG race-lowered further when the fitted grip exceeds that: the static rollover threshold T/2h stays
   // ROLL_GRIP x the lateral mu, so a high-grip car cannot lift both inside wheels and tip over in a long corner
   // (18 Oct 2026, painted-road track: the quick stints need grip scale > 1.14, where tall cars rolled over at T2)
@@ -593,16 +600,34 @@ export function coastDecel(perf: CarPerf, v: number): number {
 const GHOST_CAP = 1.3;
 /** Profile options (experiments and tools): `ghostCap` x the real Probe lap as a ceiling, `commit` = share of the lateral and braking budgets the profile asks for. */
 export interface ProfileOptions { ghostCap?: number; commit?: number }
+/**
+ * Lateral acceleration capacity (g) on a banked road: a level-road capacity `a` (g) plus the road's bank toward the
+ * inside of the turn (tan b > 0; the line's `bank` times the turn direction): (a + b) / (1 - a b). Laguna's T5, T6, the
+ * Corkscrew, Rainey and T10 are banked 4-12 %, worth 0.1-0.25 g (18 Oct 2026: the profile ignored it, so the AI
+ * drove the banked corners as if flat).
+ */
+export function bankedG(a: number, line: RaceLine, i: number, v = 0): number {
+  const k = line.curv[i];
+  const b = Math.max(-0.15, Math.min(0.15, k >= 0 ? line.bank[i] : -line.bank[i]));
+  return loadFactor(line, i, v) * (a + b) / Math.max(0.5, 1 - a * b);
+}
+
+/** Normal load factor from the line's vertical curvature at speed v: < 1 over a crest (the Corkscrew drop), > 1 in a dip. */
+export function loadFactor(line: RaceLine, i: number, v: number): number {
+  return Math.max(0.5, Math.min(1.25, 1 + v * v * line.vcurv[i] / G));
+}
+
+
 export function buildSpeedProfile(line: RaceLine, perf: CarPerf, spec: CarSpec, opts: ProfileOptions = {}): Float64Array {
   const N = line.N, curv = line.curv, grade = line.grade, ds = line.ds;
   const ghostCap = opts.ghostCap ?? GHOST_CAP, commit = opts.commit ?? 1;
   const vLat = new Float64Array(N);
   const ref = spec.tyre.speedSensitivity.refSpeed, slope = spec.tyre.speedSensitivity.slope;
   const VMAX = 85;
-  const capAt = (i: number, v: number) => commit * perf.alat * Math.max(0.6, 1 - slope * Math.max(0, v - ref));
+  const capAt = (i: number, v: number) => bankedG(commit * perf.alat * Math.max(0.6, 1 - slope * Math.max(0, v - ref)), line, i, v);
   for (let i = 0; i < N; i++) {
     const k = Math.max(1e-6, Math.abs(curv[i]));
-    let v = Math.min(VMAX, Math.sqrt(perf.alat * G / k));
+    let v = Math.min(VMAX, Math.sqrt(bankedG(perf.alat, line, i) * G / k));
     for (let it = 0; it < 4; it++) v = Math.min(VMAX, Math.sqrt(capAt(i, v) * G / k));
     vLat[i] = v;
   }
@@ -621,7 +646,7 @@ export function buildSpeedProfile(line: RaceLine, perf: CarPerf, spec: CarSpec, 
     }
     for (let k = 2 * N; k > 0; k--) {
       const j = k % N, i = (j - 1 + N) % N, v = prof[j];
-      const d = commit * perf.abrake * G * ell(v, j) + G * grade[i];
+      const d = commit * perf.abrake * G * loadFactor(line, j, v) * ell(v, j) + G * grade[i];
       const vp = Math.sqrt(Math.max(0, v * v + 2 * Math.max(0.5, d) * ds[i]));
       if (vp < prof[i]) prof[i] = vp;
     }
