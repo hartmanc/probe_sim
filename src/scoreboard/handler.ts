@@ -5,7 +5,7 @@ import { verifyHotlap } from './replay';
 import type { SimAssets } from './sim';
 import type { ScoreStore } from './store';
 import type { ApiError, Board, HotlapSubmission, InputType, RaceSubmission, Score, SubmitResult } from './types';
-import { boardKey, lowerIsBetter, nameKey, normalizeName, parseBoardKey, validateSubmission } from './validate';
+import { boardKey, lowerIsBetter, nameKey, normalizeName, parseBoardKey, raceScore, validateSubmission } from './validate';
 
 export interface HandlerDeps {
   store: ScoreStore;
@@ -20,7 +20,7 @@ export interface HandlerDeps {
   log?: (msg: string) => void;
 }
 
-interface Meta { name: string; input: InputType; at: string; ai_version?: string; laps?: number; device?: string; replayed?: number; claimed?: number }
+interface Meta { name: string; input: InputType; at: string; ai_version?: string; laps?: number; finished?: boolean; device?: string; replayed?: number; claimed?: number }
 
 const BASE_HEADERS: Record<string, string> = {
   'Content-Type': 'application/json; charset=utf-8',
@@ -133,9 +133,9 @@ async function postScore(req: Request, deps: HandlerDeps): Promise<Response> {
     meta = { name, input: s.input, at, replayed, claimed: s.time, ...(s.device ? { device: s.device } : {}) };
   } else {
     const s = sub as RaceSubmission;
-    score = Math.round(s.metres * 100) / 100;
+    score = raceScore(s, s.track in TRACKS ? TRACKS[s.track as keyof typeof TRACKS].length_m : 0);
     key = boardKey('race', s.track, s.car, s.physics, s.ai_version);
-    meta = { name, input: s.input, at, ai_version: s.ai_version, laps: s.laps, ...(s.device ? { device: s.device } : {}) };
+    meta = { name, input: s.input, at, ai_version: s.ai_version, laps: s.laps, finished: !!s.finished, ...(s.device ? { device: s.device } : {}) };
   }
   const asc = lowerIsBetter(sub.mode);
   const member = nameKey(name);

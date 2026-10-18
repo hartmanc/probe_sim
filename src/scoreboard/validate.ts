@@ -42,7 +42,21 @@ export function parseBoardKey(key: unknown): { mode: Mode; track: string; car: s
 }
 
 /** Ascending boards (lower is better) vs descending. */
-export const lowerIsBetter = (mode: Mode): boolean => mode === 'hotlap';
+/** Both boards sort ascending: hot-lap time, and the race score below (finish time, then distance). */
+export const lowerIsBetter = (_mode: Mode): boolean => true;
+
+/** Race score for the sorted set: finish time for a finished race, else distance encoded above LIMITS.raceDnfBase
+ *  (max metres - metres, so more distance sorts first). Lower is better. */
+export function raceScore(s: { finished?: boolean; time?: number; metres: number }, trackLength: number): number {
+  if (s.finished && typeof s.time === 'number') return Math.round(s.time * 1000) / 1000;
+  const maxM = LIMITS.raceLaps * trackLength + LIMITS.raceMarginM;
+  return LIMITS.raceDnfBase + Math.round(Math.max(0, maxM - s.metres) * 100) / 100;
+}
+/** Inverse for display: the finish time, or the metres of a car classified short. */
+export function raceScoreView(score: number, trackLength: number): { time: number } | { metres: number } {
+  if (score < LIMITS.raceDnfBase) return { time: score };
+  return { metres: Math.max(0, LIMITS.raceLaps * trackLength + LIMITS.raceMarginM - (score - LIMITS.raceDnfBase)) };
+}
 
 /**
  * Plausibility checks on a parsed POST body. `serverPhysics` is the server's physicsVersion() for the
@@ -89,6 +103,11 @@ export function validateSubmission(body: unknown, serverPhysics?: (track: string
     if (b.position !== undefined && (typeof b.position !== 'number' || !Number.isInteger(b.position) || b.position < 1 || b.position > 64)) r.push('position malformed');
     if (b.finished !== undefined && typeof b.finished !== 'boolean') r.push('finished malformed');
     if (b.finished === true && laps !== LIMITS.raceLaps) r.push('finished requires all laps');
+    const tm = b.time;
+    const tMin = LIMITS.raceLaps * LIMITS.lapMin, tMax = LIMITS.raceLaps * LIMITS.lapMax;
+    if (b.finished === true) {
+      if (typeof tm !== 'number' || !Number.isFinite(tm) || !(tm > tMin && tm < tMax)) r.push(`finished requires a race time between ${tMin} and ${tMax} s`);
+    } else if (tm !== undefined && tm !== null) r.push('time only with a finished race');
   }
   if (r.length) return { ok: false, reasons: r };
   const value = { ...(b as object), name } as Submission;

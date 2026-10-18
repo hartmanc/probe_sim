@@ -113,6 +113,8 @@ export interface ResultRow {
   laps: number;
   lapsCompleted: number;
   bestLap: number | null;
+  /** race time, s from the green to the crossing that completed the last lap; null for a car classified short of it */
+  time: number | null;
   status: 'running' | 'ejected';
   player: boolean;
 }
@@ -169,6 +171,8 @@ export interface RaceCar {
   // race bookkeeping
   U: number; hint: number;
   lapStart: number; lastLap: number; bestLap: number;
+  /** race time (s after the green) of the crossing that completed the last lap; NaN until then */
+  finishAt: number;
   lapsDone: number;
   lapIdx: number; lapStartGreen: boolean;
   /** race distance U at the green flag (NaN before): the live counter counts from here (owner, 17 Oct 2026) */
@@ -339,7 +343,7 @@ export class RaceDirector {
         idx: this.cars.length, number: c.number, team: c.team, cls: c.class, grid: c.grid, isPlayer, vehicle,
         surface: (isPlayer && inputs.playerSurface) || (inputs.makeSurface ? inputs.makeSurface() : inputs.surface), spec, driver, pace: c,
         identity: id, tint: tintFor(c.number), paceTarget: dp.targetLap, paceSigma: dp.sigma, paceScale: dp.scale, stint: dp.stint,
-        U: 0, hint: -1, lapStart: NaN, lastLap: NaN, bestLap: NaN, lapsDone: 0, lapIdx: 0, lapStartGreen: false, greenU: NaN, finished: false, recoveries: 0, mishaps: 0,
+        U: 0, hint: -1, lapStart: NaN, lastLap: NaN, bestLap: NaN, finishAt: NaN, lapsDone: 0, lapIdx: 0, lapStartGreen: false, greenU: NaN, finished: false, recoveries: 0, mishaps: 0,
       };
       this.cars.push(car);
     }
@@ -445,7 +449,7 @@ export class RaceDirector {
       car.vehicle.reset([pos[0], pos[1], z], line.headingAt(sw), Math.max(5, v0), up);
       // race distance from the start/finish line: negative before it (s near L), positive past it
       car.U = sw > 0.5 * L ? sw - L : sw;
-      car.hint = -1; car.lapStart = NaN; car.lastLap = NaN; car.bestLap = NaN; car.lapsDone = 0; car.lapIdx = Math.floor(car.U / L); car.lapStartGreen = false; car.greenU = NaN; car.finished = false; car.recoveries = 0; car.mishaps = 0;
+      car.hint = -1; car.lapStart = NaN; car.lastLap = NaN; car.bestLap = NaN; car.finishAt = NaN; car.lapsDone = 0; car.lapIdx = Math.floor(car.U / L); car.lapStartGreen = false; car.greenU = NaN; car.finished = false; car.recoveries = 0; car.mishaps = 0;
       if (car.driver) {
         car.driver.resetState();
         car.driver.mishapCount = 0;
@@ -574,6 +578,7 @@ export class RaceDirector {
         car.lapStartGreen = this.phase === 'green' || this.phase === 'yellow';
         car.lapIdx = li;
         car.lapsDone = Math.max(0, li);
+        if (li >= this.config.laps && !Number.isFinite(car.finishAt)) car.finishAt = tc - this.#greenAt;
         if ((this.phase === 'chequered' || this.phase === 'finished') && !car.finished) {
           car.finished = true;
           if (car.driver) { car.driver.ctl.paceFactor = 0.6; car.driver.ctl.mishapRate = 0; }
@@ -762,6 +767,7 @@ export class RaceDirector {
       metres: +Math.max(0, c.U).toFixed(1), laps: +(Math.max(0, c.U) / L).toFixed(3),
       lapsCompleted: Math.max(0, Math.floor(c.U / L)),
       bestLap: Number.isFinite(c.bestLap) ? +c.bestLap.toFixed(3) : null,
+      time: Number.isFinite(c.finishAt) ? +c.finishAt.toFixed(3) : null,
       status: c.isPlayer && this.pen.ejected ? 'ejected' : 'running', player: c.isPlayer,
     }));
   }

@@ -19,11 +19,13 @@ import { loadFieldData, loadFieldModel, type FieldData } from '../loader';
 import { FieldCars, identityColor, type FieldCarInfo } from '../field-cars';
 import { RaceHudDom, raceHudView, raceTable, resultRows, rowStatus, type TableRow } from '../race-hud';
 export { rowStatus, type RowStatus } from '../race-hud';
-import { fmtMetres, setBoardContext, submitRace, type RaceResult, type SubmitOutcome } from '../scoreboard-client';
+import { fmtLapTime, fmtMetres, setBoardContext, submitRace, type RaceResult, type SubmitOutcome } from '../scoreboard-client';
+import { LIMITS } from '../../scoreboard/config';
 import { FieldAudio, familyFor, FIELD_VOICES_DESKTOP, FIELD_VOICES_PHONE, type FamilyIndex, type Layout } from '../audio-field';
 import type { ConeLineLike, FieldAudioCar, FieldAudioHook, FieldAudioLike, FieldCarSound, GameMode, ModeContext, ModeHud, RaceServices } from './mode';
 
-export const RACE_LAPS = 5; // was 10 until 17 Oct 2026 (owner: 10 is a long time alone in a sim)
+/** 5 since 17 Oct 2026 (owner: 10 is a long time alone in a sim); the server validates against the same number. */
+export const RACE_LAPS: number = LIMITS.raceLaps;
 export const PLAYER_NUMBER = '619';
 // AI shadows: quality.aiShadowCasters nearest AI cars cast shadow-map shadows inside the sun's ±quality.shadowBoxM box
 // (desktop 12 cars / ±30 m / 4096 px; phone and ?aishadows=0: none); the rest keep a contact-shadow blob (src/app/quality.ts).
@@ -65,7 +67,9 @@ export function raceResultFor(rows: TableRow[], o: { seed: number; aiVersion: nu
     aiVersion: String(o.aiVersion),
     seed: o.seed,
     position: me.position,
-    finished: o.finished && (me.status === 'running' || me.status === 'finished'),
+    // finished = all laps completed: only then is there a race time, and the time is the score
+    finished: o.finished && me.time != null && (me.status === 'running' || me.status === 'finished'),
+    ...(o.finished && me.time != null ? { time: me.time } : {}),
   };
 }
 
@@ -487,7 +491,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
     const shortRace = laps !== RACE_LAPS && !ov.devSubmit;
     return {
       title: 'RESULTS',
-      subtitle: `${laps} lap${laps === 1 ? '' : 's'} · seed ${seed}${me ? ` · P${me.position} of ${rows.length} · ${fmtMetres(me.metres, Math.max(0, me.laps), L())}` : ''}`,
+      subtitle: `${laps} lap${laps === 1 ? '' : 's'} · seed ${seed}${me ? ` · P${me.position} of ${rows.length} · ${me.time != null ? `${me.laps} laps in ${fmtLapTime(me.time)}` : fmtMetres(me.metres, Math.max(0, me.laps), L())}` : ''}`,
       body: () => raceTable(rows, L(), d?.getResults() ? 'CHEQUERED FLAG · LAGUNA SECA · 2026 LEMONS FIELD' : 'OUT OF THE RACE · ORDER WHEN YOU LEFT'),
       entries: (): MenuEntry[] => [
         {

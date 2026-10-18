@@ -3,7 +3,7 @@
 // director's RaceHud to display strings and is pure (unit-tested); the DOM classes only render it.
 import { FF_SCALE, type RaceHud, type ResultRow } from '../physics/ai/race';
 import { fmtTime } from './hud';
-import { fmtMetres } from './scoreboard-client';
+import { fmtLapTime, fmtMetres } from './scoreboard-client';
 
 export type FlagKind = 'yellow' | 'green' | 'chequered' | 'black' | 'none';
 
@@ -142,6 +142,8 @@ export class RaceHudDom {
 export interface TableRow {
   position: number; number: string; team: string; class: string;
   metres: number; laps: number; status: string; player: boolean; bestLap?: number | null;
+  /** race time to complete all laps, s (finishers only) */
+  time?: number | null;
 }
 
 export type RowStatus = 'running' | 'finished' | 'out' | 'ejected';
@@ -163,7 +165,7 @@ export function resultRows(rows: ResultRow[], out: { metres: number } | null): T
     metres: r.player && out ? out.metres : r.metres,
     laps: r.player && out ? -1 : r.lapsCompleted,
     status: rowStatus({ player: r.player, out: !!out, ejected: r.status === 'ejected', flagged: true }),
-    player: r.player, bestLap: r.bestLap,
+    player: r.player, bestLap: r.bestLap, time: r.time,
   }));
 }
 
@@ -181,7 +183,7 @@ export function raceTable(rows: TableRow[], trackLength: number, caption: string
     row.append(
       el('span', 'rt-pos', String(r.position)), el('span', 'rt-num', r.number),
       el('span', 'rt-team', `${r.team}${r.player ? ' (you)' : ''}`),
-      el('span', 'rt-dist', fmtMetres(Math.max(0, r.metres), Math.max(0, laps), trackLength)),
+      el('span', 'rt-dist', r.time != null && laps > 0 ? `${laps}L ${fmtLapTime(r.time)}` : fmtMetres(Math.max(0, r.metres), Math.max(0, laps), trackLength)),
       el('span', `rt-st st-${r.status}`, r.status),
     );
     box.append(row);

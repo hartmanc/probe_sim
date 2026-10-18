@@ -2,6 +2,7 @@
 // localStorage, building submissions, deciding whether a lap may be submitted, and the board context the
 // hot-lap and (future) race modes submit through. No DOM besides localStorage / location / fetch, all guarded,
 // so it is unit-tested in node.
+import { raceScoreView } from '../scoreboard/validate';
 import {
   LIMITS, boardKey, lowerIsBetter, normalizeName,
   type ApiError, type Board, type HotlapSubmission, type InputTrace, type InputType, type Mode, type RaceSubmission,
@@ -230,8 +231,10 @@ export function raceBoard(c: BoardContext | null = ctx): string | null {
 export interface RaceResult {
   /** Distance covered, m (the score). */
   metres: number;
-  /** Laps completed, 0..10. */
+  /** Laps completed, 0..LIMITS.raceLaps. */
   laps: number;
+  /** Race time, s from the green to the last-lap crossing (finishers only; the score). */
+  time?: number;
   /** Race AI version; part of the board key. Defaults to the context's raceAiVersion. */
   aiVersion?: string;
   /** Field seed (stored in the reserved `replay` field; ignored by the server today). */
@@ -299,5 +302,8 @@ export function fmtMetres(metres: number, laps: number | undefined, trackLength:
   return `${laps}L +${Math.round(rest).toLocaleString('en-US')} m`;
 }
 
-export const fmtScore = (mode: Mode, score: number, laps?: number, trackLength = 0): string =>
-  mode === 'hotlap' ? fmtLapTime(score) : fmtMetres(score, laps, trackLength);
+export const fmtScore = (mode: Mode, score: number, laps?: number, trackLength = 0): string => {
+  if (mode === 'hotlap') return fmtLapTime(score);
+  const v = raceScoreView(score, trackLength);
+  return 'time' in v ? `${laps ?? LIMITS.raceLaps}L ${fmtLapTime(v.time)}` : fmtMetres(v.metres, laps, trackLength);
+};

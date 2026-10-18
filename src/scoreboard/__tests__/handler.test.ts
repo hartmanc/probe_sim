@@ -91,15 +91,19 @@ describe('api handler', () => {
     expect(g.you.rank).toBe(12);
   });
 
-  test('race: plausibility only, descending, keyed by ai_version', async () => {
+  test('race: plausibility only, finishers by time then distance, keyed by ai_version', async () => {
     const d = deps();
-    const race = (name: string, metres: number, laps: number, ai = 'ai-1') => post({ mode: 'race', track: 'laguna_seca', car: 'probe_gt', physics: PV, name, input: 'keys', ai_version: ai, metres, laps, replay: null }, { 'x-forwarded-for': name });
-    expect((await handleScores(race('a', 30_000, 8), d)).status).toBe(200);
-    expect(await (await handleScores(race('b', 35_000, 9), d)).json()).toMatchObject({ rank: 1, board: `race:laguna_seca:probe_gt:${PV}:ai-1` });
+    const race = (name: string, metres: number, laps: number, ai = 'ai-1', time?: number) => post({ mode: 'race', track: 'laguna_seca', car: 'probe_gt', physics: PV, name, input: 'keys', ai_version: ai, metres, laps, replay: null, ...(time ? { finished: true, time } : {}) }, { 'x-forwarded-for': name });
+    expect((await handleScores(race('a', 14_000, 3), d)).status).toBe(200);
+    expect(await (await handleScores(race('b', 16_000, 4), d)).json()).toMatchObject({ rank: 1, board: `race:laguna_seca:probe_gt:${PV}:ai-1` });
+    // a finisher ranks by race time, ahead of every car classified short
+    expect(await (await handleScores(race('f', 17_800, 5, 'ai-1', 700), d)).json()).toMatchObject({ rank: 1 });
+    expect(await (await handleScores(race('g', 17_800, 5, 'ai-1', 650), d)).json()).toMatchObject({ rank: 1 });
+    expect(await (await handleScores(race('b2', 16_500, 4), d)).json()).toMatchObject({ rank: 3 });
     expect(await (await handleScores(race('c', 1_000, 0, 'ai-2'), d)).json()).toMatchObject({ rank: 1, board: `race:laguna_seca:probe_gt:${PV}:ai-2` });
-    expect((await handleScores(race('d', 99_000, 10), d)).status).toBe(422);
+    expect((await handleScores(race('d', 99_000, 5), d)).status).toBe(422);
     const g = await (await handleScores(get(`?board=race:laguna_seca:probe_gt:${PV}:ai-1`), d)).json() as { entries: { name: string; laps: number; ai_version: string }[] };
-    expect(g.entries.map((e) => e.name)).toEqual(['b', 'a']);
+    expect(g.entries.map((e) => e.name)).toEqual(['g', 'f', 'b2', 'b', 'a']);
     expect(g.entries[0]).toMatchObject({ laps: 9, ai_version: 'ai-1' });
   });
 

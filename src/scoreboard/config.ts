@@ -74,8 +74,11 @@ export const LIMITS = {
   /** Request body cap, bytes. */
   maxBodyBytes: 2_500_000,
   /** Race: laps and the slack on the metres check, m. */
-  raceLaps: 10,
+  raceLaps: 5,
   raceMarginM: 250,
+  /** Race boards rank finish time; a car classified short is ranked by distance, encoded above this base so one
+   *  ascending sorted set orders both (see validate.ts raceScore). */
+  raceDnfBase: 1_000_000,
   /** Rate limit: posts per window per IP. */
   ratePosts: 10,
   rateWindowS: 600,

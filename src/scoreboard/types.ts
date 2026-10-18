@@ -60,8 +60,10 @@ export interface RaceSubmission extends SubmissionBase {
   ai_version: string;
   /** Distance covered in the race, m (the score; higher is better). */
   metres: number;
-  /** Laps completed (0..10). */
+  /** Laps completed (0..LIMITS.raceLaps). */
   laps: number;
+  /** Race time, s from the green flag to the crossing that completed the last lap. Required when finished; it is the score. */
+  time?: number;
   /** Finishing position, 1-based (optional, informative). */
   position?: number;
   finished?: boolean;
@@ -75,7 +77,8 @@ export type Submission = HotlapSubmission | RaceSubmission;
 export interface Score {
   rank: number;      // 1-based
   name: string;
-  /** Hot lap: lap time s (lower better). Race: metres (higher better). */
+  /** Hot lap: lap time s. Race: finish time s for a finished race, else LIMITS.raceDnfBase + (max metres - metres)
+   *  for a car classified short (validate.ts raceScore / raceScoreView). Lower is better in both. */
   score: number;
   input: InputType;
   /** ISO date of the submission. */

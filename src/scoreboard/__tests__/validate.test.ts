@@ -14,7 +14,7 @@ const hot = (over: Record<string, unknown> = {}) => ({
 });
 const race = (over: Record<string, unknown> = {}) => ({
   mode: 'race', track: 'laguna_seca', car: 'probe_gt', physics: 'abc123', name: 'Coby', input: 'keys',
-  ai_version: 'ai-1', metres: 35_600, laps: 10, finished: true, ...over,
+  ai_version: 'ai-1', metres: 17_800, laps: 5, finished: true, time: 640, ...over,
 });
 const reasons = (b: unknown, sp?: string) => validateSubmission(b, sp ? () => sp : undefined).reasons.join(' | ');
 
@@ -91,14 +91,17 @@ describe('race plausibility', () => {
     expect(v.reasons).toEqual([]);
     expect('replay' in v.value!).toBe(false);
   });
-  test('metres within 0 < m <= 10 laps + margin, laps consistent', () => {
+  test('metres within 0 < m <= 5 laps + margin, laps consistent, finishers carry a race time', () => {
     expect(reasons(race({ metres: 0 }))).toMatch(/metres/);
-    expect(reasons(race({ metres: 35_600 + 251 }))).toMatch(/metres/);
-    expect(reasons(race({ metres: 35_600 + 249 }))).toBe('');
-    expect(reasons(race({ laps: 3, metres: 20_000, finished: false }))).toMatch(/inconsistent/);
-    expect(reasons(race({ laps: 3, metres: 12_000, finished: false }))).toBe('');
-    expect(reasons(race({ laps: 11 }))).toMatch(/laps must/);
-    expect(reasons(race({ laps: 9, metres: 34_000 }))).toMatch(/finished requires/);
+    expect(reasons(race({ metres: 17_800 + 251 }))).toMatch(/metres/);
+    expect(reasons(race({ metres: 17_800 + 249 }))).toBe('');
+    expect(reasons(race({ laps: 3, metres: 16_000, finished: false, time: undefined }))).toMatch(/inconsistent/);
+    expect(reasons(race({ laps: 3, metres: 12_000, finished: false, time: undefined }))).toBe('');
+    expect(reasons(race({ laps: 6 }))).toMatch(/laps must/);
+    expect(reasons(race({ laps: 4, metres: 16_000 }))).toMatch(/finished requires/);
+    expect(reasons(race({ time: undefined }))).toMatch(/race time/);
+    expect(reasons(race({ time: 100 }))).toMatch(/race time/);
+    expect(reasons(race({ laps: 3, metres: 12_000, finished: false, time: 640 }))).toMatch(/time only/);
     expect(reasons(race({ ai_version: undefined }))).toMatch(/ai_version/);
     expect(reasons(race({ ai_version: 'a:b' }))).toMatch(/ai_version/);
   });
