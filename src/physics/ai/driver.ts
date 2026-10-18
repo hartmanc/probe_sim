@@ -642,6 +642,12 @@ export class AiDriver {
       if (rs > REAR_SLIP0 && this.limiter === 'profile') brake *= Math.max(0.1, 1 - REAR_SLIPK * (rs - REAR_SLIP0));
       brake = Math.min(brake, this.brakeCap);
       throttle = Math.min(throttle, this.thrCap);
+      // rear-drive car sliding while the engine brakes the rear wheels: a little throttle to stop the engine braking
+      // (a driver's blip; 18 Oct 2026: light, powerful RWD cars spun off the T3 exit on a closed throttle)
+      if (perf.drivenRear && rs > REAR_SLIP0 && brake < 0.3) {
+        const lr = Math.min(st.wheels[2].slipRatio, st.wheels[3].slipRatio);
+        if (lr < -0.5 * kpk) throttle = Math.max(throttle, Math.min(0.2, 4 * (-lr - 0.5 * kpk)));
+      }
       const sat = (throttle >= 1 && e > 0) || (brake >= 1 && e < 0);
       if (!sat) this.integ = Math.max(-0.5, Math.min(0.5, this.integ + e * dt));
       // stopped behind something: hold the brake

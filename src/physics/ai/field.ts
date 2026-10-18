@@ -606,9 +606,11 @@ export interface ProfileOptions { ghostCap?: number; commit?: number }
  * Corkscrew, Rainey and T10 are banked 4-12 %, worth 0.1-0.25 g (18 Oct 2026: the profile ignored it, so the AI
  * drove the banked corners as if flat).
  */
+/** Share of the banking credited in the profile (1.0 ran the cars ~1 m wide at Rainey and T3/T5: line rms 0.4 m alone). */
+const BANK_CREDIT = 0.85;
 export function bankedG(a: number, line: RaceLine, i: number, v = 0): number {
   const k = line.curv[i];
-  const b = Math.max(-0.15, Math.min(0.15, k >= 0 ? line.bank[i] : -line.bank[i]));
+  const b = BANK_CREDIT * Math.max(-0.15, Math.min(0.15, k >= 0 ? line.bank[i] : -line.bank[i]));
   return loadFactor(line, i, v) * (a + b) / Math.max(0.5, 1 - a * b);
 }
 
