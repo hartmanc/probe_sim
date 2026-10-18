@@ -44,11 +44,16 @@ describe('post', () => {
     for (let i = 0; i < 200 && changed === null; i++) changed = d.sample(33);
     expect(changed).not.toBeNull();
     expect(d.ratio).toBeLessThan(1.5);
-    for (let i = 0; i < 2000; i++) d.sample(33);
+    for (let i = 0; i < 3000; i++) d.sample(33);
     expect(d.ratio).toBeCloseTo(0.8, 5);
-    for (let i = 0; i < 2000; i++) d.sample(8);
+    for (let i = 0; i < 3000; i++) d.sample(8);
     expect(d.ratio).toBeCloseTo(1.5, 5);
     expect(d.sample(500)).toBeNull(); // a hitch is ignored
+    // frames right around the target never step (no oscillation, no black frames)
+    const e = new DynamicResolution(0.8, 1.5, 16.7);
+    let steps = 0;
+    for (let i = 0; i < 3000; i++) if (e.sample(i % 2 ? 15 : 18.5) !== null) steps++;
+    expect(steps).toBe(0);
   });
 });
 

@@ -142,7 +142,8 @@ export function makeSky(dir: THREE.Vector3, elevationDeg: number): Sky {
   const fs = sky.material.fragmentShader;
   const a = 'uniform float showSunDisc;', b = 'gl_FragColor = vec4( texColor, 1.0 );';
   if (fs.includes(a) && fs.includes(b)) {
-    sky.material.fragmentShader = fs.replace(a, `${a}\nuniform float skyGain;`).replace(b, 'gl_FragColor = vec4( texColor * skyGain, 1.0 );');
+    // the sun disc is capped so the bloom around it cannot pop as it enters or leaves the frame
+    sky.material.fragmentShader = fs.replace(a, `${a}\nuniform float skyGain;`).replace(b, 'gl_FragColor = vec4( min( texColor * skyGain, vec3( 6.0 ) ), 1.0 );');
   } else console.warn('look: sky shader changed, radiance gain not applied');
   sky.frustumCulled = false;
   sky.renderOrder = -1;
@@ -228,23 +229,31 @@ export function postUrlOff(search: string): boolean {
 
 // ---------------------------------------------------------------- dynamic resolution
 
-/** Pure controller: lowers the pixel ratio while frames run long, raises it back when they are quick. */
+/** Dynamic resolution: frames between decisions, and the cooldown after a change (a resize is a visible step). */
+export const DYN_WINDOW = 40;
+export const DYN_COOLDOWN = 150;
+
+/** Pure controller: lowers the pixel ratio while frames run long, raises it back only when they are clearly quick. */
 export class DynamicResolution {
   ratio: number;
   private ema = DYN_TARGET_MS;
   private frames = 0;
+  private cooldown = 0;
   constructor(public min: number, public max: number, public targetMs = DYN_TARGET_MS) { this.ratio = max; }
-  /** Feed one frame (ms); returns the new ratio when it changes (every 40 frames at most). */
+  /** Feed one frame (ms); returns the new ratio when it changes (at most once per DYN_WINDOW frames, then a cooldown). */
   sample(frameMs: number): number | null {
     if (!(frameMs > 0) || frameMs > 100) return null; // hitch, tab switch or a paused frame
     this.ema += (frameMs - this.ema) * 0.08;
-    if (++this.frames < 40) return null;
+    if (this.cooldown > 0) { this.cooldown--; return null; }
+    if (++this.frames < DYN_WINDOW) return null;
     this.frames = 0;
     let r = this.ratio;
+    // wide hysteresis: down past 1.15 x target, up only below 0.8 x, so a frame time near the target never oscillates
     if (this.ema > this.targetMs * 1.15) r = Math.max(this.min, r * 0.88);
-    else if (this.ema < this.targetMs * 0.9) r = Math.min(this.max, r * 1.06);
+    else if (this.ema < this.targetMs * 0.8) r = Math.min(this.max, r * 1.06);
     if (Math.abs(r - this.ratio) < 1e-3) return null;
     this.ratio = r;
+    this.cooldown = DYN_COOLDOWN;
     return r;
   }
 }
@@ -311,8 +320,10 @@ export class Look {
     this.sky.material.uniforms.time.value = this.time;
     if (!this.post) { this.renderer.render(this.world.scene, this.camera); return; }
     this.post.speed.strength = clamp((Math.abs(speed) - SPEED_BLUR_FROM) / SPEED_BLUR_SPAN, 0, 1) * 0.9;
-    this.post.composer.render(dt);
+    // resize BEFORE drawing: a resized canvas is cleared to black, so it has to be redrawn in the same frame
+    // (owner, 18 Oct 2026: "the lighting flickers / suddenly goes dark" — one black frame per resolution step)
     const r = this.dyn!.sample(dt * 1000);
     if (r !== null) { this.renderer.setPixelRatio(r); this.post.composer.setSize(this.w, this.h, false); }
+    this.post.composer.render(dt);
   }
 }
