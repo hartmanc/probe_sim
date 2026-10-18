@@ -55,7 +55,8 @@ describe('post', () => {
 describe('marks', () => {
   it('a wheel marks past its grip peak on pavement, never unloaded', () => {
     expect(markIntensity({ slipUse: 0.9, slipRatio: 0, slipAngle: 0, load: 3000 })).toBe(0);
-    expect(markIntensity({ slipUse: 1.3, slipRatio: 0, slipAngle: 0, load: 3000 })).toBeCloseTo(0.5, 5);
+    expect(markIntensity({ slipUse: 1.3, slipRatio: 0, slipAngle: 0, load: 3000 })).toBe(0);
+    expect(markIntensity({ slipUse: 1.6, slipRatio: 0, slipAngle: 0, load: 3000 })).toBeCloseTo(0.45, 5);
     expect(markIntensity({ slipUse: 2, slipRatio: 0, slipAngle: 0, load: 3000 })).toBe(1);
     expect(markIntensity({ slipUse: 2, slipRatio: 0, slipAngle: 0, load: 0 })).toBe(0);
     expect(markIntensity({ slipRatio: 0.3, slipAngle: 0, load: 3000 })).toBe(1); // stub physics: from the slips
@@ -94,5 +95,23 @@ describe('car materials', () => {
     // phone tier: glass only
     const root2 = new THREE.Group(); root2.add(new THREE.Mesh(g, new THREE.MeshStandardMaterial({ name: 'paint' })));
     expect(upgradeCarMaterials(root2, { clearcoat: false })).toBe(0);
+  });
+});
+
+describe('thresholds (owner, 18 Oct: "people aren\'t smoking their tires every 10 seconds")', () => {
+  it('marks start well past the grip peak; smoke needs a locked or spinning wheel', async () => {
+    const { smokes, MARK_USE_ON } = await import('../marks');
+    expect(MARK_USE_ON).toBeGreaterThanOrEqual(1.25);
+    expect(markIntensity({ slipUse: 1.2, slipRatio: -0.1, slipAngle: 0.05, load: 3000 })).toBe(0); // ABS chatter / trail braking
+    expect(smokes({ slipRatio: -0.3, load: 3000 }, 30)).toBe(false);
+    expect(smokes({ slipRatio: -0.95, load: 3000 }, 30)).toBe(true);   // locked at speed
+    expect(smokes({ slipRatio: -0.95, load: 3000 }, 3)).toBe(false);   // locked while nearly stopped: no smoke
+    expect(smokes({ slipRatio: 1.5, load: 3000 }, 0)).toBe(true);      // burnout
+  });
+  it('no tree within reach of a driveable surface', async () => {
+    const { keepTreeClear, TREE_CLEARANCE_M } = await import('../scenery');
+    expect(keepTreeClear(5, 3)).toBe(false);
+    expect(keepTreeClear(TREE_CLEARANCE_M + 3, 3)).toBe(true);
+    expect(keepTreeClear(TREE_CLEARANCE_M + 2, 3)).toBe(false);
   });
 });

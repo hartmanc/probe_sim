@@ -176,14 +176,25 @@ uniform float pgTileG, pgTileA;
 float pgHash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 float pgNoise(vec2 p) { vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
   return mix(mix(pgHash(i), pgHash(i + vec2(1, 0)), f.x), mix(pgHash(i + vec2(0, 1)), pgHash(i + vec2(1, 1)), f.x), f.y); }
-float pgFade() { return 1.0 - smoothstep(30.0, 80.0, length(vPgW - cameraPosition)); }`)
+float pgFade() { return 1.0 - smoothstep(30.0, 80.0, length(vPgW - cameraPosition)); }
+// de-tiled sampling: a second sample, rotated and rescaled, blended in by a ~25 m noise so no tile repeats in step
+const mat2 pgR = mat2(0.80, -0.60, 0.60, 0.80);
+const mat2 pgRi = mat2(0.80, 0.60, -0.60, 0.80);
+float pgTileK(vec2 uv) { return smoothstep(0.35, 0.65, pgNoise(uv * 0.07)); }
+vec4 pgTile(sampler2D t, vec2 uv) { return mix(texture2D(t, uv), texture2D(t, pgR * uv * 0.63 + vec2(0.37, 0.21)), pgTileK(uv)); }
+vec3 pgTileN(sampler2D t, vec2 uv) {
+  vec3 n1 = texture2D(t, uv).xyz * 2.0 - 1.0;
+  vec3 n2 = texture2D(t, pgR * uv * 0.63 + vec2(0.37, 0.21)).xyz * 2.0 - 1.0;
+  n2.xy = pgRi * n2.xy;
+  return mix(n1, n2, pgTileK(uv));
+}`)
       .replace('#include <map_fragment>', `#include <map_fragment>
 {
   vec2 wp = vPgW.xz;
   vec2 wuv = vec2(vPgW.x, -vPgW.z);
   float w = clamp(vPgA, 0.0, 1.0);
   float pgPa = 0.0;
-  float n = pgNoise(wp * 1.3) * 0.6 + pgNoise(wp * 0.35) * 0.4;
+  float n = pgNoise(wp * 1.3) * 0.5 + pgNoise(wp * 0.35) * 0.3 + pgNoise(wp * 0.09) * 0.2;
   diffuseColor.rgb *= 1.0 + (n - 0.5) * ${grain.toFixed(3)};
 #if ${hasA}
   {
@@ -219,8 +230,8 @@ float pgFade() { return 1.0 - smoothstep(30.0, 80.0, length(vPgW - cameraPositio
 #endif
   }
 #endif
-  float dG = texture2D(pgAlbG, wuv / pgTileG).r * 2.0;
-  float dA = texture2D(pgAlbA, wuv / pgTileA).r * 2.0;
+  float dG = pgTile(pgAlbG, wuv / pgTileG).r * 2.0;
+  float dA = pgTile(pgAlbA, wuv / pgTileA).r * 2.0;
   diffuseColor.rgb *= mix(1.0, mix(dG, dA, w), pgFade() * mix(0.5, 0.9, w) * (1.0 - 0.45 * pgPa));
 }`)
       .replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>
@@ -229,8 +240,8 @@ float pgFade() { return 1.0 - smoothstep(30.0, 80.0, length(vPgW - cameraPositio
 #ifdef USE_NORMALMAP_TANGENTSPACE
   {
     vec2 wuvN = vec2(vPgW.x, -vPgW.z);
-    vec3 nG = texture2D(normalMap, vNormalMapUv).xyz * 2.0 - 1.0;
-    vec3 nA = texture2D(pgNorA, wuvN / pgTileA).xyz * 2.0 - 1.0;
+    vec3 nG = pgTileN(normalMap, vNormalMapUv);
+    vec3 nA = pgTileN(pgNorA, wuvN / pgTileA);
     vec3 mapN = mix(nG, nA, clamp(vPgA, 0.0, 1.0));
     mapN.xy *= normalScale * pgFade();
     normal = normalize(tbn * mapN);

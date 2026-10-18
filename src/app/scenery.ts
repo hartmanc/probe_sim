@@ -3,6 +3,7 @@
 // Everything is static: instanced or merged per kind and chunked so frustum culling works. Nothing here
 // casts shadows (only the car does).
 import * as THREE from 'three';
+import { trackDistance } from './quality';
 import { mergeGeometries, mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import type { PitLaneJson, TrackJson } from './physics-types';
 import { PitExitCones, type PitExitConesJson } from './trackmath';
@@ -129,7 +130,100 @@ function lobe(cx: number, cy: number, cz: number, sx: number, sy: number, sz: nu
   return mergeVertices(g, 1e-4); // weld so the crown shades smoothly
 }
 
-/** Unit coast-live-oak crown: x, z in [-1, 1], y from ~0.3 to 1 (scaled by crown radius and tree height). */
+/** A 1x1 white stand-in where there is no canvas (tests). */
+function flatTexture(): THREE.Texture {
+  const t = new THREE.DataTexture(new Uint8Array([255, 255, 255, 255]), 1, 1, THREE.RGBAFormat);
+  t.needsUpdate = true;
+  return t;
+}
+
+/** Leaf-cluster atlas (2 x 2 cells): oak leaves as small ellipses in clumps, thinning to a ragged edge. sRGB; the
+ *  cards are alpha-tested, so the canopy's silhouette is leaves, not a blob. */
+function leafAtlas(): THREE.Texture {
+  if (typeof document === 'undefined') return flatTexture();
+  const N = 512, C = 256;
+  const cv = document.createElement('canvas'); cv.width = cv.height = N;
+  const g = cv.getContext('2d');
+  if (!g) return flatTexture();
+  const palette = ['#2f4a1f', '#3a5a26', '#46682c', '#557a35', '#3d5b2a', '#6a8a3e', '#2b3f1c', '#4f7030'];
+  for (let cell = 0; cell < 4; cell++) {
+    const ox = (cell % 2) * C + C / 2, oy = Math.floor(cell / 2) * C + C / 2;
+    const clumps: [number, number, number][] = [];
+    for (let k = 0; k < 7; k++) { const a = rand() * Math.PI * 2, d = rand() * 0.5 * (C / 2); clumps.push([ox + Math.cos(a) * d, oy + Math.sin(a) * d, (0.3 + rand() * 0.25) * (C / 2)]); }
+    for (let i = 0; i < 1100; i++) {
+      const [cx, cy, cr] = clumps[i % clumps.length];
+      const a = rand() * Math.PI * 2, d = Math.sqrt(rand()) * cr;
+      const x = cx + Math.cos(a) * d, y = cy + Math.sin(a) * d;
+      if (Math.hypot(x - ox, y - oy) > C / 2 - 6) continue;
+      const len = 6 + rand() * 6, wid = len * (0.4 + rand() * 0.25), rot = rand() * Math.PI;
+      g.fillStyle = palette[Math.floor(rand() * palette.length)];
+      g.beginPath(); g.ellipse(x, y, len / 2, wid / 2, rot, 0, Math.PI * 2); g.fill();
+    }
+  }
+  const t = new THREE.CanvasTexture(cv);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = 4;
+  t.generateMipmaps = true; t.minFilter = THREE.LinearMipmapLinearFilter;
+  return t;
+}
+
+/** Bark: vertical streaks, repeated around and up the trunk. */
+function barkTexture(): THREE.Texture {
+  if (typeof document === 'undefined') return flatTexture();
+  const W = 64, H = 256;
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  const g = cv.getContext('2d');
+  if (!g) return flatTexture();
+  g.fillStyle = '#5a4e40'; g.fillRect(0, 0, W, H);
+  for (let i = 0; i < 90; i++) {
+    const x0 = rand() * W, w = 1 + rand() * 3, dark = rand() < 0.55;
+    g.fillStyle = dark ? 'rgba(40,32,26,0.7)' : 'rgba(120,106,88,0.55)';
+    for (let y = 0; y < H; y += 16) g.fillRect(((x0 + Math.sin(y * 0.11 + i) * 1.5) % W + W) % W, y, w, 16);
+  }
+  const t = new THREE.CanvasTexture(cv);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  t.repeat.set(2, 3);
+  return t;
+}
+
+/**
+ * Unit oak canopy as `cards` leaf-textured quads scattered through the crown (x, z in [-1, 1], y ~0.3..1, scaled
+ * per tree by crown radius and height). Normals point out from the canopy's centre so the cluster shades like one
+ * round crown; a vertex colour darkens the underside. Cards are half as tall as wide because the instance scale
+ * stretches y by the tree's height (about twice its crown radius).
+ */
+function foliageGeometry(variant: number, cards: number): THREE.BufferGeometry {
+  const parts: THREE.BufferGeometry[] = [];
+  const m = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), pos = new THREE.Vector3(), one = new THREE.Vector3(1, 1, 1);
+  for (let k = 0; k < cards; k++) {
+    const a = rand() * Math.PI * 2, d = Math.sqrt(rand()) * 0.6;
+    const cx = Math.cos(a) * d, cz = Math.sin(a) * d, cy = 0.52 + rand() * 0.3;
+    const s = 1.0 + rand() * 0.5;
+    const pg = new THREE.PlaneGeometry(s, s * 0.5);
+    const cell = (variant * 3 + k) % 4;
+    const uv = pg.attributes.uv as THREE.BufferAttribute;
+    for (let i = 0; i < uv.count; i++) uv.setXY(i, (uv.getX(i) + (cell % 2)) / 2, (uv.getY(i) + (1 - Math.floor(cell / 2))) / 2);
+    e.set((rand() - 0.5) * 1.3, rand() * Math.PI, (rand() - 0.5) * 1.3);
+    m.compose(pos.set(cx, cy, cz), q.setFromEuler(e), one);
+    pg.applyMatrix4(m);
+    parts.push(pg);
+  }
+  const g = mergeGeometries(parts)!;
+  const p = g.attributes.position as THREE.BufferAttribute;
+  const n = new Float32Array(p.count * 3), c = new Float32Array(p.count * 3), v = new THREE.Vector3();
+  for (let i = 0; i < p.count; i++) {
+    v.set(p.getX(i), p.getY(i) - 0.62, p.getZ(i)); v.y *= 1.8; v.normalize();
+    n[i * 3] = v.x; n[i * 3 + 1] = v.y; n[i * 3 + 2] = v.z;
+    const l = 0.55 + 0.55 * THREE.MathUtils.clamp((p.getY(i) - 0.3) / 0.75, 0, 1);
+    c[i * 3] = l; c[i * 3 + 1] = l; c[i * 3 + 2] = l;
+  }
+  g.setAttribute('normal', new THREE.BufferAttribute(n, 3));
+  g.setAttribute('color', new THREE.BufferAttribute(c, 3));
+  return g;
+}
+
+/** Unit coast-live-oak crown as a lumpy blob (the far-pack fallback and the pre-18-Oct look). */
 function crownGeometry(variant: number, detail: number): THREE.BufferGeometry {
   const L: THREE.BufferGeometry[] = [];
   if (variant === 0) {
@@ -154,15 +248,24 @@ function crownGeometry(variant: number, detail: number): THREE.BufferGeometry {
   return g;
 }
 
-function buildTrees(packs: { p: PackedTrees; far: boolean }[]): THREE.Group {
+/** Clearance (m) a trunk keeps from any driveable centreline beyond its own crown radius: half-widths run to ~8 m,
+ *  shoulders and barriers a few more (owner, 18 Oct 2026: a tree through the Corkscrew bridge — "no trees anywhere
+ *  where a user can drive"). */
+export const TREE_CLEARANCE_M = 10;
+/** Pure: keep a tree of crown radius r whose trunk is d from the nearest driveable centreline? */
+export function keepTreeClear(d: number, r: number): boolean { return d - r >= TREE_CLEARANCE_M; }
+
+function buildTrees(packs: { p: PackedTrees; far: boolean }[], keep?: (x: number, y: number, r: number) => boolean): THREE.Group {
   const group = new THREE.Group();
   group.name = 'trees';
-  const crownsNear = [0, 1, 2].map((v) => crownGeometry(v, 1));
-  const crownsFar = [crownGeometry(0, 0), crownGeometry(2, 0)];
-  const trunkGeo = new THREE.CylinderGeometry(0.55, 0.8, 1, 6, 1, true).translate(0, 0.5, 0);
-  const crownMat = new THREE.MeshLambertMaterial({ vertexColors: true });
-  const trunkMat = new THREE.MeshLambertMaterial({ color: 0x4b4136 });
-  const base = new THREE.Color(0x3c4a26);
+  // leaf cards near the track, fewer for the far pack (owner, 18 Oct 2026: "make the trees look more like trees")
+  const crownsNear = [0, 1, 2].map((v) => foliageGeometry(v, 11));
+  const crownsFar = [foliageGeometry(0, 5), foliageGeometry(2, 5)];
+  void crownGeometry;
+  const trunkGeo = new THREE.CylinderGeometry(0.55, 0.8, 1, 8, 1, true).translate(0, 0.5, 0);
+  const crownMat = new THREE.MeshLambertMaterial({ map: leafAtlas(), alphaTest: 0.45, side: THREE.DoubleSide, vertexColors: true });
+  const trunkMat = new THREE.MeshLambertMaterial({ map: barkTexture() });
+  const base = new THREE.Color(0xe6efd8);
   const tmp = new THREE.Color();
   const m = new THREE.Matrix4(), q = new THREE.Quaternion(), s = new THREE.Vector3(), pv = new THREE.Vector3();
   const Y = new THREE.Vector3(0, 1, 0);
@@ -172,6 +275,7 @@ function buildTrees(packs: { p: PackedTrees; far: boolean }[]): THREE.Group {
     const buckets = new Map<string, number[]>();
     for (let i = 0; i < n; i++) {
       const x = p.data[i * p.stride] * p.scale, y = p.data[i * p.stride + 1] * p.scale;
+      if (keep && !keep(x, y, Math.max(1.2, p.data[i * p.stride + 4] * p.scale))) continue;
       const key = `${Math.floor(x / tile)},${Math.floor(y / tile)}`;
       let b = buckets.get(key);
       if (!b) buckets.set(key, (b = []));
@@ -1050,7 +1154,10 @@ export function buildScenery(track: TrackJson, _hf: Float32Array, sc: SceneryAss
   if (far) root.add(far);
   const packs = [{ p: j.trees, far: false }];
   if (j.far_trees) packs.push({ p: j.far_trees, far: true });
-  root.add(buildTrees(packs));
+  // no tree within reach of the track, the pit lane or a paved zone
+  const driveable = [...track.center, ...(j.pit_lane?.parts ?? []).flatMap((p) => p.center), ...(j.paved_zones?.parts ?? []).flatMap((p) => p.center)];
+  const dist = trackDistance({ center: driveable as TrackJson['center'] });
+  root.add(buildTrees(packs, (x, y, r) => keepTreeClear(dist(x, y), r)));
   const stands = (j.buildings ?? []).filter((b) => b.kind === 'grandstand');
   const others = (j.buildings ?? []).filter((b) => b.kind !== 'grandstand');
   if (others.length) root.add(buildBuildings(track, others));
