@@ -104,7 +104,7 @@ describe('api handler', () => {
     expect((await handleScores(race('d', 99_000, 5), d)).status).toBe(422);
     const g = await (await handleScores(get(`?board=race:laguna_seca:probe_gt:${PV}:ai-1`), d)).json() as { entries: { name: string; laps: number; ai_version: string }[] };
     expect(g.entries.map((e) => e.name)).toEqual(['g', 'f', 'b2', 'b', 'a']);
-    expect(g.entries[0]).toMatchObject({ laps: 9, ai_version: 'ai-1' });
+    expect(g.entries[0]).toMatchObject({ laps: 5, ai_version: 'ai-1' });
   });
 
   test('rate limit: 10 posts per IP per window, then 429 with Retry-After', async () => {

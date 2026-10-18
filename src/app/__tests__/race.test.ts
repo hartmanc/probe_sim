@@ -240,12 +240,16 @@ describe('race HUD mapping', () => {
 
 describe('results → scoreboard', () => {
   const rows: ResultRow[] = [
-    { position: 1, number: '711', team: 'Eyesore Racing', class: 'A', metres: 36_020.4, laps: 10.006, lapsCompleted: 10, bestLap: 108, status: 'running', player: false },
-    { position: 2, number: '619', team: 'Probe', class: 'B', metres: 35_111.26, laps: 9.75, lapsCompleted: 9, bestLap: 121, status: 'running', player: true },
+    { position: 1, number: '711', team: 'Eyesore Racing', class: 'A', metres: 36_020.4, laps: 10.006, lapsCompleted: 10, bestLap: 108, time: 1130.2, status: 'running', player: false },
+    { position: 2, number: '619', team: 'Probe', class: 'B', metres: 35_111.26, laps: 9.75, lapsCompleted: 9, bestLap: 121, time: null, status: 'running', player: true },
   ];
   it('builds the race payload and posts it through submitRace', async () => {
+    // classified short of the full distance: distance is the score, not a finished race
     const res = raceResultFor(resultRows(rows, null), { seed: 4242, aiVersion: 2, finished: true })!;
-    expect(res).toEqual({ metres: 35111.3, laps: 9, aiVersion: '2', seed: 4242, position: 2, finished: true });
+    expect(res).toEqual({ metres: 35111.3, laps: 9, aiVersion: '2', seed: 4242, position: 2, finished: false });
+    // the winner: all laps done, the race time is the score
+    const win = raceResultFor(resultRows(rows.map((r) => (r.player ? { ...r, position: 1, lapsCompleted: 10, metres: 36_100, time: 1180.5 } : { ...r, position: 2 })), null), { seed: 4242, aiVersion: 2, finished: true })!;
+    expect(win).toMatchObject({ laps: 10, position: 1, finished: true, time: 1180.5 });
     // launched: the distance at the launch, not finished
     const out = raceResultFor(resultRows(rows, { metres: 5000 }), { seed: 1, aiVersion: 2, finished: false })!;
     expect([out.metres, out.finished]).toEqual([5000, false]);

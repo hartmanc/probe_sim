@@ -108,9 +108,10 @@ describe('result statuses', () => {
   });
   it('the results table reads "finished" (or "out") at the flag, and the scoreboard still sees a finished race', () => {
     const rows: ResultRow[] = [
-      { position: 1, number: '711', team: 'Eyesore', class: 'A', metres: 36_020, laps: 10, lapsCompleted: 10, bestLap: 108, status: 'running', player: false },
-      { position: 2, number: '619', team: 'Probe', class: 'B', metres: 35_111, laps: 9.7, lapsCompleted: 9, bestLap: 121, status: 'running', player: true },
-      { position: 3, number: '20', team: 'NSF', class: 'C', metres: 30_000, laps: 8.3, lapsCompleted: 8, bestLap: 150, status: 'running', player: false },
+      // the player completed every lap (a race time): "finished" on the scoreboard means all laps done, ranked by that time
+      { position: 1, number: '711', team: 'Eyesore', class: 'A', metres: 36_020, laps: 10, lapsCompleted: 10, bestLap: 108, time: 1130.2, status: 'running', player: false },
+      { position: 2, number: '619', team: 'Probe', class: 'B', metres: 35_611, laps: 10.0, lapsCompleted: 10, bestLap: 121, time: 1180.5, status: 'running', player: true },
+      { position: 3, number: '20', team: 'NSF', class: 'C', metres: 30_000, laps: 8.3, lapsCompleted: 8, bestLap: 150, time: null, status: 'running', player: false },
     ];
     const r = resultRows(rows, null);
     expect(r.map((x) => x.status)).toEqual(['finished', 'finished', 'finished']);
