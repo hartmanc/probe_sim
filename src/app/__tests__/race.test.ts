@@ -266,6 +266,6 @@ describe('results → scoreboard', () => {
     setBoardContext({ client, track: 'laguna_seca', car: 'probe_gt', physics: 'p1', input: () => 'keys', assetsOk: true, raceAiVersion: '2', offer: undefined });
     const o = await submitRace(res);
     expect(o.status).toBe('submitted');
-    expect(posted).toMatchObject({ mode: 'race', track: 'laguna_seca', car: 'probe_gt', ai_version: '2', name: 'COBY', metres: 35111.3, laps: 9, position: 2, finished: true, replay: { seed: 4242 } });
+    expect(posted).toMatchObject({ mode: 'race', track: 'laguna_seca', car: 'probe_gt', ai_version: '2', name: 'COBY', metres: 35111.3, laps: 9, position: 2, finished: false, replay: { seed: 4242 } });
   });
 });

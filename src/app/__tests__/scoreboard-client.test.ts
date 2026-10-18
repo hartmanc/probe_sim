@@ -130,15 +130,16 @@ describe('scoreboard client', () => {
     c.savePb('b1', 'hotlap', 120.5);
     c.savePb('b1', 'hotlap', 121);
     expect(c.pb('b1')).toBe(120.5);
+    // race PBs are board scores (finish time, or distance encoded above raceDnfBase): lower is better
     c.savePb('r1', 'race', 9000); c.savePb('r1', 'race', 8000);
-    expect(kv.m.get(lsPbKey('r1'))).toBe('9000');
+    expect(kv.m.get(lsPbKey('r1'))).toBe('8000');
     expect(c.name).toBeNull();
     expect(c.setName('x'.repeat(13))).toBeNull();
     const broken = new ScoreboardClient({ base: '/x', storage: { getItem: () => { throw new Error('denied'); }, setItem: () => { throw new Error('denied'); } } });
     expect(broken.name).toBeNull();
     expect(broken.pb('b1')).toBeNull();
     expect(broken.setName('Ok')).toBe('Ok');
-    expect(isBetter('hotlap', 1, 2) && isBetter('race', 2, 1)).toBe(true);
+    expect(isBetter('hotlap', 1, 2) && isBetter('race', 1, 2)).toBe(true);
   });
 
   it('which laps can be submitted', () => {
@@ -165,9 +166,12 @@ describe('scoreboard client', () => {
       },
     });
     setBoardContext({ client, track: 'laguna_seca', car: 'probe_gt', physics: 'p', input: () => 'pad', assetsOk: true, offer: undefined });
-    expect((await submitRace({ metres: 30000, laps: 8, aiVersion: 'ai-1', seed: 7, position: 3 })).status).toBe('submitted');
-    expect(body).toMatchObject({ mode: 'race', ai_version: 'ai-1', metres: 30000, laps: 8, name: 'Racer', input: 'pad', position: 3, replay: { seed: 7 } });
-    expect((await submitRace({ metres: 20000, laps: 5, aiVersion: 'ai-1' })).status).toBe('not-best');
+    expect((await submitRace({ metres: 14000, laps: 3, aiVersion: 'ai-1', seed: 7, position: 3 })).status).toBe('submitted');
+    expect(body).toMatchObject({ mode: 'race', ai_version: 'ai-1', metres: 14000, laps: 3, name: 'Racer', input: 'pad', position: 3, replay: { seed: 7 } });
+    expect((await submitRace({ metres: 12000, laps: 3, aiVersion: 'ai-1' })).status).toBe('not-best');
+    // a finished race carries its time and beats any distance
+    expect((await submitRace({ metres: 17800, laps: 5, aiVersion: 'ai-1', finished: true, time: 660.5 })).status).toBe('submitted');
+    expect(body).toMatchObject({ finished: true, time: 660.5, laps: 5 });
     expect(fmtMetres(30000, 8, 3560)).toBe('8L +1,520 m');
   });
 

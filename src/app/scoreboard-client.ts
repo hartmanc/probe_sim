@@ -2,9 +2,9 @@
 // localStorage, building submissions, deciding whether a lap may be submitted, and the board context the
 // hot-lap and (future) race modes submit through. No DOM besides localStorage / location / fetch, all guarded,
 // so it is unit-tested in node.
-import { raceScoreView } from '../scoreboard/validate';
+import { raceScore, raceScoreView } from '../scoreboard/validate';
 import {
-  LIMITS, boardKey, lowerIsBetter, normalizeName,
+  TRACKS, LIMITS, boardKey, lowerIsBetter, normalizeName,
   type ApiError, type Board, type HotlapSubmission, type InputTrace, type InputType, type Mode, type RaceSubmission,
   type Submission, type SubmitResult,
 } from '../scoreboard';
@@ -256,10 +256,12 @@ export async function submitRace(result: RaceResult): Promise<SubmitOutcome> {
   if (!c.raceAiVersion) setBoardContext({ raceAiVersion: ai });
   const board = boardKey('race', c.track, c.car, c.physics, ai);
   const pb = c.client.pb(board);
-  if (!(result.metres > 0) || (pb !== null && !isBetter('race', result.metres, pb))) return { status: 'not-best' };
+  // the board's score: finish time for a finished race, else distance encoded above LIMITS.raceDnfBase (lower is better)
+  const score = raceScore({ finished: result.finished, time: result.time, metres: result.metres }, TRACKS[c.track]?.length_m ?? 0);
+  if (!(result.metres > 0) || (pb !== null && !isBetter('race', score, pb))) return { status: 'not-best' };
   const input = result.input ?? c.input();
   const cand: Candidate = {
-    mode: 'race', board, score: result.metres,
+    mode: 'race', board, score,
     detail: `Race · ${result.laps} lap${result.laps === 1 ? '' : 's'}${result.position ? ` · P${result.position}` : ''}`,
     build: (name): RaceSubmission => ({
       mode: 'race', track: c.track, car: c.car, physics: c.physics, ai_version: ai, name, input,
@@ -267,6 +269,7 @@ export async function submitRace(result: RaceResult): Promise<SubmitOutcome> {
       metres: result.metres, laps: result.laps,
       ...(result.position !== undefined ? { position: result.position } : {}),
       ...(result.finished !== undefined ? { finished: result.finished } : {}),
+      ...(result.finished && result.time !== undefined ? { time: result.time } : {}),
       ...(result.seed !== undefined ? { replay: { seed: result.seed } } : {}),
     }),
   };
