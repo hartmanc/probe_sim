@@ -318,11 +318,16 @@ def main():
             nk += 1
         log(f"     kerb margin {args.kerb_margin} m along {nk} kerb strips ({np.sum(mL < MARGIN) + np.sum(mR < MARGIN)} side-points)")
     # (the kerb relaxation is added after the edge envelope, ramped in over ~4 m, never past edge - kerb margin)
-    lim = smooth_bound(np.maximum(hw - MARGIN, 0.5))  # left bound (+)
-    limr = smooth_bound(np.maximum(hwr - MARGIN, 0.5))  # right bound (-)
+    # floors: a 0.5 m corridor measured from the OTHER side's bound, not from the centre line. Since the 18 Oct 2026
+    # apex-kerb re-trace the centre can lie within 0.6 m of an edge (Corkscrew apex: left half-width 0.62 m), and a
+    # +-0.5 m floor about the centre let the line run 0.25 m from that edge.
+    fl_l = 0.5 - (hwr - MARGIN)
+    fl_r = 0.5 - (hw - MARGIN)
+    lim = smooth_bound(np.maximum(hw - MARGIN, fl_l))  # left bound (+)
+    limr = smooth_bound(np.maximum(hwr - MARGIN, fl_r))  # right bound (-)
     if (mL < MARGIN).any() or (mR < MARGIN).any():
-        lim = np.minimum(lim + gaussian_filter1d(MARGIN - mL, 1.0, mode="wrap"), np.maximum(hw - mL, 0.5))
-        limr = np.minimum(limr + gaussian_filter1d(MARGIN - mR, 1.0, mode="wrap"), np.maximum(hwr - mR, 0.5))
+        lim = np.minimum(lim + gaussian_filter1d(MARGIN - mL, 1.0, mode="wrap"), np.maximum(hw - mL, fl_l))
+        limr = np.minimum(limr + gaussian_filter1d(MARGIN - mR, 1.0, mode="wrap"), np.maximum(hwr - mR, fl_r))
     # the drivers' measured line: fastest real laps from good-GPS files, plus the optimal pieces (all good-GPS)
     meas = []
     for lp in laps:
