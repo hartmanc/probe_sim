@@ -1,9 +1,11 @@
 import { defineConfig } from 'vite';
 import { execSync } from 'node:child_process';
 
-// the build's commit for the main menu's version line: Vercel's env on a deploy, git locally, '' when unknown
+// the build's commit for the main menu's version line: GIT_SHA passed at deploy time
+// (`vercel deploy --build-env GIT_SHA=$(git rev-parse --short HEAD)`: a CLI deploy's build has neither git nor
+// VERCEL_GIT_COMMIT_SHA), else Vercel's env on a git-connected deploy, else git locally, '' when unknown
 const gitSha = (() => {
-  const v = process.env.VERCEL_GIT_COMMIT_SHA;
+  const v = process.env.GIT_SHA || process.env.VERCEL_GIT_COMMIT_SHA;
   if (v) return v.slice(0, 7);
   try { return execSync('git rev-parse --short HEAD', { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim(); } catch { return ''; }
 })();
