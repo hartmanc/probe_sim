@@ -39,15 +39,77 @@ def slope_limit(v, lim, n):
     return v
 
 
+def touch_mask(C0, nl0, pit_parts, dilate=21, gap=0.3):
+    """(n, 2) bool: stations where a pit-lane part comes within `gap` m of the track edge (0.3: touches), left / right,
+    dilated by `dilate` stations."""
+    n = len(C0)
+    keep = np.zeros((n, 2), bool); kd = cKDTree(C0)
+    for part in pit_parts or []:
+        for E, gp in ((part['left'], part['gap_left']), (part['right'], part['gap_right'])):
+            E = np.array(E)[:, :2]; _, ii = kd.query(E); le = ((E - C0[ii]) * nl0[ii]).sum(1)
+            for i, l_, g in zip(ii, le, gp):
+                if g <= gap: keep[i, 0 if l_ > 0 else 1] = True
+    for k in range(2): keep[:, k] = np.convolve(keep[:, k].astype(int), np.ones(dilate, int), 'same') > 0
+    return keep
+
+
+def merge_edges(C0, el, er, merge, log=B.log):
+    """The circuit's own painted edge through the pit merges (19 Oct 2026; no-logger Laguna had the centre 2.6-3.0 m
+    off at T1 because the pit-out merge was read as road). Where a pit-lane part comes within merge['gap'] m of the
+    track edge (default 0.3: it touches; 3 m was tried on Laguna's T11 exit and spread the zone over the whole front
+    straight), or along the pit-exit blend lane, the pit-side edge of the midpoint target is the blend boundary (the cone line's
+    lateral where the cones run) or else the circuit's painted edge interpolated across the merge from the measured
+    stations either side (relative to C0, linear in station). merge = {'parts': pit_lane parts, 'cones': [[x, y, z],
+    ...] or None}. Returns el, er (copies) and the (n, 2) merge mask."""
+    n = len(C0)
+    nl0 = B.left_normals(C0)
+    el, er = el.copy(), er.copy()
+    mask = touch_mask(C0, nl0, merge.get('parts'), gap=merge.get('gap', 0.3))
+    idx = np.arange(n)
+    cone_lat = np.full(n, np.nan)
+    pts = merge.get('cones')
+    if pts is not None and len(pts) >= 2:
+        q = np.array(pts)[:, :2]
+        sq, lq = B.project(C0, q)
+        sq_u = np.unwrap(sq * 2 * np.pi / n) * n / (2 * np.pi)
+        o = np.argsort(sq_u)
+        a, b = sq_u[o][0], sq_u[o][-1]
+        ks = np.arange(int(np.ceil(a)), int(np.floor(b)) + 1)
+        cone_lat[ks % n] = np.interp(ks, sq_u[o], lq[o])
+        side = 0 if np.median(lq) > 0 else 1
+        mask[ks % n, side] = True
+        log(f"pit merges: cone line {int(np.ceil(a)) % n}..{int(np.floor(b)) % n} on the {'left' if side == 0 else 'right'} "
+            f"is the blend boundary (lateral {np.nanmin(cone_lat):+.1f}..{np.nanmax(cone_lat):+.1f} m)")
+    for k, (arr, sg) in enumerate(((el, 1), (er, -1))):
+        m = mask[:, k]
+        if not m.any():
+            continue
+        has_cone = m & np.isfinite(cone_lat) & (np.sign(np.nan_to_num(cone_lat)) == sg)
+        arr[has_cone] = cone_lat[has_cone]
+        rest = m & ~has_cone
+        src = ~m & np.isfinite(arr)
+        if rest.any() and src.sum() > 10:
+            arr[rest] = np.interp(idx[rest], idx[src], arr[src], period=n)
+        runs = np.flatnonzero(np.diff(np.r_[0, m.astype(int), 0]))
+        rr = [f"{int(runs[j]) % n}..{int(runs[j + 1] - 1) % n}" for j in range(0, len(runs) - 1, 2)]
+        log(f"pit merges, {'left' if k == 0 else 'right'}: {int(m.sum())} stations in {', '.join(rr)} ({int(has_cone.sum())} on "
+            f"the cone line, {int(rest.sum())} interpolated from the painted edge either side)")
+    return el, er, mask
+
+
 def refit(C0, hl0, hr0, P, shadow_s, pit_parts, cones, e_gps, fit_a, fit_b, bridge_win=25, gps_margin=1.0,
-          min_width=10.0, log=B.log):
+          min_width=10.0, log=B.log, merge=None):
     """C0 (n, 2) current centre with half-widths hl0/hr0; P = paint.measure(...) on C0; shadow_s = stations of bridge
-    crossings (shadows); pit_parts = scenery pit_lane parts on C0; cones = (s0, s1) of the pit-exit blend lane or None;
-    e_gps = the logged racing line's lateral on C0 per station (None without logger). Returns a dict."""
+    crossings (shadows); pit_parts = scenery pit_lane parts on C0 (their touch zones keep the old edges);
+    cones = (s0, s1) of the pit-exit blend lane or None; e_gps = the logged racing line's lateral on C0 per station
+    (None without logger); merge = {'parts', 'cones'} (merge_edges): the midpoint target takes the circuit's own edge
+    through the pit merges (None = the measured edges as they are, how Laguna's logger build ran). Returns a dict."""
     n = len(C0)
     nl0 = B.left_normals(C0)
     Lw0 = C0 + hl0[:, None] * nl0; Rw0 = C0 - hr0[:, None] * nl0
     el, er = P['lat_left'], P['lat_right']
+    # the midpoint target's edges: through the pit merges the circuit's own edge (the edges written out are unchanged)
+    elm, erm = merge_edges(C0, el, er, merge, log=log)[:2] if merge else (el, er)
     ok = np.isfinite(el) & np.isfinite(er)
     # bridge shadows: the detector reads the shadow's edge as a painted line under every bridge (owner, 18 Oct 2026:
     # "There is no little kink here. This is straight underneath the bridge in real life"), so measurements within
@@ -63,13 +125,22 @@ def refit(C0, hl0, hr0, P, shadow_s, pit_parts, cones, e_gps, fit_a, fit_b, brid
         return np.interp(idx, idx[ok], a[ok], period=n)
     elf, erf = median_filter(fill(el), 9, mode='wrap'), median_filter(fill(er), 9, mode='wrap')
     good = ok & (np.abs(el - elf) < 1.0) & (np.abs(er - erf) < 1.0)
-    mid = (el + er) / 2
+    if merge:
+        okm = np.isfinite(elm) & np.isfinite(erm) & ~shadow
+
+        def fillm(a):
+            return np.interp(idx, idx[okm], a[okm], period=n)
+        elmf, ermf = median_filter(fillm(elm), 9, mode='wrap'), median_filter(fillm(erm), 9, mode='wrap')
+        goodm = okm & (np.abs(elm - elmf) < 1.0) & (np.abs(erm - ermf) < 1.0)
+    else:
+        goodm = good
+    mid = (elm + erm) / 2
     # the fit target: the painted midpoint, de-noised along s (median 15, Gaussian 5 m over measured stations) so the
     # centre does not pick up the detector's station-to-station jitter
-    midf = np.interp(idx, idx[good], mid[good], period=n)
+    midf = np.interp(idx, idx[goodm], mid[goodm], period=n)
     midf = gaussian_filter1d(median_filter(midf, 15, mode='wrap'), 5, mode='wrap')
-    d = np.where(good, midf, 0.0)
-    w = good.astype(float)
+    d = np.where(goodm, midf, 0.0)
+    w = goodm.astype(float)
     D2 = V2.diffop(n, [(-1, 1), (0, -2), (1, 1)])
     D3 = V2.diffop(n, [(-1, -1), (0, 3), (1, -3), (2, 1)])
     Ax = D3 @ diags(nl0[:, 0]); Ay = D3 @ diags(nl0[:, 1])
@@ -92,13 +163,7 @@ def refit(C0, hl0, hr0, P, shadow_s, pit_parts, cones, e_gps, fit_a, fit_b, brid
     pr = lat_of(C0 + eri[:, None] * nl0)
     ol, orr = lat_of(Lw0), -lat_of(Rw0)
     hl = np.where(usable, pl, ol); hr = np.where(usable, -pr, orr)
-    keep = np.zeros((n, 2), bool); kd = cKDTree(C0)
-    for part in pit_parts or []:
-        for E, gp in ((part['left'], part['gap_left']), (part['right'], part['gap_right'])):
-            E = np.array(E)[:, :2]; _, ii = kd.query(E); le = ((E - C0[ii]) * nl0[ii]).sum(1)
-            for i, l_, g in zip(ii, le, gp):
-                if g <= 0.3: keep[i, 0 if l_ > 0 else 1] = True
-    for k in range(2): keep[:, k] = np.convolve(keep[:, k].astype(int), np.ones(21, int), 'same') > 0
+    keep = touch_mask(C0, nl0, pit_parts)
     # pit-out blend lane (cones on the left): the paved exit lane stays driveable track, the cones police it
     if cones: keep[int(cones[0]) - 40:int(cones[1]) + 1, 0] = True
     hl = np.where(keep[:, 0], ol, hl); hr = np.where(keep[:, 1], orr, hr)
@@ -140,8 +205,8 @@ def refit(C0, hl0, hr0, P, shadow_s, pit_parts, cones, e_gps, fit_a, fit_b, brid
     rep = {
         'fit': {'A': fit_a, 'B': fit_b, 'measured_stations': int(good.sum())},
         'move_m': {'p50': float(np.median(np.abs(e))), 'p90': float(np.percentile(np.abs(e), 90)), 'max': float(np.abs(e).max())},
-        'residual_mid_m': {'before_rms': float(np.sqrt((d[good] ** 2).mean())), 'after_rms': float(np.sqrt(((d - e)[good] ** 2).mean())),
-                           'after_p90': float(np.percentile(np.abs(d - e)[good], 90))},
+        'residual_mid_m': {'before_rms': float(np.sqrt((d[goodm] ** 2).mean())), 'after_rms': float(np.sqrt(((d - e)[goodm] ** 2).mean())),
+                           'after_p90': float(np.percentile(np.abs(d - e)[goodm], 90))},
         'length_m': {'old': float(np.linalg.norm(np.roll(C0, -1, 0) - C0, axis=1).sum()), 'new': Ltot},
         'spacing_m': sp, 'old_station_shift_max_m': float(np.abs(u - np.arange(n)).max() * sp),
         'width_m': {'p5': float(np.percentile(hl + hr, 5)), 'p50': float(np.median(hl + hr)), 'p95': float(np.percentile(hl + hr, 95))},

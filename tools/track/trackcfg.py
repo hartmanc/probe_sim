@@ -28,7 +28,10 @@ Corners
 Geometry (Stage 1)
   loop_check {n_min, n_max, official_m, elev_min, elev_max}
   centre {naip_fit_a, naip_fit_b (logger: driven line -> NAIP midpoint), osm_fit_a, osm_fit_b (no logger: OSM loop ->
-          NAIP midpoint), paint_fit_a, paint_fit_b, bridge_win, gps_margin, min_width, extra_shadow_stations}
+          NAIP midpoint), paint_fit_a, paint_fit_b, bridge_win, gps_margin, min_width, extra_shadow_stations,
+          pit_merge (default True: through the pit merges the midpoint target takes the circuit's own edge, the cone
+          line or the painted edge interpolated across the join; off while reproducing an accepted build), pit_merge_gap
+          (m, default 0.3: a pit-lane part this close to the track edge counts as joined)}
   reproduce {...}                            build artefacts of an accepted package (logger path only; see Laguna's)
   centre_captures ('z20' | 'clean'), centre_registration ('per_capture' | 'common')
   repave_fixes [(a, b, crest from, crest to, why)]
@@ -56,7 +59,7 @@ DEFAULTS = dict(
     logger_sections=None, logger_bad_gps_files=[], start_finish_latlon=None, named_straights=[],
     loop_check=dict(n_min=500, n_max=10000, official_m=None, elev_min=0, elev_max=500),
     centre=dict(naip_fit_a=1e6, naip_fit_b=1e3, osm_fit_a=1e3, osm_fit_b=1e3, paint_fit_a=1e4, paint_fit_b=1e2,
-                nologger_fit_a=1e1, nologger_fit_b=1e5,
+                nologger_fit_a=1e1, nologger_fit_b=1e5, pit_merge=True, pit_merge_gap=0.3,
                 bridge_win=25, gps_margin=1.0, min_width=10.0, extra_shadow_stations=[]),
     centre_captures='clean', centre_registration='common', repave_fixes=[],
     captures=dict(z20_dir=None, z20_index='z20_tiles.json', z20_mask=None, clean_dir=None, clean_index='tiles.json',

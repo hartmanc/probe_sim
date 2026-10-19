@@ -204,8 +204,13 @@ def stage_geometry(cfg, out, no_logger):
     # logger path: fit_a keeps the driven line's curvature while the centre moves to the paint; no logger: the base is
     # the OSM loop, whose curvature is not to be kept (v1's kinks), so the move is soft and the positions are smoothed
     pfa, pfb = (cen["paint_fit_a"], cen["paint_fit_b"]) if cfg.logger else (cen["nologger_fit_a"], cen["nologger_fit_b"])
+    # pit merges: the midpoint target takes the circuit's own edge where the pit lane joins (the cone line through the
+    # pit-exit blend lane, else the painted edge interpolated across the join); config centre.pit_merge (default on;
+    # off when reproducing an accepted package's build)
+    merge = ({"parts": (pit or {}).get("parts", []), "cones": cones["pts"] if cones else None, "gap": cen.get("pit_merge_gap", 0.3)}
+             if cen.get("pit_merge", True) and not REPRO and pit else None)
     fit = recentre.refit(C, hl, hr, Pm, shadow, (pit or {}).get("parts", []), (cones["s0"], cones["s1"]) if cones else None,
-                         e_gps, pfa, pfb, cen["bridge_win"], cen["gps_margin"], cen["min_width"])
+                         e_gps, pfa, pfb, cen["bridge_win"], cen["gps_margin"], cen["min_width"], merge=merge)
     C1, hl1, hr1, u, sp, L1 = fit["C"], fit["hl"], fit["hr"], fit["u"], fit["sp"], fit["L"]
     if REPRO.get("gps_margin_line") == "stale_refit_index":
         # Reproduces the accepted Laguna package only: on 18 Oct 2026 the GPS-margin step read a logged line measured on
@@ -235,7 +240,7 @@ def stage_geometry(cfg, out, no_logger):
             hs, rs, _ = edges_spline.fit_run(C1, NL1, hs, rs, run[0], run[1], tiles, features, sp_cfg, cc["mpp"])
         P2 = {"lat_left": hs, "lat_right": -rs}
         fit2 = recentre.refit(C1, hl1, hr1, P2, [], [], None, None, pfa, pfb, 0,
-                              cen["gps_margin"], cen["min_width"])
+                              cen["gps_margin"], cen["min_width"], merge=merge)
         C1, hl1, hr1, sp, L1 = fit2["C"], fit2["hl"], fit2["hr"], fit2["sp"], fit2["L"]
         fit["report"]["second_refit"] = fit2["report"]
     rep.check("painted-midpoint residual", fit["report"]["residual_mid_m"]["after_rms"] <= 0.6,
