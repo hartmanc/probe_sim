@@ -38,12 +38,15 @@ import { HotlapSim, LIMITS, type SimAssets, type SceneryLike, type InputType } f
 import { LAUNCH_S } from '../scoreboard/config';
 import { ScoreboardClient, buildHotlapSubmission, checkHotlap, hotlapBoard, offerCandidate, setBoardContext, fmtLapTime } from './scoreboard-client';
 import { ScoreboardUI } from './scoreboard-ui';
+import { TRACK, TRACK_ID, TRACK_IDS, urlForTrack } from './track-choice';
+import { TRACKS } from '../scoreboard/config';
 
 // The player's car runs in HotlapSim (src/scoreboard/sim.ts): 1000 Hz physics, 200 Hz timing, input sampled on a
-// 100 Hz grid, rolling start 130 m before T11 at 22 m/s. Its constants live in src/scoreboard/config.ts.
+// 100 Hz grid, rolling start 230 m before the last corner (Laguna: T11) at 22 m/s. Its constants live in
+// src/scoreboard/config.ts.
 const MAX_FRAME = 0.05;      // cap per rendered frame
 const GAME_OVER_DELAY_MS = 2500;        // space-launch easter egg: GAME OVER this long after the launch
-const TITLE = 'Probe GT · Laguna Seca';
+const TITLE = `Probe GT · ${TRACK.short}`;
 
 const app = document.getElementById('app')!;
 // phone layout + touch controls (quality.ts): html.touch styles the HUD for a small landscape screen
@@ -119,10 +122,18 @@ const loadLabel = loadBox.querySelector('.load-label') as HTMLDivElement;
 
 let sim: Sim | null = null;
 
+/** Start-menu track choice: only when more than one track is registered (a pick reloads with ?track=<id>). */
+const trackEntry = (): MenuEntry[] => TRACK_IDS.length < 2 ? [] : [{
+  kind: 'choice', id: 'track', label: 'Track',
+  options: TRACK_IDS.map((id) => ({ value: id, label: TRACKS[id].short })),
+  get: () => TRACK_ID, set: (v) => { if (v !== TRACK_ID) location.assign(urlForTrack(v)); },
+}];
+
 const mainPage: MenuPage = {
   title: TITLE,
   subtitle: '1993 Ford Probe GT · 24 Hours of Lemons #619',
   entries: (): MenuEntry[] => [
+    ...trackEntry(),
     { kind: 'action', id: 'hotlap', label: 'Hot lap', note: sim ? undefined : 'loading…', disabled: !sim, run: () => startMode('hotlap') },
     { kind: 'action', id: 'race', label: raceMenuLabel(location.search), note: sim ? undefined : 'loading…', disabled: !sim, run: () => startMode('race') },
     ...(touch ? [{ kind: 'submenu', id: 'touch', label: 'Touch controls', page: () => touchPage(touch) } as MenuEntry] : []),
@@ -288,7 +299,7 @@ function createSim(assets: Assets) {
   // 200 Hz timing + gear schedule, input trace for the scoreboard). Always the real physics (?stub=1 no longer
   // affects the player's car).
   const simAssets: SimAssets = {
-    trackId: 'laguna_seca', carId: 'probe_gt', track: track as unknown as SimAssets['track'], heightfield,
+    trackId: TRACK_ID, carId: 'probe_gt', track: track as unknown as SimAssets['track'], heightfield,
     carJson: assets.carSpecJson, scenery: (assets.scenery?.json ?? null) as SceneryLike | null,
     farHeightfield: assets.scenery?.farHeightfield ?? null, ghosts: assets.ghosts as unknown as SimAssets['ghosts'],
   };
@@ -300,10 +311,10 @@ function createSim(assets: Assets) {
   // physics-relevant stand-ins (synthetic track, flat heightfield, synthetic ghosts, no scenery / car.json) make
   // submissions fail the server's physics check or replay, so they are not offered
   const assetsOk = !assets.fallbacks.some((f) => !/^(ortho|car model)/.test(f));
-  setBoardContext({ client: scoreClient, track: 'laguna_seca', car: 'probe_gt', physics: hsim.physics, input: () => input.inputTag, assetsOk, offer: (c) => scoreUI.offer(c) });
+  setBoardContext({ client: scoreClient, track: TRACK_ID, car: 'probe_gt', physics: hsim.physics, input: () => input.inputTag, assetsOk, offer: (c) => scoreUI.offer(c) });
   void scoreClient.info().then((r) => {
     if (!r.ok) return; // offline: the Scoreboard screen says so when opened
-    const server = r.value.boards['laguna_seca/probe_gt'];
+    const server = r.value.boards[`${TRACK_ID}/probe_gt`];
     if (server && server !== hotlapBoard()) hud.toast('Scoreboard: this page is out of date — reload to post laps', 5000);
   });
 

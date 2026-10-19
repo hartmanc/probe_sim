@@ -1,4 +1,4 @@
-// Scenery from public/tracks/laguna_seca/scenery.json (CONTRACTS §2b): far terrain, oaks, buildings, bridges,
+// Scenery from the track package's scenery.json (CONTRACTS §2b): far terrain, oaks, buildings, bridges,
 // barriers, kerbs, boards and the flag stand. ENU -> three: X = x, Y = z, Z = -y.
 // Everything is static: instanced or merged per kind and chunked so frustum culling works. Nothing here
 // casts shadows (only the car does).
@@ -7,6 +7,7 @@ import { trackDistance } from './quality';
 import { mergeGeometries, mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import type { PitLaneJson, SausageJson, TrackJson } from './physics-types';
 import { PitExitCones, type PitExitConesJson } from './trackmath';
+import { TRACK } from './track-choice';
 
 type V2 = [number, number];
 type V3 = [number, number, number];
@@ -1067,7 +1068,7 @@ function buildBridges(list: SceneryJson['bridges'], ground?: (x: number, y: numb
     const bh = sign ? 2.6 : foot ? 3.6 : 1.6;
     const bannerY = sign ? -bh / 2 + 0.25 : foot ? 1.1 - bh / 2 : -deckT / 2 + 0.3;
     [0, 1].forEach((face) => {
-      const texts = b.banners[face] ?? b.banners[0] ?? ['LAGUNA SECA'];
+      const texts = b.banners[face] ?? b.banners[0] ?? [TRACK.short.toUpperCase()];
       const mat = new THREE.MeshLambertMaterial({ map: bannerTexture(texts, span, bh) });
       const pl = new THREE.Mesh(new THREE.PlaneGeometry(span, bh), mat);
       pl.position.set(0, bannerY, (face === 0 ? 1 : -1) * (w / 2 + 0.03));

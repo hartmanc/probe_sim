@@ -1,19 +1,19 @@
 // Fit each AI car's pace scale so its clean solo lap equals the real target lap (pace.json), and one
 // scale per real stint (pace.json cars[].stints[]: the per-driver paces a race draws from).
 //
-//   npx tsx tools/race/calibrate_field.ts [--only 711,619] [--workers 8] [--tol 0.002] [--dry]
+//   npx tsx tools/race/calibrate_field.ts [--track <id>] [--only 711,619] [--workers 8] [--tol 0.002] [--dry]
 //
-// Per car: the AI driver alone on Laguna Seca with the race physics (1 kHz, control at 500 Hz), 2
+// Per car: the AI driver alone on the track (registry id, default Laguna Seca) with the race physics (1 kHz, control at 500 Hz), 2
 // flying laps per evaluation, lap 2 counts. Bracketed secant / bisection on the scale (<= 8
-// evaluations), starting from the Probe's lap ratio. Writes scale + achievedLap into
-// public/cars/field/pace.json and prints a table. Bump AI_VERSION (src/physics/ai/field.ts) when the
+// evaluations), starting from the Probe's lap ratio. Writes scale + achievedLap into the track's pace file
+// (TRACKS[id].pace; Laguna public/cars/field/pace.json) and prints a table. Bump AI_VERSION (src/physics/ai/field.ts) when the
 // driver or this procedure changes behaviour, then re-run.
 
 import { writeFileSync } from 'node:fs';
 import { cpus } from 'node:os';
 import { Worker, isMainThread, parentPort, workerData } from 'node:worker_threads';
 import { fileURLToPath } from 'node:url';
-import { loadTrackPack, loadProbeJson, loadPace, loadIdentity, PACE_PATH } from './load';
+import { loadTrackPack, loadProbeJson, loadPace, loadIdentity, pacePath, trackArg } from './load';
 import { runSolo } from '../../src/physics/ai/solo';
 import { AI_VERSION, PACE_MIN, PACE_MAX, describeAiCar, paceSplit, type PaceCar } from '../../src/physics/ai/field';
 
@@ -57,8 +57,8 @@ function fitOne(job: Job, evalLap: (scale: number) => number): Fit {
   return { id: job.id, number: job.number, scale: +best[0].toFixed(5), lap: +best[1].toFixed(3), evals: hist.length, ok: Math.abs(best[1] - T) / T <= Math.max(job.tol, 0.005), history: hist };
 }
 
-function makeEval() {
-  const pack = loadTrackPack();
+function makeEval(track: string) {
+  const pack = loadTrackPack(track);
   const probe = loadProbeJson();
   const ident = loadIdentity();
   return (num: string) => (scale: number) => {
@@ -68,7 +68,7 @@ function makeEval() {
 }
 
 if (!isMainThread) {
-  const evalFor = makeEval();
+  const evalFor = makeEval(workerData.track);
   const jobs: Job[] = workerData.jobs;
   for (const job of jobs) parentPort!.postMessage(fitOne(job, evalFor(job.number)));
 } else {
@@ -78,7 +78,8 @@ if (!isMainThread) {
   const tol = Number(arg('--tol') ?? 0.002);
   const nWorkers = Math.max(1, Number(arg('--workers') ?? Math.min(8, Math.max(1, cpus().length - 2))));
   const dry = argv.includes('--dry');
-  const pace = loadPace();
+  const track = trackArg(argv);
+  const pace = loadPace(track);
   const probeJson = loadProbeJson();
   const ident = loadIdentity();
   const cars = pace.cars.filter((c) => !only || only.includes(c.number));
@@ -102,7 +103,7 @@ if (!isMainThread) {
       const mine = jobs.filter((_, k) => k % nWorkers === w);
       if (!mine.length) continue;
       live++;
-      const wk = new Worker(fileURLToPath(import.meta.url), { workerData: { jobs: mine }, execArgv: ['--import', 'tsx'] });
+      const wk = new Worker(fileURLToPath(import.meta.url), { workerData: { jobs: mine, track }, execArgv: ['--import', 'tsx'] });
       wk.on('message', (f: Fit) => { fits.set(f.id, f); process.stderr.write(`  #${f.id.padEnd(6)} scale ${f.scale.toFixed(4)} lap ${f.lap.toFixed(2)} (${f.evals} evals)\n`); });
       wk.on('error', fail);
       wk.on('exit', () => { if (--live === 0) done(); });
@@ -136,5 +137,5 @@ if (!isMainThread) {
   console.log(`\nworst error ${worst.toFixed(2)} %, ${((performance.now() - t0) / 1000).toFixed(1)} s with ${nWorkers} workers`);
   pace.ai_version = AI_VERSION;
   pace.calibrated = { ai_version: AI_VERSION, date: new Date().toISOString().slice(0, 10), tolerance: tol };
-  if (!dry) { writeFileSync(PACE_PATH, JSON.stringify(pace, null, 1) + '\n'); console.log(`wrote ${PACE_PATH}`); }
+  if (!dry) { writeFileSync(pacePath(track), JSON.stringify(pace, null, 1) + '\n'); console.log(`wrote ${pacePath(track)}`); }
 }

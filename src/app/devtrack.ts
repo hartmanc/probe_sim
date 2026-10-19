@@ -1,6 +1,6 @@
 // Synthetic development track: a flat 1.5 km stadium oval (CCW) with a hill on
 // the back straight. Produces a valid track.json object plus its heightfield,
-// used when public/tracks/laguna_seca/track.json is missing.
+// used when the track package's track.json is missing.
 // Also: a procedural "ortho" canvas for any track whose ortho.jpg is missing,
 // and a flat heightfield for a track whose heightfield.bin is missing.
 import type { TrackJson, Vec3 } from './physics-types';

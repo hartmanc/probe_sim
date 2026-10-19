@@ -143,9 +143,31 @@ export class RaceLine {
     const lap = ghosts.laps.find((l) => l.id === ghostId) ?? ghosts.laps.find((l) => l.kind === 'real') ?? ghosts.laps[0];
     this.ghostV = new Float64Array(N);
     this.ghostLap = lap ? lap.lap_time_s : 120;
-    for (let i = 0; i < N; i++) this.ghostV[i] = lap ? Math.max(5, gridAt(lap.v_mps, i * this.spacing)) : 30;
+    if (lap) for (let i = 0; i < N; i++) this.ghostV[i] = Math.max(5, gridAt(lap.v_mps, i * this.spacing));
+    else this.ghostLap = this.curvatureSpeedProfile();
     this.globalProj = createTrackProjector(track);
     this.corners = this.buildCorners();
+  }
+
+  /** A track built without logger laps has no ghost speeds: a reference profile from the line's curvature (1.05 g
+   *  laterally, 3.5 m/s^2 falling with speed forward, 8.5 m/s^2 braking, two periodic passes) stands in for the corner
+   *  finder (apex, braking point, entry speed). Returns its lap time. Unused when ghosts.json has laps. */
+  private curvatureSpeedProfile(): number {
+    const N = this.ghostV.length, v = this.ghostV;
+    for (let i = 0; i < N; i++) v[i] = Math.min(58, Math.sqrt(1.05 * 9.81 / Math.max(1e-4, Math.abs(this.curv[i]))));
+    for (let pass = 0; pass < 2; pass++) {
+      for (let k = 1; k < 2 * N; k++) {
+        const a = k % N, b = (k - 1) % N, acc = 3.5 * Math.max(0.15, 1 - v[b] / 62);
+        v[a] = Math.min(v[a], Math.sqrt(v[b] * v[b] + 2 * acc * this.ds[b]));
+      }
+      for (let k = 2 * N - 2; k >= 0; k--) {
+        const a = k % N, b = (k + 1) % N;
+        v[a] = Math.min(v[a], Math.sqrt(v[b] * v[b] + 2 * 8.5 * this.ds[a]));
+      }
+    }
+    let t = 0;
+    for (let i = 0; i < N; i++) { v[i] = Math.max(5, v[i]); t += this.ds[i] / v[i]; }
+    return t;
   }
 
   /** Corners from track.json (radius < 150 m; corners sharing an apex, e.g. the Corkscrew T8/T8A, merged). */

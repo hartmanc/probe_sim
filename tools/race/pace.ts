@@ -1,6 +1,7 @@
 // Per-car race pace from the real MYLAPS results of the 2026-10-12 Laguna Seca Lemons race.
 //
-//   npx tsx tools/race/pace.ts            # writes public/cars/field/pace.json (keeps fitted scales already there)
+//   npx tsx tools/race/pace.ts [--track <id>] [--data <dir>]   # writes the track's pace file (TRACKS[id].pace,
+//                                          Laguna: public/cars/field/pace.json), keeping fitted scales already there
 //
 // Input: tools/race/data/sessions_12975608_classification.json + tools/race/data/laps/posNNN.json.
 // Per car: target lap = median of GREEN, non-pit laps after dropping outliers (> 1.3 x the raw median);
@@ -20,10 +21,14 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { aggressionFor } from '../../src/physics/ai/rng';
 import { AI_VERSION, type PaceCar, type PaceJson, type PaceStint } from '../../src/physics/ai/field';
+import { pacePath, trackArg } from './load';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
-const DATA = resolve(ROOT, 'tools/race/data');
-const OUT = resolve(ROOT, 'public/cars/field/pace.json');
+const ARGV = process.argv.slice(2);
+const TRACK = trackArg(ARGV);
+// the race results the paces come from (Laguna: the 2026-10-12 MYLAPS session in tools/race/data)
+const DATA = resolve(ROOT, ARGV.includes('--data') ? ARGV[ARGV.indexOf('--data') + 1] : 'tools/race/data');
+const OUT = pacePath(TRACK);
 const PLAYER = '619';
 const MIN_STINT_LAPS = 5;
 
@@ -112,8 +117,9 @@ for (const r of cls.rows) {
 cars.sort((a, b) => a.grid - b.grid);
 const out: PaceJson = {
   ai_version: prev?.ai_version ?? AI_VERSION,
-  source: 'MYLAPS session 12975608 (24 Hours of Lemons, WeatherTech Raceway Laguna Seca, 2026-10-12); tools/race/pace.ts',
-  track: 'laguna_seca',
+  source: ARGV.includes('--source') ? ARGV[ARGV.indexOf('--source') + 1]
+    : 'MYLAPS session 12975608 (24 Hours of Lemons, WeatherTech Raceway Laguna Seca, 2026-10-12); tools/race/pace.ts',
+  track: TRACK,
   cars,
 };
 mkdirSync(dirname(OUT), { recursive: true });

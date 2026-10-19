@@ -21,15 +21,16 @@ export const TIMING_EVERY = 5;
 /** Quantisation of steer / throttle / brake: integers in thousandths. */
 export const QUANT = 1000;
 
-/** Rolling start (HotlapSim.canonicalReset): this far before the T11 hairpin at this speed, on the racing line
- *  (230 m since 17 Oct 2026, was 130 m on the centreline: the hot lap now launches itself for LAUNCH_S first). */
-export const ROLLING_START_BEFORE_T11_M = 230;
+/** Rolling start (HotlapSim.canonicalReset): this far before the track's last corner (the last track.json corner with a
+ *  direction; Laguna's T11 hairpin) at this speed, on the racing line (230 m since 17 Oct 2026, was 130 m on the
+ *  centreline: the hot lap now launches itself for LAUNCH_S first). */
+export const ROLLING_START_BEFORE_LAST_CORNER_M = 230;
 export const ROLLING_START_SPEED = 22;
 /** Hot-lap auto-launch (owner, 17 Oct 2026): for this long after the rolling start the car drives itself at full
  *  throttle along the racing line while the HUD counts 3-2-1, then the driver takes over. The launch inputs go
  *  through the normal 100 Hz sample path, so a trace replays them like any other input. */
 export const LAUNCH_S = 3;
-/** Fallback when the track has no T11: standing start this far behind the line. */
+/** Fallback when the track has no directed corner: standing start this far behind the line. */
 export const START_BACK_M = 25;
 
 /** Trace flag bits. shiftUp/shiftDown are one-sample pulses; the others are held states. */
@@ -45,10 +46,33 @@ export const MODES: readonly Mode[] = ['hotlap', 'race'];
 export type InputType = 'pad' | 'keys' | 'phone';
 export const INPUT_TYPES: readonly InputType[] = ['pad', 'keys', 'phone'];
 
-/** Whitelisted tracks. `dir` is relative to public/ (client fetch base and server file root). */
-export const TRACKS: Readonly<Record<string, { dir: string; length_m: number }>> = {
-  laguna_seca: { dir: 'tracks/laguna_seca/', length_m: 3588.048 },
+/** One circuit. Paths are relative to public/ (client fetch base and server file root). */
+export interface TrackInfo {
+  /** track package directory: track.json, heightfield.bin, ortho.jpg, ghosts.json, scenery.json, far_* */
+  dir: string;
+  /** full name (track.json `name`) */
+  name: string;
+  /** short name for titles and captions */
+  short: string;
+  /** track.json length_m (feeds physicsVersion and the race metres check) */
+  length_m: number;
+  /** the race field's per-stint pace for this circuit (tools/race/pace.ts, calibrate_field.ts) */
+  pace: string;
+}
+
+/** The track registry: every circuit the app, the scoreboard server and the tools know (whitelist). A new track gets an
+ *  entry here (built by tools/track/build_track.py, see the build-track skill) and a pace file of its own under
+ *  cars/field/<id>/pace.json; Laguna's predates that and stays at cars/field/pace.json. */
+export const TRACKS: Readonly<Record<string, TrackInfo>> = {
+  laguna_seca: { dir: 'tracks/laguna_seca/', name: 'WeatherTech Raceway Laguna Seca', short: 'Laguna Seca', length_m: 3588.048, pace: 'cars/field/pace.json' },
 };
+/** The track when none is chosen (URL ?track=, Start menu). */
+export const DEFAULT_TRACK = 'laguna_seca';
+
+/** A registered track id, or the default for anything else (unknown ids fall back rather than break the page). */
+export function resolveTrackId(id: string | null | undefined): string {
+  return id && Object.prototype.hasOwnProperty.call(TRACKS, id) ? id : DEFAULT_TRACK;
+}
 /** Whitelisted cars. */
 export const CARS: Readonly<Record<string, { dir: string }>> = {
   probe_gt: { dir: 'cars/probe_gt/' },

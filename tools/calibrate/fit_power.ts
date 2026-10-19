@@ -12,11 +12,12 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createTrackProjector, createTrackSurface, lineToWorld, loadCarSpec, loadHeightfield, Vehicle } from '../../src/physics';
 import type { TrackJson } from '../../src/physics';
+import { TRACKS, DEFAULT_TRACK } from '../../src/scoreboard/config';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const argv = process.argv.slice(2);
 const arg = (k: string, d: number) => { const i = argv.indexOf(k); return i >= 0 ? Number(argv[i + 1]) : d; };
-const TD = resolve(ROOT, 'public/tracks/laguna_seca');
+const TD = resolve(ROOT, 'public', TRACKS[DEFAULT_TRACK].dir);
 const track = JSON.parse(readFileSync(TD + '/track.json', 'utf8')) as TrackJson;
 const hf = loadHeightfield(Uint8Array.from(readFileSync(TD + '/heightfield.bin')).buffer);
 const ghosts = JSON.parse(readFileSync(TD + '/ghosts.json', 'utf8'));

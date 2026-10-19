@@ -3,9 +3,10 @@ import { readFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { deriveGearSchedule, loadCarSpec, shiftRpmSummary } from '../../src/physics';
+import { TRACKS, DEFAULT_TRACK } from '../../src/scoreboard/config';
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const spec = loadCarSpec(JSON.parse(readFileSync(resolve(ROOT, 'public/cars/probe_gt/car.json'), 'utf8')));
-const gh = JSON.parse(readFileSync(resolve(ROOT, 'public/tracks/laguna_seca/ghosts.json'), 'utf8'));
+const gh = JSON.parse(readFileSync(resolve(ROOT, 'public', TRACKS[DEFAULT_TRACK].dir, 'ghosts.json'), 'utf8'));
 const want = process.argv[2];
 for (const lap of gh.laps) {
   if (want && lap.id !== want) continue;

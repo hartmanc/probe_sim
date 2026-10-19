@@ -1,20 +1,21 @@
 // Headless race: the whole field (player car driven by an AI) for N laps; prints timing, results and
-// per-car pace vs target.   npx tsx tools/race/sim_race.ts [--laps 3] [--seed 1] [--every 2]
+// per-car pace vs target.   npx tsx tools/race/sim_race.ts [--track <id>] [--laps 3] [--seed 1] [--every 2]
 import { createTrackSurface, createCollisionWorld } from '../../src/physics/index';
 import { RaceDirector } from '../../src/physics/ai/race';
-import { loadTrackPack, loadProbeJson, loadPace, IDENTITY_PATH } from './load';
+import { loadTrackPack, loadProbeJson, loadPace, IDENTITY_PATH, trackArg } from './load';
 import { existsSync, readFileSync } from 'node:fs';
 
 const argv = process.argv.slice(2);
 const arg = (k: string, d: string) => { const i = argv.indexOf(k); return i >= 0 ? argv[i + 1] : d; };
 const laps = Number(arg('--laps', '3')), seed = Number(arg('--seed', '1')), every = Number(arg('--every', '2'));
-const pack = loadTrackPack();
+const track = trackArg(argv);
+const pack = loadTrackPack(track);
 const identity = existsSync(IDENTITY_PATH) ? JSON.parse(readFileSync(IDENTITY_PATH, 'utf8')) : null;
 const cw = argv.includes('--no-walls') ? null : createCollisionWorld(pack.scenery, pack.track);
 const t0 = performance.now();
 const dir = new RaceDirector({
   line: pack.line, surface: pack.surface, makeSurface: () => createTrackSurface(pack.track, pack.heightfield, { pitLane: pack.pitLane }),
-  probeJson: loadProbeJson(), pace: loadPace(), identity, pitLane: pack.scenery?.pit_lane ?? null, collisionWorld: cw,
+  probeJson: loadProbeJson(), pace: loadPace(track), identity, pitLane: pack.scenery?.pit_lane ?? null, collisionWorld: cw,
 }, { laps, seed, playerAi: true, aiControlEvery: every });
 console.log(`setup ${(performance.now() - t0).toFixed(0)} ms, ${dir.cars.length} cars, stale calibration: ${dir.calibrationStale}`);
 const dt = 0.001;

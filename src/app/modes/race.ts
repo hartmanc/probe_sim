@@ -1,4 +1,4 @@
-// Race: RACE_LAPS laps (?laps= to shorten) against the 2026 Lemons field at Laguna Seca. The race core is
+// Race: RACE_LAPS laps (?laps= to shorten) against the 2026 Lemons field on the page's track. The race core is
 // src/physics/ai (RaceDirector, see its NOTES.md); this file wires it into the app:
 //
 // - The player's car stays the HotlapSim car (input sampled on its 100 Hz grid, 200 Hz timing, gear schedule).
@@ -21,6 +21,7 @@ import { RaceHudDom, raceHudView, raceTable, resultRows, rowStatus, type TableRo
 export { rowStatus, type RowStatus } from '../race-hud';
 import { fmtLapTime, fmtMetres, setBoardContext, submitRace, type RaceResult, type SubmitOutcome } from '../scoreboard-client';
 import { LIMITS } from '../../scoreboard/config';
+import { TRACK } from '../track-choice';
 import { FieldAudio, familyFor, FIELD_VOICES_DESKTOP, FIELD_VOICES_PHONE, type FamilyIndex, type Layout } from '../audio-field';
 import type { ConeLineLike, FieldAudioCar, FieldAudioHook, FieldAudioLike, FieldCarSound, GameMode, ModeContext, ModeHud, RaceServices } from './mode';
 
@@ -492,7 +493,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
     return {
       title: 'RESULTS',
       subtitle: `${laps} lap${laps === 1 ? '' : 's'} · seed ${seed}${me ? ` · P${me.position} of ${rows.length} · ${me.time != null ? `${me.laps} laps in ${fmtLapTime(me.time)}` : fmtMetres(me.metres, Math.max(0, me.laps), L())}` : ''}`,
-      body: () => raceTable(rows, L(), d?.getResults() ? 'CHEQUERED FLAG · LAGUNA SECA · 2026 LEMONS FIELD' : 'OUT OF THE RACE · ORDER WHEN YOU LEFT'),
+      body: () => raceTable(rows, L(), d?.getResults() ? `CHEQUERED FLAG · ${TRACK.short.toUpperCase()} · 2026 LEMONS FIELD` : 'OUT OF THE RACE · ORDER WHEN YOU LEFT'),
       entries: (): MenuEntry[] => [
         {
           kind: 'action', id: 'raceSubmit', label: 'Submit to scoreboard',

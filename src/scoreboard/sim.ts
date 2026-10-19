@@ -10,7 +10,7 @@ import {
   type SausageJson } from '../physics';
 import { LapTimer, type Lap } from '../app/timing';
 import {
-  STEP, SAMPLE_EVERY, TIMING_EVERY, ROLLING_START_BEFORE_T11_M, ROLLING_START_SPEED, START_BACK_M,
+  STEP, SAMPLE_EVERY, TIMING_EVERY, ROLLING_START_BEFORE_LAST_CORNER_M, ROLLING_START_SPEED, START_BACK_M,
   FLAG_SHIFT_UP, FLAG_SHIFT_DOWN, FLAG_HANDBRAKE, FLAG_AUTOSHIFT, FLAG_ABS, QUANT, TRACE_FORMAT,
 } from './config';
 import { physicsVersion } from './hash';
@@ -65,14 +65,25 @@ export function defaultRefGhost(g: GhostsLike): string | null {
   return (best ?? g.laps[0])?.id ?? null;
 }
 
-/** The canonical start: ROLLING_START_BEFORE_T11_M before T11 on the racing line (`lineOffset`, 0 = centreline). */
+/** The track's last corner: the directed track.json corner with the largest s (Laguna: T11). */
+export function lastCorner(track: TrackJson): { name: string; s: number } | null {
+  let last: { name: string; s: number } | null = null;
+  for (const c of track.corners ?? []) {
+    if (!(c as { dir?: string | null }).dir) continue;
+    if (!last || c.s > last.s) last = c;
+  }
+  return last;
+}
+
+/** The canonical start: ROLLING_START_BEFORE_LAST_CORNER_M before the last corner on the racing line (`lineOffset`,
+ *  0 = centreline), at ROLLING_START_SPEED; a track without directed corners gets a standing start START_BACK_M back. */
 export function canonicalReset(track: TrackJson, lineOffset: (s: number) => number = () => 0): { pos: [number, number, number]; heading: number; speed: number } {
-  const t11 = track.corners?.find((c) => /^T11\b/i.test(c.name));
-  const s = t11
-    ? (t11.s - ROLLING_START_BEFORE_T11_M + track.length_m) % track.length_m
+  const lc = lastCorner(track);
+  const s = lc
+    ? (lc.s - ROLLING_START_BEFORE_LAST_CORNER_M + track.length_m) % track.length_m
     : (track.length_m - START_BACK_M) % track.length_m;
   const p = lineToWorld(track, lineOffset, s);
-  return { pos: [p.pos[0], p.pos[1], p.pos[2]], heading: p.heading, speed: t11 ? ROLLING_START_SPEED : 0 };
+  return { pos: [p.pos[0], p.pos[1], p.pos[2]], heading: p.heading, speed: lc ? ROLLING_START_SPEED : 0 };
 }
 
 export interface HotlapSimOptions {

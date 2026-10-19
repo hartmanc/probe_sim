@@ -8,6 +8,7 @@ import { makeDevTrack, makeFlatHeightfield, makeOrthoCanvas } from './devtrack';
 import { buildFallbackCar } from './car';
 import { synthesizeGhosts } from './ghosts';
 import type { SceneryAssets, SceneryJson } from './scenery';
+import { TRACK } from './track-choice';
 
 export interface Assets {
   track: TrackJson;
@@ -21,7 +22,8 @@ export interface Assets {
   fallbacks: string[];   // human-readable list of what was synthesized
 }
 
-const TRACK_DIR = 'tracks/laguna_seca/';
+/** The page's track package (?track=, src/app/track-choice.ts). */
+const TRACK_DIR = TRACK.dir;
 const CAR_DIR = 'cars/probe_gt/';
 
 async function fetchOk(url: string): Promise<Response | null> {
@@ -88,7 +90,9 @@ export async function loadAssets(onProgress: (frac: number, label: string) => vo
   })();
   const ghostsP = (async () => {
     let g = isDev ? null : await fetchJson<GhostsJson>(TRACK_DIR + 'ghosts.json');
-    if (!g || !Array.isArray(g.laps) || g.laps.length === 0) {
+    // a track built without logger laps has a racing line and no ghost laps: keep it (no ghosts to show, the line is real)
+    const lineOnly = !!g && Array.isArray(g.laps) && g.laps.length === 0 && (g.line?.offset_m?.length ?? 0) > 0;
+    if (!g || (!lineOnly && (!Array.isArray(g.laps) || g.laps.length === 0))) {
       g = synthesizeGhosts(t);
       if (!isDev) fallbacks.push('ghosts (synthetic)');
     }
@@ -182,12 +186,12 @@ export interface FieldData {
 
 let fieldDataP: Promise<FieldData> | null = null;
 
-/** pace.json + identity.json + models.json (fetched once, cached). */
+/** The track's pace.json + identity.json + models.json (fetched once, cached). */
 export function loadFieldData(): Promise<FieldData> {
   if (!fieldDataP) {
     fieldDataP = (async () => {
       const [pace, identity, models] = await Promise.all([
-        fetchJson<unknown>(FIELD_DIR + 'pace.json'),
+        fetchJson<unknown>(TRACK.pace),   // per track (src/scoreboard/config.ts TRACKS)
         fetchJson<unknown>(FIELD_DIR + 'identity.json'),
         fetchJson<{ cars?: FieldModelInfo[] }>(FIELD_DIR + 'models.json'),
       ]);

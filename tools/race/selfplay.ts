@@ -1,11 +1,11 @@
 // Headless self-play: the whole field (player car driven by an AI) races N laps and the AI's racecraft is
 // measured: line tracking when alone, passing when clearly faster, defending by pace gap, rules
 // (contacts, four wheels off, formation passes), mishaps, and the per-step cost.
-//   npx tsx tools/race/selfplay.ts [--laps 4] [--seed 1] [--max-ai N] [--pace path] [--mishap-rate 0.0002] [--json out.json] [--quiet]
+//   npx tsx tools/race/selfplay.ts [--track <id>] [--laps 4] [--seed 1] [--max-ai N] [--pace path] [--mishap-rate 0.0002] [--json out.json] [--quiet]
 import { createTrackSurface, createCollisionWorld } from '../../src/physics/index';
 import { RaceDirector } from '../../src/physics/ai/race';
 import type { PaceJson } from '../../src/physics/ai/field';
-import { loadTrackPack, loadProbeJson, loadPace, IDENTITY_PATH } from './load';
+import { loadTrackPack, loadProbeJson, loadPace, IDENTITY_PATH, trackArg } from './load';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { runSelfplay, printReport } from './selfplay_metrics';
 
@@ -15,9 +15,10 @@ const laps = Number(arg('--laps', '4')), seed = Number(arg('--seed', '1'));
 const maxAi = Number(arg('--max-ai', 'Infinity'));
 const pacePath = arg('--pace', '');
 const mishapRate = argv.includes('--mishap-rate') ? Number(arg('--mishap-rate', '0.0002')) : undefined;
-const pack = loadTrackPack();
+const track = trackArg(argv);
+const pack = loadTrackPack(track);
 const identity = existsSync(IDENTITY_PATH) ? JSON.parse(readFileSync(IDENTITY_PATH, 'utf8')) : null;
-const pace: PaceJson = pacePath ? JSON.parse(readFileSync(pacePath, 'utf8')) : loadPace();
+const pace: PaceJson = pacePath ? JSON.parse(readFileSync(pacePath, 'utf8')) : loadPace(track);
 const makeSurface = () => createTrackSurface(pack.track, pack.heightfield, { pitLane: pack.pitLane });
 const dir = new RaceDirector({
   line: pack.line, surface: pack.surface, makeSurface,

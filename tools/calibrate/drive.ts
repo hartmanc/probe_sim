@@ -1,4 +1,4 @@
-// Autopilot calibration driver: runs the real physics at 1 kHz on Laguna Seca,
+// Autopilot calibration driver: runs the real physics at 1 kHz on a track package (--track <dir>, default Laguna Seca),
 // following the ghost racing line, and compares the lap with the logger ghosts.
 //
 //   npx tsx tools/calibrate/drive.ts [--car public/cars/probe_gt/car.json]
@@ -16,6 +16,7 @@ import {
   type DriverInput, type TrackJson, type Surface,
 } from '../../src/physics/index';
 import { createFlatSurface } from '../../src/physics/devtrack';
+import { TRACKS, DEFAULT_TRACK } from '../../src/scoreboard/config';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const G = 9.81;
@@ -25,11 +26,13 @@ const DT = 0.001;
 interface Args {
   car: string; sets: [string, number][]; torqueScale: number;
   alat: number; abrake: number; out: string; track: string; bank: boolean; json: boolean; quiet: boolean; noFiles: boolean; keepShaping: boolean; upshift: number; learn: number; schedule: string;
+  refGhosts: string;
 }
 function parseArgs(argv: string[]): Args {
   const a: Args = {
     car: 'public/cars/probe_gt/car.json', sets: [], torqueScale: 1, alat: 1.05, abrake: 0.95,
-    out: 'tools/calibrate/out', track: 'public/tracks/laguna_seca', bank: false, json: false, quiet: false, noFiles: false, keepShaping: false, upshift: 5000, learn: 0, schedule: '',
+    out: 'tools/calibrate/out', track: 'public/' + TRACKS[DEFAULT_TRACK].dir.replace(/\/$/, ''), bank: false, json: false, quiet: false, noFiles: false, keepShaping: false, upshift: 5000, learn: 0, schedule: '',
+    refGhosts: '',
   };
   for (let i = 0; i < argv.length; i++) {
     const k = argv[i];
@@ -49,6 +52,7 @@ function parseArgs(argv: string[]): Args {
     else if (k === '--upshift') a.upshift = Number(nxt());
     else if (k === '--learn') a.learn = Number(nxt());
     else if (k === '--schedule') a.schedule = nxt();
+    else if (k === '--ref-ghosts') a.refGhosts = nxt();
     else throw new Error(`unknown argument ${k}`);
   }
   return a;
@@ -95,7 +99,10 @@ const ghosts = JSON.parse(readFileSync(resolve(TDIR, 'ghosts.json'), 'utf8'));
 const surface: Surface = createTrackSurface(track, heightfield);
 const projector = createTrackProjector(track);
 const LEN = track.length_m;
-const N = track.n; // 1 m stations
+// 1 m samples of the line, s = i metres. Never past the lap end: a package with spacing_m < 1 (more stations than metres,
+// e.g. a track built without logger laps) would otherwise wrap its last samples onto the start and fake a hairpin
+// there. (With spacing_m > 1, as Laguna's 1.0079, the last ~28 m reuse the first samples; left as it was.)
+const N = Math.min(track.n, Math.floor(LEN));
 
 const gridDs: number = ghosts.s_grid_m;
 // --schedule <ghost id>: autoShift follows that ghost's gear schedule (deriveGearSchedule)
@@ -454,9 +461,27 @@ alatAt.set(bestAlat); buildProfile();
 const { rows, lapTime, lapsDone, maxLatErr, offTrackSteps, spun } = best!;
 
 // ------------------------------------------------------------------ comparison
+// Comparison laps: this package's ghosts, or --ref-ghosts <ghosts.json> of another package of the same circuit (a package
+// built without logger laps has none), resampled onto this grid by the fraction of the lap. Without any, the sim lap
+// stands in, so the tables compare the sim with itself and only the lap time and the sim column mean anything.
+const refJson = args.refGhosts ? JSON.parse(readFileSync(resolve(ROOT, args.refGhosts), 'utf8')) : ghosts;
 const lapsById: Record<string, any> = {};
-for (const l of ghosts.laps) lapsById[l.id] = l;
-const driver_a = lapsById['driver_a_best'], opt = lapsById['optimal'];
+for (const l of refJson.laps) {
+  if (refJson === ghosts) { lapsById[l.id] = l; continue; }
+  const m = l.t.length, out: any = { ...l, t: [], v_mps: [], rpm: [], throttle: [] };
+  for (let i = 0; i < NG; i++) {
+    const u = (i / NG) * m, a = Math.min(m - 1, Math.floor(u)), b = Math.min(m - 1, a + 1), f = u - Math.floor(u);
+    for (const k of ['t', 'v_mps', 'rpm', 'throttle']) out[k].push(l[k][a] + f * (l[k][b] - l[k][a]));
+  }
+  lapsById[l.id] = out;
+}
+const kmhSim = Float64Array.from({ length: NG }, () => NaN);
+for (const r of rows) kmhSim[Math.round(r.s / gridDs)] = r.v;
+const simLap = { id: 'sim', lap_time_s: lapTime, v_mps: Array.from(kmhSim, (v, i) => (Number.isFinite(v) ? v : kmhSim[(i + NG - 1) % NG])),
+  t: Array.from({ length: NG }, (_, i) => i), rpm: new Array(NG).fill(0), throttle: new Array(NG).fill(0) };
+const noRef = !lapsById['driver_a_best'] || !lapsById['optimal'];
+if (noRef) log('no ghost laps to compare with (none in ghosts.json and no --ref-ghosts): the sim lap stands in for driver A / optimal');
+const driver_a = lapsById['driver_a_best'] ?? simLap, opt = lapsById['optimal'] ?? simLap;
 const kmh = (x: number) => x * 3.6;
 const simV = new Float64Array(NG).fill(NaN);
 for (const r of rows) simV[Math.round(r.s / gridDs)] = r.v;

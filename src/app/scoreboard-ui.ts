@@ -7,6 +7,7 @@ import {
   type ApiResult, type Candidate, type ScoreboardClient, type SubmitOutcome,
 } from './scoreboard-client';
 import { LIMITS, nameKey, normalizeName, type Board, type Mode, type Score } from '../scoreboard';
+import { TRACK } from './track-choice';
 
 function el<K extends keyof HTMLElementTagNameMap>(tag: K, cls?: string, text?: string): HTMLElementTagNameMap[K] {
   const e = document.createElement(tag);
@@ -320,7 +321,7 @@ export class ScoreboardUI {
     const key = this.key();
     const mode = this.mode;
     const ctx = boardContext();
-    box.append(el('div', 'sb-caption', `${mode === 'race' ? 'RACE · METRES IN 10 LAPS' : 'HOT LAP'} · LAGUNA SECA · PROBE GT`));
+    box.append(el('div', 'sb-caption', `${mode === 'race' ? 'RACE · METRES IN 10 LAPS' : 'HOT LAP'} · ${TRACK.short.toUpperCase()} · PROBE GT`));
     const st = key ? this.states.get(key) : undefined;
     if (!key || !ctx) { box.append(el('div', 'sb-msg', 'LOADING THE TRACK…')); return box; }
     const me = this.o.client.name;
