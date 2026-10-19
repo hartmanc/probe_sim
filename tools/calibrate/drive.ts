@@ -99,10 +99,9 @@ const ghosts = JSON.parse(readFileSync(resolve(TDIR, 'ghosts.json'), 'utf8'));
 const surface: Surface = createTrackSurface(track, heightfield);
 const projector = createTrackProjector(track);
 const LEN = track.length_m;
-// 1 m samples of the line, s = i metres. Never past the lap end: a package with spacing_m < 1 (more stations than metres,
-// e.g. a track built without logger laps) would otherwise wrap its last samples onto the start and fake a hairpin
-// there. (With spacing_m > 1, as Laguna's 1.0079, the last ~28 m reuse the first samples; left as it was.)
-const N = Math.min(track.n, Math.floor(LEN));
+// 1 m samples of the line, s = i metres, over the whole lap (20 Oct 2026: was min(n, floor(length)), which left the last
+// length - n metres unsampled on a package with spacing_m > 1, ~11 m of Sonoma's first build; lineToWorld takes metres)
+const N = Math.floor(LEN);
 
 const gridDs: number = ghosts.s_grid_m;
 // --schedule <ghost id>: autoShift follows that ghost's gear schedule (deriveGearSchedule)
@@ -166,10 +165,11 @@ const BANK = new Float64Array(N);
 {
   const fr = track.profile.fractions;
   for (let i = 0; i < N; i++) {
-    const c = track.center[i], l = track.left[i], r = track.right[i];
+    const st = Math.round(i / (track.spacing_m ?? 1)) % track.n;   // metre i -> station
+    const c = track.center[st], l = track.left[st], r = track.right[st];
     const hl = Math.hypot(l[0] - c[0], l[1] - c[1]), hr = Math.hypot(r[0] - c[0], r[1] - c[1]);
     const lat = fr.map((f) => (f < 0 ? -f * hl : -f * hr)); // + left
-    const z = track.profile.z[i];
+    const z = track.profile.z[st];
     const sl: number[] = [];
     for (let k = 1; k < fr.length - 2; k++) sl.push((z[k + 1] - z[k]) / (lat[k + 1] - lat[k]));
     sl.sort((a, b) => a - b);
@@ -336,7 +336,7 @@ let brakeCap = 1, thrCap = 1;
 const TMAX = 400;
 const KR = Number(process.env.DRIVE_KR ?? 0.25);
 const LD0 = Number(process.env.DRIVE_LD0 ?? 3), LDK = Number(process.env.DRIVE_LDK ?? 0.25); // pure-pursuit look-ahead Ld = LD0 + LDK·v (m) // rad of road-wheel angle per rad/s of yaw-rate error
-const halfWidth = (i: number) => 0.5 * Math.hypot(track.left[i][0] - track.right[i][0], track.left[i][1] - track.right[i][1]);
+const halfWidth = (m: number) => { const i = Math.round(m / (track.spacing_m ?? 1)) % track.n; return 0.5 * Math.hypot(track.left[i][0] - track.right[i][0], track.left[i][1] - track.right[i][1]); };
 
 while (t < TMAX) {
   const st = car.state;
@@ -480,32 +480,27 @@ for (const r of rows) kmhSim[Math.round(r.s / gridDs)] = r.v;
 const simLap = { id: 'sim', lap_time_s: lapTime, v_mps: Array.from(kmhSim, (v, i) => (Number.isFinite(v) ? v : kmhSim[(i + NG - 1) % NG])),
   t: Array.from({ length: NG }, (_, i) => i), rpm: new Array(NG).fill(0), throttle: new Array(NG).fill(0) };
 const noRef = !lapsById['driver_a_best'] || !lapsById['optimal'];
-if (noRef) log('no ghost laps to compare with (none in ghosts.json and no --ref-ghosts): the sim lap stands in for driver A / optimal');
+
 const driver_a = lapsById['driver_a_best'] ?? simLap, opt = lapsById['optimal'] ?? simLap;
 const kmh = (x: number) => x * 3.6;
 const simV = new Float64Array(NG).fill(NaN);
 for (const r of rows) simV[Math.round(r.s / gridDs)] = r.v;
 
-// Windows were set on the v1 track (corner s below); on another package they move with track.json's corner s.
-const CORNERS_V1: [string, string, number, number, number][] = [
-  ['T2 Andretti', 'T2', 538, 440, 600], ['T3', 'T3', 793, 740, 860], ['T4', 'T4', 1072, 1000, 1120],
-  ['T5', 'T5', 1554, 1480, 1620], ['T6', 'T6', 1963, 1900, 2020], ['Corkscrew T8/8A', 'T8', 2479, 2440, 2560],
-  ['T9 Rainey', 'T9', 2765, 2680, 2820], ['T10', 'T10', 3011, 2940, 3080], ['T11', 'T11', 3295, 3230, 3360],
-];
-const trackCorners: { turn?: string | null; s: number }[] = (track as any).corners ?? [];
-const CORNERS: [string, number, number][] = CORNERS_V1.map(([name, turn, s1, a, b]) => {
-  const c = trackCorners.find((x) => x.turn === turn);
-  const d = c ? c.s - s1 : 0;
-  return [name, a + d, b + d];
-});
+// Corner and straight windows from this package's own track.json corners (20 Oct 2026: they were Laguna's names and
+// sectors moved by corner offsets, which skipped half of Sonoma's corners): every directed corner +-60 m, and every
+// stretch from one corner's exit to 30 m before the next corner.
+const trackCorners: { turn?: string | null; name?: string; s: number; dir?: string | null }[] =
+  ((track as any).corners ?? []).filter((c: any) => c.dir).sort((x: any, y: any) => x.s - y.s);
+const cname = (c: { turn?: string | null; name?: string }) => (c.name && c.name !== c.turn ? `${c.turn} ${c.name}` : String(c.turn ?? c.name)).slice(0, 17);
+const CORNERS: [string, number, number][] = trackCorners.map((c) => [cname(c), c.s - 60, c.s + 60]);
 function minIn(v: ArrayLike<number>, a: number, b: number): { v: number; s: number } {
   let best = Infinity, bs = 0;
-  for (let i = Math.ceil(a / gridDs); i <= Math.floor(b / gridDs); i++) if (v[i] < best) { best = v[i]; bs = i * gridDs; }
+  for (let i = Math.ceil(a / gridDs); i <= Math.floor(b / gridDs); i++) { const k = ((i % NG) + NG) % NG; if (v[k] < best) { best = v[k]; bs = k * gridDs; } }
   return { v: best, s: bs };
 }
 function maxIn(v: ArrayLike<number>, a: number, b: number): { v: number; s: number } {
   let best = -Infinity, bs = 0;
-  for (let i = Math.ceil(a / gridDs); i <= Math.floor(b / gridDs); i++) if (v[i] > best) { best = v[i]; bs = i * gridDs; }
+  for (let i = Math.ceil(a / gridDs); i <= Math.floor(b / gridDs); i++) { const k = ((i % NG) + NG) % NG; if (v[k] > best) { best = v[k]; bs = k * gridDs; } }
   return { v: best, s: bs };
 }
 const corners = CORNERS.map(([name, a, b]) => {
@@ -514,18 +509,11 @@ const corners = CORNERS.map(([name, a, b]) => {
     errdriver A: (m.v / e.v - 1) * 100, errOpt: (m.v / o.v - 1) * 100 };
 });
 // straights: from corner exit minimum to the max before the next braking point
-const STRAIGHTS: [string, number, number, number, number][] = [
-  // name, min window a,b ; max window a,b (max window end is before the braking point)
-  ['T11 -> front straight -> T2', 3230, 3360, 0, 420],
-  ['T2 -> T3', 440, 600, 600, 760],
-  ['T3 -> T4', 740, 860, 860, 1060],
-  ['T4 -> T5', 1000, 1120, 1120, 1500],
-  ['T5 -> T6', 1480, 1620, 1620, 1950],
-  ['T6 -> Rahal -> Corkscrew', 1900, 2020, 2020, 2420],
-  ['Corkscrew -> Rainey', 2440, 2560, 2560, 2700],
-  ['Rainey -> T10', 2680, 2820, 2820, 2960],
-  ['T10 -> T11', 2940, 3080, 3080, 3260],
-];
+const STRAIGHTS: [string, number, number, number, number][] = trackCorners.map((c, i) => {
+  const nx = trackCorners[(i + 1) % trackCorners.length];
+  const nxs = nx.s > c.s ? nx.s : nx.s + LEN;
+  return [`${cname(c)} -> ${cname(nx)}`.slice(0, 29), c.s - 60, c.s + 60, c.s + 60, nxs - 30] as [string, number, number, number, number];
+});
 function straightOf(v: ArrayLike<number>, st: typeof STRAIGHTS[number]) {
   const lo = minIn(v, st[1], st[2]);
   const vv = Array.from(v);
@@ -561,8 +549,10 @@ const straights = STRAIGHTS.map((st) => {
 });
 // speed at s = 300 (front straight, logger max point)
 const at = (v: ArrayLike<number>, s: number) => kmh(v[Math.round(s / gridDs)]);
-const front = { driver_a: at(driver_a.v_mps, 300), optimal: at(opt.v_mps, 300), sim: at(simV, 300),
-  driver_aMax: maxIn(driver_a.v_mps, 0, 420), simMax: maxIn(simV, 0, 420) };
+const longest = STRAIGHTS.reduce((m, st) => (st[4] - st[3] > m[4] - m[3] ? st : m), STRAIGHTS[0]);
+const front = { name: longest[0], driver_a: maxIn(driver_a.v_mps, longest[3], longest[4]).v * 3.6, optimal: maxIn(opt.v_mps, longest[3], longest[4]).v * 3.6,
+  sim: maxIn(simV, longest[3], longest[4]).v * 3.6, driver_aMax: maxIn(driver_a.v_mps, longest[3], longest[4]), simMax: maxIn(simV, longest[3], longest[4]) };
+void at;
 
 // ghost braking rates (dv/dt smoothed over ±2 grid points)
 function decelPeaks(l: any): { s: number; g: number }[] {
@@ -621,9 +611,19 @@ if (args.json) {
   console.log(JSON.stringify(summary));
 } else {
   const mmss = (x: number) => `${Math.floor(x / 60)}:${(x % 60).toFixed(2).padStart(5, '0')}`;
-  console.log(`lap: ${summary.complete ? 'complete' : 'INCOMPLETE'}  time ${lapTime > 0 ? mmss(lapTime) : '-'}  (profile ${mmss(summary.profileLapTime)}, driver A ${mmss(driver_a.lap_time_s)}, optimal ${mmss(opt.lap_time_s)})`);
+  console.log(`lap: ${summary.complete ? 'complete' : 'INCOMPLETE'}  time ${lapTime > 0 ? mmss(lapTime) : '-'}  (profile ${mmss(summary.profileLapTime)}${noRef ? ', no reference laps' : `, driver A ${mmss(driver_a.lap_time_s)}, optimal ${mmss(opt.lap_time_s)}`})`);
   console.log(`line tracking: max |lateral error| ${fmt(maxLatErr, 2)} m, wheel-off-track steps ${offTrackSteps}`);
-  console.log(`front straight @ s=300: sim ${fmt(front.sim)}  driver A ${fmt(front.driver_a)}  optimal ${fmt(front.optimal)} km/h; flat-ground top speed ${fmt(summary.flatTopSpeedKmh)} km/h`);
+  if (noRef) {
+    // no reference laps: the sim is not compared with itself (20 Oct 2026); sim-only tables
+    console.log(`no reference laps (ghosts.json has none; --ref-ghosts <ghosts.json> of the same circuit gives them): sim only`);
+    console.log(`longest straight (${front.name}): sim max ${fmt(front.sim)} km/h; flat-ground top speed ${fmt(summary.flatTopSpeedKmh)} km/h`);
+    console.log('\ncorner minimum speeds (km/h), sim');
+    for (const c of corners) console.log(`${c.name.padEnd(17)} ${fmt(c.sim).padStart(6)} at ${fmt(c.simS, 0)} m`);
+    console.log('\nstraights: exit min -> max before braking (km/h), sim');
+    for (const st of straights) console.log(`${st.name.padEnd(29)} ${fmt(st.sim.vmin, 0)}->${fmt(st.sim.vmax, 0)}`);
+    console.log(`  sim: threshold (no lock) ${fmt(bestBrake.decel, 3)} g at pedal ${fmt(bestBrake.pedal, 2)}; peak decel in lap ${fmt(simPeakDecel, 2)} g; peak lateral ${fmt(simPeakLat, 2)} g`);
+  } else {
+  console.log(`longest straight (${front.name}): max sim ${fmt(front.sim)}  driver A ${fmt(front.driver_a)}  optimal ${fmt(front.optimal)} km/h; flat-ground top speed ${fmt(summary.flatTopSpeedKmh)} km/h`);
   console.log('\ncorner minimum speeds (km/h)');
   console.log('corner             driver A  optimal    sim   vs driver A  vs opt');
   for (const c of corners) console.log(`${c.name.padEnd(17)} ${fmt(c.driver_a).padStart(6)} ${fmt(c.optimal).padStart(8)} ${fmt(c.sim).padStart(6)} ${(fmt(c.errdriver A) + '%').padStart(9)} ${(fmt(c.errOpt) + '%').padStart(7)}`);
@@ -643,4 +643,5 @@ if (args.json) {
   console.log('\nbraking: ghost peak decel per zone (g), driver A / optimal');
   console.log('  ' + brakingdriver A.map((b, i) => `${b.s}:${fmt(b.g, 2)}/${fmt(brakingOpt[i].g, 2)}`).join('  '));
   console.log(`  sim: threshold (no lock) ${fmt(bestBrake.decel, 3)} g at pedal ${fmt(bestBrake.pedal, 2)}; full pedal ${fmt(fullBrake.decel, 3)} g locked=${fullBrake.locked}; peak decel in lap ${fmt(simPeakDecel, 2)} g; peak lateral ${fmt(simPeakLat, 2)} g`);
+  }
 }
