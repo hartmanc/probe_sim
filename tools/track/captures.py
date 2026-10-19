@@ -56,7 +56,10 @@ def capture_list(cfg, which, shift=None):
     cc = cfg['captures']
     if shift is None and cc['common_shift'] is None and cc.get('clean_dir'):
         sj = os.path.join(cfg.path(cc['clean_dir']), 'shift.json')   # measured by register_clean.py
-        shift = json.load(open(sj))['common_shift'] if os.path.exists(sj) else (0.0, 0.0)
+        if not os.path.exists(sj):
+            raise SystemExit(f"captures: {sj} missing and config captures.common_shift is None: run "
+                             f"register_clean.py --track {cfg['id']} --write (no silent (0, 0) shift)")
+        shift = json.load(open(sj))['common_shift']
     sx, sy = shift if shift is not None else cc['common_shift']
     out = []
     if 'z20' in which and cc.get('z20_dir'):
@@ -67,9 +70,15 @@ def capture_list(cfg, which, shift=None):
     if 'clean' in which and cc.get('clean_dir'):
         d = cfg.path(cc['clean_dir'])
         idx = os.path.join(d, cc['clean_index'])
-        if os.path.exists(idx):
-            for t in json.load(open(idx)):
-                if 'rel_dx' not in t: continue
+        if not os.path.exists(idx):
+            raise SystemExit(f"captures: clean capture index {idx} missing")
+        if True:
+            T = json.load(open(idx))
+            unreg = [t['name'] for t in T if 'rel_dx' not in t]
+            if unreg:
+                raise SystemExit(f"captures: {len(unreg)} clean captures without registration ({', '.join(unreg[:5])}...): "
+                                 f"run register_clean.py --track {cfg['id']} --write")
+            for t in T:
                 out.append(dict(name=t['name'], path=os.path.join(d, t['name'] + '_google.jpg'), x=t['x'], y=t['y'],
                                 dx=sx + t['rel_dx'], dy=sy + t['rel_dy'], mask=MASKS[cc.get('clean_mask') or 'clean'],
                                 kind='clean'))

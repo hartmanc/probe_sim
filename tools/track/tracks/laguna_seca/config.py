@@ -53,6 +53,7 @@ CONFIG = dict(
         ('T11', None, 'left', 3240, 36.588565, -121.754395),
     ],
     named_straights=[('Rahal Straight', 'T6', 'T7')],   # placed halfway between the two corners
+    radius_check_skip=['T1', 'T7'],                     # flat-out kinks: no radius check against the driven line
     # Every station number below is a station of this config's geometry: n = 3560, length 3588.048 m (the accepted
     # package). A build with another station count (no logger: 3600) maps them by the fraction of the lap.
     stations_ref=(3560, 3588.048),
@@ -119,6 +120,11 @@ CONFIG = dict(
     ),
     # Measured shapes (fix_edge_shape.py): station:half-width knots, monotone cubic, blended over `blend` stations.
     shapes=[
+        dict(side='left', knots=[(3280, 5.64), (3295, 5.44), (3310, 4.66), (3325, 4.64), (3340, 5.70), (3355, 5.73),
+                                 (3370, 5.71), (3385, 6.48)], blend=2, fitted_only=True,
+             why='T11 exit left to the pit entry: the dashed pit-entry blend line (z20_s3315/s3400, the accepted '
+                 'package\'s edge, measured 18 Oct 2026); without logger laps the pit-entry lane beyond it shared the '
+                 'paint step\'s reading. Fitted method only (the logger reproduction keeps its own steps here)'),
         dict(side='right', knots=[(3283, 4.2), (3310, 5.4), (3340, 7.0), (3360, 7.3), (3420, 7.9)], blend=2,
              why='T11 exit: kerb outer limit from the apex to 3360 (red/white on z20_s3315/s3400), white line beyond, '
                  'widening once to the straight at 4.0 m from the wall'),
@@ -142,6 +148,9 @@ CONFIG = dict(
                 kappa_drivers=['driver A', 'Coby', 'driver D']),
     # ---------------------------------------------------------------- stage 3: scenery (build_scenery.py constants)
     scenery=dict(
+        # the committed Laguna package predates the trees' imagery check (build_scenery.canopy_check); it stays off here so
+        # the logger build reproduces that package; a build with it on reports what it would remove
+        tree_imagery_check=False,
         tyre_corners=[('T2', 48, 62), ('T5', 44, 56), ('T8', 39, 21), ('T8A', 15, 55), ('T9', 45, 65), ('T11', 45, 50)],
         paved_runoff=[('T6', 15, 80), ('T9', 30, 75), ('T10', 20, 75)],
         brake_board_corners=['T2', 'T5', 'T8', 'T11'],

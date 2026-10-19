@@ -39,11 +39,13 @@ Geometry (Stage 1)
   repave_fixes [(a, b, crest from, crest to, why)]
   captures {z20_dir, z20_index, z20_mask, clean_dir, clean_index, mpp, common_shift, exclude, cursor_boxes}
   spline {runs [(lo, hi)], knot, lam, huber, line_off, prior, init_stiff, captures}
-  features [(side, lo, hi, 'keep' | 'asphalt_end' | 'kerb', why)]   keep: the prior is held; asphalt_end: where the
-                                             dark asphalt ends; kerb: red-band (kerb outer limit) candidates only
+  features [(side, lo, hi, 'keep' | 'asphalt_end' | 'kerb', why)]   keep: the prior is held (legacy reproduction
+                                             only; the fitted method ignores it); asphalt_end: where the dark asphalt
+                                             ends; kerb: red-band (kerb outer limit) candidates only
   prior {bridge_win, bridge_skip [first-centre stations], extra_bridges [first-centre stations of bridges OSM does not
          map], first_edge [(side, lo, hi, why)], interp [(side, lo, hi, why)]}
-  shapes [{side, knots [(station, half-width)], blend, why}]
+  shapes [{side, knots [(station, half-width)], blend, why, fitted_only}]   measured half-widths; in the fitted method
+                                             a constraint inside the fit (fitted_only: not in the legacy reproduction)
   straights [{side, fit 'paint' | 'parallel', lo, hi, join (a, b), end, blend, tol | ref_side/ref_lo/ref_hi, why}]
   gate {straight_rms, step, profile_step, spline_obs_within}
 Ghosts (Stage 2): ghosts {margin, kerb_margin, nudge, jerk_w}
@@ -51,6 +53,7 @@ Scenery (Stage 3): scenery {...}, see build_scenery.py and scenery_post.py
 App: app {short, pace}
 """
 import importlib.util
+import json
 import math
 import os
 
@@ -132,22 +135,54 @@ def load(track_id, no_logger=False):
     return cfg
 
 
-def remap_stations(cfg, n, length_m=None):
-    """Config station numbers are those of the geometry the config was written for (`stations_ref` = (n, length_m)).
-    A build with another station count (Laguna without logger laps: the OSM loop gives 3600 stations, the logger 3560)
-    maps them by the fraction of the lap: station k -> round(k * n / n_ref); metres s -> s * length / length_ref.
+def _ref_polyline(cfg):
+    p = os.path.join(TRACKS, cfg['id'], 'stations_ref.json')
+    return json.load(open(p)) if os.path.exists(p) else None
+
+
+def remap_stations(cfg, n, length_m=None, C=None):
+    """Config station numbers are those of the geometry the config was written for (`stations_ref` = (n, length_m),
+    whose centre polyline is frozen in tracks/<id>/stations_ref.json). With a built centre C (n, 2) they are mapped by
+    WORLD POSITION: reference station k -> its reference centre point -> the nearest station of C; a measured shape's
+    knot (station, half-width) -> its reference edge point -> station and half-width on C. Without C (or without the
+    frozen polyline) by the fraction of the lap: k -> round(k * n / n_ref), metres s -> s * length / length_ref.
     Returns a new Config (the same object when nothing changes)."""
+    import copy
     ref = cfg.get('stations_ref')
     if not ref or (ref[0] == n and (length_m is None or abs(ref[1] - length_m) < 1e-6)):
         return cfg
-    import copy
     c = copy.deepcopy(cfg)
-    f = n / ref[0]
-    fm = (length_m / ref[1]) if length_m else f
-    st = lambda k: int(round(k * f))  # noqa: E731
+    R = _ref_polyline(cfg) if C is not None else None
+    if R is not None:
+        import numpy as np
+        Cr = np.array(R['center']); nr = len(Cr)
+        t = np.roll(Cr, -1, 0) - np.roll(Cr, 1, 0); t /= np.linalg.norm(t, axis=1, keepdims=True); NLr = np.c_[-t[:, 1], t[:, 0]]
+        C = np.asarray(C, float); tc = np.roll(C, -1, 0) - np.roll(C, 1, 0); tc /= np.linalg.norm(tc, axis=1, keepdims=True)
+        NLc = np.c_[-tc[:, 1], tc[:, 0]]
+        from scipy.spatial import cKDTree
+        kd = cKDTree(C)
+
+        def proj(P):
+            _, i = kd.query(P); return i, ((P - C[i]) * NLc[i]).sum(-1)
+
+        def st(k):
+            k = int(round(k)); i, _ = proj(Cr[k % nr]); off = (k - (k % nr))   # keep wrap-around ranges (k >= nr)
+            return int(i) + (len(C) if off else 0)
+        sp_ref = ref[1] / ref[0]; sp_new = (length_m / n) if length_m else 1.0
+        fm_s = lambda s_m: round(st(s_m / sp_ref) * sp_new, 1)  # noqa: E731
+        for shp in c['shapes']:
+            sg = 1 if shp['side'] == 'left' else -1; kn = []
+            for k, hw in shp['knots']:
+                i, lat = proj(Cr[k % nr] + sg * hw * NLr[k % nr]); kn.append((int(i), round(float(abs(lat)), 3)))
+            shp['knots'] = kn
+    else:
+        f = n / ref[0]
+        fm = (length_m / ref[1]) if length_m else f
+        st = lambda k: int(round(k * f))  # noqa: E731
+        fm_s = lambda s_m: round(s_m * fm, 1)  # noqa: E731
+        for shp in c['shapes']:
+            shp['knots'] = [(st(k), v) for k, v in shp['knots']]
     c['features'] = [(a, st(lo), st(hi)) + tuple(rest) for a, lo, hi, *rest in c['features']]
-    for shp in c['shapes']:
-        shp['knots'] = [(st(k), v) for k, v in shp['knots']]
     for s in c['straights']:
         for k in ('lo', 'hi', 'end', 'ref_lo', 'ref_hi'):
             if k in s: s[k] = st(s[k])
@@ -155,6 +190,7 @@ def remap_stations(cfg, n, length_m=None):
     p = c.get('prior', {})
     if p:
         p['bridge_skip'] = [st(k) for k in p.get('bridge_skip', [])]
+        p['extra_bridges'] = [st(k) for k in p.get('extra_bridges', [])]
         for key in ('first_edge', 'interp'):
             p[key] = [(a, st(lo), st(hi)) + tuple(rest) for a, lo, hi, *rest in p.get(key, [])]
     sp = c['spline']
@@ -174,9 +210,9 @@ def remap_stations(cfg, n, length_m=None):
             for k in ('lo', 'hi', 'fit_lo', 'fit_hi'):
                 if k in s[key]: s[key][k] = st(s[key][k])
     for e in s.get('kerb_extents', []):
-        for k in ('near', 's0', 's1'): e[k] = round(e[k] * fm, 1)
+        for k in ('near', 's0', 's1'): e[k] = fm_s(e[k])
     for e in s.get('edge_line_runs', []):
-        for k in ('s0', 's1'): e[k] = round(e[k] * fm, 1)
+        for k in ('s0', 's1'): e[k] = fm_s(e[k])
     if s.get('pit_exit_cones', {}).get('s0') is not None:
-        s['pit_exit_cones']['s0'] = round(s['pit_exit_cones']['s0'] * fm, 1)
+        s['pit_exit_cones']['s0'] = fm_s(s['pit_exit_cones']['s0'])
     return c

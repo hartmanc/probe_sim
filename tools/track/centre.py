@@ -163,6 +163,9 @@ def clean_profile(prof, lat):
     return gaussian_filter1d(out, LONG_SIGMA, axis=0, mode="wrap")
 
 
+LIDAR_POINTS = None   # path of the box's lidar point cache (build_track.py stage 1)
+
+
 def lidar_correct(PX, PY, prof, z0, radius=1.0, max_corr=1.0):
     """Pull the DEM profile onto the lidar point cloud's ground returns (class 2), median within 1 m of each
     profile point. The DEM is the same 2017 lidar, gridded and smoothed; at a few places it departs from the
@@ -170,11 +173,13 @@ def lidar_correct(PX, PY, prof, z0, radius=1.0, max_corr=1.0):
     (a barrier/berm bleeding into the smoothed grid). Gaps are filled along s, outliers median-filtered and the
     correction smoothed with a CORR_SIGMA Gaussian. Differences over 1 m are bridge decks classed as ground
     (s~1835-1846) and are ignored. 
-    Uses the scenery stage's point cache (tools/track/cache/lidar_points.npz); skipped with a warning if absent."""
-    path = os.path.join(B.CACHE, "lidar_points.npz")
-    if not os.path.exists(path):
-        B.log("WARNING: no lidar point cache, profile left on the DEM (run build_scenery.py once to fetch points)")
-        return prof
+    Reads the box-keyed point cache that stage 1 fetches before the profile (LIDAR_POINTS, set by build_track.py);
+    a missing cache is an error, never a silent fallback to the DEM (geometry would depend on whether the scenery
+    stage had run before)."""
+    path = LIDAR_POINTS
+    if not path or not os.path.exists(path):
+        raise SystemExit(f"lidar_correct: no lidar point cache ({path}); stage 1 fetches it from the config's lidar_ept "
+                         "before the profile")
     from scipy.spatial import cKDTree
 
     P = np.load(path)

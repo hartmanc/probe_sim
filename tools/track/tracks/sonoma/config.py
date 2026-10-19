@@ -65,7 +65,10 @@ CONFIG = dict(
     # ---------------------------------------------------------------- stage 1: geometry
     # 2.52 mi full course (4056 m, the circuit) plus the T7a hairpin round the O'Reilly island, which the full course
     # takes short (OSM: 121 m round the island against 89 m for the short T7): 4088 m. MyLaps lists the event as 2.51 mi.
-    centre=dict(extra_shadow_stations=[4084]),
+    # station numbers in this config refer to the frozen centre in stations_ref.json (the 19 Oct build) and are mapped
+    # onto every build by world position
+    stations_ref=(4090, 4101.037),
+    centre=dict(extra_shadow_stations=[4084], width_cap=21.0),   # the shared drag-strip start pavement is ~19-20 m
     loop_check=dict(n_min=3900, n_max=4250, official_m=4088, elev_min=20, elev_max=80),
     captures=dict(
         z20_dir=None,
@@ -76,26 +79,45 @@ CONFIG = dict(
         exclude=[],
     ),
     spline=dict(runs=None, knot=6, lam=30.0, huber=0.25, line_off=0.26, prior=0.03, init_stiff=30.0, captures='clean'),
-    # Carousel exit (T6) to the T7 approach, stations ~1680-1960: the circuit runs onto the drag strip's start area and
-    # uses both drag-strip lanes (onboard 0:58-1:02 crosses the yellow lane line), then bears left onto its own road to
-    # T7 where the drag strip carries straight on (Lemons layout picture: the drag strip in grey). The fitted edges keep
-    # the full shared pavement, then taper to the T7 road: no feature needed.
-    features=[],
-    # bridge shadows: the T2 footbridge is in OSM (station ~296); the start/finish footbridge (first-centre station 4084,
-    # c20_s1705) is not. Measurements under both are masked and the prior interpolated across them.
+    # Carousel exit (T6) to the T7 approach, stations ~1680-2060 (onboard youtube.com/watch?v=RAZip6S84CM 0:55-1:09):
+    # the course is bounded by the PAVEMENT, not by cones or a painted line. On the shared drag-strip start (to ~1880) the
+    # car runs right of the yellow lane line with the red/white kerb as the right edge (0:59-1:01) and crosses the lane
+    # line (1:03-1:04) toward the T7 road, whose left edge is the blue concrete wall at the asphalt's end (1:06-1:09,
+    # c20_s3685/s3740: no painted line on that side) and whose right edge is the white line along the drag strip.
+    features=[
+        ('left', 1860, 2060, 'asphalt_end', 'T7 road left edge: asphalt ends at the concrete wall, no painted line'),
+    ],
+    # bridge shadow: the T2 footbridge is in OSM (station ~296). Station 4084 is NOT a bridge (corrected 20 Oct 2026; there
+    # is no footbridge at the line): it is the chequered start/finish stripe painted across the road (c20_s1705), which
+    # the paint detectors read as edge lines; it is masked the same way.
     prior=dict(bridge_win=35, extra_bridges=[4084]),
     shapes=[],
-    straights=[],
+    # the front straight from the T12 exit to the T1 kink: both painted edges are straight lines (c20_s1595..s1870)
+    straights=[
+        dict(side='left', fit='paint', lo=3995, hi=55, join=(3995, 4005), end=55, tol=0.15,
+             why='front straight left: the painted line along the pit wall is straight'),
+        dict(side='right', fit='paint', lo=3995, hi=55, join=(3995, 4005), end=55, tol=0.15,
+             why='front straight right: the painted line is straight'),
+        # the T7 road from the fork to the T7 braking zone is straight (c20_s3740/s3795): its right edge is the white line
+        # along the drag strip; its left edge (asphalt to the concrete wall, no paint) runs parallel to it
+        dict(side='right', fit='paint', lo=1985, hi=2095, join=(1985, 1990), end=2095, tol=0.15,
+             why='T7 road right: the white line along the drag strip is straight'),
+        dict(side='left', fit='parallel', ref_side='right', ref_lo=1985, ref_hi=2095, lo=1985, hi=2095, join=(1985, 1990),
+             end=2095, why='T7 road left: the wall-side asphalt edge runs parallel to the right line (onboard 1:06-1:09)'),
+    ],
     gate=dict(straight_rms=0.10, step=0.10, profile_step=0.10, spline_obs_within=0.85,
               exempt=[('left', 3480, 3610, 'pit-in lane splits off on the left before T11 (dashed blend line, c20_s1155): '
                        'the edge steps in by ~5 m over 60 m as the lane leaves (junction, real)'),
-                      ('left', 160, 260, 'pit-out lane joins on the left after T1 (c20_s1870/s1925; junction, real)')]),
+                      ('left', 160, 260, 'pit-out lane joins on the left after T1 (c20_s1870/s1925; junction, real)'),
+                      ('left', 1860, 1980, 'the T7 road forks off the drag strip to the left (c20_s3685/s3740; junction, real)')]),
     # ---------------------------------------------------------------- stage 2: racing line only (no logger laps)
     ghosts=dict(margin=1.0, kerb_margin=1.0, nudge=0.3, jerk_w=3),
     # ---------------------------------------------------------------- stage 3: scenery by rule only (no footage rounds yet)
     scenery=dict(
         brake_board_corners=['T2', 'T4', 'T7a', 'T11'],
-        pit_wall=dict(fence_until_m=120),
+        # the pit wall halfway between the track and the pit lane, along straights only (the pit road runs round the
+        # OUTSIDE of the T11 hairpin; a wall 0.6 m off that edge put the hot-lap launch into it, owner 20 Oct 2026)
+        pit_wall=dict(fence_until_m=120, at='midway', min_radius=150.0),
     ),
     # ---------------------------------------------------------------- app registry (src/scoreboard/config.ts)
     app=dict(short='Sonoma', pace='cars/field/sonoma/pace.json'),

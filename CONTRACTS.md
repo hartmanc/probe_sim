@@ -662,3 +662,9 @@ Where each part documents itself (read these before changing that part):
   - §3 Probe glb triangle budget is now 90 k (detail pass, `check_glb.py`), was 80 k.
   - §5: the app no longer owns a Vehicle; the player always runs in `HotlapSim`. Start overlay and settings panel
     replaced by the main and pause menus; Start and Esc are reserved; gamepad profiles are `v: 2`.
+
+**20 Oct 2026, track packages (§1, §2): the ENU origin is per package.** §1's lat0 = 36.5843, lon0 = -121.7535 is
+Laguna Seca's origin, not a universal one. Every track package declares its own frame in `track.json` `origin`
+(Sonoma: lat 38.1627, lon -122.4576), and every other file of that package (heightfield, ortho, scenery, ghosts) is in
+that frame. Consumers read the origin from the package; nothing may assume Laguna's. The axes, units and z
+convention (relative to `z0_navd88`) are unchanged.

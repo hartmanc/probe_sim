@@ -18,7 +18,34 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..'))
 
 
-def gate(T, SC=None, g=None, log=print):
+# Acceptance of the fitted method (build-track skill: 90 %+ of observations within 0.25 m; edges_spline.py: rolling
+# waviness <= 0.04 m, peak <= 0.10 m, kink <= 0.5 deg/station; the share is of the associated observations, as the skill
+# measured it, and at least 85 % of capture rows must hold a band within 1.2 m of the curve), coverage and gaps (20 Oct 2026: at least 60 % of
+# stations with evidence, no stretch over 60 m without), and world-space continuity (the third difference of each edge
+# polyline under 2 cm: a 2 cm step shows there, a smooth curve does not). A config can tighten these, never loosen.
+FITTED = dict(within=0.90, assoc=0.85, covered=0.60, gap=60, wave_rms=0.04, wave_peak=0.10, kink=0.5, world_d3=0.02)
+_TIGHTER = dict(within=max, assoc=max, covered=max, gap=min, wave_rms=min, wave_peak=min, kink=min, world_d3=min)
+
+
+def fitted_thresholds(g):
+    g = g or {}
+    return {k: _TIGHTER[k](v, g.get('fit_' + k, v)) for k, v in FITTED.items()}
+
+
+def world_continuity(T):
+    """max |third difference| of the left and right edge polylines (world metres) and where."""
+    out = {}
+    for side in ('left', 'right'):
+        E = T[side]; n = len(E); best = (0.0, 0)
+        for k in range(n):
+            a, b, c, d = E[(k - 1) % n], E[k], E[(k + 1) % n], E[(k + 2) % n]
+            v = math.hypot(d[0] - 3 * c[0] + 3 * b[0] - a[0], d[1] - 3 * c[1] + 3 * b[1] - a[1])
+            if v > best[0]: best = (v, k)
+        out[side] = best
+    return out
+
+
+def gate(T, SC=None, g=None, log=print, world=False):
     """T: track.json dict; SC: scenery.json dict or None; g: config `gate` dict. Returns (metrics, fails)."""
     g = g or dict(straight_rms=0.10, step=0.10, profile_step=0.10)
     n, sp = T['n'], T['spacing_m']; C, L, R, Z = T['center'], T['left'], T['right'], T['profile']['z']; ci = T['profile']['fractions'].index(0)
@@ -56,6 +83,13 @@ def gate(T, SC=None, g=None, log=print):
             f'(<= {g["straight_rms"]}) | max adjacent step (R>100 m within +-30) {top[0][0]:.3f} m at {top[0][1]} (next {top[1][0]:.3f}@{top[1][1]}, '
             f'{top[2][0]:.3f}@{top[2][1]}; <= {g["step"]}) | max edge-column cross-section step {zs[0]:.3f} m at {zs[1]}')
         if not ok: fails.append(f'edge gate {side}')
+    if world:
+        thr = fitted_thresholds(g)['world_d3']
+        for side, (v, k) in world_continuity(T).items():
+            met[side]['world_d3'] = v
+            ok = v <= thr
+            log(f'[{"ok" if ok else "FAIL"}] world continuity {side:5s}: max |third difference| of the edge polyline {v:.4f} m at station {k} (<= {thr})')
+            if not ok: fails.append(f'world continuity {side}')
     allcol = max((abs((Z[(k + 1) % n][c] - Z[(k + 1) % n][ci]) - (Z[k][c] - Z[k][ci])), k, c) for k in range(n) for c in range(len(Z[0])))
     met['profile_step'] = allcol[0]
     ok = allcol[0] <= g['profile_step']

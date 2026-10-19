@@ -98,7 +98,7 @@ def merge_edges(C0, el, er, merge, log=B.log):
 
 
 def refit(C0, hl0, hr0, P, shadow_s, pit_parts, cones, e_gps, fit_a, fit_b, bridge_win=25, gps_margin=1.0,
-          min_width=10.0, log=B.log, merge=None):
+          min_width=10.0, log=B.log, merge=None, width_cap=16.0):
     """C0 (n, 2) current centre with half-widths hl0/hr0; P = paint.measure(...) on C0; shadow_s = stations of bridge
     crossings (shadows); pit_parts = scenery pit_lane parts on C0 (their touch zones keep the old edges);
     cones = (s0, s1) of the pit-exit blend lane or None; e_gps = the logged racing line's lateral on C0 per station
@@ -187,7 +187,7 @@ def refit(C0, hl0, hr0, P, shadow_s, pit_parts, cones, e_gps, fit_a, fit_b, brid
         egn = gaussian_filter1d(egn, 2, mode='wrap')
         needL = np.minimum(egn + gps_margin, ol); needR = np.minimum(-egn + gps_margin, orr)
         new[:, 0] = np.maximum(new[:, 0], needL); new[:, 1] = np.maximum(new[:, 1], needR)
-    wd = new.sum(1); new *= (np.minimum(wd, 16.0) / wd)[:, None]
+    wd = new.sum(1); new *= (np.minimum(wd, width_cap) / wd)[:, None]   # config centre.width_cap (Laguna 16 m)
     for k in range(2):
         new[:, k] = np.where(keep[:, k], np.maximum(new[:, k], np.where(k == 0, ol, orr)), new[:, k])
         new[:, k] = slope_limit(new[:, k], 0.25, n)

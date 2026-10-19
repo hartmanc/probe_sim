@@ -104,3 +104,42 @@ def apply(C, NL, hl, hr, straights, tiles, mpp, pitwall=None, log=_log):
         for k, v in vals.items(): hw[k] = v
         rep.append(dict(side=side, fit=st_['fit'], inliers=nin, join=int(k0), end=st_['end'], max_move=float(mv)))
     return hl, hr, rep
+
+
+def targets(C, NL, hl, hr, straights, tiles, mpp, pitwall=None, log=_log):
+    """The declared straights as constraints for the fitted method (edges_spline.fit_periodic): for each, the straight
+    line is fitted to its evidence (painted-line detections, or the pit-wall polyline less `gap`) and returned as the
+    half-width where each station's normal crosses it, over lo..hi. Nothing is overwritten or blended here: the
+    periodic spline takes these as anchor observations next to the image evidence. Returns
+    {'left'|'right': (stations, half-widths)} and a report."""
+    n = len(C); lines = {}; out = {'left': ([], []), 'right': ([], [])}; rep = []
+
+    def cross(k, m, d, sg):
+        nn = NL[k] * sg; den = nn[0] * (-d[1]) - nn[1] * (-d[0]); r = m - C[k]
+        return (r[0] * (-d[1]) - r[1] * (-d[0])) / den
+    for st_ in straights:
+        side = st_['side']; sg = 1 if side == 'left' else -1; hw = hl if side == 'left' else hr
+        ks = np.array(span(st_['lo'], st_['hi'], n))
+        if st_['fit'] == 'paint':
+            pts = paint_points(C, NL, hw, sg, ks, tiles, mpp)
+            m, d, nin = ransac(pts, st_.get('tol', 0.15))
+        elif st_['fit'] == 'parallel':
+            m0, d = lines[st_['ref_side']]; nr = np.array([-d[1], d[0]])
+            ref = span(st_['ref_lo'], st_['ref_hi'], n)
+            off = float(np.median([(C[k] + sg * NL[k] * hw[k] - m0) @ nr for k in ref])); m = m0 + off * nr; nin = len(ref)
+        elif st_['fit'] == 'pitwall':
+            if pitwall is None or not len(pitwall):
+                raise SystemExit('straights: fit pitwall needs the pit-wall polyline')
+            kset = set(ks.tolist())
+            near = np.array([int(np.argmin(np.hypot(*(C - p).T))) in kset for p in pitwall])
+            wm, d, nin = ransac(pitwall[near], 0.25, min_len=60)
+            m = wm - sg * st_['gap'] * np.array([-d[1], d[0]]) * np.sign(np.array([-d[1], d[0]]) @ NL[st_['lo'] % n])
+        else:
+            raise SystemExit(f"straights: unknown fit {st_['fit']!r}")
+        lines[side] = (m, d)
+        v = np.array([cross(k, m, d, sg) for k in ks])
+        out[side][0].extend(ks.tolist()); out[side][1].extend(v.tolist())
+        log(f"straight {side} {st_['lo']}..{st_['hi']} ({st_['fit']}, {nin} inliers): constraint inside the fit, "
+            f"{np.abs(v - hw[ks]).max():.2f} m from the prior at most")
+        rep.append(dict(side=side, fit=st_['fit'], inliers=int(nin), lo=int(st_['lo']), hi=int(st_['hi'])))
+    return out, rep

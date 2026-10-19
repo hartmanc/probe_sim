@@ -274,3 +274,167 @@ def fit_run(C, NL, hl, hr, lo, hi, tiles, features, sp, mpp, side_sel="both", lo
     if 'left' in result: hl[kk] = result['left'][0]
     if 'right' in result: hr[kk] = result['right'][0]
     return hl, hr, rep
+
+
+# ---------------------------------------------------------------- the fitted method (new circuits; 20 Oct 2026)
+def feature_at(features, side, k, n):
+    """the config feature covering station k on `side` (ranges may wrap past the lap end), or None"""
+    for f in features:
+        if f[0] == side and (k - f[1]) % n <= (f[2] - f[1]) % n:
+            return f[3]
+    return None
+
+
+def gather(C, NL, hl, hr, tiles, features, line_off, mpp, U_=None):
+    """Boundary evidence along every station's normal on every capture: for each side a list of (station, capture,
+    [candidate half-widths], [kinds]). Features 'asphalt_end' and 'kerb' choose the kind of evidence; 'keep' is not a
+    method here (it froze a prior) and is ignored."""
+    n = len(C); U_ = U if U_ is None else U_
+    ks = np.arange(n)
+    raw = {'left': [], 'right': []}
+    for ti, t in enumerate(tiles):
+        im = None
+        for side, sg, hw in (('left', 1, hl), ('right', -1, hr)):
+            lat = sg * (hw[:, None] + U_[None, :])
+            X = C[:, 0:1] + lat * NL[:, 0:1]; Y = C[:, 1:2] + lat * NL[:, 1:2]
+            near = np.hypot(X.mean(1) - t['x'], Y.mean(1) - t['y']) <= 100
+            if not near.any(): continue
+            if im is None:
+                im = np.asarray(Image.open(t['path']).convert('RGB')).astype(np.float32)
+                H, W = im.shape[:2]; mask = t['mask'](H, W)
+            px = W / 2 + (X + t['dx'] - t['x']) / mpp; py = H / 2 - (Y + t['dy'] - t['y']) / mpp
+            inside = (px >= 1) & (px < W - 2) & (py >= 1) & (py < H - 2)
+            rows = np.where(inside.mean(1) > 0.6)[0]
+            if not len(rows): continue
+            V = bilinear(im, np.clip(px[rows], 1, W - 2), np.clip(py[rows], 1, H - 2))
+            val = inside[rows] & mask[np.clip(np.round(py[rows]).astype(int), 0, H - 1), np.clip(np.round(px[rows]).astype(int), 0, W - 1)]
+            for v, ok, i in zip(V, val, rows):
+                feat = feature_at(features, side, ks[i], n)
+                if feat == 'asphalt_end':
+                    e = asphalt_end(v, ok)
+                    if e is not None: raw[side].append((i, ti, [(e, e + 0.1, False, -1.0)]))
+                    continue
+                bl = bands(v, ok)
+                if bl: raw[side].append((i, ti, bl))
+    obs = {'left': [], 'right': []}
+    for side, hw in (('left', hl), ('right', hr)):
+        red_st = np.zeros(n, bool)
+        for i, _, bl in raw[side]:
+            if any(b_[2] and 0.3 <= b_[3] <= 2.6 for b_ in bl): red_st[i] = True
+        kerb_at = np.array([red_st[np.arange(i - 4, i + 5) % n].any() for i in range(n)])
+        for i, ti, bl in raw[side]:
+            feat = feature_at(features, side, ks[i], n)
+            if feat == 'kerb':
+                c = [(u1, 2) for u0, u1, has_red, w in bl if has_red and 0.3 <= w <= 2.6]
+            else:
+                c = candidates(bl, line_off, kerb_at[i])
+            if c: obs[side].append((i, ti, [hw[i] + e for e, _ in c], [kd for _, kd in c]))
+    return obs
+
+
+def periodic_basis(x, K, n):
+    """cubic periodic B-spline design matrix: K coefficients on uniform knots over a loop of n stations."""
+    h = n / K; t = (np.asarray(x, float) % n) / h; i = np.floor(t).astype(int); u = t - i
+    B = np.zeros((len(t), K))
+    b = [(1 - u) ** 3 / 6, (3 * u ** 3 - 6 * u ** 2 + 4) / 6, (-3 * u ** 3 + 3 * u ** 2 + 3 * u + 1) / 6, u ** 3 / 6]
+    for m in range(4): np.add.at(B, (np.arange(len(t)), (i + m) % K), b[m])
+    return B
+
+
+def periodic_fit(xo, yo, K, n, lam, huber, xp, yp, wp, xa=None, ya=None, wa=None, iters=8):
+    """Robust penalised periodic spline: observations (Huber), a weak prior at every station (wp), and constraint
+    anchors (declared straights, measured shapes: ya at stations xa with weights wa) inside the same least squares."""
+    B = periodic_basis(xo, K, n); Bp = periodic_basis(xp, K, n)
+    D = np.zeros((K, K))
+    for j in range(K):   # third difference, circulant
+        for o, cf in ((0, -1), (1, 3), (2, -3), (3, 1)): D[j, (j + o) % K] += cf
+    P = lam * D.T @ D + (Bp * np.asarray(wp)[:, None]).T @ Bp
+    rhs0 = (Bp * np.asarray(wp)[:, None]).T @ yp
+    if xa is not None and len(xa):
+        Ba = periodic_basis(xa, K, n); P = P + (Ba * wa[:, None]).T @ Ba; rhs0 = rhs0 + (Ba * wa[:, None]).T @ ya
+    rw = np.ones(len(xo))
+    for _ in range(iters):
+        A = (B * rw[:, None]).T @ B + P
+        c = np.linalg.solve(A, (B * rw[:, None]).T @ yo + rhs0)
+        r = np.abs(B @ c - yo); rw = np.where(r <= huber, 1.0, huber / np.maximum(r, 1e-9))
+    return c
+
+
+def tight_mask(C, radius=100.0, win=30):
+    """stations within +-win of a centre radius under `radius` (corners: the half-width legitimately bends there)."""
+    from geo import curvature
+    n = len(C); k = np.abs(curvature(C, sigma=5))
+    tight = (1 / np.maximum(k, 1e-6)) < radius
+    out = np.zeros(n, bool)
+    for d in range(-win, win + 1): out |= np.roll(tight, d)
+    return out
+
+
+def ranges(mask, n):
+    idx = np.flatnonzero(mask)
+    if not len(idx): return []
+    out = []; a = b = idx[0]
+    for k in idx[1:]:
+        if k == b + 1: b = k
+        else: out.append((int(a), int(b))); a = b = k
+    out.append((int(a), int(b)))
+    if len(out) > 1 and out[0][0] == 0 and out[-1][1] == n - 1: out = [(out[-1][0], out[0][1])] + out[1:-1]
+    return out
+
+
+def fit_periodic(C, NL, hl, hr, tiles, features, sp, mpp, anchors=None, log=_log):
+    """ONE periodic robust spline per side over the whole lap (no runs, no seam, no post-fit overwrite). anchors:
+    {'left'|'right': (stations, half-widths, weights)} from declared straights and measured shapes, inside the fit.
+    Returns (hl, hr, report) with per-side metrics for the gates (build_track.py): share of associated observations
+    within 0.25 m, share of capture rows with a band within 1.2 m, coverage, gaps, waviness and kink per station."""
+    n = len(C); knot = sp['knot']; K = int(round(n / knot))
+    win = sp.get('search', (-4.5, 4.0)); U_ = np.arange(win[0], win[1] + 1e-4, 0.04)
+    obs = gather(C, NL, hl, hr, tiles, features, sp['line_off'], mpp, U_)
+    xs = np.arange(n, dtype=float); Bx = periodic_basis(xs, K, n)
+    tight = tight_mask(C)
+    rep, out = {}, {}
+    for side, hw in (('left', hl), ('right', hr)):
+        O = obs[side]
+        if not O:
+            raise SystemExit(f'fit_periodic: no observations on the {side} side')
+        xa = ya = wa = None
+        if anchors and anchors.get(side):
+            xa, ya, wa = (np.asarray(v, float) for v in anchors[side])
+        wp = np.full(n, sp['prior'])
+        xo_all = np.array([i for i, _, c, _ in O for _ in c], float); yo_all = np.array([y for _, _, c, _ in O for y in c])
+        c0 = periodic_fit(xo_all, yo_all, K, n, sp['lam'] * sp['init_stiff'], 1.0, xs, hw, wp, xa, ya, wa)
+        cur = Bx @ c0
+        for gate in (1.2, 1.0, 0.8, 0.6, 0.5, 0.5):
+            xo, yo = [], []
+            for i, _, c, _ in O:
+                d = np.abs(np.array(c) - cur[i]); j = int(d.argmin())
+                if d[j] <= gate: xo.append(i); yo.append(c[j])
+            xo = np.array(xo, float); yo = np.array(yo)
+            cf = periodic_fit(xo, yo, K, n, sp['lam'], sp['huber'], xs, hw, wp, xa, ya, wa)
+            cur = Bx @ cf
+        # every capture row's nearest band to the final curve (not only the gated ones)
+        allres = np.array([min(abs(y - cur[i]) for y in c) for i, _, c, _ in O])
+        assoc = allres <= 1.2   # rows whose nearest band lies within the association window: observations OF this edge
+        covered = np.zeros(n, bool); covered[xo.astype(int)] = True
+        if xa is not None: covered[xa.astype(int) % n] = True     # a declared straight / shape is evidence too
+        gaps = ranges(~covered, n); glen = [(b - a) % n + 1 for a, b in gaps]
+        gi = int(np.argmax(glen)) if glen else 0
+        qq = local_quad_resid(np.r_[cur[-25:], cur, cur[:25]], 25)[25:-25]
+        roll = np.array([np.sqrt(np.mean(qq[np.arange(k - 50, k + 50) % n] ** 2)) for k in range(n)])
+        cp = np.r_[cur[-1], cur, cur[0]]
+        kink = np.degrees(np.abs(cp[2:] - 2 * cur + cp[:-2]))
+        loose = ~tight
+        rep[side] = dict(obs=int(len(xo)), candidates=int(len(O)), within=float(np.mean(allres[assoc] <= 0.25)),
+                         within_all=float(np.mean(allres <= 0.25)), assoc_share=float(assoc.mean()),
+                         off_hist=np.histogram(allres[assoc & (allres > 0.25)], bins=[0.25, 0.4, 0.6, 0.8, 1.0, 1.2])[0].tolist(),
+                         within_gated=float(np.mean(np.abs(yo - Bx[xo.astype(int)] @ cf) <= 0.25)),
+                         covered=float(covered.mean()), longest_gap=int(glen[gi]) if glen else 0,
+                         gap_at=gaps[gi] if glen else None, wave_rms=float(roll[loose].max()), wave_peak=float(np.abs(qq)[loose].max()),
+                         kink=float(kink[loose].max()), kink_all=float(kink.max()), kink_at=int(np.argmax(np.where(loose, kink, 0))),
+                         seam_kink=float(kink[0]), roll=roll, qq=qq, kinkv=kink, loose=loose, gaps=list(zip(gaps, glen)))
+        out[side] = cur
+        log(f"{side:5s} periodic fit: {len(xo)} of {len(O)} capture rows kept; within 0.25 m: {rep[side]['within_gated'] * 100:.1f} % of the "
+            f"associated, {rep[side]['within'] * 100:.1f} % of the {rep[side]['assoc_share'] * 100:.0f} % of rows with a band within 1.2 m; "
+            f"{covered.mean() * 100:.0f} % of stations covered, longest gap {rep[side]['longest_gap']} st at {rep[side]['gap_at']}; "
+            f"station 0 kink {rep[side]['seam_kink']:.2f} deg")
+    return out['left'], out['right'], rep

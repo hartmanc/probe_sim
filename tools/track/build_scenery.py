@@ -417,10 +417,47 @@ def trees(trk, G, taken):
     y = gy[pr]
     z = trk.ground(x, y)
     keep = hmax > 3.0
+    canopy_ok = canopy_check(trk, x, y, rad)
+    log(f"trees: imagery check (a dark canopy blob in the NAIP image under the crown) rejects {int((keep & ~canopy_ok).sum())} "
+        f"of {int(keep.sum())} lidar crowns (poles, towers, fences, light masts)"
+        + ("" if SC_CFG.get("tree_imagery_check", True) else "; NOT applied (config scenery.tree_imagery_check False)"))
+    if SC_CFG.get("tree_imagery_check", True):
+        keep &= canopy_ok
     T = np.c_[x, y, z, hmax, rad][keep]
     log(f"trees: {len(T)} crowns; height p10/p50/p90 {np.percentile(T[:, 3], [10, 50, 90]).round(1)} m, "
         f"radius p50 {np.median(T[:, 4]):.1f} m")
     return T
+
+
+def canopy_check(trk, x, y, rad):
+    """True where a tree is visible in the image (20 Oct 2026: the lidar rule alone, class-1 height over 2 m with a
+    multi-return share over 0.18, made trees of light masts, towers and fences on Sonoma's infield and drag strip): at
+    least 30 % of the NAIP pixels within 0.6 crown radius (at least 1.5 m) are canopy, i.e. darker than the ground around
+    the image's 35th percentile and green."""
+    from PIL import Image
+    o = trk.t["ortho"]
+    raw = os.path.join(CACHE, f"naip_{int(o['x0'])}_{int(o['y0'])}_{int(o['x1'])}_{int(o['y1'])}_{o['width_px']}x{o['height_px']}.png")
+    im = np.asarray(Image.open(raw).convert("RGB")).astype(float)
+    H, W, _ = im.shape
+    lum = im.mean(2)
+    sx = (o["x1"] - o["x0"]) / W
+    # canopy: darker than the image's 35th percentile (trees are among the darkest cover in a summer NAIP frame; a LOCAL
+    # reference failed in dense oak stands, where the neighbourhood is canopy too) and green rather than the neutral grey
+    # of asphalt. Masts, towers and fences are thin and stand on pavement or dry grass: under 30 % of the crown disc.
+    p35, p15 = np.percentile(lum, [35, 15])
+    green = im[..., 1] - np.maximum(im[..., 0], im[..., 2]) > 2    # not the neutral grey of asphalt or concrete
+    canopy = (lum < p35) & green
+    del p15
+    ok = np.zeros(len(x), bool)
+    for k, (xx, yy, rr) in enumerate(zip(x, y, rad)):
+        r_px = max(1.5, 0.6 * rr) / sx
+        c = (xx - o["x0"]) / sx; r = (o["y1"] - yy) / sx
+        c0, c1 = int(max(0, c - r_px)), int(min(W, c + r_px + 1)); r0, r1 = int(max(0, r - r_px)), int(min(H, r + r_px + 1))
+        if c1 <= c0 or r1 <= r0: continue
+        yy_, xx_ = np.mgrid[r0:r1, c0:c1]
+        m = (yy_ - r) ** 2 + (xx_ - c) ** 2 <= r_px ** 2
+        ok[k] = canopy[r0:r1, c0:c1][m].mean() >= 0.3 if m.any() else False
+    return ok
 
 
 # ---------------------------------------------------------------- bridges
@@ -518,6 +555,16 @@ def edge_line(trk, s0, s1, side, extra, step=2):
     return trk.C[st, :2] + trk.N[st] * (side * (trk.hw(st, side) + ex))[:, None]
 
 
+def _runs(mask):
+    """(start, end) index pairs of the True runs of a boolean array"""
+    out, a = [], None
+    for i, v in enumerate(mask):
+        if v and a is None: a = i
+        if not v and a is not None: out.append((a, i - 1)); a = None
+    if a is not None: out.append((a, len(mask) - 1))
+    return out
+
+
 def barriers(trk, osm):
     out = []
     walls = osm.select(lambda t: t.get("barrier") == "wall", trk.box)
@@ -580,7 +627,33 @@ def barriers(trk, osm):
                 s1 = min(s1, trk.n + int(pwc["end_after_line_m"]))
             # catch fence on the front straight only (to ~120 m past the line at Laguna); the rest of the wall is bare
             mid = min(max(trk.n + int(pwc.get("fence_until_m", 120)), s0 + 2), s1)
+            at = pwc.get("at")
+            if at == "midway":
+                # 20 Oct 2026 (Sonoma: a wall 0.6 m off the outside edge of the T11 hairpin, where the pit road runs
+                # round the outside 10-15 m away, put the hot-lap launch into it): the wall stands halfway between the
+                # track edge and the pit lane's near edge, and only where the centre radius is over min_radius (the pit
+                # lane runs alongside a straight), never 0.6 m off a corner's outside edge
+                dist = np.full(trk.n, np.nan)
+                ii_, ll_, dd_ = trk.project(PL)
+                for k_, d_ in zip(ii_[ll_ > 0], dd_[ll_ > 0]):
+                    if 2 < d_ < 25: dist[k_] = d_ if np.isnan(dist[k_]) else min(dist[k_], d_)
+                idx_ = np.arange(trk.n); okd = np.isfinite(dist)
+                dist = np.interp(idx_, idx_[okd], dist[okd], period=trk.n)
+                lane_half = PIT_HALF_DEFAULT
+                kap_ = np.abs(bl.curvature(trk.C[:, :2], sigma=5))
+                straightish = (1 / np.maximum(kap_, 1e-6)) > pwc.get("min_radius", 150.0)
             for a, b_, fence in ((s0, mid, 3.5), (mid, s1, 0.0)):
+                if b_ - a >= 4 and at == "midway":
+                    st_all = np.arange(a, b_ + 1) % trk.n
+                    for ra, rb in [(r0, r1) for r0, r1 in _runs(straightish[st_all])]:
+                        if rb - ra < 8: continue
+                        st_ = st_all[ra:rb + 1]
+                        ex = np.maximum((dist[st_] - lane_half) / 2.0, 0.6)
+                        exs = np.interp(np.arange(a + ra, a + rb + 1, 2), np.arange(a + ra, a + rb + 1), ex)
+                        P = edge_line(trk, int(a + ra), int(a + rb), +1, exs)
+                        out.append({"kind": "pitwall", "h": 1.1, "fence": fence, "pts": with_z(trk, P),
+                                    "src": "OSM pit lane extent, halfway to the pit lane, straights only"})
+                    continue
                 if b_ - a >= 4:
                     ex = 0.6
                     if PITWALL_EDGE is not None:
@@ -760,9 +833,11 @@ def pit_exit_cones(trk, pit, barriers=None, spacing=16.0):
     (who drove the real race) remembers far fewer cones, so the sim draws one every 16 m (17 Oct 2026)."""
     from PIL import Image
 
-    if not pit or len(pit["parts"]) < 2:
+    if not pit or not pit["parts"]:
         return None
     n = trk.n
+    if len(pit["parts"]) == 1:
+        return _pit_exit_cones_one_part(trk, pit["parts"][0], barriers, spacing)
     a, b = pit["parts"][0], pit["parts"][1]
     # start: last stretch of part 0 that touches the track edge; end: part 1 until it pulls away (gap > 0.5 m)
     ga = np.array(a["gap_right"])
@@ -810,6 +885,39 @@ def pit_exit_cones(trk, pit, barriers=None, spacing=16.0):
     log(f"pit-exit cones: s {s0}-{s1}, {len(P) * 2} m, lateral {lat.min():.1f}..{lat.max():.1f} m left of centre")
     return {"spacing_m": spacing, "s0": s0, "s1": s1, "pts": with_z(trk, P),
             "src": "NAIP painted blend line between pit_lane parts 0 and 1; spacing from onboard GL030045/GL020045"}
+
+
+def _pit_exit_cones_one_part(trk, part, barriers, spacing):
+    """One pit-lane part (Sonoma: pit-in before T11, round the outside, behind the wall, out after T1): the pit exit is
+    the part's END. Where its track-facing edge lies on the track edge (gap under 0.5 m) up to that end, the lane
+    merges on shared pavement: the cone line is that edge (the blend boundary), from the end of the pit wall on.
+    The side comes from the part's lateral, not an assumption (20 Oct 2026)."""
+    Cp = np.array(part["center"])[:, :2]
+    _, latc, _ = trk.project(Cp[-20:])
+    side = 1 if np.median(latc) > 0 else -1
+    E = np.array(part["right"] if side > 0 else part["left"])[:, :2]   # the edge facing the track
+    gap = np.array(part["gap_right"] if side > 0 else part["gap_left"])
+    k1 = len(gap) - 1
+    while k1 > 0 and gap[k1] >= 0.5: k1 -= 1
+    k0 = k1
+    while k0 > 0 and gap[k0 - 1] < 0.5: k0 -= 1
+    if k1 - k0 < 10:
+        return None
+    s0 = int(trk.project(E[k0:k0 + 1])[0][0]); s1 = int(trk.project(E[k1:k1 + 1])[0][0])
+    for w in barriers or []:
+        if w["kind"] != "pitwall": continue
+        i, lat, out = trk.project(np.array(w["pts"])[:, :2])
+        near = (np.sign(lat) == side) & (((i - s0) % trk.n) < ((s1 - s0) % trk.n))
+        if near.any():
+            s0 = max(s0, int(((i[near] - s0) % trk.n).max() + s0) + 2) % trk.n
+    st = np.arange(s0, s1 + (trk.n if s1 < s0 else 0) + 1) % trk.n
+    if len(st) < 10:
+        return None
+    P = trk.C[st, :2] + trk.N[st] * (side * trk.hw(st, side))[:, None]
+    P = resample_line(P, 2.0)
+    log(f"pit-exit cones (one pit-lane part): s {s0}-{s1} on the {'left' if side > 0 else 'right'} edge, {len(P) * 2} m")
+    return {"spacing_m": spacing, "s0": int(s0), "s1": int(s1), "pts": with_z(trk, P),
+            "src": "the pit lane's track-facing edge where it merges at its end (one-part pit lane)"}
 
 
 def paved_zones(trk, osm):
