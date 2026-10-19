@@ -8,8 +8,7 @@ The Lemons loop (24hoursoflemons.com/race/?id=450, layout picture registration.2
 26_sonoma.png, 2026 season; confirmed on the March 2026 Lemons onboard youtube.com/watch?v=RAZip6S84CM): clockwise,
 start/finish on the front straight; T1 left kink, T2 right at the bottom of the hill, up to T3 (left) / T3a (right),
 T4 right, T5 right, the Carousel (T6, a long left), the straight along the trees (not the drag strip) to T7 and the
-7a hairpin round the O'Reilly island, the T8 / T8a esses, the 2020 bypass ("9a": left, the old T9 straight is not
-used), T10 right, down to the T11 hairpin (not the 11a shortcut), T12 kink onto the front straight. No chute (T4 to T7).
+7a hairpin round the O'Reilly island, the T8 / T8a esses, the back straight to the 9a left-right (the 2020 fast bypass is not used), T10 right, down to the T11 hairpin (not the 11a shortcut), T12 kink onto the front straight. No chute (T4 to T7).
 The pit lane ("Pit Road") leaves before the T11 hairpin (outside it), runs behind the wall on the left of the front
 straight and rejoins on the left at T1.
 """
@@ -22,13 +21,15 @@ CONFIG = dict(
     origin=(38.1627, -122.4576),                        # lat0, lon0 of the local ENU frame (circuit centre)
     osm_bbox=(-122.470, 38.150, -122.440, 38.175),      # W, S, E, N of the OSM API map call (19 Oct 2026)
     osm_file='osm/osm.xml',
-    # The Lemons loop in driving order from the T7a hairpin exit. OSM has the long circuit way 505453048 (T7a exit ->
-    # T8 -> old T9 straight -> T10 -> T11 -> front straight -> T1-T4) plus bypasses; the Lemons loop leaves it after
-    # T8a for the 2020 bypass ("Sonoma Raceway 2020" 834728156, then 116036857) and rejoins it before T10. Not used:
-    # 1494191150 (short T7), 505454376 (PWC lower hairpin), 28825444 (T11a shortcut), 834724050/230287122 (the chute),
-    # 1382620983, the Dragstrip.
-    loop_ways=['505453048:1309519366:4954001530', '834728156', '116036857', '505453048:316917004:316916528',
-               '1494191149', '913592144'],
+    # The Lemons loop in driving order from the T7a hairpin exit: the long circuit way 505453048 (T7a exit -> T8 -> 8a ->
+    # the back straight -> the 9a left-right -> T10 -> T11 -> front straight -> T1-T6 Carousel), then 1494191149 (the
+    # straight to T7) and 913592144 (T7 / 7a round the O'Reilly island). 20 Oct 2026, owner's drive: Lemons runs the
+    # IndyCar 9a, not the 2020 fast bypass (834728156 'Sonoma Raceway 2020' + 116036857, the grey curve after 8a in the
+    # layout picture); onboard youtube.com/watch?v=RAZip6S84CM 1:34-1:39 the long back straight with an orange cone on
+    # the left at the closed bypass, 1:40-1:42 the 9a left-right with the tyre stack, 1:43-1:46 T10 (Sunbelt banner).
+    # Not driven (paved, coned off, built as paved zones): the bypass, 1494191150 (short T7), 505454376 (PWC lower
+    # hairpin), 28825444 (T11a shortcut), 834724050 / 230287122 (the Chute), the Dragstrip 28825448.
+    loop_ways=['505453048', '1494191149', '913592144'],
     pit_lane_way='Pit Road',                            # OSM 230287120: pit-in before T11 (outside it) to after T1
     dem_tiles=['https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/1m/Projects/CA_NorthernCA_B22/TIFF/'
                'USGS_1M_10_x54y423_CA_NorthernCA_B22.tif'],
@@ -56,7 +57,7 @@ CONFIG = dict(
         ('T7a', 'T7a hairpin', 'right', None, 38.166843, -122.461834),
         ('T8', None, 'left', None, 38.166248, -122.461437),
         ('T8a', None, 'right', None, 38.165612, -122.460091),
-        ('T9a', None, 'left', None, 38.164944, -122.459029),
+        ('T9a', None, 'left', None, 38.164876, -122.458777),
         ('T10', None, 'right', None, 38.162108, -122.453349),
         ('T11', 'T11 hairpin', 'right', None, 38.158643, -122.452193),
         ('T12', None, 'left', None, 38.160569, -122.453276),
@@ -85,6 +86,9 @@ CONFIG = dict(
     # line (1:03-1:04) toward the T7 road, whose left edge is the blue concrete wall at the asphalt's end (1:06-1:09,
     # c20_s3685/s3740: no painted line on that side) and whose right edge is the white line along the drag strip.
     features=[
+        ('right', 180, 260, 'kerb', 'T1 exit right: the edge is the inner side of the blue/white kerb runs and the painted '
+                                    'wedges between them (c20_s1925); the bright wedge pulled the paint finder outward '
+                                    '(rolling wave 0.044 m at 218-228)'),
         ('left', 1860, 2060, 'asphalt_end', 'T7 road left edge: asphalt ends at the concrete wall, no painted line'),
     ],
     # bridge shadow: the T2 footbridge is in OSM (station ~296). Station 4084 is NOT a bridge (corrected 20 Oct 2026; there
@@ -115,9 +119,47 @@ CONFIG = dict(
     # ---------------------------------------------------------------- stage 3: scenery by rule only (no footage rounds yet)
     scenery=dict(
         brake_board_corners=['T2', 'T4', 'T7a', 'T11'],
+        # kerbs: blue and white flat concrete (owner, Street View inside T7; the z20 captures show white and grey-blue
+        # blocks), measured on c20_o0715 (T10 inside, 0.117 m/px): 5 px wide = 0.55 m, block period 16 px = 1.9 m, so
+        # 0.95 m blocks. Laguna keeps the defaults (0.9 m, 2 m, red / white).
+        # walls OSM does not map: the pit straight (owner, 19 Oct 2026 drive), concrete Jersey walls without catch fence
+        # (Street View 5MY4xR9O7etAXEHnZCVnGQ, compare/sonoma/streetview.md), measured on the
+        # clean captures c20_s1595..s1870 as the bright 0.25-1.2 m band beyond each painted edge (tools/track/compare/
+        # wall_measure: left 2.0 m off the edge at 235 of 271 stations, right 2.3 m at 243), every 10th station
+        declared_walls=[
+            dict(name='pit straight and pit-out lane, pit-lane side', kind='concrete', h=1.0, fence=0.0, latlon=[
+                (38.1606469, -122.4535036), (38.1607541, -122.4536697), (38.1608652, -122.4538464),
+                (38.1609772, -122.4540279), (38.1610893, -122.4542076), (38.1612006, -122.454387),
+                (38.1613123, -122.4545663), (38.1614237, -122.4547457), (38.1615466, -122.4549429),
+                (38.1616582, -122.455122), (38.1617703, -122.4553019), (38.1618793, -122.4554785),
+                # on through T1 between the track and the pit-out lane to its end (c20_s1925, measured by hand on the
+                # capture: the white wall line), where the lane merges on the left
+                (38.1619426, -122.4560474), (38.1619637, -122.4563223), (38.1619848, -122.4565905),
+                (38.1620069, -122.4568788)]),
+            dict(name='pit straight, drag-strip side', kind='concrete', h=1.0, fence=0.0, latlon=[
+                (38.1611834, -122.4539958), (38.1613003, -122.4541846), (38.161412, -122.4543637),
+                (38.1615237, -122.4545429), (38.1616354, -122.4547222), (38.1617473, -122.4549012),
+                (38.1618596, -122.4550797), (38.1619709, -122.4552587), (38.1620296, -122.4553516)]),
+        ],
+        # the hillside grandstands (OSM building=grandstand 1414701936-39) sit on the slope: height = terrain rise across
+        # the footprint + the lidar structure height
+        grandstand_on_terrain=True,
+        kerb=dict(width=0.55, stripe_m=0.95, colors=['#5b7ea8', '#d9d8cf']),
         # the pit wall halfway between the track and the pit lane, along straights only (the pit road runs round the
         # OUTSIDE of the T11 hairpin; a wall 0.6 m off that edge put the hot-lap launch into it, owner 20 Oct 2026)
         pit_wall=dict(fence_until_m=120, at='midway', min_radius=150.0),
+        # paved roads of the circuit the Lemons loop does not use: driveable pavement, coned off at each mouth (owner,
+        # 19 Oct 2026: "the Chute pavement is missing")
+        closed_roads=[
+            dict(name='2020 fast bypass (8a to T10)', ways=['834728156', '116036857'], half_width=6.0),
+            dict(name='the Chute (NASCAR short course, T4 to T7)', ways=['834724050', '230287122'], half_width=6.0),
+            dict(name='drag strip', ways=['28825448'], half_width=9.0, max_half=12.0),
+            # the paved runoff INSIDE T7 (the triangle inside the hairpin, round the short-T7 way): cars may use it
+            # (owner), so no cones; the racing line stays on the track (cutting through adds distance)
+            dict(name='T7 inside runoff', ways=['1494191150'], half_width=10.0, max_half=14.0, cones=False),
+            dict(name='T11a shortcut', ways=['28825444'], half_width=6.0),
+            dict(name='PWC lower hairpin', ways=['505454376'], half_width=5.0),
+        ],
     ),
     # ---------------------------------------------------------------- app registry (src/scoreboard/config.ts)
     app=dict(short='Sonoma', pace='cars/field/sonoma/pace.json'),

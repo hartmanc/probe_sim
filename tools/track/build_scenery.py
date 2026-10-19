@@ -349,6 +349,13 @@ def buildings(trk, G, osm):
         if w["tags"].get("name") == "Tower":
             kind = "tower"
         zb = float(np.min(trk.ground(xy[:, 0], xy[:, 1])))
+        if kind == "grandstand" and SC_CFG.get("grandstand_on_terrain"):
+            # hillside stands (Sonoma, 20 Oct 2026): the seating lies on the slope, so the bare-earth DEM already holds
+            # most of the rise and the lidar height above it is small; the stand spans the terrain rise across its
+            # footprint plus its own structure (config scenery.grandstand_on_terrain; off for Laguna's package)
+            gz = trk.ground(xy[:, 0], xy[:, 1])
+            h = float(gz.max() - gz.min()) + max(float(np.percentile(hv, 85)), 2.0)
+            h = min(h, 40.0)
         out.append({"kind": kind, "name": HANGARS.get(w["id"], w["tags"].get("name", "")), "z": rnd(zb, 2), "h": rnd(h, 1),
                     "footprint": [[rnd(x, 1), rnd(y, 1)] for x, y in xy], "src": "osm"})
     n_osm = len(out)
@@ -665,6 +672,38 @@ def barriers(trk, osm):
                     out.append({"kind": "pitwall", "h": 1.1, "fence": fence, "pts": with_z(trk, P),
                                 "src": "OSM pit lane extent"})
             log(f"pit wall: s {s0 % trk.n}..{s1 % trk.n} ({s1 - s0} m)")
+    # declared walls (config scenery.declared_walls, 20 Oct 2026): runs OSM does not map, measured on the z20 captures as
+    # lat/lon polylines (a declared fact like a corner anchor, not a geometry edit). A rule-placed pit wall within 3 m of
+    # a declared wall is dropped there (the declared one is the measured position of the same wall).
+    decl = []
+    for dw in SC_CFG.get("declared_walls", []):
+        ll = np.array(dw["latlon"], float)
+        x, y = bl.enu(ll[:, 0], ll[:, 1])
+        P = resample_line(np.c_[x, y], 2.0)
+        # the fitted edge wins: a declared point closer than 0.5 m to the road (or on it) is moved out along the
+        # normal to 0.55 m outside the edge, and the shift is reported (the measurement and the fit disagree there)
+        i, lat, dout = trk.project(P)
+        close = dout < 0.5
+        if close.any():
+            sd = np.sign(lat[close]); P[close] = trk.edge_point(i[close], sd, 0.55)
+            log(f"declared wall {dw['name']}: {int(close.sum())} points within 0.5 m of the fitted edge moved out "
+                f"(max {0.5 - dout[close].min():.2f} m, stations {int(i[close].min())}..{int(i[close].max())})")
+        decl.append(P)
+        out.append({"kind": dw.get("kind", "concrete"), "h": dw.get("h", 1.0), "fence": dw.get("fence", 3.0),
+                    "pts": with_z(trk, P), "src": f"declared: {dw['name']}"})
+        log(f"declared wall {dw['name']}: {len(P) * 2} m ({dw.get('kind', 'concrete')}, fence {dw.get('fence', 3.0)} m)")
+    if decl:
+        from scipy.spatial import cKDTree
+        kd = cKDTree(np.concatenate(decl))
+        kept = []
+        for b in out:
+            if b["kind"] != "pitwall" or str(b.get("src", "")).startswith("declared"):
+                kept.append(b); continue
+            P = np.array(b["pts"]); far = kd.query(P[:, :2])[0] > 3.0
+            for a_, b2 in _runs(far):
+                if b2 - a_ >= 3:
+                    kept.append(dict(b, pts=[list(map(float, q)) for q in P[a_:b2 + 1]]))
+        out[:] = kept
     # catch fence round the paddock
     for w in osm.select(lambda t: t.get("barrier") == "fence", trk.box):
         for run in polyline_runs(trk, w["xy"], step=3.0, max_out=400):
@@ -706,6 +745,43 @@ KERB_W = 0.9  # m; v2 track edges include the kerbs, so kerbs lie inside the edg
 PIT_HALF_DEFAULT = 4.0  # m (8 m paved width) when the image gives no edge
 
 
+def closed_roads(trk, osm):
+    """Paved roads of the circuit that the loop does not use (config scenery.closed_roads: [{name, ways: [OSM way id or
+    'way:from:to', ...], half_width}], 20 Oct 2026): driveable pavement in the sim (paved_zones parts, the pit-lane
+    strip layout: the half-width from the NAIP asphalt extent, else half_width; edges inside the track clamped onto
+    its edge, stretches inside the track dropped), and a cone line across each mouth where a part meets the track."""
+    import geo as G_
+    out_parts, lines = [], []
+    nodes = {}
+    root = ET.parse(os.path.join(CACHE, G_.CFG["osm_file"])).getroot()
+    nodes = {n.get("id"): (float(n.get("lat")), float(n.get("lon"))) for n in root.iter("node")}
+    ways = {w.get("id"): [x.get("ref") for x in w.iter("nd")] for w in root.iter("way")}
+    for road in SC_CFG.get("closed_roads", []):
+        for e in road["ways"]:
+            wid, *rng = str(e).split(":")
+            nd = ways[wid]
+            if rng:
+                a, b = nd.index(rng[0]), nd.index(rng[1]); nd = nd[min(a, b):max(a, b) + 1]
+            ll = np.array([nodes[i] for i in nd if i in nodes])
+            x, y = bl.enu(ll[:, 0], ll[:, 1])
+            res = lane_parts(trk, np.c_[x, y], road.get("half_width", 5.0), f"{road['name']} ({e})",
+                             clip=(2.5, road.get("max_half", 12.0)))
+            if not res:
+                continue
+            for part in res["parts"]:
+                part["turn"] = road["name"]
+                out_parts.append(part)
+                # cone line across each end that touches the track: from one lane edge to the other, 1 m off the edge
+                for end in ((0, -1) if road.get("cones", True) else ()):
+                    gl, gr = part["gap_left"][end], part["gap_right"][end]
+                    if min(gl, gr) <= 0.5:
+                        L = np.array(part["left"][end][:2]); R = np.array(part["right"][end][:2])
+                        P = np.array([L + (R - L) * t for t in np.linspace(0, 1, max(2, int(np.hypot(*(R - L)) / 2) + 1))])
+                        lines.append({"spacing_m": 2.0, "pts": with_z(trk, P), "src": f"closed road {road['name']} mouth"})
+    log(f"closed roads: {len(out_parts)} paved parts, {len(lines)} cone lines")
+    return out_parts, lines
+
+
 def pit_lane(trk, osm):
     """Paved pit lane from the OSM "Pit Lane" way: 1 m stations, half-widths from the NAIP asphalt extent
     (build_laguna.detect_edges, clamped 3-6 m, fallback 4 m), and the track-facing edge clamped to the track edge so
@@ -718,7 +794,15 @@ def pit_lane(trk, osm):
     w = [w for w in osm.ways if w["tags"].get("name") == PIT_WAY]
     if not w:
         return None
-    P = resample_line(w[0]["xy"], 1.0)
+    return lane_parts(trk, w[0]["xy"], PIT_HALF_DEFAULT, "pit lane")
+
+
+def lane_parts(trk, xy, half_default, label, clip=(3.0, 6.0)):
+    """A paved lane along polyline xy as parts in the pit-lane strip layout (pit_lane's method; closed_roads too)."""
+    from PIL import Image
+    from scipy.ndimage import gaussian_filter1d
+
+    P = resample_line(xy, 1.0)
     P = np.c_[gaussian_filter1d(P[:, 0], 2, mode="nearest"), gaussian_filter1d(P[:, 1], 2, mode="nearest")]
     n = len(P)
     d = np.gradient(P, axis=0)
@@ -727,15 +811,15 @@ def pit_lane(trk, osm):
     # width from the image
     o = trk.t["ortho"]
     raw = os.path.join(CACHE, f"naip_{int(o['x0'])}_{int(o['y0'])}_{int(o['x1'])}_{int(o['y1'])}_{o['width_px']}x{o['height_px']}.png")
-    half = np.full((n, 2), PIT_HALF_DEFAULT)
-    src = "default 4 m"
+    half = np.full((n, 2), float(half_default))
+    src = f"default {half_default} m"
     if os.path.exists(raw):
         ortho = bl.Ortho(np.asarray(Image.open(raw).convert("RGB")), trk.box)
         try:
             h, stats, ok = bl.detect_edges(P, ortho, reach=9.0)
             for k in range(2):
                 if np.isfinite(h[:, k]).all():
-                    half[:, k] = np.clip(h[:, k], 3.0, 6.0)
+                    half[:, k] = np.clip(h[:, k], clip[0], clip[1])
             src = f"NAIP (left found {stats['left_found']:.0%}, right {stats['right_found']:.0%})"
         except Exception as e:  # noqa: BLE001
             log("pit lane: edge detection failed, using default width:", str(e)[:80])
@@ -809,7 +893,7 @@ def pit_lane(trk, osm):
             "track_s": [int(v) for v in trk.project(C)[0][[0, -1]]],
         })
     tot = sum(p["n"] for p in parts)
-    log(f"pit lane: {len(parts)} parts, {tot} m paved (OSM way {n} m), width {src}, "
+    log(f"{label}: {len(parts)} parts, {tot} m paved (OSM way {n} m), width {src}, "
         f"half-widths p50 {np.median(half, 0).round(1)} m; parts at track s " + ", ".join(f"{p['track_s'][0]}-{p['track_s'][1]}" for p in parts))
     return {"spacing_m": 1.0, "fractions": fr, "open": True, "parts": parts}
 
@@ -905,9 +989,9 @@ def _pit_exit_cones_one_part(trk, part, barriers, spacing):
         return None
     s0 = int(trk.project(E[k0:k0 + 1])[0][0]); s1 = int(trk.project(E[k1:k1 + 1])[0][0])
     for w in barriers or []:
-        if w["kind"] != "pitwall": continue
+        if w["kind"] != "pitwall" and not str(w.get("src", "")).startswith("declared"): continue
         i, lat, out = trk.project(np.array(w["pts"])[:, :2])
-        near = (np.sign(lat) == side) & (((i - s0) % trk.n) < ((s1 - s0) % trk.n))
+        near = (np.sign(lat) == side) & (out < 6.0) & (((i - s0) % trk.n) < ((s1 - s0) % trk.n))
         if near.any():
             s0 = max(s0, int(((i[near] - s0) % trk.n).max() + s0) + 2) % trk.n
     st = np.arange(s0, s1 + (trk.n if s1 < s0 else 0) + 1) % trk.n
@@ -1291,6 +1375,9 @@ def main(cfg=None, out_dir=None):
     lines = edge_lines(trk, kerb, osm)
     pit = pit_lane(trk, osm)
     zones = paved_zones(trk, osm)
+    cr_parts, cone_lines = closed_roads(trk, osm) if SC_CFG.get("closed_roads") else ([], [])
+    if cr_parts:
+        zones["parts"] += cr_parts
     cones = pit_exit_cones(trk, pit, bar)
     marks = landmarks(trk, T, brg)
     for b_ in bld:
@@ -1341,11 +1428,15 @@ def main(cfg=None, out_dir=None):
         "buildings": bld,
         "bridges": brg,
         "barriers": bar,
-        "kerbs": {"width": KERB_W, "inside": True, "stripe_m": 2.0, "strips": kerb},
+        "kerbs": {"width": SC_CFG.get("kerb", {}).get("width", KERB_W), "inside": True,
+                  "stripe_m": SC_CFG.get("kerb", {}).get("stripe_m", 2.0), "strips": kerb,
+                  # per-track paint (config scenery.kerb.colors = [stripe, base]); absent: the app's red / white (Laguna)
+                  **({"colors": SC_CFG["kerb"]["colors"]} if SC_CFG.get("kerb", {}).get("colors") else {})},
         "edge_lines": {"width": 0.12, "inset": 0.15, "runs": lines},
         "pit_lane": pit,
         "paved_zones": zones,
         "pit_exit_cones": cones,
+        **({"cone_lines": cone_lines} if cone_lines else {}),
         "landmarks": marks,
     }
     with open(os.path.join(OUT, "scenery.json"), "w") as fh:

@@ -529,7 +529,7 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, bar, 
     pw = np.array([q[:2] for b in bar if b["kind"] == "pitwall" for q in b["pts"]]) if bar else None
     Ccur, hlp, hrp = C1, hl1.copy(), hr1.copy()
     fit_last = fit
-    for it in range(30):
+    for it in range(40):
         cfgw = trackcfg.remap_stations(cfg_raw, n, float(np.linalg.norm(np.roll(Ccur, -1, 0) - Ccur, axis=1).sum()), C=Ccur)
         NL = B.left_normals(Ccur)
         pcfg = cfgw.get("prior", {})
@@ -577,6 +577,21 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, bar, 
             ks = [k for k in range(xs[0], xs[-1] + 1) if k % n not in taken]
             anchors[shp["side"]][0].extend(ks); anchors[shp["side"]][1].extend([f(k) for k in ks]); anchors[shp["side"]][2].extend([aw] * len(ks))
             log(f"shape {shp['side']} {xs[0]}..{xs[-1]}: constraint inside the fit ({shp.get('why', '')[:60]})")
+        # taper each constraint run's weight over its first and last `anchor_ramp` stations (20 Oct 2026: a full-weight
+        # constraint starting abruptly made a 0.04 m rolling wave where the free fit hands over, at Sonoma's front
+        # straight start and the T7 road)
+        ramp = int(sp_cfg.get("anchor_ramp", 10))
+        for side in ("left", "right"):
+            ks_, _, ws_ = anchors[side]
+            if not ks_ or ramp <= 0:
+                continue
+            kk = np.array(ks_) % n
+            have = set(kk.tolist())
+            for j, k in enumerate(kk):
+                d = min(next((m for m in range(1, ramp + 1) if (k - m) % n not in have), ramp + 1),
+                        next((m for m in range(1, ramp + 1) if (k + m) % n not in have), ramp + 1))
+                if d <= ramp:
+                    ws_[j] = ws_[j] * d / (ramp + 1)
         keeps = [f for f in cfgw["features"] if f[3] == "keep"]
         if keeps:
             log(f"features: {len(keeps)} 'keep' zones are not part of the fitted method and are ignored: "
@@ -619,7 +634,7 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, bar, 
             log(f"converged after {it + 1} centre refits")
             break
     else:
-        rep.check("centre convergence", False, f"centre still moving {move:.3f} m after 30 refits")
+        rep.check("centre convergence", False, f"centre still moving {move:.3f} m after 40 refits")
     seg = np.linalg.norm(np.roll(Ccur, -1, 0) - Ccur, axis=1); L = float(seg.sum()); sp = L / n
     # -- gates of the fitted method (edge_gate.FITTED; a config may tighten them, never loosen)
     G = edge_gate.fitted_thresholds(cfg_raw["gate"])

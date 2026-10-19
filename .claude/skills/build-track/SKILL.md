@@ -101,6 +101,15 @@ the painted line on the clean captures) and one lat/lon anchor per corner (`corn
 | Team logger laps: `centreline.npy` (ENU, 1 m, index 0 at the transponder line, driving order), `traces_warped.pkl` (t, v, thr, rpm, alat), `sections.pkl`, `official.pkl` | `~/projects/starlink-go-pro/laps` style analysis, read only | centreline shape, start/finish, direction, ghosts, racing line, κ ground truth |
 | Onboard video: the team's GoPro (with `sync.py` epochs and logger GPS for video time → s) and a recent series onboard on YouTube | team footage, YouTube | compare pass, repaves, runoff, landmarks |
 
+**Street View survey (owner, 20 Oct 2026; every circuit).** In your own Chrome tab, open Google Maps Street View / user
+photo spheres at every corner and major feature of the loop (both sides where available; the circuit's own spheres, and
+road-side coverage of the access roads for stands and buildings). Record in `tools/track/compare/<id>/streetview.md`,
+per place, the panorama id and heading, the capture date, walls (side, material), catch fencing, tyre walls,
+corner-worker stands, kerb colour / width / height, runoff (paved / gravel / dirt), cones, bridges and gantries,
+buildings and towers, grandstands (size, construction). Screenshots are reference only, never textures, never committed;
+the record is the deliverable. Check its date against the recent onboard (source precedence). It feeds the declared
+walls, kerbs and paved zones of stage 3 and the scenery task.
+
 Without logger laps for the circuit (`logger_dir=None`, or `--no-logger`): the centreline shape comes from the painted
 road midpoint alone (OSM loop -> NAIP midpoint -> painted midpoint -> spline-fitted edges -> refit to their midpoint,
 soft move and stiff smoothing, `nologger_fit_a` 1e1 / `nologger_fit_b` 1e5, so the OSM nodes' kinks are not kept),
@@ -362,6 +371,12 @@ command regenerates it after any track change; the lidar and NAIP caches are key
   in-page continuity scan (every ribbon, shoulder, pit, zone, kerb and line triangle against
   `window.__sim.surface`, flag over 2 cm; walk the surface from 0.5 m inside to 18 m outside each edge for steps
   and slope changes over 8 % per metre) and fix the data that creases.
+
+- **From the Street View survey and the captures (20 Oct 2026):** walls OSM does not map as `declared_walls` (lat/lon
+  polylines measured on the clean captures, material and fence from the survey); kerb paint, width and block length per
+  track (`scenery.kerb`: colours, width, stripe_m; measure width and block period on the captures); paved roads of the
+  circuit the loop does not use as `closed_roads` (driveable paved zones with a cone line across each mouth; an inside
+  runoff the cars may use gets no cones); hillside grandstands on the terrain (`grandstand_on_terrain`).
 
 ## Stage 4: compare pass with a judge (`tools/track/compare/`)
 
