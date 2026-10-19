@@ -11,7 +11,9 @@ Identity and sources (Stage 0)
   cache_dir                                  download cache, relative to tools/track (default 'cache/<id>')
   osm_file                                   cached OSM XML in cache_dir (default 'osm.xml')
   loop_ways [way id, ...]                    the OSM highway=raceway ways forming the Lemons loop, stitched by shared end
-                                             nodes starting at the first; the loop is then turned to `direction`
+                                             nodes starting at the first; the loop is then turned to `direction`. An
+                                             entry 'way:from_node:to_node' takes the part of a way between two of its
+                                             nodes (a loop that leaves a long way for a bypass and rejoins it)
   pit_lane_way                               OSM name of the pit-lane way (scenery: pit lane, pit wall, edge lines)
   dem_tiles [url, ...]                       USGS 3DEP 1 m DEM tiles (read as windows over HTTP, cached)
   lidar_ept, lidar_survey                    Entwine point tiles of the same survey; survey name for notes
@@ -39,6 +41,8 @@ Geometry (Stage 1)
   spline {runs [(lo, hi)], knot, lam, huber, line_off, prior, init_stiff, captures}
   features [(side, lo, hi, 'keep' | 'asphalt_end' | 'kerb', why)]   keep: the prior is held; asphalt_end: where the
                                              dark asphalt ends; kerb: red-band (kerb outer limit) candidates only
+  prior {bridge_win, bridge_skip [first-centre stations], extra_bridges [first-centre stations of bridges OSM does not
+         map], first_edge [(side, lo, hi, why)], interp [(side, lo, hi, why)]}
   shapes [{side, knots [(station, half-width)], blend, why}]
   straights [{side, fit 'paint' | 'parallel', lo, hi, join (a, b), end, blend, tol | ref_side/ref_lo/ref_hi, why}]
   gate {straight_rms, step, profile_step, spline_obs_within}

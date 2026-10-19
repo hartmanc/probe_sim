@@ -25,6 +25,9 @@ uv run --python 3.12 --with "$W" python -I tools/track/build_track.py --track <i
 * **Checks of a candidate:** `compare_package.py --cand <dir> --ref <dir> [--by-corner]` (per-station centre, edge,
   height, racing-line differences; scenery counts), `edge_gate.py --track <dir> --config <id>`, and the autopilot
   `npx tsx tools/calibrate/drive.ts --track <dir> --alat 1.2 --learn 25 --bank --no-files [--ref-ghosts <ghosts.json>]`.
+* **Satellite overlay check:** `compare/overlay_captures.py --track <id> --pkg <dir> [--ref <dir>] [--grid 2 --scale 0.5]`
+  draws a candidate's edges, centre and racing line on the track's own clean captures (sheets under
+  `compare/<id>/overlay/`, ignored by git) for the builder to read stretch by stretch.
 * **Captures:** `captures.py` (lists, masks, the one common Google-to-ortho shift), `register_clean.py --track <id>`
   (measures that shift), `sweep_paint.py` (paint check per station, anchored at the current edge).
 * **Laguna dry runs (19 Oct 2026):** `tools/track/out/laguna_dryrun/README.md` (with the logger laps, against the

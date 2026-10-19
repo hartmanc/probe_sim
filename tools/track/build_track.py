@@ -272,7 +272,7 @@ def stage_geometry(cfg, out, no_logger):
     # is straight under every bridge; was fix_bridge_edges.py), except the configured crossings (first-centre stations)
     if pcfg.get("bridge_win"):
         wn = pcfg["bridge_win"]
-        for k_old in BS.bridge_stations(trk, osm):
+        for k_old in BS.bridge_stations(trk, osm) + list(pcfg.get("extra_bridges", [])):
             if any(abs(k_old - sk) <= 3 for sk in pcfg.get("bridge_skip", [])):
                 continue
             k0 = int(round(float(np.interp(k_old, np.arange(n + 1), np.r_[u, n]))))

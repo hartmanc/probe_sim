@@ -85,7 +85,7 @@ if (!isMainThread) {
   const cars = pace.cars.filter((c) => !only || only.includes(c.number));
   // reference: the Probe at scale 1
   const t0 = performance.now();
-  const ref = makeEval()('619')(1);
+  const ref = makeEval(track)('619')(1);
   console.log(`reference: AI Probe at scale 1.000 laps ${ref.toFixed(2)} s`);
   const fresh = pace.ai_version === AI_VERSION;
   const jobs: Job[] = [];

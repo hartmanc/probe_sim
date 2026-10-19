@@ -160,15 +160,29 @@ def osm_loop():
         open(path, "wb").write(r.content)
     root = ET.parse(path).getroot()
     nodes = {n.get("id"): (float(n.get("lat")), float(n.get("lon"))) for n in root.iter("node")}
-    ways = {}
+    # a loop entry is a way id, or "way:from_node:to_node" for the part of a way between two of its nodes (Sonoma: the
+    # Lemons loop leaves the long circuit way for a bypass and rejoins it)
+    want = {}
+    for e in LOOP_WAYS:
+        wid, *rng = e.split(":")
+        want[e] = (wid, rng)
+    raw = {}
     for w in root.iter("way"):
-        tags = {t.get("k"): t.get("v") for t in w.iter("tag")}
-        if w.get("id") in LOOP_WAYS:
-            ways[w.get("id")] = ([nd.get("ref") for nd in w.iter("nd")], tags.get("name", ""))
-    missing = [w for w in LOOP_WAYS if w not in ways]
+        if w.get("id") in {v[0] for v in want.values()}:
+            tags = {t.get("k"): t.get("v") for t in w.iter("tag")}
+            raw[w.get("id")] = ([nd.get("ref") for nd in w.iter("nd")], tags.get("name", ""))
+    missing = [e for e, (wid, _) in want.items() if wid not in raw]
     if missing:
         raise SystemExit(f"OSM: loop ways {missing} are not in {OSM_FILE}")
-    ways = {w: ways[w] for w in LOOP_WAYS}  # config order: the stitch starts at the first
+    ways = {}
+    for e, (wid, rng) in want.items():
+        nd, name = raw[wid]
+        if rng:
+            a, b = nd.index(rng[0]), nd.index(rng[1])
+            if a >= b:
+                raise SystemExit(f"OSM: {e}: node {rng[0]} does not come before {rng[1]} on way {wid}")
+            nd = nd[a:b + 1]
+        ways[e] = (nd, name)
     log(f"OSM: {len(ways)} circuit ways:", sorted({n for _, n in ways.values()}))
     by_start = {nd[0]: wid for wid, (nd, _) in ways.items()}
     if len(by_start) != len(ways):
