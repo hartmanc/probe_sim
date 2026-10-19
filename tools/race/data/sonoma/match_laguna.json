@@ -1,0 +1,367 @@
+{
+ "note": "Laguna field car (public/cars/field/identity.json numbering, MyLaps session 12975608) -> Sonoma entrant (MyLaps session 11838772, 21-22 Mar 2026). From tools/race/data/sonoma_2026_03/overlap.json in the main checkout (team names normalised, transponders where both files have one). Reused by the field build (tools/race/pace_sonoma.ts).",
+ "laguna_session": 12975608,
+ "sonoma_session": 11838772,
+ "cars": [
+  {
+   "laguna_number": "711",
+   "laguna_team": "Eyesore Racing",
+   "sonoma_number": "111",
+   "sonoma_team": "Eyesore Racing",
+   "status": "renumbered",
+   "evidence": "exact normalised team match; transponder 6352107 matches Sonoma #111 Eyesore Racing"
+  },
+  {
+   "laguna_number": "189",
+   "laguna_team": "Tired Iron Racing",
+   "sonoma_number": "189",
+   "sonoma_team": "Tired Iron Racing",
+   "status": "same",
+   "evidence": "exact normalised team match; transponder 5828421 matches Sonoma #189 Tired Iron Racing; number matches"
+  },
+  {
+   "laguna_number": "89",
+   "laguna_team": "The Homer by Porcubimmer\u2026.",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "absent",
+   "evidence": "best fuzzy Poseur Race Consortium 0.43"
+  },
+  {
+   "laguna_number": "83",
+   "laguna_team": "Dirty Duck Racing",
+   "sonoma_number": "83",
+   "sonoma_team": "Dirty Duck Racing",
+   "status": "same",
+   "evidence": "exact normalised team match; transponder 12503343 matches Sonoma #83 Dirty Duck Racing; number matches"
+  },
+  {
+   "laguna_number": "41",
+   "laguna_team": "Distilled Racing",
+   "sonoma_number": "41",
+   "sonoma_team": "Distilled Racing",
+   "status": "same",
+   "evidence": "exact normalised team match; number matches"
+  },
+  {
+   "laguna_number": "38",
+   "laguna_team": "Another Fine Mess",
+   "sonoma_number": "245",
+   "sonoma_team": "Another Fine Mess",
+   "status": "renumbered",
+   "evidence": "exact normalised team match; transponder 2123257 matches Sonoma #245 Another Fine Mess"
+  },
+  {
+   "laguna_number": "619",
+   "laguna_team": "Anal Corkscrew Probe",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "absent",
+   "evidence": "best fuzzy Cork Screw Racing (R) 0.69"
+  },
+  {
+   "laguna_number": "156",
+   "laguna_team": "TPF Racing",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "absent",
+   "evidence": "best fuzzy KFU Racing 0.33"
+  },
+  {
+   "laguna_number": "100",
+   "laguna_team": "Sorry For Party Racing",
+   "sonoma_number": "2",
+   "sonoma_team": "Sorry For Party Racing",
+   "status": "renumbered",
+   "evidence": "exact normalised team match"
+  },
+  {
+   "laguna_number": "76",
+   "laguna_team": "Salty Thunder Racing",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "absent",
+   "evidence": "best fuzzy Swamp Turkey 0.48; Sonoma #76 is Team Boulder (not a match)"
+  },
+  {
+   "laguna_number": "58",
+   "laguna_team": "Italian job racing",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "absent",
+   "evidence": "best fuzzy Team Valiant Effort 0.56"
+  },
+  {
+   "laguna_number": "37",
+   "laguna_team": "Caffeine Unlimited",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "absent",
+   "evidence": "best fuzzy College Fund Racing 0.47; Sonoma #37 is Delinquent Racing (not a match)"
+  },
+  {
+   "laguna_number": "801",
+   "laguna_team": "Volatile RAM",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "absent",
+   "evidence": "best fuzzy Tired Iron Racing 0.45"
+  },
+  {
+   "laguna_number": "670",
+   "laguna_team": "Bernal Dads Racing",
+   "sonoma_number": "67",
+   "sonoma_team": "Bernal Dads Racing",
+   "status": "renumbered",
+   "evidence": "exact normalised team match; transponder 12127150 matches Sonoma #67 Bernal Dads Racing"
+  },
+  {
+   "laguna_number": "49",
+   "laguna_team": "Ran When Parked Racing Entry C",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "absent",
+   "evidence": "best fuzzy Nerd Herd GT 0.46; Sonoma #49 is The Spy Who Drove Me to Lemons (not a match)"
+  },
+  {
+   "laguna_number": "2",
+   "laguna_team": "I Soar Racing",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "absent",
+   "evidence": "best fuzzy Nopar 0.55; Sonoma #2 is Sorry For Party Racing (not a match)"
+  },
+  {
+   "laguna_number": "42",
+   "laguna_team": "Team Valiant Effort",
+   "sonoma_number": "42",
+   "sonoma_team": "Team Valiant Effort",
+   "status": "same",
+   "evidence": "exact normalised team match; number matches"
+  },
+  {
+   "laguna_number": "664",
+   "laguna_team": "NachoFriend Racing",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "absent",
+   "evidence": "best fuzzy Blackhole racing 0.50"
+  },
+  {
+   "laguna_number": "963",
+   "laguna_team": "Borsche AG",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "absent",
+   "evidence": "best fuzzy Cork Screw Racing (R) 0.55"
+  },
+  {
+   "laguna_number": "74",
+   "laguna_team": "B Team - Just Plain Stupid",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "absent",
+   "evidence": "best fuzzy Auto Paint Trader Racing 0.56"
+  },
+  {
+   "laguna_number": "40",
+   "laguna_team": "Mock Grass Racing",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "absent",
+   "evidence": "best fuzzy Skid Games 0.50"
+  },
+  {
+   "laguna_number": "200",
+   "laguna_team": "Aggressively Adequate (R)",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "absent",
+   "evidence": "best fuzzy Aggressively Tacky 0.68"
+  },
+  {
+   "laguna_number": "9",
+   "laguna_team": "Arc Blast",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "absent",
+   "evidence": "best fuzzy Car Wars 0.59"
+  },
+  {
+   "laguna_number": "544",
+   "laguna_team": "ONSET/Tetanus Racing",
+   "sonoma_number": "544",
+   "sonoma_team": "ONSET/Tetanus Racing",
+   "status": "same",
+   "evidence": "exact normalised team match; transponder 4597811 matches Sonoma #544 ONSET/Tetanus Racing; number matches"
+  },
+  {
+   "laguna_number": "169",
+   "laguna_team": "Mal\u00f6rt Racing Development (MRD)",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "absent",
+   "evidence": "best fuzzy Developing Drivers Racing 0.45"
+  },
+  {
+   "laguna_number": "105",
+   "laguna_team": "Scuderia Limoni",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "absent",
+   "evidence": "best fuzzy Scuderia Limone Corroto 0.74"
+  },
+  {
+   "laguna_number": "34",
+   "laguna_team": "KnoxVegas LowBallerssss",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "absent",
+   "evidence": "best fuzzy Not-All-Us 0.42"
+  },
+  {
+   "laguna_number": "97",
+   "laguna_team": "Louballers",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "absent",
+   "evidence": "best fuzzy Team Boulder 0.59"
+  },
+  {
+   "laguna_number": "759",
+   "laguna_team": "In search of Edselance",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "absent",
+   "evidence": "best fuzzy Captain Ron Escapes\u2026. 0.44"
+  },
+  {
+   "laguna_number": "319",
+   "laguna_team": "Fancy Chicken Racing",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "absent",
+   "evidence": "best fuzzy Fast Weenies 0.40"
+  },
+  {
+   "laguna_number": "202",
+   "laguna_team": "Ur Moms Minivan Racing",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "absent",
+   "evidence": "best fuzzy Bare Minimum 0.44"
+  },
+  {
+   "laguna_number": "785",
+   "laguna_team": "Race Rambler",
+   "sonoma_number": "785",
+   "sonoma_team": "Race Rambler",
+   "status": "same",
+   "evidence": "exact normalised team match; number matches"
+  },
+  {
+   "laguna_number": "20",
+   "laguna_team": "NSF Racing",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "absent",
+   "evidence": "best fuzzy Sea Wolf. 0.36; Sonoma #20 is KFU Racing (not a match)"
+  },
+  {
+   "laguna_number": "143",
+   "laguna_team": "PIT CREW REVENGE \u2026.",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "not a match",
+   "evidence": "transponder 4315638 identical in both races (Sonoma #685 Enjoy Your Diarrhea, Index winner); team name differs entirely, so possibly a loaner/shared transponder or a renamed team; unconfirmed; owner/coordinator 20 Oct 2026: treated as NOT a match (different team name; a shared transponder is not a car identity)"
+  },
+  {
+   "laguna_number": "67",
+   "laguna_team": "Lost in Translation",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "absent",
+   "evidence": "best fuzzy ONSET/Tetanus Racing 0.50; Sonoma #67 is Bernal Dads Racing (not a match)"
+  },
+  {
+   "laguna_number": "1",
+   "laguna_team": "Team Bean Redux",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "absent",
+   "evidence": "best fuzzy Nein-Speed Racing 0.50; Sonoma #1 is Cartman Racing (not a match)"
+  },
+  {
+   "laguna_number": "8",
+   "laguna_team": "Team Tinyvette",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "absent",
+   "evidence": "best fuzzy ONSET/Tetanus Racing 0.45"
+  },
+  {
+   "laguna_number": "0",
+   "laguna_team": "The Supranos",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "absent",
+   "evidence": "best fuzzy Paranoid Racing (R) 0.56; Sonoma #0 is Argonaut Racing (not a match)"
+  },
+  {
+   "laguna_number": "51",
+   "laguna_team": "Chase Race: The Best Damn\u2026.",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "absent",
+   "evidence": "best fuzzy Cartman Racing 0.45; Sonoma #51 is Argonaut Racing (not a match)"
+  },
+  {
+   "laguna_number": "249",
+   "laguna_team": "Pony Keg",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "absent",
+   "evidence": "best fuzzy TEAM. KRAPTONITE 0.44"
+  },
+  {
+   "laguna_number": "55",
+   "laguna_team": "I Snore Racing",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "absent",
+   "evidence": "best fuzzy Eyesore Racing 0.57; Sonoma #55 is Top Gun Rookies (not a match)"
+  },
+  {
+   "laguna_number": "906",
+   "laguna_team": "Low Road Racing",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "absent",
+   "evidence": "best fuzzy LiMoNada 0.50"
+  },
+  {
+   "laguna_number": "43",
+   "laguna_team": "Faster Farms: 18 years of\u2026.",
+   "sonoma_number": "43",
+   "sonoma_team": "Faster Farms: 18 years\u2026.",
+   "status": "probable",
+   "evidence": "fuzzy team 0.93; number matches"
+  },
+  {
+   "laguna_number": "700",
+   "laguna_team": "SKINNY KOYOTE RACING Team A",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "absent",
+   "evidence": "best fuzzy SharkByte 0.42"
+  },
+  {
+   "laguna_number": "16",
+   "laguna_team": "Scrubbing Bubbles",
+   "sonoma_number": null,
+   "sonoma_team": null,
+   "status": "absent",
+   "evidence": "best fuzzy \"\"\"Team Braking Bad\"\"\" 0.43; Sonoma #16 is Electric Turtle (not a match)"
+  }
+ ]
+}
