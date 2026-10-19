@@ -1,0 +1,17 @@
+left : rms vs 41-st median (R>250 m, 2244 st) 0.089 m | max adjacent step (R>100 m) 0.384 m at 2468 (next 0.383@2469, 0.378@2467) | max edge-column cross-section step 0.090 m at 2480
+right: rms vs 41-st median (R>250 m, 2244 st) 0.094 m | max adjacent step (R>100 m) 0.252 m at 2475 (next 0.252@2471, 0.251@2473) | max edge-column cross-section step 0.082 m at 2465
+max cross-section step any column: 0.090 m at station 2480 column 0
+front straight left gap to pitwall (3420-40, 181 st): p10 1.97 p50 2.01 p90 2.04 m
+front straight right gap to concrete (3420-40, 181 st): p10 4.00 p50 4.04 p90 4.74 m
+bridge s=   37.1 (station 37) left: max adjacent half-width step within +-35 0.090 m
+bridge s=   37.1 (station 37) right: max adjacent half-width step within +-35 0.051 m
+bridge s=  940.1 (station 933) left: max adjacent half-width step within +-35 0.019 m
+bridge s=  940.1 (station 933) right: max adjacent half-width step within +-35 0.004 m
+bridge s= 1419.7 (station 1409) left: max adjacent half-width step within +-35 0.004 m
+bridge s= 1419.7 (station 1409) right: max adjacent half-width step within +-35 0.031 m
+bridge s= 1849.4 (station 1835) left: max adjacent half-width step within +-35 0.005 m
+bridge s= 1849.4 (station 1835) right: max adjacent half-width step within +-35 0.014 m
+bridge s= 2606.6 (station 2586) left: max adjacent half-width step within +-35 0.018 m
+bridge s= 2606.6 (station 2586) right: max adjacent half-width step within +-35 0.046 m
+bridge s= 2239.7 (station 2222) left: max adjacent half-width step within +-35 0.083 m
+bridge s= 2239.7 (station 2222) right: max adjacent half-width step within +-35 0.046 m

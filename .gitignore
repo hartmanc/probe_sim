@@ -10,3 +10,30 @@ tools/**/__pycache__/
 tools/cars/kit/downloads/
 tools/cars/field/album/
 tools/cars/field/photos/*/owner_*
+# tools/track: scripts, configs and markdown records are tracked; downloads, captures, frames, outputs and previews
+# are not (no trailing slash: in a worktree these may be symlinks to the main checkout's data, which a "dir/" rule
+# does not match)
+tools/track/cache
+tools/track/out
+tools/track/previews
+tools/track/compare/satellite
+tools/track/compare/satellite_clean
+tools/track/compare/satellite_sheets
+tools/track/compare/youtube
+tools/track/compare/youtube_sim*
+tools/track/compare/youtube_sheets
+tools/track/compare/onboard
+tools/track/compare/sim
+tools/track/compare/judge
+tools/track/compare/kerbs
+tools/track/compare/crossings.json
+tools/track/**/__pycache__/
+tools/track/**/*.jpg
+tools/track/**/*.jpeg
+tools/track/**/*.png
+tools/track/**/*.pkl
+tools/track/**/*.npy
+tools/track/**/*.npz
+tools/track/**/*.bin
+tools/track/**/*.tif
+tools/track/**/*.mp4
