@@ -27,7 +27,7 @@ export interface ChangeEntry {
 /** Newest first. Add a new entry at the top and mirror its version in package.json. */
 export const CHANGELOG: ChangeEntry[] = [
   {
-    version: '0.2.0', date: '', title: 'Painted road', resets: ['Laguna Seca'],
+    version: '0.2.0', date: '2026-10-19', title: 'Painted road', resets: ['Laguna Seca'],
     items: [
       'Laguna Seca’s edges re-fitted to the painted lines in satellite imagery, one smooth curve per side: the front straight is straight, and Rahal, Rainey, T6 and T11 are their real widths. Racing line re-solved on them.',
       'Sausage kerbs on every apex. They and the edges are part of the physics, so lap times reset.',
