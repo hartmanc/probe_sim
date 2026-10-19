@@ -18,8 +18,12 @@ hotlap:<track>:<car>:<physics>
 race:<track>:<car>:<physics>:<ai_version>
 ```
 
-`physics = physicsVersion(carJson, track.length_m)` (`src/scoreboard/hash.ts`): a cyrb53 hash of
-`PHYSICS_VERSION` (in `src/scoreboard/config.ts`), the track length and the canonical (key-sorted) car.json.
+`physics = physicsVersion(carJson, track.length_m, TRACKS[track].rev)` (`src/scoreboard/hash.ts`): a cyrb53 hash of
+`PHYSICS_VERSION` (in `src/scoreboard/config.ts`), the track length and the canonical (key-sorted) car.json, plus, for a
+track whose registry entry has one, its geometry revision `rev` (20 Oct 2026: a content fingerprint of the published
+track.json, so rebuilding one track opens that track's boards only; a global `PHYSICS_VERSION` bump would reset every
+track). Laguna has no `rev`: its key is byte-identical to 0.2.0's. The rolling start (`TRACKS[track].start`, a named
+corner and distance, or a station in metres, and a speed) is part of every replay as well.
 A car.json recalibration or a `PHYSICS_VERSION` bump therefore opens fresh boards automatically. **Bump
 `PHYSICS_VERSION` whenever anything else a replay depends on changes**: src/physics code, track.json geometry,
 heightfield.bin, scenery.json (walls, pit lane, paved zones, far terrain), ghosts.json (gear schedules, line

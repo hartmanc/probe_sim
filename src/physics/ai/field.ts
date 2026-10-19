@@ -17,6 +17,8 @@ export const AI_VERSION = 8; // 8: an understeering car (front slip > 2x its pea
 
 /** One car in public/cars/field/pace.json. */
 export interface PaceCar {
+  /** Where targetLap comes from when it is not this circuit's own result (tools/race/pace_sonoma.ts). */
+  targetSource?: string;
   number: string;
   team: string;
   class: string;            // 'A' | 'B' | 'C'

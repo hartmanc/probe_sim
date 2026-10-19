@@ -25,7 +25,7 @@ export interface SceneryJson {
   buildings: { kind: string; name: string; z: number; h: number; footprint: V2[]; src: string }[];
   bridges: { id: string; kind: string; name: string; s: number; deck_z: number; a: V2; b: V2; width: number; banners: string[][]; style?: 'deck' | 'arch' | 'sign' }[];
   barriers: { kind: 'concrete' | 'armco' | 'tyres' | 'pitwall' | 'fence'; h: number; fence: number; pts: V3[]; src: string }[];
-  kerbs: { width: number; inside?: boolean; stripe_m: number; strips: { side: number; s0: number; s1: number; kind: string; paint?: number; inset?: number ; /** verge: white line on the outer edge (default on) */ edge?: boolean }[] };
+  kerbs: { width: number; inside?: boolean; stripe_m: number; /** [stripe, base] sRGB hex; default red / white */ colors?: [string, string]; strips: { side: number; s0: number; s1: number; kind: string; paint?: number; inset?: number ; /** verge: white line on the outer edge (default on) */ edge?: boolean }[] };
   /** raised yellow sausage kerbs beyond the apex kerbs (physics: src/physics/track.ts) */
   sausages?: SausageJson | null;
   edge_lines?: { width: number; inset: number; runs: { side: number; s0: number; s1: number }[] };
@@ -35,6 +35,8 @@ export interface SceneryJson {
   paved_zones?: { spacing_m: number; fractions: number[]; open?: boolean; parts: (PitLaneJson['parts'][number] & { gap_left: number[]; gap_right: number[]; track_s: number[]; turn?: string })[] } | null;
   /** Cone line between the pit-exit lane and the track (CONTRACTS §2b); crossing it is a black-flag offence. */
   pit_exit_cones?: PitExitConesJson | null;
+  /** cone lines across the mouths of paved but unused roads (closed variants of the circuit, 20 Oct 2026): drawn only */
+  cone_lines?: { spacing_m: number; pts: [number, number, number][]; src?: string }[];
   /** kinds: brake | corner | flagstand | oak | banner (ad board facing the track) | sign (on a wall at z) | gantry (two
    *  lattice towers at (x, y, z) and (x2, y2, z2) with cables across the track) */
   landmarks: { kind: string; text: string; x: number; y: number; z: number; heading: number; h: number; w: number; x2?: number; y2?: number; z2?: number; color?: string }[];
@@ -705,8 +707,9 @@ const PAINT_V = (band: keyof typeof PAINT_ROWS, t: number) => 1 - (PAINT_ROWS[ba
  * dull mid-green with dirt blown over it; edge lines are off-white with speckled wear. Colours are sRGB; the shader
  * multiplies them by the aerial's local brightness so they pick up the same shade and grime as the road.
  */
-export function kerbPaintTexture(stripeM: number): THREE.Texture {
-  const key = `kerbpaint${stripeM}`;
+const hexRgb = (h: string): number[] => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+export function kerbPaintTexture(stripeM: number, colors?: [string, string]): THREE.Texture {
+  const key = `kerbpaint${stripeM}${colors ? colors.join('') : ''}`;
   const hit = texCache.get(key);
   if (hit) return hit;
   const W = PAINT_TILE_M * PAINT_PX_M, H = 256;
@@ -729,7 +732,7 @@ export function kerbPaintTexture(stripeM: number): THREE.Texture {
   };
   const fade = lattice(24, 6), patch = lattice(96, 12), streak = lattice(48, 64), fine = lattice(512, 96), edgeJ = lattice(128, 4);
   const mix = (a: number[], b: number[], t: number) => a.map((v, k) => v + (b[k] - v) * t);
-  const RED = [172, 64, 56], WHITE = [228, 225, 214], CONC = [170, 166, 156], RUBBER = [60, 58, 55];
+  const RED = colors ? hexRgb(colors[0]) : [172, 64, 56], WHITE = colors ? hexRgb(colors[1]) : [228, 225, 214], CONC = [170, 166, 156], RUBBER = [60, 58, 55];
   const GREEN = [60, 122, 72], DIRT = [168, 150, 118], LINE = [214, 212, 204];
   const stripePx = stripeM * PAINT_PX_M;
   const put = (x: number, y: number, c: number[], a: number) => {
@@ -850,7 +853,7 @@ function buildKerbs(track: TrackJson, k: SceneryJson['kerbs'], ground?: (x: numb
       if (s.kind === 'verge' && s.edge !== false) st.add(s.side, s.s0, s.s1, [{ out: base + P, dz: 0.012, v: PAINT_V('line', 0) }, { out: base + P + 0.12, dz: 0.012, v: PAINT_V('line', 1) }], o0 - 1.2, u0);
     }
   });
-  return st.build(kerbPaintTexture(k.stripe_m), 'kerbs', -8);
+  return st.build(kerbPaintTexture(k.stripe_m, k.colors), 'kerbs', -8);
 }
 
 /** Weathered paint: off-white with speckled wear, tiled along the line (u = metres / 2). */
@@ -1257,6 +1260,10 @@ export function buildScenery(track: TrackJson, _hf: Float32Array, sc: SceneryAss
   pitExitConesData = j.pit_exit_cones ?? null;
   const cones = j.pit_exit_cones ? buildPitExitCones(j.pit_exit_cones, ground) : null;
   if (cones) root.add(cones);
+  for (const cl of j.cone_lines ?? []) {
+    const m = buildPitExitCones({ spacing_m: cl.spacing_m, s0: 0, s1: 0, pts: cl.pts }, ground);
+    if (m) { m.name = 'cone_line'; root.add(m); }
+  }
   if (j.bridges?.length) root.add(buildBridges(j.bridges, ground));
   if (j.landmarks?.length) root.add(buildLandmarks(j.landmarks));
   root.traverse((o) => { o.castShadow = false; if (o.name !== 'kerbs' && o.name !== 'edge_lines') o.receiveShadow = false; o.matrixAutoUpdate = false; o.updateMatrix(); });

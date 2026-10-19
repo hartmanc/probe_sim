@@ -69,5 +69,5 @@ export async function loadSimAssets(track: string, car: string): Promise<SimAsse
 /** The server's physicsVersion() for a track + car (reads only car.json and track.json). */
 export async function serverPhysics(track: string, car: string): Promise<string> {
   if (!(track in TRACKS) || !(car in CARS)) throw new Error('not whitelisted');
-  return physicsVersion(readCar(car), readTrack(track).length_m);
+  return physicsVersion(readCar(car), readTrack(track).length_m, TRACKS[track].rev);
 }

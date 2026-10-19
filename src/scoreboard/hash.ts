@@ -27,7 +27,9 @@ export function canonicalJson(v: unknown): string {
  * Physics version string: PHYSICS_VERSION + hash(car.json) + track length. Boards are keyed by it,
  * so a recalibration of car.json (or a PHYSICS_VERSION bump) starts fresh boards.
  */
-export function physicsVersion(carJson: unknown, trackLengthM: number): string {
-  const h = cyrb53(`${PHYSICS_VERSION}|${trackLengthM}|${canonicalJson(carJson)}`);
+export function physicsVersion(carJson: unknown, trackLengthM: number, trackRev?: string): string {
+  // trackRev (TRACKS[id].rev, 20 Oct 2026): a per-track geometry revision / package fingerprint, so a rebuilt track opens
+  // its own fresh boards without a global PHYSICS_VERSION bump; absent (Laguna) the key is exactly as before
+  const h = cyrb53(`${PHYSICS_VERSION}|${trackLengthM}|${canonicalJson(carJson)}` + (trackRev ? `|${trackRev}` : ''));
   return h.toString(36).padStart(11, '0');
 }

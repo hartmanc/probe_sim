@@ -58,14 +58,26 @@ export interface TrackInfo {
   length_m: number;
   /** the race field's per-stint pace for this circuit (tools/race/pace.ts, calibrate_field.ts) */
   pace: string;
+  /** The rolling start of hot laps and replays (canonicalReset), an explicit fact of the track: either a distance before a
+   *  named corner (Laguna: 230 m before T11, the rule its boards were recorded with) or a station in metres along the lap,
+   *  and the speed. Part of every replay: changing it changes the board key's meaning. */
+  start: { beforeCorner: string; m: number; speed: number } | { s_m: number; speed: number };
+  /** Revision of the published package: sha256 over the sha256 of track.json, heightfield.bin, ghosts.json, scenery.json
+   *  and far_heightfield.bin, first 10 hex (the registry test checks it), part of physicsVersion() and so
+   *  of the board key: a rebuilt package opens its own boards without a global PHYSICS_VERSION bump. Laguna has none
+   *  (its key is unchanged since 0.2.0). */
+  rev?: string;
 }
 
 /** The track registry: every circuit the app, the scoreboard server and the tools know (whitelist). A new track gets an
  *  entry here (built by tools/track/build_track.py, see the build-track skill) and a pace file of its own under
  *  cars/field/<id>/pace.json; Laguna's predates that and stays at cars/field/pace.json. */
 export const TRACKS: Readonly<Record<string, TrackInfo>> = {
-  laguna_seca: { dir: 'tracks/laguna_seca/', name: 'WeatherTech Raceway Laguna Seca', short: 'Laguna Seca', length_m: 3588.048, pace: 'cars/field/pace.json' },
-  sonoma: { dir: 'tracks/sonoma/', name: 'Sonoma Raceway', short: 'Sonoma', length_m: 4101.037, pace: 'cars/field/sonoma/pace.json' },
+  laguna_seca: { dir: 'tracks/laguna_seca/', name: 'WeatherTech Raceway Laguna Seca', short: 'Laguna Seca', length_m: 3588.048, pace: 'cars/field/pace.json',
+    start: { beforeCorner: 'T11', m: ROLLING_START_BEFORE_LAST_CORNER_M, speed: ROLLING_START_SPEED } },
+  sonoma: { dir: 'tracks/sonoma/', name: 'Sonoma Raceway', short: 'Sonoma', length_m: 4098.796, pace: 'cars/field/sonoma/pace.json', rev: 'aa270170ab',
+    // on the front straight, ~120 m before the line (230 m before the last corner, T12, was 26 m past the T11 apex)
+    start: { s_m: 3975, speed: ROLLING_START_SPEED } },
 };
 /** The track when none is chosen (URL ?track=, Start menu). */
 export const DEFAULT_TRACK = 'laguna_seca';

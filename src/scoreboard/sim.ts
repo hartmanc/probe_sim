@@ -11,7 +11,7 @@ import {
 import { LapTimer, type Lap } from '../app/timing';
 import {
   STEP, SAMPLE_EVERY, TIMING_EVERY, ROLLING_START_BEFORE_LAST_CORNER_M, ROLLING_START_SPEED, START_BACK_M,
-  FLAG_SHIFT_UP, FLAG_SHIFT_DOWN, FLAG_HANDBRAKE, FLAG_AUTOSHIFT, FLAG_ABS, QUANT, TRACE_FORMAT,
+  FLAG_SHIFT_UP, FLAG_SHIFT_DOWN, FLAG_HANDBRAKE, FLAG_AUTOSHIFT, FLAG_ABS, QUANT, TRACE_FORMAT, TRACKS, type TrackInfo,
 } from './config';
 import { physicsVersion } from './hash';
 import type { InputTrace, TraceRow } from './types';
@@ -77,13 +77,21 @@ export function lastCorner(track: TrackJson): { name: string; s: number } | null
 
 /** The canonical start: ROLLING_START_BEFORE_LAST_CORNER_M before the last corner on the racing line (`lineOffset`,
  *  0 = centreline), at ROLLING_START_SPEED; a track without directed corners gets a standing start START_BACK_M back. */
-export function canonicalReset(track: TrackJson, lineOffset: (s: number) => number = () => 0): { pos: [number, number, number]; heading: number; speed: number } {
-  const lc = lastCorner(track);
+export function canonicalReset(track: TrackJson, lineOffset: (s: number) => number = () => 0,
+  start?: TrackInfo['start']): { pos: [number, number, number]; heading: number; speed: number } {
+  if (start && 's_m' in start) {
+    const p = lineToWorld(track, lineOffset, ((start.s_m % track.length_m) + track.length_m) % track.length_m);
+    return { pos: [p.pos[0], p.pos[1], p.pos[2]], heading: p.heading, speed: start.speed };
+  }
+  // a named corner (Laguna: T11), else the last directed corner; the same arithmetic as before 20 Oct 2026
+  const named = start ? (track.corners ?? []).find((c) => (c as { turn?: string | null }).turn === start.beforeCorner) ?? null : null;
+  const lc = named ?? lastCorner(track);
+  const before = start ? start.m : ROLLING_START_BEFORE_LAST_CORNER_M;
   const s = lc
-    ? (lc.s - ROLLING_START_BEFORE_LAST_CORNER_M + track.length_m) % track.length_m
+    ? (lc.s - before + track.length_m) % track.length_m
     : (track.length_m - START_BACK_M) % track.length_m;
   const p = lineToWorld(track, lineOffset, s);
-  return { pos: [p.pos[0], p.pos[1], p.pos[2]], heading: p.heading, speed: lc ? ROLLING_START_SPEED : 0 };
+  return { pos: [p.pos[0], p.pos[1], p.pos[2]], heading: p.heading, speed: lc ? (start ? start.speed : ROLLING_START_SPEED) : 0 };
 }
 
 export interface HotlapSimOptions {
@@ -154,7 +162,7 @@ export class HotlapSim {
   constructor(readonly assets: SimAssets, opts: HotlapSimOptions = {}) {
     const a = assets;
     this.spec = loadCarSpec(a.carJson);
-    this.physics = physicsVersion(a.carJson, a.track.length_m);
+    this.physics = physicsVersion(a.carJson, a.track.length_m, TRACKS[a.trackId]?.rev);
     const farGrid = a.scenery?.far?.heightfield;
     this.far = farGrid && a.farHeightfield
       ? { heightfield: a.farHeightfield, x0: farGrid.x0, y0: farGrid.y0, dx: farGrid.dx, nx: farGrid.nx, ny: farGrid.ny } : null;
@@ -184,7 +192,7 @@ export class HotlapSim {
     this.vehicle.abs = this.abs;
     this.vehicle.setCollisionWorld(this.collision);
     this.surface = createTrackSurface(a.track, a.heightfield, { far: this.far, pitLane: this.pitLane, sausages: a.scenery?.sausages ?? null });
-    const r = canonicalReset(a.track, (s) => this.lineOffsetAt(s));
+    const r = canonicalReset(a.track, (s) => this.lineOffsetAt(s), TRACKS[a.trackId]?.start);
     this.vehicle.reset(r.pos, r.heading, r.speed);
     this.resetInfo = r;
     this.timer.reset();
