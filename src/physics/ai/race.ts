@@ -51,6 +51,11 @@ export interface RaceConfig {
    * (RaceLine.corners, mean 1) and aggression (calm 0.6, normal 1, aggressive 1.5) factors. Never the player.
    */
   mishapRate: number;
+  /**
+   * Racing time headway factor for every AI driver (per track: src/scoreboard/config.ts TRACKS[id].ai; 1 = Laguna,
+   * where the headways were tuned).
+   */
+  followScale: number;
 }
 
 /** One AI loss of control (director.mishapLog). */
@@ -60,6 +65,7 @@ export const DEFAULT_RACE_CONFIG: RaceConfig = {
   laps: 10, seed: 1, ai_version: AI_VERSION, playerNumber: '619', greenWindow: [5, 30],
   formationSpeed: 20, gridGap: 15, aiControlEvery: 2, aiPhysicsEvery: 2, aiWalls: true, playerAi: false, maxAi: Infinity,
   mishapRate: 0.0002,
+  followScale: 1,
 };
 
 export interface RaceInputs {
@@ -479,6 +485,7 @@ export class RaceDirector {
       if (!d) continue;
       const c = d.ctl;
       c.noise = true;
+      c.followScale = this.config.followScale;
       c.mishapRate = this.phase === 'green' && !car.isPlayer && !car.finished ? this.config.mishapRate : 0;
       if (this.phase === 'formation') { c.speedCap = this.config.formationSpeed + 3; c.noPass = true; c.minGap = this.config.gridGap; c.paceFactor = 1; }
       else if (this.phase === 'yellow') { c.speedCap = this.config.formationSpeed * 1.25 + 3; c.noPass = true; c.minGap = 10; c.paceFactor = 1; }

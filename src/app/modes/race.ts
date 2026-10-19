@@ -109,7 +109,7 @@ export function buildDirector(sim: RaceServices['sim'], field: FieldData, o: { s
     pitLane: pit ? { spacing_m: 1, ...pit } : null,
     collisionWorld: sim.collision,
     playerVehicle: sim.vehicle, playerSurface: sim.surface,
-  }, { laps: o.laps, seed: o.seed, playerNumber: PLAYER_NUMBER, greenWindow: [5, 30] });
+  }, { laps: o.laps, seed: o.seed, playerNumber: PLAYER_NUMBER, greenWindow: [5, 30], followScale: TRACK.ai?.followScale ?? 1 });
 }
 
 /** FieldCars inputs for every AI car of a director (colour from identity.json, size from its physics spec). */

@@ -44,6 +44,8 @@ export interface DriverControl {
   noPass: boolean;
   /** Minimum gap to the car ahead, m (formation: 15). 0 = time headway only. */
   minGap: number;
+  /** Racing time headway x this (per track, RaceConfig.followScale; 1 = the tuned Laguna values). */
+  followScale: number;
   /** Fraction of the target profile (cool-down lap after the flag: 0.6). */
   paceFactor: number;
   /** Per-lap pace noise on (race) or off (calibration). */
@@ -133,7 +135,7 @@ export class AiDriver {
   /** Target speed profile per station (m/s), from buildSpeedProfile. */
   profile: Float64Array;
   readonly input: DriverInput = { steer: 0, throttle: 0, brake: 0, shiftUp: false, shiftDown: false };
-  readonly ctl: DriverControl = { speedCap: Infinity, noPass: false, minGap: 0, paceFactor: 1, noise: true, mishapRate: 0 };
+  readonly ctl: DriverControl = { speedCap: Infinity, noPass: false, minGap: 0, followScale: 1, paceFactor: 1, noise: true, mishapRate: 0 };
   readonly rng: Rng;
 
   // ---- state
@@ -384,7 +386,7 @@ export class AiDriver {
     const eMe = lat - line.at(line.off, s);
     let shiftWant = 0;
     let leadJ = -1, leadGap = Infinity;
-    const headway = HEADWAY[this.params.aggression];
+    const headway = HEADWAY[this.params.aggression] * ctl.followScale;
     const green = !ctl.noPass;
     this.planTimer -= dt;
     this.passCool = Math.max(0, this.passCool - dt);
