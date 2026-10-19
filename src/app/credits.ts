@@ -6,8 +6,8 @@
 //   public/cars/field/identity.json        team names for the car headings (optional)
 // plus the race-photo reference line. Either credits file may be missing or change shape slightly: the parsers
 // accept {cars: {num: entry | entry[]}}, {num: entry | entry[]} and [{number, ...}], and the two are merged by car
-// number and source (pure functions, unit-tested). The card is a menu page: the body scrolls (wheel / touch), and
-// "Scroll down / up" rows move it for pads and keys.
+// number and source (pure functions, unit-tested). The card is a menu page: the body scrolls by wheel / touch, and
+// by up / down on the Back row for pads and keys (Menu.scrollBody).
 import type { MenuEntry, MenuPage } from './menu';
 
 export interface CreditLine {
@@ -228,7 +228,6 @@ export function renderCredits(d: CreditsData, box: HTMLElement): void {
 let box: HTMLElement | null = null;
 let loading: Promise<void> | null = null;
 
-const scrollBox = (dir: 1 | -1) => { if (box) box.scrollBy({ top: dir * Math.max(80, box.clientHeight * 0.8), behavior: 'auto' }); };
 
 /** Main menu → Credits. The data is re-read every time the page opens (new entries show up without a reload). */
 export function creditsPage(): MenuPage {
@@ -245,10 +244,6 @@ export function creditsPage(): MenuPage {
     subtitle: 'Third-party material in this game',
     // the menu re-renders the body on every change; keep the same element and its scroll position
     body: () => { const top = b.scrollTop; queueMicrotask(() => { b.scrollTop = top; }); return b; },
-    entries: (): MenuEntry[] => [
-      { kind: 'action', id: 'crDown', label: 'Scroll down ▾', run: () => scrollBox(1) },
-      { kind: 'action', id: 'crUp', label: 'Scroll up ▴', run: () => scrollBox(-1) },
-      { kind: 'back', id: 'back', label: 'Back' },
-    ],
+    entries: (): MenuEntry[] => [{ kind: 'back', id: 'back', label: 'Back' }],
   };
 }

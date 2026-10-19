@@ -24,7 +24,7 @@ import { createHotLap, HotlapLoop } from './modes/hotlap';
 import { createRace, fieldAudioHook, fieldAudioUrlOff, fieldVoicesFor, raceMenuLabel } from './modes/race';
 import { pitExitConeWatcher } from './scenery';
 import { creditsPage } from './credits';
-import { APP_VERSION, changelogPage, versionLine } from './changelog';
+import { APP_RELEASED, APP_VERSION, changelogPage, versionLine } from './changelog';
 /** AI engine sounds in a race (src/app/audio-field.ts): on by default; pause-menu toggle (persisted); ?fieldaudio=0 forces off. */
 const FIELD_AUDIO_URL_OFF = fieldAudioUrlOff(location.search);
 const FIELD_AUDIO_KEY = 'probeSim.fieldAudio.v1';
@@ -119,7 +119,7 @@ menu.extra.append(loadBox);
 const GIT_SHA = typeof __GIT_SHA__ === 'string' ? __GIT_SHA__ : '';
 const versionEl = document.createElement('div');
 versionEl.className = 'menu-version';
-versionEl.textContent = versionLine(APP_VERSION, GIT_SHA);
+versionEl.textContent = versionLine(APP_VERSION, GIT_SHA, APP_RELEASED);
 menu.extra.append(versionEl);
 const progressBar = loadBox.querySelector('.progress > div') as HTMLDivElement;
 const loadLabel = loadBox.querySelector('.load-label') as HTMLDivElement;

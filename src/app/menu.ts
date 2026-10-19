@@ -225,8 +225,26 @@ export class Menu {
   nav(ev: NavEvent): void {
     const m = this.model;
     if (!m || !this.isOpen) return;
+    if ((ev === 'up' || ev === 'down') && this.scrollBody(ev === 'down' ? 1 : -1)) return;
     const r = m.nav(ev);
     this.after(r);
+  }
+
+  /**
+   * A page whose body overflows (credits, what's new): down on the last row / up on the first scrolls the body a
+   * step instead of wrapping the cursor, so pads and keys can read it without scroll rows; the wheel and touch
+   * scroll the box directly. Returns false when there is nothing to scroll that way.
+   */
+  private scrollBody(dir: 1 | -1): boolean {
+    const m = this.model, box = this.bodyEl.firstElementChild as HTMLElement | null;
+    if (!m || !box || box.scrollHeight <= box.clientHeight + 1) return false;
+    let first = -1, last = -1;
+    m.entries.forEach((e, i) => { if (selectable(e)) { if (first < 0) first = i; last = i; } });
+    if (dir > 0 ? m.index !== last : m.index !== first) return false;
+    const room = dir > 0 ? box.scrollHeight - box.clientHeight - box.scrollTop : box.scrollTop;
+    if (room <= 1) return false;
+    box.scrollBy({ top: dir * Math.max(60, box.clientHeight * 0.6), behavior: 'auto' });
+    return true;
   }
 
   private after(r: NavResult): void {
