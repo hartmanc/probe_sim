@@ -10,3 +10,4 @@ tools/**/__pycache__/
 tools/cars/kit/downloads/
 tools/cars/field/album/
 tools/cars/field/photos/*/owner_*
+.claude/settings.local.json
