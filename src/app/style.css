@@ -369,6 +369,11 @@ html.touch .race-table { max-height: 40vh; }
 /* credits (credits.ts): a scrollable card in the main menu */
 .menu-card:has(.credits) { width: min(680px, 100%); }
 .credits { max-height: 56vh; overflow: auto; overscroll-behavior: contain; touch-action: pan-y; -webkit-overflow-scrolling: touch; user-select: text; text-align: left; background: #05070a; border: 2px solid #1d2733; border-radius: 8px; padding: 10px 14px; font-size: 13px; line-height: 1.45; }
+.credits { scrollbar-width: thin; scrollbar-color: #3a4652 #05070a; scrollbar-gutter: stable; }
+.credits::-webkit-scrollbar { width: 9px; }
+.credits::-webkit-scrollbar-track { background: #05070a; border-radius: 8px; }
+.credits::-webkit-scrollbar-thumb { background: #3a4652; border-radius: 8px; border: 2px solid #05070a; }
+.credits::-webkit-scrollbar-thumb:hover { background: #4d5c6b; }
 .credits .cr-section + .cr-section { margin-top: 14px; }
 .credits .cr-h { margin: 0 0 6px; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); position: sticky; top: -10px; background: #05070a; padding: 2px 0; }
 .credits .cr-intro { color: var(--muted); font-size: 12px; margin-bottom: 6px; }
@@ -382,4 +387,14 @@ html.touch .race-table { max-height: 40vh; }
 .credits .cr-lic { color: var(--good); font-size: 12px; }
 .credits .cr-note { flex-basis: 100%; color: var(--muted); font-size: 11px; }
 html.touch .credits { max-height: 44vh; font-size: 12px; }
+/* what's new (changelog.ts): the credits card with one section per release */
+.menu-version { margin-top: 10px; color: var(--muted); font-size: 12px; text-align: center; letter-spacing: 0.04em; }
+.changelog .cr-h { display: flex; flex-wrap: wrap; gap: 0 10px; align-items: baseline; text-transform: none; letter-spacing: 0; }
+.changelog .cl-ver { font-size: 15px; font-weight: 800; letter-spacing: 0.02em; }
+.changelog .cl-date { color: var(--muted); font-size: 12px; font-weight: 500; }
+.changelog .cl-title { color: #e8eef5; font-size: 13px; font-weight: 600; }
+.changelog .cl-reset { display: inline-block; margin: 2px 0 6px; padding: 2px 8px; border-radius: 999px; background: rgba(242, 194, 48, 0.16); color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: 0.04em; }
+.changelog .cl-items { margin: 0; padding-left: 18px; color: #c9d3de; }
+.changelog .cl-items li + li { margin-top: 3px; }
+.changelog .cl-keys { margin-top: 14px; border-top: 1px dashed #1d2733; padding-top: 8px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; }
 .rt-row .st-finished { color: var(--good); }

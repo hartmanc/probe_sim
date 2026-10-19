@@ -37,3 +37,4 @@ tools/track/**/*.npz
 tools/track/**/*.bin
 tools/track/**/*.tif
 tools/track/**/*.mp4
+.claude/settings.local.json

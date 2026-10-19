@@ -24,6 +24,7 @@ import { createHotLap, HotlapLoop } from './modes/hotlap';
 import { createRace, fieldAudioHook, fieldAudioUrlOff, fieldVoicesFor, raceMenuLabel } from './modes/race';
 import { pitExitConeWatcher } from './scenery';
 import { creditsPage } from './credits';
+import { APP_RELEASED, APP_VERSION, changelogPage, versionLine } from './changelog';
 /** AI engine sounds in a race (src/app/audio-field.ts): on by default; pause-menu toggle (persisted); ?fieldaudio=0 forces off. */
 const FIELD_AUDIO_URL_OFF = fieldAudioUrlOff(location.search);
 const FIELD_AUDIO_KEY = 'probeSim.fieldAudio.v1';
@@ -117,6 +118,12 @@ const loadBox = document.createElement('div');
 loadBox.className = 'menu-load';
 loadBox.innerHTML = `<div class="progress"><div></div></div><div class="load-label">Loading…</div>`;
 menu.extra.append(loadBox);
+// the release and the build's commit (What's new has the history)
+const GIT_SHA = typeof __GIT_SHA__ === 'string' ? __GIT_SHA__ : '';
+const versionEl = document.createElement('div');
+versionEl.className = 'menu-version';
+versionEl.textContent = versionLine(APP_VERSION, GIT_SHA, APP_RELEASED);
+menu.extra.append(versionEl);
 const progressBar = loadBox.querySelector('.progress > div') as HTMLDivElement;
 const loadLabel = loadBox.querySelector('.load-label') as HTMLDivElement;
 
@@ -141,6 +148,7 @@ const mainPage: MenuPage = {
     graphicsEntry(),
     ...reloadEntry(),
     scoreboardEntry(),
+    { kind: 'submenu', id: 'whatsnew', label: "What's new", note: `v${APP_VERSION}`, page: () => changelogPage(GIT_SHA) },
     { kind: 'submenu', id: 'credits', label: 'Credits', page: creditsPage },
   ],
 };

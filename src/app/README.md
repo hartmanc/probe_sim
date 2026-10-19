@@ -63,14 +63,22 @@ a light ribbon tint) washed it out. 60 fps on an M3 in Chrome at 1.5× pixel rat
 ## Menus
 
 - **Main menu** at boot (replaces the old start overlay): Hot lap, Race · 5 laps vs the 2026 field, Controls & calibration,
-  Scoreboard (disabled, coming soon). Load progress shows under the title; the mode rows are disabled until assets are
-  loaded. Picking a mode is the user gesture that starts audio.
+  Scoreboard (disabled, coming soon), What's new, Credits. Load progress and the version line (`v0.3.1 · <commit>`,
+  `src/app/changelog.ts`, commit from vite `define`) show under the title; the mode rows are disabled until assets are
+  loaded. Picking a mode is the user gesture that starts audio. **What's new** is the release history: one
+  MAJOR.MINOR.PATCH number per publish to main / lemons-sim.app (MAJOR milestones, MINOR content and features, PATCH
+  look / sound / AI / fixes), newest first, each entry naming the circuits whose lap times reset (the board key is
+  `PHYSICS_VERSION`, not the version). Previews are not releases: everything since the last publish goes into the top
+  entry, which keeps `date: ''` (shown as "preview") until it ships. Mirror the version in package.json;
+  `changelog.test.ts` checks both.
 - **Pause menu** (Start / Esc / O while driving): Resume, Restart (mode start procedure, fresh session), Camera (choice),
   Auto-shift, ABS (real physics only), the mode's rows (hot lap: Ghosts submenu with per-ghost toggles and the delta
   reference), Controls & calibration, Mute, Main menu. Clicking the dimmed backdrop resumes.
 - **Navigation:** d-pad or left stick (repeat after 350 ms, then every 120 ms), A select, B back, Start resume;
   keyboard arrows / WASD, Enter / Space select, Esc back. Mouse and touch: tap a row; tap ‹ › on a choice.
-  In the controls panel B / Start / Esc close it (when not assigning).
+  In the controls panel B / Start / Esc close it (when not assigning). On a page whose body overflows (What's new,
+  Credits) down on the last row / up on the first scrolls the body a step instead of wrapping the cursor; wheel and
+  touch scroll it directly, and its scrollbar stays visible.
 - Footer hints and the help overlay name controls in the glyphs of the connected pad (Xbox A/B/RB, PlayStation ✕/○/R1,
   Nintendo B/A/R, generic "Button n"); keyboard users see key names.
 
