@@ -302,6 +302,32 @@ the field had been tuned on the wider geometry.
   Kerb-aware bounds (0.75 / 0.5 / 0.3 m from the edge along the kerb strips) gain <= 0.07 s on the Probe lap; only T5
   opens (R 52 -> 56 m), so ghosts.json is unchanged.
 
+## 19 Oct 2026: understeer unwind (AI_VERSION 8), self-play band re-based on 16 seeds
+
+After the spline-fitted edges, 2 self-play seeds read 0.08 contacts per car-lap. On more seeds the edges were not the
+cause: seeds 1-8 at ab4b15d (pre-edge) 0.051, at the fitted edges 0.058 (16 seeds 0.056); the 4-seed band above
+(0.044 mean) was a lucky draw. Seed-to-seed spread is 0.01-0.11, so compare driver changes on 16 seeds (~3 min on 8 cores).
+
+- **Cause** (per-contact traces, 2.5 s of both cars): about half the contacts involve a car 4-9 m off the line and slow,
+  steering back across a car arriving or alongside. Those cars had ploughed: making room for a passer or changing lanes
+  at turn-in, the front slid to 0.3-0.67 rad (tyre peak 0.12) at full lock, the car ran wide, then bit all at once as it
+  slowed and was thrown back across the road (or spun: #143 seed 2, Rainey exit, rear slip to 1.5 rad).
+- **Change**: an understeering car at speed (front slip > `STEER_PLOUGH` 2 x the tyre peak and above the rear's,
+  > 10 m/s, on track) stops adding lock and unwinds it at 2/s; the cap recovers at 2/s once the front grips
+  (`CarPerf.peakSlipAngle`). Applied regardless of phase (limited to understeer: a plain cap trapped low-speed and
+  oversteering cars, 110-180 recoveries per 8 races).
+- **Tried and dropped** (16 seeds, no gain or worse): pass lane changes limited by the spare lateral grip (0.045),
+  a car far off the line treated as a merge back that waits for a free lane (0.072 on 8 seeds), threshold braking at
+  a lock-up instead of the 3/s cap cut (0.043-0.045).
+- **Calibration**: solo laps change for 26 of 311 car / stints (all faster; #700 by 3 s, it ploughed solo), so
+  AI_VERSION 8 and pace.json recalibrated: AI Probe at scale 1 laps 120.20 s; worst error 0.19 % (#49 stint 7 needed a
+  second `--only 49` run from the warm start).
+- **Self-play band re-based** (`selfplay.ts`, 4 laps, seeds 1-16, AI_VERSION 8): line rms alone 0.24-0.33 m;
+  clearly-faster passes 69.1 % pooled (64-70 %), median stuck 12.5 s mean; AI-AI contacts > 1 m/s 0.038 per car-lap
+  pooled (0.012-0.085 per seed; was 0.056); four wheels off non-mishap 0.087 (was 0.116); recoveries 58 and mishaps 6
+  over the 16 races. Seeds 1-4 alone: contacts 0.027.
+- Tests: 321/321; `ai_race` 45 cars seed 1 now passes (the grid hash changes with AI_VERSION), not loosened.
+
 ## Assumptions and data wishes
 
 - Target pace is the median green lap (traffic included), so AI cars run their real race pace, slower

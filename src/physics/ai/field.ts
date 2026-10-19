@@ -9,7 +9,7 @@ import type { RaceLine } from './line';
 import { Rng, hashSeed } from './rng';
 
 /** Bump whenever the AI driver or the calibration changes behaviour (pace.json scales are then stale). */
-export const AI_VERSION = 7; // 7: lateral mu capped at 1.20 (pace above it from power); profiles credit banking and the crest/dip load; driver margins 0.97 lateral / 0.85 braking, grip limiter at 1.5x, engine-braking blip for sliding RWD cars. 6: CG lowered with the fitted grip (T/2h >= 1.15 x lateral mu: quick cars rolled over at T2 on the painted-road track). 5: pace fit split into grip (corners) and power (straights): power follows the powertrain
+export const AI_VERSION = 8; // 8: an understeering car (front slip > 2x its peak) unwinds the lock instead of holding full lock. 7: lateral mu capped at 1.20 (pace above it from power); profiles credit banking and the crest/dip load; driver margins 0.97 lateral / 0.85 braking, grip limiter at 1.5x, engine-braking blip for sliding RWD cars. 6: CG lowered with the fitted grip (T/2h >= 1.15 x lateral mu: quick cars rolled over at T2 on the painted-road track). 5: pace fit split into grip (corners) and power (straights): power follows the powertrain
 // 4: per-stint driver pace (each race draws one real stint per car), stint outlier rules
 // 3: #49 Mayflower re-specced as a Honda K24 swap (owner), recalibrated
 
@@ -488,6 +488,8 @@ export interface CarPerf {
   wheelbase: number;
   mass: number; aeroK: number; crr: number;
   peakSlipRatio: number;
+  /** slip angle of the pure-lateral tyre peak, rad */
+  peakSlipAngle: number;
   /** wheels whose spin the driver watches for wheelspin (driven axle) */
   drivenFront: boolean; drivenRear: boolean;
   hullFront: number; hullRear: number; halfWidth: number;
@@ -575,6 +577,7 @@ export function measureCarPerf(spec: CarSpec): CarPerf {
     abrake: 0.95 * spec.tyre.longitudinal.mu0 / 1.08,
     maxSteer, wheelbase: L, mass: m, aeroK, crr: spec.rollingResistance,
     peakSlipRatio: spec.tyre.longitudinal.peakSlipRatio,
+    peakSlipAngle: (spec.tyre.lateral.peakSlipAngleDeg * Math.PI) / 180,
     drivenFront: spec.drivetrain.layout !== 'rwd', drivenRear: spec.drivetrain.layout !== 'fwd',
     hullFront: spec.hull.front, hullRear: spec.hull.rear, halfWidth: spec.hull.halfWidth,
   };

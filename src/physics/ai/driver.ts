@@ -73,6 +73,8 @@ const CORNER_MARGIN = 0.97, BRAKE_MARGIN = 0.85;    // driverProfile: share of t
 /** The grip limiter lifts only when the commanded path needs more than this multiple of the (banked) lateral grip (1 until
  *  18 Oct 2026: at 1 it braked mid-corner for the pursuit's own correction curvature, ~1.5 s a lap on the Probe). */
 const GRIP_LIMIT = 1.5;
+/** Front slip angle (x the tyre's peak) above which an understeering car stops adding lock and unwinds it. */
+const STEER_PLOUGH = 2;
 const REAR_SLIP0 = 0.08, REAR_SLIPK = 6; // rad, 1/rad: ease the brake when the rear slides
 // lane model (NOTES "Racecraft (the lane model) and mishaps")
 const LANE_CLR = 0.3;      // m each side of a car's span in lane-occupancy checks (adjacent lanes leave >= 0.6 m)
@@ -141,7 +143,7 @@ export class AiDriver {
   shift = 0;
   private shiftTarget = 0;
   private integ = 0;
-  private brakeCap = 1; private thrCap = 1;
+  private brakeCap = 1; private thrCap = 1; private steerCap = 1;
   /** per-lap pace factor (1 ± noise) */
   lapFactor = 1;
   private lastLapIdx = Number.NaN;
@@ -187,7 +189,7 @@ export class AiDriver {
 
   /** Forget transient state (after a reset onto the track). */
   resetState(): void {
-    this.shift = 0; this.shiftTarget = 0; this.integ = 0; this.brakeCap = 1; this.thrCap = 1;
+    this.shift = 0; this.shiftTarget = 0; this.integ = 0; this.brakeCap = 1; this.thrCap = 1; this.steerCap = 1;
     this.passTarget = -1; this.passSide = 0; this.passTimer = 0; this.stuckTimer = 0;
     this.passE = Number.NaN; this.passPhase = 0; this.planTimer = 0;
     this.defendSide = 0; this.defendCorner = -1; this.defendTimer = 0; this.offTrack = false;
@@ -633,7 +635,19 @@ export class AiDriver {
       this.kCmd = kappa;
       let delta = Math.atan(L * kappa) + KR * (v * kappa - st.angVel[2]);
       delta += perf.kUs * Math.max(-1.3, Math.min(1.3, (v * v * kappa) / G));
-      this.input.steer = Math.max(-1, Math.min(1, delta / perf.maxSteer));
+      let sc = Math.max(-1, Math.min(1, delta / perf.maxSteer));
+      // front axle sliding past its peak (understeer, at speed): hold / unwind the lock. More lock only pushes the front
+      // wider, then bites all at once as the car slows and throws it back across the road (19 Oct 2026: making room or
+      // changing lanes at turn-in, cars ploughed 4-7 m wide at full lock and snapped back into the car alongside)
+      {
+        let fs = 0;
+        for (let k = 0; k < 2; k++) { const w = st.wheels[k]; if (w.load > 1000) fs = Math.max(fs, Math.abs(w.slipAngle)); }
+        const rs = Math.max(Math.abs(st.wheels[2].slipAngle), Math.abs(st.wheels[3].slipAngle)), fp = perf.peakSlipAngle;
+        const plough = fs > STEER_PLOUGH * fp && fs > rs + 0.5 * fp && v > 10 && !this.offTrack;
+        this.steerCap = plough ? Math.max(0.1, Math.min(this.steerCap, Math.abs(this.input.steer)) - 2 * dt) : Math.min(1, this.steerCap + 2 * dt);
+        sc = Math.max(-this.steerCap, Math.min(this.steerCap, sc));
+      }
+      this.input.steer = sc;
     }
 
     // ---- speed control
