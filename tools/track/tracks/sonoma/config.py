@@ -1,0 +1,102 @@
+"""Sonoma Raceway in its 24 Hours of Lemons configuration: every per-circuit constant of the track pipeline
+(tools/track/build_track.py; format in tools/track/trackcfg.py, Laguna's config is the worked example).
+
+Built without logger laps (the team has not raced here): the centre is the painted-road midpoint, the racing line the
+pure minimum-curvature line. Plain data; nothing here runs. Paths are relative to tools/track/.
+
+The Lemons loop (24hoursoflemons.com/race/?id=450, layout picture registration.24hoursoflemons.com/userfiles/races/
+26_sonoma.png, 2026 season; confirmed on the March 2026 Lemons onboard youtube.com/watch?v=RAZip6S84CM): clockwise,
+start/finish on the front straight; T1 left kink, T2 right at the bottom of the hill, up to T3 (left) / T3a (right),
+T4 right, T5 right, the Carousel (T6, a long left), the straight along the trees (not the drag strip) to T7 and the
+7a hairpin round the O'Reilly island, the T8 / T8a esses, the 2020 bypass ("9a": left, the old T9 straight is not
+used), T10 right, down to the T11 hairpin (not the 11a shortcut), T12 kink onto the front straight. No chute (T4 to T7).
+The pit lane ("Pit Road") leaves before the T11 hairpin (outside it), runs behind the wall on the left of the front
+straight and rejoins on the left at T1.
+"""
+
+CONFIG = dict(
+    id='sonoma',
+    name='Sonoma Raceway',
+    direction='cw',
+    # ---------------------------------------------------------------- frame and sources (Stage 0)
+    origin=(38.1627, -122.4576),                        # lat0, lon0 of the local ENU frame (circuit centre)
+    osm_bbox=(-122.470, 38.150, -122.440, 38.175),      # W, S, E, N of the OSM API map call (19 Oct 2026)
+    osm_file='osm/osm.xml',
+    # The Lemons loop in driving order from the T7a hairpin exit. OSM has the long circuit way 505453048 (T7a exit ->
+    # T8 -> old T9 straight -> T10 -> T11 -> front straight -> T1-T4) plus bypasses; the Lemons loop leaves it after
+    # T8a for the 2020 bypass ("Sonoma Raceway 2020" 834728156, then 116036857) and rejoins it before T10. Not used:
+    # 1494191150 (short T7), 505454376 (PWC lower hairpin), 28825444 (T11a shortcut), 834724050/230287122 (the chute),
+    # 1382620983, the Dragstrip.
+    loop_ways=['505453048:1309519366:4954001530', '834728156', '116036857', '505453048:316917004:316916528',
+               '1494191149', '913592144'],
+    pit_lane_way='Pit Road',                            # OSM 230287120: pit-in before T11 (outside it) to after T1
+    dem_tiles=['https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/1m/Projects/CA_NorthernCA_B22/TIFF/'
+               'USGS_1M_10_x54y423_CA_NorthernCA_B22.tif'],
+    # the DEM's own survey (collected 26 Aug 2022 - 4 Jul 2024, published 24 Mar 2026). Sonoma's road course was fully
+    # repaved Dec 2023 - Feb 2024 (milled ~1.5 in and relaid, finished 29 Feb 2024): grades unchanged to centimetres
+    lidar_ept='https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CA_NorthernCA_1_B22/',
+    lidar_survey='CA_NorthernCA_B22',
+    dem13='https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/13/TIFF/current/n39w123/USGS_13_n39w123.tif',
+    # ---------------------------------------------------------------- no logger laps
+    logger_dir=None,
+    # the chequered timing line on the front straight (clean captures c20_s1705 / c20_s1760, within 0.4 m of each other)
+    start_finish_latlon=(38.161529, -122.454728),
+    # ---------------------------------------------------------------- corners: (turn, name, dir, logger s, lat, lon)
+    # anchors = curvature peaks of the OSM loop (numbering from the Lemons layout picture); the corner is the
+    # signed-curvature peak of the built centre within +-45 m of the anchor
+    corners=[
+        ('T1', None, 'left', None, 38.162039, -122.455626),
+        ('T2', None, 'right', None, 38.161040, -122.458817),
+        ('T3', None, 'left', None, 38.162598, -122.461150),
+        ('T3a', None, 'right', None, 38.162605, -122.462125),
+        ('T4', None, 'right', None, 38.164137, -122.463412),
+        ('T5', None, 'right', None, 38.164477, -122.461334),
+        ('T6', 'The Carousel', 'left', None, 38.162885, -122.458188),
+        ('T7', None, 'right', None, 38.166066, -122.462731),
+        ('T7a', 'T7a hairpin', 'right', None, 38.166843, -122.461834),
+        ('T8', None, 'left', None, 38.166248, -122.461437),
+        ('T8a', None, 'right', None, 38.165612, -122.460091),
+        ('T9a', None, 'left', None, 38.164944, -122.459029),
+        ('T10', None, 'right', None, 38.162108, -122.453349),
+        ('T11', 'T11 hairpin', 'right', None, 38.158643, -122.452193),
+        ('T12', None, 'left', None, 38.160569, -122.453276),
+    ],
+    named_straights=[],
+    # ---------------------------------------------------------------- stage 1: geometry
+    # 2.52 mi full course (4056 m, the circuit) plus the T7a hairpin round the O'Reilly island, which the full course
+    # takes short (OSM: 121 m round the island against 89 m for the short T7): 4088 m. MyLaps lists the event as 2.51 mi.
+    centre=dict(extra_shadow_stations=[4084]),
+    loop_check=dict(n_min=3900, n_max=4250, official_m=4088, elev_min=20, elev_max=80),
+    captures=dict(
+        z20_dir=None,
+        clean_dir='compare/sonoma/satellite_clean', clean_index='tiles.json',
+        mpp=0.11738,                 # z20 at 38.163 N; overlapping captures measure 0.11749 (68 pairs, median)
+        common_shift=None,           # measured by register_clean.py -> satellite_clean/shift.json
+        clean_mask='clean',
+        exclude=[],
+    ),
+    spline=dict(runs=None, knot=6, lam=30.0, huber=0.25, line_off=0.26, prior=0.03, init_stiff=30.0, captures='clean'),
+    # Carousel exit (T6) to the T7 approach, stations ~1680-1960: the circuit runs onto the drag strip's start area and
+    # uses both drag-strip lanes (onboard 0:58-1:02 crosses the yellow lane line), then bears left onto its own road to
+    # T7 where the drag strip carries straight on (Lemons layout picture: the drag strip in grey). The fitted edges keep
+    # the full shared pavement, then taper to the T7 road: no feature needed.
+    features=[],
+    # bridge shadows: the T2 footbridge is in OSM (station ~296); the start/finish footbridge (first-centre station 4084,
+    # c20_s1705) is not. Measurements under both are masked and the prior interpolated across them.
+    prior=dict(bridge_win=35, extra_bridges=[4084]),
+    shapes=[],
+    straights=[],
+    gate=dict(straight_rms=0.10, step=0.10, profile_step=0.10, spline_obs_within=0.85,
+              exempt=[('left', 3480, 3610, 'pit-in lane splits off on the left before T11 (dashed blend line, c20_s1155): '
+                       'the edge steps in by ~5 m over 60 m as the lane leaves (junction, real)'),
+                      ('left', 160, 260, 'pit-out lane joins on the left after T1 (c20_s1870/s1925; junction, real)')]),
+    # ---------------------------------------------------------------- stage 2: racing line only (no logger laps)
+    ghosts=dict(margin=1.0, kerb_margin=1.0, nudge=0.3, jerk_w=3),
+    # ---------------------------------------------------------------- stage 3: scenery by rule only (no footage rounds yet)
+    scenery=dict(
+        brake_board_corners=['T2', 'T4', 'T7a', 'T11'],
+        pit_wall=dict(fence_until_m=120),
+    ),
+    # ---------------------------------------------------------------- app registry (src/scoreboard/config.ts)
+    app=dict(short='Sonoma', pace='cars/field/sonoma/pace.json'),
+)

@@ -3,7 +3,7 @@ import { handleScores, type HandlerDeps } from '../handler';
 import { MemoryStore } from '../store';
 import { physicsVersion } from '../hash';
 import { boardKey } from '../validate';
-import { LIMITS } from '../config';
+import { LIMITS, TRACKS } from '../config';
 import type { Lap } from '../../app/timing';
 import type { InputTrace } from '../types';
 import { lagunaAssets, recordLap } from './fixtures';
@@ -37,11 +37,14 @@ const hot = (over: Record<string, unknown> = {}) => ({
 const fakeVerify: HandlerDeps['verify'] = (_a, _t, _n, claimed) => ({ ok: true, reasons: [], replayed: claimed, cpuMs: 0 });
 
 describe('api handler', () => {
-  test('GET without a board lists the current hot-lap board', async () => {
+  test('GET without a board lists the current hot-lap board of every registered track', async () => {
     const r = await handleScores(get(''), deps());
     expect(r.status).toBe(200);
     expect(r.headers.get('cache-control')).toBe('no-store');
-    expect(await r.json()).toEqual({ ok: true, store: 'memory', boards: { 'laguna_seca/probe_gt': `hotlap:laguna_seca:probe_gt:${PV}` } });
+    // the fixture's physics() answers PV for every track; one board per registered track
+    const boards = Object.fromEntries(Object.keys(TRACKS).map((t) => [`${t}/probe_gt`, `hotlap:${t}:probe_gt:${PV}`]));
+    expect(boards['laguna_seca/probe_gt']).toBe(`hotlap:laguna_seca:probe_gt:${PV}`);
+    expect(await r.json()).toEqual({ ok: true, store: 'memory', boards });
   });
 
   test('POST a real hot lap: replayed on the server, stored, ranked; GET shows it', async () => {

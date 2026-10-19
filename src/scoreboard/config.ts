@@ -65,6 +65,7 @@ export interface TrackInfo {
  *  cars/field/<id>/pace.json; Laguna's predates that and stays at cars/field/pace.json. */
 export const TRACKS: Readonly<Record<string, TrackInfo>> = {
   laguna_seca: { dir: 'tracks/laguna_seca/', name: 'WeatherTech Raceway Laguna Seca', short: 'Laguna Seca', length_m: 3588.048, pace: 'cars/field/pace.json' },
+  sonoma: { dir: 'tracks/sonoma/', name: 'Sonoma Raceway', short: 'Sonoma', length_m: 4101.037, pace: 'cars/field/sonoma/pace.json' },
 };
 /** The track when none is chosen (URL ?track=, Start menu). */
 export const DEFAULT_TRACK = 'laguna_seca';

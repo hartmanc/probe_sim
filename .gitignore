@@ -27,6 +27,7 @@ tools/track/compare/sim
 tools/track/compare/judge
 tools/track/compare/kerbs
 tools/track/compare/crossings.json
+tools/track/compare/sonoma
 tools/track/**/__pycache__/
 tools/track/**/*.jpg
 tools/track/**/*.jpeg
