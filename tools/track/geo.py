@@ -1,10 +1,10 @@
-"""Build the Laguna Seca track package: public/tracks/laguna_seca/{track.json, heightfield.bin, ortho.jpg} and tools/track/previews/preview.png.
+"""Shared helpers of the track pipeline (tools/track/build_track.py): the local ENU frame, OSM loop stitching, the
+3DEP DEM window, the NAIP ortho, the NAIP asphalt-extent edge detector, curvature, projection and the preview plot.
 
-    uv run --python 3.12 --with numpy,scipy,rasterio,pyproj,shapely,pillow,requests,pandas,matplotlib \
-        python tools/track/build_laguna.py
-
-Frames and file formats follow CONTRACTS.md sections 1 and 2. Downloads are cached in tools/track/cache/.
-See tools/track/README.md for sources and method.
+Was build_laguna.py (the v1 Laguna builder, 17 Oct 2026). Its v1 main() is gone (dead end: a spline through the OSM
+nodes as the centreline, symmetric NAIP edges clamped 4.5-8.5 m; see the build-track skill). The per-track constants
+(frame origin, OSM box and ways, DEM tiles, cache folder) come from the track config: call configure(cfg) first.
+Frames and file formats follow CONTRACTS.md sections 1 and 2.
 """
 
 import io
@@ -21,20 +21,17 @@ from scipy.spatial import cKDTree
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
-CACHE = os.path.join(HERE, "cache")
-OUT = os.path.join(ROOT, "public", "tracks", "laguna_seca")
-PREVIEWS = os.path.join(ROOT, "tools", "track", "previews")
-LAPS = "/Users/cobyhartman/projects/starlink-go-pro/laps"  # read-only race-logger analysis
-GPS_CENTRELINE = os.path.join(LAPS, "centreline.npy")
 
-LAT0, LON0, R = 36.5843, -121.7535, 6378137.0
-COSL = math.cos(math.radians(LAT0))
-OSM_BBOX = (-121.775, 36.572, -121.735, 36.598)
-DEM_TILES = [
-    "https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/1m/Projects/CA_AZ_FEMA_R9_Lidar_2017_D18/TIFF/"
-    f"USGS_1M_10_{t}_CA_AZ_FEMA_R9_Lidar_2017_D18.tif"
-    for t in ("x61y405", "x61y406")
-]
+# set by configure(cfg)
+CFG = None
+CACHE = None
+NAME = ""
+LAT0, LON0, R = 0.0, 0.0, 6378137.0
+COSL = 1.0
+OSM_BBOX = None
+OSM_FILE = None
+LOOP_WAYS = None
+DEM_TILES = []
 NAIP = "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer/exportImage"
 
 MARGIN = 200.0  # m around the track bounding box for heightfield and ortho
@@ -43,20 +40,25 @@ ORTHO_PX = 0.6  # m per pixel requested
 HALF_MIN, HALF_MAX, HALF_FALLBACK = 4.5, 8.5, 6.5
 FRACTIONS = [-1, -0.6667, -0.3333, 0, 0.3333, 0.6667, 1]
 
-# Cross slope limits. The lidar shows real, planar banking of 12-15 % (always toward the inside) at T5, the
-# Corkscrew (T8/T8A) and Rainey Curve, so the hard limit is 16 %; anything over 12 % is reported with its corner
-# and must be near-planar (the four inner segment slopes within 7 points of each other), which DEM noise would not
-# be. (Rainey's inside quarter flattens out by ~6 points, a gutter/kerb zone.)
+# Cross slope limits. The lidar shows real, planar banking of 12-15 % (always toward the inside) at Laguna's T5, the
+# Corkscrew (T8/T8A) and Rainey Curve, so the hard limit is 16 %; anything over 12 % is reported and must be
+# near-planar (the four inner segment slopes within 7 points of each other), which DEM noise would not be.
 CROSS_HARD, CROSS_SOFT, CROSS_PLANAR = 0.16, 0.12, 0.07
 
-# Standard Laguna turns. s_laps = position in the race-logger frame (length 3558, from traces2.ANCH /
-# corners.CORN), sign = +1 left-hander, -1 right-hander (driving counter-clockwise).
-TURNS = [
-    ("T1", None, 240, +1), ("T2", "Andretti Hairpin", 520, +1), ("T3", None, 790, -1), ("T4", None, 1060, -1),
-    ("T5", None, 1530, +1), ("T6", None, 1940, +1), ("T7", None, 2360, -1), ("T8", "The Corkscrew", 2440, +1),
-    ("T8A", "The Corkscrew", 2490, -1), ("T9", "Rainey Curve", 2690, +1), ("T10", None, 2950, -1),
-    ("T11", None, 3240, +1),
-]
+
+def configure(cfg):
+    """Point the module at one track's config (trackcfg.Config)."""
+    global CFG, CACHE, NAME, LAT0, LON0, COSL, OSM_BBOX, OSM_FILE, LOOP_WAYS, DEM_TILES
+    CFG = cfg
+    CACHE = cfg.cache
+    NAME = cfg["name"]
+    LAT0, LON0 = cfg["origin"]
+    COSL = math.cos(math.radians(LAT0))
+    OSM_BBOX = tuple(cfg["osm_bbox"])
+    OSM_FILE = os.path.join(CACHE, cfg["osm_file"])
+    LOOP_WAYS = [str(w) for w in cfg["loop_ways"]]
+    DEM_TILES = list(cfg["dem_tiles"])
+    os.makedirs(CACHE, exist_ok=True)
 
 
 def log(*a):
@@ -146,7 +148,7 @@ def project(P, Q):
 
 # ---------------------------------------------------------------- 1. OSM centreline
 def osm_loop():
-    path = os.path.join(CACHE, "laguna_osm.xml")
+    path = OSM_FILE
     if not os.path.exists(path):
         import requests
 
@@ -161,8 +163,12 @@ def osm_loop():
     ways = {}
     for w in root.iter("way"):
         tags = {t.get("k"): t.get("v") for t in w.iter("tag")}
-        if tags.get("highway") == "raceway" and "pit" not in tags.get("name", "").lower():
+        if w.get("id") in LOOP_WAYS:
             ways[w.get("id")] = ([nd.get("ref") for nd in w.iter("nd")], tags.get("name", ""))
+    missing = [w for w in LOOP_WAYS if w not in ways]
+    if missing:
+        raise SystemExit(f"OSM: loop ways {missing} are not in {OSM_FILE}")
+    ways = {w: ways[w] for w in LOOP_WAYS}  # config order: the stitch starts at the first
     log(f"OSM: {len(ways)} circuit ways:", sorted({n for _, n in ways.values()}))
     by_start = {nd[0]: wid for wid, (nd, _) in ways.items()}
     if len(by_start) != len(ways):
@@ -191,6 +197,11 @@ def dem_window(box):
     if os.path.exists(cache):
         d = np.load(cache, allow_pickle=False)
         if np.allclose(d["box"], box):
+            return d["Z"], tuple(d["T"]), str(d["crs"])
+        # another box's window: never overwritten, this box gets its own file
+        cache = os.path.join(CACHE, "dem_window_" + "_".join(str(int(v)) for v in box) + ".npz")
+        if os.path.exists(cache):
+            d = np.load(cache, allow_pickle=False)
             return d["Z"], tuple(d["T"]), str(d["crs"])
     import rasterio
     from pyproj import Transformer
@@ -422,230 +433,6 @@ def detect_edges(C, ortho, reach=13.0, step=0.3):
     return out, stats, raw_ok
 
 
-# ---------------------------------------------------------------- main
-def main():
-    os.makedirs(CACHE, exist_ok=True)
-    os.makedirs(OUT, exist_ok=True)
-    os.makedirs(PREVIEWS, exist_ok=True)
-    fails = []
-
-    # -- OSM loop, oriented and smoothed
-    P, names = osm_loop()
-    G = np.load(GPS_CENTRELINE)
-    log(f"OSM loop: {len(P)} nodes; GPS centreline: {len(G)} pts")
-    # direction: GPS order must increase along the OSM loop
-    gi, _ = project(G, P)
-    step = np.angle(np.exp(1j * 2 * np.pi * np.diff(np.r_[gi, gi[:1]]) / len(G)))
-    if step.sum() < 0:
-        P, names = P[::-1].copy(), names[::-1]
-        log("OSM loop reversed to match the driving direction")
-    # densify the coarse OSM polyline at 5 m first so the periodic smoothing spline sees uniform support
-    D, _ = resample_closed(P, n=None, smooth=0.0, k=1)
-    D = D[::5]
-    C0, L0 = resample_closed(D, smooth=len(D) * 0.25 ** 2)
-    log(f"OSM spline loop length {L0:.1f} m")
-
-    # -- compare with GPS
-    _, lat = project(C0, G)
-    log(f"GPS vs OSM lateral: median |d| {np.median(np.abs(lat)):.2f} m, p95 {np.percentile(np.abs(lat), 95):.2f} m, "
-        f"max {np.abs(lat).max():.2f} m, mean signed {lat.mean():+.2f} m")
-    if np.percentile(np.abs(lat), 95) > 10:
-        fails.append("GPS and OSM centrelines disagree by > 10 m (p95)")
-
-    # -- bounding box (ortho and heightfield share it)
-    lo = C0.min(0) - MARGIN - 20
-    hi = C0.max(0) + MARGIN + 20
-    box = (math.floor(lo[0] / 10) * 10, math.floor(lo[1] / 10) * 10, math.ceil(hi[0] / 10) * 10,
-           math.ceil(hi[1] / 10) * 10)
-    box = tuple(float(v) for v in box)
-    log("ENU box", box)
-
-    img, W, H = fetch_ortho(box)
-    ortho = Ortho(img, box)
-    log(f"ortho {W}x{H} px, {(box[2] - box[0]) / W:.3f} x {(box[3] - box[1]) / H:.3f} m/px")
-
-    # -- edges, iterate twice (detect, recentre, detect again on the recentred line)
-    C = C0
-    edge_fallback = False
-    for it in range(2):
-        half, stats, raw_ok = detect_edges(C, ortho)
-        log(f"edges pass {it + 1}:", {k: round(v, 3) if isinstance(v, float) else v for k, v in stats.items()})
-        if not np.isfinite(half).all():
-            edge_fallback = True
-            log("EDGE DETECTION FAILED broadly: falling back to a constant", HALF_FALLBACK, "m half-width")
-            half = np.full((len(C), 2), HALF_FALLBACK)
-            break
-        nl = left_normals(C)
-        Lp = C + half[:, :1] * nl
-        Rp = C - half[:, 1:] * nl
-        mid = 0.5 * (Lp + Rp)
-        # recentre gently: the midpoint shift is smoothed along s so the centreline stays fair
-        shift = ((mid - C) * nl).sum(1)
-        shift = gaussian_filter1d(shift, 10, mode="wrap")
-        Cn = C + shift[:, None] * nl
-        C, _ = resample_closed(Cn[::4], smooth=len(Cn[::4]) * 0.1 ** 2)
-        log(f"  recentre shift: mean {shift.mean():+.2f} m, max |{np.abs(shift).max():.2f}| m")
-    width_full = None
-    if not edge_fallback:
-        half, stats, raw_ok = detect_edges(C, ortho)
-        if not np.isfinite(half).all():
-            edge_fallback = True
-            half = np.full((len(C), 2), HALF_FALLBACK)
-        else:
-            width_full = half.sum(1)
-    hw = 0.5 * half.sum(1) if not edge_fallback else np.full(len(C), HALF_FALLBACK)
-
-    # -- station 0 at start/finish, exact 1 m resample
-    s0, _ = project(C, G[:1])
-    s0 = float(s0[0])
-    Lc = len(C)
-    idx_f = np.arange(Lc)
-    Cr = np.c_[np.interp((s0 + idx_f) % Lc, idx_f, C[:, 0], period=Lc),
-               np.interp((s0 + idx_f) % Lc, idx_f, C[:, 1], period=Lc)]
-    hw = np.interp((s0 + idx_f) % Lc, idx_f, hw, period=Lc)
-    C, L = resample_closed(Cr, smooth=0.0)
-    n = len(C)
-    hw = np.interp(np.arange(n) * Lc / n, idx_f, hw, period=Lc)
-    hw = np.clip(hw, HALF_MIN, HALF_MAX)
-    log(f"final loop: n={n}, spline length {L:.2f} m, spacing {L / n:.4f} m")
-    nl = left_normals(C)
-    Lp = C + hw[:, None] * nl
-    Rp = C - hw[:, None] * nl
-
-    # -- elevation
-    dem = Dem(box)
-    dem_s = Dem(box, sigma=0.7)  # light smoothing for the road surface (lidar noise, paint, cars)
-    z0 = float(dem(C[:1, 0], C[:1, 1])[0])
-    fr = np.array(FRACTIONS)
-    # fraction -1 = left edge = centre + hw * left normal
-    PX = C[:, 0:1] - (fr[None, :] * hw[:, None]) * nl[:, 0:1]
-    PY = C[:, 1:2] - (fr[None, :] * hw[:, None]) * nl[:, 1:2]
-    prof = dem_s(PX, PY) - z0
-    prof = gaussian_filter1d(prof, 1.5, axis=0, mode="wrap")
-    zc = prof[:, 3]
-    zl, zr = prof[:, 0], prof[:, -1]
-
-    # heightfield
-    nx = int(round((box[2] - box[0]) / HF_DX)) + 1
-    ny = int(round((box[3] - box[1]) / HF_DX)) + 1
-    gx, gy = np.meshgrid(box[0] + np.arange(nx) * HF_DX, box[1] + np.arange(ny) * HF_DX)
-    hf = (dem(gx, gy) - z0).astype("<f4")
-
-    # -- corners from curvature peaks, seeded from the logger frame
-    Gs, _ = project(C, G)  # logger index -> new station (fractional)
-    Gs_u = np.unwrap(Gs * 2 * np.pi / n) * n / (2 * np.pi)
-    Gs_u -= Gs_u[0] - Gs[0]
-    kap = curvature(C, sigma=6)
-    corners = []
-    for turn, name, s_laps, sgn in TURNS:
-        guess = np.interp(s_laps, np.arange(len(G)), Gs_u) % n
-        win = (np.arange(n) - guess + n / 2) % n - n / 2
-        m = np.abs(win) <= 45
-        cand = np.where(m, sgn * kap, -np.inf)
-        i = int(np.argmax(cand))
-        if sgn * kap[i] <= 0:
-            fails.append(f"corner {turn}: no curvature peak of the right sign near s={guess:.0f}")
-        corners.append({"name": name or turn, "turn": turn, "s": int(i), "radius_m": round(float(1 / abs(kap[i])), 1),
-                        "dir": "left" if sgn > 0 else "right"})
-    t6 = next(c["s"] for c in corners if c["turn"] == "T6")
-    t7 = next(c["s"] for c in corners if c["turn"] == "T7")
-    corners.append({"name": "Rahal Straight", "turn": None, "s": int((t6 + t7) // 2), "radius_m": None, "dir": None})
-    corners.sort(key=lambda c: c["s"])
-
-    # -- validation
-    log("\n================ VALIDATION ================")
-    def check(label, ok, msg):
-        log(f"[{'ok' if ok else 'FAIL'}] {label}: {msg}")
-        if not ok:
-            fails.append(label)
-
-    check("loop length", 3480 <= n <= 3680, f"{n} m (official 3602)")
-    zr_ = float(zc.max() - zc.min())
-    check("elevation range", 45 <= zr_ <= 65, f"{zr_:.1f} m (centre z {zc.min():.1f}..{zc.max():.1f}, z0 {z0:.2f} NAVD88)")
-    d0 = float(np.linalg.norm(C[0] - G[0]))
-    check("start/finish", d0 <= 15, f"station 0 is {d0:.2f} m from centreline.npy[0]")
-    gs_new, glat = project(C, G)
-    adv = np.angle(np.exp(1j * 2 * np.pi * np.diff(gs_new) / n)) * n / (2 * np.pi)
-    check("direction", (adv > 0).mean() > 0.98, f"{(adv > 0).mean() * 100:.1f}% of GPS steps advance s")
-    area = 0.5 * np.sum(C[:, 0] * np.roll(C[:, 1], -1) - np.roll(C[:, 0], -1) * C[:, 1])
-    check("ccw", area > 0, f"signed area {area:.0f} m^2 ({'ccw' if area > 0 else 'cw'})")
-    check("GPS agreement", np.percentile(np.abs(glat), 95) < 8,
-          f"GPS line vs final centre: median |lat| {np.median(np.abs(glat)):.2f} m, p95 {np.percentile(np.abs(glat), 95):.2f} m")
-    lat_d = np.diff(fr) * hw[:, None]
-    cs = np.abs(np.diff(prof, axis=1)) / lat_d
-    csm = cs.max(1)
-    check("cross slope", csm.max() < CROSS_HARD,
-          f"max {csm.max() * 100:.1f}% at s={int(csm.argmax())}; {np.sum(csm > CROSS_SOFT)} stations over "
-          f"{CROSS_SOFT * 100:.0f}% (p99 {np.percentile(csm, 99) * 100:.1f}%)")
-    signed = np.diff(prof, axis=1) / lat_d  # + = right side higher
-    steep = np.where(csm > CROSS_SOFT)[0]
-    if len(steep):
-        spread = np.ptp(signed[steep][:, 1:5], axis=1)  # inner four segments; edge segments may meet kerbs/gutters
-        check("steep banking is planar", spread.max() < CROSS_PLANAR,
-              f"max spread of segment slopes over steep stations {spread.max() * 100:.1f} points")
-        runs = np.split(steep, np.where(np.diff(steep) > 3)[0] + 1)
-        for r in runs:
-            near = min(corners, key=lambda c: min(abs(c["s"] - r[0]), abs(c["s"] - r[-1])))
-            i = r[csm[r].argmax()]
-            bank = "toward inside" if np.sign(-signed[i].mean()) == -np.sign(kap[i]) or abs(kap[i]) < 2e-3 else "OFF-CAMBER"
-            log(f"     banking >12%: s={r[0]}..{r[-1]} (near {near['turn'] or near['name']}), max {csm[i] * 100:.1f}%, "
-                f"{'right' if signed[i].mean() > 0 else 'left'} side higher, curvature {kap[i] * 1000:+.1f}/km -> {bank}")
-    long_g = np.abs(np.diff(np.r_[zc, zc[:1]]))
-    log(f"     longitudinal grade: max {long_g.max() * 100:.1f}% at s={int(long_g.argmax())}")
-    allarr = [C, Lp, Rp, prof, hf, hw]
-    check("no NaN", all(np.isfinite(a).all() for a in allarr), "centre/edges/profile/heightfield finite")
-    if width_full is not None:
-        log(f"     paved width (detected, before clamp/symmetrise): median {np.median(width_full):.1f} m, "
-            f"p5 {np.percentile(width_full, 5):.1f}, p95 {np.percentile(width_full, 95):.1f}")
-    log(f"     half-width used: min {hw.min():.2f} median {np.median(hw):.2f} max {hw.max():.2f} m; "
-        f"clamped low {np.mean(hw <= HALF_MIN + 1e-6) * 100:.1f}%, high {np.mean(hw >= HALF_MAX - 1e-6) * 100:.1f}%")
-    log(f"     edge detection raw success: left {raw_ok[:, 0].mean() * 100:.1f}%, right {raw_ok[:, 1].mean() * 100:.1f}%"
-        + ("  (FALLBACK constant width)" if edge_fallback else ""))
-    for c in corners:
-        log(f"     {c['turn'] or '':4s} {c['name']:18s} s={c['s']:5d}  R={c['radius_m']}")
-
-    # -- write
-    r3 = lambda a: np.round(a, 3).tolist()  # noqa: E731
-    track = {
-        "name": "WeatherTech Raceway Laguna Seca",
-        "origin": {"lat": LAT0, "lon": LON0},
-        "z0_navd88": round(z0, 3),
-        "direction": "ccw" if area > 0 else "cw",
-        "spacing_m": 1.0,
-        "n": n,
-        "length_m": float(n),
-        "center": r3(np.c_[C, zc]),
-        "left": r3(np.c_[Lp, zl]),
-        "right": r3(np.c_[Rp, zr]),
-        "profile": {"fractions": FRACTIONS, "z": r3(prof)},
-        "start_finish": {"index": 0},
-        "corners": corners,
-        "heightfield": {"file": "heightfield.bin", "x0": box[0], "y0": box[1], "dx": HF_DX, "nx": nx, "ny": ny},
-        "ortho": {"file": "ortho.jpg", "x0": box[0], "y0": box[1], "x1": box[2], "y1": box[3], "width_px": W,
-                  "height_px": H},
-        "sources": "OpenStreetMap (ODbL), USGS 3DEP 1 m DEM 2017 (public domain), USGS NAIP imagery (public domain)",
-        "notes": {
-            "edges": "constant 6.5 m half-width fallback" if edge_fallback else
-            "edges from NAIP asphalt extent, robust-smoothed, symmetrised about the recentred centre",
-            "spline_length_m": round(L, 2),
-        },
-    }
-    np.savez(os.path.join(CACHE, "track_arrays.npz"), C=C, Lp=Lp, Rp=Rp, hw=hw, zc=zc, prof=prof, kap=kap)
-    if fails:
-        preview(img, box, C, Lp, Rp, zc, corners, os.path.join(CACHE, "preview_failed.png"))
-        log("\nVALIDATION FAILED:", fails)
-        sys.exit(1)
-    with open(os.path.join(OUT, "track.json"), "w") as fh:
-        json.dump(track, fh, separators=(",", ":"))
-    hf.tofile(os.path.join(OUT, "heightfield.bin"))
-    from PIL import Image
-
-    Image.fromarray(grade_ortho(img)).save(os.path.join(OUT, "ortho.jpg"), quality=85, optimize=True)
-    preview(img, box, C, Lp, Rp, zc, corners, os.path.join(PREVIEWS, "preview.png"))
-    for f in ("track.json", "heightfield.bin", "ortho.jpg"):
-        log(f"wrote {f}: {os.path.getsize(os.path.join(OUT, f)) / 1e6:.2f} MB")
-
-
 def preview(img, box, C, Lp, Rp, zc, corners, path):
     import matplotlib
 
@@ -671,7 +458,7 @@ def preview(img, box, C, Lp, Rp, zc, corners, path):
     ax.set_ylim(lo[1], hi[1])
     ax.set_aspect("equal")
     ax.legend(loc="lower right")
-    ax.set_title("Laguna Seca: centre and edges on NAIP ortho (ENU m)")
+    ax.set_title(f"{NAME}: centre and edges on NAIP ortho (ENU m)")
     bx = fig.add_axes([0.06, 0.04, 0.9, 0.18])
     s = np.arange(len(zc))
     bx.plot(s, zc, color="k", lw=1)
@@ -685,6 +472,3 @@ def preview(img, box, C, Lp, Rp, zc, corners, path):
     fig.savefig(path, dpi=110)
     plt.close(fig)
 
-
-if __name__ == "__main__":
-    main()

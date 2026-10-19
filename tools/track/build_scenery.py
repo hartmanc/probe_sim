@@ -1,11 +1,11 @@
-"""Build the Laguna Seca scenery package: public/tracks/laguna_seca/{scenery.json, far_heightfield.bin, far_ortho.jpg}
-and regrade ortho.jpg.
+"""Stage 3 of the track pipeline: scenery.json, far_heightfield.bin, far_ortho.jpg and the regraded ortho.jpg of a track
+package (run through tools/track/build_track.py --stage scenery; the per-circuit constants are in the track config's
+`scenery` block).
 
-    uv run --python 3.12 --with numpy,scipy,rasterio,pyproj,shapely,pillow,requests,laspy[lazrs] \
-        python tools/track/build_scenery.py
-
-Reads track.json / heightfield.bin written by build_laguna.py. Format: CONTRACTS.md section 2b and
-tools/track/README.md. Downloads are cached in tools/track/cache/.
+Reads track.json / heightfield.bin of the package being built. Format: CONTRACTS.md section 2b and
+tools/track/README.md. Downloads are cached in the track's cache folder. The post steps that were separate scripts on
+18 Oct 2026 (paved aprons, the shoulder zone, pit-wall end / set-back / straightening, edge-line runs, kerb extents,
+the pit-exit cone start) run afterwards from scenery_post.py.
 """
 
 import io
@@ -21,12 +21,13 @@ import requests
 from scipy import ndimage as ndi
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import build_laguna as bl  # noqa: E402  (frames, DEM window, NAIP helpers, grade_ortho)
+import geo as bl  # noqa: E402  (frames, DEM window, NAIP helpers, grade_ortho)
 
-CACHE, OUT, PREVIEWS = bl.CACHE, bl.OUT, bl.PREVIEWS
+CACHE = OUT = PREVIEWS = None   # set by configure()
+PITWALL_EDGE = None  # optional per-station lateral (+left, m) of the left edge the pit wall stands 0.6 m off
+SC_CFG = {}
 UA = {"User-Agent": "probe-sim/0.1"}
-EPT = "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/CA_FEMA_Z4_B1_2018/"  # same 2017 FEMA R9 project as the DEM
-DEM13 = "https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/13/TIFF/current/n37w122/USGS_13_n37w122.tif"
+EPT = DEM13 = PIT_WAY = None   # from the track config (lidar_ept, dem13, pit_lane_way)
 FAR_HALF, FAR_DX, FAR_ORTHO_PX = 2500.0, 10.0, 5.0  # far terrain: 5 x 5 km at 10 m, image at 5 m/px
 CELL = 1.0  # canopy grid, m
 log = bl.log
@@ -36,18 +37,51 @@ def rnd(v, d=2):
     return float(round(float(v), d))
 
 
+def configure(cfg, out_dir):
+    """Point the module at one track's config and package directory (call geo.configure(cfg) first)."""
+    global CACHE, OUT, PREVIEWS, EPT, DEM13, PIT_WAY, SC_CFG, TYRE_CORNERS, PAVED_RUNOFF, BANNER_BOARDS, BANNERS, BRIDGE_STYLE, HANGARS
+    CACHE, OUT, PREVIEWS = cfg.cache, out_dir, out_dir
+    EPT, DEM13, PIT_WAY = cfg.get("lidar_ept"), cfg.get("dem13"), cfg["pit_lane_way"]
+    SC_CFG = cfg["scenery"]
+    TYRE_CORNERS = [tuple(x) for x in SC_CFG.get("tyre_corners", [])]
+    PAVED_RUNOFF = [tuple(x) for x in SC_CFG.get("paved_runoff", [])]
+    BANNER_BOARDS = [tuple(x) for x in SC_CFG.get("banner_boards", [])]
+    BANNERS = dict(SC_CFG.get("bridge_banners", {}))
+    BRIDGE_STYLE = dict(SC_CFG.get("bridge_style", {}))
+    HANGARS = dict(SC_CFG.get("hangars", {}))
+
+
+def cache_file(name, box):
+    """A box-keyed cache file: the plain name when absent or holding this box, else a name with the box in it (an
+    existing cache file of another box is never overwritten)."""
+    p = os.path.join(CACHE, name)
+    if not os.path.exists(p):
+        return p
+    try:
+        if np.allclose(np.load(p)["box"], box):
+            return p
+    except Exception:  # noqa: BLE001
+        pass
+    stem, ext = os.path.splitext(name)
+    return os.path.join(CACHE, f"{stem}_{'_'.join(str(int(v)) for v in box)}{ext}")
+
+
 # ---------------------------------------------------------------- track
 class Track:
-    def __init__(self):
-        with open(os.path.join(OUT, "track.json")) as fh:
-            t = json.load(fh)
+    def __init__(self, t=None, hf=None):
+        if t is None:
+            with open(os.path.join(OUT, "track.json")) as fh:
+                t = json.load(fh)
+        # corner s is metres along the lap (station * spacing_m); placements here work in stations
+        self.sp = float(t.get("spacing_m", 1.0))
+        t = dict(t, corners=[dict(c, s=int(round(c["s"] / self.sp)) % t["n"]) for c in t["corners"]])
         self.t = t
         self.C = np.array(t["center"])
         self.L = np.array(t["left"])
         self.R = np.array(t["right"])
         self.n = t["n"]
         h = t["heightfield"]
-        self.hf = np.fromfile(os.path.join(OUT, h["file"]), np.float32).reshape(h["ny"], h["nx"])
+        self.hf = hf if hf is not None else np.fromfile(os.path.join(OUT, h["file"]), np.float32).reshape(h["ny"], h["nx"])
         self.h = h
         o = t["ortho"]
         self.box = (o["x0"], o["y0"], o["x1"], o["y1"])
@@ -124,7 +158,7 @@ def get(url, path=None, timeout=120):
 
 def lidar_points(box):
     """All points of the EPT dataset inside the ENU box: (x, y, z_navd88, class, return_no, n_returns)."""
-    cache = os.path.join(CACHE, "lidar_points.npz")
+    cache = cache_file("lidar_points.npz", box)
     if os.path.exists(cache):
         d = np.load(cache)
         if np.allclose(d["box"], box):
@@ -184,8 +218,8 @@ def lidar_points(box):
 def lidar_grids(trk):
     """1 m grids over the ortho box: DEM (bare earth, ENU z), DSM of all non-noise points, vegetation DSM,
     building-class DSM. Row 0 = y0 (south), like heightfield.bin."""
-    cache = os.path.join(CACHE, "lidar_grids.npz")
     box = trk.box
+    cache = cache_file("lidar_grids.npz", box)
     if os.path.exists(cache):
         d = np.load(cache)
         if np.allclose(d["box"], box):
@@ -238,7 +272,7 @@ def lidar_grids(trk):
 # ---------------------------------------------------------------- OSM
 class Osm:
     def __init__(self):
-        root = ET.parse(os.path.join(CACHE, "laguna_osm.xml")).getroot()
+        root = ET.parse(bl.OSM_FILE).getroot()
         self.nodes = {n.get("id"): (float(n.get("lat")), float(n.get("lon"))) for n in root.iter("node")}
         self.ways = []
         for w in root.iter("way"):
@@ -390,6 +424,19 @@ def trees(trk, G, taken):
 
 
 # ---------------------------------------------------------------- bridges
+def bridge_stations(trk, osm):
+    """Stations where OSM bridge=yes ways cross the circuit (the crossing logic of bridges(), without the lidar)."""
+    out = []
+    for w in osm.select(lambda t: t.get("bridge") == "yes", trk.box):
+        xy = resample_line(w["xy"], 0.5)
+        i, lat, dout = trk.project(xy)
+        on = dout < 0
+        if not on.any():
+            continue
+        out.append(int(i[np.argmin(np.abs(lat) + 1000 * ~on)]))
+    return sorted(out)
+
+
 def bridges(trk, G, osm):
     out = []
     BRG = G["BRG"]
@@ -433,9 +480,10 @@ def bridges(trk, G, osm):
 
 
 # ---------------------------------------------------------------- barriers
-# Tyre walls on the outside of the big stops: (turn in track.json corners, metres before, metres after the corner's s).
-# Side is derived from the corner direction (outside = right for a left-hander), so the script follows a rebuilt track.
-TYRE_CORNERS = [("T2", 48, 62), ("T5", 44, 56), ("T8", 39, 21), ("T8A", 15, 55), ("T9", 45, 65), ("T11", 45, 50)]
+# Tyre walls on the outside of the big stops: config scenery.tyre_corners = (turn in track.json corners, metres before,
+# metres after the corner's s). Side is derived from the corner direction (outside = right for a left-hander), so the
+# placement follows a rebuilt track.
+TYRE_CORNERS = []
 
 
 def polyline_runs(trk, xy, step=2.0, min_out=2.0, max_out=70.0, min_len=6.0):
@@ -511,7 +559,7 @@ def barriers(trk, osm):
         out.append({"kind": "tyres", "h": 1.0, "fence": 0.0, "pts": with_z(trk, P), "src": f"{name}: {src}"})
         log(f"tyre wall {name}: s {s0}-{s1}, {np.median(d):.1f} m outside the edge ({src})")
     # pit wall: left of the front straight wherever the pit lane runs alongside
-    pit = [w for w in osm.ways if w["tags"].get("name") == "Pit Lane"]
+    pit = [w for w in osm.ways if w["tags"].get("name") == PIT_WAY]
     if pit:
         PL = resample_line(pit[0]["xy"], 2.0)
         i, lat, dout = trk.project(PL)
@@ -526,13 +574,21 @@ def barriers(trk, osm):
             else:
                 s0, s1 = int(ss[0]), int(ss[-1])
             s0, s1 = s0 + 15, s1 - 10
-            # the real pit wall ends at the T1 kink; the pit-exit lane down to the Andretti hairpin has no wall
-            s1 = min(s1, trk.n + 260)
-            # catch fence on the front straight only (to ~120 m past the line); the rest of the wall is bare
-            mid = min(max(trk.n + 120, s0 + 2), s1)
+            # Laguna: the real pit wall ends at the T1 kink; the pit-exit lane down to the Andretti hairpin has no wall
+            pwc = SC_CFG.get("pit_wall", {})
+            if pwc.get("end_after_line_m") is not None:
+                s1 = min(s1, trk.n + int(pwc["end_after_line_m"]))
+            # catch fence on the front straight only (to ~120 m past the line at Laguna); the rest of the wall is bare
+            mid = min(max(trk.n + int(pwc.get("fence_until_m", 120)), s0 + 2), s1)
             for a, b_, fence in ((s0, mid, 3.5), (mid, s1, 0.0)):
                 if b_ - a >= 4:
-                    P = edge_line(trk, a, b_, +1, 0.6)
+                    ex = 0.6
+                    if PITWALL_EDGE is not None:
+                        # the wall stays 0.6 m off the first build's NAIP asphalt edge (the asphalt runs to the wall),
+                        # not off the painted edge (config pit_wall.at = 'first_edge')
+                        st_ = np.arange(a, b_ + 1, 2) % trk.n
+                        ex = np.maximum(PITWALL_EDGE[st_] - trk.hl[st_], 0.0) + 0.6
+                    P = edge_line(trk, a, b_, +1, ex)
                     out.append({"kind": "pitwall", "h": 1.1, "fence": fence, "pts": with_z(trk, P),
                                 "src": "OSM pit lane extent"})
             log(f"pit wall: s {s0 % trk.n}..{s1 % trk.n} ({s1 - s0} m)")
@@ -561,7 +617,7 @@ def kerbs(trk):
             continue
         half = int(min(max(rad * 0.9, 28), 45))
         out.append({"side": side, "s0": s - half, "s1": s + half, "kind": "apex"})
-        if c["turn"] != "T8":  # the Corkscrew's T8 exit is T8A's entry
+        if c["turn"] not in SC_CFG.get("no_exit_kerb", []):  # Laguna: the Corkscrew's T8 exit is T8A's entry
             out.append({"side": -side, "s0": s + 15, "s1": s + 15 + int(min(max(rad, 45), 70)), "kind": "exit",
                         "paint": 1.5})
     for k in out:
@@ -586,7 +642,7 @@ def pit_lane(trk, osm):
     from PIL import Image
     from scipy.ndimage import gaussian_filter1d
 
-    w = [w for w in osm.ways if w["tags"].get("name") == "Pit Lane"]
+    w = [w for w in osm.ways if w["tags"].get("name") == PIT_WAY]
     if not w:
         return None
     P = resample_line(w[0]["xy"], 1.0)
@@ -685,9 +741,9 @@ def pit_lane(trk, osm):
     return {"spacing_m": 1.0, "fractions": fr, "open": True, "parts": parts}
 
 
-# Paved runoff seen in the team's onboard video (2026-10-12, GL030045; tools/track/compare/), newer than the 2017
-# lidar and the NAIP image: (turn, metres before, metres after the corner's s). Always on the outside of the corner.
-PAVED_RUNOFF = [("T6", 15, 80), ("T9", 30, 75), ("T10", 20, 75)]
+# Paved runoff seen in the footage (Laguna: the team's onboard 2026-10-12, GL030045), newer than the lidar and the NAIP
+# image: config scenery.paved_runoff = (turn, metres before, metres after the corner's s). Outside of the corner.
+PAVED_RUNOFF = []
 
 
 def pit_exit_cones(trk, pit, barriers=None, spacing=16.0):
@@ -839,7 +895,7 @@ def edge_lines(trk, kerb, osm, gap=3, min_run=10):
     dirt have nearly the same luminance there (they differ in hue), so lines are assumed everywhere else."""
     n = trk.n
     runs = []
-    pit = [w for w in osm.ways if w["tags"].get("name") == "Pit Lane"]
+    pit = [w for w in osm.ways if w["tags"].get("name") == PIT_WAY]
     merge = np.zeros(n, bool)
     if pit:
         i, lat, dout = trk.project(resample_line(pit[0]["xy"], 1.0))
@@ -881,15 +937,9 @@ def board(trk, s, side, extra, kind, text, h=1.8, w=1.2, face=0.0):
             "heading": rnd(heading, 3), "h": h, "w": w}
 
 
-# (turn, s offset from its apex, side +1 left/-1 right, text, board width m, distance beyond the edge m or None = at
-# the outside wall) - from the onboard frames
-BANNER_BOARDS = [
-    ("T1", -70, -1, "PORSCHE", 10.0, 14.0),
-    ("T6", 10, -1, "PORSCHE", 8.0, None),
-    ("T7", 10, -1, "WEATHERTECH", 10.0, None),
-    ("T11", -80, -1, "MOTUL", 6.0, None), ("T11", -72, -1, "LAGUNA SECA", 6.0, None),
-    ("T11", -64, -1, "MICHELIN", 6.0, None), ("T11", -56, -1, "TIRE RACK", 6.0, None),
-]
+# config scenery.banner_boards: (turn, s offset from its apex, side +1 left/-1 right, text, board width m, distance
+# beyond the edge m or None = at the outside wall), from the onboard frames
+BANNER_BOARDS = []
 
 
 def fence_board(trk, st, side, dist, text, width):
@@ -916,7 +966,7 @@ def landmarks(trk, T, brg):
     out = []
     corners = {c["turn"]: c for c in trk.t["corners"] if c.get("turn")}
     # brake marker boards 3-2-1 (100 ft steps are 30 m; the circuit uses 3/2/1 at roughly 150/100/50 m)
-    for t in ("T2", "T5", "T8", "T11"):
+    for t in SC_CFG.get("brake_board_corners", []):
         c = corners[t]
         side = -1 if c["dir"] == "left" else 1
         for k, dist in ((3, 150), (2, 100), (1, 50)):
@@ -934,17 +984,20 @@ def landmarks(trk, T, brg):
     out.append({"kind": "flagstand", "text": "", "x": rnd(p[0], 2), "y": rnd(p[1], 2),
                 "z": rnd(float(trk.ground(p[0], p[1])[0]), 2), "heading": rnd(math.atan2(-trk.T[st, 1], -trk.T[st, 0]), 3),
                 "h": 7.5, "w": 2.6})
-    # the Corkscrew oak: biggest crown on the inside (left) of T8
-    c8 = corners["T8"]
-    i, lat, dout = trk.project(T[:, :2])
-    near = (np.abs(i - c8["s"]) < 40) & (lat > 0) & (dout > 2) & (dout < 45)
+    # a landmark tree (Laguna: the Corkscrew oak, the biggest crown on the inside (left) of T8)
+    oak = SC_CFG.get("oak")
+    near = np.zeros(len(T), bool)
+    if oak:
+        c8 = corners[oak["corner"]]
+        i, lat, dout = trk.project(T[:, :2])
+        near = (np.abs(i - c8["s"]) < 40) & ((lat > 0) if oak.get("side", "left") == "left" else (lat < 0)) & (dout > 2) & (dout < 45)
     if near.any():
         k = np.nonzero(near)[0][np.argmax(T[near, 3] * T[near, 4])]
         T[k, 3] = max(T[k, 3], 13.0)
         T[k, 4] = max(T[k, 4], 8.0)
-        out.append({"kind": "oak", "text": "Corkscrew oak", "x": rnd(T[k, 0], 1), "y": rnd(T[k, 1], 1),
+        out.append({"kind": "oak", "text": oak.get("text", "oak"), "x": rnd(T[k, 0], 1), "y": rnd(T[k, 1], 1),
                     "z": rnd(T[k, 2], 2), "heading": 0, "h": rnd(T[k, 3], 1), "w": rnd(T[k, 4], 1)})
-        log(f"Corkscrew oak: lidar crown at ({T[k, 0]:.0f}, {T[k, 1]:.0f}), {T[k, 3]:.1f} m tall, r {T[k, 4]:.1f} m")
+        log(f"{oak.get('text', 'oak')}: lidar crown at ({T[k, 0]:.0f}, {T[k, 1]:.0f}), {T[k, 3]:.1f} m tall, r {T[k, 4]:.1f} m")
     # advertising boards and the Rahal cable gantry seen in the onboard video (tools/track/compare/): placed against
     # the outside wall (OSM) or at a fixed distance; (turn or None, s offset or absolute s, side, text, width)
     corners_all = corners
@@ -952,7 +1005,10 @@ def landmarks(trk, T, brg):
         s0 = corners_all[turn]["s"] + ds if turn else ds
         st = int(s0) % trk.n
         out.append(fence_board(trk, st, side, dist, text, width))
-    s_g = (corners_all["T7"]["s"] - 150) % trk.n
+    gy = SC_CFG.get("gantry")
+    if not gy:
+        return out
+    s_g = (corners_all[gy["corner"]]["s"] - gy["before_m"]) % trk.n
     a_ = trk.C[s_g, :2] + trk.N[s_g] * (trk.hw(s_g, 1) + 9)
     b_ = trk.C[s_g, :2] - trk.N[s_g] * (trk.hw(s_g, -1) + 9)
     out.append({"kind": "gantry", "text": "", "x": rnd(a_[0], 2), "y": rnd(a_[1], 2), "z": rnd(float(trk.ground(*a_)[0]), 2),
@@ -960,13 +1016,9 @@ def landmarks(trk, T, brg):
     return out
 
 
-BANNERS = {  # text on the faces of each bridge, by OSM id; [face toward oncoming cars, face away] (from the onboard video)
-    "60116334": [["MISSION", "WEATHERTECH", "MISSION", "PORSCHE"], ["WEATHERTECH", "LAGUNA SECA"]],  # S/F bridge
-    "60116327": [["TIRE RACK"], ["TIRE RACK"]],                                                      # T3-T4 arch
-    "459576002": [["WEATHERTECH", "AUTO. HOME. PET. FIND YOUR FIT."], ["WEATHERTECH"]],              # after T8A
-}
-BRIDGE_STYLE = {"60116327": "arch"}  # the T3-T4 bridge is the TIRE RACK arch (curved truss), not a flat deck
-HANGARS = {"639859964": "kinetic"}  # OSM building id -> sign on the gabled hangar seen ahead-left on the T3 approach
+# config scenery: bridge_banners (text on the faces of each bridge, by OSM id; [face toward oncoming cars, face away],
+# from the onboard video), bridge_style (OSM id -> 'arch' | 'deck'), hangars (OSM building id -> sign on the hangar)
+BANNERS, BRIDGE_STYLE, HANGARS = {}, {}, {}
 
 
 def far_terrain(trk):
@@ -1085,7 +1137,7 @@ def preview(trk, T, Tf, bld, bar, kerb, brg, marks, path):
     for br in bar:
         d.line([px(p[0], p[1]) for p in br["pts"]], fill=col[br["kind"]], width=3)
     for k in kerb:
-        st = np.arange(k["s0"], k["s1"]) % trk.n
+        st = (np.arange(k["s0"], k["s1"]) / trk.sp).astype(int) % trk.n
         P = trk.C[st, :2] + trk.N[st] * (k["side"] * trk.hw(st, k["side"]))[:, None]
         d.line([px(x, y) for x, y in P], fill=(255, 0, 0), width=4)
     for g in brg:
@@ -1096,9 +1148,13 @@ def preview(trk, T, Tf, bld, bar, kerb, brg, marks, path):
     im.save(path)
 
 
-def main():
+def main(cfg=None, out_dir=None):
+    """Build the scenery of the package in out_dir (configure() first, or pass cfg and out_dir)."""
     from PIL import Image
 
+    if cfg is not None:
+        bl.configure(cfg)
+        configure(cfg, out_dir)
     trk = Track()
     # 1. regrade the near ortho from the cached NAIP mosaic
     o = trk.t["ortho"]
@@ -1108,14 +1164,15 @@ def main():
             os.path.join(OUT, "ortho.jpg"), quality=84, optimize=True)
         log(f"ortho.jpg regraded: {os.path.getsize(os.path.join(OUT, 'ortho.jpg')) / 1e6:.2f} MB")
     else:
-        log("WARNING: cached NAIP mosaic missing, ortho.jpg left as is (run build_laguna.py)")
+        log("WARNING: cached NAIP mosaic missing, ortho.jpg left as is (run the geometry stage)")
     G = lidar_grids(trk)
     osm = Osm()
     bld, taken = buildings(trk, G, osm)
     T = trees(trk, G, taken)
     brg = bridges(trk, G, osm)
     for b in brg:
-        b["banners"] = BANNERS.get(b["id"], [["LAGUNA SECA"], ["LAGUNA SECA"]])
+        dflt = SC_CFG.get("bridge_default_banner", "")
+        b["banners"] = BANNERS.get(b["id"], [[dflt], [dflt]] if dflt else [[], []])
         b["style"] = BRIDGE_STYLE.get(b["id"], "deck")
     bar, bar_tot = barriers(trk, osm)
     for b_ in bar:
@@ -1149,6 +1206,19 @@ def main():
     def pack(A):
         return [int(round(v * 10)) for v in A.ravel()]
 
+    # station ranges -> metres along the lap (CONTRACTS 2b: s = station * spacing_m)
+    to_m = lambda v: round(float(v) * trk.sp, 1)  # noqa: E731
+    for k_ in kerb:
+        k_["s0"], k_["s1"] = to_m(k_["s0"]), to_m(k_["s1"])
+    for r_ in lines:
+        r_["s0"], r_["s1"] = to_m(r_["s0"]), to_m(r_["s1"])
+    for b_ in brg:
+        b_["s"] = to_m(b_["s"])
+    if cones:
+        cones["s0"], cones["s1"] = to_m(cones["s0"]), to_m(cones["s1"])
+    for grp in (pit, zones):
+        for p_ in (grp or {}).get("parts", []):
+            p_["track_s"] = [to_m(v) for v in p_["track_s"]]
     sc = {
         "version": 1,
         "units": "ENU metres (CONTRACTS section 1); z relative to z0_navd88 of track.json",
@@ -1172,7 +1242,7 @@ def main():
     }
     with open(os.path.join(OUT, "scenery.json"), "w") as fh:
         json.dump(sc, fh, separators=(",", ":"))
-    preview(trk, T, Tf, bld, bar, kerb, brg, marks, os.path.join(PREVIEWS, "scenery.png"))
+    preview(trk, T, Tf, bld, bar, kerb, brg, marks, os.path.join(PREVIEWS, "scenery_preview.png"))
     tot = 0
     for f in ("scenery.json", "far_heightfield.bin", "far_ortho.jpg", "ortho.jpg"):
         sz = os.path.getsize(os.path.join(OUT, f))
@@ -1204,7 +1274,17 @@ def only_pit_exit_cones():
 
 
 if __name__ == "__main__":
-    if sys.argv[1:3] == ["--only", "pit_exit_cones"]:
-        only_pit_exit_cones()
-    else:
-        main()
+    # normally run as `build_track.py --track <id> --stage scenery`; directly: --track <id> --dir <package dir>
+    import argparse
+
+    import trackcfg
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--track", required=True)
+    ap.add_argument("--dir", required=True, help="package directory holding track.json / heightfield.bin")
+    ap.add_argument("--only", choices=["pit_exit_cones"])
+    a = ap.parse_args()
+    cfg_ = trackcfg.load(a.track)
+    bl.configure(cfg_)
+    configure(cfg_, os.path.abspath(a.dir))
+    only_pit_exit_cones() if a.only else main()

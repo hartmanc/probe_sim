@@ -1,26 +1,38 @@
-# Laguna Seca track and ghost data
+# Track pipeline (Laguna Seca is the worked example)
 
-Two scripts build `public/tracks/laguna_seca/` in the format given in `CONTRACTS.md` sections 1 and 2.
-
-```sh
-# 1. track: track.json, heightfield.bin, ortho.jpg, tools/track/previews/preview.png  (about 2.5 min on the first run, a few seconds after)
-uv run --python 3.12 --with numpy,scipy,rasterio,pyproj,shapely,pillow,requests,pandas,matplotlib \
-    python tools/track/build_laguna.py
-
-# 2. ghosts: ghosts.json, tools/track/previews/preview_ghosts.png  (reads the track.json from step 1)
-uv run --python 3.12 --with numpy,scipy,pandas,matplotlib,pillow python tools/ghosts/build_ghosts.py
-```
-
-A third script adds the scenery (CONTRACTS §2b) and regrades `ortho.jpg` for display. It needs step 1's output:
+One driver builds a circuit package in the format of `CONTRACTS.md` sections 1, 2 and 2b from a per-track config:
 
 ```sh
-# 3. scenery: scenery.json, far_heightfield.bin, far_ortho.jpg, regraded ortho.jpg, tools/track/previews/scenery.png
-#    (about 2 min on the first run, mostly the lidar download; ~15 s after)
-uv run --python 3.12 --with numpy,scipy,rasterio,pyproj,shapely,pillow,requests,laspy[lazrs] \
-    python tools/track/build_scenery.py
+W='numpy,scipy,rasterio,pyproj,shapely,pillow,requests,pandas,matplotlib,laspy[lazrs]'
+uv run --python 3.12 --with "$W" python -I tools/track/build_track.py --track <id> [--stage geometry|ghosts|scenery|all] \
+    [--no-logger] [--out tools/track/out/<id>] [--publish]
 ```
 
-Both track and ghost scripts print a validation report and exit with status 1 without writing their outputs if a check fails.
+* **Config:** `tools/track/tracks/<id>/config.py` (one dict, `CONFIG`; data only). The keys and their defaults are documented
+  in `trackcfg.py`; `tracks/laguna_seca/config.py` holds every constant the 17-18 Oct 2026 Laguna scripts had, each with
+  where it came from.
+* **Stages**, each printing a validation report and exiting 1 without writing its outputs when a check fails
+  (`--write-on-fail` writes them anyway for diagnosis, still exits 1, and is never publishable):
+  1. `geometry`: OSM loop (`geo.py`) -> first centre (`centre.py`: the logger's driven line moved toward the NAIP
+     midpoint; without logger laps the OSM loop) -> painted edges on the captures (`paint.py`) -> centre refit and
+     uniform stations (`recentre.py`) -> edges: the paint-step prior, measured shapes, one robust penalised spline per
+     side (`edges_spline.py`), declared straights (`straights.py`) -> profile (DEM + lidar returns + `clean_profile` +
+     repave crests) re-evaluated at the fitted edges -> heightfield, ortho, corners -> gates (`edge_gate.py`).
+  2. `ghosts`: `tools/ghosts/build_ghosts.py --config <id>` (no logger: the racing line only, laps `[]`).
+  3. `scenery`: `build_scenery.py`, then the post steps of `scenery_post.py`, then the edge and barrier gates.
+* **Output:** a candidate package in `tools/track/out/<id>/` (plus `work/`: reports, previews, arrays). `--publish`
+  copies it to `public/tracks/<id>/` (refuses to replace an existing package without `--overwrite-package`).
+* **Checks of a candidate:** `compare_package.py --cand <dir> --ref <dir> [--by-corner]` (per-station centre, edge,
+  height, racing-line differences; scenery counts), `edge_gate.py --track <dir> --config <id>`, and the autopilot
+  `npx tsx tools/calibrate/drive.ts --track <dir> --alat 1.2 --learn 25 --bank --no-files [--ref-ghosts <ghosts.json>]`.
+* **Captures:** `captures.py` (lists, masks, the one common Google-to-ortho shift), `register_clean.py --track <id>`
+  (measures that shift), `sweep_paint.py` (paint check per station, anchored at the current edge).
+* **Laguna dry runs (19 Oct 2026):** `tools/track/out/laguna_dryrun/README.md` (with the logger laps, against the
+  accepted package) and the no-logger numbers there; the skill (`.claude/skills/build-track/SKILL.md`) has the summary.
+
+The scripts that built Laguna one step at a time on 17-18 Oct 2026 (`build_laguna.py`, `build_laguna_v2.py`,
+`rebuild_from_paint.py`, `fit_edges_spline.py`, the `fix_*.py` steps, `add_paved_aprons.py`, `remap_scenery.py`) are
+in git history (commit a21695f); their method lives on in the modules above and their constants in the config.
 
 ## Data sources and licences
 
@@ -36,7 +48,7 @@ Both track and ghost scripts print a validation report and exit with status 1 wi
 
 ## Cache
 
-Downloads go to `tools/track/cache/` (gitignored): `laguna_osm.xml`, `dem_window.npz` (the merged DEM window),
+Downloads go to the track's cache folder (config `cache_dir`; Laguna `tools/track/cache/`, new tracks `tools/track/cache/<id>/`; gitignored): `laguna_osm.xml`, `dem_window.npz` (the merged DEM window),
 `naip_tiles/` plus the stitched `naip_*.png`, `ept/` (lidar nodes), `lidar_points.npz`, `lidar_grids.npz`,
 `dem13_window.npz` and `naip_far_*.png`. Delete a file to fetch it again. The scripts also write
 `track_arrays.npz` there (intermediate arrays), and `preview_failed.png` when validation fails.
@@ -80,7 +92,7 @@ The format is in CONTRACTS §2b. The script prints counts for each item and writ
 OSM and lidar buildings in magenta and cyan, concrete walls white, Armco blue, tyres red, the pit wall yellow,
 fences orange, kerbs red and bridges yellow.
 
-- **Ortho grade.** `grade_ortho` in `build_laguna.py` uses one black point for all three channels (taken from the
+- **Ortho grade.** `grade_ortho` in `geo.py` uses one black point for all three channels (taken from the
   0.5th percentile) and one white point. It then applies gamma 1.25 so the mid-tones stay close, a 25 % smoothstep
   S-curve, and +6 % saturation. Per-channel black points made the dry grass orange, so they are not used. The same
   grade is applied to `far_ortho.jpg`.
@@ -159,15 +171,7 @@ NAIP caches are re-fetched automatically, because they are keyed by the box.
 a normal map: asphalt with aggregate chips and pores on a 0.8 m tile, and dry grass, clods and pebbles on a 1.6 m
 tile. They are multiplied over the ortho in world space and fade out between 30 and 80 m.
 
-## v2 centreline (staging: `tools/track/out/laguna_v2/`)
-
-```sh
-uv run --python 3.12 --with numpy,scipy,rasterio,pyproj,shapely,pillow,requests,pandas,matplotlib \
-    python tools/track/build_laguna_v2.py                       # -> tools/track/out/laguna_v2/{track.json,heightfield.bin,ortho.jpg,preview.png}
-uv run --python 3.12 --with numpy,scipy,pandas,matplotlib,pillow \
-    python tools/ghosts/build_ghosts.py --track-dir tools/track/out/laguna_v2 --preview-dir tools/track/out/laguna_v2
-npx tsx tools/calibrate/drive.ts --track tools/track/out/laguna_v2 --alat 1.2 --learn 25 --bank --no-files
-```
+## v2 centreline (now the first centre of `centre.py`)
 
 **Why.** The v1 centre was a spline through the coarse OSM nodes. It kinked at way junctions and corner nodes, and
 recentring along its own normals kept the kinks. Its corner radii came out 20–70 % tighter than the driven line,
@@ -203,7 +207,7 @@ apex the 2017 data shows a sag of about 0.4 m: a vertical radius of +230 m, whic
 120 km/h. The ground returns confirm the sag is in the survey. Coby drove the circuit in October 2026 and reports
 that T6 is now a crest.
 
-`build_laguna_v2.py` (`REPAVE_FIXES`) rebuilds the centre height over s = 1895–2000 from its vertical curvature:
+The config's `repave_fixes` (was `build_laguna_v2.py` `REPAVE_FIXES`) rebuild the centre height over s = 1895–2000 from its vertical curvature:
 
 - **Crest zone (s = 1905–1965):** the curvature is crest or flat (z'' ≤ 0), never a hollow.
 - **Rest of the window:** a gentle sag of R ≥ 1500 m at most.

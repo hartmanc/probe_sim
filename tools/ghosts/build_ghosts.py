@@ -1,10 +1,15 @@
-"""Build public/tracks/laguna_seca/ghosts.json: each driver's best lap, the optimal lap and a racing line.
+"""Build a track package's ghosts.json: each driver's best lap, the optimal lap and a racing line (stage 2 of
+tools/track/build_track.py, which runs it; directly:)
 
-    uv run --python 3.12 --with numpy,scipy,pandas,matplotlib,pillow python tools/ghosts/build_ghosts.py
+    uv run --python 3.12 --with numpy,scipy,pandas,matplotlib,pillow python -I tools/ghosts/build_ghosts.py \
+        [--config <track id>] [--track-dir <package>] [--no-logger]
 
-Run tools/track/build_laguna.py first (this reads its track.json and ortho.jpg).
+Reads the package's track.json and ortho.jpg. The track config (tools/track/tracks/<id>/config.py, default
+laguna_seca) names the logger directory, drivers and sections; with --no-logger, or a config without logger_dir,
+ghosts.json carries only the racing line, the pure bounded minimum-curvature solve (no nudge, no kerb relaxation), and
+an empty laps list; the implied-g checks are skipped (the autopilot lap, tools/calibrate/drive.ts, validates instead).
 
-Source: the team's race-logger analysis in /Users/cobyhartman/projects/starlink-go-pro/laps (read-only). The lap
+Source: the team's race-logger analysis (Laguna: /Users/cobyhartman/projects/starlink-go-pro/laps, read-only). The lap
 selection, official-time scaling and optimal-lap stitching reproduce that analysis's export_dashboard.py (whose
 helper modules write to their own folder on import, so the few functions needed are copied here, not imported):
   * laps are scaled so each adds up to its official MyLaps time (official.pkl),
@@ -28,8 +33,12 @@ from scipy.spatial import cKDTree
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
-TRACK_DIR = os.path.join(ROOT, "public", "tracks", "laguna_seca")
-LAPS = "/Users/cobyhartman/projects/starlink-go-pro/laps"
+sys.path.insert(0, os.path.join(ROOT, "tools", "track"))
+import trackcfg  # noqa: E402
+
+TRACK_ID = "laguna_seca"   # set by configure()
+TRACK_DIR = None
+LAPS = None
 
 DS = 2.0  # output grid
 MARGIN = 1.0  # racing line keeps this far inside the edges
@@ -38,9 +47,32 @@ BOUND_SMOOTH_M = 10.0  # the line's edge bounds are a smoothed lower envelope of
 KERB_MARGIN = 1.0  # closest the line may come to an edge, only where the measured line went that close
 NUDGE_W = 0.1  # weight of the nudge target in the final line solve
 NUDGE = 0.3  # weight of the drivers' measured line vs the minimum-curvature line
-DRIVERS = ["driver C", "driver B", "Coby", "driver D", "driver A"]  # race order
-J_LAPS = None  # section joins, filled from defs.py values below
+DRIVERS = []  # race order (config logger_drivers)
+SECTIONS = None  # logger section joins (config logger_sections, defs.J; None = the lap end)
+BAD_GPS = []
 NS = 8
+IMPLIED_G_TURNS = None   # corners checked for implied g (config ghosts.implied_g_turns; default every corner under R 150)
+IMPLIED_G_EXEMPT = []    # flat-out kinks: tabled, not checked
+KAPPA_DRIVERS = []       # drivers whose fastest good-GPS laps give the IMU curvature check (config ghosts.kappa_drivers)
+
+
+def configure(cfg, no_logger=False):
+    global TRACK_ID, TRACK_DIR, LAPS, DRIVERS, SECTIONS, BAD_GPS, NS, MARGIN, KERB_MARGIN, NUDGE, LINE_JERK_W
+    global IMPLIED_G_TURNS, IMPLIED_G_EXEMPT
+    TRACK_ID = cfg["id"]
+    TRACK_DIR = os.path.join(ROOT, "public", "tracks", cfg["id"])
+    LAPS = None if no_logger else cfg["logger_dir"]
+    DRIVERS = list(cfg["logger_drivers"])
+    SECTIONS = cfg["logger_sections"]
+    BAD_GPS = list(cfg["logger_bad_gps_files"])
+    if SECTIONS:
+        NS = len(SECTIONS) - 1
+    g = cfg["ghosts"]
+    MARGIN, KERB_MARGIN, NUDGE, LINE_JERK_W = g["margin"], g["kerb_margin"], g["nudge"], g["jerk_w"]
+    IMPLIED_G_TURNS = g.get("implied_g_turns")
+    IMPLIED_G_EXEMPT = list(g.get("implied_g_exempt", []))
+    global KAPPA_DRIVERS
+    KAPPA_DRIVERS = list(g.get("kappa_drivers", []))
 
 
 def log(*a):
@@ -96,7 +128,7 @@ def load_logger():
     G = np.load(os.path.join(LAPS, "centreline.npy"))
     L = float(len(G))
     SE = np.arange(-450, L + 450, 2.0)
-    J = [0, 640, 920, 1340, 1760, 2200, 2820, 3100, L]  # defs.J
+    J = [L if j is None else j for j in SECTIONS]  # defs.J
     TW, _ = pd.read_pickle(os.path.join(LAPS, "traces_warped.pkl"))
     X = pd.read_pickle(os.path.join(LAPS, "sections.pkl"))
     X["driver"] = X["driver"].replace({"16d7 pre-stop": "driver A"})
@@ -104,10 +136,10 @@ def load_logger():
     X = X.join(MATCH[["n", "official_s"]])
     X["logger_lapw"] = X.lapw
     FAC = X.official_s / X.lapw
-    SECS = [f"sec{k}" for k in range(1, 9)]
+    SECS = [f"sec{k}" for k in range(1, NS + 1)]
     X[SECS] = X[SECS].mul(FAC, axis=0)
     X["lapw"] = X.official_s
-    X["gps_good"] = X.file != "0e98"
+    X["gps_good"] = ~X.file.isin(BAD_GPS)
     return G, L, SE, J, TW, X, FAC, OFFICIAL
 
 
@@ -197,19 +229,22 @@ def main():
     import argparse
 
     ap = argparse.ArgumentParser()
-    ap.add_argument("--track-dir", default=TRACK_DIR, help="track package to read track.json from and write ghosts.json to")
+    ap.add_argument("--config", default="laguna_seca", help="track id: tools/track/tracks/<id>/config.py")
+    ap.add_argument("--no-logger", action="store_true", help="racing line only (pure minimum curvature), no ghost laps")
+    ap.add_argument("--track-dir", default=None, help="track package to read track.json from and write ghosts.json to (default public/tracks/<id>)")
     ap.add_argument("--write-on-fail", action="store_true", help="write ghosts.json even if validation fails")
     ap.add_argument("--preview-dir", default=None, help="where preview_ghosts.png goes (default tools/track/previews)")
     ap.add_argument("--kerb-margin", type=float, default=None,
                     help="line bound (m from the edge) along the red/white kerb strips of scenery.json (apex / exit kerbs, "
                          "pavement inside the edge); default: MARGIN everywhere")
     ap.add_argument("--jerk-w", type=float, default=None, help="curvature-change weight (default LINE_JERK_W)")
-    ap.add_argument("--debug-out", default=None, help="where ghost_line_debug.npz goes (default tools/track/cache)")
+    ap.add_argument("--debug-out", default=None, help="where ghost_line_debug.npz goes (default the preview directory)")
     args = ap.parse_args()
+    configure(trackcfg.load(args.config, no_logger=args.no_logger), no_logger=args.no_logger)
     global LINE_JERK_W
     if args.jerk_w is not None:
         LINE_JERK_W = args.jerk_w
-    TRACK_DIR = os.path.abspath(args.track_dir)
+    TRACK_DIR = os.path.abspath(args.track_dir or TRACK_DIR)
     preview_dir = args.preview_dir or os.path.join(HERE, "..", "track", "previews")
     track = json.load(open(os.path.join(TRACK_DIR, "track.json")))
     n = track["n"]
@@ -222,6 +257,8 @@ def main():
     m = len(grid)
     fails = []
 
+    if LAPS is None:
+        return no_logger_line(track, C, hw_full, hr_full, grid, gi, m, preview_dir, args)
     G, L, SE, J, TW, X, FAC, OFFICIAL = load_logger()
 
     # ---- s mapping: logger distance (index into G) -> track s
@@ -409,11 +446,11 @@ def main():
         f"offset range {e.min():+.2f}..{e.max():+.2f} m")
 
     # entries sit every DS stations; consumers index by metres (s = station * spacing_m), so the grid step is in metres
-    ghosts = {"track": "laguna_seca", "s_grid_m": round(DS * float(track.get("spacing_m", 1.0)), 6),
+    ghosts = {"track": TRACK_ID, "s_grid_m": round(DS * float(track.get("spacing_m", 1.0)), 6),
               "line": {"offset_m": np.round(e, 3).tolist(),
                        "method": f"min-curvature within edges less {MARGIN} m, nudged {NUDGE:.0%} toward measured lines"},
               "laps": out_laps}
-    np.savez(args.debug_out or os.path.join(HERE, "..", "track", "cache", "ghost_line_debug.npz"), e=e, e_mc=e_mc, e_gps=e_gps,
+    np.savez(args.debug_out or os.path.join(preview_dir, "ghost_line_debug.npz"), e=e, e_mc=e_mc, e_gps=e_gps,
              lim=lim, limr=limr, grid=grid)
     if fails:
         log("\nGHOST VALIDATION FAILED:", fails)
@@ -424,6 +461,46 @@ def main():
         json.dump(ghosts, fh, separators=(",", ":"))
     log(f"wrote ghosts.json: {os.path.getsize(path_out) / 1e6:.2f} MB, {len(out_laps)} laps x {m} points")
     preview(track, grid, P, nlg, hw, e, e_mc, e_gps, laps, os.path.join(preview_dir, "preview_ghosts.png"))
+
+
+def no_logger_line(track, C, hw_full, hr_full, grid, gi, m, preview_dir, args):
+    """No logger laps: the racing line is the pure bounded minimum-curvature line (MARGIN inside the smoothed edge
+    envelope, the same floors), there are no ghost laps and no implied-g checks."""
+    fails = []
+    hw, hwr = hw_full[gi], hr_full[gi]
+    P = C[gi]
+    nlg, _ = left_normals(P)
+    fl_l = 0.5 - (hwr - MARGIN)
+    fl_r = 0.5 - (hw - MARGIN)
+    lim = smooth_bound(np.maximum(hw - MARGIN, fl_l))
+    limr = smooth_bound(np.maximum(hwr - MARGIN, fl_r))
+    e = min_curvature_line(P, nlg, -limr, lim)
+    log("racing line: no logger laps, pure minimum-curvature line within the edges less "
+        f"{MARGIN} m (offset range {e.min():+.2f}..{e.max():+.2f} m)")
+    log("\n================ GHOST VALIDATION (no logger) ================")
+    clear = np.minimum(hw - e, hwr + e)
+    ok = clear.min() >= min(MARGIN, 0.5) - 0.05
+    log(f"[{'ok' if ok else 'FAIL'}] line inside edges: min clearance to edge {clear.min():.2f} m")
+    if not ok:
+        fails.append("line inside edges")
+    kap_line = curvature_of(P + e[:, None] * nlg)
+    kap_c = curvature_of(P)
+    log(f"     line curvature: sum k^2 {np.sum(kap_line ** 2):.4f} vs centre {np.sum(kap_c ** 2):.4f}")
+    log("     implied-g checks skipped (no ghost laps): validate with tools/calibrate/drive.ts --track <dir>")
+    ghosts = {"track": TRACK_ID, "s_grid_m": round(DS * float(track.get("spacing_m", 1.0)), 6),
+              "line": {"offset_m": np.round(e, 3).tolist(),
+                       "method": f"min-curvature within edges less {MARGIN} m (no logger laps)"},
+              "laps": []}
+    np.savez(args.debug_out or os.path.join(preview_dir, "ghost_line_debug.npz"), e=e, e_mc=e, e_gps=np.full(m, np.nan),
+             lim=lim, limr=limr, grid=grid)
+    if fails and not args.write_on_fail:
+        log("\nGHOST VALIDATION FAILED:", fails)
+        sys.exit(1)
+    path_out = os.path.join(TRACK_DIR, "ghosts.json")
+    with open(path_out, "w") as fh:
+        json.dump(ghosts, fh, separators=(",", ":"))
+    log(f"wrote ghosts.json: {os.path.getsize(path_out) / 1e6:.2f} MB, racing line only ({m} points)")
+    preview(track, grid, P, nlg, hw, e, e, np.full(m, np.nan), [], os.path.join(preview_dir, "preview_ghosts.png"))
 
 
 def curvature_of(P):
@@ -456,7 +533,6 @@ def min_curvature_line(P, nl, lo, hi, iters=4):
 
 
 G_ACC = 9.81
-CORNER_TURNS = ["T2", "T3", "T4", "T5", "T6", "T7", "T8", "T8A", "T9", "T10", "T11"]
 
 
 def profile_z(track, i, lat):
@@ -499,8 +575,10 @@ def implied_g(track, grid, R, e, laps, check, sigma_m=4.0):
         "tyre = after banking")
     log("     corner  s     R_line  bank%   driver A plain/tyre   optimal plain/tyre")
     bad, rows = [], []
+    turns = IMPLIED_G_TURNS if IMPLIED_G_TURNS is not None else [
+        c["turn"] for c in track["corners"] if c.get("turn") and c.get("radius_m") is not None and c["radius_m"] < 150]
     for c in track["corners"]:
-        if c.get("turn") not in CORNER_TURNS:
+        if c.get("turn") not in turns:
             continue
         cs = c["s"] / float(track.get("spacing_m", 1.0))  # corner s is metres; grid is stations
         w = np.abs((grid - cs + track["n"] / 2) % track["n"] - track["n"] / 2) <= 40
@@ -513,7 +591,7 @@ def implied_g(track, grid, R, e, laps, check, sigma_m=4.0):
         log(f"     {c['turn']:6s} {c['s']:7.1f} {r:6.1f}  {tb[j] * 100:+5.1f}   " +
             "   ".join(f"{p:5.2f} / {t:4.2f}     " for p, t in vals))
         # too tight: the tyres would need > 1.3 g after banking; too straight: v^2 k / g < 0.9 at a real corner
-        if c["turn"] != "T7" and not all(t <= 1.3 and p >= 0.9 for p, t in vals):  # T7 is a flat-out kink
+        if c["turn"] not in IMPLIED_G_EXEMPT and not all(t <= 1.3 and p >= 0.9 for p, t in vals):  # flat-out kinks (Laguna T7)
             bad.append(c["turn"])
     gmax = max(lp["g_tyre"].max() for lp in ref)
     pmax = max(lp["g_plain"].max() for lp in ref)
@@ -529,7 +607,7 @@ def kappa_plot(track, grid, R, s_laps, L, X, TW, SE, path):
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    sel = X[X.clean & X.gps_good & X.driver.isin(["driver A", "Coby", "driver D"])].sort_values("lapw").groupby("driver").head(5)
+    sel = X[X.clean & X.gps_good & X.driver.isin(KAPPA_DRIVERS or DRIVERS)].sort_values("lapw").groupby("driver").head(5)
     K = [np.interp(s_laps, SE, TW[i].alat.to_numpy() / np.maximum(TW[i].v.to_numpy(), 5) ** 2) for i in sel.index]
     km = gaussian_filter1d(np.median(K, 0), 2, mode="wrap")
     C = np.array(track["center"])[:, :2][grid.astype(int)]
@@ -541,7 +619,7 @@ def kappa_plot(track, grid, R, s_laps, L, X, TW, SE, path):
     log(f"     curvature check vs measured (IMU) over {len(K)} laps: corr centre {np.corrcoef(km, kc)[0, 1]:.3f}, "
         f"line {np.corrcoef(km, kl)[0, 1]:.3f}; peak |k| ratio line/measured at corners shown in {os.path.basename(path)}")
     fig, ax = plt.subplots(figsize=(16, 6))
-    ax.plot(grid, km * 1000, color="k", lw=1.5, label="measured alat/v^2 (median, driver A/Coby/driver D)")
+    ax.plot(grid, km * 1000, color="k", lw=1.5, label=f"measured alat/v^2 (median, {'/'.join(KAPPA_DRIVERS or DRIVERS)})")
     ax.plot(grid, kg * 1000, color="0.6", lw=1, label="centreline.npy (GPS driven)")
     ax.plot(grid, kc * 1000, color="#0a84ff", lw=0.8, label="track centre")
     ax.plot(grid, kl * 1000, color="#d4a000", lw=1.2, label="racing line")
