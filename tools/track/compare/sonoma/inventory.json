@@ -930,11 +930,16 @@
    "note": "terrace rows on the bank with catch fence at its foot"
   },
   {
-   "side": "left",
+   "side": "right",
    "kind": "station",
    "attrs": {
     "type": "marshal post (white hut)",
-    "colour": "white"
+    "colour": "white",
+    "correction": {
+     "round": "r1",
+     "was": "side left",
+     "why": "the white hut stands at the T2 apex inside (right); its roof and shadow on c20_s2145"
+    }
    },
    "confidence": 0.5,
    "t": 13.5,
@@ -1868,11 +1873,17 @@
    "kind": "wall",
    "attrs": {
     "type": "dark concrete at the terrace foot",
-    "colour": "dark grey"
+    "colour": "dark grey",
+    "ahead_m": 30.0,
+    "correction": {
+     "round": "r1",
+     "was": "abeam at 1:30",
+     "why": "the dark wall at the terrace foot is seen ahead at 1:30; the band starts at s 2690 on c20_s0330"
+    }
    },
    "confidence": 0.7,
    "t": 90,
-   "s": 2662.9,
+   "s": 2692.9,
    "source": "onboard:RAZip6S84CM@90.0",
    "frame": "t090.jpg",
    "scope": "lap"
@@ -1883,11 +1894,17 @@
    "attrs": {
     "type": "kerb",
     "colour": "red/white",
-    "raised": "flat"
+    "raised": "flat",
+    "ahead_m": 30.0,
+    "correction": {
+     "round": "r1",
+     "was": "abeam at 1:30",
+     "why": "the T9 apex kerb is seen 30 m ahead at 1:30 (abeam at 1:31, d091); kerb on c20_s0330 at s 2692-2740"
+    }
    },
    "confidence": 0.9,
    "t": 90,
-   "s": 2662.9,
+   "s": 2692.9,
    "source": "onboard:RAZip6S84CM@90.0",
    "frame": "t090.jpg",
    "scope": "lap",
@@ -2798,12 +2815,17 @@
    "note": "3 storeys x 3.2 m"
   },
   {
-   "side": "right",
+   "side": "left",
    "kind": "building",
    "attrs": {
     "type": "T12 control tower building",
     "h_m": 6.4,
-    "h_method": "storeys"
+    "h_method": "storeys",
+    "correction": {
+     "round": "r1",
+     "was": "side right",
+     "why": "the T12 control building stands left of the track (onboard 2:13, t133); the panorama looks across from the right"
+    }
    },
    "confidence": 0.6,
    "t": null,
@@ -2997,11 +3019,16 @@
     "type": "pit wall",
     "colour": "white",
     "h_m": 1.1,
-    "h_method": "safer-ref"
+    "h_method": "safer-ref",
+    "correction": {
+     "round": "r1",
+     "was": "s 30",
+     "why": "re-timed against the pit wall nose at s 92 (c20_s1870): p302 shows the separation Jersey ending, p304 the blend line"
+    }
    },
    "confidence": 0.8,
    "t": null,
-   "s": 30.0,
+   "s": 20.0,
    "source": "onboard:24of8fjjAug@296",
    "frame": "../frames_pit/p296.jpg",
    "scope": "pit"
@@ -3013,11 +3040,16 @@
     "type": "pit wall",
     "colour": "white",
     "h_m": 1.1,
-    "h_method": "safer-ref"
+    "h_method": "safer-ref",
+    "correction": {
+     "round": "r1",
+     "was": "s 90",
+     "why": "re-timed against the pit wall nose at s 92 (c20_s1870): p302 shows the separation Jersey ending, p304 the blend line"
+    }
    },
    "confidence": 0.8,
    "t": null,
-   "s": 90.0,
+   "s": 50.0,
    "source": "onboard:24of8fjjAug@298",
    "frame": "../frames_pit/p298.jpg",
    "scope": "pit"
@@ -3026,11 +3058,16 @@
    "side": "left",
    "kind": "building",
    "attrs": {
-    "type": "red-roof pit-out building"
+    "type": "red-roof pit-out building",
+    "correction": {
+     "round": "r1",
+     "was": "s 130",
+     "why": "re-timed against the pit wall nose at s 92 (c20_s1870): p302 shows the separation Jersey ending, p304 the blend line"
+    }
    },
    "confidence": 0.8,
    "t": null,
-   "s": 130.0,
+   "s": 70.0,
    "source": "onboard:24of8fjjAug@300",
    "frame": "../frames_pit/p300.jpg",
    "scope": "pit"
@@ -3043,11 +3080,16 @@
     "colour": "white/red",
     "h_m": 1.0,
     "h_method": "fence-post-ref",
-    "fence_m": 3.0
+    "fence_m": 3.0,
+    "correction": {
+     "round": "r1",
+     "was": "s 160",
+     "why": "re-timed against the pit wall nose at s 92 (c20_s1870): p302 shows the separation Jersey ending, p304 the blend line"
+    }
    },
    "confidence": 0.8,
    "t": null,
-   "s": 160.0,
+   "s": 95.0,
    "source": "onboard:24of8fjjAug@302",
    "frame": "../frames_pit/p302.jpg",
    "scope": "pit"
@@ -3059,11 +3101,16 @@
     "type": "Jersey (pit-out separation)",
     "colour": "white",
     "h_m": 0.81,
-    "h_method": "jersey-ref"
+    "h_method": "jersey-ref",
+    "correction": {
+     "round": "r1",
+     "was": "s 160",
+     "why": "re-timed against the pit wall nose at s 92 (c20_s1870): p302 shows the separation Jersey ending, p304 the blend line"
+    }
    },
    "confidence": 0.8,
    "t": null,
-   "s": 160.0,
+   "s": 95.0,
    "source": "onboard:24of8fjjAug@302",
    "frame": "../frames_pit/p302.jpg",
    "scope": "pit",
@@ -3077,11 +3124,16 @@
     "colour": "white",
     "h_m": 1.0,
     "h_method": "fence-post-ref",
-    "fence_m": 3.0
+    "fence_m": 3.0,
+    "correction": {
+     "round": "r1",
+     "was": "s 200",
+     "why": "re-timed against the pit wall nose at s 92 (c20_s1870): p302 shows the separation Jersey ending, p304 the blend line"
+    }
    },
    "confidence": 0.8,
    "t": null,
-   "s": 200.0,
+   "s": 140.0,
    "source": "onboard:24of8fjjAug@304",
    "frame": "../frames_pit/p304.jpg",
    "scope": "pit"
@@ -3091,11 +3143,16 @@
    "kind": "cone_line",
    "attrs": {
     "type": "small yellow cones on the double yellow blend line",
-    "colour": "yellow"
+    "colour": "yellow",
+    "correction": {
+     "round": "r1",
+     "was": "s 200",
+     "why": "re-timed against the pit wall nose at s 92 (c20_s1870): p302 shows the separation Jersey ending, p304 the blend line"
+    }
    },
    "confidence": 0.8,
    "t": null,
-   "s": 200.0,
+   "s": 140.0,
    "source": "onboard:24of8fjjAug@304",
    "frame": "../frames_pit/p304.jpg",
    "scope": "pit",
@@ -3106,11 +3163,16 @@
    "kind": "paint",
    "attrs": {
     "type": "double yellow blend line",
-    "colour": "yellow"
+    "colour": "yellow",
+    "correction": {
+     "round": "r1",
+     "was": "s 200",
+     "why": "re-timed against the pit wall nose at s 92 (c20_s1870): p302 shows the separation Jersey ending, p304 the blend line"
+    }
    },
    "confidence": 0.8,
    "t": null,
-   "s": 200.0,
+   "s": 140.0,
    "source": "onboard:24of8fjjAug@304",
    "frame": "../frames_pit/p304.jpg",
    "scope": "pit"
@@ -3120,11 +3182,16 @@
    "kind": "wall",
    "attrs": {
     "type": "concrete with catch fence",
-    "colour": "white"
+    "colour": "white",
+    "correction": {
+     "round": "r1",
+     "was": "s 240",
+     "why": "re-timed against the pit wall nose at s 92 (c20_s1870): p302 shows the separation Jersey ending, p304 the blend line"
+    }
    },
    "confidence": 0.8,
    "t": null,
-   "s": 240.0,
+   "s": 200.0,
    "source": "onboard:24of8fjjAug@306",
    "frame": "../frames_pit/p306.jpg",
    "scope": "pit"
@@ -3183,11 +3250,16 @@
    "kind": "paint",
    "attrs": {
     "type": "pit box lines",
-    "colour": "white/yellow"
+    "colour": "white/yellow",
+    "correction": {
+     "round": "r1",
+     "was": "s 4000",
+     "why": "re-timed against the pit wall nose at s 92 (c20_s1870): p302 shows the separation Jersey ending, p304 the blend line"
+    }
    },
    "confidence": 0.8,
    "t": null,
-   "s": 4000.0,
+   "s": 3990.0,
    "source": "onboard:24of8fjjAug@288",
    "frame": "../frames_pit/p288.jpg",
    "scope": "pit"
@@ -3199,11 +3271,16 @@
     "type": "pit wall (track side)",
     "colour": "white",
     "h_m": 1.1,
-    "h_method": "safer-ref"
+    "h_method": "safer-ref",
+    "correction": {
+     "round": "r1",
+     "was": "s 4000",
+     "why": "re-timed against the pit wall nose at s 92 (c20_s1870): p302 shows the separation Jersey ending, p304 the blend line"
+    }
    },
    "confidence": 0.8,
    "t": null,
-   "s": 4000.0,
+   "s": 3990.0,
    "source": "onboard:24of8fjjAug@288",
    "frame": "../frames_pit/p288.jpg",
    "scope": "pit",
@@ -3213,11 +3290,16 @@
    "side": "left",
    "kind": "stand",
    "attrs": {
-    "type": "main grandstand beyond the boxes"
+    "type": "main grandstand beyond the boxes",
+    "correction": {
+     "round": "r1",
+     "was": "s 4060",
+     "why": "re-timed against the pit wall nose at s 92 (c20_s1870): p302 shows the separation Jersey ending, p304 the blend line"
+    }
    },
    "confidence": 0.8,
    "t": null,
-   "s": 4060.0,
+   "s": 4050.0,
    "source": "onboard:24of8fjjAug@292",
    "frame": "../frames_pit/p292.jpg",
    "scope": "pit"
@@ -3229,11 +3311,16 @@
     "type": "pit wall",
     "colour": "white",
     "h_m": 1.1,
-    "h_method": "safer-ref"
+    "h_method": "safer-ref",
+    "correction": {
+     "round": "r1",
+     "was": "s 4060",
+     "why": "re-timed against the pit wall nose at s 92 (c20_s1870): p302 shows the separation Jersey ending, p304 the blend line"
+    }
    },
    "confidence": 0.8,
    "t": null,
-   "s": 4060.0,
+   "s": 4050.0,
    "source": "onboard:24of8fjjAug@292",
    "frame": "../frames_pit/p292.jpg",
    "scope": "pit"

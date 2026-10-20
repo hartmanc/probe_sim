@@ -47,7 +47,7 @@ Interpolation between anchors: profile (profile: shared out by a curvature speed
 | 321 | 0:10.0 | left | kerb | kerb, red/white, flat |  | 0.9 | onboard:RAZip6S84CM@10.0 | T2 approach left kerb |
 | 321 | 0:10.0 | left | tyre_wall | tyre wall, black |  | 0.6 | onboard:RAZip6S84CM@10.0 |  |
 | 372 | 0:12.0 | left | stand | hillside terrace (T2) |  | 0.8 | onboard:RAZip6S84CM@12.0 | terrace rows on the bank with catch fence at its foot |
-| 401 | 0:13.5 | left | station | marshal post (white hut), white |  | 0.5 | onboard:RAZip6S84CM@13.5 | small white structure at the foot of the T2 terrace, d013.5 |
+| 401 | 0:13.5 | right | station | marshal post (white hut), white |  | 0.5 | onboard:RAZip6S84CM@13.5 | small white structure at the foot of the T2 terrace, d013.5 |
 | 405 |  | right | kerb | kerb, blue/white (2011), flat |  | 0.6 | streetview:H9xspk4q_OoFIjVDhaMzDA@210 | Jul 2011 panorama; repainted red/white by 2026 (onboard 0:14) |
 | 409 | 0:14.0 | left | fence | catch fence along the terrace foot | 3.0 m (unmeasured) | 0.7 | onboard:RAZip6S84CM@14.0 |  |
 | 409 | 0:14.0 | left | tyre_wall | tyre wall, black |  | 0.6 | onboard:RAZip6S84CM@14.0 |  |
@@ -110,8 +110,8 @@ Interpolation between anchors: profile (profile: shared out by a curvature speed
 | 2591 | 1:28.0 | left | kerb | kerb, red/white, flat |  | 0.9 | onboard:RAZip6S84CM@88.0 |  |
 | 2591 | 1:28.0 | left | wall | concrete beyond grass, white |  | 0.6 | onboard:RAZip6S84CM@88.0 |  |
 | 2663 | 1:30.0 | left | stand | back-straight terrace |  | 0.9 | onboard:RAZip6S84CM@90.0 |  |
-| 2663 | 1:30.0 | left | wall | dark concrete at the terrace foot, dark grey |  | 0.7 | onboard:RAZip6S84CM@90.0 |  |
-| 2663 | 1:30.0 | right | kerb | kerb, red/white, flat |  | 0.9 | onboard:RAZip6S84CM@90.0 | T9 |
+| 2693 | 1:30.0 | left | wall | dark concrete at the terrace foot, dark grey |  | 0.7 | onboard:RAZip6S84CM@90.0 |  |
+| 2693 | 1:30.0 | right | kerb | kerb, red/white, flat |  | 0.9 | onboard:RAZip6S84CM@90.0 | T9 |
 | 2732 | 1:32.0 | left | fence | catch fence on the wall | 4.5 m (fence-post-ref) | 0.7 | onboard:RAZip6S84CM@92.0 | t094 col 330: posts 95 px over a ~30 px wall |
 | 2732 | 1:32.0 | right | cone_line | orange cones at the bypass mouth, orange |  | 0.7 | onboard:RAZip6S84CM@92.0 |  |
 | 2812 | 1:34.0 | left | fence | catch fence on the wall | 4.5 m (fence-post-ref) | 0.8 | onboard:RAZip6S84CM@94.0 |  |
@@ -173,7 +173,7 @@ Interpolation between anchors: profile (profile: shared out by a curvature speed
 | 3909 | 2:12.0 | left | cone_line | orange cones at the nose, orange |  | 0.7 | onboard:RAZip6S84CM@132.0 |  |
 | 3909 | 2:12.0 | left | wall | wall nose painted SONOMA TURN 12, white/brown |  | 0.9 | onboard:RAZip6S84CM@132.0 |  |
 | 3941 | 2:13.0 | left | building | 3-storey control building | 9.6 m (storeys) | 0.8 | onboard:RAZip6S84CM@133.0 | 3 storeys x 3.2 m |
-| 3950 |  | right | building | T12 control tower building | 6.4 m (storeys) | 0.6 | streetview:QduY6QTXmw4JDevQVE_b-g@0 | Jul 2011 panorama; HEIGHTS.md ex. 8 |
+| 3950 |  | left | building | T12 control tower building | 6.4 m (storeys) | 0.6 | streetview:QduY6QTXmw4JDevQVE_b-g@0 | Jul 2011 panorama; HEIGHTS.md ex. 8 |
 | 3967 | 2:14.0 | left | stand | main grandstand |  | 0.9 | onboard:RAZip6S84CM@134.0 |  |
 | 3967 | 2:14.0 | left | wall | concrete with ECHOPARK painted face, green/white |  | 0.9 | onboard:RAZip6S84CM@134.0 |  |
 | 3967 | 2:14.0 | right | wall | concrete with ECHOPARK painted face, green/white |  | 0.8 | onboard:RAZip6S84CM@134.0 |  |
@@ -191,19 +191,19 @@ Interpolation between anchors: profile (profile: shared out by a curvature speed
 
 | s (m) | t | side | kind | what | height | conf | source | note |
 |---|---|---|---|---|---|---|---|---|
-| 30 |  | right | wall | pit wall, white | 1.1 m (safer-ref) | 0.8 | onboard:24of8fjjAug@296 |  |
-| 90 |  | right | wall | pit wall, white | 1.1 m (safer-ref) | 0.8 | onboard:24of8fjjAug@298 |  |
-| 130 |  | left | building | red-roof pit-out building |  | 0.8 | onboard:24of8fjjAug@300 |  |
-| 160 |  | left | wall | concrete with catch fence and O'Reilly boards, white/red | 1.0 m (fence-post-ref) | 0.8 | onboard:24of8fjjAug@302 |  |
-| 160 |  | right | wall | Jersey (pit-out separation), white | 0.81 m (jersey-ref) | 0.8 | onboard:24of8fjjAug@302 | ends at its nose before the blend |
-| 200 |  | left | wall | concrete with catch fence, white | 1.0 m (fence-post-ref) | 0.8 | onboard:24of8fjjAug@304 |  |
-| 200 |  | right | cone_line | small yellow cones on the double yellow blend line, yellow |  | 0.8 | onboard:24of8fjjAug@304 | about 0.5 m cones |
-| 200 |  | right | paint | double yellow blend line, yellow |  | 0.8 | onboard:24of8fjjAug@304 |  |
-| 240 |  | left | wall | concrete with catch fence, white |  | 0.8 | onboard:24of8fjjAug@306 |  |
+| 20 |  | right | wall | pit wall, white | 1.1 m (safer-ref) | 0.8 | onboard:24of8fjjAug@296 |  |
+| 50 |  | right | wall | pit wall, white | 1.1 m (safer-ref) | 0.8 | onboard:24of8fjjAug@298 |  |
+| 70 |  | left | building | red-roof pit-out building |  | 0.8 | onboard:24of8fjjAug@300 |  |
+| 95 |  | left | wall | concrete with catch fence and O'Reilly boards, white/red | 1.0 m (fence-post-ref) | 0.8 | onboard:24of8fjjAug@302 |  |
+| 95 |  | right | wall | Jersey (pit-out separation), white | 0.81 m (jersey-ref) | 0.8 | onboard:24of8fjjAug@302 | ends at its nose before the blend |
+| 140 |  | left | wall | concrete with catch fence, white | 1.0 m (fence-post-ref) | 0.8 | onboard:24of8fjjAug@304 |  |
+| 140 |  | right | cone_line | small yellow cones on the double yellow blend line, yellow |  | 0.8 | onboard:24of8fjjAug@304 | about 0.5 m cones |
+| 140 |  | right | paint | double yellow blend line, yellow |  | 0.8 | onboard:24of8fjjAug@304 |  |
+| 200 |  | left | wall | concrete with catch fence, white |  | 0.8 | onboard:24of8fjjAug@306 |  |
 | 3560 |  | left | tyre_wall | black tyre stacks in front of the wall, black | 0.84 m (tyre-ref) | 0.8 | onboard:24of8fjjAug@1436 |  |
 | 3560 |  | left | wall | tall board wall (GENERAL TIRE), red/white | 5.3 m (door-ref) | 0.8 | onboard:24of8fjjAug@1436 | same wall as the lap rows at 1:56 (HEIGHTS.md ex. 4) |
 | 3560 |  | right | tyre_wall | black tyre stacks between the pit-in lane and the track, black | 0.84 m (tyre-ref) | 0.8 | onboard:24of8fjjAug@1436 |  |
-| 4000 |  | left | paint | pit box lines, white/yellow |  | 0.8 | onboard:24of8fjjAug@288 |  |
-| 4000 |  | right | wall | pit wall (track side), white | 1.1 m (safer-ref) | 0.8 | onboard:24of8fjjAug@288 | tall white wall between the boxes and the track |
-| 4060 |  | left | stand | main grandstand beyond the boxes |  | 0.8 | onboard:24of8fjjAug@292 |  |
-| 4060 |  | right | wall | pit wall, white | 1.1 m (safer-ref) | 0.8 | onboard:24of8fjjAug@292 |  |
+| 3990 |  | left | paint | pit box lines, white/yellow |  | 0.8 | onboard:24of8fjjAug@288 |  |
+| 3990 |  | right | wall | pit wall (track side), white | 1.1 m (safer-ref) | 0.8 | onboard:24of8fjjAug@288 | tall white wall between the boxes and the track |
+| 4050 |  | left | stand | main grandstand beyond the boxes |  | 0.8 | onboard:24of8fjjAug@292 |  |
+| 4050 |  | right | wall | pit wall, white | 1.1 m (safer-ref) | 0.8 | onboard:24of8fjjAug@292 |  |

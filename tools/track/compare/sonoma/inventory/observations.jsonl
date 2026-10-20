@@ -15,7 +15,7 @@
 {"t": 10, "side": "left", "kind": "kerb", "attrs": {"type": "kerb", "colour": "red/white", "raised": "flat"}, "confidence": 0.9, "note": "T2 approach left kerb"}
 {"t": 10, "side": "left", "kind": "tyre_wall", "attrs": {"type": "tyre wall", "colour": "black"}, "confidence": 0.6, "note": ""}
 {"t": 12, "side": "left", "kind": "stand", "attrs": {"type": "hillside terrace (T2)"}, "confidence": 0.8, "note": "terrace rows on the bank with catch fence at its foot"}
-{"t": 13.5, "side": "left", "kind": "station", "attrs": {"type": "marshal post (white hut)", "colour": "white"}, "confidence": 0.5, "note": "small white structure at the foot of the T2 terrace, d013.5"}
+{"t": 13.5, "side": "right", "kind": "station", "attrs": {"type": "marshal post (white hut)", "colour": "white", "correction": {"round": "r1", "was": "side left", "why": "the white hut stands at the T2 apex inside (right); its roof and shadow on c20_s2145"}}, "confidence": 0.5, "note": "small white structure at the foot of the T2 terrace, d013.5"}
 {"t": 14, "side": "right", "kind": "kerb", "attrs": {"type": "kerb", "colour": "red/white", "raised": "flat"}, "confidence": 0.95, "note": "T2 apex"}
 {"t": 14, "side": "left", "kind": "fence", "attrs": {"type": "catch fence along the terrace foot", "h_m": 3.0, "h_method": "unmeasured"}, "confidence": 0.7, "note": ""}
 {"t": 14, "side": "left", "kind": "tyre_wall", "attrs": {"type": "tyre wall", "colour": "black"}, "confidence": 0.6, "note": ""}
@@ -76,9 +76,9 @@
 {"t": 86, "side": "right", "kind": "wall", "attrs": {"type": "concrete", "colour": "light grey"}, "confidence": 0.7, "note": ""}
 {"t": 88, "side": "left", "kind": "kerb", "attrs": {"type": "kerb", "colour": "red/white", "raised": "flat"}, "confidence": 0.9, "note": ""}
 {"t": 88, "side": "left", "kind": "wall", "attrs": {"type": "concrete beyond grass", "colour": "white"}, "confidence": 0.6, "note": ""}
-{"t": 90, "side": "right", "kind": "kerb", "attrs": {"type": "kerb", "colour": "red/white", "raised": "flat"}, "confidence": 0.9, "note": "T9"}
+{"t": 90, "side": "right", "kind": "kerb", "attrs": {"type": "kerb", "colour": "red/white", "raised": "flat", "ahead_m": 30.0, "correction": {"round": "r1", "was": "abeam at 1:30", "why": "the T9 apex kerb is seen 30 m ahead at 1:30 (abeam at 1:31, d091); kerb on c20_s0330 at s 2692-2740"}}, "confidence": 0.9, "note": "T9"}
 {"t": 90, "side": "left", "kind": "stand", "attrs": {"type": "back-straight terrace"}, "confidence": 0.9, "note": ""}
-{"t": 90, "side": "left", "kind": "wall", "attrs": {"type": "dark concrete at the terrace foot", "colour": "dark grey"}, "confidence": 0.7, "note": ""}
+{"t": 90, "side": "left", "kind": "wall", "attrs": {"type": "dark concrete at the terrace foot", "colour": "dark grey", "ahead_m": 30.0, "correction": {"round": "r1", "was": "abeam at 1:30", "why": "the dark wall at the terrace foot is seen ahead at 1:30; the band starts at s 2690 on c20_s0330"}}, "confidence": 0.7, "note": ""}
 {"t": 92, "side": "right", "kind": "cone_line", "attrs": {"type": "orange cones at the bypass mouth", "colour": "orange"}, "confidence": 0.7, "note": ""}
 {"t": 92, "side": "left", "kind": "fence", "attrs": {"type": "catch fence on the wall", "h_m": 4.5, "h_method": "fence-post-ref"}, "confidence": 0.7, "note": "t094 col 330: posts 95 px over a ~30 px wall"}
 {"t": 94, "side": "left", "kind": "wall", "attrs": {"type": "concrete", "colour": "white", "h_m": 1.0, "h_method": "fence-post-ref"}, "confidence": 0.8, "note": ""}
