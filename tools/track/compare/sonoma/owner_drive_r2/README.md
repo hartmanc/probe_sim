@@ -175,3 +175,6 @@ Verdict: "a disappointing output that was not ready for me to review."
     of the grass, with the flag station beyond; on the left the grey concrete wall with the Pirelli / red boards and the
     marshal post. Owner: "Yeah I'm sure the far tire barrier is there." Round 7 looked for a DARK band; the tyres are white,
     so on the captures it is a bright line at the pavement's far edge.
+52. Owner's crop of the far barrier in note 51 (owner_51_T7_far_barrier_crop.png): BLACK tyres stacked in front of a WHITE
+    concrete wall, along the far edge of the T7 paved runoff. Correction to note 51 ("white-wrapped" was the orchestrator's
+    misreading). Source video for context: https://youtu.be/fEcQdo0ucL8?t=62 (May 2025 onboard; reference only).

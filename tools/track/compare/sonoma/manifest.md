@@ -1289,3 +1289,51 @@ Placed: the 9a cone (2 rows), the T11 apex blocks (2 of the 4 apron-block rows).
 - Ground logos (note 46): not done; seen while measuring T11: TOYOTA, Save Mart and other painted logos inside the T11
   hairpin (c20_s1265 / s1320), for the next round.
 - T7 complex (note 45) and the T8a tyre / concrete facing rule (note 48): not done this round.
+
+## Round 7b (22 Oct 2026; registry rev 2185009d8d; owner notes 43-51)
+
+All gates pass on the published package (edge, barrier gaps, containment, pit connectivity with the lane paths, signs,
+wall ends, tyre facings (new), coverage: MISSING 31 of non-failing kinds, UNSUPPORTED 0, pit lane). track.json /
+heightfield.bin / ghosts.json byte-identical; Laguna byte-identical to main.
+
+- **Tyre facings (note 48)**: gate `sideBySide` fails a tyre run standing parallel 0.8-2.5 m off a rigid wall for 2 m or
+  more (joints within 1.5 m of a wall end and runs angling in are not counted; tests). On the round-7 package it found
+  four pairs (T7 approach left, back-straight start left, 9a right, T10-T11 bundles). Builder rule `scenery.tyre_facings`
+  (reach 2.6 m, 0.55 m in front): tyre points within reach of a wall line move onto its track side; a point the move
+  would bring within 0.55 m of the edge stays (barrier-gap gate). Eight runs faced (log in the stage report). The 8a-T9
+  pair: the package already met end to end (0.6 m); onboard t084-t088: tyres along the bank foot to ~s 2585, then the
+  bare light concrete wall with its fence; the re-measure on c20_s0110..s0220 (dark 100 %, rms 1.24 m; bright 87 %, rms
+  0.89 m) is too noisy (event trailers) to move the measured lines; the facing rule snaps its two joint points.
+- **Ground signs (note 46)**: `scenery.ground_signs` (typed text on a decal draped on the ground; the boards' rule, no
+  logo artwork). Placed: O'Reilly inside the T7a hairpin island (c20_s0000 / s3960, 17 x 7.5 m, white on a red panel:
+  the summer NAIP shows the red patch the owner saw); TOYOTA (18 m) and Save Mart (24 m) in the T11 infield (c20_s1320 /
+  s1265, white). Not placed: the smaller T11 infield names (Coca-Cola, Busch and others above TOYOTA, illegible at
+  0.09 m/px). The rest of the lap was NOT scanned systematically: no other painted ground logo showed in the capture
+  windows reviewed this round (pit-in / T11, T12 exit, pit-out to T2, T5, Carousel exit, T6-T7 drag strip, T7-T8, 8a-T9,
+  9a); a full scan is open.
+- **T7 complex (note 45)**: raised kerb lines (`scenery.kerb_lines`, drawn, Sonoma kerb height) on the two islands' kerb
+  paint measured on c20_s3960 / s0000 (O'Reilly island lower edge 44 m, 100 %, rms 0.91 m; the island tip and upper
+  edge between the short-T7 road and the drag-strip road 41 m, 99 %, rms 0.17 m); the T7 inside runoff gets painted
+  edges (paint.measure, 49 of 66 stations each side) and stays open; cones across the short-T7 (PWC) road where it leaves
+  the T7 paved area (t074; its mouth is 22 m off the track, so the mouth rule finds none). Not done: seams on measured
+  material boundaries between the track, the runoff triangle and the short-T7 road.
+- **T11 outside blocks (item F)**: three white 1.0 x 1.6 x 0.8 m blocks at the outside apron edge where c20_s1320 shows
+  them (s ~3678-3681); onboard t122 white blocks along the apron edge. Heights by eye (knee height), not measured.
+- **Pit-out wall s 231-268 (note 43)**: t004 / t006 (March 2026) and the 2025 pit-out frames t0300 / t0304 show the
+  light-blue / white paddock-side wall running on beside the merged track to its Jersey end before the footbridge; the
+  lane polygon tapers 13.3 -> 10.5 m left of the centre into the track edge by s 241 while the wall stays 2-4 m outside
+  the merged edge; no wall end across the lane (the lane check passes). Kept as measured (c20_s1870 / s1925, 87 %);
+  heights unchanged (inventory 0:06: 2.0 m fence top; the 2025 frame shows a taller catch fence, older evidence).
+- **T8 station (note 47)**: not found. Captures c20_s0000, s0055, s0110, s0165, s0220, s0275, s0330, s0385 and s3685 /
+  s3960 / s4070 over s 2300-2750 both sides: the paddock either side of T8-T9 is full of event trailers and canopies; one
+  candidate at s ~2475 left, ~10 m beyond the edge (a ~4 m light square with a canopy-like shadow among trailers on
+  c20_s0110) is not confirmed by t084-t088 (no hut beside the track; t086 shows a small white box far left on the bank
+  top, not resolvable). For the owner.
+- **T7 far runoff barrier (notes 44 / 51)**: not placed. The owner's May 2025 frame and crop put black tyres in front of
+  a white wall along the far edge of a paved runoff, ahead-right when approaching T7. On c20_s3850 / s3905 / s3960 /
+  s0000 I could not tie a dark-in-front-of-bright pair of bands to that bearing: the 18 m dark line found in round 7 is
+  on the SW edge of the paved lot outside T7 (the left on the approach); the paved areas inside the hairpin have kerbs,
+  painted edges and parked vehicles at their far edges. Needs a capture point from the orchestrator / owner.
+- **Render cost of the stacked tyres (item G)**: pose_walk, 6 poses x 2 runs, headless Chrome: round-6 cylinders
+  (scene 1.98 M triangles) mean 13.0 ms per render, the round-7 stacks (2.50 M) 11.9 ms; run-to-run spread 3-5 ms per
+  pose, so no rise is measurable; tyre geometry left as round 7 (8 segments, 2 profile points per tyre).
