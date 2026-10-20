@@ -50,6 +50,18 @@ Geometry (Stage 1)
   gate {straight_rms, step, profile_step, spline_obs_within}
 Ghosts (Stage 2): ghosts {margin, kerb_margin, nudge, jerk_w}
 Scenery (Stage 3): scenery {...}, see build_scenery.py and scenery_post.py
+Pit lane (first-class, 21 Oct 2026; read by the pit-lane gate, tools/track/gates/coverageGate.ts, and by the scenery
+  builder as it learns each part). Sides are as driven down the lane (the lap's direction); stations are the lap s
+  abeam (the lane part's track_s), or lat/lon ends projected onto the track by build_track.py. Every entry carries `src`
+  (an inventory frame, a capture, a panorama id). Nothing here is a default: an empty list means "not surveyed".
+  pit_lane {
+    lane       {source: 'osm' (pit_lane_way) | 'declared', latlon: [(lat, lon), ...] (declared centre line), width_m}
+    walls      [{side 'left'|'right', s0, s1 | a (lat, lon), b (lat, lon), h (m, HEIGHTS.md), material
+                 ('concrete'|'jersey'|'board_wall'|'pitbox_wall'), fence (m, catch fence on top), src}]
+    boxes      {n, first (lat, lon), last (lat, lon), wall_h, numbered: bool, src}
+    buildings  [{name, osm (way id) | footprint [(lat, lon), ...], h, roof ('flat'|'gable'), colours {wall, roof}, src}]
+    furniture  [{kind ('fuel'|'light_mast'|'cone_line'|'water_barrier'|'tyre_stack'|'gate'|'sign'), latlon | s, side, src}]
+  }
 App: app {short, pace}
 """
 import importlib.util
@@ -76,6 +88,7 @@ DEFAULTS = dict(
     gate=dict(straight_rms=0.10, step=0.10, profile_step=0.10, spline_obs_within=0.85),
     ghosts=dict(margin=1.0, kerb_margin=1.0, nudge=0.3, jerk_w=3),
     scenery={}, app={},
+    pit_lane=dict(lane=dict(source='osm'), walls=[], boxes=None, buildings=[], furniture=[]),
 )
 
 
@@ -133,6 +146,58 @@ def load(track_id, no_logger=False):
     if not cfg.logger and not cfg['start_finish_latlon']:
         raise SystemExit(f'{path}: without logger laps the config needs start_finish_latlon')
     return cfg
+
+
+PIT_WALL_MATERIALS = ('concrete', 'jersey', 'board_wall', 'pitbox_wall', 'armco', 'fence')
+PIT_FURNITURE = ('fuel', 'light_mast', 'cone_line', 'water_barrier', 'tyre_stack', 'gate', 'sign')
+
+
+def check_pit_lane(cfg):
+    """Schema check of the pit_lane section: returns a list of error strings (empty when valid)."""
+    p = cfg.get('pit_lane') or {}
+    errs = []
+    lane = p.get('lane', {})
+    if lane.get('source', 'osm') not in ('osm', 'declared'):
+        errs.append(f"pit_lane.lane.source {lane.get('source')!r} not 'osm' | 'declared'")
+    if lane.get('source') == 'declared' and len(lane.get('latlon', [])) < 2:
+        errs.append('pit_lane.lane: a declared lane needs latlon (two or more points)')
+    for k, w in enumerate(p.get('walls', [])):
+        where = f'pit_lane.walls[{k}]'
+        if w.get('side') not in ('left', 'right'):
+            errs.append(f"{where}: side {w.get('side')!r} not left | right")
+        if not (('s0' in w and 's1' in w) or ('a' in w and 'b' in w)):
+            errs.append(f'{where}: needs s0, s1 (lap stations) or a, b (lat, lon)')
+        if 'h' in w and not (isinstance(w['h'], (int, float)) and 0 < w['h'] < 15):
+            errs.append(f"{where}: h {w['h']!r} out of range")
+        if w.get('material', 'concrete') not in PIT_WALL_MATERIALS:
+            errs.append(f"{where}: material {w.get('material')!r} not in {PIT_WALL_MATERIALS}")
+        if not w.get('src'):
+            errs.append(f'{where}: needs src (no object without a cited source)')
+    b = p.get('boxes')
+    if b is not None and not (isinstance(b, dict) and b.get('src')):
+        errs.append('pit_lane.boxes: needs src')
+    for k, b in enumerate(p.get('buildings', [])):
+        if not b.get('src') or not (b.get('osm') or b.get('footprint')):
+            errs.append(f'pit_lane.buildings[{k}]: needs osm or footprint, and src')
+    for k, f in enumerate(p.get('furniture', [])):
+        if f.get('kind') not in PIT_FURNITURE or not f.get('src') or not ('latlon' in f or 's' in f):
+            errs.append(f'pit_lane.furniture[{k}]: needs kind in {PIT_FURNITURE}, latlon or s, and src')
+    return errs
+
+
+def pit_walls_for_gate(cfg, project=None):
+    """The declared pit-lane walls as [{side, s0, s1, h, src}] in lap stations for the pit-lane gate; `project` maps
+    (lat, lon) -> lap s for walls given by their ends."""
+    out = []
+    for w in (cfg.get('pit_lane') or {}).get('walls', []):
+        if 's0' in w:
+            s0, s1 = w['s0'], w['s1']
+        elif project is not None:
+            s0, s1 = project(w['a']), project(w['b'])
+        else:
+            continue
+        out.append({'side': w['side'], 's0': s0, 's1': s1, 'h': w.get('h'), 'src': w.get('src', '')})
+    return out
 
 
 def _ref_polyline(cfg):
