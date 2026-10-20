@@ -9,9 +9,26 @@ table is generated from the published package. Tools: `compare/kerb_detect.py` (
 `compare/capstrip.py` (straightened capture strips), `compare/wall_measure.py` (wall / tyre line picked every 0.5 m
 across a guide), `compare/capwin.py` (north-up window with the package drawn over it).
 
-Not covered by the rule (unchanged, from data): trees (lidar + NAIP canopy check), buildings (OSM footprints + lidar
-heights; the four OSM grandstands are now terraces), the footbridge at s 295 (OSM), painted edge lines (rule: the
+Not covered by the rule (unchanged, from data): trees (lidar + NAIP canopy check), buildings (OSM footprints; the four
+OSM grandstands are now terraces), the footbridge at s 295 (OSM), painted edge lines (rule: the
 captures show white edge lines everywhere except through kerbs), the pit lane and closed-road pavement (OSM ways).
+
+## Building heights (fix round, 20 Oct 2026; config `scenery.building_height_robust`, Laguna off)
+
+Height = the 60th percentile of the lidar surface above the footprint's ground (2022-24 survey), not the 85th; where
+p90 - p50 > 6 m (a mast, tower or slope inside the outline) the p50, logged; a footprint with no lidar structure above
+2.5 m (p90 < 2.5 m) is dropped, logged. Sonoma: all 24 OSM buildings re-measured, 4 dropped (OSM 1019835306,
+1019837485, 1019838290, 1019838923: p90 0.0-0.2 m), 1 capped:
+
+| OSM | where | before | after | lidar p50 / p60 / p90 | evidence |
+|---|---|---|---|---|---|
+| 262082790 'Sonoma Raceway' | 59 m left of s 4063 | 25.6 m | 9.3 m (capped) | 9.3 / 11.1 / 26.1 | c20_s1650 / s1705: the outline is the main grandstand bowl at the line (rows rising away from the track) with the suites and timing tower at its back; Street View 5MY4xR9O7etAXEHnZCVnGQ, QduY6QTXmw4JDevQVE_b-g: 2-3 storeys at the front. Still drawn as one block (a stepped-stand model for it is left for a builder change) |
+| 1019838438 | 13 m right of s 3419 (T11 approach) | 14.2 m | 12.5 m | 11.7 / 12.5 / 14.2 | lidar consistent: a ~12 m structure stood there in 2022-24. c20_s1045 (2026) shows a long white hospitality tent on part of the outline with a short shadow; Street View jrXpHaDfJT2APw6zcyBKRA (2011) open infield. The sources disagree; the rule keeps the lidar |
+| 1019836595 | 44 m left of s 3923 (T12) | 9.8 m | 8.7 m | 8.6 / 8.7 / 9.9 | c20_s1540: flat-roofed building beside the T12 exit; Street View QduY6QTXmw4JDevQVE_b-g: two-storey buildings both sides |
+
+Laguna (report only, its package unchanged): the rule would change 49 of its 52 OSM buildings (mostly -0.1 to -1 m,
+'Tower' 14.4 -> 13.9 m, 220990689 6.7 -> 4.7, 639859972 7.6 -> 4.4) and drop 5 (639859968, 639859969, 773078645,
+773078646, 1015992235).
 
 ## Removed for lack of evidence (round 2 -> round 3): 61 objects
 
@@ -134,7 +151,7 @@ pit-lane-side one now ends at its nose at T1 (c20_s1815) instead of running on t
 | T4 | kerbs: outside on entry, apex, outside on exit | placed | c20_s2585..s2860 |
 | T5, zCwjltSjI02eDZGZbVyrMg | left low dark wall (tyres) | not placed | the 2026 onboard 0:40 shows a tyre line far left, not resolved on the captures this round |
 | T5 -> T6 crest | right concrete wall | placed | c20_s2860..s3080; onboard 0:43-0:48.5 (built after the 2011 Street View) |
-| T6 hilltop (owner), GMaTaipEd9Hm7fMNE26aGQ | corner station | placed (platform) | c20_s3135 platform + box; panorama: white box and tyre stack |
+| T6 hilltop (owner), GMaTaipEd9Hm7fMNE26aGQ | corner station | placed (platform) | c20_s3135 platform + box; panorama at heading 215 (not 60): white box and tyre stack right of the track |
 | Carousel, ma3jBYjtYGtNBlTLjNz1LQ | far right armco, fence far left | not placed | not resolved on the captures this round |
 | Carousel | apex kerb left, exit kerb right | placed | c20_s3355 / s3410, c20_s3465 / s3520 |
 | T6 -> T7 (owner) | left wall all along | placed (446 m) | c20_s3465..s3850; onboard 0:58-1:12 |

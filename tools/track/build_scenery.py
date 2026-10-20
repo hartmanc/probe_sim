@@ -346,11 +346,28 @@ def buildings(trk, G, osm):
             TERRACE_FOOTPRINTS[w["id"]] = xy   # stepped rows on the hillside instead of a slab (terraces())
             continue
         hv = CHM[m]
-        h = float(np.percentile(hv, 85)) if (hv > 2).mean() > 0.3 else 0.0
-        lv = w["tags"].get("building:levels")
-        if h < 2.5:
-            h = float(lv) * 3.2 if lv else 4.0
-        h = min(max(h, 2.5), 30.0)
+        if SC_CFG.get("building_height_robust"):
+            # robust height (config scenery.building_height_robust, 20 Oct 2026; Sonoma: the p85 rule made a 25.6 m block of
+            # the 2-3 storey suites at the line, from the timing tower, light masts and the hillside in the footprint): the
+            # 60th percentile of the lidar surface above the footprint's ground; where the lidar is inconsistent (p90 - p50
+            # over 6 m: a mast, a tower or a slope inside the outline) the p50; no structure above 2.5 m (p90 under 2.5 m):
+            # the footprint is dropped (an outline OSM keeps of something no longer standing, or flat pavement)
+            p50, p60, p90 = (float(v) for v in np.percentile(hv, [50, 60, 90]))
+            if p90 < 2.5:
+                log(f"building {w['id']} ({w['tags'].get('name', '')}): no lidar structure above 2.5 m (p90 {p90:.1f} m), dropped")
+                continue
+            h = p60
+            if p90 - p50 > 6.0:
+                log(f"building {w['id']} ({w['tags'].get('name', '')}): lidar inconsistent (p50 {p50:.1f}, p90 {p90:.1f} m), "
+                    f"height capped at the p50")
+                h = p50
+            h = min(max(h, 2.5), 30.0)
+        else:
+            h = float(np.percentile(hv, 85)) if (hv > 2).mean() > 0.3 else 0.0
+            lv = w["tags"].get("building:levels")
+            if h < 2.5:
+                h = float(lv) * 3.2 if lv else 4.0
+            h = min(max(h, 2.5), 30.0)
         kind = BUILDING_KIND.get(w["tags"]["building"], "building")
         if w["id"] in HANGARS:
             kind = "hangar"

@@ -415,7 +415,12 @@ For every other circuit, these are steps of stage 3:
      and `gates.paddock` polygon; brake and turn boards within 15 m of an edge.
    Laguna's logger build (report only, 20 Oct 2026): containment fails on its pit lane (s 375-573 left, the pit-out lane
    after T2, and two rays at T11); pit connectivity and signs pass.
-5. **Hood stills of every surveyed spot** in `tools/track/compare/<id>/hood_r3/` (or the round's folder) with a README
+5. **Building heights from a robust lidar statistic** (`scenery.building_height_robust`; Laguna leaves it off so its
+   package stays byte-identical): the 60th percentile of the lidar surface above the footprint's ground, the p50 where
+   p90 - p50 > 6 m (logged: a mast, tower or hillside inside the outline), the footprint dropped when p90 < 2.5 m (logged).
+   The p85 rule made Sonoma's main grandstand at the line a 25.6 m block. Check the tallest few against Street View
+   storeys and the captures and write them in the manifest.
+6. **Hood stills of every surveyed spot** in `tools/track/compare/<id>/hood_r3/` (or the round's folder) with a README
    listing station and the matching panorama id / onboard time, before the owner drives.
 
 ## Stage 4: compare pass with a judge (`tools/track/compare/`)

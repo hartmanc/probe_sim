@@ -452,6 +452,10 @@ CONFIG = dict(
         # onboard 0:28-0:32; above T2: H9xspk4q_OoFIjVDhaMzDA, onboard 0:15; back straight / 9a: xkSrqJ5RaN9WFLncaiqaug,
         # onboard 1:33-1:36)
         grandstand_on_terrain=True,
+        # building heights from a robust lidar statistic (p60 above the footprint's ground; p50 where p90 - p50 > 6 m; no
+        # structure above 2.5 m: dropped): the p85 rule made the main grandstand at the line a 25.6 m block (timing tower,
+        # masts and the stand's slope inside the OSM outline). Laguna keeps the old rule (byte-identical package).
+        building_height_robust=True,
         terraces=[
             dict(name='T7a hill', osm='1414701937', src='OSM 1414701937; Street View J6fsnW4hj4xCjQLzrgRGzA (terraces, fence and light masts on top); onboard 1:14'),
             dict(name='T3a-T4', osm='1414701938', src='OSM 1414701938; Street View nA1oaDXwADSI7x-Pa-j4Ow (~20 concrete rows); onboard 0:28-0:32'),
