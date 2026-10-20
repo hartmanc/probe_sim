@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import { HotlapSim } from '../../scoreboard';
 import { lagunaAssets, autopilot } from '../../scoreboard/__tests__/fixtures';
 import { HotlapLoop } from '../modes/hotlap';
-import { createRace, newSeed, parseRaceOverrides, raceResultFor, RACE_LAPS, type RaceDeps } from '../modes/race';
+import { createRace, newSeed, parseRaceOverrides, raceAiConfig, raceResultFor, RACE_LAPS, type RaceDeps } from '../modes/race';
 import type { ModeContext, RaceServices } from '../modes/mode';
 import type { FieldData } from '../loader';
 import { FieldCars, buildPlaceholderCar, identityColor, selectDrawn, triangleCount, PROBE_DIMS, type FieldCarInfo } from '../field-cars';
@@ -267,5 +267,12 @@ describe('results → scoreboard', () => {
     const o = await submitRace(res);
     expect(o.status).toBe('submitted');
     expect(posted).toMatchObject({ mode: 'race', track: 'laguna_seca', car: 'probe_gt', ai_version: '2', name: 'COBY', metres: 35111.3, laps: 9, position: 2, finished: false, replay: { seed: 4242 } });
+  });
+});
+
+describe('per-track AI race parameters (TRACKS[id].ai → RaceConfig)', () => {
+  it('Sonoma carries its headway, pass-lane margin and grip-capped lane changes; Laguna the defaults', () => {
+    expect(raceAiConfig('sonoma')).toEqual({ followScale: 1.4, laneMargin: 0.85, shiftGrip: 1 });
+    expect(raceAiConfig('laguna_seca')).toEqual({ followScale: 1, laneMargin: 1, shiftGrip: 0 });
   });
 });
