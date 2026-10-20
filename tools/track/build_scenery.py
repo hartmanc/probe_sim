@@ -1188,11 +1188,12 @@ def closed_road_paint(trk, parts):
             continue
         Pm = PAINT.measure(C, np.zeros(len(C)), caps, ortho, trk.t["ortho"], cfg["captures"]["mpp"],
                            cfg["centre_registration"], log=lambda *a: None)
-        tg = np.gradient(C, axis=0); tg /= np.linalg.norm(tg, axis=1, keepdims=True)
+        tg = np.gradient(C, axis=0); tg /= np.maximum(np.linalg.norm(tg, axis=1, keepdims=True), 1e-9)
         NL = np.c_[-tg[:, 1], tg[:, 0]]
         Z = np.array(p["center"])[:, 2]
         for side, key in ((1, "lat_left"), (-1, "lat_right")):
             v = Pm[key].copy()
+            v[~np.isfinite(NL).all(1) | (np.linalg.norm(NL, axis=1) < 0.5)] = np.nan   # repeated centre points (round 7b)
             ok = np.isfinite(v)
             if ok.sum() < 10:
                 log(f"closed road {p['turn']}: {side > 0 and 'left' or 'right'} painted edge not found ({int(ok.sum())} stations)")
@@ -1866,6 +1867,25 @@ def declared_paint_lines(trk):
     return out
 
 
+def kerb_lines(trk):
+    """Raised kerb strips off the lap (config scenery.kerb_lines, round 7b, Sonoma owner note 45): the painted kerbs round
+    the closed roads' islands, measured on the captures as lat/lon lines (the kerb's centre); {latlon, width, colors
+    (stripe, base) or a palette name, src}; the track's kerb profile height and stripe length; drawn so the ortho's
+    flat kerb paint is covered by geometry (closed roads are not driven at race pace; not in the physics)."""
+    out = []
+    kc = SC_CFG.get("kerb", {})
+    pal = kc.get("palettes", {})
+    for k in SC_CFG.get("kerb_lines", []):
+        P = _ll_line(k["latlon"], 0.5)
+        c = k.get("colors", kc.get("colors", ["#b8433a", "#dedbd2"]))
+        if isinstance(c, str):
+            c = pal[c]
+        out.append({"pts": with_z(trk, P), "width": k.get("width", 0.9), "height": (kc.get("profile") or {}).get("height", 0.08),
+                    "stripe_m": kc.get("stripe_m", 1.0), "colors": list(c), "src": k["src"]})
+        log(f"kerb line {len(P) * 0.5:.0f} m")
+    return out
+
+
 def ground_signs(trk):
     """Painted ground logos as typed text (config scenery.ground_signs, round 7b, Sonoma owner note 46): {latlon (centre),
     length (m, along the text), height (m, across), heading (deg, ENU, the text's reading direction), text, fg, bg (None =
@@ -2255,6 +2275,7 @@ def main(cfg=None, out_dir=None):
         **({"paint_lines": plines} if plines else {}),
         **({"paved_areas": pareas} if pareas else {}),
         **({"ground_signs": ground_signs(trk)} if SC_CFG.get("ground_signs") else {}),
+        **({"kerb_lines": kerb_lines(trk)} if SC_CFG.get("kerb_lines") else {}),
         "landmarks": marks,
         **({"terraces": terr} if terr else {}),
     }

@@ -48,6 +48,8 @@ export interface SceneryJson {
   paint_lines?: { width: number; side?: number; pts: V3[]; src?: string; /** round 7: line colour (default white) */ color?: string }[];
   /** painted ground logos as typed text (round 7b): centre, reading direction (rad, ENU), size, colours */
   ground_signs?: { x: number; y: number; z: number; heading: number; length: number; height: number; text: string; fg: string; bg?: string; src?: string }[];
+  /** raised kerb strips off the lap (round 7b): centre line, width, height, stripe length, colours */
+  kerb_lines?: { pts: V3[]; width: number; height: number; stripe_m: number; colors: string[]; src?: string }[];
   /** paved ground that is not driven (the paddock, 20 Oct 2026): plain paving over the terrain, no physics */
   paved_areas?: { name: string; surface: 'asphalt' | 'concrete'; src: string; poly: V2[] }[];
   /** Cone line between the pit-exit lane and the track (CONTRACTS §2b); crossing it is a black-flag offence. */
@@ -1396,6 +1398,41 @@ function buildPaintLines(list: NonNullable<SceneryJson['paint_lines']>): THREE.G
   return grp.children.length ? grp : null;
 }
 
+/** Raised kerb strips off the lap (scenery.json `kerb_lines`, round 7b): a low box section along each measured line,
+ *  coloured stripe / base every stripe_m, standing on the driven ground. Drawn only. */
+function buildKerbLines(list: NonNullable<SceneryJson['kerb_lines']>, ground?: (x: number, y: number) => number): THREE.Mesh {
+  const pos: number[] = [], col: number[] = [];
+  const quad = (a: THREE.Vector3, b: THREE.Vector3, c: THREE.Vector3, d: THREE.Vector3, cc: THREE.Color) => {
+    for (const p of [a, b, c, a, c, d]) { pos.push(p.x, p.y, p.z); col.push(cc.r, cc.g, cc.b); }
+  };
+  for (const k of list) {
+    const C = k.colors.map((h) => new THREE.Color(h)), hw = k.width / 2, P = k.pts;
+    let acc = 0;
+    for (let i = 0; i + 1 < P.length; i++) {
+      const a = P[i], b = P[i + 1], L = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1;
+      const nx = (-(b[1] - a[1]) / L) * hw, ny = ((b[0] - a[0]) / L) * hw;
+      const g = (x: number, y: number, z: number) => (ground ? ground(x, y) : z);
+      const cc = C[Math.floor(acc / k.stripe_m) % C.length];
+      const za = Math.max(g(a[0] + nx, a[1] + ny, a[2]), g(a[0] - nx, a[1] - ny, a[2])), zb = Math.max(g(b[0] + nx, b[1] + ny, b[2]), g(b[0] - nx, b[1] - ny, b[2]));
+      const A0 = v3(a[0] + nx, a[1] + ny, za - 0.05), A1 = v3(a[0] - nx, a[1] - ny, za - 0.05), B0 = v3(b[0] + nx, b[1] + ny, zb - 0.05), B1 = v3(b[0] - nx, b[1] - ny, zb - 0.05);
+      const up = (v: THREE.Vector3) => v.clone().add(new THREE.Vector3(0, k.height + 0.05, 0));
+      quad(up(A0), up(A1), up(B1), up(B0), cc);
+      quad(A0, up(A0), up(B0), B0, cc.clone().multiplyScalar(0.85));
+      quad(A1, B1, up(B1), up(A1), cc.clone().multiplyScalar(0.85));
+      if (i === 0) quad(A0, A1, up(A1), up(A0), cc);
+      if (i + 2 === P.length) quad(B0, up(B0), up(B1), B1, cc);
+      acc += L;
+    }
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  geo.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+  geo.computeVertexNormals();
+  const m = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ vertexColors: true, side: THREE.DoubleSide }));
+  m.name = 'kerb_lines';
+  return m;
+}
+
 /** Painted ground logos (scenery.json `ground_signs`, round 7b): each a grid draped on the driven ground 2 cm up, a
  *  canvas texture with the name typed in the observed colours (no logo artwork). */
 function buildGroundSigns(list: NonNullable<SceneryJson['ground_signs']>, ground?: (x: number, y: number) => number): THREE.Group {
@@ -1684,6 +1721,7 @@ export function buildScenery(track: TrackJson, _hf: Float32Array, sc: SceneryAss
   }
   if (j.paint_lines?.length) { const m = buildPaintLines(j.paint_lines); if (m) root.add(m); }
   if (j.ground_signs?.length) { const m = buildGroundSigns(j.ground_signs, ground); if (m) root.add(m); }
+  if (j.kerb_lines?.length) root.add(buildKerbLines(j.kerb_lines, ground));
   if (j.paved_areas?.length && ground) { const m = buildPavedAreas(j.paved_areas, ground); if (m) root.add(m); }
   if (j.bridges?.length) root.add(buildBridges(j.bridges, ground));
   if (j.landmarks?.length) root.add(buildLandmarks(j.landmarks));

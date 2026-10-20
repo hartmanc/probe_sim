@@ -796,6 +796,15 @@ CONFIG = dict(
                  src='pit-out blend line, c20_s1870 / c20_s1925 (as the pit-exit cones); colour: the 2025 pit-out video 24of8fjjAug t=304 (double yellow)'),
         ],
         edge_line_cut=[dict(side='left', s=(100, 242), why='the pit-out blend line is the declared double yellow paint line (2025 pit-out video t=304), not the white edge line')],
+        # raised kerbs round the T7 complex islands off the lap (round 7b, owner note 45): the capture's red / white kerb paint
+        # measured as lines (wall_measure bright along the painted blocks, capture shift applied), drawn raised so the ortho's
+        # flat kerb paint never shows under a partial strip
+        kerb_lines=[
+            dict(latlon=[(38.1667106, -122.4620068), (38.1666918, -122.461982), (38.1666742, -122.461956), (38.166659, -122.4619276), (38.1666438, -122.4619002), (38.166626, -122.4618744), (38.1666101, -122.4618461), (38.1665948, -122.4618172), (38.1665754, -122.4617939), (38.1665542, -122.4617719), (38.1665356, -122.4617471), (38.1665181, -122.461721), (38.1665005, -122.461695), (38.1664828, -122.4616691), (38.1664651, -122.4616433), (38.1664622, -122.461639)],
+                 width=1.0, colors='red', src="c20_s3960 / c20_s0000: red / white kerb blocks along the O'Reilly island's lower edge (the T7 inside runoff / PWC road side), wall_measure bright 100 % picked, rms 0.91 m"),
+            dict(latlon=[(38.1665091, -122.4622261), (38.1665166, -122.4621931), (38.1665238, -122.4621585), (38.1665208, -122.4621237), (38.1665183, -122.4620895), (38.1665123, -122.4620558), (38.1665007, -122.4620249), (38.166489, -122.461994), (38.1664748, -122.4619651), (38.1664606, -122.4619361), (38.1664464, -122.461907), (38.16643, -122.4618798), (38.1664136, -122.4618526), (38.166397, -122.4618255), (38.1663914, -122.4618166)],
+                 width=1.0, colors='red', src='c20_s3960 / c20_s0000: red / white kerb blocks round the tip and upper edge of the island between the short-T7 road and the drag-strip road, wall_measure bright 99 % picked, rms 0.17 m'),
+        ],
         # painted ground logos (round 7b, owner note 46): the name typed in the observed colours, no logo artwork; footprint and
         # reading direction measured on the clean captures (capture shift applied)
         ground_signs=[
@@ -897,6 +906,10 @@ CONFIG = dict(
             # from t098's perspective (between the edge and the wall, nearer the edge); none in t090-t094
             dict(side='left', s=(3031, 3032), off=6.4, spacing=10.0, size=0.5,
                  src='onboard RAZip6S84CM 1:36-1:38 (t096 / t098; owner_49 crop): one orange cone ~0.5 m on the grass verge left before 9a, ~6 m beyond the edge (frame perspective); not resolved on c20_s0605 / c20_o0660'),
+            # round 7b (note 45): cones across the short-T7 (PWC) road where it leaves the T7 paved area (its mouth is 22 m off
+            # the track, so the closed-road mouth rule finds none): onboard 1:14 (t074) orange cones ahead-right across it
+            dict(latlon=[(38.1663154, -122.4622045), (38.1663858, -122.4621335)], spacing=2.5,
+                 src='onboard RAZip6S84CM 1:14 (t074): orange cones across the short-T7 road at the T7 hairpin; line across the road\'s first section (OSM 505454376, NAIP width)'),
             dict(side='right', s=(2196, 2212), off=0.5, spacing=5.0,
                  src='onboard 1:14-1:16 (round 5): orange delineator posts on the edge of the T7a island before its kerb (island on c20_s3960)'),
             dict(side='right', s=(1932, 1942), off=1.5, spacing=4.0,
@@ -934,9 +947,10 @@ CONFIG = dict(
                  mouth_cones=[]),
             # the paved runoff INSIDE T7 (the triangle inside the hairpin, round the short-T7 way): cars may use it
             # (owner), so no cones; the racing line stays on the track (cutting through adds distance)
-            dict(name='T7 inside runoff', ways=['1494191150'], half_width=10.0, max_half=14.0, cones=False, surface='asphalt'),
+            dict(name='T7 inside runoff', ways=['1494191150'], half_width=10.0, max_half=14.0, cones=False, surface='asphalt', paint=True),  # round 7b (note 45): painted edges like a real road; still open (owner, 19 Oct)
             dict(name='T11a shortcut', ways=['28825444'], half_width=6.0, surface='concrete', paint=True, mouth_cones=[]),
-            dict(name='PWC lower hairpin', ways=['505454376'], half_width=5.0, surface='asphalt', paint=True, mouth_cones=[]),
+            dict(name='PWC lower hairpin', ways=['505454376'], half_width=5.0, surface='asphalt', paint=True,
+                 mouth_cones=[]),
         ],
 
         # a closed road's paving stops at its walls (the drag strip's NAIP width reached under the pit-straight wall)
