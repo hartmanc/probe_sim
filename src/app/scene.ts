@@ -805,7 +805,7 @@ export function buildWorld(track: TrackJson, hf: Float32Array, ortho: THREE.Text
   if (pit) { const m = buildPitPaint(pit, ground); if (m) scene.add(m); }
   const seam = seamReport(secs, grid.surfaceZ);
   scene.add(buildStartLine(track, ground));
-  if (scenery) scene.add(buildScenery(track, hf, scenery, maxAniso, ground, paintSurface(track, ortho, asphaltDetail, groundDetail)));
+  if (scenery) scene.add(buildScenery(track, hf, scenery, maxAniso, ground, paintSurface(track, ortho, asphaltDetail, groundDetail), grid.surfaceZ));
   else scene.add(buildCornerSigns(track));
   // Lambert BRDF is albedo/pi: sun 3.4 at 38 deg elevation + sky fill ~ 0.9 x albedo on flat ground, so the
   // ortho shows close to its own colours under ACES at exposure 1.

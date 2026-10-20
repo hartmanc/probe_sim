@@ -488,6 +488,11 @@ def terraces(trk):
     from shapely.geometry import LineString, Polygon
     out, fences = [], []
     for tc in SC_CFG.get("terraces", []):
+        if tc.get("front"):
+            t_, f_ = terrace_measured(trk, tc)
+            if t_:
+                out.append(t_); fences.extend(f_)
+            continue
         if tc.get("osm"):
             xy = TERRACE_FOOTPRINTS.get(str(tc["osm"]))
             if xy is None:
@@ -551,6 +556,64 @@ def terraces(trk):
             f"(p10 {np.percentile(rise, 10) if len(rise) else 0:.2f}, p90 {np.percentile(rise, 90) if len(rise) else 0:.2f}), "
             f"hillside slope {slope:.2f}, total rise {rows[-1]['z'] - rows[0]['z']:.1f} m")
     return out, fences
+
+
+def terrace_measured(trk, tc):
+    """A terrace declared by its measured footprint (config scenery.terraces `front` / `back`, Sonoma round 6, 21 Oct 2026):
+    two lat/lon polylines of equal length, matched by index: the lower edge of the seating field and its upper edge on the
+    same measurement ray (compare/terrace_measure.py: the row texture on the 2026 captures, the DEM crest less 3 m where
+    the captures end). The rows follow the stand: row k is the curve at (k + 0.5) * run up each ray, present where the
+    ray's depth holds the whole tread; each vertex's tread sits on the ground at the tread's back (uphill) edge, at least
+    0.15 m above the row below; its riser runs down to the row below (row 0: to the ground at the tread's front edge).
+    The OSM way (`osm`) only marks the slab the terrace replaces. Rows carry `pts` [x, y, z, z_low, m] (m: metres along
+    the front line) and `nrm` (the uphill unit vector per vertex) besides the a / b / z of the straight rows."""
+    F = np.array([bl.enu(la, lo) for la, lo in tc["front"]], float)
+    B = np.array([bl.enu(la, lo) for la, lo in tc["back"]], float)
+    if len(F) != len(B) or len(F) < 2:
+        raise SystemExit(f"terrace {tc['name']}: front and back need the same number (>= 2) of points")
+    D = B - F
+    depth = np.linalg.norm(D, axis=1)
+    U = D / np.maximum(depth, 1e-6)[:, None]
+    M = np.r_[0, np.cumsum(np.linalg.norm(np.diff(F, axis=0), axis=1))]
+    run = float(tc.get("run", 0.9)); h = run / 2
+    nrow = int(depth.max() / run)
+    rows, zprev = [], np.full(len(F), np.nan)
+    for k in range(nrow):
+        d = (k + 0.5) * run
+        present = d + h <= depth + 0.3
+        V = F + U * d
+        zb = trk.ground(V[:, 0] + U[:, 0] * h, V[:, 1] + U[:, 1] * h)
+        zf = trk.ground(V[:, 0] - U[:, 0] * h, V[:, 1] - U[:, 1] * h)
+        zb = np.maximum(zb, ndi.median_filter(zb, 3, mode="nearest"))
+        zlow = np.where(np.isfinite(zprev), zprev, zf)
+        z = np.maximum(zb, zlow + 0.15)
+        znew = np.full(len(F), np.nan)
+        lab, nl = ndi.label(present)
+        for j in range(1, nl + 1):
+            ii = np.where(lab == j)[0]
+            if len(ii) < 2:
+                continue
+            znew[ii] = z[ii]
+            pts = [[rnd(V[i, 0], 2), rnd(V[i, 1], 2), rnd(z[i], 2), rnd(zlow[i], 2), rnd(M[i], 2)] for i in ii]
+            rows.append({"a": pts[0][:2], "b": pts[-1][:2], "z": rnd(float(z[ii].min()), 2), "k": k, "pts": pts,
+                         "nrm": [[rnd(U[i, 0], 4), rnd(U[i, 1], 4)] for i in ii]})
+        zprev = znew
+    if not rows:
+        log(f"terrace {tc['name']}: no rows (depth {depth.max():.1f} m < run {run} m)")
+        return None, []
+    u = U.mean(0); u /= np.linalg.norm(u)
+    zg0 = min(min(p[3] for p in r["pts"]) for r in rows if r["k"] == 0) if any(r["k"] == 0 for r in rows) else rows[0]["z"]
+    t_ = {"name": tc["name"], "src": tc["src"], "run": run, "dir": [rnd(u[0], 4), rnd(u[1], 4)], "z_ground_front": rnd(zg0, 2),
+          "rows": rows}
+    fences = []
+    if tc.get("fence", True):
+        Pf = resample_line(B, 3.0)
+        fences.append({"kind": "fence", "h": 0.0, "fence": 1.8, "pts": with_z(trk, Pf),
+                       "src": f"terrace {tc['name']} top fence ({tc.get('fence_src', tc['src'])})"})
+    area = float(np.sum((depth[1:] + depth[:-1]) / 2 * np.diff(M)))
+    log(f"terrace {tc['name']}: measured footprint, {len(F)} rays over {M[-1]:.0f} m, depth {depth.min():.1f}-{depth.max():.1f} m "
+        f"({area:.0f} m2), {nrow} rows of {run} m in {len(rows)} pieces, rise {rows[-1]['z'] - rows[0]['z']:.1f} m")
+    return t_, fences
 
 
 # ---------------------------------------------------------------- trees

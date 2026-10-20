@@ -134,7 +134,10 @@ def main():
                 d.text((q[0] + 5, q[1] + 2), f"{m['kind'][:6]} {m.get('text', '')}", fill=(255, 255, 0))
             for tr in SC.get('terraces', []):
                 for row in tr.get('rows', [])[::4]:
-                    d.line([px(*row['a']), px(*row['b'])], fill=(200, 200, 200), width=1)
+                    if row.get('pts'):
+                        d.line([px(q[0], q[1]) for q in row['pts']], fill=(200, 200, 200), width=1)
+                    else:
+                        d.line([px(*row['a']), px(*row['b'])], fill=(200, 200, 200), width=1)
     if a.poly:
         for run in json.load(open(a.poly)):
             d.line([px(*cfg.enu(la, lo)) for la, lo in run], fill=(255, 0, 0), width=2)

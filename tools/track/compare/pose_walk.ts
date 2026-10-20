@@ -6,7 +6,7 @@
 //   npx tsx tools/track/compare/pose_walk.ts --track sonoma --poses poses.json --out <dir> [--port 5180] [--tag after]
 //
 // poses.json: [{name, x, y, z, heading (rad, ENU), yaw (deg, + = left), pitch (deg, + = up)}]; the car is placed at
-// (x, y, z) facing heading, the hood camera turned by yaw / pitch. Writes <out>/<name>_<tag>.jpg and <out>/stats_<tag>.json.
+// (x, y, z) facing heading, the hood camera turned by yaw / pitch; --hide a,b hides scene objects by name. Writes <out>/<name>_<tag>.jpg and <out>/stats_<tag>.json.
 import { spawn, type ChildProcess } from 'node:child_process';
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -90,6 +90,9 @@ async function main() {
       if (st) st.traverse((o) => { if (o.isMesh) { stMeshes++; stTris += o.geometry.attributes.position.count / 3; } });
       return { sceneMeshes: meshes, sceneTriangles: Math.round(tris), structureMeshes: stMeshes, structureTriangles: stTris }; })()`);
     console.log('scene', JSON.stringify(scene));
+    // --hide name,name: hide the named scene objects (diagnosis: which mesh draws what)
+    const hide = opt('hide', '');
+    if (hide) console.log('hidden', await cdp.eval<number>(`(() => { let n = 0; for (const nm of ${JSON.stringify(hide.split(','))}) window.__sim.world.scene.traverse((o) => { if (o.name === nm) { o.visible = false; n++; } }); return n; })()`));
     for (const p of poses) {
       await cdp.eval(`window.__sim.vehicle.reset(${JSON.stringify([p.x, p.y, p.z])}, ${p.heading}, 0)`);
       await sleep(300);

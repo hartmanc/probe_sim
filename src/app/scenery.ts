@@ -8,7 +8,7 @@ import { mergeGeometries, mergeVertices } from 'three/examples/jsm/utils/BufferG
 import type { PitLaneJson, SausageJson, TrackJson } from './physics-types';
 import { PitExitCones, type PitExitConesJson } from './trackmath';
 import { TRACK } from './track-choice';
-import { buildStructures, type StructureJson } from './structures';
+import { buildStructures, selfLitMaterial, TERRACE_SELF_LIT, type StructureJson, type TerraceJson } from './structures';
 
 type V2 = [number, number];
 type V3 = [number, number, number];
@@ -56,8 +56,9 @@ export interface SceneryJson {
     /** wall-board signs: the panel's top above the ground (m), for the coverage gate */ top?: number;
     /** 'impact' (impact barrier block at a wall's nose): its length along `heading` */ d?: number }[];
   /** grandstands built into a hillside: stepped concrete rows following the ground (20 Oct 2026). Row r is a tread
-   *  from a to b at height z, `run` m deep away from the track along `dir`; risers join consecutive rows. */
-  terraces?: { name: string; src: string; run: number; dir: V2; z_ground_front: number; rows: { a: V2; b: V2; z: number }[] }[];
+   *  from a to b at height z, `run` m deep away from the track along `dir`; risers join consecutive rows. A terrace declared
+   *  by its measured footprint (Sonoma round 6) has polyline rows that follow the stand (`pts`, `nrm`; structures.ts). */
+  terraces?: TerraceJson[];
   /** parametric structures (grandstands, garages, blocks, fuel islands, fences, masts, pit-box paint, boards, terrace
    *  dressing; src/app/structures.ts, tools/track/build_structures.py; 21 Oct 2026) */
   structures?: StructureJson[];
@@ -389,16 +390,62 @@ function bleacherTexture(): THREE.Texture {
 }
 
 /** Hillside grandstands as stepped concrete rows (scenery.json `terraces`): a tread per row at its height and a riser
- *  down to the row below (row 0 to the ground), in alternating concrete greys. */
+ *  down to the row below (row 0 to the ground). Bleacher grey with the row contrast that reads at a distance (round 6,
+ *  the orchestrator's sheets: the stands read as brown wedges): light concrete treads in two close greys, dark risers
+ *  shadow lines at the foot of each riser (what the track sees between rows). Polyline rows (`pts`, `nrm`) follow the stand vertex by vertex. */
+/** Polyline terrace rows onto the DRAWN terrain (round 6): the package puts each tread on the heightfield at its back
+ *  edge, but the terrain is drawn as a 3 m mesh whose planes cut through 1.1-1.25 m steps and buried the rows (the stands
+ *  read as flat ortho-grey slopes). Each vertex's tread is lifted to 3 cm over the drawn ground under its front, middle
+ *  and back, the riser's foot follows the (lifted) row below at the same metre mark, and row 0's riser starts on the
+ *  drawn ground. Straight rows and terraces without `ground` pass unchanged. Pure. */
+export function liftTerraces(list: TerraceJson[], ground?: (x: number, y: number) => number): TerraceJson[] {
+  if (!ground) return list;
+  return list.map((t) => {
+    if (!t.rows.some((r) => r.pts)) return t;
+    const h = t.run / 2, lifted = new Map<string, number>();
+    const rows = [...t.rows].sort((a, b) => (a.k ?? 0) - (b.k ?? 0)).map((r) => {
+      if (!r.pts || !r.nrm) return r;
+      const pts = r.pts.map((q, i) => {
+        const n = r.nrm![i];
+        const gz = Math.max(ground(q[0] - n[0] * h, q[1] - n[1] * h), ground(q[0], q[1]), ground(q[0] + n[0] * h, q[1] + n[1] * h));
+        const z = Math.max(q[2], gz + 0.03);
+        const below = lifted.get(`${(r.k ?? 0) - 1}:${q[4]}`);
+        const zl = below !== undefined ? Math.min(below, z) : Math.min(q[3], ground(q[0] - n[0] * h, q[1] - n[1] * h));
+        return [q[0], q[1], z, zl, q[4]] as [number, number, number, number, number];
+      });
+      for (const q of pts) lifted.set(`${r.k ?? 0}:${q[4]}`, q[2]);
+      return { ...r, pts, z: Math.min(...pts.map((q) => q[2])) };
+    });
+    return { ...t, rows };
+  });
+}
+
+export const TERRACE_TREAD_A = 0xc6c5c0, TERRACE_TREAD_B = 0xbab9b4, TERRACE_RISER = 0x4a4946, TERRACE_STEP = 0xa6a5a0;
 function buildTerraces(list: NonNullable<SceneryJson['terraces']>): THREE.Mesh | null {
   const pos: number[] = [], col: number[] = [];
-  const cA = new THREE.Color(0xa9a8a3), cB = new THREE.Color(0x9b9a95), cR = new THREE.Color(0x85847f);
+  const cA = new THREE.Color(TERRACE_TREAD_A), cB = new THREE.Color(TERRACE_TREAD_B), cR = new THREE.Color(TERRACE_RISER), cS = new THREE.Color(TERRACE_STEP);
   const quad = (p: THREE.Vector3[], c: THREE.Color) => {
     for (const k of [0, 1, 2, 0, 2, 3]) { pos.push(p[k].x, p[k].y, p[k].z); col.push(c.r, c.g, c.b); }
   };
   for (const t of list) {
     const [ux, uy] = t.dir, h = t.run / 2;
     t.rows.forEach((r, i) => {
+      if (r.pts && r.nrm && r.pts.length >= 2) {
+        const P = r.pts, N = r.nrm, c = (r.k ?? i) % 2 ? cA : cB;
+        for (let j = 0; j + 1 < P.length; j++) {
+          const a = P[j], b = P[j + 1], na = N[j], nb = N[j + 1];
+          const fa: V2 = [a[0] - na[0] * h, a[1] - na[1] * h], fb: V2 = [b[0] - nb[0] * h, b[1] - nb[1] * h];
+          const a0 = v3(fa[0], fa[1], a[2]), b0 = v3(fb[0], fb[1], b[2]);
+          const a1 = v3(a[0] + na[0] * h, a[1] + na[1] * h, a[2]), b1 = v3(b[0] + nb[0] * h, b[1] + nb[1] * h, b[2]);
+          quad([a0, b0, b1, a1], c);
+          // riser: the shadow line under the row above's front (lower 45 %, dark) and the step face (upper part, concrete):
+          // the dark line every row is what reads as rows at a distance
+          const ma = a[3] + (a[2] - a[3]) * 0.45, mb = b[3] + (b[2] - b[3]) * 0.45;
+          quad([v3(fa[0], fa[1], a[3]), v3(fb[0], fb[1], b[3]), v3(fb[0], fb[1], mb), v3(fa[0], fa[1], ma)], cR);
+          quad([v3(fa[0], fa[1], ma), v3(fb[0], fb[1], mb), b0, a0], cS);
+        }
+        return;
+      }
       const a0: V2 = [r.a[0] - ux * h, r.a[1] - uy * h], b0: V2 = [r.b[0] - ux * h, r.b[1] - uy * h];
       const a1: V2 = [r.a[0] + ux * h, r.a[1] + uy * h], b1: V2 = [r.b[0] + ux * h, r.b[1] + uy * h];
       quad([v3(a0[0], a0[1], r.z), v3(b0[0], b0[1], r.z), v3(b1[0], b1[1], r.z), v3(a1[0], a1[1], r.z)], i % 2 ? cA : cB);
@@ -411,7 +458,8 @@ function buildTerraces(list: NonNullable<SceneryJson['terraces']>): THREE.Mesh |
   g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
   g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
   g.computeVertexNormals();
-  const m = new THREE.Mesh(g, new THREE.MeshLambertMaterial({ vertexColors: true, side: THREE.DoubleSide }));
+  const mat = selfLitMaterial(TERRACE_SELF_LIT);
+  const m = new THREE.Mesh(g, mat);
   m.name = 'terraces';
   return m;
 }
@@ -1467,7 +1515,9 @@ function buildLandmarks(list: SceneryJson['landmarks']): THREE.Group {
   return group;
 }
 
-export function buildScenery(track: TrackJson, _hf: Float32Array, sc: SceneryAssets, _maxAniso: number, ground?: (x: number, y: number) => number, paint?: PaintSurface): THREE.Group {
+/** `drawn`: the height of the terrain mesh as drawn (a 3 m triangulation of the heightfield, sunk under the ribbons);
+ *  the hillside terraces sit on it (liftTerraces). */
+export function buildScenery(track: TrackJson, _hf: Float32Array, sc: SceneryAssets, _maxAniso: number, ground?: (x: number, y: number) => number, paint?: PaintSurface, drawn?: (x: number, y: number) => number): THREE.Group {
   const root = new THREE.Group();
   root.name = 'scenery';
   const j = sc.json;
@@ -1483,8 +1533,9 @@ export function buildScenery(track: TrackJson, _hf: Float32Array, sc: SceneryAss
   const others = (j.buildings ?? []).filter((b) => b.kind !== 'grandstand');
   if (others.length) root.add(buildBuildings(track, others));
   if (stands.length) root.add(buildBuildings(track, stands, true));
-  if (j.terraces?.length) { const t = buildTerraces(j.terraces); if (t) root.add(t); }
-  if (j.structures?.length) root.add(buildStructures(j.structures, j.terraces ?? [], ground));
+  const terr = j.terraces?.length ? liftTerraces(j.terraces, drawn ?? ground) : [];
+  if (terr.length) { const t = buildTerraces(terr); if (t) root.add(t); }
+  if (j.structures?.length) root.add(buildStructures(j.structures, terr, ground));
   // barrier feet and kerbs follow the drawn/driven surface (the track shoulder differs from the raw heightfield)
   const snap = (P: V3[]): V3[] => (ground ? P.map(([x, y]) => [x, y, ground(x, y)] as V3) : P);
   if (j.barriers?.length) root.add(buildBarriers(j.barriers.map((b) => ({ ...b, pts: snap(b.pts) }))));

@@ -120,12 +120,13 @@ describe('structure kit', () => {
     expect(a.solid.pos).toEqual(b.solid.pos);
     expect(a.solid.col).toEqual(b.solid.col);
     expect(a.paint.pos).toEqual(b.paint.pos);
-    const total = a.solid.tris + a.paint.tris + a.fabric.tris;
+    const total = a.solid.tris + a.paint.tris + a.fabric.tris + a.terrace.tris;
     expect(Object.values(a.perType).reduce((x, y) => x + y, 0)).toBe(total);
     expect(total).toBeLessThan(150000);
     // unknown types and a dressing of a missing terrace draw nothing
     const none = structureSoups([{ type: 'terrace_dress', src: 't', terrace: 'nope' } as StructureJson], []);
     expect(none.solid.tris).toBe(0);
+    expect(none.terrace.tris).toBe(0);
   });
 });
 
@@ -156,5 +157,24 @@ describe('terrace dressing on the terrain', () => {
     expect(hill.tris).toBe(flat.tris);   // the same 8 m pieces, lifted
     expect(hill.bounds().max[2]).toBeCloseTo(50.4, 6);
     expect(hill.bounds().min[2]).toBeCloseTo(0.4, 6);   // the first row's own height where the ground is lower
+  });
+});
+
+describe('terrace with polyline rows (measured footprint, round 6)', () => {
+  // two rows along a bend, 4 vertices each, metres along the front line in pts[4]
+  const row = (k: number, d: number) => ({
+    a: [0, d] as [number, number], b: [30, d + 6] as [number, number], z: 1 + k * 0.5, k,
+    pts: [0, 10, 20, 30].map((m, i) => [m, d + i * 2, 1 + k * 0.5, k ? 1 + (k - 1) * 0.5 : 0.8, m] as [number, number, number, number, number]),
+    nrm: [0, 1, 2, 3].map(() => [0, 1] as [number, number]),
+  });
+  const terr = { name: 'bend', run: 1.15, dir: [0, 1] as [number, number], z_ground_front: 0.8, rows: [row(0, 0), row(1, 1.15)] };
+  it('benches run along each row, broken by aisles at fixed metres, with a rail to the next row', () => {
+    const s = new Soup();
+    terraceDress({ type: 'terrace_dress', src: 't', terrace: 'bend', bench: { color: '#b3b1aa', h: 0.15, depth: 0.45 }, aisles: { pitch: 15, w: 1.4, color: '#c4c1b8' } }, terr, s);
+    expect(s.tris).toBeGreaterThan(2 * 8 * 4);
+    const { min, max } = s.bounds();
+    expect(min[0]).toBeGreaterThanOrEqual(-1e-6);
+    expect(max[0]).toBeLessThanOrEqual(30 + 1e-6);
+    expect(max[2]).toBeLessThanOrEqual(1.5 + 0.9 + 1e-6);   // the rail top over the upper row
   });
 });

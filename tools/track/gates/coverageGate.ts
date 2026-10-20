@@ -97,6 +97,13 @@ export function sceneryObjects(t: TrackLike, sc: SceneryLike & Record<string, an
   }
   (sc.terraces ?? []).forEach((tr: any) => {
     const P: V2[] = [];
+    if (tr.rows.some((r: any) => r.pts)) {
+      // polyline rows (a measured footprint): the front and top rows along their length
+      const kmax = Math.max(...tr.rows.map((r: any) => r.k ?? 0));
+      for (const r of tr.rows) if ((r.k ?? 0) === 0 || (r.k ?? 0) === kmax) for (const q of r.pts) P.push([q[0], q[1]]);
+      bySide('stand', project(P, 300), tr.src ?? '', `terrace ${tr.name}`);
+      return;
+    }
     for (const r of [tr.rows[0], tr.rows[tr.rows.length - 1]]) if (r) P.push(r.a, r.b);
     bySide('stand', project(densify(P, 10), 300), tr.src ?? '', `terrace ${tr.name}`);
   });

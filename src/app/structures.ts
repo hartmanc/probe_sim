@@ -88,7 +88,11 @@ export interface TerraceDressJson {
 /** every structure may carry solid outlines for the collision world (src/physics/collision.ts reads them like buildings) */
 export interface Collide { collide?: { footprint: V2[]; z: number; h: number }[] }
 export type StructureJson = (GrandstandJson | GarageJson | BlockJson | FuelJson | FenceJson | MastJson | PaintJson | BoardsJson | TerraceDressJson) & Collide;
-export interface TerraceJson { name: string; run: number; dir: V2; z_ground_front: number; rows: { a: V2; b: V2; z: number }[] }
+/** A terrace row: straight (a, b at height z), or, for a terrace declared by its measured footprint (Sonoma round 6), a
+ *  polyline following the stand: `pts` [x, y, z, z_low, m] (tread height, the row below's height, metres along the front
+ *  line) with `nrm` the uphill unit vector per vertex, and `k` the row number. */
+export interface TerraceRow { a: V2; b: V2; z: number; k?: number; pts?: [number, number, number, number, number][]; nrm?: V2[] }
+export interface TerraceJson { name: string; run: number; dir: V2; z_ground_front: number; rows: TerraceRow[] }
 
 // ------------------------------------------------------------------ triangle soup
 const colorCache = new Map<string, [number, number, number]>();
@@ -462,6 +466,7 @@ export function boards(u: BoardsJson, s: Soup): void {
 /** With `ground` (the drawn terrain), each bench piece (at most 8 m) sits on the higher of its row height and the
  *  terrain under it, so the rows read on a hillside whose ground varies along a row (the treads are flat per row). */
 export function terraceDress(u: TerraceDressJson, t: TerraceJson, s: Soup, ground?: (x: number, y: number) => number): void {
+  if (t.rows.some((r) => r.pts?.length)) { terraceDressPolyline(u, t, s, ground); return; }
   const [ux, uy] = t.dir, h = t.run / 2;
   const rows = t.rows;
   if (!rows.length) return;
@@ -550,15 +555,123 @@ export function terraceDress(u: TerraceDressJson, t: TerraceJson, s: Soup, groun
   }
 }
 
-// ------------------------------------------------------------------ assembly
-export interface StructureSoups { solid: Soup; paint: Soup; fabric: Soup; perType: Record<string, number> }
+/** A point on a polyline row at metres `m` along the front line: position, tread height, the row below's height and the
+ *  uphill normal (linear between vertices); null outside the row. */
+function rowAt(r: TerraceRow, m: number): { p: V2; z: number; zl: number; n: V2 } | null {
+  const P = r.pts!, N = r.nrm!;
+  if (m < P[0][4] - 1e-6 || m > P[P.length - 1][4] + 1e-6) return null;
+  let i = 0;
+  while (i < P.length - 2 && P[i + 1][4] < m) i++;
+  const a = P[i], b = P[i + 1], f = Math.min(1, Math.max(0, (m - a[4]) / (b[4] - a[4] || 1)));
+  const nx = N[i][0] + (N[i + 1][0] - N[i][0]) * f, ny = N[i][1] + (N[i + 1][1] - N[i][1]) * f, nl = Math.hypot(nx, ny) || 1;
+  return { p: [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f], z: a[2] + (b[2] - a[2]) * f, zl: a[3] + (b[3] - a[3]) * f, n: [nx / nl, ny / nl] };
+}
 
-/** All structures as three triangle soups (pure; deterministic for the same input). */
+/** Dressing of a terrace whose rows follow the stand (polyline rows): bench pieces between the aisles on every row (each
+ *  on the higher of the tread and the drawn terrain), aisle steps and hand rails at fixed metres along the front line, and
+ *  shade roofs over the top `rows` rows between fractions f0..f1 of the front line. */
+function terraceDressPolyline(u: TerraceDressJson, t: TerraceJson, s: Soup, ground?: (x: number, y: number) => number): void {
+  const h = t.run / 2;
+  const rows = t.rows.filter((r) => r.pts && r.pts.length >= 2);
+  if (!rows.length) return;
+  const mlo = Math.min(...rows.map((r) => r.pts![0][4])), mhi = Math.max(...rows.map((r) => r.pts![r.pts!.length - 1][4]));
+  const A = u.aisles;
+  const aisleAt: number[] = [];
+  if (A) for (let x = mlo + A.pitch / 2; x < mhi; x += A.pitch) aisleAt.push(x);
+  // the bench's front face in shadow (0.35 of its colour): the dark line per row that reads as rows from the track
+  const cBench = rgb(u.bench?.color ?? '#c9c6bd'), cBenchF = rgb(u.bench?.color ?? '#c9c6bd', 0.35);
+  const cAisle = rgb(A?.color ?? '#c2c0b9'), cRail = rgb(A?.rail ?? '#7d8186');
+  const P3 = (q: { p: V2; n: V2 }, d: number, z: number): V3 => [q.p[0] + q.n[0] * d, q.p[1] + q.n[1] * d, z];
+  const byK = new Map<number, TerraceRow[]>();
+  for (const r of rows) { const k = r.k ?? 0; if (!byK.has(k)) byK.set(k, []); byK.get(k)!.push(r); }
+  for (const r of rows) {
+    const m0 = r.pts![0][4], m1 = r.pts![r.pts!.length - 1][4];
+    if (m1 - m0 < 1) continue;
+    const cuts: [number, number][] = [];
+    let c0 = m0;
+    if (A) for (const x of aisleAt) { if (x - A.w / 2 > c0 && x + A.w / 2 < m1) { cuts.push([c0, x - A.w / 2]); c0 = x + A.w / 2; } }
+    cuts.push([c0, m1]);
+    if (u.bench) {
+      const B = u.bench, db0 = h - B.depth - 0.05, db1 = h - 0.05;
+      for (const [q0, q1] of cuts) {
+        if (q1 - q0 < 0.5) continue;
+        // pieces of at most 4 m (the rows bend), each on the higher of its tread and the terrain under its back edge
+        const n = Math.max(1, Math.ceil((q1 - q0) / 4));
+        for (let k = 0; k < n; k++) {
+          const a = rowAt(r, q0 + ((q1 - q0) * k) / n), b = rowAt(r, q0 + ((q1 - q0) * (k + 1)) / n);
+          if (!a || !b) continue;
+          const gz = ground ? Math.max(ground(a.p[0] + a.n[0] * h, a.p[1] + a.n[1] * h), ground(b.p[0] + b.n[0] * h, b.p[1] + b.n[1] * h)) : -Infinity;
+          const za = Math.max(a.z, gz), zb = Math.max(b.z, gz);
+          s.quad(P3(a, db0, za + B.h), P3(b, db0, zb + B.h), P3(b, db1, zb + B.h), P3(a, db1, za + B.h), cBench);
+          s.quad(P3(a, db0, za), P3(b, db0, zb), P3(b, db0, zb + B.h), P3(a, db0, za + B.h), cBenchF);
+        }
+      }
+    }
+    if (A) for (const x of aisleAt) {
+      if (x - A.w / 2 <= m0 || x + A.w / 2 >= m1) continue;
+      const a = rowAt(r, x - A.w / 2)!, b = rowAt(r, x + A.w / 2)!, c = rowAt(r, x)!;
+      const zm = (c.zl + c.z) / 2;
+      const Q = (q: { p: V2; n: V2 }, d: number, z: number): V3 => P3(q, d, z + 0.01);
+      s.quad(Q(a, -h, zm), Q(b, -h, zm), Q(b, 0, zm), Q(a, 0, zm), cAisle);
+      s.quad(Q(a, 0, zm), Q(b, 0, zm), Q(b, 0, c.z), Q(a, 0, c.z), rgb(A.color, 0.85));
+      s.quad(Q(a, 0, c.z), Q(b, 0, c.z), Q(b, h, c.z), Q(a, h, c.z), cAisle);
+      const nx = (byK.get((r.k ?? 0) + 1) ?? []).map((q) => rowAt(q, x)).find((q) => q);
+      if (nx) {
+        const a3: V3 = [c.p[0], c.p[1], c.z + 0.9], b3: V3 = [nx.p[0], nx.p[1], nx.z + 0.9];
+        s.quad([a3[0], a3[1], a3[2] - 0.05], [b3[0], b3[1], b3[2] - 0.05], b3, a3, cRail);
+        if ((r.k ?? 0) % 3 === 0) s.quad([c.p[0] - 0.03 * c.n[1], c.p[1] + 0.03 * c.n[0], c.z], [c.p[0] + 0.03 * c.n[1], c.p[1] - 0.03 * c.n[0], c.z], [c.p[0] + 0.03 * c.n[1], c.p[1] - 0.03 * c.n[0], c.z + 0.9], [c.p[0] - 0.03 * c.n[1], c.p[1] + 0.03 * c.n[0], c.z + 0.9], cRail);
+      }
+    }
+  }
+  // shade roofs: at each metre mark across f0..f1, from the front of the row `rows - 1` below the top row there to the
+  // back of the top row, `h` over the treads (0.6 m more at the back), posts every ~8 m
+  const kmax = (m: number) => { let best: { k: number; q: ReturnType<typeof rowAt> } | null = null; for (const r of rows) { const q = rowAt(r, m); if (q && (!best || (r.k ?? 0) > best.k)) best = { k: r.k ?? 0, q }; } return best; };
+  for (const sh of u.shades ?? []) {
+    const a0 = mlo + (mhi - mlo) * sh.f0, a1 = mlo + (mhi - mlo) * sh.f1;
+    const n = Math.max(1, Math.ceil((a1 - a0) / 4));
+    const col = rgb(sh.color), post = rgb('#8c9196');
+    let prev: [V3, V3] | null = null;
+    for (let k = 0; k <= n; k++) {
+      const m = a0 + ((a1 - a0) * k) / n, top = kmax(m);
+      if (!top || !top.q) { prev = null; continue; }
+      const lowK = Math.max(0, top.k - sh.rows + 1);
+      const low = (byK.get(lowK) ?? []).map((q) => rowAt(q, m)).find((q) => q) ?? top.q;
+      const f: V3 = P3(low, -h, low.z + sh.h), b: V3 = P3(top.q, h, top.q.z + sh.h + 0.6);
+      if (prev) s.quad(prev[0], f, b, prev[1], col);
+      if (k === 0 || k === n || k % 2 === 0) for (const [q, z, d] of [[low, low.z, -h * 0.9], [top.q, top.q.z, h * 0.9]] as [{ p: V2; n: V2 }, number, number][]) {
+        const fr = new Frame(P3(q, d, z), [q.n[0], q.n[1]], [-q.n[1], q.n[0]]);
+        s.box(fr, -0.08, 0.08, -0.08, 0.08, 0, (q === low ? f[2] : b[2]) - z, post, { top: null, shade: false });
+      }
+      prev = [f, b];
+    }
+  }
+}
+
+// ------------------------------------------------------------------ assembly
+/** Share of a hillside terrace's own colour added unlit (round 6): concrete lit by the sky as well as the sun, so the
+ *  step faces and benches turned away from the sun stay grey with the row contrast intact, not black (the onboard's stands
+ *  read light grey with darker row lines whatever the sun's side). */
+export const TERRACE_SELF_LIT = 0.45;
+export function selfLitMaterial(k: number): THREE.MeshLambertMaterial {
+  const mat = new THREE.MeshLambertMaterial({ vertexColors: true, side: THREE.DoubleSide });
+  mat.onBeforeCompile = (sh) => {
+    sh.fragmentShader = sh.fragmentShader.replace('#include <emissivemap_fragment>',
+      `#include <emissivemap_fragment>\n  totalEmissiveRadiance += ${k.toFixed(2)} * vColor.rgb;`);
+  };
+  mat.customProgramCacheKey = () => `selflit${k}`;
+  return mat;
+}
+
+/** `terrace`: the terrace dressing, drawn with the terraces' part-self-lit concrete (scenery.ts) so benches and aisles keep
+ *  their grey on a stand the sun lights from behind (round 6) */
+export interface StructureSoups { solid: Soup; paint: Soup; fabric: Soup; terrace: Soup; perType: Record<string, number> }
+
+/** All structures as four triangle soups (pure; deterministic for the same input). */
 export function structureSoups(list: StructureJson[], terraces: TerraceJson[] = [], ground?: (x: number, y: number) => number): StructureSoups {
-  const solid = new Soup(), pnt = new Soup(), fabric = new Soup();
+  const solid = new Soup(), pnt = new Soup(), fabric = new Soup(), terr = new Soup();
   const perType: Record<string, number> = {};
   for (const u of list) {
-    const before = solid.tris + pnt.tris + fabric.tris;
+    const before = solid.tris + pnt.tris + fabric.tris + terr.tris;
     switch (u.type) {
       case 'grandstand': grandstand(u, solid); break;
       case 'garage': garage(u, solid); break;
@@ -568,12 +681,12 @@ export function structureSoups(list: StructureJson[], terraces: TerraceJson[] = 
       case 'mast': masts(u, solid); break;
       case 'paint': paint(u, pnt, ground); break;
       case 'boards': boards(u, solid); break;
-      case 'terrace_dress': { const t = terraces.find((x) => x.name === u.terrace); if (t) terraceDress(u, t, solid, ground); break; }
+      case 'terrace_dress': { const t = terraces.find((x) => x.name === u.terrace); if (t) terraceDress(u, t, terr, ground); break; }
       default: break;
     }
-    perType[u.type] = (perType[u.type] ?? 0) + solid.tris + pnt.tris + fabric.tris - before;
+    perType[u.type] = (perType[u.type] ?? 0) + solid.tris + pnt.tris + fabric.tris + terr.tris - before;
   }
-  return { solid, paint: pnt, fabric, perType };
+  return { solid, paint: pnt, fabric, terrace: terr, perType };
 }
 
 function toGeometry(s: Soup): THREE.BufferGeometry {
@@ -608,6 +721,11 @@ export function buildStructures(list: StructureJson[], terraces: TerraceJson[] =
   if (S.solid.tris) {
     const m = new THREE.Mesh(toGeometry(S.solid), new THREE.MeshLambertMaterial({ vertexColors: true, side: THREE.DoubleSide }));
     m.name = 'structures_solid';
+    grp.add(m);
+  }
+  if (S.terrace.tris) {
+    const m = new THREE.Mesh(toGeometry(S.terrace), selfLitMaterial(TERRACE_SELF_LIT));
+    m.name = 'structures_terrace';
     grp.add(m);
   }
   if (S.paint.tris) {
