@@ -761,6 +761,8 @@ CONFIG = dict(
                  src='c20_s2695: a raised hut on a platform 27 m right of the T4 approach (long shadow); onboard 0:33 white elevated post with roof on the right; Street View 3a panorama (Jul 2011) shows it ahead right'),
             dict(name='T2 exit', latlon=(38.1607335, -122.4589865), h=3.0,
                  src='c20_s2200: a ~2 m white hut at the foot of the T2 terraces, 31 m left of the centre at s ~445 (round 5); onboard 0:12 white marshal hut ahead-left at the fence line'),
+            dict(name='8a outside', latlon=(38.1657543, -122.4602187), h=3.6,
+                 src='round 7c (owner note / item 1): the owner\'s May 2025 onboard at 1:14 (owner_52_T8_station_video.png, reference only): a white roofed hut on the outside of the corner; c20_s0110 / c20_s0055: a ~4 x 3.5 m light roof with a long dark shadow (an elevated hut) at s ~2483, 11.5 m left of the centre (5.5 m beyond the edge, on the outside of 8a), a yellowish low band in front of it at the edge; the package has no wall there (the 8a tyre line runs 14 m beyond the edge), so the "wall with a tyre facing in front" of the 2025 frame is not placed'),
             dict(name='9a, stand foot', latlon=(38.1632923, -122.4549874), h=3.0,
                  src='round 7 (owner note 49, corrected): onboard t098 and the owner crop owner_49_9a_station_crop.jpg: a small hut at the base of the back-straight terraces near their 9a end, behind the catch fence, the marker cone on the verge in front of it; position from the frame (s ~3025, 28 m left, between the wall line and the terrace foot): not resolved on c20_s0605 / c20_s0660 / c20_o0660 (event trailers parked there); band colour not readable (default)'),
             dict(name='T7', latlon=(38.1659466, -122.4626554), h=4.9, color='#dcdfe2',  # round 7: t072 white hut, no coloured band
@@ -812,6 +814,12 @@ CONFIG = dict(
                  src="c20_s0000 / c20_s3960: an O'Reilly logo painted inside the T7a hairpin island (white lettering with an outline, ~17 x 7.5 m, reading NW); the summer NAIP shows it as a red patch (owner_45 'red splotch'); red panel / white letters"),
             dict(latlon=(38.1588939, -122.4521769), length=18.0, height=4.5, heading=8.7, text='TOYOTA', fg='#ffffff',
                  src='c20_s1320 / c20_s1265: TOYOTA lettering painted in the T11 hairpin infield (white, ~18 m, reading ENE); the red emblem beside it is logo artwork, not drawn'),
+            # round 7c: the smaller names above TOYOTA (c20_s1265 at 0.04 m/px; the illegible ones are not placed)
+            dict(latlon=(38.1589594, -122.4523855), length=6.8, height=3.0, heading=15.0, text='CW', fg='#ffffff', src='c20_s1265: CW lettering in the T11 infield (row above Coca-Cola)'),
+            dict(latlon=(38.1589289, -122.4522850), length=6.2, height=2.0, heading=15.0, text='Coca-Cola', fg='#ffffff', src='c20_s1265: Coca-Cola script in the T11 infield, white'),
+            dict(latlon=(38.1589540, -122.4521982), length=6.5, height=2.0, heading=20.0, text='xfinity', fg='#ffffff', src='c20_s1265: xfinity lettering in the T11 infield, white'),
+            dict(latlon=(38.1590007, -122.4522142), length=3.2, height=3.2, heading=15.0, text='TNT', fg='#1a1a1a', bg='#f4f3ef', src='c20_s1265: the TNT roundel in the T11 infield (white disc, dark letters; drawn as a square panel)'),
+            dict(latlon=(38.1590115, -122.4523901), length=6.0, height=1.6, heading=15.0, text='PIT BOSS', fg='#ffffff', src='c20_s1265: PIT BOSS lettering in the T11 infield (top-left row, partly legible)'),
             dict(latlon=(38.1588066, -122.4521872), length=24.0, height=5.5, heading=14.3, text='Save Mart', fg='#ffffff',
                  src='c20_s1320 / c20_s1265: Save Mart lettering painted in the T11 hairpin infield (white, ~24 m)'),
         ],
