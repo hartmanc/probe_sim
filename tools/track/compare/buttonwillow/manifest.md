@@ -106,3 +106,93 @@ the default asphalt_end are identical to the 1e71ef2 code on their caches and on
 driven against node order (`geo.osm_loop`), edge features `warm_end` and `kerb_band`, the asphalt_end detector's
 parameters (`spline.asphalt_end`), `inventory.py --pkg`, and the app's three-colour kerb paint (`colors: [stripe,
 base, stripe 2]`).
+
+## Stage 1, round 2 (20 Oct 2026): better evidence, gates unchanged
+
+No geometry run this round: neither lead produced evidence that meets the bar for a refit (below), so the last gate
+lines are still run 5's, exactly as the builder printed them:
+
+```
+[FAIL] fit left: observations within 0.25 m: 74.9 % of the associated observations (>= 90 %); 78 % of capture rows have a band within 1.2 m (>= 85 %); 43 % of all rows
+[FAIL] fit left: coverage: 48 % of stations (>= 60 %)
+[ok]   fit left: longest gap: 47 st at (354, 400) (<= 60)
+[FAIL] fit left: waviness: rolling-100 rms max 0.046 m (<= 0.04), peak 0.080 m (<= 0.1)
+[FAIL] fit left: kink: max 0.59 deg/station (<= 0.5); over at [(4664, 4672)]
+[FAIL] fit right: observations within 0.25 m: 77.9 % of the associated observations (>= 90 %); 81 % within 1.2 m (>= 85 %); 49 % of all rows
+[FAIL] fit right: coverage: 50 % of stations (>= 60 %)
+[ok]   fit right: longest gap: 41 st at (583, 623) (<= 60)
+[FAIL] fit right: waviness: rolling-100 rms max 0.050 m (<= 0.04), peak 0.096 m (<= 0.1)
+[ok]   fit right: kink: max 0.48 deg/station (<= 0.5)
+[FAIL] edge gate left : rms 0.086 m (<= 0.1) | max adjacent step 0.161 m at 4512 (<= 0.1)
+[FAIL] edge gate right: rms 0.068 m (<= 0.1) | max adjacent step 0.186 m at 4511 (<= 0.1)
+```
+
+### Lead B: the capture detector's ambiguity
+
+Every capture profile at the run-5 asphalt-end stations (8117 station-side pairs, all 106 captures), read relative to
+the run-5 fitted edge:
+
+| detector | side | coverage | readings agree across captures (within 0.25 m of the station median) | station medians within 0.25 m of a 41-station running median | rms | lag-1 correlation of that residual along s |
+|---|---|---|---|---|---|---|
+| asphalt_end tuned (inside out, the run-5 detector) | left | 0.83 | 0.96 | 0.37 | 0.87 m | 0.38 |
+| | right | 0.84 | 0.96 | 0.41 | 0.85 m | 0.37 |
+| outermost transition (outside in), jump 6 | left / right | 0.96 / 0.96 | 0.89 / 0.85 | 0.34 / 0.30 | 0.80 / 0.80 | 0.37 / 0.32 |
+| jump 8 | left / right | 0.90 / 0.91 | 0.88 / 0.86 | 0.30 / 0.26 | 0.85 / 0.87 | 0.36 / 0.34 |
+| jump 10 | left / right | 0.79 / 0.83 | 0.90 / 0.88 | 0.28 / 0.26 | 0.91 / 0.92 | 0.34 / 0.36 |
+
+Readings of the tuned detector relative to the fitted edge (0.25 m bins from -2.0 to +2.0 m), left:
+665 279 339 396 358 637 **2052 1595** 628 381 384 311 334 326 261 197; right: 710 279 329 345 387 658 **2427 2017**
+635 359 350 322 213 180 280 166. A central mode at -0.5..0 m on a flat background from -2 to +2 m, plus a pile at the
+window's inner end (-2 m).
+
+Reading: the captures agree with each other at a station (they are one mosaic, so this is not independent evidence),
+but the station medians jump along the track (lag-1 correlation 0.37: not a smooth physical wander, which would
+correlate strongly from one metre to the next). So the scatter is partly the detector choosing between transitions,
+as suspected. But reading from outside in does not fix it: the dirt beyond the edge has its own transitions (tyre
+tracks, vegetation, graded strips), and the outside-in detector piles up at the far end of the window (+1.75..+2.0 m:
+2582 / 3090 readings at jump 6) and scatters more along the track (0.26-0.34 within 0.25 m). No detector tried gives a
+reading that is smooth along the track.
+
+### Lead A: the lidar point cloud
+
+`tools/track/lidar_edge.py` re-reads the EPT tiles (cache/buttonwillow/ept) with Intensity, Classification and
+ReturnNumber into a corridor cache (cache/buttonwillow/lidar_corridor.npz: 3.59 M points within 25 m of the centre;
+class 2 ground 2.61 M, class 1 0.98 M). Per station the points within +-W m along the track are binned across the
+normal (0.1 m bins over -4.5..+4.0 m from the current edge, as edges_spline.U) and averaged. Density turned out to be
+lower than 18 pts/m2 on the road: 14-65 ground points per 0.1 m bin at W = 10 m (16-20 m of road).
+
+Two readings per station: the intensity step (the largest rise of the 0.6 m means either side within -2.5..+2.5 m,
+at least 350 and 20 %) and the elevation slope break (first sustained 3 cm departure from the line fitted on
+-4.0..-1.5 m).
+
+| reading | W | side | coverage | within 0.25 m of a 41-station running median | rms | vs the capture median on the eight stretches: n, bias, p10 / p90, share with abs diff > 0.5 m |
+|---|---|---|---|---|---|---|
+| intensity step | 5 m | left | 0.62 | 0.76 | 0.45 | 355, -0.24, -1.98 / +1.60, 0.78 |
+| | | right | 0.61 | 0.81 | 0.35 | 427, -0.18, -2.24 / +0.78, 0.67 |
+| | 10 m | left | 0.55 | 0.80 | 0.29 | 336, -0.20, -1.68 / +1.69, 0.77 |
+| | | right | 0.58 | 0.82 | 0.29 | 419, -0.16, -2.13 / +0.79, 0.64 |
+| slope break | 5 m | left | 0.81 | 0.52 | 0.63 | 435, +0.66, -1.10 / +2.27, 0.74 |
+| | | right | 0.76 | 0.51 | 0.64 | 411, +0.84, -0.80 / +2.24, 0.83 |
+| | 10 m | left | 0.81 | 0.58 | 0.58 | 448, +0.76, -1.05 / +2.36, 0.76 |
+| | | right | 0.75 | 0.55 | 0.60 | 379, +0.86, -0.88 / +2.30, 0.82 |
+
+(The running-median smoothness of a W-windowed reading is flattered by the overlapping windows: adjacent stations share
+most of their points.)
+
+Stacking the lidar intensity on the capture edge over the eight stretches (276 / 277 stations, 2 m window) shows no
+step but a ramp: left 1684 at -2 m rising evenly to 2637 at +2 m, right 1648 to 2937. In the lidar, as in the
+captures, the asphalt-to-dirt transition at Buttonwillow is spread over 2-4 m.
+
+The lidar disagrees with the captures by more than 0.5 m at 64-83 % of the eight stretches' stations. Its
+differences have no stable sign (bias -0.2 m for the intensity step and +0.8 m for the slope break, p10 / p90 out to
++-2 m), so they read as noise rather than a 2021-to-2025/26 edge that moved. The lidar is not consistent along the
+track either (80-82 % at best against the 90 % bar). It is therefore **not** added as an evidence feature, and no
+refit was run.
+
+### What this means for the owner's decision
+
+Both datasets say the same thing: at Buttonwillow there is no sharp edge to measure. The 2026 captures and the 2021
+lidar both show a 2-4 m asphalt-to-dirt transition. The capture readings are consistent across captures (0.96) but
+not along the track (0.37-0.41 within 0.25 m of a running median). The fitted spline's 75-78 % "within 0.25 m" is
+what a ragged, dusty edge measured by any of these detectors gives. The proposal for a gate on unpainted edges stays
+an open owner decision (report of this round).
