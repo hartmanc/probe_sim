@@ -444,6 +444,8 @@ def stage_geometry(cfg, out, no_logger):
     # -- validation
     lc = cfg["loop_check"]
     rep.check("loop stations", lc["n_min"] <= n <= lc["n_max"], f"n = {n}")
+    if not lc.get("official_m"):
+        log(f"     lap length: {L1:.2f} m (no official figure in the config: loop_check.official_m is None)")
     if lc.get("official_m"):
         rep.check("lap length", abs(L1 - lc["official_m"]) <= 0.01 * lc["official_m"],
                   f"{L1:.2f} m (official {lc['official_m']}; spacing {sp:.6f})")
@@ -655,11 +657,25 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, bar, 
         for sd, lo, hi, *_ in cfgw["gate"].get("exempt", []):
             if sd == side:
                 r["loose"][np.array([k % n for k in range(lo, hi + (n if hi < lo else 0) + 1)])] = False
-        rep.check(f"fit {side}: observations within 0.25 m", r["within_gated"] >= G["within"] and r["assoc_share"] >= G["assoc"],
-                  f"{r['within_gated'] * 100:.1f} % of the associated observations (>= {G['within'] * 100:.0f} %, the skill's measure); "
-                  f"{r['assoc_share'] * 100:.0f} % of capture rows have a band within 1.2 m (>= {G['assoc'] * 100:.0f} %); of those "
-                  f"{r['within'] * 100:.1f} % within 0.25 m, the rest at 0.25-0.4/0.4-0.6/0.6-0.8/0.8-1.0/1.0-1.2 m: {r['off_hist']}; "
-                  f"{r['within_all'] * 100:.0f} % of all rows")
+        Gs = edge_gate.unpainted_thresholds(cfg_raw["gate"]) if r.get("unpainted") else G
+        if r.get("unpainted"):
+            # the owner's decision of 20 Oct 2026 (edge_gate.UNPAINTED): a bias gate instead of the 0.25 m share
+            bg = edge_gate.bias_gate(r["assoc_x"], r["assoc_res"], n)
+            U_ = edge_gate.UNPAINTED; wb = bg["worst"]
+            worst_txt = f"worst {wb[0]:+.3f} m at {wb[1]} ({wb[2]}..{wb[3]})" if wb else "no window" 
+            share_ae = sum(k == "asphalt_end" for k in r["assoc_kind"]) / max(1, len(r["assoc_kind"]))
+            rep.check(f"fit {side}: unpainted bias", bg["ok"] and r["assoc_share"] >= G["assoc"],
+                      f"unpainted side ({share_ae * 100:.0f} % of {len(r['assoc_kind'])} associated readings from asphalt_end); "
+                      f"{bg['share'] * 100:.1f} % of {bg['windows']} {U_['window']}-station windows have a median residual within "
+                      f"+-{U_['bias']} m (>= {U_['bias_windows'] * 100:.0f} %); {worst_txt}; "
+                      f"{r['assoc_share'] * 100:.0f} % of capture rows have a band within 1.2 m (>= {G['assoc'] * 100:.0f} %); "
+                      f"spread (printed, not gated): |residual| p10/p50/p90 {bg['spread']} m, {r['within_gated'] * 100:.1f} % within 0.25 m")
+        else:
+          rep.check(f"fit {side}: observations within 0.25 m", r["within_gated"] >= G["within"] and r["assoc_share"] >= G["assoc"],
+                    f"{r['within_gated'] * 100:.1f} % of the associated observations (>= {G['within'] * 100:.0f} %, the skill's measure); "
+                    f"{r['assoc_share'] * 100:.0f} % of capture rows have a band within 1.2 m (>= {G['assoc'] * 100:.0f} %); of those "
+                    f"{r['within'] * 100:.1f} % within 0.25 m, the rest at 0.25-0.4/0.4-0.6/0.6-0.8/0.8-1.0/1.0-1.2 m: {r['off_hist']}; "
+                    f"{r['within_all'] * 100:.0f} % of all rows")
         lo_ = r["loose"]
         # rolling waviness over the loose stations only (a junction or tight corner inside a 100-station window is left
         # out of that window's rms, not only the windows centred on it)
@@ -669,8 +685,8 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, bar, 
             roll[k] = np.sqrt(np.mean(r["qq"][w_][m_] ** 2)) if m_.sum() >= 50 else 0.0
         r["roll"] = roll
         r["wave_rms"] = float(roll[lo_].max()); r["wave_peak"] = float(np.abs(r["qq"])[lo_].max()); r["kink"] = float(r["kinkv"][lo_].max())
-        rep.check(f"fit {side}: coverage", r["covered"] >= G["covered"],
-                  f"{r['covered'] * 100:.0f} % of stations (>= {G['covered'] * 100:.0f} %)")
+        rep.check(f"fit {side}: coverage", r["covered"] >= Gs["covered"],
+                  f"{r['covered'] * 100:.0f} % of stations (>= {Gs['covered'] * 100:.0f} %" + (", unpainted side)" if r.get("unpainted") else ")"))
         bad = [f"{a}..{b} ({ln} st)" for (a, b), ln in r["gaps"] if ln > G["gap"]]
         rep.check(f"fit {side}: longest gap", not bad, f"{r['longest_gap']} st at {r['gap_at']} (<= {G['gap']})"
                   + (f"; over: {', '.join(bad)}" if bad else ""))
@@ -693,7 +709,7 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, bar, 
         rep.check(f, False, "no curvature peak of the corner's direction near its anchor")
     prof0, resurface = V2.profile(Ccur, hlp, hrp, dem_s, z0, cfgw["repave_fixes"])
     prof = V2.reprofile(prof0, hlp, hrp, hl3, hr3)
-    spline_rep = [{k: v for k, v in frep[s_].items() if k not in ("roll", "qq", "kinkv", "loose")} | {"side": s_} for s_ in ("left", "right")]
+    spline_rep = [{k: v for k, v in frep[s_].items() if k not in ("roll", "qq", "kinkv", "loose", "assoc_x", "assoc_res", "assoc_kind")} | {"side": s_} for s_ in ("left", "right")]
     return Ccur, hlp, hrp, hl3, hr3, sp, L, fit_last, corners, prof0, resurface, prof, spline_rep, str_rep, cfgw
 
 
@@ -861,6 +877,9 @@ def main():
     ap.add_argument("--write-on-fail", action="store_true", help="write a failed stage's outputs anyway (diagnosis only; still exits 1)")
     ap.add_argument("--publish", action="store_true", help="copy the package to public/tracks/<id>/ when every stage passed")
     ap.add_argument("--overwrite-package", action="store_true", help="with --publish: replace an existing public/tracks/<id>/")
+    ap.add_argument("--partial", action="store_true", help="with --publish: publish a package through its last passed stage "
+                    "(geometry, or geometry + ghosts) before stage 3 has run (a new circuit's 1.10 review); never over a "
+                    "package that has scenery")
     a = ap.parse_args()
     global WRITE_ON_FAIL, REPRO
     WRITE_ON_FAIL = a.write_on_fail
@@ -895,11 +914,23 @@ def main():
     if a.publish:
         # only a complete package whose three stage records passed with this config and are current (no output changed
         # since, every stage consumed the current geometry); copied to a temporary folder, then swapped in
-        for st in ("geometry", "ghosts", "scenery"):
+        through = ("geometry", "ghosts", "scenery")
+        if a.partial:
+            # the stages before scenery whose records are current, in order; the package carries their files only
+            through = tuple(st for i, st in enumerate(("geometry", "ghosts"))
+                            if all(record_ok(cfg, out, s_, a.no_logger)[0] for s_ in ("geometry", "ghosts")[:i + 1]))
+            if not through:
+                raise SystemExit(f"--publish --partial refused: {record_ok(cfg, out, 'geometry', a.no_logger)[1]}")
+            if os.path.exists(os.path.join(pub, "scenery.json")):
+                raise SystemExit(f"--publish --partial refused: {pub} has scenery (a complete package); publish it whole")
+        for st in through:
             ok, why = record_ok(cfg, out, st, a.no_logger)
             if not ok:
                 raise SystemExit(f"--publish refused: {why}")
         files = ("track.json", "heightfield.bin", "ortho.jpg", "ghosts.json", "scenery.json", "far_heightfield.bin", "far_ortho.jpg")
+        if a.partial:
+            files = ("track.json", "heightfield.bin", "ortho.jpg") + (("ghosts.json",) if "ghosts" in through else ())
+            log(f"partial publish through stage {through[-1]}: {', '.join(files)}")
         missing = [f for f in files if not os.path.exists(os.path.join(out, f))]
         if missing:
             raise SystemExit(f"--publish refused: package incomplete, missing {missing}")

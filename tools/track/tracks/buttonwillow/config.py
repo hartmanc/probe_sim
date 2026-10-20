@@ -131,7 +131,16 @@ CONFIG = dict(
     # down to 1-2 m half-widths at s 4524-4560 and 4656-30); back to the detector's -1.2 m
     # report_by_kind / report_width: report-only numbers for the owner's gate decision (no gate reads them); the
     # operator's Classic-track width is 36-55 ft = 10.97-16.76 m (buttonwillowraceway.com/track-info/)
-    spline=dict(asphalt_end=dict(jump=8.0, sat_max=40.0, lo=-1.2, hi=2.0), report_by_kind=True, report_width=(10.97, 16.76)),
+    # mask (round 5): the marshal post's tyre-faced earth mound beside the left edge on the T11 approach (c20_s4400, sheet
+    # edge_sheets/step_left4265: the mound stands at s ~4255-4268, 2-4 m off the asphalt) pulled the asphalt-end
+    # readings outward there and left a 0.100 m step at 4267 just before the pit-in exemption; its stations' readings
+    # are not used (the fit carries the edge across from both sides)
+    # lam 60 / huber 0.15 (round 5; defaults 30 / 0.25): on the ragged unpainted edges the readings jump 0.3-0.5 m between
+    # the asphalt end and a dust line along the Riverside straight (right 2050-2131, left ~2466; sheets w_right,
+    # w_left), which the default spline followed (waviness 0.056 m, steps 0.101-0.105 m); a stiffer spline with a
+    # tighter robust loss runs through the middle of them
+    spline=dict(lam=60.0, huber=0.15, asphalt_end=dict(jump=8.0, sat_max=40.0, lo=-1.2, hi=2.0), report_by_kind=True, report_width=(10.97, 16.76),
+                mask=[('left', 4250, 4272, 'c20_s4400: marshal post mound beside the left edge at s ~4255-4268')]),
     # Buttonwillow has no painted edge lines (every 2026 capture and the onboard: asphalt straight to dirt), so the edge
     # is where the dark asphalt ends, everywhere except at kerbs, where it is the kerb's outer limit (SKILL 1.5). The kerb
     # zones come from compare/kerb_detect.py on the asphalt-end build (run 3, 20 Oct 2026: runs with their outer limit

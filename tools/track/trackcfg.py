@@ -40,7 +40,8 @@ Geometry (Stage 1)
   repave_fixes [(a, b, crest from, crest to, why)]
   captures {z20_dir, z20_index, z20_mask, clean_dir, clean_index, mpp, common_shift, exclude, cursor_boxes}
   spline {runs [(lo, hi)], knot, lam, huber, line_off, prior, init_stiff, captures, asphalt_end {jump, sat_max, lo, hi},
-          warm_thr}   (asphalt_end / warm_thr: detector parameters of those features; absent = the defaults)
+          warm_thr, mask [(side, lo, hi, src)]}   (asphalt_end / warm_thr: detector parameters of those features;
+          absent = the defaults; mask: stations whose capture readings are dropped, an object beside the edge, with its capture)
   features [(side, lo, hi, 'keep' | 'asphalt_end' | 'warm_end' | 'kerb' | 'kerb_band', why)]   keep: the prior is held (legacy reproduction
                                              only; the fitted method ignores it); asphalt_end: where the dark asphalt
                                              ends; kerb: red-band (kerb outer limit) candidates only; warm_end: where

@@ -31,92 +31,92 @@
   {
    "name": "GPS 10s",
    "t": 10.0,
-   "s": 187.2,
-   "how": "Catalyst GPS dot on frame t010.jpg mapped to the centre (inventory/catalyst_dots.py, minimap fit p95 6.6 m), 7.1 m off the centre"
+   "s": 186.1,
+   "how": "Catalyst GPS dot on frame t010.jpg mapped to the published centre (inventory/catalyst_dots.py), 6.2 m off the centre"
   },
   {
    "name": "GPS 20s",
    "t": 20.0,
-   "s": 478.5,
-   "how": "Catalyst GPS dot on frame t020.jpg mapped to the centre (inventory/catalyst_dots.py, minimap fit p95 6.6 m), 4.3 m off the centre"
+   "s": 477.2,
+   "how": "Catalyst GPS dot on frame t020.jpg mapped to the published centre (inventory/catalyst_dots.py), 4.9 m off the centre"
   },
   {
    "name": "GPS 30s",
    "t": 30.0,
-   "s": 690.7,
-   "how": "Catalyst GPS dot on frame t030.jpg mapped to the centre (inventory/catalyst_dots.py, minimap fit p95 6.6 m), 3.8 m off the centre"
+   "s": 690.3,
+   "how": "Catalyst GPS dot on frame t030.jpg mapped to the published centre (inventory/catalyst_dots.py), 3.4 m off the centre"
   },
   {
    "name": "GPS 40s",
    "t": 40.0,
-   "s": 996.1,
-   "how": "Catalyst GPS dot on frame t040.jpg mapped to the centre (inventory/catalyst_dots.py, minimap fit p95 6.6 m), 0.5 m off the centre"
+   "s": 995.5,
+   "how": "Catalyst GPS dot on frame t040.jpg mapped to the published centre (inventory/catalyst_dots.py), 0.4 m off the centre"
   },
   {
    "name": "GPS 50s",
    "t": 50.0,
-   "s": 1224.3,
-   "how": "Catalyst GPS dot on frame t050.jpg mapped to the centre (inventory/catalyst_dots.py, minimap fit p95 6.6 m), 3.3 m off the centre"
+   "s": 1223.6,
+   "how": "Catalyst GPS dot on frame t050.jpg mapped to the published centre (inventory/catalyst_dots.py), 0.9 m off the centre"
   },
   {
    "name": "GPS 60s",
    "t": 60.0,
-   "s": 1550.6,
-   "how": "Catalyst GPS dot on frame t060.jpg mapped to the centre (inventory/catalyst_dots.py, minimap fit p95 6.6 m), 1.5 m off the centre"
+   "s": 1549.7,
+   "how": "Catalyst GPS dot on frame t060.jpg mapped to the published centre (inventory/catalyst_dots.py), 3.0 m off the centre"
   },
   {
    "name": "GPS 70s",
    "t": 70.0,
-   "s": 1879.0,
-   "how": "Catalyst GPS dot on frame t070.jpg mapped to the centre (inventory/catalyst_dots.py, minimap fit p95 6.6 m), 1.2 m off the centre"
+   "s": 1877.9,
+   "how": "Catalyst GPS dot on frame t070.jpg mapped to the published centre (inventory/catalyst_dots.py), 4.2 m off the centre"
   },
   {
    "name": "GPS 80s",
    "t": 80.0,
-   "s": 2230.4,
-   "how": "Catalyst GPS dot on frame t080.jpg mapped to the centre (inventory/catalyst_dots.py, minimap fit p95 6.6 m), 0.1 m off the centre"
+   "s": 2231.0,
+   "how": "Catalyst GPS dot on frame t080.jpg mapped to the published centre (inventory/catalyst_dots.py), 2.1 m off the centre"
   },
   {
    "name": "GPS 90s",
    "t": 90.0,
-   "s": 2619.8,
-   "how": "Catalyst GPS dot on frame t090.jpg mapped to the centre (inventory/catalyst_dots.py, minimap fit p95 6.6 m), 7.1 m off the centre"
+   "s": 2620.2,
+   "how": "Catalyst GPS dot on frame t090.jpg mapped to the published centre (inventory/catalyst_dots.py), 6.3 m off the centre"
   },
   {
    "name": "GPS 100s",
    "t": 100.0,
-   "s": 2948.1,
-   "how": "Catalyst GPS dot on frame t100.jpg mapped to the centre (inventory/catalyst_dots.py, minimap fit p95 6.6 m), 4.6 m off the centre"
+   "s": 2949.4,
+   "how": "Catalyst GPS dot on frame t100.jpg mapped to the published centre (inventory/catalyst_dots.py), 3.9 m off the centre"
   },
   {
    "name": "GPS 110s",
    "t": 110.0,
-   "s": 3326.5,
-   "how": "Catalyst GPS dot on frame t110.jpg mapped to the centre (inventory/catalyst_dots.py, minimap fit p95 6.6 m), 0.5 m off the centre"
+   "s": 3328.6,
+   "how": "Catalyst GPS dot on frame t110.jpg mapped to the published centre (inventory/catalyst_dots.py), 0.6 m off the centre"
   },
   {
    "name": "GPS 120s",
    "t": 120.0,
-   "s": 3571.8,
-   "how": "Catalyst GPS dot on frame t120.jpg mapped to the centre (inventory/catalyst_dots.py, minimap fit p95 6.6 m), 1.7 m off the centre"
+   "s": 3570.7,
+   "how": "Catalyst GPS dot on frame t120.jpg mapped to the published centre (inventory/catalyst_dots.py), 1.8 m off the centre"
   },
   {
    "name": "GPS 130s",
    "t": 130.0,
-   "s": 3916.2,
-   "how": "Catalyst GPS dot on frame t130.jpg mapped to the centre (inventory/catalyst_dots.py, minimap fit p95 6.6 m), 1.4 m off the centre"
+   "s": 3913.8,
+   "how": "Catalyst GPS dot on frame t130.jpg mapped to the published centre (inventory/catalyst_dots.py), 0.7 m off the centre"
   },
   {
    "name": "GPS 140s",
    "t": 140.0,
-   "s": 4311.6,
-   "how": "Catalyst GPS dot on frame t140.jpg mapped to the centre (inventory/catalyst_dots.py, minimap fit p95 6.6 m), 4.0 m off the centre"
+   "s": 4308.0,
+   "how": "Catalyst GPS dot on frame t140.jpg mapped to the published centre (inventory/catalyst_dots.py), 5.8 m off the centre"
   },
   {
    "name": "GPS 150s",
    "t": 150.0,
-   "s": 4594.9,
-   "how": "Catalyst GPS dot on frame t150.jpg mapped to the centre (inventory/catalyst_dots.py, minimap fit p95 6.6 m), 0.4 m off the centre"
+   "s": 4593.1,
+   "how": "Catalyst GPS dot on frame t150.jpg mapped to the published centre (inventory/catalyst_dots.py), 5.0 m off the centre"
   },
   {
    "name": "T2",
@@ -137,7 +137,12 @@
    "how": "lap 22 Catalyst timer 0:01.05 at 2:34.00"
   }
  ],
- "corrections": [],
+ "corrections": [
+  {
+   "round": "stage 1 round 5 (20 Oct 2026)",
+   "what": "GPS anchors re-mapped onto the published package (public/tracks/buttonwillow); they were on the run-5 diagnostic candidate"
+  }
+ ],
  "observations": [
   "observations.jsonl",
   "pit.jsonl"

@@ -389,7 +389,23 @@ Named straights sit halfway between their corners.
 - No slope over 0.10 m per station outside tight corners.
 - The printed local waviness (residual about a ±25-station quadratic, rolling 100 m) and the kink per station pass.
 - Observation residuals: 90 %+ within 0.25 m.
-- Coverage passes.
+- Coverage passes (60 % of stations).
+- **Unpainted sides (the owner's decision, 20 Oct 2026; `edge_gate.UNPAINTED`, code-defined, no per-track numbers).** A
+  side is unpainted when at least 80 % of its associated readings come from the `asphalt_end` feature (asphalt straight
+  to dirt: no painted line, no kerb). There is no sharp edge to hold a reading to 0.25 m: at Buttonwillow the 2026
+  captures and the 2021 lidar both show a 2-4 m asphalt-to-dirt transition, the readings agree across captures (98 %
+  within 0.25 m of their station's median) but scatter along the track (46-50 % within 0.25 m of the fitted edge).
+  - "Observations within 0.25 m" is replaced by a **bias gate**: over rolling 41-station windows holding at least 10
+    associated readings, the median signed residual (reading minus fitted edge) lies within +-0.25 m in at least 90 %
+    of the windows; the worst window is listed with its stations. The readings' spread is the edge's own: printed, not
+    gated (with the report-only numbers per evidence kind and the width against the operator's figure).
+  - Coverage for an unpainted side: 50 % of stations (Buttonwillow 54 / 56 %).
+  - Longest gap, waviness, kink, the edge gate, world continuity and profile are unchanged. Painted and kerb sides keep
+    the gates above everywhere. A config may only tighten either.
+  - An object beside an unpainted edge that the detector reads as the edge (a marshal mound) is masked with
+    `spline.mask` [(side, lo, hi, capture)], never exempted.
+  - The owner's fallback for a circuit worse than Buttonwillow: "the owner draws the edges on the captures", a future
+    evidence feature (an owner-traced edge), not implemented.
 - World continuity: the edge polyline's third difference stays ≤ 2 cm.
 - Wall offsets stay steady where a wall runs parallel.
 - Width changes slowly except at kerbs and junctions.

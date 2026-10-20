@@ -19,8 +19,11 @@ describe('track registry', () => {
   });
   test.each(Object.keys(TRACKS).filter((id) => TRACKS[id].rev))('%s: rev is the fingerprint of the published package', (id) => {
     const h = createHash('sha256');
+    // the files the package has (a package before its scenery stage has no scenery.json / far_heightfield.bin;
+    // Buttonwillow, 20 Oct 2026): a complete package's rev is unchanged
     for (const f of ['track.json', 'heightfield.bin', 'ghosts.json', 'scenery.json', 'far_heightfield.bin'])
-      h.update(createHash('sha256').update(readFileSync(resolve(ROOT, 'public', TRACKS[id].dir, f))).digest());
+      if (existsSync(resolve(ROOT, 'public', TRACKS[id].dir, f)))
+        h.update(createHash('sha256').update(readFileSync(resolve(ROOT, 'public', TRACKS[id].dir, f))).digest());
     expect(h.digest('hex').slice(0, 10)).toBe(TRACKS[id].rev);
   });
   test('Laguna keeps its 0.2.0 board key and rolling start rule', () => {

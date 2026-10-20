@@ -339,3 +339,96 @@ run 6 (before / after, e.g. `worst2_left_right_150-235`). Local and ignored.
 **Advisory (not a gate):** exit overshoot at T1 (+2.38 m, 426), T2 (+3.64 m, 687) and Star Mazda (+2.51 m, 3535).
 At 455-500 the run-8 sheet shows the right edge running through the dirt past the T1 marshal post beside the pit-out
 lane. This is where the pit-merge logic applies (cone line 440-521) and is for the stage-1 hood-sheet review.
+
+## Stage 1, round 5 (20 Oct 2026): the owner's unpainted-side gate; stage 1 and 2 pass, published for the 1.10 review
+
+**The owner's decision (20 Oct 2026, 14:00 PDT).**
+- A side is unpainted when at least 80 % of its associated readings come from asphalt_end.
+- On an unpainted side, a bias gate replaces "observations within 0.25 m": over rolling 41-station windows that hold at
+  least 10 readings, the median signed residual must lie within +-0.25 m in at least 90 % of the windows.
+- Coverage on an unpainted side is held to 50 %.
+- Everything else is unchanged, and painted and kerb sides keep FITTED.
+
+**Where it is implemented.**
+- The rule lives in `edge_gate.py` (UNPAINTED, unpainted_side, bias_gate, unpainted_thresholds) and in the builder, with
+  a docstring update.
+- It is documented in SKILL.md under 1.9, together with the owner-traced edge recorded as a future evidence feature.
+- Tests: `tools/track/test_edge_gate_unpainted.py`, 7 tests (ragged zero bias passes, shifted 0.4 m fails, a painted
+  side keeps the old gate, the threshold, Laguna and Sonoma are not unpainted).
+
+**Before the gate: merged track-pipeline 2bad53f** (no conflicts). Python tests, vitest and the build pass after the merge.
+
+**Config this round**
+- `spline.mask` (new key, edges_spline MASK; empty = every reading): left 4250-4272. This is the marshal post's tyre
+  mound beside the edge on the T11 approach (c20_s4400). The 0.100 m step at 4267 is gone: the largest left step is now
+  0.078 m, at 3688.
+- `spline.lam` 60 and `huber` 0.15 (defaults 30 / 0.25). These are the skill's allowed knobs. The first run under the new
+  gate (masked, default spline) failed on:
+  - right waviness 0.056 m at 2050-2131 and steps of 0.101 m left at 2466 and 0.105 m right at 2112 (the Riverside
+    straight's readings jumping between the asphalt end and a dust line);
+  - the stiffer spline with the tighter robust loss runs through the middle of them.
+- The timing line point and the front-straight straight are as in round 4.
+
+**Stage 1 (final run, exit 0, `work/stage_geometry.json` passed):**
+```
+converged after 16 centre refits
+[ok] fit left: unpainted bias: unpainted side (85 % of 5715 associated readings from asphalt_end); 98.3 % of 4598 41-station windows have a median residual within +-0.25 m (>= 90 %); worst -0.453 m at 394 (374..414); 86 % of capture rows have a band within 1.2 m (>= 85 %); spread (printed, not gated): |residual| p10/p50/p90 (0.033, 0.158, 0.401) m, 68.7 % within 0.25 m
+[ok] fit left: coverage: 51 % of stations (>= 50 %, unpainted side)
+[ok] fit left: longest gap: 59 st at (470, 528) (<= 60)
+[ok] fit left: waviness: rolling-100 rms max 0.019 m (<= 0.04), peak 0.031 m (<= 0.1) outside tight corners
+[ok] fit left: kink: max 0.24 deg/station (<= 0.5) outside tight corners; station 0 0.00
+[ok] fit right: unpainted bias: unpainted side (86 % of 6094 associated readings from asphalt_end); 98.0 % of 4662 41-station windows have a median residual within +-0.25 m (>= 90 %); worst +0.361 m at 27 (7..47); 86 % of capture rows have a band within 1.2 m (>= 85 %); spread (printed, not gated): |residual| p10/p50/p90 (0.021, 0.126, 0.365) m, 76.4 % within 0.25 m
+[ok] fit right: coverage: 53 % of stations (>= 50 %, unpainted side)
+[ok] fit right: longest gap: 41 st at (583, 623) (<= 60)
+[ok] fit right: waviness: rolling-100 rms max 0.018 m (<= 0.04), peak 0.028 m (<= 0.1) outside tight corners
+[ok] fit right: kink: max 0.26 deg/station (<= 0.5) outside tight corners; station 0 0.00
+[ok] painted-midpoint residual: rms 0.14 -> 0.03 m (final refit)
+[ok] loop stations: n = 4692
+     lap length: 4694.19 m (no official figure in the config: loop_check.official_m is None)
+[ok] elevation range: 3.4 m (z0 76.67 NAVD88)
+[ok] direction: signed area -368950 m^2, config cw
+[ok] start/finish: station 0 is 0.02 m from the configured timing line
+[ok] edge jumps: max lateral change between stations: left 0.115 m, right 0.090 m
+[ok] cross slope (inner 2/3): max 7.9% at s=2192; 0 stations over 12 % (listed in work/report.json)
+[ok] cross slope (edge thirds): max 8.9% at s=2193
+[ok] edge gate left : rms vs 41-st median (R>250 m, 2373 st) 0.039 m (<= 0.1) | max adjacent step (R>100 m within +-30) 0.078 m at 3688 (next 0.077@3690, 0.077@3685; <= 0.1) | max edge-column cross-section step 0.022 m at 1318
+[ok] edge gate right: rms vs 41-st median (R>250 m, 2373 st) 0.043 m (<= 0.1) | max adjacent step (R>100 m within +-30) 0.090 m at 2466 (next 0.090@2467, 0.088@2463; <= 0.1) | max edge-column cross-section step 0.020 m at 4401
+[ok] world continuity left : max |third difference| of the edge polyline 0.0058 m at station 619 (<= 0.02)
+[ok] world continuity right: max |third difference| of the edge polyline 0.0050 m at station 1065 (<= 0.02)
+[ok] profile gate: max cross-section step any column 0.022 m at station 1318 column 0 (<= 0.1)
+```
+Width (report): median 14.40 m, p10 12.23, p90 17.28, min 7.66 m at station 509 (the pit-out merge, where the pit-merge
+logic draws the left edge on the cone line), max 19.40 m at 2435. 3.4 % of stations are under 36 ft and 14.8 % over
+55 ft. Corners: T1 R 46.9, T2 26.3, T3 43.0, T4 54.2, T5 49.7, T6 134.3, T7 124.0, T8 69.1, T9 32.6, T10 75.2,
+T11 44.5 m. Advisory exit overshoots at T1 (+2.63 m), T2 (+3.01), T6 (+1.46) and Star Mazda (+2.65) are for the
+hood-sheet review.
+
+**Stage 2 (exit 0):**
+```
+racing line: no logger laps, pure minimum-curvature line within the edges less 1.0 m (offset range -6.09..+6.80 m)
+================ GHOST VALIDATION (no logger) ================
+[ok] line inside edges: min clearance to edge 1.03 m
+     line curvature: sum k^2 0.1312 vs centre 0.1999
+     implied-g checks skipped (no ghost laps): validate with tools/calibrate/drive.ts --track <dir>
+wrote ghosts.json: 0.02 MB, racing line only (2346 points)
+```
+
+**Published (partial: geometry + ghosts; new builder flag `--publish --partial`, refused over a package with
+scenery):**
+- `public/tracks/buttonwillow/`: track.json, heightfield.bin, ortho.jpg, ghosts.json.
+- Registry entry `buttonwillow`: length_m 4694.187; start at s 4580, speed 22, on the front straight ~115 m before the
+  line; rev 5106465b48.
+- The rev covers the files the package has. The registry test and the TrackInfo doc now hash the files present; Sonoma's
+  rev is unchanged.
+- No AI keys. The registry requires a pace file, so `public/cars/field/buttonwillow/pace.json` is the uncalibrated
+  `pace_track.ts` build: 6 cars from their own laps, the rest placeholders, with the AI Probe solo lap 145.03 s against
+  Laguna 120.20 s. Stage 5 replaces it.
+- The inventory was re-mapped on the published package (GPS anchors re-projected; residuals 4.2-25.9 m).
+
+**The 1.10 hood sheet (for the orchestrator's review; not judged here):**
+- `compare/buttonwillow/compare_sheets/`: 16 sheets, 94 hood stills every 50 m (`camera_walk.ts --camera hood
+  --no-rows --back-step 0 --pit-step 0 --no-runoff`, dev server on 5183, stopped).
+- Each still is paired with the onboard 7QS2M-HGSI4 frame at the inventory's mapped time.
+- The 94 onboard frames come from a headless Chrome. Two of them (t 60.01, 126.32) were drawn without the
+  presented-frame callback, and the worst time mismatch is 0.58 s.
+- Local, git-ignored.

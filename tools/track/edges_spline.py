@@ -89,6 +89,9 @@ KEEP_W = 400.0
 # smaller step (jump 8, sat_max 40, window -2.0..+2.0 m: on eight stretches of the 2026 captures 81 % of stations hit,
 # 98 % of hits within 0.25 m of the station's median over captures, against 65 % / 99 % with the defaults)
 AEND = dict(jump=10.0, sat_max=30.0, lo=-1.2, hi=2.0)
+MASK = []
+# stations whose capture readings are not used, per side (spline.mask [(side, lo, hi, src)]): an object beside the edge
+# that the detector reads as the edge (Buttonwillow's T11-approach marshal mound, 20 Oct 2026); empty = every reading
 
 
 def asphalt_end(v, valid):
@@ -335,6 +338,7 @@ def gather(C, NL, hl, hr, tiles, features, line_off, mpp, U_=None):
             V = bilinear(im, np.clip(px[rows], 1, W - 2), np.clip(py[rows], 1, H - 2))
             val = inside[rows] & mask[np.clip(np.round(py[rows]).astype(int), 0, H - 1), np.clip(np.round(px[rows]).astype(int), 0, W - 1)]
             for v, ok, i in zip(V, val, rows):
+                if MASK and any(m[0] == side and (ks[i] - m[1]) % n <= (m[2] - m[1]) % n for m in MASK): continue
                 feat = feature_at(features, side, ks[i], n)
                 if feat in ('asphalt_end', 'warm_end'):
                     e = asphalt_end(v, ok) if feat == 'asphalt_end' else warm_end(v, ok)
@@ -421,6 +425,7 @@ def fit_periodic(C, NL, hl, hr, tiles, features, sp, mpp, anchors=None, log=_log
     n = len(C); knot = sp['knot']; K = int(round(n / knot))
     if sp.get('warm_thr') is not None: WARM_THR = float(sp['warm_thr'])
     AEND.update(jump=10.0, sat_max=30.0, lo=-1.2, hi=2.0); AEND.update(sp.get('asphalt_end') or {})
+    MASK[:] = list(sp.get('mask') or [])
     win = sp.get('search', (-4.5, 4.0)); U_ = np.arange(win[0], win[1] + 1e-4, 0.04)
     obs = gather(C, NL, hl, hr, tiles, features, sp['line_off'], mpp, U_)
     xs = np.arange(n, dtype=float); Bx = periodic_basis(xs, K, n)
@@ -465,7 +470,12 @@ def fit_periodic(C, NL, hl, hr, tiles, features, sp, mpp, anchors=None, log=_log
                          gap_at=gaps[gi] if glen else None, wave_rms=float(roll[loose].max()), wave_peak=float(np.abs(qq)[loose].max()),
                          kink=float(kink[loose].max()), kink_all=float(kink.max()), kink_at=int(np.argmax(np.where(loose, kink, 0))),
                          seam_kink=float(kink[0]), roll=roll, qq=qq, kinkv=kink, loose=loose, gaps=list(zip(gaps, glen)))
-        if sp.get('report_by_kind'):
+        # the associated readings' feature kinds and signed residuals (edge_gate.unpainted_side / bias_gate)
+        rep[side]['assoc_x'] = xo.astype(int); rep[side]['assoc_res'] = yo - cur[xo.astype(int)]
+        rep[side]['assoc_kind'] = [feature_at(features, side, int(i), n) for i in xo.astype(int)]
+        from edge_gate import unpainted_side
+        rep[side]['unpainted'] = unpainted_side(rep[side]['assoc_kind'])
+        if sp.get('report_by_kind') or rep[side]['unpainted']:
             # report only (owner's gate decision for unpainted edges, Buttonwillow 20 Oct 2026; no gate reads these):
             # the measures split by the evidence kind of each row's station, asphalt_end's 0.6 m share and its
             # agreement with the station's own median over captures

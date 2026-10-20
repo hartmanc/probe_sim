@@ -11,6 +11,8 @@ column relative to the centre column, i.e. the cross-section shape (gate `profil
 scenery.json, the wall gaps of config `gate.wall_gaps` (p10/p50/p90, advisory) and the max adjacent half-width step
 within +-35 stations of each bridge, and the exit-overshoot lines (advisory: they also fire on real features, each is
 checked on the captures).
+Also the fitted method's thresholds (FITTED) and, for an unpainted side (owner's decision of 20 Oct 2026, UNPAINTED),
+the bias gate that replaces the 0.25 m observation share there (unpainted_side, bias_gate, unpainted_thresholds).
 """
 import argparse, json, math, os, sys
 
@@ -30,6 +32,60 @@ _TIGHTER = dict(within=max, assoc=max, covered=max, gap=min, wave_rms=min, wave_
 def fitted_thresholds(g):
     g = g or {}
     return {k: _TIGHTER[k](v, g.get('fit_' + k, v)) for k, v in FITTED.items()}
+
+
+# Unpainted sides (the owner's decision, 20 Oct 2026, Buttonwillow): a side whose evidence is at least 80 % the
+# asphalt_end feature (asphalt straight to dirt, no painted edge line, no kerb) has no sharp edge to hold a reading to
+# within 0.25 m: on Buttonwillow's 2026 captures and 2021 lidar the asphalt-to-dirt transition is 2-4 m wide, the
+# readings agree across captures (98 % within 0.25 m of their station's median) but scatter along the track (46-50 % of
+# the associated readings within 0.25 m of the fitted edge). For such a side the "observations within 0.25 m" gate is
+# replaced by a BIAS gate: over rolling 41-station windows holding at least 10 associated readings, the median signed
+# residual (reading minus fitted edge) lies within +-0.25 m in at least 90 % of the windows (the curve runs through the
+# middle of the ragged edge; the readings' spread is the edge's own and is printed, not gated), and coverage is held to
+# 50 % of stations (Buttonwillow 54 / 56 %). Longest gap, waviness, kink, the edge gate, world continuity and profile
+# are unchanged; painted and kerb sides keep FITTED. A config can tighten these, never loosen (gate.fit_covered also
+# applies here when higher). The owner's named fallback for a circuit worse than this, "the owner draws the edges on the
+# captures", is a future evidence feature (an owner-traced edge), not implemented.
+UNPAINTED = dict(share=0.80, window=41, min_readings=10, bias=0.25, bias_windows=0.90, covered=0.50)
+
+
+def unpainted_side(kinds):
+    """True when at least UNPAINTED['share'] of a side's associated readings come from the asphalt_end feature.
+    kinds: the feature kind of each associated reading's station ('asphalt_end', 'kerb_band', None for painted ...)."""
+    kinds = list(kinds)
+    return bool(kinds) and sum(k == 'asphalt_end' for k in kinds) / len(kinds) >= UNPAINTED['share']
+
+
+def bias_gate(stations, residuals, n, window=None, min_readings=None, tol=None, share=None):
+    """The unpainted side's bias gate: rolling `window`-station windows (wrapping the lap) holding at least
+    `min_readings` associated readings; returns dict(ok, share (of windows with |median| <= tol), windows, worst
+    (median, centre station, lo, hi), spread (p10, p50, p90 of |residual|))."""
+    import numpy as np
+    U = UNPAINTED; window = window or U['window']; min_readings = min_readings or U['min_readings']
+    tol = U['bias'] if tol is None else tol; share = U['bias_windows'] if share is None else share
+    st = np.asarray(stations, int) % n; r = np.asarray(residuals, float); h = window // 2
+    order = np.argsort(st); st, r = st[order], r[order]
+    meds = []
+    for k in range(n):
+        lo, hi = k - h, k + h
+        if lo < 0: m = (st >= lo % n) | (st <= hi)
+        elif hi >= n: m = (st >= lo) | (st <= hi % n)
+        else: m = (st >= lo) & (st <= hi)
+        if m.sum() >= min_readings: meds.append((float(np.median(r[m])), k))
+    if not meds:
+        return dict(ok=False, share=0.0, windows=0, worst=None, spread=None)
+    good = np.mean([abs(v) <= tol for v, _ in meds]); worst = max(meds, key=lambda x: abs(x[0]))
+    a = np.abs(r)
+    return dict(ok=bool(good >= share), share=float(good), windows=len(meds),
+                worst=(round(worst[0], 3), worst[1], (worst[1] - h) % n, (worst[1] + h) % n),
+                spread=tuple(round(float(v), 3) for v in np.percentile(a, [10, 50, 90])) if len(a) else None)
+
+
+def unpainted_thresholds(g):
+    """FITTED for an unpainted side, with its coverage and bias terms (a config may only tighten)."""
+    t = fitted_thresholds(g); g = g or {}
+    t['covered'] = max(UNPAINTED['covered'], g.get('fit_covered', UNPAINTED['covered']))
+    return t
 
 
 def world_continuity(T):
