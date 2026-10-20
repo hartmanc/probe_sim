@@ -628,18 +628,19 @@ export function tyresInStack(h: number): number { return Math.max(1, Math.min(6,
  *  hole at the top (vertex colour by radius: tread 1, groove 0.45, hole 0.25). */
 export function tyreStackGeometry(n: number): THREE.BufferGeometry {
   const P: THREE.Vector2[] = [new THREE.Vector2(0.001, 0), new THREE.Vector2(TYRE_R - 0.05, 0)];
+  // two profile points per tyre (the bulge, then the groove) and 8 segments: ~190 triangles for a stack of 4
   for (let k = 0; k < n; k++) {
     const y0 = k * TYRE_H;
-    P.push(new THREE.Vector2(TYRE_R - 0.05, y0 + 0.004), new THREE.Vector2(TYRE_R, y0 + 0.05), new THREE.Vector2(TYRE_R, y0 + TYRE_H - 0.05), new THREE.Vector2(TYRE_R - 0.05, y0 + TYRE_H - 0.004));
+    P.push(new THREE.Vector2(TYRE_R, y0 + TYRE_H / 2), new THREE.Vector2(TYRE_R - 0.05, y0 + TYRE_H));
   }
   const top = n * TYRE_H;
-  P.push(new THREE.Vector2(0.2, top), new THREE.Vector2(0.17, top - 0.04), new THREE.Vector2(0.17, top - 0.16), new THREE.Vector2(0.001, top - 0.16));
-  const g = new THREE.LatheGeometry(P, 12);
+  P.push(new THREE.Vector2(0.17, top - 0.01), new THREE.Vector2(0.15, top - 0.14), new THREE.Vector2(0.001, top - 0.14));
+  const g = new THREE.LatheGeometry(P, 8);
   const p = g.attributes.position as THREE.BufferAttribute;
   const col = new Float32Array(p.count * 3);
   for (let i = 0; i < p.count; i++) {
     const r = Math.hypot(p.getX(i), p.getZ(i));
-    const v = r > TYRE_R - 0.01 ? 1 : r > 0.21 ? 0.45 : 0.25;
+    const v = r > TYRE_R - 0.01 ? 1 : r > 0.2 ? 0.45 : 0.25;
     col[i * 3] = col[i * 3 + 1] = col[i * 3 + 2] = v;
   }
   g.setAttribute('color', new THREE.BufferAttribute(col, 3));
