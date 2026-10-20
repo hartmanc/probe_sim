@@ -8,6 +8,7 @@ import { mergeGeometries, mergeVertices } from 'three/examples/jsm/utils/BufferG
 import type { PitLaneJson, SausageJson, TrackJson } from './physics-types';
 import { PitExitCones, type PitExitConesJson } from './trackmath';
 import { TRACK } from './track-choice';
+import { buildStructures, type StructureJson } from './structures';
 
 type V2 = [number, number];
 type V3 = [number, number, number];
@@ -56,6 +57,9 @@ export interface SceneryJson {
   /** grandstands built into a hillside: stepped concrete rows following the ground (20 Oct 2026). Row r is a tread
    *  from a to b at height z, `run` m deep away from the track along `dir`; risers join consecutive rows. */
   terraces?: { name: string; src: string; run: number; dir: V2; z_ground_front: number; rows: { a: V2; b: V2; z: number }[] }[];
+  /** parametric structures (grandstands, garages, blocks, fuel islands, fences, masts, pit-box paint, boards, terrace
+   *  dressing; src/app/structures.ts, tools/track/build_structures.py; 21 Oct 2026) */
+  structures?: StructureJson[];
 }
 export interface SceneryAssets { json: SceneryJson; farHeightfield: Float32Array | null; farOrtho: THREE.Texture | null }
 
@@ -1459,6 +1463,7 @@ export function buildScenery(track: TrackJson, _hf: Float32Array, sc: SceneryAss
   if (others.length) root.add(buildBuildings(track, others));
   if (stands.length) root.add(buildBuildings(track, stands, true));
   if (j.terraces?.length) { const t = buildTerraces(j.terraces); if (t) root.add(t); }
+  if (j.structures?.length) root.add(buildStructures(j.structures, j.terraces ?? [], ground));
   // barrier feet and kerbs follow the drawn/driven surface (the track shoulder differs from the raw heightfield)
   const snap = (P: V3[]): V3[] => (ground ? P.map(([x, y]) => [x, y, ground(x, y)] as V3) : P);
   if (j.barriers?.length) root.add(buildBarriers(j.barriers.map((b) => ({ ...b, pts: snap(b.pts) }))));

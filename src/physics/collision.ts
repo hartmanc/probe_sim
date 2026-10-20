@@ -40,6 +40,8 @@ export interface SceneryCollisionJson {
   far?: { heightfield?: Grid | null } | null;
   barriers?: { kind: string; h: number; fence?: number; pts: number[][] }[];
   buildings?: { z: number; h: number; footprint: number[][] }[];
+  /** parametric structures (src/app/structures.ts): their solid outlines collide like buildings */
+  structures?: { collide?: { z: number; h: number; footprint: number[][] }[] }[];
   trees?: PackedTrees | null;
   far_trees?: PackedTrees | null;
   landmarks?: { kind: string; x: number; y: number; z: number; h?: number }[];
@@ -221,7 +223,7 @@ export function createCollisionWorld(scenery: SceneryCollisionJson | null | unde
   }
 
   const kb = KIND_CODE('building');
-  for (const bd of sc.buildings ?? []) {
+  for (const bd of [...(sc.buildings ?? []), ...(sc.structures ?? []).flatMap((st) => st.collide ?? [])]) {
     const fp = bd.footprint;
     if (!Array.isArray(fp) || fp.length < 3) continue;
     const zb = bd.z ?? 0, zt = zb + Math.max(1, bd.h ?? 3);
