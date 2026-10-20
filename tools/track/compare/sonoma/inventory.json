@@ -13,12 +13,12 @@
  "anchors": [
   {
    "name": "S/F",
-   "t": 2.2,
+   "t": 0.0,
    "s": 0.0
   },
   {
    "name": "footbridge",
-   "t": 8.7,
+   "t": 9.0,
    "s": 295.3
   },
   {
@@ -105,22 +105,22 @@
  "anchor_residuals": [
   {
    "name": "footbridge",
-   "t": 8.7,
+   "t": 9.0,
    "s": 295.3,
-   "loo_pred_s": 246.3,
-   "loo_residual_m": 49.0,
-   "loo_residual_linear_m": 60.0,
-   "v_in": 45.4,
-   "v_out": 23.7
+   "loo_pred_s": 282.5,
+   "loo_residual_m": 12.8,
+   "loo_residual_linear_m": 22.6,
+   "v_in": 32.8,
+   "v_out": 25.3
   },
   {
    "name": "T2",
    "t": 13.5,
    "s": 409.1,
-   "loo_pred_s": 423.3,
-   "loo_residual_m": -14.2,
-   "loo_residual_linear_m": -16.4,
-   "v_in": 23.7,
+   "loo_pred_s": 419.1,
+   "loo_residual_m": -10.0,
+   "loo_residual_linear_m": -10.7,
+   "v_in": 25.3,
    "v_out": 28.7
   },
   {
@@ -269,37 +269,37 @@
   {
    "t": 0,
    "frame": "t000.jpg",
-   "s": 4024.4
+   "s": 0.0
   },
   {
    "t": 2,
    "frame": "t002.jpg",
-   "s": 4091.6
+   "s": 76.5
   },
   {
    "t": 4,
    "frame": "t004.jpg",
-   "s": 91.0
+   "s": 133.6
   },
   {
    "t": 6,
    "frame": "t006.jpg",
-   "s": 174.1
+   "s": 200.0
   },
   {
    "t": 8,
    "frame": "t008.jpg",
-   "s": 266.3
+   "s": 265.4
   },
   {
    "t": 10,
    "frame": "t010.jpg",
-   "s": 329.5
+   "s": 323.1
   },
   {
    "t": 12,
    "frame": "t012.jpg",
-   "s": 381.0
+   "s": 378.8
   },
   {
    "t": 14,
@@ -657,6 +657,167 @@
  ],
  "rows": [
   {
+   "side": "left",
+   "kind": "mast",
+   "attrs": {
+    "type": "light mast",
+    "h_m": 20,
+    "h_method": "unmeasured"
+   },
+   "confidence": 0.8,
+   "t": 0,
+   "s": 0.0,
+   "source": "onboard:RAZip6S84CM@0.0",
+   "frame": "t000.jpg",
+   "scope": "lap",
+   "note": "light masts behind the pit lane"
+  },
+  {
+   "side": "left",
+   "kind": "stand",
+   "attrs": {
+    "type": "bleachers with suites deck",
+    "h_m": 15,
+    "h_method": "storeys"
+   },
+   "confidence": 0.9,
+   "t": 0,
+   "s": 0.0,
+   "source": "onboard:RAZip6S84CM@0.0",
+   "frame": "t000.jpg",
+   "scope": "lap",
+   "note": "main grandstand at the line, beyond the pit lane"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete",
+    "colour": "light blue",
+    "h_m": 1.0,
+    "h_method": "jersey-ref"
+   },
+   "confidence": 0.9,
+   "t": 0,
+   "s": 0.0,
+   "source": "onboard:RAZip6S84CM@0.0",
+   "frame": "t000.jpg",
+   "scope": "lap",
+   "note": "pit wall along the front straight, between track and pit lane"
+  },
+  {
+   "side": "right",
+   "kind": "fence",
+   "attrs": {
+    "type": "chain-link catch fence",
+    "h_m": 3,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.7,
+   "t": 0,
+   "s": 0.0,
+   "source": "onboard:RAZip6S84CM@0.0",
+   "frame": "t000.jpg",
+   "scope": "lap",
+   "note": "far right, beyond the drag strip"
+  },
+  {
+   "side": "right",
+   "kind": "mast",
+   "attrs": {
+    "type": "light mast",
+    "h_m": 20,
+    "h_method": "unmeasured"
+   },
+   "confidence": 0.8,
+   "t": 0,
+   "s": 0.0,
+   "source": "onboard:RAZip6S84CM@0.0",
+   "frame": "t000.jpg",
+   "scope": "lap",
+   "note": "light masts beyond the drag strip"
+  },
+  {
+   "side": "right",
+   "kind": "paint",
+   "attrs": {
+    "type": "white edge line"
+   },
+   "confidence": 0.9,
+   "t": 0,
+   "s": 0.0,
+   "source": "onboard:RAZip6S84CM@0.0",
+   "frame": "t000.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete",
+    "colour": "light blue",
+    "h_m": 1.0,
+    "h_method": "jersey-ref"
+   },
+   "confidence": 0.9,
+   "t": 0,
+   "s": 0.0,
+   "source": "onboard:RAZip6S84CM@0.0",
+   "frame": "t000.jpg",
+   "scope": "lap",
+   "note": "drag-strip side wall, continuous"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete",
+    "colour": "light blue",
+    "h_m": 1.0,
+    "h_method": "jersey-ref"
+   },
+   "confidence": 0.9,
+   "t": 2,
+   "s": 76.5,
+   "source": "onboard:RAZip6S84CM@2.0",
+   "frame": "t002.jpg",
+   "scope": "lap",
+   "note": "pit wall continues"
+  },
+  {
+   "side": "right",
+   "kind": "fence",
+   "attrs": {
+    "type": "chain-link catch fence",
+    "h_m": 3,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.7,
+   "t": 2,
+   "s": 76.5,
+   "source": "onboard:RAZip6S84CM@2.0",
+   "frame": "t002.jpg",
+   "scope": "lap",
+   "note": "far right"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete",
+    "colour": "light blue",
+    "h_m": 1.0,
+    "h_method": "jersey-ref"
+   },
+   "confidence": 0.9,
+   "t": 2,
+   "s": 76.5,
+   "source": "onboard:RAZip6S84CM@2.0",
+   "frame": "t002.jpg",
+   "scope": "lap",
+   "note": "drag-strip wall continues"
+  },
+  {
    "side": "ahead",
    "kind": "tower",
    "attrs": {
@@ -664,7 +825,7 @@
    },
    "confidence": 0.9,
    "t": 4,
-   "s": 91.0,
+   "s": 133.6,
    "source": "onboard:RAZip6S84CM@4.0",
    "frame": "t004.jpg",
    "scope": "lap"
@@ -677,20 +838,7 @@
    },
    "confidence": 0.7,
    "t": 4,
-   "s": 91.0,
-   "source": "onboard:RAZip6S84CM@4.0",
-   "frame": "t004.jpg",
-   "scope": "lap"
-  },
-  {
-   "side": "left",
-   "kind": "building",
-   "attrs": {
-    "type": "pit-exit building, red roof, glazed front"
-   },
-   "confidence": 0.8,
-   "t": 4,
-   "s": 91.0,
+   "s": 133.6,
    "source": "onboard:RAZip6S84CM@4.0",
    "frame": "t004.jpg",
    "scope": "lap"
@@ -706,7 +854,7 @@
    },
    "confidence": 0.9,
    "t": 4,
-   "s": 91.0,
+   "s": 133.6,
    "source": "onboard:RAZip6S84CM@4.0",
    "frame": "t004.jpg",
    "scope": "lap",
@@ -722,7 +870,7 @@
    },
    "confidence": 0.7,
    "t": 4,
-   "s": 91.0,
+   "s": 133.6,
    "source": "onboard:RAZip6S84CM@4.0",
    "frame": "t004.jpg",
    "scope": "lap"
@@ -735,11 +883,54 @@
    },
    "confidence": 0.8,
    "t": 4,
-   "s": 91.0,
+   "s": 133.6,
    "source": "onboard:RAZip6S84CM@4.0",
    "frame": "t004.jpg",
    "scope": "lap",
    "note": "wide open asphalt to the right at T1, white painted lines"
+  },
+  {
+   "side": "left",
+   "kind": "building",
+   "attrs": {
+    "type": "pit-exit building, red roof, glazed front",
+    "ahead_m": 35,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t004: the red-roofed pit-exit building is ahead-left (frame left edge); its footprint on c20_s1870 is at s ~160-190"
+    }
+   },
+   "confidence": 0.8,
+   "t": 4,
+   "s": 168.6,
+   "source": "onboard:RAZip6S84CM@4.0",
+   "frame": "t004.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "building",
+   "attrs": {
+    "type": "pit garages, red roof",
+    "ahead_m": 95,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t002: the red-roofed building is far ahead-left beyond the pit wall: the pit-exit building at s ~170 (c20_s1870), not a garage abeam"
+    }
+   },
+   "confidence": 0.8,
+   "t": 2,
+   "s": 171.5,
+   "source": "onboard:RAZip6S84CM@2.0",
+   "frame": "t002.jpg",
+   "scope": "lap",
+   "note": "beyond pit lane"
   },
   {
    "side": "ahead",
@@ -749,11 +940,36 @@
    },
    "confidence": 0.9,
    "t": 6,
-   "s": 174.1,
+   "s": 200.0,
    "source": "onboard:RAZip6S84CM@6.0",
    "frame": "t006.jpg",
    "scope": "lap",
    "note": "T2 footbridge seen ahead"
+  },
+  {
+   "side": "ahead",
+   "kind": "fence",
+   "attrs": {
+    "type": "fence along the hill top",
+    "h_m": 1.5,
+    "h_method": "unmeasured",
+    "out_m": 140,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "side": "right",
+      "out_m": null
+     },
+     "why": "frame t006: the fence runs along the hill top below the tower, far right-ahead; the lidar DEM puts that crest 130-150 m beyond the right edge (s 150-280), past the gate reach for a fence (80 m): background, not trackside; kept as an ahead row without a distance (the station is not fixed for an object that far out)"
+    }
+   },
+   "confidence": 0.5,
+   "t": 6,
+   "s": 200.0,
+   "source": "onboard:RAZip6S84CM@6.0",
+   "frame": "t006.jpg",
+   "scope": "lap",
+   "note": "hill top below the tower, far"
   },
   {
    "side": "left",
@@ -763,7 +979,7 @@
    },
    "confidence": 0.8,
    "t": 6,
-   "s": 174.1,
+   "s": 200.0,
    "source": "onboard:RAZip6S84CM@6.0",
    "frame": "t006.jpg",
    "scope": "lap",
@@ -779,7 +995,7 @@
    },
    "confidence": 0.7,
    "t": 6,
-   "s": 174.1,
+   "s": 200.0,
    "source": "onboard:RAZip6S84CM@6.0",
    "frame": "t006.jpg",
    "scope": "lap",
@@ -796,27 +1012,11 @@
    },
    "confidence": 0.9,
    "t": 6,
-   "s": 174.1,
+   "s": 200.0,
    "source": "onboard:RAZip6S84CM@6.0",
    "frame": "t006.jpg",
    "scope": "lap",
    "note": "pit-out lane, paddock-side wall beyond the lane"
-  },
-  {
-   "side": "right",
-   "kind": "fence",
-   "attrs": {
-    "type": "fence along the hill top",
-    "h_m": 1.5,
-    "h_method": "unmeasured"
-   },
-   "confidence": 0.5,
-   "t": 6,
-   "s": 174.1,
-   "source": "onboard:RAZip6S84CM@6.0",
-   "frame": "t006.jpg",
-   "scope": "lap",
-   "note": "hill top below the tower, far"
   },
   {
    "side": "right",
@@ -826,7 +1026,7 @@
    },
    "confidence": 0.9,
    "t": 6,
-   "s": 174.1,
+   "s": 200.0,
    "source": "onboard:RAZip6S84CM@6.0",
    "frame": "t006.jpg",
    "scope": "lap"
@@ -839,7 +1039,7 @@
    },
    "confidence": 0.8,
    "t": 6,
-   "s": 174.1,
+   "s": 200.0,
    "source": "onboard:RAZip6S84CM@6.0",
    "frame": "t006.jpg",
    "scope": "lap"
@@ -854,7 +1054,7 @@
    },
    "confidence": 0.5,
    "t": 6,
-   "s": 174.1,
+   "s": 200.0,
    "source": "onboard:RAZip6S84CM@6.0",
    "frame": "t006.jpg",
    "scope": "lap",
@@ -868,7 +1068,7 @@
    },
    "confidence": 0.9,
    "t": 8,
-   "s": 266.3,
+   "s": 265.4,
    "source": "onboard:RAZip6S84CM@8.0",
    "frame": "t008.jpg",
    "scope": "lap"
@@ -883,7 +1083,7 @@
    },
    "confidence": 0.8,
    "t": 8,
-   "s": 266.3,
+   "s": 265.4,
    "source": "onboard:RAZip6S84CM@8.0",
    "frame": "t008.jpg",
    "scope": "lap",
@@ -900,7 +1100,7 @@
    },
    "confidence": 0.9,
    "t": 8,
-   "s": 266.3,
+   "s": 265.4,
    "source": "onboard:RAZip6S84CM@8.0",
    "frame": "t008.jpg",
    "scope": "lap",
@@ -916,7 +1116,7 @@
    },
    "confidence": 0.6,
    "t": 8,
-   "s": 266.3,
+   "s": 265.4,
    "source": "onboard:RAZip6S84CM@8.0",
    "frame": "t008.jpg",
    "scope": "lap",
@@ -931,7 +1131,7 @@
    },
    "confidence": 0.95,
    "t": 8,
-   "s": 286.3,
+   "s": 285.4,
    "source": "onboard:RAZip6S84CM@8.0",
    "frame": "t008.jpg",
    "scope": "lap"
@@ -947,7 +1147,7 @@
    },
    "confidence": 0.95,
    "t": 8,
-   "s": 286.3,
+   "s": 285.4,
    "source": "onboard:RAZip6S84CM@8.0",
    "frame": "t008.jpg",
    "scope": "lap",
@@ -963,7 +1163,7 @@
    },
    "confidence": 0.95,
    "t": 10,
-   "s": 329.5,
+   "s": 323.1,
    "source": "onboard:RAZip6S84CM@10.0",
    "frame": "t010.jpg",
    "scope": "lap",
@@ -977,7 +1177,7 @@
    },
    "confidence": 0.8,
    "t": 10,
-   "s": 329.5,
+   "s": 323.1,
    "source": "onboard:RAZip6S84CM@10.0",
    "frame": "t010.jpg",
    "scope": "lap"
@@ -990,7 +1190,7 @@
    },
    "confidence": 0.9,
    "t": 10,
-   "s": 329.5,
+   "s": 323.1,
    "source": "onboard:RAZip6S84CM@10.0",
    "frame": "t010.jpg",
    "scope": "lap"
@@ -1003,7 +1203,7 @@
    },
    "confidence": 0.8,
    "t": 10,
-   "s": 329.5,
+   "s": 323.1,
    "source": "onboard:RAZip6S84CM@10.0",
    "frame": "t010.jpg",
    "scope": "lap"
@@ -1016,7 +1216,7 @@
    },
    "confidence": 0.4,
    "t": 10,
-   "s": 329.5,
+   "s": 323.1,
    "source": "onboard:RAZip6S84CM@10.0",
    "frame": "t010.jpg",
    "scope": "lap",
@@ -1044,7 +1244,33 @@
    },
    "confidence": 0.9,
    "t": 12,
-   "s": 381.0,
+   "s": 378.8,
+   "source": "onboard:RAZip6S84CM@12.0",
+   "frame": "t012.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "paint",
+   "attrs": {
+    "type": "white edge line"
+   },
+   "confidence": 0.9,
+   "t": 12,
+   "s": 378.8,
+   "source": "onboard:RAZip6S84CM@12.0",
+   "frame": "t012.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "paint",
+   "attrs": {
+    "type": "white edge line"
+   },
+   "confidence": 0.9,
+   "t": 12,
+   "s": 378.8,
    "source": "onboard:RAZip6S84CM@12.0",
    "frame": "t012.jpg",
    "scope": "lap"
@@ -1055,11 +1281,19 @@
    "attrs": {
     "type": "catch fence, curved-top posts",
     "h_m": 3.5,
-    "h_method": "fence-post-ref"
+    "h_method": "fence-post-ref",
+    "ahead_m": 35,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t012: the fence stands along the foot of the terraces AHEAD-left (the row note says so); the T2-exit wall and fence begin at s ~414 on c20_s2145 / c20_s2200, about 35 m ahead"
+    }
    },
    "confidence": 0.85,
    "t": 12,
-   "s": 381.0,
+   "s": 413.8,
    "source": "onboard:RAZip6S84CM@12.0",
    "frame": "t012.jpg",
    "scope": "lap",
@@ -1067,59 +1301,18 @@
   },
   {
    "side": "left",
-   "kind": "paint",
+   "kind": "building",
    "attrs": {
-    "type": "white edge line"
+    "type": "open shade roof on posts at the top of the T2 terraces, a tan block behind it",
+    "added": "scenery round 5 (21 Oct 2026)"
    },
-   "confidence": 0.9,
-   "t": 12,
-   "s": 381.0,
-   "source": "onboard:RAZip6S84CM@12.0",
-   "frame": "t012.jpg",
-   "scope": "lap"
-  },
-  {
-   "side": "left",
-   "kind": "station",
-   "attrs": {
-    "type": "white marshal hut at the foot of the terraces"
-   },
-   "confidence": 0.7,
-   "t": 12,
-   "s": 381.0,
-   "source": "onboard:RAZip6S84CM@12.0",
-   "frame": "t012.jpg",
+   "confidence": 0.8,
+   "t": 14,
+   "s": 419.6,
+   "source": "onboard:RAZip6S84CM@14.0",
+   "frame": "t014.jpg",
    "scope": "lap",
-   "note": "ahead-left at the fence line"
-  },
-  {
-   "side": "right",
-   "kind": "paint",
-   "attrs": {
-    "type": "white edge line"
-   },
-   "confidence": 0.9,
-   "t": 12,
-   "s": 381.0,
-   "source": "onboard:RAZip6S84CM@12.0",
-   "frame": "t012.jpg",
-   "scope": "lap"
-  },
-  {
-   "side": "right",
-   "kind": "tyre_wall",
-   "attrs": {
-    "type": "dark tyre wall far right",
-    "h_m": 0.8,
-    "h_method": "unmeasured"
-   },
-   "confidence": 0.7,
-   "t": 12,
-   "s": 381.0,
-   "source": "onboard:RAZip6S84CM@12.0",
-   "frame": "t012.jpg",
-   "scope": "lap",
-   "note": "outside of T2 exit / T3 approach, 30+ m"
+   "note": "added in round 5 from frame t014: the shade structure the stand row of this frame mentions, on the hilltop above the terraces (OSM outline 96 m left of s ~411)"
   },
   {
    "side": "left",
@@ -1208,6 +1401,28 @@
    "source": "onboard:RAZip6S84CM@14.0",
    "frame": "t014.jpg",
    "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "station",
+   "attrs": {
+    "type": "white marshal hut at the foot of the terraces",
+    "ahead_m": 64,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t012: the hut is ahead-left at the fence line; c20_s2200 shows a ~2 m white hut at the foot of the terraces at s ~445, 31 m left of the centre"
+    }
+   },
+   "confidence": 0.7,
+   "t": 12,
+   "s": 442.8,
+   "source": "onboard:RAZip6S84CM@12.0",
+   "frame": "t012.jpg",
+   "scope": "lap",
+   "note": "ahead-left at the fence line"
   },
   {
    "side": "left",
@@ -1312,6 +1527,30 @@
    "scope": "lap"
   },
   {
+   "side": "right",
+   "kind": "tyre_wall",
+   "attrs": {
+    "type": "dark tyre wall far right",
+    "h_m": 0.8,
+    "h_method": "unmeasured",
+    "ahead_m": 100,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t012: the dark tyre wall is far AHEAD-right along the foot of the hill (T2 exit / T3 approach, as the note says); the barrier line there begins at s ~481 (owner_11 line, c20_s2200 / c20_s2255)"
+    }
+   },
+   "confidence": 0.7,
+   "t": 12,
+   "s": 478.8,
+   "source": "onboard:RAZip6S84CM@12.0",
+   "frame": "t012.jpg",
+   "scope": "lap",
+   "note": "outside of T2 exit / T3 approach, 30+ m"
+  },
+  {
    "side": "left",
    "kind": "fence",
    "attrs": {
@@ -1414,37 +1653,6 @@
    "scope": "lap"
   },
   {
-   "side": "left",
-   "kind": "fence",
-   "attrs": {
-    "type": "catch fence, curved-top posts, far left",
-    "h_m": 3.5,
-    "h_method": "fence-post-ref"
-   },
-   "confidence": 0.6,
-   "t": 22,
-   "s": 655.1,
-   "source": "onboard:RAZip6S84CM@22.0",
-   "frame": "t022.jpg",
-   "scope": "lap"
-  },
-  {
-   "side": "left",
-   "kind": "wall",
-   "attrs": {
-    "type": "white low wall / armco end ahead-left",
-    "h_m": 0.8,
-    "h_method": "unmeasured"
-   },
-   "confidence": 0.5,
-   "t": 22,
-   "s": 655.1,
-   "source": "onboard:RAZip6S84CM@22.0",
-   "frame": "t022.jpg",
-   "scope": "lap",
-   "note": "at the T3 apex area, ahead"
-  },
-  {
    "side": "right",
    "kind": "paint",
    "attrs": {
@@ -1501,21 +1709,6 @@
   },
   {
    "side": "left",
-   "kind": "fence",
-   "attrs": {
-    "type": "catch fence, curved-top posts",
-    "h_m": 3.5,
-    "h_method": "fence-post-ref"
-   },
-   "confidence": 0.85,
-   "t": 24,
-   "s": 710.4,
-   "source": "onboard:RAZip6S84CM@24.0",
-   "frame": "t024.jpg",
-   "scope": "lap"
-  },
-  {
-   "side": "left",
    "kind": "kerb",
    "attrs": {
     "colour": "red/white",
@@ -1544,22 +1737,6 @@
    "scope": "lap"
   },
   {
-   "side": "left",
-   "kind": "wall",
-   "attrs": {
-    "type": "low dark concrete wall at the foot of the terraces",
-    "h_m": 0.8,
-    "h_method": "jersey-ref"
-   },
-   "confidence": 0.8,
-   "t": 24,
-   "s": 710.4,
-   "source": "onboard:RAZip6S84CM@24.0",
-   "frame": "t024.jpg",
-   "scope": "lap",
-   "note": "15-25 m left"
-  },
-  {
    "side": "right",
    "kind": "runoff",
    "attrs": {
@@ -1571,6 +1748,100 @@
    "source": "onboard:RAZip6S84CM@24.0",
    "frame": "t024.jpg",
    "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence, curved-top posts, far left",
+    "h_m": 3.5,
+    "h_method": "fence-post-ref",
+    "ahead_m": 80,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t022: the catch fence is far ahead-left on the wall that begins at s ~735 (c20_s2475)"
+    }
+   },
+   "confidence": 0.6,
+   "t": 22,
+   "s": 735.1,
+   "source": "onboard:RAZip6S84CM@22.0",
+   "frame": "t022.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "white low wall / armco end ahead-left",
+    "h_m": 0.8,
+    "h_method": "unmeasured",
+    "ahead_m": 80,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t022: the low wall and its fence stand far ahead-left at the T3 apex area (the note says ahead); the wall below the T3a-T4 stands begins at s ~735 (c20_s2475)"
+    }
+   },
+   "confidence": 0.5,
+   "t": 22,
+   "s": 735.1,
+   "source": "onboard:RAZip6S84CM@22.0",
+   "frame": "t022.jpg",
+   "scope": "lap",
+   "note": "at the T3 apex area, ahead"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence, curved-top posts",
+    "h_m": 3.5,
+    "h_method": "fence-post-ref",
+    "ahead_m": 30,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t024: as the wall row of this frame (fence on the wall that begins at s ~735)"
+    }
+   },
+   "confidence": 0.85,
+   "t": 24,
+   "s": 740.4,
+   "source": "onboard:RAZip6S84CM@24.0",
+   "frame": "t024.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "low dark concrete wall at the foot of the terraces",
+    "h_m": 0.8,
+    "h_method": "jersey-ref",
+    "ahead_m": 30,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t024: the wall with its fence begins ahead-left (frame left edge, 25-40 m ahead); the wall below the T3a-T4 stands begins at s ~735 (c20_s2475)"
+    }
+   },
+   "confidence": 0.8,
+   "t": 24,
+   "s": 740.4,
+   "source": "onboard:RAZip6S84CM@24.0",
+   "frame": "t024.jpg",
+   "scope": "lap",
+   "note": "15-25 m left"
   },
   {
    "side": "left",
@@ -1592,19 +1863,6 @@
    "kind": "paint",
    "attrs": {
     "type": "white edge line"
-   },
-   "confidence": 0.9,
-   "t": 26,
-   "s": 762.5,
-   "source": "onboard:RAZip6S84CM@26.0",
-   "frame": "t026.jpg",
-   "scope": "lap"
-  },
-  {
-   "side": "left",
-   "kind": "stand",
-   "attrs": {
-    "type": "concrete terraces (T3a-T4)"
    },
    "confidence": 0.9,
    "t": 26,
@@ -1654,20 +1912,6 @@
    "source": "onboard:RAZip6S84CM@26.0",
    "frame": "t026.jpg",
    "scope": "lap"
-  },
-  {
-   "side": "right",
-   "kind": "station",
-   "attrs": {
-    "type": "white elevated marshal tower with roof"
-   },
-   "confidence": 0.8,
-   "t": 26,
-   "s": 762.5,
-   "source": "onboard:RAZip6S84CM@26.0",
-   "frame": "t026.jpg",
-   "scope": "lap",
-   "note": "far right on the bank (3a / T4 area)"
   },
   {
    "side": "left",
@@ -1737,6 +1981,27 @@
    "s": 810.8,
    "source": "onboard:RAZip6S84CM@28.0",
    "frame": "t028.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "stand",
+   "attrs": {
+    "type": "concrete terraces (T3a-T4)",
+    "ahead_m": 50,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t026: the T3a-T4 terraces are ahead-left; their footprint (OSM 1414701938) begins at s ~812"
+    }
+   },
+   "confidence": 0.9,
+   "t": 26,
+   "s": 812.5,
+   "source": "onboard:RAZip6S84CM@26.0",
+   "frame": "t026.jpg",
    "scope": "lap"
   },
   {
@@ -1824,20 +2089,6 @@
    "source": "onboard:RAZip6S84CM@30.0",
    "frame": "t030.jpg",
    "scope": "lap"
-  },
-  {
-   "side": "right",
-   "kind": "station",
-   "attrs": {
-    "type": "white marshal post with roof"
-   },
-   "confidence": 0.8,
-   "t": 30,
-   "s": 855.2,
-   "source": "onboard:RAZip6S84CM@30.0",
-   "frame": "t030.jpg",
-   "scope": "lap",
-   "note": "ahead-right at T4"
   },
   {
    "side": "right",
@@ -1945,25 +2196,18 @@
   },
   {
    "side": "right",
-   "kind": "station",
-   "attrs": {
-    "type": "white elevated marshal post with roof, on a platform"
-   },
-   "confidence": 0.9,
-   "t": 32,
-   "s": 909.4,
-   "source": "onboard:RAZip6S84CM@32.0",
-   "frame": "t032.jpg",
-   "scope": "lap",
-   "note": "T4 station, right, beyond the runoff"
-  },
-  {
-   "side": "right",
-   "kind": "wall",
+   "kind": "tyre_wall",
    "attrs": {
     "type": "dark concrete / tyre-faced wall",
     "h_m": 1.0,
-    "h_method": "unmeasured"
+    "h_method": "unmeasured",
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "kind": "wall"
+     },
+     "why": "the row itself reads \"dark concrete / tyre-faced wall\"; the 2026 captures c20_s2640 / c20_s2695 show a dark tyre line beyond the T4 runoff there (OSM note \"Tire barrier\"), the barrier of row 0:30 of the same kind"
+    }
    },
    "confidence": 0.7,
    "t": 32,
@@ -1985,22 +2229,6 @@
    "source": "onboard:RAZip6S84CM@34.0",
    "frame": "t034.jpg",
    "scope": "lap"
-  },
-  {
-   "side": "left",
-   "kind": "cone_line",
-   "attrs": {
-    "type": "orange traffic cones across the Chute mouth",
-    "h_m": 0.7,
-    "h_method": "cone-ref"
-   },
-   "confidence": 0.9,
-   "t": 34,
-   "s": 967.6,
-   "source": "onboard:RAZip6S84CM@34.0",
-   "frame": "t034.jpg",
-   "scope": "lap",
-   "note": "3-5 cones, ahead-left at T4"
   },
   {
    "side": "left",
@@ -2044,19 +2272,94 @@
    "scope": "lap"
   },
   {
-   "side": "left",
-   "kind": "fence",
+   "side": "right",
+   "kind": "station",
    "attrs": {
-    "type": "chain-link fence",
-    "h_m": 2.5,
-    "h_method": "fence-post-ref"
+    "type": "white elevated marshal post with roof, on a platform",
+    "ahead_m": 60,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t032: the T4 post beyond the runoff is ~60 m ahead-right; it stands at s ~970 (c20_s2695)"
+    }
    },
-   "confidence": 0.7,
-   "t": 36,
-   "s": 1003.7,
-   "source": "onboard:RAZip6S84CM@36.0",
-   "frame": "t036.jpg",
-   "scope": "lap"
+   "confidence": 0.9,
+   "t": 32,
+   "s": 969.4,
+   "source": "onboard:RAZip6S84CM@32.0",
+   "frame": "t032.jpg",
+   "scope": "lap",
+   "note": "T4 station, right, beyond the runoff"
+  },
+  {
+   "side": "right",
+   "kind": "station",
+   "attrs": {
+    "type": "white elevated marshal tower with roof",
+    "ahead_m": 207,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t026: the tower stands far ahead-right on the bank; it is the T4 post (c20_s2695, s ~970), the only roofed tower on that bank"
+    }
+   },
+   "confidence": 0.8,
+   "t": 26,
+   "s": 969.5,
+   "source": "onboard:RAZip6S84CM@26.0",
+   "frame": "t026.jpg",
+   "scope": "lap",
+   "note": "far right on the bank (3a / T4 area)"
+  },
+  {
+   "side": "right",
+   "kind": "station",
+   "attrs": {
+    "type": "white marshal post with roof",
+    "ahead_m": 115,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t030: the post is ahead-right at T4 (the note says so): the T4 post at s ~970 (c20_s2695)"
+    }
+   },
+   "confidence": 0.8,
+   "t": 30,
+   "s": 970.2,
+   "source": "onboard:RAZip6S84CM@30.0",
+   "frame": "t030.jpg",
+   "scope": "lap",
+   "note": "ahead-right at T4"
+  },
+  {
+   "side": "left",
+   "kind": "cone_line",
+   "attrs": {
+    "type": "orange traffic cones across the Chute mouth",
+    "h_m": 0.7,
+    "h_method": "cone-ref",
+    "ahead_m": 30,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t034: 3-5 cones ahead-left across the Chute mouth (the note says ahead); the mouth meets the track at s ~995-1001"
+    }
+   },
+   "confidence": 0.9,
+   "t": 34,
+   "s": 997.6,
+   "source": "onboard:RAZip6S84CM@34.0",
+   "frame": "t034.jpg",
+   "scope": "lap",
+   "note": "3-5 cones, ahead-left at T4"
   },
   {
    "side": "left",
@@ -2070,22 +2373,6 @@
    "source": "onboard:RAZip6S84CM@36.0",
    "frame": "t036.jpg",
    "scope": "lap"
-  },
-  {
-   "side": "left",
-   "kind": "wall",
-   "attrs": {
-    "type": "low black wall with ad boards (Save Mart, others)",
-    "h_m": 1.0,
-    "h_method": "jersey-ref"
-   },
-   "confidence": 0.85,
-   "t": 36,
-   "s": 1003.7,
-   "source": "onboard:RAZip6S84CM@36.0",
-   "frame": "t036.jpg",
-   "scope": "lap",
-   "note": "outside of T4 beyond grass and the Chute"
   },
   {
    "side": "right",
@@ -2102,21 +2389,6 @@
    "frame": "t036.jpg",
    "scope": "lap",
    "note": "T4 apex kerb"
-  },
-  {
-   "side": "left",
-   "kind": "fence",
-   "attrs": {
-    "type": "chain-link fence with posts",
-    "h_m": 2.5,
-    "h_method": "fence-post-ref"
-   },
-   "confidence": 0.7,
-   "t": 38,
-   "s": 1050.9,
-   "source": "onboard:RAZip6S84CM@38.0",
-   "frame": "t038.jpg",
-   "scope": "lap"
   },
   {
    "side": "left",
@@ -2146,22 +2418,6 @@
    "source": "onboard:RAZip6S84CM@38.0",
    "frame": "t038.jpg",
    "scope": "lap"
-  },
-  {
-   "side": "left",
-   "kind": "tyre_wall",
-   "attrs": {
-    "type": "low dark wall / tyre line",
-    "h_m": 0.8,
-    "h_method": "jersey-ref"
-   },
-   "confidence": 0.75,
-   "t": 38,
-   "s": 1050.9,
-   "source": "onboard:RAZip6S84CM@38.0",
-   "frame": "t038.jpg",
-   "scope": "lap",
-   "note": "15-25 m left"
   },
   {
    "side": "right",
@@ -2206,6 +2462,101 @@
    "frame": "t038.jpg",
    "scope": "lap",
    "note": "T5 right wall begins, 5-8 m right"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "chain-link fence with posts",
+    "h_m": 2.5,
+    "h_method": "fence-post-ref",
+    "ahead_m": 30,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t038: the fence behind the T5 tyre wall begins 20-30 m ahead-left"
+    }
+   },
+   "confidence": 0.7,
+   "t": 38,
+   "s": 1080.9,
+   "source": "onboard:RAZip6S84CM@38.0",
+   "frame": "t038.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "tyre_wall",
+   "attrs": {
+    "type": "low dark wall / tyre line",
+    "h_m": 0.8,
+    "h_method": "jersey-ref",
+    "ahead_m": 30,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t038: the tyre line begins ahead-left (frame left edge, 20-30 m ahead); the T5 tyre wall begins at s ~1082 (c20_s2805)"
+    }
+   },
+   "confidence": 0.75,
+   "t": 38,
+   "s": 1080.9,
+   "source": "onboard:RAZip6S84CM@38.0",
+   "frame": "t038.jpg",
+   "scope": "lap",
+   "note": "15-25 m left"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "chain-link fence",
+    "h_m": 2.5,
+    "h_method": "fence-post-ref",
+    "ahead_m": 80,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t036: the chain-link fence stands behind the T5 tyre wall seen ~80 m ahead (s ~1082 on)"
+    }
+   },
+   "confidence": 0.7,
+   "t": 36,
+   "s": 1083.7,
+   "source": "onboard:RAZip6S84CM@36.0",
+   "frame": "t036.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "tyre_wall",
+   "attrs": {
+    "type": "low black wall with ad boards (Save Mart, others)",
+    "h_m": 1.0,
+    "h_method": "jersey-ref",
+    "ahead_m": 80,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null,
+      "kind": "wall"
+     },
+     "why": "frames t036 / t038 / t040: the black barrier with ad boards beyond the Chute is the T5 tyre wall (black tyre stacks at 0:38-0:40), seen ~80 m ahead from 0:36; it begins at s ~1082 (c20_s2805)"
+    }
+   },
+   "confidence": 0.85,
+   "t": 36,
+   "s": 1083.7,
+   "source": "onboard:RAZip6S84CM@36.0",
+   "frame": "t036.jpg",
+   "scope": "lap",
+   "note": "outside of T4 beyond grass and the Chute"
   },
   {
    "side": "left",
@@ -2309,22 +2660,6 @@
   },
   {
    "side": "left",
-   "kind": "fence",
-   "attrs": {
-    "type": "catch fence, curved-top posts",
-    "h_m": 3.5,
-    "h_method": "fence-post-ref"
-   },
-   "confidence": 0.7,
-   "t": 42,
-   "s": 1189.0,
-   "source": "onboard:RAZip6S84CM@42.0",
-   "frame": "t042.jpg",
-   "scope": "lap",
-   "note": "far left"
-  },
-  {
-   "side": "left",
    "kind": "runoff",
    "attrs": {
     "type": "grass, wide"
@@ -2335,22 +2670,6 @@
    "source": "onboard:RAZip6S84CM@42.0",
    "frame": "t042.jpg",
    "scope": "lap"
-  },
-  {
-   "side": "left",
-   "kind": "wall",
-   "attrs": {
-    "type": "low dark wall far left",
-    "h_m": 0.8,
-    "h_method": "unmeasured"
-   },
-   "confidence": 0.6,
-   "t": 42,
-   "s": 1189.0,
-   "source": "onboard:RAZip6S84CM@42.0",
-   "frame": "t042.jpg",
-   "scope": "lap",
-   "note": "25-40 m left"
   },
   {
    "side": "right",
@@ -2367,6 +2686,54 @@
    "frame": "t042.jpg",
    "scope": "lap",
    "note": "continuous, 4-5 m right, orange dirt strip in front"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence, curved-top posts",
+    "h_m": 3.5,
+    "h_method": "fence-post-ref",
+    "ahead_m": 40,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t042: as the wall row of this frame"
+    }
+   },
+   "confidence": 0.7,
+   "t": 42,
+   "s": 1229.0,
+   "source": "onboard:RAZip6S84CM@42.0",
+   "frame": "t042.jpg",
+   "scope": "lap",
+   "note": "far left"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "low dark wall far left",
+    "h_m": 0.8,
+    "h_method": "unmeasured",
+    "ahead_m": 40,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t042: the low dark wall with its fence is far ahead-left (the T5-T6 crest wall, which begins at s ~1226 on the 2026 captures)"
+    }
+   },
+   "confidence": 0.6,
+   "t": 42,
+   "s": 1229.0,
+   "source": "onboard:RAZip6S84CM@42.0",
+   "frame": "t042.jpg",
+   "scope": "lap",
+   "note": "25-40 m left"
   },
   {
    "side": "left",
@@ -2441,20 +2808,6 @@
    "source": "onboard:RAZip6S84CM@46.0",
    "frame": "t046.jpg",
    "scope": "lap"
-  },
-  {
-   "side": "right",
-   "kind": "station",
-   "attrs": {
-    "type": "marshal post with roof on the crest, vehicles parked"
-   },
-   "confidence": 0.85,
-   "t": 46,
-   "s": 1320.4,
-   "source": "onboard:RAZip6S84CM@46.0",
-   "frame": "t046.jpg",
-   "scope": "lap",
-   "note": "hilltop station before the Carousel (owner)"
   },
   {
    "side": "right",
@@ -2573,6 +2926,28 @@
    "note": "down from the crest into the Carousel, 2-4 m right"
   },
   {
+   "side": "right",
+   "kind": "station",
+   "attrs": {
+    "type": "marshal post with roof on the crest, vehicles parked",
+    "ahead_m": 75,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t046: the post is ahead on the crest (vehicles beside it); it is the T6 hilltop post at s ~1395 (c20_s3135)"
+    }
+   },
+   "confidence": 0.85,
+   "t": 46,
+   "s": 1395.4,
+   "source": "onboard:RAZip6S84CM@46.0",
+   "frame": "t046.jpg",
+   "scope": "lap",
+   "note": "hilltop station before the Carousel (owner)"
+  },
+  {
    "side": "left",
    "kind": "paint",
    "attrs": {
@@ -2629,9 +3004,16 @@
   },
   {
    "side": "right",
-   "kind": "wall",
+   "kind": "tyre_wall",
    "attrs": {
-    "type": "armco far right at the Carousel"
+    "type": "armco far right at the Carousel",
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "kind": "wall"
+     },
+     "why": "Street View is July 2011; the row note itself records that the March 2026 onboard 0:52-0:54 shows a dark tyre line there (Carousel right tyre-faced barrier on the 2026 captures from s ~1514)"
+    }
    },
    "confidence": 0.4,
    "t": null,
@@ -2642,12 +3024,23 @@
    "note": "2026 onboard 0:52-0:54 shows a dark tyre line there"
   },
   {
-   "side": "left",
-   "kind": "runoff",
+   "side": "ahead",
+   "kind": "fence",
    "attrs": {
-    "type": "grass mound inside"
+    "type": "spectator fence on the bank top",
+    "h_m": 1.2,
+    "h_method": "person-ref",
+    "out_m": 100,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "side": "right",
+      "out_m": null
+     },
+     "why": "frame t052: the spectator fence stands on the bank top beyond the Carousel; the lidar DEM puts that crest ~100 m beyond the right edge (s 1480-1560), past the gate reach for a fence (80 m): background, kept as an ahead row without a distance"
+    }
    },
-   "confidence": 0.8,
+   "confidence": 0.7,
    "t": 52,
    "s": 1513.0,
    "source": "onboard:RAZip6S84CM@52.0",
@@ -2655,14 +3048,12 @@
    "scope": "lap"
   },
   {
-   "side": "right",
-   "kind": "fence",
+   "side": "left",
+   "kind": "runoff",
    "attrs": {
-    "type": "spectator fence on the bank top",
-    "h_m": 1.2,
-    "h_method": "person-ref"
+    "type": "grass mound inside"
    },
-   "confidence": 0.7,
+   "confidence": 0.8,
    "t": 52,
    "s": 1513.0,
    "source": "onboard:RAZip6S84CM@52.0",
@@ -2712,22 +3103,6 @@
    "scope": "lap"
   },
   {
-   "side": "left",
-   "kind": "kerb",
-   "attrs": {
-    "colour": "red/white",
-    "raised": "low, flat concrete",
-    "width_m": 0.9
-   },
-   "confidence": 0.85,
-   "t": 54,
-   "s": 1567.5,
-   "source": "onboard:RAZip6S84CM@54.0",
-   "frame": "t054.jpg",
-   "scope": "lap",
-   "note": "Carousel apex kerb, ahead-left"
-  },
-  {
    "side": "right",
    "kind": "mast",
    "attrs": {
@@ -2757,6 +3132,30 @@
    "frame": "t054.jpg",
    "scope": "lap",
    "note": "15-25 m right, Carousel outside"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "colour": "red/white",
+    "raised": "low, flat concrete",
+    "width_m": 0.9,
+    "ahead_m": 25,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t054: the Carousel apex kerb is ahead-left (the note says so); it begins at s ~1591 (kerb_detect, c20_s3355)"
+    }
+   },
+   "confidence": 0.85,
+   "t": 54,
+   "s": 1592.5,
+   "source": "onboard:RAZip6S84CM@54.0",
+   "frame": "t054.jpg",
+   "scope": "lap",
+   "note": "Carousel apex kerb, ahead-left"
   },
   {
    "side": "left",
@@ -3039,22 +3438,6 @@
   },
   {
    "side": "right",
-   "kind": "cone_line",
-   "attrs": {
-    "type": "orange cones",
-    "h_m": 0.7,
-    "h_method": "cone-ref"
-   },
-   "confidence": 0.7,
-   "t": 64,
-   "s": 1888.2,
-   "source": "onboard:RAZip6S84CM@64.0",
-   "frame": "t064.jpg",
-   "scope": "lap",
-   "note": "ahead-right, at a paved junction"
-  },
-  {
-   "side": "right",
    "kind": "mast",
    "attrs": {
     "type": "light mast",
@@ -3083,15 +3466,47 @@
   },
   {
    "side": "right",
+   "kind": "cone_line",
+   "attrs": {
+    "type": "orange cones",
+    "h_m": 0.7,
+    "h_method": "cone-ref",
+    "ahead_m": 50,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t064: the cones stand in front of the tyre line across the drag strip continuation at the fork, ~40-60 m ahead"
+    }
+   },
+   "confidence": 0.7,
+   "t": 64,
+   "s": 1938.2,
+   "source": "onboard:RAZip6S84CM@64.0",
+   "frame": "t064.jpg",
+   "scope": "lap",
+   "note": "ahead-right, at a paved junction"
+  },
+  {
+   "side": "right",
    "kind": "tyre_wall",
    "attrs": {
     "type": "black tyre line",
     "h_m": 0.7,
-    "h_method": "tyre-ref"
+    "h_method": "tyre-ref",
+    "ahead_m": 50,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t064: the black tyre line and cones lie across the drag strip continuation where the course forks left to T7, ~40-60 m ahead (base rows 12-20 px below the horizon)"
+    }
    },
    "confidence": 0.7,
    "t": 64,
-   "s": 1888.2,
+   "s": 1938.2,
    "source": "onboard:RAZip6S84CM@64.0",
    "frame": "t064.jpg",
    "scope": "lap",
@@ -3187,20 +3602,6 @@
    "scope": "lap"
   },
   {
-   "side": "right",
-   "kind": "stand",
-   "attrs": {
-    "type": "concrete terraces on the T7a hill"
-   },
-   "confidence": 0.8,
-   "t": 68,
-   "s": 2032.9,
-   "source": "onboard:RAZip6S84CM@68.0",
-   "frame": "t068.jpg",
-   "scope": "lap",
-   "note": "far right"
-  },
-  {
    "side": "left",
    "kind": "tyre_wall",
    "attrs": {
@@ -3256,20 +3657,6 @@
    "source": "onboard:RAZip6S84CM@70.0",
    "frame": "t070.jpg",
    "scope": "lap"
-  },
-  {
-   "side": "right",
-   "kind": "stand",
-   "attrs": {
-    "type": "concrete terraces with fence on top"
-   },
-   "confidence": 0.8,
-   "t": 70,
-   "s": 2111.5,
-   "source": "onboard:RAZip6S84CM@70.0",
-   "frame": "t070.jpg",
-   "scope": "lap",
-   "note": "far right"
   },
   {
    "side": "ahead",
@@ -3346,18 +3733,40 @@
    "note": "T7 island apex kerb"
   },
   {
-   "side": "right",
-   "kind": "stand",
+   "side": "left",
+   "kind": "cone_line",
    "attrs": {
-    "type": "concrete terraces with fence and light masts on top"
+    "type": "orange cones in front of a black tyre line across the Chute's T7 mouth",
+    "h_m": 0.7,
+    "h_method": "cone-ref",
+    "ahead_m": 10,
+    "added": "scenery round 5 (21 Oct 2026)"
    },
-   "confidence": 0.9,
+   "confidence": 0.8,
    "t": 72,
-   "s": 2157.1,
+   "s": 2167.1,
    "source": "onboard:RAZip6S84CM@72.0",
    "frame": "t072.jpg",
    "scope": "lap",
-   "note": "T7a hill, far right"
+   "note": "added in round 5 from frame t072: small orange cones and two low black tyre lines across the paved Chute mouth ahead-left of T7 (the first pass logged only the T7 post and wall end in this frame)"
+  },
+  {
+   "side": "left",
+   "kind": "tyre_wall",
+   "attrs": {
+    "type": "low black tyre line across the Chute's T7 mouth",
+    "h_m": 0.6,
+    "h_method": "tyre-ref",
+    "ahead_m": 10,
+    "added": "scenery round 5 (21 Oct 2026)"
+   },
+   "confidence": 0.75,
+   "t": 72,
+   "s": 2167.1,
+   "source": "onboard:RAZip6S84CM@72.0",
+   "frame": "t072.jpg",
+   "scope": "lap",
+   "note": "added in round 5 from frame t072 (with the cones in front of it); seen again far left at 0:74"
   },
   {
    "side": "left",
@@ -3371,35 +3780,6 @@
    "source": "onboard:RAZip6S84CM@74.0",
    "frame": "t074.jpg",
    "scope": "lap"
-  },
-  {
-   "side": "left",
-   "kind": "stand",
-   "attrs": {
-    "type": "concrete terraces"
-   },
-   "confidence": 0.9,
-   "t": 74,
-   "s": 2202.1,
-   "source": "onboard:RAZip6S84CM@74.0",
-   "frame": "t074.jpg",
-   "scope": "lap"
-  },
-  {
-   "side": "left",
-   "kind": "tyre_wall",
-   "attrs": {
-    "type": "black tyre wall line, recovery vehicles behind",
-    "h_m": 0.8,
-    "h_method": "tyre-ref"
-   },
-   "confidence": 0.85,
-   "t": 74,
-   "s": 2202.1,
-   "source": "onboard:RAZip6S84CM@74.0",
-   "frame": "t074.jpg",
-   "scope": "lap",
-   "note": "far left beyond the T7 paved runoff"
   },
   {
    "side": "right",
@@ -3442,6 +3822,51 @@
    "s": 2215.0,
    "source": "streetview:J6fsnW4hj4xCjQLzrgRGzA@54",
    "frame": "",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "tyre_wall",
+   "attrs": {
+    "type": "black tyre wall line, recovery vehicles behind",
+    "h_m": 0.8,
+    "h_method": "tyre-ref",
+    "ahead_m": 35,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t074: the black tyre line with vehicles behind it is far ahead-left at the foot of the T7a terraces; the dark band there begins at s ~2234 (c20_s3960, vehicles parked in front)"
+    }
+   },
+   "confidence": 0.85,
+   "t": 74,
+   "s": 2237.1,
+   "source": "onboard:RAZip6S84CM@74.0",
+   "frame": "t074.jpg",
+   "scope": "lap",
+   "note": "far left beyond the T7 paved runoff"
+  },
+  {
+   "side": "left",
+   "kind": "stand",
+   "attrs": {
+    "type": "concrete terraces",
+    "ahead_m": 60,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t074: the T7a terraces are ahead-left; their footprint (OSM 1414701937) is at s ~2261-2291"
+    }
+   },
+   "confidence": 0.9,
+   "t": 74,
+   "s": 2262.1,
+   "source": "onboard:RAZip6S84CM@74.0",
+   "frame": "t074.jpg",
    "scope": "lap"
   },
   {
@@ -3522,6 +3947,75 @@
    "scope": "lap"
   },
   {
+   "side": "ahead",
+   "kind": "stand",
+   "attrs": {
+    "type": "concrete terraces with fence on top",
+    "ahead_m": 160,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "side": "right",
+      "ahead_m": null
+     },
+     "why": "frame t070: as 1:08, the T7a terraces far ahead (s ~2261-2291, left of the track there)"
+    }
+   },
+   "confidence": 0.8,
+   "t": 70,
+   "s": 2271.5,
+   "source": "onboard:RAZip6S84CM@70.0",
+   "frame": "t070.jpg",
+   "scope": "lap",
+   "note": "far right"
+  },
+  {
+   "side": "ahead",
+   "kind": "stand",
+   "attrs": {
+    "type": "concrete terraces with fence and light masts on top",
+    "ahead_m": 115,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "side": "right",
+      "ahead_m": null
+     },
+     "why": "frame t072: as 1:08, the T7a terraces ahead (s ~2261-2291, left of the track there)"
+    }
+   },
+   "confidence": 0.9,
+   "t": 72,
+   "s": 2272.1,
+   "source": "onboard:RAZip6S84CM@72.0",
+   "frame": "t072.jpg",
+   "scope": "lap",
+   "note": "T7a hill, far right"
+  },
+  {
+   "side": "ahead",
+   "kind": "stand",
+   "attrs": {
+    "type": "concrete terraces on the T7a hill",
+    "ahead_m": 240,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "side": "right",
+      "ahead_m": null
+     },
+     "why": "frame t068: the T7a terraces are far ahead (the note says far right): they stand on the outside of the T7a exit, on the left of the track there (OSM 1414701937, s ~2261-2291)"
+    }
+   },
+   "confidence": 0.8,
+   "t": 68,
+   "s": 2272.9,
+   "source": "onboard:RAZip6S84CM@68.0",
+   "frame": "t068.jpg",
+   "scope": "lap",
+   "note": "far right"
+  },
+  {
    "side": "left",
    "kind": "fence",
    "attrs": {
@@ -3600,11 +4094,19 @@
    "attrs": {
     "type": "light concrete wall with ad board",
     "h_m": 1.0,
-    "h_method": "jersey-ref"
+    "h_method": "jersey-ref",
+    "ahead_m": 40,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t078: far right ahead: the T8 right wall between the track and the PWC road begins at s ~2350 (c20_s0000 / c20_s0055)"
+    }
    },
    "confidence": 0.6,
    "t": 78,
-   "s": 2313.5,
+   "s": 2353.5,
    "source": "onboard:RAZip6S84CM@78.0",
    "frame": "t078.jpg",
    "scope": "lap",
@@ -3750,9 +4252,16 @@
   },
   {
    "side": "left",
-   "kind": "wall",
+   "kind": "tyre_wall",
    "attrs": {
-    "type": "concrete wall with a catch fence on the bank"
+    "type": "concrete wall with a catch fence on the bank",
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "kind": "wall"
+     },
+     "why": "Street View is July 2011; the March 2026 onboard 1:20-1:24 (rows at 0:80-0:86) shows a dark low wall / tyre line at the foot of the bank there, not concrete (HEIGHTS.md rule: keep Street View only where the recent video shows the same structure)"
+    }
    },
    "confidence": 0.6,
    "t": null,
@@ -3828,11 +4337,19 @@
    "attrs": {
     "type": "black-covered tyre barrier / dark panel wall",
     "h_m": 1.3,
-    "h_method": "jersey-ref"
+    "h_method": "jersey-ref",
+    "ahead_m": 20,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t084: the dark panel / tyre barrier is ahead-right; it begins at s ~2515 (c20_s0165)"
+    }
    },
    "confidence": 0.8,
    "t": 84,
-   "s": 2497.4,
+   "s": 2517.4,
    "source": "onboard:RAZip6S84CM@84.0",
    "frame": "t084.jpg",
    "scope": "lap",
@@ -3919,11 +4436,19 @@
    "attrs": {
     "type": "light grey concrete wall",
     "h_m": 1.0,
-    "h_method": "jersey-ref"
+    "h_method": "jersey-ref",
+    "ahead_m": 20,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t086: the light wall begins ~15-20 m ahead-right; the T9 right wall begins at s ~2591 (c20_s0220)"
+    }
    },
    "confidence": 0.9,
    "t": 86,
-   "s": 2570.9,
+   "s": 2590.9,
    "source": "onboard:RAZip6S84CM@86.0",
    "frame": "t086.jpg",
    "scope": "lap",
@@ -4022,19 +4547,6 @@
   },
   {
    "side": "left",
-   "kind": "stand",
-   "attrs": {
-    "type": "concrete terraces (back straight)"
-   },
-   "confidence": 0.9,
-   "t": 90,
-   "s": 2707.0,
-   "source": "onboard:RAZip6S84CM@90.0",
-   "frame": "t090.jpg",
-   "scope": "lap"
-  },
-  {
-   "side": "left",
    "kind": "wall",
    "attrs": {
     "type": "low dark concrete wall",
@@ -4089,6 +4601,27 @@
    "confidence": 0.8,
    "t": 90,
    "s": 2707.0,
+   "source": "onboard:RAZip6S84CM@90.0",
+   "frame": "t090.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "stand",
+   "attrs": {
+    "type": "concrete terraces (back straight)",
+    "ahead_m": 30,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t090: the back-straight terraces begin ahead-left; their footprint (OSM 1414701936) begins at s ~2735"
+    }
+   },
+   "confidence": 0.9,
+   "t": 90,
+   "s": 2737.0,
    "source": "onboard:RAZip6S84CM@90.0",
    "frame": "t090.jpg",
    "scope": "lap"
@@ -4557,22 +5090,6 @@
    "note": "15-25 m right"
   },
   {
-   "side": "right",
-   "kind": "wall",
-   "attrs": {
-    "type": "light concrete wall with catch fence",
-    "h_m": 1.0,
-    "h_method": "jersey-ref"
-   },
-   "confidence": 0.8,
-   "t": 102,
-   "s": 3089.3,
-   "source": "onboard:RAZip6S84CM@102.0",
-   "frame": "t102.jpg",
-   "scope": "lap",
-   "note": "right, below the grandstand"
-  },
-  {
    "side": "left",
    "kind": "kerb",
    "attrs": {
@@ -4662,6 +5179,30 @@
    "frame": "t104.jpg",
    "scope": "lap",
    "note": "8-12 m right"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "light concrete wall with catch fence",
+    "h_m": 1.0,
+    "h_method": "jersey-ref",
+    "ahead_m": 60,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t102: the light wall with its fence stands beyond the black tyre barrier, ahead-right; on c20_s0715 / c20_s0770 the dark tyre band ends at s ~3132 and the light wall runs on from there"
+    }
+   },
+   "confidence": 0.8,
+   "t": 102,
+   "s": 3149.3,
+   "source": "onboard:RAZip6S84CM@102.0",
+   "frame": "t102.jpg",
+   "scope": "lap",
+   "note": "right, below the grandstand"
   },
   {
    "side": "left",
@@ -5632,21 +6173,6 @@
    "scope": "lap"
   },
   {
-   "side": "right",
-   "kind": "wall",
-   "attrs": {
-    "type": "wall with ad boards far right",
-    "h_m": 1.5,
-    "h_method": "unmeasured"
-   },
-   "confidence": 0.6,
-   "t": 126,
-   "s": 3736.5,
-   "source": "onboard:RAZip6S84CM@126.0",
-   "frame": "t126.jpg",
-   "scope": "lap"
-  },
-  {
    "side": "left",
    "kind": "building",
    "attrs": {
@@ -5715,22 +6241,6 @@
    "scope": "lap"
   },
   {
-   "side": "right",
-   "kind": "wall",
-   "attrs": {
-    "type": "wall with Las Vegas / O'Reilly boards",
-    "h_m": 2.5,
-    "h_method": "horizon-ratio"
-   },
-   "confidence": 0.75,
-   "t": 128,
-   "s": 3784.4,
-   "source": "onboard:RAZip6S84CM@128.0",
-   "frame": "t128.jpg",
-   "scope": "lap",
-   "note": "far right"
-  },
-  {
    "side": "left",
    "kind": "building",
    "attrs": {
@@ -5785,22 +6295,6 @@
    "source": "onboard:RAZip6S84CM@130.0",
    "frame": "t130.jpg",
    "scope": "lap"
-  },
-  {
-   "side": "right",
-   "kind": "wall",
-   "attrs": {
-    "type": "wall with EchoPark boards",
-    "h_m": 2.5,
-    "h_method": "horizon-ratio"
-   },
-   "confidence": 0.75,
-   "t": 130,
-   "s": 3843.2,
-   "source": "onboard:RAZip6S84CM@130.0",
-   "frame": "t130.jpg",
-   "scope": "lap",
-   "note": "far right"
   },
   {
    "side": "left",
@@ -5892,15 +6386,94 @@
    "attrs": {
     "type": "wall with zMAX / Save Mart boards",
     "h_m": 2.5,
-    "h_method": "horizon-ratio"
+    "h_method": "horizon-ratio",
+    "ahead_m": 40,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t132: the boarded wall is the far drag-strip wall, ~40 m ahead-right"
+    }
    },
    "confidence": 0.75,
    "t": 132,
-   "s": 3911.8,
+   "s": 3951.8,
    "source": "onboard:RAZip6S84CM@132.0",
    "frame": "t132.jpg",
    "scope": "lap",
    "note": "far right"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "wall with EchoPark boards",
+    "h_m": 2.5,
+    "h_method": "horizon-ratio",
+    "ahead_m": 122,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t130: as t126, the boarded drag-strip wall at the T12 exit seen far ahead-right (boards from s ~3960)"
+    }
+   },
+   "confidence": 0.75,
+   "t": 130,
+   "s": 3965.2,
+   "source": "onboard:RAZip6S84CM@130.0",
+   "frame": "t130.jpg",
+   "scope": "lap",
+   "note": "far right"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "wall with Las Vegas / O'Reilly boards",
+    "h_m": 2.5,
+    "h_method": "horizon-ratio",
+    "ahead_m": 181,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t128: as t126, the boarded drag-strip wall at the T12 exit seen far ahead-right (boards from s ~3960)"
+    }
+   },
+   "confidence": 0.75,
+   "t": 128,
+   "s": 3965.4,
+   "source": "onboard:RAZip6S84CM@128.0",
+   "frame": "t128.jpg",
+   "scope": "lap",
+   "note": "far right"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "wall with ad boards far right",
+    "h_m": 1.5,
+    "h_method": "unmeasured",
+    "ahead_m": 229,
+    "correction": {
+     "round": "scenery round 5 (21 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t126: the boarded wall is far ahead-right (vanishing point): the drag-strip walls at the T12 exit, whose boards begin at s ~3960 (c20_s1540); the NASCAR infield between is open paving (c20_s1375..s1540)"
+    }
+   },
+   "confidence": 0.6,
+   "t": 126,
+   "s": 3965.5,
+   "source": "onboard:RAZip6S84CM@126.0",
+   "frame": "t126.jpg",
+   "scope": "lap"
   },
   {
    "side": "left",
@@ -5979,38 +6552,6 @@
   },
   {
    "side": "left",
-   "kind": "mast",
-   "attrs": {
-    "type": "light mast",
-    "h_m": 20,
-    "h_method": "unmeasured"
-   },
-   "confidence": 0.8,
-   "t": 0,
-   "s": 4024.4,
-   "source": "onboard:RAZip6S84CM@0.0",
-   "frame": "t000.jpg",
-   "scope": "lap",
-   "note": "light masts behind the pit lane"
-  },
-  {
-   "side": "left",
-   "kind": "stand",
-   "attrs": {
-    "type": "bleachers with suites deck",
-    "h_m": 15,
-    "h_method": "storeys"
-   },
-   "confidence": 0.9,
-   "t": 0,
-   "s": 4024.4,
-   "source": "onboard:RAZip6S84CM@0.0",
-   "frame": "t000.jpg",
-   "scope": "lap",
-   "note": "main grandstand at the line, beyond the pit lane"
-  },
-  {
-   "side": "left",
    "kind": "stand",
    "attrs": {
     "type": "main grandstand with suites deck (Sonoma Raceway sign)"
@@ -6021,23 +6562,6 @@
    "source": "onboard:RAZip6S84CM@136.0",
    "frame": "t136.jpg",
    "scope": "lap"
-  },
-  {
-   "side": "left",
-   "kind": "wall",
-   "attrs": {
-    "type": "concrete",
-    "colour": "light blue",
-    "h_m": 1.0,
-    "h_method": "jersey-ref"
-   },
-   "confidence": 0.9,
-   "t": 0,
-   "s": 4024.4,
-   "source": "onboard:RAZip6S84CM@0.0",
-   "frame": "t000.jpg",
-   "scope": "lap",
-   "note": "pit wall along the front straight, between track and pit lane"
   },
   {
    "side": "left",
@@ -6070,38 +6594,6 @@
   },
   {
    "side": "right",
-   "kind": "fence",
-   "attrs": {
-    "type": "chain-link catch fence",
-    "h_m": 3,
-    "h_method": "fence-post-ref"
-   },
-   "confidence": 0.7,
-   "t": 0,
-   "s": 4024.4,
-   "source": "onboard:RAZip6S84CM@0.0",
-   "frame": "t000.jpg",
-   "scope": "lap",
-   "note": "far right, beyond the drag strip"
-  },
-  {
-   "side": "right",
-   "kind": "mast",
-   "attrs": {
-    "type": "light mast",
-    "h_m": 20,
-    "h_method": "unmeasured"
-   },
-   "confidence": 0.8,
-   "t": 0,
-   "s": 4024.4,
-   "source": "onboard:RAZip6S84CM@0.0",
-   "frame": "t000.jpg",
-   "scope": "lap",
-   "note": "light masts beyond the drag strip"
-  },
-  {
-   "side": "right",
    "kind": "mast",
    "attrs": {
     "type": "light masts beyond the drag strip",
@@ -6114,36 +6606,6 @@
    "source": "onboard:RAZip6S84CM@136.0",
    "frame": "t136.jpg",
    "scope": "lap"
-  },
-  {
-   "side": "right",
-   "kind": "paint",
-   "attrs": {
-    "type": "white edge line"
-   },
-   "confidence": 0.9,
-   "t": 0,
-   "s": 4024.4,
-   "source": "onboard:RAZip6S84CM@0.0",
-   "frame": "t000.jpg",
-   "scope": "lap"
-  },
-  {
-   "side": "right",
-   "kind": "wall",
-   "attrs": {
-    "type": "concrete",
-    "colour": "light blue",
-    "h_m": 1.0,
-    "h_method": "jersey-ref"
-   },
-   "confidence": 0.9,
-   "t": 0,
-   "s": 4024.4,
-   "source": "onboard:RAZip6S84CM@0.0",
-   "frame": "t000.jpg",
-   "scope": "lap",
-   "note": "drag-strip side wall, continuous"
   },
   {
    "side": "right",
@@ -6236,37 +6698,6 @@
   },
   {
    "side": "left",
-   "kind": "building",
-   "attrs": {
-    "type": "pit garages, red roof"
-   },
-   "confidence": 0.8,
-   "t": 2,
-   "s": 4091.6,
-   "source": "onboard:RAZip6S84CM@2.0",
-   "frame": "t002.jpg",
-   "scope": "lap",
-   "note": "beyond pit lane"
-  },
-  {
-   "side": "left",
-   "kind": "wall",
-   "attrs": {
-    "type": "concrete",
-    "colour": "light blue",
-    "h_m": 1.0,
-    "h_method": "jersey-ref"
-   },
-   "confidence": 0.9,
-   "t": 2,
-   "s": 4091.6,
-   "source": "onboard:RAZip6S84CM@2.0",
-   "frame": "t002.jpg",
-   "scope": "lap",
-   "note": "pit wall continues"
-  },
-  {
-   "side": "left",
    "kind": "wall",
    "attrs": {
     "type": "concrete pit wall, light blue",
@@ -6284,22 +6715,6 @@
    "side": "right",
    "kind": "fence",
    "attrs": {
-    "type": "chain-link catch fence",
-    "h_m": 3,
-    "h_method": "fence-post-ref"
-   },
-   "confidence": 0.7,
-   "t": 2,
-   "s": 4091.6,
-   "source": "onboard:RAZip6S84CM@2.0",
-   "frame": "t002.jpg",
-   "scope": "lap",
-   "note": "far right"
-  },
-  {
-   "side": "right",
-   "kind": "fence",
-   "attrs": {
     "type": "chain-link catch fence beyond the drag strip",
     "h_m": 3.0,
     "h_method": "fence-post-ref"
@@ -6310,23 +6725,6 @@
    "source": "onboard:RAZip6S84CM@138.0",
    "frame": "t138.jpg",
    "scope": "lap"
-  },
-  {
-   "side": "right",
-   "kind": "wall",
-   "attrs": {
-    "type": "concrete",
-    "colour": "light blue",
-    "h_m": 1.0,
-    "h_method": "jersey-ref"
-   },
-   "confidence": 0.9,
-   "t": 2,
-   "s": 4091.6,
-   "source": "onboard:RAZip6S84CM@2.0",
-   "frame": "t002.jpg",
-   "scope": "lap",
-   "note": "drag-strip wall continues"
   },
   {
    "side": "right",
@@ -6831,17 +7229,17 @@
   }
  ],
  "counts": {
-  "wall": 106,
+  "wall": 102,
   "fence": 52,
   "runoff": 46,
+  "tyre_wall": 33,
   "paint": 32,
   "mast": 30,
   "kerb": 29,
-  "tyre_wall": 28,
   "stand": 23,
-  "building": 18,
+  "building": 19,
   "boards": 17,
-  "cone_line": 14,
+  "cone_line": 15,
   "tyre_stack": 12,
   "station": 8,
   "bridge": 2,

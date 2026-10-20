@@ -13,15 +13,15 @@
  "anchors": [
   {
    "name": "S/F",
-   "t": 2.2,
+   "t": 0.0,
    "sf": "start",
-   "how": "chequered line under the hood at 2:18.2 one lap later; 0:00 shows the same place as 2:16"
+   "how": "chequered line at the very start of the clip: the 0:00 frame shows the main grandstand's end, the press box and the first light mast where the 2:18.0 frame (line under the hood) shows them, while the 2:16 frame shows the grandstand much nearer (about 60 m before the line). Was 0:02.2 (from '0:00 = 2:16'), which made the S/F-to-footbridge stretch 45 m/s (round 5, see corrections)"
   },
   {
    "name": "footbridge",
-   "t": 8.7,
+   "t": 9.0,
    "s": 295.3,
-   "how": "the T2 footbridge (track.json / scenery bridge s 295.3) passes overhead between 0:08.5 and 0:09.0 (0.5 s steps)"
+   "how": "the T2 footbridge (track.json / scenery bridge s 295.3) passes overhead between 0:08.5 and 0:09.0 (0.5 s steps); 0:09.0 (round 5): the 0:08 frame shows the paddock-side Jersey end ~5 m away and the bridge deck ~30-40 m ahead (deck 4.2 m above the camera, 50 px above the horizon), so the passage is at the end of the bracket"
   },
   {
    "name": "T2",
@@ -143,6 +143,24 @@
    "corner": "T1",
    "how": "turn-in left about 7 m before the pit-wall nose (s ~103), passed between the 0:04 and 0:06 frames",
    "why": "T1 is a flat kink with no apex marker; at 0:05.0 it implied 54 m/s from T1 to the footbridge (passage timed to 0.5 s at 0:08.7), so the footbridge replaces it"
+  }
+ ],
+ "corrections": [
+  {
+   "date": "2026-10-21",
+   "round": "scenery round 5",
+   "anchor": "S/F",
+   "was": 2.2,
+   "now": 0.0,
+   "why": "0:00 does not show the place of 2:16: comparing frames t000, t136 and t138, the grandstand end / press box / first mast in 0:00 sit as in 2:18.0 (line under the hood), not as in 2:16. With the line at 0:02.2 the car would average 45 m/s to the footbridge (295.3 m at 0:08.7, checked on capture c20_s1980: the bridge crosses the left edge at s 290-295; the pit-out paddock wall's Jersey end, 5 m away in t008, at s ~250); with 0:00 it averages 34 m/s"
+  },
+  {
+   "date": "2026-10-21",
+   "round": "scenery round 5",
+   "anchor": "footbridge",
+   "was": 8.7,
+   "now": 9.0,
+   "why": "within the timed bracket 0:08.5-0:09.0: the 0:08 frame puts the deck 30-40 m ahead, about 1 s at the 33 m/s the S/F fix gives; with 8.7 the 0:08 rows mapped 2 m short of the bridge"
   }
  ]
 }
