@@ -44,7 +44,7 @@ CONFIG = dict(
     start_finish_latlon=(38.161529, -122.454728),
     # ---------------------------------------------------------------- corners: (turn, name, dir, logger s, lat, lon)
     # anchors = curvature peaks of the OSM loop (numbering from the Lemons layout picture); the corner is the
-    # signed-curvature peak of the built centre within +-45 m of the anchor
+    # signed-curvature peak of the built centre within +-45 m of the anchor (an optional 7th element: another window, m)
     corners=[
         ('T1', None, 'left', None, 38.162039, -122.455626),
         ('T2', None, 'right', None, 38.161040, -122.458817),
@@ -57,8 +57,15 @@ CONFIG = dict(
         ('T7a', 'T7a hairpin', 'right', None, 38.166843, -122.461834),
         ('T8', None, 'left', None, 38.166248, -122.461437),
         ('T8a', None, 'right', None, 38.165612, -122.460091),
-        ('T9a', None, 'left', None, 38.164876, -122.458777),
-        ('T10', None, 'right', None, 38.162108, -122.453349),
+        # T9: the fast left after 8a (s ~2644; this anchor was mislabelled T9a until 20 Oct 2026). T9a: the 9a chicane at
+        # the end of the back straight, a right (R ~22 m, s ~3043) then a left (R ~21 m, s ~3083); the corner is its
+        # slow point on the racing line, the left (onboard youtube.com/watch?v=RAZip6S84CM 1:39-1:41: right-hand entry
+        # kerb, red/white kerb on the left-hand part). T10: the long right after the chicane (onboard 1:43-1:46, the
+        # Sunbelt banners), a near-constant R ~100 m arc whose centreline curvature peak (s ~3217) lies 14 m before its
+        # slow point on the racing line (s ~3231): anchor at the slow point, window 3 m. Windows in metres (7th element).
+        ('T9', None, 'left', None, 38.164873, -122.458761),
+        ('T9a', '9a chicane', 'left', None, 38.162615, -122.455133, 15),
+        ('T10', None, 'right', None, 38.162223, -122.453568, 3),
         ('T11', 'T11 hairpin', 'right', None, 38.158643, -122.452193),
         ('T12', None, 'left', None, 38.160569, -122.453276),
     ],

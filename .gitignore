@@ -27,7 +27,10 @@ tools/track/compare/sim
 tools/track/compare/judge
 tools/track/compare/kerbs
 tools/track/compare/crossings.json
-tools/track/compare/sonoma
+# per-circuit compare folders: imagery ignored, the markdown records (survey, findings, manifest, READMEs) tracked
+tools/track/compare/sonoma/**
+!tools/track/compare/sonoma/**/
+!tools/track/compare/sonoma/**/*.md
 tools/track/**/__pycache__/
 tools/track/**/*.jpg
 tools/track/**/*.jpeg

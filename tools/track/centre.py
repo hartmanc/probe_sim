@@ -403,14 +403,18 @@ def heightfield(box, dem, z0, C, hl, hr, resurface):
 
 
 def corners(C, cfg, anchors_s, log=B.log):
-    """Signed-curvature peaks within +-45 m of each anchor (track s), named straights halfway between corners."""
+    """Signed-curvature peaks within +-45 m of each anchor (track s; a corner tuple's optional 7th element narrows or
+    widens that window, e.g. a long constant arc whose slow point is not its centreline curvature peak), named straights
+    halfway between corners."""
     n = len(C)
     kap = B.curvature(C, sigma=6)
     out, fails = [], []
-    for (turn, name, dirn, _, _, _), guess in zip(cfg["corners"], anchors_s):
+    for cc, guess in zip(cfg["corners"], anchors_s):
+        turn, name, dirn = cc[:3]
+        win = cc[6] if len(cc) > 6 else 45
         sgn = 1 if dirn == "left" else -1
         w = (np.arange(n) - guess + n / 2) % n - n / 2
-        cand = np.where(np.abs(w) <= 45, sgn * kap, -np.inf)
+        cand = np.where(np.abs(w) <= win, sgn * kap, -np.inf)
         i = int(np.argmax(cand))
         if sgn * kap[i] <= 0:
             fails.append(f"corner {turn}")

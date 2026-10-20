@@ -24,7 +24,7 @@ Logger laps (optional)
   logger_drivers, logger_sections, logger_bad_gps_files
   start_finish_latlon                        the timing line, used when there is no logger (station 0 = its projection)
 Corners
-  corners [(turn, name, dir, logger_s, lat, lon)]   anchor per corner: logger frame s (logger path) or lat/lon; the
+  corners [(turn, name, dir, logger_s, lat, lon[, window_m])]   anchor per corner: logger frame s (logger path) or lat/lon; the
                                              corner is the signed-curvature peak within +-45 m of it
   named_straights [(name, from turn, to turn)]
 Geometry (Stage 1)
