@@ -188,3 +188,23 @@ Verdict: "a disappointing output that was not ready for me to review."
     is probably a moveable jersey barrier they bring out for road races, and then they move them out of the way for drag
     events. I am going to guess this goes here." The line runs roughly parallel to the track about 20 m to its LEFT (west)
     across the paddock pavement at s ~2195-2250; ENU endpoints ~(-426, 441) to (-453, 405).
+55. Round-7d preview, out lap at the pit exit (owner_55_pit_exit_sim_r7d.png): the double yellow blend line angles across
+    the road from the wall nose toward the track centre with cones on it, and the lane merges within ~50 m. Owner: "Pit
+    exit is still not blending properly." owner_56_pit_exit_blend_marked.png (Google satellite 2026, reference only, red
+    line = the owner's blend line): the blend line is the STRAIGHT continuation of the pit wall's line westward from the
+    wall's nose (the yellow-topped end post), parallel to the pit wall, about twice the length of the visible wall segment
+    (~75 m; trailers for scale), running along the Turn 1 kink; parked vehicles hide it on the captures. The lane's outer
+    edge beyond the line's end is simply the track edge; no polygon angling across.
+57. Round-7d preview, on the drag strip side of the T7 fork looking down the strip's continuation (owner_57_T7_runup_
+    dragstrip.png): a black tyre barrier with a cone stands across the strip at the fork, and the strip beyond is bare
+    pale concrete. Owner: "I don't think the run-up to T7 is modeled correctly. The run-out area for the drag strip doesn't
+    have a tire barrier in front of it. It has pylons. Also, per our previous discussion, the pavement should be modeled
+    as race track." Reference: May 2025 Radical onboard https://youtu.be/fEcQdo0ucL8?t=57 (reference only): at the fork the
+    strip continuation is closed by a line of orange PYLONS (tall delineator posts), not tyres, and the strip pavement
+    looks like racing surface with its painted lines. The round-5 'drag strip at the T7 fork: tyre line across the
+    continuation' (s 1934-1942) was a misread of the onboard t=64.
+58. May 2025 Radical onboard, T5 (owner_58_T5_yellow_kerb.png, reference only): the INSIDE (right) kerb at T5 is plain
+    YELLOW, a continuous raised strip, not red/white blocks; a plain white Jersey on the right beyond it. Owner: "Use the
+    video to check the color of kerbs. The inside of T5 has a yellow kerb, not a red/white one." Round 3 set every Sonoma
+    kerb red/white from the March 2026 onboard; the colour must be read per strip, and the 2025 Radical video
+    (https://youtu.be/fEcQdo0ucL8, reference only) is a second source for it.
