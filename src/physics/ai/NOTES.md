@@ -328,6 +328,41 @@ cause: seeds 1-8 at ab4b15d (pre-edge) 0.051, at the fitted edges 0.058 (16 seed
   over the 16 races. Seeds 1-4 alone: contacts 0.027.
 - Tests: 321/321; `ai_race` 45 cars seed 1 now passes (the grid hash changes with AI_VERSION), not loosened.
 
+## 20 Oct 2026: self-play with kerbs (re-based bands), Sonoma lane changes within the grip
+
+- **Self-play surface fixed** (`tools/race/load.ts` `makeSurface`): selfplay / selfplay_trace / sim_race gave every car a
+  pit-lane-only surface, so self-play never saw Laguna's sausages or Sonoma's 5 cm kerb profile. The pack now builds its
+  surfaces with the app's options (`surfaceFactory`: pit lane + paved zones, far terrain, sausages, kerbs);
+  `selfplay --no-kerbs` keeps the old surface for comparison. Solo laps (calibration) unchanged.
+- **Laguna band re-based (measurement change, 16 seeds, 4 laps, AI_VERSION 8)**: without kerbs contacts 0.038 per car-lap,
+  four-off 0.090 (non-mishap 0.087), clearly-faster passes 69.1 %, line rms 0.29 (the 19 Oct band, reproduced); with
+  kerbs **0.036, 0.090 (0.088), 69.2 %, 0.29**, recoveries 55, mishaps 6 (per seed contacts 0.012-0.075).
+- **Sonoma baseline with kerbs** (seeds 1-8): contacts 0.042, four-off 0.097, passes 73.6 %, rms 0.37 (without kerbs
+  0.047 / 0.119 / 71.9 %); seeds 1-16: 0.047 / 0.094 / 73.0 %.
+- **Clusters (traces, seeds 1-8)**: 19 of 54 contacts involve a spinning car, 50 of 123 four-offs are spins, mostly
+  in the esses s 2400-2800 (T8a-T9) and RWD cars (#76 Fiero, #200 86, #0, #55, #43). Mechanism: a room-making / corridor
+  push (2 x SHIFT_RATE) or a pass lane change at 20-25 m/s asks 3-5 x the line's curvature; the car slides, the grip
+  limiter brakes on the pursuit's counter-steer curvature with the rear sliding, the car spins (also with shift 0 after
+  a slide). The rest: inside passes into T4 (s 990-1000) and T11 (s 3610-3660), where the road takes the inside lane away
+  at the apex and the passer, clamped onto the line, runs 1-2 m wide into the car making room (closing 1-3 m/s); 9a rear-ends.
+- **Changes (per track, `TRACKS[id].ai`, Laguna's arithmetic unchanged, seeds bit-identical)**: `shiftGrip` (RaceConfig,
+  0 = off): the lane-shift rate is capped at shiftGrip x a_spare x Ld / v (>= 0.8 m/s), a_spare = lateral grip minus the
+  line's v^2 k; Sonoma 1. `laneMargin` (1 = Laguna): a pass lane's own path speed at that share of the corner margin;
+  Sonoma 0.85. **Sonoma, 16 seeds**: contacts 0.047 -> 0.033 (shiftGrip) -> 0.025 (+ laneMargin), four-off 0.094 ->
+  0.031 -> 0.019, passes 73.0 -> 73.7 -> 73.5 %, rms 0.36; **seeds 1-8: 0.024 / 0.017 / 72.7 % / 0.36** (target contacts
+  <= 0.02 not reached). Remaining contacts: T4 entry 10, T11 entry 9, T7 7-10, straights 9.
+- **Shared trials (not kept)**: shiftGrip on Laguna (16 seeds): contacts 0.035, four-off 0.020, passes 71.4 %, recoveries
+  13 (from 55), but total green passes -11 % and `ai_behaviour` "full field, 2 laps" fails (passesTotal 140, needs > 150;
+  not loosened); exempting pass lane changes from the cap passes that test but gives back the gain (Sonoma 0.039 / 0.046,
+  Laguna 0.043 / 0.076). laneMargin 0.85 on Laguna: contacts 0.036 (no gain). On Sonoma, no gain beyond noise: throttle
+  cut on rear slide for RWD, brake easing under the grip limiter (0.045 / 0.090), shift rate x min(1, 15/v) (0.030 /
+  0.057 alone, 0.044 with shiftGrip), the follow check scanning the lane pinch on the way (0.039), extra room for a
+  passer (0.6 / 1.2 m: 0.035 / 0.038). 8-seed spread is +-0.006 contacts: compare on 16.
+- No AI_VERSION bump: Laguna solo laps are bit-identical; on Sonoma shiftGrip changes one checked solo lap by 0.008 s
+  (#200 stint scale 0.8), far inside the 0.2 % calibration tolerance (as the 18 Oct lane retune, no recalibration).
+- The app passes `followScale` only (`src/app/modes/race.ts`): `laneMargin` and `shiftGrip` must be passed from
+  `TRACK.ai` there too for the app's Sonoma race to use them.
+
 ## Assumptions and data wishes
 
 - Target pace is the median green lap (traffic included), so AI cars run their real race pace, slower
