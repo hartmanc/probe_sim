@@ -267,7 +267,7 @@ CONFIG = dict(
                 (38.1657918, -122.4623896), (38.1658239, -122.4624963), (38.1658571, -122.4626024),
                 ]),
             dict(name='T5 to the T6 crest, right', kind='concrete', h=1.0, fence=0.0, color='#a9c9dd',
-                 src='c20_s2860..s3080 light wall line 3-6 m beyond the right edge (76 % picked); onboard 0:40-0:49 concrete wall on the right',
+                 src='c20_s2860..s3080 light wall line 3-6 m beyond the right edge (76 % picked); onboard 0:43-0:48.5 concrete wall on the right (not in the Jul 2011 Street View GMaTaipEd9Hm7fMNE26aGQ: built since)',
                  latlon=[
                 (38.1644291, -122.4619012), (38.1644384, -122.4618115), (38.164431, -122.4616934),
                 (38.1644188, -122.461581), (38.1643997, -122.4614694), (38.1643726, -122.4613603),
@@ -461,9 +461,11 @@ CONFIG = dict(
         # corner-worker stations measured on the captures (small raised platforms beside the track) and confirmed on the onboard
         marshal_posts=[
             dict(name='T6 hilltop', latlon=(38.1631039, -122.4600748), h=2.6, style='platform',
-                 src='c20_s3135: a ~3 x 3 m platform behind the right wall at the crest before the Carousel; onboard 0:47 (owner: "the one at the top of the hill just before T6")'),
+                 src='c20_s3135: a ~3 x 3 m platform with a box behind the right wall at the crest before the Carousel; Street View GMaTaipEd9Hm7fMNE26aGQ (Jul 2011): white box and tyre stack there (owner: "the one at the top of the hill just before T6")'),
+            dict(name='T4', latlon=(38.1639325, -122.4631172), h=4.0,
+                 src='c20_s2695: a raised hut on a platform 27 m right of the T4 approach (long shadow); onboard 0:33 white elevated post with roof on the right; Street View 3a panorama (Jul 2011) shows it ahead right'),
             dict(name='T7', latlon=(38.1659466, -122.4626554), h=4.0,
-                 src='c20_s3905: a post at the end of the left wall at T7; onboard 1:12 raised white post with roof and stairs'),
+                 src='c20_s3905: a post at the end of the left wall at T7; onboard 1:11 raised white post with roof ahead'),
         ],
         # paved roads of the circuit the Lemons loop does not use: driveable pavement, coned off at each mouth (owner,
         # 19 Oct 2026: "the Chute pavement is missing")

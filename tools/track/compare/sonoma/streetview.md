@@ -19,8 +19,17 @@ screenshot is a texture or is committed. One panorama per place, heading = the d
 | back straight to 9a | xkSrqJ5RaN9WFLncaiqaug | 125 | right concrete wall | - | white line only | dirt / gravel | hillside grandstands left, timing tower |
 | T11 approach | jrXpHaDfJT2APw6zcyBKRA | 196 | left concrete wall with ad boards (Sprint) | - | painted island right (NASCAR infield) | paved infield (NASCAR logo pad), cones, tyre bundles at the 11a entry | hill behind |
 | T12 / front straight | QduY6QTXmw4JDevQVE_b-g | 338 | left concrete wall (pit-lane side), right concrete wall (drag-strip side) | - | - | paved (the T11a apron) | two-storey buildings both sides (suites left, control tower right) |
+| T6 hilltop (crest before the Carousel) | GMaTaipEd9Hm7fMNE26aGQ | 215 / 300 | none near the track in 2011 (the 2026 onboard 0:43-0:48.5 shows a concrete wall on the right: built since) | fence far left | - | grass both sides | corner station: white box beside a tyre stack on the right (added 20 Oct 2026, round 3) |
+| Turn 3a (labelled pano) | viewpoint 38.16261,-122.46182 (Jul 2011) | 290 | low wall far left below the stands | fence along the stands | blue / white on the RIGHT only, none on the left | dirt / grass | "Turn 3a" painted on the road; corner station (raised white hut) ahead right at T4 (round 3) |
+| back straight / 9a spectator walk | Gas0S2x3OzWj_AinwcVtAg | 170 | concrete wall between the walkway and the track | catch fence on the wall | - | grass | concrete terraces left of the walkway, light masts; the 9a / T10 stands beyond (round 3) |
 
 Notes for the scenery task: kerbs are blue / white low flat concrete at T2, 7a, 8a in 2011; the March 2026 onboard
 shows red / white kerbs at 8a and 9a (1:28-1:41), so the colours may differ by corner since the repave. Large concrete
 terrace grandstands: hillside above T2, along T3a-T4, above T7a, along the back straight (9a). Walls without fences on
 the pit straight; catch fences on the bank walls at T4 and T8a.
+
+Round 3 (20 Oct 2026), the 2026 onboard checked against the survey: the kerbs are red / white everywhere the onboard
+shows them (0:10 T2 entry, 0:13 T2, 0:24 T3, 0:30-0:38 T4, 0:55-1:00 Carousel, 1:12-1:16 T7 / 7a, 1:18-1:28 T8-T9,
+1:39-1:45 9a / T10, 2:01-2:04 T11): the 2011 blue / white predates the repave. The walls are painted light blue
+(0:43-0:48.5 T5-T6 right, 0:58-1:12 T6-T7 left, 2:16-2:20 pit straight). Corner stations seen: T4 right (0:33), T7
+(1:11). Toyota / Garton / Save Mart banners on the T6-T7 wall at 1:11 (not placed this round).
