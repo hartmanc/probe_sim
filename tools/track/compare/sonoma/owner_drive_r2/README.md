@@ -182,3 +182,9 @@ Verdict: "a disappointing output that was not ready for me to review."
     owner_52_T8_station_video.png: a white hut with a roof standing BEHIND the concrete wall (outside of the corner),
     with a dark tyre facing on the wall in front of it, grass and light masts beyond. Owner: "It's on the other side of
     the wall." Round 7b's unconfirmed candidate at s ~2475 left, 10 m out (c20_s0110) is probably it.
+54. T7 far barrier, owner's placement (owner_53_T7_far_barrier_marked.png, red line on the orchestrator's 2026 capture
+    render; owner_54_T7_far_barrier_video.png = May 2025 onboard frame at ~1:02 with the barrier ahead across the pavement
+    and the hill stands behind). Owner: "it is not shown in this satellite photo, even though it appears on onboards... It
+    is probably a moveable jersey barrier they bring out for road races, and then they move them out of the way for drag
+    events. I am going to guess this goes here." The line runs roughly parallel to the track about 20 m to its LEFT (west)
+    across the paddock pavement at s ~2195-2250; ENU endpoints ~(-426, 441) to (-453, 405).

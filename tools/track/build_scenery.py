@@ -1173,6 +1173,7 @@ def closed_road_paint(trk, parts):
     from PIL import Image as Img
     from scipy.ndimage import gaussian_filter1d, median_filter
     names = {r["name"] for r in SC_CFG.get("closed_roads", []) if r.get("paint")}
+    seam_names = {r["name"] for r in SC_CFG.get("closed_roads", []) if r.get("edges_from_paint")}
     if not names:
         return []
     cfg = G_.CFG
@@ -1205,6 +1206,15 @@ def closed_road_paint(trk, parts):
             near = np.zeros(len(C), bool)
             for i in idx:
                 near[max(0, i - 4):i + 5] = True
+            if p.get("turn") in seam_names:
+                # round 7c (Sonoma owner note 45): the paving's edge is the measured painted edge (+0.3 m outward), so the
+                # seam between this road and the ground / the next surface lies on a measured material boundary, not on
+                # the NAIP half-width; the stations without paint nearby keep their edge
+                E = np.array(p["left" if side > 0 else "right"], float)
+                st_ = np.nonzero(near)[0]
+                E[st_, :2] = C[st_] + NL[st_] * (full[st_] + side * 0.3)[:, None]
+                p["left" if side > 0 else "right"] = [[rnd(x, 2), rnd(y, 2), rnd(z, 3)] for x, y, z in E]
+                log(f"closed road {p['turn']}: {'left' if side > 0 else 'right'} paving edge set on the measured paint at {len(st_)} stations")
             for a_, b_ in _runs(near):
                 if b_ - a_ < 10:
                     continue

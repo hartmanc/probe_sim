@@ -606,6 +606,13 @@ CONFIG = dict(
                  src='onboard RAZip6S84CM 1:12 (frame t072): two low black tyre lines with small orange cones across the paved Chute mouth ahead-left of T7, again far left at 1:14; placed 1.5 m behind the mouth cone line (the mouth from the OSM Chute way; c20_s3905 shows the mouth open at another event)',
                  latlon=[(38.1660984, -122.4628055), (38.1660851, -122.4627847), (38.1660717, -122.4627639), (38.1660584, -122.4627431),
                          (38.166045, -122.4627224), (38.1660317, -122.4627016)]),
+            # round 7c (owner, item H): a MOVABLE Jersey line with a black tyre facing across the paddock pavement left of T7
+            dict(name='T7, left: movable Jersey across the paddock pavement (round 7c, movable)', kind='concrete', h=0.9, fence=0.0, color='#e6e4de',
+                 h_src='HEIGHTS.md Jersey 0.81-0.9 m; owner_54 shows a low white Jersey line', src='owner placement 20 Oct 2026 on the capture render (owner_53_T7_far_barrier_marked.png) + May 2025 onboard 1:02 (owner_54, reference only): MOVABLE, set out for road races, absent from the 2026 drag-season capture',
+                 latlon=[(38.1666856, -122.4624694), (38.1663600, -122.4627744)]),
+            dict(name='T7, left: black tyre facing on the movable Jersey (round 7c, movable)', kind='tyres', color=TYRE_BLACK, h=0.9, fence=0.0,
+                 h_src='owner_54: black tyre facing as high as the Jersey', src='owner placement 20 Oct 2026 on the capture render (owner_53_T7_far_barrier_marked.png) + May 2025 onboard 1:02 (owner_54, reference only): MOVABLE, set out for road races, absent from the 2026 drag-season capture; placed on the Jersey line, the facing rule puts it on its track side',
+                 latlon=[(38.1666856, -122.4624694), (38.1663600, -122.4627744)]),
             dict(name='T7, left: wall bounding the paved runoff below the T7a stands (round 5)', kind='concrete', h=1.0, fence=0.0, color='#e6e4de',
                  h_src='height not read (1.0 m default; the Street View row gives none)',
                  src='c20_s3960 / c20_s4015: wall_measure bright, 85 % picked, rms 0.57 m; Street View J6fsnW4hj4xCjQLzrgRGzA (concrete wall far left along the T7a stands)',
@@ -955,9 +962,9 @@ CONFIG = dict(
                  mouth_cones=[]),
             # the paved runoff INSIDE T7 (the triangle inside the hairpin, round the short-T7 way): cars may use it
             # (owner), so no cones; the racing line stays on the track (cutting through adds distance)
-            dict(name='T7 inside runoff', ways=['1494191150'], half_width=10.0, max_half=14.0, cones=False, surface='asphalt', paint=True),  # round 7b (note 45): painted edges like a real road; still open (owner, 19 Oct)
+            dict(name='T7 inside runoff', ways=['1494191150'], half_width=10.0, max_half=14.0, cones=False, surface='asphalt', paint=True, edges_from_paint=True),  # round 7b (note 45): painted edges like a real road; still open (owner, 19 Oct)
             dict(name='T11a shortcut', ways=['28825444'], half_width=6.0, surface='concrete', paint=True, mouth_cones=[]),
-            dict(name='PWC lower hairpin', ways=['505454376'], half_width=5.0, surface='asphalt', paint=True,
+            dict(name='PWC lower hairpin', ways=['505454376'], half_width=5.0, surface='asphalt', paint=True, edges_from_paint=True,
                  mouth_cones=[]),
         ],
 

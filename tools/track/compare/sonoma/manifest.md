@@ -1361,3 +1361,21 @@ All gates pass; track.json / heightfield.bin / ghosts.json byte-identical; Lagun
   No other painted logo on the windows (T1-T2, T3-T4, T5-T6, Carousel, drag strip, T7-T9, back straight, 9a, T10).
 - **T7 complex seams (item 3)**: not done this round.
 - **T7 far barrier (item 4)**: the owner's marking had not arrived; not placed.
+
+## Round 7d (22 Oct 2026; registry rev b8a51e2cfa)
+
+All gates pass (containment: 0 escapes, 920 rays onto allowed runoff, was 916); track.json / heightfield.bin /
+ghosts.json byte-identical; Laguna byte-identical to main.
+
+- **T7 far barrier, MOVABLE (owner, item H)**: a white 0.9 m Jersey (HEIGHTS.md Jersey) with a black tyre facing across
+  the paddock pavement left of T7, s ~2183-2231, 19-20 m left of the centre, 48 m, from the owner's placement on the
+  capture render (owner_53, endpoints 38.1666856, -122.4624694 to 38.1663600, -122.4627744) and his May 2025 onboard at
+  1:02 (owner_54, reference only). Set out for road races, removed for drag events: absent from the 2026 capture. The
+  facing rule puts the tyres 0.55 m on its track side. Flag: **movable**. Still: hood_r7/t7jersey_2210_r7d.jpg.
+- **8a hut wall, candidate movable**: owner frame shows a wall; not in the 2026 capture; not placed (the hut is placed).
+- **T7 complex seams (note 45)**: the T7 inside runoff and the short-T7 (PWC) road now take their paving edge from the
+  measured painted edge (+0.3 m) wherever paint is measured within 8 m (`closed_roads[].edges_from_paint`: 56 / 56 and
+  59 / 59 stations), so the boundary between each road and the ground or the next surface lies on a measured line, not
+  on the NAIP half-width. Remaining: a tone difference between the runoff and the track asphalt is still visible in the
+  stills (hood_r7/t7mouth_2214_r7d.jpg); the track / runoff overlap itself is unchanged.
+- SKILL.md: movable barriers rule (Evidence first, step 12).

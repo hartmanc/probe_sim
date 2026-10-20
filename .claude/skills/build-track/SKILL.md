@@ -550,6 +550,9 @@ For every other circuit, these are steps of stage 3:
      measured on the captures (`cone_lines_declared[].latlon`, `pit_exit_cones.latlon`, `paint_lines_declared`), never at
      an offset from the fitted edge (which can follow a wall at a lane mouth); colours and sizes from the footage
      (`color`, `size`); `edge_line_cut` where the edge paint is not the white line.
+   - *Movable barriers*: barriers present in road-race footage but absent from the capture (taken at another kind of
+     event) are placed from the footage with the owner's placement recorded in `src`, and flagged 'movable' in the
+     manifest (Sonoma's T7 paddock Jersey with its tyre facing, round 7c).
    - *A bright line is not a wall until the onboard shows one*: painted edges and drag-strip lane edges pick as bright
      bands; check every declared wall's head against the frames (Sonoma's drag-strip far wall and T6-T7 head were paint).
    - App (every track): barrier runs have end caps, tyre runs render as stacked tyres (`stack` per run), marshal posts as
