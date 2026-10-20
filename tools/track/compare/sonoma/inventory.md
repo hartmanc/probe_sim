@@ -289,7 +289,6 @@ Interpolation between anchors: profile (profile: shared out by a curvature speed
 | 2854 | 1:34.0 | right | stand | grandstand far ahead-right (T11 area) |  | 0.6 | onboard:RAZip6S84CM@94.0 |  |
 | 2900 |  | left | fence | catch fence on the wall between the spectator walk and the track |  | 0.6 | streetview:Gas0S2x3OzWj_AinwcVtAg@170 |  |
 | 2947 | 1:36.0 | ahead | stand | large grandstand with suites (T10/T11 infield side) |  | 0.8 | onboard:RAZip6S84CM@96.0 | far ahead-right |
-| 2947 | 1:36.0 | left | cone_line | single orange cone on the grass (marker) | 0.5 m (cone-ref) | 0.7 | onboard:RAZip6S84CM@96.0 |  |
 | 2947 | 1:36.0 | left | fence | catch fence, curved-top posts | 3.5 m (fence-post-ref) | 0.9 | onboard:RAZip6S84CM@96.0 |  |
 | 2947 | 1:36.0 | left | wall | light concrete wall | 1.0 m (jersey-ref) | 0.9 | onboard:RAZip6S84CM@96.0 | 5-8 m left, end of the back straight |
 | 2947 | 1:36.0 | right | runoff | grass, wide |  | 0.8 | onboard:RAZip6S84CM@96.0 |  |
@@ -297,6 +296,7 @@ Interpolation between anchors: profile (profile: shared out by a curvature speed
 | 3018 | 1:38.0 | left | fence | catch fence, curved-top posts | 3.5 m (fence-post-ref) | 0.9 | onboard:RAZip6S84CM@98.0 |  |
 | 3018 | 1:38.0 | left | wall | light concrete wall | 1.0 m (jersey-ref) | 0.9 | onboard:RAZip6S84CM@98.0 |  |
 | 3018 | 1:38.0 | right | runoff | grass |  | 0.8 | onboard:RAZip6S84CM@98.0 |  |
+| 3033 | 1:36.0 | left | cone_line | single orange cone on the grass (marker) | 0.5 m (cone-ref) | 0.7 | onboard:RAZip6S84CM@96.0 |  |
 | 3056 | 1:40.0 | ahead | tyre_wall | black covered barrier sections | 1.0 m (unmeasured) | 0.6 | onboard:RAZip6S84CM@100.0 |  |
 | 3056 | 1:40.0 | left | fence | catch fence, curved-top posts | 3.5 m (fence-post-ref) | 0.85 | onboard:RAZip6S84CM@100.0 |  |
 | 3056 | 1:40.0 | left | runoff | paved (bypass mouth) |  | 0.7 | onboard:RAZip6S84CM@100.0 |  |

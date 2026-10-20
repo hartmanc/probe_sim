@@ -29,7 +29,8 @@ export interface SceneryJson {
     /** where the deck meets the banks (20 Oct 2026): an abutment at `at` from z_ground to the deck, stairs on to `to` */
     ends?: { at: V2; z_ground: number; to: V2; z_to: number }[] }[];
   /** color: the wall's paint where the evidence shows it (Sonoma 2026: light blue / green), default plain concrete */
-  barriers: { kind: 'concrete' | 'armco' | 'tyres' | 'pitwall' | 'fence'; h: number; fence: number; pts: V3[]; src: string; color?: string }[];
+  barriers: { kind: 'concrete' | 'armco' | 'tyres' | 'pitwall' | 'fence'; h: number; fence: number; pts: V3[]; src: string; color?: string;
+    /** tyres per stack (round 7; default from h) */ stack?: number }[];
   kerbs: { width: number; inside?: boolean; stripe_m: number; /** [stripe, base] sRGB hex; default red / white */ colors?: [string, string];
     /** raised concrete kerbs (physics: src/physics/track.ts KerbsJson); absent = flat paint */ profile?: { height: number; face: number; back: number } | null;
     strips: { side: number; s0: number; s1: number; kind: string; paint?: number; inset?: number ; /** verge: white line on the outer edge (default on) */ edge?: boolean;
@@ -684,7 +685,9 @@ function buildBarriers(list: SceneryJson['barriers']): THREE.Group {
     } else if (b.kind === 'tyres') {
       // stacks of round(h / 0.23) tyres every 0.62 m (touching), two staggered rows
       let acc = 0, k = 0;
-      const nT = tyresInStack(b.h);
+      // tyres per stack from the evidence (b.stack) or from h; the stack is scaled to stand exactly h high
+      const nT = b.stack ?? tyresInStack(b.h), sy = (b.h || nT * TYRE_H) / (nT * TYRE_H);
+      const place = (x: number, y: number, z: number) => new THREE.Matrix4().makeTranslation(x, z, -y).multiply(new THREE.Matrix4().makeScale(1, sy, 1));
       for (let i = 0; i < P.length - 1; i++) {
         const a = P[i], c = P[i + 1];
         const seg = Math.hypot(c[0] - a[0], c[1] - a[1]);
@@ -695,7 +698,7 @@ function buildBarriers(list: SceneryJson['barriers']): THREE.Group {
           for (const row of [0, 1]) {
             const off = row * 0.6, sh = row * 0.31;
             const px = x + nx * off + ((c[0] - a[0]) / seg) * sh, py = y + ny * off + ((c[1] - a[1]) / seg) * sh;
-            tyres.push({ m: new THREE.Matrix4().makeTranslation(px, z, -py), white: !b.color && k % 12 < 2, color: b.color, n: nT });   // mostly black with a white pair every 12 stacks
+            tyres.push({ m: place(px, py, z), white: !b.color && k % 12 < 2, color: b.color, n: nT });   // mostly black with a white pair every 12 stacks
           }
           k++;
           acc += TYRE_PITCH;
@@ -710,7 +713,7 @@ function buildBarriers(list: SceneryJson['barriers']): THREE.Group {
         for (const row of [0, 1]) {
           const off = row * 0.6, sh = row * 0.31;
           const px = last[0] - ty * off - tx * sh, py = last[1] + tx * off - ty * sh;
-          tyres.push({ m: new THREE.Matrix4().makeTranslation(px, last[2], -py), white: !b.color && k % 12 < 2, color: b.color, n: nT });
+          tyres.push({ m: place(px, py, last[2]), white: !b.color && k % 12 < 2, color: b.color, n: nT });
         }
       }
     }

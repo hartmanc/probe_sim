@@ -416,7 +416,7 @@ CONFIG = dict(
                 (38.1591610, -122.4518250), (38.1591092, -122.4518023), (38.1590572, -122.4517802), (38.1590035, -122.4517582),
                 (38.1589515, -122.4517375), (38.1588959, -122.4517173), (38.1588466, -122.4517025),
                 ]),
-            dict(name='T11 hairpin, left tyre wall', kind='tyres', color=TYRE_WHITE, h=1.0, fence=2.0, h_src='onboard 2:01.5-2:03.5: white tyre stacks ~1 m in front of the light-blue wall with a catch fence; round 5: fence top 3.0 m, between the 3.5 m catch fence at 2:02 and the 2.5 m chain-link at 2:04 (inventory, fence-post-ref; was 4.0)',
+            dict(name='T11 hairpin, left tyre wall', kind='tyres', color=TYRE_WHITE, h=0.8, stack=2, fence=2.2, h_src='round 7 (owner note 38): onboard 2:02-2:04 (t122 / t124) the white-wrapped stacks are two tyres high, 0.8 m (inventory, tyre-ref); the fence top stays 3.0 m; onboard 2:01.5-2:03.5: white tyre stacks ~1 m in front of the light-blue wall with a catch fence; round 5: fence top 3.0 m, between the 3.5 m catch fence at 2:02 and the 2.5 m chain-link at 2:04 (inventory, fence-post-ref; was 4.0)',
                  src='c20_s1265 / c20_s1320 white tyre band on the outside of the hairpin (69 % picked, rms 0.35 m); onboard 2:04 white tyre stacks left',
                  latlon=[
                 (38.158888, -122.451793), (38.158799, -122.4517857), (38.1587102, -122.4518038),
@@ -754,13 +754,16 @@ CONFIG = dict(
         ],
         # corner-worker stations measured on the captures (small raised platforms beside the track) and confirmed on the onboard
         marshal_posts=[
-            dict(name='T6 hilltop', latlon=(38.1631039, -122.4600748), h=2.6, style='platform',
+            dict(name='T6 hilltop', latlon=(38.1631039, -122.4600748), h=3.8, color='#2f5d9e',
+                 h_src='round 7 (owner note 40): an elevated hut, the roof ~2.5 m over the ~1 m wall (owner_39, May 2025 onboard, reference only): deck 1.2 m, roof top ~3.6 m; white walls, blue lower band, open front, roof overhang',
                  src='c20_s3135: a ~3 x 3 m platform with a box behind the right wall at the crest before the Carousel; Street View GMaTaipEd9Hm7fMNE26aGQ (Jul 2011): white box and tyre stack there (owner: "the one at the top of the hill just before T6")'),
             dict(name='T4', latlon=(38.1639325, -122.4631172), h=4.0,
                  src='c20_s2695: a raised hut on a platform 27 m right of the T4 approach (long shadow); onboard 0:33 white elevated post with roof on the right; Street View 3a panorama (Jul 2011) shows it ahead right'),
             dict(name='T2 exit', latlon=(38.1607335, -122.4589865), h=3.0,
                  src='c20_s2200: a ~2 m white hut at the foot of the T2 terraces, 31 m left of the centre at s ~445 (round 5); onboard 0:12 white marshal hut ahead-left at the fence line'),
-            dict(name='T7', latlon=(38.1659466, -122.4626554), h=4.9,
+            dict(name='9a, stand foot', latlon=(38.1632923, -122.4549874), h=3.0,
+                 src='round 7 (owner note 49, corrected): onboard t098 and the owner crop owner_49_9a_station_crop.jpg: a small hut at the base of the back-straight terraces near their 9a end, behind the catch fence, the marker cone on the verge in front of it; position from the frame (s ~3025, 28 m left, between the wall line and the terrace foot): not resolved on c20_s0605 / c20_s0660 / c20_o0660 (event trailers parked there); band colour not readable (default)'),
+            dict(name='T7', latlon=(38.1659466, -122.4626554), h=4.9, color='#dcdfe2',  # round 7: t072 white hut, no coloured band
                  src='c20_s3905: a post at the end of the left wall at T7; onboard 1:11 raised white post with roof ahead; round 6 (orchestrator S4): onboard 1:12 (t072) the hut stands on legs about as tall as itself, ~2.5 m (the kit draws legs h - 2.4 m)'),
         ],
         # light masts (round 5, 21 Oct 2026): only those whose base and shadow the 2026 captures show (a thin shadow pointing
@@ -781,6 +784,28 @@ CONFIG = dict(
             dict(latlon=(38.1610718, -122.4597621), h=4.0, src='onboard 0:14-0:16 (light poles inside the fence line at the foot of the T2 terraces, ~4 m, fence-post-ref) along the measured T2-exit wall (c20_s2145 / c20_s2200), 1.5 m behind it every 20 m (pole spacing in the frames)'),
             dict(latlon=(38.1612016, -122.4599209), h=4.0, src='onboard 0:14-0:16 (light poles inside the fence line at the foot of the T2 terraces, ~4 m, fence-post-ref) along the measured T2-exit wall (c20_s2145 / c20_s2200), 1.5 m behind it every 20 m (pole spacing in the frames)'),
             dict(latlon=(38.1613529, -122.460044), h=4.0, src='onboard 0:14-0:16 (light poles inside the fence line at the foot of the T2 terraces, ~4 m, fence-post-ref) along the measured T2-exit wall (c20_s2145 / c20_s2200), 1.5 m behind it every 20 m (pole spacing in the frames)'),
+        ],
+        # the pit-out blend line (round 7, owner notes 42-43): measured on c20_s1870 / c20_s1925 (wall_measure bright along the
+        # left edge s 100-245, 90 % picked, rms 0.20 m: the painted line is the fitted edge, offset p50 -0.09 m), from the
+        # pit-wall nose (s ~103) to the merge (s ~240). The 2025 pit-out video (24of8fjjAug t=300 / 304, local frames) shows
+        # it as a DOUBLE YELLOW line with small yellow cones ON it, sparse; no cones before the nose (the lane is behind the wall)
+        pit_exit_cones=dict(latlon=[(38.1619886, -122.4557157), (38.1620023, -122.4557836), (38.1620139, -122.4558548), (38.1620225, -122.4559225), (38.1620292, -122.4559906), (38.1620328, -122.4560590), (38.1620353, -122.4561332), (38.1620373, -122.4562017), (38.1620394, -122.4562703), (38.1620420, -122.4563445), (38.1620434, -122.4564130), (38.1620442, -122.4564816), (38.1620451, -122.4565501), (38.1620460, -122.4566187), (38.1620468, -122.4566880), (38.1620476, -122.4567614), (38.1620485, -122.4568299), (38.1620488, -122.4569034), (38.1620484, -122.4569729), (38.1620459, -122.4570417), (38.1620318, -122.4571083), (38.1620180, -122.4571748), (38.1620122, -122.4572141)], spacing=17.0, color='#e5c21e', size=0.5,
+                            src='the pit-out blend line measured on c20_s1870 / c20_s1925 (s 103-240); 2025 pit-out video 24of8fjjAug t=304: small yellow cones (~0.5 m) on the double yellow line, 15-20 m apart in the frame\'s perspective (17 m used); t=300: none before the nose'),
+        paint_lines_declared=[
+            dict(latlon=[(38.1619886, -122.4557157), (38.1620023, -122.4557836), (38.1620139, -122.4558548), (38.1620225, -122.4559225), (38.1620292, -122.4559906), (38.1620328, -122.4560590), (38.1620353, -122.4561332), (38.1620373, -122.4562017), (38.1620394, -122.4562703), (38.1620420, -122.4563445), (38.1620434, -122.4564130), (38.1620442, -122.4564816), (38.1620451, -122.4565501), (38.1620460, -122.4566187), (38.1620468, -122.4566880), (38.1620476, -122.4567614), (38.1620485, -122.4568299), (38.1620488, -122.4569034), (38.1620484, -122.4569729), (38.1620459, -122.4570417), (38.1620318, -122.4571083), (38.1620180, -122.4571748), (38.1620122, -122.4572141)], width=0.1, double=0.3, color='#d9b42a',
+                 src='pit-out blend line, c20_s1870 / c20_s1925 (as the pit-exit cones); colour: the 2025 pit-out video 24of8fjjAug t=304 (double yellow)'),
+        ],
+        edge_line_cut=[dict(side='left', s=(100, 242), why='the pit-out blend line is the declared double yellow paint line (2025 pit-out video t=304), not the white edge line')],
+        # free-standing concrete blocks (round 7, owner note 38): kind 'block' (drawn only), w across, d along the track
+        blocks=[
+            # the onboard (higher precedence than the captures) puts them at the apex: two large red / white striped blocks on
+            # the inside apron beside the apex kerb (t120 ahead, t122 / t124 abeam right); positions from the frames (1.6 m
+            # beyond the right edge at s ~3668 and ~3684); the 2026 captures (another event) show three such blocks at the
+            # OUTSIDE edge instead (c20_s1320, s ~3679, 0.6-1.3 m inside the left edge): not placed there (moveable furniture)
+            dict(latlon=(38.1587344, -122.4520929), w=1.0, d=1.6, h=1.0, style='striped', color='#c8202c',
+                 src='onboard RAZip6S84CM 2:00-2:04 (t120 / t122 / t124): large red / white striped concrete block at the T11 apex beside the kerb (inventory rows s 3638-3699 right); c20_s1320 shows the same blocks (dark bands, ~1.6 m) moved to the outside edge at another event'),
+            dict(latlon=(38.1587122, -122.4521780), w=1.0, d=1.6, h=1.0, style='striped', color='#c8202c',
+                 src='onboard RAZip6S84CM 2:02-2:04 (t122 / t124): the second striped block at the apex (see the first); c20_s1320'),
         ],
         # free-standing tyre stacks (round 5): the ones the onboard shows that the captures place
         tyre_stacks=[
@@ -846,6 +871,11 @@ CONFIG = dict(
         # the cone line along the double white line between the track and the pit-in lane, from where the lanes part
         # to the nose (owner_15: cones on the double line; c20_s1155 / c20_s1210: the solid double line from s ~3525)
         cone_lines_declared=[
+            # round 7 (owner note 49): the single orange marker cone on the left verge before the 9a chicane; onboard t096 shows
+            # it ~85 m ahead by the wall, t098 ~15 m ahead mid-verge (the same cone: the car covers ~80 m in 2 s); position
+            # from t098's perspective (between the edge and the wall, nearer the edge); none in t090-t094
+            dict(side='left', s=(3031, 3032), off=6.4, spacing=10.0, size=0.5,
+                 src='onboard RAZip6S84CM 1:36-1:38 (t096 / t098; owner_49 crop): one orange cone ~0.5 m on the grass verge left before 9a, ~6 m beyond the edge (frame perspective); not resolved on c20_s0605 / c20_o0660'),
             dict(side='right', s=(2196, 2212), off=0.5, spacing=5.0,
                  src='onboard 1:14-1:16 (round 5): orange delineator posts on the edge of the T7a island before its kerb (island on c20_s3960)'),
             dict(side='right', s=(1932, 1942), off=1.5, spacing=4.0,

@@ -1008,6 +1008,8 @@ def barriers(trk, osm):
                "pts": with_z(trk, P), "src": f"declared: {dw['name']}" + (f" ({dw['src']})" if dw.get("src") else "")}
         if dw.get("color"):
             rec["color"] = dw["color"]
+        if dw.get("stack"):
+            rec["stack"] = int(dw["stack"])   # tyres per stack (round 7), from the evidence
         out.append(rec)
         log(f"declared wall {dw['name']}: {len(P) * 2} m ({dw.get('kind', 'concrete')}, fence {dw.get('fence', 3.0)} m)")
     if decl:
@@ -2079,6 +2081,25 @@ def main(cfg=None, out_dir=None):
             _WALL_CACHE.append(trk.project(P_))
     kerb = kerbs(trk)
     lines = edge_lines(trk, kerb, osm)
+    # round 7 (Sonoma owner notes 42-43): stretches where the painted edge is not the white line but a declared paint
+    # line (the pit-out blend line is double yellow): config scenery.edge_line_cut [{side, s: (s0, s1) m, why}]
+    for cut in SC_CFG.get("edge_line_cut", []):
+        sd = 1 if cut["side"] == "left" else -1
+        a, b = (v / trk.sp for v in cut["s"])
+        kept = []
+        for r_ in lines:
+            if r_["side"] != sd:
+                kept.append(r_); continue
+            lo, hi = r_["s0"], r_["s1"]
+            for off in (0, trk.n, -trk.n):   # runs may wrap past the line
+                A, B = a + off, b + off
+                if hi <= A or lo >= B:
+                    continue
+                if lo < A: kept.append(dict(r_, s0=lo, s1=A))
+                lo = max(lo, B)
+            if lo < hi: kept.append(dict(r_, s0=lo, s1=hi))
+        lines = kept
+        log(f"edge lines cut on the {cut['side']} s {cut['s'][0]}-{cut['s'][1]} ({cut['why'][:60]})")
     pit = pit_lane(trk, osm)
     if pit and SC_CFG.get("pit_lane_clip_walls"):
         # the lane's real width: its paving stops at the walls that bound it (config scenery.pit_lane_clip_walls,

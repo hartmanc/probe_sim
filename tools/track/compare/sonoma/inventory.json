@@ -4737,21 +4737,6 @@
   },
   {
    "side": "left",
-   "kind": "cone_line",
-   "attrs": {
-    "type": "single orange cone on the grass (marker)",
-    "h_m": 0.5,
-    "h_method": "cone-ref"
-   },
-   "confidence": 0.7,
-   "t": 96,
-   "s": 2946.9,
-   "source": "onboard:RAZip6S84CM@96.0",
-   "frame": "t096.jpg",
-   "scope": "lap"
-  },
-  {
-   "side": "left",
    "kind": "fence",
    "attrs": {
     "type": "catch fence, curved-top posts",
@@ -4850,6 +4835,29 @@
    "s": 3017.7,
    "source": "onboard:RAZip6S84CM@98.0",
    "frame": "t098.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "cone_line",
+   "attrs": {
+    "type": "single orange cone on the grass (marker)",
+    "h_m": 0.5,
+    "h_method": "cone-ref",
+    "ahead_m": 86,
+    "correction": {
+     "round": "scenery round 7 (22 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frames t096 / t098 (owner note 49): the cone seen far ahead by the wall at 1:36 is the one ~15 m ahead mid-verge at 1:38 (~80 m covered in 2 s); placed at s ~3033 from t098's perspective"
+    }
+   },
+   "confidence": 0.7,
+   "t": 96,
+   "s": 3032.9,
+   "source": "onboard:RAZip6S84CM@96.0",
+   "frame": "t096.jpg",
    "scope": "lap"
   },
   {
