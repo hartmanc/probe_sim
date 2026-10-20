@@ -372,11 +372,51 @@ command regenerates it after any track change; the lidar and NAIP caches are key
   `window.__sim.surface`, flag over 2 cm; walk the surface from 0.5 m inside to 18 m outside each edge for steps
   and slope changes over 8 % per metre) and fix the data that creases.
 
-- **From the Street View survey and the captures (20 Oct 2026):** walls OSM does not map as `declared_walls` (lat/lon
+- **From the Street View survey and the captures (20 Oct 2026):** (see "Evidence first" below for the rule that now
+  governs all of these) walls OSM does not map as `declared_walls` (lat/lon
   polylines measured on the clean captures, material and fence from the survey); kerb paint, width and block length per
   track (`scenery.kerb`: colours, width, stripe_m; measure width and block period on the captures); paved roads of the
   circuit the loop does not use as `closed_roads` (driveable paved zones with a cone line across each mouth; an inside
   runoff the cars may use gets no cones); hillside grandstands on the terrain (`grandstand_on_terrain`).
+
+### Evidence first: the manifest rule and the three scenery gates (20 Oct 2026, every circuit)
+
+Sonoma's round-2 scenery was rejected by the owner ("not ready for me to review") because every miss came from
+Laguna's generic rules: a radius-rule kerb on T7's open side, Laguna's green after-kerb strip and flat profile, a brake
+board in the pit-in lane, the pit wall closing the pit exit, the drag strip reachable from the T1 runoff, OSM grandstand
+slabs where the stands are terraces, missing walls and corner stations. The Laguna rules above stay for Laguna only.
+For every other circuit, these are steps of stage 3:
+
+1. **No object without a cited source.** Every kerb strip, wall, tyre wall, fence, grandstand, corner station, sign and
+   cone line traces to a clean z20 capture, a Street View panorama id (check its date against the recent onboard), an
+   onboard timestamp or OSM, and the config entry carries that source (`src`). Write `tools/track/compare/<id>/
+   manifest.md`: one row per object (kind, side, stations, source, how measured), plus a "removed for lack of evidence"
+   table and the survey walk (every Street View spot: placed / not placed and why). A rule-placed object with no
+   evidence is removed (config: `brake_board_corners=[]`, `corner_boards=False`, `flagstand=False`,
+   `pit_wall=dict(rule=False)`).
+2. **Kerbs from the imagery** (`scenery.kerbs_declared`): `compare/kerb_detect.py` finds the painted block pattern along
+   both edges; confirm each run on `compare/capstrip.py` / `capwin.py` and the onboard; declare its ends (lat, lon on the
+   edge), colour (per strip or a `kerb.palettes` name), band offset (`off`). No green verge unless the imagery shows it.
+   Kerb height per track (`scenery.kerb.profile` {height, face, back}; Sonoma 0.10 / 0.25 / 0.30, stepped concrete):
+   the physics (`createTrackSurface` option `kerbs`) and the app read it from scenery.json; absent = flat paint.
+3. **Walls measured, not assumed** (`scenery.declared_walls`): `compare/wall_measure.py` with a guide (ENU, lat/lon,
+   track s/lateral `--sguide`, or along an edge `--edge --off`) picks the bright concrete top or dark tyre stack every
+   0.5 m; put its polyline, rms and pick rate in the `src`. `drop_within` drops the parts of a wall the course itself
+   runs over; `closed_roads_clip_walls` stops a closed road's paving at its walls. Grandstands on a hillside are terraces
+   (`scenery.terraces`: OSM footprint, 0.9 m rows on the DEM, top fence), corner stations `marshal_posts`.
+4. **Three gates, run by `build_track.py --stage scenery`** (`tools/track/gates/sceneryGates.ts`, CLI `run_gates.ts`,
+   tests in `src/scoreboard/__tests__/scenerygates.test.ts`), failing the stage like the edge gate:
+   - CONTAINMENT: from every 2 m station, both sides, rays on the normal and +-35 deg up to 120 m: any other paved
+     polygon (pit lane, closed road) reached before a barrier or a cone line is an escape, logged with its stations,
+     unless `scenery.gates.allowed` lists it (target, side, stretch as lat/lon on the track, why with evidence).
+   - PIT CONNECTIVITY: pit box (`gates.pit_box_latlon`, default the line) -> pit exit -> track and track -> pit entry ->
+     pit box along the lane crosses no barrier and stays paved.
+   - SIGN PLACEMENT: boards, banners, flag stands and posts stand off the track and outside every pit-lane, closed-road
+     and `gates.paddock` polygon; brake and turn boards within 15 m of an edge.
+   Laguna's logger build (report only, 20 Oct 2026): containment fails on its pit lane (s 375-573 left, the pit-out lane
+   after T2, and two rays at T11); pit connectivity and signs pass.
+5. **Hood stills of every surveyed spot** in `tools/track/compare/<id>/hood_r3/` (or the round's folder) with a README
+   listing station and the matching panorama id / onboard time, before the owner drives.
 
 ## Stage 4: compare pass with a judge (`tools/track/compare/`)
 
