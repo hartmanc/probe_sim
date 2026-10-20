@@ -230,7 +230,68 @@ export function escapeRuns(es: Escape[]): { side: string; target: string; s0: nu
 }
 
 // ------------------------------------------------------------------ pit connectivity
-export interface PitReport { ok: boolean; paths: { name: string; length: number; crossings: string[]; unpaved_m: number; cones: number }[] }
+export interface PitReport {
+  ok: boolean; paths: { name: string; length: number; crossings: string[]; unpaved_m: number; cones: number }[];
+  /** round 7 (Sonoma owner note 37: a cone line converging into the outer wall closed the pit-in while the centre path
+   *  passed): the lane driven on two paths 1.5 m from each lane edge; `blocked` lists every barrier, cone line or wall
+   *  end inside the lane polygon or within 1.0 m of either path, `pinched` the stations where the lane is under 3 m wide
+   *  between two closed edges (neither open to the track). */
+  lane?: { stations: number; blocked: string[]; pinched: number[] };
+}
+
+/** Distance from p to segment a-b. */
+export function segDist(p: V2, a: V2, b: V2): number {
+  const dx = b[0] - a[0], dy = b[1] - a[1], l2 = dx * dx + dy * dy;
+  const t = l2 > 0 ? Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / l2)) : 0;
+  return Math.hypot(p[0] - a[0] - t * dx, p[1] - a[1] - t * dy);
+}
+
+/** Two-path lane check (see PitReport.lane). Barriers and cone lines both count; a lane edge is 'open' where it lies on
+ *  the track's paved width (the junctions), and a narrow lane is only allowed there. */
+export function laneClearance(t: TrackLike, sc: SceneryLike, opts: { off?: number; clear?: number; minW?: number; inset?: number } = {}): NonNullable<PitReport['lane']> {
+  const off = opts.off ?? 1.5, clear = opts.clear ?? 1.0, minW = opts.minW ?? 3.0, inset = opts.inset ?? 0.3;
+  const proj = makeProjector(t);
+  const obst: { a: V2; b: V2; tag: string }[] = [];
+  const short = (tag: string) => tag.length > 90 ? tag.slice(0, 90) + '...' : tag;
+  for (const b of sc.barriers ?? []) for (let i = 0; i + 1 < b.pts.length; i++) obst.push({ a: [b.pts[i][0], b.pts[i][1]], b: [b.pts[i + 1][0], b.pts[i + 1][1]], tag: `${b.kind}: ${short(b.src ?? '')}` });
+  for (const c of sc.cone_lines ?? []) for (let i = 0; i + 1 < c.pts.length; i++) obst.push({ a: [c.pts[i][0], c.pts[i][1]], b: [c.pts[i + 1][0], c.pts[i + 1][1]], tag: `cones: ${short(c.src ?? '')}` });
+  const out = { stations: 0, blocked: [] as string[], pinched: [] as number[] };
+  const seen = new Set<string>();
+  const hit = (tag: string, where: V2, why: string) => {
+    const pr = proj(where, 80), key = `${tag}|${why}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    out.blocked.push(`${why}: ${tag} near s ${pr ? (pr.i * t.spacing_m).toFixed(0) : '?'} (${where[0].toFixed(1)}, ${where[1].toFixed(1)})`);
+  };
+  for (const p of sc.pit_lane?.parts ?? []) {
+    const poly = partPolygon(p);
+    const xs = poly.map((q) => q[0]), ys = poly.map((q) => q[1]);
+    const box = [Math.min(...xs) - 3, Math.min(...ys) - 3, Math.max(...xs) + 3, Math.max(...ys) + 3];
+    const near = obst.filter((o) => Math.max(o.a[0], o.b[0]) >= box[0] && Math.min(o.a[0], o.b[0]) <= box[2] && Math.max(o.a[1], o.b[1]) >= box[1] && Math.min(o.a[1], o.b[1]) <= box[3]);
+    const edgeD = (q: V2) => { let d = Infinity; for (let i = 0; i < poly.length; i++) d = Math.min(d, segDist(q, poly[i], poly[(i + 1) % poly.length])); return d; };
+    // 1. nothing stands inside the lane (deeper than `inset` from its boundary: the bounding walls sit on it)
+    for (const o of near) {
+      const L = Math.hypot(o.b[0] - o.a[0], o.b[1] - o.a[1]);
+      for (let d = 0; d <= L; d += 0.5) {
+        const q: V2 = [o.a[0] + ((o.b[0] - o.a[0]) * d) / (L || 1), o.a[1] + ((o.b[1] - o.a[1]) * d) / (L || 1)];
+        if (inPoly(q, poly) && edgeD(q) > inset) { hit(o.tag, q, 'inside the lane'); break; }
+      }
+    }
+    // 2. two paths 1.5 m in from each edge, 1.0 m clear of every barrier and cone line
+    const openAt = (q: V3) => { const pr = proj([q[0], q[1]], 40); return !!pr && pr.out <= 0.3; };
+    for (let j = 0; j < p.center.length; j++) {
+      const l: V2 = [p.left[j][0], p.left[j][1]], r: V2 = [p.right[j][0], p.right[j][1]];
+      const w = Math.hypot(r[0] - l[0], r[1] - l[1]);
+      out.stations++;
+      const oL = openAt(p.left[j]), oR = openAt(p.right[j]);
+      if (w < 2 * off) { if (!oL && !oR) { const pr = proj(l, 80); out.pinched.push(pr ? Math.round(pr.i * t.spacing_m) : -1); } continue; }
+      const ux = (r[0] - l[0]) / w, uy = (r[1] - l[1]) / w;
+      const paths: V2[] = [[l[0] + ux * off, l[1] + uy * off], [r[0] - ux * off, r[1] - uy * off]];
+      for (const q of paths) for (const o of near) if (segDist(q, o.a, o.b) < clear) hit(o.tag, q, `within ${clear} m of a lane path`);
+    }
+  }
+  return out;
+}
 
 /** Point on the track centre `ds` m along from station i (wrapped). */
 function centreAt(t: TrackLike, i: number, ds: number): V2 {
@@ -289,6 +350,8 @@ export function pitConnectivity(t: TrackLike, sc: SceneryLike, boxS?: number): P
   if (prI) entryPath.push(centreAt(t, prI.i, -15), abeam(xy(first), prI.i));
   entryPath.push(...pi.center.slice(0, bk + 1).map(xy));
   check('track -> pit entry -> pit box', entryPath);
+  rep.lane = laneClearance(t, sc);
+  if (rep.lane.blocked.length || rep.lane.pinched.length) rep.ok = false;
   return rep;
 }
 
@@ -314,6 +377,88 @@ export function signPlacement(t: TrackLike, sc: SceneryLike, cfg: GateConfig = {
     const inside = polys.find((q) => inPoly(p, q.poly));
     if (inside) { bad(`inside ${inside.name}`); continue; }
     if ((m.kind === 'brake' || m.kind === 'corner') && (!pr || pr.out > 15)) bad(`${pr ? pr.out.toFixed(1) : '>200'} m from the circuit edge (max 15)`);
+  }
+  return rep;
+}
+
+// ------------------------------------------------------------------ exposed wall ends (round 7, Sonoma owner notes 39 / 41)
+export interface ExposedEnd { label: string; side: 'left' | 'right'; s: number; out: number; why: string }
+export interface EndsReport { checked: number; ok: { label: string; s: number; how: string }[]; exposed: ExposedEnd[] }
+
+/** Every rigid barrier run (concrete, pitwall, armco) whose upstream end (the end a car travelling the lap meets first)
+ *  stands within `near` m (8) of the edge must be protected, else it is an end face exposed to oncoming travel:
+ *  - joined: another barrier, a tyre run or an impact block is within `join` m (1.5) of the end point (one wall, or a
+ *    cushion at its head);
+ *  - lapped: a run on the same side ends within `lap` m (25) upstream of it, or overlaps it, and stands closer to the
+ *    track there (the downstream start further from the track than the upstream end: the lapping rule);
+ *  - tapered: the run angles away from the track at its head (its end is at least `taper` m (1.5) further out than
+ *    the run 10 m downstream).
+ *  Runs from 25 m upstream of the end are compared on the end's own side. */
+export function exposedEnds(t: TrackLike, sc: SceneryLike & { landmarks?: { kind: string; x: number; y: number }[] }, opts: { near?: number; join?: number; lap?: number; taper?: number } = {}): EndsReport {
+  const near = opts.near ?? 8, join = opts.join ?? 1.5, lap = opts.lap ?? 25, taper = opts.taper ?? 1.5;
+  const proj = makeProjector(t), L = t.n * t.spacing_m;
+  const dens = (P: V3[]): V2[] => {
+    const o: V2[] = [];
+    for (let i = 0; i + 1 < P.length; i++) {
+      const d = Math.hypot(P[i + 1][0] - P[i][0], P[i + 1][1] - P[i][1]), n = Math.max(1, Math.ceil(d));
+      for (let k = 0; k < n; k++) o.push([P[i][0] + ((P[i + 1][0] - P[i][0]) * k) / n, P[i][1] + ((P[i + 1][1] - P[i][1]) * k) / n]);
+    }
+    if (P.length) o.push([P[P.length - 1][0], P[P.length - 1][1]]);
+    return o;
+  };
+  interface Run { k: number; kind: string; label: string; xy: V2[]; s: number[]; out: number[]; lat: number[] }
+  const runs: Run[] = [];
+  (sc.barriers ?? []).forEach((b, k) => {
+    if (b.pts.length < 2 || b.kind === 'fence') return;
+    const xy = dens(b.pts);
+    const pr = xy.map((p) => proj(p, 120));
+    if (pr.some((q) => !q)) return;
+    // unwrap s along the run
+    const s: number[] = [];
+    pr.forEach((q, i) => { let v = q!.i * t.spacing_m; if (i) { while (v - s[i - 1] > L / 2) v -= L; while (s[i - 1] - v > L / 2) v += L; } s.push(v); });
+    runs.push({ k, kind: b.kind, label: `${b.kind}: ${(b.src ?? '').slice(0, 100)}`, xy, s, out: pr.map((q) => q!.out), lat: pr.map((q) => q!.lat) });
+  });
+  const cushions: V2[] = ((sc.landmarks ?? []) as { kind: string; x: number; y: number }[]).filter((m) => m.kind === 'impact').map((m) => [m.x, m.y]);
+  const rep: EndsReport = { checked: 0, ok: [], exposed: [] };
+  const sd = (a: number, b: number) => { let d = (b - a) % L; if (d > L / 2) d -= L; if (d < -L / 2) d += L; return d; };  // b - a, wrapped
+  for (const r of runs) {
+    if (r.kind === 'tyres') continue;
+    // the upstream end: the end with the lower s along the run's direction of travel
+    const fwd = r.s[r.s.length - 1] >= r.s[0];
+    const ord = fwd ? r.xy.map((_, i) => i) : r.xy.map((_, i) => r.xy.length - 1 - i);
+    const h = ord[0];
+    if (r.out[h] > near || r.out[h] < -0.5) continue;
+    // a run that crosses the track (a wall across a closed road's mouth, out < 0 on the road) is not a lap wall end
+    rep.checked++;
+    const side: 'left' | 'right' = r.lat[h] > 0 ? 'left' : 'right';
+    const P = r.xy[h], s0 = ((r.s[h] % L) + L) % L, o0 = r.out[h];
+    const label = r.label;
+    // joined / cushioned
+    let how = '';
+    for (const q of runs) {
+      if (q === r) continue;
+      if (q.xy.some((p) => Math.hypot(p[0] - P[0], p[1] - P[1]) <= join)) { how = `joined to ${q.kind} run ${q.k}`; break; }
+    }
+    if (!how && cushions.some((c) => Math.hypot(c[0] - P[0], c[1] - P[1]) <= join + 1.5)) how = 'impact block at its head';
+    // lapped by an upstream run on the same side standing closer to the track
+    if (!how) for (const q of runs) {
+      if (q === r) continue;
+      let best = Infinity;
+      for (let i = 0; i < q.xy.length; i++) {
+        if ((q.lat[i] > 0 ? 'left' : 'right') !== side) continue;
+        const d = sd(((q.s[i] % L) + L) % L, s0);  // > 0: q's point is upstream of the head
+        if (d < -2 || d > lap) continue;
+        if (q.out[i] < o0 - 0.2) best = Math.min(best, q.out[i]);
+      }
+      if (best < Infinity) { how = `lapped by ${q.kind} run ${q.k} (${best.toFixed(1)} m out vs ${o0.toFixed(1)} m)`; break; }
+    }
+    // tapered: angled away from the track at its head
+    if (!how) {
+      const j = ord.find((i) => Math.abs(sd(((r.s[h] % L) + L) % L, ((r.s[i] % L) + L) % L)) >= 10);
+      if (j !== undefined && o0 - r.out[j] >= taper) how = `tapered (${o0.toFixed(1)} m out at the head, ${r.out[j].toFixed(1)} m 10 m on)`;
+    }
+    if (how) rep.ok.push({ label, s: Math.round(s0), how });
+    else rep.exposed.push({ label, side, s: Math.round(s0), out: Math.round(o0 * 10) / 10, why: `upstream end ${o0.toFixed(1)} m beyond the ${side} edge faces oncoming travel: no join, cushion, lapping run or taper` });
   }
   return rep;
 }

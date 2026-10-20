@@ -620,13 +620,38 @@ class Strip {
   }
 }
 
+const TYRE_R = 0.31, TYRE_H = 0.23, TYRE_PITCH = 0.62;
+/** Tyres in a stack of height h (m): one per 0.23 m, 1 to 6. */
+export function tyresInStack(h: number): number { return Math.max(1, Math.min(6, Math.round((h || 0.92) / TYRE_H))); }
+/** One stack of n tyres lying flat: a lathe whose profile bulges per tyre with a dark groove between tyres and a dark
+ *  hole at the top (vertex colour by radius: tread 1, groove 0.45, hole 0.25). */
+export function tyreStackGeometry(n: number): THREE.BufferGeometry {
+  const P: THREE.Vector2[] = [new THREE.Vector2(0.001, 0), new THREE.Vector2(TYRE_R - 0.05, 0)];
+  for (let k = 0; k < n; k++) {
+    const y0 = k * TYRE_H;
+    P.push(new THREE.Vector2(TYRE_R - 0.05, y0 + 0.004), new THREE.Vector2(TYRE_R, y0 + 0.05), new THREE.Vector2(TYRE_R, y0 + TYRE_H - 0.05), new THREE.Vector2(TYRE_R - 0.05, y0 + TYRE_H - 0.004));
+  }
+  const top = n * TYRE_H;
+  P.push(new THREE.Vector2(0.2, top), new THREE.Vector2(0.17, top - 0.04), new THREE.Vector2(0.17, top - 0.16), new THREE.Vector2(0.001, top - 0.16));
+  const g = new THREE.LatheGeometry(P, 12);
+  const p = g.attributes.position as THREE.BufferAttribute;
+  const col = new Float32Array(p.count * 3);
+  for (let i = 0; i < p.count; i++) {
+    const r = Math.hypot(p.getX(i), p.getZ(i));
+    const v = r > TYRE_R - 0.01 ? 1 : r > 0.21 ? 0.45 : 0.25;
+    col[i * 3] = col[i * 3 + 1] = col[i * 3 + 2] = v;
+  }
+  g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  return g;
+}
+
 function buildBarriers(list: SceneryJson['barriers']): THREE.Group {
   const group = new THREE.Group();
   group.name = 'barriers';
   const concrete = new Strip(), armco = new Strip(), fence = new Strip();
   const cConcrete = new THREE.Color(0xc9c5bb), cTop = new THREE.Color(0xd8d5cc), cPit = new THREE.Color(0xe6e4de);
   const cRail = new THREE.Color(0xc0c6cc), cFence = new THREE.Color(0xffffff);
-  const posts: THREE.Matrix4[] = [], fencePosts: THREE.Matrix4[] = [], tyres: { m: THREE.Matrix4; white: boolean; color?: string }[] = [];
+  const posts: THREE.Matrix4[] = [], fencePosts: THREE.Matrix4[] = [], tyres: { m: THREE.Matrix4; white: boolean; color?: string; n: number }[] = [];
   const up = (P: V3[], dz: number) => P.map((p) => v3(p[0], p[1], p[2] + dz));
   for (const b of list) {
     const P = b.pts;
@@ -638,17 +663,28 @@ function buildBarriers(list: SceneryJson['barriers']): THREE.Group {
       concrete.add(up(L, -0.3), up(L, b.h), cc);
       concrete.add(up(R, b.h), up(R, -0.3), cc);
       concrete.add(up(L, b.h), up(R, b.h), b.color ? cc.clone().lerp(cTop, 0.35) : cTop);
+      // end caps: close both ends of the run, else an open end shows the wall's inside (Sonoma owner note 36)
+      for (const i of [0, P.length - 1]) {
+        const e = [L[i], R[i]];
+        concrete.add(up(e, -0.3), up(e, b.h), cc);
+      }
     } else if (b.kind === 'armco') {
       // W-beam: top and bottom edges forward, the groove set back 5 cm
       const mid = offsetLine(P, 0.05);
       armco.add(up(P, 0.44), up(mid, 0.6), cRail);
       armco.add(up(mid, 0.6), up(P, 0.76), cRail);
+      // end plates: close the W-beam's groove at both ends of the run
+      for (const i of [0, P.length - 1]) {
+        const e = [P[i], mid[i]];
+        armco.add(up(e, 0.44), up(e, 0.76), cRail);
+      }
       for (let i = 0; i < P.length; i++) {
         posts.push(new THREE.Matrix4().compose(v3(P[i][0], P[i][1], P[i][2] + 0.38), new THREE.Quaternion(), new THREE.Vector3(1, 1, 1)));
       }
     } else if (b.kind === 'tyres') {
-      // stacks of 4 tyres every 0.58 m (slightly overlapping, so the wall reads continuous from above), two staggered rows
+      // stacks of round(h / 0.23) tyres every 0.62 m (touching), two staggered rows
       let acc = 0, k = 0;
+      const nT = tyresInStack(b.h);
       for (let i = 0; i < P.length - 1; i++) {
         const a = P[i], c = P[i + 1];
         const seg = Math.hypot(c[0] - a[0], c[1] - a[1]);
@@ -659,12 +695,23 @@ function buildBarriers(list: SceneryJson['barriers']): THREE.Group {
           for (const row of [0, 1]) {
             const off = row * 0.6, sh = row * 0.31;
             const px = x + nx * off + ((c[0] - a[0]) / seg) * sh, py = y + ny * off + ((c[1] - a[1]) / seg) * sh;
-            tyres.push({ m: new THREE.Matrix4().makeTranslation(px, z, -py), white: !b.color && k % 12 < 2, color: b.color });   // mostly black with a white pair every 12 stacks: a continuous wall from above, not a dotted line
+            tyres.push({ m: new THREE.Matrix4().makeTranslation(px, z, -py), white: !b.color && k % 12 < 2, color: b.color, n: nT });   // mostly black with a white pair every 12 stacks
           }
           k++;
-          acc += 0.58;
+          acc += TYRE_PITCH;
         }
         acc -= seg;
+      }
+      // close the run's far end: a last stack on the end point unless the spacing already put one within 0.2 m
+      const last = P[P.length - 1], prev = P[P.length - 2];
+      const segL = Math.hypot(last[0] - prev[0], last[1] - prev[1]);
+      if (segL > 1e-6 && TYRE_PITCH - acc > 0.2) {
+        const tx = (last[0] - prev[0]) / segL, ty = (last[1] - prev[1]) / segL;
+        for (const row of [0, 1]) {
+          const off = row * 0.6, sh = row * 0.31;
+          const px = last[0] - ty * off - tx * sh, py = last[1] + tx * off - ty * sh;
+          tyres.push({ m: new THREE.Matrix4().makeTranslation(px, last[2], -py), white: !b.color && k % 12 < 2, color: b.color, n: nT });
+        }
       }
     }
     if (b.fence > 0) {
@@ -698,25 +745,23 @@ function buildBarriers(list: SceneryJson['barriers']): THREE.Group {
   inst(new THREE.BoxGeometry(0.1, 0.8, 0.1), lam({ color: 0x6f747a }), posts, 'armco_posts');
   inst(new THREE.CylinderGeometry(0.035, 0.035, 1, 5), lam({ color: 0x8c9196 }), fencePosts, 'fence_posts');
   if (tyres.length) {
-    // one stack: 4 tyres with dark gaps between them
-    const g = new THREE.CylinderGeometry(0.31, 0.31, 0.92, 10, 4, false).translate(0, 0.46, 0);
-    const p = g.attributes.position as THREE.BufferAttribute;
-    const col = new Float32Array(p.count * 3);
-    for (let i = 0; i < p.count; i++) {
-      const yy = p.getY(i);
-      const edge = Math.abs(((yy / 0.23) % 1) - 0.5) > 0.45 ? 0.55 : 1;
-      col[i * 3] = col[i * 3 + 1] = col[i * 3 + 2] = edge;
-    }
-    g.setAttribute('color', new THREE.BufferAttribute(col, 3));
-    const im = new THREE.InstancedMesh(g, lam({ vertexColors: true }), tyres.length);
+    // stacked tyres (round 7, Sonoma owner note 38: the stacks read as a flat segmented wall): one lathe per stack height,
+    // each tyre a rounded bulge with a dark groove between tyres and the dark hole at the top, so a run reads as tyres;
+    // one InstancedMesh per stack height, colour per instance (the run's recorded colour, black by default)
+    const byN = new Map<number, typeof tyres>();
+    for (const t of tyres) { const a = byN.get(t.n); if (a) a.push(t); else byN.set(t.n, [t]); }
     const black = new THREE.Color(0x202020), white = new THREE.Color(0xdedede);
-    // a run's recorded colour (Sonoma: black-covered stacks, white at the T11 hairpin) for all its stacks; without one,
-    // black with a white pair every 12 stacks (Laguna)
     const tc = new Map<string, THREE.Color>();
-    tyres.forEach((t, i) => { im.setMatrixAt(i, t.m); im.setColorAt(i, t.color ? (tc.get(t.color) ?? tc.set(t.color, new THREE.Color(t.color)).get(t.color)!) : t.white ? white : black); });
-    im.computeBoundingSphere();
-    im.name = 'tyre_walls';
-    group.add(im);
+    for (const [nT, list2] of byN) {
+      const g = tyreStackGeometry(nT);
+      const im = new THREE.InstancedMesh(g, lam({ vertexColors: true }), list2.length);
+      // a run's recorded colour (Sonoma: black-covered stacks, white at the T11 hairpin) for all its stacks; without one,
+      // black with a white pair every 12 stacks (Laguna)
+      list2.forEach((t, i) => { im.setMatrixAt(i, t.m); im.setColorAt(i, t.color ? (tc.get(t.color) ?? tc.set(t.color, new THREE.Color(t.color)).get(t.color)!) : t.white ? white : black); });
+      im.computeBoundingSphere();
+      im.name = 'tyre_walls';
+      group.add(im);
+    }
   }
   return group;
 }
@@ -1444,35 +1489,54 @@ function buildLandmarks(list: SceneryJson['landmarks']): THREE.Group {
         }
       }
     } else if (m.kind === 'marshal') {
-      // corner-worker post (20 Oct 2026): a raised platform on four legs with a railing and a small roofed hut, its open
-      // side toward the track (+Z after yawFor faces the heading, i.e. the track). style 'platform': no hut
-      const legH = Math.max(0.6, m.h - 2.4), W = m.w, D = 2.0;
-      for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
-        const leg = new THREE.Mesh(new THREE.BoxGeometry(0.14, legH, 0.14), white);
-        leg.position.set(x * (W / 2 - 0.1), legH / 2, z * (D / 2 - 0.1));
-        g.add(leg);
-      }
-      const deck = new THREE.Mesh(new THREE.BoxGeometry(W, 0.12, D), white);
-      deck.position.set(0, legH, 0);
-      g.add(deck);
-      for (const [x, z, sx, sz] of [[0, D / 2, W, 0.05], [-W / 2, 0, 0.05, D], [W / 2, 0, 0.05, D]] as const) {
-        const rail = new THREE.Mesh(new THREE.BoxGeometry(sx, 0.05, sz), postMat);
-        rail.position.set(x, legH + 1.0, z);
-        g.add(rail);
-      }
-      for (const [x, z] of [[-W / 2, D / 2], [W / 2, D / 2]]) {
-        const p = new THREE.Mesh(new THREE.BoxGeometry(0.05, 1.0, 0.05), postMat);
-        p.position.set(x, legH + 0.5, z);
-        g.add(p);
-      }
+      // corner-worker post (round 7, Sonoma owner note 40: the old post read as a small grey box): a platform on four legs
+      // (deck at h - 2.6 m), a hut w x w (default 2.4 m) with an OPEN FRONT toward the track (+Z after yawFor faces the
+      // heading), white walls with a coloured lower band (m.color, from the frames), a flat roof overhanging 0.6 m, and a
+      // railing round the deck. style 'platform': deck and railing only.
+      const W = m.w || 2.4, D = W, legH = Math.max(0.6, m.h - 2.6), wallH = 2.2, t = 0.08;
+      const band = new THREE.MeshLambertMaterial({ color: m.color ?? '#2f5d9e' });
+      const box = (sx: number, sy: number, sz: number, x: number, y: number, z: number, mat: THREE.Material) => {
+        const b2 = new THREE.Mesh(new THREE.BoxGeometry(sx, sy, sz), mat); b2.position.set(x, y, z); g.add(b2);
+      };
+      for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) box(0.16, legH, 0.16, x * (W / 2 - 0.1), legH / 2, z * (D / 2 - 0.1), white);
+      for (const z of [-1, 1]) box(W, 0.08, 0.08, 0, legH * 0.45, z * (D / 2 - 0.1), white);   // leg braces
+      box(W + 0.4, 0.14, D + 0.4, 0, legH, 0, white);                                          // deck
       if (m.style !== 'platform') {
-        const hut = new THREE.Mesh(new THREE.BoxGeometry(W * 0.7, 2.0, D * 0.55), white);
-        hut.position.set(0, legH + 1.06, -D * 0.2);
-        const win = new THREE.Mesh(new THREE.BoxGeometry(W * 0.6, 0.6, D * 0.56), glass);
-        win.position.set(0, legH + 1.5, -D * 0.2);
-        const roof = new THREE.Mesh(new THREE.BoxGeometry(W + 0.3, 0.1, D + 0.3), white);
-        roof.position.set(0, legH + 2.2, 0);
-        g.add(hut, win, roof);
+        const y0 = legH + 0.07, bandH = Math.min(0.9, wallH * 0.4);
+        // back wall and the two side walls: coloured band below, white above; the front (track side) open
+        box(W, bandH, t, 0, y0 + bandH / 2, -D / 2 + t / 2, band);
+        box(W, wallH - bandH, t, 0, y0 + bandH + (wallH - bandH) / 2, -D / 2 + t / 2, white);
+        for (const x of [-1, 1]) {
+          box(t, bandH, D, x * (W / 2 - t / 2), y0 + bandH / 2, 0, band);
+          box(t, wallH - bandH, D, x * (W / 2 - t / 2), y0 + bandH + (wallH - bandH) / 2, 0, white);
+        }
+        box(W, bandH, t, 0, y0 + bandH / 2, D / 2 - t / 2, band);                               // low front sill (band colour)
+        for (const x of [-1, 1]) box(0.12, wallH, 0.12, x * (W / 2 - 0.06), y0 + wallH / 2, D / 2 - 0.06, white);  // front posts
+        box(W + 1.2, 0.14, D + 1.2, 0, y0 + wallH + 0.07, 0.15, white);                          // roof, 0.6 m overhang
+        box(W + 1.2, 0.05, D + 1.2, 0, y0 + wallH - 0.01, 0.15, postMat);                         // its dark underside
+      } else {
+        for (const [x, z, sx, sz] of [[0, D / 2 + 0.2, W + 0.4, 0.05], [-W / 2 - 0.2, 0, 0.05, D + 0.4], [W / 2 + 0.2, 0, 0.05, D + 0.4]] as const) {
+          box(sx, 0.05, sz, x, legH + 1.0, z, postMat);
+        }
+      }
+      // railing on the deck's open sides (the deck is 0.2 m wider than the hut all round)
+      for (const [x, z, sx, sz] of [[0, D / 2 + 0.18, W + 0.4, 0.05]] as const) box(sx, 0.05, sz, x, legH + 1.0, z, postMat);
+      for (const x of [-W / 2 - 0.18, 0, W / 2 + 0.18]) box(0.05, 1.0, 0.05, x, legH + 0.5, D / 2 + 0.18, postMat);
+    } else if (m.kind === 'block') {
+      // free-standing concrete block (round 7, Sonoma owner note 38: the T11 apex blocks): w across, d along the heading,
+      // h high; style 'striped' paints alternating red / white bands across it (color = the red), else plain m.color
+      const W = m.w, Dd = m.d ?? m.w, H = m.h;
+      if (m.style === 'striped') {
+        const nb = Math.max(2, Math.round(Dd / 0.5));
+        for (let k = 0; k < nb; k++) {
+          const blk = new THREE.Mesh(new THREE.BoxGeometry(W, H, Dd / nb), new THREE.MeshLambertMaterial({ color: k % 2 ? 0xf0efea : (m.color ?? '#c0392b') }));
+          blk.position.set(0, H / 2, -Dd / 2 + (k + 0.5) * (Dd / nb));
+          g.add(blk);
+        }
+      } else {
+        const blk = new THREE.Mesh(new THREE.BoxGeometry(W, H, Dd), new THREE.MeshLambertMaterial({ color: m.color ?? '#f0efea' }));
+        blk.position.set(0, H / 2, 0);
+        g.add(blk);
       }
     } else if (m.kind === 'impact') {
       // impact barrier (water-filled / foam block) at a wall's nose: a plain block, w across, d along the heading

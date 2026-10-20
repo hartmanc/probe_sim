@@ -2,7 +2,7 @@
 // Prints the three reports and a JSON summary line; exits 1 when a gate fails.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { containment, escapeRuns, pitConnectivity, signPlacement, type GateConfig } from './sceneryGates';
+import { containment, escapeRuns, exposedEnds, pitConnectivity, signPlacement, type GateConfig } from './sceneryGates';
 
 const dir = process.argv[2];
 const cfg: GateConfig & { pit_box_s?: number } = process.argv[3] ? JSON.parse(readFileSync(process.argv[3], 'utf8')) : {};
@@ -22,6 +22,11 @@ if (runs.length) fail = true;
 const p = pitConnectivity(track, sc, cfg.pit_box_s);
 console.log(`[${p.ok ? 'ok' : 'FAIL'}] pit connectivity: ${p.paths.length ? p.paths.map((q) => `${q.name}: ${q.length} m, ${q.crossings.length} barrier crossings, ${q.unpaved_m} m unpaved, ${q.cones} cone-line crossings`).join('; ') : 'no pit lane'}`);
 for (const q of p.paths) for (const x of q.crossings.slice(0, 5)) console.log(`       ${q.name}: crosses ${x}`);
+if (p.lane) {
+  console.log(`       lane (two paths 1.5 m from each edge, 1.0 m clearance, cone lines count): ${p.lane.stations} stations, ${p.lane.blocked.length} obstacles, ${p.lane.pinched.length} pinched stations`);
+  for (const x of p.lane.blocked.slice(0, 12)) console.log(`       lane blocked: ${x}`);
+  if (p.lane.pinched.length) console.log(`       lane pinched (< 3 m between closed edges) at s ${[...new Set(p.lane.pinched)].slice(0, 20).join(', ')}`);
+}
 if (!p.ok) fail = true;
 
 const g = signPlacement(track, sc, cfg);
@@ -29,6 +34,11 @@ console.log(`[${g.bad.length ? 'FAIL' : 'ok'}] sign placement: ${g.checked} sign
 for (const b of g.bad) console.log(`       ${b.kind} '${b.text}' at (${b.x.toFixed(1)}, ${b.y.toFixed(1)}): ${b.why}`);
 if (g.bad.length) fail = true;
 
+const e = exposedEnds(track, sc);
+console.log(`[${e.exposed.length ? 'FAIL' : 'ok'}] wall ends: ${e.checked} upstream run ends within 8 m of an edge checked, ${e.ok.length} joined / cushioned / lapped / tapered, ${e.exposed.length} exposed to oncoming travel`);
+for (const x of e.exposed) console.log(`       exposed ${x.side.padEnd(5)} s ${x.s} (${x.out} m out): ${x.label}`);
+if (e.exposed.length) fail = true;
+
 console.log('GATES_JSON ' + JSON.stringify({ containment: { escapes: c.escapes.length, runs, allowed: c.allowed.length, junctions: c.junctions },
-  pit: p, signs: g, fail }));
+  pit: p, signs: g, ends: e, fail }));
 process.exit(fail ? 1 : 0);

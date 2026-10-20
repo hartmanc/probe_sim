@@ -1,7 +1,7 @@
 // Pure parts of the stage-3 scenery gates (tools/track/gates/sceneryGates.ts, 20 Oct 2026): segment crossing, polygon
 // test, containment escapes / barriers / allowed runoff, pit connectivity and sign placement on a synthetic straight.
 import { describe, expect, it } from 'vitest';
-import { containment, escapeRuns, inPoly, pitConnectivity, segCross, signPlacement, type SceneryLike, type TrackLike, type V3 } from '../../../tools/track/gates/sceneryGates';
+import { containment, escapeRuns, exposedEnds, inPoly, laneClearance, pitConnectivity, segCross, signPlacement, type SceneryLike, type TrackLike, type V3 } from '../../../tools/track/gates/sceneryGates';
 
 // a 400 m oval-ish closed loop: two 150 m straights joined by half circles R 30, 1 m stations, half-width 5
 function loop(): TrackLike {
@@ -79,5 +79,47 @@ describe('scenery gates: pit connectivity and signs', () => {
     const r = signPlacement(T, sc);
     expect(r.checked).toBe(3);
     expect(r.bad.map((b) => b.text).sort()).toEqual(['1', '2']);
+  });
+});
+
+describe('scenery gates: the lane driven on two paths (round 7, owner note 37)', () => {
+  // the same 7 m lane as above, left of the top straight (y 65 .. 72)
+  const lane = { center: Array.from({ length: 101 }, (_, k) => [120.5 - k, 68.5, 0] as V3), left: Array.from({ length: 101 }, (_, k) => [122 - k * 1.02, 72, 0] as V3),
+    right: Array.from({ length: 101 }, (_, k) => [122 - k * 1.02, 65, 0] as V3) };
+  it('an open lane passes', () => {
+    const r = laneClearance(T, { pit_lane: { parts: [lane] } });
+    expect(r.blocked).toHaveLength(0);
+    expect(r.pinched).toHaveLength(0);
+  });
+  it('a cone line converging across the lane into its outer wall fails, though the centre path never crosses it', () => {
+    const cones: SceneryLike = { pit_lane: { parts: [lane] }, cone_lines: [{ pts: [[70, 65.2, 0], [40, 71.5, 0]], src: 'test cones' }] };
+    const r = laneClearance(T, cones);
+    expect(r.blocked.some((b) => b.includes('test cones'))).toBe(true);
+    expect(pitConnectivity(T, cones, 280).ok).toBe(false);
+  });
+  it('a wall end standing in the lane fails; walls along its edges pass', () => {
+    const edges: SceneryLike = { pit_lane: { parts: [lane] }, barriers: [{ kind: 'concrete', pts: [[122, 72.1, 0], [20, 72.1, 0]] }, { kind: 'concrete', pts: [[122, 64.9, 0], [20, 64.9, 0]] }] };
+    expect(laneClearance(T, edges).blocked).toHaveLength(0);
+    const stub: SceneryLike = { pit_lane: { parts: [lane] }, barriers: [{ kind: 'concrete', pts: [[60, 72.1, 0], [60, 69.5, 0]], src: 'stub' }] };
+    expect(laneClearance(T, stub).blocked.some((b) => b.includes('stub'))).toBe(true);
+  });
+});
+
+describe('scenery gates: exposed wall ends (round 7, owner notes 39 / 41)', () => {
+  // the bottom straight runs +x (stations 0..150), its right side is y < -5; walls on the right
+  const wall = (x0: number, x1: number, y: number, src: string) => ({ kind: 'concrete', pts: [[x0, y, 0], [x1, y, 0]] as V3[], src });
+  it('a downstream run starting closer to the track than the upstream run ends is exposed; lapped the other way it passes', () => {
+    const bad = exposedEnds(T, { barriers: [wall(20, 60, -9, 'up'), wall(70, 120, -7, 'down')] });
+    expect(bad.exposed.some((e) => e.label === 'concrete: down' && e.side === 'right')).toBe(true);
+    const good = exposedEnds(T, { barriers: [wall(20, 60, -7, 'up'), wall(55, 120, -9, 'down')] });
+    expect(good.exposed.some((e) => e.label === 'concrete: down')).toBe(false);
+  });
+  it('a run start near the edge with no cushion fails; a tyre cushion at its head or a taper passes; one joined polyline passes', () => {
+    expect(exposedEnds(T, { barriers: [wall(40, 120, -6, 'bare')] }).exposed).toHaveLength(1);
+    const cushion = exposedEnds(T, { barriers: [wall(40, 120, -6, 'cushioned'), { kind: 'tyres', pts: [[33, -6, 0], [40, -6, 0]], src: 'cushion' }] });
+    expect(cushion.exposed).toHaveLength(0);
+    const tapered = exposedEnds(T, { barriers: [{ kind: 'concrete', pts: [[30, -10, 0], [42, -6, 0], [120, -6, 0]], src: 'taper' }] });
+    expect(tapered.exposed).toHaveLength(0);
+    expect(exposedEnds(T, { barriers: [wall(40, 120, -20, 'far')] }).exposed).toHaveLength(0);
   });
 });
