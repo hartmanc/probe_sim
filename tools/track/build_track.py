@@ -809,33 +809,17 @@ def scenery_gates(cfg, T, SC, tmp, trk):
     return fails
 
 
-def manifest_assignments(cfg):
-    """MISSING inventory rows the evidence manifest (tools/track/compare/<id>/manifest.md) hands to another round: every
-    markdown table row whose last cell reads 'assigned: <round>', its first three cells kind | side | s (m). The coverage
-    gate accepts them for kind building only and lists them as ASSIGNED (21 Oct 2026); any other kind is REJECTED."""
-    import re
-    path = os.path.join(HERE, "compare", cfg["id"], "manifest.md")
-    out = []
-    if not os.path.exists(path):
-        return out
-    for line in open(path):
-        cells = [c.strip() for c in line.strip().strip("|").split("|")]
-        if len(cells) < 4 or not line.lstrip().startswith("|"):
-            continue
-        m = re.match(r"assigned:\s*(.+)$", cells[-1])
-        if not m:
-            continue
-        try:
-            out.append({"kind": cells[0], "side": cells[1], "s": float(cells[2]), "to": m.group(1).strip(), "what": cells[3]})
-        except ValueError:
-            continue
-    return out
+def manifest_dispositions(cfg):
+    """The disposition lines of tools/track/compare/<id>/manifest.md (manifest.parse_dispositions); [] without one."""
+    import manifest
+    return manifest.manifest_dispositions(cfg["id"])
 
 
 def coverage_gates(cfg, tmp, trk, sp):
     """The coverage and pit-lane gates of 21 Oct 2026 (tools/track/gates/coverageGate.ts, CLI run_coverage.ts): the
     scenery in `tmp` against the eye-level inventory tools/track/compare/<id>/inventory.json (inventory/inventory.py)
-    and the config's pit_lane walls. Every circuit needs the inventory: without one both gates fail."""
+    and the config's pit_lane walls. Every circuit needs the inventory: without one both gates fail. MISSING rows pass only
+    with a disposition line in the evidence manifest (manifest_dispositions)."""
     fails = [f"pit_lane config: {e}" for e in trackcfg.check_pit_lane(cfg)]
     for e in fails:
         log(f"[FAIL] {e}")
@@ -846,7 +830,7 @@ def coverage_gates(cfg, tmp, trk, sp):
     proj = lambda ll: round(float(trk.project(np.array([cfg.enu(*ll)]))[0][0]) * sp, 1)  # noqa: E731
     cp = os.path.join(tmp, "coverage_config.json")
     json.dump({"tol": cfg["scenery"].get("gates", {}).get("coverage_tol", 15), "pit_walls": trackcfg.pit_walls_for_gate(cfg, proj),
-               "assigned": manifest_assignments(cfg)}, open(cp, "w"))
+               "dispositions": manifest_dispositions(cfg)}, open(cp, "w"))
     r = subprocess.run(["npx", "tsx", os.path.join(HERE, "gates", "run_coverage.ts"), tmp, inv, cp, "--json",
                         os.path.join(tmp, "coverage_report.json")], cwd=ROOT, capture_output=True, text=True)
     for line in r.stdout.splitlines():

@@ -1379,3 +1379,46 @@ ghosts.json byte-identical; Laguna byte-identical to main.
   on the NAIP half-width. Remaining: a tone difference between the runoff and the track asphalt is still visible in the
   stills (hood_r7/t7mouth_2214_r7d.jpg); the track / runoff overlap itself is unchanged.
 - SKILL.md: movable barriers rule (Evidence first, step 12).
+
+## Dispositions of the MISSING rows (codify round, 20 Oct 2026; read by the coverage gate)
+
+Every inventory kind now counts: a MISSING row of a kind outside wall / fence / kerb / tyre wall / bridge passes the
+coverage gate only with one line below (`tools/track/manifest.py` parses them, `coverageGate.dispositionProblem`
+validates them: `placed` names an object of that kind in the package, `rejected` names its evidence, `not resolvable`
+names the captures examined). The reasons are rounds 5-7's ("Still MISSING", "Item 4: the non-failing MISSING rows",
+the drag-strip masts of round 6), made machine-readable; the object distances are the package's (scenery objects of the
+row's kind nearest the row's station). 31 rows: 17 masts, 4 tyre stacks, 3 stands, 5 cone lines, 1 building, 1 station.
+
+| kind | side | s (m) | what | source | disposition |
+|---|---|---|---|---|---|
+| mast | right | 111.2 | light mast | onboard:RAZip6S84CM@4.0 | not resolvable: no unplaced lidar spike (buildings-round scan, DSM - DEM > 15 m) and no base with a NW shadow on the right at the T1 exit on c20_s1870 / c20_s0715 (drag-strip lane lines and walls run parallel to the shadows); the kit masts near s 111 stand on the left |
+| tyre_stack | right | 323.1 | brown block stacks far right (tyre bundles or hay bales) | onboard:RAZip6S84CM@10.0 | not resolvable: row confidence 0.4 (frame t010); no stack at the foot of the right bank on c20_s2035 |
+| tyre_stack | right | 1395.0 | long black tyre stack beside the station box | streetview:GMaTaipEd9Hm7fMNE26aGQ@215 | not resolvable: seen only on Street View GMaTaipEd9Hm7fMNE26aGQ (Jul 2011); c20_s3135 / c20_s3190 show the T6 hilltop platform and box (placed as the 'T6 hilltop' post), no stack resolved beside it |
+| stand | right | 1395.2 | spectator area on the bank with yellow railings / bleachers | onboard:RAZip6S84CM@48.0 | not resolvable: no seating footprint (rows, railings) on c20_s3135 / c20_s3190 and none in OSM for the 0:48 spectator area |
+| mast | right | 1567.5 | light masts | onboard:RAZip6S84CM@54.0 | placed: Light masts (the kit mast at (30.5, 20.5), 42 m ahead of the station, 69 m out; frame t054 looks ahead) |
+| mast | right | 1625.8 | light masts | onboard:RAZip6S84CM@56.0 | placed: Light masts (the kit mast at (30.5, 20.5), 16 m behind the station, 69 m out: just beyond the +-15 m match) |
+| mast | right | 1809.5 | light masts | onboard:RAZip6S84CM@62.0 | not resolvable: no unplaced lidar spike ahead-right (buildings-round scan) and no base with a shadow on c20_s0275 / c20_s0220 / c20_s3575 (drag-strip lane lines, event vehicles); the placed masts stand 72-120 m behind |
+| mast | right | 1888.2 | light mast | onboard:RAZip6S84CM@64.0 | not resolvable: no unplaced lidar spike (buildings-round scan) and no base with a shadow on c20_s0165 / c20_s3630 / c20_s0220 |
+| mast | right | 1955.5 | light masts | onboard:RAZip6S84CM@66.0 | not resolvable: no unplaced lidar spike (buildings-round scan) and no base with a shadow on c20_s0110 / c20_s3685 / c20_s3740 |
+| cone_line | left | 2268.3 | orange cones along the paved runoff | onboard:RAZip6S84CM@76.0 | not resolvable: the T7 runoff cones of frame t076 are not on c20_s4015 (captured at another event: movable cones); not placed |
+| cone_line | right | 2268.3 | orange delineator post at the island nose | onboard:RAZip6S84CM@76.0 | not resolvable: the island-nose post (t076) is not resolved on c20_s4015 / c20_s3960 / c20_s4070; the island's delineators are placed at s 2196-2212 |
+| mast | right | 2268.3 | light mast | onboard:RAZip6S84CM@76.0 | placed: Light masts (the kit mast at (-367.5, 393.5), 77 m ahead, 22 m out) |
+| mast | right | 2313.5 | light mast on a black block base | onboard:RAZip6S84CM@78.0 | placed: Light masts (the kit mast at (-367.5, 393.5), 32 m ahead, 22 m out) |
+| mast | right | 2370.6 | light masts | onboard:RAZip6S84CM@80.0 | not resolvable: no unplaced lidar spike (buildings-round scan) and no base with a shadow ahead-right on c20_s3795 / c20_s0000 / c20_s3850; the nearest placed mast stands 122 m ahead |
+| mast | right | 2707.0 | light masts | onboard:RAZip6S84CM@90.0 | not resolvable: no unplaced lidar spike (buildings-round scan) and no base with a shadow on c20_s0330 / c20_s0385 (event trailers); the placed masts stand 72-134 m behind |
+| mast | right | 2773.3 | light masts | onboard:RAZip6S84CM@92.0 | placed: Light masts (the kit mast at (38.5, 95.5), 87 m ahead, 65 m out) |
+| stand | right | 2853.7 | grandstand far ahead-right (T11 area) | onboard:RAZip6S84CM@94.0 | placed: Main grandstand (the structure kit's main grandstand across the infield, 150-400 m ahead-right; round 6 corrected the 1:36-1:44 rows the same way: there is no grandstand in the T10 / T11 infield on the 2026 captures) |
+| building | right | 3335.2 | infield buildings beyond the fence | onboard:RAZip6S84CM@112.0 | placed: T12 two-storey building (the structure kit's T12 building, about 190 m off; round 7) |
+| station | left | 3511.2 | marshal standing at a door in the tall wall | onboard:RAZip6S84CM@116.0 | rejected: a person at a door in the tall pit-in wall (onboard 1:56, t116), no structure |
+| tyre_stack | right | 3638.3 | red/white painted barrier blocks / barrels on the apron | onboard:RAZip6S84CM@120.0 | placed: block (the two red / white striped apex blocks at s ~3668 / 3684, 29 m ahead; onboard t120-t124, round 7) |
+| cone_line | right | 3660.0 | traffic cone at the apron edge | streetview:jrXpHaDfJT2APw6zcyBKRA@196 | not resolvable: a single 0.42 m cone on Street View jrXpHaDfJT2APw6zcyBKRA (Jul 2011) only, movable; not resolved on c20_s1265 / c20_s1320 (2026) |
+| mast | left | 3699.4 | light masts | onboard:RAZip6S84CM@124.0 | placed: Light masts (the kit mast at (413.5, -468.5), 15 m ahead, 36 m out: just beyond the +-15 m match) |
+| tyre_stack | right | 3699.4 | red/white painted concrete blocks | onboard:RAZip6S84CM@124.0 | placed: block (the striped apex block at s ~3684, 16 m behind the station; onboard t122 / t124, round 7) |
+| mast | left | 3736.5 | light masts | onboard:RAZip6S84CM@126.0 | placed: Light masts (the kit mast at (389.5, -420.5), 18 m ahead, 42 m out) |
+| cone_line | left | 3911.8 | orange cones in the pit lane | onboard:RAZip6S84CM@132.0 | not resolvable: movable pit-lane cones (onboard 2:12, t132), not on c20_s1540; pit-lane furniture is schema only |
+| mast | right | 3911.8 | light mast and flag pole | onboard:RAZip6S84CM@132.0 | placed: Light masts (the lidar masts beyond the drag strip at (466.5, -267.5) and (404.5, -172.5) in the kit's list, round 6: they project onto other stations; the captured mast at (320.2, -112.0) 144 m ahead) |
+| cone_line | left | 3966.6 | orange cones in the pit lane | onboard:RAZip6S84CM@134.0 | not resolvable: movable pit-lane cones (onboard 2:14, t134), not on c20_s1595 / c20_s1540; pit-lane furniture is schema only |
+| stand | left | 3966.6 | main grandstand with suites deck and press box | onboard:RAZip6S84CM@134.0 | placed: Main grandstand (the structure kit's main grandstand, 23 m along and 26 m out: beyond the +-15 m match) |
+| mast | right | 3966.6 | light masts | onboard:RAZip6S84CM@134.0 | placed: Light masts (the lidar masts beyond the drag strip, round 6, and the captured mast at (320.2, -112.0), 89 m ahead, 50 m out) |
+| mast | right | 4024.4 | light masts beyond the drag strip | onboard:RAZip6S84CM@136.0 | placed: Light masts (the captured mast at (320.2, -112.0), 31 m ahead, 50 m out, and the lidar masts beyond the drag strip, round 6) |
+| mast | left | 4056.8 | light mast | onboard:RAZip6S84CM@0.0 | not resolvable: no unplaced lidar spike left of the line (buildings-round scan) and no base with a shadow on c20_s1650; the main grandstand's roof light clusters stand 29 m ahead, 62 m out |

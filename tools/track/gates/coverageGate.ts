@@ -5,14 +5,21 @@
 //              building, mast, cone line) on the lap must have a scenery object of that kind on that side within +-tol
 //              (15 m) of its station, else it is MISSING; every scenery object of those kinds must have an inventory row
 //              of its kind and side within +-tol of any of its points, or a capture source (a z20 capture or a Street
-//              View panorama in its src), else it is UNSUPPORTED. Passes when MISSING is empty for walls, fences,
-//              kerbs, tyre walls and bridges and UNSUPPORTED is empty. Also lists HEIGHT mismatches (advisory): a wall,
+//              View panorama in its src), else it is UNSUPPORTED. Passes when MISSING is empty (after the manifest's
+//              dispositions, below) and UNSUPPORTED is empty. Also lists HEIGHT mismatches (advisory): a wall,
 //              fence or tyre-wall row with a measured height whose nearest matching object differs by more than
 //              max(0.3 m, 25 %); a wall's height there counts the ad-board panels standing on it (wall-board signs, their
 //              `top` above the ground, 21 Oct 2026).
-//   ASSIGNED   (21 Oct 2026, the one allowed scope change) a MISSING row of kind `building` that the evidence manifest
-//              hands to the buildings round ('assigned: buildings round', CoverageConfig.assigned) is listed as ASSIGNED,
-//              not MISSING; an assignment of any other kind is REJECTED (its row stays MISSING and the gate fails).
+//   DISPOSITIONS (codify round, 20 Oct 2026: every inventory kind counts) a MISSING row of a kind outside MUST_COVER
+//              passes only with a disposition line in the evidence manifest (CoverageConfig.dispositions, parsed from
+//              tools/track/compare/<id>/manifest.md by build_track.py): `placed: <object name> (...)` (the object stands
+//              in the package beyond the +-tol match, e.g. a stand seen across the infield; the name must match the label
+//              or src of an object of that kind), `assigned: <round>` (kind building only, as on 21 Oct 2026), `rejected:
+//              <evidence>` (the evidence names a capture, an onboard time or frame, a panorama or the lidar), `not
+//              resolvable: <captures>` (names the captures examined). A row with no valid disposition stays MISSING and
+//              fails the gate; MISSING rows of the MUST_COVER kinds fail whatever the manifest says (a disposition for one
+//              is INVALID). An invalid disposition fails the gate; one that matches no MISSING row is listed as unmatched.
+//              The 21 Oct `assigned` config key is still read (a building row handed to the buildings round).
 //   PIT LANE   every pit-scope inventory row of kind wall must be declared in the config's pit_lane.walls on that side
 //              (UNDECLARED) and stand in the package as a barrier within +-tol along the lane on that side (ABSENT).
 //
@@ -28,7 +35,7 @@ export interface InvRow {
 export interface Inventory { track: string; length_m: number; rows: InvRow[] }
 
 export const PHYSICAL = ['wall', 'fence', 'kerb', 'tyre_wall', 'tyre_stack', 'stand', 'station', 'bridge', 'building', 'mast', 'cone_line'];
-/** MISSING rows of these kinds fail the gate */
+/** MISSING rows of these kinds fail the gate whatever the manifest says (no disposition excuses them) */
 export const MUST_COVER = ['wall', 'fence', 'kerb', 'tyre_wall', 'bridge'];
 /** how far beyond the edge an object of the kind may stand and still be "the" object a row describes (m) */
 export const REACH: Record<string, number> = {
@@ -36,6 +43,15 @@ export const REACH: Record<string, number> = {
 };
 /** a src naming one of these is a capture source (a clean z20 capture, a Street View panorama, the captures index) */
 export const CAPTURE_SRC = /c20_[so]\d{4}|\bz20\b|street ?view|panorama|\bpano\b/i;
+/** a capture named in a 'not resolvable' disposition: a clean z20 capture id (c20_s1234, c20_o0440, z20_...) */
+export const CAPTURE_ID = /\b[cz]20_[a-z]?\d{3,5}\b/i;
+/** evidence named in a 'rejected' disposition: a capture id, an onboard frame (t116) or time (1:56, 0:04.5), a Street View
+ *  panorama, or the lidar */
+export const EVIDENCE = /\b[cz]20_[a-z]?\d{3,5}\b|\bt\d{3,4}\b|\b\d{1,2}:\d{2}(\.\d+)?\b|street ?view|panorama|\blidar\b/i;
+export const DISPOSITION_TYPES = ['placed', 'assigned', 'rejected', 'not resolvable'] as const;
+export type DispositionType = typeof DISPOSITION_TYPES[number];
+/** a manifest line for a MISSING row: kind | side | s (m) | what | source | <type>: <text> */
+export interface Disposition { kind: string; side: string; s: number; type: DispositionType; text: string; what?: string }
 
 export interface SceneObj {
   kind: string; side: 'left' | 'right' | 'both'; pts: { s: number; out: number; lat: number }[]; src: string; h?: number; label: string;
@@ -144,10 +160,35 @@ export interface CoverageReport {
   rejected: Assignment[];
   /** assignments that match no MISSING row (stale manifest lines; reported, not a failure) */
   unmatched: Assignment[];
+  /** MISSING rows that carry a valid disposition (no longer in `missing`; `assigned` lists the assigned ones too) */
+  dispositioned: (MissingRow & { disposition: DispositionType; text: string })[];
+  /** dispositions the gate does not accept (wrong kind, no evidence, no capture, no such object): the gate fails */
+  invalid: (Disposition & { why: string })[];
+  /** dispositions that match no MISSING row (stale manifest lines; reported, not a failure) */
+  unmatchedDispositions: Disposition[];
 }
-/** `assigned`: MISSING rows the evidence manifest hands to another round ('assigned: buildings round'); accepted for kind
- *  building only (21 Oct 2026) */
-export interface CoverageConfig { tol?: number; mustCover?: string[]; assigned?: Assignment[] }
+/** `dispositions`: the manifest's line for each MISSING row of a kind outside `mustCover` (placed / assigned / rejected /
+ *  not resolvable); `assigned`: the 21 Oct 2026 form of an 'assigned' disposition (kind building only) */
+export interface CoverageConfig { tol?: number; mustCover?: string[]; assigned?: Assignment[]; dispositions?: Disposition[] }
+
+/** Why a disposition is not accepted for a MISSING row of its kind ('' when it is valid). */
+export function dispositionProblem(d: Disposition, objs: SceneObj[], must: string[] = MUST_COVER): string {
+  if (must.includes(d.kind)) return `kind ${d.kind} must be covered by an object (no disposition excuses a MISSING ${d.kind})`;
+  if (!(DISPOSITION_TYPES as readonly string[]).includes(d.type)) return `type '${d.type}' is not one of ${DISPOSITION_TYPES.join(' / ')}`;
+  const text = (d.text ?? '').trim();
+  if (!text) return `'${d.type}' needs its text (object, round, evidence or captures)`;
+  if (d.type === 'assigned' && d.kind !== 'building') return 'only kind building may be assigned to another round';
+  if (d.type === 'rejected' && !EVIDENCE.test(text)) return 'a rejection names its evidence (a capture id, an onboard time or frame, a panorama or the lidar)';
+  if (d.type === 'not resolvable' && !CAPTURE_ID.test(text)) return 'names no capture examined (c20_... / z20_...)';
+  if (d.type === 'placed') {
+    const name = text.split(/ \(|;/)[0].trim().toLowerCase();
+    if (!name) return "'placed' names the object";
+    if (!objs.some((o) => o.kind === d.kind && (o.label.toLowerCase().includes(name) || o.src.toLowerCase().includes(name)))) {
+      return `no ${d.kind} object in the package is named '${name}'`;
+    }
+  }
+  return '';
+}
 
 function rowSides(r: InvRow): ('left' | 'right' | 'any')[] | null {
   if (r.side === 'ahead' && typeof r.attrs?.ahead_m !== 'number') return null;
@@ -162,7 +203,7 @@ export function coverage(t: TrackLike, sc: SceneryLike & Record<string, any>, in
   const tol = cfg.tol ?? 15, must = cfg.mustCover ?? MUST_COVER, L = t.n * t.spacing_m;
   const objs = sceneryObjects(t, sc);
   const rep: CoverageReport = { checked: 0, skipped: 0, missing: [], unsupported: [], heights: [], objects: objs.length, pass: false,
-    missingByKind: {}, unsupportedByKind: {}, assigned: [], rejected: [], unmatched: [] };
+    missingByKind: {}, unsupportedByKind: {}, assigned: [], rejected: [], unmatched: [], dispositioned: [], invalid: [], unmatchedDispositions: [] };
   const rows = inv.rows.filter((r) => PHYSICAL.includes(r.kind) && (r.scope ?? 'lap') === 'lap');
   for (const r of rows) {
     const sides = rowSides(r);
@@ -198,17 +239,41 @@ export function coverage(t: TrackLike, sc: SceneryLike & Record<string, any>, in
     rep.unsupported.push({ kind: o.kind, side: o.side, label: o.label, s0: Math.round(Math.min(...ss)), s1: Math.round(Math.max(...ss)), src: o.src });
     rep.unsupportedByKind[o.kind] = (rep.unsupportedByKind[o.kind] ?? 0) + 1;
   }
-  // assignments from the evidence manifest: building rows only
+  // assignments from the evidence manifest (21 Oct 2026 form): building rows only
   for (const a of cfg.assigned ?? []) {
     if (a.kind !== 'building') { rep.rejected.push(a); continue; }
     const k = rep.missing.findIndex((m) => m.kind === 'building' && m.side === a.side && Math.abs(m.s - a.s) <= 1);
     if (k < 0) { rep.unmatched.push(a); continue; }
     const [m] = rep.missing.splice(k, 1);
     rep.assigned.push({ ...m, to: a.to });
+    rep.dispositioned.push({ ...m, disposition: 'assigned', text: a.to });
     rep.missingByKind.building -= 1;
     if (!rep.missingByKind.building) delete rep.missingByKind.building;
   }
-  rep.pass = rep.missing.every((m) => !must.includes(m.kind)) && rep.unsupported.length === 0 && rep.rejected.length === 0;
+  // dispositions from the evidence manifest: one line per MISSING row of a kind outside mustCover
+  for (const d of cfg.dispositions ?? []) {
+    const why = dispositionProblem(d, objs, must);
+    if (why) {
+      rep.invalid.push({ ...d, why });
+      if (d.type === 'assigned') rep.rejected.push({ kind: d.kind, side: d.side, s: d.s, to: d.text, what: d.what });
+      continue;
+    }
+    const hits = rep.missing.filter((m) => m.kind === d.kind && m.side === d.side && Math.abs(m.s - d.s) <= 1);
+    if (!hits.length) {
+      rep.unmatchedDispositions.push(d);
+      if (d.type === 'assigned') rep.unmatched.push({ kind: d.kind, side: d.side, s: d.s, to: d.text, what: d.what });
+      continue;
+    }
+    for (const m of hits) {
+      rep.missing.splice(rep.missing.indexOf(m), 1);
+      rep.dispositioned.push({ ...m, disposition: d.type, text: d.text });
+      if (d.type === 'assigned') rep.assigned.push({ ...m, to: d.text });
+      rep.missingByKind[m.kind] -= 1;
+      if (!rep.missingByKind[m.kind]) delete rep.missingByKind[m.kind];
+    }
+  }
+  // every MISSING row fails: the MUST_COVER kinds always, the others because they carry no valid disposition
+  rep.pass = rep.missing.length === 0 && rep.unsupported.length === 0 && rep.rejected.length === 0 && rep.invalid.length === 0;
   return rep;
 }
 
