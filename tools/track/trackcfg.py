@@ -289,6 +289,6 @@ def remap_stations(cfg, n, length_m=None, C=None):
         for k in ('near', 's0', 's1'): e[k] = fm_s(e[k])
     for e in s.get('edge_line_runs', []):
         for k in ('s0', 's1'): e[k] = fm_s(e[k])
-    if s.get('pit_exit_cones', {}).get('s0') is not None:
+    if (s.get('pit_exit_cones') or {}).get('s0') is not None:
         s['pit_exit_cones']['s0'] = fm_s(s['pit_exit_cones']['s0'])
     return c
