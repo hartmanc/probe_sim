@@ -23,7 +23,9 @@ export interface SceneryJson {
   trees: PackedTrees;
   far_trees?: PackedTrees;
   buildings: { kind: string; name: string; z: number; h: number; footprint: V2[]; src: string }[];
-  bridges: { id: string; kind: string; name: string; s: number; deck_z: number; a: V2; b: V2; width: number; banners: string[][]; style?: 'deck' | 'arch' | 'sign' }[];
+  bridges: { id: string; kind: string; name: string; s: number; deck_z: number; a: V2; b: V2; width: number; banners: string[][]; style?: 'deck' | 'arch' | 'sign';
+    /** where the deck meets the banks (20 Oct 2026): an abutment at `at` from z_ground to the deck, stairs on to `to` */
+    ends?: { at: V2; z_ground: number; to: V2; z_to: number }[] }[];
   /** color: the wall's paint where the evidence shows it (Sonoma 2026: light blue / green), default plain concrete */
   barriers: { kind: 'concrete' | 'armco' | 'tyres' | 'pitwall' | 'fence'; h: number; fence: number; pts: V3[]; src: string; color?: string }[];
   kerbs: { width: number; inside?: boolean; stripe_m: number; /** [stripe, base] sRGB hex; default red / white */ colors?: [string, string];
@@ -36,14 +38,21 @@ export interface SceneryJson {
   /** Paved pit lane (CONTRACTS §2b); the physics reads the same block. gap_* = free width to the track edge. */
   pit_lane?: { spacing_m: number; fractions: number[]; open?: boolean; parts: (PitLaneJson['parts'][number] & { gap_left: number[]; gap_right: number[]; track_s: number[] })[] } | null;
   /** Paved runoff (CONTRACTS §2b): same layout as pit_lane; rendered as asphalt, driven at full grip. */
-  paved_zones?: { spacing_m: number; fractions: number[]; open?: boolean; parts: (PitLaneJson['parts'][number] & { gap_left: number[]; gap_right: number[]; track_s: number[]; turn?: string })[] } | null;
+  paved_zones?: { spacing_m: number; fractions: number[]; open?: boolean; parts: (PitLaneJson['parts'][number] & { gap_left: number[]; gap_right: number[]; track_s: number[]; turn?: string;
+    /** closed roads (20 Oct 2026): 'asphalt' = the circuit's road material, 'concrete' = pale concrete; absent = the aerial photo's own colour (paved runoff) */
+    surface?: 'asphalt' | 'concrete' })[] } | null;
+  /** painted lines off the track (closed roads' edge lines measured on the captures, 20 Oct 2026): white strips */
+  paint_lines?: { width: number; side?: number; pts: V3[]; src?: string }[];
+  /** paved ground that is not driven (the paddock, 20 Oct 2026): plain paving over the terrain, no physics */
+  paved_areas?: { name: string; surface: 'asphalt' | 'concrete'; src: string; poly: V2[] }[];
   /** Cone line between the pit-exit lane and the track (CONTRACTS §2b); crossing it is a black-flag offence. */
   pit_exit_cones?: PitExitConesJson | null;
   /** cone lines across the mouths of paved but unused roads (closed variants of the circuit, 20 Oct 2026): drawn only */
   cone_lines?: { spacing_m: number; pts: [number, number, number][]; src?: string }[];
   /** kinds: brake | corner | flagstand | oak | banner (ad board facing the track) | sign (on a wall at z) | gantry (two
    *  lattice towers at (x, y, z) and (x2, y2, z2) with cables across the track) */
-  landmarks: { kind: string; text: string; x: number; y: number; z: number; heading: number; h: number; w: number; x2?: number; y2?: number; z2?: number; color?: string; style?: string; src?: string }[];
+  landmarks: { kind: string; text: string; x: number; y: number; z: number; heading: number; h: number; w: number; x2?: number; y2?: number; z2?: number; color?: string; style?: string; src?: string;
+    /** 'impact' (impact barrier block at a wall's nose): its length along `heading` */ d?: number }[];
   /** grandstands built into a hillside: stepped concrete rows following the ground (20 Oct 2026). Row r is a tread
    *  from a to b at height z, `run` m deep away from the track along `dir`; risers join consecutive rows. */
   terraces?: { name: string; src: string; run: number; dir: V2; z_ground_front: number; rows: { a: V2; b: V2; z: number }[] }[];
@@ -908,6 +917,35 @@ function buildKerbs(track: TrackJson, k: SceneryJson['kerbs'], ground?: (x: numb
   return st.build(kerbPaintTexture(k.stripe_m, colors), 'kerbs', -8);
 }
 
+/** A line of low grey kerb blocks along the edge (kerb strips of kind 'blocks'): 0.5 x 0.3 m blocks, 0.12 m tall, one
+ *  every 1.9 m (the block period read on the 2026 captures at T1), centred `off` m beyond the edge. */
+function buildKerbBlocks(track: TrackJson, strips: SceneryJson['kerbs']['strips'], ground?: (x: number, y: number) => number): THREE.InstancedMesh | null {
+  const sp = track.spacing_m || 1, n = track.center.length;
+  const at: { x: number; y: number; z: number; h: number }[] = [];
+  for (const s of strips) {
+    for (let m = s.s0; m <= s.s1; m += 1.9) {
+      const f = m / sp, i = Math.floor(f) % n, j = (i + 1) % n, t = f - Math.floor(f);
+      const E = s.side > 0 ? track.left : track.right;
+      const ex = E[i][0] + (E[j][0] - E[i][0]) * t, ey = E[i][1] + (E[j][1] - E[i][1]) * t;
+      const cx = track.center[i][0] + (track.center[j][0] - track.center[i][0]) * t, cy = track.center[i][1] + (track.center[j][1] - track.center[i][1]) * t;
+      const ux = ex - cx, uy = ey - cy, ul = Math.hypot(ux, uy) || 1, o = s.off ?? 0.3;
+      const x = ex + (ux / ul) * o, y = ey + (uy / ul) * o;
+      const tx = track.center[j][0] - track.center[i][0], ty = track.center[j][1] - track.center[i][1];
+      at.push({ x, y, z: ground ? ground(x, y) : E[i][2], h: Math.atan2(ty, tx) });
+    }
+  }
+  if (!at.length) return null;
+  const mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(0.3, 0.12, 0.5), new THREE.MeshLambertMaterial({ color: 0xb9b7b0 }), at.length);
+  const M = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler();
+  at.forEach((a, k) => {
+    q.setFromEuler(e.set(0, yawFor(a.h), 0));
+    M.compose(v3(a.x, a.y, a.z + 0.06), q, new THREE.Vector3(1, 1, 1));
+    mesh.setMatrixAt(k, M);
+  });
+  mesh.name = 'kerb_blocks';
+  return mesh;
+}
+
 /** Weathered paint: off-white with speckled wear, tiled along the line (u = metres / 2). */
 export function paintWearTexture(): THREE.Texture {
   const cv = document.createElement('canvas');
@@ -1144,6 +1182,26 @@ function buildBridges(list: SceneryJson['bridges'], ground?: (x: number, y: numb
       }
     }
     group.add(g);
+    // abutments and stair flights into the banks where the scenery gives them (bridge `ends`)
+    for (const e of b.ends ?? []) {
+      const hgt = b.deck_z - e.z_ground;
+      if (hgt > 0.2) {
+        const ab = new THREE.Mesh(new THREE.BoxGeometry(1.4, hgt + 0.5, w + 0.6), concrete);
+        ab.position.copy(v3(e.at[0], e.at[1], e.z_ground - 0.5 + (hgt + 0.5) / 2));
+        ab.rotation.y = yaw;
+        group.add(ab);
+      }
+      const dx = e.to[0] - e.at[0], dy = e.to[1] - e.at[1], run = Math.hypot(dx, dy);
+      if (run > 0.5) {
+        const drop = b.deck_z - e.z_to, len = Math.hypot(run, drop);
+        const fl = new THREE.Mesh(new THREE.BoxGeometry(len, 0.35, w), concrete);
+        fl.position.copy(v3((e.at[0] + e.to[0]) / 2, (e.at[1] + e.to[1]) / 2, (b.deck_z + e.z_to) / 2 - 0.2));
+        fl.rotation.order = 'YXZ';
+        fl.rotation.y = yawFor(Math.atan2(dy, dx)) - Math.PI / 2;
+        fl.rotation.z = -Math.atan2(drop, run);
+        group.add(fl);
+      }
+    }
     // piers at both ends, down to well below ground (terrain is lower than the deck everywhere near a bridge)
     for (const [x, y] of [b.a, b.b]) {
       const pierH = 30;
@@ -1194,6 +1252,62 @@ function latticeTower(x: number, y: number, z: number, h: number, w: number, mat
     }
   }
   return g;
+}
+
+/** Painted lines off the track (scenery.json `paint_lines`): flat white strips just above the paving. */
+function buildPaintLines(list: NonNullable<SceneryJson['paint_lines']>): THREE.Mesh | null {
+  const pos: number[] = [];
+  for (const l of list) {
+    const P = l.pts, hw = l.width / 2;
+    for (let i = 0; i + 1 < P.length; i++) {
+      const [ax, ay, az] = P[i], [bx, by, bz] = P[i + 1];
+      const dx = bx - ax, dy = by - ay, d = Math.hypot(dx, dy) || 1, nx = (-dy / d) * hw, ny = (dx / d) * hw;
+      const q = [v3(ax + nx, ay + ny, az), v3(ax - nx, ay - ny, az), v3(bx + nx, by + ny, bz), v3(bx - nx, by - ny, bz)];
+      for (const k of [0, 1, 2, 1, 3, 2]) pos.push(q[k].x, q[k].y, q[k].z);
+    }
+  }
+  if (!pos.length) return null;
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.computeVertexNormals();
+  const m = new THREE.Mesh(g, new THREE.MeshLambertMaterial({ color: 0xe9e8e2, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -10 }));
+  m.name = 'paint_lines';
+  return m;
+}
+
+/** Paved areas (scenery.json `paved_areas`): plain asphalt / concrete laid over the terrain on a 1.5 m grid inside the
+ *  outline, so the aerial photo (parked trailers and cars in the NAIP) never shows there as ground. Drawn only. */
+function buildPavedAreas(list: NonNullable<SceneryJson['paved_areas']>, ground: (x: number, y: number) => number): THREE.Mesh | null {
+  const pos: number[] = [], col: number[] = [];
+  const inPoly = (x: number, y: number, P: V2[]) => {
+    let c = false;
+    for (let i = 0, j = P.length - 1; i < P.length; j = i++) {
+      const [xi, yi] = P[i], [xj, yj] = P[j];
+      if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) c = !c;
+    }
+    return c;
+  };
+  const D = 1.5;
+  for (const a of list) {
+    const base = a.surface === 'concrete' ? new THREE.Color(0x9d9b95) : new THREE.Color(0x45474a);
+    const xs = a.poly.map((p) => p[0]), ys = a.poly.map((p) => p[1]);
+    for (let x = Math.min(...xs); x < Math.max(...xs); x += D) {
+      for (let y = Math.min(...ys); y < Math.max(...ys); y += D) {
+        if (!inPoly(x + D / 2, y + D / 2, a.poly)) continue;
+        const c = [[x, y], [x + D, y], [x, y + D], [x + D, y + D]].map(([px, py]) => v3(px, py, ground(px, py) + 0.04));
+        const k = 0.94 + 0.12 * rand();
+        for (const i of [0, 1, 2, 1, 3, 2]) { pos.push(c[i].x, c[i].y, c[i].z); col.push(base.r * k, base.g * k, base.b * k); }
+      }
+    }
+  }
+  if (!pos.length) return null;
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+  g.computeVertexNormals();
+  const m = new THREE.Mesh(g, new THREE.MeshLambertMaterial({ vertexColors: true, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }));
+  m.name = 'paved_areas';
+  return m;
 }
 
 function buildLandmarks(list: SceneryJson['landmarks']): THREE.Group {
@@ -1298,6 +1412,11 @@ function buildLandmarks(list: SceneryJson['landmarks']): THREE.Group {
         roof.position.set(0, legH + 2.2, 0);
         g.add(hut, win, roof);
       }
+    } else if (m.kind === 'impact') {
+      // impact barrier (water-filled / foam block) at a wall's nose: a plain block, w across, d along the heading
+      const blk = new THREE.Mesh(new THREE.BoxGeometry(m.w, m.h, m.d ?? 2), new THREE.MeshLambertMaterial({ color: m.color ?? '#e8c21c' }));
+      blk.position.set(0, m.h / 2, 0);
+      g.add(blk);
     } else if (m.kind === 'mast') {
       // light mast: a tapered grey pole with a lamp frame on top
       const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.22, m.h, 8), postMat);
@@ -1344,7 +1463,10 @@ export function buildScenery(track: TrackJson, _hf: Float32Array, sc: SceneryAss
   const snap = (P: V3[]): V3[] => (ground ? P.map(([x, y]) => [x, y, ground(x, y)] as V3) : P);
   if (j.barriers?.length) root.add(buildBarriers(j.barriers.map((b) => ({ ...b, pts: snap(b.pts) }))));
   if (j.sausages?.strips?.length) { const m = buildSausages(track, j.sausages, ground); if (m) root.add(m); }
-  const kerbs = j.kerbs ? buildKerbs(track, j.kerbs, ground, paint) : null;
+  // kind 'blocks' (Sonoma T1, 20 Oct 2026): a dotted line of low grey kerb blocks, not a painted strip
+  const blockStrips = (j.kerbs?.strips ?? []).filter((s) => s.kind === 'blocks');
+  if (blockStrips.length) { const m = buildKerbBlocks(track, blockStrips, ground); if (m) root.add(m); }
+  const kerbs = j.kerbs ? buildKerbs(track, blockStrips.length ? { ...j.kerbs, strips: j.kerbs.strips.filter((s) => s.kind !== 'blocks') } : j.kerbs, ground, paint) : null;
   if (kerbs) root.add(kerbs);
   const lines = j.edge_lines ? buildEdgeLines(track, j.edge_lines, ground, paint, j.kerbs?.stripe_m) : null;
   if (lines) root.add(lines);
@@ -1355,6 +1477,8 @@ export function buildScenery(track: TrackJson, _hf: Float32Array, sc: SceneryAss
     const m = buildPitExitCones({ spacing_m: cl.spacing_m, s0: 0, s1: 0, pts: cl.pts }, ground);
     if (m) { m.name = 'cone_line'; root.add(m); }
   }
+  if (j.paint_lines?.length) { const m = buildPaintLines(j.paint_lines); if (m) root.add(m); }
+  if (j.paved_areas?.length && ground) { const m = buildPavedAreas(j.paved_areas, ground); if (m) root.add(m); }
   if (j.bridges?.length) root.add(buildBridges(j.bridges, ground));
   if (j.landmarks?.length) root.add(buildLandmarks(j.landmarks));
   root.traverse((o) => { o.castShadow = false; if (o.name !== 'kerbs' && o.name !== 'edge_lines') o.receiveShadow = false; o.matrixAutoUpdate = false; o.updateMatrix(); });

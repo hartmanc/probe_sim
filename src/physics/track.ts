@@ -131,7 +131,7 @@ export function kerbBandCentre(k: KerbsJson, st: { off?: number }): number {
 function buildKerbStrips(track: TrackJson, k: KerbsJson): (SausageStrip & { side: number })[] {
   const out: (SausageStrip & { side: number })[] = [];
   for (const st of k.strips) {
-    if (st.kind === 'verge') continue;
+    if (st.kind === 'verge' || st.kind === 'blocks') continue; // 'blocks': a line of low kerb blocks, drawn only (20 Oct 2026)
     const off = kerbBandCentre(k, st);
     // reuse the sausage layout: kerb_width + gap + width/2 = off
     const ss = buildSausageStrips(track, { width: k.width, height: 0, gap: 0, kerb_width: off - k.width / 2, strips: [st] });

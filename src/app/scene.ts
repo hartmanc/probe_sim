@@ -126,7 +126,8 @@ function groundMaterial(p: THREE.MeshLambertMaterialParameters, roughness = 0.95
   return PBR_GROUND ? new THREE.MeshStandardMaterial({ ...p, metalness: 0, roughness }) : new THREE.MeshLambertMaterial(p);
 }
 
-export function photoGround(mat: GroundMaterial, opts: { grain?: number; ground: GroundDetail; asphalt?: GroundDetail; asphaltAttr?: boolean; paint?: THREE.Texture; rubber?: boolean; /** paved runoff: pale, sun-bleached asphalt, not the dark racing surface */ runoff?: boolean }): void {
+export function photoGround(mat: GroundMaterial, opts: { grain?: number; ground: GroundDetail; asphalt?: GroundDetail; asphaltAttr?: boolean; paint?: THREE.Texture; rubber?: boolean; /** paved runoff: pale, sun-bleached asphalt, not the dark racing surface */ runoff?: boolean;
+  /** concrete paving (a closed road the captures show as concrete): pale grey, painted lines kept */ concrete?: boolean }): void {
   const grain = opts.grain ?? 0.12;
   const G = opts.ground, A = opts.asphalt;
   const hasA = opts.asphaltAttr && A ? 1 : 0;
@@ -136,6 +137,7 @@ export function photoGround(mat: GroundMaterial, opts: { grain?: number; ground:
   const hasR = hasA && opts.rubber ? 1 : 0;
   // paved runoff zones: the real ones are pale grey (GPT judge, 18 Oct 2026: "dark asphalt lobes in the T9/T10 runoff")
   const hasO = hasA && opts.runoff ? 1 : 0;
+  const hasC = hasA && opts.concrete ? 1 : 0;
   mat.normalMap = G.normal;   // uv1 = world / G.tile (see addDetailUV); gives the tangent frame
   G.normal.channel = 1;
   mat.normalScale.set(1, 1);
@@ -219,6 +221,11 @@ vec3 pgTileN(sampler2D t, vec2 uv) {
     // asphalt, the satellite tan), so it reads as whatever the imagery shows, with only a little asphalt grade
     diffuseColor.rgb = mix(diffuseColor.rgb, diffuse * texture2D(map, vPgUvSrc).rgb * mix(1.0, 0.92, w), 0.85 * w);
 #endif
+#if ${hasC}
+    // concrete paving: a pale grey that keeps the photo's local light / dark, painted lines kept
+    vec3 conc = vec3(0.55, 0.55, 0.52) * (0.9 + 0.35 * (min(l, 0.6) - 0.3));
+    diffuseColor.rgb = mix(diffuseColor.rgb, mix(conc, vec3(l) * 1.05, paint), w);
+#endif
 #if ${hasR}
     // rubber on the racing line: two darker strips at the tyre tracks over a wider, lighter darkening
     {
@@ -255,7 +262,7 @@ vec3 pgTileN(sampler2D t, vec2 uv) {
   }
 #endif`);
   };
-  mat.customProgramCacheKey = () => `pg${hasA}${hasP}${hasR}${hasO}${grain}`;
+  mat.customProgramCacheKey = () => `pg${hasA}${hasP}${hasR}${hasO}${hasC}${grain}`;
 }
 
 export interface World {
@@ -526,7 +533,7 @@ function forRibbonSamples(rs: RibbonSections, fn: (x: number, y: number, z: numb
  * sampled 1.2 m away from it (inward on the asphalt, outward on the shoulder), because at 0.6 m/px it smears asphalt
  * and dirt into each other; the first metre of shoulder is darkened like packed dirt/gravel.
  */
-function buildRibbon(track: TrackJson, tex: THREE.Texture, rs: RibbonSections, asphalt: GroundDetail, groundDetail: GroundDetail, name = 'track', offsetUnits = -2, runoff = false): THREE.Mesh {
+function buildRibbon(track: TrackJson, tex: THREE.Texture, rs: RibbonSections, asphalt: GroundDetail, groundDetail: GroundDetail, name = 'track', offsetUnits = -2, runoff = false, concrete = false): THREE.Mesh {
   const n = rs.n, K = rs.K;
   const pos = new Float32Array(n * K * 3);
   const uv = new Float32Array(n * K * 2);
@@ -562,7 +569,7 @@ function buildRibbon(track: TrackJson, tex: THREE.Texture, rs: RibbonSections, a
   geo.computeVertexNormals();
   addDetailUV(geo, groundDetail.tile);
   const mat = groundMaterial({ map: tex, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: offsetUnits }, 0.9);
-  photoGround(mat, { grain: 0.12, ground: groundDetail, asphalt, asphaltAttr: true, rubber: !!rs.D, runoff });
+  photoGround(mat, { grain: 0.12, ground: groundDetail, asphalt, asphaltAttr: true, rubber: !!rs.D, runoff, concrete });
   const mesh = new THREE.Mesh(geo, mat);
   mesh.receiveShadow = true;
   mesh.name = name;
@@ -788,7 +795,13 @@ export function buildWorld(track: TrackJson, hf: Float32Array, ortho: THREE.Text
   scene.add(ribbon);
   // pit lane: drawn over the track's shoulder where they overlap (stronger polygon offset)
   const nPit = (pit?.parts ?? []).filter((p) => p.n >= 2).length;
-  secs.slice(1).forEach((sec, k) => scene.add(buildRibbon(track, ortho, sec, asphaltDetail, groundDetail, k < nPit ? `pit_lane_${k}` : `paved_runoff_${k - nPit}`, -6, k >= nPit)));
+  // paved zones: a closed road with a declared surface takes the road material ('asphalt') or pale concrete; the rest
+  // keep the aerial photo's colour (paved runoff, Laguna)
+  const zoneSurf = (zones?.parts ?? []).filter((p) => p.n >= 2).map((p) => p.surface);
+  secs.slice(1).forEach((sec, k) => {
+    const surf = k >= nPit ? zoneSurf[k - nPit] : 'asphalt';
+    scene.add(buildRibbon(track, ortho, sec, asphaltDetail, groundDetail, k < nPit ? `pit_lane_${k}` : `paved_runoff_${k - nPit}`, -6, k >= nPit && !surf, surf === 'concrete'));
+  });
   if (pit) { const m = buildPitPaint(pit, ground); if (m) scene.add(m); }
   const seam = seamReport(secs, grid.surfaceZ);
   scene.add(buildStartLine(track, ground));
