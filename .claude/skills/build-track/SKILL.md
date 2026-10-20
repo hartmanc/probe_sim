@@ -489,12 +489,25 @@ For every other circuit, these are steps of stage 3:
    station (else MISSING); every scenery object of those kinds must have an inventory row or a capture source (a c20_
    capture or a Street View panorama in its `src`) within +-15 m (else UNSUPPORTED). It passes only when MISSING is
    empty for walls, fences, kerbs, tyre walls and bridges and UNSUPPORTED is empty; it also lists HEIGHT mismatches
-   (a measured wall, fence or tyre-wall height the package misses by more than max(0.3 m, 25 %)). Without an inventory
-   it fails. The MISSING list is the work list of the scenery round (Sonoma: `compare/sonoma/coverage.md`).
+   (a measured wall, fence or tyre-wall height the package misses by more than max(0.3 m, 25 %); ad boards standing on
+   a wall, `wall_boards` without a `base`, count toward its height). Without an inventory it fails. The MISSING list is
+   the work list of the scenery round (Sonoma: `compare/sonoma/coverage.md`).
+   **One allowed exception (21 Oct 2026): rows handed to the buildings round.** A MISSING row of kind `building` whose
+   last manifest cell reads `assigned: buildings round` (a table row `| building | side | s | what | source | assigned:
+   buildings round |` in `compare/<id>/manifest.md`; `build_track.py` passes these to the gate) is printed as ASSIGNED,
+   not MISSING. The gate accepts the marker for kind `building` only: an assignment of any other kind is REJECTED and
+   fails the gate, one that matches no MISSING row is printed as unmatched. Everything else on the MISSING list is fixed
+   by an object measured on the evidence, or by a logged correction of the inventory row (`attrs.correction` {round,
+   was, why} in `observations.jsonl`: an object seen ahead gets `ahead_m`, a misread kind its kind; never a deleted
+   row). `tools/track/gates/manifest_tables.ts` writes the manifest's object and row tables (every object with its
+   source, every row with its outcome).
 9. **Pit lane first-class** (config `pit_lane`, `trackcfg.py`: lane, walls with side / stations or lat-lon ends / height /
    material / fence / src, boxes, buildings, furniture; `trackcfg.check_pit_lane`). The pit-lane gate (same CLI): every
    pit-lane wall row of the inventory must be declared in `pit_lane.walls` on that side and stand in the package as a
-   barrier on that side of the lane within +-15 m.
+   barrier on that side of the lane within +-15 m. Each declared pit-lane wall has geometry: `latlon` measured on the
+   captures (built as a barrier), or `declared` naming the scenery wall it is. `pit_lane.lane.match_track_tone` maps the
+   ortho inside the lane polygon onto the track asphalt's tone (one road material; the lighter NAIP paving and paint
+   smears read as a second road, Sonoma owner notes 17 and 24-26).
 
 ## Stage 4: compare pass with a judge (`tools/track/compare/`)
 

@@ -96,6 +96,35 @@ describe('coverage gate: unsupported objects, pass rule, heights', () => {
   });
 });
 
+describe('coverage gate: board heights and assignments (21 Oct 2026)', () => {
+  it('ad boards standing on a declared wall count toward its height at their stations; boards on posts (no top) do not', () => {
+    const w = { ...wall(20, 120, -8), src: 'declared: W (c20_s0000)' };
+    const board = (x: number, top?: number) => ({ kind: 'sign', text: '', x, y: -8.1, z: 0, heading: 0, h: 2.5, w: 6,
+      src: 'wall board on W (onboard)', ...(top !== undefined ? { top } : {}) });
+    const rows = [row(60, 'right', 'wall', { h_m: 3.6, h_method: 'horizon-ratio' })];
+    expect(coverage(T, { barriers: [w], landmarks: [board(58, 3.5), board(64, 3.5)] }, inv(rows)).heights).toHaveLength(0);
+    // boards far away along the lap do not lift the wall at the row
+    expect(coverage(T, { barriers: [w], landmarks: [board(100, 3.5)] }, inv(rows)).heights).toHaveLength(1);
+    // boards on posts carry no `top`: the wall keeps its own height
+    expect(coverage(T, { barriers: [w], landmarks: [board(60)] }, inv(rows)).heights[0]).toMatchObject({ obj_h: 1 });
+  });
+  it('a MISSING building row assigned to another round is ASSIGNED, not MISSING; any other kind is REJECTED and fails', () => {
+    const rows = [row(60, 'right', 'building'), row(90, 'right', 'wall')];
+    const sc = { barriers: [wall(80, 100, -8)] };
+    const r = coverage(T, sc, inv(rows), { assigned: [{ kind: 'building', side: 'right', s: 60, to: 'buildings round' }] });
+    expect(r.missing).toHaveLength(0);
+    expect(r.assigned.map((a) => [a.kind, a.s, a.to])).toEqual([['building', 60, 'buildings round']]);
+    expect(r.pass).toBe(true);
+    const bad = coverage(T, { barriers: [] }, inv(rows), { assigned: [{ kind: 'wall', side: 'right', s: 90, to: 'buildings round' }] });
+    expect(bad.rejected).toHaveLength(1);
+    expect(bad.missing.map((m) => m.kind)).toContain('wall');
+    expect(bad.pass).toBe(false);
+    const stale = coverage(T, sc, inv(rows), { assigned: [{ kind: 'building', side: 'left', s: 60, to: 'buildings round' }] });
+    expect(stale.unmatched).toHaveLength(1);
+    expect(stale.missing.map((m) => m.kind)).toEqual(['building']);
+  });
+});
+
 describe('pit-lane gate', () => {
   // a pit lane beside the bottom straight on the right (y -14 .. -20), driving +x like the track, track_s = x
   const lane = { center: Array.from({ length: 101 }, (_, k) => [20 + k, -17, 0] as V3), left: Array.from({ length: 101 }, (_, k) => [20 + k, -14, 0] as V3),

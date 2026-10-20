@@ -8,7 +8,11 @@
 //              View panorama in its src), else it is UNSUPPORTED. Passes when MISSING is empty for walls, fences,
 //              kerbs, tyre walls and bridges and UNSUPPORTED is empty. Also lists HEIGHT mismatches (advisory): a wall,
 //              fence or tyre-wall row with a measured height whose nearest matching object differs by more than
-//              max(0.3 m, 25 %).
+//              max(0.3 m, 25 %); a wall's height there counts the ad-board panels standing on it (wall-board signs, their
+//              `top` above the ground, 21 Oct 2026).
+//   ASSIGNED   (21 Oct 2026, the one allowed scope change) a MISSING row of kind `building` that the evidence manifest
+//              hands to the buildings round ('assigned: buildings round', CoverageConfig.assigned) is listed as ASSIGNED,
+//              not MISSING; an assignment of any other kind is REJECTED (its row stays MISSING and the gate fails).
 //   PIT LANE   every pit-scope inventory row of kind wall must be declared in the config's pit_lane.walls on that side
 //              (UNDECLARED) and stand in the package as a barrier within +-tol along the lane on that side (ABSENT).
 //
@@ -34,6 +38,8 @@ export const CAPTURE_SRC = /c20_[so]\d{4}|\bz20\b|street ?view|panorama|\bpano\b
 
 export interface SceneObj {
   kind: string; side: 'left' | 'right' | 'both'; pts: { s: number; out: number; lat: number }[]; src: string; h?: number; label: string;
+  /** ad-board panels standing on this wall: station and top above the ground (m) */
+  tops?: { s: number; h: number }[];
 }
 
 /** Every scenery object of a physical kind, with its points projected onto the lap (station s, side, distance beyond
@@ -60,11 +66,22 @@ export function sceneryObjects(t: TrackLike, sc: SceneryLike & Record<string, an
     }
   };
   const BKIND: Record<string, string> = { concrete: 'wall', armco: 'wall', pitwall: 'wall', wall: 'wall', tyres: 'tyre_wall', fence: 'fence' };
+  // wall-board panels by the declared wall they stand on ('wall board on <name> (...)', top above the ground)
+  const boards: Record<string, { s: number; h: number }[]> = {};
+  for (const m of (sc.landmarks ?? []) as any[]) {
+    const w = /^wall board on (.+?) \(/.exec(String(m.src ?? ''));
+    if (m.kind !== 'sign' || !w || typeof m.top !== 'number') continue;
+    const q = proj([m.x, m.y], 120);
+    if (q) (boards[w[1]] ??= []).push({ s: q.i * t.spacing_m, h: m.top });
+  }
   (sc.barriers ?? []).forEach((b: any, k: number) => {
     const kind = BKIND[b.kind] ?? 'wall';
     const pts = project(densify(b.pts));
     const label = `barrier ${k} (${b.kind}${b.fence ? ` + ${b.fence} m fence` : ''})`;
+    const name = /^declared: (.+?)(?: \(|$)/.exec(String(b.src ?? ''))?.[1];
+    const n0 = out.length;
     bySide(kind, pts, b.src ?? '', label, kind === 'fence' ? (b.h || 0) + (b.fence || 0) : b.h);
+    if (kind === 'wall' && name && boards[name]) for (const o of out.slice(n0)) o.tops = boards[name];
     if (b.fence > 0 && kind !== 'fence') bySide('fence', pts, b.src ?? '', label + ' catch fence', (b.h || 0) + b.fence);
   });
   for (const st of sc.kerbs?.strips ?? []) {
@@ -108,11 +125,20 @@ export function objectNear(o: SceneObj, s: number, side: Side, tol: number, L: n
 export interface MissingRow { s: number; side: Side; kind: string; t: number | null; source: string; frame?: string; what: string; h?: number }
 export interface Unsupported { kind: string; side: string; label: string; s0: number; s1: number; src: string }
 export interface HeightMismatch { s: number; side: Side; kind: string; row_h: number; method: string; obj_h: number; obj: string; source: string }
+export interface Assignment { kind: string; side: string; s: number; to: string; what?: string }
 export interface CoverageReport {
   checked: number; skipped: number; missing: MissingRow[]; unsupported: Unsupported[]; heights: HeightMismatch[];
   objects: number; pass: boolean; missingByKind: Record<string, number>; unsupportedByKind: Record<string, number>;
+  /** MISSING building rows handed to the buildings round by the manifest */
+  assigned: (MissingRow & { to: string })[];
+  /** assignments the gate does not accept (a kind other than building): their rows stay MISSING and the gate fails */
+  rejected: Assignment[];
+  /** assignments that match no MISSING row (stale manifest lines; reported, not a failure) */
+  unmatched: Assignment[];
 }
-export interface CoverageConfig { tol?: number; mustCover?: string[] }
+/** `assigned`: MISSING rows the evidence manifest hands to another round ('assigned: buildings round'); accepted for kind
+ *  building only (21 Oct 2026) */
+export interface CoverageConfig { tol?: number; mustCover?: string[]; assigned?: Assignment[] }
 
 function rowSides(r: InvRow): ('left' | 'right' | 'any')[] | null {
   if (r.side === 'ahead' && typeof r.attrs?.ahead_m !== 'number') return null;
@@ -126,7 +152,8 @@ function rowSides(r: InvRow): ('left' | 'right' | 'any')[] | null {
 export function coverage(t: TrackLike, sc: SceneryLike & Record<string, any>, inv: Inventory, cfg: CoverageConfig = {}): CoverageReport {
   const tol = cfg.tol ?? 15, must = cfg.mustCover ?? MUST_COVER, L = t.n * t.spacing_m;
   const objs = sceneryObjects(t, sc);
-  const rep: CoverageReport = { checked: 0, skipped: 0, missing: [], unsupported: [], heights: [], objects: objs.length, pass: false, missingByKind: {}, unsupportedByKind: {} };
+  const rep: CoverageReport = { checked: 0, skipped: 0, missing: [], unsupported: [], heights: [], objects: objs.length, pass: false,
+    missingByKind: {}, unsupportedByKind: {}, assigned: [], rejected: [], unmatched: [] };
   const rows = inv.rows.filter((r) => PHYSICAL.includes(r.kind) && (r.scope ?? 'lap') === 'lap');
   for (const r of rows) {
     const sides = rowSides(r);
@@ -143,9 +170,11 @@ export function coverage(t: TrackLike, sc: SceneryLike & Record<string, any>, in
       }
       const hm = r.attrs?.h_m, meth = String(r.attrs?.h_method ?? '');
       if (typeof hm === 'number' && meth && meth !== 'unmeasured' && ['wall', 'fence', 'tyre_wall'].includes(r.kind)) {
-        const best = near.filter((o) => typeof o.h === 'number').sort((a, b) => Math.abs((a.h ?? 0) - hm) - Math.abs((b.h ?? 0) - hm))[0];
-        if (best && Math.abs((best.h ?? 0) - hm) > Math.max(0.3, 0.25 * hm)) {
-          rep.heights.push({ s: r.s, side: r.side, kind: r.kind, row_h: hm, method: meth, obj_h: best.h ?? 0, obj: best.label, source: r.source });
+        // a wall's height at the row: its own, or the top of the ad boards standing on it within +-tol
+        const hAt = (o: SceneObj) => Math.max(o.h ?? 0, ...(o.tops ?? []).filter((b) => sdist(b.s, r.s, L) <= tol).map((b) => b.h));
+        const best = near.filter((o) => typeof o.h === 'number').sort((a, b) => Math.abs(hAt(a) - hm) - Math.abs(hAt(b) - hm))[0];
+        if (best && Math.abs(hAt(best) - hm) > Math.max(0.3, 0.25 * hm)) {
+          rep.heights.push({ s: r.s, side: r.side, kind: r.kind, row_h: hm, method: meth, obj_h: hAt(best), obj: best.label, source: r.source });
         }
       }
     }
@@ -160,7 +189,17 @@ export function coverage(t: TrackLike, sc: SceneryLike & Record<string, any>, in
     rep.unsupported.push({ kind: o.kind, side: o.side, label: o.label, s0: Math.round(Math.min(...ss)), s1: Math.round(Math.max(...ss)), src: o.src });
     rep.unsupportedByKind[o.kind] = (rep.unsupportedByKind[o.kind] ?? 0) + 1;
   }
-  rep.pass = rep.missing.every((m) => !must.includes(m.kind)) && rep.unsupported.length === 0;
+  // assignments from the evidence manifest: building rows only
+  for (const a of cfg.assigned ?? []) {
+    if (a.kind !== 'building') { rep.rejected.push(a); continue; }
+    const k = rep.missing.findIndex((m) => m.kind === 'building' && m.side === a.side && Math.abs(m.s - a.s) <= 1);
+    if (k < 0) { rep.unmatched.push(a); continue; }
+    const [m] = rep.missing.splice(k, 1);
+    rep.assigned.push({ ...m, to: a.to });
+    rep.missingByKind.building -= 1;
+    if (!rep.missingByKind.building) delete rep.missingByKind.building;
+  }
+  rep.pass = rep.missing.every((m) => !must.includes(m.kind)) && rep.unsupported.length === 0 && rep.rejected.length === 0;
   return rep;
 }
 

@@ -82,15 +82,15 @@ STAGE_FILES = {"geometry": ["track.json", "heightfield.bin", "ortho.jpg"], "ghos
 STAGE_NEEDS = {"geometry": [], "ghosts": ["track.json"], "scenery": ["track.json", "heightfield.bin"]}
 
 
-STAGE_KEYS = {"ghosts": ("ghosts",), "scenery": ("scenery", "gate")}
+STAGE_KEYS = {"ghosts": ("ghosts",), "scenery": ("scenery", "gate", "pit_lane")}
 
 
 def config_id(cfg, stage="geometry"):
-    """hash of the config keys a stage reads (geometry: everything but the ghosts, scenery and app blocks), so a scenery
-    edit does not invalidate a passed geometry stage"""
+    """hash of the config keys a stage reads (geometry: everything but the ghosts, scenery, pit_lane and app blocks), so
+    a scenery edit does not invalidate a passed geometry stage (pit_lane, 21 Oct 2026, is read by stage 3 only)"""
     import hashlib
     if stage == "geometry":
-        d = {k: v for k, v in cfg.items() if k not in ("ghosts", "scenery", "app")}
+        d = {k: v for k, v in cfg.items() if k not in ("ghosts", "scenery", "pit_lane", "app")}
     else:
         d = {k: cfg.get(k) for k in STAGE_KEYS[stage]}
     return hashlib.sha256(json.dumps(d, sort_keys=True, default=str).encode()).hexdigest()[:16]
@@ -807,6 +807,29 @@ def scenery_gates(cfg, T, SC, tmp, trk):
     return fails
 
 
+def manifest_assignments(cfg):
+    """MISSING inventory rows the evidence manifest (tools/track/compare/<id>/manifest.md) hands to another round: every
+    markdown table row whose last cell reads 'assigned: <round>', its first three cells kind | side | s (m). The coverage
+    gate accepts them for kind building only and lists them as ASSIGNED (21 Oct 2026); any other kind is REJECTED."""
+    import re
+    path = os.path.join(HERE, "compare", cfg["id"], "manifest.md")
+    out = []
+    if not os.path.exists(path):
+        return out
+    for line in open(path):
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if len(cells) < 4 or not line.lstrip().startswith("|"):
+            continue
+        m = re.match(r"assigned:\s*(.+)$", cells[-1])
+        if not m:
+            continue
+        try:
+            out.append({"kind": cells[0], "side": cells[1], "s": float(cells[2]), "to": m.group(1).strip(), "what": cells[3]})
+        except ValueError:
+            continue
+    return out
+
+
 def coverage_gates(cfg, tmp, trk, sp):
     """The coverage and pit-lane gates of 21 Oct 2026 (tools/track/gates/coverageGate.ts, CLI run_coverage.ts): the
     scenery in `tmp` against the eye-level inventory tools/track/compare/<id>/inventory.json (inventory/inventory.py)
@@ -820,7 +843,8 @@ def coverage_gates(cfg, tmp, trk, sp):
         return fails + ["coverage", "pit lane"]
     proj = lambda ll: round(float(trk.project(np.array([cfg.enu(*ll)]))[0][0]) * sp, 1)  # noqa: E731
     cp = os.path.join(tmp, "coverage_config.json")
-    json.dump({"tol": cfg["scenery"].get("gates", {}).get("coverage_tol", 15), "pit_walls": trackcfg.pit_walls_for_gate(cfg, proj)}, open(cp, "w"))
+    json.dump({"tol": cfg["scenery"].get("gates", {}).get("coverage_tol", 15), "pit_walls": trackcfg.pit_walls_for_gate(cfg, proj),
+               "assigned": manifest_assignments(cfg)}, open(cp, "w"))
     r = subprocess.run(["npx", "tsx", os.path.join(HERE, "gates", "run_coverage.ts"), tmp, inv, cp, "--json",
                         os.path.join(tmp, "coverage_report.json")], cwd=ROOT, capture_output=True, text=True)
     for line in r.stdout.splitlines():
