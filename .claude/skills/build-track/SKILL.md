@@ -422,6 +422,24 @@ For every other circuit, these are steps of stage 3:
    storeys and the captures and write them in the manifest.
 6. **Hood stills of every surveyed spot** in `tools/track/compare/<id>/hood_r3/` (or the round's folder) with a README
    listing station and the matching panorama id / onboard time, before the owner drives.
+7. **Round-4 rules (20 Oct 2026, Sonoma owner drive; all config-gated, Laguna's package unchanged):**
+   - *Bands are barriers*: a continuous narrow bright or dark band parallel to the track 10-45 m out on the captures (and
+     the light band it leaves in the NAIP ground) is a barrier line unless the onboard shows otherwise; scan every
+     outside-of-corner stretch, measure each with wall_measure.py, confirm on the onboard, and list every band examined
+     in the manifest (placed / not placed, why).
+   - *Heights from evidence*: each declared wall carries `h` / `fence` read off the onboard against the hood line or
+     Street View scale (Jersey 0.81 m, SAFER ~1.1 m, fence posts ~3 m over the wall) in `h_src`; unread heights stay
+     1.0 m and the manifest says so.
+   - *Newer evidence over lidar*: `scenery.building_overrides` [{osm | contains, h | drop, src}], only where a newer
+     source contradicts the lidar; logged per use; an unmatched entry fails the stage.
+   - *Walls carry what stands on them*: `wall_boards` (plain colour panels, no logos, colours in onboard order),
+     `impact_barriers` (block at a wall's nose), `cone_lines_declared` (cones along an edge stretch).
+   - *Closed roads look like track*: `closed_roads[].surface` (asphalt / concrete from the captures) and `paint=True`
+     (painted edges by paint.measure along the closed road's centre); `paved_areas` for paved ground the ortho fills
+     with parked vehicles; `pit_lane_clip_walls` keeps the pit lane inside its walls; `bridge_stairs` gives bridges
+     abutments and stairs to the ground; kerb strips of kind `blocks` for low block lines (drawn only).
+   - *Marshal posts*: scan for 2-5 m bright blobs within 25 m of the edges, inspect each; captures taken during an event
+     are full of trailers, so place a post only when the onboard or Street View confirms it.
 
 ## Stage 4: compare pass with a judge (`tools/track/compare/`)
 

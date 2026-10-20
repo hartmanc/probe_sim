@@ -22,8 +22,8 @@ p90 - p50 > 6 m (a mast, tower or slope inside the outline) the p50, logged; a f
 
 | OSM | where | before | after | lidar p50 / p60 / p90 | evidence |
 |---|---|---|---|---|---|
-| 262082790 'Sonoma Raceway' | 59 m left of s 4063 | 25.6 m | 9.3 m (capped) | 9.3 / 11.1 / 26.1 | c20_s1650 / s1705: the outline is the main grandstand bowl at the line (rows rising away from the track) with the suites and timing tower at its back; Street View 5MY4xR9O7etAXEHnZCVnGQ, QduY6QTXmw4JDevQVE_b-g: 2-3 storeys at the front. Still drawn as one block (a stepped-stand model for it is left for a builder change) |
-| 1019838438 | 13 m right of s 3419 (T11 approach) | 14.2 m | 12.5 m | 11.7 / 12.5 / 14.2 | lidar consistent: a ~12 m structure stood there in 2022-24. c20_s1045 (2026) shows a long white hospitality tent on part of the outline with a short shadow; Street View jrXpHaDfJT2APw6zcyBKRA (2011) open infield. The sources disagree; the rule keeps the lidar |
+| 262082790 'Sonoma Raceway' | 59 m left of s 4063 | 25.6 m | 9.3 m (capped) | 9.3 / 11.1 / 26.1 | c20_s1650 / s1705: the outline is the main grandstand bowl at the line (rows rising away from the track) with the suites and timing tower at its back; Street View 5MY4xR9O7etAXEHnZCVnGQ, QduY6QTXmw4JDevQVE_b-g: 2-3 storeys at the front. Still drawn as one 9.3 m block: handed to the buildings round (owner_22 reference: bleachers on a block-wall base, stair towers, glazed suites deck, timing tower); item 2 of round 4 dropped by the owner |
+| 1019838438 | 13 m right of s 3419 (T11 approach) | 14.2 m | DROPPED (round 4, evidence override) | 11.7 / 12.5 / 14.2 | lidar (2022-24): a ~12 m structure. c20_s1045 (2026): a temporary white tent (~8 x 30 m) on part of the outline. Onboard RAZip6S84CM 1:53-1:55.6 (Mar 2026, newest): tyre stacks and fence at the edge, an ambulance and low cabins, open paved infield, no tent and no building. Source precedence: onboard wins, so no building (see 'Round 4') |
 | 1019836595 | 44 m left of s 3923 (T12) | 9.8 m | 8.7 m | 8.6 / 8.7 / 9.9 | c20_s1540: flat-roofed building beside the T12 exit; Street View QduY6QTXmw4JDevQVE_b-g: two-storey buildings both sides |
 
 Laguna (report only, its package unchanged): the rule would change 49 of its 52 OSM buildings (mostly -0.1 to -1 m,
@@ -174,3 +174,102 @@ pit-lane-side one now ends at its nose at T1 (c20_s1815) instead of running on t
 | T11 | NASCAR infield / 11a | allowed runoff (open paved ground) | Street View jrXpHaDfJT2APw6zcyBKRA |
 | T12, QduY6QTXmw4JDevQVE_b-g | left wall (pit-road side), right wall (drag-strip side) | placed | c20_s1320..s1595 |
 | T12 -> S/F | drag strip | walled off (both drag strip walls) | containment gate |
+
+
+## Round 4 (20 Oct 2026, owner drive notes 11-31; registry rev e8a9fb17b1)
+
+Gates: edge left/right, world continuity, profile, barrier gaps, containment (0 escapes), pit connectivity (both paths, 0
+crossings) and sign placement (94 checked, 0 misplaced) all pass. Laguna: its package is unchanged against main and the
+pipeline's Laguna scenery.json is byte-identical before / after the builder changes (every new rule is config-gated).
+The four hillside terraces are byte-identical.
+
+### Evidence-declared building overrides (new rule, `scenery.building_overrides`)
+Only where a newer source than the lidar contradicts it; each use logged by the build; an entry that matches nothing
+fails the stage. Used once: OSM 1019838438 dropped (row above). Height of a tent was not needed: the March 2026 onboard,
+the newest source, shows no structure there, so the 2026 tent is treated as temporary (not estimated from its shadow).
+
+### Bright / dark barrier bands (owner note 11 rule): every outside-of-corner stretch examined
+Scan: `/tmp`-side script along both edges 2-45 m out on the clean captures (narrow continuous bands, 0.3-1.6 m wide),
+then each candidate measured with wall_measure.py on a guide and checked on the onboard. Placed (all `declared_walls`,
+src carries %-picked and rms):
+
+| stretch | side, offset | kind, h / fence | capture measure | onboard / Street View |
+|---|---|---|---|---|
+| T2 entry before the footbridge (owner_27/28) | L 11-21 m | tyres 1.0 | dark, 90 %, rms 0.74 | owner_28 Pit Out; 0:12 |
+| T2 approach far left (round-3 'not placed') | L 23-30 m | tyres 1.0 | dark, 92 %, rms 0.27 | H9xspk4q_OoFIjVDhaMzDA; 0:12 |
+| T2 exit, foot of the T2 stands | L 18-31 m | concrete 1.0 + 3.0 fence | dark, 97 %, rms 0.48 | 0:12-0:15.5 wall + fence posts |
+| T2 exit to T3, foot of the hill (owner_11) | R 19-34 m | tyres 1.0 | dark, 76 %, rms 0.41 | 0:12, 0:18 barrier line right |
+| T1 exit to T2, grass bank | R 19-33 m | tyres 1.0 | dark, 84 %, rms 0.44 | owner_28 (tyre line on the bank) |
+| T5 left (round-3 'not placed') | L 14-45 m | tyres 1.0 | dark, 96 %, rms 0.49 | zCwjltSjI02eDZGZbVyrMg; 0:41 tyre wall left |
+| T5 right, before the T5-T6 wall | R ~15 m | concrete 1.0 | dark, 99 %, rms 0.51 | 0:39 |
+| T5 to T6 crest, left, beyond the paddock | L 21-45 m | concrete 1.0 + 3.0 fence | dark, 100 %, rms 0.18 | 0:39-0:44 |
+| Carousel right (round-3 'armco, not placed') | R 23-45 m | tyres 1.0 | dark, 96 %, rms 0.32 | ma3jBYjtYGtNBlTLjNz1LQ (armco 2011); 0:50 |
+| Carousel left fence (round-3 'not placed') | L 17-43 m | fence 2.0 | dark, 100 %, rms 1.12 (weak) | ma3jBYjtYGtNBlTLjNz1LQ; 0:50 |
+| T8 left, up the bank | L 25-46 m | tyres 1.0 | dark, 99 %, rms 0.20 | 1:18.5 |
+| T9 right, along the bypass | R 10-30 m | concrete 1.0 | bright, 73 %, rms 0.38 | 1:27 |
+| 9a right (round-3 '9a tyre stack, not placed') | R ~16 m | tyres 1.0 | dark, 100 %, rms 0.53 | 1:42 |
+| T11 approach right, at the edge | R 6-9 m | tyres 1.0 + 3.5 fence | dark, 97 %, rms 0.53 | 1:53-1:55 |
+
+Examined, not placed: T10 outside left before s 3172 (bright line s 3075-3168: 48 % picked, 3 broken runs, rejected;
+the existing wall from s 3172 with its boards and 1.2 m height is what owner_14 shows missing in round 3, see
+r4_s3190_T10.jpg; whether the wall continues back to s 3100 needs a better capture); the bands at 30-45 m on the
+back straight left (stand rows), T3a-T4 left (terrace rows), s 1700-2160 right (drag-strip lane lines and the Chute
+edges) and s 3700-3960 left (pit-road paint): paint or stand rows, not barriers.
+
+### Wall heights and fences (note 13): from the onboard against the hood line and Street View scale
+Set with `h_src` on each entry: pit straight both sides 1.1 m, no fence; T6-T7 left 1.2 m with 2.0 m boards on posts;
+T10-T11 left 1.2 m with a continuous row of 2.5 m boards; T10-T11 right 1.1 m + 3.5 m fence; T11 hairpin tyres + 3 m
+fence; T11-T12 left 0.81 m (Jersey); pit-in outer walls 1.2 m; pit-in separation Jersey 0.81 m; pit-out paddock side
+1.0 m + 2.0 m chain-link (owner_28, onboard 2:22.5). Not read, kept at 1.0 m: T7 tyres, T8a-T9 tyres, T9 wall + fence,
+T8a right tyres, T3 tyres, T4 wall + fence and tyres, back straight wall + fence and tyres, drag-strip walls.
+
+### Boards, pit-in, nose, cones (notes 15-16, 18, 3h)
+`wall_boards` (plain colour panels, no logos, colours in onboard order): T10-T11 left (4 runs, 44 panels), both outer
+pit-in walls (27 panels), T6-T7 left (20 panels on posts). Pit-in separation Jersey re-measured from its nose
+(c20_s1210, 90 % picked, rms 0.15 m; round 3 had measured the OUTER wall and called it the separation wall, now renamed
+'outer pit-in wall (garage side)'); yellow `impact` block (1 x 2 x 1 m) at its nose; cone line on the double white
+line s 3525-3586; outer pit-in / pit-road walls round the hairpin outside (O2, Q: 71 % / 53 % picked; owner_18).
+`pit_lane_clip_walls`: the lane polygon stops at its walls (182 edge points clipped). T11 outside tyre wall: the
+round-3 row, now with its 3 m fence. Free-standing yellow / blue tyre stacks (owner_21, 2011): NOT placed; the 2026
+onboard 2:01-2:04 shows red / white concrete blocks at the apex instead and the captures show no round shadows on the
+apron, so no `tyre_stack` object was added (no dynamic prop either).
+
+### Closed roads (note 12, 17): material and painted edges
+surface asphalt: 2020 bypass, the Chute, PWC hairpin, T7 inside runoff; concrete: drag strip, T11a apron. Painted
+edges by paint.measure along each part's centre: bypass both sides 244 / 276 stations; Chute 53 / 183 and 35 / 96;
+drag strip 385 / 534; PWC 32 / 59; T11a apron none found (no lines drawn). No closed-road kerbs found by kerb_detect.
+Cone lines at the mouths unchanged. Material seam beside the pit-in (owner_17): NOT fixed this round; diagnosis
+pending (the light mottled surface is the pit-lane ribbon showing the ortho's lighter pit-lane paving, see
+r4_s3600_pitin_lane_mid.jpg).
+
+### Paddock smear (note 19)
+Diagnosis: NAIP ortho content (the 2026 captures c20_s1485..s1650 show the paddock full of parked trailers and cars;
+the smears sit where they are), not z-fighting. `paved_areas`: OSM 28825490 (amenity=parking) drawn as plain asphalt.
+
+### Pit exit and merge (notes 24-26)
+Re-read on c20_s1815/s1870 and onboard 2:20.5-2:22.5: the track-side pit wall does end at its nose at s ~103; beyond
+it the lane runs behind the painted blend line and its cones, bounded on the paddock side by the light-blue wall
+(now with a 2.0 m chain-link fence). Seam: lane and road edges coincide in plan and height along the merge (gap 0,
+z equal to 1 mm, s 109-234), so there is no step; the lighter strip is material. Not changed this round. Owner_25:
+the garage at the pit-exit end has a red metal roof (onboard 2:20.5 shows it too), for the buildings round.
+
+### Footbridge (note 29)
+`bridge_stairs` (Sonoma on, Laguna off): abutment from the DEM to the deck at each span end (5.3 m and 6.2 m) and a
+stair flight 7.1 m on along the OSM way. Pier positions from shadows not measured (span ends from OSM/lidar).
+
+### Corner stations (note 30)
+Scan for bright 2-5 m blobs within 25 m of either edge: 111 candidates; 16 inspected on capwin windows: 14 are parked
+trailers / vehicles (the 2026 captures were taken during an event), c20_s1148 area (T5 left, 22 m out, ~3 x 3 m white
+roof with shadow) unconfirmed (not visible on the onboard at 0:41-0:42), c20_s3208 area (white hut inside the PWC
+infield) not a trackside post. No new marshal posts placed. The owner's frame (owner_29) could not be matched with
+confidence; the white blotch is baked into the NAIP ground texture and is most likely a parked vehicle in NAIP.
+
+### T1 kerbs (note 31)
+Kind 'blocks' (low grey blocks, drawn only, no physics kerb): right s ~130-161 between striped runs 1 and 3, left s
+89-134 from the pit-wall nose (kerb_detect grey runs). Striped run 2 (143.7-149.7) folded into the block line.
+
+### What else drives the 'feel' (candidates for the next round, no work done)
+Enclosure per stretch (open T2-T6 hillside vs walled T10-T12 bowl; onboard 0:10-0:50 vs 1:43-2:20); hillside colour
+(2026 green spring grass in the onboard vs the dry NAIP tan); catch fences on the T8a-T9 bank (Street View
+xXQqyp9Q9sWv9ZLN2ORYsA); paddock density (trailers, tents along T5, T8, the back straight on the captures); light
+masts (onboard 1:43-2:20, not measured: positions need pole shadows on the captures).

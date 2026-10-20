@@ -27,3 +27,18 @@ orchestrator's drive); compare each with the Street View panorama or the onboard
 | s3560_T11_approach.jpg | 3560 | T11 approach, pit-in wall left, no board | Street View jrXpHaDfJT2APw6zcyBKRA; owner_1; onboard 1:56-1:59 |
 | s3660_T11_hairpin.jpg | 3660 | T11 hairpin | onboard 2:01-2:04 |
 | s3910_T12.jpg | 3910 | T12 to the front straight | Street View QduY6QTXmw4JDevQVE_b-g; onboard 2:10 |
+
+## Round 4 (20 Oct 2026, registry rev e8a9fb17b1), same method (car reset at s, lateral m left +, hood camera)
+
+| file | track s (m) | place | compare with |
+|---|---|---|---|
+| r4_s0250_footbridge.jpg | 250 | T2 footbridge: abutments and stairs into the banks (note 29) | Street View owner_28 |
+| r4_s0330_T2_entry_tyres.jpg | 330 | T2 outside tyre line and stand wall (notes 11, 27) | onboard 0:12; owner_27 |
+| r4_s0060_pit_lane.jpg | 60, 13 m left | inside the pit lane toward the exit | onboard 2:20-2:22.5; owner_24 |
+| r4_s3010_bypass.jpg | 3010, looking 30 deg right | the 2020 bypass as asphalt with painted edges (note 12) | owner_12 |
+| r4_s3190_T10.jpg | 3190 | T10 entry: left wall with 2.5 m boards, right wall + 3.5 m fence (notes 13-14) | onboard 1:43-1:45 |
+| r4_s3480_pitin_split.jpg | 3480 | pit-in split: boards on the outer pit-in wall, cones | owner_15; onboard 1:56-1:59 |
+| r4_s3560_pitin_nose.jpg | 3560 | yellow impact barrier at the Jersey nose, cone line | owner_15 / owner_16 |
+| r4_s3600_pitin_lane_mid.jpg | 3600, 7.5 m left | inside the pit-in lane: Jersey right, outer wall + boards left (note 18) | owner_18 |
+| r4_s3640_T11_hairpin.jpg | 3640 | T11 hairpin: tyre wall + 3 m fence outside | onboard 2:01-2:04 |
+| r4_s3910_T12.jpg | 3910 | T12 to the front straight | Street View QduY6QTXmw4JDevQVE_b-g |
