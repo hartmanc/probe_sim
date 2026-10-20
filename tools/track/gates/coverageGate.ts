@@ -18,6 +18,7 @@
 //
 // Pure functions over track.json, scenery.json and inventory.json; the CLI is run_coverage.ts (and run_gates.ts).
 import { makeProjector, trackFrame, type SceneryLike, type TrackLike, type V2, type V3 } from './sceneryGates';
+import { structureObjects } from './structuresCoverage';
 
 export type Side = 'left' | 'right' | 'both' | 'ahead';
 export interface InvRow {
@@ -104,6 +105,7 @@ export function sceneryObjects(t: TrackLike, sc: SceneryLike & Record<string, an
     const cx = f.reduce((a, p) => a + p[0], 0) / f.length, cy = f.reduce((a, p) => a + p[1], 0) / f.length;
     bySide(b.kind === 'grandstand' ? 'stand' : 'building', project([[cx, cy], ...f], 320), b.src ?? '', `building ${k} '${b.name ?? ''}' ${b.h} m`, b.h);
   });
+  structureObjects(sc.structures, project, densify, bySide);
   for (const br of sc.bridges ?? []) {
     out.push({ kind: 'bridge', side: 'both', pts: [{ s: br.s, out: 0, lat: 0 }], src: br.src ?? br.deck_src ?? '', label: `bridge ${br.id} (${br.kind}) deck ${br.deck_z}` });
   }

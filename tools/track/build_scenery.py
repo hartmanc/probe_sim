@@ -24,6 +24,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import geo as bl  # noqa: E402  (frames, DEM window, NAIP helpers, grade_ortho)
 
 CACHE = OUT = PREVIEWS = None   # set by configure()
+STRUCT_CFG = None   # config `structures` (top level), set by configure()
 PITWALL_EDGE = None  # optional per-station lateral (+left, m) of the left edge the pit wall stands 0.6 m off
 SC_CFG = {}
 PIT_CFG = {}   # the track config's pit_lane section (trackcfg.py; walls with latlon get geometry here, 21 Oct 2026)
@@ -51,6 +52,8 @@ def configure(cfg, out_dir):
     BANNERS = dict(SC_CFG.get("bridge_banners", {}))
     BRIDGE_STYLE = dict(SC_CFG.get("bridge_style", {}))
     HANGARS = dict(SC_CFG.get("hangars", {}))
+    global STRUCT_CFG
+    STRUCT_CFG = cfg.get("structures")   # parametric structures (build_structures.py, 21 Oct 2026); absent: none
 
 
 def cache_file(name, box):
@@ -2026,6 +2029,11 @@ def main(cfg=None, out_dir=None):
         "landmarks": marks,
         **({"terraces": terr} if terr else {}),
     }
+    if STRUCT_CFG:
+        # the buildings round (21 Oct 2026): grandstands, garages, blocks, fuel island, masts, pit-box paint, boards
+        import build_structures
+        build_structures.apply(trk, osm, sc, STRUCT_CFG)
+        bld = sc["buildings"]
     with open(os.path.join(OUT, "scenery.json"), "w") as fh:
         json.dump(sc, fh, separators=(",", ":"))
     preview(trk, T, Tf, bld, bar, kerb, brg, marks, os.path.join(PREVIEWS, "scenery_preview.png"))

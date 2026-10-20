@@ -856,6 +856,147 @@ CONFIG = dict(
             dict(kind='fuel', s=3730, side='right', src='inventory pit row s 3730: Sunoco fuel island, canopy and sign (24of8fjjAug 24:30; owner note 20)'),
         ],
     ),
+    # ---------------------------------------------------------------- structures (build_structures.py; 21 Oct 2026)
+    # The buildings round: the structure kit (src/app/structures.ts) declared from evidence; every source and method is
+    # in compare/sonoma/manifest.md "Structures". Heights: lidar 2022-24 (DSM - DEM profiles across each outline) checked
+    # against HEIGHTS.md storeys; colours from the 2026 onboard RAZip6S84CM and the 2025 pit-lane video 24of8fjjAug
+    # (newer than Street View 2011/2017 where they differ). Plain colours only.
+    structures=dict(
+        # OSM boxes a structure replaces: the main grandstand block, the two pit-road garage rows, the T12 two-storey
+        # building, the fuel canopy, the pit-exit building, the two paddock garages
+        suppress_osm=['262082790', '1019835464', '1019837060', '1019836595', '1019838109', '1019836533',
+                      '1019836718'],
+        items=[
+            dict(type='grandstand', name='Main grandstand',
+                 # front face of the block-wall base, 145 m (the seat field fitted on c20_s1595..s1760: 141 x 31 m in
+                 # plan, axis heading -38.8 deg; the suites roof spans 148 m in the lidar; OSM 262082790 is 144 m)
+                 front=[(38.1614898, -122.455306), (38.1606742, -122.4540143)],
+                 base=dict(h=2.2, depth=1.5, color='#a8a59c', walk='#b3b0a8', rail='#6d7176',
+                           panels=dict(colors=['#f2f2ee', '#1f3f8f'], w=8.0, h=1.3, gap=12.0, z=0.5)),
+                 rows=dict(n=31, depth=0.9, rise=0.307, z0=2.6, seat='#e0d6ae', riser='#a7a397', back=0.42),
+                 aisles=dict(pitch=11.0, w=1.3, color='#b9b6ae'),
+                 towers=dict(w=6.0, d0=18.0, depth=9.0, h=14.0, steel='#8a8f94', cap='#4a4f54'),
+                 suites=dict(d0=30.0, d1=47.0, floor=14.0, glass=[15.2, 21.6], roof=[24.0, 26.2, 23.2, 0.53],
+                             color='#8a8f93', glass_color='#4d5d6b', roof_color='#4a4f54', columns=10.0,
+                             back=dict(depth=5.0, h=20.0), lights=dict(t=[12.0, 50.0, 95.0, 133.0], h=3.5)),
+                 tower=dict(t0=20.5, t1=58.5, d0=30.0, d1=47.0, z0=24.0, h=29.8, color='#3f7a52', glass='#3b6f9a',
+                            roof='#2f4a37'),
+                 rear=dict(color='#b5ad9c'),
+                 src='OSM 262082790 footprint; 2026 captures c20_s1595..s1760 (seat field, 13 aisle heads at 11 m); lidar '
+                     '2022-24 profiles across the outline (seats 2.0 m at the front to 12.0 m at 29 m back, suites roof '
+                     '24.0-26.2 m, rear 20 m, tower 29.5-30.1 m over t -52..-14 m); onboard RAZip6S84CM 2:15 (sand seats, '
+                     'grey deck, green tower with blue glass); 2025 video 24of8fjjAug 4:48-4:56 (end stairs, deck lights); '
+                     'Street View 5MY4xR9O7etAXEHnZCVnGQ, owner_22 (2017: block-wall base, panels, stair towers)',
+                 h_src='lidar profiles (method: DSM - DEM across the outline every 2 m); storeys check: deck floor 14 m = '
+                       'top seat row + 2 m, glass 2 storeys of 3.2 m'),
+            # pit-road garage rows (T11 exit to T12, left of the pit lane): tan stucco, green metal roofs, red trim
+            dict(type='garage', name='Pit garages north', osm='1019835464', eave=4.3, ridge=7.0,
+                 wall='#d8c393', roof='#4c7a55', trim='#a8322b', trim_h=0.35,
+                 windows=dict(side='track', pitch=2.6, w=1.2, h=1.0, z=2.4, color='#3a4654'),
+                 doors=dict(side='away', pitch=5.2, w=3.6, h=3.0, color='#d6d4cf'),
+                 src='OSM 1019835464; c20_s1430..s1485 (ridged roof, light masts on the paddock side); onboard '
+                     'RAZip6S84CM 2:04-2:08 (tan stucco, green metal roofs, window row; inventory s 3699-3784); 2025 '
+                     '24of8fjjAug 24:40 (roll-up door on the paddock side); Street View owner_20 (2011, red trim band)',
+                 h_src='lidar: eaves 4.1-4.5 m, ridge 7.1 m along the outline\'s centre'),
+            dict(type='garage', name='Pit garages south', osm='1019837060', eave=4.3, ridge=7.0,
+                 wall='#d8c393', roof='#4c7a55', trim='#a8322b', trim_h=0.35,
+                 windows=dict(side='track', pitch=2.6, w=1.2, h=1.0, z=2.4, color='#3a4654'),
+                 doors=dict(side='away', pitch=5.2, w=3.6, h=3.0, color='#d6d4cf'),
+                 src='OSM 1019837060; c20_s1375..s1430; onboard RAZip6S84CM 2:04-2:06 (tan stucco, green roofs); '
+                     '2025 24of8fjjAug 24:30 (garages ahead at the fuel island)',
+                 h_src='lidar: eaves 3.9-4.5 m, ridge 7.0 m'),
+            dict(type='garage', name='Paddock garage west', osm='1019836533', eave=5.0, ridge=7.8,
+                 wall='#d8c393', roof='#4c7a55', trim='#a8322b', trim_h=0.35,
+                 doors=dict(side=0, pitch=5.2, w=3.6, h=3.2, color='#d6d4cf'),
+                 src='OSM 1019836533; NAIP ortho (green roof); 2025 24of8fjjAug 24:40 (tan garages, grey-green roofs, '
+                     'paddock); inventory s 3699 left (tan stucco garages with green metal roofs, paddock)',
+                 h_src='lidar: eaves 5.0-5.2 m, ridge 7.8 m'),
+            dict(type='garage', name='Paddock garage south', osm='1019836718', eave=5.0, ridge=7.7,
+                 wall='#d8c393', roof='#4c7a55', trim='#a8322b', trim_h=0.35,
+                 doors=dict(side=0, pitch=5.2, w=3.6, h=3.2, color='#d6d4cf'),
+                 src='OSM 1019836718; NAIP ortho (green roof); 2025 24of8fjjAug 24:30 (tan building, hip roof, beside '
+                     'the fuel island); inventory s 3699-3736 left',
+                 h_src='lidar: eaves 4.8-5.6 m, ridge 7.7 m'),
+            # pit-exit building (the "Farmers" end): grey metal walls, low mono-pitch roof rising to the glazed track side,
+            # red roof edge
+            dict(type='garage', name='Pit-exit building', osm='1019839174', eave=4.2, ridge=8.2, mono='track',
+                 wall='#9a9d9f', roof='#8e9396', trim='#b23a2e', trim_h=0.45,
+                 windows=dict(side='track', pitch=3.0, w=2.8, h=2.2, z=4.6, color='#3b6f9a'),
+                 src='OSM 1019839174; c20_s1870 (ribbed grey roof with a red edge, red round canopy beside); onboard '
+                     'RAZip6S84CM 0:04 (red roof edge, glazed front, grey walls; inventory s 91 left); 2025 24of8fjjAug '
+                     '4:56 (red roof line at the pit exit); Street View owner_25 (2011)',
+                 h_src='lidar: roof from 4.2 m (paddock side) to 8.2 m (track side)'),
+            # T12: the two-storey flat-roof building at the pit-road end of the grandstand
+            dict(type='block', name='T12 two-storey building', osm='1019836595', h=7.9, storeys=2, parapet=0.5,
+                 wall='#d4c49c', band='#34495a', roof='#a3a39e',
+                 src='OSM 1019836595; c20_s1540 (flat roof); Street View QduY6QTXmw4JDevQVE_b-g (two-storey suites and '
+                     'control buildings at T12); onboard RAZip6S84CM 2:12 (tan multi-storey glazed building)',
+                 h_src='storeys 2 x 3.2 m + parapet (HEIGHTS.md example 8); lidar flat 8.3-8.9 m'),
+            dict(type='fuel', name='Fuel island', osm='1019838109', h=4.8, fascia=0.9, hip=1.2, hip_color='#7d8a7e',
+                 canopy='#ece9df', fascia_color='#ece9df', posts=3, islands=2,
+                 pylon_at=(38.1585228, -122.4528985),
+                 pylon=dict(h=9.0, w=2.6, color='#1f3f7a', panel='#e5b622'),
+                 src='OSM 1019838109; 2025 24of8fjjAug 24:30 (cream canopy, grey-green hip roof, tall plain-panel sign '
+                     'pylon beside the light mast; inventory pit row s 3730); onboard RAZip6S84CM 2:04 (canopy left); '
+                     'owner_20 (2011)',
+                 h_src='lidar: canopy edges 5.6-6.0 m, hip top 6.9 m; pylon 9 m against the 21 m mast beside it (24:30)'),
+            # light masts: isolated lidar spikes (DSM - DEM over 15 m, local maximum, ring median low), each confirmed
+            # on the 2026 captures (lamp head displaced along the view, long shadow to the north-west); h = spike - 0.7 m
+            # (the lamp head's top above the kit's mast height)
+            dict(type='mast', name='Light masts', heads=[3, 2], at=[(38.1614918, -122.4554235, 21.1), (38.1617882, -122.4559034, 20.9), (38.161905, -122.4565317, 24.0),
+                (38.1628842, -122.4572515, 20.8), (38.164016, -122.4576171, 21.2), (38.1643574, -122.4582798, 21.2),
+                (38.1670254, -122.4630898, 20.5), (38.1668727, -122.4626899, 20.8), (38.1673488, -122.4636039, 20.7),
+                (38.1662349, -122.4617988, 20.9), (38.1657588, -122.460999, 21.0), (38.1654533, -122.4602335, 20.4),
+                (38.1650491, -122.4596051, 18.2), (38.1647077, -122.4589425, 20.9), (38.1635579, -122.4571601, 21.4),
+                (38.1631806, -122.4566688, 21.0), (38.1628572, -122.4561547, 21.1), (38.1625428, -122.4556292, 20.9),
+                (38.1622823, -122.4550465, 23.9), (38.1620757, -122.4544638, 27.3), (38.1617613, -122.4539611, 27.4),
+                (38.1614558, -122.4534584, 27.3), (38.1611504, -122.4529785, 27.0), (38.160297, -122.4522702, 24.2),
+                (38.1584914, -122.4528757, 21.0), (38.1589226, -122.4531499, 21.0), (38.1593628, -122.4533213, 21.1),
+                (38.159776, -122.4534926, 21.1)],
+                 src='lidar 2022-24 spikes; captures c20_s1760 c20_s1815 c20_s1870 c20_s3355 c20_o0440 c20_s3520 '
+                     'c20_s4015 c20_s0000 c20_s0055 c20_s0110 c20_s0220 c20_s0275 c20_s0550 c20_s0605 c20_s0660 '
+                     'c20_s0715 c20_s0770 c20_s0880 c20_s0935 c20_s0990 c20_s1100 c20_s1320 c20_s1375 c20_s1430 '
+                     'c20_s1485 (lamp heads and shadows); T7a hill top (two outside the captures): Street View '
+                     'J6fsnW4hj4xCjQLzrgRGzA (light masts on top); inventory mast rows',
+                 h_src='lidar spike height'),
+            # pit wall boards: plain panels along the pit wall's top (no logos)
+            dict(type='boards', name='Pit wall boards (blue)', side='left', s0=3960, s1=4060, lat=(4.0, 15.0), h=0.85,
+                 colors=['#23439a'], panel=3.0,
+                 src='2025 24of8fjjAug 4:48 (blue board band along the pit wall top, RESTART ZONE panel; inventory pit '
+                     'row s 4010)', h_src='about 0.8 of the 1.1 m wall below it (24of8fjjAug 4:48)'),
+            dict(type='boards', name='Pit wall boards (green)', side='left', s0=4060, s1=4098, lat=(4.0, 15.0), h=0.85,
+                 colors=['#3aa635'], panel=3.0,
+                 src='onboard RAZip6S84CM 2:15 (green panels on the pit wall at the line, both sides)',
+                 h_src='about 0.8 of the wall (onboard 2:15)'),
+            # pit-box lines: the box front line along the lane and a cross line every box, measured on a straightened
+            # strip of the 2026 captures along the pit lane (peaks of the white-line brightness; front line 6.6 m and
+            # the box wall 11.5 m off the lane centre)
+            dict(type='paint', name='Pit boxes', color='#eeeeea', runs=[
+                dict(a=(38.1592388, -122.4529714), b=(38.1598501, -122.4532217), pitch=8.95, depth=4.8, w=0.12),
+                dict(a=(38.1607036, -122.4538208), b=(38.161346, -122.4548485), pitch=8.84, depth=4.8, w=0.12),
+                dict(a=(38.1614318, -122.4549866), b=(38.1618282, -122.455619), pitch=8.85, depth=4.8, w=0.12)],
+                 src='captures c20_s1430..s1485 and c20_s1595..s1760 (box lines; runs along the lane 317-388, 504-619 and '
+                     '634-705 m from the pit-in, the gap at 619-634 m is the start-line crossing); 2025 24of8fjjAug 4:48'),
+            # hillside terraces: the existing rows (terraces rule) dressed with bench strips, stair aisles with hand rails
+            # and the shade roofs the onboard shows on top
+            dict(type='terrace_dress', terrace='above T2', bench=dict(color='#b3ada1', h=0.4, depth=0.4),
+                 aisles=dict(pitch=45.0, w=1.4, color='#c4c1b8', rail='#8c9196'),
+                 shades=[dict(f0=0.0, f1=0.12, rows=6, h=2.8, color='#5b5f63')],
+                 src='onboard RAZip6S84CM 0:14-0:16 (concrete terraces, stair aisles with hand rails, a dark shade roof on '
+                     'top at the far end); Street View H9xspk4q_OoFIjVDhaMzDA'),
+            dict(type='terrace_dress', terrace='T3a-T4', bench=dict(color='#b9b5ab', h=0.4, depth=0.4),
+                 aisles=dict(pitch=40.0, w=1.4, color='#cfccc4', rail='#8c9196'),
+                 src='onboard RAZip6S84CM 0:26-0:30 (light concrete terraces, ~20 rows); Street View nA1oaDXwADSI7x-Pa-j4Ow'),
+            dict(type='terrace_dress', terrace='T7a hill', bench=dict(color='#b49f78', h=0.4, depth=0.4),
+                 aisles=dict(pitch=40.0, w=1.4, color='#c9b892', rail='#8c9196'),
+                 src='onboard RAZip6S84CM 1:12-1:14 (tan terraces, fence and light masts on top); Street View '
+                     'J6fsnW4hj4xCjQLzrgRGzA (owner_8: stepped rows with stair aisles)'),
+            dict(type='terrace_dress', terrace='back straight / 9a', bench=dict(color='#a39d91', h=0.4, depth=0.4),
+                 aisles=dict(pitch=40.0, w=1.4, color='#c4c1b8', rail='#8c9196'),
+                 shades=[dict(f0=0.55, f1=0.62, rows=5, h=2.8, color='#5b5f63'), dict(f0=0.7, f1=0.78, rows=5, h=2.8, color='#5b5f63')],
+                 src='onboard RAZip6S84CM 1:30-1:34 (concrete terraces with shade roofs / covered stands on top); Street '
+                     'View xkSrqJ5RaN9WFLncaiqaug; captures c20_o0495..o0550 (dark roofs at the top edge)'),
+        ]),
     # ---------------------------------------------------------------- app registry (src/scoreboard/config.ts)
     app=dict(short='Sonoma', pace='cars/field/sonoma/pace.json'),
 )
