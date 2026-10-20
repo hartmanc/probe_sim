@@ -128,3 +128,33 @@ describe('structure kit', () => {
     expect(none.solid.tris).toBe(0);
   });
 });
+
+describe('structure kit options', () => {
+  it('mono-pitch garage tops out at the ridge on the stated side; hip canopy adds its rise', () => {
+    const m = new Soup();
+    garage({ ...gar, heading: 0, c: [0, 0], z: 0, mono: 1, eave: 4.2, ridge: 8.2, doors: undefined, overhang: 0.5 }, m);
+    // the roof line rises 4 m over the 14 m width; the high eave (with the overhang) is the top
+    expect(m.bounds().max[2]).toBeCloseTo(4.2 + (14.5 / 14) * 4, 6);
+    // the high side is +d (left of heading 0 = +y)
+    const top = m.pos.reduce((best, v, i) => (i % 3 === 2 && v > best.z ? { z: v, y: m.pos[i - 1] } : best), { z: -1, y: 0 });
+    expect(top.y).toBeGreaterThan(0);
+    const h = new Soup();
+    fuel({ ...fu, hip: 1.2 }, h);
+    expect(h.bounds().max[2]).toBeCloseTo(9, 6);   // the pylon is still the top
+    const h2 = new Soup();
+    fuel({ ...fu, hip: 1.2, pylon: undefined }, h2);
+    expect(h2.bounds().max[2]).toBeCloseTo(4.8 + 0.9 + 1.2, 6);
+  });
+});
+
+describe('terrace dressing on the terrain', () => {
+  it('benches sit on the higher of the row and the ground', () => {
+    const flat = new Soup(), hill = new Soup();
+    const u = { type: 'terrace_dress', src: 't', terrace: 'hill', bench: { color: '#c9c6bd', h: 0.4, depth: 0.4 } } as const;
+    terraceDress(u, terr, flat);
+    terraceDress(u, terr, hill, (x) => (x > 30 ? 50 : -50));
+    expect(hill.tris).toBe(flat.tris);   // the same 8 m pieces, lifted
+    expect(hill.bounds().max[2]).toBeCloseTo(50.4, 6);
+    expect(hill.bounds().min[2]).toBeCloseTo(0.4, 6);   // the first row's own height where the ground is lower
+  });
+});

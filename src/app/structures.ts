@@ -50,6 +50,8 @@ export interface GarageJson {
   windows?: { side: -1 | 0 | 1; pitch: number; w: number; h: number; z: number; color: string };
   /** a parapet (m above the eaves) in the trim colour round a low roof */
   parapet?: number;
+  /** mono-pitch roof: the eaves on this side (+1 left / -1 right) rise to `ridge`, the other side stays at `eave` */
+  mono?: -1 | 1;
 }
 
 /** Flat-roof block of `storeys` storeys with a window band per storey on every face, roof parapet. */
@@ -62,6 +64,8 @@ export interface BlockJson {
 export interface FuelJson {
   type: 'fuel'; name: string; src: string; c: V2; heading: number; l: number; w: number; z: number;
   h: number; fascia: number; canopy: string; fascia_color: string; posts: number; islands: number;
+  /** low hip roof on the canopy: rise above the fascia and colour */
+  hip?: number; hip_color?: string;
   pylon?: { at: V2; h: number; w: number; color: string; panel: string };
 }
 
@@ -161,7 +165,7 @@ export function grandstand(g: GrandstandJson, s: Soup): void {
   const f = new Frame([g.a[0], g.a[1], g.z], ut, g.dir);
   const B = g.base, R = g.rows;
   const cBase = rgb(B.color), cWalk = rgb(B.walk ?? '#a9a69f'), cRail = rgb(B.rail ?? '#5d6166');
-  const cSeat = rgb(R.seat), cSeatBack = rgb(R.seat, 0.82), cRiser = rgb(R.riser);
+  const cSeat = rgb(R.seat), cSeatBack = rgb(R.seat, 0.95), cRiser = rgb(R.riser);
   // base wall and the walkway on it
   s.box(f, 0, L, 0, B.depth, -0.5, B.h, cBase, { top: cWalk });
   s.box(f, 0, L, 0.02, 0.12, B.h, B.h + 1.05, cRail, { top: cRail });            // front hand rail (solid panel)
@@ -288,7 +292,16 @@ export function garage(g: GarageJson, s: Soup): void {
   const cW = rgb(g.wall), cR = rgb(g.roof), cTr = rgb(g.trim);
   s.box(f, -hl, hl, -hw, hw, -0.5, g.eave, cW, { top: null });
   s.box(f, -hl - 0.05, hl + 0.05, -hw - 0.05, hw + 0.05, g.eave - g.trim_h, g.eave, cTr, { top: null, shade: false });   // trim band
-  if (g.parapet) {
+  if (g.mono) {
+    // mono-pitch: high side at d = mono * hw; side walls and the end walls rise to the roof line
+    const m = g.mono, zr = g.ridge, ze = g.eave;
+    const zAt = (d: number) => ze + ((d * m + hw) / (2 * hw)) * (zr - ze);
+    s.box(f, -hl, hl, m > 0 ? hw - 0.01 : -hw, m > 0 ? hw : -hw + 0.01, g.eave, zr, cW, { top: null });
+    for (const t of [-hl, hl]) s.quad(f.p(t, -hw, ze), f.p(t, hw, ze), f.p(t, hw, zAt(hw)), f.p(t, -hw, zAt(-hw)), cW);
+    s.quad(f.p(-hl - o, -hw - o, zAt(-hw - o)), f.p(hl + o, -hw - o, zAt(-hw - o)), f.p(hl + o, hw + o, zAt(hw + o)), f.p(-hl - o, hw + o, zAt(hw + o)), cR);
+    for (const d of [-hw - o, hw + o]) s.quad(f.p(-hl - o, d, zAt(d) - 0.45), f.p(hl + o, d, zAt(d) - 0.45), f.p(hl + o, d, zAt(d)), f.p(-hl - o, d, zAt(d)), cTr);
+    for (const t of [-hl - o, hl + o]) s.quad(f.p(t, -hw - o, zAt(-hw - o) - 0.45), f.p(t, hw + o, zAt(hw + o) - 0.45), f.p(t, hw + o, zAt(hw + o)), f.p(t, -hw - o, zAt(-hw - o)), cTr);
+  } else if (g.parapet) {
     s.box(f, -hl - 0.1, hl + 0.1, -hw - 0.1, hw + 0.1, g.eave, g.eave + g.parapet, cTr, { top: null, shade: false });
     s.quad(f.p(-hl, -hw, g.eave + 0.2), f.p(hl, -hw, g.eave + 0.2), f.p(hl, hw, g.eave + 0.2), f.p(-hl, hw, g.eave + 0.2), cR);
   } else if (g.ridge > g.eave + 0.05) {
@@ -344,6 +357,13 @@ export function fuel(u: FuelJson, s: Soup): void {
   const hl = u.l / 2, hw = u.w / 2;
   const cC = rgb(u.canopy), cF = rgb(u.fascia_color), cPost = rgb('#c9c7c0'), cIs = rgb('#b9b6ae'), cPump = rgb('#dcdad3');
   s.box(f, -hl, hl, -hw, hw, u.h, u.h + u.fascia, cF, { top: cC, bottom: true });
+  if (u.hip) {
+    const z0 = u.h + u.fascia, z1 = z0 + u.hip, r = Math.max(0, hl - hw), k = rgb(u.hip_color ?? u.canopy);
+    s.quad(f.p(-hl, -hw, z0), f.p(hl, -hw, z0), f.p(r, 0, z1), f.p(-r, 0, z1), k);
+    s.quad(f.p(hl, hw, z0), f.p(-hl, hw, z0), f.p(-r, 0, z1), f.p(r, 0, z1), rgb(u.hip_color ?? u.canopy, 0.88));
+    s.tri(f.p(-hl, hw, z0), f.p(-hl, -hw, z0), f.p(-r, 0, z1), rgb(u.hip_color ?? u.canopy, 0.94));
+    s.tri(f.p(hl, -hw, z0), f.p(hl, hw, z0), f.p(r, 0, z1), rgb(u.hip_color ?? u.canopy, 0.94));
+  }
   const n = Math.max(1, u.posts);
   for (let i = 0; i < n; i++) {
     const t = n === 1 ? 0 : -hl + 1 + ((u.l - 2) * i) / (n - 1);
@@ -439,7 +459,9 @@ export function boards(u: BoardsJson, s: Soup): void {
 }
 
 // ------------------------------------------------------------------ terrace dressing
-export function terraceDress(u: TerraceDressJson, t: TerraceJson, s: Soup): void {
+/** With `ground` (the drawn terrain), each bench piece (at most 8 m) sits on the higher of its row height and the
+ *  terrain under it, so the rows read on a hillside whose ground varies along a row (the treads are flat per row). */
+export function terraceDress(u: TerraceDressJson, t: TerraceJson, s: Soup, ground?: (x: number, y: number) => number): void {
   const [ux, uy] = t.dir, h = t.run / 2;
   const rows = t.rows;
   if (!rows.length) return;
@@ -455,7 +477,7 @@ export function terraceDress(u: TerraceDressJson, t: TerraceJson, s: Soup): void
     const lo = Math.min(...rows.map((r) => Math.min(proj(r.a), proj(r.b)))), hi = Math.max(...rows.map((r) => Math.max(proj(r.a), proj(r.b))));
     for (let x = lo + A.pitch / 2; x < hi; x += A.pitch) aisleAt.push(x);
   }
-  const cBench = rgb(u.bench?.color ?? '#c9c6bd'), cBenchF = rgb(u.bench?.color ?? '#c9c6bd', 0.8);
+  const cBench = rgb(u.bench?.color ?? '#c9c6bd'), cBenchF = rgb(u.bench?.color ?? '#c9c6bd', 0.55);
   const cAisle = rgb(A?.color ?? '#c2c0b9'), cRail = rgb(A?.rail ?? '#7d8186');
   const at = (r: { a: V2; b: V2 }, x: number): V2 => {
     const pa = proj(r.a), pb = proj(r.b), fr = (x - pa) / (pb - pa || 1);
@@ -473,12 +495,16 @@ export function terraceDress(u: TerraceDressJson, t: TerraceJson, s: Soup): void
       const B = u.bench;
       for (const [q0, q1] of cuts) {
         if (q1 - q0 < 0.5) continue;
-        const p0 = at(r, q0), p1 = at(r, q1);
-        // bench strip on the back part of the tread
         const db0 = h - B.depth - 0.05, db1 = h - 0.05;
         const P = (p: V2, d: number, z: number): V3 => [p[0] + ux * d, p[1] + uy * d, z];
-        s.quad(P(p0, db0, r.z + B.h), P(p1, db0, r.z + B.h), P(p1, db1, r.z + B.h), P(p0, db1, r.z + B.h), cBench);
-        s.quad(P(p0, db0, r.z), P(p1, db0, r.z), P(p1, db0, r.z + B.h), P(p0, db0, r.z + B.h), cBenchF);
+        const n = Math.max(1, Math.ceil((q1 - q0) / 8));
+        for (let k = 0; k < n; k++) {
+          const p0 = at(r, q0 + ((q1 - q0) * k) / n), p1 = at(r, q0 + ((q1 - q0) * (k + 1)) / n);
+          const zb = ground ? Math.max(r.z, ground(p0[0] + ux * h, p0[1] + uy * h), ground(p1[0] + ux * h, p1[1] + uy * h), ground((p0[0] + p1[0]) / 2 + ux * h, (p0[1] + p1[1]) / 2 + uy * h)) : r.z;
+          // bench strip on the back part of the tread: a top and a darker front face
+          s.quad(P(p0, db0, zb + B.h), P(p1, db0, zb + B.h), P(p1, db1, zb + B.h), P(p0, db1, zb + B.h), cBench);
+          s.quad(P(p0, db0, zb), P(p1, db0, zb), P(p1, db0, zb + B.h), P(p0, db0, zb + B.h), cBenchF);
+        }
       }
     }
     if (A) for (const x of aisleAt) {
@@ -542,7 +568,7 @@ export function structureSoups(list: StructureJson[], terraces: TerraceJson[] = 
       case 'mast': masts(u, solid); break;
       case 'paint': paint(u, pnt, ground); break;
       case 'boards': boards(u, solid); break;
-      case 'terrace_dress': { const t = terraces.find((x) => x.name === u.terrace); if (t) terraceDress(u, t, solid); break; }
+      case 'terrace_dress': { const t = terraces.find((x) => x.name === u.terrace); if (t) terraceDress(u, t, solid, ground); break; }
       default: break;
     }
     perType[u.type] = (perType[u.type] ?? 0) + solid.tris + pnt.tris + fabric.tris - before;
