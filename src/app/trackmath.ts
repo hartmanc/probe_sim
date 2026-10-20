@@ -121,7 +121,8 @@ export function distanceToPolyline(p: P2, line: P2[]): number {
 
 /** scenery.json `pit_exit_cones` (CONTRACTS §2b): the cone line between the pit-exit lane and the track. */
 export interface PitExitConesJson { spacing_m: number; s0: number; s1: number; pts: [number, number, number][]; src?: string;
-  /** round 7: cone colour (default the orange traffic cone) and height in m (default 0.7) from the evidence */ color?: string; size?: number }
+  /** round 7: cone colour (default the orange traffic cone) and height in m (default 0.7) from the evidence */ color?: string; size?: number;
+  /** round 7e: 'delineator' = a tall pylon post (orange, white bands; default size 1.0 m) instead of a traffic cone */ style?: 'cone' | 'delineator' }
 
 /**
  * Reports crossings of the pit-exit cone line from the car's successive positions (ENU x, y). One crossing is one

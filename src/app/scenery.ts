@@ -55,7 +55,7 @@ export interface SceneryJson {
   /** Cone line between the pit-exit lane and the track (CONTRACTS §2b); crossing it is a black-flag offence. */
   pit_exit_cones?: PitExitConesJson | null;
   /** cone lines across the mouths of paved but unused roads (closed variants of the circuit, 20 Oct 2026): drawn only */
-  cone_lines?: { spacing_m: number; pts: [number, number, number][]; src?: string; color?: string; size?: number }[];
+  cone_lines?: { spacing_m: number; pts: [number, number, number][]; src?: string; color?: string; size?: number; style?: 'cone' | 'delineator' }[];
   /** kinds: brake | corner | flagstand | oak | banner (ad board facing the track) | sign (on a wall at z) | gantry (two
    *  lattice towers at (x, y, z) and (x2, y2, z2) with cables across the track) */
   landmarks: { kind: string; text: string; x: number; y: number; z: number; heading: number; h: number; w: number; x2?: number; y2?: number; z2?: number; color?: string; style?: string; src?: string;
@@ -1127,6 +1127,34 @@ function coneGeometry(color?: string): THREE.BufferGeometry {
   return g;
 }
 
+/** Delineator post (round 7e, Sonoma owner note 57: the pylons across the drag strip at the T7 fork), 1.0 m: a slim
+ *  orange post with two white reflective bands on a dark rubber base; vertex colours, merged. */
+function delineatorGeometry(color?: string): THREE.BufferGeometry {
+  const ORANGE = new THREE.Color(color ?? 0xe0561c), WHITE = new THREE.Color(0xe6e4dc), BASE = new THREE.Color(0x1c1c1c);
+  const H = 1.0, R0 = 0.045, R1 = 0.035;
+  const bands: [number, number][] = [[0.72, 0.8], [0.86, 0.94]];
+  const rows = [0.04, ...bands.flatMap(([a, b]) => [a, a, b, b]), H - 0.005];
+  const prof = rows.map((h) => new THREE.Vector2(R0 + (R1 - R0) * (h / H), h));
+  prof.push(new THREE.Vector2(0, H));
+  const body = new THREE.LatheGeometry(prof, 8).toNonIndexed();
+  const pp = body.attributes.position as THREE.BufferAttribute, cc = new Float32Array(pp.count * 3);
+  for (let t = 0; t < pp.count; t += 3) {
+    const ym = (pp.getY(t) + pp.getY(t + 1) + pp.getY(t + 2)) / 3;
+    const col = bands.some(([a, b]) => ym > a && ym < b) ? WHITE : ORANGE;
+    for (let k = 0; k < 3; k++) { cc[(t + k) * 3] = col.r; cc[(t + k) * 3 + 1] = col.g; cc[(t + k) * 3 + 2] = col.b; }
+  }
+  body.setAttribute('color', new THREE.BufferAttribute(cc, 3));
+  body.deleteAttribute('uv');
+  const base = new THREE.BoxGeometry(0.3, 0.04, 0.3).translate(0, 0.02, 0).toNonIndexed();
+  const bp = base.attributes.position as THREE.BufferAttribute, bc = new Float32Array(bp.count * 3);
+  for (let i = 0; i < bp.count; i++) { bc[i * 3] = BASE.r; bc[i * 3 + 1] = BASE.g; bc[i * 3 + 2] = BASE.b; }
+  base.setAttribute('color', new THREE.BufferAttribute(bc, 3));
+  base.deleteAttribute('uv');
+  const g = mergeGeometries([body, base])!;
+  g.computeVertexNormals();
+  return g;
+}
+
 /** Orange cones every spacing_m along the pit-exit cone line, standing on the driven surface. One draw call. */
 function buildPitExitCones(c: PitExitConesJson, ground?: (x: number, y: number) => number): THREE.InstancedMesh | null {
   const P = c.pts;
@@ -1142,8 +1170,9 @@ function buildPitExitCones(c: PitExitConesJson, ground?: (x: number, y: number) 
     }
     carry = ((carry - L) % step + step) % step;
   }
-  const mesh = new THREE.InstancedMesh(coneGeometry(c.color), new THREE.MeshLambertMaterial({ vertexColors: true }), spots.length);
-  const k = (c.size ?? 0.7) / 0.7;
+  const deli = c.style === 'delineator', h0 = deli ? 1.0 : 0.7;
+  const mesh = new THREE.InstancedMesh(deli ? delineatorGeometry(c.color) : coneGeometry(c.color), new THREE.MeshLambertMaterial({ vertexColors: true }), spots.length);
+  const k = (c.size ?? h0) / h0;
   const m = new THREE.Matrix4(), q = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0), one = new THREE.Vector3(k, k, k);
   spots.forEach(([x, y, z], i) => {
     q.setFromAxisAngle(up, rand() * Math.PI);
@@ -1716,7 +1745,7 @@ export function buildScenery(track: TrackJson, _hf: Float32Array, sc: SceneryAss
   const cones = j.pit_exit_cones ? buildPitExitCones(j.pit_exit_cones, ground) : null;
   if (cones) root.add(cones);
   for (const cl of j.cone_lines ?? []) {
-    const m = buildPitExitCones({ spacing_m: cl.spacing_m, s0: 0, s1: 0, pts: cl.pts, color: cl.color, size: cl.size }, ground);
+    const m = buildPitExitCones({ spacing_m: cl.spacing_m, s0: 0, s1: 0, pts: cl.pts, color: cl.color, size: cl.size, style: cl.style }, ground);
     if (m) { m.name = 'cone_line'; root.add(m); }
   }
   if (j.paint_lines?.length) { const m = buildPaintLines(j.paint_lines); if (m) root.add(m); }

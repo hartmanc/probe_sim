@@ -1041,10 +1041,17 @@ def kerbs_declared(trk):
     """Kerb strips from the evidence (config scenery.kerbs_declared, 20 Oct 2026; Sonoma): each {side, a, b (lat, lon of
     the strip's ends on the edge), colors (stripe, base) or a palette name of scenery.kerb.palettes, off (m, the kerb
     band's centre beyond the edge; absent = the package's inside convention), kind, src}. No rule-placed kerbs, no
-    green verge unless declared (paint)."""
+    green verge unless declared (paint).
+    Round 7e (Sonoma owner note 58): each strip's colour and pattern are read from footage at that strip, never a
+    track-wide default: `pattern` 'blocks' (stripe / base alternating, the default) or 'plain' (one colour: the
+    stripe colour on the whole strip, e.g. a plain yellow kerb), and `colour_src` (the frame that shows it, or
+    'colour unverified: ...'). With scenery.kerb.require_colour_src every kind 'kerb' strip must carry one."""
     out = []
-    pal = SC_CFG.get("kerb", {}).get("palettes", {})
+    kc_ = SC_CFG.get("kerb", {})
+    pal = kc_.get("palettes", {})
     for k in SC_CFG["kerbs_declared"]:
+        if kc_.get("require_colour_src") and k.get("kind", "kerb") == "kerb" and not k.get("colour_src"):
+            raise SystemExit(f"kerbs_declared '{k.get('name')}': no colour_src (scenery.kerb.require_colour_src; SKILL 3.3)")
         side = 1 if k["side"] == "left" else -1
         P = np.array([bl.enu(*k["a"]), bl.enu(*k["b"])], float)
         i, lat, _ = trk.project(P)
@@ -1057,11 +1064,17 @@ def kerbs_declared(trk):
             c = pal[c]
         if c:
             rec["colors"] = list(c)
+        if k.get("pattern", "blocks") == "plain":
+            if not c:
+                raise SystemExit(f"kerbs_declared '{k.get('name')}': pattern 'plain' needs colors")
+            rec["colors"] = [c[0], c[0]]
+        elif k.get("pattern", "blocks") != "blocks":
+            raise SystemExit(f"kerbs_declared '{k.get('name')}': unknown pattern {k['pattern']!r} (blocks | plain)")
         if k.get("off") is not None:
             rec["off"] = float(k["off"])
         if k.get("paint"):
             rec["paint"] = float(k["paint"])
-        rec["src"] = (f"{k['name']}: " if k.get("name") else "") + k["src"]
+        rec["src"] = (f"{k['name']}: " if k.get("name") else "") + k["src"] + (f"; colour: {k['colour_src']}" if k.get("colour_src") else "")
         out.append(rec)
     log(f"kerbs: {len(out)} declared strips (config scenery.kerbs_declared), {sum(k['s1'] - k['s0'] for k in out)} m; no rule kerbs")
     return out
@@ -1835,7 +1848,9 @@ def _ll_line(latlon, step=1.0):
 def _cone_style(cl):
     """Per-declaration cone colour and height (round 7, Sonoma owner note 42: small yellow cones on the pit-out blend
     line, the orange 0.7 m traffic cone stays the default)."""
-    return {**({"color": cl["color"]} if cl.get("color") else {}), **({"size": float(cl["size"])} if cl.get("size") else {})}
+    return {**({"color": cl["color"]} if cl.get("color") else {}), **({"size": float(cl["size"])} if cl.get("size") else {}),
+            # round 7e (Sonoma owner note 57): 'delineator' = a tall orange pylon post with white bands (app), else a cone
+            **({"style": cl["style"]} if cl.get("style") else {})}
 
 
 def declared_cone_lines(trk):
