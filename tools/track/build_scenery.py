@@ -1765,17 +1765,54 @@ def impact_barriers(trk):
     return out
 
 
+def _ll_line(latlon, step=1.0):
+    ll = np.array(latlon, float)
+    x, y = bl.enu(ll[:, 0], ll[:, 1])
+    return resample_line(np.c_[x, y], step)
+
+
+def _cone_style(cl):
+    """Per-declaration cone colour and height (round 7, Sonoma owner note 42: small yellow cones on the pit-out blend
+    line, the orange 0.7 m traffic cone stays the default)."""
+    return {**({"color": cl["color"]} if cl.get("color") else {}), **({"size": float(cl["size"])} if cl.get("size") else {})}
+
+
 def declared_cone_lines(trk):
     """Cone lines along a stretch of the track edge (config scenery.cone_lines_declared, 20 Oct 2026): each {side:
-    'left' | 'right', s: (s0, s1) track metres, off: metres outside the edge, spacing (m, default 4), src}."""
+    'left' | 'right', s: (s0, s1) track metres, off: metres outside the edge, spacing (m, default 4), src}; or (round 7)
+    {latlon: the line measured on the captures (the painted line the cones stand on), spacing, src}; optional color and
+    size (m) from the evidence."""
     out = []
     for cl in SC_CFG.get("cone_lines_declared", []):
+        if cl.get("latlon"):
+            P = _ll_line(cl["latlon"])
+            out.append({"spacing_m": cl.get("spacing", 4.0), "pts": with_z(trk, P), "src": cl["src"], **_cone_style(cl)})
+            log(f"cone line on a measured line, {len(P)} m")
+            continue
         sd = 1 if cl["side"] == "left" else -1
         a, b = (int(round(v / trk.sp)) for v in cl["s"])
         st = np.arange(a, b + 1) % trk.n
         P = trk.edge_point(st, sd, cl.get("off", 0.5))
-        out.append({"spacing_m": cl.get("spacing", 4.0), "pts": with_z(trk, P), "src": cl["src"]})
+        out.append({"spacing_m": cl.get("spacing", 4.0), "pts": with_z(trk, P), "src": cl["src"], **_cone_style(cl)})
         log(f"cone line {cl['side']} s {cl['s'][0]}-{cl['s'][1]} ({cl.get('off', 0.5)} m outside the edge)")
+    return out
+
+
+def declared_paint_lines(trk):
+    """Painted lines measured on the captures (config scenery.paint_lines_declared, round 7): each {latlon, width (m),
+    color, double: gap between the two lines' centres (m, optional), src}. Drawn only."""
+    out = []
+    for pl in SC_CFG.get("paint_lines_declared", []):
+        P = _ll_line(pl["latlon"], 1.0)
+        offs = [0.0] if not pl.get("double") else [-pl["double"] / 2, pl["double"] / 2]
+        for o in offs:
+            Q = P.copy()
+            if o:
+                t = np.gradient(P, axis=0); t /= np.linalg.norm(t, axis=1, keepdims=True)
+                Q = P + np.c_[-t[:, 1], t[:, 0]] * o
+            out.append({"width": pl.get("width", 0.12), "pts": with_z(trk, Q, 0.01), "src": pl["src"],
+                        **({"color": pl["color"]} if pl.get("color") else {})})
+        log(f"paint line {pl.get('color', 'white')} {'double ' if pl.get('double') else ''}{len(P)} m")
     return out
 
 
@@ -1811,7 +1848,8 @@ def landmarks(trk, T, brg):
         to = trk.C[i_[0], :2] - xy
         out.append({"kind": "marshal", "text": mp.get("name", ""), "x": rnd(xy[0], 2), "y": rnd(xy[1], 2),
                     "z": rnd(float(trk.ground(*xy)[0]), 2), "heading": rnd(math.atan2(to[1], to[0]), 3),
-                    "h": mp.get("h", 3.0), "w": mp.get("w", 2.4), "style": mp.get("style", "tower"), "src": mp["src"]})
+                    "h": mp.get("h", 3.0), "w": mp.get("w", 2.4), "style": mp.get("style", "tower"),
+                    **({"color": mp["color"]} if mp.get("color") else {}), "src": mp["src"]})
     # free-standing tyre stacks and barrier blocks (config scenery.tyre_stacks, 21 Oct 2026): {latlon, h, w, style
     # 'tyres' | 'blocks', color, src}; drawn only (not in the collision world)
     for ts in SC_CFG.get("tyre_stacks", []):
@@ -1821,6 +1859,21 @@ def landmarks(trk, T, brg):
         out.append({"kind": "tyres", "text": "", "x": rnd(xy[0], 2), "y": rnd(xy[1], 2), "z": rnd(float(trk.ground(*xy)[0]), 2),
                     "heading": rnd(math.atan2(to[1], to[0]), 3), "h": ts.get("h", 0.84), "w": ts.get("w", 0.62),
                     "style": ts.get("style", "tyres"), **({"color": ts["color"]} if ts.get("color") else {}), "src": ts["src"]})
+    # free-standing concrete blocks (config scenery.blocks, round 7, Sonoma owner note 38): {latlon, w (across), d (along
+    # the track), h, style 'striped' | 'plain', color, src}, or a run {latlon: [a, b], every: m, ...} of blocks between two
+    # measured ends; aligned with the track tangent; drawn only (landmark kind 'block')
+    for bk in SC_CFG.get("blocks", []):
+        pts = [np.array(bl.enu(*bk["latlon"]), float)] if not isinstance(bk["latlon"][0], (list, tuple)) else None
+        if pts is None:
+            P = _ll_line(bk["latlon"], 0.25)
+            L = np.r_[0, np.cumsum(np.linalg.norm(np.diff(P, axis=0), axis=1))]
+            pts = [P[int(np.argmin(np.abs(L - d)))] for d in np.arange(0, L[-1] + 1e-6, bk.get("every", 2.0))]
+        for xy in pts:
+            i_, _, _ = trk.project(xy[None])
+            tg_ = trk.T[i_[0]]
+            out.append({"kind": "block", "text": "", "x": rnd(xy[0], 2), "y": rnd(xy[1], 2), "z": rnd(float(trk.ground(*xy)[0]), 2),
+                        "heading": rnd(math.atan2(tg_[1], tg_[0]), 3), "h": bk.get("h", 1.0), "w": bk.get("w", 1.0), "d": bk.get("d", 1.5),
+                        "style": bk.get("style", "plain"), **({"color": bk["color"]} if bk.get("color") else {}), "src": bk["src"]})
     for lm in SC_CFG.get("light_masts", []):
         xy = np.array(bl.enu(*lm["latlon"]), float)
         out.append({"kind": "mast", "text": "", "x": rnd(xy[0], 2), "y": rnd(xy[1], 2), "z": rnd(float(trk.ground(*xy)[0]), 2),
@@ -2030,7 +2083,8 @@ def main(cfg=None, out_dir=None):
     if pit and SC_CFG.get("pit_lane_clip_walls"):
         # the lane's real width: its paving stops at the walls that bound it (config scenery.pit_lane_clip_walls,
         # 20 Oct 2026; Sonoma's OSM-width lane reached through the pit-in Jersey and the outer wall)
-        clip_parts_at_walls(pit["parts"], bar, label="pit lane")
+        # round 7 (owner note 37): and at the declared cone lines along it (the pit-in separation line before the nose)
+        clip_parts_at_walls(pit["parts"], bar + [{"kind": "tyres", "pts": c_["pts"]} for c_ in declared_cone_lines(trk)], label="pit lane")
     if pit and ortho_arr is not None and (PIT_CFG.get("lane") or {}).get("match_track_tone"):
         Image.fromarray(pit_tone_match(trk, pit, ortho_arr, PIT_CFG["lane"]["match_track_tone"])).save(
             os.path.join(OUT, "ortho.jpg"), quality=84, optimize=True)
@@ -2041,9 +2095,18 @@ def main(cfg=None, out_dir=None):
     if cr_parts:
         zones["parts"] += cr_parts
     cone_lines += declared_cone_lines(trk)
-    plines = closed_road_paint(trk, cr_parts)
+    plines = closed_road_paint(trk, cr_parts) + declared_paint_lines(trk)
     pareas = paved_areas(trk, osm)
     cones = pit_exit_cones(trk, pit, bar)
+    pc_ = SC_CFG.get("pit_exit_cones") or {}
+    if pc_.get("latlon"):
+        # round 7 (Sonoma owner notes 42-43): the cones stand ON the painted blend line measured on the captures, from
+        # the pit-wall nose to the merge, in the colour, size and spacing of the footage
+        P_ = _ll_line(pc_["latlon"], 2.0)
+        i_, _, _ = trk.project(P_[[0, -1]])
+        cones = {"spacing_m": pc_.get("spacing", 16.0), "s0": int(i_[0]), "s1": int(i_[1]), "pts": with_z(trk, P_),
+                 "src": pc_["src"], **_cone_style(pc_)}
+        log(f"pit-exit cones on the measured blend line: stations {int(i_[0])}-{int(i_[1])}, every {cones['spacing_m']} m")
     marks = landmarks(trk, T, brg)
     for b_ in bld:
         if b_["kind"] == "hangar":

@@ -3148,22 +3148,6 @@
    "scope": "lap"
   },
   {
-   "side": "left",
-   "kind": "wall",
-   "attrs": {
-    "type": "black wall section then light grey concrete wall",
-    "h_m": 1.1,
-    "h_method": "jersey-ref"
-   },
-   "confidence": 0.9,
-   "t": 58,
-   "s": 1686.8,
-   "source": "onboard:RAZip6S84CM@58.0",
-   "frame": "t058.jpg",
-   "scope": "lap",
-   "note": "left of the Carousel exit, 2-6 m"
-  },
-  {
    "side": "right",
    "kind": "mast",
    "attrs": {
@@ -3206,6 +3190,30 @@
    "frame": "t058.jpg",
    "scope": "lap",
    "note": "right, 20 m out"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "black wall section then light grey concrete wall",
+    "h_m": 1.1,
+    "h_method": "jersey-ref",
+    "ahead_m": 33,
+    "correction": {
+     "round": "scenery round 7 (22 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t058 (owner note 41): the black cushion section stands first, from s ~1684 (7.8 m beyond the left edge, angling in; c20_s3410 / s3465 dark band, declared as a tyre run), and the light grey concrete wall begins where it meets the edge, s ~1720, ~33 m ahead of the car; t056 shows no wall"
+    }
+   },
+   "confidence": 0.9,
+   "t": 58,
+   "s": 1719.8,
+   "source": "onboard:RAZip6S84CM@58.0",
+   "frame": "t058.jpg",
+   "scope": "lap",
+   "note": "left of the Carousel exit, 2-6 m"
   },
   {
    "side": "left",
@@ -3461,22 +3469,6 @@
    "scope": "lap"
   },
   {
-   "side": "right",
-   "kind": "wall",
-   "attrs": {
-    "type": "light blue concrete wall beyond the Chute",
-    "h_m": 1.0,
-    "h_method": "jersey-ref"
-   },
-   "confidence": 0.6,
-   "t": 66,
-   "s": 1955.5,
-   "source": "onboard:RAZip6S84CM@66.0",
-   "frame": "t066.jpg",
-   "scope": "lap",
-   "note": "far right"
-  },
-  {
    "side": "left",
    "kind": "wall",
    "attrs": {
@@ -3504,6 +3496,30 @@
    "source": "onboard:RAZip6S84CM@68.0",
    "frame": "t068.jpg",
    "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "light blue concrete wall beyond the Chute",
+    "h_m": 1.0,
+    "h_method": "jersey-ref",
+    "ahead_m": 125,
+    "correction": {
+     "round": "scenery round 7 (22 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t066 (owner note 36): the low light-blue wall stands far right ACROSS the drag strip continuation, 30 m or more from the T7 road; on c20_s3685 / c20_s3740 the measured wall at the strip's far side begins at s ~2081 (30 m right of the centre), ~125 m ahead of the car; nothing stands at the strip's near edge (t062 / t064 grass)"
+    }
+   },
+   "confidence": 0.6,
+   "t": 66,
+   "s": 2080.5,
+   "source": "onboard:RAZip6S84CM@66.0",
+   "frame": "t066.jpg",
+   "scope": "lap",
+   "note": "far right"
   },
   {
    "side": "left",

@@ -44,13 +44,13 @@ export interface SceneryJson {
     /** closed roads (20 Oct 2026): 'asphalt' = the circuit's road material, 'concrete' = pale concrete; absent = the aerial photo's own colour (paved runoff) */
     surface?: 'asphalt' | 'concrete' })[] } | null;
   /** painted lines off the track (closed roads' edge lines measured on the captures, 20 Oct 2026): white strips */
-  paint_lines?: { width: number; side?: number; pts: V3[]; src?: string }[];
+  paint_lines?: { width: number; side?: number; pts: V3[]; src?: string; /** round 7: line colour (default white) */ color?: string }[];
   /** paved ground that is not driven (the paddock, 20 Oct 2026): plain paving over the terrain, no physics */
   paved_areas?: { name: string; surface: 'asphalt' | 'concrete'; src: string; poly: V2[] }[];
   /** Cone line between the pit-exit lane and the track (CONTRACTS §2b); crossing it is a black-flag offence. */
   pit_exit_cones?: PitExitConesJson | null;
   /** cone lines across the mouths of paved but unused roads (closed variants of the circuit, 20 Oct 2026): drawn only */
-  cone_lines?: { spacing_m: number; pts: [number, number, number][]; src?: string }[];
+  cone_lines?: { spacing_m: number; pts: [number, number, number][]; src?: string; color?: string; size?: number }[];
   /** kinds: brake | corner | flagstand | oak | banner (ad board facing the track) | sign (on a wall at z) | gantry (two
    *  lattice towers at (x, y, z) and (x2, y2, z2) with cables across the track) */
   landmarks: { kind: string; text: string; x: number; y: number; z: number; heading: number; h: number; w: number; x2?: number; y2?: number; z2?: number; color?: string; style?: string; src?: string;
@@ -1088,8 +1088,8 @@ export function pitExitConeLine(): PitExitConesJson | null { return pitExitCones
 export function pitExitConeWatcher(): PitExitCones | null { return pitExitConesData ? new PitExitCones(pitExitConesData) : null; }
 
 /** Traffic cone, 0.7 m: square base, orange body with a white reflective band; vertex colours, merged. */
-function coneGeometry(): THREE.BufferGeometry {
-  const ORANGE = new THREE.Color(0xd8501c), WHITE = new THREE.Color(0xe6e4dc), BASE = new THREE.Color(0xc2461a);
+function coneGeometry(color?: string): THREE.BufferGeometry {
+  const ORANGE = new THREE.Color(color ?? 0xd8501c), WHITE = new THREE.Color(0xe6e4dc), BASE = new THREE.Color(color ?? 0xc2461a).multiplyScalar(color ? 0.85 : 1);
   const prof: THREE.Vector2[] = [];
   const H = 0.7, R0 = 0.16, R1 = 0.03;
   for (const h of [0.03, 0.4, 0.4, 0.53, 0.53, H - 0.01]) prof.push(new THREE.Vector2(R0 + (R1 - R0) * (h / H), h));
@@ -1134,8 +1134,9 @@ function buildPitExitCones(c: PitExitConesJson, ground?: (x: number, y: number) 
     }
     carry = ((carry - L) % step + step) % step;
   }
-  const mesh = new THREE.InstancedMesh(coneGeometry(), new THREE.MeshLambertMaterial({ vertexColors: true }), spots.length);
-  const m = new THREE.Matrix4(), q = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0), one = new THREE.Vector3(1, 1, 1);
+  const mesh = new THREE.InstancedMesh(coneGeometry(c.color), new THREE.MeshLambertMaterial({ vertexColors: true }), spots.length);
+  const k = (c.size ?? 0.7) / 0.7;
+  const m = new THREE.Matrix4(), q = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0), one = new THREE.Vector3(k, k, k);
   spots.forEach(([x, y, z], i) => {
     q.setFromAxisAngle(up, rand() * Math.PI);
     m.compose(v3(x, y, z), q, one);
@@ -1362,9 +1363,11 @@ function latticeTower(x: number, y: number, z: number, h: number, w: number, mat
 }
 
 /** Painted lines off the track (scenery.json `paint_lines`): flat white strips just above the paving. */
-function buildPaintLines(list: NonNullable<SceneryJson['paint_lines']>): THREE.Mesh | null {
-  const pos: number[] = [];
+function buildPaintLines(list: NonNullable<SceneryJson['paint_lines']>): THREE.Group | null {
+  const byColor = new Map<string, number[]>();
   for (const l of list) {
+    const key = l.color ?? '#e9e8e2';
+    const pos = byColor.get(key) ?? (byColor.set(key, []).get(key)!);
     const P = l.pts, hw = l.width / 2;
     for (let i = 0; i + 1 < P.length; i++) {
       const [ax, ay, az] = P[i], [bx, by, bz] = P[i + 1];
@@ -1373,13 +1376,18 @@ function buildPaintLines(list: NonNullable<SceneryJson['paint_lines']>): THREE.M
       for (const k of [0, 1, 2, 1, 3, 2]) pos.push(q[k].x, q[k].y, q[k].z);
     }
   }
-  if (!pos.length) return null;
-  const g = new THREE.BufferGeometry();
-  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-  g.computeVertexNormals();
-  const m = new THREE.Mesh(g, new THREE.MeshLambertMaterial({ color: 0xe9e8e2, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -10 }));
-  m.name = 'paint_lines';
-  return m;
+  const grp = new THREE.Group();
+  grp.name = 'paint_lines';
+  for (const [color, pos] of byColor) {
+    if (!pos.length) continue;
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+    g.computeVertexNormals();
+    const m = new THREE.Mesh(g, new THREE.MeshLambertMaterial({ color, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -10 }));
+    m.name = 'paint_lines';
+    grp.add(m);
+  }
+  return grp.children.length ? grp : null;
 }
 
 /** Paved areas (scenery.json `paved_areas`): plain asphalt / concrete laid over the terrain on a 1.5 m grid inside the
@@ -1624,7 +1632,7 @@ export function buildScenery(track: TrackJson, _hf: Float32Array, sc: SceneryAss
   const cones = j.pit_exit_cones ? buildPitExitCones(j.pit_exit_cones, ground) : null;
   if (cones) root.add(cones);
   for (const cl of j.cone_lines ?? []) {
-    const m = buildPitExitCones({ spacing_m: cl.spacing_m, s0: 0, s1: 0, pts: cl.pts }, ground);
+    const m = buildPitExitCones({ spacing_m: cl.spacing_m, s0: 0, s1: 0, pts: cl.pts, color: cl.color, size: cl.size }, ground);
     if (m) { m.name = 'cone_line'; root.add(m); }
   }
   if (j.paint_lines?.length) { const m = buildPaintLines(j.paint_lines); if (m) root.add(m); }

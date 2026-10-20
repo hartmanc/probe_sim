@@ -452,6 +452,18 @@ export function exposedEnds(t: TrackLike, sc: SceneryLike & { landmarks?: { kind
       }
       if (best < Infinity) { how = `lapped by ${q.kind} run ${q.k} (${best.toFixed(1)} m out vs ${o0.toFixed(1)} m)`; break; }
     }
+    // a run that leaves the track at a right angle (a wall across a runoff or a road mouth) shows its end face across the
+    // track, not along it: nothing travelling the lap meets it head-on
+    if (!how) {
+      const j = ord.find((i) => Math.hypot(r.xy[i][0] - P[0], r.xy[i][1] - P[1]) >= 5);
+      const pr = proj(P, 60);
+      if (j !== undefined && pr) {
+        const a = t.center[(pr.i + 1) % t.n], b = t.center[(pr.i - 1 + t.n) % t.n];
+        const tx = a[0] - b[0], ty = a[1] - b[1], dx = r.xy[j][0] - P[0], dy = r.xy[j][1] - P[1];
+        const cos = Math.abs(tx * dx + ty * dy) / ((Math.hypot(tx, ty) || 1) * (Math.hypot(dx, dy) || 1));
+        if (cos < 0.5) how = `leaves the track at ${(Math.acos(cos) * 180 / Math.PI).toFixed(0)} deg (its end faces across the lap)`;
+      }
+    }
     // tapered: angled away from the track at its head
     if (!how) {
       const j = ord.find((i) => Math.abs(sd(((r.s[h] % L) + L) % L, ((r.s[i] % L) + L) % L)) >= 10);

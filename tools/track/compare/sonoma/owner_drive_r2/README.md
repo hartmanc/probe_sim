@@ -95,3 +95,74 @@ Verdict: "a disappointing output that was not ready for me to review."
 34. "Give the billboards their text / designs so they aren't just blank." Orchestrator's rule: designed boards in the recorded
     colour scheme with invented sponsor names and the track's own name where the onboard shows it; no real logos or
     trademarks (same licensing reasoning as textures).
+35. Round-6 preview (91d84f8), owner: the black timing tower on the Carousel hill is confirmed by his 2025 pit-out video frame
+    and the satellite (long shadow, square base, small building beside it) - matches the placed scoring tower at s 1584,
+    47 m inside the Carousel. The dropped "control tower beyond the drag strip" (2011 Street View, s 3910 right) is a
+    different structure.
+36. Owner, hot lap 1:38 (T7 approach, ~s 1900-1960): "Nitpick - the ends of the walls appear to be open" (barrier runs have
+    no end caps: the end face is missing, you see inside the wall). "Is this inside wall and tire barrier here on the approach
+    to T7? I don't remember that." Onboard t=64/66 s: the tyre line + cones across the drag strip continuation ahead-right is
+    real; the white wall declared at 9-33 m right ('drag strip NW end: far wall beyond the fork', round 5, c20_s3630/s3685)
+    is the strip's FAR wall ~30 m+ away across the full strip width in the footage, so its near end is ~20 m too close.
+37. Round-6 preview, hot lap 4:00, T11 approach at the Las Vegas / O'Reilly boards (~s 3490-3520): the car is beside the tall
+    outer wall with a cone line on its right; ahead the cone line converges INTO the wall, closing the pit-in lane. Owner:
+    "the pit entrance is blocked off" (owner_35_pit_entry_blocked.png). The pit-connectivity gate passed, so the gate's path
+    or its cone handling missed this.
+38. Round-6 preview, T11 hairpin at the apex (4:31, off track): the outside of the hairpin shows a low flat white segmented
+    wall and the apex only the red/white kerb. Owner: "I don't see the tires at T11 like we talked about previously"
+    (owner_36_T11_no_tyres.png; cf. owner_21). The March 2026 onboard frames t=122 / t=124 show: a continuous tyre wall of
+    WHITE-wrapped tyre stacks two high round the whole outside of T11 in front of the pit garages, and at the apex two large
+    RED/WHITE striped concrete blocks plus white-painted blocks along the apron edge, beside the red/white kerb.
+39. Round-6 preview, T5 exit right (lap 2, 1:16, off track): two wall runs on the right, the downstream one starting beyond
+    the first and standing CLOSER to the track, its end face exposed head-on. Owner: "Is the wall shingled like this at T5?
+    Seems dangerous... I would think the actual track has this start behind the first wall" (owner_37_T5_shingled_wall.png).
+    Onboard t=42 / t=44 (frames t042, t044): ONE continuous light-grey Jersey wall on the right from T5 up to the crest, no
+    step. Config declares two runs measured on different captures ('T5, right: wall before the T5-T6 wall' and 'T5 to the T6
+    crest, right') that do not join.
+40. Round-6 preview, T5 exit climbing to the T6 crest (lap 2, 2:55): the marshal post at the crest (s ~1395, right) is a
+    small grey box behind the wall, barely visible. Owner: "Nitpick: this corner station should be a little more
+    pronounced... See how it has a roof in this actual footage" (owner_38_T6_station_sim.png; owner_39_T6_station_video.png =
+    a May 2025 onboard, reference only: a white / blue elevated hut with a flat roof overhang, open front, on legs above the
+    wall at the crest, right side, seen from well before the crest).
+41. Round-6 preview, Carousel exit (lap 2, 4:22): the pale blue T6-T7 left wall begins right at the exit of the Carousel
+    with its end facing the car. Owner: "I don't think this wall starts so soon after T6. This also seems dangerous"
+    (owner_40_T6_exit_wall_start.png). Package: the run starts at s 1659, 7 m off the edge. Onboard t=56 (s ~1626): grass
+    bank and kerb on the left, no wall; t=58 (s ~1687): a BLACK cushioned wall section at the asphalt edge, then the light
+    grey concrete wall. So the wall starts ~25-30 m later than in the sim and its start is a dark energy-absorbing section.
+42. Round-6 preview, out lap on the front straight toward T1: a line of large orange traffic cones along the left edge of
+    the track ahead. Owner: "Do they have these cones on the front straight in real life?" (owner_41_front_straight_cones.png).
+    2025 pit-out video frame t=304 (pit_24of8fjjAug_t0304.jpg): YES, but as small YELLOW cones standing on the double
+    yellow blend line where the pit-out lane merges past T1, sparse (~15-20 m apart); before the nose the lane is behind
+    the white wall (t=300) with no cones. The sim's cones are orange, large and dense.
+43. Round-6 preview, lap 2 at 0:25, pit-out lane past T1 looking at the merge (~s 180-240): the lane is a lighter, separate
+    strip with a solid white line between it and the track, the orange cones stand on that line, and the far end closes
+    where a wall juts in. Owner: "Pit out doesn't 'blend' with the real track and seems to have cones in the way"
+    (owner_42_pit_out_blend.png). 2025 pit-out video t=304: the lane and the track are one surface with a double yellow
+    line and sparse small yellow cones ON it; the lane tapers into the track with no wall at the end.
+44. Round-6 preview, lap 2 at 1:38, standing in the T7 inside paved runoff looking across it: open pavement to the hills,
+    masts and the T7a stand, no barrier at the far edge. Owner: "I think there is a tire barrier pretty far out after the
+    run-off of T7, that safety vehicles are usually kept behind" (owner_43_T7_runoff_far_barrier.png). The 2011 T7 panorama
+    (owner_8, gd1SNdksCq5QZtwlsrzR7g) shows tyre walls across the far side of the paved area.
+45. Round-6 preview, lap 2 at 2:40, in the T7 complex looking across the unused tight corner (the short-T7 way inside the
+    hairpin): the ortho's painted red/white kerb shows flat in the ground texture with a partial raised kerb over it, odd
+    seams between surfaces, and a flat black band (a tyre wall drawn as a wall) across the far edge. Owner: "There is some
+    weirdness going on in the T7 complex, particularly with the corner that isn't used in this layout. I would prefer that
+    everything look like legitimate racing surface (because it is), and then have cones blocking it off when not in use.
+    Also some weirdness going on with the textures" (owner_44_T7_unused_corner.png).
+46. Same area, 3:48: a red smear in the grass beside the unused corner. Owner: "This red splotch in the same area is
+    probably an O'Reillys sign painted in the grass. We should represent an actual sign here" (owner_45_T7_grass_logo.png):
+    a painted ground logo, to be rendered as legible typed text in brand colours (the Laguna rule), sized from the capture.
+47. Round-6 preview, lap 2 at 5:04, T8 looking toward 8a / the back straight: no marshal post in view. Owner: "I can't
+    remember but I think there is a corner station around here for T8 that might be missing" (owner_46_T8_station.png).
+    Onboard t=80 (T8) shows none beside the track; t=82 (8a approach) shows a small white hut on the far left bank top
+    toward T9 (the inventory has no station row between s 2157 and s 3511).
+48. Round-6 preview, lap 2 at 5:43, off track on the outside of 8a looking BACK along the bank: the black tyre wall and the
+    grey concrete wall overlap side by side for a stretch, the tyre wall ends abruptly, and the concrete wall's end
+    reaches past it with the black stacks in front; the catch fence runs behind both. Owner: "there is some weirdness with
+    how this tire barrier and concrete barrier are transitioning" (owner_47_T8a_tyre_concrete_transition.png). Config: 'T8a
+    to T9, left (the bank)' tyres and 'T9, left (the bank)' concrete + 3 m fence were measured as separate runs.
+49. Round-6 preview, lap 2 at 6:44, back straight approaching the 9a chicane: no markers on the verge, no station. Owner:
+    "I think there is also a missing corner station here at T9A, and missing brake markers before the chicane"
+    (owner_48_9a_approach.png). Onboard t=96 / t=98: single ORANGE cones standing on the grass verge on the LEFT before
+    the chicane (the inventory's 'single orange cone on the grass (marker)' rows at s 2947 and 3018, both still MISSING);
+    no boards. No hut visible in those frames; to be checked on the captures and t098-t104.

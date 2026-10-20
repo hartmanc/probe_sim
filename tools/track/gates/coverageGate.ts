@@ -91,7 +91,7 @@ export function sceneryObjects(t: TrackLike, sc: SceneryLike & Record<string, an
     out.push({ kind: 'kerb', side: st.side > 0 ? 'left' : 'right', pts, src: st.src ?? '', label: `kerb ${st.s0}-${st.s1}` });
   }
   for (const m of (sc.landmarks ?? []) as { kind: string; text?: string; x: number; y: number; src?: string; h?: number }[]) {
-    const kind = m.kind === 'marshal' ? 'station' : m.kind === 'mast' || m.kind === 'light' ? 'mast' : m.kind === 'tyres' ? 'tyre_stack' : null;
+    const kind = m.kind === 'marshal' ? 'station' : m.kind === 'mast' || m.kind === 'light' ? 'mast' : m.kind === 'tyres' || m.kind === 'block' ? 'tyre_stack' : null;
     if (!kind) continue;
     bySide(kind, project([[m.x, m.y]], 200), m.src ?? '', `${m.kind} '${m.text ?? ''}'`, m.h);
   }

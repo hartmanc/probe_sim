@@ -121,5 +121,7 @@ describe('scenery gates: exposed wall ends (round 7, owner notes 39 / 41)', () =
     const tapered = exposedEnds(T, { barriers: [{ kind: 'concrete', pts: [[30, -10, 0], [42, -6, 0], [120, -6, 0]], src: 'taper' }] });
     expect(tapered.exposed).toHaveLength(0);
     expect(exposedEnds(T, { barriers: [wall(40, 120, -20, 'far')] }).exposed).toHaveLength(0);
+    // a wall leaving the edge at a right angle (across a runoff) faces across the lap, not along it
+    expect(exposedEnds(T, { barriers: [{ kind: 'concrete', pts: [[60, -6, 0], [60, -30, 0]], src: 'across' }] }).exposed).toHaveLength(0);
   });
 });

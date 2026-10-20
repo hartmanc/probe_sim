@@ -151,7 +151,7 @@
 {"t":56,"side":"right","kind":"mast","attrs":{"type":"light masts","h_m":15,"h_method":"unmeasured"},"confidence":0.8}
 {"t":56,"side":"right","kind":"runoff","attrs":{"type":"paved then grass"},"confidence":0.7}
 {"t":56,"side":"right","kind":"paint","attrs":{"type":"white edge line"},"confidence":0.9}
-{"t":58,"side":"left","kind":"wall","attrs":{"type":"black wall section then light grey concrete wall","h_m":1.1,"h_method":"jersey-ref"},"confidence":0.9,"note":"left of the Carousel exit, 2-6 m"}
+{"t":58,"side":"left","kind":"wall","attrs":{"type":"black wall section then light grey concrete wall","h_m":1.1,"h_method":"jersey-ref","ahead_m":33,"correction":{"round":"scenery round 7 (22 Oct 2026)","was":{"ahead_m":null},"why":"frame t058 (owner note 41): the black cushion section stands first, from s ~1684 (7.8 m beyond the left edge, angling in; c20_s3410 / s3465 dark band, declared as a tyre run), and the light grey concrete wall begins where it meets the edge, s ~1720, ~33 m ahead of the car; t056 shows no wall"}},"confidence":0.9,"note":"left of the Carousel exit, 2-6 m"}
 {"t":58,"side":"left","kind":"paint","attrs":{"type":"grey/white painted blocks on the left edge (flat)"},"confidence":0.6}
 {"t":58,"side":"right","kind":"tyre_stack","attrs":{"type":"black tyre stack","h_m":0.8,"h_method":"tyre-ref"},"confidence":0.8,"note":"right, 20 m out"}
 {"t":58,"side":"right","kind":"mast","attrs":{"type":"light masts","h_m":15,"h_method":"unmeasured"},"confidence":0.8}
@@ -171,7 +171,7 @@
 {"t":64,"side":"right","kind":"paint","attrs":{"type":"yellow centre line, white edge line"},"confidence":0.8}
 {"t":66,"side":"left","kind":"wall","attrs":{"type":"light blue-grey concrete wall","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.95,"note":"continuous"}
 {"t":66,"side":"right","kind":"runoff","attrs":{"type":"grass strip, then the Chute pavement"},"confidence":0.8}
-{"t":66,"side":"right","kind":"wall","attrs":{"type":"light blue concrete wall beyond the Chute","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.6,"note":"far right"}
+{"t":66,"side":"right","kind":"wall","attrs":{"type":"light blue concrete wall beyond the Chute","h_m":1.0,"h_method":"jersey-ref","ahead_m":125,"correction":{"round":"scenery round 7 (22 Oct 2026)","was":{"ahead_m":null},"why":"frame t066 (owner note 36): the low light-blue wall stands far right ACROSS the drag strip continuation, 30 m or more from the T7 road; on c20_s3685 / c20_s3740 the measured wall at the strip's far side begins at s ~2081 (30 m right of the centre), ~125 m ahead of the car; nothing stands at the strip's near edge (t062 / t064 grass)"}},"confidence":0.6,"note":"far right"}
 {"t":66,"side":"right","kind":"mast","attrs":{"type":"light masts","h_m":15,"h_method":"unmeasured"},"confidence":0.8}
 {"t":68,"side":"left","kind":"wall","attrs":{"type":"light blue-grey concrete wall","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.95,"note":"continuous to T7"}
 {"t":68,"side":"ahead","kind":"stand","attrs":{"type":"concrete terraces on the T7a hill","ahead_m":240,"correction":{"round":"scenery round 5 (21 Oct 2026)","was":{"side":"right","ahead_m":null},"why":"frame t068: the T7a terraces are far ahead (the note says far right): they stand on the outside of the T7a exit, on the left of the track there (OSM 1414701937, s ~2261-2291)"}},"confidence":0.8,"note":"far right"}

@@ -190,10 +190,10 @@ Interpolation between anchors: profile (profile: shared out by a curvature speed
 | 1626 | 0:56.0 | right | runoff | paved then grass |  | 0.7 | onboard:RAZip6S84CM@56.0 |  |
 | 1626 | 0:56.0 | right | tyre_stack | single black tyre stacks on the runoff | 0.8 m (tyre-ref) | 0.8 | onboard:RAZip6S84CM@56.0 | 2 stacks, right of the Carousel exit |
 | 1687 | 0:58.0 | left | paint | grey/white painted blocks on the left edge (flat) |  | 0.6 | onboard:RAZip6S84CM@58.0 |  |
-| 1687 | 0:58.0 | left | wall | black wall section then light grey concrete wall | 1.1 m (jersey-ref) | 0.9 | onboard:RAZip6S84CM@58.0 | left of the Carousel exit, 2-6 m |
 | 1687 | 0:58.0 | right | mast | light masts | 15 m (unmeasured) | 0.8 | onboard:RAZip6S84CM@58.0 |  |
 | 1687 | 0:58.0 | right | paint | yellow centre line of the drag strip / NASCAR course |  | 0.7 | onboard:RAZip6S84CM@58.0 |  |
 | 1687 | 0:58.0 | right | tyre_stack | black tyre stack | 0.8 m (tyre-ref) | 0.8 | onboard:RAZip6S84CM@58.0 | right, 20 m out |
+| 1720 | 0:58.0 | left | wall | black wall section then light grey concrete wall | 1.1 m (jersey-ref) | 0.9 | onboard:RAZip6S84CM@58.0 | left of the Carousel exit, 2-6 m |
 | 1742 | 1:00.0 | left | wall | light blue-grey concrete wall | 1.0 m (jersey-ref) | 0.95 | onboard:RAZip6S84CM@60.0 | T6-T7 straight, 3-8 m left, continuous |
 | 1742 | 1:00.0 | right | kerb | red/white, low, flat concrete |  | 0.95 | onboard:RAZip6S84CM@60.0 | Carousel exit kerb, right |
 | 1742 | 1:00.0 | right | mast | light masts with tyre stacks at the base | 15 m (unmeasured) | 0.8 | onboard:RAZip6S84CM@60.0 |  |
@@ -210,9 +210,9 @@ Interpolation between anchors: profile (profile: shared out by a curvature speed
 | 1956 | 1:06.0 | left | wall | light blue-grey concrete wall | 1.0 m (jersey-ref) | 0.95 | onboard:RAZip6S84CM@66.0 | continuous |
 | 1956 | 1:06.0 | right | mast | light masts | 15 m (unmeasured) | 0.8 | onboard:RAZip6S84CM@66.0 |  |
 | 1956 | 1:06.0 | right | runoff | grass strip, then the Chute pavement |  | 0.8 | onboard:RAZip6S84CM@66.0 |  |
-| 1956 | 1:06.0 | right | wall | light blue concrete wall beyond the Chute | 1.0 m (jersey-ref) | 0.6 | onboard:RAZip6S84CM@66.0 | far right |
 | 2033 | 1:08.0 | left | wall | light blue-grey concrete wall | 1.0 m (jersey-ref) | 0.95 | onboard:RAZip6S84CM@68.0 | continuous to T7 |
 | 2033 | 1:08.0 | right | runoff | grass then pavement |  | 0.8 | onboard:RAZip6S84CM@68.0 |  |
+| 2080 | 1:06.0 | right | wall | light blue concrete wall beyond the Chute | 1.0 m (jersey-ref) | 0.6 | onboard:RAZip6S84CM@66.0 | far right |
 | 2100 |  | left | tyre_wall | tyre walls left on the T7 approach |  | 0.6 | streetview:gd1SNdksCq5QZtwlsrzR7g@0 |  |
 | 2112 | 1:10.0 | left | boards | large Toyota ad boards on posts above the wall | 2.5 m (jersey-ref) | 0.95 | onboard:RAZip6S84CM@70.0 | T7 approach |
 | 2112 | 1:10.0 | left | wall | light blue-grey concrete wall | 1.0 m (jersey-ref) | 0.95 | onboard:RAZip6S84CM@70.0 |  |
