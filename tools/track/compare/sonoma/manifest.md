@@ -406,8 +406,8 @@ mouth; 0:14 the shade roof on the T2 hilltop. Corrections (43 rows):
 
 | kind | side | s (m) | what | source | outcome |
 |---|---|---|---|---|---|
-| building | right | 3258.9 | tan buildings beyond the fence (infield) | onboard:RAZip6S84CM@110.0 | assigned: buildings round |
-| building | right | 3910.0 | two-storey control tower building beyond the drag strip | streetview:QduY6QTXmw4JDevQVE_b-g@338 | assigned: buildings round |
+| building | right | 3258.9 | tan buildings beyond the fence (infield) | onboard:RAZip6S84CM@110.0 | round 6: background (the T12 building, structure kit, 190 m), row corrected to ahead |
+| building | right | 3910.0 | two-storey control tower building beyond the drag strip | streetview:QduY6QTXmw4JDevQVE_b-g@338 | round 6: not standing in 2026 (onboard, captures, lidar), row corrected to ahead |
 
 Also for the buildings round (not gate markers, kind stand / building already covered by an OSM block): the main
 grandstand at the line (stand rows 0:00, 2:14, 2:16, Street View 4050; OSM 262082790, still one 9.3 m block), the

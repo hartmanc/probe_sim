@@ -87,6 +87,11 @@
    "s": 3228.7
   },
   {
+   "name": "T10-T11 Jersey start",
+   "t": 115.0,
+   "s": 3468.0
+  },
+  {
    "name": "T11",
    "t": 122.5,
    "s": 3676.7
@@ -237,20 +242,30 @@
    "name": "T10",
    "t": 109.0,
    "s": 3228.7,
-   "loo_pred_s": 3244.0,
-   "loo_residual_m": -15.3,
-   "loo_residual_linear_m": -66.4,
+   "loo_pred_s": 3247.4,
+   "loo_residual_m": -18.7,
+   "loo_residual_linear_m": -68.2,
    "v_in": 19.4,
-   "v_out": 33.2
+   "v_out": 39.9
+  },
+  {
+   "name": "T10-T11 Jersey start",
+   "t": 115.0,
+   "s": 3468.0,
+   "loo_pred_s": 3446.2,
+   "loo_residual_m": 21.8,
+   "loo_residual_linear_m": 40.2,
+   "v_in": 39.9,
+   "v_out": 27.8
   },
   {
    "name": "T11",
    "t": 122.5,
    "s": 3676.7,
-   "loo_pred_s": 3677.3,
-   "loo_residual_m": -0.6,
-   "loo_residual_linear_m": 47.3,
-   "v_in": 33.2,
+   "loo_pred_s": 3681.3,
+   "loo_residual_m": -4.6,
+   "loo_residual_linear_m": 11.6,
+   "v_in": 27.8,
    "v_out": 25.2
   },
   {
@@ -544,37 +559,37 @@
   {
    "t": 110,
    "frame": "t110.jpg",
-   "s": 3258.9
+   "s": 3261.5
   },
   {
    "t": 112,
    "frame": "t112.jpg",
-   "s": 3326.4
+   "s": 3335.2
   },
   {
    "t": 114,
    "frame": "t114.jpg",
-   "s": 3403.6
+   "s": 3420.6
   },
   {
    "t": 116,
    "frame": "t116.jpg",
-   "s": 3491.5
+   "s": 3511.2
   },
   {
    "t": 118,
    "frame": "t118.jpg",
-   "s": 3577.4
+   "s": 3587.7
   },
   {
    "t": 120,
    "frame": "t120.jpg",
-   "s": 3634.9
+   "s": 3638.3
   },
   {
    "t": 122,
    "frame": "t122.jpg",
-   "s": 3669.3
+   "s": 3669.8
   },
   {
    "t": 124,
@@ -4684,6 +4699,27 @@
    "scope": "lap"
   },
   {
+   "side": "ahead",
+   "kind": "stand",
+   "attrs": {
+    "type": "large grandstand with suites (T10/T11 infield side)",
+    "correction": {
+     "round": "scenery round 6 (21 Oct 2026)",
+     "was": {
+      "side": "right"
+     },
+     "why": "frames t096 / t102 / t104: the grandstand with the suites deck and the green-glass tower is the MAIN grandstand at the line (structure kit), seen across the infield 150-400 m away (t102: green tower, suites deck, hills of the front straight behind); the 2026 captures show no grandstand in the T10/T11 infield (c20_s0715..s1155: paved lot, a 21 x 20 m building, trucks). Background: kept as an ahead row without a distance"
+    }
+   },
+   "confidence": 0.8,
+   "t": 96,
+   "s": 2946.9,
+   "source": "onboard:RAZip6S84CM@96.0",
+   "frame": "t096.jpg",
+   "scope": "lap",
+   "note": "far ahead-right"
+  },
+  {
    "side": "left",
    "kind": "cone_line",
    "attrs": {
@@ -4741,20 +4777,6 @@
    "source": "onboard:RAZip6S84CM@96.0",
    "frame": "t096.jpg",
    "scope": "lap"
-  },
-  {
-   "side": "right",
-   "kind": "stand",
-   "attrs": {
-    "type": "large grandstand with suites (T10/T11 infield side)"
-   },
-   "confidence": 0.8,
-   "t": 96,
-   "s": 2946.9,
-   "source": "onboard:RAZip6S84CM@96.0",
-   "frame": "t096.jpg",
-   "scope": "lap",
-   "note": "far ahead-right"
   },
   {
    "side": "left",
@@ -4905,6 +4927,26 @@
    "scope": "lap"
   },
   {
+   "side": "ahead",
+   "kind": "stand",
+   "attrs": {
+    "type": "large grandstand with suites deck",
+    "correction": {
+     "round": "scenery round 6 (21 Oct 2026)",
+     "was": {
+      "side": "right"
+     },
+     "why": "frames t096 / t102 / t104: the grandstand with the suites deck and the green-glass tower is the MAIN grandstand at the line (structure kit), seen across the infield 150-400 m away (t102: green tower, suites deck, hills of the front straight behind); the 2026 captures show no grandstand in the T10/T11 infield (c20_s0715..s1155: paved lot, a 21 x 20 m building, trucks). Background: kept as an ahead row without a distance"
+    }
+   },
+   "confidence": 0.85,
+   "t": 102,
+   "s": 3089.3,
+   "source": "onboard:RAZip6S84CM@102.0",
+   "frame": "t102.jpg",
+   "scope": "lap"
+  },
+  {
    "side": "left",
    "kind": "boards",
    "attrs": {
@@ -4951,19 +4993,6 @@
   },
   {
    "side": "right",
-   "kind": "stand",
-   "attrs": {
-    "type": "large grandstand with suites deck"
-   },
-   "confidence": 0.85,
-   "t": 102,
-   "s": 3089.3,
-   "source": "onboard:RAZip6S84CM@102.0",
-   "frame": "t102.jpg",
-   "scope": "lap"
-  },
-  {
-   "side": "right",
    "kind": "tyre_wall",
    "attrs": {
     "type": "black covered tyre barrier",
@@ -4977,6 +5006,26 @@
    "frame": "t102.jpg",
    "scope": "lap",
    "note": "15-25 m right"
+  },
+  {
+   "side": "ahead",
+   "kind": "stand",
+   "attrs": {
+    "type": "grandstand with suites deck behind the fence",
+    "correction": {
+     "round": "scenery round 6 (21 Oct 2026)",
+     "was": {
+      "side": "right"
+     },
+     "why": "frames t096 / t102 / t104: the grandstand with the suites deck and the green-glass tower is the MAIN grandstand at the line (structure kit), seen across the infield 150-400 m away (t102: green tower, suites deck, hills of the front straight behind); the 2026 captures show no grandstand in the T10/T11 infield (c20_s0715..s1155: paved lot, a 21 x 20 m building, trucks). Background: kept as an ahead row without a distance"
+    }
+   },
+   "confidence": 0.85,
+   "t": 104,
+   "s": 3118.6,
+   "source": "onboard:RAZip6S84CM@104.0",
+   "frame": "t104.jpg",
+   "scope": "lap"
   },
   {
    "side": "left",
@@ -5034,19 +5083,6 @@
     "h_method": "fence-post-ref"
    },
    "confidence": 0.9,
-   "t": 104,
-   "s": 3118.6,
-   "source": "onboard:RAZip6S84CM@104.0",
-   "frame": "t104.jpg",
-   "scope": "lap"
-  },
-  {
-   "side": "right",
-   "kind": "stand",
-   "attrs": {
-    "type": "grandstand with suites deck behind the fence"
-   },
-   "confidence": 0.85,
    "t": 104,
    "s": 3118.6,
    "source": "onboard:RAZip6S84CM@104.0",
@@ -5258,6 +5294,26 @@
    "note": "5-10 m right"
   },
   {
+   "side": "ahead",
+   "kind": "building",
+   "attrs": {
+    "type": "tan buildings beyond the fence (infield)",
+    "correction": {
+     "round": "scenery round 6 (21 Oct 2026)",
+     "was": {
+      "side": "right"
+     },
+     "why": "frame t110 (s ~3262): the tan two-storey building with window bands at the frame's right edge, in front of the green hills of the front straight, is the T12 two-storey building (structure kit, OSM 1019836595) 190 m away at ~55 deg right, with the tan pit garages beyond (240-320 m); the 2026 captures show no tan building within 80 m right of s 3230-3300 (the 21 x 20 m infield building is at s 3296-3307, grey roof). Background: kept as an ahead row without a distance"
+    }
+   },
+   "confidence": 0.6,
+   "t": 110,
+   "s": 3261.5,
+   "source": "onboard:RAZip6S84CM@110.0",
+   "frame": "t110.jpg",
+   "scope": "lap"
+  },
+  {
    "side": "left",
    "kind": "boards",
    "attrs": {
@@ -5265,7 +5321,7 @@
    },
    "confidence": 0.95,
    "t": 110,
-   "s": 3258.9,
+   "s": 3261.5,
    "source": "onboard:RAZip6S84CM@110.0",
    "frame": "t110.jpg",
    "scope": "lap"
@@ -5280,24 +5336,11 @@
    },
    "confidence": 0.9,
    "t": 110,
-   "s": 3258.9,
+   "s": 3261.5,
    "source": "onboard:RAZip6S84CM@110.0",
    "frame": "t110.jpg",
    "scope": "lap",
    "note": "T10 exit, 6-12 m left"
-  },
-  {
-   "side": "right",
-   "kind": "building",
-   "attrs": {
-    "type": "tan buildings beyond the fence (infield)"
-   },
-   "confidence": 0.6,
-   "t": 110,
-   "s": 3258.9,
-   "source": "onboard:RAZip6S84CM@110.0",
-   "frame": "t110.jpg",
-   "scope": "lap"
   },
   {
    "side": "right",
@@ -5309,7 +5352,7 @@
    },
    "confidence": 0.9,
    "t": 110,
-   "s": 3258.9,
+   "s": 3261.5,
    "source": "onboard:RAZip6S84CM@110.0",
    "frame": "t110.jpg",
    "scope": "lap"
@@ -5324,7 +5367,7 @@
    },
    "confidence": 0.95,
    "t": 110,
-   "s": 3258.9,
+   "s": 3261.5,
    "source": "onboard:RAZip6S84CM@110.0",
    "frame": "t110.jpg",
    "scope": "lap",
@@ -5340,7 +5383,7 @@
    },
    "confidence": 0.9,
    "t": 110,
-   "s": 3258.9,
+   "s": 3261.5,
    "source": "onboard:RAZip6S84CM@110.0",
    "frame": "t110.jpg",
    "scope": "lap"
@@ -5355,7 +5398,7 @@
    },
    "confidence": 0.7,
    "t": 112,
-   "s": 3326.4,
+   "s": 3335.2,
    "source": "onboard:RAZip6S84CM@112.0",
    "frame": "t112.jpg",
    "scope": "lap",
@@ -5371,7 +5414,7 @@
    },
    "confidence": 0.9,
    "t": 112,
-   "s": 3326.4,
+   "s": 3335.2,
    "source": "onboard:RAZip6S84CM@112.0",
    "frame": "t112.jpg",
    "scope": "lap",
@@ -5385,7 +5428,7 @@
    },
    "confidence": 0.6,
    "t": 112,
-   "s": 3326.4,
+   "s": 3335.2,
    "source": "onboard:RAZip6S84CM@112.0",
    "frame": "t112.jpg",
    "scope": "lap"
@@ -5400,7 +5443,7 @@
    },
    "confidence": 0.9,
    "t": 112,
-   "s": 3326.4,
+   "s": 3335.2,
    "source": "onboard:RAZip6S84CM@112.0",
    "frame": "t112.jpg",
    "scope": "lap"
@@ -5415,7 +5458,7 @@
    },
    "confidence": 0.85,
    "t": 112,
-   "s": 3326.4,
+   "s": 3335.2,
    "source": "onboard:RAZip6S84CM@112.0",
    "frame": "t112.jpg",
    "scope": "lap"
@@ -5430,7 +5473,7 @@
    },
    "confidence": 0.9,
    "t": 112,
-   "s": 3326.4,
+   "s": 3335.2,
    "source": "onboard:RAZip6S84CM@112.0",
    "frame": "t112.jpg",
    "scope": "lap"
@@ -5445,7 +5488,7 @@
    },
    "confidence": 0.8,
    "t": 114,
-   "s": 3403.6,
+   "s": 3420.6,
    "source": "onboard:RAZip6S84CM@114.0",
    "frame": "t114.jpg",
    "scope": "lap"
@@ -5460,7 +5503,7 @@
    },
    "confidence": 0.9,
    "t": 114,
-   "s": 3403.6,
+   "s": 3420.6,
    "source": "onboard:RAZip6S84CM@114.0",
    "frame": "t114.jpg",
    "scope": "lap",
@@ -5476,7 +5519,7 @@
    },
    "confidence": 0.95,
    "t": 114,
-   "s": 3403.6,
+   "s": 3420.6,
    "source": "onboard:RAZip6S84CM@114.0",
    "frame": "t114.jpg",
    "scope": "lap",
@@ -5492,7 +5535,7 @@
    },
    "confidence": 0.95,
    "t": 114,
-   "s": 3403.6,
+   "s": 3420.6,
    "source": "onboard:RAZip6S84CM@114.0",
    "frame": "t114.jpg",
    "scope": "lap",
@@ -5508,7 +5551,7 @@
    },
    "confidence": 0.85,
    "t": 114,
-   "s": 3403.6,
+   "s": 3420.6,
    "source": "onboard:RAZip6S84CM@114.0",
    "frame": "t114.jpg",
    "scope": "lap"
@@ -5521,7 +5564,7 @@
    },
    "confidence": 0.6,
    "t": 116,
-   "s": 3491.5,
+   "s": 3511.2,
    "source": "onboard:RAZip6S84CM@116.0",
    "frame": "t116.jpg",
    "scope": "lap"
@@ -5536,7 +5579,7 @@
    },
    "confidence": 0.9,
    "t": 116,
-   "s": 3491.5,
+   "s": 3511.2,
    "source": "onboard:RAZip6S84CM@116.0",
    "frame": "t116.jpg",
    "scope": "lap",
@@ -5552,7 +5595,7 @@
    },
    "confidence": 0.8,
    "t": 116,
-   "s": 3491.5,
+   "s": 3511.2,
    "source": "onboard:RAZip6S84CM@116.0",
    "frame": "t116.jpg",
    "scope": "lap",
@@ -5566,7 +5609,7 @@
    },
    "confidence": 0.9,
    "t": 116,
-   "s": 3491.5,
+   "s": 3511.2,
    "source": "onboard:RAZip6S84CM@116.0",
    "frame": "t116.jpg",
    "scope": "lap"
@@ -5581,7 +5624,7 @@
    },
    "confidence": 0.9,
    "t": 118,
-   "s": 3577.4,
+   "s": 3587.7,
    "source": "onboard:RAZip6S84CM@118.0",
    "frame": "t118.jpg",
    "scope": "lap",
@@ -5595,7 +5638,7 @@
    },
    "confidence": 0.7,
    "t": 118,
-   "s": 3577.4,
+   "s": 3587.7,
    "source": "onboard:RAZip6S84CM@118.0",
    "frame": "t118.jpg",
    "scope": "lap"
@@ -5610,7 +5653,7 @@
    },
    "confidence": 0.9,
    "t": 118,
-   "s": 3577.4,
+   "s": 3587.7,
    "source": "onboard:RAZip6S84CM@118.0",
    "frame": "t118.jpg",
    "scope": "lap"
@@ -5625,7 +5668,7 @@
    },
    "confidence": 0.85,
    "t": 118,
-   "s": 3577.4,
+   "s": 3587.7,
    "source": "onboard:RAZip6S84CM@118.0",
    "frame": "t118.jpg",
    "scope": "lap"
@@ -5638,7 +5681,7 @@
    },
    "confidence": 0.9,
    "t": 118,
-   "s": 3577.4,
+   "s": 3587.7,
    "source": "onboard:RAZip6S84CM@118.0",
    "frame": "t118.jpg",
    "scope": "lap"
@@ -5669,7 +5712,7 @@
    },
    "confidence": 0.9,
    "t": 120,
-   "s": 3634.9,
+   "s": 3638.3,
    "source": "onboard:RAZip6S84CM@120.0",
    "frame": "t120.jpg",
    "scope": "lap"
@@ -5684,7 +5727,7 @@
    },
    "confidence": 0.9,
    "t": 120,
-   "s": 3634.9,
+   "s": 3638.3,
    "source": "onboard:RAZip6S84CM@120.0",
    "frame": "t120.jpg",
    "scope": "lap"
@@ -5699,7 +5742,7 @@
    },
    "confidence": 0.95,
    "t": 120,
-   "s": 3634.9,
+   "s": 3638.3,
    "source": "onboard:RAZip6S84CM@120.0",
    "frame": "t120.jpg",
    "scope": "lap",
@@ -5715,7 +5758,7 @@
    },
    "confidence": 0.85,
    "t": 120,
-   "s": 3634.9,
+   "s": 3638.3,
    "source": "onboard:RAZip6S84CM@120.0",
    "frame": "t120.jpg",
    "scope": "lap",
@@ -5729,7 +5772,7 @@
    },
    "confidence": 0.9,
    "t": 120,
-   "s": 3634.9,
+   "s": 3638.3,
    "source": "onboard:RAZip6S84CM@120.0",
    "frame": "t120.jpg",
    "scope": "lap"
@@ -5744,7 +5787,7 @@
    },
    "confidence": 0.8,
    "t": 120,
-   "s": 3634.9,
+   "s": 3638.3,
    "source": "onboard:RAZip6S84CM@120.0",
    "frame": "t120.jpg",
    "scope": "lap",
@@ -5806,7 +5849,7 @@
    },
    "confidence": 0.8,
    "t": 122,
-   "s": 3669.3,
+   "s": 3669.8,
    "source": "onboard:RAZip6S84CM@122.0",
    "frame": "t122.jpg",
    "scope": "lap"
@@ -5821,7 +5864,7 @@
    },
    "confidence": 0.95,
    "t": 122,
-   "s": 3669.3,
+   "s": 3669.8,
    "source": "onboard:RAZip6S84CM@122.0",
    "frame": "t122.jpg",
    "scope": "lap"
@@ -5836,7 +5879,7 @@
    },
    "confidence": 0.7,
    "t": 122,
-   "s": 3669.3,
+   "s": 3669.8,
    "source": "onboard:RAZip6S84CM@122.0",
    "frame": "t122.jpg",
    "scope": "lap"
@@ -5851,7 +5894,7 @@
    },
    "confidence": 0.95,
    "t": 122,
-   "s": 3669.3,
+   "s": 3669.8,
    "source": "onboard:RAZip6S84CM@122.0",
    "frame": "t122.jpg",
    "scope": "lap"
@@ -5866,7 +5909,7 @@
    },
    "confidence": 0.95,
    "t": 122,
-   "s": 3669.3,
+   "s": 3669.8,
    "source": "onboard:RAZip6S84CM@122.0",
    "frame": "t122.jpg",
    "scope": "lap",
@@ -5882,7 +5925,7 @@
    },
    "confidence": 0.9,
    "t": 122,
-   "s": 3669.3,
+   "s": 3669.8,
    "source": "onboard:RAZip6S84CM@122.0",
    "frame": "t122.jpg",
    "scope": "lap",
@@ -6186,12 +6229,19 @@
    "scope": "lap"
   },
   {
-   "side": "left",
+   "side": "ahead",
    "kind": "building",
    "attrs": {
-    "type": "two-storey suites building beyond the pit road"
+    "type": "two-storey control tower building beyond the drag strip",
+    "correction": {
+     "round": "scenery round 6 (21 Oct 2026)",
+     "was": {
+      "side": "right"
+     },
+     "why": "Street View is July 2011. The March 2026 onboard 2:08-2:12 (frames t128-t132) shows the boarded drag-strip wall, a flag pole and light masts beyond the drag strip on the right and no two-storey building; the 2026 captures c20_s1540 / c20_s1595 show the drag-strip start box and parking there; the 2022-24 lidar has no structure over 4 m within 250 m right of s 3850-4100. The building no longer stands (keep Street View only where the recent video shows the same structure); kept as an ahead row without a distance, never deleted"
+    }
    },
-   "confidence": 0.6,
+   "confidence": 0.5,
    "t": null,
    "s": 3910.0,
    "source": "streetview:QduY6QTXmw4JDevQVE_b-g@338",
@@ -6199,12 +6249,12 @@
    "scope": "lap"
   },
   {
-   "side": "right",
+   "side": "left",
    "kind": "building",
    "attrs": {
-    "type": "two-storey control tower building beyond the drag strip"
+    "type": "two-storey suites building beyond the pit road"
    },
-   "confidence": 0.5,
+   "confidence": 0.6,
    "t": null,
    "s": 3910.0,
    "source": "streetview:QduY6QTXmw4JDevQVE_b-g@338",

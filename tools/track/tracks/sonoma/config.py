@@ -664,6 +664,7 @@ CONFIG = dict(
         building_evidence=[
             dict(contains=(38.1617509, -122.456482), src='c20_s1870: the red-roofed metal pit-exit building (onboard 0:04 and 24of8fjjAug 5:00 red-roofed pit-exit building)'),
             dict(contains=(38.1603944, -122.4579624), src='onboard 0:14 (frame t014): open shade roof on posts at the top of the T2 terraces (inventory row added in round 5)'),
+            dict(contains=(38.1615502, -122.4535441), src='c20_s0935: the flat-roofed 21 x 22 m infield building (grey roof, vehicles at its east side) 42-62 m right of s 3290-3320; lidar 3.2-3.5 m; onboard 1:52 (frame t112): a small grey building with a window beyond the fence at the right edge (round 6)'),
             dict(contains=(38.1673048, -122.45762), drop=True, src='OSM 3.2 m outline 273 m left of s 2698: outside the 2026 z20 captures and not in the onboard'),
             dict(contains=(38.1678842, -122.4631081), drop=True, src='OSM 4.3 m outline 151 m left of s 2256 (above the T7a hill): outside the 2026 z20 captures and not in the onboard'),
             dict(contains=(38.1599354, -122.4604477), drop=True, src='lidar blob (7.5 m, 91 m2) 164 m left of s 486, in the trees above the T2 terraces: outside the z20 captures; the onboard (0:14-0:18) shows trees there, no building'),

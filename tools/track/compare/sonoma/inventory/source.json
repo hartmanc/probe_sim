@@ -102,6 +102,12 @@
    "how": "apex kerb (right) alongside, 0.5 s steps 1:46.5-1:49.5"
   },
   {
+   "name": "T10-T11 Jersey start",
+   "t": 115.0,
+   "s": 3468.0,
+   "how": "the light-blue Jersey at the foot of the T10-T11 boarded wall begins where the tyre bundles end (s 3468: the round-5 measured bundle run 3395-3468, and on c20_s1100 the wall-foot line changes there, the pit-in dashed lane line starting just after); Chrome captures at 0.25 s (round 6): at 1:54.5 the tyre bundles are alongside and the Jersey begins ~10-15 m ahead, at 1:55.25 the Jersey runs from the frame's left edge, at 1:56.0 it is alongside: abeam at 1:55.0 (+-0.25 s). The impact block at s ~3600 is the Jersey's far end, not its nose (the round-5 note's 3586)"
+  },
+  {
    "name": "T11",
    "t": 122.5,
    "corner": "T11",
@@ -161,6 +167,14 @@
    "was": 8.7,
    "now": 9.0,
    "why": "within the timed bracket 0:08.5-0:09.0: the 0:08 frame puts the deck 30-40 m ahead, about 1 s at the 33 m/s the S/F fix gives; with 8.7 the 0:08 rows mapped 2 m short of the bridge; confirmed in Chrome: at 0:09.0 the deck is directly overhead"
+  },
+  {
+   "date": "2026-10-21",
+   "round": "scenery round 6",
+   "anchor": "T10-T11 Jersey start",
+   "was": null,
+   "now": 115.0,
+   "why": "T11-approach anchor: the 1:56 Jersey row mapped to s 3492 with no anchor between T10 (1:49) and T11 (2:02.5); round 5 read the impact block at s ~3586-3600 as the Jersey's nose and concluded the map ran ~90 m early; the Jersey starts at s 3468, so the 1:56 frame (Jersey alongside) is at s ~3500"
   }
  ]
 }

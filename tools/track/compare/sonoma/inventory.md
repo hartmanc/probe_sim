@@ -24,8 +24,9 @@ Interpolation between anchors: profile (profile: shared out by a curvature speed
 | T8a | 1:24.0 | 2497.4 | 2504.7 | -7.3 | -11.5 | 31.3 / 36.7 |
 | T9 | 1:28.0 | 2644.1 | 2634.8 | 9.3 | 12.8 | 36.7 / 32.5 |
 | T9a | 1:41.5 | 3083.1 | 3064.0 | 19.1 | 63.2 | 32.5 / 19.4 |
-| T10 | 1:49.0 | 3228.7 | 3244.0 | -15.3 | -66.4 | 19.4 / 33.2 |
-| T11 | 2:02.5 | 3676.7 | 3677.3 | -0.6 | 47.3 | 33.2 / 25.2 |
+| T10 | 1:49.0 | 3228.7 | 3247.4 | -18.7 | -68.2 | 19.4 / 39.9 |
+| T10-T11 Jersey start | 1:55.0 | 3468.0 | 3446.2 | 21.8 | 40.2 | 39.9 / 27.8 |
+| T11 | 2:02.5 | 3676.7 | 3681.3 | -4.6 | 11.6 | 27.8 / 25.2 |
 | T12 | 2:13.0 | 3941.1 | 3934.1 | 7.0 | -17.9 | 25.2 / 30.3 |
 | S/F lap 2 | 2:18.2 | 4098.8 | - | - | - | - |
 
@@ -287,11 +288,11 @@ Interpolation between anchors: profile (profile: shared out by a curvature speed
 | 2854 | 1:34.0 | right | runoff | grass, wide |  | 0.8 | onboard:RAZip6S84CM@94.0 |  |
 | 2854 | 1:34.0 | right | stand | grandstand far ahead-right (T11 area) |  | 0.6 | onboard:RAZip6S84CM@94.0 |  |
 | 2900 |  | left | fence | catch fence on the wall between the spectator walk and the track |  | 0.6 | streetview:Gas0S2x3OzWj_AinwcVtAg@170 |  |
+| 2947 | 1:36.0 | ahead | stand | large grandstand with suites (T10/T11 infield side) |  | 0.8 | onboard:RAZip6S84CM@96.0 | far ahead-right |
 | 2947 | 1:36.0 | left | cone_line | single orange cone on the grass (marker) | 0.5 m (cone-ref) | 0.7 | onboard:RAZip6S84CM@96.0 |  |
 | 2947 | 1:36.0 | left | fence | catch fence, curved-top posts | 3.5 m (fence-post-ref) | 0.9 | onboard:RAZip6S84CM@96.0 |  |
 | 2947 | 1:36.0 | left | wall | light concrete wall | 1.0 m (jersey-ref) | 0.9 | onboard:RAZip6S84CM@96.0 | 5-8 m left, end of the back straight |
 | 2947 | 1:36.0 | right | runoff | grass, wide |  | 0.8 | onboard:RAZip6S84CM@96.0 |  |
-| 2947 | 1:36.0 | right | stand | large grandstand with suites (T10/T11 infield side) |  | 0.8 | onboard:RAZip6S84CM@96.0 | far ahead-right |
 | 3018 | 1:38.0 | left | cone_line | single orange cone on the grass (marker) | 0.5 m (cone-ref) | 0.7 | onboard:RAZip6S84CM@98.0 |  |
 | 3018 | 1:38.0 | left | fence | catch fence, curved-top posts | 3.5 m (fence-post-ref) | 0.9 | onboard:RAZip6S84CM@98.0 |  |
 | 3018 | 1:38.0 | left | wall | light concrete wall | 1.0 m (jersey-ref) | 0.9 | onboard:RAZip6S84CM@98.0 |  |
@@ -302,16 +303,16 @@ Interpolation between anchors: profile (profile: shared out by a curvature speed
 | 3056 | 1:40.0 | left | wall | concrete wall with 'Sonoma Raceway' ad boards | 1.0 m (jersey-ref) | 0.85 | onboard:RAZip6S84CM@100.0 | 15-25 m left |
 | 3056 | 1:40.0 | right | kerb | red/white, low, flat concrete |  | 0.95 | onboard:RAZip6S84CM@100.0 | 9a right-hand apex kerb |
 | 3056 | 1:40.0 | right | tyre_stack | stack of 2 grey tyres on the apex | 0.5 m (tyre-ref) | 0.9 | onboard:RAZip6S84CM@100.0 |  |
+| 3089 | 1:42.0 | ahead | stand | large grandstand with suites deck |  | 0.85 | onboard:RAZip6S84CM@102.0 |  |
 | 3089 | 1:42.0 | left | boards | Toyota and other ad boards on the far wall |  | 0.8 | onboard:RAZip6S84CM@102.0 | far left |
 | 3089 | 1:42.0 | left | kerb | red/white, low, flat concrete |  | 0.95 | onboard:RAZip6S84CM@102.0 | 9a left-hand apex kerb |
 | 3089 | 1:42.0 | right | mast | light masts | 20 m (unmeasured) | 0.85 | onboard:RAZip6S84CM@102.0 |  |
-| 3089 | 1:42.0 | right | stand | large grandstand with suites deck |  | 0.85 | onboard:RAZip6S84CM@102.0 |  |
 | 3089 | 1:42.0 | right | tyre_wall | black covered tyre barrier | 1.0 m (jersey-ref) | 0.75 | onboard:RAZip6S84CM@102.0 | 15-25 m right |
+| 3119 | 1:44.0 | ahead | stand | grandstand with suites deck behind the fence |  | 0.85 | onboard:RAZip6S84CM@104.0 |  |
 | 3119 | 1:44.0 | left | kerb | red/white, low, flat concrete |  | 0.85 | onboard:RAZip6S84CM@104.0 | 9a exit kerb, left |
 | 3119 | 1:44.0 | left | tyre_stack | black tyre stack in front of the wall | 0.6 m (tyre-ref) | 0.8 | onboard:RAZip6S84CM@104.0 |  |
 | 3119 | 1:44.0 | left | wall | concrete wall with tall 'SONOMA RACEWAY' / Sunbelt board panels on top | 2.8 m (horizon-ratio) | 0.85 | onboard:RAZip6S84CM@104.0 | after 9a, 15-20 m left; owner note 13/14: walls at and after T10 much higher |
 | 3119 | 1:44.0 | right | fence | catch fence on the wall, curved-top posts, cables | 4.0 m (fence-post-ref) | 0.9 | onboard:RAZip6S84CM@104.0 |  |
-| 3119 | 1:44.0 | right | stand | grandstand with suites deck behind the fence |  | 0.85 | onboard:RAZip6S84CM@104.0 |  |
 | 3119 | 1:44.0 | right | wall | light concrete wall (SAFER-like) | 1.1 m (jersey-ref) | 0.9 | onboard:RAZip6S84CM@104.0 | 8-12 m right |
 | 3149 | 1:42.0 | right | wall | light concrete wall with catch fence | 1.0 m (jersey-ref) | 0.8 | onboard:RAZip6S84CM@102.0 | right, below the grandstand |
 | 3156 | 1:46.0 | left | boards | Sunbelt Rentals, Toyota boards on the wall |  | 0.95 | onboard:RAZip6S84CM@106.0 |  |
@@ -325,48 +326,48 @@ Interpolation between anchors: profile (profile: shared out by a curvature speed
 | 3203 | 1:48.0 | right | fence | catch fence, curved-top posts | 4.0 m (fence-post-ref) | 0.9 | onboard:RAZip6S84CM@108.0 |  |
 | 3203 | 1:48.0 | right | kerb | red/white, low, flat concrete |  | 0.95 | onboard:RAZip6S84CM@108.0 | T10 apex kerb |
 | 3203 | 1:48.0 | right | wall | light concrete wall | 1.1 m (jersey-ref) | 0.9 | onboard:RAZip6S84CM@108.0 | 5-10 m right |
-| 3259 | 1:50.0 | left | boards | Humboldt, Save Mart, zMAX boards |  | 0.95 | onboard:RAZip6S84CM@110.0 |  |
-| 3259 | 1:50.0 | left | wall | concrete wall topped by tall ad-board panels (Humboldt, Save Mart, zMAX) | 4.0 m (horizon-ratio) | 0.9 | onboard:RAZip6S84CM@110.0 | T10 exit, 6-12 m left |
-| 3259 | 1:50.0 | right | building | tan buildings beyond the fence (infield) |  | 0.6 | onboard:RAZip6S84CM@110.0 |  |
-| 3259 | 1:50.0 | right | fence | catch fence, curved-top posts | 4.0 m (fence-post-ref) | 0.9 | onboard:RAZip6S84CM@110.0 |  |
-| 3259 | 1:50.0 | right | kerb | red/white, low, flat concrete |  | 0.95 | onboard:RAZip6S84CM@110.0 | T10 apex/exit kerb right |
-| 3259 | 1:50.0 | right | wall | light concrete wall | 1.1 m (jersey-ref) | 0.9 | onboard:RAZip6S84CM@110.0 |  |
-| 3326 | 1:52.0 | left | kerb | red/white, low, flat concrete |  | 0.7 | onboard:RAZip6S84CM@112.0 | T10 exit outside kerb, left |
-| 3326 | 1:52.0 | left | wall | concrete wall topped by tall ad-board panels (zMAX, EchoPark) | 3.0 m (horizon-ratio) | 0.9 | onboard:RAZip6S84CM@112.0 | T10 exit toward T11 |
-| 3326 | 1:52.0 | right | building | infield buildings beyond the fence |  | 0.6 | onboard:RAZip6S84CM@112.0 |  |
-| 3326 | 1:52.0 | right | fence | catch fence, curved-top posts | 4.0 m (fence-post-ref) | 0.9 | onboard:RAZip6S84CM@112.0 |  |
-| 3326 | 1:52.0 | right | mast | light mast and flag pole | 20 m (unmeasured) | 0.85 | onboard:RAZip6S84CM@112.0 |  |
-| 3326 | 1:52.0 | right | wall | concrete wall | 1.1 m (jersey-ref) | 0.9 | onboard:RAZip6S84CM@112.0 |  |
-| 3404 | 1:54.0 | left | tyre_wall | tyre bundles along the foot of the tall wall | 0.6 m (tyre-ref) | 0.8 | onboard:RAZip6S84CM@114.0 |  |
-| 3404 | 1:54.0 | left | wall | tall wall with EchoPark board panels | 3.5 m (horizon-ratio) | 0.9 | onboard:RAZip6S84CM@114.0 | 5-10 m left |
-| 3404 | 1:54.0 | right | fence | catch fence on a concrete wall, curved-top posts | 4.0 m (fence-post-ref) | 0.95 | onboard:RAZip6S84CM@114.0 | behind the tyre wall |
-| 3404 | 1:54.0 | right | tyre_wall | black tyre stacks 4 high, continuous | 1.1 m (tyre-ref) | 0.95 | onboard:RAZip6S84CM@114.0 | 1-3 m right of the edge, T10-T11 straight |
-| 3404 | 1:54.0 | right | wall | concrete wall under the catch fence | 1.0 m (jersey-ref) | 0.85 | onboard:RAZip6S84CM@114.0 |  |
-| 3492 | 1:56.0 | left | station | marshal standing at a door in the tall wall |  | 0.6 | onboard:RAZip6S84CM@116.0 |  |
-| 3492 | 1:56.0 | left | wall | light blue concrete Jersey wall (pit-in separation) | 0.9 m (jersey-ref) | 0.9 | onboard:RAZip6S84CM@116.0 | 1-3 m left of the edge |
-| 3492 | 1:56.0 | left | wall | tall concrete wall with Las Vegas / O'Reilly boards on top (outside of the pit-in lane) | 5.2 m (door-ref) | 0.8 | onboard:RAZip6S84CM@116.0 | 5.0-5.6 m from the door in its face (this frame) and 5.2 m on Street View jrXpHaDfJT2APw6zcyBKRA (HEIGHTS.md examples 3, 4); owner note 18: tall concrete wall on the outside of the pit-in lane; a door and a marshal in its face |
-| 3492 | 1:56.0 | right | runoff | paved infield (T11a / NASCAR), painted lines |  | 0.9 | onboard:RAZip6S84CM@116.0 |  |
-| 3577 | 1:58.0 | left | cone_line | orange cones along the pit-in separation | 0.7 m (cone-ref) | 0.9 | onboard:RAZip6S84CM@118.0 | owner note 15/16 |
-| 3577 | 1:58.0 | left | paint | double white line at the pit-in split |  | 0.7 | onboard:RAZip6S84CM@118.0 |  |
-| 3577 | 1:58.0 | left | wall | light blue concrete Jersey wall (pit-in separation) | 0.9 m (jersey-ref) | 0.9 | onboard:RAZip6S84CM@118.0 |  |
-| 3577 | 1:58.0 | left | wall | tall concrete wall with Lucky / Save Mart / Pit Boss boards | 5.2 m (door-ref) | 0.85 | onboard:RAZip6S84CM@118.0 |  |
-| 3577 | 1:58.0 | right | runoff | paved infield |  | 0.9 | onboard:RAZip6S84CM@118.0 |  |
+| 3262 | 1:50.0 | ahead | building | tan buildings beyond the fence (infield) |  | 0.6 | onboard:RAZip6S84CM@110.0 |  |
+| 3262 | 1:50.0 | left | boards | Humboldt, Save Mart, zMAX boards |  | 0.95 | onboard:RAZip6S84CM@110.0 |  |
+| 3262 | 1:50.0 | left | wall | concrete wall topped by tall ad-board panels (Humboldt, Save Mart, zMAX) | 4.0 m (horizon-ratio) | 0.9 | onboard:RAZip6S84CM@110.0 | T10 exit, 6-12 m left |
+| 3262 | 1:50.0 | right | fence | catch fence, curved-top posts | 4.0 m (fence-post-ref) | 0.9 | onboard:RAZip6S84CM@110.0 |  |
+| 3262 | 1:50.0 | right | kerb | red/white, low, flat concrete |  | 0.95 | onboard:RAZip6S84CM@110.0 | T10 apex/exit kerb right |
+| 3262 | 1:50.0 | right | wall | light concrete wall | 1.1 m (jersey-ref) | 0.9 | onboard:RAZip6S84CM@110.0 |  |
+| 3335 | 1:52.0 | left | kerb | red/white, low, flat concrete |  | 0.7 | onboard:RAZip6S84CM@112.0 | T10 exit outside kerb, left |
+| 3335 | 1:52.0 | left | wall | concrete wall topped by tall ad-board panels (zMAX, EchoPark) | 3.0 m (horizon-ratio) | 0.9 | onboard:RAZip6S84CM@112.0 | T10 exit toward T11 |
+| 3335 | 1:52.0 | right | building | infield buildings beyond the fence |  | 0.6 | onboard:RAZip6S84CM@112.0 |  |
+| 3335 | 1:52.0 | right | fence | catch fence, curved-top posts | 4.0 m (fence-post-ref) | 0.9 | onboard:RAZip6S84CM@112.0 |  |
+| 3335 | 1:52.0 | right | mast | light mast and flag pole | 20 m (unmeasured) | 0.85 | onboard:RAZip6S84CM@112.0 |  |
+| 3335 | 1:52.0 | right | wall | concrete wall | 1.1 m (jersey-ref) | 0.9 | onboard:RAZip6S84CM@112.0 |  |
+| 3421 | 1:54.0 | left | tyre_wall | tyre bundles along the foot of the tall wall | 0.6 m (tyre-ref) | 0.8 | onboard:RAZip6S84CM@114.0 |  |
+| 3421 | 1:54.0 | left | wall | tall wall with EchoPark board panels | 3.5 m (horizon-ratio) | 0.9 | onboard:RAZip6S84CM@114.0 | 5-10 m left |
+| 3421 | 1:54.0 | right | fence | catch fence on a concrete wall, curved-top posts | 4.0 m (fence-post-ref) | 0.95 | onboard:RAZip6S84CM@114.0 | behind the tyre wall |
+| 3421 | 1:54.0 | right | tyre_wall | black tyre stacks 4 high, continuous | 1.1 m (tyre-ref) | 0.95 | onboard:RAZip6S84CM@114.0 | 1-3 m right of the edge, T10-T11 straight |
+| 3421 | 1:54.0 | right | wall | concrete wall under the catch fence | 1.0 m (jersey-ref) | 0.85 | onboard:RAZip6S84CM@114.0 |  |
+| 3511 | 1:56.0 | left | station | marshal standing at a door in the tall wall |  | 0.6 | onboard:RAZip6S84CM@116.0 |  |
+| 3511 | 1:56.0 | left | wall | light blue concrete Jersey wall (pit-in separation) | 0.9 m (jersey-ref) | 0.9 | onboard:RAZip6S84CM@116.0 | 1-3 m left of the edge |
+| 3511 | 1:56.0 | left | wall | tall concrete wall with Las Vegas / O'Reilly boards on top (outside of the pit-in lane) | 5.2 m (door-ref) | 0.8 | onboard:RAZip6S84CM@116.0 | 5.0-5.6 m from the door in its face (this frame) and 5.2 m on Street View jrXpHaDfJT2APw6zcyBKRA (HEIGHTS.md examples 3, 4); owner note 18: tall concrete wall on the outside of the pit-in lane; a door and a marshal in its face |
+| 3511 | 1:56.0 | right | runoff | paved infield (T11a / NASCAR), painted lines |  | 0.9 | onboard:RAZip6S84CM@116.0 |  |
+| 3588 | 1:58.0 | left | cone_line | orange cones along the pit-in separation | 0.7 m (cone-ref) | 0.9 | onboard:RAZip6S84CM@118.0 | owner note 15/16 |
+| 3588 | 1:58.0 | left | paint | double white line at the pit-in split |  | 0.7 | onboard:RAZip6S84CM@118.0 |  |
+| 3588 | 1:58.0 | left | wall | light blue concrete Jersey wall (pit-in separation) | 0.9 m (jersey-ref) | 0.9 | onboard:RAZip6S84CM@118.0 |  |
+| 3588 | 1:58.0 | left | wall | tall concrete wall with Lucky / Save Mart / Pit Boss boards | 5.2 m (door-ref) | 0.85 | onboard:RAZip6S84CM@118.0 |  |
+| 3588 | 1:58.0 | right | runoff | paved infield |  | 0.9 | onboard:RAZip6S84CM@118.0 |  |
 | 3600 |  | left | wall | tall wall between the pit-in lane and the paddock: concrete base and Sprint board panels | 5.2 m (horizon-ratio) | 0.8 | streetview:jrXpHaDfJT2APw6zcyBKRA@196 | HEIGHTS.md example 3: base row 459, top row 366, horizon 414.5 -> 2.5 x 93 / 44.5 = 5.2 m |
-| 3635 | 2:00.0 | ahead | fence | catch fence, curved-top posts on the T11 outside wall | 3.5 m (fence-post-ref) | 0.9 | onboard:RAZip6S84CM@120.0 |  |
-| 3635 | 2:00.0 | ahead | wall | light blue low wall round the T11 outside | 1.0 m (jersey-ref) | 0.9 | onboard:RAZip6S84CM@120.0 |  |
-| 3635 | 2:00.0 | left | wall | light blue concrete Jersey wall | 0.9 m (jersey-ref) | 0.95 | onboard:RAZip6S84CM@120.0 | pit-in separation continues to the T11 entry, 0.5-2 m left |
-| 3635 | 2:00.0 | left | wall | tall wall with Coca-Cola / xfinity boards | 5.2 m (door-ref) | 0.85 | onboard:RAZip6S84CM@120.0 | outside of the pit-in lane |
-| 3635 | 2:00.0 | right | runoff | paved infield apron, painted lines |  | 0.9 | onboard:RAZip6S84CM@120.0 |  |
-| 3635 | 2:00.0 | right | tyre_stack | red/white painted barrier blocks / barrels on the apron | 1.0 m (car-ref) | 0.8 | onboard:RAZip6S84CM@120.0 | T11 inside |
+| 3638 | 2:00.0 | ahead | fence | catch fence, curved-top posts on the T11 outside wall | 3.5 m (fence-post-ref) | 0.9 | onboard:RAZip6S84CM@120.0 |  |
+| 3638 | 2:00.0 | ahead | wall | light blue low wall round the T11 outside | 1.0 m (jersey-ref) | 0.9 | onboard:RAZip6S84CM@120.0 |  |
+| 3638 | 2:00.0 | left | wall | light blue concrete Jersey wall | 0.9 m (jersey-ref) | 0.95 | onboard:RAZip6S84CM@120.0 | pit-in separation continues to the T11 entry, 0.5-2 m left |
+| 3638 | 2:00.0 | left | wall | tall wall with Coca-Cola / xfinity boards | 5.2 m (door-ref) | 0.85 | onboard:RAZip6S84CM@120.0 | outside of the pit-in lane |
+| 3638 | 2:00.0 | right | runoff | paved infield apron, painted lines |  | 0.9 | onboard:RAZip6S84CM@120.0 |  |
+| 3638 | 2:00.0 | right | tyre_stack | red/white painted barrier blocks / barrels on the apron | 1.0 m (car-ref) | 0.8 | onboard:RAZip6S84CM@120.0 | T11 inside |
 | 3640 |  | left | tyre_wall | continuous dark tyre wall round the outside of the hairpin, in front of the concrete wall and catch fence | 0.9 m (horizon-ratio) | 0.6 | streetview:jrXpHaDfJT2APw6zcyBKRA@196 | owner note 21; 2026 onboard 2:02-2:04 shows white-painted tyres on the exit side |
 | 3660 |  | right | cone_line | traffic cone at the apron edge | 0.42 m (horizon-ratio) | 0.6 | streetview:jrXpHaDfJT2APw6zcyBKRA@196 | HEIGHTS.md check: an 18 in cone measures 0.42 m |
 | 3660 |  | right | tyre_stack | free-standing yellow / blue tyre stacks, 4 high, along the painted apron | 0.87 m (horizon-ratio) | 0.7 | streetview:jrXpHaDfJT2APw6zcyBKRA@196 | HEIGHTS.md example 5 (tyre stack); owner note 21: should scatter when hit; 2026 onboard 2:00-2:04 shows red/white blocks there |
-| 3669 | 2:02.0 | left | building | glazed two-storey paddock / hospitality building |  | 0.8 | onboard:RAZip6S84CM@122.0 |  |
-| 3669 | 2:02.0 | left | fence | catch fence, curved-top posts | 3.5 m (fence-post-ref) | 0.95 | onboard:RAZip6S84CM@122.0 |  |
-| 3669 | 2:02.0 | left | tyre_wall | white tyre stacks along the far wall | 0.8 m (tyre-ref) | 0.7 | onboard:RAZip6S84CM@122.0 |  |
-| 3669 | 2:02.0 | left | wall | light blue concrete wall round the hairpin outside | 1.0 m (jersey-ref) | 0.95 | onboard:RAZip6S84CM@122.0 |  |
-| 3669 | 2:02.0 | right | kerb | red/white, low, flat concrete |  | 0.95 | onboard:RAZip6S84CM@122.0 | T11 apex kerb |
-| 3669 | 2:02.0 | right | tyre_stack | red/white painted concrete blocks and a white water-filled barrier on the apron | 1.0 m (car-ref) | 0.9 | onboard:RAZip6S84CM@122.0 | owner note 21: free-standing stacks at the inside apron |
+| 3670 | 2:02.0 | left | building | glazed two-storey paddock / hospitality building |  | 0.8 | onboard:RAZip6S84CM@122.0 |  |
+| 3670 | 2:02.0 | left | fence | catch fence, curved-top posts | 3.5 m (fence-post-ref) | 0.95 | onboard:RAZip6S84CM@122.0 |  |
+| 3670 | 2:02.0 | left | tyre_wall | white tyre stacks along the far wall | 0.8 m (tyre-ref) | 0.7 | onboard:RAZip6S84CM@122.0 |  |
+| 3670 | 2:02.0 | left | wall | light blue concrete wall round the hairpin outside | 1.0 m (jersey-ref) | 0.95 | onboard:RAZip6S84CM@122.0 |  |
+| 3670 | 2:02.0 | right | kerb | red/white, low, flat concrete |  | 0.95 | onboard:RAZip6S84CM@122.0 | T11 apex kerb |
+| 3670 | 2:02.0 | right | tyre_stack | red/white painted concrete blocks and a white water-filled barrier on the apron | 1.0 m (car-ref) | 0.9 | onboard:RAZip6S84CM@122.0 | owner note 21: free-standing stacks at the inside apron |
 | 3699 | 2:04.0 | left | building | tan stucco garages with green metal roofs (paddock) |  | 0.9 | onboard:RAZip6S84CM@124.0 |  |
 | 3699 | 2:04.0 | left | fence | chain-link fence | 2.5 m (fence-post-ref) | 0.8 | onboard:RAZip6S84CM@124.0 |  |
 | 3699 | 2:04.0 | left | mast | light masts | 20 m (unmeasured) | 0.85 | onboard:RAZip6S84CM@124.0 |  |
@@ -388,8 +389,8 @@ Interpolation between anchors: profile (profile: shared out by a curvature speed
 | 3843 | 2:10.0 | left | mast | light masts | 20 m (unmeasured) | 0.85 | onboard:RAZip6S84CM@130.0 |  |
 | 3843 | 2:10.0 | left | wall | white concrete wall (pit-road side) | 1.0 m (jersey-ref) | 0.95 | onboard:RAZip6S84CM@130.0 |  |
 | 3843 | 2:10.0 | right | runoff | paved, wide |  | 0.85 | onboard:RAZip6S84CM@130.0 |  |
+| 3910 |  | ahead | building | two-storey control tower building beyond the drag strip |  | 0.5 | streetview:QduY6QTXmw4JDevQVE_b-g@338 |  |
 | 3910 |  | left | building | two-storey suites building beyond the pit road |  | 0.6 | streetview:QduY6QTXmw4JDevQVE_b-g@338 |  |
-| 3910 |  | right | building | two-storey control tower building beyond the drag strip |  | 0.5 | streetview:QduY6QTXmw4JDevQVE_b-g@338 |  |
 | 3912 | 2:12.0 | left | building | tan multi-storey glazed building (timing / control) |  | 0.9 | onboard:RAZip6S84CM@132.0 |  |
 | 3912 | 2:12.0 | left | cone_line | orange cones in the pit lane | 0.7 m (cone-ref) | 0.8 | onboard:RAZip6S84CM@132.0 |  |
 | 3912 | 2:12.0 | left | wall | white concrete wall (pit-road side), end ahead | 1.0 m (jersey-ref) | 0.95 | onboard:RAZip6S84CM@132.0 |  |
