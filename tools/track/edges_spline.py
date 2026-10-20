@@ -465,6 +465,30 @@ def fit_periodic(C, NL, hl, hr, tiles, features, sp, mpp, anchors=None, log=_log
                          gap_at=gaps[gi] if glen else None, wave_rms=float(roll[loose].max()), wave_peak=float(np.abs(qq)[loose].max()),
                          kink=float(kink[loose].max()), kink_all=float(kink.max()), kink_at=int(np.argmax(np.where(loose, kink, 0))),
                          seam_kink=float(kink[0]), roll=roll, qq=qq, kinkv=kink, loose=loose, gaps=list(zip(gaps, glen)))
+        if sp.get('report_by_kind'):
+            # report only (owner's gate decision for unpainted edges, Buttonwillow 20 Oct 2026; no gate reads these):
+            # the measures split by the evidence kind of each row's station, asphalt_end's 0.6 m share and its
+            # agreement with the station's own median over captures
+            kind = np.array([feature_at(features, side, int(i), n) or 'default' for i, _, _, _ in O], dtype=object)
+            rows_i = np.array([int(i) for i, _, _, _ in O])
+            gated = set(xo.astype(int).tolist()); bk = {}
+            for kname in sorted(set(kind.tolist())):
+                m = kind == kname
+                st_k = np.array([s_ for s_ in range(n) if (feature_at(features, side, s_, n) or 'default') == kname])
+                d = dict(rows=int(m.sum()), within_assoc=float(np.mean(allres[m & assoc] <= 0.25)) if (m & assoc).any() else float('nan'),
+                         within06_assoc=float(np.mean(allres[m & assoc] <= 0.6)) if (m & assoc).any() else float('nan'),
+                         coverage=float(np.mean([s_ in gated for s_ in st_k])) if len(st_k) else float('nan'), stations=int(len(st_k)))
+                if kname == 'asphalt_end':
+                    med = {}
+                    for (i, _, c, _), r in zip(O, allres):
+                        med.setdefault(int(i), []).append(c[int(np.argmin(np.abs(np.array(c) - cur[i])))])
+                    dev = [abs(v - np.median(vs)) <= 0.25 for vs in med.values() if len(vs) >= 2 for v in vs]
+                    d['within025_station_median'] = float(np.mean(dev)) if dev else float('nan')
+                bk[kname] = d
+                log(f"   report {side} {kname:12s}: {d['rows']} rows on {d['stations']} stations; within 0.25 m {d['within_assoc'] * 100:.1f} %, "
+                    f"within 0.6 m {d['within06_assoc'] * 100:.1f} % of the associated; coverage {d['coverage'] * 100:.0f} %"
+                    + (f"; readings within 0.25 m of their station's median over captures {d['within025_station_median'] * 100:.1f} %" if 'within025_station_median' in d else ''))
+            rep[side]['by_kind'] = bk
         out[side] = cur
         log(f"{side:5s} periodic fit: {len(xo)} of {len(O)} capture rows kept; within 0.25 m: {rep[side]['within_gated'] * 100:.1f} % of the "
             f"associated, {rep[side]['within'] * 100:.1f} % of the {rep[side]['assoc_share'] * 100:.0f} % of rows with a band within 1.2 m; "

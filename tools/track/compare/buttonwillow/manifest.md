@@ -196,3 +196,67 @@ lidar both show a 2-4 m asphalt-to-dirt transition. The capture readings are con
 not along the track (0.37-0.41 within 0.25 m of a running median). The fitted spline's 75-78 % "within 0.25 m" is
 what a ragged, dusty edge measured by any of these detectors gives. The proposal for a gate on unpainted edges stays
 an open owner decision (report of this round).
+
+## Stage 1, round 3 (20 Oct 2026): the gates that bind under any definition
+
+Within / coverage are the owner's decision and still fail (expected). Two runs:
+
+- **Run 6**: the asphalt_end inner window back to -1.2 m. Final config and output `tools/track/out/buttonwillow_r6`.
+- **Run 7**: run 6 plus the front straight declared as a straight line fitted to the asphalt-end readings. Not kept.
+
+**Run 6 (final), gate lines as printed:**
+```
+[FAIL] centre convergence: centre still moving 0.062 m after 40 refits
+[FAIL] fit left: observations within 0.25 m: 72.9 % of the associated observations (>= 90 %, the skill's measure); 88 % of capture rows have a band within 1.2 m (>= 85 %); of those 53.6 % within 0.25 m, the rest at 0.25-0.4/0.4-0.6/0.6-0.8/0.8-1.0/1.0-1.2 m: [1203, 816, 760, 947, 344]; 47 % of all rows
+[FAIL] fit left: coverage: 51 % of stations (>= 60 %)
+[ok] fit left: longest gap: 40 st at (356, 395) (<= 60)
+[FAIL] fit left: waviness: rolling-100 rms max 0.058 m (<= 0.04), peak 0.095 m (<= 0.1) outside tight corners; over at [(61, 124), (150, 183), (4438, 4527)]
+[ok] fit left: kink: max 0.45 deg/station (<= 0.5) outside tight corners; station 0 0.07
+[FAIL] fit right: observations within 0.25 m: 77.5 % of the associated observations (>= 90 %, the skill's measure); 88 % of capture rows have a band within 1.2 m (>= 85 %); of those 58.6 % within 0.25 m, the rest at 0.25-0.4/0.4-0.6/0.6-0.8/0.8-1.0/1.0-1.2 m: [1090, 781, 689, 852, 363]; 52 % of all rows
+[FAIL] fit right: coverage: 54 % of stations (>= 60 %)
+[ok] fit right: longest gap: 45 st at (582, 626) (<= 60)
+[FAIL] fit right: waviness: rolling-100 rms max 0.066 m (<= 0.04), peak 0.120 m (<= 0.1) outside tight corners; over at [(186, 235)]
+[ok] fit right: kink: max 0.43 deg/station (<= 0.5) outside tight corners; station 0 0.06
+[ok] edge jumps: max lateral change between stations: left 0.161 m, right 0.160 m
+[FAIL] edge gate left : rms vs 41-st median (R>250 m, 2280 st) 0.075 m (<= 0.1) | max adjacent step (R>100 m within +-30) 0.118 m at 62 (next 0.112@4265, 0.112@4267; <= 0.1) | max edge-column cross-section step 0.024 m at 1318
+[FAIL] edge gate right: rms vs 41-st median (R>250 m, 2280 st) 0.080 m (<= 0.1) | max adjacent step (R>100 m within +-30) 0.137 m at 4124 (next 0.137@4125, 0.137@4123; <= 0.1) | max edge-column cross-section step 0.022 m at 25
+```
+
+**What changed from run 5:**
+- Run 5's inner window of -2.0 m let the asphalt-end edge creep inward on every refit. By the end, the front straight's half-widths were down to 0.6-2.5 m at s 4524-4560 and 4656-30, with the centre wandering into the dirt.
+- That collapse is what produced the run-5 kink at 4664-4672 and the steps at 4511-4512, and the 4.9 m "pit-in width". It was not the pit-in split: the pit lane leaves at s ~4296 (OSM 39224587), behind the wall.
+- With -1.2 m, the kinks pass on both sides (0.45 / 0.43°). The width (report) is median 14.27 m, p10 12.08, p90 17.22, min 9.02 m at 3731, max 23.91 m at 23. 4.2 % of stations are under the operator's 36 ft (10.97 m) and 14.4 % over 55 ft (16.76 m).
+
+**What still binds and fails:**
+- Waviness, all on or next to the front straight and T1:
+  - left 61-124 and 150-183: the edge on the pit-wall median, whose gravel strip gives scattered readings;
+  - left 4438-4527: the T11 exit into the straight;
+  - right 186-235: the T1 kerb, where kerb_band takes the inner side of the white blocks rather than their outer limit (sheet `worst2_left_right_150-235`).
+- Edge steps:
+  - left 0.118 m at 62 (front straight) and 0.112 m at 4265-4267, 3-5 stations before the pit-in exemption (4270-4330);
+  - right 0.137 m at 4124, 6 stations before the Zorros Corners mouth exemption (4130-4190).
+  - I did not widen either exemption: that needs the capture showing the junction's fillet.
+- Centre convergence: a 0.062 m limit cycle after 40 refits.
+
+**Run 7 (front straight as a straight from the asphalt-end readings, lo 4470 .. hi 180, 318 / 625 inliers):** worse.
+- It starts inside the T11 exit curve, where the station normals cross the line far off: width -5.15 m at 4477, kinks 0.74 / 0.73° at 4432-4476, waviness 0.068 / 0.078 m.
+- Not kept. A start after the pit-wall head (~4520) is the next thing to try.
+
+**Report-only numbers (run 6; builder flag `spline.report_by_kind`; no gate reads them):**
+
+| side | evidence | rows / stations | within 0.25 m (all associated rows) | within 0.6 m | coverage | readings within 0.25 m of their station's median over captures |
+|---|---|---|---|---|---|---|
+| left | asphalt_end | 8962 / 4061 | 50.2 % | 74.1 % | 50 % | 98.3 % |
+| left | kerb_band | 1047 / 631 | 80.8 % | 96.7 % | 56 % | - |
+| right | asphalt_end | 9355 / 4056 | 56.3 % | 77.5 % | 54 % | 97.9 % |
+| right | kerb_band | 966 / 636 | 79.0 % | 93.9 % | 49 % | - |
+
+Width on the fitted edges: median 14.27 m, p10 12.08, p90 17.22, min 9.02 m (station 3731), against the operator's 10.97-16.76 m.
+Cross-capture agreement (round 2): 0.96.
+
+**Sheets for the owner:** `compare/buttonwillow/edge_sheets/` (local, ignored, reference only):
+- the eight clean stretches, clean1-clean8;
+- the three worst waviness stretches, worst1-3;
+- the two edge steps, at 4124 right and 4265 left.
+
+Fitted edges are drawn in red, the centre in blue, asphalt-end readings in yellow and kerb-band readings in cyan (`tools/track/compare/edge_sheets.py`).

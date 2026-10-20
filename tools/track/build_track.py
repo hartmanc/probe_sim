@@ -493,6 +493,12 @@ def stage_geometry(cfg, out, no_logger):
     w = hl3 + hr3
     log(f"     width: median {np.median(w):.1f} m (p5 {np.percentile(w, 5):.1f}, p95 {np.percentile(w, 95):.1f}); corners: "
         + ", ".join(f"{c['turn'] or c['name']} s={c['s']} R={c['radius_m']}" for c in corners))
+    if cfg["spline"].get("report_by_kind"):
+        # report only (no gate): the width against the operator's figure (config spline.report_width = (lo, hi) m)
+        lo_w, hi_w = cfg["spline"].get("report_width", (0.0, 1e9)); k0 = int(np.argmin(w))
+        log(f"     report width: median {np.median(w):.2f} m, p10 {np.percentile(w, 10):.2f}, p90 {np.percentile(w, 90):.2f}, "
+            f"min {w[k0]:.2f} m at station {k0}, max {w.max():.2f} m at station {int(np.argmax(w))}; "
+            f"{np.mean(w < lo_w) * 100:.1f} % of stations under {lo_w} m, {np.mean(w > hi_w) * 100:.1f} % over {hi_w} m")
     report = {"provisional": {"shadow_stations": [int(v) for v in shadow], "cones": [cones["s0"], cones["s1"]] if cones else None,
                               "pit_parts": [p["track_s"] for p in (pit or {}).get("parts", [])]},
               "recentre": fit["report"], "spline": spline_rep, "straights": str_rep, "gate": met,

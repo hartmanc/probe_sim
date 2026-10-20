@@ -125,7 +125,11 @@ CONFIG = dict(
     # the edge fit (SKILL 1.4): defaults, plus the asphalt-end detector tuned to Buttonwillow's pale dusty dirt (20 Oct
     # 2026, eight stretches of the captures: jump 8 / sat 40 / window -2..+2 m hit 81 % of stations, 98 % within 0.25 m
     # of the median over captures; the defaults 65 % / 99 %, and from the NAIP prior they often miss the window)
-    spline=dict(asphalt_end=dict(jump=8.0, sat_max=40.0, lo=-2.0, hi=2.0)),
+    # round 3: the -2.0 m inner window let the edge creep inward a little more each refit (run 5: the front straight
+    # down to 1-2 m half-widths at s 4524-4560 and 4656-30); back to the detector's -1.2 m
+    # report_by_kind / report_width: report-only numbers for the owner's gate decision (no gate reads them); the
+    # operator's Classic-track width is 36-55 ft = 10.97-16.76 m (buttonwillowraceway.com/track-info/)
+    spline=dict(asphalt_end=dict(jump=8.0, sat_max=40.0, lo=-1.2, hi=2.0), report_by_kind=True, report_width=(10.97, 16.76)),
     # Buttonwillow has no painted edge lines (every 2026 capture and the onboard: asphalt straight to dirt), so the edge
     # is where the dark asphalt ends, everywhere except at kerbs, where it is the kerb's outer limit (SKILL 1.5). The kerb
     # zones come from compare/kerb_detect.py on the asphalt-end build (run 3, 20 Oct 2026: runs with their outer limit
@@ -190,7 +194,11 @@ CONFIG = dict(
         ('right', 4645, 4689, 'mouth of OSM 34351015 (infield connector): the prior is carried across it'),
     ]),
     shapes=[],                                   # measured half-width knots (SKILL 1.4)
-    straights=[],                                # declared straights: a RANSAC paint line or parallel to a wall (SKILL 1.4)
+    # round 3, run 7 tried the front straight as a straight fitted to the asphalt-end readings (straights.py fit
+    # 'asphalt_end', lo 4470 .. hi 180): it starts inside the T11 exit curve, where the station normals cross the line
+    # far off (width -5.2 m at 4477, kinks 0.73-0.74 deg at 4432-4476), so it is not declared; a later start (~4520,
+    # after the pit-wall head) is the next thing to try
+    straights=[],
     repave_fixes=[],                             # only where recent footage contradicts the survey (SKILL 1.6)
     gate=dict(exempt=[
         ('right', 8, 68, 'mouth of OSM 34351026 (infield connector); junction, real'),
