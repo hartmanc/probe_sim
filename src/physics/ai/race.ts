@@ -56,6 +56,17 @@ export interface RaceConfig {
    * where the headways were tuned).
    */
   followScale: number;
+  /**
+   * Pass-lane speed margin (per track, TRACKS[id].ai.laneMargin; 1 = Laguna): the lateral grip share a pass lane's own
+   * path (clamped to the road) is driven at, x the driver's corner margin. Sonoma 0.85: inside pass lanes into T4 and
+   * T11 collapse onto the line at the apex and the passer ran 1-2 m wide into the car making room.
+   */
+  laneMargin: number;
+  /**
+   * Lane changes within the spare lateral grip, x this (per track, TRACKS[id].ai.shiftGrip; 0 = off, Laguna). Sonoma 1:
+   * room-making and pass lane changes at 2-4 m/s through the esses made the cars spin (driver.ts SHIFT_RATE_MIN).
+   */
+  shiftGrip: number;
 }
 
 /** One AI loss of control (director.mishapLog). */
@@ -66,6 +77,8 @@ export const DEFAULT_RACE_CONFIG: RaceConfig = {
   formationSpeed: 20, gridGap: 15, aiControlEvery: 2, aiPhysicsEvery: 2, aiWalls: true, playerAi: false, maxAi: Infinity,
   mishapRate: 0.0002,
   followScale: 1,
+  laneMargin: 1,
+  shiftGrip: 0,
 };
 
 export interface RaceInputs {
@@ -486,6 +499,8 @@ export class RaceDirector {
       const c = d.ctl;
       c.noise = true;
       c.followScale = this.config.followScale;
+      c.laneMargin = this.config.laneMargin;
+      c.shiftGrip = this.config.shiftGrip;
       c.mishapRate = this.phase === 'green' && !car.isPlayer && !car.finished ? this.config.mishapRate : 0;
       if (this.phase === 'formation') { c.speedCap = this.config.formationSpeed + 3; c.noPass = true; c.minGap = this.config.gridGap; c.paceFactor = 1; }
       else if (this.phase === 'yellow') { c.speedCap = this.config.formationSpeed * 1.25 + 3; c.noPass = true; c.minGap = 10; c.paceFactor = 1; }

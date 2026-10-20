@@ -62,8 +62,9 @@ export interface TrackInfo {
    *  named corner (Laguna: 230 m before T11, the rule its boards were recorded with) or a station in metres along the lap,
    *  and the speed. Part of every replay: changing it changes the board key's meaning. */
   start: { beforeCorner: string; m: number; speed: number } | { s_m: number; speed: number };
-  /** Per-track AI race parameters (RaceConfig): followScale multiplies the racing time headway (absent = 1, Laguna). */
-  ai?: { followScale?: number };
+  /** Per-track AI race parameters (RaceConfig): followScale multiplies the racing time headway, laneMargin the grip share of
+   *  a pass lane's own path (absent = 1, Laguna), shiftGrip caps lane changes by the spare lateral grip (absent = 0 = off). */
+  ai?: { followScale?: number; laneMargin?: number; shiftGrip?: number };
   /** Revision of the published package: sha256 over the sha256 of track.json, heightfield.bin, ghosts.json, scenery.json
    *  and far_heightfield.bin, first 10 hex (the registry test checks it), part of physicsVersion() and so
    *  of the board key: a rebuilt package opens its own boards without a global PHYSICS_VERSION bump. Laguna has none
@@ -80,8 +81,10 @@ export const TRACKS: Readonly<Record<string, TrackInfo>> = {
   sonoma: { dir: 'tracks/sonoma/', name: 'Sonoma Raceway', short: 'Sonoma', length_m: 4098.796, pace: 'cars/field/sonoma/pace.json', rev: '9738ab56a5',
     // on the front straight, ~120 m before the line (230 m before the last corner, T12, was 26 m past the T11 apex)
     start: { s_m: 3975, speed: ROLLING_START_SPEED },
-    // 20 Oct 2026, 8 seeds of 4 laps: AI-AI contacts 91 at the Laguna headways, 57 at x1.4, 51 at x1.8 (the rest are passes)
-    ai: { followScale: 1.4 } },
+    // 20 Oct 2026, 8 seeds of 4 laps: AI-AI contacts 91 at the Laguna headways, 57 at x1.4, 51 at x1.8 (the rest are passes);
+    // 16 seeds of 4 laps with kerbs: shiftGrip 1 contacts 0.047 -> 0.033, four-off 0.094 -> 0.031 (spins in the esses);
+    // laneMargin 0.85 on top 0.025 / 0.019 (inside passes at T4, T11); passes 73.0 -> 73.5 %
+    ai: { followScale: 1.4, laneMargin: 0.85, shiftGrip: 1 } },
 };
 /** The track when none is chosen (URL ?track=, Start menu). */
 export const DEFAULT_TRACK = 'laguna_seca';

@@ -27,7 +27,7 @@ const makeSurface = argv.includes('--no-kerbs') ? () => createTrackSurface(pack.
 const dir = new RaceDirector({
   line: pack.line, surface: pack.surface, makeSurface,
   probeJson: loadProbeJson(), pace, identity, pitLane: pack.scenery?.pit_lane ?? null, collisionWorld: createCollisionWorld(pack.scenery, pack.track),
-}, { laps, seed, playerAi: true, maxAi, followScale, ...(mishapRate !== undefined ? { mishapRate } : {}) });
+}, { laps, seed, playerAi: true, maxAi, followScale, laneMargin: TRACKS[track]?.ai?.laneMargin ?? 1, shiftGrip: TRACKS[track]?.ai?.shiftGrip ?? 0, ...(mishapRate !== undefined ? { mishapRate } : {}) });
 const m = runSelfplay(dir, makeSurface(), { log: !argv.includes('--quiet') });
 printReport(m);
 const out = arg('--json', '');

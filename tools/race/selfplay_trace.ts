@@ -22,7 +22,7 @@ const makeSurface = pack.makeSurface;   // the app's surface options (load.ts)
 const dir = new RaceDirector({
   line: pack.line, surface: pack.surface, makeSurface, probeJson: loadProbeJson(), pace: loadPace(track), identity,
   pitLane: pack.scenery?.pit_lane ?? null, collisionWorld: createCollisionWorld(pack.scenery, pack.track),
-}, { laps, seed, playerAi: true, followScale });
+}, { laps, seed, playerAi: true, followScale, laneMargin: TRACKS[track]?.ai?.laneMargin ?? 1, shiftGrip: TRACKS[track]?.ai?.shiftGrip ?? 0 });
 const line = dir.line, tr = dir.traffic, cars = dir.cars, n = cars.length;
 type Rec = { t: number; s: number; e: number; sh: number; eT: number; v: number; vp: number; lim: string; ph: number; pt: number; on: number; hL: number; hR: number; off: number; yaw: number; thr: number; brk: number; slR: number; lead: number };
 const hist: Rec[][] = cars.map(() => []);
