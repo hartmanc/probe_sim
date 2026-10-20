@@ -1337,3 +1337,27 @@ heightfield.bin / ghosts.json byte-identical; Laguna byte-identical to main.
 - **Render cost of the stacked tyres (item G)**: pose_walk, 6 poses x 2 runs, headless Chrome: round-6 cylinders
   (scene 1.98 M triangles) mean 13.0 ms per render, the round-7 stacks (2.50 M) 11.9 ms; run-to-run spread 3-5 ms per
   pose, so no rise is measurable; tyre geometry left as round 7 (8 segments, 2 profile points per tyre).
+
+## Round 7c (22 Oct 2026; registry rev 7c40595e2b)
+
+All gates pass; track.json / heightfield.bin / ghosts.json byte-identical; Laguna byte-identical to main.
+
+- **8a marshal hut (item 1)**: c20_s0110 / s0055 (zoom 0.04 m/px): a ~4 x 3.5 m light roof with a long dark shadow (an
+  elevated hut) at s ~2483, 11.5 m left of the centre (5.5 m beyond the edge, the outside of 8a), a yellowish low band
+  at the edge in front of it. Placed with the hut model (h 3.6, default band). The owner's May 2025 frame shows it behind
+  a concrete wall with a dark tyre facing; the 2026 captures show no wall line there (the 8a tyre line runs 14 m beyond
+  the edge), so no wall is added. Still: hood_r7/t8hut_2470_r7c.jpg.
+- **Ground-logo scan (item 2)**: 35 capture windows every 120 m round the lap (0.25 m/px, 150 m square, both sides;
+  captures c20_s0000..s4070 and the o-series where they cover; sheets local in /tmp only). Painted logos found:
+  | where | capture | logo | outcome |
+  |---|---|---|---|
+  | T7a hairpin island | c20_s0000 / s3960 | O'Reilly | placed (7b) |
+  | T11 hairpin infield | c20_s1265 / s1320 | TOYOTA, Save Mart | placed (7b) |
+  | T11 hairpin infield | c20_s1265 | CW, Coca-Cola, xfinity, TNT, PIT BOSS | placed (7c) |
+  | T11 hairpin infield | c20_s1265 | three top-row names and a 'Freightliner'-like row | not placed: illegible at 0.04 m/px |
+  | T11 hairpin infield | c20_s1320 | Toyota emblem, Save Mart leaf | not placed: logo artwork (the rule) |
+  | T11a lot | c20_s1045 / s1100 | a ~5 m painted roundel | not placed: no legible text |
+  | drag strip at the line | c20_s1595 / s1650 | red / pink burnout-box paint | not a logo |
+  No other painted logo on the windows (T1-T2, T3-T4, T5-T6, Carousel, drag strip, T7-T9, back straight, 9a, T10).
+- **T7 complex seams (item 3)**: not done this round.
+- **T7 far barrier (item 4)**: the owner's marking had not arrived; not placed.

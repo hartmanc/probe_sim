@@ -178,3 +178,7 @@ Verdict: "a disappointing output that was not ready for me to review."
 52. Owner's crop of the far barrier in note 51 (owner_51_T7_far_barrier_crop.png): BLACK tyres stacked in front of a WHITE
     concrete wall, along the far edge of the T7 paved runoff. Correction to note 51 ("white-wrapped" was the orchestrator's
     misreading). Source video for context: https://youtu.be/fEcQdo0ucL8?t=62 (May 2025 onboard; reference only).
+53. T8 station confirmed by the owner: May 2025 onboard https://youtu.be/fEcQdo0ucL8?t=74 (reference only), crop
+    owner_52_T8_station_video.png: a white hut with a roof standing BEHIND the concrete wall (outside of the corner),
+    with a dark tyre facing on the wall in front of it, grass and light masts beyond. Owner: "It's on the other side of
+    the wall." Round 7b's unconfirmed candidate at s ~2475 left, 10 m out (c20_s0110) is probably it.
