@@ -31,6 +31,14 @@ export interface AxleSuspension {
    * into it (in phase with the fronts). Default 0.
    */
   complianceSteerDegPerKN: number;
+  /**
+   * Digressive damper (Oct 2026, kerb strikes): above this shaft speed (m/s at the wheel) the damper coefficient
+   * drops to `damperHighSpeedRatio` × the low-speed one (a real damper's blow-off / digressive valving). Default
+   * Infinity: linear at every speed.
+   */
+  damperKnee: number;
+  /** High-speed damper slope as a fraction of the low-speed coefficient, 0..1. Default 1 (linear). */
+  damperHighSpeedRatio: number;
 }
 
 export interface TyreAxis {
@@ -321,6 +329,8 @@ function axleSusp(o: Obj, p: string): AxleSuspension {
     antiRollRate: num(o, 'antiRollRate', p, { min: 0 }),
     staticCompression: num(o, 'staticCompression', p, POS),
     complianceSteerDegPerKN: num(o, 'complianceSteerDegPerKN', p, { def: 0, min: -1, max: 1 }),
+    damperKnee: o.damperKnee === undefined ? Infinity : num(o, 'damperKnee', p, POS),
+    damperHighSpeedRatio: num(o, 'damperHighSpeedRatio', p, { def: 1, min: 0, max: 1 }),
   };
 }
 

@@ -58,6 +58,9 @@ export class Vehicle {
   private readonly kSpring = new Float64Array(4);
   private readonly cBump = new Float64Array(4);
   private readonly cReb = new Float64Array(4);
+  /** digressive damper: knee shaft speed (m/s; Infinity = linear) and high-speed slope ratio, per wheel */
+  private readonly dKnee = new Float64Array(4);
+  private readonly dHi = new Float64Array(4);
   private readonly kArb = new Float64Array(4);
   private readonly cStatic = new Float64Array(4);
   private readonly kTyreV: number;
@@ -249,6 +252,7 @@ export class Vehicle {
       this.kSpring[i] = ax.springRate;
       this.cBump[i] = ax.damperBump;
       this.cReb[i] = ax.damperRebound;
+      this.dKnee[i] = ax.damperKnee; this.dHi[i] = ax.damperHighSpeedRatio;
       this.kArb[i] = ax.antiRollRate;
       this.cStatic[i] = ax.staticCompression;
       const bs = ax.staticCompression > this.bumpStart ? this.kBump * (ax.staticCompression - this.bumpStart) ** 2 : 0;
@@ -609,6 +613,17 @@ export class Vehicle {
       const f = Ft - Fs;
       const cd = f > 0 ? this.cBump[i] : this.cReb[i];
       let cNew = c + (dt * f) / (cd + dt * (dFt + dFs));
+      {
+        // digressive damper: past the knee the slope is dHi·cd. The implicit step solves D(v) = f - dt·k·v with
+        // D(v) = cd·v below the knee and cd·vk + dHi·cd·(|v| - vk) above (same sign); below the knee this is exactly
+        // the linear update above.
+        const vk = this.dKnee[i];
+        const vv = (cNew - c) / dt;
+        if (vv > vk || vv < -vk) {
+          const sg = vv > 0 ? 1 : -1, c2 = this.dHi[i] * cd;
+          cNew = c + (dt * (f - sg * (cd - c2) * vk)) / (c2 + dt * (dFt + dFs));
+        }
+      }
       if (cNew < 0) cNew = 0;
       else if (cNew > this.travel + 0.03) cNew = this.travel + 0.03;
       this.susC[i] = cNew;
