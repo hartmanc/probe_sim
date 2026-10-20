@@ -52,6 +52,7 @@ export interface SceneryJson {
   /** kinds: brake | corner | flagstand | oak | banner (ad board facing the track) | sign (on a wall at z) | gantry (two
    *  lattice towers at (x, y, z) and (x2, y2, z2) with cables across the track) */
   landmarks: { kind: string; text: string; x: number; y: number; z: number; heading: number; h: number; w: number; x2?: number; y2?: number; z2?: number; color?: string; style?: string; src?: string;
+    /** wall-board signs: the panel's top above the ground (m), for the coverage gate */ top?: number;
     /** 'impact' (impact barrier block at a wall's nose): its length along `heading` */ d?: number }[];
   /** grandstands built into a hillside: stepped concrete rows following the ground (20 Oct 2026). Row r is a tread
    *  from a to b at height z, `run` m deep away from the track along `dir`; risers join consecutive rows. */
@@ -1417,6 +1418,26 @@ function buildLandmarks(list: SceneryJson['landmarks']): THREE.Group {
       const blk = new THREE.Mesh(new THREE.BoxGeometry(m.w, m.h, m.d ?? 2), new THREE.MeshLambertMaterial({ color: m.color ?? '#e8c21c' }));
       blk.position.set(0, m.h / 2, 0);
       g.add(blk);
+    } else if (m.kind === 'tyres') {
+      // free-standing tyre stack (style 'tyres': tyres lying flat, 0.21 m a layer) or a painted barrier block (style
+      // 'blocks', red / white bands), 21 Oct 2026; drawn only, not in the collision world
+      if (m.style === 'blocks') {
+        const bands = Math.max(1, Math.round(m.h / 0.25));
+        for (let k = 0; k < bands; k++) {
+          const blk = new THREE.Mesh(new THREE.BoxGeometry(m.w, m.h / bands, m.w * 1.6),
+            new THREE.MeshLambertMaterial({ color: k % 2 ? 0xf0efea : (m.color ?? '#c0392b') }));
+          blk.position.set(0, (k + 0.5) * (m.h / bands), 0);
+          g.add(blk);
+        }
+      } else {
+        const layers = Math.max(1, Math.round(m.h / 0.21));
+        const tyreMat = new THREE.MeshLambertMaterial({ color: m.color ?? '#1d1e20' });
+        for (let k = 0; k < layers; k++) {
+          const t = new THREE.Mesh(new THREE.CylinderGeometry(m.w / 2, m.w / 2, 0.2, 14), tyreMat);
+          t.position.set(0, 0.1 + k * 0.21, 0);
+          g.add(t);
+        }
+      }
     } else if (m.kind === 'mast') {
       // light mast: a tapered grey pole with a lamp frame on top
       const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.22, m.h, 8), postMat);

@@ -26,6 +26,7 @@ import geo as bl  # noqa: E402  (frames, DEM window, NAIP helpers, grade_ortho)
 CACHE = OUT = PREVIEWS = None   # set by configure()
 PITWALL_EDGE = None  # optional per-station lateral (+left, m) of the left edge the pit wall stands 0.6 m off
 SC_CFG = {}
+PIT_CFG = {}   # the track config's pit_lane section (trackcfg.py; walls with latlon get geometry here, 21 Oct 2026)
 UA = {"User-Agent": "probe-sim/0.1"}
 EPT = DEM13 = PIT_WAY = None   # from the track config (lidar_ept, dem13, pit_lane_way)
 FAR_HALF, FAR_DX, FAR_ORTHO_PX = 2500.0, 10.0, 5.0  # far terrain: 5 x 5 km at 10 m, image at 5 m/px
@@ -39,10 +40,11 @@ def rnd(v, d=2):
 
 def configure(cfg, out_dir):
     """Point the module at one track's config and package directory (call geo.configure(cfg) first)."""
-    global CACHE, OUT, PREVIEWS, EPT, DEM13, PIT_WAY, SC_CFG, TYRE_CORNERS, PAVED_RUNOFF, BANNER_BOARDS, BANNERS, BRIDGE_STYLE, HANGARS
+    global CACHE, OUT, PREVIEWS, EPT, DEM13, PIT_WAY, SC_CFG, PIT_CFG, TYRE_CORNERS, PAVED_RUNOFF, BANNER_BOARDS, BANNERS, BRIDGE_STYLE, HANGARS
     CACHE, OUT, PREVIEWS = cfg.cache, out_dir, out_dir
     EPT, DEM13, PIT_WAY = cfg.get("lidar_ept"), cfg.get("dem13"), cfg["pit_lane_way"]
     SC_CFG = cfg["scenery"]
+    PIT_CFG = cfg.get("pit_lane") or {}
     TYRE_CORNERS = [tuple(x) for x in SC_CFG.get("tyre_corners", [])]
     PAVED_RUNOFF = [tuple(x) for x in SC_CFG.get("paved_runoff", [])]
     BANNER_BOARDS = [tuple(x) for x in SC_CFG.get("banner_boards", [])]
@@ -451,6 +453,25 @@ def buildings(trk, G, osm):
                     "footprint": [[rnd(a, 1), rnd(b, 1)] for a, b in xy], "src": "lidar"})
         taken[sl] |= ndi.binary_dilation(m, iterations=2)
     log(f"buildings: {n_osm} from OSM footprints, {len(out) - n_osm} unmapped structures from the lidar")
+    # the evidence of each building the coverage gate checks (config scenery.building_evidence, 21 Oct 2026): {contains:
+    # (lat, lon) inside the footprint, src: the capture / onboard evidence | drop: True with src: why there is none}; a
+    # building with no source in the 2026 evidence is removed (no object without a cited source); an entry that
+    # matches no footprint fails the stage
+    from shapely.geometry import Point, Polygon
+    for k, ev in enumerate(SC_CFG.get("building_evidence", [])):
+        if not ev.get("src"):
+            raise SystemExit(f"building_evidence[{k}]: no src")
+        p = Point(*bl.enu(*ev["contains"]))
+        hit = [j for j, b_ in enumerate(out) if b_ is not None and Polygon(b_["footprint"]).buffer(0).contains(p)]
+        if len(hit) != 1:
+            raise SystemExit(f"building_evidence[{k}] at {ev['contains']}: {len(hit)} footprints contain it")
+        b_ = out[hit[0]]
+        if ev.get("drop"):
+            log(f"building ({b_['src']}, {b_['h']} m) at {ev['contains']}: removed, no 2026 evidence: {ev['src']}")
+            out[hit[0]] = None
+        else:
+            b_["src"] = f"{b_['src']} ({ev['src']})"
+    out = [b_ for b_ in out if b_ is not None]
     return out, taken
 
 
@@ -736,16 +757,36 @@ def barriers(trk, osm):
     DECLARED_WALLS.clear()
     walls = osm.select(lambda t: t.get("barrier") == "wall", trk.box)
     wall_pts = []
+    # evidence overrides of OSM walls (config scenery.osm_barrier_overrides {way id: {kind, h, fence, color | drop,
+    # src}}, 21 Oct 2026): OSM tags a tyre barrier as barrier=wall (note 'tire barrier'), or maps a line the captures show
+    # as a duplicate of a measured declared wall; each use is logged, an unmatched id fails the stage
+    ovr = {str(k): v for k, v in SC_CFG.get("osm_barrier_overrides", {}).items()}
+    used = set()
     for w in walls:
+        ov = ovr.get(str(w["id"]))
+        if ov is not None:
+            used.add(str(w["id"]))
+            if not ov.get("src"):
+                raise SystemExit(f"osm_barrier_overrides[{w['id']}]: no evidence (src) given")
+            if ov.get("drop"):
+                log(f"OSM wall {w['id']}: DROPPED by evidence override: {ov['src']}")
+                continue
         for run in polyline_runs(trk, w["xy"]):
             i, lat, dout = trk.project(run)
             d = float(np.median(dout))
             # Close to the edge: concrete wall with catch fence (spectator banks, photo 01). Further out, behind
             # run-off: Armco on posts.
             kind = "concrete" if d < 14 else "armco"
-            out.append({"kind": kind, "h": 1.0 if kind == "concrete" else 0.75,
-                        "fence": 3.0 if kind == "concrete" else 0.0, "pts": with_z(trk, run), "src": f"osm:{w['id']}"})
+            rec = {"kind": kind, "h": 1.0 if kind == "concrete" else 0.75,
+                   "fence": 3.0 if kind == "concrete" else 0.0, "pts": with_z(trk, run), "src": f"osm:{w['id']}"}
+            if ov is not None:
+                rec.update({k: ov[k] for k in ("kind", "h", "fence", "color") if k in ov})
+                rec["src"] = f"osm:{w['id']} ({ov['src']})"
+                log(f"OSM wall {w['id']}: {kind} -> {rec['kind']} h {rec['h']} fence {rec['fence']} by evidence override")
+            out.append(rec)
             wall_pts.append(np.c_[run, i, lat, dout])
+    for k in set(ovr) - used:
+        raise SystemExit(f"osm_barrier_overrides: OSM wall {k} not found in the box")
     W = np.concatenate(wall_pts) if wall_pts else np.zeros((0, 5))
     # tyre walls in front of the outside barrier of the big stops
     corners = {c["turn"]: c for c in trk.t["corners"] if c.get("turn")}
@@ -841,6 +882,24 @@ def barriers(trk, osm):
     decl = []
     split = []
     work = [(dw, None) for dw in SC_CFG.get("declared_walls", [])]
+    # pit-lane walls with their own measured geometry (config pit_lane.walls[] with latlon, 21 Oct 2026); a pit-lane
+    # wall that is one of the declared walls names it (`declared`) and adds no geometry
+    PIT_MAT = {"pitbox_wall": ("concrete", "#e6e4de"), "jersey": ("concrete", "#e6e4de"), "board_wall": ("concrete", "#a9c9dd"),
+               "concrete": ("concrete", "#a9c9dd"), "armco": ("armco", None), "fence": ("fence", None)}
+    names = {dw["name"] for dw in SC_CFG.get("declared_walls", [])}
+    for k, pw in enumerate(PIT_CFG.get("walls", [])):
+        if pw.get("declared"):
+            if pw["declared"] not in names:
+                raise SystemExit(f"pit_lane.walls[{k}]: declared wall {pw['declared']!r} not in scenery.declared_walls")
+            continue
+        if not pw.get("latlon"):
+            continue
+        kind, col = PIT_MAT[pw.get("material", "concrete")]
+        dw = {"name": pw.get("name", f"pit lane wall {k} ({pw['side']})"), "kind": kind, "h": pw.get("h", 1.0),
+              "fence": pw.get("fence", 0.0), "latlon": pw["latlon"], "src": "pit lane: " + pw["src"]}
+        if pw.get("color", col):
+            dw["color"] = pw.get("color", col)
+        work.append((dw, None))
     k_ = 0
     while k_ < len(work) or split:
         if k_ >= len(work):
@@ -966,6 +1025,9 @@ KERB_W = 0.9  # m; v2 track edges include the kerbs, so kerbs lie inside the edg
 PIT_HALF_DEFAULT = 4.0  # m (8 m paved width) when the image gives no edge
 
 
+_MOUTHS_USED = set()
+
+
 def closed_roads(trk, osm):
     """Paved roads of the circuit that the loop does not use (config scenery.closed_roads: [{name, ways: [OSM way id or
     'way:from:to', ...], half_width}], 20 Oct 2026): driveable pavement in the sim (paved_zones parts, the pit-lane
@@ -1005,7 +1067,22 @@ def closed_roads(trk, osm):
                     if min(gl, gr) <= 0.5:
                         L = np.array(part["left"][end][:2]); R = np.array(part["right"][end][:2])
                         P = np.array([L + (R - L) * t for t in np.linspace(0, 1, max(2, int(np.hypot(*(R - L)) / 2) + 1))])
-                        lines.append({"spacing_m": 2.0, "pts": with_z(trk, P), "src": f"closed road {road['name']} mouth"})
+                        src = f"closed road {road['name']} mouth"
+                        if "mouth_cones" in road:
+                            # cones only at the mouths the evidence shows coned (config closed_roads[].mouth_cones:
+                            # [{near: (lat, lon), src}], 21 Oct 2026); the other mouths are left open or walled
+                            mid = (L + R) / 2
+                            hit = [m for m in road["mouth_cones"] if np.hypot(*(np.array(bl.enu(*m["near"])) - mid)) < 20]
+                            if not hit:
+                                log(f"closed road {road['name']}: mouth at ({mid[0]:.0f}, {mid[1]:.0f}) left without cones (no evidence of cones)")
+                                continue
+                            src += f" ({hit[0]['src']})"
+                            _MOUTHS_USED.add(id(hit[0]))
+                        lines.append({"spacing_m": 2.0, "pts": with_z(trk, P), "src": src})
+    for road in SC_CFG.get("closed_roads", []):
+        for m in road.get("mouth_cones", []):
+            if id(m) not in _MOUTHS_USED:
+                raise SystemExit(f"closed road {road['name']}: mouth_cones entry near {m['near']} matches no mouth")
     log(f"closed roads: {len(out_parts)} paved parts, {len(lines)} cone lines")
     return out_parts, lines
 
@@ -1118,6 +1195,49 @@ def clip_parts_at_walls(parts, bar, margin=0.3, label="closed roads"):
                     E[j, :2] = p + r * tt; moved += 1
             part[side] = [[rnd(x, 2), rnd(y, 2), rnd(z, 3)] for x, y, z in E]
     log(f"{label}: {moved} edge points clipped at walls")
+
+
+def pit_tone_match(trk, pit, img, opt):
+    """One road material for the pit lane (config pit_lane.lane.match_track_tone {k, paint}, 21 Oct 2026; Sonoma owner
+    notes 17, 24-26): the NAIP ortho shows the pit lane's lighter paving and its paint smears at 0.6 m/px, so the lane's
+    ribbon read as a second, lighter, mottled road beside the track. Inside the pit-lane polygon (outside the track's own
+    paved width) every pixel's luminance is mapped onto the track asphalt's: l' = m_track + k (l - m_pit), the medians
+    taken over each polygon, the colour kept by a per-pixel gain; pixels brighter than the pit's `paint` quantile
+    (painted lines) keep k = 1 relative to the new median. The seam is the lane polygon's edge, which is the measured
+    lane boundary (clipped at the track edge and the lane's walls)."""
+    from PIL import Image, ImageDraw
+    o = trk.t["ortho"]
+    H, W = img.shape[:2]
+    sx, sy = W / (o["x1"] - o["x0"]), H / (o["y1"] - o["y0"])
+    px = lambda P: [((x - o["x0"]) * sx, (o["y1"] - y) * sy) for x, y in P]  # noqa: E731
+    # the track's paved area as quads station by station (the loop is not one simple polygon)
+    mt = Image.new("L", (W, H), 0)
+    dt = ImageDraw.Draw(mt)
+    Lp, Rp = trk.L[:, :2], trk.R[:, :2]
+    for i in range(trk.n):
+        j = (i + 1) % trk.n
+        dt.polygon(px([Lp[i], Lp[j], Rp[j], Rp[i]]), fill=1)
+    mp = Image.new("L", (W, H), 0)
+    dp = ImageDraw.Draw(mp)
+    for part in pit["parts"]:
+        Lq, Rq = np.array(part["left"])[:, :2], np.array(part["right"])[:, :2]
+        for i in range(len(Lq) - 1):
+            dp.polygon(px([Lq[i], Lq[i + 1], Rq[i + 1], Rq[i]]), fill=1)
+    T_ = np.asarray(mt).astype(bool)
+    P_ = np.asarray(mp).astype(bool) & ~T_
+    f = img.astype(np.float32)
+    lum = f @ np.array([0.2126, 0.7152, 0.0722], np.float32)
+    m_t, m_p = float(np.median(lum[T_])), float(np.median(lum[P_]))
+    k, q = float(opt.get("k", 0.5)), float(opt.get("paint", 0.97))
+    lp = lum[P_]
+    thr = float(np.quantile(lp, q))
+    new = np.where(lp > thr, m_t + (lp - m_p), m_t + k * (lp - m_p))
+    gain = np.clip(new / np.maximum(lp, 1.0), 0.2, 1.5)
+    out = f.copy()
+    out[P_] = np.clip(f[P_] * gain[:, None], 0, 255)
+    log(f"pit lane tone: {int(P_.sum())} ortho px, median luminance {m_p:.1f} -> track's {m_t:.1f} (k {k}, paint above "
+        f"the {q:.2f} quantile {thr:.1f} kept)")
+    return out.astype(np.uint8)
 
 
 def pit_lane(trk, osm):
@@ -1536,7 +1656,10 @@ def wall_boards(trk):
             z = float(trk.ground(*p)[0]) + wb.get("base", wh)
             out.append({"kind": "sign", "text": "", "x": rnd(p[0], 2), "y": rnd(p[1], 2), "z": rnd(z, 2),
                         "heading": rnd(math.atan2(n_[1], n_[0]), 3), "h": wb["h"], "w": rnd(w + 0.02, 2),
-                        "color": cols[k % len(cols)], "src": f"wall board on {wb['wall']} ({wb['src']})"})
+                        "color": cols[k % len(cols)], "src": f"wall board on {wb['wall']} ({wb['src']})",
+                        # the top of a panel standing ON the wall (no `base`: boards on posts behind a wall are not
+                        # part of its face), above the ground, for the coverage gate's wall heights (21 Oct 2026)
+                        **({} if "base" in wb else {"top": rnd(wh + wb["h"], 2)})})
         log(f"wall boards on {wb['wall']} s {wb['s'][0]}-{wb['s'][1]}: {len(L) - 1} panels, {wb['h']} m tall")
     return out
 
@@ -1606,6 +1729,15 @@ def landmarks(trk, T, brg):
         out.append({"kind": "marshal", "text": mp.get("name", ""), "x": rnd(xy[0], 2), "y": rnd(xy[1], 2),
                     "z": rnd(float(trk.ground(*xy)[0]), 2), "heading": rnd(math.atan2(to[1], to[0]), 3),
                     "h": mp.get("h", 3.0), "w": mp.get("w", 2.4), "style": mp.get("style", "tower"), "src": mp["src"]})
+    # free-standing tyre stacks and barrier blocks (config scenery.tyre_stacks, 21 Oct 2026): {latlon, h, w, style
+    # 'tyres' | 'blocks', color, src}; drawn only (not in the collision world)
+    for ts in SC_CFG.get("tyre_stacks", []):
+        xy = np.array(bl.enu(*ts["latlon"]), float)
+        i_, _, _ = trk.project(xy[None])
+        to = trk.C[i_[0], :2] - xy
+        out.append({"kind": "tyres", "text": "", "x": rnd(xy[0], 2), "y": rnd(xy[1], 2), "z": rnd(float(trk.ground(*xy)[0]), 2),
+                    "heading": rnd(math.atan2(to[1], to[0]), 3), "h": ts.get("h", 0.84), "w": ts.get("w", 0.62),
+                    "style": ts.get("style", "tyres"), **({"color": ts["color"]} if ts.get("color") else {}), "src": ts["src"]})
     for lm in SC_CFG.get("light_masts", []):
         xy = np.array(bl.enu(*lm["latlon"]), float)
         out.append({"kind": "mast", "text": "", "x": rnd(xy[0], 2), "y": rnd(xy[1], 2), "z": rnd(float(trk.ground(*xy)[0]), 2),
@@ -1786,9 +1918,10 @@ def main(cfg=None, out_dir=None):
     # 1. regrade the near ortho from the cached NAIP mosaic
     o = trk.t["ortho"]
     raw = os.path.join(CACHE, f"naip_{int(o['x0'])}_{int(o['y0'])}_{int(o['x1'])}_{int(o['y1'])}_{o['width_px']}x{o['height_px']}.png")
+    ortho_arr = None
     if os.path.exists(raw):
-        Image.fromarray(bl.grade_ortho(np.asarray(Image.open(raw).convert("RGB")))).save(
-            os.path.join(OUT, "ortho.jpg"), quality=84, optimize=True)
+        ortho_arr = bl.grade_ortho(np.asarray(Image.open(raw).convert("RGB")))
+        Image.fromarray(ortho_arr).save(os.path.join(OUT, "ortho.jpg"), quality=84, optimize=True)
         log(f"ortho.jpg regraded: {os.path.getsize(os.path.join(OUT, 'ortho.jpg')) / 1e6:.2f} MB")
     else:
         log("WARNING: cached NAIP mosaic missing, ortho.jpg left as is (run the geometry stage)")
@@ -1815,6 +1948,9 @@ def main(cfg=None, out_dir=None):
         # the lane's real width: its paving stops at the walls that bound it (config scenery.pit_lane_clip_walls,
         # 20 Oct 2026; Sonoma's OSM-width lane reached through the pit-in Jersey and the outer wall)
         clip_parts_at_walls(pit["parts"], bar, label="pit lane")
+    if pit and ortho_arr is not None and (PIT_CFG.get("lane") or {}).get("match_track_tone"):
+        Image.fromarray(pit_tone_match(trk, pit, ortho_arr, PIT_CFG["lane"]["match_track_tone"])).save(
+            os.path.join(OUT, "ortho.jpg"), quality=84, optimize=True)
     zones = paved_zones(trk, osm)
     cr_parts, cone_lines = closed_roads(trk, osm) if SC_CFG.get("closed_roads") else ([], [])
     if cr_parts and SC_CFG.get("closed_roads_clip_walls"):

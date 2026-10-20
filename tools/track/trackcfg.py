@@ -49,15 +49,26 @@ Geometry (Stage 1)
   straights [{side, fit 'paint' | 'parallel', lo, hi, join (a, b), end, blend, tol | ref_side/ref_lo/ref_hi, why}]
   gate {straight_rms, step, profile_step, spline_obs_within}
 Ghosts (Stage 2): ghosts {margin, kerb_margin, nudge, jerk_w}
-Scenery (Stage 3): scenery {...}, see build_scenery.py and scenery_post.py
+Scenery (Stage 3): scenery {...}, see build_scenery.py and scenery_post.py. Evidence keys added in the Sonoma scenery
+  round 5 (21 Oct 2026), all optional (absent = the earlier behaviour, Laguna's package unchanged):
+    osm_barrier_overrides {OSM way id: {kind, h, fence, color | drop: True, src}}   re-kind or drop an OSM wall on evidence
+    building_evidence [{contains (lat, lon), src | drop: True, src}]   the source of a building the coverage gate checks,
+                                             or its removal where the 2026 evidence does not show it
+    tyre_stacks [{latlon, h, w, style 'tyres'|'blocks', color, src}]   free-standing stacks ('tyres' landmarks, drawn only)
+    light_masts [{latlon, h, src}]           masts ('mast' landmarks)
+    closed_roads[].mouth_cones [{near (lat, lon), src}]   cones only at the mouths the evidence shows coned
+    wall_boards[]: a panel with no `base` stands on its wall; its top counts toward the wall's height in the coverage gate
 Pit lane (first-class, 21 Oct 2026; read by the pit-lane gate, tools/track/gates/coverageGate.ts, and by the scenery
   builder as it learns each part). Sides are as driven down the lane (the lap's direction); stations are the lap s
   abeam (the lane part's track_s), or lat/lon ends projected onto the track by build_track.py. Every entry carries `src`
   (an inventory frame, a capture, a panorama id). Nothing here is a default: an empty list means "not surveyed".
   pit_lane {
-    lane       {source: 'osm' (pit_lane_way) | 'declared', latlon: [(lat, lon), ...] (declared centre line), width_m}
+    lane       {source: 'osm' (pit_lane_way) | 'declared', latlon: [(lat, lon), ...] (declared centre line), width_m,
+                match_track_tone {k, paint} (one road material: the ortho inside the lane mapped onto the track's tone)}
     walls      [{side 'left'|'right', s0, s1 | a (lat, lon), b (lat, lon), h (m, HEIGHTS.md), material
-                 ('concrete'|'jersey'|'board_wall'|'pitbox_wall'), fence (m, catch fence on top), src}]
+                 ('concrete'|'jersey'|'board_wall'|'pitbox_wall'), fence (m, catch fence on top), src,
+                 latlon [(lat, lon), ...] (measured geometry, built as a barrier) | declared (the name of the
+                 scenery.declared_walls entry that is this wall)}]
     boxes      {n, first (lat, lon), last (lat, lon), wall_h, numbered: bool, src}
     buildings  [{name, osm (way id) | footprint [(lat, lon), ...], h, roof ('flat'|'gable'), colours {wall, roof}, src}]
     furniture  [{kind ('fuel'|'light_mast'|'cone_line'|'water_barrier'|'tyre_stack'|'gate'|'sign'), latlon | s, side, src}]
