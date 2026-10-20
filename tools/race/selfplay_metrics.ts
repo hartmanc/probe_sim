@@ -28,7 +28,7 @@ export interface SelfplayMetrics {
     /** completion by pace ratio (target lap of the faster / the slower): < 0.85, 0.85-0.92, 0.92-0.97 */
     byRatio: { lo: number; hi: number; fails?: string[]; situations: number; completed: number; medianStuck: number; open: Record<string, number> }[] };
   defending: { vsClearlyFaster: number; within3: number; vsSlower: number; none: number };
-  rules: { contacts: number; contactsPerCarLap: number; hardContacts: number; fourOff: number; fourOffMishap: number; fourOffPerCarLap: number; fourOffNonMishapPerCarLap: number; formationPasses: number; recoveries: number; fourOffAt: { s: number; car: string; ctx: string }[]; contactAt: { s: number; t: number; a: string; b: string; closing: number; ctx: string; phase?: string; ds?: number; dl?: number }[] };
+  rules: { contacts: number; contactsPerCarLap: number; hardContacts: number; fourOff: number; fourOffMishap: number; fourOffPerCarLap: number; fourOffNonMishapPerCarLap: number; formationPasses: number; recoveries: number; fourOffAt: { s: number; t?: number; car: string; ctx: string }[]; contactAt: { s: number; t: number; a: string; b: string; closing: number; ctx: string; phase?: string; ds?: number; dl?: number }[] };
   mishaps: { total: number; perCarLap: number; wide: number; spin: number; byCorner: Record<string, number>; lossMedian: number; lossMin: number; lossMax: number; losses: { kind: string; corner: string; loss: number }[] };
   cost: { usPerStep: number; usPerCar: number };
 }
@@ -58,7 +58,7 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
   const pairSeen = new Map<number, number>();
   const offT = new Float64Array(n), onT = new Float64Array(n).fill(99), armed = new Uint8Array(n).fill(1);
   let fourOff = 0, fourOffMishap = 0;
-  const fourOffAt: { s: number; car: string; ctx: string }[] = [], contactAt: SelfplayMetrics['rules']['contactAt'] = [];
+  const fourOffAt: { s: number; t?: number; car: string; ctx: string }[] = [], contactAt: SelfplayMetrics['rules']['contactAt'] = [];
   let Ugreen: Float64Array | null = null;
   let tGreen = NaN;
   const mishapOpen: { idx: number; U0: number; t0: number; kind: string; corner: string }[] = [];
@@ -176,7 +176,7 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
       const h = SAMPLE * dt;
       if (allOff) { offT[i] += h; onT[i] = 0; } else { offT[i] = 0; onT[i] += h; }
       if (onT[i] >= 2) armed[i] = 1;
-      if (allOff && offT[i] >= 0.25 && armed[i]) { armed[i] = 0; fourOff++; fourOffAt.push({ s: Math.round(s), car: cars[i].number, ctx: (d.passTarget >= 0 ? 'pass' : d.defendSide ? 'defend' : dA < ALONE || dB < ALONE ? 'traffic' : 'alone') + '/' + ((d as unknown as { passPhase?: number }).passPhase ?? '-') + '/' + ((d as unknown as { limiter: string }).limiter) }); if (t - lastMishapT[i] < 15 || d.mishapActive) fourOffMishap++; }
+      if (allOff && offT[i] >= 0.25 && armed[i]) { armed[i] = 0; fourOff++; fourOffAt.push({ s: Math.round(s), t: +t.toFixed(1), car: cars[i].number, ctx: (d.passTarget >= 0 ? 'pass' : d.defendSide ? 'defend' : dA < ALONE || dB < ALONE ? 'traffic' : 'alone') + '/' + ((d as unknown as { passPhase?: number }).passPhase ?? '-') + '/' + ((d as unknown as { limiter: string }).limiter) }); if (t - lastMishapT[i] < 15 || d.mishapActive) fourOffMishap++; }
     }
     // ---- situations: progress, setup at passable brake points, completion, expiry
     for (const [key, sit] of situations) {
