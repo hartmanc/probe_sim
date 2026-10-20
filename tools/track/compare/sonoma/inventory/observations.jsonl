@@ -1,0 +1,364 @@
+{"t":0,"side":"left","kind":"wall","attrs":{"type":"concrete","colour":"light blue","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.9,"note":"pit wall along the front straight, between track and pit lane"}
+{"t":0,"side":"right","kind":"wall","attrs":{"type":"concrete","colour":"light blue","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.9,"note":"drag-strip side wall, continuous"}
+{"t":0,"side":"left","kind":"stand","attrs":{"type":"bleachers with suites deck","h_m":15,"h_method":"storeys"},"confidence":0.9,"note":"main grandstand at the line, beyond the pit lane"}
+{"t":0,"side":"left","kind":"mast","attrs":{"type":"light mast","h_m":20,"h_method":"unmeasured"},"confidence":0.8,"note":"light masts behind the pit lane"}
+{"t":0,"side":"right","kind":"fence","attrs":{"type":"chain-link catch fence","h_m":3,"h_method":"fence-post-ref"},"confidence":0.7,"note":"far right, beyond the drag strip"}
+{"t":0,"side":"right","kind":"mast","attrs":{"type":"light mast","h_m":20,"h_method":"unmeasured"},"confidence":0.8,"note":"light masts beyond the drag strip"}
+{"t":0,"side":"right","kind":"paint","attrs":{"type":"white edge line"},"confidence":0.9}
+{"t":2,"side":"left","kind":"wall","attrs":{"type":"concrete","colour":"light blue","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.9,"note":"pit wall continues"}
+{"t":2,"side":"right","kind":"wall","attrs":{"type":"concrete","colour":"light blue","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.9,"note":"drag-strip wall continues"}
+{"t":2,"side":"left","kind":"building","attrs":{"type":"pit garages, red roof"},"confidence":0.8,"note":"beyond pit lane"}
+{"t":2,"side":"right","kind":"fence","attrs":{"type":"chain-link catch fence","h_m":3,"h_method":"fence-post-ref"},"confidence":0.7,"note":"far right"}
+{"t":4,"side":"left","kind":"wall","attrs":{"type":"concrete","colour":"light blue, red/white end","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.9,"note":"pit wall curving left toward its nose; red/white painted section at the far end"}
+{"t":4,"side":"left","kind":"building","attrs":{"type":"pit-exit building, red roof, glazed front"},"confidence":0.8}
+{"t":4,"side":"left","kind":"boards","attrs":{"type":"ad boards on the fence line"},"confidence":0.7}
+{"t":4,"side":"right","kind":"runoff","attrs":{"type":"paved, drag-strip junction"},"confidence":0.8,"note":"wide open asphalt to the right at T1, white painted lines"}
+{"t":4,"side":"right","kind":"mast","attrs":{"type":"light mast","h_m":20,"h_method":"unmeasured"},"confidence":0.7}
+{"t":4,"side":"ahead","kind":"tower","attrs":{"type":"Sonoma tower on the hill"},"confidence":0.9}
+{"t":6,"side":"left","kind":"wall","attrs":{"type":"concrete","colour":"light blue","h_m":0.9,"h_method":"jersey-ref"},"confidence":0.9,"note":"pit-out lane, paddock-side wall beyond the lane"}
+{"t":6,"side":"left","kind":"cone_line","attrs":{"type":"pit-exit cones, yellow/white, ~0.5 m"},"confidence":0.8,"note":"along the blend line between pit-out lane and track"}
+{"t":6,"side":"left","kind":"fence","attrs":{"type":"chain-link","h_m":2.0,"h_method":"fence-post-ref"},"confidence":0.7,"note":"paddock fence behind the pit-out wall"}
+{"t":6,"side":"ahead","kind":"bridge","attrs":{"type":"footbridge with ad boards (Save Mart, GR, Sunoco, Las Vegas)"},"confidence":0.9,"note":"T2 footbridge seen ahead"}
+{"t":6,"side":"right","kind":"runoff","attrs":{"type":"dry grass / dirt"},"confidence":0.8}
+{"t":6,"side":"right","kind":"wall","attrs":{"type":"low dark wall / tyre line at the foot of the bank","h_m":0.8,"h_method":"unmeasured"},"confidence":0.5,"note":"far right, 30-60 m out, at the foot of the hill below the tower"}
+{"t":6,"side":"right","kind":"fence","attrs":{"type":"fence along the hill top","h_m":1.5,"h_method":"unmeasured"},"confidence":0.5,"note":"hill top below the tower, far"}
+{"t":6,"side":"right","kind":"paint","attrs":{"type":"white edge line"},"confidence":0.9}
+{"t":8,"side":"left","kind":"wall","attrs":{"type":"concrete Jersey end","colour":"light blue","h_m":0.81,"h_method":"jersey-ref"},"confidence":0.9,"note":"the paddock-side wall of the pit-out lane ends here"}
+{"t":8,"side":"left","kind":"tyre_wall","attrs":{"type":"dark low wall / tyre wall round the outside of T2","h_m":0.8,"h_method":"jersey-ref"},"confidence":0.8,"note":"starts before the bridge, curves round the left (owner_27/28)"}
+{"t":8,"side":"both","kind":"bridge","attrs":{"type":"truss footbridge on concrete piers both sides, ad-board fascia","h_m":6,"h_method":"car-ref","ahead_m":20},"confidence":0.95,"note":"piers stand on the banks on both sides; stairs/ramps into the banks"}
+{"t":8,"side":"both","kind":"boards","attrs":{"type":"ad boards on the bridge: Save Mart, Toyota GR x2, Sunoco, Las Vegas","ahead_m":20},"confidence":0.95}
+{"t":8,"side":"right","kind":"tyre_wall","attrs":{"type":"low dark barrier line beyond the grass bank","h_m":0.7,"h_method":"unmeasured"},"confidence":0.6,"note":"15-30 m right"}
+{"t":8,"side":"left","kind":"paint","attrs":{"type":"white edge line"},"confidence":0.9}
+{"t":10,"side":"left","kind":"kerb","attrs":{"colour":"red/white","raised":"low, flat concrete","width_m":0.9},"confidence":0.95,"note":"T2 entry outside kerb"}
+{"t":10,"side":"left","kind":"runoff","attrs":{"type":"grass then dirt"},"confidence":0.8}
+{"t":10,"side":"right","kind":"runoff","attrs":{"type":"grass"},"confidence":0.8}
+{"t":10,"side":"right","kind":"tyre_stack","attrs":{"type":"brown block stacks far right (tyre bundles or hay bales)"},"confidence":0.4,"note":"far, 60+ m"}
+{"t":10,"side":"right","kind":"paint","attrs":{"type":"white edge line"},"confidence":0.9}
+{"t":12,"side":"ahead","kind":"stand","attrs":{"type":"concrete terraces up the hill above T2/T3"},"confidence":0.9}
+{"t":12,"side":"left","kind":"fence","attrs":{"type":"catch fence, curved-top posts","h_m":3.5,"h_method":"fence-post-ref"},"confidence":0.85,"note":"along the foot of the terraces, left/ahead of T2 exit"}
+{"t":12,"side":"left","kind":"station","attrs":{"type":"white marshal hut at the foot of the terraces"},"confidence":0.7,"note":"ahead-left at the fence line"}
+{"t":12,"side":"right","kind":"tyre_wall","attrs":{"type":"dark tyre wall far right","h_m":0.8,"h_method":"unmeasured"},"confidence":0.7,"note":"outside of T2 exit / T3 approach, 30+ m"}
+{"t":12,"side":"left","kind":"paint","attrs":{"type":"white edge line"},"confidence":0.9}
+{"t":12,"side":"right","kind":"paint","attrs":{"type":"white edge line"},"confidence":0.9}
+{"t":14,"side":"right","kind":"kerb","attrs":{"colour":"red/white","raised":"low, flat concrete","width_m":1.0},"confidence":0.95,"note":"T2 apex/exit kerb right"}
+{"t":14,"side":"left","kind":"wall","attrs":{"type":"low concrete wall at the foot of the terraces with a 'SONOMA TURN 2' style sign","h_m":0.8,"h_method":"jersey-ref"},"confidence":0.8,"note":"10-15 m left"}
+{"t":14,"side":"left","kind":"fence","attrs":{"type":"catch fence, curved-top posts","h_m":3.5,"h_method":"fence-post-ref"},"confidence":0.9}
+{"t":14,"side":"left","kind":"stand","attrs":{"type":"concrete terraces, ~25 rows, stair aisles, shade roof on top"},"confidence":0.9}
+{"t":14,"side":"left","kind":"mast","attrs":{"type":"light poles inside the fence line","h_m":4,"h_method":"fence-post-ref"},"confidence":0.6}
+{"t":14,"side":"right","kind":"runoff","attrs":{"type":"grass bank"},"confidence":0.8}
+{"t":16,"side":"left","kind":"kerb","attrs":{"colour":"red/white","raised":"low, flat concrete","width_m":0.9},"confidence":0.9,"note":"long kerb along the left after T2 (exit side)"}
+{"t":16,"side":"left","kind":"runoff","attrs":{"type":"dirt strip then grass"},"confidence":0.8}
+{"t":16,"side":"left","kind":"wall","attrs":{"type":"low dark concrete wall at the foot of the terraces","h_m":0.8,"h_method":"jersey-ref"},"confidence":0.85,"note":"10-15 m left, continuous"}
+{"t":16,"side":"left","kind":"fence","attrs":{"type":"catch fence, curved-top posts","h_m":3.5,"h_method":"fence-post-ref"},"confidence":0.9}
+{"t":16,"side":"left","kind":"stand","attrs":{"type":"concrete terraces, stair rails, light poles"},"confidence":0.9}
+{"t":16,"side":"right","kind":"boards","attrs":{"type":"row of large tan billboard backs / panels","h_m":3,"h_method":"unmeasured"},"confidence":0.6,"note":"far right, 60-100 m"}
+{"t":16,"side":"right","kind":"paint","attrs":{"type":"white edge line"},"confidence":0.9}
+{"t":18,"side":"left","kind":"wall","attrs":{"type":"low dark wall (tyre-faced or black concrete) at the foot of the bank","h_m":0.8,"h_method":"jersey-ref"},"confidence":0.85,"note":"owner note 11: walls where the sim shows a lighter ground band"}
+{"t":18,"side":"left","kind":"fence","attrs":{"type":"fence along the hill top","h_m":1.5,"h_method":"unmeasured"},"confidence":0.6}
+{"t":18,"side":"left","kind":"paint","attrs":{"type":"white edge line"},"confidence":0.9}
+{"t":18,"side":"right","kind":"boards","attrs":{"type":"tan billboard panels in a row","h_m":3,"h_method":"unmeasured"},"confidence":0.6,"note":"far right"}
+{"t":20,"side":"left","kind":"runoff","attrs":{"type":"grass bank rising"},"confidence":0.8}
+{"t":20,"side":"right","kind":"boards","attrs":{"type":"tan billboard panels","h_m":3,"h_method":"unmeasured"},"confidence":0.6,"note":"30-60 m right"}
+{"t":20,"side":"right","kind":"paint","attrs":{"type":"white edge line"},"confidence":0.9}
+{"t":22,"side":"left","kind":"wall","attrs":{"type":"white low wall / armco end ahead-left","h_m":0.8,"h_method":"unmeasured"},"confidence":0.5,"note":"at the T3 apex area, ahead"}
+{"t":22,"side":"left","kind":"fence","attrs":{"type":"catch fence, curved-top posts, far left","h_m":3.5,"h_method":"fence-post-ref"},"confidence":0.6}
+{"t":22,"side":"right","kind":"runoff","attrs":{"type":"dirt then grass"},"confidence":0.8}
+{"t":22,"side":"right","kind":"tyre_wall","attrs":{"type":"dark low tyre-faced wall far right","h_m":0.8,"h_method":"unmeasured"},"confidence":0.7,"note":"30+ m right (T3 right)"}
+{"t":22,"side":"right","kind":"paint","attrs":{"type":"white edge line"},"confidence":0.9}
+{"t":24,"side":"left","kind":"kerb","attrs":{"colour":"red/white","raised":"low, flat concrete, rounded","width_m":0.9},"confidence":0.95,"note":"T3 apex kerb"}
+{"t":24,"side":"left","kind":"runoff","attrs":{"type":"dirt then grass"},"confidence":0.8}
+{"t":24,"side":"left","kind":"wall","attrs":{"type":"low dark concrete wall at the foot of the terraces","h_m":0.8,"h_method":"jersey-ref"},"confidence":0.8,"note":"15-25 m left"}
+{"t":24,"side":"left","kind":"fence","attrs":{"type":"catch fence, curved-top posts","h_m":3.5,"h_method":"fence-post-ref"},"confidence":0.85}
+{"t":24,"side":"right","kind":"runoff","attrs":{"type":"grass, wide"},"confidence":0.8}
+{"t":26,"side":"left","kind":"wall","attrs":{"type":"low dark concrete wall","h_m":0.8,"h_method":"jersey-ref"},"confidence":0.85,"note":"8-12 m left, T3 exit to 3a"}
+{"t":26,"side":"left","kind":"fence","attrs":{"type":"catch fence, curved-top posts","h_m":3.5,"h_method":"fence-post-ref"},"confidence":0.9}
+{"t":26,"side":"left","kind":"stand","attrs":{"type":"concrete terraces (T3a-T4)"},"confidence":0.9}
+{"t":26,"side":"right","kind":"station","attrs":{"type":"white elevated marshal tower with roof"},"confidence":0.8,"note":"far right on the bank (3a / T4 area)"}
+{"t":26,"side":"right","kind":"runoff","attrs":{"type":"grass bank"},"confidence":0.8}
+{"t":26,"side":"right","kind":"paint","attrs":{"type":"white edge line"},"confidence":0.9}
+{"t":26,"side":"left","kind":"paint","attrs":{"type":"white edge line"},"confidence":0.9}
+{"t":28,"side":"left","kind":"wall","attrs":{"type":"low concrete wall","h_m":0.8,"h_method":"jersey-ref"},"confidence":0.85,"note":"3a, 8-15 m left"}
+{"t":28,"side":"left","kind":"fence","attrs":{"type":"catch fence, curved-top posts","h_m":3.5,"h_method":"fence-post-ref"},"confidence":0.9}
+{"t":28,"side":"left","kind":"stand","attrs":{"type":"concrete terraces"},"confidence":0.9}
+{"t":28,"side":"right","kind":"runoff","attrs":{"type":"grass"},"confidence":0.8}
+{"t":28,"side":"right","kind":"paint","attrs":{"type":"white edge line"},"confidence":0.9}
+{"t":30,"side":"left","kind":"kerb","attrs":{"colour":"red/white","raised":"low, flat concrete","width_m":0.9},"confidence":0.95,"note":"T4 entry, outside, long"}
+{"t":30,"side":"left","kind":"wall","attrs":{"type":"light grey concrete wall","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.9,"note":"10-20 m left below the terraces"}
+{"t":30,"side":"left","kind":"fence","attrs":{"type":"catch fence, curved-top posts on the wall","h_m":3.5,"h_method":"fence-post-ref"},"confidence":0.9}
+{"t":30,"side":"left","kind":"stand","attrs":{"type":"concrete terraces (T3a-T4), ~20 rows"},"confidence":0.9}
+{"t":30,"side":"right","kind":"runoff","attrs":{"type":"dirt then grass"},"confidence":0.8}
+{"t":30,"side":"right","kind":"tyre_wall","attrs":{"type":"dark tyre wall / black barrier line with red ad boards","h_m":0.9,"h_method":"unmeasured"},"confidence":0.75,"note":"20-40 m right beyond the T4 runoff"}
+{"t":30,"side":"right","kind":"boards","attrs":{"type":"red ad boards on the barrier"},"confidence":0.6}
+{"t":30,"side":"right","kind":"station","attrs":{"type":"white marshal post with roof"},"confidence":0.8,"note":"ahead-right at T4"}
+{"t":32,"side":"left","kind":"kerb","attrs":{"colour":"red/white","raised":"low, flat concrete","width_m":0.9},"confidence":0.9,"note":"T4 entry outside kerb continues"}
+{"t":32,"side":"left","kind":"wall","attrs":{"type":"light grey concrete wall","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.9,"note":"T4 approach, 10-15 m left"}
+{"t":32,"side":"left","kind":"fence","attrs":{"type":"catch fence, curved-top posts","h_m":3.5,"h_method":"fence-post-ref"},"confidence":0.9}
+{"t":32,"side":"right","kind":"station","attrs":{"type":"white elevated marshal post with roof, on a platform"},"confidence":0.9,"note":"T4 station, right, beyond the runoff"}
+{"t":32,"side":"right","kind":"wall","attrs":{"type":"dark concrete / tyre-faced wall","h_m":1.0,"h_method":"unmeasured"},"confidence":0.7,"note":"far right beyond the T4 runoff"}
+{"t":32,"side":"right","kind":"runoff","attrs":{"type":"dirt, wide"},"confidence":0.8}
+{"t":34,"side":"left","kind":"cone_line","attrs":{"type":"orange traffic cones across the Chute mouth","h_m":0.7,"h_method":"cone-ref"},"confidence":0.9,"note":"3-5 cones, ahead-left at T4"}
+{"t":34,"side":"left","kind":"wall","attrs":{"type":"light grey concrete wall end, catch fence","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.85}
+{"t":34,"side":"ahead","kind":"boards","attrs":{"type":"ad boards on a low wall beyond the Chute (red/white, Save Mart)"},"confidence":0.7}
+{"t":34,"side":"right","kind":"runoff","attrs":{"type":"dirt island inside T4"},"confidence":0.8}
+{"t":34,"side":"right","kind":"paint","attrs":{"type":"white edge line"},"confidence":0.9}
+{"t":36,"side":"right","kind":"kerb","attrs":{"colour":"red/white","raised":"low, flat concrete","width_m":1.0},"confidence":0.95,"note":"T4 apex kerb"}
+{"t":36,"side":"left","kind":"wall","attrs":{"type":"low black wall with ad boards (Save Mart, others)","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.85,"note":"outside of T4 beyond grass and the Chute"}
+{"t":36,"side":"left","kind":"fence","attrs":{"type":"chain-link fence","h_m":2.5,"h_method":"fence-post-ref"},"confidence":0.7}
+{"t":36,"side":"left","kind":"runoff","attrs":{"type":"grass then dirt"},"confidence":0.8}
+{"t":38,"side":"left","kind":"kerb","attrs":{"colour":"red/white","raised":"low, flat concrete","width_m":0.9},"confidence":0.95,"note":"T4 exit outside kerb"}
+{"t":38,"side":"left","kind":"runoff","attrs":{"type":"dirt then grass"},"confidence":0.8}
+{"t":38,"side":"left","kind":"tyre_wall","attrs":{"type":"low dark wall / tyre line","h_m":0.8,"h_method":"jersey-ref"},"confidence":0.75,"note":"15-25 m left"}
+{"t":38,"side":"left","kind":"fence","attrs":{"type":"chain-link fence with posts","h_m":2.5,"h_method":"fence-post-ref"},"confidence":0.7}
+{"t":38,"side":"right","kind":"wall","attrs":{"type":"light grey concrete wall at the foot of the bank","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.9,"note":"T5 right wall begins, 5-8 m right"}
+{"t":38,"side":"right","kind":"fence","attrs":{"type":"fence on the hill top","h_m":1.5,"h_method":"unmeasured"},"confidence":0.6}
+{"t":38,"side":"right","kind":"paint","attrs":{"type":"white edge line"},"confidence":0.9}
+{"t":40,"side":"left","kind":"tyre_wall","attrs":{"type":"black tyre stacks 2-3 high with a rail on top","h_m":0.8,"h_method":"tyre-ref"},"confidence":0.9,"note":"T5 outside, 15-25 m left"}
+{"t":40,"side":"left","kind":"runoff","attrs":{"type":"grass / dry grass"},"confidence":0.8}
+{"t":40,"side":"right","kind":"wall","attrs":{"type":"light grey concrete Jersey segments","h_m":0.9,"h_method":"jersey-ref"},"confidence":0.95,"note":"at the foot of the bank, 4-6 m right"}
+{"t":40,"side":"right","kind":"fence","attrs":{"type":"fence on the hill top","h_m":1.5,"h_method":"unmeasured"},"confidence":0.5}
+{"t":40,"side":"left","kind":"paint","attrs":{"type":"white edge line"},"confidence":0.9}
+{"t":40,"side":"right","kind":"paint","attrs":{"type":"white edge line"},"confidence":0.9}
+{"t":42,"side":"right","kind":"wall","attrs":{"type":"light grey concrete Jersey segments","h_m":0.9,"h_method":"jersey-ref"},"confidence":0.95,"note":"continuous, 4-5 m right, orange dirt strip in front"}
+{"t":42,"side":"left","kind":"wall","attrs":{"type":"low dark wall far left","h_m":0.8,"h_method":"unmeasured"},"confidence":0.6,"note":"25-40 m left"}
+{"t":42,"side":"left","kind":"fence","attrs":{"type":"catch fence, curved-top posts","h_m":3.5,"h_method":"fence-post-ref"},"confidence":0.7,"note":"far left"}
+{"t":42,"side":"left","kind":"runoff","attrs":{"type":"grass, wide"},"confidence":0.8}
+{"t":44,"side":"right","kind":"wall","attrs":{"type":"light grey concrete Jersey segments","h_m":0.9,"h_method":"jersey-ref"},"confidence":0.95,"note":"3-5 m right, climbing to the T6 crest"}
+{"t":44,"side":"left","kind":"fence","attrs":{"type":"catch fence, curved-top posts, on a low wall","h_m":3.5,"h_method":"fence-post-ref"},"confidence":0.85,"note":"20-30 m left"}
+{"t":44,"side":"left","kind":"runoff","attrs":{"type":"grass"},"confidence":0.8}
+{"t":46,"side":"right","kind":"wall","attrs":{"type":"light grey concrete Jersey segments","h_m":0.9,"h_method":"jersey-ref"},"confidence":0.95,"note":"to the crest"}
+{"t":46,"side":"right","kind":"station","attrs":{"type":"marshal post with roof on the crest, vehicles parked"},"confidence":0.85,"note":"hilltop station before the Carousel (owner)"}
+{"t":46,"side":"left","kind":"fence","attrs":{"type":"catch fence, curved-top posts","h_m":3.5,"h_method":"fence-post-ref"},"confidence":0.8,"note":"15-25 m left"}
+{"t":46,"side":"left","kind":"runoff","attrs":{"type":"grass"},"confidence":0.8}
+{"t":48,"side":"right","kind":"wall","attrs":{"type":"light grey concrete Jersey segments","h_m":0.9,"h_method":"jersey-ref"},"confidence":0.95,"note":"down from the crest into the Carousel, 2-4 m right"}
+{"t":48,"side":"right","kind":"boards","attrs":{"type":"black sign panel on a post on the bank"},"confidence":0.6}
+{"t":48,"side":"right","kind":"stand","attrs":{"type":"spectator area on the bank with yellow railings / bleachers"},"confidence":0.6,"note":"up the hill right"}
+{"t":48,"side":"left","kind":"wall","attrs":{"type":"low dark wall far left","h_m":0.8,"h_method":"unmeasured"},"confidence":0.6,"note":"30+ m"}
+{"t":48,"side":"left","kind":"runoff","attrs":{"type":"grass"},"confidence":0.8}
+{"t":50,"side":"right","kind":"wall","attrs":{"type":"light grey concrete Jersey segments","h_m":0.9,"h_method":"jersey-ref"},"confidence":0.9,"note":"Carousel entry, outside, ends where the paved area opens"}
+{"t":50,"side":"left","kind":"runoff","attrs":{"type":"grass mound on the inside"},"confidence":0.8}
+{"t":50,"side":"left","kind":"paint","attrs":{"type":"white edge line"},"confidence":0.9}
+{"t":50,"side":"right","kind":"paint","attrs":{"type":"white edge line"},"confidence":0.9}
+{"t":52,"side":"right","kind":"tyre_wall","attrs":{"type":"dark low wall / tyre line at the foot of the spectator bank","h_m":0.8,"h_method":"unmeasured"},"confidence":0.75,"note":"Carousel outside, 25-40 m right"}
+{"t":52,"side":"right","kind":"fence","attrs":{"type":"spectator fence on the bank top","h_m":1.2,"h_method":"person-ref"},"confidence":0.7}
+{"t":52,"side":"right","kind":"runoff","attrs":{"type":"grass, wide"},"confidence":0.8}
+{"t":52,"side":"left","kind":"runoff","attrs":{"type":"grass mound inside"},"confidence":0.8}
+{"t":54,"side":"left","kind":"kerb","attrs":{"colour":"red/white","raised":"low, flat concrete","width_m":0.9},"confidence":0.85,"note":"Carousel apex kerb, ahead-left"}
+{"t":54,"side":"right","kind":"tyre_wall","attrs":{"type":"dark low wall / tyre line","h_m":0.8,"h_method":"unmeasured"},"confidence":0.75,"note":"15-25 m right, Carousel outside"}
+{"t":54,"side":"right","kind":"mast","attrs":{"type":"light masts","h_m":15,"h_method":"unmeasured"},"confidence":0.7}
+{"t":54,"side":"ahead","kind":"boards","attrs":{"type":"sign panel on a post at the Carousel infield"},"confidence":0.5}
+{"t":56,"side":"left","kind":"kerb","attrs":{"colour":"red/white","raised":"low, flat concrete","width_m":0.9},"confidence":0.9,"note":"Carousel apex kerb, left"}
+{"t":56,"side":"right","kind":"tyre_stack","attrs":{"type":"single black tyre stacks on the runoff","h_m":0.8,"h_method":"tyre-ref"},"confidence":0.8,"note":"2 stacks, right of the Carousel exit"}
+{"t":56,"side":"right","kind":"mast","attrs":{"type":"light masts","h_m":15,"h_method":"unmeasured"},"confidence":0.8}
+{"t":56,"side":"right","kind":"runoff","attrs":{"type":"paved then grass"},"confidence":0.7}
+{"t":56,"side":"right","kind":"paint","attrs":{"type":"white edge line"},"confidence":0.9}
+{"t":58,"side":"left","kind":"wall","attrs":{"type":"black wall section then light grey concrete wall","h_m":1.1,"h_method":"jersey-ref"},"confidence":0.9,"note":"left of the Carousel exit, 2-6 m"}
+{"t":58,"side":"left","kind":"paint","attrs":{"type":"grey/white painted blocks on the left edge (flat)"},"confidence":0.6}
+{"t":58,"side":"right","kind":"tyre_stack","attrs":{"type":"black tyre stack","h_m":0.8,"h_method":"tyre-ref"},"confidence":0.8,"note":"right, 20 m out"}
+{"t":58,"side":"right","kind":"mast","attrs":{"type":"light masts","h_m":15,"h_method":"unmeasured"},"confidence":0.8}
+{"t":58,"side":"right","kind":"paint","attrs":{"type":"yellow centre line of the drag strip / NASCAR course"},"confidence":0.7}
+{"t":60,"side":"left","kind":"wall","attrs":{"type":"light blue-grey concrete wall","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.95,"note":"T6-T7 straight, 3-8 m left, continuous"}
+{"t":60,"side":"right","kind":"kerb","attrs":{"colour":"red/white","raised":"low, flat concrete","width_m":0.9},"confidence":0.95,"note":"Carousel exit kerb, right"}
+{"t":60,"side":"right","kind":"runoff","attrs":{"type":"dirt strip then grass bank"},"confidence":0.8}
+{"t":60,"side":"right","kind":"mast","attrs":{"type":"light masts with tyre stacks at the base","h_m":15,"h_method":"unmeasured"},"confidence":0.8}
+{"t":62,"side":"left","kind":"wall","attrs":{"type":"light blue-grey concrete wall","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.95,"note":"continuous"}
+{"t":62,"side":"right","kind":"runoff","attrs":{"type":"grass bank"},"confidence":0.8}
+{"t":62,"side":"right","kind":"mast","attrs":{"type":"light masts","h_m":15,"h_method":"unmeasured"},"confidence":0.8}
+{"t":62,"side":"right","kind":"paint","attrs":{"type":"white edge line"},"confidence":0.9}
+{"t":64,"side":"left","kind":"wall","attrs":{"type":"light blue-grey concrete wall","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.95,"note":"1-2 m from the left edge"}
+{"t":64,"side":"right","kind":"cone_line","attrs":{"type":"orange cones","h_m":0.7,"h_method":"cone-ref"},"confidence":0.7,"note":"ahead-right, at a paved junction"}
+{"t":64,"side":"right","kind":"tyre_wall","attrs":{"type":"black tyre line","h_m":0.7,"h_method":"tyre-ref"},"confidence":0.7,"note":"ahead-right"}
+{"t":64,"side":"right","kind":"mast","attrs":{"type":"light mast","h_m":15,"h_method":"unmeasured"},"confidence":0.8}
+{"t":64,"side":"right","kind":"paint","attrs":{"type":"yellow centre line, white edge line"},"confidence":0.8}
+{"t":66,"side":"left","kind":"wall","attrs":{"type":"light blue-grey concrete wall","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.95,"note":"continuous"}
+{"t":66,"side":"right","kind":"runoff","attrs":{"type":"grass strip, then the Chute pavement"},"confidence":0.8}
+{"t":66,"side":"right","kind":"wall","attrs":{"type":"light blue concrete wall beyond the Chute","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.6,"note":"far right"}
+{"t":66,"side":"right","kind":"mast","attrs":{"type":"light masts","h_m":15,"h_method":"unmeasured"},"confidence":0.8}
+{"t":68,"side":"left","kind":"wall","attrs":{"type":"light blue-grey concrete wall","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.95,"note":"continuous to T7"}
+{"t":68,"side":"right","kind":"stand","attrs":{"type":"concrete terraces on the T7a hill"},"confidence":0.8,"note":"far right"}
+{"t":68,"side":"right","kind":"runoff","attrs":{"type":"grass then pavement"},"confidence":0.8}
+{"t":70,"side":"left","kind":"wall","attrs":{"type":"light blue-grey concrete wall","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.95}
+{"t":70,"side":"left","kind":"boards","attrs":{"type":"large Toyota ad boards on posts above the wall","h_m":2.5,"h_method":"jersey-ref"},"confidence":0.95,"note":"T7 approach"}
+{"t":70,"side":"right","kind":"runoff","attrs":{"type":"grass then paved runoff"},"confidence":0.8}
+{"t":70,"side":"right","kind":"stand","attrs":{"type":"concrete terraces with fence on top"},"confidence":0.8,"note":"far right"}
+{"t":72,"side":"left","kind":"station","attrs":{"type":"white elevated marshal post on a platform with roof, portable toilet beside"},"confidence":0.95,"note":"T7 station, behind the end of the left wall"}
+{"t":72,"side":"left","kind":"wall","attrs":{"type":"light blue-grey concrete wall end","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.9}
+{"t":72,"side":"left","kind":"boards","attrs":{"type":"Pirelli and red ad boards on a low wall"},"confidence":0.85,"note":"ahead-left at T7"}
+{"t":72,"side":"ahead","kind":"tyre_wall","attrs":{"type":"black tyre line across the T7 runoff, vehicles behind","h_m":0.8,"h_method":"tyre-ref"},"confidence":0.85}
+{"t":72,"side":"right","kind":"kerb","attrs":{"colour":"red/white","raised":"low, flat concrete","width_m":0.9},"confidence":0.9,"note":"T7 island apex kerb"}
+{"t":72,"side":"right","kind":"stand","attrs":{"type":"concrete terraces with fence and light masts on top"},"confidence":0.9,"note":"T7a hill, far right"}
+{"t":74,"side":"left","kind":"tyre_wall","attrs":{"type":"black tyre wall line, recovery vehicles behind","h_m":0.8,"h_method":"tyre-ref"},"confidence":0.85,"note":"far left beyond the T7 paved runoff"}
+{"t":74,"side":"left","kind":"runoff","attrs":{"type":"paved, wide (T7 inside runoff)"},"confidence":0.9}
+{"t":74,"side":"left","kind":"stand","attrs":{"type":"concrete terraces"},"confidence":0.9}
+{"t":74,"side":"right","kind":"cone_line","attrs":{"type":"orange delineator posts (tall cones) on the island edge","h_m":1.0,"h_method":"cone-ref"},"confidence":0.85}
+{"t":74,"side":"right","kind":"kerb","attrs":{"colour":"red/white","raised":"low, flat concrete","width_m":0.9},"confidence":0.85}
+{"t":76,"side":"right","kind":"kerb","attrs":{"colour":"red/white","raised":"low, flat concrete","width_m":0.9},"confidence":0.9,"note":"7a island kerb, painted island beyond"}
+{"t":76,"side":"right","kind":"cone_line","attrs":{"type":"orange delineator post at the island nose","h_m":1.0,"h_method":"cone-ref"},"confidence":0.85}
+{"t":76,"side":"left","kind":"cone_line","attrs":{"type":"orange cones along the paved runoff","h_m":0.7,"h_method":"cone-ref"},"confidence":0.8}
+{"t":76,"side":"left","kind":"wall","attrs":{"type":"low white wall at the foot of the terraces","h_m":0.8,"h_method":"jersey-ref"},"confidence":0.6,"note":"far left"}
+{"t":76,"side":"right","kind":"mast","attrs":{"type":"light mast","h_m":15,"h_method":"unmeasured"},"confidence":0.8}
+{"t":78,"side":"left","kind":"kerb","attrs":{"colour":"red/white","raised":"low, flat concrete","width_m":0.9},"confidence":0.9,"note":"7a exit outside kerb"}
+{"t":78,"side":"left","kind":"runoff","attrs":{"type":"pavement then grass"},"confidence":0.8}
+{"t":78,"side":"left","kind":"fence","attrs":{"type":"fence on the far bank","h_m":1.5,"h_method":"unmeasured"},"confidence":0.5}
+{"t":78,"side":"right","kind":"mast","attrs":{"type":"light mast on a black block base","h_m":15,"h_method":"unmeasured"},"confidence":0.9,"note":"5-8 m right"}
+{"t":78,"side":"right","kind":"wall","attrs":{"type":"light concrete wall with ad board","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.6,"note":"far right"}
+{"t":78,"side":"right","kind":"paint","attrs":{"type":"white edge line"},"confidence":0.9}
+{"t":80,"side":"left","kind":"kerb","attrs":{"colour":"red/white","raised":"low, flat concrete","width_m":0.9},"confidence":0.9,"note":"T8 apex kerb"}
+{"t":80,"side":"left","kind":"tyre_wall","attrs":{"type":"dark low wall at the foot of the bank","h_m":0.8,"h_method":"jersey-ref"},"confidence":0.75,"note":"15-25 m left"}
+{"t":80,"side":"left","kind":"fence","attrs":{"type":"fence on the bank top","h_m":1.5,"h_method":"unmeasured"},"confidence":0.6}
+{"t":80,"side":"right","kind":"wall","attrs":{"type":"light grey concrete wall","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.9,"note":"6-10 m right"}
+{"t":80,"side":"right","kind":"mast","attrs":{"type":"light masts","h_m":15,"h_method":"unmeasured"},"confidence":0.8}
+{"t":82,"side":"left","kind":"kerb","attrs":{"colour":"red/white","raised":"low, flat concrete","width_m":0.9},"confidence":0.8,"note":"short kerb on the left ahead (T8 exit)"}
+{"t":82,"side":"left","kind":"tyre_wall","attrs":{"type":"dark low wall / tyre line at the foot of the bank","h_m":0.8,"h_method":"jersey-ref"},"confidence":0.75}
+{"t":82,"side":"right","kind":"wall","attrs":{"type":"light grey concrete wall","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.9,"note":"continuous right"}
+{"t":84,"side":"right","kind":"kerb","attrs":{"colour":"red/white","raised":"low, flat concrete","width_m":0.9},"confidence":0.85,"note":"8a apex kerb"}
+{"t":84,"side":"right","kind":"tyre_wall","attrs":{"type":"black-covered tyre barrier / dark panel wall","h_m":1.3,"h_method":"jersey-ref"},"confidence":0.8,"note":"8a right, 10-20 m (toward the 2020 bypass)"}
+{"t":84,"side":"right","kind":"mast","attrs":{"type":"tall pole","h_m":15,"h_method":"unmeasured"},"confidence":0.7}
+{"t":84,"side":"left","kind":"tyre_wall","attrs":{"type":"dark low wall far left","h_m":0.8,"h_method":"unmeasured"},"confidence":0.7}
+{"t":84,"side":"left","kind":"fence","attrs":{"type":"fence along the hill","h_m":1.5,"h_method":"unmeasured"},"confidence":0.6}
+{"t":86,"side":"left","kind":"kerb","attrs":{"colour":"red/white","raised":"low, flat concrete","width_m":0.9},"confidence":0.9,"note":"8a exit outside kerb"}
+{"t":86,"side":"left","kind":"tyre_wall","attrs":{"type":"dark low wall / tyre line","h_m":0.8,"h_method":"jersey-ref"},"confidence":0.8,"note":"10-20 m left"}
+{"t":86,"side":"left","kind":"fence","attrs":{"type":"fence on the bank top","h_m":1.5,"h_method":"unmeasured"},"confidence":0.6}
+{"t":86,"side":"right","kind":"wall","attrs":{"type":"light grey concrete wall","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.9,"note":"5-8 m right"}
+{"t":86,"side":"right","kind":"mast","attrs":{"type":"light mast","h_m":15,"h_method":"unmeasured"},"confidence":0.85}
+{"t":86,"side":"right","kind":"paint","attrs":{"type":"white edge line"},"confidence":0.9}
+{"t":88,"side":"left","kind":"kerb","attrs":{"colour":"red/white","raised":"low, flat concrete","width_m":0.9},"confidence":0.95,"note":"T9 apex kerb"}
+{"t":88,"side":"left","kind":"wall","attrs":{"type":"light grey concrete wall","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.9,"note":"10-15 m left"}
+{"t":88,"side":"left","kind":"fence","attrs":{"type":"catch fence posts on the wall, fence up the bank","h_m":3.0,"h_method":"fence-post-ref"},"confidence":0.8}
+{"t":88,"side":"right","kind":"wall","attrs":{"type":"dark wall with a 'SONOMA TURN 8' sign","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.7,"note":"far right (8a / bypass side)"}
+{"t":88,"side":"right","kind":"runoff","attrs":{"type":"grass, wide"},"confidence":0.8}
+{"t":90,"side":"right","kind":"kerb","attrs":{"colour":"red/white","raised":"low, flat concrete","width_m":0.9},"confidence":0.95,"note":"T9 exit outside kerb"}
+{"t":90,"side":"left","kind":"wall","attrs":{"type":"low dark concrete wall","h_m":0.9,"h_method":"jersey-ref"},"confidence":0.9,"note":"8-12 m left"}
+{"t":90,"side":"left","kind":"fence","attrs":{"type":"catch fence, curved-top posts","h_m":3.5,"h_method":"fence-post-ref"},"confidence":0.9}
+{"t":90,"side":"left","kind":"stand","attrs":{"type":"concrete terraces (back straight)"},"confidence":0.9}
+{"t":90,"side":"right","kind":"runoff","attrs":{"type":"grass, wide"},"confidence":0.8}
+{"t":90,"side":"right","kind":"mast","attrs":{"type":"light masts","h_m":15,"h_method":"unmeasured"},"confidence":0.8}
+{"t":92,"side":"left","kind":"wall","attrs":{"type":"dark then light concrete wall","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.9,"note":"8-12 m left"}
+{"t":92,"side":"left","kind":"fence","attrs":{"type":"catch fence, curved-top posts","h_m":3.5,"h_method":"fence-post-ref"},"confidence":0.9}
+{"t":92,"side":"left","kind":"stand","attrs":{"type":"concrete terraces with shade roofs on top"},"confidence":0.9}
+{"t":92,"side":"right","kind":"runoff","attrs":{"type":"grass, then the paved 2020 bypass"},"confidence":0.8}
+{"t":92,"side":"right","kind":"mast","attrs":{"type":"light masts","h_m":15,"h_method":"unmeasured"},"confidence":0.8}
+{"t":92,"side":"left","kind":"paint","attrs":{"type":"white edge line"},"confidence":0.9}
+{"t":94,"side":"left","kind":"wall","attrs":{"type":"light concrete wall","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.9,"note":"8-12 m left"}
+{"t":94,"side":"left","kind":"fence","attrs":{"type":"catch fence, curved-top posts","h_m":3.5,"h_method":"fence-post-ref"},"confidence":0.9}
+{"t":94,"side":"left","kind":"stand","attrs":{"type":"concrete terraces with covered stands on top"},"confidence":0.9}
+{"t":94,"side":"right","kind":"runoff","attrs":{"type":"grass, wide"},"confidence":0.8}
+{"t":94,"side":"right","kind":"stand","attrs":{"type":"grandstand far ahead-right (T11 area)"},"confidence":0.6}
+{"t":96,"side":"left","kind":"wall","attrs":{"type":"light concrete wall","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.9,"note":"5-8 m left, end of the back straight"}
+{"t":96,"side":"left","kind":"fence","attrs":{"type":"catch fence, curved-top posts","h_m":3.5,"h_method":"fence-post-ref"},"confidence":0.9}
+{"t":96,"side":"left","kind":"cone_line","attrs":{"type":"single orange cone on the grass (marker)","h_m":0.5,"h_method":"cone-ref"},"confidence":0.7}
+{"t":96,"side":"right","kind":"stand","attrs":{"type":"large grandstand with suites (T10/T11 infield side)"},"confidence":0.8,"note":"far ahead-right"}
+{"t":96,"side":"right","kind":"runoff","attrs":{"type":"grass, wide"},"confidence":0.8}
+{"t":98,"side":"left","kind":"wall","attrs":{"type":"light concrete wall","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.9}
+{"t":98,"side":"left","kind":"fence","attrs":{"type":"catch fence, curved-top posts","h_m":3.5,"h_method":"fence-post-ref"},"confidence":0.9}
+{"t":98,"side":"left","kind":"cone_line","attrs":{"type":"single orange cone on the grass (marker)","h_m":0.5,"h_method":"cone-ref"},"confidence":0.7}
+{"t":98,"side":"right","kind":"runoff","attrs":{"type":"grass"},"confidence":0.8}
+{"t":100,"side":"right","kind":"kerb","attrs":{"colour":"red/white","raised":"low, flat concrete","width_m":0.9},"confidence":0.95,"note":"9a right-hand apex kerb"}
+{"t":100,"side":"right","kind":"tyre_stack","attrs":{"type":"stack of 2 grey tyres on the apex","h_m":0.5,"h_method":"tyre-ref"},"confidence":0.9}
+{"t":100,"side":"left","kind":"wall","attrs":{"type":"concrete wall with 'Sonoma Raceway' ad boards","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.85,"note":"15-25 m left"}
+{"t":100,"side":"left","kind":"fence","attrs":{"type":"catch fence, curved-top posts","h_m":3.5,"h_method":"fence-post-ref"},"confidence":0.85}
+{"t":100,"side":"left","kind":"runoff","attrs":{"type":"paved (bypass mouth)"},"confidence":0.7}
+{"t":100,"side":"ahead","kind":"tyre_wall","attrs":{"type":"black covered barrier sections","h_m":1.0,"h_method":"unmeasured"},"confidence":0.6}
+{"t":102,"side":"left","kind":"kerb","attrs":{"colour":"red/white","raised":"low, flat concrete","width_m":0.9},"confidence":0.95,"note":"9a left-hand apex kerb"}
+{"t":102,"side":"left","kind":"boards","attrs":{"type":"Toyota and other ad boards on the far wall"},"confidence":0.8,"note":"far left"}
+{"t":102,"side":"right","kind":"tyre_wall","attrs":{"type":"black covered tyre barrier","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.75,"note":"15-25 m right"}
+{"t":102,"side":"right","kind":"wall","attrs":{"type":"light concrete wall with catch fence","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.8,"note":"right, below the grandstand"}
+{"t":102,"side":"right","kind":"stand","attrs":{"type":"large grandstand with suites deck"},"confidence":0.85}
+{"t":102,"side":"right","kind":"mast","attrs":{"type":"light masts","h_m":20,"h_method":"unmeasured"},"confidence":0.85}
+{"t":104,"side":"left","kind":"wall","attrs":{"type":"concrete wall with tall 'SONOMA RACEWAY' / Sunbelt board panels on top","h_m":2.8,"h_method":"horizon-ratio"},"confidence":0.85,"note":"after 9a, 15-20 m left; owner note 13/14: walls at and after T10 much higher"}
+{"t":104,"side":"left","kind":"tyre_stack","attrs":{"type":"black tyre stack in front of the wall","h_m":0.6,"h_method":"tyre-ref"},"confidence":0.8}
+{"t":104,"side":"left","kind":"kerb","attrs":{"colour":"red/white","raised":"low, flat concrete","width_m":0.9},"confidence":0.85,"note":"9a exit kerb, left"}
+{"t":104,"side":"right","kind":"wall","attrs":{"type":"light concrete wall (SAFER-like)","h_m":1.1,"h_method":"jersey-ref"},"confidence":0.9,"note":"8-12 m right"}
+{"t":104,"side":"right","kind":"fence","attrs":{"type":"catch fence on the wall, curved-top posts, cables","h_m":4.0,"h_method":"fence-post-ref"},"confidence":0.9}
+{"t":104,"side":"right","kind":"stand","attrs":{"type":"grandstand with suites deck behind the fence"},"confidence":0.85}
+{"t":106,"side":"left","kind":"wall","attrs":{"type":"concrete wall topped by tall ad-board panels (Sunbelt Rentals, Toyota)","h_m":4.0,"h_method":"horizon-ratio"},"confidence":0.85,"note":"T10 approach, outside, 8-15 m left"}
+{"t":106,"side":"left","kind":"boards","attrs":{"type":"Sunbelt Rentals, Toyota boards on the wall"},"confidence":0.95}
+{"t":106,"side":"right","kind":"wall","attrs":{"type":"light concrete wall","h_m":1.1,"h_method":"jersey-ref"},"confidence":0.9,"note":"8-12 m right"}
+{"t":106,"side":"right","kind":"fence","attrs":{"type":"catch fence, curved-top posts","h_m":4.0,"h_method":"fence-post-ref"},"confidence":0.9}
+{"t":106,"side":"right","kind":"mast","attrs":{"type":"light masts","h_m":20,"h_method":"unmeasured"},"confidence":0.85}
+{"t":108,"side":"right","kind":"kerb","attrs":{"colour":"red/white","raised":"low, flat concrete","width_m":0.9},"confidence":0.95,"note":"T10 apex kerb"}
+{"t":108,"side":"left","kind":"wall","attrs":{"type":"concrete wall topped by tall Toyota ad-board panels","h_m":4.0,"h_method":"horizon-ratio"},"confidence":0.9,"note":"T10 outside, continuous to T11; 4.0 m measured at 1:50 (HEIGHTS.md example 2)"}
+{"t":108,"side":"left","kind":"boards","attrs":{"type":"Toyota, Save Mart, zMAX boards"},"confidence":0.95}
+{"t":108,"side":"right","kind":"wall","attrs":{"type":"light concrete wall","h_m":1.1,"h_method":"jersey-ref"},"confidence":0.9,"note":"5-10 m right"}
+{"t":108,"side":"right","kind":"fence","attrs":{"type":"catch fence, curved-top posts","h_m":4.0,"h_method":"fence-post-ref"},"confidence":0.9}
+{"t":108,"side":"right","kind":"boards","attrs":{"type":"small sign panel on a post"},"confidence":0.6}
+{"t":110,"side":"right","kind":"kerb","attrs":{"colour":"red/white","raised":"low, flat concrete","width_m":0.9},"confidence":0.95,"note":"T10 apex/exit kerb right"}
+{"t":110,"side":"left","kind":"wall","attrs":{"type":"concrete wall topped by tall ad-board panels (Humboldt, Save Mart, zMAX)","h_m":4.0,"h_method":"horizon-ratio"},"confidence":0.9,"note":"T10 exit, 6-12 m left"}
+{"t":110,"side":"left","kind":"boards","attrs":{"type":"Humboldt, Save Mart, zMAX boards"},"confidence":0.95}
+{"t":110,"side":"right","kind":"wall","attrs":{"type":"light concrete wall","h_m":1.1,"h_method":"jersey-ref"},"confidence":0.9}
+{"t":110,"side":"right","kind":"fence","attrs":{"type":"catch fence, curved-top posts","h_m":4.0,"h_method":"fence-post-ref"},"confidence":0.9}
+{"t":110,"side":"right","kind":"building","attrs":{"type":"tan buildings beyond the fence (infield)"},"confidence":0.6}
+{"t":112,"side":"left","kind":"wall","attrs":{"type":"concrete wall topped by tall ad-board panels (zMAX, EchoPark)","h_m":3.0,"h_method":"horizon-ratio"},"confidence":0.9,"note":"T10 exit toward T11"}
+{"t":112,"side":"left","kind":"kerb","attrs":{"colour":"red/white","raised":"low, flat concrete","width_m":0.9},"confidence":0.7,"note":"T10 exit outside kerb, left"}
+{"t":112,"side":"right","kind":"wall","attrs":{"type":"concrete wall","h_m":1.1,"h_method":"jersey-ref"},"confidence":0.9}
+{"t":112,"side":"right","kind":"fence","attrs":{"type":"catch fence, curved-top posts","h_m":4.0,"h_method":"fence-post-ref"},"confidence":0.9}
+{"t":112,"side":"right","kind":"mast","attrs":{"type":"light mast and flag pole","h_m":20,"h_method":"unmeasured"},"confidence":0.85}
+{"t":112,"side":"right","kind":"building","attrs":{"type":"infield buildings beyond the fence"},"confidence":0.6}
+{"t":114,"side":"left","kind":"wall","attrs":{"type":"tall wall with EchoPark board panels","h_m":3.5,"h_method":"horizon-ratio"},"confidence":0.9,"note":"5-10 m left"}
+{"t":114,"side":"left","kind":"tyre_wall","attrs":{"type":"tyre bundles along the foot of the tall wall","h_m":0.6,"h_method":"tyre-ref"},"confidence":0.8}
+{"t":114,"side":"right","kind":"tyre_wall","attrs":{"type":"black tyre stacks 4 high, continuous","h_m":1.1,"h_method":"tyre-ref"},"confidence":0.95,"note":"1-3 m right of the edge, T10-T11 straight"}
+{"t":114,"side":"right","kind":"fence","attrs":{"type":"catch fence on a concrete wall, curved-top posts","h_m":4.0,"h_method":"fence-post-ref"},"confidence":0.95,"note":"behind the tyre wall"}
+{"t":114,"side":"right","kind":"wall","attrs":{"type":"concrete wall under the catch fence","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.85}
+{"t":116,"side":"left","kind":"wall","attrs":{"type":"light blue concrete Jersey wall (pit-in separation)","h_m":0.9,"h_method":"jersey-ref"},"confidence":0.9,"note":"1-3 m left of the edge"}
+{"t":116,"side":"left","kind":"wall","attrs":{"type":"tall concrete wall with Las Vegas / O'Reilly boards on top (outside of the pit-in lane)","h_m":5.2,"h_method":"door-ref"},"confidence":0.8,"note":"5.0-5.6 m from the door in its face (this frame) and 5.2 m on Street View jrXpHaDfJT2APw6zcyBKRA (HEIGHTS.md examples 3, 4); owner note 18: tall concrete wall on the outside of the pit-in lane; a door and a marshal in its face"}
+{"t":116,"side":"left","kind":"station","attrs":{"type":"marshal standing at a door in the tall wall"},"confidence":0.6}
+{"t":116,"side":"right","kind":"runoff","attrs":{"type":"paved infield (T11a / NASCAR), painted lines"},"confidence":0.9}
+{"t":118,"side":"left","kind":"wall","attrs":{"type":"light blue concrete Jersey wall (pit-in separation)","h_m":0.9,"h_method":"jersey-ref"},"confidence":0.9}
+{"t":118,"side":"left","kind":"cone_line","attrs":{"type":"orange cones along the pit-in separation","h_m":0.7,"h_method":"cone-ref"},"confidence":0.9,"note":"owner note 15/16"}
+{"t":118,"side":"left","kind":"wall","attrs":{"type":"tall concrete wall with Lucky / Save Mart / Pit Boss boards","h_m":5.2,"h_method":"door-ref"},"confidence":0.85}
+{"t":118,"side":"left","kind":"paint","attrs":{"type":"double white line at the pit-in split"},"confidence":0.7}
+{"t":118,"side":"right","kind":"runoff","attrs":{"type":"paved infield"},"confidence":0.9}
+{"t":120,"side":"left","kind":"wall","attrs":{"type":"light blue concrete Jersey wall","h_m":0.9,"h_method":"jersey-ref"},"confidence":0.95,"note":"pit-in separation continues to the T11 entry, 0.5-2 m left"}
+{"t":120,"side":"left","kind":"wall","attrs":{"type":"tall wall with Coca-Cola / xfinity boards","h_m":5.2,"h_method":"door-ref"},"confidence":0.85,"note":"outside of the pit-in lane"}
+{"t":120,"side":"ahead","kind":"wall","attrs":{"type":"light blue low wall round the T11 outside","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.9}
+{"t":120,"side":"ahead","kind":"fence","attrs":{"type":"catch fence, curved-top posts on the T11 outside wall","h_m":3.5,"h_method":"fence-post-ref"},"confidence":0.9}
+{"t":120,"side":"right","kind":"tyre_stack","attrs":{"type":"red/white painted barrier blocks / barrels on the apron","h_m":1.0,"h_method":"car-ref"},"confidence":0.8,"note":"T11 inside"}
+{"t":120,"side":"right","kind":"runoff","attrs":{"type":"paved infield apron, painted lines"},"confidence":0.9}
+{"t":122,"side":"right","kind":"kerb","attrs":{"colour":"red/white","raised":"low, flat concrete","width_m":1.2},"confidence":0.95,"note":"T11 apex kerb"}
+{"t":122,"side":"right","kind":"tyre_stack","attrs":{"type":"red/white painted concrete blocks and a white water-filled barrier on the apron","h_m":1.0,"h_method":"car-ref"},"confidence":0.9,"note":"owner note 21: free-standing stacks at the inside apron"}
+{"t":122,"side":"left","kind":"wall","attrs":{"type":"light blue concrete wall round the hairpin outside","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.95}
+{"t":122,"side":"left","kind":"fence","attrs":{"type":"catch fence, curved-top posts","h_m":3.5,"h_method":"fence-post-ref"},"confidence":0.95}
+{"t":122,"side":"left","kind":"building","attrs":{"type":"glazed two-storey paddock / hospitality building"},"confidence":0.8}
+{"t":122,"side":"left","kind":"tyre_wall","attrs":{"type":"white tyre stacks along the far wall","h_m":0.8,"h_method":"tyre-ref"},"confidence":0.7}
+{"t":124,"side":"left","kind":"tyre_wall","attrs":{"type":"white-painted tyre wall, 2-3 high","h_m":0.8,"h_method":"tyre-ref"},"confidence":0.95,"note":"T11 exit, outside, 8-15 m left"}
+{"t":124,"side":"left","kind":"fence","attrs":{"type":"chain-link fence","h_m":2.5,"h_method":"fence-post-ref"},"confidence":0.8}
+{"t":124,"side":"left","kind":"building","attrs":{"type":"tan stucco garages with green metal roofs (paddock)"},"confidence":0.9}
+{"t":124,"side":"left","kind":"mast","attrs":{"type":"light masts","h_m":20,"h_method":"unmeasured"},"confidence":0.85}
+{"t":124,"side":"right","kind":"kerb","attrs":{"colour":"red/white","raised":"low, flat concrete","width_m":1.2},"confidence":0.95,"note":"T11 apex/exit kerb"}
+{"t":124,"side":"right","kind":"tyre_stack","attrs":{"type":"red/white painted concrete blocks","h_m":1.0,"h_method":"car-ref"},"confidence":0.9}
+{"t":126,"side":"left","kind":"wall","attrs":{"type":"white concrete wall (pit-road side)","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.95,"note":"1-2 m left, T11 exit to T12"}
+{"t":126,"side":"left","kind":"pit_lane","attrs":{"type":"paved lane beyond the wall"},"confidence":0.7}
+{"t":126,"side":"left","kind":"building","attrs":{"type":"long tan garage building, green roof, windows"},"confidence":0.9}
+{"t":126,"side":"left","kind":"mast","attrs":{"type":"light masts","h_m":20,"h_method":"unmeasured"},"confidence":0.85}
+{"t":126,"side":"right","kind":"runoff","attrs":{"type":"paved (drag strip / infield)"},"confidence":0.8}
+{"t":126,"side":"right","kind":"wall","attrs":{"type":"wall with ad boards far right","h_m":1.5,"h_method":"unmeasured"},"confidence":0.6}
+{"t":126,"side":"right","kind":"paint","attrs":{"type":"white edge line"},"confidence":0.9}
+{"t":128,"side":"left","kind":"wall","attrs":{"type":"white concrete wall (pit-road side)","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.95,"note":"T12, 1-2 m left"}
+{"t":128,"side":"left","kind":"pit_lane","attrs":{"type":"pit lane with numbered boxes beyond the wall"},"confidence":0.85}
+{"t":128,"side":"left","kind":"building","attrs":{"type":"tan garages with green roofs"},"confidence":0.9}
+{"t":128,"side":"right","kind":"runoff","attrs":{"type":"paved, wide (drag strip side)"},"confidence":0.85}
+{"t":128,"side":"right","kind":"wall","attrs":{"type":"wall with Las Vegas / O'Reilly boards","h_m":2.5,"h_method":"horizon-ratio"},"confidence":0.75,"note":"far right"}
+{"t":128,"side":"right","kind":"paint","attrs":{"type":"white edge line"},"confidence":0.9}
+{"t":130,"side":"left","kind":"wall","attrs":{"type":"white concrete wall (pit-road side)","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.95}
+{"t":130,"side":"left","kind":"building","attrs":{"type":"garages and the control tower building"},"confidence":0.85}
+{"t":130,"side":"left","kind":"mast","attrs":{"type":"light masts","h_m":20,"h_method":"unmeasured"},"confidence":0.85}
+{"t":130,"side":"right","kind":"wall","attrs":{"type":"wall with EchoPark boards","h_m":2.5,"h_method":"horizon-ratio"},"confidence":0.75,"note":"far right"}
+{"t":130,"side":"right","kind":"runoff","attrs":{"type":"paved, wide"},"confidence":0.85}
+{"t":132,"side":"left","kind":"wall","attrs":{"type":"white concrete wall (pit-road side), end ahead","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.95}
+{"t":132,"side":"left","kind":"cone_line","attrs":{"type":"orange cones in the pit lane","h_m":0.7,"h_method":"cone-ref"},"confidence":0.8}
+{"t":132,"side":"left","kind":"building","attrs":{"type":"tan multi-storey glazed building (timing / control)"},"confidence":0.9}
+{"t":132,"side":"right","kind":"wall","attrs":{"type":"wall with zMAX / Save Mart boards","h_m":2.5,"h_method":"horizon-ratio"},"confidence":0.75,"note":"far right"}
+{"t":132,"side":"right","kind":"mast","attrs":{"type":"light mast and flag pole","h_m":20,"h_method":"unmeasured"},"confidence":0.8}
+{"t":134,"side":"left","kind":"wall","attrs":{"type":"concrete pit wall wrapped green (EchoPark)","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.95,"note":"front straight, 1-2 m left"}
+{"t":134,"side":"left","kind":"stand","attrs":{"type":"main grandstand with suites deck and press box"},"confidence":0.95}
+{"t":134,"side":"left","kind":"cone_line","attrs":{"type":"orange cones in the pit lane","h_m":0.7,"h_method":"cone-ref"},"confidence":0.8}
+{"t":134,"side":"right","kind":"wall","attrs":{"type":"concrete wall wrapped green (EchoPark, RESTART ZONE)","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.95,"note":"front straight, 2-4 m right"}
+{"t":134,"side":"right","kind":"mast","attrs":{"type":"light masts","h_m":20,"h_method":"unmeasured"},"confidence":0.85}
+{"t":136,"side":"left","kind":"wall","attrs":{"type":"concrete pit wall, light blue","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.95,"note":"front straight before the line"}
+{"t":136,"side":"left","kind":"stand","attrs":{"type":"main grandstand with suites deck (Sonoma Raceway sign)"},"confidence":0.95}
+{"t":136,"side":"right","kind":"wall","attrs":{"type":"concrete wall to the drag strip, light blue, ad panels","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.95}
+{"t":136,"side":"right","kind":"mast","attrs":{"type":"light masts beyond the drag strip","h_m":18,"h_method":"unmeasured"},"confidence":0.8}
+{"t":136,"side":"right","kind":"boards","attrs":{"type":"Sonoma Raceway / Toyota boards on the far drag-strip wall"},"confidence":0.7}
+{"t":138,"side":"both","kind":"paint","attrs":{"type":"chequered start/finish line, green/white, SONOMA RACEWAY lettering"},"confidence":0.95,"note":"S/F line under the hood at 2:18.2"}
+{"t":138,"side":"left","kind":"wall","attrs":{"type":"concrete pit wall, light blue","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.95}
+{"t":138,"side":"right","kind":"wall","attrs":{"type":"concrete wall with Cup Series / mural panels","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.95}
+{"t":138,"side":"right","kind":"fence","attrs":{"type":"chain-link catch fence beyond the drag strip","h_m":3.0,"h_method":"fence-post-ref"},"confidence":0.7}

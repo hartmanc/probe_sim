@@ -1,0 +1,148 @@
+{
+ "video": {
+  "id": "RAZip6S84CM",
+  "url": "https://www.youtube.com/watch?v=RAZip6S84CM",
+  "title": "2nd Place Lemons Finish | Fast Lap in Our Honda CR-V (Sonoma Raceway)",
+  "date": "March 2026 (24 Hours of Lemons)",
+  "camera": "hood / windscreen GoPro, about 1.3 m above the road",
+  "lap_s": 136.0,
+  "stepped": "every 2.0 s from 0:00 to 2:24 (73 frames), apexes refined at 0.5 s"
+ },
+ "frames": "frames",
+ "frame_pattern": "t{t:03d}.jpg",
+ "anchors": [
+  {
+   "name": "S/F",
+   "t": 2.2,
+   "sf": "start",
+   "how": "chequered line under the hood at 2:18.2 one lap later; 0:00 shows the same place as 2:16"
+  },
+  {
+   "name": "footbridge",
+   "t": 8.7,
+   "s": 295.3,
+   "how": "the T2 footbridge (track.json / scenery bridge s 295.3) passes overhead between 0:08.5 and 0:09.0 (0.5 s steps)"
+  },
+  {
+   "name": "T2",
+   "t": 13.5,
+   "corner": "T2",
+   "how": "apex kerb (right) alongside, 0.5 s steps 0:11-0:14"
+  },
+  {
+   "name": "T3",
+   "t": 24.0,
+   "corner": "T3",
+   "how": "apex kerb (left) alongside"
+  },
+  {
+   "name": "T3a",
+   "t": 27.5,
+   "corner": "T3a",
+   "how": "between the 0:26 and 0:28 frames"
+  },
+  {
+   "name": "T4",
+   "t": 36.0,
+   "corner": "T4",
+   "how": "apex kerb (right) alongside"
+  },
+  {
+   "name": "T5",
+   "t": 41.0,
+   "corner": "T5",
+   "how": "right-hander at the foot of the bank wall, between 0:40 and 0:42 (0:40 gave 38 m/s out of T4: too fast)"
+  },
+  {
+   "name": "T6",
+   "t": 54.0,
+   "corner": "T6",
+   "how": "Carousel apex kerb (left) ahead at 0:54, alongside 0:55-0:56"
+  },
+  {
+   "name": "T7",
+   "t": 72.5,
+   "corner": "T7",
+   "how": "turn-in past the T7 station (0:72), island kerb right"
+  },
+  {
+   "name": "T7a",
+   "t": 76.5,
+   "corner": "T7a",
+   "how": "7a island nose with the delineator (1:16); 1:15.5 gave 39 m/s between the two hairpins"
+  },
+  {
+   "name": "T8",
+   "t": 79.5,
+   "corner": "T8",
+   "how": "T8 apex kerb (left) alongside at 1:20, turn-in just before"
+  },
+  {
+   "name": "T8a",
+   "t": 84.0,
+   "corner": "T8a",
+   "how": "8a apex kerb right"
+  },
+  {
+   "name": "T9",
+   "t": 88.0,
+   "corner": "T9",
+   "how": "T9 apex kerb (left) alongside"
+  },
+  {
+   "name": "T9a",
+   "t": 101.5,
+   "corner": "T9a",
+   "how": "9a left apex kerb alongside (1:42)"
+  },
+  {
+   "name": "T10",
+   "t": 109.0,
+   "corner": "T10",
+   "how": "apex kerb (right) alongside, 0.5 s steps 1:46.5-1:49.5"
+  },
+  {
+   "name": "T11",
+   "t": 122.5,
+   "corner": "T11",
+   "how": "hairpin apex kerb (right) alongside, 0.5 s steps 2:00.5-2:03.5"
+  },
+  {
+   "name": "T12",
+   "t": 133.0,
+   "corner": "T12",
+   "how": "end of the pit-road wall (manifest 3705-3964) just ahead at 2:12 (2:09.5 gave 18 m/s on the front straight)"
+  },
+  {
+   "name": "S/F lap 2",
+   "t": 138.2,
+   "sf": "end",
+   "how": "chequered line under the hood, 0.5 s steps 2:16.5-2:18"
+  }
+ ],
+ "observations": [
+  "observations.jsonl",
+  "pit.jsonl",
+  "streetview.jsonl"
+ ],
+ "survey_times": {
+  "T2": 10,
+  "T4": 33,
+  "T6": 52,
+  "T7": 71,
+  "T8a": 84,
+  "T9a": 100,
+  "T10": 105,
+  "T11": 122,
+  "S/F": 138
+ },
+ "dropped_anchors": [
+  {
+   "name": "T1",
+   "t": 5.0,
+   "corner": "T1",
+   "how": "turn-in left about 7 m before the pit-wall nose (s ~103), passed between the 0:04 and 0:06 frames",
+   "why": "T1 is a flat kink with no apex marker; at 0:05.0 it implied 54 m/s from T1 to the footbridge (passage timed to 0.5 s at 0:08.7), so the footbridge replaces it"
+  }
+ ]
+}
