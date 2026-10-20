@@ -162,73 +162,105 @@ CONFIG = dict(
         # enveloped by the 0.316 m tyre (sqrt(2 r h) = 0.18 m) is felt as a ~0.25 m ramp. The earlier "10-15 cm" was
         # most likely the sloped face's width, not its height. No green after-kerb strip (none in the captures or the onboard).
         kerb=dict(width=0.65, stripe_m=0.95, colors=['#b8433a', '#dedbd2'],
-                  palettes={'red': ['#b8433a', '#dedbd2'], 'blue': ['#5b7ea8', '#d9d8cf']},
+                  palettes={'red': ['#b8433a', '#dedbd2'], 'blue': ['#5b7ea8', '#d9d8cf'], 'yellow': ['#c9a83e', '#c9a83e']},
+                  # round 7e (owner note 58): every strip's colour and pattern from footage at that strip, with its frame
+                  require_colour_src=True,
                   profile=dict(height=0.05, face=0.25, back=0.60)),
         # every strip: detected on the 2026 captures by compare/kerb_detect.py (block pattern) or seen on the straightened
         # strips (compare/capstrip.py), confirmed on the onboard; a, b = its ends on the edge (lat, lon)
         kerbs_declared=[
             dict(side='right', a=(38.1621761, -122.4558020), b=(38.1621947, -122.4559702), colors='red', off=0.3, name='T1 exit right, run 1 of the broken kerb',
+                 colour_src='colour unverified: no local frame (t002 / t004: the T1 exit right edge not resolved)',
                  src='c20_s1870 (detector run 116.7-129.7, block pattern), feature note c20_s1925'),
             # T1 kerb blocks (round 4, owner note 31): the dotted line of low grey blocks between the two striped
             # sections on the outside and along the inside from the pit-wall nose, kind 'blocks' (drawn as blocks, no
             # physics kerb); kerb_detect.py runs (grey, block period ~1.9 m) confirmed on capstrip s 40-250
             dict(side='right', a=(38.1621947, -122.4559701), b=(38.1622059, -122.4563447), kind='blocks', off=0.6, name='T1 exit right, block line between the striped runs',
+                 colour_src='colour unverified: no local frame (t002 / t004; grey blocks from the captures)',
                  src='c20_s1870 (kerb_detect grey run 143.7-149.7 and the dotted blocks from 130 to 161 between striped runs 1 and 3); owner_31 satellite'),
             dict(side='left', a=(38.1619492, -122.4555792), b=(38.1620304, -122.4560332), kind='blocks', off=-0.15, name='T1 inside, block line from the pit-wall nose',
+                 colour_src='colour unverified: no local frame (t002 / t004; grey blocks from the captures)',
                  src='c20_s1815 / c20_s1870 (kerb_detect grey run 88.8-133.7, offsets -0.5..+0.2 m); owner_31 satellite (dotted block line on the inside); onboard 2:22.5'),
             dict(side='right', a=(38.1622058, -122.4563328), b=(38.1621982, -122.4565440), colors='red', off=0.3, name='T1 exit right, run 3',
+                 colour_src='colour unverified: no local frame (t004 / t006: behind or not resolved)',
                  src='c20_s1870 / c20_s1925 (detector 161.6-178.6, red)'),
             dict(side='right', a=(38.1621861, -122.4568047), b=(38.1621940, -122.4570057), colors='red', off=0.3, name='T1 exit right, run 4',
+                 colour_src='colour unverified: no local frame (t004 / t006: not resolved)',
                  src='c20_s1925 (detector 203.5-219.5)'),
             dict(side='left', a=(38.1616611, -122.4580486), b=(38.1613606, -122.4582911), colors='red', off=0.3, name='T2 entry, outside (owner_3)',
+                 colour_src='t010: red / white blocks, left',
                  src='c20_s2090 / c20_s2035 blocks on the left edge (capstrip s300); onboard RAZip6S84CM 0:10 red/white kerb left on entry'),
             dict(side='left', a=(38.1609628, -122.459043), b=(38.1612976, -122.4597386), colors='red', off=0.3, name='T2 exit, outside (round 5)',
+                 colour_src='t016: red / white blocks, left',
                  src='c20_s2200 / c20_s2255 (kerb_detect red runs 451.0-458.0 and 465.0-519.8, 91 % of the run, offsets -0.4..+1.0 m); onboard 0:16 long red/white kerb along the left after T2'),
             dict(side='right', a=(38.1612090, -122.4585461), b=(38.1610716, -122.4590163), colors='red', off=0.3, name='T2 apex',
+                 colour_src='t014: red / white blocks, right',
                  src='c20_s2145 (detector 412.1-428.0, 436.0-451.0); onboard 0:13-0:14 red/white apex kerb right'),
             dict(side='right', a=(38.1619167, -122.4603232), b=(38.1622785, -122.4606472), colors='red', off=0.3, name='T3 approach, right',
+                 colour_src='colour unverified: no local frame (t018-t022: no kerb resolved on the right)',
                  src='c20_s2365 (detector 610.6-655.5, red); onboard 0:20.6-0:21 kerb on the right'),
             dict(side='left', a=(38.1624585, -122.4609959), b=(38.1625770, -122.4615314), colors='red', off=0.3, name='T3 apex',
+                 colour_src='t024: red / white blocks, left',
                  src='c20_s2420 / c20_s2475 blocks on the left edge (capstrip s600); onboard 0:24 red/white kerb left'),
             dict(side='right', a=(38.1626675, -122.4617129), b=(38.1627262, -122.4622560), colors='red', off=0.3, name='T3a apex (right; no kerb on the left of 3a)',
+                 colour_src='colour unverified: no local frame (t024-t028: not resolved on the right)',
                  src='c20_s2530 (detector 781.2-814.2) and blocks from 760 (capstrip s750)'),
             dict(side='left', a=(38.1629296, -122.4626566), b=(38.1637196, -122.4633060), colors='red', off=0.3, name='T4 entry, outside',
+                 colour_src='t030 / t032: red / white blocks, left',
                  src='c20_s2585..s2750 blocks on the left edge (capstrip s750/s900); onboard 0:30-0:32 red/white kerb left'),
             dict(side='right', a=(38.1639939, -122.4633539), b=(38.1642332, -122.4631995), colors='red', off=0.3, name='T4 apex',
+                 colour_src='t036: red / white blocks, right',
                  src='c20_s2750 (detector 995.8-1027.7, red); onboard 0:34-0:36 red/white apex kerb right'),
             dict(side='left', a=(38.1643028, -122.4633233), b=(38.1644968, -122.4625410), colors='red', off=0.3, name='T4 exit, outside',
+                 colour_src='t038: red / white blocks, left',
                  src='c20_s2750..s2860 blocks on the left edge (capstrip s900/s1050); onboard 0:38 red/white kerb left'),
-            dict(side='right', a=(38.1644932, -122.4618956), b=(38.1641441, -122.4607970), colors='red', off=0.3, name='T5 apex and exit',
+            dict(side='right', a=(38.1644932, -122.4618956), b=(38.1641441, -122.4607970), colors='yellow', pattern='plain', off=0.3, name='T5 apex and exit',
+                 colour_src='t042: a plain yellow continuous strip on the right at the wall foot (sampled rgb 180, 175, 88 in the graded frame); owner note 58 (owner_58, May 2025 onboard fEcQdo0ucL8, reference only: plain yellow, rgb 182, 159, 95); #c9a83e between the two',
                  src='c20_s2860..s2970 (detector 1154.4-1165.4, 1182.3-1261.2, red)'),
             dict(side='left', a=(38.1629847, -122.4582212), b=(38.1634238, -122.4580951), colors='red', off=0.3, name='Carousel (T6) apex',
+                 colour_src='t054 / t056: red / white blocks, left',
                  src='c20_s3355 / c20_s3410 (detector 1591.4-1646.3); onboard 0:55 red/white kerb left'),
             dict(side='right', a=(38.1640788, -122.4583265), b=(38.1644928, -122.4590012), colors='red', off=0.3, name='Carousel exit, right',
+                 colour_src='t060: red / white blocks, right',
                  src='c20_s3465 / c20_s3520 (detector 1721.1-1796.0, red); onboard 0:60 red/white kerb right'),
             dict(side='right', a=(38.1660531, -122.4625071), b=(38.1663429, -122.4623758), colors='red', off=0.3, name='T7 island (apex)',
+                 colour_src='t072: red / white blocks, right (island tip)',
                  src='c20_s3905 / c20_s3960 (detector 2172.1-2180.1, 2188.1-2201.1); satellite owner_9; onboard 1:12 red/white island kerb'),
             dict(side='right', a=(38.1663894, -122.4623279), b=(38.1664626, -122.4616350), colors='red', off=0.3, name="T7a island (O'Reilly)",
+                 colour_src='t076: red / white blocks, right',
                  src='c20_s3960..s4070 (detector 2216.0-2223.0, 2324.8-2331.8; blocks along the island, capstrip s2250); onboard 1:16 red/white'),
             dict(side='left', a=(38.1667780, -122.4615777), b=(38.1662003, -122.4612627), colors='red', off=0.3, name='T7a exit, outside',
+                 colour_src='t078: red / white blocks, left',
                  src='c20_s4015 / c20_s4070 / c20_s0000 (detector 2299.8-2309.8, 2315.8-2371.7); satellite owner_9 outer kerb'),
             dict(side='left', a=(38.1659810, -122.4609435), b=(38.1658234, -122.4606740), colors='red', off=0.3, name='T8 apex',
+                 colour_src='t082: red / white blocks, left',
                  src='c20_s0055 (detector 2417.6-2440.5, red); onboard 1:18-1:20 red/white kerb left'),
             dict(side='right', a=(38.1657094, -122.4607681), b=(38.1652733, -122.4596928), colors='red', off=0.3, name='T8a apex',
+                 colour_src='t084: red / white blocks, right (small, ahead)',
                  src='c20_s0055..s0165 (detector 2441.5-2447.5, 2479.4-2505.4, 2523.3-2537.3; blocks capstrip s2400); onboard 1:22-1:24'),
             dict(side='left', a=(38.1655429, -122.4598331), b=(38.1651945, -122.4594269), colors='red', off=0.3, name='T8a exit, outside',
+                 colour_src='t086: red / white blocks, left',
                  src='c20_s0165 / c20_s0220 (detector 2542.3-2572.2); onboard 1:26 red/white kerb left'),
             dict(side='left', a=(38.1650454, -122.4591963), b=(38.1649276, -122.4587442), colors='red', off=0.3, name='T9 apex',
+                 colour_src='t088: red / white blocks, left',
                  src='c20_s0220 / c20_s0275 (detector 2600.2-2645.1, red); onboard 1:28'),
             dict(side='right', a=(38.1648360, -122.4582215), b=(38.1646912, -122.4577513), colors='red', off=0.3, name='T9 exit, outside',
+                 colour_src='t090: red / white blocks, right',
                  src='c20_s0330 / c20_s0385 (detector 2692.0-2739.8, red)'),
             dict(side='right', a=(38.1630881, -122.4552904), b=(38.1629460, -122.4551790), colors='red', off=0.3, name='9a chicane, right-hand part apex',
+                 colour_src='t100: red / white blocks, right',
                  src='c20_o0660 (detector 3021.2-3036.2, red); onboard 1:39 kerb right'),
             dict(side='left', a=(38.1628061, -122.4550548), b=(38.1624095, -122.4542271), colors='red', off=0.3, name='9a chicane left-hand part apex and on to T10',
+                 colour_src='t102 / t104: red / white blocks, left',
                  src='c20_o0715 / c20_s0715 / c20_s0770 (detector 3060.1-3169.9); onboard 1:41 red/white kerb left'),
             dict(side='right', a=(38.1622297, -122.4537575), b=(38.1618148, -122.4531362), colors='red', off=0.3, name='T10 apex',
+                 colour_src='t108 / t110: red / white blocks, right',
                  src='c20_s0825..s0935 (detector 3219.8-3292.6, red); onboard 1:45'),
             dict(side='left', a=(38.1614869, -122.4527961), b=(38.1609287, -122.4525711), colors='red', off=0.3, name='T10 exit, outside',
+                 colour_src='colour unverified: no local frame (t110-t114: hidden by another car / behind)',
                  src='c20_s0990 / c20_s1045 (detector 3338.5-3369.4, 3379.4-3402.4)'),
             dict(side='right', a=(38.1590671, -122.4520153), b=(38.1589844, -122.4525287), colors='red', off=0.3, name='T11 hairpin apex',
+                 colour_src='t122 / t124: red / white blocks, right',
                  src='c20_s1265..s1375 (detector 3628.8-3673.7, 3700.7-3730.6; blocks capstrip s3600); onboard 2:01-2:04 red/white'),
         ],
         # walls OSM does not map, measured on the clean captures with compare/wall_measure.py (bright concrete top or
@@ -592,10 +624,8 @@ CONFIG = dict(
                  src='c20_s3685 / c20_s3740: wall_measure bright along the drag strip NW end, the third measured run only (s 2081-2100, 30-33 m right of the centre); onboard 1:04-1:06 (t064 / t066) the low white wall stands on the far side of the drag strip continuation, 30 m or more from the T7 road',
                  cut='round 7 (owner note 36): the round-5 line began at s 1885, 0.5 m beyond the right edge, on the drag strip\'s NE paint / concrete edge (the bright line c20_s3630 shows): t062 / t064 show grass right off that edge and no wall before the fork; the first two measured runs and the 69 m bridge between them are dropped, the third run (the wall the footage shows) kept',
                  latlon=[(38.165956, -122.4617028), (38.166008, -122.461796), (38.1660575, -122.4618781)]),
-            dict(name='drag strip at the T7 fork: tyre line across the continuation (round 5)', kind='tyres', color=TYRE_BLACK, h=0.7, fence=0.0,
-                 h_src='inventory 1:04: black tyre line 0.7 m (tyre-ref)',
-                 src='onboard RAZip6S84CM 1:04: a black tyre line with cones across the drag strip continuation where the course forks left, ~40-60 m ahead; placed across the continuation at s ~1938 between the track edge and the measured far wall (c20_s3630; the 2026 captures, taken at another event, show the lanes open)',
-                 latlon=[(38.1651955, -122.4603197), (38.1652344, -122.4603494), (38.1652741, -122.4603766)]),
+            # round 7e (owner note 57): the round-5 'tyre line across the continuation' (s 1934-1942) was a misread of t064; the
+            # continuation is closed by a line of orange pylons (cone_lines_declared below, style 'delineator')
             dict(name='T7 approach, left: wall on to the T7 post (round 5)', kind='concrete', h=1.2, fence=0.0, color=WALL_PALE_BLUE,
                  h_src='as the T6 to T7 wall (onboard 1:09: ~1.2 m)',
                  src='c20_s3850 / c20_s3905: wall_measure bright, s 2104-2150, 63 % picked, rms 0.80 m (parked vehicles); onboard 1:12 the light blue-grey wall runs to its end beside the T7 post',
@@ -794,17 +824,23 @@ CONFIG = dict(
             dict(latlon=(38.1612016, -122.4599209), h=4.0, src='onboard 0:14-0:16 (light poles inside the fence line at the foot of the T2 terraces, ~4 m, fence-post-ref) along the measured T2-exit wall (c20_s2145 / c20_s2200), 1.5 m behind it every 20 m (pole spacing in the frames)'),
             dict(latlon=(38.1613529, -122.460044), h=4.0, src='onboard 0:14-0:16 (light poles inside the fence line at the foot of the T2 terraces, ~4 m, fence-post-ref) along the measured T2-exit wall (c20_s2145 / c20_s2200), 1.5 m behind it every 20 m (pole spacing in the frames)'),
         ],
-        # the pit-out blend line (round 7, owner notes 42-43): measured on c20_s1870 / c20_s1925 (wall_measure bright along the
-        # left edge s 100-245, 90 % picked, rms 0.20 m: the painted line is the fitted edge, offset p50 -0.09 m), from the
-        # pit-wall nose (s ~103) to the merge (s ~240). The 2025 pit-out video (24of8fjjAug t=300 / 304, local frames) shows
-        # it as a DOUBLE YELLOW line with small yellow cones ON it, sparse; no cones before the nose (the lane is behind the wall)
-        pit_exit_cones=dict(latlon=[(38.1619886, -122.4557157), (38.1620023, -122.4557836), (38.1620139, -122.4558548), (38.1620225, -122.4559225), (38.1620292, -122.4559906), (38.1620328, -122.4560590), (38.1620353, -122.4561332), (38.1620373, -122.4562017), (38.1620394, -122.4562703), (38.1620420, -122.4563445), (38.1620434, -122.4564130), (38.1620442, -122.4564816), (38.1620451, -122.4565501), (38.1620460, -122.4566187), (38.1620468, -122.4566880), (38.1620476, -122.4567614), (38.1620485, -122.4568299), (38.1620488, -122.4569034), (38.1620484, -122.4569729), (38.1620459, -122.4570417), (38.1620318, -122.4571083), (38.1620180, -122.4571748), (38.1620122, -122.4572141)], spacing=17.0, color='#e5c21e', size=0.5,
-                            src='the pit-out blend line measured on c20_s1870 / c20_s1925 (s 103-240); 2025 pit-out video 24of8fjjAug t=304: small yellow cones (~0.5 m) on the double yellow line, 15-20 m apart in the frame\'s perspective (17 m used); t=300: none before the nose'),
+        # the pit-out blend line (round 7e, owner notes 55-56; was round 7's line along the fitted edge, which bent 6 m out
+        # with the edge's merge bulge after s 205 and closed the lane): the STRAIGHT continuation of the short pit-side wall
+        # past T1. That wall (s 134-158, 22.9 m, a white top with a dark north shadow on c20_s1815 / c20_s1870, the owner's
+        # 'visible wall segment' in owner_56) is measured as a line (656 picks at 0.035 m/px, rms 0.055 m, heading 177.9 deg);
+        # the double yellow starts at its west end ('the nose', s 158) and runs straight. Its direction: the paint visible on
+        # c20_s1870 / c20_s1925 for 52 m past the wall (103 of 103 picks, straight fit rms 0.044 m, heading 179.1 deg: 1.1 deg
+        # off the wall toward the track; the owner's red line sits 0.9 deg off his wall strip the same way). Its length: the
+        # owner's drawing, red line 839 px against the 304 px wall strip (x 2.76), on the measured 22.9 m wall = 63.3 m,
+        # s 158-222 (vehicles hide the paint beyond 52 m). Beyond its end the lane is open to the track (no line). Cones: the
+        # 2025 pit-out video 24of8fjjAug t=304 (small yellow cones on the double yellow, 15-20 m apart; 17 m).
+        pit_exit_cones=dict(latlon=[(38.1620421, -122.4562996), (38.1620425, -122.4563325), (38.1620429, -122.4563653), (38.1620433, -122.4563982), (38.1620438, -122.4564311), (38.1620442, -122.4564639), (38.1620446, -122.4564968), (38.1620450, -122.4565297), (38.1620455, -122.4565626), (38.1620459, -122.4565954), (38.1620463, -122.4566283), (38.1620467, -122.4566612), (38.1620472, -122.4566941), (38.1620476, -122.4567269), (38.1620480, -122.4567598), (38.1620484, -122.4567927), (38.1620489, -122.4568256), (38.1620493, -122.4568584), (38.1620497, -122.4568913), (38.1620502, -122.4569242), (38.1620506, -122.4569570), (38.1620510, -122.4569899), (38.1620514, -122.4570228)], spacing=17.0, color='#e5c21e', size=0.5,
+                            src='round 7e (owner notes 55-56): the straight pit-out blend line from the west end of the pit-side wall s 134-158 (c20_s1815 / c20_s1870), along the paint on c20_s1870 / c20_s1925 (100 % picked, rms 0.044 m), 63.3 m (owner_56 drawing scaled by the wall), s 158-222; 2025 pit-out video 24of8fjjAug t=304: small yellow cones (~0.5 m) on the double yellow line, 15-20 m apart (17 m used); t=300: none before the nose'),
         paint_lines_declared=[
-            dict(latlon=[(38.1619886, -122.4557157), (38.1620023, -122.4557836), (38.1620139, -122.4558548), (38.1620225, -122.4559225), (38.1620292, -122.4559906), (38.1620328, -122.4560590), (38.1620353, -122.4561332), (38.1620373, -122.4562017), (38.1620394, -122.4562703), (38.1620420, -122.4563445), (38.1620434, -122.4564130), (38.1620442, -122.4564816), (38.1620451, -122.4565501), (38.1620460, -122.4566187), (38.1620468, -122.4566880), (38.1620476, -122.4567614), (38.1620485, -122.4568299), (38.1620488, -122.4569034), (38.1620484, -122.4569729), (38.1620459, -122.4570417), (38.1620318, -122.4571083), (38.1620180, -122.4571748), (38.1620122, -122.4572141)], width=0.1, double=0.3, color='#d9b42a',
-                 src='pit-out blend line, c20_s1870 / c20_s1925 (as the pit-exit cones); colour: the 2025 pit-out video 24of8fjjAug t=304 (double yellow)'),
+            dict(latlon=[(38.1620421, -122.4562996), (38.1620425, -122.4563325), (38.1620429, -122.4563653), (38.1620433, -122.4563982), (38.1620438, -122.4564311), (38.1620442, -122.4564639), (38.1620446, -122.4564968), (38.1620450, -122.4565297), (38.1620455, -122.4565626), (38.1620459, -122.4565954), (38.1620463, -122.4566283), (38.1620467, -122.4566612), (38.1620472, -122.4566941), (38.1620476, -122.4567269), (38.1620480, -122.4567598), (38.1620484, -122.4567927), (38.1620489, -122.4568256), (38.1620493, -122.4568584), (38.1620497, -122.4568913), (38.1620502, -122.4569242), (38.1620506, -122.4569570), (38.1620510, -122.4569899), (38.1620514, -122.4570228)], width=0.1, double=0.3, color='#d9b42a',
+                 src='round 7e pit-out blend line (as the pit-exit cones: straight from the pit-side wall s 134-158, c20_s1815 / c20_s1870 / c20_s1925, owner_56); colour: the 2025 pit-out video 24of8fjjAug t=304 (double yellow)'),
         ],
-        edge_line_cut=[dict(side='left', s=(100, 242), why='the pit-out blend line is the declared double yellow paint line (2025 pit-out video t=304), not the white edge line')],
+        edge_line_cut=[dict(side='left', s=(100, 242), why='the pit-out: dotted block line from the nose (s 88-133), the pit-side wall (s 134-158, not placed), the declared double yellow blend line (s 158-222, 2025 pit-out video t=304) and the open merge beyond its end (owner note 56: no line), not the white edge line')],
         # raised kerbs round the T7 complex islands off the lap (round 7b, owner note 45): the capture's red / white kerb paint
         # measured as lines (wall_measure bright along the painted blocks, capture shift applied), drawn raised so the ortho's
         # flat kerb paint never shows under a partial strip
@@ -927,8 +963,10 @@ CONFIG = dict(
                  src='onboard RAZip6S84CM 1:14 (t074): orange cones across the short-T7 road at the T7 hairpin; line across the road\'s first section (OSM 505454376, NAIP width)'),
             dict(side='right', s=(2196, 2212), off=0.5, spacing=5.0,
                  src='onboard 1:14-1:16 (round 5): orange delineator posts on the edge of the T7a island before its kerb (island on c20_s3960)'),
-            dict(side='right', s=(1932, 1942), off=1.5, spacing=4.0,
-                 src='onboard 1:04 (round 5): orange cones in front of the tyre line across the drag strip continuation at the T7 fork'),
+            # round 7e (owner note 57): orange PYLONS (tall delineator posts, ~1 m, white bands) close the drag strip continuation
+            # at the T7 fork, on the round-5 line across it (track edge to the strip's far side, c20_s3630); no tyres
+            dict(latlon=[(38.1651955, -122.4603196), (38.1652326, -122.4603465), (38.1652697, -122.4603733), (38.1653068, -122.4604002), (38.1653439, -122.4604270)], spacing=1.7, color='#e0561c', size=1.0, style='delineator',
+                 src='owner note 57 (May 2025 onboard fEcQdo0ucL8 0:57, reference only: a line of orange pylons, no tyre barrier); onboard RAZip6S84CM t064: 7 orange posts with white bands resolved over the first ~10 m (spacing 1.7 m); the round-5 line across the drag strip continuation at s ~1938 (c20_s3630) extended on its own direction to 19 m, across the strip paved mouth (17.6 m wide, 12.3 m beyond the right edge: the closed road drag strip past the T7 fork)'),
             # round 7 (owner note 37): ON the measured solid double line, 0.3 m to its track side, from where the dashed
             # blend line turns solid (s ~3510) to the Jersey nose; the round-5 line ran 0.4 m outside the fitted track edge,
             # which at the lane mouth lies along the outer wall, so it started inside the lane and converged into the wall
@@ -960,11 +998,21 @@ CONFIG = dict(
                               dict(near=(38.1660875, -122.4627527), src='onboard 1:12: small orange cones in front of a black tyre line across the Chute mouth at T7 (inventory, added row)')]),
             dict(name='drag strip', ways=['28825448'], half_width=9.0, max_half=12.0, surface='concrete', paint=True,
                  mouth_cones=[]),
+            # round 7e (owner note 57: 'per our previous discussion, the pavement should be modeled as race track'): the drag
+            # strip's continuation past the T7 fork (OSM raceway 834724051, from the course at s 1878 through the fork node to the
+            # node at the T7 hairpin, s ~2216) was unpaved ground
+            # in the sim (the ortho's pale concrete); now the circuit's road material with its painted lines (closed_roads rule,
+            # edges_from_paint), stopped at its walls; its mouth is closed by the pylon line (cone_lines_declared)
+            dict(name='drag strip past the T7 fork', ways=['834724051:316916576:4954006091'], half_width=9.0, max_half=12.0, surface='asphalt', paint=True,
+                 edges_from_paint=True, mouth_cones=[],
+                 src='OSM 834724051 (raceway, the straight NW continuation of the drag strip); c20_s3630 / c20_s3685 / c20_s3740: paved strip with lane paint beyond the fork; owner note 57 (May 2025 onboard fEcQdo0ucL8 0:57, reference only); onboard t064 / t066 asphalt with painted lane lines'),
             # the paved runoff INSIDE T7 (the triangle inside the hairpin, round the short-T7 way): cars may use it
             # (owner), so no cones; the racing line stays on the track (cutting through adds distance)
             dict(name='T7 inside runoff', ways=['1494191150'], half_width=10.0, max_half=14.0, cones=False, surface='asphalt', paint=True, edges_from_paint=True),  # round 7b (note 45): painted edges like a real road; still open (owner, 19 Oct)
             dict(name='T11a shortcut', ways=['28825444'], half_width=6.0, surface='concrete', paint=True, mouth_cones=[]),
-            dict(name='PWC lower hairpin', ways=['505454376'], half_width=5.0, surface='asphalt', paint=True, edges_from_paint=True,
+            dict(name='PWC lower hairpin', ways=['505454376'], half_width=5.0, surface='concrete', paint=True,
+                 part_overrides=[dict(near=(38.1655500, -122.4607000), surface='asphalt', edges_from_paint=True,
+                                      src='owner note 57 (May 2025 onboard fEcQdo0ucL8 0:57, reference only: the strip past the fork looks like racing surface with its painted lines); onboard t064 / t066: grey asphalt with painted lane lines')],
                  mouth_cones=[]),
         ],
 
@@ -989,6 +1037,14 @@ CONFIG = dict(
                  why='back straight, right: open dirt infield (paddock) to the bypass, no barrier (c20_o0440..o0660; onboard 1:33-1:38 open right)'),
             dict(target='drag strip', side='right', a=(38.1631111, -122.4580692), b=(38.1638457, -122.4581899),
                  why='Carousel exit: the course runs onto the drag strip; the drag strip toward the front straight is open pavement in the 2026 evidence (c20_s3410; no cones there in the onboard either, so round 5 removed the rule cone line) and a dead end, walled along the front straight and at T12 (onboard 2:12-2:18)'),
+            # round 7e (owner note 57): the drag strip's continuation past the fork is paved now; its mouth is closed by the
+            # pylon line, and these stretches see it across open ground (no barrier in the captures or the onboard)
+            dict(target='drag strip past the T7 fork', side='right', a=(38.1651699, -122.4602071), b=(38.1664136, -122.4623056),
+                 why='T7 road, right (from the fork, beside the pylon line\'s track end): open grass between the T7 road and the drag strip continuation, no wall (round 7, owner note 36: t062 / t064 / t066 show grass right off the edge and no wall; c20_s3630 / c20_s3685 / c20_s3740)'),
+            dict(target='drag strip past the T7 fork', side='right', a=(38.1667539, -122.4619088), b=(38.1662644, -122.4615375),
+                 why='T7a exit to T8, right: open grass and paddock down to the strip\'s NW end (onboard t076 / t078: no barrier on the right; c20_s3960 / c20_s4015)'),
+            dict(target='drag strip past the T7 fork', side='right', a=(38.1655508, -122.4600987), b=(38.1654029, -122.4598397),
+                 why='8a, right: the crossover road to the drag strip (OSM raceway 380830038) meets 8a in the gap between the measured T8-8a concrete wall (ends s ~2510) and the 8a tyre line (begins s ~2515, c20_s0110 / c20_s0165)'),
             dict(target='PWC lower hairpin', side='right', a=(38.1656123, -122.4615977), b=(38.1661994, -122.4613789),
                  why='inside T7 / 7a: paved runoff and the PWC hairpin are open pavement the cars may use (owner, 19 Oct; owner_9; Street View J6fsnW4hj4xCjQLzrgRGzA, gd1SNdksCq5QZtwlsrzR7g)'),
             dict(target='T11a shortcut', side='right', a=(38.1609734, -122.4526661), b=(38.1597720, -122.4522059),

@@ -3380,16 +3380,19 @@
    "side": "right",
    "kind": "cone_line",
    "attrs": {
-    "type": "orange cones",
-    "h_m": 0.7,
-    "h_method": "cone-ref",
+    "type": "orange pylons (tall delineator posts, white bands) across the drag strip continuation",
+    "h_m": 1.0,
+    "h_method": "unmeasured",
     "ahead_m": 50,
     "correction": {
-     "round": "scenery round 5 (21 Oct 2026)",
+     "round": "scenery rounds 5 and 7e (21-23 Oct 2026)",
      "was": {
-      "ahead_m": null
+      "ahead_m": null,
+      "type": "orange cones",
+      "h_m": 0.7,
+      "h_method": "cone-ref"
      },
-     "why": "frame t064: the cones stand in front of the tyre line across the drag strip continuation at the fork, ~40-60 m ahead"
+     "why": "round 5: frame t064: the cones stand in front of the tyre line across the drag strip continuation at the fork, ~40-60 m ahead; round 7e (owner note 57): the strip continuation at the fork is closed by a line of orange pylons, not tyres (the owner's May 2025 onboard fEcQdo0ucL8 0:57, reference only); frame t064 zoomed: 7 orange posts with white bands across the mouth; the dark band behind them read as tyres in round 5 is not across the continuation; height ~1 m (owner)"
     }
    },
    "confidence": 0.7,
@@ -3402,18 +3405,22 @@
   },
   {
    "side": "right",
-   "kind": "tyre_wall",
+   "kind": "cone_line",
    "attrs": {
-    "type": "black tyre line",
-    "h_m": 0.7,
-    "h_method": "tyre-ref",
+    "type": "orange pylons (tall delineator posts, white bands) across the drag strip continuation",
+    "h_m": 1.0,
+    "h_method": "unmeasured",
     "ahead_m": 50,
     "correction": {
-     "round": "scenery round 5 (21 Oct 2026)",
+     "round": "scenery rounds 5 and 7e (21-23 Oct 2026)",
      "was": {
-      "ahead_m": null
+      "ahead_m": null,
+      "kind": "tyre_wall",
+      "type": "black tyre line",
+      "h_m": 0.7,
+      "h_method": "tyre-ref"
      },
-     "why": "frame t064: the black tyre line and cones lie across the drag strip continuation where the course forks left to T7, ~40-60 m ahead (base rows 12-20 px below the horizon)"
+     "why": "round 5: frame t064: the black tyre line and cones lie across the drag strip continuation where the course forks left to T7, ~40-60 m ahead (base rows 12-20 px below the horizon); round 7e (owner note 57): the strip continuation at the fork is closed by a line of orange pylons, not tyres (the owner's May 2025 onboard fEcQdo0ucL8 0:57, reference only); frame t064 zoomed: 7 orange posts with white bands across the mouth; the dark band behind them read as tyres in round 5 is not across the continuation; height ~1 m (owner)"
     }
    },
    "confidence": 0.7,
@@ -7306,19 +7313,19 @@
   "wall": 102,
   "fence": 52,
   "runoff": 46,
-  "tyre_wall": 33,
   "paint": 32,
+  "tyre_wall": 32,
   "mast": 30,
   "kerb": 29,
   "stand": 23,
   "building": 19,
   "boards": 17,
-  "cone_line": 15,
+  "cone_line": 16,
   "tyre_stack": 12,
   "station": 8,
   "bridge": 2,
   "pit_lane": 2,
   "tower": 1
  },
- "unmeasured_heights": 54
+ "unmeasured_heights": 56
 }
