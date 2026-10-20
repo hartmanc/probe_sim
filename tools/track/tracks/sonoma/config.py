@@ -148,7 +148,8 @@ CONFIG = dict(
         # the pit-exit cone line starts where the pit wall AT the edge ends (its nose, s ~103), not at the pit-out lane's
         # paddock-side wall (c20_s1815 / c20_s1870: painted blend line from the nose to the merge)
         pit_exit_near_wall_only=True,
-        # kerbs: red / white painted concrete in 2026 at every corner the onboard shows (0:10 T2 entry, 0:13 T2, 0:24 T3,
+        # kerbs (round 7e, owner note 58: colour per strip from its frame, colour_src on each strip; T5 inside is plain
+        # yellow): red / white painted concrete in 2026 at the corners the onboard shows (0:10 T2 entry, 0:13 T2, 0:24 T3,
         # 0:30-0:38 T4, 0:55-1:00 Carousel, 1:12-1:16 T7 / 7a islands, 1:18-1:28 T8 / 8a / T9, 1:39-1:45 9a / T10,
         # 2:01-2:04 T11); the July 2011 Street View blue / white (H9xspk4q_OoFIjVDhaMzDA, J6fsnW4hj4xCjQLzrgRGzA,
         # xXQqyp9Q9sWv9ZLN2ORYsA) predates the repave. Blocks 0.95 m (16 px period on c20_o0715); 0.65 m wide, lying
