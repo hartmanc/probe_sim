@@ -33,7 +33,7 @@ export function loadTrackPack(idOrDir: string = DEFAULT_TRACK): TrackPack {
   const scenery = existsSync(resolve(D, 'scenery.json')) ? JSON.parse(readFileSync(resolve(D, 'scenery.json'), 'utf8')) : null;
   const pit = scenery?.pit_lane ?? null, zones = scenery?.paved_zones ?? null;
   const pitLane = pit || zones ? { spacing_m: 1, fractions: (pit ?? zones).fractions, parts: [...(pit?.parts ?? []), ...(zones?.parts ?? [])] } : null;
-  const surface = createTrackSurface(track, heightfield, { pitLane, sausages: scenery?.sausages ?? null });
+  const surface = createTrackSurface(track, heightfield, { pitLane, sausages: scenery?.sausages ?? null, kerbs: scenery?.kerbs ?? null });
   const line = new RaceLine(track, ghosts);
   if (scenery?.pit_exit_cones?.pts?.length) line.restrictLeft(scenery.pit_exit_cones.pts);
   return { track, ghosts, scenery, surface, line, pitLane, heightfield };

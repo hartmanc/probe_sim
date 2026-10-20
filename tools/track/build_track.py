@@ -20,7 +20,8 @@ Stages, each with a printed validation report; a failed check exits 1 without wr
             Without logger laps the centre is the painted-road midpoint after the spline fit (one more refit).
   ghosts    (stage 2) tools/ghosts/build_ghosts.py: ghost laps, optimal lap, racing line (no logger: the pure
             minimum-curvature line only, no laps, implied-g checks skipped; validate with tools/calibrate/drive.ts).
-  scenery   (stage 3) build_scenery.py then scenery_post.py, then the edge gate with the walls and bridges.
+  scenery   (stage 3) build_scenery.py then scenery_post.py, then the edge gate with the walls and bridges, then the
+            containment, pit-connectivity and sign-placement gates (gates/sceneryGates.ts).
 """
 import argparse
 import json
@@ -742,6 +743,10 @@ def stage_scenery(cfg, out, no_logger):
     bad = [w for w in worst if w[0] < (0.3 if w[1] == "pitwall" else 0.5)]
     rep.check("barrier gaps", not bad, f"min gap to the edge {min(w[0] for w in worst):.2f} m over {len(worst)} runs"
               + (f"; {len(bad)} runs closer than 0.5 m (pit wall 0.3 m)" if bad else ""))
+    # the three scenery gates of 20 Oct 2026 (tools/track/gates/sceneryGates.ts): containment, pit connectivity, sign
+    # placement, on the scenery just built; config scenery.gates {allowed: [{target, side, a, b (lat, lon on the track),
+    # why}], paddock: [{name, latlon: [...]}], pit_box_latlon, reach, step}
+    rep.fails += scenery_gates(cfg, T, SC, tmp, trk)
     counts = {k: (len(v) if isinstance(v, list) else len(v.get("parts", v.get("strips", v.get("runs", v.get("pts", []))))))
               for k, v in SC.items() if isinstance(v, (list, dict)) and k not in ("far", "notes")}
     counts["trees"] = len(SC["trees"]["data"]) // 5
@@ -754,11 +759,48 @@ def stage_scenery(cfg, out, no_logger):
     for f in ("far_heightfield.bin", "far_ortho.jpg", "ortho.jpg"):
         shutil.copyfile(os.path.join(tmp, f), os.path.join(out, f))
     shutil.copyfile(os.path.join(tmp, "scenery_preview.png"), os.path.join(work, "scenery_preview.png"))
+    if os.path.exists(os.path.join(tmp, "gates_report.json")):
+        shutil.copyfile(os.path.join(tmp, "gates_report.json"), os.path.join(work, "gates_report.json"))
     log(f"wrote {out}: scenery.json, far_heightfield.bin, far_ortho.jpg, regraded ortho.jpg")
     if rep.fails:
         log("\nSCENERY STAGE FAILED:", rep.fails, "(written anyway: --write-on-fail, for diagnosis only)")
         return 1
     return 0
+
+
+def scenery_gates(cfg, T, SC, tmp, trk):
+    """Run the TypeScript scenery gates on scenery.json in `tmp` (written first) and print their report; returns the
+    failed gate labels."""
+    g = dict(cfg["scenery"].get("gates", {}))
+    out = {k: g[k] for k in ("reach", "step") if k in g}
+    sp = T["spacing_m"]
+    al = []
+    for a in g.get("allowed", []):
+        P = np.array([cfg.enu(*a["a"]), cfg.enu(*a["b"])], float)
+        i, _, _ = trk.project(P)
+        al.append({"target": a["target"], **({"side": a["side"]} if a.get("side") else {}), "s0": round(float(i[0]) * sp, 1),
+                   "s1": round(float(i[1]) * sp, 1), "why": a["why"]})
+    out["allowed"] = al
+    out["paddock"] = [{"name": p["name"], "poly": [list(cfg.enu(*q)) for q in p["latlon"]]} for p in g.get("paddock", [])]
+    if g.get("pit_box_latlon"):
+        i, _, _ = trk.project(np.array([cfg.enu(*g["pit_box_latlon"])]))
+        out["pit_box_s"] = round(float(i[0]) * sp, 1)
+    json.dump(SC, open(os.path.join(tmp, "scenery.json"), "w"), separators=(",", ":"))
+    cp = os.path.join(tmp, "gates_config.json")
+    json.dump(out, open(cp, "w"))
+    r = subprocess.run(["npx", "tsx", os.path.join(HERE, "gates", "run_gates.ts"), tmp, cp], cwd=ROOT, capture_output=True, text=True)
+    fails = []
+    for line in r.stdout.splitlines():
+        if line.startswith("GATES_JSON "):
+            json.dump(json.loads(line[11:]), open(os.path.join(tmp, "gates_report.json"), "w"), indent=1)
+            continue
+        log(line)
+        if line.startswith("[FAIL]"):
+            fails.append(line[7:].split(":")[0])
+    if r.returncode not in (0, 1) or (r.returncode == 1 and not fails):
+        log(r.stderr[-2000:])
+        fails.append("scenery gates did not run")
+    return fails
 
 
 def main():

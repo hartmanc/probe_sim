@@ -72,6 +72,12 @@ export interface VehicleLike {
 }
 
 /** Pit lane (scenery.json `pit_lane`, CONTRACTS §2b): open parts with the track's centre/left/right/profile layout. */
+/** Kerb strips (scenery.json `kerbs`); raised only with a `profile` (see src/physics/track.ts KerbsJson). */
+export interface KerbsJson {
+  width: number; inside?: boolean; profile?: { height: number; face: number; back: number } | null;
+  strips: { side: number; s0: number; s1: number; kind?: string; off?: number }[];
+}
+
 /** Raised sausage kerbs (scenery.json `sausages`, see src/physics/track.ts SausageJson). */
 export interface SausageJson {
   width: number; height: number; gap: number; kerb_width: number;
@@ -127,7 +133,7 @@ export interface GhostsJson {
 export interface PhysicsApi {
   Vehicle: new (spec: any, opts?: { autoShift?: boolean }) => VehicleLike;
   loadCarSpec(json: unknown): unknown;
-  createTrackSurface(track: TrackJson, heightfield: Float32Array, opts?: { far?: FarHeightfield | null; pitLane?: PitLaneJson | null; sausages?: SausageJson | null }): Surface;
+  createTrackSurface(track: TrackJson, heightfield: Float32Array, opts?: { far?: FarHeightfield | null; pitLane?: PitLaneJson | null; sausages?: SausageJson | null; kerbs?: KerbsJson | null }): Surface;
   /** Real physics only: static collision world from scenery.json (null scenery → boundary only). */
   createCollisionWorld?(scenery: unknown, track: TrackJson): unknown;
   /** Real physics only: the gear a ghost used at every grid point (from its rpm and speed channels). */

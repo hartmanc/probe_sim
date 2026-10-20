@@ -324,9 +324,14 @@ def poly_mask(G, xy):
 BUILDING_KIND = {"grandstand": "grandstand", "garage": "garage", "terrace": "tower"}
 
 
+TERRACE_FOOTPRINTS = {}   # OSM id -> ENU footprint of a grandstand built as a terrace (config scenery.terraces)
+
+
 def buildings(trk, G, osm):
     CHM = np.nan_to_num(G["DSM"] - G["DEM"], nan=0.0)
     out, taken = [], np.zeros_like(CHM, bool)
+    terr_ids = {str(t["osm"]) for t in SC_CFG.get("terraces", []) if t.get("osm")}
+    TERRACE_FOOTPRINTS.clear()
     for w in osm.select(lambda t: "building" in t, trk.box):
         xy = w["xy"]
         if np.linalg.norm(xy[0] - xy[-1]) < 0.5:
@@ -337,6 +342,9 @@ def buildings(trk, G, osm):
         if m.sum() < 4:
             continue
         taken |= ndi.binary_dilation(m, iterations=2)
+        if w["id"] in terr_ids:
+            TERRACE_FOOTPRINTS[w["id"]] = xy   # stepped rows on the hillside instead of a slab (terraces())
+            continue
         hv = CHM[m]
         h = float(np.percentile(hv, 85)) if (hv > 2).mean() > 0.3 else 0.0
         lv = w["tags"].get("building:levels")
@@ -391,6 +399,81 @@ def buildings(trk, G, osm):
         taken[sl] |= ndi.binary_dilation(m, iterations=2)
     log(f"buildings: {n_osm} from OSM footprints, {len(out) - n_osm} unmapped structures from the lidar")
     return out, taken
+
+
+def terraces(trk):
+    """Grandstands built into a hillside as stepped concrete rows (config scenery.terraces, 20 Oct 2026; Sonoma's stands
+    are terraces cut into the hills, not slabs): each {name, osm (way id) | footprint [(lat, lon), ...], run (m, default
+    0.9), fence (top fence, default True), src}. The rows run along the contour: their direction is perpendicular to the
+    uphill direction of a plane fitted to the DEM over the footprint (away from the track where the ground is flat);
+    row r's tread is the median ground along its centre line, at least 0.15 m above the row below; the riser of row 0
+    starts on the ground. Returns (terraces for scenery.json, fence barrier runs)."""
+    from shapely.geometry import LineString, Polygon
+    out, fences = [], []
+    for tc in SC_CFG.get("terraces", []):
+        if tc.get("osm"):
+            xy = TERRACE_FOOTPRINTS.get(str(tc["osm"]))
+            if xy is None:
+                log(f"terrace {tc['name']}: OSM way {tc['osm']} not found"); continue
+        else:
+            ll = np.array(tc["footprint"], float); xy = np.c_[bl.enu(ll[:, 0], ll[:, 1])]
+        poly = Polygon(xy)
+        if not poly.is_valid:
+            poly = poly.buffer(0)
+        # uphill direction from a plane fit to the DEM inside the footprint
+        mn = np.array(poly.bounds[:2]); mx = np.array(poly.bounds[2:])
+        gx, gy = np.meshgrid(np.arange(mn[0], mx[0], 2.0), np.arange(mn[1], mx[1], 2.0))
+        from shapely import contains_xy
+        inside = contains_xy(poly, gx.ravel(), gy.ravel())
+        X, Y = gx.ravel()[inside], gy.ravel()[inside]
+        Z = trk.ground(X, Y)
+        A = np.c_[X - X.mean(), Y - Y.mean(), np.ones(len(X))]
+        (ax, ay, _), *_ = np.linalg.lstsq(A, Z, rcond=None)
+        slope = math.hypot(ax, ay)
+        c = np.array(poly.centroid.coords[0])
+        if slope > 0.05:
+            u = np.array([ax, ay]) / slope
+        else:
+            i_, _, _ = trk.project(c[None]); u = c - trk.C[i_[0], :2]; u /= np.linalg.norm(u)
+        v = np.array([-u[1], u[0]])
+        P = np.asarray(poly.exterior.coords)
+        t = (P - c) @ u
+        run = tc.get("run", 0.9)
+        rows, zprev = [], None
+        nrow = int((t.max() - t.min()) / run)
+        L = 2 * float(np.abs((P - c) @ v).max()) + 10
+        for r in range(nrow):
+            tm = t.min() + (r + 0.5) * run
+            seg = poly.intersection(LineString([c + u * tm - v * L, c + u * tm + v * L]))
+            if seg.is_empty:
+                continue
+            if seg.geom_type != "LineString":
+                seg = max(getattr(seg, "geoms", [seg]), key=lambda g: g.length)
+            a, b = np.array(seg.coords[0]), np.array(seg.coords[-1])
+            if np.linalg.norm(b - a) < 2:
+                continue
+            q = a[None] + (b - a)[None] * np.linspace(0, 1, 9)[:, None]
+            z = float(np.median(trk.ground(q[:, 0], q[:, 1])))
+            z0 = z if zprev is None else max(z, zprev + 0.15)
+            rows.append({"a": [rnd(a[0], 2), rnd(a[1], 2)], "b": [rnd(b[0], 2), rnd(b[1], 2)], "z": rnd(z0, 2)})
+            zprev = z0
+        if not rows:
+            continue
+        rise = np.diff([r_["z"] for r_ in rows])
+        f = rows[0]
+        zg0 = float(np.min(trk.ground(np.array([f["a"][0], f["b"][0]]), np.array([f["a"][1], f["b"][1]]))))
+        out.append({"name": tc["name"], "src": tc["src"], "run": run, "dir": [rnd(u[0], 4), rnd(u[1], 4)],
+                    "z_ground_front": rnd(zg0, 2), "rows": rows})
+        if tc.get("fence", True):
+            top = rows[-1]
+            Pf = np.array([top["a"], top["b"]], float) + u * run / 2
+            Pf = resample_line(Pf, 3.0)
+            fences.append({"kind": "fence", "h": 0.0, "fence": 1.8, "pts": with_z(trk, Pf),
+                           "src": f"terrace {tc['name']} top fence ({tc.get('fence_src', tc['src'])})"})
+        log(f"terrace {tc['name']}: {len(rows)} rows of {run} m, rise p50 {np.median(rise) if len(rise) else 0:.2f} m "
+            f"(p10 {np.percentile(rise, 10) if len(rise) else 0:.2f}, p90 {np.percentile(rise, 90) if len(rise) else 0:.2f}), "
+            f"hillside slope {slope:.2f}, total rise {rows[-1]['z'] - rows[0]['z']:.1f} m")
+    return out, fences
 
 
 # ---------------------------------------------------------------- trees
@@ -614,6 +697,9 @@ def barriers(trk, osm):
         log(f"tyre wall {name}: s {s0}-{s1}, {np.median(d):.1f} m outside the edge ({src})")
     # pit wall: left of the front straight wherever the pit lane runs alongside
     pit = [w for w in osm.ways if w["tags"].get("name") == PIT_WAY]
+    if pit and SC_CFG.get("pit_wall", {}).get("rule", True) is False:
+        log("pit wall: rule off (config scenery.pit_wall.rule False): every pit-side wall is declared from the evidence")
+        pit = []
     if pit:
         PL = resample_line(pit[0]["xy"], 2.0)
         i, lat, dout = trk.project(PL)
@@ -676,10 +762,32 @@ def barriers(trk, osm):
     # lat/lon polylines (a declared fact like a corner anchor, not a geometry edit). A rule-placed pit wall within 3 m of
     # a declared wall is dropped there (the declared one is the measured position of the same wall).
     decl = []
-    for dw in SC_CFG.get("declared_walls", []):
-        ll = np.array(dw["latlon"], float)
-        x, y = bl.enu(ll[:, 0], ll[:, 1])
-        P = resample_line(np.c_[x, y], 2.0)
+    split = []
+    work = [(dw, None) for dw in SC_CFG.get("declared_walls", [])]
+    k_ = 0
+    while k_ < len(work) or split:
+        if k_ >= len(work):
+            work += split; split = []
+            continue
+        dw, pre = work[k_]; k_ += 1
+        if pre is not None:
+            dw = dict(dw, drop_within=None, _pre=pre)
+        if dw.get("_pre") is not None:
+            x, y = dw["_pre"][:, 0], dw["_pre"][:, 1]
+        else:
+            ll = np.array(dw["latlon"], float)
+            x, y = bl.enu(ll[:, 0], ll[:, 1])
+        P = resample_line(np.c_[x, y], 2.0) if dw.get("_pre") is None else np.c_[x, y]
+        if dw.get("drop_within") is not None:
+            # a wall that the track itself crosses or runs on (Sonoma's drag-strip walls where the course uses the drag
+            # strip): points within drop_within m of the track's paved width are not this wall; the rest is kept in runs
+            _, _, dd = trk.project(P)
+            runs_ = [P[a_:b_ + 1] for a_, b_ in _runs(dd >= dw["drop_within"]) if b_ - a_ >= 2]
+            for extra in runs_[1:]:
+                split.append((dw, extra))
+            if not runs_:
+                continue
+            P = runs_[0]
         # the fitted edge wins: a declared point closer than 0.5 m to the road (or on it) is moved out along the
         # normal to 0.55 m outside the edge, and the shift is reported (the measurement and the fit disagree there)
         i, lat, dout = trk.project(P)
@@ -689,8 +797,11 @@ def barriers(trk, osm):
             log(f"declared wall {dw['name']}: {int(close.sum())} points within 0.5 m of the fitted edge moved out "
                 f"(max {0.5 - dout[close].min():.2f} m, stations {int(i[close].min())}..{int(i[close].max())})")
         decl.append(P)
-        out.append({"kind": dw.get("kind", "concrete"), "h": dw.get("h", 1.0), "fence": dw.get("fence", 3.0),
-                    "pts": with_z(trk, P), "src": f"declared: {dw['name']}"})
+        rec = {"kind": dw.get("kind", "concrete"), "h": dw.get("h", 1.0), "fence": dw.get("fence", 3.0),
+               "pts": with_z(trk, P), "src": f"declared: {dw['name']}" + (f" ({dw['src']})" if dw.get("src") else "")}
+        if dw.get("color"):
+            rec["color"] = dw["color"]
+        out.append(rec)
         log(f"declared wall {dw['name']}: {len(P) * 2} m ({dw.get('kind', 'concrete')}, fence {dw.get('fence', 3.0)} m)")
     if decl:
         from scipy.spatial import cKDTree
@@ -717,7 +828,39 @@ def barriers(trk, osm):
 
 
 # ---------------------------------------------------------------- kerbs, boards, landmarks
+def kerbs_declared(trk):
+    """Kerb strips from the evidence (config scenery.kerbs_declared, 20 Oct 2026; Sonoma): each {side, a, b (lat, lon of
+    the strip's ends on the edge), colors (stripe, base) or a palette name of scenery.kerb.palettes, off (m, the kerb
+    band's centre beyond the edge; absent = the package's inside convention), kind, src}. No rule-placed kerbs, no
+    green verge unless declared (paint)."""
+    out = []
+    pal = SC_CFG.get("kerb", {}).get("palettes", {})
+    for k in SC_CFG["kerbs_declared"]:
+        side = 1 if k["side"] == "left" else -1
+        P = np.array([bl.enu(*k["a"]), bl.enu(*k["b"])], float)
+        i, lat, _ = trk.project(P)
+        s0, s1 = int(i[0]), int(i[1])
+        if (s1 - s0) % trk.n > trk.n / 2:
+            s0, s1 = s1, s0
+        rec = {"side": side, "s0": s0, "s1": s0 + (s1 - s0) % trk.n, "kind": k.get("kind", "kerb")}
+        c = k.get("colors")
+        if isinstance(c, str):
+            c = pal[c]
+        if c:
+            rec["colors"] = list(c)
+        if k.get("off") is not None:
+            rec["off"] = float(k["off"])
+        if k.get("paint"):
+            rec["paint"] = float(k["paint"])
+        rec["src"] = (f"{k['name']}: " if k.get("name") else "") + k["src"]
+        out.append(rec)
+    log(f"kerbs: {len(out)} declared strips (config scenery.kerbs_declared), {sum(k['s1'] - k['s0'] for k in out)} m; no rule kerbs")
+    return out
+
+
 def kerbs(trk):
+    if SC_CFG.get("kerbs_declared") is not None:
+        return kerbs_declared(trk)
     out = []
     for c in trk.t["corners"]:
         if not c.get("dir"):
@@ -770,6 +913,9 @@ def closed_roads(trk, osm):
                 continue
             for part in res["parts"]:
                 part["turn"] = road["name"]
+                # 20 Oct 2026: a closed road is other pavement for the containment gate (an inside runoff the cars may
+                # use, cones False, is not: it is runoff)
+                part["kind"] = "closed_road" if road.get("cones", True) else "runoff"
                 out_parts.append(part)
                 # cone line across each end that touches the track: from one lane edge to the other, 1 m off the edge
                 for end in ((0, -1) if road.get("cones", True) else ()):
@@ -780,6 +926,42 @@ def closed_roads(trk, osm):
                         lines.append({"spacing_m": 2.0, "pts": with_z(trk, P), "src": f"closed road {road['name']} mouth"})
     log(f"closed roads: {len(out_parts)} paved parts, {len(lines)} cone lines")
     return out_parts, lines
+
+
+def clip_parts_at_walls(parts, bar, margin=0.3):
+    """A closed road's paving stops at a wall (config scenery.closed_roads_clip_walls, 20 Oct 2026: the NAIP half-width
+    of Sonoma's drag strip reached under the pit-straight wall): an edge point whose segment from the part's centre crosses
+    a wall, tyre wall or Armco run is moved back to 0.3 m short of the crossing. Heights are kept (the profile is linear
+    across, the clipped side keeps its own row value)."""
+    S = []
+    for b in bar:
+        if b["kind"] in ("concrete", "pitwall", "tyres", "armco"):
+            P = np.array(b["pts"])[:, :2]
+            S.append(np.c_[P[:-1], P[1:]])
+    if not S:
+        return
+    S = np.concatenate(S)
+    a0, a1 = S[:, :2], S[:, 2:]
+    moved = 0
+    for part in parts:
+        C = np.array(part["center"])[:, :2]
+        for side in ("left", "right"):
+            E = np.array(part[side])
+            for j in range(len(E)):
+                p, q = C[j], E[j, :2]
+                r = q - p; s_ = a1 - a0
+                den = r[0] * s_[:, 1] - r[1] * s_[:, 0]
+                ok = np.abs(den) > 1e-9
+                qp = a0 - p
+                t = np.where(ok, (qp[:, 0] * s_[:, 1] - qp[:, 1] * s_[:, 0]) / np.where(ok, den, 1), 9)
+                u = np.where(ok, (qp[:, 0] * r[1] - qp[:, 1] * r[0]) / np.where(ok, den, 1), 9)
+                hit = ok & (t >= 0) & (t <= 1) & (u >= 0) & (u <= 1)
+                if hit.any():
+                    tt = float(t[hit].min()); L = float(np.linalg.norm(r))
+                    tt = max(0.0, tt - margin / max(L, 1e-6))
+                    E[j, :2] = p + r * tt; moved += 1
+            part[side] = [[rnd(x, 2), rnd(y, 2), rnd(z, 3)] for x, y, z in E]
+    log(f"closed roads: {moved} edge points clipped at walls (config scenery.closed_roads_clip_walls)")
 
 
 def pit_lane(trk, osm):
@@ -991,7 +1173,9 @@ def _pit_exit_cones_one_part(trk, part, barriers, spacing):
     for w in barriers or []:
         if w["kind"] != "pitwall" and not str(w.get("src", "")).startswith("declared"): continue
         i, lat, out = trk.project(np.array(w["pts"])[:, :2])
-        near = (np.sign(lat) == side) & (out < 6.0) & (((i - s0) % trk.n) < ((s1 - s0) % trk.n))
+        # a wall AT the lane's track-facing edge (a pit wall, 2 m off the edge) ends the shared stretch; a wall on the
+        # lane's far side (Sonoma's pit-out lane, 20 Oct 2026) does not
+        near = (np.sign(lat) == side) & (out < (3.0 if SC_CFG.get("pit_exit_near_wall_only") else 6.0)) & (((i - s0) % trk.n) < ((s1 - s0) % trk.n))
         if near.any():
             s0 = max(s0, int(((i[near] - s0) % trk.n).max() + s0) + 2) % trk.n
     st = np.arange(s0, s1 + (trk.n if s1 < s0 else 0) + 1) % trk.n
@@ -1163,8 +1347,9 @@ def landmarks(trk, T, brg):
         side = -1 if c["dir"] == "left" else 1
         for k, dist in ((3, 150), (2, 100), (1, 50)):
             out.append(board(trk, c["s"] - dist, side, 3.0, "brake", str(k), h=1.6, w=1.0))
-    # corner-number boards at turn-in, outside
-    for t, c in corners.items():
+    # corner-number boards at turn-in, outside (config scenery.corner_boards False: none, e.g. Sonoma, where the 2026
+    # onboard shows no turn boards)
+    for t, c in (corners.items() if SC_CFG.get("corner_boards", True) else []):
         side = -1 if c["dir"] == "left" else 1
         num = t[1:]
         out.append(board(trk, c["s"] - 75, side, 5.0, "corner", num, h=2.2, w=1.4))
@@ -1173,9 +1358,23 @@ def landmarks(trk, T, brg):
     s_flag = (sf["s"] - 8) if sf else 30
     st = s_flag % trk.n
     p = trk.C[st, :2] + trk.N[st] * (trk.hw(st, 1) + 1.0)
-    out.append({"kind": "flagstand", "text": "", "x": rnd(p[0], 2), "y": rnd(p[1], 2),
-                "z": rnd(float(trk.ground(p[0], p[1])[0]), 2), "heading": rnd(math.atan2(-trk.T[st, 1], -trk.T[st, 0]), 3),
-                "h": 7.5, "w": 2.6})
+    if SC_CFG.get("flagstand", True):
+        out.append({"kind": "flagstand", "text": "", "x": rnd(p[0], 2), "y": rnd(p[1], 2),
+                    "z": rnd(float(trk.ground(p[0], p[1])[0]), 2), "heading": rnd(math.atan2(-trk.T[st, 1], -trk.T[st, 0]), 3),
+                    "h": 7.5, "w": 2.6})
+    # corner-worker (marshal) posts and light masts from the evidence (config scenery.marshal_posts / light_masts,
+    # 20 Oct 2026): lat/lon measured on the captures; a post faces the nearest track point
+    for mp in SC_CFG.get("marshal_posts", []):
+        xy = np.array(bl.enu(*mp["latlon"]), float)
+        i_, _, _ = trk.project(xy[None])
+        to = trk.C[i_[0], :2] - xy
+        out.append({"kind": "marshal", "text": mp.get("name", ""), "x": rnd(xy[0], 2), "y": rnd(xy[1], 2),
+                    "z": rnd(float(trk.ground(*xy)[0]), 2), "heading": rnd(math.atan2(to[1], to[0]), 3),
+                    "h": mp.get("h", 3.0), "w": mp.get("w", 2.4), "style": mp.get("style", "tower"), "src": mp["src"]})
+    for lm in SC_CFG.get("light_masts", []):
+        xy = np.array(bl.enu(*lm["latlon"]), float)
+        out.append({"kind": "mast", "text": "", "x": rnd(xy[0], 2), "y": rnd(xy[1], 2), "z": rnd(float(trk.ground(*xy)[0]), 2),
+                    "heading": 0, "h": lm.get("h", 18.0), "w": 1.2, "src": lm["src"]})
     # a landmark tree (Laguna: the Corkscrew oak, the biggest crown on the inside (left) of T8)
     oak = SC_CFG.get("oak")
     near = np.zeros(len(T), bool)
@@ -1367,6 +1566,8 @@ def main(cfg=None, out_dir=None):
         b["banners"] = BANNERS.get(b["id"], [[dflt], [dflt]] if dflt else [[], []])
         b["style"] = BRIDGE_STYLE.get(b["id"], "deck")
     bar, bar_tot = barriers(trk, osm)
+    terr, terr_fences = terraces(trk)
+    bar += terr_fences
     for b_ in bar:
         if b_["kind"] in ("concrete", "armco", "pitwall"):
             P_ = np.array(b_["pts"])[:, :2]
@@ -1376,6 +1577,8 @@ def main(cfg=None, out_dir=None):
     pit = pit_lane(trk, osm)
     zones = paved_zones(trk, osm)
     cr_parts, cone_lines = closed_roads(trk, osm) if SC_CFG.get("closed_roads") else ([], [])
+    if cr_parts and SC_CFG.get("closed_roads_clip_walls"):
+        clip_parts_at_walls(cr_parts, bar)
     if cr_parts:
         zones["parts"] += cr_parts
     cones = pit_exit_cones(trk, pit, bar)
@@ -1431,13 +1634,16 @@ def main(cfg=None, out_dir=None):
         "kerbs": {"width": SC_CFG.get("kerb", {}).get("width", KERB_W), "inside": True,
                   "stripe_m": SC_CFG.get("kerb", {}).get("stripe_m", 2.0), "strips": kerb,
                   # per-track paint (config scenery.kerb.colors = [stripe, base]); absent: the app's red / white (Laguna)
-                  **({"colors": SC_CFG["kerb"]["colors"]} if SC_CFG.get("kerb", {}).get("colors") else {})},
+                  **({"colors": SC_CFG["kerb"]["colors"]} if SC_CFG.get("kerb", {}).get("colors") else {}),
+                  # raised kerb profile (config scenery.kerb.profile, 20 Oct 2026; absent = flat paint, Laguna)
+                  **({"profile": SC_CFG["kerb"]["profile"]} if SC_CFG.get("kerb", {}).get("profile") else {})},
         "edge_lines": {"width": 0.12, "inset": 0.15, "runs": lines},
         "pit_lane": pit,
         "paved_zones": zones,
         "pit_exit_cones": cones,
         **({"cone_lines": cone_lines} if cone_lines else {}),
         "landmarks": marks,
+        **({"terraces": terr} if terr else {}),
     }
     with open(os.path.join(OUT, "scenery.json"), "w") as fh:
         json.dump(sc, fh, separators=(",", ":"))

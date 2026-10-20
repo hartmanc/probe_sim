@@ -110,9 +110,79 @@ function sausageAt(strips: SausageStrip[], j: SausageJson, x: number, y: number,
   }
 }
 
+/** Raised kerb profile (scenery.json `kerbs.profile`, 20 Oct 2026): a concrete kerb `height` m high whose track-side face
+ *  rises over `face` m (smoothstep) to a flat top, and whose back drops to the ground over `back` m beyond the band.
+ *  Absent = flat paint at road level (Laguna). Sonoma: the stepped concrete kerbs (owner: "more aggressive, you can feel
+ *  it in the car"; Street View J6fsnW4hj4xCjQLzrgRGzA / gd1SNdksCq5QZtwlsrzR7g, a sloped face of ~10-15 cm). */
+export interface KerbProfileJson { height: number; face: number; back: number }
+/** scenery.json `kerbs` as the physics reads it: band [edge - width, edge] on `side` (inside the edge) or, with a strip's
+ *  `off`, a band `width` wide centred `off` m beyond the edge. */
+export interface KerbsJson {
+  width: number; inside?: boolean; profile?: KerbProfileJson | null;
+  strips: { side: number; s0: number; s1: number; kind?: string; off?: number }[];
+}
+
+/** The kerb band's centre offset beyond the edge (m, + outside) of a strip. */
+export function kerbBandCentre(k: KerbsJson, st: { off?: number }): number {
+  return st.off !== undefined ? st.off : (k.inside ?? true) ? -k.width / 2 : k.width / 2;
+}
+
+/** Each raised kerb strip's centreline (1 m points beyond/inside the edge) in the sausage strip layout. */
+function buildKerbStrips(track: TrackJson, k: KerbsJson): (SausageStrip & { side: number })[] {
+  const out: (SausageStrip & { side: number })[] = [];
+  for (const st of k.strips) {
+    if (st.kind === 'verge') continue;
+    const off = kerbBandCentre(k, st);
+    // reuse the sausage layout: kerb_width + gap + width/2 = off
+    const ss = buildSausageStrips(track, { width: k.width, height: 0, gap: 0, kerb_width: off - k.width / 2, strips: [st] });
+    for (const s2 of ss) { s2.minx -= 1; s2.maxx += 1; s2.miny -= 1; s2.maxy += 1; out.push({ ...s2, side: st.side }); }
+  }
+  return out;
+}
+
+const smooth01 = (t: number) => (t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t));
+const dsmooth01 = (t: number) => (t <= 0 || t >= 1 ? 0 : 6 * t * (1 - t));
+
+/** Kerb hump height and world gradient at (x, y) (h = 0 clear of every strip). o = outward distance from the band centre. */
+function kerbAt(strips: (SausageStrip & { side: number })[], k: KerbsJson, x: number, y: number, out: { h: number; gx: number; gy: number }): void {
+  out.h = 0; out.gx = 0; out.gy = 0;
+  const pr = k.profile!, H = pr.height, hw = k.width / 2;
+  for (const s of strips) {
+    if (x < s.minx || x > s.maxx || y < s.miny || y > s.maxy) continue;
+    let bestD = Infinity, bk = -1, u = 0, acc = 0;
+    for (let q = 0; q < s.len.length; q++) {
+      const dx = x - s.xs[q], dy = y - s.ys[q];
+      let t = (dx * s.tx[q] + dy * s.ty[q]) / s.len[q];
+      t = t < 0 ? 0 : t > 1 ? 1 : t;
+      const px = dx - t * s.len[q] * s.tx[q], py = dy - t * s.len[q] * s.ty[q];
+      const d2 = px * px + py * py;
+      if (d2 < bestD) { bestD = d2; bk = q; u = acc + t * s.len[q]; }
+      acc += s.len[q];
+    }
+    if (bk < 0) continue;
+    const dx = x - s.xs[bk], dy = y - s.ys[bk];
+    const o = (-dx * s.ty[bk] + dy * s.tx[bk]) * s.side;   // + away from the track
+    if (o < -hw || o > hw + pr.back) continue;
+    const ramp = Math.min(1, Math.min(u, s.L - u) / SAUSAGE_RAMP_M);
+    if (ramp <= 0) continue;
+    let h: number, dhdo: number;
+    if (o < -hw + pr.face) { const t = (o + hw) / pr.face; h = H * smooth01(t); dhdo = (H * dsmooth01(t)) / pr.face; }
+    else if (o <= hw) { h = H; dhdo = 0; }
+    else { const t = (o - hw) / pr.back; h = H * (1 - smooth01(t)); dhdo = (-H * dsmooth01(t)) / pr.back; }
+    h *= ramp; dhdo *= ramp;
+    if (dhdo > SAUSAGE_MAX_SLOPE) dhdo = SAUSAGE_MAX_SLOPE; else if (dhdo < -SAUSAGE_MAX_SLOPE) dhdo = -SAUSAGE_MAX_SLOPE;
+    if (h > out.h) {
+      // d(o)/d(world) = side * (-ty, tx)
+      out.h = h; out.gx = dhdo * s.side * -s.ty[bk]; out.gy = dhdo * s.side * s.tx[bk];
+    }
+  }
+}
+
 export interface TrackSurfaceOptions {
   /** Raised sausage kerbs beyond the apex kerbs (scenery.json `sausages`); null / absent = none. */
   sausages?: SausageJson | null;
+  /** scenery.json `kerbs`: raised only when it carries a `profile` (Sonoma); flat paint otherwise (no height). */
+  kerbs?: KerbsJson | null;
   /** Paved pit lane: mu = muOnTrack and profile heights inside its footprint; it blends to the heightfield over the
    *  same shoulder width as the track. onTrack stays false there; `paved` is true. */
   pitLane?: PitLaneJson | null;
@@ -442,7 +512,8 @@ export function createTrackSurface(track: TrackJson, heightfield: Float32Array, 
     out.nx = -gxw * l; out.ny = -gyw * l; out.nz = l;
   };
   const strips = opts.sausages && opts.sausages.strips?.length ? buildSausageStrips(track, opts.sausages) : null;
-  const bump = { h: 0, gx: 0, gy: 0 };
+  const kerbStrips = opts.kerbs && opts.kerbs.profile && opts.kerbs.strips?.length ? buildKerbStrips(track, opts.kerbs) : null;
+  const bump = { h: 0, gx: 0, gy: 0 }, kb = { h: 0, gx: 0, gy: 0 };
 
   const base: Surface = {
     sample(x: number, y: number): SurfaceSample {
@@ -544,12 +615,17 @@ export function createTrackSurface(track: TrackJson, heightfield: Float32Array, 
       return out;
     },
   };
-  if (!strips) return base;
-  // sausage kerbs ride on top of whatever is under them (shoulder, kerb paint, pavement): add the hump and tilt the normal
+  if (!strips && !kerbStrips) return base;
+  // sausage kerbs and raised kerbs ride on top of whatever is under them (shoulder, kerb paint, pavement): add the hump
+  // and tilt the normal
   return {
     sample(x: number, y: number): SurfaceSample {
       base.sample(x, y);
-      sausageAt(strips, opts.sausages!, x, y, bump);
+      if (strips) sausageAt(strips, opts.sausages!, x, y, bump); else { bump.h = 0; bump.gx = 0; bump.gy = 0; }
+      if (kerbStrips) {
+        kerbAt(kerbStrips, opts.kerbs!, x, y, kb);
+        if (kb.h > bump.h) { bump.h = kb.h; bump.gx = kb.gx; bump.gy = kb.gy; }
+      }
       if (bump.h > 0) {
         const gx = -out.nx / out.nz + bump.gx, gy = -out.ny / out.nz + bump.gy;
         out.z += bump.h;

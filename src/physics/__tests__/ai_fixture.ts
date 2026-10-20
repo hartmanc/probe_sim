@@ -24,7 +24,7 @@ export function pack(): Pack {
   const pit = scenery.pit_lane ?? null, zones = scenery.paved_zones ?? null;
   const pitLane = pit || zones ? { spacing_m: 1, fractions: (pit ?? zones).fractions, parts: [...(pit?.parts ?? []), ...(zones?.parts ?? [])] } : null;
   // the same surface the race builds in the app (race.ts surfaceFactory): pit lane, paved zones and sausage kerbs
-  const makeSurface = () => createTrackSurface(track, heightfield, { pitLane, sausages: scenery.sausages ?? null });
+  const makeSurface = () => createTrackSurface(track, heightfield, { pitLane, sausages: scenery.sausages ?? null, kerbs: scenery.kerbs ?? null });
   const line = new RaceLine(track, ghosts);
   if (scenery.pit_exit_cones?.pts?.length) line.restrictLeft(scenery.pit_exit_cones.pts);
   let identity: unknown | null = null;

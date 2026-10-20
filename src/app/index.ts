@@ -289,7 +289,7 @@ function createSim(assets: Assets) {
     : null;
   // rendering / HUD surface. The physics surface is private to HotlapSim: Surface.sample() caches the last
   // station, so sampling the sim's surface from the HUD would change the physics (docs/scoreboard.md §3.1)
-  const surface: Surface = physics.createTrackSurface(track, heightfield, { far, pitLane, sausages: assets.scenery?.json.sausages ?? null });
+  const surface: Surface = physics.createTrackSurface(track, heightfield, { far, pitLane, sausages: assets.scenery?.json.sausages ?? null, kerbs: assets.scenery?.json.kerbs ?? null });
   /** A wheel is off track only if it is on neither the track nor the paved pit lane. */
   const wheelOff = (w: { onTrack: boolean; pos: [number, number, number] }) => !w.onTrack && !surface.sample(w.pos[0], w.pos[1]).paved;
   const world: World = buildWorld(track, heightfield, assets.ortho, Math.min(quality.maxAnisotropy, renderer.capabilities.getMaxAnisotropy()), assets.scenery,
