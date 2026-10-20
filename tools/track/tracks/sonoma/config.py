@@ -995,12 +995,15 @@ CONFIG = dict(
             # hill past T1, 0:52-0:56 beside the Carousel): a tall slender dark column on a white-rimmed square base
             dict(type='scoring_tower', name='Scoring tower (Carousel hill)', at=(38.1626443, -122.4577737), heading_deg=135.0,
                  w=4.6, d=4.6, h=27.6, color='#45474a', plinth=dict(w=5.6, h=0.8, color='#e3e1db'),
+                 head=dict(h=1.5, w=4.9, d=4.9, color='#2e3033'),
                  src='lidar 2022-24: an isolated 27.5-27.9 m spike (DSM - DEM), 33 cells over 10 m in a 5.7 x 4.9 m rectangle at '
                      '(-15.2, -6.2) ENU, axis 135 deg, nearest track s 1584 (50 m right); c20_s3300 / c20_s3245: a ~5.6 m '
                      'white-rimmed square base with a long 4-5 m wide shadow to the north-west (the capture puts the base ~10 m '
                      'SE of the lidar top; the lidar position is used, as for the masts); onboard RAZip6S84CM 0:06 (t006): a '
-                     'tall slender dark grey rectangular column on the hill, no wider head visible (the owner\'s Alamy reference '
-                     '2R6P462 is no longer on the site, so no head board is modelled)',
+                     'tall slender dark grey rectangular column on the hill; 0:50-0:52 (t050, t052) closer: a straight column ~1:5 with a '
+                     'darker capped top, no head wider than the column (the orchestrator\'s pylon description has a wider '
+                     'position-board head; the frames show only the cap, modelled 0.3 m proud; the Alamy reference 2R6P462 is '
+                     'no longer on the site)',
                  h_src='lidar spike 27.5-27.9 m above the DEM; width / height ~1/6 in the t006 frame (4.6 m)'),
             # T12: the two-storey flat-roof building at the pit-road end of the grandstand
             dict(type='block', name='T12 two-storey building', osm='1019836595', h=7.9, storeys=2, parapet=0.5,
