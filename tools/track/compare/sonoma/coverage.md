@@ -1,5 +1,11 @@
 # Sonoma: coverage gate on the current package (21 Oct 2026)
 
+**Status after scenery round 5 (registry rev 93334503f0): PASS.** Coverage: 285 rows checked, 160 objects, MISSING 0 for
+walls, fences, kerbs, tyre walls and bridges, UNSUPPORTED 0, 2 building rows ASSIGNED to the buildings round, 48 rows of
+the non-failing kinds still MISSING (masts 25, stands 9, tyre stacks 7, cone lines 6, station 1), 1 HEIGHT mismatch
+(advisory). Pit lane: 13 rows, all declared, all standing: PASS. What was placed, corrected and why, and every row's
+outcome: `manifest.md`, "Round 5". The round-4 work list below is kept as the record of what the round started from.
+
 Package `public/tracks/sonoma` at track-pipeline 0da269d (the build the owner drove), checked against `inventory.json` by `npx tsx tools/track/gates/run_coverage.ts public/tracks/sonoma tools/track/compare/sonoma/inventory.json <gate config>` (the gate config carries the pit_lane walls from `tools/track/tracks/sonoma/config.py`). Tolerance +-15 m. This list is the deliverable for the scenery round: every MISSING row of a must-cover kind is a fix, every UNSUPPORTED object needs a source or goes.
 
 **Result: FAIL.** 284 rows checked (6 'ahead' rows without a distance skipped), 104 scenery objects.
