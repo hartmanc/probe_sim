@@ -1,7 +1,7 @@
 // The structure kit's pure geometry (src/app/structures.ts): triangle counts, bounds and determinism.
 import { describe, expect, it } from 'vitest';
 import {
-  Soup, block, boards, fence, fuel, garage, grandstand, masts, paint, structureSoups, terraceDress,
+  Soup, block, boards, fence, fuel, garage, grandstand, masts, paint, scoringTower, structureSoups, terraceDress,
   type BlockJson, type FuelJson, type GarageJson, type GrandstandJson, type StructureJson, type TerraceJson,
 } from '../structures';
 
@@ -176,5 +176,18 @@ describe('terrace with polyline rows (measured footprint, round 6)', () => {
     expect(min[0]).toBeGreaterThanOrEqual(-1e-6);
     expect(max[0]).toBeLessThanOrEqual(30 + 1e-6);
     expect(max[2]).toBeLessThanOrEqual(1.5 + 0.9 + 1e-6);   // the rail top over the upper row
+  });
+});
+
+describe('scoring tower (round 6)', () => {
+  it('a column on a plinth to its height; a head board widens the top', () => {
+    const s = new Soup();
+    scoringTower({ type: 'scoring_tower', src: 't', c: [0, 0], z: 10, heading_deg: 0, w: 4, d: 2, h: 27.6, color: '#45474a', plinth: { w: 5.6, h: 0.8, color: '#e3e1db' } }, s);
+    expect(s.bounds().max[2]).toBeCloseTo(37.6, 6);
+    expect(s.bounds().max[0]).toBeCloseTo(2.8, 6);   // the plinth is the widest part
+    const h = new Soup();
+    scoringTower({ type: 'scoring_tower', src: 't', c: [0, 0], z: 0, heading_deg: 0, w: 4, d: 2, h: 30, color: '#45474a', head: { h: 6, w: 9, d: 2.4, color: '#222222' } }, h);
+    expect(h.bounds().max[0]).toBeCloseTo(4.5, 6);
+    expect(h.bounds().max[2]).toBeCloseTo(30, 6);
   });
 });

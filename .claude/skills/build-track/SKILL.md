@@ -519,6 +519,25 @@ For every other circuit, these are steps of stage 3:
    reference sheets with `compare/pose_walk.ts` (it also reports draw calls and triangles) and keep the kit under ~150k
    triangles.
 
+11. **Round-6 rules (21 Oct 2026, Sonoma; all config-gated, Laguna's package unchanged):**
+   - *Hillside stands from a measured footprint*, not the OSM outline: `compare/terrace_measure.py` (ray mode, `--json`) reads
+     the seating field as a texture on the clean captures (rows every 1.1-1.25 m across the strip), its lower and upper edge
+     per ray, the DEM crest less 3 m where the captures end, `--fill-osm <way>` only for rays the captures do not reach;
+     the result goes in `scenery.terraces` as `front` / `back` (lat/lon, matched by index; `osm` then only suppresses the
+     slab). The rows follow the stand (polyline rows on the ground at each tread's back edge), the app lifts them onto the
+     drawn 3 m terrain mesh, and draws bleacher-grey concrete with a dark line per row (part self-lit). OSM outlines cut
+     straight rows across curved banks: 20-36 % of each tread buried, the rest floating, invisible from the track.
+     Verify from the track with `compare/pose_walk.ts` (`--hide name` isolates a mesh).
+   - *Boards carry names*: `wall_boards[].names`, structure `boards.names`, `bridge_banners` ('NAME|#bg|#fg'): the sponsor
+     names the recent footage shows on that run, typed in the observed colours (Laguna's rule: text only, no logo artwork);
+     the manifest records per run the names, the onboard time and the colours.
+   - *Closed-road edge lines stop at the circuit's paved width* (never drawn across the track at a mouth).
+   - *Season tint* (`scenery.season_tint`, optional): the summer NAIP's dry grass shifted to the footage's season on the
+     published ortho / far_ortho only, as the stage's last step (the NAIP cache, the paint detector and the tree tests read
+     the untinted images); before / after sheet in the manifest's evidence folder.
+   - Tall singular structures (Sonoma's scoring tower) are kit items from an isolated lidar spike plus the capture's base
+     and shadow (`structures` type `scoring_tower`).
+
 ## Stage 4: compare pass with a judge (`tools/track/compare/`)
 
 Only after stage 1 is accepted: iterating landmarks on wrong geometry wasted five rounds at Laguna, and the judge
