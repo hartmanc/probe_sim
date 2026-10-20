@@ -13,6 +13,15 @@ The pit lane ("Pit Road") leaves before the T11 hairpin (outside it), runs behin
 straight and rejoins on the left at T1.
 """
 
+# Round 6 (orchestrator F7 / S6): the walls the inventory records as "light blue" / "light blue-grey" read white-grey with
+# a faint blue in the 2026 onboard (frames t060, t116, t130, t136: pale painted concrete under the camera's blue cast); the
+# round-4 #a9c9dd drew them saturated blue. One pale blue-grey for all of them.
+WALL_PALE_BLUE = '#d3dbe0'
+# Round 6 (orchestrator S5): tyre walls are black-covered stacks (inventory: black tyre wall / dark tyre line rows), so every
+# Sonoma tyre run carries its colour (the app's default black with a white pair every 12 stacks is Laguna's rule); the
+# T11 hairpin's are white (onboard 2:01.5-2:03.5, white tyre stacks in front of the wall)
+TYRE_BLACK, TYRE_WHITE = '#161616', '#dedede'
+
 CONFIG = dict(
     id='sonoma',
     name='Sonoma Raceway',
@@ -226,7 +235,7 @@ CONFIG = dict(
         # dark tyre stack, picked every 0.5 m across a guide, median 9 + Gaussian 3 m), every 10 m. Wall paint: light
         # blue in 2026 (onboard 0:03, 0:58-1:12, 1:56-2:19).
         declared_walls=[
-            dict(name='pit straight, pit-lane side, to its nose at T1', kind='concrete', h=1.1, fence=0.0, h_src='onboard 2:14-2:17: wall top level with the hood line at 2-3 m (SAFER-type ~1.1 m, Street View 5MY4xR9O7etAXEHnZCVnGQ ~1 m); no catch fence', color='#a9c9dd',
+            dict(name='pit straight, pit-lane side, to its nose at T1', kind='concrete', h=1.1, fence=0.0, h_src='onboard 2:14-2:17: wall top level with the hood line at 2-3 m (SAFER-type ~1.1 m, Street View 5MY4xR9O7etAXEHnZCVnGQ ~1 m); no catch fence', color=WALL_PALE_BLUE,
                  src='c20_s1595..s1870 bright band 2.0 m beyond the left edge (19 Oct); nose on c20_s1815 (s ~103); onboard 2:16-2:20',
                  latlon=[
                 (38.1606469, -122.4535036), (38.1607541, -122.4536697), (38.1608652, -122.4538464),
@@ -234,7 +243,7 @@ CONFIG = dict(
                 (38.1613123, -122.4545663), (38.1614237, -122.4547457), (38.1615466, -122.4549429),
                 (38.1616582, -122.455122), (38.1617703, -122.4553019), (38.1618793, -122.4554785),
                 (38.1619647, -122.4556086)]),
-            dict(name='pit-out lane, paddock side', kind='concrete', h=1.0, fence=1.0, color='#a9c9dd', h_src='onboard 2:22.5: low light-blue wall with a chain-link fence behind it along the pit-out lane; Street View owner_28 Pit Out (low white wall, chain-link fence beyond); round 5: the chain-link fence is 2.0 m to its top (inventory 0:06, fence-post-ref), so 1.0 m over the 1.0 m wall (was 2.0)',
+            dict(name='pit-out lane, paddock side', kind='concrete', h=1.0, fence=1.0, color=WALL_PALE_BLUE, h_src='onboard 2:22.5: low light-blue wall with a chain-link fence behind it along the pit-out lane; Street View owner_28 Pit Out (low white wall, chain-link fence beyond); round 5: the chain-link fence is 2.0 m to its top (inventory 0:06, fence-post-ref), so 1.0 m over the 1.0 m wall (was 2.0)',
                  src='c20_s1870 / c20_s1925, bright band along the lane outer side (wall_measure, 87 % picked, rms 0.30 m); onboard 2:23 / 0:06.5',
                  latlon=[
                 (38.1619153, -122.4557708), (38.161916, -122.4558863), (38.1619357, -122.455998),
@@ -246,7 +255,7 @@ CONFIG = dict(
                 (38.1620017, -122.4569719), (38.1620076, -122.4570863), (38.1619978, -122.4572003), (38.1619769, -122.4573118),
                 (38.1619426, -122.4574171), (38.1619172, -122.457483),
                 ]),
-            dict(name='pit straight, drag-strip side', kind='concrete', h=1.1, fence=0.0, h_src='onboard 2:14-2:17: as the pit-lane side wall, ~1.1 m, no catch fence on it (the posts at 2:17 stand beyond the drag strip)', color='#a9c9dd',
+            dict(name='pit straight, drag-strip side', kind='concrete', h=1.1, fence=0.0, h_src='onboard 2:14-2:17: as the pit-lane side wall, ~1.1 m, no catch fence on it (the posts at 2:17 stand beyond the drag strip)', color=WALL_PALE_BLUE,
                  src='c20_s1595..s1870 bright band 2.3 m beyond the right edge (19 Oct); Street View 5MY4xR9O7etAXEHnZCVnGQ; onboard 2:17',
                  latlon=[
                 # T12 exit to the timing line (c20_s1540 / c20_s1595, wall_measure along the right edge, 86 % picked, offset p50 1.7 m)
@@ -254,7 +263,7 @@ CONFIG = dict(
                 (38.1611834, -122.4539958), (38.161300, -122.4541846), (38.161412, -122.4543637),
                 (38.1615237, -122.4545429), (38.1616354, -122.4547222), (38.1617473, -122.4549012),
                 (38.1618596, -122.4550797), (38.1619709, -122.4552587), (38.1620296, -122.4553516)]),
-            dict(name='T6 to T7, left (Carousel exit along the drag strip and the T7 road)', kind='concrete', h=1.2, fence=0.0, h_src='onboard 1:09: light-blue wall a little above the hood line at 1-2 m (~1.2 m), ad boards on posts behind it (wall_boards)', color='#a9c9dd',
+            dict(name='T6 to T7, left (Carousel exit along the drag strip and the T7 road)', kind='concrete', h=1.2, fence=0.0, h_src='onboard 1:09: light-blue wall a little above the hood line at 1-2 m (~1.2 m), ad boards on posts behind it (wall_boards)', color=WALL_PALE_BLUE,
                  src='c20_s3465..s3850 bright band at the asphalt end (wall_measure along the left edge, 83 % picked, rms 0.11 m, gaps bridged); onboard 0:58-1:12 light-blue wall, Toyota boards at 1:10',
                  latlon=[
                 (38.163533, -122.4581187), (38.1636186, -122.4581558), (38.1637009, -122.4582033),
@@ -274,14 +283,14 @@ CONFIG = dict(
                 (38.1655902, -122.4617079), (38.1656276, -122.4618119), (38.1656699, -122.4619127),
                 (38.1657118, -122.4620137), (38.1657519, -122.4621158), (38.1657757, -122.4621773),
                 ]),
-            dict(name='T7 approach, left tyre wall', kind='tyres', h=1.0, fence=0.0,
+            dict(name='T7 approach, left tyre wall', kind='tyres', color=TYRE_BLACK, h=1.0, fence=0.0,
                  src='c20_s3850 / c20_s3905 dark tyre stack 4-10 m beyond the left edge (96 % picked, rms 0.35 m); Street View gd1SNdksCq5QZtwlsrzR7g',
                  latlon=[
                 (38.1655798, -122.4617596), (38.1656263, -122.4618583), (38.1656577, -122.4619656),
                 (38.1656929, -122.4620707), (38.1657243, -122.4621779), (38.1657594, -122.4622831),
                 (38.1657918, -122.4623896), (38.1658239, -122.4624963), (38.1658571, -122.4626024),
                 ]),
-            dict(name='T5 to the T6 crest, right', kind='concrete', h=1.0, fence=0.0, color='#a9c9dd',
+            dict(name='T5 to the T6 crest, right', kind='concrete', h=1.0, fence=0.0, color=WALL_PALE_BLUE,
                  src='c20_s2860..s3080 light wall line 3-6 m beyond the right edge (76 % picked); onboard 0:43-0:48.5 concrete wall on the right (not in the Jul 2011 Street View GMaTaipEd9Hm7fMNE26aGQ: built since)',
                  latlon=[
                 (38.1644291, -122.4619012), (38.1644384, -122.4618115), (38.164431, -122.4616934),
@@ -293,7 +302,7 @@ CONFIG = dict(
                 (38.1635576, -122.4603389), (38.163482, -122.4602772), (38.1634056, -122.4602168),
                 (38.1633771, -122.4601993),
                 ]),
-            dict(name='T8a to T9, left (the bank)', kind='tyres', h=1.0, fence=0.0,
+            dict(name='T8a to T9, left (the bank)', kind='tyres', color=TYRE_BLACK, h=1.0, fence=0.0,
                  src='c20_s0110 / c20_s0165 dark barrier ~20 m left (99 % picked, rms 0.34 m); Street View xXQqyp9Q9sWv9ZLN2ORYsA',
                  latlon=[
                 (38.1658696, -122.4602454), (38.1658579, -122.4601295), (38.165808, -122.4600325),
@@ -302,7 +311,7 @@ CONFIG = dict(
                 (38.1653939, -122.4594453), (38.1653256, -122.4593708), (38.1652641, -122.459286),
                 (38.1652155, -122.4592262),
                 ]),
-            dict(name='T9, left (the bank)', kind='concrete', h=1.0, fence=2.0, color='#a9c9dd', h_src='round 5: catch fence 3.0 m to its top (inventory 1:28, fence-post-ref), so 2.0 m over the 1.0 m wall (was 3.0)',
+            dict(name='T9, left (the bank)', kind='concrete', h=1.0, fence=2.0, color=WALL_PALE_BLUE, h_src='round 5: catch fence 3.0 m to its top (inventory 1:28, fence-post-ref), so 2.0 m over the 1.0 m wall (was 3.0)',
                  src='c20_s0220 / c20_s0275 bright wall ~19 m left (95 % picked, rms 0.27 m); Street View xXQqyp9Q9sWv9ZLN2ORYsA (wall + catch fence on the bank)',
                  latlon=[
                 (38.1652099, -122.4592275), (38.1651617, -122.4591306), (38.165111, -122.4590365),
@@ -310,7 +319,7 @@ CONFIG = dict(
                 (38.1650435, -122.4585948), (38.1650446, -122.4584802), (38.165051, -122.4583666),
                 (38.16505, -122.4582533), (38.1650495, -122.4582307),
                 ]),
-            dict(name='T8a, right (toward the 2020 bypass)', kind='tyres', h=1.0, fence=0.0,
+            dict(name='T8a, right (toward the 2020 bypass)', kind='tyres', color=TYRE_BLACK, h=1.0, fence=0.0,
                  src='c20_s0165 / c20_s0220 dark tyre stack 10-18 m right (95 % picked, rms 0.59 m); onboard 1:24',
                  latlon=[
                 (38.1654018, -122.4600434), (38.1653398, -122.4599595), (38.1652854, -122.4598698),
@@ -330,7 +339,7 @@ CONFIG = dict(
                 (38.1603584, -122.4532488), (38.1604392, -122.4533007), (38.1605176, -122.4533589),
                 (38.1605909, -122.4534287), (38.1606552, -122.4535117), (38.1607059, -122.453593),
                 ]),
-            dict(name='drag strip, track (SW) side, past T1 to the Carousel exit', kind='concrete', h=1.0, fence=0.0, color='#a9c9dd', drop_within=0.0,
+            dict(name='drag strip, track (SW) side, past T1 to the Carousel exit', kind='concrete', h=1.0, fence=0.0, color=WALL_PALE_BLUE, drop_within=0.0,
                  src='c20_s1870 / c20_s1815 / c20_s0550 / c20_s3355: the bright wall along the drag strip SW edge (wall_measure along the paved part edge, 100 % picked, rms 0.22 m); Street View l9CetikWiRZTe2ONpwxrQQ; onboard 2:20',
                  latlon=[
                 (38.1620296, -122.4553516), (38.1620416, -122.4554152), (38.1620972, -122.4555049),
@@ -345,7 +354,7 @@ CONFIG = dict(
                 (38.1634959, -122.4577396), (38.1635518, -122.4578291), (38.1636072, -122.4579189),
                 (38.1636647, -122.4580082), (38.1637426, -122.4580595),
                 ]),
-            dict(name='drag strip, infield (NE) side', kind='concrete', h=1.0, fence=0.0, color='#a9c9dd', drop_within=0.0,
+            dict(name='drag strip, infield (NE) side', kind='concrete', h=1.0, fence=0.0, color=WALL_PALE_BLUE, drop_within=0.0,
                  src='c20_s0495..s1760: the bright wall along the drag strip NE edge (530 m, 100 % picked, rms 0.14 m); dropped where the course runs on the drag strip (Carousel exit)',
                  latlon=[
                 (38.1608826, -122.4532313), (38.1609395, -122.4533196), (38.160999, -122.4534055),
@@ -368,7 +377,7 @@ CONFIG = dict(
                 (38.163739, -122.4577871), (38.1637951, -122.4578763), (38.1638513, -122.4579654),
                 (38.1638569, -122.4579743),
                 ]),
-            dict(name='T11 entry, left: outer pit-in wall (garage side)', kind='concrete', h=2.7, fence=0.0, color='#a9c9dd', h_src='this is the OUTER pit-in wall (10.8 m left, beside the garage), not the track-side one; round 5: 5.2 m to the board top (HEIGHTS.md examples 3 and 4: Street View jrXpHaDfJT2APw6zcyBKRA 5.22 m, onboard 1:56 door-ref 5.0-5.6 m), the concrete face 2.7 m (it holds 2.03 m doors) under 2.5 m boards (wall_boards); was 1.2 m',
+            dict(name='T11 entry, left: outer pit-in wall (garage side)', kind='concrete', h=2.7, fence=0.0, color=WALL_PALE_BLUE, h_src='this is the OUTER pit-in wall (10.8 m left, beside the garage), not the track-side one; round 5: 5.2 m to the board top (HEIGHTS.md examples 3 and 4: Street View jrXpHaDfJT2APw6zcyBKRA 5.22 m, onboard 1:56 door-ref 5.0-5.6 m), the concrete face 2.7 m (it holds 2.03 m doors) under 2.5 m boards (wall_boards); was 1.2 m',
                  src='c20_s1210 / c20_s1265 bright line 10.8 m left (93 % picked, rms 0.05 m); onboard 1:59 red / white painted concrete on the left',
                  latlon=[
                 (38.1596288, -122.4520274), (38.1595436, -122.4519911), (38.1594586, -122.4519543),
@@ -376,7 +385,7 @@ CONFIG = dict(
                 (38.1591185, -122.4518066), (38.159033, -122.4517702), (38.1589441, -122.451747),
                 (38.1588895, -122.4517436),
                 ]),
-            dict(name='T11 hairpin, left tyre wall', kind='tyres', h=1.0, fence=2.0, h_src='onboard 2:01.5-2:03.5: white tyre stacks ~1 m in front of the light-blue wall with a catch fence; round 5: fence top 3.0 m, between the 3.5 m catch fence at 2:02 and the 2.5 m chain-link at 2:04 (inventory, fence-post-ref; was 4.0)',
+            dict(name='T11 hairpin, left tyre wall', kind='tyres', color=TYRE_WHITE, h=1.0, fence=2.0, h_src='onboard 2:01.5-2:03.5: white tyre stacks ~1 m in front of the light-blue wall with a catch fence; round 5: fence top 3.0 m, between the 3.5 m catch fence at 2:02 and the 2.5 m chain-link at 2:04 (inventory, fence-post-ref; was 4.0)',
                  src='c20_s1265 / c20_s1320 white tyre band on the outside of the hairpin (69 % picked, rms 0.35 m); onboard 2:04 white tyre stacks left',
                  latlon=[
                 (38.158888, -122.451793), (38.158799, -122.4517857), (38.1587102, -122.4518038),
@@ -385,7 +394,7 @@ CONFIG = dict(
                 (38.1585634, -122.4524562), (38.1586344, -122.4525261), (38.1587172, -122.4525726),
                 (38.1587582, -122.4525939),
                 ]),
-            dict(name='T3, right: low tyre-faced wall far out', kind='tyres', h=1.0, fence=0.0,
+            dict(name='T3, right: low tyre-faced wall far out', kind='tyres', color=TYRE_BLACK, h=1.0, fence=0.0,
                  src='c20_s2365..s2475 dark line 34-36 m right (100 % picked, rms 0.70 m); Street View exOejoRD5-jF1wceBnhfjg',
                  latlon=[
                 (38.1620501, -122.4600578), (38.1621207, -122.4601288), (38.1621945, -122.4601941),
@@ -397,7 +406,7 @@ CONFIG = dict(
                 (38.1629553, -122.4615987), (38.1629473, -122.4617129), (38.1629364, -122.4618264),
                 (38.1629329, -122.4619396), (38.1629327, -122.4619453),
                 ]),
-            dict(name='T4 approach, left: wall and catch fence below the T3a-T4 stands', kind='concrete', h=1.0, fence=3.0, color='#a9c9dd',
+            dict(name='T4 approach, left: wall and catch fence below the T3a-T4 stands', kind='concrete', h=1.0, fence=3.0, color=WALL_PALE_BLUE,
                  src='c20_s2475..s2640 dark wall line 17-23 m left (97 % picked, rms 0.64 m); Street View nA1oaDXwADSI7x-Pa-j4Ow (wall + ~3 m catch fence left); onboard 0:28-0:32',
                  latlon=[
                 (38.1624738, -122.4614233), (38.1624636, -122.4615377), (38.1624324, -122.4616472),
@@ -407,7 +416,7 @@ CONFIG = dict(
                 (38.1627013, -122.4626409), (38.1627748, -122.4627036), (38.1628521, -122.4627608),
                 (38.1629308, -122.4628152), (38.1630099, -122.4628689), (38.1630409, -122.462892),
                 ]),
-            dict(name='T4, right: tyre line beyond the runoff', kind='tyres', h=1.0, fence=0.0,
+            dict(name='T4, right: tyre line beyond the runoff', kind='tyres', color=TYRE_BLACK, h=1.0, fence=0.0,
                  src='c20_s2640 / c20_s2695 dark tyre line 20-30 m right (79 % picked, rms 0.32 m)',
                  latlon=[
                 (38.1629449, -122.462163), (38.1630084, -122.4622443), (38.1630649, -122.4623338),
@@ -416,7 +425,7 @@ CONFIG = dict(
                 (38.1636063, -122.4627406), (38.1636174, -122.4627504), (38.1637605, -122.4629255),
                 (38.16382, -122.4630087), (38.1638613, -122.4630761),
                 ]),
-            dict(name='back straight, left: wall and catch fence at the foot of the stands', kind='concrete', h=1.0, fence=3.0, color='#a9c9dd',
+            dict(name='back straight, left: wall and catch fence at the foot of the stands', kind='concrete', h=1.0, fence=3.0, color=WALL_PALE_BLUE,
                  src='c20_o0440..o0550 dark line ~25 m left at the foot of the stands (100 % picked, rms 1.06 m: the weakest measurement); onboard 1:33-1:36 light-blue wall with catch fence left',
                  latlon=[
                 (38.1646464, -122.4571881), (38.164585, -122.4571034), (38.1645276, -122.4570133),
@@ -428,14 +437,14 @@ CONFIG = dict(
                 (38.1636444, -122.4555714), (38.1635815, -122.4554898), (38.1635175, -122.4554089),
                 (38.163459, -122.4553375),
                 ]),
-            dict(name='back straight start, left tyre line', kind='tyres', h=1.0, fence=0.0,
+            dict(name='back straight start, left tyre line', kind='tyres', color=TYRE_BLACK, h=1.0, fence=0.0,
                  src='c20_s0330 / c20_s0385 dark tyre line ~21 m left (78 % picked, rms 0.72 m)',
                  latlon=[
                 (38.1650939, -122.4581954), (38.1650639, -122.4580853), (38.1650497, -122.4579728),
                 (38.1650114, -122.4578695), (38.1649757, -122.4577658), (38.1649311, -122.4576678),
                 (38.1648827, -122.4575726), (38.1648592, -122.4575312),
                 ]),
-            dict(name='T10 to T11, left wall with the ad boards', kind='concrete', h=1.2, fence=0.0, h_src='onboard 1:43-1:55: wall ~1.2 m under a continuous row of ~2.5 m ad boards (wall_boards); owner note 13/14 "much higher"', color='#a9c9dd',
+            dict(name='T10 to T11, left wall with the ad boards', kind='concrete', h=1.2, fence=0.0, h_src='onboard 1:43-1:55: wall ~1.2 m under a continuous row of ~2.5 m ad boards (wall_boards); owner note 13/14 "much higher"', color=WALL_PALE_BLUE,
                  src='c20_s0825..s1100 dark wall line 10-22 m left (96 % picked, rms 0.76 m); Street View jrXpHaDfJT2APw6zcyBKRA (ad boards); onboard 1:46-1:57 (Sunbelt, Toyota, zMAX boards on the wall)',
                  latlon=[
                 (38.1625428, -122.4542559), (38.1625395, -122.4541403), (38.1625247, -122.4540276),
@@ -451,7 +460,7 @@ CONFIG = dict(
                 (38.160602, -122.4523738), (38.1605128, -122.4523564), (38.1604242, -122.4523371),
                 (38.1603536, -122.4523199),
                 ]),
-            dict(name='T10 to T11, right wall and catch fence', kind='concrete', h=1.1, fence=3.5, h_src='onboard 1:43.2-1:50: concrete ~1.1 m, catch-fence posts about three wall heights above it (~3.5 m)', color='#a9c9dd',
+            dict(name='T10 to T11, right wall and catch fence', kind='concrete', h=1.1, fence=3.5, h_src='onboard 1:43.2-1:50: concrete ~1.1 m, catch-fence posts about three wall heights above it (~3.5 m)', color=WALL_PALE_BLUE,
                  src='c20_s0880..s1045 bright line ~18 m right (55 % picked, rms 0.60 m, gaps bridged); onboard 1:43-1:52 concrete wall with catch fence on the right',
                  latlon=[
                 (38.1621134, -122.4537615), (38.162081, -122.4536551), (38.1620705, -122.4536365),
@@ -464,72 +473,72 @@ CONFIG = dict(
             # ---- round 4 (20 Oct 2026, owner drive notes 11, 13-18): barrier lines read on the 2026 captures as a
             # continuous dark tyre / wall band (or bright wall top) parallel to the track, measured with
             # compare/wall_measure.py on a guide, each confirmed on the March 2026 onboard (manifest: 'bright / dark bands')
-            dict(name='T2 approach, far left: tyre line', kind='tyres', h=1.0, fence=0.0,
+            dict(name='T2 approach, far left: tyre line', kind='tyres', color=TYRE_BLACK, h=1.0, fence=0.0,
                  src='2026 captures c20_s2090 / c20_s2145: wall_measure dark line, 92 % picked, rms 0.27 m; Street View H9xspk4q_OoFIjVDhaMzDA (tyre / armco line far left); onboard 0:12 low dark barrier far left',
                  latlon=[(38.1615844, -122.4577948), (38.1615100, -122.4578627), (38.1614389, -122.4579328), (38.1613691, -122.4580008), (38.1612978, -122.4580688), (38.1612243, -122.4581356), (38.1611504, -122.4582001), (38.1610760, -122.4582644), (38.1610046, -122.4583342), (38.1609319, -122.4584037), (38.1609059, -122.4584364)]),
             dict(name='T2 exit, left: wall and catch fence at the foot of the T2 stands', kind='concrete', h=1.0, fence=3.0, color='#6f7a82',
                  src='2026 captures c20_s2145 / c20_s2200: wall_measure dark line, 97 % picked, rms 0.48 m; onboard 0:12-0:15.5 dark grey wall with catch-fence posts below the terraces',
                  latlon=[(38.1608628, -122.4584495), (38.1607944, -122.4585276), (38.1607720, -122.4586405), (38.1607615, -122.4587526), (38.1607583, -122.4588653), (38.1607634, -122.4589784), (38.1607724, -122.4590914), (38.1608055, -122.4591971), (38.1608410, -122.4593007), (38.1608838, -122.4593999), (38.1609205, -122.4595061), (38.1609742, -122.4595982), (38.1610319, -122.4596863), (38.1610953, -122.4597681), (38.1611587, -122.4598494), (38.1612262, -122.4599260), (38.1613073, -122.4599791), (38.1613792, -122.4600480), (38.1614253, -122.4600936)]),
-            dict(name='T2 exit to T3, right: barrier line at the foot of the hill (owner_11)', kind='tyres', h=1.0, fence=0.0,
+            dict(name='T2 exit to T3, right: barrier line at the foot of the hill (owner_11)', kind='tyres', color=TYRE_BLACK, h=1.0, fence=0.0,
                  src='2026 captures c20_s2255 / c20_s2310: wall_measure dark line, 76 % picked, rms 0.41 m; owner_11 (the light band in the sim ground); onboard 0:12 dark barrier line far right, 0:18 barrier line along the right toward T3; joins the T3 tyre wall at s 600',
                  latlon=[(38.1613087, -122.4591967), (38.1613739, -122.4592754), (38.1614416, -122.4593507), (38.1615062, -122.4594303), (38.1615667, -122.4595146), (38.1616270, -122.4595999), (38.1616905, -122.4596811), (38.1617575, -122.4597574), (38.1618249, -122.4598330), (38.1618928, -122.4599079), (38.1619612, -122.4599821), (38.1619891, -122.4600113)]),
-            dict(name='T5, right: wall before the T5-T6 wall', kind='concrete', h=1.0, fence=0.0, color='#a9c9dd',
+            dict(name='T5, right: wall before the T5-T6 wall', kind='concrete', h=1.0, fence=0.0, color=WALL_PALE_BLUE,
                  src='2026 captures c20_s2805 / c20_s2860: wall_measure dark line, 99 % picked, rms 0.51 m; onboard 0:39 the light concrete wall on the right already runs before T5 (continues the T5-T6 wall)',
                  latlon=[(38.1642349, -122.4628430), (38.1642667, -122.4627355), (38.1642887, -122.4626247), (38.1643083, -122.4625131), (38.1643267, -122.4624011), (38.1643439, -122.4622888), (38.1643607, -122.4621764), (38.1643769, -122.4620647), (38.1644014, -122.4619554), (38.1644056, -122.4618934)]),
-            dict(name='T5, left: tyre wall', kind='tyres', h=1.0, fence=1.5, h_src='round 5: chain-link fence behind the tyre stacks, 2.5 m to its top (inventory 0:36 / 0:38, fence-post-ref)',
+            dict(name='T5, left: tyre wall', kind='tyres', color=TYRE_BLACK, h=1.0, fence=1.5, h_src='round 5: chain-link fence behind the tyre stacks, 2.5 m to its top (inventory 0:36 / 0:38, fence-post-ref)',
                  src='2026 captures c20_s2805 / c20_s2860: wall_measure dark line, 96 % picked, rms 0.49 m; Street View zCwjltSjI02eDZGZbVyrMg (left low dark wall, tyres); onboard 0:39 dark barrier far left',
                  latlon=[(38.1648083, -122.4628124), (38.1647511, -122.4627218), (38.1647308, -122.4626081), (38.1646947, -122.4625013), (38.1646847, -122.4623865), (38.1646845, -122.4622722), (38.1646828, -122.4621581), (38.1646788, -122.4620444), (38.1646778, -122.4619303), (38.1646730, -122.4618174), (38.1646717, -122.4618062)]),
             dict(name='T5 to the T6 crest, left: wall and catch fence beyond the paddock', kind='concrete', h=1.0, fence=3.0, color='#5d6266',
                  src='2026 captures c20_s2970 / c20_s3080: wall_measure dark line, 100 % picked, rms 0.18 m; onboard 0:39-0:44 long low dark wall with catch fence far left',
                  latlon=[(38.1646874, -122.4608403), (38.1646360, -122.4607461), (38.1645828, -122.4606548), (38.1645317, -122.4605628), (38.1644772, -122.4604752), (38.1644168, -122.4603947), (38.1643505, -122.4603208), (38.1642841, -122.4602453), (38.1642147, -122.4601730), (38.1641425, -122.4601049), (38.1640681, -122.4600410), (38.1639945, -122.4599754), (38.1639190, -122.4599135), (38.1638407, -122.4598570), (38.1637615, -122.4598068), (38.1636782, -122.4597633), (38.1635930, -122.4597251), (38.1635126, -122.4596930), (38.1634263, -122.4596605), (38.1633402, -122.4596260), (38.1632538, -122.4595914), (38.1631673, -122.4595589), (38.1630828, -122.4595193), (38.1630006, -122.4594703), (38.1629308, -122.4594152)]),
-            dict(name='Carousel, right: tyre-faced barrier across the infield', kind='tyres', h=1.0, fence=0.0,
+            dict(name='Carousel, right: tyre-faced barrier across the infield', kind='tyres', color=TYRE_BLACK, h=1.0, fence=0.0,
                  src='2026 captures c20_s3245 / c20_s3300: wall_measure dark line, 96 % picked, rms 0.32 m; Street View ma3jBYjtYGtNBlTLjNz1LQ (far right barrier, armco in Jul 2011); onboard 0:50 low dark barrier across the infield (2026: tyre-faced)',
                  latlon=[(38.1622039, -122.4588419), (38.1622255, -122.4587309), (38.1622553, -122.4586227), (38.1623030, -122.4585253), (38.1623564, -122.4584336), (38.1624127, -122.4583449), (38.1624782, -122.4582677), (38.1625456, -122.4581945), (38.1626151, -122.4581251), (38.1626880, -122.4580575), (38.1627618, -122.4579958), (38.1628388, -122.4579389), (38.1629189, -122.4578909), (38.1630010, -122.4578456), (38.1630843, -122.4578067), (38.1631693, -122.4577726), (38.1631736, -122.4577708)]),
             dict(name='Carousel, left: trackside fence', kind='fence', h=0.0, fence=2.0,
                  src='2026 captures c20_s3190 / c20_s3300: wall_measure dark line, 100 % picked, rms 1.12 m; Street View ma3jBYjtYGtNBlTLjNz1LQ (trackside fence far left); onboard 0:50 fence posts far left',
                  latlon=[(38.1628193, -122.4592713), (38.1627947, -122.4591583), (38.1627963, -122.4590400), (38.1628182, -122.4589248), (38.1628573, -122.4588192), (38.1629139, -122.4587269), (38.1629728, -122.4586395), (38.1630406, -122.4585575), (38.1631286, -122.4585162), (38.1632203, -122.4584975), (38.1632768, -122.4584977)]),
-            dict(name='T8, left: tyre line up the bank (to the T8a-T9 tyres)', kind='tyres', h=1.0, fence=0.0,
+            dict(name='T8, left: tyre line up the bank (to the T8a-T9 tyres)', kind='tyres', color=TYRE_BLACK, h=1.0, fence=0.0,
                  src='2026 captures c20_s0000 / c20_s0055: wall_measure dark line, 99 % picked, rms 0.20 m; onboard 1:18.5 low dark line along the bank on the left; joins the T8a-T9 tyre wall',
                  latlon=[(38.1662930, -122.4607413), (38.1662218, -122.4606714), (38.1661547, -122.4605954), (38.1660895, -122.4605163), (38.1660270, -122.4604362), (38.1659724, -122.4603494), (38.1659225, -122.4602539), (38.1658914, -122.4601844)]),
-            dict(name='T9, right: concrete wall along the 2020 bypass (part 1)', kind='concrete', h=1.0, fence=0.0, color='#a9c9dd',
+            dict(name='T9, right: concrete wall along the 2020 bypass (part 1)', kind='concrete', h=1.0, fence=0.0, color=WALL_PALE_BLUE,
                  src='2026 captures c20_s0220 / c20_s0275: wall_measure bright line, 73 % picked, rms 0.38 m; onboard 1:27 light concrete wall on the right',
                  latlon=[(38.1649727, -122.4593844), (38.1649175, -122.4592939), (38.1648682, -122.4591981), (38.1648298, -122.4590942), (38.1647990, -122.4589867), (38.1647950, -122.4589764)]),
-            dict(name='T9, right: concrete wall along the 2020 bypass (part 2)', kind='concrete', h=1.0, fence=0.0, color='#a9c9dd',
+            dict(name='T9, right: concrete wall along the 2020 bypass (part 2)', kind='concrete', h=1.0, fence=0.0, color=WALL_PALE_BLUE,
                  src='2026 captures c20_s0220 / c20_s0275: wall_measure bright line, 73 % picked, rms 0.38 m; onboard 1:27 light concrete wall on the right',
                  latlon=[(38.1647501, -122.4588643), (38.1647131, -122.4587603), (38.1646824, -122.4586526), (38.1646386, -122.4585525), (38.1646043, -122.4584656)]),
-            dict(name='T11 approach, right: tyre wall and catch fence at the edge', kind='tyres', h=1.0, fence=3.5,
+            dict(name='T11 approach, right: tyre wall and catch fence at the edge', kind='tyres', color=TYRE_BLACK, h=1.0, fence=3.5,
                  src='2026 captures c20_s1045 / c20_s1100: wall_measure dark line, 97 % picked, rms 0.53 m; onboard 1:53-1:55 tyre stacks along the right edge with catch fence (an ambulance parked behind at 1:54.6)',
                  latlon=[(38.1609312, -122.4527310), (38.1608446, -122.4527009), (38.1607590, -122.4526659), (38.1606736, -122.4526305), (38.1605876, -122.4525984), (38.1604991, -122.4525756), (38.1604404, -122.4525457)]),
-            dict(name='9a, right: tyre wall', kind='tyres', h=1.0, fence=0.0, cut='round 5: ends at s ~3132 where the dark tyre band ends on c20_s0715 / c20_s0770; the light concrete wall with its catch fence runs on from there (onboard 1:42-1:44)',
+            dict(name='9a, right: tyre wall', kind='tyres', color=TYRE_BLACK, h=1.0, fence=0.0, cut='round 5: ends at s ~3132 where the dark tyre band ends on c20_s0715 / c20_s0770; the light concrete wall with its catch fence runs on from there (onboard 1:42-1:44)',
                  src='2026 captures c20_s0715 / c20_s0770: wall_measure dark line, 100 % picked, rms 0.53 m; onboard 1:42 tyre wall ahead right before the T10 wall',
                  latlon=[(38.1623750, -122.4551039), (38.1623515, -122.4549909), (38.1623267, -122.4548812), (38.1623041, -122.4547707), (38.1622884, -122.4547052)]),
-            dict(name='T11 approach, left: outer pit-in wall (from the split)', kind='concrete', h=2.7, fence=0.0, color='#a9c9dd', h_src='round 5: the same tall wall as the garage-side part (HEIGHTS.md examples 3 and 4, 5.2 m to the board top; onboard 1:56 shows its doors and a marshal at one): 2.7 m concrete under 2.5 m boards; was 1.2 m',
+            dict(name='T11 approach, left: outer pit-in wall (from the split)', kind='concrete', h=2.7, fence=0.0, color=WALL_PALE_BLUE, h_src='round 5: the same tall wall as the garage-side part (HEIGHTS.md examples 3 and 4, 5.2 m to the board top; onboard 1:56 shows its doors and a marshal at one): 2.7 m concrete under 2.5 m boards; was 1.2 m',
                  src='2026 captures c20_s1100 / c20_s1155: wall_measure bright line, 100 % picked, rms 0.30 m; Street View owner_15 (wall with ad boards along the pit-in lane, ~1 m wall); onboard 1:59 light-blue wall with ad boards behind the pit-in Jersey',
                  latlon=[(38.1602279, -122.4522589), (38.1601428, -122.4522222), (38.1600546, -122.4521985), (38.1599666, -122.4521740), (38.1598813, -122.4521374), (38.1597964, -122.4520999), (38.1597112, -122.4520635), (38.1596261, -122.4520267), (38.1595623, -122.4519992)]),
             dict(name='T11 entry, left: Jersey wall between the track and the pit-in lane (from its nose)', kind='concrete', h=0.81, fence=0.0, color='#c9473e',
                  src='2026 captures c20_s1210 / c20_s1265: wall_measure bright line, 90 % picked, rms 0.15 m; owner_15 / owner_16 (wall between pit-in and track, nose with an impact barrier); onboard 1:59 red / white Jersey on the left; Jersey scale 0.81 m',
                  latlon=[(38.1593423, -122.4519695), (38.1592572, -122.4519328), (38.1591705, -122.4519022), (38.1590843, -122.4518703), (38.1589987, -122.4518373), (38.1589111, -122.4518114), (38.1588705, -122.4518113)]),
-            dict(name='T11 hairpin, outside the pit road: outer wall (east)', kind='concrete', h=1.2, fence=0.0, color='#a9c9dd',
+            dict(name='T11 hairpin, outside the pit road: outer wall (east)', kind='concrete', h=1.2, fence=0.0, color=WALL_PALE_BLUE,
                  src='2026 captures c20_s1265 / c20_s1320: wall_measure bright line, 71 % picked, rms 0.65 m; owner_18 (tall concrete wall on the outside of the pit-in lane); Street View jrXpHaDfJT2APw6zcyBKRA',
                  latlon=[(38.1590349, -122.4517413), (38.1589451, -122.4517340), (38.1588574, -122.4517030), (38.1587676, -122.4516937), (38.1586770, -122.4517000), (38.1586275, -122.4517082)]),
-            dict(name='T11 hairpin, outside the pit road: outer wall (south) (part 1)', kind='concrete', h=1.2, fence=0.0, color='#a9c9dd',
+            dict(name='T11 hairpin, outside the pit road: outer wall (south) (part 1)', kind='concrete', h=1.2, fence=0.0, color=WALL_PALE_BLUE,
                  src='2026 captures c20_s1320: wall_measure dark line, 53 % picked, rms 0.51 m; owner_18 (tall concrete wall on the outside of the pit road behind the hairpin)',
                  latlon=[(38.1584146, -122.4517271), (38.1583969, -122.4518406), (38.1583891, -122.4518614)]),
-            dict(name='T11 hairpin, outside the pit road: outer wall (south) (part 2)', kind='concrete', h=1.2, fence=0.0, color='#a9c9dd',
+            dict(name='T11 hairpin, outside the pit road: outer wall (south) (part 2)', kind='concrete', h=1.2, fence=0.0, color=WALL_PALE_BLUE,
                  src='2026 captures c20_s1320: wall_measure dark line, 53 % picked, rms 0.51 m; owner_18 (tall concrete wall on the outside of the pit road behind the hairpin)',
                  latlon=[(38.1583472, -122.4520171), (38.1583292, -122.4521300), (38.1583196, -122.4522436), (38.1583277, -122.4523591), (38.1583333, -122.4524733), (38.1583327, -122.4525882), (38.1583217, -122.4527018), (38.1583222, -122.4527076)]),
-            dict(name='T2 entry, left: tyre wall before the footbridge (owner_27 / owner_28)', kind='tyres', h=1.0, fence=0.0,
+            dict(name='T2 entry, left: tyre wall before the footbridge (owner_27 / owner_28)', kind='tyres', color=TYRE_BLACK, h=1.0, fence=0.0,
                  src='2026 captures c20_s1980 / c20_s2035: wall_measure dark line, 90 % picked, rms 0.74 m; owner_27 ("there is a tire wall missing here"); Street View owner_28 Pit Out (Jul 2011): tyre wall round the outside of T2 from before the footbridge; onboard 0:12 dark low barrier left',
                  latlon=[(38.1618462, -122.4575074), (38.1618430, -122.4576228), (38.1618430, -122.4577255)]),
-            dict(name='T1 exit to T2, right: tyre line on the grass bank (owner_28) (part 1)', kind='tyres', h=1.0, fence=0.0,
+            dict(name='T1 exit to T2, right: tyre line on the grass bank (owner_28) (part 1)', kind='tyres', color=TYRE_BLACK, h=1.0, fence=0.0,
                  src='2026 captures c20_s1925 / c20_s1980: wall_measure dark line, 84 % picked, rms 0.44 m; Street View owner_28 Pit Out (tyre line on the grass bank to the right)',
                  latlon=[(38.1624065, -122.4570844), (38.1623691, -122.4571903), (38.1623026, -122.4572695), (38.1622666, -122.4573742), (38.1622368, -122.4574815), (38.1622123, -122.4575920), (38.1621887, -122.4577016), (38.1621601, -122.4578097), (38.1621259, -122.4579154), (38.1621035, -122.4580230), (38.1620621, -122.4581284), (38.1620569, -122.4581378)]),
-            dict(name='T1 exit to T2, right: tyre line on the grass bank (owner_28) (part 2)', kind='tyres', h=1.0, fence=0.0,
+            dict(name='T1 exit to T2, right: tyre line on the grass bank (owner_28) (part 2)', kind='tyres', color=TYRE_BLACK, h=1.0, fence=0.0,
                  src='2026 captures c20_s1980 / c20_s2035: wall_measure dark line, 84 % picked, rms 0.44 m; Street View owner_28 Pit Out (tyre line on the grass bank to the right)',
                  latlon=[(38.1619844, -122.4582623), (38.1619265, -122.4583509), (38.1618636, -122.4584335), (38.1618208, -122.4584846)]),
             # ---- round 5 (21 Oct 2026): the coverage gate's MISSING rows (compare/sonoma/coverage.md), each measured with
             # compare/wall_measure.py on the named 2026 captures (or derived where said) and tied to its inventory rows
-            dict(name='T4 approach, left: wall and catch fence on to the Chute (round 5)', kind='concrete', h=1.0, fence=2.5, color='#a9c9dd',
+            dict(name='T4 approach, left: wall and catch fence on to the Chute (round 5)', kind='concrete', h=1.0, fence=2.5, color=WALL_PALE_BLUE,
                  h_src='inventory 0:30-0:34: light grey concrete wall 1.0 m (jersey-ref) with catch fence 3.5 m to its top (fence-post-ref)',
                  src='c20_s2695 / c20_s2750: wall_measure bright, s 876-985 beyond the measured T4 approach wall, 56 % picked (three runs, gaps under 16 m bridged), rms 0.31 m; onboard 0:32 wall and fence abeam, 0:34 its end at the Chute; Street View nA1oaDXwADSI7x-Pa-j4Ow',
                  latlon=[(38.1629985, -122.4628819), (38.1630796, -122.4629321), (38.163157, -122.4629901), (38.1631686, -122.4629989),
@@ -542,23 +551,23 @@ CONFIG = dict(
                  latlon=[(38.1634226, -122.4602245), (38.1633499, -122.4601568), (38.1632764, -122.4600909), (38.1632014, -122.460028),
                          (38.1631256, -122.4599668), (38.1630498, -122.4599057), (38.1629731, -122.4598463), (38.1628974, -122.4597854),
                          (38.1628231, -122.4597217), (38.1627516, -122.4596522), (38.162684, -122.459575), (38.162658, -122.4595345)]),
-            dict(name='drag strip NW end: far wall beyond the fork (round 5)', kind='concrete', h=1.0, fence=0.0, color='#a9c9dd',
+            dict(name='drag strip NW end: far wall beyond the fork (round 5)', kind='concrete', h=1.0, fence=0.0, color=WALL_PALE_BLUE,
                  h_src='inventory 1:06: light blue concrete wall 1.0 m (jersey-ref)',
                  src='c20_s3630 / c20_s3685 / c20_s3740: wall_measure bright along the drag strip NW end, three runs 54 % picked, rms 0.15 m (gaps of 32 and 69 m bridged: the onboard shows one continuous wall); onboard 1:04-1:06 light blue wall on the far side of the drag strip, right',
                  latlon=[(38.1649784, -122.4598073), (38.1650344, -122.4598966), (38.1650903, -122.4599843), (38.1651446, -122.4600733),
                          (38.1652006, -122.4601639), (38.1652486, -122.4602608), (38.1653888, -122.460571), (38.1654331, -122.4606709),
                          (38.1654834, -122.4607656), (38.1655392, -122.4608555), (38.1655951, -122.460946), (38.1656393, -122.4610241),
                          (38.165956, -122.4617028), (38.166008, -122.461796), (38.1660575, -122.4618781)]),
-            dict(name='drag strip at the T7 fork: tyre line across the continuation (round 5)', kind='tyres', h=0.7, fence=0.0,
+            dict(name='drag strip at the T7 fork: tyre line across the continuation (round 5)', kind='tyres', color=TYRE_BLACK, h=0.7, fence=0.0,
                  h_src='inventory 1:04: black tyre line 0.7 m (tyre-ref)',
                  src='onboard RAZip6S84CM 1:04: a black tyre line with cones across the drag strip continuation where the course forks left, ~40-60 m ahead; placed across the continuation at s ~1938 between the track edge and the measured far wall (c20_s3630; the 2026 captures, taken at another event, show the lanes open)',
                  latlon=[(38.1651955, -122.4603197), (38.1652344, -122.4603494), (38.1652741, -122.4603766)]),
-            dict(name='T7 approach, left: wall on to the T7 post (round 5)', kind='concrete', h=1.2, fence=0.0, color='#a9c9dd',
+            dict(name='T7 approach, left: wall on to the T7 post (round 5)', kind='concrete', h=1.2, fence=0.0, color=WALL_PALE_BLUE,
                  h_src='as the T6 to T7 wall (onboard 1:09: ~1.2 m)',
                  src='c20_s3850 / c20_s3905: wall_measure bright, s 2104-2150, 63 % picked, rms 0.80 m (parked vehicles); onboard 1:12 the light blue-grey wall runs to its end beside the T7 post',
                  latlon=[(38.1657502, -122.4621356), (38.1657957, -122.4622344), (38.1658423, -122.4623324), (38.1658771, -122.4624379),
                          (38.1659144, -122.4625419), (38.1659438, -122.4626138)]),
-            dict(name="the Chute's T7 mouth: tyre line behind the cones (round 5)", kind='tyres', h=0.6, fence=0.0,
+            dict(name="the Chute's T7 mouth: tyre line behind the cones (round 5)", kind='tyres', color=TYRE_BLACK, h=0.6, fence=0.0,
                  h_src='inventory 1:12 (added row): low black tyre line, 0.6 m (tyre-ref)',
                  src='onboard RAZip6S84CM 1:12 (frame t072): two low black tyre lines with small orange cones across the paved Chute mouth ahead-left of T7, again far left at 1:14; placed 1.5 m behind the mouth cone line (the mouth from the OSM Chute way; c20_s3905 shows the mouth open at another event)',
                  latlon=[(38.1660984, -122.4628055), (38.1660851, -122.4627847), (38.1660717, -122.4627639), (38.1660584, -122.4627431),
@@ -568,7 +577,7 @@ CONFIG = dict(
                  src='c20_s3960 / c20_s4015: wall_measure bright, 85 % picked, rms 0.57 m; Street View J6fsnW4hj4xCjQLzrgRGzA (concrete wall far left along the T7a stands)',
                  latlon=[(38.1668994, -122.4629129), (38.166845, -122.4628215), (38.1667931, -122.462728), (38.1667492, -122.4626282),
                          (38.1666955, -122.4625373), (38.1666442, -122.4624436), (38.1666416, -122.4624389)]),
-            dict(name='T7a, left: tyre line at the foot of the terraces (round 5)', kind='tyres', h=0.8, fence=0.0,
+            dict(name='T7a, left: tyre line at the foot of the terraces (round 5)', kind='tyres', color=TYRE_BLACK, h=0.8, fence=0.0,
                  h_src='inventory 1:14: black tyre wall line 0.8 m (tyre-ref)',
                  src='c20_s3960 / c20_s4015: wall_measure dark, 100 % picked, rms 0.39 m: the first 21 m of the line at the foot of the T7a terraces is a black tyre band (vehicles parked in front of it); onboard 1:14 black tyre wall line far left with recovery vehicles behind',
                  latlon=[(38.1668627, -122.4627568), (38.1668723, -122.4626432), (38.1668947, -122.4625312)]),
@@ -577,7 +586,7 @@ CONFIG = dict(
                  src='c20_s3960 / c20_s4015: wall_measure dark (its shadow line), 100 % picked, rms 0.39 m, the light part of the line at the foot of the T7a terraces; onboard 1:16 low white wall at the foot of the terraces',
                  latlon=[(38.1668947, -122.4625312), (38.1669342, -122.4624265),
                          (38.1669743, -122.4623242), (38.1670134, -122.4622213), (38.1670306, -122.4621747)]),
-            dict(name='T7a to T8, left: tyre line at the foot of the bank (round 5)', kind='tyres', h=0.8, fence=0.0,
+            dict(name='T7a to T8, left: tyre line at the foot of the bank (round 5)', kind='tyres', color=TYRE_BLACK, h=0.8, fence=0.0,
                  h_src='inventory 1:20: dark low wall 0.8 m (jersey-ref)',
                  src='c20_s0000 / c20_s4070: wall_measure dark, 100 % picked, rms 0.59 m, s 2292-2405 along the foot of the bank behind the paddock (joins the T8 tyre line); onboard 1:20-1:22 dark low wall / tyre line at the foot of the bank',
                  latlon=[(38.1670743, -122.4614152), (38.1670237, -122.4613205), (38.1669716, -122.4612278), (38.1668862, -122.4611955),
@@ -592,7 +601,7 @@ CONFIG = dict(
                  h_src='inventory 0:38: chain-link fence with posts 2.5 m (fence-post-ref)',
                  src='onboard RAZip6S84CM 0:38-0:40 (fence along the top of the bank above the right wall) at the bank crest from the lidar bare-earth DEM (21-48 m beyond the edge; median 9 + Gaussian 3), s 1040-1200',
                  latlon=[(38.1639517, -122.4629725), (38.1639382, -122.4628885), (38.1638931, -122.4627569), (38.16396, -122.4626495), (38.1641443, -122.4625934), (38.1641771, -122.46249), (38.1641155, -122.4623559), (38.1640479, -122.4622213), (38.1640469, -122.4621012), (38.1640545, -122.4620059), (38.1640598, -122.4619276), (38.1640634, -122.4618657), (38.1640671, -122.4618101), (38.1640687, -122.4617495), (38.1640666, -122.4616797), (38.1640619, -122.461606), (38.1640494, -122.4615382)]),
-            dict(name='T8 to 8a, right: concrete wall to the PWC road (round 5)', kind='concrete', h=1.0, fence=0.0, color='#a9c9dd',
+            dict(name='T8 to 8a, right: concrete wall to the PWC road (round 5)', kind='concrete', h=1.0, fence=0.0, color=WALL_PALE_BLUE,
                  h_src='inventory 1:20-1:22: light grey concrete wall 1.0 m (jersey-ref)',
                  src='c20_s0000 / c20_s0055 / c20_s0110: wall_measure bright, s 2350-2510, three runs 68-77 % picked, rms 0.78-0.84 m (gaps of 10 m bridged; trailers parked against it at another event); onboard 1:20-1:22 continuous light grey wall 6-10 m right',
                  latlon=[(38.1662731, -122.4616245), (38.1662058, -122.4615408), (38.1661216, -122.4614937), (38.1660785, -122.4614341),
@@ -607,13 +616,13 @@ CONFIG = dict(
                          (38.1650184, -122.4578636), (38.1649777, -122.4577615), (38.1649274, -122.4576671), (38.1648753, -122.4575753),
                          (38.1648231, -122.4574842), (38.1647666, -122.4573975), (38.1647152, -122.4573029), (38.164654, -122.4572192),
                          (38.1646096, -122.4571626)]),
-            dict(name='back straight to 9a, left: wall and catch fence (round 5)', kind='concrete', h=1.0, fence=2.5, color='#a9c9dd',
+            dict(name='back straight to 9a, left: wall and catch fence (round 5)', kind='concrete', h=1.0, fence=2.5, color=WALL_PALE_BLUE,
                  h_src='inventory 1:38-1:40: light concrete wall 1.0 m (jersey-ref), catch fence 3.5 m to its top (fence-post-ref)',
                  src='c20_o0660 / c20_s0660: wall_measure bright, s 2986-3046, 79 % picked, rms 0.58 m; onboard 1:38 wall and catch fence abeam on the left, 1:40 with Sonoma Raceway boards',
                  latlon=[(38.1635069, -122.455342), (38.1634471, -122.4552569), (38.1633834, -122.4551765), (38.1633219, -122.4550927),
                          (38.1632699, -122.4549987), (38.1631973, -122.454928), (38.1631105, -122.4548934), (38.1631062, -122.4548916),
                          (38.1630317, -122.4548843), (38.1629581, -122.4548937)]),
-            dict(name='9a to T10, right: concrete wall and catch fence (round 5)', kind='concrete', h=1.1, fence=2.9, color='#a9c9dd',
+            dict(name='9a to T10, right: concrete wall and catch fence (round 5)', kind='concrete', h=1.1, fence=2.9, color=WALL_PALE_BLUE,
                  h_src='inventory 1:44-1:48: light concrete wall 1.1 m (jersey-ref) with catch fence 4.0 m to its top (fence-post-ref)',
                  src='c20_s0715 / c20_s0770: wall_measure bright, s 3128-3222 (where the 9a tyre band ends to the T10-T11 right wall), 91 % picked, rms 0.44 m; onboard 1:44 light concrete wall with catch fence on the right',
                  latlon=[(38.1622887, -122.4547553), (38.1622686, -122.4546437), (38.1622507, -122.4545315), (38.1622352, -122.4544188),
@@ -624,7 +633,7 @@ CONFIG = dict(
                  src='c20_s0715 / c20_s0770: wall_measure bright along the bypass edge, s 3118-3168, 63 % picked, rms 0.75 m (round 4 rejected a line here at 48 %; this guide follows the bypass edge, which the onboard confirms); onboard 1:44 a SONOMA RACEWAY / Sunbelt board wall 15-20 m left with a tyre stack in front, joining the T10-T11 boarded wall',
                  latlon=[(38.1627604, -122.454702), (38.162717, -122.4546005), (38.1626631, -122.4545065), (38.1626192, -122.454406),
                          (38.162607, -122.4542885), (38.1625989, -122.4542076)]),
-            dict(name='T10 to T11, left: tyre bundles at the foot of the boarded wall (round 5)', kind='tyres', h=0.6, fence=0.0,
+            dict(name='T10 to T11, left: tyre bundles at the foot of the boarded wall (round 5)', kind='tyres', color=TYRE_BLACK, h=0.6, fence=0.0,
                  h_src='inventory 1:54: tyre bundles 0.6 m (tyre-ref)',
                  src='c20_s0990 / c20_s1045: wall_measure dark in front of the boarded wall, s 3395-3468, 99 % picked, rms 0.59 m; onboard 1:54 tyre bundles along the foot of the EchoPark wall',
                  latlon=[(38.1610051, -122.4525256), (38.1609177, -122.4524996), (38.1608296, -122.4524769), (38.1607425, -122.4524495),
@@ -647,6 +656,10 @@ CONFIG = dict(
         # evidence-declared building overrides (20 Oct 2026, round 4): only where a newer source contradicts the 2022-24
         # lidar (precedence: recent onboard > 2026 satellite > NAIP > OSM > lidar); each use is logged by the build
         building_overrides=[
+            dict(osm='1019835273', plain=True,
+                 src='round 6 (orchestrator S2): the long flat-roofed shed east of the T10-T11 straight (4.4-5.0 m, lidar 2022-24) '
+                     'drew with two rows of office windows over the boarded wall; the onboard 1:52-1:58 (t112-t118) shows no '
+                     'storeys or glazing above the boards, and c20_s1100 / c20_s1155 / c20_s1210 a plain light roof: plain walls'),
             dict(osm='1019838438', drop=True,
                  src='T11 approach, 1-6 m right of the right edge at s 3414-3440: the lidar (2022-24) has a ~12.5 m structure; '
                      'the 2026 capture c20_s1045 shows a temporary white hospitality tent (~8 x 30 m) on part of the outline; the '
@@ -656,7 +669,7 @@ CONFIG = dict(
         ],
         # OSM walls the evidence re-kinds or drops (round 5): OSM notes both T3 / T4 lines as 'tire barrier'
         osm_barrier_overrides={
-            '380830042': dict(kind='tyres', h=1.0, fence=0.0, src='T3 right, OSM note "tire barrier": c20_s2475 / c20_s2530 show the dark tyre band on this line, 37-47 m right of the centre (round 5)'),
+            '380830042': dict(kind='tyres', color=TYRE_BLACK, h=1.0, fence=0.0, src='T3 right, OSM note "tire barrier": c20_s2475 / c20_s2530 show the dark tyre band on this line, 37-47 m right of the centre (round 5)'),
             '380830043': dict(drop=True, src='T4 right: the same tyre line as the measured declared wall "T4, right: tyre line beyond the runoff" (c20_s2640 / c20_s2695, within 1-2 m of it), OSM note "Tire barrier" (round 5)'),
         },
         # the evidence for the buildings the coverage gate checks (round 5): kept with their capture / onboard source, or
@@ -740,30 +753,48 @@ CONFIG = dict(
         # advertising boards on the walls as plain coloured panels, no logos (20 Oct 2026, round 4; owner notes 13 / 15):
         # colours in the order the onboard shows them, track s from the onboard time (+-20 m), panel heights from the
         # Street View scale (owner_15: ~2.5 m boards on a ~1 m wall)
+        # the T2 footbridge's fascia (round 6, owner O2 / orchestrator F6): onboard 0:06-0:08 (t006, t008) toward oncoming cars:
+        # Save Mart (white, red lettering), TOYOTA GAZOO Racing (red, white), TOYOTA GAZOO Racing (white, black), SUNOCO (blue,
+        # yellow), LAS VEGAS (navy, white); the far face is not seen in the footage (the same set)
+        bridge_banners={'1382620985': [
+            ['Save Mart|#f4f3ef|#c8202c', 'TOYOTA GAZOO Racing|#d6262c|#ffffff', 'TOYOTA GAZOO Racing|#f4f3ef|#1a1a1a', 'SUNOCO|#1f3f99|#f5d000', 'LAS VEGAS|#1d2230|#f3f3f0'],
+            ['Save Mart|#f4f3ef|#c8202c', 'TOYOTA GAZOO Racing|#d6262c|#ffffff', 'TOYOTA GAZOO Racing|#f4f3ef|#1a1a1a', 'SUNOCO|#1f3f99|#f5d000', 'LAS VEGAS|#1d2230|#f3f3f0']]},
+        # Round 6 (owner O2, Laguna's rule): every board carries the sponsor NAME the footage shows on that run, typed as plain
+        # bold text in the observed background / text colours (no logo artwork or emblems); names cycle per 6 m panel.
+        # Observed colours from the 2026 onboard frames named in each src (manifest "Boards" table).
         wall_boards=[
-            dict(wall='T10 to T11, left wall with the ad boards', s=(3172, 3235), h=2.5, colors=['#1d2a3a'],
-                 src='onboard 1:43.2-1:44.5 dark navy board along the T10 entry wall'),
-            dict(wall='T10 to T11, left wall with the ad boards', s=(3235, 3262), h=2.5, colors=['#3f9b3c'],
-                 src='onboard 1:43.2-1:44.5 green boards after it'),
-            dict(wall='T10 to T11, left wall with the ad boards', s=(3262, 3335), h=2.5, colors=['#ecebe6', '#ecebe6', '#b8202a'],
-                 src='onboard 1:44.5-1:50 white boards with red ones between'),
-            dict(wall='T10 to T11, left wall with the ad boards', s=(3335, 3400), h=2.5, colors=['#22262b'],
-                 src='onboard 1:53-1:54 dark boards toward T11'),
+            dict(wall='T10 to T11, left wall with the ad boards', s=(3172, 3235), h=2.5,
+                 names=[('SONOMA RACEWAY', '#1d2a3a', '#ffffff')],
+                 src='onboard 1:43.2-1:44.5 (t104): dark navy SONOMA RACEWAY boards along the T10 entry wall'),
+            dict(wall='T10 to T11, left wall with the ad boards', s=(3235, 3262), h=2.5,
+                 names=[('SUNBELT RENTALS', '#3aa635', '#ffffff')],
+                 src='onboard 1:46 (t106): green SUNBELT RENTALS boards (white lettering)'),
+            dict(wall='T10 to T11, left wall with the ad boards', s=(3262, 3335), h=2.5,
+                 names=[('TOYOTA', '#f4f3ef', '#1a1a1a'), ('HUMBOLDT', '#f4f3ef', '#1d2a3a'), ('SAVE MART', '#f4f3ef', '#c8202c'), ('zMAX', '#c8202c', '#ffffff')],
+                 src='onboard 1:48-1:50 (t108, t110): white TOYOTA boards (black lettering), white Humboldt (navy), white SAVE MART (red), zMAX on red'),
+            dict(wall='T10 to T11, left wall with the ad boards', s=(3335, 3478), h=2.5,
+                 names=[('EchoPark', '#22262b', '#ffffff'), ('zMAX', '#c8202c', '#ffffff')],
+                 src='onboard 1:52-1:55 (t112, t114; inventory s 3335 and 3421): dark EchoPark AUTOMOTIVE boards (white / green lettering), zMAX; to the Jersey start at s 3478'),
             dict(wall='T11 approach, left: outer pit-in wall (from the split)', s=(3485, 3563), h=2.5,
-                 colors=['#b8202a', '#1f3a2a', '#ecebe6', '#22262b'],
-                 src='Street View owner_15 (red, dark green, white boards on the pit-in wall, Jul 2011); onboard 1:59 dark / white / red boards'),
+                 names=[('LAS VEGAS', '#1a1a1a', '#f3f3f0'), ('LAS VEGAS', '#1a1a1a', '#f3f3f0'), ("O'REILLY", '#1f6b3a', '#ffffff')],
+                 src="onboard 1:56 (t116): black LAS VEGAS boards (white lettering), then green O'Reilly"),
             dict(wall='T11 entry, left: outer pit-in wall (garage side)', s=(3563, 3646), h=2.5,
-                 colors=['#22262b', '#ecebe6', '#22262b', '#b8202a'],
-                 src='onboard 1:59 dark, white, dark, red boards above the light-blue pit-in wall'),
-            dict(wall='T6 to T7, left (Carousel exit along the drag strip and the T7 road)', s=(1990, 2105), h=2.0, base=1.6,
-                 colors=['#ecebe6', '#d8467e', '#2a4fa8', '#b8202a'],
-                 src='onboard 1:09-1:11 boards on posts above the light-blue wall (white, pink, blue, red)'),
+                 names=[('Lucky', '#f4f3ef', '#c8202c'), ('SAVE MART', '#f4f3ef', '#c8202c'), ('PIT BOSS', '#1a1a1a', '#f3f3f0'), ('Coca-Cola', '#1a1a1a', '#ffffff'), ('xfinity', '#f4f3ef', '#1a1a1a')],
+                 src='onboard 1:58-2:00 (t118, t120): white Lucky / SAVE MART COMPANIES (red lettering), black PIT BOSS, black Coca-Cola, xfinity'),
+            # F4 (owner, inventory 0:58-1:10): the T6-T7 wall is plain up to s ~2105; the TOYOTA boards on posts above the wall
+            # stand at 1:10 (s 2112), the Pirelli / red boards on the low wall at its end at 1:12 (s 2157)
+            dict(wall='T7 approach, left: wall on to the T7 post (round 5)', s=(2105, 2140), h=2.5, base=1.6,
+                 names=[('TOYOTA', '#f4f3ef', '#1a1a1a')],
+                 src='onboard 1:10 (t070): large white TOYOTA boards with red frames on posts above the wall (~2.5 m, inventory s 2112)'),
+            dict(wall='T7 approach, left: wall on to the T7 post (round 5)', s=(2140, 2150), h=1.0,
+                 names=[('PIRELLI', '#f5d000', '#1a1a1a'), ('', '#b8202a', '#ffffff')], panel=5.0,
+                 src='onboard 1:12 (t072): Pirelli (yellow) and red boards on the low wall at the wall end (inventory s 2157)'),
             dict(wall='T10 entry, left: board wall along the bypass edge (round 5)', s=(3118, 3168), h=2.2,
-                 colors=['#1d2a3a', '#1d2a3a', '#3f9b3c', '#ecebe6'],
-                 src='onboard 1:44-1:46 (round 5): SONOMA RACEWAY (dark navy), Sunbelt (green) and Toyota (white) boards; 3.2 m to the top, between the 2.8 m read at 1:44 and the 4.0 m at 1:46 where they join the T10 wall (inventory, horizon-ratio)'),
+                 names=[('SONOMA RACEWAY', '#1d2a3a', '#ffffff'), ('SONOMA RACEWAY', '#1d2a3a', '#ffffff'), ('SUNBELT RENTALS', '#3aa635', '#ffffff'), ('TOYOTA', '#f4f3ef', '#1a1a1a')],
+                 src='onboard 1:44-1:46 (round 5, t104 / t106): SONOMA RACEWAY (dark navy), SUNBELT RENTALS (green) and TOYOTA (white) boards; 3.2 m to the top, between the 2.8 m read at 1:44 and the 4.0 m at 1:46 where they join the T10 wall (inventory, horizon-ratio)'),
             dict(wall='drag strip, infield (NE) side', s=(3925, 4098), h=1.5,
-                 colors=['#22262b', '#3f9b3c', '#3f9b3c', '#b8202a', '#ecebe6'],
-                 src='onboard 2:08-2:18 (round 5): Las Vegas (black), O\'Reilly and EchoPark (green), zMAX (red), Toyota (white) boards on the far drag-strip wall; 2.5 m to the top (inventory 2:08-2:12, horizon-ratio)'),
+                 names=[('LAS VEGAS', '#1a1a1a', '#f3f3f0'), ("O'REILLY", '#1f6b3a', '#ffffff'), ('EchoPark', '#3aa635', '#ffffff'), ('zMAX', '#c8202c', '#ffffff'), ('TOYOTA', '#f4f3ef', '#1a1a1a'), ('SONOMA RACEWAY', '#1d2a3a', '#ffffff')],
+                 src="onboard 2:08-2:18 (round 5, t126-t136): LAS VEGAS (black), O'Reilly and EchoPark (green), zMAX (red), TOYOTA (white) and SONOMA RACEWAY boards on the far drag-strip wall; 2.5 m to the top (inventory 2:08-2:12, horizon-ratio)"),
         ],
         # round 5 (21 Oct 2026): boards on the new T10-entry wall and on the far drag-strip wall at T12 / the front straight
         # the nose of the pit-in separation wall: a yellow water-filled impact barrier before the concrete (owner_15)
@@ -884,7 +915,7 @@ CONFIG = dict(
         # OSM boxes a structure replaces: the main grandstand block, the two pit-road garage rows, the T12 two-storey
         # building, the fuel canopy, the pit-exit building, the two paddock garages
         suppress_osm=['262082790', '1019835464', '1019837060', '1019836595', '1019838109', '1019836533',
-                      '1019836718'],
+                      '1019836718', '1019839490'],
         items=[
             dict(type='grandstand', name='Main grandstand',
                  # front face of the block-wall base, 145 m (the seat field fitted on c20_s1595..s1760: 141 x 31 m in
@@ -945,6 +976,15 @@ CONFIG = dict(
                      'RAZip6S84CM 0:04 (red roof edge, glazed front, grey walls; inventory s 91 left); 2025 24of8fjjAug '
                      '4:56 (red roof line at the pit exit); Street View owner_25 (2011)',
                  h_src='lidar: roof from 4.2 m (paddock side) to 8.2 m (track side)'),
+            # round 6 (orchestrator S2): the long single-storey shed directly behind the T10-T11 boarded wall (left of s
+            # 3478-3700): the OSM box drew as a two-storey glazed block towering over the wall; the onboard 1:54-1:58 shows
+            # only the 5.2 m boarded wall with the hills behind (the shed's roof sits at the boards' top)
+            dict(type='garage', name='T10-T11 shed behind the boarded wall', osm='1019839490', eave=5.5, ridge=5.6,
+                 wall='#d9d8d2', roof='#c9c8c2', trim='#d9d8d2', trim_h=0.0,
+                 src='OSM 1019839490 (a 12 x 250 m rectangle, 3016 m2); c20_s1100 / c20_s1155 / c20_s1210: a long flat light '
+                     'roof directly behind the boarded wall; onboard RAZip6S84CM 1:54-1:58 (frames t114-t118): only the '
+                     'boarded wall (5.2 m) and the hills behind, no storeys or glazing above it',
+                 h_src='lidar 2022-24 over the outline: p50 5.5 m, p90 6.2 m (flat roof)'),
             # T12: the two-storey flat-roof building at the pit-road end of the grandstand
             dict(type='block', name='T12 two-storey building', osm='1019836595', h=7.9, storeys=2, parapet=0.5,
                  wall='#d4c49c', band='#34495a', roof='#a3a39e',
@@ -980,12 +1020,12 @@ CONFIG = dict(
                  h_src='lidar spike height'),
             # pit wall boards: plain panels along the pit wall's top (no logos)
             dict(type='boards', name='Pit wall boards (blue)', side='left', s0=3960, s1=4060, lat=(4.0, 15.0), h=0.85,
-                 colors=['#23439a'], panel=3.0,
+                 colors=['#23439a'], panel=3.0, names=[('RESTART ZONE', '#23439a', '#ffffff'), ('GEICO', '#23439a', '#ffffff')],
                  src='2025 24of8fjjAug 4:48 (blue board band along the pit wall top, RESTART ZONE panel; inventory pit '
                      'row s 4010)', h_src='about 0.8 of the 1.1 m wall below it (24of8fjjAug 4:48)'),
             dict(type='boards', name='Pit wall boards (green)', side='left', s0=4060, s1=4098, lat=(4.0, 15.0), h=0.85,
-                 colors=['#3aa635'], panel=3.0,
-                 src='onboard RAZip6S84CM 2:15 (green panels on the pit wall at the line, both sides)',
+                 colors=['#3aa635'], panel=3.0, names=[('EchoPark', '#3aa635', '#ffffff')],
+                 src='onboard RAZip6S84CM 2:15 (green panels on the pit wall at the line, both sides; t134: EchoPark on the green wrap)',
                  h_src='about 0.8 of the wall (onboard 2:15)'),
             # pit-box lines: the box front line along the lane and a cross line every box, measured on a straightened
             # strip of the 2026 captures along the pit lane (peaks of the white-line brightness; front line 6.6 m and

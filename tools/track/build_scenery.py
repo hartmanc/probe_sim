@@ -342,8 +342,8 @@ def building_override(w, xy):
     for k, ov in enumerate(SC_CFG.get("building_overrides", [])):
         if not ov.get("src"):
             raise SystemExit(f"building_overrides[{k}]: no evidence (src) given")
-        if ("h" in ov) == bool(ov.get("drop")):
-            raise SystemExit(f"building_overrides[{k}]: give exactly one of h or drop")
+        if ("h" in ov) == bool(ov.get("drop")) and not (ov.get("plain") and not ov.get("drop")):
+            raise SystemExit(f"building_overrides[{k}]: give exactly one of h or drop (or plain=True)")
         hit = ov.get("osm") is not None and str(ov["osm"]) == str(w["id"])
         if not hit and ov.get("contains") is not None:
             p = bl.enu(*ov["contains"])
@@ -403,9 +403,12 @@ def buildings(trk, G, osm):
                 log(f"building {w['id']} ({w['tags'].get('name', '')}): DROPPED by evidence override (lidar 2022-24 p50 "
                     f"{p50_:.1f} / p90 {p90_:.1f} m, would have been {h:.1f} m): {ov['src']}")
                 continue
-            log(f"building {w['id']} ({w['tags'].get('name', '')}): height {h:.1f} -> {float(ov['h']):.1f} m by evidence "
-                f"override (lidar 2022-24 p50 {p50_:.1f} / p90 {p90_:.1f} m): {ov['src']}")
-            h = float(ov["h"])
+            if "h" in ov:
+                log(f"building {w['id']} ({w['tags'].get('name', '')}): height {h:.1f} -> {float(ov['h']):.1f} m by evidence "
+                    f"override (lidar 2022-24 p50 {p50_:.1f} / p90 {p90_:.1f} m): {ov['src']}")
+                h = float(ov["h"])
+            if ov.get("plain"):
+                log(f"building {w['id']} ({w['tags'].get('name', '')}): plain walls (no window / door facade) by evidence override: {ov['src']}")
         kind = BUILDING_KIND.get(w["tags"]["building"], "building")
         if w["id"] in HANGARS:
             kind = "hangar"
@@ -420,7 +423,8 @@ def buildings(trk, G, osm):
             h = float(gz.max() - gz.min()) + max(float(np.percentile(hv, 85)), 2.0)
             h = min(h, 40.0)
         out.append({"kind": kind, "name": HANGARS.get(w["id"], w["tags"].get("name", "")), "z": rnd(zb, 2), "h": rnd(h, 1),
-                    "footprint": [[rnd(x, 1), rnd(y, 1)] for x, y in xy], "src": "osm"})
+                    "footprint": [[rnd(x, 1), rnd(y, 1)] for x, y in xy], "src": "osm",
+                    **({"plain": True} if ov is not None and ov.get("plain") else {})})
     n_osm = len(out)
     unused = [k for k in range(len(SC_CFG.get("building_overrides", []))) if k not in _OVERRIDES_USED]
     if unused:
@@ -1204,8 +1208,18 @@ def closed_road_paint(trk, parts):
                 st = np.arange(a_, b_ + 1)
                 lat = full[st] - side * 0.15
                 P = C[st] + NL[st] * lat[:, None]
-                out.append({"width": 0.12, "side": side, "pts": [[rnd(x, 2), rnd(y, 2), rnd(z + 0.02, 3)] for (x, y), z in zip(P, Z[st])],
-                            "src": f"closed road {p['turn']}: painted edge on the 2026 captures (paint.measure, {int(ok[st].sum())} of {len(st)} stations measured)"})
+                # round 6 (orchestrator F5): a closed road's edge line stops at the circuit's own paved width (+0.3 m): the
+                # line at the 2020 bypass mouth was drawn on across the track at s ~2800
+                ti, tl, _ = trk.project(P)
+                on_track = (tl <= trk.hl[ti] + 0.3) & (tl >= -trk.hr[ti] - 0.3)
+                if on_track.any():
+                    log(f"closed road {p['turn']}: {int(on_track.sum())} edge-line samples on the circuit's paved width dropped")
+                for c_, d_ in _runs(~on_track):
+                    if d_ - c_ < 10:
+                        continue
+                    q = np.arange(c_, d_ + 1)
+                    out.append({"width": 0.12, "side": side, "pts": [[rnd(x, 2), rnd(y, 2), rnd(z + 0.02, 3)] for (x, y), z in zip(P[q], Z[st][q])],
+                                "src": f"closed road {p['turn']}: painted edge on the 2026 captures (paint.measure, {int(ok[st].sum())} of {len(st)} stations measured)"})
             log(f"closed road {p['turn']}: {'left' if side > 0 else 'right'} painted edge measured at {int(ok.sum())} of {len(C)} stations, "
                 f"lateral p50 {np.nanmedian(v):+.1f} m")
     return out
@@ -1701,12 +1715,14 @@ def wall_boards(trk):
     """Advertising boards on a declared wall as plain coloured panels, no logos (config scenery.wall_boards, 20 Oct
     2026): each {wall: declared wall name, s: (s0, s1) track metres, h: panel height (m), colors: [hex, ...] taken in
     turn, panel: panel length (m, default 6), base: height of the panel's bottom above the ground (default the wall's
-    top), src}. Panels stand on the wall line, facing the track ('sign' landmarks with no text)."""
+    top), names: [(text, background, text colour), ...] in turn instead of colors (round 6: the sponsor names the footage
+    shows typed as plain text in the observed colours, no logo artwork), src}. Panels stand on the wall line, facing the track ('sign' landmarks with no text)."""
     out = []
     for wb in SC_CFG.get("wall_boards", []):
         P, wh = _wall_stretch(trk, wb["wall"], *wb["s"])
         L = resample_line(P, wb.get("panel", 6.0))
-        cols = wb["colors"]
+        names = wb.get("names")           # round 6: [(text, background, text colour), ...] in turn (typed names, no logos)
+        cols = [n_[1] for n_ in names] if names else wb["colors"]
         for k in range(len(L) - 1):
             a, b = L[k], L[k + 1]
             m = (a + b) / 2
@@ -1720,9 +1736,10 @@ def wall_boards(trk):
                 n_ = -n_
             p = m + n_ * 0.12                     # on the wall's track face
             z = float(trk.ground(*p)[0]) + wb.get("base", wh)
-            out.append({"kind": "sign", "text": "", "x": rnd(p[0], 2), "y": rnd(p[1], 2), "z": rnd(z, 2),
+            out.append({"kind": "sign", "text": names[k % len(names)][0] if names else "", "x": rnd(p[0], 2), "y": rnd(p[1], 2), "z": rnd(z, 2),
                         "heading": rnd(math.atan2(n_[1], n_[0]), 3), "h": wb["h"], "w": rnd(w + 0.02, 2),
-                        "color": cols[k % len(cols)], "src": f"wall board on {wb['wall']} ({wb['src']})",
+                        "color": cols[k % len(cols)], **({"fg": names[k % len(names)][2]} if names else {}),
+                        "src": f"wall board on {wb['wall']} ({wb['src']})",
                         # the top of a panel standing ON the wall (no `base`: boards on posts behind a wall are not
                         # part of its face), above the ground, for the coverage gate's wall heights (21 Oct 2026)
                         **({} if "base" in wb else {"top": rnd(wh + wb["h"], 2)})})

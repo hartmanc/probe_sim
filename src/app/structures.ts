@@ -75,7 +75,9 @@ export interface MastJson { type: 'mast'; name?: string; src: string; at: [numbe
 /** Painted ground rectangles [cx, cy, heading, length, width] (pit-box lines) */
 export interface PaintJson { type: 'paint'; name?: string; src: string; rects: [number, number, number, number, number][]; color: string; z?: number[] }
 /** Plain board panels standing along a line at z0..z0 + h above the line's points */
-export interface BoardsJson { type: 'boards'; name?: string; src: string; pts: V3[]; z0: number; h: number; colors: string[]; panel: number }
+/** `names` (round 6): each panel's typed name [text, background, text colour] in turn (the names the footage shows, as
+ *  plain bold text, no logo artwork; drawn by buildStructures' `label`), its background replacing `colors` */
+export interface BoardsJson { type: 'boards'; name?: string; src: string; pts: V3[]; z0: number; h: number; colors: string[]; panel: number; names?: [string, string, string][] }
 /** Dressing of a hillside terrace (scenery.json `terraces` by name): bench strip per row, stair aisles with hand
  *  rails, shade roofs over the top rows between fractions f0..f1 of the row length */
 export interface TerraceDressJson {
@@ -441,8 +443,9 @@ export function paint(u: PaintJson, s: Soup, ground?: (x: number, y: number) => 
   });
 }
 
-export function boards(u: BoardsJson, s: Soup): void {
-  // walk the line, one panel per `panel` metres, colours in order
+/** The panels of a boards run: frame at the panel's start, length, the z offset over it, and its name entry. */
+export function boardPanels(u: BoardsJson): { f: Frame; l: number; dz: number; k: number }[] {
+  const out: { f: Frame; l: number; dz: number; k: number }[] = [];
   let k = 0;
   for (let i = 0; i + 1 < u.pts.length; i++) {
     const a = u.pts[i], b = u.pts[i + 1];
@@ -454,11 +457,17 @@ export function boards(u: BoardsJson, s: Soup): void {
       const p0: V3 = [a[0] + (b[0] - a[0]) * f0, a[1] + (b[1] - a[1]) * f0, a[2] + (b[2] - a[2]) * f0];
       const p1: V3 = [a[0] + (b[0] - a[0]) * f1, a[1] + (b[1] - a[1]) * f1, a[2] + (b[2] - a[2]) * f1];
       const ut: V2 = [(b[0] - a[0]) / len, (b[1] - a[1]) / len];
-      const f = new Frame(p0, ut, [-ut[1], ut[0]]);
-      const l = Math.hypot(p1[0] - p0[0], p1[1] - p0[1]) - 0.06, dz = p1[2] - p0[2];
-      s.box(f, 0.03, 0.03 + l, -0.03, 0.03, u.z0 + Math.min(0, dz), u.z0 + u.h + Math.max(0, dz), rgb(u.colors[k % u.colors.length]), { shade: false });
-      k++;
+      out.push({ f: new Frame(p0, ut, [-ut[1], ut[0]]), l: Math.hypot(p1[0] - p0[0], p1[1] - p0[1]) - 0.06, dz: p1[2] - p0[2], k: k++ });
     }
+  }
+  return out;
+}
+
+export function boards(u: BoardsJson, s: Soup): void {
+  // walk the line, one panel per `panel` metres, colours (or the names' backgrounds) in order
+  for (const { f, l, dz, k } of boardPanels(u)) {
+    const col = u.names?.length ? u.names[k % u.names.length][1] : u.colors[k % u.colors.length];
+    s.box(f, 0.03, 0.03 + l, -0.03, 0.03, u.z0 + Math.min(0, dz), u.z0 + u.h + Math.max(0, dz), rgb(col), { shade: false });
   }
 }
 
@@ -714,10 +723,33 @@ function fabricTexture(): THREE.Texture | null {
 }
 
 /** The structures as three meshes (solid, ground paint, fence fabric). */
-export function buildStructures(list: StructureJson[], terraces: TerraceJson[] = [], ground?: (x: number, y: number) => number): THREE.Group {
+/** `label`: a texture of one typed board name (scenery.ts bannerTexture): boards runs with `names` get their name on
+ *  both faces of every panel. */
+export type BoardLabel = (text: string, bg: string, fg: string, w: number, h: number) => THREE.Texture;
+export function buildStructures(list: StructureJson[], terraces: TerraceJson[] = [], ground?: (x: number, y: number) => number, label?: BoardLabel): THREE.Group {
   const grp = new THREE.Group();
   grp.name = 'structures';
   const S = structureSoups(list, terraces, ground);
+  if (label) {
+    const mats = new Map<string, THREE.MeshLambertMaterial>();
+    for (const u of list) {
+      if (u.type !== 'boards' || !u.names?.length) continue;
+      for (const { f, l, dz, k } of boardPanels(u)) {
+        const [text, bg, fg] = u.names[k % u.names.length];
+        const key = `${text}|${bg}|${fg}|${l.toFixed(1)}|${u.h}`;
+        if (!mats.has(key)) mats.set(key, new THREE.MeshLambertMaterial({ map: label(text, bg, fg, l, u.h) }));
+        for (const side of [1, -1]) {
+          const c = f.p(0.03 + l / 2, side * 0.036, u.z0 + u.h / 2 + dz / 2);
+          const pl = new THREE.Mesh(new THREE.PlaneGeometry(l, u.h), mats.get(key)!);
+          pl.position.set(c[0], c[2], -c[1]);
+          // the plane's +Z normal along the panel's side normal (ENU d axis); three's yaw from ENU heading
+          const nx = f.ud[0] * side, ny = f.ud[1] * side;
+          pl.rotation.y = Math.atan2(nx, -ny);
+          grp.add(pl);
+        }
+      }
+    }
+  }
   if (S.solid.tris) {
     const m = new THREE.Mesh(toGeometry(S.solid), new THREE.MeshLambertMaterial({ vertexColors: true, side: THREE.DoubleSide }));
     m.name = 'structures_solid';

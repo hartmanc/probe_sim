@@ -23,7 +23,8 @@ export interface SceneryJson {
   };
   trees: PackedTrees;
   far_trees?: PackedTrees;
-  buildings: { kind: string; name: string; z: number; h: number; footprint: V2[]; src: string }[];
+  /** plain: walls without the window / door facade (an evidence override, round 6) */
+  buildings: { kind: string; name: string; z: number; h: number; footprint: V2[]; src: string; plain?: boolean }[];
   bridges: { id: string; kind: string; name: string; s: number; deck_z: number; a: V2; b: V2; width: number; banners: string[][]; style?: 'deck' | 'arch' | 'sign';
     /** where the deck meets the banks (20 Oct 2026): an abutment at `at` from z_ground to the deck, stairs on to `to` */
     ends?: { at: V2; z_ground: number; to: V2; z_to: number }[] }[];
@@ -54,7 +55,8 @@ export interface SceneryJson {
    *  lattice towers at (x, y, z) and (x2, y2, z2) with cables across the track) */
   landmarks: { kind: string; text: string; x: number; y: number; z: number; heading: number; h: number; w: number; x2?: number; y2?: number; z2?: number; color?: string; style?: string; src?: string;
     /** wall-board signs: the panel's top above the ground (m), for the coverage gate */ top?: number;
-    /** 'impact' (impact barrier block at a wall's nose): its length along `heading` */ d?: number }[];
+    /** 'impact' (impact barrier block at a wall's nose): its length along `heading` */ d?: number;
+    /** wall boards with a typed name (round 6): the lettering's colour */ fg?: string }[];
   /** grandstands built into a hillside: stepped concrete rows following the ground (20 Oct 2026). Row r is a tread
    *  from a to b at height z, `run` m deep away from the track along `dir`; risers join consecutive rows. A terrace declared
    *  by its measured footprint (Sonoma round 6) has polyline rows that follow the stand (`pts`, `nrm`; structures.ts). */
@@ -498,7 +500,7 @@ function buildBuildings(track: TrackJson, list: SceneryJson['buildings'], stands
       const a1 = v3(fp[i].x, fp[i].y, top[i]), b1 = v3(fp[j].x, fp[j].y, top[j]);
       // facade: windows on offices/tower, doors on garages, plain on grandstands and sheds under 3 m
       const len = Math.hypot(fp[j].x - fp[i].x, fp[j].y - fp[i].y);
-      const plain = stands || b.h < 3;
+      const plain = stands || b.h < 3 || b.plain === true;
       const half = b.kind === 'garage' ? 0.5 : 0;
       const bays = Math.max(1, Math.round(len / (b.kind === 'garage' ? 5 : 4)));
       const sto = (top[i] - z0) / 3.2, stoJ = (top[j] - z0) / 3.2;
@@ -624,7 +626,7 @@ function buildBarriers(list: SceneryJson['barriers']): THREE.Group {
   const concrete = new Strip(), armco = new Strip(), fence = new Strip();
   const cConcrete = new THREE.Color(0xc9c5bb), cTop = new THREE.Color(0xd8d5cc), cPit = new THREE.Color(0xe6e4de);
   const cRail = new THREE.Color(0xc0c6cc), cFence = new THREE.Color(0xffffff);
-  const posts: THREE.Matrix4[] = [], fencePosts: THREE.Matrix4[] = [], tyres: { m: THREE.Matrix4; white: boolean }[] = [];
+  const posts: THREE.Matrix4[] = [], fencePosts: THREE.Matrix4[] = [], tyres: { m: THREE.Matrix4; white: boolean; color?: string }[] = [];
   const up = (P: V3[], dz: number) => P.map((p) => v3(p[0], p[1], p[2] + dz));
   for (const b of list) {
     const P = b.pts;
@@ -657,7 +659,7 @@ function buildBarriers(list: SceneryJson['barriers']): THREE.Group {
           for (const row of [0, 1]) {
             const off = row * 0.6, sh = row * 0.31;
             const px = x + nx * off + ((c[0] - a[0]) / seg) * sh, py = y + ny * off + ((c[1] - a[1]) / seg) * sh;
-            tyres.push({ m: new THREE.Matrix4().makeTranslation(px, z, -py), white: k % 12 < 2 });   // mostly black with a white pair every 12 stacks: a continuous wall from above, not a dotted line
+            tyres.push({ m: new THREE.Matrix4().makeTranslation(px, z, -py), white: !b.color && k % 12 < 2, color: b.color });   // mostly black with a white pair every 12 stacks: a continuous wall from above, not a dotted line
           }
           k++;
           acc += 0.58;
@@ -708,7 +710,10 @@ function buildBarriers(list: SceneryJson['barriers']): THREE.Group {
     g.setAttribute('color', new THREE.BufferAttribute(col, 3));
     const im = new THREE.InstancedMesh(g, lam({ vertexColors: true }), tyres.length);
     const black = new THREE.Color(0x202020), white = new THREE.Color(0xdedede);
-    tyres.forEach((t, i) => { im.setMatrixAt(i, t.m); im.setColorAt(i, t.white ? white : black); });
+    // a run's recorded colour (Sonoma: black-covered stacks, white at the T11 hairpin) for all its stacks; without one,
+    // black with a white pair every 12 stacks (Laguna)
+    const tc = new Map<string, THREE.Color>();
+    tyres.forEach((t, i) => { im.setMatrixAt(i, t.m); im.setColorAt(i, t.color ? (tc.get(t.color) ?? tc.set(t.color, new THREE.Color(t.color)).get(t.color)!) : t.white ? white : black); });
     im.computeBoundingSphere();
     im.name = 'tyre_walls';
     group.add(im);
@@ -1118,14 +1123,18 @@ const BANNER_STYLE: Record<string, [string, string]> = {
   'TIRE RACK': ['#20262e', '#ffffff'], 'AUTO. HOME. PET. FIND YOUR FIT.': ['#f5f5f2', '#1f3d7a'],
   MOTUL: ['#d71920', '#ffffff'], MICHELIN: ['#27509b', '#ffd400'], kinetic: ['#e9eaeb', '#3a4654'],
 };
-/** `bg` overrides the board colour (plain coloured ad boards: text '' draws no lettering). */
-function bannerTexture(texts: string[], spanM: number, hM: number, bg?: string): THREE.Texture {
+/** `bg` overrides the board colour (plain coloured ad boards: text '' draws no lettering), `fg` the lettering's. A text
+ *  'NAME|#bg|#fg' carries its own colours (Sonoma round 6: the names the footage shows, typed in their observed colours,
+ *  no logo artwork, the Laguna rule). */
+function bannerTexture(texts: string[], spanM: number, hM: number, bg?: string, fgOver?: string): THREE.Texture {
   const W = 2048, H = Math.max(64, Math.round((W * hM) / spanM));
-  return canvasTex(`banner:${texts.join('|')}:${W}x${H}:${bg ?? ''}`, W, H, (g) => {
+  return canvasTex(`banner:${texts.join('~')}:${W}x${H}:${bg ?? ''}:${fgOver ?? ''}`, W, H, (g) => {
     const seg = W / texts.length;
-    texts.forEach((t, i) => {
-      const [bg0, fg] = BANNER_STYLE[t] ?? ['#1d2a3a', '#f3f3f0'];
-      g.fillStyle = bg ?? bg0; g.fillRect(i * seg, 0, seg, H);
+    texts.forEach((raw, i) => {
+      const [t, tb, tf] = raw.split('|');
+      const [bg0, fg0] = BANNER_STYLE[t] ?? ['#1d2a3a', '#f3f3f0'];
+      const fg = tf ?? fgOver ?? fg0;
+      g.fillStyle = tb ?? bg ?? bg0; g.fillRect(i * seg, 0, seg, H);
       g.fillStyle = 'rgba(255,255,255,0.25)'; g.fillRect(i * seg, 0, 3, H);
       g.fillStyle = fg; g.textAlign = 'center'; g.textBaseline = 'middle';
       let size = H * 0.72;
@@ -1423,7 +1432,7 @@ function buildLandmarks(list: SceneryJson['landmarks']): THREE.Group {
     } else if (m.kind === 'banner' || m.kind === 'sign') {
       // ad board facing the track (two posts) or a sign on a wall at z (no posts)
       const bottom = m.kind === 'banner' ? 0.25 : 0;
-      const tex = bannerTexture([m.text], m.w, m.h, m.color);
+      const tex = bannerTexture([m.text], m.w, m.h, m.color, m.fg);
       const face = new THREE.Mesh(new THREE.PlaneGeometry(m.w, m.h), new THREE.MeshLambertMaterial({ map: tex, side: THREE.DoubleSide }));
       face.position.set(0, bottom + m.h / 2, 0.04);
       g.add(face);
@@ -1535,7 +1544,7 @@ export function buildScenery(track: TrackJson, _hf: Float32Array, sc: SceneryAss
   if (stands.length) root.add(buildBuildings(track, stands, true));
   const terr = j.terraces?.length ? liftTerraces(j.terraces, drawn ?? ground) : [];
   if (terr.length) { const t = buildTerraces(terr); if (t) root.add(t); }
-  if (j.structures?.length) root.add(buildStructures(j.structures, terr, ground));
+  if (j.structures?.length) root.add(buildStructures(j.structures, terr, ground, (text, bg, fg, w, h) => bannerTexture([text], w, h, bg, fg)));
   // barrier feet and kerbs follow the drawn/driven surface (the track shoulder differs from the raw heightfield)
   const snap = (P: V3[]): V3[] => (ground ? P.map(([x, y]) => [x, y, ground(x, y)] as V3) : P);
   if (j.barriers?.length) root.add(buildBarriers(j.barriers.map((b) => ({ ...b, pts: snap(b.pts) }))));
