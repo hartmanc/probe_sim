@@ -13,6 +13,11 @@ against the accepted package.
 - **Fresh agent.** One Opus subagent with no memory of the Sonoma rounds. It gets this file's "Allowed" list and the
   skill. It works stage by stage in its own worktree, with every gate and its own judge round, up to the skill's
   "Acceptance" section.
+- **The orchestrator's judge rounds are part of the test.** The accepted package took seven owner rounds, each with
+  the orchestrator checking the builder's scans and sheets. The fresh agent's own judge round is a self-check (JUDGE.md:
+  the builder never judges itself); the orchestrator judges its sheets and sends the findings back, and the test's
+  score is the number of such rounds to reach Acceptance, together with the comparison. The first run (20 Oct 2026,
+  `compare/sonoma/rederive_2026-10-20.md`) had no orchestrator round: one pass of stage 3, 261 of 375 objects.
 - **Owner.** Drives the result only after the comparison, as the skill's last step.
 
 ## Setup (orchestrator)
@@ -20,7 +25,10 @@ against the accepted package.
 1. Create a fresh worktree on its own branch from the codify commit:
    `git worktree add ../probe_sim-wt/rederive-sonoma -b rederive-sonoma <codify commit>`. Symlink `node_modules`,
    `tools/track/cache` (raw downloads: OSM, DEM, lidar, NAIP) and `tools/track/compare/sonoma/satellite_clean` (the raw
-   clean captures and `tiles.json`). Nothing else is symlinked.
+   clean captures and `tiles.json`). Nothing else is symlinked: run `find . -type l -not -path './node_modules/*'` and
+   check `tools/track/out` and `previews` in particular. On 20 Oct 2026 both were symlinks into the main checkout's
+   `out/`, which holds the accepted Sonoma builds; the agent noticed, replaced them with local directories and read
+   nothing through them, but a stage-3 build would have written into the accepted builds' directory.
 2. In that worktree, in one setup commit:
    - Replace `tools/track/tracks/sonoma/config.py` with `tools/track/tracks/_template/config.py`. Fill in Sonoma's
      **layout and source keys** from the accepted config: id, name, direction, origin, osm_bbox, osm_file, loop_ways,
@@ -90,7 +98,7 @@ These are the orchestrator's proposal. The owner may change them.
 
 | measure | bar |
 |---|---|
-| geometry | track.json, heightfield.bin, ghosts.json byte-identical to the accepted package |
+| geometry | heightfield.bin and ghosts.json byte-identical; track.json rebuilt with every stage-1 gate passing and the lap length within 0.1 % of the accepted. Byte identity of track.json is not reachable while stage 1 reads stage-3 keys through the pit merge (SKILL stage 1): on 20 Oct 2026 the accepted geometry itself, rebuilt with its full config and the same geometry hash, came out 3 m longer and failed two fit gates |
 | gates | every stage-3 gate passes in the candidate; coverage has 0 undispositioned MISSING rows |
 | walls, tyre walls, fences, kerbs (compare_packages) | matched >= 90 % of the reference objects of each kind |
 | stations, stands, buildings, bridge, boards, cone lines, blocks, tyre stacks, masts, ground signs | matched >= 75 % per kind |

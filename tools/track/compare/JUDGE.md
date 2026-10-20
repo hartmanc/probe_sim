@@ -2,8 +2,11 @@
 
 The sheets from `camera_walk.ts` + `make_compare_sheets.py` (`tools/track/compare/<id>/compare_sheets/`, local only)
 are judged sheet by sheet before any build reaches the owner. Judge: GPT 6 Astra through codex when credits exist,
-else the orchestrator with this same prompt (say which in the report). The judge lists differences; it never decides
-a fix, and the inventory and the captures settle disagreements, not a re-ask.
+else the orchestrator with this same prompt (say which in the report). Never the agent that built the package: a
+builder judging its own sheets passes what it placed (the Sonoma re-derivation of 20 Oct 2026 judged itself, found 10
+open rows, and the orchestrator's side-by-side sheets then showed the T9 bank barrier, the T2 light poles and five
+marshal huts missing with no row for them). The judge lists differences; it never decides a fix, and the inventory and
+the captures settle disagreements, not a re-ask.
 
 ## Invocation (Astra)
 
