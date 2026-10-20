@@ -144,13 +144,17 @@ CONFIG = dict(
         # 2:01-2:04 T11); the July 2011 Street View blue / white (H9xspk4q_OoFIjVDhaMzDA, J6fsnW4hj4xCjQLzrgRGzA,
         # xXQqyp9Q9sWv9ZLN2ORYsA) predates the repave. Blocks 0.95 m (16 px period on c20_o0715); 0.65 m wide, lying
         # just beyond the painted edge line (c20_s3355 Carousel apex, c20_s2530 3a: the blocks start at the line's outer
-        # side), so each strip's band is centred 0.3 m beyond the edge. Profile: stepped concrete, higher than Laguna's
-        # flat strip (owner: "more aggressive, you can feel it in the car"; Street View J6fsnW4hj4xCjQLzrgRGzA and
-        # gd1SNdksCq5QZtwlsrzR7g show a sloped face of ~10-15 cm): 10 cm, its track-side face rising over 0.25 m, the
-        # back dropping to the ground over 0.3 m. No green after-kerb strip (none in the captures or the onboard).
+        # side), so each strip's band is centred 0.3 m beyond the edge. Profile: raised concrete, higher than Laguna's
+        # flat strip (owner: "more aggressive, you can feel it in the car"). 5 cm, the track-side face rising over
+        # 0.25 m, the back easing to the ground over 0.6 m (20 Oct 2026, was 10 cm / 0.25 / 0.30, which rolled the car:
+        # compare/sonoma/kerb_rollover.md). Evidence for the lower kerb: the July 2011 Street View notes read "low flat
+        # concrete" (compare/sonoma/streetview.md), the owner's T7 panorama (owner_8, gd1SNdksCq5QZtwlsrzR7g) shows the
+        # island dirt level with the kerb top (no drop behind it) and a low lip on the track side; a 5 cm lip at 30-45 deg
+        # enveloped by the 0.316 m tyre (sqrt(2 r h) = 0.18 m) is felt as a ~0.25 m ramp. The earlier "10-15 cm" was
+        # most likely the sloped face's width, not its height. No green after-kerb strip (none in the captures or the onboard).
         kerb=dict(width=0.65, stripe_m=0.95, colors=['#b8433a', '#dedbd2'],
                   palettes={'red': ['#b8433a', '#dedbd2'], 'blue': ['#5b7ea8', '#d9d8cf']},
-                  profile=dict(height=0.10, face=0.25, back=0.30)),
+                  profile=dict(height=0.05, face=0.25, back=0.60)),
         # every strip: detected on the 2026 captures by compare/kerb_detect.py (block pattern) or seen on the straightened
         # strips (compare/capstrip.py), confirmed on the onboard; a, b = its ends on the edge (lat, lon)
         kerbs_declared=[
