@@ -11,30 +11,29 @@ Interpolation between anchors: profile (profile: shared out by a curvature speed
 | anchor | video t | track s (m) | leave-one-out predicted s | residual (m) | residual if linear in t (m) | speed in / out (m/s) |
 |---|---|---|---|---|---|---|
 | S/F | 0:05.5 | 0.0 | - | - | - | - |
-| GPS 10s | 0:10.0 | 186.1 | 196.3 | -10.2 | 37.3 | 41.1 / 29.1 |
-| GPS 20s | 0:20.0 | 477.2 | 466.9 | 10.3 | 26.6 | 29.1 / 22.0 |
-| T2 | 0:26.0 | 609.3 | 613.7 | -4.4 | 4.2 | 22.0 / 20.2 |
-| GPS 30s | 0:30.0 | 690.3 | 680.4 | 9.9 | -29.3 | 20.2 / 30.5 |
-| GPS 40s | 0:40.0 | 995.5 | 1009.4 | -13.9 | 38.6 | 30.5 / 22.8 |
-| GPS 50s | 0:50.0 | 1223.6 | 1248.6 | -25.0 | -49.0 | 22.8 / 32.6 |
-| GPS 60s | 1:00.0 | 1549.7 | 1538.7 | 11.0 | -1.0 | 32.6 / 32.8 |
-| GPS 70s | 1:10.0 | 1877.9 | 1868.2 | 9.7 | -12.4 | 32.8 / 35.3 |
-| GPS 80s | 1:20.0 | 2231.0 | 2256.9 | -25.9 | -18.1 | 35.3 / 38.9 |
-| GPS 90s | 1:30.0 | 2620.2 | 2600.2 | 20.0 | 30.0 | 38.9 / 32.9 |
-| GPS 100s | 1:40.0 | 2949.4 | 2953.6 | -4.2 | -25.0 | 32.9 / 37.9 |
-| GPS 110s | 1:50.0 | 3328.6 | 3351.2 | -22.6 | 22.0 | 37.9 / 29.4 |
-| T9 | 1:53.5 | 3431.6 | 3414.7 | 16.9 | 18.3 | 29.4 / 21.4 |
-| GPS 120s | 2:00.0 | 3570.7 | 3590.8 | -20.1 | -50.9 | 21.4 / 34.3 |
-| GPS 130s | 2:10.0 | 3913.8 | 3919.1 | -5.3 | -25.5 | 34.3 / 39.4 |
-| GPS 140s | 2:20.0 | 4308.0 | 4303.1 | 4.9 | 54.5 | 39.4 / 28.5 |
-| GPS 150s | 2:30.0 | 4593.1 | 4582.1 | 11.0 | -13.1 | 28.5 / 34.3 |
-| S/F end | 2:32.9 | 4694.2 | - | - | - | - |
+| GPS 10s | 0:10.0 | 186.1 | 197.8 | -11.7 | 37.3 | 41.1 / 29.1 |
+| GPS 20s | 0:20.0 | 477.2 | 463.8 | 13.4 | 27.0 | 29.1 / 21.9 |
+| T2 | 0:26.0 | 608.7 | 614.3 | -5.6 | 3.6 | 21.9 / 20.4 |
+| GPS 30s | 0:30.0 | 690.3 | 679.4 | 10.9 | -28.9 | 20.4 / 30.5 |
+| GPS 40s | 0:40.0 | 995.5 | 1013.4 | -17.9 | 38.6 | 30.5 / 22.8 |
+| GPS 50s | 0:50.0 | 1223.6 | 1239.6 | -16.0 | -49.0 | 22.8 / 32.6 |
+| GPS 60s | 1:00.0 | 1549.7 | 1544.6 | 5.1 | -1.0 | 32.6 / 32.8 |
+| GPS 70s | 1:10.0 | 1877.9 | 1875.9 | 2.0 | -12.4 | 32.8 / 35.3 |
+| GPS 80s | 1:20.0 | 2231.0 | 2242.1 | -11.1 | -18.1 | 35.3 / 38.9 |
+| GPS 90s | 1:30.0 | 2620.2 | 2598.2 | 22.0 | 30.0 | 38.9 / 32.9 |
+| GPS 100s | 1:40.0 | 2949.4 | 2955.1 | -5.7 | -25.0 | 32.9 / 37.9 |
+| GPS 110s | 1:50.0 | 3328.6 | 3353.5 | -24.9 | 19.3 | 37.9 / 30.5 |
+| T9 | 1:53.5 | 3435.2 | 3416.0 | 19.2 | 21.9 | 30.5 / 20.8 |
+| GPS 120s | 2:00.0 | 3570.7 | 3596.1 | -25.4 | -53.0 | 20.8 / 34.3 |
+| GPS 130s | 2:10.0 | 3913.8 | 3914.9 | -1.1 | -25.5 | 34.3 / 39.4 |
+| GPS 140s | 2:20.0 | 4308.0 | 4301.8 | 6.2 | 54.5 | 39.4 / 28.5 |
+| GPS 150s | 2:30.0 | 4593.1 | 4584.7 | 8.4 | -15.9 | 28.5 / 35.5 |
+| S/F end | 2:32.9 | 4697.8 | - | - | - | - |
 
 ## Rows round the lap (79)
 
 | s (m) | t | side | kind | what | height | conf | source | note |
 |---|---|---|---|---|---|---|---|---|
-| 1 | 0:02.0 | left | building | control tower: 2 storeys, blue flat roof on posts over a deck, beige walls, blue roof | 8.0 m (storeys) | 0.8 | onboard:7QS2M-HGSI4@2.0 | race control / timing tower beyond the pit lane (t004 alongside); 2 storeys x 3.2 m + roof deck |
 | 20 | 0:06.0 | left | wall | concrete K-rail, white with red panels | 0.81 m (jersey-ref) | 0.9 | onboard:7QS2M-HGSI4@6.0 | pit wall continues |
 | 20 | 0:06.0 | right | cone_line | two cones, yellow and orange, yellow, orange | 0.7 m (cone-ref) | 0.6 | onboard:7QS2M-HGSI4@6.0 | cones on the right at the mouth of a concrete access road (paddock crossover) |
 | 101 | 0:08.0 | left | wall | concrete K-rail, a dark (black) section at its east end, white, red, black | 0.81 m (jersey-ref) | 0.7 | onboard:7QS2M-HGSI4@8.0 | pit wall towards its east end |
@@ -42,77 +41,78 @@ Interpolation between anchors: profile (profile: shared out by a curvature speed
 | 246 | 0:10.0 | left | station | canopy on posts over a low concrete platform, white canopy |  | 0.6 | onboard:7QS2M-HGSI4@10.0 | station / canopy at the east end of the pit wall (pit-out side) |
 | 257 | 0:12.0 | right | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@12.0 | T1 outside kerb alongside, an orange cone at its end |
 | 297 | 0:12.0 | right | cone_line | single orange cone, orange | 0.7 m (cone-ref) | 0.6 | onboard:7QS2M-HGSI4@12.0 | T1 turn-in marker cone |
-| 301 | 0:14.0 | left | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@14.0 | T1 apex kerb (left) |
-| 409 | 0:18.0 | right | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@18.0 | T1 exit kerb (right), along the bend north |
+| 302 | 0:14.0 | left | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@14.0 | T1 apex kerb (left) |
+| 410 | 0:18.0 | right | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@18.0 | T1 exit kerb (right), along the bend north |
 | 477 | 0:20.0 | right | station | corner station: canopy on posts on a tyre-walled earth mound, white / blue canopy |  | 0.8 | onboard:7QS2M-HGSI4@20.0 | close right, ~10 m off the edge |
 | 477 | 0:20.0 | right | tyre_wall | tyres around the station mound, black |  | 0.6 | onboard:7QS2M-HGSI4@20.0 | the station mound is faced with tyres |
-| 533 | 0:22.0 | left | cone_line | single orange cone, orange | 0.7 m (cone-ref) | 0.6 | onboard:7QS2M-HGSI4@22.0 | cone at the start of the T2 entry kerb |
-| 533 | 0:22.0 | left | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@22.0 | T2 entry, outside (left) kerb |
-| 579 | 0:24.0 | right | runoff | pale paved / concrete patch inside the hairpin |  | 0.5 | onboard:7QS2M-HGSI4@24.0 | T2 hairpin inside |
+| 536 | 0:22.0 | left | cone_line | single orange cone, orange | 0.7 m (cone-ref) | 0.6 | onboard:7QS2M-HGSI4@22.0 | cone at the start of the T2 entry kerb |
+| 536 | 0:22.0 | left | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@22.0 | T2 entry, outside (left) kerb |
+| 580 | 0:24.0 | right | runoff | pale paved / concrete patch inside the hairpin |  | 0.5 | onboard:7QS2M-HGSI4@24.0 | T2 hairpin inside |
 | 738 | 0:32.0 | left | kerb | flat painted kerb, white / red, False |  | 0.8 | onboard:7QS2M-HGSI4@32.0 | T2 exit, long kerb on the left |
 | 770 | 0:30.0 | left | cone_line | line of small cones, orange |  | 0.5 | onboard:7QS2M-HGSI4@30.0 | cones far ahead on the left of the road down the east side |
 | 834 | 0:34.0 | left | cone_line | single orange cone, orange | 0.7 m (cone-ref) | 0.5 | onboard:7QS2M-HGSI4@34.0 |  |
 | 834 | 0:34.0 | right | station | corner station: canopy on posts on a tyre-walled mound, blue canopy |  | 0.8 | onboard:7QS2M-HGSI4@34.0 | east side station |
-| 973 | 0:38.0 | left | cone_line | single orange cone, orange | 0.7 m (cone-ref) | 0.5 | onboard:7QS2M-HGSI4@38.0 |  |
-| 973 | 0:38.0 | left | kerb | flat painted kerb, white / red, False |  | 0.7 | onboard:7QS2M-HGSI4@38.0 | T3 approach, outside (left) |
+| 974 | 0:38.0 | left | cone_line | single orange cone, orange | 0.7 m (cone-ref) | 0.5 | onboard:7QS2M-HGSI4@38.0 |  |
+| 974 | 0:38.0 | left | kerb | flat painted kerb, white / red, False |  | 0.7 | onboard:7QS2M-HGSI4@38.0 | T3 approach, outside (left) |
 | 996 | 0:40.0 | left | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@40.0 | T3 outside kerb alongside |
 | 996 | 0:40.0 | right | station | corner station: blue canopy on posts on a tyre-walled mound |  | 0.9 | onboard:7QS2M-HGSI4@40.0 | close right at T3 |
 | 1040 | 0:42.0 | right | cone_line | single orange cone, orange | 0.7 m (cone-ref) | 0.6 | onboard:7QS2M-HGSI4@42.0 | T3 apex marker |
-| 1086 | 0:44.0 | left | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@44.0 | left-hand kink between T3 and T4 (inside, left) |
-| 1172 | 0:48.0 | right | kerb | flat painted kerb, red / white, False |  | 0.9 | onboard:7QS2M-HGSI4@48.0 | T4 apex (right) |
-| 1186 | 0:46.0 | right | station | corner station: canopy on posts |  | 0.6 | onboard:7QS2M-HGSI4@46.0 |  |
+| 1087 | 0:44.0 | left | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@44.0 | left-hand kink between T3 and T4 (inside, left) |
+| 1173 | 0:48.0 | right | kerb | flat painted kerb, red / white, False |  | 0.9 | onboard:7QS2M-HGSI4@48.0 | T4 apex (right) |
+| 1188 | 0:46.0 | right | station | corner station: canopy on posts |  | 0.6 | onboard:7QS2M-HGSI4@46.0 |  |
 | 1224 | 0:50.0 | left | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@50.0 | T4 exit, long kerb on the left |
 | 1302 | 0:52.0 | right | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@52.0 | T5 (the bottom right-hander) apex kerb, orange cone at its start |
 | 1307 | 0:52.0 | right | cone_line | single orange cone, orange | 0.7 m (cone-ref) | 0.6 | onboard:7QS2M-HGSI4@52.0 |  |
 | 1348 | 0:54.0 | left | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@54.0 | exit kerb, left, long |
-| 1483 | 0:56.0 | left | paint | white painted blocks at the left edge, white |  | 0.5 | onboard:7QS2M-HGSI4@56.0 | white blocks ahead left (a road mouth or kerb end) |
-| 1494 | 0:58.0 | right | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@58.0 | right kerb, entry to the hump (Club Corner) |
-| 1524 | 0:58.0 | right | station | corner station: canopy on posts on a tyre-walled mound |  | 0.8 | onboard:7QS2M-HGSI4@58.0 |  |
+| 1484 | 0:56.0 | left | paint | white painted blocks at the left edge, white |  | 0.5 | onboard:7QS2M-HGSI4@56.0 | white blocks ahead left (a road mouth or kerb end) |
+| 1495 | 0:58.0 | right | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@58.0 | right kerb, entry to the hump (Club Corner) |
+| 1525 | 0:58.0 | right | station | corner station: canopy on posts on a tyre-walled mound |  | 0.8 | onboard:7QS2M-HGSI4@58.0 |  |
 | 1580 | 1:00.0 | left | kerb | flat painted kerb, red / white, False |  | 0.7 | onboard:7QS2M-HGSI4@60.0 | left kerb ahead (Bus Stop) |
-| 1645 | 1:02.0 | left | kerb | flat painted kerb, red / white, False |  | 0.8 | onboard:7QS2M-HGSI4@62.0 | left kerb ahead, the Club Corner climb |
-| 1751 | 1:06.0 | right | kerb | flat painted kerb, white / red / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@66.0 | right kerb alongside (Bus Stop) |
-| 1824 | 1:08.0 | left | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@68.0 | left kerb alongside, long (Truck Stop) |
+| 1647 | 1:02.0 | left | kerb | flat painted kerb, red / white, False |  | 0.8 | onboard:7QS2M-HGSI4@62.0 | left kerb ahead, the Club Corner climb |
+| 1776 | 1:06.0 | right | kerb | flat painted kerb, white / red / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@66.0 | right kerb alongside (Bus Stop) |
+| 1840 | 1:08.0 | left | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@68.0 | left kerb alongside, long (Truck Stop) |
 | 1878 | 1:10.0 | right | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@70.0 | right kerb alongside, Bus Stop |
-| 2020 | 1:12.0 | left | paint | white painted chevrons / blocks at the left edge, white |  | 0.5 | onboard:7QS2M-HGSI4@72.0 | at the Dog Leg junction |
-| 2050 | 1:14.0 | right | station | corner station: canopy on posts on a tyre-walled mound |  | 0.8 | onboard:7QS2M-HGSI4@74.0 | Riverside |
-| 2158 | 1:18.0 | right | cone_line | single orange cone, orange | 0.7 m (cone-ref) | 0.5 | onboard:7QS2M-HGSI4@78.0 |  |
-| 2312 | 1:22.0 | right | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@82.0 | Riverside apex (right), long |
-| 2372 | 1:22.0 | right | station | corner station: canopy on a mound |  | 0.6 | onboard:7QS2M-HGSI4@82.0 |  |
-| 2696 | 1:32.0 | left | cone_line | two orange cones, orange | 0.7 m (cone-ref) | 0.6 | onboard:7QS2M-HGSI4@92.0 |  |
-| 2696 | 1:32.0 | left | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@92.0 | Lost Hill, left kerb, long, two orange cones beside it |
+| 2023 | 1:12.0 | left | paint | white painted chevrons / blocks at the left edge, white |  | 0.5 | onboard:7QS2M-HGSI4@72.0 | at the Dog Leg junction |
+| 2054 | 1:14.0 | right | station | corner station: canopy on posts on a tyre-walled mound |  | 0.8 | onboard:7QS2M-HGSI4@74.0 | Riverside |
+| 2160 | 1:18.0 | right | cone_line | single orange cone, orange | 0.7 m (cone-ref) | 0.5 | onboard:7QS2M-HGSI4@78.0 |  |
+| 2311 | 1:22.0 | right | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@82.0 | Riverside apex (right), long |
+| 2371 | 1:22.0 | right | station | corner station: canopy on a mound |  | 0.6 | onboard:7QS2M-HGSI4@82.0 |  |
+| 2695 | 1:32.0 | left | cone_line | two orange cones, orange | 0.7 m (cone-ref) | 0.6 | onboard:7QS2M-HGSI4@92.0 |  |
+| 2695 | 1:32.0 | left | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@92.0 | Lost Hill, left kerb, long, two orange cones beside it |
 | 2757 | 1:34.0 | right | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@94.0 | T8 (Lost Hill right) apex kerb |
-| 2776 | 1:32.0 | right | station | corner station: canopy on posts |  | 0.6 | onboard:7QS2M-HGSI4@92.0 |  |
-| 2850 | 1:36.0 | left | paint | white painted blocks at the left edge, white |  | 0.5 | onboard:7QS2M-HGSI4@96.0 | where Lost Hill joins the drag strip |
+| 2775 | 1:32.0 | right | station | corner station: canopy on posts |  | 0.6 | onboard:7QS2M-HGSI4@92.0 |  |
+| 2851 | 1:36.0 | left | paint | white painted blocks at the left edge, white |  | 0.5 | onboard:7QS2M-HGSI4@96.0 | where Lost Hill joins the drag strip |
 | 3329 | 1:50.0 | left | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@110.0 | T9 (Star Mazda) entry, outside (left) |
-| 3400 | 1:46.0 | ahead | mast | tall pole (light / camera mast) |  | 0.5 | onboard:7QS2M-HGSI4@106.0 | seen ahead-right on the run north (t106-t112) |
-| 3421 | 1:52.0 | right | kerb | flat painted kerb, blue / white, False |  | 0.8 | onboard:7QS2M-HGSI4@112.0 | T9 apex kerb |
-| 3436 | 1:52.0 | right | station | corner station: roofed platform on stilts, dark |  | 0.8 | onboard:7QS2M-HGSI4@112.0 | T9 station right |
-| 3439 | 1:54.0 | right | cone_line | single orange cone, orange | 0.7 m (cone-ref) | 0.6 | onboard:7QS2M-HGSI4@114.0 |  |
-| 3439 | 1:54.0 | right | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@114.0 | T9 apex kerb alongside, an orange cone at its end |
-| 3475 | 1:56.0 | left | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@116.0 | T9 exit kerb (left), long |
-| 3715 | 2:04.0 | left | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@124.0 | Esses, left kerb, long |
+| 3423 | 1:52.0 | right | kerb | flat painted kerb, blue / white, False |  | 0.8 | onboard:7QS2M-HGSI4@112.0 | T9 apex kerb |
+| 3438 | 1:46.0 | ahead | mast | tall pole (light / camera mast) |  | 0.5 | onboard:7QS2M-HGSI4@106.0 | seen ahead-right on the run north (t106-t112) |
+| 3438 | 1:52.0 | right | station | corner station: roofed platform on stilts, dark |  | 0.8 | onboard:7QS2M-HGSI4@112.0 | T9 station right |
+| 3443 | 1:54.0 | right | cone_line | single orange cone, orange | 0.7 m (cone-ref) | 0.6 | onboard:7QS2M-HGSI4@114.0 |  |
+| 3443 | 1:54.0 | right | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@114.0 | T9 apex kerb alongside, an orange cone at its end |
+| 3478 | 1:56.0 | left | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@116.0 | T9 exit kerb (left), long |
+| 3712 | 2:04.0 | left | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@124.0 | Esses, left kerb, long |
 | 3758 | 2:02.0 | right | station | corner station |  | 0.5 | onboard:7QS2M-HGSI4@122.0 | far ahead right |
-| 3788 | 2:06.0 | right | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@126.0 | Esses, right kerb |
-| 3854 | 2:08.0 | left | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@128.0 | Esses, left kerb |
+| 3782 | 2:06.0 | right | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@126.0 | Esses, right kerb |
+| 3851 | 2:08.0 | left | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@128.0 | Esses, left kerb |
 | 3914 | 2:10.0 | right | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@130.0 | Esses, right kerb |
-| 3982 | 2:12.0 | left | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@132.0 | Esses, left kerb |
-| 4066 | 2:14.0 | right | kerb | flat painted kerb, white / blue, False |  | 0.8 | onboard:7QS2M-HGSI4@134.0 | right kerb ahead with an orange cone |
-| 4071 | 2:14.0 | right | cone_line | single orange cone, orange | 0.7 m (cone-ref) | 0.6 | onboard:7QS2M-HGSI4@134.0 |  |
-| 4123 | 2:16.0 | right | kerb | flat painted kerb, white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@136.0 | right kerb alongside, orange cone |
-| 4274 | 2:18.0 | left | station | corner station: canopy on posts on a tyre-walled mound |  | 0.8 | onboard:7QS2M-HGSI4@138.0 | Sunset station, ahead left |
+| 3981 | 2:12.0 | left | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@132.0 | Esses, left kerb |
+| 4065 | 2:14.0 | right | kerb | flat painted kerb, white / blue, False |  | 0.8 | onboard:7QS2M-HGSI4@134.0 | right kerb ahead with an orange cone |
+| 4070 | 2:14.0 | right | cone_line | single orange cone, orange | 0.7 m (cone-ref) | 0.6 | onboard:7QS2M-HGSI4@134.0 |  |
+| 4122 | 2:16.0 | right | kerb | flat painted kerb, white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@136.0 | right kerb alongside, orange cone |
+| 4273 | 2:18.0 | left | station | corner station: canopy on posts on a tyre-walled mound |  | 0.8 | onboard:7QS2M-HGSI4@138.0 | Sunset station, ahead left |
 | 4308 | 2:20.0 | right | kerb | flat painted kerb, white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@140.0 | T11 (Sunset) entry, right |
-| 4370 | 2:22.0 | left | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@142.0 | T11 apex kerb (left) |
-| 4416 | 2:24.0 | right | kerb | flat painted kerb, white / blue / red, False |  | 0.9 | onboard:7QS2M-HGSI4@144.0 | T11 exit kerb (right), long |
-| 4474 | 2:26.0 | right | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@146.0 | T11 exit kerb alongside |
+| 4371 | 2:22.0 | left | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@142.0 | T11 apex kerb (left) |
+| 4417 | 2:24.0 | right | kerb | flat painted kerb, white / blue / red, False |  | 0.9 | onboard:7QS2M-HGSI4@144.0 | T11 exit kerb (right), long |
+| 4475 | 2:26.0 | right | kerb | flat painted kerb, red / white / blue, False |  | 0.9 | onboard:7QS2M-HGSI4@146.0 | T11 exit kerb alongside |
 | 4514 | 0:00.0 | left | wall | concrete K-rail (Jersey) segments, white with red panels | 0.81 m (jersey-ref) | 0.9 | onboard:7QS2M-HGSI4@0.0 | pit wall along the front straight, between track and pit lane; Jersey profile (slanted face, joints every ~6 m) |
 | 4514 | 0:00.0 | right | runoff | dirt, flat, open |  | 0.9 | onboard:7QS2M-HGSI4@0.0 | no barrier on the infield side of the front straight |
 | 4575 | 0:02.0 | right | cone_line | single orange cone, orange | 0.7 m (cone-ref) | 0.6 | onboard:7QS2M-HGSI4@2.0 | orange cone at the right edge where a concrete access road meets the track |
 | 4593 | 2:30.0 | left | wall | concrete K-rail, white with red panels | 0.81 m (jersey-ref) | 0.9 | onboard:7QS2M-HGSI4@150.0 | pit wall |
 | 4593 | 2:30.0 | right | cone_line | single orange cone, orange | 0.7 m (cone-ref) | 0.6 | onboard:7QS2M-HGSI4@150.0 | cone at the right edge of the front straight |
 | 4609 | 2:28.0 | left | wall | concrete K-rail, white with red panels | 0.81 m (jersey-ref) | 0.8 | onboard:7QS2M-HGSI4@148.0 | start of the pit wall, ahead left |
-| 4641 | 0:04.0 | left | building | control tower | 8.0 m (storeys) | 0.9 | onboard:7QS2M-HGSI4@4.0 | tower alongside on the left beyond the pit lane, white tent beside it |
-| 4641 | 0:04.0 | left | wall | concrete K-rail (Jersey), white with red panels | 0.81 m (jersey-ref) | 0.9 | onboard:7QS2M-HGSI4@4.0 | pit wall alongside; camh: wall top row 286.5, base 319, horizon 277 -> camera 1.05 m |
-| 4659 | 2:32.0 | left | wall | concrete K-rail, white with red panels | 0.81 m (jersey-ref) | 0.9 | onboard:7QS2M-HGSI4@152.0 | pit wall alongside; control tower beyond |
+| 4643 | 0:04.0 | left | wall | concrete K-rail (Jersey), white with red panels | 0.81 m (jersey-ref) | 0.9 | onboard:7QS2M-HGSI4@4.0 | pit wall alongside; camh: wall top row 286.5, base 319, horizon 277 -> camera 1.05 m |
+| 4662 | 2:32.0 | left | wall | concrete K-rail, white with red panels | 0.81 m (jersey-ref) | 0.9 | onboard:7QS2M-HGSI4@152.0 | pit wall alongside; control tower beyond |
+| 4695 | 0:04.0 | left | building | control tower | 8.0 m (storeys) | 0.9 | onboard:7QS2M-HGSI4@4.0 | tower alongside on the left beyond the pit lane, white tent beside it |
+| 4695 | 0:02.0 | left | building | control tower: 2 storeys, blue flat roof on posts over a deck, beige walls, blue roof | 8.0 m (storeys) | 0.8 | onboard:7QS2M-HGSI4@2.0 | race control / timing tower beyond the pit lane (t004 alongside); 2 storeys x 3.2 m + roof deck |
 
 ## Pit-lane rows (13)
 
@@ -121,7 +121,7 @@ Interpolation between anchors: profile (profile: shared out by a curvature speed
 | 4296 |  | right | paint | the lane leaves the track's left edge before T11 (no wall at the split) |  | 0.7 | onboard:ucmXJu5QKFQ@20:31 | pit-in: the car turns left off Sunset onto the lane (t1231000) |
 | 4320 |  | right | station | canopy on a pole over a low concrete pad, white canopy |  | 0.6 | onboard:ucmXJu5QKFQ@20:31 | pit-in marshal, ahead right at the head of the pit wall (t1231000, t1240000) |
 | 4497 |  | left | cone_line | small yellow and orange cones, yellow, orange | 0.46 m (cone-ref) | 0.5 | onboard:ucmXJu5QKFQ@20:40 | a few small cones on the left at the paddock edge (t1240000) |
-| 4497 |  | right | wall | concrete K-rail (Jersey) segments, white with red panels | 0.81 m (jersey-ref) | 0.9 | onboard:ucmXJu5QKFQ@20:40 | the pit wall begins on the right (track side), a canopy stand at its head (t1240000) |
+| 4510 |  | right | wall | concrete K-rail (Jersey) segments, white with red panels | 0.81 m (jersey-ref) | 0.9 | onboard:ucmXJu5QKFQ@20:40 | the pit wall begins on the right (track side), a canopy stand at its head (t1240000) |
 | 4528 |  | left | wall | concrete K-rail (Jersey) segments, white with red panels | 0.81 m (jersey-ref) | 0.9 | onboard:ucmXJu5QKFQ@20:49 | a Jersey wall on the left too, between the lane and the paddock (t1249000) |
 | 4528 |  | right | wall | concrete K-rail (Jersey), white with red panels | 0.81 m (jersey-ref) | 0.9 | onboard:ucmXJu5QKFQ@20:49 | pit wall |
 | 4579 |  | left | wall | concrete K-rail, white with red panels | 0.81 m (jersey-ref) | 0.8 | onboard:ucmXJu5QKFQ@21:07 | paddock-side wall continues (t1267000) |
