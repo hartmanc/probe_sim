@@ -6,7 +6,7 @@
 //   npx tsx tools/track/compare/pose_walk.ts --track sonoma --poses poses.json --out <dir> [--port 5180] [--tag after]
 //
 // poses.json: [{name, x, y, z, heading (rad, ENU), yaw (deg, + = left), pitch (deg, + = up)}]; the car is placed at
-// (x, y, z) facing heading, the hood camera turned by yaw / pitch; --hide a,b hides scene objects by name. Writes <out>/<name>_<tag>.jpg and <out>/stats_<tag>.json.
+// (x, y, z) facing heading (z null: the drivable surface's height there, sampled in the page), the hood camera turned by yaw / pitch; --hide a,b hides scene objects by name. Writes <out>/<name>_<tag>.jpg and <out>/stats_<tag>.json.
 import { spawn, type ChildProcess } from 'node:child_process';
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -22,7 +22,7 @@ const tag = opt('tag', 'sim')!;
 const out = resolve(opt('out', '.')!);
 const chromeBin = opt('chrome', '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome')!;
 const W = Number(opt('width', '1280')), H = Number(opt('height', '720'));
-const poses: { name: string; x: number; y: number; z: number; heading: number; yaw?: number; pitch?: number }[] = JSON.parse(readFileSync(posesPath, 'utf8'));
+const poses: { name: string; x: number; y: number; z: number | null; heading: number; yaw?: number; pitch?: number }[] = JSON.parse(readFileSync(posesPath, 'utf8'));
 
 // ------------------------------------------------------------------ minimal DevTools protocol client
 class CDP {
@@ -94,7 +94,8 @@ async function main() {
     const hide = opt('hide', '');
     if (hide) console.log('hidden', await cdp.eval<number>(`(() => { let n = 0; for (const nm of ${JSON.stringify(hide.split(','))}) window.__sim.world.scene.traverse((o) => { if (o.name === nm) { o.visible = false; n++; } }); return n; })()`));
     for (const p of poses) {
-      await cdp.eval(`window.__sim.vehicle.reset(${JSON.stringify([p.x, p.y, p.z])}, ${p.heading}, 0)`);
+      const z = p.z === null || p.z === undefined ? await cdp.eval<number>(`window.__sim.surface.sample(${p.x}, ${p.y}).z`) : p.z;
+      await cdp.eval(`window.__sim.vehicle.reset(${JSON.stringify([p.x, p.y, z])}, ${p.heading}, 0)`);
       await sleep(300);
       const r = await cdp.eval<{ url: string; calls: number; triangles: number; ms: number }>(`(() => { const S = window.__sim, cam = S.cams.camera, q = cam.quaternion.clone();
         cam.rotateY(${((p.yaw ?? 0) * Math.PI) / 180}); cam.rotateX(${((p.pitch ?? 0) * Math.PI) / 180}); cam.updateMatrixWorld(true);

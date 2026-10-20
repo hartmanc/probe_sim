@@ -1,0 +1,208 @@
+{
+ "track": "sonoma",
+ "tag": "sonoma",
+ "size": [
+  1280,
+  720
+ ],
+ "scene": {
+  "sceneMeshes": 829,
+  "sceneTriangles": 2532991,
+  "structureMeshes": 137,
+  "structureTriangles": 32548.666666666664
+ },
+ "poses": [
+  {
+   "pose": "wall_concrete_endcap",
+   "calls": 253,
+   "triangles": 2451247,
+   "ms_per_render": 10.59
+  },
+  {
+   "pose": "wall_catch_fence",
+   "calls": 536,
+   "triangles": 2482215,
+   "ms_per_render": 14.54
+  },
+  {
+   "pose": "wall_jersey_impact",
+   "calls": 182,
+   "triangles": 1226463,
+   "ms_per_render": 9.12
+  },
+  {
+   "pose": "tyres_black_stacked",
+   "calls": 398,
+   "triangles": 2510751,
+   "ms_per_render": 11.4
+  },
+  {
+   "pose": "tyres_white_stacked",
+   "calls": 183,
+   "triangles": 1187201,
+   "ms_per_render": 10.15
+  },
+  {
+   "pose": "tyre_cushion_head",
+   "calls": 259,
+   "triangles": 2372964,
+   "ms_per_render": 8.53
+  },
+  {
+   "pose": "movable_jersey_facing",
+   "calls": 188,
+   "triangles": 2339830,
+   "ms_per_render": 8.54
+  },
+  {
+   "pose": "fence_standalone",
+   "calls": 319,
+   "triangles": 2394922,
+   "ms_per_render": 8.55
+  },
+  {
+   "pose": "cones_orange",
+   "calls": 184,
+   "triangles": 2347070,
+   "ms_per_render": 10.56
+  },
+  {
+   "pose": "cones_yellow_small",
+   "calls": 250,
+   "triangles": 2508661,
+   "ms_per_render": 11.28
+  },
+  {
+   "pose": "tyre_stack",
+   "calls": 237,
+   "triangles": 2417101,
+   "ms_per_render": 12.49
+  },
+  {
+   "pose": "block_striped",
+   "calls": 795,
+   "triangles": 2569491,
+   "ms_per_render": 15.28
+  },
+  {
+   "pose": "block_plain",
+   "calls": 183,
+   "triangles": 1187201,
+   "ms_per_render": 8.8
+  },
+  {
+   "pose": "marshal_hut",
+   "calls": 202,
+   "triangles": 2328870,
+   "ms_per_render": 11.7
+  },
+  {
+   "pose": "grandstand",
+   "calls": 248,
+   "triangles": 2447567,
+   "ms_per_render": 9.88
+  },
+  {
+   "pose": "terrace",
+   "calls": 172,
+   "triangles": 2328190,
+   "ms_per_render": 10.06
+  },
+  {
+   "pose": "garage_row",
+   "calls": 354,
+   "triangles": 2467709,
+   "ms_per_render": 11.13
+  },
+  {
+   "pose": "flat_block",
+   "calls": 256,
+   "triangles": 2449995,
+   "ms_per_render": 10.81
+  },
+  {
+   "pose": "fuel_island",
+   "calls": 240,
+   "triangles": 2425981,
+   "ms_per_render": 10.9
+  },
+  {
+   "pose": "light_mast",
+   "calls": 257,
+   "triangles": 2341780,
+   "ms_per_render": 11.78
+  },
+  {
+   "pose": "boards_on_wall",
+   "calls": 250,
+   "triangles": 2425569,
+   "ms_per_render": 9.03
+  },
+  {
+   "pose": "boards_structure",
+   "calls": 233,
+   "triangles": 2449239,
+   "ms_per_render": 13.09
+  },
+  {
+   "pose": "ground_sign",
+   "calls": 257,
+   "triangles": 2360580,
+   "ms_per_render": 12.58
+  },
+  {
+   "pose": "bridge_abutments",
+   "calls": 483,
+   "triangles": 2509471,
+   "ms_per_render": 10.85
+  },
+  {
+   "pose": "bridge_banners",
+   "calls": 226,
+   "triangles": 2392705,
+   "ms_per_render": 11.21
+  },
+  {
+   "pose": "scoring_tower",
+   "calls": 578,
+   "triangles": 2523809,
+   "ms_per_render": 10.48
+  },
+  {
+   "pose": "kerb_strip",
+   "calls": 262,
+   "triangles": 2432531,
+   "ms_per_render": 12.05
+  },
+  {
+   "pose": "kerb_line_raised",
+   "calls": 244,
+   "triangles": 2360962,
+   "ms_per_render": 14.21
+  },
+  {
+   "pose": "paint_line_declared",
+   "calls": 329,
+   "triangles": 2467253,
+   "ms_per_render": 11.13
+  },
+  {
+   "pose": "osm_building",
+   "calls": 179,
+   "triangles": 1223865,
+   "ms_per_render": 9.64
+  },
+  {
+   "pose": "closed_road_surface",
+   "calls": 518,
+   "triangles": 2528317,
+   "ms_per_render": 11.35
+  },
+  {
+   "pose": "paved_runoff_surface",
+   "calls": 730,
+   "triangles": 2542175,
+   "ms_per_render": 13.71
+  }
+ ]
+}

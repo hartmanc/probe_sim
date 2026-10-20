@@ -1,0 +1,410 @@
+[
+ {
+  "name": "wall_concrete_endcap",
+  "x": 178.28,
+  "y": -74.99,
+  "z": null,
+  "heading": -2.045,
+  "yaw": 0,
+  "pitch": 0,
+  "target": [
+   174.19,
+   -82.96
+  ]
+ },
+ {
+  "name": "wall_catch_fence",
+  "x": 407.91,
+  "y": -128.84,
+  "z": null,
+  "heading": -2.7779,
+  "yaw": 0,
+  "pitch": 5,
+  "target": [
+   394.83,
+   -133.82
+  ]
+ },
+ {
+  "name": "wall_jersey_impact",
+  "x": 487.61,
+  "y": -374.42,
+  "z": null,
+  "heading": 0.3239,
+  "yaw": 0,
+  "pitch": 0,
+  "target": [
+   492.48,
+   -372.78
+  ]
+ },
+ {
+  "name": "tyres_black_stacked",
+  "x": 239.44,
+  "y": -31.57,
+  "z": null,
+  "heading": -1.8325,
+  "yaw": 0,
+  "pitch": 0,
+  "target": [
+   236.85,
+   -41.23
+  ]
+ },
+ {
+  "name": "tyres_white_stacked",
+  "x": 478.8,
+  "y": -458.99,
+  "z": null,
+  "heading": -1.3786,
+  "yaw": 0,
+  "pitch": 0,
+  "target": [
+   480.71,
+   -468.81
+  ]
+ },
+ {
+  "name": "tyre_cushion_head",
+  "x": -52.83,
+  "y": 115.16,
+  "z": null,
+  "heading": -2.7406,
+  "yaw": 0,
+  "pitch": 0,
+  "target": [
+   -62.04,
+   111.26
+  ]
+ },
+ {
+  "name": "movable_jersey_facing",
+  "x": -429.22,
+  "y": 415.98,
+  "z": null,
+  "heading": 2.4639,
+  "yaw": 0,
+  "pitch": 0,
+  "target": [
+   -440.13,
+   424.76
+  ]
+ },
+ {
+  "name": "fence_standalone",
+  "x": -89.93,
+  "y": -5.95,
+  "z": null,
+  "heading": 1.915,
+  "yaw": 0,
+  "pitch": 5,
+  "target": [
+   -100.17,
+   22.61
+  ]
+ },
+ {
+  "name": "cones_orange",
+  "x": -509.92,
+  "y": 150.68,
+  "z": null,
+  "heading": 3.1342,
+  "yaw": 0,
+  "pitch": -5,
+  "target": [
+   -518.04,
+   150.74
+  ]
+ },
+ {
+  "name": "cones_yellow_small",
+  "x": 97.96,
+  "y": -65.02,
+  "z": null,
+  "heading": -1.5198,
+  "yaw": 0,
+  "pitch": -5,
+  "target": [
+   98.37,
+   -73.01
+  ]
+ },
+ {
+  "name": "tyre_stack",
+  "x": -48.66,
+  "y": 122.35,
+  "z": null,
+  "heading": 0.4732,
+  "yaw": 0,
+  "pitch": 0,
+  "target": [
+   -2.56,
+   145.95
+  ]
+ },
+ {
+  "name": "block_striped",
+  "x": 487.74,
+  "y": -448.39,
+  "z": null,
+  "heading": 2.2611,
+  "yaw": 0,
+  "pitch": 0,
+  "target": [
+   482.01,
+   -441.45
+  ]
+ },
+ {
+  "name": "block_plain",
+  "x": 478.52,
+  "y": -457.66,
+  "z": null,
+  "heading": -1.3984,
+  "yaw": 0,
+  "pitch": 0,
+  "target": [
+   480.06,
+   -466.53
+  ]
+ },
+ {
+  "name": "marshal_hut",
+  "x": -203.17,
+  "y": 53.64,
+  "z": null,
+  "heading": -2.5683,
+  "yaw": 0,
+  "pitch": 5,
+  "target": [
+   -216.61,
+   44.96
+  ]
+ },
+ {
+  "name": "grandstand",
+  "x": 222.21,
+  "y": -107.75,
+  "z": null,
+  "heading": -2.2421,
+  "yaw": 0,
+  "pitch": 8,
+  "target": [
+   200.78,
+   -134.72
+  ]
+ },
+ {
+  "name": "terrace",
+  "x": -450.26,
+  "y": 48.07,
+  "z": null,
+  "heading": -2.5901,
+  "yaw": 0,
+  "pitch": 10,
+  "target": [
+   -474.48,
+   33.17
+  ]
+ },
+ {
+  "name": "garage_row",
+  "x": 389.07,
+  "y": -301.11,
+  "z": null,
+  "heading": -2.833,
+  "yaw": 0,
+  "pitch": 3,
+  "target": [
+   360.49,
+   -310.22
+  ]
+ },
+ {
+  "name": "flat_block",
+  "x": 372.75,
+  "y": -238.89,
+  "z": null,
+  "heading": -2.5711,
+  "yaw": 0,
+  "pitch": 3,
+  "target": [
+   343.29,
+   -257.79
+  ]
+ },
+ {
+  "name": "fuel_island",
+  "x": 425.77,
+  "y": -444.96,
+  "z": null,
+  "heading": -2.7124,
+  "yaw": 0,
+  "pitch": 3,
+  "target": [
+   405.77,
+   -454.12
+  ]
+ },
+ {
+  "name": "light_mast",
+  "x": -163.7,
+  "y": 272.81,
+  "z": null,
+  "heading": -2.3776,
+  "yaw": 0,
+  "pitch": 18,
+  "target": [
+   -175.5,
+   261.5
+  ]
+ },
+ {
+  "name": "boards_on_wall",
+  "x": 302.46,
+  "y": -28.19,
+  "z": null,
+  "heading": 1.4625,
+  "yaw": 0,
+  "pitch": 3,
+  "target": [
+   303.54,
+   -18.25
+  ]
+ },
+ {
+  "name": "boards_structure",
+  "x": 318.77,
+  "y": -185.14,
+  "z": null,
+  "heading": -2.2123,
+  "yaw": 0,
+  "pitch": 0,
+  "target": [
+   313.38,
+   -192.35
+  ]
+ },
+ {
+  "name": "ground_sign",
+  "x": -354.87,
+  "y": 448.13,
+  "z": null,
+  "heading": -2.5535,
+  "yaw": 0,
+  "pitch": -5,
+  "target": [
+   -368.65,
+   438.94
+  ]
+ },
+ {
+  "name": "bridge_abutments",
+  "x": -21.18,
+  "y": -101.34,
+  "z": null,
+  "heading": -0.8522,
+  "yaw": 0,
+  "pitch": 5,
+  "target": [
+   -6.7,
+   -117.9
+  ]
+ },
+ {
+  "name": "bridge_banners",
+  "x": -21.8,
+  "y": -90.03,
+  "z": null,
+  "heading": -2.4144,
+  "yaw": 0,
+  "pitch": 4,
+  "target": [
+   -22.15,
+   -90.35
+  ]
+ },
+ {
+  "name": "scoring_tower",
+  "x": -53.58,
+  "y": 20.91,
+  "z": null,
+  "heading": -0.6151,
+  "yaw": 0,
+  "pitch": 14,
+  "target": [
+   -15.2,
+   -6.2
+  ]
+ },
+ {
+  "name": "kerb_strip",
+  "x": 148.79,
+  "y": -65.99,
+  "z": null,
+  "heading": 1.4383,
+  "yaw": 0,
+  "pitch": -6,
+  "target": [
+   149.98,
+   -57.07
+  ]
+ },
+ {
+  "name": "kerb_line_raised",
+  "x": -360.52,
+  "y": 436.53,
+  "z": null,
+  "heading": -2.7868,
+  "yaw": 0,
+  "pitch": -6,
+  "target": [
+   -368.96,
+   433.4
+  ]
+ },
+ {
+  "name": "paint_line_declared",
+  "x": 117.74,
+  "y": 73.16,
+  "z": null,
+  "heading": -2.267,
+  "yaw": 0,
+  "pitch": -6,
+  "target": [
+   112.61,
+   67.02
+  ]
+ },
+ {
+  "name": "osm_building",
+  "x": 501.06,
+  "y": -425.3,
+  "z": null,
+  "heading": -0.0064,
+  "yaw": 0,
+  "pitch": 3,
+  "target": [
+   563.0,
+   -425.7
+  ]
+ },
+ {
+  "name": "closed_road_surface",
+  "x": 105.88,
+  "y": 65.12,
+  "z": null,
+  "heading": -0.8515,
+  "yaw": 0,
+  "pitch": -3
+ },
+ {
+  "name": "paved_runoff_surface",
+  "x": -374.15,
+  "y": 425.34,
+  "z": null,
+  "heading": -0.6907,
+  "yaw": 0,
+  "pitch": -3
+ }
+]
