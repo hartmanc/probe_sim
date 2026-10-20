@@ -31,6 +31,13 @@ tools/track/compare/crossings.json
 tools/track/compare/sonoma/**
 !tools/track/compare/sonoma/**/
 !tools/track/compare/sonoma/**/*.md
+# eye-level inventory (21 Oct 2026): the rows, sources and inventory.json are tracked for every circuit; the video
+# frames and the compare sheets (reference imagery) never are
+!tools/track/compare/*/inventory.json
+!tools/track/compare/*/inventory/*.jsonl
+!tools/track/compare/*/inventory/source.json
+tools/track/compare/*/inventory/frames
+tools/track/compare/*/compare_sheets
 tools/track/**/__pycache__/
 tools/track/**/*.jpg
 tools/track/**/*.jpeg
