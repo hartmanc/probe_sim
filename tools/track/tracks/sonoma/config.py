@@ -796,6 +796,20 @@ CONFIG = dict(
                  src='pit-out blend line, c20_s1870 / c20_s1925 (as the pit-exit cones); colour: the 2025 pit-out video 24of8fjjAug t=304 (double yellow)'),
         ],
         edge_line_cut=[dict(side='left', s=(100, 242), why='the pit-out blend line is the declared double yellow paint line (2025 pit-out video t=304), not the white edge line')],
+        # painted ground logos (round 7b, owner note 46): the name typed in the observed colours, no logo artwork; footprint and
+        # reading direction measured on the clean captures (capture shift applied)
+        ground_signs=[
+            dict(latlon=(38.1666431, -122.4618119), length=17.0, height=7.5, heading=135.0, text="O'Reilly", fg='#ffffff', bg='#c8202c',
+                 src="c20_s0000 / c20_s3960: an O'Reilly logo painted inside the T7a hairpin island (white lettering with an outline, ~17 x 7.5 m, reading NW); the summer NAIP shows it as a red patch (owner_45 'red splotch'); red panel / white letters"),
+            dict(latlon=(38.1588939, -122.4521769), length=18.0, height=4.5, heading=8.7, text='TOYOTA', fg='#ffffff',
+                 src='c20_s1320 / c20_s1265: TOYOTA lettering painted in the T11 hairpin infield (white, ~18 m, reading ENE); the red emblem beside it is logo artwork, not drawn'),
+            dict(latlon=(38.1588066, -122.4521872), length=24.0, height=5.5, heading=14.3, text='Save Mart', fg='#ffffff',
+                 src='c20_s1320 / c20_s1265: Save Mart lettering painted in the T11 hairpin infield (white, ~24 m)'),
+        ],
+        # tyre runs in front of a wall are facings of it (round 7b, owner note 48): stacks against the wall line, never side by
+        # side at an offset (the captures put the dark tyre band and the bright wall top 1-2.5 m apart: one is the stack, the
+        # other the concrete behind it); the wall-ends / facing gate checks it
+        tyre_facings=dict(reach=2.6, off=0.55),
         # free-standing concrete blocks (round 7, owner note 38): kind 'block' (drawn only), w across, d along the track
         blocks=[
             # the onboard (higher precedence than the captures) puts them at the apex: two large red / white striped blocks on
@@ -806,6 +820,13 @@ CONFIG = dict(
                  src='onboard RAZip6S84CM 2:00-2:04 (t120 / t122 / t124): large red / white striped concrete block at the T11 apex beside the kerb (inventory rows s 3638-3699 right); c20_s1320 shows the same blocks (dark bands, ~1.6 m) moved to the outside edge at another event'),
             dict(latlon=(38.1587122, -122.4521780), w=1.0, d=1.6, h=1.0, style='striped', color='#c8202c',
                  src='onboard RAZip6S84CM 2:02-2:04 (t122 / t124): the second striped block at the apex (see the first); c20_s1320'),
+            # round 7b (item F): the three blocks the 2026 capture shows at the OUTSIDE apron edge of the hairpin (c20_s1320,
+            # bright 1.6 m boxes with dark joints, s ~3678-3681, 0.6-1.3 m inside the fitted left edge); onboard t122: white
+            # blocks along the apron edge
+            dict(latlon=(38.1585091, -122.4521152), w=1.0, d=1.6, h=0.8, style='plain', color='#f0efea',
+                 src='c20_s1320: block 1 of 3 at the outside apron edge of T11 (s ~3681, 10.2 m left of the centre, capture shift applied); onboard 2:02 (t122) white blocks along the apron edge'),
+            dict(latlon=(38.1585091, -122.4520926), w=1.0, d=1.6, h=0.8, style='plain', color='#f0efea', src='c20_s1320: block 2 of 3 (see block 1)'),
+            dict(latlon=(38.1585107, -122.4520700), w=1.0, d=1.6, h=0.8, style='plain', color='#f0efea', src='c20_s1320: block 3 of 3 (see block 1)'),
         ],
         # free-standing tyre stacks (round 5): the ones the onboard shows that the captures place
         tyre_stacks=[

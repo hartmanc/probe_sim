@@ -2,7 +2,7 @@
 // Prints the three reports and a JSON summary line; exits 1 when a gate fails.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { containment, escapeRuns, exposedEnds, pitConnectivity, signPlacement, type GateConfig } from './sceneryGates';
+import { containment, escapeRuns, exposedEnds, pitConnectivity, sideBySide, signPlacement, type GateConfig } from './sceneryGates';
 
 const dir = process.argv[2];
 const cfg: GateConfig & { pit_box_s?: number } = process.argv[3] ? JSON.parse(readFileSync(process.argv[3], 'utf8')) : {};
@@ -38,7 +38,11 @@ const e = exposedEnds(track, sc);
 console.log(`[${e.exposed.length ? 'FAIL' : 'ok'}] wall ends: ${e.checked} upstream run ends within 8 m of an edge checked, ${e.ok.length} joined / cushioned / lapped / tapered, ${e.exposed.length} exposed to oncoming travel`);
 for (const x of e.exposed) console.log(`       exposed ${x.side.padEnd(5)} s ${x.s} (${x.out} m out): ${x.label}`);
 if (e.exposed.length) fail = true;
+const sb = sideBySide(track, sc);
+console.log(`[${sb.length ? 'FAIL' : 'ok'}] tyre facings: ${sb.length} tyre runs standing 0.8-2.5 m off a wall side by side (a tyre run beside a wall must face it, within 0.8 m, or meet it end to end)`);
+for (const x of sb) console.log(`       side by side s ${x.s} (${x.off} m off): ${x.tyre} | ${x.wall}`);
+if (sb.length) fail = true;
 
 console.log('GATES_JSON ' + JSON.stringify({ containment: { escapes: c.escapes.length, runs, allowed: c.allowed.length, junctions: c.junctions },
-  pit: p, signs: g, ends: e, fail }));
+  pit: p, signs: g, ends: e, facings: sb, fail }));
 process.exit(fail ? 1 : 0);

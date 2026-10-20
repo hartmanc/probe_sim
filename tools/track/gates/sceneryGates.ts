@@ -474,3 +474,47 @@ export function exposedEnds(t: TrackLike, sc: SceneryLike & { landmarks?: { kind
   }
   return rep;
 }
+
+// ------------------------------------------------------------------ tyre facings (round 7b, Sonoma owner note 48)
+export interface SideBySide { tyre: string; wall: string; s: number; off: number }
+
+/** A tyre run beside a rigid wall (concrete, pitwall, armco) must be a FACING of it (its stacks within `facing` m, 0.8,
+ *  of the wall line) or meet it end to end; a tyre run standing `facing`..`reach` (2.5) m off a wall over a stretch is
+ *  two runs of different kinds side by side with an offset. Points within `joint` m (1.5) of the wall's own end points
+ *  are the joint and not counted. Returns one entry per (tyre run, wall) pair, at its first offending point. */
+export function sideBySide(t: TrackLike, sc: SceneryLike, opts: { facing?: number; reach?: number; joint?: number } = {}): SideBySide[] {
+  const facing = opts.facing ?? 0.8, reach = opts.reach ?? 2.5, joint = opts.joint ?? 1.5;
+  const proj = makeProjector(t);
+  const out: SideBySide[] = [];
+  const bars = sc.barriers ?? [];
+  const xy = (P: V3[]): V2[] => P.map((p) => [p[0], p[1]]);
+  for (const tb of bars) {
+    if (tb.kind !== 'tyres') continue;
+    const T: V2[] = [];
+    const P = xy(tb.pts);
+    for (let i = 0; i + 1 < P.length; i++) {
+      const d = Math.hypot(P[i + 1][0] - P[i][0], P[i + 1][1] - P[i][1]), n = Math.max(1, Math.ceil(d / 0.5));
+      for (let k = 0; k < n; k++) T.push([P[i][0] + ((P[i + 1][0] - P[i][0]) * k) / n, P[i][1] + ((P[i + 1][1] - P[i][1]) * k) / n]);
+    }
+    for (const wb of bars) {
+      if (!['concrete', 'pitwall', 'armco'].includes(wb.kind)) continue;
+      const W = xy(wb.pts), e0 = W[0], e1 = W[W.length - 1];
+      // side by side = PARALLEL at an offset: consecutive 0.5 m samples in the band whose offset changes under 0.1 m
+      // per sample (< ~11 deg); a run angling in to meet the wall (a taper) changes faster and is not counted
+      let bad = 0, best = 0, first: V2 | null = null, offAt = 0, prev = NaN;
+      for (const q of T) {
+        let d = Infinity;
+        for (let i = 0; i + 1 < W.length; i++) d = Math.min(d, segDist(q, W[i], W[i + 1]));
+        const atJoint = Math.hypot(q[0] - e0[0], q[1] - e0[1]) < joint || Math.hypot(q[0] - e1[0], q[1] - e1[1]) < joint;
+        if (!atJoint && d > facing && d < reach && Math.abs(d - prev) < 0.1) { bad++; if (bad > best) { best = bad; } if (!first) { first = q; offAt = d; } }
+        else bad = 0;
+        prev = d;
+      }
+      if (best >= 4 && first) {   // >= 2 m of parallel run
+        const pr = proj(first, 80);
+        out.push({ tyre: (tb.src ?? '').slice(0, 80), wall: (wb.src ?? '').slice(0, 80), s: pr ? Math.round(pr.i * t.spacing_m) : -1, off: Math.round(offAt * 10) / 10 });
+      }
+    }
+  }
+  return out;
+}

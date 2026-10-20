@@ -170,3 +170,8 @@ Verdict: "a disappointing output that was not ready for me to review."
     on the bank top behind the catch fence above the back-straight stand near its 9a end (a small hut among the trees on
     the skyline, left of centre, with a marshal beside it), with the orange marker cone on the verge below. The
     orchestrator missed it in the frame.
+51. Owner's May 2025 onboard frame (reference only) approaching T7 (owner_50_T7_far_tyre_wall_video.png): confirms note
+    44. Across the paved runoff on the RIGHT a low WHITE-wrapped tyre wall runs along the far edge of the pavement in front
+    of the grass, with the flag station beyond; on the left the grey concrete wall with the Pirelli / red boards and the
+    marshal post. Owner: "Yeah I'm sure the far tire barrier is there." Round 7 looked for a DARK band; the tyres are white,
+    so on the captures it is a bright line at the pavement's far edge.

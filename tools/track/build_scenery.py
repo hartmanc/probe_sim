@@ -1243,6 +1243,54 @@ def paved_areas(trk, osm):
     return out
 
 
+def tyre_facings(trk, bar, reach=2.5, off=0.55):
+    """A tyre run in front of a rigid wall is a FACING of it (config scenery.tyre_facings, round 7b; Sonoma owner note
+    48): every tyre point within `reach` m of a concrete / pitwall / Armco line and on its track side is moved onto that
+    line, `off` m toward the track (the stacks stand against the wall), so the two never stand side by side at an offset;
+    points further off are kept, so a run that angles in meets the facing as a taper; a point read just behind the wall
+    line (the dark band beside the bright top) joins the facing too; a point the move would bring within 0.55 m of the
+    fitted edge stays. Logged per run."""
+    rig = []
+    for b in bar:
+        if b["kind"] in ("concrete", "pitwall", "armco"):
+            P = np.array(b["pts"])[:, :2]
+            if len(P) >= 2:
+                rig.append(np.c_[P[:-1], P[1:]])
+    if not rig:
+        return
+    S = np.concatenate(rig)
+    a, d = S[:, :2], S[:, 2:] - S[:, :2]
+    L2 = np.maximum((d ** 2).sum(1), 1e-9)
+    for b in bar:
+        if b["kind"] != "tyres":
+            continue
+        P = np.array(b["pts"], float)
+        moved = []
+        for j in range(len(P)):
+            q = P[j, :2]
+            t = np.clip(((q - a) * d).sum(1) / L2, 0, 1)
+            C = a + d * t[:, None]
+            dist = np.linalg.norm(C - q, axis=1)
+            k = int(np.argmin(dist))
+            if dist[k] > reach:
+                continue
+            c = C[k]
+            i_, lat_, _ = trk.project(np.array([q, c]))
+            # in front of the wall or just behind it (the dark band read beside the bright wall top): one facing, in front
+            toward = -np.sign(lat_[1]) * trk.N[int(i_[1]) % trk.n]
+            p_new = c + toward * off
+            # never closer than 0.55 m to the fitted edge (the barrier-gap gate)
+            i2, lat2, dout2 = trk.project(p_new[None])
+            if dout2[0] < 0.55:
+                continue
+            P[j, :2] = p_new
+            moved.append(int(i_[0]))
+        if moved:
+            P[:, 2] = trk.ground(P[:, 0], P[:, 1])
+            b["pts"] = [[rnd(x, 2), rnd(y, 2), rnd(z, 2)] for x, y, z in P]
+            log(f"tyre facing: {str(b.get('src', ''))[:70]}: {len(moved)} points onto the wall line ({off} m in front), stations {min(moved)}..{max(moved)}")
+
+
 def clip_parts_at_walls(parts, bar, margin=0.3, label="closed roads"):
     """A closed road's paving stops at a wall (config scenery.closed_roads_clip_walls, 20 Oct 2026: the NAIP half-width
     of Sonoma's drag strip reached under the pit-straight wall): an edge point whose segment from the part's centre crosses
@@ -1818,6 +1866,20 @@ def declared_paint_lines(trk):
     return out
 
 
+def ground_signs(trk):
+    """Painted ground logos as typed text (config scenery.ground_signs, round 7b, Sonoma owner note 46): {latlon (centre),
+    length (m, along the text), height (m, across), heading (deg, ENU, the text's reading direction), text, fg, bg (None =
+    no panel), src}; the boards' rule: the name as text in the observed colours, no logo artwork. Drawn on the ground."""
+    out = []
+    for g in SC_CFG.get("ground_signs", []):
+        xy = np.array(bl.enu(*g["latlon"]), float)
+        out.append({"x": rnd(xy[0], 2), "y": rnd(xy[1], 2), "z": rnd(float(trk.ground(*xy)[0]), 2),
+                    "heading": rnd(math.radians(g["heading"]), 3), "length": g["length"], "height": g.get("height", g["length"] / 4),
+                    "text": g["text"], "fg": g.get("fg", "#ffffff"), **({"bg": g["bg"]} if g.get("bg") else {}), "src": g["src"]})
+        log(f"ground sign '{g['text']}' {g['length']} m")
+    return out
+
+
 def landmarks(trk, T, brg):
     out = []
     corners = {c["turn"]: c for c in trk.t["corners"] if c.get("turn")}
@@ -2075,6 +2137,8 @@ def main(cfg=None, out_dir=None):
     bar, bar_tot = barriers(trk, osm)
     terr, terr_fences = terraces(trk)
     bar += terr_fences
+    if SC_CFG.get("tyre_facings"):
+        tyre_facings(trk, bar, **SC_CFG["tyre_facings"])
     for b_ in bar:
         if b_["kind"] in ("concrete", "armco", "pitwall"):
             P_ = np.array(b_["pts"])[:, :2]
@@ -2190,6 +2254,7 @@ def main(cfg=None, out_dir=None):
         **({"cone_lines": cone_lines} if cone_lines else {}),
         **({"paint_lines": plines} if plines else {}),
         **({"paved_areas": pareas} if pareas else {}),
+        **({"ground_signs": ground_signs(trk)} if SC_CFG.get("ground_signs") else {}),
         "landmarks": marks,
         **({"terraces": terr} if terr else {}),
     }

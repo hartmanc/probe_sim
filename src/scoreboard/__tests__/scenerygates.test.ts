@@ -1,7 +1,7 @@
 // Pure parts of the stage-3 scenery gates (tools/track/gates/sceneryGates.ts, 20 Oct 2026): segment crossing, polygon
 // test, containment escapes / barriers / allowed runoff, pit connectivity and sign placement on a synthetic straight.
 import { describe, expect, it } from 'vitest';
-import { containment, escapeRuns, exposedEnds, inPoly, laneClearance, pitConnectivity, segCross, signPlacement, type SceneryLike, type TrackLike, type V3 } from '../../../tools/track/gates/sceneryGates';
+import { containment, escapeRuns, exposedEnds, inPoly, laneClearance, pitConnectivity, segCross, sideBySide, signPlacement, type SceneryLike, type TrackLike, type V3 } from '../../../tools/track/gates/sceneryGates';
 
 // a 400 m oval-ish closed loop: two 150 m straights joined by half circles R 30, 1 m stations, half-width 5
 function loop(): TrackLike {
@@ -123,5 +123,17 @@ describe('scenery gates: exposed wall ends (round 7, owner notes 39 / 41)', () =
     expect(exposedEnds(T, { barriers: [wall(40, 120, -20, 'far')] }).exposed).toHaveLength(0);
     // a wall leaving the edge at a right angle (across a runoff) faces across the lap, not along it
     expect(exposedEnds(T, { barriers: [{ kind: 'concrete', pts: [[60, -6, 0], [60, -30, 0]], src: 'across' }] }).exposed).toHaveLength(0);
+  });
+});
+
+describe('scenery gates: tyre facings (round 7b, owner note 48)', () => {
+  const conc = { kind: 'concrete', pts: [[20, -12, 0], [120, -12, 0]] as V3[], src: 'wall' };
+  it('a tyre run parallel 1.5 m in front of a wall is side by side; as a facing (0.5 m) or angling in it passes', () => {
+    expect(sideBySide(T, { barriers: [conc, { kind: 'tyres', pts: [[40, -10.5, 0], [90, -10.5, 0]], src: 'beside' }] })).toHaveLength(1);
+    expect(sideBySide(T, { barriers: [conc, { kind: 'tyres', pts: [[40, -11.5, 0], [90, -11.5, 0]], src: 'facing' }] })).toHaveLength(0);
+    expect(sideBySide(T, { barriers: [conc, { kind: 'tyres', pts: [[40, -6, 0], [60, -11.5, 0]], src: 'taper' }] })).toHaveLength(0);
+  });
+  it('a tyre run meeting the wall end to end passes', () => {
+    expect(sideBySide(T, { barriers: [conc, { kind: 'tyres', pts: [[0, -12, 0], [19.5, -12, 0]], src: 'end' }] })).toHaveLength(0);
   });
 });
