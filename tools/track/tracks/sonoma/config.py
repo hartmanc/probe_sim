@@ -964,9 +964,9 @@ CONFIG = dict(
             dict(side='right', s=(2196, 2212), off=0.5, spacing=5.0,
                  src='onboard 1:14-1:16 (round 5): orange delineator posts on the edge of the T7a island before its kerb (island on c20_s3960)'),
             # round 7e (owner note 57): orange PYLONS (tall delineator posts, ~1 m, white bands) close the drag strip continuation
-            # at the T7 fork, on the round-5 line across it (track edge to the strip's far side, c20_s3630); no tyres
-            dict(latlon=[(38.1651955, -122.4603196), (38.1652326, -122.4603465), (38.1652697, -122.4603733), (38.1653068, -122.4604002), (38.1653439, -122.4604270)], spacing=1.7, color='#e0561c', size=1.0, style='delineator',
-                 src='owner note 57 (May 2025 onboard fEcQdo0ucL8 0:57, reference only: a line of orange pylons, no tyre barrier); onboard RAZip6S84CM t064: 7 orange posts with white bands resolved over the first ~10 m (spacing 1.7 m); the round-5 line across the drag strip continuation at s ~1938 (c20_s3630) extended on its own direction to 19 m, across the strip paved mouth (17.6 m wide, 12.3 m beyond the right edge: the closed road drag strip past the T7 fork)'),
+            # at the T7 fork, across the strip's mouth (track edge to the strip's far paved edge, c20_s3630); no tyres
+            dict(latlon=[(38.1652055, -122.4603712), (38.1652389, -122.4603487), (38.1652723, -122.4603262), (38.1653057, -122.4603037)], spacing=1.7, color='#e0561c', size=1.0, style='delineator',
+                 src='owner note 57 (May 2025 onboard fEcQdo0ucL8 0:57, reference only: a line of orange pylons, no tyre barrier); onboard RAZip6S84CM t064: 7 orange posts with white bands across the mouth (spacing 1.7 m); the line runs ACROSS the strip at its mouth (perpendicular to the strip, heading 62 deg: the first cross-section of the closed road drag strip past the T7 fork, where it leaves the course at s ~1942), from the track right edge to 1 m past the strip far paved edge, 12.6 m; the round-5 tyre line ran 30 deg off the strip own direction'),
             # round 7 (owner note 37): ON the measured solid double line, 0.3 m to its track side, from where the dashed
             # blend line turns solid (s ~3510) to the Jersey nose; the round-5 line ran 0.4 m outside the fitted track edge,
             # which at the lane mouth lies along the outer wall, so it started inside the lane and converged into the wall
