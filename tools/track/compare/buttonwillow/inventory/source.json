@@ -1,0 +1,30 @@
+{
+ "video": {
+  "id": "7QS2M-HGSI4",
+  "url": "https://www.youtube.com/watch?v=7QS2M-HGSI4",
+  "title": "Buttonwillow 2026 Lemons, My best lap of the weekend",
+  "channel": "Daniel Peters",
+  "date": "24 Hours of Lemons Button Turrible, 26-27 Sep 2026 (uploaded 29 Sep 2026)",
+  "camera": "Garmin Catalyst hood camera, ~1.05 m above the road (camh from the pit-wall Jersey, t004); Catalyst overlay with lap time, speed and a GPS minimap",
+  "lap_s": 147.48,
+  "stepped": "every 2.0 s from 0:00 to 2:38 (80 frames; headless_capture.ts, 720p-1080p source); lap 21 runs from 0:05.47 to 2:32.95 (Catalyst lap timer 0:00.51 at 0:06, lap 22 timer 0:01.05 at 2:34)"
+ },
+ "pit_video": {
+  "id": "ucmXJu5QKFQ",
+  "url": "https://www.youtube.com/watch?v=ucmXJu5QKFQ",
+  "title": "Lemons 2026 at Buttonwillow - Saturday - Jason Evening Yellow Flag Tour",
+  "channel": "Jason Dosch",
+  "date": "Saturday 26 Sep 2026, end of the race session (uploaded 13 Oct 2026)",
+  "camera": "Garmin Catalyst, roof / windscreen",
+  "pit": "20:31 (1231 s) the car leaves the track left before T11 into the pit lane, 20:40-22:46 the lane end to end behind the pit wall to the starter's stand and the paddock (frames frames/pit_ucm/t<ms>.jpg every 9 s)"
+ },
+ "frames": "frames",
+ "frame_pattern": "t{t:03d}.jpg",
+ "interp": "profile",
+ "anchors": [],
+ "corrections": [],
+ "observations": [
+  "observations.jsonl",
+  "pit.jsonl"
+ ]
+}

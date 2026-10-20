@@ -223,11 +223,13 @@ def load_rows(path):
     return rows
 
 
-def build(track_id, root=ROOT):
+def build(track_id, root=ROOT, pkg=None):
     cdir = os.path.join(root, 'tools', 'track', 'compare', track_id)
     idir = os.path.join(cdir, 'inventory')
     src = json.load(open(os.path.join(idir, 'source.json')))
-    track = json.load(open(os.path.join(root, 'public', 'tracks', track_id, 'track.json')))
+    # pkg: the package whose track.json gives the stations (default the published one; a new circuit has none before
+    # stage 3, so its first inventory maps onto the geometry stage's candidate, tools/track/out/<id>)
+    track = json.load(open(os.path.join(pkg or os.path.join(root, 'public', 'tracks', track_id), 'track.json')))
     anchors, L = anchors_from(src, track)
     prof = speed_profile(track) if src.get('interp', 'profile') == 'profile' else None
     tm = TimeMap(anchors, L, prof, track['spacing_m'])
@@ -338,8 +340,9 @@ def main():
     ap.add_argument('--track', required=True)
     ap.add_argument('--times', type=float, default=0, help='print the video time of every STEP m station (json) and exit')
     ap.add_argument('--check', action='store_true', help='validate only, write nothing')
+    ap.add_argument('--pkg', default=None, help='package dir with track.json (default public/tracks/<id>)')
     args = ap.parse_args()
-    inv, tm, errs, warn = build(args.track)
+    inv, tm, errs, warn = build(args.track, pkg=args.pkg)
     if args.times:
         n = int(inv['length_m'] // args.times) + 1
         print(json.dumps([{'s': round(k * args.times, 1), 't': round(tm.t(k * args.times), 2)} for k in range(n)

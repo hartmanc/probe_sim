@@ -1,0 +1,83 @@
+// Eye-level inventory, round 1 (20 Oct 2026): every 2 s of "Buttonwillow 2026 Lemons, My best lap of the weekend"
+// (youtube.com/watch?v=7QS2M-HGSI4, Daniel Peters, uploaded 29 Sep 2026; Garmin Catalyst hood camera ~1.05 m (camh from the
+// pit-wall Jersey, t004), lap 21 = 2:27.48, the Lemons race of 26-27 Sep 2026). t = video time (s); frames frames/tNNN.jpg.
+// The circuit is open desert: no walls except the front-straight pit wall and the paddock edge; runoff is dirt everywhere.
+{"t":0,"side":"left","kind":"wall","attrs":{"type":"concrete K-rail (Jersey) segments","colour":"white with red panels","h_m":0.81,"h_method":"jersey-ref"},"confidence":0.9,"note":"pit wall along the front straight, between track and pit lane; Jersey profile (slanted face, joints every ~6 m)"}
+{"t":0,"side":"right","kind":"runoff","attrs":{"type":"dirt, flat, open"},"confidence":0.9,"note":"no barrier on the infield side of the front straight"}
+{"t":2,"side":"left","kind":"building","attrs":{"type":"control tower: 2 storeys, blue flat roof on posts over a deck","colour":"beige walls, blue roof","h_m":8.0,"h_method":"storeys","ahead_m":120},"confidence":0.8,"note":"race control / timing tower beyond the pit lane (t004 alongside); 2 storeys x 3.2 m + roof deck"}
+{"t":2,"side":"right","kind":"cone_line","attrs":{"type":"single orange cone","colour":"orange","h_m":0.7,"h_method":"cone-ref"},"confidence":0.6,"note":"orange cone at the right edge where a concrete access road meets the track"}
+{"t":4,"side":"left","kind":"wall","attrs":{"type":"concrete K-rail (Jersey)","colour":"white with red panels","h_m":0.81,"h_method":"jersey-ref"},"confidence":0.9,"note":"pit wall alongside; camh: wall top row 286.5, base 319, horizon 277 -> camera 1.05 m"}
+{"t":4,"side":"left","kind":"building","attrs":{"type":"control tower","h_m":8.0,"h_method":"storeys"},"confidence":0.9,"note":"tower alongside on the left beyond the pit lane, white tent beside it"}
+{"t":6,"side":"right","kind":"cone_line","attrs":{"type":"two cones, yellow and orange","colour":"yellow, orange","h_m":0.7,"h_method":"cone-ref"},"confidence":0.6,"note":"cones on the right at the mouth of a concrete access road (paddock crossover)"}
+{"t":6,"side":"left","kind":"wall","attrs":{"type":"concrete K-rail","colour":"white with red panels","h_m":0.81,"h_method":"jersey-ref"},"confidence":0.9,"note":"pit wall continues"}
+{"t":8,"side":"left","kind":"wall","attrs":{"type":"concrete K-rail, a dark (black) section at its east end","colour":"white, red, black","h_m":0.81,"h_method":"jersey-ref"},"confidence":0.7,"note":"pit wall towards its east end"}
+{"t":10,"side":"left","kind":"station","attrs":{"type":"canopy on posts over a low concrete platform","colour":"white canopy","ahead_m":60},"confidence":0.6,"note":"station / canopy at the east end of the pit wall (pit-out side)"}
+{"t":10,"side":"right","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"red / white / blue","raised":false,"ahead_m":30},"confidence":0.8,"note":"T1 approach, outside (right) kerb"}
+{"t":12,"side":"right","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"red / white / blue","raised":false},"confidence":0.9,"note":"T1 outside kerb alongside, an orange cone at its end"}
+{"t":12,"side":"right","kind":"cone_line","attrs":{"type":"single orange cone","colour":"orange","h_m":0.7,"h_method":"cone-ref","ahead_m":40},"confidence":0.6,"note":"T1 turn-in marker cone"}
+{"t":14,"side":"left","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"red / white / blue","raised":false},"confidence":0.9,"note":"T1 apex kerb (left)"}
+{"t":18,"side":"right","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"red / white / blue","raised":false},"confidence":0.9,"note":"T1 exit kerb (right), along the bend north"}
+{"t":20,"side":"right","kind":"station","attrs":{"type":"corner station: canopy on posts on a tyre-walled earth mound","colour":"white / blue canopy"},"confidence":0.8,"note":"close right, ~10 m off the edge"}
+{"t":20,"side":"right","kind":"tyre_wall","attrs":{"type":"tyres around the station mound","colour":"black"},"confidence":0.6,"note":"the station mound is faced with tyres"}
+{"t":22,"side":"left","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"red / white / blue","raised":false},"confidence":0.9,"note":"T2 entry, outside (left) kerb"}
+{"t":22,"side":"left","kind":"cone_line","attrs":{"type":"single orange cone","colour":"orange","h_m":0.7,"h_method":"cone-ref"},"confidence":0.6,"note":"cone at the start of the T2 entry kerb"}
+{"t":24,"side":"right","kind":"runoff","attrs":{"type":"pale paved / concrete patch inside the hairpin"},"confidence":0.5,"note":"T2 hairpin inside"}
+{"t":30,"side":"left","kind":"cone_line","attrs":{"type":"line of small cones","colour":"orange","ahead_m":80},"confidence":0.5,"note":"cones far ahead on the left of the road down the east side"}
+{"t":32,"side":"left","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"white / red","raised":false},"confidence":0.8,"note":"T2 exit, long kerb on the left"}
+{"t":34,"side":"right","kind":"station","attrs":{"type":"corner station: canopy on posts on a tyre-walled mound","colour":"blue canopy","ahead_m":40},"confidence":0.8,"note":"east side station"}
+{"t":34,"side":"left","kind":"cone_line","attrs":{"type":"single orange cone","colour":"orange","h_m":0.7,"h_method":"cone-ref","ahead_m":40},"confidence":0.5,"note":""}
+{"t":38,"side":"left","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"white / red","raised":false,"ahead_m":40},"confidence":0.7,"note":"T3 approach, outside (left)"}
+{"t":38,"side":"left","kind":"cone_line","attrs":{"type":"single orange cone","colour":"orange","h_m":0.7,"h_method":"cone-ref","ahead_m":40},"confidence":0.5,"note":""}
+{"t":40,"side":"left","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"red / white / blue","raised":false},"confidence":0.9,"note":"T3 outside kerb alongside"}
+{"t":40,"side":"right","kind":"station","attrs":{"type":"corner station: blue canopy on posts on a tyre-walled mound"},"confidence":0.9,"note":"close right at T3"}
+{"t":42,"side":"right","kind":"cone_line","attrs":{"type":"single orange cone","colour":"orange","h_m":0.7,"h_method":"cone-ref"},"confidence":0.6,"note":"T3 apex marker"}
+{"t":44,"side":"left","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"red / white / blue","raised":false},"confidence":0.9,"note":"left-hand kink between T3 and T4 (inside, left)"}
+{"t":46,"side":"right","kind":"station","attrs":{"type":"corner station: canopy on posts","ahead_m":60},"confidence":0.6,"note":""}
+{"t":48,"side":"right","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"red / white","raised":false},"confidence":0.9,"note":"T4 apex (right)"}
+{"t":50,"side":"left","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"red / white / blue","raised":false},"confidence":0.9,"note":"T4 exit, long kerb on the left"}
+{"t":52,"side":"right","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"red / white / blue","raised":false,"ahead_m":15},"confidence":0.9,"note":"T5 (the bottom right-hander) apex kerb, orange cone at its start"}
+{"t":52,"side":"right","kind":"cone_line","attrs":{"type":"single orange cone","colour":"orange","h_m":0.7,"h_method":"cone-ref","ahead_m":20},"confidence":0.6,"note":""}
+{"t":54,"side":"left","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"red / white / blue","raised":false},"confidence":0.9,"note":"exit kerb, left, long"}
+{"t":56,"side":"left","kind":"paint","attrs":{"type":"white painted blocks at the left edge","colour":"white","ahead_m":60},"confidence":0.5,"note":"white blocks ahead left (a road mouth or kerb end)"}
+{"t":58,"side":"right","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"red / white / blue","raised":false},"confidence":0.9,"note":"right kerb, entry to the hump (Club Corner)"}
+{"t":58,"side":"right","kind":"station","attrs":{"type":"corner station: canopy on posts on a tyre-walled mound","ahead_m":30},"confidence":0.8,"note":""}
+{"t":60,"side":"left","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"red / white","raised":false,"ahead_m":30},"confidence":0.7,"note":"left kerb ahead (Bus Stop)"}
+{"t":66,"side":"right","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"white / red / blue","raised":false},"confidence":0.9,"note":"right kerb alongside (Bus Stop)"}
+{"t":68,"side":"left","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"red / white / blue","raised":false},"confidence":0.9,"note":"left kerb alongside, long (Truck Stop)"}
+{"t":72,"side":"left","kind":"paint","attrs":{"type":"white painted chevrons / blocks at the left edge","colour":"white","ahead_m":80},"confidence":0.5,"note":"at the Dog Leg junction"}
+{"t":74,"side":"right","kind":"station","attrs":{"type":"corner station: canopy on posts on a tyre-walled mound","ahead_m":40},"confidence":0.8,"note":"Riverside"}
+{"t":78,"side":"right","kind":"cone_line","attrs":{"type":"single orange cone","colour":"orange","h_m":0.7,"h_method":"cone-ref"},"confidence":0.5,"note":""}
+{"t":82,"side":"right","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"red / white / blue","raised":false},"confidence":0.9,"note":"Riverside apex (right), long"}
+{"t":82,"side":"right","kind":"station","attrs":{"type":"corner station: canopy on a mound","ahead_m":60},"confidence":0.6,"note":""}
+{"t":92,"side":"left","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"red / white / blue","raised":false},"confidence":0.9,"note":"Lost Hill, left kerb, long, two orange cones beside it"}
+{"t":92,"side":"left","kind":"cone_line","attrs":{"type":"two orange cones","colour":"orange","h_m":0.7,"h_method":"cone-ref"},"confidence":0.6,"note":""}
+{"t":92,"side":"right","kind":"station","attrs":{"type":"corner station: canopy on posts","ahead_m":80},"confidence":0.6,"note":""}
+{"t":94,"side":"right","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"red / white / blue","raised":false},"confidence":0.9,"note":"T8 (Lost Hill right) apex kerb"}
+{"t":96,"side":"left","kind":"paint","attrs":{"type":"white painted blocks at the left edge","colour":"white","ahead_m":40},"confidence":0.5,"note":"where Lost Hill joins the drag strip"}
+{"t":106,"side":"ahead","kind":"mast","attrs":{"type":"tall pole (light / camera mast)","ahead_m":250},"confidence":0.5,"note":"seen ahead-right on the run north (t106-t112)"}
+{"t":110,"side":"left","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"red / white / blue","raised":false},"confidence":0.9,"note":"T9 (Star Mazda) entry, outside (left)"}
+{"t":112,"side":"right","kind":"station","attrs":{"type":"corner station: roofed platform on stilts","colour":"dark","ahead_m":40},"confidence":0.8,"note":"T9 station right"}
+{"t":112,"side":"right","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"blue / white","raised":false,"ahead_m":25},"confidence":0.8,"note":"T9 apex kerb"}
+{"t":114,"side":"right","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"red / white / blue","raised":false},"confidence":0.9,"note":"T9 apex kerb alongside, an orange cone at its end"}
+{"t":114,"side":"right","kind":"cone_line","attrs":{"type":"single orange cone","colour":"orange","h_m":0.7,"h_method":"cone-ref"},"confidence":0.6,"note":""}
+{"t":116,"side":"left","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"red / white / blue","raised":false},"confidence":0.9,"note":"T9 exit kerb (left), long"}
+{"t":122,"side":"right","kind":"station","attrs":{"type":"corner station","ahead_m":120},"confidence":0.5,"note":"far ahead right"}
+{"t":124,"side":"left","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"red / white / blue","raised":false},"confidence":0.9,"note":"Esses, left kerb, long"}
+{"t":126,"side":"right","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"red / white / blue","raised":false},"confidence":0.9,"note":"Esses, right kerb"}
+{"t":128,"side":"left","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"red / white / blue","raised":false},"confidence":0.9,"note":"Esses, left kerb"}
+{"t":130,"side":"right","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"red / white / blue","raised":false},"confidence":0.9,"note":"Esses, right kerb"}
+{"t":132,"side":"left","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"red / white / blue","raised":false},"confidence":0.9,"note":"Esses, left kerb"}
+{"t":134,"side":"right","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"white / blue","raised":false,"ahead_m":20},"confidence":0.8,"note":"right kerb ahead with an orange cone"}
+{"t":134,"side":"right","kind":"cone_line","attrs":{"type":"single orange cone","colour":"orange","h_m":0.7,"h_method":"cone-ref","ahead_m":25},"confidence":0.6,"note":""}
+{"t":136,"side":"right","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"white / blue","raised":false},"confidence":0.9,"note":"right kerb alongside, orange cone"}
+{"t":138,"side":"left","kind":"station","attrs":{"type":"corner station: canopy on posts on a tyre-walled mound","ahead_m":60},"confidence":0.8,"note":"Sunset station, ahead left"}
+{"t":140,"side":"right","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"white / blue","raised":false},"confidence":0.9,"note":"T11 (Sunset) entry, right"}
+{"t":142,"side":"left","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"red / white / blue","raised":false},"confidence":0.9,"note":"T11 apex kerb (left)"}
+{"t":144,"side":"right","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"white / blue / red","raised":false},"confidence":0.9,"note":"T11 exit kerb (right), long"}
+{"t":146,"side":"right","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"red / white / blue","raised":false},"confidence":0.9,"note":"T11 exit kerb alongside"}
+{"t":148,"side":"left","kind":"wall","attrs":{"type":"concrete K-rail","colour":"white with red panels","h_m":0.81,"h_method":"jersey-ref","ahead_m":80},"confidence":0.8,"note":"start of the pit wall, ahead left"}
+{"t":150,"side":"right","kind":"cone_line","attrs":{"type":"single orange cone","colour":"orange","h_m":0.7,"h_method":"cone-ref"},"confidence":0.6,"note":"cone at the right edge of the front straight"}
+{"t":150,"side":"left","kind":"wall","attrs":{"type":"concrete K-rail","colour":"white with red panels","h_m":0.81,"h_method":"jersey-ref"},"confidence":0.9,"note":"pit wall"}
+{"t":152,"side":"left","kind":"wall","attrs":{"type":"concrete K-rail","colour":"white with red panels","h_m":0.81,"h_method":"jersey-ref"},"confidence":0.9,"note":"pit wall alongside; control tower beyond"}
+{"t":62,"side":"left","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"red / white","raised":false,"ahead_m":30},"confidence":0.8,"note":"left kerb ahead, the Club Corner climb"}
+{"t":70,"side":"right","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"red / white / blue","raised":false},"confidence":0.9,"note":"right kerb alongside, Bus Stop"}

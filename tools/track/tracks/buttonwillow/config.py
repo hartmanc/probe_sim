@@ -22,7 +22,12 @@ CONFIG = dict(
     osm_bbox=(-119.556, 35.478, -119.530, 35.500),   # W, S, E, N of the OSM API map call (20 Oct 2026)
     osm_file='osm/osm.xml',                      # cached under cache/<id>/
     # The Lemons loop in driving order from the front straight (stage 0.1; OSM 20 Oct 2026). Clockwise drives several
-    # ways against their node order ('way:from:to' with from after to). PROVISIONAL until the onboard check (0.1).
+    # ways against their node order ('way:from:to' with from after to). Confirmed on the 2026 Lemons onboard
+    # youtube.com/watch?v=7QS2M-HGSI4: its Garmin Catalyst minimap is the GPS trace of the driven lap; an affine fit of the
+    # trace (frame t100) against five candidate loops gives OSM -> trace p95 6.3 m (max 50 m, at the Lost Hill / drag
+    # strip join) for this loop, against 17 m with the 39224609 loop at T2, 37 m with the drag strip instead of Lost
+    # Hill, 46 m with the Dog Leg instead of the Club Corner / Bus Stop / Truck Stop hump, and 64 m with the Sweeper
+    # instead of the Star Mazda Turn. The Lemons picture shows the same hump, the Lost Hill bulge and the long north leg.
     loop_ways=[
         '34350797:393994623:393994620',   # front straight (unnamed), west -> east
         '39224614',                       # Sunrise: T1 left, north
@@ -63,24 +68,33 @@ CONFIG = dict(
     # PROVISIONAL (stage 0.1): no painted timing line on the 2026 captures; the starter's stand on the pit wall
     # (c20_s0150, the white hut on the wall at px 455, 195) abeam on the track centre. Checked on the onboard (0.7).
     start_finish_latlon=(35.488784, -119.544507),
-    # PROVISIONAL: numbering from the Lemons layout picture (11 turns), anchors = curvature peaks of the OSM loop
+    # numbering from the Lemons layout picture (11 turns): the picture's turn circles mapped onto the first centre by an
+    # affine fit on T1, T2, T9 and T11 (residual of the others 0-25 m), each anchored at the curvature peak of the
+    # picture's direction nearest to it (20 Oct 2026, first centre work/v2): T5 is the right-hander at the end of
+    # Grapevine (not the left into Club Corner, which has no peak), T10 the left of the Esses at s ~3823.
     corners=[
-        ('T1', None, 'left', None, 35.489327, -119.541013),
-        ('T2', None, 'right', None, 35.491661, -119.541518),
-        ('T3', None, 'right', None, 35.488903, -119.539226),
-        ('T4', None, 'right', None, 35.487572, -119.539383),
-        ('T5', None, 'left', None, 35.486640, -119.542040),
-        ('T6', None, 'right', None, 35.486400, -119.547530),
-        ('T7', None, 'right', None, 35.486594, -119.549386),
-        ('T8', None, 'right', None, 35.491056, -119.550794),
-        ('T9', None, 'right', None, 35.496565, -119.549311),
-        ('T10', None, 'left', None, 35.493800, -119.548300),
-        ('T11', None, 'left', None, 35.488595, -119.547712),
+        ('T1', None, 'left', None, 35.488998, -119.541433),
+        ('T2', None, 'right', None, 35.491670, -119.541540),
+        ('T3', None, 'right', None, 35.488712, -119.539278),
+        ('T4', None, 'right', None, 35.487701, -119.539421),
+        ('T5', None, 'right', None, 35.486712, -119.542282),
+        ('T6', None, 'right', None, 35.486314, -119.548485),
+        ('T7', None, 'right', None, 35.487341, -119.549927),
+        ('T8', None, 'right', None, 35.491136, -119.550774),
+        ('T9', 'Star Mazda', 'right', None, 35.496627, -119.548964),
+        ('T10', None, 'left', None, 35.493539, -119.548124),
+        ('T11', 'Sunset', 'left', None, 35.488787, -119.547978),
     ],
     named_straights=[],
-    # Race #13 CW: 3.000 mi = 4828 m (en.wikipedia.org/wiki/Buttonwillow_Raceway_Park, 20 Oct 2026). MyLaps' 3.1 mi is the
-    # venue's default length (the same for every Buttonwillow event), not this layout's. The stitched OSM loop is 4701 m.
-    loop_check=dict(n_min=4500, n_max=5100, official_m=4828, elev_min=50, elev_max=120),
+    # Lap length: there is no official figure for this layout to better than ~3 %. The operator's site
+    # (buttonwillowraceway.com/track-info/, 20 Oct 2026) gives no length for Race #13 (its map brp-track-map-race-13-
+    # outline.png is this loop); Wikipedia says "3.000 mi (4.828 km)", a conversion of a rounded "3.0 mi"; lapmeta.com
+    # lists 13CW at 4.43 km and 13CCW at 4.83 km; MyLaps' 3.1 mi is the venue default (Classic track, East + West loops
+    # combined, the operator's own figure). Independent measures of THIS loop: the stitched OSM loop 4701 m; the 2026
+    # onboard (7QS2M-HGSI4) Catalyst speed readout integrated over lap 21 (2 s steps, trapezoid) 4650 m on the driven
+    # line, which runs ~1 % inside the centre. So official_m stays None (no 1 % gate against a rounded figure) and the
+    # length is checked against those two in the manifest: the built centre must lie within 1 % of OSM.
+    loop_check=dict(n_min=4500, n_max=5100, official_m=None, elev_min=50, elev_max=120),
     captures=dict(                               # clean z20 captures (SKILL 0.3): register_clean.py, one common shift
         z20_dir=None,
         clean_dir='compare/buttonwillow/satellite_clean', clean_index='tiles.json',

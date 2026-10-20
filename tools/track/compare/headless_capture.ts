@@ -127,7 +127,14 @@ async function yt() {
       const grab = () => cdp.eval<any>(`(async () => {
         const p = document.getElementById('movie_player'); const sl = (ms) => new Promise((r) => setTimeout(r, ms));
         for (let k = 0; k < 120 && p.classList.contains('ad-showing'); k++) { const b = document.querySelector('.ytp-skip-ad-button, .ytp-ad-skip-button, .ytp-ad-skip-button-modern'); if (b) b.click(); await sl(500); }
-        const v = document.querySelector('video'); v.muted = true; v.pause();
+        let v = document.querySelector('video'); v.muted = true; v.pause();
+        // low rendition after a reload: ask for 720p and play muted until the player has switched up
+        for (let k = 0; k < 2 && v.videoWidth < 1280; k++) {
+          try { const q = p.getAvailableQualityLevels(); const best = q.includes('hd720') ? 'hd720' : q[0]; p.setPlaybackQualityRange(best, best); } catch (e) {}
+          v.currentTime = Math.max(0, ${t} - 3); await Promise.race([v.play().catch(() => {}), sl(3000)]);
+          for (let j = 0; j < 16 && v.videoWidth < 1280; j++) await sl(250);
+          v.pause(); v = document.querySelector('video');
+        }
         const shown = new Promise((r) => { v.requestVideoFrameCallback((now, md) => r(md.mediaTime)); setTimeout(() => r(-1), 10000); });
         v.currentTime = ${t};
         const mt = await shown;
@@ -260,4 +267,51 @@ async function maps() {
   }
 }
 
-(mode === 'yt' ? yt() : mode === 'maps' ? maps() : Promise.reject(new Error('mode: yt | maps'))).catch((e) => { console.error(e.message ?? e); process.exit(1); });
+// Street View coverage check: Maps at a zoom, the pegman pressed (the blue coverage overlay shows where panoramas and
+// photo spheres exist), one screenshot. Reference only.
+async function svcover() {
+  const lat = Number(opt('lat')), lon = Number(opt('lon')), zoom = Number(opt('zoom', '16')); const out = resolve(opt('out')!);
+  const W = 1440, H = 900;
+  const { proc, ws, profile } = await launch(W, H);
+  const cdp = new CDP();
+  try {
+    await cdp.open(ws); await cdp.send('Page.enable'); await cdp.send('Runtime.enable');
+    await cdp.send('Emulation.setDeviceMetricsOverride', { width: W, height: H, deviceScaleFactor: 1, mobile: false });
+    await cdp.send('Page.navigate', { url: `https://www.google.com/maps/@${lat},${lon},${zoom}z/data=!3m1!1e3?hl=en` });
+    await sleep(7000);
+    const r = await cdp.eval<any>(`(() => { const b = [...document.querySelectorAll('button, div[role=button]')].find((e) => /Street View|pegman/i.test((e.getAttribute('aria-label') || '') + (e.className || '')));
+      if (!b) return null; const q = b.getBoundingClientRect(); return { x: q.x + q.width / 2, y: q.y + q.height / 2, label: b.getAttribute('aria-label') }; })()`);
+    console.log('pegman', JSON.stringify(r));
+    if (r) {
+      await cdp.send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: r.x, y: r.y });
+      await cdp.send('Input.dispatchMouseEvent', { type: 'mousePressed', x: r.x, y: r.y, button: 'left', clickCount: 1 });
+      for (let k = 1; k <= 10; k++) { await cdp.send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: r.x - k * 20, y: r.y - k * 20, button: 'left', buttons: 1 }); await sleep(60); }
+      await sleep(3500);
+    }
+    await shot(cdp, out, 90);
+    // --drop x,y: release the pegman there (window pixels), then record the panorama URL and shoot the given headings
+    const drop = opt('drop');
+    if (r && drop) {
+      const [dx, dy] = drop.split(',').map(Number);
+      for (let k = 1; k <= 15; k++) { await cdp.send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: r.x + (dx - r.x) * k / 15, y: r.y + (dy - r.y) * k / 15, button: 'left', buttons: 1 }); await sleep(60); }
+      await sleep(1500);
+      await cdp.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: dx, y: dy, button: 'left', clickCount: 1 });
+      await sleep(7000);
+      const u = await cdp.eval<string>('location.href'); console.log('panorama url', u);
+      const base = u.replace(/,(\d+(\.\d+)?)h,/, ',HDGh,');
+      for (const h of (opt('headings', '0,90,180,270')!).split(',')) {
+        await cdp.send('Page.navigate', { url: base.replace('HDG', h).replace(/,(\d+(\.\d+)?)t\//, ',90t/') }); await sleep(6000);
+        await cdp.eval(`(() => { const st = document.createElement('style'); st.textContent = 'body * { visibility: hidden !important; } canvas { visibility: visible !important; }'; document.head.appendChild(st); })()`);
+        await sleep(500); await shot(cdp, out.replace(/\.jpg$/, `_h${h}.jpg`), 88);
+        console.log('heading', h, await cdp.eval<string>('location.href'));
+      }
+      const meta = await cdp.eval<string>(`(document.body.innerText.match(/(Image capture|Street View)[^\n]{0,40}|[A-Z][a-z]{2} 20\d\d/g) || []).slice(0, 6).join(' | ')`).catch(() => '');
+      console.log('captions', meta);
+    } else if (r) await cdp.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: W - 5, y: 5, button: 'left', clickCount: 1 }).catch(() => {});
+  } finally {
+    cdp.close(); proc.kill('SIGTERM'); await sleep(500);
+    try { rmSync(profile, { recursive: true, force: true }); } catch { /* tmp */ }
+  }
+}
+
+(mode === 'yt' ? yt() : mode === 'maps' ? maps() : mode === 'svcover' ? svcover() : Promise.reject(new Error('mode: yt | maps | svcover'))).catch((e) => { console.error(e.message ?? e); process.exit(1); });
