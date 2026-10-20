@@ -13,7 +13,8 @@ Identity and sources (Stage 0)
   loop_ways [way id, ...]                    the OSM highway=raceway ways forming the Lemons loop, stitched by shared end
                                              nodes starting at the first; the loop is then turned to `direction`. An
                                              entry 'way:from_node:to_node' takes the part of a way between two of its
-                                             nodes (a loop that leaves a long way for a bypass and rejoins it)
+                                             nodes (a loop that leaves a long way for a bypass and rejoins it); with
+                                             from_node after to_node the part is driven against the way's node order
   pit_lane_way                               OSM name of the pit-lane way (scenery: pit lane, pit wall, edge lines)
   dem_tiles [url, ...]                       USGS 3DEP 1 m DEM tiles (read as windows over HTTP, cached)
   lidar_ept, lidar_survey                    Entwine point tiles of the same survey; survey name for notes

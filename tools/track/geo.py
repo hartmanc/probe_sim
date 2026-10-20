@@ -179,9 +179,11 @@ def osm_loop():
         nd, name = raw[wid]
         if rng:
             a, b = nd.index(rng[0]), nd.index(rng[1])
-            if a >= b:
-                raise SystemExit(f"OSM: {e}: node {rng[0]} does not come before {rng[1]} on way {wid}")
-            nd = nd[a:b + 1]
+            if a == b:
+                raise SystemExit(f"OSM: {e}: from and to are the same node of way {wid}")
+            # from after to: the part is driven against the way's node order (Buttonwillow: the clockwise course
+            # drives several ways backwards); a way never driven backwards keeps its order
+            nd = nd[a:b + 1] if a < b else nd[b:a + 1][::-1]
         ways[e] = (nd, name)
     log(f"OSM: {len(ways)} circuit ways:", sorted({n for _, n in ways.values()}))
     by_start = {nd[0]: wid for wid, (nd, _) in ways.items()}
