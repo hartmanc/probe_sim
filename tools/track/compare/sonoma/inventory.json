@@ -1,0 +1,3259 @@
+{
+ "track": "sonoma",
+ "length_m": 4098.79,
+ "video": {
+  "id": "RAZip6S84CM",
+  "url": "https://www.youtube.com/watch?v=RAZip6S84CM",
+  "title": "2nd Place Lemons Finish | Fast Lap in Our Honda CR-V (Sonoma Raceway)",
+  "date": "2026-03 (24 Hours of Lemons, Sonoma; uploaded ~6 months before 20 Oct 2026)",
+  "camera": "hood / windscreen wide-angle, Honda CR-V #47 RUN-CRV",
+  "lap_time_s": 137.0,
+  "access": "headless Chrome, throwaway profile, muted, paused, frames drawn from the paused video element; never downloaded"
+ },
+ "anchors": [
+  {
+   "name": "S/F",
+   "t": 1.15,
+   "s": 0.0
+  },
+  {
+   "name": "T2 footbridge",
+   "t": 8.95,
+   "s": 295.3
+  },
+  {
+   "name": "T2",
+   "t": 14.0,
+   "s": 409.1
+  },
+  {
+   "name": "T3",
+   "t": 24.0,
+   "s": 710.4
+  },
+  {
+   "name": "T3a",
+   "t": 27.3,
+   "s": 801.2
+  },
+  {
+   "name": "T4",
+   "t": 35.7,
+   "s": 1003.7
+  },
+  {
+   "name": "T6",
+   "t": 52.5,
+   "s": 1567.5
+  },
+  {
+   "name": "T7",
+   "t": 73.0,
+   "s": 2164.1
+  },
+  {
+   "name": "T7a",
+   "t": 77.0,
+   "s": 2280.9
+  },
+  {
+   "name": "T8a",
+   "t": 85.5,
+   "s": 2497.4
+  },
+  {
+   "name": "T9a",
+   "t": 101.7,
+   "s": 3083.1
+  },
+  {
+   "name": "T10",
+   "t": 109.7,
+   "s": 3228.7
+  },
+  {
+   "name": "T11",
+   "t": 123.3,
+   "s": 3676.7
+  },
+  {
+   "name": "T12",
+   "t": 133.0,
+   "s": 3941.1
+  },
+  {
+   "name": "S/F end",
+   "t": 138.15,
+   "s": 4098.7939719999995
+  }
+ ],
+ "anchor_residuals": [
+  {
+   "name": "T2 footbridge",
+   "t": 8.95,
+   "s": 295.3,
+   "loo_pred_s": 259.7,
+   "loo_residual_m": 35.6,
+   "loo_residual_linear_m": 47.0,
+   "v_in": 37.9,
+   "v_out": 22.5
+  },
+  {
+   "name": "T2",
+   "t": 14.0,
+   "s": 409.1,
+   "loo_pred_s": 429.9,
+   "loo_residual_m": -20.8,
+   "loo_residual_linear_m": -25.5,
+   "v_in": 22.5,
+   "v_out": 30.1
+  },
+  {
+   "name": "T3",
+   "t": 24.0,
+   "s": 710.4,
+   "loo_pred_s": 712.8,
+   "loo_residual_m": -2.4,
+   "loo_residual_linear_m": 6.5,
+   "v_in": 30.1,
+   "v_out": 27.5
+  },
+  {
+   "name": "T3a",
+   "t": 27.3,
+   "s": 801.2,
+   "loo_pred_s": 793.1,
+   "loo_residual_m": 8.1,
+   "loo_residual_linear_m": 8.1,
+   "v_in": 27.5,
+   "v_out": 24.1
+  },
+  {
+   "name": "T4",
+   "t": 35.7,
+   "s": 1003.7,
+   "loo_pred_s": 1023.5,
+   "loo_residual_m": -19.8,
+   "loo_residual_linear_m": -52.9,
+   "v_in": 24.1,
+   "v_out": 33.6
+  },
+  {
+   "name": "T6",
+   "t": 52.5,
+   "s": 1567.5,
+   "loo_pred_s": 1516.2,
+   "loo_residual_m": 51.3,
+   "loo_residual_linear_m": 41.2,
+   "v_in": 33.6,
+   "v_out": 29.1
+  },
+  {
+   "name": "T7",
+   "t": 73.0,
+   "s": 2164.1,
+   "loo_pred_s": 2199.2,
+   "loo_residual_m": -35.1,
+   "loo_residual_linear_m": -0.3,
+   "v_in": 29.1,
+   "v_out": 29.2
+  },
+  {
+   "name": "T7a",
+   "t": 77.0,
+   "s": 2280.9,
+   "loo_pred_s": 2254.4,
+   "loo_residual_m": 26.5,
+   "loo_residual_linear_m": 10.1,
+   "v_in": 29.2,
+   "v_out": 25.5
+  },
+  {
+   "name": "T8a",
+   "t": 85.5,
+   "s": 2497.4,
+   "loo_pred_s": 2526.6,
+   "loo_residual_m": -29.2,
+   "loo_residual_linear_m": -59.6,
+   "v_in": 25.5,
+   "v_out": 36.2
+  },
+  {
+   "name": "T9a",
+   "t": 101.7,
+   "s": 3083.1,
+   "loo_pred_s": 3046.8,
+   "loo_residual_m": 36.3,
+   "loo_residual_linear_m": 96.2,
+   "v_in": 36.2,
+   "v_out": 18.2
+  },
+  {
+   "name": "T10",
+   "t": 109.7,
+   "s": 3228.7,
+   "loo_pred_s": 3252.1,
+   "loo_residual_m": -23.4,
+   "loo_residual_linear_m": -74.3,
+   "v_in": 18.2,
+   "v_out": 32.9
+  },
+  {
+   "name": "T11",
+   "t": 123.3,
+   "s": 3676.7,
+   "loo_pred_s": 3684.8,
+   "loo_residual_m": -8.1,
+   "loo_residual_linear_m": 32.2,
+   "v_in": 32.9,
+   "v_out": 27.3
+  },
+  {
+   "name": "T12",
+   "t": 133.0,
+   "s": 3941.1,
+   "loo_pred_s": 3927.4,
+   "loo_residual_m": 13.7,
+   "loo_residual_linear_m": -11.3,
+   "v_in": 27.3,
+   "v_out": 30.6
+  }
+ ],
+ "interp": "profile",
+ "frames": [
+  {
+   "t": 0,
+   "frame": "t000.jpg",
+   "s": 4058.1
+  },
+  {
+   "t": 2,
+   "frame": "t002.jpg",
+   "s": 40.3
+  },
+  {
+   "t": 4,
+   "frame": "t004.jpg",
+   "s": 112.8
+  },
+  {
+   "t": 5.5,
+   "frame": "t006.jpg",
+   "s": 166.0
+  },
+  {
+   "t": 6,
+   "frame": "t006.jpg",
+   "s": 185.6
+  },
+  {
+   "t": 8,
+   "frame": "t008.jpg",
+   "s": 262.5
+  },
+  {
+   "t": 8.95,
+   "frame": "t009.jpg",
+   "s": 295.3
+  },
+  {
+   "t": 10,
+   "frame": "t010.jpg",
+   "s": 321.3
+  },
+  {
+   "t": 12,
+   "frame": "t012.jpg",
+   "s": 371.7
+  },
+  {
+   "t": 13.5,
+   "frame": "t014.jpg",
+   "s": 401.0
+  },
+  {
+   "t": 14,
+   "frame": "t014.jpg",
+   "s": 409.1
+  },
+  {
+   "t": 16,
+   "frame": "t016.jpg",
+   "s": 453.9
+  },
+  {
+   "t": 18,
+   "frame": "t018.jpg",
+   "s": 507.7
+  },
+  {
+   "t": 20,
+   "frame": "t020.jpg",
+   "s": 574.4
+  },
+  {
+   "t": 24,
+   "frame": "t024.jpg",
+   "s": 710.4
+  },
+  {
+   "t": 27.3,
+   "frame": "t027.jpg",
+   "s": 801.2
+  },
+  {
+   "t": 27.5,
+   "frame": "t028.jpg",
+   "s": 805.0
+  },
+  {
+   "t": 28,
+   "frame": "t028.jpg",
+   "s": 815.0
+  },
+  {
+   "t": 29,
+   "frame": "t029.jpg",
+   "s": 836.7
+  },
+  {
+   "t": 30,
+   "frame": "t030.jpg",
+   "s": 860.9
+  },
+  {
+   "t": 32,
+   "frame": "t032.jpg",
+   "s": 917.1
+  },
+  {
+   "t": 34,
+   "frame": "t034.jpg",
+   "s": 974.0
+  },
+  {
+   "t": 36,
+   "frame": "t036.jpg",
+   "s": 1009.3
+  },
+  {
+   "t": 38,
+   "frame": "t038.jpg",
+   "s": 1052.7
+  },
+  {
+   "t": 40,
+   "frame": "t040.jpg",
+   "s": 1111.3
+  },
+  {
+   "t": 42,
+   "frame": "t042.jpg",
+   "s": 1183.6
+  },
+  {
+   "t": 44,
+   "frame": "t044.jpg",
+   "s": 1261.5
+  },
+  {
+   "t": 46,
+   "frame": "t046.jpg",
+   "s": 1337.0
+  },
+  {
+   "t": 48,
+   "frame": "t048.jpg",
+   "s": 1424.5
+  },
+  {
+   "t": 52,
+   "frame": "t052.jpg",
+   "s": 1552.3
+  },
+  {
+   "t": 54,
+   "frame": "t054.jpg",
+   "s": 1606.4
+  },
+  {
+   "t": 56,
+   "frame": "t056.jpg",
+   "s": 1660.7
+  },
+  {
+   "t": 58,
+   "frame": "t058.jpg",
+   "s": 1712.2
+  },
+  {
+   "t": 60,
+   "frame": "t060.jpg",
+   "s": 1766.5
+  },
+  {
+   "t": 62,
+   "frame": "t062.jpg",
+   "s": 1831.2
+  },
+  {
+   "t": 64,
+   "frame": "t064.jpg",
+   "s": 1901.6
+  },
+  {
+   "t": 66,
+   "frame": "t066.jpg",
+   "s": 1962.1
+  },
+  {
+   "t": 68,
+   "frame": "t068.jpg",
+   "s": 2032.3
+  },
+  {
+   "t": 70,
+   "frame": "t070.jpg",
+   "s": 2104.8
+  },
+  {
+   "t": 72,
+   "frame": "t072.jpg",
+   "s": 2150.7
+  },
+  {
+   "t": 72.5,
+   "frame": "t072.jpg",
+   "s": 2157.8
+  },
+  {
+   "t": 74,
+   "frame": "t074.jpg",
+   "s": 2187.6
+  },
+  {
+   "t": 76.5,
+   "frame": "t076.jpg",
+   "s": 2268.3
+  },
+  {
+   "t": 77,
+   "frame": "t077.jpg",
+   "s": 2280.9
+  },
+  {
+   "t": 78,
+   "frame": "t078.jpg",
+   "s": 2297.0
+  },
+  {
+   "t": 80,
+   "frame": "t080.jpg",
+   "s": 2337.5
+  },
+  {
+   "t": 82.5,
+   "frame": "t082.jpg",
+   "s": 2405.4
+  },
+  {
+   "t": 84,
+   "frame": "t084.jpg",
+   "s": 2452.1
+  },
+  {
+   "t": 85,
+   "frame": "t085.jpg",
+   "s": 2482.5
+  },
+  {
+   "t": 85.5,
+   "frame": "t086.jpg",
+   "s": 2497.4
+  },
+  {
+   "t": 86,
+   "frame": "t086.jpg",
+   "s": 2514.3
+  },
+  {
+   "t": 88,
+   "frame": "t088.jpg",
+   "s": 2590.7
+  },
+  {
+   "t": 90,
+   "frame": "t090.jpg",
+   "s": 2662.9
+  },
+  {
+   "t": 92,
+   "frame": "t092.jpg",
+   "s": 2731.6
+  },
+  {
+   "t": 94,
+   "frame": "t094.jpg",
+   "s": 2811.8
+  },
+  {
+   "t": 96,
+   "frame": "t096.jpg",
+   "s": 2909.0
+  },
+  {
+   "t": 98,
+   "frame": "t098.jpg",
+   "s": 3001.0
+  },
+  {
+   "t": 100,
+   "frame": "t100.jpg",
+   "s": 3048.8
+  },
+  {
+   "t": 101.7,
+   "frame": "t102.jpg",
+   "s": 3083.1
+  },
+  {
+   "t": 104,
+   "frame": "t104.jpg",
+   "s": 3113.0
+  },
+  {
+   "t": 106,
+   "frame": "t106.jpg",
+   "s": 3146.9
+  },
+  {
+   "t": 108,
+   "frame": "t108.jpg",
+   "s": 3188.3
+  },
+  {
+   "t": 109.7,
+   "frame": "t110.jpg",
+   "s": 3228.7
+  },
+  {
+   "t": 110,
+   "frame": "t110.jpg",
+   "s": 3237.5
+  },
+  {
+   "t": 112,
+   "frame": "t112.jpg",
+   "s": 3301.3
+  },
+  {
+   "t": 114,
+   "frame": "t114.jpg",
+   "s": 3374.1
+  },
+  {
+   "t": 116,
+   "frame": "t116.jpg",
+   "s": 3457.4
+  },
+  {
+   "t": 118,
+   "frame": "t118.jpg",
+   "s": 3547.7
+  },
+  {
+   "t": 120,
+   "frame": "t120.jpg",
+   "s": 3616.2
+  },
+  {
+   "t": 122,
+   "frame": "t122.jpg",
+   "s": 3657.1
+  },
+  {
+   "t": 123.3,
+   "frame": "t123.jpg",
+   "s": 3676.7
+  },
+  {
+   "t": 124,
+   "frame": "t124.jpg",
+   "s": 3687.9
+  },
+  {
+   "t": 126,
+   "frame": "t126.jpg",
+   "s": 3724.7
+  },
+  {
+   "t": 128,
+   "frame": "t128.jpg",
+   "s": 3773.6
+  },
+  {
+   "t": 130,
+   "frame": "t130.jpg",
+   "s": 3835.3
+  },
+  {
+   "t": 132,
+   "frame": "t132.jpg",
+   "s": 3909.0
+  },
+  {
+   "t": 133,
+   "frame": "t133.jpg",
+   "s": 3941.1
+  },
+  {
+   "t": 134,
+   "frame": "t134.jpg",
+   "s": 3966.8
+  },
+  {
+   "t": 136,
+   "frame": "t136.jpg",
+   "s": 4025.3
+  },
+  {
+   "t": 138,
+   "frame": "t138.jpg",
+   "s": 4093.3
+  },
+  {
+   "t": 140,
+   "frame": "t140.jpg",
+   "s": 80.6
+  },
+  {
+   "t": 142,
+   "frame": "t142.jpg",
+   "s": 147.3
+  },
+  {
+   "t": 144,
+   "frame": "t144.jpg",
+   "s": 225.2
+  }
+ ],
+ "kinds": {
+  "physical": [
+   "wall",
+   "fence",
+   "kerb",
+   "tyre_wall",
+   "tyre_stack",
+   "stand",
+   "station",
+   "bridge",
+   "building",
+   "mast",
+   "cone_line"
+  ],
+  "other": [
+   "boards",
+   "paint",
+   "runoff",
+   "tower",
+   "pit_lane",
+   "sign"
+  ]
+ },
+ "height_methods": [
+  "jersey-ref",
+  "safer-ref",
+  "fence-post-ref",
+  "tyre-ref",
+  "cone-ref",
+  "person-ref",
+  "car-ref",
+  "door-ref",
+  "horizon-ratio",
+  "storeys",
+  "shadow",
+  "lidar",
+  "unmeasured"
+ ],
+ "rows": [
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete pit wall",
+    "colour": "light blue",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 2,
+   "s": 40.3,
+   "source": "onboard:RAZip6S84CM@2.0",
+   "frame": "t002.jpg",
+   "scope": "lap",
+   "note": "H 1.55 m (camh on this video, HEIGHTS.md ex. 2), horizon row ~600/1080"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete (drag-strip wall)",
+    "colour": "light blue",
+    "h_m": 0.9,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 2,
+   "s": 40.3,
+   "source": "onboard:RAZip6S84CM@2.0",
+   "frame": "t002.jpg",
+   "scope": "lap",
+   "note": "H 1.55 m (camh on this video, HEIGHTS.md ex. 2), horizon row ~600/1080"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete pit wall",
+    "colour": "light blue"
+   },
+   "confidence": 0.8,
+   "t": 140,
+   "s": 80.6,
+   "source": "onboard:RAZip6S84CM@140.0",
+   "frame": "t140.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "building",
+   "attrs": {
+    "type": "pit-out buildings, red roofs"
+   },
+   "confidence": 0.7,
+   "t": 4,
+   "s": 112.8,
+   "source": "onboard:RAZip6S84CM@4.0",
+   "frame": "t004.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete pit wall",
+    "colour": "light blue"
+   },
+   "confidence": 0.8,
+   "t": 4,
+   "s": 112.8,
+   "source": "onboard:RAZip6S84CM@4.0",
+   "frame": "t004.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "building",
+   "attrs": {
+    "type": "red-roof building"
+   },
+   "confidence": 0.7,
+   "t": 142,
+   "s": 147.3,
+   "source": "onboard:RAZip6S84CM@142.0",
+   "frame": "t142.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete pit wall",
+    "colour": "light blue"
+   },
+   "confidence": 0.8,
+   "t": 142,
+   "s": 147.3,
+   "source": "onboard:RAZip6S84CM@142.0",
+   "frame": "t142.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "kerb",
+    "colour": "red/white",
+    "raised": "flat"
+   },
+   "confidence": 0.9,
+   "t": 5.5,
+   "s": 166.0,
+   "source": "onboard:RAZip6S84CM@5.5",
+   "frame": "t006.jpg",
+   "scope": "lap",
+   "note": "T1 right kerb, frame d005.5"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete pit-out wall with catch fence",
+    "colour": "light blue",
+    "fence_m": 3.0
+   },
+   "confidence": 0.7,
+   "t": 6,
+   "s": 185.6,
+   "source": "onboard:RAZip6S84CM@6.0",
+   "frame": "t006.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete pit-out wall",
+    "colour": "light blue"
+   },
+   "confidence": 0.7,
+   "t": 144,
+   "s": 225.2,
+   "source": "onboard:RAZip6S84CM@144.0",
+   "frame": "t144.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "both",
+   "kind": "boards",
+   "attrs": {
+    "type": "bridge banners",
+    "colour": "SAVE MART white/red, GR TOYOTA GAZOO RACING red, GR white, SUNOCO LAS VEGAS blue"
+   },
+   "confidence": 0.9,
+   "t": 8,
+   "s": 262.5,
+   "source": "onboard:RAZip6S84CM@8.0",
+   "frame": "t008.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "tyre_wall",
+   "attrs": {
+    "type": "tyre wall",
+    "colour": "black"
+   },
+   "confidence": 0.6,
+   "t": 8,
+   "s": 262.5,
+   "source": "onboard:RAZip6S84CM@8.0",
+   "frame": "t008.jpg",
+   "scope": "lap",
+   "note": "dark band at the foot of the T2 bank beyond the footbridge"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "Jersey stub",
+    "colour": "white",
+    "h_m": 0.81,
+    "h_method": "jersey-ref"
+   },
+   "confidence": 0.6,
+   "t": 8,
+   "s": 262.5,
+   "source": "onboard:RAZip6S84CM@8.0",
+   "frame": "t008.jpg",
+   "scope": "lap",
+   "note": "short white Jersey left before the footbridge"
+  },
+  {
+   "side": "ahead",
+   "kind": "bridge",
+   "attrs": {
+    "type": "footbridge",
+    "colour": "banners Save Mart / GR Toyota Gazoo Racing / Sunoco Las Vegas",
+    "ahead_m": 0.0
+   },
+   "confidence": 0.95,
+   "t": 8.95,
+   "s": 295.3,
+   "source": "onboard:RAZip6S84CM@8.9",
+   "frame": "t009.jpg",
+   "scope": "lap",
+   "note": "passes overhead 8.9-9.0 (anchor)"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "kerb",
+    "colour": "red/white",
+    "raised": "flat"
+   },
+   "confidence": 0.9,
+   "t": 10,
+   "s": 321.3,
+   "source": "onboard:RAZip6S84CM@10.0",
+   "frame": "t010.jpg",
+   "scope": "lap",
+   "note": "T2 approach left kerb"
+  },
+  {
+   "side": "left",
+   "kind": "tyre_wall",
+   "attrs": {
+    "type": "tyre wall",
+    "colour": "black"
+   },
+   "confidence": 0.6,
+   "t": 10,
+   "s": 321.3,
+   "source": "onboard:RAZip6S84CM@10.0",
+   "frame": "t010.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "stand",
+   "attrs": {
+    "type": "hillside terrace (T2)"
+   },
+   "confidence": 0.8,
+   "t": 12,
+   "s": 371.7,
+   "source": "onboard:RAZip6S84CM@12.0",
+   "frame": "t012.jpg",
+   "scope": "lap",
+   "note": "terrace rows on the bank with catch fence at its foot"
+  },
+  {
+   "side": "left",
+   "kind": "station",
+   "attrs": {
+    "type": "marshal post (white hut)",
+    "colour": "white"
+   },
+   "confidence": 0.5,
+   "t": 13.5,
+   "s": 401.0,
+   "source": "onboard:RAZip6S84CM@13.5",
+   "frame": "t014.jpg",
+   "scope": "lap",
+   "note": "small white structure at the foot of the T2 terrace, d013.5"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "kerb",
+    "colour": "blue/white (2011)",
+    "raised": "flat"
+   },
+   "confidence": 0.6,
+   "t": null,
+   "s": 405.0,
+   "source": "streetview:H9xspk4q_OoFIjVDhaMzDA@210",
+   "frame": "",
+   "scope": "lap",
+   "note": "Jul 2011 panorama; repainted red/white by 2026 (onboard 0:14)"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence along the terrace foot",
+    "h_m": 3.0,
+    "h_method": "unmeasured"
+   },
+   "confidence": 0.7,
+   "t": 14,
+   "s": 409.1,
+   "source": "onboard:RAZip6S84CM@14.0",
+   "frame": "t014.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "tyre_wall",
+   "attrs": {
+    "type": "tyre wall",
+    "colour": "black"
+   },
+   "confidence": 0.6,
+   "t": 14,
+   "s": 409.1,
+   "source": "onboard:RAZip6S84CM@14.0",
+   "frame": "t014.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "kerb",
+    "colour": "red/white",
+    "raised": "flat"
+   },
+   "confidence": 0.95,
+   "t": 14,
+   "s": 409.1,
+   "source": "onboard:RAZip6S84CM@14.0",
+   "frame": "t014.jpg",
+   "scope": "lap",
+   "note": "T2 apex"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "kerb",
+    "colour": "red/white",
+    "raised": "flat"
+   },
+   "confidence": 0.9,
+   "t": 16,
+   "s": 453.9,
+   "source": "onboard:RAZip6S84CM@16.0",
+   "frame": "t016.jpg",
+   "scope": "lap",
+   "note": "T2 exit left"
+  },
+  {
+   "side": "left",
+   "kind": "stand",
+   "attrs": {
+    "type": "hillside terrace (T2)"
+   },
+   "confidence": 0.8,
+   "t": 16,
+   "s": 453.9,
+   "source": "onboard:RAZip6S84CM@16.0",
+   "frame": "t016.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "tyre_wall",
+   "attrs": {
+    "type": "low dark barrier at the bank foot",
+    "colour": "black"
+   },
+   "confidence": 0.5,
+   "t": 18,
+   "s": 507.7,
+   "source": "onboard:RAZip6S84CM@18.0",
+   "frame": "t018.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "boards",
+   "attrs": {
+    "type": "boards on posts (brown/yellow)"
+   },
+   "confidence": 0.5,
+   "t": 20,
+   "s": 574.4,
+   "source": "onboard:RAZip6S84CM@20.0",
+   "frame": "t020.jpg",
+   "scope": "lap",
+   "note": "far right ahead, T3 area"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "kerb",
+    "colour": "red/white",
+    "raised": "flat"
+   },
+   "confidence": 0.95,
+   "t": 24,
+   "s": 710.4,
+   "source": "onboard:RAZip6S84CM@24.0",
+   "frame": "t024.jpg",
+   "scope": "lap",
+   "note": "T3 apex"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "kerb",
+    "colour": "red/white",
+    "raised": "flat"
+   },
+   "confidence": 0.95,
+   "t": 27.3,
+   "s": 801.2,
+   "source": "onboard:RAZip6S84CM@27.3",
+   "frame": "t027.jpg",
+   "scope": "lap",
+   "note": "T3a apex"
+  },
+  {
+   "side": "right",
+   "kind": "station",
+   "attrs": {
+    "type": "marshal tower (white hut on legs)",
+    "colour": "white"
+   },
+   "confidence": 0.8,
+   "t": 27.5,
+   "s": 805.0,
+   "source": "onboard:RAZip6S84CM@27.5",
+   "frame": "t028.jpg",
+   "scope": "lap",
+   "note": "right, T3a outside, 0:25-0:28"
+  },
+  {
+   "side": "left",
+   "kind": "stand",
+   "attrs": {
+    "type": "hillside terrace (T3a-T4)"
+   },
+   "confidence": 0.85,
+   "t": 28,
+   "s": 815.0,
+   "source": "onboard:RAZip6S84CM@28.0",
+   "frame": "t028.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "tyre_stack",
+   "attrs": {
+    "type": "black tyre stacks at the terrace foot",
+    "colour": "black"
+   },
+   "confidence": 0.5,
+   "t": 29,
+   "s": 836.7,
+   "source": "onboard:RAZip6S84CM@29.0",
+   "frame": "t029.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "kerb",
+    "colour": "red/white",
+    "raised": "flat"
+   },
+   "confidence": 0.9,
+   "t": 30,
+   "s": 860.9,
+   "source": "onboard:RAZip6S84CM@30.0",
+   "frame": "t030.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "Jersey",
+    "colour": "white",
+    "h_m": 0.81,
+    "h_method": "jersey-ref"
+   },
+   "confidence": 0.7,
+   "t": 30,
+   "s": 860.9,
+   "source": "onboard:RAZip6S84CM@30.0",
+   "frame": "t030.jpg",
+   "scope": "lap",
+   "note": "at the terrace foot"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "kerb",
+    "colour": "red/white",
+    "raised": "flat"
+   },
+   "confidence": 0.8,
+   "t": 32,
+   "s": 917.1,
+   "source": "onboard:RAZip6S84CM@32.0",
+   "frame": "t032.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "Jersey",
+    "colour": "white",
+    "h_m": 0.81,
+    "h_method": "jersey-ref"
+   },
+   "confidence": 0.7,
+   "t": 32,
+   "s": 917.1,
+   "source": "onboard:RAZip6S84CM@32.0",
+   "frame": "t032.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "cone_line",
+   "attrs": {
+    "type": "delineator pylons across the Chute mouth",
+    "colour": "orange/white"
+   },
+   "confidence": 0.8,
+   "t": 34,
+   "s": 974.0,
+   "source": "onboard:RAZip6S84CM@34.0",
+   "frame": "t034.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "boards",
+   "attrs": {
+    "type": "O'Reilly board run across the infield",
+    "colour": "red/white"
+   },
+   "confidence": 0.6,
+   "t": 36,
+   "s": 1009.3,
+   "source": "onboard:RAZip6S84CM@36.0",
+   "frame": "t036.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "kerb",
+    "colour": "red/white",
+    "raised": "flat"
+   },
+   "confidence": 0.95,
+   "t": 36,
+   "s": 1009.3,
+   "source": "onboard:RAZip6S84CM@36.0",
+   "frame": "t036.jpg",
+   "scope": "lap",
+   "note": "T4 apex"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "kerb",
+    "colour": "red/white",
+    "raised": "flat"
+   },
+   "confidence": 0.9,
+   "t": 38,
+   "s": 1052.7,
+   "source": "onboard:RAZip6S84CM@38.0",
+   "frame": "t038.jpg",
+   "scope": "lap",
+   "note": "T4 exit"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "Jersey at the bank foot",
+    "colour": "white",
+    "h_m": 0.9,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.7,
+   "t": 38,
+   "s": 1052.7,
+   "source": "onboard:RAZip6S84CM@38.0",
+   "frame": "t038.jpg",
+   "scope": "lap",
+   "note": "H 1.55 m (camh on this video, HEIGHTS.md ex. 2), horizon row ~600/1080"
+  },
+  {
+   "side": "left",
+   "kind": "tyre_wall",
+   "attrs": {
+    "type": "stacked tyres",
+    "colour": "black"
+   },
+   "confidence": 0.7,
+   "t": 40,
+   "s": 1111.3,
+   "source": "onboard:RAZip6S84CM@40.0",
+   "frame": "t040.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete at the bank foot",
+    "colour": "white",
+    "h_m": 1.1,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 40,
+   "s": 1111.3,
+   "source": "onboard:RAZip6S84CM@40.0",
+   "frame": "t040.jpg",
+   "scope": "lap",
+   "note": "t044 col 1700 rows 625/705; H 1.55 m (camh on this video, HEIGHTS.md ex. 2), horizon row ~600/1080"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "plain kerb strip",
+    "colour": "yellow",
+    "raised": "flat"
+   },
+   "confidence": 0.7,
+   "t": 42,
+   "s": 1183.6,
+   "source": "onboard:RAZip6S84CM@42.0",
+   "frame": "t042.jpg",
+   "scope": "lap",
+   "note": "T5 inside: plain yellow/orange strip"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete",
+    "colour": "white",
+    "h_m": 1.1,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 42,
+   "s": 1183.6,
+   "source": "onboard:RAZip6S84CM@42.0",
+   "frame": "t042.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete",
+    "colour": "white",
+    "h_m": 1.1,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 44,
+   "s": 1261.5,
+   "source": "onboard:RAZip6S84CM@44.0",
+   "frame": "t044.jpg",
+   "scope": "lap",
+   "note": "t044 col 1700 rows 625/705"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete",
+    "colour": "white"
+   },
+   "confidence": 0.8,
+   "t": 46,
+   "s": 1337.0,
+   "source": "onboard:RAZip6S84CM@46.0",
+   "frame": "t046.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "ahead",
+   "kind": "tower",
+   "attrs": {
+    "type": "tall dark tower (infield)"
+   },
+   "confidence": 0.9,
+   "t": 48,
+   "s": 1424.5,
+   "source": "onboard:RAZip6S84CM@48.0",
+   "frame": "t048.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete",
+    "colour": "white"
+   },
+   "confidence": 0.7,
+   "t": 48,
+   "s": 1424.5,
+   "source": "onboard:RAZip6S84CM@48.0",
+   "frame": "t048.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "tower",
+   "attrs": {
+    "type": "tall dark tower (infield, green light)"
+   },
+   "confidence": 0.9,
+   "t": 52,
+   "s": 1552.3,
+   "source": "onboard:RAZip6S84CM@52.0",
+   "frame": "t052.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "kerb",
+    "colour": "red/white",
+    "raised": "flat"
+   },
+   "confidence": 0.7,
+   "t": 54,
+   "s": 1606.4,
+   "source": "onboard:RAZip6S84CM@54.0",
+   "frame": "t054.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "tyre_wall",
+   "attrs": {
+    "type": "tyre lines",
+    "colour": "black"
+   },
+   "confidence": 0.5,
+   "t": 54,
+   "s": 1606.4,
+   "source": "onboard:RAZip6S84CM@54.0",
+   "frame": "t054.jpg",
+   "scope": "lap",
+   "note": "far right, drag strip side"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "kerb",
+    "colour": "red/white",
+    "raised": "flat"
+   },
+   "confidence": 0.85,
+   "t": 56,
+   "s": 1660.7,
+   "source": "onboard:RAZip6S84CM@56.0",
+   "frame": "t056.jpg",
+   "scope": "lap",
+   "note": "Carousel exit"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete with dark head section",
+    "colour": "light blue / black head"
+   },
+   "confidence": 0.8,
+   "t": 58,
+   "s": 1712.2,
+   "source": "onboard:RAZip6S84CM@58.0",
+   "frame": "t058.jpg",
+   "scope": "lap",
+   "note": "T6-T7 left wall starts with a dark section"
+  },
+  {
+   "side": "right",
+   "kind": "paint",
+   "attrs": {
+    "type": "drag strip lane line",
+    "colour": "yellow"
+   },
+   "confidence": 0.9,
+   "t": 58,
+   "s": 1712.2,
+   "source": "onboard:RAZip6S84CM@58.0",
+   "frame": "t058.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "Jersey",
+    "colour": "light blue",
+    "h_m": 1.05,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 60,
+   "s": 1766.5,
+   "source": "onboard:RAZip6S84CM@60.0",
+   "frame": "t060.jpg",
+   "scope": "lap",
+   "note": "t060 col 300 rows 615/648; H 1.55 m (camh on this video, HEIGHTS.md ex. 2), horizon row ~600/1080"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "kerb",
+    "colour": "red/white",
+    "raised": "flat"
+   },
+   "confidence": 0.95,
+   "t": 60,
+   "s": 1766.5,
+   "source": "onboard:RAZip6S84CM@60.0",
+   "frame": "t060.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "Jersey",
+    "colour": "light blue"
+   },
+   "confidence": 0.8,
+   "t": 62,
+   "s": 1831.2,
+   "source": "onboard:RAZip6S84CM@62.0",
+   "frame": "t062.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "Jersey",
+    "colour": "light blue"
+   },
+   "confidence": 0.8,
+   "t": 64,
+   "s": 1901.6,
+   "source": "onboard:RAZip6S84CM@64.0",
+   "frame": "t064.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "Jersey",
+    "colour": "light blue"
+   },
+   "confidence": 0.8,
+   "t": 66,
+   "s": 1962.1,
+   "source": "onboard:RAZip6S84CM@66.0",
+   "frame": "t066.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "Jersey",
+    "colour": "light blue"
+   },
+   "confidence": 0.8,
+   "t": 68,
+   "s": 2032.3,
+   "source": "onboard:RAZip6S84CM@68.0",
+   "frame": "t068.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "boards",
+   "attrs": {
+    "type": "boards on posts behind the wall",
+    "colour": "TOYOTA red/white, brown fence"
+   },
+   "confidence": 0.8,
+   "t": 70,
+   "s": 2104.8,
+   "source": "onboard:RAZip6S84CM@70.0",
+   "frame": "t070.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "Jersey",
+    "colour": "light blue"
+   },
+   "confidence": 0.8,
+   "t": 70,
+   "s": 2104.8,
+   "source": "onboard:RAZip6S84CM@70.0",
+   "frame": "t070.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "ahead",
+   "kind": "boards",
+   "attrs": {
+    "type": "PIRELLI board",
+    "colour": "yellow/red"
+   },
+   "confidence": 0.7,
+   "t": 72,
+   "s": 2150.7,
+   "source": "onboard:RAZip6S84CM@72.0",
+   "frame": "t072.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "station",
+   "attrs": {
+    "type": "marshal tower (white hut on legs) behind the wall",
+    "colour": "white"
+   },
+   "confidence": 0.9,
+   "t": 72,
+   "s": 2150.7,
+   "source": "onboard:RAZip6S84CM@72.0",
+   "frame": "t072.jpg",
+   "scope": "lap",
+   "note": "T7, 0:71.5-0:72.5"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "kerb",
+    "colour": "red/white",
+    "raised": "flat"
+   },
+   "confidence": 0.95,
+   "t": 72.5,
+   "s": 2157.8,
+   "source": "onboard:RAZip6S84CM@72.5",
+   "frame": "t072.jpg",
+   "scope": "lap",
+   "note": "T7 apex"
+  },
+  {
+   "side": "left",
+   "kind": "tyre_stack",
+   "attrs": {
+    "type": "black tyre stacks along the paddock edge",
+    "colour": "black"
+   },
+   "confidence": 0.6,
+   "t": 74,
+   "s": 2187.6,
+   "source": "onboard:RAZip6S84CM@74.0",
+   "frame": "t074.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "cone_line",
+   "attrs": {
+    "type": "delineator pylons at the island",
+    "colour": "orange/white"
+   },
+   "confidence": 0.7,
+   "t": 74,
+   "s": 2187.6,
+   "source": "onboard:RAZip6S84CM@74.0",
+   "frame": "t074.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "island kerb",
+    "colour": "red/white",
+    "raised": "flat"
+   },
+   "confidence": 0.9,
+   "t": 76.5,
+   "s": 2268.3,
+   "source": "onboard:RAZip6S84CM@76.5",
+   "frame": "t076.jpg",
+   "scope": "lap",
+   "note": "T7a"
+  },
+  {
+   "side": "right",
+   "kind": "mast",
+   "attrs": {
+    "type": "light mast"
+   },
+   "confidence": 0.9,
+   "t": 77,
+   "s": 2280.9,
+   "source": "onboard:RAZip6S84CM@77.0",
+   "frame": "t077.jpg",
+   "scope": "lap",
+   "note": "on the island, base with tyre stack"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "kerb",
+    "colour": "red/white",
+    "raised": "flat"
+   },
+   "confidence": 0.9,
+   "t": 78,
+   "s": 2297.0,
+   "source": "onboard:RAZip6S84CM@78.0",
+   "frame": "t078.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "kerb",
+    "colour": "red/white",
+    "raised": "flat"
+   },
+   "confidence": 0.8,
+   "t": 80,
+   "s": 2337.5,
+   "source": "onboard:RAZip6S84CM@80.0",
+   "frame": "t080.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete (far)",
+    "colour": "white"
+   },
+   "confidence": 0.5,
+   "t": 80,
+   "s": 2337.5,
+   "source": "onboard:RAZip6S84CM@80.0",
+   "frame": "t080.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "kerb",
+    "colour": "red/white",
+    "raised": "flat"
+   },
+   "confidence": 0.95,
+   "t": 82.5,
+   "s": 2405.4,
+   "source": "onboard:RAZip6S84CM@82.5",
+   "frame": "t082.jpg",
+   "scope": "lap",
+   "note": "T8"
+  },
+  {
+   "side": "right",
+   "kind": "mast",
+   "attrs": {
+    "type": "light mast"
+   },
+   "confidence": 0.8,
+   "t": 84,
+   "s": 2452.1,
+   "source": "onboard:RAZip6S84CM@84.0",
+   "frame": "t084.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "dark concrete wall",
+    "colour": "dark grey"
+   },
+   "confidence": 0.6,
+   "t": 85,
+   "s": 2482.5,
+   "source": "onboard:RAZip6S84CM@85.0",
+   "frame": "t085.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "kerb",
+    "colour": "red/white",
+    "raised": "flat"
+   },
+   "confidence": 0.95,
+   "t": 85.5,
+   "s": 2497.4,
+   "source": "onboard:RAZip6S84CM@85.5",
+   "frame": "t086.jpg",
+   "scope": "lap",
+   "note": "T8a"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete",
+    "colour": "light grey"
+   },
+   "confidence": 0.7,
+   "t": 86,
+   "s": 2514.3,
+   "source": "onboard:RAZip6S84CM@86.0",
+   "frame": "t086.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "kerb",
+    "colour": "red/white",
+    "raised": "flat"
+   },
+   "confidence": 0.9,
+   "t": 88,
+   "s": 2590.7,
+   "source": "onboard:RAZip6S84CM@88.0",
+   "frame": "t088.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete beyond grass",
+    "colour": "white"
+   },
+   "confidence": 0.6,
+   "t": 88,
+   "s": 2590.7,
+   "source": "onboard:RAZip6S84CM@88.0",
+   "frame": "t088.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "stand",
+   "attrs": {
+    "type": "back-straight terrace"
+   },
+   "confidence": 0.9,
+   "t": 90,
+   "s": 2662.9,
+   "source": "onboard:RAZip6S84CM@90.0",
+   "frame": "t090.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "dark concrete at the terrace foot",
+    "colour": "dark grey"
+   },
+   "confidence": 0.7,
+   "t": 90,
+   "s": 2662.9,
+   "source": "onboard:RAZip6S84CM@90.0",
+   "frame": "t090.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "kerb",
+    "colour": "red/white",
+    "raised": "flat"
+   },
+   "confidence": 0.9,
+   "t": 90,
+   "s": 2662.9,
+   "source": "onboard:RAZip6S84CM@90.0",
+   "frame": "t090.jpg",
+   "scope": "lap",
+   "note": "T9"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence on the wall",
+    "h_m": 4.5,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.7,
+   "t": 92,
+   "s": 2731.6,
+   "source": "onboard:RAZip6S84CM@92.0",
+   "frame": "t092.jpg",
+   "scope": "lap",
+   "note": "t094 col 330: posts 95 px over a ~30 px wall"
+  },
+  {
+   "side": "right",
+   "kind": "cone_line",
+   "attrs": {
+    "type": "orange cones at the bypass mouth",
+    "colour": "orange"
+   },
+   "confidence": 0.7,
+   "t": 92,
+   "s": 2731.6,
+   "source": "onboard:RAZip6S84CM@92.0",
+   "frame": "t092.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence on the wall",
+    "h_m": 4.5,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.8,
+   "t": 94,
+   "s": 2811.8,
+   "source": "onboard:RAZip6S84CM@94.0",
+   "frame": "t094.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "stand",
+   "attrs": {
+    "type": "back-straight terrace with shade roof"
+   },
+   "confidence": 0.9,
+   "t": 94,
+   "s": 2811.8,
+   "source": "onboard:RAZip6S84CM@94.0",
+   "frame": "t094.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete",
+    "colour": "white",
+    "h_m": 1.0,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.8,
+   "t": 94,
+   "s": 2811.8,
+   "source": "onboard:RAZip6S84CM@94.0",
+   "frame": "t094.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "cone_line",
+   "attrs": {
+    "type": "single marker cone",
+    "colour": "orange"
+   },
+   "confidence": 0.6,
+   "t": 96,
+   "s": 2909.0,
+   "source": "onboard:RAZip6S84CM@96.0",
+   "frame": "t096.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete",
+    "colour": "white"
+   },
+   "confidence": 0.8,
+   "t": 96,
+   "s": 2909.0,
+   "source": "onboard:RAZip6S84CM@96.0",
+   "frame": "t096.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "cone_line",
+   "attrs": {
+    "type": "single marker cone",
+    "colour": "orange"
+   },
+   "confidence": 0.6,
+   "t": 98,
+   "s": 3001.0,
+   "source": "onboard:RAZip6S84CM@98.0",
+   "frame": "t098.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence"
+   },
+   "confidence": 0.8,
+   "t": 98,
+   "s": 3001.0,
+   "source": "onboard:RAZip6S84CM@98.0",
+   "frame": "t098.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete",
+    "colour": "white"
+   },
+   "confidence": 0.8,
+   "t": 98,
+   "s": 3001.0,
+   "source": "onboard:RAZip6S84CM@98.0",
+   "frame": "t098.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "kerb",
+    "colour": "red/white",
+    "raised": "flat"
+   },
+   "confidence": 0.95,
+   "t": 100,
+   "s": 3048.8,
+   "source": "onboard:RAZip6S84CM@100.0",
+   "frame": "t100.jpg",
+   "scope": "lap",
+   "note": "9a right part"
+  },
+  {
+   "side": "right",
+   "kind": "tyre_stack",
+   "attrs": {
+    "type": "two-tyre stack",
+    "colour": "black",
+    "h_m": 0.42,
+    "h_method": "tyre-ref"
+   },
+   "confidence": 0.8,
+   "t": 100,
+   "s": 3048.8,
+   "source": "onboard:RAZip6S84CM@100.0",
+   "frame": "t100.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "kerb",
+    "colour": "red/white",
+    "raised": "flat"
+   },
+   "confidence": 0.95,
+   "t": 101.7,
+   "s": 3083.1,
+   "source": "onboard:RAZip6S84CM@101.7",
+   "frame": "t102.jpg",
+   "scope": "lap",
+   "note": "9a left part"
+  },
+  {
+   "side": "left",
+   "kind": "boards",
+   "attrs": {
+    "type": "SONOMA RACEWAY / SUNBELT RENTALS / TOYOTA",
+    "colour": "black/white, green/white, white/red"
+   },
+   "confidence": 0.9,
+   "t": 104,
+   "s": 3113.0,
+   "source": "onboard:RAZip6S84CM@104.0",
+   "frame": "t104.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "tall board wall",
+    "colour": "black SONOMA RACEWAY, green SUNBELT",
+    "h_m": 3.98,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 104,
+   "s": 3113.0,
+   "source": "onboard:RAZip6S84CM@104.0",
+   "frame": "t104.jpg",
+   "scope": "lap",
+   "note": "HEIGHTS.md ex. 2 on this video at 1:50"
+  },
+  {
+   "side": "right",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence on the wall",
+    "h_m": 4.0,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.8,
+   "t": 104,
+   "s": 3113.0,
+   "source": "onboard:RAZip6S84CM@104.0",
+   "frame": "t104.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete",
+    "colour": "white",
+    "h_m": 1.0,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.8,
+   "t": 104,
+   "s": 3113.0,
+   "source": "onboard:RAZip6S84CM@104.0",
+   "frame": "t104.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "tall board wall",
+    "h_m": 3.98,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 106,
+   "s": 3146.9,
+   "source": "onboard:RAZip6S84CM@106.0",
+   "frame": "t106.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence",
+    "h_m": 4.0,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.8,
+   "t": 106,
+   "s": 3146.9,
+   "source": "onboard:RAZip6S84CM@106.0",
+   "frame": "t106.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete",
+    "colour": "white"
+   },
+   "confidence": 0.8,
+   "t": 106,
+   "s": 3146.9,
+   "source": "onboard:RAZip6S84CM@106.0",
+   "frame": "t106.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "boards",
+   "attrs": {
+    "type": "TOYOTA",
+    "colour": "white/red"
+   },
+   "confidence": 0.9,
+   "t": 108,
+   "s": 3188.3,
+   "source": "onboard:RAZip6S84CM@108.0",
+   "frame": "t108.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "tall board wall",
+    "h_m": 3.98,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 108,
+   "s": 3188.3,
+   "source": "onboard:RAZip6S84CM@108.0",
+   "frame": "t108.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence",
+    "h_m": 4.0,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.8,
+   "t": 108,
+   "s": 3188.3,
+   "source": "onboard:RAZip6S84CM@108.0",
+   "frame": "t108.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete",
+    "colour": "white"
+   },
+   "confidence": 0.8,
+   "t": 108,
+   "s": 3188.3,
+   "source": "onboard:RAZip6S84CM@108.0",
+   "frame": "t108.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "kerb",
+    "colour": "red/white",
+    "raised": "flat"
+   },
+   "confidence": 0.95,
+   "t": 109.7,
+   "s": 3228.7,
+   "source": "onboard:RAZip6S84CM@109.7",
+   "frame": "t110.jpg",
+   "scope": "lap",
+   "note": "T10"
+  },
+  {
+   "side": "left",
+   "kind": "boards",
+   "attrs": {
+    "type": "HUMBOLDT / SAVE MART / ZMAX",
+    "colour": "white/black, white/red"
+   },
+   "confidence": 0.9,
+   "t": 110,
+   "s": 3237.5,
+   "source": "onboard:RAZip6S84CM@110.0",
+   "frame": "t110.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "tall board wall",
+    "h_m": 3.98,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.9,
+   "t": 110,
+   "s": 3237.5,
+   "source": "onboard:RAZip6S84CM@110.0",
+   "frame": "t110.jpg",
+   "scope": "lap",
+   "note": "HEIGHTS.md ex. 2"
+  },
+  {
+   "side": "right",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence",
+    "h_m": 4.0,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.8,
+   "t": 110,
+   "s": 3237.5,
+   "source": "onboard:RAZip6S84CM@110.0",
+   "frame": "t110.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete",
+    "colour": "white"
+   },
+   "confidence": 0.8,
+   "t": 110,
+   "s": 3237.5,
+   "source": "onboard:RAZip6S84CM@110.0",
+   "frame": "t110.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "boards",
+   "attrs": {
+    "type": "ZMAX",
+    "colour": "white/red"
+   },
+   "confidence": 0.9,
+   "t": 112,
+   "s": 3301.3,
+   "source": "onboard:RAZip6S84CM@112.0",
+   "frame": "t112.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "tall board wall",
+    "h_m": 3.98,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 112,
+   "s": 3301.3,
+   "source": "onboard:RAZip6S84CM@112.0",
+   "frame": "t112.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence",
+    "h_m": 4.0,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.8,
+   "t": 112,
+   "s": 3301.3,
+   "source": "onboard:RAZip6S84CM@112.0",
+   "frame": "t112.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete",
+    "colour": "white"
+   },
+   "confidence": 0.8,
+   "t": 112,
+   "s": 3301.3,
+   "source": "onboard:RAZip6S84CM@112.0",
+   "frame": "t112.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "boards",
+   "attrs": {
+    "type": "ECHOPARK AUTOMOTIVE",
+    "colour": "black/green"
+   },
+   "confidence": 0.9,
+   "t": 114,
+   "s": 3374.1,
+   "source": "onboard:RAZip6S84CM@114.0",
+   "frame": "t114.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "tall board wall",
+    "h_m": 3.98,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 114,
+   "s": 3374.1,
+   "source": "onboard:RAZip6S84CM@114.0",
+   "frame": "t114.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence",
+    "h_m": 4.0,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.8,
+   "t": 114,
+   "s": 3374.1,
+   "source": "onboard:RAZip6S84CM@114.0",
+   "frame": "t114.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "tyre_wall",
+   "attrs": {
+    "type": "stacked tyres along the fence",
+    "colour": "black",
+    "h_m": 1.05,
+    "h_method": "tyre-ref"
+   },
+   "confidence": 0.8,
+   "t": 114,
+   "s": 3374.1,
+   "source": "onboard:RAZip6S84CM@114.0",
+   "frame": "t114.jpg",
+   "scope": "lap",
+   "note": "5 tyres high"
+  },
+  {
+   "side": "left",
+   "kind": "boards",
+   "attrs": {
+    "type": "LAS VEGAS",
+    "colour": "black/white"
+   },
+   "confidence": 0.9,
+   "t": 116,
+   "s": 3457.4,
+   "source": "onboard:RAZip6S84CM@116.0",
+   "frame": "t116.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "tall board wall (pit-in / paddock)",
+    "h_m": 5.3,
+    "h_method": "door-ref"
+   },
+   "confidence": 0.8,
+   "t": 116,
+   "s": 3457.4,
+   "source": "onboard:RAZip6S84CM@116.0",
+   "frame": "t116.jpg",
+   "scope": "lap",
+   "note": "door in the wall face; HEIGHTS.md ex. 4 (5.0-5.6 m) on this video at 1:56"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "Jersey in front (pit-in separation)",
+    "colour": "light blue",
+    "h_m": 0.81,
+    "h_method": "jersey-ref"
+   },
+   "confidence": 0.8,
+   "t": 116,
+   "s": 3457.4,
+   "source": "onboard:RAZip6S84CM@116.0",
+   "frame": "t116.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "boards",
+   "attrs": {
+    "type": "SAVE MART / LUCKY / FOODMAXX",
+    "colour": "white/red"
+   },
+   "confidence": 0.8,
+   "t": 118,
+   "s": 3547.7,
+   "source": "onboard:RAZip6S84CM@118.0",
+   "frame": "t118.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "cone_line",
+   "attrs": {
+    "type": "orange cones along the pit-in line",
+    "colour": "orange"
+   },
+   "confidence": 0.8,
+   "t": 118,
+   "s": 3547.7,
+   "source": "onboard:RAZip6S84CM@118.0",
+   "frame": "t118.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "Jersey (pit-in separation)",
+    "colour": "light blue",
+    "h_m": 0.81,
+    "h_method": "jersey-ref"
+   },
+   "confidence": 0.8,
+   "t": 118,
+   "s": 3547.7,
+   "source": "onboard:RAZip6S84CM@118.0",
+   "frame": "t118.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "boards",
+   "attrs": {
+    "type": "COCA-COLA",
+    "colour": "black/white"
+   },
+   "confidence": 0.8,
+   "t": 120,
+   "s": 3616.2,
+   "source": "onboard:RAZip6S84CM@120.0",
+   "frame": "t120.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "Jersey",
+    "colour": "light blue",
+    "h_m": 0.81,
+    "h_method": "jersey-ref"
+   },
+   "confidence": 0.8,
+   "t": 120,
+   "s": 3616.2,
+   "source": "onboard:RAZip6S84CM@120.0",
+   "frame": "t120.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "board wall with Jersey in front",
+    "h_m": 5.22,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.6,
+   "t": null,
+   "s": 3655.0,
+   "source": "streetview:jrXpHaDfJT2APw6zcyBKRA@40",
+   "frame": "",
+   "scope": "lap",
+   "note": "Jul 2011 panorama; HEIGHTS.md ex. 3; 2011 Sprint/Yokohama boards, 2026 boards differ (onboard 1:56)"
+  },
+  {
+   "side": "left",
+   "kind": "building",
+   "attrs": {
+    "type": "glass-front building beyond the pit road"
+   },
+   "confidence": 0.8,
+   "t": 122,
+   "s": 3657.1,
+   "source": "onboard:RAZip6S84CM@122.0",
+   "frame": "t122.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete (outside of T11)",
+    "colour": "light blue"
+   },
+   "confidence": 0.8,
+   "t": 122,
+   "s": 3657.1,
+   "source": "onboard:RAZip6S84CM@122.0",
+   "frame": "t122.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "tyre_stack",
+   "attrs": {
+    "type": "striped concrete blocks at the apex",
+    "colour": "red/white"
+   },
+   "confidence": 0.9,
+   "t": 122,
+   "s": 3657.1,
+   "source": "onboard:RAZip6S84CM@122.0",
+   "frame": "t122.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "tyre_stack",
+   "attrs": {
+    "type": "yellow/blue tyre stacks on the apron",
+    "h_m": 0.87,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.6,
+   "t": null,
+   "s": 3665.0,
+   "source": "streetview:jrXpHaDfJT2APw6zcyBKRA@196",
+   "frame": "",
+   "scope": "lap",
+   "note": "Jul 2011 panorama; HEIGHTS.md ex. 5; 2026 onboard 2:02-2:04 shows red/white blocks instead: old"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "kerb",
+    "colour": "red/white",
+    "raised": "flat"
+   },
+   "confidence": 0.95,
+   "t": 123.3,
+   "s": 3676.7,
+   "source": "onboard:RAZip6S84CM@123.3",
+   "frame": "t123.jpg",
+   "scope": "lap",
+   "note": "T11 apex"
+  },
+  {
+   "side": "left",
+   "kind": "tyre_wall",
+   "attrs": {
+    "type": "white-wrapped stacked tyres on the wall",
+    "colour": "white",
+    "h_m": 0.84,
+    "h_method": "tyre-ref"
+   },
+   "confidence": 0.9,
+   "t": 124,
+   "s": 3687.9,
+   "source": "onboard:RAZip6S84CM@124.0",
+   "frame": "t124.jpg",
+   "scope": "lap",
+   "note": "4 high"
+  },
+  {
+   "side": "right",
+   "kind": "tyre_stack",
+   "attrs": {
+    "type": "striped blocks",
+    "colour": "red/white"
+   },
+   "confidence": 0.9,
+   "t": 124,
+   "s": 3687.9,
+   "source": "onboard:RAZip6S84CM@124.0",
+   "frame": "t124.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "building",
+   "attrs": {
+    "type": "pit garages, yellow with green roofs"
+   },
+   "confidence": 0.9,
+   "t": 126,
+   "s": 3724.7,
+   "source": "onboard:RAZip6S84CM@126.0",
+   "frame": "t126.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete (pit separation)",
+    "colour": "white",
+    "h_m": 0.9,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 126,
+   "s": 3724.7,
+   "source": "onboard:RAZip6S84CM@126.0",
+   "frame": "t126.jpg",
+   "scope": "lap",
+   "note": "t126; H 1.55 m (camh on this video, HEIGHTS.md ex. 2), horizon row ~600/1080"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete (pit separation)",
+    "colour": "white"
+   },
+   "confidence": 0.8,
+   "t": 128,
+   "s": 3773.6,
+   "source": "onboard:RAZip6S84CM@128.0",
+   "frame": "t128.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "building",
+   "attrs": {
+    "type": "pit garages"
+   },
+   "confidence": 0.8,
+   "t": 130,
+   "s": 3835.3,
+   "source": "onboard:RAZip6S84CM@130.0",
+   "frame": "t130.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete (pit separation)",
+    "colour": "white"
+   },
+   "confidence": 0.8,
+   "t": 130,
+   "s": 3835.3,
+   "source": "onboard:RAZip6S84CM@130.0",
+   "frame": "t130.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "cone_line",
+   "attrs": {
+    "type": "orange cones at the nose",
+    "colour": "orange"
+   },
+   "confidence": 0.7,
+   "t": 132,
+   "s": 3909.0,
+   "source": "onboard:RAZip6S84CM@132.0",
+   "frame": "t132.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "wall nose painted SONOMA TURN 12",
+    "colour": "white/brown"
+   },
+   "confidence": 0.9,
+   "t": 132,
+   "s": 3909.0,
+   "source": "onboard:RAZip6S84CM@132.0",
+   "frame": "t132.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "building",
+   "attrs": {
+    "type": "3-storey control building",
+    "h_m": 9.6,
+    "h_method": "storeys"
+   },
+   "confidence": 0.8,
+   "t": 133,
+   "s": 3941.1,
+   "source": "onboard:RAZip6S84CM@133.0",
+   "frame": "t133.jpg",
+   "scope": "lap",
+   "note": "3 storeys x 3.2 m"
+  },
+  {
+   "side": "right",
+   "kind": "building",
+   "attrs": {
+    "type": "T12 control tower building",
+    "h_m": 6.4,
+    "h_method": "storeys"
+   },
+   "confidence": 0.6,
+   "t": null,
+   "s": 3950.0,
+   "source": "streetview:QduY6QTXmw4JDevQVE_b-g@0",
+   "frame": "",
+   "scope": "lap",
+   "note": "Jul 2011 panorama; HEIGHTS.md ex. 8"
+  },
+  {
+   "side": "left",
+   "kind": "stand",
+   "attrs": {
+    "type": "main grandstand"
+   },
+   "confidence": 0.9,
+   "t": 134,
+   "s": 3966.8,
+   "source": "onboard:RAZip6S84CM@134.0",
+   "frame": "t134.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete with ECHOPARK painted face",
+    "colour": "green/white"
+   },
+   "confidence": 0.9,
+   "t": 134,
+   "s": 3966.8,
+   "source": "onboard:RAZip6S84CM@134.0",
+   "frame": "t134.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete with ECHOPARK painted face",
+    "colour": "green/white"
+   },
+   "confidence": 0.8,
+   "t": 134,
+   "s": 3966.8,
+   "source": "onboard:RAZip6S84CM@134.0",
+   "frame": "t134.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete pit wall",
+    "colour": "light blue"
+   },
+   "confidence": 0.8,
+   "t": 136,
+   "s": 4025.3,
+   "source": "onboard:RAZip6S84CM@136.0",
+   "frame": "t136.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "drag-strip Jersey",
+    "colour": "light blue"
+   },
+   "confidence": 0.8,
+   "t": 136,
+   "s": 4025.3,
+   "source": "onboard:RAZip6S84CM@136.0",
+   "frame": "t136.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "both",
+   "kind": "paint",
+   "attrs": {
+    "type": "chequered S/F stripe",
+    "colour": "white/black"
+   },
+   "confidence": 0.9,
+   "t": 0,
+   "s": 4058.1,
+   "source": "onboard:RAZip6S84CM@0.0",
+   "frame": "t000.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "stand",
+   "attrs": {
+    "type": "main grandstand with suites"
+   },
+   "confidence": 0.9,
+   "t": 0,
+   "s": 4058.1,
+   "source": "onboard:RAZip6S84CM@0.0",
+   "frame": "t000.jpg",
+   "scope": "lap",
+   "note": "beyond the pit lane, left, 0:00-0:04"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete pit wall",
+    "colour": "light blue",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 0,
+   "s": 4058.1,
+   "source": "onboard:RAZip6S84CM@0.0",
+   "frame": "t000.jpg",
+   "scope": "lap",
+   "note": "front straight pit wall; H 1.55 m (camh on this video, HEIGHTS.md ex. 2), horizon row ~600/1080"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete (drag-strip wall)",
+    "colour": "light blue",
+    "h_m": 0.9,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 0,
+   "s": 4058.1,
+   "source": "onboard:RAZip6S84CM@0.0",
+   "frame": "t000.jpg",
+   "scope": "lap",
+   "note": "drag strip Jersey line right of the front straight; H 1.55 m (camh on this video, HEIGHTS.md ex. 2), horizon row ~600/1080"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "pit wall",
+    "h_m": 1.08,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.6,
+   "t": null,
+   "s": 4085.0,
+   "source": "streetview:5MY4xR9O7etAXEHnZCVnGQ@300",
+   "frame": "",
+   "scope": "lap",
+   "note": "Jul 2011 panorama; HEIGHTS.md ex. 1 rows 565/680; same wall in the 2026 onboard 0:00"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "drag-strip wall",
+    "h_m": 0.93,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.6,
+   "t": null,
+   "s": 4085.0,
+   "source": "streetview:5MY4xR9O7etAXEHnZCVnGQ@300",
+   "frame": "",
+   "scope": "lap",
+   "note": "Jul 2011 panorama; HEIGHTS.md ex. 1; same wall in the 2026 onboard"
+  },
+  {
+   "side": "left",
+   "kind": "paint",
+   "attrs": {
+    "type": "SONOMA RACEWAY ground logo",
+    "colour": "white"
+   },
+   "confidence": 0.9,
+   "t": 138,
+   "s": 4093.3,
+   "source": "onboard:RAZip6S84CM@138.0",
+   "frame": "t138.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "pit wall",
+    "colour": "white",
+    "h_m": 1.1,
+    "h_method": "safer-ref"
+   },
+   "confidence": 0.8,
+   "t": null,
+   "s": 30.0,
+   "source": "onboard:24of8fjjAug@296",
+   "frame": "../frames_pit/p296.jpg",
+   "scope": "pit"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "pit wall",
+    "colour": "white",
+    "h_m": 1.1,
+    "h_method": "safer-ref"
+   },
+   "confidence": 0.8,
+   "t": null,
+   "s": 90.0,
+   "source": "onboard:24of8fjjAug@298",
+   "frame": "../frames_pit/p298.jpg",
+   "scope": "pit"
+  },
+  {
+   "side": "left",
+   "kind": "building",
+   "attrs": {
+    "type": "red-roof pit-out building"
+   },
+   "confidence": 0.8,
+   "t": null,
+   "s": 130.0,
+   "source": "onboard:24of8fjjAug@300",
+   "frame": "../frames_pit/p300.jpg",
+   "scope": "pit"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete with catch fence and O'Reilly boards",
+    "colour": "white/red",
+    "h_m": 1.0,
+    "h_method": "fence-post-ref",
+    "fence_m": 3.0
+   },
+   "confidence": 0.8,
+   "t": null,
+   "s": 160.0,
+   "source": "onboard:24of8fjjAug@302",
+   "frame": "../frames_pit/p302.jpg",
+   "scope": "pit"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "Jersey (pit-out separation)",
+    "colour": "white",
+    "h_m": 0.81,
+    "h_method": "jersey-ref"
+   },
+   "confidence": 0.8,
+   "t": null,
+   "s": 160.0,
+   "source": "onboard:24of8fjjAug@302",
+   "frame": "../frames_pit/p302.jpg",
+   "scope": "pit",
+   "note": "ends at its nose before the blend"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete with catch fence",
+    "colour": "white",
+    "h_m": 1.0,
+    "h_method": "fence-post-ref",
+    "fence_m": 3.0
+   },
+   "confidence": 0.8,
+   "t": null,
+   "s": 200.0,
+   "source": "onboard:24of8fjjAug@304",
+   "frame": "../frames_pit/p304.jpg",
+   "scope": "pit"
+  },
+  {
+   "side": "right",
+   "kind": "cone_line",
+   "attrs": {
+    "type": "small yellow cones on the double yellow blend line",
+    "colour": "yellow"
+   },
+   "confidence": 0.8,
+   "t": null,
+   "s": 200.0,
+   "source": "onboard:24of8fjjAug@304",
+   "frame": "../frames_pit/p304.jpg",
+   "scope": "pit",
+   "note": "about 0.5 m cones"
+  },
+  {
+   "side": "right",
+   "kind": "paint",
+   "attrs": {
+    "type": "double yellow blend line",
+    "colour": "yellow"
+   },
+   "confidence": 0.8,
+   "t": null,
+   "s": 200.0,
+   "source": "onboard:24of8fjjAug@304",
+   "frame": "../frames_pit/p304.jpg",
+   "scope": "pit"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete with catch fence",
+    "colour": "white"
+   },
+   "confidence": 0.8,
+   "t": null,
+   "s": 240.0,
+   "source": "onboard:24of8fjjAug@306",
+   "frame": "../frames_pit/p306.jpg",
+   "scope": "pit"
+  },
+  {
+   "side": "left",
+   "kind": "tyre_wall",
+   "attrs": {
+    "type": "black tyre stacks in front of the wall",
+    "colour": "black",
+    "h_m": 0.84,
+    "h_method": "tyre-ref"
+   },
+   "confidence": 0.8,
+   "t": null,
+   "s": 3560.0,
+   "source": "onboard:24of8fjjAug@1436",
+   "frame": "../frames_pit/p1436.jpg",
+   "scope": "pit"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "tall board wall (GENERAL TIRE)",
+    "colour": "red/white",
+    "h_m": 5.3,
+    "h_method": "door-ref"
+   },
+   "confidence": 0.8,
+   "t": null,
+   "s": 3560.0,
+   "source": "onboard:24of8fjjAug@1436",
+   "frame": "../frames_pit/p1436.jpg",
+   "scope": "pit",
+   "note": "same wall as the lap rows at 1:56 (HEIGHTS.md ex. 4)"
+  },
+  {
+   "side": "right",
+   "kind": "tyre_wall",
+   "attrs": {
+    "type": "black tyre stacks between the pit-in lane and the track",
+    "colour": "black",
+    "h_m": 0.84,
+    "h_method": "tyre-ref"
+   },
+   "confidence": 0.8,
+   "t": null,
+   "s": 3560.0,
+   "source": "onboard:24of8fjjAug@1436",
+   "frame": "../frames_pit/p1436.jpg",
+   "scope": "pit"
+  },
+  {
+   "side": "left",
+   "kind": "paint",
+   "attrs": {
+    "type": "pit box lines",
+    "colour": "white/yellow"
+   },
+   "confidence": 0.8,
+   "t": null,
+   "s": 4000.0,
+   "source": "onboard:24of8fjjAug@288",
+   "frame": "../frames_pit/p288.jpg",
+   "scope": "pit"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "pit wall (track side)",
+    "colour": "white",
+    "h_m": 1.1,
+    "h_method": "safer-ref"
+   },
+   "confidence": 0.8,
+   "t": null,
+   "s": 4000.0,
+   "source": "onboard:24of8fjjAug@288",
+   "frame": "../frames_pit/p288.jpg",
+   "scope": "pit",
+   "note": "tall white wall between the boxes and the track"
+  },
+  {
+   "side": "left",
+   "kind": "stand",
+   "attrs": {
+    "type": "main grandstand beyond the boxes"
+   },
+   "confidence": 0.8,
+   "t": null,
+   "s": 4060.0,
+   "source": "onboard:24of8fjjAug@292",
+   "frame": "../frames_pit/p292.jpg",
+   "scope": "pit"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "pit wall",
+    "colour": "white",
+    "h_m": 1.1,
+    "h_method": "safer-ref"
+   },
+   "confidence": 0.8,
+   "t": null,
+   "s": 4060.0,
+   "source": "onboard:24of8fjjAug@292",
+   "frame": "../frames_pit/p292.jpg",
+   "scope": "pit"
+  }
+ ],
+ "counts": {
+  "wall": 69,
+  "kerb": 27,
+  "boards": 13,
+  "tyre_wall": 10,
+  "fence": 10,
+  "building": 8,
+  "stand": 8,
+  "cone_line": 8,
+  "tyre_stack": 6,
+  "paint": 5,
+  "station": 3,
+  "tower": 2,
+  "mast": 2,
+  "bridge": 1
+ },
+ "unmeasured_heights": 1
+}

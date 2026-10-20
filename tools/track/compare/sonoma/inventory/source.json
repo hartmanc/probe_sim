@@ -1,0 +1,132 @@
+{
+ "video": {
+  "id": "RAZip6S84CM",
+  "url": "https://www.youtube.com/watch?v=RAZip6S84CM",
+  "title": "2nd Place Lemons Finish | Fast Lap in Our Honda CR-V (Sonoma Raceway)",
+  "date": "2026-03 (24 Hours of Lemons, Sonoma; uploaded ~6 months before 20 Oct 2026)",
+  "camera": "hood / windscreen wide-angle, Honda CR-V #47 RUN-CRV",
+  "lap_time_s": 137.0,
+  "access": "headless Chrome, throwaway profile, muted, paused, frames drawn from the paused video element; never downloaded"
+ },
+ "interp": "profile",
+ "frames": "frames",
+ "frame_pattern": "t{t:03d}.jpg",
+ "observations": [
+  "observations.jsonl",
+  "pit.jsonl",
+  "streetview.jsonl"
+ ],
+ "anchors": [
+  {
+   "name": "S/F",
+   "t": 1.15,
+   "sf": "start",
+   "how": "chequered stripe under the hood between 1.0 and 1.25 (0.25 s frames)"
+  },
+  {
+   "name": "T2 footbridge",
+   "t": 8.95,
+   "s": 295.3,
+   "how": "the Save Mart / GR / Sunoco / Las Vegas footbridge overhead at 8.9-9.0 (0.25 s frames); OSM way 1382620985 crosses at s 295.3"
+  },
+  {
+   "name": "T2",
+   "t": 14.0,
+   "corner": "T2",
+   "how": "apex kerb abeam 13.5-14.5"
+  },
+  {
+   "name": "T3",
+   "t": 24.0,
+   "corner": "T3",
+   "how": "apex kerb abeam 23.5-24.5"
+  },
+  {
+   "name": "T3a",
+   "t": 27.3,
+   "corner": "T3a",
+   "how": "apex kerb abeam 27.0-27.5"
+  },
+  {
+   "name": "T4",
+   "t": 35.7,
+   "corner": "T4",
+   "how": "apex kerb abeam 35.5-36"
+  },
+  {
+   "name": "T6",
+   "t": 52.5,
+   "corner": "T6",
+   "how": "mid-Carousel (long arc 50-54), lower confidence"
+  },
+  {
+   "name": "T7",
+   "t": 73.0,
+   "corner": "T7",
+   "how": "apex kerb abeam 72.5-73.5"
+  },
+  {
+   "name": "T7a",
+   "t": 77.0,
+   "corner": "T7a",
+   "how": "island kerb abeam 76.5-77"
+  },
+  {
+   "name": "T8a",
+   "t": 85.5,
+   "corner": "T8a",
+   "how": "apex kerb on the right abeam 85-85.5 (the left kerb at 82.5-83 is T8, the left kerb at 87.5-88.5 is T9)"
+  },
+  {
+   "name": "T9a",
+   "t": 101.7,
+   "corner": "T9a",
+   "how": "9a left part: kerb abeam 101.5-102 (the right part with the tyre stack at 100.0)"
+  },
+  {
+   "name": "T10",
+   "t": 109.7,
+   "corner": "T10",
+   "how": "apex kerb abeam 109.5-110"
+  },
+  {
+   "name": "T11",
+   "t": 123.3,
+   "corner": "T11",
+   "how": "hairpin apex kerb abeam 123-123.5"
+  },
+  {
+   "name": "T12",
+   "t": 133.0,
+   "corner": "T12",
+   "how": "the SONOMA TURN 12 wall nose abeam 132.5-133"
+  },
+  {
+   "name": "S/F end",
+   "t": 138.15,
+   "sf": "end",
+   "how": "chequered stripe under the hood between 138.0 and 138.25"
+  }
+ ],
+ "corrections": [
+  {
+   "anchor": "T1",
+   "t": 5.0,
+   "why": "T1 apex at 5.0 implied 54 m/s from T1 (s 96) to the footbridge (s 295 at 8.95): dropped (the skill's own Sonoma example); the footbridge passage is the landmark anchor instead"
+  },
+  {
+   "anchor": "T8",
+   "t": 82.8,
+   "why": "T7a -> T8 at 12.6 m/s and T8 -> 9a at 38.4 m/s: the curvature profile puts T8 at 81.6 and T8a at 85.5; anchored on T8a (85.5) and T9 (88.3) instead, T8 dropped"
+  },
+  {
+   "anchor": "T9",
+   "t": 88.3,
+   "why": "T8a (85.5) -> T9 at 52 m/s: the left kerb at 87.5-88.5 is T8a's exit kerb, not the T9 apex (profile: T9 ~89.5); dropped"
+  }
+ ],
+ "pit_video": {
+  "id": "24of8fjjAug",
+  "url": "https://www.youtube.com/watch?v=24of8fjjAug"
+ }
+}

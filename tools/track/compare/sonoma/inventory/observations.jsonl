@@ -1,0 +1,150 @@
+{"t": 0, "side": "left", "kind": "wall", "attrs": {"type": "concrete pit wall", "colour": "light blue", "h_m": 1.0, "h_method": "horizon-ratio"}, "confidence": 0.8, "note": "front straight pit wall; H 1.55 m (camh on this video, HEIGHTS.md ex. 2), horizon row ~600/1080"}
+{"t": 0, "side": "right", "kind": "wall", "attrs": {"type": "concrete (drag-strip wall)", "colour": "light blue", "h_m": 0.9, "h_method": "horizon-ratio"}, "confidence": 0.8, "note": "drag strip Jersey line right of the front straight; H 1.55 m (camh on this video, HEIGHTS.md ex. 2), horizon row ~600/1080"}
+{"t": 0, "side": "left", "kind": "stand", "attrs": {"type": "main grandstand with suites"}, "confidence": 0.9, "note": "beyond the pit lane, left, 0:00-0:04"}
+{"t": 0, "side": "both", "kind": "paint", "attrs": {"type": "chequered S/F stripe", "colour": "white/black"}, "confidence": 0.9, "note": ""}
+{"t": 2, "side": "left", "kind": "wall", "attrs": {"type": "concrete pit wall", "colour": "light blue", "h_m": 1.0, "h_method": "horizon-ratio"}, "confidence": 0.8, "note": "H 1.55 m (camh on this video, HEIGHTS.md ex. 2), horizon row ~600/1080"}
+{"t": 2, "side": "right", "kind": "wall", "attrs": {"type": "concrete (drag-strip wall)", "colour": "light blue", "h_m": 0.9, "h_method": "horizon-ratio"}, "confidence": 0.8, "note": "H 1.55 m (camh on this video, HEIGHTS.md ex. 2), horizon row ~600/1080"}
+{"t": 4, "side": "left", "kind": "wall", "attrs": {"type": "concrete pit wall", "colour": "light blue"}, "confidence": 0.8, "note": ""}
+{"t": 4, "side": "left", "kind": "building", "attrs": {"type": "pit-out buildings, red roofs"}, "confidence": 0.7, "note": ""}
+{"t": 5.5, "side": "right", "kind": "kerb", "attrs": {"type": "kerb", "colour": "red/white", "raised": "flat"}, "confidence": 0.9, "note": "T1 right kerb, frame d005.5"}
+{"t": 6, "side": "left", "kind": "wall", "attrs": {"type": "concrete pit-out wall with catch fence", "colour": "light blue", "fence_m": 3.0}, "confidence": 0.7, "note": ""}
+{"t": 8, "side": "left", "kind": "wall", "attrs": {"type": "Jersey stub", "colour": "white", "h_m": 0.81, "h_method": "jersey-ref"}, "confidence": 0.6, "note": "short white Jersey left before the footbridge"}
+{"t": 8, "side": "left", "kind": "tyre_wall", "attrs": {"type": "tyre wall", "colour": "black"}, "confidence": 0.6, "note": "dark band at the foot of the T2 bank beyond the footbridge"}
+{"t": 8.95, "side": "ahead", "kind": "bridge", "attrs": {"type": "footbridge", "colour": "banners Save Mart / GR Toyota Gazoo Racing / Sunoco Las Vegas", "ahead_m": 0.0}, "confidence": 0.95, "note": "passes overhead 8.9-9.0 (anchor)"}
+{"t": 8, "side": "both", "kind": "boards", "attrs": {"type": "bridge banners", "colour": "SAVE MART white/red, GR TOYOTA GAZOO RACING red, GR white, SUNOCO LAS VEGAS blue"}, "confidence": 0.9, "note": ""}
+{"t": 10, "side": "left", "kind": "kerb", "attrs": {"type": "kerb", "colour": "red/white", "raised": "flat"}, "confidence": 0.9, "note": "T2 approach left kerb"}
+{"t": 10, "side": "left", "kind": "tyre_wall", "attrs": {"type": "tyre wall", "colour": "black"}, "confidence": 0.6, "note": ""}
+{"t": 12, "side": "left", "kind": "stand", "attrs": {"type": "hillside terrace (T2)"}, "confidence": 0.8, "note": "terrace rows on the bank with catch fence at its foot"}
+{"t": 13.5, "side": "left", "kind": "station", "attrs": {"type": "marshal post (white hut)", "colour": "white"}, "confidence": 0.5, "note": "small white structure at the foot of the T2 terrace, d013.5"}
+{"t": 14, "side": "right", "kind": "kerb", "attrs": {"type": "kerb", "colour": "red/white", "raised": "flat"}, "confidence": 0.95, "note": "T2 apex"}
+{"t": 14, "side": "left", "kind": "fence", "attrs": {"type": "catch fence along the terrace foot", "h_m": 3.0, "h_method": "unmeasured"}, "confidence": 0.7, "note": ""}
+{"t": 14, "side": "left", "kind": "tyre_wall", "attrs": {"type": "tyre wall", "colour": "black"}, "confidence": 0.6, "note": ""}
+{"t": 16, "side": "left", "kind": "kerb", "attrs": {"type": "kerb", "colour": "red/white", "raised": "flat"}, "confidence": 0.9, "note": "T2 exit left"}
+{"t": 16, "side": "left", "kind": "stand", "attrs": {"type": "hillside terrace (T2)"}, "confidence": 0.8, "note": ""}
+{"t": 18, "side": "left", "kind": "tyre_wall", "attrs": {"type": "low dark barrier at the bank foot", "colour": "black"}, "confidence": 0.5, "note": ""}
+{"t": 20, "side": "right", "kind": "boards", "attrs": {"type": "boards on posts (brown/yellow)"}, "confidence": 0.5, "note": "far right ahead, T3 area"}
+{"t": 24, "side": "left", "kind": "kerb", "attrs": {"type": "kerb", "colour": "red/white", "raised": "flat"}, "confidence": 0.95, "note": "T3 apex"}
+{"t": 27.5, "side": "right", "kind": "station", "attrs": {"type": "marshal tower (white hut on legs)", "colour": "white"}, "confidence": 0.8, "note": "right, T3a outside, 0:25-0:28"}
+{"t": 27.3, "side": "right", "kind": "kerb", "attrs": {"type": "kerb", "colour": "red/white", "raised": "flat"}, "confidence": 0.95, "note": "T3a apex"}
+{"t": 28, "side": "left", "kind": "stand", "attrs": {"type": "hillside terrace (T3a-T4)"}, "confidence": 0.85, "note": ""}
+{"t": 29, "side": "left", "kind": "tyre_stack", "attrs": {"type": "black tyre stacks at the terrace foot", "colour": "black"}, "confidence": 0.5, "note": ""}
+{"t": 30, "side": "left", "kind": "kerb", "attrs": {"type": "kerb", "colour": "red/white", "raised": "flat"}, "confidence": 0.9, "note": ""}
+{"t": 30, "side": "left", "kind": "wall", "attrs": {"type": "Jersey", "colour": "white", "h_m": 0.81, "h_method": "jersey-ref"}, "confidence": 0.7, "note": "at the terrace foot"}
+{"t": 32, "side": "left", "kind": "wall", "attrs": {"type": "Jersey", "colour": "white", "h_m": 0.81, "h_method": "jersey-ref"}, "confidence": 0.7, "note": ""}
+{"t": 32, "side": "left", "kind": "kerb", "attrs": {"type": "kerb", "colour": "red/white", "raised": "flat"}, "confidence": 0.8, "note": ""}
+{"t": 34, "side": "left", "kind": "cone_line", "attrs": {"type": "delineator pylons across the Chute mouth", "colour": "orange/white"}, "confidence": 0.8, "note": ""}
+{"t": 36, "side": "right", "kind": "kerb", "attrs": {"type": "kerb", "colour": "red/white", "raised": "flat"}, "confidence": 0.95, "note": "T4 apex"}
+{"t": 36, "side": "left", "kind": "boards", "attrs": {"type": "O'Reilly board run across the infield", "colour": "red/white"}, "confidence": 0.6, "note": ""}
+{"t": 38, "side": "left", "kind": "kerb", "attrs": {"type": "kerb", "colour": "red/white", "raised": "flat"}, "confidence": 0.9, "note": "T4 exit"}
+{"t": 38, "side": "right", "kind": "wall", "attrs": {"type": "Jersey at the bank foot", "colour": "white", "h_m": 0.9, "h_method": "horizon-ratio"}, "confidence": 0.7, "note": "H 1.55 m (camh on this video, HEIGHTS.md ex. 2), horizon row ~600/1080"}
+{"t": 40, "side": "left", "kind": "tyre_wall", "attrs": {"type": "stacked tyres", "colour": "black"}, "confidence": 0.7, "note": ""}
+{"t": 40, "side": "right", "kind": "wall", "attrs": {"type": "concrete at the bank foot", "colour": "white", "h_m": 1.1, "h_method": "horizon-ratio"}, "confidence": 0.8, "note": "t044 col 1700 rows 625/705; H 1.55 m (camh on this video, HEIGHTS.md ex. 2), horizon row ~600/1080"}
+{"t": 42, "side": "right", "kind": "kerb", "attrs": {"type": "plain kerb strip", "colour": "yellow", "raised": "flat"}, "confidence": 0.7, "note": "T5 inside: plain yellow/orange strip"}
+{"t": 42, "side": "right", "kind": "wall", "attrs": {"type": "concrete", "colour": "white", "h_m": 1.1, "h_method": "horizon-ratio"}, "confidence": 0.8, "note": ""}
+{"t": 44, "side": "right", "kind": "wall", "attrs": {"type": "concrete", "colour": "white", "h_m": 1.1, "h_method": "horizon-ratio"}, "confidence": 0.8, "note": "t044 col 1700 rows 625/705"}
+{"t": 46, "side": "right", "kind": "wall", "attrs": {"type": "concrete", "colour": "white"}, "confidence": 0.8, "note": ""}
+{"t": 48, "side": "right", "kind": "wall", "attrs": {"type": "concrete", "colour": "white"}, "confidence": 0.7, "note": ""}
+{"t": 48, "side": "ahead", "kind": "tower", "attrs": {"type": "tall dark tower (infield)"}, "confidence": 0.9, "note": ""}
+{"t": 52, "side": "left", "kind": "tower", "attrs": {"type": "tall dark tower (infield, green light)"}, "confidence": 0.9, "note": ""}
+{"t": 54, "side": "left", "kind": "kerb", "attrs": {"type": "kerb", "colour": "red/white", "raised": "flat"}, "confidence": 0.7, "note": ""}
+{"t": 54, "side": "right", "kind": "tyre_wall", "attrs": {"type": "tyre lines", "colour": "black"}, "confidence": 0.5, "note": "far right, drag strip side"}
+{"t": 56, "side": "left", "kind": "kerb", "attrs": {"type": "kerb", "colour": "red/white", "raised": "flat"}, "confidence": 0.85, "note": "Carousel exit"}
+{"t": 58, "side": "left", "kind": "wall", "attrs": {"type": "concrete with dark head section", "colour": "light blue / black head"}, "confidence": 0.8, "note": "T6-T7 left wall starts with a dark section"}
+{"t": 58, "side": "right", "kind": "paint", "attrs": {"type": "drag strip lane line", "colour": "yellow"}, "confidence": 0.9, "note": ""}
+{"t": 60, "side": "right", "kind": "kerb", "attrs": {"type": "kerb", "colour": "red/white", "raised": "flat"}, "confidence": 0.95, "note": ""}
+{"t": 60, "side": "left", "kind": "wall", "attrs": {"type": "Jersey", "colour": "light blue", "h_m": 1.05, "h_method": "horizon-ratio"}, "confidence": 0.8, "note": "t060 col 300 rows 615/648; H 1.55 m (camh on this video, HEIGHTS.md ex. 2), horizon row ~600/1080"}
+{"t": 62, "side": "left", "kind": "wall", "attrs": {"type": "Jersey", "colour": "light blue"}, "confidence": 0.8, "note": ""}
+{"t": 64, "side": "left", "kind": "wall", "attrs": {"type": "Jersey", "colour": "light blue"}, "confidence": 0.8, "note": ""}
+{"t": 66, "side": "left", "kind": "wall", "attrs": {"type": "Jersey", "colour": "light blue"}, "confidence": 0.8, "note": ""}
+{"t": 68, "side": "left", "kind": "wall", "attrs": {"type": "Jersey", "colour": "light blue"}, "confidence": 0.8, "note": ""}
+{"t": 70, "side": "left", "kind": "wall", "attrs": {"type": "Jersey", "colour": "light blue"}, "confidence": 0.8, "note": ""}
+{"t": 70, "side": "left", "kind": "boards", "attrs": {"type": "boards on posts behind the wall", "colour": "TOYOTA red/white, brown fence"}, "confidence": 0.8, "note": ""}
+{"t": 72, "side": "left", "kind": "station", "attrs": {"type": "marshal tower (white hut on legs) behind the wall", "colour": "white"}, "confidence": 0.9, "note": "T7, 0:71.5-0:72.5"}
+{"t": 72.5, "side": "right", "kind": "kerb", "attrs": {"type": "kerb", "colour": "red/white", "raised": "flat"}, "confidence": 0.95, "note": "T7 apex"}
+{"t": 72, "side": "ahead", "kind": "boards", "attrs": {"type": "PIRELLI board", "colour": "yellow/red"}, "confidence": 0.7, "note": ""}
+{"t": 74, "side": "left", "kind": "tyre_stack", "attrs": {"type": "black tyre stacks along the paddock edge", "colour": "black"}, "confidence": 0.6, "note": ""}
+{"t": 74, "side": "right", "kind": "cone_line", "attrs": {"type": "delineator pylons at the island", "colour": "orange/white"}, "confidence": 0.7, "note": ""}
+{"t": 76.5, "side": "right", "kind": "kerb", "attrs": {"type": "island kerb", "colour": "red/white", "raised": "flat"}, "confidence": 0.9, "note": "T7a"}
+{"t": 77, "side": "right", "kind": "mast", "attrs": {"type": "light mast"}, "confidence": 0.9, "note": "on the island, base with tyre stack"}
+{"t": 78, "side": "left", "kind": "kerb", "attrs": {"type": "kerb", "colour": "red/white", "raised": "flat"}, "confidence": 0.9, "note": ""}
+{"t": 80, "side": "left", "kind": "kerb", "attrs": {"type": "kerb", "colour": "red/white", "raised": "flat"}, "confidence": 0.8, "note": ""}
+{"t": 80, "side": "right", "kind": "wall", "attrs": {"type": "concrete (far)", "colour": "white"}, "confidence": 0.5, "note": ""}
+{"t": 82.5, "side": "left", "kind": "kerb", "attrs": {"type": "kerb", "colour": "red/white", "raised": "flat"}, "confidence": 0.95, "note": "T8"}
+{"t": 84, "side": "right", "kind": "mast", "attrs": {"type": "light mast"}, "confidence": 0.8, "note": ""}
+{"t": 85.5, "side": "right", "kind": "kerb", "attrs": {"type": "kerb", "colour": "red/white", "raised": "flat"}, "confidence": 0.95, "note": "T8a"}
+{"t": 85, "side": "right", "kind": "wall", "attrs": {"type": "dark concrete wall", "colour": "dark grey"}, "confidence": 0.6, "note": ""}
+{"t": 86, "side": "right", "kind": "wall", "attrs": {"type": "concrete", "colour": "light grey"}, "confidence": 0.7, "note": ""}
+{"t": 88, "side": "left", "kind": "kerb", "attrs": {"type": "kerb", "colour": "red/white", "raised": "flat"}, "confidence": 0.9, "note": ""}
+{"t": 88, "side": "left", "kind": "wall", "attrs": {"type": "concrete beyond grass", "colour": "white"}, "confidence": 0.6, "note": ""}
+{"t": 90, "side": "right", "kind": "kerb", "attrs": {"type": "kerb", "colour": "red/white", "raised": "flat"}, "confidence": 0.9, "note": "T9"}
+{"t": 90, "side": "left", "kind": "stand", "attrs": {"type": "back-straight terrace"}, "confidence": 0.9, "note": ""}
+{"t": 90, "side": "left", "kind": "wall", "attrs": {"type": "dark concrete at the terrace foot", "colour": "dark grey"}, "confidence": 0.7, "note": ""}
+{"t": 92, "side": "right", "kind": "cone_line", "attrs": {"type": "orange cones at the bypass mouth", "colour": "orange"}, "confidence": 0.7, "note": ""}
+{"t": 92, "side": "left", "kind": "fence", "attrs": {"type": "catch fence on the wall", "h_m": 4.5, "h_method": "fence-post-ref"}, "confidence": 0.7, "note": "t094 col 330: posts 95 px over a ~30 px wall"}
+{"t": 94, "side": "left", "kind": "wall", "attrs": {"type": "concrete", "colour": "white", "h_m": 1.0, "h_method": "fence-post-ref"}, "confidence": 0.8, "note": ""}
+{"t": 94, "side": "left", "kind": "fence", "attrs": {"type": "catch fence on the wall", "h_m": 4.5, "h_method": "fence-post-ref"}, "confidence": 0.8, "note": ""}
+{"t": 94, "side": "left", "kind": "stand", "attrs": {"type": "back-straight terrace with shade roof"}, "confidence": 0.9, "note": ""}
+{"t": 96, "side": "left", "kind": "wall", "attrs": {"type": "concrete", "colour": "white"}, "confidence": 0.8, "note": ""}
+{"t": 96, "side": "left", "kind": "cone_line", "attrs": {"type": "single marker cone", "colour": "orange"}, "confidence": 0.6, "note": ""}
+{"t": 98, "side": "left", "kind": "wall", "attrs": {"type": "concrete", "colour": "white"}, "confidence": 0.8, "note": ""}
+{"t": 98, "side": "left", "kind": "fence", "attrs": {"type": "catch fence"}, "confidence": 0.8, "note": ""}
+{"t": 98, "side": "left", "kind": "cone_line", "attrs": {"type": "single marker cone", "colour": "orange"}, "confidence": 0.6, "note": ""}
+{"t": 100, "side": "right", "kind": "kerb", "attrs": {"type": "kerb", "colour": "red/white", "raised": "flat"}, "confidence": 0.95, "note": "9a right part"}
+{"t": 100, "side": "right", "kind": "tyre_stack", "attrs": {"type": "two-tyre stack", "colour": "black", "h_m": 0.42, "h_method": "tyre-ref"}, "confidence": 0.8, "note": ""}
+{"t": 101.7, "side": "left", "kind": "kerb", "attrs": {"type": "kerb", "colour": "red/white", "raised": "flat"}, "confidence": 0.95, "note": "9a left part"}
+{"t": 104, "side": "left", "kind": "wall", "attrs": {"type": "tall board wall", "colour": "black SONOMA RACEWAY, green SUNBELT", "h_m": 3.98, "h_method": "horizon-ratio"}, "confidence": 0.8, "note": "HEIGHTS.md ex. 2 on this video at 1:50"}
+{"t": 104, "side": "left", "kind": "boards", "attrs": {"type": "SONOMA RACEWAY / SUNBELT RENTALS / TOYOTA", "colour": "black/white, green/white, white/red"}, "confidence": 0.9, "note": ""}
+{"t": 104, "side": "right", "kind": "wall", "attrs": {"type": "concrete", "colour": "white", "h_m": 1.0, "h_method": "fence-post-ref"}, "confidence": 0.8, "note": ""}
+{"t": 104, "side": "right", "kind": "fence", "attrs": {"type": "catch fence on the wall", "h_m": 4.0, "h_method": "fence-post-ref"}, "confidence": 0.8, "note": ""}
+{"t": 106, "side": "left", "kind": "wall", "attrs": {"type": "tall board wall", "h_m": 3.98, "h_method": "horizon-ratio"}, "confidence": 0.8, "note": ""}
+{"t": 106, "side": "right", "kind": "wall", "attrs": {"type": "concrete", "colour": "white"}, "confidence": 0.8, "note": ""}
+{"t": 106, "side": "right", "kind": "fence", "attrs": {"type": "catch fence", "h_m": 4.0, "h_method": "fence-post-ref"}, "confidence": 0.8, "note": ""}
+{"t": 108, "side": "left", "kind": "wall", "attrs": {"type": "tall board wall", "h_m": 3.98, "h_method": "horizon-ratio"}, "confidence": 0.8, "note": ""}
+{"t": 108, "side": "left", "kind": "boards", "attrs": {"type": "TOYOTA", "colour": "white/red"}, "confidence": 0.9, "note": ""}
+{"t": 108, "side": "right", "kind": "wall", "attrs": {"type": "concrete", "colour": "white"}, "confidence": 0.8, "note": ""}
+{"t": 108, "side": "right", "kind": "fence", "attrs": {"type": "catch fence", "h_m": 4.0, "h_method": "fence-post-ref"}, "confidence": 0.8, "note": ""}
+{"t": 109.7, "side": "right", "kind": "kerb", "attrs": {"type": "kerb", "colour": "red/white", "raised": "flat"}, "confidence": 0.95, "note": "T10"}
+{"t": 110, "side": "left", "kind": "wall", "attrs": {"type": "tall board wall", "h_m": 3.98, "h_method": "horizon-ratio"}, "confidence": 0.9, "note": "HEIGHTS.md ex. 2"}
+{"t": 110, "side": "left", "kind": "boards", "attrs": {"type": "HUMBOLDT / SAVE MART / ZMAX", "colour": "white/black, white/red"}, "confidence": 0.9, "note": ""}
+{"t": 110, "side": "right", "kind": "wall", "attrs": {"type": "concrete", "colour": "white"}, "confidence": 0.8, "note": ""}
+{"t": 110, "side": "right", "kind": "fence", "attrs": {"type": "catch fence", "h_m": 4.0, "h_method": "fence-post-ref"}, "confidence": 0.8, "note": ""}
+{"t": 112, "side": "left", "kind": "wall", "attrs": {"type": "tall board wall", "h_m": 3.98, "h_method": "horizon-ratio"}, "confidence": 0.8, "note": ""}
+{"t": 112, "side": "left", "kind": "boards", "attrs": {"type": "ZMAX", "colour": "white/red"}, "confidence": 0.9, "note": ""}
+{"t": 112, "side": "right", "kind": "wall", "attrs": {"type": "concrete", "colour": "white"}, "confidence": 0.8, "note": ""}
+{"t": 112, "side": "right", "kind": "fence", "attrs": {"type": "catch fence", "h_m": 4.0, "h_method": "fence-post-ref"}, "confidence": 0.8, "note": ""}
+{"t": 114, "side": "left", "kind": "wall", "attrs": {"type": "tall board wall", "h_m": 3.98, "h_method": "horizon-ratio"}, "confidence": 0.8, "note": ""}
+{"t": 114, "side": "left", "kind": "boards", "attrs": {"type": "ECHOPARK AUTOMOTIVE", "colour": "black/green"}, "confidence": 0.9, "note": ""}
+{"t": 114, "side": "right", "kind": "tyre_wall", "attrs": {"type": "stacked tyres along the fence", "colour": "black", "h_m": 1.05, "h_method": "tyre-ref"}, "confidence": 0.8, "note": "5 tyres high"}
+{"t": 114, "side": "right", "kind": "fence", "attrs": {"type": "catch fence", "h_m": 4.0, "h_method": "fence-post-ref"}, "confidence": 0.8, "note": ""}
+{"t": 116, "side": "left", "kind": "wall", "attrs": {"type": "tall board wall (pit-in / paddock)", "h_m": 5.3, "h_method": "door-ref"}, "confidence": 0.8, "note": "door in the wall face; HEIGHTS.md ex. 4 (5.0-5.6 m) on this video at 1:56"}
+{"t": 116, "side": "left", "kind": "boards", "attrs": {"type": "LAS VEGAS", "colour": "black/white"}, "confidence": 0.9, "note": ""}
+{"t": 116, "side": "left", "kind": "wall", "attrs": {"type": "Jersey in front (pit-in separation)", "colour": "light blue", "h_m": 0.81, "h_method": "jersey-ref"}, "confidence": 0.8, "note": ""}
+{"t": 118, "side": "left", "kind": "wall", "attrs": {"type": "Jersey (pit-in separation)", "colour": "light blue", "h_m": 0.81, "h_method": "jersey-ref"}, "confidence": 0.8, "note": ""}
+{"t": 118, "side": "left", "kind": "boards", "attrs": {"type": "SAVE MART / LUCKY / FOODMAXX", "colour": "white/red"}, "confidence": 0.8, "note": ""}
+{"t": 118, "side": "left", "kind": "cone_line", "attrs": {"type": "orange cones along the pit-in line", "colour": "orange"}, "confidence": 0.8, "note": ""}
+{"t": 120, "side": "left", "kind": "boards", "attrs": {"type": "COCA-COLA", "colour": "black/white"}, "confidence": 0.8, "note": ""}
+{"t": 120, "side": "left", "kind": "wall", "attrs": {"type": "Jersey", "colour": "light blue", "h_m": 0.81, "h_method": "jersey-ref"}, "confidence": 0.8, "note": ""}
+{"t": 123.3, "side": "right", "kind": "kerb", "attrs": {"type": "kerb", "colour": "red/white", "raised": "flat"}, "confidence": 0.95, "note": "T11 apex"}
+{"t": 122, "side": "right", "kind": "tyre_stack", "attrs": {"type": "striped concrete blocks at the apex", "colour": "red/white"}, "confidence": 0.9, "note": ""}
+{"t": 122, "side": "left", "kind": "wall", "attrs": {"type": "concrete (outside of T11)", "colour": "light blue"}, "confidence": 0.8, "note": ""}
+{"t": 122, "side": "left", "kind": "building", "attrs": {"type": "glass-front building beyond the pit road"}, "confidence": 0.8, "note": ""}
+{"t": 124, "side": "left", "kind": "tyre_wall", "attrs": {"type": "white-wrapped stacked tyres on the wall", "colour": "white", "h_m": 0.84, "h_method": "tyre-ref"}, "confidence": 0.9, "note": "4 high"}
+{"t": 124, "side": "right", "kind": "tyre_stack", "attrs": {"type": "striped blocks", "colour": "red/white"}, "confidence": 0.9, "note": ""}
+{"t": 126, "side": "left", "kind": "wall", "attrs": {"type": "concrete (pit separation)", "colour": "white", "h_m": 0.9, "h_method": "horizon-ratio"}, "confidence": 0.8, "note": "t126; H 1.55 m (camh on this video, HEIGHTS.md ex. 2), horizon row ~600/1080"}
+{"t": 126, "side": "left", "kind": "building", "attrs": {"type": "pit garages, yellow with green roofs"}, "confidence": 0.9, "note": ""}
+{"t": 128, "side": "left", "kind": "wall", "attrs": {"type": "concrete (pit separation)", "colour": "white"}, "confidence": 0.8, "note": ""}
+{"t": 130, "side": "left", "kind": "wall", "attrs": {"type": "concrete (pit separation)", "colour": "white"}, "confidence": 0.8, "note": ""}
+{"t": 130, "side": "left", "kind": "building", "attrs": {"type": "pit garages"}, "confidence": 0.8, "note": ""}
+{"t": 132, "side": "left", "kind": "wall", "attrs": {"type": "wall nose painted SONOMA TURN 12", "colour": "white/brown"}, "confidence": 0.9, "note": ""}
+{"t": 132, "side": "left", "kind": "cone_line", "attrs": {"type": "orange cones at the nose", "colour": "orange"}, "confidence": 0.7, "note": ""}
+{"t": 133, "side": "left", "kind": "building", "attrs": {"type": "3-storey control building", "h_m": 9.6, "h_method": "storeys"}, "confidence": 0.8, "note": "3 storeys x 3.2 m"}
+{"t": 134, "side": "left", "kind": "wall", "attrs": {"type": "concrete with ECHOPARK painted face", "colour": "green/white"}, "confidence": 0.9, "note": ""}
+{"t": 134, "side": "right", "kind": "wall", "attrs": {"type": "concrete with ECHOPARK painted face", "colour": "green/white"}, "confidence": 0.8, "note": ""}
+{"t": 134, "side": "left", "kind": "stand", "attrs": {"type": "main grandstand"}, "confidence": 0.9, "note": ""}
+{"t": 136, "side": "left", "kind": "wall", "attrs": {"type": "concrete pit wall", "colour": "light blue"}, "confidence": 0.8, "note": ""}
+{"t": 136, "side": "right", "kind": "wall", "attrs": {"type": "drag-strip Jersey", "colour": "light blue"}, "confidence": 0.8, "note": ""}
+{"t": 138, "side": "left", "kind": "paint", "attrs": {"type": "SONOMA RACEWAY ground logo", "colour": "white"}, "confidence": 0.9, "note": ""}
+{"t": 140, "side": "left", "kind": "wall", "attrs": {"type": "concrete pit wall", "colour": "light blue"}, "confidence": 0.8, "note": ""}
+{"t": 142, "side": "left", "kind": "wall", "attrs": {"type": "concrete pit wall", "colour": "light blue"}, "confidence": 0.8, "note": ""}
+{"t": 142, "side": "left", "kind": "building", "attrs": {"type": "red-roof building"}, "confidence": 0.7, "note": ""}
+{"t": 144, "side": "left", "kind": "wall", "attrs": {"type": "concrete pit-out wall", "colour": "light blue"}, "confidence": 0.7, "note": ""}
