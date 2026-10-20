@@ -273,3 +273,39 @@ Enclosure per stretch (open T2-T6 hillside vs walled T10-T12 bowl; onboard 0:10-
 (2026 green spring grass in the onboard vs the dry NAIP tan); catch fences on the T8a-T9 bank (Street View
 xXQqyp9Q9sWv9ZLN2ORYsA); paddock density (trailers, tents along T5, T8, the back straight on the captures); light
 masts (onboard 1:43-2:20, not measured: positions need pole shadows on the captures).
+
+## Structures (buildings round, 21 Oct 2026; config `structures`, tools/track/build_structures.py, app src/app/structures.ts)
+
+The owner: "The sim course resembles Sonoma, but it doesn't feel like Sonoma"; "Our pit lane looks nothing like Sonoma";
+"the building agent should model the actual grand stands"; "Use recent video as a benchmark". The OSM boxes of the
+grandstand, the pit and paddock garages, the pit-exit building, the T12 building and the fuel canopy are replaced by the
+parametric structure kit (plain colours, no logos, no imagery). Precedence for looks: 2026 onboard RAZip6S84CM > 2025
+pit-lane video 24of8fjjAug > 2026 captures > Street View (2011 / 2017). Heights: lidar 2022-24, DSM - DEM profiles across
+each outline every 2 m (method below), cross-checked with HEIGHTS.md storeys.
+
+| structure | footprint source | heights and method | look (source) |
+|---|---|---|---|
+| Main grandstand (replaces OSM 262082790, a 9.3 m block) | front line of the block-wall base, 145 m, fitted on the seat field of c20_s1595..s1760 (141 x 31 m in plan, axis -38.8 deg); OSM outline 144 m | lidar profile across the outline: seats 2.0 m at the front to 12.0 m 29 m back (31 rows of 0.9 m rising 0.307 m from 2.6 m; base 2.2 m); suites roof 24.0 m front, 26.2 m ridge, 23.2 m back; rear 20 m; deck floor 14 m (top row + 2 m), glass 15.2-21.6 m (two storeys); tower 29.8 m over t -52..-14 m (lidar 29.5-30.1 m) | sand seats, grey deck, dark glass, green tower with blue glass (onboard 2:15); 13 aisle heads at 11 m (captures); steel stairs at both ends (24of8fjjAug 4:56, owner_22); plain white / blue base panels (owner_22, 2017); 4 light clusters on the roof (owner_22, onboard 2:15; positions along the roof approximate) |
+| Pit garages north / south (OSM 1019835464, 1019837060) | OSM rectangles 74.6 x 12.8 m, 75.5 x 13.0 m | lidar: eaves 3.9-4.5 m (4.3), ridge 7.0-7.1 m | tan stucco, GREEN metal roofs (onboard 2:04-2:08, 2026; the 2026 captures show the roofs dark, the onboard shows green), red trim band (owner_20, 2011), window row on the lane side (onboard 2:05), roll-up doors on the paddock side (24of8fjjAug 24:40) |
+| Paddock garages west / south (OSM 1019836533, 1019836718) | OSM rectangles 54.4 x 16.8, 56.2 x 21.4 m | lidar: eaves 5.0 m, ridge 7.7-7.8 m | tan, green roofs (NAIP; 24of8fjjAug 24:30-24:40 grey-green) |
+| Pit-exit building (OSM 1019839174) | OSM 29.1 x 29.0 m | lidar: mono-pitch roof 4.2 m (paddock side) to 8.2 m (track side) | grey ribbed walls and roof, RED roof edge, glazed track side (onboard 0:04; c20_s1870 grey roof with a red edge; owner_25, 2011, red curved roof line) |
+| T12 two-storey building (OSM 1019836595) | OSM 32.2 x 14.0 m | 2 storeys x 3.2 m + 0.5 m parapet = 8.4 m (HEIGHTS.md example 8); lidar flat 8.3-8.9 m | tan, window bands (onboard 2:12; Street View QduY6QTXmw4JDevQVE_b-g) |
+| Fuel island (OSM 1019838109) | OSM 15.2 x 6.9 m | lidar: canopy edges 5.6-6.0 m, hip top 6.9 m (canopy 4.8 + fascia 0.9 + hip 1.2); pylon 9 m against the 21 m mast beside it | cream canopy, grey-green hip roof (24of8fjjAug 24:30); plain blue pylon with a yellow panel (no logo) |
+| 28 light masts | isolated lidar spikes (DSM - DEM > 15 m, local max, ring median low), each checked on a 28 x 28 m capture window: lamp head displaced along the view and a long shadow to the north-west (c20_s1760 ... c20_s1485, listed in the config `src`); two on the T7a hill outside the captures (Street View J6fsnW4hj4xCjQLzrgRGzA) | spike height - 0.7 m (the kit's head top): 18.2-27.4 m | grey poles, 3 x 2 lamp heads facing the nearest track point |
+| Pit wall boards | the pit-side barrier between s 3960 and 4098, found by side and lateral 4-15 m (robust to wall edits) | 0.85 m panels on the 1.1 m wall | blue (24of8fjjAug 4:48), green at the line (onboard 2:15) |
+| Pit-box lines | straightened strip of the 2026 captures along the pit lane, peaks of the white-line brightness: three runs (317-388, 504-619, 634-705 m from the pit-in), pitch 8.95 / 8.84 / 8.85 m, box front line 6.6 m and the box wall 11.5 m off the lane centre | painted, 0.12 m | white |
+| Terrace dressing (above T2, T3a-T4, T7a hill, back straight / 9a) | the existing terrace rows (rule unchanged) | bench strips 0.4 m on each row, seated on the drawn terrain | stair aisles with hand rails every 40-45 m (onboard 0:14-0:16, 0:26-0:30, 1:12-1:14, 1:30-1:34; positions along the rows not measured); shade roofs on top above T2 (one, at the far end) and on the back straight (two; onboard 1:32-1:34, positions approximate) |
+
+Suppressed OSM boxes (logged by the build): 262082790, 1019835464, 1019837060, 1019836595, 1019838109, 1019839174,
+1019836533, 1019836718. No lidar box or tree stood inside a structure outline.
+
+Coverage gate, building / stand / mast rows (report only; the gate fails on the scenery round's kinds): MISSING mast 29 ->
+20, stand 15 -> 12, building 4 -> 4; UNSUPPORTED building 12 -> 11 (none of the structures is unsupported). Still missing:
+the pit-exit building rows at s 91 and 4092 (the building stands at s 160-190, seen ahead), the drag-strip masts on the
+right of the front straight (no lidar spike and no capture shadow found), the T10-T11 infield grandstand and buildings
+(s 2854-3119 right, 3259 right), the T12 control tower beyond the drag strip (s 3910 right).
+
+Not sourced / not built: the drag-strip masts; fences (the scenery round's); the dark scoring pylon at the Carousel
+(s 1584, a 28 m lidar spike with a solid shadow: not a mast); the hospitality building OSM 1363693902 stays an OSM box.
+Finding for the terrace rule (not changed here): the T2 terrace starts ~30 m up the bank in the sim; the onboard (0:14)
+shows the rows from the catch fence at the foot of the bank.

@@ -496,6 +496,16 @@ For every other circuit, these are steps of stage 3:
    pit-lane wall row of the inventory must be declared in `pit_lane.walls` on that side and stand in the package as a
    barrier on that side of the lane within +-15 m.
 
+10. **Structures (21 Oct 2026, Sonoma's buildings round).** Grandstands, pit and paddock garages, blocks, fuel islands, masts,
+   pit-box lines and pit-wall boards are declared in the config's top-level `structures` section and built by
+   `build_structures.py` at the end of `build_scenery.main` into scenery.json `structures`, drawn by the app's structure kit
+   (`src/app/structures.ts`: parametric generators in three merged meshes). Every item carries `src` and `h_src`; footprints
+   from OSM (`osm=`) or lat/lon on the clean captures; heights from lidar profiles across the outline (DSM - DEM every 2 m)
+   checked against storeys; masts from isolated lidar spikes each confirmed on a capture window; colours from the most recent
+   video. `suppress_osm` lists the OSM boxes a structure replaces (each must match, logged). Shoot before / after /
+   reference sheets with `compare/pose_walk.ts` (it also reports draw calls and triangles) and keep the kit under ~150k
+   triangles.
+
 ## Stage 4: compare pass with a judge (`tools/track/compare/`)
 
 Only after stage 1 is accepted: iterating landmarks on wrong geometry wasted five rounds at Laguna, and the judge
