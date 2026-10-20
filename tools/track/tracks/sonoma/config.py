@@ -649,6 +649,11 @@ CONFIG = dict(
         # onboard 0:28-0:32; above T2: H9xspk4q_OoFIjVDhaMzDA, onboard 0:15; back straight / 9a: xkSrqJ5RaN9WFLncaiqaug,
         # onboard 1:33-1:36)
         grandstand_on_terrain=True,
+        # round 6 (owner O3, approved quick version): the summer NAIP's dry grass shifted to the March green of the 2026
+        # onboard, on the published ortho.jpg / far_ortho.jpg only, as the stage's last step (build_scenery.season_tint;
+        # spec compare/sonoma/season_tint_mockup.py). Limits: ploughed fields go green too; one uniform green.
+        season_tint=dict(enabled=True, green=(0.38, 0.47, 0.24), warm=(0.06, 0.20), bright=(0.25, 0.45), sat_max=0.55,
+                         sat_soft=0.25, dark=0.88),
         # building heights from a robust lidar statistic (p60 above the footprint's ground; p50 where p90 - p50 > 6 m; no
         # structure above 2.5 m: dropped): the p85 rule made the main grandstand at the line a 25.6 m block (timing tower,
         # masts and the stand's slope inside the OSM outline). Laguna keeps the old rule (byte-identical package).
@@ -721,8 +726,8 @@ CONFIG = dict(
                  src='c20_s2695: a raised hut on a platform 27 m right of the T4 approach (long shadow); onboard 0:33 white elevated post with roof on the right; Street View 3a panorama (Jul 2011) shows it ahead right'),
             dict(name='T2 exit', latlon=(38.1607335, -122.4589865), h=3.0,
                  src='c20_s2200: a ~2 m white hut at the foot of the T2 terraces, 31 m left of the centre at s ~445 (round 5); onboard 0:12 white marshal hut ahead-left at the fence line'),
-            dict(name='T7', latlon=(38.1659466, -122.4626554), h=4.0,
-                 src='c20_s3905: a post at the end of the left wall at T7; onboard 1:11 raised white post with roof ahead'),
+            dict(name='T7', latlon=(38.1659466, -122.4626554), h=4.9,
+                 src='c20_s3905: a post at the end of the left wall at T7; onboard 1:11 raised white post with roof ahead; round 6 (orchestrator S4): onboard 1:12 (t072) the hut stands on legs about as tall as itself, ~2.5 m (the kit draws legs h - 2.4 m)'),
         ],
         # light masts (round 5, 21 Oct 2026): only those whose base and shadow the 2026 captures show (a thin shadow pointing
         # NW from the base, with the lamp frame's wider shadow at its end); heights not measurable on the captures (no
@@ -745,6 +750,7 @@ CONFIG = dict(
         ],
         # free-standing tyre stacks (round 5): the ones the onboard shows that the captures place
         tyre_stacks=[
+            dict(latlon=(38.1640111, -122.4576293), h=0.8, src='round 6 (orchestrator S3): onboard 0:58 (t058) a black tyre stack at the foot of the light mast on the Carousel-exit runoff (0.8 m, tyre-ref; inventory s 1687 right); the mast is the lidar spike at (-1.5, 146.5) confirmed on c20_s3355 (structure kit masts), the stack 1.2 m track-side of its base'),
             dict(latlon=(38.1632399, -122.4575474), h=0.84, src='c20_s3300 / c20_s3355: two dark stacks on the runoff right of the Carousel exit; onboard 0:56 single black tyre stacks on the runoff (0.8 m, tyre-ref)'),
             dict(latlon=(38.1631995, -122.4575097), h=0.84, src='c20_s3300 / c20_s3355: the second stack; onboard 0:56'),
             dict(latlon=(38.1629302, -122.4551972), h=0.42, color='#8a8d90', src='onboard 1:40: a stack of 2 grey tyres just past the 9a right apex kerb (kerb end s ~3045 on c20_o0660), 1.5 m outside the edge'),
@@ -985,6 +991,17 @@ CONFIG = dict(
                      'roof directly behind the boarded wall; onboard RAZip6S84CM 1:54-1:58 (frames t114-t118): only the '
                      'boarded wall (5.2 m) and the hills behind, no storeys or glazing above it',
                  h_src='lidar 2022-24 over the outline: p50 5.5 m, p90 6.2 m (flat roof)'),
+            # round 6 (owner O1 / orchestrator F1): the scoring tower on the Carousel hill (onboard 0:04-0:06 ahead-right on the
+            # hill past T1, 0:52-0:56 beside the Carousel): a tall slender dark column on a white-rimmed square base
+            dict(type='scoring_tower', name='Scoring tower (Carousel hill)', at=(38.1626443, -122.4577737), heading_deg=135.0,
+                 w=4.6, d=4.6, h=27.6, color='#45474a', plinth=dict(w=5.6, h=0.8, color='#e3e1db'),
+                 src='lidar 2022-24: an isolated 27.5-27.9 m spike (DSM - DEM), 33 cells over 10 m in a 5.7 x 4.9 m rectangle at '
+                     '(-15.2, -6.2) ENU, axis 135 deg, nearest track s 1584 (50 m right); c20_s3300 / c20_s3245: a ~5.6 m '
+                     'white-rimmed square base with a long 4-5 m wide shadow to the north-west (the capture puts the base ~10 m '
+                     'SE of the lidar top; the lidar position is used, as for the masts); onboard RAZip6S84CM 0:06 (t006): a '
+                     'tall slender dark grey rectangular column on the hill, no wider head visible (the owner\'s Alamy reference '
+                     '2R6P462 is no longer on the site, so no head board is modelled)',
+                 h_src='lidar spike 27.5-27.9 m above the DEM; width / height ~1/6 in the t006 frame (4.6 m)'),
             # T12: the two-storey flat-roof building at the pit-road end of the grandstand
             dict(type='block', name='T12 two-storey building', osm='1019836595', h=7.9, storeys=2, parapet=0.5,
                  wall='#d4c49c', band='#34495a', roof='#a3a39e',

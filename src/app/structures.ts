@@ -78,6 +78,12 @@ export interface PaintJson { type: 'paint'; name?: string; src: string; rects: [
 /** `names` (round 6): each panel's typed name [text, background, text colour] in turn (the names the footage shows, as
  *  plain bold text, no logo artwork; drawn by buildStructures' `label`), its background replacing `colors` */
 export interface BoardsJson { type: 'boards'; name?: string; src: string; pts: V3[]; z0: number; h: number; colors: string[]; panel: number; names?: [string, string, string][] }
+/** A slender scoring tower (round 6, Sonoma's on the Carousel hill): a column w (along `heading_deg`) x d, h tall over
+ *  the ground at its centre, on an optional plinth, with an optional wider head board at its top. */
+export interface ScoringTowerJson {
+  type: 'scoring_tower'; name?: string; src: string; c: V2; z: number; heading_deg: number; w: number; d: number; h: number; color: string;
+  head?: { h: number; w: number; d: number; color: string }; plinth?: { w: number; h: number; color: string };
+}
 /** Dressing of a hillside terrace (scenery.json `terraces` by name): bench strip per row, stair aisles with hand
  *  rails, shade roofs over the top rows between fractions f0..f1 of the row length */
 export interface TerraceDressJson {
@@ -89,7 +95,7 @@ export interface TerraceDressJson {
 
 /** every structure may carry solid outlines for the collision world (src/physics/collision.ts reads them like buildings) */
 export interface Collide { collide?: { footprint: V2[]; z: number; h: number }[] }
-export type StructureJson = (GrandstandJson | GarageJson | BlockJson | FuelJson | FenceJson | MastJson | PaintJson | BoardsJson | TerraceDressJson) & Collide;
+export type StructureJson = (GrandstandJson | GarageJson | BlockJson | FuelJson | FenceJson | MastJson | PaintJson | BoardsJson | TerraceDressJson | ScoringTowerJson) & Collide;
 /** A terrace row: straight (a, b at height z), or, for a terrace declared by its measured footprint (Sonoma round 6), a
  *  polyline following the stand: `pts` [x, y, z, z_low, m] (tread height, the row below's height, metres along the front
  *  line) with `nrm` the uphill unit vector per vertex, and `k` the row number. */
@@ -444,6 +450,17 @@ export function paint(u: PaintJson, s: Soup, ground?: (x: number, y: number) => 
 }
 
 /** The panels of a boards run: frame at the panel's start, length, the z offset over it, and its name entry. */
+export function scoringTower(u: ScoringTowerJson, s: Soup): void {
+  const f = Frame.heading(u.c, u.z, (u.heading_deg * Math.PI) / 180);
+  const pl = u.plinth;
+  const z0 = pl ? pl.h : 0;
+  if (pl) s.box(f, -pl.w / 2, pl.w / 2, -pl.w / 2, pl.w / 2, -0.5, pl.h, rgb(pl.color));
+  const hd = u.head;
+  const zc = hd ? u.h - hd.h : u.h;
+  s.box(f, -u.w / 2, u.w / 2, -u.d / 2, u.d / 2, z0, zc, rgb(u.color));
+  if (hd) s.box(f, -hd.w / 2, hd.w / 2, -hd.d / 2, hd.d / 2, zc, u.h, rgb(hd.color));
+}
+
 export function boardPanels(u: BoardsJson): { f: Frame; l: number; dz: number; k: number }[] {
   const out: { f: Frame; l: number; dz: number; k: number }[] = [];
   let k = 0;
@@ -690,6 +707,7 @@ export function structureSoups(list: StructureJson[], terraces: TerraceJson[] = 
       case 'mast': masts(u, solid); break;
       case 'paint': paint(u, pnt, ground); break;
       case 'boards': boards(u, solid); break;
+      case 'scoring_tower': scoringTower(u, solid); break;
       case 'terrace_dress': { const t = terraces.find((x) => x.name === u.terrace); if (t) terraceDress(u, t, terr, ground); break; }
       default: break;
     }

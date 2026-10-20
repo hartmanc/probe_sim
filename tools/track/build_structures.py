@@ -15,6 +15,7 @@ captures with compare/capwin.py; heights by tools/track/compare/HEIGHTS.md or th
             dict(type='boards', side='left'|'right', s0, s1, lat=(a, b), h, colors, panel),   # on the barrier there
             dict(type='paint', runs=[dict(a=(lat, lon), b=(lat, lon), pitch, depth, w)], color),   # pit-box lines
             dict(type='terrace_dress', terrace=name, ...),            # passed through
+            dict(type='scoring_tower', at=(lat, lon), heading_deg, w, d, h, color, head=dict(h, w, d, color)?, plinth=dict(w, h, color)?)
             dict(type='fence', pts=[(lat, lon), ...], h),
         ])
 
@@ -243,6 +244,11 @@ def apply(trk, osm, sc, cfg):
             o, fp = boxlike(trk, osm, it); out.append(o); outlines.append(fp)
         elif t == "mast":
             out += masts(trk, it)
+        elif t == "scoring_tower":
+            # round 6 (owner O1 / orchestrator F1): a slender scoring tower, column (+ optional head board) on a plinth
+            p = _enu(it["at"])
+            out.append({k: v for k, v in it.items() if k not in ("at", "h_src")} | {"c": [rnd(p[0]), rnd(p[1])], "z": rnd(_ground(trk, p))})
+            log(f"structure scoring tower '{it.get('name', '')}': {it['w']} x {it['d']} m, {it['h']} m at ({p[0]:.1f}, {p[1]:.1f})")
         elif t == "boards":
             out.append(boards(trk, it, sc["barriers"]))
         elif t == "paint":

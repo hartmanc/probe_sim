@@ -2125,8 +2125,41 @@ def main(cfg=None, out_dir=None):
     log(f"new payload (excluding the regraded ortho.jpg): {tot / 1e6:.2f} MB")
     log(f"summary: {len(T)} trees (lidar) + {len(Tf)} far trees (NAIP), {len(bld)} buildings, {len(brg)} bridges, "
         f"{len(bar)} barrier runs ({sum(bar_tot.values()):.0f} m), {len(kerb)} kerbs, {len(marks)} landmarks")
+    st_cfg = SC_CFG.get("season_tint")
+    if st_cfg and st_cfg.get("enabled", True):
+        # the LAST step of the stage, on the published ground images only: the cached NAIP (stage 1's paint detector,
+        # the canopy tests, far trees) and every step above read the untinted images
+        for f, q in (("ortho.jpg", 84), ("far_ortho.jpg", 78)):
+            fp = os.path.join(OUT, f)
+            arr, share = season_tint(np.asarray(Image.open(fp).convert("RGB")), st_cfg)
+            Image.fromarray(arr).save(fp, quality=q, optimize=True)
+            log(f"season tint on {f}: {share * 100:.1f} % of the pixels (mask mean), green {tuple(st_cfg.get('green', (0.38, 0.47, 0.24)))}")
     if os.path.getsize(os.path.join(OUT, "ortho.jpg")) > 1.5e6:
         log("WARNING: ortho.jpg over 1.5 MB")
+
+
+def season_tint(img, opt):
+    """Procedural season tint of a ground image (config scenery.season_tint, Sonoma round 6, owner-approved quick version
+    of the mock-up compare/sonoma/season_tint_mockup.py): the dry-grass class of the summer NAIP shifted to March green.
+    Per pixel, mask = warm ramp (R - B over warm0..warm1) x brightness ramp (max channel over v0..v1) x low-saturation
+    ramp (saturation under sat_max, soft over sat_soft) x not-already-green (G - R under 0.02, soft over 0.08); masked
+    pixels take the green (r, g, b) scaled to keep the pixel's luminance, times `dark`, blended by the mask. Known limits:
+    ploughed fields go green too, and the green is uniform (an NIR mask + slope version is a later option). Returns the
+    tinted uint8 image and the mask's mean."""
+    im = img.astype(np.float32) / 255.0
+    r, g, b = im[..., 0], im[..., 1], im[..., 2]
+    v = im.max(-1); mn = im.min(-1)
+    sat = np.where(v > 0, (v - mn) / np.maximum(v, 1e-6), 0)
+    w0, w1 = opt.get("warm", (0.06, 0.20)); v0, v1 = opt.get("bright", (0.25, 0.45))
+    smax, ssoft = opt.get("sat_max", 0.55), opt.get("sat_soft", 0.25)
+    m = np.clip((r - b - w0) / (w1 - w0), 0, 1) * np.clip((v - v0) / (v1 - v0), 0, 1) * np.clip((smax - sat) / ssoft, 0, 1)
+    m = m * np.clip(1 - (g - r - 0.02) / 0.08, 0, 1)
+    lum = 0.299 * r + 0.587 * g + 0.114 * b
+    tr, tg, tb = opt.get("green", (0.38, 0.47, 0.24))
+    k = lum / (0.299 * tr + 0.587 * tg + 0.114 * tb)
+    green = np.clip(np.stack([tr * k, tg * k, tb * k], -1) * opt.get("dark", 0.88), 0, 1)
+    out = im * (1 - m[..., None]) + green * m[..., None]
+    return (np.clip(out, 0, 1) * 255).astype(np.uint8), float(m.mean())
 
 
 def only_pit_exit_cones():
