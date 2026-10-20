@@ -43,9 +43,10 @@ from geo import log as _log
 U = np.arange(-4.5, 4.0001, 0.04)
 
 
-def bands(v, valid):
+def bands(v, valid, U=U):
     """v: (len(U), 3) RGB outward along the normal; valid: bool per sample. Returns the painted bands with asphalt just
-    inside them: [(inner offset, outer offset from the current edge, has red, width)]."""
+    inside them: [(inner offset, outer offset from the current edge, has red, width)]. U: the offsets sampled (the
+    module default, or a kerb zone's own search window, spline.kerb_search)."""
     br = v.mean(1); sat = v.max(1) - v.min(1)
     grey = (sat < 30) & valid
     inner = (U < -1.5) & grey
@@ -90,14 +91,21 @@ KEEP_W = 400.0
 # 98 % of hits within 0.25 m of the station's median over captures, against 65 % / 99 % with the defaults)
 AEND = dict(jump=10.0, sat_max=30.0, lo=-1.2, hi=2.0)
 MASK = []
+# kerb zones whose blocks lie beyond the default search window of the current edge (spline.kerb_search [(side, lo, hi,
+# (w_lo, w_hi), src)], Buttonwillow 20 Oct 2026: block-line kerbs laid on wider pavement, the paved apron beyond them
+# fitted as track by asphalt_end; the blocks 2-10 m inside that edge). The zone's feature kind reads its evidence over
+# the window: bands for kerb / kerb_band, the asphalt_end / warm_end detectors over the whole window for those kinds.
+KSEARCH = []
 # stations whose capture readings are not used, per side (spline.mask [(side, lo, hi, src)]): an object beside the edge
 # that the detector reads as the edge (Buttonwillow's T11-approach marshal mound, 20 Oct 2026); empty = every reading
 
 
-def asphalt_end(v, valid):
-    """offset where the dark asphalt ends: first point whose next 0.4 m is `jump`+ brighter than the 0.3-1.0 m before it."""
+def asphalt_end(v, valid, U=U, win=None):
+    """offset where the dark asphalt ends: first point whose next 0.4 m is `jump`+ brighter than the 0.3-1.0 m before it.
+    U / win: a search zone's own offsets and window (spline.kerb_search); default the module's."""
     br = v.mean(1); sat = v.max(1) - v.min(1); st = 0.04; q = lambda m: max(1, int(round(m / st)))
     jump, sat_max, lo, hi = AEND['jump'], AEND['sat_max'], AEND['lo'], AEND['hi']
+    if win is not None: lo, hi = win
     for k in range(q(1.0), len(U) - q(0.4)):
         if not valid[k - q(1.0):k + q(0.4)].all(): continue
         if U[k] < lo or U[k] > hi: continue   # near the current edge only (the rubbered line brightens gently over 4 m)
@@ -109,7 +117,7 @@ def asphalt_end(v, valid):
 WARM_THR = 16.0   # R - B (8-bit) above which a pixel reads as dirt (spline.warm_thr; Buttonwillow, 20 Oct 2026)
 
 
-def warm_end(v, valid, thr=None):
+def warm_end(v, valid, thr=None, U=U, win=(-1.5, 2.5)):
     """offset where the grey asphalt ends against warm dirt (feature 'warm_end'; circuits with no painted edge line whose
     asphalt and dirt have the same brightness, Buttonwillow: asphalt R - B +8..+12, dirt +20..+31 on the 2026 captures):
     the first point, from 1.5 m inside the current edge outward to 2.5 m beyond it, whose next 0.4 m reads warmer than
@@ -118,7 +126,7 @@ def warm_end(v, valid, thr=None):
     w = v[:, 0] - v[:, 2]; st = 0.04; q = lambda m: max(1, int(round(m / st)))
     for k in range(q(1.0), len(U) - q(0.4)):
         if not valid[k - q(1.0):k + q(0.4)].all(): continue
-        if U[k] < -1.5 or U[k] > 2.5: continue
+        if U[k] < win[0] or U[k] > win[1]: continue
         if np.median(w[k - q(1.0):k - q(0.3)]) <= thr - 5 and (w[k:k + q(0.4)] >= thr).mean() >= 0.8:
             return float(U[k])
     return None
@@ -314,6 +322,14 @@ def feature_at(features, side, k, n):
     return None
 
 
+def ksearch_at(side, k, n):
+    """the kerb_search window covering station k on `side`, or None"""
+    for z in KSEARCH:
+        if z[0] == side and (k - z[1]) % n <= (z[2] - z[1]) % n:
+            return z[3]
+    return None
+
+
 def gather(C, NL, hl, hr, tiles, features, line_off, mpp, U_=None):
     """Boundary evidence along every station's normal on every capture: for each side a list of (station, capture,
     [candidate half-widths], [kinds]). Features 'asphalt_end' and 'kerb' choose the kind of evidence; 'keep' is not a
@@ -339,6 +355,7 @@ def gather(C, NL, hl, hr, tiles, features, line_off, mpp, U_=None):
             val = inside[rows] & mask[np.clip(np.round(py[rows]).astype(int), 0, H - 1), np.clip(np.round(px[rows]).astype(int), 0, W - 1)]
             for v, ok, i in zip(V, val, rows):
                 if MASK and any(m[0] == side and (ks[i] - m[1]) % n <= (m[2] - m[1]) % n for m in MASK): continue
+                if KSEARCH and ksearch_at(side, ks[i], n) is not None: continue
                 feat = feature_at(features, side, ks[i], n)
                 if feat in ('asphalt_end', 'warm_end'):
                     e = asphalt_end(v, ok) if feat == 'asphalt_end' else warm_end(v, ok)
@@ -346,6 +363,35 @@ def gather(C, NL, hl, hr, tiles, features, line_off, mpp, U_=None):
                     continue
                 bl = bands(v, ok)
                 if bl: raw[side].append((i, ti, bl))
+    # kerb zones with their own search window (KSEARCH): the same band reading over the zone's offsets
+    for ti, t in enumerate(tiles):
+        im = None
+        for zs, z0, z1, win, *_ in KSEARCH:
+            sg = 1 if zs == 'left' else -1; hw = hl if zs == 'left' else hr
+            Uz = np.arange(win[0], win[1] + 1e-4, 0.04)
+            zk = (np.arange(z0, z1 + 1) % n)
+            lat = sg * (hw[zk][:, None] + Uz[None, :])
+            X = C[zk, 0:1] + lat * NL[zk, 0:1]; Y = C[zk, 1:2] + lat * NL[zk, 1:2]
+            if not (np.hypot(X.mean(1) - t['x'], Y.mean(1) - t['y']) <= 100).any(): continue
+            if im is None:
+                im = np.asarray(Image.open(t['path']).convert('RGB')).astype(np.float32)
+                H, W = im.shape[:2]; mask = t['mask'](H, W)
+            px = W / 2 + (X + t['dx'] - t['x']) / mpp; py = H / 2 - (Y + t['dy'] - t['y']) / mpp
+            inside = (px >= 1) & (px < W - 2) & (py >= 1) & (py < H - 2)
+            rows = np.where(inside.mean(1) > 0.6)[0]
+            if not len(rows): continue
+            V = bilinear(im, np.clip(px[rows], 1, W - 2), np.clip(py[rows], 1, H - 2))
+            val = inside[rows] & mask[np.clip(np.round(py[rows]).astype(int), 0, H - 1), np.clip(np.round(px[rows]).astype(int), 0, W - 1)]
+            for v, ok, r in zip(V, val, rows):
+                i = int(zk[r])
+                if MASK and any(m[0] == zs and (i - m[1]) % n <= (m[2] - m[1]) % n for m in MASK): continue
+                fz = feature_at(features, zs, i, n)
+                if fz in ('asphalt_end', 'warm_end'):
+                    e = asphalt_end(v, ok, Uz, win) if fz == 'asphalt_end' else warm_end(v, ok, None, Uz, win)
+                    if e is not None: raw[zs].append((i, ti, [(e, e + 0.1, False, -1.0)]))
+                    continue
+                bl = bands(v, ok, Uz)
+                if bl: raw[zs].append((i, ti, bl))
     obs = {'left': [], 'right': []}
     for side, hw in (('left', hl), ('right', hr)):
         red_st = np.zeros(n, bool)
@@ -426,6 +472,10 @@ def fit_periodic(C, NL, hl, hr, tiles, features, sp, mpp, anchors=None, log=_log
     if sp.get('warm_thr') is not None: WARM_THR = float(sp['warm_thr'])
     AEND.update(jump=10.0, sat_max=30.0, lo=-1.2, hi=2.0); AEND.update(sp.get('asphalt_end') or {})
     MASK[:] = list(sp.get('mask') or [])
+    KSEARCH[:] = list(sp.get('kerb_search') or [])
+    for z in KSEARCH:
+        if len({feature_at(features, z[0], k, n) for k in (z[1], z[2])}) != 1:
+            raise SystemExit(f'spline.kerb_search {z[:4]}: its ends lie in different feature zones')
     win = sp.get('search', (-4.5, 4.0)); U_ = np.arange(win[0], win[1] + 1e-4, 0.04)
     obs = gather(C, NL, hl, hr, tiles, features, sp['line_off'], mpp, U_)
     xs = np.arange(n, dtype=float); Bx = periodic_basis(xs, K, n)
@@ -442,11 +492,17 @@ def fit_periodic(C, NL, hl, hr, tiles, features, sp, mpp, anchors=None, log=_log
         xo_all = np.array([i for i, _, c, _ in O for _ in c], float); yo_all = np.array([y for _, _, c, _ in O for y in c])
         c0 = periodic_fit(xo_all, yo_all, K, n, sp['lam'] * sp['init_stiff'], 1.0, xs, hw, wp, xa, ya, wa)
         cur = Bx @ c0
+        # a search zone's stations associate over the zone's whole window (its blocks may lie metres from the prior;
+        # the outer centre refits carry the edge there step by step); elsewhere the gate schedule below
+        zreach = np.zeros(n)
+        for z in KSEARCH:
+            if z[0] == side:
+                zreach[np.arange(z[1], z[2] + 1) % n] = max(abs(z[3][0]), abs(z[3][1]))
         for gate in (1.2, 1.0, 0.8, 0.6, 0.5, 0.5):
             xo, yo = [], []
             for i, _, c, _ in O:
                 d = np.abs(np.array(c) - cur[i]); j = int(d.argmin())
-                if d[j] <= gate: xo.append(i); yo.append(c[j])
+                if d[j] <= max(gate, zreach[i]): xo.append(i); yo.append(c[j])
             xo = np.array(xo, float); yo = np.array(yo)
             cf = periodic_fit(xo, yo, K, n, sp['lam'], sp['huber'], xs, hw, wp, xa, ya, wa)
             cur = Bx @ cf

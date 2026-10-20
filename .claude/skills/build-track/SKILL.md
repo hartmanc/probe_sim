@@ -348,6 +348,23 @@ knot 6, lam 30, huber 0.25, line_off 0.26, prior 0.03), per side:
   interpolate the prior across ±35 stations (`prior.bridge_win`). Painted lines across the road, like Sonoma's chequered
   S/F stripe, go in `prior.extra_bridges`.
 - **Junctions.** Keep the old edge where a pit-lane join or the pit-exit blend lane touches the track.
+- **Block-line kerbs on wider pavement.** On a circuit where paved aprons or runoffs meet the track with no paint and a
+  line of kerb blocks separates them (Buttonwillow), an asphalt-end edge runs out to the far side of the apron.
+  - Reach the blocks. The kerb search must reach the blocks wherever they sit, not only ±1.5 m from the current edge.
+    Give each such zone a `kerb_band` feature and its own search window in `spline.kerb_search`
+    [(side, lo, hi, (w_lo, w_hi), src)]. The window also works for `asphalt_end` and `warm_end` zones.
+  - Cite the evidence. Each zone cites its capture window and onboard frame, and its side follows the onboard: blocks on
+    the car's right are the right edge.
+  - Look first. `kerb_detect.py --offs=-10,-1` lists the candidates.
+  - Buttonwillow, 20 Oct 2026. Nine block lines sat 1.3-16 m inside the fitted edges; 13 onboard kerb rows were MISSING
+    in stage 3. The T1-exit line runs diagonally across the whole fitted track, and the flying lap runs west of it.
+  - What the fit cannot do. It moves an edge only as far as its gate lets an observation pull the curve (1.2 m on the
+    first pass). It cannot jump 13-16 m. Where a block line ends and the apron edge runs on 4-5 m out, the edge-gate step
+    (0.1 m per station) fails. Both are reported, not forced.
+- **The operator's width range is a stage-1 advisory check.** Put the published track width in `spline.report_width`
+  (Buttonwillow: 36-55 ft = 10.97-16.76 m). Then read the report's shares of stations outside it. Stations over the top
+  usually mean an apron fitted as track, so look at each run on a capture window. Buttonwillow before the block-line
+  zones: p90 16.94 m, max 19.33 m at s 2437, 12.0 % of stations over 16.76 m.
 - **Laguna's result:** painted width median 12.9 → 11.6 m (p5 8.7, p95 16.0); apex half-widths such as T6 3.0/8.9 →
   4.1/4.8 m and T11 3.0/9.6 → 5.4/6.6 m; front straight 7.9/8.5 → 4.7/5.4 m. The AI Probe's solo lap went from 120.4 s
   on the wide track to 123.8 s on the painted road with the old driver, and to 120.2 s once the AI's speed profile

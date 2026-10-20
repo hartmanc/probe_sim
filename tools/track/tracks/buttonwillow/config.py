@@ -148,6 +148,18 @@ CONFIG = dict(
     # w_left), which the default spline followed (waviness 0.056 m, steps 0.101-0.105 m); a stiffer spline with a
     # tighter robust loss runs through the middle of them
     spline=dict(lam=60.0, huber=0.15, asphalt_end=dict(jump=7.0, sat_max=40.0, lo=-1.2, hi=2.0), report_by_kind=True, report_width=(10.97, 16.76),
+                # the block-line kerb zones' search windows (offsets from the current edge; features below cite the evidence)
+                kerb_search=[
+                     # set aside after stage-1 runs 17 and 19 (manifest, stage-3 round): ('right', 355, 432, (-18.0, 1.5), 'T1 exit: the white block line from 4 m inside the right edge at s 361 to the left edge at '),
+                     ('left', 540, 582, (-10.0, 1.5), 'block line 2.7-6.6 m inside the left edge at s 540-560 (cw_533); onboard t022 (0:22): red '),
+                     ('left', 1076, 1112, (-10.0, 1.5), 'block line 5.4-6.5 m inside the left edge (cw_1086); onboard t044 (0:44): red / white / bl'),
+                     # set aside after stage-1 run 17 (manifest, stage-3 round): ('left', 1318, 1392, (-10.0, 1.5), 'block line 4.6-8.6 m inside the left edge, along the middle of the paved strip (cw_1348); '),
+                     ('right', 1760, 1810, (-10.0, 1.5), 'block line 0-5.4 m inside the right edge where the Dog Leg leaves (cw_1751, cw_1824); onbo'),
+                     ('left', 3675, 3712, (-10.0, 1.5), 'block line 1.3-1.8 m inside the left edge (c20_s3800); onboard t124 (2:04): red / white / '),
+                     ('left', 3948, 4010, (-10.0, 1.5), 'block line 1.3-1.8 m inside the left edge (c20_s4100 / c20_s4150); onboard t132 (2:12): re'),
+                     ('right', 4050, 4112, (-10.0, 1.5), 'block line 1.5-5.5 m inside the right edge (c20_s4150 .. c20_s4250); onboard t134 / t136 ('),
+                     # set aside after stage-1 run 17 (manifest, stage-3 round): ('right', 4402, 4445, (-10.0, 1.5), 'block line 5.6-8.0 m inside the right edge (c20_s4500 / c20_s4550); onboard t144 / t146 (2'),
+                ],
                 mask=[('left', 4250, 4272, 'c20_s4400: marshal post mound beside the left edge at s ~4255-4268'),
                       # stage-3 pass: the T1-exit corner station's tyre-faced mound right beside the right edge (c20_s0650,
                       # sheet edge_sheets/pitout_merge_470-540: the fitted right edge ran through the mound, its roof
@@ -160,9 +172,20 @@ CONFIG = dict(
     # wins. Kind 'kerb_band': the red / white / blue blocks read grey on the captures (kerb_detect colour 'grey'), so the
     # red-only 'kerb' kind found nothing there. Stations are those of the first centre (4692, station 0 at the timing line).
     features=[
+        # stage-3 pass (20 Oct 2026): block-line kerbs laid on wider pavement, the paved apron beyond fitted as track by
+        # asphalt_end; the edge is the blocks' outer limit (SKILL 1.5), found with a per-zone search window
+        # set aside after stage-1 runs 17 and 19 (manifest, stage-3 round): ('right', 355, 432, 'kerb_band', 'block line, search window (-18.0, 1.5) (spline.kerb_search): T1 exit: the white block line from 4 m inside the right edge at s 361 to the left edge at s 425 (stage3_evidence/cw_400ov.png, cw_t1raw.png); the flying lap runs west of it with the blocks on its right, converging (onboard 0:16-0:18, s0350 / s0400 / t016 / t018); the dark pavement east of it is a paved apron inside T1'),
+        ('left', 540, 582, 'kerb_band', 'block line, search window (-10.0, 1.5) (spline.kerb_search): block line 2.7-6.6 m inside the left edge at s 540-560 (cw_533); onboard t022 (0:22): red / white / blue kerb close left, running ahead'),
+        ('left', 1076, 1112, 'kerb_band', 'block line, search window (-10.0, 1.5) (spline.kerb_search): block line 5.4-6.5 m inside the left edge (cw_1086); onboard t044 (0:44): red / white / blue kerb on the left through the left-hander'),
+        # set aside after stage-1 run 17 (manifest, stage-3 round): ('left', 1318, 1392, 'kerb_band', 'block line, search window (-10.0, 1.5) (spline.kerb_search): block line 4.6-8.6 m inside the left edge, along the middle of the paved strip (cw_1348); onboard t054 (0:54): red / white / blue kerb on the left, the car right of it'),
+        ('right', 1760, 1810, 'kerb_band', 'block line, search window (-10.0, 1.5) (spline.kerb_search): block line 0-5.4 m inside the right edge where the Dog Leg leaves (cw_1751, cw_1824); onboard t066 (1:06): white / red / blue kerb ahead right'),
+        ('left', 3675, 3712, 'kerb_band', 'block line, search window (-10.0, 1.5) (spline.kerb_search): block line 1.3-1.8 m inside the left edge (c20_s3800); onboard t124 (2:04): red / white / blue kerb on the left'),
+        ('left', 3948, 4010, 'kerb_band', 'block line, search window (-10.0, 1.5) (spline.kerb_search): block line 1.3-1.8 m inside the left edge (c20_s4100 / c20_s4150); onboard t132 (2:12): red / white / blue kerb on the left'),
+        ('right', 4050, 4112, 'kerb_band', 'block line, search window (-10.0, 1.5) (spline.kerb_search): block line 1.5-5.5 m inside the right edge (c20_s4150 .. c20_s4250); onboard t134 / t136 (2:14-2:16): white / blue kerb on the right'),
+        # set aside after stage-1 run 17 (manifest, stage-3 round): ('right', 4402, 4445, 'kerb_band', 'block line, search window (-10.0, 1.5) (spline.kerb_search): block line 5.6-8.0 m inside the right edge (c20_s4500 / c20_s4550); onboard t144 / t146 (2:24-2:26): kerb on the right'),
         ('left', 277, 327, 'kerb_band', 'kerb_detect run s 282-324 off +0.1..+1.0 m (c20_s0400, c20_s0450)'),
         ('left', 356, 389, 'kerb_band', 'kerb_detect run s 362-387 off +0.1..+1.0 m (c20_s0500)'),
-        ('left', 393, 432, 'kerb_band', 'kerb_detect run s 399-430 off +0.3..+1.0 m (c20_p0840, c20_s0550)'),
+        # (left 393-432 dropped in the stage-3 pass: that block line is the RIGHT edge of the pale T1-exit surface, below)
         ('left', 745, 766, 'kerb_band', 'kerb_detect run s 751-764 off +0.3..+0.6 m (c20_s0850, c20_s0900)'),
         ('left', 947, 1017, 'kerb_band', 'kerb_detect run s 954-1016 off -0.2..+0.7 m (c20_s1050, c20_s1100)'),
         ('left', 1198, 1218, 'kerb_band', 'kerb_detect run s 1205-1217 off -0.1..+0.3 m (c20_s1300, c20_s1350)'),
