@@ -1,7 +1,7 @@
 // Headless self-play: the whole field (player car driven by an AI) races N laps and the AI's racecraft is
 // measured: line tracking when alone, passing when clearly faster, defending by pace gap, rules
 // (contacts, four wheels off, formation passes), mishaps, and the per-step cost.
-//   npx tsx tools/race/selfplay.ts [--track <id>] [--laps 4] [--seed 1] [--max-ai N] [--pace path] [--mishap-rate 0.0002] [--follow-scale 1] [--json out.json] [--quiet]
+//   npx tsx tools/race/selfplay.ts [--track <id>] [--laps 4] [--seed 1] [--max-ai N] [--pace path] [--mishap-rate 0.0002] [--follow-scale 1] [--no-kerbs] [--json out.json] [--quiet]
 import { createTrackSurface, createCollisionWorld } from '../../src/physics/index';
 import { RaceDirector } from '../../src/physics/ai/race';
 import type { PaceJson } from '../../src/physics/ai/field';
@@ -22,7 +22,8 @@ const followScale = argv.includes('--follow-scale') ? Number(arg('--follow-scale
 const pack = loadTrackPack(track);
 const identity = existsSync(IDENTITY_PATH) ? JSON.parse(readFileSync(IDENTITY_PATH, 'utf8')) : null;
 const pace: PaceJson = pacePath ? JSON.parse(readFileSync(pacePath, 'utf8')) : loadPace(track);
-const makeSurface = () => createTrackSurface(pack.track, pack.heightfield, { pitLane: pack.pitLane });
+// the app's surface options (load.ts); --no-kerbs: the pit-lane-only surface self-play used until 20 Oct 2026 (comparison)
+const makeSurface = argv.includes('--no-kerbs') ? () => createTrackSurface(pack.track, pack.heightfield, { pitLane: pack.pitLane }) : pack.makeSurface;
 const dir = new RaceDirector({
   line: pack.line, surface: pack.surface, makeSurface,
   probeJson: loadProbeJson(), pace, identity, pitLane: pack.scenery?.pit_lane ?? null, collisionWorld: createCollisionWorld(pack.scenery, pack.track),

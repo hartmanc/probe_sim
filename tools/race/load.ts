@@ -21,7 +21,14 @@ export function pacePath(trackId: string = DEFAULT_TRACK): string { return resol
 export const PACE_PATH = pacePath(DEFAULT_TRACK);
 export const IDENTITY_PATH = resolve(ROOT, 'public/cars/field/identity.json');
 
-export interface TrackPack { track: TrackJson; ghosts: GhostsJsonLike; scenery: any; surface: Surface; line: RaceLine; pitLane: PitLaneJson | null; heightfield: Float32Array }
+export interface TrackPack {
+  track: TrackJson; ghosts: GhostsJsonLike; scenery: any; surface: Surface; line: RaceLine; pitLane: PitLaneJson | null; heightfield: Float32Array;
+  /** far terrain (scenery.json far.heightfield), as the app loads it, or null */
+  farHeightfield: Float32Array | null;
+  /** A new physics Surface with the app's options (src/app/modes/race.ts surfaceFactory, HotlapSim): pit lane + paved
+   *  zones, far terrain, sausage kerbs and the per-track kerb profile. Every race tool builds its surfaces with this. */
+  makeSurface: () => Surface;
+}
 
 /** A track package by registry id, or by directory (relative to the repo root). */
 export function loadTrackPack(idOrDir: string = DEFAULT_TRACK): TrackPack {
@@ -33,10 +40,21 @@ export function loadTrackPack(idOrDir: string = DEFAULT_TRACK): TrackPack {
   const scenery = existsSync(resolve(D, 'scenery.json')) ? JSON.parse(readFileSync(resolve(D, 'scenery.json'), 'utf8')) : null;
   const pit = scenery?.pit_lane ?? null, zones = scenery?.paved_zones ?? null;
   const pitLane = pit || zones ? { spacing_m: 1, fractions: (pit ?? zones).fractions, parts: [...(pit?.parts ?? []), ...(zones?.parts ?? [])] } : null;
-  const surface = createTrackSurface(track, heightfield, { pitLane, sausages: scenery?.sausages ?? null, kerbs: scenery?.kerbs ?? null });
+  // far terrain: the app reads nx·ny floats from scenery.json far.heightfield.file (src/app/loader.ts)
+  let farHeightfield: Float32Array | null = null;
+  const farGrid = scenery?.far?.heightfield;
+  if (farGrid?.file && existsSync(resolve(D, farGrid.file))) {
+    const fb = readFileSync(resolve(D, farGrid.file)), n = farGrid.nx * farGrid.ny;
+    if (fb.byteLength >= n * 4) farHeightfield = new Float32Array(fb.buffer.slice(fb.byteOffset, fb.byteOffset + n * 4));
+  }
+  const far = farGrid && farHeightfield ? { heightfield: farHeightfield, x0: farGrid.x0, y0: farGrid.y0, dx: farGrid.dx, nx: farGrid.nx, ny: farGrid.ny } : null;
+  // (until 20 Oct 2026 selfplay / sim_race / selfplay_trace built their per-car surfaces with the pit lane only: no
+  // sausages, no kerb profile, no far terrain, unlike the app's race)
+  const makeSurface = () => createTrackSurface(track, heightfield, { far, pitLane, sausages: scenery?.sausages ?? null, kerbs: scenery?.kerbs ?? null });
+  const surface = makeSurface();
   const line = new RaceLine(track, ghosts);
   if (scenery?.pit_exit_cones?.pts?.length) line.restrictLeft(scenery.pit_exit_cones.pts);
-  return { track, ghosts, scenery, surface, line, pitLane, heightfield };
+  return { track, ghosts, scenery, surface, line, pitLane, heightfield, farHeightfield, makeSurface };
 }
 
 export function loadProbeJson(): any { return JSON.parse(readFileSync(resolve(ROOT, 'public/cars/probe_gt/car.json'), 'utf8')); }

@@ -2,7 +2,7 @@
 // 3 s before each four-off / contact (lane offset e, shift, target, edges, speed vs profile, limiter, pass phase).
 //   npx tsx tools/race/selfplay_trace.ts --track <id> --seed N [--near s0-s1] [--kind four|contact] [--max 20] [--pre 3]
 //   [--summary: one classified line per event]  [--car NUM --from t0 --to t1: pedals / steering / slips of one car]
-import { createTrackSurface, createCollisionWorld } from '../../src/physics/index';
+import { createCollisionWorld } from '../../src/physics/index';
 import { RaceDirector } from '../../src/physics/ai/race';
 import { loadTrackPack, loadProbeJson, loadPace, IDENTITY_PATH, trackArg } from './load';
 import { existsSync, readFileSync } from 'node:fs';
@@ -18,7 +18,7 @@ const kind = arg('--kind', 'four'), maxN = Number(arg('--max', '20')), pre = Num
 const followScale = argv.includes('--follow-scale') ? Number(arg('--follow-scale', '1')) : (TRACKS[track]?.ai?.followScale ?? 1);
 const pack = loadTrackPack(track);
 const identity = existsSync(IDENTITY_PATH) ? JSON.parse(readFileSync(IDENTITY_PATH, 'utf8')) : null;
-const makeSurface = () => createTrackSurface(pack.track, pack.heightfield, { pitLane: pack.pitLane });
+const makeSurface = pack.makeSurface;   // the app's surface options (load.ts)
 const dir = new RaceDirector({
   line: pack.line, surface: pack.surface, makeSurface, probeJson: loadProbeJson(), pace: loadPace(track), identity,
   pitLane: pack.scenery?.pit_lane ?? null, collisionWorld: createCollisionWorld(pack.scenery, pack.track),

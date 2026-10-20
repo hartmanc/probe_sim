@@ -1,6 +1,6 @@
 // Headless race: the whole field (player car driven by an AI) for N laps; prints timing, results and
 // per-car pace vs target.   npx tsx tools/race/sim_race.ts [--track <id>] [--laps 3] [--seed 1] [--every 2]
-import { createTrackSurface, createCollisionWorld } from '../../src/physics/index';
+import { createCollisionWorld } from '../../src/physics/index';
 import { RaceDirector } from '../../src/physics/ai/race';
 import { loadTrackPack, loadProbeJson, loadPace, IDENTITY_PATH, trackArg } from './load';
 import { existsSync, readFileSync } from 'node:fs';
@@ -14,7 +14,7 @@ const identity = existsSync(IDENTITY_PATH) ? JSON.parse(readFileSync(IDENTITY_PA
 const cw = argv.includes('--no-walls') ? null : createCollisionWorld(pack.scenery, pack.track);
 const t0 = performance.now();
 const dir = new RaceDirector({
-  line: pack.line, surface: pack.surface, makeSurface: () => createTrackSurface(pack.track, pack.heightfield, { pitLane: pack.pitLane }),
+  line: pack.line, surface: pack.surface, makeSurface: pack.makeSurface,
   probeJson: loadProbeJson(), pace: loadPace(track), identity, pitLane: pack.scenery?.pit_lane ?? null, collisionWorld: cw,
 }, { laps, seed, playerAi: true, aiControlEvery: every });
 console.log(`setup ${(performance.now() - t0).toFixed(0)} ms, ${dir.cars.length} cars, stale calibration: ${dir.calibrationStale}`);
