@@ -43,7 +43,7 @@ def lonlat(cfg, x, y):
     return lat0 + math.degrees(y / R), lon0 + math.degrees(x / (R * math.cos(math.radians(lat0))))
 
 
-def detect(cfg, T, smp, side):
+def detect(cfg, T, smp, side, share_min=0.45, std_min=16.0, ac_min=0.45):
     C, NL, hl, hr = frame(T); n = len(C); sp = T['spacing_m']
     hw = hl if side > 0 else hr
     m = int(round(n * sp / DS))
@@ -70,14 +70,14 @@ def detect(cfg, T, smp, side):
     share = var_band / np.maximum(var_all, 1e-3)
     std = np.sqrt(var_band)
     # the period must be regular: autocorrelation of lp at lag P (1.6..2.8 m) high, at lag P/2 negative
-    det = (share >= 0.45) & (std >= 16) & valid
+    det = (share >= share_min) & (std >= std_min) & valid
     lags = np.arange(int(1.6 / DS), int(2.8 / DS) + 1)
     best_ac = np.full(det.shape, -1.0)
     den = uniform_filter1d(lp * lp, W, axis=0, mode='wrap') + 1e-3
     for L in lags:
         ac = uniform_filter1d(lp * np.roll(lp, -L, axis=0), W, axis=0, mode='wrap') / den
         best_ac = np.maximum(best_ac, ac)
-    det &= best_ac >= 0.45
+    det &= best_ac >= ac_min
     # per station (1 m): any offset detected
     per = det.reshape(n, -1, len(OFFS)).any(1) if m == n * int(round(sp / DS)) else None
     st_of = np.floor(u).astype(int) % n
@@ -122,16 +122,27 @@ def main():
     ap.add_argument('--track', required=True)
     ap.add_argument('--pkg', required=True)
     ap.add_argument('--out', default=None)
+    # a second, looser look for the onboard's kerb rows the default pass misses (candidates only, each confirmed on a
+    # capture window and the frame): a wider offset range and lower thresholds; defaults are the pass above
+    ap.add_argument('--offs', default=None, help='lo,hi lateral offsets in m (default -1.5,1.5)')
+    ap.add_argument('--share', type=float, default=0.45)
+    ap.add_argument('--std', type=float, default=16.0)
+    ap.add_argument('--ac', type=float, default=0.45)
+    ap.add_argument('--min-len', type=int, default=6)
     a = ap.parse_args()
+    if a.offs:
+        global OFFS
+        lo, hi = (float(v) for v in a.offs.split(','))
+        OFFS = np.round(np.arange(lo, hi + 0.01, 0.1), 2)
     cfg = trackcfg.load(a.track)
     T = json.load(open(os.path.join(a.pkg, 'track.json')))
     smp = Sampler(cfg)
     C, NL, hl, hr = frame(T); n = len(C); sp = T['spacing_m']
     res = []
     for side in (1, -1):
-        hit, offs, col, used, st_of = detect(cfg, T, smp, side)
+        hit, offs, col, used, st_of = detect(cfg, T, smp, side, a.share, a.std, a.ac)
         hw = hl if side > 0 else hr
-        for a_, b_ in runs(hit, n):
+        for a_, b_ in runs(hit, n, min_len=a.min_len):
             ks = np.arange(a_, b_ + 1) % n
             o = [v for k in ks for v in offs[k]]
             cc = np.nanmean(col[ks], 0)

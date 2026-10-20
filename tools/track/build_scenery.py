@@ -2235,6 +2235,10 @@ def main(cfg=None, out_dir=None):
     pareas = paved_areas(trk, osm)
     cones = pit_exit_cones(trk, pit, bar)
     pc_ = SC_CFG.get("pit_exit_cones") or {}
+    if pc_.get("draw") is False:
+        # no cones where the footage shows none (Buttonwillow's pit-out merge, onboard 0:18-0:22): no cone line at all
+        log(f"pit-exit cones: none (config scenery.pit_exit_cones.draw False: {pc_.get('src', '')})")
+        cones = None
     if pc_.get("latlon"):
         # round 7 (Sonoma owner notes 42-43): the cones stand ON the painted blend line measured on the captures, from
         # the pit-wall nose to the merge, in the colour, size and spacing of the footage

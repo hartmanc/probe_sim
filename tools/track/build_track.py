@@ -271,6 +271,13 @@ def stage_geometry(cfg, out, no_logger):
     pit = BS.pit_lane(trk, osm)
     bar, _ = BS.barriers(trk, osm)
     cones = BS.pit_exit_cones(trk, pit, bar)
+    if cen.get("pit_merge_line"):
+        # config centre.pit_merge_line (Buttonwillow, 20 Oct 2026): the blend boundary through a pit-lane merge measured
+        # on the captures, where no painted line or cone line exists, in place of the pit part's own edge (a stage-1 key)
+        P_ = BS._ll_line(cen["pit_merge_line"]["latlon"], 2.0)
+        i_, _, _ = trk.project(P_[[0, -1]])
+        cones = {"s0": int(i_[0]), "s1": int(i_[1]), "pts": BS.with_z(trk, P_)}
+        log(f"pit merge line (config centre.pit_merge_line): stations {cones['s0']}-{cones['s1']}; {cen['pit_merge_line']['src']}")
     shadow = BS.bridge_stations(trk, osm) + list(cen.get("extra_shadow_stations", []))
     # -- painted midpoint and the centre refit
     caps = CAP.capture_list(cfg, cfg["centre_captures"])
