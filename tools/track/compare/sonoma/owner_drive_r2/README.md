@@ -86,3 +86,12 @@ Verdict: "a disappointing output that was not ready for me to review."
     reference only): along the OUTSIDE (right) edge of T1 there are TWO red/white striped kerb sections (one short one at the
     drag-strip junction end, one at the exit) joined by a dotted line of kerb blocks; along the inside (pit-out side) a
     dotted block line and the continuous white blend line. Owner: "Only some of these kerbs are present at T1".
+32. Owner on the 568c8f2 stills: "Looking better from the stills." Decisions: try a spring NAIP pass for the ortho (the March
+    onboard is green, the current NAIP is dry-season brown).
+33. "Add the timing tower that's on the hill behind T1" - reference (copyrighted stock photo, reference only, never saved
+    here): https://c8.alamy.com/comp/2R6P462/ (Alamy 2R6P462, the scoring tower at NASCAR practice, June 2023): a tall
+    slender pylon-type scoring tower on the hill. Likely the same tall dark tower the judge round saw ahead at s 100-200 and
+    from s 1400-1560 (finding F1).
+34. "Give the billboards their text / designs so they aren't just blank." Orchestrator's rule: designed boards in the recorded
+    colour scheme with invented sponsor names and the track's own name where the onboard shows it; no real logos or
+    trademarks (same licensing reasoning as textures).
