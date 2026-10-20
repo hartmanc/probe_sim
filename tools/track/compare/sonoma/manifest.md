@@ -431,9 +431,9 @@ buildings (rows 2:02-2:12 left, pit rows).
   c20_s1210 and the 1:56 frame shows the Jersey abeam, so 1:56 maps ~90 m early (the time map's T10-T11 stretch; the car
   brakes for the hairpin). The row stands; the map needs a T11-approach anchor (the Jersey nose's passage) next round.
 
-## Round 5 tables (generated: `npx tsx tools/track/gates/manifest_tables.ts public/tracks/sonoma tools/track/compare/sonoma/inventory.json <coverage config>`)
+## Tables (generated after round 6: `npx tsx tools/track/gates/manifest_tables.ts public/tracks/sonoma tools/track/compare/sonoma/inventory.json`; round 5's are in git history)
 
-### Scenery objects of the checked kinds (160, from public/tracks/sonoma)
+### Scenery objects of the checked kinds (194, from public/tracks/sonoma)
 
 | # | kind | side | s (m) | out (m) | object | source |
 |---|---|---|---|---|---|---|
@@ -514,10 +514,10 @@ buildings (rows 2:02-2:12 left, pit rows).
 | 75 | tyre_wall | left | 3395-3468 | 2-6 | barrier 60 (tyres) | declared: T10 to T11, left: tyre bundles at the foot of the boarded wall (round 5) (c20_s0990 / c20_s1045: wall_measure dark in front of the boarded wall, s 3395-3468, 99 % picked, rms 0.59 m; onboard 1:54 tyre bundles along the foot of the EchoPark wall) |
 | 76 | fence | right | 4042-109 (wraps) | 19-27 | barrier 61 (fence + 3 m fence) | declared: drag strip infield side: catch fence near the line (round 5) (onboard RAZip6S84CM 0:00, 0:02, 2:18 (chain-link catch fence on the far side of the drag strip, right) on the measured NE drag-strip wall (c20_s1595..s1760, the declared wall), s 4040-110) |
 | 77 | wall | left | 3988-30 (wraps) | 18-19 | barrier 62 (concrete) | declared: pit lane, left: low white pit-box wall (round 5) (pit lane: inventory pit rows s 4010 / 4060 / 20: low white pit-box wall with box numbers (24of8fjjAug 4:48-4:56); measured on c20_s1595 / c20_s1650 / c20_s1705: the bright double line between the boxes and the crew area, 27 m left of the centre, wall_measure 100 % picked, rms 0.03-0.07 m) |
-| 78 | fence | left | 2261-2274 | 67-74 | barrier 63 (fence + 1.8 m fence) | terrace T7a hill top fence (OSM 1414701937; Street View J6fsnW4hj4xCjQLzrgRGzA (terraces, fence and light masts on top); onboard 1:14) |
-| 79 | fence | left | 812-836 | 44-47 | barrier 64 (fence + 1.8 m fence) | terrace T3a-T4 top fence (OSM 1414701938; Street View nA1oaDXwADSI7x-Pa-j4Ow (~20 concrete rows); onboard 0:28-0:32) |
-| 80 | fence | left | 487-512 | 63-64 | barrier 65 (fence + 1.8 m fence) | terrace above T2 top fence (OSM 1414701939; Street View H9xspk4q_OoFIjVDhaMzDA; onboard 0:15-0:16 (fence and light poles on top)) |
-| 81 | fence | left | 2735-2765 | 60-62 | barrier 66 (fence + 1.8 m fence) | terrace back straight / 9a top fence (OSM 1414701936; Street View xkSrqJ5RaN9WFLncaiqaug; onboard 1:33-1:36) |
+| 78 | fence | left | 2240-2272 | 62-71 | barrier 63 (fence + 1.8 m fence) | terrace T7a hill top fence (measured footprint (round 6): compare/terrace_measure.py --thr 0.35 --guide xy:-480,462;-452,464;-420,471;-390,481;-370,495;-355,510 (the curved low wall below the stand on capwin.py) --reach 80 --fill-osm 1414701937: the row texture (period 1.1-1.25 m) on c20_s3960 / c20_s4015 (lower rows; the upper part is outside the captures: DEM crest - 3 m); row pitch 1.11 m on the rays; Street View J6fsnW4hj4xCjQLzrgRGzA (terraces, fence and light masts on top); onboard 1:12-1:14) |
+| 79 | fence | left | 782-987 | 41-58 | barrier 64 (fence + 1.8 m fence) | terrace T3a-T4 top fence (measured footprint (round 6): compare/terrace_measure.py --thr 0.35 --side left --s0 740 --s1 1010 --guide-lat 20 --fill-osm 1414701938: the row texture (period 1.1-1.25 m) on c20_s2530..c20_s2695 (the whole field, top walkway and fence captured); row pitch 1.25 m on the rays; Street View nA1oaDXwADSI7x-Pa-j4Ow (~20 concrete rows); onboard 0:26-0:32) |
+| 80 | fence | left | 428-569 | 52-69 | barrier 65 (fence + 1.8 m fence) | terrace above T2 top fence (measured footprint (round 6): compare/terrace_measure.py --thr 0.35 --side left --s0 400 --s1 600 --guide-lat 25 --fill-osm 1414701939: the row texture (period 1.1-1.25 m) on c20_s2090..c20_s2255 (lower two thirds; above, the DEM crest - 3 m); row pitch 1.17 m on the rays; Street View H9xspk4q_OoFIjVDhaMzDA; onboard 0:14-0:16 (rows from the catch fence at the foot of the bank, fence and light poles on top)) |
+| 81 | fence | left | 2722-3044 | 25-58 | barrier 66 (fence + 1.8 m fence) | terrace back straight / 9a top fence (measured footprint (round 6): compare/terrace_measure.py --thr 0.35 --side left --s0 2690 --s1 3070 --guide-lat 18 --fill-osm 1414701936: the row texture (period 1.1-1.25 m) on c20_o0440..c20_o0550, c20_s0605 (the whole field; it ends at s ~3030 where the access road and trees begin); row pitch 1.15 m on the rays; Street View xkSrqJ5RaN9WFLncaiqaug; onboard 1:30-1:36) |
 | 82 | kerb | right | 116-130 | 0-0 | kerb 115.7-129.7 | T1 exit right, run 1 of the broken kerb: c20_s1870 (detector run 116.7-129.7, block pattern), feature note c20_s1925 |
 | 83 | kerb | right | 130-162 | 0-0 | kerb 129.7-161.6 | T1 exit right, block line between the striped runs: c20_s1870 (kerb_detect grey run 143.7-149.7 and the dotted blocks from 130 to 161 between striped runs 1 and 3); owner_31 satellite |
 | 84 | kerb | left | 89-134 | 0-0 | kerb 88.8-133.7 | T1 inside, block line from the pit-wall nose: c20_s1815 / c20_s1870 (kerb_detect grey run 88.8-133.7, offsets -0.5..+0.2 m); owner_31 satellite (dotted block line on the inside); onboard 2:22.5 |
@@ -551,52 +551,86 @@ buildings (rows 2:02-2:12 left, pit rows).
 | 112 | station | right | 1395-1395 | 10-10 | marshal 'T6 hilltop' | c20_s3135: a ~3 x 3 m platform with a box behind the right wall at the crest before the Carousel; Street View GMaTaipEd9Hm7fMNE26aGQ (Jul 2011): white box and tyre stack there (owner: "the one at the top of the hill just before T6") |
 | 113 | station | right | 970-970 | 16-16 | marshal 'T4' | c20_s2695: a raised hut on a platform 27 m right of the T4 approach (long shadow); onboard 0:33 white elevated post with roof on the right; Street View 3a panorama (Jul 2011) shows it ahead right |
 | 114 | station | left | 445-445 | 25-25 | marshal 'T2 exit' | c20_s2200: a ~2 m white hut at the foot of the T2 terraces, 31 m left of the centre at s ~445 (round 5); onboard 0:12 white marshal hut ahead-left at the fence line |
-| 115 | station | left | 2152-2152 | 4-4 | marshal 'T7' | c20_s3905: a post at the end of the left wall at T7; onboard 1:11 raised white post with roof ahead |
-| 116 | tyre_stack | right | 1629-1629 | 35-35 | tyres '' | c20_s3300 / c20_s3355: two dark stacks on the runoff right of the Carousel exit; onboard 0:56 single black tyre stacks on the runoff (0.8 m, tyre-ref) |
-| 117 | tyre_stack | right | 1626-1626 | 39-39 | tyres '' | c20_s3300 / c20_s3355: the second stack; onboard 0:56 |
-| 118 | tyre_stack | right | 3048-3048 | 1-1 | tyres '' | onboard 1:40: a stack of 2 grey tyres just past the 9a right apex kerb (kerb end s ~3045 on c20_o0660), 1.5 m outside the edge |
-| 119 | tyre_stack | left | 3125-3125 | 10-10 | tyres '' | onboard 1:44: a black tyre stack in front of the T10-entry board wall at its start (s ~3125; wall on c20_s0715 / c20_s0770) |
-| 120 | mast | right | 1732-1732 | 24-24 | mast '' | c20_s3465 / c20_s0330: mast base with its NW shadow between the drag strip and the infield (seen on both); onboard 1:00 light masts on the right |
-| 121 | mast | right | 2635-2635 | 20-20 | mast '' | c20_s3465: mast base with its shadow beyond the drag strip, right of the Carousel exit; onboard 1:00-1:02 light masts on the right |
-| 122 | mast | right | 2575-2575 | 13-13 | mast '' | c20_s0165 / c20_s0220: mast base on a black block base in the island between the drag strip and the T8 road; onboard 1:18 light mast on a black block base |
-| 123 | mast | right | 4056-4056 | 50-50 | mast '' | c20_s1650 / c20_s1705: mast base with its NW shadow in the paddock beyond the drag strip at the line; Street View 5MY4xR9O7etAXEHnZCVnGQ (light masts both sides of the straight) |
-| 124 | mast | left | 419-419 | 26-26 | mast '' | onboard 0:14-0:16 (light poles inside the fence line at the foot of the T2 terraces, ~4 m, fence-post-ref) along the measured T2-exit wall (c20_s2145 / c20_s2200), 1.5 m behind it every 20 m (pole spacing in the frames) |
-| 125 | mast | left | 431-431 | 25-25 | mast '' | onboard 0:14-0:16 (light poles inside the fence line at the foot of the T2 terraces, ~4 m, fence-post-ref) along the measured T2-exit wall (c20_s2145 / c20_s2200), 1.5 m behind it every 20 m (pole spacing in the frames) |
-| 126 | mast | left | 443-443 | 23-23 | mast '' | onboard 0:14-0:16 (light poles inside the fence line at the foot of the T2 terraces, ~4 m, fence-post-ref) along the measured T2-exit wall (c20_s2145 / c20_s2200), 1.5 m behind it every 20 m (pole spacing in the frames) |
-| 127 | mast | left | 456-456 | 22-22 | mast '' | onboard 0:14-0:16 (light poles inside the fence line at the foot of the T2 terraces, ~4 m, fence-post-ref) along the measured T2-exit wall (c20_s2145 / c20_s2200), 1.5 m behind it every 20 m (pole spacing in the frames) |
-| 128 | mast | left | 471-471 | 21-21 | mast '' | onboard 0:14-0:16 (light poles inside the fence line at the foot of the T2 terraces, ~4 m, fence-post-ref) along the measured T2-exit wall (c20_s2145 / c20_s2200), 1.5 m behind it every 20 m (pole spacing in the frames) |
-| 129 | mast | left | 488-488 | 22-22 | mast '' | onboard 0:14-0:16 (light poles inside the fence line at the foot of the T2 terraces, ~4 m, fence-post-ref) along the measured T2-exit wall (c20_s2145 / c20_s2200), 1.5 m behind it every 20 m (pole spacing in the frames) |
-| 130 | mast | left | 506-506 | 20-20 | mast '' | onboard 0:14-0:16 (light poles inside the fence line at the foot of the T2 terraces, ~4 m, fence-post-ref) along the measured T2-exit wall (c20_s2145 / c20_s2200), 1.5 m behind it every 20 m (pole spacing in the frames) |
-| 131 | mast | left | 525-525 | 19-19 | mast '' | onboard 0:14-0:16 (light poles inside the fence line at the foot of the T2 terraces, ~4 m, fence-post-ref) along the measured T2-exit wall (c20_s2145 / c20_s2200), 1.5 m behind it every 20 m (pole spacing in the frames) |
-| 132 | mast | left | 543-543 | 14-14 | mast '' | onboard 0:14-0:16 (light poles inside the fence line at the foot of the T2 terraces, ~4 m, fence-post-ref) along the measured T2-exit wall (c20_s2145 / c20_s2200), 1.5 m behind it every 20 m (pole spacing in the frames) |
-| 133 | stand | left | 2261-2291 | 46-73 | terrace T7a hill | OSM 1414701937; Street View J6fsnW4hj4xCjQLzrgRGzA (terraces, fence and light masts on top); onboard 1:14 |
-| 134 | stand | left | 812-995 | 25-47 | terrace T3a-T4 | OSM 1414701938; Street View nA1oaDXwADSI7x-Pa-j4Ow (~20 concrete rows); onboard 0:28-0:32 |
-| 135 | stand | left | 417-512 | 30-63 | terrace above T2 | OSM 1414701939; Street View H9xspk4q_OoFIjVDhaMzDA; onboard 0:15-0:16 (fence and light poles on top) |
-| 136 | stand | left | 2735-3146 | 23-61 | terrace back straight / 9a | OSM 1414701936; Street View xkSrqJ5RaN9WFLncaiqaug; onboard 1:33-1:36 |
-| 137 | building | left | 3991-38 (wraps) | 26-74 | building 0 'Sonoma Raceway' 9.3 m | osm |
-| 138 | building | left | 3421-3658 | 20-129 | building 1 '' 4.5 m | osm |
-| 139 | building | left | 3830-3908 | 29-42 | building 2 '' 6.2 m | osm |
-| 140 | building | left | 3683-3692 | 177-213 | building 3 '' 5.2 m | osm |
-| 141 | building | left | 3737-3791 | 105-122 | building 4 '' 6.7 m | osm |
-| 142 | building | left | 3909-3963 | 18-42 | building 5 '' 8.7 m | osm |
-| 143 | building | left | 3713-3733 | 62-113 | building 6 '' 6.8 m | osm |
-| 144 | building | left | 3745-3821 | 29-42 | building 7 '' 6.3 m | osm |
-| 145 | building | left | 3686-3690 | 54-87 | building 8 '' 6.4 m | osm |
-| 146 | building | left | 3674-3674 | 188-196 | building 9 '' 2.5 m | osm |
-| 147 | building | left | 3719-3728 | 32-41 | building 10 '' 6.5 m | osm |
-| 148 | building | right | 3279-3314 | 36-53 | building 11 '' 3.2 m | osm |
-| 149 | building | left | 409-414 | 78-98 | building 12 '' 3.2 m | osm (onboard 0:14 (frame t014): open shade roof on posts at the top of the T2 terraces (inventory row added in round 5)) |
-| 150 | building | left | 3684-3689 | 86-99 | building 13 '' 4.5 m | osm |
-| 151 | building | left | 157-191 | 16-49 | building 14 '' 6.6 m | osm (c20_s1870: the red-roofed metal pit-exit building (onboard 0:04 and 24of8fjjAug 5:00 red-roofed pit-exit building)) |
-| 152 | building | left | 3478-3657 | 2-39 | building 15 '' 5.5 m | osm |
-| 153 | building | left | 3662-3692 | 22-64 | building 16 '' 4.7 m | osm |
-| 154 | bridge | both | 295-295 | 0-0 | bridge 1382620985 (foot) deck 20.9 | lidar |
-| 155 | cone_line | left | 995-1001 | 0-5 | cone line 0 | closed road the Chute (NASCAR short course, T4 to T7) mouth (onboard 0:34: 3-5 orange cones across the Chute mouth ahead-left at T4 (inventory)) |
-| 156 | cone_line | left | 2159-2166 | 0-6 | cone line 1 | closed road the Chute (NASCAR short course, T4 to T7) mouth (onboard 1:12: small orange cones in front of a black tyre line across the Chute mouth at T7 (inventory, added row)) |
-| 157 | cone_line | right | 2196-2212 | 0-1 | cone line 2 | onboard 1:14-1:16 (round 5): orange delineator posts on the edge of the T7a island before its kerb (island on c20_s3960) |
-| 158 | cone_line | right | 1932-1942 | 1-2 | cone line 3 | onboard 1:04 (round 5): orange cones in front of the tyre line across the drag strip continuation at the T7 fork |
-| 159 | cone_line | left | 3525-3586 | 0-0 | cone line 4 | pit-in double white line, s 3525 to the nose at 3586 (c20_s1155 / c20_s1210; Street View owner_15 cones) |
-| 160 | cone_line | left | 3966-240 (wraps) | 0-0 | cone line 5 | the pit lane's track-facing edge where it merges at its end (one-part pit lane) |
+| 115 | station | left | 2152-2152 | 4-4 | marshal 'T7' | c20_s3905: a post at the end of the left wall at T7; onboard 1:11 raised white post with roof ahead; round 6 (orchestrator S4): onboard 1:12 (t072) the hut stands on legs about as tall as itself, ~2.5 m (the kit draws legs h - 2.4 m) |
+| 116 | tyre_stack | right | 1689-1689 | 43-43 | tyres '' | round 6 (orchestrator S3): onboard 0:58 (t058) a black tyre stack at the foot of the light mast on the Carousel-exit runoff (0.8 m, tyre-ref; inventory s 1687 right); the mast is the lidar spike at (-1.5, 146.5) confirmed on c20_s3355 (structure kit masts), the stack 1.2 m track-side of its base |
+| 117 | tyre_stack | right | 1629-1629 | 35-35 | tyres '' | c20_s3300 / c20_s3355: two dark stacks on the runoff right of the Carousel exit; onboard 0:56 single black tyre stacks on the runoff (0.8 m, tyre-ref) |
+| 118 | tyre_stack | right | 1626-1626 | 39-39 | tyres '' | c20_s3300 / c20_s3355: the second stack; onboard 0:56 |
+| 119 | tyre_stack | right | 3048-3048 | 1-1 | tyres '' | onboard 1:40: a stack of 2 grey tyres just past the 9a right apex kerb (kerb end s ~3045 on c20_o0660), 1.5 m outside the edge |
+| 120 | tyre_stack | left | 3125-3125 | 10-10 | tyres '' | onboard 1:44: a black tyre stack in front of the T10-entry board wall at its start (s ~3125; wall on c20_s0715 / c20_s0770) |
+| 121 | mast | right | 1732-1732 | 24-24 | mast '' | c20_s3465 / c20_s0330: mast base with its NW shadow between the drag strip and the infield (seen on both); onboard 1:00 light masts on the right |
+| 122 | mast | right | 2635-2635 | 20-20 | mast '' | c20_s3465: mast base with its shadow beyond the drag strip, right of the Carousel exit; onboard 1:00-1:02 light masts on the right |
+| 123 | mast | right | 2575-2575 | 13-13 | mast '' | c20_s0165 / c20_s0220: mast base on a black block base in the island between the drag strip and the T8 road; onboard 1:18 light mast on a black block base |
+| 124 | mast | right | 4056-4056 | 50-50 | mast '' | c20_s1650 / c20_s1705: mast base with its NW shadow in the paddock beyond the drag strip at the line; Street View 5MY4xR9O7etAXEHnZCVnGQ (light masts both sides of the straight) |
+| 125 | mast | left | 419-419 | 26-26 | mast '' | onboard 0:14-0:16 (light poles inside the fence line at the foot of the T2 terraces, ~4 m, fence-post-ref) along the measured T2-exit wall (c20_s2145 / c20_s2200), 1.5 m behind it every 20 m (pole spacing in the frames) |
+| 126 | mast | left | 431-431 | 25-25 | mast '' | onboard 0:14-0:16 (light poles inside the fence line at the foot of the T2 terraces, ~4 m, fence-post-ref) along the measured T2-exit wall (c20_s2145 / c20_s2200), 1.5 m behind it every 20 m (pole spacing in the frames) |
+| 127 | mast | left | 443-443 | 23-23 | mast '' | onboard 0:14-0:16 (light poles inside the fence line at the foot of the T2 terraces, ~4 m, fence-post-ref) along the measured T2-exit wall (c20_s2145 / c20_s2200), 1.5 m behind it every 20 m (pole spacing in the frames) |
+| 128 | mast | left | 456-456 | 22-22 | mast '' | onboard 0:14-0:16 (light poles inside the fence line at the foot of the T2 terraces, ~4 m, fence-post-ref) along the measured T2-exit wall (c20_s2145 / c20_s2200), 1.5 m behind it every 20 m (pole spacing in the frames) |
+| 129 | mast | left | 471-471 | 21-21 | mast '' | onboard 0:14-0:16 (light poles inside the fence line at the foot of the T2 terraces, ~4 m, fence-post-ref) along the measured T2-exit wall (c20_s2145 / c20_s2200), 1.5 m behind it every 20 m (pole spacing in the frames) |
+| 130 | mast | left | 488-488 | 22-22 | mast '' | onboard 0:14-0:16 (light poles inside the fence line at the foot of the T2 terraces, ~4 m, fence-post-ref) along the measured T2-exit wall (c20_s2145 / c20_s2200), 1.5 m behind it every 20 m (pole spacing in the frames) |
+| 131 | mast | left | 506-506 | 20-20 | mast '' | onboard 0:14-0:16 (light poles inside the fence line at the foot of the T2 terraces, ~4 m, fence-post-ref) along the measured T2-exit wall (c20_s2145 / c20_s2200), 1.5 m behind it every 20 m (pole spacing in the frames) |
+| 132 | mast | left | 525-525 | 19-19 | mast '' | onboard 0:14-0:16 (light poles inside the fence line at the foot of the T2 terraces, ~4 m, fence-post-ref) along the measured T2-exit wall (c20_s2145 / c20_s2200), 1.5 m behind it every 20 m (pole spacing in the frames) |
+| 133 | mast | left | 543-543 | 14-14 | mast '' | onboard 0:14-0:16 (light poles inside the fence line at the foot of the T2 terraces, ~4 m, fence-post-ref) along the measured T2-exit wall (c20_s2145 / c20_s2200), 1.5 m behind it every 20 m (pole spacing in the frames) |
+| 134 | stand | left | 2237-2277 | 30-69 | terrace T7a hill | measured footprint (round 6): compare/terrace_measure.py --thr 0.35 --guide xy:-480,462;-452,464;-420,471;-390,481;-370,495;-355,510 (the curved low wall below the stand on capwin.py) --reach 80 --fill-osm 1414701937: the row texture (period 1.1-1.25 m) on c20_s3960 / c20_s4015 (lower rows; the upper part is outside the captures: DEM crest - 3 m); row pitch 1.11 m on the rays; Street View J6fsnW4hj4xCjQLzrgRGzA (terraces, fence and light masts on top); onboard 1:12-1:14 |
+| 135 | stand | left | 782-987 | 19-57 | terrace T3a-T4 | measured footprint (round 6): compare/terrace_measure.py --thr 0.35 --side left --s0 740 --s1 1010 --guide-lat 20 --fill-osm 1414701938: the row texture (period 1.1-1.25 m) on c20_s2530..c20_s2695 (the whole field, top walkway and fence captured); row pitch 1.25 m on the rays; Street View nA1oaDXwADSI7x-Pa-j4Ow (~20 concrete rows); onboard 0:26-0:32 |
+| 136 | stand | left | 428-569 | 26-68 | terrace above T2 | measured footprint (round 6): compare/terrace_measure.py --thr 0.35 --side left --s0 400 --s1 600 --guide-lat 25 --fill-osm 1414701939: the row texture (period 1.1-1.25 m) on c20_s2090..c20_s2255 (lower two thirds; above, the DEM crest - 3 m); row pitch 1.17 m on the rays; Street View H9xspk4q_OoFIjVDhaMzDA; onboard 0:14-0:16 (rows from the catch fence at the foot of the bank, fence and light poles on top) |
+| 137 | stand | left | 2722-3044 | 19-51 | terrace back straight / 9a | measured footprint (round 6): compare/terrace_measure.py --thr 0.35 --side left --s0 2690 --s1 3070 --guide-lat 18 --fill-osm 1414701936: the row texture (period 1.1-1.25 m) on c20_o0440..c20_o0550, c20_s0605 (the whole field; it ends at s ~3030 where the access road and trees begin); row pitch 1.15 m on the rays; Street View xkSrqJ5RaN9WFLncaiqaug; onboard 1:30-1:36 |
+| 138 | building | left | 3421-3658 | 20-129 | building 0 '' 4.5 m | osm |
+| 139 | building | left | 3683-3692 | 177-213 | building 1 '' 5.2 m | osm |
+| 140 | building | left | 3686-3690 | 54-87 | building 2 '' 6.4 m | osm |
+| 141 | building | left | 3674-3674 | 188-196 | building 3 '' 2.5 m | osm |
+| 142 | building | right | 3279-3314 | 36-53 | building 4 '' 3.2 m | osm (c20_s0935: the flat-roofed 21 x 22 m infield building (grey roof, vehicles at its east side) 42-62 m right of s 3290-3320; lidar 3.2-3.5 m; onboard 1:52 (frame t112): a small grey building with a window beyond the fence at the right edge (round 6)) |
+| 143 | building | left | 409-414 | 78-98 | building 5 '' 3.2 m | osm (onboard 0:14 (frame t014): open shade roof on posts at the top of the T2 terraces (inventory row added in round 5)) |
+| 144 | building | left | 3684-3689 | 86-99 | building 6 '' 4.5 m | osm |
+| 145 | building | left | 157-191 | 16-49 | building 7 '' 6.6 m | osm (c20_s1870: the red-roofed metal pit-exit building (onboard 0:04 and 24of8fjjAug 5:00 red-roofed pit-exit building)) |
+| 146 | building | left | 3662-3692 | 22-64 | building 8 '' 4.7 m | osm |
+| 147 | stand | left | 3990-37 (wraps) | 26-79 | structure 0 grandstand 'Main grandstand' | OSM 262082790 footprint; 2026 captures c20_s1595..s1760 (seat field, 13 aisle heads at 11 m); lidar 2022-24 profiles across the outline (seats 2.0 m at the front to 12.0 m at 29 m back, suites roof 24.0-26.2 m, rear 20 m, tower 29.5-30.1 m over t -52..-14 m); onboard RAZip6S84CM 2:15 (sand seats, grey deck, green tower with blue glass); 2025 video 24of8fjjAug 4:48-4:56 (end stairs, deck lights); Street View 5MY4xR9O7etAXEHnZCVnGQ, owner_22 (2017: block-wall base, panels, stair towers) |
+| 148 | mast | left | 25-25 | 61-61 | structure 0 grandstand 'Main grandstand' roof light at t 12 | OSM 262082790 footprint; 2026 captures c20_s1595..s1760 (seat field, 13 aisle heads at 11 m); lidar 2022-24 profiles across the outline (seats 2.0 m at the front to 12.0 m at 29 m back, suites roof 24.0-26.2 m, rear 20 m, tower 29.5-30.1 m over t -52..-14 m); onboard RAZip6S84CM 2:15 (sand seats, grey deck, green tower with blue glass); 2025 video 24of8fjjAug 4:48-4:56 (end stairs, deck lights); Street View 5MY4xR9O7etAXEHnZCVnGQ, owner_22 (2017: block-wall base, panels, stair towers) |
+| 149 | mast | left | 4086-4086 | 62-62 | structure 0 grandstand 'Main grandstand' roof light at t 50 | OSM 262082790 footprint; 2026 captures c20_s1595..s1760 (seat field, 13 aisle heads at 11 m); lidar 2022-24 profiles across the outline (seats 2.0 m at the front to 12.0 m at 29 m back, suites roof 24.0-26.2 m, rear 20 m, tower 29.5-30.1 m over t -52..-14 m); onboard RAZip6S84CM 2:15 (sand seats, grey deck, green tower with blue glass); 2025 video 24of8fjjAug 4:48-4:56 (end stairs, deck lights); Street View 5MY4xR9O7etAXEHnZCVnGQ, owner_22 (2017: block-wall base, panels, stair towers) |
+| 150 | mast | left | 4041-4041 | 62-62 | structure 0 grandstand 'Main grandstand' roof light at t 95 | OSM 262082790 footprint; 2026 captures c20_s1595..s1760 (seat field, 13 aisle heads at 11 m); lidar 2022-24 profiles across the outline (seats 2.0 m at the front to 12.0 m at 29 m back, suites roof 24.0-26.2 m, rear 20 m, tower 29.5-30.1 m over t -52..-14 m); onboard RAZip6S84CM 2:15 (sand seats, grey deck, green tower with blue glass); 2025 video 24of8fjjAug 4:48-4:56 (end stairs, deck lights); Street View 5MY4xR9O7etAXEHnZCVnGQ, owner_22 (2017: block-wall base, panels, stair towers) |
+| 151 | mast | left | 4002-4002 | 62-62 | structure 0 grandstand 'Main grandstand' roof light at t 133 | OSM 262082790 footprint; 2026 captures c20_s1595..s1760 (seat field, 13 aisle heads at 11 m); lidar 2022-24 profiles across the outline (seats 2.0 m at the front to 12.0 m at 29 m back, suites roof 24.0-26.2 m, rear 20 m, tower 29.5-30.1 m over t -52..-14 m); onboard RAZip6S84CM 2:15 (sand seats, grey deck, green tower with blue glass); 2025 video 24of8fjjAug 4:48-4:56 (end stairs, deck lights); Street View 5MY4xR9O7etAXEHnZCVnGQ, owner_22 (2017: block-wall base, panels, stair towers) |
+| 152 | building | left | 3830-3908 | 29-42 | structure 1 garage 'Pit garages north' | OSM 1019835464; c20_s1430..s1485 (ridged roof, light masts on the paddock side); onboard RAZip6S84CM 2:04-2:08 (tan stucco, green metal roofs, window row; inventory s 3699-3784); 2025 24of8fjjAug 24:40 (roll-up door on the paddock side); Street View owner_20 (2011, red trim band) |
+| 153 | building | left | 3745-3821 | 28-42 | structure 2 garage 'Pit garages south' | OSM 1019837060; c20_s1375..s1430; onboard RAZip6S84CM 2:04-2:06 (tan stucco, green roofs); 2025 24of8fjjAug 24:30 (garages ahead at the fuel island) |
+| 154 | building | left | 3737-3791 | 105-122 | structure 3 garage 'Paddock garage west' | OSM 1019836533; NAIP ortho (green roof); 2025 24of8fjjAug 24:40 (tan garages, grey-green roofs, paddock); inventory s 3699 left (tan stucco garages with green metal roofs, paddock) |
+| 155 | building | left | 3713-3735 | 59-113 | structure 4 garage 'Paddock garage south' | OSM 1019836718; NAIP ortho (green roof); 2025 24of8fjjAug 24:30 (tan building, hip roof, beside the fuel island); inventory s 3699-3736 left |
+| 156 | building | left | 157-191 | 16-48 | structure 5 garage 'Pit-exit building' | OSM 1019839174; c20_s1870 (ribbed grey roof with a red edge, red round canopy beside); onboard RAZip6S84CM 0:04 (red roof edge, glazed front, grey walls; inventory s 91 left); 2025 24of8fjjAug 4:56 (red roof line at the pit exit); Street View owner_25 (2011) |
+| 157 | building | left | 3478-3657 | 2-39 | structure 6 garage 'T10-T11 shed behind the boarded wall' | OSM 1019839490 (a 12 x 250 m rectangle, 3016 m2); c20_s1100 / c20_s1155 / c20_s1210: a long flat light roof directly behind the boarded wall; onboard RAZip6S84CM 1:54-1:58 (frames t114-t118): only the boarded wall (5.2 m) and the hills behind, no storeys or glazing above it |
+| 158 | building | left | 3909-3965 | 18-42 | structure 8 block 'T12 two-storey building' | OSM 1019836595; c20_s1540 (flat roof); Street View QduY6QTXmw4JDevQVE_b-g (two-storey suites and control buildings at T12); onboard RAZip6S84CM 2:12 (tan multi-storey glazed building) |
+| 159 | building | left | 3723-3728 | 36-36 | structure 9 fuel 'Fuel island' | OSM 1019838109; 2025 24of8fjjAug 24:30 (cream canopy, grey-green hip roof, tall plain-panel sign pylon beside the light mast; inventory pit row s 3730); onboard RAZip6S84CM 2:04 (canopy left); owner_20 (2011) |
+| 160 | mast | right | 2573-2573 | 10-10 | structure 10 mast 'Light masts' at (-175.5, 261.5) | lidar 2022-24 spikes; captures c20_s1760 c20_s1815 c20_s1870 c20_s3355 c20_o0440 c20_s3520 c20_s4015 c20_s0000 c20_s0055 c20_s0110 c20_s0220 c20_s0275 c20_s0550 c20_s0605 c20_s0660 c20_s0715 c20_s0770 c20_s0880 c20_s0935 c20_s0990 c20_s1100 c20_s1320 c20_s1375 c20_s1430 c20_s1485 (lamp heads and shadows); T7a hill top (two outside the captures): Street View J6fsnW4hj4xCjQLzrgRGzA (light masts on top); inventory mast rows |
+| 161 | mast | right | 2492-2492 | 15-15 | structure 11 mast 'Light masts' at (-230.5, 306.5) | lidar 2022-24 spikes; captures c20_s1760 c20_s1815 c20_s1870 c20_s3355 c20_o0440 c20_s3520 c20_s4015 c20_s0000 c20_s0055 c20_s0110 c20_s0220 c20_s0275 c20_s0550 c20_s0605 c20_s0660 c20_s0715 c20_s0770 c20_s0880 c20_s0935 c20_s0990 c20_s1100 c20_s1320 c20_s1375 c20_s1430 c20_s1485 (lamp heads and shadows); T7a hill top (two outside the captures): Street View J6fsnW4hj4xCjQLzrgRGzA (light masts on top); inventory mast rows |
+| 162 | mast | left | 2235-2235 | 76-76 | structure 12 mast 'Light masts' at (-480.5, 481.5) | lidar 2022-24 spikes; captures c20_s1760 c20_s1815 c20_s1870 c20_s3355 c20_o0440 c20_s3520 c20_s4015 c20_s0000 c20_s0055 c20_s0110 c20_s0220 c20_s0275 c20_s0550 c20_s0605 c20_s0660 c20_s0715 c20_s0770 c20_s0880 c20_s0935 c20_s0990 c20_s1100 c20_s1320 c20_s1375 c20_s1430 c20_s1485 (lamp heads and shadows); T7a hill top (two outside the captures): Street View J6fsnW4hj4xCjQLzrgRGzA (light masts on top); inventory mast rows |
+| 163 | mast | left | 2238-2238 | 133-133 | structure 13 mast 'Light masts' at (-525.5, 517.5) | lidar 2022-24 spikes; captures c20_s1760 c20_s1815 c20_s1870 c20_s3355 c20_o0440 c20_s3520 c20_s4015 c20_s0000 c20_s0055 c20_s0110 c20_s0220 c20_s0275 c20_s0550 c20_s0605 c20_s0660 c20_s0715 c20_s0770 c20_s0880 c20_s0935 c20_s0990 c20_s1100 c20_s1320 c20_s1375 c20_s1430 c20_s1485 (lamp heads and shadows); T7a hill top (two outside the captures): Street View J6fsnW4hj4xCjQLzrgRGzA (light masts on top); inventory mast rows |
+| 164 | mast | right | 1609-1609 | 69-69 | structure 14 mast 'Light masts' at (30.5, 20.51) | lidar 2022-24 spikes; captures c20_s1760 c20_s1815 c20_s1870 c20_s3355 c20_o0440 c20_s3520 c20_s4015 c20_s0000 c20_s0055 c20_s0110 c20_s0220 c20_s0275 c20_s0550 c20_s0605 c20_s0660 c20_s0715 c20_s0770 c20_s0880 c20_s0935 c20_s0990 c20_s1100 c20_s1320 c20_s1375 c20_s1430 c20_s1485 (lamp heads and shadows); T7a hill top (two outside the captures): Street View J6fsnW4hj4xCjQLzrgRGzA (light masts on top); inventory mast rows |
+| 165 | mast | left | 2237-2237 | 37-37 | structure 14 mast 'Light masts' at (-445.5, 464.5) | lidar 2022-24 spikes; captures c20_s1760 c20_s1815 c20_s1870 c20_s3355 c20_o0440 c20_s3520 c20_s4015 c20_s0000 c20_s0055 c20_s0110 c20_s0220 c20_s0275 c20_s0550 c20_s0605 c20_s0660 c20_s0715 c20_s0770 c20_s0880 c20_s0935 c20_s0990 c20_s1100 c20_s1320 c20_s1375 c20_s1430 c20_s1485 (lamp heads and shadows); T7a hill top (two outside the captures): Street View J6fsnW4hj4xCjQLzrgRGzA (light masts on top); inventory mast rows |
+| 166 | mast | left | 117-117 | 25-25 | structure 15 mast 'Light masts' at (148.5, -101.5) | lidar 2022-24 spikes; captures c20_s1760 c20_s1815 c20_s1870 c20_s3355 c20_o0440 c20_s3520 c20_s4015 c20_s0000 c20_s0055 c20_s0110 c20_s0220 c20_s0275 c20_s0550 c20_s0605 c20_s0660 c20_s0715 c20_s0770 c20_s0880 c20_s0935 c20_s0990 c20_s1100 c20_s1320 c20_s1375 c20_s1430 c20_s1485 (lamp heads and shadows); T7a hill top (two outside the captures): Street View J6fsnW4hj4xCjQLzrgRGzA (light masts on top); inventory mast rows |
+| 167 | mast | right | 2346-2346 | 22-22 | structure 15 mast 'Light masts' at (-367.5, 393.5) | lidar 2022-24 spikes; captures c20_s1760 c20_s1815 c20_s1870 c20_s3355 c20_o0440 c20_s3520 c20_s4015 c20_s0000 c20_s0055 c20_s0110 c20_s0220 c20_s0275 c20_s0550 c20_s0605 c20_s0660 c20_s0715 c20_s0770 c20_s0880 c20_s0935 c20_s0990 c20_s1100 c20_s1320 c20_s1375 c20_s1430 c20_s1485 (lamp heads and shadows); T7a hill top (two outside the captures): Street View J6fsnW4hj4xCjQLzrgRGzA (light masts on top); inventory mast rows |
+| 168 | mast | right | 2633-2633 | 14-14 | structure 15 mast 'Light masts' at (-117.5, 223.5) | lidar 2022-24 spikes; captures c20_s1760 c20_s1815 c20_s1870 c20_s3355 c20_o0440 c20_s3520 c20_s4015 c20_s0000 c20_s0055 c20_s0110 c20_s0220 c20_s0275 c20_s0550 c20_s0605 c20_s0660 c20_s0715 c20_s0770 c20_s0880 c20_s0935 c20_s0990 c20_s1100 c20_s1320 c20_s1375 c20_s1430 c20_s1485 (lamp heads and shadows); T7a hill top (two outside the captures): Street View J6fsnW4hj4xCjQLzrgRGzA (light masts on top); inventory mast rows |
+| 169 | mast | right | 3081-3081 | 36-36 | structure 15 mast 'Light masts' at (172.5, -17.5) | lidar 2022-24 spikes; captures c20_s1760 c20_s1815 c20_s1870 c20_s3355 c20_o0440 c20_s3520 c20_s4015 c20_s0000 c20_s0055 c20_s0110 c20_s0220 c20_s0275 c20_s0550 c20_s0605 c20_s0660 c20_s0715 c20_s0770 c20_s0880 c20_s0935 c20_s0990 c20_s1100 c20_s1320 c20_s1375 c20_s1430 c20_s1485 (lamp heads and shadows); T7a hill top (two outside the captures): Street View J6fsnW4hj4xCjQLzrgRGzA (light masts on top); inventory mast rows |
+| 170 | mast | right | 2422-2422 | 7-7 | structure 16 mast 'Light masts' at (-297.5, 340.5) | lidar 2022-24 spikes; captures c20_s1760 c20_s1815 c20_s1870 c20_s3355 c20_o0440 c20_s3520 c20_s4015 c20_s0000 c20_s0055 c20_s0110 c20_s0220 c20_s0275 c20_s0550 c20_s0605 c20_s0660 c20_s0715 c20_s0770 c20_s0880 c20_s0935 c20_s0990 c20_s1100 c20_s1320 c20_s1375 c20_s1430 c20_s1485 (lamp heads and shadows); T7a hill top (two outside the captures): Street View J6fsnW4hj4xCjQLzrgRGzA (light masts on top); inventory mast rows |
+| 171 | mast | right | 2921-2921 | 70-70 | structure 16 mast 'Light masts' at (81.5, 53.5) | lidar 2022-24 spikes; captures c20_s1760 c20_s1815 c20_s1870 c20_s3355 c20_o0440 c20_s3520 c20_s4015 c20_s0000 c20_s0055 c20_s0110 c20_s0220 c20_s0275 c20_s0550 c20_s0605 c20_s0660 c20_s0715 c20_s0770 c20_s0880 c20_s0935 c20_s0990 c20_s1100 c20_s1320 c20_s1375 c20_s1430 c20_s1485 (lamp heads and shadows); T7a hill top (two outside the captures): Street View J6fsnW4hj4xCjQLzrgRGzA (light masts on top); inventory mast rows |
+| 172 | mast | left | 3715-3715 | 36-36 | structure 16 mast 'Light masts' at (413.5, -468.5) | lidar 2022-24 spikes; captures c20_s1760 c20_s1815 c20_s1870 c20_s3355 c20_o0440 c20_s3520 c20_s4015 c20_s0000 c20_s0055 c20_s0110 c20_s0220 c20_s0275 c20_s0550 c20_s0605 c20_s0660 c20_s0715 c20_s0770 c20_s0880 c20_s0935 c20_s0990 c20_s1100 c20_s1320 c20_s1375 c20_s1430 c20_s1485 (lamp heads and shadows); T7a hill top (two outside the captures): Street View J6fsnW4hj4xCjQLzrgRGzA (light masts on top); inventory mast rows |
+| 173 | mast | left | 3755-3755 | 42-42 | structure 16 mast 'Light masts' at (389.5, -420.5) | lidar 2022-24 spikes; captures c20_s1760 c20_s1815 c20_s1870 c20_s3355 c20_o0440 c20_s3520 c20_s4015 c20_s0000 c20_s0055 c20_s0110 c20_s0220 c20_s0275 c20_s0550 c20_s0605 c20_s0660 c20_s0715 c20_s0770 c20_s0880 c20_s0935 c20_s0990 c20_s1100 c20_s1320 c20_s1375 c20_s1430 c20_s1485 (lamp heads and shadows); T7a hill top (two outside the captures): Street View J6fsnW4hj4xCjQLzrgRGzA (light masts on top); inventory mast rows |
+| 174 | mast | left | 45-45 | 33-33 | structure 17 mast 'Light masts' at (190.5, -134.5) | lidar 2022-24 spikes; captures c20_s1760 c20_s1815 c20_s1870 c20_s3355 c20_o0440 c20_s3520 c20_s4015 c20_s0000 c20_s0055 c20_s0110 c20_s0220 c20_s0275 c20_s0550 c20_s0605 c20_s0660 c20_s0715 c20_s0770 c20_s0880 c20_s0935 c20_s0990 c20_s1100 c20_s1320 c20_s1375 c20_s1430 c20_s1485 (lamp heads and shadows); T7a hill top (two outside the captures): Street View J6fsnW4hj4xCjQLzrgRGzA (light masts on top); inventory mast rows |
+| 175 | mast | right | 2980-2980 | 69-69 | structure 17 mast 'Light masts' at (126.5, 17.5) | lidar 2022-24 spikes; captures c20_s1760 c20_s1815 c20_s1870 c20_s3355 c20_o0440 c20_s3520 c20_s4015 c20_s0000 c20_s0055 c20_s0110 c20_s0220 c20_s0275 c20_s0550 c20_s0605 c20_s0660 c20_s0715 c20_s0770 c20_s0880 c20_s0935 c20_s0990 c20_s1100 c20_s1320 c20_s1375 c20_s1430 c20_s1485 (lamp heads and shadows); T7a hill top (two outside the captures): Street View J6fsnW4hj4xCjQLzrgRGzA (light masts on top); inventory mast rows |
+| 176 | mast | left | 3805-3805 | 41-41 | structure 17 mast 'Light masts' at (374.5, -371.5) | lidar 2022-24 spikes; captures c20_s1760 c20_s1815 c20_s1870 c20_s3355 c20_o0440 c20_s3520 c20_s4015 c20_s0000 c20_s0055 c20_s0110 c20_s0220 c20_s0275 c20_s0550 c20_s0605 c20_s0660 c20_s0715 c20_s0770 c20_s0880 c20_s0935 c20_s0990 c20_s1100 c20_s1320 c20_s1375 c20_s1430 c20_s1485 (lamp heads and shadows); T7a hill top (two outside the captures): Street View J6fsnW4hj4xCjQLzrgRGzA (light masts on top); inventory mast rows |
+| 177 | mast | left | 3854-3854 | 42-42 | structure 17 mast 'Light masts' at (359.5, -325.5) | lidar 2022-24 spikes; captures c20_s1760 c20_s1815 c20_s1870 c20_s3355 c20_o0440 c20_s3520 c20_s4015 c20_s0000 c20_s0055 c20_s0110 c20_s0220 c20_s0275 c20_s0550 c20_s0605 c20_s0660 c20_s0715 c20_s0770 c20_s0880 c20_s0935 c20_s0990 c20_s1100 c20_s1320 c20_s1375 c20_s1430 c20_s1485 (lamp heads and shadows); T7a hill top (two outside the captures): Street View J6fsnW4hj4xCjQLzrgRGzA (light masts on top); inventory mast rows |
+| 178 | mast | right | 1689-1689 | 44-44 | structure 18 mast 'Light masts' at (-1.5, 146.5) | lidar 2022-24 spikes; captures c20_s1760 c20_s1815 c20_s1870 c20_s3355 c20_o0440 c20_s3520 c20_s4015 c20_s0000 c20_s0055 c20_s0110 c20_s0220 c20_s0275 c20_s0550 c20_s0605 c20_s0660 c20_s0715 c20_s0770 c20_s0880 c20_s0935 c20_s0990 c20_s1100 c20_s1320 c20_s1375 c20_s1430 c20_s1485 (lamp heads and shadows); T7a hill top (two outside the captures): Street View J6fsnW4hj4xCjQLzrgRGzA (light masts on top); inventory mast rows |
+| 179 | mast | right | 1737-1737 | 27-27 | structure 18 mast 'Light masts' at (-59.5, 184.5) | lidar 2022-24 spikes; captures c20_s1760 c20_s1815 c20_s1870 c20_s3355 c20_o0440 c20_s3520 c20_s4015 c20_s0000 c20_s0055 c20_s0110 c20_s0220 c20_s0275 c20_s0550 c20_s0605 c20_s0660 c20_s0715 c20_s0770 c20_s0880 c20_s0935 c20_s0990 c20_s1100 c20_s1320 c20_s1375 c20_s1430 c20_s1485 (lamp heads and shadows); T7a hill top (two outside the captures): Street View J6fsnW4hj4xCjQLzrgRGzA (light masts on top); inventory mast rows |
+| 180 | mast | right | 2861-2861 | 65-65 | structure 19 mast 'Light masts' at (38.5, 95.5) | lidar 2022-24 spikes; captures c20_s1760 c20_s1815 c20_s1870 c20_s3355 c20_o0440 c20_s3520 c20_s4015 c20_s0000 c20_s0055 c20_s0110 c20_s0220 c20_s0275 c20_s0550 c20_s0605 c20_s0660 c20_s0715 c20_s0770 c20_s0880 c20_s0935 c20_s0990 c20_s1100 c20_s1320 c20_s1375 c20_s1430 c20_s1485 (lamp heads and shadows); T7a hill top (two outside the captures): Street View J6fsnW4hj4xCjQLzrgRGzA (light masts on top); inventory mast rows |
+| 181 | mast | right | 3106-3106 | 19-19 | structure 20 mast 'Light masts' at (223.5, -46.5) | lidar 2022-24 spikes; captures c20_s1760 c20_s1815 c20_s1870 c20_s3355 c20_o0440 c20_s3520 c20_s4015 c20_s0000 c20_s0055 c20_s0110 c20_s0220 c20_s0275 c20_s0550 c20_s0605 c20_s0660 c20_s0715 c20_s0770 c20_s0880 c20_s0935 c20_s0990 c20_s1100 c20_s1320 c20_s1375 c20_s1430 c20_s1485 (lamp heads and shadows); T7a hill top (two outside the captures): Street View J6fsnW4hj4xCjQLzrgRGzA (light masts on top); inventory mast rows |
+| 182 | mast | left | 180-180 | 16-16 | structure 21 mast 'Light masts' at (93.5, -88.5) | lidar 2022-24 spikes; captures c20_s1760 c20_s1815 c20_s1870 c20_s3355 c20_o0440 c20_s3520 c20_s4015 c20_s0000 c20_s0055 c20_s0110 c20_s0220 c20_s0275 c20_s0550 c20_s0605 c20_s0660 c20_s0715 c20_s0770 c20_s0880 c20_s0935 c20_s0990 c20_s1100 c20_s1320 c20_s1375 c20_s1430 c20_s1485 (lamp heads and shadows); T7a hill top (two outside the captures): Street View J6fsnW4hj4xCjQLzrgRGzA (light masts on top); inventory mast rows |
+| 183 | mast | left | 3477-3477 | 4-4 | structure 22 mast 'Light masts' at (466.5, -267.5) | lidar 2022-24 spikes; captures c20_s1760 c20_s1815 c20_s1870 c20_s3355 c20_o0440 c20_s3520 c20_s4015 c20_s0000 c20_s0055 c20_s0110 c20_s0220 c20_s0275 c20_s0550 c20_s0605 c20_s0660 c20_s0715 c20_s0770 c20_s0880 c20_s0935 c20_s0990 c20_s1100 c20_s1320 c20_s1375 c20_s1430 c20_s1485 (lamp heads and shadows); T7a hill top (two outside the captures): Street View J6fsnW4hj4xCjQLzrgRGzA (light masts on top); inventory mast rows |
+| 184 | mast | right | 3368-3368 | 14-14 | structure 23 mast 'Light masts' at (404.5, -172.5) | lidar 2022-24 spikes; captures c20_s1760 c20_s1815 c20_s1870 c20_s3355 c20_o0440 c20_s3520 c20_s4015 c20_s0000 c20_s0055 c20_s0110 c20_s0220 c20_s0275 c20_s0550 c20_s0605 c20_s0660 c20_s0715 c20_s0770 c20_s0880 c20_s0935 c20_s0990 c20_s1100 c20_s1320 c20_s1375 c20_s1430 c20_s1485 (lamp heads and shadows); T7a hill top (two outside the captures): Street View J6fsnW4hj4xCjQLzrgRGzA (light masts on top); inventory mast rows |
+| 185 | mast | right | 3157-3157 | 27-27 | structure 24 mast 'Light masts' at (274.5, -69.5) | lidar 2022-24 spikes; captures c20_s1760 c20_s1815 c20_s1870 c20_s3355 c20_o0440 c20_s3520 c20_s4015 c20_s0000 c20_s0055 c20_s0110 c20_s0220 c20_s0275 c20_s0550 c20_s0605 c20_s0660 c20_s0715 c20_s0770 c20_s0880 c20_s0935 c20_s0990 c20_s1100 c20_s1320 c20_s1375 c20_s1430 c20_s1485 (lamp heads and shadows); T7a hill top (two outside the captures): Street View J6fsnW4hj4xCjQLzrgRGzA (light masts on top); inventory mast rows |
+| 186 | mast | right | 3321-3321 | 43-43 | structure 24 mast 'Light masts' at (362.5, -138.5) | lidar 2022-24 spikes; captures c20_s1760 c20_s1815 c20_s1870 c20_s3355 c20_o0440 c20_s3520 c20_s4015 c20_s0000 c20_s0055 c20_s0110 c20_s0220 c20_s0275 c20_s0550 c20_s0605 c20_s0660 c20_s0715 c20_s0770 c20_s0880 c20_s0935 c20_s0990 c20_s1100 c20_s1320 c20_s1375 c20_s1430 c20_s1485 (lamp heads and shadows); T7a hill top (two outside the captures): Street View J6fsnW4hj4xCjQLzrgRGzA (light masts on top); inventory mast rows |
+| 187 | mast | right | 3217-3217 | 55-55 | structure 25 mast 'Light masts' at (318.5, -104.5) | lidar 2022-24 spikes; captures c20_s1760 c20_s1815 c20_s1870 c20_s3355 c20_o0440 c20_s3520 c20_s4015 c20_s0000 c20_s0055 c20_s0110 c20_s0220 c20_s0275 c20_s0550 c20_s0605 c20_s0660 c20_s0715 c20_s0770 c20_s0880 c20_s0935 c20_s0990 c20_s1100 c20_s1320 c20_s1375 c20_s1430 c20_s1485 (lamp heads and shadows); T7a hill top (two outside the captures): Street View J6fsnW4hj4xCjQLzrgRGzA (light masts on top); inventory mast rows |
+| 188 | bridge | both | 295-295 | 0-0 | bridge 1382620985 (foot) deck 20.9 | lidar |
+| 189 | cone_line | left | 995-1001 | 0-5 | cone line 0 | closed road the Chute (NASCAR short course, T4 to T7) mouth (onboard 0:34: 3-5 orange cones across the Chute mouth ahead-left at T4 (inventory)) |
+| 190 | cone_line | left | 2159-2166 | 0-6 | cone line 1 | closed road the Chute (NASCAR short course, T4 to T7) mouth (onboard 1:12: small orange cones in front of a black tyre line across the Chute mouth at T7 (inventory, added row)) |
+| 191 | cone_line | right | 2196-2212 | 0-1 | cone line 2 | onboard 1:14-1:16 (round 5): orange delineator posts on the edge of the T7a island before its kerb (island on c20_s3960) |
+| 192 | cone_line | right | 1932-1942 | 1-2 | cone line 3 | onboard 1:04 (round 5): orange cones in front of the tyre line across the drag strip continuation at the T7 fork |
+| 193 | cone_line | left | 3525-3586 | 0-0 | cone line 4 | pit-in double white line, s 3525 to the nose at 3586 (c20_s1155 / c20_s1210; Street View owner_15 cones) |
+| 194 | cone_line | left | 3966-240 (wraps) | 0-0 | cone line 5 | the pit lane's track-facing edge where it merges at its end (one-part pit lane) |
 
 ### Every inventory row and its outcome (423 rows)
 
@@ -610,8 +644,8 @@ buildings (rows 2:02-2:12 left, pit rows).
 | 111 | 0:04.0 | left | wall | concrete | onboard:RAZip6S84CM@4.0 | covered by barrier 2 (concrete + 1 m fence) |
 | 111 | 0:04.0 | right | mast | light mast | onboard:RAZip6S84CM@4.0 | MISSING |
 | 111 | 0:04.0 | right | runoff | paved, drag-strip junction | onboard:RAZip6S84CM@4.0 | surroundings (not a checked kind) |
-| 146 | 0:04.0 | left | building | pit-exit building, red roof, glazed front | onboard:RAZip6S84CM@4.0 | covered by building 14 '' 6.6 m (corrected in scenery round 5 (21 Oct 2026): ahead_m was none) |
-| 173 | 0:02.0 | left | building | pit garages, red roof | onboard:RAZip6S84CM@2.0 | covered by building 14 '' 6.6 m (corrected in scenery round 5 (21 Oct 2026): ahead_m was none) |
+| 146 | 0:04.0 | left | building | pit-exit building, red roof, glazed front | onboard:RAZip6S84CM@4.0 | covered by building 7 '' 6.6 m; structure 5 garage 'Pit-exit building' (corrected in scenery round 5 (21 Oct 2026): ahead_m was none) |
+| 173 | 0:02.0 | left | building | pit garages, red roof | onboard:RAZip6S84CM@2.0 | covered by building 7 '' 6.6 m; structure 5 garage 'Pit-exit building' (corrected in scenery round 5 (21 Oct 2026): ahead_m was none) |
 | 184 | 0:06.0 | ahead | bridge | footbridge with ad boards (Save Mart, GR, Sunoco, Las Vegas) | onboard:RAZip6S84CM@6.0 | skipped: 'ahead' without a distance |
 | 184 | 0:06.0 | ahead | fence | fence along the hill top | onboard:RAZip6S84CM@6.0 | skipped: 'ahead' without a distance (corrected in scenery round 5 (21 Oct 2026): side was right, out_m was none) |
 | 184 | 0:06.0 | left | cone_line | pit-exit cones, yellow/white, ~0.5 m | onboard:RAZip6S84CM@6.0 | covered by cone line 5 |
@@ -635,16 +669,16 @@ buildings (rows 2:02-2:12 left, pit rows).
 | 379 | 0:12.0 | ahead | stand | concrete terraces up the hill above T2/T3 | onboard:RAZip6S84CM@12.0 | skipped: 'ahead' without a distance |
 | 379 | 0:12.0 | left | paint | white edge line | onboard:RAZip6S84CM@12.0 | surroundings (not a checked kind) |
 | 379 | 0:12.0 | right | paint | white edge line | onboard:RAZip6S84CM@12.0 | surroundings (not a checked kind) |
-| 414 | 0:12.0 | left | fence | catch fence, curved-top posts | onboard:RAZip6S84CM@12.0 | covered by barrier 23 (concrete + 3 m fence) catch fence (corrected in scenery round 5 (21 Oct 2026): ahead_m was none) |
-| 420 | 0:14.0 | left | building | open shade roof on posts at the top of the T2 terraces, a tan block behind it | onboard:RAZip6S84CM@14.0 | covered by building 12 '' 3.2 m (row added in scenery round 5 (21 Oct 2026)) |
-| 420 | 0:14.0 | left | fence | catch fence, curved-top posts | onboard:RAZip6S84CM@14.0 | covered by barrier 23 (concrete + 3 m fence) catch fence |
+| 414 | 0:12.0 | left | fence | catch fence, curved-top posts | onboard:RAZip6S84CM@12.0 | covered by barrier 23 (concrete + 3 m fence) catch fence; barrier 65 (fence + 1.8 m fence) (corrected in scenery round 5 (21 Oct 2026): ahead_m was none) |
+| 420 | 0:14.0 | left | building | open shade roof on posts at the top of the T2 terraces, a tan block behind it | onboard:RAZip6S84CM@14.0 | covered by building 5 '' 3.2 m (row added in scenery round 5 (21 Oct 2026)) |
+| 420 | 0:14.0 | left | fence | catch fence, curved-top posts | onboard:RAZip6S84CM@14.0 | covered by barrier 23 (concrete + 3 m fence) catch fence; barrier 65 (fence + 1.8 m fence) |
 | 420 | 0:14.0 | left | mast | light poles inside the fence line | onboard:RAZip6S84CM@14.0 | covered by mast ''; mast '' |
 | 420 | 0:14.0 | left | stand | concrete terraces, ~25 rows, stair aisles, shade roof on top | onboard:RAZip6S84CM@14.0 | covered by terrace above T2 |
 | 420 | 0:14.0 | left | wall | low concrete wall at the foot of the terraces with a 'SONOMA TURN 2' style sign | onboard:RAZip6S84CM@14.0 | covered by barrier 23 (concrete + 3 m fence) |
 | 420 | 0:14.0 | right | kerb | T2 apex/exit kerb right | onboard:RAZip6S84CM@14.0 | covered by kerb 398.1-451 |
 | 420 | 0:14.0 | right | runoff | grass bank | onboard:RAZip6S84CM@14.0 | surroundings (not a checked kind) |
 | 443 | 0:12.0 | left | station | white marshal hut at the foot of the terraces | onboard:RAZip6S84CM@12.0 | covered by marshal 'T2 exit' (corrected in scenery round 5 (21 Oct 2026): ahead_m was none) |
-| 463 | 0:16.0 | left | fence | catch fence, curved-top posts | onboard:RAZip6S84CM@16.0 | covered by barrier 23 (concrete + 3 m fence) catch fence |
+| 463 | 0:16.0 | left | fence | catch fence, curved-top posts | onboard:RAZip6S84CM@16.0 | covered by barrier 23 (concrete + 3 m fence) catch fence; barrier 65 (fence + 1.8 m fence) |
 | 463 | 0:16.0 | left | kerb | long kerb along the left after T2 (exit side) | onboard:RAZip6S84CM@16.0 | covered by kerb 451-519.8 |
 | 463 | 0:16.0 | left | runoff | dirt strip then grass | onboard:RAZip6S84CM@16.0 | surroundings (not a checked kind) |
 | 463 | 0:16.0 | left | stand | concrete terraces, stair rails, light poles | onboard:RAZip6S84CM@16.0 | covered by terrace above T2 |
@@ -681,16 +715,16 @@ buildings (rows 2:02-2:12 left, pit rows).
 | 811 | 0:28.0 | right | paint | white edge line | onboard:RAZip6S84CM@28.0 | surroundings (not a checked kind) |
 | 811 | 0:28.0 | right | runoff | grass | onboard:RAZip6S84CM@28.0 | surroundings (not a checked kind) |
 | 813 | 0:26.0 | left | stand | concrete terraces (T3a-T4) | onboard:RAZip6S84CM@26.0 | covered by terrace T3a-T4 (corrected in scenery round 5 (21 Oct 2026): ahead_m was none) |
-| 855 | 0:30.0 | left | fence | catch fence, curved-top posts on the wall | onboard:RAZip6S84CM@30.0 | covered by barrier 16 (concrete + 3 m fence) catch fence |
+| 855 | 0:30.0 | left | fence | catch fence, curved-top posts on the wall | onboard:RAZip6S84CM@30.0 | covered by barrier 16 (concrete + 3 m fence) catch fence; barrier 64 (fence + 1.8 m fence) |
 | 855 | 0:30.0 | left | kerb | T4 entry, outside, long | onboard:RAZip6S84CM@30.0 | covered by kerb 855.1-959.8 |
 | 855 | 0:30.0 | left | stand | concrete terraces (T3a-T4), ~20 rows | onboard:RAZip6S84CM@30.0 | covered by terrace T3a-T4 |
 | 855 | 0:30.0 | left | wall | light grey concrete wall | onboard:RAZip6S84CM@30.0 | covered by barrier 16 (concrete + 3 m fence) |
 | 855 | 0:30.0 | right | boards | red ad boards on the barrier | onboard:RAZip6S84CM@30.0 | surroundings (not a checked kind) |
 | 855 | 0:30.0 | right | runoff | dirt then grass | onboard:RAZip6S84CM@30.0 | surroundings (not a checked kind) |
 | 855 | 0:30.0 | right | tyre_wall | dark tyre wall / black barrier line with red ad boards | onboard:RAZip6S84CM@30.0 | covered by barrier 17 (tyres) |
-| 900 |  | left | fence | catch fence on the wall below the T3a-T4 stands | streetview:nA1oaDXwADSI7x-Pa-j4Ow@337 | covered by barrier 43 (concrete + 2.5 m fence) catch fence |
+| 900 |  | left | fence | catch fence on the wall below the T3a-T4 stands | streetview:nA1oaDXwADSI7x-Pa-j4Ow@337 | covered by barrier 43 (concrete + 2.5 m fence) catch fence; barrier 64 (fence + 1.8 m fence) |
 | 900 |  | left | wall | concrete wall below the stands | streetview:nA1oaDXwADSI7x-Pa-j4Ow@337 | covered by barrier 43 (concrete + 2.5 m fence) |
-| 909 | 0:32.0 | left | fence | catch fence, curved-top posts | onboard:RAZip6S84CM@32.0 | covered by barrier 43 (concrete + 2.5 m fence) catch fence |
+| 909 | 0:32.0 | left | fence | catch fence, curved-top posts | onboard:RAZip6S84CM@32.0 | covered by barrier 43 (concrete + 2.5 m fence) catch fence; barrier 64 (fence + 1.8 m fence) |
 | 909 | 0:32.0 | left | kerb | T4 entry outside kerb continues | onboard:RAZip6S84CM@32.0 | covered by kerb 855.1-959.8 |
 | 909 | 0:32.0 | left | wall | light grey concrete wall | onboard:RAZip6S84CM@32.0 | covered by barrier 43 (concrete + 2.5 m fence) |
 | 909 | 0:32.0 | right | runoff | dirt, wide | onboard:RAZip6S84CM@32.0 | surroundings (not a checked kind) |
@@ -759,12 +793,12 @@ buildings (rows 2:02-2:12 left, pit rows).
 | 1626 | 0:56.0 | right | tyre_stack | single black tyre stacks on the runoff | onboard:RAZip6S84CM@56.0 | covered by tyres ''; tyres '' |
 | 1687 | 0:58.0 | left | paint | grey/white painted blocks on the left edge (flat) | onboard:RAZip6S84CM@58.0 | surroundings (not a checked kind) |
 | 1687 | 0:58.0 | left | wall | black wall section then light grey concrete wall | onboard:RAZip6S84CM@58.0 | covered by barrier 4 (concrete) |
-| 1687 | 0:58.0 | right | mast | light masts | onboard:RAZip6S84CM@58.0 | MISSING |
+| 1687 | 0:58.0 | right | mast | light masts | onboard:RAZip6S84CM@58.0 | covered by structure 18 mast 'Light masts' at (-1.5, 146.5) |
 | 1687 | 0:58.0 | right | paint | yellow centre line of the drag strip / NASCAR course | onboard:RAZip6S84CM@58.0 | surroundings (not a checked kind) |
-| 1687 | 0:58.0 | right | tyre_stack | black tyre stack | onboard:RAZip6S84CM@58.0 | MISSING |
+| 1687 | 0:58.0 | right | tyre_stack | black tyre stack | onboard:RAZip6S84CM@58.0 | covered by tyres '' |
 | 1742 | 1:00.0 | left | wall | light blue-grey concrete wall | onboard:RAZip6S84CM@60.0 | covered by barrier 4 (concrete) |
 | 1742 | 1:00.0 | right | kerb | Carousel exit kerb, right | onboard:RAZip6S84CM@60.0 | covered by kerb 1721.1-1796 |
-| 1742 | 1:00.0 | right | mast | light masts with tyre stacks at the base | onboard:RAZip6S84CM@60.0 | covered by mast '' |
+| 1742 | 1:00.0 | right | mast | light masts with tyre stacks at the base | onboard:RAZip6S84CM@60.0 | covered by mast ''; structure 18 mast 'Light masts' at (-59.5, 184.5) |
 | 1742 | 1:00.0 | right | runoff | dirt strip then grass bank | onboard:RAZip6S84CM@60.0 | surroundings (not a checked kind) |
 | 1810 | 1:02.0 | left | wall | light blue-grey concrete wall | onboard:RAZip6S84CM@62.0 | covered by barrier 4 (concrete) |
 | 1810 | 1:02.0 | right | mast | light masts | onboard:RAZip6S84CM@62.0 | MISSING |
@@ -825,12 +859,12 @@ buildings (rows 2:02-2:12 left, pit rows).
 | 2497 | 1:24.0 | left | fence | fence along the hill | onboard:RAZip6S84CM@84.0 | covered by barrier 53 (fence + 1.5 m fence) |
 | 2497 | 1:24.0 | left | tyre_wall | dark low wall far left | onboard:RAZip6S84CM@84.0 | covered by barrier 7 (tyres); barrier 30 (tyres) |
 | 2497 | 1:24.0 | right | kerb | 8a apex kerb | onboard:RAZip6S84CM@84.0 | covered by kerb 2439.5-2550.3 |
-| 2497 | 1:24.0 | right | mast | tall pole | onboard:RAZip6S84CM@84.0 | MISSING |
+| 2497 | 1:24.0 | right | mast | tall pole | onboard:RAZip6S84CM@84.0 | covered by structure 11 mast 'Light masts' at (-230.5, 306.5) |
 | 2517 | 1:24.0 | right | tyre_wall | black-covered tyre barrier / dark panel wall | onboard:RAZip6S84CM@84.0 | covered by barrier 9 (tyres) (corrected in scenery round 5 (21 Oct 2026): ahead_m was none) |
 | 2571 | 1:26.0 | left | fence | fence on the bank top | onboard:RAZip6S84CM@86.0 | covered by barrier 8 (concrete + 2 m fence) catch fence; barrier 53 (fence + 1.5 m fence) |
 | 2571 | 1:26.0 | left | kerb | 8a exit outside kerb | onboard:RAZip6S84CM@86.0 | covered by kerb 2520.3-2572.2 |
 | 2571 | 1:26.0 | left | tyre_wall | dark low wall / tyre line | onboard:RAZip6S84CM@86.0 | covered by barrier 7 (tyres) |
-| 2571 | 1:26.0 | right | mast | light mast | onboard:RAZip6S84CM@86.0 | covered by mast '' |
+| 2571 | 1:26.0 | right | mast | light mast | onboard:RAZip6S84CM@86.0 | covered by mast ''; structure 10 mast 'Light masts' at (-175.5, 261.5) |
 | 2571 | 1:26.0 | right | paint | white edge line | onboard:RAZip6S84CM@86.0 | surroundings (not a checked kind) |
 | 2591 | 1:26.0 | right | wall | light grey concrete wall | onboard:RAZip6S84CM@86.0 | covered by barrier 31 (concrete) (corrected in scenery round 5 (21 Oct 2026): ahead_m was none) |
 | 2644 | 1:28.0 | left | fence | catch fence posts on the wall, fence up the bank | onboard:RAZip6S84CM@88.0 | covered by barrier 8 (concrete + 2 m fence) catch fence; barrier 53 (fence + 1.5 m fence) |
@@ -838,7 +872,7 @@ buildings (rows 2:02-2:12 left, pit rows).
 | 2644 | 1:28.0 | left | wall | light grey concrete wall | onboard:RAZip6S84CM@88.0 | covered by barrier 8 (concrete + 2 m fence) |
 | 2644 | 1:28.0 | right | runoff | grass, wide | onboard:RAZip6S84CM@88.0 | surroundings (not a checked kind) |
 | 2644 | 1:28.0 | right | wall | dark wall with a 'SONOMA TURN 8' sign | onboard:RAZip6S84CM@88.0 | covered by barrier 32 (concrete) |
-| 2707 | 1:30.0 | left | fence | catch fence, curved-top posts | onboard:RAZip6S84CM@90.0 | covered by barrier 56 (concrete + 2.5 m fence) catch fence |
+| 2707 | 1:30.0 | left | fence | catch fence, curved-top posts | onboard:RAZip6S84CM@90.0 | covered by barrier 56 (concrete + 2.5 m fence) catch fence; barrier 66 (fence + 1.8 m fence) |
 | 2707 | 1:30.0 | left | wall | low dark concrete wall | onboard:RAZip6S84CM@90.0 | covered by barrier 56 (concrete + 2.5 m fence) |
 | 2707 | 1:30.0 | right | kerb | T9 exit outside kerb | onboard:RAZip6S84CM@90.0 | covered by kerb 2692-2739.8 |
 | 2707 | 1:30.0 | right | mast | light masts | onboard:RAZip6S84CM@90.0 | MISSING |
@@ -850,43 +884,43 @@ buildings (rows 2:02-2:12 left, pit rows).
 | 2773 | 1:32.0 | left | wall | dark then light concrete wall | onboard:RAZip6S84CM@92.0 | covered by barrier 18 (concrete + 3 m fence); barrier 56 (concrete + 2.5 m fence) |
 | 2773 | 1:32.0 | right | mast | light masts | onboard:RAZip6S84CM@92.0 | MISSING |
 | 2773 | 1:32.0 | right | runoff | grass, then the paved 2020 bypass | onboard:RAZip6S84CM@92.0 | surroundings (not a checked kind) |
-| 2854 | 1:34.0 | left | fence | catch fence, curved-top posts | onboard:RAZip6S84CM@94.0 | covered by barrier 18 (concrete + 3 m fence) catch fence |
+| 2854 | 1:34.0 | left | fence | catch fence, curved-top posts | onboard:RAZip6S84CM@94.0 | covered by barrier 18 (concrete + 3 m fence) catch fence; barrier 66 (fence + 1.8 m fence) |
 | 2854 | 1:34.0 | left | stand | concrete terraces with covered stands on top | onboard:RAZip6S84CM@94.0 | covered by terrace back straight / 9a |
 | 2854 | 1:34.0 | left | wall | light concrete wall | onboard:RAZip6S84CM@94.0 | covered by barrier 18 (concrete + 3 m fence) |
 | 2854 | 1:34.0 | right | runoff | grass, wide | onboard:RAZip6S84CM@94.0 | surroundings (not a checked kind) |
 | 2854 | 1:34.0 | right | stand | grandstand far ahead-right (T11 area) | onboard:RAZip6S84CM@94.0 | MISSING |
-| 2900 |  | left | fence | catch fence on the wall between the spectator walk and the track | streetview:Gas0S2x3OzWj_AinwcVtAg@170 | covered by barrier 18 (concrete + 3 m fence) catch fence |
+| 2900 |  | left | fence | catch fence on the wall between the spectator walk and the track | streetview:Gas0S2x3OzWj_AinwcVtAg@170 | covered by barrier 18 (concrete + 3 m fence) catch fence; barrier 66 (fence + 1.8 m fence) |
+| 2947 | 1:36.0 | ahead | stand | large grandstand with suites (T10/T11 infield side) | onboard:RAZip6S84CM@96.0 | skipped: 'ahead' without a distance (corrected in scenery round 6 (21 Oct 2026): side was right) |
 | 2947 | 1:36.0 | left | cone_line | single orange cone on the grass (marker) | onboard:RAZip6S84CM@96.0 | MISSING |
-| 2947 | 1:36.0 | left | fence | catch fence, curved-top posts | onboard:RAZip6S84CM@96.0 | covered by barrier 18 (concrete + 3 m fence) catch fence |
+| 2947 | 1:36.0 | left | fence | catch fence, curved-top posts | onboard:RAZip6S84CM@96.0 | covered by barrier 18 (concrete + 3 m fence) catch fence; barrier 66 (fence + 1.8 m fence) |
 | 2947 | 1:36.0 | left | wall | light concrete wall | onboard:RAZip6S84CM@96.0 | covered by barrier 18 (concrete + 3 m fence) |
 | 2947 | 1:36.0 | right | runoff | grass, wide | onboard:RAZip6S84CM@96.0 | surroundings (not a checked kind) |
-| 2947 | 1:36.0 | right | stand | large grandstand with suites (T10/T11 infield side) | onboard:RAZip6S84CM@96.0 | MISSING |
 | 3018 | 1:38.0 | left | cone_line | single orange cone on the grass (marker) | onboard:RAZip6S84CM@98.0 | MISSING |
-| 3018 | 1:38.0 | left | fence | catch fence, curved-top posts | onboard:RAZip6S84CM@98.0 | covered by barrier 57 (concrete + 2.5 m fence) catch fence |
+| 3018 | 1:38.0 | left | fence | catch fence, curved-top posts | onboard:RAZip6S84CM@98.0 | covered by barrier 57 (concrete + 2.5 m fence) catch fence; barrier 66 (fence + 1.8 m fence) |
 | 3018 | 1:38.0 | left | wall | light concrete wall | onboard:RAZip6S84CM@98.0 | covered by barrier 57 (concrete + 2.5 m fence) |
 | 3018 | 1:38.0 | right | runoff | grass | onboard:RAZip6S84CM@98.0 | surroundings (not a checked kind) |
 | 3056 | 1:40.0 | ahead | tyre_wall | black covered barrier sections | onboard:RAZip6S84CM@100.0 | skipped: 'ahead' without a distance |
-| 3056 | 1:40.0 | left | fence | catch fence, curved-top posts | onboard:RAZip6S84CM@100.0 | covered by barrier 57 (concrete + 2.5 m fence) catch fence |
+| 3056 | 1:40.0 | left | fence | catch fence, curved-top posts | onboard:RAZip6S84CM@100.0 | covered by barrier 57 (concrete + 2.5 m fence) catch fence; barrier 66 (fence + 1.8 m fence) |
 | 3056 | 1:40.0 | left | runoff | paved (bypass mouth) | onboard:RAZip6S84CM@100.0 | surroundings (not a checked kind) |
 | 3056 | 1:40.0 | left | wall | concrete wall with 'Sonoma Raceway' ad boards | onboard:RAZip6S84CM@100.0 | covered by barrier 57 (concrete + 2.5 m fence) |
 | 3056 | 1:40.0 | right | kerb | 9a right-hand apex kerb | onboard:RAZip6S84CM@100.0 | covered by kerb 3020.2-3045.2 |
 | 3056 | 1:40.0 | right | tyre_stack | stack of 2 grey tyres on the apex | onboard:RAZip6S84CM@100.0 | covered by tyres '' |
+| 3089 | 1:42.0 | ahead | stand | large grandstand with suites deck | onboard:RAZip6S84CM@102.0 | skipped: 'ahead' without a distance (corrected in scenery round 6 (21 Oct 2026): side was right) |
 | 3089 | 1:42.0 | left | boards | Toyota and other ad boards on the far wall | onboard:RAZip6S84CM@102.0 | surroundings (not a checked kind) |
 | 3089 | 1:42.0 | left | kerb | 9a left-hand apex kerb | onboard:RAZip6S84CM@102.0 | covered by kerb 3060.1-3169.9 |
-| 3089 | 1:42.0 | right | mast | light masts | onboard:RAZip6S84CM@102.0 | MISSING |
-| 3089 | 1:42.0 | right | stand | large grandstand with suites deck | onboard:RAZip6S84CM@102.0 | MISSING |
+| 3089 | 1:42.0 | right | mast | light masts | onboard:RAZip6S84CM@102.0 | covered by structure 15 mast 'Light masts' at (172.5, -17.5) |
 | 3089 | 1:42.0 | right | tyre_wall | black covered tyre barrier | onboard:RAZip6S84CM@102.0 | covered by barrier 34 (tyres) |
+| 3119 | 1:44.0 | ahead | stand | grandstand with suites deck behind the fence | onboard:RAZip6S84CM@104.0 | skipped: 'ahead' without a distance (corrected in scenery round 6 (21 Oct 2026): side was right) |
 | 3119 | 1:44.0 | left | kerb | 9a exit kerb, left | onboard:RAZip6S84CM@104.0 | covered by kerb 3060.1-3169.9 |
 | 3119 | 1:44.0 | left | tyre_stack | black tyre stack in front of the wall | onboard:RAZip6S84CM@104.0 | covered by tyres '' |
 | 3119 | 1:44.0 | left | wall | concrete wall with tall 'SONOMA RACEWAY' / Sunbelt board panels on top | onboard:RAZip6S84CM@104.0 | covered by barrier 59 (concrete) |
 | 3119 | 1:44.0 | right | fence | catch fence on the wall, curved-top posts, cables | onboard:RAZip6S84CM@104.0 | covered by barrier 58 (concrete + 2.9 m fence) catch fence |
-| 3119 | 1:44.0 | right | stand | grandstand with suites deck behind the fence | onboard:RAZip6S84CM@104.0 | MISSING |
 | 3119 | 1:44.0 | right | wall | light concrete wall (SAFER-like) | onboard:RAZip6S84CM@104.0 | covered by barrier 58 (concrete + 2.9 m fence) |
 | 3149 | 1:42.0 | right | wall | light concrete wall with catch fence | onboard:RAZip6S84CM@102.0 | covered by barrier 58 (concrete + 2.9 m fence) (corrected in scenery round 5 (21 Oct 2026): ahead_m was none) |
 | 3157 | 1:46.0 | left | boards | Sunbelt Rentals, Toyota boards on the wall | onboard:RAZip6S84CM@106.0 | surroundings (not a checked kind) |
 | 3157 | 1:46.0 | left | wall | concrete wall topped by tall ad-board panels (Sunbelt Rentals, Toyota) | onboard:RAZip6S84CM@106.0 | covered by barrier 20 (concrete); barrier 59 (concrete) |
 | 3157 | 1:46.0 | right | fence | catch fence, curved-top posts | onboard:RAZip6S84CM@106.0 | covered by barrier 58 (concrete + 2.9 m fence) catch fence |
-| 3157 | 1:46.0 | right | mast | light masts | onboard:RAZip6S84CM@106.0 | MISSING |
+| 3157 | 1:46.0 | right | mast | light masts | onboard:RAZip6S84CM@106.0 | covered by structure 24 mast 'Light masts' at (274.5, -69.5) |
 | 3157 | 1:46.0 | right | wall | light concrete wall | onboard:RAZip6S84CM@106.0 | covered by barrier 58 (concrete + 2.9 m fence) |
 | 3203 | 1:48.0 | left | boards | Toyota, Save Mart, zMAX boards | onboard:RAZip6S84CM@108.0 | surroundings (not a checked kind) |
 | 3203 | 1:48.0 | left | wall | concrete wall topped by tall Toyota ad-board panels | onboard:RAZip6S84CM@108.0 | covered by barrier 20 (concrete) |
@@ -894,72 +928,72 @@ buildings (rows 2:02-2:12 left, pit rows).
 | 3203 | 1:48.0 | right | fence | catch fence, curved-top posts | onboard:RAZip6S84CM@108.0 | covered by barrier 58 (concrete + 2.9 m fence) catch fence |
 | 3203 | 1:48.0 | right | kerb | T10 apex kerb | onboard:RAZip6S84CM@108.0 | covered by kerb 3214.8-3291.6 |
 | 3203 | 1:48.0 | right | wall | light concrete wall | onboard:RAZip6S84CM@108.0 | covered by barrier 58 (concrete + 2.9 m fence) |
-| 3259 | 1:50.0 | left | boards | Humboldt, Save Mart, zMAX boards | onboard:RAZip6S84CM@110.0 | surroundings (not a checked kind) |
-| 3259 | 1:50.0 | left | wall | concrete wall topped by tall ad-board panels (Humboldt, Save Mart, zMAX) | onboard:RAZip6S84CM@110.0 | covered by barrier 20 (concrete) |
-| 3259 | 1:50.0 | right | building | tan buildings beyond the fence (infield) | onboard:RAZip6S84CM@110.0 | ASSIGNED to the buildings round |
-| 3259 | 1:50.0 | right | fence | catch fence, curved-top posts | onboard:RAZip6S84CM@110.0 | covered by barrier 21 (concrete + 3.5 m fence) catch fence |
-| 3259 | 1:50.0 | right | kerb | T10 apex/exit kerb right | onboard:RAZip6S84CM@110.0 | covered by kerb 3214.8-3291.6 |
-| 3259 | 1:50.0 | right | wall | light concrete wall | onboard:RAZip6S84CM@110.0 | covered by barrier 21 (concrete + 3.5 m fence) |
-| 3326 | 1:52.0 | left | kerb | T10 exit outside kerb, left | onboard:RAZip6S84CM@112.0 | covered by kerb 3337.5-3402.4 |
-| 3326 | 1:52.0 | left | wall | concrete wall topped by tall ad-board panels (zMAX, EchoPark) | onboard:RAZip6S84CM@112.0 | covered by barrier 20 (concrete) |
-| 3326 | 1:52.0 | right | building | infield buildings beyond the fence | onboard:RAZip6S84CM@112.0 | covered by building 11 '' 3.2 m |
-| 3326 | 1:52.0 | right | fence | catch fence, curved-top posts | onboard:RAZip6S84CM@112.0 | covered by barrier 21 (concrete + 3.5 m fence) catch fence |
-| 3326 | 1:52.0 | right | mast | light mast and flag pole | onboard:RAZip6S84CM@112.0 | MISSING |
-| 3326 | 1:52.0 | right | wall | concrete wall | onboard:RAZip6S84CM@112.0 | covered by barrier 21 (concrete + 3.5 m fence) |
-| 3404 | 1:54.0 | left | tyre_wall | tyre bundles along the foot of the tall wall | onboard:RAZip6S84CM@114.0 | covered by barrier 60 (tyres) |
-| 3404 | 1:54.0 | left | wall | tall wall with EchoPark board panels | onboard:RAZip6S84CM@114.0 | covered by barrier 20 (concrete) |
-| 3404 | 1:54.0 | right | fence | catch fence on a concrete wall, curved-top posts | onboard:RAZip6S84CM@114.0 | covered by barrier 21 (concrete + 3.5 m fence) catch fence; barrier 33 (tyres + 3.5 m fence) catch fence |
-| 3404 | 1:54.0 | right | tyre_wall | black tyre stacks 4 high, continuous | onboard:RAZip6S84CM@114.0 | covered by barrier 33 (tyres + 3.5 m fence) |
-| 3404 | 1:54.0 | right | wall | concrete wall under the catch fence | onboard:RAZip6S84CM@114.0 | covered by barrier 21 (concrete + 3.5 m fence) |
-| 3492 | 1:56.0 | left | station | marshal standing at a door in the tall wall | onboard:RAZip6S84CM@116.0 | MISSING |
-| 3492 | 1:56.0 | left | wall | light blue concrete Jersey wall (pit-in separation) | onboard:RAZip6S84CM@116.0 | covered by barrier 35 (concrete) |
-| 3492 | 1:56.0 | left | wall | tall concrete wall with Las Vegas / O'Reilly boards on top (outside of the pit-in lane) | onboard:RAZip6S84CM@116.0 | covered by barrier 35 (concrete) |
-| 3492 | 1:56.0 | right | runoff | paved infield (T11a / NASCAR), painted lines | onboard:RAZip6S84CM@116.0 | surroundings (not a checked kind) |
-| 3577 | 1:58.0 | left | cone_line | orange cones along the pit-in separation | onboard:RAZip6S84CM@118.0 | covered by cone line 4 |
-| 3577 | 1:58.0 | left | paint | double white line at the pit-in split | onboard:RAZip6S84CM@118.0 | surroundings (not a checked kind) |
-| 3577 | 1:58.0 | left | wall | light blue concrete Jersey wall (pit-in separation) | onboard:RAZip6S84CM@118.0 | covered by barrier 13 (concrete); barrier 35 (concrete) |
-| 3577 | 1:58.0 | left | wall | tall concrete wall with Lucky / Save Mart / Pit Boss boards | onboard:RAZip6S84CM@118.0 | covered by barrier 13 (concrete); barrier 35 (concrete) |
-| 3577 | 1:58.0 | right | runoff | paved infield | onboard:RAZip6S84CM@118.0 | surroundings (not a checked kind) |
+| 3262 | 1:50.0 | ahead | building | tan buildings beyond the fence (infield) | onboard:RAZip6S84CM@110.0 | skipped: 'ahead' without a distance (corrected in scenery round 6 (21 Oct 2026): side was right) |
+| 3262 | 1:50.0 | left | boards | Humboldt, Save Mart, zMAX boards | onboard:RAZip6S84CM@110.0 | surroundings (not a checked kind) |
+| 3262 | 1:50.0 | left | wall | concrete wall topped by tall ad-board panels (Humboldt, Save Mart, zMAX) | onboard:RAZip6S84CM@110.0 | covered by barrier 20 (concrete) |
+| 3262 | 1:50.0 | right | fence | catch fence, curved-top posts | onboard:RAZip6S84CM@110.0 | covered by barrier 21 (concrete + 3.5 m fence) catch fence |
+| 3262 | 1:50.0 | right | kerb | T10 apex/exit kerb right | onboard:RAZip6S84CM@110.0 | covered by kerb 3214.8-3291.6 |
+| 3262 | 1:50.0 | right | wall | light concrete wall | onboard:RAZip6S84CM@110.0 | covered by barrier 21 (concrete + 3.5 m fence) |
+| 3335 | 1:52.0 | left | kerb | T10 exit outside kerb, left | onboard:RAZip6S84CM@112.0 | covered by kerb 3337.5-3402.4 |
+| 3335 | 1:52.0 | left | wall | concrete wall topped by tall ad-board panels (zMAX, EchoPark) | onboard:RAZip6S84CM@112.0 | covered by barrier 20 (concrete) |
+| 3335 | 1:52.0 | right | building | infield buildings beyond the fence | onboard:RAZip6S84CM@112.0 | MISSING |
+| 3335 | 1:52.0 | right | fence | catch fence, curved-top posts | onboard:RAZip6S84CM@112.0 | covered by barrier 21 (concrete + 3.5 m fence) catch fence |
+| 3335 | 1:52.0 | right | mast | light mast and flag pole | onboard:RAZip6S84CM@112.0 | covered by structure 24 mast 'Light masts' at (362.5, -138.5) |
+| 3335 | 1:52.0 | right | wall | concrete wall | onboard:RAZip6S84CM@112.0 | covered by barrier 21 (concrete + 3.5 m fence) |
+| 3421 | 1:54.0 | left | tyre_wall | tyre bundles along the foot of the tall wall | onboard:RAZip6S84CM@114.0 | covered by barrier 60 (tyres) |
+| 3421 | 1:54.0 | left | wall | tall wall with EchoPark board panels | onboard:RAZip6S84CM@114.0 | covered by barrier 20 (concrete) |
+| 3421 | 1:54.0 | right | fence | catch fence on a concrete wall, curved-top posts | onboard:RAZip6S84CM@114.0 | covered by barrier 21 (concrete + 3.5 m fence) catch fence; barrier 33 (tyres + 3.5 m fence) catch fence |
+| 3421 | 1:54.0 | right | tyre_wall | black tyre stacks 4 high, continuous | onboard:RAZip6S84CM@114.0 | covered by barrier 33 (tyres + 3.5 m fence) |
+| 3421 | 1:54.0 | right | wall | concrete wall under the catch fence | onboard:RAZip6S84CM@114.0 | covered by barrier 21 (concrete + 3.5 m fence) |
+| 3511 | 1:56.0 | left | station | marshal standing at a door in the tall wall | onboard:RAZip6S84CM@116.0 | MISSING |
+| 3511 | 1:56.0 | left | wall | light blue concrete Jersey wall (pit-in separation) | onboard:RAZip6S84CM@116.0 | covered by barrier 35 (concrete) |
+| 3511 | 1:56.0 | left | wall | tall concrete wall with Las Vegas / O'Reilly boards on top (outside of the pit-in lane) | onboard:RAZip6S84CM@116.0 | covered by barrier 35 (concrete) |
+| 3511 | 1:56.0 | right | runoff | paved infield (T11a / NASCAR), painted lines | onboard:RAZip6S84CM@116.0 | surroundings (not a checked kind) |
+| 3588 | 1:58.0 | left | cone_line | orange cones along the pit-in separation | onboard:RAZip6S84CM@118.0 | covered by cone line 4 |
+| 3588 | 1:58.0 | left | paint | double white line at the pit-in split | onboard:RAZip6S84CM@118.0 | surroundings (not a checked kind) |
+| 3588 | 1:58.0 | left | wall | light blue concrete Jersey wall (pit-in separation) | onboard:RAZip6S84CM@118.0 | covered by barrier 13 (concrete); barrier 36 (concrete) |
+| 3588 | 1:58.0 | left | wall | tall concrete wall with Lucky / Save Mart / Pit Boss boards | onboard:RAZip6S84CM@118.0 | covered by barrier 13 (concrete); barrier 36 (concrete) |
+| 3588 | 1:58.0 | right | runoff | paved infield | onboard:RAZip6S84CM@118.0 | surroundings (not a checked kind) |
 | 3600 |  | left | wall | tall wall between the pit-in lane and the paddock: concrete base and Sprint board panels | streetview:jrXpHaDfJT2APw6zcyBKRA@196 | covered by barrier 13 (concrete); barrier 36 (concrete) |
-| 3635 | 2:00.0 | ahead | fence | catch fence, curved-top posts on the T11 outside wall | onboard:RAZip6S84CM@120.0 | skipped: 'ahead' without a distance |
-| 3635 | 2:00.0 | ahead | wall | light blue low wall round the T11 outside | onboard:RAZip6S84CM@120.0 | skipped: 'ahead' without a distance |
-| 3635 | 2:00.0 | left | wall | light blue concrete Jersey wall | onboard:RAZip6S84CM@120.0 | covered by barrier 13 (concrete); barrier 36 (concrete) |
-| 3635 | 2:00.0 | left | wall | tall wall with Coca-Cola / xfinity boards | onboard:RAZip6S84CM@120.0 | covered by barrier 13 (concrete); barrier 36 (concrete) |
-| 3635 | 2:00.0 | right | runoff | paved infield apron, painted lines | onboard:RAZip6S84CM@120.0 | surroundings (not a checked kind) |
-| 3635 | 2:00.0 | right | tyre_stack | red/white painted barrier blocks / barrels on the apron | onboard:RAZip6S84CM@120.0 | MISSING |
+| 3638 | 2:00.0 | ahead | fence | catch fence, curved-top posts on the T11 outside wall | onboard:RAZip6S84CM@120.0 | skipped: 'ahead' without a distance |
+| 3638 | 2:00.0 | ahead | wall | light blue low wall round the T11 outside | onboard:RAZip6S84CM@120.0 | skipped: 'ahead' without a distance |
+| 3638 | 2:00.0 | left | wall | light blue concrete Jersey wall | onboard:RAZip6S84CM@120.0 | covered by barrier 13 (concrete); barrier 36 (concrete) |
+| 3638 | 2:00.0 | left | wall | tall wall with Coca-Cola / xfinity boards | onboard:RAZip6S84CM@120.0 | covered by barrier 13 (concrete); barrier 36 (concrete) |
+| 3638 | 2:00.0 | right | runoff | paved infield apron, painted lines | onboard:RAZip6S84CM@120.0 | surroundings (not a checked kind) |
+| 3638 | 2:00.0 | right | tyre_stack | red/white painted barrier blocks / barrels on the apron | onboard:RAZip6S84CM@120.0 | MISSING |
 | 3640 |  | left | tyre_wall | continuous dark tyre wall round the outside of the hairpin, in front of the concrete wall and catch fence | streetview:jrXpHaDfJT2APw6zcyBKRA@196 | covered by barrier 14 (tyres + 2 m fence) |
 | 3660 |  | right | cone_line | traffic cone at the apron edge | streetview:jrXpHaDfJT2APw6zcyBKRA@196 | MISSING |
 | 3660 |  | right | tyre_stack | free-standing yellow / blue tyre stacks, 4 high, along the painted apron | streetview:jrXpHaDfJT2APw6zcyBKRA@196 | MISSING |
-| 3669 | 2:02.0 | left | building | glazed two-storey paddock / hospitality building | onboard:RAZip6S84CM@122.0 | covered by building 1 '' 4.5 m; building 3 '' 5.2 m |
-| 3669 | 2:02.0 | left | fence | catch fence, curved-top posts | onboard:RAZip6S84CM@122.0 | covered by barrier 14 (tyres + 2 m fence) catch fence |
-| 3669 | 2:02.0 | left | tyre_wall | white tyre stacks along the far wall | onboard:RAZip6S84CM@122.0 | covered by barrier 14 (tyres + 2 m fence) |
-| 3669 | 2:02.0 | left | wall | light blue concrete wall round the hairpin outside | onboard:RAZip6S84CM@122.0 | covered by barrier 37 (concrete); barrier 38 (concrete) |
-| 3669 | 2:02.0 | right | kerb | T11 apex kerb | onboard:RAZip6S84CM@122.0 | covered by kerb 3614.9-3744.6 |
-| 3669 | 2:02.0 | right | tyre_stack | red/white painted concrete blocks and a white water-filled barrier on the apron | onboard:RAZip6S84CM@122.0 | MISSING |
-| 3699 | 2:04.0 | left | building | tan stucco garages with green metal roofs (paddock) | onboard:RAZip6S84CM@124.0 | covered by building 3 '' 5.2 m; building 6 '' 6.8 m |
+| 3670 | 2:02.0 | left | building | glazed two-storey paddock / hospitality building | onboard:RAZip6S84CM@122.0 | covered by building 0 '' 4.5 m; building 1 '' 5.2 m |
+| 3670 | 2:02.0 | left | fence | catch fence, curved-top posts | onboard:RAZip6S84CM@122.0 | covered by barrier 14 (tyres + 2 m fence) catch fence |
+| 3670 | 2:02.0 | left | tyre_wall | white tyre stacks along the far wall | onboard:RAZip6S84CM@122.0 | covered by barrier 14 (tyres + 2 m fence) |
+| 3670 | 2:02.0 | left | wall | light blue concrete wall round the hairpin outside | onboard:RAZip6S84CM@122.0 | covered by barrier 37 (concrete); barrier 38 (concrete) |
+| 3670 | 2:02.0 | right | kerb | T11 apex kerb | onboard:RAZip6S84CM@122.0 | covered by kerb 3614.9-3744.6 |
+| 3670 | 2:02.0 | right | tyre_stack | red/white painted concrete blocks and a white water-filled barrier on the apron | onboard:RAZip6S84CM@122.0 | MISSING |
+| 3699 | 2:04.0 | left | building | tan stucco garages with green metal roofs (paddock) | onboard:RAZip6S84CM@124.0 | covered by building 1 '' 5.2 m; building 2 '' 6.4 m |
 | 3699 | 2:04.0 | left | fence | chain-link fence | onboard:RAZip6S84CM@124.0 | covered by barrier 14 (tyres + 2 m fence) catch fence |
 | 3699 | 2:04.0 | left | mast | light masts | onboard:RAZip6S84CM@124.0 | MISSING |
 | 3699 | 2:04.0 | left | tyre_wall | white-painted tyre wall, 2-3 high | onboard:RAZip6S84CM@124.0 | covered by barrier 14 (tyres + 2 m fence) |
 | 3699 | 2:04.0 | right | kerb | T11 apex/exit kerb | onboard:RAZip6S84CM@124.0 | covered by kerb 3614.9-3744.6 |
 | 3699 | 2:04.0 | right | tyre_stack | red/white painted concrete blocks | onboard:RAZip6S84CM@124.0 | MISSING |
-| 3737 | 2:06.0 | left | building | long tan garage building, green roof, windows | onboard:RAZip6S84CM@126.0 | covered by building 4 '' 6.7 m; building 6 '' 6.8 m |
+| 3737 | 2:06.0 | left | building | long tan garage building, green roof, windows | onboard:RAZip6S84CM@126.0 | covered by structure 2 garage 'Pit garages south'; structure 3 garage 'Paddock garage west' |
 | 3737 | 2:06.0 | left | mast | light masts | onboard:RAZip6S84CM@126.0 | MISSING |
 | 3737 | 2:06.0 | left | pit_lane | paved lane beyond the wall | onboard:RAZip6S84CM@126.0 | surroundings (not a checked kind) |
 | 3737 | 2:06.0 | left | wall | white concrete wall (pit-road side) | onboard:RAZip6S84CM@126.0 | covered by barrier 10 (concrete) |
 | 3737 | 2:06.0 | right | paint | white edge line | onboard:RAZip6S84CM@126.0 | surroundings (not a checked kind) |
 | 3737 | 2:06.0 | right | runoff | paved (drag strip / infield) | onboard:RAZip6S84CM@126.0 | surroundings (not a checked kind) |
-| 3784 | 2:08.0 | left | building | tan garages with green roofs | onboard:RAZip6S84CM@128.0 | covered by building 4 '' 6.7 m; building 7 '' 6.3 m |
+| 3784 | 2:08.0 | left | building | tan garages with green roofs | onboard:RAZip6S84CM@128.0 | covered by structure 2 garage 'Pit garages south'; structure 3 garage 'Paddock garage west' |
 | 3784 | 2:08.0 | left | pit_lane | pit lane with numbered boxes beyond the wall | onboard:RAZip6S84CM@128.0 | surroundings (not a checked kind) |
 | 3784 | 2:08.0 | left | wall | white concrete wall (pit-road side) | onboard:RAZip6S84CM@128.0 | covered by barrier 10 (concrete) |
 | 3784 | 2:08.0 | right | paint | white edge line | onboard:RAZip6S84CM@128.0 | surroundings (not a checked kind) |
 | 3784 | 2:08.0 | right | runoff | paved, wide (drag strip side) | onboard:RAZip6S84CM@128.0 | surroundings (not a checked kind) |
-| 3843 | 2:10.0 | left | building | garages and the control tower building | onboard:RAZip6S84CM@130.0 | covered by building 2 '' 6.2 m |
-| 3843 | 2:10.0 | left | mast | light masts | onboard:RAZip6S84CM@130.0 | MISSING |
+| 3843 | 2:10.0 | left | building | garages and the control tower building | onboard:RAZip6S84CM@130.0 | covered by structure 1 garage 'Pit garages north' |
+| 3843 | 2:10.0 | left | mast | light masts | onboard:RAZip6S84CM@130.0 | covered by structure 17 mast 'Light masts' at (359.5, -325.5) |
 | 3843 | 2:10.0 | left | wall | white concrete wall (pit-road side) | onboard:RAZip6S84CM@130.0 | covered by barrier 10 (concrete) |
 | 3843 | 2:10.0 | right | runoff | paved, wide | onboard:RAZip6S84CM@130.0 | surroundings (not a checked kind) |
-| 3910 |  | left | building | two-storey suites building beyond the pit road | streetview:QduY6QTXmw4JDevQVE_b-g@338 | covered by building 2 '' 6.2 m; building 5 '' 8.7 m |
-| 3910 |  | right | building | two-storey control tower building beyond the drag strip | streetview:QduY6QTXmw4JDevQVE_b-g@338 | ASSIGNED to the buildings round |
-| 3912 | 2:12.0 | left | building | tan multi-storey glazed building (timing / control) | onboard:RAZip6S84CM@132.0 | covered by building 2 '' 6.2 m; building 5 '' 8.7 m |
+| 3910 |  | ahead | building | two-storey control tower building beyond the drag strip | streetview:QduY6QTXmw4JDevQVE_b-g@338 | skipped: 'ahead' without a distance (corrected in scenery round 6 (21 Oct 2026): side was right) |
+| 3910 |  | left | building | two-storey suites building beyond the pit road | streetview:QduY6QTXmw4JDevQVE_b-g@338 | covered by structure 1 garage 'Pit garages north'; structure 8 block 'T12 two-storey building' |
+| 3912 | 2:12.0 | left | building | tan multi-storey glazed building (timing / control) | onboard:RAZip6S84CM@132.0 | covered by structure 1 garage 'Pit garages north'; structure 8 block 'T12 two-storey building' |
 | 3912 | 2:12.0 | left | cone_line | orange cones in the pit lane | onboard:RAZip6S84CM@132.0 | MISSING |
 | 3912 | 2:12.0 | left | wall | white concrete wall (pit-road side), end ahead | onboard:RAZip6S84CM@132.0 | covered by barrier 10 (concrete) |
 | 3912 | 2:12.0 | right | mast | light mast and flag pole | onboard:RAZip6S84CM@132.0 | MISSING |
@@ -972,17 +1006,17 @@ buildings (rows 2:02-2:12 left, pit rows).
 | 3967 | 2:14.0 | left | wall | concrete pit wall wrapped green (EchoPark) | onboard:RAZip6S84CM@134.0 | covered by barrier 1 (concrete); barrier 10 (concrete) |
 | 3967 | 2:14.0 | right | mast | light masts | onboard:RAZip6S84CM@134.0 | MISSING |
 | 3967 | 2:14.0 | right | wall | concrete wall wrapped green (EchoPark, RESTART ZONE) | onboard:RAZip6S84CM@134.0 | covered by barrier 3 (concrete); barrier 12 (concrete) |
-| 4024 | 2:16.0 | left | stand | main grandstand with suites deck (Sonoma Raceway sign) | onboard:RAZip6S84CM@136.0 | MISSING |
+| 4024 | 2:16.0 | left | stand | main grandstand with suites deck (Sonoma Raceway sign) | onboard:RAZip6S84CM@136.0 | covered by structure 0 grandstand 'Main grandstand' |
 | 4024 | 2:16.0 | left | wall | concrete pit wall, light blue | onboard:RAZip6S84CM@136.0 | covered by barrier 1 (concrete); barrier 62 (concrete) |
 | 4024 | 2:16.0 | right | boards | Sonoma Raceway / Toyota boards on the far drag-strip wall | onboard:RAZip6S84CM@136.0 | surroundings (not a checked kind) |
 | 4024 | 2:16.0 | right | mast | light masts beyond the drag strip | onboard:RAZip6S84CM@136.0 | MISSING |
 | 4024 | 2:16.0 | right | wall | concrete wall to the drag strip, light blue, ad panels | onboard:RAZip6S84CM@136.0 | covered by barrier 3 (concrete); barrier 12 (concrete) |
-| 4050 |  | both | mast | light masts both sides of the straight | streetview:5MY4xR9O7etAXEHnZCVnGQ@300 | MISSING (left); covered by mast '' (right) |
-| 4050 |  | left | stand | main grandstand behind the pit lane, open bleachers, suites deck, stair towers | streetview:5MY4xR9O7etAXEHnZCVnGQ@300 | MISSING |
+| 4050 |  | both | mast | light masts both sides of the straight | streetview:5MY4xR9O7etAXEHnZCVnGQ@300 | covered by structure 0 grandstand 'Main grandstand' roof light at t 95 (left); covered by mast '' (right) |
+| 4050 |  | left | stand | main grandstand behind the pit lane, open bleachers, suites deck, stair towers | streetview:5MY4xR9O7etAXEHnZCVnGQ@300 | covered by structure 0 grandstand 'Main grandstand' |
 | 4050 |  | left | wall | concrete pit wall at the line | streetview:5MY4xR9O7etAXEHnZCVnGQ@300 | covered by barrier 1 (concrete); barrier 62 (concrete) |
 | 4050 |  | right | wall | concrete wall to the drag strip, Sonoma Raceway boards on its face | streetview:5MY4xR9O7etAXEHnZCVnGQ@300 | covered by barrier 3 (concrete); barrier 12 (concrete) |
 | 4057 | 0:00.0 | left | mast | light mast | onboard:RAZip6S84CM@0.0 | MISSING |
-| 4057 | 0:00.0 | left | stand | bleachers with suites deck | onboard:RAZip6S84CM@0.0 | MISSING |
+| 4057 | 0:00.0 | left | stand | bleachers with suites deck | onboard:RAZip6S84CM@0.0 | covered by structure 0 grandstand 'Main grandstand' |
 | 4057 | 0:00.0 | left | wall | concrete | onboard:RAZip6S84CM@0.0 | covered by barrier 1 (concrete); barrier 62 (concrete) |
 | 4057 | 0:00.0 | right | fence | chain-link catch fence | onboard:RAZip6S84CM@0.0 | covered by barrier 61 (fence + 3 m fence) |
 | 4057 | 0:00.0 | right | mast | light mast | onboard:RAZip6S84CM@0.0 | covered by mast '' |
@@ -1025,6 +1059,7 @@ buildings (rows 2:02-2:12 left, pit rows).
 | 4060 |  | left | wall | low white pit-box wall (boxes 16, 15) | onboard:24of8fjjAug@292 | pit-lane gate (pit_lane.walls) |
 | 4060 |  | right | mast | light masts beyond the pit wall | onboard:24of8fjjAug@292 | pit lane: not a checked kind for the lap |
 | 4060 |  | right | wall | white concrete pit wall | onboard:24of8fjjAug@292 | pit-lane gate (pit_lane.walls) |
+
 ## Structures (buildings round, 21 Oct 2026; config `structures`, tools/track/build_structures.py, app src/app/structures.ts)
 
 The owner: "The sim course resembles Sonoma, but it doesn't feel like Sonoma"; "Our pit lane looks nothing like Sonoma";
@@ -1060,3 +1095,93 @@ Not sourced / not built: the drag-strip masts; fences (the scenery round's); the
 (s 1584, a 28 m lidar spike with a solid shadow: not a mast); the hospitality building OSM 1363693902 stays an OSM box.
 Finding for the terrace rule (not changed here): the T2 terrace starts ~30 m up the bank in the sim; the onboard (0:14)
 shows the rows from the catch fence at the foot of the bank.
+
+## Round 6 (21 Oct 2026; registry rev 9738ab56a5; sheets in compare/sonoma/buildings_sheets/r6, compare_sheets regenerated)
+
+### Hillside stands: footprints measured, not OSM (config `scenery.terraces` front / back; tools/track/compare/terrace_measure.py)
+Rays every 3 m perpendicular to a guide below each stand; on each ray the seating field is the row texture on the clean
+captures (spectral share in the 0.85-1.45 m period band over 6 m, three rays averaged, threshold 0.35, gaps under 3 m
+closed, 6 m minimum); lower edge = start of the field, upper edge = its end, or the DEM crest less 3 m where the field
+runs into the end of the captures; rays the captures do not reach above the bank take the OSM outline (`--fill-osm`,
+listed). Row pitch measured on the rays (zero-padded spectral peak). Why: the OSM outlines cut straight rows across
+curved banks, 20-36 % of the tread area lay under the terrain and the rest floated up to 3.7 m (the T2 stand invisible
+from s 415, T7a a brown wedge); the back-straight outline ran on over the access road and trees to s 3147.
+
+| stand | guide | rays kept (of which OSM fill) | before (OSM): s, lateral from centre | after (measured): s, lateral | rows, pitch | captures |
+|---|---|---|---|---|---|---|
+| above T2 | track at 25 m left, s 400-600 | 57 (15, the near end above the captures) | 417-572, 33.3-73.5 m | 428-569, 31.4-74.3 m | 35 x 1.15 m | c20_s2090..s2255 |
+| T3a-T4 | track at 20 m left, s 740-1010 | 78 (4) | 793-996, 23.6-68.1 m | 782-987, 24.4-62.9 m | 32 x 1.25 m | c20_s2530..s2695 |
+| T7a hill | xy polyline along the curved low wall | 41 (19, the east end) | 2236-2291, 38.7-87.2 m | 2237-2277, 39.5-80.0 m | 30 x 1.10 m | c20_s3960 / s4015 (lower rows) |
+| back straight / 9a | track at 18 m left, s 2690-3070 | 114 (5) | 2716-3147, 20.1-68.8 m | 2722-3044, 24.9-65.4 m | 26 x 1.15 m | c20_o0440..o0550, s0605 |
+
+App: rows follow the stand as polylines (each tread on the ground at its back edge, lifted onto the drawn 3 m terrain
+mesh), bleacher-grey treads, a dark shadow line at the foot of each riser, part self-lit concrete (0.45 of the face
+colour unlit) so a stand lit from behind stays grey; dressing: 0.15 m seat lips (0.4 m benches hid the rows), aisles
+every 40-45 m, shade roofs (back straight at the dark roofs s 2897-2915 / 2932-2940 on c20_o0495 / o0550). Orchestrator
+S1 (s 3018 left): the captures show rows to s ~3030 (the field's end, lat 25-42 m) and none past the access road; the
+1:38 frame's "green hill" side view is the stand's end; the stand no longer runs to 9a.
+
+### The two ASSIGNED building rows (markers removed; coverage passes with ASSIGNED 0)
+- **Tan buildings, onboard 1:50, right s 3259**: frame t110's tan two-storey building with window bands at the right edge,
+  in front of the front-straight hills, is the T12 two-storey building (structure kit) 190 m away at ~55 deg right, the
+  tan pit garages beyond; no tan building stands within 80 m right of s 3230-3300 on the 2026 captures. Row corrected
+  to `ahead` (background), never deleted. The 21 x 22 m infield building (s 3296-3307 right) now cites c20_s0935.
+- **Control tower beyond the drag strip, Street View QduY6QTXmw4JDevQVE_b-g (Jul 2011), right s 3910**: not in the
+  March 2026 onboard 2:08-2:12 (t128-t132: board wall, flag pole, masts), not on c20_s1540 / s1595, and the 2022-24
+  lidar has no structure over 4 m within 250 m right of s 3850-4100: gone. Row corrected to `ahead`, never deleted.
+- The "large grandstand with suites" rows right at 1:36-1:44 are the main grandstand (green-glass tower, t102) across
+  the infield, 150-400 m: corrected to `ahead`. There is no grandstand in the T10/T11 infield on the 2026 captures.
+
+### Drag-strip masts (right of the front straight)
+The lidar has two masts beyond the drag strip, 24.9 m at (466.5, -267.5) and 27.7 m at (404.5, -172.5), both already in
+the kit's mast list (buildings round); the rows at 3912 / 3967 / 4024 project onto other stations, so they stay MISSING
+(masts do not fail the gate). A 13 m pole pair with long NW shadows at (408.5, -206.5) on c20_s1045 stands beside an
+event scaffold in the T11a lot: not placed (temporary).
+
+### Time map
+New anchor `T10-T11 Jersey start` (s 3468, 1:55.0 +-0.25 s, Chrome captures 1:54.5 / 1:55.25 / 1:56.0): the light-blue
+Jersey at the foot of the boarded wall starts where the round-5 tyre bundles (3395-3468) end; the impact block at s
+~3600 is its far end, not its nose (round 5's "nose at 3586" and the "90 m early" note were that misreading).
+Leave-one-out residuals (m): footbridge +25.1, T2 -10.0, T3 -1.8, T3a +5.7, T4 -18.6, T5 +32.7, T6 -11.3, T7 -28.4,
+T7a +8.6, T8 +9.6, T8a -7.3, T9 +9.3, T9a +19.1, T10 -18.7 (was -15.3), Jersey start +21.8, T11 -4.6 (was -0.6), T12
++7.0; speeds T10 -> Jersey 39.9 m/s, Jersey -> T11 27.8 m/s. The 1:56 Jersey row now maps to s 3511; its HEIGHT
+mismatch (0.9 m Jersey vs the 5.2 m boarded wall) stays advisory: the declared Jersey run starts at the impact block
+end, the frames put its start at s 3468 (a wall_measure pass for the next round).
+
+### Boards: the names the footage shows, typed (owner O2 as revised; Laguna's rule: text only, no logo artwork)
+| run | names (background / lettering) | footage |
+|---|---|---|
+| T10 entry board wall, left 3118-3168 | SONOMA RACEWAY (navy / white), SUNBELT RENTALS (green / white), TOYOTA (white / black) | 1:44-1:46, t104 / t106 |
+| T10-T11 left 3172-3235 | SONOMA RACEWAY (navy / white) | 1:43-1:44.5, t104 |
+| T10-T11 left 3235-3262 | SUNBELT RENTALS (green / white) | 1:46, t106 |
+| T10-T11 left 3262-3335 | TOYOTA (white / black), HUMBOLDT (white / navy), SAVE MART (white / red), zMAX (red / white) | 1:48-1:50, t108 / t110 |
+| T10-T11 left 3335-3478 | EchoPark (dark / white), zMAX | 1:52-1:55, t112 / t114 |
+| T11 approach, pit-in outer wall 3485-3563 | LAS VEGAS (black / white), O'REILLY (green / white) | 1:56, t116 |
+| T11 entry, garage side 3563-3646 | Lucky, SAVE MART (white / red), PIT BOSS (black / white), Coca-Cola (black / white), xfinity | 1:58-2:00, t118 / t120 |
+| T7 approach 2105-2140 (on posts, 1.6-4.1 m) | TOYOTA (white / black) | 1:10, t070 (F4: the wall before s 2105 is plain) |
+| T7 wall end 2140-2150 (on the wall face) | PIRELLI (yellow / black), plain red | 1:12, t072 |
+| drag strip far wall 3925-4098 | LAS VEGAS, O'REILLY, EchoPark, zMAX, TOYOTA, SONOMA RACEWAY | 2:08-2:18, t126-t136 |
+| pit wall (structure boards) 3960-4060 / 4060-4098 | RESTART ZONE, GEICO (blue / white); EchoPark (green / white) | 24of8fjjAug 4:48; 2:15, t134 |
+| T2 footbridge fascia (both faces) | Save Mart (white / red), TOYOTA GAZOO Racing (red / white), TOYOTA GAZOO Racing (white / black), SUNOCO (blue / yellow), LAS VEGAS (navy / white) | 0:06-0:08, t006 / t008 (far face not seen: same set) |
+
+### Other fixes (orchestrator F / S items)
+- **Scoring tower** (O1 / F1): kit `scoring_tower` at the lidar spike (27.5-27.9 m, (-15.2, -6.2) ENU, s 1584, 50 m
+  right), 4.6 m column, darker capped top, 5.6 m white plinth (c20_s3300 base and shadow; the capture puts the base ~10 m
+  SE of the lidar top, lidar used); onboard 0:06 and 0:50-0:52 show a straight column with a cap, no wider head.
+- **S2**: the "two-storey glazed block" behind the T10-T11 boarded wall was OSM 1019839490 (a 12 x 250 m shed, lidar
+  5.5 m) drawn with office windows: now a plain kit shed (eave 5.5 m); OSM 1019835273 behind it drawn with plain walls
+  (`building_overrides` plain=True, new key).
+- **F7 / S6**: the 26 walls coloured #a9c9dd now one pale blue-grey #d3dbe0 (the onboard's "light blue" walls read
+  white-grey under the camera's blue cast, t060 / t116 / t130 / t136).
+- **S5**: every tyre run carries its colour (black #161616; white at the T11 hairpin, onboard 2:01.5-2:03.5); the app's
+  white pair every 12 stacks stays for runs without one (Laguna).
+- **F5**: closed-road edge lines stop at the circuit's paved width (+0.3 m): 23 samples dropped at the 2020 bypass
+  mouth, 8 at the Chute, 8 at the drag strip, 21 at the PWC hairpin.
+- **S3**: tyre stack at the Carousel-exit mast base (onboard 0:58, mast at (-1.5, 146.5)); the 1626 row is the existing
+  pair (c20_s3300 / s3355). **S4 / F2**: T7 post legs ~2.5 m (h 4.9, t072); T4 post drawn (h 4.0, 27 m right, visible
+  at s 950); T5: the only candidate on the 2026 captures is a ~3 m white hut 25 m LEFT at s ~1140 among event trailers
+  (c20_s2860), the white object on the right bank top at 0:38 is not on the captures: not placed.
+- **Season tint** (O3): `scenery.season_tint` on ortho.jpg / far_ortho.jpg as the last step of stage 3 (27.0 % / 29.9 %
+  of the pixels); trees 471 / 745 and track.json identical before / after. Sheet: compare/sonoma/season_tint/
+  before_after.jpg (local). Known limits: ploughed and pale fields go green too (bright lime in the far image), the
+  green is uniform; an NIR mask + slope version is a later option.
