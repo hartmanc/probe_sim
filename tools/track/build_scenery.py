@@ -996,12 +996,18 @@ def barriers(trk, osm):
             P = runs_[0]
         # the fitted edge wins: a declared point closer than 0.5 m to the road (or on it) is moved out along the
         # normal to 0.55 m outside the edge, and the shift is reported (the measurement and the fit disagree there)
+        # round 7f (Sonoma owner note 56): a declared pit wall (kind 'pitwall') uses the barrier-gap gate's pit-wall minimum,
+        # 0.3 m, with the same 0.05 m margin (moved to 0.35 m), and every moved point is logged with its measured gap
+        gmin = 0.3 if dw.get("kind") == "pitwall" else 0.5
         i, lat, dout = trk.project(P)
-        close = dout < 0.5
+        close = dout < gmin
         if close.any():
-            sd = np.sign(lat[close]); P[close] = trk.edge_point(i[close], sd, 0.55)
-            log(f"declared wall {dw['name']}: {int(close.sum())} points within 0.5 m of the fitted edge moved out "
-                f"(max {0.5 - dout[close].min():.2f} m, stations {int(i[close].min())}..{int(i[close].max())})")
+            sd = np.sign(lat[close]); P[close] = trk.edge_point(i[close], sd, gmin + 0.05)
+            log(f"declared wall {dw['name']}: {int(close.sum())} points within {gmin} m of the fitted edge moved out "
+                f"(max {gmin - dout[close].min():.2f} m, stations {int(i[close].min())}..{int(i[close].max())})")
+            if dw.get("kind") == "pitwall":
+                for i_, d_ in zip(i[close], dout[close]):
+                    log(f"  pit wall point at station {int(i_)}: measured {d_:+.2f} m from the edge -> {gmin + 0.05:.2f} m")
         decl.append(P)
         DECLARED_WALLS.setdefault(dw["name"], []).append((P.copy(), float(dw.get("h", 1.0))))
         rec = {"kind": dw.get("kind", "concrete"), "h": dw.get("h", 1.0), "fence": dw.get("fence", 3.0),
