@@ -65,11 +65,19 @@ W='numpy,scipy,rasterio,pyproj,shapely,pillow,requests,pandas,matplotlib,laspy[l
 B="uv run --python 3.12 --with $W python -I tools/track/build_track.py --track <id>"
 $B --stage geometry      # stage 1: track.json, heightfield.bin, ortho.jpg in tools/track/out/<id>/ (+ work/)
 $B --stage ghosts        # stage 2: ghosts.json (no logger: racing line only)
-$B --stage scenery       # stage 3: scenery.json, far_*; post steps; edge and barrier gates
+python3 -I tools/track/inventory/inventory.py --track <id>   # inventory stage (before scenery): inventory.json + .md
+$B --stage scenery       # stage 3: scenery.json, far_*; post steps; edge, barrier, scenery, coverage and pit-lane gates
 $B --publish             # all stages, then copy to public/tracks/<id>/ (refuses to replace a package without --overwrite-package)
 uv run --python 3.12 --with numpy,scipy python -I tools/track/compare_package.py --cand tools/track/out/<id> --ref <dir> [--by-corner]
 npx tsx tools/calibrate/drive.ts --track tools/track/out/<id> --alat 1.2 --learn 25 --bank --no-files [--ref-ghosts <ghosts.json>]
+npx tsx tools/track/gates/run_coverage.ts public/tracks/<id> tools/track/compare/<id>/inventory.json [cfg]  # coverage + pit lane
+npx tsx tools/track/compare/camera_walk.ts --track <id>        # drive proxy: sim stills every 50 m + toward every row (dev server on 5179)
+uv run --python 3.12 --with pillow python -I tools/track/compare/make_compare_sheets.py --track <id>   # compare sheets + index.md
 ```
+
+**Acceptance rule (owner, 21 Oct 2026): a build reaches the owner only after the coverage gate passes and the
+orchestrator has reviewed every compare sheet of the current package (and the judge round of stage 4 is done).** Hood
+stills at spots the builder chose show what was placed, never what is missing; the inventory and the sheets do.
 
 Each stage prints its validation report and exits 1 without writing when a check fails; `--write-on-fail` writes
 anyway for diagnosis (never publish such a package). Config keys by stage (all in `trackcfg.py`, Laguna's values in
@@ -315,6 +323,41 @@ kerb_margin, nudge, jerk_w, implied_g_turns, implied_g_exempt, kappa_drivers).
 - Implied-g table per corner, plain and tyre share after banking μ = (a − tan b)/(1 + a·tan b): tyre share ≤ 1.3
   at apexes, ≤ 1.35 anywhere, plain ≥ 0.9. Re-run only when station 0 or the length changes.
 
+## Inventory stage: what the place looks like at eye level (REQUIRED, every circuit, before stage 3)
+
+Why (Sonoma, 19 Oct 2026): the owner drove the round-3 build and found sixteen things in one lap nobody had caught
+(walls at the default 1 m, a missing T10 outside wall, a pit lane with no walls, a pit exit that never blends, a
+floating bridge, kerbs where there are none, stations missing, a tent extruded to 12 m). Satellite, lidar and OSM see
+only what is visible from above; everything vertical lives at eye level and no stage extracted it. The onboard and Street
+View were spot checks at places the builder chose. The inventory makes them a continuous source.
+
+1. **Lap video.** A RECENT onboard of the Lemons layout (the series' own onboard or a team's, 2024 onward), one full
+   lap, plus any 2024+ video that drives the pit lane (pit in, the boxes, pit out) found by YouTube search in your own
+   Chrome tab. Screenshots only, no downloads; frames under `tools/track/compare/<id>/inventory/frames/` (ignored).
+2. **Step it every 2 s** (about 70 frames a lap; do them all): in the video page, pause, set `video.currentTime`, draw
+   the video into a full-window overlay canvas and screenshot it (`save_to_disk`); for each frame write one row per
+   object on each side into `inventory/observations.jsonl`: `{t, side, kind, attrs {type, colour, raised, h_m,
+   h_method, ahead_m}, confidence, note}`; kinds wall, fence, kerb, tyre_wall, tyre_stack, stand, station, bridge,
+   building, mast, cone_line, boards, paint, runoff (`inventory.py` KINDS). Log what is there, not what the package has.
+   An object seen ahead gets `side: ahead` and, when you can tell, `ahead_m`; a wide-angle lens makes things look far
+   (the Sonoma footbridge "85 m ahead" was 20 m: time its passage instead).
+3. **Time-to-station map** (`inventory/source.json`): anchor the start/finish crossings (s = 0 and L) and every corner
+   apex you can time to 0.5 s (a 0.5 s 2x2 grid of the video around it) to the package's corner stations
+   (`track.json` corners); add landmark anchors with a known s (a bridge passing overhead, a wall nose). Between anchors
+   t -> s follows a curvature speed profile's own time (the car slows into corners; `interp: linear` for a plain
+   piecewise-linear map). `inventory.py` prints each anchor's leave-one-out residual and the mean speed in and out:
+   a speed no car could do is a wrong anchor (Sonoma's T1 at 0:05 implied 54 m/s to the footbridge and was dropped).
+   Sonoma: 17 anchors, residuals 1-33 m with the profile (5-66 m linear).
+4. **Pit lane and Street View rows**: rows with an explicit `s` and `source` (`onboard:<video>@<t>`,
+   `streetview:<panorama id>@<heading>`) in `pit.jsonl` (`scope: pit`) and `streetview.jsonl`, for what the lap video
+   cannot show: heights, what stands behind a wall, the pit lane. Street View is old: keep it only where the recent
+   video shows the same structure.
+5. **Heights by a method**, never by default: `tools/track/compare/HEIGHTS.md` (horizon ratio with the 2.5 m Street View
+   camera, a known-size reference, the camera height from a Jersey barrier, shadows) and `tools/track/inventory/heights.py`.
+   Every `h_m` cites its `h_method`; `inventory.py` refuses one without and counts the `unmeasured` ones.
+6. `python3 -I tools/track/inventory/inventory.py --track <id>` validates and writes `compare/<id>/inventory.json` and
+   `inventory.md` (tracked; the frames are not).
+
 ## Stage 3: scenery (`build_track.py --stage scenery`: `build_scenery.py`, then `scenery_post.py`)
 
 Output: `scenery.json`, `far_heightfield.bin`, `far_ortho.jpg`, regraded `ortho.jpg`, `work/scenery_preview.png`. The
@@ -440,11 +483,35 @@ For every other circuit, these are steps of stage 3:
      abutments and stairs to the ground; kerb strips of kind `blocks` for low block lines (drawn only).
    - *Marshal posts*: scan for 2-5 m bright blobs within 25 m of the edges, inspect each; captures taken during an event
      are full of trailers, so place a post only when the onboard or Street View confirms it.
+8. **Coverage gate (REQUIRED, 21 Oct 2026)**, run by `build_track.py --stage scenery` after the three gates
+   (`tools/track/gates/coverageGate.ts`, CLI `run_coverage.ts`, tests `src/scoreboard/__tests__/coveragegate.test.ts`):
+   every inventory row of a physical kind must have a scenery object of that kind on that side within +-15 m of its
+   station (else MISSING); every scenery object of those kinds must have an inventory row or a capture source (a c20_
+   capture or a Street View panorama in its `src`) within +-15 m (else UNSUPPORTED). It passes only when MISSING is
+   empty for walls, fences, kerbs, tyre walls and bridges and UNSUPPORTED is empty; it also lists HEIGHT mismatches
+   (a measured wall, fence or tyre-wall height the package misses by more than max(0.3 m, 25 %)). Without an inventory
+   it fails. The MISSING list is the work list of the scenery round (Sonoma: `compare/sonoma/coverage.md`).
+9. **Pit lane first-class** (config `pit_lane`, `trackcfg.py`: lane, walls with side / stations or lat-lon ends / height /
+   material / fence / src, boxes, buildings, furniture; `trackcfg.check_pit_lane`). The pit-lane gate (same CLI): every
+   pit-lane wall row of the inventory must be declared in `pit_lane.walls` on that side and stand in the package as a
+   barrier on that side of the lane within +-15 m.
 
 ## Stage 4: compare pass with a judge (`tools/track/compare/`)
 
 Only after stage 1 is accepted: iterating landmarks on wrong geometry wasted five rounds at Laguna, and the judge
 flagged edge mismatches every time.
+
+0. **Drive proxy and judge round (REQUIRED, every circuit, before the owner's lap; 21 Oct 2026).**
+   - `npx tsx tools/track/compare/camera_walk.ts --track <id>` (dev server on 5179; its own headless Chrome with a
+     throwaway profile, the `__sim` hooks of the hood stills): the hood camera every 50 m round the lap, and turned
+     +-70 deg toward the side of every inventory row. Then capture the onboard frame at the mapped time of every 50 m
+     step (`inventory.py --times 50`; 2x2 grids in your own Chrome tab, cropped into `compare_sheets/onboard/` with
+     `onboard.json`), and `make_compare_sheets.py`: 6 pairs a sheet, onboard left, sim right, captioned with the station,
+     the corner and the inventory rows there; `compare_sheets/index.md`. Local only.
+   - The orchestrator reviews every sheet; the judge (GPT 6 Astra via codex when credits exist, else the orchestrator)
+     lists every difference per sheet as inventory-style rows with the prompt of `tools/track/compare/JUDGE.md`; the
+     table goes in `compare/<id>/judge_r<n>.md`. These sheets replace stills at builder-chosen spots as the review.
+   - Acceptance: the coverage gate passes and the sheets are reviewed before the build goes to the owner.
 
 1. **Team footage first.** `find_frames.py` maps logger GPS to video time (camera epochs from `sync.py`, logger
    offsets from `sync.json`) and to track s; `grab.py` extracts windscreen crops at each corner's approach, apex and

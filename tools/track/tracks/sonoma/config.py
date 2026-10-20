@@ -642,6 +642,35 @@ CONFIG = dict(
                  why='T11 exit to T12, right: open paved NASCAR infield (onboard 2:06-2:11; c20_s1375..s1540)'),
         ]),
     ),
+    # ---------------------------------------------------------------- pit lane (trackcfg.py pit_lane; 21 Oct 2026)
+    # Only what the eye-level inventory gives (tools/track/compare/sonoma/inventory.md, pit-lane rows from the 2025 HPDE
+    # video youtube.com/watch?v=24of8fjjAug and the 2026 onboard): stations abeam on the lap, sides as driven down the
+    # lane. No geometry yet: the scenery round measures each wall on the captures and gives it a, b ends.
+    pit_lane=dict(
+        lane=dict(source='osm'),
+        walls=[
+            dict(side='left', s0=4000, s1=30, h=0.6, material='pitbox_wall',
+                 src='inventory pit rows s 4010 / 4060 / 20: low white pit-box wall with box numbers (24of8fjjAug 4:48-4:56)'),
+            dict(side='right', s0=4000, s1=105, h=1.1, material='concrete',
+                 src='inventory pit rows s 4010 / 4060 / 20 / 100: white concrete pit wall with GEICO boards, Jersey nose curving with the track (24of8fjjAug 4:48-5:00); Street View 5MY4xR9O7etAXEHnZCVnGQ 1.08 m'),
+            dict(side='left', s0=150, s1=170, h=1.1, fence=4.0, material='concrete',
+                 src='inventory pit row s 160: white wall with a catch fence along the pit-out lane (24of8fjjAug 5:04)'),
+            dict(side='left', s0=3550, s1=3615, h=5.2, material='board_wall',
+                 src='inventory pit rows s 3560 / 3610: tall wall with doors and board panels, Jersey at its foot (24of8fjjAug 24:06-24:12; onboard RAZip6S84CM 1:56; Street View jrXpHaDfJT2APw6zcyBKRA 5.2 m)'),
+            dict(side='right', s0=3600, s1=3620, h=0.9, material='jersey',
+                 src='inventory pit row s 3610: Jersey barrier between the pit-in lane and the track (24of8fjjAug 24:12); the separation starts at the water barriers at s ~3570'),
+            dict(side='left', s0=3670, s1=3690, h=1.0, fence=4.0, material='concrete',
+                 src='inventory pit row s 3680: wall and catch fence, paddock buildings behind (24of8fjjAug 24:18)'),
+            dict(side='right', s0=3670, s1=3690, h=1.1, fence=4.0, material='concrete',
+                 src='inventory pit row s 3680: the T11 outside wall and catch fence seen from the lane (24of8fjjAug 24:18)'),
+        ],
+        furniture=[
+            dict(kind='water_barrier', s=3570, side='right', src='inventory pit row s 3570: red / white water-filled barriers at the separation nose (24of8fjjAug 24:06; owner note 15)'),
+            dict(kind='cone_line', s=3560, side='right', src='inventory pit row s 3560: yellow cones on the double white line (24of8fjjAug 24:06)'),
+            dict(kind='cone_line', s=160, side='right', src='inventory pit row s 160: yellow cones on the double yellow blend line (24of8fjjAug 5:04)'),
+            dict(kind='fuel', s=3730, side='right', src='inventory pit row s 3730: Sunoco fuel island, canopy and sign (24of8fjjAug 24:30; owner note 20)'),
+        ],
+    ),
     # ---------------------------------------------------------------- app registry (src/scoreboard/config.ts)
     app=dict(short='Sonoma', pace='cars/field/sonoma/pace.json'),
 )

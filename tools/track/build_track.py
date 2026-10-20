@@ -21,7 +21,8 @@ Stages, each with a printed validation report; a failed check exits 1 without wr
   ghosts    (stage 2) tools/ghosts/build_ghosts.py: ghost laps, optimal lap, racing line (no logger: the pure
             minimum-curvature line only, no laps, implied-g checks skipped; validate with tools/calibrate/drive.ts).
   scenery   (stage 3) build_scenery.py then scenery_post.py, then the edge gate with the walls and bridges, then the
-            containment, pit-connectivity and sign-placement gates (gates/sceneryGates.ts).
+            containment, pit-connectivity and sign-placement gates (gates/sceneryGates.ts), then the coverage and
+            pit-lane gates against the eye-level inventory (gates/coverageGate.ts, compare/<id>/inventory.json).
 """
 import argparse
 import json
@@ -761,6 +762,8 @@ def stage_scenery(cfg, out, no_logger):
     shutil.copyfile(os.path.join(tmp, "scenery_preview.png"), os.path.join(work, "scenery_preview.png"))
     if os.path.exists(os.path.join(tmp, "gates_report.json")):
         shutil.copyfile(os.path.join(tmp, "gates_report.json"), os.path.join(work, "gates_report.json"))
+    if os.path.exists(os.path.join(tmp, "coverage_report.json")):
+        shutil.copyfile(os.path.join(tmp, "coverage_report.json"), os.path.join(work, "coverage_report.json"))
     log(f"wrote {out}: scenery.json, far_heightfield.bin, far_ortho.jpg, regraded ortho.jpg")
     if rep.fails:
         log("\nSCENERY STAGE FAILED:", rep.fails, "(written anyway: --write-on-fail, for diagnosis only)")
@@ -800,6 +803,35 @@ def scenery_gates(cfg, T, SC, tmp, trk):
     if r.returncode not in (0, 1) or (r.returncode == 1 and not fails):
         log(r.stderr[-2000:])
         fails.append("scenery gates did not run")
+    fails += coverage_gates(cfg, tmp, trk, sp)
+    return fails
+
+
+def coverage_gates(cfg, tmp, trk, sp):
+    """The coverage and pit-lane gates of 21 Oct 2026 (tools/track/gates/coverageGate.ts, CLI run_coverage.ts): the
+    scenery in `tmp` against the eye-level inventory tools/track/compare/<id>/inventory.json (inventory/inventory.py)
+    and the config's pit_lane walls. Every circuit needs the inventory: without one both gates fail."""
+    fails = [f"pit_lane config: {e}" for e in trackcfg.check_pit_lane(cfg)]
+    for e in fails:
+        log(f"[FAIL] {e}")
+    inv = os.path.join(HERE, "compare", cfg["id"], "inventory.json")
+    if not os.path.exists(inv):
+        log(f"[FAIL] coverage: no inventory ({os.path.relpath(inv, ROOT)}); the inventory stage is required before scenery (build-track skill)")
+        return fails + ["coverage", "pit lane"]
+    proj = lambda ll: round(float(trk.project(np.array([cfg.enu(*ll)]))[0][0]) * sp, 1)  # noqa: E731
+    cp = os.path.join(tmp, "coverage_config.json")
+    json.dump({"tol": cfg["scenery"].get("gates", {}).get("coverage_tol", 15), "pit_walls": trackcfg.pit_walls_for_gate(cfg, proj)}, open(cp, "w"))
+    r = subprocess.run(["npx", "tsx", os.path.join(HERE, "gates", "run_coverage.ts"), tmp, inv, cp, "--json",
+                        os.path.join(tmp, "coverage_report.json")], cwd=ROOT, capture_output=True, text=True)
+    for line in r.stdout.splitlines():
+        if line.startswith("COVERAGE_JSON "):
+            continue
+        log(line)
+        if line.startswith("[FAIL]"):
+            fails.append(line[7:].split(":")[0])
+    if r.returncode not in (0, 1) or (r.returncode == 1 and not fails):
+        log(r.stderr[-2000:])
+        fails.append("coverage gate did not run")
     return fails
 
 
