@@ -239,15 +239,16 @@ Modules: `geo.py` (frames, OSM, DEM, NAIP), `centre.py` (first centre, NAIP edge
 Iterating landmarks on wrong geometry wasted five rounds at Laguna, so stage 1 is accepted, by the gate and the hood
 sheet, before stage 3 starts.
 
-**Stage 1 reads three stage-3 keys, and its record does not hash them.** The centre refit's pit merge takes the pit-lane
-parts, the barriers and the pit-exit cone line from `build_scenery` (config `pit_lane`, `scenery.declared_walls`,
-`scenery.pit_exit_cones` and what those readers use), while `config_id('geometry')` leaves `scenery` and `pit_lane`
-out. A later scenery edit can therefore move the centre without invalidating a passed stage-1 record. Measured on
-20 Oct 2026: Sonoma's accepted geometry (built 19 Oct 18:05) rebuilt with its full config, the same geometry hash,
-the same captures and lidar, gives 4101.9 m against the accepted 4098.8 m, with the left observation gate at 89.5 %
-and the right waviness gate failing at 2752-2814; the re-derivation's reduced config gives 4099.1 m. Until the hash
-covers what stage 1 reads, or the pit merge takes stage-1 keys only, treat those three keys as frozen once stage 1 has
-passed: a change to them re-runs stage 1, and the re-run must pass before stage 3 runs on it.
+**Stage 1 reads no stage-3 key.** The centre refit's pit merge takes the pit-lane parts from OSM (`pit_lane_way`) and
+the NAIP, and the pit-exit blend line from `centre.pit_exit` = {`line_latlon` (the blend line measured on the captures)
+| `wall_end_latlon` (the end of the pit wall at the track edge; the builder detects the line from 2 stations past it),
+`src`} (`build_track.pit_merge_inputs`, `build_scenery.pit_exit_line`); a straight with fit `pitwall` uses the OSM rule
+wall (`pit_wall_line`). `build_scenery.configure_geometry` leaves the scenery and pit_lane sections empty in stage 1,
+so `config_id('geometry')` covers everything stage 1 reads (`test_pit_merge.py`). Until 20 Oct 2026 the merge came
+from `barriers()` / `pit_exit_cones()`, so Sonoma's rounds 5-7e scenery edits moved a passed centre (4101.9 m against
+the accepted 4098.8 m, two fit gates failing); Sonoma's `centre.pit_exit` now holds the wall end its accepted build
+used, and the accepted track.json rebuilds byte for byte. Stage 3's cones take `line_latlon` when
+`scenery.pit_exit_cones` has no line of its own; a changed `centre.pit_exit` is a stage-1 change and needs a new pass.
 
 **1.1 Loop.** Stitch the OSM raceway ways by shared end nodes into one loop, turn it to the driving direction, and roll
 it so station 0 is the start/finish. Use 1 m stations. The pit lane is a separate way. With a logger, check OSM against

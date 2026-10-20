@@ -28,6 +28,7 @@ STRUCT_CFG = None   # config `structures` (top level), set by configure()
 PITWALL_EDGE = None  # optional per-station lateral (+left, m) of the left edge the pit wall stands 0.6 m off
 SC_CFG = {}
 PIT_CFG = {}   # the track config's pit_lane section (trackcfg.py; walls with latlon get geometry here, 21 Oct 2026)
+PIT_EXIT = {}  # the track config's centre.pit_exit (stage 1's measured pit-exit blend line / wall end; trackcfg.py)
 UA = {"User-Agent": "probe-sim/0.1"}
 EPT = DEM13 = PIT_WAY = None   # from the track config (lidar_ept, dem13, pit_lane_way)
 FAR_HALF, FAR_DX, FAR_ORTHO_PX = 2500.0, 10.0, 5.0  # far terrain: 5 x 5 km at 10 m, image at 5 m/px
@@ -52,8 +53,24 @@ def configure(cfg, out_dir):
     BANNERS = dict(SC_CFG.get("bridge_banners", {}))
     BRIDGE_STYLE = dict(SC_CFG.get("bridge_style", {}))
     HANGARS = dict(SC_CFG.get("hangars", {}))
-    global STRUCT_CFG
+    global STRUCT_CFG, PIT_EXIT
     STRUCT_CFG = cfg.get("structures")   # parametric structures (build_structures.py, 21 Oct 2026); absent: none
+    PIT_EXIT = dict((cfg.get("centre") or {}).get("pit_exit") or {})   # stage-1 key: the cone objects may take its line
+
+
+def configure_geometry(cfg, out_dir):
+    """Stage 1's view of this module (20 Oct 2026): the cache, the package directory, the lidar survey and the OSM
+    pit-lane way name, all stage-1 keys. The scenery and pit_lane sections are left EMPTY, so nothing stage 1 calls here
+    (pit_lane, pit_exit_line, pit_wall_line, bridge_stations, lidar_points) can read a stage-3 key: stage 1 used to take
+    the pit merge from barriers() / pit_exit_cones(), which read scenery and pit_lane, while config_id('geometry') does
+    not hash them."""
+    global CACHE, OUT, PREVIEWS, EPT, DEM13, PIT_WAY, SC_CFG, PIT_CFG, TYRE_CORNERS, PAVED_RUNOFF, BANNER_BOARDS, BANNERS, BRIDGE_STYLE, HANGARS
+    global STRUCT_CFG, PIT_EXIT
+    CACHE, OUT, PREVIEWS = cfg.cache, out_dir, out_dir
+    EPT, DEM13, PIT_WAY = cfg.get("lidar_ept"), cfg.get("dem13"), cfg["pit_lane_way"]
+    SC_CFG, PIT_CFG, STRUCT_CFG, PIT_EXIT = {}, {}, None, {}
+    TYRE_CORNERS, PAVED_RUNOFF, BANNER_BOARDS = [], [], []
+    BANNERS, BRIDGE_STYLE, HANGARS = {}, {}, {}
 
 
 def cache_file(name, box):
@@ -819,6 +836,79 @@ def _runs(mask):
     return out
 
 
+def _pit_wall_rule(trk, way, pwc, edge=None):
+    """The rule-placed pit wall (was inline in barriers()): left of the front straight wherever the OSM pit-lane `way`
+    runs alongside, 0.6 m off the left edge (off `edge`, a per-station lateral, with pit_wall.at 'first_edge'), fenced
+    to fence_until_m past the line. pwc = config scenery.pit_wall ({}: the defaults, stage 1's pit_wall_line)."""
+    out = []
+    PL = resample_line(way["xy"], 2.0)
+    i, lat, dout = trk.project(PL)
+    m = (lat > 0) & (dout > 2) & (dout < 25)
+    ss = np.sort(i[m])
+    # the pit lane straddles s = 0: take the contiguous wrap-around range
+    gaps = np.diff(ss)
+    if len(ss):
+        if gaps.max(initial=0) > 500:
+            cut = np.argmax(gaps)
+            s0, s1 = int(ss[cut + 1]), int(ss[cut]) + trk.n
+        else:
+            s0, s1 = int(ss[0]), int(ss[-1])
+        s0, s1 = s0 + 15, s1 - 10
+        # Laguna: the real pit wall ends at the T1 kink; the pit-exit lane down to the Andretti hairpin has no wall
+        if pwc.get("end_after_line_m") is not None:
+            s1 = min(s1, trk.n + int(pwc["end_after_line_m"]))
+        # catch fence on the front straight only (to ~120 m past the line at Laguna); the rest of the wall is bare
+        mid = min(max(trk.n + int(pwc.get("fence_until_m", 120)), s0 + 2), s1)
+        at = pwc.get("at")
+        if at == "midway":
+            # 20 Oct 2026 (Sonoma: a wall 0.6 m off the outside edge of the T11 hairpin, where the pit road runs
+            # round the outside 10-15 m away, put the hot-lap launch into it): the wall stands halfway between the
+            # track edge and the pit lane's near edge, and only where the centre radius is over min_radius (the pit
+            # lane runs alongside a straight), never 0.6 m off a corner's outside edge
+            dist = np.full(trk.n, np.nan)
+            ii_, ll_, dd_ = trk.project(PL)
+            for k_, d_ in zip(ii_[ll_ > 0], dd_[ll_ > 0]):
+                if 2 < d_ < 25: dist[k_] = d_ if np.isnan(dist[k_]) else min(dist[k_], d_)
+            idx_ = np.arange(trk.n); okd = np.isfinite(dist)
+            dist = np.interp(idx_, idx_[okd], dist[okd], period=trk.n)
+            lane_half = PIT_HALF_DEFAULT
+            kap_ = np.abs(bl.curvature(trk.C[:, :2], sigma=5))
+            straightish = (1 / np.maximum(kap_, 1e-6)) > pwc.get("min_radius", 150.0)
+        for a, b_, fence in ((s0, mid, 3.5), (mid, s1, 0.0)):
+            if b_ - a >= 4 and at == "midway":
+                st_all = np.arange(a, b_ + 1) % trk.n
+                for ra, rb in [(r0, r1) for r0, r1 in _runs(straightish[st_all])]:
+                    if rb - ra < 8: continue
+                    st_ = st_all[ra:rb + 1]
+                    ex = np.maximum((dist[st_] - lane_half) / 2.0, 0.6)
+                    exs = np.interp(np.arange(a + ra, a + rb + 1, 2), np.arange(a + ra, a + rb + 1), ex)
+                    P = edge_line(trk, int(a + ra), int(a + rb), +1, exs)
+                    out.append({"kind": "pitwall", "h": 1.1, "fence": fence, "pts": with_z(trk, P),
+                                "src": "OSM pit lane extent, halfway to the pit lane, straights only"})
+                continue
+            if b_ - a >= 4:
+                ex = 0.6
+                if edge is not None:
+                    # the wall stays 0.6 m off the first build's NAIP asphalt edge (the asphalt runs to the wall),
+                    # not off the painted edge (config pit_wall.at = 'first_edge')
+                    st_ = np.arange(a, b_ + 1, 2) % trk.n
+                    ex = np.maximum(edge[st_] - trk.hl[st_], 0.0) + 0.6
+                P = edge_line(trk, a, b_, +1, ex)
+                out.append({"kind": "pitwall", "h": 1.1, "fence": fence, "pts": with_z(trk, P),
+                            "src": "OSM pit lane extent"})
+        log(f"pit wall: s {s0 % trk.n}..{s1 % trk.n} ({s1 - s0} m)")
+    return out
+
+
+def pit_wall_line(trk, osm):
+    """Stage 1's pit-wall polyline (straights fit 'pitwall', Laguna's front straight): the OSM rule wall with the default
+    parameters, reading no scenery key (20 Oct 2026; it was barriers()' pitwall runs, which read scenery.pit_wall,
+    declared_walls and pit_lane.walls). (k, 2) ENU points, or None without a pit-lane way."""
+    pit = [w for w in osm.ways if w["tags"].get("name") == PIT_WAY]
+    recs = _pit_wall_rule(trk, pit[0], {}) if pit else []
+    return np.array([q[:2] for b in recs for q in b["pts"]]) if recs else None
+
+
 DECLARED_WALLS = {}   # declared wall name -> [(ENU polyline, wall height)], for the boards and nose objects on them
 
 
@@ -889,63 +979,7 @@ def barriers(trk, osm):
         log("pit wall: rule off (config scenery.pit_wall.rule False): every pit-side wall is declared from the evidence")
         pit = []
     if pit:
-        PL = resample_line(pit[0]["xy"], 2.0)
-        i, lat, dout = trk.project(PL)
-        m = (lat > 0) & (dout > 2) & (dout < 25)
-        ss = np.sort(i[m])
-        # the pit lane straddles s = 0: take the contiguous wrap-around range
-        gaps = np.diff(ss)
-        if len(ss):
-            if gaps.max(initial=0) > 500:
-                cut = np.argmax(gaps)
-                s0, s1 = int(ss[cut + 1]), int(ss[cut]) + trk.n
-            else:
-                s0, s1 = int(ss[0]), int(ss[-1])
-            s0, s1 = s0 + 15, s1 - 10
-            # Laguna: the real pit wall ends at the T1 kink; the pit-exit lane down to the Andretti hairpin has no wall
-            pwc = SC_CFG.get("pit_wall", {})
-            if pwc.get("end_after_line_m") is not None:
-                s1 = min(s1, trk.n + int(pwc["end_after_line_m"]))
-            # catch fence on the front straight only (to ~120 m past the line at Laguna); the rest of the wall is bare
-            mid = min(max(trk.n + int(pwc.get("fence_until_m", 120)), s0 + 2), s1)
-            at = pwc.get("at")
-            if at == "midway":
-                # 20 Oct 2026 (Sonoma: a wall 0.6 m off the outside edge of the T11 hairpin, where the pit road runs
-                # round the outside 10-15 m away, put the hot-lap launch into it): the wall stands halfway between the
-                # track edge and the pit lane's near edge, and only where the centre radius is over min_radius (the pit
-                # lane runs alongside a straight), never 0.6 m off a corner's outside edge
-                dist = np.full(trk.n, np.nan)
-                ii_, ll_, dd_ = trk.project(PL)
-                for k_, d_ in zip(ii_[ll_ > 0], dd_[ll_ > 0]):
-                    if 2 < d_ < 25: dist[k_] = d_ if np.isnan(dist[k_]) else min(dist[k_], d_)
-                idx_ = np.arange(trk.n); okd = np.isfinite(dist)
-                dist = np.interp(idx_, idx_[okd], dist[okd], period=trk.n)
-                lane_half = PIT_HALF_DEFAULT
-                kap_ = np.abs(bl.curvature(trk.C[:, :2], sigma=5))
-                straightish = (1 / np.maximum(kap_, 1e-6)) > pwc.get("min_radius", 150.0)
-            for a, b_, fence in ((s0, mid, 3.5), (mid, s1, 0.0)):
-                if b_ - a >= 4 and at == "midway":
-                    st_all = np.arange(a, b_ + 1) % trk.n
-                    for ra, rb in [(r0, r1) for r0, r1 in _runs(straightish[st_all])]:
-                        if rb - ra < 8: continue
-                        st_ = st_all[ra:rb + 1]
-                        ex = np.maximum((dist[st_] - lane_half) / 2.0, 0.6)
-                        exs = np.interp(np.arange(a + ra, a + rb + 1, 2), np.arange(a + ra, a + rb + 1), ex)
-                        P = edge_line(trk, int(a + ra), int(a + rb), +1, exs)
-                        out.append({"kind": "pitwall", "h": 1.1, "fence": fence, "pts": with_z(trk, P),
-                                    "src": "OSM pit lane extent, halfway to the pit lane, straights only"})
-                    continue
-                if b_ - a >= 4:
-                    ex = 0.6
-                    if PITWALL_EDGE is not None:
-                        # the wall stays 0.6 m off the first build's NAIP asphalt edge (the asphalt runs to the wall),
-                        # not off the painted edge (config pit_wall.at = 'first_edge')
-                        st_ = np.arange(a, b_ + 1, 2) % trk.n
-                        ex = np.maximum(PITWALL_EDGE[st_] - trk.hl[st_], 0.0) + 0.6
-                    P = edge_line(trk, a, b_, +1, ex)
-                    out.append({"kind": "pitwall", "h": 1.1, "fence": fence, "pts": with_z(trk, P),
-                                "src": "OSM pit lane extent"})
-            log(f"pit wall: s {s0 % trk.n}..{s1 % trk.n} ({s1 - s0} m)")
+        out += _pit_wall_rule(trk, pit[0], SC_CFG.get("pit_wall", {}), PITWALL_EDGE)
     # declared walls (config scenery.declared_walls, 20 Oct 2026): runs OSM does not map, measured on the z20 captures as
     # lat/lon polylines (a declared fact like a corner anchor, not a geometry edit). A rule-placed pit wall within 3 m of
     # a declared wall is dropped there (the declared one is the measured position of the same wall).
@@ -1533,15 +1567,25 @@ def pit_exit_cones(trk, pit, barriers=None, spacing=16.0):
     smoothed (sigma 6 m). The line starts no earlier than the end of the fenced pit wall along the left edge (the
     barriers list), so no cone stands beside the wall. Cone spacing: the footage shows about 8 m, but the owner
     (who drove the real race) remembers far fewer cones, so the sim draws one every 16 m (17 Oct 2026)."""
-    from PIL import Image
-
     if not pit or not pit["parts"]:
         return None
     n = trk.n
     if len(pit["parts"]) == 1:
         return _pit_exit_cones_one_part(trk, pit["parts"][0], barriers, spacing)
+    s0, s1 = _two_part_stretch(trk, pit)
+    for w in barriers or []:
+        if w["kind"] != "pitwall" or not w.get("fence"):
+            continue
+        i, lat, out = trk.project(np.array(w["pts"])[:, :2])
+        near = (lat > 0) & (np.abs(out) < 2.0) & (((i - s0) % n) < 200)
+        if near.any():
+            s0 = max(s0, int(((i[near] - s0) % n).max() + s0) + 2)
+    return _two_part_line(trk, s0, s1, spacing)
+
+
+def _two_part_stretch(trk, pit):
+    """(s0, s1): from where pit_lane part 0 last touches the track edge to where part 1 pulls away (gap > 0.5 m)."""
     a, b = pit["parts"][0], pit["parts"][1]
-    # start: last stretch of part 0 that touches the track edge; end: part 1 until it pulls away (gap > 0.5 m)
     ga = np.array(a["gap_right"])
     k0 = len(ga) - 1
     while k0 > 0 and ga[k0 - 1] < 0.5:
@@ -1552,13 +1596,14 @@ def pit_exit_cones(trk, pit, barriers=None, spacing=16.0):
         k1 += 1
     s0 = int(trk.project(np.array(a["center"])[k0:k0 + 1, :2])[0][0])
     s1 = int(trk.project(np.array(b["center"])[k1:k1 + 1, :2])[0][0])
-    for w in barriers or []:
-        if w["kind"] != "pitwall" or not w.get("fence"):
-            continue
-        i, lat, out = trk.project(np.array(w["pts"])[:, :2])
-        near = (lat > 0) & (np.abs(out) < 2.0) & (((i - s0) % n) < 200)
-        if near.any():
-            s0 = max(s0, int(((i[near] - s0) % n).max() + s0) + 2)
+    return s0, s1
+
+
+def _two_part_line(trk, s0, s1, spacing):
+    """The painted blend line between two pit-lane parts over stations s0..s1, tracked on the NAIP (pit_exit_cones)."""
+    from PIL import Image
+
+    n = trk.n
     st = np.arange(s0, s1 + (n if s1 < s0 else 0) + 1) % n
     o = trk.t["ortho"]
     raw = os.path.join(CACHE, f"naip_{int(o['x0'])}_{int(o['y0'])}_{int(o['x1'])}_{int(o['y1'])}_{o['width_px']}x{o['height_px']}.png")
@@ -1594,6 +1639,23 @@ def _pit_exit_cones_one_part(trk, part, barriers, spacing):
     the part's END. Where its track-facing edge lies on the track edge (gap under 0.5 m) up to that end, the lane
     merges on shared pavement: the cone line is that edge (the blend boundary), from the end of the pit wall on.
     The side comes from the part's lateral, not an assumption (20 Oct 2026)."""
+    stretch = _one_part_stretch(trk, part)
+    if stretch is None:
+        return None
+    side, s0, s1 = stretch
+    for w in barriers or []:
+        if w["kind"] != "pitwall" and not str(w.get("src", "")).startswith("declared"): continue
+        i, lat, out = trk.project(np.array(w["pts"])[:, :2])
+        # a wall AT the lane's track-facing edge (a pit wall, 2 m off the edge) ends the shared stretch; a wall on the
+        # lane's far side (Sonoma's pit-out lane, 20 Oct 2026) does not
+        near = (np.sign(lat) == side) & (out < (3.0 if SC_CFG.get("pit_exit_near_wall_only") else 6.0)) & (((i - s0) % trk.n) < ((s1 - s0) % trk.n))
+        if near.any():
+            s0 = max(s0, int(((i[near] - s0) % trk.n).max() + s0) + 2) % trk.n
+    return _one_part_line(trk, side, s0, s1, spacing)
+
+
+def _one_part_stretch(trk, part):
+    """(side, s0, s1) of a one-part pit lane's shared stretch at its end (gap under 0.5 m), or None if under 10 m."""
     Cp = np.array(part["center"])[:, :2]
     _, latc, _ = trk.project(Cp[-20:])
     side = 1 if np.median(latc) > 0 else -1
@@ -1606,14 +1668,11 @@ def _pit_exit_cones_one_part(trk, part, barriers, spacing):
     if k1 - k0 < 10:
         return None
     s0 = int(trk.project(E[k0:k0 + 1])[0][0]); s1 = int(trk.project(E[k1:k1 + 1])[0][0])
-    for w in barriers or []:
-        if w["kind"] != "pitwall" and not str(w.get("src", "")).startswith("declared"): continue
-        i, lat, out = trk.project(np.array(w["pts"])[:, :2])
-        # a wall AT the lane's track-facing edge (a pit wall, 2 m off the edge) ends the shared stretch; a wall on the
-        # lane's far side (Sonoma's pit-out lane, 20 Oct 2026) does not
-        near = (np.sign(lat) == side) & (out < (3.0 if SC_CFG.get("pit_exit_near_wall_only") else 6.0)) & (((i - s0) % trk.n) < ((s1 - s0) % trk.n))
-        if near.any():
-            s0 = max(s0, int(((i[near] - s0) % trk.n).max() + s0) + 2) % trk.n
+    return side, s0, s1
+
+
+def _one_part_line(trk, side, s0, s1, spacing):
+    """The track edge on `side` over stations s0..s1 (the blend boundary of a one-part pit lane)."""
     st = np.arange(s0, s1 + (trk.n if s1 < s0 else 0) + 1) % trk.n
     if len(st) < 10:
         return None
@@ -1622,6 +1681,57 @@ def _pit_exit_cones_one_part(trk, part, barriers, spacing):
     log(f"pit-exit cones (one pit-lane part): s {s0}-{s1} on the {'left' if side > 0 else 'right'} edge, {len(P) * 2} m")
     return {"spacing_m": spacing, "s0": int(s0), "s1": int(s1), "pts": with_z(trk, P),
             "src": "the pit lane's track-facing edge where it merges at its end (one-part pit lane)"}
+
+
+def pit_exit_line(trk, pit, pe, spacing=16.0):
+    """Stage 1's pit-exit blend line (20 Oct 2026), from config centre.pit_exit `pe` and stage-1 evidence only; it reads
+    no scenery or pit_lane key (stage 1 used to take it from pit_exit_cones() on barriers(), both stage-3 readers that
+    config_id('geometry') does not hash, so a scenery edit moved a passed centre).
+      pe.line_latlon      the measured blend line [(lat, lon), ...] (cm-rounded ENU, as every cone line), used as given;
+      else detected as pit_exit_cones() does (two parts: the painted line on the NAIP between them; one part: the
+      lane's track-facing edge where it merges at its end), starting after the measured wall end:
+      pe.wall_end_latlon  (lat, lon) of the end of the pit wall at the edge; the line starts 2 stations past its station
+                          when that lies in the shared stretch (the measured fact pit_exit_cones() gets from barriers).
+    Returns {spacing_m, s0, s1, pts, src} or None."""
+    pe = pe or {}
+    if pe.get("line_latlon"):
+        ll = np.array(pe["line_latlon"], float)
+        x, y = bl.enu(ll[:, 0], ll[:, 1])
+        P = np.c_[x, y]
+        i_, _, _ = trk.project(P[[0, -1]])
+        log(f"pit-exit line (centre.pit_exit.line_latlon): stations {int(i_[0])}-{int(i_[1])}, {len(P)} points")
+        return {"spacing_m": spacing, "s0": int(i_[0]), "s1": int(i_[1]), "pts": with_z(trk, P), "src": pe.get("src", "")}
+    if not pit or not pit["parts"]:
+        return None
+    n = trk.n
+    we = None
+    if pe.get("wall_end_latlon"):
+        x, y = bl.enu(*pe["wall_end_latlon"])
+        we = int(trk.project(np.array([[float(x), float(y)]]))[0][0])
+    if len(pit["parts"]) == 1:
+        stretch = _one_part_stretch(trk, pit["parts"][0])
+        if stretch is None:
+            return None
+        side, s0, s1 = stretch
+        if we is not None:
+            if ((we - s0) % n) < ((s1 - s0) % n):
+                s0 = (((we - s0) % n) + s0 + 2) % n
+                log(f"pit-exit line: the pit wall ends at station {we} (centre.pit_exit.wall_end_latlon)")
+            else:
+                log(f"pit-exit line: wall end station {we} outside the merge stretch {s0}..{s1}: not applied")
+        else:
+            log("pit-exit line: NO wall end given (centre.pit_exit.wall_end_latlon): the line starts where the lane joins")
+        return _one_part_line(trk, side, s0, s1, spacing)
+    s0, s1 = _two_part_stretch(trk, pit)
+    if we is not None:
+        if ((we - s0) % n) < 200:
+            s0 = max(s0, ((we - s0) % n) + s0 + 2)
+            log(f"pit-exit line: the pit wall ends at station {we} (wall_end_latlon)")
+        else:
+            log(f"pit-exit line: wall end station {we} not within 200 stations after {s0}: not applied")
+    else:
+        log("pit-exit line: NO wall end given (centre.pit_exit.wall_end_latlon): the line starts where the lane joins")
+    return _two_part_line(trk, s0, s1, spacing)
 
 
 def paved_zones(trk, osm):
@@ -2235,13 +2345,16 @@ def main(cfg=None, out_dir=None):
     pareas = paved_areas(trk, osm)
     cones = pit_exit_cones(trk, pit, bar)
     pc_ = SC_CFG.get("pit_exit_cones") or {}
-    if pc_.get("latlon"):
+    # the measured blend line: scenery.pit_exit_cones.latlon, else stage 1's centre.pit_exit.line_latlon (one
+    # measurement serves both; scenery.pit_exit_cones keeps the colour, size and spacing)
+    ll_, src_ = (pc_.get("latlon"), pc_.get("src")) if pc_.get("latlon") else (PIT_EXIT.get("line_latlon"), PIT_EXIT.get("src", ""))
+    if ll_:
         # round 7 (Sonoma owner notes 42-43): the cones stand ON the painted blend line measured on the captures, from
         # the pit-wall nose to the merge, in the colour, size and spacing of the footage
-        P_ = _ll_line(pc_["latlon"], 2.0)
+        P_ = _ll_line(ll_, 2.0)
         i_, _, _ = trk.project(P_[[0, -1]])
         cones = {"spacing_m": pc_.get("spacing", 16.0), "s0": int(i_[0]), "s1": int(i_[1]), "pts": with_z(trk, P_),
-                 "src": pc_["src"], **_cone_style(pc_)}
+                 "src": src_, **_cone_style(pc_)}
         log(f"pit-exit cones on the measured blend line: stations {int(i_[0])}-{int(i_[1])}, every {cones['spacing_m']} m")
     marks = landmarks(trk, T, brg)
     for b_ in bld:

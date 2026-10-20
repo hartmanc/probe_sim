@@ -44,7 +44,13 @@ CONFIG = dict(
     ),
     # ---------------------------------------------------------------- stage 1: geometry (SKILL stage 1)
     stations_ref=None,                           # (n, length_m) of the build the station numbers below refer to (SKILL 1.3)
-    centre=dict(),                               # fit weights, bridge windows, pit merges (SKILL 1.3)
+    centre=dict(                                 # fit weights, bridge windows, pit merges (SKILL 1.3)
+        # the pit merge's inputs, stage-1 evidence only (stage 1 reads no scenery / pit_lane key): the measured pit-exit
+        # blend line, or the end of the pit wall at the edge from which the builder detects it; src cites the capture
+        pit_exit=dict(line_latlon=None,          # [(lat, lon), ...] the painted blend line measured on the captures
+                      wall_end_latlon=None,      # (lat, lon) where the pit wall at the track edge ends (its nose)
+                      src=''),
+    ),
     spline=dict(),                               # the edge fit (SKILL 1.4); defaults in trackcfg.py
     features=[],                                 # (side, lo, hi, 'keep' | 'asphalt_end' | 'kerb', why) where the paint is ambiguous (SKILL 1.4)
     prior=dict(),                                # bridge windows, first_edge, interp (SKILL 1.4)

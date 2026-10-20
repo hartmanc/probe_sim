@@ -74,9 +74,14 @@ CONFIG = dict(
     centre_captures='z20',
     centre_registration='per_capture',
     repave_fixes=[(1895, 2000, 1905, 1965, 'T6 sag (2017 lidar) -> crest (2023 repave)')],
-    # Three artefacts of how the accepted package was built on 17-18 Oct 2026, applied only on the logger path (and not
+    # Four artefacts of how the accepted package was built on 17-18 Oct 2026, applied only on the logger path (and not
     # with --no-reproduce) so that a rebuild reproduces it; they are not method, and new circuits leave this block out:
     reproduce=dict(
+        # the pit-exit line's start (the refit keeps the old left edge from 40 stations before it): the accepted build took
+        # the wall end from the stage-3 pit-wall RULE, the end of its fenced part 120 m past the line (scenery.pit_wall
+        # fence_until_m), at first-centre station 120; this is that rule point, not a measurement (20 Oct 2026: stage 1
+        # reads no scenery key; a measured wall end belongs in centre.pit_exit.wall_end_latlon)
+        pit_exit_wall_end_latlon=(36.585547670, -121.757121091),
         centre_bridge_win=0,          # the centre was refitted (18 Oct, 10:08) before the bridge-shadow mask existed
         gps_margin_line='stale_refit_index',  # the paint step's GPS margin read a logged line measured on the refitted
                                       # centre (a stale ghost_line_debug.npz), index for index, as if on the first centre

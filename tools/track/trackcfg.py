@@ -33,8 +33,17 @@ Geometry (Stage 1)
           NAIP midpoint), paint_fit_a, paint_fit_b, bridge_win, gps_margin, min_width, extra_shadow_stations,
           pit_merge (default True: through the pit merges the midpoint target takes the circuit's own edge, the cone
           line or the painted edge interpolated across the join; off while reproducing an accepted build), pit_merge_gap
-          (m, default 0.3: a pit-lane part this close to the track edge counts as joined)}
-  reproduce {...}                            build artefacts of an accepted package (logger path only; see Laguna's)
+          (m, default 0.3: a pit-lane part this close to the track edge counts as joined),
+          pit_exit (default None) {line_latlon [(lat, lon), ...] | None, wall_end_latlon (lat, lon) | None, src}: the
+          pit-exit blend line the merge and the refit's keep zone use, from stage-1 evidence only (20 Oct 2026: stage 1
+          read it through the scenery builder from scenery / pit_lane keys, which this hash does not cover). line_latlon
+          = the measured blend line (used as given, cm-rounded); without it the line is detected (two pit-lane parts:
+          the painted line on the NAIP between them; one part: the lane's track-facing edge where it merges at its end)
+          from 2 stations past wall_end_latlon, the measured end of the pit wall at the edge (absent: from where the
+          lane joins, logged). src cites the capture or frame. Stage 3's pit_exit_cones objects take line_latlon when
+          scenery.pit_exit_cones has no latlon of its own}
+  reproduce {...}                            build artefacts of an accepted package (logger path only; see Laguna's;
+                                             pit_exit_wall_end_latlon replaces centre.pit_exit.wall_end_latlon)
   centre_captures ('z20' | 'clean'), centre_registration ('per_capture' | 'common')
   repave_fixes [(a, b, crest from, crest to, why)]
   captures {z20_dir, z20_index, z20_mask, clean_dir, clean_index, mpp, common_shift, exclude, cursor_boxes}
@@ -46,7 +55,8 @@ Geometry (Stage 1)
          map], first_edge [(side, lo, hi, why)], interp [(side, lo, hi, why)]}
   shapes [{side, knots [(station, half-width)], blend, why, fitted_only}]   measured half-widths; in the fitted method
                                              a constraint inside the fit (fitted_only: not in the legacy reproduction)
-  straights [{side, fit 'paint' | 'parallel', lo, hi, join (a, b), end, blend, tol | ref_side/ref_lo/ref_hi, why}]
+  straights [{side, fit 'paint' | 'parallel' | 'pitwall', lo, hi, join (a, b), end, blend, tol | ref_side/ref_lo/ref_hi,
+             why}]   fit 'pitwall': the OSM rule pit wall (build_scenery.pit_wall_line; no scenery key)
   gate {straight_rms, step, profile_step, spline_obs_within}
 Ghosts (Stage 2): ghosts {margin, kerb_margin, nudge, jerk_w}
 Scenery (Stage 3): scenery {...}, see build_scenery.py and scenery_post.py. Evidence keys added in the Sonoma scenery
@@ -89,7 +99,7 @@ DEFAULTS = dict(
     logger_sections=None, logger_bad_gps_files=[], start_finish_latlon=None, named_straights=[],
     loop_check=dict(n_min=500, n_max=10000, official_m=None, elev_min=0, elev_max=500),
     centre=dict(naip_fit_a=1e6, naip_fit_b=1e3, osm_fit_a=1e3, osm_fit_b=1e3, paint_fit_a=1e4, paint_fit_b=1e2,
-                nologger_fit_a=1e1, nologger_fit_b=1e5, pit_merge=True, pit_merge_gap=0.3,
+                nologger_fit_a=1e1, nologger_fit_b=1e5, pit_merge=True, pit_merge_gap=0.3, pit_exit=None,
                 bridge_win=25, gps_margin=1.0, min_width=10.0, extra_shadow_stations=[]),
     centre_captures='clean', centre_registration='common', repave_fixes=[],
     captures=dict(z20_dir=None, z20_index='z20_tiles.json', z20_mask=None, clean_dir=None, clean_index='tiles.json',
