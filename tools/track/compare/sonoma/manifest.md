@@ -431,9 +431,9 @@ buildings (rows 2:02-2:12 left, pit rows).
   c20_s1210 and the 1:56 frame shows the Jersey abeam, so 1:56 maps ~90 m early (the time map's T10-T11 stretch; the car
   brakes for the hairpin). The row stands; the map needs a T11-approach anchor (the Jersey nose's passage) next round.
 
-## Tables (generated after round 7e: `npx tsx tools/track/gates/manifest_tables.ts public/tracks/sonoma tools/track/compare/sonoma/inventory.json <coverage_config.json>`; earlier rounds' are in git history)
+## Tables (generated after round 7f: `npx tsx tools/track/gates/manifest_tables.ts public/tracks/sonoma tools/track/compare/sonoma/inventory.json <coverage_config.json>`; earlier rounds' are in git history)
 
-### Scenery objects of the checked kinds (206, from public/tracks/sonoma)
+### Scenery objects of the checked kinds (207, from public/tracks/sonoma)
 
 | # | kind | side | s (m) | out (m) | object | source |
 |---|---|---|---|---|---|---|
@@ -521,19 +521,19 @@ buildings (rows 2:02-2:12 left, pit rows).
 | 82 | fence | left | 782-987 | 41-58 | barrier 67 (fence + 1.8 m fence) | terrace T3a-T4 top fence (measured footprint (round 6): compare/terrace_measure.py --thr 0.35 --side left --s0 740 --s1 1010 --guide-lat 20 --fill-osm 1414701938: the row texture (period 1.1-1.25 m) on c20_s2530..c20_s2695 (the whole field, top walkway and fence captured); row pitch 1.25 m on the rays; Street View nA1oaDXwADSI7x-Pa-j4Ow (~20 concrete rows); onboard 0:26-0:32) |
 | 83 | fence | left | 428-569 | 52-69 | barrier 68 (fence + 1.8 m fence) | terrace above T2 top fence (measured footprint (round 6): compare/terrace_measure.py --thr 0.35 --side left --s0 400 --s1 600 --guide-lat 25 --fill-osm 1414701939: the row texture (period 1.1-1.25 m) on c20_s2090..c20_s2255 (lower two thirds; above, the DEM crest - 3 m); row pitch 1.17 m on the rays; Street View H9xspk4q_OoFIjVDhaMzDA; onboard 0:14-0:16 (rows from the catch fence at the foot of the bank, fence and light poles on top)) |
 | 84 | fence | left | 2722-3044 | 25-58 | barrier 69 (fence + 1.8 m fence) | terrace back straight / 9a top fence (measured footprint (round 6): compare/terrace_measure.py --thr 0.35 --side left --s0 2690 --s1 3070 --guide-lat 18 --fill-osm 1414701936: the row texture (period 1.1-1.25 m) on c20_o0440..c20_o0550, c20_s0605 (the whole field; it ends at s ~3030 where the access road and trees begin); row pitch 1.15 m on the rays; Street View xkSrqJ5RaN9WFLncaiqaug; onboard 1:30-1:36) |
-| 85 | kerb | right | 116-130 | 0-0 | kerb 115.7-129.7 | T1 exit right, run 1 of the broken kerb: c20_s1870 (detector run 116.7-129.7, block pattern), feature note c20_s1925; colour: colour unverified: no local frame (t002 / t004: the T1 exit right edge not resolved) |
+| 85 | kerb | right | 116-130 | 0-0 | kerb 115.7-129.7 | T1 exit right, run 1 of the broken kerb: c20_s1870 (detector run 116.7-129.7, block pattern), feature note c20_s1925; colour: colour unverified: no frame (t002 / t004 do not resolve it; the owner's 2025 video at 0:17-0:19 looks past it) |
 | 86 | kerb | right | 130-162 | 0-0 | kerb 129.7-161.6 | T1 exit right, block line between the striped runs: c20_s1870 (kerb_detect grey run 143.7-149.7 and the dotted blocks from 130 to 161 between striped runs 1 and 3); owner_31 satellite; colour: colour unverified: no local frame (t002 / t004; grey blocks from the captures) |
 | 87 | kerb | left | 89-134 | 0-0 | kerb 88.8-133.7 | T1 inside, block line from the pit-wall nose: c20_s1815 / c20_s1870 (kerb_detect grey run 88.8-133.7, offsets -0.5..+0.2 m); owner_31 satellite (dotted block line on the inside); onboard 2:22.5; colour: colour unverified: no local frame (t002 / t004; grey blocks from the captures) |
-| 88 | kerb | right | 161-179 | 0-0 | kerb 160.6-178.6 | T1 exit right, run 3: c20_s1870 / c20_s1925 (detector 161.6-178.6, red); colour: colour unverified: no local frame (t004 / t006: behind or not resolved) |
-| 89 | kerb | right | 203-220 | 0-0 | kerb 202.5-219.5 | T1 exit right, run 4: c20_s1925 (detector 203.5-219.5); colour: colour unverified: no local frame (t004 / t006: not resolved) |
+| 88 | kerb | right | 161-179 | 0-0 | kerb 160.6-178.6 | T1 exit right, run 3: c20_s1870 / c20_s1925 (detector 161.6-178.6, red); colour: colour unverified: no frame (t004 / t006 behind or not resolved; the owner's 2025 video at 0:17-0:19 looks past it) |
+| 89 | kerb | right | 203-220 | 0-0 | kerb 202.5-219.5 | T1 exit right, run 4: c20_s1925 (detector 203.5-219.5); colour: colour unverified: no frame (t004 / t006 not resolved; the owner's 2025 video at 0:17-0:19 looks past it) |
 | 90 | kerb | left | 330-372 | 0-0 | kerb 330.3-372.2 | T2 entry, outside (owner_3): c20_s2090 / c20_s2035 blocks on the left edge (capstrip s300); onboard RAZip6S84CM 0:10 red/white kerb left on entry; colour: t010: red / white blocks, left |
 | 91 | kerb | left | 451-520 | 0-0 | kerb 451-519.8 | T2 exit, outside (round 5): c20_s2200 / c20_s2255 (kerb_detect red runs 451.0-458.0 and 465.0-519.8, 91 % of the run, offsets -0.4..+1.0 m); onboard 0:16 long red/white kerb along the left after T2; colour: t016: red / white blocks, left |
 | 92 | kerb | right | 398-451 | 0-0 | kerb 398.1-451 | T2 apex: c20_s2145 (detector 412.1-428.0, 436.0-451.0); onboard 0:13-0:14 red/white apex kerb right; colour: t014: red / white blocks, right |
-| 93 | kerb | right | 605-655 | 0-0 | kerb 604.6-655.5 | T3 approach, right: c20_s2365 (detector 610.6-655.5, red); onboard 0:20.6-0:21 kerb on the right; colour: colour unverified: no local frame (t018-t022: no kerb resolved on the right) |
+| 93 | kerb | right | 605-655 | 0-0 | kerb 604.6-655.5 | T3 approach, right: c20_s2365 (detector 610.6-655.5, red); onboard 0:20.6-0:21 kerb on the right; colour: colour unverified: video shows no kerb at the mapped time (possible station offset): owner's May 2025 Radical onboard fEcQdo0ucL8 (checked by the orchestrator in his own tab, muted; frames not saved) 0:26 (11:33.27) shows plain grass and a white line on the right; t018-t022 resolve none; kept because c20_s2365 at 0.05 m/px shows a painted block pattern along the right edge over the detected run (kerb_detect 610.6-655.5) |
 | 94 | kerb | left | 690-745 | 0-0 | kerb 690.4-745.3 | T3 apex: c20_s2420 / c20_s2475 blocks on the left edge (capstrip s600); onboard 0:24 red/white kerb left; colour: t024: red / white blocks, left |
-| 95 | kerb | right | 760-814 | 0-0 | kerb 760.3-814.2 | T3a apex (right; no kerb on the left of 3a): c20_s2530 (detector 781.2-814.2) and blocks from 760 (capstrip s750); colour: colour unverified: no local frame (t024-t028: not resolved on the right) |
+| 95 | kerb | right | 760-814 | 0-0 | kerb 760.3-814.2 | T3a apex (right; no kerb on the left of 3a): c20_s2530 (detector 781.2-814.2) and blocks from 760 (capstrip s750); colour: owner's May 2025 Radical onboard fEcQdo0ucL8 (checked by the orchestrator in his own tab, muted; frames not saved) 0:33 (clock 11:33.34): red / white blocks, right |
 | 96 | kerb | left | 855-960 | 0-0 | kerb 855.1-959.8 | T4 entry, outside: c20_s2585..s2750 blocks on the left edge (capstrip s750/s900); onboard 0:30-0:32 red/white kerb left; colour: t030 / t032: red / white blocks, left |
-| 97 | kerb | right | 990-1030 | 0-0 | kerb 989.8-1029.7 | T4 apex: c20_s2750 (detector 995.8-1027.7, red); onboard 0:34-0:36 red/white apex kerb right; colour: t036: red / white blocks, right |
+| 97 | kerb | right | 990-1030 | 0-0 | kerb 989.8-1029.7 | T4 apex: c20_s2750 (detector 995.8-1027.7, red); onboard 0:34-0:36 red/white apex kerb right; colour: t036: red / white blocks, right; owner's May 2025 Radical onboard fEcQdo0ucL8 (checked by the orchestrator in his own tab, muted; frames not saved) 0:36 (11:33.37): red / white blocks |
 | 98 | kerb | left | 1025-1095 | 0-0 | kerb 1024.7-1094.5 | T4 exit, outside: c20_s2750..s2860 blocks on the left edge (capstrip s900/s1050); onboard 0:38 red/white kerb left; colour: t038: red / white blocks, left |
 | 99 | kerb | right | 1150-1262 | 0-0 | kerb 1150.4-1262.2 | T5 apex and exit: c20_s2860..s2970 (detector 1154.4-1165.4, 1182.3-1261.2, red); colour: t042: a plain yellow continuous strip on the right at the wall foot (sampled rgb 180, 175, 88 in the graded frame); owner note 58 (owner_58, May 2025 onboard fEcQdo0ucL8, reference only: plain yellow, rgb 182, 159, 95); #c9a83e between the two |
 | 100 | kerb | left | 1591-1646 | 0-0 | kerb 1591.4-1646.3 | Carousel (T6) apex: c20_s3355 / c20_s3410 (detector 1591.4-1646.3); onboard 0:55 red/white kerb left; colour: t054 / t056: red / white blocks, left |
@@ -548,8 +548,8 @@ buildings (rows 2:02-2:12 left, pit rows).
 | 109 | kerb | right | 2692-2740 | 0-0 | kerb 2692-2739.8 | T9 exit, outside: c20_s0330 / c20_s0385 (detector 2692.0-2739.8, red); colour: t090: red / white blocks, right |
 | 110 | kerb | right | 3020-3045 | 0-0 | kerb 3020.2-3045.2 | 9a chicane, right-hand part apex: c20_o0660 (detector 3021.2-3036.2, red); onboard 1:39 kerb right; colour: t100: red / white blocks, right |
 | 111 | kerb | left | 3060-3170 | 0-0 | kerb 3060.1-3169.9 | 9a chicane left-hand part apex and on to T10: c20_o0715 / c20_s0715 / c20_s0770 (detector 3060.1-3169.9); onboard 1:41 red/white kerb left; colour: t102 / t104: red / white blocks, left |
-| 112 | kerb | right | 3215-3292 | 0-0 | kerb 3214.8-3291.6 | T10 apex: c20_s0825..s0935 (detector 3219.8-3292.6, red); onboard 1:45; colour: t108 / t110: red / white blocks, right |
-| 113 | kerb | left | 3338-3402 | 0-0 | kerb 3337.5-3402.4 | T10 exit, outside: c20_s0990 / c20_s1045 (detector 3338.5-3369.4, 3379.4-3402.4); colour: colour unverified: no local frame (t110-t114: hidden by another car / behind) |
+| 112 | kerb | right | 3215-3292 | 0-0 | kerb 3214.8-3291.6 | T10 apex: c20_s0825..s0935 (detector 3219.8-3292.6, red); onboard 1:45; colour: t108 / t110: red / white blocks, right; owner's May 2025 Radical onboard fEcQdo0ucL8 (checked by the orchestrator in his own tab, muted; frames not saved) 1:25-1:27 (11:34.26-28): continuous red / white along the right edge through T10 past the Toyota and Humboldt / Save Mart boards |
+| 113 | kerb | left | 3338-3402 | 0-0 | kerb 3337.5-3402.4 | T10 exit, outside: c20_s0990 / c20_s1045 (detector 3338.5-3369.4, 3379.4-3402.4); colour: colour unverified: video shows no kerb at the mapped time (possible station offset): owner's May 2025 Radical onboard fEcQdo0ucL8 (checked by the orchestrator in his own tab, muted; frames not saved) 1:27 (11:34.28) shows the board wall and a white line on the left; t110-t114 hidden or behind; kept because c20_s0990 at 0.05 m/px shows a painted block pattern along the left edge over the detected runs (3338.5-3402.4) |
 | 114 | kerb | right | 3615-3745 | 0-0 | kerb 3614.9-3744.6 | T11 hairpin apex: c20_s1265..s1375 (detector 3628.8-3673.7, 3700.7-3730.6; blocks capstrip s3600); onboard 2:01-2:04 red/white; colour: t122 / t124: red / white blocks, right |
 | 115 | station | right | 1395-1395 | 10-10 | marshal 'T6 hilltop' | c20_s3135: a ~3 x 3 m platform with a box behind the right wall at the crest before the Carousel; Street View GMaTaipEd9Hm7fMNE26aGQ (Jul 2011): white box and tyre stack there (owner: "the one at the top of the hill just before T6") |
 | 116 | station | right | 970-970 | 16-16 | marshal 'T4' | c20_s2695: a raised hut on a platform 27 m right of the T4 approach (long shadow); onboard 0:33 white elevated post with roof on the right; Street View 3a panorama (Jul 2011) shows it ahead right |
@@ -639,10 +639,11 @@ buildings (rows 2:02-2:12 left, pit rows).
 | 200 | cone_line | left | 2159-2166 | 0-6 | cone line 1 | closed road the Chute (NASCAR short course, T4 to T7) mouth (onboard 1:12: small orange cones in front of a black tyre line across the Chute mouth at T7 (inventory, added row)) |
 | 201 | cone_line | left | 3031-3032 | 6-6 | cone line 2 | onboard RAZip6S84CM 1:36-1:38 (t096 / t098; owner_49 crop): one orange cone ~0.5 m on the grass verge left before 9a, ~6 m beyond the edge (frame perspective); not resolved on c20_s0605 / c20_o0660 |
 | 202 | cone_line | right | 2208-2215 | 14-14 | cone line 3 | onboard RAZip6S84CM 1:14 (t074): orange cones across the short-T7 road at the T7 hairpin; line across the road's first section (OSM 505454376, NAIP width) |
-| 203 | cone_line | right | 2196-2212 | 0-1 | cone line 4 | onboard 1:14-1:16 (round 5): orange delineator posts on the edge of the T7a island before its kerb (island on c20_s3960) |
-| 204 | cone_line | right | 1937-1939 | 0-12 | cone line 5 | owner note 57 (May 2025 onboard fEcQdo0ucL8 0:57, reference only: a line of orange pylons, no tyre barrier); onboard RAZip6S84CM t064: 7 orange posts with white bands across the mouth (spacing 1.7 m); the line runs ACROSS the strip at its mouth (perpendicular to the strip, heading 62 deg: the first cross-section of the closed road drag strip past the T7 fork, where it leaves the course at s ~1942), from the track right edge to 1 m past the strip far paved edge, 12.6 m; the round-5 tyre line ran 30 deg off the strip own direction |
-| 205 | cone_line | left | 3510-3587 | -5-1 | cone line 6 | pit-in double white line measured on c20_s1155 / c20_s1210 (wall_measure bright, sguide s 3500-3586 at ~4 m left, 94 % picked, rms 0.15 m), s 3510-3584; cones on it: Street View owner_15, onboard 1:58 (t118) cones ahead-right along the line |
-| 206 | cone_line | left | 158-222 | -1-0 | cone line 7 | round 7e (owner notes 55-56): the straight pit-out blend line from the west end of the pit-side wall s 134-158 (c20_s1815 / c20_s1870), along the paint on c20_s1870 / c20_s1925 (100 % picked, rms 0.044 m), 63.3 m (owner_56 drawing scaled by the wall), s 158-222; 2025 pit-out video 24of8fjjAug t=304: small yellow cones (~0.5 m) on the double yellow line, 15-20 m apart (17 m used); t=300: none before the nose |
+| 203 | cone_line | right | 2196-2212 | 0-1 | cone line 4 | onboard 1:14-1:16 (round 5): orange delineator posts on the edge of the T7a island before its kerb (island on c20_s3960); round 7f: t074 zoomed shows 4 tall orange posts with white bands along the island edge (4 posts over the 16 m line: spacing 5 m), 1 m (inventory 1:14 cone-ref) |
+| 204 | cone_line | right | 2275-2276 | 1-1 | cone line 5 | T7a island-nose delineator post (round 7f): onboard 1:16 (t076) one tall orange post with white bands ahead-right beside the red / white island kerb, ~10-15 m ahead of the frame station (s ~2262, compare_sheets/onboard.json), just beyond the kerb band (0.65 m centred 0.3 m out); position from the frame only, +-15 m |
+| 205 | cone_line | right | 1937-1939 | 0-12 | cone line 6 | owner note 57 (May 2025 onboard fEcQdo0ucL8 0:57, reference only: a line of orange pylons, no tyre barrier); onboard RAZip6S84CM t064: 7 orange posts with white bands across the mouth (spacing 1.7 m); the line runs ACROSS the strip at its mouth (perpendicular to the strip, heading 62 deg: the first cross-section of the closed road drag strip past the T7 fork, where it leaves the course at s ~1942), from the track right edge to 1 m past the strip far paved edge, 12.6 m; the round-5 tyre line ran 30 deg off the strip own direction |
+| 206 | cone_line | left | 3510-3587 | -5-1 | cone line 7 | pit-in double white line measured on c20_s1155 / c20_s1210 (wall_measure bright, sguide s 3500-3586 at ~4 m left, 94 % picked, rms 0.15 m), s 3510-3584; cones on it: Street View owner_15, onboard 1:58 (t118) cones ahead-right along the line |
+| 207 | cone_line | left | 158-222 | -1-0 | cone line 8 | round 7e (owner notes 55-56): the straight pit-out blend line from the west end of the pit-side wall s 134-158 (c20_s1815 / c20_s1870), along the paint on c20_s1870 / c20_s1925 (100 % picked, rms 0.044 m), 63.3 m (owner_56 drawing scaled by the wall), s 158-222; 2025 pit-out video 24of8fjjAug t=304: small yellow cones (~0.5 m) on the double yellow line, 15-20 m apart (17 m used); t=300: none before the nose |
 
 ### Every inventory row and its outcome (423 rows)
 
@@ -660,7 +661,7 @@ buildings (rows 2:02-2:12 left, pit rows).
 | 173 | 0:02.0 | left | building | pit garages, red roof | onboard:RAZip6S84CM@2.0 | covered by building 7 '' 6.6 m; structure 5 garage 'Pit-exit building' (corrected in scenery round 5 (21 Oct 2026): ahead_m was none) |
 | 184 | 0:06.0 | ahead | bridge | footbridge with ad boards (Save Mart, GR, Sunoco, Las Vegas) | onboard:RAZip6S84CM@6.0 | skipped: 'ahead' without a distance |
 | 184 | 0:06.0 | ahead | fence | fence along the hill top | onboard:RAZip6S84CM@6.0 | skipped: 'ahead' without a distance (corrected in scenery round 5 (21 Oct 2026): side was right, out_m was none) |
-| 184 | 0:06.0 | left | cone_line | pit-exit cones, yellow/white, ~0.5 m | onboard:RAZip6S84CM@6.0 | covered by cone line 7 |
+| 184 | 0:06.0 | left | cone_line | pit-exit cones, yellow/white, ~0.5 m | onboard:RAZip6S84CM@6.0 | covered by cone line 8 |
 | 184 | 0:06.0 | left | fence | chain-link | onboard:RAZip6S84CM@6.0 | covered by barrier 2 (concrete + 1 m fence) catch fence |
 | 184 | 0:06.0 | left | wall | concrete | onboard:RAZip6S84CM@6.0 | covered by barrier 2 (concrete + 1 m fence) |
 | 184 | 0:06.0 | right | paint | white edge line | onboard:RAZip6S84CM@6.0 | surroundings (not a checked kind) |
@@ -819,8 +820,8 @@ buildings (rows 2:02-2:12 left, pit rows).
 | 1888 | 1:04.0 | left | wall | light blue-grey concrete wall | onboard:RAZip6S84CM@64.0 | covered by barrier 6 (concrete) |
 | 1888 | 1:04.0 | right | mast | light mast | onboard:RAZip6S84CM@64.0 | MISSING, not resolvable: no unplaced lidar spike (buildings-round scan) and no base with a shadow on c20_s0165 / c20_s3630 / c20_s0220 |
 | 1888 | 1:04.0 | right | paint | yellow centre line, white edge line | onboard:RAZip6S84CM@64.0 | surroundings (not a checked kind) |
-| 1938 | 1:04.0 | right | cone_line | orange pylons (tall delineator posts, white bands) across the drag strip continuation | onboard:RAZip6S84CM@64.0 | covered by cone line 5 (corrected in scenery rounds 5 and 7e (21-23 Oct 2026): ahead_m was none, type was orange cones, h_m was 0.7, h_method was cone-ref) |
-| 1938 | 1:04.0 | right | cone_line | orange pylons (tall delineator posts, white bands) across the drag strip continuation | onboard:RAZip6S84CM@64.0 | covered by cone line 5 (corrected in scenery rounds 5 and 7e (21-23 Oct 2026): ahead_m was none, kind was tyre_wall, type was black tyre line, h_m was 0.7, h_method was tyre-ref) |
+| 1938 | 1:04.0 | right | cone_line | orange pylons (tall delineator posts, white bands) across the drag strip continuation | onboard:RAZip6S84CM@64.0 | covered by cone line 6 (corrected in scenery rounds 5 and 7e (21-23 Oct 2026): ahead_m was none, type was orange cones, h_m was 0.7, h_method was cone-ref) |
+| 1938 | 1:04.0 | right | cone_line | orange pylons (tall delineator posts, white bands) across the drag strip continuation | onboard:RAZip6S84CM@64.0 | covered by cone line 6 (corrected in scenery rounds 5 and 7e (21-23 Oct 2026): ahead_m was none, kind was tyre_wall, type was black tyre line, h_m was 0.7, h_method was tyre-ref) |
 | 1956 | 1:06.0 | left | wall | light blue-grey concrete wall | onboard:RAZip6S84CM@66.0 | covered by barrier 6 (concrete) |
 | 1956 | 1:06.0 | right | mast | light masts | onboard:RAZip6S84CM@66.0 | MISSING, not resolvable: no unplaced lidar spike (buildings-round scan) and no base with a shadow on c20_s0110 / c20_s3685 / c20_s3740 |
 | 1956 | 1:06.0 | right | runoff | grass strip, then the Chute pavement | onboard:RAZip6S84CM@66.0 | surroundings (not a checked kind) |
@@ -846,7 +847,7 @@ buildings (rows 2:02-2:12 left, pit rows).
 | 2262 | 1:14.0 | left | stand | concrete terraces | onboard:RAZip6S84CM@74.0 | covered by terrace T7a hill (corrected in scenery round 5 (21 Oct 2026): ahead_m was none) |
 | 2268 | 1:16.0 | left | cone_line | orange cones along the paved runoff | onboard:RAZip6S84CM@76.0 | MISSING, not resolvable: the T7 runoff cones of frame t076 are not on c20_s4015 (captured at another event: movable cones); not placed |
 | 2268 | 1:16.0 | left | wall | low white wall at the foot of the terraces | onboard:RAZip6S84CM@76.0 | covered by barrier 54 (concrete) |
-| 2268 | 1:16.0 | right | cone_line | orange delineator post at the island nose | onboard:RAZip6S84CM@76.0 | MISSING, not resolvable: the island-nose post (t076) is not resolved on c20_s4015 / c20_s3960 / c20_s4070; the island's delineators are placed at s 2196-2212 |
+| 2268 | 1:16.0 | right | cone_line | orange delineator post at the island nose | onboard:RAZip6S84CM@76.0 | covered by cone line 5 |
 | 2268 | 1:16.0 | right | kerb | 7a island kerb, painted island beyond | onboard:RAZip6S84CM@76.0 | covered by kerb 2208-2329.8 |
 | 2268 | 1:16.0 | right | mast | light mast | onboard:RAZip6S84CM@76.0 | MISSING, placed: Light masts (the kit mast at (-367.5, 393.5), 77 m ahead, 22 m out) |
 | 2272 | 1:10.0 | ahead | stand | concrete terraces with fence on top | onboard:RAZip6S84CM@70.0 | covered by terrace T7a hill (corrected in scenery round 5 (21 Oct 2026): side was right, ahead_m was none) |
@@ -961,7 +962,7 @@ buildings (rows 2:02-2:12 left, pit rows).
 | 3511 | 1:56.0 | left | wall | light blue concrete Jersey wall (pit-in separation) | onboard:RAZip6S84CM@116.0 | covered by barrier 36 (concrete); barrier 37 (concrete) |
 | 3511 | 1:56.0 | left | wall | tall concrete wall with Las Vegas / O'Reilly boards on top (outside of the pit-in lane) | onboard:RAZip6S84CM@116.0 | covered by barrier 36 (concrete); barrier 37 (concrete) |
 | 3511 | 1:56.0 | right | runoff | paved infield (T11a / NASCAR), painted lines | onboard:RAZip6S84CM@116.0 | surroundings (not a checked kind) |
-| 3588 | 1:58.0 | left | cone_line | orange cones along the pit-in separation | onboard:RAZip6S84CM@118.0 | covered by cone line 6 |
+| 3588 | 1:58.0 | left | cone_line | orange cones along the pit-in separation | onboard:RAZip6S84CM@118.0 | covered by cone line 7 |
 | 3588 | 1:58.0 | left | paint | double white line at the pit-in split | onboard:RAZip6S84CM@118.0 | surroundings (not a checked kind) |
 | 3588 | 1:58.0 | left | wall | light blue concrete Jersey wall (pit-in separation) | onboard:RAZip6S84CM@118.0 | covered by barrier 15 (concrete); barrier 38 (concrete) |
 | 3588 | 1:58.0 | left | wall | tall concrete wall with Lucky / Save Mart / Pit Boss boards | onboard:RAZip6S84CM@118.0 | covered by barrier 15 (concrete); barrier 38 (concrete) |
@@ -1491,6 +1492,85 @@ T5 at s 1140 / 1190). Compare sheets regenerated (camera_walk --replay, 344 pose
 | T10 exit, outside | left | 3345-3410 | 112.5-114.1 | red / white blocks | unverified | colour unverified: no local frame (t110-t114: hidden by another car / behind) |
 | T11 hairpin apex | right | 3623-3753 | 119.6-126.7 | red / white blocks | verified | t122 / t124: red / white blocks, right |
 
+## Round 7f (23 Oct 2026; registry rev 3fa66ae8a4)
+
+All 13 stage-3 gates pass (barrier gaps min 0.51 m, containment 0 escapes, wall ends 15 checked / 0 exposed, coverage
+MISSING 0 / UNSUPPORTED 0 / 30 dispositioned / 0 unmatched, pit lane). track.json / heightfield.bin / ghosts.json
+byte-identical; Laguna byte-identical to main. Stills `hood_r7e/*_r7f.jpg` (lane and track at s 140, T7a at s 2185 /
+2255). Compare sheets regenerated (camera_walk --replay, 344 poses, 58 sheets) before the final colour_src text change,
+which alters no geometry.
+
+### Item 1: the short pit-side wall at s 133-158 (notes 55-56): NOT placed
+- Builder (config-gated by kind): a declared wall of kind 'pitwall' uses the barrier-gap gate's pit-wall minimum (0.3 m)
+  in the push-out rule, moved to 0.35 m (the rule's 0.05 m margin, as 0.55 m against 0.5 m for other walls), and every
+  moved point is logged with its measured gap. No existing wall uses the kind, so no package changes from the rule.
+- Tried: the wall declared from its measured line (c20_s1815 / c20_s1870, 656 picks, rms 0.055 m), h 0.8 m (shadow:
+  ~0.35 m against ~0.45-0.5 m for the 1.0 m paddock wall on the same capture). Build log: 13 points moved out, measured
+  gaps -0.19 / -0.13 / -0.08 / -0.06 / -0.04 / -0.03 / -0.03 / -0.02 / -0.02 / -0.02 / -0.03 / -0.03 / -0.03 m at
+  stations 134-158 (every 2) -> 0.35 m. Barrier gaps passed (min 0.35 m), pit connectivity and the lane paths passed
+  (0 obstacles).
+- Failed: the wall-ends gate. Its upstream end at s 134 stands 0.4 m from the edge, facing oncoming travel, and is not
+  joined, lapped, cushioned or tapered. No local evidence shows protection there: t004 / s0100 resolve only the flat
+  yellow line past the front-straight nose, the 2025 pit-out frame t=300 shows a tyre stack on the lane side, not at
+  this end, and the captures show the dotted block line running up to it. Not placed (no gate loosened); the config
+  carries a note. Needed from the owner: what stands at the wall's east end (an impact block, a cushion, a yellow-topped
+  post, or nothing).
+
+### Item 2: T7a island delineators
+- The island-edge line (s 2196-2212, inventory 1:14, s 2202) is now style 'delineator' (1.0 m), spacing 5 m: t074 zoomed
+  shows 4 tall orange posts with white bands over the 16 m line.
+- The island-nose post (inventory 1:16, s 2268) is placed: one delineator at s ~2275, 1.2 m beyond the right edge (just
+  past the kerb band), from frame t076 (one post ahead-right beside the red / white island kerb, ~10-15 m ahead of the
+  frame station s ~2262). It is within +-15 m of the row, so its 'not resolvable' disposition is removed (30 remain).
+- The short-T7 road cone line (t074, 10 m across the road, 22 m right of the track) is unchanged: it is not one of the
+  two rows.
+
+### Kerb table update (orchestrator's check of the owner's May 2025 Radical onboard fEcQdo0ucL8, in his own tab, frames not saved)
+- Confirmed red / white blocks, colour_src set to the video id and times:
+  - T3a apex right (0:33, clock 11:33.34), now verified;
+  - T4 apex right (0:36, 11:33.37);
+  - T10 apex right (1:25-1:27, 11:34.26-28).
+- Not seen in the video, re-checked on the captures at 0.05 m/px:
+  - T3 approach right (video 0:26): c20_s2365 shows a painted block pattern along the right edge over the detected run.
+  - T10 exit left (video 1:27): c20_s0990 shows a painted block pattern along the left edge over 3338-3402.
+  - Both are kept as 'colour unverified: video shows no kerb at the mapped time (possible station offset)', not dropped:
+    the detections are strong.
+- T1 exit runs 1, 3 and 4 stay 'colour unverified: no frame' (the video's 0:17-0:19 looks past them).
+- Now 23 of 28 painted strips verified, 5 unverified, plus the two grey block lines.
+
+| strip | side | s (m) | onboard t (s) | colour / pattern now | verified | frame / note |
+|---|---|---|---|---|---|---|
+| T1 exit right, run 1 of the broken kerb | right | 116-130 | 4.1-4.5 | red / white blocks | unverified | colour unverified: no frame (t002 / t004 do not resolve it; the owner's 2025 video at 0:17-0:19 looks past it) |
+| T1 exit right, block line between the striped runs | right | 130-162 | 4.5-5.5 | grey blocks (drawn) | unverified | colour unverified: no local frame (t002 / t004; grey blocks from the captures) |
+| T1 inside, block line from the pit-wall nose | left | 89-134 | 3.3-4.6 | grey blocks (drawn) | unverified | colour unverified: no local frame (t002 / t004; grey blocks from the captures) |
+| T1 exit right, run 3 | right | 161-179 | 5.4-5.9 | red / white blocks | unverified | colour unverified: no frame (t004 / t006 behind or not resolved; the owner's 2025 video at 0:17-0:19 looks past it) |
+| T1 exit right, run 4 | right | 203-220 | 6.6-7.0 | red / white blocks | unverified | colour unverified: no frame (t004 / t006 not resolved; the owner's 2025 video at 0:17-0:19 looks past it) |
+| T2 entry, outside (owner_3) | left | 331-373 | 10.1-11.8 | red / white blocks | verified | t010: red / white blocks, left |
+| T2 exit, outside (round 5) | left | 452-521 | 15.5-18.1 | red / white blocks | verified | t016: red / white blocks, left |
+| T2 apex | right | 399-452 | 12.9-15.5 | red / white blocks | verified | t014: red / white blocks, right |
+| T3 approach, right | right | 606-657 | 20.7-22.1 | red / white blocks | unverified | colour unverified: video shows no kerb at the mapped time (possible station offset): owner's May 2025 Radical onboard fEcQdo0ucL8 (checked by the orchestrator in his own tab, muted; frames not saved) 0:26 (11:33.27) shows plain grass and a white line on the right; t018-t022 resolve none; kept because c20_s2365 at 0.05 m/px shows a painted block pattern along the right edge over the detected run (kerb_detect 610.6-655.5) |
+| T3 apex | left | 692-747 | 23.3-25.4 | red / white blocks | verified | t024: red / white blocks, left |
+| T3a apex (right; no kerb on the left of 3a) | right | 762-816 | 26.0-28.2 | red / white blocks | verified | owner's May 2025 Radical onboard fEcQdo0ucL8 (checked by the orchestrator in his own tab, muted; frames not saved) 0:33 (clock 11:33.34): red / white blocks, right |
+| T4 entry, outside | left | 857-962 | 30.1-33.9 | red / white blocks | verified | t030 / t032: red / white blocks, left |
+| T4 apex | right | 992-1032 | 35.4-37.2 | red / white blocks | verified | t036: red / white blocks, right; owner's May 2025 Radical onboard fEcQdo0ucL8 (checked by the orchestrator in his own tab, muted; frames not saved) 0:36 (11:33.37): red / white blocks |
+| T4 exit, outside | left | 1027-1097 | 36.9-39.4 | red / white blocks | verified | t038: red / white blocks, left |
+| T5 apex and exit | right | 1153-1265 | 40.9-44.3 | plain yellow | verified | t042: a plain yellow continuous strip on the right at the wall foot (sampled rgb 180, 175, 88 in the graded frame); owner note 58 (owner_58, May 2025 onboard fEcQdo0ucL8, reference only: plain yellow, rgb 182, 159, 95); #c9a83e between the two |
+| Carousel (T6) apex | left | 1595-1650 | 55.0-56.8 | red / white blocks | verified | t054 / t056: red / white blocks, left |
+| Carousel exit, right | right | 1725-1800 | 59.4-61.7 | red / white blocks | verified | t060: red / white blocks, right |
+| T7 island (apex) | right | 2155-2207 | 71.8-74.1 | red / white blocks | verified | t072: red / white blocks, right (island tip) |
+| T7a island (O'Reilly) | right | 2213-2335 | 74.3-78.7 | red / white blocks | verified | t076: red / white blocks, right |
+| T7a exit, outside | left | 2305-2377 | 77.6-80.2 | red / white blocks | verified | t078: red / white blocks, left |
+| T8 apex | left | 2415-2446 | 81.4-82.4 | red / white blocks | verified | t082: red / white blocks, left |
+| T8a apex | right | 2445-2556 | 82.3-85.6 | red / white blocks | verified | t084: red / white blocks, right (small, ahead) |
+| T8a exit, outside | left | 2526-2578 | 84.8-86.2 | red / white blocks | verified | t086: red / white blocks, left |
+| T9 apex | left | 2606-2651 | 86.9-88.2 | red / white blocks | verified | t088: red / white blocks, left |
+| T9 exit, outside | right | 2698-2746 | 89.7-91.2 | red / white blocks | verified | t090: red / white blocks, right |
+| 9a chicane, right-hand part apex | right | 3027-3052 | 98.6-99.8 | red / white blocks | verified | t100: red / white blocks, right |
+| 9a chicane left-hand part apex and on to T10 | left | 3067-3177 | 100.7-106.9 | red / white blocks | verified | t102 / t104: red / white blocks, left |
+| T10 apex | right | 3222-3299 | 108.7-111.2 | red / white blocks | verified | t108 / t110: red / white blocks, right; owner's May 2025 Radical onboard fEcQdo0ucL8 (checked by the orchestrator in his own tab, muted; frames not saved) 1:25-1:27 (11:34.26-28): continuous red / white along the right edge through T10 past the Toyota and Humboldt / Save Mart boards |
+| T10 exit, outside | left | 3345-3410 | 112.5-114.1 | red / white blocks | unverified | colour unverified: video shows no kerb at the mapped time (possible station offset): owner's May 2025 Radical onboard fEcQdo0ucL8 (checked by the orchestrator in his own tab, muted; frames not saved) 1:27 (11:34.28) shows the board wall and a white line on the left; t110-t114 hidden or behind; kept because c20_s0990 at 0.05 m/px shows a painted block pattern along the left edge over the detected runs (3338.5-3402.4) |
+| T11 hairpin apex | right | 3623-3753 | 119.6-126.7 | red / white blocks | verified | t122 / t124: red / white blocks, right |
+
 ## Dispositions of the MISSING rows (codify round, 20 Oct 2026; read by the coverage gate)
 
 Every inventory kind now counts: a MISSING row of a kind outside wall / fence / kerb / tyre wall / bridge passes the
@@ -1498,7 +1578,7 @@ coverage gate only with one line below (`tools/track/manifest.py` parses them, `
 validates them: `placed` names an object of that kind in the package, `rejected` names its evidence, `not resolvable`
 names the captures examined). The reasons are rounds 5-7's ("Still MISSING", "Item 4: the non-failing MISSING rows",
 the drag-strip masts of round 6), made machine-readable; the object distances are the package's (scenery objects of the
-row's kind nearest the row's station). 31 rows: 17 masts, 4 tyre stacks, 3 stands, 5 cone lines, 1 building, 1 station.
+row's kind nearest the row's station). 31 rows: 17 masts, 4 tyre stacks, 3 stands, 5 cone lines, 1 building, 1 station (30 since round 7f: the T7a island-nose post is placed and its row is covered).
 
 | kind | side | s (m) | what | source | disposition |
 |---|---|---|---|---|---|
@@ -1512,7 +1592,6 @@ row's kind nearest the row's station). 31 rows: 17 masts, 4 tyre stacks, 3 stand
 | mast | right | 1888.2 | light mast | onboard:RAZip6S84CM@64.0 | not resolvable: no unplaced lidar spike (buildings-round scan) and no base with a shadow on c20_s0165 / c20_s3630 / c20_s0220 |
 | mast | right | 1955.5 | light masts | onboard:RAZip6S84CM@66.0 | not resolvable: no unplaced lidar spike (buildings-round scan) and no base with a shadow on c20_s0110 / c20_s3685 / c20_s3740 |
 | cone_line | left | 2268.3 | orange cones along the paved runoff | onboard:RAZip6S84CM@76.0 | not resolvable: the T7 runoff cones of frame t076 are not on c20_s4015 (captured at another event: movable cones); not placed |
-| cone_line | right | 2268.3 | orange delineator post at the island nose | onboard:RAZip6S84CM@76.0 | not resolvable: the island-nose post (t076) is not resolved on c20_s4015 / c20_s3960 / c20_s4070; the island's delineators are placed at s 2196-2212 |
 | mast | right | 2268.3 | light mast | onboard:RAZip6S84CM@76.0 | placed: Light masts (the kit mast at (-367.5, 393.5), 77 m ahead, 22 m out) |
 | mast | right | 2313.5 | light mast on a black block base | onboard:RAZip6S84CM@78.0 | placed: Light masts (the kit mast at (-367.5, 393.5), 32 m ahead, 22 m out) |
 | mast | right | 2370.6 | light masts | onboard:RAZip6S84CM@80.0 | not resolvable: no unplaced lidar spike (buildings-round scan) and no base with a shadow ahead-right on c20_s3795 / c20_s0000 / c20_s3850; the nearest placed mast stands 122 m ahead |

@@ -171,7 +171,7 @@ CONFIG = dict(
         # strips (compare/capstrip.py), confirmed on the onboard; a, b = its ends on the edge (lat, lon)
         kerbs_declared=[
             dict(side='right', a=(38.1621761, -122.4558020), b=(38.1621947, -122.4559702), colors='red', off=0.3, name='T1 exit right, run 1 of the broken kerb',
-                 colour_src='colour unverified: no local frame (t002 / t004: the T1 exit right edge not resolved)',
+                 colour_src="colour unverified: no frame (t002 / t004 do not resolve it; the owner's 2025 video at 0:17-0:19 looks past it)",
                  src='c20_s1870 (detector run 116.7-129.7, block pattern), feature note c20_s1925'),
             # T1 kerb blocks (round 4, owner note 31): the dotted line of low grey blocks between the two striped
             # sections on the outside and along the inside from the pit-wall nose, kind 'blocks' (drawn as blocks, no
@@ -183,10 +183,10 @@ CONFIG = dict(
                  colour_src='colour unverified: no local frame (t002 / t004; grey blocks from the captures)',
                  src='c20_s1815 / c20_s1870 (kerb_detect grey run 88.8-133.7, offsets -0.5..+0.2 m); owner_31 satellite (dotted block line on the inside); onboard 2:22.5'),
             dict(side='right', a=(38.1622058, -122.4563328), b=(38.1621982, -122.4565440), colors='red', off=0.3, name='T1 exit right, run 3',
-                 colour_src='colour unverified: no local frame (t004 / t006: behind or not resolved)',
+                 colour_src="colour unverified: no frame (t004 / t006 behind or not resolved; the owner's 2025 video at 0:17-0:19 looks past it)",
                  src='c20_s1870 / c20_s1925 (detector 161.6-178.6, red)'),
             dict(side='right', a=(38.1621861, -122.4568047), b=(38.1621940, -122.4570057), colors='red', off=0.3, name='T1 exit right, run 4',
-                 colour_src='colour unverified: no local frame (t004 / t006: not resolved)',
+                 colour_src="colour unverified: no frame (t004 / t006 not resolved; the owner's 2025 video at 0:17-0:19 looks past it)",
                  src='c20_s1925 (detector 203.5-219.5)'),
             dict(side='left', a=(38.1616611, -122.4580486), b=(38.1613606, -122.4582911), colors='red', off=0.3, name='T2 entry, outside (owner_3)',
                  colour_src='t010: red / white blocks, left',
@@ -198,19 +198,19 @@ CONFIG = dict(
                  colour_src='t014: red / white blocks, right',
                  src='c20_s2145 (detector 412.1-428.0, 436.0-451.0); onboard 0:13-0:14 red/white apex kerb right'),
             dict(side='right', a=(38.1619167, -122.4603232), b=(38.1622785, -122.4606472), colors='red', off=0.3, name='T3 approach, right',
-                 colour_src='colour unverified: no local frame (t018-t022: no kerb resolved on the right)',
+                 colour_src="colour unverified: video shows no kerb at the mapped time (possible station offset): owner's May 2025 Radical onboard fEcQdo0ucL8 (checked by the orchestrator in his own tab, muted; frames not saved) 0:26 (11:33.27) shows plain grass and a white line on the right; t018-t022 resolve none; kept because c20_s2365 at 0.05 m/px shows a painted block pattern along the right edge over the detected run (kerb_detect 610.6-655.5)",
                  src='c20_s2365 (detector 610.6-655.5, red); onboard 0:20.6-0:21 kerb on the right'),
             dict(side='left', a=(38.1624585, -122.4609959), b=(38.1625770, -122.4615314), colors='red', off=0.3, name='T3 apex',
                  colour_src='t024: red / white blocks, left',
                  src='c20_s2420 / c20_s2475 blocks on the left edge (capstrip s600); onboard 0:24 red/white kerb left'),
             dict(side='right', a=(38.1626675, -122.4617129), b=(38.1627262, -122.4622560), colors='red', off=0.3, name='T3a apex (right; no kerb on the left of 3a)',
-                 colour_src='colour unverified: no local frame (t024-t028: not resolved on the right)',
+                 colour_src="owner's May 2025 Radical onboard fEcQdo0ucL8 (checked by the orchestrator in his own tab, muted; frames not saved) 0:33 (clock 11:33.34): red / white blocks, right",
                  src='c20_s2530 (detector 781.2-814.2) and blocks from 760 (capstrip s750)'),
             dict(side='left', a=(38.1629296, -122.4626566), b=(38.1637196, -122.4633060), colors='red', off=0.3, name='T4 entry, outside',
                  colour_src='t030 / t032: red / white blocks, left',
                  src='c20_s2585..s2750 blocks on the left edge (capstrip s750/s900); onboard 0:30-0:32 red/white kerb left'),
             dict(side='right', a=(38.1639939, -122.4633539), b=(38.1642332, -122.4631995), colors='red', off=0.3, name='T4 apex',
-                 colour_src='t036: red / white blocks, right',
+                 colour_src="t036: red / white blocks, right; owner's May 2025 Radical onboard fEcQdo0ucL8 (checked by the orchestrator in his own tab, muted; frames not saved) 0:36 (11:33.37): red / white blocks",
                  src='c20_s2750 (detector 995.8-1027.7, red); onboard 0:34-0:36 red/white apex kerb right'),
             dict(side='left', a=(38.1643028, -122.4633233), b=(38.1644968, -122.4625410), colors='red', off=0.3, name='T4 exit, outside',
                  colour_src='t038: red / white blocks, left',
@@ -255,10 +255,10 @@ CONFIG = dict(
                  colour_src='t102 / t104: red / white blocks, left',
                  src='c20_o0715 / c20_s0715 / c20_s0770 (detector 3060.1-3169.9); onboard 1:41 red/white kerb left'),
             dict(side='right', a=(38.1622297, -122.4537575), b=(38.1618148, -122.4531362), colors='red', off=0.3, name='T10 apex',
-                 colour_src='t108 / t110: red / white blocks, right',
+                 colour_src="t108 / t110: red / white blocks, right; owner's May 2025 Radical onboard fEcQdo0ucL8 (checked by the orchestrator in his own tab, muted; frames not saved) 1:25-1:27 (11:34.26-28): continuous red / white along the right edge through T10 past the Toyota and Humboldt / Save Mart boards",
                  src='c20_s0825..s0935 (detector 3219.8-3292.6, red); onboard 1:45'),
             dict(side='left', a=(38.1614869, -122.4527961), b=(38.1609287, -122.4525711), colors='red', off=0.3, name='T10 exit, outside',
-                 colour_src='colour unverified: no local frame (t110-t114: hidden by another car / behind)',
+                 colour_src="colour unverified: video shows no kerb at the mapped time (possible station offset): owner's May 2025 Radical onboard fEcQdo0ucL8 (checked by the orchestrator in his own tab, muted; frames not saved) 1:27 (11:34.28) shows the board wall and a white line on the left; t110-t114 hidden or behind; kept because c20_s0990 at 0.05 m/px shows a painted block pattern along the left edge over the detected runs (3338.5-3402.4)",
                  src='c20_s0990 / c20_s1045 (detector 3338.5-3369.4, 3379.4-3402.4)'),
             dict(side='right', a=(38.1590671, -122.4520153), b=(38.1589844, -122.4525287), colors='red', off=0.3, name='T11 hairpin apex',
                  colour_src='t122 / t124: red / white blocks, right',
@@ -294,6 +294,10 @@ CONFIG = dict(
                  latlon=[(38.160394, -122.4528664), (38.160391, -122.4528951), (38.1603825, -122.4529276), (38.1603721, -122.4529595), (38.1603631, -122.4529919),
                          (38.1603547, -122.4530244), (38.1603465, -122.4530571), (38.1603479, -122.453067), (38.1603637, -122.4530791), (38.1603802, -122.4530884),
                          (38.1603972, -122.4530955), (38.1604103, -122.4530998)]),
+            # round 7f (owner notes 55-56): the short pit-side wall past T1 (s 134-158, c20_s1815 / c20_s1870, owner_56) is NOT
+            # placed: stood at the pit-wall minimum (kind 'pitwall', pushed to 0.35 m, 13 points, logged) it passes the barrier-gap
+            # gate but its upstream end at s 134 (0.4 m out) fails the wall-ends gate, and no frame or capture shows a cushion,
+            # impact block or taper there (t004, s0100, 24of8fjjAug t=300); manifest round 7f, for the owner
             dict(name='pit straight, drag-strip side', kind='concrete', h=1.1, fence=0.0, h_src='onboard 2:14-2:17: as the pit-lane side wall, ~1.1 m, no catch fence on it (the posts at 2:17 stand beyond the drag strip)', color=WALL_PALE_BLUE,
                  src='c20_s1595..s1870 bright band 2.3 m beyond the right edge (19 Oct); Street View 5MY4xR9O7etAXEHnZCVnGQ; onboard 2:17',
                  latlon=[
@@ -962,8 +966,11 @@ CONFIG = dict(
             # the track, so the closed-road mouth rule finds none): onboard 1:14 (t074) orange cones ahead-right across it
             dict(latlon=[(38.1663154, -122.4622045), (38.1663858, -122.4621335)], spacing=2.5,
                  src='onboard RAZip6S84CM 1:14 (t074): orange cones across the short-T7 road at the T7 hairpin; line across the road\'s first section (OSM 505454376, NAIP width)'),
-            dict(side='right', s=(2196, 2212), off=0.5, spacing=5.0,
-                 src='onboard 1:14-1:16 (round 5): orange delineator posts on the edge of the T7a island before its kerb (island on c20_s3960)'),
+            # round 7f: tall delineator posts, not traffic cones (t074 / t076, local frames)
+            dict(side='right', s=(2196, 2212), off=0.5, spacing=5.0, color='#e0561c', size=1.0, style='delineator',
+                 src='onboard 1:14-1:16 (round 5): orange delineator posts on the edge of the T7a island before its kerb (island on c20_s3960); round 7f: t074 zoomed shows 4 tall orange posts with white bands along the island edge (4 posts over the 16 m line: spacing 5 m), 1 m (inventory 1:14 cone-ref)'),
+            dict(side='right', s=(2275, 2276), off=1.2, spacing=10.0, color='#e0561c', size=1.0, style='delineator',
+                 src='T7a island-nose delineator post (round 7f): onboard 1:16 (t076) one tall orange post with white bands ahead-right beside the red / white island kerb, ~10-15 m ahead of the frame station (s ~2262, compare_sheets/onboard.json), just beyond the kerb band (0.65 m centred 0.3 m out); position from the frame only, +-15 m'),
             # round 7e (owner note 57): orange PYLONS (tall delineator posts, ~1 m, white bands) close the drag strip continuation
             # at the T7 fork, across the strip's mouth (track edge to the strip's far paved edge, c20_s3630); no tyres
             dict(latlon=[(38.1652055, -122.4603712), (38.1652389, -122.4603487), (38.1652723, -122.4603262), (38.1653057, -122.4603037)], spacing=1.7, color='#e0561c', size=1.0, style='delineator',
