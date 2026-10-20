@@ -33,7 +33,7 @@ CONFIG = dict(
         mpp=0.0,                                 # metres per pixel at z20 at this latitude (measured on overlapping pairs)
         common_shift=None,                       # measured by register_clean.py -> satellite_clean/shift.json
         clean_mask='clean',
-        exclude=[],                              # captures off by more than 0.5 m from both neighbours (SKILL 1.6)
+        exclude=[],                              # captures off by more than 0.5 m from both neighbours (SKILL 1.2)
     ),
     # recent video and survey sources (SKILL 0.4, 0.5): recorded here and in compare/<id>/inventory/source.json
     sources=dict(

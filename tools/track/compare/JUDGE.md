@@ -55,7 +55,7 @@ C21 FINDING" (the checklist is below this prompt in JUDGE.md: paste it here). Fi
 lap, worst first.
 ```
 
-## Checklist (codify round, 20 Oct 2026; from the owner's 54 drive notes, `compare/sonoma/owner_drive_r2/README.md`)
+## Checklist (codify round, 20 Oct 2026; from the owner's drive notes 1-55, `compare/sonoma/owner_drive_r2/README.md`)
 
 The judge's table lists what differs; the checklist makes sure the differences the owner found by driving are looked for
 on every sheet. Answer each line for EVERY sheet (forward, side, back, pit, runoff), as `C<n>: ok`, `C<n>: n/a` (nothing
@@ -72,7 +72,7 @@ of that kind in the sheet) or `C<n>: FINDING` with a table row above. The notes 
 | C7 | Containment: is any paved area (drag strip, closed road, paddock) open to the track where the footage shows a wall, tyres or cones? [4] |
 | C8 | Cones: colour, size and spacing as the footage, standing on the painted line, none inside a lane or a blend, none where the footage has none? [42, 43, 49] |
 | C9 | Pit lane: open end to end (nothing across it), walls on the sides the footage shows, separation wall with its impact barrier at the nose, no rule boards in it? [1, 2, 15, 16, 18, 37] |
-| C10 | Pit-out blend: does the lane taper into the track as one surface (no seam, no lighter strip, no wall at its end), with the merge line and cones the footage shows? [24, 25, 26, 42, 43] |
+| C10 | Pit-out blend: does the lane taper into the track as one surface (no seam, no lighter strip, no wall at its end), with the merge line and cones the footage shows, the blend line continuing the pit wall's line? [24, 25, 26, 42, 43, 55] |
 | C11 | Kerbs: a kerb exactly where the clean captures show the block pattern (both sides checked), none elsewhere, colours as the footage, no green after-kerb strip unless shown? [3, 6, 7, 8, 9, 31] |
 | C12 | Stands: does each stand start, end and rise where the footage shows it, built into the hill, rows on the ground, nothing floating or buried? [5, 22, S1] |
 | C13 | Huts: is each corner station visible from where the footage shows it, roofed, raised, open-fronted, on the side of the wall the footage shows? [30, 40, 47, 49, 50, 53] |
