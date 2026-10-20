@@ -13,7 +13,7 @@
  "anchors": [
   {
    "name": "S/F",
-   "t": 0.0,
+   "t": 1.2,
    "s": 0.0
   },
   {
@@ -107,10 +107,10 @@
    "name": "footbridge",
    "t": 9.0,
    "s": 295.3,
-   "loo_pred_s": 282.5,
-   "loo_residual_m": 12.8,
-   "loo_residual_linear_m": 22.6,
-   "v_in": 32.8,
+   "loo_pred_s": 270.2,
+   "loo_residual_m": 25.1,
+   "loo_residual_linear_m": 35.9,
+   "v_in": 37.9,
    "v_out": 25.3
   },
   {
@@ -269,27 +269,27 @@
   {
    "t": 0,
    "frame": "t000.jpg",
-   "s": 0.0
+   "s": 4056.8
   },
   {
    "t": 2,
    "frame": "t002.jpg",
-   "s": 76.5
+   "s": 38.0
   },
   {
    "t": 4,
    "frame": "t004.jpg",
-   "s": 133.6
+   "s": 111.2
   },
   {
    "t": 6,
    "frame": "t006.jpg",
-   "s": 200.0
+   "s": 183.6
   },
   {
    "t": 8,
    "frame": "t008.jpg",
-   "s": 265.4
+   "s": 260.7
   },
   {
    "t": 10,
@@ -658,117 +658,6 @@
  "rows": [
   {
    "side": "left",
-   "kind": "mast",
-   "attrs": {
-    "type": "light mast",
-    "h_m": 20,
-    "h_method": "unmeasured"
-   },
-   "confidence": 0.8,
-   "t": 0,
-   "s": 0.0,
-   "source": "onboard:RAZip6S84CM@0.0",
-   "frame": "t000.jpg",
-   "scope": "lap",
-   "note": "light masts behind the pit lane"
-  },
-  {
-   "side": "left",
-   "kind": "stand",
-   "attrs": {
-    "type": "bleachers with suites deck",
-    "h_m": 15,
-    "h_method": "storeys"
-   },
-   "confidence": 0.9,
-   "t": 0,
-   "s": 0.0,
-   "source": "onboard:RAZip6S84CM@0.0",
-   "frame": "t000.jpg",
-   "scope": "lap",
-   "note": "main grandstand at the line, beyond the pit lane"
-  },
-  {
-   "side": "left",
-   "kind": "wall",
-   "attrs": {
-    "type": "concrete",
-    "colour": "light blue",
-    "h_m": 1.0,
-    "h_method": "jersey-ref"
-   },
-   "confidence": 0.9,
-   "t": 0,
-   "s": 0.0,
-   "source": "onboard:RAZip6S84CM@0.0",
-   "frame": "t000.jpg",
-   "scope": "lap",
-   "note": "pit wall along the front straight, between track and pit lane"
-  },
-  {
-   "side": "right",
-   "kind": "fence",
-   "attrs": {
-    "type": "chain-link catch fence",
-    "h_m": 3,
-    "h_method": "fence-post-ref"
-   },
-   "confidence": 0.7,
-   "t": 0,
-   "s": 0.0,
-   "source": "onboard:RAZip6S84CM@0.0",
-   "frame": "t000.jpg",
-   "scope": "lap",
-   "note": "far right, beyond the drag strip"
-  },
-  {
-   "side": "right",
-   "kind": "mast",
-   "attrs": {
-    "type": "light mast",
-    "h_m": 20,
-    "h_method": "unmeasured"
-   },
-   "confidence": 0.8,
-   "t": 0,
-   "s": 0.0,
-   "source": "onboard:RAZip6S84CM@0.0",
-   "frame": "t000.jpg",
-   "scope": "lap",
-   "note": "light masts beyond the drag strip"
-  },
-  {
-   "side": "right",
-   "kind": "paint",
-   "attrs": {
-    "type": "white edge line"
-   },
-   "confidence": 0.9,
-   "t": 0,
-   "s": 0.0,
-   "source": "onboard:RAZip6S84CM@0.0",
-   "frame": "t000.jpg",
-   "scope": "lap"
-  },
-  {
-   "side": "right",
-   "kind": "wall",
-   "attrs": {
-    "type": "concrete",
-    "colour": "light blue",
-    "h_m": 1.0,
-    "h_method": "jersey-ref"
-   },
-   "confidence": 0.9,
-   "t": 0,
-   "s": 0.0,
-   "source": "onboard:RAZip6S84CM@0.0",
-   "frame": "t000.jpg",
-   "scope": "lap",
-   "note": "drag-strip side wall, continuous"
-  },
-  {
-   "side": "left",
    "kind": "wall",
    "attrs": {
     "type": "concrete",
@@ -778,7 +667,7 @@
    },
    "confidence": 0.9,
    "t": 2,
-   "s": 76.5,
+   "s": 38.0,
    "source": "onboard:RAZip6S84CM@2.0",
    "frame": "t002.jpg",
    "scope": "lap",
@@ -794,7 +683,7 @@
    },
    "confidence": 0.7,
    "t": 2,
-   "s": 76.5,
+   "s": 38.0,
    "source": "onboard:RAZip6S84CM@2.0",
    "frame": "t002.jpg",
    "scope": "lap",
@@ -811,7 +700,7 @@
    },
    "confidence": 0.9,
    "t": 2,
-   "s": 76.5,
+   "s": 38.0,
    "source": "onboard:RAZip6S84CM@2.0",
    "frame": "t002.jpg",
    "scope": "lap",
@@ -825,7 +714,7 @@
    },
    "confidence": 0.9,
    "t": 4,
-   "s": 133.6,
+   "s": 111.2,
    "source": "onboard:RAZip6S84CM@4.0",
    "frame": "t004.jpg",
    "scope": "lap"
@@ -838,7 +727,7 @@
    },
    "confidence": 0.7,
    "t": 4,
-   "s": 133.6,
+   "s": 111.2,
    "source": "onboard:RAZip6S84CM@4.0",
    "frame": "t004.jpg",
    "scope": "lap"
@@ -854,7 +743,7 @@
    },
    "confidence": 0.9,
    "t": 4,
-   "s": 133.6,
+   "s": 111.2,
    "source": "onboard:RAZip6S84CM@4.0",
    "frame": "t004.jpg",
    "scope": "lap",
@@ -870,7 +759,7 @@
    },
    "confidence": 0.7,
    "t": 4,
-   "s": 133.6,
+   "s": 111.2,
    "source": "onboard:RAZip6S84CM@4.0",
    "frame": "t004.jpg",
    "scope": "lap"
@@ -883,7 +772,7 @@
    },
    "confidence": 0.8,
    "t": 4,
-   "s": 133.6,
+   "s": 111.2,
    "source": "onboard:RAZip6S84CM@4.0",
    "frame": "t004.jpg",
    "scope": "lap",
@@ -905,7 +794,7 @@
    },
    "confidence": 0.8,
    "t": 4,
-   "s": 168.6,
+   "s": 146.2,
    "source": "onboard:RAZip6S84CM@4.0",
    "frame": "t004.jpg",
    "scope": "lap"
@@ -915,7 +804,7 @@
    "kind": "building",
    "attrs": {
     "type": "pit garages, red roof",
-    "ahead_m": 95,
+    "ahead_m": 135,
     "correction": {
      "round": "scenery round 5 (21 Oct 2026)",
      "was": {
@@ -926,7 +815,7 @@
    },
    "confidence": 0.8,
    "t": 2,
-   "s": 171.5,
+   "s": 173.0,
    "source": "onboard:RAZip6S84CM@2.0",
    "frame": "t002.jpg",
    "scope": "lap",
@@ -940,7 +829,7 @@
    },
    "confidence": 0.9,
    "t": 6,
-   "s": 200.0,
+   "s": 183.6,
    "source": "onboard:RAZip6S84CM@6.0",
    "frame": "t006.jpg",
    "scope": "lap",
@@ -965,7 +854,7 @@
    },
    "confidence": 0.5,
    "t": 6,
-   "s": 200.0,
+   "s": 183.6,
    "source": "onboard:RAZip6S84CM@6.0",
    "frame": "t006.jpg",
    "scope": "lap",
@@ -979,7 +868,7 @@
    },
    "confidence": 0.8,
    "t": 6,
-   "s": 200.0,
+   "s": 183.6,
    "source": "onboard:RAZip6S84CM@6.0",
    "frame": "t006.jpg",
    "scope": "lap",
@@ -995,7 +884,7 @@
    },
    "confidence": 0.7,
    "t": 6,
-   "s": 200.0,
+   "s": 183.6,
    "source": "onboard:RAZip6S84CM@6.0",
    "frame": "t006.jpg",
    "scope": "lap",
@@ -1012,7 +901,7 @@
    },
    "confidence": 0.9,
    "t": 6,
-   "s": 200.0,
+   "s": 183.6,
    "source": "onboard:RAZip6S84CM@6.0",
    "frame": "t006.jpg",
    "scope": "lap",
@@ -1026,7 +915,7 @@
    },
    "confidence": 0.9,
    "t": 6,
-   "s": 200.0,
+   "s": 183.6,
    "source": "onboard:RAZip6S84CM@6.0",
    "frame": "t006.jpg",
    "scope": "lap"
@@ -1039,7 +928,7 @@
    },
    "confidence": 0.8,
    "t": 6,
-   "s": 200.0,
+   "s": 183.6,
    "source": "onboard:RAZip6S84CM@6.0",
    "frame": "t006.jpg",
    "scope": "lap"
@@ -1054,7 +943,7 @@
    },
    "confidence": 0.5,
    "t": 6,
-   "s": 200.0,
+   "s": 183.6,
    "source": "onboard:RAZip6S84CM@6.0",
    "frame": "t006.jpg",
    "scope": "lap",
@@ -1068,7 +957,7 @@
    },
    "confidence": 0.9,
    "t": 8,
-   "s": 265.4,
+   "s": 260.7,
    "source": "onboard:RAZip6S84CM@8.0",
    "frame": "t008.jpg",
    "scope": "lap"
@@ -1083,7 +972,7 @@
    },
    "confidence": 0.8,
    "t": 8,
-   "s": 265.4,
+   "s": 260.7,
    "source": "onboard:RAZip6S84CM@8.0",
    "frame": "t008.jpg",
    "scope": "lap",
@@ -1100,7 +989,7 @@
    },
    "confidence": 0.9,
    "t": 8,
-   "s": 265.4,
+   "s": 260.7,
    "source": "onboard:RAZip6S84CM@8.0",
    "frame": "t008.jpg",
    "scope": "lap",
@@ -1116,7 +1005,7 @@
    },
    "confidence": 0.6,
    "t": 8,
-   "s": 265.4,
+   "s": 260.7,
    "source": "onboard:RAZip6S84CM@8.0",
    "frame": "t008.jpg",
    "scope": "lap",
@@ -1131,7 +1020,7 @@
    },
    "confidence": 0.95,
    "t": 8,
-   "s": 285.4,
+   "s": 280.7,
    "source": "onboard:RAZip6S84CM@8.0",
    "frame": "t008.jpg",
    "scope": "lap"
@@ -1147,7 +1036,7 @@
    },
    "confidence": 0.95,
    "t": 8,
-   "s": 285.4,
+   "s": 280.7,
    "source": "onboard:RAZip6S84CM@8.0",
    "frame": "t008.jpg",
    "scope": "lap",
@@ -6681,6 +6570,117 @@
    "source": "streetview:5MY4xR9O7etAXEHnZCVnGQ@300",
    "frame": "",
    "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "mast",
+   "attrs": {
+    "type": "light mast",
+    "h_m": 20,
+    "h_method": "unmeasured"
+   },
+   "confidence": 0.8,
+   "t": 0,
+   "s": 4056.8,
+   "source": "onboard:RAZip6S84CM@0.0",
+   "frame": "t000.jpg",
+   "scope": "lap",
+   "note": "light masts behind the pit lane"
+  },
+  {
+   "side": "left",
+   "kind": "stand",
+   "attrs": {
+    "type": "bleachers with suites deck",
+    "h_m": 15,
+    "h_method": "storeys"
+   },
+   "confidence": 0.9,
+   "t": 0,
+   "s": 4056.8,
+   "source": "onboard:RAZip6S84CM@0.0",
+   "frame": "t000.jpg",
+   "scope": "lap",
+   "note": "main grandstand at the line, beyond the pit lane"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete",
+    "colour": "light blue",
+    "h_m": 1.0,
+    "h_method": "jersey-ref"
+   },
+   "confidence": 0.9,
+   "t": 0,
+   "s": 4056.8,
+   "source": "onboard:RAZip6S84CM@0.0",
+   "frame": "t000.jpg",
+   "scope": "lap",
+   "note": "pit wall along the front straight, between track and pit lane"
+  },
+  {
+   "side": "right",
+   "kind": "fence",
+   "attrs": {
+    "type": "chain-link catch fence",
+    "h_m": 3,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.7,
+   "t": 0,
+   "s": 4056.8,
+   "source": "onboard:RAZip6S84CM@0.0",
+   "frame": "t000.jpg",
+   "scope": "lap",
+   "note": "far right, beyond the drag strip"
+  },
+  {
+   "side": "right",
+   "kind": "mast",
+   "attrs": {
+    "type": "light mast",
+    "h_m": 20,
+    "h_method": "unmeasured"
+   },
+   "confidence": 0.8,
+   "t": 0,
+   "s": 4056.8,
+   "source": "onboard:RAZip6S84CM@0.0",
+   "frame": "t000.jpg",
+   "scope": "lap",
+   "note": "light masts beyond the drag strip"
+  },
+  {
+   "side": "right",
+   "kind": "paint",
+   "attrs": {
+    "type": "white edge line"
+   },
+   "confidence": 0.9,
+   "t": 0,
+   "s": 4056.8,
+   "source": "onboard:RAZip6S84CM@0.0",
+   "frame": "t000.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete",
+    "colour": "light blue",
+    "h_m": 1.0,
+    "h_method": "jersey-ref"
+   },
+   "confidence": 0.9,
+   "t": 0,
+   "s": 4056.8,
+   "source": "onboard:RAZip6S84CM@0.0",
+   "frame": "t000.jpg",
+   "scope": "lap",
+   "note": "drag-strip side wall, continuous"
   },
   {
    "side": "both",

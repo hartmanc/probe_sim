@@ -13,9 +13,9 @@
  "anchors": [
   {
    "name": "S/F",
-   "t": 0.0,
+   "t": 1.2,
    "sf": "start",
-   "how": "chequered line at the very start of the clip: the 0:00 frame shows the main grandstand's end, the press box and the first light mast where the 2:18.0 frame (line under the hood) shows them, while the 2:16 frame shows the grandstand much nearer (about 60 m before the line). Was 0:02.2 (from '0:00 = 2:16'), which made the S/F-to-footbridge stretch 45 m/s (round 5, see corrections)"
+   "how": "chequered line passing under the hood at 0:01.2: frames captured at 0.05 s precision in Chrome (round 5): at 0:00.9 the line is ~10 m ahead, at 0:01.15 it is at the hood's front edge, as in the 2:18.0 frame one lap later; was 0:02.2 (from '0:00 = 2:16'), which made the S/F-to-footbridge stretch 45 m/s"
   },
   {
    "name": "footbridge",
@@ -151,8 +151,8 @@
    "round": "scenery round 5",
    "anchor": "S/F",
    "was": 2.2,
-   "now": 0.0,
-   "why": "0:00 does not show the place of 2:16: comparing frames t000, t136 and t138, the grandstand end / press box / first mast in 0:00 sit as in 2:18.0 (line under the hood), not as in 2:16. With the line at 0:02.2 the car would average 45 m/s to the footbridge (295.3 m at 0:08.7, checked on capture c20_s1980: the bridge crosses the left edge at s 290-295; the pit-out paddock wall's Jersey end, 5 m away in t008, at s ~250); with 0:00 it averages 34 m/s"
+   "now": 1.2,
+   "why": "the 0:02.2 anchor assumed 0:00 shows the place of 2:16. Captured at 0.05 s steps (round 5): the line is ~10 m ahead at 0:00.9 and at the hood's front edge at 0:01.15, as in the 2:18.0 frame; the line passes under the camera at ~0:01.2. With 0:02.2 the car averaged 45 m/s to the footbridge (295.3 m; on c20_s1980 the span crosses the left edge at s 290-295)"
   },
   {
    "date": "2026-10-21",
@@ -160,7 +160,7 @@
    "anchor": "footbridge",
    "was": 8.7,
    "now": 9.0,
-   "why": "within the timed bracket 0:08.5-0:09.0: the 0:08 frame puts the deck 30-40 m ahead, about 1 s at the 33 m/s the S/F fix gives; with 8.7 the 0:08 rows mapped 2 m short of the bridge"
+   "why": "within the timed bracket 0:08.5-0:09.0: the 0:08 frame puts the deck 30-40 m ahead, about 1 s at the 33 m/s the S/F fix gives; with 8.7 the 0:08 rows mapped 2 m short of the bridge; confirmed in Chrome: at 0:09.0 the deck is directly overhead"
   }
  ]
 }

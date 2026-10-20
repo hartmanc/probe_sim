@@ -1,8 +1,8 @@
 # Sonoma: coverage gate on the current package (21 Oct 2026)
 
 **Status after scenery round 5 (registry rev 93334503f0): PASS.** Coverage: 285 rows checked, 160 objects, MISSING 0 for
-walls, fences, kerbs, tyre walls and bridges, UNSUPPORTED 0, 2 building rows ASSIGNED to the buildings round, 48 rows of
-the non-failing kinds still MISSING (masts 25, stands 9, tyre stacks 7, cone lines 6, station 1), 1 HEIGHT mismatch
+walls, fences, kerbs, tyre walls and bridges, UNSUPPORTED 0, 2 building rows ASSIGNED to the buildings round, 47 rows of
+the non-failing kinds still MISSING (masts 24, stands 9, tyre stacks 7, cone lines 6, station 1), 1 HEIGHT mismatch
 (advisory). Pit lane: 13 rows, all declared, all standing: PASS. What was placed, corrected and why, and every row's
 outcome: `manifest.md`, "Round 5". The round-4 work list below is kept as the record of what the round started from.
 

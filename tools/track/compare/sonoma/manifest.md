@@ -284,7 +284,7 @@ Gate results on `public/tracks/sonoma` (live on HEAD 52b091a, then on this packa
 | | wall | fence | kerb | tyre wall | bridge | tyre stack | stand | station | building | mast | cone line |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | MISSING before | 31 | 25 | 2 | 7 | 0 | 10 | 15 | 6 | 4 | 29 | 10 |
-| MISSING after | 0 | 0 | 0 | 0 | 0 | 7 | 9 | 1 | 0 (2 ASSIGNED) | 25 | 6 |
+| MISSING after | 0 | 0 | 0 | 0 | 0 | 7 | 9 | 1 | 0 (2 ASSIGNED) | 24 | 6 |
 | UNSUPPORTED before | 2 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 12 | 0 | 8 |
 | UNSUPPORTED after | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 
@@ -292,17 +292,18 @@ HEIGHT mismatches: 13 before, 1 after (see below). Pit-lane gate: FAIL (3 box-wa
 after. Edge, barrier-gap, containment, pit-connectivity and sign gates pass.
 
 ### Time-to-station map (inventory/source.json `corrections`)
-- **S/F 0:02.2 -> 0:00.0.** The anchor rested on "0:00 shows the same place as 2:16"; frames t000 / t136 / t138 say
-  otherwise: in t000 the main grandstand's end, the press box and the first light mast sit as in t138 (chequered line
-  under the hood), while t136 shows the grandstand much nearer (about 60 m before the line). With 0:02.2 the car
-  averaged 45 m/s to the footbridge.
+- **S/F 0:02.2 -> 0:01.2.** The anchor rested on "0:00 shows the same place as 2:16". Frames captured in Chrome at
+  0.05 s steps: the chequered line is ~10 m ahead at 0:00.9 and at the hood's front edge at 0:01.15, as in the 2:18.0
+  frame one lap later. With 0:02.2 the car averaged 45 m/s to the footbridge.
 - **Footbridge 0:08.7 -> 0:09.0**, inside its timed bracket (0:08.5-0:09.0): t008 shows the paddock-side Jersey end 5 m
-  away and the deck 30-40 m ahead (deck 4.2 m above the camera, 50 px above the horizon). The bridge's s 295 is right:
+  away and the deck 30-40 m ahead (deck 4.2 m above the camera, 50 px above the horizon); at 0:09.0 the deck is
+  directly overhead (Chrome capture). The bridge's s 295 is right:
   on c20_s1980 the span crosses the left edge at s 290-295.
-- Residuals (leave-one-out, profile interpolation): footbridge 49.0 -> 12.8 m (S/F-to-bridge speed 45.4 -> 32.8 m/s),
+- Residuals (leave-one-out, profile interpolation): footbridge 49.0 -> 25.1 m (S/F-to-bridge speed 45.4 -> 37.9 m/s,
+  the profile slowing the car for T2 earlier than the CR-V did; linear 60.0 -> 35.9 m),
   T2 -14.2 -> -10.0 m; the other anchors unchanged (T3 -1.8, T3a 5.7, T4 -18.6, T5 32.7, T6 -11.3, T7 -28.4, T7a 8.6,
-  T8 9.6, T8a -7.3, T9 9.3, T9a 19.1, T10 -15.3, T11 -0.6, T12 7.0 m). Still uncertain: 0:04 maps to s 137 while the
-  frame shows the pit-wall nose (s ~92-103) just ahead, and 1:56 maps to s 3492 while the frame shows the pit-in Jersey
+  T8 9.6, T8a -7.3, T9 9.3, T9a 19.1, T10 -15.3, T11 -0.6, T12 7.0 m). The 0:04 frame (pit-wall nose, s ~92-103,
+  just ahead) now maps to s ~112 (was 91 before the fix, 138 with S/F at 0:00). Still uncertain: 1:56 maps to s 3492 while the frame shows the pit-in Jersey
   abeam (its nose is at s 3586 on c20_s1210): the map is +-40 m there; rows from those frames were checked on the frames.
 
 ### Placed (config `scenery`, each entry's `src` names the captures and the onboard time)
@@ -357,9 +358,9 @@ mouth; 0:14 the shade roof on the T2 hilltop. Corrections (43 rows):
 
 | s now (m) | t | side | kind | row | change | why |
 |---|---|---|---|---|---|---|
-| 169 | 0:04.0 | left | building | pit-exit building, red roof, glazed front | ahead_m: none -> 35 | frame t004: the red-roofed pit-exit building is ahead-left (frame left edge); its footprint on c20_s1870 is at s ~160-190 |
-| 172 | 0:02.0 | left | building | pit garages, red roof | ahead_m: none -> 95 | frame t002: the red-roofed building is far ahead-left beyond the pit wall: the pit-exit building at s ~170 (c20_s1870), not a garage abeam |
-| 200 | 0:06.0 | ahead | fence | fence along the hill top | side: right -> ahead, out_m: none -> 140 | frame t006: the fence runs along the hill top below the tower, far right-ahead; the lidar DEM puts that crest 130-150 m beyond the right edge (s 150-280), past the gate reach for a fence (80 m): background, not trackside; kept as an ahead row without a distance (the station is not fixed for an object that far out) |
+| 146 | 0:04.0 | left | building | pit-exit building, red roof, glazed front | ahead_m: none -> 35 | frame t004: the red-roofed pit-exit building is ahead-left (frame left edge); its footprint on c20_s1870 is at s ~160-190 |
+| 173 | 0:02.0 | left | building | pit garages, red roof | ahead_m: none -> 135 | frame t002: the red-roofed building is far ahead-left beyond the pit wall: the pit-exit building at s ~170 (c20_s1870), not a garage abeam |
+| 184 | 0:06.0 | ahead | fence | fence along the hill top | side: right -> ahead, out_m: none -> 140 | frame t006: the fence runs along the hill top below the tower, far right-ahead; the lidar DEM puts that crest 130-150 m beyond the right edge (s 150-280), past the gate reach for a fence (80 m): background, not trackside; kept as an ahead row without a distance (the station is not fixed for an object that far out) |
 | 414 | 0:12.0 | left | fence | catch fence, curved-top posts | ahead_m: none -> 35 | frame t012: the fence stands along the foot of the terraces AHEAD-left (the row note says so); the T2-exit wall and fence begin at s ~414 on c20_s2145 / c20_s2200, about 35 m ahead |
 | 443 | 0:12.0 | left | station | white marshal hut at the foot of the terraces | ahead_m: none -> 64 | frame t012: the hut is ahead-left at the fence line; c20_s2200 shows a ~2 m white hut at the foot of the terraces at s ~445, 31 m left of the centre |
 | 479 | 0:12.0 | right | tyre_wall | dark tyre wall far right | ahead_m: none -> 100 | frame t012: the dark tyre wall is far AHEAD-right along the foot of the hill (T2 exit / T3 approach, as the note says); the barrier line there begins at s ~481 (owner_11 line, c20_s2200 / c20_s2255) |
@@ -414,7 +415,7 @@ infield grandstand with suites at T10/T11 (stand rows 1:34-1:44 right), the pit 
 buildings (rows 2:02-2:12 left, pit rows).
 
 ### Still MISSING (kinds that do not fail the gate) and why
-- **Masts (25 rows):** positions not resolved on the captures (masts show only as thin shadows; along the front straight
+- **Masts (24 rows):** positions not resolved on the captures (masts show only as thin shadows; along the front straight
   and the drag strip the shadows run parallel to the walls and lane lines, and the captures were taken during an event);
   placed only where base and shadow are clear.
 - **Stands (9):** the main grandstand and the T10/T11 infield grandstand (buildings round, above); the Carousel bank
@@ -432,7 +433,7 @@ buildings (rows 2:02-2:12 left, pit rows).
 
 ## Round 5 tables (generated: `npx tsx tools/track/gates/manifest_tables.ts public/tracks/sonoma tools/track/compare/sonoma/inventory.json <coverage config>`)
 
-### Scenery objects of the checked kinds (160, from tools/track/out/sonoma_r3/work/scenery_tmp)
+### Scenery objects of the checked kinds (160, from public/tracks/sonoma)
 
 | # | kind | side | s (m) | out (m) | object | source |
 |---|---|---|---|---|---|---|
@@ -601,37 +602,30 @@ buildings (rows 2:02-2:12 left, pit rows).
 
 | s (m) | t | side | kind | what | source | outcome |
 |---|---|---|---|---|---|---|
-| 0 | 0:00.0 | left | mast | light mast | onboard:RAZip6S84CM@0.0 | MISSING |
-| 0 | 0:00.0 | left | stand | bleachers with suites deck | onboard:RAZip6S84CM@0.0 | MISSING |
-| 0 | 0:00.0 | left | wall | concrete | onboard:RAZip6S84CM@0.0 | covered by barrier 1 (concrete); barrier 62 (concrete) |
-| 0 | 0:00.0 | right | fence | chain-link catch fence | onboard:RAZip6S84CM@0.0 | covered by barrier 61 (fence + 3 m fence) |
-| 0 | 0:00.0 | right | mast | light mast | onboard:RAZip6S84CM@0.0 | MISSING |
-| 0 | 0:00.0 | right | paint | white edge line | onboard:RAZip6S84CM@0.0 | surroundings (not a checked kind) |
-| 0 | 0:00.0 | right | wall | concrete | onboard:RAZip6S84CM@0.0 | covered by barrier 3 (concrete); barrier 12 (concrete) |
-| 77 | 0:02.0 | left | wall | concrete | onboard:RAZip6S84CM@2.0 | covered by barrier 1 (concrete) |
-| 77 | 0:02.0 | right | fence | chain-link catch fence | onboard:RAZip6S84CM@2.0 | covered by barrier 61 (fence + 3 m fence) |
-| 77 | 0:02.0 | right | wall | concrete | onboard:RAZip6S84CM@2.0 | covered by barrier 3 (concrete); barrier 11 (concrete) |
-| 134 | 0:04.0 | ahead | tower | Sonoma tower on the hill | onboard:RAZip6S84CM@4.0 | surroundings (not a checked kind) |
-| 134 | 0:04.0 | left | boards | ad boards on the fence line | onboard:RAZip6S84CM@4.0 | surroundings (not a checked kind) |
-| 134 | 0:04.0 | left | wall | concrete | onboard:RAZip6S84CM@4.0 | covered by barrier 2 (concrete + 1 m fence) |
-| 134 | 0:04.0 | right | mast | light mast | onboard:RAZip6S84CM@4.0 | MISSING |
-| 134 | 0:04.0 | right | runoff | paved, drag-strip junction | onboard:RAZip6S84CM@4.0 | surroundings (not a checked kind) |
-| 169 | 0:04.0 | left | building | pit-exit building, red roof, glazed front | onboard:RAZip6S84CM@4.0 | covered by building 14 '' 6.6 m (corrected in scenery round 5 (21 Oct 2026): ahead_m was none) |
-| 172 | 0:02.0 | left | building | pit garages, red roof | onboard:RAZip6S84CM@2.0 | covered by building 14 '' 6.6 m (corrected in scenery round 5 (21 Oct 2026): ahead_m was none) |
-| 200 | 0:06.0 | ahead | bridge | footbridge with ad boards (Save Mart, GR, Sunoco, Las Vegas) | onboard:RAZip6S84CM@6.0 | skipped: 'ahead' without a distance |
-| 200 | 0:06.0 | ahead | fence | fence along the hill top | onboard:RAZip6S84CM@6.0 | skipped: 'ahead' without a distance (corrected in scenery round 5 (21 Oct 2026): side was right, out_m was none) |
-| 200 | 0:06.0 | left | cone_line | pit-exit cones, yellow/white, ~0.5 m | onboard:RAZip6S84CM@6.0 | covered by cone line 5 |
-| 200 | 0:06.0 | left | fence | chain-link | onboard:RAZip6S84CM@6.0 | covered by barrier 2 (concrete + 1 m fence) catch fence |
-| 200 | 0:06.0 | left | wall | concrete | onboard:RAZip6S84CM@6.0 | covered by barrier 2 (concrete + 1 m fence) |
-| 200 | 0:06.0 | right | paint | white edge line | onboard:RAZip6S84CM@6.0 | surroundings (not a checked kind) |
-| 200 | 0:06.0 | right | runoff | dry grass / dirt | onboard:RAZip6S84CM@6.0 | surroundings (not a checked kind) |
-| 200 | 0:06.0 | right | wall | low dark wall / tyre line at the foot of the bank | onboard:RAZip6S84CM@6.0 | covered by barrier 11 (concrete) |
-| 265 | 0:08.0 | left | paint | white edge line | onboard:RAZip6S84CM@8.0 | surroundings (not a checked kind) |
-| 265 | 0:08.0 | left | tyre_wall | dark low wall / tyre wall round the outside of T2 | onboard:RAZip6S84CM@8.0 | covered by barrier 40 (tyres) |
-| 265 | 0:08.0 | left | wall | concrete Jersey end | onboard:RAZip6S84CM@8.0 | covered by barrier 2 (concrete + 1 m fence) |
-| 265 | 0:08.0 | right | tyre_wall | low dark barrier line beyond the grass bank | onboard:RAZip6S84CM@8.0 | covered by barrier 41 (tyres) |
-| 285 | 0:08.0 | both | boards | ad boards on the bridge: Save Mart, Toyota GR x2, Sunoco, Las Vegas | onboard:RAZip6S84CM@8.0 | surroundings (not a checked kind) |
-| 285 | 0:08.0 | both | bridge | truss footbridge on concrete piers both sides, ad-board fascia | onboard:RAZip6S84CM@8.0 | covered by bridge 1382620985 (foot) deck 20.9 |
+| 38 | 0:02.0 | left | wall | concrete | onboard:RAZip6S84CM@2.0 | covered by barrier 1 (concrete); barrier 62 (concrete) |
+| 38 | 0:02.0 | right | fence | chain-link catch fence | onboard:RAZip6S84CM@2.0 | covered by barrier 61 (fence + 3 m fence) |
+| 38 | 0:02.0 | right | wall | concrete | onboard:RAZip6S84CM@2.0 | covered by barrier 3 (concrete); barrier 12 (concrete) |
+| 111 | 0:04.0 | ahead | tower | Sonoma tower on the hill | onboard:RAZip6S84CM@4.0 | surroundings (not a checked kind) |
+| 111 | 0:04.0 | left | boards | ad boards on the fence line | onboard:RAZip6S84CM@4.0 | surroundings (not a checked kind) |
+| 111 | 0:04.0 | left | wall | concrete | onboard:RAZip6S84CM@4.0 | covered by barrier 2 (concrete + 1 m fence) |
+| 111 | 0:04.0 | right | mast | light mast | onboard:RAZip6S84CM@4.0 | MISSING |
+| 111 | 0:04.0 | right | runoff | paved, drag-strip junction | onboard:RAZip6S84CM@4.0 | surroundings (not a checked kind) |
+| 146 | 0:04.0 | left | building | pit-exit building, red roof, glazed front | onboard:RAZip6S84CM@4.0 | covered by building 14 '' 6.6 m (corrected in scenery round 5 (21 Oct 2026): ahead_m was none) |
+| 173 | 0:02.0 | left | building | pit garages, red roof | onboard:RAZip6S84CM@2.0 | covered by building 14 '' 6.6 m (corrected in scenery round 5 (21 Oct 2026): ahead_m was none) |
+| 184 | 0:06.0 | ahead | bridge | footbridge with ad boards (Save Mart, GR, Sunoco, Las Vegas) | onboard:RAZip6S84CM@6.0 | skipped: 'ahead' without a distance |
+| 184 | 0:06.0 | ahead | fence | fence along the hill top | onboard:RAZip6S84CM@6.0 | skipped: 'ahead' without a distance (corrected in scenery round 5 (21 Oct 2026): side was right, out_m was none) |
+| 184 | 0:06.0 | left | cone_line | pit-exit cones, yellow/white, ~0.5 m | onboard:RAZip6S84CM@6.0 | covered by cone line 5 |
+| 184 | 0:06.0 | left | fence | chain-link | onboard:RAZip6S84CM@6.0 | covered by barrier 2 (concrete + 1 m fence) catch fence |
+| 184 | 0:06.0 | left | wall | concrete | onboard:RAZip6S84CM@6.0 | covered by barrier 2 (concrete + 1 m fence) |
+| 184 | 0:06.0 | right | paint | white edge line | onboard:RAZip6S84CM@6.0 | surroundings (not a checked kind) |
+| 184 | 0:06.0 | right | runoff | dry grass / dirt | onboard:RAZip6S84CM@6.0 | surroundings (not a checked kind) |
+| 184 | 0:06.0 | right | wall | low dark wall / tyre line at the foot of the bank | onboard:RAZip6S84CM@6.0 | covered by barrier 11 (concrete) |
+| 261 | 0:08.0 | left | paint | white edge line | onboard:RAZip6S84CM@8.0 | surroundings (not a checked kind) |
+| 261 | 0:08.0 | left | tyre_wall | dark low wall / tyre wall round the outside of T2 | onboard:RAZip6S84CM@8.0 | covered by barrier 40 (tyres) |
+| 261 | 0:08.0 | left | wall | concrete Jersey end | onboard:RAZip6S84CM@8.0 | covered by barrier 2 (concrete + 1 m fence) |
+| 261 | 0:08.0 | right | tyre_wall | low dark barrier line beyond the grass bank | onboard:RAZip6S84CM@8.0 | covered by barrier 41 (tyres) |
+| 281 | 0:08.0 | both | boards | ad boards on the bridge: Save Mart, Toyota GR x2, Sunoco, Las Vegas | onboard:RAZip6S84CM@8.0 | surroundings (not a checked kind) |
+| 281 | 0:08.0 | both | bridge | truss footbridge on concrete piers both sides, ad-board fascia | onboard:RAZip6S84CM@8.0 | covered by bridge 1382620985 (foot) deck 20.9 |
 | 323 | 0:10.0 | left | kerb | T2 entry outside kerb | onboard:RAZip6S84CM@10.0 | covered by kerb 330.3-372.2 |
 | 323 | 0:10.0 | left | runoff | grass then dirt | onboard:RAZip6S84CM@10.0 | surroundings (not a checked kind) |
 | 323 | 0:10.0 | right | paint | white edge line | onboard:RAZip6S84CM@10.0 | surroundings (not a checked kind) |
@@ -987,6 +981,13 @@ buildings (rows 2:02-2:12 left, pit rows).
 | 4050 |  | left | stand | main grandstand behind the pit lane, open bleachers, suites deck, stair towers | streetview:5MY4xR9O7etAXEHnZCVnGQ@300 | MISSING |
 | 4050 |  | left | wall | concrete pit wall at the line | streetview:5MY4xR9O7etAXEHnZCVnGQ@300 | covered by barrier 1 (concrete); barrier 62 (concrete) |
 | 4050 |  | right | wall | concrete wall to the drag strip, Sonoma Raceway boards on its face | streetview:5MY4xR9O7etAXEHnZCVnGQ@300 | covered by barrier 3 (concrete); barrier 12 (concrete) |
+| 4057 | 0:00.0 | left | mast | light mast | onboard:RAZip6S84CM@0.0 | MISSING |
+| 4057 | 0:00.0 | left | stand | bleachers with suites deck | onboard:RAZip6S84CM@0.0 | MISSING |
+| 4057 | 0:00.0 | left | wall | concrete | onboard:RAZip6S84CM@0.0 | covered by barrier 1 (concrete); barrier 62 (concrete) |
+| 4057 | 0:00.0 | right | fence | chain-link catch fence | onboard:RAZip6S84CM@0.0 | covered by barrier 61 (fence + 3 m fence) |
+| 4057 | 0:00.0 | right | mast | light mast | onboard:RAZip6S84CM@0.0 | covered by mast '' |
+| 4057 | 0:00.0 | right | paint | white edge line | onboard:RAZip6S84CM@0.0 | surroundings (not a checked kind) |
+| 4057 | 0:00.0 | right | wall | concrete | onboard:RAZip6S84CM@0.0 | covered by barrier 3 (concrete); barrier 12 (concrete) |
 | 4092 | 2:18.0 | both | paint | chequered start/finish line, green/white, SONOMA RACEWAY lettering | onboard:RAZip6S84CM@138.0 | surroundings (not a checked kind) |
 | 4092 | 2:18.0 | left | wall | concrete pit wall, light blue | onboard:RAZip6S84CM@138.0 | covered by barrier 1 (concrete); barrier 62 (concrete) |
 | 4092 | 2:18.0 | right | fence | chain-link catch fence beyond the drag strip | onboard:RAZip6S84CM@138.0 | covered by barrier 61 (fence + 3 m fence) |
