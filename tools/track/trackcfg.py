@@ -39,10 +39,14 @@ Geometry (Stage 1)
   centre_captures ('z20' | 'clean'), centre_registration ('per_capture' | 'common')
   repave_fixes [(a, b, crest from, crest to, why)]
   captures {z20_dir, z20_index, z20_mask, clean_dir, clean_index, mpp, common_shift, exclude, cursor_boxes}
-  spline {runs [(lo, hi)], knot, lam, huber, line_off, prior, init_stiff, captures}
-  features [(side, lo, hi, 'keep' | 'asphalt_end' | 'kerb', why)]   keep: the prior is held (legacy reproduction
+  spline {runs [(lo, hi)], knot, lam, huber, line_off, prior, init_stiff, captures, asphalt_end {jump, sat_max, lo, hi},
+          warm_thr}   (asphalt_end / warm_thr: detector parameters of those features; absent = the defaults)
+  features [(side, lo, hi, 'keep' | 'asphalt_end' | 'warm_end' | 'kerb' | 'kerb_band', why)]   keep: the prior is held (legacy reproduction
                                              only; the fitted method ignores it); asphalt_end: where the dark asphalt
-                                             ends; kerb: red-band (kerb outer limit) candidates only
+                                             ends; kerb: red-band (kerb outer limit) candidates only; warm_end: where
+                                             grey asphalt meets warm dirt (the warmth step, spline.warm_thr); kerb_band:
+                                             a kerb whose blocks are not red on the captures, every 0.3-2.6 m band by
+                                             its outer limit (Buttonwillow, 20 Oct 2026)
   prior {bridge_win, bridge_skip [first-centre stations], extra_bridges [first-centre stations of bridges OSM does not
          map], first_edge [(side, lo, hi, why)], interp [(side, lo, hi, why)]}
   shapes [{side, knots [(station, half-width)], blend, why, fitted_only}]   measured half-widths; in the fitted method

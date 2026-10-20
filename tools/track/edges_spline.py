@@ -84,14 +84,40 @@ def bands(v, valid):
 KEEP_W = 400.0
 
 
+# asphalt_end detector parameters (spline.asphalt_end {jump, sat_max, lo, hi}); the defaults are the detector every
+# circuit used until 20 Oct 2026 (Sonoma's T7 wall-side asphalt). Buttonwillow's asphalt meets pale dusty dirt with a
+# smaller step (jump 8, sat_max 40, window -2.0..+2.0 m: on eight stretches of the 2026 captures 81 % of stations hit,
+# 98 % of hits within 0.25 m of the station's median over captures, against 65 % / 99 % with the defaults)
+AEND = dict(jump=10.0, sat_max=30.0, lo=-1.2, hi=2.0)
+
+
 def asphalt_end(v, valid):
-    """offset where the dark asphalt ends: first point whose next 0.4 m is 10+ brighter than the 0.3-1.0 m before it."""
+    """offset where the dark asphalt ends: first point whose next 0.4 m is `jump`+ brighter than the 0.3-1.0 m before it."""
     br = v.mean(1); sat = v.max(1) - v.min(1); st = 0.04; q = lambda m: max(1, int(round(m / st)))
+    jump, sat_max, lo, hi = AEND['jump'], AEND['sat_max'], AEND['lo'], AEND['hi']
     for k in range(q(1.0), len(U) - q(0.4)):
         if not valid[k - q(1.0):k + q(0.4)].all(): continue
-        if U[k] < -1.2 or U[k] > 2.0: continue   # near the current edge only (the rubbered line brightens gently over 4 m)
+        if U[k] < lo or U[k] > hi: continue   # near the current edge only (the rubbered line brightens gently over 4 m)
         before = np.median(br[k - q(1.0):k - q(0.3)]); after = br[k:k + q(0.4)]
-        if (after > before + 10).mean() > 0.9 and np.median(sat[k:k + q(0.4)]) < 30: return float(U[k])
+        if (after > before + jump).mean() > 0.9 and np.median(sat[k:k + q(0.4)]) < sat_max: return float(U[k])
+    return None
+
+
+WARM_THR = 16.0   # R - B (8-bit) above which a pixel reads as dirt (spline.warm_thr; Buttonwillow, 20 Oct 2026)
+
+
+def warm_end(v, valid, thr=None):
+    """offset where the grey asphalt ends against warm dirt (feature 'warm_end'; circuits with no painted edge line whose
+    asphalt and dirt have the same brightness, Buttonwillow: asphalt R - B +8..+12, dirt +20..+31 on the 2026 captures):
+    the first point, from 1.5 m inside the current edge outward to 2.5 m beyond it, whose next 0.4 m reads warmer than
+    thr on 80 % of its samples while the 0.3-1.0 m before it has a median at least 5 below thr."""
+    thr = WARM_THR if thr is None else thr
+    w = v[:, 0] - v[:, 2]; st = 0.04; q = lambda m: max(1, int(round(m / st)))
+    for k in range(q(1.0), len(U) - q(0.4)):
+        if not valid[k - q(1.0):k + q(0.4)].all(): continue
+        if U[k] < -1.5 or U[k] > 2.5: continue
+        if np.median(w[k - q(1.0):k - q(0.3)]) <= thr - 5 and (w[k:k + q(0.4)] >= thr).mean() >= 0.8:
+            return float(U[k])
     return None
 
 
@@ -310,8 +336,8 @@ def gather(C, NL, hl, hr, tiles, features, line_off, mpp, U_=None):
             val = inside[rows] & mask[np.clip(np.round(py[rows]).astype(int), 0, H - 1), np.clip(np.round(px[rows]).astype(int), 0, W - 1)]
             for v, ok, i in zip(V, val, rows):
                 feat = feature_at(features, side, ks[i], n)
-                if feat == 'asphalt_end':
-                    e = asphalt_end(v, ok)
+                if feat in ('asphalt_end', 'warm_end'):
+                    e = asphalt_end(v, ok) if feat == 'asphalt_end' else warm_end(v, ok)
                     if e is not None: raw[side].append((i, ti, [(e, e + 0.1, False, -1.0)]))
                     continue
                 bl = bands(v, ok)
@@ -326,6 +352,10 @@ def gather(C, NL, hl, hr, tiles, features, line_off, mpp, U_=None):
             feat = feature_at(features, side, ks[i], n)
             if feat == 'kerb':
                 c = [(u1, 2) for u0, u1, has_red, w in bl if has_red and 0.3 <= w <= 2.6]
+            elif feat == 'kerb_band':
+                # a kerb whose coloured blocks do not read as red on the captures (Buttonwillow's red / white / blue
+                # blocks are grey there): every band 0.3-2.6 m wide counts by its outer limit, as in a red kerb zone
+                c = candidates(bl, line_off, True)
             else:
                 c = candidates(bl, line_off, kerb_at[i])
             if c: obs[side].append((i, ti, [hw[i] + e for e, _ in c], [kd for _, kd in c]))
@@ -387,7 +417,10 @@ def fit_periodic(C, NL, hl, hr, tiles, features, sp, mpp, anchors=None, log=_log
     {'left'|'right': (stations, half-widths, weights)} from declared straights and measured shapes, inside the fit.
     Returns (hl, hr, report) with per-side metrics for the gates (build_track.py): share of associated observations
     within 0.25 m, share of capture rows with a band within 1.2 m, coverage, gaps, waviness and kink per station."""
+    global WARM_THR
     n = len(C); knot = sp['knot']; K = int(round(n / knot))
+    if sp.get('warm_thr') is not None: WARM_THR = float(sp['warm_thr'])
+    AEND.update(jump=10.0, sat_max=30.0, lo=-1.2, hi=2.0); AEND.update(sp.get('asphalt_end') or {})
     win = sp.get('search', (-4.5, 4.0)); U_ = np.arange(win[0], win[1] + 1e-4, 0.04)
     obs = gather(C, NL, hl, hr, tiles, features, sp['line_off'], mpp, U_)
     xs = np.arange(n, dtype=float); Bx = periodic_basis(xs, K, n)

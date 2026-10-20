@@ -31,10 +31,11 @@ export interface SceneryJson {
   /** color: the wall's paint where the evidence shows it (Sonoma 2026: light blue / green), default plain concrete */
   barriers: { kind: 'concrete' | 'armco' | 'tyres' | 'pitwall' | 'fence'; h: number; fence: number; pts: V3[]; src: string; color?: string;
     /** tyres per stack (round 7; default from h) */ stack?: number }[];
-  kerbs: { width: number; inside?: boolean; stripe_m: number; /** [stripe, base] sRGB hex; default red / white */ colors?: [string, string];
+  kerbs: { width: number; inside?: boolean; stripe_m: number; /** [stripe, base] sRGB hex (default red / white), or [stripe, base, stripe 2]: the
+    *  two stripe colours alternate between base blocks (Buttonwillow's red / white / blue / white) */ colors?: KerbColors;
     /** raised concrete kerbs (physics: src/physics/track.ts KerbsJson); absent = flat paint */ profile?: { height: number; face: number; back: number } | null;
     strips: { side: number; s0: number; s1: number; kind: string; paint?: number; inset?: number ; /** verge: white line on the outer edge (default on) */ edge?: boolean;
-      /** per-strip paint [stripe, base] */ colors?: [string, string]; /** band centre beyond the edge, m (default: the inside convention) */ off?: number; src?: string }[] };
+      /** per-strip paint [stripe, base] or [stripe, base, stripe 2] */ colors?: KerbColors; /** band centre beyond the edge, m (default: the inside convention) */ off?: number; src?: string }[] };
   /** raised yellow sausage kerbs beyond the apex kerbs (physics: src/physics/track.ts) */
   sausages?: SausageJson | null;
   edge_lines?: { width: number; inset: number; runs: { side: number; s0: number; s1: number }[] };
@@ -863,7 +864,8 @@ const PAINT_V = (band: keyof typeof PAINT_ROWS, t: number) => 1 - (PAINT_ROWS[ba
  * multiplies them by the aerial's local brightness so they pick up the same shade and grime as the road.
  */
 const hexRgb = (h: string): number[] => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
-export function kerbPaintTexture(stripeM: number, colors?: [string, string]): THREE.Texture {
+export type KerbColors = [string, string] | [string, string, string];
+export function kerbPaintTexture(stripeM: number, colors?: KerbColors): THREE.Texture {
   const key = `kerbpaint${stripeM}${colors ? colors.join('') : ''}`;
   const hit = texCache.get(key);
   if (hit) return hit;
@@ -888,6 +890,8 @@ export function kerbPaintTexture(stripeM: number, colors?: [string, string]): TH
   const fade = lattice(24, 6), patch = lattice(96, 12), streak = lattice(48, 64), fine = lattice(512, 96), edgeJ = lattice(128, 4);
   const mix = (a: number[], b: number[], t: number) => a.map((v, k) => v + (b[k] - v) * t);
   const RED = colors ? hexRgb(colors[0]) : [172, 64, 56], WHITE = colors ? hexRgb(colors[1]) : [228, 225, 214], CONC = [170, 166, 156], RUBBER = [60, 58, 55];
+  // a third colour: the stripe colour of every second stripe (stripe, base, stripe 2, base: a period of four stripes)
+  const RED2 = colors && colors.length === 3 ? hexRgb(colors[2]) : RED;
   const GREEN = [60, 122, 72], DIRT = [168, 150, 118], LINE = [214, 212, 204];
   const stripePx = stripeM * PAINT_PX_M;
   const put = (x: number, y: number, c: number[], a: number) => {
@@ -903,7 +907,8 @@ export function kerbPaintTexture(stripeM: number, colors?: [string, string]): TH
       const xb = x + (noise(edgeJ, x, y) - 0.5) * 5;                       // painted stripe ends, slightly ragged
       const ph = ((xb % (2 * stripePx)) + 2 * stripePx) % (2 * stripePx);
       const red = ss(-2.5, 2.5, ph) * (1 - ss(stripePx - 2.5, stripePx + 2.5, ph)) + ss(2 * stripePx - 2.5, 2 * stripePx + 2.5, ph);
-      let c = mix(WHITE, RED, Math.min(1, red));
+      const second = colors && colors.length === 3 && Math.floor((((xb % (4 * stripePx)) + 4 * stripePx) % (4 * stripePx)) / (2 * stripePx)) === 1;
+      let c = mix(WHITE, second ? RED2 : RED, Math.min(1, red));
       c = mix(c, CONC, 0.08 + 0.25 * ss(0.45, 0.85, nf));                // sun-faded paint
       c = mix(c, CONC, ss(0.66, 0.74, np) * 0.85);                        // worn through to the concrete
       const ride = ss(0.0, 0.12, t) * (1 - ss(0.45, 0.8, t));           // the half the tyres run on
@@ -994,12 +999,12 @@ function buildKerbs(track: TrackJson, k: SceneryJson['kerbs'], ground?: (x: numb
   if (keys.length > 1) {
     const g = new THREE.Group(); g.name = 'kerbs';
     for (const key of keys) {
-      const sub = buildKerbs(track, { ...k, colors: (key === '|' ? k.colors : key.split('|')) as [string, string] | undefined, strips: k.strips.filter((s) => keyOf(s) === key).map((s) => ({ ...s, colors: undefined })) }, ground, surf);
+      const sub = buildKerbs(track, { ...k, colors: (key === '|' ? k.colors : key.split('|')) as KerbColors | undefined, strips: k.strips.filter((s) => keyOf(s) === key).map((s) => ({ ...s, colors: undefined })) }, ground, surf);
       if (sub) { sub.name = 'kerbs'; g.add(sub); }
     }
     return g;
   }
-  const colors = (k.strips[0]?.colors ?? k.colors) as [string, string] | undefined;
+  const colors = (k.strips[0]?.colors ?? k.colors) as KerbColors | undefined;
   const st = new PaintStrips(edgeFrame(track, ground), surf, track.spacing_m || 1);
   const w = k.width;
   const period = 2 * k.stripe_m;

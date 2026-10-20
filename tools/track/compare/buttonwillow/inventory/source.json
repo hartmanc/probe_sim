@@ -21,7 +21,122 @@
  "frames": "frames",
  "frame_pattern": "t{t:03d}.jpg",
  "interp": "profile",
- "anchors": [],
+ "anchors": [
+  {
+   "name": "S/F",
+   "t": 5.47,
+   "sf": "start",
+   "how": "Catalyst lap timer: lap 21 at 0:00.51 at 0:06.00 (and lap 22 at 0:01.05 at 2:34.00, lap 21 = 2:27.48); the Catalyst line is within 10 m of the timing loop below the starter's stand"
+  },
+  {
+   "name": "GPS 10s",
+   "t": 10.0,
+   "s": 187.2,
+   "how": "Catalyst GPS dot on frame t010.jpg mapped to the centre (inventory/catalyst_dots.py, minimap fit p95 6.6 m), 7.1 m off the centre"
+  },
+  {
+   "name": "GPS 20s",
+   "t": 20.0,
+   "s": 478.5,
+   "how": "Catalyst GPS dot on frame t020.jpg mapped to the centre (inventory/catalyst_dots.py, minimap fit p95 6.6 m), 4.3 m off the centre"
+  },
+  {
+   "name": "GPS 30s",
+   "t": 30.0,
+   "s": 690.7,
+   "how": "Catalyst GPS dot on frame t030.jpg mapped to the centre (inventory/catalyst_dots.py, minimap fit p95 6.6 m), 3.8 m off the centre"
+  },
+  {
+   "name": "GPS 40s",
+   "t": 40.0,
+   "s": 996.1,
+   "how": "Catalyst GPS dot on frame t040.jpg mapped to the centre (inventory/catalyst_dots.py, minimap fit p95 6.6 m), 0.5 m off the centre"
+  },
+  {
+   "name": "GPS 50s",
+   "t": 50.0,
+   "s": 1224.3,
+   "how": "Catalyst GPS dot on frame t050.jpg mapped to the centre (inventory/catalyst_dots.py, minimap fit p95 6.6 m), 3.3 m off the centre"
+  },
+  {
+   "name": "GPS 60s",
+   "t": 60.0,
+   "s": 1550.6,
+   "how": "Catalyst GPS dot on frame t060.jpg mapped to the centre (inventory/catalyst_dots.py, minimap fit p95 6.6 m), 1.5 m off the centre"
+  },
+  {
+   "name": "GPS 70s",
+   "t": 70.0,
+   "s": 1879.0,
+   "how": "Catalyst GPS dot on frame t070.jpg mapped to the centre (inventory/catalyst_dots.py, minimap fit p95 6.6 m), 1.2 m off the centre"
+  },
+  {
+   "name": "GPS 80s",
+   "t": 80.0,
+   "s": 2230.4,
+   "how": "Catalyst GPS dot on frame t080.jpg mapped to the centre (inventory/catalyst_dots.py, minimap fit p95 6.6 m), 0.1 m off the centre"
+  },
+  {
+   "name": "GPS 90s",
+   "t": 90.0,
+   "s": 2619.8,
+   "how": "Catalyst GPS dot on frame t090.jpg mapped to the centre (inventory/catalyst_dots.py, minimap fit p95 6.6 m), 7.1 m off the centre"
+  },
+  {
+   "name": "GPS 100s",
+   "t": 100.0,
+   "s": 2948.1,
+   "how": "Catalyst GPS dot on frame t100.jpg mapped to the centre (inventory/catalyst_dots.py, minimap fit p95 6.6 m), 4.6 m off the centre"
+  },
+  {
+   "name": "GPS 110s",
+   "t": 110.0,
+   "s": 3326.5,
+   "how": "Catalyst GPS dot on frame t110.jpg mapped to the centre (inventory/catalyst_dots.py, minimap fit p95 6.6 m), 0.5 m off the centre"
+  },
+  {
+   "name": "GPS 120s",
+   "t": 120.0,
+   "s": 3571.8,
+   "how": "Catalyst GPS dot on frame t120.jpg mapped to the centre (inventory/catalyst_dots.py, minimap fit p95 6.6 m), 1.7 m off the centre"
+  },
+  {
+   "name": "GPS 130s",
+   "t": 130.0,
+   "s": 3916.2,
+   "how": "Catalyst GPS dot on frame t130.jpg mapped to the centre (inventory/catalyst_dots.py, minimap fit p95 6.6 m), 1.4 m off the centre"
+  },
+  {
+   "name": "GPS 140s",
+   "t": 140.0,
+   "s": 4311.6,
+   "how": "Catalyst GPS dot on frame t140.jpg mapped to the centre (inventory/catalyst_dots.py, minimap fit p95 6.6 m), 4.0 m off the centre"
+  },
+  {
+   "name": "GPS 150s",
+   "t": 150.0,
+   "s": 4594.9,
+   "how": "Catalyst GPS dot on frame t150.jpg mapped to the centre (inventory/catalyst_dots.py, minimap fit p95 6.6 m), 0.4 m off the centre"
+  },
+  {
+   "name": "T2",
+   "t": 26.0,
+   "corner": "T2",
+   "how": "the hairpin's minimum speed (38 mph on the overlay at 0:26, 42 at 0:24, 44 at 0:28)"
+  },
+  {
+   "name": "T9",
+   "t": 113.5,
+   "corner": "T9",
+   "how": "Star Mazda: 49 mph at 1:52, 44 at 1:54 (minimum), apex kerb right alongside at 1:54 (frames t112, t114)"
+  },
+  {
+   "name": "S/F end",
+   "t": 152.95,
+   "sf": "end",
+   "how": "lap 22 Catalyst timer 0:01.05 at 2:34.00"
+  }
+ ],
  "corrections": [],
  "observations": [
   "observations.jsonl",
