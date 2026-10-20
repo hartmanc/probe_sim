@@ -71,9 +71,11 @@ CONFIG = dict(
     logger_dir=None,                             # the team's logger analysis, or None (the no-logger path)
     # the timing line: no painted line on the 2026 captures; the timing loop's two saw cuts cross the track directly below
     # the starter's stand on the pit wall (c20_s0150, px x 450; the stand is the scaffold tower on the wall in the pit-lane
-    # video ucmXJu5QKFQ 22:19-22:28), taken on the first centre (ENU 16.2, -232.9). The onboard's Catalyst lap line (lap
-    # 21 starts at 0:05.47; GPS dot at 0:06 at s ~31) lies within 10 m of it.
-    start_finish_latlon=(35.4887078, -119.5445213),
+    # video ucmXJu5QKFQ 22:19-22:28). The point is where that line crosses the road's centre: round 4 moved it from the
+    # first centre (ENU 16.2, -232.9, which sat 4-7 m toward the right edge once the front straight was fitted) to the
+    # fitted centre of run 8 (ENU 15.7, -225.7); the line itself is unchanged. The onboard's Catalyst lap line (lap 21
+    # starts at 0:05.47; GPS dot at 0:06 at s ~31) lies within 10 m of it.
+    start_finish_latlon=(35.4887722, -119.5445271),
     # numbering from the Lemons layout picture (11 turns): the picture's turn circles mapped onto the first centre by an
     # affine fit on T1, T2, T9 and T11 (residual of the others 0-25 m), each anchored at the curvature peak of the
     # picture's direction nearest to it (20 Oct 2026, first centre work/v2): T5 is the right-hander at the end of
@@ -189,16 +191,25 @@ CONFIG = dict(
         ('right', 2947, 2991, 'mouth of OSM 34351305 (Drag Strip, south part (Lost Hill rejoins)): the prior is carried across it'),
         ('right', 3210, 3254, 'mouth of OSM 34351309 (Sweeper): the prior is carried across it'),
         ('right', 3627, 3671, 'mouth of OSM 34351309 (Sweeper): the prior is carried across it'),
-        ('right', 4138, 4182, 'mouth of OSM 34351301 (Zorros Corners): the prior is carried across it'),
+        ('right', 4112, 4182, 'mouth of OSM 34351301 (Zorros Corners): the prior is carried across it; from 4112 since round 4 (c20_s4250: the paved fillet of the mouth starts at s ~4115)'),
         ('right', 4580, 4624, 'mouth of OSM 34350988 (Pacific): the prior is carried across it'),
         ('right', 4645, 4689, 'mouth of OSM 34351015 (infield connector): the prior is carried across it'),
     ]),
     shapes=[],                                   # measured half-width knots (SKILL 1.4)
-    # round 3, run 7 tried the front straight as a straight fitted to the asphalt-end readings (straights.py fit
-    # 'asphalt_end', lo 4470 .. hi 180): it starts inside the T11 exit curve, where the station normals cross the line
-    # far off (width -5.2 m at 4477, kinks 0.73-0.74 deg at 4432-4476), so it is not declared; a later start (~4520,
-    # after the pit-wall head) is the next thing to try
-    straights=[],
+    # the front straight from after the pit-wall head (s ~4525) to the T1 kerb (180) is one straight line on both sides
+    # on every capture (c20_s4600 .. c20_s0250): left the asphalt's end at the pit-wall median, right asphalt to dirt
+    # between the infield crossovers. Declared as a straight fitted to the asphalt-end readings (round 4). Why: run 6's
+    # centre never converged, swinging 0.06-0.075 m at stations 39-40 and 166, the mouths of the infield connector
+    # 34351026 and Atlantic 34351042 on the right, and its waviness at 61-124 / 150-183 left is the free fit following
+    # the gravel median. Round 3's run 7 started this line at 4470, inside the T11 exit curve, and was worse.
+    straights=[
+        dict(side='left', fit='asphalt_end', lo=4525, hi=180, join=(4525, 4535), end=180, tol=0.25,
+             detector=dict(jump=8.0, sat_max=40.0, lo=-1.2, hi=2.0),
+             why='front straight left: straight asphalt end at the pit-wall median (c20_s4600-c20_s0250)'),
+        dict(side='right', fit='asphalt_end', lo=4525, hi=180, join=(4525, 4535), end=180, tol=0.25,
+             detector=dict(jump=8.0, sat_max=40.0, lo=-1.2, hi=2.0),
+             why='front straight right: straight asphalt-to-dirt edge between the crossovers (c20_s4600-c20_s0250)'),
+    ],
     repave_fixes=[],                             # only where recent footage contradicts the survey (SKILL 1.6)
     gate=dict(exempt=[
         ('right', 8, 68, 'mouth of OSM 34351026 (infield connector); junction, real'),
@@ -215,7 +226,7 @@ CONFIG = dict(
         ('right', 2939, 2999, 'mouth of OSM 34351305 (Drag Strip, south part (Lost Hill rejoins)); junction, real'),
         ('right', 3202, 3262, 'mouth of OSM 34351309 (Sweeper); junction, real'),
         ('right', 3619, 3679, 'mouth of OSM 34351309 (Sweeper); junction, real'),
-        ('right', 4130, 4190, 'mouth of OSM 34351301 (Zorros Corners); junction, real'),
+        ('right', 4108, 4190, 'mouth of OSM 34351301 (Zorros Corners); junction, real. Round 4: c20_s4250 (sheet edge_sheets/step_right4124) shows the paved fillet of the mouth starting at s ~4115 on the right, so the range starts there (was 4130, from the OSM node +-30)'),
         ('right', 4572, 4632, 'mouth of OSM 34350988 (Pacific); junction, real'),
         ('right', 4637, 4697, 'mouth of OSM 34351015 (infield connector); junction, real'),
         ('left', 4270, 4330, 'pit-in: the Pit / Fire Road (OSM 39224587) leaves on the left before T11 (pit-lane video ucmXJu5QKFQ 20:31); junction, real'),

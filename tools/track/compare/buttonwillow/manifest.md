@@ -260,3 +260,82 @@ Cross-capture agreement (round 2): 0.96.
 - the two edge steps, at 4124 right and 4265 left.
 
 Fitted edges are drawn in red, the centre in blue, asphalt-end readings in yellow and kerb-band readings in cyan (`tools/track/compare/edge_sheets.py`).
+
+## Stage 1, round 4 (20 Oct 2026): the decision-independent gates
+
+Two runs: run 8 and run 9 (final, `tools/track/out/buttonwillow_r9`). Everything except within / coverage (the
+owner's decision) and one edge step now passes.
+
+**Run 9 (final), gate lines as printed:**
+```
+converged after 26 centre refits
+[FAIL] fit left: observations within 0.25 m: 71.7 % of the associated observations (>= 90 %, the skill's measure); 87 % of capture rows have a band within 1.2 m (>= 85 %); of those 49.9 % within 0.25 m, the rest at 0.25-0.4/0.4-0.6/0.6-0.8/0.8-1.0/1.0-1.2 m: [1176, 996, 834, 1028, 330]; 43 % of all rows
+[FAIL] fit left: coverage: 54 % of stations (>= 60 %)
+[ok] fit left: longest gap: 38 st at (352, 389) (<= 60)
+[ok] fit left: waviness: rolling-100 rms max 0.030 m (<= 0.04), peak 0.048 m (<= 0.1) outside tight corners
+[ok] fit left: kink: max 0.36 deg/station (<= 0.5) outside tight corners; station 0 0.00
+[FAIL] fit right: observations within 0.25 m: 75.5 % of the associated observations (>= 90 %, the skill's measure); 88 % of capture rows have a band within 1.2 m (>= 85 %); of those 53.7 % within 0.25 m, the rest at 0.25-0.4/0.4-0.6/0.6-0.8/0.8-1.0/1.0-1.2 m: [1066, 741, 688, 1207, 415]; 47 % of all rows
+[FAIL] fit right: coverage: 56 % of stations (>= 60 %)
+[ok] fit right: longest gap: 41 st at (583, 623) (<= 60)
+[ok] fit right: waviness: rolling-100 rms max 0.036 m (<= 0.04), peak 0.063 m (<= 0.1) outside tight corners
+[ok] fit right: kink: max 0.36 deg/station (<= 0.5) outside tight corners; station 0 0.01
+[ok] painted-midpoint residual: rms 0.17 -> 0.04 m (final refit)
+[ok] start/finish: station 0 is 0.04 m from the configured timing line
+[ok] edge jumps: max lateral change between stations: left 0.112 m, right 0.107 m
+[FAIL] edge gate left : rms vs 41-st median (R>250 m, 2356 st) 0.071 m (<= 0.1) | max adjacent step (R>100 m within +-30) 0.100 m at 4267 (next 0.100@4268, 0.099@4265; <= 0.1) | max edge-column cross-section step 0.024 m at 1315
+[ok] edge gate right: rms vs 41-st median (R>250 m, 2356 st) 0.061 m (<= 0.1) | max adjacent step (R>100 m within +-30) 0.092 m at 3102 (next 0.092@3103, 0.091@3101; <= 0.1) | max edge-column cross-section step 0.020 m at 4402
+[ok] world continuity left / right, profile gate (0.024 m), loop, elevation, direction, cross slope, no NaN
+```
+
+**What changed and why:**
+
+1. **Centre convergence.** Run 6's swing (0.06-0.075 m) sat at stations 39-40 and 166, the right-side mouths of the
+   infield connector 34351026 and of Atlantic 34351042 on the front straight. The free fit alternated between taking
+   the road's edge and the mouth there. Fix: the front straight is declared as a straight line fitted to the
+   asphalt-end readings, from after the pit-wall head (4525) to the T1 kerb (180), on both sides (`straights` fit
+   'asphalt_end'; 609 / 585 inliers). Round 3's run 7 had started it at 4470, inside the T11 exit. Runs 8 and 9
+   converge (24 / 26 refits).
+2. **Waviness.** The straight also removes left 61-124 and 150-183 (the free fit following the gravel median) and
+   4438-4527. Right 186-235 (T1 kerb) is gone too.
+   - The kerb_band reading was already the band's outer limit: it is the `u1` of a 0.3-2.6 m band. At s 195-225 the
+     bright band runs -1.3..-0.0 m and the reading is -0.02..+0.18 m.
+   - The waviness came from the straight's edge meeting the kerb, where the kerb flares out from the asphalt at its
+     start (the r6 sheet `worst2`). The free fit could not hold both; with the straight fixed up to 180, it can.
+   - No detector change was needed.
+   - Run 8 still showed left 1879-1959 (0.047) and right 2048-2132 (0.055), with no junction, kerb or shadow at either.
+     Its sheets show the readings jumping 0.3-0.5 m between the asphalt end and a dust line. In run 9, with station 0
+     moved (item 4), both are inside 0.04: 0.030 left, 0.036 right. They sit near the bound, and the cause is the
+     edge's own scatter.
+3. **Edge steps.**
+   - Right, 0.137 m at 4124 (run 6): c20_s4250 (sheet `step_right4124`) shows the paved fillet of the Zorros Corners
+     mouth starting at s ~4115 on the right. The exemption's evidence changed and its range with it: 4108-4190 (was
+     4130-4190, from the OSM node +-30). The prior interpolation also starts at 4112. Run 9's largest right step is
+     0.092 m at 3102.
+   - Left, 0.118 m at 62 (run 6): the front straight. Gone with the straight.
+   - Left, 0.100 m at 4267 (run 9; 0.112 m in run 6): **not changed**. c20_s4400 (sheet `step_left4265`) shows no
+     junction there. The pit lane's fillet begins at ~4280 on the left, and the exemption covers 4270-4330. At
+     4255-4270 there is a marshal post's tyre-faced mound on the left beside the edge; the readings scatter around it,
+     and the edge steps by 0.100 m just before the exemption. It fails the 0.1 m bound by rounding (0.1004 m). It stays,
+     and the capture is as described.
+4. **Start/finish.** Run 8 failed it: station 0 sat 7.19 m from the configured point, all of it across the track. The
+   configured point lay on the FIRST centre, which sat 4-7 m toward the right edge once the front straight was fitted.
+   The point now sits where the same timing line crosses the fitted centre (35.4887722, -119.5445271). Run 9: 0.04 m.
+
+**Report-only numbers (run 9):**
+
+| side | evidence | rows / stations | within 0.25 m | within 0.6 m | coverage | within 0.25 m of the station's median over captures |
+|---|---|---|---|---|---|---|
+| left | asphalt_end | 8995 / 4061 | 46.4 % | 72.5 % | 49 % | 97.7 % |
+| left | kerb_band | 1033 / 631 | 77.4 % | 93.6 % | 55 % | - |
+| right | asphalt_end | 9201 / 4056 | 50.4 % | 71.5 % | 51 % | 97.8 % |
+| right | kerb_band | 964 / 636 | 81.6 % | 94.8 % | 52 % | - |
+
+Width: median 14.38 m, p10 12.13, p90 17.18, min 10.31 m at 2512, max 19.43 m at 2430. 2.3 % of stations are under
+the operator's 36 ft (10.97 m) and 14.2 % over 55 ft (16.76 m). Cross-capture agreement: 0.96 (round 2).
+
+**Sheets:** `compare/buttonwillow/edge_sheets/` holds the same thirteen places on run 9; `edge_sheets/r6/` holds them on
+run 6 (before / after, e.g. `worst2_left_right_150-235`). Local and ignored.
+
+**Advisory (not a gate):** exit overshoot at T1 (+2.38 m, 426), T2 (+3.64 m, 687) and Star Mazda (+2.51 m, 3535).
+At 455-500 the run-8 sheet shows the right edge running through the dirt past the T1 marshal post beside the pit-out
+lane. This is where the pit-merge logic applies (cone line 440-521) and is for the stage-1 hood-sheet review.
