@@ -27,6 +27,17 @@ export interface ChangeEntry {
 /** Newest first. Add a new entry at the top and mirror its version in package.json. */
 export const CHANGELOG: ChangeEntry[] = [
   {
+    version: '0.3.0', date: '', title: 'Sonoma Raceway',
+    items: [
+      'Sonoma Raceway in its 24 Hours of Lemons layout: the road fitted to the painted lines in 2026 satellite imagery, the ground from USGS lidar, and the trackside built from the March 2026 onboard: walls at their real heights, catch fences, tyre walls, kerbs in their real colours, the pit lane with both walls, the hillside grandstands, the main grandstand and garages, marshal posts, the scoring tower, sponsor boards and painted logos. Unused roads are real pavement, coned off.',
+      'A track pipeline that builds a circuit from public data and recent video, with gates for containment, pit-lane connectivity, wall ends and coverage of everything the onboard shows, so the next circuits start at this level.',
+      'Race at Sonoma against the Laguna field, with the real Sonoma pace for the eleven cars that raced there in March 2026.',
+      'AI drivers at Sonoma: fewer collisions and spins than at Laguna (lane changes capped by spare grip, passing cars keep a margin); Laguna’s drivers are unchanged.',
+      'Sonoma’s kerbs are 5 cm raised concrete; a kerb traversal check keeps every kerb on every track from lifting a wheel at racing speed.',
+      'Per-track scoreboards: a rebuilt circuit opens its own boards without resetting the others.',
+    ],
+  },
+  {
     version: '0.2.0', date: '2026-10-19', title: 'Painted road', resets: ['Laguna Seca'],
     items: [
       'Laguna Seca’s edges re-fitted to the painted lines in satellite imagery, one smooth curve per side: the front straight is straight, and Rahal, Rainey, T6 and T11 are their real widths. Racing line re-solved on them.',
