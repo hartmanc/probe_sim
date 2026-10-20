@@ -46,6 +46,10 @@ export interface DriverControl {
   minGap: number;
   /** Racing time headway x this (per track, RaceConfig.followScale; 1 = the tuned Laguna values). */
   followScale: number;
+  /** Lateral grip share a pass lane's own path speed is held to, x CORNER_MARGIN (per track, RaceConfig.laneMargin; 1 = Laguna). */
+  laneMargin: number;
+  /** Lane changes held within the spare lateral grip, x this (per track, RaceConfig.shiftGrip; 0 = off, Laguna). */
+  shiftGrip: number;
   /** Fraction of the target profile (cool-down lap after the flag: 0.6). */
   paceFactor: number;
   /** Per-lap pace noise on (race) or off (calibration). */
@@ -98,6 +102,11 @@ const PASS_EDGE = 0.5;     // m from the track edge (car side) a pass lane is cl
  *  closing onto a slower car 20 m ahead rear-ended it; the 1.5 s occupancy projection decides within this range) */
 const MERGE_AHEAD = 60;
 const SHIFT_RATE = 2.2;                    // m/s lateral change of the target offset
+/** Lane changes within the spare lateral grip (per track, `ctl.shiftGrip`, 20 Oct 2026): the shift rate is capped at
+ *  shiftGrip x a_spare x Ld / v (pure pursuit turns a shift rate r into ~ r / (v Ld) of path curvature on top of the
+ *  line's), never below SHIFT_RATE_MIN. A room-making or corridor push at 2 x SHIFT_RATE through Sonoma's esses asked
+ *  3-5 x the line's curvature, the grip limiter braked with the rear sliding and the car spun. */
+const SHIFT_RATE_MIN = 0.8;
 const KR = 0.25, LD0 = 3, LDK = 0.25;
 
 /**
@@ -135,7 +144,7 @@ export class AiDriver {
   /** Target speed profile per station (m/s), from buildSpeedProfile. */
   profile: Float64Array;
   readonly input: DriverInput = { steer: 0, throttle: 0, brake: 0, shiftUp: false, shiftDown: false };
-  readonly ctl: DriverControl = { speedCap: Infinity, noPass: false, minGap: 0, followScale: 1, paceFactor: 1, noise: true, mishapRate: 0 };
+  readonly ctl: DriverControl = { speedCap: Infinity, noPass: false, minGap: 0, followScale: 1, laneMargin: 1, shiftGrip: 0, paceFactor: 1, noise: true, mishapRate: 0 };
   readonly rng: Rng;
 
   // ---- state
@@ -344,7 +353,7 @@ export class AiDriver {
     // car runs along the edge, tighter than the lane), looked ahead with a braking envelope
     if (this.passPhase !== 0) {
       const eL = this.passPhase === 3 ? 0 : this.passE;
-      const b = 0.75 * BRAKE_MARGIN * perf.abrake * G, aG = CORNER_MARGIN * perf.alat * G;
+      const b = 0.75 * BRAKE_MARGIN * perf.abrake * G, aG = ctl.laneMargin * CORNER_MARGIN * perf.alat * G;
       let ePrev = this.laneAt(s - 8, eL, hwI), e0 = this.laneAt(s, eL, hwI);
       for (let d = 0; d <= 48; d += 8) {
         const x = s + d, eNext = this.laneAt(x + 8, eL, hwI), k = line.at(line.curv, x);
@@ -616,7 +625,12 @@ export class AiDriver {
 
       this.shiftTarget = tgt;
       tr.eT[i] = tgt;
-      const rate = (push !== 0 || !Number.isNaN(mishapLat) ? 2 * SHIFT_RATE : this.offTrack ? 0.8 * SHIFT_RATE : this.passPhase !== 0 ? PASS_SHIFT * SHIFT_RATE : SHIFT_RATE) * dt;
+      let rate = (push !== 0 || !Number.isNaN(mishapLat) ? 2 * SHIFT_RATE : this.offTrack ? 0.8 * SHIFT_RATE : this.passPhase !== 0 ? PASS_SHIFT * SHIFT_RATE : SHIFT_RATE) * dt;
+      if (ctl.shiftGrip > 0 && Number.isNaN(mishapLat) && !this.offTrack) {
+        // within the spare lateral grip at the look point (a mishap or a rejoin keeps its own rate)
+        const kl = Math.abs(line.at(line.curv, sLook)), aSp = Math.max(0.25 * perf.alat * G, perf.alat * G - v * v * kl);
+        rate = Math.min(rate, Math.max(SHIFT_RATE_MIN, ctl.shiftGrip * aSp * (LD0 + LDK * v) / Math.max(5, v)) * dt);
+      }
       const dsh = this.shiftTarget - this.shift;
       this.shift += dsh > rate ? rate : dsh < -rate ? -rate : dsh;
       // the line sweeps across the road faster than the shift may change: never let a held shift carry the car off

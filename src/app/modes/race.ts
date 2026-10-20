@@ -20,8 +20,8 @@ import { FieldCars, identityColor, type FieldCarInfo } from '../field-cars';
 import { RaceHudDom, raceHudView, raceTable, resultRows, rowStatus, type TableRow } from '../race-hud';
 export { rowStatus, type RowStatus } from '../race-hud';
 import { fmtLapTime, fmtMetres, setBoardContext, submitRace, type RaceResult, type SubmitOutcome } from '../scoreboard-client';
-import { LIMITS } from '../../scoreboard/config';
-import { TRACK } from '../track-choice';
+import { LIMITS, TRACKS, resolveTrackId } from '../../scoreboard/config';
+import { TRACK, TRACK_ID } from '../track-choice';
 import { FieldAudio, familyFor, FIELD_VOICES_DESKTOP, FIELD_VOICES_PHONE, type FamilyIndex, type Layout } from '../audio-field';
 import type { ConeLineLike, FieldAudioCar, FieldAudioHook, FieldAudioLike, FieldCarSound, GameMode, ModeContext, ModeHud, RaceServices } from './mode';
 
@@ -98,6 +98,12 @@ function raceLine(a: SimAssets): RaceLine {
   return l;
 }
 
+/** The per-track AI race parameters (TRACKS[id].ai) as RaceConfig fields; absent = Laguna's values (1, 1, 0). */
+export function raceAiConfig(trackId: string): { followScale: number; laneMargin: number; shiftGrip: number } {
+  const ai = TRACKS[resolveTrackId(trackId)].ai;
+  return { followScale: ai?.followScale ?? 1, laneMargin: ai?.laneMargin ?? 1, shiftGrip: ai?.shiftGrip ?? 0 };
+}
+
 /** Build the RaceDirector for the player's current HotlapSim car (call right after a rolling start). */
 export function buildDirector(sim: RaceServices['sim'], field: FieldData, o: { seed: number; laps: number }): RaceDirector {
   const a = sim.assets;
@@ -109,7 +115,7 @@ export function buildDirector(sim: RaceServices['sim'], field: FieldData, o: { s
     pitLane: pit ? { spacing_m: 1, ...pit } : null,
     collisionWorld: sim.collision,
     playerVehicle: sim.vehicle, playerSurface: sim.surface,
-  }, { laps: o.laps, seed: o.seed, playerNumber: PLAYER_NUMBER, greenWindow: [5, 30], followScale: TRACK.ai?.followScale ?? 1 });
+  }, { laps: o.laps, seed: o.seed, playerNumber: PLAYER_NUMBER, greenWindow: [5, 30], ...raceAiConfig(TRACK_ID) });
 }
 
 /** FieldCars inputs for every AI car of a director (colour from identity.json, size from its physics spec). */
