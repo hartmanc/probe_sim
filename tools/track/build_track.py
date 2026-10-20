@@ -90,9 +90,11 @@ def config_id(cfg, stage="geometry"):
     edit does not invalidate a passed geometry stage"""
     import hashlib
     if stage == "geometry":
-        d = {k: v for k, v in cfg.items() if k not in ("ghosts", "scenery", "app")}
+        d = {k: v for k, v in cfg.items() if k not in ("ghosts", "scenery", "app", "structures")}
     else:
         d = {k: cfg.get(k) for k in STAGE_KEYS[stage]}
+        if stage == "scenery" and cfg.get("structures"):   # the buildings round's section (absent: hash unchanged)
+            d["structures"] = cfg["structures"]
     return hashlib.sha256(json.dumps(d, sort_keys=True, default=str).encode()).hexdigest()[:16]
 
 
