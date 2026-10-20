@@ -1185,3 +1185,107 @@ end, the frames put its start at s 3468 (a wall_measure pass for the next round)
   of the pixels); trees 471 / 745 and track.json identical before / after. Sheet: compare/sonoma/season_tint/
   before_after.jpg (local). Known limits: ploughed and pale fields go green too (bright lime in the far image), the
   green is uniform; an NIR mask + slope version is a later option.
+
+## Round 7 (22 Oct 2026; registry rev 68e4c91c28; owner notes 36-50 from the round-6 preview)
+
+Every gate passes on the published package: edge, barrier gaps, containment (0 escapes), pit connectivity (now also the
+two-path lane check), signs, wall ends (new), coverage (MISSING 31, none of a failing kind, UNSUPPORTED 0, HEIGHT 0), pit
+lane. track.json / heightfield.bin / ghosts.json byte-identical; far_* unchanged; Laguna byte-identical to main.
+
+### App (every track; Laguna's package unchanged)
+- Barrier end caps (note 36): concrete / pitwall runs closed at both ends; Armco end plates; a tyre run gets a last stack
+  on its end point; fence runs already had end posts.
+- Tyre runs render as stacked tyres (note 38): a lathe per stack (bulge per tyre, dark groove, dark hole on top), one
+  instanced mesh per stack height, `stack` (tyres per stack) from the evidence or round(h / 0.23), scaled to stand h
+  high; colour per run (black default). Scene triangles 2.00 M -> 2.50 M (pose_walk stats).
+- Marshal post (note 40): deck on four legs at h - 2.6 m, 2.4 m hut with an open front, white walls, coloured lower band
+  (`color`, default blue), roof overhanging 0.6 m, railing. New landmark `block` (w x d x h, striped red / white or
+  plain). Cones carry `color` / `size`; paint lines carry `color`.
+
+### Gates (tools/track/gates/sceneryGates.ts, tests in scenerygates.test.ts)
+- Pit connectivity, two-path lane check (note 37; the round-6 gate passed with the pit-in closed): the lane driven on two
+  paths 1.5 m from each lane edge; fails on any barrier or cone line within 1.0 m of a path or inside the lane polygon
+  (deeper than 0.3 m), or a lane under 3 m between two closed edges. On the round-6 package it fails (the cone line inside
+  the lane at s 3525, the Jersey nose and the garage-side wall end inside the lane); on this package 0 obstacles.
+- Wall ends (notes 39, 41, 48): every rigid run's upstream end within 8 m of an edge must be joined (another run, a tyre
+  cushion or an impact block within 1.5 m), lapped (a run on the same side ending within 25 m upstream, closer to the
+  track), tapered (1.5 m further out at its head than 10 m on), or leave the track at > 60 deg. Round-6 package: 6
+  exposed. This package: 15 ends checked, 0 exposed:
+
+| s | run | outcome |
+|---|---|---|
+| 1149 | T5 to the T6 crest, right | was exposed (2.6 m step toward the track at the joint with 'T5, right: wall before the T5-T6 wall'): the two runs are one run, the joint s 1115-1192 re-measured across the capture boundary (wall_measure dark, 100 %, rms 0.87 m; t042 / t044 one continuous wall) |
+| 1659 -> 1720 | T6 to T7, left | was exposed at 0.5 m (note 41): its head s 1659-1720 followed the painted edge line (bright picks 0.15-0.3 m inside the edge); t056 no wall, t058 black section first: a black tyre cushion (c20_s3410 / s3465 dark band s 1684-1720, 7.8 m out angling in, 99 %, rms 0.82 m) and the concrete from s 1720, joined |
+| 1885 | drag strip far wall | was exposed at 0.5 m: re-declared (below), now 30 m out |
+| 2591 | T9 right, bypass wall part 1 | was exposed (3.6 m, the T8a tyre line ended 2 m further out): the tyre line now ends on the wall's measured head (one line) |
+| 3919 | pit straight, drag-strip side | was exposed (3.3 m): c20_s1540 shows an L-shaped light concrete band at the T12 exit (8 m along the right edge, then across the drag strip, 90 % picked): declared; the side wall is lapped behind it |
+| 2228 | T7 runoff wall below the T7a stands | leaves the track at 82 deg (faces across the lap) |
+| others | pit wall, pit-in walls, Jersey nose (impact block), T11 exit, T6 crest, T7 approach, T8-8a (tapered) | joined / cushioned / lapped / tapered |
+
+### Item 2: the drag-strip far wall (note 36)
+Before: 'drag strip NW end: far wall beyond the fork' from s 1885, 8.8 m right of the centre (0.5 m beyond the edge) to
+s 2100 (33 m), three wall_measure runs on c20_s3630 / s3685 / s3740 with 32 m and 69 m gaps bridged. The first two runs
+lie on the drag strip's NE paint / concrete edge: t062 and t064 show grass right off that edge and no wall. After: the
+third measured run only, s 2081-2100, 30-33 m right of the centre (23-27 m beyond the T7 road's edge), the low white wall
+t064 / t066 show across the strip. The tyre line and cones across the strip continuation (s 1934-1942) stay; containment
+stays closed (the strip's 'allowed' runoff entry unchanged). Inventory row 1:06 corrected (ahead_m 125: the car is at s
+1956, the wall begins at s ~2081).
+
+### Item 3 and note 37: the pit-in
+- The cone line now stands on the measured solid double line (c20_s1155 / s1210, wall_measure bright, 94 %, rms 0.15 m),
+  0.3 m to its track side, s 3510-3584 and on to the Jersey nose. Round 5 placed it 0.4 m outside the FITTED left edge,
+  which at the lane mouth runs along the outer wall: it started inside the lane and converged into the wall.
+- The lane polygon is clipped at the declared cone lines as at walls (builder): its width between the line and the outer
+  wall is 5.0-6.0 m from s 3537 (measured line-to-wall 4.5 m at 3500, 5.9 at 3540, 6.3 at 3560, 5.6 at 3586).
+- Garage-side outer wall re-measured to where it curves away behind T11 (s 3560-3641, 83 %, rms 0.05 m); the round-5
+  straight line ended 1-3 m inside the lane. The east hairpin wall starts at its second pick (on that line; the first
+  stood 2.5 m off).
+- The "Jersey run starting at s 3468": the onboard 1:55-1:58 (t114 / t116 / t118) shows a light-blue Jersey at the
+  FOOT of the tall boarded outer wall, beginning where the round-5 tyre bundles end (the round-6 anchor, s 3468); the
+  captures show no barrier between the track and the lane before the red / white separation Jersey's nose (s 3587,
+  c20_s1210), only the double line. So the run starting at s 3468 is declared as a 0.9 m light-blue Jersey along the
+  declared outer walls, 0.35 m into the lane (s 3468-3563); the separation Jersey keeps its impact block at its nose
+  (s 3587). This also clears round 6's HEIGHT mismatch (the 1:56 Jersey row against the 5.2 m wall).
+
+### Pit-out (notes 42-43)
+Pit-exit cones: yellow, 0.5 m, every 17 m (the 2025 pit-out video t=304 shows 15-20 m), ON the blend line measured on
+c20_s1870 / s1925 (90 %, rms 0.20 m; the line is the fitted edge, p50 -0.09 m), from the pit-wall nose (s 103) to the
+merge (s 240); none along the front straight (they ran from s 3966). The blend line is painted double yellow (two 0.1 m
+lines 0.3 m apart; `paint_lines_declared`), the white edge line cut there (`edge_line_cut`). Not done: (a) the lane's
+material is already the track ribbon's (same builder, `match_track_tone` on the ortho); no further change made; (c) the
+paddock-side wall at s 231-268 (2.6 m beyond the edge at s 240) is the round-5 measurement (85 %); vehicles parked in
+the lane on c20_s1925 hide where the lane tapers, so it was not re-measured; the lane check passes there.
+
+### T11 (note 38), posts (note 40), 9a (note 49)
+- T11 outside tyre wall: white, two tyres high, 0.8 m (t122 / t124; inventory tyre-ref 0.8 m), fence top 3.0 m.
+- Apex blocks: two red / white striped blocks 1.0 x 1.6 x 1.0 m beside the apex kerb at s ~3668 / 3684, from the onboard
+  (t120-t124, higher precedence). c20_s1320 (another event) shows three such blocks at the OUTSIDE edge (s ~3679): not
+  placed there. The white block run along the apron edge is not resolved: not placed.
+- Posts: T6 crest a hut (h 3.8, blue band; owner_39 May 2025 reference frame), T7 white band (t072), T4 / T2 default band
+  (colours not readable in the March frames). New 9a post at the stand foot, s ~3025, 28 m left (t098, owner crop;
+  the captures there are covered by event trailers). 9a marker cone: one orange 0.5 m cone ~6 m beyond the left edge at
+  s ~3031 (t096 and t098 show the same cone; row 1:36 corrected ahead_m 86); t090-t094 show no other.
+
+### Item 4: the non-failing MISSING rows (31 now; 34 at the start)
+Placed: the 9a cone (2 rows), the T11 apex blocks (2 of the 4 apron-block rows). Not placed, reasons:
+- Masts (17): bases not resolved on the captures (thin shadows parallel to walls and lane lines, event vehicles); the
+  lidar masts are already in the kit and project onto other stations; placed only where base and shadow are clear.
+- Tyre stacks (4): 0:10 brown blocks far right (confidence 0.4, tyre bundles or hay bales, not on c20_s2035); the T6
+  hilltop stack (Street View 2011 only); two T11 apron rows (the white block run, not resolved).
+- Cone lines (5): T7 runoff cones and the T7a island-nose delineator at 1:16 (the island delineators are placed at s
+  2196-2212; the nose post is not resolved), pit-lane cones 2:12 / 2:14 (pit furniture; they were matched before only
+  by the pit-exit cones along the front straight, which the 2025 video shows do not exist), the 2011 apron cone.
+- Stands (3) and building (1): the main grandstand (structure kit) and the T10 / T11 rows seen across the infield
+  project onto other stations (the gate matches within +-15 m of the car's station, the stands stand 150-400 m away);
+  the Carousel bank spectator area (1:48) has no footprint on the captures; the infield buildings row (1:52) is the
+  T12 building in the kit, 190 m off.
+- Station (1): 1:56 'marshal standing at a door' is a person at the pit-in wall door, no structure.
+
+### Scans asked for, with the captures examined
+- T7 far runoff tyre barrier (note 44): c20_s3850 / s3905 / s3960 / s0000 over the paved area outside T7: no continuous
+  dark tyre band along its far edge; a thin dark line ~18 m long at its SW edge among parked vehicles is unconfirmed
+  (fence shadow or tyres). Not placed; for the owner.
+- T8 station (note 47): not scanned this round.
+- Ground logos (note 46): not done; seen while measuring T11: TOYOTA, Save Mart and other painted logos inside the T11
+  hairpin (c20_s1265 / s1320), for the next round.
+- T7 complex (note 45) and the T8a tyre / concrete facing rule (note 48): not done this round.

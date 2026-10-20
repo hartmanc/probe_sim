@@ -538,6 +538,23 @@ For every other circuit, these are steps of stage 3:
    - Tall singular structures (Sonoma's scoring tower) are kit items from an isolated lidar spike plus the capture's base
      and shadow (`structures` type `scoring_tower`).
 
+12. **Round-7 rules (22 Oct 2026, Sonoma owner notes 36-50; gates for every circuit, data keys config-gated):**
+   - *The lane is driven, not just its centre*: the pit-connectivity gate also drives each pit-lane part on two paths
+     1.5 m from its edges and fails on any barrier or cone line within 1.0 m of a path or inside the lane polygon, or a
+     lane under 3 m between two closed edges (cone lines count as barriers; the lane is clipped at declared cone lines).
+   - *No exposed wall ends*: the wall-ends gate fails on a rigid run whose upstream end stands within 8 m of an edge
+     unless it is joined (a run, a tyre cushion or an impact block within 1.5 m), lapped (a run on the same side ending
+     within 25 m upstream, closer to the track), tapered, or leaves the track at > 60 deg. Fix each from the captures:
+     join runs measured on different captures by re-measuring across the boundary, declare the cushion the onboard shows.
+   - *Lines that matter are measured lines*: a cone line or paint line beside a lane or a blend stands on the painted line
+     measured on the captures (`cone_lines_declared[].latlon`, `pit_exit_cones.latlon`, `paint_lines_declared`), never at
+     an offset from the fitted edge (which can follow a wall at a lane mouth); colours and sizes from the footage
+     (`color`, `size`); `edge_line_cut` where the edge paint is not the white line.
+   - *A bright line is not a wall until the onboard shows one*: painted edges and drag-strip lane edges pick as bright
+     bands; check every declared wall's head against the frames (Sonoma's drag-strip far wall and T6-T7 head were paint).
+   - App (every track): barrier runs have end caps, tyre runs render as stacked tyres (`stack` per run), marshal posts as
+     open-front huts with a coloured band (`color`), `blocks` for free-standing concrete blocks.
+
 ## Stage 4: compare pass with a judge (`tools/track/compare/`)
 
 Only after stage 1 is accepted: iterating landmarks on wrong geometry wasted five rounds at Laguna, and the judge

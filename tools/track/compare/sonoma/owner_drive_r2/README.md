@@ -166,3 +166,7 @@ Verdict: "a disappointing output that was not ready for me to review."
     (owner_48_9a_approach.png). Onboard t=96 / t=98: single ORANGE cones standing on the grass verge on the LEFT before
     the chicane (the inventory's 'single orange cone on the grass (marker)' rows at s 2947 and 3018, both still MISSING);
     no boards. No hut visible in those frames; to be checked on the captures and t098-t104.
+50. Owner's crop of the onboard frame t=98 (owner_49_9a_station_crop.jpg): the 9a corner station IS visible, on the LEFT,
+    on the bank top behind the catch fence above the back-straight stand near its 9a end (a small hut among the trees on
+    the skyline, left of centre, with a marshal beside it), with the orange marker cone on the verge below. The
+    orchestrator missed it in the frame.
