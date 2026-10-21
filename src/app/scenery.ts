@@ -65,7 +65,7 @@ export interface SceneryJson {
   /** paved ground that is not driven (the paddock, 20 Oct 2026): plain paving over the terrain, no physics */
   paved_areas?: { name: string; surface: 'asphalt' | 'concrete' | 'apron'; src: string; poly: V2[]; /** a measured tone (#rrggbb) in place of the surface's */ color?: string;
     /** per outline segment (poly[i] -> poly[i + 1]): fade it (true) or not (false: it meets the road edge; judge r6) */ feather?: boolean[];
-    /** 'lane': drawn in the road's asphalt look (the photo graded as the track), not a flat colour */ look?: 'lane' }[];
+    /** 'lane' / 'concrete': drawn with the asphalt grain in the lane's or a pale concrete tone, not a flat colour */ look?: 'lane' | 'concrete' }[];
   /** Cone line between the pit-exit lane and the track (CONTRACTS §2b); crossing it is a black-flag offence. */
   pit_exit_cones?: PitExitConesJson | null;
   /** cone lines across the mouths of paved but unused roads (closed variants of the circuit, 20 Oct 2026): drawn only */
@@ -906,7 +906,7 @@ export interface PaintSurface {
   /** a paved area in the apron look (pale weathered asphalt with grain); `pgA` = its weight (fade at the outline) */
   apronMesh?(geo: THREE.BufferGeometry, name: string, offsetUnits: number): THREE.Mesh;
   /** a paved area in the road's asphalt look (photo graded as the track) */
-  laneMesh?(geo: THREE.BufferGeometry, name: string, offsetUnits: number): THREE.Mesh;
+  laneMesh?(geo: THREE.BufferGeometry, name: string, offsetUnits: number, tone?: [number, number, number]): THREE.Mesh;
 }
 
 /** Point `out` m outside (negative = inside) the edge on `side` at station i, `dz` above the driven surface (ENU). */
@@ -1622,10 +1622,11 @@ function buildPavedAreas(list: NonNullable<SceneryJson['paved_areas']>, ground: 
   // the same as an apron zone), its weight pgA fading over 2.5 m of the outline into the photo
   const apr = { pos: [] as number[], uv: [] as number[], a: [] as number[], idx: [] as number[] };
   const lane = { pos: [] as number[], uv: [] as number[], a: [] as number[], idx: [] as number[] };
+  const conc = { pos: [] as number[], uv: [] as number[], a: [] as number[], idx: [] as number[] };
   const apronArea = (a: NonNullable<SceneryJson['paved_areas']>[number], edgeDist: (x: number, y: number) => number,
     x0: number, x1: number, y0: number, y1: number) => {
     const d = 0.5, nx = Math.ceil((x1 - x0) / d) + 1, ny = Math.ceil((y1 - y0) / d) + 1;
-    const T = a.look === 'lane' ? lane : apr, b0 = T.pos.length / 3;
+    const T = a.look === 'lane' ? lane : a.look === 'concrete' ? conc : apr, b0 = T.pos.length / 3;
     // round 8 (owner lap 2 note 4, the tan wedges between a kerb and an apron): grid vertices outside the outline are
     // snapped onto it, and a cell is kept when any corner lies inside, so the mesh ends ON the outline (the road edge)
     // instead of in 0.5 m grid steps
@@ -1668,7 +1669,7 @@ function buildPavedAreas(list: NonNullable<SceneryJson['paved_areas']>, ground: 
       return d;
     };
     const xs = a.poly.map((p) => p[0]), ys = a.poly.map((p) => p[1]);
-    if (a.surface === 'apron' || a.color) {
+    if (a.surface === 'apron' || a.color || a.look) {
       // texture pass (Buttonwillow owner lap 1, 21 Oct 2026, "some screwed up textures"): the apron's 1.5 m cells with a
       // tone step per cell and whole cells dropped near the outline drew as a flat staircase of grey squares, and the
       // pit-entry strip as a checker; a 0.5 m grid of shared vertices instead, the tone varying per vertex (smooth), an
@@ -1685,7 +1686,7 @@ function buildPavedAreas(list: NonNullable<SceneryJson['paved_areas']>, ground: 
         }
         return d;
       } : edgeDist;
-      if ((a.surface === 'apron' && surf?.apronMesh && !a.color) || (a.look === 'lane' && surf?.laneMesh)) apronArea(a, featherDist, Math.min(...xs) - 1, Math.max(...xs) + 1, Math.min(...ys) - 1, Math.max(...ys) + 1);
+      if ((a.surface === 'apron' && surf?.apronMesh && !a.color) || (a.look && surf?.laneMesh)) apronArea(a, featherDist, Math.min(...xs) - 1, Math.max(...xs) + 1, Math.min(...ys) - 1, Math.max(...ys) + 1);
       else softArea(a, base, edgeDist, Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys));
       continue;
     }
@@ -1708,7 +1709,7 @@ function buildPavedAreas(list: NonNullable<SceneryJson['paved_areas']>, ground: 
     m2.name = 'paved_areas_soft';
     return m2;
   })() : null;
-  const mk = (B: typeof apr, fn: 'apronMesh' | 'laneMesh', name: string) => {
+  const mk = (B: typeof apr, fn: 'apronMesh' | 'laneMesh', name: string, tone?: [number, number, number]) => {
     if (!B.idx.length) return null;
     const g3 = new THREE.BufferGeometry();
     g3.setAttribute('position', new THREE.Float32BufferAttribute(B.pos, 3));
@@ -1718,10 +1719,10 @@ function buildPavedAreas(list: NonNullable<SceneryJson['paved_areas']>, ground: 
     g3.setAttribute('pgUvSrc', new THREE.Float32BufferAttribute(B.uv, 2));
     g3.setIndex(B.idx);
     g3.computeVertexNormals();
-    return surf![fn]!(g3, name, list.some((q) => q.feather) ? -4 : -1);
+    return fn === 'laneMesh' ? surf!.laneMesh!(g3, name, list.some((q) => q.feather) ? -4 : -1, tone) : surf!.apronMesh!(g3, name, list.some((q) => q.feather) ? -4 : -1);
   };
-  const apronM = mk(apr, 'apronMesh', 'paved_areas_apron'), laneM = mk(lane, 'laneMesh', 'paved_areas_lane');
-  const apron = apronM || laneM ? (() => { const g0 = new THREE.Group(); if (apronM) g0.add(apronM); if (laneM) g0.add(laneM); return g0; })() : null;
+  const apronM = mk(apr, 'apronMesh', 'paved_areas_apron'), laneM = mk(lane, 'laneMesh', 'paved_areas_lane'), concM = mk(conc, 'laneMesh', 'paved_areas_concrete', [0.58, 0.575, 0.55]);
+  const apron = apronM || laneM || concM ? (() => { const g0 = new THREE.Group(); for (const m0 of [apronM, laneM, concM]) if (m0) g0.add(m0); return g0; })() : null;
   if (apron) {
     const grp = new THREE.Group(); grp.name = 'paved_areas_group'; grp.add(apron);
     if (soft) grp.add(soft);

@@ -128,7 +128,8 @@ function groundMaterial(p: THREE.MeshLambertMaterialParameters, roughness = 0.95
 
 export function photoGround(mat: GroundMaterial, opts: { grain?: number; ground: GroundDetail; asphalt?: GroundDetail; asphaltAttr?: boolean; paint?: THREE.Texture; rubber?: boolean; /** paved runoff: pale, sun-bleached asphalt, not the dark racing surface */ runoff?: boolean;
   /** concrete paving (a closed road the captures show as concrete): pale grey, painted lines kept */ concrete?: boolean;
-  /** apron (Buttonwillow judge r5): pale weathered asphalt with the asphalt grain, the onboard's pale grey pavement */ apron?: boolean }): void {
+  /** apron (Buttonwillow judge r5): pale weathered asphalt with the asphalt grain, the onboard's pale grey pavement */ apron?: boolean;
+  /** the apron branch's base tone (linear-ish RGB, default the pale apron 0.50 / 0.49 / 0.46): the lane look and concrete use it */ apronTone?: [number, number, number] }): void {
   const grain = opts.grain ?? 0.12;
   const G = opts.ground, A = opts.asphalt;
   const hasA = opts.asphaltAttr && A ? 1 : 0;
@@ -227,7 +228,7 @@ vec3 pgTileN(sampler2D t, vec2 uv) {
     // apron: pale weathered asphalt, a little warmer and darker than concrete, keeping the photo's local light / dark;
     // the asphalt detail texture (grain) comes from the mix below (w = 1 on the surface)
     // judge r6: pale grey-beige (the onboard's T2 / T5 aprons, t024 / t058), only a little of the photo's light / dark
-    vec3 apr = vec3(0.50, 0.49, 0.46) * (0.95 + 0.2 * (min(l, 0.6) - 0.3));
+    vec3 apr = vec3(${(opts.apronTone ?? [0.50, 0.49, 0.46]).map((v) => v.toFixed(3)).join(', ')}) * (0.95 + 0.2 * (min(l, 0.6) - 0.3));
     diffuseColor.rgb = mix(diffuseColor.rgb, mix(apr, vec3(l) * 1.05, paint), w);
 #endif
 #if ${hasC}
@@ -271,7 +272,7 @@ vec3 pgTileN(sampler2D t, vec2 uv) {
   }
 #endif`);
   };
-  mat.customProgramCacheKey = () => `pg${hasA}${hasP}${hasR}${hasO}${hasC}${hasAp}${grain}`;
+  mat.customProgramCacheKey = () => `pg${hasA}${hasP}${hasR}${hasO}${hasC}${hasAp}${grain}${(opts.apronTone ?? []).join(',')}`;
 }
 
 export interface World {
@@ -631,11 +632,13 @@ function seamReport(rss: RibbonSections[], terrainZ: Ground): SeamReport {
 function paintSurface(track: TrackJson, ortho: THREE.Texture, asphalt: GroundDetail, groundDetail: GroundDetail): PaintSurface {
   return {
     uv: (x, y) => orthoUV(track, x, y),
-    laneMesh(geo, name, offsetUnits) {
+    laneMesh(geo, name, offsetUnits, tone) {
       // a paved area in the road's own graded-photo asphalt look (Buttonwillow round 8, the pit-in gore: was a flat colour)
       addDetailUV(geo, groundDetail.tile);
       const mat = groundMaterial({ map: ortho, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: offsetUnits }, 0.9);
-      photoGround(mat, { grain: 0.12, ground: groundDetail, asphalt, asphaltAttr: true });
+      // round 8 cp5: the road's photo grading alone rendered the gore near-black (its photo is dark dirt); the apron
+      // branch with the lane's tone keeps the asphalt grain and the photo's local light / dark
+      photoGround(mat, { grain: 0.12, ground: groundDetail, asphalt, asphaltAttr: true, apron: true, apronTone: tone ?? [0.33, 0.335, 0.345] });
       const mesh = new THREE.Mesh(geo, mat);
       mesh.receiveShadow = true;
       mesh.name = name;

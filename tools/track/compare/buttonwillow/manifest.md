@@ -1740,6 +1740,80 @@ Geometry unchanged from 8bf8602. Stage 3 every gate ok; kerb roll gate 6 / 6.
 - Videos in config `sources`: done in checkpoint 3.
 - Stage 4: 50 sheets and the hood set rendered on rev 8bbcab1d43 (the only difference from 2025a3091f: the gore's look).
 
+## Round 8 checkpoint 5 (22 Oct 2026, rev c0fbb9bd11)
+
+Geometry unchanged from 8bf8602. Stage 3 every gate ok; kerb roll gate ok. Dog Leg runs stay flat blocks pending the owner.
+
+### Boundary seam rows (checkpoint 4)
+
+| row | outcome |
+|---|---|
+| pit-in gore, flat slab | FIXED (kit): the paved-area branch ignored `look` and drew the flat cell mesh (the cause of the near-black slab in cp4, not the grading); now the toned apron shader with the lane tone (asphalt grain, the photo's light / dark): r8f_pit_in_gore |
+| T2 concrete patch, flat slab | FIXED (kit): `look='concrete'`, pale concrete tone with grain; its 1 m feather fades to the tan photo at the edge (it lies on the road): OPEN as a detail (r8f_T2_concrete_patch) |
+| pit lane right ~175 m dark blotch | ortho_paint_over (dark, 127 px) |
+| pale strip west ~75 m green ground | ortho_paint_over (`all=True`: the whole 12 m box to the ring median, 441 px) |
+| crossover left ~125 m yellow-tan patch | ortho_paint_over (yellow, 5 px): the patch in the still persists: it is not in the ortho at that box; OPEN |
+| Dog Leg 1900 L dark brown patch | ortho_paint_over (dark, 158 px) |
+| apron 2963-3025 R start lighter triangle | OPEN: the apron clip / feather do not explain it (the triangle is the apron's own outline corner beyond the clip); needs the outline re-traced |
+| zone ends square-cut at 1800 R / 3600 R | OPEN: the paved-zone ribbon has no end feather (its asphalt weight is per column, not per row); a kit change |
+
+### Kerb widths re-measured (painted blocks + contiguous pale concrete)
+
+The capture reader extended outward over pale grey, unsaturated, non-warm pixels contiguous with the band. On the clean
+captures there is no wide pale concrete beyond the blocks: at Cotton (1020-1049 R) and the Star Mazda entry (3339-3382 L)
+the blocks meet the dirt directly (capture windows at 0.04 m/px, local). Widths unchanged in the package; table:
+
+| run | painted (m) | painted + pale (m) | readings |
+|---|---|---|---|
+| left 283-322 | 0.52 | 0.64 | 10 |
+| left 536-558 | 0.6 | 0.62 | 16 |
+| left 745-767 | 1.04 | 1.04 | 24 |
+| left 954-1011 | 0.96 | 0.96 | 48 |
+| left 1089-1116 | 0.9 | 1.0 | 4 |
+| left 1203-1272 | 0.76 | 0.92 | 33 |
+| left 1337-1395 | 0.88 | 1.08 | 64 |
+| left 1454-1478 | 0.64 | 0.68 | 26 |
+| left 1542-1575 | 1.16 | 1.2 | 45 |
+| left 1654-1681 | 0.88 | 0.88 | 31 |
+| left 1843-1851 | 1.12 | 1.26 | 12 |
+| left 2539-2544 | 0.9 | 0.9 | 6 |
+| left 2690-2747 | 1.12 | 1.14 | 50 |
+| left 2850-2856 | 0.94 | 1.04 | 4 |
+| left 3005-3013 | 1.1 | 1.1 | 10 |
+| left 3339-3382 | 1.24 | 1.24 | 51 |
+| left 3470-3518 | 0.76 | 1.0 | 55 |
+| left 3691-3760 | 0.88 | 1.02 | 34 |
+| left 3845-3876 | 0.74 | 0.88 | 18 |
+| left 3972-4023 | 0.88 | 0.96 | 38 |
+| left 4380-4406 | 1.04 | 1.08 | 35 |
+| right 188-268 | 1.28 | 1.4 | 117 |
+| right 360-376 | 1.08 | 1.2 | 22 |
+| right 410-424 | 1.0 | 1.12 | 20 |
+| right 584-604 | 0.6 | 0.64 | 19 |
+| right 1020-1049 | 1.04 | 1.04 | 18 |
+| right 1304-1309 | 0.36 | 0.36 | 3 |
+| right 1494-1516 | 0.88 | 0.88 | 25 |
+| right 1779-1819 | 1.0 | 1.12 | 65 |
+| right 1869-1934 | 0.68 | 0.8 | 92 |
+| right 2315-2340 | 1.12 | 1.12 | 18 |
+| right 2766-2793 | 0.84 | 0.88 | 21 |
+| right 3400-3450 | 1.0 | 1.0 | 60 |
+| right 3794-3810 | 1.12 | 1.12 | 18 |
+| right 3894-3935 | 0.56 | 0.8 | 28 |
+| right 4029-4126 | 0.68 | 0.72 | 81 |
+| right 4320-4370 | 1.16 | 1.16 | 72 |
+| right 4424-4501 | 1.0 | 1.16 | 151 |
+
+### Crack-seal marks
+
+Contrast 14 -> 9: 884 candidate segments, 407 kept (cap 1200). Per 400 m section from s 0: 29, 31, 34, 33, 47, 21, 34,
+15, 46, 50, 34. Visible as thin dark lines from 2 m (r8f_crack_T2_high); at hood height they are faint.
+
+### Kart track
+
+Traced on the paddock capture pad_5 by skeleton: only 106 m resolved (the loop leaves the tile to the north and merges
+with the paved lot on the right): not placed; OPEN (needs more capture tiles).
+
 ### Generated tables (manifest_tables.ts on the published package, rev b7a674a6da)
 
 ### Scenery objects of the checked kinds (136, from public/tracks/buttonwillow/)

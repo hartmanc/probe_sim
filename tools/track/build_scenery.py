@@ -1571,6 +1571,9 @@ def ortho_paint_over(trk, img, items, ring=3.0, lift=18.0):
             Pr = c + (P - c) * (1 + 15.0 / max(1e-6, float(np.linalg.norm(P - c, axis=1).mean())))
             r_ = Image.new("L", (W, H), 0); ImageDraw.Draw(r_).polygon(px(Pr), fill=1); r_ = np.asarray(r_, bool) & road
             med = np.median(img[r_ & (lum < np.median(lum[r_]) + lift)], axis=0)
+        if it.get("all"):
+            # recolour the whole outline to the ring's median (a tone patch, e.g. green-toned ground: round 8 cp5)
+            ref = g & ~m; med = np.median(img[ref], axis=0); mark = np.ones_like(mark)
         hit = m & mark
         out[hit] = med.astype(np.uint8)
         log(f"ortho paint-over: {int(hit.sum())} px ({hit.sum() * 0.36:.0f} m2) {"on the road" if it.get("on", "road") == "road" else "in the outline"} -> {med.astype(int).tolist()} ({it['src'][:60]})")
