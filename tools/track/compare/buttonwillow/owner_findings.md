@@ -32,3 +32,9 @@ build). Notes as given, before bed:
    this build is the T9 apex (3400-3451 R, 6 cm), so this is the raised-kerb mesh on a curve: gaps between segments where
    the per-station offset or the curvature changes, or the back-slope quads not sharing vertices. Every run raised in round
    8 will show it unless the mesh is made watertight.
+5. **A barrier / fence at a dark line in the infield** (owner/owner_lap2_infield_barrier_line.png, local: off track on
+   dirt, a dark line running across the infield ahead with a tree beyond): "I'm pretty sure there's a barrier / fence here
+   at this dark line; i.e., it shouldn't be possible for a car to slide off the track and into the infield." Place not
+   given yet (corner to come). The round-2 barrier ledger called every infield dark line "tyre tracks" or "none" except the
+   ones re-read later (the T11-approach tyre line at 4150-4260 L was one such miss, corrected in round 4): the ledger's
+   "none" rows need a second read for dark linear features within ~40 m of the track on the infield side.
