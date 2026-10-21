@@ -55,3 +55,10 @@ build). Notes as given, before bed:
    lines across the pit-in lane past the split. "These look like pit spots that should appear in pit lane itself, not pit
    in or pit out." The pit-box paint is drawn over the whole pit-lane part (pit-in, the lane, pit-out); the real boxes are
    along the pit wall only (the pit video: the lane between the two K-rails), and the pit-in and pit-out roads carry none.
+10. **"Try to place the fence around the infield."** New source from the owner: a CCW onboard, youtube.com/watch?v=_7QwJdGQtaE
+    (reference only, frames only), frame at 2:18 saved as owner/owner_lap2_infield_fence_ccw_video.png: the car on the
+    pit-out / front-straight area running CCW; "shown at far left from driver's POV is the pit wall, the wall to the right
+    of that is the wall between pit lane and the paddock"; his arrow points at a chain-link fence on posts running along the
+    infield edge beyond the walls, in front of the big trees. The infield is fenced; the sim has no fence there. This is the
+    barrier of note 5 or its kind: a chain-link fence line around the infield, to be traced on the captures (post shadows,
+    the thin line) and confirmed on this video.
