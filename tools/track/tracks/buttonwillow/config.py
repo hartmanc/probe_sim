@@ -122,7 +122,7 @@ CONFIG = dict(
         naip='m_3511936_ne_11_060_20220608 (NAIP 8 Jun 2022, 0.6 m)',
     ),
     # ---------------------------------------------------------------- stage 1: geometry (SKILL stage 1)
-    stations_ref=None,                           # (n, length_m) of the build the station numbers below refer to (SKILL 1.3)
+    stations_ref=(4692, 4697.78),   # the run-20 centre (stations_ref.json): the station numbers below refer to it (SKILL 1.3)
     # the pit-out merge (round 6 / stage 3 pass, 1.10 review item 1): the pit lane comes round the inside of T1 and
     # shares the pavement with the track from ~s 432 to ~527, between two lines of white kerb blocks (the left kerb
     # band ending at s 432, c20_s0500 / c20_p0840; the block line starting at s 527, c20_s0650, sheet
@@ -130,8 +130,21 @@ CONFIG = dict(
     # c20_s0600 / c20_s0650; onboard 0:18-0:22, frames t018-t022: one wide asphalt surface). The pipeline's rule put the
     # blend boundary on the OSM pit way's own edge, 1.5-3 m inside the shared pavement (width 7.66 m at 509). The
     # boundary is the straight line joining the two block lines' ends, measured on the captures.
-    centre=dict(pit_merge_line=dict(latlon=[(35.4902035, -119.5410911), (35.4910048, -119.5413669)],
-                                    src='left kerb band end at s 432 (c20_s0500 / c20_p0840) to the block line start at s 527 (c20_s0650); no paint between')),
+    # the first centre (SKILL 1.2): at T1 exit, T10 and T11 exit the OSM way runs on the paved apron beside the circuit
+    # (the dark pavement beyond the white / red / blue block line); the flying lap runs on the pale surface on the other
+    # side of the blocks (onboard 0:16-0:22, 2:02-2:08, 2:22-2:28). Knots: points of the OSM first centre with the
+    # lateral shift (+ left) of the real pavement's midline, measured on the capture windows with a 2 m ruler across the
+    # first centre every 10 m (compare/buttonwillow/stage3_evidence/ruler_t1.png, ruler_t1b.png, ruler_t10.png,
+    # ruler_t11.png; midline between the block line and the pale surface's asphalt end). The edges stay fitted.
+    # (round 5's centre.pit_merge_line from the block line's end at s 432 is dropped: that block line is the right edge)
+    centre=dict(prior_shift=[
+        dict(knots=[(35.4893901, -119.5410498, 0), (35.4894769, -119.5410212, 2.5), (35.4895652, -119.5410012, 5.0), (35.4896543, -119.540987, 6.0), (35.4897438, -119.5409781, 7.5), (35.4898336, -119.5409745, 8.5), (35.4899234, -119.5409765, 9.5), (35.490013, -119.5409837, 10.5), (35.4901023, -119.5409954, 11.0), (35.4901912, -119.5410112, 11.0), (35.4902795, -119.5410313, 10.0), (35.4903673, -119.5410549, 8.5), (35.4904547, -119.5410801, 7.8), (35.4905419, -119.5411067, 7.5), (35.4906282, -119.5411372, 6.5), (35.4907138, -119.5411707, 6.0), (35.4907997, -119.5412029, 4.5), (35.4909712, -119.5412684, 4.0), (35.4911326, -119.5413641, 3.0), (35.4912799, -119.5414904, 1.5), (35.4914422, -119.5415832, 0)],
+             blend=0, src='T1 exit s 340-580: the pale surface west of the block line (ruler_t1 / ruler_t1b on c20_s0450-c20_s0700; onboard t016-t022 blocks on the right)'),
+        dict(knots=[(35.4949012, -119.5478938, 0), (35.4948119, -119.5479049, -1.3), (35.4947229, -119.5479203, -2.0), (35.4946339, -119.5479353, -3.0), (35.4945443, -119.5479422, -5.8), (35.4944548, -119.5479345, -8.3), (35.4943662, -119.5479161, -10.6), (35.494277, -119.5479037, -10.9), (35.4941874, -119.547909, -8.8), (35.4940992, -119.5479297, -5.3), (35.4940121, -119.5479567, -1.8), (35.493925, -119.5479835, 0)],
+             blend=0, src='T10 s 3670-3780: the pale surface west of the block line (ruler_t10 on c20_s3800 / c20_s3850; onboard t122-t126 blocks on the left)'),
+        dict(knots=[(35.488704, -119.5478922, 0), (35.4886483, -119.5478058, 2.0), (35.4886036, -119.5477102, 4.5), (35.4885706, -119.5476077, 6.6), (35.4885481, -119.547501, 8.0), (35.4885335, -119.5473921, 9.8), (35.4885234, -119.5472825, 11.2), (35.4885162, -119.5471725, 12.1), (35.4885114, -119.5470624, 13.1), (35.4885093, -119.5469521, 13.8), (35.4885103, -119.5468418, 14.3), (35.488514, -119.5467315, 14.4), (35.4885207, -119.5466215, 13.0), (35.488532, -119.5465121, 12.0), (35.4885482, -119.5464036, 11.0), (35.4885739, -119.5461854, 10.8), (35.4885768, -119.5459648, 11.7), (35.4885954, -119.5457455, 11.1), (35.4886266, -119.5455282, 9.2), (35.4886596, -119.5453113, 7.0), (35.4886837, -119.5450928, 5.8), (35.4886868, -119.5448722, 3.0), (35.4886971, -119.544652, 0)],
+             blend=0, src='T11 exit and the front straight s 4380-4680: the pale surface north of the block line to the pit-wall median (ruler_t11 on c20_s4500-c20_s4600; onboard t142-t148 blocks on the right); past s 4500 the shift follows where the fitted front-straight centre already lay (run 20)'),
+    ]),
     # the edge fit (SKILL 1.4): defaults, plus the asphalt-end detector tuned to Buttonwillow's pale dusty dirt (20 Oct
     # 2026, eight stretches of the captures: jump 8 / sat 40 / window -2..+2 m hit 81 % of stations, 98 % within 0.25 m
     # of the median over captures; the defaults 65 % / 99 %, and from the NAIP prior they often miss the window)
@@ -150,15 +163,15 @@ CONFIG = dict(
     spline=dict(lam=60.0, huber=0.15, asphalt_end=dict(jump=7.0, sat_max=40.0, lo=-1.2, hi=2.0), report_by_kind=True, report_width=(10.97, 16.76),
                 # the block-line kerb zones' search windows (offsets from the current edge; features below cite the evidence)
                 kerb_search=[
-                     # set aside after stage-1 runs 17 and 19 (manifest, stage-3 round): ('right', 355, 432, (-18.0, 1.5), 'T1 exit: the white block line from 4 m inside the right edge at s 361 to the left edge at '),
+                     ('right', 355, 432, (-18.0, 1.5), 'T1 exit: the white block line from 4 m inside the right edge at s 361 to the left edge at '),
                      ('left', 540, 582, (-10.0, 1.5), 'block line 2.7-6.6 m inside the left edge at s 540-560 (cw_533); onboard t022 (0:22): red '),
                      ('left', 1076, 1112, (-10.0, 1.5), 'block line 5.4-6.5 m inside the left edge (cw_1086); onboard t044 (0:44): red / white / bl'),
-                     # set aside after stage-1 run 17 (manifest, stage-3 round): ('left', 1318, 1392, (-10.0, 1.5), 'block line 4.6-8.6 m inside the left edge, along the middle of the paved strip (cw_1348); '),
+                     ('left', 1318, 1392, (-10.0, 1.5), 'block line 4.6-8.6 m inside the left edge, along the middle of the paved strip (cw_1348); '),
                      ('right', 1760, 1810, (-10.0, 1.5), 'block line 0-5.4 m inside the right edge where the Dog Leg leaves (cw_1751, cw_1824); onbo'),
-                     ('left', 3675, 3712, (-10.0, 1.5), 'block line 1.3-1.8 m inside the left edge (c20_s3800); onboard t124 (2:04): red / white / '),
+                     ('left', 3675, 3760, (-12.0, 1.5), 'block line 1.3-1.8 m inside the left edge (c20_s3800); onboard t124 (2:04): red / white / '),
                      ('left', 3948, 4010, (-10.0, 1.5), 'block line 1.3-1.8 m inside the left edge (c20_s4100 / c20_s4150); onboard t132 (2:12): re'),
                      ('right', 4050, 4112, (-10.0, 1.5), 'block line 1.5-5.5 m inside the right edge (c20_s4150 .. c20_s4250); onboard t134 / t136 ('),
-                     # set aside after stage-1 run 17 (manifest, stage-3 round): ('right', 4402, 4445, (-10.0, 1.5), 'block line 5.6-8.0 m inside the right edge (c20_s4500 / c20_s4550); onboard t144 / t146 (2'),
+                     ('right', 4402, 4492, (-10.0, 1.5), 'block line 5.6-8.0 m inside the right edge (c20_s4500 / c20_s4550); onboard t144 / t146 (2'),
                 ],
                 mask=[('left', 4250, 4272, 'c20_s4400: marshal post mound beside the left edge at s ~4255-4268'),
                       # stage-3 pass: the T1-exit corner station's tyre-faced mound right beside the right edge (c20_s0650,
@@ -174,15 +187,15 @@ CONFIG = dict(
     features=[
         # stage-3 pass (20 Oct 2026): block-line kerbs laid on wider pavement, the paved apron beyond fitted as track by
         # asphalt_end; the edge is the blocks' outer limit (SKILL 1.5), found with a per-zone search window
-        # set aside after stage-1 runs 17 and 19 (manifest, stage-3 round): ('right', 355, 432, 'kerb_band', 'block line, search window (-18.0, 1.5) (spline.kerb_search): T1 exit: the white block line from 4 m inside the right edge at s 361 to the left edge at s 425 (stage3_evidence/cw_400ov.png, cw_t1raw.png); the flying lap runs west of it with the blocks on its right, converging (onboard 0:16-0:18, s0350 / s0400 / t016 / t018); the dark pavement east of it is a paved apron inside T1'),
+        ('right', 355, 432, 'kerb_band', 'block line, search window (-18.0, 1.5) (spline.kerb_search): T1 exit: the white block line from 4 m inside the right edge at s 361 to the left edge at s 425 (stage3_evidence/cw_400ov.png, cw_t1raw.png); the flying lap runs west of it with the blocks on its right, converging (onboard 0:16-0:18, s0350 / s0400 / t016 / t018); the dark pavement east of it is a paved apron inside T1'),
         ('left', 540, 582, 'kerb_band', 'block line, search window (-10.0, 1.5) (spline.kerb_search): block line 2.7-6.6 m inside the left edge at s 540-560 (cw_533); onboard t022 (0:22): red / white / blue kerb close left, running ahead'),
         ('left', 1076, 1112, 'kerb_band', 'block line, search window (-10.0, 1.5) (spline.kerb_search): block line 5.4-6.5 m inside the left edge (cw_1086); onboard t044 (0:44): red / white / blue kerb on the left through the left-hander'),
-        # set aside after stage-1 run 17 (manifest, stage-3 round): ('left', 1318, 1392, 'kerb_band', 'block line, search window (-10.0, 1.5) (spline.kerb_search): block line 4.6-8.6 m inside the left edge, along the middle of the paved strip (cw_1348); onboard t054 (0:54): red / white / blue kerb on the left, the car right of it'),
+        ('left', 1318, 1392, 'kerb_band', 'block line, search window (-10.0, 1.5) (spline.kerb_search): block line 4.6-8.6 m inside the left edge, along the middle of the paved strip (cw_1348); onboard t054 (0:54): red / white / blue kerb on the left, the car right of it'),
         ('right', 1760, 1810, 'kerb_band', 'block line, search window (-10.0, 1.5) (spline.kerb_search): block line 0-5.4 m inside the right edge where the Dog Leg leaves (cw_1751, cw_1824); onboard t066 (1:06): white / red / blue kerb ahead right'),
-        ('left', 3675, 3712, 'kerb_band', 'block line, search window (-10.0, 1.5) (spline.kerb_search): block line 1.3-1.8 m inside the left edge (c20_s3800); onboard t124 (2:04): red / white / blue kerb on the left'),
+        ('left', 3675, 3760, 'kerb_band', 'block line, search window (-12.0, 1.5) (spline.kerb_search): block line 1.3-1.8 m inside the left edge (c20_s3800); onboard t124 (2:04): red / white / blue kerb on the left'),
         ('left', 3948, 4010, 'kerb_band', 'block line, search window (-10.0, 1.5) (spline.kerb_search): block line 1.3-1.8 m inside the left edge (c20_s4100 / c20_s4150); onboard t132 (2:12): red / white / blue kerb on the left'),
         ('right', 4050, 4112, 'kerb_band', 'block line, search window (-10.0, 1.5) (spline.kerb_search): block line 1.5-5.5 m inside the right edge (c20_s4150 .. c20_s4250); onboard t134 / t136 (2:14-2:16): white / blue kerb on the right'),
-        # set aside after stage-1 run 17 (manifest, stage-3 round): ('right', 4402, 4445, 'kerb_band', 'block line, search window (-10.0, 1.5) (spline.kerb_search): block line 5.6-8.0 m inside the right edge (c20_s4500 / c20_s4550); onboard t144 / t146 (2:24-2:26): kerb on the right'),
+        ('right', 4402, 4492, 'kerb_band', 'block line, search window (-10.0, 1.5) (spline.kerb_search): block line 5.6-8.0 m inside the right edge (c20_s4500 / c20_s4550); onboard t144 / t146 (2:24-2:26): kerb on the right'),
         ('left', 277, 327, 'kerb_band', 'kerb_detect run s 282-324 off +0.1..+1.0 m (c20_s0400, c20_s0450)'),
         ('left', 356, 389, 'kerb_band', 'kerb_detect run s 362-387 off +0.1..+1.0 m (c20_s0500)'),
         # (left 393-432 dropped in the stage-3 pass: that block line is the RIGHT edge of the pale T1-exit surface, below)
@@ -197,7 +210,7 @@ CONFIG = dict(
         ('left', 3318, 3385, 'kerb_band', 'kerb_detect run s 3330-3389 off +0.1..+1.0 m (c20_s3450, c20_s3500)'),
         ('left', 3458, 3515, 'kerb_band', 'kerb_detect run s 3470-3520 off +0.0..+0.7 m (c20_s3550, c20_s3600)'),
         ('left', 4364, 4394, 'kerb_band', 'kerb_detect run s 4378-4400 off +0.1..+0.9 m (c20_s4500)'),
-        ('left', 4470, 4501, 'kerb_band', 'kerb_detect run s 4485-4508 off +0.0..+0.9 m (c20_s4600)'),
+        # (left 4470-4501 dropped in the first-centre round: those blocks are the RIGHT limit of the T11-exit surface, onboard t146)
         ('right', 189, 273, 'kerb_band', 'kerb_detect run s 194-270 off -0.3..+1.1 m (c20_s0300, c20_s0350)'),
         ('right', 583, 623, 'kerb_band', 'kerb_detect run s 588-621 off -0.4..+0.5 m (c20_s0700, c20_s0750)'),
         ('right', 1011, 1037, 'kerb_band', 'kerb_detect run s 1018-1036 off +0.3..+1.1 m (c20_s1150)'),
@@ -221,6 +234,7 @@ CONFIG = dict(
     # with a ray test: every highway way that leaves the road for 12 m or more): the NAIP prior bulges into each mouth
     # and asphalt_end then finds the far side of the other road, so the prior is interpolated across +-22 stations
     prior=dict(interp=[
+        ('left', 1385, 1429, 'the T4-T5 block line ends against the paved apron at s 1387 (c20_s1500): the prior is carried across the step'),
         ('right', 16, 60, 'mouth of OSM 34351026 (infield connector): the prior is carried across it'),
         ('right', 133, 177, 'mouth of OSM 34351042 (Atlantic): the prior is carried across it'),
         ('left', 601, 645, 'mouth of OSM 39224609 (the outer T2 loop): the prior is carried across it'),
@@ -256,6 +270,7 @@ CONFIG = dict(
     ],
     repave_fixes=[],                             # only where recent footage contradicts the survey (SKILL 1.6)
     gate=dict(exempt=[
+        ('left', 1380, 1430, "the T4-T5 block line ends at s 1387 against the paved apron, whose asphalt end runs 4.6 m further out (stage3_evidence/cw_1348.png on c20_s1450 / c20_s1500); the edge steps out like a road mouth; junction, real"),
         ('right', 8, 68, 'mouth of OSM 34351026 (infield connector); junction, real'),
         ('right', 125, 185, 'mouth of OSM 34351042 (Atlantic); junction, real'),
         ('left', 593, 653, 'mouth of OSM 39224609 (the outer T2 loop); junction, real'),

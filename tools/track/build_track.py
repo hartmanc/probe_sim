@@ -193,6 +193,10 @@ def stage_geometry(cfg, out, no_logger):
     else:
         sf = cfg.enu(*cfg["start_finish_latlon"])
         C, L = V2.osm_centre(C0box, ortho, sf, cen["osm_fit_a"], cen["osm_fit_b"])
+        if cen.get("prior_shift"):
+            # where the OSM way runs on a paved apron, the first centre is moved onto the circuit's pavement by the
+            # shift measured on the captures (config centre.prior_shift; SKILL 1.2), before the NAIP edges and the fit
+            C, L = B.prior_shift(C, cen["prior_shift"], cfg.enu, log)
     n = len(C)
     log(f"first centre: n={n}, spline length {L:.2f} m")
     cfg_raw = cfg
@@ -550,6 +554,10 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, bar, 
     fit_last = fit
     for it in range(40):
         cfgw = trackcfg.remap_stations(cfg_raw, n, float(np.linalg.norm(np.roll(Ccur, -1, 0) - Ccur, axis=1).sum()), C=Ccur)
+        # the edge fit's masks and kerb-search zones on this centre's stations, as the features (absent: unchanged)
+        for key_ in ("mask", "kerb_search"):
+            if cfgw["spline"].get(key_):
+                sp_cfg[key_] = cfgw["spline"][key_]
         NL = B.left_normals(Ccur)
         pcfg = cfgw.get("prior", {})
         # prior adjustments (the prior is only the fit's weak fallback where there is no evidence)
@@ -648,6 +656,9 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, bar, 
         if move < 0.05 and it >= 1:
             NL = B.left_normals(Ccur)
             cfgw = trackcfg.remap_stations(cfg_raw, n, fit2["L"], C=Ccur)
+            for key_ in ("mask", "kerb_search"):
+                if cfgw["spline"].get(key_):
+                    sp_cfg[key_] = cfgw["spline"][key_]
             hl3, hr3, frep = edges_spline.fit_periodic(Ccur, NL, hlp, hrp, tiles, features, sp_cfg, cc["mpp"],
                                                        {k: v for k, v in anchors.items() if v[0]})
             log(f"converged after {it + 1} centre refits")

@@ -488,3 +488,34 @@ def preview(img, box, C, Lp, Rp, zc, corners, path):
     fig.savefig(path, dpi=110)
     plt.close(fig)
 
+
+# ---------------------------------------------------------------- first-centre shift (config centre.prior_shift)
+def prior_shift(C, entries, enu_fn, log_fn=None):
+    """Shift the FIRST centre sideways over measured stretches (config centre.prior_shift, Buttonwillow 20 Oct 2026):
+    where the OSM way runs on a paved apron beside the circuit, the first centre (and so the NAIP edges and the fit's
+    search windows) starts on the wrong pavement. Each entry {knots: [(lat, lon, dx_m), ...], blend: stations, src}:
+    the knots are points on the first centre with the measured lateral shift (+ left) of the real pavement's midline;
+    the shift is interpolated along the stations between the knots and tapered linearly to zero over `blend` stations
+    beyond the first and last knot. The shifted loop is resampled from the same start point. No entries: C unchanged."""
+    if not entries:
+        return C, None
+    n = len(C)
+    nl = left_normals(C)
+    shift = np.zeros(n)
+    for e in entries:
+        pts = np.array([enu_fn(la, lo) for la, lo, _ in e["knots"]], float)
+        ks, _ = project(C, pts)
+        dx = np.array([d for _, _, d in e["knots"]], float)
+        ks = np.unwrap(ks * 2 * np.pi / n) * n / (2 * np.pi)
+        if np.any(np.diff(ks) <= 0):
+            raise SystemExit(f"centre.prior_shift ({e.get('src', '')[:60]}): knots not in driving order")
+        b = int(e.get("blend", 0))
+        xs = np.r_[ks[0] - b, ks, ks[-1] + b] if b else ks
+        ys = np.r_[0.0, dx, 0.0] if b else dx
+        k = np.arange(int(np.floor(xs[0])), int(np.ceil(xs[-1])) + 1)
+        shift[k % n] += np.interp(k, xs, ys)
+        if log_fn:
+            log_fn(f"first centre shifted (config centre.prior_shift) over stations {ks[0] % n:.0f}-{ks[-1] % n:.0f}: "
+                   f"max {dx[np.argmax(np.abs(dx))]:+.1f} m; {e.get('src', '')}")
+    P, L = resample_closed(C + shift[:, None] * nl)
+    return P, L

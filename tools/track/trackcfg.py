@@ -276,6 +276,11 @@ def remap_stations(cfg, n, length_m=None, C=None):
         for key in ('first_edge', 'interp'):
             p[key] = [(a, st(lo), st(hi)) + tuple(rest) for a, lo, hi, *rest in p.get(key, [])]
     sp = c['spline']
+    # stations of the edge fit's masks and kerb-search zones (Buttonwillow, 20 Oct 2026; no other circuit has them)
+    if sp.get('mask'):
+        sp['mask'] = [(a, st(lo), st(hi)) + tuple(rest) for a, lo, hi, *rest in sp['mask']]
+    if sp.get('kerb_search'):
+        sp['kerb_search'] = [(a, st(lo), st(hi)) + tuple(rest) for a, lo, hi, *rest in sp['kerb_search']]
     if sp.get('runs'):
         sp['runs'] = [(st(r[0]), st(r[1])) + tuple(r[2:]) for r in sp['runs']]
     c['repave_fixes'] = [(st(a), st(b), st(c0), st(c1), why) for a, b, c0, c1, why in c['repave_fixes']]
