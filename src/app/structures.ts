@@ -62,6 +62,11 @@ export interface GarageJson {
 export interface CanopyJson {
   type: 'canopy'; name?: string; src: string; c: V2; z: number; d: number; h: number; hole?: number; tilt_deg?: number;
   tilt_bearing?: number; color: string; post_color?: string; posts?: number; deck?: { h: number; d: number; color: string };
+  /** round 10: the terrace stands on posts, open beneath (absent: a solid round podium, as round 9 drew it) */
+  deck_posts?: number;
+  /** round 10: a straight stair flight from the terrace edge down to the ground, leaving on `bearing_deg`, `w` wide, `run`
+   *  long, its centre line `lateral` m to the right of that bearing through the canopy centre */
+  stair?: { bearing_deg: number; w: number; run: number; lateral?: number; color?: string };
 }
 
 /** Flat-roof block of `storeys` storeys with a window band per storey on every face, roof parapet. */
@@ -498,8 +503,18 @@ export function canopy(u: CanopyJson, s: Soup): void {
     if (u.deck) {
       const D = u.deck.d / 2, cD = rgb(u.deck.color);
       const g = (rad: number, a: number, z: number): V3 => [u.c[0] + rad * Math.cos(a), u.c[1] + rad * Math.sin(a), u.z + z];
-      s.quad(g(D, a0, -0.5), g(D, a1, -0.5), g(D, a1, u.deck.h), g(D, a0, u.deck.h), rgb(u.deck.color, 0.86));   // terrace wall
-      s.tri(g(0, 0, u.deck.h), g(D, a0, u.deck.h), g(D, a1, u.deck.h), cD);                                       // terrace floor
+      if (u.deck_posts) {
+        // round 10: a 0.3 m slab on posts, open beneath (edge band, floor, soffit)
+        const zt = u.deck.h, zb = u.deck.h - 0.3;
+        s.quad(g(D, a0, zb), g(D, a1, zb), g(D, a1, zt), g(D, a0, zt), rgb(u.deck.color, 0.86));
+        s.tri(g(0, 0, zt), g(D, a0, zt), g(D, a1, zt), cD);
+        s.tri(g(0, 0, zb), g(D, a1, zb), g(D, a0, zb), rgb(u.deck.color, 0.6));
+        // a rail round the terrace edge, 1.0 m
+        s.quad(g(D - 0.05, a0, zt + 0.95), g(D - 0.05, a1, zt + 0.95), g(D - 0.05, a1, zt + 1.0), g(D - 0.05, a0, zt + 1.0), rgb(u.post_color ?? '#9aa0a6'));
+      } else {
+        s.quad(g(D, a0, -0.5), g(D, a1, -0.5), g(D, a1, u.deck.h), g(D, a0, u.deck.h), rgb(u.deck.color, 0.86));   // terrace wall
+        s.tri(g(0, 0, u.deck.h), g(D, a0, u.deck.h), g(D, a1, u.deck.h), cD);                                       // terrace floor
+      }
     }
   }
   // centre column and a ring of posts from the terrace up to the roof's underside
@@ -511,6 +526,23 @@ export function canopy(u: CanopyJson, s: Soup): void {
     for (let k = 0; k < (u.posts ?? 6); k++) { const a = (k / (u.posts ?? 6)) * 2 * Math.PI; col(r * Math.cos(a), r * Math.sin(a), 0.25); }
   } else col(0, 0, 0.5);
   for (let k = 0; k < (u.posts ?? 6); k++) { const a = (k / (u.posts ?? 6)) * 2 * Math.PI + 0.3; col(R * 0.8 * Math.cos(a), R * 0.8 * Math.sin(a), 0.16); }
+  if (u.deck && u.deck_posts) {
+    // round 10: the terrace's posts, ground to the slab's underside, on a ring at 0.85 of its radius and at the centre
+    const zb = u.deck.h - 0.3, pc = rgb(u.post_color ?? '#9aa0a6'), Dd = u.deck.d / 2;
+    const leg = (x: number, y: number) => s.box(Frame.heading([u.c[0] + x, u.c[1] + y], u.z, 0), -0.15, 0.15, -0.15, 0.15, -0.3, zb, pc, { top: null });
+    leg(0, 0);
+    for (let k = 0; k < u.deck_posts; k++) { const a = (k / u.deck_posts) * 2 * Math.PI; leg(Dd * 0.85 * Math.cos(a), Dd * 0.85 * Math.sin(a)); }
+  }
+  if (u.deck && u.stair) {
+    // round 10: a straight flight of solid steps from the terrace edge to the ground
+    const b = (u.stair.bearing_deg * Math.PI) / 180, dir: V2 = [Math.sin(b), Math.cos(b)], right: V2 = [dir[1], -dir[0]];
+    const lat = u.stair.lateral ?? 0, Dd = u.deck.d / 2;
+    const off = Math.sqrt(Math.max(0, Dd * Dd - lat * lat));   // where the flight's centre line meets the terrace edge
+    const o: V2 = [u.c[0] + dir[0] * off + right[0] * lat, u.c[1] + dir[1] * off + right[1] * lat];
+    const f = new Frame([o[0], o[1], u.z], dir, [-dir[1], dir[0]]);
+    const n = Math.max(2, Math.round(u.deck.h / 0.18)), tr = u.stair.run / n, ck = rgb(u.stair.color ?? u.deck.color, 0.9);
+    for (let i = 0; i < n; i++) s.box(f, i * tr, (i + 1) * tr, -u.stair.w / 2, u.stair.w / 2, -0.3, u.deck.h * (1 - i / n), ck);
+  }
 }
 
 export function boardPanels(u: BoardsJson): { f: Frame; l: number; dz: number; k: number }[] {

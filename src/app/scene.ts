@@ -429,14 +429,18 @@ interface RibbonSections {
 interface StationFrame { cx: number; cy: number; nx: number; ny: number; hl: number; hr: number; gapL: number; gapR: number }
 interface Strand { n: number; closed: boolean; fractions: number[]; at(i: number): StationFrame }
 
-function trackStrand(track: TrackJson): Strand {
+function trackStrand(track: TrackJson, cuts: { side: number; s0: number; s1: number }[] = []): Strand {
+  // round 10 (Sonoma judge r9): scenery.json `track_shoulder_cut`: no shoulder on that side over s0..s1 (a paved lane
+  // runs against the edge there and the shoulder rows rose through it); absent: every station keeps its shoulder
+  const sp = track.spacing_m || 1, L = track.n * sp;
+  const cut = (i: number, side: number) => cuts.some((c) => c.side === side && ((i * sp - c.s0 + L) % L) <= ((c.s1 - c.s0 + L) % L));
   return {
     n: track.n, closed: true, fractions: track.profile.fractions,
     at(i) {
       const c = track.center[i];
       const [tx, ty] = tangentAt(track, i);
       const [hl, hr] = halfWidths(track, i);
-      return { cx: c[0], cy: c[1], nx: -ty, ny: tx, hl, hr, gapL: Infinity, gapR: Infinity };
+      return { cx: c[0], cy: c[1], nx: -ty, ny: tx, hl, hr, gapL: cuts.length && cut(i, 1) ? 0 : Infinity, gapR: cuts.length && cut(i, -1) ? 0 : Infinity };
     },
   };
 }
@@ -640,7 +644,10 @@ function buildPitPaint(pit: NonNullable<SceneryAssets['json']['pit_lane']>, grou
     }
     // pit boxes on the longer part (beside the front straight): garage side = the side further from the track
     if (pi !== 0) return;
+    // round 9 (Sonoma judge r9): lane station ranges where the footage shows no box lines (absent: drawn everywhere)
+    const noBoxes = (part as { no_boxes?: [number, number][] }).no_boxes ?? [];
     for (let i = 40; i < part.n - 40; i += 10) {
+      if (noBoxes.some(([a, b]) => i >= a && i <= b)) continue;
       const f = st.at(i), g = st.at(i + 1);
       const side = f.gapL > f.gapR ? 1 : -1;
       const h = side > 0 ? f.hl : f.hr;
@@ -769,7 +776,7 @@ export function buildWorld(track: TrackJson, hf: Float32Array, ortho: THREE.Text
   const pit = scenery?.json.pit_lane;
   const zones = scenery?.json.paved_zones;
   const strands: Strand[] = [
-    trackStrand(track),
+    trackStrand(track, (scenery?.json as { track_shoulder_cut?: { side: number; s0: number; s1: number }[] } | undefined)?.track_shoulder_cut ?? []),
     ...(pit?.parts ?? []).filter((p) => p.n >= 2).map((p) => pitStrand(p, pit!.fractions)),
     ...(zones?.parts ?? []).filter((p) => p.n >= 2).map((p) => pitStrand(p, zones!.fractions)),
   ];

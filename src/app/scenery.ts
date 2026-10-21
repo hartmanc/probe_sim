@@ -30,6 +30,9 @@ export interface SceneryJson {
     ends?: { at: V2; z_ground: number; to: V2; z_to: number }[] }[];
   /** color: the wall's paint where the evidence shows it (Sonoma 2026: light blue / green), default plain concrete */
   barriers: { kind: 'concrete' | 'armco' | 'tyres' | 'pitwall' | 'fence'; h: number; fence: number; pts: V3[]; src: string; color?: string;
+    /** round 10 (Sonoma pit-out catch fence): angled arms on the fence posts, `len` m long at `deg` from vertical,
+     *  leaning to `side` (+1 the left of the polyline, -1 the right), the mesh carried up them (absent: straight posts) */
+    arm?: { len: number; deg: number; side: number };
     /** tyres per stack (round 7; default from h) */ stack?: number }[];
   kerbs: { width: number; inside?: boolean; stripe_m: number; /** [stripe, base] sRGB hex; default red / white */ colors?: [string, string];
     /** raised concrete kerbs (physics: src/physics/track.ts KerbsJson); absent = flat paint */ profile?: { height: number; face: number; back: number } | null;
@@ -733,6 +736,24 @@ function buildBarriers(list: SceneryJson['barriers']): THREE.Group {
         if (i === 0 || i === P.length - 1 || acc >= 3) {
           acc = 0;
           fencePosts.push(new THREE.Matrix4().compose(v3(P[i][0], P[i][1], P[i][2] + base + b.fence / 2), new THREE.Quaternion(), new THREE.Vector3(1, b.fence, 1)));
+        }
+      }
+      if (b.arm) {
+        // round 10: the angled top of the catch fence, mesh and arms, leaning to the arm's side
+        const top = base + b.fence, rad = (b.arm.deg * Math.PI) / 180;
+        const dl = b.arm.len * Math.sin(rad), dh = b.arm.len * Math.cos(rad);
+        const T = offsetLine(P, b.arm.side * dl);
+        fence.add(up(P, top), up(T, top + dh), cFence, 1 / 0.3, b.fence / 0.3, (b.fence + b.arm.len) / 0.3);
+        let acc2 = 0;
+        for (let i = 0; i < P.length; i++) {
+          if (i > 0) acc2 += Math.hypot(P[i][0] - P[i - 1][0], P[i][1] - P[i - 1][1]);
+          if (i === 0 || i === P.length - 1 || acc2 >= 3) {
+            acc2 = 0;
+            const a0 = v3(P[i][0], P[i][1], P[i][2] + top), a1 = v3(T[i][0], T[i][1], T[i][2] + top + dh);
+            const dirv = a1.clone().sub(a0).normalize();
+            fencePosts.push(new THREE.Matrix4().compose(a0.clone().add(a1).multiplyScalar(0.5),
+              new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), dirv), new THREE.Vector3(1, b.arm.len, 1)));
+          }
         }
       }
     }

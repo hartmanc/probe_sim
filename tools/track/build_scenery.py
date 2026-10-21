@@ -1050,6 +1050,15 @@ def barriers(trk, osm):
             rec["color"] = dw["color"]
         if dw.get("stack"):
             rec["stack"] = int(dw["stack"])   # tyres per stack (round 7), from the evidence
+        if dw.get("fence_arm"):
+            # round 10 (Sonoma pit-out catch fence): angled arms on the fence posts, leaning toward the track (the side of
+            # the polyline the nearest track centre lies on; +1 = left, the app's offsetLine convention)
+            m_ = len(P) // 2
+            t_ = P[min(m_ + 1, len(P) - 1)] - P[max(m_ - 1, 0)]
+            n_ = np.array([-t_[1], t_[0]])
+            i_, _, _ = trk.project(P[m_:m_ + 1])
+            side_ = 1 if float((trk.C[i_[0], :2] - P[m_]) @ n_) > 0 else -1
+            rec["arm"] = {"len": float(dw["fence_arm"]["len"]), "deg": float(dw["fence_arm"]["deg"]), "side": side_}
         out.append(rec)
         log(f"declared wall {dw['name']}: {len(P) * 2} m ({dw.get('kind', 'concrete')}, fence {dw.get('fence', 3.0)} m)")
     if decl:
@@ -1924,7 +1933,7 @@ def wall_boards(trk):
             n_ = np.array([-(b - a)[1], (b - a)[0]]) / w
             if n_ @ to < 0:
                 n_ = -n_
-            p = m + n_ * 0.12                     # on the wall's track face
+            p = m + n_ * float(wb.get("off", 0.12))  # on the wall's track face (round 10 `off`: further out, e.g. on a tyre facing's front)
             z = float(trk.ground(*p)[0]) + wb.get("base", wh)
             out.append({"kind": "sign", "text": names[k % len(names)][0] if names else "", "x": rnd(p[0], 2), "y": rnd(p[1], 2), "z": rnd(z, 2),
                         "heading": rnd(math.atan2(n_[1], n_[0]), 3), "h": wb["h"], "w": rnd(w + 0.02, 2),
@@ -2398,6 +2407,22 @@ def main(cfg=None, out_dir=None):
         b_["s"] = to_m(b_["s"])
     if cones:
         cones["s0"], cones["s1"] = to_m(cones["s0"]), to_m(cones["s1"])
+    # round 9 (Sonoma judge r9): the app draws rule pit-box lines across the longest pit-lane part every 10 lane stations;
+    # pit_lane.lane.no_box_lines [{s: (s0, s1) track metres, why}] lists stretches where the footage shows no box lines
+    # (the pit-out lane past the boxes), written as lane station ranges `no_boxes` on part 0 (absent: as before)
+    nb_ = (PIT_CFG.get("lane") or {}).get("no_box_lines") or []
+    if pit and pit.get("parts") and nb_:
+        p0_ = pit["parts"][0]
+        si_ = trk.project(np.array(p0_["center"])[:, :2])[0] * trk.sp
+        rngs = []
+        for f_ in nb_:
+            a_, b_ = f_["s"]
+            m_ = ((si_ - a_) % (trk.n * trk.sp)) <= ((b_ - a_) % (trk.n * trk.sp))
+            idx_ = np.nonzero(m_)[0]
+            if len(idx_):
+                rngs.append([int(idx_.min()), int(idx_.max())])
+        p0_["no_boxes"] = rngs
+        log(f"pit lane: no rule box lines at lane stations {rngs} (track s {[f_['s'] for f_ in nb_]})")
     for grp in (pit, zones):
         for p_ in (grp or {}).get("parts", []):
             p_["track_s"] = [to_m(v) for v in p_["track_s"]]
@@ -2432,6 +2457,11 @@ def main(cfg=None, out_dir=None):
         **({"kerb_lines": kerb_lines(trk)} if SC_CFG.get("kerb_lines") else {}),
         "landmarks": marks,
         **({"terraces": terr} if terr else {}),
+        # round 10 (Sonoma judge r9, the pit-out lane surface): stretches where the track ribbon draws no shoulder because a
+        # paved lane runs right against the edge there; the shoulder rows rose through the lane and showed as pale patches
+        # (config scenery.track_shoulder_cut [{side, s: (s0, s1) m, why}]; absent: every station keeps its shoulder)
+        **({"track_shoulder_cut": [{"side": 1 if c_["side"] == "left" else -1, "s0": float(c_["s"][0]), "s1": float(c_["s"][1]),
+                                    "why": c_["why"]} for c_ in SC_CFG["track_shoulder_cut"]]} if SC_CFG.get("track_shoulder_cut") else {}),
     }
     if STRUCT_CFG:
         # the buildings round (21 Oct 2026): grandstands, garages, blocks, fuel island, masts, pit-box paint, boards
