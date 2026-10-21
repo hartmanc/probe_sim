@@ -546,7 +546,9 @@ CONFIG = dict(
                  # t1240000-t1330000: two white 6.1 m segments to one red, the 20 ft CalTrans K-rail), and a dark section
                  # near s 101 (onboard t004 / t006: ~6 m of dark, scorched or painted panel) at 286-292 m along the run
                  pattern=dict(colors=['#e4e2dc', '#e4e2dc', '#b8433a'], period_m=18.3),
-                 sections=[dict(from_m=286.0, to_m=292.0, color='#3b3a38')],
+                 # judge r8 (cp6): the pit-in end (the nose) is two unpainted beige K-rail segments (2 x 6.1 m) under the berm, then the
+                 # station and the white / red pattern (pit-lane video t1240000)
+                 sections=[dict(from_m=0.0, to_m=12.2, color='#c9bc9c'), dict(from_m=286.0, to_m=292.0, color='#3b3a38')],
                  h_src='jersey-ref: the onboard t004 wall is a K-rail (0.81 m); camh 1.05 m from it',
                  src='wall_measure.py --edge left 4490-4693 (88 % picked, offset p50 3.56 m) and 0-300 (75 %, p50 3.74 m) on c20_s4550..c20_s0300; onboard t000-t008, t148-t158 (white K-rail with red panels); pit-lane video 20:40-22:28 (on the right of the lane)',
                  latlon=[(35.4887467, -119.5466176), (35.4887756, -119.5463925), (35.4887872, -119.5461735), (35.4887997, -119.5459532),
@@ -586,6 +588,28 @@ CONFIG = dict(
                  src='onboard t020 (0:20); c20_s0600 / c20_s0650 (the tyre ring round the station roof); position: 0.8 m beyond the fitted right edge at s 474-488, the mound face',
                  latlon=[(35.4906055, -119.5410192), (35.4906059, -119.5410526), (35.4906305, -119.5410667), (35.4906638, -119.5410826),
                          (35.4906971, -119.5410982), (35.4907226, -119.5411075), (35.4907385, -119.5410817)]),
+            # judge r8 (cp6): the pale protective surround the frames show round the stations without a declared ring (a ring of 3.5 m radius,
+            # pale tyres 0.8 m, as the T3 / T5 rings); 2776 R (t092 does not show the station) and 3202 R left without one
+            dict(name='station 826 surround', kind='tyres', h=0.8, fence=0.0, color='#d2cab8',
+                 h_src='tyre-ref against the station base on t034',
+                 src='onboard t034: a low pale surround round the station (stage3_evidence/station_crops.jpg); c20_s0600: a dark tyre ring round the white roof (blob_scan); 3.5 m radius as the T3 ring',
+                 latlon=[(35.4904386, -119.5401737), (35.4904506, -119.5401767), (35.4904608, -119.540185), (35.4904677, -119.5401976), (35.49047, -119.5402123), (35.4904677, -119.5402271), (35.4904608, -119.5402396), (35.4904506, -119.540248), (35.4904386, -119.5402509), (35.4904266, -119.540248), (35.4904164, -119.5402396), (35.4904096, -119.5402271), (35.4904072, -119.5402123), (35.4904096, -119.5401976), (35.4904164, -119.540185), (35.4904266, -119.5401767), (35.4904386, -119.5401737)]),
+            dict(name='station 1185 surround', kind='tyres', h=0.8, fence=0.0, color='#d2cab8',
+                 h_src='tyre-ref against the station base on t046',
+                 src='onboard t046: a low pale surround round the station (stage3_evidence/station_crops.jpg); c20_s1300: a dark tyre ring round the white roof (blob_scan); 3.5 m radius as the T3 ring',
+                 latlon=[(35.4875581, -119.5395148), (35.4875701, -119.5395178), (35.4875803, -119.5395261), (35.4875871, -119.5395387), (35.4875895, -119.5395534), (35.4875871, -119.5395682), (35.4875803, -119.5395807), (35.4875701, -119.5395891), (35.4875581, -119.5395921), (35.487546, -119.5395891), (35.4875358, -119.5395807), (35.487529, -119.5395682), (35.4875266, -119.5395534), (35.487529, -119.5395387), (35.4875358, -119.5395261), (35.487546, -119.5395178), (35.4875581, -119.5395148)]),
+            dict(name='station 2370 surround', kind='tyres', h=0.8, fence=0.0, color='#d2cab8',
+                 h_src='tyre-ref against the station base on t082',
+                 src='onboard t082: a low pale surround round the station (stage3_evidence/station_crops.jpg); c20_s2500: a dark tyre ring round the white roof (blob_scan); 3.5 m radius as the T3 ring',
+                 latlon=[(35.487615, -119.5496438), (35.4876271, -119.5496467), (35.4876373, -119.5496551), (35.4876441, -119.5496676), (35.4876465, -119.5496824), (35.4876441, -119.5496972), (35.4876373, -119.5497097), (35.4876271, -119.5497181), (35.487615, -119.549721), (35.487603, -119.5497181), (35.4875928, -119.5497097), (35.487586, -119.5496972), (35.4875836, -119.5496824), (35.487586, -119.5496676), (35.4875928, -119.5496551), (35.487603, -119.5496467), (35.487615, -119.5496438)]),
+            dict(name='station 3433 surround', kind='tyres', h=0.8, fence=0.0, color='#d2cab8',
+                 h_src='tyre-ref against the station base on t112',
+                 src='onboard t112: a low pale surround round the station (stage3_evidence/station_crops.jpg); c20_s3500: a dark tyre ring round the white roof (blob_scan); 3.5 m radius as the T3 ring',
+                 latlon=[(35.4964593, -119.5490965), (35.4964713, -119.5490995), (35.4964815, -119.5491078), (35.4964883, -119.5491204), (35.4964907, -119.5491351), (35.4964883, -119.5491499), (35.4964815, -119.5491625), (35.4964713, -119.5491708), (35.4964593, -119.5491738), (35.4964473, -119.5491708), (35.4964371, -119.5491625), (35.4964302, -119.5491499), (35.4964279, -119.5491351), (35.4964302, -119.5491204), (35.4964371, -119.5491078), (35.4964473, -119.5490995), (35.4964593, -119.5490965)]),
+            dict(name='station 3716 surround', kind='tyres', h=0.8, fence=0.0, color='#d2cab8',
+                 h_src='tyre-ref against the station base on t122',
+                 src='onboard t122: a low pale surround round the station (stage3_evidence/station_crops.jpg); c20_s3800: a dark tyre ring round the white roof (blob_scan); 3.5 m radius as the T3 ring',
+                 latlon=[(35.4946445, -119.5481377), (35.4946566, -119.5481406), (35.4946668, -119.548149), (35.4946736, -119.5481615), (35.494676, -119.5481763), (35.4946736, -119.5481911), (35.4946668, -119.5482036), (35.4946566, -119.5482119), (35.4946445, -119.5482149), (35.4946325, -119.5482119), (35.4946223, -119.5482036), (35.4946155, -119.5481911), (35.4946131, -119.5481763), (35.4946155, -119.5481615), (35.4946223, -119.548149), (35.4946325, -119.5481406), (35.4946445, -119.5481377)]),
             dict(name='T3 station mound tyres', kind='tyres', h=0.8, fence=0.0, color='#d2cab8',
                  h_src='tyre-ref: one to two tyres high round the mound (onboard t040 (0:40))',
                  src='c20_s1100 / c20_s1150: the dark tyre ring round the station roof (compare/blob_scan.py); onboard t040 (0:40) (inventory station row s 996 right: a canopy on a tyre-walled mound); a ring of 3.5 m radius round the roof centroid, the mound size on the capture (judge r1 row)',
@@ -773,8 +797,8 @@ CONFIG = dict(
             # t1312000 (21:52) / t1339000 two at the tower's foot, one yellow, one orange. Replaces round 4's three yellow
             dict(latlon=[(35.4889724, -119.5455606), (35.489007, -119.5450089)], spacing=10.0, size=0.46,
                  src='pit-lane video t1267000 (21:07): six small orange cones along the left (paddock-side) wall ahead of the tower, at the wall foot (0.4 m off it, at the edge of the lane paving, which now stops 0.3 m short of the wall; the pit-connectivity gate keeps the lane itself clear), ~10 m apart (judge r5 pit_01 / pit_02)'),
-            dict(latlon=[(35.4890292, -119.5446559), (35.4890294, -119.5446504)], spacing=4.0, size=0.46, color='#e8c21c',
-                 src='pit-lane video t1312000 / t1339000: the yellow cone at the tower foot, 0.4 m off the paddock-side wall'),
+            dict(latlon=[(35.4890292, -119.5446559), (35.4890294, -119.5446504)], spacing=4.0, size=0.46, color='#c6e21e',
+                 src='pit-lane video t1312000 / t1339000: the fluorescent yellow-green cone at the tower foot (judge r8: t1312000), 0.4 m off the paddock-side wall'),
             dict(latlon=[(35.4890306, -119.5446117), (35.4890308, -119.5446062)], spacing=4.0, size=0.46,
                  src='pit-lane video t1312000 / t1339000: the orange cone beside it at the tower foot'),
             # judge r1 (orchestrator, 20 Oct 2026): cones the onboard shows that the package lacked; placed from the frames
@@ -888,6 +912,7 @@ CONFIG = dict(
         tree_imagery_check=False, tree_min=dict(radius=3.0, height=6.0),
         # round 8 (owner lap 2 note 18): the crack-seal lines measured on the clean captures (build_scenery.surface_marks)
         surface_marks=dict(max=1200, min_len=3.0, contrast=9),   # cp5: 14 -> 9 (111 marks did not show at hood level)
+        zone_end_feather=True,   # judge r8 (cp6): the square-cut paved-zone ends on the dirt (1800 R, 3600 R) fade out
         zones_meet_edge=True,    # judge r5: the crossover mouths (side_00 21 / 46 / 146 R, fwd_15 4600-4650 R) showed a dirt wedge between the zone's end and the edge
         paved_zones_over=True,   # texture pass (owner lap 1): the crossovers and the T2 runoff drew dirt blotches where the track's / a neighbour zone's shoulder lay over them (structure_stills/textures_r5)
         runoff_zones=[
@@ -1064,13 +1089,13 @@ CONFIG = dict(
         # roof at the frame's left edge). Footprints measured on c20_p0420 / c20_s0050 (structure_stills/tower_cap_r6.png):
         # the white roof outline 25 x 19 m at heading 3.83 deg, the tower its east 14 m, the low structure the west 11 m
         # and a 5 m strip behind the tower
-        dict(type='block', name='timing tower', rect=dict(c=(35.4891166, -119.5445371), heading_deg=183.83, l=14.0, w=14.0),
+        dict(type='block', name='timing tower', rect=dict(c=(35.4891199, -119.5444765), heading_deg=183.83, l=14.0, w=14.0),
              h=3.2, storeys=1, parapet=0.0, wall='#cdb892', band='#3a3530', roof='#9c9a94', bands=[], deck_rail=True,
              windows=dict(w=1.2, pitch=4.5, z0=1.0, z1=2.2), doors_at=[dict(face=-1, at=-3.0, w=1.0, h=2.1), dict(face=2, at=2.0, w=1.0, h=2.1)],
              balcony=dict(side='track', z=3.2, depth=0.8, color='#cdb892', stair=True),
              src='pit-lane video t1312000 / t1339000 (judge r5): solid tan lower storey with a door and a few windows, the deck on its roof with a railing, the exterior stair at the west end; footprint on c20_p0420 / c20_s0050',
              h_src='storey 3.2 m (HEIGHTS.md); the deck on its roof'),
-        dict(type='block', name='timing tower upper storey', rect=dict(c=(35.4891435, -119.5445393), heading_deg=3.83, l=11.0, w=8.0),
+        dict(type='block', name='timing tower upper storey', rect=dict(c=(35.4891471, -119.5444732), heading_deg=3.83, l=11.0, w=8.0),
              base=3.2, h=2.8, storeys=1, wall='#cdb892', band='#2e3a48', roof='#9c9a94', bands=[],
              windows=dict(w=1.6, pitch=2.2, z0=0.8, z1=2.3, faces=[-1, 2, -2]), doors_at=[dict(face=-1, at=4.2, w=0.9, h=2.1, color='#5a4636')],
              src='pit-lane video t1312000 / t1339000: the upper storey set back behind the deck, windows between dark posts on the lane side and the ends (glazed upper storey only)',
@@ -1083,7 +1108,13 @@ CONFIG = dict(
              h=3.9, fascia=0.4, canopy='#c9cbcd', fascia_color='#9da0a3', posts=6, islands=0, edge_posts=True,
              src='OSM 765811056 footprint behind the tower; c20_p0420 (the ribbed roof); owner lap 2 note 14 (his CCW frame and map); pit-lane video t1312000',
              h_src='lidar: the footprint top 4.3 m (roof 0.4 m)'),
-        dict(type='fuel', name='timing tower roof', rect=dict(c=(35.489139, -119.5445389), heading_deg=3.83, l=25.0, w=19.0),   # round 8 (owner lap 2 note 14): the whole 25 x 19 m roof at the lane is the tower's (his map 'Starter's Tower'), the tower centred under it
+        # judge r8 (cp6): the west 11 m of the 25 x 19 m roof outline beside the tower at the lane: an open shade roof on posts
+        # (pit video t1312000: open frontage, a tent), as in round 7; the awning (OSM 765811056) stays behind the tower
+        dict(type='fuel', name='timing tower west shade roof', rect=dict(c=(35.4891348, -119.544616), heading_deg=3.83, l=11.0, w=19.0),
+             h=2.6, fascia=0.2, canopy='#b5b2aa', fascia_color='#5b5852', posts=4, islands=0, edge_posts=True,
+             src='the west 11 m of the 25 x 19 m roof outline on c20_p0420 / c20_s0050 beside the tower; pit video t1312000: open frontage with a tent',
+             h_src='2.6 m: below the tower deck on t1312000 (HEIGHTS.md storeys)'),
+        dict(type='fuel', name='timing tower roof', rect=dict(c=(35.4891244, -119.5444769), heading_deg=3.83, l=17.0, w=16.0),   # judge r8 (cp6): back to the compact tower (pit video t1312000 / t1339000: 12-15 m along the lane, a projecting roof): the tower is the east 14 m of the 25 x 19 m roof outline, its roof 1.5 m over its walls
              h=6.1, fascia=0.9, canopy='#2f5d9e', fascia_color='#27508a', posts=6, islands=0,   # judge r6 fwd_15: a deep roof (0.9 m fascia) sitting on the upper storey, not a thin slab above it
              src='pit-lane video t1312000 / t1339000: the deep blue roof on posts over the tower, ~1.5 m overhang past its walls (the 14 m tower, not the 25 m outline)',
              h_src='lidar: the footprint top 9.8 m (scenery building_height_robust), roof 0.5 m'),

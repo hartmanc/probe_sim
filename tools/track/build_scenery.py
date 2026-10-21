@@ -2653,6 +2653,18 @@ def main(cfg=None, out_dir=None):
         zones["parts"] += cr_parts
     if SC_CFG.get("zones_meet_edge"):
         zones_meet_edge(trk, zones["parts"])
+    if SC_CFG.get("zone_end_feather"):
+        # judge r8 (cp6): a zone end more than 2 m from the road (on the dirt) is feathered by the app
+        from shapely.geometry import Point, Polygon
+        from shapely.ops import unary_union
+        L_, R_, n_ = trk.L[:, :2], trk.R[:, :2], trk.n
+        road_ = unary_union([Polygon([L_[i], L_[(i + 1) % n_], R_[(i + 1) % n_], R_[i]]).buffer(0) for i in range(n_)])
+        nf = 0
+        for p_ in zones["parts"]:
+            fe = [bool(road_.distance(Point(p_["center"][e][:2])) > 2.0) for e in (0, -1)]
+            if any(fe):
+                p_["feather_ends"] = fe; nf += sum(fe)
+        log(f"zone ends feathered: {nf} (scenery.zone_end_feather)")
     if SC_CFG.get("paved_zones_over"):
         # texture pass (Buttonwillow owner lap 1, 21 Oct 2026): every zone's road surface draws in front of the track's
         # and the other zones' shoulders, its own shoulder behind them (the app's `over`); drawn only, no physics change

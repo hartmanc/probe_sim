@@ -161,14 +161,16 @@ varying vec2 vPgPaintUv;
 varying float vPgD;
 ${hasA ? 'attribute float pgA; attribute float pgE; attribute vec2 pgUvSrc;' : ''}
 ${hasP ? 'attribute vec2 pgPaintUv;' : ''}
-${hasR ? 'attribute float pgD;' : ''}`)
+${hasR ? 'attribute float pgD;' : ''}
+${hasAp ? 'attribute float pgWear; varying float vPgWear;' : ''}`)
       .replace('#include <worldpos_vertex>', `#include <worldpos_vertex>
 vPgW = (modelMatrix * vec4(transformed, 1.0)).xyz;
 vPgA = ${hasA ? 'pgA' : '0.0'};
 vPgE = ${hasA ? 'pgE' : '0.0'};
 vPgUvSrc = ${hasA ? 'pgUvSrc' : 'vec2(0.0)'};
 vPgPaintUv = ${hasP ? 'pgPaintUv' : 'vec2(0.0)'};
-vPgD = ${hasR ? 'pgD' : '1000.0'};`);
+vPgD = ${hasR ? 'pgD' : '1000.0'};
+${hasAp ? 'vPgWear = pgWear;' : ''}`);
     sh.fragmentShader = sh.fragmentShader
       .replace('#include <common>', `#include <common>
 varying vec3 vPgW;
@@ -177,6 +179,7 @@ varying float vPgE;
 varying vec2 vPgUvSrc;
 varying vec2 vPgPaintUv;
 varying float vPgD;
+${hasAp ? 'varying float vPgWear;' : ''}
 float pgRub = 0.0;
 uniform sampler2D pgAlbG, pgAlbA, pgNorA, pgPaint;
 uniform float pgTileG, pgTileA;
@@ -229,6 +232,10 @@ vec3 pgTileN(sampler2D t, vec2 uv) {
     // the asphalt detail texture (grain) comes from the mix below (w = 1 on the surface)
     // judge r6: pale grey-beige (the onboard's T2 / T5 aprons, t024 / t058), only a little of the photo's light / dark
     vec3 apr = vec3(${(opts.apronTone ?? [0.50, 0.49, 0.46]).map((v) => v.toFixed(3)).join(', ')}) * (0.95 + 0.2 * (min(l, 0.6) - 0.3));
+    // judge r8 (cp6): variation: weathered patches at 6 m and 1.5 m scales (+-9 %), and a darker worn band toward the
+    // track (pgWear 1 at the road edge, 0 from 3 m in) so the apron does not meet the track as a uniform slab
+    apr *= 0.91 + 0.18 * (pgNoise(wp * 0.16) * 0.65 + pgNoise(wp * 0.7) * 0.35);
+    apr *= mix(1.0, 0.72, clamp(vPgWear, 0.0, 1.0));
     diffuseColor.rgb = mix(diffuseColor.rgb, mix(apr, vec3(l) * 1.05, paint), w);
 #endif
 #if ${hasC}
@@ -861,6 +868,19 @@ export function buildWorld(track: TrackJson, hf: Float32Array, ortho: THREE.Text
   secs.slice(1).forEach((sec, k) => {
     const surf = k >= nPit ? zoneSurf[k - nPit] : 'asphalt';
     const over = k >= nPit ? zoneOver[k - nPit] : 0;
+    // judge r8 (cp6): a zone end standing on the dirt (scenery.json part feather_ends [start, end], the builder's
+    // flags) fades its asphalt weight over its last 4 rows, so the paving does not end square-cut
+    const fe = k >= nPit ? (zones!.parts.filter((p) => p.n >= 2)[k - nPit] as { feather_ends?: [boolean, boolean] }).feather_ends : undefined;
+    if (fe) {
+      const K = sec.K, n = sec.n, rows = Math.min(4, Math.floor(n / 3));
+      for (let r = 0; r < rows; r++) {
+        const f = (r + 0.5) / rows;
+        for (const [on, i] of [[fe[0], r], [fe[1], n - 1 - r]] as [boolean, number][]) {
+          if (!on) continue;
+          for (let c = 0; c < K; c++) sec.A[i * K + c] *= f;
+        }
+      }
+    }
     scene.add(buildRibbon(track, ortho, sec, asphaltDetail, groundDetail, k < nPit ? `pit_lane_${k}` : `paved_runoff_${k - nPit}`, -6, k >= nPit && !surf, surf === 'concrete', over, surf === 'apron'));
   });
   if (pit) { const m = buildPitPaint(pit, ground); if (m) scene.add(m); }

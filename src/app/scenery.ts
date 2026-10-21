@@ -1620,9 +1620,19 @@ function buildPavedAreas(list: NonNullable<SceneryJson['paved_areas']>, ground: 
   };
   // judge r5 (round 6): an apron in the apron look of the paint surface (pale weathered asphalt with the asphalt grain,
   // the same as an apron zone), its weight pgA fading over 2.5 m of the outline into the photo
-  const apr = { pos: [] as number[], uv: [] as number[], a: [] as number[], idx: [] as number[] };
-  const lane = { pos: [] as number[], uv: [] as number[], a: [] as number[], idx: [] as number[] };
-  const conc = { pos: [] as number[], uv: [] as number[], a: [] as number[], idx: [] as number[] };
+  const roadDist = (a: NonNullable<SceneryJson['paved_areas']>[number], x: number, y: number) => {
+    let d = Infinity;
+    for (let i = 0; i < a.poly.length; i++) {
+      if (a.feather![i]) continue;
+      const [x1, y1] = a.poly[i], [x2, y2] = a.poly[(i + 1) % a.poly.length], dx = x2 - x1, dy = y2 - y1, l2 = dx * dx + dy * dy || 1;
+      const t = Math.max(0, Math.min(1, ((x - x1) * dx + (y - y1) * dy) / l2));
+      d = Math.min(d, Math.hypot(x - x1 - t * dx, y - y1 - t * dy));
+    }
+    return d;
+  };
+  const apr = { pos: [] as number[], uv: [] as number[], a: [] as number[], idx: [] as number[], w: [] as number[] };
+  const lane = { pos: [] as number[], uv: [] as number[], a: [] as number[], idx: [] as number[], w: [] as number[] };
+  const conc = { pos: [] as number[], uv: [] as number[], a: [] as number[], idx: [] as number[], w: [] as number[] };
   const apronArea = (a: NonNullable<SceneryJson['paved_areas']>[number], edgeDist: (x: number, y: number) => number,
     x0: number, x1: number, y0: number, y1: number) => {
     const d = 0.5, nx = Math.ceil((x1 - x0) / d) + 1, ny = Math.ceil((y1 - y0) / d) + 1;
@@ -1648,6 +1658,8 @@ function buildPavedAreas(list: NonNullable<SceneryJson['paved_areas']>, ground: 
       // tone covers the area and the edge follows the outline instead of the grid (no bites)
       const sd = edgeDist(x, y), e = Math.min(1, Math.max(0, (sd - 0.0) / 1.0));   // fade inward over 1 m from the feathered outline
       T.pos.push(p.x, p.y, p.z); T.uv.push(uv[0], uv[1]); T.a.push(e * e * (3 - 2 * e));
+      // wear: 1 at the road-edge (unfeathered) segments, 0 from 3 m in
+      T.w.push(a.feather ? Math.max(0, 1 - roadDist(a, x, y) / 3) : 0);
     }
     for (let i = 0; i < nx - 1; i++) for (let j = 0; j < ny - 1; j++) {
       if (!(inside[i * ny + j] || inside[(i + 1) * ny + j] || inside[i * ny + j + 1] || inside[(i + 1) * ny + j + 1])) continue;
@@ -1717,6 +1729,7 @@ function buildPavedAreas(list: NonNullable<SceneryJson['paved_areas']>, ground: 
     g3.setAttribute('pgA', new THREE.Float32BufferAttribute(B.a, 1));
     g3.setAttribute('pgE', new THREE.Float32BufferAttribute(new Float32Array(B.a.length), 1));
     g3.setAttribute('pgUvSrc', new THREE.Float32BufferAttribute(B.uv, 2));
+    g3.setAttribute('pgWear', new THREE.Float32BufferAttribute(B.w, 1));
     g3.setIndex(B.idx);
     g3.computeVertexNormals();
     return fn === 'laneMesh' ? surf!.laneMesh!(g3, name, list.some((q) => q.feather) ? -4 : -1, tone) : surf!.apronMesh!(g3, name, list.some((q) => q.feather) ? -4 : -1);
@@ -1960,12 +1973,12 @@ function buildLandmarks(list: SceneryJson['landmarks']): THREE.Group {
         };
         const leg = (k: number, y: number) => { const r = (2.0 - 1.4 * (y / m.h)) / Math.sqrt(3) * 1.0, a = (k * 2 * Math.PI) / 3; return new THREE.Vector3(r * Math.cos(a) * 1.15, y, r * Math.sin(a) * 1.15); };
         const panels = Math.max(4, Math.round(m.h / 3));
-        for (let k = 0; k < 3; k++) strut(leg(k, 0), leg(k, m.h), 0.18);
+        for (let k = 0; k < 3; k++) strut(leg(k, 0), leg(k, m.h), 0.12);   // judge r8: thinner members, lighter (read as a solid shaft at distance)
         for (let p = 0; p < panels; p++) {
           const y0 = (p * m.h) / panels, y1 = ((p + 1) * m.h) / panels;
-          for (let k = 0; k < 3; k++) { strut(leg(k, y0), leg((k + 1) % 3, y1), 0.07); strut(leg(k, y1), leg((k + 1) % 3, y1), 0.07); }
+          for (let k = 0; k < 3; k++) { strut(leg(k, y0), leg((k + 1) % 3, y1), 0.045); strut(leg(k, y1), leg((k + 1) % 3, y1), 0.045); }
         }
-        const lat = new THREE.Mesh(mergeGeometries(geos)!, new THREE.MeshLambertMaterial({ color: 0xb9bcbf }));
+        const lat = new THREE.Mesh(mergeGeometries(geos)!, new THREE.MeshLambertMaterial({ color: 0xd4d7da }));
         g.add(lat);
         const frame = new THREE.Mesh(new THREE.BoxGeometry(3.0, 1.8, 0.4), new THREE.MeshLambertMaterial({ color: 0xd8dadc }));
         frame.position.set(0, m.h + 0.4, 0);

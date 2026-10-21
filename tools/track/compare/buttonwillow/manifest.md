@@ -1814,6 +1814,22 @@ Contrast 14 -> 9: 884 candidate segments, 407 kept (cap 1200). Per 400 m section
 Traced on the paddock capture pad_5 by skeleton: only 106 m resolved (the loop leaves the tile to the north and merges
 with the paved lot on the right): not placed; OPEN (needs more capture tiles).
 
+## Round 8 checkpoint 6 (22 Oct 2026, rev 6ebc6e3263): judge r8 rows
+
+Geometry unchanged from 8bf8602. Stage 3 every gate ok. Stills structure_stills/r8g_*_r8.jpg.
+
+| row | outcome |
+|---|---|
+| Control tower | FIXED: back to the compact tower (the east 14 m of the 25 x 19 m roof outline: solid lower storey 14 x 14 m with doors and windows, set-back glazed upper 11 x 8, deck rail, stair, 17 x 16 m roof); the west 11 m an open shade roof on posts; the awning (OSM 765811056) behind (r8g_tower_close / _from_lane) |
+| Station surrounds | FIXED for 826 R (t034), 1185 R (t046), 2370 R (t082), 3433 R (t112), 3716 R (t122): pale tyre ring 0.8 m, 3.5 m radius, each with the capture's dark tyre ring. 2776 R (t092 does not show it) and 3202 R: none placed |
+| Apron tone | FIXED (kit): the apron shader varies (+-9 % patches at 6 m and 1.5 m) and darkens to 0.72 over the 3 m next to the road edge; the T2 runoff shares the shader but has no road-edge segments (no worn band) |
+| Square-cut zone ends 1800 R / 3600 R | FIXED (kit + builder `zone_end_feather`): 38 zone ends on the dirt fade their asphalt over 4 rows |
+| Apron 2963-3025 R corner, 2550 R seam, 2800 L triangle, 4300 L wedge, 590 R strip | OPEN (not reworked this checkpoint; stills r8g_seam_*) |
+| Pit wall | the nose's first 12.2 m (two K-rail segments) beige, unpainted, as t1240000 shows; the nose position and the pit-in-facing end: OPEN |
+| Pit-lane cones | the tower-foot cone fluorescent yellow-green (#c6e21e, t1312000) |
+| Lattice mast | thinner members (0.12 / 0.045 m) and a lighter grey |
+| T1 cones on the pavement, T2 apex run width / colours, the dark K-rail section's visibility, the K-rail's T1 end, the 4100 R kerb end, mouth-cone visibility | OPEN (not reached) |
+
 ### Generated tables (manifest_tables.ts on the published package, rev b7a674a6da)
 
 ### Scenery objects of the checked kinds (136, from public/tracks/buttonwillow/)
