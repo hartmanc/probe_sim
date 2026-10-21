@@ -27,6 +27,7 @@ CACHE = OUT = PREVIEWS = None   # set by configure()
 STRUCT_CFG = None   # config `structures` (top level), set by configure()
 PITWALL_EDGE = None  # optional per-station lateral (+left, m) of the left edge the pit wall stands 0.6 m off
 SC_CFG = {}
+CFG_ALL = None
 PIT_CFG = {}   # the track config's pit_lane section (trackcfg.py; walls with latlon get geometry here, 21 Oct 2026)
 PIT_EXIT = {}  # the track config's centre.pit_exit (stage 1's measured pit-exit blend line / wall end; trackcfg.py)
 UA = {"User-Agent": "probe-sim/0.1"}
@@ -42,7 +43,8 @@ def rnd(v, d=2):
 
 def configure(cfg, out_dir):
     """Point the module at one track's config and package directory (call geo.configure(cfg) first)."""
-    global CACHE, OUT, PREVIEWS, EPT, DEM13, PIT_WAY, SC_CFG, PIT_CFG, TYRE_CORNERS, PAVED_RUNOFF, BANNER_BOARDS, BANNERS, BRIDGE_STYLE, HANGARS
+    global CACHE, OUT, PREVIEWS, EPT, DEM13, PIT_WAY, SC_CFG, PIT_CFG, TYRE_CORNERS, PAVED_RUNOFF, BANNER_BOARDS, BANNERS, BRIDGE_STYLE, HANGARS, CFG_ALL
+    CFG_ALL = cfg
     CACHE, OUT, PREVIEWS = cfg.cache, out_dir, out_dir
     EPT, DEM13, PIT_WAY = cfg.get("lidar_ept"), cfg.get("dem13"), cfg["pit_lane_way"]
     SC_CFG = cfg["scenery"]
@@ -1378,7 +1380,7 @@ def paved_areas(trk, osm):
             if pa["surface"] == "apron" and SC_CFG.get("aprons_meet_road"):
                 xy, extra = _apron_meet_road(trk, xy)
             out.append({"name": pa.get("name", "paved area"), "surface": pa["surface"], "src": pa["src"],
-                        "poly": [[rnd(x, 1), rnd(y, 1)] for x, y in xy], **({"color": pa["color"]} if pa.get("color") else {}), **extra})
+                        "poly": [[rnd(x, 1), rnd(y, 1)] for x, y in xy], **({"color": pa["color"]} if pa.get("color") else {}), **({"look": pa["look"]} if pa.get("look") else {}), **extra})
             log(f"paved area {pa.get('name', '')}: {len(xy)} vertices, {pa['surface']} (measured outline)")
             continue
         w = next((w for w in osm.ways if w["id"] == str(pa["osm"])), None)
@@ -2227,6 +2229,64 @@ def declared_cone_lines(trk):
     return out
 
 
+def surface_marks(trk):
+    """Crack-seal lines measured on the clean captures (config scenery.surface_marks {max, min_len, contrast}, Buttonwillow
+    owner lap 2 note 18): inside the track polygon, pixels darker than the road's local median by `contrast` that are
+    also a thin dark ridge (black-hat over 0.7 m); connected components elongated (length >= min_len m, length / width
+    >= 6) become one straight segment each (principal axis); the strongest `max` kept; published as paint_lines (dark,
+    0.1 m). The captures are the measurement, never a texture."""
+    cfgm = SC_CFG.get("surface_marks")
+    if not cfgm:
+        return []
+    import captures as CAP_
+    from PIL import Image as Img, ImageDraw as IDraw
+    tiles = CAP_.capture_list(CFG_ALL, "clean")
+    mpp = (CFG_ALL["captures"]["mpp"])
+    L, R, n = trk.L[:, :2], trk.R[:, :2], trk.n
+    segs = []
+    for t in tiles:
+        im = np.asarray(Img.open(t["path"]).convert("L")).astype(np.float32); H, W = im.shape
+        m = t["mask"](H, W)
+        px = lambda P: [((x + t["dx"] - t["x"]) / mpp + W / 2, H / 2 - (y + t["dy"] - t["y"]) / mpp) for x, y in P]  # noqa: E731
+        road = Img.new("L", (W, H), 0); dr = IDraw.Draw(road)
+        near = np.hypot(trk.C[:, 0] - t["x"], trk.C[:, 1] - t["y"]) < 90
+        for i in np.nonzero(near)[0]:
+            j = (i + 1) % n
+            dr.polygon(px([L[i], L[j], R[j], R[i]]), fill=1)
+        road = ndi.binary_erosion(np.asarray(road, bool) & m, iterations=3)
+        if road.sum() < 2000:
+            continue
+        med = ndi.median_filter(im, size=31)
+        bh = ndi.grey_closing(im, size=(6, 6)) - im
+        mark = road & (bh > cfgm.get("contrast", 14)) & (im < med - cfgm.get("contrast", 14) * 0.6)
+        lab, k = ndi.label(mark, structure=np.ones((3, 3)))
+        for c in range(1, k + 1):
+            ys, xs = np.nonzero(lab == c)
+            if len(xs) < 15:
+                continue
+            Q = np.c_[xs, ys].astype(float); mu = Q.mean(0); u, sv, vt = np.linalg.svd(Q - mu, full_matrices=False)
+            ln = (sv[0] / math.sqrt(len(Q))) * math.sqrt(12) * mpp; wd = (sv[1] / math.sqrt(len(Q))) * math.sqrt(12) * mpp
+            if ln < cfgm.get("min_len", 3.0) or ln / max(wd, 0.05) < 6:
+                continue
+            a = mu - vt[0] * ln / mpp / 2; b = mu + vt[0] * ln / mpp / 2
+            wa = (t["x"] + (a[0] - W / 2) * mpp - t["dx"], t["y"] - (a[1] - H / 2) * mpp - t["dy"])
+            wb = (t["x"] + (b[0] - W / 2) * mpp - t["dx"], t["y"] - (b[1] - H / 2) * mpp - t["dy"])
+            segs.append((float(bh[ys, xs].mean() * len(xs)), wa, wb, t["name"]))
+    # one per place: drop a segment whose midpoint lies within 1 m of a stronger one's (captures overlap)
+    segs.sort(key=lambda q: -q[0]); kept = []
+    for sc, a, b, nm in segs:
+        mid = ((a[0] + b[0]) / 2, (a[1] + b[1]) / 2)
+        if any(math.dist(mid, ((k[1][0] + k[2][0]) / 2, (k[1][1] + k[2][1]) / 2)) < 1.0 for k in kept):
+            continue
+        kept.append((sc, a, b, nm))
+        if len(kept) >= cfgm.get("max", 1500):
+            break
+    out = [{"width": 0.1, "color": cfgm.get("color", "#2a2a2a"), "pts": with_z(trk, np.array([a, b]), 0.008),
+            "src": f"surface mark (crack seal) measured on {nm}"} for _, a, b, nm in kept]
+    log(f"surface marks: {len(segs)} candidate segments on the clean captures, {len(out)} kept (max {cfgm.get('max', 1500)})")
+    return out
+
+
 def declared_paint_lines(trk):
     """Painted lines measured on the captures (config scenery.paint_lines_declared, round 7): each {latlon, width (m),
     color, double: gap between the two lines' centres (m, optional), src}. Drawn only."""
@@ -2598,7 +2658,7 @@ def main(cfg=None, out_dir=None):
             p_["over"] = 2 if p_.get("kind") == "closed_road" else 1
         log(f"paved zones: {len(zones['parts'])} parts drawn over the neighbouring shoulders (scenery.paved_zones_over)")
     cone_lines += declared_cone_lines(trk)
-    plines = closed_road_paint(trk, cr_parts) + declared_paint_lines(trk)
+    plines = closed_road_paint(trk, cr_parts) + declared_paint_lines(trk) + surface_marks(trk)
     pareas = paved_areas(trk, osm)
     cones = pit_exit_cones(trk, pit, bar)
     pc_ = SC_CFG.get("pit_exit_cones") or {}

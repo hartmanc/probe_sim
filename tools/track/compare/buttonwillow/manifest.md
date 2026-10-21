@@ -1698,6 +1698,48 @@ config's `sources` gained the two videos, and it reproduced them byte for byte).
 - Stage 4: 50 sheets and the hood set (compare_sheets/hood_r8/) and stills r8b / r8c rendered on rev a8c39183b2 (the
   only change to e168ce1ca4: the 1843-1851 L profile 10 -> 6 cm).
 
+## Round 8 checkpoint 4 (22 Oct 2026, rev 2025a3091f)
+
+Geometry unchanged from 8bf8602. Stage 3 every gate ok; kerb roll gate 6 / 6.
+
+- Dog Leg runs (1843-1851 L, 1868-1933 R): flat separation blocks (profile height 0) per the coordinator, pending the
+  owner; no CW frame shows them raised (t066-t068: painted blocks).
+- Infield fence (5, 10, 11), lidar route (/tmp tool: points 1.3-2.8 m over the DEM with nothing above 3.5 m in a 2 m
+  neighbourhood, 0.5 m cells, RANSAC lines): the only linear runs are inside the paddock / east yard clutter (vehicles,
+  sheds); the one isolated linear series, x ~ -195 m from y 170 to 625 (west of the paddock), is points every ~20-25 m
+  (poles or trees, not a chain-link fence, which would read continuous at 0.5 m); chain-link returns are too sparse to
+  show. Not confirmed; nothing placed; the paddock-lane containment allowance stays. Frames that show it: CCW t138-t140,
+  t1370.
+- Cotton crest (19): the third video t700 (lap 0:32.44) shows the hilltop kerb: a wide dark-painted concrete kerb, raised
+  (a pale face on its track side), consistent with the 10 cm default; height not measurable from the frame. The K-rail
+  blocks are not in the frames grabbed (t0-t1200 at 2 s; t700-t708 show no blocks right of the crest): OPEN.
+- Crack-seal marks (18): `surface_marks` (build_scenery): 261 candidate segments on the clean captures, 111 kept
+  (contrast 14, min 3 m, length / width >= 6), published as dark 0.1 m paint lines. At the T2 / front-straight stills
+  (r8e_crack_seal_*) they are not visible: the detection is sparse; OPEN to tune.
+- Boundary audit (13): framing fixed (camera 1.2 m up, 6 m on the unpaved side, looking across, every 25 m): 743 stills,
+  31 sheets in boundary_sheets/ (cp3/ holds the first run). Seam rows from the sampled groups (area, edge L / R, pit,
+  zones; about 200 stills read):
+  | kind | where | what | status |
+  |---|---|---|---|
+  | paved area | pit-in gore (pit part 0-25 m, both sides) | flat untextured slab, a hard tone step against the lane | OPEN (the 'lane' look tried rendered near-black; reverted to the lane tone) |
+  | paved area | T2 concrete patch (583 R) | flat grey untextured slab | OPEN |
+  | pit lane | right side ~175 m | a dark blotch on the ground beside the lane | OPEN |
+  | zone | front-straight pale strip west ~75 m | green-toned ground beside the K-rail (C11) | OPEN |
+  | zone | front-straight crossover left ~125 m | a yellow-tan NAIP patch left on the asphalt | OPEN (paint-over outline candidate) |
+  | edge | left ~1900 (Dog Leg) | a dark brown ground patch, hard tone step | OPEN |
+  | area | apron 2963-3025 R start | a lighter triangle where apron and road meet | OPEN |
+  | edge / zone | 1800 R, 3600 R | zone ends square-cut against the dirt | OPEN |
+  No row was fixed in this checkpoint.
+- Pit-in gore (9): the kit's 'lane' look (the road's graded photo) rendered near-black; reverted to the lane tone #8c8a85
+  (flat): OPEN.
+- Fast Lane school / kart track (15): the Fast Lane garages are among the 13 lidar buildings restored in checkpoint 2
+  (pad_3 / pad_4); the kart track (pad_5) is a winding loop with an inner island, which the paved-area kit (one outline,
+  no holes) cannot draw: OPEN.
+- Kerb mesh (4): close stills facing the runs at the Dog Leg (1842 L, 1868 R), the Esses (3690 L) and the T2 apex (583 R)
+  from 0.5 m and 1.5 m (structure_stills/r8d_*): no gaps or tears.
+- Videos in config `sources`: done in checkpoint 3.
+- Stage 4: 50 sheets and the hood set rendered on rev 8bbcab1d43 (the only difference from 2025a3091f: the gore's look).
+
 ### Generated tables (manifest_tables.ts on the published package, rev b7a674a6da)
 
 ### Scenery objects of the checked kinds (136, from public/tracks/buttonwillow/)

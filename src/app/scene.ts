@@ -631,6 +631,16 @@ function seamReport(rss: RibbonSections[], terrainZ: Ground): SeamReport {
 function paintSurface(track: TrackJson, ortho: THREE.Texture, asphalt: GroundDetail, groundDetail: GroundDetail): PaintSurface {
   return {
     uv: (x, y) => orthoUV(track, x, y),
+    laneMesh(geo, name, offsetUnits) {
+      // a paved area in the road's own graded-photo asphalt look (Buttonwillow round 8, the pit-in gore: was a flat colour)
+      addDetailUV(geo, groundDetail.tile);
+      const mat = groundMaterial({ map: ortho, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: offsetUnits }, 0.9);
+      photoGround(mat, { grain: 0.12, ground: groundDetail, asphalt, asphaltAttr: true });
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.receiveShadow = true;
+      mesh.name = name;
+      return mesh;
+    },
     apronMesh(geo, name, offsetUnits) {
       // paved areas with the apron surface (judge r5): the same pale weathered asphalt as an apron zone; pgA fades it
       // into the photo at the outline
