@@ -30,6 +30,8 @@ export interface SceneryJson {
     ends?: { at: V2; z_ground: number; to: V2; z_to: number }[] }[];
   /** color: the wall's paint where the evidence shows it (Sonoma 2026: light blue / green), default plain concrete */
   barriers: { kind: 'concrete' | 'armco' | 'tyres' | 'pitwall' | 'fence'; h: number; fence: number; pts: V3[]; src: string; color?: string;
+    /** colour sections along the run (Buttonwillow, 20 Oct 2026): an alternating pattern and / or explicit sections */
+    pattern?: { colors: string[]; period_m: number }; sections?: { from_m: number; to_m: number; color: string }[];
     /** tyres per stack (round 7; default from h) */ stack?: number }[];
   kerbs: { width: number; inside?: boolean; stripe_m: number; /** [stripe, base] sRGB hex (default red / white), or [stripe, base, stripe 2]: the
     *  two stripe colours alternate between base blocks (Buttonwillow's red / white / blue / white) */ colors?: KerbColors;
@@ -62,7 +64,9 @@ export interface SceneryJson {
   landmarks: { kind: string; text: string; x: number; y: number; z: number; heading: number; h: number; w: number; x2?: number; y2?: number; z2?: number; color?: string; style?: string; src?: string;
     /** wall-board signs: the panel's top above the ground (m), for the coverage gate */ top?: number;
     /** 'impact' (impact barrier block at a wall's nose): its length along `heading` */ d?: number;
-    /** wall boards with a typed name (round 6): the lettering's colour */ fg?: string }[];
+    /** wall boards with a typed name (round 6): the lettering's colour */ fg?: string;
+    /** marshal style 'canopy' (Buttonwillow, 20 Oct 2026): the earth mound under the posts (m), a deck railing, and for
+     *  style 'platform' an access stair */ mound_h?: number; railing?: boolean; stair?: boolean }[];
   /** grandstands built into a hillside: stepped concrete rows following the ground (20 Oct 2026). Row r is a tread
    *  from a to b at height z, `run` m deep away from the track along `dir`; risers join consecutive rows. A terrace declared
    *  by its measured footprint (Sonoma round 6) has polyline rows that follow the stand (`pts`, `nrm`; structures.ts). */
@@ -652,6 +656,46 @@ export function tyreStackGeometry(n: number): THREE.BufferGeometry {
   return g;
 }
 
+/** Arc-length piece [a, b] (m) of a polyline, ends interpolated. */
+export function sliceLine(P: V3[], a: number, b: number): V3[] {
+  const out: V3[] = []; let acc = 0;
+  for (let i = 0; i < P.length - 1; i++) {
+    const p = P[i], q = P[i + 1], l = Math.hypot(q[0] - p[0], q[1] - p[1]);
+    const at = (d: number): V3 => { const t = l > 0 ? (d - acc) / l : 0; return [p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t, p[2] + (q[2] - p[2]) * t]; };
+    if (acc + l >= a && acc <= b) {
+      if (!out.length) out.push(at(Math.max(a, acc)));
+      if (acc + l <= b) out.push(q); else { out.push(at(b)); break; }
+    }
+    acc += l;
+  }
+  return out;
+}
+
+/** Colour sections of a wall run: explicit `sections` [{from_m, to_m, color}] along the run (the rest in the run's
+ *  colour), or an alternating `pattern` {colors, period_m} (each colour over period_m / colors.length); null without
+ *  either (the run is drawn in one colour, as before). */
+export function barrierSections(P: V3[], b: { color?: string; pattern?: { colors: string[]; period_m: number }; sections?: { from_m: number; to_m: number; color: string }[] }): { a: number; b: number; color: string }[] | null {
+  if (!b.pattern && !b.sections) return null;
+  let L = 0;
+  for (let i = 0; i < P.length - 1; i++) L += Math.hypot(P[i + 1][0] - P[i][0], P[i + 1][1] - P[i][1]);
+  const base: { a: number; b: number; color: string }[] = [];
+  if (b.pattern && b.pattern.colors.length && b.pattern.period_m > 0) {
+    const w = b.pattern.period_m / b.pattern.colors.length;
+    for (let k = 0, d = 0; d < L; k++, d += w) base.push({ a: d, b: Math.min(L, d + w), color: b.pattern.colors[k % b.pattern.colors.length] });
+  } else base.push({ a: 0, b: L, color: b.color ?? '#c9c5bb' });
+  if (!b.sections?.length) return base;
+  // explicit sections override the base pattern where they lie
+  const cuts = new Set<number>([0, L]);
+  for (const x of [...base, ...b.sections.map((q) => ({ a: q.from_m, b: q.to_m, color: q.color }))]) { cuts.add(Math.max(0, Math.min(L, x.a))); cuts.add(Math.max(0, Math.min(L, x.b))); }
+  const cs = [...cuts].sort((x, y) => x - y), out: { a: number; b: number; color: string }[] = [];
+  for (let i = 0; i < cs.length - 1; i++) {
+    const m = (cs[i] + cs[i + 1]) / 2;
+    const sec = b.sections.find((q) => q.from_m <= m && m <= q.to_m);
+    out.push({ a: cs[i], b: cs[i + 1], color: sec ? sec.color : base.find((q) => q.a <= m && m <= q.b)!.color });
+  }
+  return out;
+}
+
 function buildBarriers(list: SceneryJson['barriers']): THREE.Group {
   const group = new THREE.Group();
   group.name = 'barriers';
@@ -667,9 +711,23 @@ function buildBarriers(list: SceneryJson['barriers']): THREE.Group {
       const th = 0.18;
       const L = offsetLine(P, th), R = offsetLine(P, -th);
       const cc = b.color ? new THREE.Color(b.color) : b.kind === 'pitwall' ? cPit : cConcrete;
-      concrete.add(up(L, -0.3), up(L, b.h), cc);
-      concrete.add(up(R, b.h), up(R, -0.3), cc);
-      concrete.add(up(L, b.h), up(R, b.h), b.color ? cc.clone().lerp(cTop, 0.35) : cTop);
+      const segs = barrierSections(P, b);
+      if (segs) {
+        // colour sections along the run (Buttonwillow judge r2: white K-rail with red sections): each section's faces in
+        // its own colour; the run's end caps below as before
+        for (const sg of segs) {
+          const Q = sliceLine(P, sg.a, sg.b);
+          if (Q.length < 2) continue;
+          const Ls = offsetLine(Q, th), Rs = offsetLine(Q, -th), c2 = new THREE.Color(sg.color);
+          concrete.add(up(Ls, -0.3), up(Ls, b.h), c2);
+          concrete.add(up(Rs, b.h), up(Rs, -0.3), c2);
+          concrete.add(up(Ls, b.h), up(Rs, b.h), c2.clone().lerp(cTop, 0.35));
+        }
+      } else {
+        concrete.add(up(L, -0.3), up(L, b.h), cc);
+        concrete.add(up(R, b.h), up(R, -0.3), cc);
+        concrete.add(up(L, b.h), up(R, b.h), b.color ? cc.clone().lerp(cTop, 0.35) : cTop);
+      }
       // end caps: close both ends of the run, else an open end shows the wall's inside (Sonoma owner note 36)
       for (const i of [0, P.length - 1]) {
         const e = [L[i], R[i]];
@@ -1624,6 +1682,17 @@ function buildLandmarks(list: SceneryJson['landmarks']): THREE.Group {
       const box = (sx: number, sy: number, sz: number, x: number, y: number, z: number, mat: THREE.Material) => {
         const b2 = new THREE.Mesh(new THREE.BoxGeometry(sx, sy, sz), mat); b2.position.set(x, y, z); g.add(b2);
       };
+      if (m.style === 'canopy') {
+        // open marshal canopy (Buttonwillow judge r2: the frames show a flat roof on four posts over a tyre-faced earth
+        // mound, no walls): the mound (mound_h, earth colour), four posts to the roof underside at h, the roof slab in
+        // m.color with a 0.3 m overhang, an optional railing at 1 m on the mound top
+        const mh = m.mound_h ?? 0, roofY = Math.max(mh + 2.0, m.h);
+        if (mh > 0) box(W + 1.6, mh, D + 1.6, 0, mh / 2, 0, new THREE.MeshLambertMaterial({ color: '#9a8a6c' }));
+        for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) box(0.1, roofY - mh, 0.1, x * (W / 2 - 0.05), mh + (roofY - mh) / 2, z * (D / 2 - 0.05), postMat);
+        box(W + 0.6, 0.12, D + 0.6, 0, roofY + 0.06, 0, band);
+        box(W + 0.6, 0.04, D + 0.6, 0, roofY - 0.01, 0, white);
+        if (m.railing) for (const z of [-1, 1]) box(W, 0.05, 0.05, 0, mh + 1.0, z * (D / 2 - 0.05), postMat);
+      } else {
       for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) box(0.16, legH, 0.16, x * (W / 2 - 0.1), legH / 2, z * (D / 2 - 0.1), white);
       for (const z of [-1, 1]) box(W, 0.08, 0.08, 0, legH * 0.45, z * (D / 2 - 0.1), white);   // leg braces
       box(W + 0.4, 0.14, D + 0.4, 0, legH, 0, white);                                          // deck
@@ -1644,10 +1713,16 @@ function buildLandmarks(list: SceneryJson['landmarks']): THREE.Group {
         for (const [x, z, sx, sz] of [[0, D / 2 + 0.2, W + 0.4, 0.05], [-W / 2 - 0.2, 0, 0.05, D + 0.4], [W / 2 + 0.2, 0, 0.05, D + 0.4]] as const) {
           box(sx, 0.05, sz, x, legH + 1.0, z, postMat);
         }
+        if (m.stair) {
+          // an access stair down the back (Buttonwillow's pit-wall stand, judge r2 pit_02): a sloped stringer and treads
+          const run = legH * 1.2, n = Math.max(3, Math.round(legH / 0.2));
+          for (let k = 0; k < n; k++) box(0.9, 0.05, run / n, W / 2 - 0.5, legH * (k + 0.5) / n, -D / 2 - run + (n - k - 0.5) * run / n, white);
+        }
       }
       // railing on the deck's open sides (the deck is 0.2 m wider than the hut all round)
       for (const [x, z, sx, sz] of [[0, D / 2 + 0.18, W + 0.4, 0.05]] as const) box(sx, 0.05, sz, x, legH + 1.0, z, postMat);
       for (const x of [-W / 2 - 0.18, 0, W / 2 + 0.18]) box(0.05, 1.0, 0.05, x, legH + 0.5, D / 2 + 0.18, postMat);
+      }
     } else if (m.kind === 'block') {
       // free-standing concrete block (round 7, Sonoma owner note 38: the T11 apex blocks): w across, d along the heading,
       // h high; style 'striped' paints alternating red / white bands across it (color = the red), else plain m.color

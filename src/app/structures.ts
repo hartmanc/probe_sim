@@ -58,6 +58,11 @@ export interface GarageJson {
 export interface BlockJson {
   type: 'block'; name: string; src: string; c: V2; heading: number; l: number; w: number; z: number; h: number;
   storeys: number; wall: string; band: string; roof: string; parapet?: number; band_frac?: [number, number];
+  /** the storeys (0 = ground) that carry a window band; absent: every storey (Buttonwillow's tower: the upper only) */
+  bands?: number[];
+  /** a balcony along the long side `side` (+1 / -1 of the frame, the builder resolves 'track'): its floor at z, depth
+   *  out from the wall, a 1 m railing; and an exterior stair from the ground up to it at the +l end */
+  balcony?: { side: number; z: number; depth: number; color?: string; stair?: boolean };
 }
 
 /** Fuel island: canopy slab on posts, island kerbs with pumps, a plain sign pylon at a local offset. */
@@ -356,11 +361,31 @@ export function block(b: BlockJson, s: Soup): void {
   const [f0, f1] = b.band_frac ?? [0.3, 0.8];
   const sh = b.h / b.storeys;
   for (let k = 0; k < b.storeys; k++) {
+    if (b.bands && !b.bands.includes(k)) continue;
     const z0 = k * sh + f0 * sh, z1 = k * sh + f1 * sh, e = 0.04;
     s.quad(f.p(-hl + 0.6, -hw - e, z0), f.p(hl - 0.6, -hw - e, z0), f.p(hl - 0.6, -hw - e, z1), f.p(-hl + 0.6, -hw - e, z1), cB);
     s.quad(f.p(hl - 0.6, hw + e, z0), f.p(-hl + 0.6, hw + e, z0), f.p(-hl + 0.6, hw + e, z1), f.p(hl - 0.6, hw + e, z1), cB);
     s.quad(f.p(-hl - e, hw - 0.6, z0), f.p(-hl - e, -hw + 0.6, z0), f.p(-hl - e, -hw + 0.6, z1), f.p(-hl - e, hw - 0.6, z1), cB);
     s.quad(f.p(hl + e, -hw + 0.6, z0), f.p(hl + e, hw - 0.6, z0), f.p(hl + e, hw - 0.6, z1), f.p(hl + e, -hw + 0.6, z1), cB);
+  }
+  if (b.balcony) balcony(b, s, f);
+}
+
+function balcony(b: BlockJson, s: Soup, f: Frame): void {
+  const B = b.balcony!; const hl = b.l / 2, hw = b.w / 2, sd = B.side >= 0 ? 1 : -1;
+  const d0 = sd > 0 ? hw : -hw - B.depth, d1 = sd > 0 ? hw + B.depth : -hw;
+  const cB = rgb(B.color ?? b.wall), cR = rgb('#5d6166');
+  s.box(f, -hl, hl, d0, d1, B.z - 0.18, B.z, cB, { bottom: true });                                   // the floor slab
+  const dr0 = sd > 0 ? d1 - 0.06 : d0, dr1 = sd > 0 ? d1 : d0 + 0.06;
+  s.box(f, -hl, hl, dr0, dr1, B.z + 0.95, B.z + 1.0, cR);                                             // hand rail
+  for (let t = -hl; t <= hl + 1e-6; t += 1.5) s.box(f, t - 0.03, t + 0.03, dr0, dr1, B.z, B.z + 1.0, cR);   // balusters
+  if (B.stair) {
+    // a straight flight up the +l end, outside the balcony's line, ground to the floor
+    const n = Math.max(4, Math.round(B.z / 0.18)), run = B.z / 0.75;
+    for (let k = 0; k < n; k++) {
+      const t0 = hl + 0.2 + run - (k + 1) * (run / n), z = (k + 1) * (B.z / n);
+      s.box(f, t0, t0 + run / n, d0, d1, z - 0.06, z, cB);
+    }
   }
 }
 

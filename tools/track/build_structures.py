@@ -127,6 +127,8 @@ def boxlike(trk, osm, it):
     for key in ("doors", "windows"):
         if key in it:
             out[key] = dict(it[key], side=_side(it[key], st))
+    if it["type"] == "block" and it.get("balcony"):
+        out["balcony"] = dict(it["balcony"], side=_side(it["balcony"], st))
     if it["type"] == "garage" and it.get("mono") is not None:
         out["mono"] = _side({"side": it["mono"]}, st)
     if it["type"] == "fuel" and it.get("pylon_at"):

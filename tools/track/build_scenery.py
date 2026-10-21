@@ -1048,6 +1048,9 @@ def barriers(trk, osm):
                "pts": with_z(trk, P), "src": f"declared: {dw['name']}" + (f" ({dw['src']})" if dw.get("src") else "")}
         if dw.get("color"):
             rec["color"] = dw["color"]
+        for key_ in ("pattern", "sections"):   # colour sections along the run (Buttonwillow, 20 Oct 2026); absent: one colour
+            if dw.get(key_):
+                rec[key_] = dw[key_]
         if dw.get("stack"):
             rec["stack"] = int(dw["stack"])   # tyres per stack (round 7), from the evidence
         out.append(rec)
@@ -1117,6 +1120,13 @@ def kerbs_declared(trk):
         rec["src"] = (f"{k['name']}: " if k.get("name") else "") + k["src"] + (f"; colour: {k['colour_src']}" if k.get("colour_src") else "")
         out.append(rec)
     log(f"kerbs: {len(out)} declared strips (config scenery.kerbs_declared), {sum(k['s1'] - k['s0'] for k in out)} m; no rule kerbs")
+    far = [k for k in out if abs(k.get("off", 0.0)) > 1.2]
+    if far:
+        # report (judge r2, Buttonwillow): strips standing more than 1.2 m off the fitted edge, each with its evidence: a
+        # block line the edge should reach (a stage-1 kerb zone) or a false detection to drop
+        log(f"kerbs: {len(far)} strips more than 1.2 m off the edge (report):")
+        for k in far:
+            log(f"   {'left' if k['side'] > 0 else 'right'} s {k['s0']:.0f}-{k['s1']:.0f} off {k['off']:+.2f} m: {k['src'][:140]}")
     return out
 
 
@@ -1297,6 +1307,13 @@ def paved_areas(trk, osm):
     'concrete', src}. The OSM outline, drawn by the app as plain paving over the terrain (no physics change)."""
     out = []
     for pa in SC_CFG.get("paved_areas", []):
+        if pa.get("latlon"):
+            # an outline measured on the captures (Buttonwillow, 20 Oct 2026: the paved patch inside the T2 hairpin)
+            ll_ = np.array(pa["latlon"], float); xx, yy = bl.enu(ll_[:, 0], ll_[:, 1]); xy = np.c_[xx, yy]
+            out.append({"name": pa.get("name", "paved area"), "surface": pa["surface"], "src": pa["src"],
+                        "poly": [[rnd(x, 1), rnd(y, 1)] for x, y in xy]})
+            log(f"paved area {pa.get('name', '')}: {len(xy)} vertices, {pa['surface']} (measured outline)")
+            continue
         w = next((w for w in osm.ways if w["id"] == str(pa["osm"])), None)
         if w is None:
             raise SystemExit(f"paved_areas: OSM way {pa['osm']} not found")
@@ -2074,7 +2091,8 @@ def landmarks(trk, T, brg):
         out.append({"kind": "marshal", "text": mp.get("name", ""), "x": rnd(xy[0], 2), "y": rnd(xy[1], 2),
                     "z": rnd(float(trk.ground(*xy)[0]), 2), "heading": rnd(math.atan2(to[1], to[0]), 3),
                     "h": mp.get("h", 3.0), "w": mp.get("w", 2.4), "style": mp.get("style", "tower"),
-                    **({"color": mp["color"]} if mp.get("color") else {}), "src": mp["src"]})
+                    **({"color": mp["color"]} if mp.get("color") else {}),
+                    **{k: mp[k] for k in ("mound_h", "railing", "stair") if k in mp}, "src": mp["src"]})
     # free-standing tyre stacks and barrier blocks (config scenery.tyre_stacks, 21 Oct 2026): {latlon, h, w, style
     # 'tyres' | 'blocks', color, src}; drawn only (not in the collision world)
     for ts in SC_CFG.get("tyre_stacks", []):
