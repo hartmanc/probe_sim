@@ -62,3 +62,11 @@ build). Notes as given, before bed:
     infield edge beyond the walls, in front of the big trees. The infield is fenced; the sim has no fence there. This is the
     barrier of note 5 or its kind: a chain-link fence line around the infield, to be traced on the captures (post shadows,
     the thin line) and confirmed on this video.
+11. **The fence at T1** (CCW video _7QwJdGQtaE at 22:47, &t=1367; owner/owner_lap2_t1_fence_ccw_video.png): running CCW
+    toward T1 (the CW lap's T1 exit / Sunrise seen from the other side), a chain-link fence on posts at the far right by the
+    trees (his arrow): the infield fence of note 10 at the T1 end.
+12. **Tyre barriers at T2 that the sim does not have** (CCW video at 22:33, &t=1353; owner/owner_lap2_t2_tyre_barriers_ccw_video.png;
+    the sim at the same place owner/owner_lap2_t2_outside_sim.png): a long black tyre wall around the OUTSIDE of the T2
+    hairpin, behind the outer-loop pavement, with the paddock buildings behind it and cones on the pavement; the sim shows a
+    wavy tan ridge there (the lidar / heightfield bump of the tyre wall) and no barrier. The CW barrier ledger has the T2
+    outside as "none".
