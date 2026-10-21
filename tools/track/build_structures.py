@@ -16,6 +16,7 @@ captures with compare/capwin.py; heights by tools/track/compare/HEIGHTS.md or th
             dict(type='paint', runs=[dict(a=(lat, lon), b=(lat, lon), pitch, depth, w)], color),   # pit-box lines
             dict(type='terrace_dress', terrace=name, ...),            # passed through
             dict(type='scoring_tower', at=(lat, lon), heading_deg, w, d, h, color, head=dict(h, w, d, color)?, plinth=dict(w, h, color)?)
+            dict(type='canopy', at=(lat, lon), d, h, hole, tilt_deg, tilt_bearing, color, posts, deck=dict(h, d, color)?)   # round 9
             dict(type='fence', pts=[(lat, lon), ...], h),
         ])
 
@@ -249,6 +250,13 @@ def apply(trk, osm, sc, cfg):
             p = _enu(it["at"])
             out.append({k: v for k, v in it.items() if k not in ("at", "h_src")} | {"c": [rnd(p[0]), rnd(p[1])], "z": rnd(_ground(trk, p))})
             log(f"structure scoring tower '{it.get('name', '')}': {it['w']} x {it['d']} m, {it['h']} m at ({p[0]:.1f}, {p[1]:.1f})")
+        elif t == "canopy":
+            # round 9 (Sonoma judge r8, pit-exit row): a round canopy (a ring roof with an open centre, on a centre column and
+            # a ring of posts) over a raised round terrace; passed through with its centre in ENU and the ground there
+            p = _enu(it["at"])
+            out.append({k: v for k, v in it.items() if k not in ("at", "h_src")} | {"c": [rnd(p[0]), rnd(p[1])], "z": rnd(_ground(trk, p))})
+            log(f"structure canopy '{it.get('name', '')}': {it['d']} m across, roof {it['h']} m, terrace {it.get('deck', {}).get('h', 0)} m "
+                f"at ({p[0]:.1f}, {p[1]:.1f})")
         elif t == "boards":
             out.append(boards(trk, it, sc["barriers"]))
         elif t == "paint":

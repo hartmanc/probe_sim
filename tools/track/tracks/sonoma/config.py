@@ -190,7 +190,7 @@ CONFIG = dict(
             # sections on the outside, kind 'blocks' (drawn as blocks, no physics kerb); kerb_detect.py runs (grey, block
             # period ~1.9 m) confirmed on capstrip s 40-250. Round 8 (owner note 59): the inside 'block line from the
             # pit-wall nose' (s 88-133, c20_s1815 / c20_s1870) was the pit wall's K-rail segment tops, not kerb blocks;
-            # that entry is gone and the wall runs on through it ('pit straight, pit-lane side (continuous ...)')
+            # that entry is gone and the wall runs on through it (round 9: 'pit straight, pit-lane side: K-rail from the island ...')
             dict(side='right', a=(38.1621947, -122.4559701), b=(38.1622059, -122.4563447), kind='blocks', off=0.6, name='T1 exit right, block line between the striped runs',
                  colour_src='colour unverified: no local frame (t002 / t004; grey blocks from the captures)',
                  src='c20_s1870 (kerb_detect grey run 143.7-149.7 and the dotted blocks from 130 to 161 between striped runs 1 and 3); owner_31 satellite'),
@@ -289,27 +289,45 @@ CONFIG = dict(
             # AT the fitted edge (measured -0.2..0.0 m), so the push-out rule stands it at the pit-wall minimum + 0.05 m
             # (0.35 m, each point logged) instead of 0.55 m. Its only end near the merge is downstream (s ~158), which the
             # wall-ends gate does not check; its upstream end is the front-straight start (s ~3953)
-            dict(name='pit straight, pit-lane side (continuous to the pit-out blend line)', kind='pitwall', h=1.1, fence=0.0, h_src='onboard 2:14-2:17: wall top level with the hood line at 2-3 m (SAFER-type ~1.1 m, Street View 5MY4xR9O7etAXEHnZCVnGQ ~1 m); no catch fence. The T1 section (s ~90-158) is K-rail, ~0.8-0.9 m (round 7f shadow on c20_s1815: ~0.8 m; inventory pit row s 100: white Jersey segments 0.9 m, jersey-ref), drawn at the run\'s 1.1 m (one height per run; HEIGHT within the coverage tolerance)', color=WALL_PALE_BLUE,
-                 src='c20_s1595..s1870 bright band 2.0 m beyond the left edge (19 Oct), s 3953-76; round 8 (owner note 59): the pit-lane side line of the island converging to the track-side line at s ~88 (wall_measure.py along the left edge, offset 1.0-3.0 m, s 40-96: 92 % picked, rms 0.05 m; points s 79-85) and the wall on from there at the edge (wall_measure.py along the left edge, offset -0.6..1.0 m, s 90-158: 84 % picked, rms 0.05 m, p90 0.09 m, offset beyond the edge p50 -0.05 m; s 92-133 the K-rail segment tops 80 % picked, rms 0.15 m; s 134-158 the solid section 98 % picked, rms 0.03 m) to the blend line start (s ~158, 0.3 m from pit_exit_cones.latlon[0]); onboard 2:16-2:20; 24of8fjjAug pit row s 100 (Jersey segments curving with the track)',
+            # round 9 (judge r8, K-rail stretch height): the same measured line as two runs joined end to end at the island
+            # vertex (s ~85, where the island's pit-lane side line meets the track-side line and the segmented Jersey starts):
+            # the front-straight wall s 3953-85 and the K-rail s 85-158. The 2017 lidar does NOT step there (DSM - DEM, 3 x 3 m
+            # max every 2 m along the line: median 0.85 m on both stretches); the split is where the wall type changes on the
+            # captures and in the pit video (t0296 a continuous wall, t0300 white Jersey segments with gaps). The Jersey run's
+            # upstream end is joined to the front-straight run's downstream end (the same point), so the wall-ends gate
+            # covers it without an allowance
+            dict(name='pit straight, pit-lane side: front-straight wall to the island', kind='pitwall', h=1.1, fence=0.0, h_src='onboard 2:14-2:17: wall top level with the hood line at 2-3 m (SAFER-type ~1.1 m, Street View 5MY4xR9O7etAXEHnZCVnGQ ~1 m); no catch fence. Lidar 2017 DSM - DEM along the line (3 x 3 m max every 2 m, 115 samples): median 0.85 m (p25 0.83, p75 0.87), lower than the onboard reading and no step from the K-rail (the lidar predates the 2023-24 work; the onboard height kept)', color=WALL_PALE_BLUE,
+                 src='c20_s1595..s1870 bright band 2.0 m beyond the left edge (19 Oct), s 3953-76; round 8 (owner note 59): the pit-lane side line of the island converging to the track-side line (wall_measure.py along the left edge, offset 1.0-3.0 m, s 40-96: 92 % picked, rms 0.05 m; points s 79-85); round 9: ends at the island vertex s ~85, joined there to the K-rail run; onboard 2:16-2:20; 24of8fjjAug t0296 (a continuous wall on the right of the lane)',
                  latlon=[
                 (38.1606469, -122.4535036), (38.1607541, -122.4536697), (38.1608652, -122.4538464),
                 (38.1609772, -122.4540279), (38.1610893, -122.4542076), (38.1612006, -122.454387),
                 (38.1613123, -122.4545663), (38.1614237, -122.4547457), (38.1615466, -122.4549429),
                 (38.1616582, -122.455122), (38.1617703, -122.4553019), (38.1618793, -122.4554785),
-                # round 8: the island's pit-lane side line converging (s 79-85), then the wall at the edge s 90-158
-                (38.1618922, -122.4554972), (38.1619034, -122.4555152), (38.1619144, -122.4555336), (38.1619249, -122.4555526),
+                # round 8: the island's pit-lane side line converging (s 79-85)
+                (38.1618922, -122.4554972), (38.1619034, -122.4555152), (38.1619144, -122.4555336), (38.1619249, -122.4555526)]),
+            dict(name='pit straight, pit-lane side: K-rail from the island to the blend line', kind='pitwall', h=0.85, fence=0.0, h_src='lidar 2017 DSM - DEM along the line (3 x 3 m max every 2 m, 33 samples, s 85-157): median 0.85 m (p25 0.83, p75 0.89); 24of8fjjAug t0300: white Jersey segments with gaps, about the hood height (inventory pit row s 100: 0.9 m, jersey-ref); round 7f shadow on c20_s1815 ~0.8 m', color=WALL_PALE_BLUE,
+                 src='round 8 (owner note 59: "I\'m pretty sure the wall on the left side of the pit straight extends all the way up to the red arrow and through the yellow line. Anything else would be extremely dangerous."): the wall at the edge from the island (s ~85, joined to the front-straight run) to the blend line start (wall_measure.py along the left edge, offset -0.6..1.0 m, s 90-158: 84 % picked, rms 0.05 m, p90 0.09 m, offset beyond the edge p50 -0.05 m; s 92-133 the K-rail segment tops 80 % picked, rms 0.15 m; s 134-158 the solid section 98 % picked, rms 0.03 m) to s ~158, 0.3 m from pit_exit_cones.latlon[0]; 24of8fjjAug t0300 (segmented Jersey from the island), pit row s 100 (Jersey segments curving with the track)',
+                 latlon=[
+                (38.1619249, -122.4555526),
                 (38.1619515, -122.4555892), (38.1619667, -122.4556308), (38.1619791, -122.4556738), (38.1619895, -122.4557177),
                 (38.1619984, -122.455762), (38.1620063, -122.4558067), (38.1620133, -122.4558516), (38.1620193, -122.4558968),
                 (38.1620246, -122.4559421), (38.1620289, -122.4559875), (38.1620316, -122.4560332), (38.1620334, -122.4560789),
                 (38.1620349, -122.4561246), (38.1620363, -122.4561703), (38.1620377, -122.456216), (38.1620387, -122.4562617),
                 (38.1620393, -122.4562959)]),
+            # round 9 (judge r8, pit-out catch fence): one wall, two runs joined end to end at the vertex s ~151: the low
+            # chain-link along the pit-exit apron (s 106-151; 24of8fjjAug t0300 / inventory pit row s 100: the black steel
+            # apron fence, low) and the catch fence from s ~151 to the wall's Jersey end (t0304 / inventory pit row s 160)
             dict(name='pit-out lane, paddock side', kind='concrete', h=1.0, fence=1.0, color=WALL_PALE_BLUE, h_src='onboard 2:22.5: low light-blue wall with a chain-link fence behind it along the pit-out lane; Street View owner_28 Pit Out (low white wall, chain-link fence beyond); round 5: the chain-link fence is 2.0 m to its top (inventory 0:06, fence-post-ref), so 1.0 m over the 1.0 m wall (was 2.0)',
-                 src='c20_s1870 / c20_s1925, bright band along the lane outer side (wall_measure, 87 % picked, rms 0.30 m); onboard 2:23 / 0:06.5',
+                 src='c20_s1870 / c20_s1925, bright band along the lane outer side (wall_measure, 87 % picked, rms 0.30 m); onboard 2:23 / 0:06.5; round 9: its first 45 m (s 106-151), the low chain-link along the pit-exit apron (24of8fjjAug t0300: the low black steel fence round the apron, inventory pit row s 100), joined at s ~151 to the catch-fence run below',
                  latlon=[
                 (38.1619153, -122.4557708), (38.161916, -122.4558863), (38.1619357, -122.455998),
-                (38.1619491, -122.456111), (38.1619592, -122.4562246), (38.1619666, -122.4563384),
-                (38.1619792, -122.4564517), (38.1619856, -122.4565657), (38.1619903, -122.4566799),
-                (38.1619944, -122.4567942), (38.1619986, -122.4568797),
+                (38.1619491, -122.456111), (38.1619592, -122.4562246)]),
+            dict(name='pit-out lane, paddock side: wall with the catch fence (round 9)', kind='concrete', h=1.0, fence=2.1, color=WALL_PALE_BLUE,
+                 h_src='wall 1.0 m as the run before it; catch fence measured against the wall face beneath each post (same depth, so the ratio holds): 24of8fjjAug t0304 (pit-out, reference only), nearest post at frame x ~180: wall face 82 px, the post 148 px above the wall top to its bend and 180 px to the top of its angled arm (1.8 x and 2.2 x); onboard RAZip6S84CM t006 (from the track, March 2026), post at x ~80: wall 26 px, 47 px to the bend, 52 px to the top (1.8 x, 2.0 x). Fence 2.1 m over the 1.0 m wall, top ~3.1 m. The inventory reads 4.0 m (pit row s 160) and 2.0 m (t006 row s 184), both estimates; the frame ratios are the measurement. The angled post tops are not drawn (the kit fence is vertical)',
+                 src='c20_s1870 / c20_s1925, bright band along the lane outer side (wall_measure, 87 % picked, rms 0.30 m); onboard 2:23 / 0:06.5; round 9 (judge r8 row "pit-out catch fence"): from s ~151 to the Jersey end, the 3-4 m-class mesh catch fence with angled tops on the wall (24of8fjjAug t0304: mesh from the frame\'s left edge, beside the round red canopy, to the end of the lane; inventory pit row s 160 "catch fence on the wall, curved-top posts")',
+                 latlon=[
+                (38.1619592, -122.4562246), (38.1619666, -122.4563384), (38.1619792, -122.4564517), (38.1619856, -122.4565657),
+                (38.1619903, -122.4566799), (38.1619944, -122.4567942), (38.1619986, -122.4568797),
                 # round 5: on to its Jersey end before the footbridge (c20_s1925 / c20_s1980 wall_measure bright, 85 % picked,
                 # rms 0.31 m; onboard 0:08 'the paddock-side wall of the pit-out lane ends here', Jersey end 5 m away)
                 (38.1620017, -122.4569719), (38.1620076, -122.4570863), (38.1619978, -122.4572003), (38.1619769, -122.4573118),
@@ -875,10 +893,12 @@ CONFIG = dict(
             # is w 2.8 x d 2.3 under the kit's 0.6 m overhang; its open front faces bearing 10.6 (square to the long axis,
             # toward the 8a-T9 pass). Height: the 2017 lidar block over the footprint, 3.5-4.1 m (roof falling to the SE),
             # so h 4.0 (the kit's roof top is h - 0.19 m = 3.81 m)
+            # round 9 (judge r8, the owner's first notice): style 'deck', the kit's open viewing deck (a solid lighter lower
+            # storey to a sill, an open deck under a broad flat roof overhanging 0.9 m at the front), as owner_52 shows it
             dict(name='8a (T9) station tower', latlon=(38.1645832, -122.4585614), h=4.0, w=2.8, d=2.3, heading_deg=10.6,
-                 roof='#3a2917', color='#dcdfe2',
+                 roof='#3a2917', color='#dcdfe2', style='deck',
                  h_src='lidar 2017 DSM - DEM over the footprint (1 m grid): a 4 x 4 m block 3.5-4.1 m above the ground (p90 3.65 m, max 4.06 m; the roof falling to the SE), i.e. roof top ~3.8 m; h 4.0 puts the kit\'s roof top at 3.81 m (deck 1.4 m, over the 0.85 m Jersey)',
-                 src='owner note 61 (tools/track/tracks/sonoma/owner/t8a_station.json, green outline on the s 2600 window: 4.0 x 3.5 m, long axis 280.6 deg, centre (38.1645832, -122.4585614) = ENU (-84.15, 209.63); s 2659, 32.2 m right on the 8a-T9 pass; s 1772, 40.7 m right on the drag strip); "The tower\'s roof sits over the wall" (1.7 m from the T6-facing wall line); c20_s0275: the dark roof square with its NW shadow, roof pixels median rgb (58, 41, 23), a dark brown (owner note 60: "brown-roofed"); owner_52 (May 2025 onboard 1:14, reference only): a white roofed hut behind the track-side wall; white walls, no coloured band read (color white)'),
+                 src='owner note 61 (tools/track/tracks/sonoma/owner/t8a_station.json, green outline on the s 2600 window: 4.0 x 3.5 m, long axis 280.6 deg, centre (38.1645832, -122.4585614) = ENU (-84.15, 209.63); s 2659, 32.2 m right on the 8a-T9 pass; s 1772, 40.7 m right on the drag strip); "The tower\'s roof sits over the wall" (1.7 m from the T6-facing wall line); c20_s0275: the dark roof square with its NW shadow, roof pixels median rgb (58, 41, 23), a dark brown (owner note 60: "brown-roofed"); owner_52 (May 2025 onboard 1:14, reference only): a white roofed hut behind the track-side wall; white walls, no coloured band read (color white); round 9: owner_52 (May 2025 onboard 1:14, reference only) shows a broad brown overhanging roof over a dark OPEN viewing deck (the background visible through it between corner posts) above a lighter solid lower storey, drawn as style \'deck\''),
             dict(name='9a, stand foot', latlon=(38.1632923, -122.4549874), h=3.0,
                  src='round 7 (owner note 49, corrected): onboard t098 and the owner crop owner_49_9a_station_crop.jpg: a small hut at the base of the back-straight terraces near their 9a end, behind the catch fence, the marker cone on the verge in front of it; position from the frame (s ~3025, 28 m left, between the wall line and the terrace foot): not resolved on c20_s0605 / c20_s0660 / c20_o0660 (event trailers parked there); band colour not readable (default)'),
             dict(name='T7', latlon=(38.1659466, -122.4626554), h=4.9, color='#dcdfe2',  # round 7: t072 white hut, no coloured band
@@ -989,6 +1009,16 @@ CONFIG = dict(
         # bold text in the observed background / text colours (no logo artwork or emblems); names cycle per 6 m panel.
         # Observed colours from the 2026 onboard frames named in each src (manifest "Boards" table).
         wall_boards=[
+            # round 9 (judge r8, "SONOMA TURN 8" row): typed white lettering on a grey panel on the station-side wall's track
+            # face, from onboard t088 (RAZip6S84CM 1:28, inventory row s 2644 right "dark wall with a 'SONOMA TURN 8' sign"):
+            # the grey panel (graded rgb ~146, 168, 154: a neutral grey under the frame's green cast) with SONOMA TURN 8 in white
+            # sits on the dark wall between the camera and the station. Length: in t088 the panel is 142 px against the
+            # 1.0 m wall's 17 px face height at that place, i.e. at least 8.4 m (foreshortened: a lower bound), the text ~70 %
+            # of it; drawn as one 7.7 m panel on the black facing (the wall's track face there) at s 2641-2647, 0.15-0.85 m
+            # above the ground. The small logo mark left of the text is not drawn (no logo art)
+            dict(wall='T9, right: black tyre facing in front of the 8a station (round 8)', s=(2641, 2647), h=0.7, base=0.15, panel=9.0,
+                 names=[('SONOMA TURN 8', '#8f9392', '#ffffff')],
+                 src='onboard RAZip6S84CM t088 (1:28): white SONOMA TURN 8 lettering on a grey panel on the dark wall beside the 8a station (inventory row s 2644 right)'),
             dict(wall='T10 to T11, left wall with the ad boards', s=(3172, 3235), h=2.5,
                  names=[('SONOMA RACEWAY', '#1d2a3a', '#ffffff')],
                  src='onboard 1:43.2-1:44.5 (t104): dark navy SONOMA RACEWAY boards along the T10 entry wall'),
@@ -1150,9 +1180,11 @@ CONFIG = dict(
                          (38.1609419, -122.4542916), (38.1609976, -122.4543812), (38.1610533, -122.4544708), (38.1611091, -122.4545604),
                          (38.1611648, -122.45465), (38.1612207, -122.4547395), (38.1612764, -122.4548291), (38.1613294, -122.4549142),
                          (38.161335, -122.4549232), (38.1613905, -122.455013), (38.1614464, -122.4551025), (38.1614997, -122.4551873)]),
-            dict(side='right', s0=4000, s1=158, h=1.1, material='concrete', declared='pit straight, pit-lane side (continuous to the pit-out blend line)',
-                 src='inventory pit rows s 4010 / 4060 / 20 / 100: white concrete pit wall with GEICO boards, Jersey nose curving with the track (24of8fjjAug 4:48-5:00); Street View 5MY4xR9O7etAXEHnZCVnGQ 1.08 m; round 8 (owner note 59): continuous to s ~158, where the double yellow blend line starts (was s1 105, the old nose)'),
-            dict(side='left', s0=150, s1=170, h=1.1, fence=4.0, material='concrete', declared='pit-out lane, paddock side',
+            dict(side='right', s0=4000, s1=85, h=1.1, material='concrete', declared='pit straight, pit-lane side: front-straight wall to the island',
+                 src='inventory pit rows s 4010 / 4060 / 20: white concrete pit wall with GEICO boards (24of8fjjAug 4:48-5:00); Street View 5MY4xR9O7etAXEHnZCVnGQ 1.08 m; round 8 (owner note 59): continuous with the K-rail (round 9: two runs joined at the island, s ~85)'),
+            dict(side='right', s0=85, s1=158, h=0.85, material='jersey', declared='pit straight, pit-lane side: K-rail from the island to the blend line',
+                 src='inventory pit row s 100: the pit-wall nose, white Jersey segments curving right with the track (24of8fjjAug 5:00, t0300; 0.9 m jersey-ref); round 8 (owner note 59): continuous to s ~158, where the double yellow blend line starts'),
+            dict(side='left', s0=150, s1=170, h=1.0, fence=2.1, material='concrete', declared='pit-out lane, paddock side: wall with the catch fence (round 9)',
                  src='inventory pit row s 160: white wall with a catch fence along the pit-out lane (24of8fjjAug 5:04)'),
             dict(side='left', s0=3550, s1=3615, h=5.2, material='board_wall', declared='T11 entry, left: outer pit-in wall (garage side)',
                  src='inventory pit rows s 3560 / 3610: tall wall with doors and board panels, Jersey at its foot (24of8fjjAug 24:06-24:12; onboard RAZip6S84CM 1:56; Street View jrXpHaDfJT2APw6zcyBKRA 5.2 m)'),
@@ -1231,15 +1263,34 @@ CONFIG = dict(
                  src='OSM 1019836718; NAIP ortho (green roof); 2025 24of8fjjAug 24:30 (tan building, hip roof, beside '
                      'the fuel island); inventory s 3699-3736 left',
                  h_src='lidar: eaves 4.8-5.6 m, ridge 7.7 m'),
-            # pit-exit building (the "Farmers" end): grey metal walls, low mono-pitch roof rising to the glazed track side,
-            # red roof edge
+            # pit-exit building (the "Farmers" end): grey metal walls, low mono-pitch roof rising to the track side, red roof
+            # edge. Round 9 (judge r8, pit-exit building): 24of8fjjAug t0300 (reference only) shows its end from the pit lane:
+            # the red-edged roof sloping from low (paddock side) to high (track side), grey cladding above a continuous DARK
+            # frontage band (~2.0-4.0 m, the low end's eave at its top) and a lighter strip below; no blue window rows and no
+            # red mid-wall band (the round-6 windows and trim band are dropped). Heights stay the lidar's (4.2 m to 8.2 m: the
+            # frame's high end stands ~2.2 x the low end, the lidar 1.95 x). Colours: the frame's shaded east face reads rgb
+            # (65, 66, 75) above, (20, 21, 30) in the band, (57, 58, 63) below (drawn lifted for the shading: #6f7277, #1c1d24)
             dict(type='garage', name='Pit-exit building', osm='1019839174', eave=4.2, ridge=8.2, mono='track',
-                 wall='#9a9d9f', roof='#8e9396', trim='#b23a2e', trim_h=0.45,
-                 windows=dict(side='track', pitch=3.0, w=2.8, h=2.2, z=4.6, color='#3b6f9a'),
+                 wall='#6f7277', roof='#8e9396', trim='#b23a2e', trim_h=0.0,
+                 band=dict(z0=2.0, z1=4.0, color='#1c1d24'),
                  src='OSM 1019839174; c20_s1870 (ribbed grey roof with a red edge, red round canopy beside); onboard '
                      'RAZip6S84CM 0:04 (red roof edge, glazed front, grey walls; inventory s 91 left); 2025 24of8fjjAug '
-                     '4:56 (red roof line at the pit exit); Street View owner_25 (2011)',
-                 h_src='lidar: roof from 4.2 m (paddock side) to 8.2 m (track side)'),
+                     '4:56 (red roof line at the pit exit); round 9: 24of8fjjAug t0300 (the end face: red-edged mono roof, '
+                     'grey cladding, a dark frontage band, no window rows); Street View owner_25 (2011)',
+                 h_src='lidar: roof from 4.2 m (paddock side) to 8.2 m (track side); t0300: the high end ~2.2 x the low end'),
+            # round 9 (judge r8, pit-exit building row): the round red canopy on a raised terrace at the building's west end,
+            # beside the pit-out lane. Centre and size on c20_s1870 (a red disc 10 m across, ENU centre (78.5, -92.5), its open
+            # centre ~2.5 m dark; median red rgb (169, 89, 77)); heights from the 2017 lidar (DSM - DEM over the disc: the roof
+            # 6.3 m at its west rim to 8.8 m at its east rim, i.e. ~7.6 m at the centre, tilted ~14 deg up toward the east; the
+            # open centre reads 2.9-3.2 m, the terrace under it); 24of8fjjAug t0304 (reference only): the ring roof of red
+            # panels on a steel ring, open in the middle, above the catch fence beside the building
+            dict(type='canopy', name='Pit-exit round canopy', at=(38.1618691, -122.4567031), d=10.0, h=7.6, hole=2.5,
+                 tilt_deg=14.0, tilt_bearing=90.0, color='#a9594d', post_color='#9aa0a6', posts=6,
+                 deck=dict(h=3.0, d=10.5, color='#b9b6ae'),
+                 src='c20_s1870 (the round red canopy beside the pit-exit building: centre, 10 m disc, open centre); lidar 2017 '
+                     '(canopy surface 6.3-8.8 m, terrace 2.9-3.2 m through the open centre); 2025 24of8fjjAug t0304 (red ring '
+                     'roof on a steel ring with an open middle, on a raised terrace beside the building)',
+                 h_src='lidar 2017 DSM - DEM over the disc (1 m grid): 6.3-8.8 m, rising to the east; 2.9-3.2 m in the open centre (the terrace)'),
             # round 6 (orchestrator S2): the long single-storey shed directly behind the T10-T11 boarded wall (left of s
             # 3478-3700): the OSM box drew as a two-storey glazed block towering over the wall; the onboard 1:54-1:58 shows
             # only the 5.2 m boarded wall with the hills behind (the shed's roof sits at the boards' top)

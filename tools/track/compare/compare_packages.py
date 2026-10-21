@@ -104,6 +104,8 @@ def objects(sc, track=None):
                 out.append(obj("mast", [tuple(a[:2])], f"{name} at ({a[0]}, {a[1]})", st.get("h"), st.get("src")))
         elif t == "scoring_tower":
             out.append(obj("tower", [tuple(st["c"][:2])], name, st.get("h"), st.get("src")))
+        elif t == "canopy":   # round 9: a round canopy on a raised terrace (a building-like structure)
+            out.append(obj("building", [tuple(st["c"][:2])], name, st.get("h"), st.get("src")))
         elif t == "boards" and st.get("pts"):
             out.append(obj("board", densify([p[:2] for p in st["pts"]]), name, st.get("h"), st.get("src")))
         elif t == "fence" and st.get("pts"):

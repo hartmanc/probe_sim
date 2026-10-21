@@ -52,6 +52,16 @@ export interface GarageJson {
   parapet?: number;
   /** mono-pitch roof: the eaves on this side (+1 left / -1 right) rise to `ridge`, the other side stays at `eave` */
   mono?: -1 | 1;
+  /** round 9 (Sonoma pit-exit building): a continuous band on all four walls from z0 to z1 (a dark frontage) */
+  band?: { z0: number; z1: number; color: string };
+}
+
+/** Round canopy (round 9, Sonoma's pit-exit terrace): a ring roof `d` across with an open centre `hole` across, its
+ *  centre at height `h`, tilted up by `tilt_deg` toward the bearing `tilt_bearing`; a centre column and `posts` posts
+ *  down to a raised round terrace (`deck`: top height, diameter, colour; none: the ground). */
+export interface CanopyJson {
+  type: 'canopy'; name?: string; src: string; c: V2; z: number; d: number; h: number; hole?: number; tilt_deg?: number;
+  tilt_bearing?: number; color: string; post_color?: string; posts?: number; deck?: { h: number; d: number; color: string };
 }
 
 /** Flat-roof block of `storeys` storeys with a window band per storey on every face, roof parapet. */
@@ -95,7 +105,7 @@ export interface TerraceDressJson {
 
 /** every structure may carry solid outlines for the collision world (src/physics/collision.ts reads them like buildings) */
 export interface Collide { collide?: { footprint: V2[]; z: number; h: number }[] }
-export type StructureJson = (GrandstandJson | GarageJson | BlockJson | FuelJson | FenceJson | MastJson | PaintJson | BoardsJson | TerraceDressJson | ScoringTowerJson) & Collide;
+export type StructureJson = (GrandstandJson | GarageJson | BlockJson | FuelJson | FenceJson | MastJson | PaintJson | BoardsJson | TerraceDressJson | ScoringTowerJson | CanopyJson) & Collide;
 /** A terrace row: straight (a, b at height z), or, for a terrace declared by its measured footprint (Sonoma round 6), a
  *  polyline following the stand: `pts` [x, y, z, z_low, m] (tread height, the row below's height, metres along the front
  *  line) with `nrm` the uphill unit vector per vertex, and `k` the row number. */
@@ -303,7 +313,15 @@ export function garage(g: GarageJson, s: Soup): void {
   const hl = g.l / 2, hw = g.w / 2, o = g.overhang ?? 0.5;
   const cW = rgb(g.wall), cR = rgb(g.roof), cTr = rgb(g.trim);
   s.box(f, -hl, hl, -hw, hw, -0.5, g.eave, cW, { top: null });
-  s.box(f, -hl - 0.05, hl + 0.05, -hw - 0.05, hw + 0.05, g.eave - g.trim_h, g.eave, cTr, { top: null, shade: false });   // trim band
+  if (g.trim_h > 0) s.box(f, -hl - 0.05, hl + 0.05, -hw - 0.05, hw + 0.05, g.eave - g.trim_h, g.eave, cTr, { top: null, shade: false });   // trim band
+  if (g.band) {
+    // round 9: a continuous band round the walls (no openings), just proud of the wall faces
+    const e = 0.04, z0 = g.band.z0, z1 = g.band.z1, cB = rgb(g.band.color);
+    s.quad(f.p(-hl, -hw - e, z0), f.p(hl, -hw - e, z0), f.p(hl, -hw - e, z1), f.p(-hl, -hw - e, z1), cB);
+    s.quad(f.p(hl, hw + e, z0), f.p(-hl, hw + e, z0), f.p(-hl, hw + e, z1), f.p(hl, hw + e, z1), cB);
+    s.quad(f.p(-hl - e, hw, z0), f.p(-hl - e, -hw, z0), f.p(-hl - e, -hw, z1), f.p(-hl - e, hw, z1), cB);
+    s.quad(f.p(hl + e, -hw, z0), f.p(hl + e, hw, z0), f.p(hl + e, hw, z1), f.p(hl + e, -hw, z1), cB);
+  }
   if (g.mono) {
     // mono-pitch: high side at d = mono * hw; side walls and the end walls rise to the roof line
     const m = g.mono, zr = g.ridge, ze = g.eave;
@@ -459,6 +477,40 @@ export function scoringTower(u: ScoringTowerJson, s: Soup): void {
   const zc = hd ? u.h - hd.h : u.h;
   s.box(f, -u.w / 2, u.w / 2, -u.d / 2, u.d / 2, z0, zc, rgb(u.color));
   if (hd) s.box(f, -hd.w / 2, hd.w / 2, -hd.d / 2, hd.d / 2, zc, u.h, rgb(hd.color));
+}
+
+export function canopy(u: CanopyJson, s: Soup): void {
+  const N = 32, R = u.d / 2, r = (u.hole ?? 0) / 2, th = 0.25;
+  const tb = ((u.tilt_bearing ?? 0) * Math.PI) / 180, slope = Math.tan(((u.tilt_deg ?? 0) * Math.PI) / 180);
+  const dir: V2 = [Math.sin(tb), Math.cos(tb)];   // bearing -> ENU unit vector
+  const z0 = u.deck ? u.deck.h : 0;
+  const at = (rad: number, a: number, dz = 0): V3 => {
+    const x = rad * Math.cos(a), y = rad * Math.sin(a);
+    return [u.c[0] + x, u.c[1] + y, u.z + u.h + slope * (x * dir[0] + y * dir[1]) + dz];
+  };
+  const cRoof = rgb(u.color), cUnder = rgb(u.color, 0.7), cPost = rgb(u.post_color ?? '#9aa0a6');
+  for (let i = 0; i < N; i++) {
+    const a0 = (i / N) * 2 * Math.PI, a1 = ((i + 1) / N) * 2 * Math.PI;
+    s.quad(at(r, a0), at(R, a0), at(R, a1), at(r, a1), cRoof);                       // top
+    s.quad(at(r, a1, -th), at(R, a1, -th), at(R, a0, -th), at(r, a0, -th), cUnder);  // underside
+    s.quad(at(R, a0, -th), at(R, a1, -th), at(R, a1), at(R, a0), cRoof);             // rim
+    if (r > 0) s.quad(at(r, a1, -th), at(r, a0, -th), at(r, a0), at(r, a1), cUnder);
+    if (u.deck) {
+      const D = u.deck.d / 2, cD = rgb(u.deck.color);
+      const g = (rad: number, a: number, z: number): V3 => [u.c[0] + rad * Math.cos(a), u.c[1] + rad * Math.sin(a), u.z + z];
+      s.quad(g(D, a0, -0.5), g(D, a1, -0.5), g(D, a1, u.deck.h), g(D, a0, u.deck.h), rgb(u.deck.color, 0.86));   // terrace wall
+      s.tri(g(0, 0, u.deck.h), g(D, a0, u.deck.h), g(D, a1, u.deck.h), cD);                                       // terrace floor
+    }
+  }
+  // centre column and a ring of posts from the terrace up to the roof's underside
+  const col = (x: number, y: number, w: number) => {
+    const zt = u.h + slope * (x * dir[0] + y * dir[1]) - th;
+    s.box(Frame.heading([u.c[0] + x, u.c[1] + y], u.z, 0), -w / 2, w / 2, -w / 2, w / 2, z0, zt, cPost, { top: null });
+  };
+  if (r > 0) {
+    for (let k = 0; k < (u.posts ?? 6); k++) { const a = (k / (u.posts ?? 6)) * 2 * Math.PI; col(r * Math.cos(a), r * Math.sin(a), 0.25); }
+  } else col(0, 0, 0.5);
+  for (let k = 0; k < (u.posts ?? 6); k++) { const a = (k / (u.posts ?? 6)) * 2 * Math.PI + 0.3; col(R * 0.8 * Math.cos(a), R * 0.8 * Math.sin(a), 0.16); }
 }
 
 export function boardPanels(u: BoardsJson): { f: Frame; l: number; dz: number; k: number }[] {
@@ -708,6 +760,7 @@ export function structureSoups(list: StructureJson[], terraces: TerraceJson[] = 
       case 'paint': paint(u, pnt, ground); break;
       case 'boards': boards(u, solid); break;
       case 'scoring_tower': scoringTower(u, solid); break;
+      case 'canopy': canopy(u, solid); break;
       case 'terrace_dress': { const t = terraces.find((x) => x.name === u.terrace); if (t) terraceDress(u, t, terr, ground); break; }
       default: break;
     }

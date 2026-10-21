@@ -1623,30 +1623,48 @@ function buildLandmarks(list: SceneryJson['landmarks']): THREE.Group {
       const box = (sx: number, sy: number, sz: number, x: number, y: number, z: number, mat: THREE.Material) => {
         const b2 = new THREE.Mesh(new THREE.BoxGeometry(sx, sy, sz), mat); b2.position.set(x, y, z); g.add(b2);
       };
-      for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) box(0.16, legH, 0.16, x * (W / 2 - 0.1), legH / 2, z * (D / 2 - 0.1), white);
-      for (const z of [-1, 1]) box(W, 0.08, 0.08, 0, legH * 0.45, z * (D / 2 - 0.1), white);   // leg braces
-      box(W + 0.4, 0.14, D + 0.4, 0, legH, 0, white);                                          // deck
-      if (m.style !== 'platform') {
-        const y0 = legH + 0.07, bandH = Math.min(0.9, wallH * 0.4);
-        // back wall and the two side walls: coloured band below, white above; the front (track side) open
-        box(W, bandH, t, 0, y0 + bandH / 2, -D / 2 + t / 2, band);
-        box(W, wallH - bandH, t, 0, y0 + bandH + (wallH - bandH) / 2, -D / 2 + t / 2, white);
-        for (const x of [-1, 1]) {
-          box(t, bandH, D, x * (W / 2 - t / 2), y0 + bandH / 2, 0, band);
-          box(t, wallH - bandH, D, x * (W / 2 - t / 2), y0 + bandH + (wallH - bandH) / 2, 0, white);
-        }
-        box(W, bandH, t, 0, y0 + bandH / 2, D / 2 - t / 2, band);                               // low front sill (band colour)
-        for (const x of [-1, 1]) box(0.12, wallH, 0.12, x * (W / 2 - 0.06), y0 + wallH / 2, D / 2 - 0.06, white);  // front posts
-        box(W + 1.2, 0.14, D + 1.2, 0, y0 + wallH + 0.07, 0.15, roofMat);                        // roof, 0.6 m overhang
-        box(W + 1.2, 0.05, D + 1.2, 0, y0 + wallH - 0.01, 0.15, postMat);                         // its dark underside
+      if (m.style === 'deck') {
+        // round 9 (Sonoma 8a station; owner_52, the May 2025 onboard frame): a solid lighter lower storey (m.color) up to a
+        // sill 1.0 m above the deck level, an OPEN viewing deck above it (posts at the corners and mid-sides, a rail on the
+        // sill, a dark deck floor, open all round), under a broad flat roof slab overhanging 0.9 m at the front (the
+        // heading) and 0.6 m elsewhere; the roof top at h - 0.19 m, as in the hut style
+        const sill = legH + 1.0, roofTop = m.h - 0.19, slab = 0.3, under = roofTop - slab, hp = (under - sill) / 2 + sill;
+        const lower = new THREE.MeshLambertMaterial({ color: m.color ?? '#d2d1cb' });
+        const deckDark = new THREE.MeshLambertMaterial({ color: '#33363a' });
+        box(W, sill, D, 0, sill / 2, 0, lower);                                                  // lower storey and sill
+        box(W - 0.2, 0.04, D - 0.2, 0, sill + 0.02, 0, deckDark);                                // the deck floor, dark
+        for (const x of [-1, 0, 1]) for (const z of [-1, 1]) box(0.14, under - sill, 0.14, x * (W / 2 - 0.07), hp, z * (D / 2 - 0.07), postMat);
+        for (const x of [-1, 1]) box(0.14, under - sill, 0.14, x * (W / 2 - 0.07), hp, 0, postMat);   // mid-side posts
+        box(W + 0.04, 0.06, 0.06, 0, sill + 1.0, D / 2, postMat);                                // front rail
+        for (const x of [-1, 1]) box(0.06, 0.06, D + 0.04, x * (W / 2), sill + 1.0, 0, postMat); // side rails
+        box(W + 1.2, slab, D + 1.5, 0, under + slab / 2, 0.15, roofMat);                         // roof slab
+        box(W + 1.22, 0.04, D + 1.52, 0, under - 0.02, 0.15, postMat);                           // its dark underside
       } else {
-        for (const [x, z, sx, sz] of [[0, D / 2 + 0.2, W + 0.4, 0.05], [-W / 2 - 0.2, 0, 0.05, D + 0.4], [W / 2 + 0.2, 0, 0.05, D + 0.4]] as const) {
-          box(sx, 0.05, sz, x, legH + 1.0, z, postMat);
+        for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) box(0.16, legH, 0.16, x * (W / 2 - 0.1), legH / 2, z * (D / 2 - 0.1), white);
+        for (const z of [-1, 1]) box(W, 0.08, 0.08, 0, legH * 0.45, z * (D / 2 - 0.1), white);   // leg braces
+        box(W + 0.4, 0.14, D + 0.4, 0, legH, 0, white);                                          // deck
+        if (m.style !== 'platform') {
+          const y0 = legH + 0.07, bandH = Math.min(0.9, wallH * 0.4);
+          // back wall and the two side walls: coloured band below, white above; the front (track side) open
+          box(W, bandH, t, 0, y0 + bandH / 2, -D / 2 + t / 2, band);
+          box(W, wallH - bandH, t, 0, y0 + bandH + (wallH - bandH) / 2, -D / 2 + t / 2, white);
+          for (const x of [-1, 1]) {
+            box(t, bandH, D, x * (W / 2 - t / 2), y0 + bandH / 2, 0, band);
+            box(t, wallH - bandH, D, x * (W / 2 - t / 2), y0 + bandH + (wallH - bandH) / 2, 0, white);
+          }
+          box(W, bandH, t, 0, y0 + bandH / 2, D / 2 - t / 2, band);                               // low front sill (band colour)
+          for (const x of [-1, 1]) box(0.12, wallH, 0.12, x * (W / 2 - 0.06), y0 + wallH / 2, D / 2 - 0.06, white);  // front posts
+          box(W + 1.2, 0.14, D + 1.2, 0, y0 + wallH + 0.07, 0.15, roofMat);                        // roof, 0.6 m overhang
+          box(W + 1.2, 0.05, D + 1.2, 0, y0 + wallH - 0.01, 0.15, postMat);                         // its dark underside
+        } else {
+          for (const [x, z, sx, sz] of [[0, D / 2 + 0.2, W + 0.4, 0.05], [-W / 2 - 0.2, 0, 0.05, D + 0.4], [W / 2 + 0.2, 0, 0.05, D + 0.4]] as const) {
+            box(sx, 0.05, sz, x, legH + 1.0, z, postMat);
+          }
         }
+        // railing on the deck's open sides (the deck is 0.2 m wider than the hut all round)
+        for (const [x, z, sx, sz] of [[0, D / 2 + 0.18, W + 0.4, 0.05]] as const) box(sx, 0.05, sz, x, legH + 1.0, z, postMat);
+        for (const x of [-W / 2 - 0.18, 0, W / 2 + 0.18]) box(0.05, 1.0, 0.05, x, legH + 0.5, D / 2 + 0.18, postMat);
       }
-      // railing on the deck's open sides (the deck is 0.2 m wider than the hut all round)
-      for (const [x, z, sx, sz] of [[0, D / 2 + 0.18, W + 0.4, 0.05]] as const) box(sx, 0.05, sz, x, legH + 1.0, z, postMat);
-      for (const x of [-W / 2 - 0.18, 0, W / 2 + 0.18]) box(0.05, 1.0, 0.05, x, legH + 0.5, D / 2 + 0.18, postMat);
     } else if (m.kind === 'block') {
       // free-standing concrete block (round 7, Sonoma owner note 38: the T11 apex blocks): w across, d along the heading,
       // h high; style 'striped' paints alternating red / white bands across it (color = the red), else plain m.color
