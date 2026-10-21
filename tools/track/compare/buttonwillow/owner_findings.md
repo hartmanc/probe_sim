@@ -127,3 +127,9 @@ build). Notes as given, before bed:
     edge, the UPPER one on the boundary between the dark track and the PALE strip that lies between the track and the
     pit-wall K-rail). The round-4 straight declaration fitted both sides to asphalt-end readings "between the pit-wall
     median and the infield dirt" (16.9 m); the pale strip north of the dark band is not racing surface.
+24. **Weird cones blocking nothing before T1** (owner/owner_lap2_t1_cones_sim.png: three cones in a row across the pale
+    pavement on the right of the T1 approach). The satellite (owner/owner_lap2_t1_access_road_map.png, Google Maps,
+    reference only) shows a paved service road leaving the inside of Sunrise there and running diagonally through the
+    infield to the outside of Cotton Corners: "This might be for an emergency vehicle route between Sunrise and Cotton
+    Corners (that shouldn't be blocked off for realism's sake)." The sim's cone line 140-160 R (from onboard t006-t008)
+    stands at that road's mouth; the road itself is not modelled.
