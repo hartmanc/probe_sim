@@ -226,7 +226,8 @@ vec3 pgTileN(sampler2D t, vec2 uv) {
 #if ${hasAp}
     // apron: pale weathered asphalt, a little warmer and darker than concrete, keeping the photo's local light / dark;
     // the asphalt detail texture (grain) comes from the mix below (w = 1 on the surface)
-    vec3 apr = vec3(0.43, 0.425, 0.405) * (0.9 + 0.4 * (min(l, 0.6) - 0.3));
+    // judge r6: pale grey-beige (the onboard's T2 / T5 aprons, t024 / t058), only a little of the photo's light / dark
+    vec3 apr = vec3(0.50, 0.49, 0.46) * (0.95 + 0.2 * (min(l, 0.6) - 0.3));
     diffuseColor.rgb = mix(diffuseColor.rgb, mix(apr, vec3(l) * 1.05, paint), w);
 #endif
 #if ${hasC}

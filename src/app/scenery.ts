@@ -61,7 +61,8 @@ export interface SceneryJson {
   /** raised kerb strips off the lap (round 7b): centre line, width, height, stripe length, colours */
   kerb_lines?: { pts: V3[]; width: number; height: number; stripe_m: number; colors: string[]; src?: string }[];
   /** paved ground that is not driven (the paddock, 20 Oct 2026): plain paving over the terrain, no physics */
-  paved_areas?: { name: string; surface: 'asphalt' | 'concrete' | 'apron'; src: string; poly: V2[]; /** a measured tone (#rrggbb) in place of the surface's */ color?: string }[];
+  paved_areas?: { name: string; surface: 'asphalt' | 'concrete' | 'apron'; src: string; poly: V2[]; /** a measured tone (#rrggbb) in place of the surface's */ color?: string;
+    /** per outline segment (poly[i] -> poly[i + 1]): fade it (true) or not (false: it meets the road edge; judge r6) */ feather?: boolean[] }[];
   /** Cone line between the pit-exit lane and the track (CONTRACTS §2b); crossing it is a black-flag offence. */
   pit_exit_cones?: PitExitConesJson | null;
   /** cone lines across the mouths of paved but unused roads (closed variants of the circuit, 20 Oct 2026): drawn only */
@@ -1619,11 +1620,14 @@ function buildPavedAreas(list: NonNullable<SceneryJson['paved_areas']>, ground: 
     const d = 0.5, nx = Math.ceil((x1 - x0) / d) + 1, ny = Math.ceil((y1 - y0) / d) + 1, b0 = aPos.length / 3;
     for (let i = 0; i < nx; i++) for (let j = 0; j < ny; j++) {
       const x = x0 + i * d, y = y0 + j * d, p = v3(x, y, ground(x, y) + 0.04), uv = surf!.uv(x, y);
-      const e = Math.min(1, edgeDist(x, y) / 2.5);
-      aPos.push(p.x, p.y, p.z); aUv.push(uv[0], uv[1]); aA.push(inPoly(x, y, a.poly) ? e * e * (3 - 2 * e) : 0);
+      // judge r6: a straight 1 m feather on the signed distance to the outline (-0.5 .. +0.5 m), so the apron's own
+      // tone covers the area and the edge follows the outline instead of the grid (no bites)
+      const sd = (inPoly(x, y, a.poly) ? 1 : -1) * edgeDist(x, y), e = Math.min(1, Math.max(0, sd + 0.5));
+      aPos.push(p.x, p.y, p.z); aUv.push(uv[0], uv[1]); aA.push(e * e * (3 - 2 * e));
     }
     for (let i = 0; i < nx - 1; i++) for (let j = 0; j < ny - 1; j++) {
-      if (!inPoly(x0 + (i + 0.5) * d, y0 + (j + 0.5) * d, a.poly)) continue;
+      const cx = x0 + (i + 0.5) * d, cy = y0 + (j + 0.5) * d;
+      if (!inPoly(cx, cy, a.poly) && edgeDist(cx, cy) > 0.75) continue;
       const q = b0 + i * ny + j;
       aIdx.push(q, q + ny, q + 1, q + ny, q + ny + 1, q + 1);
     }
@@ -1648,7 +1652,18 @@ function buildPavedAreas(list: NonNullable<SceneryJson['paved_areas']>, ground: 
       // pit-entry strip as a checker; a 0.5 m grid of shared vertices instead, the tone varying per vertex (smooth), an
       // apron fading out over 2.5 m of its outline by vertex alpha (no holes, no steps). Areas without a measured colour
       // or the apron surface keep the cells below (Sonoma, Laguna unchanged).
-      if (a.surface === 'apron' && surf?.apronMesh && !a.color) apronArea(a, edgeDist, Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys));
+      // with `feather`, the fade follows only the feathered segments (the road-edge ones meet the road unfaded)
+      const featherDist = a.feather ? (x: number, y: number) => {
+        let d = Infinity;
+        for (let i = 0; i < a.poly.length; i++) {
+          if (!a.feather![i]) continue;
+          const [x1, y1] = a.poly[i], [x2, y2] = a.poly[(i + 1) % a.poly.length], dx = x2 - x1, dy = y2 - y1, l2 = dx * dx + dy * dy || 1;
+          const t = Math.max(0, Math.min(1, ((x - x1) * dx + (y - y1) * dy) / l2));
+          d = Math.min(d, Math.hypot(x - x1 - t * dx, y - y1 - t * dy));
+        }
+        return d;
+      } : edgeDist;
+      if (a.surface === 'apron' && surf?.apronMesh && !a.color) apronArea(a, featherDist, Math.min(...xs) - 1, Math.max(...xs) + 1, Math.min(...ys) - 1, Math.max(...ys) + 1);
       else softArea(a, base, edgeDist, Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys));
       continue;
     }
@@ -1680,7 +1695,7 @@ function buildPavedAreas(list: NonNullable<SceneryJson['paved_areas']>, ground: 
     g3.setAttribute('pgUvSrc', new THREE.Float32BufferAttribute(aUv, 2));
     g3.setIndex(aIdx);
     g3.computeVertexNormals();
-    return surf!.apronMesh!(g3, 'paved_areas_apron', -1);
+    return surf!.apronMesh!(g3, 'paved_areas_apron', list.some((q) => q.feather) ? -4 : -1);
   })() : null;
   if (apron) {
     const grp = new THREE.Group(); grp.name = 'paved_areas_group'; grp.add(apron);
@@ -1824,6 +1839,15 @@ function buildLandmarks(list: SceneryJson['landmarks']): THREE.Group {
       } else {
         for (const [x, z, sx, sz] of [[0, D / 2 + 0.2, W + 0.4, 0.05], [-W / 2 - 0.2, 0, 0.05, D + 0.4], [W / 2 + 0.2, 0, 0.05, D + 0.4]] as const) {
           box(sx, 0.05, sz, x, legH + 1.0, z, postMat);
+          if (m.fine) {
+            // judge r6 pit_02 4690 R: a denser rail (t1339000): a mid rail and balusters every 0.3 m
+            box(sx, 0.03, sz, x, legH + 0.5, z, postMat);
+            const L = Math.max(sx, sz), nb = Math.max(2, Math.round(L / 0.3));
+            for (let k = 0; k <= nb; k++) {
+              const t = -L / 2 + (L * k) / nb;
+              box(0.025, 1.0, 0.025, sx > sz ? x + t : x, legH + 0.5, sx > sz ? z : z + t, postMat);
+            }
+          }
         }
         if (m.roof) {
           // a small canopy over the deck (Buttonwillow's pit-wall stand, judge r3): two rear posts and a flat roof 2.2 m up

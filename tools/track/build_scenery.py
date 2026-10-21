@@ -1360,8 +1360,11 @@ def paved_areas(trk, osm):
         if pa.get("latlon"):
             # an outline measured on the captures (Buttonwillow, 20 Oct 2026: the paved patch inside the T2 hairpin)
             ll_ = np.array(pa["latlon"], float); xx, yy = bl.enu(ll_[:, 0], ll_[:, 1]); xy = np.c_[xx, yy]
+            extra = {}
+            if pa["surface"] == "apron" and SC_CFG.get("aprons_meet_road"):
+                xy, extra = _apron_meet_road(trk, xy)
             out.append({"name": pa.get("name", "paved area"), "surface": pa["surface"], "src": pa["src"],
-                        "poly": [[rnd(x, 1), rnd(y, 1)] for x, y in xy], **({"color": pa["color"]} if pa.get("color") else {})})
+                        "poly": [[rnd(x, 1), rnd(y, 1)] for x, y in xy], **({"color": pa["color"]} if pa.get("color") else {}), **extra})
             log(f"paved area {pa.get('name', '')}: {len(xy)} vertices, {pa['surface']} (measured outline)")
             continue
         w = next((w for w in osm.ways if w["id"] == str(pa["osm"])), None)
@@ -1372,6 +1375,30 @@ def paved_areas(trk, osm):
                     "poly": [[rnd(x, 1), rnd(y, 1)] for x, y in xy]})
         log(f"paved area {pa.get('name', pa['osm'])}: {len(xy)} vertices, {pa['surface']}")
     return out
+
+
+_ROAD_POLY = None
+
+
+def _apron_meet_road(trk, xy):
+    """An apron outline clipped to the road (config scenery.aprons_meet_road, Buttonwillow judge r6: the outline's own
+    steps along the track edge read as tan bites between the apron and the road): the outline minus the road polygon
+    (the largest piece, simplified 0.05 m), so the apron meets the fitted edge along it; `feather` per segment (poly[i]
+    -> poly[i+1]): False on the road edge (no fade there: the app draws it over the track's shoulder), True elsewhere."""
+    global _ROAD_POLY
+    from shapely.geometry import Point, Polygon
+    from shapely.ops import unary_union
+    if _ROAD_POLY is None:
+        L, R, n = trk.L[:, :2], trk.R[:, :2], trk.n
+        _ROAD_POLY = unary_union([Polygon([L[i], L[(i + 1) % n], R[(i + 1) % n], R[i]]).buffer(0) for i in range(n)])
+    g = Polygon(xy).buffer(0).difference(_ROAD_POLY)
+    if g.geom_type == "MultiPolygon":
+        g = max(g.geoms, key=lambda q: q.area)
+    g = g.simplify(0.05)
+    P = np.array(g.exterior.coords)[:-1]
+    fe = [bool(_ROAD_POLY.distance(Point((P[i] + P[(i + 1) % len(P)]) / 2)) > 0.2) for i in range(len(P))]
+    log(f"   apron meets the road: {len(P)} vertices, {sum(not f for f in fe)} segments on the road edge")
+    return P, {"feather": fe}
 
 
 def tyre_facings(trk, bar, reach=2.5, off=0.55):
@@ -1510,14 +1537,21 @@ def ortho_paint_over(trk, img, items, ring=3.0, lift=18.0):
     lum = img.astype(float) @ np.array([0.2126, 0.7152, 0.0722])
     for it in items:
         P = np.array([bl.enu(*q) for q in it["latlon"]], float)
-        m = Image.new("L", (W, H), 0); ImageDraw.Draw(m).polygon(px(P), fill=1); m = np.asarray(m, bool) & road
+        # `on`: 'road' (default: only pixels between the fitted edges) or 'any' (judge r6: the NAIP hatch in the pit-entry
+        # gore, the drag-strip chevrons off the road; there the yellow cast counts as a mark too)
+        area = road if it.get("on", "road") == "road" else np.ones_like(road)
+        m = Image.new("L", (W, H), 0); ImageDraw.Draw(m).polygon(px(P), fill=1); m = np.asarray(m, bool) & area
         c = P.mean(0); Pg = c + (P - c) * (1 + ring / max(1e-6, float(np.linalg.norm(P - c, axis=1).mean())))
-        g = Image.new("L", (W, H), 0); ImageDraw.Draw(g).polygon(px(Pg), fill=1); g = np.asarray(g, bool) & road
-        ref = g & (lum < np.median(lum[g]) + lift)
+        g = Image.new("L", (W, H), 0); ImageDraw.Draw(g).polygon(px(Pg), fill=1); g = np.asarray(g, bool) & area
+        yel = img[..., 0].astype(float) - img[..., 2].astype(float)
+        mark = (lum > np.median(lum[g]) + lift)
+        if it.get("on") == "any":
+            mark |= yel > np.median(yel[g]) + 25
+        ref = g & ~mark
         med = np.median(img[ref], axis=0)
-        hit = m & (lum > np.median(lum[g]) + lift)
+        hit = m & mark
         out[hit] = med.astype(np.uint8)
-        log(f"ortho paint-over: {int(hit.sum())} px ({hit.sum() * 0.36:.0f} m2) on the road -> {med.astype(int).tolist()} ({it['src'][:60]})")
+        log(f"ortho paint-over: {int(hit.sum())} px ({hit.sum() * 0.36:.0f} m2) {"on the road" if it.get("on", "road") == "road" else "in the outline"} -> {med.astype(int).tolist()} ({it['src'][:60]})")
     return out
 
 

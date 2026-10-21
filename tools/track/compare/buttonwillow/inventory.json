@@ -2514,6 +2514,23 @@
    "frame": "pit_ucm/t1312000.jpg",
    "scope": "pit",
    "note": "a yellow and an orange cone at the timing tower's foot by the paddock-side wall"
+  },
+  {
+   "side": "left",
+   "kind": "building",
+   "attrs": {
+    "type": "long low dark shade roof on posts in the paddock behind the paddock-side K-rail",
+    "h_m": 3.0,
+    "h_method": "storeys",
+    "added": "judge r6 (round 7): fwd_00 0 L, t1267000 / t1303000"
+   },
+   "confidence": 0.6,
+   "t": null,
+   "s": 4618.0,
+   "source": "onboard:ucmXJu5QKFQ@21:07",
+   "frame": "pit_ucm/t1267000.jpg",
+   "scope": "pit",
+   "note": "a long low shade roof on posts behind the paddock-side wall west of the tower (also t1303000, and past the wall on the onboard t000)"
   }
  ],
  "counts": {

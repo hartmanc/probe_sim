@@ -785,12 +785,17 @@ CONFIG = dict(
         # judge r5 (round 6): NAIP marks on the fitted road painted over in the ortho (stage 3; outlines measured on the
         # package ortho, stage3_evidence/smears_r6.jpg); only road pixels brighter than the road's median there change
         ortho_paint_over=[
+            # judge r6 (round 7): the NAIP yellow hatch in the pit-entry gore (pit_00 4294-4318 R, open since r2) and the
+            # chevrons at the drag-strip crossing (fwd_08 2550 R, open since r3), off the road: on='any'
+            dict(latlon=[(35.4895828, -119.5481191), (35.4895828, -119.5478764), (35.4893133, -119.5478764), (35.4893133, -119.5481191)], on='any', src='pit_00 4294-4318 R: the NAIP 2022 yellow hatch in the gore between the track and the pit-entry lane'),
+            dict(latlon=[(35.4895702, -119.5499307), (35.4895702, -119.549688), (35.4892558, -119.549688), (35.4892558, -119.5499307)], on='any', src='fwd_08 2550 R: the NAIP chevrons on the drag-strip crossing'),
             dict(latlon=[(35.491772, -119.5503996), (35.491772, -119.5503003), (35.4916552, -119.5503003), (35.4916552, -119.5503996)], src='fwd_09 2800-2850 L: a broad white mark on the road (NAIP 2022)'),
             dict(latlon=[(35.491251, -119.5507086), (35.491251, -119.5506313), (35.4911791, -119.5506313), (35.4911791, -119.5507086)], src='the same stretch, the second mark at s ~2850'),
             dict(latlon=[(35.4883332, -119.5396337), (35.4883332, -119.5395454), (35.4880727, -119.5395454), (35.4880727, -119.5396337)], src='T4 ~1100: the NAIP kerb blocks now inside the owner-traced right edge'),
             dict(latlon=[(35.4875418, -119.539456), (35.4875418, -119.5394009), (35.4874789, -119.5394009), (35.4874789, -119.539456)], src='T4 exit ~1203: NAIP blocks on the road (first)'),
             dict(latlon=[(35.4873891, -119.5394229), (35.4873891, -119.5393457), (35.4872813, -119.5393457), (35.4872813, -119.5394229)], src='T4 exit ~1203: NAIP blocks on the road (second)'),
         ],
+        aprons_meet_road=True,   # judge r6 back_05 3000: the apron outlines clipped to the road, no fade along the road edge (no tan bites)
         zones_meet_edge=True,    # judge r5: the crossover mouths (side_00 21 / 46 / 146 R, fwd_15 4600-4650 R) showed a dirt wedge between the zone's end and the edge
         paved_zones_over=True,   # texture pass (owner lap 1): the crossovers and the T2 runoff drew dirt blotches where the track's / a neighbour zone's shoulder lay over them (structure_stills/textures_r5)
         runoff_zones=[
@@ -831,7 +836,7 @@ CONFIG = dict(
         building_evidence=[
             dict(contains=(35.4893364, -119.5445599), src='pit-lane video ucmXJu5QKFQ 21:52-22:10 (t1312000, t1330000): the two-storey timing tower with the blue roof beside the pit lane; OSM footprint, lidar height'),
             dict(contains=(35.4891529, -119.544572), src='pit-lane video ucmXJu5QKFQ 21:52-22:10 (t1312000, t1330000): the two-storey timing tower with the blue roof beside the pit lane; OSM footprint, lidar height'),
-            dict(contains=(35.4896585, -119.5454773), drop=True, src='no 2026 source: 29 x 8 m lidar (2021) structure in the paddock, outside every clean capture (the z20 set covers the track corridor); the pit-lane video (t1240000-t1366000) and the onboard (t000-t008) show the paddock behind the K-rail full of trailers, cars and trees with no building attributable to this footprint'),
+            dict(contains=(35.4896585, -119.5454773), drop=True, src='round 7: drawn as the structures item "paddock shade roof" (open, on posts) instead of a solid block; 29 x 8 m lidar (2021) structure in the paddock, outside every clean capture (the z20 set covers the track corridor); the pit-lane video (t1240000-t1366000) and the onboard (t000-t008) show the paddock behind the K-rail full of trailers, cars and trees with no building attributable to this footprint'),
             dict(contains=(35.4897631, -119.5436739), drop=True, src='no 2026 source: 28 x 7 m lidar (2021) structure in the paddock, outside every clean capture (the z20 set covers the track corridor); the pit-lane video (t1240000-t1366000) and the onboard (t000-t008) show the paddock behind the K-rail full of trailers, cars and trees with no building attributable to this footprint'),
             dict(contains=(35.4900634, -119.545886), drop=True, src='no 2026 source: 20 x 7 m lidar (2021) structure in the paddock, outside every clean capture (the z20 set covers the track corridor); the pit-lane video (t1240000-t1366000) and the onboard (t000-t008) show the paddock behind the K-rail full of trailers, cars and trees with no building attributable to this footprint'),
             dict(contains=(35.4900867, -119.5455277), drop=True, src='no 2026 source: 30 x 9 m lidar (2021) structure in the paddock, outside every clean capture (the z20 set covers the track corridor); the pit-lane video (t1240000-t1366000) and the onboard (t000-t008) show the paddock behind the K-rail full of trailers, cars and trees with no building attributable to this footprint'),
@@ -956,11 +961,22 @@ CONFIG = dict(
              src='pit-lane video t1312000 / t1339000: the upper storey set back behind the deck, windows between dark posts on the lane side and the ends (glazed upper storey only)',
              h_src='storey 2.8 m under the roof; the lidar top of the footprint 9.8 m includes the roof'),
         dict(type='fuel', name='timing tower roof', rect=dict(c=(35.4891244, -119.5444769), heading_deg=3.83, l=17.0, w=16.0),
-             h=6.4, fascia=0.6, canopy='#2f5d9e', fascia_color='#2f5d9e', posts=6, islands=0,
+             h=6.1, fascia=0.9, canopy='#2f5d9e', fascia_color='#27508a', posts=6, islands=0,   # judge r6 fwd_15: a deep roof (0.9 m fascia) sitting on the upper storey, not a thin slab above it
              src='pit-lane video t1312000 / t1339000: the deep blue roof on posts over the tower, ~1.5 m overhang past its walls (the 14 m tower, not the 25 m outline)',
              h_src='lidar: the footprint top 9.8 m (scenery building_height_robust), roof 0.5 m'),
+        # judge r6 (pit_02 4640, r6_tower_from_lane): the shade roof read as a white block from the lane: thin posts along both
+        # long edges (open frontage, t1312000), a dark thin fascia
+        # judge r6 fwd_00 0 L (round 7): the pit video t1267000 (21:07) and t1303000 (21:43) show a long, low, dark shade roof
+        # on posts in the paddock behind the paddock-side K-rail west of the tower (the onboard t000 the same line of roofs
+        # past the wall); the only roofed structure there in the lidar is the 29 x 8 m footprint at (35.4896585,
+        # -119.5454773), 3.7 m (the 2026 clean captures stop short of it): drawn there, open on its posts, dark roof. The
+        # pop-up tents and the parked trailers are not placed (temporary)
+        dict(type='fuel', name='paddock shade roof', rect=dict(c=(35.4896585, -119.5454773), heading_deg=3.83, l=29.0, w=8.0),
+             h=3.0, fascia=0.3, canopy='#55585b', fascia_color='#45484b', posts=6, islands=0, edge_posts=True,
+             src='pit-lane video t1267000 / t1303000: the long low dark shade roof on posts behind the paddock-side K-rail west of the tower; footprint and height from the lidar (2021) structure there, 29 x 8 m, 3.7 m',
+             h_src='lidar 3.7 m top; the roof underside at 3.0 m'),
         dict(type='fuel', name='timing tower west annex', rect=dict(c=(35.4891348, -119.544616), heading_deg=3.83, l=11.0, w=19.0),
-             h=2.6, fascia=0.3, canopy='#b5b2aa', fascia_color='#8d8a84', posts=6, islands=0,
+             h=2.6, fascia=0.2, canopy='#b5b2aa', fascia_color='#5b5852', posts=4, islands=0, edge_posts=True,
              src='the west 11 m of the 25 x 19 m roof outline on c20_p0420 / c20_s0050: the low flat shade roof on posts west of the tower (pit video t1312000, the dark shade roof at the frame edge); plain, low, open',
              h_src='2.6 m: below the tower deck on t1312000 (HEIGHTS.md storeys)'),
         dict(type='block', name='timing tower rear annex', rect=dict(c=(35.4892051, -119.5444835), heading_deg=3.83, l=14.0, w=5.0),

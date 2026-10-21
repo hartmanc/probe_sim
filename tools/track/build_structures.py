@@ -138,8 +138,10 @@ def boxlike(trk, osm, it):
     h = {"garage": lambda: max(it["eave"], it["ridge"]) + it.get("parapet", 0), "block": lambda: it["h"] + it.get("parapet", 0),
          "fuel": lambda: it["h"] + it["fascia"] + it.get("hip", 0)}[it["type"]]()
     out["collide"] = [{"footprint": _poly(fp), "z": rnd(z), "h": rnd(h, 1)}] if it["type"] != "fuel" else \
-        [{"footprint": _poly(_corners(c + np.array([math.cos(hd), math.sin(hd)]) * t, hd, 0.4, 0.4)), "z": rnd(z), "h": rnd(it["h"], 1)}
-         for t in np.linspace(-l / 2 + 1, l / 2 - 1, max(1, it["posts"]))]
+        [{"footprint": _poly(_corners(c + np.array([math.cos(hd), math.sin(hd)]) * t + np.array([-math.sin(hd), math.cos(hd)]) * dd, hd, 0.4, 0.4)),
+          "z": rnd(z), "h": rnd(it["h"], 1)}
+         for t in np.linspace(-l / 2 + 1, l / 2 - 1, max(1, it["posts"]))
+         for dd in ((-w / 2 + 0.3, w / 2 - 0.3) if it.get("edge_posts") else (0.0,))]   # edge_posts: both long edges (judge r6)
     log(f"structure {it['type']} '{it['name']}': {l:.1f} x {w:.1f} m, heading {math.degrees(hd):.1f} deg, top {h:.1f} m, "
         f"z {z:.2f}, faces the track on side {st:+d}")
     return out, fp

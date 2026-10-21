@@ -77,7 +77,7 @@ export interface BlockJson {
 /** Fuel island: canopy slab on posts, island kerbs with pumps, a plain sign pylon at a local offset. */
 export interface FuelJson {
   type: 'fuel'; name: string; src: string; c: V2; heading: number; l: number; w: number; z: number;
-  h: number; fascia: number; canopy: string; fascia_color: string; posts: number; islands: number;
+  h: number; fascia: number; canopy: string; fascia_color: string; posts: number; islands: number; edge_posts?: boolean;
   /** low hip roof on the canopy: rise above the fascia and colour */
   hip?: number; hip_color?: string;
   pylon?: { at: V2; h: number; w: number; color: string; panel: string };
@@ -453,7 +453,10 @@ export function fuel(u: FuelJson, s: Soup): void {
   const n = Math.max(1, u.posts);
   for (let i = 0; i < n; i++) {
     const t = n === 1 ? 0 : -hl + 1 + ((u.l - 2) * i) / (n - 1);
-    s.box(f, t - 0.2, t + 0.2, -0.2, 0.2, -0.3, u.h, cPost, { top: null });
+    // edge_posts (Buttonwillow's open shade roof, judge r6): thin posts along both long edges instead of the centre line,
+    // so the roof reads as open on posts from the lane
+    if (u.edge_posts) for (const d of [-hw + 0.3, hw - 0.3]) s.box(f, t - 0.08, t + 0.08, d - 0.08, d + 0.08, -0.3, u.h, cPost, { top: null });
+    else s.box(f, t - 0.2, t + 0.2, -0.2, 0.2, -0.3, u.h, cPost, { top: null });
   }
   for (let k = 0; k < u.islands; k++) {
     const d = u.islands === 1 ? 0 : -hw + 1.5 + ((u.w - 3) * k) / (u.islands - 1);
