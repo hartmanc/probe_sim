@@ -2067,13 +2067,23 @@ def landmarks(trk, T, brg):
                     "h": 7.5, "w": 2.6})
     # corner-worker (marshal) posts and light masts from the evidence (config scenery.marshal_posts / light_masts,
     # 20 Oct 2026): lat/lon measured on the captures; a post faces the nearest track point
+    # Round 8 (Sonoma owner note 61): a post with a measured footprint and heading (an owner-marked or capture-measured
+    # outline) carries `heading_deg` (the bearing its open front faces, degrees clockwise from north), `d` (the depth
+    # along that heading; `w` is the width across it) and `roof` (the roof colour); absent, the post faces the nearest
+    # track point, is w x w and has the white roof, as before (every other post's record is unchanged)
     for mp in SC_CFG.get("marshal_posts", []):
         xy = np.array(bl.enu(*mp["latlon"]), float)
-        i_, _, _ = trk.project(xy[None])
-        to = trk.C[i_[0], :2] - xy
+        if mp.get("heading_deg") is not None:
+            b_ = math.radians(float(mp["heading_deg"]))
+            hd = math.atan2(math.cos(b_), math.sin(b_))
+        else:
+            i_, _, _ = trk.project(xy[None])
+            to = trk.C[i_[0], :2] - xy
+            hd = math.atan2(to[1], to[0])
         out.append({"kind": "marshal", "text": mp.get("name", ""), "x": rnd(xy[0], 2), "y": rnd(xy[1], 2),
-                    "z": rnd(float(trk.ground(*xy)[0]), 2), "heading": rnd(math.atan2(to[1], to[0]), 3),
+                    "z": rnd(float(trk.ground(*xy)[0]), 2), "heading": rnd(hd, 3),
                     "h": mp.get("h", 3.0), "w": mp.get("w", 2.4), "style": mp.get("style", "tower"),
+                    **({"d": mp["d"]} if mp.get("d") else {}), **({"roof": mp["roof"]} if mp.get("roof") else {}),
                     **({"color": mp["color"]} if mp.get("color") else {}), "src": mp["src"]})
     # free-standing tyre stacks and barrier blocks (config scenery.tyre_stacks, 21 Oct 2026): {latlon, h, w, style
     # 'tyres' | 'blocks', color, src}; drawn only (not in the collision world)

@@ -60,7 +60,9 @@ export interface SceneryJson {
    *  lattice towers at (x, y, z) and (x2, y2, z2) with cables across the track) */
   landmarks: { kind: string; text: string; x: number; y: number; z: number; heading: number; h: number; w: number; x2?: number; y2?: number; z2?: number; color?: string; style?: string; src?: string;
     /** wall-board signs: the panel's top above the ground (m), for the coverage gate */ top?: number;
-    /** 'impact' (impact barrier block at a wall's nose): its length along `heading` */ d?: number;
+    /** 'impact' (impact barrier block at a wall's nose): its length along `heading`; 'marshal' (round 8): the hut's
+     *  depth along `heading` (absent: w x w) */ d?: number;
+    /** 'marshal' (round 8, Sonoma owner note 61): the roof colour (absent: white) */ roof?: string;
     /** wall boards with a typed name (round 6): the lettering's colour */ fg?: string }[];
   /** grandstands built into a hillside: stepped concrete rows following the ground (20 Oct 2026). Row r is a tread
    *  from a to b at height z, `run` m deep away from the track along `dir`; risers join consecutive rows. A terrace declared
@@ -1613,9 +1615,11 @@ function buildLandmarks(list: SceneryJson['landmarks']): THREE.Group {
       // corner-worker post (round 7, Sonoma owner note 40: the old post read as a small grey box): a platform on four legs
       // (deck at h - 2.6 m), a hut w x w (default 2.4 m) with an OPEN FRONT toward the track (+Z after yawFor faces the
       // heading), white walls with a coloured lower band (m.color, from the frames), a flat roof overhanging 0.6 m, and a
-      // railing round the deck. style 'platform': deck and railing only.
-      const W = m.w || 2.4, D = W, legH = Math.max(0.6, m.h - 2.6), wallH = 2.2, t = 0.08;
+      // railing round the deck. style 'platform': deck and railing only. Round 8 (Sonoma owner note 61): a measured
+      // footprint gives the hut w across x d along the heading (absent: w x w) and m.roof the roof colour (absent: white).
+      const W = m.w || 2.4, D = m.d ?? W, legH = Math.max(0.6, m.h - 2.6), wallH = 2.2, t = 0.08;
       const band = new THREE.MeshLambertMaterial({ color: m.color ?? '#2f5d9e' });
+      const roofMat = m.roof ? new THREE.MeshLambertMaterial({ color: m.roof }) : white;
       const box = (sx: number, sy: number, sz: number, x: number, y: number, z: number, mat: THREE.Material) => {
         const b2 = new THREE.Mesh(new THREE.BoxGeometry(sx, sy, sz), mat); b2.position.set(x, y, z); g.add(b2);
       };
@@ -1633,7 +1637,7 @@ function buildLandmarks(list: SceneryJson['landmarks']): THREE.Group {
         }
         box(W, bandH, t, 0, y0 + bandH / 2, D / 2 - t / 2, band);                               // low front sill (band colour)
         for (const x of [-1, 1]) box(0.12, wallH, 0.12, x * (W / 2 - 0.06), y0 + wallH / 2, D / 2 - 0.06, white);  // front posts
-        box(W + 1.2, 0.14, D + 1.2, 0, y0 + wallH + 0.07, 0.15, white);                          // roof, 0.6 m overhang
+        box(W + 1.2, 0.14, D + 1.2, 0, y0 + wallH + 0.07, 0.15, roofMat);                        // roof, 0.6 m overhang
         box(W + 1.2, 0.05, D + 1.2, 0, y0 + wallH - 0.01, 0.15, postMat);                         // its dark underside
       } else {
         for (const [x, z, sx, sz] of [[0, D / 2 + 0.2, W + 0.4, 0.05], [-W / 2 - 0.2, 0, 0.05, D + 0.4], [W / 2 + 0.2, 0, 0.05, D + 0.4]] as const) {
