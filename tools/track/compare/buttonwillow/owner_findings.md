@@ -107,3 +107,8 @@ build). Notes as given, before bed:
     white paint, white K-rail blocks and the "Cal Club" board beyond it). The run 1020-1049 R. "In general, all the kerbs
     should be checked" (note 3 again). The same frame shows white K-rail blocks on the right at the crest that the sim does
     not have, and the sim shows a dark diagonal stripe across the road on the approach (the round-7 paint-over at ~1100?).
+20. **A bulge on the drag strip that is not there** (owner/owner_lap2_drag_strip_bulge_sim.png: on the drag-strip leg
+    toward T9, the left edge swings outward ahead into a pale bay; owner/owner_lap2_drag_strip_map.png, Google Maps,
+    reference only: the drag strip is a straight strip of constant width). Like Sunset (note 6): the stretch from the
+    drag-strip rejoin (the 2963-3025 R apron) to the T9 entry is a straight on both sides; the fit follows pale side
+    pavement there.
