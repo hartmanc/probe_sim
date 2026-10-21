@@ -421,24 +421,26 @@ Named straights sit halfway between their corners.
 - The printed local waviness (residual about a ±25-station quadratic, rolling 100 m) and the kink per station pass.
 - Observation residuals: 90 %+ within 0.25 m.
 - Coverage passes (60 % of stations).
-- **The within gate runs per evidence kind (the owner's decision, 20 Oct 2026; `edge_gate.per_kind_gate`, code-defined,
-  no per-track numbers).** An `asphalt_end` reading (asphalt straight to dirt: no painted line, no kerb) has no sharp edge
-  to hold to 0.25 m. At Buttonwillow the 2026 captures and the 2021 lidar both show a 2-4 m asphalt-to-dirt transition:
-  the readings agree across captures (98 % within 0.25 m of their station's median) but scatter along the track (46-50 %
-  within 0.25 m of the fitted edge). So on each side:
-  - Painted and kerb readings must have 90 %+ within 0.25 m of the fitted edge, over those readings only, when the side
-    has at least 100 of them.
-  - `asphalt_end` readings must pass a **bias gate**: over rolling 41-station windows holding at least 10 of them, the
-    median signed residual (reading minus fitted edge) lies within ±0.25 m in at least 90 % of the windows. The worst
-    window is listed with its stations. Their spread is the edge's own, printed but not gated, alongside the report-only
-    numbers per evidence kind and the width against the operator's figure.
-  - Coverage is 50 % of stations when `asphalt_end` readings are the majority of the side's associated readings
-    (Buttonwillow 54 / 56 %), else 60 %.
-  - The gate line prints both kinds' numbers and shares.
-  - Longest gap, waviness, kink, the edge gate, world continuity and profile are unchanged. A config may only tighten.
-  - Why per kind, not per side: the first statement ("a side is unpainted when 80 % of its readings are asphalt_end")
-    broke in Buttonwillow's first-centre round, when the block-line kerb zones put a side's kerb readings over 20 %.
-  - An object beside an asphalt-end edge that the detector reads as the edge (a marshal mound) is masked with
+- **Unpainted sides (the owner's decision, 20 Oct 2026; `edge_gate.UNPAINTED`, `side_within_gate`, code-defined, no
+  per-track numbers).** On a side with no painted edge line, the curve must run through the middle of the ragged evidence,
+  with the fit-quality gates binding; painted circuits are untouched.
+  - A side is unpainted when `asphalt_end` readings are the majority of its associated readings
+    (`asphalt_end_majority`).
+  - At Buttonwillow the 2026 captures and the 2021 lidar show a 2-4 m asphalt-to-dirt transition. The readings agree
+    across captures (98 % within 0.25 m of their station's median) but scatter along the track (46-50 % within 0.25 m
+    of the fitted edge).
+  - An unpainted side's within gate is a **bias gate over all its readings**, `asphalt_end` and kerb pooled: over
+    rolling 41-station windows holding at least 10 readings, the median signed residual (reading minus fitted edge) lies
+    within ±0.25 m in at least 90 % of the windows. The worst window is listed with its stations, and the spread is
+    printed, not gated.
+  - Its coverage threshold is 50 % of stations (Buttonwillow 54 / 56 %).
+  - Why kerbs are pooled: the grey block bands of an unpainted circuit blur on the captures like the asphalt end
+    (Buttonwillow: 85-86 % within 0.25 m, a 0.25-0.6 m tail, zone medians within ±0.05 m).
+  - The numbers per evidence kind are a printed report, never gated. The bias gate still catches a zone that sits off
+    centre: fix such a zone from its capture window.
+  - A painted side keeps the gates above, computed exactly as before. Longest gap, waviness, kink, the edge gate, world
+    continuity and profile are unchanged. A config may only tighten.
+  - An object beside an unpainted edge that the detector reads as the edge (a marshal mound) is masked with
     `spline.mask` [(side, lo, hi, capture)], never exempted.
   - The owner's fallback for a circuit worse than Buttonwillow: "the owner draws the edges on the captures", a future
     evidence feature (an owner-traced edge), not implemented.

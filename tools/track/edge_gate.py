@@ -11,8 +11,9 @@ column relative to the centre column, i.e. the cross-section shape (gate `profil
 scenery.json, the wall gaps of config `gate.wall_gaps` (p10/p50/p90, advisory) and the max adjacent half-width step
 within +-35 stations of each bridge, and the exit-overshoot lines (advisory: they also fire on real features, each is
 checked on the captures).
-Also the fitted method's thresholds (FITTED) and the within gate per evidence kind (owner's decision of 20 Oct 2026:
-per_kind_gate, bias_gate for asphalt_end readings, asphalt_end_majority / unpainted_thresholds for coverage).
+Also the fitted method's thresholds (FITTED) and, for an unpainted side (owner's decision of 20 Oct 2026, UNPAINTED;
+asphalt_end_majority), the bias gate over all its readings that replaces the 0.25 m share there (side_within_gate,
+bias_gate, unpainted_thresholds); per_kind_report prints the numbers per evidence kind, never gated.
 """
 import argparse, json, math, os, sys
 
@@ -34,50 +35,52 @@ def fitted_thresholds(g):
     return {k: _TIGHTER[k](v, g.get('fit_' + k, v)) for k, v in FITTED.items()}
 
 
-# Evidence kinds (the owner's decision of 20 Oct 2026, Buttonwillow, stated per kind): an asphalt_end reading (asphalt
-# straight to dirt, no painted edge line, no kerb) has no sharp edge to hold to within 0.25 m: on Buttonwillow's 2026
-# captures and 2021 lidar the asphalt-to-dirt transition is 2-4 m wide, the readings agree across captures (98 % within
-# 0.25 m of their station's median) but scatter along the track (46-50 % within 0.25 m of the fitted edge). So on each
-# side the within gate runs PER KIND:
-#   - painted and kerb readings (every kind but asphalt_end): at least FITTED['within'] of them within 0.25 m of the
-#     fitted edge, over those readings only, when the side has at least PER_KIND['min_painted'] of them;
-#   - asphalt_end readings: the BIAS gate (bias_gate): over rolling 41-station windows holding at least 10 of them, the
-#     median signed residual (reading minus fitted edge) within +-0.25 m in at least 90 % of the windows (the curve runs
-#     through the middle of the ragged edge; their spread is the edge's own and is printed, not gated).
-# A side whose associated readings are mostly asphalt_end (asphalt_end_majority) holds coverage to 50 % of stations
-# instead of 60 % (Buttonwillow 54 / 56 %). Longest gap, waviness, kink, the edge gate, world continuity and profile are
-# unchanged. A config can tighten these, never loosen (gate.fit_covered also applies when higher). The first statement
-# of this rule ("a side with 80 % asphalt_end readings is unpainted") was a shorthand and broke when Buttonwillow's
-# block-line kerb zones put a side's kerb readings over 20 % (first-centre round, 20 Oct 2026). The owner's named
-# fallback for a circuit worse than this, "the owner draws the edges on the captures", is a future evidence feature.
+# Unpainted sides (the owner's decision, 20 Oct 2026 14:00, Buttonwillow): on a side with no painted edge line the
+# curve must run through the middle of the ragged evidence, with the fit-quality gates binding; painted circuits are
+# untouched. A side is unpainted when asphalt_end readings are the majority of its associated readings
+# (asphalt_end_majority). On Buttonwillow's 2026 captures and 2021 lidar the asphalt-to-dirt transition is 2-4 m wide:
+# the readings agree across captures (98 % within 0.25 m of their station's median) but scatter along the track (46-50 %
+# within 0.25 m of the fitted edge). An unpainted side's within gate is the BIAS gate over ALL its associated readings
+# (asphalt_end and kerb pooled): over rolling 41-station windows holding at least 10 readings, the median signed residual
+# (reading minus fitted edge) lies within +-0.25 m in at least 90 % of the windows (the worst window printed; the spread
+# is the edge's own, printed, not gated), and its coverage is held to 50 % of stations. Kerb readings are pooled because
+# the grey block bands of an unpainted circuit blur on the captures like the asphalt end (Buttonwillow: 85-86 % within
+# 0.25 m, a 0.25-0.6 m tail, zone medians within +-0.05 m; first-centre round). The per-kind numbers are a printed report,
+# never gated. A painted side keeps FITTED over all its readings, computed exactly as before. Longest gap, waviness, kink,
+# the edge gate, world continuity and profile are unchanged; a config can tighten, never loosen (gate.fit_covered also
+# applies when higher). The owner's named fallback for a circuit worse than this, "the owner draws the edges on the
+# captures", is a future evidence feature (an owner-traced edge), not implemented.
 UNPAINTED = dict(window=41, min_readings=10, bias=0.25, bias_windows=0.90, covered=0.50)
-PER_KIND = dict(min_painted=100)
 
 
 def asphalt_end_majority(kinds):
-    """True when most of a side's associated readings come from the asphalt_end feature (coverage held to 50 %).
+    """True when most of a side's associated readings come from the asphalt_end feature: the side is unpainted.
     kinds: the feature kind of each associated reading's station ('asphalt_end', 'kerb_band', None for painted ...)."""
     kinds = list(kinds)
     return bool(kinds) and sum(k == 'asphalt_end' for k in kinds) * 2 > len(kinds)
 
 
-unpainted_side = asphalt_end_majority   # the report-only block's name for it (edges_spline)
+unpainted_side = asphalt_end_majority
 
 
-def per_kind_gate(kinds, stations, residuals, n, within=None):
-    """The within gate per evidence kind on one side. Returns dict(ok, ae (asphalt_end readings), pk (painted / kerb
-    readings), ae_share, painted=dict(n, within, ok or None when under PER_KIND['min_painted']), bias=bias_gate result or
-    None without asphalt_end readings)."""
+def side_within_gate(r, n, G):
+    """The within gate of one side from the fit's report r (edges_spline.fit_periodic): an unpainted side (asphalt_end
+    majority) takes the bias gate over all its associated readings; a painted side FITTED's share over all its readings,
+    the original computation. Returns dict(unpainted, ok, bias (or None))."""
+    if asphalt_end_majority(r['assoc_kind']):
+        bg = bias_gate(r['assoc_x'], r['assoc_res'], n)
+        return dict(unpainted=True, ok=bool(bg['ok'] and r['assoc_share'] >= G['assoc']), bias=bg)
+    return dict(unpainted=False, ok=r['within_gated'] >= G['within'] and r['assoc_share'] >= G['assoc'], bias=None)
+
+
+def per_kind_report(kinds, residuals):
+    """Report only (never gated): per evidence kind, readings, share of the side, and share within 0.25 m."""
     import numpy as np
-    within = FITTED['within'] if within is None else within
-    k = np.array([x == 'asphalt_end' for x in kinds], bool); st = np.asarray(stations, int); r = np.asarray(residuals, float)
-    ae, pk = int(k.sum()), int((~k).sum())
-    painted = dict(n=pk, within=float(np.mean(np.abs(r[~k]) <= 0.25)) if pk else float('nan'), ok=None)
-    if pk >= PER_KIND['min_painted']:
-        painted['ok'] = bool(painted['within'] >= within)
-    bias = bias_gate(st[k], r[k], n) if ae else None
-    ok = (painted['ok'] is not False) and (bias is None or bias['ok'])
-    return dict(ok=bool(ok), ae=ae, pk=pk, ae_share=ae / max(1, ae + pk), painted=painted, bias=bias)
+    k = np.array([x or 'painted' for x in kinds], dtype=object); r = np.asarray(residuals, float); out = {}
+    for name in sorted(set(k.tolist())):
+        m = k == name
+        out[name] = dict(n=int(m.sum()), share=float(m.mean()), within=float(np.mean(np.abs(r[m]) <= 0.25)))
+    return out
 
 
 def bias_gate(stations, residuals, n, window=None, min_readings=None, tol=None, share=None):
@@ -106,7 +109,7 @@ def bias_gate(stations, residuals, n, window=None, min_readings=None, tol=None, 
 
 
 def unpainted_thresholds(g):
-    """FITTED for a side whose readings are mostly asphalt_end: coverage 50 % (a config may only tighten)."""
+    """FITTED for an unpainted side, with its coverage term (a config may only tighten)."""
     t = fitted_thresholds(g); g = g or {}
     t['covered'] = max(UNPAINTED['covered'], g.get('fit_covered', UNPAINTED['covered']))
     return t

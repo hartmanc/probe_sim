@@ -1,5 +1,5 @@
-"""The within gate per evidence kind (owner's decision, 20 Oct 2026; edge_gate.per_kind_gate / bias_gate /
-asphalt_end_majority).
+"""The unpainted-side edge gate (owner's decision, 20 Oct 2026; edge_gate.UNPAINTED / asphalt_end_majority /
+side_within_gate / bias_gate / per_kind_report).
 
     uv run --python 3.12 --with pytest,numpy python -I -m pytest -q tools/track/test_edge_gate_unpainted.py
 """
@@ -41,40 +41,36 @@ class BiasGate(unittest.TestCase):
         self.assertEqual(g['windows'], 0); self.assertFalse(g['ok'])
 
     def test_painted_readings_keep_fitted(self):
-        # ragged readings that are all painted / kerb: judged by FITTED's 90 % within 0.25 m, which they fail
         st, r = ragged()
-        g = EG.per_kind_gate([None] * len(st), st, r, 2000)
-        self.assertIsNone(g['bias']); self.assertFalse(g['ok'])
-        self.assertEqual(EG.fitted_thresholds({})['within'], 0.90)
+        rep = dict(assoc_kind=[None] * len(st), assoc_x=st, assoc_res=r, within_gated=float(np.mean(np.abs(r) <= 0.25)), assoc_share=0.9)
+        g = EG.side_within_gate(rep, 2000, EG.fitted_thresholds({}))
+        self.assertFalse(g['unpainted']); self.assertIsNone(g['bias']); self.assertFalse(g['ok'])
 
 
-class PerKind(unittest.TestCase):
-    def mixed(self, kerb_good=True):
-        # 60 % asphalt_end readings (ragged, unbiased) and 40 % kerb readings (sharp, or ragged)
+class SideRule(unittest.TestCase):
+    def mixed(self, kerb_shift=0.0):
+        # 60 % asphalt_end readings and 40 % kerb readings, both ragged (grey block bands blur like the asphalt end)
         rng = np.random.default_rng(5)
         st_a = np.repeat(np.arange(2000), 3); r_a = rng.uniform(-1, 1, len(st_a))
-        st_k = np.repeat(np.arange(2000), 2); r_k = rng.normal(0, 0.05 if kerb_good else 0.6, len(st_k))
+        st_k = np.repeat(np.arange(2000), 2); r_k = rng.normal(kerb_shift, 0.3, len(st_k))
         kinds = ['asphalt_end'] * len(st_a) + ['kerb_band'] * len(st_k)
-        return kinds, np.r_[st_a, st_k], np.r_[r_a, r_k]
+        st = np.r_[st_a, st_k]; r = np.r_[r_a, r_k]
+        return dict(assoc_kind=kinds, assoc_x=st, assoc_res=r, within_gated=float(np.mean(np.abs(r) <= 0.25)), assoc_share=0.9)
 
-    def test_mixed_side_judged_per_kind(self):
-        kinds, st, r = self.mixed()
-        g = EG.per_kind_gate(kinds, st, r, 2000)
-        self.assertAlmostEqual(g['ae_share'], 0.6)
-        self.assertTrue(g['bias']['ok']); self.assertTrue(g['painted']['ok']); self.assertTrue(g['ok'])
-        # the old pooled share would have failed: well under 90 % of all readings within 0.25 m
-        self.assertLess(np.mean(np.abs(r) <= 0.25), 0.9)
+    def test_unpainted_side_pools_all_readings_in_the_bias_gate(self):
+        rep = self.mixed()
+        g = EG.side_within_gate(rep, 2000, EG.fitted_thresholds({}))
+        self.assertTrue(g['unpainted']); self.assertTrue(g['ok'])
+        self.assertLess(rep['within_gated'], 0.9)   # the painted share would have failed
+        pk = EG.per_kind_report(rep['assoc_kind'], rep['assoc_res'])   # report only
+        self.assertAlmostEqual(pk['asphalt_end']['share'], 0.6)
 
-    def test_kerb_readings_alone_decide_the_painted_measure(self):
-        kinds, st, r = self.mixed(kerb_good=False)
-        g = EG.per_kind_gate(kinds, st, r, 2000)
-        self.assertTrue(g['bias']['ok']); self.assertFalse(g['painted']['ok']); self.assertFalse(g['ok'])
+    def test_off_centre_kerb_zone_still_caught(self):
+        # kerb readings sitting 0.6 m off the curve over the whole side move every window's median
+        rep = self.mixed(kerb_shift=1.5)
+        self.assertFalse(EG.side_within_gate(rep, 2000, EG.fitted_thresholds({}))['ok'])
 
-    def test_few_painted_readings_are_not_gated(self):
-        g = EG.per_kind_gate([None] * 50, np.arange(50), np.ones(50), 2000)
-        self.assertIsNone(g['painted']['ok']); self.assertTrue(g['ok'])
-
-    def test_majority_sets_coverage(self):
+    def test_majority_and_coverage(self):
         self.assertTrue(EG.asphalt_end_majority(['asphalt_end'] * 60 + ['kerb_band'] * 40))
         self.assertFalse(EG.asphalt_end_majority(['asphalt_end'] * 50 + ['kerb_band'] * 50))
         self.assertFalse(EG.asphalt_end_majority([]))
@@ -83,10 +79,9 @@ class PerKind(unittest.TestCase):
         self.assertEqual(EG.unpainted_thresholds({'fit_covered': 0.3})['covered'], 0.50)
         self.assertEqual(EG.unpainted_thresholds({})['wave_rms'], EG.FITTED['wave_rms'])
 
-    def test_laguna_and_sonoma_stay_painted_sides(self):
-        # each has one short asphalt_end zone (Laguna left 478-528, Sonoma's T7 wall left 1860-2060): far from a
-        # majority of either side's stations, so coverage stays at 60 % and FITTED's share holds over their painted
-        # and kerb readings; the zone's own readings get the bias gate
+    def test_laguna_and_sonoma_painted_computation_unchanged(self):
+        # their sides are painted under both the old 80 % classification and the majority rule (asphalt_end under 6 %
+        # of each side's stations), and the painted gate is the original formula: within_gated >= 0.90 and assoc >= 0.85
         for tid, n in (('laguna_seca', 3560), ('sonoma', 4090)):
             cfg = trackcfg.load(tid)
             for side in ('left', 'right'):
@@ -94,10 +89,13 @@ class PerKind(unittest.TestCase):
                          for s_ in range(n)]
                 self.assertFalse(EG.asphalt_end_majority(kinds), (tid, side))
                 self.assertLess(sum(k == 'asphalt_end' for k in kinds) / n, 0.06, (tid, side))
-        st, r = ragged(spread=0.1)
-        g = EG.per_kind_gate([None] * len(st), st, r, 2000)
-        self.assertEqual(g['ae'], 0); self.assertIsNone(g['bias'])
-        self.assertAlmostEqual(g['painted']['within'], float(np.mean(np.abs(r) <= 0.25)))
+        rng = np.random.default_rng(9)
+        G = EG.fitted_thresholds({})
+        for _ in range(200):
+            wg, a = float(rng.uniform(0.8, 1.0)), float(rng.uniform(0.8, 1.0))
+            kinds = [None] * 95 + ['asphalt_end'] * 5
+            rep = dict(assoc_kind=kinds, assoc_x=np.arange(100), assoc_res=np.zeros(100), within_gated=wg, assoc_share=a)
+            self.assertEqual(EG.side_within_gate(rep, 3560, G)['ok'], wg >= G['within'] and a >= G['assoc'])
 
 
 if __name__ == '__main__':

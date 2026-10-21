@@ -227,7 +227,7 @@ def apply(trk, osm, sc, cfg):
             raise SystemExit(f"structures.suppress_osm: OSM way {wid} not found")
         xy = w["xy"][:-1] if np.linalg.norm(w["xy"][0] - w["xy"][-1]) < 0.5 else w["xy"]
         key = [[rnd(x, 1), rnd(y, 1)] for x, y in xy]
-        hit = [k for k, b in enumerate(sc["buildings"]) if b["src"] == "osm" and b["footprint"] == key]
+        hit = [k for k, b in enumerate(sc["buildings"]) if b["src"].split(" (")[0] == "osm" and b["footprint"] == key]   # src may carry its building_evidence
         if not hit:
             raise SystemExit(f"structures.suppress_osm: OSM building {wid} is not among the scenery's buildings")
         for k in reversed(hit):

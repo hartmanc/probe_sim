@@ -679,28 +679,33 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, bar, 
             if sd == side:
                 r["loose"][np.array([k % n for k in range(lo, hi + (n if hi < lo else 0) + 1)])] = False
         Gs = edge_gate.unpainted_thresholds(cfg_raw["gate"]) if r.get("unpainted") else G
-        # the within gate per evidence kind (owner's decision of 20 Oct 2026, edge_gate.per_kind_gate): painted and kerb
-        # readings hold FITTED's share within 0.25 m, asphalt_end readings the bias gate; coverage 50 % when asphalt_end
-        # readings are the majority (r["unpainted"], edge_gate.asphalt_end_majority), else 60 %
-        pg = edge_gate.per_kind_gate(r["assoc_kind"], r["assoc_x"], r["assoc_res"], n, within=G["within"])
-        # the associated readings (station, kind, residual) for diagnosis of the per-kind gate (work/, not the package)
+        if r.get("unpainted"):
+            # the owner's decision of 20 Oct 2026 (edge_gate.UNPAINTED; a side whose associated readings are mostly
+            # asphalt_end): a bias gate over all its readings instead of the 0.25 m share
+            bg = edge_gate.side_within_gate(r, n, G)["bias"]
+            U_ = edge_gate.UNPAINTED; wb = bg["worst"]
+            worst_txt = f"worst {wb[0]:+.3f} m at {wb[1]} ({wb[2]}..{wb[3]})" if wb else "no window"
+            share_ae = sum(k == "asphalt_end" for k in r["assoc_kind"]) / max(1, len(r["assoc_kind"]))
+            rep.check(f"fit {side}: unpainted bias", bg["ok"] and r["assoc_share"] >= G["assoc"],
+                      f"unpainted side ({share_ae * 100:.0f} % of {len(r['assoc_kind'])} associated readings from asphalt_end, a majority); "
+                      f"{bg['share'] * 100:.1f} % of {bg['windows']} {U_['window']}-station windows have a median residual within "
+                      f"+-{U_['bias']} m (>= {U_['bias_windows'] * 100:.0f} %); {worst_txt}; "
+                      f"{r['assoc_share'] * 100:.0f} % of capture rows have a band within 1.2 m (>= {G['assoc'] * 100:.0f} %); "
+                      f"spread (printed, not gated): |residual| p10/p50/p90 {bg['spread']} m, {r['within_gated'] * 100:.1f} % within 0.25 m")
+        else:
+          rep.check(f"fit {side}: observations within 0.25 m", r["within_gated"] >= G["within"] and r["assoc_share"] >= G["assoc"],
+                    f"{r['within_gated'] * 100:.1f} % of the associated observations (>= {G['within'] * 100:.0f} %, the skill's measure); "
+                    f"{r['assoc_share'] * 100:.0f} % of capture rows have a band within 1.2 m (>= {G['assoc'] * 100:.0f} %); of those "
+                    f"{r['within'] * 100:.1f} % within 0.25 m, the rest at 0.25-0.4/0.4-0.6/0.6-0.8/0.8-1.0/1.0-1.2 m: {r['off_hist']}; "
+                    f"{r['within_all'] * 100:.0f} % of all rows")
+        if r.get("unpainted") or cfg_raw["spline"].get("report_by_kind"):
+            pk_ = edge_gate.per_kind_report(r["assoc_kind"], r["assoc_res"])
+            log(f"     report {side} per evidence kind (not gated): " + "; ".join(
+                f"{k_} {v['n']} readings ({v['share'] * 100:.0f} %), {v['within'] * 100:.1f} % within 0.25 m" for k_, v in pk_.items()))
+        # the associated readings (station, kind, residual) for diagnosis (work/, not the package)
         json.dump({"n": n, "x": [int(v) for v in r["assoc_x"]], "kind": [k_ or "painted" for k_ in r["assoc_kind"]],
                    "res": [round(float(v), 3) for v in r["assoc_res"]]},
                   open(os.path.join(FIT_DUMP_DIR, f"fit_assoc_{side}.json"), "w"))
-        pp, bg = pg["painted"], pg["bias"]
-        p_txt = (f"painted / kerb {pp['n']} readings ({(1 - pg['ae_share']) * 100:.0f} %): {pp['within'] * 100:.1f} % within 0.25 m "
-                 f"(>= {G['within'] * 100:.0f} %" + (")" if pp["ok"] is not None else f"; under {edge_gate.PER_KIND['min_painted']} readings, not gated)")
-                 if pp["n"] else "no painted / kerb readings")
-        if bg is not None:
-            U_ = edge_gate.UNPAINTED; wb = bg["worst"]
-            worst_txt = f"worst {wb[0]:+.3f} m at {wb[1]} ({wb[2]}..{wb[3]})" if wb else "no window"
-            b_txt = (f"asphalt_end {pg['ae']} readings ({pg['ae_share'] * 100:.0f} %): bias {bg['share'] * 100:.1f} % of {bg['windows']} "
-                     f"{U_['window']}-station windows with a median residual within +-{U_['bias']} m (>= {U_['bias_windows'] * 100:.0f} %), "
-                     f"{worst_txt}; spread (printed, not gated) |residual| p10/p50/p90 {bg['spread']} m")
-        else:
-            b_txt = "no asphalt_end readings"
-        rep.check(f"fit {side}: within per evidence kind", pg["ok"] and r["assoc_share"] >= G["assoc"],
-                  f"{p_txt} | {b_txt} | {r['assoc_share'] * 100:.0f} % of capture rows have a band within 1.2 m (>= {G['assoc'] * 100:.0f} %)")
         lo_ = r["loose"]
         # rolling waviness over the loose stations only (a junction or tight corner inside a 100-station window is left
         # out of that window's rms, not only the windows centred on it)
@@ -711,7 +716,7 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, bar, 
         r["roll"] = roll
         r["wave_rms"] = float(roll[lo_].max()); r["wave_peak"] = float(np.abs(r["qq"])[lo_].max()); r["kink"] = float(r["kinkv"][lo_].max())
         rep.check(f"fit {side}: coverage", r["covered"] >= Gs["covered"],
-                  f"{r['covered'] * 100:.0f} % of stations (>= {Gs['covered'] * 100:.0f} %" + (", asphalt_end majority)" if r.get("unpainted") else ")"))
+                  f"{r['covered'] * 100:.0f} % of stations (>= {Gs['covered'] * 100:.0f} %" + (", unpainted side)" if r.get("unpainted") else ")"))
         bad = [f"{a}..{b} ({ln} st)" for (a, b), ln in r["gaps"] if ln > G["gap"]]
         rep.check(f"fit {side}: longest gap", not bad, f"{r['longest_gap']} st at {r['gap_at']} (<= {G['gap']})"
                   + (f"; over: {', '.join(bad)}" if bad else ""))
