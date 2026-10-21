@@ -1372,6 +1372,38 @@ def tyre_facings(trk, bar, reach=2.5, off=0.55):
             log(f"tyre facing: {str(b.get('src', ''))[:70]}: {len(moved)} points onto the wall line ({off} m in front), stations {min(moved)}..{max(moved)}")
 
 
+def extend_parts_to_walls(parts, bar, reach=4.0, margin=0.3, label="pit lane"):
+    """The lane's paving out to its walls (config pit_lane.lane.to_walls {reach}, Buttonwillow judge r3: the footage has
+    pavement from the lane to the K-rails where the NAIP half-width left a pale verge): an edge point whose ray from the
+    part's centre, continued up to `reach` m past the edge, meets a wall run is moved to `margin` m short of it."""
+    S = [np.c_[np.array(b["pts"])[:-1, :2], np.array(b["pts"])[1:, :2]] for b in bar if b["kind"] in ("concrete", "pitwall")]
+    if not S:
+        return
+    S = np.concatenate(S); a0, a1 = S[:, :2], S[:, 2:]
+    moved = 0
+    for part in parts:
+        C = np.array(part["center"])[:, :2]
+        for side in ("left", "right"):
+            E = part[side]
+            for j in range(len(E)):
+                p, q = C[j], np.array(E[j][:2], float)
+                d = q - p; L0 = float(np.linalg.norm(d))
+                if L0 < 1e-6:
+                    continue
+                r = d / L0 * (L0 + reach); s_ = a1 - a0
+                den = r[0] * s_[:, 1] - r[1] * s_[:, 0]; ok = np.abs(den) > 1e-9; qp = a0 - p
+                t = np.where(ok, (qp[:, 0] * s_[:, 1] - qp[:, 1] * s_[:, 0]) / np.where(ok, den, 1), 9)
+                u = np.where(ok, (qp[:, 0] * r[1] - qp[:, 1] * r[0]) / np.where(ok, den, 1), 9)
+                hit = ok & (t >= 0) & (t <= 1) & (u >= 0) & (u <= 1)
+                if hit.any():
+                    tw = float(t[hit].min()) * float(np.linalg.norm(r)) - margin
+                    if tw > L0 + 0.05:
+                        nq = p + d / L0 * tw
+                        E[j] = [rnd(nq[0], 2), rnd(nq[1], 2)] + list(E[j][2:])
+                        moved += 1
+    log(f"{label}: {moved} edge points extended to the walls (pit_lane.lane.to_walls)")
+
+
 def clip_parts_at_walls(parts, bar, margin=0.3, label="closed roads"):
     """A closed road's paving stops at a wall (config scenery.closed_roads_clip_walls, 20 Oct 2026: the NAIP half-width
     of Sonoma's drag strip reached under the pit-straight wall): an edge point whose segment from the part's centre crosses
@@ -1967,7 +1999,7 @@ def impact_barriers(trk):
         p = a + u * (d / 2 + 0.05)
         out.append({"kind": "impact", "text": "", "x": rnd(p[0], 2), "y": rnd(p[1], 2), "z": rnd(float(trk.ground(*p)[0]), 2),
                     "heading": rnd(math.atan2(u[1], u[0]), 3), "h": ib.get("h", 1.0), "w": ib.get("w", 1.0), "d": d,
-                    "color": ib.get("color", "#e8c21c"), "src": ib["src"]})
+                    "color": ib.get("color", "#e8c21c"), **({"style": ib["style"]} if ib.get("style") else {}), "src": ib["src"]})
         log(f"impact barrier at the {ib.get('end', 'start')} of {ib['wall']}")
     return out
 
@@ -2092,7 +2124,8 @@ def landmarks(trk, T, brg):
                     "z": rnd(float(trk.ground(*xy)[0]), 2), "heading": rnd(math.atan2(to[1], to[0]), 3),
                     "h": mp.get("h", 3.0), "w": mp.get("w", 2.4), "style": mp.get("style", "tower"),
                     **({"color": mp["color"]} if mp.get("color") else {}),
-                    **{k: mp[k] for k in ("mound_h", "railing", "stair") if k in mp}, "src": mp["src"]})
+                    **{k: mp[k] for k in ("mound_h", "railing", "stair", "base_color", "body_h", "body_color", "pole", "roof") if k in mp},
+                    "src": mp["src"]})
     # free-standing tyre stacks and barrier blocks (config scenery.tyre_stacks, 21 Oct 2026): {latlon, h, w, style
     # 'tyres' | 'blocks', color, src}; drawn only (not in the collision world)
     for ts in SC_CFG.get("tyre_stacks", []):
@@ -2120,7 +2153,7 @@ def landmarks(trk, T, brg):
     for lm in SC_CFG.get("light_masts", []):
         xy = np.array(bl.enu(*lm["latlon"]), float)
         out.append({"kind": "mast", "text": "", "x": rnd(xy[0], 2), "y": rnd(xy[1], 2), "z": rnd(float(trk.ground(*xy)[0]), 2),
-                    "heading": 0, "h": lm.get("h", 18.0), "w": 1.2, "src": lm["src"]})
+                    "heading": 0, "h": lm.get("h", 18.0), "w": 1.2, **({"style": lm["style"]} if lm.get("style") else {}), "src": lm["src"]})
     # a landmark tree (Laguna: the Corkscrew oak, the biggest crown on the inside (left) of T8)
     oak = SC_CFG.get("oak")
     near = np.zeros(len(T), bool)
@@ -2349,6 +2382,8 @@ def main(cfg=None, out_dir=None):
         # 20 Oct 2026; Sonoma's OSM-width lane reached through the pit-in Jersey and the outer wall)
         # round 7 (owner note 37): and at the declared cone lines along it (the pit-in separation line before the nose)
         clip_parts_at_walls(pit["parts"], bar + [{"kind": "tyres", "pts": c_["pts"]} for c_ in declared_cone_lines(trk)], label="pit lane")
+    if pit and (PIT_CFG.get("lane") or {}).get("to_walls"):
+        extend_parts_to_walls(pit["parts"], bar, **PIT_CFG["lane"]["to_walls"])
     if pit and ortho_arr is not None and (PIT_CFG.get("lane") or {}).get("match_track_tone"):
         Image.fromarray(pit_tone_match(trk, pit, ortho_arr, PIT_CFG["lane"]["match_track_tone"])).save(
             os.path.join(OUT, "ortho.jpg"), quality=84, optimize=True)

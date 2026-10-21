@@ -54,7 +54,7 @@ export interface SceneryJson {
   /** raised kerb strips off the lap (round 7b): centre line, width, height, stripe length, colours */
   kerb_lines?: { pts: V3[]; width: number; height: number; stripe_m: number; colors: string[]; src?: string }[];
   /** paved ground that is not driven (the paddock, 20 Oct 2026): plain paving over the terrain, no physics */
-  paved_areas?: { name: string; surface: 'asphalt' | 'concrete'; src: string; poly: V2[] }[];
+  paved_areas?: { name: string; surface: 'asphalt' | 'concrete' | 'apron'; src: string; poly: V2[] }[];
   /** Cone line between the pit-exit lane and the track (CONTRACTS §2b); crossing it is a black-flag offence. */
   pit_exit_cones?: PitExitConesJson | null;
   /** cone lines across the mouths of paved but unused roads (closed variants of the circuit, 20 Oct 2026): drawn only */
@@ -66,7 +66,9 @@ export interface SceneryJson {
     /** 'impact' (impact barrier block at a wall's nose): its length along `heading` */ d?: number;
     /** wall boards with a typed name (round 6): the lettering's colour */ fg?: string;
     /** marshal style 'canopy' (Buttonwillow, 20 Oct 2026): the earth mound under the posts (m), a deck railing, and for
-     *  style 'platform' an access stair */ mound_h?: number; railing?: boolean; stair?: boolean }[];
+     *  style 'platform' an access stair */ mound_h?: number; railing?: boolean; stair?: boolean;
+    /** canopy style (judge r3): the base colour, a booth on the base (height, colour), a single central pole */
+    base_color?: string; body_h?: number; body_color?: string; pole?: boolean; roof?: boolean }[];
   /** grandstands built into a hillside: stepped concrete rows following the ground (20 Oct 2026). Row r is a tread
    *  from a to b at height z, `run` m deep away from the track along `dir`; risers join consecutive rows. A terrace declared
    *  by its measured footprint (Sonoma round 6) has polyline rows that follow the stand (`pts`, `nrm`; structures.ts). */
@@ -1580,11 +1582,23 @@ function buildPavedAreas(list: NonNullable<SceneryJson['paved_areas']>, ground: 
   };
   const D = 1.5;
   for (const a of list) {
-    const base = a.surface === 'concrete' ? new THREE.Color(0x9d9b95) : new THREE.Color(0x45474a);
+    // 'apron' (Buttonwillow judge r3): worn pale asphalt with a soft edge: cells within 2.5 m of the outline thin out
+    // towards it, so the paving frays into the ground instead of ending on a hard line
+    const base = a.surface === 'concrete' ? new THREE.Color(0x9d9b95) : a.surface === 'apron' ? new THREE.Color(0x6f6c66) : new THREE.Color(0x45474a);
+    const edgeDist = (x: number, y: number) => {
+      let d = Infinity;
+      for (let i = 0, j = a.poly.length - 1; i < a.poly.length; j = i++) {
+        const [x1, y1] = a.poly[j], [x2, y2] = a.poly[i], dx = x2 - x1, dy = y2 - y1, l2 = dx * dx + dy * dy || 1;
+        const t = Math.max(0, Math.min(1, ((x - x1) * dx + (y - y1) * dy) / l2));
+        d = Math.min(d, Math.hypot(x - x1 - t * dx, y - y1 - t * dy));
+      }
+      return d;
+    };
     const xs = a.poly.map((p) => p[0]), ys = a.poly.map((p) => p[1]);
     for (let x = Math.min(...xs); x < Math.max(...xs); x += D) {
       for (let y = Math.min(...ys); y < Math.max(...ys); y += D) {
         if (!inPoly(x + D / 2, y + D / 2, a.poly)) continue;
+        if (a.surface === 'apron') { const e = edgeDist(x + D / 2, y + D / 2); if (e < 2.5 && rand() > e / 2.5) continue; }
         const c = [[x, y], [x + D, y], [x, y + D], [x + D, y + D]].map(([px, py]) => v3(px, py, ground(px, py) + 0.04));
         const k = 0.94 + 0.12 * rand();
         for (const i of [0, 1, 2, 1, 3, 2]) { pos.push(c[i].x, c[i].y, c[i].z); col.push(base.r * k, base.g * k, base.b * k); }
@@ -1683,12 +1697,18 @@ function buildLandmarks(list: SceneryJson['landmarks']): THREE.Group {
         const b2 = new THREE.Mesh(new THREE.BoxGeometry(sx, sy, sz), mat); b2.position.set(x, y, z); g.add(b2);
       };
       if (m.style === 'canopy') {
-        // open marshal canopy (Buttonwillow judge r2: the frames show a flat roof on four posts over a tyre-faced earth
-        // mound, no walls): the mound (mound_h, earth colour), four posts to the roof underside at h, the roof slab in
-        // m.color with a 0.3 m overhang, an optional railing at 1 m on the mound top
-        const mh = m.mound_h ?? 0, roofY = Math.max(mh + 2.0, m.h);
-        if (mh > 0) box(W + 1.6, mh, D + 1.6, 0, mh / 2, 0, new THREE.MeshLambertMaterial({ color: '#9a8a6c' }));
-        for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) box(0.1, roofY - mh, 0.1, x * (W / 2 - 0.05), mh + (roofY - mh) / 2, z * (D / 2 - 0.05), postMat);
+        // marshal canopy (Buttonwillow judge r2 / r3, per station from its own frame): a ROUNDED base (mound_h, radius
+        // W / 2 + 1.5 m, in base_color: earth, or pale where the frame shows a concrete / white-faced base), an optional
+        // booth on it (body_h, body_color: the dark / blue / white cabinet the frames show), and the roof in m.color on a
+        // single central pole (pole) or four posts, its underside at h
+        const mh = m.mound_h ?? 0, roofY = Math.max(mh + 2.0, m.h), R0 = W / 2 + 1.5;
+        if (mh > 0) {
+          const mound = new THREE.Mesh(new THREE.CylinderGeometry(R0 - 0.6, R0, mh, 20), new THREE.MeshLambertMaterial({ color: m.base_color ?? '#9a8a6c' }));
+          mound.position.set(0, mh / 2, 0); g.add(mound);
+        }
+        if (m.body_h) box(W * 0.55, m.body_h, W * 0.55, 0, mh + m.body_h / 2, -W * 0.1, new THREE.MeshLambertMaterial({ color: m.body_color ?? '#2b3f5c' }));
+        if (m.pole) box(0.12, roofY - mh, 0.12, 0, mh + (roofY - mh) / 2, 0, postMat);
+        else for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) box(0.1, roofY - mh, 0.1, x * (W / 2 - 0.05), mh + (roofY - mh) / 2, z * (D / 2 - 0.05), postMat);
         box(W + 0.6, 0.12, D + 0.6, 0, roofY + 0.06, 0, band);
         box(W + 0.6, 0.04, D + 0.6, 0, roofY - 0.01, 0, white);
         if (m.railing) for (const z of [-1, 1]) box(W, 0.05, 0.05, 0, mh + 1.0, z * (D / 2 - 0.05), postMat);
@@ -1712,6 +1732,11 @@ function buildLandmarks(list: SceneryJson['landmarks']): THREE.Group {
       } else {
         for (const [x, z, sx, sz] of [[0, D / 2 + 0.2, W + 0.4, 0.05], [-W / 2 - 0.2, 0, 0.05, D + 0.4], [W / 2 + 0.2, 0, 0.05, D + 0.4]] as const) {
           box(sx, 0.05, sz, x, legH + 1.0, z, postMat);
+        }
+        if (m.roof) {
+          // a small canopy over the deck (Buttonwillow's pit-wall stand, judge r3): two rear posts and a flat roof 2.2 m up
+          for (const x of [-1, 1]) box(0.08, 2.2, 0.08, x * (W / 2), legH + 1.1, -D / 2, postMat);
+          box(W + 0.4, 0.08, D + 0.4, 0, legH + 2.2, 0, band);
         }
         if (m.stair) {
           // an access stair down the back (Buttonwillow's pit-wall stand, judge r2 pit_02): a sloped stringer and treads
@@ -1741,9 +1766,20 @@ function buildLandmarks(list: SceneryJson['landmarks']): THREE.Group {
       }
     } else if (m.kind === 'impact') {
       // impact barrier (water-filled / foam block) at a wall's nose: a plain block, w across, d along the heading
-      const blk = new THREE.Mesh(new THREE.BoxGeometry(m.w, m.h, m.d ?? 2), new THREE.MeshLambertMaterial({ color: m.color ?? '#e8c21c' }));
-      blk.position.set(0, m.h / 2, 0);
-      g.add(blk);
+      const mat = new THREE.MeshLambertMaterial({ color: m.color ?? '#e8c21c' });
+      if (m.style === 'rounded') {
+        // bulky rounded protection (Buttonwillow's pit-wall nose, judge r3): a half-capsule, w across, d along, h tall
+        const r = m.w / 2, len = Math.max(0, (m.d ?? 2) - m.w);
+        const body = new THREE.Mesh(new THREE.CylinderGeometry(r, r, len, 16, 1, false, 0, Math.PI), mat);
+        body.rotation.x = Math.PI / 2; body.rotation.z = Math.PI / 2; body.scale.set(1, 1, m.h / r); body.position.set(0, 0, 0);
+        const nose = new THREE.Mesh(new THREE.SphereGeometry(r, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2), mat);
+        nose.scale.set(1, m.h / r, 1); nose.position.set(0, 0, len / 2);
+        g.add(body, nose);
+      } else {
+        const blk = new THREE.Mesh(new THREE.BoxGeometry(m.w, m.h, m.d ?? 2), mat);
+        blk.position.set(0, m.h / 2, 0);
+        g.add(blk);
+      }
     } else if (m.kind === 'tyres') {
       // free-standing tyre stack (style 'tyres': tyres lying flat, 0.21 m a layer) or a painted barrier block (style
       // 'blocks', red / white bands), 21 Oct 2026; drawn only, not in the collision world
@@ -1768,9 +1804,21 @@ function buildLandmarks(list: SceneryJson['landmarks']): THREE.Group {
       // light mast: a tapered grey pole with a lamp frame on top
       const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.22, m.h, 8), postMat);
       pole.position.set(0, m.h / 2, 0);
-      const head = new THREE.Mesh(new THREE.BoxGeometry(2.2, 1.0, 0.3), backMat);
-      head.position.set(0, m.h + 0.3, 0);
-      g.add(pole, head);
+      if (m.style === 'flood') {
+        // a floodlight head (Buttonwillow judge r3): a frame with a 3 x 2 grid of lamps facing the heading
+        const frame = new THREE.Mesh(new THREE.BoxGeometry(2.6, 1.6, 0.15), postMat);
+        frame.position.set(0, m.h + 0.5, 0);
+        g.add(pole, frame);
+        const lamp = new THREE.MeshLambertMaterial({ color: 0xe9ecef, emissive: 0x2a2a2a });
+        for (let i = 0; i < 3; i++) for (let j = 0; j < 2; j++) {
+          const l2 = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.55, 0.25), lamp);
+          l2.position.set(-0.85 + i * 0.85, m.h + 0.15 + j * 0.7, 0.18); g.add(l2);
+        }
+      } else {
+        const head = new THREE.Mesh(new THREE.BoxGeometry(2.2, 1.0, 0.3), backMat);
+        head.position.set(0, m.h + 0.3, 0);
+        g.add(pole, head);
+      }
     } else if (m.kind === 'gantry' && m.x2 !== undefined && m.y2 !== undefined) {
       // two white lattice towers either side of the track with cables between their tops
       group.add(latticeTower(m.x, m.y, m.z, m.h, m.w, white), latticeTower(m.x2, m.y2, m.z2 ?? m.z, m.h, m.w, white));

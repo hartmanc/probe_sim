@@ -63,6 +63,10 @@ export interface BlockJson {
   /** a balcony along the long side `side` (+1 / -1 of the frame, the builder resolves 'track'): its floor at z, depth
    *  out from the wall, a 1 m railing; and an exterior stair from the ground up to it at the +l end */
   balcony?: { side: number; z: number; depth: number; color?: string; stair?: boolean };
+  /** a storey set back on the roof of a lower one (Buttonwillow's tower, judge r3): the block's base height above the
+   *  ground (m), its glazing divided by wall-coloured mullions every mullions_m (m), and a railing round its own top
+   *  edge (the open deck on the lower storey's roof) */
+  base?: number; mullions_m?: number; deck_rail?: boolean;
 }
 
 /** Fuel island: canopy slab on posts, island kerbs with pumps, a plain sign pylon at a local offset. */
@@ -348,7 +352,7 @@ export function garage(g: GarageJson, s: Soup): void {
 }
 
 export function block(b: BlockJson, s: Soup): void {
-  const f = Frame.heading(b.c, b.z, b.heading);
+  const f = Frame.heading(b.c, b.z + (b.base ?? 0), b.heading);
   const hl = b.l / 2, hw = b.w / 2;
   const cW = rgb(b.wall), cB = rgb(b.band), cR = rgb(b.roof);
   s.box(f, -hl, hl, -hw, hw, -0.5, b.h, cW, { top: cR });
@@ -367,6 +371,26 @@ export function block(b: BlockJson, s: Soup): void {
     s.quad(f.p(hl - 0.6, hw + e, z0), f.p(-hl + 0.6, hw + e, z0), f.p(-hl + 0.6, hw + e, z1), f.p(hl - 0.6, hw + e, z1), cB);
     s.quad(f.p(-hl - e, hw - 0.6, z0), f.p(-hl - e, -hw + 0.6, z0), f.p(-hl - e, -hw + 0.6, z1), f.p(-hl - e, hw - 0.6, z1), cB);
     s.quad(f.p(hl + e, -hw + 0.6, z0), f.p(hl + e, hw - 0.6, z0), f.p(hl + e, hw - 0.6, z1), f.p(hl + e, -hw + 0.6, z1), cB);
+  }
+  if (b.mullions_m) {
+    // wall-coloured mullions across the bands (divided glazing)
+    const e = 0.06;
+    for (let k = 0; k < b.storeys; k++) {
+      if (b.bands && !b.bands.includes(k)) continue;
+      const z0 = k * sh + f0 * sh, z1 = k * sh + f1 * sh;
+      for (let t = -hl + 0.6 + b.mullions_m; t < hl - 0.6; t += b.mullions_m) {
+        s.box(f, t - 0.06, t + 0.06, -hw - e, -hw, z0, z1, cW); s.box(f, t - 0.06, t + 0.06, hw, hw + e, z0, z1, cW);
+      }
+      for (let d = -hw + 0.6 + b.mullions_m; d < hw - 0.6; d += b.mullions_m) {
+        s.box(f, -hl - e, -hl, d - 0.06, d + 0.06, z0, z1, cW); s.box(f, hl, hl + e, d - 0.06, d + 0.06, z0, z1, cW);
+      }
+    }
+  }
+  if (b.deck_rail) {
+    const cR = rgb('#5d6166'), zr = b.h + 1.0;
+    s.box(f, -hl, hl, -hw, -hw + 0.06, zr - 0.05, zr, cR); s.box(f, -hl, hl, hw - 0.06, hw, zr - 0.05, zr, cR);
+    s.box(f, -hl, -hl + 0.06, -hw, hw, zr - 0.05, zr, cR); s.box(f, hl - 0.06, hl, -hw, hw, zr - 0.05, zr, cR);
+    for (let t = -hl; t <= hl + 1e-6; t += 1.5) { s.box(f, t - 0.03, t + 0.03, -hw, -hw + 0.06, b.h, zr, cR); s.box(f, t - 0.03, t + 0.03, hw - 0.06, hw, b.h, zr, cR); }
   }
   if (b.balcony) balcony(b, s, f);
 }
