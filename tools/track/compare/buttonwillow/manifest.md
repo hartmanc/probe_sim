@@ -1481,6 +1481,105 @@ compare_sheets/ (50 with pit frames), compare_sheets/hood_r7/ (16), structure_st
 tower from the lane and close, the stand, the 21 R pair, the hatch and chevrons) and textures_r7/ (42 apron and zone
 stills); round-6 sets in compare_sheets/r6/ and structure_stills/r6/.
 
+## Round 8 (21 Oct 2026, checkpoint): the owner's lap 2, notes 1-24 (in progress)
+
+Geometry changed (owner notes 6, 8, 20, 21, 23). Stage 1 run 85 every gate ok (28 lines, owner edges T2 / T4 and the
+Dog Leg zone included); lap 4703.81 m (was 4704.32); track.json sha256 b592641cf7cb3177..., heightfield.bin c36561136e37069c...;
+published rev 37991e53ab.
+
+### Straights (config `straights`, new options `once` and `width_shared` in straights.py)
+
+- Sunset, both sides, config 4192-4276 (current 4203-4287): read once from 3.5 m inside the first fit's edge (reading
+  around the moving edge walked the line outward: run 80 19 m, run 82 16.3 m). Width 12.6-12.9 m over 4210-4290 (was
+  12.3-17.1 with the bulges). The right-side readings at 4241-4258: lighter, rutted dirt beside the asphalt, no structure;
+  the left bay 4241-4270: the T11-approach station mound area (2-8 m off the asphalt). The Zorros-mouth fillet 4130-4190
+  (exempted) still reads 13.7-17.2 m.
+- Drag strip, config 3022-3374: left read once, right PARALLEL to it (`width_shared`): one width, 11.44 m (was 11.8-16.2).
+- Front straight, config 4525-180: right (south asphalt end) read once, left PARALLEL at the dark / pale tone step
+  (the asphalt_end detector read from 7 m inside the old edge): one width, 13.12 m (was 19.2 at 4540 to 15.8 at 160).
+  The pale strip between it and the pit-wall K-rail: two runoff zones in the apron look ('front straight pale strip'
+  west / east, 7.5-8.5 / 5.6-8.0 m wide), K-rail unchanged; pit connectivity ok.
+- Capture ruler checks: the automatic dark-band ruler (tools: /tmp ruler, the dark band against the road median + 18) is
+  unreliable here (dirt and asphalt within 18 grey levels: 11-28 m readings): OPEN, to measure by eye on ruled windows.
+- The T4-T5 edge-gate exemption right widened 1370 -> 1365 (config), the same apron step (cw_1348.png) now reached at
+  config 1368 (run 84: 0.101 m).
+
+### Kerb heights (notes 1, 2, 3, 19, 22): measured, NOT applied (gate decision pending)
+
+Lidar (2021, class-2 ground, first returns; tools: /tmp/bw_tools/kerb_heights.py, stage3_evidence/kerb_heights_lidar_r8.json):
+per station the asphalt line on the 1.6 m inside the band, extrapolated under it; the run's step = median, sigma = MAD.
+The steps do not resolve kerbs: the T9 apex (6 cm on t114) reads 0.0 ± 0.2 cm, and every negative value is the road's
+crest or banking (the Cotton hilltop run 1020-1049 R, raised on the third video, reads -9.3 cm). The ground
+classification removes kerb tops; the lidar cannot settle heights.
+
+| run | stations | points | lidar step |
+|---|---|---|---|
+| left 283-322 | 40 | 827 | -2.6 ± 0.2 cm |
+| left 536-558 | 23 | 492 | +0.9 ± 0.7 cm |
+| left 745-767 | 23 | 454 | +0.1 ± 0.2 cm |
+| left 954-1011 | 57 | 1036 | -0.4 ± 0.2 cm |
+| left 1089-1116 | 28 | 2406 | +0.5 ± 0.4 cm |
+| left 1203-1272 | 69 | 2338 | +0.2 ± 0.1 cm |
+| left 1338-1396 | 59 | 2211 | +1.8 ± 0.2 cm |
+| left 1449-1479 | 31 | 695 | +1.3 ± 0.1 cm |
+| left 1541-1574 | 34 | 608 | +1.9 ± 0.3 cm |
+| left 1653-1680 | 28 | 489 | +2.6 ± 0.2 cm |
+| left 1843-1851 | 9 | 190 | +0.9 ± 0.4 cm |
+| left 2539-2544 | 6 | 198 | -2.6 ± 1.1 cm |
+| left 2689-2746 | 55 | 925 | -4.7 ± 0.2 cm |
+| left 2849-2855 | 7 | 100 | -8.5 ± 1.9 cm |
+| left 3005-3013 | 9 | 150 | -7.2 ± 0.5 cm |
+| left 3340-3383 | 43 | 743 | -10.2 ± 0.3 cm |
+| left 3470-3518 | 49 | 850 | +1.7 ± 0.3 cm |
+| left 3691-3760 | 65 | 1007 | +0.1 ± 0.2 cm |
+| left 3845-3876 | 32 | 544 | +0.7 ± 0.2 cm |
+| left 3972-4024 | 45 | 649 | +0.6 ± 0.2 cm |
+| left 4381-4406 | 26 | 886 | +2.6 ± 0.6 cm |
+| right 188-268 | 81 | 1625 | +3.3 ± 0.2 cm |
+| right 360-376 | 17 | 380 | -0.0 ± 0.2 cm |
+| right 410-424 | 15 | 303 | -0.1 ± 0.3 cm |
+| right 584-604 | 21 | 424 | -0.2 ± 0.1 cm |
+| right 1020-1049 | 30 | 616 | -9.3 ± 0.3 cm |
+| right 1168-1191 | 24 | 738 | +2.8 ± 0.7 cm |
+| right 1304-1310 | 6 | 176 | -7.0 ± 0.1 cm |
+| right 1495-1515 | 21 | 400 | +1.9 ± 0.4 cm |
+| right 1779-1818 | 39 | 738 | +1.8 ± 0.3 cm |
+| right 1868-1933 | 66 | 1244 | -4.5 ± 0.2 cm |
+| right 2315-2340 | 25 | 574 | +0.4 ± 0.3 cm |
+| right 2765-2792 | 27 | 448 | +0.5 ± 0.4 cm |
+| right 3400-3451 | 49 | 743 | -0.0 ± 0.2 cm |
+| right 3794-3810 | 17 | 316 | -5.8 ± 0.3 cm |
+| right 3894-3935 | 42 | 685 | -9.2 ± 0.3 cm |
+| right 4030-4127 | 98 | 2758 | -4.9 ± 0.2 cm |
+| right 4321-4370 | 50 | 1392 | -5.3 ± 0.3 cm |
+| right 4424-4501 | 78 | 2336 | -0.6 ± 0.2 cm |
+
+Traversal gate (no wheel lifted, 3 passes per run) with every run raised, tried in the test harness: 6 cm / 0.15 m face:
+44 of 117 passes lift a wheel; 8 cm / 0.3: 43; 10 cm / 0.3: 44; 10 cm / 0.45: 36; 8 cm / 0.45: 35; 6 cm / 0.3: 37; no
+roll past 15 deg in any. The T9 exit alone at 10 cm / 0.2 m: 215-562 ms lifts. The same car-suspension behaviour as
+Sonoma's known failure. The T9 exit run stays flat in this checkpoint; the decision is in the report.
+
+### Scenery items done
+
+- Pit boxes (note 9): `pit_lane.lane.boxes = []` (no box lines on t1249000-t1339000); scenery.json pit_lane.boxes; the app
+  draws the rule boxes only without the key (Laguna). Still r8_pit_road_8 / r8_pit_road_95.
+- Pit-in gore (note 7): the paint-over recolours to the road's median within 15 m (`tone='road'`); the hatch paint left
+  out. Still r8_pit_in_gore: tan patches remain on the gore's dirt part (OPEN).
+- Apron edge (note 4 / the wedge look beside kerbs): apron vertices snapped onto the outline (no 0.5 m grid steps), the
+  1 m fade inward from the feathered segments only.
+- Kerb runs: a run under 12 m takes one offset (its median); 1449-1479 L starts 6 m later (the edge-relative ramp at the
+  T4-T5 apron step). OPEN: the Dog Leg run 1843-1851 L now stands 1.5 m inside the edge (the edge moved out there).
+
+### Not done in this checkpoint (OPEN)
+
+The CCW video (_7QwJdGQtaE, NASA SoCal HPDE 2 Buttonwillow Classic CCW 4/5/2025, Fast Car Seats; frames t000-t300 in
+inventory/frames/ccw_7Qw, local) is grabbed but not yet read for the infield fence (notes 5, 10, 11), the T2-outside tyre
+wall (12), kerb faces; the third video (XIxXIvsDz3s) not yet grabbed (notes 17, 19, 22); the tower awning (14), the
+paddock layout and buildings (15), the willows (16), the T2 concrete patch (17), surface marks (18), the Cotton K-rail
+blocks and the ~1100 stripe (19), per-run kerb width and block length (22), the cone re-reads and the service road (24:
+t006 shows four cones parallel to the edge ~3.8 m out, yellow / white / orange / orange), the boundary audit (13), the
+raised-kerb mesh check on the curved runs (4: the raised strip is one shared-vertex grid; T9 apex stills show no gaps).
+
 ### Generated tables (manifest_tables.ts on the published package, rev b7a674a6da)
 
 ### Scenery objects of the checked kinds (136, from public/tracks/buttonwillow/)

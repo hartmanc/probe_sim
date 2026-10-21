@@ -302,16 +302,44 @@ CONFIG = dict(
     # 34351026 and Atlantic 34351042 on the right, and its waviness at 61-124 / 150-183 left is the free fit following
     # the gravel median. Round 3's run 7 started this line at 4470, inside the T11 exit curve, and was worse.
     straights=[
-        dict(side='left', fit='asphalt_end', lo=4525, hi=180, join=(4525, 4535), end=180, tol=0.25,
-             detector=dict(jump=8.0, sat_max=40.0, lo=-1.2, hi=2.0),
-             why='front straight left: straight asphalt end at the pit-wall median (c20_s4600-c20_s0250)'),
-        dict(side='right', fit='asphalt_end', lo=4525, hi=180, join=(4525, 4535), end=180, tol=0.25,
+        # round 8 (owner lap 2 note 23, "I don't think the front straight is this wide"): the racing surface is the DARK
+        # band of constant width; the pale strip between it and the pit-wall K-rail is not racing surface (a paved shoulder,
+        # drawn as the runoff zone 'front straight pale strip'). The right (south) edge: the asphalt-to-dirt line, read
+        # once; the left: the dark-to-pale tone step (the asphalt_end detector, i.e. the first brightness step outward,
+        # read from 7 m inside the old edge at the K-rail median), PARALLEL to the right line (width_shared)
+        dict(side='right', fit='asphalt_end', lo=4525, hi=180, join=(4525, 4535), end=180, tol=0.25, once=True,
              detector=dict(jump=8.0, sat_max=40.0, lo=-1.2, hi=2.0),
              why='front straight right: straight asphalt-to-dirt edge between the crossovers (c20_s4600-c20_s0250)'),
+        dict(side='left', fit='asphalt_end', lo=4525, hi=180, join=(4525, 4535), end=180, tol=0.25, once=True, width_shared=True,
+             detector=dict(jump=8.0, sat_max=40.0, lo=-7.0, hi=0.3),
+             why='front straight left: the dark / pale tone step, parallel to the right edge (owner lap 2 note 23; c20_s4600-c20_s0250)'),
+        # Sunset (round 8, owner lap 2 notes 6 / 8: "Sunset doesn't have this bulge. It's pretty straight on either side",
+        # both edges drawn straight on his map from past the Zorro's Corners mouth to the West Pit In/Out junction):
+        # straight on both sides from the downstream end of the mouth exemption (4190) to before the pit-in split
+        # (current s ~4290 = config 4279), measured on c20_s4250 / c20_s4300 / c20_s4350 (stage3_evidence/sunset_r8.png).
+        # RANSAC over the asphalt-end readings: the 4230-4247 right readings (current 4241-4258: lighter, rutted dirt
+        # beside the asphalt, no structure) and the left bay at 4241-4270 (the T11-approach station mound area, 2-8 m
+        # off the asphalt) fall outside the line
+        dict(side='left', fit='asphalt_end', lo=4192, hi=4276, join=(4192, 4202), end=4276, tol=0.25, once=True,
+             detector=dict(jump=8.0, sat_max=40.0, lo=-3.5, hi=0.3),   # read once (`once`), from 3.5 m inside the edge outward: the first asphalt end, not the rutted dirt beyond the bulge (run 80 with (-1.2, 2.0) refit after refit: 19 m wide; run 82 with (-1.5, 0.6) once: 16.3 m)
+             why='Sunset left: straight asphalt-to-dirt edge, owner lap 2 (c20_s4250-c20_s4350)'),
+        dict(side='right', fit='asphalt_end', lo=4192, hi=4276, join=(4192, 4202), end=4276, tol=0.25, once=True,
+             detector=dict(jump=8.0, sat_max=40.0, lo=-3.5, hi=0.3),   # read once (`once`), from 3.5 m inside the edge outward: the first asphalt end, not the rutted dirt beyond the bulge (run 80 with (-1.2, 2.0) refit after refit: 19 m wide; run 82 with (-1.5, 0.6) once: 16.3 m)
+             why='Sunset right: straight dark-asphalt edge, owner lap 2 (c20_s4250-c20_s4350)'),
+        # the drag-strip leg toward T9 (round 8, owner lap 2 note 20: a straight strip of constant width; the fit wandered
+        # 11.1-16.5 m onto the pale dirt beside it): straight on both sides from where the strip's full width begins past
+        # the T8 rejoin (c20_s3050: current s ~3030) to the T9 entry (c20_s3400 / c20_s3450: the curve starts ~3385),
+        # stage3_evidence/drag_r8.jpg
+        dict(side='left', fit='asphalt_end', lo=3022, hi=3374, join=(3022, 3032), end=3374, tol=0.25, once=True,
+             detector=dict(jump=8.0, sat_max=40.0, lo=-3.5, hi=0.3),
+             why='drag strip left: straight asphalt edge, owner lap 2 note 20 (c20_s3050-c20_s3400)'),
+        dict(side='right', fit='asphalt_end', lo=3022, hi=3374, join=(3022, 3032), end=3374, tol=0.25, once=True, width_shared=True,   # owner note 21: one width end to end
+             detector=dict(jump=8.0, sat_max=40.0, lo=-3.5, hi=0.3),
+             why='drag strip right: straight asphalt edge, owner lap 2 note 20 (c20_s3050-c20_s3400)'),
     ],
     repave_fixes=[],                             # only where recent footage contradicts the survey (SKILL 1.6)
     gate=dict(exempt=[
-        ('right', 1370, 1435, "mirror of the left exemption 1380-1430: as the left edge steps out to the T4-T5 apron at the block line's end (s 1387, stage3_evidence/cw_1348.png on c20_s1450 / c20_s1500) the centre and its normals swing, so the right half-width changes 0.17 m per station with no feature on the right edge; the world-continuity gate on the right edge polyline is the physical check and passes; junction, real"),
+        ('right', 1365, 1435, "round 8: from 1365 (was 1370): with the front-straight / Sunset / drag-strip straights the stations moved and the same swing reached 1368 (run 84: 0.101 m at current 1377 = config 1368; the same apron step on cw_1348.png); mirror of the left exemption 1380-1430: as the left edge steps out to the T4-T5 apron at the block line's end (s 1387, stage3_evidence/cw_1348.png on c20_s1450 / c20_s1500) the centre and its normals swing, so the right half-width changes 0.17 m per station with no feature on the right edge; the world-continuity gate on the right edge polyline is the physical check and passes; junction, real"),
         ('left', 1380, 1430, "the T4-T5 block line ends at s 1387 against the paved apron, whose asphalt end runs 4.6 m further out (stage3_evidence/cw_1348.png on c20_s1450 / c20_s1500); the edge steps out like a road mouth; junction, real"),
         ('right', 8, 68, 'mouth of OSM 34351026 (infield connector); junction, real'),
         ('right', 125, 185, 'mouth of OSM 34351042 (Atlantic); junction, real'),
@@ -378,9 +406,9 @@ CONFIG = dict(
             dict(side='left', line_latlon=[(35.4865519, -119.5403896), (35.4865507, -119.5404122), (35.4865527, -119.5404346), (35.4865543, -119.5404569), (35.4865561, -119.5404792), (35.4865569, -119.5405014), (35.4865582, -119.5405236), (35.4865591, -119.5405457), (35.48656, -119.5405679), (35.4865606, -119.54059), (35.4865612, -119.5406122), (35.4865618, -119.5406343), (35.486564, -119.5406563), (35.4865644, -119.5406785), (35.4865648, -119.5407006), (35.4865655, -119.5407227), (35.4865659, -119.5407448), (35.4865665, -119.5407669), (35.4865671, -119.5407889), (35.4865671, -119.540811), (35.4865683, -119.540833), (35.4865694, -119.5408549), (35.4865704, -119.5408768), (35.4865711, -119.5408987), (35.4865714, -119.5409206), (35.4865729, -119.5409424), (35.4865745, -119.5409643), (35.486574, -119.5409862), (35.4865747, -119.5410081), (35.4865763, -119.5410299)], colors='rwb', name='run left s 1338-1396',
                  colour_src='t054.jpg (red / white / blue; inventory row s 1344 left)',
                  src='kerb run (owner lap 1): the block line followed on c20_s1500 with the band reader (edges_spline.bands outer limits, the band centre 0.45 m inside), one continuous run'),
-            dict(side='left', line_latlon=[(35.4866032, -119.5416197), (35.4866037, -119.5416413), (35.4866045, -119.5416629), (35.4866058, -119.5416842), (35.4866063, -119.5417055), (35.4866072, -119.5417267), (35.4866079, -119.5417479), (35.4866089, -119.541769), (35.4866097, -119.5417902), (35.4866106, -119.5418114), (35.4866116, -119.5418326), (35.4866122, -119.5418541), (35.4866125, -119.5418756), (35.4866135, -119.5418973), (35.4866144, -119.5419193), (35.4866164, -119.5419415)], colors='rwb', name='run left s 1449-1479',
+            dict(side='left', line_latlon=[(35.4866058, -119.5416842), (35.4866063, -119.5417055), (35.4866072, -119.5417267), (35.4866079, -119.5417479), (35.4866089, -119.541769), (35.4866097, -119.5417902), (35.4866106, -119.5418114), (35.4866116, -119.5418326), (35.4866122, -119.5418541), (35.4866125, -119.5418756), (35.4866135, -119.5418973), (35.4866144, -119.5419193), (35.4866164, -119.5419415)], colors='rwb', name='run left s 1449-1479',
                  colour_src='colour unverified: no inventory kerb row on that side within 40 m of s 1449-1479',
-                 src='kerb run (owner lap 1): the block line followed on c20_s1600 with the band reader (edges_spline.bands outer limits, the band centre 0.45 m inside), one continuous run'),
+                 src='kerb run (owner lap 1): the block line followed on c20_s1600 with the band reader (edges_spline.bands outer limits, the band centre 0.45 m inside), one continuous run; round 8: the first 6 m dropped (with the new edges the left edge steps out to the T4-T5 apron at the run start, the edge-relative offset ramped 0.12 m per station over the step gate; the blocks there stand at the old edge, an open row)'),
             dict(side='left', line_latlon=[(35.4868471, -119.5425864), (35.4868571, -119.5426044), (35.4868685, -119.5426206), (35.4868795, -119.5426371), (35.4868907, -119.5426534), (35.4869006, -119.5426711), (35.4869122, -119.5426872), (35.4869225, -119.5427047), (35.4869336, -119.5427213), (35.486944, -119.5427389), (35.4869552, -119.5427557), (35.486966, -119.5427731), (35.4869774, -119.54279), (35.4869887, -119.5428071), (35.4870003, -119.542824), (35.4870115, -119.5428414), (35.4870236, -119.5428581), (35.4870297, -119.5428663)], colors='rwb', name='run left s 1541-1574',
                  colour_src='colour unverified: no inventory kerb row on that side within 40 m of s 1541-1574',
                  src='kerb run (owner lap 1): the block line followed on c20_s1700 with the band reader (edges_spline.bands outer limits, the band centre 0.45 m inside), one continuous run'),
@@ -405,9 +433,10 @@ CONFIG = dict(
             dict(side='left', line_latlon=[(35.4959299, -119.5495995), (35.4959478, -119.5495976), (35.4959658, -119.5495962), (35.4959835, -119.5495928), (35.4960012, -119.5495893), (35.496019, -119.5495935), (35.4960367, -119.5495941), (35.4960543, -119.5495933), (35.4960719, -119.5495928), (35.4960896, -119.5495921), (35.4961072, -119.5495919), (35.496125, -119.5495905), (35.4961428, -119.5495901), (35.4961608, -119.5495893), (35.4961789, -119.5495881), (35.4961972, -119.5495876), (35.4962156, -119.5495821), (35.4962342, -119.549586), (35.4962531, -119.5495865), (35.4962721, -119.5495859), (35.4962913, -119.5495847), (35.4963106, -119.5495826), (35.4963206, -119.549584)], colors='rwb', name='run left s 3340-3383',
                  colour_src='t110.jpg (red / white / blue; inventory row s 3329 left)',
                  src='kerb run (owner lap 1): the block line followed on c20_s3500 with the band reader (edges_spline.bands outer limits, the band centre 0.45 m inside), one continuous run'),
-            dict(side='left', line_latlon=[(35.4965872, -119.5487644), (35.4965731, -119.5487478), (35.4965591, -119.5487316), (35.4965457, -119.5487151), (35.496531, -119.5487007), (35.4965176, -119.5486851), (35.4965038, -119.5486705), (35.4964906, -119.5486551), (35.4964771, -119.5486407), (35.4964636, -119.5486262), (35.4964502, -119.5486118), (35.4964365, -119.5485979), (35.4964226, -119.5485844), (35.4964106, -119.5485683), (35.4963981, -119.5485529), (35.4963855, -119.5485376), (35.4963728, -119.5485222), (35.4963598, -119.5485075), (35.4963438, -119.5484963), (35.4963301, -119.5484821), (35.4963202, -119.5484631), (35.496307, -119.5484482), (35.4962941, -119.5484329), (35.4962805, -119.5484185), (35.4962672, -119.5484037)], colors='rwb', name='run left s 3470-3518',
+            dict(side='left', line_latlon=[(35.4965872, -119.5487644), (35.4965731, -119.5487478), (35.4965591, -119.5487316), (35.4965457, -119.5487151), (35.496531, -119.5487007), (35.4965176, -119.5486851), (35.4965038, -119.5486705), (35.4964906, -119.5486551), (35.4964771, -119.5486407), (35.4964636, -119.5486262), (35.4964502, -119.5486118), (35.4964365, -119.5485979), (35.4964226, -119.5485844), (35.4964106, -119.5485683), (35.4963981, -119.5485529), (35.4963855, -119.5485376), (35.4963728, -119.5485222), (35.4963598, -119.5485075), (35.4963438, -119.5484963), (35.4963301, -119.5484821), (35.4963202, -119.5484631), (35.496307, -119.5484482), (35.4962941, -119.5484329), (35.4962805, -119.5484185), (35.4962672, -119.5484037)], colors='rwb', name='run left s 3470-3518',   # round 8: raised 10 cm per the owner (lap 2 note 1) lifts a wheel in the traversal gate (215-562 ms); held flat pending the gate decision (report)
+
                  colour_src='t116.jpg (red / white / blue; inventory row s 3479 left)',
-                 src='kerb run (owner lap 1): the block line followed on c20_s3600 with the band reader (edges_spline.bands outer limits, the band centre 0.45 m inside), one continuous run'),
+                 src='kerb run (owner lap 1): the block line followed on c20_s3600 with the band reader (edges_spline.bands outer limits, the band centre 0.45 m inside), one continuous run; raised (round 8): owner lap 2: raised, aggressive; height from the owner pending (10 cm, the 6 cm of the apex run the floor; t114-t118 at full resolution show no resolvable face: t116, the closest frame, has a soft 2-3 px white-to-asphalt edge)'),
             dict(side='left', line_latlon=[(35.4947997, -119.5478563), (35.4947813, -119.5478611), (35.4947633, -119.5478667), (35.4947461, -119.5478749), (35.4947285, -119.5478816), (35.4947111, -119.547888), (35.4946935, -119.5478937), (35.4946761, -119.5478994), (35.4946588, -119.547905), (35.4946418, -119.5479112), (35.4946249, -119.5479172), (35.4946081, -119.5479231), (35.4945915, -119.5479287), (35.494575, -119.5479342), (35.4945587, -119.5479394), (35.4945424, -119.5479444), (35.4945263, -119.547949), (35.4945104, -119.5479533), (35.4944945, -119.5479573), (35.4944787, -119.5479608), (35.494463, -119.5479636), (35.4944474, -119.5479663), (35.4944317, -119.5479681), (35.4944162, -119.5479712), (35.4944005, -119.5479724), (35.4943848, -119.5479731), (35.4943691, -119.5479732), (35.4943532, -119.5479731), (35.4943371, -119.5479729), (35.4943211, -119.5479708), (35.4943049, -119.5479685), (35.4942885, -119.5479656), (35.494272, -119.5479622), (35.4942553, -119.5479579), (35.4942381, -119.5479548), (35.4942298, -119.5479516)], colors='rwb', name='run left s 3691-3760',
                  colour_src='t124.jpg (red / white / blue; inventory row s 3725 left)',
                  src='kerb run (owner lap 1): the block line followed on c20_s3850 with the band reader (edges_spline.bands outer limits, the band centre 0.45 m inside), one continuous run'),
@@ -787,7 +816,7 @@ CONFIG = dict(
         ortho_paint_over=[
             # judge r6 (round 7): the NAIP yellow hatch in the pit-entry gore (pit_00 4294-4318 R, open since r2) and the
             # chevrons at the drag-strip crossing (fwd_08 2550 R, open since r3), off the road: on='any'
-            dict(latlon=[(35.4895828, -119.5481191), (35.4895828, -119.5478764), (35.4893133, -119.5478764), (35.4893133, -119.5481191)], on='any', src='pit_00 4294-4318 R: the NAIP 2022 yellow hatch in the gore between the track and the pit-entry lane'),
+            dict(latlon=[(35.4895828, -119.5481191), (35.4895828, -119.5478764), (35.4893133, -119.5478764), (35.4893133, -119.5481191)], on='any', tone='road', src='pit_00 4294-4318 R: the NAIP 2022 yellow hatch in the gore between the track and the pit-entry lane; round 8 (owner lap 2 note 7): recoloured to the road tone (the gore is paved, pit video t1231000); the hatch paint itself left out'),
             dict(latlon=[(35.4895702, -119.5499307), (35.4895702, -119.549688), (35.4892558, -119.549688), (35.4892558, -119.5499307)], on='any', src='fwd_08 2550 R: the NAIP chevrons on the drag-strip crossing'),
             dict(latlon=[(35.491772, -119.5503996), (35.491772, -119.5503003), (35.4916552, -119.5503003), (35.4916552, -119.5503996)], src='fwd_09 2800-2850 L: a broad white mark on the road (NAIP 2022)'),
             dict(latlon=[(35.491251, -119.5507086), (35.491251, -119.5506313), (35.4911791, -119.5506313), (35.4911791, -119.5507086)], src='the same stretch, the second mark at s ~2850'),
@@ -799,6 +828,13 @@ CONFIG = dict(
         zones_meet_edge=True,    # judge r5: the crossover mouths (side_00 21 / 46 / 146 R, fwd_15 4600-4650 R) showed a dirt wedge between the zone's end and the edge
         paved_zones_over=True,   # texture pass (owner lap 1): the crossovers and the T2 runoff drew dirt blotches where the track's / a neighbour zone's shoulder lay over them (structure_stills/textures_r5)
         runoff_zones=[
+            # round 8 (owner lap 2 note 23): the pale paved strip between the front straight's dark racing surface and the
+            # pit-wall K-rail (c20_s4600-c20_s0250): pavement, not racing surface; from the new left edge out to the
+            # K-rail's line (the declared wall), two pieces either side of the lap's start
+            dict(name='front straight pale strip west', side='left', s=(4536, 4700), surface='apron', outer_latlon=[(35.4887467, -119.5466176), (35.4887756, -119.5463925), (35.4887872, -119.5461735), (35.4887997, -119.5459532), (35.4888121, -119.5457331), (35.4888245, -119.545513), (35.4888375, -119.5452929), (35.4888504, -119.5450728), (35.4888629, -119.5448526), (35.4888756, -119.5446326), (35.4888859, -119.5445371), (35.4888939, -119.5443166), (35.4889064, -119.5440964), (35.4889189, -119.5438763), (35.488932, -119.5436563), (35.4889447, -119.5434362), (35.4889573, -119.543216), (35.4889707, -119.542996), (35.4889828, -119.5427758), (35.4889963, -119.5425558), (35.4890124, -119.542336), (35.4890148, -119.5422713)],
+                 src='c20_s4550-c20_s4650: the pale paved strip between the dark track and the pit-wall K-rail (owner lap 2 note 23, his map mark-up)'),
+            dict(name='front straight pale strip east', side='left', s=(2, 190), surface='apron', outer_latlon=[(35.4887467, -119.5466176), (35.4887756, -119.5463925), (35.4887872, -119.5461735), (35.4887997, -119.5459532), (35.4888121, -119.5457331), (35.4888245, -119.545513), (35.4888375, -119.5452929), (35.4888504, -119.5450728), (35.4888629, -119.5448526), (35.4888756, -119.5446326), (35.4888859, -119.5445371), (35.4888939, -119.5443166), (35.4889064, -119.5440964), (35.4889189, -119.5438763), (35.488932, -119.5436563), (35.4889447, -119.5434362), (35.4889573, -119.543216), (35.4889707, -119.542996), (35.4889828, -119.5427758), (35.4889963, -119.5425558), (35.4890124, -119.542336), (35.4890148, -119.5422713)],
+                 src='c20_s0050-c20_s0250: the pale paved strip between the dark track and the pit-wall K-rail (owner lap 2 note 23, his map mark-up)'),
             # surface 'apron' (judge r5): pale weathered asphalt with grain, the look of the aprons and of the outer T2 loop
             # it overlaps (round 5's 'asphalt' cut a dark band across the pale pavement, runoff_04 623 R)
             dict(name='T2 runoff', side='left', s=(605, 640), surface='apron', outer_latlon=[(35.4916435, -119.5418451), (35.4918004, -119.5416784), (35.4918179, -119.5416483), (35.49183, -119.5416142), (35.4918432, -119.5415824), (35.4918561, -119.5415506), (35.4918676, -119.5415186), (35.4918802, -119.541487), (35.491894, -119.5414555), (35.4919084, -119.5414234), (35.4919223, -119.5413903), (35.4919364, -119.5413563), (35.4919525, -119.5413211), (35.4919666, -119.5412851), (35.491981, -119.541248), (35.491996, -119.5412098), (35.4920109, -119.5411707), (35.4920239, -119.5411312), (35.4919238, -119.5410508)],
@@ -916,7 +952,10 @@ CONFIG = dict(
     pit_lane=dict(
         lane=dict(source='osm', match_track_tone=dict(k=0.5, paint=0.97),
                   to_walls=dict(reach=6.0),    # judge r3 pit_01 / pit_02: pavement from the lane to both K-rails (pit video t1249000-t1348000); reach 4 -> 6 m (judge r5: the paddock-side wall stands 4.1-5.3 m past the left edge at x -150..+9, a tan strip on pit_01 / pit_02)
-                  no_edge_line=['left']),      # judge r5: t1267000 / t1312000 show pavement to the paddock-side wall base and no white line on the left
+                  no_edge_line=['left'],
+                  # round 8 (owner lap 2 note 9): no pit-box lines: the pit video t1249000-t1339000 shows the lane between
+                  # the K-rails with no transverse box lines (and the rule had painted them on the pit-in and pit-out roads)
+                  boxes=[]),      # judge r5: t1267000 / t1312000 show pavement to the paddock-side wall base and no white line on the left
         walls=[
             dict(side='right', a=(35.4887467, -119.5466176), b=(35.4890148, -119.5422713), h=0.81, material='jersey',
                  declared='pit wall, front straight', src='pit-lane video ucmXJu5QKFQ 20:40-22:28 (the K-rail on the right of the lane); inventory pit rows s 4497-4655 right'),

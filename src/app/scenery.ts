@@ -45,7 +45,8 @@ export interface SceneryJson {
   sausages?: SausageJson | null;
   edge_lines?: { width: number; inset: number; runs: { side: number; s0: number; s1: number }[] };
   /** Paved pit lane (CONTRACTS §2b); the physics reads the same block. gap_* = free width to the track edge. */
-  pit_lane?: { spacing_m: number; fractions: number[]; open?: boolean; /** sides drawn without the white edge line */ no_edge_line?: ('left' | 'right')[]; parts: (PitLaneJson['parts'][number] & { gap_left: number[]; gap_right: number[]; track_s: number[] })[] } | null;
+  pit_lane?: { spacing_m: number; fractions: number[]; open?: boolean; /** sides drawn without the white edge line */ no_edge_line?: ('left' | 'right')[];
+    /** pit-box line ranges [from_m, to_m] along the first part ([] = none; absent = the rule) */ boxes?: [number, number][]; parts: (PitLaneJson['parts'][number] & { gap_left: number[]; gap_right: number[]; track_s: number[] })[] } | null;
   /** Paved runoff (CONTRACTS §2b): same layout as pit_lane; rendered as asphalt, driven at full grip. */
   paved_zones?: { spacing_m: number; fractions: number[]; open?: boolean; parts: (PitLaneJson['parts'][number] & { gap_left: number[]; gap_right: number[]; track_s: number[]; turn?: string;
     /** closed roads (20 Oct 2026): 'asphalt' = the circuit's road material, 'concrete' = pale concrete; absent = the aerial photo's own colour (paved runoff) */
@@ -1618,16 +1619,30 @@ function buildPavedAreas(list: NonNullable<SceneryJson['paved_areas']>, ground: 
   const apronArea = (a: NonNullable<SceneryJson['paved_areas']>[number], edgeDist: (x: number, y: number) => number,
     x0: number, x1: number, y0: number, y1: number) => {
     const d = 0.5, nx = Math.ceil((x1 - x0) / d) + 1, ny = Math.ceil((y1 - y0) / d) + 1, b0 = aPos.length / 3;
+    // round 8 (owner lap 2 note 4, the tan wedges between a kerb and an apron): grid vertices outside the outline are
+    // snapped onto it, and a cell is kept when any corner lies inside, so the mesh ends ON the outline (the road edge)
+    // instead of in 0.5 m grid steps
+    const snap = (x: number, y: number): [number, number] => {
+      if (inPoly(x, y, a.poly)) return [x, y];
+      let best = Infinity, bx = x, by = y;
+      for (let k = 0; k < a.poly.length; k++) {
+        const [xa, ya] = a.poly[k], [xb, yb] = a.poly[(k + 1) % a.poly.length], dx = xb - xa, dy = yb - ya, l2 = dx * dx + dy * dy || 1;
+        const t = Math.max(0, Math.min(1, ((x - xa) * dx + (y - ya) * dy) / l2)), qx = xa + t * dx, qy = ya + t * dy, dd = Math.hypot(x - qx, y - qy);
+        if (dd < best) { best = dd; bx = qx; by = qy; }
+      }
+      return [bx, by];
+    };
+    const inside: boolean[] = [];
     for (let i = 0; i < nx; i++) for (let j = 0; j < ny; j++) {
-      const x = x0 + i * d, y = y0 + j * d, p = v3(x, y, ground(x, y) + 0.04), uv = surf!.uv(x, y);
+      const gx = x0 + i * d, gy = y0 + j * d; inside.push(inPoly(gx, gy, a.poly));
+      const [x, y] = snap(gx, gy), p = v3(x, y, ground(x, y) + 0.04), uv = surf!.uv(x, y);
       // judge r6: a straight 1 m feather on the signed distance to the outline (-0.5 .. +0.5 m), so the apron's own
       // tone covers the area and the edge follows the outline instead of the grid (no bites)
-      const sd = (inPoly(x, y, a.poly) ? 1 : -1) * edgeDist(x, y), e = Math.min(1, Math.max(0, sd + 0.5));
+      const sd = edgeDist(x, y), e = Math.min(1, Math.max(0, (sd - 0.0) / 1.0));   // fade inward over 1 m from the feathered outline
       aPos.push(p.x, p.y, p.z); aUv.push(uv[0], uv[1]); aA.push(e * e * (3 - 2 * e));
     }
     for (let i = 0; i < nx - 1; i++) for (let j = 0; j < ny - 1; j++) {
-      const cx = x0 + (i + 0.5) * d, cy = y0 + (j + 0.5) * d;
-      if (!inPoly(cx, cy, a.poly) && edgeDist(cx, cy) > 0.75) continue;
+      if (!(inside[i * ny + j] || inside[(i + 1) * ny + j] || inside[i * ny + j + 1] || inside[(i + 1) * ny + j + 1])) continue;
       const q = b0 + i * ny + j;
       aIdx.push(q, q + ny, q + 1, q + ny, q + ny + 1, q + 1);
     }

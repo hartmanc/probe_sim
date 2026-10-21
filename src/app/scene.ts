@@ -680,9 +680,13 @@ function buildPitPaint(pit: NonNullable<SceneryAssets['json']['pit_lane']>, grou
         quad([pt(a, ha, IN + W), pt(a, ha, IN), pt(b, hb, IN + W), pt(b, hb, IN)], i / 2, (i + 1) / 2);
       }
     }
-    // pit boxes on the longer part (beside the front straight): garage side = the side further from the track
+    // pit boxes on the longer part (beside the front straight): garage side = the side further from the track. With
+    // scenery.json pit_lane.boxes (Buttonwillow round 8, owner lap 2 note 9: the rule painted boxes on the pit-in and
+    // pit-out roads) only within those [from_m, to_m] ranges along the part, none for []; absent: the rule (Laguna)
     if (pi !== 0) return;
+    const inBoxes = (i: number) => !pit.boxes || pit.boxes.some(([a, b]) => i * (pit.spacing_m || 1) >= a && i * (pit.spacing_m || 1) <= b);
     for (let i = 40; i < part.n - 40; i += 10) {
+      if (!inBoxes(i)) continue;
       const f = st.at(i), g = st.at(i + 1);
       const side = f.gapL > f.gapR ? 1 : -1;
       const h = side > 0 ? f.hl : f.hr;

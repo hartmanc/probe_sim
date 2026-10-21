@@ -1159,7 +1159,11 @@ def kerb_run(trk, k, pal, max_step=0.1):
     lat = np.interp(st, i_, lat_)
     hw = trk.hw(st % trk.n, side)
     off = side * lat - hw
-    if len(off) >= 3:
+    if len(off) < 12:
+        # a short run (under 12 m, round 8): one offset, its median (a 9 m block line set at an angle to an edge that bends
+        # there read as a 0.7 m ramp the smoothing cannot hold under the step gate; the band is short enough to be one line)
+        off = np.full(len(off), float(np.median(off)))
+    elif len(off) >= 3:
         mw = min(9, len(off) - (1 - len(off) % 2))   # odd, at most the run's length (a 6 m run: 5)
         off = gaussian_filter1d(median_filter(off, mw, mode="nearest"), 4, mode="nearest")
     step = float(np.abs(np.diff(off)).max()) if len(off) > 1 else 0.0
@@ -1549,6 +1553,12 @@ def ortho_paint_over(trk, img, items, ring=3.0, lift=18.0):
             mark |= yel > np.median(yel[g]) + 25
         ref = g & ~mark
         med = np.median(img[ref], axis=0)
+        if it.get("tone") == "road":
+            # round 8 (owner lap 2 note 7): the pit-in gore is paved; the ring's median came out tan (dirt in the ring):
+            # the road's own median colour within 15 m of the outline instead
+            Pr = c + (P - c) * (1 + 15.0 / max(1e-6, float(np.linalg.norm(P - c, axis=1).mean())))
+            r_ = Image.new("L", (W, H), 0); ImageDraw.Draw(r_).polygon(px(Pr), fill=1); r_ = np.asarray(r_, bool) & road
+            med = np.median(img[r_ & (lum < np.median(lum[r_]) + lift)], axis=0)
         hit = m & mark
         out[hit] = med.astype(np.uint8)
         log(f"ortho paint-over: {int(hit.sum())} px ({hit.sum() * 0.36:.0f} m2) {"on the road" if it.get("on", "road") == "road" else "in the outline"} -> {med.astype(int).tolist()} ({it['src'][:60]})")
@@ -2552,6 +2562,8 @@ def main(cfg=None, out_dir=None):
         clip_parts_at_walls(pit["parts"], bar + [{"kind": "tyres", "pts": c_["pts"]} for c_ in declared_cone_lines(trk)], label="pit lane")
     if pit and (PIT_CFG.get("lane") or {}).get("to_walls"):
         extend_parts_to_walls(pit["parts"], bar, **PIT_CFG["lane"]["to_walls"])
+    if pit and (PIT_CFG.get("lane") or {}).get("boxes") is not None:
+        pit["boxes"] = [list(map(float, r)) for r in PIT_CFG["lane"]["boxes"]]   # pit-box line ranges (m along part 0); [] = none
     if pit and (PIT_CFG.get("lane") or {}).get("no_edge_line"):
         pit["no_edge_line"] = list(PIT_CFG["lane"]["no_edge_line"])   # the app draws no white edge line on these sides
     if pit and ortho_arr is not None and (PIT_CFG.get("lane") or {}).get("match_track_tone"):
