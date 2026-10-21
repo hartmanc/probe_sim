@@ -1400,9 +1400,56 @@ Every gate ok (barrier gaps 2.47 m over 11 runs; containment 0 escapes, 3407 ray
 Stage 4: compare_sheets/ (50 sheets with pit frames), compare_sheets/hood_r5/ (16), structure_stills/*_r5.jpg (71, r4 set
 in structure_stills/r4/), compare_sheets/prefix_r5/ (the same before the texture fixes).
 
-### Generated tables (manifest_tables.ts on the published package, rev b3bd33079b)
+## Round 6 (21 Oct 2026): judge r5 (GPT 6 Astra, checked by the orchestrator)
 
-### Scenery objects of the checked kinds (130, from public/tracks/buttonwillow/)
+No stage-1 change: track.json and heightfield.bin are byte-identical to rev b3bd33079b (`git diff ec813d9` on both
+empty). Stage 3 every gate ok; published rev 84a9fc7678.
+
+### Settled FALSE (judge_r5.md), with the package object
+
+- Stations "on a single stem above a solid pedestal": the kit's canopy style on the frames (stage3_evidence/station_crops.jpg), unchanged.
+- Kerbs "missing" within the 30 m mapping tolerance: the runs 584-604 R, 1168-1191 R, 1449-1479 L, 1653-1680 L, 2765-2792 R, 1203-1272 L, 1495-1515 R, 1868-1933 R, 4424-4501 R (manifest Round 5 / E).
+- Single cones and short lines "missing": placed (scenery.json cone_lines; 0.7 m, too small for the sheet).
+- back_07 4700 L tower, side_10 3765 R station: behind the camera.
+
+### TRUE / CHECK rows
+
+| row | finding | outcome |
+|---|---|---|
+| Timing tower massing (fwd_15, side_13, side_14, back_00, pit_01, pit_02) | round 5 glazed both storeys over the whole 25 x 19 m roof outline | FIXED: the tower is the east 14 m of the outline (c20_p0420 / c20_s0050, structure_stills/tower_cap_r6.png): a solid tan lower storey 14 x 14 m with two doors and windows every 4.5 m (kit: block `windows` / `doors_at`, no continuous band), the deck rail and the exterior stair at its west end; the upper storey 11 x 8 m set back, windows between posts on the lane side and the ends (glazed upper only); the blue roof 17 x 16 m on 6 posts (1.5 m overhang). The west 11 m: an open shade roof on posts, 2.6 m (pit video t1312000's dark shade roof); the north 5 m strip behind the tower a plain 2.6 m block. Stills r6_tower_close / r6_tower_from_lane |
+| Pit lane paving, left edge (pit_01, pit_02) | white line and a tan strip to the paddock-side wall | FIXED: `to_walls` reach 4 -> 6 m (the wall stood 4.1-5.3 m past the left edge at x -150..+9; 570 edge points now meet the walls); the left edge line dropped (`pit_lane.no_edge_line ['left']`, kit) |
+| Pit-lane cones (pit_01 4490-4514 L, pit_02 4665-4690 L) | the round-4 removal took the frame's row too | FIXED: one row of 6 small orange cones, 10 m apart, along the paddock-side wall abeam s ~4612-4662 (t1267000), and the tower-foot pair, yellow + orange (t1312000 / t1339000); 0.4 m off the wall at the edge of the lane paving (the pit-connectivity gate keeps the lane clear: at 2.5 m they stood inside the lane). Inventory rows added (pit scope, s 4637 and 4697 left). None elsewhere |
+| Pit-entry fence (pit_00 4294-4318 L, fwd_14 4300 L) | the fence 1.0 m from the lane | FIXED: re-measured on the tree line's lane-side edge (c20_s4400 / c20_p0180, stage3_evidence/fence_r6.png) where t1231000 shows its posts beside the parked trucks: 20-27 m from the lane edge (the brief's 5-10 m is not what the capture shows) |
+| Pit-wall nose (pit_01 4490 R) | an isolated plinth, then a wall with a square start | FIXED: on t1231000 / t1240000 the station stands on the broad head of the separation barrier: the berm (impact, rounded) now wraps the wall's square end by 0.8 m (builder `overlap`), 3.4 m long; the station moved from 1.7 m beside the wall onto its line, 1.6 m from its start |
+| Aprons and the T2 runoff (fwd_00, fwd_01, fwd_03, back_01, side_02, runoff_04) | aprons read as dirt without grain; the T2 runoff a dark band | FIXED (kit): surface 'apron' = pale weathered asphalt with the asphalt detail grain (photoGround `apron`), the 8 apron areas through the paint surface (their weight fading over 2.5 m of the outline into the photo), the T2 runoff and the outer T2 loop it overlaps in the same look. Inside T2 (side_02 574 R): the terrain lies 0.10-0.35 m BELOW the edge 2-20 m in at 560-605 (heightfield), no bank: the look made it read so. T1 inside 200-250 R on c20_s0300: dirt, no apron (FALSE) |
+| Crossover mouths (side_00 21 / 46 / 146 R, fwd_15 4600-4650 R) | a dirt wedge between the zone and the edge | FIXED: zone ends within 1.5 m of the road have their end points moved along the zone onto the road, 0.3 m inside (`scenery.zones_meet_edge`; 20 points) |
+| NAIP smears (fwd_09 2800-2850 L, T4 ~1100, ~1203) | bright NAIP marks kept as paint | FIXED (config-gated `scenery.ortho_paint_over`, stage 3's ortho step): 5 outlines on the package ortho (stage3_evidence/smears_r6.jpg); only road pixels brighter than the road's median there change: 42 + 21 px at 2825, 112 px at 1100 (the NAIP kerb blocks now inside the owner-traced edge), 7 + 38 px at 1203. fwd_08 2550 R chevrons: still open |
+| Kerb 4300-4320 R | run starts 4321 | FALSE: c20_s4450 shows the block line beginning where the run begins; t140's kerb at ~4300 is the time map's +-30 m |
+| Kerb 4350-4380 L | run starts 4381 | FALSE: c20_s4450 / c20_s4500: the inside blocks begin at ~4383 |
+| Kerb 536-552 L | run ends 549 | FIXED: c20_s0650 shows the blocks on to ~558; the run extended at its last offset |
+| Kerb 410-424 R (back_00 500 R) | the onboard line runs to ~500 | FALSE: c20_s0550 / c20_s0600 show no blocks on the right after 425 |
+| Kerb 4381-4406 L colours | "pale edging without coloured blocks" | FALSE: the run is red / white / blue (scenery.json), as t142 shows |
+| Kerb 3005-3013 L (EXTRA) | | FALSE: c20_s3100 shows the short white block line there; kept |
+| Masts (fwd_11 3400 L, back_05 3500 R) | the comms tower as a thin pole | FIXED (kit): style 'lattice': three tapering legs (4 m -> 1.2 m), bracing every ~3 m as ONE merged mesh, a 3.0 x 1.8 m pale head that reads from both sides (the 3500 R head seen from behind is this tower) |
+| 21 R cone pair | one yellow, one orange | FIXED: two declarations, one each |
+| K-rail dark section (side_00 104 L) | not seen | FALSE: the section is in the package (286-292 m along the pit wall, x 111-117, track s ~98-104), beside / behind the 104 L pose; still r6_dark_krail_section |
+| 3200-3250 L cone cluster | density | FIXED: t108 shows two at the mouth (was three) |
+| Starter's stand (side_13 4693 L) | heavy frame, solid canopy | FIXED (kit): platform `fine`: 6 cm legs with X braces, a thin deck, a thin roof on four thin posts (t1339000) |
+| K-rail profile (sloped faces), stepped section joins near the building | | OPEN (kit items, low) |
+
+### Stage 3 (published, rev 84a9fc7678)
+
+Every gate ok: barrier gaps 2.47 m over 11 runs; containment 0 escapes (3428 rays onto allowed runoff); pit connectivity
+386 / 382 m, 0 crossings, the lane clear; wall ends cushioned; coverage 87 rows, 135 objects, MISSING 0, UNSUPPORTED 0.
+Stage 4: compare_sheets/ (50 sheets with pit frames), compare_sheets/hood_r6/ (16), structure_stills/*_r6.jpg (80: the
+round-5 set plus 14 round-6 poses: the tower, the pit lane and its cones, the nose, the pit-entry fence, the starter's stand,
+the lattice tower front and back, the T2 apron and runoff, a crossover mouth, the paint-overs, the dark K-rail section);
+the round-5 sets in compare_sheets/r5/ and structure_stills/r5/; compare_sheets/r6_pre_annex/ and
+structure_stills/r6_pre_annex/ are the same before the west annex became an open shade roof.
+
+### Generated tables (manifest_tables.ts on the published package, rev 84a9fc7678)
+
+### Scenery objects of the checked kinds (135, from public/tracks/buttonwillow/)
 
 | # | kind | side | s (m) | out (m) | object | source |
 |---|---|---|---|---|---|---|
@@ -1415,10 +1462,10 @@ in structure_stills/r4/), compare_sheets/prefix_r5/ (the same before the texture
 | 7 | tyre_wall | right | 1496-1507 | 8-15 | barrier 6 (tyres) | declared: T5 station mound tyres (c20_s1600: the dark tyre ring round the station roof (compare/blob_scan.py); onboard t058 (0:58) (inventory station row s 1525 right: a canopy on a tyre-walled mound); a ring of 3.5 m radius round the roof centroid, the mound size on the capture (judge r1 row)) |
 | 8 | tyre_wall | right | 2077-2084 | 7-14 | barrier 7 (tyres) | declared: T6 (Riverside) station mound tyres (c20_s2150: the dark tyre ring round the station roof (compare/blob_scan.py); onboard t074 (1:14) (inventory station row s 2054 right: a canopy on a tyre-walled mound); a ring of 3.5 m radius round the roof centroid, the mound size on the capture (judge r1 row)) |
 | 9 | tyre_wall | left | 4284-4291 | 6-13 | barrier 8 (tyres) | declared: T11 approach (Sunset) station mound tyres (c20_s4400: the dark tyre ring round the station roof (compare/blob_scan.py); onboard t138 (2:18) (inventory station row s 4273 left: a canopy on a tyre-walled mound); a ring of 3.5 m radius round the roof centroid, the mound size on the capture (judge r1 row)) |
-| 10 | fence | left | 4299-4362 | 3-35 | barrier 9 (fence + 1.5 m fence) | declared: pit entry paddock fence (c20_s4400 / c20_p0180 / c20_p0240 (the lane entry) and pit-lane video ucmXJu5QKFQ 20:31-20:40 (t1231000, t1240000; judge r3 pit_00): a ~1.5 m mesh fence along the paddock side of the pit entry; placed 1.0 m beyond the lane part's paddock-side edge at track s 4290-4362) |
+| 10 | fence | left | 4303-4451 | 34-56 | barrier 9 (fence + 1.5 m fence) | declared: pit entry paddock fence (pit-lane video t1231000 (20:31): the mesh fence along the paddock boundary under the trees left of the pit entry; the line on the tree line lane-side edge, c20_s4400 / c20_p0180) |
 | 11 | tyre_wall | left | 4166-4271 | 27-31 | barrier 10 (tyres) | declared: T11 approach tree-line tyre barrier (c20_s4300 (stage3_evidence/tyre4200.png): a long dark tyre line under the trees ~27 m beyond the left edge at s ~4150-4260; judge r3 back_07 (looking back at 4200); onboard t136-t138 (dark line under the trees, left)) |
 | 12 | kerb | left | 283-322 | 0-0 | kerb 283.3-322.4 | run left s 283-322: kerb run (owner lap 1): the block line followed on c20_s0400 with the band reader (edges_spline.bands outer limits, the band centre 0.45 m inside), one continuous run; colour: t014.jpg (red / white / blue; inventory row s 300 left) |
-| 13 | kerb | left | 536-549 | 0-0 | kerb 535.6-548.6 | run left s 536-549: kerb run (owner lap 1): the block line followed on c20_s0650 with the band reader (edges_spline.bands outer limits, the band centre 0.45 m inside), one continuous run; colour: t022.jpg (red / white / blue; inventory row s 531 left) |
+| 13 | kerb | left | 536-558 | 0-0 | kerb 535.6-557.6 | run left s 536-549: kerb run (owner lap 1): the block line followed on c20_s0650 with the band reader (edges_spline.bands outer limits, the band centre 0.45 m inside), one continuous run; extended to s ~558 (judge r5 fwd_01 550 L): c20_s0650 shows the block line continuing ~9 m past the end of the band reader, at the last offset of the run; colour: t022.jpg (red / white / blue; inventory row s 531 left) |
 | 14 | kerb | left | 745-767 | 0-0 | kerb 744.8-766.9 | run left s 745-767: kerb run (owner lap 1): the block line followed on c20_s0900 with the band reader (edges_spline.bands outer limits, the band centre 0.45 m inside), one continuous run; colour: t032.jpg (white / red; inventory row s 738 left) |
 | 15 | kerb | left | 954-1011 | 0-0 | kerb 954.1-1011.1 | run left s 954-1011: kerb run (owner lap 1): the block line followed on c20_s1100 with the band reader (edges_spline.bands outer limits, the band centre 0.45 m inside), one continuous run; colour: t040.jpg (red / white / blue; inventory row s 996 left) |
 | 16 | kerb | left | 1089-1116 | 0-0 | kerb 1089.2-1116.3 | run left s 1089-1116: kerb run (owner lap 1): the round-4 strip extent on c20_s1250; the band reader found no line on the new edge: band centre 0.45 m inside the edge; colour: t044.jpg (red / white / blue; inventory row s 1088 left) |
@@ -1468,7 +1515,7 @@ in structure_stills/r4/), compare_sheets/prefix_r5/ (the same before the texture
 | 60 | station | right | 3433-3433 | 14-14 | marshal 'T9 (Star Mazda)' | c20_s3500: white roof 5.8 m2 in a dark tyre ring (compare/blob_scan.py, 13.6 m beyond the right edge at s 3420); onboard t112 (1:52): roofed platform on stilts ahead right; inventory s 3436 right |
 | 61 | station | right | 3716-3716 | 7-7 | marshal 'T10' | c20_s3800: white roof 5.4 m2 in a dark tyre ring (compare/blob_scan.py, 15.4 m beyond the right edge at s 3698); onboard t122 (2:02): station far ahead right; inventory s 3758 right |
 | 62 | station | left | 4287-4287 | 9-9 | marshal 'T11 approach (Sunset)' | c20_s4350: white roof 5.4 m2 in a dark tyre ring (compare/blob_scan.py, 5.0 m beyond the left edge at s 4272); onboard t138 (2:18): canopy on a tyre-faced mound ahead left; inventory s 4274 left |
-| 63 | station | left | 4517-4517 | 4-4 | marshal 'pit-in station' | pit-lane video ucmXJu5QKFQ 20:40 (t1240000): a canopy on one pole over a small white 'CAC CLUB' cabinet on a pale base at the pit-wall head (judge r3 pit_00, the entry shelter); c20_s4550 / c20_s4600: the white roof at the wall head (compare/blob_scan.py, s 4511 left 8.5 m); pit row s 4320 corrected to 4508 |
+| 63 | station | left | 4516-4516 | 2-2 | marshal 'pit-in station' | pit-lane video ucmXJu5QKFQ 20:40 (t1240000): a canopy on one pole over a small white 'CAC CLUB' cabinet on a pale base at the pit-wall head (judge r3 pit_00, the entry shelter); c20_s4550 / c20_s4600: the white roof at the wall head (compare/blob_scan.py, s 4511 left 8.5 m); pit row s 4320 corrected to 4508 |
 | 64 | station | left | 246-246 | 42-42 | marshal 'T1 inside canopy' | c20_s0300 / c20_s0350: a white roof ~5 x 3 m among the trees inside T1, 42 m beyond the left edge at s 247 (compare/blob_scan.py; stage3_evidence/blob247.png); onboard t010 (0:10): canopy on posts over a low concrete platform ahead left (inventory station row s 246 left, ahead_m 60; judge r1 row) |
 | 65 | station | left | 199-199 | 5-5 | marshal 'pit-wall end hut' | c20_s0300 / c20_s0350: white roof 7.8 m2 at the east end of the pit wall (compare/blob_scan.py, 5.2 m beyond the left edge at s 199; window stage3_evidence/cw_wallend.png); onboard t010 (0:10): canopy on posts over a low concrete platform ahead left (inventory station row s 246 left, ahead_m 60) |
 | 66 | station | left | 2-2 | 3-3 | marshal 'starter's stand' | c20_s0050 / c20_s0100 / c20_s0150: the white structure on the pit wall at the timing line (blob_scan s 2, 3.4 m beyond the left edge); pit-lane video ucmXJu5QKFQ 22:19-22:28: the scaffold starter's stand with a canopy on the pit wall |
@@ -1506,43 +1553,48 @@ in structure_stills/r4/), compare_sheets/prefix_r5/ (the same before the texture
 | 98 | tyre_stack | left | 645-645 | 26-26 | block '' | the outer-loop block line beyond the T2 runoff (traced on the owner frame of c20_s0700 / c20_s0750; owner/t2_edges.json green ends); drawn only, not a track kerb |
 | 99 | mast | left | 3448-3448 | 161-161 | mast '' | OSM man_made=mast / communications tower node 10220517717; the lidar (CA_SanJoaquin_2021) has an isolated spike 49.5-49.7 m over the DEM there (30 cells, compare/stage3 lidar spike scan); onboard t106 (1:46): a tall thin pole far ahead on the north leg (inventory mast row s 3400 ahead, ahead_m 250) |
 | 100 | building | left | 4694-13 (wraps) | 46-63 | building 0 '' 4.3 m | osm (pit-lane video ucmXJu5QKFQ 21:52-22:10 (t1312000, t1330000): the two-storey timing tower with the blue roof beside the pit lane; OSM footprint, lidar height) |
-| 101 | building | left | 4691-11 (wraps) | 25-43 | structure 0 block 'timing tower' | OSM 765811057 (the walls); pit-lane video t1303000 / t1312000 / t1330000 and onboard t146-t152: tan ground storey with windows, the open deck on its roof with a railing, the exterior stair on the track side |
-| 102 | building | left | 4698-3 (wraps) | 31-37 | structure 1 block 'timing tower upper storey' | pit-lane video t1303000: the upper storey set back behind the deck, divided glazing (the window frames read as mullions) |
-| 103 | building | left | 4691-4703 | 34-34 | structure 2 fuel 'timing tower roof deck' | pit-lane video t1312000 / t1330000 and onboard t004 / t146-t152: the blue flat roof on posts over the tower deck, a broad overhang (1.5 m past the OSM footprint each side, judge r2) |
-| 104 | cone_line | right | 179-182 | 0-4 | cone line 0 | closed road Atlantic (OSM 34351042) mouth (judge r3 runoff_01 (s 170 R): a clear row of cones closing the paved branch; onboard t010-t012) |
-| 105 | cone_line | right | 1827-1830 | 0-3 | cone line 1 | closed road crossover (OSM 34351015) mouth (onboard t068 (judge r2 runoff_02, s 1824 R): cones across the crossover mouth) |
-| 106 | cone_line | right | 40-54 | 1-1 | cone line 2 | judge r3 runoff (s 46 R): cones across the front-straight crossover (OSM 34351026) mouth on the right; onboard t006 (the two cones at the mouth, inventory s 20-24 R) |
-| 107 | cone_line | right | 1914-1915 | 1-2 | cone line 3 | compare_sheets onboard s1900 (t 70.76): an orange cone beside the end of the right kerb (judge r3 1920 R) |
-| 108 | cone_line | right | 3199-3200 | 1-2 | cone line 4 | compare_sheets onboard s3200 (t 107.15): an orange cone at the right edge (judge r3 fwd_10 3200 R) |
-| 109 | cone_line | right | 140-160 | 2-2 | cone line 5 | onboard t006-t008 (judge r2, fwd_00): several orange cones on the paved shoulder right |
-| 110 | cone_line | left | 895-905 | 1-2 | cone line 6 | onboard t036 (judge r2, fwd_02 / fwd_03): orange cones on the left |
-| 111 | cone_line | right | 1780-1830 | 3-3 | cone line 7 | onboard t066-t068 (judge r2, fwd_06): a long line of cones separating the adjacent pavement (the Dog Leg / crossover mouth) on the right |
-| 112 | cone_line | left | 3250-3300 | 1-2 | cone line 8 | onboard t108-t110 (judge r2, fwd_10 / fwd_11): orange cones along the left |
-| 113 | cone_line | right | 3645-3655 | 1-2 | cone line 9 | onboard t122 (judge r2, fwd_12): orange cones on the right |
-| 114 | cone_line | left | 4695-1 (wraps) | 22-22 | cone line 10 | pit-lane video t1303000 (21:43): three yellow cones at the timing tower foot, lane side of the paddock K-rail (judge r3 pit_01) |
-| 115 | cone_line | left | 752-772 | 3-3 | cone line 11 | onboard t030 / compare_sheets s0700, s0750 (fwd_02, side_02): a line of small orange cones on the pale apron left of the T2 approach (inventory cone_line row s 770 left, ahead_m 80); the "3-4 cones" of s0700 are this line seen from 60 m back |
-| 116 | cone_line | left | 3196-3204 | 2-2 | cone line 12 | compare_sheets s3200 (fwd_10): three orange cones at a mouth on the left |
-| 117 | cone_line | right | 4046-4054 | 3-3 | cone line 13 | compare_sheets s4050 (fwd_13): cones on the right apron, 20 m before the t134 cone at s 4071 |
-| 118 | cone_line | right | 20-24 | 1-2 | cone line 14 | onboard t006.jpg (yellow, orange; inventory s 20 right: two cones, yellow and orange); position along the track from the time map (+-10-30 m), 1.5 m beyond the edge from the frame (the cones stand on the dirt next to the edge or the kerb) |
-| 119 | cone_line | right | 297-298 | 2-2 | cone line 15 | onboard t012.jpg (orange; inventory s 297 right: single orange cone); position along the track from the time map (+-10-30 m), 1.5 m beyond the edge from the frame (the cones stand on the dirt next to the edge or the kerb) |
-| 120 | cone_line | left | 533-534 | 2-2 | cone line 16 | onboard t022.jpg (orange; inventory s 533 left: single orange cone); position along the track from the time map (+-10-30 m), 1.5 m beyond the edge from the frame (the cones stand on the dirt next to the edge or the kerb) |
-| 121 | cone_line | left | 834-835 | 2-2 | cone line 17 | onboard t034.jpg (orange; inventory s 834 left: single orange cone); position along the track from the time map (+-10-30 m), 1.5 m beyond the edge from the frame (the cones stand on the dirt next to the edge or the kerb) |
-| 122 | cone_line | left | 973-974 | 1-2 | cone line 18 | onboard t038.jpg (orange; inventory s 973 left: single orange cone); position along the track from the time map (+-10-30 m), 1.5 m beyond the edge from the frame (the cones stand on the dirt next to the edge or the kerb) |
-| 123 | cone_line | right | 1040-1041 | 1-1 | cone line 19 | onboard t042.jpg (orange; inventory s 1040 right: single orange cone); position along the track from the time map (+-10-30 m), 1.5 m beyond the edge from the frame (the cones stand on the dirt next to the edge or the kerb) |
-| 124 | cone_line | right | 1307-1308 | 1-2 | cone line 20 | onboard t052.jpg (orange; inventory s 1307 right: single orange cone); position along the track from the time map (+-10-30 m), 1.5 m beyond the edge from the frame (the cones stand on the dirt next to the edge or the kerb) |
-| 125 | cone_line | right | 2158-2159 | 1-1 | cone line 21 | onboard t078.jpg (orange; inventory s 2158 right: single orange cone); position along the track from the time map (+-10-30 m), 1.5 m beyond the edge from the frame (the cones stand on the dirt next to the edge or the kerb) |
-| 126 | cone_line | left | 2696-2700 | 1-2 | cone line 22 | onboard t092.jpg (orange; inventory s 2696 left: two orange cones); position along the track from the time map (+-10-30 m), 1.5 m beyond the edge from the frame (the cones stand on the dirt next to the edge or the kerb) |
-| 127 | cone_line | right | 3439-3440 | 1-1 | cone line 23 | onboard t114.jpg (orange; inventory s 3439 right: single orange cone); position along the track from the time map (+-10-30 m), 1.5 m beyond the edge from the frame (the cones stand on the dirt next to the edge or the kerb) |
-| 128 | cone_line | right | 4071-4072 | 1-2 | cone line 24 | onboard t134.jpg (orange; inventory s 4071 right: single orange cone); position along the track from the time map (+-10-30 m), 1.5 m beyond the edge from the frame (the cones stand on the dirt next to the edge or the kerb) |
-| 129 | cone_line | right | 4575-4576 | 1-1 | cone line 25 | onboard t002.jpg (orange; inventory s 4575 right: single orange cone); position along the track from the time map (+-10-30 m), 1.5 m beyond the edge from the frame (the cones stand on the dirt next to the edge or the kerb) |
-| 130 | cone_line | right | 4593-4594 | 1-1 | cone line 26 | onboard t150.jpg (orange; inventory s 4593 right: single orange cone); position along the track from the time map (+-10-30 m), 1.5 m beyond the edge from the frame (the cones stand on the dirt next to the edge or the kerb) |
+| 101 | building | left | 0-14 | 23-37 | structure 0 block 'timing tower' | pit-lane video t1312000 / t1339000 (judge r5): solid tan lower storey with a door and a few windows, the deck on its roof with a railing, the exterior stair at the west end; footprint on c20_p0420 / c20_s0050 |
+| 102 | building | left | 2-13 | 29-37 | structure 1 block 'timing tower upper storey' | pit-lane video t1312000 / t1339000: the upper storey set back behind the deck, windows between dark posts on the lane side and the ends (glazed upper storey only) |
+| 103 | building | left | 0-7 | 30-31 | structure 2 fuel 'timing tower roof' | pit-lane video t1312000 / t1339000: the deep blue roof on posts over the tower, ~1.5 m overhang past its walls (the 14 m tower, not the 25 m outline) |
+| 104 | building | left | 4694-4699 | 32-33 | structure 3 fuel 'timing tower west annex' | the west 11 m of the 25 x 19 m roof outline on c20_p0420 / c20_s0050: the low flat shade roof on posts west of the tower (pit video t1312000, the dark shade roof at the frame edge); plain, low, open |
+| 105 | building | left | 0-14 | 37-42 | structure 4 block 'timing tower rear annex' | the north 5 m strip of the roof outline behind the tower (c20_p0420): plain, low |
+| 106 | cone_line | right | 179-182 | 0-4 | cone line 0 | closed road Atlantic (OSM 34351042) mouth (judge r3 runoff_01 (s 170 R): a clear row of cones closing the paved branch; onboard t010-t012) |
+| 107 | cone_line | right | 1827-1830 | 0-3 | cone line 1 | closed road crossover (OSM 34351015) mouth (onboard t068 (judge r2 runoff_02, s 1824 R): cones across the crossover mouth) |
+| 108 | cone_line | right | 40-54 | 1-1 | cone line 2 | judge r3 runoff (s 46 R): cones across the front-straight crossover (OSM 34351026) mouth on the right; onboard t006 (the two cones at the mouth, inventory s 20-24 R) |
+| 109 | cone_line | right | 1914-1915 | 1-2 | cone line 3 | compare_sheets onboard s1900 (t 70.76): an orange cone beside the end of the right kerb (judge r3 1920 R) |
+| 110 | cone_line | right | 3199-3200 | 1-2 | cone line 4 | compare_sheets onboard s3200 (t 107.15): an orange cone at the right edge (judge r3 fwd_10 3200 R) |
+| 111 | cone_line | right | 140-160 | 2-2 | cone line 5 | onboard t006-t008 (judge r2, fwd_00): several orange cones on the paved shoulder right |
+| 112 | cone_line | left | 895-905 | 1-2 | cone line 6 | onboard t036 (judge r2, fwd_02 / fwd_03): orange cones on the left |
+| 113 | cone_line | right | 1780-1830 | 3-3 | cone line 7 | onboard t066-t068 (judge r2, fwd_06): a long line of cones separating the adjacent pavement (the Dog Leg / crossover mouth) on the right |
+| 114 | cone_line | left | 3250-3300 | 1-2 | cone line 8 | onboard t108-t110 (judge r2, fwd_10 / fwd_11): orange cones along the left |
+| 115 | cone_line | right | 3645-3655 | 1-2 | cone line 9 | onboard t122 (judge r2, fwd_12): orange cones on the right |
+| 116 | cone_line | left | 4612-4662 | 20-21 | cone line 10 | pit-lane video t1267000 (21:07): six small orange cones along the left (paddock-side) wall ahead of the tower, at the wall foot (0.4 m off it, at the edge of the lane paving, which now stops 0.3 m short of the wall; the pit-connectivity gate keeps the lane itself clear), ~10 m apart (judge r5 pit_01 / pit_02) |
+| 117 | cone_line | left | 4694-4695 | 21-21 | cone line 11 | pit-lane video t1312000 / t1339000: the yellow cone at the tower foot, 0.4 m off the paddock-side wall |
+| 118 | cone_line | left | 4698-4699 | 21-21 | cone line 12 | pit-lane video t1312000 / t1339000: the orange cone beside it at the tower foot |
+| 119 | cone_line | left | 752-772 | 3-3 | cone line 13 | onboard t030 / compare_sheets s0700, s0750 (fwd_02, side_02): a line of small orange cones on the pale apron left of the T2 approach (inventory cone_line row s 770 left, ahead_m 80); the "3-4 cones" of s0700 are this line seen from 60 m back |
+| 120 | cone_line | left | 3198-3202 | 2-2 | cone line 14 | compare_sheets s3200 (fwd_10): orange cones at a mouth on the left; judge r5 fwd_10 3200 L: onboard t108 shows two (was three) |
+| 121 | cone_line | right | 4046-4054 | 3-3 | cone line 15 | compare_sheets s4050 (fwd_13): cones on the right apron, 20 m before the t134 cone at s 4071 |
+| 122 | cone_line | right | 20-21 | 1-1 | cone line 16 | onboard t006.jpg (yellow, orange; inventory s 20 right: two cones, yellow and orange); position along the track from the time map (+-10-30 m), 1.5 m beyond the edge from the frame (the cones stand on the dirt next to the edge or the kerb) |
+| 123 | cone_line | right | 24-25 | 2-2 | cone line 17 | onboard t006.jpg (yellow, orange; inventory s 20 right: two cones, yellow and orange); position along the track from the time map (+-10-30 m), 1.5 m beyond the edge from the frame (the cones stand on the dirt next to the edge or the kerb) |
+| 124 | cone_line | right | 297-298 | 2-2 | cone line 18 | onboard t012.jpg (orange; inventory s 297 right: single orange cone); position along the track from the time map (+-10-30 m), 1.5 m beyond the edge from the frame (the cones stand on the dirt next to the edge or the kerb) |
+| 125 | cone_line | left | 533-534 | 2-2 | cone line 19 | onboard t022.jpg (orange; inventory s 533 left: single orange cone); position along the track from the time map (+-10-30 m), 1.5 m beyond the edge from the frame (the cones stand on the dirt next to the edge or the kerb) |
+| 126 | cone_line | left | 834-835 | 2-2 | cone line 20 | onboard t034.jpg (orange; inventory s 834 left: single orange cone); position along the track from the time map (+-10-30 m), 1.5 m beyond the edge from the frame (the cones stand on the dirt next to the edge or the kerb) |
+| 127 | cone_line | left | 973-974 | 1-2 | cone line 21 | onboard t038.jpg (orange; inventory s 973 left: single orange cone); position along the track from the time map (+-10-30 m), 1.5 m beyond the edge from the frame (the cones stand on the dirt next to the edge or the kerb) |
+| 128 | cone_line | right | 1040-1041 | 1-1 | cone line 22 | onboard t042.jpg (orange; inventory s 1040 right: single orange cone); position along the track from the time map (+-10-30 m), 1.5 m beyond the edge from the frame (the cones stand on the dirt next to the edge or the kerb) |
+| 129 | cone_line | right | 1307-1308 | 1-2 | cone line 23 | onboard t052.jpg (orange; inventory s 1307 right: single orange cone); position along the track from the time map (+-10-30 m), 1.5 m beyond the edge from the frame (the cones stand on the dirt next to the edge or the kerb) |
+| 130 | cone_line | right | 2158-2159 | 1-1 | cone line 24 | onboard t078.jpg (orange; inventory s 2158 right: single orange cone); position along the track from the time map (+-10-30 m), 1.5 m beyond the edge from the frame (the cones stand on the dirt next to the edge or the kerb) |
+| 131 | cone_line | left | 2696-2700 | 1-2 | cone line 25 | onboard t092.jpg (orange; inventory s 2696 left: two orange cones); position along the track from the time map (+-10-30 m), 1.5 m beyond the edge from the frame (the cones stand on the dirt next to the edge or the kerb) |
+| 132 | cone_line | right | 3439-3440 | 1-1 | cone line 26 | onboard t114.jpg (orange; inventory s 3439 right: single orange cone); position along the track from the time map (+-10-30 m), 1.5 m beyond the edge from the frame (the cones stand on the dirt next to the edge or the kerb) |
+| 133 | cone_line | right | 4071-4072 | 1-2 | cone line 27 | onboard t134.jpg (orange; inventory s 4071 right: single orange cone); position along the track from the time map (+-10-30 m), 1.5 m beyond the edge from the frame (the cones stand on the dirt next to the edge or the kerb) |
+| 134 | cone_line | right | 4575-4576 | 1-1 | cone line 28 | onboard t002.jpg (orange; inventory s 4575 right: single orange cone); position along the track from the time map (+-10-30 m), 1.5 m beyond the edge from the frame (the cones stand on the dirt next to the edge or the kerb) |
+| 135 | cone_line | right | 4593-4594 | 1-1 | cone line 29 | onboard t150.jpg (orange; inventory s 4593 right: single orange cone); position along the track from the time map (+-10-30 m), 1.5 m beyond the edge from the frame (the cones stand on the dirt next to the edge or the kerb) |
 
-### Every inventory row and its outcome (105 rows)
+### Every inventory row and its outcome (107 rows)
 
 | s (m) | t | side | kind | what | source | outcome |
 |---|---|---|---|---|---|---|
 | 21 | 0:06.0 | left | wall | concrete K-rail | onboard:7QS2M-HGSI4@6.0 | covered by barrier 0 (concrete); barrier 2 (concrete) |
-| 21 | 0:06.0 | right | cone_line | two cones, yellow and orange | onboard:7QS2M-HGSI4@6.0 | covered by cone line 14 |
+| 21 | 0:06.0 | right | cone_line | two cones, yellow and orange | onboard:7QS2M-HGSI4@6.0 | covered by cone line 16; cone line 17 |
 | 46 | 0:06.0 | right | cone_line | cones across the crossover mouth | onboard:7QS2M-HGSI4@6.0 | covered by cone line 2 (corrected in round 4, 20 Oct 2026 (judge r3): ) (row added in true) |
 | 104 | 0:08.0 | left | wall | concrete K-rail, a dark (black) section at its east end | onboard:7QS2M-HGSI4@8.0 | covered by barrier 0 (concrete); barrier 3 (concrete) |
 | 146 | 0:09.0 | right | cone_line | several orange cones on the paved shoulder | onboard:7QS2M-HGSI4@9.0 | covered by cone line 5 (corrected in round 3, 20 Oct 2026 (judge r2): ) (row added in true) |
@@ -1550,31 +1602,31 @@ in structure_stills/r4/), compare_sheets/prefix_r5/ (the same before the texture
 | 216 | 0:10.0 | right | kerb | flat painted kerb | onboard:7QS2M-HGSI4@10.0 | covered by kerb 188.2-268.3 |
 | 246 | 0:10.0 | left | station | canopy on posts over a low concrete platform | onboard:7QS2M-HGSI4@10.0 | covered by marshal 'T1 inside canopy' |
 | 256 | 0:12.0 | right | kerb | flat painted kerb | onboard:7QS2M-HGSI4@12.0 | covered by kerb 188.2-268.3 |
-| 296 | 0:12.0 | right | cone_line | single orange cone | onboard:7QS2M-HGSI4@12.0 | covered by cone line 15 |
+| 296 | 0:12.0 | right | cone_line | single orange cone | onboard:7QS2M-HGSI4@12.0 | covered by cone line 18 |
 | 300 | 0:14.0 | left | kerb | flat painted kerb | onboard:7QS2M-HGSI4@14.0 | covered by kerb 283.3-322.4 |
 | 408 | 0:18.0 | right | kerb | flat painted kerb | onboard:7QS2M-HGSI4@18.0 | covered by kerb 410.5-424.5 |
 | 477 | 0:20.0 | right | station | corner station: canopy on posts on a tyre-walled earth mound | onboard:7QS2M-HGSI4@20.0 | covered by marshal 'T1 exit' |
 | 477 | 0:20.0 | right | tyre_wall | tyres around the station mound | onboard:7QS2M-HGSI4@20.0 | covered by barrier 4 (tyres) |
-| 531 | 0:22.0 | left | cone_line | single orange cone | onboard:7QS2M-HGSI4@22.0 | covered by cone line 16 |
-| 531 | 0:22.0 | left | kerb | flat painted kerb | onboard:7QS2M-HGSI4@22.0 | covered by kerb 535.6-548.6 |
+| 531 | 0:22.0 | left | cone_line | single orange cone | onboard:7QS2M-HGSI4@22.0 | covered by cone line 19 |
+| 531 | 0:22.0 | left | kerb | flat painted kerb | onboard:7QS2M-HGSI4@22.0 | covered by kerb 535.6-557.6 |
 | 574 | 0:24.0 | right | runoff | pale paved / concrete patch inside the hairpin | onboard:7QS2M-HGSI4@24.0 | surroundings (not a checked kind) |
 | 590 | 0:25.0 | right | kerb | block line on the inside of the T2 hairpin apex | onboard:7QS2M-HGSI4@25.0 | covered by kerb 583.7-603.7 (corrected in round 3, 20 Oct 2026 (judge r2): ) (row added in true) |
 | 738 | 0:32.0 | left | kerb | flat painted kerb | onboard:7QS2M-HGSI4@32.0 | covered by kerb 744.8-766.9 |
-| 770 | 0:30.0 | left | cone_line | line of small cones | onboard:7QS2M-HGSI4@30.0 | covered by cone line 11 |
-| 833 | 0:34.0 | left | cone_line | single orange cone | onboard:7QS2M-HGSI4@34.0 | covered by cone line 17 |
+| 770 | 0:30.0 | left | cone_line | line of small cones | onboard:7QS2M-HGSI4@30.0 | covered by cone line 13 |
+| 833 | 0:34.0 | left | cone_line | single orange cone | onboard:7QS2M-HGSI4@34.0 | covered by cone line 20 |
 | 833 | 0:34.0 | right | station | corner station: canopy on posts on a tyre-walled mound | onboard:7QS2M-HGSI4@34.0 | covered by marshal 'T2 to T3, east side' |
 | 893 | 0:37.0 | left | cone_line | orange cones on the left | onboard:7QS2M-HGSI4@37.0 | covered by cone line 6 (corrected in round 3, 20 Oct 2026 (judge r2): ) (row added in true) |
-| 972 | 0:38.0 | left | cone_line | single orange cone | onboard:7QS2M-HGSI4@38.0 | covered by cone line 18 |
+| 972 | 0:38.0 | left | cone_line | single orange cone | onboard:7QS2M-HGSI4@38.0 | covered by cone line 21 |
 | 972 | 0:38.0 | left | kerb | flat painted kerb | onboard:7QS2M-HGSI4@38.0 | covered by kerb 954.1-1011.1 |
 | 996 | 0:40.0 | left | kerb | flat painted kerb | onboard:7QS2M-HGSI4@40.0 | covered by kerb 954.1-1011.1 |
 | 996 | 0:40.0 | right | station | corner station: blue canopy on posts on a tyre-walled mound | onboard:7QS2M-HGSI4@40.0 | MISSING, placed: T3 (s 1013 right, 17 m: time-map error) |
-| 1041 | 0:42.0 | right | cone_line | single orange cone | onboard:7QS2M-HGSI4@42.0 | covered by cone line 19 |
+| 1041 | 0:42.0 | right | cone_line | single orange cone | onboard:7QS2M-HGSI4@42.0 | covered by cone line 22 |
 | 1088 | 0:44.0 | left | kerb | flat painted kerb | onboard:7QS2M-HGSI4@44.0 | covered by kerb 1089.2-1116.3 |
 | 1175 | 0:48.0 | right | kerb | flat painted kerb | onboard:7QS2M-HGSI4@48.0 | covered by kerb 1168.3-1191.3 |
 | 1190 | 0:46.0 | right | station | corner station: canopy on posts | onboard:7QS2M-HGSI4@46.0 | covered by marshal 'T4' |
 | 1224 | 0:50.0 | left | kerb | flat painted kerb | onboard:7QS2M-HGSI4@50.0 | covered by kerb 1203.4-1272.4 |
 | 1304 | 0:52.0 | right | kerb | flat painted kerb | onboard:7QS2M-HGSI4@52.0 | covered by kerb 1304.5-1309.5 |
-| 1309 | 0:52.0 | right | cone_line | single orange cone | onboard:7QS2M-HGSI4@52.0 | covered by cone line 20 |
+| 1309 | 0:52.0 | right | cone_line | single orange cone | onboard:7QS2M-HGSI4@52.0 | covered by cone line 23 |
 | 1344 | 0:54.0 | left | kerb | flat painted kerb | onboard:7QS2M-HGSI4@54.0 | covered by kerb 1337.5-1395.6 |
 | 1476 | 0:56.0 | left | paint | white painted blocks at the left edge | onboard:7QS2M-HGSI4@56.0 | surroundings (not a checked kind) |
 | 1492 | 0:58.0 | right | kerb | flat painted kerb | onboard:7QS2M-HGSI4@58.0 | covered by kerb 1494.7-1514.7 |
@@ -1589,22 +1641,22 @@ in structure_stills/r4/), compare_sheets/prefix_r5/ (the same before the texture
 | 1924 | 1:11.0 | right | cone_line | single orange cone at the kerb's end | onboard:7QS2M-HGSI4@71.0 | covered by cone line 3 (corrected in round 4, 20 Oct 2026 (judge r3): ) (row added in true) |
 | 2022 | 1:12.0 | left | paint | white painted chevrons / blocks at the left edge | onboard:7QS2M-HGSI4@72.0 | surroundings (not a checked kind) |
 | 2053 | 1:14.0 | right | station | corner station: canopy on posts on a tyre-walled mound | onboard:7QS2M-HGSI4@74.0 | MISSING, placed: T6 (Riverside) (s 2069 right, 17 m: time-map error) |
-| 2158 | 1:18.0 | right | cone_line | single orange cone | onboard:7QS2M-HGSI4@78.0 | covered by cone line 21 |
+| 2158 | 1:18.0 | right | cone_line | single orange cone | onboard:7QS2M-HGSI4@78.0 | covered by cone line 24 |
 | 2313 | 1:22.0 | right | kerb | flat painted kerb | onboard:7QS2M-HGSI4@82.0 | covered by kerb 2314.6-2339.6 |
 | 2373 | 1:22.0 | right | station | corner station: canopy on a mound | onboard:7QS2M-HGSI4@82.0 | covered by marshal 'T7' |
-| 2697 | 1:32.0 | left | cone_line | two orange cones | onboard:7QS2M-HGSI4@92.0 | covered by cone line 22 |
+| 2697 | 1:32.0 | left | cone_line | two orange cones | onboard:7QS2M-HGSI4@92.0 | covered by cone line 25 |
 | 2697 | 1:32.0 | left | kerb | flat painted kerb | onboard:7QS2M-HGSI4@92.0 | covered by kerb 2689-2746.1 |
 | 2760 | 1:34.0 | right | kerb | flat painted kerb | onboard:7QS2M-HGSI4@94.0 | covered by kerb 2765.1-2792.2 |
 | 2777 | 1:32.0 | right | station | corner station: canopy on posts | onboard:7QS2M-HGSI4@92.0 | covered by marshal 'T8' |
 | 2857 | 1:36.0 | left | paint | white painted blocks at the left edge | onboard:7QS2M-HGSI4@96.0 | surroundings (not a checked kind) |
-| 3196 | 1:47.0 | left | cone_line | three orange cones at a mouth | onboard:7QS2M-HGSI4@107.0 | covered by cone line 12 (corrected in first-centre round, 20 Oct 2026 (judge r1): ) (row added in true) |
+| 3196 | 1:47.0 | left | cone_line | three orange cones at a mouth | onboard:7QS2M-HGSI4@107.0 | covered by cone line 14 (corrected in first-centre round, 20 Oct 2026 (judge r1): ) (row added in true) |
 | 3196 | 1:47.0 | right | cone_line | single orange cone at the right edge | onboard:7QS2M-HGSI4@107.0 | covered by cone line 4 (corrected in round 4, 20 Oct 2026 (judge r3): ) (row added in true) |
 | 3287 | 1:49.0 | left | cone_line | orange cones along the left | onboard:7QS2M-HGSI4@109.0 | covered by cone line 8 (corrected in round 3, 20 Oct 2026 (judge r2): ) (row added in true) |
 | 3329 | 1:50.0 | left | kerb | flat painted kerb | onboard:7QS2M-HGSI4@110.0 | covered by kerb 3339.8-3382.8 |
 | 3425 | 1:52.0 | right | kerb | flat painted kerb | onboard:7QS2M-HGSI4@112.0 | covered by kerb 3399.8-3450.9 |
 | 3440 | 1:52.0 | right | station | corner station: roofed platform on stilts | onboard:7QS2M-HGSI4@112.0 | covered by marshal 'T9 (Star Mazda)' |
 | 3444 | 1:46.0 | ahead | mast | tall pole (light / camera mast) | onboard:7QS2M-HGSI4@106.0 | MISSING, placed: OSM man_made=mast (the 49.5 m communications tower, s 3439 left, ~400 m off; the pole on t106 is most likely it) (corrected in stage-3 pass, 20 Oct 2026: ahead_m was 250) |
-| 3445 | 1:54.0 | right | cone_line | single orange cone | onboard:7QS2M-HGSI4@114.0 | covered by cone line 23 |
+| 3445 | 1:54.0 | right | cone_line | single orange cone | onboard:7QS2M-HGSI4@114.0 | covered by cone line 26 |
 | 3445 | 1:54.0 | right | kerb | flat painted kerb | onboard:7QS2M-HGSI4@114.0 | covered by kerb 3399.8-3450.9 |
 | 3479 | 1:56.0 | left | kerb | flat painted kerb | onboard:7QS2M-HGSI4@116.0 | covered by kerb 3469.9-3518 |
 | 3645 | 2:02.0 | right | cone_line | orange cones on the right | onboard:7QS2M-HGSI4@122.0 | covered by cone line 9 (corrected in round 3, 20 Oct 2026 (judge r2): ) (row added in true) |
@@ -1614,9 +1666,9 @@ in structure_stills/r4/), compare_sheets/prefix_r5/ (the same before the texture
 | 3848 | 2:08.0 | left | kerb | flat painted kerb | onboard:7QS2M-HGSI4@128.0 | covered by kerb 3845.3-3876.4 |
 | 3914 | 2:10.0 | right | kerb | flat painted kerb | onboard:7QS2M-HGSI4@130.0 | covered by kerb 3894.4-3935.4 |
 | 3981 | 2:12.0 | left | kerb | flat painted kerb | onboard:7QS2M-HGSI4@132.0 | covered by kerb 3972.5-4023.5 |
-| 4045 | 2:14.0 | right | cone_line | cones on the right apron | onboard:7QS2M-HGSI4@134.0 | covered by cone line 13 (corrected in first-centre round, 20 Oct 2026 (judge r1): ) (row added in true) |
+| 4045 | 2:14.0 | right | cone_line | cones on the right apron | onboard:7QS2M-HGSI4@134.0 | covered by cone line 15 (corrected in first-centre round, 20 Oct 2026 (judge r1): ) (row added in true) |
 | 4065 | 2:14.0 | right | kerb | flat painted kerb | onboard:7QS2M-HGSI4@134.0 | covered by kerb 4029.6-4126.7 |
-| 4070 | 2:14.0 | right | cone_line | single orange cone | onboard:7QS2M-HGSI4@134.0 | covered by cone line 24 |
+| 4070 | 2:14.0 | right | cone_line | single orange cone | onboard:7QS2M-HGSI4@134.0 | covered by cone line 27 |
 | 4122 | 2:16.0 | right | kerb | flat painted kerb | onboard:7QS2M-HGSI4@136.0 | covered by kerb 4029.6-4126.7 |
 | 4273 | 2:18.0 | left | station | corner station: canopy on posts on a tyre-walled mound | onboard:7QS2M-HGSI4@138.0 | covered by marshal 'T11 approach (Sunset)' |
 | 4308 | 2:20.0 | right | kerb | flat painted kerb | onboard:7QS2M-HGSI4@140.0 | covered by kerb 4320.9-4369.9 |
@@ -1625,9 +1677,9 @@ in structure_stills/r4/), compare_sheets/prefix_r5/ (the same before the texture
 | 4458 | 2:26.0 | right | kerb | flat painted kerb | onboard:7QS2M-HGSI4@146.0 | covered by kerb 4424-4501.1 |
 | 4502 | 0:00.0 | left | wall | concrete K-rail (Jersey) segments | onboard:7QS2M-HGSI4@0.0 | covered by barrier 0 (concrete) |
 | 4502 | 0:00.0 | right | runoff | dirt, flat, open | onboard:7QS2M-HGSI4@0.0 | surroundings (not a checked kind) |
-| 4573 | 0:02.0 | right | cone_line | single orange cone | onboard:7QS2M-HGSI4@2.0 | covered by cone line 25 |
+| 4573 | 0:02.0 | right | cone_line | single orange cone | onboard:7QS2M-HGSI4@2.0 | covered by cone line 28 |
 | 4593 | 2:30.0 | left | wall | concrete K-rail | onboard:7QS2M-HGSI4@150.0 | covered by barrier 0 (concrete); barrier 1 (concrete) |
-| 4593 | 2:30.0 | right | cone_line | single orange cone | onboard:7QS2M-HGSI4@150.0 | covered by cone line 26 |
+| 4593 | 2:30.0 | right | cone_line | single orange cone | onboard:7QS2M-HGSI4@150.0 | covered by cone line 29 |
 | 4599 | 2:28.0 | left | wall | concrete K-rail | onboard:7QS2M-HGSI4@148.0 | covered by barrier 0 (concrete); barrier 1 (concrete) |
 | 4643 | 0:04.0 | left | wall | concrete K-rail (Jersey) | onboard:7QS2M-HGSI4@4.0 | covered by barrier 0 (concrete); barrier 1 (concrete) |
 | 4662 | 2:32.0 | left | wall | concrete K-rail | onboard:7QS2M-HGSI4@152.0 | covered by barrier 0 (concrete); barrier 1 (concrete) |
@@ -1646,3 +1698,5 @@ in structure_stills/r4/), compare_sheets/prefix_r5/ (the same before the texture
 | 4655 |  | right | wall | concrete K-rail | onboard:ucmXJu5QKFQ@21:52 | pit-lane gate (pit_lane.walls) |
 | 4683 |  | both | cone_line | orange cones in two lines along the lane | onboard:ucmXJu5QKFQ@22:19 | pit lane: not a checked kind for the lap |
 | 4683 |  | right | station | starter's stand: scaffold tower with a deck and canopy on the pit wall | onboard:ucmXJu5QKFQ@22:19 | pit lane: not a checked kind for the lap |
+| 4637 |  | left | cone_line | row of small orange cones along the paddock-side wall | onboard:ucmXJu5QKFQ@21:07 | pit lane: not a checked kind for the lap (row added in judge r5 (round 6): t1267000 shows the row ahead of the tower) |
+| 4697 |  | left | cone_line | two cones at the tower foot (yellow, orange) | onboard:ucmXJu5QKFQ@21:52 | pit lane: not a checked kind for the lap (row added in judge r5 (round 6): t1312000 / t1339000) |

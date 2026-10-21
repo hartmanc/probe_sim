@@ -1490,6 +1490,37 @@ def clip_parts_at_walls(parts, bar, margin=0.3, label="closed roads"):
     log(f"{label}: {moved} edge points clipped at walls")
 
 
+def ortho_paint_over(trk, img, items, ring=3.0, lift=18.0):
+    """NAIP marks painted over (config scenery.ortho_paint_over, Buttonwillow judge r5: white kerb blocks of the 2022
+    NAIP that now lie on the fitted road read as white smears on the asphalt): each {latlon: outline, src}; inside the
+    outline, the pixels ON THE ROAD (between the fitted edges) brighter than the road's own median there by `lift`
+    (luminance, 0-255) take the median colour of the road pixels of the outline grown by `ring` m."""
+    from PIL import Image, ImageDraw
+    o = trk.t["ortho"]
+    H, W = img.shape[:2]
+    sx, sy = W / (o["x1"] - o["x0"]), H / (o["y1"] - o["y0"])
+    px = lambda P: [((x - o["x0"]) * sx, (o["y1"] - y) * sy) for x, y in P]  # noqa: E731
+    road = Image.new("L", (W, H), 0); dr = ImageDraw.Draw(road)
+    Lq, Rq = trk.L[:, :2], trk.R[:, :2]
+    for i in range(trk.n):
+        j = (i + 1) % trk.n
+        dr.polygon(px([Lq[i], Lq[j], Rq[j], Rq[i]]), fill=1)
+    road = np.asarray(road, bool)
+    out = img.copy()
+    lum = img.astype(float) @ np.array([0.2126, 0.7152, 0.0722])
+    for it in items:
+        P = np.array([bl.enu(*q) for q in it["latlon"]], float)
+        m = Image.new("L", (W, H), 0); ImageDraw.Draw(m).polygon(px(P), fill=1); m = np.asarray(m, bool) & road
+        c = P.mean(0); Pg = c + (P - c) * (1 + ring / max(1e-6, float(np.linalg.norm(P - c, axis=1).mean())))
+        g = Image.new("L", (W, H), 0); ImageDraw.Draw(g).polygon(px(Pg), fill=1); g = np.asarray(g, bool) & road
+        ref = g & (lum < np.median(lum[g]) + lift)
+        med = np.median(img[ref], axis=0)
+        hit = m & (lum > np.median(lum[g]) + lift)
+        out[hit] = med.astype(np.uint8)
+        log(f"ortho paint-over: {int(hit.sum())} px ({hit.sum() * 0.36:.0f} m2) on the road -> {med.astype(int).tolist()} ({it['src'][:60]})")
+    return out
+
+
 def pit_tone_match(trk, pit, img, opt):
     """One road material for the pit lane (config pit_lane.lane.match_track_tone {k, paint}, 21 Oct 2026; Sonoma owner
     notes 17, 24-26): the NAIP ortho shows the pit lane's lighter paving and its paint smears at 0.6 m/px, so the lane's
@@ -2064,7 +2095,8 @@ def impact_barriers(trk):
         a, b = (P[0], P[1]) if ib.get("end", "start") == "start" else (P[-1], P[-2])
         u = (a - b) / np.linalg.norm(a - b)        # pointing out of the wall's end
         d = ib.get("d", 2.0)
-        p = a + u * (d / 2 + 0.05)
+        # `overlap` (m, Buttonwillow judge r5): the block wraps the wall's square end by that much (one continuous nose)
+        p = a + u * (d / 2 + 0.05 - ib.get("overlap", 0.0))
         out.append({"kind": "impact", "text": "", "x": rnd(p[0], 2), "y": rnd(p[1], 2), "z": rnd(float(trk.ground(*p)[0]), 2),
                     "heading": rnd(math.atan2(u[1], u[0]), 3), "h": ib.get("h", 1.0), "w": ib.get("w", 1.0), "d": d,
                     "color": ib.get("color", "#e8c21c"), **({"style": ib["style"]} if ib.get("style") else {}), "src": ib["src"]})
@@ -2084,6 +2116,40 @@ def _cone_style(cl):
     return {**({"color": cl["color"]} if cl.get("color") else {}), **({"size": float(cl["size"])} if cl.get("size") else {}),
             # round 7e (Sonoma owner note 57): 'delineator' = a tall orange pylon post with white bands (app), else a cone
             **({"style": cl["style"]} if cl.get("style") else {})}
+
+
+def zones_meet_edge(trk, parts, reach=8.0, near=1.5, overlap=0.3):
+    """Zone ends meeting the track at an angle leave a dirt wedge between the far end corner and the edge (Buttonwillow
+    judge r5: tan strips at the crossover mouths). config scenery.zones_meet_edge: at an end whose nearest corner lies
+    within `near` m of the road, each end point (left, centre, right) is moved along the part's direction toward the
+    track until it lies `overlap` m inside the road (at most `reach` m); heights kept."""
+    from shapely.geometry import Point, Polygon
+    from shapely.ops import unary_union
+    L, R, n = trk.L[:, :2], trk.R[:, :2], trk.n
+    road = unary_union([Polygon([L[i], L[(i + 1) % n], R[(i + 1) % n], R[i]]).buffer(0) for i in range(n)])
+    inner = road.buffer(-overlap)
+    moved = 0
+    for p in parts:
+        C = np.array(p["center"])[:, :2]
+        if len(C) < 3:
+            continue
+        for end in (0, -1):
+            k, k2 = (0, 1) if end == 0 else (len(C) - 1, len(C) - 2)
+            ds = [road.distance(Point(np.array(p[sd][k][:2]))) for sd in ("left", "center", "right")]
+            if min(ds) > near or max(ds) < 0.05:
+                continue
+            t = C[k] - C[k2]; t /= np.linalg.norm(t)
+            for sd in ("left", "center", "right"):
+                q = np.array(p[sd][k][:2], float)
+                if inner.contains(Point(q)):
+                    continue
+                for step in np.arange(0.1, reach + 1e-6, 0.1):
+                    if inner.contains(Point(q + t * step)):
+                        nq = q + t * step
+                        p[sd][k] = [rnd(nq[0], 2), rnd(nq[1], 2)] + list(p[sd][k][2:])
+                        moved += 1
+                        break
+    log(f"zones meet the edge: {moved} end points moved onto the road (scenery.zones_meet_edge)")
 
 
 def declared_cone_lines(trk):
@@ -2192,7 +2258,7 @@ def landmarks(trk, T, brg):
                     "z": rnd(float(trk.ground(*xy)[0]), 2), "heading": rnd(math.atan2(to[1], to[0]), 3),
                     "h": mp.get("h", 3.0), "w": mp.get("w", 2.4), "style": mp.get("style", "tower"),
                     **({"color": mp["color"]} if mp.get("color") else {}),
-                    **{k: mp[k] for k in ("mound_h", "railing", "stair", "base_color", "body_h", "body_color", "pole", "roof") if k in mp},
+                    **{k: mp[k] for k in ("mound_h", "railing", "stair", "base_color", "body_h", "body_color", "pole", "roof", "fine") if k in mp},
                     "src": mp["src"]})
     # free-standing tyre stacks and barrier blocks (config scenery.tyre_stacks, 21 Oct 2026): {latlon, h, w, style
     # 'tyres' | 'blocks', color, src}; drawn only (not in the collision world)
@@ -2452,15 +2518,22 @@ def main(cfg=None, out_dir=None):
         clip_parts_at_walls(pit["parts"], bar + [{"kind": "tyres", "pts": c_["pts"]} for c_ in declared_cone_lines(trk)], label="pit lane")
     if pit and (PIT_CFG.get("lane") or {}).get("to_walls"):
         extend_parts_to_walls(pit["parts"], bar, **PIT_CFG["lane"]["to_walls"])
+    if pit and (PIT_CFG.get("lane") or {}).get("no_edge_line"):
+        pit["no_edge_line"] = list(PIT_CFG["lane"]["no_edge_line"])   # the app draws no white edge line on these sides
     if pit and ortho_arr is not None and (PIT_CFG.get("lane") or {}).get("match_track_tone"):
-        Image.fromarray(pit_tone_match(trk, pit, ortho_arr, PIT_CFG["lane"]["match_track_tone"])).save(
-            os.path.join(OUT, "ortho.jpg"), quality=84, optimize=True)
+        ortho_arr = pit_tone_match(trk, pit, ortho_arr, PIT_CFG["lane"]["match_track_tone"])
+        Image.fromarray(ortho_arr).save(os.path.join(OUT, "ortho.jpg"), quality=84, optimize=True)
+    if ortho_arr is not None and SC_CFG.get("ortho_paint_over"):
+        ortho_arr = ortho_paint_over(trk, ortho_arr, SC_CFG["ortho_paint_over"])
+        Image.fromarray(ortho_arr).save(os.path.join(OUT, "ortho.jpg"), quality=84, optimize=True)
     zones = paved_zones(trk, osm)
     cr_parts, cone_lines = closed_roads(trk, osm) if SC_CFG.get("closed_roads") else ([], [])
     if cr_parts and SC_CFG.get("closed_roads_clip_walls"):
         clip_parts_at_walls(cr_parts, bar)
     if cr_parts:
         zones["parts"] += cr_parts
+    if SC_CFG.get("zones_meet_edge"):
+        zones_meet_edge(trk, zones["parts"])
     if SC_CFG.get("paved_zones_over"):
         # texture pass (Buttonwillow owner lap 1, 21 Oct 2026): every zone's road surface draws in front of the track's
         # and the other zones' shoulders, its own shoulder behind them (the app's `over`); drawn only, no physics change

@@ -67,6 +67,11 @@ export interface BlockJson {
    *  ground (m), its glazing divided by wall-coloured mullions every mullions_m (m), and a railing round its own top
    *  edge (the open deck on the lower storey's roof) */
   base?: number; mullions_m?: number; deck_rail?: boolean;
+  /** discrete windows instead of the continuous band (Buttonwillow's tower, judge r5: a solid lower storey with a few
+   *  windows): `w` wide every `pitch` m along each face from z0 to z1 (m above the block's base), on the faces listed
+   *  (+1 / -1 long sides, +2 / -2 the ends; absent: all four); and doors (`at` along the face from its centre) */
+  windows?: { w: number; pitch: number; z0: number; z1: number; faces?: number[] };
+  doors_at?: { face: number; at: number; w: number; h: number; color?: string }[];
 }
 
 /** Fuel island: canopy slab on posts, island kerbs with pumps, a plain sign pylon at a local offset. */
@@ -385,6 +390,26 @@ export function block(b: BlockJson, s: Soup): void {
         s.box(f, -hl - e, -hl, d - 0.06, d + 0.06, z0, z1, cW); s.box(f, hl, hl + e, d - 0.06, d + 0.06, z0, z1, cW);
       }
     }
+  }
+  if (b.windows) {
+    const W = b.windows, e = 0.04, faces = W.faces ?? [1, -1, 2, -2];
+    for (const fc of faces) {
+      const half = Math.abs(fc) === 1 ? hl : hw, n = Math.max(1, Math.floor((2 * half - 1.2) / W.pitch));
+      for (let q = 0; q < n; q++) {
+        const t = -((n - 1) * W.pitch) / 2 + q * W.pitch, a = t - W.w / 2, c = t + W.w / 2;
+        if (fc === 1) s.quad(f.p(c, hw + e, W.z0), f.p(a, hw + e, W.z0), f.p(a, hw + e, W.z1), f.p(c, hw + e, W.z1), cB);
+        else if (fc === -1) s.quad(f.p(a, -hw - e, W.z0), f.p(c, -hw - e, W.z0), f.p(c, -hw - e, W.z1), f.p(a, -hw - e, W.z1), cB);
+        else if (fc === 2) s.quad(f.p(hl + e, a, W.z0), f.p(hl + e, c, W.z0), f.p(hl + e, c, W.z1), f.p(hl + e, a, W.z1), cB);
+        else s.quad(f.p(-hl - e, c, W.z0), f.p(-hl - e, a, W.z0), f.p(-hl - e, a, W.z1), f.p(-hl - e, c, W.z1), cB);
+      }
+    }
+  }
+  for (const d of b.doors_at ?? []) {
+    const e = 0.05, cD = rgb(d.color ?? '#6b5a48'), a = d.at - d.w / 2, c = d.at + d.w / 2;
+    if (d.face === 1) s.quad(f.p(c, hw + e, 0), f.p(a, hw + e, 0), f.p(a, hw + e, d.h), f.p(c, hw + e, d.h), cD);
+    else if (d.face === -1) s.quad(f.p(a, -hw - e, 0), f.p(c, -hw - e, 0), f.p(c, -hw - e, d.h), f.p(a, -hw - e, d.h), cD);
+    else if (d.face === 2) s.quad(f.p(hl + e, a, 0), f.p(hl + e, c, 0), f.p(hl + e, c, d.h), f.p(hl + e, a, d.h), cD);
+    else s.quad(f.p(-hl - e, c, 0), f.p(-hl - e, a, 0), f.p(-hl - e, a, d.h), f.p(-hl - e, c, d.h), cD);
   }
   if (b.deck_rail) {
     const cR = rgb('#5d6166'), zr = b.h + 1.0;

@@ -127,7 +127,8 @@ function groundMaterial(p: THREE.MeshLambertMaterialParameters, roughness = 0.95
 }
 
 export function photoGround(mat: GroundMaterial, opts: { grain?: number; ground: GroundDetail; asphalt?: GroundDetail; asphaltAttr?: boolean; paint?: THREE.Texture; rubber?: boolean; /** paved runoff: pale, sun-bleached asphalt, not the dark racing surface */ runoff?: boolean;
-  /** concrete paving (a closed road the captures show as concrete): pale grey, painted lines kept */ concrete?: boolean }): void {
+  /** concrete paving (a closed road the captures show as concrete): pale grey, painted lines kept */ concrete?: boolean;
+  /** apron (Buttonwillow judge r5): pale weathered asphalt with the asphalt grain, the onboard's pale grey pavement */ apron?: boolean }): void {
   const grain = opts.grain ?? 0.12;
   const G = opts.ground, A = opts.asphalt;
   const hasA = opts.asphaltAttr && A ? 1 : 0;
@@ -138,6 +139,7 @@ export function photoGround(mat: GroundMaterial, opts: { grain?: number; ground:
   // paved runoff zones: the real ones are pale grey (GPT judge, 18 Oct 2026: "dark asphalt lobes in the T9/T10 runoff")
   const hasO = hasA && opts.runoff ? 1 : 0;
   const hasC = hasA && opts.concrete ? 1 : 0;
+  const hasAp = hasA && opts.apron ? 1 : 0;
   mat.normalMap = G.normal;   // uv1 = world / G.tile (see addDetailUV); gives the tangent frame
   G.normal.channel = 1;
   mat.normalScale.set(1, 1);
@@ -221,6 +223,12 @@ vec3 pgTileN(sampler2D t, vec2 uv) {
     // asphalt, the satellite tan), so it reads as whatever the imagery shows, with only a little asphalt grade
     diffuseColor.rgb = mix(diffuseColor.rgb, diffuse * texture2D(map, vPgUvSrc).rgb * mix(1.0, 0.92, w), 0.85 * w);
 #endif
+#if ${hasAp}
+    // apron: pale weathered asphalt, a little warmer and darker than concrete, keeping the photo's local light / dark;
+    // the asphalt detail texture (grain) comes from the mix below (w = 1 on the surface)
+    vec3 apr = vec3(0.43, 0.425, 0.405) * (0.9 + 0.4 * (min(l, 0.6) - 0.3));
+    diffuseColor.rgb = mix(diffuseColor.rgb, mix(apr, vec3(l) * 1.05, paint), w);
+#endif
 #if ${hasC}
     // concrete paving: a pale grey that keeps the photo's local light / dark, painted lines kept
     vec3 conc = vec3(0.55, 0.55, 0.52) * (0.9 + 0.35 * (min(l, 0.6) - 0.3));
@@ -262,7 +270,7 @@ vec3 pgTileN(sampler2D t, vec2 uv) {
   }
 #endif`);
   };
-  mat.customProgramCacheKey = () => `pg${hasA}${hasP}${hasR}${hasO}${hasC}${grain}`;
+  mat.customProgramCacheKey = () => `pg${hasA}${hasP}${hasR}${hasO}${hasC}${hasAp}${grain}`;
 }
 
 export interface World {
@@ -533,7 +541,7 @@ function forRibbonSamples(rs: RibbonSections, fn: (x: number, y: number, z: numb
  * sampled 1.2 m away from it (inward on the asphalt, outward on the shoulder), because at 0.6 m/px it smears asphalt
  * and dirt into each other; the first metre of shoulder is darkened like packed dirt/gravel.
  */
-function buildRibbon(track: TrackJson, tex: THREE.Texture, rs: RibbonSections, asphalt: GroundDetail, groundDetail: GroundDetail, name = 'track', offsetUnits = -2, runoff = false, concrete = false, over = 0): THREE.Object3D {
+function buildRibbon(track: TrackJson, tex: THREE.Texture, rs: RibbonSections, asphalt: GroundDetail, groundDetail: GroundDetail, name = 'track', offsetUnits = -2, runoff = false, concrete = false, over = 0, apron = false): THREE.Object3D {
   const n = rs.n, K = rs.K;
   const pos = new Float32Array(n * K * 3);
   const uv = new Float32Array(n * K * 2);
@@ -569,7 +577,7 @@ function buildRibbon(track: TrackJson, tex: THREE.Texture, rs: RibbonSections, a
   geo.computeVertexNormals();
   addDetailUV(geo, groundDetail.tile);
   const mat = groundMaterial({ map: tex, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: offsetUnits }, 0.9);
-  photoGround(mat, { grain: 0.12, ground: groundDetail, asphalt, asphaltAttr: true, rubber: !!rs.D, runoff, concrete });
+  photoGround(mat, { grain: 0.12, ground: groundDetail, asphalt, asphaltAttr: true, rubber: !!rs.D, runoff, concrete, apron });
   if (over) {
     // a zone flagged `over` (texture pass, Buttonwillow 21 Oct 2026: the track's shoulder and a neighbouring zone's
     // shoulder showed through the crossovers and the T2 runoff in dirt-coloured blotches): its road quads (A = 1 on
@@ -581,7 +589,7 @@ function buildRibbon(track: TrackJson, tex: THREE.Texture, rs: RibbonSections, a
     }
     const group = new THREE.Group(); group.name = name;
     const matS = groundMaterial({ map: tex, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 4 }, 0.9);
-    photoGround(matS, { grain: 0.12, ground: groundDetail, asphalt, asphaltAttr: true, rubber: !!rs.D, runoff, concrete });
+    photoGround(matS, { grain: 0.12, ground: groundDetail, asphalt, asphaltAttr: true, rubber: !!rs.D, runoff, concrete, apron });
     mat.polygonOffsetFactor = -2; mat.polygonOffsetUnits = -12 - 12 * over;
     for (const [ix, m, nm] of [[road, mat, 'road'], [shoulder, matS, 'shoulder']] as const) {
       const g2 = geo.clone(); g2.setIndex(ix as number[]);
@@ -622,6 +630,17 @@ function seamReport(rss: RibbonSections[], terrainZ: Ground): SeamReport {
 function paintSurface(track: TrackJson, ortho: THREE.Texture, asphalt: GroundDetail, groundDetail: GroundDetail): PaintSurface {
   return {
     uv: (x, y) => orthoUV(track, x, y),
+    apronMesh(geo, name, offsetUnits) {
+      // paved areas with the apron surface (judge r5): the same pale weathered asphalt as an apron zone; pgA fades it
+      // into the photo at the outline
+      addDetailUV(geo, groundDetail.tile);
+      const mat = groundMaterial({ map: ortho, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: offsetUnits }, 0.9);
+      photoGround(mat, { grain: 0.12, ground: groundDetail, asphalt, asphaltAttr: true, apron: true });
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.receiveShadow = true;
+      mesh.name = name;
+      return mesh;
+    },
     mesh(geo, paint, name, offsetUnits) {
       addDetailUV(geo, groundDetail.tile);
       const mat = groundMaterial({ map: ortho, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: offsetUnits }, 0.9);
@@ -650,6 +669,9 @@ function buildPitPaint(pit: NonNullable<SceneryAssets['json']['pit_lane']>, grou
     for (let i = 0; i < part.n - 1; i++) {
       const a = st.at(i), b = st.at(i + 1);
       for (const side of [1, -1]) {
+        // a side the footage shows unpainted (scenery.json pit_lane.no_edge_line, Buttonwillow judge r5: pavement to the
+        // paddock-side wall, no line)
+        if (pit.no_edge_line?.includes(side > 0 ? 'left' : 'right')) continue;
         const gap = side > 0 ? Math.min(a.gapL, b.gapL) : Math.min(a.gapR, b.gapR);
         if (!(gap > 1.0)) continue;
         const ha = side > 0 ? a.hl : a.hr, hb = side > 0 ? b.hl : b.hr;
@@ -821,7 +843,7 @@ export function buildWorld(track: TrackJson, hf: Float32Array, ortho: THREE.Text
   secs.slice(1).forEach((sec, k) => {
     const surf = k >= nPit ? zoneSurf[k - nPit] : 'asphalt';
     const over = k >= nPit ? zoneOver[k - nPit] : 0;
-    scene.add(buildRibbon(track, ortho, sec, asphaltDetail, groundDetail, k < nPit ? `pit_lane_${k}` : `paved_runoff_${k - nPit}`, -6, k >= nPit && !surf, surf === 'concrete', over));
+    scene.add(buildRibbon(track, ortho, sec, asphaltDetail, groundDetail, k < nPit ? `pit_lane_${k}` : `paved_runoff_${k - nPit}`, -6, k >= nPit && !surf, surf === 'concrete', over, surf === 'apron'));
   });
   if (pit) { const m = buildPitPaint(pit, ground); if (m) scene.add(m); }
   const seam = seamReport(secs, grid.surfaceZ);

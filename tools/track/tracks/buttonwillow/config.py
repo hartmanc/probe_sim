@@ -360,9 +360,9 @@ CONFIG = dict(
             dict(side='left', line_latlon=[(35.4890403, -119.5414453), (35.489049, -119.5414293), (35.4890564, -119.5414125), (35.489065, -119.5413966), (35.4890742, -119.5413809), (35.489084, -119.5413657), (35.4890949, -119.5413515), (35.4891061, -119.5413376), (35.4891176, -119.5413238), (35.4891298, -119.5413108), (35.4891421, -119.5412977), (35.489155, -119.5412852), (35.4891683, -119.5412732), (35.4891817, -119.5412613), (35.4891954, -119.5412497), (35.4892095, -119.5412387), (35.4892223, -119.541225), (35.4892376, -119.5412161), (35.4892517, -119.541205), (35.4892675, -119.5411977), (35.4892752, -119.5411936)], colors='rwb', name='run left s 283-322',
                  colour_src='t014.jpg (red / white / blue; inventory row s 300 left)',
                  src='kerb run (owner lap 1): the block line followed on c20_s0400 with the band reader (edges_spline.bands outer limits, the band centre 0.45 m inside), one continuous run'),
-            dict(side='left', line_latlon=[(35.4910984, -119.5414236), (35.4911112, -119.5414352), (35.4911238, -119.5414477), (35.4911365, -119.5414604), (35.4911478, -119.5414756), (35.4911597, -119.5414904), (35.4911706, -119.541507), (35.4911768, -119.5415146)], colors='rwb', name='run left s 536-549',
+            dict(side='left', line_latlon=[(35.4910984, -119.5414236), (35.4911112, -119.5414352), (35.4911238, -119.5414477), (35.4911365, -119.5414604), (35.4911478, -119.5414756), (35.4911597, -119.5414904), (35.4911706, -119.541507), (35.4911768, -119.5415146), (35.4911959, -119.5415378), (35.4912087, -119.5415538), (35.491222, -119.5415698), (35.4912358, -119.5415855)], colors='rwb', name='run left s 536-549',
                  colour_src='t022.jpg (red / white / blue; inventory row s 531 left)',
-                 src='kerb run (owner lap 1): the block line followed on c20_s0650 with the band reader (edges_spline.bands outer limits, the band centre 0.45 m inside), one continuous run'),
+                 src='kerb run (owner lap 1): the block line followed on c20_s0650 with the band reader (edges_spline.bands outer limits, the band centre 0.45 m inside), one continuous run; extended to s ~558 (judge r5 fwd_01 550 L): c20_s0650 shows the block line continuing ~9 m past the end of the band reader, at the last offset of the run'),
             dict(side='left', line_latlon=[(35.4911807, -119.5403341), (35.4911631, -119.5403277), (35.4911454, -119.540322), (35.4911278, -119.5403164), (35.491111, -119.5403087), (35.4910936, -119.5403031), (35.4910769, -119.5402952), (35.4910609, -119.5402857), (35.491044, -119.5402789), (35.4910266, -119.5402737), (35.4910097, -119.5402667), (35.4909928, -119.54026)], colors='rwb', name='run left s 745-767',
                  colour_src='t032.jpg (white / red; inventory row s 738 left)',
                  src='kerb run (owner lap 1): the block line followed on c20_s0900 with the band reader (edges_spline.bands outer limits, the band centre 0.45 m inside), one continuous run'),
@@ -540,10 +540,14 @@ CONFIG = dict(
                  h_src='tyre-ref: one to two tyres high round the mound (onboard t138 (2:18))',
                  src='c20_s4400: the dark tyre ring round the station roof (compare/blob_scan.py); onboard t138 (2:18) (inventory station row s 4273 left: a canopy on a tyre-walled mound); a ring of 3.5 m radius round the roof centroid, the mound size on the capture (judge r1 row)',
                  latlon=[(35.4896673, -119.547986), (35.4896809, -119.5479898), (35.4896919, -119.5480005), (35.489698, -119.548016), (35.489698, -119.5480332), (35.4896919, -119.5480487), (35.4896809, -119.5480594), (35.4896673, -119.5480632), (35.4896537, -119.5480594), (35.4896427, -119.5480487), (35.4896366, -119.5480332), (35.4896366, -119.548016), (35.4896427, -119.5480005), (35.4896537, -119.5479898), (35.4896673, -119.547986)]),
+            # judge r5 pit_00 / fwd_14 (round 6): the fence stands on the paddock boundary under the tree line, not by the
+            # lane: the pit video t1231000 (20:31) shows its posts at the left beside the parked trucks under the trees, the
+            # verge between it and the lane open dirt; traced on the tree line's lane-side edge on c20_s4400 / c20_p0180
+            # (stage3_evidence/fence_r6.png): 20-27 m from the lane's paddock-side edge, not the round-4 1.0 m
             dict(name='pit entry paddock fence', kind='fence', h=1.5, fence=1.5, color='#9aa0a4',
                  h_src='person-ref on the pit-lane video t1231000-t1240000: chest-high mesh',
-                 src='c20_s4400 / c20_p0180 / c20_p0240 (the lane entry) and pit-lane video ucmXJu5QKFQ 20:31-20:40 (t1231000, t1240000; judge r3 pit_00): a ~1.5 m mesh fence along the paddock side of the pit entry; placed 1.0 m beyond the lane part\'s paddock-side edge at track s 4290-4362',
-                 latlon=[[35.4895475, -119.5480695], [35.4895302, -119.5480617], [35.489513, -119.5480542], [35.4894958, -119.5480467], [35.4894788, -119.5480393], [35.4894631, -119.5480324], [35.4894499, -119.5480256], [35.4894375, -119.548017], [35.4894235, -119.5480056], [35.4894085, -119.5479929], [35.4893934, -119.54798], [35.4893783, -119.5479673], [35.4893625, -119.5479538], [35.489348, -119.5479416], [35.4893332, -119.5479291], [35.4893185, -119.5479166], [35.4893042, -119.5479045], [35.489291, -119.5478926], [35.4892782, -119.5478801], [35.489265, -119.5478666], [35.4892516, -119.5478524], [35.4892379, -119.5478379], [35.4892243, -119.5478235], [35.4892107, -119.5478092], [35.4891971, -119.5477949], [35.4891834, -119.5477804], [35.4891698, -119.5477661], [35.4891565, -119.5477519], [35.489144, -119.5477383], [35.4891327, -119.5477249], [35.4891215, -119.5477103], [35.4891099, -119.5476944], [35.4890979, -119.547678], [35.489086, -119.5476615], [35.4890741, -119.5476451], [35.4890622, -119.5476285], [35.4890506, -119.5476124], [35.4890401, -119.5475973], [35.4890314, -119.5475832]]),
+                 src='pit-lane video t1231000 (20:31): the mesh fence along the paddock boundary under the trees left of the pit entry; the line on the tree line lane-side edge, c20_s4400 / c20_p0180',
+                 latlon=[[35.4895693, -119.5477186], [35.4894292, -119.5476259], [35.4893214, -119.5475333], [35.4892351, -119.5474141], [35.489192, -119.5473479]]),
             dict(name='T11 approach tree-line tyre barrier', kind='tyres', h=0.85, fence=0.0, color='#202020',
                  h_src='tyre-ref: three to four tyres high on the back view (judge r3 back_07, 0.7-1.0 m)',
                  src='c20_s4300 (stage3_evidence/tyre4200.png): a long dark tyre line under the trees ~27 m beyond the left edge at s ~4150-4260; judge r3 back_07 (looking back at 4200); onboard t136-t138 (dark line under the trees, left)',
@@ -552,7 +556,7 @@ CONFIG = dict(
         osm_barrier_overrides={},
         tyre_facings=None,
         impact_barriers=[
-            dict(wall='pit wall, front straight', end='start', w=1.8, d=2.6, h=0.9, color='#e4dfd2', style='rounded',   # judge r3: bulky, rounded, pale (pit video t1240000)
+            dict(wall='pit wall, front straight', end='start', w=1.8, d=3.4, h=0.9, overlap=0.8, color='#e4dfd2', style='rounded',   # judge r5: wraps the wall's square end (one continuous nose with the station on it)   # judge r3: bulky, rounded, pale (pit video t1240000)
                  src='pit-lane video ucmXJu5QKFQ 20:40 (t1240000): a sand / dirt berm piled against the pit wall head where the pit-in lane meets it; onboard s4500 / t148: the wall head low and light ahead left'),
         ],
         tyre_stacks=[],
@@ -643,7 +647,9 @@ CONFIG = dict(
                 
                  h_src='deck top: the canopy stands on a ~1.5 m earth mound (the tyre ring) with ~1.5 m posts; storeys / person scale on the onboard frames, unmeasured to better than +-0.5 m',
                  src='c20_s4350: white roof 5.4 m2 in a dark tyre ring (compare/blob_scan.py, 5.0 m beyond the left edge at s 4272); onboard t138 (2:18): canopy on a tyre-faced mound ahead left; inventory s 4274 left'),
-            dict(name='pit-in station', latlon=(35.4887617, -119.5465905), h=3.9, w=2.0, color='#cfd4d8', style='canopy', mound_h=0.5,
+            # judge r5 pit_01 4490 R: on t1231000 / t1240000 the station stands ON the broad concrete head of the separation
+            # barrier, one continuous end with the berm; moved from 1.7 m beside the wall onto its line, 1.6 m from its start
+            dict(name='pit-in station', latlon=(35.4887475, -119.5465999), h=3.9, w=2.0, color='#cfd4d8', style='canopy', mound_h=0.5,
                  base_color='#cfc6b2', pole=True, body_h=1.2, body_color='#e8e6e0',
                  h_src='person-ref against the pit-wall K-rail (0.81 m) on the pit-lane video t1240000',
                  src="pit-lane video ucmXJu5QKFQ 20:40 (t1240000): a canopy on one pole over a small white 'CAC CLUB' cabinet on a pale base at the pit-wall head (judge r3 pit_00, the entry shelter); c20_s4550 / c20_s4600: the white roof at the wall head (compare/blob_scan.py, s 4511 left 8.5 m); pit row s 4320 corrected to 4508"),
@@ -653,13 +659,14 @@ CONFIG = dict(
             dict(name='pit-wall end hut', latlon=(35.4890197, -119.5423407), h=2.6, color='#e8e6e0', style='canopy', mound_h=0.3,
                  h_src='person-ref: a one-storey white hut with a canopy over a low concrete platform (onboard t010, people beside it)',
                  src="c20_s0300 / c20_s0350: white roof 7.8 m2 at the east end of the pit wall (compare/blob_scan.py, 5.2 m beyond the left edge at s 199; window stage3_evidence/cw_wallend.png); onboard t010 (0:10): canopy on posts over a low concrete platform ahead left (inventory station row s 246 left, ahead_m 60)"),
-            dict(name="starter's stand", latlon=(35.4888807, -119.5445092), h=4.4, w=1.6, color='#e8e6e0', style='platform', stair=True, roof=True,  # judge r3: a compact raised platform, deck ~1.8 m, rails, a ladder and a small canopy (pit video t1339000 / t1348000)
+            dict(name="starter's stand", latlon=(35.4888807, -119.5445092), h=4.4, w=1.6, color='#e8e6e0', style='platform', stair=True, roof=True, fine=True,   # judge r5 side_13 4693 L: a fine scaffold frame on t1339000 (thin tubes, X braces, a thin roof on four thin posts)
+                 # judge r3: a compact raised platform, deck ~1.8 m, rails, a ladder and a small canopy (pit video t1339000 / t1348000)
                 
                  h_src='person-ref: people stand on its deck at about the wall-top-plus-3 m line (pit-lane video 22:19-22:28, t1339000 / t1348000)',
                  src="c20_s0050 / c20_s0100 / c20_s0150: the white structure on the pit wall at the timing line (blob_scan s 2, 3.4 m beyond the left edge); pit-lane video ucmXJu5QKFQ 22:19-22:28: the scaffold starter's stand with a canopy on the pit wall"),
         ],
         light_masts=[
-            dict(latlon=(35.4981168, -119.5486443), h=49.5, style='flood',   # judge r3: the head reads as a light cluster on the onboard (s3350 / t106)
+            dict(latlon=(35.4981168, -119.5486443), h=49.5, style='lattice',   # judge r3: the head reads as a light cluster on the onboard (s3350 / t106); judge r5: a lattice tower, not a pole (fwd_11 3400 L)
                  src='OSM man_made=mast / communications tower node 10220517717; the lidar (CA_SanJoaquin_2021) has an isolated spike 49.5-49.7 m over the DEM there (30 cells, compare/stage3 lidar spike scan); onboard t106 (1:46): a tall thin pole far ahead on the north leg (inventory mast row s 3400 ahead, ahead_m 250)'),
         ],
         cone_lines_declared=[
@@ -684,17 +691,27 @@ CONFIG = dict(
                  src='onboard t122 (judge r2, fwd_12): orange cones on the right'),
             # judge r3 (EXTRA): the long pit-lane cone runs are dropped; the pit video t1303000 (21:43) shows a few yellow cones at
             # the timing tower's foot by the paddock-side K-rail, none along the walls
-            dict(latlon=[(35.4890355, -119.5446533), (35.4890434, -119.5445333)], spacing=4.0, size=0.46, color='#e8c21c',
-                 src='pit-lane video t1303000 (21:43): three yellow cones at the timing tower foot, lane side of the paddock K-rail (judge r3 pit_01)'),
+            # judge r5 (round 6): the pit-lane cones from the frames. t1267000 (21:07) shows a row of small orange cones along
+            # the paddock-side (left) wall ahead of the tower, at the wall foot, about 10 m apart (abeam s ~4600-4660);
+            # t1312000 (21:52) / t1339000 two at the tower's foot, one yellow, one orange. Replaces round 4's three yellow
+            dict(latlon=[(35.4889724, -119.5455606), (35.489007, -119.5450089)], spacing=10.0, size=0.46,
+                 src='pit-lane video t1267000 (21:07): six small orange cones along the left (paddock-side) wall ahead of the tower, at the wall foot (0.4 m off it, at the edge of the lane paving, which now stops 0.3 m short of the wall; the pit-connectivity gate keeps the lane itself clear), ~10 m apart (judge r5 pit_01 / pit_02)'),
+            dict(latlon=[(35.4890292, -119.5446559), (35.4890294, -119.5446504)], spacing=4.0, size=0.46, color='#e8c21c',
+                 src='pit-lane video t1312000 / t1339000: the yellow cone at the tower foot, 0.4 m off the paddock-side wall'),
+            dict(latlon=[(35.4890306, -119.5446117), (35.4890308, -119.5446062)], spacing=4.0, size=0.46,
+                 src='pit-lane video t1312000 / t1339000: the orange cone beside it at the tower foot'),
             # judge r1 (orchestrator, 20 Oct 2026): cones the onboard shows that the package lacked; placed from the frames
             # at the sheet stations (temporary items, absent on the 2026 captures; along-track position +-15 m)
             dict(side='left', s=(752, 772), off=3.0, spacing=4.0, size=0.45,
                  src='onboard t030 / compare_sheets s0700, s0750 (fwd_02, side_02): a line of small orange cones on the pale apron left of the T2 approach (inventory cone_line row s 770 left, ahead_m 80); the "3-4 cones" of s0700 are this line seen from 60 m back'),
-            dict(side='left', s=(3196, 3204), off=2.0, spacing=4.0, size=0.7,
-                 src='compare_sheets s3200 (fwd_10): three orange cones at a mouth on the left'),
+            dict(side='left', s=(3198, 3202), off=2.0, spacing=4.0, size=0.7,
+                 src='compare_sheets s3200 (fwd_10): orange cones at a mouth on the left; judge r5 fwd_10 3200 L: onboard t108 shows two (was three)'),
             dict(side='right', s=(4046, 4054), off=3.0, spacing=4.0, size=0.7,
                  src='compare_sheets s4050 (fwd_13): cones on the right apron, 20 m before the t134 cone at s 4071'),
-            dict(side='right', s=(20, 24), off=1.5, spacing=4.0, size=0.7,
+            # judge r5 side_00 21 R: the pair is one yellow and one orange cone (per-cone colour: one declaration each)
+            dict(side='right', s=(20, 21), off=1.5, spacing=4.0, size=0.7, color='#e8c21c',
+                 src='onboard t006.jpg (yellow, orange; inventory s 20 right: two cones, yellow and orange); position along the track from the time map (+-10-30 m), 1.5 m beyond the edge from the frame (the cones stand on the dirt next to the edge or the kerb)'),
+            dict(side='right', s=(24, 25), off=1.5, spacing=4.0, size=0.7,
                  src='onboard t006.jpg (yellow, orange; inventory s 20 right: two cones, yellow and orange); position along the track from the time map (+-10-30 m), 1.5 m beyond the edge from the frame (the cones stand on the dirt next to the edge or the kerb)'),
             dict(side='right', s=(297, 298), off=1.5, spacing=4.0, size=0.7,
                  src='onboard t012.jpg (orange; inventory s 297 right: single orange cone); position along the track from the time map (+-10-30 m), 1.5 m beyond the edge from the frame (the cones stand on the dirt next to the edge or the kerb)'),
@@ -748,7 +765,9 @@ CONFIG = dict(
             dict(name='crossover (OSM 34351015)', ways=['34351015'], half_width=4.0, surface='asphalt',
                  mouth_cones=[dict(near=(35.487584, -119.5454944), src='onboard t068 (judge r2 runoff_02, s 1824 R): cones across the crossover mouth')],
                  src='OSM 34351015; c20_s0000 / c20_s0050: pale concrete road south from the front straight'),
-            dict(name='outer T2 loop (OSM 39224609)', ways=['39224609'], half_width=5.5, surface='asphalt', mouth_cones=[],
+            # surface 'apron' (judge r5 runoff_04 623 R): the unused loop is the pale weathered pavement of the onboard, the same
+            # look as the T2 runoff that overlaps it (one material: no tone band where the two zones meet)
+            dict(name='outer T2 loop (OSM 39224609)', ways=['39224609'], half_width=5.5, surface='apron', mouth_cones=[],
                  src='OSM 39224609; c20_s0700 / c20_s0750 / c20_s0800: the outer hairpin road round the T2 pond, asphalt with white kerb blocks'),
             dict(name='Dog Leg (OSM 39224483, west of the T5 turn)', ways=['39224483:469884764:393994724'], half_width=5.5, surface='asphalt', mouth_cones=[],
                  src='OSM 39224483; c20_s1650 .. c20_s2100: the straight asphalt road the course leaves at T5 and rejoins after Truck Stop'),
@@ -763,12 +782,21 @@ CONFIG = dict(
         # the T2 runoff (round 5): the owner marked it as legitimate pavement (green end lines, owner/t2_edges.json): "a car can
         # legally go all the way up to the outside kerb at T2, it's used as a run-off in the Lemons configuration"; a drivable
         # zone from the fitted left edge (his red line) out to the outer-loop block line between his two green lines
+        # judge r5 (round 6): NAIP marks on the fitted road painted over in the ortho (stage 3; outlines measured on the
+        # package ortho, stage3_evidence/smears_r6.jpg); only road pixels brighter than the road's median there change
+        ortho_paint_over=[
+            dict(latlon=[(35.491772, -119.5503996), (35.491772, -119.5503003), (35.4916552, -119.5503003), (35.4916552, -119.5503996)], src='fwd_09 2800-2850 L: a broad white mark on the road (NAIP 2022)'),
+            dict(latlon=[(35.491251, -119.5507086), (35.491251, -119.5506313), (35.4911791, -119.5506313), (35.4911791, -119.5507086)], src='the same stretch, the second mark at s ~2850'),
+            dict(latlon=[(35.4883332, -119.5396337), (35.4883332, -119.5395454), (35.4880727, -119.5395454), (35.4880727, -119.5396337)], src='T4 ~1100: the NAIP kerb blocks now inside the owner-traced right edge'),
+            dict(latlon=[(35.4875418, -119.539456), (35.4875418, -119.5394009), (35.4874789, -119.5394009), (35.4874789, -119.539456)], src='T4 exit ~1203: NAIP blocks on the road (first)'),
+            dict(latlon=[(35.4873891, -119.5394229), (35.4873891, -119.5393457), (35.4872813, -119.5393457), (35.4872813, -119.5394229)], src='T4 exit ~1203: NAIP blocks on the road (second)'),
+        ],
+        zones_meet_edge=True,    # judge r5: the crossover mouths (side_00 21 / 46 / 146 R, fwd_15 4600-4650 R) showed a dirt wedge between the zone's end and the edge
         paved_zones_over=True,   # texture pass (owner lap 1): the crossovers and the T2 runoff drew dirt blotches where the track's / a neighbour zone's shoulder lay over them (structure_stills/textures_r5)
         runoff_zones=[
-            # surface 'asphalt' (texture pass): the zone overlaps the outer T2 loop's own paving (OSM 39224609) at a
-            # slightly different height; in the photo's colour against the loop's asphalt the two drew a tan / grey
-            # blotch pattern (structure_stills/textures_r5/zone_T2_runoff_*); one material reads as one pavement
-            dict(name='T2 runoff', side='left', s=(605, 640), surface='asphalt', outer_latlon=[(35.4916435, -119.5418451), (35.4918004, -119.5416784), (35.4918179, -119.5416483), (35.49183, -119.5416142), (35.4918432, -119.5415824), (35.4918561, -119.5415506), (35.4918676, -119.5415186), (35.4918802, -119.541487), (35.491894, -119.5414555), (35.4919084, -119.5414234), (35.4919223, -119.5413903), (35.4919364, -119.5413563), (35.4919525, -119.5413211), (35.4919666, -119.5412851), (35.491981, -119.541248), (35.491996, -119.5412098), (35.4920109, -119.5411707), (35.4920239, -119.5411312), (35.4919238, -119.5410508)],
+            # surface 'apron' (judge r5): pale weathered asphalt with grain, the look of the aprons and of the outer T2 loop
+            # it overlaps (round 5's 'asphalt' cut a dark band across the pale pavement, runoff_04 623 R)
+            dict(name='T2 runoff', side='left', s=(605, 640), surface='apron', outer_latlon=[(35.4916435, -119.5418451), (35.4918004, -119.5416784), (35.4918179, -119.5416483), (35.49183, -119.5416142), (35.4918432, -119.5415824), (35.4918561, -119.5415506), (35.4918676, -119.5415186), (35.4918802, -119.541487), (35.491894, -119.5414555), (35.4919084, -119.5414234), (35.4919223, -119.5413903), (35.4919364, -119.5413563), (35.4919525, -119.5413211), (35.4919666, -119.5412851), (35.491981, -119.541248), (35.491996, -119.5412098), (35.4920109, -119.5411707), (35.4920239, -119.5411312), (35.4919238, -119.5410508)],
                  src="owner/t2_edges.json (the owner's green end lines, s 579-608 and 635-647) and the outer-loop block line traced on the owner's frame of the 2026 capture (white blocks 12-34 m left, s 608-642; c20_s0700 / c20_s0750)"),
         ],
         paved_areas=[
@@ -882,7 +910,8 @@ CONFIG = dict(
     # ---------------------------------------------------------------- pit lane, first-class (SKILL 3.5)
     pit_lane=dict(
         lane=dict(source='osm', match_track_tone=dict(k=0.5, paint=0.97),
-                  to_walls=dict(reach=4.0)),   # judge r3 pit_01 / pit_02: pavement from the lane to both K-rails (pit video t1249000-t1348000)
+                  to_walls=dict(reach=6.0),    # judge r3 pit_01 / pit_02: pavement from the lane to both K-rails (pit video t1249000-t1348000); reach 4 -> 6 m (judge r5: the paddock-side wall stands 4.1-5.3 m past the left edge at x -150..+9, a tan strip on pit_01 / pit_02)
+                  no_edge_line=['left']),      # judge r5: t1267000 / t1312000 show pavement to the paddock-side wall base and no white line on the left
         walls=[
             dict(side='right', a=(35.4887467, -119.5466176), b=(35.4890148, -119.5422713), h=0.81, material='jersey',
                  declared='pit wall, front straight', src='pit-lane video ucmXJu5QKFQ 20:40-22:28 (the K-rail on the right of the lane); inventory pit rows s 4497-4655 right'),
@@ -908,20 +937,36 @@ CONFIG = dict(
         # back behind an open deck with posts and a railing, divided glazing, an exterior stair on the track side, the
         # deep blue roof over it; the capture (stage3_evidence/tower_cap.png on c20_s0050 / c20_p0420) shows the roof at
         # ~25 x 20 m, the OSM footprint the walls
-        dict(type='block', name='timing tower', osm='765811057', h=3.2, storeys=1, parapet=0.0,
-             wall='#cdb892', band='#3a4756', roof='#9c9a94', bands=[0], band_frac=[0.35, 0.75], mullions_m=2.0, deck_rail=True,
+        # judge r5 (round 6): the round-5 open deck glazed both storeys of the whole 25 x 19 m roof outline; the pit video
+        # (t1312000 21:52, t1339000) shows a COMPACT tower, ~14 m along the lane: a solid tan lower storey with a door and
+        # a few windows, the upper storey set back behind a deck with a railing, windows between posts, a deep blue roof
+        # overhang on posts, the exterior stair at its west (near) end; west of it a low flat-roofed structure (the shade
+        # roof at the frame's left edge). Footprints measured on c20_p0420 / c20_s0050 (structure_stills/tower_cap_r6.png):
+        # the white roof outline 25 x 19 m at heading 3.83 deg, the tower its east 14 m, the low structure the west 11 m
+        # and a 5 m strip behind the tower
+        dict(type='block', name='timing tower', rect=dict(c=(35.4891199, -119.5444765), heading_deg=183.83, l=14.0, w=14.0),
+             h=3.2, storeys=1, parapet=0.0, wall='#cdb892', band='#3a3530', roof='#9c9a94', bands=[], deck_rail=True,
+             windows=dict(w=1.2, pitch=4.5, z0=1.0, z1=2.2), doors_at=[dict(face=-1, at=-3.0, w=1.0, h=2.1), dict(face=2, at=2.0, w=1.0, h=2.1)],
              balcony=dict(side='track', z=3.2, depth=0.8, color='#cdb892', stair=True),
-             src='OSM 765811057 (the walls); pit-lane video t1303000 / t1312000 / t1330000 and onboard t146-t152: tan ground storey with windows, the open deck on its roof with a railing, the exterior stair on the track side',
+             src='pit-lane video t1312000 / t1339000 (judge r5): solid tan lower storey with a door and a few windows, the deck on its roof with a railing, the exterior stair at the west end; footprint on c20_p0420 / c20_s0050',
              h_src='storey 3.2 m (HEIGHTS.md); the deck on its roof'),
-        dict(type='block', name='timing tower upper storey', rect=dict(c=(35.4891529, -119.5445723), heading_deg=3.83, l=9.0, w=6.0),   # judge r4: mostly an open deck (posts, railing) under the roof; a small glazed room
-             base=3.2, h=2.8, storeys=1, wall='#cdb892', band='#2e3a48', roof='#9c9a94', bands=[0], band_frac=[0.1, 0.9], mullions_m=1.2,
-             src='pit-lane video t1303000: the upper storey set back behind the deck, divided glazing (the window frames read as mullions)',
-             h_src='storey 2.8 m under the roof deck; the lidar top of the footprint 9.8 m includes the roof'),
-        dict(type='fuel', name='timing tower roof deck', rect=dict(c=(35.4891529, -119.5445723), heading_deg=3.83, l=25.2, w=20.0),
-             h=6.4, fascia=0.6, canopy='#2f5d9e', fascia_color='#2f5d9e',
-             posts=6, islands=0,
-             src='pit-lane video t1312000 / t1330000 and onboard t004 / t146-t152: the blue flat roof on posts over the tower deck, a broad overhang (1.5 m past the OSM footprint each side, judge r2)',
+        dict(type='block', name='timing tower upper storey', rect=dict(c=(35.4891471, -119.5444732), heading_deg=3.83, l=11.0, w=8.0),
+             base=3.2, h=2.8, storeys=1, wall='#cdb892', band='#2e3a48', roof='#9c9a94', bands=[],
+             windows=dict(w=1.6, pitch=2.2, z0=0.8, z1=2.3, faces=[-1, 2, -2]), doors_at=[dict(face=-1, at=4.2, w=0.9, h=2.1, color='#5a4636')],
+             src='pit-lane video t1312000 / t1339000: the upper storey set back behind the deck, windows between dark posts on the lane side and the ends (glazed upper storey only)',
+             h_src='storey 2.8 m under the roof; the lidar top of the footprint 9.8 m includes the roof'),
+        dict(type='fuel', name='timing tower roof', rect=dict(c=(35.4891244, -119.5444769), heading_deg=3.83, l=17.0, w=16.0),
+             h=6.4, fascia=0.6, canopy='#2f5d9e', fascia_color='#2f5d9e', posts=6, islands=0,
+             src='pit-lane video t1312000 / t1339000: the deep blue roof on posts over the tower, ~1.5 m overhang past its walls (the 14 m tower, not the 25 m outline)',
              h_src='lidar: the footprint top 9.8 m (scenery building_height_robust), roof 0.5 m'),
+        dict(type='fuel', name='timing tower west annex', rect=dict(c=(35.4891348, -119.544616), heading_deg=3.83, l=11.0, w=19.0),
+             h=2.6, fascia=0.3, canopy='#b5b2aa', fascia_color='#8d8a84', posts=6, islands=0,
+             src='the west 11 m of the 25 x 19 m roof outline on c20_p0420 / c20_s0050: the low flat shade roof on posts west of the tower (pit video t1312000, the dark shade roof at the frame edge); plain, low, open',
+             h_src='2.6 m: below the tower deck on t1312000 (HEIGHTS.md storeys)'),
+        dict(type='block', name='timing tower rear annex', rect=dict(c=(35.4892051, -119.5444835), heading_deg=3.83, l=14.0, w=5.0),
+             h=2.6, storeys=1, parapet=0.0, wall='#d8d2c4', band='#3a3530', roof='#b5b2aa', bands=[],
+             src='the north 5 m strip of the roof outline behind the tower (c20_p0420): plain, low',
+             h_src='2.6 m as the west annex'),
     ]),
     # ---------------------------------------------------------------- app (SKILL stage 6)
     app=dict(short='Buttonwillow', pace='cars/field/buttonwillow/pace.json'),
