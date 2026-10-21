@@ -76,3 +76,16 @@ build). Notes as given, before bed:
     do not meet cleanly. "Check texture mash-ups and transitions along the track edges, pit in, pit out. This seems to be a
     common problem." A systematic boundary pass: every place two surfaces meet, with a close still, and a draw order that
     holds everywhere (kerb over apron over shoulder; no green strip beside a kerb).
+14. **The awning is BEHIND the control tower, not on its side** (owner/owner_lap2_tower_awning_video.png: the CCW video
+    frame with his arrow on the shade roof to the left of the tower; owner/owner_lap2_tower_awning_map.png: Google Maps,
+    reference only, "Starter's Tower": the tower's square roof at the pit lane and a second square ribbed roof directly
+    behind it, on the paddock side toward Slow Ln). Round 6-7 put the shade-roof annex beside the tower along the lane
+    (the west 11 m of the 25 x 19 m capture roof); the capture roof is the tower (south, at the lane) plus the awning (north,
+    behind it).
+15. **"Make sure the infield layout and buildings are at least vaguely modeled"** (owner/owner_lap2_infield_layout_map.png,
+    Google Maps, reference only): the paddock grid (Cal Club Rd, Slow Ln, Ralf St, the paddock lanes), the Fast Lane Racing
+    School buildings and the big white garages at the north end, the small buildings in the paddock rows, the tree rows
+    between the paddock lanes, the kart track in the north-east corner, the Cal Club buildings. The sim dropped the paddock
+    structures for want of a 2026 source; the owner wants them present at a plain level.
+16. **The willows around the infield are big**, "especially those coming out by Star Mazda all the way through Sunset": the
+    tree rows along the infield's north and west edges (T9 to T11) are tall. The sim's trees there read small.
