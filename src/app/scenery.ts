@@ -37,7 +37,10 @@ export interface SceneryJson {
     *  two stripe colours alternate between base blocks (Buttonwillow's red / white / blue / white) */ colors?: KerbColors;
     /** raised concrete kerbs (physics: src/physics/track.ts KerbsJson); absent = flat paint */ profile?: { height: number; face: number; back: number } | null;
     strips: { side: number; s0: number; s1: number; kind: string; paint?: number; inset?: number ; /** verge: white line on the outer edge (default on) */ edge?: boolean;
-      /** per-strip paint [stripe, base] or [stripe, base, stripe 2] */ colors?: KerbColors; /** band centre beyond the edge, m (default: the inside convention) */ off?: number; src?: string }[] };
+      /** per-strip paint [stripe, base] or [stripe, base, stripe 2] */ colors?: KerbColors; /** band centre beyond the edge, m (default: the inside convention) */ off?: number; src?: string;
+      /** a kerb RUN (Buttonwillow, 21 Oct 2026): the band centre's offset per station from s0 (smoothed along the block line,
+       *  no steps), in place of the constant `off`; and the run's own raised profile over the track default */
+      offs?: number[]; profile?: { height: number; face: number; back: number } | null }[] };
   /** raised yellow sausage kerbs beyond the apex kerbs (physics: src/physics/track.ts) */
   sausages?: SausageJson | null;
   edge_lines?: { width: number; inset: number; runs: { side: number; s0: number; s1: number }[] };
@@ -46,7 +49,11 @@ export interface SceneryJson {
   /** Paved runoff (CONTRACTS §2b): same layout as pit_lane; rendered as asphalt, driven at full grip. */
   paved_zones?: { spacing_m: number; fractions: number[]; open?: boolean; parts: (PitLaneJson['parts'][number] & { gap_left: number[]; gap_right: number[]; track_s: number[]; turn?: string;
     /** closed roads (20 Oct 2026): 'asphalt' = the circuit's road material, 'concrete' = pale concrete; absent = the aerial photo's own colour (paved runoff) */
-    surface?: 'asphalt' | 'concrete' })[] } | null;
+    surface?: 'asphalt' | 'concrete';
+    /** texture pass (Buttonwillow, 21 Oct 2026): the zone's road surface draws over any overlapping ribbon (the track's
+     *  shoulder, another zone's shoulder; a higher `over` in front of a lower one: closed roads 2, runoff 1) and its own
+     *  shoulder draws behind them; absent = as before (Laguna, Sonoma) */
+    over?: number })[] } | null;
   /** painted lines off the track (closed roads' edge lines measured on the captures, 20 Oct 2026): white strips */
   paint_lines?: { width: number; side?: number; pts: V3[]; src?: string; /** round 7: line colour (default white) */ color?: string }[];
   /** painted ground logos as typed text (round 7b): centre, reading direction (rad, ENU), size, colours */
@@ -54,7 +61,7 @@ export interface SceneryJson {
   /** raised kerb strips off the lap (round 7b): centre line, width, height, stripe length, colours */
   kerb_lines?: { pts: V3[]; width: number; height: number; stripe_m: number; colors: string[]; src?: string }[];
   /** paved ground that is not driven (the paddock, 20 Oct 2026): plain paving over the terrain, no physics */
-  paved_areas?: { name: string; surface: 'asphalt' | 'concrete' | 'apron'; src: string; poly: V2[] }[];
+  paved_areas?: { name: string; surface: 'asphalt' | 'concrete' | 'apron'; src: string; poly: V2[]; /** a measured tone (#rrggbb) in place of the surface's */ color?: string }[];
   /** Cone line between the pit-exit lane and the track (CONTRACTS §2b); crossing it is a black-flag offence. */
   pit_exit_cones?: PitExitConesJson | null;
   /** cone lines across the mouths of paved but unused roads (closed variants of the circuit, 20 Oct 2026): drawn only */
@@ -895,7 +902,7 @@ export interface PaintSurface {
 }
 
 /** Point `out` m outside (negative = inside) the edge on `side` at station i, `dz` above the driven surface (ENU). */
-function edgeFrame(track: TrackJson, ground: ((x: number, y: number) => number) | undefined) {
+export function edgeFrame(track: TrackJson, ground: ((x: number, y: number) => number) | undefined) {
   const n = track.n;
   return (i: number, side: number, out: number, dz: number): V3 => {
     const ii = ((i % n) + n) % n;
@@ -1002,18 +1009,20 @@ export function kerbPaintTexture(stripeM: number, colors?: KerbColors): THREE.Te
 /** Grid strips (stations along x columns across) on the driven surface, with the ribbon's shading attributes:
  *  pgA = 1 (asphalt grade), pgE = 1 with pgUvSrc 1.2 m inside the track side of the strip (the aerial smears asphalt
  *  and dirt at the edge, like the ribbon's edge columns), and pgPaintUv into the paint atlas. One merged mesh. */
-class PaintStrips {
+export class PaintStrips {
   pos: number[] = []; uv: number[] = []; src: number[] = []; puv: number[] = []; idx: number[] = [];
   /** `spacing` = track.spacing_m: strip ranges s0..s1 are metres along the lap (station = s / spacing). */
   constructor(private at: ReturnType<typeof edgeFrame>, private surf: PaintSurface | undefined, private spacing = 1) {}
-  add(side: number, sm0: number, sm1: number, cols: { out: number; dz: number; v: number }[], srcOut: number, u0: number): void {
+  add(side: number, sm0: number, sm1: number, cols: { out: number; dz: number; v: number }[], srcOut: number, u0: number, shift?: number[]): void {
     const base = this.pos.length / 3, K = cols.length;
     const s0 = Math.round(sm0 / this.spacing), s1 = Math.round(sm1 / this.spacing);
     for (let i = s0; i <= s1; i++) {
-      const sp = this.at(i, side, srcOut, 0);
+      // a run's per-station offset (shift[i - s0], clamped to its ends) moves every column with it
+      const sh = shift && shift.length ? shift[Math.min(shift.length - 1, Math.max(0, i - s0))] : 0;
+      const sp = this.at(i, side, srcOut + sh, 0);
       const su = this.surf ? this.surf.uv(sp[0], sp[1]) : [0, 0];
       for (const c of cols) {
-        const [x, y, z] = this.at(i, side, c.out, c.dz);
+        const [x, y, z] = this.at(i, side, c.out + sh, c.dz);
         const p = v3(x, y, z);
         this.pos.push(p.x, p.y, p.z);
         const uv = this.surf ? this.surf.uv(x, y) : [0, 0];
@@ -1070,16 +1079,17 @@ function buildKerbs(track: TrackJson, k: SceneryJson['kerbs'], ground?: (x: numb
   const period = 2 * k.stripe_m;
   k.strips.forEach((s, j) => {
     // kerb band across the edge: inside it by default, or `off` m beyond it (centre) for a kerb measured outside the edge
-    const o0 = s.off !== undefined ? s.off - w / 2 : k.inside ? -w : -0.1, o1 = s.off !== undefined ? s.off + w / 2 : k.inside ? 0 : w;
+    const o0 = s.offs ? -w / 2 : s.off !== undefined ? s.off - w / 2 : k.inside ? -w : -0.1, o1 = s.offs ? w / 2 : s.off !== undefined ? s.off + w / 2 : k.inside ? 0 : w;
+    const prof = s.profile ?? k.profile;
     const u0 = (j * 3 % 4) * period;                        // vary the wear pattern between kerbs, keep red first
     // columns on the ribbon's own columns where possible (edge, 0.5 m inside) so the paint follows its surface; a raised
     // kerb (profile) gets columns every ~8 cm across its face and top so the paint follows the hump the physics carries,
     // plus its back face down to the ground
-    const across = k.profile
-      ? [...Array.from({ length: Math.max(3, Math.ceil(w / 0.08)) + 1 }, (_, q) => o0 + (w * q) / Math.max(3, Math.ceil(w / 0.08))), o1 + k.profile.back * 0.5, o1 + k.profile.back]
+    const across = prof
+      ? [...Array.from({ length: Math.max(3, Math.ceil(w / 0.08)) + 1 }, (_, q) => o0 + (w * q) / Math.max(3, Math.ceil(w / 0.08))), o1 + prof.back * 0.5, o1 + prof.back]
       : [o0, o1 - 0.5 > o0 + 0.1 ? o1 - 0.5 : (o0 + o1) / 2, o1];
     // kind 'verge': green verge paint only (no red/white kerb), e.g. the long painted aprons seen on satellite imagery
-    if (s.kind !== 'verge') st.add(s.side, s.s0, s.s1, across.map((o) => ({ out: o, dz: 0.008 + 0.002 * Math.min(1, (o - o0) / (o1 - o0)), v: PAINT_V('kerb', Math.min(1, (o - o0) / (o1 - o0))) })), o0 - 1.2, u0);
+    if (s.kind !== 'verge') st.add(s.side, s.s0, s.s1, across.map((o) => ({ out: o, dz: 0.008 + 0.002 * Math.min(1, (o - o0) / (o1 - o0)), v: PAINT_V('kerb', Math.min(1, (o - o0) / (o1 - o0))) })), o0 - 1.2, u0, s.offs);
     if (s.paint) {
       const P = s.paint;
       // verge strips may start `inset` m inside the edge (the v2 edge is wider than the painted road in places)
@@ -1581,10 +1591,28 @@ function buildPavedAreas(list: NonNullable<SceneryJson['paved_areas']>, ground: 
     return c;
   };
   const D = 1.5;
+  const sPos: number[] = [], sCol: number[] = [], sIdx: number[] = [];
+  const softArea = (a: NonNullable<SceneryJson['paved_areas']>[number], base: THREE.Color, edgeDist: (x: number, y: number) => number,
+    x0: number, x1: number, y0: number, y1: number) => {
+    const d = 0.5, nx = Math.ceil((x1 - x0) / d) + 1, ny = Math.ceil((y1 - y0) / d) + 1, b0 = sPos.length / 3;
+    const hash = (i: number, j: number) => { const h = Math.sin(i * 127.1 + j * 311.7) * 43758.5453; return h - Math.floor(h); };
+    for (let i = 0; i < nx; i++) for (let j = 0; j < ny; j++) {
+      const x = x0 + i * d, y = y0 + j * d, p = v3(x, y, ground(x, y) + 0.04);
+      // tone: two octaves of smooth value noise (2 m and 6 m), +-6 %
+      const k = 0.94 + 0.08 * hash(i >> 2, j >> 2) + 0.04 * hash(Math.floor(i / 12) + 91, Math.floor(j / 12) + 37);
+      const e = a.surface === 'apron' ? Math.min(1, edgeDist(x, y) / 2.5) : 1, al = a.surface === 'apron' ? e * e * (3 - 2 * e) : 1;
+      sPos.push(p.x, p.y, p.z); sCol.push(base.r * k, base.g * k, base.b * k, inPoly(x, y, a.poly) ? al : 0);
+    }
+    for (let i = 0; i < nx - 1; i++) for (let j = 0; j < ny - 1; j++) {
+      if (!inPoly(x0 + (i + 0.5) * d, y0 + (j + 0.5) * d, a.poly)) continue;
+      const q = b0 + i * ny + j;
+      sIdx.push(q, q + ny, q + 1, q + ny, q + ny + 1, q + 1);
+    }
+  };
   for (const a of list) {
     // 'apron' (Buttonwillow judge r3): worn pale asphalt with a soft edge: cells within 2.5 m of the outline thin out
     // towards it, so the paving frays into the ground instead of ending on a hard line
-    const base = a.surface === 'concrete' ? new THREE.Color(0x9d9b95) : a.surface === 'apron' ? new THREE.Color(0x6f6c66) : new THREE.Color(0x45474a);
+    const base = a.color ? new THREE.Color(a.color) : a.surface === 'concrete' ? new THREE.Color(0x9d9b95) : a.surface === 'apron' ? new THREE.Color(0x6f6c66) : new THREE.Color(0x45474a);
     const edgeDist = (x: number, y: number) => {
       let d = Infinity;
       for (let i = 0, j = a.poly.length - 1; i < a.poly.length; j = i++) {
@@ -1595,23 +1623,42 @@ function buildPavedAreas(list: NonNullable<SceneryJson['paved_areas']>, ground: 
       return d;
     };
     const xs = a.poly.map((p) => p[0]), ys = a.poly.map((p) => p[1]);
+    if (a.surface === 'apron' || a.color) {
+      // texture pass (Buttonwillow owner lap 1, 21 Oct 2026, "some screwed up textures"): the apron's 1.5 m cells with a
+      // tone step per cell and whole cells dropped near the outline drew as a flat staircase of grey squares, and the
+      // pit-entry strip as a checker; a 0.5 m grid of shared vertices instead, the tone varying per vertex (smooth), an
+      // apron fading out over 2.5 m of its outline by vertex alpha (no holes, no steps). Areas without a measured colour
+      // or the apron surface keep the cells below (Sonoma, Laguna unchanged).
+      softArea(a, base, edgeDist, Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys));
+      continue;
+    }
     for (let x = Math.min(...xs); x < Math.max(...xs); x += D) {
       for (let y = Math.min(...ys); y < Math.max(...ys); y += D) {
         if (!inPoly(x + D / 2, y + D / 2, a.poly)) continue;
-        if (a.surface === 'apron') { const e = edgeDist(x + D / 2, y + D / 2); if (e < 2.5 && rand() > e / 2.5) continue; }
         const c = [[x, y], [x + D, y], [x, y + D], [x + D, y + D]].map(([px, py]) => v3(px, py, ground(px, py) + 0.04));
         const k = 0.94 + 0.12 * rand();
         for (const i of [0, 1, 2, 1, 3, 2]) { pos.push(c[i].x, c[i].y, c[i].z); col.push(base.r * k, base.g * k, base.b * k); }
       }
     }
   }
-  if (!pos.length) return null;
+  const soft = sIdx.length ? (() => {
+    const g2 = new THREE.BufferGeometry();
+    g2.setAttribute('position', new THREE.Float32BufferAttribute(sPos, 3));
+    g2.setAttribute('color', new THREE.Float32BufferAttribute(sCol, 4));
+    g2.setIndex(sIdx);
+    g2.computeVertexNormals();
+    const m2 = new THREE.Mesh(g2, new THREE.MeshLambertMaterial({ vertexColors: true, transparent: true, depthWrite: false, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }));
+    m2.name = 'paved_areas_soft';
+    return m2;
+  })() : null;
+  if (!pos.length) return soft;
   const g = new THREE.BufferGeometry();
   g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
   g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
   g.computeVertexNormals();
   const m = new THREE.Mesh(g, new THREE.MeshLambertMaterial({ vertexColors: true, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }));
   m.name = 'paved_areas';
+  if (soft) { const grp = new THREE.Group(); grp.name = 'paved_areas_group'; grp.add(m, soft); return grp as unknown as THREE.Mesh; }
   return m;
 }
 

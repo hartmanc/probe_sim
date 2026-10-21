@@ -21,6 +21,8 @@ describe.each(Object.keys(TRACKS))('kerb traversal gate: %s', (id) => {
   // car-suspension question (70 mm droop, linear rebound damping), not the kerb's; left to the owner (kerb_rollover.md).
   // it.fails keeps the gate visible: it turns red the day the lifts are gone, so this line can become a plain it().
   const lifts = () => results.filter((r) => r.kerbLiftMs > 0).map((r) => `${r.label}: ${r.kerbLiftMs} ms`);
+  // Buttonwillow's raised run (the T9 apex kerb, its own profile, 21 Oct 2026) is in the gate: line -1 / 0 / +1 m
+  if (id === 'buttonwillow') it('the per-run raised kerb is traversed', () => expect(gateCases(pack).filter((c) => c.kind === 'kerb').length).toBe(3));
   if (id === 'sonoma') it.fails('no wheel lifted by a strip (known: fails on Sonoma)', () => expect(lifts()).toEqual([]));
   else it('no wheel lifted by a strip', () => expect(lifts()).toEqual([]));
 }, 120000);

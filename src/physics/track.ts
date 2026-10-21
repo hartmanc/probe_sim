@@ -119,7 +119,10 @@ export interface KerbProfileJson { height: number; face: number; back: number }
  *  `off`, a band `width` wide centred `off` m beyond the edge. */
 export interface KerbsJson {
   width: number; inside?: boolean; profile?: KerbProfileJson | null;
-  strips: { side: number; s0: number; s1: number; kind?: string; off?: number }[];
+  strips: { side: number; s0: number; s1: number; kind?: string; off?: number;
+    /** a run's own raised profile (Buttonwillow's T9 kerb, 21 Oct 2026) on top of the track default `profile`; absent: the
+     *  default (flat paint when the track has none) */
+    profile?: KerbProfileJson | null }[];
 }
 
 /** The kerb band's centre offset beyond the edge (m, + outside) of a strip. */
@@ -128,14 +131,16 @@ export function kerbBandCentre(k: KerbsJson, st: { off?: number }): number {
 }
 
 /** Each raised kerb strip's centreline (1 m points beyond/inside the edge) in the sausage strip layout. */
-function buildKerbStrips(track: TrackJson, k: KerbsJson): (SausageStrip & { side: number })[] {
-  const out: (SausageStrip & { side: number })[] = [];
+function buildKerbStrips(track: TrackJson, k: KerbsJson): (SausageStrip & { side: number; pr: KerbProfileJson })[] {
+  const out: (SausageStrip & { side: number; pr: KerbProfileJson })[] = [];
   for (const st of k.strips) {
     if (st.kind === 'verge' || st.kind === 'blocks') continue; // 'blocks': a line of low kerb blocks, drawn only (20 Oct 2026)
+    const pr = st.profile ?? k.profile;
+    if (!pr) continue;                                          // flat paint: no height
     const off = kerbBandCentre(k, st);
     // reuse the sausage layout: kerb_width + gap + width/2 = off
     const ss = buildSausageStrips(track, { width: k.width, height: 0, gap: 0, kerb_width: off - k.width / 2, strips: [st] });
-    for (const s2 of ss) { s2.minx -= 1; s2.maxx += 1; s2.miny -= 1; s2.maxy += 1; out.push({ ...s2, side: st.side }); }
+    for (const s2 of ss) { s2.minx -= 1; s2.maxx += 1; s2.miny -= 1; s2.maxy += 1; out.push({ ...s2, side: st.side, pr }); }
   }
   return out;
 }
@@ -144,10 +149,11 @@ const smooth01 = (t: number) => (t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t));
 const dsmooth01 = (t: number) => (t <= 0 || t >= 1 ? 0 : 6 * t * (1 - t));
 
 /** Kerb hump height and world gradient at (x, y) (h = 0 clear of every strip). o = outward distance from the band centre. */
-function kerbAt(strips: (SausageStrip & { side: number })[], k: KerbsJson, x: number, y: number, out: { h: number; gx: number; gy: number }): void {
+function kerbAt(strips: (SausageStrip & { side: number; pr: KerbProfileJson })[], k: KerbsJson, x: number, y: number, out: { h: number; gx: number; gy: number }): void {
   out.h = 0; out.gx = 0; out.gy = 0;
-  const pr = k.profile!, H = pr.height, hw = k.width / 2;
+  const hw = k.width / 2;
   for (const s of strips) {
+    const pr = s.pr, H = pr.height;
     if (x < s.minx || x > s.maxx || y < s.miny || y > s.maxy) continue;
     let bestD = Infinity, bk = -1, u = 0, acc = 0;
     for (let q = 0; q < s.len.length; q++) {
@@ -512,7 +518,8 @@ export function createTrackSurface(track: TrackJson, heightfield: Float32Array, 
     out.nx = -gxw * l; out.ny = -gyw * l; out.nz = l;
   };
   const strips = opts.sausages && opts.sausages.strips?.length ? buildSausageStrips(track, opts.sausages) : null;
-  const kerbStrips = opts.kerbs && opts.kerbs.profile && opts.kerbs.strips?.length ? buildKerbStrips(track, opts.kerbs) : null;
+  const kerbStrips = opts.kerbs && opts.kerbs.strips?.length && (opts.kerbs.profile || opts.kerbs.strips.some((s) => s.profile))
+    ? buildKerbStrips(track, opts.kerbs) : null;
   const bump = { h: 0, gx: 0, gy: 0 }, kb = { h: 0, gx: 0, gy: 0 };
 
   const base: Surface = {

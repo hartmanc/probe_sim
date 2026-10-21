@@ -93,6 +93,10 @@ def config_id(cfg, stage="geometry"):
     import hashlib
     if stage == "geometry":
         d = {k: v for k, v in cfg.items() if k not in ("ghosts", "scenery", "pit_lane", "app", "structures")}
+        if (cfg.get("spline") or {}).get("owner_edges"):
+            # the owner's traced edge files are stage-1 evidence: their content enters the hash (absent: hash unchanged)
+            d["_owner_files"] = {w["file"]: hashlib.sha256(open(os.path.join(HERE, "tracks", cfg["id"], w["file"]), "rb").read()).hexdigest()
+                                 for w in cfg["spline"]["owner_edges"]}
     else:
         d = {k: cfg.get(k) for k in STAGE_KEYS[stage]}
         if stage == "scenery" and cfg.get("structures"):   # the buildings round's section (absent: hash unchanged)
@@ -168,6 +172,27 @@ def run_ghosts(cfg, pkg, work, no_logger, write_on_fail=False, quiet=False):
 
 # ---------------------------------------------------------------- stage 1
 FIT_DUMP_DIR = '.'
+OWNER_REPORT = []
+_OWNER_CACHE = {}
+
+
+def owner_windows(cfg_raw, cfgw):
+    """spline.owner_edges on this centre's stations (cfgw remapped): per window and side {side, lo, hi, pts (world xy),
+    kerb_inside [(lo, hi)], kerb_w, file}; the JSON (compare/owner_edges.py) is read from tracks/<id>/"""
+    out = []
+    kw = float((cfg_raw["scenery"].get("kerb") or {}).get("width", 0.9))
+    for w in cfgw["spline"]["owner_edges"]:
+        path = os.path.join(HERE, "tracks", cfg_raw["id"], w["file"])
+        if path not in _OWNER_CACHE:
+            _OWNER_CACHE[path] = json.load(open(path))
+        d = _OWNER_CACHE[path]
+        import edges_spline as ES
+        chains = ES.owner_chains([[x, y] for side in ("left", "right") for x, y, *_ in d[side + "_enu_xys"]])
+        for side in ("left", "right"):
+            pts = np.array([[x, y] for x, y, *_ in d[side + "_enu_xys"]], float)
+            out.append({"side": side, "lo": int(w["lo"]), "hi": int(w["hi"]), "pts": pts, "chains": chains, "file": w["file"], "kerb_w": kw,
+                        "kerb_inside": [(lo, hi) for sd, lo, hi in w.get("kerb_inside", []) if sd == side]})
+    return out
 
 
 def pit_merge_inputs(cfg, trk, osm):
@@ -572,6 +597,8 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, pw, m
         for key_ in ("mask", "kerb_search"):
             if cfgw["spline"].get(key_):
                 sp_cfg[key_] = cfgw["spline"][key_]
+        if cfgw["spline"].get("owner_edges"):
+            sp_cfg["_owner"] = owner_windows(cfg_raw, cfgw)
         NL = B.left_normals(Ccur)
         pcfg = cfgw.get("prior", {})
         # prior adjustments (the prior is only the fit's weak fallback where there is no evidence)
@@ -673,6 +700,12 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, pw, m
             for key_ in ("mask", "kerb_search"):
                 if cfgw["spline"].get(key_):
                     sp_cfg[key_] = cfgw["spline"][key_]
+            if cfgw["spline"].get("kerb_search") or cfgw["spline"].get("owner_edges"):
+                # the features on the same remap as the search zones (round 5: with the T2 / T4 owner edges the
+                # stations moved ~9 m and the loop's earlier features no longer matched the zone ends at 1921-1939)
+                features = [tuple(f[:4]) for f in cfgw["features"] if f[3] != "keep"]
+            if cfgw["spline"].get("owner_edges"):
+                sp_cfg["_owner"] = owner_windows(cfg_raw, cfgw)
             hl3, hr3, frep = edges_spline.fit_periodic(Ccur, NL, hlp, hrp, tiles, features, sp_cfg, cc["mpp"],
                                                        {k: v for k, v in anchors.items() if v[0]})
             log(f"converged after {it + 1} centre refits")
@@ -682,6 +715,22 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, pw, m
     seg = np.linalg.norm(np.roll(Ccur, -1, 0) - Ccur, axis=1); L = float(seg.sum()); sp = L / n
     # -- gates of the fitted method (edge_gate.FITTED; a config may tighten them, never loosen)
     G = edge_gate.fitted_thresholds(cfg_raw["gate"])
+    # the owner's traced edges (spline.owner_edges): the fitted edge follows his reading in every window
+    if sp_cfg.get("_owner"):
+        NLf = B.left_normals(Ccur)
+        for w in owner_windows(cfg_raw, trackcfg.remap_stations(cfg_raw, n, float(np.linalg.norm(np.roll(Ccur, -1, 0) - Ccur, axis=1).sum()), C=Ccur)):
+            r = edges_spline.owner_readings(Ccur, NLf, w, n)
+            hw = hl3 if w["side"] == "left" else hr3
+            ks_ = [k for k in r if (k - w["lo"]) % n <= (w["hi"] - w["lo"]) % n]
+            if not ks_:
+                rep.check(f"owner edge {w['side']} {w['lo']}-{w['hi']}", False, "no owner reading in the window"); continue
+            res = np.array([hw[k] - r[k] for k in ks_])
+            a_ = np.abs(res); share = float(np.mean(a_ <= G["owner_tol"]))
+            OWNER_REPORT.append({"side": w["side"], "lo": w["lo"], "hi": w["hi"], "file": w["file"], "k": ks_, "owner": [r[k] for k in ks_], "fit": [float(hw[k]) for k in ks_]})
+            rep.check(f"owner edge {w['side']} {w['lo']}-{w['hi']}", share >= G["owner_within"] and a_.max() <= G["owner_max"],
+                      f"{len(ks_)} stations ({w['file']}): {share * 100:.1f} % within {G['owner_tol']} m of the owner's line (>= {G['owner_within'] * 100:.0f} %), "
+                      f"|residual| p50 {np.median(a_):.3f} / p90 {np.percentile(a_, 90):.3f} / max {a_.max():.3f} m (<= {G['owner_max']})")
+        json.dump(OWNER_REPORT, open(os.path.join(FIT_DUMP_DIR, "owner_edges_report.json"), "w"))
     for side in ("left", "right"):
         r = frep[side]
         # the declared junctions (config gate.exempt, pit-lane joins) are excluded from the waviness and kink metrics as

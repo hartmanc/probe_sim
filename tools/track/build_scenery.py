@@ -1092,9 +1092,13 @@ def kerbs_declared(trk):
     out = []
     kc_ = SC_CFG.get("kerb", {})
     pal = kc_.get("palettes", {})
+    max_step = float(kc_.get("run_max_step", 0.1))
     for k in SC_CFG["kerbs_declared"]:
         if kc_.get("require_colour_src") and k.get("kind", "kerb") == "kerb" and not k.get("colour_src"):
             raise SystemExit(f"kerbs_declared '{k.get('name')}': no colour_src (scenery.kerb.require_colour_src; SKILL 3.3)")
+        if k.get("line_latlon"):
+            out.append(kerb_run(trk, k, pal, max_step))
+            continue
         side = 1 if k["side"] == "left" else -1
         P = np.array([bl.enu(*k["a"]), bl.enu(*k["b"])], float)
         i, lat, _ = trk.project(P)
@@ -1120,6 +1124,9 @@ def kerbs_declared(trk):
         rec["src"] = (f"{k['name']}: " if k.get("name") else "") + k["src"] + (f"; colour: {k['colour_src']}" if k.get("colour_src") else "")
         out.append(rec)
     log(f"kerbs: {len(out)} declared strips (config scenery.kerbs_declared), {sum(k['s1'] - k['s0'] for k in out)} m; no rule kerbs")
+    for r in KERB_RUN_REPORT:
+        log(f"   kerb run {r['name']}: {r['side']} s {r['s0']}-{r['s1']}, offset {r['off_min']:+.2f}..{r['off_max']:+.2f} m, max step {r['max_step']:.3f} m"
+            + (f", raised {r['profile']}" if r.get("profile") else ""))
     far = [k for k in out if abs(k.get("off", 0.0)) > 1.2]
     if far:
         # report (judge r2, Buttonwillow): strips standing more than 1.2 m off the fitted edge, each with its evidence: a
@@ -1128,6 +1135,49 @@ def kerbs_declared(trk):
         for k in far:
             log(f"   {'left' if k['side'] > 0 else 'right'} s {k['s0']:.0f}-{k['s1']:.0f} off {k['off']:+.2f} m: {k['src'][:140]}")
     return out
+
+
+KERB_RUN_REPORT = []
+
+
+def kerb_run(trk, k, pal, max_step=0.1):
+    """One kerb RUN along its block line (config kerbs_declared entry with `line_latlon`, Buttonwillow 21 Oct 2026, the
+    owner's "weird, disjointed kerbs"): the band centre's measured world line projected on the track every build, its
+    offset from the edge per station robust-smoothed over ~10 m (median 9, Gaussian 4: the band reader alternates between
+    a block's inner and outer limit on some lines, right 3888-3930), published as one strip with
+    `offs` per station (no steps between pieces) and `off` (the median, for the physics' band); optional `profile` (a
+    raised run). The run's largest station-to-station offset change is reported and must stay <= max_step."""
+    from scipy.ndimage import gaussian_filter1d, median_filter
+    side = 1 if k["side"] == "left" else -1
+    P = _ll_line(k["line_latlon"], 1.0)
+    i_, lat_, _ = trk.project(P)
+    o_ = np.argsort(i_); i_, lat_ = np.asarray(i_)[o_], np.asarray(lat_)[o_]
+    if i_[-1] - i_[0] > trk.n / 2:            # wraps the start line
+        i_ = np.where(i_ < trk.n / 2, i_ + trk.n, i_); o_ = np.argsort(i_); i_, lat_ = i_[o_], lat_[o_]
+    s0, s1 = int(np.ceil(i_[0])), int(np.floor(i_[-1]))
+    st = np.arange(s0, s1 + 1)
+    lat = np.interp(st, i_, lat_)
+    hw = trk.hw(st % trk.n, side)
+    off = side * lat - hw
+    if len(off) >= 3:
+        mw = min(9, len(off) - (1 - len(off) % 2))   # odd, at most the run's length (a 6 m run: 5)
+        off = gaussian_filter1d(median_filter(off, mw, mode="nearest"), 4, mode="nearest")
+    step = float(np.abs(np.diff(off)).max()) if len(off) > 1 else 0.0
+    rec = {"side": side, "s0": int(s0), "s1": int(s1), "kind": k.get("kind", "kerb"), "off": rnd(float(np.median(off)), 2),
+           "offs": [rnd(float(v), 2) for v in off]}
+    c = k.get("colors")
+    if isinstance(c, str):
+        c = pal[c]
+    if c:
+        rec["colors"] = list(c)
+    if k.get("profile"):
+        rec["profile"] = dict(k["profile"])
+    rec["src"] = (f"{k['name']}: " if k.get("name") else "") + k["src"] + (f"; colour: {k['colour_src']}" if k.get("colour_src") else "")
+    KERB_RUN_REPORT.append({"name": k.get("name", ""), "side": k["side"], "s0": int(s0), "s1": int(s1), "max_step": round(step, 3),
+                            "off_min": rnd(float(off.min()), 2), "off_max": rnd(float(off.max()), 2), "profile": k.get("profile")})
+    if step > max_step:
+        raise SystemExit(f"kerb run '{k.get('name')}': offset step {step:.3f} m between stations (> {max_step} m)")
+    return rec
 
 
 def kerbs(trk):
@@ -1311,7 +1361,7 @@ def paved_areas(trk, osm):
             # an outline measured on the captures (Buttonwillow, 20 Oct 2026: the paved patch inside the T2 hairpin)
             ll_ = np.array(pa["latlon"], float); xx, yy = bl.enu(ll_[:, 0], ll_[:, 1]); xy = np.c_[xx, yy]
             out.append({"name": pa.get("name", "paved area"), "surface": pa["surface"], "src": pa["src"],
-                        "poly": [[rnd(x, 1), rnd(y, 1)] for x, y in xy]})
+                        "poly": [[rnd(x, 1), rnd(y, 1)] for x, y in xy], **({"color": pa["color"]} if pa.get("color") else {})})
             log(f"paved area {pa.get('name', '')}: {len(xy)} vertices, {pa['surface']} (measured outline)")
             continue
         w = next((w for w in osm.ways if w["id"] == str(pa["osm"])), None)
@@ -1799,21 +1849,8 @@ def paved_zones(trk, osm):
     W = np.concatenate(walls) if walls else np.zeros((0, 3))
     fr = trk.t["profile"]["fractions"]
     parts = []
-    for turn, before, after in PAVED_RUNOFF:
-        c = corners.get(turn)
-        if not c:
-            continue
-        side = -1 if c["dir"] == "left" else 1
-        st = np.arange(c["s"] - before, c["s"] + after + 1) % trk.n
-        wd = np.full(len(st), np.nan)
-        for k, sv in enumerate(st):
-            m = (np.abs(((W[:, 0] - sv + trk.n / 2) % trk.n) - trk.n / 2) < 4) & (np.sign(W[:, 1]) == side) & (W[:, 2] > 3) & (W[:, 2] < 40)
-            if m.any():
-                wd[k] = W[m, 2].min()
-        width = np.where(np.isfinite(wd), wd - 1.5, 12.0)
-        width = gaussian_filter1d(np.clip(ndi.median_filter(width, 9, mode="nearest"), 6, 25), 3, mode="nearest")
-        ramp = np.clip(np.minimum(np.arange(len(st)), np.arange(len(st))[::-1]) / 15.0, 0, 1)
-        width = np.maximum(width * (0.5 - 0.5 * np.cos(np.pi * ramp)), 0.4)
+
+    def make_part(turn, st, side, width):
         inner = trk.C[st, :2] + trk.N[st] * (side * trk.hw(st, side))[:, None]
         outer = inner + trk.N[st] * (side * width)[:, None]
         # smooth centreline with perpendicular edges: the track's station normals carry noise, and a wobbly zone
@@ -1855,8 +1892,39 @@ def paved_zones(trk, osm):
             "gap_right": [rnd(v, 2) for v in (gap_in if side > 0 else gap_out)],
             "track_s": [int(st[0]), int(st[-1])],
         })
+
+    for turn, before, after in PAVED_RUNOFF:
+        c = corners.get(turn)
+        if not c:
+            continue
+        side = -1 if c["dir"] == "left" else 1
+        st = np.arange(c["s"] - before, c["s"] + after + 1) % trk.n
+        wd = np.full(len(st), np.nan)
+        for k, sv in enumerate(st):
+            m = (np.abs(((W[:, 0] - sv + trk.n / 2) % trk.n) - trk.n / 2) < 4) & (np.sign(W[:, 1]) == side) & (W[:, 2] > 3) & (W[:, 2] < 40)
+            if m.any():
+                wd[k] = W[m, 2].min()
+        width = np.where(np.isfinite(wd), wd - 1.5, 12.0)
+        width = gaussian_filter1d(np.clip(ndi.median_filter(width, 9, mode="nearest"), 6, 25), 3, mode="nearest")
+        ramp = np.clip(np.minimum(np.arange(len(st)), np.arange(len(st))[::-1]) / 15.0, 0, 1)
+        width = np.maximum(width * (0.5 - 0.5 * np.cos(np.pi * ramp)), 0.4)
+        make_part(turn, st, side, width)
         log(f"paved runoff {turn}: s {st[0]}-{st[-1]}, {'left' if side > 0 else 'right'} side, width p50 {np.median(width):.1f} m "
             f"({np.isfinite(wd).mean():.0%} of stations bounded by an OSM wall)")
+    # drivable runoff zones bounded by measured lines (config scenery.runoff_zones, Buttonwillow 21 Oct 2026: the T2
+    # runoff the owner marked, from the track edge out to the outer-loop block line): {name, side, s: (s0, s1) track
+    # metres, outer_latlon, src}; the width per station is the outer line's distance beyond the edge, square ends
+    for z in SC_CFG.get("runoff_zones", []):
+        sd = 1 if z["side"] == "left" else -1
+        a_, b_ = (int(round(v / trk.sp)) for v in z["s"])
+        st = np.arange(a_, b_ + 1) % trk.n
+        O = _ll_line(z["outer_latlon"], 1.0)
+        i_, lat_, dout_ = trk.project(O)
+        wz = np.interp(np.arange(a_, b_ + 1), np.sort(i_), dout_[np.argsort(i_)])
+        make_part(z["name"], st, sd, np.clip(wz, 0.5, 60.0))
+        if z.get("surface"):
+            parts[-1]["surface"] = z["surface"]   # absent: the aerial photo's own colour (paved runoff)
+        log(f"runoff zone {z['name']}: s {a_}-{b_} {z['side']}, width {np.min(wz):.1f}-{np.max(wz):.1f} m ({z['src'][:60]})")
     return {"spacing_m": 1.0, "fractions": fr, "open": True, "parts": parts}
 
 
@@ -2393,6 +2461,13 @@ def main(cfg=None, out_dir=None):
         clip_parts_at_walls(cr_parts, bar)
     if cr_parts:
         zones["parts"] += cr_parts
+    if SC_CFG.get("paved_zones_over"):
+        # texture pass (Buttonwillow owner lap 1, 21 Oct 2026): every zone's road surface draws in front of the track's
+        # and the other zones' shoulders, its own shoulder behind them (the app's `over`); drawn only, no physics change
+        # (closed roads 2 in front of runoff zones 1: the T2 runoff reaches the outer-loop road's block line)
+        for p_ in zones["parts"]:
+            p_["over"] = 2 if p_.get("kind") == "closed_road" else 1
+        log(f"paved zones: {len(zones['parts'])} parts drawn over the neighbouring shoulders (scenery.paved_zones_over)")
     cone_lines += declared_cone_lines(trk)
     plines = closed_road_paint(trk, cr_parts) + declared_paint_lines(trk)
     pareas = paved_areas(trk, osm)

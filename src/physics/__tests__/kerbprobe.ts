@@ -62,7 +62,8 @@ export function gateCases(p: KerbPack, offsets: number[] = [-1, 0, 1], angles: n
   const add = (kind: 'kerb' | 'sausage', index: number) => {
     for (const a of angles) for (const o of a > 0 ? [0] : offsets) out.push({ kind, index, offset: o, angleDeg: a });
   };
-  if (k?.profile) k.strips.forEach((st: any, i: number) => { if (st.kind !== 'verge') add('kerb', i); });
+  // a run's own profile (Buttonwillow T9, 21 Oct 2026) is raised too; the track default as before (Sonoma unchanged)
+  if (k) k.strips.forEach((st: any, i: number) => { if (st.kind !== 'verge' && (k.profile || st.profile)) add('kerb', i); });
   if (sa) sa.strips.forEach((_: any, i: number) => add('sausage', i));
   return out;
 }

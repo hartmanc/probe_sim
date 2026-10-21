@@ -533,7 +533,7 @@ function forRibbonSamples(rs: RibbonSections, fn: (x: number, y: number, z: numb
  * sampled 1.2 m away from it (inward on the asphalt, outward on the shoulder), because at 0.6 m/px it smears asphalt
  * and dirt into each other; the first metre of shoulder is darkened like packed dirt/gravel.
  */
-function buildRibbon(track: TrackJson, tex: THREE.Texture, rs: RibbonSections, asphalt: GroundDetail, groundDetail: GroundDetail, name = 'track', offsetUnits = -2, runoff = false, concrete = false): THREE.Mesh {
+function buildRibbon(track: TrackJson, tex: THREE.Texture, rs: RibbonSections, asphalt: GroundDetail, groundDetail: GroundDetail, name = 'track', offsetUnits = -2, runoff = false, concrete = false, over = 0): THREE.Object3D {
   const n = rs.n, K = rs.K;
   const pos = new Float32Array(n * K * 3);
   const uv = new Float32Array(n * K * 2);
@@ -570,6 +570,25 @@ function buildRibbon(track: TrackJson, tex: THREE.Texture, rs: RibbonSections, a
   addDetailUV(geo, groundDetail.tile);
   const mat = groundMaterial({ map: tex, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: offsetUnits }, 0.9);
   photoGround(mat, { grain: 0.12, ground: groundDetail, asphalt, asphaltAttr: true, rubber: !!rs.D, runoff, concrete });
+  if (over) {
+    // a zone flagged `over` (texture pass, Buttonwillow 21 Oct 2026: the track's shoulder and a neighbouring zone's
+    // shoulder showed through the crossovers and the T2 runoff in dirt-coloured blotches): its road quads (A = 1 on
+    // both columns) draw with a strong offset in front, its shoulder quads behind every other ribbon
+    const road: number[] = [], shoulder: number[] = [];
+    for (let t = 0; t < idx.length; t += 3) {
+      const a = idx[t], b = idx[t + 1], c = idx[t + 2];
+      (rs.A[a] >= 1 && rs.A[b] >= 1 && rs.A[c] >= 1 ? road : shoulder).push(a, b, c);
+    }
+    const group = new THREE.Group(); group.name = name;
+    const matS = groundMaterial({ map: tex, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 4 }, 0.9);
+    photoGround(matS, { grain: 0.12, ground: groundDetail, asphalt, asphaltAttr: true, rubber: !!rs.D, runoff, concrete });
+    mat.polygonOffsetFactor = -2; mat.polygonOffsetUnits = -12 - 12 * over;
+    for (const [ix, m, nm] of [[road, mat, 'road'], [shoulder, matS, 'shoulder']] as const) {
+      const g2 = geo.clone(); g2.setIndex(ix as number[]);
+      const me = new THREE.Mesh(g2, m); me.receiveShadow = true; me.name = `${name}_${nm}`; group.add(me);
+    }
+    return group;
+  }
   const mesh = new THREE.Mesh(geo, mat);
   mesh.receiveShadow = true;
   mesh.name = name;
@@ -798,9 +817,11 @@ export function buildWorld(track: TrackJson, hf: Float32Array, ortho: THREE.Text
   // paved zones: a closed road with a declared surface takes the road material ('asphalt') or pale concrete; the rest
   // keep the aerial photo's colour (paved runoff, Laguna)
   const zoneSurf = (zones?.parts ?? []).filter((p) => p.n >= 2).map((p) => p.surface);
+  const zoneOver = (zones?.parts ?? []).filter((p) => p.n >= 2).map((p) => p.over ?? 0);
   secs.slice(1).forEach((sec, k) => {
     const surf = k >= nPit ? zoneSurf[k - nPit] : 'asphalt';
-    scene.add(buildRibbon(track, ortho, sec, asphaltDetail, groundDetail, k < nPit ? `pit_lane_${k}` : `paved_runoff_${k - nPit}`, -6, k >= nPit && !surf, surf === 'concrete'));
+    const over = k >= nPit ? zoneOver[k - nPit] : 0;
+    scene.add(buildRibbon(track, ortho, sec, asphaltDetail, groundDetail, k < nPit ? `pit_lane_${k}` : `paved_runoff_${k - nPit}`, -6, k >= nPit && !surf, surf === 'concrete', over));
   });
   if (pit) { const m = buildPitPaint(pit, ground); if (m) scene.add(m); }
   const seam = seamReport(secs, grid.surfaceZ);

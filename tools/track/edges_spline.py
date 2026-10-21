@@ -96,6 +96,12 @@ MASK = []
 # fitted as track by asphalt_end; the blocks 2-10 m inside that edge). The zone's feature kind reads its evidence over
 # the window: bands for kerb / kerb_band, the asphalt_end / warm_end detectors over the whole window for those kinds.
 KSEARCH = []
+# the owner's traced edges (spline.owner_edges, Buttonwillow 21 Oct 2026; build_track loads them into sp['_owner']):
+# [{side, lo, hi, pts (world xy, n x 2), kerb_inside: [(lo, hi)], kerb_w}] on the current centre's stations
+OWNER = []
+KERB_RAMP = 6     # stations over which a kerb_inside shift ramps in at each end
+OWNER_W = 40.0   # anchor weight per owner station (40 unit rows: his line outweighs the third-difference penalty;
+                 # as plain rows, 8 copies left 0.5-0.7 m bumps of 10-15 m unfollowed, run 38, and copies swamped the side's kind counts, run 39)
 # stations whose capture readings are not used, per side (spline.mask [(side, lo, hi, src)]): an object beside the edge
 # that the detector reads as the edge (Buttonwillow's T11-approach marshal mound, 20 Oct 2026); empty = every reading
 
@@ -409,7 +415,77 @@ def gather(C, NL, hl, hr, tiles, features, line_off, mpp, U_=None):
             else:
                 c = candidates(bl, line_off, kerb_at[i])
             if c: obs[side].append((i, ti, [hw[i] + e for e, _ in c], [kd for _, kd in c]))
+    for side, hw in (('left', hl), ('right', hr)):
+        for w in OWNER:
+            if w['side'] != side:
+                continue
+            r = owner_readings(C, NL, w, n)
+            if not r:
+                continue
+            # the owner's line replaces every other reading in its window on that side where he drew it (within 3
+            # stations of a reading of his); where he drew nothing (T4 left 1115-1137) the captures stand
+            inwin = {k % n for k in range(w['lo'], w['hi'] + (n if w['hi'] < w['lo'] else 0) + 1)}
+            drawn = {(k + d) % n for k in r for d in range(-3, 4)} & inwin
+            obs[side] = [o for o in obs[side] if o[0] not in drawn]
+            for k, lat in r.items():
+                if k in inwin:
+                    # owner_readings gives the half-width (+ outward); one reading per station (the gates' statistics
+                    # count it once); its weight in the fit comes from the anchors (fit_periodic, OWNER_W)
+                    obs[side].append((k, -1, [lat], ['owner']))
     return obs
+
+
+def owner_chains(pts, link=3.0, min_pts=5):
+    """the owner's points (both labels pooled) split into continuous lines: single linkage at `link` m (his two lines
+    stand >= 8 m apart, his points ~1 m apart along a line)"""
+    from scipy.spatial import cKDTree
+    P = np.asarray(pts, float)
+    par = list(range(len(P)))
+    def f(i):
+        while par[i] != i:
+            par[i] = par[par[i]]; i = par[i]
+        return i
+    for i, j in cKDTree(P).query_pairs(link):
+        par[f(i)] = f(j)
+    r = np.array([f(i) for i in range(len(P))])
+    # a line has many points; a lone pixel cluster (T4: one point) is no line
+    return [P[r == u] for u in np.unique(r) if (r == u).sum() >= min_pts]
+
+
+def owner_readings(C, NL, w, n):
+    """the owner's line as one half-width reading per station of the current centre: each world point projected on
+    the centre (nearest station, lateral along the normal), the median per station; where the owner drew on the track
+    side of a block line (kerb_inside), moved outward by the kerb's width so the kit's strip stays inside the edge"""
+    from scipy.spatial import cKDTree
+    sg = 1 if w['side'] == 'left' else -1
+    if w.get('chains'):
+        # the drawing's continuous lines (owner_chains), each given to the side of the CURRENT centre that holds most of
+        # it: the JSON's left / right labels came from the centre it was traced against, which at T4 1118-1137 sat
+        # beside the right line (round 5: the right line's 1118-1137 points carried the 'left' label)
+        T = cKDTree(C)
+        keep = []
+        for Q in w['chains']:
+            _, kq = T.query(Q)
+            if np.sign(np.median(((Q - C[kq]) * NL[kq]).sum(1))) == sg:
+                keep.append(Q)
+        P = np.vstack(keep) if keep else np.zeros((0, 2))
+    else:
+        P = np.asarray(w['pts'], float)
+    if not len(P):
+        return {}
+    _, k = cKDTree(C).query(P)
+    lat = sg * ((P - C[k]) * NL[k]).sum(1)
+    out = {}
+    for kk in np.unique(k):
+        v = float(np.median(lat[k == kk]))
+        for a, b in w.get('kerb_inside', []):
+            if (kk - a) % n <= (b - a) % n:
+                # the kerb's width, ramped in over KERB_RAMP stations at each end of the run (a 0.9 m step in a reading
+                # is no edge: the asphalt end runs on past the block ends; round 5, run 41)
+                e = min((kk - a) % n, (b - kk) % n) + 1
+                v += w.get('kerb_w', 0.9) * min(1.0, e / KERB_RAMP)
+        out[int(kk)] = v
+    return out
 
 
 def periodic_basis(x, K, n):
@@ -473,6 +549,7 @@ def fit_periodic(C, NL, hl, hr, tiles, features, sp, mpp, anchors=None, log=_log
     AEND.update(jump=10.0, sat_max=30.0, lo=-1.2, hi=2.0); AEND.update(sp.get('asphalt_end') or {})
     MASK[:] = list(sp.get('mask') or [])
     KSEARCH[:] = list(sp.get('kerb_search') or [])
+    OWNER[:] = list(sp.get('_owner') or [])
     for z in KSEARCH:
         if len({feature_at(features, z[0], k, n) for k in (z[1], z[2])}) != 1:
             raise SystemExit(f'spline.kerb_search {z[:4]}: its ends lie in different feature zones')
@@ -488,6 +565,15 @@ def fit_periodic(C, NL, hl, hr, tiles, features, sp, mpp, anchors=None, log=_log
         xa = ya = wa = None
         if anchors and anchors.get(side):
             xa, ya, wa = (np.asarray(v, float) for v in anchors[side])
+        # the owner's line (spline.owner_edges) as weighted anchors on this centre: it dominates its window
+        for w in OWNER:
+            if w['side'] == side:
+                rd = owner_readings(C, NL, w, n)
+                ks_ = [k for k in sorted(rd) if (k - w['lo']) % n <= (w['hi'] - w['lo']) % n]
+                if ks_:
+                    xa = np.r_[xa if xa is not None else [], np.array(ks_, float)]
+                    ya = np.r_[ya if ya is not None else [], np.array([rd[k] for k in ks_])]
+                    wa = np.r_[wa if wa is not None else [], np.full(len(ks_), OWNER_W)]
         wp = np.full(n, sp['prior'])
         xo_all = np.array([i for i, _, c, _ in O for _ in c], float); yo_all = np.array([y for _, _, c, _ in O for y in c])
         c0 = periodic_fit(xo_all, yo_all, K, n, sp['lam'] * sp['init_stiff'], 1.0, xs, hw, wp, xa, ya, wa)
@@ -498,6 +584,9 @@ def fit_periodic(C, NL, hl, hr, tiles, features, sp, mpp, anchors=None, log=_log
         for z in KSEARCH:
             if z[0] == side:
                 zreach[np.arange(z[1], z[2] + 1) % n] = max(abs(z[3][0]), abs(z[3][1]))
+        for w in OWNER:
+            if w['side'] == side:
+                zreach[np.arange(w['lo'], w['hi'] + (n if w['hi'] < w['lo'] else 0) + 1) % n] = 50.0
         for gate in (1.2, 1.0, 0.8, 0.6, 0.5, 0.5):
             xo, yo = [], []
             for i, _, c, _ in O:
@@ -528,7 +617,8 @@ def fit_periodic(C, NL, hl, hr, tiles, features, sp, mpp, anchors=None, log=_log
                          seam_kink=float(kink[0]), roll=roll, qq=qq, kinkv=kink, loose=loose, gaps=list(zip(gaps, glen)))
         # the associated readings' feature kinds and signed residuals (edge_gate.unpainted_side / bias_gate)
         rep[side]['assoc_x'] = xo.astype(int); rep[side]['assoc_res'] = yo - cur[xo.astype(int)]
-        rep[side]['assoc_kind'] = [feature_at(features, side, int(i), n) for i in xo.astype(int)]
+        own_k = {i for i, ti, c, kd in O if kd and kd[0] == 'owner'}
+        rep[side]['assoc_kind'] = ['owner' if int(i) in own_k else feature_at(features, side, int(i), n) for i in xo.astype(int)]
         from edge_gate import unpainted_side
         rep[side]['unpainted'] = unpainted_side(rep[side]['assoc_kind'])
         if sp.get('report_by_kind') or rep[side]['unpainted']:

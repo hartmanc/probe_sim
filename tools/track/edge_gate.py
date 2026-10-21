@@ -25,9 +25,14 @@ ROOT = os.path.abspath(os.path.join(HERE, '..', '..'))
 # waviness <= 0.04 m, peak <= 0.10 m, kink <= 0.5 deg/station; the share is of the associated observations, as the skill
 # measured it, and at least 85 % of capture rows must hold a band within 1.2 m of the curve), coverage and gaps (20 Oct 2026: at least 60 % of
 # stations with evidence, no stretch over 60 m without), and world-space continuity (the third difference of each edge
-# polyline under 2 cm: a 2 cm step shows there, a smooth curve does not). A config can tighten these, never loosen.
-FITTED = dict(within=0.90, assoc=0.85, covered=0.60, gap=60, wave_rms=0.04, wave_peak=0.10, kink=0.5, world_d3=0.02)
-_TIGHTER = dict(within=max, assoc=max, covered=max, gap=min, wave_rms=min, wave_peak=min, kink=min, world_d3=min)
+# polyline under 2 cm: a 2 cm step shows there, a smooth curve does not). Where the owner traced an edge (spline.owner_edges,
+# 21 Oct 2026) the fitted edge follows his line: within owner_tol (0.25 m) of his reading at >= owner_within (90 %) of the
+# window's stations and never more than owner_max (0.5 m) off (his stroke is ~0.3 m wide at 0.1 m/px). A config can
+# tighten these, never loosen.
+FITTED = dict(within=0.90, assoc=0.85, covered=0.60, gap=60, wave_rms=0.04, wave_peak=0.10, kink=0.5, world_d3=0.02,
+              owner_within=0.90, owner_tol=0.25, owner_max=0.5)
+_TIGHTER = dict(within=max, assoc=max, covered=max, gap=min, wave_rms=min, wave_peak=min, kink=min, world_d3=min,
+                owner_within=max, owner_tol=min, owner_max=min)
 
 
 def fitted_thresholds(g):
@@ -49,7 +54,8 @@ def fitted_thresholds(g):
 # never gated. A painted side keeps FITTED over all its readings, computed exactly as before. Longest gap, waviness, kink,
 # the edge gate, world continuity and profile are unchanged; a config can tighten, never loosen (gate.fit_covered also
 # applies when higher). The owner's named fallback for a circuit worse than this, "the owner draws the edges on the
-# captures", is a future evidence feature (an owner-traced edge), not implemented.
+# captures", is the owner-traced edge (spline.owner_edges): his red lines on a capwin frame, read by
+# compare/owner_edges.py into world points per station, dominate the fit in their window (the gate above holds it).
 UNPAINTED = dict(window=41, min_readings=10, bias=0.25, bias_windows=0.90, covered=0.50)
 
 

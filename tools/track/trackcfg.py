@@ -291,6 +291,9 @@ def remap_stations(cfg, n, length_m=None, C=None):
         sp['mask'] = [(a, st(lo), st(hi)) + tuple(rest) for a, lo, hi, *rest in sp['mask']]
     if sp.get('kerb_search'):
         sp['kerb_search'] = [(a, st(lo), st(hi)) + tuple(rest) for a, lo, hi, *rest in sp['kerb_search']]
+    for w in sp.get('owner_edges') or []:   # the owner's traced edge windows (Buttonwillow, 21 Oct 2026)
+        w['lo'], w['hi'] = st(w['lo']), st(w['hi'])
+        w['kerb_inside'] = [(a, st(lo), st(hi)) for a, lo, hi in w.get('kerb_inside', [])]
     if sp.get('runs'):
         sp['runs'] = [(st(r[0]), st(r[1])) + tuple(r[2:]) for r in sp['runs']]
     c['repave_fixes'] = [(st(a), st(b), st(c0), st(c1), why) for a, b, c0, c1, why in c['repave_fixes']]
