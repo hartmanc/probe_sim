@@ -241,3 +241,9 @@ Verdict: "a disappointing output that was not ready for me to review."
     footprint over the T6-facing wall; both walls are measured on the captures along the owner's lines and their
     extensions (the dark line NW toward T7; the T6-facing wall both ways) and placed with the tower's roof over the T6-facing
     one. The owner's May 2025 onboard at 1:14 (owner_52_T8_station_video.png) shows the station from the track.
+62. (21 Oct 2026, ~09:10, after the Buttonwillow kerb decision) Kerb hops at Sonoma, owner: "there are some kerbs that you try to
+    avoid (at least I do) at Sonoma because the car will hop up / get upset. T3 coming over the hill at Sonoma is an example,
+    IIRC: if you hit the inside kerb, the car can hop up a bit, and then it's hard to keep it on the track coming over the
+    other side." Context: the owner's rule for the kerb gate on every track: "Lifting a wheel isn't inherently a realism
+    issue. Driving over a kerb and rolling over is an issue." (a wheel lift is advisory, roll past 15 degrees / rollover
+    stays the hard check). To read off the kerb sweep's advisory lift numbers for the T3 inside run when it is re-run.
