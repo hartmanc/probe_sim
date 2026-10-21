@@ -21,3 +21,9 @@ build). Notes as given, before bed:
    (owner/owner_lap2_star_mazda_outside_kerb.png, local): the left exit run 3470-3518 L, drawn flat. Round 5 raised only the
    apex run (right 3400-3451, 6 cm from t114) and left the exit run flat because t116 showed 1-2 px. The owner has driven
    the real one: the exit kerb is a raised, aggressive kerb. Per-run profile for 3470-3518 L.
+2. **The Esses (T10 complex) kerbs too** (owner/owner_lap2_esses_kerbs.png, local: the left kerb at the first Esses bend
+   drawn flat): the runs 3691-3760 L, 3794-3810 R, 3845-3876 L, 3894-3935 R, 3972-4024 L are raised kerbs.
+3. **The rule: "I think all of the kerb heights should be checked. Most Buttonwillow kerbs are not just flat extensions of
+   the pavement."** Round 5's profile pass read 1-2 px on the distant frames and called every run but the T9 apex flat; that
+   method under-reads. A whole-lap per-run height pass with better evidence (the 2021 lidar cross-profiles, the close onboard
+   frames) and the owner's statement as the default where the evidence is ambiguous: raised unless a source shows flat.
