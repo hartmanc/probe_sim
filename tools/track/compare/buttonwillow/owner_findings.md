@@ -27,3 +27,8 @@ build). Notes as given, before bed:
    the pavement."** Round 5's profile pass read 1-2 px on the distant frames and called every run but the T9 apex flat; that
    method under-reads. A whole-lap per-run height pass with better evidence (the 2021 lidar cross-profiles, the close onboard
    frames) and the owner's statement as the default where the evidence is ambiguous: raised unless a source shows flat.
+4. **Texture fault on a raised kerb** (owner/owner_lap2_kerb_wedges.png, local): a curved red / white / blue kerb with tan
+   triangular wedges between the painted blocks along its outer edge, the ground showing through. The only raised run on
+   this build is the T9 apex (3400-3451 R, 6 cm), so this is the raised-kerb mesh on a curve: gaps between segments where
+   the per-station offset or the curvature changes, or the back-slope quads not sharing vertices. Every run raised in round
+   8 will show it unless the mesh is made watertight.
