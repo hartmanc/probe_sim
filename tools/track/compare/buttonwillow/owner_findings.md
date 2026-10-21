@@ -70,3 +70,9 @@ build). Notes as given, before bed:
     hairpin, behind the outer-loop pavement, with the paddock buildings behind it and cones on the pavement; the sim shows a
     wavy tan ridge there (the lidar / heightfield bump of the tyre wall) and no barrier. The CW barrier ledger has the T2
     outside as "none".
+13. **Texture weirdness at T2** (owner/owner_lap2_t2_kerb_apron_mashup.png, local): at the T2 apex on the right, the kerb
+    strip (584-604 R), a pale grey band, green patches and the pale apron (553-624 R) overlap in layers along the edge: the
+    apron draws over part of the kerb, green ground shows between the layers, and the track edge, the apron edge and the kerb
+    do not meet cleanly. "Check texture mash-ups and transitions along the track edges, pit in, pit out. This seems to be a
+    common problem." A systematic boundary pass: every place two surfaces meet, with a close still, and a draw order that
+    holds everywhere (kerb over apron over shoulder; no green strip beside a kerb).
