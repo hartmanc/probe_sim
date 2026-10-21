@@ -112,3 +112,7 @@ build). Notes as given, before bed:
     reference only: the drag strip is a straight strip of constant width). Like Sunset (note 6): the stretch from the
     drag-strip rejoin (the 2963-3025 R apron) to the T9 entry is a straight on both sides; the fit follows pale side
     pavement there.
+21. **The drag strip narrows toward Star Mazda in the sim** (owner/owner_lap2_drag_strip_narrowing_sim.png: the strip
+    pinching ahead with the left-side cone line beside it); it is one uniform width all the way down. Same stretch as note
+    20: the straight on both sides must hold one width from the rejoin to the T9 entry (the fit had 11.7 m at 3200 and
+    11.9 m at 3380 against 15-16.5 m at 3040-3100).
