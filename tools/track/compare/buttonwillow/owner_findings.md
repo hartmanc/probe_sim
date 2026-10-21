@@ -116,3 +116,8 @@ build). Notes as given, before bed:
     pinching ahead with the left-side cone line beside it); it is one uniform width all the way down. Same stretch as note
     20: the straight on both sides must hold one width from the rejoin to the T9 entry (the fit had 11.7 m at 3200 and
     11.9 m at 3380 against 15-16.5 m at 3040-3100).
+22. **The kerb on the outside of the Star Mazda entrance is WIDE; too narrow in the sim** (owner/owner_lap2_star_mazda_entry_kerb_sim.png:
+    the left kerb on the approach drawn as the 0.9 m strip; owner/owner_lap2_star_mazda_entry_kerb_video.png: the third
+    video, segment 12, 99 mph on the drag strip into T9: a wide raised kerb, long blocks, a sloped face, roughly 2-3 m wide).
+    "Again, check the kerb height, width, and angle." The kerb WIDTH is per run too, and it is directly measurable on the
+    captures (the painted band's width at 0.12 m/px); the kit draws every run at the track's one width (0.9 m).
