@@ -87,7 +87,9 @@ STAGE_KEYS = {"ghosts": ("ghosts",), "scenery": ("scenery", "gate", "pit_lane")}
 
 def config_id(cfg, stage="geometry"):
     """hash of the config keys a stage reads (geometry: everything but the ghosts, scenery, pit_lane and app blocks), so
-    a scenery edit does not invalidate a passed geometry stage (pit_lane, 21 Oct 2026, is read by stage 3 only)"""
+    a scenery edit does not invalidate a passed geometry stage (pit_lane, 21 Oct 2026, is read by stage 3 only). Stage 1
+    reads none of the left-out keys: since 20 Oct 2026 its pit merge takes centre.pit_exit, not the scenery builder's
+    barriers / pit-exit cones (test_pit_merge.py)"""
     import hashlib
     if stage == "geometry":
         d = {k: v for k, v in cfg.items() if k not in ("ghosts", "scenery", "pit_lane", "app", "structures")}
@@ -166,6 +168,24 @@ def run_ghosts(cfg, pkg, work, no_logger, write_on_fail=False, quiet=False):
 
 # ---------------------------------------------------------------- stage 1
 FIT_DUMP_DIR = '.'
+
+
+def pit_merge_inputs(cfg, trk, osm):
+    """The pit merge's inputs on the provisional track `trk` from stage-1 keys and evidence only (20 Oct 2026): the
+    pit-lane parts from the OSM pit_lane_way and the NAIP (build_scenery.pit_lane), and the pit-exit blend line from
+    config centre.pit_exit (build_scenery.pit_exit_line: its measured line, or the detected one after its measured
+    wall end). No scenery or pit_lane key is read, so config_id('geometry') covers them (test_pit_merge.py). Under
+    `reproduce`, pit_exit_wall_end_latlon replaces the wall end (Laguna's accepted build took it from the stage-3
+    pit-wall rule). Returns (pit, line)."""
+    import build_scenery as BS
+    pe = dict(cfg["centre"].get("pit_exit") or {})
+    if REPRO.get("pit_exit_wall_end_latlon") is not None:
+        pe["wall_end_latlon"] = REPRO["pit_exit_wall_end_latlon"]
+        log(f"pit-exit wall end from config reproduce: {pe['wall_end_latlon']}")
+    pit = BS.pit_lane(trk, osm)
+    return pit, BS.pit_exit_line(trk, pit, pe)
+
+
 def stage_geometry(cfg, out, no_logger):
     t0 = time.time()
     work = os.path.join(out, "work")
@@ -212,7 +232,7 @@ def stage_geometry(cfg, out, no_logger):
     log("NAIP edges:", {k: round(v, 3) for k, v in st.items() if isinstance(v, float)})
     # lidar ground returns for the profile: fetched here (stage 1), never left to whether the scenery stage ran before
     import build_scenery as BS
-    BS.configure(cfg, work)
+    BS.configure_geometry(cfg, work)   # stage-1 keys only: nothing here reads the scenery or pit_lane sections
     if not cfg.get("lidar_ept"):
         raise SystemExit("config lidar_ept missing: the profile needs the survey's point cloud")
     BS.lidar_points(box)
@@ -272,19 +292,12 @@ def stage_geometry(cfg, out, no_logger):
         line = np.interp(np.arange(n), np.arange(len(g["line"]["offset_m"])) * g["s_grid_m"], g["line"]["offset_m"], period=n)
         dbg = np.load(os.path.join(v2dir, "ghost_line_debug.npz"))
         e_gps = np.interp(np.arange(n), dbg["grid"], dbg["e_gps"], period=n)
-    BS.configure(cfg, v2dir)
+    BS.configure_geometry(cfg, v2dir)
     trk = BS.Track(T_v2, hf_v2)
     osm = BS.Osm()
-    pit = BS.pit_lane(trk, osm)
-    bar, _ = BS.barriers(trk, osm)
-    cones = BS.pit_exit_cones(trk, pit, bar)
-    if cen.get("pit_merge_line"):
-        # config centre.pit_merge_line (Buttonwillow, 20 Oct 2026): the blend boundary through a pit-lane merge measured
-        # on the captures, where no painted line or cone line exists, in place of the pit part's own edge (a stage-1 key)
-        P_ = BS._ll_line(cen["pit_merge_line"]["latlon"], 2.0)
-        i_, _, _ = trk.project(P_[[0, -1]])
-        cones = {"s0": int(i_[0]), "s1": int(i_[1]), "pts": BS.with_z(trk, P_)}
-        log(f"pit merge line (config centre.pit_merge_line): stations {cones['s0']}-{cones['s1']}; {cen['pit_merge_line']['src']}")
+    pit, cones = pit_merge_inputs(cfg, trk, osm)
+    # the pit-wall polyline of a straight fitted to the pit wall (fit 'pitwall'): the OSM rule wall, no scenery key
+    pw = BS.pit_wall_line(trk, osm) if any(s_.get("fit") == "pitwall" for s_ in cfg["straights"]) else None
     shadow = BS.bridge_stations(trk, osm) + list(cen.get("extra_shadow_stations", []))
     # -- painted midpoint and the centre refit
     caps = CAP.capture_list(cfg, cfg["centre_captures"])
@@ -400,7 +413,6 @@ def stage_geometry(cfg, out, no_logger):
             else:
                 hr2 = edges_spline.apply_shape(hr2, shp["knots"], shp.get("blend", 2), n)
             log(f"shape {side} {shp['knots'][0][0]}..{shp['knots'][-1][0]}: {shp.get('why', '')}")
-        pw = np.array([q[:2] for b in bar if b["kind"] == "pitwall" for q in b["pts"]]) if bar else None
         if cfg["straights"]:
             # the declared straights are known before the fit: put them in the prior too, so a 'keep' feature over a
             # straight holds the line, not the paint step's reading (re-applied after the fit)
@@ -432,7 +444,7 @@ def stage_geometry(cfg, out, no_logger):
         prof = V2.reprofile(prof0, hl1, hr1, hl3, hr3)
     else:
         C1, hl1, hr1, hl3, hr3, sp, L1, fit, corners, prof0, resurface, prof, spline_rep, str_rep, cfg = fitted_method(
-            cfg_raw, cfg, C, hl, hr, C1, hl1, hr1, fit, trk, osm, bar, merge, pfa, pfb, cen, cc, dem_s, z0, rep)
+            cfg_raw, cfg, C, hl, hr, C1, hl1, hr1, fit, trk, osm, pw, merge, pfa, pfb, cen, cc, dem_s, z0, rep)
         n = len(C1)
     # -- heightfield with the repave change carried in
     if REPRO.get("heightfield_centre") == "first":
@@ -540,7 +552,7 @@ def stage_geometry(cfg, out, no_logger):
     return 0
 
 
-def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, bar, merge, pfa, pfb, cen, cc, dem_s, z0, rep):
+def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, pw, merge, pfa, pfb, cen, cc, dem_s, z0, rep):
     """The fitted method (20 Oct 2026, owner's rule: edges FITTED, never traced or patched): one periodic robust spline
     per side over the whole lap with the declared straights and measured shapes as constraints INSIDE the fit; config
     stations mapped onto each centre by world position; without logger laps the centre is refitted to the midpoint of
@@ -552,7 +564,6 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, bar, 
     n = len(C1)
     nl0 = B.left_normals(C0)
     bridges_world = [C0[k % len(C0)] for k in BS.bridge_stations(trk, osm)]   # OSM crossings, first-centre stations
-    pw = np.array([q[:2] for b in bar if b["kind"] == "pitwall" for q in b["pts"]]) if bar else None
     Ccur, hlp, hrp = C1, hl1.copy(), hr1.copy()
     fit_last = fit
     for it in range(40):

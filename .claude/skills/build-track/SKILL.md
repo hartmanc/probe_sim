@@ -103,7 +103,8 @@ step that fills each one:
 `reproduce` exists only to rebuild Laguna's accepted package byte for byte where its build had artefacts. A new circuit
 never has one. Every new builder rule is config-gated: Laguna's and Sonoma's packages must come out of the pipeline
 byte-identical after any builder change (rebuild stage 3 into `tools/track/out/<id>_*` and compare, and
-`git diff main -- public/tracks/laguna_seca` empty).
+`git diff main -- public/tracks/laguna_seca` empty); stage 1 by the two reproductions of Acceptance 6 (Laguna's
+track.json against its pipeline reference hash, not the hand-finished accepted file).
 
 ## Stage 0: sources and the eye-level inventory (10 steps; REQUIRED before stage 3)
 
@@ -239,15 +240,16 @@ Modules: `geo.py` (frames, OSM, DEM, NAIP), `centre.py` (first centre, NAIP edge
 Iterating landmarks on wrong geometry wasted five rounds at Laguna, so stage 1 is accepted, by the gate and the hood
 sheet, before stage 3 starts.
 
-**Stage 1 reads three stage-3 keys, and its record does not hash them.** The centre refit's pit merge takes the pit-lane
-parts, the barriers and the pit-exit cone line from `build_scenery` (config `pit_lane`, `scenery.declared_walls`,
-`scenery.pit_exit_cones` and what those readers use), while `config_id('geometry')` leaves `scenery` and `pit_lane`
-out. A later scenery edit can therefore move the centre without invalidating a passed stage-1 record. Measured on
-20 Oct 2026: Sonoma's accepted geometry (built 19 Oct 18:05) rebuilt with its full config, the same geometry hash,
-the same captures and lidar, gives 4101.9 m against the accepted 4098.8 m, with the left observation gate at 89.5 %
-and the right waviness gate failing at 2752-2814; the re-derivation's reduced config gives 4099.1 m. Until the hash
-covers what stage 1 reads, or the pit merge takes stage-1 keys only, treat those three keys as frozen once stage 1 has
-passed: a change to them re-runs stage 1, and the re-run must pass before stage 3 runs on it.
+**Stage 1 reads no stage-3 key.** The centre refit's pit merge takes the pit-lane parts from OSM (`pit_lane_way`) and
+the NAIP, and the pit-exit blend line from `centre.pit_exit` = {`line_latlon` (the blend line measured on the captures)
+| `wall_end_latlon` (the end of the pit wall at the track edge; the builder detects the line from 2 stations past it),
+`src`} (`build_track.pit_merge_inputs`, `build_scenery.pit_exit_line`); a straight with fit `pitwall` uses the OSM rule
+wall (`pit_wall_line`). `build_scenery.configure_geometry` leaves the scenery and pit_lane sections empty in stage 1,
+so `config_id('geometry')` covers everything stage 1 reads (`test_pit_merge.py`). Until 20 Oct 2026 the merge came
+from `barriers()` / `pit_exit_cones()`, so Sonoma's rounds 5-7e scenery edits moved a passed centre (4101.9 m against
+the accepted 4098.8 m, two fit gates failing); Sonoma's `centre.pit_exit` now holds the wall end its accepted build
+used, and the accepted track.json rebuilds byte for byte. Stage 3's cones take `line_latlon` when
+`scenery.pit_exit_cones` has no line of its own; a changed `centre.pit_exit` is a stage-1 change and needs a new pass.
 
 **1.1 Loop.** Stitch the OSM raceway ways by shared end nodes into one loop, turn it to the driving direction, and roll
 it so station 0 is the start/finish. Use 1 m stations. The pit lane is a separate way. With a logger, check OSM against
@@ -998,8 +1000,17 @@ A new track needs:
    in `compare/<id>/judge_r<n>.md`.
 5. The manifest is current: object and row tables generated, every scan listed with its captures, movable barriers
    flagged.
-6. Laguna's and every other published package are byte-identical through the pipeline (no builder change leaks), and
-   `npm run build` plus the full `npx vitest run` pass.
+6. No builder change leaks into a published package, and `npm run build` plus the full `npx vitest run` pass. The
+   orchestrator runs the two stage-1 reproductions before every merge to main (one at a time, about 5 minutes each):
+   - Sonoma: `build_track.py --track sonoma --stage geometry --out tools/track/out/sonoma_repro`: exits 0, and
+     track.json (9d7d52be96485e08) and heightfield.bin are byte-identical to `public/tracks/sonoma` (`cmp`).
+   - Laguna: `build_track.py --track laguna_seca --stage geometry --out tools/track/out/laguna_repro --write-on-fail`:
+     heightfield.bin byte-identical to `public/tracks/laguna_seca`, and track.json sha256 d4e8634710813961, the
+     pipeline's own Laguna reference. Laguna's accepted track.json (ea1afb899d5dc66b) never came out of the pipeline:
+     it carries the 18 Oct hand steps the config cannot express (Corkscrew, T11 and T1 retraces, the front-straight
+     blend into the pit-out at 16-45; `tools/track/out/laguna_dryrun/README.md`), so the run fails `edge gate left`
+     with 0.105 m at station 46 (the accepted edge 0.087 m), as it has from the first dry run (19 Oct 08:49) through
+     cb1335b, 2bad53f and pit-merge (checked 20 Oct 2026). A different hash or gate line is a leak.
 7. **The step ledger is complete.** The manifest carries a table of every numbered step of this skill (0.1 to 4.5)
    with its record (the file, table or commit that shows it was done) or `n/a: <why>`. The orchestrator reads the
    ledger before the comparison or the owner's lap; a step with no record was not done. The Sonoma re-derivation of

@@ -85,7 +85,18 @@ CONFIG = dict(
     # station numbers in this config refer to the frozen centre in stations_ref.json (the 19 Oct build) and are mapped
     # onto every build by world position
     stations_ref=(4090, 4101.037),
-    centre=dict(extra_shadow_stations=[4084], width_cap=21.0),   # the shared drag-strip start pavement is ~19-20 m
+    centre=dict(extra_shadow_stations=[4084], width_cap=21.0,   # the shared drag-strip start pavement is ~19-20 m
+                # the pit merge's inputs (stage 1 reads no scenery key, 20 Oct 2026). The accepted geometry (19 Oct 18:05)
+                # took its wall end from the round-3 declared pit-side wall: it stands within 6 m of the left edge to
+                # first-centre station 209, so the pit-exit line ran along the left edge from s 211 to the merge (s 240).
+                # This is that point. Rounds 5-7e re-measured the T1 pit side (the nose at s ~103, a short pit-side wall
+                # s 134-158 on c20_s1815 / c20_s1870, the blend line s 158-222: scenery.pit_exit_cones); moving the
+                # stage-1 inputs to them is a geometry change (a new stage-1 pass), not made here
+                pit_exit=dict(wall_end_latlon=(38.162006860, -122.456878843),
+                              src='round-3 declared wall "pit straight and pit-out lane, pit-lane side" (c20_s1595..s1870 '
+                                  'bright band 2.0 m beyond the left edge; its T1 run measured by hand on c20_s1925, the '
+                                  'white wall line): its last point within 6 m of the left edge, first-centre station 209 '
+                                  '(the accepted 19 Oct 18:05 build, config 9d6f3c1)')),
     loop_check=dict(n_min=3900, n_max=4250, official_m=4088, elev_min=20, elev_max=80),
     captures=dict(
         z20_dir=None,

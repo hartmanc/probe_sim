@@ -98,7 +98,7 @@ These are the orchestrator's proposal. The owner may change them.
 
 | measure | bar |
 |---|---|
-| geometry | heightfield.bin and ghosts.json byte-identical; track.json rebuilt with every stage-1 gate passing and the lap length within 0.1 % of the accepted. Byte identity of track.json is not reachable while stage 1 reads stage-3 keys through the pit merge (SKILL stage 1): on 20 Oct 2026 the accepted geometry itself, rebuilt with its full config and the same geometry hash, came out 3 m longer and failed two fit gates |
+| geometry | track.json, heightfield.bin and ghosts.json byte-identical to the accepted package, rebuilt through the builder with every stage-1 gate passing. Reachable again since 20 Oct 2026 (branch pit-merge): stage 1 takes the pit merge from `centre.pit_exit`, a stage-1 key the setup copies with the other stage 1-2 keys, so a clean config rebuilds the accepted centre; before that fix the merge read stage-3 keys and the first run's track.json came out 0.3 m longer |
 | gates | every stage-3 gate passes in the candidate; coverage has 0 undispositioned MISSING rows |
 | walls, tyre walls, fences, kerbs (compare_packages) | matched >= 90 % of the reference objects of each kind |
 | stations, stands, buildings, bridge, boards, cone lines, blocks, tyre stacks, masts, ground signs | matched >= 75 % per kind |
