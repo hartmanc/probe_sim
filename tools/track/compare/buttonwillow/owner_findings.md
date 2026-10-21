@@ -89,3 +89,15 @@ build). Notes as given, before bed:
     structures for want of a 2026 source; the owner wants them present at a plain level.
 16. **The willows around the infield are big**, "especially those coming out by Star Mazda all the way through Sunset": the
     tree rows along the infield's north and west edges (T9 to T11) are tall. The sim's trees there read small.
+17. **Off Ramp (T2): a concrete patch close to the inside kerb** (owner/owner_lap2_t2_concrete_patch_map.png, Google Maps,
+    his arrow at the hairpin's exit on the inside beside the block line; owner/owner_lap2_t2_concrete_patch_video.png: a
+    THIRD onboard source, youtube.com/watch?v=XIxXIvsDz3s at 7:55 (&t=475), CW, Catalyst overlay, "Full Throttle Driving
+    Academy": a pale smooth concrete slab between the inside kerb and the dark asphalt at the exit). The round-5 'apron
+    right s 553-624' covers that ground as weathered asphalt; the real surface is a concrete patch with its own outline.
+18. **The racing surface is cracked, with dark sealant over the cracks**, visible on the satellite (owner/owner_lap2_crack_seal_map.png:
+    the Off Ramp / A Section pavement with the crack-seal network) and in the onboard (owner/owner_lap2_crack_seal_video.png,
+    the same video, his arrows on the seal lines across the road). "Can the agent model this?" Yes: measured, not textured.
+    The crack-seal lines are dark linear features on the 2026 clean captures within the road polygon; detect them (a dark
+    ridge filter on the road area, vectorised to polylines with a width), publish them as a `surface_marks` layer, and draw
+    them in the kit as dark semi-transparent lines on the road, the way paint is drawn. The captures stay reference only:
+    the lines are measurements, like the kerbs and the edges.
