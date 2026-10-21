@@ -101,3 +101,9 @@ build). Notes as given, before bed:
     ridge filter on the road area, vectorised to polylines with a width), publish them as a `surface_marks` layer, and draw
     them in the kit as dark semi-transparent lines on the road, the way paint is drawn. The captures stay reference only:
     the lines are measurements, like the kerbs and the edges.
+19. **The kerb at the top of the hill in Cotton Corners is more aggressive than in the sim** (owner/owner_lap2_cotton_hilltop_kerb_sim.png:
+    the right-hand red / white kerb at the crest, flat; owner/owner_lap2_cotton_hilltop_kerb_video.png: the third video
+    XIxXIvsDz3s, lap time 0:32, segment 5, around 8:07: a raised concrete kerb on the right with a pale face and worn blue /
+    white paint, white K-rail blocks and the "Cal Club" board beyond it). The run 1020-1049 R. "In general, all the kerbs
+    should be checked" (note 3 again). The same frame shows white K-rail blocks on the right at the crest that the sim does
+    not have, and the sim shows a dark diagonal stripe across the road on the approach (the round-7 paint-over at ~1100?).
