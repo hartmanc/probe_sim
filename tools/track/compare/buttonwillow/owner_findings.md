@@ -44,3 +44,10 @@ build). Notes as given, before bed:
    bulging outward ahead, arrowed, from ~s 4200 looking toward T11). The fit's width report had 4135-4161 at 17.2 m (the
    Zorros mouth fillet) and 4241-4258 at 16.9 m; the right edge wanders out at both. Stage 1: declare Sunset a straight on
    both sides (config `straights`, as the front straight 4525..180), the mouth readings exempt.
+7. **Texture issue at pit-in** (owner/owner_lap2_pit_in_texture.png, local): the gore between the track and the pit-in
+   lane, ahead-left of the car approaching T11, is covered in tan / straw blotches on the asphalt, with the white lane line
+   beside them. That is the round-7 paint-over of the NAIP hatch (on='any', 441 px) turned into ground-coloured patches, or
+   the ground texture showing through the gore. The video (pit_ucm t1231000) shows a plain paved gore with the painted
+   hatch: it must read as asphalt.
+8. **Another bulge, on the LEFT side of Sunset** (owner/owner_lap2_sunset_left_bulge.png, local): the left edge swings
+   outward ahead into a tan bay. Same stretch as note 6, the other side: the straight declaration covers both sides.
