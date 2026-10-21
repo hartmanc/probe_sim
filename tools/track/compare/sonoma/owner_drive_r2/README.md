@@ -221,3 +221,23 @@ Verdict: "a disappointing output that was not ready for me to review."
     the track) is a camper, wrong. The orchestrator's tile window at s 2470 (half 90) does not contain it: owner: "That looks
     like the exit of T7 through T8. The hut isn't in that picture." The tower is further along the lap (toward 8a / T9); the
     owner is to mark it on a tile window further along.
+61. (21 Oct 2026, ~08:00) The 8a tower and its walls, owner's mark on the orchestrator's s 2600 tile window (half 90, 0.12 m/px;
+    owner_61_8a_tower_marked.png, reference only; digitised by compare/owner_marks.py into
+    tools/track/tracks/sonoma/owner/t8a_station.json, the tracked evidence, with a check render that reproduces the strokes).
+    Owner: "tower outlined in green, walls in red (note I didn't outline the wall all the way back towards T7, just close to
+    the tower for you)" and "The tower's roof sits over the wall, but the wall facing T6 runs all the way across the red
+    line I drew (protects the station from people losing control at T6)". Measured:
+    - the TOWER: a 4.0 x 3.5 m footprint, long axis bearing 281, centre ENU (-84.15, 209.63) = lat/lon (38.1645832,
+      -122.4585614); seen from the 8a-T9 pass at s 2659, 32.2 m RIGHT; from the drag-strip pass (T6 exit to T7) at s 1772,
+      40.7 m right. On the capture it is the dark square (the brown roof) between the two walls below.
+    - the track-side wall (red line 1, the dark line with its shadow, where the trailers park): 34.7 m, bearing 290, fit
+      0.10 m rms; from s 2641 (18.5 m right) to s 2667 (30.8 m right) on the 8a-T9 pass; its drawn SE end is ~6 m beyond the
+      tower on the track side; the owner did not draw it further NW toward T7 (it continues on the capture).
+    - the T6-facing wall (red line 0): 48.8 m, bearing 304, fit 0.38 m rms; from s 2652 (27.8 m right) to s 2714 (56.2 m
+      right) on the 8a-T9 pass, i.e. s 1781 (38.4 m right) to s 1732 (42.0 m right) on the drag-strip pass; the tower's centre
+      is 1.7 m from this line: the roof sits over the wall, and the wall is CONTINUOUS under it ("runs all the way across").
+      The two walls converge toward the NW (they would meet ~1 m NW of line 1's drawn end at s 2641) and open toward T6.
+    So: the placed '8a outside' hut (s 2483, 10.9 m left, among the campers) goes; the tower stands at the measured
+    footprint over the T6-facing wall; both walls are measured on the captures along the owner's lines and their
+    extensions (the dark line NW toward T7; the T6-facing wall both ways) and placed with the tower's roof over the T6-facing
+    one. The owner's May 2025 onboard at 1:14 (owner_52_T8_station_video.png) shows the station from the track.
