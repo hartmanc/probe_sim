@@ -270,6 +270,7 @@ CONFIG = dict(
     ],
     repave_fixes=[],                             # only where recent footage contradicts the survey (SKILL 1.6)
     gate=dict(exempt=[
+        ('right', 1365, 1400, "mirror of the left exemption 1380-1430: as the left edge steps out to the T4-T5 apron at the block line's end (s 1387, stage3_evidence/cw_1348.png on c20_s1450 / c20_s1500) the centre and its normals swing, so the right half-width changes 0.17 m per station with no feature on the right edge; the world-continuity gate on the right edge polyline is the physical check and passes; junction, real"),
         ('left', 1380, 1430, "the T4-T5 block line ends at s 1387 against the paved apron, whose asphalt end runs 4.6 m further out (stage3_evidence/cw_1348.png on c20_s1450 / c20_s1500); the edge steps out like a road mouth; junction, real"),
         ('right', 8, 68, 'mouth of OSM 34351026 (infield connector); junction, real'),
         ('right', 125, 185, 'mouth of OSM 34351042 (Atlantic); junction, real'),

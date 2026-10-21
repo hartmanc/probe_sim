@@ -253,6 +253,20 @@ passed: a change to them re-runs stage 1, and the re-run must pass before stage 
 it so station 0 is the start/finish. Use 1 m stations. The pit lane is a separate way. With a logger, check OSM against
 the GPS centreline (Laguna: median 3.2 m, p95 6.2 m) and station 0 against `centreline.npy[0]` (3.6 m).
 
+- **Where the OSM way runs on an apron**, the first centre is corrected by a measured shift or by the OSM way that
+  runs on the circuit, never by tracing. Otherwise the NAIP edges and the fit's search windows all start on the wrong
+  pavement, and no edge knob gets there.
+  - The OSM way on the circuit is a `loop_ways` part (`way:node:node`) when the ways share nodes.
+  - Otherwise use `centre.prior_shift` [dict(knots=[(lat, lon, dx_m)], blend, src)]: points of the first centre with
+    the lateral shift (+ left) of the real pavement's midline. The shift is interpolated along the stations and applied
+    before the NAIP edges and the fit; the edges stay fitted.
+  - The evidence form is a capture window with a 2 m ruler drawn across the first centre every 10 m, measured from the
+    midline between the asphalt end and the block line, cited in `src`.
+  - A shift changes the loop's length and so its station count. Freeze `stations_ref` (and `stations_ref.json`) to the
+    accepted station frame first, so the config's stations, masks and kerb-search zones map by world position.
+  - Buttonwillow, 20 Oct 2026: T1 exit, T10 and T11 exit, where the OSM ways run on the paved aprons beyond the block
+    lines. Shifts of +11.0, -10.9 and +14.4 m put all three edges on their blocks.
+
 **1.2 Frame registration before anything else.**
 - Phase-correlate the captures against the NAIP `ortho.jpg` (Laguna: Google minus NAIP = −0.3 m east, 0.0 m north,
   all 42 tiles under 1 m).
@@ -407,19 +421,24 @@ Named straights sit halfway between their corners.
 - The printed local waviness (residual about a ±25-station quadratic, rolling 100 m) and the kink per station pass.
 - Observation residuals: 90 %+ within 0.25 m.
 - Coverage passes (60 % of stations).
-- **Unpainted sides (the owner's decision, 20 Oct 2026; `edge_gate.UNPAINTED`, code-defined, no per-track numbers).** A
-  side is unpainted when at least 80 % of its associated readings come from the `asphalt_end` feature (asphalt straight
-  to dirt: no painted line, no kerb). There is no sharp edge to hold a reading to 0.25 m: at Buttonwillow the 2026
-  captures and the 2021 lidar both show a 2-4 m asphalt-to-dirt transition, the readings agree across captures (98 %
-  within 0.25 m of their station's median) but scatter along the track (46-50 % within 0.25 m of the fitted edge).
-  - "Observations within 0.25 m" is replaced by a **bias gate**: over rolling 41-station windows holding at least 10
-    associated readings, the median signed residual (reading minus fitted edge) lies within +-0.25 m in at least 90 %
-    of the windows; the worst window is listed with its stations. The readings' spread is the edge's own: printed, not
-    gated (with the report-only numbers per evidence kind and the width against the operator's figure).
-  - Coverage for an unpainted side: 50 % of stations (Buttonwillow 54 / 56 %).
-  - Longest gap, waviness, kink, the edge gate, world continuity and profile are unchanged. Painted and kerb sides keep
-    the gates above everywhere. A config may only tighten either.
-  - An object beside an unpainted edge that the detector reads as the edge (a marshal mound) is masked with
+- **The within gate runs per evidence kind (the owner's decision, 20 Oct 2026; `edge_gate.per_kind_gate`, code-defined,
+  no per-track numbers).** An `asphalt_end` reading (asphalt straight to dirt: no painted line, no kerb) has no sharp edge
+  to hold to 0.25 m. At Buttonwillow the 2026 captures and the 2021 lidar both show a 2-4 m asphalt-to-dirt transition:
+  the readings agree across captures (98 % within 0.25 m of their station's median) but scatter along the track (46-50 %
+  within 0.25 m of the fitted edge). So on each side:
+  - Painted and kerb readings must have 90 %+ within 0.25 m of the fitted edge, over those readings only, when the side
+    has at least 100 of them.
+  - `asphalt_end` readings must pass a **bias gate**: over rolling 41-station windows holding at least 10 of them, the
+    median signed residual (reading minus fitted edge) lies within ±0.25 m in at least 90 % of the windows. The worst
+    window is listed with its stations. Their spread is the edge's own, printed but not gated, alongside the report-only
+    numbers per evidence kind and the width against the operator's figure.
+  - Coverage is 50 % of stations when `asphalt_end` readings are the majority of the side's associated readings
+    (Buttonwillow 54 / 56 %), else 60 %.
+  - The gate line prints both kinds' numbers and shares.
+  - Longest gap, waviness, kink, the edge gate, world continuity and profile are unchanged. A config may only tighten.
+  - Why per kind, not per side: the first statement ("a side is unpainted when 80 % of its readings are asphalt_end")
+    broke in Buttonwillow's first-centre round, when the block-line kerb zones put a side's kerb readings over 20 %.
+  - An object beside an asphalt-end edge that the detector reads as the edge (a marshal mound) is masked with
     `spline.mask` [(side, lo, hi, capture)], never exempted.
   - The owner's fallback for a circuit worse than Buttonwillow: "the owner draws the edges on the captures", a future
     evidence feature (an owner-traced edge), not implemented.
