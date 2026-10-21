@@ -38,3 +38,9 @@ build). Notes as given, before bed:
    given yet (corner to come). The round-2 barrier ledger called every infield dark line "tyre tracks" or "none" except the
    ones re-read later (the T11-approach tyre line at 4150-4260 L was one such miss, corrected in round 4): the ledger's
    "none" rows need a second read for dark linear features within ~40 m of the track on the infield side.
+6. **Sunset (the straight from the Zorro's Corners mouth to the T11 sweep) has a bulge in the sim; the real road is straight
+   on both sides** (owner/owner_lap2_sunset_straight_map.png: his two red lines along both edges on Google Maps, from just
+   past the Zorro's Corners mouth to the West Pit In/Out junction; owner/owner_lap2_sunset_bulge_sim.png: the right edge
+   bulging outward ahead, arrowed, from ~s 4200 looking toward T11). The fit's width report had 4135-4161 at 17.2 m (the
+   Zorros mouth fillet) and 4241-4258 at 16.9 m; the right edge wanders out at both. Stage 1: declare Sunset a straight on
+   both sides (config `straights`, as the front straight 4525..180), the mouth readings exempt.
