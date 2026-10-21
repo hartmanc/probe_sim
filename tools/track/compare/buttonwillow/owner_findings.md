@@ -121,3 +121,9 @@ build). Notes as given, before bed:
     video, segment 12, 99 mph on the drag strip into T9: a wide raised kerb, long blocks, a sloped face, roughly 2-3 m wide).
     "Again, check the kerb height, width, and angle." The kerb WIDTH is per run too, and it is directly measurable on the
     captures (the painted band's width at 0.12 m/px); the kit draws every run at the track's one width (0.9 m).
+23. **"I don't think the front straight is this wide"** (owner/owner_lap2_front_straight_sim.png: the sim's straight from
+    the T11 exit, ~17 m wide, the K-rail far left; owner/owner_lap2_front_straight_map.png: Google Maps, reference only,
+    his two red lines along the racing surface from the T11 exit to the T1 entry: the lower one on the south asphalt
+    edge, the UPPER one on the boundary between the dark track and the PALE strip that lies between the track and the
+    pit-wall K-rail). The round-4 straight declaration fitted both sides to asphalt-end readings "between the pit-wall
+    median and the infield dirt" (16.9 m); the pale strip north of the dark band is not racing surface.
