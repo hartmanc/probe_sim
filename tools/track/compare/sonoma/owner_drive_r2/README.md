@@ -208,3 +208,16 @@ Verdict: "a disappointing output that was not ready for me to review."
     video to check the color of kerbs. The inside of T5 has a yellow kerb, not a red/white one." Round 3 set every Sonoma
     kerb red/white from the March 2026 onboard; the colour must be read per strip, and the 2025 Radical video
     (https://youtu.be/fEcQdo0ucL8, reference only) is a second source for it.
+59. (20 Oct 2026, ~23:00) The short pit-side wall s 134-158 (round 7f item 1, the wall-ends gate's bare upstream end at s 134):
+    owner, on the orchestrator's arrow picture (tmp sonoma_q/pitwall_arrow.png, the s 134 end marked): "I'm pretty sure the
+    wall on the left side of the pit straight extends all the way up to the red arrow and through the yellow line. Anything
+    else would be extremely dangerous." So the pit wall (track / pit-lane separation) is CONTINUOUS from the front straight
+    through s 134-158: there is no nose at s ~88-103 followed by a painted dotted line; the "dotted block line s 88-133" on
+    c20_s1815 / c20_s1870 is to be re-read as the K-rail's segment tops. The wall's only end near the merge is the downstream
+    one at s ~158, where the blend line starts.
+60. (same time) The 8a corner station: the owner's Google Maps screenshot (owner_57_T8_tower_marked.png, reference only) marks a
+    BROWN-ROOFED TOWER at the end of a straight dark line (the wall with the black tyre facing of note 53) between the T8-8a
+    track and the parallel road to the south-west; the placed '8a outside' hut (10.9 m left at s 2483, among campers north of
+    the track) is a camper, wrong. The orchestrator's tile window at s 2470 (half 90) does not contain it: owner: "That looks
+    like the exit of T7 through T8. The hut isn't in that picture." The tower is further along the lap (toward 8a / T9); the
+    owner is to mark it on a tile window further along.
