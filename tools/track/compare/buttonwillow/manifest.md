@@ -1661,6 +1661,43 @@ Geometry unchanged from 8bf8602 (track.json / heightfield.bin identical). Stage 
   end), the T2 concrete patch (17), crack-seal surface marks (18), the Cotton K-rail blocks and the ~1100 stripe (19),
   the pit-in gore's tan patches (9), the boundary audit tool (13), the kerb mesh check on curved raised runs (4).
 
+## Round 8 checkpoint 3 (21 Oct 2026, rev e168ce1ca4)
+
+Geometry unchanged (track.json / heightfield.bin identical to 8bf8602; a full stage-1/2/3 rebuild was needed because the
+config's `sources` gained the two videos, and it reproduced them byte for byte). Stage 3 every gate ok.
+
+- Dog Leg kerbs: 10 cm with a 0.30 m face tried (sweep): 1843-1851 L passes its own passes (max 13.8 deg) but the
+  1868-1933 R pass at line -1 m crosses it (it stands 1.5 m inside the road on the separation blocks) and rolls over;
+  1868-1933 R rolls over at 10 cm with every face 0.15-0.60 m (180 deg at line -1 m). Both stay at 6 cm / 0.15 m (every
+  pass under 15 deg), reasons in each profile's comment; pending the owner's figure.
+- Star Mazda entry width: left at the measured 1.24 m (owner to mark the extent).
+- Infield fence (5, 10, 11): OPEN. Existence: CCW t138-t140 (pit-out end, along the tree line: the round-6 pit-entry
+  fence 20-27 m out is that fence's south piece) and t1370 (a chain-link fence at the far right on the T1 side). Position:
+  not resolved: on c20_p0780 / c20_s0500 the thin dark line inside the east pit road's curve could not be separated from the
+  dirt track edge and the tree shadows by the detector (stage3_evidence attempts not kept). The paddock-lane containment
+  allowance stays until it is placed.
+- T2 concrete patch (17): placed, 7.6 m2, the pale slab beside the inside kerb on c20_s0700 (stage3_evidence/
+  t2patch_r8.png); the part under the parked car on the capture not resolved.
+- ~1095 stripe (19): a DARK NAIP mark on the road (stage3_evidence/stripe1100_r8.png), not the round-7 recolour;
+  painted over (`ortho_paint_over` with `dark=True`, 43 px). The Cotton K-rail blocks: OPEN (the third video's frames
+  grabbed, t440-t620, do not include the Cotton crest).
+- Pit-in gore (9): paved over the hatch outline in the lane's tone (#8c8a85); it renders as a flat untextured slab
+  (r8c_pit_in_gore_r8): OPEN as a look.
+- Service road Sunrise -> Cotton (24): on c20_s0350 / c20_s0400 it is a dirt track (the OSM 'track' type), not paved:
+  left as the open dirt it is, no cones.
+- Fast Lane school / kart track (15): OPEN (the kart track lies outside the lidar box; OSM has no way for it).
+- Crack-seal surface marks (18): OPEN (not started).
+- Raised-kerb mesh on curves (4): the r8b / r8c close stills show no gaps at the T9 apex and exit, the Esses, Cotton;
+  the 0.5 m stills at the Dog Leg missed the kerb (camera yaw): a re-shoot is OPEN.
+- Videos recorded in config `sources`: video_ccw (_7QwJdGQtaE) and video_cw_ftd (XIxXIvsDz3s), with what each was used for.
+- Boundary audit (13): tool tools/track/compare/boundary_sheets.py and SKILL 4.1b; run on rev a8c39183b2 (1250 stills,
+  53 sheets in boundary_sheets/, local). Read: the paved-area, pit-lane, T2-zone and front-straight groups. Finding: the
+  framing (camera over the boundary, looking along it) shows mostly one side, and the apron views read tan (the outer,
+  dirt-side boundary): the sheets are not yet a usable audit; the tool's framing (turn toward the surface, both sides)
+  is OPEN, and no seam rows are listed from it yet.
+- Stage 4: 50 sheets and the hood set (compare_sheets/hood_r8/) and stills r8b / r8c rendered on rev a8c39183b2 (the
+  only change to e168ce1ca4: the 1843-1851 L profile 10 -> 6 cm).
+
 ### Generated tables (manifest_tables.ts on the published package, rev b7a674a6da)
 
 ### Scenery objects of the checked kinds (136, from public/tracks/buttonwillow/)

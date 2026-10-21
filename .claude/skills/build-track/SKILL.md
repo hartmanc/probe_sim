@@ -929,6 +929,15 @@ Write the generated tables with `manifest_tables.ts` after each round.
 - **from every paved runoff and closed road the track reaches, looking back at the track** (the containment rays' runs,
   one pose per 150 m, 4 m inside the polygon, and each paved runoff zone).
 
+**4.1b Boundary audit (REQUIRED before the owner drives; Buttonwillow owner lap 2 note 13: "Check texture mash-ups and
+transitions along the track edges, pit in, pit out. This seems to be a common problem.")**:
+`python3 -I tools/track/compare/boundary_sheets.py poses --pkg public/tracks/<id>/ --out tools/track/compare/<id>/boundary_sheets`,
+then `pose_walk.ts --poses .../poses.json --tag b`, then `boundary_sheets.py sheets`. Every surface boundary (track edges,
+each paved area, each zone's edges, the pit lane's edges) gets a still every 30 m from 0.8 m looking along it and from
+2.5 m looking down. Read every sheet; list each seam, overlap, gap, z-fight or tone step in the manifest (kind,
+stations, side, what, fixed / open) and fix what the kit can fix. Run it on the final package (boundaries move with
+the edges).
+
 These are the places the owner went on his laps. Every pose is recorded in `walk.json`, and `--replay <walk.json>`
 reshoots the same poses on another package. Sonoma: 344 stills (fwd 82, rows 173, back 41, pit 36, runoff 12).
 

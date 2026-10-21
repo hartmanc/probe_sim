@@ -1558,7 +1558,7 @@ def ortho_paint_over(trk, img, items, ring=3.0, lift=18.0):
         c = P.mean(0); Pg = c + (P - c) * (1 + ring / max(1e-6, float(np.linalg.norm(P - c, axis=1).mean())))
         g = Image.new("L", (W, H), 0); ImageDraw.Draw(g).polygon(px(Pg), fill=1); g = np.asarray(g, bool) & area
         yel = img[..., 0].astype(float) - img[..., 2].astype(float)
-        mark = (lum > np.median(lum[g]) + lift)
+        mark = (lum > np.median(lum[g]) + lift) if not it.get("dark") else (lum < np.median(lum[g]) - lift)   # dark: a dark NAIP mark (round 8, the ~1100 stripe)
         if it.get("on") == "any":
             mark |= yel > np.median(yel[g]) + 25
         ref = g & ~mark
