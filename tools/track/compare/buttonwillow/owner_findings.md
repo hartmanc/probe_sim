@@ -51,3 +51,7 @@ build). Notes as given, before bed:
    hatch: it must read as asphalt.
 8. **Another bulge, on the LEFT side of Sunset** (owner/owner_lap2_sunset_left_bulge.png, local): the left edge swings
    outward ahead into a tan bay. Same stretch as note 6, the other side: the straight declaration covers both sides.
+9. **White lines on the pit-in lane that are not there** (owner/owner_lap2_pit_in_box_lines.png, local): transverse white
+   lines across the pit-in lane past the split. "These look like pit spots that should appear in pit lane itself, not pit
+   in or pit out." The pit-box paint is drawn over the whole pit-lane part (pit-in, the lane, pit-out); the real boxes are
+   along the pit wall only (the pit video: the lane between the two K-rails), and the pit-in and pit-out roads carry none.
