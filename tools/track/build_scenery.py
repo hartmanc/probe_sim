@@ -674,6 +674,14 @@ def trees(trk, G, taken):
         + ("" if SC_CFG.get("tree_imagery_check", True) else "; NOT applied (config scenery.tree_imagery_check False)"))
     if SC_CFG.get("tree_imagery_check", True):
         keep &= canopy_ok
+    tm = SC_CFG.get("tree_min")
+    if tm:
+        # round 8 (Buttonwillow owner lap 2 note 16): with the NAIP check off (it rejected 243 of 273 lidar crowns, the
+        # infield's willow / eucalyptus rows among them), poles, masts and fence posts are kept out by their crown: a
+        # crown at least `radius` m and `height` m
+        small = (rad < tm.get("radius", 3.0)) | (hmax < tm.get("height", 6.0))
+        log(f"trees: tree_min drops {int((keep & small).sum())} small crowns (radius < {tm.get('radius', 3.0)} m or height < {tm.get('height', 6.0)} m)")
+        keep &= ~small
     T = np.c_[x, y, z, hmax, rad][keep]
     log(f"trees: {len(T)} crowns; height p10/p50/p90 {np.percentile(T[:, 3], [10, 50, 90]).round(1)} m, "
         f"radius p50 {np.median(T[:, 4]):.1f} m")
@@ -1176,6 +1184,8 @@ def kerb_run(trk, k, pal, max_step=0.1):
         rec["colors"] = list(c)
     if k.get("profile"):
         rec["profile"] = dict(k["profile"])
+    if k.get("width"):
+        rec["width"] = float(k["width"])   # the run's own band width (round 8, measured on the captures)
     rec["src"] = (f"{k['name']}: " if k.get("name") else "") + k["src"] + (f"; colour: {k['colour_src']}" if k.get("colour_src") else "")
     KERB_RUN_REPORT.append({"name": k.get("name", ""), "side": k["side"], "s0": int(s0), "s1": int(s1), "max_step": round(step, 3),
                             "off_min": rnd(float(off.min()), 2), "off_max": rnd(float(off.max()), 2), "profile": k.get("profile")})

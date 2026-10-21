@@ -2,6 +2,9 @@
 // kerb strip of a track package (scenery.json kerbs + sausages) and logs what the car does on it: per-wheel ground
 // height above the plain road, wheel load, suspension travel, body roll (relative to the road) and roll rate, wheel
 // lift, hull (floor) contact. Also an AI-driven solo lap with the same logging (`--lap`), with time into the lap.
+// The gate (src/physics/__tests__/kerbgate.test.ts) fails on roll past 15 deg relative to the road or a rollover; wheel
+// lifts are reported, not gated (the owner, 21 Oct 2026: "Lifting a wheel isn't inherently a realism issue. Driving
+// over a kerb and rolling over is an issue.").
 //
 //   npx tsx tools/physics/kerb_sweep.ts [--track sonoma] [--offsets -1,0,1] [--angles 0] [--speed-scale 1]
 //       [--raised] [--set car.path=value ...] [--profile height,face,back] [--lap] [--trace <stripIndex>:<offset>[:<angle>] --csv out.csv] [--json out.json] [--quiet]

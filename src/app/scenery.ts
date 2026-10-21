@@ -40,7 +40,8 @@ export interface SceneryJson {
       /** per-strip paint [stripe, base] or [stripe, base, stripe 2] */ colors?: KerbColors; /** band centre beyond the edge, m (default: the inside convention) */ off?: number; src?: string;
       /** a kerb RUN (Buttonwillow, 21 Oct 2026): the band centre's offset per station from s0 (smoothed along the block line,
        *  no steps), in place of the constant `off`; and the run's own raised profile over the track default */
-      offs?: number[]; profile?: { height: number; face: number; back: number } | null }[] };
+      offs?: number[]; profile?: { height: number; face: number; back: number } | null;
+      /** a run's own band width (m, measured on the captures; absent: the track's `width`) */ width?: number }[] };
   /** raised yellow sausage kerbs beyond the apex kerbs (physics: src/physics/track.ts) */
   sausages?: SausageJson | null;
   edge_lines?: { width: number; inset: number; runs: { side: number; s0: number; s1: number }[] };
@@ -1079,9 +1080,10 @@ function buildKerbs(track: TrackJson, k: SceneryJson['kerbs'], ground?: (x: numb
   }
   const colors = (k.strips[0]?.colors ?? k.colors) as KerbColors | undefined;
   const st = new PaintStrips(edgeFrame(track, ground), surf, track.spacing_m || 1);
-  const w = k.width;
   const period = 2 * k.stripe_m;
   k.strips.forEach((s, j) => {
+    // a run's own band width (Buttonwillow round 8, measured on the captures), else the track's
+    const w = s.width ?? k.width;
     // kerb band across the edge: inside it by default, or `off` m beyond it (centre) for a kerb measured outside the edge
     const o0 = s.offs ? -w / 2 : s.off !== undefined ? s.off - w / 2 : k.inside ? -w : -0.1, o1 = s.offs ? w / 2 : s.off !== undefined ? s.off + w / 2 : k.inside ? 0 : w;
     const prof = s.profile ?? k.profile;

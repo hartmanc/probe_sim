@@ -676,11 +676,15 @@
     "type": "two cones, yellow and orange",
     "colour": "yellow, orange",
     "h_m": 0.7,
-    "h_method": "cone-ref"
+    "h_method": "cone-ref",
+    "correction": {
+     "s": 47.0,
+     "why": "round 8 (owner lap 2 note 24): t006 at full resolution: these are the four cones (yellow, white, orange, orange) parallel to the edge ~3.8 m out at s 40-55 (the time map put them at 21)"
+    }
    },
    "confidence": 0.6,
    "t": 6,
-   "s": 21.1,
+   "s": 47.0,
    "source": "onboard:7QS2M-HGSI4@6.0",
    "frame": "t006.jpg",
    "scope": "lap",
@@ -736,9 +740,8 @@
     "h_method": "cone-ref",
     "added": true,
     "correction": {
-     "round": "round 3, 20 Oct 2026 (judge r2)",
-     "was": {},
-     "why": "added: judge r2 fwd_00: cones on the paved shoulder right at s ~150 (t006-t008)"
+     "removed": true,
+     "why": "round 8 (owner lap 2 note 24): t008 at full resolution shows small dark marker posts beyond the edge, no orange cones; the t006 cones are the s 40-55 row"
     }
    },
    "confidence": 0.7,

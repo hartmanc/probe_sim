@@ -813,6 +813,7 @@ logo or text was seen, so `ground_signs` stays empty. The onboard shows none eit
 | station | right | 3765 | corner station | onboard t122 (ahead 120 m) | placed: T10 (s 3697 right; the 120 m look-ahead was estimated by eye) |
 | station | right | 2052 | corner station on a tyre-walled mound | onboard t074 (ahead 40 m) | placed: T6 (Riverside) (s 2069 right, 17 m: time-map error) |
 | mast | ahead | 3444 | tall pole | onboard t106 | placed: OSM man_made=mast (the 49.5 m communications tower, s 3439 left, ~400 m off; the pole on t106 is most likely it) |
+| cone_line | right | 146 | several orange cones on the paved shoulder | onboard t008 | rejected: round 8 (owner lap 2 note 24): t008 at full resolution shows small dark marker posts beyond the edge, no orange cones; the t006 cones are the s 40-55 row |
 
 ## First-centre round and judge r1 (20 Oct 2026)
 
@@ -1579,6 +1580,86 @@ paddock layout and buildings (15), the willows (16), the T2 concrete patch (17),
 blocks and the ~1100 stripe (19), per-run kerb width and block length (22), the cone re-reads and the service road (24:
 t006 shows four cones parallel to the edge ~3.8 m out, yellow / white / orange / orange), the boundary audit (13), the
 raised-kerb mesh check on the curved runs (4: the raised strip is one shared-vertex grid; T9 apex stills show no gaps).
+
+## Round 8 (continued, 21 Oct 2026): the owner's kerb-height decision and notes 9-24 (checkpoint, rev 8736f6da3c)
+
+Geometry unchanged from 8bf8602 (track.json / heightfield.bin identical). Stage 3 every gate ok (containment 0 escapes,
+3558 onto allowed runoff; pit connectivity ok; coverage 0 missing, 6 dispositions: + rejected 146 R cones).
+
+### Kerb profiles (the owner's decision: "Lifting a wheel isn't inherently a realism issue. Driving over a kerb and rolling over is an issue." / "I drove over a kerb at Buttonwillow and lifted at least one wheel a few weeks ago.")
+
+- Track default `kerb.profile` 10 cm / 0.15 m face / 0.30 m back on every run ('default raised, no resolving frame':
+  the 2021 lidar does not resolve kerb tops; the closest frames show faces without a measurable height). The T9 apex
+  keeps its measured 6 cm (t114). The two Dog Leg separation runs (1843-1851 L, 1868-1933 R) roll the car over at 10 cm
+  (37.4 deg and 180 deg at line +1 / -1 m) and take 6 cm (max roll 8.9 deg), pending the owner's figure.
+- Width per run from the capture band (edges_spline.bands, median over stations x captures; 23 runs differ from
+  0.9 m by 0.1 m or more; 3339-3382 L, the Star Mazda entry the owner calls 2-3 m wide, measures 1.24 m on the captures:
+  OPEN for the owner). Block length unchanged (1.0 m).
+- kerbgate.test.ts: roll past 15 deg relative to the road or a rollover fails (unchanged numbers); wheel lifts are an
+  advisory report printed per pass on every track (Sonoma's it.fails removed with it). Max roll: Laguna 7.9 deg (30
+  passes), Sonoma 8.38 deg (90 passes, 16 with a lift, as before), Buttonwillow 9.88 deg (117 passes, 43 with a lift).
+
+| run | lidar step | width | profile (h / face / back) | longest lift | max roll | source |
+|---|---|---|---|---|---|---|
+| left 283-322 | -2.6 ± 0.2 cm | 0.50 m | 10 cm / 0.15 / 0.30 | 0 ms | 4.51 deg | default raised, no resolving frame |
+| left 536-558 | +0.9 ± 0.7 cm | 0.60 m | 10 cm / 0.15 / 0.30 | 0 ms | 3.38 deg | default raised, no resolving frame |
+| left 745-767 | +0.1 ± 0.2 cm | 1.05 m | 10 cm / 0.15 / 0.30 | 28 ms | 1.54 deg | default raised, no resolving frame |
+| left 954-1011 | -0.4 ± 0.2 cm | 0.90 m | 10 cm / 0.15 / 0.30 | 229 ms | 6.11 deg | default raised, no resolving frame |
+| left 1089-1116 | +0.5 ± 0.4 cm | 0.90 m | 10 cm / 0.15 / 0.30 | 450 ms | 4.92 deg | default raised, no resolving frame |
+| left 1203-1272 | +0.2 ± 0.1 cm | 0.75 m | 10 cm / 0.15 / 0.30 | 472 ms | 7.9 deg | default raised, no resolving frame |
+| left 1337-1395 | +1.8 ± 0.2 cm | 0.90 m | 10 cm / 0.15 / 0.30 | 143 ms | 5.39 deg | default raised, no resolving frame |
+| left 1454-1478 | +1.3 ± 0.1 cm | 0.65 m | 10 cm / 0.15 / 0.30 | - ms | - deg | default raised, no resolving frame |
+| left 1542-1575 | +1.9 ± 0.3 cm | 1.15 m | 10 cm / 0.15 / 0.30 | 0 ms | 3.45 deg | default raised, no resolving frame |
+| left 1654-1681 | +2.6 ± 0.2 cm | 0.90 m | 10 cm / 0.15 / 0.30 | 361 ms | 7.96 deg | default raised, no resolving frame |
+| left 1843-1851 | +0.9 ± 0.4 cm | 1.10 m | 6 cm / 0.15 / 0.30 | 391 ms | 7.67 deg | 6 cm: 10 cm rolls the car here (gate) |
+| left 2539-2544 | -2.6 ± 1.1 cm | 0.90 m | 10 cm / 0.15 / 0.30 | 0 ms | 3.25 deg | default raised, no resolving frame |
+| left 2690-2747 | -4.7 ± 0.2 cm | 1.10 m | 10 cm / 0.15 / 0.30 | 0 ms | 2.97 deg | default raised, no resolving frame |
+| left 2850-2856 | -8.5 ± 1.9 cm | 0.90 m | 10 cm / 0.15 / 0.30 | 187 ms | 5.93 deg | default raised, no resolving frame |
+| left 3005-3013 | -7.2 ± 0.5 cm | 1.10 m | 10 cm / 0.15 / 0.30 | 0 ms | 1.75 deg | default raised, no resolving frame |
+| left 3339-3382 | -10.2 ± 0.3 cm | 1.25 m | 10 cm / 0.15 / 0.30 | 114 ms | 4.07 deg | default raised, no resolving frame |
+| left 3470-3518 | +1.7 ± 0.3 cm | 0.75 m | 10 cm / 0.15 / 0.30 | 483 ms | 9.88 deg | default raised, no resolving frame |
+| left 3691-3760 | +0.1 ± 0.2 cm | 0.90 m | 10 cm / 0.15 / 0.30 | 0 ms | 3.29 deg | default raised, no resolving frame |
+| left 3845-3876 | +0.7 ± 0.2 cm | 0.75 m | 10 cm / 0.15 / 0.30 | 149 ms | 6.01 deg | default raised, no resolving frame |
+| left 3972-4023 | +0.6 ± 0.2 cm | 0.90 m | 10 cm / 0.15 / 0.30 | 309 ms | 7.05 deg | default raised, no resolving frame |
+| left 4380-4406 | +2.6 ± 0.6 cm | 1.05 m | 10 cm / 0.15 / 0.30 | 0 ms | 4.9 deg | default raised, no resolving frame |
+| right 188-268 | +3.3 ± 0.2 cm | 1.30 m | 10 cm / 0.15 / 0.30 | 147 ms | 5.41 deg | default raised, no resolving frame |
+| right 360-376 | -0.0 ± 0.2 cm | 1.10 m | 10 cm / 0.15 / 0.30 | 0 ms | 4.65 deg | default raised, no resolving frame |
+| right 410-424 | -0.1 ± 0.3 cm | 0.90 m | 10 cm / 0.15 / 0.30 | 0 ms | 2.12 deg | default raised, no resolving frame |
+| right 584-604 | -0.2 ± 0.1 cm | 0.60 m | 10 cm / 0.15 / 0.30 | 0 ms | 3.76 deg | default raised, no resolving frame |
+| right 1020-1049 | -9.3 ± 0.3 cm | 1.05 m | 10 cm / 0.15 / 0.30 | 96 ms | 4.47 deg | default raised, no resolving frame |
+| right 1168-1191 | +2.8 ± 0.7 cm | 0.90 m | 10 cm / 0.15 / 0.30 | 423 ms | 6.81 deg | default raised, no resolving frame |
+| right 1304-1309 | -7.0 ± 0.1 cm | 0.90 m | 10 cm / 0.15 / 0.30 | 151 ms | 4.37 deg | default raised, no resolving frame |
+| right 1494-1516 | +1.9 ± 0.4 cm | 0.90 m | 10 cm / 0.15 / 0.30 | 0 ms | 3.33 deg | default raised, no resolving frame |
+| right 1779-1819 | +1.8 ± 0.3 cm | 0.90 m | 10 cm / 0.15 / 0.30 | 278 ms | 6.8 deg | default raised, no resolving frame |
+| right 1869-1934 | -4.5 ± 0.2 cm | 0.70 m | 6 cm / 0.15 / 0.30 | 921 ms | 8.9 deg | 6 cm: 10 cm rolls the car here (gate) |
+| right 2315-2340 | +0.4 ± 0.3 cm | 1.10 m | 10 cm / 0.15 / 0.30 | 0 ms | 3.03 deg | default raised, no resolving frame |
+| right 2766-2793 | +0.5 ± 0.4 cm | 0.90 m | 10 cm / 0.15 / 0.30 | 0 ms | 3.11 deg | default raised, no resolving frame |
+| right 3400-3450 | -0.0 ± 0.2 cm | 0.90 m | 6 cm / 0.15 / 0.30 | 0 ms | 5.15 deg | t114 (6 cm measured) |
+| right 3794-3810 | -5.8 ± 0.3 cm | 1.10 m | 10 cm / 0.15 / 0.30 | 344 ms | 7.82 deg | default raised, no resolving frame |
+| right 3894-3935 | -9.2 ± 0.3 cm | 0.55 m | 10 cm / 0.15 / 0.30 | 283 ms | 5.76 deg | default raised, no resolving frame |
+| right 4029-4126 | -4.9 ± 0.2 cm | 0.70 m | 10 cm / 0.15 / 0.30 | 212 ms | 6.54 deg | default raised, no resolving frame |
+| right 4320-4370 | -5.3 ± 0.3 cm | 1.15 m | 10 cm / 0.15 / 0.30 | 158 ms | 4.5 deg | default raised, no resolving frame |
+| right 4424-4501 | -0.6 ± 0.2 cm | 0.90 m | 10 cm / 0.15 / 0.30 | 535 ms | 9.78 deg | default raised, no resolving frame |
+
+### Other notes
+
+- Note 24 cones: the four t006 cones (yellow, white, orange, orange) as one line parallel to the edge 3.8 m out at s 40-55
+  R; the 140-160 R line removed (t008: dark marker posts, no cones; inventory s 146 row rejected in the dispositions;
+  s 21 row corrected to 47). The Sunrise-Cotton service road: OPEN (not modelled).
+- Note 12: the T2-outside tyre wall, 115 m, 1.0 m, traced on c20_s0700 / c20_s0750 (stage3_evidence/t2tyres_r8.png),
+  CCW onboard t286 / t288. The heightfield bump under it: left as is (known lidar artefact, no mask in the pipeline).
+- Note 14: the tower centred under the 25 x 19 m roof; the awning (OSM 765811056, 23.6 x 17.4 m, 4.3 m) behind it as an
+  open shade roof on posts; the round-6 / 7 annexes removed.
+- Note 15: 13 lidar paddock buildings restored, each confirmed on the new 2026 z20 paddock captures (satellite_paddock/
+  pad_0-pad_7, local); the paddock lanes (12 OSM service ways) as pale closed roads (no mouths), in gates.allowed until
+  the infield fence is placed. The Fast Lane school / kart track: OPEN.
+- Note 16: trees from the lidar canopy with the NAIP check off and a 3 m / 6 m minimum crown: 233 crowns, height
+  p10 / p50 / p90 12.0 / 15.4 / 19.1 m, crown radius p50 4.8 m (was 30 crowns).
+- Dog Leg run 1843-1851 L: the extent pass on the new edges puts the band 1.5 m inside the edge on the separation blocks
+  (stage3_evidence/dog_r8.png: the strip sits on the white blocks); the edge itself runs beyond them. Not a misplacement.
+- OPEN: the infield chain-link fence (notes 5, 10, 11; CCW t138-t140 show it on posts by the eucalyptus at the pit-out
+  end), the T2 concrete patch (17), crack-seal surface marks (18), the Cotton K-rail blocks and the ~1100 stripe (19),
+  the pit-in gore's tan patches (9), the boundary audit tool (13), the kerb mesh check on curved raised runs (4).
 
 ### Generated tables (manifest_tables.ts on the published package, rev b7a674a6da)
 

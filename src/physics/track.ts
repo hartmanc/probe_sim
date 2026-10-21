@@ -122,7 +122,9 @@ export interface KerbsJson {
   strips: { side: number; s0: number; s1: number; kind?: string; off?: number;
     /** a run's own raised profile (Buttonwillow's T9 kerb, 21 Oct 2026) on top of the track default `profile`; absent: the
      *  default (flat paint when the track has none) */
-    profile?: KerbProfileJson | null }[];
+    profile?: KerbProfileJson | null;
+    /** a run's own band width (Buttonwillow round 8); absent: the track's `width` */
+    width?: number }[];
 }
 
 /** The kerb band's centre offset beyond the edge (m, + outside) of a strip. */
@@ -131,16 +133,16 @@ export function kerbBandCentre(k: KerbsJson, st: { off?: number }): number {
 }
 
 /** Each raised kerb strip's centreline (1 m points beyond/inside the edge) in the sausage strip layout. */
-function buildKerbStrips(track: TrackJson, k: KerbsJson): (SausageStrip & { side: number; pr: KerbProfileJson })[] {
-  const out: (SausageStrip & { side: number; pr: KerbProfileJson })[] = [];
+function buildKerbStrips(track: TrackJson, k: KerbsJson): (SausageStrip & { side: number; pr: KerbProfileJson; hw: number })[] {
+  const out: (SausageStrip & { side: number; pr: KerbProfileJson; hw: number })[] = [];
   for (const st of k.strips) {
     if (st.kind === 'verge' || st.kind === 'blocks') continue; // 'blocks': a line of low kerb blocks, drawn only (20 Oct 2026)
     const pr = st.profile ?? k.profile;
     if (!pr) continue;                                          // flat paint: no height
-    const off = kerbBandCentre(k, st);
+    const off = kerbBandCentre(k, st), w = st.width ?? k.width;
     // reuse the sausage layout: kerb_width + gap + width/2 = off
-    const ss = buildSausageStrips(track, { width: k.width, height: 0, gap: 0, kerb_width: off - k.width / 2, strips: [st] });
-    for (const s2 of ss) { s2.minx -= 1; s2.maxx += 1; s2.miny -= 1; s2.maxy += 1; out.push({ ...s2, side: st.side, pr }); }
+    const ss = buildSausageStrips(track, { width: w, height: 0, gap: 0, kerb_width: off - w / 2, strips: [st] });
+    for (const s2 of ss) { s2.minx -= 1; s2.maxx += 1; s2.miny -= 1; s2.maxy += 1; out.push({ ...s2, side: st.side, pr, hw: w / 2 }); }
   }
   return out;
 }
@@ -149,11 +151,10 @@ const smooth01 = (t: number) => (t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t));
 const dsmooth01 = (t: number) => (t <= 0 || t >= 1 ? 0 : 6 * t * (1 - t));
 
 /** Kerb hump height and world gradient at (x, y) (h = 0 clear of every strip). o = outward distance from the band centre. */
-function kerbAt(strips: (SausageStrip & { side: number; pr: KerbProfileJson })[], k: KerbsJson, x: number, y: number, out: { h: number; gx: number; gy: number }): void {
+function kerbAt(strips: (SausageStrip & { side: number; pr: KerbProfileJson; hw: number })[], k: KerbsJson, x: number, y: number, out: { h: number; gx: number; gy: number }): void {
   out.h = 0; out.gx = 0; out.gy = 0;
-  const hw = k.width / 2;
   for (const s of strips) {
-    const pr = s.pr, H = pr.height;
+    const pr = s.pr, H = pr.height, hw = s.hw;
     if (x < s.minx || x > s.maxx || y < s.miny || y > s.maxy) continue;
     let bestD = Infinity, bk = -1, u = 0, acc = 0;
     for (let q = 0; q < s.len.length; q++) {
