@@ -400,8 +400,8 @@ describe('per-event fields: identity / model by field key (id, else number)', ()
     expect(modelKey({ number: '711' })).toBe('711');
     const rows = normaliseModelRows(readJson('cars/field/models.json'));
     const cars = [{ id: '6', model: '8', number: '6', isPlayer: false }, { id: '670_bw', model: '670_bw', number: '670', isPlayer: false }, { id: '8_bw', model: '8_bw', number: '8', isPlayer: false }];
-    // #6 shows Laguna #8's Opel GT; Buttonwillow's #670 van and #8 never get Laguna's #670 / #8 models
-    expect(modelQueue(rows, cars, () => 'placeholder').map((q) => [q.car, q.model.file])).toEqual([['6', 'models/8.glb']]);
+    // #6 shows Laguna #8's Opel GT; Buttonwillow's #670 van and #8 get their own _bw models, never Laguna's #670 / #8
+    expect(modelQueue(rows, cars, () => 'placeholder').map((q) => [q.car, q.model.file])).toEqual([['6', 'models/8.glb'], ['8', 'models/8_bw.glb'], ['670', 'models/670_bw.glb']]);
   });
 
   it('a battery-electric car (cylinders 0, layout EV): finite physics, no division by zero, silent in the field audio', () => {
