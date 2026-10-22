@@ -277,3 +277,12 @@ wall mesh: tyre walls need a solid collider like the concrete walls (an app / ph
 
 Game note (owner_game_rollover.png, the car on its side at the T11 wall): "we should make a game over screen (just like when you
 blast into space) if you roll the car, and it should say you've been banned for Lemons for 1 year for rolling your hooptie".
+69. (22 Oct 2026) The Carousel exit to T7 straight (the drag strip run-up), owner_69_carousel_to_T7_wavy_edge_sim.png (the sim at
+    about s 1700-1750 looking toward T7: the LEFT white edge line waves in and out along the straight) and
+    owner_69_carousel_to_T7_satellite.png (Google satellite with labels, reference only: both edges of that straight are dead
+    straight from the Carousel to T7): "I don't think this section going to T7 is wavy like this". Together with note 64 (the
+    right edge wavy looking back from the T7 complex): both edges of this straight are fitted as straight lines of one shared
+    width, as the Buttonwillow straights were (the pipeline's straights fit: read once, width shared), stations ~1680-2060.
+    Owner on the rest: "Other than that, Sonoma drives very well." No further notes on Sonoma.
+
+Game note, exact text for the rollover screen: "You are banned from Lemons for one year for rolling your hooptie".
