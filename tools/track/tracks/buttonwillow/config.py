@@ -181,9 +181,9 @@ CONFIG = dict(
                 # kerb_inside: stations where he drew on the track side of a block line (the extent pass's block runs), moved
                 # outward by the kerb width so the strip stays inside the edge
                 owner_edges=[
-                    dict(file='owner/t2_edges.json', lo=505, hi=670, kerb_inside=[('right', 582, 605), ('left', 535, 545)],
+                    dict(file='owner/t2_edges.json', lo=505, hi=670, kerb_inside=[],   # round 9: his line IS the edge (the kerb's inside, the width model's convention); was [('right', 582, 605), ('left', 535, 545)]
                          src="owner drawing on the 2026 tile, capwin --s 583 --half 70 --mpp 0.1 (compare/buttonwillow/owner/owner_t2_edges_marked.png, local): T2 both edges; block runs from the extent pass (582-605 R inside apex, 535-545 L entry)"),
-                    dict(file='owner/t4_edges.json', lo=1042, hi=1156, kerb_inside=[('left', 1086, 1114)],
+                    dict(file='owner/t4_edges.json', lo=1042, hi=1156, kerb_inside=[],   # round 9: his line IS the edge; was [('left', 1086, 1114)]
                          src="owner drawing on the 2026 tile, capwin --s 1080 --half 70 --mpp 0.1 (compare/buttonwillow/owner/owner_t4_edges_marked.png, local): T4 both edges; the left block line 1086-1114 from the extent pass"),
                 ],
                 kerb_search=[
@@ -214,7 +214,43 @@ CONFIG = dict(
                       # stage-3 pass: the T1-exit corner station's tyre-faced mound right beside the right edge (c20_s0650,
                       # sheet edge_sheets/pitout_merge_470-540: the fitted right edge ran through the mound, its roof
                       # 0.4 m beyond the edge in compare/blob_scan.py)
-                      ('right', 468, 498, 'c20_s0650: corner station mound beside the right edge at s ~475-492')]),
+                      ('right', 468, 498, 'c20_s0650: corner station mound beside the right edge at s ~475-492')],
+                # round 9 (owner lap 3 note 27): the width-prior edge model (width_model.py). The asphalt-end detector reads
+                # the far side of the bleached shoulder (asphalt and dirt within ~18 grey levels on the 2026 captures), so
+                # after the fitted method converges the edges are re-placed: kerb anchors at the painted block band's
+                # INSIDE line (the owner's convention), the detector's outward bias measured through them and removed,
+                # one width per section, the weaker side placed at that width from the stronger. The sections are the
+                # lap split at the junctions below (side, lo, hi, kind, evidence); in a junction range the local width is
+                # measured and blended into the neighbouring sections over `blend` stations. The ranges are those of
+                # gate.exempt (OSM ways leaving the road for 12 m or more, measured with a ray test on the asphalt-end
+                # build, each mouth on its capture) plus the T1-exit apron and the owner's traced windows
+                # evidence_passes 1 (round 9 run 2 read the evidence a second time around the placed edges: the bias went to
+                # ~0 and every section width rose ~0.5 m, the edges back in the shoulder at s 4180 / 4354 / 4475 on the
+                # captures; kerb_expect: the band's centre from the edge searched around, -0.45 m on the pass-1 edge)
+                width_model=dict(kerb_offs=(-5.0, 1.5), kerb_expect=(-0.45, 0.45), kerb_min_len=6, w_kerb=10.0, w_owner=40.0,
+                                 mid_knot=6, mid_lam=300.0, local_half=15, blend=25, anchor_w=20.0, min_obs=15, evidence_passes=1, agree_conf=0.6,
+                                 junctions=[
+                    ('right', 8, 68, 'mouth', 'OSM 34351026 (infield connector) mouth; c20_s0050 / c20_s0100'),
+                    ('right', 125, 185, 'mouth', 'OSM 34351042 (Atlantic) mouth, the front straight crossover; c20_s0200 / c20_s0250'),
+                    ('left', 380, 540, 'pit-out', 'the pit lane rejoins on the left after T1 (c20_s0450, c20_s0500, c20_p0840)'),
+                    ('both', 480, 695, 'owner', "T2 hairpin: the owner's traced edges (owner/t2_edges.json, window 505-670, the range 25 stations wider at each end for the blend into the sections), which also cover the outer T2 loop mouth (OSM 39224609, left 593-653)"),
+                    ('left', 726, 786, 'mouth', 'OSM 39224609 (the outer T2 loop) mouth; c20_s0800 / c20_s0850'),
+                    ('both', 1017, 1181, 'owner', "T4: the owner's traced edges (owner/t4_edges.json, window 1042-1156, 25 stations wider at each end for the blend)"),
+                    ('right', 1365, 1435, 'apron', 'the T4-T5 block line ends against the paved apron at s 1387 (stage3_evidence/cw_1348.png on c20_s1450 / c20_s1500)'),
+                    ('left', 1380, 1430, 'apron', 'the T4-T5 paved apron, its asphalt end 4.6 m further out (cw_1348.png on c20_s1450 / c20_s1500)'),
+                    ('left', 1477, 1537, 'mouth', 'OSM 39224483 (Dog Leg) mouth; c20_s1550 / c20_s1600'),
+                    ('right', 1640, 1713, 'mouth', 'OSM 34351042 (Atlantic) and 34351026 (infield connector) mouths; c20_s1750 / c20_s1800'),
+                    ('right', 1796, 1862, 'mouth', 'OSM 34351015 (infield connector) and 34350988 (Pacific) mouths, where the Dog Leg leaves (cw_1751, cw_1824 on c20_s1900 / c20_s1950)'),
+                    ('left', 1964, 2024, 'mouth', 'OSM 39224483 (Dog Leg) mouth; c20_s2050 / c20_s2100'),
+                    ('right', 2516, 2576, 'mouth', 'OSM 34351305 (Drag Strip, south part) mouth; c20_s2600 / c20_s2650'),
+                    ('right', 2939, 2999, 'mouth', 'OSM 34351305 (Lost Hill rejoins) mouth; c20_s3050'),
+                    ('right', 3202, 3262, 'mouth', 'OSM 34351309 (Sweeper) mouth; c20_s3300'),
+                    ('right', 3619, 3679, 'mouth', 'OSM 34351309 (Sweeper) mouth; c20_s3700 / c20_s3750'),
+                    ('right', 4108, 4190, 'mouth', 'OSM 34351301 (Zorros Corners) mouth, the paved fillet from s ~4115 (c20_s4250)'),
+                    ('left', 4270, 4330, 'pit-in', 'the Pit / Fire Road (OSM 39224587) leaves on the left before T11 (pit-lane video ucmXJu5QKFQ 20:31; c20_s4400)'),
+                    ('right', 4572, 4632, 'mouth', 'OSM 34350988 (Pacific) mouth, a front straight crossover; c20_s4650'),
+                    ('right', 4637, 4697, 'mouth', 'OSM 34351015 (infield connector) mouth, a front straight crossover; c20_s0000 / c20_s0050'),
+                ])),
     # Buttonwillow has no painted edge lines (every 2026 capture and the onboard: asphalt straight to dirt), so the edge
     # is where the dark asphalt ends, everywhere except at kerbs, where it is the kerb's outer limit (SKILL 1.5). The kerb
     # zones come from compare/kerb_detect.py on the asphalt-end build (run 3, 20 Oct 2026: runs with their outer limit

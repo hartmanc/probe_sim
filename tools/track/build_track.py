@@ -543,6 +543,12 @@ def stage_geometry(cfg, out, no_logger):
     log(f"     heightfield vs profile on the centre: median {np.median(dzc):.3f} m, p95 {np.percentile(dzc, 95):.3f} m (the profile carries the lidar correction)")
     met, gf = edge_gate.gate(T, None, cfg["gate"], log=log, world=not REPRO)
     rep.fails += gf
+    if cfg_raw["spline"].get("width_model"):
+        # the width gates (round 9, REQUIRED with a width model): one width per section, no 20-80 m wave
+        cw_ = trackcfg.remap_stations(cfg_raw, n, L1, C=C1)
+        met["width"], gf = edge_gate.width_gates(T, cw_["spline"]["width_model"]["junctions"], cfg_raw["gate"], log=log)
+        rep.fails += gf
+        json.dump(WIDTH_REPORT, open(os.path.join(work, "width_model_report.json"), "w"), default=float)
     w = hl3 + hr3
     log(f"     width: median {np.median(w):.1f} m (p5 {np.percentile(w, 5):.1f}, p95 {np.percentile(w, 95):.1f}); corners: "
         + ", ".join(f"{c['turn'] or c['name']} s={c['s']} R={c['radius_m']}" for c in corners))
@@ -575,6 +581,96 @@ def stage_geometry(cfg, out, no_logger):
         log("\nGEOMETRY STAGE FAILED:", rep.fails, "(written anyway: --write-on-fail, for diagnosis only)")
         return 1
     return 0
+
+
+WIDTH_REPORT = {}
+
+
+def width_model_pass(cfg_raw, Ccur, hl1, hr1, tiles, features, sp_cfg, cc, pfa, pfb, cen, merge, fit_last, rep):
+    """The width-prior edge model (width_model.py, config spline.width_model; Buttonwillow round 9): the evidence is
+    gathered once around the converged fitted-method edges, in world coordinates; then, on every centre, the bias and
+    the section widths are estimated, the edges placed (one width per section, the weaker side from the stronger) and
+    fitted (edges_spline.fit_periodic with the corrected evidence as observations and the placement as constraints),
+    and the centre refitted to their midpoint until it moves less than 5 cm."""
+    import width_model as WM
+    n = len(Ccur)
+    spm = dict(sp_cfg, kerb_search=[])      # the evidence is the model's; no search zone reaches across it
+    L0 = float(np.linalg.norm(np.roll(Ccur, -1, 0) - Ccur, axis=1).sum())
+    cfgw = trackcfg.remap_stations(cfg_raw, n, L0, C=Ccur)
+    wm = cfgw["spline"]["width_model"]
+    hlp, hrp, hl3, hr3 = hl1.copy(), hr1.copy(), hl1.copy(), hr1.copy()
+    # evidence passes (spline.width_model.evidence_passes): the detector's window follows the edge it searches around,
+    # so after the first pass the evidence is read again around the placed edges and the model re-run on it
+    for ep in range(int(wm.get("evidence_passes", 1))):
+      ke = wm.get("kerb_expect", -0.45)
+      wm_ep = dict(wm, kerb_expect=ke[min(ep, len(ke) - 1)] if isinstance(ke, (list, tuple)) else ke)   # where the band sits from the edge searched around
+      ev = WM.gather_world(cfg_raw, Ccur, B.left_normals(Ccur), hl3, hr3, tiles, cc["mpp"], wm_ep, mask=cfgw["spline"].get("mask") or [], log=log)
+      move = 1e9
+      for it in range(40):
+          L_ = float(np.linalg.norm(np.roll(Ccur, -1, 0) - Ccur, axis=1).sum())
+          cfgw = trackcfg.remap_stations(cfg_raw, n, L_, C=Ccur)
+          wm = cfgw["spline"]["width_model"]; J = wm["junctions"]
+          NL = B.left_normals(Ccur)
+          owner = owner_windows(cfg_raw, cfgw) if cfgw["spline"].get("owner_edges") else []
+          spm["_owner"] = owner
+          if cfgw["spline"].get("mask"):
+              spm["mask"] = cfgw["spline"]["mask"]
+          feats = [tuple(f[:4]) for f in cfgw["features"] if f[3] != "keep"]
+          E = WM.station_evidence(Ccur, NL, ev, n, owner)
+          jm, secs = WM.sections(n, J)
+          est = WM.estimate(E, n, secs, jm, int(wm.get("min_obs", 15)), log=log, agree=float(wm.get("agree_conf", 0.6)))
+          Ev = WM.corrected(E, est["bias"])
+          w = WM.width_function(n, secs, est["W"], J, Ev, int(wm.get("local_half", 15)), int(wm.get("blend", 15)))
+          mid, tl, tr, src = WM.targets(n, Ev, w, wm, WM.junction_side(n, J))
+          obs = WM.observations(E, est["bias"], n)
+          aw = float(wm.get("anchor_w", 20.0))
+          anchors = {"left": (np.arange(n), tl, np.full(n, aw)), "right": (np.arange(n), tr, np.full(n, aw))}
+          log(f"width model, evidence pass {ep + 1}, iteration {it + 1}: {len(secs)} sections, widths " + ", ".join(f"{a}-{b}: {W:.2f}" for (a, b), W in zip(secs, est["W"])))
+          hl3, hr3, frep = edges_spline.fit_periodic(Ccur, NL, hlp, hrp, tiles, feats, spm, cc["mpp"], anchors, obs=obs, anchors_cover=False)
+          if it >= 1 and move < 0.05:
+              break
+          P2 = {"lat_left": hl3, "lat_right": -hr3}
+          fit2 = recentre.refit(Ccur, hlp, hrp, P2, [], [], None, None, pfa, pfb, 0, cen["gps_margin"], cen["min_width"],
+                                merge=merge, width_cap=cen.get("width_cap", 16.0))
+          Cn = fit2["C"]
+          if it >= 2:
+              alpha = 1.0 / it
+              _, latc = B.project(Cn, Ccur)
+              Cd = Ccur - alpha * latc[:, None] * B.left_normals(Ccur)
+              Cn, _ = B.resample_closed(Cd, n=n, smooth=0.0)
+          _, lat = B.project(Cn, Ccur)
+          move = float(np.abs(lat).max())
+          for side, hw in (("left", hl3), ("right", hr3)):
+              sg = 1 if side == "left" else -1
+              sq, lq = B.project(Cn, Ccur + sg * hw[:, None] * NL); o_ = np.argsort(sq)
+              v = sg * np.interp(np.arange(n), sq[o_], lq[o_], period=n)
+              if side == "left": hlp = v
+              else: hrp = v
+          fit_last = fit2
+          log(f"width model: centre refit to the midpoint of the placed edges: max move {move:.3f} m at station {int(np.argmax(np.abs(lat)))}")
+          Ccur = Cn
+      else:
+          rep.check("width model convergence", False, f"evidence pass {ep + 1}: centre still moving {move:.3f} m after 40 refits")
+    # report (work/width_model_report.json; the outline page and the round's record read it)
+    kd = {}
+    for side, hw in (("left", hl3), ("right", hr3)):
+        kb = E[side]["kerb"]; m = ~np.isnan(kb); d = np.where(m, hw - kb, np.nan)
+        kd[side] = dict(stations=int(m.sum()), within_03=float(np.mean(np.abs(d[m]) <= 0.3)) if m.any() else None,
+                        over=[(a, b) for a, b in edges_spline.ranges(m & (np.abs(np.nan_to_num(d)) > 0.3), n)],
+                        max=float(np.nanmax(np.abs(d))) if m.any() else None)
+    from collections import Counter
+    WIDTH_REPORT.update(dict(bias=est["bias"], at_kerb=est["at_kerb"], kinds=est["kinds"], fallback=est["fallback"], lapW=est["lapW"],
+                             sections=[dict(lo=int(a), hi=int(b), W=round(float(W), 2), obs=int(c), kinds=kk_)
+                                       for (a, b), W, c, kk_ in zip(secs, est["W"], est["cnt"], est["kinds_by_sec"])],
+                             junctions=[list(j[:4]) for j in J], src=dict(Counter(src.tolist())), kerb_disagree=kd,
+                             width=[round(float(v), 3) for v in w], src_per_station=src.tolist(),
+                             per_station={sd: dict(val=[None if np.isnan(v) else round(float(v), 3) for v in Ev[sd][0]], kind=Ev[sd][1].tolist(),
+                                                   conf=[round(float(v), 2) for v in Ev[sd][2]]) for sd in ("left", "right")}))
+    for side in ("left", "right"):
+        log(f"width model: {side} edge vs the kerb anchors: {kd[side]['stations']} stations, {kd[side]['within_03'] * 100:.1f} % within 0.3 m, "
+            f"max {kd[side]['max']:.2f} m; over 0.3 m at {kd[side]['over'][:12]}")
+    log("width model: the stronger side per station: " + ", ".join(f"{k or 'none'} {v}" for k, v in sorted(WIDTH_REPORT["src"].items())))
+    return Ccur, hlp, hrp, hl3, hr3, frep, fit_last, cfgw
 
 
 def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, pw, merge, pfa, pfb, cen, cc, dem_s, z0, rep):
@@ -712,6 +808,9 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, pw, m
             break
     else:
         rep.check("centre convergence", False, f"centre still moving {move:.3f} m after 40 refits")
+    if sp_cfg.get("width_model") and not cfg_raw.logger:
+        Ccur, hlp, hrp, hl3, hr3, frep, fit_last, cfgw = width_model_pass(cfg_raw, Ccur, hl3, hr3, tiles, features, sp_cfg, cc,
+                                                                          pfa, pfb, cen, merge, fit_last, rep)
     seg = np.linalg.norm(np.roll(Ccur, -1, 0) - Ccur, axis=1); L = float(seg.sum()); sp = L / n
     # -- gates of the fitted method (edge_gate.FITTED; a config may tighten them, never loosen)
     G = edge_gate.fitted_thresholds(cfg_raw["gate"])

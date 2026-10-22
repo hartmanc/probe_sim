@@ -1,0 +1,126 @@
+"""The owner's outline review page (Buttonwillow round 9, 22 Oct 2026): the fitted edges over the clean captures for the
+whole lap as capwin windows (capwin.py --light: white edges, yellow station ticks, no scenery), plus close-ups, and a
+plain index.html listing them in lap order with the station range and the section width under each; the header holds
+the width table per section (before / after) and the width gates' numbers.
+
+    uv run --python 3.12 --with numpy,scipy,pillow python -I tools/track/compare/outline_page.py --track buttonwillow \
+        --pkg tools/track/out/bw_r9e --before public/tracks/buttonwillow --out tools/track/compare/buttonwillow/edges_r9 \
+        [--every 125 --half 75 --mpp 0.12] [--close 4180,4354,4475 --close-half 30 --close-mpp 0.06]
+
+The PNGs are reference imagery and stay local (gitignored); the html is tracked.
+"""
+import argparse
+import html
+import json
+import os
+import subprocess
+import sys
+
+import numpy as np
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.dirname(HERE))
+import trackcfg  # noqa: E402
+import edge_gate  # noqa: E402
+
+
+def gates(T, cfg):
+    cw = trackcfg.remap_stations(cfg, T['n'], T['n'] * T['spacing_m'], C=np.array(T['center'])[:, :2])
+    J = cw['spline']['width_model']['junctions']
+    lines = []
+    met, fails = edge_gate.width_gates(T, J, cfg['gate'], log=lines.append)
+    return met, lines, J
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--track', required=True); ap.add_argument('--pkg', required=True); ap.add_argument('--before', required=True)
+    ap.add_argument('--out', required=True)
+    ap.add_argument('--every', type=float, default=125.0); ap.add_argument('--half', type=float, default=75.0); ap.add_argument('--mpp', type=float, default=0.12)
+    ap.add_argument('--close', default='4180,4354,4475'); ap.add_argument('--close-half', type=float, default=30.0); ap.add_argument('--close-mpp', type=float, default=0.06)
+    ap.add_argument('--title', default='Edges, round 9')
+    ap.add_argument('--skip-render', action='store_true')
+    a = ap.parse_args()
+    cfg = trackcfg.load(a.track)
+    T = json.load(open(os.path.join(a.pkg, 'track.json'))); T0 = json.load(open(os.path.join(a.before, 'track.json')))
+    n, sp = T['n'], T['spacing_m']; L = n * sp
+    met1, lines1, J = gates(T, cfg); met0, lines0, J0 = gates(T0, cfg)
+    wr = json.load(open(os.path.join(a.pkg, 'work', 'width_model_report.json')))
+    os.makedirs(a.out, exist_ok=True)
+    capwin = os.path.join(HERE, 'capwin.py')
+    hl, hr = edge_gate.half_widths(T); w = hl + hr
+    jm = edge_gate.junction_mask(n, J)
+
+    def where(k):
+        k %= n
+        if jm[k]:
+            js = [j for j in J if (k - j[1]) % n <= (j[2] - j[1]) % n]
+            return 'junction: ' + '; '.join(f"{j[3]} {j[0]} {j[1] * sp:.0f}-{j[2] * sp:.0f} m" for j in js)
+        for s in met1['sections']:
+            if (k - s['lo']) % n <= (s['hi'] - s['lo']) % n:
+                return f"section {s['lo'] * sp:.0f}-{s['hi'] * sp:.0f} m, width {s['W']:.2f} m"
+        return ''
+    items = []
+    s = 0.0
+    while s < L - 1:
+        items.append(('lap', s, a.half, a.mpp)); s += a.every
+    for c in a.close.split(','):
+        if c:
+            items.append(('close', float(c), a.close_half, a.close_mpp))
+    rows = []
+    for kind, s, half, mpp in items:
+        name = f"{'w' if kind == 'lap' else 'close'}_s{int(round(s)):04d}.png"
+        if not a.skip_render:
+            subprocess.run([sys.executable, '-I', capwin, '--track', a.track, '--pkg', a.pkg, '--s', f'{s:.1f}', '--half', str(half),
+                            '--mpp', str(mpp), '--light', '--out', os.path.join(a.out, name)], check=True, capture_output=True)
+        k = int(round(s / sp)) % n; k0, k1 = int(round((s - half) / sp)), int(round((s + half) / sp))
+        ks = np.arange(k0, k1 + 1) % n
+        rows.append((kind, s, half, mpp, name, where(k), float(w[k]), float(np.median(w[ks])), k0 * sp, k1 * sp))
+    # the page
+    e = html.escape
+    sec_rows = []
+    for s1 in met1['sections']:
+        a0, b0 = s1['lo'] * sp, s1['hi'] * sp
+        # the same world range on the old package: the old section whose span holds the new section's middle
+        mid = ((s1['lo'] + ((s1['hi'] - s1['lo']) % n) // 2) % n) * sp
+        k0 = int(round(mid / T0['spacing_m'])) % T0['n']
+        old = next((s0 for s0 in met0['sections'] if (k0 - s0['lo']) % T0['n'] <= (s0['hi'] - s0['lo']) % T0['n']), None)
+        ms = next((x for x in wr['sections'] if abs(x['lo'] - s1['lo']) <= 3), None)
+        sec_rows.append(f"<tr><td>{a0:.0f}-{b0:.0f}</td><td>{old['W'] if old else '-'}</td><td>{old['max_dev'] if old else '-'}</td>"
+                        f"<td>{s1['W']:.2f}</td><td>{s1['max_dev']:.3f}</td><td>{ms['obs'] if ms else '-'}</td>"
+                        f"<td>{e(', '.join(f'{k} {v}' for k, v in (ms['kinds'] if ms else {}).items() if v))}</td></tr>")
+    j_rows = ''.join(f"<li>{e(j[0])} {j[1] * sp:.0f}-{j[2] * sp:.0f} m: {e(j[3])}</li>" for j in J)
+    win_rows = ''.join(
+        f"<figure><img src=\"{e(r[4])}\" alt=\"s {r[1]:.0f}\" loading=\"lazy\"><figcaption><b>s {r[1]:.0f} m</b> "
+        f"({'close-up, ' if r[0] == 'close' else ''}{2 * r[2]:.0f} m across at {r[3]} m/px; stations {r[8]:.0f}-{r[9]:.0f} m): {e(r[5])}; "
+        f"width here {r[6]:.2f} m, window median {r[7]:.2f} m</figcaption></figure>" for r in rows)
+    b = wr['bias']; ak = wr['at_kerb']
+    doc = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{e(a.title)}</title>
+<style>body{{font:15px/1.45 system-ui,sans-serif;margin:16px;max-width:1300px;background:#fff;color:#111}}img{{max-width:100%;height:auto;border:1px solid #888}}
+figure{{margin:0 0 22px}}figcaption{{font-size:14px}}table{{border-collapse:collapse;font-size:14px}}td,th{{border:1px solid #bbb;padding:2px 6px;text-align:right}}
+pre{{white-space:pre-wrap;font-size:13px}}</style></head><body>
+<h1>{e(a.title)}: {e(cfg['name'])}</h1>
+<p>The new fitted edges (white) over the clean 2026 captures, station ticks every 10 m (yellow, labels every 50 m), the whole lap
+every {a.every:.0f} m in windows {2 * a.half:.0f} m across at {a.mpp} m/px, then close-ups of your three crops. Model: kerb bands anchor the edge at
+their inside line; the asphalt-end detector's outward bias, measured through the kerb anchors, is removed (left {b['left']:+.2f} m, right
+{b['right']:+.2f} m; at the kerb stations themselves the detector reads the band, {ak['left'][1]:+.2f} / {ak['right'][1]:+.2f} m from its inside line);
+one width per section between the junctions; the weaker side placed at that width from the stronger. Lap {L:.2f} m (before {T0['n'] * T0['spacing_m']:.2f} m).</p>
+<h2>Width gates</h2><pre>before (ccf00b4):
+{e(chr(10).join(lines0))}
+after:
+{e(chr(10).join(lines1))}</pre>
+<h2>Width per section (between the junctions)</h2>
+<table><tr><th>stations (m)</th><th>before: median width</th><th>before: max deviation</th><th>after: width</th><th>after: max deviation</th><th>observations</th><th>kinds (K kerb, D detector; left+right)</th></tr>
+{''.join(sec_rows)}</table>
+<h2>Junction ranges (measured local width, blended into the sections)</h2><ul>{j_rows}</ul>
+<h2>Windows in lap order</h2>
+{win_rows}
+</body></html>
+"""
+    open(os.path.join(a.out, 'index.html'), 'w').write(doc)
+    print(f"{len(rows)} windows -> {a.out}/index.html")
+
+
+if __name__ == '__main__':
+    main()

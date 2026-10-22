@@ -2085,3 +2085,25 @@ Geometry unchanged from 8bf8602. Stage 3 every gate ok. Stills structure_stills/
 | 4637 |  | left | cone_line | row of small orange cones along the paddock-side wall | onboard:ucmXJu5QKFQ@21:07 | pit lane: not a checked kind for the lap (row added in judge r5 (round 6): t1267000 shows the row ahead of the tower) |
 | 4697 |  | left | cone_line | two cones at the tower foot (yellow, orange) | onboard:ucmXJu5QKFQ@21:52 | pit lane: not a checked kind for the lap (row added in judge r5 (round 6): t1312000 / t1339000) |
 | 4618 |  | left | building | long low dark shade roof on posts in the paddock behind the paddock-side K-rail | onboard:ucmXJu5QKFQ@21:07 | pit lane: not a checked kind for the lap (row added in judge r6 (round 7): fwd_00 0 L, t1267000 / t1303000) |
+
+## Round 9 (22 Oct 2026): the width-prior edge model, stage 1 only (owner lap 3 note 27)
+
+Stage 1 rebuilt to tools/track/out/bw_r9e (not published: the owner reviews the outline before stages 2-3; notes 25-26
+move to the next round). width_model.py after the fitted method; config spline.width_model (21 junction ranges).
+Outline page: compare/buttonwillow/edges_r9/index.html (41 capwin windows, local PNGs).
+
+| | ccf00b4 | round 9 |
+|---|---|---|
+| width p5 / p50 / p95 | 10.66 / 13.14 / 16.45 m | 9.91 / 11.61 / 12.74 m |
+| width consistency (<= 0.3 m) | FAIL 4.92 m, 2302 of 3181 stations over | ok 0.096 m |
+| 20-80 m waviness left / right (<= 0.3 m) | FAIL 0.424 / 0.408 m | ok 0.120 / 0.119 m |
+| lap length | 4703.81 m | 4709.86 m |
+| bias (through the kerb anchors) | | left +1.05, right +0.75 m; at a kerb the detector reads -0.03 / -0.13 m from the band's inside |
+
+Open (stage 1 fails, written with --write-on-fail): the fitted method's evidence gates on the corrected detector readings,
+fit left / right unpainted bias 85.6 / 88.9 % of windows (>= 90), rows within 1.2 m 72 / 80 % (>= 85), coverage 45 / 49 %
+(>= 50), longest gap 72 / 74 st (<= 60), fit left waviness peak 0.108 m (<= 0.1); section 2035-2525 (Riverside) width
+12.73 m from detector-only stations, the outer edge 2-3 m out on the pale runoff at s 2200-2300. Runs: run 1 (first
+model), run 2 (two evidence passes: widths +0.5 m, back in the shoulder; dropped), run 3 (mouths carry the edge across,
+owner windows widened 25 st for the blend, both detector sides weighted by capture agreement), run 4 (width observations
+only from detector sides whose captures agree, conf >= 0.6).

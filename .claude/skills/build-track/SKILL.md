@@ -469,6 +469,23 @@ Named straights sit halfway between their corners.
     0.5 m (edge_gate.FITTED owner_*, tighten only).
   - Add `centre.prior_shift` knots from his midline so the refit starts in the right place.
   - The file's content enters the geometry config hash.
+- **The width-prior model and the width gates** (Buttonwillow round 9, 22 Oct 2026, owner lap 3 note 27: the
+  asphalt-end detector read the far side of the bleached shoulder; edges 1-2 m out, width p5/p50/p95 10.7/13.1/16.5 m,
+  every smoothness gate passing). Config `spline.width_model`; `width_model.py` after the fitted method converges:
+  - evidence once, in world coordinates, around the converged edges: every capture's asphalt-end reading, and kerb
+    anchors (kerb_detect's block pattern) at the band's INSIDE line (the owner's convention);
+  - the detector's bias measured THROUGH the anchors (at a kerb the detector reads the band itself, so kerb + detector
+    vs detector + detector widths, one L1 fit with one width per section); Buttonwillow: left +1.0, right +0.75 m;
+  - sections = the lap between declared junction ranges (`junctions`: mouths carry the edge across, pit-in / pit-out /
+    apron keep the measured local width, owner windows his lines, all blended over `blend` stations); the weaker side
+    placed at the section width from the stronger (kerb, owner, else the detector side by capture agreement);
+  - the placement enters fit_periodic as constraints with the corrected evidence as observations (coverage counts
+    evidence only).
+  - Gates (edge_gate.width_gates, REQUIRED with a width model): |width - section median| <= 0.3 m outside the
+    junction ranges, and the 20-80 m band of each edge's offset <= 0.3 m. Both failed on round 8's package
+    (4.9 m, 0.42 / 0.41 m), which every older gate passed.
+  - Reading the evidence a second time around the placed edges (`evidence_passes` 2) took the bias to ~0 and every
+    width up ~0.5 m, back into the shoulder: one pass.
 - World continuity: the edge polyline's third difference stays ≤ 2 cm.
 - Wall offsets stay steady where a wall runs parallel.
 - Width changes slowly except at kerbs and junctions.

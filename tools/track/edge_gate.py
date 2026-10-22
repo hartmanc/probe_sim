@@ -121,6 +121,99 @@ def unpainted_thresholds(g):
     return t
 
 
+# Width gates (Buttonwillow round 9, 22 Oct 2026; owner lap 3 note 27: "it seems to have a relatively uniform width
+# (except where the 'usable' track interfaces with track segments that aren't used, or service roads)"). Both REQUIRED
+# for a config with spline.width_model (its junction ranges declare the exceptions), both measured on the package:
+#  (a) width consistency: the lap is split into sections at the declared junction ranges; a section's width is the
+#      median of its stations' widths; at every station outside a junction range |width - section width| <= tol;
+#  (b) waviness: each edge's lateral offset from the centreline, with the junction ranges bridged by a straight line,
+#      band-passed to 20-80 m (difference of Gaussians, sigma = 0.1874 x wavelength: the half-power points at 20 and
+#      80 m); |band-pass| <= wave at every station outside the junction ranges.
+# The 41-station-median, step and third-difference gates measure smoothness only; these measure the width the owner
+# sees. A config may tighten (gate.width_tol, gate.width_wave), never loosen.
+WIDTH = dict(tol=0.30, wave=0.30, band=(20.0, 80.0))
+
+
+def width_thresholds(g):
+    g = g or {}
+    return dict(tol=min(WIDTH['tol'], g.get('width_tol', WIDTH['tol'])), wave=min(WIDTH['wave'], g.get('width_wave', WIDTH['wave'])),
+                band=WIDTH['band'])
+
+
+def junction_mask(n, junctions):
+    import numpy as np
+    jm = np.zeros(n, bool)
+    for j in junctions:
+        lo, hi = j[1], j[2]
+        jm[np.arange(lo, hi + (n if hi < lo else 0) + 1) % n] = True
+    return jm
+
+
+def _runs(mask, n):
+    import numpy as np
+    idx = np.flatnonzero(mask)
+    if not len(idx):
+        return []
+    out = []; a = b = idx[0]
+    for k in idx[1:]:
+        if k == b + 1: b = k
+        else: out.append((int(a), int(b))); a = b = k
+    out.append((int(a), int(b)))
+    if len(out) > 1 and out[0][0] == 0 and out[-1][1] == n - 1:
+        out = [(out[-1][0], out[0][1])] + out[1:-1]
+    return out
+
+
+def half_widths(T):
+    import numpy as np
+    C = np.array(T['center'])[:, :2]; L = np.array(T['left'])[:, :2]; R = np.array(T['right'])[:, :2]
+    t = np.roll(C, -1, 0) - np.roll(C, 1, 0); t /= np.linalg.norm(t, axis=1, keepdims=True); NL = np.c_[-t[:, 1], t[:, 0]]
+    return ((L - C) * NL).sum(1), -((R - C) * NL).sum(1)
+
+
+def band_pass(v, jm, sp, band):
+    """the 20-80 m band of a periodic per-station signal, junction stations bridged by a straight line first"""
+    import numpy as np
+    from scipy.ndimage import gaussian_filter1d
+    n = len(v); x = np.asarray(v, float).copy()
+    for a, b in _runs(jm, n):
+        if (b - a) % n + 1 >= n: continue
+        va, vb = x[(a - 1) % n], x[(b + 1) % n]; m = (b - a) % n + 1
+        for j in range(m):
+            x[(a + j) % n] = va + (vb - va) * (j + 1) / (m + 1)
+    s1, s2 = 0.1874 * band[0] / sp, 0.1874 * band[1] / sp
+    return gaussian_filter1d(x, s1, mode='wrap') - gaussian_filter1d(x, s2, mode='wrap')
+
+
+def width_gates(T, junctions, g=None, log=print):
+    """(a) width consistency and (b) 20-80 m waviness (WIDTH). Returns (metrics, fails)."""
+    import numpy as np
+    G = width_thresholds(g); n, sp = T['n'], T['spacing_m']
+    hl, hr = half_widths(T); w = hl + hr
+    jm = junction_mask(n, junctions); fails = []; met = {'sections': []}
+    worst = (0.0, None, None); bad = 0
+    for a, b in _runs(~jm, n):
+        ks = np.arange(a, b + (n if b < a else 0) + 1) % n
+        W = float(np.median(w[ks])); d = w[ks] - W; i = int(np.argmax(np.abs(d)))
+        bad += int(np.sum(np.abs(d) > G['tol']))
+        met['sections'].append(dict(lo=int(a), hi=int(b), W=round(W, 2), max_dev=round(float(np.abs(d).max()), 3), at=int(ks[i])))
+        if abs(d[i]) > worst[0]: worst = (float(abs(d[i])), int(ks[i]), (int(a), int(b)))
+    ok = bad == 0
+    met['width'] = dict(max_dev=worst[0], at=worst[1], stations_over=bad, of=int((~jm).sum()))
+    log(f"[{'ok' if ok else 'FAIL'}] width consistency: {len(met['sections'])} sections outside the junction ranges; max |width - section width| "
+        f"{worst[0]:.3f} m at station {worst[1]} (section {worst[2]}); {bad} of {int((~jm).sum())} stations over {G['tol']} m (<= {G['tol']} everywhere)")
+    if not ok: fails.append('width consistency')
+    for side, v in (('left', hl), ('right', hr)):
+        bp = band_pass(v, jm, sp, G['band']); a_ = np.abs(bp); a_[jm] = 0
+        k = int(np.argmax(a_)); over = int(np.sum(a_ > G['wave']))
+        met['wave_' + side] = dict(max=float(a_[k]), at=k, p95=float(np.percentile(np.abs(bp)[~jm], 95)), stations_over=over)
+        ok = over == 0
+        log(f"[{'ok' if ok else 'FAIL'}] edge waviness {side:5s}: 20-80 m band of the offset from the centre, max {a_[k]:.3f} m at station {k}, "
+            f"p95 {met['wave_' + side]['p95']:.3f} m; {over} stations over {G['wave']} m outside the junction ranges (<= {G['wave']})")
+        if not ok: fails.append(f'edge waviness {side}')
+    return met, fails
+
+
 def world_continuity(T):
     """max |third difference| of the left and right edge polylines (world metres) and where."""
     out = {}
@@ -226,8 +319,14 @@ def main():
     scp = os.path.join(d, 'scenery.json'); SC = json.load(open(scp)) if os.path.exists(scp) else None
     g = None
     if a.config:
-        sys.path.insert(0, HERE); import trackcfg; g = trackcfg.load(a.config)['gate']
+        sys.path.insert(0, HERE); import trackcfg; cfg = trackcfg.load(a.config); g = cfg['gate']
     _, fails = gate(T, SC, g)
+    if a.config and cfg['spline'].get('width_model'):
+        # the width gates on this package's stations (junction ranges mapped by world position, SKILL 1.3)
+        import numpy as np
+        cw = trackcfg.remap_stations(cfg, T['n'], T['n'] * T['spacing_m'], C=np.array(T['center'])[:, :2])
+        _, f2 = width_gates(T, cw['spline']['width_model']['junctions'], g)
+        fails += f2
     return 1 if fails else 0
 
 

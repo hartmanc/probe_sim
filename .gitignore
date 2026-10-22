@@ -34,6 +34,7 @@ tools/track/compare/sonoma/**
 tools/track/compare/buttonwillow/**
 !tools/track/compare/buttonwillow/**/
 !tools/track/compare/buttonwillow/**/*.md
+!tools/track/compare/buttonwillow/edges_r9/index.html
 # eye-level inventory (21 Oct 2026): the rows, sources and inventory.json are tracked for every circuit; the video
 # frames and the compare sheets (reference imagery) never are
 !tools/track/compare/*/inventory.json

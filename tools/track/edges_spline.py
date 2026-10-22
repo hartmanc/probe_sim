@@ -538,7 +538,7 @@ def ranges(mask, n):
     return out
 
 
-def fit_periodic(C, NL, hl, hr, tiles, features, sp, mpp, anchors=None, log=_log):
+def fit_periodic(C, NL, hl, hr, tiles, features, sp, mpp, anchors=None, log=_log, obs=None, anchors_cover=True):
     """ONE periodic robust spline per side over the whole lap (no runs, no seam, no post-fit overwrite). anchors:
     {'left'|'right': (stations, half-widths, weights)} from declared straights and measured shapes, inside the fit.
     Returns (hl, hr, report) with per-side metrics for the gates (build_track.py): share of associated observations
@@ -554,7 +554,10 @@ def fit_periodic(C, NL, hl, hr, tiles, features, sp, mpp, anchors=None, log=_log
         if len({feature_at(features, z[0], k, n) for k in (z[1], z[2])}) != 1:
             raise SystemExit(f'spline.kerb_search {z[:4]}: its ends lie in different feature zones')
     win = sp.get('search', (-4.5, 4.0)); U_ = np.arange(win[0], win[1] + 1e-4, 0.04)
-    obs = gather(C, NL, hl, hr, tiles, features, sp['line_off'], mpp, U_)
+    if obs is None:
+        obs = gather(C, NL, hl, hr, tiles, features, sp['line_off'], mpp, U_)
+    # obs given (width_model.py, round 9): the caller's own evidence rows; anchors_cover False: its constraints are
+    # not evidence, coverage and gaps count the observations only
     xs = np.arange(n, dtype=float); Bx = periodic_basis(xs, K, n)
     tight = tight_mask(C)
     rep, out = {}, {}
@@ -599,7 +602,7 @@ def fit_periodic(C, NL, hl, hr, tiles, features, sp, mpp, anchors=None, log=_log
         allres = np.array([min(abs(y - cur[i]) for y in c) for i, _, c, _ in O])
         assoc = allres <= 1.2   # rows whose nearest band lies within the association window: observations OF this edge
         covered = np.zeros(n, bool); covered[xo.astype(int)] = True
-        if xa is not None: covered[xa.astype(int) % n] = True     # a declared straight / shape is evidence too
+        if xa is not None and anchors_cover: covered[xa.astype(int) % n] = True     # a declared straight / shape is evidence too
         gaps = ranges(~covered, n); glen = [(b - a) % n + 1 for a, b in gaps]
         gi = int(np.argmax(glen)) if glen else 0
         qq = local_quad_resid(np.r_[cur[-25:], cur, cur[:25]], 25)[25:-25]

@@ -49,7 +49,7 @@ Geometry (Stage 1)
   repave_fixes [(a, b, crest from, crest to, why)]
   captures {z20_dir, z20_index, z20_mask, clean_dir, clean_index, mpp, common_shift, exclude, cursor_boxes}
   spline {runs [(lo, hi)], knot, lam, huber, line_off, prior, init_stiff, captures, asphalt_end {jump, sat_max, lo, hi},
-          warm_thr, mask [(side, lo, hi, src)]}   (asphalt_end / warm_thr: detector parameters of those features;
+          warm_thr, mask [(side, lo, hi, src)], width_model {junctions [(side, lo, hi, kind, src)], ...} (width_model.py)}   (asphalt_end / warm_thr: detector parameters of those features;
           absent = the defaults; mask: stations whose capture readings are dropped, an object beside the edge, with its capture)
   features [(side, lo, hi, 'keep' | 'asphalt_end' | 'warm_end' | 'kerb' | 'kerb_band', why)]   keep: the prior is held (legacy reproduction
                                              only; the fitted method ignores it); asphalt_end: where the dark asphalt
@@ -294,6 +294,8 @@ def remap_stations(cfg, n, length_m=None, C=None):
     for w in sp.get('owner_edges') or []:   # the owner's traced edge windows (Buttonwillow, 21 Oct 2026)
         w['lo'], w['hi'] = st(w['lo']), st(w['hi'])
         w['kerb_inside'] = [(a, st(lo), st(hi)) for a, lo, hi in w.get('kerb_inside', [])]
+    if sp.get('width_model'):   # the width model's junction ranges (Buttonwillow round 9, 22 Oct 2026)
+        sp['width_model']['junctions'] = [(a, st(lo), st(hi)) + tuple(rest) for a, lo, hi, *rest in sp['width_model'].get('junctions', [])]
     if sp.get('runs'):
         sp['runs'] = [(st(r[0]), st(r[1])) + tuple(r[2:]) for r in sp['runs']]
     c['repave_fixes'] = [(st(a), st(b), st(c0), st(c1), why) for a, b, c0, c1, why in c['repave_fixes']]
