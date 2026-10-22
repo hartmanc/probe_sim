@@ -119,7 +119,8 @@
    "licence": "CC-BY-NC-SA-4.0",
    "licence_url": "http://creativecommons.org/licenses/by-nc-sa/4.0/",
    "url": "https://sketchfab.com/3d-models/b19433b592b24522b16acfe87da58771",
-   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added",
+   "note": "Uploader flagged: other Ddiaz Design uploads carry game-asset names inside (M_CarPaint_Max, _Low, *_lod0). This file was scanned on 22 Oct 2026 and its node, mesh, material, texture and image names carry no such names; kept on the owner's decision."
   },
   "664": {
    "title": "Toyota Celica Supra XX",
@@ -487,7 +488,8 @@
    "licence": "CC-BY-NC-SA-4.0",
    "licence_url": "http://creativecommons.org/licenses/by-nc-sa/4.0/",
    "url": "https://sketchfab.com/3d-models/1998-volkswagen-new-beetle-81d1dbbf18e841a184c51f028e652879",
-   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added",
+   "note": "Uploader flagged: other Ddiaz Design uploads carry game-asset names inside (M_CarPaint_Max, _Low, *_lod0). This file was scanned on 22 Oct 2026 and its node, mesh, material, texture and image names carry no such names; kept on the owner's decision."
   },
   "328": {
    "title": "BMW E36 Coupe",
@@ -538,11 +540,11 @@
    "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
   },
   "26": {
-   "title": "BMW E30",
-   "author": "subishi",
+   "title": "Low poly Volkswagen Jetta 2",
+   "author": "msh093785",
    "licence": "CC-BY-4.0",
    "licence_url": "http://creativecommons.org/licenses/by/4.0/",
-   "url": "https://sketchfab.com/3d-models/bmw-e30-b4bfbfefe95f449ba239caf1183ef912",
+   "url": "https://sketchfab.com/3d-models/c9c2ebfb18ab47518b5694393389ad20",
    "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
   },
   "128": {
