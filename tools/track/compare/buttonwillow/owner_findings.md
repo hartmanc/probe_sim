@@ -133,3 +133,24 @@ build). Notes as given, before bed:
     infield to the outside of Cotton Corners: "This might be for an emergency vehicle route between Sunrise and Cotton
     Corners (that shouldn't be blocked off for realism's sake)." The sim's cone line 140-160 R (from onboard t006-t008)
     stands at that road's mouth; the road itself is not modelled.
+
+## Lap 3 (22 Oct 2026, the round-8 checkpoint-6 preview ccf00b4, probe-rddrews1f)
+
+25. **The strip left of the start / finish straight** (owner/owner_lap3_108.png, arrow): "The non-paved area on the left side of the
+    start/finish straight should look like the dirt that's around the circuit everywhere else. In the sim it looks like
+    concrete." Round 8 drew the pale strip between the dark band and the K-rail as two drivable zones in the apron look (the
+    orchestrator's brief read the capture's pale tone as pavement): it is DIRT; the zones go, the ground is the dirt of the rest.
+26. **The starter's stand at the pit wall** (owner/owner_lap3_109.png, arrows): "The start / finish tower hangs over the pit wall,
+    but its legs/structure are behind the pit wall. Also its stairs are floating." The scaffold stand's deck overhangs the wall
+    with its legs behind it, and its stair stands in the air: the stand's footprint and the stair's foot from the capture
+    (c20_p0420) and the pit video, the stair meeting the ground.
+27. **The track edges** (owner/owner_lap3_110..116.png: the edge line waving in and out at seven places, a bulge into the dirt,
+    a kerb running away from the asphalt with a gap, the road narrowing and widening on straights): "The track edges seem off in
+    enough places that something seems wrong with the pipeline. This feels like a regression on the track edges. When I look
+    at the satellite photo of the track, it seems to have a relatively uniform width (except where the 'usable' track
+    interfaces with track segments that aren't used, or service roads). Something seems fundamentally wrong with how we are
+    approaching Buttonwillow. Is the satellite photo so low contrast that the agent can't tell where the track edges are (gray
+    pavement vs. brown dirt)?" Orchestrator's measurement on ccf00b4: width p5 / p50 / p95 = 10.7 / 13.1 / 16.5 m; the
+    20-80 m band of the width has p95 1.14 m and max 1.8 m (s 1419), on straights p95 0.72 m; the agent's own round-8 note said
+    the dirt and the asphalt are within 18 grey levels on the captures. The edge gate measures smoothness against a 41-station
+    median and adjacent steps, not truth against a width prior, so a 20-80 m wander passes it.
