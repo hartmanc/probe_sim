@@ -2,15 +2,15 @@
 // per-car pace vs target.   npx tsx tools/race/sim_race.ts [--track <id>] [--laps 3] [--seed 1] [--every 2]
 import { createCollisionWorld } from '../../src/physics/index';
 import { RaceDirector } from '../../src/physics/ai/race';
-import { loadTrackPack, loadProbeJson, loadPace, IDENTITY_PATH, trackArg } from './load';
-import { existsSync, readFileSync } from 'node:fs';
+import { loadTrackPack, loadProbeJson, loadPace, loadIdentityJson, trackArg } from './load';
 
 const argv = process.argv.slice(2);
 const arg = (k: string, d: string) => { const i = argv.indexOf(k); return i >= 0 ? argv[i + 1] : d; };
 const laps = Number(arg('--laps', '3')), seed = Number(arg('--seed', '1')), every = Number(arg('--every', '2'));
 const track = trackArg(argv);
 const pack = loadTrackPack(track);
-const identity = existsSync(IDENTITY_PATH) ? JSON.parse(readFileSync(IDENTITY_PATH, 'utf8')) : null;
+// the track's own identity.json, else the global one (as the app)
+const identity = loadIdentityJson(track);
 const cw = argv.includes('--no-walls') ? null : createCollisionWorld(pack.scenery, pack.track);
 const t0 = performance.now();
 const dir = new RaceDirector({

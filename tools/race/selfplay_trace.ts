@@ -4,8 +4,7 @@
 //   [--summary: one classified line per event]  [--car NUM --from t0 --to t1: pedals / steering / slips of one car]
 import { createCollisionWorld } from '../../src/physics/index';
 import { RaceDirector } from '../../src/physics/ai/race';
-import { loadTrackPack, loadProbeJson, loadPace, IDENTITY_PATH, trackArg } from './load';
-import { existsSync, readFileSync } from 'node:fs';
+import { loadTrackPack, loadProbeJson, loadPace, loadIdentityJson, trackArg } from './load';
 import { runSelfplay } from './selfplay_metrics';
 import { TRACKS } from '../../src/scoreboard/config';
 
@@ -17,7 +16,8 @@ const near = arg('--near', '').split('-').map(Number);
 const kind = arg('--kind', 'four'), maxN = Number(arg('--max', '20')), pre = Number(arg('--pre', '3'));
 const followScale = argv.includes('--follow-scale') ? Number(arg('--follow-scale', '1')) : (TRACKS[track]?.ai?.followScale ?? 1);
 const pack = loadTrackPack(track);
-const identity = existsSync(IDENTITY_PATH) ? JSON.parse(readFileSync(IDENTITY_PATH, 'utf8')) : null;
+// the track's own identity.json, else the global one (as the app)
+const identity = loadIdentityJson(track);
 const makeSurface = pack.makeSurface;   // the app's surface options (load.ts)
 const dir = new RaceDirector({
   line: pack.line, surface: pack.surface, makeSurface, probeJson: loadProbeJson(), pace: loadPace(track), identity,

@@ -1,6 +1,11 @@
 // The AI field: pace.json / identity.json types, per-car CarSpec construction (Probe spec + identity
 // overrides + one pace scale), the per-car performance model the driver uses (acceleration table,
 // brake gain, understeer feed-forward) and the per-car target speed profile.
+//
+// Field keys (22 Oct 2026): a car's identity row and its model are found by its `id` (pace.json cars[].id, absent =
+// its number; `fieldKey`). identity.json / models.json rows are keyed the same way (`id`, else `number`), so the Laguna
+// files, which have no ids, resolve by number exactly as before. A circuit's own field (Buttonwillow) gives a car whose
+// number is a different Laguna car's an id of its own ("0_bw"), so it never picks up that car's identity or model.
 
 import { loadCarSpec, type CarSpec } from '../spec';
 import { Vehicle } from '../vehicle';
@@ -95,8 +100,14 @@ export interface PaceJson {
   cars: PaceCar[];
 }
 
+/** A field car's identity / model key: its `id`, else its number (pace.json cars, identity.json / models.json rows). */
+export function fieldKey(c: { id?: unknown; number?: unknown }): string {
+  return c.id != null && String(c.id) !== '' ? String(c.id) : String(c.number);
+}
+
 /**
- * Car identity (public/cars/field/identity.json, written by another tool). All fields optional; this
+ * Car identity (public/cars/field/identity.json, or the track's own cars/field/<track>/identity.json, written by
+ * another tool; rows keyed by `id`, else `number`). All fields optional; this
  * module reads several spellings (top level or under `dims` / `dimensions`) so the two can evolve
  * independently. Missing → Probe values.
  */
@@ -106,6 +117,8 @@ export interface IdentityEngine {
 }
 export interface IdentityCar {
   number: string;
+  /** the row's field key when it differs from the number ("0_bw"); see fieldKey */
+  id?: string;
   make?: string; model?: string; year?: number;
   mass_kg?: number;
   power_kw?: number;
@@ -129,19 +142,20 @@ function pickNum(o: any, keys: string[]): number | undefined {
 }
 const dimKeys = (k: string, extra: string[] = []) => [k, `dims.${k}`, `dimensions.${k}`, ...extra];
 
-/** Normalize identity.json (array, { cars: [...] } or { "<number>": {...} }) into a map by car number. */
+/** Normalize identity.json (array, { cars: [...] } or { "<number>": {...} }) into a map by field key (`id`, else number). */
 export function parseIdentity(json: unknown): Map<string, IdentityCar> {
   const out = new Map<string, IdentityCar>();
   if (!json || typeof json !== 'object') return out;
   const j: any = json;
   const list: any[] = Array.isArray(j) ? j : Array.isArray(j.cars) ? j.cars : Object.entries(j).filter(([, v]) => v && typeof v === 'object').map(([k, v]: [string, any]) => ({ number: k, ...v }));
   for (const c of list) {
-    if (!c || c.number == null) continue;
-    const num = String(c.number);
+    if (!c || (c.number == null && c.id == null)) continue;
+    const num = String(c.number ?? c.id);
+    const key = fieldKey(c);
     const kw = pickNum(c, dimKeys('power_kw', ['powerKw', 'power.kw']));
     const hp = pickNum(c, dimKeys('power_hp', ['hp', 'power.hp', 'horsepower']));
     const e = c.engine && typeof c.engine === 'object' ? c.engine : {};
-    out.set(num, {
+    out.set(key, {
       ...c,
       number: num,
       year: pickNum(c, ['year']),

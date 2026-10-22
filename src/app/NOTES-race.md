@@ -32,6 +32,23 @@ Tests: `src/app/__tests__/race.test.ts` (+ the race case in `modes.test.ts`).
 - **Scoreboard:** `setBoardContext({ raceAiVersion: '2' })` at each build; results → `submitRace({ metres, laps,
   aiVersion, seed, position, finished })` through the usual prompt; the results card reopens afterwards.
 
+## Per-event fields and field keys (22 Oct 2026)
+
+- **Files per track.** `TRACKS[id].pace` (required) and `TRACKS[id].identity` (optional, a circuit's own field:
+  `cars/field/<track>/identity.json`). `loadFieldData` loads the track's own identity file and falls back to the global
+  `cars/field/identity.json` (Laguna's) when the track has none or the file is missing / 404 (`loadIdentityWithFallback`;
+  the fallback is noted in `FieldData.missing` and `identityPath` says which file was used). `models.json` stays one
+  global pool for every track. The tools do the same (`tools/race/load.ts` `identityPath` / `loadIdentity(track)`).
+- **Field key = `id`, else the number** (`fieldKey`, src/physics/ai/field.ts). pace.json cars, identity.json rows and
+  models.json rows may carry `id`; the director finds a car's identity row by it (`RaceCar.id`, `CarPose.id`), the app
+  its model (`modelQueue` in modes/race.ts) and its index.json sound row. Laguna's files carry no ids, so everything
+  resolves by number exactly as before (seeded self-play unchanged). FieldCars, tints, stint draws, driver seeds and
+  results stay keyed by the number (unique within one race).
+- **Buttonwillow** (`tools/race/pace_track.ts --own`): the race's own 100 cars (99 AI + the player's reference row;
+  the five entrants with no lap left out). A number that is a different Laguna car's gets `<n>_bw` (0, 1, 8, 9, 16,
+  40, 711, 801), so it never shows the Laguna car's identity or model; the six same cars (#38, 189, 544, 619, 670, 963)
+  keep their number and so their Laguna identity and model. A car without a model row keeps the placeholder.
+
 ## Dev overrides (URL)
 
 | param | effect |

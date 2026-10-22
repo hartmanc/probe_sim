@@ -42,8 +42,8 @@ export interface FieldAudioHook {
   readonly audio: FieldAudioLike | null;
   /** Resolves when the first index fetch settled (sounds are re-resolved then). */
   ready?: Promise<void>;
-  /** A car's sound (index.json `cars` entry by number, else identity.json engine family / make / model, else cylinders + layout). */
-  sound(car: { number: string; identity: unknown; engine: { layout: string; cylinders: number; exhaustNote?: string | null } }): FieldCarSound;
+  /** A car's sound (index.json `cars` entry by field key `id`, else number; else identity.json engine family / make / model, else cylinders + layout). */
+  sound(car: { number: string; id?: string; identity: unknown; engine: { layout: string; cylinders: number; exhaustNote?: string | null } }): FieldCarSound;
   /** Per frame while racing: retries a missing index now and then. */
   tick?(): void;
   dispose(): void;

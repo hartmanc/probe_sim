@@ -19,7 +19,19 @@ export function trackArg(argv: string[] = process.argv.slice(2)): string {
 /** The track's field pace file (TRACKS[id].pace, relative to public/). */
 export function pacePath(trackId: string = DEFAULT_TRACK): string { return resolve(ROOT, 'public', TRACKS[trackId].pace); }
 export const PACE_PATH = pacePath(DEFAULT_TRACK);
+/** The global identity.json (Laguna's field; the fallback of a track without its own). */
 export const IDENTITY_PATH = resolve(ROOT, 'public/cars/field/identity.json');
+/** The identity file a track's race uses, as the app (src/app/loader.ts loadFieldData): TRACKS[id].identity when that
+ *  file exists, else the global IDENTITY_PATH. Rows are keyed by `id`, else number (field.ts fieldKey). */
+export function identityPath(trackId: string = DEFAULT_TRACK): string {
+  const own = TRACKS[trackId]?.identity;
+  return own && existsSync(resolve(ROOT, 'public', own)) ? resolve(ROOT, 'public', own) : IDENTITY_PATH;
+}
+/** The track's identity.json contents (identityPath), or null when there is none. */
+export function loadIdentityJson(trackId: string = DEFAULT_TRACK): unknown | null {
+  const p = identityPath(trackId);
+  return existsSync(p) ? JSON.parse(readFileSync(p, 'utf8')) : null;
+}
 
 export interface TrackPack {
   track: TrackJson; ghosts: GhostsJsonLike; scenery: any; surface: Surface; line: RaceLine; pitLane: PitLaneJson | null; heightfield: Float32Array;
@@ -59,6 +71,8 @@ export function loadTrackPack(idOrDir: string = DEFAULT_TRACK): TrackPack {
 
 export function loadProbeJson(): any { return JSON.parse(readFileSync(resolve(ROOT, 'public/cars/probe_gt/car.json'), 'utf8')); }
 export function loadPace(trackId: string = DEFAULT_TRACK): PaceJson { return JSON.parse(readFileSync(pacePath(trackId), 'utf8')); }
-export function loadIdentity(): Map<string, IdentityCar> {
-  return existsSync(IDENTITY_PATH) ? parseIdentity(JSON.parse(readFileSync(IDENTITY_PATH, 'utf8'))) : new Map();
+/** The track's identity rows by field key (`id`, else number); empty when there is no identity file. */
+export function loadIdentity(trackId: string = DEFAULT_TRACK): Map<string, IdentityCar> {
+  const j = loadIdentityJson(trackId);
+  return j ? parseIdentity(j) : new Map();
 }

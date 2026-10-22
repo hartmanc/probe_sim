@@ -5,8 +5,8 @@
 import { createTrackSurface, createCollisionWorld } from '../../src/physics/index';
 import { RaceDirector } from '../../src/physics/ai/race';
 import type { PaceJson } from '../../src/physics/ai/field';
-import { loadTrackPack, loadProbeJson, loadPace, IDENTITY_PATH, trackArg } from './load';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { loadTrackPack, loadProbeJson, loadPace, loadIdentityJson, trackArg } from './load';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { runSelfplay, printReport } from './selfplay_metrics';
 import { TRACKS } from '../../src/scoreboard/config';
 
@@ -20,7 +20,8 @@ const track = trackArg(argv);
 // the track's AI parameters (TRACKS[id].ai), or --follow-scale to try another
 const followScale = argv.includes('--follow-scale') ? Number(arg('--follow-scale', '1')) : (TRACKS[track]?.ai?.followScale ?? 1);
 const pack = loadTrackPack(track);
-const identity = existsSync(IDENTITY_PATH) ? JSON.parse(readFileSync(IDENTITY_PATH, 'utf8')) : null;
+// the track's own identity.json, else the global one (as the app)
+const identity = loadIdentityJson(track);
 const pace: PaceJson = pacePath ? JSON.parse(readFileSync(pacePath, 'utf8')) : loadPace(track);
 // the app's surface options (load.ts); --no-kerbs: the pit-lane-only surface self-play used until 20 Oct 2026 (comparison)
 const makeSurface = argv.includes('--no-kerbs') ? () => createTrackSurface(pack.track, pack.heightfield, { pitLane: pack.pitLane }) : pack.makeSurface;

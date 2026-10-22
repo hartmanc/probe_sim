@@ -7,9 +7,11 @@ import * as THREE from 'three';
 import { HotlapSim } from '../../scoreboard';
 import { lagunaAssets, autopilot } from '../../scoreboard/__tests__/fixtures';
 import { HotlapLoop } from '../modes/hotlap';
-import { createRace, newSeed, parseRaceOverrides, raceAiConfig, raceResultFor, RACE_LAPS, type RaceDeps } from '../modes/race';
+import { carSound, createRace, modelQueue, newSeed, parseRaceOverrides, raceAiConfig, raceResultFor, RACE_LAPS, type RaceDeps } from '../modes/race';
 import type { ModeContext, RaceServices } from '../modes/mode';
-import type { FieldData } from '../loader';
+import { GLOBAL_IDENTITY, loadIdentityWithFallback, normaliseModelRows, type FieldData } from '../loader';
+import { fieldKey, parseIdentity, type PaceJson } from '../../physics/ai/field';
+import { TRACKS } from '../../scoreboard/config';
 import { FieldCars, buildPlaceholderCar, identityColor, selectDrawn, triangleCount, PROBE_DIMS, type FieldCarInfo } from '../field-cars';
 import { raceHudView, resultRows } from '../race-hud';
 import type { RaceHud, ResultRow } from '../../physics/ai/race';
@@ -23,7 +25,7 @@ const fieldData = (): FieldData => ({
   models: readJson('cars/field/models.json').cars, missing: [],
 });
 
-function harness(search = '?seed=42&laps=2', rand: () => number = () => 0.5) {
+function harness(search = '?seed=42&laps=2', rand: () => number = () => 0.5, field: () => FieldData = fieldData, loadModel: RaceDeps['loadModel'] = async () => null) {
   const sim = new HotlapSim(lagunaAssets(), { record: true, autoShift: true });
   const pilot = { fn: autopilot(sim, 0.35) };
   const loop = new HotlapLoop(sim, () => ({ ...pilot.fn(), handbrake: false, tag: 'keys' as const }));
@@ -45,7 +47,7 @@ function harness(search = '?seed=42&laps=2', rand: () => number = () => 0.5) {
     toast: (m: string) => log.push(`toast:${m}`),
     race: services,
   } as unknown as ModeContext;
-  const deps: RaceDeps = { loadField: fieldData, loadModel: async () => null, random: rand, dom: false };
+  const deps: RaceDeps = { loadField: field, loadModel, random: rand, dom: false };
   const race = createRace(ctx, deps);
   loop.onStep = () => race.step(0.001);
   return { sim, loop, scene, race, log, pilot };
@@ -275,4 +277,112 @@ describe('per-track AI race parameters (TRACKS[id].ai → RaceConfig)', () => {
     expect(raceAiConfig('sonoma')).toEqual({ followScale: 1.4, laneMargin: 0.85, shiftGrip: 1 });
     expect(raceAiConfig('laguna_seca')).toEqual({ followScale: 1, laneMargin: 1, shiftGrip: 0 });
   });
+});
+
+describe('per-event fields: identity / model by field key (id, else number)', () => {
+  const lagIdent = parseIdentity(readJson('cars/field/identity.json'));
+  const bw: PaceJson = readJson('cars/field/buttonwillow/pace.json');
+
+  it('fieldKey and parseIdentity: id first, number as the fallback', () => {
+    expect(fieldKey({ number: '711' })).toBe('711');
+    expect(fieldKey({ id: '711_bw', number: '711' })).toBe('711_bw');
+    expect(fieldKey({ id: '', number: '8' })).toBe('8');
+    const m = parseIdentity([{ number: '0', make: 'Laguna zero' }, { id: '0_bw', number: '0', make: 'Buttonwillow zero' }, { number: 38, make: 'Same car' }]);
+    expect(m.get('0')!.make).toBe('Laguna zero');
+    expect(m.get('0_bw')!.make).toBe('Buttonwillow zero');
+    expect(m.get('0_bw')!.number).toBe('0');
+    expect(m.get('38')!.make).toBe('Same car');
+    // Laguna's identity.json has no ids: every row is keyed by its number, as before
+    for (const [k, v] of lagIdent) expect(k).toBe(v.number);
+  });
+
+  it('identity.json per track with the global fallback (the per-track file may be missing or 404)', async () => {
+    expect(TRACKS.laguna_seca.identity).toBeUndefined();
+    expect(TRACKS.buttonwillow.identity).toBe('cars/field/buttonwillow/identity.json');
+    expect(GLOBAL_IDENTITY).toBe('cars/field/identity.json');
+    const own = { cars: [{ id: '0_bw', number: '0' }] }, global = [{ number: '0' }];
+    const asked: string[] = [];
+    const get = (have: Record<string, unknown>) => async (u: string) => { asked.push(u); return have[u] ?? null; };
+    // own file present: used, the global one not fetched
+    expect(await loadIdentityWithFallback(TRACKS.buttonwillow.identity, get({ [TRACKS.buttonwillow.identity!]: own, [GLOBAL_IDENTITY]: global })))
+      .toEqual({ identity: own, path: TRACKS.buttonwillow.identity });
+    expect(asked).toEqual([TRACKS.buttonwillow.identity]);
+    // own file missing / 404 (fetchJson gives null): the global one
+    asked.length = 0;
+    expect(await loadIdentityWithFallback(TRACKS.buttonwillow.identity, get({ [GLOBAL_IDENTITY]: global }))).toEqual({ identity: global, path: GLOBAL_IDENTITY });
+    expect(asked).toEqual([TRACKS.buttonwillow.identity, GLOBAL_IDENTITY]);
+    // Laguna (no per-track file): straight to the global one
+    asked.length = 0;
+    expect(await loadIdentityWithFallback(TRACKS.laguna_seca.identity, get({ [GLOBAL_IDENTITY]: global }))).toEqual({ identity: global, path: GLOBAL_IDENTITY });
+    expect(asked).toEqual([GLOBAL_IDENTITY]);
+    // neither: null
+    expect(await loadIdentityWithFallback(TRACKS.buttonwillow.identity, get({}))).toEqual({ identity: null, path: null });
+  });
+
+  it('models.json rows get an id (the number when absent); the queue matches them to cars by field key', () => {
+    const rows = normaliseModelRows({ cars: [{ number: 0, file: 'models/0.glb' }, { id: '0_bw', number: '0', file: 'models/0_bw.glb' }, { number: '38', file: 'models/38.glb' }, { number: '5' }] });
+    expect(rows.map((r) => [r.number, r.id, r.file])).toEqual([['0', '0', 'models/0.glb'], ['0', '0_bw', 'models/0_bw.glb'], ['38', '38', 'models/38.glb']]);
+    const cars = [{ id: '0_bw', number: '0', isPlayer: false }, { id: '38', number: '38', isPlayer: false }, { id: '619', number: '619', isPlayer: true }];
+    const kinds: Record<string, 'placeholder' | 'model'> = { '0': 'placeholder', '38': 'placeholder' };
+    expect(modelQueue(rows, cars, (n) => kinds[n] ?? null).map((q) => [q.car, q.model.file])).toEqual([['0', 'models/0_bw.glb'], ['38', 'models/38.glb']]);
+    // the Laguna #0 model never lands on Buttonwillow's 0_bw; a car without a row keeps its placeholder
+    expect(modelQueue(rows.slice(0, 1), cars, (n) => kinds[n] ?? null)).toEqual([]);
+    kinds['38'] = 'model';
+    expect(modelQueue(rows, cars, (n) => kinds[n] ?? null).map((q) => q.car)).toEqual(['0']);
+    // Laguna's raw rows (no id) match by number
+    const lag = readJson('cars/field/models.json').cars;
+    expect(modelQueue(lag, [{ id: '711', number: '711', isPlayer: false }], () => 'placeholder').map((q) => q.model.file)).toEqual(['models/711.glb']);
+  });
+
+  it('the sound index row is found by field key', () => {
+    const index = { families: { v8: {}, i4: {} }, aliases: [], fallback: [], default: 'i4', cars: { '0': { family: 'v8' } } } as never;
+    const engine = { layout: 'I4', cylinders: 4 };
+    expect(carSound(index, { number: '0', identity: null, engine }).family).toBe('v8');
+    expect(carSound(index, { number: '0', id: '0', identity: null, engine }).family).toBe('v8');
+    expect(carSound(index, { number: '0', id: '0_bw', identity: null, engine }).family).not.toBe('v8');
+  });
+
+  it('Buttonwillow pace: ids by number, "<n>_bw" for a different Laguna car', () => {
+    const ids = bw.cars.map((c) => c.id);
+    expect(ids.every((x) => typeof x === 'string')).toBe(true);
+    expect(new Set(ids).size).toBe(bw.cars.length);
+    expect(bw.cars.filter((c) => c.id !== c.number).map((c) => c.id).sort()).toEqual(['0_bw', '16_bw', '1_bw', '40_bw', '711_bw', '801_bw', '8_bw', '9_bw']);
+    for (const n of ['38', '189', '544', '619', '670', '963']) expect(bw.cars.find((c) => c.number === n)!.id).toBe(n);
+    expect(bw.cars.filter((c) => c.player).map((c) => c.number)).toEqual(['619']);
+    for (const c of bw.cars) { expect(c.targetLap).toBeGreaterThan(100); expect((c.stints ?? []).length).toBeGreaterThan(0); }
+  });
+
+  it('the director resolves identity by id; the race loads models by id (Buttonwillow cars on the global fallback)', async () => {
+    const pick = ['0', '38', '711', '69', '619'];
+    const pace: PaceJson = { ...bw, cars: bw.cars.filter((c) => pick.includes(c.number)) };
+    const field = (): FieldData => ({ pace, identity: readJson('cars/field/identity.json'), models: normaliseModelRows(readJson('cars/field/models.json')), missing: [] });
+    const asked: string[] = [];
+    const { race } = harness('?seed=42&laps=2', () => 0.5, field, async (f) => { asked.push(f); return null; });
+    race.start();
+    const d = race.director!;
+    const car = (n: string) => d.cars.find((c) => c.number === n)!;
+    expect(d.cars.length).toBe(5);
+    expect(car('0').id).toBe('0_bw');
+    expect(car('0').identity).toBeNull();                      // not Laguna's #0
+    expect(car('711').identity).toBeNull();                    // not Laguna's #711 Miata
+    expect(car('38').identity!.make).toBe(lagIdent.get('38')!.make);   // the same car: its Laguna identity
+    expect(car('69').identity).toBeNull();                     // a Buttonwillow-only car: placeholder until its own row
+    expect(d.poses().find((p) => p.number === '0')!.id).toBe('0_bw');
+    await Promise.resolve(); await new Promise((r) => setTimeout(r, 0));
+    expect(asked).toContain('models/38.glb');
+    expect(asked).not.toContain('models/0.glb');
+    expect(asked).not.toContain('models/711.glb');
+    race.dispose();
+  }, 60000);
+
+  it('Laguna: every car keyed by its number, identity as before', () => {
+    const { race } = harness();
+    race.start();
+    const d = race.director!;
+    for (const c of d.cars) {
+      expect(c.id).toBe(c.number);
+      if (!c.isPlayer) expect(c.identity?.make).toBe(lagIdent.get(c.number)?.make);
+    }
+    race.dispose();
+  }, 60000);
 });

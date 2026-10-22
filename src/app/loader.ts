@@ -1,6 +1,11 @@
 // Asset loading with fallbacks. Every asset is fetched by a relative URL so
 // the site works under any base path. A missing asset (404, or Vite's HTML
 // fallback page) is replaced by a synthetic stand-in and reported.
+//
+// The race field (loadFieldData): the track's pace.json (TRACKS[id].pace), its identity.json (TRACKS[id].identity, a
+// circuit's own field; falls back to the global cars/field/identity.json when absent, missing or 404) and the one
+// global models.json pool. Identity rows and models are matched to pace cars by field key: `id`, else the number
+// (src/physics/ai/field.ts fieldKey), so Laguna's files, which carry no ids, resolve by number as before.
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import type { GhostsJson, TrackJson } from './physics-types';
@@ -161,9 +166,12 @@ export async function loadAssets(onProgress: (frac: number, label: string) => vo
 
 const FIELD_DIR = 'cars/field/';
 
-/** One row of public/cars/field/models.json. */
+/** One row of public/cars/field/models.json (one global pool of models for every track). */
 export interface FieldModelInfo {
   number: string;
+  /** the field key the model belongs to (pace.json car `id`, e.g. "0_bw"); loadFieldData fills it with the number when
+   *  the row has none, so Laguna's rows match by number as before */
+  id: string;
   file: string;
   tris?: number;
   tyre_radius_m?: number;
@@ -179,6 +187,8 @@ export interface FieldModelInfo {
 export interface FieldData {
   pace: unknown | null;
   identity: unknown | null;
+  /** the identity file actually used (TRACK.identity, or the global fallback), null when none loaded */
+  identityPath?: string | null;
   models: FieldModelInfo[];
   /** Human-readable notes on what is missing. */
   missing: string[];
@@ -186,21 +196,45 @@ export interface FieldData {
 
 let fieldDataP: Promise<FieldData> | null = null;
 
-/** The track's pace.json + identity.json + models.json (fetched once, cached). */
+/** The global identity file: Laguna's field, and the fallback of a track without its own (or while it is missing). */
+export const GLOBAL_IDENTITY = FIELD_DIR + 'identity.json';
+
+/**
+ * A track's identity.json: its own (`identityPath`, TRACKS[id].identity) when it loads, else the global one. A missing
+ * own file (404, or Vite's HTML fallback) falls back silently. `get` is the JSON fetch (null on any failure).
+ */
+export async function loadIdentityWithFallback(identityPath: string | undefined, get: (url: string) => Promise<unknown | null>): Promise<{ identity: unknown | null; path: string | null }> {
+  if (identityPath && identityPath !== GLOBAL_IDENTITY) {
+    const own = await get(identityPath);
+    if (own) return { identity: own, path: identityPath };
+  }
+  const global = await get(GLOBAL_IDENTITY);
+  return { identity: global, path: global ? GLOBAL_IDENTITY : null };
+}
+
+/** models.json rows with a file, `number` as a string and `id` filled (the row's `id`, else its number). */
+export function normaliseModelRows(models: { cars?: unknown } | null): FieldModelInfo[] {
+  const cars = models && Array.isArray(models.cars) ? (models.cars as Record<string, unknown>[]) : [];
+  return cars.filter((m) => m && (m.number != null || m.id != null) && typeof m.file === 'string')
+    // the field key as src/physics/ai/field.ts fieldKey (not imported: this module stays out of the physics code)
+    .map((m) => ({ ...m, number: String(m.number ?? m.id), id: m.id != null && String(m.id) !== '' ? String(m.id) : String(m.number) }) as FieldModelInfo);
+}
+
+/** The track's pace.json + identity.json (its own, else the global) + models.json (global) (fetched once, cached). */
 export function loadFieldData(): Promise<FieldData> {
   if (!fieldDataP) {
     fieldDataP = (async () => {
-      const [pace, identity, models] = await Promise.all([
+      const [pace, ident, models] = await Promise.all([
         fetchJson<unknown>(TRACK.pace),   // per track (src/scoreboard/config.ts TRACKS)
-        fetchJson<unknown>(FIELD_DIR + 'identity.json'),
+        loadIdentityWithFallback(TRACK.identity, (u) => fetchJson<unknown>(u)),
         fetchJson<{ cars?: FieldModelInfo[] }>(FIELD_DIR + 'models.json'),
       ]);
       const missing: string[] = [];
       if (!pace) missing.push('pace.json');
-      if (!identity) missing.push('identity.json (cars are Probe clones)');
+      if (!ident.identity) missing.push('identity.json (cars are Probe clones)');
+      else if (TRACK.identity && ident.path !== TRACK.identity) missing.push(`${TRACK.identity} (global identity.json used)`);
       if (!models) missing.push('models.json (placeholder cars)');
-      const list = Array.isArray(models?.cars) ? models!.cars.filter((m) => m && m.number != null && typeof m.file === 'string').map((m) => ({ ...m, number: String(m.number) })) : [];
-      return { pace, identity, models: list, missing };
+      return { pace, identity: ident.identity, identityPath: ident.path, models: normaliseModelRows(models), missing };
     })();
     fieldDataP.catch(() => { fieldDataP = null; });
   }

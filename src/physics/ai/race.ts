@@ -13,7 +13,7 @@ import { loadCarSpec, type CarSpec } from '../spec';
 import { CarCollider, type CarBody, type CarContactEvent } from '../cars';
 import type { RaceLine } from './line';
 import { AiDriver, type MishapKind } from './driver';
-import { AI_VERSION, resolveCarType, aiCarJson, buildSpeedProfile, measureCarPerf, parseIdentity, drawPace, type CarPerf, type IdentityCar, type PaceCar, type PaceJson } from './field';
+import { AI_VERSION, resolveCarType, aiCarJson, buildSpeedProfile, measureCarPerf, parseIdentity, drawPace, fieldKey, type CarPerf, type IdentityCar, type PaceCar, type PaceJson } from './field';
 import { Traffic } from './traffic';
 import { Rng, hashSeed } from './rng';
 
@@ -97,7 +97,8 @@ export interface RaceInputs {
   /** Probe car.json (the base of every AI car). */
   probeJson: unknown;
   pace: PaceJson;
-  /** public/cars/field/identity.json contents, or null when missing. */
+  /** identity.json contents (the track's own, else public/cars/field/identity.json), or null when missing; rows are
+   *  matched to pace cars by field key (`id`, else number: field.ts fieldKey). */
   identity?: unknown | null;
   /** scenery.json pit_lane (the penalty box is on its first part); null → fallback box beside the front straight. */
   pitLane?: PitLaneJson | null;
@@ -159,6 +160,8 @@ export interface RaceHud {
 export interface EngineInfo { layout: string; cylinders: number; redline: number; shiftRpm: number; turbo: boolean; exhaustNote: string | null; drive: string }
 export interface CarPose {
   number: string; isPlayer: boolean;
+  /** the car's field key (pace.json `id`, else its number): identity / model / sound rows are found by it */
+  id: string;
   /** live VehicleState (pos, quat, wheels, rpm, gear, throttleOut, impact): pass to CarRig.pose() */
   state: VehicleState;
   /** placeholder tint (#rrggbb) when the car's own model is missing; identity colors take precedence */
@@ -172,6 +175,8 @@ export interface CarPose {
 export interface RaceCar {
   idx: number;
   number: string; team: string; cls: string; grid: number;
+  /** field key (pace.json `id`, else the number): the identity row and the model are found by it */
+  id: string;
   isPlayer: boolean;
   vehicle: Vehicle;
   /** this car's own Surface (see RaceInputs.makeSurface) */
@@ -346,7 +351,7 @@ export class RaceDirector {
     this.collisionWorld = inputs.collisionWorld ?? null;
     for (const c of entries) {
       const isPlayer = c.number === this.config.playerNumber;
-      const id = ident.get(c.number) ?? null;
+      const id = ident.get(fieldKey(c)) ?? null;
       let vehicle: Vehicle, spec: CarSpec, driver: AiDriver | null = null;
       const dp = this.drawFor(c, isPlayer, this.config.seed);
       if (isPlayer && inputs.playerVehicle) {
@@ -359,7 +364,7 @@ export class RaceDirector {
       }
       if (inputs.collisionWorld && (isPlayer ? !inputs.playerVehicle : this.config.aiWalls)) vehicle.setCollisionWorld(inputs.collisionWorld);
       const car: RaceCar = {
-        idx: this.cars.length, number: c.number, team: c.team, cls: c.class, grid: c.grid, isPlayer, vehicle,
+        idx: this.cars.length, number: c.number, id: fieldKey(c), team: c.team, cls: c.class, grid: c.grid, isPlayer, vehicle,
         surface: (isPlayer && inputs.playerSurface) || (inputs.makeSurface ? inputs.makeSurface() : inputs.surface), spec, driver, pace: c,
         identity: id, tint: tintFor(c.number), paceTarget: dp.targetLap, paceSigma: dp.sigma, paceScale: dp.scale, stint: dp.stint,
         U: 0, hint: -1, lapStart: NaN, lastLap: NaN, bestLap: NaN, finishAt: NaN, lapsDone: 0, lapIdx: 0, lapStartGreen: false, greenU: NaN, finished: false, recoveries: 0, mishaps: 0,
@@ -842,7 +847,7 @@ export class RaceDirector {
           layout: t.engineLayout, cylinders: t.cylinders, redline: c.spec.engine.revLimitRpm - (t.probeFallback ? 0 : 100),
           shiftRpm: c.spec.drivetrain.autoShift.upshiftRpm, turbo: t.turbo, exhaustNote: t.exhaustNote, drive: c.spec.drivetrain.layout,
         };
-        return { number: c.number, isPlayer: c.isPlayer, state: c.vehicle.state, tint: c.tint, identity: c.identity, engine, brake: 0 };
+        return { number: c.number, id: c.id, isPlayer: c.isPlayer, state: c.vehicle.state, tint: c.tint, identity: c.identity, engine, brake: 0 };
       });
     }
     for (let i = 0; i < this.poseCache.length; i++) { const d = this.cars[i].driver; this.poseCache[i].brake = d ? d.input.brake : 0; }
