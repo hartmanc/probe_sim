@@ -668,3 +668,10 @@ Laguna Seca's origin, not a universal one. Every track package declares its own 
 (Sonoma: lat 38.1627, lon -122.4576), and every other file of that package (heightfield, ortho, scenery, ghosts) is in
 that frame. Consumers read the origin from the package; nothing may assume Laguna's. The axes, units and z
 convention (relative to `z0_navd88`) are unchanged.
+
+**22 Oct 2026, scenery barriers (§2b), Sonoma round 12.** A `barriers[]` run may carry `top_z`: one absolute z per point
+(same frame and datum as `pts`) for the top of the wall where it stands level across a hollow in its ground
+(tools/track/barrier_rules.py). `pts[i][2]` stays the ground at the line and the wall is drawn from the ground to
+`top_z[i]`; a catch fence stands on `top_z`. Absent: the top is ground + `h`, as before. The physics does not read it
+(the collision wall is unchanged). The app draws a tyre run's second row 0.6 m to the polyline's LEFT (unchanged); the
+scenery builder now orders a tyre run so that row stands behind the line where it would otherwise reach the road.

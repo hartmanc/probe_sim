@@ -22,11 +22,13 @@ from scipy import ndimage as ndi
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import geo as bl  # noqa: E402  (frames, DEM window, NAIP helpers, grade_ortho)
+import barrier_rules as BR  # noqa: E402  (round 12: wall tops across hollows, tyre rows off the road)
 
 CACHE = OUT = PREVIEWS = None   # set by configure()
 STRUCT_CFG = None   # config `structures` (top level), set by configure()
 PITWALL_EDGE = None  # optional per-station lateral (+left, m) of the left edge the pit wall stands 0.6 m off
 SC_CFG = {}
+HOLLOWS = dict(BR.HOLLOW_DEFAULTS)   # config scenery.barrier_hollows {span, slope} (False: None, off), set by configure()
 PIT_CFG = {}   # the track config's pit_lane section (trackcfg.py; walls with latlon get geometry here, 21 Oct 2026)
 PIT_EXIT = {}  # the track config's centre.pit_exit (stage 1's measured pit-exit blend line / wall end; trackcfg.py)
 UA = {"User-Agent": "probe-sim/0.1"}
@@ -46,6 +48,9 @@ def configure(cfg, out_dir):
     CACHE, OUT, PREVIEWS = cfg.cache, out_dir, out_dir
     EPT, DEM13, PIT_WAY = cfg.get("lidar_ept"), cfg.get("dem13"), cfg["pit_lane_way"]
     SC_CFG = cfg["scenery"]
+    global HOLLOWS
+    hc = SC_CFG.get("barrier_hollows", {})
+    HOLLOWS = None if hc is False else dict(BR.HOLLOW_DEFAULTS, **(hc or {}))
     PIT_CFG = cfg.get("pit_lane") or {}
     TYRE_CORNERS = [tuple(x) for x in SC_CFG.get("tyre_corners", [])]
     PAVED_RUNOFF = [tuple(x) for x in SC_CFG.get("paved_runoff", [])]
@@ -1043,9 +1048,13 @@ def barriers(trk, osm):
                 for i_, d_ in zip(i[close], dout[close]):
                     log(f"  pit wall point at station {int(i_)}: measured {d_:+.2f} m from the edge -> {gmin + 0.05:.2f} m")
         decl.append(P)
-        DECLARED_WALLS.setdefault(dw["name"], []).append((P.copy(), float(dw.get("h", 1.0))))
         rec = {"kind": dw.get("kind", "concrete"), "h": dw.get("h", 1.0), "fence": dw.get("fence", 3.0),
                "pts": with_z(trk, P), "src": f"declared: {dw['name']}" + (f" ({dw['src']})" if dw.get("src") else "")}
+        # round 12: the lift that puts the wall's top level across a hollow (barrier_rules.py rule 1; the same rule as the
+        # final top_z pass in scenery_post.py on the same points), for the boards standing on the wall
+        lift = (BR.run_lift(rec["pts"], **HOLLOWS) if HOLLOWS is not None and rec["kind"] in BR.HOLLOW_KINDS
+                else np.zeros(len(P)))
+        DECLARED_WALLS.setdefault(dw["name"], []).append((P.copy(), float(dw.get("h", 1.0)), lift))
         if dw.get("color"):
             rec["color"] = dw["color"]
         if dw.get("stack"):
@@ -1378,6 +1387,43 @@ def tyre_facings(trk, bar, reach=2.5, off=0.55):
             P[:, 2] = trk.ground(P[:, 0], P[:, 1])
             b["pts"] = [[rnd(x, 2), rnd(y, 2), rnd(z, 2)] for x, y, z in P]
             log(f"tyre facing: {str(b.get('src', ''))[:70]}: {len(moved)} points onto the wall line ({off} m in front), stations {min(moved)}..{max(moved)}")
+
+
+def tyre_rows_outside(trk, bar, face_min=0.5, wall_reach=1.5):
+    """Round 12 (Sonoma judge r11 N67; barrier_rules.py rule 2): a tyre run whose drawn track-side face (row 1 is drawn
+    0.6 m to the polyline's left) would stand closer than `face_min` m to the fitted edge is reversed so its second row
+    lies behind the line, unless a rigid wall stands within `wall_reach` m behind it over 3 points or more (a facing: its
+    rows belong in front of the wall). Config scenery.tyre_rows_outside {face_min, wall_reach} (absent: these defaults;
+    False: off). Logged per run."""
+    rig = [np.array(b["pts"], float)[:, :2] for b in bar if b["kind"] in BR.RIGID and len(b["pts"]) >= 2]
+    R = np.concatenate(rig) if rig else np.zeros((0, 2))
+    Rout = trk.project(R)[2] if len(R) else np.zeros(0)
+    for b in bar:
+        if b["kind"] != "tyres" or len(b["pts"]) < 2:
+            continue
+        P = np.array(b["pts"], float)
+        i, _, dout = trk.project(P[:, :2])
+        T = np.gradient(P[:, :2], axis=0)
+        T /= np.maximum(np.linalg.norm(T, axis=1), 1e-9)[:, None]
+        NL = np.c_[-T[:, 1], T[:, 0]]
+        left = ((trk.C[i, :2] - P[:, :2]) * NL).sum(1) > 0
+        face = BR.tyre_face_out(P, left, dout)
+        if face.min() >= face_min or not left.any():
+            continue
+        flip = BR.tyre_face_out(P, ~left, dout)
+        if flip.min() <= face.min():
+            continue
+        behind = 0
+        if len(R):
+            for q, dq in zip(P[:, :2], dout):
+                m = np.hypot(*(R - q).T) <= wall_reach
+                behind += bool((Rout[m] > dq + 0.3).any())
+        if behind >= 3:
+            log(f"tyre rows: {str(b.get('src', ''))[:70]}: face {face.min():+.2f} m from the edge but a facing ({behind} points with a wall behind): kept")
+            continue
+        b["pts"] = b["pts"][::-1]
+        log(f"tyre rows: {str(b.get('src', ''))[:70]}: drawn face {face.min():+.2f} m from the edge with row 1 toward the track "
+            f"(stations {int(i.min())}..{int(i.max())}): reversed, rows behind the line, face now {flip.min():+.2f} m")
 
 
 def clip_parts_at_walls(parts, bar, margin=0.3, label="closed roads"):
@@ -1911,16 +1957,16 @@ _WALL_CACHE = []
 
 def _wall_stretch(trk, name, s0, s1):
     """The declared wall `name` (config scenery.declared_walls) between track s0 and s1 (metres, s0 < s1 or wrapping),
-    as one ENU polyline in its own order, and its height."""
+    as one ENU polyline in its own order, its height and the lift of its top across hollows per point (round 12)."""
     if name not in DECLARED_WALLS:
         raise SystemExit(f"no declared wall named {name!r}")
     a, b = int(round(s0 / trk.sp)) % trk.n, int(round(s1 / trk.sp)) % trk.n
     best = None
-    for P, h in DECLARED_WALLS[name]:
+    for P, h, lift in DECLARED_WALLS[name]:
         i, _, _ = trk.project(P)
         m = ((i - a) % trk.n) <= ((b - a) % trk.n)
         if m.sum() >= 2 and (best is None or m.sum() > best[0].shape[0]):
-            best = (P[m], h)
+            best = (P[m], h, lift[m])
     if best is None:
         raise SystemExit(f"declared wall {name!r} does not reach s {s0}-{s1}")
     return best
@@ -1934,7 +1980,7 @@ def wall_boards(trk):
     shows typed as plain text in the observed colours, no logo artwork), src}. Panels stand on the wall line, facing the track ('sign' landmarks with no text)."""
     out = []
     for wb in SC_CFG.get("wall_boards", []):
-        P, wh = _wall_stretch(trk, wb["wall"], *wb["s"])
+        P, wh, lift = _wall_stretch(trk, wb["wall"], *wb["s"])
         L = resample_line(P, wb.get("panel", 6.0))
         names = wb.get("names")           # round 6: [(text, background, text colour), ...] in turn (typed names, no logos)
         cols = [n_[1] for n_ in names] if names else wb["colors"]
@@ -1950,7 +1996,22 @@ def wall_boards(trk):
             if n_ @ to < 0:
                 n_ = -n_
             p = m + n_ * float(wb.get("off", 0.12))  # on the wall's track face (round 10 `off`: further out, e.g. on a tyre facing's front)
-            z = float(trk.ground(*p)[0]) + wb.get("base", wh)
+            # round 12 (Sonoma judge r11 N65): a panel on a wall that is level across a hollow stands on the wall's top,
+            # the bridged ground interpolated along the wall at the panel (the wall's top_z less h), not in the hollow
+            j = int(np.argmin(np.hypot(*(P - m).T)))
+            if lift[max(j - 1, 0):j + 2].any():
+                zb = np.round(trk.ground(P[:, 0], P[:, 1]), 2) + lift
+                k_ = min(max(j, 1), len(P) - 1)
+                cands = []
+                for a_ in (k_ - 1, k_):
+                    if a_ + 1 >= len(P):
+                        continue
+                    d_ = P[a_ + 1] - P[a_]
+                    u_ = float(np.clip((m - P[a_]) @ d_ / max(d_ @ d_, 1e-9), 0, 1))
+                    cands.append((float(np.linalg.norm(P[a_] + d_ * u_ - m)), zb[a_] + (zb[a_ + 1] - zb[a_]) * u_))
+                z = float(min(cands)[1]) + wb.get("base", wh)
+            else:
+                z = float(trk.ground(*p)[0]) + wb.get("base", wh)
             out.append({"kind": "sign", "text": names[k % len(names)][0] if names else "", "x": rnd(p[0], 2), "y": rnd(p[1], 2), "z": rnd(z, 2),
                         "heading": rnd(math.atan2(n_[1], n_[0]), 3), "h": wb["h"], "w": rnd(w + 0.02, 2),
                         "color": cols[k % len(cols)], **({"fg": names[k % len(names)][2]} if names else {}),
@@ -1968,7 +2029,7 @@ def impact_barriers(trk):
     tall), color, src}. A plain block in front of the wall's end, along the wall's direction ('impact' landmark)."""
     out = []
     for ib in SC_CFG.get("impact_barriers", []):
-        P, _ = max(DECLARED_WALLS[ib["wall"]], key=lambda q: len(q[0]))
+        P = max(DECLARED_WALLS[ib["wall"]], key=lambda q: len(q[0]))[0]
         a, b = (P[0], P[1]) if ib.get("end", "start") == "start" else (P[-1], P[-2])
         u = (a - b) / np.linalg.norm(a - b)        # pointing out of the wall's end
         d = ib.get("d", 2.0)
@@ -2335,6 +2396,8 @@ def main(cfg=None, out_dir=None):
     bar += terr_fences
     if SC_CFG.get("tyre_facings"):
         tyre_facings(trk, bar, **SC_CFG["tyre_facings"])
+    if SC_CFG.get("tyre_rows_outside", {}) is not False:
+        tyre_rows_outside(trk, bar, **(SC_CFG.get("tyre_rows_outside") or {}))
     for b_ in bar:
         if b_["kind"] in ("concrete", "armco", "pitwall"):
             P_ = np.array(b_["pts"])[:, :2]

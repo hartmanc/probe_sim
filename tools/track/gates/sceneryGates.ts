@@ -527,3 +527,141 @@ export function sideBySide(t: TrackLike, sc: SceneryLike, opts: { facing?: numbe
   }
   return out;
 }
+
+// ------------------------------------------------------------------ wall tops, joins and tyre faces (round 12)
+// Sonoma judge r11 N65 / N67 (22 Oct 2026). The drawn layout these gates check is the app's (src/app/scenery.ts): a
+// concrete / pit wall is 0.36 m thick on its line (Armco: the beam 0.05 m off it) and stands to `top_z` per point where
+// it is level across a hollow (tools/track/barrier_rules.py), else ground + h; a tyre run is two rows of 0.31 m stacks,
+// row 0 on the line and row 1 0.6 m to the polyline's left (the physics collides at the same faces).
+export const TYRE_R = 0.31, TYRE_ROW = 0.6;
+const RIGID_KINDS = ['concrete', 'pitwall', 'armco'];
+const HALF_THICK: Record<string, number> = { concrete: 0.18, pitwall: 0.18, armco: 0.05 };
+type BarrierTop = { kind: string; pts: V3[]; src?: string; h?: number; top_z?: number[] };
+const topsOf = (b: BarrierTop): number[] => (b.top_z && b.top_z.length === b.pts.length ? b.top_z : b.pts.map((p) => p[2] + (b.h ?? 0)));
+
+export interface WallTopsReport {
+  checked: number;
+  /** a rigid run whose top line changes faster than `slope` m per m between points >= 0.5 m apart (a step) */
+  steps: { label: string; s: number; slope: number; dz: number }[];
+  /** a board on a wall ('wall board on <wall>' with `top`) whose foot is not on the wall's top */
+  boards: { text: string; s: number; z: number; top: number }[];
+  boardsChecked: number;
+}
+
+/** Wall tops (round 12, N65: "a depressed, stepped section between taller boarded runs"): the top line of every
+ *  concrete, pit-wall and Armco run has no step (|d top| / d run <= `slope`, 0.5, where the builder bridges any hollow
+ *  steeper than that), and every board standing on a wall has its foot within `tol` m (0.10) of that wall's top. */
+export function wallTops(t: TrackLike, sc: SceneryLike & { barriers?: BarrierTop[]; landmarks?: { kind: string; text?: string; x: number; y: number; z?: number; src?: string; top?: number }[] },
+  opts: { slope?: number; tol?: number } = {}): WallTopsReport {
+  const slopeMax = opts.slope ?? 0.5, tol = opts.tol ?? 0.1;
+  const proj = makeProjector(t);
+  const sOf = (p: V2) => { const q = proj(p, 200); return q ? Math.round(q.i * t.spacing_m) : -1; };
+  const rep: WallTopsReport = { checked: 0, steps: [], boards: [], boardsChecked: 0 };
+  const rigid = (sc.barriers ?? []).filter((b) => RIGID_KINDS.includes(b.kind) && b.pts.length >= 2);
+  for (const b of rigid) {
+    rep.checked++;
+    const top = topsOf(b);
+    let worst = { slope: 0, i: -1, dz: 0 };
+    for (let i = 0; i + 1 < b.pts.length; i++) {
+      const ds = Math.hypot(b.pts[i + 1][0] - b.pts[i][0], b.pts[i + 1][1] - b.pts[i][1]);
+      if (ds < 0.5) continue;
+      const dz = top[i + 1] - top[i], sl = Math.abs(dz) / ds;
+      if (sl > worst.slope) worst = { slope: sl, i, dz };
+    }
+    if (worst.slope > slopeMax) rep.steps.push({ label: `${b.kind}: ${(b.src ?? '').slice(0, 90)}`, s: sOf([b.pts[worst.i][0], b.pts[worst.i][1]]),
+      slope: Math.round(worst.slope * 100) / 100, dz: Math.round(worst.dz * 100) / 100 });
+  }
+  for (const m of sc.landmarks ?? []) {
+    if (m.kind !== 'sign' || typeof m.top !== 'number' || typeof m.z !== 'number' || !(m.src ?? '').startsWith('wall board on ')) continue;
+    // the nearest segment within 1 m of the board's own wall ('wall board on <name> (...)' -> 'declared: <name>'; a panel
+    // stands 0.12 m in front of its wall's line)
+    const src = m.src ?? '', name = src.slice('wall board on '.length, src.lastIndexOf(' (') > 0 ? src.indexOf(' (', 'wall board on '.length) : undefined);
+    let best = { d: 1.0, top: NaN };
+    for (const b of rigid) {
+      if (!(b.src ?? '').startsWith(`declared: ${name}`)) continue;
+      const top = topsOf(b);
+      for (let i = 0; i + 1 < b.pts.length; i++) {
+        const a = b.pts[i], c = b.pts[i + 1], dx = c[0] - a[0], dy = c[1] - a[1], l2 = dx * dx + dy * dy || 1e-9;
+        const u = Math.max(0, Math.min(1, ((m.x - a[0]) * dx + (m.y - a[1]) * dy) / l2));
+        const d = Math.hypot(a[0] + dx * u - m.x, a[1] + dy * u - m.y);
+        if (d < best.d) best = { d, top: top[i] + (top[i + 1] - top[i]) * u };
+      }
+    }
+    if (!Number.isFinite(best.top)) continue;
+    rep.boardsChecked++;
+    if (Math.abs(m.z - best.top) > tol) rep.boards.push({ text: m.text ?? '', s: sOf([m.x, m.y]), z: m.z, top: Math.round(best.top * 100) / 100 });
+  }
+  return rep;
+}
+
+export interface JoinFace { wall: string; tyres: string; s: number; downstream: 'tyres' | 'wall'; step: number }
+
+/** Flush joins (round 12, N67: "whether the wall meets the tyre head flush"): where a rigid run's end meets a tyre run's
+ *  end end to end (within `join` m, 1.5, the run directions within 60 deg), the downstream run's track face may stand
+ *  at most `tol` m (0.15, checked by the caller) proud toward the track of the upstream run's: else the downstream run's
+ *  head is a step facing oncoming travel. Returns every join, with `step` = downstream face - upstream face (m, + = the
+ *  downstream head stands proud toward the track; a recessed downstream head is shielded and fine). */
+export function joinFaces(t: TrackLike, sc: SceneryLike & { barriers?: BarrierTop[] }, opts: { join?: number } = {}): JoinFace[] {
+  const join = opts.join ?? 1.5;
+  const proj = makeProjector(t);
+  const out: JoinFace[] = [];
+  const bars = sc.barriers ?? [];
+  const ends = (P: V3[]) => [{ p: P[0], q: P[1] }, { p: P[P.length - 1], q: P[P.length - 2] }];
+  for (const tb of bars) {
+    if (tb.kind !== 'tyres' || tb.pts.length < 2) continue;
+    for (const [k, te] of ends(tb.pts).entries()) {
+      const H = te.p, ux0 = te.q[0] - H[0], uy0 = te.q[1] - H[1], ul = Math.hypot(ux0, uy0) || 1;
+      const ux = ux0 / ul, uy = uy0 / ul;   // into the tyre run from its end
+      // the polyline's left normal at this end (the run's own direction, first -> last)
+      const nlx = k === 0 ? -uy : uy, nly = k === 0 ? ux : -ux;
+      const pr = proj([H[0], H[1]], 200);
+      if (!pr) continue;
+      const c = t.center[pr.i], trackLeft = (c[0] - H[0]) * nlx + (c[1] - H[1]) * nly > 0;
+      const ntx = trackLeft ? nlx : -nlx, nty = trackLeft ? nly : -nly;   // toward the track
+      const tyreFace = trackLeft ? TYRE_ROW + TYRE_R : TYRE_R;
+      for (const wb of bars) {
+        if (!RIGID_KINDS.includes(wb.kind) || wb.pts.length < 2) continue;
+        for (const we of ends(wb.pts)) {
+          const E = we.p;
+          if (Math.hypot(E[0] - H[0], E[1] - H[1]) > join) continue;
+          const wx0 = E[0] - we.q[0], wy0 = E[1] - we.q[1], wl = Math.hypot(wx0, wy0) || 1;   // out of the wall at its end
+          if ((wx0 / wl) * ux + (wy0 / wl) * uy < 0.5) continue;   // not end to end (a facing or a crossing)
+          const wallFace = (E[0] - H[0]) * ntx + (E[1] - H[1]) * nty + (HALF_THICK[wb.kind] ?? 0.18);
+          // driving direction at the joint (stations are in driving order): do the tyres run on downstream of it?
+          const fa = t.center[(pr.i + 1) % t.n], fb = t.center[(pr.i - 1 + t.n) % t.n];
+          const tyresDown = (fa[0] - fb[0]) * ux + (fa[1] - fb[1]) * uy > 0;
+          out.push({ wall: `${wb.kind}: ${(wb.src ?? '').slice(0, 70)}`, tyres: (tb.src ?? '').slice(0, 70), s: Math.round(pr.i * t.spacing_m),
+            downstream: tyresDown ? 'tyres' : 'wall', step: Math.round((tyresDown ? tyreFace - wallFace : wallFace - tyreFace) * 100) / 100 });
+        }
+      }
+    }
+  }
+  return out;
+}
+
+export interface TyreFace { tyres: string; s: number; face: number; rowsToTrack: boolean }
+
+/** Tyre faces off the road (round 12, N67: the T11-approach tyre wall's row 1 stood 0.37 m on the road): every tyre run's
+ *  drawn track-side face stands at least `min` m (0.2) beyond the edge. Returns the runs that do not, at their worst
+ *  point. Points more than 60 m from the centre (far runs, other roads) are not checked. */
+export function tyreFaces(t: TrackLike, sc: SceneryLike, opts: { min?: number } = {}): TyreFace[] {
+  const min = opts.min ?? 0.2;
+  const proj = makeProjector(t);
+  const out: TyreFace[] = [];
+  for (const tb of sc.barriers ?? []) {
+    if (tb.kind !== 'tyres' || tb.pts.length < 2) continue;
+    const P = tb.pts;
+    let worst: TyreFace | null = null;
+    for (let i = 0; i < P.length; i++) {
+      const a = P[Math.max(0, i - 1)], b = P[Math.min(P.length - 1, i + 1)], l = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1;
+      const nlx = -(b[1] - a[1]) / l, nly = (b[0] - a[0]) / l;
+      const pr = proj([P[i][0], P[i][1]], 60);
+      if (!pr) continue;
+      const c = t.center[pr.i], trackLeft = (c[0] - P[i][0]) * nlx + (c[1] - P[i][1]) * nly > 0;
+      const face = pr.out - (trackLeft ? TYRE_ROW + TYRE_R : TYRE_R);
+      if (!worst || face < worst.face) worst = { tyres: (tb.src ?? '').slice(0, 90), s: Math.round(pr.i * t.spacing_m), face: Math.round(face * 100) / 100, rowsToTrack: trackLeft };
+    }
+    if (worst && worst.face < min) out.push(worst);
+  }
+  return out;
+}

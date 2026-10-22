@@ -785,11 +785,16 @@ export function buildWorld(track: TrackJson, hf: Float32Array, ortho: THREE.Text
   // bases are the heightfield (DEM) at their own line, but this mesh samples it every 4 m, so a wall along a hollow
   // narrower than that sank under the drawn ground (the T10-T11 boarded wall by up to 1.06 m, top near the ground);
   // lower the triangles under each barrier line, every metre, to its base (the physics' ground is the heightfield too)
-  for (const b of (scenery?.json as { barriers?: { pts: number[][] }[] } | undefined)?.barriers ?? []) {
+  // round 12 (Sonoma judge r11 N65): where a wall is level across a hollow (top_z), lower the mesh only to the level its
+  // top stands on (top_z - h), not into the hollow: digging the 4 m mesh down to a 3 m ditch bottom every metre along the
+  // wall cut pale wedges beside it; the wall itself reaches down to the ground there
+  for (const b of (scenery?.json as { barriers?: { pts: number[][]; h?: number; top_z?: number[] }[] } | undefined)?.barriers ?? []) {
+    const base = (i: number) => (b.top_z && b.top_z.length === b.pts.length ? b.top_z[i] - (b.h ?? 0) : (b.pts[i][2] ?? 0));
     for (let i = 0; i + 1 < b.pts.length; i++) {
       const a = b.pts[i], c = b.pts[i + 1], n = Math.max(1, Math.ceil(Math.hypot(c[0] - a[0], c[1] - a[1])));
+      const za = base(i), zc = base(i + 1);
       for (let k = 0; k <= n; k++) {
-        const x = a[0] + ((c[0] - a[0]) * k) / n, y = a[1] + ((c[1] - a[1]) * k) / n, z = (a[2] ?? 0) + (((c[2] ?? 0) - (a[2] ?? 0)) * k) / n;
+        const x = a[0] + ((c[0] - a[0]) * k) / n, y = a[1] + ((c[1] - a[1]) * k) / n, z = za + ((zc - za) * k) / n;
         const sunk = grid.surfaceZ(x, y) - z;
         if (sunk > 0.05) grid.lowerAt(x, y, sunk);
       }

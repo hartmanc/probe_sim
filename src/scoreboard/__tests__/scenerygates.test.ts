@@ -1,7 +1,7 @@
 // Pure parts of the stage-3 scenery gates (tools/track/gates/sceneryGates.ts, 20 Oct 2026): segment crossing, polygon
 // test, containment escapes / barriers / allowed runoff, pit connectivity and sign placement on a synthetic straight.
 import { describe, expect, it } from 'vitest';
-import { containment, escapeRuns, exposedEnds, inPoly, laneClearance, pitConnectivity, segCross, sideBySide, signPlacement, type SceneryLike, type TrackLike, type V3 } from '../../../tools/track/gates/sceneryGates';
+import { containment, escapeRuns, exposedEnds, inPoly, joinFaces, laneClearance, pitConnectivity, segCross, sideBySide, signPlacement, tyreFaces, wallTops, type SceneryLike, type TrackLike, type V3 } from '../../../tools/track/gates/sceneryGates';
 
 // a 400 m oval-ish closed loop: two 150 m straights joined by half circles R 30, 1 m stations, half-width 5
 function loop(): TrackLike {
@@ -146,5 +146,41 @@ describe('scenery gates: tyre facings (round 7b, owner note 48)', () => {
   });
   it('a tyre run meeting the wall end to end passes', () => {
     expect(sideBySide(T, { barriers: [conc, { kind: 'tyres', pts: [[0, -12, 0], [19.5, -12, 0]], src: 'end' }] })).toHaveLength(0);
+  });
+});
+
+describe('scenery gates: wall tops, wall-tyre joins and tyre faces (round 12, Sonoma judge r11 N65 / N67)', () => {
+  // a wall 10 m right of the bottom straight whose ground drops into a 3 m ditch at x 40-44 (the T10-T11 boarded wall)
+  const ditch = (x: number) => (x >= 40 && x <= 44 ? -3 : 0);
+  const pts: V3[] = [];
+  for (let x = 20; x <= 64; x += 2) pts.push([x, -10, ditch(x)]);
+  const board = (x: number, z: number) => ({ kind: 'sign', text: 'SONOMA RACEWAY', x, y: -9.88, z, src: 'wall board on W (boards)', top: 2.5 });
+  it('a wall that follows a ditch steps; level across it (top_z) it passes, and a board must stand on its top', () => {
+    const sunk = wallTops(T, { barriers: [{ kind: 'concrete', h: 1.2, pts, src: 'declared: W' }], landmarks: [board(42, -1.8)] } as never);
+    expect(sunk.steps).toHaveLength(1);
+    expect(sunk.boards).toHaveLength(0);   // the board sits on the sunk wall's top: the step is the wall's
+    const level = { kind: 'concrete', h: 1.2, pts, src: 'declared: W', top_z: pts.map(() => 1.2) };
+    const ok = wallTops(T, { barriers: [level], landmarks: [board(42, 1.2)] } as never);
+    expect(ok.steps).toHaveLength(0);
+    expect(ok.boards).toHaveLength(0);
+    // a board left in the ditch in front of a level wall
+    expect(wallTops(T, { barriers: [level], landmarks: [board(42, -1.8)] } as never).boards).toHaveLength(1);
+  });
+  it('a tyre run whose rows stand toward the track proud of the wall ending on its head fails; rows behind the line pass', () => {
+    const wall = { kind: 'concrete', pts: [[10, -12, 0], [25, -9, 0], [40, -6, 0]] as V3[], src: 'onto the tyres' };
+    const fwd = { kind: 'tyres', pts: [[40, -6, 0], [70, -6, 0], [100, -6, 0]] as V3[], src: 'tyres' };
+    const j = joinFaces(T, { barriers: [wall, fwd] });
+    expect(j).toHaveLength(1);
+    expect(j[0].downstream).toBe('tyres');
+    expect(j[0].step).toBeCloseTo(0.6 + 0.31 - 0.18, 2);   // 0.73 m proud: the Sonoma s 3398 head
+    const rev = { ...fwd, pts: [...fwd.pts].reverse() };
+    expect(joinFaces(T, { barriers: [wall, rev] })[0].step).toBeCloseTo(0.31 - 0.18, 2);
+  });
+  it('a tyre run drawn with its face on the road fails; reversed (rows behind the line) it passes', () => {
+    const fwd = { kind: 'tyres', pts: [[40, -5.55, 0], [100, -5.55, 0]] as V3[], src: 'at the edge' };
+    const bad = tyreFaces(T, { barriers: [fwd] });
+    expect(bad).toHaveLength(1);
+    expect(bad[0].face).toBeCloseTo(0.55 - 0.91, 2);
+    expect(tyreFaces(T, { barriers: [{ ...fwd, pts: [...fwd.pts].reverse() }] })).toHaveLength(0);
   });
 });

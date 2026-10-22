@@ -77,6 +77,11 @@ Scenery (Stage 3): scenery {...}, see build_scenery.py and scenery_post.py. Evid
     light_masts [{latlon, h, src}]           masts ('mast' landmarks)
     closed_roads[].mouth_cones [{near (lat, lon), src}]   cones only at the mouths the evidence shows coned
     wall_boards[]: a panel with no `base` stands on its wall; its top counts toward the wall's height in the coverage gate
+  Barrier rules of round 12 (22 Oct 2026, tools/track/barrier_rules.py), on by default for every track:
+    barrier_hollows {span: 30, slope: 0.5, rise: 0.3} | False   a rigid wall's top (and the boards on it) level across a hollow at
+                                             most `span` m wide whose ground drops at `slope` or more: scenery.json top_z
+    tyre_rows_outside {face_min: 0.5, wall_reach: 1.5} | False   a tyre run whose drawn row 1 would stand within
+                                             face_min m of the edge is reversed so its rows lie behind its line
 Pit lane (first-class, 21 Oct 2026; read by the pit-lane gate, tools/track/gates/coverageGate.ts, and by the scenery
   builder as it learns each part). Sides are as driven down the lane (the lap's direction); stations are the lap s
   abeam (the lane part's track_s), or lat/lon ends projected onto the track by build_track.py. Every entry carries `src`

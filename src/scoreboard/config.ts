@@ -78,7 +78,7 @@ export interface TrackInfo {
 export const TRACKS: Readonly<Record<string, TrackInfo>> = {
   laguna_seca: { dir: 'tracks/laguna_seca/', name: 'WeatherTech Raceway Laguna Seca', short: 'Laguna Seca', length_m: 3588.048, pace: 'cars/field/pace.json',
     start: { beforeCorner: 'T11', m: ROLLING_START_BEFORE_LAST_CORNER_M, speed: ROLLING_START_SPEED } },
-  sonoma: { dir: 'tracks/sonoma/', name: 'Sonoma Raceway', short: 'Sonoma', length_m: 4098.5, pace: 'cars/field/sonoma/pace.json', rev: 'ff9814637f',
+  sonoma: { dir: 'tracks/sonoma/', name: 'Sonoma Raceway', short: 'Sonoma', length_m: 4098.5, pace: 'cars/field/sonoma/pace.json', rev: '1d38e06899',
     // on the front straight, ~120 m before the line (230 m before the last corner, T12, was 26 m past the T11 apex)
     start: { s_m: 3975, speed: ROLLING_START_SPEED },
     // 20 Oct 2026, 8 seeds of 4 laps: AI-AI contacts 91 at the Laguna headways, 57 at x1.4, 51 at x1.8 (the rest are passes);

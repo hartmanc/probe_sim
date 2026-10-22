@@ -2,7 +2,7 @@
 // Prints the three reports and a JSON summary line; exits 1 when a gate fails.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { containment, escapeRuns, exposedEnds, pitConnectivity, sideBySide, signPlacement, type GateConfig } from './sceneryGates';
+import { containment, escapeRuns, exposedEnds, joinFaces, pitConnectivity, sideBySide, signPlacement, tyreFaces, wallTops, type GateConfig } from './sceneryGates';
 
 const dir = process.argv[2];
 const cfg: GateConfig & { pit_box_s?: number } = process.argv[3] ? JSON.parse(readFileSync(process.argv[3], 'utf8')) : {};
@@ -43,6 +43,25 @@ console.log(`[${sb.length ? 'FAIL' : 'ok'}] tyre facings: ${sb.length} tyre runs
 for (const x of sb) console.log(`       side by side s ${x.s} (${x.off} m off): ${x.tyre} | ${x.wall}`);
 if (sb.length) fail = true;
 
+// round 12 (Sonoma judge r11 N65 / N67): wall tops without steps and boards on them, flush wall-tyre joins, tyre faces off the road
+const wt = wallTops(track, sc);
+const wtBad = wt.steps.length + wt.boards.length;
+console.log(`[${wtBad ? 'FAIL' : 'ok'}] wall tops: ${wt.checked} concrete / pit-wall / Armco runs, top line steeper than 0.5 m per m in ${wt.steps.length}; `
+  + `${wt.boardsChecked} wall boards, ${wt.boards.length} off their wall's top by more than 0.10 m`);
+for (const x of wt.steps) console.log(`       step s ${x.s}: ${x.dz} m at ${x.slope} m per m: ${x.label}`);
+for (const x of wt.boards) console.log(`       board '${x.text}' s ${x.s}: foot ${x.z} m, wall top ${x.top} m`);
+if (wtBad) fail = true;
+const jf = joinFaces(track, sc);
+const jfBad = jf.filter((x) => x.step > 0.15);
+console.log(`[${jfBad.length ? 'FAIL' : 'ok'}] wall-tyre joins: ${jf.length} end-to-end joins, ${jfBad.length} with the downstream head more than 0.15 m proud toward the track`
+  + (jf.length ? ` (steps ${jf.map((x) => `s ${x.s} ${x.downstream} ${x.step >= 0 ? '+' : ''}${x.step.toFixed(2)}`).join(', ')})` : ''));
+for (const x of jfBad) console.log(`       proud s ${x.s}: ${x.downstream} head ${x.step.toFixed(2)} m toward the track: ${x.wall} | ${x.tyres}`);
+if (jfBad.length) fail = true;
+const tf = tyreFaces(track, sc);
+console.log(`[${tf.length ? 'FAIL' : 'ok'}] tyre faces: ${tf.length} tyre runs whose drawn track-side face stands under 0.2 m beyond the edge`);
+for (const x of tf) console.log(`       tyre face s ${x.s}: ${x.face.toFixed(2)} m (row 1 ${x.rowsToTrack ? 'toward' : 'away from'} the track): ${x.tyres}`);
+if (tf.length) fail = true;
+
 console.log('GATES_JSON ' + JSON.stringify({ containment: { escapes: c.escapes.length, runs, allowed: c.allowed.length, junctions: c.junctions },
-  pit: p, signs: g, ends: e, facings: sb, fail }));
+  pit: p, signs: g, ends: e, facings: sb, wallTops: wt, joins: jf, tyreFaces: tf, fail }));
 process.exit(fail ? 1 : 0);

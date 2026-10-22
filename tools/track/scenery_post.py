@@ -17,6 +17,8 @@ now config:
   edge_line_runs   painted edge-line runs added or merged [fix_edge_line_run.py]
   pit_exit_cones   the cone line extended back to s0 along the pit-lane boundary (it starts where the wall ends)
                    [fix_pit_exit_cones.py]
+  barrier_hollows  (always, last; round 12) a rigid wall's top level across a narrow, steep hollow in its ground: `top_z`
+                   per point (barrier_rules.py; {span, slope}, False: off)
 Stations are track stations; s0/s1 values are metres, as in scenery.json.
 """
 import math
@@ -25,6 +27,7 @@ import numpy as np
 from PIL import Image
 from scipy.ndimage import gaussian_filter1d, median_filter
 
+import barrier_rules
 from captures import bilinear
 from geo import log as _log
 from straights import ransac
@@ -277,4 +280,7 @@ def run(T, SC, scfg, tiles, mpp, regs=None, log=_log):
         pc = scfg['pit_exit_cones']
         if 'spacing' in pc: SC['pit_exit_cones']['spacing_m'] = pc['spacing']
         if 's0' in pc and pc['s0'] < SC['pit_exit_cones']['s0']: pit_exit_cones_from(T, SC, pc, log)
+    # round 12 (Sonoma judge r11 N65), last so it sees every point the steps above moved or removed: a wall's top level
+    # across a narrow, steep hollow in its ground (barrier_rules.py rule 1; config scenery.barrier_hollows)
+    barrier_rules.barrier_tops(SC, scfg.get('barrier_hollows'), log)
     return SC

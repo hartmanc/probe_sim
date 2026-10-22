@@ -33,7 +33,10 @@ export interface SceneryJson {
     /** round 10 (Sonoma pit-out catch fence): angled arms on the fence posts, `len` m long at `deg` from vertical,
      *  leaning to `side` (+1 the left of the polyline, -1 the right), the mesh carried up them (absent: straight posts) */
     arm?: { len: number; deg: number; side: number };
-    /** tyres per stack (round 7; default from h) */ stack?: number }[];
+    /** tyres per stack (round 7; default from h) */ stack?: number;
+    /** round 12 (Sonoma judge r11 N65): the absolute z of the wall's top per point where it is level across a hollow in
+     *  its ground (tools/track/barrier_rules.py); absent: ground + h. The wall is drawn from the ground to this top. */
+    top_z?: number[] }[];
   kerbs: { width: number; inside?: boolean; stripe_m: number; /** [stripe, base] sRGB hex; default red / white */ colors?: [string, string];
     /** raised concrete kerbs (physics: src/physics/track.ts KerbsJson); absent = flat paint */ profile?: { height: number; face: number; back: number } | null;
     strips: { side: number; s0: number; s1: number; kind: string; paint?: number; inset?: number ; /** verge: white line on the outer edge (default on) */ edge?: boolean;
@@ -656,7 +659,7 @@ export function tyreStackGeometry(n: number): THREE.BufferGeometry {
   return g;
 }
 
-function buildBarriers(list: SceneryJson['barriers']): THREE.Group {
+function buildBarriers(list: SceneryJson['barriers'], drawn?: (x: number, y: number) => number): THREE.Group {
   const group = new THREE.Group();
   group.name = 'barriers';
   const concrete = new Strip(), armco = new Strip(), fence = new Strip();
@@ -664,20 +667,26 @@ function buildBarriers(list: SceneryJson['barriers']): THREE.Group {
   const cRail = new THREE.Color(0xc0c6cc), cFence = new THREE.Color(0xffffff);
   const posts: THREE.Matrix4[] = [], fencePosts: THREE.Matrix4[] = [], tyres: { m: THREE.Matrix4; white: boolean; color?: string; n: number }[] = [];
   const up = (P: V3[], dz: number) => P.map((p) => v3(p[0], p[1], p[2] + dz));
+  // the top of a run per point: its own top_z where the wall is level across a hollow (round 12), else ground + h
+  const atTop = (P: V3[], top: number[]) => P.map((p, i) => v3(p[0], p[1], top[i]));
+  // a wall's foot 0.3 m under the ground, or under the drawn terrain where that lies lower (round 12: the 4 m mesh can
+  // pass under a ridge of the heightfield, and a wall level across a hollow must not show a gap beneath it)
+  const foot = (P: V3[]) => P.map((p) => v3(p[0], p[1], Math.min(p[2], drawn ? drawn(p[0], p[1]) : p[2]) - 0.3));
   for (const b of list) {
     const P = b.pts;
     if (P.length < 2) continue;
+    const top = b.top_z && b.top_z.length === P.length ? b.top_z : P.map((p) => p[2] + b.h);
     if (b.kind === 'concrete' || b.kind === 'pitwall') {
       const th = 0.18;
       const L = offsetLine(P, th), R = offsetLine(P, -th);
       const cc = b.color ? new THREE.Color(b.color) : b.kind === 'pitwall' ? cPit : cConcrete;
-      concrete.add(up(L, -0.3), up(L, b.h), cc);
-      concrete.add(up(R, b.h), up(R, -0.3), cc);
-      concrete.add(up(L, b.h), up(R, b.h), b.color ? cc.clone().lerp(cTop, 0.35) : cTop);
+      concrete.add(foot(L), atTop(L, top), cc);
+      concrete.add(atTop(R, top), foot(R), cc);
+      concrete.add(atTop(L, top), atTop(R, top), b.color ? cc.clone().lerp(cTop, 0.35) : cTop);
       // end caps: close both ends of the run, else an open end shows the wall's inside (Sonoma owner note 36)
       for (const i of [0, P.length - 1]) {
         const e = [L[i], R[i]];
-        concrete.add(up(e, -0.3), up(e, b.h), cc);
+        concrete.add(foot(e), atTop(e, [top[i], top[i]]), cc);
       }
     } else if (b.kind === 'armco') {
       // W-beam: top and bottom edges forward, the groove set back 5 cm
@@ -728,28 +737,30 @@ function buildBarriers(list: SceneryJson['barriers']): THREE.Group {
       }
     }
     if (b.fence > 0) {
-      const base = b.kind === 'fence' ? 0 : b.h;
-      fence.add(up(P, base), up(P, base + b.fence), cFence, 1 / 0.3, 0, b.fence / 0.3);
+      // the fence stands on the wall's top (round 12: top_z where the wall is level across a hollow), a lone fence on the ground
+      const fb = b.kind === 'fence' ? P.map((p) => p[2]) : top;
+      const onFb = (A: V3[], dz: number) => A.map((p, i) => v3(p[0], p[1], fb[i] + dz));
+      fence.add(onFb(P, 0), onFb(P, b.fence), cFence, 1 / 0.3, 0, b.fence / 0.3);
       let acc = 0;
       for (let i = 0; i < P.length; i++) {
         if (i > 0) acc += Math.hypot(P[i][0] - P[i - 1][0], P[i][1] - P[i - 1][1]);
         if (i === 0 || i === P.length - 1 || acc >= 3) {
           acc = 0;
-          fencePosts.push(new THREE.Matrix4().compose(v3(P[i][0], P[i][1], P[i][2] + base + b.fence / 2), new THREE.Quaternion(), new THREE.Vector3(1, b.fence, 1)));
+          fencePosts.push(new THREE.Matrix4().compose(v3(P[i][0], P[i][1], fb[i] + b.fence / 2), new THREE.Quaternion(), new THREE.Vector3(1, b.fence, 1)));
         }
       }
       if (b.arm) {
         // round 10: the angled top of the catch fence, mesh and arms, leaning to the arm's side
-        const top = base + b.fence, rad = (b.arm.deg * Math.PI) / 180;
+        const rad = (b.arm.deg * Math.PI) / 180;
         const dl = b.arm.len * Math.sin(rad), dh = b.arm.len * Math.cos(rad);
         const T = offsetLine(P, b.arm.side * dl);
-        fence.add(up(P, top), up(T, top + dh), cFence, 1 / 0.3, b.fence / 0.3, (b.fence + b.arm.len) / 0.3);
+        fence.add(onFb(P, b.fence), onFb(T, b.fence + dh), cFence, 1 / 0.3, b.fence / 0.3, (b.fence + b.arm.len) / 0.3);
         let acc2 = 0;
         for (let i = 0; i < P.length; i++) {
           if (i > 0) acc2 += Math.hypot(P[i][0] - P[i - 1][0], P[i][1] - P[i - 1][1]);
           if (i === 0 || i === P.length - 1 || acc2 >= 3) {
             acc2 = 0;
-            const a0 = v3(P[i][0], P[i][1], P[i][2] + top), a1 = v3(T[i][0], T[i][1], T[i][2] + top + dh);
+            const a0 = v3(P[i][0], P[i][1], fb[i] + b.fence), a1 = v3(T[i][0], T[i][1], fb[i] + b.fence + dh);
             const dirv = a1.clone().sub(a0).normalize();
             fencePosts.push(new THREE.Matrix4().compose(a0.clone().add(a1).multiplyScalar(0.5),
               new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), dirv), new THREE.Vector3(1, b.arm.len, 1)));
@@ -1775,7 +1786,7 @@ export function buildScenery(track: TrackJson, _hf: Float32Array, sc: SceneryAss
   if (j.structures?.length) root.add(buildStructures(j.structures, terr, ground, (text, bg, fg, w, h) => bannerTexture([text], w, h, bg, fg)));
   // barrier feet and kerbs follow the drawn/driven surface (the track shoulder differs from the raw heightfield)
   const snap = (P: V3[]): V3[] => (ground ? P.map(([x, y]) => [x, y, ground(x, y)] as V3) : P);
-  if (j.barriers?.length) root.add(buildBarriers(j.barriers.map((b) => ({ ...b, pts: snap(b.pts) }))));
+  if (j.barriers?.length) root.add(buildBarriers(j.barriers.map((b) => ({ ...b, pts: snap(b.pts) })), drawn));
   if (j.sausages?.strips?.length) { const m = buildSausages(track, j.sausages, ground); if (m) root.add(m); }
   // kind 'blocks' (Sonoma T1, 20 Oct 2026): a dotted line of low grey kerb blocks, not a painted strip
   const blockStrips = (j.kerbs?.strips ?? []).filter((s) => s.kind === 'blocks');
