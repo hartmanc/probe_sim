@@ -19,6 +19,10 @@ export const AI_VERSION = 8; // 8: an understeering car (front slip > 2x its pea
 export interface PaceCar {
   /** Where targetLap comes from when it is not this circuit's own result (tools/race/pace_sonoma.ts). */
   targetSource?: string;
+  /** The car's identity / model key (identity.json and models.json rows by `id`, else by number). Absent = `number`
+   *  (Laguna). A circuit's own field sets it on every car; a number that belongs to a different Laguna car gets
+   *  "<number>_<track>" (Buttonwillow "0_bw", tools/race/pace_track.ts --own). */
+  id?: string;
   number: string;
   team: string;
   class: string;            // 'A' | 'B' | 'C'

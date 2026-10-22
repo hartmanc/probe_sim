@@ -10,6 +10,18 @@
 //             two entrants is matched by number, else it is not matched. No fuzzy matches (Buttonwillow: "TPF Racing" vs
 //             "PH Racing" scored 0.82 and is a different team).
 //
+//
+//   npx tsx tools/race/pace_track.ts --track <id> --session <MyLaps session id> --own [--data tools/race/data/<id>]
+//       [--label <name>] [--source <the file's source line>]
+//       The circuit's OWN field (Buttonwillow, 22 Oct 2026): every entrant of the session becomes a car with its own
+//       pace and stints under tools/race/pace.ts's rules (tools/race/pace_rules.ts: the official best is the 0.97 floor),
+//       aggression = aggressionFor(number, class) as pace.ts; an entrant with no lap in the session (a non-starter) is
+//       left out and named in `source` (Buttonwillow: #89, #6, #43, #101, #222); the player's car (#619) keeps a reference row
+//       (`player: true`, its real grid slot, never an AI car) as in Laguna's file. Every car carries `id`: its number,
+//       except a number that belongs to a DIFFERENT Laguna car (public/cars/field/pace.json numbers, not `same` in
+//       match_laguna.json) gets "<number>_<id>" (Buttonwillow: "0_bw"), so its identity / model never resolve to the
+//       Laguna car's. Fitted scales of an earlier file are kept per id and stint while ai_version and the target match.
+//
 // Inputs in <data>: sessions_<session>_classification.json and laps/posNNN.json (MyLaps / Speedhive event results
 // API, eventresults/sessions/<session>/classification and .../lapdata/<position>/laps), match_laguna.json.
 // Rules (tools/race/pace.ts): target = median of green non-pit laps after dropping those over 1.3 x the raw median;
@@ -19,8 +31,10 @@
 import { readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { loadTrackPack, loadProbeJson, loadPace, pacePath, trackArg, ROOT } from './load';
+import { carPace, parseLap as officialLap } from './pace_rules';
+import { aggressionFor } from '../../src/physics/ai/rng';
 import { runSolo } from '../../src/physics/ai/solo';
-import { AI_VERSION, type PaceJson, type PaceStint } from '../../src/physics/ai/field';
+import { AI_VERSION, type PaceCar, type PaceJson, type PaceStint } from '../../src/physics/ai/field';
 
 const ARGV = process.argv.slice(2);
 const arg = (k: string) => { const i = ARGV.indexOf(`--${k}`); return i >= 0 ? ARGV[i + 1] : undefined; };
@@ -89,6 +103,65 @@ function ownPace(nr: string) {
   flush();
   return { targetLap: +median(clean).toFixed(3), bestLap: +best.toFixed(3), sigma: +robustSigma(clean).toFixed(3), greenLaps: clean.length, stints };
 }
+
+/** --own: the circuit's own field from its session (see the header). */
+function ownField(): void {
+  const PLAYER = '619';
+  const cls = JSON.parse(readFileSync(resolve(DATA, `sessions_${SESSION}_classification.json`), 'utf8'));
+  const lagunaNumbers = new Set(src.cars.map((c) => c.number));
+  const sameCar = new Set(match.cars.filter((m: any) => m.status === 'same' && m[numKey] === m.laguna_number).map((m: any) => String(m.laguna_number)));
+  const idFor = (n: string) => (lagunaNumbers.has(n) && !sameCar.has(n) ? `${n}_${TRACK === 'buttonwillow' ? 'bw' : TRACK}` : n);
+  const prev: PaceJson | null = existsSync(pacePath(TRACK)) ? JSON.parse(readFileSync(pacePath(TRACK), 'utf8')) : null;
+  const keepScales = prev?.ai_version === AI_VERSION;
+  const prevBy = new Map((prev?.cars ?? []).map((c) => [c.id ?? c.number, c]));
+  const out: PaceCar[] = [];
+  const noLaps: string[] = [];
+  for (const r of cls.rows) {
+    const number = String(r.startNumber);
+    const j = byNr.get(number);
+    if (!j) throw new Error(`no ${TRACK} lap file for #${number}`);
+    // an entrant with no timed lap in the session (did not start) has no pace of its own: left out, named in `source`
+    if (!j.laps.length || !(r.numberOfLaps > 0)) { noLaps.push(number); continue; }
+    const id = idFor(number);
+    const p = prevBy.get(id);
+    const same = p?.number === number;
+    const pc = carPace(j.laps, officialLap(r.bestTime), (k, target) => {
+      const old = keepScales && same ? p?.stints?.[k] : undefined;
+      return old && old.targetLap === target && old.scale !== undefined ? { scale: old.scale, achievedLap: old.achievedLap } : null;
+    });
+    out.push({
+      id, number, team: r.name, class: r.resultClass, grid: j.lapDataInfo.participantInfo.startPos, finish: r.position,
+      classFinish: r.positionInClass, lapsCompleted: r.numberOfLaps,
+      greenLaps: pc.greenLaps, targetLap: pc.targetLap, bestLap: pc.bestLap, sigma: pc.sigma,
+      aggression: aggressionFor(number, r.resultClass),
+      ...(number === PLAYER ? { player: true } : {}),
+      ...(keepScales && same && p?.scale !== undefined && p.targetLap === pc.targetLap ? { scale: p.scale, achievedLap: p.achievedLap } : {}),
+      stints: pc.stints,
+    });
+  }
+  out.sort((a, b) => a.grid - b.grid);
+  const renamed = out.filter((c) => c.id !== c.number).map((c) => c.id!);
+  const label = arg('label') ?? TRACK;
+  const ai = out.filter((c) => !c.player);
+  const file: PaceJson = {
+    ai_version: AI_VERSION,
+    source: arg('source') ?? `MyLaps session ${SESSION} (${label}): ${out.length} of its ${cls.rows.length} entrants from their own laps (${ai.length} AI cars + the player's `
+      + `#${PLAYER} as a reference row; ${noLaps.length ? `left out with no lap in the session: ${noLaps.map((n) => '#' + n).join(', ')}` : 'none left out'}), `
+      + `tools/race/pace.ts rules (tools/race/pace_rules.ts); ids = numbers except ${renamed.length} numbers of a different `
+      + `Laguna car (${dirname(matchPath).replace(ROOT + '/', '')}/match_laguna.json not 'same'): ${renamed.join(', ')}; tools/race/pace_track.ts --own`,
+    track: TRACK,
+    cars: out,
+  };
+  mkdirSync(dirname(pacePath(TRACK)), { recursive: true });
+  writeFileSync(pacePath(TRACK), JSON.stringify(file, null, 1) + '\n');
+  const noStint = ai.filter((c) => !(c.stints ?? []).length);
+  console.log(`${out.length} cars (${ai.length} AI), ${ai.reduce((a, c) => a + (c.stints?.length ?? 0), 0)} AI stints; ${noStint.length} AI cars without a stint `
+    + `(car-level pace): ${noStint.map((c) => `#${c.number} (${c.greenLaps} green laps)`).join(', ') || 'none'}`);
+  console.log(`renamed ids: ${renamed.join(', ')}; left out (no laps): ${noLaps.join(', ') || 'none'}`);
+  console.log(`wrote ${pacePath(TRACK)}`);
+}
+
+if (ARGV.includes('--own')) { ownField(); process.exit(0); }
 
 const probe = loadProbeJson();
 const solo = (id: string) => { const p = loadTrackPack(id); const r = runSolo(p.line, p.surface, probe, null, 1, 2); return r.laps[1]; };
