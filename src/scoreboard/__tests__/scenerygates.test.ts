@@ -124,6 +124,17 @@ describe('scenery gates: exposed wall ends (round 7, owner notes 39 / 41)', () =
     // a wall leaving the edge at a right angle (across a runoff) faces across the lap, not along it
     expect(exposedEnds(T, { barriers: [{ kind: 'concrete', pts: [[60, -6, 0], [60, -30, 0]], src: 'across' }] }).exposed).toHaveLength(0);
   });
+  it('a tyre wall starting bare near the edge fails (Sonoma owner note 67); joined to the wall it meets, it passes', () => {
+    const tyres = (x0: number, x1: number, y: number, src: string) => ({ kind: 'tyres', pts: [[x0, y, 0], [x1, y, 0]] as V3[], src });
+    const bare = exposedEnds(T, { barriers: [tyres(40, 120, -6, 'bare tyres')] });
+    expect(bare.exposed.some((e) => e.label === 'tyres: bare tyres')).toBe(true);
+    // the wall along the dark line converging onto the tyres' head
+    const joined = exposedEnds(T, { barriers: [{ kind: 'concrete', pts: [[10, -14, 0], [40, -6, 0]], src: 'onto' }, tyres(40, 120, -6, 'joined tyres')] });
+    expect(joined.exposed.some((e) => e.label === 'tyres: joined tyres')).toBe(false);
+    // a long tyre run is not a cushion even if its tail meets a wall
+    const long = exposedEnds(T, { barriers: [tyres(20, 40, -6, 'long'), wall(40, 120, -6, 'w')] });
+    expect(long.exposed.some((e) => e.label === 'tyres: long')).toBe(true);
+  });
 });
 
 describe('scenery gates: tyre facings (round 7b, owner note 48)', () => {

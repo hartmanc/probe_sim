@@ -20,6 +20,8 @@ from captures import bilinear
 from geo import log as _log
 
 
+_ONCE = {}   # straights with `once`: (side, lo, hi) -> the line read on the first call
+
 def ransac(xy, tol, it=4000, seed=1, min_len=30):
     rng = np.random.default_rng(seed); best = None
     for _ in range(it):
@@ -120,9 +122,29 @@ def targets(C, NL, hl, hr, straights, tiles, mpp, pitwall=None, log=_log):
     for st_ in straights:
         side = st_['side']; sg = 1 if side == 'left' else -1; hw = hl if side == 'left' else hr
         ks = np.array(span(st_['lo'], st_['hi'], n))
-        if st_['fit'] == 'paint':
+        if st_['fit'] == 'paint' and st_.get('once') and (side, st_.get('why', '')) in _ONCE:
+            # `once` (Buttonwillow Sunset, round 8): the line is read once, around the first fit's edge, and reused on every
+            # refit (read around the moving edge, an outward reading pulls the edge out and the next window further)
+            m, d, nin = _ONCE[(side, st_.get('why', ''))]
+        elif st_['fit'] == 'paint' and st_.get('width_shared'):
+            # `width_shared` (Buttonwillow's drag strip, round 8, owner notes 20-21: one width end to end): this side is
+            # the line PARALLEL to the other side's line already fitted (same direction), at the robust median distance of
+            # this side's own readings from it (the readings within 0.5 m of the first median)
+            os_ = 'right' if side == 'left' else 'left'
+            if os_ not in lines:
+                raise SystemExit(f"straights: width_shared on {side} needs the {os_} line declared first")
+            m0, d = lines[os_]; nr = np.array([-d[1], d[0]])
+            pts = paint_points(C, NL, hw, sg, ks, tiles, mpp)
+            dist = (pts - m0) @ nr; med = float(np.median(dist)); near = np.abs(dist - med) < 0.5
+            off = float(np.median(dist[near])); m = m0 + off * nr; nin = int(near.sum())
+            if st_.get('once'):
+                _ONCE[(side, st_.get('why', ''))] = (m, d, nin)
+            log(f"straight {side} {st_['lo']}..{st_['hi']}: parallel to the {os_} line, width {abs(off):.2f} m ({nin} of {len(pts)} readings)")
+        elif st_['fit'] == 'paint':
             pts = paint_points(C, NL, hw, sg, ks, tiles, mpp)
             m, d, nin = ransac(pts, st_.get('tol', 0.15))
+            if st_.get('once'):
+                _ONCE[(side, st_.get('why', ''))] = (m, d, nin)
         elif st_['fit'] == 'parallel':
             m0, d = lines[st_['ref_side']]; nr = np.array([-d[1], d[0]])
             ref = span(st_['ref_lo'], st_['ref_hi'], n)

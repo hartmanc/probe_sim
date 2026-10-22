@@ -422,11 +422,20 @@ export function exposedEnds(t: TrackLike, sc: SceneryLike & { landmarks?: { kind
   const rep: EndsReport = { checked: 0, ok: [], exposed: [] };
   const sd = (a: number, b: number) => { let d = (b - a) % L; if (d > L / 2) d -= L; if (d < -L / 2) d += L; return d; };  // b - a, wrapped
   for (const r of runs) {
-    if (r.kind === 'tyres') continue;
     // the upstream end: the end with the lower s along the run's direction of travel
     const fwd = r.s[r.s.length - 1] >= r.s[0];
     const ord = fwd ? r.xy.map((_, i) => i) : r.xy.map((_, i) => r.xy.length - 1 - i);
     const h = ord[0];
+    // tyre runs are checked like every other run (round 11, Sonoma owner note 67: "the wall transition shown in the sim
+    // generally don't exist because they are extremely dangerous": a tyre wall never starts bare facing travel; until
+    // 22 Oct 2026 every tyre run was skipped here). The one exemption: a cushion, a tyre run of at most 12 m whose
+    // downstream end joins a rigid run (it IS the end protection of that run's head)
+    if (r.kind === 'tyres') {
+      const tail = r.xy[ord[ord.length - 1]];
+      const len = r.xy.reduce((a, p, i) => (i ? a + Math.hypot(p[0] - r.xy[i - 1][0], p[1] - r.xy[i - 1][1]) : 0), 0);
+      const cushion = len <= 12 && runs.some((q) => q !== r && q.kind !== 'tyres' && q.xy.some((p) => Math.hypot(p[0] - tail[0], p[1] - tail[1]) <= join));
+      if (cushion) continue;
+    }
     if (r.out[h] > near || r.out[h] < -0.5) continue;
     // a run that crosses the track (a wall across a closed road's mouth, out < 0 on the road) is not a lap wall end
     rep.checked++;

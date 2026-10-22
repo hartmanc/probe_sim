@@ -781,6 +781,20 @@ export function buildWorld(track: TrackJson, hf: Float32Array, ortho: THREE.Text
     ...(zones?.parts ?? []).filter((p) => p.n >= 2).map((p) => pitStrand(p, zones!.fractions)),
   ];
   const grid = terrainGrid(track, hf, ground, strands);
+  // barriers stand on the ground they were placed on (round 11, Sonoma owner note 65: "Weird sunken wall at T10"): their
+  // bases are the heightfield (DEM) at their own line, but this mesh samples it every 4 m, so a wall along a hollow
+  // narrower than that sank under the drawn ground (the T10-T11 boarded wall by up to 1.06 m, top near the ground);
+  // lower the triangles under each barrier line, every metre, to its base (the physics' ground is the heightfield too)
+  for (const b of (scenery?.json as { barriers?: { pts: number[][] }[] } | undefined)?.barriers ?? []) {
+    for (let i = 0; i + 1 < b.pts.length; i++) {
+      const a = b.pts[i], c = b.pts[i + 1], n = Math.max(1, Math.ceil(Math.hypot(c[0] - a[0], c[1] - a[1])));
+      for (let k = 0; k <= n; k++) {
+        const x = a[0] + ((c[0] - a[0]) * k) / n, y = a[1] + ((c[1] - a[1]) * k) / n, z = (a[2] ?? 0) + (((c[2] ?? 0) - (a[2] ?? 0)) * k) / n;
+        const sunk = grid.surfaceZ(x, y) - z;
+        if (sunk > 0.05) grid.lowerAt(x, y, sunk);
+      }
+    }
+  }
   // Stitch: the outer shoulder rows sit on the terrain; wherever the terrain still comes within 2 cm of a ribbon or
   // shoulder (a 4 m terrain triangle can reach under it from outside), lower that triangle and re-stitch.
   let secs = strands.map((st, k) => ribbonSections(st, ground, grid.surfaceZ, k === 0 ? lineOff : undefined));

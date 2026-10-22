@@ -1191,6 +1191,19 @@ def closed_roads(trk, osm):
                     # its material in the app (asphalt = the circuit's road look, concrete = pale concrete); absent:
                     # the aerial photo's own colour, as before (20 Oct 2026, owner: "it's usable track, just not in use")
                     part["surface"] = road["surface"]
+                # per-part overrides (config closed_roads[].part_overrides: [{near: (lat, lon), surface, src}], round 11):
+                # the part whose centre line passes within 25 m of `near` takes that surface (it was read nowhere until
+                # 22 Oct 2026, so the round-7e override was a no-op); an entry matching no part fails the stage
+                for ov in road.get("part_overrides", []):
+                    q = np.array(bl.enu(*ov["near"]))
+                    if np.min(np.hypot(*(np.array(part["center"])[:, :2] - q).T)) < 25.0:
+                        if not ov.get("src"):
+                            raise SystemExit(f"closed road {road['name']}: part_overrides entry near {ov['near']} has no src")
+                        if ov.get("surface"):
+                            part["surface"] = ov["surface"]
+                        _MOUTHS_USED.add(id(ov))
+                        log(f"closed road {road['name']}: part at ({part['center'][0][0]:.0f}, {part['center'][0][1]:.0f}) "
+                            f"surface {part.get('surface')} (part_overrides near {ov['near']})")
                 # 20 Oct 2026: a closed road is other pavement for the containment gate (an inside runoff the cars may
                 # use, cones False, is not: it is runoff)
                 part["kind"] = "closed_road" if road.get("cones", True) else "runoff"
@@ -1217,6 +1230,9 @@ def closed_roads(trk, osm):
         for m in road.get("mouth_cones", []):
             if id(m) not in _MOUTHS_USED:
                 raise SystemExit(f"closed road {road['name']}: mouth_cones entry near {m['near']} matches no mouth")
+        for m in road.get("part_overrides", []):
+            if id(m) not in _MOUTHS_USED:
+                raise SystemExit(f"closed road {road['name']}: part_overrides entry near {m['near']} matches no part")
     log(f"closed roads: {len(out_parts)} paved parts, {len(lines)} cone lines")
     return out_parts, lines
 
@@ -2485,14 +2501,38 @@ def main(cfg=None, out_dir=None):
         # the canopy tests, far trees) and every step above read the untinted images
         for f, q in (("ortho.jpg", 84), ("far_ortho.jpg", 78)):
             fp = os.path.join(OUT, f)
-            arr, share = season_tint(np.asarray(Image.open(fp).convert("RGB")), st_cfg)
+            src_img = np.asarray(Image.open(fp).convert("RGB"))
+            zone = season_zone_mask(Track(), st_cfg, src_img.shape) if (f == "ortho.jpg" and st_cfg.get("zones")) else None
+            arr, share = season_tint(src_img, st_cfg, zone)
             Image.fromarray(arr).save(fp, quality=q, optimize=True)
             log(f"season tint on {f}: {share * 100:.1f} % of the pixels (mask mean), green {tuple(st_cfg.get('green', (0.38, 0.47, 0.24)))}")
     if os.path.getsize(os.path.join(OUT, "ortho.jpg")) > 1.5e6:
         log("WARNING: ortho.jpg over 1.5 MB")
 
 
-def season_tint(img, opt):
+def season_zone_mask(trk, opt, shape):
+    """Ground colour zones of the season tint (config scenery.season_tint.zones [{side, s: (s0, s1) m, off: (a, b) m beyond
+    the edge, src}], round 11, Sonoma owner note 65): where the onboard shows green grass the summer NAIP's dry ground
+    reads tan; inside a zone the tint applies at full strength to the ground pixels. Returns a float mask over ortho.jpg."""
+    from PIL import Image, ImageDraw
+    o = trk.t["ortho"]; H, W = shape[:2]
+    C = np.array(trk.t["center"])[:, :2]; sp = trk.t["spacing_m"]; n = len(C)
+    img = Image.new("L", (W, H), 0); dr = ImageDraw.Draw(img)
+    tox = lambda P: [((p[0] - o["x0"]) / (o["x1"] - o["x0"]) * W, (o["y1"] - p[1]) / (o["y1"] - o["y0"]) * H) for p in P]  # noqa: E731
+    for z in opt.get("zones", []):
+        if not z.get("src"):
+            raise SystemExit("season_tint.zones: every zone needs its src")
+        E = np.array(trk.t[z["side"]])[:, :2]
+        ks = [k % n for k in range(int(round(z["s"][0] / sp)), int(round(z["s"][1] / sp)) + 1)]
+        nrm = np.array([(E[k] - C[k]) / max(np.linalg.norm(E[k] - C[k]), 1e-6) for k in ks])
+        a, b = z["off"]
+        poly = [E[k] + nrm[i] * a for i, k in enumerate(ks)] + [E[k] + nrm[i] * b for i, k in reversed(list(enumerate(ks)))]
+        dr.polygon(tox(poly), fill=255)
+        log(f"season tint zone {z['side']} s {z['s'][0]}-{z['s'][1]} m, {a}-{b} m beyond the edge: {z['src'][:90]}")
+    return np.asarray(img, np.float32) / 255.0
+
+
+def season_tint(img, opt, zone=None):
     """Procedural season tint of a ground image (config scenery.season_tint, Sonoma round 6, owner-approved quick version
     of the mock-up compare/sonoma/season_tint_mockup.py): the dry-grass class of the summer NAIP shifted to March green.
     Per pixel, mask = warm ramp (R - B over warm0..warm1) x brightness ramp (max channel over v0..v1) x low-saturation
@@ -2508,6 +2548,11 @@ def season_tint(img, opt):
     smax, ssoft = opt.get("sat_max", 0.55), opt.get("sat_soft", 0.25)
     m = np.clip((r - b - w0) / (w1 - w0), 0, 1) * np.clip((v - v0) / (v1 - v0), 0, 1) * np.clip((smax - sat) / ssoft, 0, 1)
     m = m * np.clip(1 - (g - r - 0.02) / 0.08, 0, 1)
+    if zone is not None:
+        # declared grass zones: every ground pixel (not grey asphalt or pale concrete: saturation over ~0.08; not a red
+        # kerb; not dark) takes the green fully
+        ground = np.clip((sat - 0.06) / 0.05, 0, 1) * np.clip((v - 0.2) / 0.1, 0, 1) * np.clip(1 - (r - g - 0.08) / 0.07, 0, 1)
+        m = np.maximum(m, zone * ground)
     lum = 0.299 * r + 0.587 * g + 0.114 * b
     tr, tg, tb = opt.get("green", (0.38, 0.47, 0.24))
     k = lum / (0.299 * tr + 0.587 * tg + 0.114 * tb)

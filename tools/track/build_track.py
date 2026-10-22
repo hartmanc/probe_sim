@@ -547,40 +547,8 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, pw, m
     n = len(C1)
     nl0 = B.left_normals(C0)
     bridges_world = [C0[k % len(C0)] for k in BS.bridge_stations(trk, osm)]   # OSM crossings, first-centre stations
-    Ccur, hlp, hrp = C1, hl1.copy(), hr1.copy()
-    fit_last = fit
-    for it in range(40):
-        cfgw = trackcfg.remap_stations(cfg_raw, n, float(np.linalg.norm(np.roll(Ccur, -1, 0) - Ccur, axis=1).sum()), C=Ccur)
-        NL = B.left_normals(Ccur)
-        pcfg = cfgw.get("prior", {})
-        # prior adjustments (the prior is only the fit's weak fallback where there is no evidence)
-        if pcfg.get("bridge_win") and it == 0:
-            wn = pcfg["bridge_win"]
-            kb = [int(B.project(Ccur, p[None])[0][0]) for p in bridges_world] + list(pcfg.get("extra_bridges", []))
-            for k0 in kb:
-                if any(abs(k0 - sk) <= 3 for sk in pcfg.get("bridge_skip", [])):
-                    continue
-                lo, hi = k0 - wn, k0 + wn
-                for arr in (hlp, hrp):
-                    a0, a1 = arr[lo % n], arr[hi % n]
-                    for k in range(lo, hi + 1):
-                        arr[k % n] = a0 + (k - lo) / (hi - lo) * (a1 - a0)
-                log(f"prior: bridge at station {k0}: interpolated over +-{wn}")
-        if it == 0:
-            for side, lo, hi, why in pcfg.get("first_edge", []):
-                src = hl0 if side == "left" else hr0; sg = 1 if side == "left" else -1
-                sq, lq = B.project(Ccur, C0 + sg * src[:, None] * nl0); o_ = np.argsort(sq)
-                on_new = sg * np.interp(np.arange(n), sq[o_], lq[o_], period=n)
-                arr = hlp if side == "left" else hrp
-                for k in range(lo, hi + 1):
-                    arr[k % n] = on_new[k % n]
-                log(f"prior: {side} {lo}..{hi} from the first-centre NAIP edge ({why})")
-            for side, lo, hi, why in pcfg.get("interp", []):
-                arr = hlp if side == "left" else hrp
-                a0, a1 = arr[lo % n], arr[hi % n]
-                for k in range(lo, hi + 1):
-                    arr[k % n] = a0 + (k - lo) / ((hi - lo) % n) * (a1 - a0)
-                log(f"prior: {side} {lo}..{hi} interpolated ({why})")
+    def build_anchors(cfgw, Ccur, NL, hlp, hrp):
+        """The constraints inside the fit (declared straights, measured shapes) and the fit's features."""
         # constraints inside the fit: declared straights, measured shapes (world-mapped knots)
         anchors = {"left": ([], [], []), "right": ([], [], [])}
         aw = sp_cfg.get("anchor_w", 20.0)
@@ -617,6 +585,57 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, pw, m
             log(f"features: {len(keeps)} 'keep' zones are not part of the fitted method and are ignored: "
                 + ", ".join(f"{f[0]} {f[1]}..{f[2]}" for f in keeps))
         features = [tuple(f[:4]) for f in cfgw["features"] if f[3] != "keep"]
+        return anchors, str_rep, features
+
+    # centre.local (Sonoma round 11): converge first without the straights marked `local` (the accepted geometry), then
+    # refit inside the window only (local_refit below)
+    loc = cfg_raw["centre"].get("local")
+    cfg_fit = cfg_raw
+    if loc:
+        import copy
+        cfg_fit = copy.deepcopy(cfg_raw)
+        cfg_fit["straights"] = [s_ for s_ in cfg_raw["straights"] if not s_.get("local")]
+        # features carry an optional 6th element {local: True} (only in the local refit) or {replaced_by_local: True}
+        # (only before it); the local refit's config has every straight and its own feature list
+        fflag = lambda f, k: len(f) > 5 and isinstance(f[5], dict) and bool(f[5].get(k))  # noqa: E731
+        cfg_fit["features"] = [f for f in cfg_raw["features"] if not fflag(f, "local")]
+        cfg_loc = copy.deepcopy(cfg_raw)
+        cfg_loc["features"] = [f for f in cfg_raw["features"] if not fflag(f, "replaced_by_local")]
+    Ccur, hlp, hrp = C1, hl1.copy(), hr1.copy()
+    fit_last = fit
+    for it in range(40):
+        cfgw = trackcfg.remap_stations(cfg_fit, n, float(np.linalg.norm(np.roll(Ccur, -1, 0) - Ccur, axis=1).sum()), C=Ccur)
+        NL = B.left_normals(Ccur)
+        pcfg = cfgw.get("prior", {})
+        # prior adjustments (the prior is only the fit's weak fallback where there is no evidence)
+        if pcfg.get("bridge_win") and it == 0:
+            wn = pcfg["bridge_win"]
+            kb = [int(B.project(Ccur, p[None])[0][0]) for p in bridges_world] + list(pcfg.get("extra_bridges", []))
+            for k0 in kb:
+                if any(abs(k0 - sk) <= 3 for sk in pcfg.get("bridge_skip", [])):
+                    continue
+                lo, hi = k0 - wn, k0 + wn
+                for arr in (hlp, hrp):
+                    a0, a1 = arr[lo % n], arr[hi % n]
+                    for k in range(lo, hi + 1):
+                        arr[k % n] = a0 + (k - lo) / (hi - lo) * (a1 - a0)
+                log(f"prior: bridge at station {k0}: interpolated over +-{wn}")
+        if it == 0:
+            for side, lo, hi, why in pcfg.get("first_edge", []):
+                src = hl0 if side == "left" else hr0; sg = 1 if side == "left" else -1
+                sq, lq = B.project(Ccur, C0 + sg * src[:, None] * nl0); o_ = np.argsort(sq)
+                on_new = sg * np.interp(np.arange(n), sq[o_], lq[o_], period=n)
+                arr = hlp if side == "left" else hrp
+                for k in range(lo, hi + 1):
+                    arr[k % n] = on_new[k % n]
+                log(f"prior: {side} {lo}..{hi} from the first-centre NAIP edge ({why})")
+            for side, lo, hi, why in pcfg.get("interp", []):
+                arr = hlp if side == "left" else hrp
+                a0, a1 = arr[lo % n], arr[hi % n]
+                for k in range(lo, hi + 1):
+                    arr[k % n] = a0 + (k - lo) / ((hi - lo) % n) * (a1 - a0)
+                log(f"prior: {side} {lo}..{hi} interpolated ({why})")
+        anchors, str_rep, features = build_anchors(cfgw, Ccur, NL, hlp, hrp)
         log(f"fitted method, iteration {it + 1}: periodic spline per side on {len(tiles)} captures")
         hl3, hr3, frep = edges_spline.fit_periodic(Ccur, NL, hlp, hrp, tiles, features, sp_cfg, cc["mpp"],
                                                    {k: v for k, v in anchors.items() if v[0]})
@@ -648,13 +667,77 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, pw, m
         Ccur = Cn
         if move < 0.05 and it >= 1:
             NL = B.left_normals(Ccur)
-            cfgw = trackcfg.remap_stations(cfg_raw, n, fit2["L"], C=Ccur)
+            cfgw = trackcfg.remap_stations(cfg_fit, n, fit2["L"], C=Ccur)
             hl3, hr3, frep = edges_spline.fit_periodic(Ccur, NL, hlp, hrp, tiles, features, sp_cfg, cc["mpp"],
                                                        {k: v for k, v in anchors.items() if v[0]})
             log(f"converged after {it + 1} centre refits")
             break
     else:
         rep.check("centre convergence", False, f"centre still moving {move:.3f} m after 40 refits")
+    if loc:
+        # -- the local refit (config centre.local): every straight (the `local` ones too) inside the window, the converged
+        # geometry above held outside it in WORLD position. The centre moves only by the window weight (no re-stationing
+        # inside the loop, so stations outside the window stay put); the edges are the fit inside, the held edges
+        # outside, smoothstep-blended over `blend` stations inside each window end; the gates measure the returned edges.
+        def on_centre(Cx, Wp, sg):
+            sq, lq = B.project(Cx, Wp); o_ = np.argsort(sq)
+            return sg * np.interp(np.arange(len(Cx)), sq[o_], lq[o_], period=len(Cx))
+
+        def weights(cfgw):
+            lo, hi = cfgw["centre"]["local"]["window"]; bl = int(loc.get("blend", 15)); span = (hi - lo) % n
+            w = np.zeros(n)
+            for j in range(span + 1):
+                t = min(1.0, min(j, span - j) / bl); w[(lo + j) % n] = t * t * (3 - 2 * t)
+            return w
+        NLa = B.left_normals(Ccur)
+        held = {"left": (Ccur + hl3[:, None] * NLa, 1), "right": (Ccur - hr3[:, None] * NLa, -1)}
+        held_prior = {"left": (Ccur + hlp[:, None] * NLa, 1), "right": (Ccur - hrp[:, None] * NLa, -1)}   # the profile's edges
+        Ca = Ccur.copy()
+
+        def hold_for(Cx, cfgw):
+            return {"w": weights(cfgw), "left": on_centre(Cx, *held["left"]), "right": on_centre(Cx, *held["right"])}
+        log(f"local refit (centre.local, {loc.get('why', '')[:80]}): window {cfg_raw['centre']['local']['window']} "
+            f"(config stations), blend {loc.get('blend', 15)}")
+        for jt in range(40):
+            Lc = float(np.linalg.norm(np.roll(Ccur, -1, 0) - Ccur, axis=1).sum())
+            cfgw = trackcfg.remap_stations(cfg_loc, n, Lc, C=Ccur)
+            NL = B.left_normals(Ccur)
+            hold = hold_for(Ccur, cfgw)
+            anchors, str_rep, features = build_anchors(cfgw, Ccur, NL, hlp, hrp)
+            hl3, hr3, frep = edges_spline.fit_periodic(Ccur, NL, hlp, hrp, tiles, features, sp_cfg, cc["mpp"],
+                                                       {k: v for k, v in anchors.items() if v[0]}, hold=hold)
+            fit2 = recentre.refit(Ccur, hlp, hrp, {"lat_left": hl3, "lat_right": -hr3}, [], [], None, None, pfa, pfb, 0,
+                                  cen["gps_margin"], cen["min_width"], merge=merge, width_cap=cen.get("width_cap", 16.0))
+            alpha = 1.0 if jt < 2 else 1.0 / jt
+            _, latc = B.project(fit2["C"], Ccur)
+            dm = alpha * hold["w"] * latc
+            Cn = Ccur - dm[:, None] * NL
+            move = float(np.abs(dm).max()); move_at = int(np.argmax(np.abs(dm)))
+            hlp = on_centre(Cn, Ccur + hl3[:, None] * NL, 1); hrp = on_centre(Cn, Ccur - hr3[:, None] * NL, -1)
+            fit_last = fit2; Ccur = Cn
+            log(f"local refit {jt + 1}: centre max move {move:.3f} m at station {move_at}")
+            if move < 0.05 and jt >= 1:
+                break
+        else:
+            rep.check("local refit convergence", False, f"centre still moving {move:.3f} m after 40 local refits")
+        # the final fit on the loop's own stations (outside the window they are the converged stations above, so the
+        # held edges there are measured on exactly the observations the converged fit had); its metrics are the gates
+        cfgw = trackcfg.remap_stations(cfg_loc, n, float(np.linalg.norm(np.roll(Ccur, -1, 0) - Ccur, axis=1).sum()), C=Ccur)
+        NL = B.left_normals(Ccur)
+        anchors, str_rep, features = build_anchors(cfgw, Ccur, NL, hlp, hrp)
+        hl3, hr3, frep = edges_spline.fit_periodic(Ccur, NL, hlp, hrp, tiles, features, sp_cfg, cc["mpp"],
+                                                   {k: v for k, v in anchors.items() if v[0]}, hold=hold_for(Ccur, cfgw))
+        wf = weights(cfgw)
+        hlp = wf * hlp + (1 - wf) * on_centre(Ccur, *held_prior["left"])
+        hrp = wf * hrp + (1 - wf) * on_centre(Ccur, *held_prior["right"])
+        # then uniform stations again (the contract's spacing L / n): the same centre curve and the same world edges,
+        # re-expressed on the new stations (no refit)
+        Cu, _ = B.resample_closed(Ccur, n=n, smooth=0.0)
+        hl3, hr3, hlp, hrp = (on_centre(Cu, Ccur + sg_ * a_[:, None] * NL, sg_) for a_, sg_ in ((hl3, 1), (hr3, -1), (hlp, 1), (hrp, -1)))
+        Ccur = Cu
+        cfgw = trackcfg.remap_stations(cfg_loc, n, float(np.linalg.norm(np.roll(Ccur, -1, 0) - Ccur, axis=1).sum()), C=Ccur)
+        _, dC = B.project(Ca, Ccur)
+        log(f"local refit done after {jt + 1} refits: centre moved up to {np.abs(dC).max():.3f} m (station {int(np.argmax(np.abs(dC)))})")
     seg = np.linalg.norm(np.roll(Ccur, -1, 0) - Ccur, axis=1); L = float(seg.sum()); sp = L / n
     # -- gates of the fitted method (edge_gate.FITTED; a config may tighten them, never loosen)
     G = edge_gate.fitted_thresholds(cfg_raw["gate"])

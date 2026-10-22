@@ -41,14 +41,15 @@ class DispositionLinesTest(unittest.TestCase):
     def test_missing_manifest_is_empty(self):
         self.assertEqual(manifest.manifest_dispositions("no_such_track_for_tests"), [])
 
-    def test_sonoma_manifest_disposes_30_rows(self):
+    def test_sonoma_manifest_disposes_31_rows(self):
         # 31 when the gate was written (4fce076); round 7f placed the T7a island-nose delineator, so its "not resolvable"
         # line went (the coverage gate passed with 0 missing rows in the 3fa66ae8a4 publish run). The count tracks the
-        # manifest: a placed object loses its line, a new MISSING row gains one.
+        # manifest: a placed object loses its line, a new MISSING row gains one. Round 11: 31 (the s 3335 right mast row, its
+        # kit mast 15.9 m behind it after the 0.30 m shorter lap moved its station: a 'placed' line).
         if not os.path.exists(manifest.manifest_path("sonoma")):
             self.skipTest("no Sonoma manifest")
         d = manifest.manifest_dispositions("sonoma")
-        self.assertEqual(len(d), 30)
+        self.assertEqual(len(d), 31)
         self.assertTrue(all(x["text"] for x in d))
 
 

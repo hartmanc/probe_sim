@@ -382,11 +382,13 @@ def ranges(mask, n):
     return out
 
 
-def fit_periodic(C, NL, hl, hr, tiles, features, sp, mpp, anchors=None, log=_log):
+def fit_periodic(C, NL, hl, hr, tiles, features, sp, mpp, anchors=None, log=_log, hold=None):
     """ONE periodic robust spline per side over the whole lap (no runs, no seam, no post-fit overwrite). anchors:
     {'left'|'right': (stations, half-widths, weights)} from declared straights and measured shapes, inside the fit.
     Returns (hl, hr, report) with per-side metrics for the gates (build_track.py): share of associated observations
-    within 0.25 m, share of capture rows with a band within 1.2 m, coverage, gaps, waviness and kink per station."""
+    within 0.25 m, share of capture rows with a band within 1.2 m, coverage, gaps, waviness and kink per station.
+    hold (the local refit, config centre.local; None: off): {'w': (n,) weights, 'left' / 'right': (n,) half-widths}; the
+    returned edge is w * fit + (1 - w) * held, and every metric is measured on that returned edge."""
     n = len(C); knot = sp['knot']; K = int(round(n / knot))
     win = sp.get('search', (-4.5, 4.0)); U_ = np.arange(win[0], win[1] + 1e-4, 0.04)
     obs = gather(C, NL, hl, hr, tiles, features, sp['line_off'], mpp, U_)
@@ -404,6 +406,8 @@ def fit_periodic(C, NL, hl, hr, tiles, features, sp, mpp, anchors=None, log=_log
         xo_all = np.array([i for i, _, c, _ in O for _ in c], float); yo_all = np.array([y for _, _, c, _ in O for y in c])
         c0 = periodic_fit(xo_all, yo_all, K, n, sp['lam'] * sp['init_stiff'], 1.0, xs, hw, wp, xa, ya, wa)
         cur = Bx @ c0
+        if hold is not None:   # the observations are associated with the edge that is returned (held outside the window)
+            cur = hold['w'] * cur + (1.0 - hold['w']) * hold[side]
         for gate in (1.2, 1.0, 0.8, 0.6, 0.5, 0.5):
             xo, yo = [], []
             for i, _, c, _ in O:
@@ -412,6 +416,8 @@ def fit_periodic(C, NL, hl, hr, tiles, features, sp, mpp, anchors=None, log=_log
             xo = np.array(xo, float); yo = np.array(yo)
             cf = periodic_fit(xo, yo, K, n, sp['lam'], sp['huber'], xs, hw, wp, xa, ya, wa)
             cur = Bx @ cf
+            if hold is not None:
+                cur = hold['w'] * cur + (1.0 - hold['w']) * hold[side]
         # every capture row's nearest band to the final curve (not only the gated ones)
         allres = np.array([min(abs(y - cur[i]) for y in c) for i, _, c, _ in O])
         assoc = allres <= 1.2   # rows whose nearest band lies within the association window: observations OF this edge
@@ -427,7 +433,7 @@ def fit_periodic(C, NL, hl, hr, tiles, features, sp, mpp, anchors=None, log=_log
         rep[side] = dict(obs=int(len(xo)), candidates=int(len(O)), within=float(np.mean(allres[assoc] <= 0.25)),
                          within_all=float(np.mean(allres <= 0.25)), assoc_share=float(assoc.mean()),
                          off_hist=np.histogram(allres[assoc & (allres > 0.25)], bins=[0.25, 0.4, 0.6, 0.8, 1.0, 1.2])[0].tolist(),
-                         within_gated=float(np.mean(np.abs(yo - Bx[xo.astype(int)] @ cf) <= 0.25)),
+                         within_gated=float(np.mean(np.abs(yo - (Bx[xo.astype(int)] @ cf if hold is None else cur[xo.astype(int)])) <= 0.25)),
                          covered=float(covered.mean()), longest_gap=int(glen[gi]) if glen else 0,
                          gap_at=gaps[gi] if glen else None, wave_rms=float(roll[loose].max()), wave_peak=float(np.abs(qq)[loose].max()),
                          kink=float(kink[loose].max()), kink_all=float(kink.max()), kink_at=int(np.argmax(np.where(loose, kink, 0))),

@@ -97,7 +97,12 @@ CONFIG = dict(
                               src='round-3 declared wall "pit straight and pit-out lane, pit-lane side" (c20_s1595..s1870 '
                                   'bright band 2.0 m beyond the left edge; its T1 run measured by hand on c20_s1925, the '
                                   'white wall line): its last point within 6 m of the left edge, first-centre station 209 '
-                                  '(the accepted 19 Oct 18:05 build, config 9d6f3c1)')),
+                                  '(the accepted 19 Oct 18:05 build, config 9d6f3c1)'),
+                # round 11 (owner notes 64 / 69): the Carousel-exit-to-T7 straights (the `local` straights below) are
+                # refitted inside this window only, the accepted geometry held outside it (the refit loop's limit cycles
+                # at the T7 hairpin and 9a and the uniform re-stationing would otherwise move the whole lap by up to 2.6 m)
+                local=dict(window=(1643, 2091), blend=15,
+                           why='round 11: the Carousel exit to T7 straights only (owner notes 64 / 69)')),
     loop_check=dict(n_min=3900, n_max=4250, official_m=4088, elev_min=20, elev_max=80),
     captures=dict(
         z20_dir=None,
@@ -117,7 +122,15 @@ CONFIG = dict(
         ('right', 180, 260, 'kerb', 'T1 exit right: the edge is the inner side of the blue/white kerb runs and the painted '
                                     'wedges between them (c20_s1925); the bright wedge pulled the paint finder outward '
                                     '(rolling wave 0.044 m at 218-228)'),
-        ('left', 1860, 2060, 'asphalt_end', 'T7 road left edge: asphalt ends at the concrete wall, no painted line'),
+        ('left', 1860, 2060, 'asphalt_end', 'T7 road left edge: asphalt ends at the concrete wall, no painted line',
+         dict(replaced_by_local=True)),
+        # round 11 (the local refit, centre.local): the T7 road's asphalt-end zone starts at the fork vertex (config 1901),
+        # not at 1860: from 1860 to the vertex the left edge is the drag strip's SW painted line, ~0.33 m wide, which the
+        # clean captures show unbroken to the vertex (compare/sonoma/round11/edge_1872.png on c20_s3575 / c20_s0220 /
+        # c20_s3630; strip_part1-2.png); read there as an asphalt end it gave edge readings 0.3 m outside the line at
+        # 1868-1890 on every capture (c20_s0220, s0275, s3575, s3630, s3685)
+        ('left', 1901, 2060, 'asphalt_end', 'T7 road left edge from the fork vertex: asphalt ends at the concrete wall, no painted line',
+         dict(local=True)),
     ],
     # bridge shadow: the T2 footbridge is in OSM (station ~296). Station 4084 is NOT a bridge (corrected 20 Oct 2026; there
     # is no footbridge at the line): it is the chequered start/finish stripe painted across the road (c20_s1705), which
@@ -136,6 +149,34 @@ CONFIG = dict(
              why='T7 road right: the white line along the drag strip is straight'),
         dict(side='left', fit='parallel', ref_side='right', ref_lo=1985, ref_hi=2095, lo=1985, hi=2095, join=(1985, 1990),
              end=2095, why='T7 road left: the wall-side asphalt edge runs parallel to the right line (onboard 1:06-1:09)'),
+        # ---- round 11 (owner notes 64 and 69, 21-22 Oct 2026; the local refit, centre.local): "I don't think this line
+        # should be wiggly. It should be straight"; "I don't think this section going to T7 is wavy like this"; owner_69's
+        # satellite: both edges dead straight from the Carousel to T7. The clean captures show two straight legs 11 deg
+        # apart (the drag strip at 141.6 deg, the T7 road at 152.9 deg), each between straight lines of one width:
+        # (1) the T7 road's left line from the fork vertex (config 1901, where its asphalt end meets the drag strip's SW
+        # paint line) on: the asphalt end lies on that line from the vertex to the T7 braking zone (c20_s0110 / c20_s0165 /
+        # c20_s3630 / c20_s3685; compare/sonoma/round11/axisL_T7road.png); the free fit over the junction chorded 1-3 m
+        # inside it at 1910-1995. Same line as the entry above (parallel to the T7 road's right line, one width).
+        dict(side='left', fit='parallel', ref_side='right', ref_lo=1985, ref_hi=2095, lo=1901, hi=1984, join=(1901, 1906),
+             end=1984, local=True,
+             why='T7 road left from the fork vertex: the asphalt end on the T7 road left line (round 11, owner notes 64 / 69)'),
+        # (2) the drag-strip leg from the Carousel exit to the fork (config 1716-1897/1899): the full drag strip between its
+        # two straight painted edge lines (compare/sonoma/round11/strip_part0-2.png on c20_s0165 / c20_s0220 / c20_s3410 /
+        # c20_s3465: the SW line on the left; the NE line, red / white blocks outside it, on the right). The free fit waved
+        # +-0.2 m (left) and bowed +-0.4 m (right). Buttonwillow round 8's straights fit: the LEFT (SW) line read once
+        # (RANSAC; a first try read the right line first and its RANSAC ran from the red / white blocks outside the NE
+        # line at 1720-1800, where the line itself is not detected beside them, to the paint at 1840-1904: 0.7 deg off,
+        # compare/sonoma/round11/axisR_cand.png), the right PARALLEL to it at its own readings' median distance
+        # (width_shared: one width), read once. The NE paint is parallel to the SW line at 18.3-18.45 m from the Carousel
+        # exit to config 1827 (current 1835), then curves in by ~1.4 m toward the fork (16.9 m at 1900; every overlapping
+        # capture agrees: axisL_drag.png): the one-width line ends there and the free fit follows that paint; the left
+        # line ends at config 1878 (current 1886): over the last ~20 m before the vertex the painted edge turns into the
+        # fork corner (edge readings 0.3-0.5 m outside the straight line at current 1887-1905 on every capture), so the
+        # fit follows that corner (the junction, gate exemption left 1860-1980) into the T7 road's line at the vertex.
+        dict(side='left', fit='paint', lo=1716, hi=1878, join=(1716, 1721), end=1878, tol=0.15, once=True, local=True,
+             why='drag-strip leg left: the SW painted edge line is straight (round 11, owner notes 64 / 69)'),
+        dict(side='right', fit='paint', lo=1716, hi=1827, join=(1716, 1721), end=1827, tol=0.15, once=True, width_shared=True,
+             local=True, why='drag-strip leg right: the NE painted edge line, parallel to the left one (one width; round 11, owner notes 64 / 69)'),
     ],
     gate=dict(straight_rms=0.10, step=0.10, profile_step=0.10, spline_obs_within=0.85,
               exempt=[('left', 3480, 3610, 'pit-in lane splits off on the left before T11 (dashed blend line, c20_s1155): '
@@ -239,7 +280,13 @@ CONFIG = dict(
             dict(side='right', a=(38.1660531, -122.4625071), b=(38.1663429, -122.4623758), colors='red', off=0.3, name='T7 island (apex)',
                  colour_src='t072: red / white blocks, right (island tip)',
                  src='c20_s3905 / c20_s3960 (detector 2172.1-2180.1, 2188.1-2201.1); satellite owner_9; onboard 1:12 red/white island kerb'),
-            dict(side='right', a=(38.1663894, -122.4623279), b=(38.1664626, -122.4616350), colors='red', off=0.3, name="T7a island (O'Reilly)",
+            # round 11 (owner note 63: "not clear to me if this kerb should be here to block off the 'normal' T7 (just cones)"):
+            # the strip started at s ~2213, before the mouth of the normal T7 (the paved area between the T7 island and the
+            # O'Reilly island), so it ran 40-50 m across that open mouth; the captures show the blocks only round the
+            # O'Reilly island from its nose (c20_s3960 / c20_s0000, compare/sonoma/round11/win_t7mouth.png), and onboard 1:14
+            # (t074) shows the orange delineator posts across the mouth, no kerb: the strip now starts on the edge abreast of
+            # the island's nose (s ~2264, the edge point 0.19 m from the first block); the posts (s 2196-2212) stay
+            dict(side='right', a=(38.1667273, -122.4620163), b=(38.1664626, -122.4616350), colors='red', off=0.3, name="T7a island (O'Reilly)",
                  colour_src='t076: red / white blocks, right',
                  src='c20_s3960..s4070 (detector 2216.0-2223.0, 2324.8-2331.8; blocks along the island, capstrip s2250); onboard 1:16 red/white'),
             dict(side='left', a=(38.1667780, -122.4615777), b=(38.1662003, -122.4612627), colors='red', off=0.3, name='T7a exit, outside',
@@ -655,6 +702,19 @@ CONFIG = dict(
             dict(name='T8, left: tyre line up the bank (to the T8a-T9 tyres)', kind='tyres', color=TYRE_BLACK, h=1.0, fence=0.0,
                  src='2026 captures c20_s0000 / c20_s0055: wall_measure dark line, 99 % picked, rms 0.20 m; onboard 1:18.5 low dark line along the bank on the left; joins the T8a-T9 tyre wall',
                  latlon=[(38.1662930, -122.4607413), (38.1662218, -122.4606714), (38.1661547, -122.4605954), (38.1660895, -122.4605163), (38.1660270, -122.4604362), (38.1659724, -122.4603494), (38.1659225, -122.4602539), (38.1658914, -122.4601844)]),
+            # round 11 (owner note 67, owner_67_missing_wall_dark_line.png: "Seems like there is a wall missing along this dark
+            # texture line. Without it, there is a tire wall that abruptly starts, with an end that someone could smash into at
+            # speed. As a general rule, the wall transition shown in the sim generally don't exist because they are extremely
+            # dangerous"): the dark line converging across the verge onto the head of the T11-approach tyre wall is that wall:
+            # concrete with its catch fence, the tyres standing in front of it at the edge
+            dict(name='T11 approach, right: wall and catch fence onto the tyre wall (round 11)', kind='concrete', h=1.1, fence=3.5,
+                 color=WALL_PALE_BLUE,
+                 h_src='onboard RAZip6S84CM 1:52 (t112): the pale wall with its catch fence angling in across the grass toward the edge, '
+                       'its top at the tyre stacks\' top (4 tyres, ~1 m) where it meets them at 1:54 (t114); as the T10-T11 wall (1.1 m, fence ~3.5 m)',
+                 src='round 11: 2026 captures c20_s0990 / c20_s1045: wall_measure dark line on the guide (396,-110)..(425,-196.6) ENU, 97 % '
+                     'picked, rms 0.65 m (the convergent stretch from (403.5, -139) kept: north of it the picks run into the T10-exit dirt '
+                     'and tyre marks); ends on the tyre wall\'s head (joined); compare/sonoma/round11/win_3385.png',
+                 latlon=[(38.1614509, -122.4529900), (38.1614102, -122.4529627), (38.1613693, -122.4529369), (38.1613262, -122.4529205), (38.1612829, -122.4529064), (38.1612367, -122.4529034), (38.1611914, -122.4528967), (38.1611483, -122.4528803), (38.1611063, -122.4528597), (38.1610650, -122.4528363), (38.1610236, -122.4528130), (38.1609857, -122.4527866), (38.1609464, -122.4527582), (38.1609312, -122.4527310)]),
             dict(name='T11 approach, right: tyre wall and catch fence at the edge', kind='tyres', color=TYRE_BLACK, h=1.0, fence=3.5,
                  src='2026 captures c20_s1045 / c20_s1100: wall_measure dark line, 97 % picked, rms 0.53 m; onboard 1:53-1:55 tyre stacks along the right edge with catch fence (an ambulance parked behind at 1:54.6)',
                  latlon=[(38.1609312, -122.4527310), (38.1608446, -122.4527009), (38.1607590, -122.4526659), (38.1606736, -122.4526305), (38.1605876, -122.4525984), (38.1604991, -122.4525756), (38.1604404, -122.4525457)]),
@@ -813,7 +873,16 @@ CONFIG = dict(
         # onboard, on the published ortho.jpg / far_ortho.jpg only, as the stage's last step (build_scenery.season_tint;
         # spec compare/sonoma/season_tint_mockup.py). Limits: ploughed fields go green too; one uniform green.
         season_tint=dict(enabled=True, green=(0.38, 0.47, 0.24), warm=(0.06, 0.20), bright=(0.25, 0.45), sat_max=0.55,
-                         sat_soft=0.25, dark=0.88),
+                         sat_soft=0.25, dark=0.88,
+                         # round 11 (owner note 65: "the grass is not green, which seems to imply a feature is missing or a
+                         # painted-on sign in the grass is missing"): the March 2026 onboard at T10 shows both verges green
+                         # grass from the edge to the walls and no painted sign (RAZip6S84CM 1:44 t104, 1:46 t106, 1:50 t110);
+                         # the summer NAIP's pale dry ground there escaped the tint (ortho (0.50-0.61, 0.51-0.62, 0.36-0.50),
+                         # saturation 0.12-0.34): ground colour zones, the tint at full strength on the ground pixels
+                         zones=[dict(side='right', s=(3140, 3330), off=(0.5, 12.0),
+                                     src='onboard RAZip6S84CM 1:44-1:50 (t104, t106, t110): green grass right of T10 to the wall and catch fence'),
+                                dict(side='left', s=(3140, 3260), off=(0.5, 12.0),
+                                     src='onboard RAZip6S84CM 1:44-1:46 (t104, t106): green grass left of T10 to the boarded wall and its tyre bundles')]),
         # building heights from a robust lidar statistic (p60 above the footprint's ground; p50 where p90 - p50 > 6 m; no
         # structure above 2.5 m: dropped): the p85 rule made the main grandstand at the line a 25.6 m block (timing tower,
         # masts and the stand's slope inside the OSM outline). Laguna keeps the old rule (byte-identical package).
@@ -943,7 +1012,13 @@ CONFIG = dict(
         ],
         # round 10 (judge r9, the pit-out lane surface): no track shoulder on the left where the pit-out lane runs against the
         # edge past the K-rail to the merge (the shoulder rows rose through the lane as pale patches; see pit_lane.lane)
-        track_shoulder_cut=[dict(side='left', s=(150, 240), why='the pit-out lane runs against the left edge (t0304: one plain surface)')],
+        track_shoulder_cut=[dict(side='left', s=(150, 240), why='the pit-out lane runs against the left edge (t0304: one plain surface)'),
+                            # round 11 (owner note 68, owner_68_T11_texture.png: "Texture issue before T11"): the same cause at
+                            # the pit-in: the lane's track-facing side is at the left edge (gap 0) from s 3522 to s ~3635, and
+                            # the track ribbon's left shoulder rows (draping the ortho's lane paint) rose through the lane as
+                            # pale patches (compare/sonoma/round11/stills/n68_left_before.jpg); onboard 1:55-1:57 and the
+                            # captures c20_s1155 / c20_s1210 show one dark surface to the cone line
+                            dict(side='left', s=(3515, 3640), why='the pit-in lane runs against the left edge from s 3522 to s ~3635 (round 11, owner note 68)')],
         edge_line_cut=[dict(side='left', s=(88, 242), why='the pit-out: the continuous pit wall stands at the edge from s ~88 to s ~158 (round 8, owner note 59: its K-rail segment tops s 88-133, read in earlier rounds as a dotted block line that broke the line from s 88.8, then its solid section s 134-158; the cut starts at s 88, was 100), then the declared double yellow blend line (s 158-222, 2025 pit-out video t=304) and the open merge beyond its end (owner note 56: no line), not the white edge line')],
         # raised kerbs round the T7 complex islands off the lap (round 7b, owner note 45): the capture's red / white kerb paint
         # measured as lines (wall_measure bright along the painted blocks, capture shift applied), drawn raised so the ortho's
@@ -1132,8 +1207,10 @@ CONFIG = dict(
             dict(name='T7 inside runoff', ways=['1494191150'], half_width=10.0, max_half=14.0, cones=False, surface='asphalt', paint=True, edges_from_paint=True),  # round 7b (note 45): painted edges like a real road; still open (owner, 19 Oct)
             dict(name='T11a shortcut', ways=['28825444'], half_width=6.0, surface='concrete', paint=True, mouth_cones=[]),
             dict(name='PWC lower hairpin', ways=['505454376'], half_width=5.0, surface='concrete', paint=True,
-                 part_overrides=[dict(near=(38.1655500, -122.4607000), surface='asphalt', edges_from_paint=True,
-                                      src='owner note 57 (May 2025 onboard fEcQdo0ucL8 0:57, reference only: the strip past the fork looks like racing surface with its painted lines); onboard t064 / t066: grey asphalt with painted lane lines')],
+                 part_overrides=[dict(near=(38.1663500, -122.4621700), surface='asphalt',
+                                      src="round 11 (owner note 63: \"Weirdness at T7 where part of the track is not in-use. It should have the same texture as everything else\"): the road's T7 section (the normal T7, closed by the cones of t074) is the track's dark asphalt with its centre line on c20_s3960 / c20_s0000 (compare/sonoma/round11/win_t7mouth.png) and grey asphalt at onboard 1:14 (t074), not pale concrete")],
+                 # (round 11: the round-7e override near (38.16555, -122.4607) matched no part of this road: part_overrides was
+                 # read nowhere until now; that place is the 'drag strip past the T7 fork' road, declared asphalt above)
                  mouth_cones=[]),
         ],
 
