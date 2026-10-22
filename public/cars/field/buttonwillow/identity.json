@@ -2098,8 +2098,8 @@
   "class_finish": 15,
   "laps": 258,
   "best_lap_s": 143.82,
-  "make": "BMW",
-  "model": "3 Series (E30) sedan",
+  "make": "Volkswagen",
+  "model": "Jetta Mk2 4-door",
   "generation": "E30 (1982-94)",
   "year": 1987,
   "body": "sedan",
@@ -4112,8 +4112,8 @@
    "evidence": "Turbocharged B-series seen under the hood; stock B18 used for base power"
   },
   "colors": {
-   "primary": "#c9a07a",
-   "secondary": "#b08a66",
+   "primary": "#c89c88",
+   "secondary": "#d4a0a0",
    "accents": [
     "#f2f2f2",
     "#111111"
