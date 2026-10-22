@@ -13,7 +13,7 @@ import { loadCarSpec, type CarSpec } from '../spec';
 import { CarCollider, type CarBody, type CarContactEvent } from '../cars';
 import type { RaceLine } from './line';
 import { AiDriver, type MishapKind } from './driver';
-import { AI_VERSION, resolveCarType, aiCarJson, buildSpeedProfile, measureCarPerf, parseIdentity, drawPace, fieldKey, type CarPerf, type IdentityCar, type PaceCar, type PaceJson } from './field';
+import { AI_VERSION, resolveCarType, aiCarJson, buildSpeedProfile, measureCarPerf, parseIdentity, drawPace, fieldKey, modelKey, type CarPerf, type IdentityCar, type PaceCar, type PaceJson } from './field';
 import { Traffic } from './traffic';
 import { Rng, hashSeed } from './rng';
 
@@ -175,8 +175,10 @@ export interface CarPose {
 export interface RaceCar {
   idx: number;
   number: string; team: string; cls: string; grid: number;
-  /** field key (pace.json `id`, else the number): the identity row and the model are found by it */
+  /** field key (pace.json `id`, else the number): the identity row is found by it */
   id: string;
+  /** models.json key: pace `model_id`, else identity `model_id`, else `id` (field.ts modelKey) */
+  model: string;
   isPlayer: boolean;
   vehicle: Vehicle;
   /** this car's own Surface (see RaceInputs.makeSurface) */
@@ -364,7 +366,7 @@ export class RaceDirector {
       }
       if (inputs.collisionWorld && (isPlayer ? !inputs.playerVehicle : this.config.aiWalls)) vehicle.setCollisionWorld(inputs.collisionWorld);
       const car: RaceCar = {
-        idx: this.cars.length, number: c.number, id: fieldKey(c), team: c.team, cls: c.class, grid: c.grid, isPlayer, vehicle,
+        idx: this.cars.length, number: c.number, id: fieldKey(c), model: modelKey(c, id), team: c.team, cls: c.class, grid: c.grid, isPlayer, vehicle,
         surface: (isPlayer && inputs.playerSurface) || (inputs.makeSurface ? inputs.makeSurface() : inputs.surface), spec, driver, pace: c,
         identity: id, tint: tintFor(c.number), paceTarget: dp.targetLap, paceSigma: dp.sigma, paceScale: dp.scale, stint: dp.stint,
         U: 0, hint: -1, lapStart: NaN, lastLap: NaN, bestLap: NaN, finishAt: NaN, lapsDone: 0, lapIdx: 0, lapStartGreen: false, greenU: NaN, finished: false, recoveries: 0, mishaps: 0,

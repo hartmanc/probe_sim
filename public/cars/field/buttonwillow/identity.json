@@ -1,0 +1,7290 @@
+[
+ {
+  "number": "69",
+  "team": "Junk Propulsion Laboratory",
+  "class": "A",
+  "grid": 6,
+  "finish": 1,
+  "class_finish": 1,
+  "laps": 322,
+  "best_lap_s": 138.614,
+  "make": "BMW",
+  "model": "530i",
+  "generation": "E39 (1995-2003)",
+  "year": 2001,
+  "body": "sedan",
+  "confidence": "high",
+  "evidence": "Lemons award page id 454: '2001 BMW 530i' (Winner on Laps, Class A winner); photos: grey-pink wood-pattern wrap on an E39 sedan with a Jolly-Roger style roof rig",
+  "dims": {
+   "wheelbase_m": 2.83,
+   "length_m": 4.775,
+   "width_m": 1.8,
+   "height_m": 1.435,
+   "track_m": 1.53,
+   "mass_kg": 1550,
+   "power_kw": 170,
+   "source": "https://en.wikipedia.org/wiki/BMW_5_Series_(E39)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M54 3.0 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 3.0,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 170,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock M54 3.0 assumed; overall winner pace"
+  },
+  "colors": {
+   "primary": "#b49aa0",
+   "secondary": "#6b5a50",
+   "accents": [
+    "#e8d8c0"
+   ]
+  },
+  "numbers": {
+   "color": "white on dark",
+   "boards": [
+    "door",
+    "trunk"
+   ]
+  },
+  "livery": "Faded pink-grey driftwood/plank wrap, round team crest on the doors, roof mast with small flag",
+  "theme": "Pirates (team in pirate costumes), roof mast",
+  "photos": [
+   "26Butt-069-JunkPropul-01.jpg",
+   "26Butt-069-JunkPropul-02.jpg",
+   "26Butt-069-JunkPropul-03.jpg",
+   "26Butt-069-JunkPropul-04.jpg",
+   "26Butt-069-JunkPropul-05.jpg",
+   "26Butt-069-JunkPropul-01_XL.jpg",
+   "26Butt-069-JunkPropul-02_XL.jpg",
+   "26Butt-069-JunkPropul-03_XL.jpg",
+   "26Butt-069-JunkPropul-04_XL.jpg",
+   "26Butt-069-JunkPropul-05_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "69",
+  "photo_dir": "photos/buttonwillow/69",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "191",
+  "team": "Princess Diana and….",
+  "class": "A",
+  "grid": 14,
+  "finish": 2,
+  "class_finish": 2,
+  "laps": 318,
+  "best_lap_s": 138.232,
+  "make": "BMW",
+  "model": "3 Series sedan",
+  "generation": "E46 (1998-2006)",
+  "year": 2003,
+  "body": "sedan",
+  "confidence": "medium",
+  "evidence": "Photos: yellow E46 4-door with teal/white number panel; no archive record for 'Princess Diana and...'; team in Chiefs hockey jerseys",
+  "dims": {
+   "wheelbase_m": 2.725,
+   "length_m": 4.471,
+   "width_m": 1.739,
+   "height_m": 1.415,
+   "track_m": 1.48,
+   "mass_kg": 1400,
+   "power_kw": 141,
+   "source": "https://en.wikipedia.org/wiki/BMW_3_Series_(E46)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M54 2.5 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 141,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#f0c820",
+   "secondary": "#2a9aa8",
+   "accents": [
+    "#ffffff"
+   ]
+  },
+  "numbers": {
+   "color": "black on teal/white panel",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Yellow with teal/white door panel and black wing-like decals over the hood",
+  "theme": "Slap Shot hockey (Charlestown Chiefs jerseys)",
+  "photos": [
+   "26Butt-191-PrincessDi-01.jpg",
+   "26Butt-191-PrincessDi-02.jpg",
+   "26Butt-191-PrincessDi-03.jpg",
+   "26Butt-191-PrincessDi-04.jpg",
+   "26Butt-191-PrincessDi-05.jpg",
+   "26Butt-191-PrincessDi-01_XL.jpg",
+   "26Butt-191-PrincessDi-02_XL.jpg",
+   "26Butt-191-PrincessDi-03_XL.jpg",
+   "26Butt-191-PrincessDi-04_XL.jpg",
+   "26Butt-191-PrincessDi-05_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "191",
+  "photo_dir": "photos/buttonwillow/191",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "32",
+  "team": "Slow and Seething",
+  "class": "A",
+  "grid": 41,
+  "finish": 3,
+  "class_finish": 3,
+  "laps": 318,
+  "best_lap_s": 137.823,
+  "make": "BMW",
+  "model": "3 Series (E30) 2-door",
+  "generation": "E30 (1982-94)",
+  "year": 1987,
+  "body": "coupe",
+  "confidence": "medium",
+  "evidence": "Photos: red E30 2-door with silver/white splash graphics, 'Slow & Seething' windscreen banner and rear wing",
+  "dims": {
+   "wheelbase_m": 2.57,
+   "length_m": 4.325,
+   "width_m": 1.645,
+   "height_m": 1.38,
+   "track_m": 1.41,
+   "mass_kg": 1200,
+   "power_kw": 125,
+   "source": "https://en.wikipedia.org/wiki/BMW_3_Series_(E30)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M20 2.5 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 125,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#c82020",
+   "secondary": "#c0c0c0",
+   "accents": [
+    "#ffffff",
+    "#2a2a2a"
+   ]
+  },
+  "numbers": {
+   "color": "white on black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Red with grey/white flame splash on the sides, small lettered sponsor panels",
+  "theme": "Slow and Seething banner",
+  "photos": [
+   "26Butt-032-SlowandSee-01.jpg",
+   "26Butt-032-SlowandSee-02.jpg",
+   "26Butt-032-SlowandSee-03.jpg",
+   "26Butt-032-SlowandSee-04.jpg",
+   "26Butt-032-SlowandSee-05.jpg",
+   "26Butt-032-SlowandSee-06.jpg",
+   "26Butt-032-SlowandSee-01_XL.jpg",
+   "26Butt-032-SlowandSee-02_XL.jpg",
+   "26Butt-032-SlowandSee-03_XL.jpg",
+   "26Butt-032-SlowandSee-04_XL.jpg",
+   "26Butt-032-SlowandSee-05_XL.jpg",
+   "26Butt-032-SlowandSee-06_XL.jpg"
+  ],
+  "photo_sightings": 6,
+  "id": "32",
+  "photo_dir": "photos/buttonwillow/32",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "0",
+  "team": "Hella Shitty Racing",
+  "class": "A",
+  "grid": 51,
+  "finish": 4,
+  "class_finish": 4,
+  "laps": 316,
+  "best_lap_s": 144.723,
+  "make": "BMW",
+  "model": "318ti",
+  "generation": "E36 compact (1994-99)",
+  "year": 1997,
+  "body": "hatch",
+  "confidence": "high",
+  "evidence": "Lemons award page id 454: earlier Lemons pages list Hella Shitty Racing '1997 BMW 318ti'; photos: black E36 compact with 'Zer0' lettering and two long whip antennas",
+  "dims": {
+   "wheelbase_m": 2.7,
+   "length_m": 4.21,
+   "width_m": 1.7,
+   "height_m": 1.36,
+   "track_m": 1.42,
+   "mass_kg": 1250,
+   "power_kw": 103,
+   "source": "https://en.wikipedia.org/wiki/BMW_3_Series_(E36)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M42 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 103,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#1a1a1a",
+   "secondary": "#f2f2f2",
+   "accents": [
+    "#40c040"
+   ]
+  },
+  "numbers": {
+   "color": "white on black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Black with white 'Zer0' script on the lower doors, white slashed-zero '0' panel, two tall whip antennas on the roof",
+  "theme": "'Zero' wordplay with tall antennas",
+  "photos": [
+   "26Butt-000-HellaShitt-01.jpg",
+   "26Butt-000-HellaShitt-02.jpg",
+   "26Butt-000-HellaShitt-03.jpg",
+   "26Butt-000-HellaShitt-04.jpg",
+   "26Butt-000-HellaShitt-05.jpg",
+   "26Butt-000-HellaShitt-01_XL.jpg",
+   "26Butt-000-HellaShitt-02_XL.jpg",
+   "26Butt-000-HellaShitt-03_XL.jpg",
+   "26Butt-000-HellaShitt-04_XL.jpg",
+   "26Butt-000-HellaShitt-05_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "0_bw",
+  "photo_dir": "photos/buttonwillow/0",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "118",
+  "team": "Lexxy and the Wall Bangers",
+  "class": "A",
+  "grid": 16,
+  "finish": 5,
+  "class_finish": 5,
+  "laps": 316,
+  "best_lap_s": 138.226,
+  "make": "Lexus",
+  "model": "IS300",
+  "generation": "XE10 (2000-05)",
+  "year": 2002,
+  "body": "sedan",
+  "confidence": "high",
+  "evidence": "Lemons award page id 454: earlier award rows: Lexxy and the Wall Bangers '2002 Lexus IS300'; photos: silver IS300 sedan with purple 'Lexxy' script",
+  "dims": {
+   "wheelbase_m": 2.67,
+   "length_m": 4.4,
+   "width_m": 1.72,
+   "height_m": 1.41,
+   "track_m": 1.5,
+   "mass_kg": 1500,
+   "power_kw": 157,
+   "source": "https://en.wikipedia.org/wiki/Lexus_IS",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Toyota 2JZ-GE 3.0 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 3.0,
+   "aspiration": "NA",
+   "redline_rpm": 6200,
+   "stock_power_kw": 157,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#b8b8bc",
+   "secondary": "#6a3a9a",
+   "accents": [
+    "#ffffff"
+   ]
+  },
+  "numbers": {
+   "color": "white on black circle",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Silver with purple Lexxy script, black round number roundel, tall wing",
+  "theme": "Lexus pun",
+  "photos": [
+   "26Butt-118-Lexxyandth-01.jpg",
+   "26Butt-118-Lexxyandth-02.jpg",
+   "26Butt-118-Lexxyandth-01_XL.jpg",
+   "26Butt-118-Lexxyandth-02_XL.jpg"
+  ],
+  "photo_sightings": 2,
+  "id": "118",
+  "photo_dir": "photos/buttonwillow/118",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "357",
+  "team": "THE NOTORIOUS V.A.G",
+  "class": "A",
+  "grid": 45,
+  "finish": 6,
+  "class_finish": 6,
+  "laps": 315,
+  "best_lap_s": 138.966,
+  "make": "Volkswagen",
+  "model": "Golf",
+  "generation": "Mk4 (1997-2006)",
+  "year": 2001,
+  "body": "hatch",
+  "confidence": "high",
+  "evidence": "Photos: 5-door Golf Mk4 in German-flag colour blocking (black nose, yellow doors, red tail); team 'THE NOTORIOUS V.A.G.'; no archive record",
+  "dims": {
+   "wheelbase_m": 2.511,
+   "length_m": 4.149,
+   "width_m": 1.735,
+   "height_m": 1.444,
+   "track_m": 1.51,
+   "mass_kg": 1250,
+   "power_kw": 110,
+   "source": "https://en.wikipedia.org/wiki/Volkswagen_Golf_Mk4",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "VW 1.8T I4 turbo",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "turbo",
+   "redline_rpm": 6500,
+   "stock_power_kw": 110,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#f0c020",
+   "secondary": "#c82020",
+   "accents": [
+    "#1a1a1a",
+    "#ffffff"
+   ]
+  },
+  "numbers": {
+   "color": "black on white oval",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Black front end, yellow centre, red rear in a diagonal split, white oval number panels, small crown",
+  "theme": "Notorious B.I.G. / German flag colours",
+  "photos": [
+   "26Butt-357-THENOTORIO-01.jpg",
+   "26Butt-357-THENOTORIO-02.jpg",
+   "26Butt-357-THENOTORIO-03.jpg",
+   "26Butt-357-THENOTORIO-04.jpg",
+   "26Butt-357-THENOTORIO-05.jpg",
+   "26Butt-357-THENOTORIO-01_XL.jpg",
+   "26Butt-357-THENOTORIO-02_XL.jpg",
+   "26Butt-357-THENOTORIO-03_XL.jpg",
+   "26Butt-357-THENOTORIO-04_XL.jpg",
+   "26Butt-357-THENOTORIO-05_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "357",
+  "photo_dir": "photos/buttonwillow/357",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "562",
+  "team": "3off Racing (B Team!)",
+  "class": "A",
+  "grid": 35,
+  "finish": 7,
+  "class_finish": 7,
+  "laps": 309,
+  "best_lap_s": 136.857,
+  "make": "BMW",
+  "model": "3 Series sedan",
+  "generation": "E36 (1990-99)",
+  "year": 1996,
+  "body": "sedan",
+  "confidence": "high",
+  "evidence": "Photos: white E36 4-door with blue hood and State Farm logos ('3off Racing (B Team!)'); sister car of #333",
+  "dims": {
+   "wheelbase_m": 2.7,
+   "length_m": 4.433,
+   "width_m": 1.698,
+   "height_m": 1.393,
+   "track_m": 1.42,
+   "mass_kg": 1300,
+   "power_kw": 125,
+   "source": "https://en.wikipedia.org/wiki/BMW_3_Series_(E36)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M50 2.5 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 125,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#f0f0f0",
+   "secondary": "#2a5ac8",
+   "accents": [
+    "#d02020"
+   ]
+  },
+  "numbers": {
+   "color": "black on white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "White with a blue hood, State Farm red-on-white decals, '3off Racing' windscreen banner",
+  "theme": "State Farm insurance parody",
+  "photos": [
+   "26Butt-562-3offRacing-01.jpg",
+   "26Butt-562-3offRacing-02.jpg",
+   "26Butt-562-3offRacing-03.jpg",
+   "26Butt-562-3offRacing-04.jpg",
+   "26Butt-562-3offRacing-05.jpg",
+   "26Butt-562-3offRacing-06.jpg",
+   "26Butt-562-3offRacing-01_XL.jpg",
+   "26Butt-562-3offRacing-02_XL.jpg",
+   "26Butt-562-3offRacing-03_XL.jpg",
+   "26Butt-562-3offRacing-04_XL.jpg",
+   "26Butt-562-3offRacing-05_XL.jpg",
+   "26Butt-562-3offRacing-06_XL.jpg"
+  ],
+  "photo_sightings": 6,
+  "id": "562",
+  "photo_dir": "photos/buttonwillow/562",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "192",
+  "team": "Takata R&D",
+  "class": "B",
+  "grid": 34,
+  "finish": 8,
+  "class_finish": 1,
+  "laps": 307,
+  "best_lap_s": 139.836,
+  "make": "Honda",
+  "model": "Accord LX",
+  "generation": "CB (1990-93)",
+  "year": 1992,
+  "body": "sedan",
+  "confidence": "high",
+  "evidence": "Lemons award page id 454: '1992 Honda Accord LX' (Class B winner); photos: green/white Accord sedan with TAKATA door lettering",
+  "dims": {
+   "wheelbase_m": 2.72,
+   "length_m": 4.7,
+   "width_m": 1.7,
+   "height_m": 1.38,
+   "track_m": 1.47,
+   "mass_kg": 1300,
+   "power_kw": 95,
+   "source": "https://en.wikipedia.org/wiki/Honda_Accord_(fourth_generation)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Honda F22A 2.2 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.2,
+   "aspiration": "NA",
+   "redline_rpm": 5800,
+   "stock_power_kw": 95,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#f2f2f2",
+   "secondary": "#2a8a3a",
+   "accents": [
+    "#1a1a1a",
+    "#f0c020"
+   ]
+  },
+  "numbers": {
+   "color": "black on white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "White with green hood/fender/roof splash and large black 'TAKATA' door lettering, R&D tag",
+  "theme": "Takata airbag recall joke",
+  "photos": [
+   "26Butt-192-TakataRD-01.jpg",
+   "26Butt-192-TakataRD-02.jpg",
+   "26Butt-192-TakataRD-01_XL.jpg",
+   "26Butt-192-TakataRD-02_XL.jpg"
+  ],
+  "photo_sightings": 2,
+  "id": "192",
+  "photo_dir": "photos/buttonwillow/192",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "888",
+  "team": "True Performance ….",
+  "class": "A",
+  "grid": 50,
+  "finish": 9,
+  "class_finish": 8,
+  "laps": 301,
+  "best_lap_s": 140.524,
+  "make": "BMW",
+  "model": "3 Series (E30) sedan",
+  "generation": "E30 (1982-94)",
+  "year": 1987,
+  "body": "sedan",
+  "confidence": "medium",
+  "evidence": "Photos: silver E30 4-door, 'TPM XComp' door sponsors; team 'True Performance'; no archive record",
+  "dims": {
+   "wheelbase_m": 2.57,
+   "length_m": 4.325,
+   "width_m": 1.645,
+   "height_m": 1.38,
+   "track_m": 1.41,
+   "mass_kg": 1200,
+   "power_kw": 125,
+   "source": "https://en.wikipedia.org/wiki/BMW_3_Series_(E30)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M20 2.5 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 125,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#a8a8ac",
+   "secondary": "#2a2a2a",
+   "accents": [
+    "#ffffff"
+   ]
+  },
+  "numbers": {
+   "color": "black on white tag",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Silver, bare stock look with small TPM / XComp door decals",
+  "theme": "Plain mechanical racer",
+  "photos": [
+   "26Butt-888-TruePerfor-01.jpg",
+   "26Butt-888-TruePerfor-02.jpg",
+   "26Butt-888-TruePerfor-03.jpg",
+   "26Butt-888-TruePerfor-01_XL.jpg",
+   "26Butt-888-TruePerfor-02_XL.jpg",
+   "26Butt-888-TruePerfor-03_XL.jpg"
+  ],
+  "photo_sightings": 3,
+  "id": "888",
+  "photo_dir": "photos/buttonwillow/888",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "213",
+  "team": "Prince Rogers Nelson",
+  "class": "B",
+  "grid": 70,
+  "finish": 10,
+  "class_finish": 2,
+  "laps": 296,
+  "best_lap_s": 146.788,
+  "make": "Acura",
+  "model": "RSX",
+  "generation": "DC5 (2001-06)",
+  "year": 2004,
+  "body": "coupe",
+  "confidence": "high",
+  "evidence": "Photos: dark navy RSX with grey front lip, large wing and blue Sonic-style spikes on the roof; hood has anime art",
+  "dims": {
+   "wheelbase_m": 2.7,
+   "length_m": 4.37,
+   "width_m": 1.72,
+   "height_m": 1.4,
+   "track_m": 1.49,
+   "mass_kg": 1200,
+   "power_kw": 118,
+   "source": "https://en.wikipedia.org/wiki/Acura_RSX",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Honda K20A3 2.0 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.0,
+   "aspiration": "NA",
+   "redline_rpm": 7200,
+   "stock_power_kw": 118,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock K20A3 assumed"
+  },
+  "colors": {
+   "primary": "#1e2a5a",
+   "secondary": "#9a9aa0",
+   "accents": [
+    "#2a6ad0",
+    "#ffffff"
+   ]
+  },
+  "numbers": {
+   "color": "white on dark",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Navy with unpainted grey front bumper, anime character hood graphic, blue spikes on the roof",
+  "theme": "Sonic the Hedgehog (Prince Rogers Nelson = Sonic joke)",
+  "photos": [
+   "26Butt-213-PrinceRoge-01.jpg",
+   "26Butt-213-PrinceRoge-02.jpg",
+   "26Butt-213-PrinceRoge-03.jpg",
+   "26Butt-213-PrinceRoge-04.jpg",
+   "26Butt-213-PrinceRoge-05.jpg",
+   "26Butt-213-PrinceRoge-01_XL.jpg",
+   "26Butt-213-PrinceRoge-02_XL.jpg",
+   "26Butt-213-PrinceRoge-03_XL.jpg",
+   "26Butt-213-PrinceRoge-04_XL.jpg",
+   "26Butt-213-PrinceRoge-05_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "213",
+  "photo_dir": "photos/buttonwillow/213",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "257",
+  "team": "25-Seven: Inconvenience Store",
+  "class": "B",
+  "grid": 26,
+  "finish": 11,
+  "class_finish": 3,
+  "laps": 295,
+  "best_lap_s": 141.985,
+  "make": "Honda",
+  "model": "Accord",
+  "generation": "CB (1990-93)",
+  "year": 1993,
+  "body": "sedan",
+  "confidence": "high",
+  "evidence": "Lemons award page id 454: earlier award row: 25-Seven Inconvenience Store '1993 Honda Accord'; photos: white 4-door with green/orange stripes, hood scoop and red wing",
+  "dims": {
+   "wheelbase_m": 2.72,
+   "length_m": 4.7,
+   "width_m": 1.7,
+   "height_m": 1.38,
+   "track_m": 1.47,
+   "mass_kg": 1300,
+   "power_kw": 95,
+   "source": "https://en.wikipedia.org/wiki/Honda_Accord_(fourth_generation)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Honda F22A 2.2 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.2,
+   "aspiration": "NA",
+   "redline_rpm": 5800,
+   "stock_power_kw": 95,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#f2f2f2",
+   "secondary": "#2a7a4a",
+   "accents": [
+    "#e8742a",
+    "#d02020"
+   ]
+  },
+  "numbers": {
+   "color": "black on white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "White with green rear and orange/green/red diagonal stripes, orange front splitter",
+  "theme": "Convenience-store (7-Eleven) colours",
+  "photos": [
+   "26Butt-257-25SevenInc-01.jpg",
+   "26Butt-257-25SevenInc-02.jpg",
+   "26Butt-257-25SevenInc-03.jpg",
+   "26Butt-257-25SevenInc-04.jpg",
+   "26Butt-257-25SevenInc-01_XL.jpg",
+   "26Butt-257-25SevenInc-02_XL.jpg",
+   "26Butt-257-25SevenInc-03_XL.jpg",
+   "26Butt-257-25SevenInc-04_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "257",
+  "photo_dir": "photos/buttonwillow/257",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "989",
+  "team": "JUNK RUNNERS",
+  "class": "B",
+  "grid": 72,
+  "finish": 12,
+  "class_finish": 4,
+  "laps": 295,
+  "best_lap_s": 149.506,
+  "make": "Ford",
+  "model": "Ranger (1st gen pickup)",
+  "generation": "1983-88",
+  "year": 1986,
+  "body": "truck",
+  "confidence": "low",
+  "evidence": "Lemons award page id 454: earlier row: JUNK RUNNERS '1986 Ford Truck'; photos: small boxy 80s pickup, black/grey with red lower skirt and a big hood scoop; grille could also read as a Chevrolet C10, so the model is low confidence",
+  "dims": {
+   "wheelbase_m": 2.72,
+   "length_m": 4.55,
+   "width_m": 1.69,
+   "height_m": 1.6,
+   "track_m": 1.4,
+   "mass_kg": 1100,
+   "power_kw": 86,
+   "source": "https://en.wikipedia.org/wiki/Ford_Ranger_(Americas)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Ford Cologne 2.8 V6",
+   "cylinders": 6,
+   "layout": "V6",
+   "displacement_l": 2.8,
+   "aspiration": "NA",
+   "redline_rpm": 5500,
+   "stock_power_kw": 86,
+   "exhaust_note": "stock muffler",
+   "confidence": "low",
+   "evidence": "Stock V6 assumed; hood scoop suggests an engine swap"
+  },
+  "colors": {
+   "primary": "#2a2a2e",
+   "secondary": "#d03020",
+   "accents": [
+    "#e8e8e8"
+   ]
+  },
+  "numbers": {
+   "color": "white on black circle",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Black/grey with red lower body and nose bar, 'Voxx' lettering on the bed side",
+  "theme": "Junkyard pickup",
+  "photos": [
+   "26Butt-989-JUNKRUNNER-01.jpg",
+   "26Butt-989-JUNKRUNNER-02.jpg",
+   "26Butt-989-JUNKRUNNER-03.jpg",
+   "26Butt-989-JUNKRUNNER-04.jpg",
+   "26Butt-989-JUNKRUNNER-05.jpg",
+   "26Butt-989-JUNKRUNNER-06.jpg",
+   "26Butt-989-JUNKRUNNER-01_XL.jpg",
+   "26Butt-989-JUNKRUNNER-02_XL.jpg",
+   "26Butt-989-JUNKRUNNER-03_XL.jpg",
+   "26Butt-989-JUNKRUNNER-04_XL.jpg",
+   "26Butt-989-JUNKRUNNER-05_XL.jpg",
+   "26Butt-989-JUNKRUNNER-06_XL.jpg"
+  ],
+  "photo_sightings": 6,
+  "id": "989",
+  "photo_dir": "photos/buttonwillow/989",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "121",
+  "team": "Team Right Of Way -….",
+  "class": "B",
+  "grid": 66,
+  "finish": 13,
+  "class_finish": 5,
+  "laps": 291,
+  "best_lap_s": 150.098,
+  "make": "Honda",
+  "model": "Civic sedan",
+  "generation": "7th gen (2001-05)",
+  "year": 2004,
+  "body": "sedan",
+  "confidence": "medium",
+  "evidence": "Photos: pink Civic 4-door with black hood and eyelash decals; no archive record",
+  "dims": {
+   "wheelbase_m": 2.62,
+   "length_m": 4.45,
+   "width_m": 1.7,
+   "height_m": 1.44,
+   "track_m": 1.47,
+   "mass_kg": 1100,
+   "power_kw": 82,
+   "source": "https://en.wikipedia.org/wiki/Honda_Civic_(seventh_generation)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Honda D17A 1.7 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.7,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 82,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#f0a8c0",
+   "secondary": "#1a1a1a",
+   "accents": [
+    "#ffffff"
+   ]
+  },
+  "numbers": {
+   "color": "black on white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Pink with black hood and eyelashes over the headlights",
+  "theme": "Barbie pink",
+  "photos": [
+   "26Butt-121-TeamRightO-01.jpg",
+   "26Butt-121-TeamRightO-02.jpg",
+   "26Butt-121-TeamRightO-03.jpg",
+   "26Butt-121-TeamRightO-04.jpg",
+   "26Butt-121-TeamRightO-01_XL.jpg",
+   "26Butt-121-TeamRightO-02_XL.jpg",
+   "26Butt-121-TeamRightO-03_XL.jpg",
+   "26Butt-121-TeamRightO-04_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "121",
+  "photo_dir": "photos/buttonwillow/121",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "282",
+  "team": "Rancho de Llama",
+  "class": "B",
+  "grid": 4,
+  "finish": 14,
+  "class_finish": 6,
+  "laps": 289,
+  "best_lap_s": 145.863,
+  "make": "Volvo",
+  "model": "242/244 sedan",
+  "generation": "200 series (1974-93)",
+  "year": 1978,
+  "body": "sedan",
+  "confidence": "medium",
+  "evidence": "Photos: blue-grey Volvo 240 sedan with yellow/orange/white retro stripes; team 'Rancho de Llama'; earlier award rows list a 1966 Volvo 122, so a Volvo is plausible",
+  "dims": {
+   "wheelbase_m": 2.64,
+   "length_m": 4.79,
+   "width_m": 1.71,
+   "height_m": 1.4,
+   "track_m": 1.42,
+   "mass_kg": 1290,
+   "power_kw": 85,
+   "source": "https://en.wikipedia.org/wiki/Volvo_200_Series",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Volvo B21 2.1 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.1,
+   "aspiration": "NA",
+   "redline_rpm": 5800,
+   "stock_power_kw": 80,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#4a6a7a",
+   "secondary": "#f0c040",
+   "accents": [
+    "#e8742a",
+    "#ffffff"
+   ]
+  },
+  "numbers": {
+   "color": "white on blue",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Steel blue with 70s yellow/orange stripe wedge along the sides, white '282'",
+  "theme": "Llama ranch (70s stripes)",
+  "photos": [
+   "26Butt-282-RanchodeLl-01.jpg",
+   "26Butt-282-RanchodeLl-02.jpg",
+   "26Butt-282-RanchodeLl-03.jpg",
+   "26Butt-282-RanchodeLl-04.jpg",
+   "26Butt-282-RanchodeLl-05.jpg",
+   "26Butt-282-RanchodeLl-06.jpg",
+   "26Butt-282-RanchodeLl-01_XL.jpg",
+   "26Butt-282-RanchodeLl-02_XL.jpg",
+   "26Butt-282-RanchodeLl-03_XL.jpg",
+   "26Butt-282-RanchodeLl-04_XL.jpg",
+   "26Butt-282-RanchodeLl-05_XL.jpg",
+   "26Butt-282-RanchodeLl-06_XL.jpg"
+  ],
+  "photo_sightings": 6,
+  "id": "282",
+  "photo_dir": "photos/buttonwillow/282",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "8",
+  "team": "Outlook Not So Good",
+  "class": "B",
+  "grid": 25,
+  "finish": 16,
+  "class_finish": 8,
+  "laps": 284,
+  "best_lap_s": 143.575,
+  "make": "Mazda",
+  "model": "MX-5 Miata",
+  "generation": "NA (1989-97)",
+  "year": 1994,
+  "body": "roadster",
+  "confidence": "high",
+  "evidence": "Photos: black NA Miata with gold wheels, white 8-ball number and sticker panels; team 'Outlook Not So Good'; no archive record",
+  "dims": {
+   "wheelbase_m": 2.265,
+   "length_m": 3.95,
+   "width_m": 1.675,
+   "height_m": 1.225,
+   "track_m": 1.41,
+   "mass_kg": 990,
+   "power_kw": 96,
+   "source": "https://en.wikipedia.org/wiki/Mazda_MX-5_(NA)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Mazda BP 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 7000,
+   "stock_power_kw": 96,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock BP 1.8 assumed"
+  },
+  "colors": {
+   "primary": "#1a1a1e",
+   "secondary": "#f0c040",
+   "accents": [
+    "#2a4aa0",
+    "#ffffff"
+   ]
+  },
+  "numbers": {
+   "color": "navy on white 8-ball",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Black with gold wheels and a white 8-ball number disc, stickers and blue arrows on the sides",
+  "theme": "Magic 8-ball 'Outlook Not So Good'",
+  "photos": [
+   "26Butt-008-OutlookNot-01.jpg",
+   "26Butt-008-OutlookNot-02.jpg",
+   "26Butt-008-OutlookNot-03.jpg",
+   "26Butt-008-OutlookNot-04.jpg",
+   "26Butt-008-OutlookNot-05.jpg",
+   "26Butt-008-OutlookNot-01_XL.jpg",
+   "26Butt-008-OutlookNot-02_XL.jpg",
+   "26Butt-008-OutlookNot-03_XL.jpg",
+   "26Butt-008-OutlookNot-04_XL.jpg",
+   "26Butt-008-OutlookNot-05_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "8_bw",
+  "photo_dir": "photos/buttonwillow/8",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "71",
+  "team": "Sorry For Party Racing",
+  "class": "A",
+  "grid": 15,
+  "finish": 17,
+  "class_finish": 9,
+  "laps": 284,
+  "best_lap_s": 142.25,
+  "make": "Chevrolet",
+  "model": "Corvette",
+  "generation": "C5 (1997-2004)",
+  "year": 2001,
+  "body": "roadster",
+  "confidence": "high",
+  "evidence": "Lemons award page id 454: earlier rows: Sorry For Party Racing '2001 Chevrolet Corvette' (also LUV, Porsche 944, Firebird); photos: hot-pink C5 with roll hoop and 'Barbie' on the nose",
+  "dims": {
+   "wheelbase_m": 2.655,
+   "length_m": 4.565,
+   "width_m": 1.87,
+   "height_m": 1.245,
+   "track_m": 1.55,
+   "mass_kg": 1520,
+   "power_kw": 257,
+   "source": "https://en.wikipedia.org/wiki/Chevrolet_Corvette_(C5)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "GM LS1 5.7 V8",
+   "cylinders": 8,
+   "layout": "V8",
+   "displacement_l": 5.7,
+   "aspiration": "NA",
+   "redline_rpm": 6000,
+   "stock_power_kw": 257,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "LS1 stock"
+  },
+  "colors": {
+   "primary": "#f040a0",
+   "secondary": "#ffffff",
+   "accents": [
+    "#f0c020"
+   ]
+  },
+  "numbers": {
+   "color": "white on pink",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Hot pink with Barbie script across the nose and a gear-shaped number badge",
+  "theme": "Barbie",
+  "photos": [
+   "26Butt-071-SorryForPa-01.jpg",
+   "26Butt-071-SorryForPa-02.jpg",
+   "26Butt-071-SorryForPa-03.jpg",
+   "26Butt-071-SorryForPa-04.jpg",
+   "26Butt-071-SorryForPa-05.jpg",
+   "26Butt-071-SorryForPa-06.jpg",
+   "26Butt-071-SorryForPa-01_XL.jpg",
+   "26Butt-071-SorryForPa-02_XL.jpg",
+   "26Butt-071-SorryForPa-03_XL.jpg",
+   "26Butt-071-SorryForPa-04_XL.jpg",
+   "26Butt-071-SorryForPa-05_XL.jpg",
+   "26Butt-071-SorryForPa-06_XL.jpg"
+  ],
+  "photo_sightings": 6,
+  "id": "71",
+  "photo_dir": "photos/buttonwillow/71",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "44",
+  "team": "HAZARD FRAUGHT",
+  "class": "B",
+  "grid": 22,
+  "finish": 18,
+  "class_finish": 9,
+  "laps": 282,
+  "best_lap_s": 148.995,
+  "make": "Mini",
+  "model": "Cooper S (R56)",
+  "generation": "R56 (2007-13)",
+  "year": 2008,
+  "body": "hatch",
+  "confidence": "medium",
+  "evidence": "Photos: red Mini hatch with black roof and hood stripes, 'HAZARD FRAUGHT' windscreen banner (gallery tag '3Ss2Ksands')",
+  "dims": {
+   "wheelbase_m": 2.467,
+   "length_m": 3.714,
+   "width_m": 1.683,
+   "height_m": 1.408,
+   "track_m": 1.46,
+   "mass_kg": 1175,
+   "power_kw": 128,
+   "source": "https://en.wikipedia.org/wiki/Mini_Hatch_(R56)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Prince 1.6 I4 turbo",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.6,
+   "aspiration": "turbo",
+   "redline_rpm": 6500,
+   "stock_power_kw": 128,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#c82a2a",
+   "secondary": "#1a1a1a",
+   "accents": [
+    "#ffffff"
+   ]
+  },
+  "numbers": {
+   "color": "white on black roof",
+   "boards": [
+    "roof",
+    "door"
+   ]
+  },
+  "livery": "Red with black roof and bonnet stripes, white numbers on the roof",
+  "theme": "Hazard Freight tools parody",
+  "photos": [
+   "26Butt-044-3Ss2Ksands-01.jpg",
+   "26Butt-044-3Ss2Ksands-02.jpg",
+   "26Butt-044-3Ss2Ksands-03.jpg",
+   "26Butt-044-3Ss2Ksands-04.jpg",
+   "26Butt-044-3Ss2Ksands-05.jpg",
+   "26Butt-044-3Ss2Ksands-06.jpg",
+   "26Butt-044-3Ss2Ksands-01_XL.jpg",
+   "26Butt-044-3Ss2Ksands-02_XL.jpg",
+   "26Butt-044-3Ss2Ksands-03_XL.jpg",
+   "26Butt-044-3Ss2Ksands-04_XL.jpg",
+   "26Butt-044-3Ss2Ksands-05_XL.jpg",
+   "26Butt-044-3Ss2Ksands-06_XL.jpg"
+  ],
+  "photo_sightings": 6,
+  "id": "44",
+  "photo_dir": "photos/buttonwillow/44",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "72",
+  "team": "Team Lemo'ktoberfest",
+  "class": "B",
+  "grid": 27,
+  "finish": 19,
+  "class_finish": 10,
+  "laps": 281,
+  "best_lap_s": 150.23,
+  "make": "Mazda",
+  "model": "MX-5 Miata",
+  "generation": "NB (1998-2005)",
+  "year": 2001,
+  "body": "roadster",
+  "confidence": "high",
+  "evidence": "Photos: NB Miata (fixed-headlight face) in purple, white and black with MAZDASPEED lettering",
+  "dims": {
+   "wheelbase_m": 2.265,
+   "length_m": 3.945,
+   "width_m": 1.68,
+   "height_m": 1.235,
+   "track_m": 1.41,
+   "mass_kg": 1050,
+   "power_kw": 104,
+   "source": "https://en.wikipedia.org/wiki/Mazda_MX-5_(NB)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Mazda BP-ZE 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 7000,
+   "stock_power_kw": 104,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock 1.8"
+  },
+  "colors": {
+   "primary": "#5a3aa0",
+   "secondary": "#f2f2f2",
+   "accents": [
+    "#1a1a1a"
+   ]
+  },
+  "numbers": {
+   "color": "black on white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Purple front, white mid with black rear and black lower nose; MAZDASPEED bumper lettering",
+  "theme": "Lemons Oktoberfest",
+  "photos": [
+   "26Butt-072-TeamLemokt-01.jpg",
+   "26Butt-072-TeamLemokt-02.jpg",
+   "26Butt-072-TeamLemokt-03.jpg",
+   "26Butt-072-TeamLemokt-04.jpg",
+   "26Butt-072-TeamLemokt-05.jpg",
+   "26Butt-072-TeamLemokt-01_XL.jpg",
+   "26Butt-072-TeamLemokt-02_XL.jpg",
+   "26Butt-072-TeamLemokt-03_XL.jpg",
+   "26Butt-072-TeamLemokt-04_XL.jpg",
+   "26Butt-072-TeamLemokt-05_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "72",
+  "photo_dir": "photos/buttonwillow/72",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "63",
+  "team": "People's Republic of Racing",
+  "class": "C",
+  "grid": 65,
+  "finish": 20,
+  "class_finish": 1,
+  "laps": 279,
+  "best_lap_s": 143.489,
+  "make": "Honda",
+  "model": "CRX",
+  "generation": "2nd gen (1988-91)",
+  "year": 1991,
+  "body": "hatch",
+  "confidence": "high",
+  "evidence": "Lemons award page id 454: '1991 Honda CRX' (Class C winner); photos: orange CRX with cream stripes, wing",
+  "dims": {
+   "wheelbase_m": 2.3,
+   "length_m": 3.78,
+   "width_m": 1.65,
+   "height_m": 1.27,
+   "track_m": 1.45,
+   "mass_kg": 880,
+   "power_kw": 68,
+   "source": "https://en.wikipedia.org/wiki/Honda_CR-X",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Honda D16A6 1.6 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.6,
+   "aspiration": "NA",
+   "redline_rpm": 6800,
+   "stock_power_kw": 68,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock D-series assumed; heavily prepped CRX pace"
+  },
+  "colors": {
+   "primary": "#e8742a",
+   "secondary": "#f2e8d0",
+   "accents": [
+    "#ffffff"
+   ]
+  },
+  "numbers": {
+   "color": "white on orange circle",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Orange with cream stripes, 63 in a cloud-shaped roundel, rear wing",
+  "theme": "People's Republic of Racing (Berkeley)",
+  "photos": [
+   "26Butt-063-PeoplesRep-01.jpg",
+   "26Butt-063-PeoplesRep-02.jpg",
+   "26Butt-063-PeoplesRep-03.jpg",
+   "26Butt-063-PeoplesRep-04.jpg",
+   "26Butt-063-PeoplesRep-05.jpg",
+   "26Butt-063-PeoplesRep-06.jpg",
+   "26Butt-063-PeoplesRep-01_XL.jpg",
+   "26Butt-063-PeoplesRep-02_XL.jpg",
+   "26Butt-063-PeoplesRep-03_XL.jpg",
+   "26Butt-063-PeoplesRep-04_XL.jpg",
+   "26Butt-063-PeoplesRep-05_XL.jpg",
+   "26Butt-063-PeoplesRep-06_XL.jpg"
+  ],
+  "photo_sightings": 8,
+  "id": "63",
+  "photo_dir": "photos/buttonwillow/63",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "117",
+  "team": "Too Mini problems racing",
+  "class": "C",
+  "grid": 77,
+  "finish": 21,
+  "class_finish": 2,
+  "laps": 276,
+  "best_lap_s": 147.477,
+  "make": "Mini",
+  "model": "Cooper S (ute)",
+  "generation": "R53 (2002-06)",
+  "year": 2004,
+  "body": "truck",
+  "confidence": "high",
+  "evidence": "Photos: R53 Cooper S cut into a pickup/targa with bed, lime-green Mountain Dew livery",
+  "dims": {
+   "wheelbase_m": 2.467,
+   "length_m": 3.655,
+   "width_m": 1.688,
+   "height_m": 1.416,
+   "track_m": 1.46,
+   "mass_kg": 1140,
+   "power_kw": 120,
+   "source": "https://en.wikipedia.org/wiki/Mini_Hatch_(R50)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Tritec 1.6 I4 supercharged",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.6,
+   "aspiration": "super",
+   "redline_rpm": 6750,
+   "stock_power_kw": 120,
+   "exhaust_note": "stock muffler",
+   "confidence": "high",
+   "evidence": "Stock supercharged 1.6"
+  },
+  "colors": {
+   "primary": "#80d020",
+   "secondary": "#1a1a1a",
+   "accents": [
+    "#ffffff",
+    "#2a8a3a"
+   ]
+  },
+  "numbers": {
+   "color": "white on green",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Lime green with Mountain Dew decals, black roof frame",
+  "theme": "Mountain Dew",
+  "photos": [
+   "26Butt-117-TooMinipro-01.jpg",
+   "26Butt-117-TooMinipro-02.jpg",
+   "26Butt-117-TooMinipro-03.jpg",
+   "26Butt-117-TooMinipro-04.jpg",
+   "26Butt-117-TooMinipro-01_XL.jpg",
+   "26Butt-117-TooMinipro-02_XL.jpg",
+   "26Butt-117-TooMinipro-03_XL.jpg",
+   "26Butt-117-TooMinipro-04_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "117",
+  "photo_dir": "photos/buttonwillow/117",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "39",
+  "team": "Bratwurst Racing",
+  "class": "C",
+  "grid": 60,
+  "finish": 22,
+  "class_finish": 3,
+  "laps": 274,
+  "best_lap_s": 151.424,
+  "make": "Volkswagen",
+  "model": "Passat wagon",
+  "generation": "B5.5 (2001-05)",
+  "year": 2003,
+  "body": "wagon",
+  "confidence": "high",
+  "evidence": "Lemons award page id 454: earlier rows: Bratwurst Racing '2003 Volkswagen Passat Wagon'; photos: grey Passat wagon with orange number and Liqui Moly sponsor, roof wing",
+  "dims": {
+   "wheelbase_m": 2.703,
+   "length_m": 4.675,
+   "width_m": 1.74,
+   "height_m": 1.5,
+   "track_m": 1.52,
+   "mass_kg": 1450,
+   "power_kw": 110,
+   "source": "https://en.wikipedia.org/wiki/Volkswagen_Passat_(B5)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "VW EA113 1.8T I4 turbo",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "turbo",
+   "redline_rpm": 6500,
+   "stock_power_kw": 110,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock 1.8T assumed"
+  },
+  "colors": {
+   "primary": "#8a8a90",
+   "secondary": "#e8742a",
+   "accents": [
+    "#ffffff"
+   ]
+  },
+  "numbers": {
+   "color": "orange on grey",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Grey with orange 39 and Liqui Moly decals, roof wing on rails",
+  "theme": "Hot-dog (Bratwurst) team in hot-dog hats",
+  "photos": [
+   "26Butt-039-BratwurstR-01.jpg",
+   "26Butt-039-BratwurstR-02.jpg",
+   "26Butt-039-BratwurstR-03.jpg",
+   "26Butt-039-BratwurstR-04.jpg",
+   "26Butt-039-BratwurstR-05.jpg",
+   "26Butt-039-BratwurstR-01_XL.jpg",
+   "26Butt-039-BratwurstR-02_XL.jpg",
+   "26Butt-039-BratwurstR-03_XL.jpg",
+   "26Butt-039-BratwurstR-04_XL.jpg",
+   "26Butt-039-BratwurstR-05_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "39",
+  "photo_dir": "photos/buttonwillow/39",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "325",
+  "team": "Last Call Racing",
+  "class": "B",
+  "grid": 90,
+  "finish": 23,
+  "class_finish": 11,
+  "laps": 271,
+  "best_lap_s": 151.66,
+  "make": "Mazda",
+  "model": "MX-5 Miata",
+  "generation": "NA (1989-97)",
+  "year": 1992,
+  "body": "roadster",
+  "confidence": "high",
+  "evidence": "Photos: purple NA Miata with gold star pattern and green/gold Mardi-Gras bonnet stripes",
+  "dims": {
+   "wheelbase_m": 2.265,
+   "length_m": 3.95,
+   "width_m": 1.675,
+   "height_m": 1.225,
+   "track_m": 1.41,
+   "mass_kg": 990,
+   "power_kw": 96,
+   "source": "https://en.wikipedia.org/wiki/Mazda_MX-5_(NA)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Mazda BP 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 7000,
+   "stock_power_kw": 96,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#4a2a8a",
+   "secondary": "#f0c040",
+   "accents": [
+    "#2a8a3a"
+   ]
+  },
+  "numbers": {
+   "color": "gold on purple",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Purple with a gold star pattern and green/gold stripes over the bonnet",
+  "theme": "Last Call (Mardi Gras)",
+  "photos": [
+   "26Butt-325-LastCallRa-01.jpg",
+   "26Butt-325-LastCallRa-02.jpg",
+   "26Butt-325-LastCallRa-03.jpg",
+   "26Butt-325-LastCallRa-04.jpg",
+   "26Butt-325-LastCallRa-01_XL.jpg",
+   "26Butt-325-LastCallRa-02_XL.jpg",
+   "26Butt-325-LastCallRa-03_XL.jpg",
+   "26Butt-325-LastCallRa-04_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "325",
+  "photo_dir": "photos/buttonwillow/325",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "95",
+  "team": "Boiling Hasenpfeffers",
+  "class": "A",
+  "grid": 49,
+  "finish": 24,
+  "class_finish": 10,
+  "laps": 269,
+  "best_lap_s": 138.75,
+  "make": "Volkswagen",
+  "model": "GTI",
+  "generation": "Mk4 (1997-2006)",
+  "year": 2001,
+  "body": "hatch",
+  "confidence": "high",
+  "evidence": "Lemons award page id 454: earlier row: Boiling Hasenpfeffers '2001 Volkswagen GTi'; photos: orange 5-door Mk4 with stripped front, tall wing and Feuerzangenbowle-style bear logo",
+  "dims": {
+   "wheelbase_m": 2.511,
+   "length_m": 4.149,
+   "width_m": 1.735,
+   "height_m": 1.444,
+   "track_m": 1.51,
+   "mass_kg": 1250,
+   "power_kw": 110,
+   "source": "https://en.wikipedia.org/wiki/Volkswagen_Golf_Mk4",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "VW 1.8T I4 turbo",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "turbo",
+   "redline_rpm": 6500,
+   "stock_power_kw": 110,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock 1.8T / 2.0 assumed"
+  },
+  "colors": {
+   "primary": "#f08a20",
+   "secondary": "#1a1a1a",
+   "accents": [
+    "#ffffff"
+   ]
+  },
+  "numbers": {
+   "color": "black on white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Orange with black bear crest, stripped nose, tall wing",
+  "theme": "Hasenpfeffer (German rabbit stew) bear logo",
+  "photos": [
+   "26Butt-095-BoilingHas-01.jpg",
+   "26Butt-095-BoilingHas-02.jpg",
+   "26Butt-095-BoilingHas-03.jpg",
+   "26Butt-095-BoilingHas-04.jpg",
+   "26Butt-095-BoilingHas-05.jpg",
+   "26Butt-095-BoilingHas-06.jpg",
+   "26Butt-095-BoilingHas-01_XL.jpg",
+   "26Butt-095-BoilingHas-02_XL.jpg",
+   "26Butt-095-BoilingHas-03_XL.jpg",
+   "26Butt-095-BoilingHas-04_XL.jpg",
+   "26Butt-095-BoilingHas-05_XL.jpg",
+   "26Butt-095-BoilingHas-06_XL.jpg"
+  ],
+  "photo_sightings": 6,
+  "id": "95",
+  "photo_dir": "photos/buttonwillow/95",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "757",
+  "team": "Catastrophic Concepts",
+  "class": "B",
+  "grid": 78,
+  "finish": 25,
+  "class_finish": 12,
+  "laps": 269,
+  "best_lap_s": 144.692,
+  "make": "Toyota",
+  "model": "Celica (notchback coupe)",
+  "generation": "A60 (1982-85)",
+  "year": 1983,
+  "body": "coupe",
+  "confidence": "medium",
+  "evidence": "Photos: white/black notchback coupe with 'TE' and '#CELEXUS' decals; reads as an A60 Celica coupe with a Lexus swap (CELica + LEXUS)",
+  "dims": {
+   "wheelbase_m": 2.5,
+   "length_m": 4.44,
+   "width_m": 1.68,
+   "height_m": 1.3,
+   "track_m": 1.43,
+   "mass_kg": 1150,
+   "power_kw": 86,
+   "source": "https://en.wikipedia.org/wiki/Toyota_Celica_(A60)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Lexus 1UZ-FE 4.0 V8 (swap; stock was Toyota 22R-E 2.4)",
+   "cylinders": 8,
+   "layout": "V8",
+   "displacement_l": 4.0,
+   "aspiration": "NA",
+   "redline_rpm": 6200,
+   "stock_power_kw": 190,
+   "exhaust_note": "stock muffler",
+   "confidence": "low",
+   "evidence": "'#CELEXUS' suggests a Lexus V8 (1UZ) swap; guess only"
+  },
+  "colors": {
+   "primary": "#f2f2f2",
+   "secondary": "#1a1a1a",
+   "accents": [
+    "#d02020"
+   ]
+  },
+  "numbers": {
+   "color": "black on white",
+   "boards": [
+    "door",
+    "rear"
+   ]
+  },
+  "livery": "White upper, black lower body, TE (Toyota) stripe on the rear quarter, #CELEXUS hashtag",
+  "theme": "Toyota Celica with a Lexus engine",
+  "photos": [
+   "26Butt-757-Catastroph-01.jpg",
+   "26Butt-757-Catastroph-02.jpg",
+   "26Butt-757-Catastroph-03.jpg",
+   "26Butt-757-Catastroph-04.jpg",
+   "26Butt-757-Catastroph-05.jpg",
+   "26Butt-757-Catastroph-06.jpg",
+   "26Butt-757-Catastroph-01_XL.jpg",
+   "26Butt-757-Catastroph-02_XL.jpg",
+   "26Butt-757-Catastroph-03_XL.jpg",
+   "26Butt-757-Catastroph-04_XL.jpg",
+   "26Butt-757-Catastroph-05_XL.jpg",
+   "26Butt-757-Catastroph-06_XL.jpg"
+  ],
+  "photo_sightings": 6,
+  "id": "757",
+  "photo_dir": "photos/buttonwillow/757",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "414",
+  "team": "Oktoberfest Racing",
+  "class": "B",
+  "grid": 21,
+  "finish": 26,
+  "class_finish": 13,
+  "laps": 266,
+  "best_lap_s": 146.976,
+  "make": "BMW",
+  "model": "2002",
+  "generation": "(1966-76)",
+  "year": 1970,
+  "body": "coupe",
+  "confidence": "high",
+  "evidence": "Lemons award page id 454: earlier row: Oktoberfest Racing '1970 BMW 2002'; photos: blue/white Bavarian-check 2002 with bumper-cut nose",
+  "dims": {
+   "wheelbase_m": 2.5,
+   "length_m": 4.23,
+   "width_m": 1.59,
+   "height_m": 1.37,
+   "track_m": 1.35,
+   "mass_kg": 1000,
+   "power_kw": 73,
+   "source": "https://en.wikipedia.org/wiki/BMW_2002",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M10 2.0 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.0,
+   "aspiration": "NA",
+   "redline_rpm": 6000,
+   "stock_power_kw": 73,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "M10 stock assumed"
+  },
+  "colors": {
+   "primary": "#1a2a5a",
+   "secondary": "#f2f2f2",
+   "accents": [
+    "#2a7a3a"
+   ]
+  },
+  "numbers": {
+   "color": "white on blue",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Dark with blue/white Bavarian diamond checks and cut-down front bumper pieces",
+  "theme": "Oktoberfest",
+  "photos": [
+   "26Butt-414-Oktoberfes-01.jpg",
+   "26Butt-414-Oktoberfes-02.jpg",
+   "26Butt-414-Oktoberfes-03.jpg",
+   "26Butt-414-Oktoberfes-04.jpg",
+   "26Butt-414-Oktoberfes-05.jpg",
+   "26Butt-414-Oktoberfes-01_XL.jpg",
+   "26Butt-414-Oktoberfes-02_XL.jpg",
+   "26Butt-414-Oktoberfes-03_XL.jpg",
+   "26Butt-414-Oktoberfes-04_XL.jpg",
+   "26Butt-414-Oktoberfes-05_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "414",
+  "photo_dir": "photos/buttonwillow/414",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "98",
+  "team": "Whale Wars Racing",
+  "class": "A",
+  "grid": 67,
+  "finish": 27,
+  "class_finish": 11,
+  "laps": 265,
+  "best_lap_s": 135.91,
+  "make": "BMW",
+  "model": "3 Series sedan",
+  "generation": "E36 (1990-99)",
+  "year": 1996,
+  "body": "sedan",
+  "confidence": "medium",
+  "evidence": "Photos: silver E36 4-door with blue nose, shark fin on the roof and a big wing ('Whale Wars')",
+  "dims": {
+   "wheelbase_m": 2.7,
+   "length_m": 4.433,
+   "width_m": 1.698,
+   "height_m": 1.393,
+   "track_m": 1.42,
+   "mass_kg": 1300,
+   "power_kw": 125,
+   "source": "https://en.wikipedia.org/wiki/BMW_3_Series_(E36)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M50 2.5 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 125,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock M50 assumed"
+  },
+  "colors": {
+   "primary": "#c0c0c4",
+   "secondary": "#2a5ac8",
+   "accents": [
+    "#ffffff"
+   ]
+  },
+  "numbers": {
+   "color": "black on white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Raw silver with a blue front bumper, shark fin on the roof, whale art",
+  "theme": "Whale Wars / orca",
+  "photos": [
+   "26Butt-098-WhaleWarsR-01.jpg",
+   "26Butt-098-WhaleWarsR-02.jpg",
+   "26Butt-098-WhaleWarsR-03.jpg",
+   "26Butt-098-WhaleWarsR-04.jpg",
+   "26Butt-098-WhaleWarsR-05.jpg",
+   "26Butt-098-WhaleWarsR-01_XL.jpg",
+   "26Butt-098-WhaleWarsR-02_XL.jpg",
+   "26Butt-098-WhaleWarsR-03_XL.jpg",
+   "26Butt-098-WhaleWarsR-04_XL.jpg",
+   "26Butt-098-WhaleWarsR-05_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "98",
+  "photo_dir": "photos/buttonwillow/98",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "64",
+  "team": "Bare Minimum",
+  "class": "C",
+  "grid": 46,
+  "finish": 28,
+  "class_finish": 4,
+  "laps": 263,
+  "best_lap_s": 152.834,
+  "make": "Volkswagen",
+  "model": "New Beetle",
+  "generation": "1998-2010",
+  "year": 2000,
+  "body": "hatch",
+  "confidence": "high",
+  "evidence": "Photos: blue-and-white New Beetle with white fenders, spiked blue pattern on the roof and wing 'ears'",
+  "dims": {
+   "wheelbase_m": 2.515,
+   "length_m": 4.08,
+   "width_m": 1.725,
+   "height_m": 1.5,
+   "track_m": 1.49,
+   "mass_kg": 1250,
+   "power_kw": 85,
+   "source": "https://en.wikipedia.org/wiki/Volkswagen_New_Beetle",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "VW AEG 2.0 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.0,
+   "aspiration": "NA",
+   "redline_rpm": 6000,
+   "stock_power_kw": 85,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock 2.0 assumed"
+  },
+  "colors": {
+   "primary": "#2a4aa0",
+   "secondary": "#f2f2f2",
+   "accents": [
+    "#c0c0c0"
+   ]
+  },
+  "numbers": {
+   "color": "white on blue",
+   "boards": [
+    "rear"
+   ]
+  },
+  "livery": "Blue upper body with line pattern, white nose and fenders, small fin wings on the rear",
+  "theme": "Bare Minimum (Bare Necessities)",
+  "photos": [
+   "26Butt-064-BareMinimu-01.jpg",
+   "26Butt-064-BareMinimu-02.jpg",
+   "26Butt-064-BareMinimu-03.jpg",
+   "26Butt-064-BareMinimu-04.jpg",
+   "26Butt-064-BareMinimu-01_XL.jpg",
+   "26Butt-064-BareMinimu-02_XL.jpg",
+   "26Butt-064-BareMinimu-03_XL.jpg",
+   "26Butt-064-BareMinimu-04_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "64",
+  "photo_dir": "photos/buttonwillow/64",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "259",
+  "team": "Flying Scotsman",
+  "class": "B",
+  "grid": 42,
+  "finish": 29,
+  "class_finish": 14,
+  "laps": 262,
+  "best_lap_s": 139.357,
+  "make": "BMW",
+  "model": "3 Series (E30) sedan",
+  "generation": "E30 (1982-94)",
+  "year": 1987,
+  "body": "sedan",
+  "confidence": "high",
+  "evidence": "Photos: white E30 4-door with BMW M tricolour stripes on the rear and primer fenders",
+  "dims": {
+   "wheelbase_m": 2.57,
+   "length_m": 4.325,
+   "width_m": 1.645,
+   "height_m": 1.38,
+   "track_m": 1.41,
+   "mass_kg": 1200,
+   "power_kw": 125,
+   "source": "https://en.wikipedia.org/wiki/BMW_3_Series_(E30)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M20 2.5 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 125,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#f0f0f0",
+   "secondary": "#2a6ac8",
+   "accents": [
+    "#d02020",
+    "#2a2a60"
+   ]
+  },
+  "numbers": {
+   "color": "black on white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "White with blue/red BMW-M stripe along the side, primer patches, 'Flying Scotsman' crest",
+  "theme": "Flying Scotsman train",
+  "photos": [
+   "26Butt-259-FlyingScot-01.jpg",
+   "26Butt-259-FlyingScot-02.jpg",
+   "26Butt-259-FlyingScot-03.jpg",
+   "26Butt-259-FlyingScot-04.jpg",
+   "26Butt-259-FlyingScot-05.jpg",
+   "26Butt-259-FlyingScot-01_XL.jpg",
+   "26Butt-259-FlyingScot-02_XL.jpg",
+   "26Butt-259-FlyingScot-03_XL.jpg",
+   "26Butt-259-FlyingScot-04_XL.jpg",
+   "26Butt-259-FlyingScot-05_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "259",
+  "photo_dir": "photos/buttonwillow/259",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "104",
+  "team": "Eastbound & Downforce",
+  "class": "A",
+  "grid": 18,
+  "finish": 30,
+  "class_finish": 12,
+  "laps": 261,
+  "best_lap_s": 151.772,
+  "make": "Mazda",
+  "model": "MX-5 Miata (custom Trans Am body)",
+  "generation": "NA (1989-97)",
+  "year": 1994,
+  "body": "roadster",
+  "confidence": "low",
+  "evidence": "Photos: black roadster with a custom fiberglass nose carrying a Firebird-style hood bird, gold wheels and a huge wing; 'Trans Am't' door text; underlying car guessed as an NA Miata",
+  "dims": {
+   "wheelbase_m": 2.265,
+   "length_m": 3.95,
+   "width_m": 1.675,
+   "height_m": 1.225,
+   "track_m": 1.41,
+   "mass_kg": 990,
+   "power_kw": 96,
+   "source": "https://en.wikipedia.org/wiki/Mazda_MX-5_(NA)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Mazda BP 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 7000,
+   "stock_power_kw": 96,
+   "exhaust_note": "stock muffler",
+   "confidence": "low",
+   "evidence": "Stock BP 1.8 assumed"
+  },
+  "colors": {
+   "primary": "#1a1a1a",
+   "secondary": "#c8a040",
+   "accents": [
+    "#d06020"
+   ]
+  },
+  "numbers": {
+   "color": "gold on black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Black with gold wheels, gold Firebird bird on the bonnet, huge rear wing",
+  "theme": "Trans Am (Smokey and the Bandit)",
+  "photos": [
+   "26Butt-104-EastboundD-01.jpg",
+   "26Butt-104-EastboundD-02.jpg",
+   "26Butt-104-EastboundD-03.jpg",
+   "26Butt-104-EastboundD-04.jpg",
+   "26Butt-104-EastboundD-01_XL.jpg",
+   "26Butt-104-EastboundD-02_XL.jpg",
+   "26Butt-104-EastboundD-03_XL.jpg",
+   "26Butt-104-EastboundD-04_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "104",
+  "photo_dir": "photos/buttonwillow/104",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "26",
+  "team": "Go Go Godzilla",
+  "class": "B",
+  "grid": 39,
+  "finish": 31,
+  "class_finish": 15,
+  "laps": 258,
+  "best_lap_s": 143.82,
+  "make": "BMW",
+  "model": "3 Series (E30) sedan",
+  "generation": "E30 (1982-94)",
+  "year": 1987,
+  "body": "sedan",
+  "confidence": "medium",
+  "evidence": "Photos: green BMW 4-door with kidney grille, red roof and white shark-tooth mouth across the bumper",
+  "dims": {
+   "wheelbase_m": 2.57,
+   "length_m": 4.325,
+   "width_m": 1.645,
+   "height_m": 1.38,
+   "track_m": 1.41,
+   "mass_kg": 1200,
+   "power_kw": 125,
+   "source": "https://en.wikipedia.org/wiki/BMW_3_Series_(E30)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M20 2.5 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 125,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#3a6a40",
+   "secondary": "#d02020",
+   "accents": [
+    "#ffffff"
+   ]
+  },
+  "numbers": {
+   "color": "white on dark",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Olive green with red roof, large shark teeth and eyes on the nose, small wing",
+  "theme": "Godzilla (the monster)",
+  "photos": [
+   "26Butt-026-GoGoGodzil-01.jpg",
+   "26Butt-026-GoGoGodzil-02.jpg",
+   "26Butt-026-GoGoGodzil-03.jpg",
+   "26Butt-026-GoGoGodzil-04.jpg",
+   "26Butt-026-GoGoGodzil-05.jpg",
+   "26Butt-026-GoGoGodzil-01_XL.jpg",
+   "26Butt-026-GoGoGodzil-02_XL.jpg",
+   "26Butt-026-GoGoGodzil-03_XL.jpg",
+   "26Butt-026-GoGoGodzil-04_XL.jpg",
+   "26Butt-026-GoGoGodzil-05_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "26",
+  "photo_dir": "photos/buttonwillow/26",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "38",
+  "team": "Another Fine Mess",
+  "class": "B",
+  "grid": 28,
+  "finish": 32,
+  "class_finish": 16,
+  "laps": 257,
+  "best_lap_s": 143.189,
+  "make": "Hyundai",
+  "model": "Elantra",
+  "generation": "XD (2001-06)",
+  "year": 2005,
+  "body": "sedan",
+  "confidence": "high",
+  "evidence": "Lemons award page id 454: (Laguna row re-used; same team and number as at Laguna); photos: red/white/blue Elantra cut into a convertible-pickup with a roll cage and a framed portrait on top, North Korean flags [same car as Laguna #38: make/model/dims/engine taken from the Laguna row]",
+  "dims": {
+   "wheelbase_m": 2.61,
+   "length_m": 4.52,
+   "width_m": 1.72,
+   "height_m": 1.425,
+   "track_m": 1.5,
+   "mass_kg": 1250,
+   "power_kw": 103,
+   "source": "https://en.wikipedia.org/wiki/Hyundai_Elantra_(XD)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Hyundai Beta 2.0 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.0,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 103,
+   "exhaust_note": "stock muffler",
+   "confidence": "high",
+   "evidence": "Stock 2.0 Beta"
+  },
+  "colors": {
+   "primary": "#c82a2a",
+   "secondary": "#2a3aa0",
+   "accents": [
+    "#ffffff"
+   ]
+  },
+  "numbers": {
+   "color": "black on white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Red/white/blue panels, mini North Korean flags, framed portrait on the roll cage, 'TOW' tags",
+  "theme": "North Korea parade car",
+  "photos": [
+   "26Butt-038-AnotherFin-01.jpg",
+   "26Butt-038-AnotherFin-02.jpg",
+   "26Butt-038-AnotherFin-03.jpg",
+   "26Butt-038-AnotherFin-04.jpg",
+   "26Butt-038-AnotherFin-01_XL.jpg",
+   "26Butt-038-AnotherFin-02_XL.jpg",
+   "26Butt-038-AnotherFin-03_XL.jpg",
+   "26Butt-038-AnotherFin-04_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "laguna_number": "38",
+  "id": "38",
+  "photo_dir": "photos/buttonwillow/38",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "50",
+  "team": "A Car DD Drivers",
+  "class": "A",
+  "grid": 9,
+  "finish": 33,
+  "class_finish": 13,
+  "laps": 254,
+  "best_lap_s": 145.4,
+  "make": "Acura",
+  "model": "Integra",
+  "generation": "DC2/DB (1994-2001)",
+  "year": 1998,
+  "body": "coupe",
+  "confidence": "high",
+  "evidence": "Photos: red Integra coupe with Toyo Tires and 'Honda Challenge' windscreen banner, rear wing",
+  "dims": {
+   "wheelbase_m": 2.62,
+   "length_m": 4.38,
+   "width_m": 1.71,
+   "height_m": 1.32,
+   "track_m": 1.47,
+   "mass_kg": 1100,
+   "power_kw": 125,
+   "source": "https://en.wikipedia.org/wiki/Acura_Integra",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Honda B18B1 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 6800,
+   "stock_power_kw": 125,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock B18"
+  },
+  "colors": {
+   "primary": "#a82020",
+   "secondary": "#e8e8e8",
+   "accents": [
+    "#f0d020"
+   ]
+  },
+  "numbers": {
+   "color": "white on red",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Red with Toyo and H2 decals, silver wheels, rear wing",
+  "theme": "A Car Drivers Dream (DD)",
+  "photos": [
+   "26Butt-050-ACarDDDriv-01.jpg",
+   "26Butt-050-ACarDDDriv-02.jpg",
+   "26Butt-050-ACarDDDriv-03.jpg",
+   "26Butt-050-ACarDDDriv-04.jpg",
+   "26Butt-050-ACarDDDriv-01_XL.jpg",
+   "26Butt-050-ACarDDDriv-02_XL.jpg",
+   "26Butt-050-ACarDDDriv-03_XL.jpg",
+   "26Butt-050-ACarDDDriv-04_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "50",
+  "photo_dir": "photos/buttonwillow/50",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "717",
+  "team": "Battle Scarred Motorsports",
+  "class": "C",
+  "grid": 5,
+  "finish": 34,
+  "class_finish": 5,
+  "laps": 250,
+  "best_lap_s": 146.114,
+  "make": "Volkswagen",
+  "model": "GTI (3-door)",
+  "generation": "Mk5 (2004-09)",
+  "year": 2007,
+  "body": "hatch",
+  "confidence": "high",
+  "evidence": "Photos: Golf Mk5 3-door in yellow, blue, red and teal blocks with Liqui Moly sponsor",
+  "dims": {
+   "wheelbase_m": 2.578,
+   "length_m": 4.204,
+   "width_m": 1.759,
+   "height_m": 1.485,
+   "track_m": 1.54,
+   "mass_kg": 1350,
+   "power_kw": 147,
+   "source": "https://en.wikipedia.org/wiki/Volkswagen_Golf_Mk5",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "VW EA113 2.0T I4 turbo",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.0,
+   "aspiration": "turbo",
+   "redline_rpm": 6500,
+   "stock_power_kw": 147,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock 2.0T assumed"
+  },
+  "colors": {
+   "primary": "#f0d020",
+   "secondary": "#2aa8c0",
+   "accents": [
+    "#2a3aa0",
+    "#d02020"
+   ]
+  },
+  "numbers": {
+   "color": "black on white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Colour-blocked yellow nose, red hood and blue/teal doors with Liqui Moly graphics",
+  "theme": "Battle Scars (patched car)",
+  "photos": [
+   "26Butt-717-BattleScar-01.jpg",
+   "26Butt-717-BattleScar-02.jpg",
+   "26Butt-717-BattleScar-01_XL.jpg",
+   "26Butt-717-BattleScar-02_XL.jpg"
+  ],
+  "photo_sightings": 2,
+  "id": "717",
+  "photo_dir": "photos/buttonwillow/717",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "999",
+  "team": "Old Fahrt Racing",
+  "class": "C",
+  "grid": 83,
+  "finish": 35,
+  "class_finish": 6,
+  "laps": 247,
+  "best_lap_s": 144.923,
+  "make": "Volkswagen",
+  "model": "Jetta (suspected)",
+  "generation": "A4 (1999-2005)",
+  "year": 2002,
+  "body": "sedan",
+  "confidence": "low",
+  "evidence": "Photos: black compact 4-door with gold wheels and a big wing, 'Old Fahrt Racing' (VW pun); model could not be read from the photos",
+  "dims": {
+   "wheelbase_m": 2.511,
+   "length_m": 4.38,
+   "width_m": 1.735,
+   "height_m": 1.44,
+   "track_m": 1.51,
+   "mass_kg": 1300,
+   "power_kw": 85,
+   "source": "https://en.wikipedia.org/wiki/Volkswagen_Jetta_(A4)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "VW AEG 2.0 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.0,
+   "aspiration": "NA",
+   "redline_rpm": 6000,
+   "stock_power_kw": 85,
+   "exhaust_note": "stock muffler",
+   "confidence": "low",
+   "evidence": "Stock 2.0 assumed; the car is heavily modified"
+  },
+  "colors": {
+   "primary": "#1a1a1a",
+   "secondary": "#c8a040",
+   "accents": [
+    "#ffffff"
+   ]
+  },
+  "numbers": {
+   "color": "white on black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Black with gold wheels and white 999, wing on the trunk",
+  "theme": "Old Fahrt (flatulence/VW pun)",
+  "photos": [
+   "26Butt-999-OldFahrtRa-01.jpg",
+   "26Butt-999-OldFahrtRa-02.jpg",
+   "26Butt-999-OldFahrtRa-03.jpg",
+   "26Butt-999-OldFahrtRa-04.jpg",
+   "26Butt-999-OldFahrtRa-05.jpg",
+   "26Butt-999-OldFahrtRa-01_XL.jpg",
+   "26Butt-999-OldFahrtRa-02_XL.jpg",
+   "26Butt-999-OldFahrtRa-03_XL.jpg",
+   "26Butt-999-OldFahrtRa-04_XL.jpg",
+   "26Butt-999-OldFahrtRa-05_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "999",
+  "photo_dir": "photos/buttonwillow/999",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "969",
+  "team": "Sierra Auto Recycling",
+  "class": "B",
+  "grid": 54,
+  "finish": 36,
+  "class_finish": 17,
+  "laps": 247,
+  "best_lap_s": 144.751,
+  "make": "Ford",
+  "model": "Crown Victoria P71",
+  "generation": "2nd gen (1998-2011)",
+  "year": 2005,
+  "body": "sedan",
+  "confidence": "high",
+  "evidence": "Photos: black Crown Victoria Police Interceptor sedan with a wing and driver name decals",
+  "dims": {
+   "wheelbase_m": 2.91,
+   "length_m": 5.38,
+   "width_m": 1.98,
+   "height_m": 1.45,
+   "track_m": 1.62,
+   "mass_kg": 1800,
+   "power_kw": 186,
+   "source": "https://en.wikipedia.org/wiki/Ford_Crown_Victoria",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Ford Modular 4.6 V8",
+   "cylinders": 8,
+   "layout": "V8",
+   "displacement_l": 4.6,
+   "aspiration": "NA",
+   "redline_rpm": 5500,
+   "stock_power_kw": 186,
+   "exhaust_note": "stock muffler",
+   "confidence": "high",
+   "evidence": "4.6 Modular V8"
+  },
+  "colors": {
+   "primary": "#1a1a1a",
+   "secondary": "#e8e8e8",
+   "accents": [
+    "#d02020"
+   ]
+  },
+  "numbers": {
+   "color": "white on black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Black ex-cop car with team-name and driver decals along the doors",
+  "theme": "Sierra Auto Recycling sponsor car",
+  "photos": [
+   "26Butt-969-SierraAuto-01.jpg",
+   "26Butt-969-SierraAuto-02.jpg",
+   "26Butt-969-SierraAuto-03.jpg",
+   "26Butt-969-SierraAuto-04.jpg",
+   "26Butt-969-SierraAuto-05.jpg",
+   "26Butt-969-SierraAuto-06.jpg",
+   "26Butt-969-SierraAuto-01_XL.jpg",
+   "26Butt-969-SierraAuto-02_XL.jpg",
+   "26Butt-969-SierraAuto-03_XL.jpg",
+   "26Butt-969-SierraAuto-04_XL.jpg",
+   "26Butt-969-SierraAuto-05_XL.jpg",
+   "26Butt-969-SierraAuto-06_XL.jpg"
+  ],
+  "photo_sightings": 7,
+  "id": "969",
+  "photo_dir": "photos/buttonwillow/969",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "988",
+  "team": "The Flagship of Theseus",
+  "class": "B",
+  "grid": 94,
+  "finish": 37,
+  "class_finish": 18,
+  "laps": 246,
+  "best_lap_s": 141.117,
+  "make": "BMW",
+  "model": "3 Series (E30) 2-door",
+  "generation": "E30 (1982-94)",
+  "year": 1987,
+  "body": "coupe",
+  "confidence": "high",
+  "evidence": "Photos: white E30 2-door with green/blue hazard-stripe sills and 'EMOTIONAL SUPPORT VEHICLE' banner",
+  "dims": {
+   "wheelbase_m": 2.57,
+   "length_m": 4.325,
+   "width_m": 1.645,
+   "height_m": 1.38,
+   "track_m": 1.41,
+   "mass_kg": 1200,
+   "power_kw": 125,
+   "source": "https://en.wikipedia.org/wiki/BMW_3_Series_(E30)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M20 2.5 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 125,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#f0f0f0",
+   "secondary": "#2aa88a",
+   "accents": [
+    "#2a4aa0"
+   ]
+  },
+  "numbers": {
+   "color": "black on white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "White with green/blue chevron stripes, 'Emotional Support Vehicle' lettering along the side",
+  "theme": "Emotional support vehicle joke",
+  "photos": [
+   "26Butt-988-TheFlagshi-01.jpg",
+   "26Butt-988-TheFlagshi-02.jpg",
+   "26Butt-988-TheFlagshi-03.jpg",
+   "26Butt-988-TheFlagshi-01_XL.jpg",
+   "26Butt-988-TheFlagshi-02_XL.jpg",
+   "26Butt-988-TheFlagshi-03_XL.jpg"
+  ],
+  "photo_sightings": 3,
+  "id": "988",
+  "photo_dir": "photos/buttonwillow/988",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "1",
+  "team": "Cartman Racing",
+  "class": "B",
+  "grid": 10,
+  "finish": 38,
+  "class_finish": 19,
+  "laps": 245,
+  "best_lap_s": 146.305,
+  "make": "Mazda",
+  "model": "MX-5 Miata",
+  "generation": "NA (1989-97)",
+  "year": 1992,
+  "body": "roadster",
+  "confidence": "high",
+  "evidence": "Photos: red/blue NA Miata with a rear wing and Cartman graphics on the door",
+  "dims": {
+   "wheelbase_m": 2.265,
+   "length_m": 3.95,
+   "width_m": 1.675,
+   "height_m": 1.225,
+   "track_m": 1.41,
+   "mass_kg": 990,
+   "power_kw": 96,
+   "source": "https://en.wikipedia.org/wiki/Mazda_MX-5_(NA)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Mazda BP 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 7000,
+   "stock_power_kw": 96,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#c82a2a",
+   "secondary": "#2a3aa0",
+   "accents": [
+    "#f0d020"
+   ]
+  },
+  "numbers": {
+   "color": "white on red",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Red with blue diagonal bands, cartoon face on the door, big rear wing",
+  "theme": "South Park Eric Cartman",
+  "photos": [
+   "26Butt-001-CartmanRac-01.jpg",
+   "26Butt-001-CartmanRac-02.jpg",
+   "26Butt-001-CartmanRac-03.jpg",
+   "26Butt-001-CartmanRac-01_XL.jpg",
+   "26Butt-001-CartmanRac-02_XL.jpg",
+   "26Butt-001-CartmanRac-03_XL.jpg"
+  ],
+  "photo_sightings": 3,
+  "id": "1_bw",
+  "photo_dir": "photos/buttonwillow/1",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "328",
+  "team": "Official LeMons Taxi (R)",
+  "class": "A",
+  "grid": 88,
+  "finish": 39,
+  "class_finish": 14,
+  "laps": 242,
+  "best_lap_s": 135.34,
+  "make": "BMW",
+  "model": "3 Series coupe",
+  "generation": "E36 (1990-99)",
+  "year": 1995,
+  "body": "coupe",
+  "confidence": "high",
+  "evidence": "Photos: yellow E36 coupe with black lower body, taxi-style roof sign and rear wing ('Official LeMons Taxi')",
+  "dims": {
+   "wheelbase_m": 2.7,
+   "length_m": 4.433,
+   "width_m": 1.698,
+   "height_m": 1.354,
+   "track_m": 1.42,
+   "mass_kg": 1290,
+   "power_kw": 125,
+   "source": "https://en.wikipedia.org/wiki/BMW_3_Series_(E36)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M50 2.5 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 125,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#f0c020",
+   "secondary": "#1a1a1a",
+   "accents": [
+    "#ffffff"
+   ]
+  },
+  "numbers": {
+   "color": "black on yellow",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Taxi yellow with black lower body, taxi advert text on the sides",
+  "theme": "Lemons taxi",
+  "photos": [
+   "26Butt-328-OfficialLe-01.jpg",
+   "26Butt-328-OfficialLe-02.jpg",
+   "26Butt-328-OfficialLe-03.jpg",
+   "26Butt-328-OfficialLe-04.jpg",
+   "26Butt-328-OfficialLe-05.jpg",
+   "26Butt-328-OfficialLe-01_XL.jpg",
+   "26Butt-328-OfficialLe-02_XL.jpg",
+   "26Butt-328-OfficialLe-03_XL.jpg",
+   "26Butt-328-OfficialLe-04_XL.jpg",
+   "26Butt-328-OfficialLe-05_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "328",
+  "photo_dir": "photos/buttonwillow/328",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "103",
+  "team": "Captain Ron’s Backdraft….",
+  "class": "B",
+  "grid": 7,
+  "finish": 40,
+  "class_finish": 20,
+  "laps": 240,
+  "best_lap_s": 145.004,
+  "make": "BMW",
+  "model": "3 Series sedan",
+  "generation": "E46 (1998-2006)",
+  "year": 2002,
+  "body": "sedan",
+  "confidence": "medium",
+  "evidence": "Photos: white E46 4-door with a mock-semi truck grille on the front, twin vertical exhaust stacks and navy/yellow stripes",
+  "dims": {
+   "wheelbase_m": 2.725,
+   "length_m": 4.471,
+   "width_m": 1.739,
+   "height_m": 1.415,
+   "track_m": 1.48,
+   "mass_kg": 1400,
+   "power_kw": 141,
+   "source": "https://en.wikipedia.org/wiki/BMW_3_Series_(E46)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M54 2.5 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 141,
+   "exhaust_note": "vertical stacks, loud",
+   "confidence": "low",
+   "evidence": "Twin vertical stacks seen in the photos; engine otherwise stock M54"
+  },
+  "colors": {
+   "primary": "#f2f2f2",
+   "secondary": "#2a3a6a",
+   "accents": [
+    "#f0c020"
+   ]
+  },
+  "numbers": {
+   "color": "black on white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "White with navy and yellow stripes, a large chrome truck radiator grille on the nose and tall vertical stacks beside the windscreen",
+  "theme": "Captain Ron's Backdraft (truck/fire theme)",
+  "photos": [
+   "26Butt-103-CaptainRon-01.jpg",
+   "26Butt-103-CaptainRon-02.jpg",
+   "26Butt-103-CaptainRon-03.jpg",
+   "26Butt-103-CaptainRon-01_XL.jpg",
+   "26Butt-103-CaptainRon-02_XL.jpg",
+   "26Butt-103-CaptainRon-03_XL.jpg"
+  ],
+  "photo_sightings": 3,
+  "id": "103",
+  "photo_dir": "photos/buttonwillow/103",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "82",
+  "team": "Duct Tape n' Hammers",
+  "class": "A",
+  "grid": 97,
+  "finish": 41,
+  "class_finish": 15,
+  "laps": 240,
+  "best_lap_s": 145.421,
+  "make": "Porsche",
+  "model": "944",
+  "generation": "1982-91",
+  "year": 1986,
+  "body": "coupe",
+  "confidence": "high",
+  "evidence": "Photos: blue/light-blue/orange Rotmans livery, 'ARMY BEAT NAVY' front splitter text",
+  "dims": {
+   "wheelbase_m": 2.4,
+   "length_m": 4.32,
+   "width_m": 1.735,
+   "height_m": 1.275,
+   "track_m": 1.48,
+   "mass_kg": 1180,
+   "power_kw": 110,
+   "source": "https://en.wikipedia.org/wiki/Porsche_944",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Porsche M44 2.5 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6400,
+   "stock_power_kw": 110,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock 2.5 assumed"
+  },
+  "colors": {
+   "primary": "#2a4aa0",
+   "secondary": "#e87a2a",
+   "accents": [
+    "#6ac8e8",
+    "#f2f2f2"
+   ]
+  },
+  "numbers": {
+   "color": "white on blue",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Rotmans blue with light-blue and orange stripes over a white roof, ARMY BEAT NAVY splitter text",
+  "theme": "Rothmans Porsche livery",
+  "photos": [
+   "26Butt-082-DuctTapenH-01.jpg",
+   "26Butt-082-DuctTapenH-02.jpg",
+   "26Butt-082-DuctTapenH-03.jpg",
+   "26Butt-082-DuctTapenH-04.jpg",
+   "26Butt-082-DuctTapenH-05.jpg",
+   "26Butt-082-DuctTapenH-06.jpg",
+   "26Butt-082-DuctTapenH-01_XL.jpg",
+   "26Butt-082-DuctTapenH-02_XL.jpg",
+   "26Butt-082-DuctTapenH-03_XL.jpg",
+   "26Butt-082-DuctTapenH-04_XL.jpg",
+   "26Butt-082-DuctTapenH-05_XL.jpg",
+   "26Butt-082-DuctTapenH-06_XL.jpg"
+  ],
+  "photo_sightings": 6,
+  "id": "82",
+  "photo_dir": "photos/buttonwillow/82",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "444",
+  "team": "Going Boldly",
+  "class": "B",
+  "grid": 8,
+  "finish": 42,
+  "class_finish": 21,
+  "laps": 240,
+  "best_lap_s": 142.655,
+  "make": "Ford",
+  "model": "Crown Victoria",
+  "generation": "2nd gen (1998-2011)",
+  "year": 2005,
+  "body": "sedan",
+  "confidence": "high",
+  "evidence": "Photos: black Crown Vic with a USS Enterprise saucer and nacelles mounted on the roof ('Going Boldly')",
+  "dims": {
+   "wheelbase_m": 2.91,
+   "length_m": 5.38,
+   "width_m": 1.98,
+   "height_m": 1.45,
+   "track_m": 1.62,
+   "mass_kg": 1800,
+   "power_kw": 186,
+   "source": "https://en.wikipedia.org/wiki/Ford_Crown_Victoria",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Ford Modular 4.6 V8",
+   "cylinders": 8,
+   "layout": "V8",
+   "displacement_l": 4.6,
+   "aspiration": "NA",
+   "redline_rpm": 5500,
+   "stock_power_kw": 186,
+   "exhaust_note": "stock muffler",
+   "confidence": "high",
+   "evidence": "4.6 Modular V8"
+  },
+  "colors": {
+   "primary": "#1a1a1a",
+   "secondary": "#9a9aa0",
+   "accents": [
+    "#e8e8e8"
+   ]
+  },
+  "numbers": {
+   "color": "white on black",
+   "boards": [
+    "door",
+    "hood"
+   ]
+  },
+  "livery": "Black ex-cop car with the USS Enterprise on the roof",
+  "theme": "Star Trek",
+  "photos": [
+   "26Butt-444-GoingBoldl-01.jpg",
+   "26Butt-444-GoingBoldl-02.jpg",
+   "26Butt-444-GoingBoldl-03.jpg",
+   "26Butt-444-GoingBoldl-04.jpg",
+   "26Butt-444-GoingBoldl-01_XL.jpg",
+   "26Butt-444-GoingBoldl-02_XL.jpg",
+   "26Butt-444-GoingBoldl-03_XL.jpg",
+   "26Butt-444-GoingBoldl-04_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "444",
+  "photo_dir": "photos/buttonwillow/444",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "189",
+  "team": "Tired Iron Racing",
+  "class": "A",
+  "grid": 19,
+  "finish": 43,
+  "class_finish": 16,
+  "laps": 239,
+  "best_lap_s": 145.328,
+  "make": "Mazda",
+  "model": "MX-5 Miata",
+  "generation": "NA (1989-97)",
+  "year": 1991,
+  "body": "roadster",
+  "confidence": "high",
+  "evidence": "Lemons award page id 454: (Laguna row re-used; same team and number as at Laguna); photos: orange-peach Miata with gold wheels and a pig/peach face [same car as Laguna #189: make/model/dims/engine taken from the Laguna row]",
+  "dims": {
+   "wheelbase_m": 2.265,
+   "length_m": 3.95,
+   "width_m": 1.675,
+   "height_m": 1.225,
+   "track_m": 1.41,
+   "mass_kg": 960,
+   "power_kw": 86,
+   "source": "https://en.wikipedia.org/wiki/Mazda_MX-5_(NA)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Mazda B6 1.6 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.6,
+   "aspiration": "NA",
+   "redline_rpm": 7200,
+   "stock_power_kw": 86,
+   "exhaust_note": "loud open",
+   "confidence": "high",
+   "evidence": "1991 = 1.6 B6"
+  },
+  "colors": {
+   "primary": "#d98a4a",
+   "secondary": "#f0c040",
+   "accents": [
+    "#222222"
+   ]
+  },
+  "numbers": {
+   "color": "black on white",
+   "boards": [
+    "door",
+    "rear wing"
+   ]
+  },
+  "livery": "Orange-tan finish with gold wheels and a carved face on the nose, black outlines",
+  "theme": "Peach/pumpkin body-art",
+  "photos": [
+   "26Butt-189-TiredIronR-01.jpg",
+   "26Butt-189-TiredIronR-02.jpg",
+   "26Butt-189-TiredIronR-03.jpg",
+   "26Butt-189-TiredIronR-04.jpg",
+   "26Butt-189-TiredIronR-05.jpg",
+   "26Butt-189-TiredIronR-01_XL.jpg",
+   "26Butt-189-TiredIronR-02_XL.jpg",
+   "26Butt-189-TiredIronR-03_XL.jpg",
+   "26Butt-189-TiredIronR-04_XL.jpg",
+   "26Butt-189-TiredIronR-05_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "laguna_number": "189",
+  "id": "189",
+  "photo_dir": "photos/buttonwillow/189",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "11",
+  "team": "Degens",
+  "class": "C",
+  "grid": 59,
+  "finish": 44,
+  "class_finish": 7,
+  "laps": 238,
+  "best_lap_s": 148.745,
+  "make": "Subaru",
+  "model": "Impreza wagon",
+  "generation": "GG/GD (2001-07)",
+  "year": 2006,
+  "body": "wagon",
+  "confidence": "high",
+  "evidence": "Lemons award page id 454: '2006 Subaru Impreza' (Judges' Choice); photos: grey/green camo wagon with stripped nose",
+  "dims": {
+   "wheelbase_m": 2.525,
+   "length_m": 4.415,
+   "width_m": 1.74,
+   "height_m": 1.44,
+   "track_m": 1.48,
+   "mass_kg": 1300,
+   "power_kw": 129,
+   "source": "https://en.wikipedia.org/wiki/Subaru_Impreza_(second_generation)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Subaru EJ253 2.5 flat-4",
+   "cylinders": 4,
+   "layout": "flat4",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 129,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock 2.5 assumed"
+  },
+  "colors": {
+   "primary": "#7a7a6a",
+   "secondary": "#4a6a3a",
+   "accents": [
+    "#d0a040"
+   ]
+  },
+  "numbers": {
+   "color": "black on white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Grey with green pixel-camo patches, gold wheels, Stohr/Ford sponsor tags",
+  "theme": "Degens camo",
+  "photos": [
+   "26Butt-011-Degens-02.jpg",
+   "26Butt-011-Degens-01.jpg",
+   "26Butt-011-Degens-03.jpg",
+   "26Butt-011-Degens-04.jpg",
+   "26Butt-011-Degens-02_XL.jpg",
+   "26Butt-011-Degens-01_XL.jpg",
+   "26Butt-011-Degens-03_XL.jpg",
+   "26Butt-011-Degens-04_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "11",
+  "photo_dir": "photos/buttonwillow/11",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "963",
+  "team": "Borsche AG",
+  "class": "C",
+  "grid": 93,
+  "finish": 45,
+  "class_finish": 8,
+  "laps": 238,
+  "best_lap_s": 149.945,
+  "make": "Nissan",
+  "model": "Sentra (cut into a ute)",
+  "generation": "B13 (1991-94)",
+  "year": 1991,
+  "body": "truck",
+  "confidence": "medium",
+  "evidence": "(Laguna row re-used; same team and number as at Laguna); photos: white Sentra with a pickup bed, blue/yellow bed, hand-drawn 963 [same car as Laguna #963: make/model/dims/engine taken from the Laguna row]",
+  "dims": {
+   "wheelbase_m": 2.43,
+   "length_m": 4.32,
+   "width_m": 1.645,
+   "height_m": 1.38,
+   "track_m": 1.43,
+   "mass_kg": 1000,
+   "power_kw": 82,
+   "source": "https://en.wikipedia.org/wiki/Nissan_Sentra_(B13)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Nissan GA16DE 1.6 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.6,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 82,
+   "exhaust_note": "stock muffler",
+   "confidence": "high",
+   "evidence": "GA16DE"
+  },
+  "colors": {
+   "primary": "#f2f2f2",
+   "secondary": "#3060c0",
+   "accents": [
+    "#f0c020"
+   ]
+  },
+  "numbers": {
+   "color": "blue on white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "White with hand-painted blue '963' and a blue/yellow (Ukraine-flag) bed",
+  "theme": "Borsche AG: Porsche 963 parody on a Sentra ute",
+  "photos": [
+   "26Butt-963-BorscheAG-01.jpg",
+   "26Butt-963-BorscheAG-02.jpg",
+   "26Butt-963-BorscheAG-03.jpg",
+   "26Butt-963-BorscheAG-04.jpg",
+   "26Butt-963-BorscheAG-05.jpg",
+   "26Butt-963-BorscheAG-06.jpg",
+   "26Butt-963-BorscheAG-01_XL.jpg",
+   "26Butt-963-BorscheAG-02_XL.jpg",
+   "26Butt-963-BorscheAG-03_XL.jpg",
+   "26Butt-963-BorscheAG-04_XL.jpg",
+   "26Butt-963-BorscheAG-05_XL.jpg",
+   "26Butt-963-BorscheAG-06_XL.jpg"
+  ],
+  "photo_sightings": 6,
+  "laguna_number": "963",
+  "id": "963",
+  "photo_dir": "photos/buttonwillow/963",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "261",
+  "team": "Living The Dream …. (R)",
+  "class": "B",
+  "grid": 33,
+  "finish": 46,
+  "class_finish": 22,
+  "laps": 237,
+  "best_lap_s": 158.542,
+  "make": "Mazda",
+  "model": "MX-5 Miata",
+  "generation": "NA (1989-97)",
+  "year": 1992,
+  "body": "roadster",
+  "confidence": "high",
+  "evidence": "Photos: tan/gold NA Miata with black fenders and 'Black Flag' decal on the quarter",
+  "dims": {
+   "wheelbase_m": 2.265,
+   "length_m": 3.95,
+   "width_m": 1.675,
+   "height_m": 1.225,
+   "track_m": 1.41,
+   "mass_kg": 990,
+   "power_kw": 96,
+   "source": "https://en.wikipedia.org/wiki/Mazda_MX-5_(NA)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Mazda BP 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 7000,
+   "stock_power_kw": 96,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#c0a860",
+   "secondary": "#1a1a1a",
+   "accents": [
+    "#2a8a3a",
+    "#ffffff"
+   ]
+  },
+  "numbers": {
+   "color": "white on black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Tan/gold with black rear and door, Black Flag decal, green accents",
+  "theme": "Living the Dream",
+  "photos": [
+   "26Butt-261-LivingTheD-01.jpg",
+   "26Butt-261-LivingTheD-02.jpg",
+   "26Butt-261-LivingTheD-03.jpg",
+   "26Butt-261-LivingTheD-04.jpg",
+   "26Butt-261-LivingTheD-01_XL.jpg",
+   "26Butt-261-LivingTheD-02_XL.jpg",
+   "26Butt-261-LivingTheD-03_XL.jpg",
+   "26Butt-261-LivingTheD-04_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "261",
+  "photo_dir": "photos/buttonwillow/261",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "75",
+  "team": "DONUT A-HOLES",
+  "class": "C",
+  "grid": 73,
+  "finish": 47,
+  "class_finish": 9,
+  "laps": 232,
+  "best_lap_s": 143.643,
+  "make": "Honda",
+  "model": "Civic sedan",
+  "generation": "6th gen (1996-2000)",
+  "year": 1998,
+  "body": "sedan",
+  "confidence": "low",
+  "evidence": "Photos: pink 4-door covered in hand-drawn art with a giant donut on roof stands; front is damaged and the model is uncertain (Civic-like)",
+  "dims": {
+   "wheelbase_m": 2.62,
+   "length_m": 4.4,
+   "width_m": 1.7,
+   "height_m": 1.39,
+   "track_m": 1.48,
+   "mass_kg": 1050,
+   "power_kw": 78,
+   "source": "https://en.wikipedia.org/wiki/Honda_Civic_(sixth_generation)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Honda D16Y7 1.6 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.6,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 78,
+   "exhaust_note": "stock muffler",
+   "confidence": "low",
+   "evidence": "Stock D16 assumed"
+  },
+  "colors": {
+   "primary": "#f0a8c0",
+   "secondary": "#f0d040",
+   "accents": [
+    "#1a1a1a"
+   ]
+  },
+  "numbers": {
+   "color": "black on white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Pink with yellow-donut graphics and black cartoon figures, giant donut on the roof",
+  "theme": "Donut A-Holes (donut roof)",
+  "photos": [
+   "26Butt-075-DONUTAHOLE-01.jpg",
+   "26Butt-075-DONUTAHOLE-02.jpg",
+   "26Butt-075-DONUTAHOLE-03.jpg",
+   "26Butt-075-DONUTAHOLE-04.jpg",
+   "26Butt-075-DONUTAHOLE-05.jpg",
+   "26Butt-075-DONUTAHOLE-01_XL.jpg",
+   "26Butt-075-DONUTAHOLE-02_XL.jpg",
+   "26Butt-075-DONUTAHOLE-03_XL.jpg",
+   "26Butt-075-DONUTAHOLE-04_XL.jpg",
+   "26Butt-075-DONUTAHOLE-05_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "75",
+  "photo_dir": "photos/buttonwillow/75",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "685",
+  "team": "red fang (R)",
+  "class": "C",
+  "grid": 30,
+  "finish": 48,
+  "class_finish": 10,
+  "laps": 231,
+  "best_lap_s": 164.595,
+  "make": "Chevrolet",
+  "model": "Caprice wagon",
+  "generation": "1977-90",
+  "year": 1986,
+  "body": "wagon",
+  "confidence": "high",
+  "evidence": "Photos: cream/white full-size Chevrolet wagon with wood-less sides and roof rails, covered in marker scribbles",
+  "dims": {
+   "wheelbase_m": 2.92,
+   "length_m": 5.45,
+   "width_m": 1.95,
+   "height_m": 1.45,
+   "track_m": 1.6,
+   "mass_kg": 1700,
+   "power_kw": 104,
+   "source": "https://en.wikipedia.org/wiki/Chevrolet_Caprice",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Chevrolet 305 5.0 V8",
+   "cylinders": 8,
+   "layout": "V8",
+   "displacement_l": 5.0,
+   "aspiration": "NA",
+   "redline_rpm": 4500,
+   "stock_power_kw": 104,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "305 V8 assumed"
+  },
+  "colors": {
+   "primary": "#e8dcc0",
+   "secondary": "#8a7a60",
+   "accents": [
+    "#d02020"
+   ]
+  },
+  "numbers": {
+   "color": "black on cream",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Cream-white with hand-drawn marker doodles over the body",
+  "theme": "redfang (wagon)",
+  "photos": [
+   "26Butt-685-redfang-01.jpg",
+   "26Butt-685-redfang-02.jpg",
+   "26Butt-685-redfang-03.jpg",
+   "26Butt-685-redfang-01_XL.jpg",
+   "26Butt-685-redfang-02_XL.jpg",
+   "26Butt-685-redfang-03_XL.jpg"
+  ],
+  "photo_sightings": 3,
+  "id": "685",
+  "photo_dir": "photos/buttonwillow/685",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "801",
+  "team": "Amtrack: Crapitol Corridor",
+  "class": "B",
+  "grid": 44,
+  "finish": 49,
+  "class_finish": 23,
+  "laps": 229,
+  "best_lap_s": 142.852,
+  "make": "Mazda",
+  "model": "Mazda3 hatch",
+  "generation": "BL (2009-13)",
+  "year": 2010,
+  "body": "hatch",
+  "confidence": "high",
+  "evidence": "Photos: silver Mazda3 5-door hatch with red tow tags and a smiling front-end sticker",
+  "dims": {
+   "wheelbase_m": 2.64,
+   "length_m": 4.46,
+   "width_m": 1.755,
+   "height_m": 1.47,
+   "track_m": 1.52,
+   "mass_kg": 1300,
+   "power_kw": 110,
+   "source": "https://en.wikipedia.org/wiki/Mazda3_(BL)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Mazda MZR 2.0 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.0,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 110,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock MZR 2.0"
+  },
+  "colors": {
+   "primary": "#a0a0a8",
+   "secondary": "#d02020",
+   "accents": [
+    "#ffffff"
+   ]
+  },
+  "numbers": {
+   "color": "black on white tag",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Stock silver with white door numbers on a tag, red tow straps",
+  "theme": "Amtrak: Crapitol Corridor train pun",
+  "photos": [
+   "26Butt-801-AmtrackCra-01.jpg",
+   "26Butt-801-AmtrackCra-02.jpg",
+   "26Butt-801-AmtrackCra-03.jpg",
+   "26Butt-801-AmtrackCra-04.jpg",
+   "26Butt-801-AmtrackCra-01_XL.jpg",
+   "26Butt-801-AmtrackCra-02_XL.jpg",
+   "26Butt-801-AmtrackCra-03_XL.jpg",
+   "26Butt-801-AmtrackCra-04_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "801_bw",
+  "photo_dir": "photos/buttonwillow/801",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "88",
+  "team": "BM Badwrench Racing",
+  "class": "A",
+  "grid": 38,
+  "finish": 50,
+  "class_finish": 17,
+  "laps": 228,
+  "best_lap_s": 150.45,
+  "make": "BMW",
+  "model": "3 Series (E36 pickup conversion)",
+  "generation": "E36 (1990-99)",
+  "year": 1995,
+  "body": "truck",
+  "confidence": "medium",
+  "evidence": "Photos: silver E36 with its roof cut into a pickup and 'Badwrench Service' lettering; sister car of #33",
+  "dims": {
+   "wheelbase_m": 2.7,
+   "length_m": 4.433,
+   "width_m": 1.698,
+   "height_m": 1.354,
+   "track_m": 1.42,
+   "mass_kg": 1290,
+   "power_kw": 125,
+   "source": "https://en.wikipedia.org/wiki/BMW_3_Series_(E36)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M50 2.5 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 125,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock M50"
+  },
+  "colors": {
+   "primary": "#c0c0c4",
+   "secondary": "#d02020",
+   "accents": [
+    "#ffffff"
+   ]
+  },
+  "numbers": {
+   "color": "black on white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Silver with red 'Badwrench Service' lettering and a round-number panel",
+  "theme": "Mechanic service truck",
+  "photos": [
+   "26Butt-088-BMBadwrenc-01.jpg",
+   "26Butt-088-BMBadwrenc-02.jpg",
+   "26Butt-088-BMBadwrenc-03.jpg",
+   "26Butt-088-BMBadwrenc-04.jpg",
+   "26Butt-088-BMBadwrenc-05.jpg",
+   "26Butt-088-BMBadwrenc-01_XL.jpg",
+   "26Butt-088-BMBadwrenc-02_XL.jpg",
+   "26Butt-088-BMBadwrenc-03_XL.jpg",
+   "26Butt-088-BMBadwrenc-04_XL.jpg",
+   "26Butt-088-BMBadwrenc-05_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "88",
+  "photo_dir": "photos/buttonwillow/88",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "745",
+  "team": "Whatever_Racecar",
+  "class": "C",
+  "grid": 99,
+  "finish": 51,
+  "class_finish": 11,
+  "laps": 227,
+  "best_lap_s": 141.414,
+  "make": "Volvo",
+  "model": "740/745 wagon",
+  "generation": "700 series (1982-92)",
+  "year": 1989,
+  "body": "wagon",
+  "confidence": "high",
+  "evidence": "Photos: white Volvo wagon with light-blue wheels and flower decals, team in superhero costumes",
+  "dims": {
+   "wheelbase_m": 2.77,
+   "length_m": 4.79,
+   "width_m": 1.76,
+   "height_m": 1.47,
+   "track_m": 1.48,
+   "mass_kg": 1400,
+   "power_kw": 85,
+   "source": "https://en.wikipedia.org/wiki/Volvo_700_Series",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Volvo B230F 2.3 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.3,
+   "aspiration": "NA",
+   "redline_rpm": 6000,
+   "stock_power_kw": 85,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "B230 stock"
+  },
+  "colors": {
+   "primary": "#f2f2f2",
+   "secondary": "#6ac8e8",
+   "accents": [
+    "#f0c020",
+    "#d02020"
+   ]
+  },
+  "numbers": {
+   "color": "black on white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "White with light-blue wheels and small flower/sticker decals, superhero-costume team",
+  "theme": "Whatever_Racecar (Justice League)",
+  "photos": [
+   "26Butt-745-WhateverRa-01.jpg",
+   "26Butt-745-WhateverRa-02.jpg",
+   "26Butt-745-WhateverRa-03.jpg",
+   "26Butt-745-WhateverRa-01_XL.jpg",
+   "26Butt-745-WhateverRa-02_XL.jpg",
+   "26Butt-745-WhateverRa-03_XL.jpg"
+  ],
+  "photo_sightings": 3,
+  "id": "745",
+  "photo_dir": "photos/buttonwillow/745",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "47",
+  "team": "JZK Racing (R)",
+  "class": "B",
+  "grid": 1,
+  "finish": 52,
+  "class_finish": 24,
+  "laps": 227,
+  "best_lap_s": 151.354,
+  "make": "Honda",
+  "model": "Prelude",
+  "generation": "4th gen (1992-96)",
+  "year": 1993,
+  "body": "coupe",
+  "confidence": "medium",
+  "evidence": "Photos: dark teal-green Prelude BB coupe with white number plate",
+  "dims": {
+   "wheelbase_m": 2.55,
+   "length_m": 4.52,
+   "width_m": 1.75,
+   "height_m": 1.3,
+   "track_m": 1.5,
+   "mass_kg": 1250,
+   "power_kw": 142,
+   "source": "https://en.wikipedia.org/wiki/Honda_Prelude",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Honda H22A 2.2 I4 VTEC",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.2,
+   "aspiration": "NA",
+   "redline_rpm": 7200,
+   "stock_power_kw": 142,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#1e3a38",
+   "secondary": "#c0c0c4",
+   "accents": [
+    "#ffffff"
+   ]
+  },
+  "numbers": {
+   "color": "black on white plate",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Stock dark teal paint with a white 47 plate",
+  "theme": "JZK Racing",
+  "photos": [
+   "26Butt-047-JZKRacing-01.jpg",
+   "26Butt-047-JZKRacing-02.jpg",
+   "26Butt-047-JZKRacing-03.jpg",
+   "26Butt-047-JZKRacing-01_XL.jpg",
+   "26Butt-047-JZKRacing-02_XL.jpg",
+   "26Butt-047-JZKRacing-03_XL.jpg"
+  ],
+  "photo_sightings": 3,
+  "id": "47",
+  "photo_dir": "photos/buttonwillow/47",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "702",
+  "team": "College Fund Racing",
+  "class": "A",
+  "grid": 53,
+  "finish": 53,
+  "class_finish": 18,
+  "laps": 219,
+  "best_lap_s": 156.282,
+  "make": "Mazda",
+  "model": "MX-5 Miata",
+  "generation": "NA (1989-97)",
+  "year": 1992,
+  "body": "roadster",
+  "confidence": "high",
+  "evidence": "Photos: red NA Miata with grey-primer nose and white 'COLLEGEFUND' windscreen banner",
+  "dims": {
+   "wheelbase_m": 2.265,
+   "length_m": 3.95,
+   "width_m": 1.675,
+   "height_m": 1.225,
+   "track_m": 1.41,
+   "mass_kg": 990,
+   "power_kw": 96,
+   "source": "https://en.wikipedia.org/wiki/Mazda_MX-5_(NA)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Mazda BP 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 7000,
+   "stock_power_kw": 96,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#c82020",
+   "secondary": "#a0a0a4",
+   "accents": [
+    "#ffffff"
+   ]
+  },
+  "numbers": {
+   "color": "white on red",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Red with grey primer front, white 'COLLEGEFUND' banner",
+  "theme": "College fund (broke student racers)",
+  "photos": [
+   "26Butt-702-CollegeFun-01.jpg",
+   "26Butt-702-CollegeFun-02.jpg",
+   "26Butt-702-CollegeFun-03.jpg",
+   "26Butt-702-CollegeFun-01_XL.jpg",
+   "26Butt-702-CollegeFun-02_XL.jpg",
+   "26Butt-702-CollegeFun-03_XL.jpg"
+  ],
+  "photo_sightings": 3,
+  "id": "702",
+  "photo_dir": "photos/buttonwillow/702",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "404",
+  "team": "Sticky-TC (R)",
+  "class": "B",
+  "grid": 3,
+  "finish": 54,
+  "class_finish": 25,
+  "laps": 216,
+  "best_lap_s": 152.62,
+  "make": "Scion",
+  "model": "tC",
+  "generation": "1st gen (2004-10)",
+  "year": 2006,
+  "body": "coupe",
+  "confidence": "high",
+  "evidence": "Photos: Scion tC covered in stickers, 'Sticky-TC' name",
+  "dims": {
+   "wheelbase_m": 2.7,
+   "length_m": 4.405,
+   "width_m": 1.795,
+   "height_m": 1.415,
+   "track_m": 1.54,
+   "mass_kg": 1300,
+   "power_kw": 119,
+   "source": "https://en.wikipedia.org/wiki/Scion_tC",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Toyota 2AZ-FE 2.4 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.4,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 119,
+   "exhaust_note": "stock muffler",
+   "confidence": "high",
+   "evidence": "Stock 2.4 2AZ-FE"
+  },
+  "colors": {
+   "primary": "#9a9a9a",
+   "secondary": "#d09040",
+   "accents": [
+    "#ffffff",
+    "#2a6ac8"
+   ]
+  },
+  "numbers": {
+   "color": "black on green plate",
+   "boards": [
+    "door",
+    "hood"
+   ]
+  },
+  "livery": "Sticker-bomb wrap over the whole car",
+  "theme": "Sticky TC (sticker-bomb)",
+  "photos": [
+   "26Butt-404-StickyTC-01.jpg",
+   "26Butt-404-StickyTC-02.jpg",
+   "26Butt-404-StickyTC-03.jpg",
+   "26Butt-404-StickyTC-04.jpg",
+   "26Butt-404-StickyTC-01_XL.jpg",
+   "26Butt-404-StickyTC-02_XL.jpg",
+   "26Butt-404-StickyTC-03_XL.jpg",
+   "26Butt-404-StickyTC-04_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "404",
+  "photo_dir": "photos/buttonwillow/404",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "80",
+  "team": "PH Racing",
+  "class": "C",
+  "grid": 89,
+  "finish": 55,
+  "class_finish": 12,
+  "laps": 211,
+  "best_lap_s": 152.227,
+  "make": "Chevrolet",
+  "model": "Camaro",
+  "generation": "4th gen (1993-2002)",
+  "year": 1996,
+  "body": "coupe",
+  "confidence": "low",
+  "evidence": "Photos: teal/black fastback with shark-teeth nose and a big wing; model (Camaro or its Pontiac Firebird twin) is uncertain",
+  "dims": {
+   "wheelbase_m": 2.568,
+   "length_m": 4.915,
+   "width_m": 1.88,
+   "height_m": 1.31,
+   "track_m": 1.55,
+   "mass_kg": 1550,
+   "power_kw": 118,
+   "source": "https://en.wikipedia.org/wiki/Chevrolet_Camaro_(fourth_generation)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "GM LG4 3.4 V6",
+   "cylinders": 6,
+   "layout": "V6",
+   "displacement_l": 3.4,
+   "aspiration": "NA",
+   "redline_rpm": 5500,
+   "stock_power_kw": 118,
+   "exhaust_note": "stock muffler",
+   "confidence": "low",
+   "evidence": "Stock V6 assumed"
+  },
+  "colors": {
+   "primary": "#1e3a4a",
+   "secondary": "#1a1a1a",
+   "accents": [
+    "#ffffff",
+    "#d02020"
+   ]
+  },
+  "numbers": {
+   "color": "white on black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Teal and black halves, shark mouth on the nose, red tongue, rear wing",
+  "theme": "PH Racing shark (Flying Tigers)",
+  "photos": [
+   "26Butt-080-PHRacing-01.jpg",
+   "26Butt-080-PHRacing-02.jpg",
+   "26Butt-080-PHRacing-03.jpg",
+   "26Butt-080-PHRacing-04.jpg",
+   "26Butt-080-PHRacing-05.jpg",
+   "26Butt-080-PHRacing-06.jpg",
+   "26Butt-080-PHRacing-01_XL.jpg",
+   "26Butt-080-PHRacing-02_XL.jpg",
+   "26Butt-080-PHRacing-03_XL.jpg",
+   "26Butt-080-PHRacing-04_XL.jpg",
+   "26Butt-080-PHRacing-05_XL.jpg",
+   "26Butt-080-PHRacing-06_XL.jpg"
+  ],
+  "photo_sightings": 6,
+  "id": "80",
+  "photo_dir": "photos/buttonwillow/80",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "48",
+  "team": "LiMoNada",
+  "class": "B",
+  "grid": 69,
+  "finish": 56,
+  "class_finish": 26,
+  "laps": 206,
+  "best_lap_s": 143.406,
+  "make": "Ford",
+  "model": "Mustang",
+  "generation": "SN95 New Edge (1999-2004)",
+  "year": 2001,
+  "body": "coupe",
+  "confidence": "high",
+  "evidence": "Photos: red Mustang coupe with yellow side panels and blue roundel numbers",
+  "dims": {
+   "wheelbase_m": 2.573,
+   "length_m": 4.61,
+   "width_m": 1.83,
+   "height_m": 1.34,
+   "track_m": 1.5,
+   "mass_kg": 1450,
+   "power_kw": 142,
+   "source": "https://en.wikipedia.org/wiki/Ford_Mustang_(fourth_generation)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Ford Essex 3.8 V6",
+   "cylinders": 6,
+   "layout": "V6",
+   "displacement_l": 3.8,
+   "aspiration": "NA",
+   "redline_rpm": 5500,
+   "stock_power_kw": 142,
+   "exhaust_note": "stock muffler",
+   "confidence": "low",
+   "evidence": "V6 vs 4.6 V8 not visible; stock 3.8 assumed"
+  },
+  "colors": {
+   "primary": "#c82a2a",
+   "secondary": "#f0d020",
+   "accents": [
+    "#2a3aa0"
+   ]
+  },
+  "numbers": {
+   "color": "white on blue roundel",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Red with a yellow panel through the doors, blue roundel numbers, yellow nose badge",
+  "theme": "LiMoNada (lemonade)",
+  "photos": [
+   "26Butt-048-LiMoNada-01.jpg",
+   "26Butt-048-LiMoNada-02.jpg",
+   "26Butt-048-LiMoNada-03.jpg",
+   "26Butt-048-LiMoNada-04.jpg",
+   "26Butt-048-LiMoNada-01_XL.jpg",
+   "26Butt-048-LiMoNada-02_XL.jpg",
+   "26Butt-048-LiMoNada-03_XL.jpg",
+   "26Butt-048-LiMoNada-04_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "48",
+  "photo_dir": "photos/buttonwillow/48",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "971",
+  "team": "Waffle Racers (R)",
+  "class": "B",
+  "grid": 63,
+  "finish": 57,
+  "class_finish": 27,
+  "laps": 205,
+  "best_lap_s": 151.876,
+  "make": "Mazda",
+  "model": "MX-5 Miata",
+  "generation": "NA (1989-97)",
+  "year": 1994,
+  "body": "roadster",
+  "confidence": "high",
+  "evidence": "Photos: blue NA Miata with an orange 'waffle' hood and green accents",
+  "dims": {
+   "wheelbase_m": 2.265,
+   "length_m": 3.95,
+   "width_m": 1.675,
+   "height_m": 1.225,
+   "track_m": 1.41,
+   "mass_kg": 990,
+   "power_kw": 96,
+   "source": "https://en.wikipedia.org/wiki/Mazda_MX-5_(NA)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Mazda BP 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 7000,
+   "stock_power_kw": 96,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#2a5ac8",
+   "secondary": "#e8742a",
+   "accents": [
+    "#40c040"
+   ]
+  },
+  "numbers": {
+   "color": "white on blue",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Blue with an orange waffle-pattern hood",
+  "theme": "Waffle Racers (waffle iron)",
+  "photos": [
+   "26Butt-971-WaffleRace-01.jpg",
+   "26Butt-971-WaffleRace-02.jpg",
+   "26Butt-971-WaffleRace-03.jpg",
+   "26Butt-971-WaffleRace-04.jpg",
+   "26Butt-971-WaffleRace-01_XL.jpg",
+   "26Butt-971-WaffleRace-02_XL.jpg",
+   "26Butt-971-WaffleRace-03_XL.jpg",
+   "26Butt-971-WaffleRace-04_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "971",
+  "photo_dir": "photos/buttonwillow/971",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "3",
+  "team": "Surfs up (R)",
+  "class": "A",
+  "grid": 32,
+  "finish": 58,
+  "class_finish": 19,
+  "laps": 201,
+  "best_lap_s": 143.895,
+  "make": "Nissan",
+  "model": "350Z",
+  "generation": "Z33 (2003-08)",
+  "year": 2005,
+  "body": "coupe",
+  "confidence": "high",
+  "evidence": "Photos: grey 350Z with big white 3 on the doors and white wheels",
+  "dims": {
+   "wheelbase_m": 2.65,
+   "length_m": 4.31,
+   "width_m": 1.815,
+   "height_m": 1.315,
+   "track_m": 1.51,
+   "mass_kg": 1500,
+   "power_kw": 206,
+   "source": "https://en.wikipedia.org/wiki/Nissan_350Z",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Nissan VQ35DE 3.5 V6",
+   "cylinders": 6,
+   "layout": "V6",
+   "displacement_l": 3.5,
+   "aspiration": "NA",
+   "redline_rpm": 6600,
+   "stock_power_kw": 206,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#8a8e98",
+   "secondary": "#f2f2f2",
+   "accents": [
+    "#d06020"
+   ]
+  },
+  "numbers": {
+   "color": "white on grey",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Grey with a large white '3' (Dale Earnhardt style), white wheels",
+  "theme": "Surfs Up (NASCAR #3)",
+  "photos": [
+   "26Butt-003-Surfsup-01.jpg",
+   "26Butt-003-Surfsup-02.jpg",
+   "26Butt-003-Surfsup-03.jpg",
+   "26Butt-003-Surfsup-04.jpg",
+   "26Butt-003-Surfsup-01_XL.jpg",
+   "26Butt-003-Surfsup-02_XL.jpg",
+   "26Butt-003-Surfsup-03_XL.jpg",
+   "26Butt-003-Surfsup-04_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "3",
+  "photo_dir": "photos/buttonwillow/3",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "23",
+  "team": "Agony of Da-Feet (R)",
+  "class": "C",
+  "grid": 36,
+  "finish": 59,
+  "class_finish": 13,
+  "laps": 197,
+  "best_lap_s": 159.147,
+  "make": "Acura",
+  "model": "Integra",
+  "generation": "DC2/DB (1994-2001)",
+  "year": 1996,
+  "body": "coupe",
+  "confidence": "high",
+  "evidence": "Lemons award page id 454: '1996 Acura Integra' (Organizers' Choice); photos: pink coupe with a foot-toe nose and a pink block on the roof; owner photo 22 Oct 2026 (owner_120.png): the toes are sculpted, the body is flesh tan not pink, the door number is a white rectangle",
+  "dims": {
+   "wheelbase_m": 2.62,
+   "length_m": 4.38,
+   "width_m": 1.71,
+   "height_m": 1.32,
+   "track_m": 1.47,
+   "mass_kg": 1100,
+   "power_kw": 125,
+   "source": "https://en.wikipedia.org/wiki/Acura_Integra",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Honda B18B1 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 6800,
+   "stock_power_kw": 125,
+   "exhaust_note": "stock muffler",
+   "confidence": "high",
+   "evidence": "Turbocharged B-series seen under the hood; stock B18 used for base power"
+  },
+  "colors": {
+   "primary": "#c9a07a",
+   "secondary": "#b08a66",
+   "accents": [
+    "#f2f2f2",
+    "#111111"
+   ]
+  },
+  "numbers": {
+   "color": "black on white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Matte flesh-tan Integra coupe with a sculpted foot nose (three built-out toes with toenail plates, TOE on the big toe, plywood splitter under them), a tall flesh-coloured heel block on the rear roof, a white plank rear wing with plywood end plates, black 23 on the bonnet and on a white door rectangle, SKIDOO on the rear sill",
+  "theme": "Agony of Da-Feet (a foot: sculpted toes on the nose, heel block on the roof)",
+  "photos": [
+   "26Butt-023-AgonyofDaF-01.jpg",
+   "26Butt-023-AgonyofDaF-03.jpg",
+   "26Butt-023-AgonyofDaF-04.jpg",
+   "26Butt-023-AgonyofDaF-05.jpg",
+   "26Butt-023-AgonyofDaF-06.jpg",
+   "26Butt-023-AgonyofDaF-02.jpg",
+   "26Butt-023-AgonyofDaF-01_XL.jpg",
+   "26Butt-023-AgonyofDaF-03_XL.jpg",
+   "26Butt-023-AgonyofDaF-04_XL.jpg",
+   "26Butt-023-AgonyofDaF-05_XL.jpg",
+   "26Butt-023-AgonyofDaF-06_XL.jpg",
+   "26Butt-023-AgonyofDaF-02_XL.jpg"
+  ],
+  "photo_sightings": 7,
+  "id": "23",
+  "photo_dir": "photos/buttonwillow/23",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "128",
+  "team": "Richie Bobby Racing ….",
+  "class": "B",
+  "grid": 29,
+  "finish": 60,
+  "class_finish": 28,
+  "laps": 197,
+  "best_lap_s": 143.224,
+  "make": "BMW",
+  "model": "3 Series (E30) convertible",
+  "generation": "E30 (1982-94)",
+  "year": 1987,
+  "body": "roadster",
+  "confidence": "medium",
+  "evidence": "Photos: silver E30 convertible with a roll cage and 'On a mission to pass you' sign over the windscreen",
+  "dims": {
+   "wheelbase_m": 2.57,
+   "length_m": 4.325,
+   "width_m": 1.645,
+   "height_m": 1.38,
+   "track_m": 1.41,
+   "mass_kg": 1200,
+   "power_kw": 125,
+   "source": "https://en.wikipedia.org/wiki/BMW_3_Series_(E30)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M20 2.5 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 125,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#c0bcb0",
+   "secondary": "#2a2a2a",
+   "accents": [
+    "#ffffff"
+   ]
+  },
+  "numbers": {
+   "color": "grey on silver",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Silver, 'Respect Your Elders' lettering and a white sign on the cage",
+  "theme": "Richie Bobby 'Respect Your Elders'",
+  "photos": [
+   "26Butt-128-RichieBobb-01.jpg",
+   "26Butt-128-RichieBobb-02.jpg",
+   "26Butt-128-RichieBobb-03.jpg",
+   "26Butt-128-RichieBobb-04.jpg",
+   "26Butt-128-RichieBobb-05.jpg",
+   "26Butt-128-RichieBobb-06.jpg",
+   "26Butt-128-RichieBobb-01_XL.jpg",
+   "26Butt-128-RichieBobb-02_XL.jpg",
+   "26Butt-128-RichieBobb-03_XL.jpg",
+   "26Butt-128-RichieBobb-04_XL.jpg",
+   "26Butt-128-RichieBobb-05_XL.jpg",
+   "26Butt-128-RichieBobb-06_XL.jpg"
+  ],
+  "photo_sightings": 6,
+  "id": "128",
+  "photo_dir": "photos/buttonwillow/128",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "62",
+  "team": "Wieners Gone Mobile",
+  "class": "C",
+  "grid": 17,
+  "finish": 61,
+  "class_finish": 14,
+  "laps": 189,
+  "best_lap_s": 150.159,
+  "make": "Volkswagen",
+  "model": "Golf GTI",
+  "generation": "Mk3 (1992-98)",
+  "year": 1996,
+  "body": "hatch",
+  "confidence": "high",
+  "evidence": "Lemons award page id 454: earlier row: Wieners Gone Mobile '1996 Volkswagen Golf GTI'; photos: orange/yellow 3-door with a red hot-dog roof sign",
+  "dims": {
+   "wheelbase_m": 2.475,
+   "length_m": 4.02,
+   "width_m": 1.695,
+   "height_m": 1.425,
+   "track_m": 1.46,
+   "mass_kg": 1050,
+   "power_kw": 85,
+   "source": "https://en.wikipedia.org/wiki/Volkswagen_Golf_Mk3",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "VW ABA 2.0 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.0,
+   "aspiration": "NA",
+   "redline_rpm": 6000,
+   "stock_power_kw": 85,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#f08a20",
+   "secondary": "#f0d020",
+   "accents": [
+    "#d02020"
+   ]
+  },
+  "numbers": {
+   "color": "black on orange",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Orange with yellow lower body, red wiener-dog sign on the roof",
+  "theme": "Wieners Gone Mobile (hot-dog stand)",
+  "photos": [
+   "26Butt-062-WienersGon-01.jpg",
+   "26Butt-062-WienersGon-02.jpg",
+   "26Butt-062-WienersGon-03.jpg",
+   "26Butt-062-WienersGon-04.jpg",
+   "26Butt-062-WienersGon-05.jpg",
+   "26Butt-062-WienersGon-01_XL.jpg",
+   "26Butt-062-WienersGon-02_XL.jpg",
+   "26Butt-062-WienersGon-03_XL.jpg",
+   "26Butt-062-WienersGon-04_XL.jpg",
+   "26Butt-062-WienersGon-05_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "62",
+  "photo_dir": "photos/buttonwillow/62",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "530",
+  "team": "Eurobeaters",
+  "class": "A",
+  "grid": 24,
+  "finish": 62,
+  "class_finish": 20,
+  "laps": 187,
+  "best_lap_s": 138.563,
+  "make": "BMW",
+  "model": "3 Series sedan",
+  "generation": "E36 (1990-99)",
+  "year": 1996,
+  "body": "sedan",
+  "confidence": "high",
+  "evidence": "Photos: white/blue E36 4-door with yellow lenses and 'SUPER EUROBEAT' door text",
+  "dims": {
+   "wheelbase_m": 2.7,
+   "length_m": 4.433,
+   "width_m": 1.698,
+   "height_m": 1.393,
+   "track_m": 1.42,
+   "mass_kg": 1300,
+   "power_kw": 125,
+   "source": "https://en.wikipedia.org/wiki/BMW_3_Series_(E36)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M50 2.5 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 125,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#f2f2f2",
+   "secondary": "#2a8ae8",
+   "accents": [
+    "#f0d020"
+   ]
+  },
+  "numbers": {
+   "color": "black on white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "White with a bright-blue nose/rear and rear wing, yellow headlights",
+  "theme": "Eurobeat (Initial D)",
+  "photos": [
+   "26Butt-530-Eurobeater-01.jpg",
+   "26Butt-530-Eurobeater-02.jpg",
+   "26Butt-530-Eurobeater-03.jpg",
+   "26Butt-530-Eurobeater-01_XL.jpg",
+   "26Butt-530-Eurobeater-02_XL.jpg",
+   "26Butt-530-Eurobeater-03_XL.jpg"
+  ],
+  "photo_sightings": 3,
+  "id": "530",
+  "photo_dir": "photos/buttonwillow/530",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "9",
+  "team": "GT Poorty Racing",
+  "class": "C",
+  "grid": 12,
+  "finish": 63,
+  "class_finish": 15,
+  "laps": 185,
+  "best_lap_s": 135.252,
+  "make": "Chrysler",
+  "model": "Cordoba / Mirada (suspected)",
+  "generation": "2nd gen (1980-83)",
+  "year": 1981,
+  "body": "coupe",
+  "confidence": "low",
+  "evidence": "Photos: pale-blue/white 2-door with a tall vertical grille and quad stacked lamps, 'GT' side stripe; the Cordoba/Mirada identification is a guess",
+  "dims": {
+   "wheelbase_m": 2.86,
+   "length_m": 5.1,
+   "width_m": 1.78,
+   "height_m": 1.38,
+   "track_m": 1.5,
+   "mass_kg": 1500,
+   "power_kw": 90,
+   "source": "https://en.wikipedia.org/wiki/Chrysler_Cordoba",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Chrysler slant-6 225 3.7 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 3.7,
+   "aspiration": "NA",
+   "redline_rpm": 4800,
+   "stock_power_kw": 90,
+   "exhaust_note": "stock muffler",
+   "confidence": "low",
+   "evidence": "Stock slant-6"
+  },
+  "colors": {
+   "primary": "#c8e0e8",
+   "secondary": "#e8e8e8",
+   "accents": [
+    "#1a1a1a"
+   ]
+  },
+  "numbers": {
+   "color": "black on white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Pale blue/white with dark GT stripes",
+  "theme": "GT Poorty (GT parody)",
+  "photos": [
+   "26Butt-009-GTPoortyRa-01.jpg",
+   "26Butt-009-GTPoortyRa-02.jpg",
+   "26Butt-009-GTPoortyRa-03.jpg",
+   "26Butt-009-GTPoortyRa-01_XL.jpg",
+   "26Butt-009-GTPoortyRa-02_XL.jpg",
+   "26Butt-009-GTPoortyRa-03_XL.jpg"
+  ],
+  "photo_sightings": 3,
+  "id": "9_bw",
+  "photo_dir": "photos/buttonwillow/9",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "858",
+  "team": "Wassailing Fruitcakes",
+  "class": "B",
+  "grid": 95,
+  "finish": 64,
+  "class_finish": 29,
+  "laps": 185,
+  "best_lap_s": 148.607,
+  "make": "Mazda",
+  "model": "MX-5 Miata",
+  "generation": "NA (1989-97)",
+  "year": 1992,
+  "body": "roadster",
+  "confidence": "high",
+  "evidence": "Photos: beaten-up black NA Miata with a white 858 roundel and a fruit/animal sticker collection",
+  "dims": {
+   "wheelbase_m": 2.265,
+   "length_m": 3.95,
+   "width_m": 1.675,
+   "height_m": 1.225,
+   "track_m": 1.41,
+   "mass_kg": 990,
+   "power_kw": 96,
+   "source": "https://en.wikipedia.org/wiki/Mazda_MX-5_(NA)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Mazda BP 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 7000,
+   "stock_power_kw": 96,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#1a1a1a",
+   "secondary": "#f2f2f2",
+   "accents": [
+    "#d02020"
+   ]
+  },
+  "numbers": {
+   "color": "black on white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Rat-rod black with white number roundel and a stuffed animal on the hood",
+  "theme": "Wassailing Fruitcakes",
+  "photos": [
+   "26Butt-858-Wassailing-01.jpg",
+   "26Butt-858-Wassailing-02.jpg",
+   "26Butt-858-Wassailing-01_XL.jpg",
+   "26Butt-858-Wassailing-02_XL.jpg"
+  ],
+  "photo_sightings": 2,
+  "id": "858",
+  "photo_dir": "photos/buttonwillow/858",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "99",
+  "team": "Patent It!",
+  "class": "B",
+  "grid": 75,
+  "finish": 65,
+  "class_finish": 30,
+  "laps": 184,
+  "best_lap_s": 148.931,
+  "make": "Plymouth",
+  "model": "Neon",
+  "generation": "1st gen (1995-99)",
+  "year": 1997,
+  "body": "sedan",
+  "confidence": "high",
+  "evidence": "Photos: Gulf-style powder blue and orange Neon sedan with Hawk decals",
+  "dims": {
+   "wheelbase_m": 2.642,
+   "length_m": 4.37,
+   "width_m": 1.7,
+   "height_m": 1.4,
+   "track_m": 1.45,
+   "mass_kg": 1100,
+   "power_kw": 98,
+   "source": "https://en.wikipedia.org/wiki/Dodge_Neon",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Chrysler 2.0 SOHC I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.0,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 98,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#8ac0e0",
+   "secondary": "#f07a20",
+   "accents": [
+    "#ffffff"
+   ]
+  },
+  "numbers": {
+   "color": "black on white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Gulf racing colours (pale blue body with orange nose)",
+  "theme": "Patent It! (Gulf)",
+  "photos": [
+   "26Butt-099-PatentIt-01.jpg",
+   "26Butt-099-PatentIt-02.jpg",
+   "26Butt-099-PatentIt-03.jpg",
+   "26Butt-099-PatentIt-04.jpg",
+   "26Butt-099-PatentIt-05.jpg",
+   "26Butt-099-PatentIt-01_XL.jpg",
+   "26Butt-099-PatentIt-02_XL.jpg",
+   "26Butt-099-PatentIt-03_XL.jpg",
+   "26Butt-099-PatentIt-04_XL.jpg",
+   "26Butt-099-PatentIt-05_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "99",
+  "photo_dir": "photos/buttonwillow/99",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "16",
+  "team": "Electric Turtle",
+  "class": "C",
+  "grid": 87,
+  "finish": 66,
+  "class_finish": 16,
+  "laps": 183,
+  "best_lap_s": 148.811,
+  "make": "Chevrolet",
+  "model": "Bolt EV",
+  "generation": "1st gen (2017-23)",
+  "year": 2018,
+  "body": "hatch",
+  "confidence": "high",
+  "evidence": "Lemons award page id 454: earlier row: Electric Turtle '2018 Chevrolet Bolt'; photos: blue Bolt with Electrify America logos",
+  "dims": {
+   "wheelbase_m": 2.6,
+   "length_m": 4.166,
+   "width_m": 1.765,
+   "height_m": 1.594,
+   "track_m": 1.52,
+   "mass_kg": 1625,
+   "power_kw": 150,
+   "source": "https://en.wikipedia.org/wiki/Chevrolet_Bolt",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Chevrolet Bolt EV single motor (battery electric)",
+   "cylinders": 0,
+   "layout": "EV",
+   "displacement_l": 0.0,
+   "aspiration": "EV",
+   "redline_rpm": 8800,
+   "stock_power_kw": 150,
+   "exhaust_note": "electric: no exhaust",
+   "confidence": "high",
+   "evidence": "Battery electric, single motor; no combustion exhaust note"
+  },
+  "colors": {
+   "primary": "#2a5ac8",
+   "secondary": "#f2f2f2",
+   "accents": [
+    "#40c040"
+   ]
+  },
+  "numbers": {
+   "color": "white on blue",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Blue with the white Electrify America door panel",
+  "theme": "Electric turtle; the field's only battery-electric car",
+  "photos": [
+   "26Butt-016-ElectricTu-01.jpg",
+   "26Butt-016-ElectricTu-02.jpg",
+   "26Butt-016-ElectricTu-03.jpg",
+   "26Butt-016-ElectricTu-04.jpg",
+   "26Butt-016-ElectricTu-05.jpg",
+   "26Butt-016-ElectricTu-01_XL.jpg",
+   "26Butt-016-ElectricTu-02_XL.jpg",
+   "26Butt-016-ElectricTu-03_XL.jpg",
+   "26Butt-016-ElectricTu-04_XL.jpg",
+   "26Butt-016-ElectricTu-05_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "16_bw",
+  "photo_dir": "photos/buttonwillow/16",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "975",
+  "team": "Backdraft Brigade",
+  "class": "B",
+  "grid": 57,
+  "finish": 67,
+  "class_finish": 31,
+  "laps": 178,
+  "best_lap_s": 142.695,
+  "make": "Mazda",
+  "model": "MX-5 Miata (Frogeye Sprite nose)",
+  "generation": "NA (1989-97)",
+  "year": 1992,
+  "body": "roadster",
+  "confidence": "medium",
+  "evidence": "Photos: red NA Miata with an Austin-Healey Sprite style nose and 'FIRE' lettering, silver roof cover; earlier row lists a 2008 Mazda3 for this team, so the identification is from photos only",
+  "dims": {
+   "wheelbase_m": 2.265,
+   "length_m": 3.95,
+   "width_m": 1.675,
+   "height_m": 1.225,
+   "track_m": 1.41,
+   "mass_kg": 990,
+   "power_kw": 96,
+   "source": "https://en.wikipedia.org/wiki/Mazda_MX-5_(NA)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Mazda BP 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 7000,
+   "stock_power_kw": 96,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#c82020",
+   "secondary": "#e8e8e8",
+   "accents": [
+    "#f0d020"
+   ]
+  },
+  "numbers": {
+   "color": "white on red",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Red with white stripes, frog-eye headlight bulges, silver roof",
+  "theme": "Backdraft Brigade (firefighters)",
+  "photos": [
+   "26Butt-975-BackdraftB-01.jpg",
+   "26Butt-975-BackdraftB-02.jpg",
+   "26Butt-975-BackdraftB-03.jpg",
+   "26Butt-975-BackdraftB-01_XL.jpg",
+   "26Butt-975-BackdraftB-02_XL.jpg",
+   "26Butt-975-BackdraftB-03_XL.jpg"
+  ],
+  "photo_sightings": 3,
+  "id": "975",
+  "photo_dir": "photos/buttonwillow/975",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "703",
+  "team": "College Fund Racing 3",
+  "class": "A",
+  "grid": 48,
+  "finish": 68,
+  "class_finish": 21,
+  "laps": 177,
+  "best_lap_s": 142.835,
+  "make": "Mazda",
+  "model": "MX-5 Miata",
+  "generation": "NA (1989-97)",
+  "year": 1992,
+  "body": "roadster",
+  "confidence": "high",
+  "evidence": "Photos: red NA Miata with 'Waho' decal and the same team as #702",
+  "dims": {
+   "wheelbase_m": 2.265,
+   "length_m": 3.95,
+   "width_m": 1.675,
+   "height_m": 1.225,
+   "track_m": 1.41,
+   "mass_kg": 990,
+   "power_kw": 96,
+   "source": "https://en.wikipedia.org/wiki/Mazda_MX-5_(NA)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Mazda BP 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 7000,
+   "stock_power_kw": 96,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#c82020",
+   "secondary": "#e8e8e8",
+   "accents": [
+    "#2a2a2a"
+   ]
+  },
+  "numbers": {
+   "color": "white on black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Red with Waho script and white number tag",
+  "theme": "College Fund Racing 3",
+  "photos": [
+   "26Butt-703-CollegeFun-01.jpg",
+   "26Butt-703-CollegeFun-02.jpg",
+   "26Butt-703-CollegeFun-01_XL.jpg",
+   "26Butt-703-CollegeFun-02_XL.jpg"
+  ],
+  "photo_sightings": 2,
+  "id": "703",
+  "photo_dir": "photos/buttonwillow/703",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "124",
+  "team": "Sorry For Party Racing",
+  "class": "C",
+  "grid": 85,
+  "finish": 69,
+  "class_finish": 17,
+  "laps": 174,
+  "best_lap_s": 147.846,
+  "make": "Chevrolet",
+  "model": "LUV",
+  "generation": "1972-80",
+  "year": 1978,
+  "body": "truck",
+  "confidence": "high",
+  "evidence": "Lemons award page id 454: earlier rows: Sorry For Party Racing '1978 Chevrolet LUV'; photos: purple leopard-print LUV pickup with lime/blue wheels",
+  "dims": {
+   "wheelbase_m": 2.72,
+   "length_m": 4.46,
+   "width_m": 1.55,
+   "height_m": 1.55,
+   "track_m": 1.3,
+   "mass_kg": 1000,
+   "power_kw": 66,
+   "source": "https://en.wikipedia.org/wiki/Chevrolet_LUV",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Isuzu G180Z 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 5500,
+   "stock_power_kw": 66,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#8a7ac8",
+   "secondary": "#6a5030",
+   "accents": [
+    "#80d020",
+    "#2a9ae8"
+   ]
+  },
+  "numbers": {
+   "color": "white on black plate",
+   "boards": [
+    "bed"
+   ]
+  },
+  "livery": "Purple leopard print with brown fenders and mismatched lime/blue wheels",
+  "theme": "Leopard-print Barbie pickup",
+  "photos": [
+   "26Butt-124-SorryForPa-01.jpg",
+   "26Butt-124-SorryForPa-02.jpg",
+   "26Butt-124-SorryForPa-03.jpg",
+   "26Butt-124-SorryForPa-04.jpg",
+   "26Butt-124-SorryForPa-05.jpg",
+   "26Butt-124-SorryForPa-06.jpg",
+   "26Butt-124-SorryForPa-01_XL.jpg",
+   "26Butt-124-SorryForPa-02_XL.jpg",
+   "26Butt-124-SorryForPa-03_XL.jpg",
+   "26Butt-124-SorryForPa-04_XL.jpg",
+   "26Butt-124-SorryForPa-05_XL.jpg",
+   "26Butt-124-SorryForPa-06_XL.jpg"
+  ],
+  "photo_sightings": 6,
+  "id": "124",
+  "photo_dir": "photos/buttonwillow/124",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "630",
+  "team": "Another Fine Mess",
+  "class": "B",
+  "grid": 37,
+  "finish": 70,
+  "class_finish": 32,
+  "laps": 173,
+  "best_lap_s": 146.397,
+  "make": "BMW",
+  "model": "6 Series",
+  "generation": "E24 (1976-89)",
+  "year": 1984,
+  "body": "coupe",
+  "confidence": "high",
+  "evidence": "Photos: black E24 coupe with gold wheels and gold JPS-style script, large '630' roundel",
+  "dims": {
+   "wheelbase_m": 2.626,
+   "length_m": 4.755,
+   "width_m": 1.725,
+   "height_m": 1.365,
+   "track_m": 1.41,
+   "mass_kg": 1500,
+   "power_kw": 135,
+   "source": "https://en.wikipedia.org/wiki/BMW_6_Series_(E24)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M30 3.5 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 3.5,
+   "aspiration": "NA",
+   "redline_rpm": 6000,
+   "stock_power_kw": 135,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock 3.5 I6 assumed"
+  },
+  "colors": {
+   "primary": "#1a1a1a",
+   "secondary": "#c8a040",
+   "accents": [
+    "#ffffff"
+   ]
+  },
+  "numbers": {
+   "color": "gold on black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Black Lotus JPS style with gold roundel numbers and script",
+  "theme": "John Player Special (Lotus) livery",
+  "photos": [
+   "26Butt-630-AnotherFin-01.jpg",
+   "26Butt-630-AnotherFin-01_XL.jpg"
+  ],
+  "photo_sightings": 1,
+  "id": "630",
+  "photo_dir": "photos/buttonwillow/630",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "911",
+  "team": "SUPA DUPA Racing",
+  "class": "C",
+  "grid": 61,
+  "finish": 71,
+  "class_finish": 18,
+  "laps": 170,
+  "best_lap_s": 152.001,
+  "make": "Volkswagen",
+  "model": "Jetta",
+  "generation": "Mk2 (1984-92)",
+  "year": 1988,
+  "body": "sedan",
+  "confidence": "high",
+  "evidence": "Lemons award page id 454: '1988 VW Jetta' (I Got Screwed); photos: red Jetta 2-door/4-door with white stars and a blue field across the roof",
+  "dims": {
+   "wheelbase_m": 2.47,
+   "length_m": 4.18,
+   "width_m": 1.675,
+   "height_m": 1.415,
+   "track_m": 1.43,
+   "mass_kg": 1000,
+   "power_kw": 66,
+   "source": "https://en.wikipedia.org/wiki/Volkswagen_Jetta_(A2)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "VW EA827 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 6000,
+   "stock_power_kw": 66,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock 1.8"
+  },
+  "colors": {
+   "primary": "#c82020",
+   "secondary": "#2a3aa0",
+   "accents": [
+    "#f2f2f2"
+   ]
+  },
+  "numbers": {
+   "color": "white on red",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Red with white stars and a blue star field across the roof and bonnet, SUPA DUPA grille banner",
+  "theme": "SUPA! (American flag)",
+  "photos": [
+   "26Butt-911-SUPADUPARa-01.jpg",
+   "26Butt-911-SUPADUPARa-02.jpg",
+   "26Butt-911-SUPADUPARa-03.jpg",
+   "26Butt-911-SUPADUPARa-04.jpg",
+   "26Butt-911-SUPADUPARa-05.jpg",
+   "26Butt-911-SUPADUPARa-06.jpg",
+   "26Butt-911-SUPADUPARa-01_XL.jpg",
+   "26Butt-911-SUPADUPARa-02_XL.jpg",
+   "26Butt-911-SUPADUPARa-03_XL.jpg",
+   "26Butt-911-SUPADUPARa-04_XL.jpg",
+   "26Butt-911-SUPADUPARa-05_XL.jpg",
+   "26Butt-911-SUPADUPARa-06_XL.jpg"
+  ],
+  "photo_sightings": 6,
+  "id": "911",
+  "photo_dir": "photos/buttonwillow/911",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "245",
+  "team": "Shitty Shitty Bang Bang",
+  "class": "C",
+  "grid": 100,
+  "finish": 72,
+  "class_finish": 19,
+  "laps": 161,
+  "best_lap_s": 159.496,
+  "make": "Volvo",
+  "model": "245 wagon",
+  "generation": "200 series (1974-93)",
+  "year": 1984,
+  "body": "wagon",
+  "confidence": "medium",
+  "evidence": "Photos: yellow Volvo wagon with taxi checker band and 'MOM'S TAXI' doors; a sister team (Another Fine Mess) is on record with a 1984 Volvo 245",
+  "dims": {
+   "wheelbase_m": 2.64,
+   "length_m": 4.785,
+   "width_m": 1.71,
+   "height_m": 1.46,
+   "track_m": 1.42,
+   "mass_kg": 1340,
+   "power_kw": 85,
+   "source": "https://en.wikipedia.org/wiki/Volvo_200_Series",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Volvo B230F 2.3 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.3,
+   "aspiration": "NA",
+   "redline_rpm": 6000,
+   "stock_power_kw": 85,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#f0d020",
+   "secondary": "#1a1a1a",
+   "accents": [
+    "#d02020"
+   ]
+  },
+  "numbers": {
+   "color": "black on yellow",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Taxi yellow with a black/yellow checker band and Mom's Taxi lettering",
+  "theme": "Mom's Taxi (Shitty Shitty Bang Bang)",
+  "photos": [
+   "26Butt-245-ShittyShit-02.jpg",
+   "26Butt-245-ShittyShit-03.jpg",
+   "26Butt-245-ShittyShit-04.jpg",
+   "26Butt-245-ShittyShit-01.jpg",
+   "26Butt-245-ShittyShit-05.jpg",
+   "26Butt-245-ShittyShit-06.jpg",
+   "26Butt-245-ShittyShit-02_XL.jpg",
+   "26Butt-245-ShittyShit-03_XL.jpg",
+   "26Butt-245-ShittyShit-04_XL.jpg",
+   "26Butt-245-ShittyShit-01_XL.jpg",
+   "26Butt-245-ShittyShit-05_XL.jpg",
+   "26Butt-245-ShittyShit-06_XL.jpg"
+  ],
+  "photo_sightings": 6,
+  "id": "245",
+  "photo_dir": "photos/buttonwillow/245",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "84",
+  "team": "Cork Screw Racing",
+  "class": "C",
+  "grid": 13,
+  "finish": 73,
+  "class_finish": 20,
+  "laps": 153,
+  "best_lap_s": 158.532,
+  "make": "Kia",
+  "model": "Rio sedan",
+  "generation": "1st gen (2000-05)",
+  "year": 2002,
+  "body": "sedan",
+  "confidence": "low",
+  "evidence": "Photos: small 4-door in blue, lime green and purple with '84 PTS' lettering; Rio-like face",
+  "dims": {
+   "wheelbase_m": 2.4,
+   "length_m": 4.25,
+   "width_m": 1.67,
+   "height_m": 1.42,
+   "track_m": 1.43,
+   "mass_kg": 1000,
+   "power_kw": 71,
+   "source": "https://en.wikipedia.org/wiki/Kia_Rio",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Kia Alpha 1.6 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.6,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 71,
+   "exhaust_note": "stock muffler",
+   "confidence": "low",
+   "evidence": "Stock 1.6"
+  },
+  "colors": {
+   "primary": "#a0a0d8",
+   "secondary": "#80d040",
+   "accents": [
+    "#2a5ac8",
+    "#8a4ad0"
+   ]
+  },
+  "numbers": {
+   "color": "black on lilac",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Blue nose, lime hood and lilac/purple sides",
+  "theme": "Cork Screw (points)",
+  "photos": [
+   "26Butt-084-CorkScrewR-01.jpg",
+   "26Butt-084-CorkScrewR-02.jpg",
+   "26Butt-084-CorkScrewR-03.jpg",
+   "26Butt-084-CorkScrewR-04.jpg",
+   "26Butt-084-CorkScrewR-01_XL.jpg",
+   "26Butt-084-CorkScrewR-02_XL.jpg",
+   "26Butt-084-CorkScrewR-03_XL.jpg",
+   "26Butt-084-CorkScrewR-04_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "84",
+  "photo_dir": "photos/buttonwillow/84",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "883",
+  "team": "Richie Bobby Racing ….",
+  "class": "C",
+  "grid": 20,
+  "finish": 74,
+  "class_finish": 21,
+  "laps": 153,
+  "best_lap_s": 162.739,
+  "make": "Chevrolet",
+  "model": "S-10",
+  "generation": "1st gen (1982-93)",
+  "year": 1991,
+  "body": "truck",
+  "confidence": "high",
+  "evidence": "Lemons award page id 454: '1991 Chevy S10' (Index of Effluency winner); photos: blue S-10 pickup with Talladega Days sponsor decals",
+  "dims": {
+   "wheelbase_m": 2.54,
+   "length_m": 4.4,
+   "width_m": 1.67,
+   "height_m": 1.6,
+   "track_m": 1.4,
+   "mass_kg": 1100,
+   "power_kw": 93,
+   "source": "https://en.wikipedia.org/wiki/Chevrolet_S-10",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "GM 2.8 60-degree V6",
+   "cylinders": 6,
+   "layout": "V6",
+   "displacement_l": 2.8,
+   "aspiration": "NA",
+   "redline_rpm": 5500,
+   "stock_power_kw": 93,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "2.8 V6 assumed"
+  },
+  "colors": {
+   "primary": "#2a5aa8",
+   "secondary": "#e8e8e8",
+   "accents": [
+    "#d02020"
+   ]
+  },
+  "numbers": {
+   "color": "white on blue",
+   "boards": [
+    "door",
+    "tailgate"
+   ]
+  },
+  "livery": "Blue with 'Talladega Days' decals and a yellow-tow tag nose",
+  "theme": "Richie Bobby Racing Talladega Days",
+  "photos": [
+   "26Butt-883-RichieBobb-01.jpg",
+   "26Butt-883-RichieBobb-02.jpg",
+   "26Butt-883-RichieBobb-03.jpg",
+   "26Butt-883-RichieBobb-04.jpg",
+   "26Butt-883-RichieBobb-05.jpg",
+   "26Butt-883-RichieBobb-01_XL.jpg",
+   "26Butt-883-RichieBobb-02_XL.jpg",
+   "26Butt-883-RichieBobb-03_XL.jpg",
+   "26Butt-883-RichieBobb-04_XL.jpg",
+   "26Butt-883-RichieBobb-05_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "883",
+  "photo_dir": "photos/buttonwillow/883",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "250",
+  "team": "Los Huevos Rancheros",
+  "class": "C",
+  "grid": 79,
+  "finish": 75,
+  "class_finish": 22,
+  "laps": 147,
+  "best_lap_s": 135.926,
+  "make": "Ford",
+  "model": "Ranchero",
+  "generation": "1st gen (1960-65)",
+  "year": 1962,
+  "body": "truck",
+  "confidence": "high",
+  "evidence": "Lemons award page id 454: '1962 Ford Ranchero' (Desire is the Source of Suffering); photos: primer-grey Falcon pickup with yellow number roundel",
+  "dims": {
+   "wheelbase_m": 2.78,
+   "length_m": 4.66,
+   "width_m": 1.8,
+   "height_m": 1.35,
+   "track_m": 1.4,
+   "mass_kg": 1150,
+   "power_kw": 63,
+   "source": "https://en.wikipedia.org/wiki/Ford_Ranchero",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Ford Thriftpower 2.4 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 2.4,
+   "aspiration": "NA",
+   "redline_rpm": 4500,
+   "stock_power_kw": 63,
+   "exhaust_note": "stock muffler",
+   "confidence": "low",
+   "evidence": "Stock Falcon 2.4 assumed; no engine photos"
+  },
+  "colors": {
+   "primary": "#a8acb0",
+   "secondary": "#f0d020",
+   "accents": [
+    "#2a8a3a"
+   ]
+  },
+  "numbers": {
+   "color": "black on yellow roundel",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Primer grey with rust, yellow circular number, sparse stripes",
+  "theme": "Los Huevos Rancheros (breakfast)",
+  "photos": [
+   "26Butt-250-LosHuevosR-01.jpg",
+   "26Butt-250-LosHuevosR-02.jpg",
+   "26Butt-250-LosHuevosR-01_XL.jpg",
+   "26Butt-250-LosHuevosR-02_XL.jpg"
+  ],
+  "photo_sightings": 2,
+  "id": "250",
+  "photo_dir": "photos/buttonwillow/250",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "90",
+  "team": "NB TuRD North …. (R)",
+  "class": "C",
+  "grid": 92,
+  "finish": 76,
+  "class_finish": 23,
+  "laps": 144,
+  "best_lap_s": 153.027,
+  "make": "Toyota",
+  "model": "Celica",
+  "generation": "T18 (1990-93)",
+  "year": 1991,
+  "body": "coupe",
+  "confidence": "medium",
+  "evidence": "Photos: white Celica coupe with hand-lettered black 90 and pink stickers",
+  "dims": {
+   "wheelbase_m": 2.525,
+   "length_m": 4.4,
+   "width_m": 1.7,
+   "height_m": 1.3,
+   "track_m": 1.48,
+   "mass_kg": 1200,
+   "power_kw": 99,
+   "source": "https://en.wikipedia.org/wiki/Toyota_Celica",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Toyota 5S-FE 2.2 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.2,
+   "aspiration": "NA",
+   "redline_rpm": 6000,
+   "stock_power_kw": 99,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#f2f2f2",
+   "secondary": "#1a1a1a",
+   "accents": [
+    "#f060a0"
+   ]
+  },
+  "numbers": {
+   "color": "black on white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "White with black hand-painted 90",
+  "theme": "NB TuRD North (Miata pun)",
+  "photos": [
+   "26Butt-090-NBTuRDNort-01.jpg",
+   "26Butt-090-NBTuRDNort-02.jpg",
+   "26Butt-090-NBTuRDNort-03.jpg",
+   "26Butt-090-NBTuRDNort-04.jpg",
+   "26Butt-090-NBTuRDNort-05.jpg",
+   "26Butt-090-NBTuRDNort-01_XL.jpg",
+   "26Butt-090-NBTuRDNort-02_XL.jpg",
+   "26Butt-090-NBTuRDNort-03_XL.jpg",
+   "26Butt-090-NBTuRDNort-04_XL.jpg",
+   "26Butt-090-NBTuRDNort-05_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "90",
+  "photo_dir": "photos/buttonwillow/90",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "316",
+  "team": "Richie Bobby Racing ….",
+  "class": "B",
+  "grid": 58,
+  "finish": 77,
+  "class_finish": 33,
+  "laps": 139,
+  "best_lap_s": 154.868,
+  "make": "Acura",
+  "model": "Integra (4-door)",
+  "generation": "DB (1994-2001)",
+  "year": 1996,
+  "body": "sedan",
+  "confidence": "medium",
+  "evidence": "Photos: purple Integra 4-door with a big rear wing and silver BRE-style windscreen banner",
+  "dims": {
+   "wheelbase_m": 2.62,
+   "length_m": 4.38,
+   "width_m": 1.71,
+   "height_m": 1.32,
+   "track_m": 1.47,
+   "mass_kg": 1100,
+   "power_kw": 125,
+   "source": "https://en.wikipedia.org/wiki/Acura_Integra",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Honda B18B1 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 6800,
+   "stock_power_kw": 125,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#5a2a8a",
+   "secondary": "#c0c0c4",
+   "accents": [
+    "#ffffff"
+   ]
+  },
+  "numbers": {
+   "color": "white on purple",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Purple with white number panels and a rear wing",
+  "theme": "Richie Bobby Racing (purple)",
+  "photos": [
+   "26Butt-316-RichieBobb-01.jpg",
+   "26Butt-316-RichieBobb-02.jpg",
+   "26Butt-316-RichieBobb-03.jpg",
+   "26Butt-316-RichieBobb-04.jpg",
+   "26Butt-316-RichieBobb-01_XL.jpg",
+   "26Butt-316-RichieBobb-02_XL.jpg",
+   "26Butt-316-RichieBobb-03_XL.jpg",
+   "26Butt-316-RichieBobb-04_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "316",
+  "photo_dir": "photos/buttonwillow/316",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "182",
+  "team": "Kraut Funded Racing",
+  "class": "C",
+  "grid": 56,
+  "finish": 78,
+  "class_finish": 24,
+  "laps": 130,
+  "best_lap_s": 147.011,
+  "make": "Volkswagen",
+  "model": "Scirocco",
+  "generation": "Mk2 (1981-92)",
+  "year": 1984,
+  "body": "hatch",
+  "confidence": "high",
+  "evidence": "Photos: black wedge hatch with quad round headlights, 182 on the doors",
+  "dims": {
+   "wheelbase_m": 2.4,
+   "length_m": 3.97,
+   "width_m": 1.65,
+   "height_m": 1.31,
+   "track_m": 1.4,
+   "mass_kg": 930,
+   "power_kw": 66,
+   "source": "https://en.wikipedia.org/wiki/Volkswagen_Scirocco",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "VW EA827 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 6000,
+   "stock_power_kw": 66,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#1a1a1e",
+   "secondary": "#e8e8e8",
+   "accents": [
+    "#d02020"
+   ]
+  },
+  "numbers": {
+   "color": "white on black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Black with white 182 on the doors",
+  "theme": "Kraut Funded (German car)",
+  "photos": [
+   "26Butt-182-KrautFunde-01.jpg",
+   "26Butt-182-KrautFunde-02.jpg",
+   "26Butt-182-KrautFunde-03.jpg",
+   "26Butt-182-KrautFunde-01_XL.jpg",
+   "26Butt-182-KrautFunde-02_XL.jpg",
+   "26Butt-182-KrautFunde-03_XL.jpg"
+  ],
+  "photo_sightings": 3,
+  "id": "182",
+  "photo_dir": "photos/buttonwillow/182",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "670",
+  "team": "Bernal Dads Racing",
+  "class": "C",
+  "grid": 47,
+  "finish": 79,
+  "class_finish": 25,
+  "laps": 129,
+  "best_lap_s": 154.24,
+  "make": "Dodge",
+  "model": "Ram Van",
+  "generation": "B-series 3rd gen (1994-2003)",
+  "year": 2001,
+  "body": "van",
+  "confidence": "high",
+  "evidence": "Lemons award page id 454: earlier row: Bernal Dads Racing '2001 Dodge Ram Van' (also on record with a 1992 Volvo 245 at Laguna); photos: white Ram Van with black nose and roof wing. NOTE: match_laguna.json says team 'same', but the physical car at Buttonwillow is a different car to the Laguna Volvo 245",
+  "dims": {
+   "wheelbase_m": 3.03,
+   "length_m": 4.9,
+   "width_m": 2.0,
+   "height_m": 2.0,
+   "track_m": 1.7,
+   "mass_kg": 2000,
+   "power_kw": 171,
+   "source": "https://en.wikipedia.org/wiki/Dodge_Ram_Van",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Chrysler Magnum 5.2 V8",
+   "cylinders": 8,
+   "layout": "V8",
+   "displacement_l": 5.2,
+   "aspiration": "NA",
+   "redline_rpm": 5000,
+   "stock_power_kw": 171,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock 5.2 Magnum assumed"
+  },
+  "colors": {
+   "primary": "#f2f2f2",
+   "secondary": "#1a1a1a",
+   "accents": [
+    "#d02020"
+   ]
+  },
+  "numbers": {
+   "color": "black on white",
+   "boards": [
+    "door",
+    "roof"
+   ]
+  },
+  "livery": "White with black grille/nose cap, black 670 on circular white panels, roof wing",
+  "theme": "Dad van (Bernal Dads)",
+  "photos": [
+   "26Butt-670-BernalDads-01.jpg",
+   "26Butt-670-BernalDads-02.jpg",
+   "26Butt-670-BernalDads-03.jpg",
+   "26Butt-670-BernalDads-04.jpg",
+   "26Butt-670-BernalDads-05.jpg",
+   "26Butt-670-BernalDads-01_XL.jpg",
+   "26Butt-670-BernalDads-02_XL.jpg",
+   "26Butt-670-BernalDads-03_XL.jpg",
+   "26Butt-670-BernalDads-04_XL.jpg",
+   "26Butt-670-BernalDads-05_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "670_bw",
+  "photo_dir": "photos/buttonwillow/670",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "111",
+  "team": "Blue Balls Racing",
+  "class": "B",
+  "grid": 55,
+  "finish": 80,
+  "class_finish": 34,
+  "laps": 127,
+  "best_lap_s": 148.0,
+  "make": "Subaru",
+  "model": "Legacy",
+  "generation": "BP (2005-09)",
+  "year": 2006,
+  "body": "sedan",
+  "confidence": "medium",
+  "evidence": "Photos: dark navy Legacy sedan with a plain stripped look, '111' tags",
+  "dims": {
+   "wheelbase_m": 2.67,
+   "length_m": 4.665,
+   "width_m": 1.69,
+   "height_m": 1.425,
+   "track_m": 1.47,
+   "mass_kg": 1400,
+   "power_kw": 130,
+   "source": "https://en.wikipedia.org/wiki/Subaru_Legacy_(fourth_generation)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Subaru EJ253 2.5 flat-4",
+   "cylinders": 4,
+   "layout": "flat4",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 130,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#1e2a4a",
+   "secondary": "#9a9aa0",
+   "accents": [
+    "#ffffff"
+   ]
+  },
+  "numbers": {
+   "color": "white on dark",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Plain navy with white 111 bars",
+  "theme": "Blue Balls Racing (navy)",
+  "photos": [
+   "26Butt-111-BlueBallsR-02.jpg",
+   "26Butt-111-BlueBallsR-01.jpg",
+   "26Butt-111-BlueBallsR-03.jpg",
+   "26Butt-111-BlueBallsR-04.jpg",
+   "26Butt-111-BlueBallsR-02_XL.jpg",
+   "26Butt-111-BlueBallsR-01_XL.jpg",
+   "26Butt-111-BlueBallsR-03_XL.jpg",
+   "26Butt-111-BlueBallsR-04_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "111",
+  "photo_dir": "photos/buttonwillow/111",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "81",
+  "team": "Colonel Angus Racing",
+  "class": "C",
+  "grid": 64,
+  "finish": 81,
+  "class_finish": 26,
+  "laps": 126,
+  "best_lap_s": 152.248,
+  "make": "Ford",
+  "model": "Focus ZX3",
+  "generation": "2nd gen (2005-07)",
+  "year": 2007,
+  "body": "hatch",
+  "confidence": "medium",
+  "evidence": "Lemons award page id 454: earlier row lists Colonel Angus Racing '2007 Ford Focus'; photos: maroon Focus 3-door with dog-tongue front and a mounted cannon-like roof prop",
+  "dims": {
+   "wheelbase_m": 2.64,
+   "length_m": 4.34,
+   "width_m": 1.84,
+   "height_m": 1.47,
+   "track_m": 1.53,
+   "mass_kg": 1250,
+   "power_kw": 100,
+   "source": "https://en.wikipedia.org/wiki/Ford_Focus_(second_generation)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Ford Duratec 2.0 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.0,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 100,
+   "exhaust_note": "stock muffler",
+   "confidence": "low",
+   "evidence": "Stock Duratec 2.0 assumed"
+  },
+  "colors": {
+   "primary": "#7a1a2a",
+   "secondary": "#d0a020",
+   "accents": [
+    "#f0d020",
+    "#f2f2f2"
+   ]
+  },
+  "numbers": {
+   "color": "yellow on maroon",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Maroon with gold/yellow stripes along the sills, dog face with a tongue on the nose, 'This will be very messy' text, roof prop",
+  "theme": "Colonel Angus (dog)",
+  "photos": [
+   "26Butt-081-ColonelAng-01.jpg",
+   "26Butt-081-ColonelAng-02.jpg",
+   "26Butt-081-ColonelAng-03.jpg",
+   "26Butt-081-ColonelAng-01_XL.jpg",
+   "26Butt-081-ColonelAng-02_XL.jpg",
+   "26Butt-081-ColonelAng-03_XL.jpg"
+  ],
+  "photo_sightings": 3,
+  "id": "81",
+  "photo_dir": "photos/buttonwillow/81",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "333",
+  "team": "3off Racing",
+  "class": "C",
+  "grid": 96,
+  "finish": 82,
+  "class_finish": 27,
+  "laps": 125,
+  "best_lap_s": 142.878,
+  "make": "BMW",
+  "model": "3 Series (E30) 2-door (325e)",
+  "generation": "E30 (1982-94)",
+  "year": 1985,
+  "body": "coupe",
+  "confidence": "high",
+  "evidence": "Lemons award page id 454: earlier row: 3off Racing '1985 BMW 325e'; photos: red/yellow/black diagonal-block E30 2-door with a stripped front clip and gold wheels",
+  "dims": {
+   "wheelbase_m": 2.57,
+   "length_m": 4.325,
+   "width_m": 1.645,
+   "height_m": 1.38,
+   "track_m": 1.41,
+   "mass_kg": 1200,
+   "power_kw": 125,
+   "source": "https://en.wikipedia.org/wiki/BMW_3_Series_(E30)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M20 2.5 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 125,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "M20 stock"
+  },
+  "colors": {
+   "primary": "#c82020",
+   "secondary": "#f0d020",
+   "accents": [
+    "#1a1a1a",
+    "#c8a040"
+   ]
+  },
+  "numbers": {
+   "color": "black on white tag",
+   "boards": [
+    "rear",
+    "door"
+   ]
+  },
+  "livery": "Diagonal red, yellow and black blocks with gold wheels, white number tag on the trunk",
+  "theme": "3off Racing (3 A-off)",
+  "photos": [
+   "26Butt-333-3offRacing-01.jpg",
+   "26Butt-333-3offRacing-02.jpg",
+   "26Butt-333-3offRacing-03.jpg",
+   "26Butt-333-3offRacing-01_XL.jpg",
+   "26Butt-333-3offRacing-02_XL.jpg",
+   "26Butt-333-3offRacing-03_XL.jpg"
+  ],
+  "photo_sightings": 3,
+  "id": "333",
+  "photo_dir": "photos/buttonwillow/333",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "33",
+  "team": "BM Badwrench Racing",
+  "class": "A",
+  "grid": 31,
+  "finish": 83,
+  "class_finish": 22,
+  "laps": 124,
+  "best_lap_s": 146.841,
+  "make": "BMW",
+  "model": "3 Series sedan",
+  "generation": "E36 (1990-99)",
+  "year": 1996,
+  "body": "sedan",
+  "confidence": "high",
+  "evidence": "Photos: silver/black E36 4-door with Badwrench logos and a black wolf-like graphic",
+  "dims": {
+   "wheelbase_m": 2.7,
+   "length_m": 4.433,
+   "width_m": 1.698,
+   "height_m": 1.393,
+   "track_m": 1.42,
+   "mass_kg": 1300,
+   "power_kw": 125,
+   "source": "https://en.wikipedia.org/wiki/BMW_3_Series_(E36)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M50 2.5 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 125,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock M50"
+  },
+  "colors": {
+   "primary": "#c0c0c4",
+   "secondary": "#2a2a2e",
+   "accents": [
+    "#d02020"
+   ]
+  },
+  "numbers": {
+   "color": "white on grey",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Silver with black patch graphics, 33 in large white-on-dark numerals, Badwrench Service decals",
+  "theme": "BM Badwrench (tools)",
+  "photos": [
+   "26Butt-033-BMBadwrenc-01.jpg",
+   "26Butt-033-BMBadwrenc-02.jpg",
+   "26Butt-033-BMBadwrenc-03.jpg",
+   "26Butt-033-BMBadwrenc-04.jpg",
+   "26Butt-033-BMBadwrenc-05.jpg",
+   "26Butt-033-BMBadwrenc-01_XL.jpg",
+   "26Butt-033-BMBadwrenc-02_XL.jpg",
+   "26Butt-033-BMBadwrenc-03_XL.jpg",
+   "26Butt-033-BMBadwrenc-04_XL.jpg",
+   "26Butt-033-BMBadwrenc-05_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "33",
+  "photo_dir": "photos/buttonwillow/33",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "136",
+  "team": "Pour Choices 2",
+  "class": "B",
+  "grid": 40,
+  "finish": 84,
+  "class_finish": 35,
+  "laps": 122,
+  "best_lap_s": 140.084,
+  "make": "Mazda",
+  "model": "MX-5 Miata",
+  "generation": "NA (1989-97)",
+  "year": 1992,
+  "body": "roadster",
+  "confidence": "high",
+  "evidence": "Photos: blue/orange Miata with MAZDA lettering and a rear wing, white 136 plate",
+  "dims": {
+   "wheelbase_m": 2.265,
+   "length_m": 3.95,
+   "width_m": 1.675,
+   "height_m": 1.225,
+   "track_m": 1.41,
+   "mass_kg": 990,
+   "power_kw": 96,
+   "source": "https://en.wikipedia.org/wiki/Mazda_MX-5_(NA)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Mazda BP 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 7000,
+   "stock_power_kw": 96,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#2a3a8a",
+   "secondary": "#e8742a",
+   "accents": [
+    "#ffffff"
+   ]
+  },
+  "numbers": {
+   "color": "black on white plate",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Blue and orange Mazda factory-style graphics",
+  "theme": "Pour Choices (Mazda livery)",
+  "photos": [
+   "26Butt-136-PourChoice-01.jpg",
+   "26Butt-136-PourChoice-02.jpg",
+   "26Butt-136-PourChoice-03.jpg",
+   "26Butt-136-PourChoice-01_XL.jpg",
+   "26Butt-136-PourChoice-02_XL.jpg",
+   "26Butt-136-PourChoice-03_XL.jpg"
+  ],
+  "photo_sightings": 3,
+  "id": "136",
+  "photo_dir": "photos/buttonwillow/136",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "711",
+  "team": "Right Now Racing",
+  "class": "C",
+  "grid": 86,
+  "finish": 85,
+  "class_finish": 28,
+  "laps": 119,
+  "best_lap_s": 171.278,
+  "make": "Toyota",
+  "model": "Camry",
+  "generation": "XV10 (1992-96)",
+  "year": 1996,
+  "body": "sedan",
+  "confidence": "high",
+  "evidence": "Lemons award page id 454: '1996 Toyota Camry' (Halloween Meets Gasoline Prize); photos: black sedan with white stripes, watermelon/fruit stickers and a roof candy tip",
+  "dims": {
+   "wheelbase_m": 2.62,
+   "length_m": 4.76,
+   "width_m": 1.78,
+   "height_m": 1.4,
+   "track_m": 1.51,
+   "mass_kg": 1400,
+   "power_kw": 99,
+   "source": "https://en.wikipedia.org/wiki/Toyota_Camry_(XV10)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Toyota 5S-FE 2.2 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.2,
+   "aspiration": "NA",
+   "redline_rpm": 6000,
+   "stock_power_kw": 99,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock 5S-FE assumed"
+  },
+  "colors": {
+   "primary": "#1a1a1a",
+   "secondary": "#f2f2f2",
+   "accents": [
+    "#d02020",
+    "#40c040"
+   ]
+  },
+  "numbers": {
+   "color": "white on black",
+   "boards": [
+    "door",
+    "hood"
+   ]
+  },
+  "livery": "Black with white racing stripes and a fruit-themed sticker set; a green lollipop on the roof",
+  "theme": "Fruit candy theme (Halloween prize)",
+  "photos": [
+   "26Butt-711-RightNowRa-01.jpg",
+   "26Butt-711-RightNowRa-02.jpg",
+   "26Butt-711-RightNowRa-03.jpg",
+   "26Butt-711-RightNowRa-04.jpg",
+   "26Butt-711-RightNowRa-01_XL.jpg",
+   "26Butt-711-RightNowRa-02_XL.jpg",
+   "26Butt-711-RightNowRa-03_XL.jpg",
+   "26Butt-711-RightNowRa-04_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "711_bw",
+  "photo_dir": "photos/buttonwillow/711",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "544",
+  "team": "ONSET/Tetanus Racing",
+  "class": "B",
+  "grid": 23,
+  "finish": 86,
+  "class_finish": 36,
+  "laps": 116,
+  "best_lap_s": 143.013,
+  "make": "Volvo",
+  "model": "PV544",
+  "generation": "PV544 (1958-65)",
+  "year": 1963,
+  "body": "sedan",
+  "confidence": "high",
+  "evidence": "(Laguna row re-used; same team and number as at Laguna); photos: maroon PV544 with googly eyes on the lights [same car as Laguna #544: make/model/dims/engine taken from the Laguna row]",
+  "dims": {
+   "wheelbase_m": 2.6,
+   "length_m": 4.45,
+   "width_m": 1.58,
+   "height_m": 1.57,
+   "track_m": 1.32,
+   "mass_kg": 1000,
+   "power_kw": 67,
+   "source": "https://en.wikipedia.org/wiki/Volvo_PV444/544",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Volvo B18 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 6000,
+   "stock_power_kw": 67,
+   "exhaust_note": "loud open",
+   "confidence": "low",
+   "evidence": "B18/B20 or modern swap (team name implies rusty stock); B18 guessed"
+  },
+  "colors": {
+   "primary": "#8a2a2a",
+   "secondary": "#5a1a1a",
+   "accents": [
+    "#d0d0d0"
+   ]
+  },
+  "numbers": {
+   "color": "white on black board",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Faded maroon with rust, cartoon eyes on the headlights, number on a dark plate",
+  "theme": "Cartoon-eyed Volvo",
+  "photos": [
+   "26Butt-544-ONSETTetan-01.jpg",
+   "26Butt-544-ONSETTetan-02.jpg",
+   "26Butt-544-ONSETTetan-03.jpg",
+   "26Butt-544-ONSETTetan-04.jpg",
+   "26Butt-544-ONSETTetan-01_XL.jpg",
+   "26Butt-544-ONSETTetan-02_XL.jpg",
+   "26Butt-544-ONSETTetan-03_XL.jpg",
+   "26Butt-544-ONSETTetan-04_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "laguna_number": "544",
+  "id": "544",
+  "photo_dir": "photos/buttonwillow/544",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "900",
+  "team": "Yellow SAABmarine (R)",
+  "class": "C",
+  "grid": 98,
+  "finish": 87,
+  "class_finish": 29,
+  "laps": 116,
+  "best_lap_s": 144.583,
+  "make": "Saab",
+  "model": "900",
+  "generation": "Classic (1978-93)",
+  "year": 1985,
+  "body": "hatch",
+  "confidence": "high",
+  "evidence": "Photos: yellow Saab 900 3-door with blue lower stripe and a Swedish-flag roof",
+  "dims": {
+   "wheelbase_m": 2.47,
+   "length_m": 4.65,
+   "width_m": 1.69,
+   "height_m": 1.42,
+   "track_m": 1.43,
+   "mass_kg": 1200,
+   "power_kw": 83,
+   "source": "https://en.wikipedia.org/wiki/Saab_900",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Saab H 2.0 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.0,
+   "aspiration": "NA",
+   "redline_rpm": 5500,
+   "stock_power_kw": 83,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock 2.0 assumed"
+  },
+  "colors": {
+   "primary": "#f0d020",
+   "secondary": "#2a4aa0",
+   "accents": [
+    "#ffffff"
+   ]
+  },
+  "numbers": {
+   "color": "white on yellow",
+   "boards": [
+    "door",
+    "hood"
+   ]
+  },
+  "livery": "Swedish flag colours: yellow with a blue stripe and blue-yellow roof",
+  "theme": "Yellow SAABmarine (Beatles reference)",
+  "photos": [
+   "26Butt-900-YellowSAAB-01.jpg",
+   "26Butt-900-YellowSAAB-02.jpg",
+   "26Butt-900-YellowSAAB-03.jpg",
+   "26Butt-900-YellowSAAB-04.jpg",
+   "26Butt-900-YellowSAAB-01_XL.jpg",
+   "26Butt-900-YellowSAAB-02_XL.jpg",
+   "26Butt-900-YellowSAAB-03_XL.jpg",
+   "26Butt-900-YellowSAAB-04_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "900",
+  "photo_dir": "photos/buttonwillow/900",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "77",
+  "team": "Dough-ba-mens",
+  "class": "A",
+  "grid": 52,
+  "finish": 88,
+  "class_finish": 23,
+  "laps": 116,
+  "best_lap_s": 144.661,
+  "make": "BMW",
+  "model": "M3 coupe",
+  "generation": "E46 (2000-06)",
+  "year": 2003,
+  "body": "coupe",
+  "confidence": "high",
+  "evidence": "Photos: blue/grey/white E46 M3 coupe with wide arches and 'DOUGH-BR-MENS' door text",
+  "dims": {
+   "wheelbase_m": 2.731,
+   "length_m": 4.492,
+   "width_m": 1.781,
+   "height_m": 1.365,
+   "track_m": 1.508,
+   "mass_kg": 1570,
+   "power_kw": 252,
+   "source": "https://en.wikipedia.org/wiki/BMW_M3",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW S54 3.2 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 3.2,
+   "aspiration": "NA",
+   "redline_rpm": 8000,
+   "stock_power_kw": 252,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "S54 stock"
+  },
+  "colors": {
+   "primary": "#2a4a8a",
+   "secondary": "#c0c0c4",
+   "accents": [
+    "#ffffff"
+   ]
+  },
+  "numbers": {
+   "color": "white on blue",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Blue and silver with wide fenders and door text",
+  "theme": "Dough-ba-mens (bakery)",
+  "photos": [
+   "26Butt-077-Doughbamen-01.jpg",
+   "26Butt-077-Doughbamen-01_XL.jpg"
+  ],
+  "photo_sightings": 1,
+  "id": "77",
+  "photo_dir": "photos/buttonwillow/77",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "707",
+  "team": "Oktoberfest Racing",
+  "class": "B",
+  "grid": 71,
+  "finish": 89,
+  "class_finish": 37,
+  "laps": 111,
+  "best_lap_s": 153.557,
+  "make": "BMW",
+  "model": "2002",
+  "generation": "(1966-76)",
+  "year": 1970,
+  "body": "coupe",
+  "confidence": "medium",
+  "evidence": "Photos: red/white/blue-striped 2002 with a rear wing; sister car of Oktoberfest Racing #414",
+  "dims": {
+   "wheelbase_m": 2.5,
+   "length_m": 4.23,
+   "width_m": 1.59,
+   "height_m": 1.37,
+   "track_m": 1.35,
+   "mass_kg": 1000,
+   "power_kw": 73,
+   "source": "https://en.wikipedia.org/wiki/BMW_2002",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M10 2.0 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.0,
+   "aspiration": "NA",
+   "redline_rpm": 6000,
+   "stock_power_kw": 73,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "M10 stock"
+  },
+  "colors": {
+   "primary": "#c82020",
+   "secondary": "#f2f2f2",
+   "accents": [
+    "#2a3a8a"
+   ]
+  },
+  "numbers": {
+   "color": "black on white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Red front with white and blue BMW M-style diagonal stripes",
+  "theme": "Oktoberfest 2nd car",
+  "photos": [
+   "26Butt-707-Oktoberfes-01.jpg",
+   "26Butt-707-Oktoberfes-01_XL.jpg"
+  ],
+  "photo_sightings": 1,
+  "id": "707",
+  "photo_dir": "photos/buttonwillow/707",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "36",
+  "team": "SUPA DUPA Racing",
+  "class": "B",
+  "grid": 68,
+  "finish": 90,
+  "class_finish": 38,
+  "laps": 78,
+  "best_lap_s": 149.918,
+  "make": "Volkswagen",
+  "model": "Rabbit (Golf Mk1)",
+  "generation": "Mk1 (1974-84)",
+  "year": 1983,
+  "body": "hatch",
+  "confidence": "high",
+  "evidence": "Lemons award page id 454: earlier row: SUPA DUPA Racing '83 VW Wabbit'; photos: black Mk1 with a blue nose cap, white 36 on the door and Mamas sponsor",
+  "dims": {
+   "wheelbase_m": 2.4,
+   "length_m": 3.96,
+   "width_m": 1.61,
+   "height_m": 1.39,
+   "track_m": 1.39,
+   "mass_kg": 860,
+   "power_kw": 55,
+   "source": "https://en.wikipedia.org/wiki/Volkswagen_Golf_Mk1",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "VW EA827 1.7 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.7,
+   "aspiration": "NA",
+   "redline_rpm": 6000,
+   "stock_power_kw": 55,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#1a1a1e",
+   "secondary": "#2a4ac8",
+   "accents": [
+    "#ffffff"
+   ]
+  },
+  "numbers": {
+   "color": "white on black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Black with a blue diagonal side panel, white numerals",
+  "theme": "SUPA DUPA",
+  "photos": [
+   "26Butt-036-SUPADUPARa-01.jpg",
+   "26Butt-036-SUPADUPARa-02.jpg",
+   "26Butt-036-SUPADUPARa-01_XL.jpg",
+   "26Butt-036-SUPADUPARa-02_XL.jpg"
+  ],
+  "photo_sightings": 2,
+  "id": "36",
+  "photo_dir": "photos/buttonwillow/36",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "96",
+  "team": "Old Nerd Racing (R)",
+  "class": "A",
+  "grid": 74,
+  "finish": 91,
+  "class_finish": 24,
+  "laps": 75,
+  "best_lap_s": 152.447,
+  "make": "BMW",
+  "model": "Z3",
+  "generation": "(1995-2002)",
+  "year": 1998,
+  "body": "roadster",
+  "confidence": "high",
+  "evidence": "Photos: silver Z3 roadster with blue stripes on the nose and a roll bar",
+  "dims": {
+   "wheelbase_m": 2.446,
+   "length_m": 4.025,
+   "width_m": 1.74,
+   "height_m": 1.29,
+   "track_m": 1.42,
+   "mass_kg": 1250,
+   "power_kw": 141,
+   "source": "https://en.wikipedia.org/wiki/BMW_Z3",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M52 2.8 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 2.8,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 141,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "M52 2.8 assumed"
+  },
+  "colors": {
+   "primary": "#b8b8bc",
+   "secondary": "#2a5ac8",
+   "accents": [
+    "#ffffff"
+   ]
+  },
+  "numbers": {
+   "color": "white on silver",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Silver with a blue/white stripe over the nose, white numerals on the doors",
+  "theme": "Old Nerd Racing",
+  "photos": [
+   "26Butt-096-OldNerdRac-01.jpg",
+   "26Butt-096-OldNerdRac-02.jpg",
+   "26Butt-096-OldNerdRac-01_XL.jpg",
+   "26Butt-096-OldNerdRac-02_XL.jpg"
+  ],
+  "photo_sightings": 2,
+  "id": "96",
+  "photo_dir": "photos/buttonwillow/96",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "5",
+  "team": "Richie Bobby Racing ….",
+  "class": "C",
+  "grid": 82,
+  "finish": 92,
+  "class_finish": 30,
+  "laps": 75,
+  "best_lap_s": 159.652,
+  "make": "Ford",
+  "model": "Pinto",
+  "generation": "1st gen (1971-80)",
+  "year": 1974,
+  "body": "sedan",
+  "confidence": "medium",
+  "evidence": "Photos: light-blue Pinto 2-door with a white Bob's Worst Pinto Beans decal",
+  "dims": {
+   "wheelbase_m": 2.39,
+   "length_m": 4.39,
+   "width_m": 1.77,
+   "height_m": 1.3,
+   "track_m": 1.4,
+   "mass_kg": 1100,
+   "power_kw": 66,
+   "source": "https://en.wikipedia.org/wiki/Ford_Pinto",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Ford Lima 2.3 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.3,
+   "aspiration": "NA",
+   "redline_rpm": 5500,
+   "stock_power_kw": 66,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#9ac8e8",
+   "secondary": "#e8e8e8",
+   "accents": [
+    "#d02020"
+   ]
+  },
+  "numbers": {
+   "color": "white on blue",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Light blue with white 5 and a 'BOB'S WORST' beans-can decal",
+  "theme": "Bob's Worst (canned pinto beans)",
+  "photos": [
+   "26Butt-005-RichieBobb-01.jpg",
+   "26Butt-005-RichieBobb-02.jpg",
+   "26Butt-005-RichieBobb-03.jpg",
+   "26Butt-005-RichieBobb-04.jpg",
+   "26Butt-005-RichieBobb-01_XL.jpg",
+   "26Butt-005-RichieBobb-02_XL.jpg",
+   "26Butt-005-RichieBobb-03_XL.jpg",
+   "26Butt-005-RichieBobb-04_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "5",
+  "photo_dir": "photos/buttonwillow/5",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "78",
+  "team": "Super Troop",
+  "class": "B",
+  "grid": 62,
+  "finish": 93,
+  "class_finish": 39,
+  "laps": 74,
+  "best_lap_s": 149.26,
+  "make": "Mercury",
+  "model": "Zephyr",
+  "generation": "(1978-83)",
+  "year": 1978,
+  "body": "sedan",
+  "confidence": "high",
+  "evidence": "Lemons award page id 454: earlier row: Super Troop '1978 Mercury Zephyr'; photos: yellow police/taxi sedan with 'ZEPHYR' on the bumper",
+  "dims": {
+   "wheelbase_m": 2.67,
+   "length_m": 4.84,
+   "width_m": 1.77,
+   "height_m": 1.37,
+   "track_m": 1.46,
+   "mass_kg": 1250,
+   "power_kw": 65,
+   "source": "https://en.wikipedia.org/wiki/Mercury_Zephyr",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Ford Thriftpower 3.3 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 3.3,
+   "aspiration": "NA",
+   "redline_rpm": 4500,
+   "stock_power_kw": 65,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#f0b820",
+   "secondary": "#2a8a3a",
+   "accents": [
+    "#ffffff"
+   ]
+  },
+  "numbers": {
+   "color": "black on yellow",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Mustard yellow with a green star badge, roof light bar",
+  "theme": "Sheriff / taxi theme",
+  "photos": [
+   "26Butt-078-SuperTroop-01.jpg",
+   "26Butt-078-SuperTroop-02.jpg",
+   "26Butt-078-SuperTroop-03.jpg",
+   "26Butt-078-SuperTroop-01_XL.jpg",
+   "26Butt-078-SuperTroop-02_XL.jpg",
+   "26Butt-078-SuperTroop-03_XL.jpg"
+  ],
+  "photo_sightings": 3,
+  "id": "78",
+  "photo_dir": "photos/buttonwillow/78",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "170",
+  "team": "Downtown browns",
+  "class": "A",
+  "grid": 11,
+  "finish": 94,
+  "class_finish": 25,
+  "laps": 73,
+  "best_lap_s": 150.341,
+  "make": "Mazda",
+  "model": "MX-5 Miata",
+  "generation": "NA (1989-97)",
+  "year": 1992,
+  "body": "roadster",
+  "confidence": "high",
+  "evidence": "Photos: grey NA Miata with purple/pink graffiti and a colourful fabric pile on the roof",
+  "dims": {
+   "wheelbase_m": 2.265,
+   "length_m": 3.95,
+   "width_m": 1.675,
+   "height_m": 1.225,
+   "track_m": 1.41,
+   "mass_kg": 990,
+   "power_kw": 96,
+   "source": "https://en.wikipedia.org/wiki/Mazda_MX-5_(NA)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Mazda BP 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 7000,
+   "stock_power_kw": 96,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#a0a0a4",
+   "secondary": "#8a4ad0",
+   "accents": [
+    "#f060a0",
+    "#e8742a"
+   ]
+  },
+  "numbers": {
+   "color": "black on white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Grey with purple/pink graffiti and a big inflated/fabric roof prop",
+  "theme": "Downtown Browns",
+  "photos": [
+   "26Butt-170-Downtownbr-01.jpg",
+   "26Butt-170-Downtownbr-02.jpg",
+   "26Butt-170-Downtownbr-01_XL.jpg",
+   "26Butt-170-Downtownbr-02_XL.jpg"
+  ],
+  "photo_sightings": 2,
+  "id": "170",
+  "photo_dir": "photos/buttonwillow/170",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "129",
+  "team": "Magicar Motors",
+  "class": "C",
+  "grid": 43,
+  "finish": 95,
+  "class_finish": 31,
+  "laps": 57,
+  "best_lap_s": 156.455,
+  "make": "Honda",
+  "model": "Accord",
+  "generation": "CB (1990-93)",
+  "year": 1992,
+  "body": "sedan",
+  "confidence": "high",
+  "evidence": "Lemons award page id 454: '1992 Honda Accord' (Another Heroic Fix); photos: white Accord with Pokemon-style fish graphics and a crown prop",
+  "dims": {
+   "wheelbase_m": 2.72,
+   "length_m": 4.7,
+   "width_m": 1.7,
+   "height_m": 1.38,
+   "track_m": 1.47,
+   "mass_kg": 1300,
+   "power_kw": 95,
+   "source": "https://en.wikipedia.org/wiki/Honda_Accord_(fourth_generation)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Honda F22A 2.2 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.2,
+   "aspiration": "NA",
+   "redline_rpm": 5800,
+   "stock_power_kw": 95,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#f2f2f2",
+   "secondary": "#6ac8e8",
+   "accents": [
+    "#2a4aa0",
+    "#f0d020"
+   ]
+  },
+  "numbers": {
+   "color": "black on white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "White with cartoon sea-creature graphics in blue/teal and a white crown on the roof",
+  "theme": "Magicar (Magikarp) Pokemon",
+  "photos": [
+   "26Butt-129-MagicarMot-01.jpg",
+   "26Butt-129-MagicarMot-02.jpg",
+   "26Butt-129-MagicarMot-03.jpg",
+   "26Butt-129-MagicarMot-04.jpg",
+   "26Butt-129-MagicarMot-01_XL.jpg",
+   "26Butt-129-MagicarMot-02_XL.jpg",
+   "26Butt-129-MagicarMot-03_XL.jpg",
+   "26Butt-129-MagicarMot-04_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "129",
+  "photo_dir": "photos/buttonwillow/129",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "61",
+  "team": "Safety Last Racing",
+  "class": "C",
+  "grid": 76,
+  "finish": 96,
+  "class_finish": 32,
+  "laps": 50,
+  "best_lap_s": 150.218,
+  "make": "MG",
+  "model": "MGB GT",
+  "generation": "MGB (1965-80)",
+  "year": 1971,
+  "body": "coupe",
+  "confidence": "medium",
+  "evidence": "Photos: dark-green MGB GT with white 61 hexagon and 'Hennessey'-like script, exposed engine bay",
+  "dims": {
+   "wheelbase_m": 2.311,
+   "length_m": 3.89,
+   "width_m": 1.52,
+   "height_m": 1.275,
+   "track_m": 1.24,
+   "mass_kg": 1060,
+   "power_kw": 68,
+   "source": "https://en.wikipedia.org/wiki/MG_MGB",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMC B-series 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 5500,
+   "stock_power_kw": 68,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "B-series stock, 1.8; may be a swap"
+  },
+  "colors": {
+   "primary": "#1e4a2a",
+   "secondary": "#e8e8e8",
+   "accents": [
+    "#c8a040"
+   ]
+  },
+  "numbers": {
+   "color": "black on white hexagon",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "British racing green with white number hexagon",
+  "theme": "Safety Last (Harold Lloyd)",
+  "photos": [
+   "26Butt-061-SafetyLast-01.jpg",
+   "26Butt-061-SafetyLast-02.jpg",
+   "26Butt-061-SafetyLast-03.jpg",
+   "26Butt-061-SafetyLast-01_XL.jpg",
+   "26Butt-061-SafetyLast-02_XL.jpg",
+   "26Butt-061-SafetyLast-03_XL.jpg"
+  ],
+  "photo_sightings": 3,
+  "id": "61",
+  "photo_dir": "photos/buttonwillow/61",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "420",
+  "team": "Mind Goblin Motors (R)",
+  "class": "B",
+  "grid": 81,
+  "finish": 97,
+  "class_finish": 40,
+  "laps": 48,
+  "best_lap_s": 169.151,
+  "make": "Mini",
+  "model": "Cooper S",
+  "generation": "R53 (2002-06)",
+  "year": 2005,
+  "body": "hatch",
+  "confidence": "high",
+  "evidence": "Lemons award page id 454: '2005 MINI COOPER S' (Heroic Fix); photos: blue R53 with white roof and white racing stripes",
+  "dims": {
+   "wheelbase_m": 2.467,
+   "length_m": 3.655,
+   "width_m": 1.688,
+   "height_m": 1.416,
+   "track_m": 1.46,
+   "mass_kg": 1140,
+   "power_kw": 120,
+   "source": "https://en.wikipedia.org/wiki/Mini_Hatch_(R50)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Tritec 1.6 I4 supercharged",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.6,
+   "aspiration": "super",
+   "redline_rpm": 6750,
+   "stock_power_kw": 120,
+   "exhaust_note": "stock muffler",
+   "confidence": "high",
+   "evidence": "Supercharged 1.6"
+  },
+  "colors": {
+   "primary": "#2a5ac8",
+   "secondary": "#f2f2f2",
+   "accents": [
+    "#1a1a1a"
+   ]
+  },
+  "numbers": {
+   "color": "black on white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Blue with a white roof and white stripes, big black 420",
+  "theme": "Mind Goblin Motors (420)",
+  "photos": [
+   "26Butt-420-MindGoblin-01.jpg",
+   "26Butt-420-MindGoblin-02.jpg",
+   "26Butt-420-MindGoblin-03.jpg",
+   "26Butt-420-MindGoblin-01_XL.jpg",
+   "26Butt-420-MindGoblin-02_XL.jpg",
+   "26Butt-420-MindGoblin-03_XL.jpg"
+  ],
+  "photo_sightings": 3,
+  "id": "420",
+  "photo_dir": "photos/buttonwillow/420",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "24",
+  "team": "Lucky Ass Grass Glass Racing",
+  "class": "B",
+  "grid": 91,
+  "finish": 98,
+  "class_finish": 41,
+  "laps": 44,
+  "best_lap_s": 152.32,
+  "make": "Mazda",
+  "model": "MX-5 Miata",
+  "generation": "NA (1989-97)",
+  "year": 1992,
+  "body": "roadster",
+  "confidence": "high",
+  "evidence": "Photos: black NA Miata with white 24 roundel, hardtop-less",
+  "dims": {
+   "wheelbase_m": 2.265,
+   "length_m": 3.95,
+   "width_m": 1.675,
+   "height_m": 1.225,
+   "track_m": 1.41,
+   "mass_kg": 990,
+   "power_kw": 96,
+   "source": "https://en.wikipedia.org/wiki/Mazda_MX-5_(NA)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Mazda BP 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 7000,
+   "stock_power_kw": 96,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#1a1a1a",
+   "secondary": "#f2f2f2",
+   "accents": [
+    "#2a8a3a"
+   ]
+  },
+  "numbers": {
+   "color": "black on white roundel",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Black with white number roundel",
+  "theme": "Lucky Ass Grass Glass",
+  "photos": [
+   "26Butt-024-LuckyAssGr-01.jpg",
+   "26Butt-024-LuckyAssGr-02.jpg",
+   "26Butt-024-LuckyAssGr-03.jpg",
+   "26Butt-024-LuckyAssGr-04.jpg",
+   "26Butt-024-LuckyAssGr-01_XL.jpg",
+   "26Butt-024-LuckyAssGr-02_XL.jpg",
+   "26Butt-024-LuckyAssGr-03_XL.jpg",
+   "26Butt-024-LuckyAssGr-04_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "24",
+  "photo_dir": "photos/buttonwillow/24",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "171",
+  "team": "Whip Shitty Racing",
+  "class": "B",
+  "grid": 2,
+  "finish": 99,
+  "class_finish": 42,
+  "laps": 33,
+  "best_lap_s": 154.16,
+  "make": "Datsun",
+  "model": "510",
+  "generation": "(1968-73)",
+  "year": 1971,
+  "body": "sedan",
+  "confidence": "medium",
+  "evidence": "Photos: white/blue sticker-bombed Datsun 510 sedan with a roof surf-style item",
+  "dims": {
+   "wheelbase_m": 2.42,
+   "length_m": 4.12,
+   "width_m": 1.5,
+   "height_m": 1.38,
+   "track_m": 1.3,
+   "mass_kg": 950,
+   "power_kw": 66,
+   "source": "https://en.wikipedia.org/wiki/Datsun_510",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Nissan L18 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 6000,
+   "stock_power_kw": 66,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#f2f2f2",
+   "secondary": "#6ac8e8",
+   "accents": [
+    "#f0d020"
+   ]
+  },
+  "numbers": {
+   "color": "black on white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "White with blue/pale stickers over the whole body",
+  "theme": "Whip Shitty (Datsun)",
+  "photos": [
+   "26Butt-171-WhipShitty-01.jpg",
+   "26Butt-171-WhipShitty-02.jpg",
+   "26Butt-171-WhipShitty-01_XL.jpg",
+   "26Butt-171-WhipShitty-02_XL.jpg"
+  ],
+  "photo_sightings": 2,
+  "id": "171",
+  "photo_dir": "photos/buttonwillow/171",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "40",
+  "team": "EPA Racing",
+  "class": "C",
+  "grid": 80,
+  "finish": 100,
+  "class_finish": 33,
+  "laps": 16,
+  "best_lap_s": 162.641,
+  "make": "Dodge",
+  "model": "Caliber",
+  "generation": "PM (2007-12)",
+  "year": 2007,
+  "body": "hatch",
+  "confidence": "high",
+  "evidence": "Lemons award page id 454: earlier row: EPA Racing '2007 Dodge Caliber'; photos: yellow Hertz-style Caliber with large 40 and engine bay exposed",
+  "dims": {
+   "wheelbase_m": 2.635,
+   "length_m": 4.409,
+   "width_m": 1.75,
+   "height_m": 1.54,
+   "track_m": 1.515,
+   "mass_kg": 1380,
+   "power_kw": 118,
+   "source": "https://en.wikipedia.org/wiki/Dodge_Caliber",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Chrysler World 2.0 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.0,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 118,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#f0d020",
+   "secondary": "#1a1a1a",
+   "accents": [
+    "#d02020"
+   ]
+  },
+  "numbers": {
+   "color": "black on white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Hertz yellow with big black 40 and Hertz decals",
+  "theme": "Hertz rental car",
+  "photos": [
+   "26Butt-040-EPARacing-01.jpg",
+   "26Butt-040-EPARacing-02.jpg",
+   "26Butt-040-EPARacing-01_XL.jpg",
+   "26Butt-040-EPARacing-02_XL.jpg"
+  ],
+  "photo_sightings": 2,
+  "id": "40_bw",
+  "photo_dir": "photos/buttonwillow/40",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "89",
+  "team": "The H.O.N.D.A (R)",
+  "class": "B",
+  "grid": 101,
+  "finish": 101,
+  "class_finish": 43,
+  "laps": 0,
+  "best_lap_s": 0.0,
+  "make": "Unknown",
+  "model": "Unidentified car (The H.O.N.D.A)",
+  "generation": "?",
+  "year": 2000,
+  "body": "sedan",
+  "confidence": "none",
+  "evidence": "No photos in the gallery and no archive record; team name suggests a Honda",
+  "dims": {
+   "wheelbase_m": 2.6,
+   "length_m": 4.5,
+   "width_m": 1.75,
+   "height_m": 1.4,
+   "track_m": 1.5,
+   "mass_kg": 1250,
+   "power_kw": 90,
+   "source": "https://en.wikipedia.org/wiki/Sedan",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Generic 2.0 I4 (placeholder, car not identified)",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.0,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 90,
+   "exhaust_note": "stock muffler",
+   "confidence": "none",
+   "evidence": "None"
+  },
+  "colors": {
+   "primary": "#808080",
+   "secondary": "#c0c0c0",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white on black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Unknown",
+  "theme": "Unknown",
+  "photos": [],
+  "photo_sightings": 0,
+  "id": "89_bw",
+  "photo_dir": "photos/buttonwillow/89",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "6",
+  "team": "Team Tinyvette",
+  "class": "",
+  "grid": null,
+  "finish": 102,
+  "class_finish": 1,
+  "laps": 0,
+  "best_lap_s": 0.0,
+  "make": "Opel",
+  "model": "GT 'Tinyvette'",
+  "generation": "1968-73",
+  "year": 1970,
+  "body": "coupe",
+  "confidence": "high",
+  "evidence": "Team Tinyvette ran an Opel GT 'Tinyvette' at Laguna as #8; renumbered #6 at Buttonwillow per match_laguna.json. No Buttonwillow photos exist in the gallery for #6 [same car as Laguna #8: make/model/dims/engine taken from the Laguna row]",
+  "dims": {
+   "wheelbase_m": 2.43,
+   "length_m": 4.11,
+   "width_m": 1.58,
+   "height_m": 1.22,
+   "track_m": 1.25,
+   "mass_kg": 940,
+   "power_kw": 76,
+   "source": "https://en.wikipedia.org/wiki/Opel_GT",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Opel CIH 1.9 I4 (team-built 2.5 stroker)",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6000,
+   "stock_power_kw": 76,
+   "exhaust_note": "loud open",
+   "confidence": "high",
+   "evidence": "GRM: homebuilt 2.5 Opel CIH stroker"
+  },
+  "colors": {
+   "primary": "#f0d020",
+   "secondary": "#1a1a1a",
+   "accents": [
+    "#d02020"
+   ]
+  },
+  "numbers": {
+   "color": "black on yellow/white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Corvette Racing parody livery",
+  "theme": "Corvette Racing parody",
+  "photos": [],
+  "photo_sightings": 0,
+  "laguna_number": "8",
+  "id": "6",
+  "photo_dir": "photos/buttonwillow/6",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "43",
+  "team": "The Spy Who Drove ….",
+  "class": "",
+  "grid": null,
+  "finish": 103,
+  "class_finish": 2,
+  "laps": 0,
+  "best_lap_s": 0.0,
+  "make": "Unknown",
+  "model": "Unidentified car (The Spy Who Drove)",
+  "generation": "?",
+  "year": 2000,
+  "body": "sedan",
+  "confidence": "none",
+  "evidence": "No photos in the gallery and no archive record for this team (Laguna #43 was a different team)",
+  "dims": {
+   "wheelbase_m": 2.6,
+   "length_m": 4.5,
+   "width_m": 1.75,
+   "height_m": 1.4,
+   "track_m": 1.5,
+   "mass_kg": 1250,
+   "power_kw": 90,
+   "source": "https://en.wikipedia.org/wiki/Sedan",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Generic 2.0 I4 (placeholder, car not identified)",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.0,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 90,
+   "exhaust_note": "stock muffler",
+   "confidence": "none",
+   "evidence": "None"
+  },
+  "colors": {
+   "primary": "#808080",
+   "secondary": "#c0c0c0",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white on black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Unknown",
+  "theme": "Spy theme from the team name",
+  "photos": [],
+  "photo_sightings": 0,
+  "id": "43_bw",
+  "photo_dir": "photos/buttonwillow/43",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "101",
+  "team": "Team Wingo",
+  "class": "",
+  "grid": null,
+  "finish": 104,
+  "class_finish": 3,
+  "laps": 0,
+  "best_lap_s": 0.0,
+  "make": "Unknown",
+  "model": "Unidentified car (Team Wingo)",
+  "generation": "?",
+  "year": 2000,
+  "body": "sedan",
+  "confidence": "none",
+  "evidence": "No photos in the gallery and no archive record",
+  "dims": {
+   "wheelbase_m": 2.6,
+   "length_m": 4.5,
+   "width_m": 1.75,
+   "height_m": 1.4,
+   "track_m": 1.5,
+   "mass_kg": 1250,
+   "power_kw": 90,
+   "source": "https://en.wikipedia.org/wiki/Sedan",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Generic 2.0 I4 (placeholder, car not identified)",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.0,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 90,
+   "exhaust_note": "stock muffler",
+   "confidence": "none",
+   "evidence": "None"
+  },
+  "colors": {
+   "primary": "#808080",
+   "secondary": "#c0c0c0",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white on black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Unknown",
+  "theme": "Unknown",
+  "photos": [],
+  "photo_sightings": 0,
+  "id": "101",
+  "photo_dir": "photos/buttonwillow/101",
+  "event": "buttonwillow"
+ },
+ {
+  "number": "222",
+  "team": "Flog the dead horse",
+  "class": "",
+  "grid": null,
+  "finish": 105,
+  "class_finish": 4,
+  "laps": 0,
+  "best_lap_s": 0.0,
+  "make": "Unknown",
+  "model": "Unidentified car (Flog the dead horse)",
+  "generation": "?",
+  "year": 2000,
+  "body": "sedan",
+  "confidence": "none",
+  "evidence": "No photos in the gallery and no archive record found",
+  "dims": {
+   "wheelbase_m": 2.6,
+   "length_m": 4.5,
+   "width_m": 1.75,
+   "height_m": 1.4,
+   "track_m": 1.5,
+   "mass_kg": 1250,
+   "power_kw": 90,
+   "source": "https://en.wikipedia.org/wiki/Sedan",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Generic 2.0 I4 (placeholder, car not identified)",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.0,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 90,
+   "exhaust_note": "stock muffler",
+   "confidence": "none",
+   "evidence": "None"
+  },
+  "colors": {
+   "primary": "#808080",
+   "secondary": "#c0c0c0",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white on black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Unknown",
+  "theme": "Dead horse theme from the team name",
+  "photos": [],
+  "photo_sightings": 0,
+  "id": "222",
+  "photo_dir": "photos/buttonwillow/222",
+  "event": "buttonwillow"
+ }
+]

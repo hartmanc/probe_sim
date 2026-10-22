@@ -7,10 +7,10 @@ import * as THREE from 'three';
 import { HotlapSim } from '../../scoreboard';
 import { lagunaAssets, autopilot } from '../../scoreboard/__tests__/fixtures';
 import { HotlapLoop } from '../modes/hotlap';
-import { carSound, createRace, modelQueue, newSeed, parseRaceOverrides, raceAiConfig, raceResultFor, RACE_LAPS, type RaceDeps } from '../modes/race';
+import { carSound, createRace, modelQueue, silentEngine, newSeed, parseRaceOverrides, raceAiConfig, raceResultFor, RACE_LAPS, type RaceDeps } from '../modes/race';
 import type { ModeContext, RaceServices } from '../modes/mode';
 import { GLOBAL_IDENTITY, loadIdentityWithFallback, normaliseModelRows, type FieldData } from '../loader';
-import { fieldKey, parseIdentity, type PaceJson } from '../../physics/ai/field';
+import { describeAiCar, fieldKey, modelKey, parseIdentity, resolveCarType, type PaceJson } from '../../physics/ai/field';
 import { TRACKS } from '../../scoreboard/config';
 import { FieldCars, buildPlaceholderCar, identityColor, selectDrawn, triangleCount, PROBE_DIMS, type FieldCarInfo } from '../field-cars';
 import { raceHudView, resultRows } from '../race-hud';
@@ -346,8 +346,14 @@ describe('per-event fields: identity / model by field key (id, else number)', ()
     const ids = bw.cars.map((c) => c.id);
     expect(ids.every((x) => typeof x === 'string')).toBe(true);
     expect(new Set(ids).size).toBe(bw.cars.length);
-    expect(bw.cars.filter((c) => c.id !== c.number).map((c) => c.id).sort()).toEqual(['0_bw', '16_bw', '1_bw', '40_bw', '711_bw', '801_bw', '8_bw', '9_bw']);
-    for (const n of ['38', '189', '544', '619', '670', '963']) expect(bw.cars.find((c) => c.number === n)!.id).toBe(n);
+    // the 11 "_bw" numbers less #43 and #89 (no lap in the session: left out, named in the notes); #670 is a different
+    // car from Laguna's (identity.json), though the team matches
+    expect(bw.cars.filter((c) => c.id !== c.number).map((c) => c.id).sort()).toEqual(['0_bw', '16_bw', '1_bw', '40_bw', '670_bw', '711_bw', '801_bw', '8_bw', '9_bw']);
+    expect(bw.notes).toMatch(/#89 \(89_bw\), #6, #43 \(43_bw\), #101, #222/);
+    // every AI car has an identity row by its id
+    const bwIdent = parseIdentity(readJson('cars/field/buttonwillow/identity.json'));
+    for (const c of bw.cars) if (!c.player) expect(bwIdent.has(fieldKey(c))).toBe(true);
+    for (const n of ['38', '189', '544', '619', '963']) expect(bw.cars.find((c) => c.number === n)!.id).toBe(n);
     expect(bw.cars.filter((c) => c.player).map((c) => c.number)).toEqual(['619']);
     for (const c of bw.cars) { expect(c.targetLap).toBeGreaterThan(100); expect((c.stints ?? []).length).toBeGreaterThan(0); }
   });
@@ -383,6 +389,64 @@ describe('per-event fields: identity / model by field key (id, else number)', ()
       expect(c.id).toBe(c.number);
       if (!c.isPlayer) expect(c.identity?.make).toBe(lagIdent.get(c.number)?.make);
     }
+    race.dispose();
+  }, 60000);
+
+  it('model key: pace model_id, then identity model_id, then id, then number (a renumbered car reuses its model)', () => {
+    expect(modelKey({ number: '6', id: '6', model_id: '8' })).toBe('8');
+    expect(modelKey({ number: '6', id: '6' }, { model_id: '8' })).toBe('8');
+    expect(modelKey({ number: '6', id: '6', model_id: '8' }, { model_id: '9' })).toBe('8');
+    expect(modelKey({ number: '670', id: '670_bw' })).toBe('670_bw');
+    expect(modelKey({ number: '711' })).toBe('711');
+    const rows = normaliseModelRows(readJson('cars/field/models.json'));
+    const cars = [{ id: '6', model: '8', number: '6', isPlayer: false }, { id: '670_bw', model: '670_bw', number: '670', isPlayer: false }, { id: '8_bw', model: '8_bw', number: '8', isPlayer: false }];
+    // #6 shows Laguna #8's Opel GT; Buttonwillow's #670 van and #8 never get Laguna's #670 / #8 models
+    expect(modelQueue(rows, cars, () => 'placeholder').map((q) => [q.car, q.model.file])).toEqual([['6', 'models/8.glb']]);
+  });
+
+  it('a battery-electric car (cylinders 0, layout EV): finite physics, no division by zero, silent in the field audio', () => {
+    const bolt = parseIdentity(readJson('cars/field/buttonwillow/identity.json')).get('16_bw')!;
+    expect(bolt.engine?.layout).toBe('EV');
+    const t = resolveCarType(bolt);
+    expect(t.engineLayout).toBe('EV');
+    expect(t.cylinders).toBe(0);
+    expect(t.turbo).toBe(false);
+    const probe = readJson('cars/probe_gt/car.json');
+    const r = describeAiCar(probe, bolt, 0.5);
+    for (const v of [r.massKg, r.powerKw, r.lateralG, r.topSpeedKph, ...r.gearRatios]) expect(Number.isFinite(v) && v > 0).toBe(true);
+    const engine = { layout: t.engineLayout, cylinders: t.cylinders, exhaustNote: t.exhaustNote };
+    expect(silentEngine(engine)).toBe(true);
+    expect(silentEngine({ layout: 'I4', cylinders: 4 })).toBe(false);
+    const index = { families: { v8: {}, i4: {} }, aliases: [['chevrolet', 'v8']], fallback: [{ cylinders: 4, family: 'i4' }], default: 'i4', cars: {} } as never;
+    const snd = carSound(index, { number: '16', id: '16_bw', identity: bolt, engine });
+    expect(snd.family).toBe('');                       // no borrowed petrol family: the race gives it no voice
+    expect(Number.isFinite(snd.trim) && Number.isFinite(snd.muffler) && Number.isFinite(snd.rpmScale)).toBe(true);
+    // an explicit index row still wins (an electric family some day)
+    expect(carSound({ ...(index as object), cars: { '16_bw': { family: 'i4' } } } as never, { number: '16', id: '16_bw', identity: bolt, engine }).family).toBe('i4');
+  });
+
+  it('a Buttonwillow race with its own identity.json: identity and models by id, #670 the van, #16 the Bolt', async () => {
+    const pick = ['16', '670', '38', '0', '619'];
+    const pace: PaceJson = { ...bw, cars: bw.cars.filter((c) => pick.includes(c.number)) };
+    const field = (): FieldData => ({ pace, identity: readJson('cars/field/buttonwillow/identity.json'), models: normaliseModelRows(readJson('cars/field/models.json')), missing: [] });
+    const asked: string[] = [];
+    const { race } = harness('?seed=42&laps=2', () => 0.5, field, async (f) => { asked.push(f); return null; });
+    race.start();
+    const d = race.director!;
+    const car = (n: string) => d.cars.find((c) => c.number === n)!;
+    expect(car('670').identity!.make).toBe('Dodge');
+    expect(car('16').identity!.model).toMatch(/Bolt/);
+    expect(car('0').id).toBe('0_bw');
+    expect(car('0').identity!.make).not.toBe(lagIdent.get('0')!.make);
+    const ev = d.poses().find((p) => p.number === '16')!;
+    expect(ev.engine.cylinders).toBe(0);
+    expect(Number.isFinite(ev.engine.redline)).toBe(true);
+    for (let k = 0; k < 500; k++) d.step(0.001);
+    expect(Number.isFinite(car('16').vehicle.state.pos[0])).toBe(true);
+    await new Promise((r) => setTimeout(r, 0));
+    expect(asked).toContain('models/38.glb');
+    expect(asked).not.toContain('models/670.glb');
+    expect(asked).not.toContain('models/0.glb');
     race.dispose();
   }, 60000);
 });

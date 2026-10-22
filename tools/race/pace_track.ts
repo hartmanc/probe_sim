@@ -20,7 +20,9 @@
 //       (`player: true`, its real grid slot, never an AI car) as in Laguna's file. Every car carries `id`: its number,
 //       except a number that belongs to a DIFFERENT Laguna car (public/cars/field/pace.json numbers, not `same` in
 //       match_laguna.json) gets "<number>_<id>" (Buttonwillow: "0_bw"), so its identity / model never resolve to the
-//       Laguna car's. Fitted scales of an earlier file are kept per id and stint while ai_version and the target match.
+//       Laguna car's. When the track's own identity.json exists its row for a number decides the id (a matched team
+//       may race a different car: Buttonwillow #670 "670_bw") and the model (`model_id`, else `laguna_number` of a
+//       renumbered car). Fitted scales of an earlier file are kept per id and stint while ai_version and the target match.
 //
 // Inputs in <data>: sessions_<session>_classification.json and laps/posNNN.json (MyLaps / Speedhive event results
 // API, eventresults/sessions/<session>/classification and .../lapdata/<position>/laps), match_laguna.json.
@@ -34,6 +36,7 @@ import { loadTrackPack, loadProbeJson, loadPace, pacePath, trackArg, ROOT } from
 import { carPace, parseLap as officialLap } from './pace_rules';
 import { aggressionFor } from '../../src/physics/ai/rng';
 import { runSolo } from '../../src/physics/ai/solo';
+import { TRACKS } from '../../src/scoreboard/config';
 import { AI_VERSION, type PaceCar, type PaceJson, type PaceStint } from '../../src/physics/ai/field';
 
 const ARGV = process.argv.slice(2);
@@ -111,6 +114,13 @@ function ownField(): void {
   const lagunaNumbers = new Set(src.cars.map((c) => c.number));
   const sameCar = new Set(match.cars.filter((m: any) => m.status === 'same' && m[numKey] === m.laguna_number).map((m: any) => String(m.laguna_number)));
   const idFor = (n: string) => (lagunaNumbers.has(n) && !sameCar.has(n) ? `${n}_${TRACK === 'buttonwillow' ? 'bw' : TRACK}` : n);
+  // the track's own identity.json (TRACKS[id].identity), when written, is the authority on ids: its row for a number
+  // gives the id (Buttonwillow #670 is a different car from Laguna's #670 though the team matches: "670_bw") and the
+  // model (`model_id`, else `laguna_number` when the car was renumbered: #6 Tinyvette = Laguna #8 -> model_id "8")
+  const ownIdent = TRACKS[TRACK].identity ? resolve(ROOT, 'public', TRACKS[TRACK].identity!) : null;
+  const identRows: any[] = ownIdent && existsSync(ownIdent) ? (([j]) => (Array.isArray(j) ? j : j.cars ?? []))([JSON.parse(readFileSync(ownIdent, 'utf8'))]) : [];
+  const identBy = new Map(identRows.filter((r) => r?.number != null).map((r) => [String(r.number), r]));
+  const fromIdent: string[] = [];
   const prev: PaceJson | null = existsSync(pacePath(TRACK)) ? JSON.parse(readFileSync(pacePath(TRACK), 'utf8')) : null;
   const keepScales = prev?.ai_version === AI_VERSION;
   const prevBy = new Map((prev?.cars ?? []).map((c) => [c.id ?? c.number, c]));
@@ -122,7 +132,11 @@ function ownField(): void {
     if (!j) throw new Error(`no ${TRACK} lap file for #${number}`);
     // an entrant with no timed lap in the session (did not start) has no pace of its own: left out, named in `source`
     if (!j.laps.length || !(r.numberOfLaps > 0)) { noLaps.push(number); continue; }
-    const id = idFor(number);
+    const row = identBy.get(number);
+    const id = row?.id != null ? String(row.id) : idFor(number);
+    if (id !== idFor(number)) fromIdent.push(`#${number} ${id} (match rule: ${idFor(number)})`);
+    const lagN = row?.laguna_number != null ? String(row.laguna_number) : null;
+    const model_id = row?.model_id != null ? String(row.model_id) : lagN && lagN !== number && lagN !== id ? lagN : undefined;
     const p = prevBy.get(id);
     const same = p?.number === number;
     const pc = carPace(j.laps, officialLap(r.bestTime), (k, target) => {
@@ -130,7 +144,7 @@ function ownField(): void {
       return old && old.targetLap === target && old.scale !== undefined ? { scale: old.scale, achievedLap: old.achievedLap } : null;
     });
     out.push({
-      id, number, team: r.name, class: r.resultClass, grid: j.lapDataInfo.participantInfo.startPos, finish: r.position,
+      id, ...(model_id ? { model_id } : {}), number, team: r.name, class: r.resultClass, grid: j.lapDataInfo.participantInfo.startPos, finish: r.position,
       classFinish: r.positionInClass, lapsCompleted: r.numberOfLaps,
       greenLaps: pc.greenLaps, targetLap: pc.targetLap, bestLap: pc.bestLap, sigma: pc.sigma,
       aggression: aggressionFor(number, r.resultClass),
@@ -147,8 +161,13 @@ function ownField(): void {
     ai_version: AI_VERSION,
     source: arg('source') ?? `MyLaps session ${SESSION} (${label}): ${out.length} of its ${cls.rows.length} entrants from their own laps (${ai.length} AI cars + the player's `
       + `#${PLAYER} as a reference row; ${noLaps.length ? `left out with no lap in the session: ${noLaps.map((n) => '#' + n).join(', ')}` : 'none left out'}), `
-      + `tools/race/pace.ts rules (tools/race/pace_rules.ts); ids = numbers except ${renamed.length} numbers of a different `
-      + `Laguna car (${dirname(matchPath).replace(ROOT + '/', '')}/match_laguna.json not 'same'): ${renamed.join(', ')}; tools/race/pace_track.ts --own`,
+      + `tools/race/pace.ts rules (tools/race/pace_rules.ts); ids from ${identRows.length ? TRACKS[TRACK].identity : 'the match rule'}: numbers except ${renamed.length} of a different `
+      + `car at Laguna: ${renamed.join(', ')}; tools/race/pace_track.ts --own`,
+    notes: `Ids: a number that is a different car at Laguna gets "<n>_bw" (${dirname(matchPath).replace(ROOT + '/', '')}/match_laguna.json not 'same'`
+      + `${fromIdent.length ? `, overridden by ${TRACKS[TRACK].identity}: ${fromIdent.join(', ')}` : ''}). `
+      + (noLaps.length ? `Left out: ${noLaps.map((n) => `#${n}${identBy.get(n)?.id && identBy.get(n).id !== n ? ` (${identBy.get(n).id})` : ''}`).join(', ')}, entrants with no lap in the session `
+        + `(classified ${noLaps.map((n) => cls.rows.find((r: any) => String(r.startNumber) === n).position).join(', ')} with 0 laps): with no clean laps there is no pace or stint to draw, `
+        + `the rule of tools/race/pace.ts (a car's pace is its own clean laps) has nothing to build them from. Their identity rows stay in identity.json.` : 'No entrant left out.'),
     track: TRACK,
     cars: out,
   };
@@ -157,6 +176,7 @@ function ownField(): void {
   const noStint = ai.filter((c) => !(c.stints ?? []).length);
   console.log(`${out.length} cars (${ai.length} AI), ${ai.reduce((a, c) => a + (c.stints?.length ?? 0), 0)} AI stints; ${noStint.length} AI cars without a stint `
     + `(car-level pace): ${noStint.map((c) => `#${c.number} (${c.greenLaps} green laps)`).join(', ') || 'none'}`);
+  if (fromIdent.length) console.log(`ids from ${TRACKS[TRACK].identity}: ${fromIdent.join(', ')}`);
   console.log(`renamed ids: ${renamed.join(', ')}; left out (no laps): ${noLaps.join(', ') || 'none'}`);
   console.log(`wrote ${pacePath(TRACK)}`);
 }

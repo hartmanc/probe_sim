@@ -5,7 +5,7 @@ export { RaceLine } from './line';
 export type { GhostsJsonLike, LineProjection } from './line';
 export { AiDriver } from './driver';
 export type { AiDriverParams, DriverControl } from './driver';
-export { AI_VERSION, parseIdentity, fieldKey, resolveCarType, aiCarJson, buildAiSpec, describeAiCar, measureCarPerf, buildSpeedProfile } from './field';
+export { AI_VERSION, parseIdentity, fieldKey, modelKey, resolveCarType, aiCarJson, buildAiSpec, describeAiCar, measureCarPerf, buildSpeedProfile } from './field';
 export type { PaceCar, PaceJson, IdentityCar, IdentityEngine, CarType, ResolvedCar, CarPerf } from './field';
 export { Traffic } from './traffic';
 export { Rng, hashSeed, aggressionFor } from './rng';

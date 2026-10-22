@@ -1,6 +1,7 @@
 {
  "ai_version": 8,
- "source": "MyLaps session 12906863 (Buttonwillow Raceway Park, Button Turrible 2026 (24 Hours of Lemons, 26-27 Sep 2026)): 100 of its 105 entrants from their own laps (99 AI cars + the player's #619 as a reference row; left out with no lap in the session: #89, #6, #43, #101, #222), tools/race/pace.ts rules (tools/race/pace_rules.ts); ids = numbers except 8 numbers of a different Laguna car (tools/race/data/buttonwillow/match_laguna.json not 'same'): 1_bw, 9_bw, 8_bw, 801_bw, 0_bw, 40_bw, 711_bw, 16_bw; tools/race/pace_track.ts --own",
+ "source": "MyLaps session 12906863 (Buttonwillow Raceway Park, Button Turrible 2026 (24 Hours of Lemons, 26-27 Sep 2026)): 100 of its 105 entrants from their own laps (99 AI cars + the player's #619 as a reference row; left out with no lap in the session: #89, #6, #43, #101, #222), tools/race/pace.ts rules (tools/race/pace_rules.ts); ids from cars/field/buttonwillow/identity.json: numbers except 9 of a different car at Laguna: 1_bw, 9_bw, 8_bw, 801_bw, 670_bw, 0_bw, 40_bw, 711_bw, 16_bw; tools/race/pace_track.ts --own",
+ "notes": "Ids: a number that is a different car at Laguna gets \"<n>_bw\" (tools/race/data/buttonwillow/match_laguna.json not 'same', overridden by cars/field/buttonwillow/identity.json: #670 670_bw (match rule: 670)). Left out: #89 (89_bw), #6, #43 (43_bw), #101, #222, entrants with no lap in the session (classified 101, 102, 103, 104, 105 with 0 laps): with no clean laps there is no pace or stint to draw, the rule of tools/race/pace.ts (a car's pace is its own clean laps) has nothing to build them from. Their identity rows stay in identity.json.",
  "track": "buttonwillow",
  "cars": [
   {
@@ -3866,7 +3867,7 @@
    ]
   },
   {
-   "id": "670",
+   "id": "670_bw",
    "number": "670",
    "team": "Bernal Dads Racing",
    "class": "C",
