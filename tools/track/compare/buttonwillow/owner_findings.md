@@ -154,3 +154,10 @@ build). Notes as given, before bed:
     20-80 m band of the width has p95 1.14 m and max 1.8 m (s 1419), on straights p95 0.72 m; the agent's own round-8 note said
     the dirt and the asphalt are within 18 grey levels on the captures. The edge gate measures smoothness against a 41-station
     median and adjacent steps, not truth against a width prior, so a 20-80 m wander passes it.
+    Owner's zoomed crops of the capture windows (owner/owner_lap3_edges_117..119.png): at s ~4354 both fitted edges sit 1-2 m
+    OUTSIDE the asphalt, the left one beyond the painted kerb band (the owner's convention puts the edge at the kerb's inside);
+    at s 4445-4505 the north edge runs in the dirt above the asphalt and the south edge on the kerb's outer side; at s 4154-4204
+    the left edge runs ~2 m into the dirt at the service-road junction. Owner: "This is really the best the fitter can do here?
+    In many of these, at least one edge seems clearly detectable. If you assume a constant width, at least as a starting point,
+    to find the opposite edge, I think that would get you pretty close." So the detector is BIASED outward (it reads the far
+    side of the bleached shoulder), not merely noisy; the kerb bands are the reliable edge wherever they exist.
