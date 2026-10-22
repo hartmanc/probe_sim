@@ -38,6 +38,10 @@ example; the scripts Laguna was built with step by step (17-18 Oct) are in git h
 - **One Opus subagent per stage, in sequence.** No swarms. Hand back numbers, not images. If a stage cannot be
   done from the data (lidar missing, fit impossible, line inconsistent with the paint), stop and report what it
   would take; never hand-edit heights or edges.
+- **Owner checkpoint after edge detection (owner, 22 Oct 2026).** Stage 1 ends with the fitted edges drawn over
+  the clean captures for the whole lap, published as one page the owner can walk, and the round STOPS there. Nothing
+  downstream (stage 2, stage 3, a drive, a judge, a preview) is built until the owner has reviewed the outline and
+  advised. The same holds for any later edge refit. See "Owner checkpoint after edge detection" under stage 1.
 - **Source precedence on any conflict:** recent onboard video (team GoPro, current-season series onboard) beats
   Google satellite beats the NAIP ortho beats OSM beats the lidar survey year. Check the repave and runoff history
   of the circuit before trusting the survey (Laguna: 2017 lidar, 2023 full repave, 2025 paved runoff).
@@ -64,6 +68,7 @@ example; the scripts Laguna was built with step by step (17-18 Oct) are in git h
 W='numpy,scipy,rasterio,pyproj,shapely,pillow,requests,pandas,matplotlib,laspy[lazrs]'
 B="uv run --python 3.12 --with $W python -I tools/track/build_track.py --track <id>"
 $B --stage geometry      # stage 1: track.json, heightfield.bin, ortho.jpg in tools/track/out/<id>/ (+ work/)
+                         # OWNER CHECKPOINT: edges over the captures as one page; stop; wait for the owner's review
 $B --stage ghosts        # stage 2: ghosts.json (no logger: racing line only)
 $B --stage scenery       # stage 3: scenery.json, far_*; post steps; edge and barrier gates
 $B --publish             # all stages, then copy to public/tracks/<id>/ (refuses to replace a package without --overwrite-package)
@@ -292,7 +297,26 @@ t2_spline_fit/). Do this instead:
    station, observation residuals (90 %+ within 0.25 m) and coverage, plus hood-cam frames; pit-lane and apron
    boundaries are moved onto the new edge by the script.
 
-## Stage 2: ghosts and racing line (`build_track.py --stage ghosts`, i.e. `tools/ghosts/build_ghosts.py --config <id> --track-dir <dir>`)
+### Owner checkpoint after edge detection (owner, 22 Oct 2026)
+
+Stage 1 is not finished when its gates pass; it is finished when the owner has looked at the edges. Buttonwillow
+showed why: its fitted edges passed every numeric gate and three judge rounds, and the owner found them 1 to 2 m
+outside the asphalt on his third lap, after five scenery checkpoints had been built on them. An edge error is
+obvious on an outline over the capture at once and costs a whole round once it is under a 3D track.
+
+1. **Render the outline.** The fitted edges over the clean captures (`compare/capwin.py --raw` with the edges as
+   `--poly`), the whole lap in windows of about 150 m at 0.12 m/px every 125 m, plus close-ups at 0.06 m/px wherever
+   the fit is uncertain (weak contrast, a junction, a kerb the fit sits outside), each window captioned with its
+   stations and the width the fit uses there. Put them on one page (`tools/track/compare/<id>/edges_r<n>/index.html`)
+   and publish it as an artifact the owner can walk; the page, not the gate numbers, is the deliverable.
+2. **Stop.** Commit the geometry and the page; do not run stage 2, stage 3, a drive, a judge pass or a preview.
+   Report the gate numbers, the per-section widths and what anchored them, and where the fit still disagrees with
+   a kerb band or a painted line by more than 0.3 m.
+3. **Wait for the owner's review and advice.** He marks the windows that are wrong (the digitisers in `compare/`
+   read his strokes: `owner_edges.py`, `owner_marks.py`); the next round refits from his evidence and renders the
+   outline again. Only an outline he has accepted goes on to stage 2.
+4. **The same for every later edge refit**, however local: render the refitted stretch over its captures and get
+   the owner's look before anything downstream is rebuilt on it. (`build_track.py --stage ghosts`, i.e. `tools/ghosts/build_ghosts.py --config <id> --track-dir <dir>`)
 
 Output: `ghosts.json`, `work/preview_ghosts.png`, `work/kappa_check.png`. Config `logger_*`, `ghosts` (margin,
 kerb_margin, nudge, jerk_w, implied_g_turns, implied_g_exempt, kappa_drivers).
