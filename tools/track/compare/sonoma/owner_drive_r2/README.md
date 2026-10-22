@@ -247,3 +247,33 @@ Verdict: "a disappointing output that was not ready for me to review."
     other side." Context: the owner's rule for the kerb gate on every track: "Lifting a wheel isn't inherently a realism
     issue. Driving over a kerb and rolling over is an issue." (a wheel lift is advisory, roll past 15 degrees / rollover
     stays the hard check). To read off the kerb sweep's advisory lift numbers for the T3 inside run when it is re-run.
+
+# Owner drive, Sonoma round 10 preview (c88c0a8, probe-37ahctxt7), 21 Oct 2026 evening (notes 63-68; "will finish giving notes later")
+
+63. T7: "Weirdness at T7 where part of the track is not in-use. It should have the same texture as everything else. Also, not
+    clear to me if this kerb should be here to block off the 'normal' T7 (just cones)". The unused part of the T7 complex (the
+    normal T7 line, closed in the Lemons layout) must carry the track's own surface, and the kerb drawn across its mouth is in
+    question: the footage shows cones there (note 57: pylons at the drag-strip fork; check the T7 mouth frames t072 / 1:12-1:14).
+64. Facing backwards toward the start of the T7 complex (owner_64_T7_complex_wiggly_line.png): "I don't think this line should be
+    wiggly. It should be straight". The white edge line on the right of the picture waves along the straight; a straight
+    (fitted, not traced) edge line there.
+65. T10 (owner_65_T10_sunken_wall.png): "Weird sunken wall at T10. Also the grass is not green, which seems to imply a feature is
+    missing or a painted-on sign in the grass is missing". A black tyre wall on the right sits below the track level with its top
+    near the ground; the verge is tan where the real one is green (a painted sign or a feature in the grass to be read from the
+    captures / onboard at T10).
+66. Infield building (owner_66_infield_building.png, from the pit-out / front-straight side looking across the infield): "I think
+    the infield building here should be taller. Or maybe one is missing?" The long low building beyond the wall reads too low;
+    check the lidar heights and the captures for a taller building or a missing one.
+67. A dark texture line with no wall (owner_67_missing_wall_dark_line.png, the front-straight / T1 area with the hillside and the
+    catch fence on the right): "Seems like there is a wall missing along this dark texture line. Without it, there is a tire wall
+    that abruptly starts, with an end that someone could smash into at speed. As a general rule, the wall transition shown in the
+    sim generally don't exist because they are extremely dangerous". Rule for the ledger: a tyre wall never starts bare in open
+    space; the dark line on the ground is the wall it joins. The wall-ends gate must catch a bare tyre-wall head facing travel.
+68. Before T11 (owner_68_T11_texture.png, the pit-in / T11 approach): "Texture issue before T11": pale patches and a tone step on
+    the pavement left of the car, the pit-in lane's paving against the track.
+
+Physics note (owner_physics_tyre_wall_penetration.png): "I can drive into the tires in a tire wall". The car passes into the tyre
+wall mesh: tyre walls need a solid collider like the concrete walls (an app / physics fix, not a track round).
+
+Game note (owner_game_rollover.png, the car on its side at the T11 wall): "we should make a game over screen (just like when you
+blast into space) if you roll the car, and it should say you've been banned for Lemons for 1 year for rolling your hooptie".
