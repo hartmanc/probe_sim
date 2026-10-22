@@ -35,6 +35,7 @@ export const CHANGELOG: ChangeEntry[] = [
       'AI drivers at Sonoma: fewer collisions and spins than at Laguna (lane changes capped by spare grip, passing cars keep a margin); Laguna’s drivers are unchanged.',
       'Sonoma’s kerbs are 5 cm raised concrete; a kerb traversal check keeps every kerb on every track from lifting a wheel at racing speed.',
       'Per-track scoreboards: a rebuilt circuit opens its own boards without resetting the others.',
+      'Tyre walls are solid now, like the concrete ones, and rolling the car ends the run: “You are banned from Lemons for one year for rolling your hooptie”.',
     ],
   },
   {

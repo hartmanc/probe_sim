@@ -24,7 +24,9 @@ export interface KindProps {
 export const KIND_PROPS: Record<CollisionKind, KindProps> = {
   concrete: { restitution: 0.25, friction: 0.6, launches: true, soft: false },
   armco: { restitution: 0.3, friction: 0.6, launches: true, soft: false },
-  tyres: { restitution: 0.1, friction: 0.6, launches: true, soft: true },  // launches only above LAUNCH_SPEED_SOFT
+  // tyre walls are solid like concrete (Sonoma owner note, 22 Oct 2026: "I can drive into the tires in a tire wall"; the
+  // spring-damper let the car sink in), with a low restitution: the stacks absorb the hit rather than bounce it back
+  tyres: { restitution: 0.1, friction: 0.6, launches: true, soft: false },
   pitwall: { restitution: 0.25, friction: 0.6, launches: true, soft: false },
   fence: { restitution: 0.05, friction: 0.6, launches: false, soft: true },
   building: { restitution: 0.25, friction: 0.6, launches: true, soft: false },
@@ -45,6 +47,27 @@ export interface SceneryCollisionJson {
   trees?: PackedTrees | null;
   far_trees?: PackedTrees | null;
   landmarks?: { kind: string; x: number; y: number; z: number; h?: number }[];
+}
+
+/** The tyre wall as the app draws it (src/app/scenery.ts): stacks of radius TYRE_WALL.r every 0.62 m in two staggered
+ *  rows, row 0 on the run's line and row 1 TYRE_WALL.row m to its LEFT (direction of the points). */
+export const TYRE_WALL = { r: 0.31, row: 0.6, stagger: 0.31 } as const;
+/** Contact begins this far from a wall segment's line (vehicle.ts WALL_HALF_THICKNESS). */
+const WALL_SKIN = 0.1;
+
+/** The polyline offset by d m to its left (per-vertex mitred normal, the miter capped at 2 x d). */
+export function offsetLeft(pts: number[][], d: number): number[][] {
+  const n = pts.length, out: number[][] = [];
+  const nrm = (a: number[], b: number[]) => { const dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1; return [-dy / l, dx / l]; };
+  for (let i = 0; i < n; i++) {
+    const na = i > 0 ? nrm(pts[i - 1], pts[i]) : nrm(pts[i], pts[i + 1]);
+    const nb = i < n - 1 ? nrm(pts[i], pts[i + 1]) : na;
+    let mx = na[0] + nb[0], my = na[1] + nb[1]; const ml = Math.hypot(mx, my);
+    if (ml < 1e-9) { mx = nb[0]; my = nb[1]; } else { mx /= ml; my /= ml; }
+    const c = mx * nb[0] + my * nb[1]; const k = Math.min(2, 1 / Math.max(c, 0.5));
+    out.push([pts[i][0] + mx * d * k, pts[i][1] + my * d * k, pts[i][2] ?? 0]);
+  }
+  return out;
 }
 
 export interface CollisionWorldOptions {
@@ -187,7 +210,25 @@ export function createCollisionWorld(scenery: SceneryCollisionJson | null | unde
   const cyls: number[][] = [];
   const sc = scenery ?? {};
 
+  // a tyre run collides at the faces of its drawn stacks: its two outer faces as wall lines (contact WALL_SKIN before
+  // the face) and a stack-sized post at each row's ends
+  const runs: { kind: string; h: number; fence?: number; pts: number[][] }[] = [];
   for (const b of sc.barriers ?? []) {
+    if (b.kind !== 'tyres' || !Array.isArray(b.pts) || b.pts.length < 2) { runs.push(b); continue; }
+    const P = b.pts.filter((p, i) => i === 0 || Math.hypot(p[0] - b.pts[i - 1][0], p[1] - b.pts[i - 1][1]) >= 1e-3);
+    if (P.length < 2) continue;
+    runs.push({ ...b, pts: offsetLeft(P, -(TYRE_WALL.r - WALL_SKIN)) });
+    runs.push({ ...b, pts: offsetLeft(P, TYRE_WALL.row + TYRE_WALL.r - WALL_SKIN) });
+    const kt = KIND_CODE('tyres'), h = Math.max(0, b.h ?? 1), fence = Math.max(0, b.fence ?? 0);
+    for (const [p, q, sgn] of [[P[0], P[1], 1], [P[P.length - 1], P[P.length - 2], -1]] as const) {
+      const l = Math.hypot(q[0] - p[0], q[1] - p[1]), tx = (q[0] - p[0]) / l, ty = (q[1] - p[1]) / l;
+      const lx = sgn > 0 ? -ty : ty, ly = sgn > 0 ? tx : -tx;   // the run's left normal at this end
+      const zb = p[2] ?? 0;
+      cyls.push([p[0], p[1], TYRE_WALL.r, zb, zb + h, zb + h + fence, kt]);
+      cyls.push([p[0] + lx * TYRE_WALL.row + tx * TYRE_WALL.stagger, p[1] + ly * TYRE_WALL.row + ty * TYRE_WALL.stagger, TYRE_WALL.r, zb, zb + h, zb + h + fence, kt]);
+    }
+  }
+  for (const b of runs) {
     const pts = b.pts;
     if (!Array.isArray(pts) || pts.length < 2) continue;
     const isFence = b.kind === 'fence';

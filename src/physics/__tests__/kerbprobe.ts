@@ -6,6 +6,7 @@ import { buildAiSpec, buildSpeedProfile, measureCarPerf } from '../ai/field';
 import { AiDriver } from '../ai/driver';
 import { Traffic } from '../ai/traffic';
 import { kerbBandCentre } from '../track';
+import { rollOf, ROLLOVER_RAD } from '../rollover';
 import { RaceLine } from '../ai/line';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -91,13 +92,6 @@ function bandLat(p: KerbPack, kind: 'kerb' | 'sausage', st: any, s: number): num
   return edge + st.side * off;
 }
 
-function rollOf(q: readonly number[], n: [number, number, number]): number {
-  const [x, y, z, w] = q;
-  const ey = [2 * (x * y - z * w), 1 - 2 * (x * x + z * z), 2 * (y * z + x * w)];
-  const ez = [2 * (x * z + y * w), 2 * (y * z - x * w), 1 - 2 * (x * x + y * y)];
-  return Math.atan2(ey[0] * n[0] + ey[1] * n[1] + ey[2] * n[2], ez[0] * n[0] + ez[1] * n[1] + ez[2] * n[2]);
-}
-
 const profCache = new WeakMap<object, Float64Array>();
 function lineProfile(p: KerbPack, probe: any): Float64Array {
   let pr = profCache.get(p.line);
@@ -158,7 +152,7 @@ function drive(p: KerbPack, surface: Surface, probe: any, c: TraversalCase, sA: 
     const g = plain.sample(s2.pos[0], s2.pos[1]);
     const r = rollOf(s2.quat, [g.nx, g.ny, g.nz]);
     if (Math.abs(r) > roll) roll = Math.abs(r);
-    if (Math.abs(r) > Math.PI / 3) rolled = true;
+    if (Math.abs(r) > ROLLOVER_RAD) rolled = true;
     const [x, y, z, w] = s2.quat;
     const ex = [1 - 2 * (y * y + z * z), 2 * (x * y + z * w), 2 * (x * z - y * w)];
     const rr = Math.abs(ex[0] * s2.angVel[0] + ex[1] * s2.angVel[1] + ex[2] * s2.angVel[2]);

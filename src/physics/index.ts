@@ -14,3 +14,4 @@ export { deriveGearSchedule, scheduleGearAt, scheduleTargetAt, shiftRpmSummary }
 export type { GearSchedule, GhostLapLike } from './gearschedule';
 // Race mode (src/physics/ai/NOTES.md): AI field, race director, car-vs-car contacts.
 export * as race from './ai/index';
+export { ROLLOVER_RAD, rollOf, isRolledOver } from './rollover';

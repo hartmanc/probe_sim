@@ -41,6 +41,7 @@ import { ScoreboardClient, buildHotlapSubmission, checkHotlap, hotlapBoard, offe
 import { ScoreboardUI } from './scoreboard-ui';
 import { TRACK, TRACK_ID, TRACK_IDS, urlForTrack } from './track-choice';
 import { TRACKS } from '../scoreboard/config';
+import { ROLLOVER_LINE, RolloverWatch } from './rollover';
 
 // The player's car runs in HotlapSim (src/scoreboard/sim.ts): 1000 Hz physics, 200 Hz timing, input sampled on a
 // 100 Hz grid, rolling start 230 m before the last corner (Laguna: T11) at 22 m/s. Its constants live in
@@ -336,12 +337,19 @@ function createSim(assets: Assets) {
   const marks = new TrackMarks(world.scene, (x, y) => surface.sample(x, y));
 
   // space-launch easter egg: camera follows the car up, GAME OVER after 2.5 s, reset clears it
+  // the rollover game over (owner game note): the same card when the car rolls over, the same reset clears it
   let launchSeenAt = -1, gameOverShown = false, lastImpactT = -1;
+  const rollWatch = new RolloverWatch();
   function clearLaunch(): void {
     launchSeenAt = -1; gameOverShown = false; lastImpactT = -1;
+    rollWatch.reset();
     cams.setLaunched(false);
     hud.hideGameOver();
   }
+
+  const gameOverHint = (label: string, verb: string): string => (input.source === 'touch' ? `Tap ${label}`
+    : input.source === 'gamepad' && input.padId ? `Press ${input.glyph('select')} or ${input.glyph('reset')} to ${verb}`
+      : `Press ${input.glyph('reset')} or Enter to ${verb}`);
 
   /** Race recovery only (not replayed): put the current vehicle on the centreline at s. Hot lap never calls it. */
   const placeCar = (s: number, speed: number) => {
@@ -563,10 +571,7 @@ function createSim(assets: Assets) {
       // race: a space launch ends the player's race (result = distance so far); the main button shows the results
       const race = mode()?.id === 'race';
       const label = race ? 'Results' : 'Reset';
-      const verb = race ? 'see the results' : 'reset';
-      const hint = input.source === 'touch' ? `Tap ${label}`
-        : input.source === 'gamepad' && input.padId ? `Press ${input.glyph('select')} or ${input.glyph('reset')} to ${verb}`
-          : `Press ${input.glyph('reset')} or Enter to ${verb}`;
+      const hint = gameOverHint(label, race ? 'see the results' : 'reset');
       // the car's actual speed at the impact (the normal component only decides whether it launches)
       const hitSpeed = st.impact?.speed ?? st.impact?.speedNormal ?? 0;
       const mph = Math.round(hitSpeed * 2.236936);
@@ -580,6 +585,17 @@ function createSim(assets: Assets) {
           extra: [{ label: 'Race again (new seed)', run: () => { hud.hideGameOver(); modes.restart(); dirty = true; } }],
         } : {}),
       });
+    }
+    if (!st.launched && !gameOverShown) {
+      const g = surface.sample(st.pos[0], st.pos[1]);
+      if (rollWatch.update(st.quat, [g.nx, g.ny, g.nz], now)) {
+        gameOverShown = true;
+        hud.showGameOver(Math.abs(st.speed), {
+          resetLabel: 'Reset', hint: gameOverHint('Reset', 'reset'), line: ROLLOVER_LINE,
+          onReset: () => { mode()?.reset(); dirty = true; },
+          onMenu: () => { hud.hideGameOver(); showMainMenu(); },
+        });
+      }
     }
     car.pose(st);
     marks.car(0, st, dt);
