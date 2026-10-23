@@ -1040,6 +1040,10 @@ CONFIG = dict(
         pit_exit_cones=dict(latlon=[(38.1620421, -122.4562996), (38.1620425, -122.4563325), (38.1620429, -122.4563653), (38.1620433, -122.4563982), (38.1620438, -122.4564311), (38.1620442, -122.4564639), (38.1620446, -122.4564968), (38.1620450, -122.4565297), (38.1620455, -122.4565626), (38.1620459, -122.4565954), (38.1620463, -122.4566283), (38.1620467, -122.4566612), (38.1620472, -122.4566941), (38.1620476, -122.4567269), (38.1620480, -122.4567598), (38.1620484, -122.4567927), (38.1620489, -122.4568256), (38.1620493, -122.4568584), (38.1620497, -122.4568913), (38.1620502, -122.4569242), (38.1620506, -122.4569570), (38.1620510, -122.4569899), (38.1620514, -122.4570228)], spacing=17.0, color='#e5c21e', size=0.5,
                             src='round 7e (owner notes 55-56): the straight pit-out blend line from the west end of the pit-side wall s 134-158 (c20_s1815 / c20_s1870), along the paint on c20_s1870 / c20_s1925 (100 % picked, rms 0.044 m), 63.3 m (owner_56 drawing scaled by the wall), s 158-222; 2025 pit-out video 24of8fjjAug t=304: small yellow cones (~0.5 m) on the double yellow line, 15-20 m apart (17 m used); t=300: none before the nose'),
         paint_lines_declared=[
+            # round 13 part B (owner note 135): the centre line of the drag strip's continuation past the T7 fork (a light grey
+            # solid line on c20_s3740..s3960, from the T7 junction to ~70 m short of the fork)
+            dict(latlon=[(38.1663426, -122.4621473), (38.1663200, -122.4621118), (38.1662976, -122.4620761), (38.1662752, -122.4620403), (38.1662530, -122.4620044), (38.1662306, -122.4619686), (38.1662084, -122.4619327), (38.1661861, -122.4618968), (38.1661639, -122.4618609), (38.1661415, -122.4618251), (38.1661192, -122.4617893), (38.1660969, -122.4617535), (38.1660745, -122.4617177), (38.1660522, -122.4616819), (38.1660300, -122.4616460), (38.1660078, -122.4616100), (38.1659856, -122.4615741), (38.1659633, -122.4615383), (38.1659411, -122.4615023), (38.1659189, -122.4614664), (38.1658966, -122.4614305), (38.1658743, -122.4613946), (38.1658521, -122.4613588), (38.1658298, -122.4613230), (38.1658075, -122.4612871), (38.1657852, -122.4612513), (38.1657629, -122.4612154), (38.1657407, -122.4611794), (38.1657185, -122.4611435), (38.1656963, -122.4611076), (38.1656739, -122.4610718), (38.1656514, -122.4610362), (38.1656288, -122.4610007), (38.1656062, -122.4609652), (38.1655836, -122.4609296), (38.1655610, -122.4608941), (38.1655384, -122.4608586), (38.1655158, -122.4608230), (38.1654989, -122.4607964)], width=0.12, color='#cfcfc8',
+                 src='c20_s3740 / c20_s3795 / c20_s3905 / c20_s3960: the continuation centre line, wall_measure bright 175 m, 85 % picked, rms 0.02 m (round 13 part B)'),
             dict(latlon=[(38.1620421, -122.4562996), (38.1620425, -122.4563325), (38.1620429, -122.4563653), (38.1620433, -122.4563982), (38.1620438, -122.4564311), (38.1620442, -122.4564639), (38.1620446, -122.4564968), (38.1620450, -122.4565297), (38.1620455, -122.4565626), (38.1620459, -122.4565954), (38.1620463, -122.4566283), (38.1620467, -122.4566612), (38.1620472, -122.4566941), (38.1620476, -122.4567269), (38.1620480, -122.4567598), (38.1620484, -122.4567927), (38.1620489, -122.4568256), (38.1620493, -122.4568584), (38.1620497, -122.4568913), (38.1620502, -122.4569242), (38.1620506, -122.4569570), (38.1620510, -122.4569899), (38.1620514, -122.4570228)], width=0.1, double=0.3, color='#d9b42a',
                  src='round 7e pit-out blend line (as the pit-exit cones: straight from the pit-side wall s 134-158, c20_s1815 / c20_s1870 / c20_s1925, owner_56); colour: the 2025 pit-out video 24of8fjjAug t=304 (double yellow)'),
         ],
@@ -1059,13 +1063,17 @@ CONFIG = dict(
         kerb_lines=[
             dict(latlon=[(38.1667106, -122.4620068), (38.1666918, -122.461982), (38.1666742, -122.461956), (38.166659, -122.4619276), (38.1666438, -122.4619002), (38.166626, -122.4618744), (38.1666101, -122.4618461), (38.1665948, -122.4618172), (38.1665754, -122.4617939), (38.1665542, -122.4617719), (38.1665356, -122.4617471), (38.1665181, -122.461721), (38.1665005, -122.461695), (38.1664828, -122.4616691), (38.1664651, -122.4616433), (38.1664622, -122.461639)],
                  width=1.0, colors='red', src="c20_s3960 / c20_s0000: red / white kerb blocks along the O'Reilly island's lower edge (the T7 inside runoff / PWC road side), wall_measure bright 100 % picked, rms 0.91 m"),
-            dict(latlon=[(38.1665091, -122.4622261), (38.1665166, -122.4621931), (38.1665238, -122.4621585), (38.1665208, -122.4621237), (38.1665183, -122.4620895), (38.1665123, -122.4620558), (38.1665007, -122.4620249), (38.166489, -122.461994), (38.1664748, -122.4619651), (38.1664606, -122.4619361), (38.1664464, -122.461907), (38.16643, -122.4618798), (38.1664136, -122.4618526), (38.166397, -122.4618255), (38.1663914, -122.4618166)],
-                 width=1.0, colors='red', src='c20_s3960 / c20_s0000: red / white kerb blocks round the tip and upper edge of the island between the short-T7 road and the drag-strip road, wall_measure bright 99 % picked, rms 0.17 m'),
+            # round 13 part B (owner note 135): re-measured on the blocks round the small island's nose and NE edge (the round-7b
+            # line stood ~1 m off them on its NE edge and stopped at the nose)
+            dict(latlon=[(38.1663919, -122.4620844), (38.1664031, -122.4621022), (38.1664144, -122.4621200), (38.1664258, -122.4621377), (38.1664372, -122.4621553), (38.1664486, -122.4621730), (38.1664606, -122.4621904), (38.1664726, -122.4622074), (38.1664850, -122.4622240), (38.1665039, -122.4622300), (38.1665168, -122.4622124), (38.1665178, -122.4621892), (38.1665193, -122.4621664), (38.1665211, -122.4621437), (38.1665235, -122.4621210), (38.1665201, -122.4620978), (38.1665140, -122.4620763), (38.1665078, -122.4620548), (38.1665012, -122.4620335), (38.1664942, -122.4620124), (38.1664863, -122.4619908), (38.1664769, -122.4619712), (38.1664675, -122.4619517), (38.1664579, -122.4619324), (38.1664480, -122.4619133), (38.1664379, -122.4618944), (38.1664274, -122.4618758), (38.1664166, -122.4618574), (38.1664057, -122.4618391), (38.1663950, -122.4618207), (38.1663871, -122.4618067)],
+                 width=1.0, colors='red', src='c20_s3960 / c20_s0000: red / white kerb blocks round the nose and NE edge of the island between the short-T7 road and the drag-strip road (round 13 part B: wall_measure bright, 81 % picked, rms 0.18 m, 60 m; was round 7b, 1 m off); onboard t076 red / white kerb round the nose')
         ],
         # painted ground logos (round 7b, owner note 46): the name typed in the observed colours, no logo artwork; footprint and
         # reading direction measured on the clean captures (capture shift applied)
         ground_signs=[
-            dict(latlon=(38.1666431, -122.4618119), length=17.0, height=7.5, heading=135.0, text="O'Reilly", fg='#ffffff', bg='#c8202c',
+            # round 13 part B (owner note 135): no red panel: the 2026 captures show white outlined lettering on the island's dark
+            # painted surface (the red was the NAIP year's island); the island is retextured dark (ortho_pave)
+            dict(latlon=(38.1666431, -122.4618119), length=17.0, height=7.5, heading=135.0, text="O'Reilly", fg='#ffffff',
                  src="c20_s0000 / c20_s3960: an O'Reilly logo painted inside the T7a hairpin island (white lettering with an outline, ~17 x 7.5 m, reading NW); the summer NAIP shows it as a red patch (owner_45 'red splotch'); red panel / white letters"),
             dict(latlon=(38.1588939, -122.4521769), length=18.0, height=4.5, heading=8.7, text='TOYOTA', fg='#ffffff',
                  src='c20_s1320 / c20_s1265: TOYOTA lettering painted in the T11 hairpin infield (white, ~18 m, reading ENE); the red emblem beside it is logo artwork, not drawn'),
@@ -1223,6 +1231,10 @@ CONFIG = dict(
             dict(name='2020 fast bypass (8a to T10)', ways=['834728156', '116036857'], half_width=6.0, surface='asphalt', paint=True,
                  mouth_cones=[]),
             dict(name='the Chute (NASCAR short course, T4 to T7)', ways=['834724050', '230287122'], half_width=6.0, surface='asphalt', paint=True,
+                 # round 13 part B (owner note 135): the T7 mouth part's painted lines wandered into a trailer parked along its SE wall
+                 # (c20_s3850 / c20_s3905); no line is measurable there, so none is drawn on that part
+                 part_overrides=[dict(near=(38.1660238, -122.4628784), paint=False,
+                                      src='c20_s3850 / c20_s3905: trailers parked along the mouth; paint.measure ran into them (round 13 part B)')],
                  mouth_cones=[dict(near=(38.1639925, -122.4635092), src='onboard 0:34: 3-5 orange cones across the Chute mouth ahead-left at T4 (inventory)'),
                               dict(near=(38.1660875, -122.4627527), src='onboard 1:12: small orange cones in front of a black tyre line across the Chute mouth at T7 (inventory, added row)')]),
             dict(name='drag strip', ways=['28825448'], half_width=9.0, max_half=12.0, surface='concrete', paint=True,
@@ -1237,14 +1249,23 @@ CONFIG = dict(
                  src='OSM 834724051 (raceway, the straight NW continuation of the drag strip); c20_s3630 / c20_s3685 / c20_s3740: paved strip with lane paint beyond the fork; owner note 57 (May 2025 onboard fEcQdo0ucL8 0:57, reference only); onboard t064 / t066 asphalt with painted lane lines'),
             # the paved runoff INSIDE T7 (the triangle inside the hairpin, round the short-T7 way): cars may use it
             # (owner), so no cones; the racing line stays on the track (cutting through adds distance)
-            dict(name='T7 inside runoff', ways=['1494191150'], half_width=10.0, max_half=14.0, cones=False, surface='asphalt', paint=True, edges_from_paint=True),  # round 7b (note 45): painted edges like a real road; still open (owner, 19 Oct)
+            # round 13 part B (owner note 135): no painted edges and no paint-measured paving edges: it is an open junction (the
+            # 2026 captures show plain asphalt between the islands), so paint.measure found the islands' kerbs and stray marks
+            # and drew five white lines across it and paving edges over the islands (round 7b had paint / edges_from_paint True)
+            dict(name='T7 inside runoff', ways=['1494191150'], half_width=10.0, max_half=14.0, cones=False, surface='asphalt', paint=False),  # round 7b (note 45): painted edges like a real road; still open (owner, 19 Oct)
             dict(name='T11a shortcut', ways=['28825444'], half_width=6.0, surface='concrete', paint=True, mouth_cones=[]),
-            dict(name='PWC lower hairpin', ways=['505454376'], half_width=5.0, surface='concrete', paint=True,
-                 part_overrides=[dict(near=(38.1663500, -122.4621700), surface='asphalt',
-                                      src="round 11 (owner note 63: \"Weirdness at T7 where part of the track is not in-use. It should have the same texture as everything else\"): the road's T7 section (the normal T7, closed by the cones of t074) is the track's dark asphalt with its centre line on c20_s3960 / c20_s0000 (compare/sonoma/round11/win_t7mouth.png) and grey asphalt at onboard 1:14 (t074), not pale concrete")],
-                 # (round 11: the round-7e override near (38.16555, -122.4607) matched no part of this road: part_overrides was
-                 # read nowhere until now; that place is the 'drag strip past the T7 fork' road, declared asphalt above)
-                 mouth_cones=[]),
+            # round 13 part B (owner note 135): the 'PWC lower hairpin' road (OSM 505454376, its T7 section; asphalt since round 11)
+            # is no longer a zone: its OSM line loops round the small island's nose, so its strip lay over the island and over the
+            # T7 inside runoff, and the two zones' shoulders painted over each other (the raw-ortho band of owner_135). On the 2026
+            # captures it is the same open junction as the T7 inside runoff, which covers it; the paving round the island's nose is
+            # the retextured ground of ortho_pave. Was:
+            # # round 13 part B (owner note 135): paint False, as the T7 inside runoff (the same open junction)
+            # dict(name='PWC lower hairpin', ways=['505454376'], half_width=5.0, surface='concrete', paint=False,
+            # part_overrides=[dict(near=(38.1663500, -122.4621700), surface='asphalt',
+            # src="round 11 (owner note 63: \"Weirdness at T7 where part of the track is not in-use. It should have the same texture as everything else\"): the road's T7 section (the normal T7, closed by the cones of t074) is the track's dark asphalt with its centre line on c20_s3960 / c20_s0000 (compare/sonoma/round11/win_t7mouth.png) and grey asphalt at onboard 1:14 (t074), not pale concrete")],
+            # # (round 11: the round-7e override near (38.16555, -122.4607) matched no part of this road: part_overrides was
+            # # read nowhere until now; that place is the 'drag strip past the T7 fork' road, declared asphalt above)
+            # mouth_cones=[]),
         ],
 
         # a closed road's paving stops at its walls (the drag strip's NAIP width reached under the pit-straight wall)
@@ -1258,6 +1279,39 @@ CONFIG = dict(
         # ground under every modelled structure's footprint (bridge decks and stairs, buildings, the structure kit's
         # stands and garages), grown by `margin` (bridge decks by `bridge_margin`: a raised deck's image leans in the NAIP)
         ortho_inpaint=dict(margin=1.5, bridge_margin=3.0),
+        # round 13 part B (owner note 135, 23 Oct 2026: "This T7 complex with un-used track looks very bad ... Not a mismatch of
+        # textures and geometries"): the NAIP ortho is of another year; its junction paint (arrows, curved and cross lines),
+        # pale patches, parked trailers' shadows and the red O'Reilly island showed through the closed paved surfaces, and
+        # paving left as ground read lighter than the same paving drawn as a zone. Inside the complex's outline the paving
+        # is read on the 2026 captures (dark unsaturated asphalt with its white paint and red / white kerb blocks; NAIP rule
+        # where no capture covers the paddock lot's west end), closed over parked vehicles, the raced track excluded, and
+        # retextured: under the closed-road zones the track paving's own ortho tone, under paving left as ground that tone
+        # graded as the road shader grades it (terrain_gain), so it reads as one surface; no paint is kept (the 2026 lines
+        # are drawn: closed-road edge lines, the continuation's centre line, the kerb lines). Evidence and ledger:
+        # compare/sonoma/round13b/LEDGER.md
+        ortho_pave=dict(terrain_gain=(0.87, 0.78, 0.81), track_shoulder=5.0, regions=[
+            dict(name='T7 complex paving', mask='captures', close=2.5, min_area=150.0, exclude_track=0.3, feather=20.0, clip_zones=True,
+                 # the outline follows the paddock lot's SW bank and the Chute's two sides (trees in deep shadow there read as asphalt)
+                 latlon=[(38.1669221, -122.4644551), (38.1667604, -122.4638267), (38.1664370, -122.4633469), (38.1661316, -122.4630384),
+                         (38.1658441, -122.4631983), (38.1655926, -122.4633697), (38.1654129, -122.4630841), (38.1656914, -122.4629470),
+                         (38.1659878, -122.4627071), (38.1657992, -122.4613703), (38.1664729, -122.4611989), (38.1671916, -122.4613132),
+                         (38.1672365, -122.4618844), (38.1670299, -122.4623986), (38.1669221, -122.4629127), (38.1675060, -122.4639981),
+                         (38.1673712, -122.4645694)],
+                 src='c20_s3850 / c20_s3905 / c20_s3960 / c20_s4015 / c20_s0000 paving (round 13 part B survey windows '
+                     'compare/sonoma/round13b/survey/cap_*.png); onboard t072 / t074 / t076 plain dark asphalt in the junction'),
+            dict(name="O'Reilly island: its dark painted surface", mask='all', fill='paving',
+                 latlon=[(38.1667200, -122.4620273), (38.1667536, -122.4619530), (38.1667514, -122.4618502), (38.1667245, -122.4617702),
+                         (38.1666840, -122.4617245), (38.1666077, -122.4616845), (38.1665538, -122.4616674), (38.1664909, -122.4616531),
+                         (38.1664774, -122.4616445), (38.1665223, -122.4617359), (38.1665807, -122.4618387), (38.1666436, -122.4619359),
+                         (38.1666975, -122.4620044)],
+                 src="c20_s3960 / c20_s0000 at 0.05 m/px: the island's outline at the outer side of its red / white kerb blocks; its "
+                     "inside a dark painted surface with white outlined O'REILLY lettering (the NAIP year's red island replaced)"),
+            dict(name="small island nose: green painted band", mask='all', fill='#5aa586',
+                 latlon=[(38.1665053, -122.4622238), (38.1665156, -122.4622135), (38.1665156, -122.4621175), (38.1664738, -122.4621861),
+                         (38.1664927, -122.4622169)],
+                 src='onboard t076: a mint-green band inside the red / white kerb at the island nose; c20_s3960: the dark green patch '
+                     'at the nose (measured outline)'),
+        ]),
         # round 13: the unmodelled-ground-lines gate (tools/track/gates/ground_lines.py; the owner's rule of 23 Oct 2026, "if we
         # are modeling textures in a long line on the ground, it's likely we are missing a feature"). Contrast 40 and 30 m
         # (16 / 20 flooded every track: 79 Sonoma, 113 Laguna findings, mostly paths, stand tiers and roof edges). On the
@@ -1265,6 +1319,9 @@ CONFIG = dict(
         # T2 wall base (s 462-550 left), the T4 wall base and its missing end (s 819-856, 968-992 left). Every finding left
         # on this package was looked at on the 2026 captures and the ortho (contact sheets compare/sonoma/round13a/ground_lines_*.jpg):
         ground_lines=dict(contrast=40.0, min_len=30.0, dispositions=[
+            # round 13 part B (owner note 135): the two T7-complex dispositions of round 13A (s 2170-2215 left, a NAIP-year
+            # temporary structure in the paddock; s 2280-2315 left, the T7a paddock paving edge) are gone with the lines: the
+            # paving there is retextured from the 2026 captures (ortho_pave)
             dict(side='left', s=(455, 560), tone='pale', what='lit concrete beside the T2 wall',
                  why="the wall stands on the ortho's dark line since round 13 (owner note 132); the pale strip 1.7-2.4 m beyond "
                      "it (profiles at s 414-544) is the lit walkway / wall top at the foot of the T2 stands, ground, not a barrier"),
@@ -1273,9 +1330,6 @@ CONFIG = dict(
                      "the foot of the T3a-T4 stands (profiles s 748-870)"),
             dict(side='left', s=(905, 985), tone='pale', what='lit concrete beside the T4-to-Chute wall',
                  why="the wall on the dark line (owner note 133); the pale strip 1.3-1.5 m beyond it (profiles s 872-944)"),
-            dict(side='left', s=(2280, 2315), tone='dark', what='T7a exit: the paddock paving edge',
-                 why='the edge between the pale paddock paving and the grass, 28-34 m left on the 2026 captures, inside the '
-                     'T7 complex (owner note 135, the next agent\'s round)'),
             dict(side='left', s=(2322, 2490), tone='dark', what='grass tone line beyond the T7a-T8 tyre lines',
                  why="the two tyre lines stand on the bank's dark band within 0.5 m (profiles s 2322-2476, ortho and c20_s0000 "
                      "/ c20_s0055); the line the gate reads is a fainter mowing / grass-tone edge 1-3 m beyond them"),
@@ -1290,9 +1344,6 @@ CONFIG = dict(
                      "track side, 1-4 m in front of the wall"),
             dict(side='left', s=(985, 1015), tone='dark', what='edge of the dirt paddock road by the Chute',
                  why='c20_s2695: a path edge with trucks parked along it, no barrier (the T4 wall ends at the Chute paving)'),
-            dict(side='left', s=(2170, 2215), tone='dark', what='a temporary structure in the NAIP year (T7 paddock)',
-                 why='a long pale object with its shadow 43-48 m left in the NAIP; the 2026 captures show an open '
-                     'parking area there (within the T7 complex, owner note 135)'),
             dict(side='left', s=(3590, 3655), tone='dark', what='shadow of the pit garages roof',
                  why='the long garage roof (the structure kit\'s pit garages) casts its shadow on the paddock lane 26-40 m left'),
             dict(side='right', s=(2860, 2920), tone='pale', what='a pale strip 57-60 m right of the back straight',
@@ -1335,8 +1386,11 @@ CONFIG = dict(
                  why='T7a exit to T8, right: open grass and paddock down to the strip\'s NW end (onboard t076 / t078: no barrier on the right; c20_s3960 / c20_s4015)'),
             dict(target='drag strip past the T7 fork', side='right', a=(38.1655508, -122.4600987), b=(38.1654029, -122.4598397),
                  why='8a, right: the crossover road to the drag strip (OSM raceway 380830038) meets 8a in the gap between the measured T8-8a concrete wall (ends s ~2510) and the 8a station wall with its black tyre facing (begins s ~2515, c20_s0110 / c20_s0165; round 8)'),
-            dict(target='PWC lower hairpin', side='right', a=(38.1656123, -122.4615977), b=(38.1661994, -122.4613789),
-                 why='inside T7 / 7a: paved runoff and the PWC hairpin are open pavement the cars may use (owner, 19 Oct; owner_9; Street View J6fsnW4hj4xCjQLzrgRGzA, gd1SNdksCq5QZtwlsrzR7g)'),
+            # round 13 part B: the 'PWC lower hairpin' zone is gone (closed_roads above); the rays it stopped now cross the open junction
+            # to the drag strip's continuation: the same open paving (c20_s3905 / c20_s3960 plain asphalt between the islands; onboard
+            # t074 / t076 cones across the short-T7 road and delineator posts on the course edge, no barrier between)
+            dict(target='drag strip past the T7 fork', side='right', a=(38.1664317, -122.4624026), b=(38.1668365, -122.4618640),
+                 why='inside T7 / 7a (s ~2208-2278): the open junction between the T7 island, the small island and the O\'Reilly island is paving to the continuation, no barrier (c20_s3905 / c20_s3960; onboard t074 / t076: cones and posts only; round 13 part B, was the PWC lower hairpin zone)'),
             dict(target='T11a shortcut', side='right', a=(38.1609734, -122.4526661), b=(38.1597720, -122.4522059),
                  why='T11 approach, right: the NASCAR infield is open paved ground to the 11a shortcut (Street View jrXpHaDfJT2APw6zcyBKRA: cones, tyre bundles at the 11a entry; onboard 1:56)'),
             dict(target='T11a shortcut', side='right', a=(38.1593620, -122.4527530), b=(38.1605086, -122.4532417),

@@ -834,6 +834,15 @@ def stage_scenery(cfg, out, no_logger):
     log("post steps:")
     ortho_ = (np.asarray(Image.open(os.path.join(tmp, "ortho.jpg")).convert("RGB")).astype(np.float32), T["ortho"])
     scenery_post.run(T, SC, scfg, tiles, cfg["captures"]["mpp"], regs, ortho=ortho_)
+    if scfg.get("ortho_pave"):
+        # round 13 part B (Sonoma owner note 135): the ground under a complex's paving retextured from the 2026 paving
+        # mask, after the post steps so every paved zone is known (config-gated: other tracks unchanged)
+        ctiles = [t for t in CAP.capture_list(cfg, "clean") if t["name"] not in cfg["captures"].get("exclude", [])]
+        op_ = os.path.join(tmp, "ortho.jpg")
+        arr_, npx_ = BS.ortho_pave(T, SC, scfg["ortho_pave"], np.asarray(Image.open(op_).convert("RGB")), ctiles,
+                                   cfg["captures"]["mpp"], cfg.enu, log=log)
+        Image.fromarray(arr_).save(op_, quality=84, optimize=True)
+        log(f"ortho pave: {npx_} px retextured")
     rep = Report("SCENERY VALIDATION")
     _, gf = edge_gate.gate(T, SC, cfg["gate"], log=log, world=not REPRO)
     rep.fails += gf

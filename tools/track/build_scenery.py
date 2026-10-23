@@ -1171,6 +1171,7 @@ PIT_HALF_DEFAULT = 4.0  # m (8 m paved width) when the image gives no edge
 
 
 _MOUTHS_USED = set()
+_NO_PAINT = set()
 
 
 def closed_roads(trk, osm):
@@ -1212,6 +1213,10 @@ def closed_roads(trk, osm):
                             raise SystemExit(f"closed road {road['name']}: part_overrides entry near {ov['near']} has no src")
                         if ov.get("surface"):
                             part["surface"] = ov["surface"]
+                        if ov.get("paint") is False:
+                            # round 13 part B (Sonoma owner note 135): no painted edge lines measured along this part
+                            # (an open junction or a parked-vehicle row gives paint.measure nothing to find)
+                            _NO_PAINT.add(id(part))
                         _MOUTHS_USED.add(id(ov))
                         log(f"closed road {road['name']}: part at ({part['center'][0][0]:.0f}, {part['center'][0][1]:.0f}) "
                             f"surface {part.get('surface')} (part_overrides near {ov['near']})")
@@ -1271,7 +1276,7 @@ def closed_road_paint(trk, parts):
     ortho = Img.open(os.path.join(OUT, "ortho.jpg"))
     out = []
     for p in parts:
-        if p.get("turn") not in names:
+        if p.get("turn") not in names or id(p) in _NO_PAINT:
             continue
         C = np.array(p["center"])[:, :2]
         if len(C) < 12:
@@ -2752,6 +2757,179 @@ def inpaint_ortho(img, polys, o, seed=13):
     out = f.copy()
     out[hole] = (fill + grain)[hole]
     return out.clip(0, 255).astype(np.uint8), int(hole.sum())
+
+
+def ortho_pave(T, SC, opt, img, tiles, mpp, enu, log=print, seed=17):
+    """The ground under a complex's paving, retextured (config scenery.ortho_pave, round 13 part B, Sonoma owner note 135:
+    "This T7 complex with un-used track looks very bad ... Not a mismatch of textures and geometries"). The NAIP ortho is
+    of another year: its paint (arrows, junction lines), pale patches, parked trailers' shadows and a red island showed
+    through the closed paved surfaces, and paving left as ground read lighter than the same paving drawn as a zone.
+    opt: {regions: [{name, latlon: [(lat, lon), ...] (the region's outline), mask: 'captures' | 'all', src, fill?: '#rrggbb' |
+    'paving' (the default),
+    close: m, min_area: m2, exclude_track: m, feather: m, clip_zones: bool}], terrain_gain: (r, g, b), track_shoulder: m}. Per region:
+    - mask 'captures': the paving read on the 2026 clean captures at 0.2 m (dark unsaturated asphalt, its white paint and
+      red / white kerb blocks), the NAIP pavement rule (blue >= green - 6, bright > 45, saturation < 70) where no capture
+      covers; at the ortho's pixels by majority, closed by `close` m (parked vehicles, paint) and components under
+      `min_area` m2 dropped (asphalt brightness 20 to `asphalt_max`: deeper shadow is under trees); mask 'all': the whole
+      outline (an island's painted surface); clip_zones: the closed-road zones inside the outline are brought in to where
+      that paving ends (an island, a verge);
+    - the raced track's own paved width (+ `exclude_track` m) is never changed;
+    - fill: under the paved zones and pit-lane parts (drawn with the road shader) the median ortho colour of the track's
+      own paving nearby; under paving left as ground that colour times `terrain_gain` (the road shader's grade, so the
+      two read as one surface); a fixed colour with `fill`. A fine grain (the track paving's own residual, capped 4) is
+      added; no paint is kept: the 2026 lines are drawn as geometry. Returns (image, pixels changed)."""
+    import importlib.util
+    from PIL import Image, ImageDraw
+    from scipy import ndimage as ndi_
+    from scipy.ndimage import gaussian_filter1d, median_filter
+    spec = importlib.util.spec_from_file_location("capwin_", os.path.join(os.path.dirname(os.path.abspath(__file__)), "compare", "capwin.py"))
+    capwin = importlib.util.module_from_spec(spec); spec.loader.exec_module(capwin)
+    o = T["ortho"]; H, W = img.shape[:2]
+    pxm = (o["x1"] - o["x0"]) / W
+    tox = lambda P: [((p[0] - o["x0"]) / (o["x1"] - o["x0"]) * W, (o["y1"] - p[1]) / (o["y1"] - o["y0"]) * H) for p in P]  # noqa: E731
+
+    def raster(polys):
+        mk = Image.new("L", (W, H), 0); dr = ImageDraw.Draw(mk)
+        for P in polys:
+            if len(P) >= 3:
+                dr.polygon(tox(P), fill=255)
+        return np.asarray(mk) > 0
+    Lp, Rp = np.array(T["left"])[:, :2], np.array(T["right"])[:, :2]
+    n = len(Lp)
+    track = raster([[Lp[i], Lp[(i + 1) % n], Rp[(i + 1) % n], Rp[i]] for i in range(n)])
+    f = img.astype(np.float32)
+    out = f.copy()
+    rng = np.random.default_rng(seed)
+    gain = np.array(opt.get("terrain_gain", (1.0, 1.0, 1.0)), np.float32)
+    changed = np.zeros((H, W), bool)
+    masks = []
+    for r in opt["regions"]:
+        if not r.get("src"):
+            raise SystemExit(f"ortho_pave region {r.get('name')}: no src")
+        poly = [enu(*q) for q in r["latlon"]]
+        reg = raster([poly])
+        ys, xs = np.nonzero(reg)
+        y0, y1, x0, x1 = ys.min(), ys.max() + 1, xs.min(), xs.max() + 1
+        if r.get("mask", "captures") == "all":
+            pave = reg.copy()
+        else:
+            k = max(1, int(round(pxm / 0.2)))
+            st = pxm / k
+            wx0 = o["x0"] + x0 * pxm; wy1 = o["y1"] - y0 * pxm
+            Wf, Hf = (x1 - x0) * k, (y1 - y0) * k
+            cap, _ = capwin.mosaic(tiles, mpp, wx0, wy1, Wf, Hf, st)
+            c = cap.astype(np.float32)
+            br = c.mean(-1); sat = c.max(-1) - c.min(-1)
+            cov = c.sum(-1) > 0
+            # asphalt: dark to mid grey, unsaturated, neither green (trees, grass) nor warm (dirt, its shadows); white paint;
+            # red kerb blocks
+            asph = (br >= 20) & (br < r.get("asphalt_max", 140)) & (sat < 30) & (c[..., 1] - c[..., 0] < 6) & (c[..., 0] - c[..., 2] < 14)
+            fine = asph | ((br > 165) & (sat < 40)) | ((c[..., 0] - c[..., 1] > 40) & (c[..., 0] > 90))
+            frac = (fine & cov).reshape(y1 - y0, k, x1 - x0, k).mean((1, 3))
+            covf = cov.reshape(y1 - y0, k, x1 - x0, k).mean((1, 3))
+            sub = f[y0:y1, x0:x1]
+            nb = sub.mean(-1); ns = sub.max(-1) - sub.min(-1)
+            naip = (sub[..., 2] - sub[..., 1] >= -6) & (nb > 45) & (ns < 70)
+            pv = np.where(covf >= 0.5, frac >= 0.5, naip)
+            rad = max(1, int(round(r.get("close", 2.5) / pxm)))
+            yy, xx = np.mgrid[-rad:rad + 1, -rad:rad + 1]
+            disk = xx ** 2 + yy ** 2 <= rad ** 2
+            pv = ndi_.binary_closing(np.pad(pv, rad, mode="edge"), disk)[rad:-rad, rad:-rad]
+            lab, nl = ndi_.label(pv)
+            if nl:
+                area = ndi_.sum(np.ones_like(lab), lab, np.arange(1, nl + 1)) * pxm * pxm
+                keep = np.r_[False, area >= r.get("min_area", 150.0)]
+                pv = keep[lab]
+            pave = np.zeros((H, W), bool); pave[y0:y1, x0:x1] = pv
+            pave &= reg
+        masks.append((r, reg, pave))
+    # islands given a colour of their own (fill '#rrggbb') are never paving for the zones
+    fixed = np.zeros((H, W), bool)
+    for r, reg, pave in masks:
+        if r.get("fill") and r["fill"] != "paving":
+            fixed |= pave
+    for r, reg, pave in [m_ for m_ in masks if m_[0].get("clip_zones")]:
+        # the closed-road zones inside the region stop where the 2026 paving stops (an island, a verge): each edge point
+        # is brought in to the first 1.2 m of non-paving met walking out from the part's centre (at least 1 m from it)
+        pm = (pave & ~fixed) | track
+        ins = lambda P: pm[np.clip(((o["y1"] - P[:, 1]) / pxm).astype(int), 0, H - 1),  # noqa: E731
+                           np.clip(((P[:, 0] - o["x0"]) / pxm).astype(int), 0, W - 1)]
+        for part in (SC.get("paved_zones") or {}).get("parts", []):
+            Cq = np.array(part["center"], float)
+            if not reg[np.clip(((o["y1"] - Cq[:, 1]) / pxm).astype(int), 0, H - 1),
+                       np.clip(((Cq[:, 0] - o["x0"]) / pxm).astype(int), 0, W - 1)].mean() > 0.5:
+                continue
+            moved = 0
+            for side in ("left", "right"):
+                E = np.array(part[side], float)
+                d0 = np.hypot(*(E[:, :2] - Cq[:, :2]).T)
+                dn = d0.copy()
+                for i in range(len(Cq)):
+                    d = float(d0[i])
+                    if d < 1.0:
+                        continue
+                    u = (E[i, :2] - Cq[i, :2]) / d
+                    t = np.arange(0.0, d + 1e-6, 0.3)
+                    ok = ins(Cq[i, :2] + t[:, None] * u)
+                    bad = np.convolve(~ok, np.ones(4), "same") >= 4
+                    bad[t < 1.0] = False
+                    if bad.any():
+                        dn[i] = min(d, max(1.0, float(t[int(np.argmax(bad))]) - 0.45))
+                if (dn < d0 - 0.05).any():
+                    # a smooth edge along the part (the 0.6 m mask steps), never more than 0.3 m beyond the walked limit
+                    sm = gaussian_filter1d(median_filter(dn, 5, mode="nearest"), 1.5, mode="nearest")
+                    dn = np.minimum(np.minimum(sm, dn + 0.3), d0)
+                    for i in np.nonzero(dn < d0 - 0.05)[0]:
+                        E[i] = Cq[i] + (E[i] - Cq[i]) * (dn[i] / d0[i]); moved += 1
+                part[side] = [[rnd(x, 2), rnd(y, 2), rnd(z, 3)] for x, y, z in E]
+            if moved:
+                log(f"ortho pave {r['name']}: zone {part.get('turn')}: {moved} edge points brought in to the 2026 paving's end")
+    zq = []
+    for grp in ("paved_zones", "pit_lane"):
+        for part in (SC.get(grp) or {}).get("parts", []):
+            Lq, Rq = np.array(part["left"])[:, :2], np.array(part["right"])[:, :2]
+            zq += [[Lq[i], Lq[i + 1], Rq[i + 1], Rq[i]] for i in range(len(Lq) - 1)]
+    zone = raster(zq)
+    union = np.zeros((H, W), bool)
+    for _, reg_, _ in masks:
+        union |= reg_
+    for r, reg, pave in masks:
+        ex = max(0, int(round(r.get("exclude_track", 0.3) / pxm)))
+        tr = ndi_.binary_dilation(track, iterations=ex) if ex else track
+        pave &= ~tr
+        # the track's own paving near the complex (all regions): its tone and its grain
+        near = ndi_.binary_dilation(union, iterations=int(60 / pxm)) & track
+        tv = f[near]
+        base = np.median(tv, 0)
+        resid = (f - ndi_.gaussian_filter(f, (2.0, 2.0, 0))).mean(-1)
+        sd = min(4.0, 1.4826 * float(np.median(np.abs(resid[near]))))
+        grain = ndi_.gaussian_filter(rng.normal(0.0, 1.0, (H, W)), 0.7).astype(np.float32)
+        grain = grain / (grain.std() or 1.0) * sd
+        if r.get("fill") and r["fill"] != "paving":
+            h_ = r["fill"].lstrip("#"); col = np.array([int(h_[i:i + 2], 16) for i in (0, 2, 4)], np.float32)
+            colz = colt = col
+        else:
+            colz, colt = base, base * gain
+        # the track ribbon's own shoulder rows (drawn over the ground up to `track_shoulder` m beyond its edges) show the ortho
+        # as ground does, so the paving under them takes the ground tone even where a zone lies beneath
+        zt = zone & ~(ndi_.binary_dilation(track, iterations=int(round(opt.get("track_shoulder", 0.0) / pxm))) & ~track
+                      if opt.get("track_shoulder") else np.zeros_like(zone))
+        tgt = np.where(zt[..., None], colz, colt)[pave] + grain[pave][:, None]
+        if r.get("feather"):
+            # fade the change in over `feather` m inside the outline where it cuts across paving (the paddock lot's far end)
+            w = np.clip(ndi_.distance_transform_edt(reg) * pxm / r["feather"], 0, 1)[pave][:, None]
+            tgt = f[pave] + w * (tgt - f[pave])
+        out[pave] = tgt
+        changed |= pave
+        log(f"ortho pave {r['name']}: {int(pave.sum())} px ({pave.sum() * pxm * pxm:.0f} m2; {int((pave & zone).sum())} under "
+            f"paved zones), track tone {base.round(0).tolist()}, ground tone {colt.round(0).tolist()}, grain {sd:.1f}")
+    # soften the outline by one pixel so the 0.6 m pixels do not stair-step
+    if changed.any():
+        soft = ndi_.gaussian_filter(changed.astype(np.float32), 0.6)
+        edge = (soft > 0.02) & (soft < 0.98)
+        blur = ndi_.gaussian_filter(out, (0.6, 0.6, 0))
+        out[edge] = blur[edge]
+    return out.clip(0, 255).astype(np.uint8), int(changed.sum())
 
 
 def season_zone_mask(trk, opt, shape):
