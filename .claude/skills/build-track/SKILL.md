@@ -322,6 +322,15 @@ obvious on an outline over the capture at once and costs a whole round once it i
 3. **Wait for the owner's review and advice.** He marks the windows that are wrong (the digitisers in `compare/`
    read his strokes: `owner_edges.py`, `owner_marks.py`); the next round refits from his evidence and renders the
    outline again. Only an outline he has accepted goes on to stage 2.
+   **Give him the drawing page, not a paint program** (owner, 23 Oct 2026: he cannot draw a straight line on a
+   touchpad): `compare/edge_draw_page.py --src <edges_r<n> dir> --out <page dir> --title "<Track> Edge Strokes"`
+   builds one page with a canvas per window and Line / Arc / Curve / Freehand / Select / Erase tools (red = the
+   asphalt edge, green = an extra line such as the end of a paved runoff; shapes finish on their last click; a
+   margin round the photo takes a line's start). Publish it with the Artifact tool (`capabilities: {db: {}}`, the
+   windows as `files`), read the strokes back with ArtifactData (collection `edges`, `out_dir`), render them with
+   `compare/edge_draw_render.py --docs <out_dir>/edges --win <page dir>/win --out compare/<id>/owner_edges_r<n>`
+   and feed the `_marked.png` files to `owner_edges.py` window by window (`windows.json` carries each station).
+   A straight needs two clicks per side; a corner an Arc or a Curve with a point every 10 m or so.
 4. **The same for every later edge refit**, however local: render the refitted stretch over its captures and get
    the owner's look before anything downstream is rebuilt on it. (`build_track.py --stage ghosts`, i.e. `tools/ghosts/build_ghosts.py --config <id> --track-dir <dir>`)
 
