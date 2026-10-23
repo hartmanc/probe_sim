@@ -4,7 +4,8 @@
 // Pure TS: no DOM, no Node built-ins.
 import {
   Vehicle, loadCarSpec, createTrackSurface, createTrackProjector, createCollisionWorld, lineToWorld,
-  deriveGearSchedule, scheduleTargetAt,
+  deriveGearSchedule, scheduleTargetAt, createOffTrackJudge, OffTrackWatch, OFFTRACK_FAR_M,
+  type OffTrackJudge,
   type CarSpec, type DriverInput, type Surface, type TrackJson, type PitLaneJson, type SceneryCollisionJson, type CollisionWorld,
   type GearSchedule,
   type SausageJson, type KerbsJson } from '../physics';
@@ -160,6 +161,10 @@ export class HotlapSim {
   private readonly pitLane: PitLaneJson | null;
   private readonly far: { heightfield: Float32Array; x0: number; y0: number; dx: number; nx: number; ny: number } | null;
   private readonly lineOffsets: number[];
+  /** Lost in the hills: the player far off the track (offtrack.ts) for OFFTRACK_HOLD_S of sim time is launched. */
+  private readonly offTrackJudge: OffTrackJudge;
+  private readonly offTrack = new OffTrackWatch();
+  private offTrackLaunchAt = NaN;
 
   constructor(readonly assets: SimAssets, opts: HotlapSimOptions = {}) {
     const a = assets;
@@ -176,6 +181,7 @@ export class HotlapSim {
     this.collision = createCollisionWorld(a.scenery ?? null, a.track);
     this.timer = new LapTimer(a.track.length_m);
     this.lineOffsets = a.ghosts.line?.offset_m ?? [];
+    this.offTrackJudge = createOffTrackJudge(a.track, { farM: TRACKS[a.trackId]?.offTrackFarM ?? OFFTRACK_FAR_M, barriers: a.scenery?.barriers ?? null });
     this.autoShift = opts.autoShift ?? true;
     this.abs = opts.abs ?? this.spec.brakes.abs.enabled >= 0.5;
     this.ref = opts.ref === undefined ? defaultRefGhost(a.ghosts) : opts.ref;
@@ -201,6 +207,7 @@ export class HotlapSim {
     this.simTime = 0; this.stepIndex = 0; this.s = 0;
     this.appliedRef = undefined; this.schedule = null;
     this.rows = []; this.refs = []; this.last = null;
+    this.offTrack.reset(); this.offTrackLaunchAt = NaN;
   }
 
   private applyRef(): void {
@@ -304,7 +311,20 @@ export class HotlapSim {
     for (const w of st.wheels) {
       if (w.onTrack || this.surface.sample(w.pos[0], w.pos[1]).paved) { allOff = false; break; }
     }
+    // lost in the hills (src/physics/offtrack.ts): every wheel off any pavement and the car far off the track (past the
+    // local limit or off the near heightfield), held for OFFTRACK_HOLD_S of sim time: launched like a hard wall hit
+    const far = allOff && this.offTrackJudge.far(st.pos[0], st.pos[1]);
+    if (this.offTrack.update(far, STEP * TIMING_EVERY)) {
+      this.offTrackLaunchAt = v.launchIntoSpace(this.offTrackJudge.away.x, this.offTrackJudge.away.y);
+      this.offTrack.reset();   // re-armed for a car put back on the road (race recovery resets the vehicle in place)
+    }
     return this.timer.update(this.simTime, pr.s, Math.abs(st.speed), allOff, STEP * TIMING_EVERY);
+  }
+
+  /** True while the player's car is in space because it got lost in the hills (not after a wall hit). */
+  get launchedOffTrack(): boolean {
+    const st = this.vehicle.state;
+    return !!st.launched && st.launchedAt === this.offTrackLaunchAt;
   }
 
   /** The trace recorded since the last reset (a copy; call it when the lap you want to submit completes). */

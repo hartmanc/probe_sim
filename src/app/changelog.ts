@@ -36,6 +36,7 @@ export const CHANGELOG: ChangeEntry[] = [
       'Sonoma’s kerbs are 5 cm raised concrete; a kerb traversal check keeps every kerb on every track from lifting a wheel at racing speed.',
       'Per-track scoreboards: a rebuilt circuit opens its own boards without resetting the others.',
       'Tyre walls are solid now, like the concrete ones, and rolling the car ends the run: “You are banned from Lemons for one year for rolling your hooptie”.',
+      'Drive far off the track, into the hills, and you are launched into space like a hard wall hit: “You got lost in the hills, so the tow truck sent you home the fast way.”',
     ],
   },
   {

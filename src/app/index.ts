@@ -42,6 +42,7 @@ import { ScoreboardUI } from './scoreboard-ui';
 import { TRACK, TRACK_ID, TRACK_IDS, urlForTrack } from './track-choice';
 import { TRACKS } from '../scoreboard/config';
 import { ROLLOVER_LINE, RolloverWatch } from './rollover';
+import { LOST_IN_HILLS_LINE } from './offtrack';
 
 // The player's car runs in HotlapSim (src/scoreboard/sim.ts): 1000 Hz physics, 200 Hz timing, input sampled on a
 // 100 Hz grid, rolling start 230 m before the last corner (Laguna: T11) at 22 m/s. Its constants live in
@@ -575,13 +576,16 @@ function createSim(assets: Assets) {
       // the car's actual speed at the impact (the normal component only decides whether it launches)
       const hitSpeed = st.impact?.speed ?? st.impact?.speedNormal ?? 0;
       const mph = Math.round(hitSpeed * 2.236936);
+      // lost in the hills (the sim launched the car for being far off the track): its own line, the same sequence
+      const lost = hsim.launchedOffTrack;
       hud.showGameOver(hitSpeed, {
         resetLabel: label, hint,
+        ...(lost ? { line: LOST_IN_HILLS_LINE } : {}),
         onReset: () => { mode()?.reset(); dirty = true; },
         onMenu: () => { hud.hideGameOver(); showMainMenu(); },
         ...(race ? {
           title: "YOU'RE OUT OF THE RACE",
-          line: `You hit the wall at ${mph} mph and blasted into space. Your race ends at the distance you had covered.`,
+          line: `${lost ? LOST_IN_HILLS_LINE : `You hit the wall at ${mph} mph and blasted into space.`} Your race ends at the distance you had covered.`,
           extra: [{ label: 'Race again (new seed)', run: () => { hud.hideGameOver(); modes.restart(); dirty = true; } }],
         } : {}),
       });

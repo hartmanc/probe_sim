@@ -1043,6 +1043,13 @@ export class Vehicle {
     return J;
   }
 
+  /** The same launch from outside (HotlapSim: the player far off the track for too long). (nx, ny) is the horizontal
+   *  unit direction to push off along. Returns the sim time of the launch (state.launchedAt from the next step). */
+  launchIntoSpace(nx: number, ny: number): number {
+    if (!this.launched) this.launch(nx, ny);
+    return this.launchedAt;
+  }
+
   /** The easter egg: hard wall hit → straight up into space. (nx, ny) points away from the wall. */
   private launch(nx: number, ny: number): void {
     const v = this.v, w = this.w, R = this.R;
