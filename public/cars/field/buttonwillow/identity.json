@@ -766,7 +766,7 @@
     "door"
    ]
   },
-  "livery": "White with green rear and orange/green/red diagonal stripes, orange front splitter",
+  "livery": "White with green rear and orange/green/red diagonal stripes, orange front splitter, black number board carrying the 257",
   "theme": "Convenience-store (7-Eleven) colours",
   "photos": [
    "26Butt-257-25SevenInc-01.jpg",
@@ -867,10 +867,10 @@
   "laps": 291,
   "best_lap_s": 150.098,
   "make": "Honda",
-  "model": "Civic sedan",
+  "model": "Civic coupe",
   "generation": "7th gen (2001-05)",
   "year": 2004,
-  "body": "sedan",
+  "body": "coupe",
   "confidence": "medium",
   "evidence": "Photos: pink Civic 4-door with black hood and eyelash decals; no archive record",
   "dims": {
@@ -937,7 +937,7 @@
   "laps": 289,
   "best_lap_s": 145.863,
   "make": "Volvo",
-  "model": "242/244 sedan",
+  "model": "242 (2-door)",
   "generation": "200 series (1974-93)",
   "year": 1978,
   "body": "sedan",
@@ -1593,7 +1593,7 @@
   "laps": 269,
   "best_lap_s": 138.75,
   "make": "Volkswagen",
-  "model": "GTI",
+  "model": "GTI 3-door",
   "generation": "Mk4 (1997-2006)",
   "year": 2001,
   "body": "hatch",
@@ -1636,7 +1636,7 @@
     "door"
    ]
   },
-  "livery": "Orange with black bear crest, stripped nose, tall wing",
+  "livery": "Orange with a rabbit-with-antlers crest (Jaegermeister parody), stripped nose, tall wing",
   "theme": "Hasenpfeffer (German rabbit stew) bear logo",
   "photos": [
    "26Butt-095-BoilingHas-01.jpg",
@@ -2028,18 +2028,18 @@
   "class_finish": 12,
   "laps": 261,
   "best_lap_s": 151.772,
-  "make": "Mazda",
-  "model": "MX-5 Miata (custom Trans Am body)",
-  "generation": "NA (1989-97)",
-  "year": 1994,
+  "make": "Pontiac",
+  "model": "Solstice (Trans Am dress)",
+  "generation": "2006-2009",
+  "year": 2007,
   "body": "roadster",
   "confidence": "low",
   "evidence": "Photos: black roadster with a custom fiberglass nose carrying a Firebird-style hood bird, gold wheels and a huge wing; 'Trans Am't' door text; underlying car guessed as an NA Miata",
   "dims": {
-   "wheelbase_m": 2.265,
-   "length_m": 3.95,
-   "width_m": 1.675,
-   "height_m": 1.225,
+   "wheelbase_m": 2.415,
+   "length_m": 3.992,
+   "width_m": 1.814,
+   "height_m": 1.275,
    "track_m": 1.41,
    "mass_kg": 990,
    "power_kw": 96,
@@ -2636,7 +2636,7 @@
     "door"
    ]
   },
-  "livery": "Red with blue diagonal bands, cartoon face on the door, big rear wing",
+  "livery": "Red with blue diagonal bands, City Wok theme (the South Park restaurant) on the hood and doors, big rear wing",
   "theme": "South Park Eric Cartman",
   "photos": [
    "26Butt-001-CartmanRac-01.jpg",
@@ -2733,10 +2733,10 @@
   "laps": 240,
   "best_lap_s": 145.004,
   "make": "BMW",
-  "model": "3 Series sedan",
-  "generation": "E46 (1998-2006)",
+  "model": "3 Series coupe",
+  "generation": "E46",
   "year": 2002,
-  "body": "sedan",
+  "body": "coupe",
   "confidence": "medium",
   "evidence": "Photos: white E46 4-door with a mock-semi truck grille on the front, twin vertical exhaust stacks and navy/yellow stripes",
   "dims": {
@@ -3238,8 +3238,8 @@
   "best_lap_s": 143.643,
   "make": "Honda",
   "model": "Civic sedan",
-  "generation": "6th gen (1996-2000)",
-  "year": 1998,
+  "generation": "EG (1992-1995)",
+  "year": 1993,
   "body": "sedan",
   "confidence": "low",
   "evidence": "Photos: pink 4-door covered in hand-drawn art with a giant donut on roof stands; front is damaged and the model is uncertain (Civic-like)",
@@ -3385,7 +3385,7 @@
   "evidence": "Photos: silver Mazda3 5-door hatch with red tow tags and a smiling front-end sticker",
   "dims": {
    "wheelbase_m": 2.64,
-   "length_m": 4.46,
+   "length_m": 4.505,
    "width_m": 1.755,
    "height_m": 1.47,
    "track_m": 1.52,
@@ -3447,7 +3447,7 @@
   "laps": 228,
   "best_lap_s": 150.45,
   "make": "BMW",
-  "model": "3 Series (E36 pickup conversion)",
+  "model": "3 Series (E36 coupe, pickup conversion)",
   "generation": "E36 (1990-99)",
   "year": 1995,
   "body": "truck",
@@ -4369,8 +4369,8 @@
   "class_finish": 15,
   "laps": 185,
   "best_lap_s": 135.252,
-  "make": "Chrysler",
-  "model": "Cordoba / Mirada (suspected)",
+  "make": "Ford",
+  "model": "Fairmont Futura",
   "generation": "2nd gen (1980-83)",
   "year": 1981,
   "body": "coupe",
@@ -4789,7 +4789,7 @@
   "confidence": "high",
   "evidence": "Lemons award page id 454: earlier rows: Sorry For Party Racing '1978 Chevrolet LUV'; photos: purple leopard-print LUV pickup with lime/blue wheels",
   "dims": {
-   "wheelbase_m": 2.72,
+   "wheelbase_m": 2.6,
    "length_m": 4.46,
    "width_m": 1.55,
    "height_m": 1.55,
@@ -5071,7 +5071,7 @@
   "make": "Kia",
   "model": "Rio sedan",
   "generation": "1st gen (2000-05)",
-  "year": 2002,
+  "year": 2004,
   "body": "sedan",
   "confidence": "low",
   "evidence": "Photos: small 4-door in blue, lime green and purple with '84 PTS' lettering; Rio-like face",
@@ -5422,8 +5422,8 @@
   "best_lap_s": 147.011,
   "make": "Volkswagen",
   "model": "Scirocco",
-  "generation": "Mk2 (1981-92)",
-  "year": 1984,
+  "generation": "Mk1 (1974-1981 facelift)",
+  "year": 1980,
   "body": "hatch",
   "confidence": "high",
   "evidence": "Photos: black wedge hatch with quad round headlights, 182 on the doors",
@@ -5496,7 +5496,7 @@
   "confidence": "high",
   "evidence": "Lemons award page id 454: earlier row: Bernal Dads Racing '2001 Dodge Ram Van' (also on record with a 1992 Volvo 245 at Laguna); photos: white Ram Van with black nose and roof wing. NOTE: match_laguna.json says team 'same', but the physical car at Buttonwillow is a different car to the Laguna Volvo 245",
   "dims": {
-   "wheelbase_m": 3.03,
+   "wheelbase_m": 2.779,
    "length_m": 4.9,
    "width_m": 2.0,
    "height_m": 2.0,
@@ -6156,8 +6156,8 @@
    "evidence": "S54 stock"
   },
   "colors": {
-   "primary": "#2a4a8a",
-   "secondary": "#c0c0c4",
+   "primary": "#c0c0c4",
+   "secondary": "#2a4a8a",
    "accents": [
     "#ffffff"
    ]
@@ -6168,7 +6168,7 @@
     "door"
    ]
   },
-  "livery": "Blue and silver with wide fenders and door text",
+  "livery": "Silver with wide fenders and door text",
   "theme": "Dough-ba-mens (bakery)",
   "photos": [
    "26Butt-077-Doughbamen-01.jpg",
@@ -6353,7 +6353,7 @@
    "primary": "#b8b8bc",
    "secondary": "#2a5ac8",
    "accents": [
-    "#ffffff"
+    "#111111"
    ]
   },
   "numbers": {
@@ -6362,7 +6362,7 @@
     "door"
    ]
   },
-  "livery": "Silver with a blue/white stripe over the nose, white numerals on the doors",
+  "livery": "Silver with a blue/white stripe over the nose, black numerals on the doors",
   "theme": "Old Nerd Racing",
   "photos": [
    "26Butt-096-OldNerdRac-01.jpg",
