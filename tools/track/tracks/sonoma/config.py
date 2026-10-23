@@ -1298,7 +1298,13 @@ CONFIG = dict(
             dict(name='T1 outside paved runoff', zone='T1 outside paved runoff', mask='all', fill='paving', exclude_track=0.3,
                  src='the apron of scenery.aprons (round 13A, owner note 126); c20_s1815 / c20_s1870 / c20_s1925: one dark asphalt '
                      'surface from the T1 edge to the drag-strip wall, no paint'),
-            dict(name='T7 complex paving', mask='captures', close=2.5, min_area=150.0, exclude_track=0.3, feather=20.0, clip_zones=True,
+            # round 13B second pass (judge r13b N135 PARTLY): the ground paving read browner and grainier than the road: its tone
+            # calibrated on the same rendered still (turn_2290: road 112.9 / 111.3 / 123.0 against ground paving 101.5 / 94.3 /
+            # 113.7 with the shared terrain_gain; ground_gain = terrain_gain x their ratio), a near-flat grain (1.0), the skipped
+            # patches filled (mask not_ground: everything in the outline but the 2026 dirt, grass and trees is paving, so the trailers, the tent and their shadows go; holes up to 800 m2), the
+            # repaint taken up to the track edge (exclude_track 0) and the first 1.5 m beyond it kept in the road's tone (mouths)
+            dict(name='T7 complex paving', mask='not_ground', close=2.5, min_area=150.0, exclude_track=0.0, feather=20.0, clip_zones=True,
+                 ground_gain=(0.97, 0.92, 0.88), grain=1.0, fill_holes=800.0, shoulder_keep=1.5,
                  # the outline follows the paddock lot's SW bank and the Chute's two sides (trees in deep shadow there read as asphalt)
                  latlon=[(38.1669221, -122.4644551), (38.1667604, -122.4638267), (38.1664370, -122.4633469), (38.1661316, -122.4630384),
                          (38.1658441, -122.4631983), (38.1655926, -122.4633697), (38.1654129, -122.4630841), (38.1656914, -122.4629470),
@@ -1307,7 +1313,7 @@ CONFIG = dict(
                          (38.1673712, -122.4645694)],
                  src='c20_s3850 / c20_s3905 / c20_s3960 / c20_s4015 / c20_s0000 paving (round 13 part B survey windows '
                      'compare/sonoma/round13b/survey/cap_*.png); onboard t072 / t074 / t076 plain dark asphalt in the junction'),
-            dict(name="O'Reilly island: its dark painted surface", mask='all', fill='paving',
+            dict(name="O'Reilly island: its dark painted surface", mask='all', fill='paving', ground_gain=(0.97, 0.92, 0.88), grain=1.0,
                  latlon=[(38.1667200, -122.4620273), (38.1667536, -122.4619530), (38.1667514, -122.4618502), (38.1667245, -122.4617702),
                          (38.1666840, -122.4617245), (38.1666077, -122.4616845), (38.1665538, -122.4616674), (38.1664909, -122.4616531),
                          (38.1664774, -122.4616445), (38.1665223, -122.4617359), (38.1665807, -122.4618387), (38.1666436, -122.4619359),

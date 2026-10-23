@@ -2879,6 +2879,13 @@ def ortho_pave(T, SC, opt, img, tiles, mpp, enu, log=print, seed=17):
             nb = sub.mean(-1); ns = sub.max(-1) - sub.min(-1)
             naip = (sub[..., 2] - sub[..., 1] >= -6) & (nb > 45) & (ns < 70)
             pv = np.where(covf >= 0.5, frac >= 0.5, naip)
+            if r.get("mask") == "not_ground":
+                # round 13B second pass (judge r13b): the whole region but its 2026 ground is paving (whatever stands on it:
+                # trailers, a tent, their shadows), so one synthesised surface replaces the NAIP year's patches; ground =
+                # warm (dirt) or green (grass, trees) or tree-dark (under 20)
+                gnd_ = (((c[..., 0] - c[..., 2] >= 30) | (c[..., 1] - c[..., 0] >= 6)) & (br >= 20)) | (br < 20)
+                gf_ = (gnd_ & cov).reshape(y1 - y0, k, x1 - x0, k).mean((1, 3)) / np.maximum(covf, 1e-6)
+                pv = np.where(covf >= 0.5, gf_ < 0.4, naip)
             rad = max(1, int(round(r.get("close", 2.5) / pxm)))
             yy, xx = np.mgrid[-rad:rad + 1, -rad:rad + 1]
             disk = xx ** 2 + yy ** 2 <= rad ** 2
@@ -2888,6 +2895,24 @@ def ortho_pave(T, SC, opt, img, tiles, mpp, enu, log=print, seed=17):
                 area = ndi_.sum(np.ones_like(lab), lab, np.arange(1, nl + 1)) * pxm * pxm
                 keep = np.r_[False, area >= r.get("min_area", 150.0)]
                 pv = keep[lab]
+            # 2026 ground (dirt, grass: warm or green) is never filled as paving: the islands stay islands
+            gnd = (((c[..., 0] - c[..., 2] >= 30) | (c[..., 1] - c[..., 0] >= 6)) & (br >= 20) & cov)
+            notg = gnd.reshape(y1 - y0, k, x1 - x0, k).mean((1, 3)) < 0.4
+            if r.get("fill_holes") or r.get("close_big"):
+                # round 13B second pass (judge r13b): what the 2026 mask skips inside the paving (parked trailers, a tent,
+                # their shadows; the NAIP year's patches under them) is paving too: holes up to `fill_holes` m2, and what a
+                # `close_big` m closing adds where the NAIP ground is paving-like (grey / pale, unsaturated; not grass)
+                if r.get("close_big"):
+                    rb = max(1, int(round(r["close_big"] / pxm)))
+                    yy, xx = np.mgrid[-rb:rb + 1, -rb:rb + 1]
+                    big = ndi_.binary_closing(np.pad(pv, rb, mode="edge"), xx ** 2 + yy ** 2 <= rb ** 2)[rb:-rb, rb:-rb]
+                    pv = pv | (big & (ns < 45) & (nb > 60) & (sub[..., 1] - sub[..., 0] < 12) & notg)
+                if r.get("fill_holes"):
+                    hl_ = ndi_.binary_fill_holes(pv) & ~pv
+                    lab_, nl_ = ndi_.label(hl_)
+                    if nl_:
+                        ar_ = ndi_.sum(np.ones_like(lab_), lab_, np.arange(1, nl_ + 1)) * pxm * pxm
+                        pv = pv | (np.r_[False, ar_ <= r["fill_holes"]][lab_] & notg)
             pave = np.zeros((H, W), bool); pave[y0:y1, x0:x1] = pv
             pave &= reg
         masks.append((r, reg, pave))
@@ -2950,18 +2975,23 @@ def ortho_pave(T, SC, opt, img, tiles, mpp, enu, log=print, seed=17):
         tv = f[near]
         base = np.median(tv, 0)
         resid = (f - ndi_.gaussian_filter(f, (2.0, 2.0, 0))).mean(-1)
-        sd = min(4.0, 1.4826 * float(np.median(np.abs(resid[near]))))
+        sd = min(4.0, 1.4826 * float(np.median(np.abs(resid[near])))) if r.get("grain") is None else float(r["grain"])
         grain = ndi_.gaussian_filter(rng.normal(0.0, 1.0, (H, W)), 0.7).astype(np.float32)
         grain = grain / (grain.std() or 1.0) * sd
         if r.get("fill") and r["fill"] != "paving":
             h_ = r["fill"].lstrip("#"); col = np.array([int(h_[i:i + 2], 16) for i in (0, 2, 4)], np.float32)
             colz = colt = col
         else:
-            colz, colt = base, base * gain
+            colz, colt = base, base * (np.array(r["ground_gain"], np.float32) if r.get("ground_gain") else gain)
         # the track ribbon's own shoulder rows (drawn over the ground up to `track_shoulder` m beyond its edges) show the ortho
         # as ground does, so the paving under them takes the ground tone even where a zone lies beneath
-        zt = zone & ~(ndi_.binary_dilation(track, iterations=int(round(opt.get("track_shoulder", 0.0) / pxm))) & ~track
-                      if opt.get("track_shoulder") else np.zeros_like(zone))
+        shb = (ndi_.binary_dilation(track, iterations=int(round(opt.get("track_shoulder", 0.0) / pxm))) & ~track
+               if opt.get("track_shoulder") else np.zeros_like(zone))
+        if r.get("shoulder_keep"):
+            # round 13B second pass: the first `shoulder_keep` m beyond the edge, where a closed road's ribbon meets the track at a
+            # mouth (the track shoulder's first rows sample the road itself), keeps the zone tone: no dark seam along the mouth
+            shb &= ~ndi_.binary_dilation(track, iterations=max(1, int(round(r["shoulder_keep"] / pxm))))
+        zt = zone & ~shb
         tgt = np.where(zt[..., None], colz, colt)[pave] + grain[pave][:, None]
         if r.get("feather"):
             # fade the change in over `feather` m inside the outline where it cuts across paving (the paddock lot's far end)

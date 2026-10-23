@@ -82,3 +82,17 @@ Open: (1) NAIP patches remain where the 2026 captures show parked trailers / a t
 paddock): the mask does not call them paving; (2) the junction paving off the zones drives with ground grip; (3) the
 retextured ground paving carries the terrain's ground grain close up, finer than the road shader's asphalt; (4) the
 dashed lane line in the paddock (t074) is not drawn (no dashed paint key).
+
+## Second pass (judge r13b N135 PARTLY, orchestrator rows 1-3), 23 Oct 2026
+
+1. Tone: the ground paving's grade calibrated on the same rendered still (turn_2290): road 112.9 / 111.3 / 123.0, ground paving
+   101.5 / 94.3 / 113.7 (purple-grey) -> region `ground_gain` (0.97, 0.92, 0.88) = terrain_gain x their ratio; after: road
+   115.6 / 118.7 / 123.8, ground paving 115.7 / 114.0 / 125.8. The synthesised grain is 1.0 (was 4): near-flat under the repaint.
+2. Patches: region mask `not_ground` (everything in the outline but the 2026 dirt (red - blue >= 30), grass / trees (green) and
+   tree shadow (under 20) is paving), holes up to 800 m2 filled away from 2026 ground: the trailer-shadow rectangle, the
+   paddock blotches and the T7a apron's pale patches are one synthesised surface (21510 m2, was 17378).
+3. Mouths: the repaint reaches the track edge (exclude_track 0) and keeps the road's tone in the first 1.5 m beyond it
+   (`shoulder_keep`), so a closed road's ribbon meeting the track at a mouth has no dark seam.
+Stills: `stills_fix/*_before.jpg` (40840d2 package) / `*_after.jpg`, same poses; `topdown_T7_complex_{before,after}.png`.
+Open: the dirt ground beside the Chute's NW mouth (2026 dirt, kept) still reads pale beside the hut (turn_2150); one small pale
+NAIP blob on the outer T7a apron at its outline.
