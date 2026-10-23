@@ -874,6 +874,126 @@
    "licence_url": "http://creativecommons.org/licenses/by/4.0/",
    "url": "https://sketchfab.com/3d-models/1970-chevrolet-chevelle-b6f2601be9cf4469ae65e058424af387",
    "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "525": {
+   "title": "BMW 525i",
+   "author": "Xico CGI",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/bmw-525i-0f017b95016c40b9838d2e6924252137",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "220": {
+   "title": "BMW 525i",
+   "author": "Xico CGI",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/bmw-525i-0f017b95016c40b9838d2e6924252137",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "150": {
+   "title": "TRIUMPH Spitfire 1500 FH",
+   "author": "Configcars / maxipub",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/triumph-spitfire-1500-fh-7c32053316c2449b9d0488e9a9219493",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "18": {
+   "title": "Acura Integra Type R",
+   "author": "Victorcstr",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/457a982d3b8946f89cb545ed7e21390c",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "141": {
+   "title": "Ford Probe GT 1993 (player car shell)",
+   "author": "Probe sim (tools/car/build_probe.py)",
+   "licence": "own work",
+   "licence_url": null,
+   "url": "public/cars/probe_gt/probe.glb",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "427": {
+   "title": "Ford Probe GT 1993 (player car shell)",
+   "author": "Probe sim (tools/car/build_probe.py)",
+   "licence": "own work",
+   "licence_url": null,
+   "url": "public/cars/probe_gt/probe.glb",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "21": {
+   "title": "Subaru BRZ (ZC6)",
+   "author": "Mona x Supercars",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/subaru-brz-zc6-321a9ece66bb4616872892c01d279542",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "833": {
+   "title": "Toyota Altezza (SXE10)",
+   "author": "Mona x Supercars",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/toyota-altezza-sxe10-4e78dd65a720492c8797cde72d2a6226",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "938": {
+   "title": "Porsche 944 turbo scale1-65 for 3D-printing",
+   "author": "fishermans garage (fishermans)",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/porsche-944-turbo-scale1-65-for-3d-printing-2cca2f19ca55455b95d546a68f451e03",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "916": {
+   "title": "Porsche 944 turbo scale1-65 for 3D-printing",
+   "author": "fishermans garage (fishermans)",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/porsche-944-turbo-scale1-65-for-3d-printing-2cca2f19ca55455b95d546a68f451e03",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "268": {
+   "title": "Honda Prelude 4",
+   "author": "Fastomas",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/honda-prelude-4-f2d1ef9e746746fcb78cc63e2fcb1b0e",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "420_sp": {
+   "title": "Low poly Volvo 740 Kombi",
+   "author": "sebbelon",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/low-poly-volvo-740-kombi-19ceff9e81af47c09e2efc8120341f58",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "750": {
+   "title": "Mazda Mx5 NBFL",
+   "author": "kizcko2901",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/mazda-mx5-nbfl-def68d44b2e04cf8a977d556bb7da80b",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "90_sp": {
+   "title": "Pontiac Fiero GT 1987",
+   "author": "loadversus",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/pontiac-fiero-gt-1987-7ec4815d28124814bbbfb4fb80d6a619",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "14": {
+   "title": "[FREE] Ford Crown Victoria 2005",
+   "author": "Velrifea",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/free-ford-crown-victoria-2005-91b2d4d7fe5b4197928c2f0315e24a67",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
   }
  }
 }
