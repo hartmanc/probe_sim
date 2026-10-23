@@ -42,6 +42,13 @@ example; the scripts Laguna was built with step by step (17-18 Oct) are in git h
   the clean captures for the whole lap, published as one page the owner can walk, and the round STOPS there. Nothing
   downstream (stage 2, stage 3, a drive, a judge, a preview) is built until the owner has reviewed the outline and
   advised. The same holds for any later edge refit. See "Owner checkpoint after edge detection" under stage 1.
+- **A long line in the ground texture is a missing feature (owner, 23 Oct 2026).** After his round-12 Sonoma lap: "if we are
+  modeling textures in a long line on the ground, it's likely we are missing a feature". The T1 tyre wall, the T2 and T4 wall
+  bases and the bridge footprint were all visible as dark or pale bands in the ortho with the model sitting behind or over
+  them. Stage 3 scans the ortho for long thin linear features in the scenery band and lists every one with no modelled
+  barrier, kerb, edge, cone line or paved area on it (the unmodelled-ground-lines gate, round 13); each finding is a feature
+  to place from the footage or a documented disposition, never left as texture. The ortho is inpainted under every modelled
+  structure footprint (bridges, stands) so the satellite's image of it does not show through.
 - **Source precedence on any conflict:** recent onboard video (team GoPro, current-season series onboard) beats
   Google satellite beats the NAIP ortho beats OSM beats the lidar survey year. Check the repave and runoff history
   of the circuit before trusting the survey (Laguna: 2017 lidar, 2023 full repave, 2025 paved runoff).
