@@ -131,11 +131,11 @@
    "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
   },
   "83": {
-   "title": "1976 Volkswagen Golf GTI Mk1",
-   "author": "Ddiaz Design",
-   "licence": "CC-BY-NC-SA-4.0",
-   "licence_url": "http://creativecommons.org/licenses/by-nc-sa/4.0/",
-   "url": "https://sketchfab.com/3d-models/1976-volkswagen-golf-gti-mk1-1fc46cb37bd748e3bb9355fcedaf3817",
+   "title": "VW Rabbit GTI scale1-70 for 3D-printing",
+   "author": "fishermans garage (fishermans)",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/vw-rabbit-gti-scale1-70-for-3d-printing-93aa4b2241184ae595c495ca44e24120",
    "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
   },
   "963": {
@@ -649,6 +649,30 @@
    "licence": "CC-BY-4.0",
    "licence_url": "http://creativecommons.org/licenses/by/4.0/",
    "url": "https://sketchfab.com/3d-models/body-mgb-lowpoly-8249b9921d984ddbb6a1536562e07b49",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "95": {
+   "title": "Golf R32",
+   "author": "Nick Broad (nickbroad)",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/golf-r32-8171332b39be45e896a7fdf3c3e66354",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "357": {
+   "title": "Golf R32",
+   "author": "Nick Broad (nickbroad)",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/golf-r32-8171332b39be45e896a7fdf3c3e66354",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "36": {
+   "title": "VW Rabbit GTI scale1-70 for 3D-printing",
+   "author": "fishermans garage (fishermans)",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/vw-rabbit-gti-scale1-70-for-3d-printing-93aa4b2241184ae595c495ca44e24120",
    "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
   }
  }
