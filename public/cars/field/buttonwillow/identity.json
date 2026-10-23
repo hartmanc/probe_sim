@@ -4156,10 +4156,10 @@
   "laps": 197,
   "best_lap_s": 143.224,
   "make": "BMW",
-  "model": "3 Series (E30) convertible",
+  "model": "3 Series (E30) convertible, top stowed",
   "generation": "E30 (1982-94)",
   "year": 1987,
-  "body": "roadster",
+  "body": "convertible",
   "confidence": "medium",
   "evidence": "Photos: silver E30 convertible with a roll cage and 'On a mission to pass you' sign over the windscreen",
   "dims": {
