@@ -9234,75 +9234,61 @@
    "number": "989",
    "id": "989",
    "file": "models/989.glb",
-   "tris": 11264,
-   "bytes": 765412,
-   "materials": 2,
-   "length_m": 4.79,
-   "width_m": 2.0,
-   "height_m": 1.5,
+   "tris": 8286,
+   "bytes": 676532,
+   "materials": 3,
+   "length_m": 4.35,
+   "width_m": 1.7,
+   "height_m": 1.635,
    "bbox_m": [
-    4.782,
-    2.17,
-    1.461
+    4.48,
+    1.956,
+    1.637
    ],
-   "wheelbase_m": 2.92,
-   "track_front_m": 1.63,
-   "track_rear_m": 1.63,
-   "tyre_radius_m": 0.33,
-   "tyre_radius_rear_m": 0.33,
+   "wheelbase_m": 2.741,
+   "track_front_m": 1.42,
+   "track_rear_m": 1.42,
+   "tyre_radius_m": 0.305,
+   "tyre_radius_rear_m": 0.305,
    "hubs": {
     "wheel_fl": [
-     0.815,
-     0.33,
-     1.46
+     0.71,
+     0.305,
+     1.3705
     ],
     "wheel_fr": [
-     -0.815,
-     0.33,
-     1.46
+     -0.71,
+     0.305,
+     1.3705
     ],
     "wheel_rl": [
-     0.815,
-     0.33,
-     -1.46
+     0.71,
+     0.305,
+     -1.3705
     ],
     "wheel_rr": [
-     -0.815,
-     0.33,
-     -1.46
+     -0.71,
+     0.305,
+     -1.3705
     ]
    },
    "team": "JUNK RUNNERS",
-   "car": "1971 Chevrolet C10 short-bed pickup",
+   "car": "1986 Ford Ranger regular cab (1st gen)",
    "brake_lamps": [
     [
-     0.84,
-     0.72,
-     -2.4182,
-     0.11
+     0.77,
+     0.86,
+     -2.3672,
+     0.13
     ],
     [
-     -0.84,
-     0.72,
-     -2.4182,
-     0.11
+     -0.77,
+     0.86,
+     -2.3678,
+     0.13
     ]
    ],
-   "brake_lamps_fallback": false,
-   "import": {
-    "method": "named wheel parts",
-    "scale": 0.02870082261860024,
-    "source_tris": 85797,
-    "model_track": 1.574,
-    "model_tyre_radius": 0.409,
-    "hub_z_front": 0.327,
-    "hub_z_rear": 0.333,
-    "model_length": 4.777,
-    "model_width": 2.169,
-    "model_height": 1.461,
-    "tris": 8595,
-    "file": "tools/cars/kit/downloads/989/model.glb"
-   }
+   "brake_lamps_fallback": false
   },
   {
    "number": "999",
