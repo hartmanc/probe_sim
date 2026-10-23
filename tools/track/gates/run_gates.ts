@@ -2,10 +2,10 @@
 // Prints the three reports and a JSON summary line; exits 1 when a gate fails.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { containment, escapeRuns, exposedEnds, joinFaces, pitConnectivity, sideBySide, signPlacement, tyreFaces, wallTops, type GateConfig } from './sceneryGates';
+import { containment, escapeRuns, exposedEnds, joinFaces, pitConnectivity, runGaps, sideBySide, signPlacement, tyreFaces, wallTops, type GateConfig } from './sceneryGates';
 
 const dir = process.argv[2];
-const cfg: GateConfig & { pit_box_s?: number } = process.argv[3] ? JSON.parse(readFileSync(process.argv[3], 'utf8')) : {};
+const cfg: GateConfig & { pit_box_s?: number; openings?: { x: number; y: number; why: string }[] } = process.argv[3] ? JSON.parse(readFileSync(process.argv[3], 'utf8')) : {};
 const track = JSON.parse(readFileSync(join(dir, 'track.json'), 'utf8'));
 const sc = JSON.parse(readFileSync(join(dir, 'scenery.json'), 'utf8'));
 let fail = false;
@@ -62,6 +62,14 @@ console.log(`[${tf.length ? 'FAIL' : 'ok'}] tyre faces: ${tf.length} tyre runs w
 for (const x of tf) console.log(`       tyre face s ${x.s}: ${x.face.toFixed(2)} m (row 1 ${x.rowsToTrack ? 'toward' : 'away from'} the track): ${x.tyres}`);
 if (tf.length) fail = true;
 
-console.log('GATES_JSON ' + JSON.stringify({ containment: { escapes: c.escapes.length, runs, allowed: c.allowed.length, junctions: c.junctions },
+// round 13 (Sonoma owner note 131): two runs of one line with a hole between them, anywhere beyond the edge
+const rg = runGaps(track, sc, { openings: cfg.openings });
+console.log(`[${rg.gaps.length ? 'FAIL' : 'ok'}] run gaps: ${rg.checked} facing run ends 0.5-25 m apart on one side, ${rg.openings.length} openings `
+  + `(paved surface, lapping run or declared), ${rg.gaps.length} holes in a barrier line`);
+for (const x of rg.openings) console.log(`       opening s ${x.s} (${x.gap} m): ${x.why}`);
+for (const x of rg.gaps) console.log(`       hole ${x.side.padEnd(5)} s ${x.s} (${x.gap} m, ${x.out} m out, at ${x.x}, ${x.y}): ${x.a} | ${x.b}`);
+if (rg.gaps.length) fail = true;
+
+console.log('GATES_JSON ' + JSON.stringify({ runGaps: rg, containment: { escapes: c.escapes.length, runs, allowed: c.allowed.length, junctions: c.junctions },
   pit: p, signs: g, ends: e, facings: sb, wallTops: wt, joins: jf, tyreFaces: tf, fail }));
 process.exit(fail ? 1 : 0);

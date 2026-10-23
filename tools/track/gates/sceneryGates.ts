@@ -665,3 +665,75 @@ export function tyreFaces(t: TrackLike, sc: SceneryLike, opts: { min?: number } 
   }
   return out;
 }
+
+// ------------------------------------------------------------------ run gaps (round 13, Sonoma owner note 131)
+export interface RunGap { a: string; b: string; s: number; side: 'left' | 'right'; out: number; gap: number; x: number; y: number }
+export interface RunGapsReport { checked: number; gaps: RunGap[]; openings: { s: number; gap: number; why: string }[] }
+
+/** Two barrier runs that are one line with a hole in it: an end of run A and an end of run B (tyres, concrete, pit wall,
+ *  Armco; fences have gates) `minGap` (0.5) to `maxGap` (25) m apart, facing each other (each end's outward direction,
+ *  its last `tail` (6) m, within `angle` (25) deg of the line to the other end), both beyond the edge on one side. Not a
+ *  finding when the hole is an opening: a paved surface (the track, a pit-lane part, a paved zone or closed road, a paved
+ *  area) crosses the segment between the ends, another barrier run passes within 2 m of its midpoint (a lapping run), or
+ *  the config declares it (`openings`: [{x, y, why}] within 10 m of the midpoint). The wall-ends gate checks only
+ *  upstream ends within 8 m of the edge and the joins gate only ends that already meet, so a 13.5 m hole 10-25 m out
+ *  (Sonoma s 306-318, right, round 12) passed both. */
+export function runGaps(t: TrackLike, sc: SceneryLike & { paved_areas?: { name?: string; poly: V2[] }[] },
+  opts: { minGap?: number; maxGap?: number; angle?: number; tail?: number; openings?: { x: number; y: number; why: string }[] } = {}): RunGapsReport {
+  const minGap = opts.minGap ?? 0.5, maxGap = opts.maxGap ?? 25, cosA = Math.cos(((opts.angle ?? 25) * Math.PI) / 180), tail = opts.tail ?? 6;
+  const proj = makeProjector(t);
+  const kinds = ['tyres', 'concrete', 'pitwall', 'armco'];
+  const runs = (sc.barriers ?? []).map((b, k) => ({ b, k })).filter(({ b }) => kinds.includes(b.kind) && b.pts.length >= 2);
+  interface End { k: number; label: string; p: V2; dir: V2 }
+  const ends: End[] = [];
+  for (const { b, k } of runs) {
+    for (const head of [true, false]) {
+      const P = head ? b.pts : [...b.pts].reverse();
+      const p: V2 = [P[0][0], P[0][1]];
+      // the point `tail` m into the run; outward direction = from it to the end
+      let acc = 0, q: V2 = [P[1][0], P[1][1]];
+      for (let i = 1; i < P.length; i++) { acc += Math.hypot(P[i][0] - P[i - 1][0], P[i][1] - P[i - 1][1]); q = [P[i][0], P[i][1]]; if (acc >= tail) break; }
+      const d = Math.hypot(p[0] - q[0], p[1] - q[1]) || 1;
+      ends.push({ k, label: `${b.kind} run ${k}: ${(b.src ?? '').slice(0, 90)}`, p, dir: [(p[0] - q[0]) / d, (p[1] - q[1]) / d] });
+    }
+  }
+  const paved: V2[][] = [];
+  for (const grp of [sc.pit_lane?.parts ?? [], sc.paved_zones?.parts ?? []]) for (const p of grp) paved.push(partPolygon(p));
+  for (const a of sc.paved_areas ?? []) paved.push(a.poly);
+  const crossesPaved = (a: V2, b: V2) => {
+    for (let k = 0; k <= 10; k++) {
+      const p: V2 = [a[0] + ((b[0] - a[0]) * k) / 10, a[1] + ((b[1] - a[1]) * k) / 10];
+      const q = proj(p, 80);
+      if (q && q.out < 0) return 'the track';
+      for (const poly of paved) if (inPoly(p, poly)) return 'a paved surface';
+    }
+    return '';
+  };
+  const segs = runs.map(({ b, k }) => ({ k, P: b.pts }));
+  const nearOther = (m: V2, ka: number, kb: number) => segs.some(({ k, P }) => k !== ka && k !== kb
+    && P.some((_, i) => i > 0 && segDist(m, [P[i - 1][0], P[i - 1][1]], [P[i][0], P[i][1]]) <= 2));
+  const rep: RunGapsReport = { checked: 0, gaps: [], openings: [] };
+  const seen = new Set<string>();
+  for (let i = 0; i < ends.length; i++) for (let j = 0; j < ends.length; j++) {
+    const A = ends[i], B = ends[j];
+    if (A.k === B.k) continue;
+    const key = `${Math.min(i, j)}-${Math.max(i, j)}`;
+    if (seen.has(key)) continue;
+    const dx = B.p[0] - A.p[0], dy = B.p[1] - A.p[1], g = Math.hypot(dx, dy);
+    if (g < minGap || g > maxGap) continue;
+    const ux = dx / g, uy = dy / g;
+    if (A.dir[0] * ux + A.dir[1] * uy < cosA || -(B.dir[0] * ux + B.dir[1] * uy) < cosA) continue;
+    const qa = proj(A.p, 120), qb = proj(B.p, 120);
+    if (!qa || !qb || qa.out < 0 || qb.out < 0 || Math.sign(qa.lat) !== Math.sign(qb.lat)) continue;
+    seen.add(key);
+    rep.checked++;
+    const m: V2 = [(A.p[0] + B.p[0]) / 2, (A.p[1] + B.p[1]) / 2];
+    const s = Math.round(((proj(m, 120) ?? qa).i) * t.spacing_m);
+    const why = crossesPaved(A.p, B.p) || (nearOther(m, A.k, B.k) ? 'a lapping run' : '')
+      || (opts.openings ?? []).find((o) => Math.hypot(o.x - m[0], o.y - m[1]) <= 10)?.why || '';
+    if (why) { rep.openings.push({ s, gap: Math.round(g * 10) / 10, why }); continue; }
+    rep.gaps.push({ a: A.label, b: B.label, s, side: qa.lat > 0 ? 'left' : 'right', out: Math.round(Math.min(qa.out, qb.out) * 10) / 10,
+      gap: Math.round(g * 10) / 10, x: Math.round(m[0] * 10) / 10, y: Math.round(m[1] * 10) / 10 });
+  }
+  return rep;
+}

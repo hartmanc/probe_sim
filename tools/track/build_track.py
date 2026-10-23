@@ -832,7 +832,8 @@ def stage_scenery(cfg, out, no_logger):
         rp = os.path.join(work, "paint_regs.json")
         regs = {r[0]: r for r in json.load(open(rp))} if os.path.exists(rp) else None
     log("post steps:")
-    scenery_post.run(T, SC, scfg, tiles, cfg["captures"]["mpp"], regs)
+    ortho_ = (np.asarray(Image.open(os.path.join(tmp, "ortho.jpg")).convert("RGB")).astype(np.float32), T["ortho"])
+    scenery_post.run(T, SC, scfg, tiles, cfg["captures"]["mpp"], regs, ortho=ortho_)
     rep = Report("SCENERY VALIDATION")
     _, gf = edge_gate.gate(T, SC, cfg["gate"], log=log, world=not REPRO)
     rep.fails += gf
@@ -886,6 +887,9 @@ def scenery_gates(cfg, T, SC, tmp, trk):
                    "s1": round(float(i[1]) * sp, 1), "why": a["why"]})
     out["allowed"] = al
     out["paddock"] = [{"name": p["name"], "poly": [list(cfg.enu(*q)) for q in p["latlon"]]} for p in g.get("paddock", [])]
+    # round 13: declared openings in a barrier line (the run-gaps gate): [{latlon, why}] -> ENU
+    out["openings"] = [{"x": round(float(cfg.enu(*o_["latlon"])[0]), 1), "y": round(float(cfg.enu(*o_["latlon"])[1]), 1), "why": o_["why"]}
+                       for o_ in g.get("openings", [])]
     if g.get("pit_box_latlon"):
         i, _, _ = trk.project(np.array([cfg.enu(*g["pit_box_latlon"])]))
         out["pit_box_s"] = round(float(i[0]) * sp, 1)
@@ -905,7 +909,24 @@ def scenery_gates(cfg, T, SC, tmp, trk):
         log(r.stderr[-2000:])
         fails.append("scenery gates did not run")
     fails += coverage_gates(cfg, tmp, trk, sp)
+    fails += ground_lines_gate(cfg, tmp)
     return fails
+
+
+def ground_lines_gate(cfg, tmp):
+    """The unmodelled-ground-lines gate of round 13 (tools/track/gates/ground_lines.py; Sonoma owner, 23 Oct 2026: "if we
+    are modeling textures in a long line on the ground, it's likely we are missing a feature"): long thin dark or pale
+    lines in the package ortho 2-60 m beyond the edge with no modelled feature on them. Strict (fails on an open finding)
+    when the config has scenery.ground_lines (options and dispositions); otherwise printed as advisory."""
+    sys.path.insert(0, os.path.join(HERE, "gates"))
+    import ground_lines
+    gl = cfg["scenery"].get("ground_lines")
+    rep = ground_lines.scan(tmp, gl or {})
+    json.dump(rep, open(os.path.join(tmp, "ground_lines_report.json"), "w"), indent=1)
+    for line in ground_lines.report_lines(rep, strict=gl is not None):
+        log(line if gl is not None or not line.startswith("[") else line + " (no config scenery.ground_lines: advisory)")
+    no = len(rep["open"])
+    return ["ground lines"] if (gl is not None and no) else []
 
 
 def manifest_dispositions(cfg):

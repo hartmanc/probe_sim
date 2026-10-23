@@ -1,7 +1,7 @@
 // Pure parts of the stage-3 scenery gates (tools/track/gates/sceneryGates.ts, 20 Oct 2026): segment crossing, polygon
 // test, containment escapes / barriers / allowed runoff, pit connectivity and sign placement on a synthetic straight.
 import { describe, expect, it } from 'vitest';
-import { containment, escapeRuns, exposedEnds, inPoly, joinFaces, laneClearance, pitConnectivity, segCross, sideBySide, signPlacement, tyreFaces, wallTops, type SceneryLike, type TrackLike, type V3 } from '../../../tools/track/gates/sceneryGates';
+import { containment, escapeRuns, exposedEnds, inPoly, joinFaces, laneClearance, pitConnectivity, runGaps, segCross, sideBySide, signPlacement, tyreFaces, wallTops, type SceneryLike, type TrackLike, type V3 } from '../../../tools/track/gates/sceneryGates';
 
 // a 400 m oval-ish closed loop: two 150 m straights joined by half circles R 30, 1 m stations, half-width 5
 function loop(): TrackLike {
@@ -182,5 +182,31 @@ describe('scenery gates: wall tops, wall-tyre joins and tyre faces (round 12, So
     expect(bad).toHaveLength(1);
     expect(bad[0].face).toBeCloseTo(0.55 - 0.91, 2);
     expect(tyreFaces(T, { barriers: [{ ...fwd, pts: [...fwd.pts].reverse() }] })).toHaveLength(0);
+  });
+});
+
+describe('scenery gates: run gaps (round 13, Sonoma owner note 131)', () => {
+  // one tyre line 20 m right of the bottom straight, split 13.5 m apart at x 60-73.5 (the hole past the footbridge)
+  const a = { kind: 'tyres', pts: [[10, -20, 0], [35, -20, 0], [60, -20, 0]] as V3[], src: 'part 1' };
+  const b = { kind: 'tyres', pts: [[73.5, -20, 0], [100, -20, 0], [130, -20, 0]] as V3[], src: 'part 2' };
+  it('two runs of one line with a hole 20 m out fail (the wall-ends and joins gates do not look there)', () => {
+    const r = runGaps(T, { barriers: [a, b] });
+    expect(r.gaps).toHaveLength(1);
+    expect(r.gaps[0].gap).toBeCloseTo(13.5, 1);
+    expect(r.gaps[0].side).toBe('right');
+    expect(exposedEnds(T, { barriers: [a, b] }).exposed).toHaveLength(0);
+    expect(joinFaces(T, { barriers: [a, b] })).toHaveLength(0);
+  });
+  it('one run, a road through the hole, a lapping run or a declared opening pass', () => {
+    expect(runGaps(T, { barriers: [{ ...a, pts: [...a.pts, ...b.pts] }] }).gaps).toHaveLength(0);
+    const cross = { turn: 'access', kind: 'closed_road', center: [[67, -8, 0], [67, -40, 0]] as V3[], left: [[64, -8, 0], [64, -40, 0]] as V3[], right: [[70, -8, 0], [70, -40, 0]] as V3[] };
+    expect(runGaps(T, { barriers: [a, b], paved_zones: { parts: [cross] } }).gaps).toHaveLength(0);
+    const lap = { kind: 'concrete', pts: [[55, -21.5, 0], [80, -21.5, 0]] as V3[], src: 'behind' };
+    expect(runGaps(T, { barriers: [a, b, lap] }).gaps).toHaveLength(0);
+    expect(runGaps(T, { barriers: [a, b] }, { openings: [{ x: 67, y: -20, why: 'gate' }] }).gaps).toHaveLength(0);
+  });
+  it('runs that do not face each other (side by side, or at right angles) are not a hole', () => {
+    const perp = { kind: 'tyres', pts: [[66, -25, 0], [66, -45, 0]] as V3[], src: 'across' };
+    expect(runGaps(T, { barriers: [a, perp] }).gaps).toHaveLength(0);
   });
 });

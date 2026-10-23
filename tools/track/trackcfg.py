@@ -304,7 +304,7 @@ def remap_stations(cfg, n, length_m=None, C=None):
     g['exempt'] = [(a, st(lo), st(hi)) + tuple(rest) for a, lo, hi, *rest in g.get('exempt', [])]
     g['wall_gaps'] = [(a, b, st(lo), st(hi)) for a, b, lo, hi in g.get('wall_gaps', [])]
     s = c['scenery']
-    s['aprons'] = [(t, side, st(lo), st(hi), why) for t, side, lo, hi, why in s.get('aprons', [])]
+    s['aprons'] = [(t, side, st(lo), st(hi), why, *rest) for t, side, lo, hi, why, *rest in s.get('aprons', [])]
     for z in s.get('shoulder_zones', []):
         z['lo'], z['hi'] = st(z['lo']), st(z['hi'])
     for key in ('pitwall_end', 'pitwall_setback', 'pitwall_straight'):
@@ -315,6 +315,8 @@ def remap_stations(cfg, n, length_m=None, C=None):
         for k in ('near', 's0', 's1'): e[k] = fm_s(e[k])
     for e in s.get('edge_line_runs', []):
         for k in ('s0', 's1'): e[k] = fm_s(e[k])
+    for d_ in (s.get('ground_lines') or {}).get('dispositions', []):
+        d_['s'] = (fm_s(d_['s'][0]), fm_s(d_['s'][1]))
     if (s.get('pit_exit_cones') or {}).get('s0') is not None:
         s['pit_exit_cones']['s0'] = fm_s(s['pit_exit_cones']['s0'])
     return c

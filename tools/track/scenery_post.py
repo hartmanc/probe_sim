@@ -117,21 +117,45 @@ def sample_profiles(C, NL, hw, sg, ks, offs, tiles, mpp, regs=None):
     return P
 
 
-def aprons(T, SC, aprons_cfg, tiles, mpp, wmax=10.0, regs=None, log=_log):
+def ortho_profiles(C, NL, hw, sg, ks, offs, ortho):
+    """sample_profiles on the package's ground ortho (ortho = (image array, track.json ortho block)): for an apron wider
+    than a capture covers clear of its labels (round 13, Sonoma's T1 runoff triangle, up to ~35 m)."""
+    from scipy.ndimage import map_coordinates
+    im, o = ortho; H, W = im.shape[:2]
+    P = np.full((len(ks), len(offs), 3), np.nan, np.float32)
+    for i, k in enumerate(ks):
+        lat = sg * (hw[k] + offs); X = C[k, 0] + lat * NL[k, 0]; Y = C[k, 1] + lat * NL[k, 1]
+        px = (X - o['x0']) / (o['x1'] - o['x0']) * W - 0.5; py = (o['y1'] - Y) / (o['y1'] - o['y0']) * H - 0.5
+        P[i] = np.stack([map_coordinates(im[..., c], [py, px], order=1, mode='nearest') for c in range(3)], -1)
+    return P
+
+
+def aprons(T, SC, aprons_cfg, tiles, mpp, wmax=10.0, regs=None, log=_log, ortho=None):
     n, sp = T['n'], T['spacing_m']; fr = T['profile']['fractions']; Z = T['profile']['z']
     C, NL, hl, hr = geometry(T)
     walls = [p for b in SC['barriers'] for p in b['pts']]
     parts = []
-    for turn, side, s0, s1, why in aprons_cfg:
+    for turn, side, s0, s1, why, *opt in aprons_cfg:
+        opt = opt[0] if opt else {}
         sg = 1 if side == 'left' else -1; hw = hl if side == 'left' else hr; E = np.array(T[side])
-        ks = list(range(s0, s1 + 1)); offs = np.arange(0.15, wmax + 1e-9, 0.1)
-        P = sample_profiles(C, NL, hw, sg, ks, offs, tiles, mpp, regs)
+        ks = list(range(s0, s1 + 1)); offs = np.arange(0.15, opt.get('max', wmax) + 1e-9, 0.1)
+        if opt.get('source') == 'ortho':
+            if ortho is None:
+                raise SystemExit(f'apron {turn}: source ortho but no ortho given')
+            P = ortho_profiles(C, NL, hw, sg, ks, offs, ortho)
+        else:
+            P = sample_profiles(C, NL, hw, sg, ks, offs, tiles, mpp, regs)
         w = np.full(len(ks), np.nan)
         for i, v in enumerate(P):
             if np.isnan(v[0, 0]): continue
             br = v.mean(1); sat = v.max(1) - v.min(1)
             teal = (v[:, 2] - v[:, 0] > 15) & (v[:, 1] - v[:, 0] > 15)
-            pave = ((np.abs(v[:, 0] - v[:, 1]) < 12) & (br > 60) & (sat < 45)) | teal
+            if opt.get('source') == 'ortho':
+                # the NAIP ortho's pavement is blue-grey (blue at least green - 6) and its ground green or tan (blue well
+                # under green): the capture rule (red ~ green) reads the ortho's grey asphalt as ground
+                pave = (v[:, 2] - v[:, 1] >= -6) & (br > 45) & (sat < 70)
+            else:
+                pave = ((np.abs(v[:, 0] - v[:, 1]) < 12) & (br > 60) & (sat < 45)) | teal
             bad = np.convolve(~pave, np.ones(8), 'valid') >= 7
             j = int(np.argmax(bad)) if bad.any() else len(offs) - 1
             w[i] = offs[j]
@@ -261,14 +285,14 @@ def pit_exit_cones_from(T, SC, c, log=_log):
     log(f'  pit-exit cones: {len(new)} added back to s {c["s0"]}')
 
 
-def run(T, SC, scfg, tiles, mpp, regs=None, log=_log):
+def run(T, SC, scfg, tiles, mpp, regs=None, log=_log, ortho=None):
     """All post steps in order on scenery dict SC (track dict T). Returns SC."""
     for z in scfg.get('shoulder_zones', []):
         part = shoulder_zone(T, SC, z)
         SC['paved_zones']['parts'] = [p for p in SC['paved_zones']['parts'] if p.get('turn') != z['turn']] + [part]
         log(f"  shoulder zone {z['turn']}: {part['n']} stations")
     if scfg.get('aprons'):
-        parts = aprons(T, SC, scfg['aprons'], tiles, mpp, scfg.get('apron_max', 10.0), regs, log)
+        parts = aprons(T, SC, scfg['aprons'], tiles, mpp, scfg.get('apron_max', 10.0), regs, log, ortho)
         names = {p['turn'] for p in parts}
         SC['paved_zones']['parts'] = [p for p in SC['paved_zones']['parts'] if p.get('turn') not in names] + parts
     if scfg.get('pitwall_end'): pitwall_end(T, SC, scfg['pitwall_end'], log)

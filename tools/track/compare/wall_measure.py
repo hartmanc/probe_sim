@@ -29,6 +29,23 @@ import trackcfg  # noqa: E402
 from capsample import Sampler  # noqa: E402
 
 
+class OrthoSampler:
+    """The Sampler interface over a package's ortho.jpg (bilinear; one image, so `group` is ignored)."""
+    def __init__(self, pkg):
+        from PIL import Image
+        T = json.load(open(os.path.join(pkg, 'track.json')))
+        self.o = T['ortho']
+        self.im = np.asarray(Image.open(os.path.join(pkg, self.o['file'])).convert('RGB')).astype(np.float32)
+
+    def sample(self, X, Y, group=None):
+        from scipy.ndimage import map_coordinates
+        o = self.o
+        px = (np.asarray(X, float) - o['x0']) / (o['x1'] - o['x0']) * o['width_px'] - 0.5
+        py = (o['y1'] - np.asarray(Y, float)) / (o['y1'] - o['y0']) * o['height_px'] - 0.5
+        rgb = np.stack([map_coordinates(self.im[..., c], [py, px], order=1, mode='nearest') for c in range(3)], -1)
+        return rgb, np.zeros(px.shape, int)
+
+
 def lonlat(cfg, x, y):
     lat0, lon0 = cfg['origin']; R = 6378137.0
     return lat0 + math.degrees(y / R), lon0 + math.degrees(x / (R * math.cos(math.radians(lat0))))
@@ -48,6 +65,11 @@ def pick(prof, offs, feature):
         k = max(1, int(round(w / (offs[1] - offs[0]))))
         c = np.convolve(prof, np.ones(k) / k, 'same')
         c = (c - med) if feature == 'bright' else (med - c)
+        # round 13: the 'same' convolution pads with zeros, so within half a window of either end the band reads dark
+        # (a dark pick pinned to the search limit, e.g. -0.90 of a 0.9 m search on the ortho): those samples cannot win
+        h = k // 2 + 1
+        if len(c) > 2 * h + 1:
+            c[:h] = -np.inf; c[-h:] = -np.inf
         i = int(np.nanargmax(c))
         if c[i] > best[1] + 2:
             best = (offs[i], float(c[i]))
@@ -117,9 +139,13 @@ def main():
     ap.add_argument('--feature', default='bright', choices=['bright', 'dark'])
     ap.add_argument('--step', type=float, default=10.0)
     ap.add_argument('--name', default='wall')
+    ap.add_argument('--ortho', action='store_true', help="sample the package's own ortho.jpg (0.6 m/px) instead of the "
+                    "z20 captures: where the captures are masked or the line to match is the one the sim's ground shows (round 13)")
+    ap.add_argument('--save', default='/tmp/wall_measure_last.json', help='where the measured polylines (lat/lon) are written as json')
+    ap.add_argument('--per-station', action='store_true', help='with --edge: print the offset beyond the edge every 2 m')
     a = ap.parse_args()
     cfg = trackcfg.load(a.track)
-    smp = Sampler(cfg)
+    smp = OrthoSampler(a.pkg) if a.ortho else Sampler(cfg)
     T = json.load(open(os.path.join(a.pkg, 'track.json')))
     C = np.array(T['center'])[:, :2]; n, sp = T['n'], T['spacing_m']
     tg = np.roll(C, -1, 0) - np.roll(C, 1, 0); tg /= np.linalg.norm(tg, axis=1, keepdims=True); NL = np.c_[-tg[:, 1], tg[:, 0]]
@@ -158,6 +184,11 @@ def main():
             i = int(np.argmin(((C - w) ** 2).sum(1)))
             d.append(abs(((w - C[i]) * NL[i]).sum()) - abs(((E[i] - C[i]) * NL[i]).sum()))
         d = np.array(d)
+        if a.per_station:
+            ii = np.where(np.isfinite(sm))[0]
+            for j in range(0, len(ii), 4):
+                w = W[ii[j]]; i = int(np.argmin(((C - w) ** 2).sum(1)))
+                print(f'   s {i * sp:7.1f} offset {d[j]:5.2f} m{"" if ok[ii[j]] else " (interpolated)"}')
         print(f'   offset beyond the {a.edge} edge: p10 {np.percentile(d, 10):.2f}, p50 {np.median(d):.2f}, p90 {np.percentile(d, 90):.2f} m')
     # polyline per continuous run, every step m
     runs, cur = [], []
@@ -179,7 +210,7 @@ def main():
         ll = [tuple(round(v, 7) for v in lonlat(cfg, *W[i])) for i in keep]
         out.append(ll)
         print(f'   run {s[r[0]]:.0f}-{s[r[-1]]:.0f} m along the guide: ' + ', '.join(f'({la}, {lo})' for la, lo in ll))
-    json.dump(out, open('/tmp/wall_measure_last.json', 'w'))
+    json.dump(out, open(a.save, 'w'))
 
 
 if __name__ == '__main__':

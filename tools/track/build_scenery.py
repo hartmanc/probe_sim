@@ -1033,6 +1033,8 @@ def barriers(trk, osm):
             if not runs_:
                 continue
             P = runs_[0]
+        if dw.get("at_edge"):
+            P = wall_at_edge(trk, P, dw["at_edge"], dw["name"])
         # the fitted edge wins: a declared point closer than 0.5 m to the road (or on it) is moved out along the
         # normal to 0.55 m outside the edge, and the shift is reported (the measurement and the fit disagree there)
         # round 7f (Sonoma owner note 56): a declared pit wall (kind 'pitwall') uses the barrier-gap gate's pit-wall minimum,
@@ -1323,6 +1325,39 @@ def closed_road_paint(trk, parts):
             log(f"closed road {p['turn']}: {'left' if side > 0 else 'right'} painted edge measured at {int(ok.sum())} of {len(C)} stations, "
                 f"lateral p50 {np.nanmedian(v):+.1f} m")
     return out
+
+
+def wall_at_edge(trk, P, ae, name):
+    """A declared wall that stands AT the painted edge line over a stretch (config declared_walls[].at_edge, round 13,
+    Sonoma owner note 136: "the wall should stand right against the painted edge line"): {side: 'left' | 'right',
+    off (m beyond the edge; the barrier-gap minimum plus its margin, 0.55), a, b, c: (lat, lon) on the track}. Between a
+    and b the wall's measured offset from the edge blends (smoothstep) to `off`; from b to c it is the edge plus `off`
+    exactly, so it follows the fitted edge with no joggle; outside a..c the measured points are kept. The edge itself
+    does not move."""
+    sg = 1 if ae["side"] == "left" else -1
+    n = trk.n
+    ia, ib, ic = (int(trk.project(np.array([bl.enu(*ae[k])]))[0][0]) for k in ("a", "b", "c"))
+    i, lat, dout = trk.project(P)
+    u = (i - ia) % n                     # stations past a, in driving order
+    span_ab, span_ac = (ib - ia) % n, (ic - ia) % n
+    if span_ab > span_ac:
+        raise SystemExit(f"declared wall {name}: at_edge points not in driving order a -> b -> c")
+    inside = (u <= span_ac) & (np.sign(lat) == sg)
+    if not inside.any():
+        raise SystemExit(f"declared wall {name}: at_edge stretch {ia}..{ic} holds none of its points")
+    o_a = float(dout[inside][np.argmin(u[inside])])   # the measured offset where the blend starts
+    Q = P.copy()
+    for j in np.where(inside)[0]:
+        if u[j] >= span_ab:
+            o = ae["off"]
+        else:
+            t = u[j] / span_ab
+            o = o_a + (ae["off"] - o_a) * t * t * (3 - 2 * t)
+        Q[j] = trk.edge_point(i[j], sg, o)
+    log(f"declared wall {name}: at the {ae['side']} edge + {ae['off']} m over stations {ia}..{ic} (blend {ia}..{ib} from "
+        f"{o_a:.2f} m): {int(inside.sum())} points; their measured offsets were p50 {np.median(dout[inside]):.2f}, "
+        f"min {dout[inside].min():.2f}, max {dout[inside].max():.2f} m")
+    return Q
 
 
 def paved_areas(trk, osm):
@@ -2547,6 +2582,21 @@ def main(cfg=None, out_dir=None):
         import build_structures
         build_structures.apply(trk, osm, sc, STRUCT_CFG)
         bld = sc["buildings"]
+    if SC_CFG.get("ortho_inpaint"):
+        # round 13 (Sonoma owner note 130): the ortho under every modelled structure's footprint is filled from the ground
+        # around it, so the satellite's image of the bridge deck, a roof or a stand does not show through as a ground band
+        op_ = os.path.join(OUT, "ortho.jpg")
+        img_ = np.asarray(Image.open(op_).convert("RGB"))
+        fp_ = structure_footprints(sc, SC_CFG["ortho_inpaint"], img_, trk.t["ortho"])
+        for k_, _ in fp_:
+            if "shadow" in k_:
+                log(f"ortho inpaint: {k_}")
+        arr_, npx_ = inpaint_ortho(img_, fp_, trk.t["ortho"])
+        Image.fromarray(arr_).save(op_, quality=84, optimize=True)
+        px_m2 = ((trk.t["ortho"]["x1"] - trk.t["ortho"]["x0"]) / arr_.shape[1]) ** 2
+        log(f"ortho inpainted under {len(fp_)} structure footprints ({sum(1 for k, _ in fp_ if k.startswith('bridge'))} bridge "
+            f"parts, margin {SC_CFG['ortho_inpaint'].get('margin', 1.5)} m, bridge decks "
+            f"{SC_CFG['ortho_inpaint'].get('bridge_margin', 3.0)} m): {npx_} px, {npx_ * px_m2:.0f} m2")
     with open(os.path.join(OUT, "scenery.json"), "w") as fh:
         json.dump(sc, fh, separators=(",", ":"))
     preview(trk, T, Tf, bld, bar, kerb, brg, marks, os.path.join(PREVIEWS, "scenery_preview.png"))
@@ -2571,6 +2621,137 @@ def main(cfg=None, out_dir=None):
             log(f"season tint on {f}: {share * 100:.1f} % of the pixels (mask mean), green {tuple(st_cfg.get('green', (0.38, 0.47, 0.24)))}")
     if os.path.getsize(os.path.join(OUT, "ortho.jpg")) > 1.5e6:
         log("WARNING: ortho.jpg over 1.5 MB")
+
+
+def deck_shadow(img, o, b, half, reach=15.0, need=30.0):
+    """((dx, dy) m, contrast) of a bridge deck's shadow in the ortho: the deck strip (a -> b, half-width `half`) shifted
+    by every offset within `reach` m on a 0.5 m grid, scored by its mean luminance against the ground 3 m either side
+    of the shifted strip; the darkest offset at least 4 m off the deck (outside its own footprint) wins when it is
+    `need` grey levels darker. None when the image shows no such shadow."""
+    from scipy import ndimage as ndi_
+    H, W = img.shape[:2]
+    lum = ndi_.gaussian_filter(img.astype(np.float32).mean(-1), 1.0)
+    a, c = np.asarray(b["a"], float), np.asarray(b["b"], float)
+    t = c - a; L = np.linalg.norm(t)
+    if L < 5:
+        return None
+    t /= L; nrm = np.array([-t[1], t[0]])
+    u = np.linspace(0.1, 0.9, 40) * L
+    v = np.linspace(-half, half, 5)
+    U, V = np.meshgrid(u, v)
+    base = a + U.ravel()[:, None] * t + V.ravel()[:, None] * nrm
+    side = np.r_[a + U.ravel()[:, None] * t + (V.ravel()[:, None] * 0 + half + 3.0) * nrm,
+                 a + U.ravel()[:, None] * t - (V.ravel()[:, None] * 0 + half + 3.0) * nrm]
+
+    def mean_at(P):
+        px = (P[:, 0] - o["x0"]) / (o["x1"] - o["x0"]) * W - 0.5
+        py = (o["y1"] - P[:, 1]) / (o["y1"] - o["y0"]) * H - 0.5
+        return float(ndi_.map_coordinates(lum, [py, px], order=1, mode="nearest").mean())
+    best = None
+    for dx in np.arange(-reach, reach + 1e-9, 0.5):
+        for dy in np.arange(-reach, reach + 1e-9, 0.5):
+            if math.hypot(dx, dy) > reach or abs(dx * nrm[0] + dy * nrm[1]) < 4.0:
+                continue
+            d = np.array([dx, dy])
+            ctr = mean_at(side + d) - mean_at(base + d)
+            if best is None or ctr > best[1]:
+                best = ((round(float(dx), 1), round(float(dy), 1)), ctr)
+    return best if best and best[1] >= need else None
+
+
+def structure_footprints(sc, opt, img=None, o=None):
+    """World polygons (ENU) of every modelled structure that stands over the ground, each grown by its margin, for
+    inpaint_ortho: bridge decks (the a -> b span, `width` wide, grown by opt.bridge_margin: a raised deck's image in a
+    non-true ortho also leans away from the nadir by about height x tan(view angle)) and their stair ends, buildings,
+    and the structure kit's collision footprints (grandstands, garages, blocks, the fuel island); with the ortho (img, o)
+    also each deck's shadow, found in the image (deck_shadow; opt.bridge_shadow, default on). Returns [(label, poly)]."""
+    m, mb = float(opt.get("margin", 1.5)), float(opt.get("bridge_margin", 3.0))
+    out = []
+
+    def strip(a, b, half):
+        a, b = np.asarray(a, float), np.asarray(b, float)
+        t = b - a; L = np.linalg.norm(t)
+        if L < 1e-6:
+            return None
+        t /= L; nrm = np.array([-t[1], t[0]])
+        a, b = a - t * half, b + t * half
+        return [a + nrm * half, b + nrm * half, b - nrm * half, a - nrm * half]
+
+    def grow(P, d):
+        P = np.asarray(P, float)[:, :2]
+        c = P.mean(0)
+        r = np.linalg.norm(P - c, axis=1, keepdims=True)
+        return c + (P - c) * (r + d) / np.maximum(r, 1e-6)
+
+    for b in sc.get("bridges", []):
+        p = strip(b["a"], b["b"], b.get("width", 3.0) / 2 + mb)
+        if p is not None:
+            out.append((f"bridge {b['id']} deck", p))
+        if opt.get("bridge_shadow", True) and img is not None:
+            # the deck's shadow in the image lies off its footprint (a raised deck): the footprint strip shifted by the
+            # offset (within 15 m) that is darkest against the ground beside it, when it is a shadow (30 grey levels)
+            sh = deck_shadow(img, o, b, b.get("width", 3.0) / 2 + 1.0)
+            if sh is not None:
+                (dx, dy), ctr = sh
+                p = strip(np.asarray(b["a"]) + (dx, dy), np.asarray(b["b"]) + (dx, dy), b.get("width", 3.0) / 2 + m)
+                out.append((f"bridge {b['id']} shadow (offset {dx:+.1f}, {dy:+.1f} m, {ctr:.0f} grey levels darker)", p))
+        for e in b.get("ends", []):
+            p = strip(e["at"], e["to"], 1.0 + m)
+            if p is not None:
+                out.append((f"bridge {b['id']} stairs", p))
+    for b in sc.get("buildings", []):
+        out.append((f"building {b.get('name') or b.get('kind')}", list(grow(b["footprint"], m))))
+    for s in sc.get("structures", []):
+        for c in s.get("collide") or []:
+            out.append((f"{s['type']} {s.get('name', '')}", list(grow(c["footprint"], m))))
+    return out
+
+
+def inpaint_ortho(img, polys, o, seed=13):
+    """Fill the ortho under the footprint polygons from the surrounding ground (config scenery.ortho_inpaint, round 13,
+    Sonoma owner note 130: the satellite's image of the footbridge deck was baked into the ground under the modelled
+    bridge). Low frequencies by a mask-weighted pyramid fill (normalized convolution: each level averages the known
+    pixels, holes take the next coarser level), plus a high-frequency grain drawn from the ring of known ground around
+    each hole (its residual's per-channel standard deviation), so the patch reads as ground rather than a smooth blot.
+    No hand painting: the mask is the footprints, the fill is the ground around them. Returns (image, pixels filled)."""
+    from PIL import Image, ImageDraw
+    from scipy import ndimage as ndi_
+    H, W = img.shape[:2]
+    mk = Image.new("L", (W, H), 0); dr = ImageDraw.Draw(mk)
+    tox = lambda P: [((p[0] - o["x0"]) / (o["x1"] - o["x0"]) * W, (o["y1"] - p[1]) / (o["y1"] - o["y0"]) * H) for p in P]  # noqa: E731
+    for _, P in polys:
+        dr.polygon(tox(P), fill=255)
+    hole = np.asarray(mk) > 0
+    if not hole.any():
+        return img, 0
+    f = img.astype(np.float32)
+    known = (~hole).astype(np.float32)
+    # pyramid of mask-weighted averages
+    levels = [(f * known[..., None], known)]
+    while levels[-1][1].shape[0] > 8 and (levels[-1][1] == 0).any():
+        a, w = levels[-1]
+        h2, w2 = a.shape[0] // 2 * 2, a.shape[1] // 2 * 2
+        a = a[:h2, :w2].reshape(h2 // 2, 2, w2 // 2, 2, 3).sum((1, 3))
+        w = w[:h2, :w2].reshape(h2 // 2, 2, w2 // 2, 2).sum((1, 3))
+        levels.append((a, w))
+    fill = levels[-1][0] / np.maximum(levels[-1][1], 1e-6)[..., None]
+    for a, w in reversed(levels[:-1]):
+        up = np.repeat(np.repeat(fill, 2, 0), 2, 1)
+        up = np.pad(up, ((0, a.shape[0] - up.shape[0]), (0, a.shape[1] - up.shape[1]), (0, 0)), mode="edge")
+        up = ndi_.gaussian_filter(up, (1.0, 1.0, 0))
+        own = a / np.maximum(w, 1e-6)[..., None]
+        fill = np.where((w > 0)[..., None], own, up)
+    # grain: the ring of known ground (3-8 px beyond each hole) gives the residual's standard deviation
+    ring = ndi_.binary_dilation(hole, iterations=8) & ~ndi_.binary_dilation(hole, iterations=3)
+    # robust (median absolute deviation) and capped: a ring round a roof or a stand holds its hard edges too
+    resid = (f - ndi_.gaussian_filter(f, (2.0, 2.0, 0))).mean(-1)
+    sd = min(6.0, 1.4826 * float(np.median(np.abs(resid[ring])))) if ring.any() else 0.0
+    rng = np.random.default_rng(seed)
+    grain = ndi_.gaussian_filter(rng.normal(0.0, 1.0, (H, W)), 0.7).astype(np.float32)
+    grain = (grain / (grain.std() or 1.0) * sd)[..., None]
+    out = f.copy()
+    out[hole] = (fill + grain)[hole]
+    return out.clip(0, 255).astype(np.uint8), int(hole.sum())
 
 
 def season_zone_mask(trk, opt, shape):

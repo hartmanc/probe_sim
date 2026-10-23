@@ -390,7 +390,18 @@ CONFIG = dict(
             # round 7f left the s 134-158 pit-side wall out (as a short run its upstream end at s 134 failed the wall-ends gate);
             # round 8 (owner note 59) places it as the last section of the continuous pit-lane side wall above, so it has no
             # upstream end of its own
-            dict(name='pit straight, drag-strip side', kind='concrete', h=1.1, fence=0.0, h_src='onboard 2:14-2:17: as the pit-lane side wall, ~1.1 m, no catch fence on it (the posts at 2:17 stand beyond the drag strip)', color=WALL_PALE_BLUE,
+            # round 13 (owner note 136, 23 Oct 2026: on the start/finish straight the wall on the right "should stand right
+            # against the painted edge line"; the ortho's white line runs the whole length where the wall base is, the model
+            # stood back from it with a joggle). Measured on the package: the wall stood 1.2-2.5 m beyond the edge (p50
+            # 2.23 m) with a 1.3 m step at s 4000-4008 (1.13 -> 2.44 m) and a 1.9 m step onto the drag-strip wall at s 77-82
+            # (2.49 -> 0.55 m). On the clean captures the bright band (the line and the wall top) lies AT the fitted edge from
+            # s ~3950 to the T1 kink (wall_measure --edge right: the bright band 0.06 m beyond the edge at s 4004-4098). The
+            # wall is now the edge + 0.55 m (the barrier-gap minimum and its margin) from s 3950 to its end at s 77, blended
+            # in over s 3926-3950 from the measured T12-exit line (2.1 m out at s 3926), where the captures show the drag
+            # strip's mouth wall diverging from the edge; its head (s 3919-3926) stays joined to the L-shaped mouth wall.
+            # The edge and the straight's painted width do not change.
+            dict(name='pit straight, drag-strip side', kind='concrete', h=1.1, fence=0.0,
+                 at_edge=dict(side='right', off=0.55, a=(38.1605166, -122.453247), b=(38.1606905, -122.4534063), c=(38.1619547, -122.4554186)), h_src='onboard 2:14-2:17: as the pit-lane side wall, ~1.1 m, no catch fence on it (the posts at 2:17 stand beyond the drag strip)', color=WALL_PALE_BLUE,
                  src='c20_s1595..s1870 bright band 2.3 m beyond the right edge (19 Oct); Street View 5MY4xR9O7etAXEHnZCVnGQ; onboard 2:17',
                  latlon=[
                 # T12 exit to the timing line (c20_s1540 / c20_s1595, wall_measure along the right edge, 86 % picked, offset p50 1.7 m)
@@ -541,7 +552,9 @@ CONFIG = dict(
                 (38.1603584, -122.4532488), (38.1604392, -122.4533007), (38.1605176, -122.4533589),
                 (38.1605909, -122.4534287), (38.1606552, -122.4535117), (38.1607059, -122.453593),
                 ]),
+            # round 13 (owner note 136): its head at s 77-88 at the edge + 0.55 m too, continuing the S/F wall with no joggle
             dict(name='drag strip, track (SW) side, past T1 to the Carousel exit', kind='concrete', h=1.0, fence=0.0, color=WALL_PALE_BLUE, drop_within=0.0,
+                 at_edge=dict(side='right', off=0.55, a=(38.1619547, -122.4554186), b=(38.1619547, -122.4554186), c=(38.1620091, -122.4555231)),
                  src='c20_s1870 / c20_s1815 / c20_s0550 / c20_s3355: the bright wall along the drag strip SW edge (wall_measure along the paved part edge, 100 % picked, rms 0.22 m); Street View l9CetikWiRZTe2ONpwxrQQ; onboard 2:20',
                  latlon=[
                 (38.1620296, -122.4553516), (38.1620416, -122.4554152), (38.1620972, -122.4555049),
@@ -611,16 +624,14 @@ CONFIG = dict(
                 (38.1629553, -122.4615987), (38.1629473, -122.4617129), (38.1629364, -122.4618264),
                 (38.1629329, -122.4619396), (38.1629327, -122.4619453),
                 ]),
+            # round 13 (owner note 133: "The T4 wall seems set back, too. Note wall position vs. dark texture"): the wall stood
+            # 1.8-3.4 m beyond the dark wall line at s 757-792 (s 776: wall 14.5 m out, capture band 11.1, ortho 12.1) and
+            # 0.9-1.3 m at s 835-853; re-measured along the band (captures, dark, search 1.5 m: 72 % picked, rms 0.23 m, two
+            # runs; over s ~785-826, where the band steps out 3 m round the stand's stair and the capture picks fall under the
+            # contrast floor, the band measured on the package ortho: 72 % picked, rms 0.13 m)
             dict(name='T4 approach, left: wall and catch fence below the T3a-T4 stands', kind='concrete', h=1.0, fence=3.0, color=WALL_PALE_BLUE,
-                 src='c20_s2475..s2640 dark wall line 17-23 m left (97 % picked, rms 0.64 m); Street View nA1oaDXwADSI7x-Pa-j4Ow (wall + ~3 m catch fence left); onboard 0:28-0:32',
-                 latlon=[
-                (38.1624738, -122.4614233), (38.1624636, -122.4615377), (38.1624324, -122.4616472),
-                (38.1624314, -122.461763), (38.1624202, -122.4618754), (38.1624141, -122.4619878),
-                (38.1624179, -122.4620994), (38.1624335, -122.4622095), (38.1624569, -122.4623177),
-                (38.162493, -122.4624242), (38.1625537, -122.4625099), (38.1626299, -122.4625736),
-                (38.1627013, -122.4626409), (38.1627748, -122.4627036), (38.1628521, -122.4627608),
-                (38.1629308, -122.4628152), (38.1630099, -122.4628689), (38.1630409, -122.462892),
-                ]),
+                 src='round 13: c20_s2475 / c20_s2530 wall_measure along the dark wall line, 72 % picked, rms 0.23 m (owner_133); was: c20_s2475..s2640 dark wall line 17-23 m left (97 % picked, rms 0.64 m); Street View nA1oaDXwADSI7x-Pa-j4Ow (wall + ~3 m catch fence left); onboard 0:28-0:32',
+                 latlon=[(38.1624659, -122.4614208), (38.1624676, -122.4615123), (38.1624653, -122.4616038), (38.1624611, -122.461695), (38.1624547, -122.461786), (38.1624457, -122.4618769), (38.1624414, -122.4619682), (38.1624406, -122.461994), (38.1624378, -122.4620399), (38.1624361, -122.4620856), (38.1624342, -122.4621307), (38.1624335, -122.4621768), (38.1624359, -122.462223), (38.1624435, -122.4622679), (38.1624517, -122.4623124), (38.1624661, -122.4623543), (38.1624842, -122.4623939), (38.1625045, -122.4624316), (38.1625281, -122.4624661), (38.1625544, -122.4624973), (38.1625823, -122.4625224), (38.1626119, -122.4625472), (38.1626268, -122.4625597), (38.1626617, -122.4626016), (38.1627223, -122.4626506), (38.1627849, -122.4626955), (38.1628459, -122.462744), (38.162907, -122.4627922), (38.162968, -122.4628403), (38.1630099, -122.4628736)]),
             dict(name='T4, right: tyre line beyond the runoff', kind='tyres', color=TYRE_BLACK, h=1.0, fence=0.0,
                  src='c20_s2640 / c20_s2695 dark tyre line 20-30 m right (79 % picked, rms 0.32 m)',
                  latlon=[
@@ -678,15 +689,26 @@ CONFIG = dict(
             # ---- round 4 (20 Oct 2026, owner drive notes 11, 13-18): barrier lines read on the 2026 captures as a
             # continuous dark tyre / wall band (or bright wall top) parallel to the track, measured with
             # compare/wall_measure.py on a guide, each confirmed on the March 2026 onboard (manifest: 'bright / dark bands')
+            # round 13 (the run-gaps gate): its end stood 4.1 m short of the re-measured T2 wall's head (s ~413, 19 m left), the
+            # dark band continuous between them on c20_s2145: it now ends on the wall's first point
             dict(name='T2 approach, far left: tyre line', kind='tyres', color=TYRE_BLACK, h=1.0, fence=0.0,
                  src='2026 captures c20_s2090 / c20_s2145: wall_measure dark line, 92 % picked, rms 0.27 m; Street View H9xspk4q_OoFIjVDhaMzDA (tyre / armco line far left); onboard 0:12 low dark barrier far left',
-                 latlon=[(38.1615844, -122.4577948), (38.1615100, -122.4578627), (38.1614389, -122.4579328), (38.1613691, -122.4580008), (38.1612978, -122.4580688), (38.1612243, -122.4581356), (38.1611504, -122.4582001), (38.1610760, -122.4582644), (38.1610046, -122.4583342), (38.1609319, -122.4584037), (38.1609059, -122.4584364)]),
+                 latlon=[(38.1615844, -122.4577948), (38.1615100, -122.4578627), (38.1614389, -122.4579328), (38.1613691, -122.4580008), (38.1612978, -122.4580688), (38.1612243, -122.4581356), (38.1611504, -122.4582001), (38.1610760, -122.4582644), (38.1610046, -122.4583342), (38.1609319, -122.4584037), (38.1609059, -122.4584364), (38.1608722, -122.4584547)]),
+            # round 13 (owner note 132, 23 Oct 2026: "Part of the T2 wall sits back from where it appears in the satellite
+            # photo"): measured per station on the package ortho and the clean captures (the darkest 0.6-2 m band along the
+            # track normal), the wall stood 2.9-4.7 m beyond the dark wall line at s 481-527 (s 499: wall 19.8 m out, ortho
+            # band 15.1, capture band 15.6) and 1.2-2.5 m beyond it at s 414 / 536; re-measured along that band (wall_measure
+            # --sguide on the band, dark, search 1.5 m, captures: 82 % picked, rms 0.33 m). The old line had locked on the
+            # stands' foot behind it over the middle third
             dict(name='T2 exit, left: wall and catch fence at the foot of the T2 stands', kind='concrete', h=1.0, fence=3.0, color='#6f7a82',
-                 src='2026 captures c20_s2145 / c20_s2200: wall_measure dark line, 97 % picked, rms 0.48 m; onboard 0:12-0:15.5 dark grey wall with catch-fence posts below the terraces',
-                 latlon=[(38.1608628, -122.4584495), (38.1607944, -122.4585276), (38.1607720, -122.4586405), (38.1607615, -122.4587526), (38.1607583, -122.4588653), (38.1607634, -122.4589784), (38.1607724, -122.4590914), (38.1608055, -122.4591971), (38.1608410, -122.4593007), (38.1608838, -122.4593999), (38.1609205, -122.4595061), (38.1609742, -122.4595982), (38.1610319, -122.4596863), (38.1610953, -122.4597681), (38.1611587, -122.4598494), (38.1612262, -122.4599260), (38.1613073, -122.4599791), (38.1613792, -122.4600480), (38.1614253, -122.4600936)]),
+                 src='round 13: c20_s2145 / c20_s2200 wall_measure along the dark wall line, 82 % picked, rms 0.33 m (owner_132); was: 2026 captures c20_s2145 / c20_s2200: wall_measure dark line, 97 % picked, rms 0.48 m; onboard 0:12-0:15.5 dark grey wall with catch-fence posts below the terraces',
+                 latlon=[(38.1608722, -122.4584547), (38.1608072, -122.4584958), (38.1607781, -122.4585779), (38.1607711, -122.4586685), (38.1607612, -122.4587591), (38.1607601, -122.4588505), (38.1607622, -122.4589418), (38.1607718, -122.4590324), (38.1607892, -122.4591211), (38.1608124, -122.4592078), (38.1608431, -122.4592906), (38.160875, -122.4593725), (38.1609155, -122.4594479), (38.1609623, -122.4595173), (38.1610117, -122.4595836), (38.1610591, -122.4596523), (38.1611077, -122.4597196), (38.1611585, -122.4597843), (38.1612104, -122.4598474), (38.161262, -122.459911), (38.1613151, -122.4599727), (38.1613682, -122.4600343), (38.1614244, -122.4600915), (38.161428, -122.4600949)]),
+            # round 13 (the run-gaps gate on the round-12 package): its end stood 7.9 m short of the T3 tyre wall's head (s ~596,
+            # 25 m right) although "joins the T3 tyre wall at s 600"; c20_s2310 / c20_s2365 show the dark band continuous, so
+            # the run now ends ON the T3 run's first point
             dict(name='T2 exit to T3, right: barrier line at the foot of the hill (owner_11)', kind='tyres', color=TYRE_BLACK, h=1.0, fence=0.0,
                  src='2026 captures c20_s2255 / c20_s2310: wall_measure dark line, 76 % picked, rms 0.41 m; owner_11 (the light band in the sim ground); onboard 0:12 dark barrier line far right, 0:18 barrier line along the right toward T3; joins the T3 tyre wall at s 600',
-                 latlon=[(38.1613087, -122.4591967), (38.1613739, -122.4592754), (38.1614416, -122.4593507), (38.1615062, -122.4594303), (38.1615667, -122.4595146), (38.1616270, -122.4595999), (38.1616905, -122.4596811), (38.1617575, -122.4597574), (38.1618249, -122.4598330), (38.1618928, -122.4599079), (38.1619612, -122.4599821), (38.1619891, -122.4600113)]),
+                 latlon=[(38.1613087, -122.4591967), (38.1613739, -122.4592754), (38.1614416, -122.4593507), (38.1615062, -122.4594303), (38.1615667, -122.4595146), (38.1616270, -122.4595999), (38.1616905, -122.4596811), (38.1617575, -122.4597574), (38.1618249, -122.4598330), (38.1618928, -122.4599079), (38.1619612, -122.4599821), (38.1619891, -122.4600113), (38.1620501, -122.4600578)]),
             dict(name='T5, left: tyre wall', kind='tyres', color=TYRE_BLACK, h=1.0, fence=1.5, h_src='round 5: chain-link fence behind the tyre stacks, 2.5 m to its top (inventory 0:36 / 0:38, fence-post-ref)',
                  src='2026 captures c20_s2805 / c20_s2860: wall_measure dark line, 96 % picked, rms 0.49 m; Street View zCwjltSjI02eDZGZbVyrMg (left low dark wall, tyres); onboard 0:39 dark barrier far left',
                  latlon=[(38.1648083, -122.4628124), (38.1647511, -122.4627218), (38.1647308, -122.4626081), (38.1646947, -122.4625013), (38.1646847, -122.4623865), (38.1646845, -122.4622722), (38.1646828, -122.4621581), (38.1646788, -122.4620444), (38.1646778, -122.4619303), (38.1646730, -122.4618174), (38.1646717, -122.4618062)]),
@@ -747,21 +769,32 @@ CONFIG = dict(
             dict(name='T2 entry, left: tyre wall before the footbridge (owner_27 / owner_28)', kind='tyres', color=TYRE_BLACK, h=1.0, fence=0.0,
                  src='2026 captures c20_s1980 / c20_s2035: wall_measure dark line, 90 % picked, rms 0.74 m; owner_27 ("there is a tire wall missing here"); Street View owner_28 Pit Out (Jul 2011): tyre wall round the outside of T2 from before the footbridge; onboard 0:12 dark low barrier left',
                  latlon=[(38.1618462, -122.4575074), (38.1618430, -122.4576228), (38.1618430, -122.4577255)]),
-            dict(name='T1 exit to T2, right: tyre line on the grass bank (owner_28) (part 1)', kind='tyres', color=TYRE_BLACK, h=1.0, fence=0.0,
-                 src='2026 captures c20_s1925 / c20_s1980: wall_measure dark line, 84 % picked, rms 0.44 m; Street View owner_28 Pit Out (tyre line on the grass bank to the right)',
-                 latlon=[(38.1624065, -122.4570844), (38.1623691, -122.4571903), (38.1623026, -122.4572695), (38.1622666, -122.4573742), (38.1622368, -122.4574815), (38.1622123, -122.4575920), (38.1621887, -122.4577016), (38.1621601, -122.4578097), (38.1621259, -122.4579154), (38.1621035, -122.4580230), (38.1620621, -122.4581284), (38.1620569, -122.4581378)]),
-            dict(name='T1 exit to T2, right: tyre line on the grass bank (owner_28) (part 2)', kind='tyres', color=TYRE_BLACK, h=1.0, fence=0.0,
-                 src='2026 captures c20_s1980 / c20_s2035: wall_measure dark line, 84 % picked, rms 0.44 m; Street View owner_28 Pit Out (tyre line on the grass bank to the right)',
-                 latlon=[(38.1619844, -122.4582623), (38.1619265, -122.4583509), (38.1618636, -122.4584335), (38.1618208, -122.4584846)]),
+            # round 13 (owner note 131, 23 Oct 2026: "There is a gap in the tire wall on the other side of the bridge, right side of
+            # circuit"): parts 1 and 2 (rounds 3-4) were one tyre line split by wall_measure where the footbridge deck and its
+            # shadow cross it (a 13.5 m gap, s 306-318, 10-25 m right). c20_s1980 / c20_s2035 show one continuous black band
+            # passing under the deck; re-measured as one run along the old two (wall_measure dark, search 2 m: 142 m guided,
+            # 94 % picked, rms 0.50 m, shift from the old line p50 +0.09 m; the 8.5 m it does not pick, under the deck, joined). The run-gaps gate (round 13) now fails on such a gap.
+            # Round 13 (owner notes 127 / 128: "Some of the T1 tire / concrete barriers are missing - I believe that's what this
+            # gray / black texture across the grass is ... It starts to the left of the access road and goes up to where we have
+            # some of it already in the model"): the run's head continues 42 m back up the paddock corner as the dark curved band
+            # on the ortho (s ~200-224, 15-25 m right of the edge, from the access road at the stands' corner to the old head).
+            # The z20 captures are label-masked there, so it is measured on the package ortho (wall_measure --ortho, dark,
+            # search 2 m: 99 % picked, rms 0.21 m) and joined to the head of the re-measured run. Type and height as the run it
+            # continues (black tyres, 1.0 m): the onboard frame owner_128 shows it as the same low black line
+            dict(name='T1 exit to T2, right: tyre line on the grass bank (owner_28), one run under the footbridge (round 13)', kind='tyres', color=TYRE_BLACK, h=1.0, fence=0.0,
+                 src='package ortho (round 13): the head from the access road, wall_measure --ortho dark, rms 0.21 m (owner_127 / owner_128); 2026 captures c20_s1980 / c20_s2035: wall_measure dark line, 94 % picked, rms 0.50 m (round 13, one run); Street View owner_28 Pit Out (tyre line on the grass bank to the right); owner_131',
+                 latlon=[(38.1627176, -122.4570536), (38.1627084, -122.457013), (38.1626781, -122.4569886), (38.162644, -122.4569706), (38.1626086, -122.4569627), (38.1625706, -122.4569649), (38.1625363, -122.4569787), (38.162502, -122.4569927), (38.1624693, -122.4570143), (38.1624384, -122.4570378), (38.1624065, -122.4570634), (38.162393, -122.4570785), (38.1623951, -122.4570779), (38.1623773, -122.4571304), (38.1623387, -122.4572049), (38.1622854, -122.4572749), (38.1622602, -122.4573606), (38.1622426, -122.4574506), (38.1622231, -122.4575387), (38.162204, -122.4576269), (38.1621852, -122.4577151), (38.1621632, -122.4578021), (38.1621351, -122.4578863), (38.1621094, -122.4579719), (38.1620937, -122.4580616), (38.1620537, -122.4581376), (38.1620082, -122.4582084), (38.1619696, -122.4582858), (38.1619259, -122.4583588), (38.1618807, -122.4584305), (38.1618317, -122.4584985)]),
             # ---- round 5 (21 Oct 2026): the coverage gate's MISSING rows (compare/sonoma/coverage.md), each measured with
             # compare/wall_measure.py on the named 2026 captures (or derived where said) and tied to its inventory rows
+            # round 13 (owner note 133: "...that wall should extend all the way down to the short shute area"): the wall stood
+            # 0.6-1.6 m beyond the ortho's dark line at s 872-912 and 1.4-3.4 m at s 922-981, and ended at s 985, 17 m short
+            # of the Chute's mouth. Re-measured on the package ortho (the captures' band is faint here: contrast 21-54; ortho
+            # wall_measure --ortho --sguide, dark, search 1.5 m: 66 % picked, rms 0.22 m) and extended along the same line,
+            # which turns north along the dirt / pavement boundary, to 1.0 m short of the Chute's paving at its mouth (s ~1000)
             dict(name='T4 approach, left: wall and catch fence on to the Chute (round 5)', kind='concrete', h=1.0, fence=2.5, color=WALL_PALE_BLUE,
-                 h_src='inventory 0:30-0:34: light grey concrete wall 1.0 m (jersey-ref) with catch fence 3.5 m to its top (fence-post-ref)',
+                 h_src='round 13: package ortho wall_measure along the dark wall line, 66 % picked, rms 0.22 m, extended to 1 m short of the Chute paving (owner_133); was: inventory 0:30-0:34: light grey concrete wall 1.0 m (jersey-ref) with catch fence 3.5 m to its top (fence-post-ref)',
                  src='c20_s2695 / c20_s2750: wall_measure bright, s 876-985 beyond the measured T4 approach wall, 56 % picked (three runs, gaps under 16 m bridged), rms 0.31 m; onboard 0:32 wall and fence abeam, 0:34 its end at the Chute; Street View nA1oaDXwADSI7x-Pa-j4Ow',
-                 latlon=[(38.1629985, -122.4628819), (38.1630796, -122.4629321), (38.163157, -122.4629901), (38.1631686, -122.4629989),
-                         (38.1632948, -122.4630979), (38.1633717, -122.463157), (38.1634476, -122.4632181), (38.1635225, -122.4632813),
-                         (38.1635918, -122.4633451), (38.1636557, -122.4633982), (38.1637355, -122.463452), (38.1638102, -122.4635138),
-                         (38.1638874, -122.4635702)]),
+                 latlon=[(38.1630057, -122.4628661), (38.1630671, -122.4629135), (38.1631284, -122.4629614), (38.1631908, -122.4630066), (38.1632519, -122.4630543), (38.1633147, -122.4630991), (38.1633779, -122.4631422), (38.1634372, -122.4631937), (38.1634974, -122.4632437), (38.1635587, -122.4632914), (38.1636195, -122.4633402), (38.1636808, -122.4633879), (38.163741, -122.4634376), (38.1638023, -122.4634855), (38.163863, -122.4635343), (38.1639247, -122.4635828), (38.1639952, -122.4636092), (38.1640616, -122.4635948)]),
             dict(name='T6 crest, right: Jersey on to the Carousel paved area (round 5)', kind='concrete', h=0.9, fence=0.0, color='#c9c9c4',
                  h_src='inventory 0:46-0:50: light grey concrete Jersey segments 0.9 m (jersey-ref)',
                  src='c20_s3135 / c20_s3190: wall_measure bright 1.0 m beyond the right edge, s 1358-1460, 96 % picked, rms 0.05 m; onboard 0:48 Jersey abeam on the right, 0:50 its end where the paved area opens',
@@ -1220,9 +1253,70 @@ CONFIG = dict(
         pit_lane_clip_walls=True,
         # bridges meet the banks: abutments and stair flights at both span ends (round 4, owner note 29)
         bridge_stairs=True,
+        # round 13 (owner note 130, 23 Oct 2026: "There is a gray texture under the bridge. I believe this is the bridge in
+        # satellite photos, but we have of course already modeled the bridge"): the ortho is filled from the surrounding
+        # ground under every modelled structure's footprint (bridge decks and stairs, buildings, the structure kit's
+        # stands and garages), grown by `margin` (bridge decks by `bridge_margin`: a raised deck's image leans in the NAIP)
+        ortho_inpaint=dict(margin=1.5, bridge_margin=3.0),
+        # round 13: the unmodelled-ground-lines gate (tools/track/gates/ground_lines.py; the owner's rule of 23 Oct 2026, "if we
+        # are modeling textures in a long line on the ground, it's likely we are missing a feature"). Contrast 40 and 30 m
+        # (16 / 20 flooded every track: 79 Sonoma, 113 Laguna findings, mostly paths, stand tiers and roof edges). On the
+        # round-12 package it fails on the owner's own findings: the T1 tyre wall (s 216-224 right, from the run's head), the
+        # T2 wall base (s 462-550 left), the T4 wall base and its missing end (s 819-856, 968-992 left). Every finding left
+        # on this package was looked at on the 2026 captures and the ortho (contact sheets compare/sonoma/round13a/ground_lines_*.jpg):
+        ground_lines=dict(contrast=40.0, min_len=30.0, dispositions=[
+            dict(side='left', s=(455, 560), tone='pale', what='lit concrete beside the T2 wall',
+                 why="the wall stands on the ortho's dark line since round 13 (owner note 132); the pale strip 1.7-2.4 m beyond "
+                     "it (profiles at s 414-544) is the lit walkway / wall top at the foot of the T2 stands, ground, not a barrier"),
+            dict(side='left', s=(735, 830), tone='pale', what='lit concrete beside the T4 approach wall',
+                 why="as at T2: the wall on the dark line (owner note 133), the pale strip 1.4-2.3 m beyond it is the walkway at "
+                     "the foot of the T3a-T4 stands (profiles s 748-870)"),
+            dict(side='left', s=(905, 985), tone='pale', what='lit concrete beside the T4-to-Chute wall',
+                 why="the wall on the dark line (owner note 133); the pale strip 1.3-1.5 m beyond it (profiles s 872-944)"),
+            dict(side='left', s=(2280, 2315), tone='dark', what='T7a exit: the paddock paving edge',
+                 why='the edge between the pale paddock paving and the grass, 28-34 m left on the 2026 captures, inside the '
+                     'T7 complex (owner note 135, the next agent\'s round)'),
+            dict(side='left', s=(2322, 2490), tone='dark', what='grass tone line beyond the T7a-T8 tyre lines',
+                 why="the two tyre lines stand on the bank's dark band within 0.5 m (profiles s 2322-2476, ortho and c20_s0000 "
+                     "/ c20_s0055); the line the gate reads is a fainter mowing / grass-tone edge 1-3 m beyond them"),
+            dict(side='left', s=(3440, 3485), tone='pale', what='roof edge of the T10-T11 shed',
+                 why="the shed's light roof edge (OSM 1019839490, the structure kit's shed) beside a tree row, 48-57 m left"),
+            dict(side='left', s=(3190, 3460), tone='any', what='the T10-T11 boarded wall: its 2.5 m ad boards and their shadow',
+                 why="the boarded wall (judged in rounds 10-12) is measured on the 2026 captures (c20_s0825..s1100); the NAIP "
+                     "shows the boards' lit tops leaning away by relief and their 3 m shadow beyond the wall (the sun in the "
+                     "WSW: the footbridge deck's shadow lies +6.5, +4.0 m from it), lines 2-6 m outside the modelled wall"),
+            dict(side='right', s=(3335, 3395), tone='dark', what="shadow of the T11-approach wall and catch fence",
+                 why="the round-11 wall with its 3.5 m catch fence on the right: with the sun in the WSW its shadow falls on the "
+                     "track side, 1-4 m in front of the wall"),
+            dict(side='left', s=(985, 1015), tone='dark', what='edge of the dirt paddock road by the Chute',
+                 why='c20_s2695: a path edge with trucks parked along it, no barrier (the T4 wall ends at the Chute paving)'),
+            dict(side='left', s=(2170, 2215), tone='dark', what='a temporary structure in the NAIP year (T7 paddock)',
+                 why='a long pale object with its shadow 43-48 m left in the NAIP; the 2026 captures show an open '
+                     'parking area there (within the T7 complex, owner note 135)'),
+            dict(side='left', s=(3590, 3655), tone='dark', what='shadow of the pit garages roof',
+                 why='the long garage roof (the structure kit\'s pit garages) casts its shadow on the paddock lane 26-40 m left'),
+            dict(side='right', s=(2860, 2920), tone='pale', what='a pale strip 57-60 m right of the back straight',
+                 why='a curved light concrete strip round an infield service yard behind the 9a buildings on the 2026 captures; at the '
+                     'outer limit of the band, behind buildings; not checked against the onboard, not placed: for the owner'),
+        ]),
+        # round 13 (owner note 126, "I don't think the track bends back in like this at T1"): the edge there is the
+        # painted course boundary (the kerb runs and the dotted block line, c20_s1870 / c20_s1925, unchanged), but the
+        # asphalt beyond it is a paved runoff triangle on the outside of T1, from where the edge leaves the drag-strip
+        # wall (s ~85) to the diagonal kerb at s ~185, bounded by the drag-strip wall and the paddock dirt; it was
+        # ground texture, so the course looked as if it narrowed. Measured by the apron walker on the package ortho (the
+        # 2026 captures are label-masked over most of it and their warm asphalt reads as the paddock dirt's colour)
+        aprons=[('T1 outside paved runoff', 'right', 84, 186, 'paved runoff triangle beyond the T1 right edge to the drag-strip '
+                 'wall and the paddock dirt (c20_s1815 / c20_s1870 / c20_s1925; owner note 126)',
+                 dict(source='ortho', max=40.0))],   # wider than a label-free capture covers: walked on the package ortho
         # containment gate: paved surfaces the cars can really reach across open ground (no barrier in the captures or the
         # onboard), each with its evidence; everything else must be behind a barrier or a cone line
-        gates=dict(allowed=[
+        gates=dict(
+            # round 13 (the run-gaps gate): holes in a barrier line that stay, each with its evidence
+            openings=[dict(latlon=(38.1583683, -122.4519388), why='T11 hairpin outer wall (south), parts 1 / 2, 14.4 m apart at s ~3674, '
+                           '18 m left: the lidar ground steps 1.0 m in 2 m across the hole (a joined wall fails the wall-tops gate, '
+                           '0.51 m per m) and c20_s1320 cannot settle whether the dark line there is the wall or the level change; '
+                           'left open for the owner (round 13)')],
+            allowed=[
             dict(target='the Chute (NASCAR short course, T4 to T7)', side='left', a=(38.1639396, -122.4634002), b=(38.1644795, -122.4623582),
                  why='T4 exit, left: open dirt paddock to the Chute, no barrier (c20_s2750 / c20_s2805; onboard 0:34-0:38: cones at the Chute mouth, open ground left)'),
             dict(target='the Chute (NASCAR short course, T4 to T7)', side='left', a=(38.1659159, -122.4623605), b=(38.1661564, -122.4626504),
