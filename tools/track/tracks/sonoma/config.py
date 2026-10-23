@@ -1278,7 +1278,10 @@ CONFIG = dict(
         # satellite photos, but we have of course already modeled the bridge"): the ortho is filled from the surrounding
         # ground under every modelled structure's footprint (bridge decks and stairs, buildings, the structure kit's
         # stands and garages), grown by `margin` (bridge decks by `bridge_margin`: a raised deck's image leans in the NAIP)
-        ortho_inpaint=dict(margin=1.5, bridge_margin=3.0),
+        # round 13A fix (judge r13a N127 / N130 / N131: a pale gravel-looking ribbon under the tyre walls on both bridge banks
+        # and under the new T1 tyre wall): every tyre / wall run too, a band 1.8 m either side of its line swept along the
+        # sun's shadow over its height (the shadow vector from the footbridge deck's measured shadow)
+        ortho_inpaint=dict(margin=1.5, bridge_margin=3.0, barriers=dict(kinds=('tyres', 'concrete', 'pitwall', 'armco'), half=1.8)),
         # round 13 part B (owner note 135, 23 Oct 2026: "This T7 complex with un-used track looks very bad ... Not a mismatch of
         # textures and geometries"): the NAIP ortho is of another year; its junction paint (arrows, curved and cross lines),
         # pale patches, parked trailers' shadows and the red O'Reilly island showed through the closed paved surfaces, and
@@ -1290,6 +1293,11 @@ CONFIG = dict(
         # are drawn: closed-road edge lines, the continuation's centre line, the kerb lines). Evidence and ledger:
         # compare/sonoma/round13b/LEDGER.md
         ortho_pave=dict(terrain_gain=(0.87, 0.78, 0.81), track_shoulder=5.0, regions=[
+            # round 13A fix (judge r13a N126: "large angular black slivers and intersecting seams cross the new paving"): the
+            # T1 paved runoff's ground image repainted in the track's paving tone, its outline the apron zone itself
+            dict(name='T1 outside paved runoff', zone='T1 outside paved runoff', mask='all', fill='paving', exclude_track=0.3,
+                 src='the apron of scenery.aprons (round 13A, owner note 126); c20_s1815 / c20_s1870 / c20_s1925: one dark asphalt '
+                     'surface from the T1 edge to the drag-strip wall, no paint'),
             dict(name='T7 complex paving', mask='captures', close=2.5, min_area=150.0, exclude_track=0.3, feather=20.0, clip_zones=True,
                  # the outline follows the paddock lot's SW bank and the Chute's two sides (trees in deep shadow there read as asphalt)
                  latlon=[(38.1669221, -122.4644551), (38.1667604, -122.4638267), (38.1664370, -122.4633469), (38.1661316, -122.4630384),
@@ -1358,7 +1366,10 @@ CONFIG = dict(
         # 2026 captures are label-masked over most of it and their warm asphalt reads as the paddock dirt's colour)
         aprons=[('T1 outside paved runoff', 'right', 84, 186, 'paved runoff triangle beyond the T1 right edge to the drag-strip '
                  'wall and the paddock dirt (c20_s1815 / c20_s1870 / c20_s1925; owner note 126)',
-                 dict(source='ortho', max=40.0))],   # wider than a label-free capture covers: walked on the package ortho
+                 # wider than a label-free capture covers: walked on the package ortho. Round 13A fix (judge r13a N126, the
+                 # drag-strip wall at its far side read 0-0.2 m tall instead of ~0.8 m): ground=True, level with the road at the
+                 # edge, then on the lidar ground (the plane from the edge stood 0.6-0.8 m above the wall's base)
+                 dict(source='ortho', max=40.0, ground=True, ground_blend=5.0, smooth=5.0))],   # smooth: no folded strip (dark wedges)
         # containment gate: paved surfaces the cars can really reach across open ground (no barrier in the captures or the
         # onboard), each with its evidence; everything else must be behind a barrier or a cone line
         gates=dict(

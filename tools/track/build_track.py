@@ -833,7 +833,15 @@ def stage_scenery(cfg, out, no_logger):
         regs = {r[0]: r for r in json.load(open(rp))} if os.path.exists(rp) else None
     log("post steps:")
     ortho_ = (np.asarray(Image.open(os.path.join(tmp, "ortho.jpg")).convert("RGB")).astype(np.float32), T["ortho"])
-    scenery_post.run(T, SC, scfg, tiles, cfg["captures"]["mpp"], regs, ortho=ortho_)
+    hm_ = T["heightfield"]
+    hf_ = np.fromfile(os.path.join(tmp, "heightfield.bin"), np.float32).reshape(hm_["ny"], hm_["nx"])
+
+    def ground_(x, y):   # bilinear on the heightfield (the lidar ground), for aprons that follow it
+        gx = min(max((x - hm_["x0"]) / hm_["dx"], 0.0), hm_["nx"] - 1.001); gy = min(max((y - hm_["y0"]) / hm_["dx"], 0.0), hm_["ny"] - 1.001)
+        i_, j_ = int(gx), int(gy); fx, fy = gx - i_, gy - j_
+        return (hf_[j_, i_] * (1 - fx) * (1 - fy) + hf_[j_, i_ + 1] * fx * (1 - fy) + hf_[j_ + 1, i_] * (1 - fx) * fy
+                + hf_[j_ + 1, i_ + 1] * fx * fy)
+    scenery_post.run(T, SC, scfg, tiles, cfg["captures"]["mpp"], regs, ortho=ortho_, ground=ground_)
     if scfg.get("ortho_pave"):
         # round 13 part B (Sonoma owner note 135): the ground under a complex's paving retextured from the 2026 paving
         # mask, after the post steps so every paved zone is known (config-gated: other tracks unchanged)

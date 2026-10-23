@@ -130,7 +130,7 @@ def ortho_profiles(C, NL, hw, sg, ks, offs, ortho):
     return P
 
 
-def aprons(T, SC, aprons_cfg, tiles, mpp, wmax=10.0, regs=None, log=_log, ortho=None):
+def aprons(T, SC, aprons_cfg, tiles, mpp, wmax=10.0, regs=None, log=_log, ortho=None, ground=None):
     n, sp = T['n'], T['spacing_m']; fr = T['profile']['fractions']; Z = T['profile']['z']
     C, NL, hl, hr = geometry(T)
     walls = [p for b in SC['barriers'] for p in b['pts']]
@@ -164,12 +164,18 @@ def aprons(T, SC, aprons_cfg, tiles, mpp, wmax=10.0, regs=None, log=_log, ortho=
             log(f'  apron {turn}: no capture covers it, skipped'); continue
         w = np.interp(idx, idx[ok], w[ok])
         w = gaussian_filter1d(median_filter(w, 9, mode='nearest'), 3, mode='nearest'); raw = np.median(w)
+        cap = np.full(len(ks), np.inf)   # 1.5 m short of the nearest barrier point ahead (within 3 m laterally)
         for i, k in enumerate(ks):
             e = E[k, :2]; nx, ny = sg * NL[k]
             for p in walls:
                 d = (p[0] - e[0]) * nx + (p[1] - e[1]) * ny; lat = abs((p[0] - e[0]) * (-ny) + (p[1] - e[1]) * nx)
-                if 0 < d < w[i] + 1.5 and lat < 3: w[i] = max(0.4, d - 1.5)
-        w = np.maximum(w, 0.4); m = len(ks)
+                if 0 < d and lat < 3: cap[i] = min(cap[i], max(0.4, d - 1.5))
+        w = np.maximum(np.minimum(w, cap), 0.4); m = len(ks)
+        if opt.get('smooth'):
+            # round 13A fix (Sonoma T1 runoff): a width that bends sharply between 1 m stations (31.9 -> 5.9 m in 10 m) bends
+            # the zone's centre line, and the drawn strip's columns, laid along its normals, fold over each other: dark
+            # wedges in the hood view. Gaussian `smooth` stations, then never past the barrier cap
+            w = np.maximum(np.minimum(gaussian_filter1d(w, float(opt['smooth']), mode='nearest'), cap), 0.4)
         for i in range(m):
             d = min(i, m - 1 - i)
             if d < 12: t = d / 12; w[i] = 0.4 + (w[i] - 0.4) * (t * t * (3 - 2 * t))
@@ -181,6 +187,20 @@ def aprons(T, SC, aprons_cfg, tiles, mpp, wmax=10.0, regs=None, log=_log, ortho=
             slope = max(-0.03, min(0.03, (zb - za) / (abs(x6 - x5) or 1)))
             outer = [e[0] + nx * w[i], e[1] + ny * w[i]]
             zc = [round(e[2] + slope * w[i] * (f + 1) / 2, 3) for f in fr]
+            if opt.get('ground') and ground is not None:
+                # round 13A fix (Sonoma T1 runoff): a wide apron is the ground's own paving: level with the road at the edge,
+                # blending (smoothstep over `ground_blend` m) into the lidar ground, so a wall standing on that ground at the
+                # apron's far side keeps its full height (the plane from the edge stood 0.6-0.8 m above it there)
+                # each column takes the highest ground within half a column spacing either side (+ 3 cm), so the lidar
+                # ground between the apron's few columns never pokes through its surface (dark wedges in the hood view)
+                bl_ = float(opt.get('ground_blend', 5.0)); zz = []
+                ds = [w[i] * (f + 1) / 2 for f in fr]
+                for j, (d, z0) in enumerate(zip(ds, zc)):
+                    a_ = (d + ds[j - 1]) / 2 if j else d; b_ = (d + ds[j + 1]) / 2 if j + 1 < len(ds) else d
+                    zg = max(float(ground(e[0] + nx * u, e[1] + ny * u)) for u in np.linspace(a_, b_, max(2, int((b_ - a_) / 0.5) + 1))) + 0.03
+                    t = min(1.0, d / bl_); t = t * t * (3 - 2 * t)
+                    zz.append(round((1 - t) * z0 + t * max(zg, z0 if d < bl_ else zg), 3))
+                zc = zz
             if side == 'right':
                 L_, R_ = [e[0], e[1], zc[0]], [outer[0], outer[1], zc[-1]]; gl.append(0.0); gr.append(99); prof.append(zc)
             else:
@@ -285,14 +305,14 @@ def pit_exit_cones_from(T, SC, c, log=_log):
     log(f'  pit-exit cones: {len(new)} added back to s {c["s0"]}')
 
 
-def run(T, SC, scfg, tiles, mpp, regs=None, log=_log, ortho=None):
+def run(T, SC, scfg, tiles, mpp, regs=None, log=_log, ortho=None, ground=None):
     """All post steps in order on scenery dict SC (track dict T). Returns SC."""
     for z in scfg.get('shoulder_zones', []):
         part = shoulder_zone(T, SC, z)
         SC['paved_zones']['parts'] = [p for p in SC['paved_zones']['parts'] if p.get('turn') != z['turn']] + [part]
         log(f"  shoulder zone {z['turn']}: {part['n']} stations")
     if scfg.get('aprons'):
-        parts = aprons(T, SC, scfg['aprons'], tiles, mpp, scfg.get('apron_max', 10.0), regs, log, ortho)
+        parts = aprons(T, SC, scfg['aprons'], tiles, mpp, scfg.get('apron_max', 10.0), regs, log, ortho, ground)
         names = {p['turn'] for p in parts}
         SC['paved_zones']['parts'] = [p for p in SC['paved_zones']['parts'] if p.get('turn') not in names] + parts
     if scfg.get('pitwall_end'): pitwall_end(T, SC, scfg['pitwall_end'], log)

@@ -2594,13 +2594,17 @@ def main(cfg=None, out_dir=None):
         img_ = np.asarray(Image.open(op_).convert("RGB"))
         fp_ = structure_footprints(sc, SC_CFG["ortho_inpaint"], img_, trk.t["ortho"])
         for k_, _ in fp_:
-            if "shadow" in k_:
+            if "shadow (" in k_:
                 log(f"ortho inpaint: {k_}")
+        for l_ in STRUCT_LOG:
+            log(f"ortho inpaint: {l_}")
+        STRUCT_LOG.clear()
+        fp_ = [(k_, P_) for k_, P_ in fp_ if len(P_) >= 3]
         arr_, npx_ = inpaint_ortho(img_, fp_, trk.t["ortho"])
         Image.fromarray(arr_).save(op_, quality=84, optimize=True)
         px_m2 = ((trk.t["ortho"]["x1"] - trk.t["ortho"]["x0"]) / arr_.shape[1]) ** 2
         log(f"ortho inpainted under {len(fp_)} structure footprints ({sum(1 for k, _ in fp_ if k.startswith('bridge'))} bridge "
-            f"parts, margin {SC_CFG['ortho_inpaint'].get('margin', 1.5)} m, bridge decks "
+            f"parts, {sum(1 for k, _ in fp_ if k.startswith('barrier'))} barrier segments, margin {SC_CFG['ortho_inpaint'].get('margin', 1.5)} m, bridge decks "
             f"{SC_CFG['ortho_inpaint'].get('bridge_margin', 3.0)} m): {npx_} px, {npx_ * px_m2:.0f} m2")
     with open(os.path.join(OUT, "scenery.json"), "w") as fh:
         json.dump(sc, fh, separators=(",", ":"))
@@ -2626,6 +2630,9 @@ def main(cfg=None, out_dir=None):
             log(f"season tint on {f}: {share * 100:.1f} % of the pixels (mask mean), green {tuple(st_cfg.get('green', (0.38, 0.47, 0.24)))}")
     if os.path.getsize(os.path.join(OUT, "ortho.jpg")) > 1.5e6:
         log("WARNING: ortho.jpg over 1.5 MB")
+
+
+STRUCT_LOG = []
 
 
 def deck_shadow(img, o, b, half, reach=15.0, need=30.0):
@@ -2704,6 +2711,39 @@ def structure_footprints(sc, opt, img=None, o=None):
             p = strip(e["at"], e["to"], 1.0 + m)
             if p is not None:
                 out.append((f"bridge {b['id']} stairs", p))
+    bo = opt.get("barriers")
+    if bo:
+        # round 13A fix (judge r13a N127 / N130 / N131): the satellite's image of a barrier itself (a pale gravel-looking
+        # ribbon under a tyre wall, a wall's lit top and its shadow) stayed in the ground under the modelled run. Each run of
+        # the listed kinds masks a band `half` m either side of its line, swept along the sun's shadow vector over its
+        # height (the vector per metre of height from the bridge deck's measured shadow, else bo.shadow_per_m)
+        sv = np.asarray(bo.get("shadow_per_m", (0.0, 0.0)), float)
+        if img is not None:
+            for b in sc.get("bridges", []):
+                sh = deck_shadow(img, o, b, b.get("width", 3.0) / 2 + 1.0)
+                hz = [e_["z_ground"] for e_ in b.get("ends", []) if "z_ground" in e_]
+                if sh is not None and hz and b.get("deck_z") is not None and b["deck_z"] - np.mean(hz) > 2.0:
+                    sv = np.asarray(sh[0], float) / (b["deck_z"] - float(np.mean(hz)))
+                    break
+        half = float(bo.get("half", 1.5))
+        from scipy.spatial import ConvexHull
+        nb = 0
+        for b in sc.get("barriers", []):
+            if b["kind"] not in bo.get("kinds", ("tyres", "concrete", "pitwall", "armco")):
+                continue
+            P = np.asarray(b["pts"], float)[:, :2]
+            S = sv * float(b.get("h", 1.0))
+            for p0, p1 in zip(P[:-1], P[1:]):
+                t = p1 - p0; L = np.linalg.norm(t)
+                if L < 1e-6:
+                    continue
+                t /= L; nrm = np.array([-t[1], t[0]])
+                q = np.array([p0 - t * half + nrm * half, p0 - t * half - nrm * half, p1 + t * half + nrm * half, p1 + t * half - nrm * half])
+                q = np.r_[q, q + S]
+                out.append((f"barrier {b['kind']} band", [tuple(v) for v in q[ConvexHull(q).vertices]]))
+            nb += 1
+        out.append(("barrier summary", []))
+        STRUCT_LOG.append(f"{nb} barrier runs banded (half {half} m, shadow {sv[0]:+.2f}, {sv[1]:+.2f} m per m of height)")
     for b in sc.get("buildings", []):
         out.append((f"building {b.get('name') or b.get('kind')}", list(grow(b["footprint"], m))))
     for s in sc.get("structures", []):
@@ -2764,7 +2804,7 @@ def ortho_pave(T, SC, opt, img, tiles, mpp, enu, log=print, seed=17):
     "This T7 complex with un-used track looks very bad ... Not a mismatch of textures and geometries"). The NAIP ortho is
     of another year: its paint (arrows, junction lines), pale patches, parked trailers' shadows and a red island showed
     through the closed paved surfaces, and paving left as ground read lighter than the same paving drawn as a zone.
-    opt: {regions: [{name, latlon: [(lat, lon), ...] (the region's outline), mask: 'captures' | 'all', src, fill?: '#rrggbb' |
+    opt: {regions: [{name, latlon: [(lat, lon), ...] (the region's outline; or zone: a paved zone's turn name), mask: 'captures' | 'all', src, fill?: '#rrggbb' |
     'paving' (the default),
     close: m, min_area: m2, exclude_track: m, feather: m, clip_zones: bool}], terrain_gain: (r, g, b), track_shoulder: m}. Per region:
     - mask 'captures': the paving read on the 2026 clean captures at 0.2 m (dark unsaturated asphalt, its white paint and
@@ -2806,7 +2846,15 @@ def ortho_pave(T, SC, opt, img, tiles, mpp, enu, log=print, seed=17):
     for r in opt["regions"]:
         if not r.get("src"):
             raise SystemExit(f"ortho_pave region {r.get('name')}: no src")
-        poly = [enu(*q) for q in r["latlon"]]
+        if r.get("zone"):
+            # round 13A fix (Sonoma T1 runoff): the outline is a paved zone's own (an apron), so its ground image is repainted
+            # as one surface (the NAIP year's slivers, seams and old paint gone) exactly where the zone is drawn
+            zp = [p_ for p_ in (SC.get("paved_zones") or {}).get("parts", []) if p_.get("turn") == r["zone"]]
+            if not zp:
+                raise SystemExit(f"ortho_pave region {r.get('name')}: no paved zone {r['zone']!r}")
+            poly = [q[:2] for q in zp[0]["left"]] + [q[:2] for q in zp[0]["right"]][::-1]
+        else:
+            poly = [enu(*q) for q in r["latlon"]]
         reg = raster([poly])
         ys, xs = np.nonzero(reg)
         y0, y1, x0, x1 = ys.min(), ys.max() + 1, xs.min(), xs.max() + 1
