@@ -545,14 +545,14 @@
    "number": "4",
    "id": "4",
    "file": "models/4.glb",
-   "tris": 9490,
-   "bytes": 508244,
+   "tris": 9594,
+   "bytes": 515016,
    "materials": 2,
    "length_m": 4.547,
    "width_m": 1.766,
    "height_m": 1.428,
    "bbox_m": [
-    4.561,
+    4.602,
     2.027,
     1.5
    ],
@@ -1975,8 +1975,8 @@
    "number": "27",
    "id": "27",
    "file": "models/27.glb",
-   "tris": 10852,
-   "bytes": 567356,
+   "tris": 10980,
+   "bytes": 575940,
    "materials": 2,
    "length_m": 3.992,
    "width_m": 1.675,
@@ -2997,8 +2997,8 @@
    "number": "44",
    "id": "44",
    "file": "models/44.glb",
-   "tris": 8834,
-   "bytes": 469144,
+   "tris": 9113,
+   "bytes": 474892,
    "materials": 3,
    "length_m": 3.728,
    "width_m": 1.684,
@@ -3039,15 +3039,15 @@
    "car": "2008 MINI Cooper S (R56)",
    "brake_lamps": [
     [
-     0.4075,
-     0.4308,
-     -1.7536,
+     0.4094,
+     0.4315,
+     -1.7534,
      0.06
     ],
     [
-     -0.4075,
-     0.4308,
-     -1.7536,
+     -0.4094,
+     0.4315,
+     -1.7534,
      0.06
     ]
    ],
@@ -3063,7 +3063,7 @@
     "model_length": 3.713,
     "model_width": 1.875,
     "model_height": 1.492,
-    "tris": 5998,
+    "tris": 5997,
     "file": "tools/cars/kit/downloads/58/model_clean.glb"
    }
   },
@@ -3071,8 +3071,8 @@
    "number": "44",
    "id": "44_sp",
    "file": "models/44_sp.glb",
-   "tris": 9992,
-   "bytes": 458448,
+   "tris": 10271,
+   "bytes": 463076,
    "materials": 3,
    "length_m": 3.728,
    "width_m": 1.684,
@@ -3113,15 +3113,15 @@
    "car": "2008 MINI Cooper (R56)",
    "brake_lamps": [
     [
-     0.4075,
-     0.4308,
-     -1.7536,
+     0.4094,
+     0.4315,
+     -1.7534,
      0.06
     ],
     [
-     -0.4075,
-     0.4308,
-     -1.7536,
+     -0.4094,
+     0.4315,
+     -1.7534,
      0.06
     ]
    ],
@@ -3137,7 +3137,7 @@
     "model_length": 3.713,
     "model_width": 1.875,
     "model_height": 1.492,
-    "tris": 5998,
+    "tris": 5997,
     "file": "tools/cars/kit/downloads/58/model_clean.glb"
    }
   },
@@ -3999,8 +3999,8 @@
    "number": "58",
    "id": "58",
    "file": "models/58.glb",
-   "tris": 11957,
-   "bytes": 597868,
+   "tris": 11906,
+   "bytes": 589288,
    "materials": 3,
    "length_m": 3.655,
    "width_m": 1.688,
@@ -4041,15 +4041,15 @@
    "car": "2003 Mini Cooper S (R53)",
    "brake_lamps": [
     [
-     0.4101,
-     0.4329,
-     -1.7532,
+     0.4069,
+     0.433,
+     -1.7537,
      0.06
     ],
     [
-     -0.4101,
-     0.4329,
-     -1.7532,
+     -0.4069,
+     0.433,
+     -1.7537,
      0.06
     ]
    ],
@@ -4065,7 +4065,7 @@
     "model_length": 3.699,
     "model_width": 1.875,
     "model_height": 1.433,
-    "tris": 5999,
+    "tris": 5701,
     "file": "tools/cars/kit/downloads/58/model_clean.glb"
    }
   },
@@ -4147,14 +4147,14 @@
    "number": "60",
    "id": "60",
    "file": "models/60.glb",
-   "tris": 8494,
-   "bytes": 494740,
+   "tris": 8868,
+   "bytes": 525524,
    "materials": 2,
    "length_m": 4.368,
    "width_m": 1.679,
    "height_m": 1.288,
    "bbox_m": [
-    4.468,
+    4.49,
     1.931,
     1.447
    ],
@@ -5109,14 +5109,14 @@
    "number": "75",
    "id": "75_sp",
    "file": "models/75_sp.glb",
-   "tris": 8210,
-   "bytes": 513412,
+   "tris": 9152,
+   "bytes": 567940,
    "materials": 2,
    "length_m": 5.05,
    "width_m": 1.994,
    "height_m": 1.86,
    "bbox_m": [
-    5.17,
+    5.181,
     2.337,
     2.134
    ],
@@ -5689,15 +5689,15 @@
    "number": "82",
    "id": "82",
    "file": "models/82.glb",
-   "tris": 10661,
-   "bytes": 670512,
+   "tris": 10590,
+   "bytes": 670136,
    "materials": 2,
    "length_m": 4.2,
    "width_m": 1.735,
    "height_m": 1.275,
    "bbox_m": [
-    4.266,
-    1.903,
+    4.268,
+    1.902,
     1.415
    ],
    "wheelbase_m": 2.4,
@@ -5731,13 +5731,13 @@
    "car": "1986 Porsche 944",
    "brake_lamps": [
     [
-     0.4094,
+     0.4088,
      0.7295,
-     -2.0391,
+     -2.0392,
      0.06
     ],
     [
-     -0.4094,
+     -0.4088,
      0.7295,
      -2.0385,
      0.06
@@ -5751,7 +5751,7 @@
     "model_length": 4.219,
     "model_width": 1.902,
     "model_height": 1.279,
-    "tris": 7500,
+    "tris": 7499,
     "file": "tools/cars/kit/downloads/82/model.glb"
    }
   },
@@ -6398,7 +6398,7 @@
    "id": "90_sp",
    "file": "models/90_sp.glb",
    "tris": 10028,
-   "bytes": 589552,
+   "bytes": 595220,
    "materials": 2,
    "length_m": 4.144,
    "width_m": 1.753,
@@ -7015,8 +7015,8 @@
    "number": "101",
    "id": "101",
    "file": "models/101.glb",
-   "tris": 9244,
-   "bytes": 503720,
+   "tris": 9312,
+   "bytes": 505280,
    "materials": 2,
    "length_m": 4.45,
    "width_m": 1.695,
@@ -8891,8 +8891,8 @@
    "number": "182",
    "id": "182",
    "file": "models/182.glb",
-   "tris": 7045,
-   "bytes": 410996,
+   "tris": 7047,
+   "bytes": 411840,
    "materials": 3,
    "length_m": 4.13,
    "width_m": 1.625,
@@ -8953,7 +8953,7 @@
     "model_length": 3.889,
     "model_width": 1.624,
     "model_height": 1.25,
-    "tris": 4447,
+    "tris": 4451,
     "file": "tools/cars/kit/downloads/182/model.glb"
    }
   },
@@ -9419,73 +9419,73 @@
    "number": "203",
    "id": "203",
    "file": "models/203.glb",
-   "tris": 9724,
-   "bytes": 490540,
+   "tris": 9705,
+   "bytes": 508260,
    "materials": 2,
-   "length_m": 5.534,
-   "width_m": 1.9,
-   "height_m": 1.37,
+   "length_m": 4.37,
+   "width_m": 1.695,
+   "height_m": 1.31,
    "bbox_m": [
-    5.323,
-    1.941,
-    1.389
+    4.515,
+    1.731,
+    1.31
    ],
-   "wheelbase_m": 2.946,
-   "track_front_m": 1.52,
-   "track_rear_m": 1.52,
-   "tyre_radius_m": 0.345,
-   "tyre_radius_rear_m": 0.345,
+   "wheelbase_m": 2.37,
+   "track_front_m": 1.475,
+   "track_rear_m": 1.465,
+   "tyre_radius_m": 0.29,
+   "tyre_radius_rear_m": 0.29,
    "hubs": {
     "wheel_fl": [
-     0.76,
-     0.345,
-     1.473
+     0.7375,
+     0.29,
+     1.185
     ],
     "wheel_fr": [
-     -0.76,
-     0.345,
-     1.473
+     -0.7375,
+     0.29,
+     1.185
     ],
     "wheel_rl": [
-     0.76,
-     0.345,
-     -1.473
+     0.7325,
+     0.29,
+     -1.185
     ],
     "wheel_rr": [
-     -0.76,
-     0.345,
-     -1.473
+     -0.7325,
+     0.29,
+     -1.185
     ]
    },
    "team": "Del Camino",
-   "car": "1970 Chevrolet El Camino",
+   "car": "1970 Chevrolet El Camino body on a Honda Del Sol chassis",
    "brake_lamps": [
     [
-     0.62,
-     0.6,
-     -2.8286,
-     0.15
+     0.5531,
+     0.5391,
+     -2.4152,
+     0.135
     ],
     [
-     -0.62,
-     0.6,
-     -2.8286,
-     0.15
+     -0.5531,
+     0.5391,
+     -2.4152,
+     0.135
     ]
    ],
    "brake_lamps_fallback": false,
    "import": {
     "method": "named wheel parts",
-    "scale": 0.37869516875917714,
+    "scale": 0.3046529361708248,
     "source_tris": 56568,
-    "model_track": 1.597,
-    "model_tyre_radius": 0.336,
-    "hub_z_front": 0.345,
-    "hub_z_rear": 0.345,
-    "model_length": 5.303,
-    "model_width": 1.942,
-    "model_height": 1.389,
-    "tris": 6975,
+    "model_track": 1.285,
+    "model_tyre_radius": 0.27,
+    "hub_z_front": 0.29,
+    "hub_z_rear": 0.29,
+    "model_length": 4.494,
+    "model_width": 1.732,
+    "model_height": 1.31,
+    "tris": 7001,
     "file": "tools/cars/kit/downloads/203/model.glb"
    }
   },
@@ -9753,8 +9753,8 @@
    "number": "242",
    "id": "242",
    "file": "models/242.glb",
-   "tris": 10578,
-   "bytes": 561920,
+   "tris": 10889,
+   "bytes": 583492,
    "materials": 2,
    "length_m": 4.258,
    "width_m": 1.645,
@@ -9795,15 +9795,15 @@
    "car": "1987 BMW 325e (E30) 2-door",
    "brake_lamps": [
     [
-     0.4636,
-     0.5347,
-     -2.1288,
+     0.4637,
+     0.535,
+     -2.1285,
      0.06
     ],
     [
-     -0.4636,
-     0.5347,
-     -2.1286,
+     -0.4637,
+     0.535,
+     -2.1272,
      0.06
     ]
    ],
@@ -10847,61 +10847,71 @@
    "number": "327",
    "id": "327",
    "file": "models/327.glb",
-   "tris": 9698,
-   "bytes": 548548,
+   "tris": 11570,
+   "bytes": 616692,
    "materials": 2,
-   "length_m": 4.713,
-   "width_m": 1.704,
-   "height_m": 1.341,
+   "length_m": 4.831,
+   "width_m": 1.781,
+   "height_m": 1.369,
    "bbox_m": [
-    4.755,
-    2.006,
-    1.341
+    4.886,
+    2.092,
+    1.382
    ],
-   "wheelbase_m": 2.72,
-   "track_front_m": 1.476,
-   "track_rear_m": 1.481,
+   "wheelbase_m": 2.805,
+   "track_front_m": 1.52,
+   "track_rear_m": 1.525,
    "tyre_radius_m": 0.307,
    "tyre_radius_rear_m": 0.307,
    "hubs": {
     "wheel_fl": [
-     0.738,
+     0.76,
      0.307,
-     1.36
+     1.4025
     ],
     "wheel_fr": [
-     -0.738,
+     -0.76,
      0.307,
-     1.36
+     1.4025
     ],
     "wheel_rl": [
-     0.7405,
+     0.7625,
      0.307,
-     -1.36
+     -1.4025
     ],
     "wheel_rr": [
-     -0.7405,
+     -0.7625,
      0.307,
-     -1.36
+     -1.4025
     ]
    },
    "team": "Max Verslowin",
-   "car": "1992 Honda Accord sedan (4th gen, CB7)",
+   "car": "1992 Acura Vigor (CC2)",
    "brake_lamps": [
     [
-     0.5512,
-     0.6874,
-     -2.2796,
-     0.06
+     0.55,
+     0.86,
+     -2.5209,
+     0.2
     ],
     [
-     -0.5512,
-     0.6874,
-     -2.2796,
-     0.06
+     -0.55,
+     0.86,
+     -2.5297,
+     0.2
     ]
    ],
-   "brake_lamps_fallback": true
+   "brake_lamps_fallback": false,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 0.21571944935784051,
+    "source_tris": 2500000,
+    "model_length": 4.867,
+    "model_width": 2.077,
+    "model_height": 1.369,
+    "tris": 7698,
+    "file": "tools/cars/kit/downloads/192/model.glb"
+   }
   },
   {
    "number": "328",
@@ -11601,9 +11611,9 @@
    "number": "420",
    "id": "420_sp",
    "file": "models/420_sp.glb",
-   "tris": 4716,
-   "bytes": 337844,
-   "materials": 2,
+   "tris": 4797,
+   "bytes": 340524,
+   "materials": 3,
    "length_m": 4.787,
    "width_m": 1.75,
    "height_m": 1.47,
@@ -11643,14 +11653,14 @@
    "car": "1989 Volvo 740 wagon",
    "brake_lamps": [
     [
-     0.6273,
-     0.5095,
+     0.6274,
+     0.5096,
      -2.4854,
      0.06
     ],
     [
-     -0.6273,
-     0.5095,
+     -0.6274,
+     0.5096,
      -2.4854,
      0.06
     ]
@@ -11667,7 +11677,7 @@
     "model_length": 4.839,
     "model_width": 1.782,
     "model_height": 1.459,
-    "tris": 1772,
+    "tris": 1751,
     "file": "tools/cars/kit/downloads/745/model.glb"
    }
   },
@@ -12439,9 +12449,9 @@
    "number": "605",
    "id": "605",
    "file": "models/605.glb",
-   "tris": 9606,
-   "bytes": 551428,
-   "materials": 3,
+   "tris": 9642,
+   "bytes": 541700,
+   "materials": 2,
    "length_m": 4.82,
    "width_m": 1.81,
    "height_m": 1.47,
@@ -12885,8 +12895,8 @@
    "number": "685",
    "id": "685_sp",
    "file": "models/685_sp.glb",
-   "tris": 10192,
-   "bytes": 583528,
+   "tris": 9894,
+   "bytes": 572452,
    "materials": 3,
    "length_m": 5.217,
    "width_m": 2.01,
@@ -12894,7 +12904,7 @@
    "bbox_m": [
     5.547,
     2.457,
-    1.82
+    1.475
    ],
    "wheelbase_m": 2.946,
    "track_front_m": 1.58,
@@ -13757,14 +13767,14 @@
    "number": "750",
    "id": "750",
    "file": "models/750.glb",
-   "tris": 6760,
-   "bytes": 350928,
+   "tris": 6946,
+   "bytes": 363296,
    "materials": 2,
    "length_m": 3.945,
    "width_m": 1.68,
    "height_m": 1.235,
    "bbox_m": [
-    3.917,
+    3.996,
     1.89,
     1.2
    ],
@@ -13799,15 +13809,15 @@
    "car": "2000 Mazda MX-5 Miata (NB), hardtop",
    "brake_lamps": [
     [
-     0.3483,
-     0.4286,
-     -1.9672,
+     0.3474,
+     0.4295,
+     -1.9674,
      0.06
     ],
     [
-     -0.3483,
-     0.4286,
-     -1.9672,
+     -0.3474,
+     0.4295,
+     -1.9674,
      0.06
     ]
    ],
@@ -14821,16 +14831,16 @@
    "number": "916",
    "id": "916",
    "file": "models/916.glb",
-   "tris": 10215,
-   "bytes": 610592,
+   "tris": 10144,
+   "bytes": 610348,
    "materials": 2,
    "length_m": 4.2,
    "width_m": 1.735,
    "height_m": 1.275,
    "bbox_m": [
-    4.219,
-    1.903,
-    1.941
+    4.221,
+    1.902,
+    1.94
    ],
    "wheelbase_m": 2.4,
    "track_front_m": 1.48,
@@ -14863,13 +14873,13 @@
    "car": "1985 Porsche 944",
    "brake_lamps": [
     [
-     0.4094,
+     0.4088,
      0.7295,
-     -2.0391,
+     -2.0392,
      0.06
     ],
     [
-     -0.4094,
+     -0.4088,
      0.7295,
      -2.0385,
      0.06
@@ -14883,7 +14893,7 @@
     "model_length": 4.219,
     "model_width": 1.902,
     "model_height": 1.279,
-    "tris": 7500,
+    "tris": 7499,
     "file": "tools/cars/kit/downloads/82/model.glb"
    }
   },
@@ -15037,16 +15047,16 @@
    "number": "938",
    "id": "938",
    "file": "models/938.glb",
-   "tris": 10227,
-   "bytes": 581752,
+   "tris": 10156,
+   "bytes": 583916,
    "materials": 2,
    "length_m": 4.2,
    "width_m": 1.735,
    "height_m": 1.275,
    "bbox_m": [
     4.286,
-    1.903,
-    1.511
+    1.902,
+    1.51
    ],
    "wheelbase_m": 2.4,
    "track_front_m": 1.48,
@@ -15079,13 +15089,13 @@
    "car": "1985 Porsche 944",
    "brake_lamps": [
     [
-     0.4094,
+     0.4088,
      0.7295,
-     -2.0391,
+     -2.0392,
      0.06
     ],
     [
-     -0.4094,
+     -0.4088,
      0.7295,
      -2.0385,
      0.06
@@ -15099,7 +15109,7 @@
     "model_length": 4.219,
     "model_width": 1.902,
     "model_height": 1.279,
-    "tris": 7500,
+    "tris": 7499,
     "file": "tools/cars/kit/downloads/82/model.glb"
    }
   },
