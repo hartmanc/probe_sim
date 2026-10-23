@@ -70,6 +70,9 @@ export interface TrackInfo {
    *  of the board key: a rebuilt package opens its own boards without a global PHYSICS_VERSION bump. Laguna has none
    *  (its key is unchanged since 0.2.0). */
   rev?: string;
+  /** "Far off the track" for the lost-in-the-hills launch, m past the nearer track edge (absent = OFFTRACK_FAR_M, 40 m,
+   *  src/physics/offtrack.ts). Only the player's car; outside the near heightfield always counts as far. */
+  offTrackFarM?: number;
 }
 
 /** The track registry: every circuit the app, the scoreboard server and the tools know (whitelist). A new track gets an

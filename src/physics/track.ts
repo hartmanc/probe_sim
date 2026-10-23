@@ -655,6 +655,35 @@ export function createTrackProjector(track: TrackJson): { project(x: number, y: 
   };
 }
 
+/** Distance from a point to the track's nearer edge (track.json left/right), the horizontal unit vector pointing
+ *  away from the centreline, the centreline segment it was measured from and the side (+1 left, -1 right). */
+export interface EdgeDistance { d: number; ux: number; uy: number; seg: number; side: 1 | -1 }
+
+/**
+ * Edge distance: `d` < 0 on the road, > 0 outside it (m past the edge on the point's side, measured from the nearest
+ * point of the centreline polyline). Far from the track the nearest station comes from a brute-force search. The
+ * returned object is reused.
+ */
+export function createEdgeDistance(track: TrackJson): (x: number, y: number) => EdgeDistance {
+  const g = getGeo(track);
+  const loc: Loc = { found: false, seg: 0, t: 0, lateral: 0 };
+  const out: EdgeDistance = { d: 0, ux: 0, uy: 0, seg: 0, side: 1 };
+  return (x, y) => {
+    let s = nearestStation(g, x, y);
+    if (s < 0) s = nearestStationBrute(g, x, y);
+    locateAt(g, x, y, s, loc);
+    const seg = loc.seg, t = loc.t, j = (seg + 1) % g.n;
+    const px = g.cx[seg] + t * (g.cx[j] - g.cx[seg]), py = g.cy[seg] + t * (g.cy[j] - g.cy[seg]);
+    const dx = x - px, dy = y - py, r = Math.hypot(dx, dy);
+    const half = loc.lateral > 0
+      ? g.halfL[seg] + t * (g.halfL[j] - g.halfL[seg])
+      : g.halfR[seg] + t * (g.halfR[j] - g.halfR[seg]);
+    out.d = r - half; out.seg = seg; out.side = loc.lateral > 0 ? 1 : -1;
+    if (r > 1e-9) { out.ux = dx / r; out.uy = dy / r; } else { out.ux = -g.ty[seg]; out.uy = g.tx[seg]; }
+    return out;
+  };
+}
+
 /** Centreline position at s (m, wrapped) offset laterally (+left) along the segment's left normal. */
 function lineXY(g: Geo, offsetAtS: (s: number) => number, s: number, out: { x: number; y: number; seg: number; t: number; off: number }): void {
   let sw = s % g.length; if (sw < 0) sw += g.length;

@@ -4,9 +4,9 @@ export type { CarSpec, AxleSuspension, TyreAxis } from './spec';
 export { loadCarSpec, tyrePeakSlip } from './spec';
 export { Vehicle, LAUNCH_SPEED } from './vehicle';
 export type { VehicleOptions } from './vehicle';
-export type { TrackJson, TrackSurfaceOptions, TrackProjection, HeightGrid, PitLaneJson, SausageJson, KerbsJson, KerbProfileJson } from './track';
+export type { TrackJson, TrackSurfaceOptions, TrackProjection, EdgeDistance, HeightGrid, PitLaneJson, SausageJson, KerbsJson, KerbProfileJson } from './track';
 export { SAUSAGE_RAMP_M, kerbBandCentre } from './track';
-export { createTrackSurface, createTrackProjector, lineToWorld, loadHeightfield, SHOULDER_WIDTH_M, OFF_PAVEMENT_MU, SURFACE_GRIP_BLEND_M, DIRT_ROUGHNESS_M } from './track';
+export { createTrackSurface, createTrackProjector, createEdgeDistance, lineToWorld, loadHeightfield, SHOULDER_WIDTH_M, OFF_PAVEMENT_MU, SURFACE_GRIP_BLEND_M, DIRT_ROUGHNESS_M } from './track';
 export { mfShape, solveMfB } from './tyre';
 export { createCollisionWorld, CollisionWorld, COLLISION_KINDS, KIND_PROPS } from './collision';
 export type { CollisionKind, KindProps, SceneryCollisionJson, CollisionWorldOptions } from './collision';
@@ -15,3 +15,5 @@ export type { GearSchedule, GhostLapLike } from './gearschedule';
 // Race mode (src/physics/ai/NOTES.md): AI field, race director, car-vs-car contacts.
 export * as race from './ai/index';
 export { ROLLOVER_RAD, rollOf, isRolledOver } from './rollover';
+export { OFFTRACK_FAR_M, OFFTRACK_HOLD_S, OFFTRACK_BARRIER_MARGIN_M, OFFTRACK_BARRIER_REACH_M, OffTrackWatch, createOffTrackJudge } from './offtrack';
+export type { OffTrackJudge, OffTrackOptions } from './offtrack';

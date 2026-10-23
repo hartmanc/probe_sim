@@ -588,7 +588,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
       const h = dir.hud();
       const P = dir.player, st = P.vehicle.state;
       if (st.launched && !out) {
-        out = { reason: 'Launched into space', metres: Math.max(0, P.U) };
+        out = { reason: sv?.sim.launchedOffTrack ? 'Lost in the hills' : 'Launched into space', metres: Math.max(0, P.U) };
         outRaced = h.raced;
       }
       if (cone && !out && cone.update(st.pos[0], st.pos[1])) dir.reportViolation('pit_exit_cones');
