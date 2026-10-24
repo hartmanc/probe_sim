@@ -51,3 +51,13 @@ other, in different places) was the registry.
 Note for the pace stage: field-buttonwillow's AI_VERSION 8 calibration of the Buttonwillow field (884 fits) was made on
 the round-8 package (4703.806 m); the merged tree carries the round-10 package (4699.187 m, edges refit from the
 owner's red). The calibration itself is unchanged by this merge.
+
+## Merge 3: field-sonoma into integration
+
+field-sonoma (cade7a9, including the #203 Del Camino B-series engine row) branched from track-pipeline at 427449c.
+No conflicts. The car pool (`public/cars/field/models.json`, `credits.json`, 228 `models/*.glb` changed on both sides)
+is byte-identical between field-buttonwillow and field-sonoma (`git diff field-buttonwillow field-sonoma` over the pool
+is empty), and the merged pool equals field-sonoma's. The other two files changed on both sides, `src/app/loader.ts`
+and `src/physics/ai/field.ts`, auto-merged to field-buttonwillow's per-event identity code plus field-sonoma's
+`same_car` fields (FieldModelInfo, IdentityCar). `changelog.ts`, `package.json` and the track registry are unchanged by
+this merge.
