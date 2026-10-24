@@ -1639,14 +1639,14 @@
    "number": "21",
    "id": "21",
    "file": "models/21.glb",
-   "tris": 10753,
-   "bytes": 705184,
+   "tris": 10767,
+   "bytes": 706608,
    "materials": 2,
    "length_m": 4.24,
    "width_m": 1.775,
    "height_m": 1.285,
    "bbox_m": [
-    4.23,
+    4.232,
     1.966,
     1.273
    ],
@@ -1679,17 +1679,18 @@
    },
    "team": "TOP Drivers (R)",
    "car": "2013 Scion FR-S (BRZ body)",
+   "same_car": "200",
    "brake_lamps": [
     [
-     0.3687,
-     0.5985,
-     -2.0781,
+     0.3646,
+     0.5979,
+     -2.0785,
      0.06
     ],
     [
-     -0.3687,
-     0.5985,
-     -2.0781,
+     -0.3646,
+     0.5979,
+     -2.0785,
      0.06
     ]
    ],
@@ -1705,7 +1706,7 @@
     "model_length": 4.235,
     "model_width": 1.986,
     "model_height": 1.412,
-    "tris": 8200,
+    "tris": 8204,
     "file": "tools/cars/kit/downloads/200/model.glb"
    }
   },
@@ -3165,6 +3166,7 @@
    },
    "team": "3S's&2K's and some T & A",
    "car": "2008 MINI Cooper (R56)",
+   "same_car": "44",
    "brake_lamps": [
     [
      0.4094,
@@ -3199,15 +3201,15 @@
    "number": "45",
    "id": "45",
    "file": "models/45.glb",
-   "tris": 8484,
-   "bytes": 488312,
+   "tris": 10489,
+   "bytes": 591528,
    "materials": 2,
-   "length_m": 4.415,
+   "length_m": 4.41,
    "width_m": 1.74,
    "height_m": 1.475,
    "bbox_m": [
-    4.46,
-    1.983,
+    4.415,
+    1.95,
     1.495
    ],
    "wheelbase_m": 2.62,
@@ -3241,19 +3243,29 @@
    "car": "2008 Subaru Impreza WRX 5-door hatchback (GH)",
    "brake_lamps": [
     [
-     0.5181,
-     0.6745,
-     -2.1415,
+     0.4156,
+     0.5802,
+     -2.1072,
      0.06
     ],
     [
-     -0.5181,
-     0.6745,
-     -2.1415,
+     -0.4156,
+     0.5802,
+     -2.107,
      0.06
     ]
    ],
-   "brake_lamps_fallback": true
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 0.07524411257897759,
+    "source_tris": 28054,
+    "model_length": 4.415,
+    "model_width": 1.953,
+    "model_height": 1.481,
+    "tris": 5999,
+    "file": "tools/cars/kit/downloads/45_gh/model.glb"
+   }
   },
   {
    "number": "47",
@@ -3940,66 +3952,6 @@
    "brake_lamps_fallback": false
   },
   {
-   "number": "55",
-   "id": "55_sp",
-   "file": "models/55_sp.glb",
-   "tris": 9208,
-   "bytes": 488164,
-   "materials": 3,
-   "length_m": 4.78,
-   "width_m": 1.77,
-   "height_m": 1.41,
-   "bbox_m": [
-    4.792,
-    2.071,
-    1.41
-   ],
-   "wheelbase_m": 2.62,
-   "track_front_m": 1.51,
-   "track_rear_m": 1.51,
-   "tyre_radius_m": 0.31,
-   "tyre_radius_rear_m": 0.31,
-   "hubs": {
-    "wheel_fl": [
-     0.755,
-     0.31,
-     1.31
-    ],
-    "wheel_fr": [
-     -0.755,
-     0.31,
-     1.31
-    ],
-    "wheel_rl": [
-     0.755,
-     0.31,
-     -1.31
-    ],
-    "wheel_rr": [
-     -0.755,
-     0.31,
-     -1.31
-    ]
-   },
-   "team": "Top Gun Rookies",
-   "car": "UNIDENTIFIED (generic 1990s sedan: Toyota Camry XV10 loft)",
-   "brake_lamps": [
-    [
-     0.55,
-     0.6863,
-     -2.5152,
-     0.06
-    ],
-    [
-     -0.55,
-     0.6863,
-     -2.5152,
-     0.06
-    ]
-   ],
-   "brake_lamps_fallback": true
-  },
-  {
    "number": "56",
    "id": "56",
    "file": "models/56.glb",
@@ -4638,66 +4590,6 @@
     ]
    ],
    "brake_lamps_fallback": false
-  },
-  {
-   "number": "68",
-   "id": "68",
-   "file": "models/68.glb",
-   "tris": 9208,
-   "bytes": 486124,
-   "materials": 3,
-   "length_m": 4.78,
-   "width_m": 1.77,
-   "height_m": 1.41,
-   "bbox_m": [
-    4.792,
-    2.071,
-    1.41
-   ],
-   "wheelbase_m": 2.62,
-   "track_front_m": 1.51,
-   "track_rear_m": 1.51,
-   "tyre_radius_m": 0.31,
-   "tyre_radius_rear_m": 0.31,
-   "hubs": {
-    "wheel_fl": [
-     0.755,
-     0.31,
-     1.31
-    ],
-    "wheel_fr": [
-     -0.755,
-     0.31,
-     1.31
-    ],
-    "wheel_rl": [
-     0.755,
-     0.31,
-     -1.31
-    ],
-    "wheel_rr": [
-     -0.755,
-     0.31,
-     -1.31
-    ]
-   },
-   "team": "Team Half Ass",
-   "car": "UNIDENTIFIED (generic 1990s sedan: Toyota Camry XV10 loft)",
-   "brake_lamps": [
-    [
-     0.55,
-     0.6863,
-     -2.5152,
-     0.06
-    ],
-    [
-     -0.55,
-     0.6863,
-     -2.5152,
-     0.06
-    ]
-   ],
-   "brake_lamps_fallback": true
   },
   {
    "number": "69",
@@ -7850,66 +7742,6 @@
    }
   },
   {
-   "number": "122",
-   "id": "122",
-   "file": "models/122.glb",
-   "tris": 9208,
-   "bytes": 485616,
-   "materials": 3,
-   "length_m": 4.78,
-   "width_m": 1.77,
-   "height_m": 1.41,
-   "bbox_m": [
-    4.792,
-    2.071,
-    1.41
-   ],
-   "wheelbase_m": 2.62,
-   "track_front_m": 1.51,
-   "track_rear_m": 1.51,
-   "tyre_radius_m": 0.31,
-   "tyre_radius_rear_m": 0.31,
-   "hubs": {
-    "wheel_fl": [
-     0.755,
-     0.31,
-     1.31
-    ],
-    "wheel_fr": [
-     -0.755,
-     0.31,
-     1.31
-    ],
-    "wheel_rl": [
-     0.755,
-     0.31,
-     -1.31
-    ],
-    "wheel_rr": [
-     -0.755,
-     0.31,
-     -1.31
-    ]
-   },
-   "team": "Team Slowtus",
-   "car": "UNIDENTIFIED (generic 1990s sedan: Toyota Camry XV10 loft)",
-   "brake_lamps": [
-    [
-     0.55,
-     0.6863,
-     -2.5152,
-     0.06
-    ],
-    [
-     -0.55,
-     0.6863,
-     -2.5152,
-     0.06
-    ]
-   ],
-   "brake_lamps_fallback": true
-  },
-  {
    "number": "123",
    "id": "123",
    "file": "models/123.glb",
@@ -10523,16 +10355,16 @@
    "number": "280",
    "id": "280",
    "file": "models/280.glb",
-   "tris": 9352,
-   "bytes": 515260,
+   "tris": 4821,
+   "bytes": 313704,
    "materials": 2,
    "length_m": 4.562,
    "width_m": 1.755,
    "height_m": 1.323,
    "bbox_m": [
-    4.614,
-    1.852,
-    1.848
+    4.549,
+    1.709,
+    1.88
    ],
    "wheelbase_m": 2.553,
    "track_front_m": 1.45,
@@ -10565,19 +10397,33 @@
    "car": "1988 Ford Mustang LX notchback (Fox body)",
    "brake_lamps": [
     [
-     0.55,
-     0.8,
-     -2.3455,
-     0.2
+     0.51,
+     0.735,
+     -2.2002,
+     0.12
     ],
     [
-     -0.55,
-     0.8,
-     -2.3455,
-     0.2
+     -0.51,
+     0.735,
+     -2.2004,
+     0.12
     ]
    ],
-   "brake_lamps_fallback": false
+   "brake_lamps_fallback": false,
+   "import": {
+    "method": "named wheel parts",
+    "scale": 0.8481962398861695,
+    "source_tris": 4230,
+    "model_track": 1.497,
+    "model_tyre_radius": 0.322,
+    "hub_z_front": 0.321,
+    "hub_z_rear": 0.331,
+    "model_length": 4.544,
+    "model_width": 1.774,
+    "model_height": 1.348,
+    "tris": 957,
+    "file": "tools/cars/kit/downloads/280_ssp/model.glb"
+   }
   },
   {
    "number": "282",
@@ -10638,66 +10484,6 @@
     ]
    ],
    "brake_lamps_fallback": false
-  },
-  {
-   "number": "299",
-   "id": "299",
-   "file": "models/299.glb",
-   "tris": 9208,
-   "bytes": 495520,
-   "materials": 3,
-   "length_m": 4.78,
-   "width_m": 1.77,
-   "height_m": 1.41,
-   "bbox_m": [
-    4.792,
-    2.071,
-    1.41
-   ],
-   "wheelbase_m": 2.62,
-   "track_front_m": 1.51,
-   "track_rear_m": 1.51,
-   "tyre_radius_m": 0.31,
-   "tyre_radius_rear_m": 0.31,
-   "hubs": {
-    "wheel_fl": [
-     0.755,
-     0.31,
-     1.31
-    ],
-    "wheel_fr": [
-     -0.755,
-     0.31,
-     1.31
-    ],
-    "wheel_rl": [
-     0.755,
-     0.31,
-     -1.31
-    ],
-    "wheel_rr": [
-     -0.755,
-     0.31,
-     -1.31
-    ]
-   },
-   "team": "Auto Paint Trader Racing",
-   "car": "UNIDENTIFIED (generic 1990s sedan: Toyota Camry XV10 loft)",
-   "brake_lamps": [
-    [
-     0.55,
-     0.6863,
-     -2.5152,
-     0.06
-    ],
-    [
-     -0.55,
-     0.6863,
-     -2.5152,
-     0.06
-    ]
-   ],
-   "brake_lamps_fallback": true
   },
   {
    "number": "300",
@@ -12205,16 +11991,16 @@
    "number": "515",
    "id": "515",
    "file": "models/515.glb",
-   "tris": 8360,
-   "bytes": 458220,
+   "tris": 4089,
+   "bytes": 264240,
    "materials": 2,
    "length_m": 4.562,
    "width_m": 1.755,
    "height_m": 1.323,
    "bbox_m": [
-    4.62,
-    1.852,
-    1.323
+    4.549,
+    1.709,
+    1.348
    ],
    "wheelbase_m": 2.553,
    "track_front_m": 1.45,
@@ -12247,19 +12033,33 @@
    "car": "1986 Ford Mustang LX notchback (Fox body)",
    "brake_lamps": [
     [
-     0.55,
-     0.8,
-     -2.3455,
-     0.2
+     0.51,
+     0.735,
+     -2.2002,
+     0.12
     ],
     [
-     -0.55,
-     0.8,
-     -2.3455,
-     0.2
+     -0.51,
+     0.735,
+     -2.2004,
+     0.12
     ]
    ],
-   "brake_lamps_fallback": false
+   "brake_lamps_fallback": false,
+   "import": {
+    "method": "named wheel parts",
+    "scale": 0.8481962398861695,
+    "source_tris": 4230,
+    "model_track": 1.497,
+    "model_tyre_radius": 0.322,
+    "hub_z_front": 0.321,
+    "hub_z_rear": 0.331,
+    "model_length": 4.544,
+    "model_width": 1.774,
+    "model_height": 1.348,
+    "tris": 957,
+    "file": "tools/cars/kit/downloads/280_ssp/model.glb"
+   }
   },
   {
    "number": "520",
@@ -13163,6 +12963,7 @@
    },
    "team": "Enjoy Your Diarrhea",
    "car": "1980 Chevrolet Caprice wagon",
+   "same_car": "685",
    "brake_lamps": [
     [
      0.9,
@@ -14379,16 +14180,16 @@
    "number": "831",
    "id": "831",
    "file": "models/831.glb",
-   "tris": 8372,
-   "bytes": 469312,
+   "tris": 4101,
+   "bytes": 287276,
    "materials": 2,
    "length_m": 4.562,
    "width_m": 1.755,
    "height_m": 1.323,
    "bbox_m": [
-    4.62,
-    1.852,
-    1.323
+    4.549,
+    1.709,
+    1.348
    ],
    "wheelbase_m": 2.553,
    "track_front_m": 1.45,
@@ -14421,19 +14222,33 @@
    "car": "Ford Mustang notchback (Fox body, 1979-86 face)",
    "brake_lamps": [
     [
-     0.55,
-     0.8,
-     -2.3455,
-     0.2
+     0.51,
+     0.735,
+     -2.2002,
+     0.12
     ],
     [
-     -0.55,
-     0.8,
-     -2.3455,
-     0.2
+     -0.51,
+     0.735,
+     -2.2004,
+     0.12
     ]
    ],
-   "brake_lamps_fallback": false
+   "brake_lamps_fallback": false,
+   "import": {
+    "method": "named wheel parts",
+    "scale": 0.8481962398861695,
+    "source_tris": 4230,
+    "model_track": 1.497,
+    "model_tyre_radius": 0.322,
+    "hub_z_front": 0.321,
+    "hub_z_rear": 0.331,
+    "model_length": 4.544,
+    "model_width": 1.774,
+    "model_height": 1.348,
+    "tris": 957,
+    "file": "tools/cars/kit/downloads/280_ssp/model.glb"
+   }
   },
   {
    "number": "833",

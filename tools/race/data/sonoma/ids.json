@@ -1,5 +1,5 @@
 {
- "note": "Sonoma 'Sears Pointless' 21-22 Mar 2026 (MyLaps 11838772) entrant -> car id. id = number unless the number belongs to a DIFFERENT car in the Laguna or Buttonwillow field (then <number>_sp), or the same car ran earlier (then the earlier id). Written 23 Oct 2026 by the identities agent; photo-decided links listed in evidence. #619 (the player's car) is not listed.",
+ "note": "Sonoma 'Sears Pointless' 21-22 Mar 2026 (MyLaps 11838772) entrant -> car id. id = number unless the number belongs to a DIFFERENT car in the Laguna or Buttonwillow field (then <number>_sp), or the same car ran earlier (then the earlier id). Written 23 Oct 2026 by the identities agent; photo-decided links listed in evidence. #619 (the player's car) is not listed. same_car (owner d07, 23 Oct 2026): the id of the same physical car's model at an earlier event (21 -> 200, 685_sp -> 685, 44_sp -> 44): one body, livery per event, each event keeps its own glb. Dropped (owner d08, 23 Oct 2026, never found: no placeholder cars in the field): #122 Team Slowtus, #68 Team Half Ass, #55 Top Gun Rookies (55_sp), #299 Auto Paint Trader Racing; tracked as GitHub issues #8, #1, #2, #3 in hartmanc/probe_sim.",
  "cars": [
   {
    "number": "135",
@@ -583,7 +583,8 @@
    "id": "21",
    "laguna": "not a Laguna entrant",
    "buttonwillow": "not a BW entrant",
-   "evidence": "no exact team-name match in the Laguna or Buttonwillow fields"
+   "evidence": "no exact team-name match in the Laguna or Buttonwillow fields",
+   "same_car": "200"
   },
   {
    "number": "938",
@@ -625,16 +626,6 @@
    "laguna": "not a Laguna entrant",
    "buttonwillow": "same car as BW #245",
    "evidence": "NOT an exact team-name match: BW #245 'Shitty Shitty Bang Bang' vs Sonoma 'Another Fine Mess' (the Laguna/BW 'Another Fine Mess' cars are a Hyundai Elantra #38 and a BMW 6 Series #630). Same number and the photos plainly show the same yellow 'Mom's Taxi' Volvo 245 wagon as BW #245 (gallery idx 298, 357, 435). Linked by number + photos; veto -> '245_sp'"
-  },
-  {
-   "number": "68",
-   "team": "Team Half Ass",
-   "finish": 61,
-   "laps": 218,
-   "id": "68",
-   "laguna": "not a Laguna entrant",
-   "buttonwillow": "not a BW entrant",
-   "evidence": "no exact team-name match in the Laguna or Buttonwillow fields"
   },
   {
    "number": "43",
@@ -1052,7 +1043,8 @@
    "id": "44_sp",
    "laguna": "not a Laguna entrant",
    "buttonwillow": "not a BW entrant",
-   "evidence": "no exact team-name match in the Laguna or Buttonwillow fields; the number belongs to a different car there (BW #44 HAZARD FRAUGHT) so id <number>_sp"
+   "evidence": "no exact team-name match in the Laguna or Buttonwillow fields; the number belongs to a different car there (BW #44 HAZARD FRAUGHT) so id <number>_sp",
+   "same_car": "44"
   },
   {
    "number": "18",
@@ -1083,7 +1075,8 @@
    "id": "685_sp",
    "laguna": "not a Laguna entrant",
    "buttonwillow": "not a BW entrant",
-   "evidence": "no exact team-name match in the Laguna or Buttonwillow fields; the number belongs to a different car there (BW #685 red fang (R)) so id <number>_sp"
+   "evidence": "no exact team-name match in the Laguna or Buttonwillow fields; the number belongs to a different car there (BW #685 red fang (R)) so id <number>_sp",
+   "same_car": "685"
   },
   {
    "number": "37",
@@ -1111,16 +1104,6 @@
    "finish": 107,
    "laps": 142,
    "id": "268",
-   "laguna": "not a Laguna entrant",
-   "buttonwillow": "not a BW entrant",
-   "evidence": "no exact team-name match in the Laguna or Buttonwillow fields"
-  },
-  {
-   "number": "299",
-   "team": "Auto Paint Trader Racing",
-   "finish": 108,
-   "laps": 138,
-   "id": "299",
    "laguna": "not a Laguna entrant",
    "buttonwillow": "not a BW entrant",
    "evidence": "no exact team-name match in the Laguna or Buttonwillow fields"
@@ -1197,16 +1180,6 @@
    "laguna": "not a Laguna entrant",
    "buttonwillow": "same car as BW #333",
    "evidence": "exact normalised team name and the same number"
-  },
-  {
-   "number": "122",
-   "team": "Team Slowtus",
-   "finish": 116,
-   "laps": 99,
-   "id": "122",
-   "laguna": "not a Laguna entrant",
-   "buttonwillow": "not a BW entrant",
-   "evidence": "no exact team-name match in the Laguna or Buttonwillow fields"
   },
   {
    "number": "238",
@@ -1421,16 +1394,6 @@
    "laguna": "not a Laguna entrant",
    "buttonwillow": "not a BW entrant",
    "evidence": "no exact team-name match in the Laguna or Buttonwillow fields"
-  },
-  {
-   "number": "55",
-   "team": "Top Gun Rookies",
-   "finish": 138,
-   "laps": 15,
-   "id": "55_sp",
-   "laguna": "not a Laguna entrant",
-   "buttonwillow": "not a BW entrant",
-   "evidence": "no exact team-name match in the Laguna or Buttonwillow fields; the number belongs to a different car there (Laguna #55 I Snore Racing) so id <number>_sp"
   },
   {
    "number": "87",

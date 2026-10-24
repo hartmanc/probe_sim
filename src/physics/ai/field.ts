@@ -110,6 +110,8 @@ export interface IdentityCar {
   /** optional explicit overrides */
   drive?: string; gears?: number;
   color?: string; colors?: string[]; model_file?: string;
+  /** id of the same physical car at an earlier event (e.g. Sonoma 21 -> Laguna 200): one body, livery per event */
+  same_car?: string;
   [k: string]: unknown;
 }
 

@@ -3813,7 +3813,8 @@
   "photo_sightings": 4,
   "id": "21",
   "photo_dir": "photos/sonoma/21",
-  "event": "sonoma"
+  "event": "sonoma",
+  "same_car": "200"
  },
  {
   "number": "938",
@@ -4085,65 +4086,6 @@
    "laguna": false,
    "buttonwillow": true
   }
- },
- {
-  "number": "68",
-  "team": "Team Half Ass",
-  "class": "A",
-  "grid": 124,
-  "finish": 61,
-  "class_finish": 19,
-  "laps": 218,
-  "best_lap_s": 135.75,
-  "make": "Unknown",
-  "model": "Unidentified car (Team Half Ass)",
-  "generation": "?",
-  "year": 2000,
-  "body": "sedan",
-  "confidence": "none",
-  "evidence": "Searched: Speedhive (Sonoma 2024-11 as #3, 201 laps); Sonoma November 2024 gallery rCsK9T (sheets 0-26 of 37 rendered, no #3; the gold LTD with the horse is #43 and the CAMAROLDS car #249); award archive (no row); 'Halfassed Motorsports' is a different team | id: no exact team-name match in the Laguna or Buttonwillow fields",
-  "dims": {
-   "wheelbase_m": 2.6,
-   "length_m": 4.5,
-   "width_m": 1.75,
-   "height_m": 1.4,
-   "track_m": 1.5,
-   "mass_kg": 1250,
-   "power_kw": 90,
-   "source": "https://en.wikipedia.org/wiki/Sedan",
-   "verified_this_run": false,
-   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
-  },
-  "engine": {
-   "family": "Generic 2.0 I4 (placeholder, car not identified)",
-   "cylinders": 4,
-   "layout": "I4",
-   "displacement_l": 2.0,
-   "aspiration": "NA",
-   "redline_rpm": 6500,
-   "stock_power_kw": 90,
-   "exhaust_note": "stock muffler",
-   "confidence": "none",
-   "evidence": "None"
-  },
-  "colors": {
-   "primary": "#808080",
-   "secondary": "#c0c0c0",
-   "accents": []
-  },
-  "numbers": {
-   "color": "unknown",
-   "boards": [
-    "door"
-   ]
-  },
-  "livery": "Unknown",
-  "theme": "Unknown",
-  "photos": [],
-  "photo_sightings": 0,
-  "id": "68",
-  "photo_dir": "photos/sonoma/68",
-  "event": "sonoma"
  },
  {
   "number": "43",
@@ -6884,7 +6826,8 @@
   "photo_sightings": 3,
   "id": "44_sp",
   "photo_dir": "photos/sonoma/44",
-  "event": "sonoma"
+  "event": "sonoma",
+  "same_car": "44"
  },
  {
   "number": "18",
@@ -7100,7 +7043,8 @@
   "photo_sightings": 17,
   "id": "685_sp",
   "photo_dir": "photos/sonoma/685",
-  "event": "sonoma"
+  "event": "sonoma",
+  "same_car": "685"
  },
  {
   "number": "37",
@@ -7287,65 +7231,6 @@
   "photo_sightings": 3,
   "id": "268",
   "photo_dir": "photos/sonoma/268",
-  "event": "sonoma"
- },
- {
-  "number": "299",
-  "team": "Auto Paint Trader Racing",
-  "class": "B",
-  "grid": 79,
-  "finish": 108,
-  "class_finish": 51,
-  "laps": 138,
-  "best_lap_s": 127.984,
-  "make": "Unknown",
-  "model": "Unidentified car (Auto Paint Trader Racing)",
-  "generation": "?",
-  "year": 2000,
-  "body": "sedan",
-  "confidence": "none",
-  "evidence": "Searched: Speedhive (Thunderhill 2013-09, 2014-09, 2015-09, 2016-03, 2017-05; Buttonwillow 2017-09, all as #299); no SmugMug race album exists before Feb 2018, so no gallery to read; award archive (no row); a web search found nothing | id: no exact team-name match in the Laguna or Buttonwillow fields",
-  "dims": {
-   "wheelbase_m": 2.6,
-   "length_m": 4.5,
-   "width_m": 1.75,
-   "height_m": 1.4,
-   "track_m": 1.5,
-   "mass_kg": 1250,
-   "power_kw": 90,
-   "source": "https://en.wikipedia.org/wiki/Sedan",
-   "verified_this_run": false,
-   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
-  },
-  "engine": {
-   "family": "Generic 2.0 I4 (placeholder, car not identified)",
-   "cylinders": 4,
-   "layout": "I4",
-   "displacement_l": 2.0,
-   "aspiration": "NA",
-   "redline_rpm": 6500,
-   "stock_power_kw": 90,
-   "exhaust_note": "stock muffler",
-   "confidence": "none",
-   "evidence": "None"
-  },
-  "colors": {
-   "primary": "#808080",
-   "secondary": "#c0c0c0",
-   "accents": []
-  },
-  "numbers": {
-   "color": "unknown",
-   "boards": [
-    "door"
-   ]
-  },
-  "livery": "Unknown",
-  "theme": "Unknown",
-  "photos": [],
-  "photo_sightings": 0,
-  "id": "299",
-  "photo_dir": "photos/sonoma/299",
   "event": "sonoma"
  },
  {
@@ -7812,65 +7697,6 @@
    "laguna": false,
    "buttonwillow": true
   }
- },
- {
-  "number": "122",
-  "team": "Team Slowtus",
-  "class": "C",
-  "grid": 132,
-  "finish": 116,
-  "class_finish": 33,
-  "laps": 99,
-  "best_lap_s": 132.106,
-  "make": "Unknown",
-  "model": "Unidentified car (Team Slowtus)",
-  "generation": "?",
-  "year": 2000,
-  "body": "sedan",
-  "confidence": "none",
-  "evidence": "Searched: Speedhive (Sonoma 2021-12 and 2022-03 as #22 'Gas Relief Team Slowtus', Sonoma 2025-03 as #122 with 0 laps, Buttonwillow 2025-09 as #722); Sonoma March 2025 gallery TM6Wnw read in full (no #122); Buttonwillow September 2025 gallery G5bf75 (32 sheets, no clear #722); Sonoma December 2021 gallery xtbJ6C (no #22 Slowtus car) | id: no exact team-name match in the Laguna or Buttonwillow fields",
-  "dims": {
-   "wheelbase_m": 2.6,
-   "length_m": 4.5,
-   "width_m": 1.75,
-   "height_m": 1.4,
-   "track_m": 1.5,
-   "mass_kg": 1250,
-   "power_kw": 90,
-   "source": "https://en.wikipedia.org/wiki/Sedan",
-   "verified_this_run": false,
-   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
-  },
-  "engine": {
-   "family": "Generic 2.0 I4 (placeholder, car not identified)",
-   "cylinders": 4,
-   "layout": "I4",
-   "displacement_l": 2.0,
-   "aspiration": "NA",
-   "redline_rpm": 6500,
-   "stock_power_kw": 90,
-   "exhaust_note": "stock muffler",
-   "confidence": "none",
-   "evidence": "None"
-  },
-  "colors": {
-   "primary": "#808080",
-   "secondary": "#c0c0c0",
-   "accents": []
-  },
-  "numbers": {
-   "color": "unknown",
-   "boards": [
-    "door"
-   ]
-  },
-  "livery": "Unknown",
-  "theme": "Unknown",
-  "photos": [],
-  "photo_sightings": 0,
-  "id": "122",
-  "photo_dir": "photos/sonoma/122",
-  "event": "sonoma"
  },
  {
   "number": "238",
@@ -9238,65 +9064,6 @@
   "photo_sightings": 0,
   "id": "198",
   "photo_dir": "photos/sonoma/198",
-  "event": "sonoma"
- },
- {
-  "number": "55",
-  "team": "Top Gun Rookies",
-  "class": "B",
-  "grid": 134,
-  "finish": 138,
-  "class_finish": 66,
-  "laps": 15,
-  "best_lap_s": 146.342,
-  "make": "Unknown",
-  "model": "Unidentified car (Top Gun Rookies)",
-  "generation": "?",
-  "year": 2000,
-  "body": "sedan",
-  "confidence": "none",
-  "evidence": "Searched: Speedhive (Sonoma 2024-11 as #50 Top Gun Rookies, 22 laps); Sonoma November 2024 gallery rCsK9T (sheets 0-26 of 37 rendered, no #50); award archive (no row) | id: no exact team-name match in the Laguna or Buttonwillow fields; the number belongs to a different car there (Laguna #55 I Snore Racing) so id <number>_sp",
-  "dims": {
-   "wheelbase_m": 2.6,
-   "length_m": 4.5,
-   "width_m": 1.75,
-   "height_m": 1.4,
-   "track_m": 1.5,
-   "mass_kg": 1250,
-   "power_kw": 90,
-   "source": "https://en.wikipedia.org/wiki/Sedan",
-   "verified_this_run": false,
-   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
-  },
-  "engine": {
-   "family": "Generic 2.0 I4 (placeholder, car not identified)",
-   "cylinders": 4,
-   "layout": "I4",
-   "displacement_l": 2.0,
-   "aspiration": "NA",
-   "redline_rpm": 6500,
-   "stock_power_kw": 90,
-   "exhaust_note": "stock muffler",
-   "confidence": "none",
-   "evidence": "None"
-  },
-  "colors": {
-   "primary": "#808080",
-   "secondary": "#c0c0c0",
-   "accents": []
-  },
-  "numbers": {
-   "color": "unknown",
-   "boards": [
-    "door"
-   ]
-  },
-  "livery": "Unknown",
-  "theme": "Unknown",
-  "photos": [],
-  "photo_sightings": 0,
-  "id": "55_sp",
-  "photo_dir": "photos/sonoma/55",
   "event": "sonoma"
  },
  {

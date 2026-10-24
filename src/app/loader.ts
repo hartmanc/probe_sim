@@ -172,6 +172,8 @@ export interface FieldModelInfo {
   brake_lamps?: number[][];
   /** the lamp positions were synthesised (the model has no lamps): keep the discs visible as dim tail lights */
   brake_lamps_fallback?: boolean;
+  /** id of the same physical car's model at an earlier event (one body, livery per event; each keeps its own glb) */
+  same_car?: string;
   [k: string]: unknown;
 }
 
