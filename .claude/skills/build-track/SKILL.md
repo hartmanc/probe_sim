@@ -944,7 +944,9 @@ Write the generated tables with `manifest_tables.ts` after each round.
 - **looking back every 100 m** (wall ends, joins and facings show from the other direction);
 - **inside the pit lane end to end** every 25 m, facing the way the cars drive it;
 - **from every paved runoff and closed road the track reaches, looking back at the track** (the containment rays' runs,
-  one pose per 150 m, 4 m inside the polygon, and each paved runoff zone).
+  one pose per 150 m from the polygon's far side looking back across its paving (5 m beyond a shallow one, 25 m into one
+  deeper than 30 m; round 11: from 4 m inside the near side the view left the paving at the hood), and each paved
+  runoff zone).
 
 **4.1b Boundary audit (REQUIRED before the owner drives; Buttonwillow owner lap 2 note 13: "Check texture mash-ups and
 transitions along the track edges, pit in, pit out. This seems to be a common problem.")**:
