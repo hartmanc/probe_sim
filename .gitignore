@@ -57,3 +57,6 @@ tools/track/**/*.mp4
 .claude/settings.local.json
 # object-kit reference stills and their render stats (tools/track/kit/README.md): local only
 tools/track/kit/stills/
+
+# tools/race: self-play traces and trial outputs (summaries go in tools/race/AI_READINESS.md)
+tools/race/out

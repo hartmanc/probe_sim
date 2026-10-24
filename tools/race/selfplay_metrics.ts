@@ -28,7 +28,7 @@ export interface SelfplayMetrics {
     /** completion by pace ratio (target lap of the faster / the slower): < 0.85, 0.85-0.92, 0.92-0.97 */
     byRatio: { lo: number; hi: number; fails?: string[]; situations: number; completed: number; medianStuck: number; open: Record<string, number> }[] };
   defending: { vsClearlyFaster: number; within3: number; vsSlower: number; none: number };
-  rules: { contacts: number; contactsPerCarLap: number; hardContacts: number; fourOff: number; fourOffMishap: number; fourOffPerCarLap: number; fourOffNonMishapPerCarLap: number; formationPasses: number; recoveries: number; fourOffAt: { s: number; t?: number; car: string; ctx: string }[]; contactAt: { s: number; t: number; a: string; b: string; closing: number; ctx: string; phase?: string; ds?: number; dl?: number }[] };
+  rules: { contacts: number; contactsPerCarLap: number; hardContacts: number; fourOff: number; fourOffMishap: number; fourOffPerCarLap: number; fourOffNonMishapPerCarLap: number; formationPasses: number; recoveries: number; recoveryAt?: { s: number; t: number; car: string; phase: string }[]; fourOffAt: { s: number; t?: number; car: string; ctx: string }[]; contactAt: { s: number; t: number; a: string; b: string; closing: number; ctx: string; phase?: string; ds?: number; dl?: number }[] };
   mishaps: { total: number; perCarLap: number; wide: number; spin: number; byCorner: Record<string, number>; lossMedian: number; lossMin: number; lossMax: number; losses: { kind: string; corner: string; loss: number }[] };
   cost: { usPerStep: number; usPerCar: number };
 }
@@ -60,6 +60,7 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
   let fourOff = 0, fourOffMishap = 0;
   const fourOffAt: { s: number; t?: number; car: string; ctx: string }[] = [], contactAt: SelfplayMetrics['rules']['contactAt'] = [];
   let Ugreen: Float64Array | null = null;
+  const prevRec = new Int32Array(n); const recoveryAt: { s: number; t: number; car: string; phase: string }[] = [];
   let tGreen = NaN;
   const mishapOpen: { idx: number; U0: number; t0: number; kind: string; corner: string }[] = [];
   const losses: { kind: string; corner: string; loss: number }[] = [];
@@ -197,6 +198,8 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
       }
     }
     for (let i = 0; i < n; i++) prevS[i] = tr.s[i];
+    // marshal resets (stuck > 4 s / wrong way > 2.5 s): where (the car's station after the reset) and when
+    for (let i = 0; i < n; i++) if (cars[i].recoveries !== prevRec[i]) { prevRec[i] = cars[i].recoveries; if (cars[i].driver) recoveryAt.push({ s: Math.round(tr.s[i]), t: +dir.time.toFixed(1), car: cars[i].number, phase: dir.phase }); }
     if (opts.log && steps % 60000 === 0) { const hh = dir.hud(); console.log(`t ${t.toFixed(0)} ${hh.phase} lap ${hh.lap} ${(ms * 1000 / steps / n).toFixed(2)} µs/car-step`); }
   }
   for (const s of situations.values()) { s.why = 'end'; closed.push(s); }
@@ -221,7 +224,7 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
         return { lo, hi, fails: g.filter((s) => !s.done).map((s) => `${cars[s.i].number}>${cars[s.j].number} ${s.why} t${s.tClose.toFixed(0)}-${s.seen.toFixed(0)}`), situations: g.length, completed: g.filter((s) => s.done).length, medianStuck: median(g.filter((s) => s.done).map((s) => s.tDone - s.tClose)), open };
       }) },
     defending: defend,
-    rules: { contacts, contactsPerCarLap: contacts / Math.max(1e-9, carLaps), hardContacts: hard, fourOff, fourOffMishap, fourOffPerCarLap: fourOff / Math.max(1e-9, carLaps), fourOffNonMishapPerCarLap: (fourOff - fourOffMishap) / Math.max(1e-9, carLaps), formationPasses, recoveries: dir.recoveries, fourOffAt, contactAt },
+    rules: { contacts, contactsPerCarLap: contacts / Math.max(1e-9, carLaps), hardContacts: hard, fourOff, fourOffMishap, fourOffPerCarLap: fourOff / Math.max(1e-9, carLaps), fourOffNonMishapPerCarLap: (fourOff - fourOffMishap) / Math.max(1e-9, carLaps), formationPasses, recoveries: dir.recoveries, fourOffAt, contactAt, recoveryAt },
     mishaps: { total: totalM, perCarLap: totalM / Math.max(1e-9, carLaps), wide, spin, byCorner, lossMedian: median(ls), lossMin: ls.length ? Math.min(...ls) : NaN, lossMax: ls.length ? Math.max(...ls) : NaN, losses },
     cost: { usPerStep, usPerCar: usPerStep / n },
   };
