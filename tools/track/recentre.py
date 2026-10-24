@@ -98,12 +98,15 @@ def merge_edges(C0, el, er, merge, log=B.log):
 
 
 def refit(C0, hl0, hr0, P, shadow_s, pit_parts, cones, e_gps, fit_a, fit_b, bridge_win=25, gps_margin=1.0,
-          min_width=10.0, log=B.log, merge=None, width_cap=16.0):
+          min_width=10.0, log=B.log, merge=None, width_cap=16.0, soft=None):
     """C0 (n, 2) current centre with half-widths hl0/hr0; P = paint.measure(...) on C0; shadow_s = stations of bridge
     crossings (shadows); pit_parts = scenery pit_lane parts on C0 (their touch zones keep the old edges);
     cones = (s0, s1) of the pit-exit blend lane or None; e_gps = the logged racing line's lateral on C0 per station
     (None without logger); merge = {'parts', 'cones'} (merge_edges): the midpoint target takes the circuit's own edge
-    through the pit merges (None = the measured edges as they are, how Laguna's logger build ran). Returns a dict."""
+    through the pit merges (None = the measured edges as they are, how Laguna's logger build ran).
+    soft (Sonoma round 14B part 1b, config centre.soft): None, or an (n,) array of multipliers (<= 1) on the smoothing
+    penalties per station, where the target is also the raw midpoint (no 15-station median / 5 m Gaussian): a tight corner
+    the owner drew is followed by the centre there; None = unchanged. Returns a dict."""
     n = len(C0)
     nl0 = B.left_normals(C0)
     Lw0 = C0 + hl0[:, None] * nl0; Rw0 = C0 - hr0[:, None] * nl0
@@ -138,14 +141,23 @@ def refit(C0, hl0, hr0, P, shadow_s, pit_parts, cones, e_gps, fit_a, fit_b, brid
     # the fit target: the painted midpoint, de-noised along s (median 15, Gaussian 5 m over measured stations) so the
     # centre does not pick up the detector's station-to-station jitter
     midf = np.interp(idx, idx[goodm], mid[goodm], period=n)
+    if soft is not None:
+        raw_mid = midf.copy()
     midf = gaussian_filter1d(median_filter(midf, 15, mode='wrap'), 5, mode='wrap')
+    if soft is not None:
+        midf = np.where(np.asarray(soft) < 1, raw_mid, midf)
     d = np.where(goodm, midf, 0.0)
     w = goodm.astype(float)
     D2 = V2.diffop(n, [(-1, 1), (0, -2), (1, 1)])
     D3 = V2.diffop(n, [(-1, -1), (0, 3), (1, -3), (2, 1)])
     Ax = D3 @ diags(nl0[:, 0]); Ay = D3 @ diags(nl0[:, 1])
-    H = diags(w + 1e-3) + fit_a * (D2.T @ D2) + fit_b * (Ax.T @ Ax + Ay.T @ Ay)
-    rhs = w * d - fit_b * (Ax.T @ (D3 @ C0[:, 0]) + Ay.T @ (D3 @ C0[:, 1]))
+    if soft is None:
+        H = diags(w + 1e-3) + fit_a * (D2.T @ D2) + fit_b * (Ax.T @ Ax + Ay.T @ Ay)
+        rhs = w * d - fit_b * (Ax.T @ (D3 @ C0[:, 0]) + Ay.T @ (D3 @ C0[:, 1]))
+    else:
+        Sm = diags(np.asarray(soft, float))
+        H = diags(w + 1e-3) + fit_a * (D2.T @ Sm @ D2) + fit_b * (Ax.T @ Sm @ Ax + Ay.T @ Sm @ Ay)
+        rhs = w * d - fit_b * (Ax.T @ (Sm @ (D3 @ C0[:, 0])) + Ay.T @ (Sm @ (D3 @ C0[:, 1])))
     e = spsolve(H.tocsc(), rhs)
     C = C0 + e[:, None] * nl0
     nl = B.left_normals(C)

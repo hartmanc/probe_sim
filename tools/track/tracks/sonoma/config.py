@@ -104,6 +104,8 @@ CONFIG = dict(
                 # round 14B (owner, round-13 drive: his red on the T1-T2 outline windows): a second local window round
                 # T1 (config 114-383, his red 143-356 with the blend outside it), refitted after the first with
                 # everything outside it held; the first window's refit is exactly round 11's (centre.local list form)
+                # round 14B part 1b: at T9A the centre follows his corner (softer smoothing there; recentre.refit soft)
+                soft=[(3010, 3130, 0.01)],
                 local=[dict(window=(1643, 2091), blend=15,
                             why='round 11: the Carousel exit to T7 straights only (owner notes 64 / 69)'),
                        dict(window=(114, 383), blend=15,
@@ -149,15 +151,15 @@ CONFIG = dict(
                              # outside, T9 exit, both 9a apexes, the T11 hairpin apex), the edge is his red moved out by the kerb
                              # width (kerb_inside, 0.65 m: scenery.kerb.width); at the O'Reilly island and the T10 exit outside his
                              # red already sits at the kerb's outer limit (fit - red +0.14 / +0.29 m): no shift there
-                             dict(file='owner/r14b/merged.json', lo=411, hi=533, local=True, windows=['owner/r14b/w_s0500.json', 'owner/r14b/w_s2125.json', 'owner/r14b/w_s2250.json', 'owner/r14b/w_s2750.json', 'owner/r14b/w_s3000.json', 'owner/r14b/w_s3125.json', 'owner/r14b/w_s3375.json', 'owner/r14b/w_s3500.json', 'owner/r14b/w_s3625.json', 'owner/r14b/w_s3750.json'],
+                             dict(file='owner/r14b/merged.json', chains=False, lo=411, hi=533, local=True, windows=['owner/r14b/w_s0500.json', 'owner/r14b/w_s2125.json', 'owner/r14b/w_s2250.json', 'owner/r14b/w_s2750.json', 'owner/r14b/w_s3000.json', 'owner/r14b/w_s3125.json', 'owner/r14b/w_s3375.json', 'owner/r14b/w_s3500.json', 'owner/r14b/w_s3625.json', 'owner/r14b/w_s3750.json'],
                                   kerb_inside=[('right', 397, 450)], src='owner round-14B checkpoint red (compare/sonoma/owner_edges_r14b, strokes.json vectors via owner_edges.py --by-stroke; owner/r14b/merged.json), T2 exit right'),
-                             dict(file='owner/r14b/merged.json', lo=2033, hi=2385, local=True, windows=['owner/r14b/w_s0500.json', 'owner/r14b/w_s2125.json', 'owner/r14b/w_s2250.json', 'owner/r14b/w_s2750.json', 'owner/r14b/w_s3000.json', 'owner/r14b/w_s3125.json', 'owner/r14b/w_s3375.json', 'owner/r14b/w_s3500.json', 'owner/r14b/w_s3625.json', 'owner/r14b/w_s3750.json'],
+                             dict(file='owner/r14b/merged.json', chains=False, lo=2033, hi=2385, local=True, windows=['owner/r14b/w_s0500.json', 'owner/r14b/w_s2125.json', 'owner/r14b/w_s2250.json', 'owner/r14b/w_s2750.json', 'owner/r14b/w_s3000.json', 'owner/r14b/w_s3125.json', 'owner/r14b/w_s3375.json', 'owner/r14b/w_s3500.json', 'owner/r14b/w_s3625.json', 'owner/r14b/w_s3750.json'],
                                   kerb_inside=[('right', 2146, 2206), ('left', 2307, 2379)], src='owner round-14B checkpoint red (compare/sonoma/owner_edges_r14b, strokes.json vectors via owner_edges.py --by-stroke; owner/r14b/merged.json), T7 approach to T7a exit'),
-                             dict(file='owner/r14b/merged.json', lo=2673, hi=2856, local=True, windows=['owner/r14b/w_s0500.json', 'owner/r14b/w_s2125.json', 'owner/r14b/w_s2250.json', 'owner/r14b/w_s2750.json', 'owner/r14b/w_s3000.json', 'owner/r14b/w_s3125.json', 'owner/r14b/w_s3375.json', 'owner/r14b/w_s3500.json', 'owner/r14b/w_s3625.json', 'owner/r14b/w_s3750.json'],
+                             dict(file='owner/r14b/merged.json', chains=False, lo=2673, hi=2856, local=True, windows=['owner/r14b/w_s0500.json', 'owner/r14b/w_s2125.json', 'owner/r14b/w_s2250.json', 'owner/r14b/w_s2750.json', 'owner/r14b/w_s3000.json', 'owner/r14b/w_s3125.json', 'owner/r14b/w_s3375.json', 'owner/r14b/w_s3500.json', 'owner/r14b/w_s3625.json', 'owner/r14b/w_s3750.json'],
                                   kerb_inside=[('right', 2699, 2746)], src='owner round-14B checkpoint red (compare/sonoma/owner_edges_r14b, strokes.json vectors via owner_edges.py --by-stroke; owner/r14b/merged.json), T9'),
-                             dict(file='owner/r14b/merged.json', lo=2894, hi=3200, local=True, windows=['owner/r14b/w_s0500.json', 'owner/r14b/w_s2125.json', 'owner/r14b/w_s2250.json', 'owner/r14b/w_s2750.json', 'owner/r14b/w_s3000.json', 'owner/r14b/w_s3125.json', 'owner/r14b/w_s3375.json', 'owner/r14b/w_s3500.json', 'owner/r14b/w_s3625.json', 'owner/r14b/w_s3750.json'],
+                             dict(file='owner/r14b/merged.json', chains=False, lo=2894, hi=3200, local=True, windows=['owner/r14b/w_s0500.json', 'owner/r14b/w_s2125.json', 'owner/r14b/w_s2250.json', 'owner/r14b/w_s2750.json', 'owner/r14b/w_s3000.json', 'owner/r14b/w_s3125.json', 'owner/r14b/w_s3375.json', 'owner/r14b/w_s3500.json', 'owner/r14b/w_s3625.json', 'owner/r14b/w_s3750.json'],
                                   kerb_inside=[('right', 3039, 3068), ('left', 3072, 3165)], src='owner round-14B checkpoint red (compare/sonoma/owner_edges_r14b, strokes.json vectors via owner_edges.py --by-stroke; owner/r14b/merged.json), 9a to T10'),
-                             dict(file='owner/r14b/merged.json', lo=3285, hi=3825, local=True, windows=['owner/r14b/w_s0500.json', 'owner/r14b/w_s2125.json', 'owner/r14b/w_s2250.json', 'owner/r14b/w_s2750.json', 'owner/r14b/w_s3000.json', 'owner/r14b/w_s3125.json', 'owner/r14b/w_s3375.json', 'owner/r14b/w_s3500.json', 'owner/r14b/w_s3625.json', 'owner/r14b/w_s3750.json'],
+                             dict(file='owner/r14b/merged.json', chains=False, lo=3285, hi=3825, local=True, windows=['owner/r14b/w_s0500.json', 'owner/r14b/w_s2125.json', 'owner/r14b/w_s2250.json', 'owner/r14b/w_s2750.json', 'owner/r14b/w_s3000.json', 'owner/r14b/w_s3125.json', 'owner/r14b/w_s3375.json', 'owner/r14b/w_s3500.json', 'owner/r14b/w_s3625.json', 'owner/r14b/w_s3750.json'],
                                   kerb_inside=[('right', 3609, 3737)], src='owner round-14B checkpoint red (compare/sonoma/owner_edges_r14b, strokes.json vectors via owner_edges.py --by-stroke; owner/r14b/merged.json), T10 exit to the T11 hairpin exit')],
                 # his red arc across the paddock-side mouth at s ~166-179 (owner_mouths.py --across: his green, the
                 # access road's edge, ends on the arc at s 166; the arc rejoins his edge line at s 179): the course
@@ -168,7 +170,12 @@ CONFIG = dict(
                 # T9A; the V his strokes make into the escape road's mouth is read as an across line (owner_edges.py
                 # --by-stroke) and left out of the edge, so the edge runs along the course past the mouth, but it is NOT a
                 # mouth: no cones, no gate exemption, no owner-gate exclusion. The mouths stay round 14's.
-                owner_mouths='owner/r14/mouths.json'),
+                owner_mouths='owner/r14/mouths.json',
+                # round 14B part 1b (coordinator: his red wins where drawn, d14): where his red turns tighter than the 6-station
+                # knots can follow and the owner gates failed by more than the 0.40 m cap (T9A up to 1.8 / 2.3 m, the T7a exit
+                # left 0.62 m, the T11 hairpin outside 0.94 m), a local layer of finer knots (edges_spline.REFINE), used only
+                # in the local refits whose window holds it
+                refine=[(2240, 2330, 3), (3005, 3135, 3), (3620, 3745, 3)]),
     # Carousel exit (T6) to the T7 approach, stations ~1680-2060 (onboard youtube.com/watch?v=RAZip6S84CM 0:55-1:09):
     # the course is bounded by the PAVEMENT, not by cones or a painted line. On the shared drag-strip start (to ~1880) the
     # car runs right of the yellow lane line with the red/white kerb as the right edge (0:59-1:01) and crosses the lane

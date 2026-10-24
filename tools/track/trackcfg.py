@@ -63,7 +63,10 @@ Geometry (Stage 1)
           over [lo, hi] his red replaces the capture readings where he drew and anchors the fit (edges_spline.OWNER_W);
           the file's content enters the geometry hash; local=True: only in the local refit (centre.local) whose window
           it overlaps. owner_mouths: a compare/owner_mouths.py file whose 'red across' segments the owner-reference gates
-          leave out (+-12 stations; edge_gate.OWNER_REF, Buttonwillow round 10; enters the geometry hash)
+          leave out (+-12 stations; edge_gate.OWNER_REF, Buttonwillow round 10; enters the geometry hash).
+          refine [(lo, hi, knot)]: a second layer of cubic B-splines at `knot` stations inside [lo, hi] (Sonoma round 14B part 1b:
+          where his red turns tighter than 6-station knots can follow); used only in the local refits whose window it
+          overlaps; absent = the periodic spline alone
   features [(side, lo, hi, 'keep' | 'asphalt_end' | 'kerb', why[, {local | replaced_by_local}])]   keep: the prior is held (legacy reproduction
                                              only; the fitted method ignores it); asphalt_end: where the dark asphalt
                                              ends; kerb: red-band (kerb outer limit) candidates only
@@ -319,6 +322,10 @@ def remap_stations(cfg, n, length_m=None, C=None):
             lc['window'] = tuple(st(k) for k in lc['window'])
     elif c['centre'].get('local'):
         c['centre']['local']['window'] = tuple(st(k) for k in c['centre']['local']['window'])
+    if c['centre'].get('soft'):   # softer centre zones (Sonoma round 14B part 1b): (lo, hi, factor)
+        c['centre']['soft'] = [(st(lo), st(hi)) + tuple(rest) for lo, hi, *rest in c['centre']['soft']]
+    if sp.get('refine'):   # local knot refinement zones (Sonoma round 14B part 1b): (lo, hi, knot stations)
+        sp['refine'] = [(st(lo), st(hi)) + tuple(rest) for lo, hi, *rest in sp['refine']]
     for w in sp.get('owner_edges') or []:   # the owner's traced edge windows (Buttonwillow, 21 Oct 2026)
         w['lo'], w['hi'] = st(w['lo']), st(w['hi'])
         w['kerb_inside'] = [(a, st(lo), st(hi)) + tuple(rest) for a, lo, hi, *rest in w.get('kerb_inside', [])]

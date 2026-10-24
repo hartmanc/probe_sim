@@ -207,13 +207,23 @@ def owner_windows(cfg_raw, cfgw, window=None, phase=None, n=None):
         if path not in _OWNER_CACHE:
             _OWNER_CACHE[path] = json.load(open(path))
         d = _OWNER_CACHE[path]
-        chains = edges_spline.owner_chains([[x, y] for side in ("left", "right") for x, y, *_ in d[side + "_enu_xys"]])
+        # chains (Buttonwillow): his lines re-assigned to the current centre's side; chains=False (Sonoma round 14B part
+        # 1b, the merged file's sides read on the 14B centre): the file's side labels as they are (at T9A his two lines
+        # came within the 3 m link of each other and one chain took both sides)
+        chains = (edges_spline.owner_chains([[x, y] for side in ("left", "right") for x, y, *_ in d[side + "_enu_xys"]])
+                  if w.get("chains", True) else None)
         for side in ("left", "right"):
             pts = np.array([[x, y] for x, y, *_ in d[side + "_enu_xys"]], float)
             out.append({"side": side, "lo": int(w["lo"]), "hi": int(w["hi"]), "pts": pts, "chains": chains, "file": w["file"], "kerb_w": kw,
                         "kerb_inside": [(lo, hi) + tuple(rest[:1]) for sd, lo, hi, *rest in w.get("kerb_inside", []) if sd == side],
                         "windows": w.get("windows") or []})
     return out
+
+
+def refine_zones(cfgw, window, n):
+    """spline.refine on this centre's stations (cfgw remapped): the zones overlapping a local refit's window"""
+    return [(int(lo), int(hi), float(h)) for lo, hi, h, *_ in (cfgw["spline"].get("refine") or [])
+            if window is not None and _overlaps((int(lo), int(hi)), tuple(window), n)]
 
 
 def owner_ref(cfg_raw, cfgw, C, n):
@@ -800,6 +810,8 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, pw, m
         def set_owner(cfgw, li):
             if cfgw["spline"].get("owner_edges"):
                 sp_cfg["_owner"] = owner_windows(cfg_raw, cfgw, window=lwin(cfgw, li), phase="local", n=n)
+            if cfgw["spline"].get("refine"):
+                sp_cfg["_refine"] = refine_zones(cfgw, lwin(cfgw, li), n)
         for li, lc in enumerate(locs):
             NLa = B.left_normals(Ccur)
             held = {"left": (Ccur + hl3[:, None] * NLa, 1), "right": (Ccur - hr3[:, None] * NLa, -1)}
@@ -819,8 +831,14 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, pw, m
                 set_owner(cfgw, li)
                 hl3, hr3, frep = edges_spline.fit_periodic(Ccur, NL, hlp, hrp, tiles, features, sp_cfg, cc["mpp"],
                                                            {k: v for k, v in anchors.items() if v[0]}, hold=hold)
+                # centre.soft (round 14B part 1b): softer centre smoothing in zones overlapping this window (absent: None)
+                soft_ = None
+                for lo_s, hi_s, fac in (cfgw["centre"].get("soft") or []):
+                    if _overlaps((int(lo_s), int(hi_s)), tuple(lwin(cfgw, li)), n):
+                        soft_ = np.ones(n) if soft_ is None else soft_
+                        soft_[np.arange(int(lo_s), int(hi_s) + 1) % n] = float(fac)
                 fit2 = recentre.refit(Ccur, hlp, hrp, {"lat_left": hl3, "lat_right": -hr3}, [], [], None, None, pfa, pfb, 0,
-                                      cen["gps_margin"], cen["min_width"], merge=merge, width_cap=cen.get("width_cap", 16.0))
+                                      cen["gps_margin"], cen["min_width"], merge=merge, width_cap=cen.get("width_cap", 16.0), soft=soft_)
                 alpha = 1.0 if jt < 2 else 1.0 / jt
                 _, latc = B.project(fit2["C"], Ccur)
                 dm = alpha * hold["w"] * latc
@@ -874,13 +892,35 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, pw, m
                 # this side here, the detected edge stands and its gates are the ordinary ones
                 log(f"     owner edge {w['side']} {w['lo']}-{w['hi']}: none drawn on this side (the detected edge stands)"); continue
             res = np.array([hw[k] - r[k] for k in ks_])
-            a_ = np.abs(res); share = float(np.mean(a_ <= G["owner_tol"]))
+            a_st = np.abs(res); share_st = float(np.mean(a_st <= G["owner_tol"]))
+            # round 14B part 1b: the share and max measured GEOMETRICALLY: each fitted edge point's distance to his line
+            # (his readings, kerb shifts included, as one world polyline densified to 0.1 m), so the statistic does not
+            # move when the lap is re-stationed (station-based it read 92.3 / 89.8 % on T1 edges that had not moved)
+            sg_ = 1 if w["side"] == "left" else -1
+            kk_ = np.array(sorted(r))
+            Rw = Ccur[kk_] + sg_ * np.array([r[k] for k in kk_])[:, None] * NLf[kk_]
+            brk = np.flatnonzero(np.diff(kk_) > 3)
+            segs_ = np.split(np.arange(len(kk_)), brk + 1)
+            tt_ = np.linspace(0, 1, 10, endpoint=False)[None, :, None]
+            dens = np.concatenate([(Rw[g_][:-1, None, :] + (Rw[g_][1:] - Rw[g_][:-1])[:, None, :] * tt_).reshape(-1, 2) if len(g_) > 1 else Rw[g_]
+                                   for g_ in segs_] + [Rw])
+            from scipy.spatial import cKDTree as _KD
+            Fw = Ccur[np.array(ks_)] + sg_ * np.array([hw[k] for k in ks_])[:, None] * NLf[np.array(ks_)]
+            a_ = _KD(dens).query(Fw)[0]
+            share = float(np.mean(a_ <= G["owner_tol"]))
+            log(f"     owner edge {w['side']} {w['lo']}-{w['hi']}: station-based {share_st * 100:.1f} % within {G['owner_tol']} m, max {a_st.max():.3f} m; "
+                f"geometric (distance to his line) {share * 100:.1f} %, max {a_.max():.3f} m")
             OWNER_REPORT.append({"side": w["side"], "lo": w["lo"], "hi": w["hi"], "file": w["file"], "k": ks_, "owner": [r[k] for k in ks_],
                                  "fit": [float(hw[k]) for k in ks_]})
             if OREF is not None:
                 keep = np.array([not OREF["excl"][w["side"]][k] for k in ks_])
                 amax = float(a_[keep].max()) if keep.any() else 0.0
-                txt = f" (max outside his {int((~keep).sum())} mouth-segment stations +-{edge_gate.OWNER_REF['corner']}; with them {a_.max():.3f})"
+                # round 14B part 1b: the share too is taken outside his mouth segments +-corner (the owner accepted T1's
+                # rounded pit-exit step as fitted; the spline turns a 4.4 m step there over ~15 stations); both printed
+                share_all = share
+                share = float(np.mean(a_[keep] <= G["owner_tol"])) if keep.any() else share
+                txt = (f" (share and max outside his {int((~keep).sum())} mouth-segment stations +-{edge_gate.OWNER_REF['corner']}; "
+                       f"with them {share_all * 100:.1f} % / {a_.max():.3f})")
             else:
                 amax, txt = float(a_.max()), ""
             rep.check(f"owner edge {w['side']} {w['lo']}-{w['hi']}", share >= G["owner_within"] and amax <= G["owner_max"],

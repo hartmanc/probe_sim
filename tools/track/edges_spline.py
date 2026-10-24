@@ -429,9 +429,53 @@ def periodic_basis(x, K, n):
     return B
 
 
+# Local knot refinement (Sonoma round 14B part 1b, config spline.refine [(lo, hi, knot)] on the current centre's stations,
+# set per local refit like OWNER): inside [lo, hi] a second layer of uniform cubic B-splines at `knot` stations is added to
+# the periodic spline (only the functions whose support lies inside the zone, so the edge outside is the coarse spline's),
+# with the same third-difference penalty on its coefficients. One curve per side, fitted in one least squares; empty
+# (every config without spline.refine): the basis and the penalty are exactly the periodic ones.
+REFINE = []
+
+
+def _fine_basis(x, n):
+    x = np.asarray(x, float) % n
+    cols = []
+    for lo, hi, h in REFINE:
+        h = float(h); m = int((hi - lo) // h) - 3
+        for j in range(max(m, 0)):
+            u = (x - (lo + j * h)) / h
+            b = np.zeros(len(x))
+            for a, f in ((0, lambda v: v ** 3 / 6), (1, lambda v: (-3 * v ** 3 + 3 * v ** 2 + 3 * v + 1) / 6),
+                         (2, lambda v: (3 * v ** 3 - 6 * v ** 2 + 4) / 6), (3, lambda v: (1 - v) ** 3 / 6)):
+                sel = (u >= a) & (u < a + 1)
+                b[sel] = f(u[sel] - a)
+            cols.append(b)
+    return np.array(cols).T if cols else np.zeros((len(x), 0))
+
+
+def basis(x, K, n):
+    """the fit's design matrix: the periodic spline, plus the refinement layer where REFINE is set"""
+    B = periodic_basis(x, K, n)
+    return np.hstack([B, _fine_basis(x, n)]) if REFINE else B
+
+
+def _fine_penalty():
+    blocks = []
+    for lo, hi, h in REFINE:
+        m = max(int((hi - lo) // float(h)) - 3, 0)
+        blocks.append(np.diff(np.eye(m), 3, axis=0) if m >= 4 else np.zeros((0, m)))
+    tot = sum(b.shape[1] for b in blocks)
+    D = np.zeros((sum(b.shape[0] for b in blocks), tot)); r = c = 0
+    for b in blocks:
+        D[r:r + b.shape[0], c:c + b.shape[1]] = b; r += b.shape[0]; c += b.shape[1]
+    return D
+
+
 def periodic_fit(xo, yo, K, n, lam, huber, xp, yp, wp, xa=None, ya=None, wa=None, iters=8):
     """Robust penalised periodic spline: observations (Huber), a weak prior at every station (wp), and constraint
     anchors (declared straights, measured shapes: ya at stations xa with weights wa) inside the same least squares."""
+    if REFINE:
+        return _refined_fit(xo, yo, K, n, lam, huber, xp, yp, wp, xa, ya, wa, iters)
     B = periodic_basis(xo, K, n); Bp = periodic_basis(xp, K, n)
     D = np.zeros((K, K))
     for j in range(K):   # third difference, circulant
@@ -440,6 +484,26 @@ def periodic_fit(xo, yo, K, n, lam, huber, xp, yp, wp, xa=None, ya=None, wa=None
     rhs0 = (Bp * np.asarray(wp)[:, None]).T @ yp
     if xa is not None and len(xa):
         Ba = periodic_basis(xa, K, n); P = P + (Ba * wa[:, None]).T @ Ba; rhs0 = rhs0 + (Ba * wa[:, None]).T @ ya
+    rw = np.ones(len(xo))
+    for _ in range(iters):
+        A = (B * rw[:, None]).T @ B + P
+        c = np.linalg.solve(A, (B * rw[:, None]).T @ yo + rhs0)
+        r = np.abs(B @ c - yo); rw = np.where(r <= huber, 1.0, huber / np.maximum(r, 1e-9))
+    return c
+
+
+def _refined_fit(xo, yo, K, n, lam, huber, xp, yp, wp, xa, ya, wa, iters):
+    """periodic_fit with the REFINE layer (same penalties: the coarse circulant third difference, the fine one per zone)"""
+    B = basis(xo, K, n); Bp = basis(xp, K, n); M = B.shape[1]
+    Dc = np.zeros((K, K))
+    for j in range(K):
+        for o, cf in ((0, -1), (1, 3), (2, -3), (3, 1)): Dc[j, (j + o) % K] += cf
+    Df = _fine_penalty()
+    P = np.zeros((M, M)); P[:K, :K] = lam * Dc.T @ Dc; P[K:, K:] = lam * Df.T @ Df
+    P = P + (Bp * np.asarray(wp)[:, None]).T @ Bp
+    rhs0 = (Bp * np.asarray(wp)[:, None]).T @ yp
+    if xa is not None and len(xa):
+        Ba = basis(xa, K, n); P = P + (Ba * wa[:, None]).T @ Ba; rhs0 = rhs0 + (Ba * wa[:, None]).T @ ya
     rw = np.ones(len(xo))
     for _ in range(iters):
         A = (B * rw[:, None]).T @ B + P
@@ -479,9 +543,10 @@ def fit_periodic(C, NL, hl, hr, tiles, features, sp, mpp, anchors=None, log=_log
     returned edge is w * fit + (1 - w) * held, and every metric is measured on that returned edge."""
     n = len(C); knot = sp['knot']; K = int(round(n / knot))
     OWNER[:] = list(sp.get('_owner') or [])
+    REFINE[:] = list(sp.get('_refine') or [])
     win = sp.get('search', (-4.5, 4.0)); U_ = np.arange(win[0], win[1] + 1e-4, 0.04)
     obs = gather(C, NL, hl, hr, tiles, features, sp['line_off'], mpp, U_)
-    xs = np.arange(n, dtype=float); Bx = periodic_basis(xs, K, n)
+    xs = np.arange(n, dtype=float); Bx = basis(xs, K, n)
     tight = tight_mask(C)
     rep, out = {}, {}
     for side, hw in (('left', hl), ('right', hr)):
