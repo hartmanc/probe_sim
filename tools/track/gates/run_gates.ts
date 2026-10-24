@@ -38,9 +38,19 @@ for (const b of g.bad) console.log(`       ${b.kind} '${b.text}' at (${b.x.toFix
 if (g.bad.length) fail = true;
 
 const e = exposedEnds(track, sc);
-console.log(`[${e.exposed.length ? 'FAIL' : 'ok'}] wall ends: ${e.checked} upstream run ends within 30 m (tyre runs 8 m) of an edge checked, ${e.ok.length} joined / cushioned / lapped / tapered, ${e.exposed.length} exposed to oncoming travel`);
-for (const x of e.exposed) console.log(`       exposed ${x.side.padEnd(5)} s ${x.s} (${x.out} m out): ${x.label}`);
-if (e.exposed.length) fail = true;
+// round 14B part 2 (config gates.known_exposures): a bare head the evidence shows, declared with its capture, is listed as a
+// known exposure for the owner; it is not counted as joined / ok, and any other exposed head still fails
+const kx: { side: string; s: number; reason: string; evidence: string }[] = (cfg as any).known_exposures ?? [];
+const Lk = track.n * track.spacing_m;
+const isKnown = (x: { side: string; s: number }) => kx.find((k) => k.side === x.side && Math.min(Math.abs(k.s - x.s), Lk - Math.abs(k.s - x.s)) <= 10);
+const exposedNew = e.exposed.filter((x) => !isKnown(x));
+console.log(`[${exposedNew.length ? 'FAIL' : 'ok'}] wall ends: ${e.checked} upstream run ends within 30 m (tyre runs 8 m) of an edge checked, ${e.ok.length} joined / cushioned / lapped / tapered, ${e.exposed.length} exposed to oncoming travel`
+  + (e.exposed.length - exposedNew.length ? ` (${e.exposed.length - exposedNew.length} a declared known exposure, listed for the owner)` : ''));
+for (const x of e.exposed) {
+  const k = isKnown(x);
+  console.log(`       ${k ? 'known exposure' : 'exposed'} ${x.side.padEnd(5)} s ${x.s} (${x.out} m out): ${x.label}` + (k ? ` | declared: ${k.reason} (${k.evidence})` : ''));
+}
+if (exposedNew.length) fail = true;
 const sb = sideBySide(track, sc);
 console.log(`[${sb.length ? 'FAIL' : 'ok'}] tyre facings: ${sb.length} tyre runs standing 0.8-2.5 m off a wall side by side (a tyre run beside a wall must face it, within 0.8 m, or meet it end to end)`);
 for (const x of sb) console.log(`       side by side s ${x.s} (${x.off} m off): ${x.tyre} | ${x.wall}`);

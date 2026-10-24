@@ -569,7 +569,8 @@ def stage_geometry(cfg, out, no_logger):
         hlt = np.maximum(np.linalg.norm(Lt - Ct, axis=1), 0.5)
         hrt = np.maximum(np.linalg.norm(Rt - Ct, axis=1), 0.5)
         hf, over_rep = TOV.apply(hf, box, B.HF_DX, cfg["terrain_override"], cfg.enu, Ct, hlt, hrt, np.array(T["profile"]["z"]),
-                                 T["profile"]["fractions"], log=log, points=V2.LIDAR_POINTS, z0=z0)
+                                 T["profile"]["fractions"], log=log, points=V2.LIDAR_POINTS, z0=z0,
+                                 track=(T["center"], T["left"], T["right"]))
         hf = hf.astype("<f4")
     # -- validation
     lc = cfg["loop_check"]
@@ -1137,6 +1138,7 @@ def stage_scenery(cfg, out, no_logger):
         shutil.copyfile(os.path.join(out, f), os.path.join(tmp, f))
     log(f"\n================ STAGE 3 SCENERY: {cfg['id']} ================")
     Tt0 = json.load(open(os.path.join(out, "track.json")))
+    cfg_raw = cfg   # the owner gates remap the raw config themselves (round 14B: remapping the remapped one moved them)
     cfg = (trackcfg.remap_stations(cfg, Tt0["n"], Tt0["length_m"]) if (cfg.logger and not no_logger)
            else trackcfg.remap_stations(cfg, Tt0["n"], Tt0["length_m"], C=np.array(Tt0["center"])[:, :2]))
     BS.PITWALL_EDGE = None
@@ -1182,7 +1184,7 @@ def stage_scenery(cfg, out, no_logger):
         # round 14A: the override regions go to scenery.json (the physics drops its shoulder blend there and puts the
         # paved parts on the heightfield) and the paved parts inside them are draped on it (config-gated)
         import terrain_override as TOV
-        SC["terrain_override"] = TOV.scenery_regions(cfg["terrain_override"], cfg.enu)
+        SC["terrain_override"] = TOV.scenery_regions(cfg["terrain_override"], cfg.enu, (T["center"], T["left"], T["right"]))
         TOV.drape_parts(SC, T, hf_, SC["terrain_override"], log=log)
     off_names = {r["name"] for r in scfg.get("closed_roads", []) if r.get("off_course")}
     if off_names:
@@ -1211,8 +1213,8 @@ def stage_scenery(cfg, out, no_logger):
     if cfg["spline"].get("owner_edges") and cfg["spline"].get("owner_mouths"):
         # the owner's reference gates with the edge gate (Sonoma round 14B; track.json as stage 1 wrote it)
         Ct_ = np.array(T["center"])[:, :2]
-        cw_ = trackcfg.remap_stations(cfg, T["n"], T["n"] * T["spacing_m"], C=Ct_)
-        oref_ = owner_ref(cfg, cw_, Ct_, T["n"])
+        cw_ = trackcfg.remap_stations(cfg_raw, T["n"], T["n"] * T["spacing_m"], C=Ct_)
+        oref_ = owner_ref(cfg_raw, cw_, Ct_, T["n"])
         _, gf = edge_gate.owner_station_gate(*edge_gate.half_widths(T), oref_, cfg["gate"], log=log)
         rep.fails += gf
         _, gf = edge_gate.owner_gates(T, oref_, cfg["gate"], log=log)
@@ -1270,6 +1272,12 @@ def scenery_gates(cfg, T, SC, tmp, trk):
     # round 13: declared openings in a barrier line (the run-gaps gate): [{latlon, why}] -> ENU
     out["openings"] = [{"x": round(float(cfg.enu(*o_["latlon"])[0]), 1), "y": round(float(cfg.enu(*o_["latlon"])[1]), 1), "why": o_["why"]}
                        for o_ in g.get("openings", [])]
+    # round 14B part 2: wall heads the evidence shows bare (gates.known_exposures [{side, latlon, reason, evidence}]): the
+    # wall-ends gate lists an exposed head within 10 m of one as a known exposure for the owner (never as joined / ok)
+    out["known_exposures"] = []
+    for k_ in g.get("known_exposures", []):
+        i, _, _ = trk.project(np.array([cfg.enu(*k_["latlon"])]))
+        out["known_exposures"].append({"side": k_["side"], "s": round(float(i[0]) * sp, 1), "reason": k_["reason"], "evidence": k_["evidence"]})
     if g.get("pit_box_latlon"):
         i, _, _ = trk.project(np.array([cfg.enu(*g["pit_box_latlon"])]))
         out["pit_box_s"] = round(float(i[0]) * sp, 1)
@@ -1328,9 +1336,36 @@ def coverage_gates(cfg, tmp, trk, sp):
         log(f"[FAIL] coverage: no inventory ({os.path.relpath(inv, ROOT)}); the inventory stage is required before scenery (build-track skill)")
         return fails + ["coverage", "pit lane"]
     proj = lambda ll: round(float(trk.project(np.array([cfg.enu(*ll)]))[0][0]) * sp, 1)  # noqa: E731
+    disp = manifest_dispositions(cfg)
+    Iv = json.load(open(inv)); L_ = trk.n * sp
+    il_ = (cfg["scenery"].get("gates") or {}).get("inventory_lap")
+    R_ = json.load(open(os.path.join(HERE, il_))) if il_ else None
+    if R_ is not None and Iv.get("length_m") and abs(Iv["length_m"] - L_) > 1.0:
+        # Sonoma round 14B part 1b: the inventory's stations are on the lap it was measured on (inv length_m); where this
+        # package's lap differs by more than 1 m (T9A as he drew it: +6.5 m) each row's s is carried over by WORLD
+        # position: as the same fraction of the frozen lap the inventory was taken on (scenery.gates.inventory_lap: round
+        # 14A's centre, compare/<id>/inventory_lap.json), its point there, then the foot
+        # of its normal on this package's centre (edges_spline.foot_project; monotonic, unlike the nearest point at T9A).
+        # The manifest's dispositions (keyed by the row's s) move with their rows. Equal laps: unchanged
+        Cr = np.array(R_["center"], float)[:, :2]; nr = len(Cr); Lr = float(np.linalg.norm(np.roll(Cr, -1, 0) - Cr, axis=1).sum())
+        Cc = np.asarray(trk.C, float)[:, :2]; NLc = B.left_normals(Cc)
+        su, _ = edges_spline.foot_project(Cc, NLc, Cr)
+        su = np.unwrap(su * 2 * np.pi / trk.n) * trk.n / (2 * np.pi)
+
+        def remap_s(s_):
+            x = (float(s_) / Iv["length_m"]) * nr
+            return round(float(np.interp(x % nr, np.arange(nr), su, period=nr) % trk.n) * sp, 1)
+        for r_ in Iv["rows"]:
+            r_["s"] = remap_s(r_["s"])
+        for d_ in disp:
+            d_["s"] = remap_s(d_["s"])
+        Iv["length_m"] = round(L_, 2)
+        inv = os.path.join(tmp, "inventory_remapped.json")
+        json.dump(Iv, open(inv, "w"))
+        log(f"     coverage: inventory rows carried from its {Iv.get('track', '')} lap by world position onto this {L_:.1f} m lap")
     cp = os.path.join(tmp, "coverage_config.json")
     json.dump({"tol": cfg["scenery"].get("gates", {}).get("coverage_tol", 15), "pit_walls": trackcfg.pit_walls_for_gate(cfg, proj),
-               "dispositions": manifest_dispositions(cfg)}, open(cp, "w"))
+               "dispositions": disp}, open(cp, "w"))
     r = subprocess.run(["npx", "tsx", os.path.join(HERE, "gates", "run_coverage.ts"), tmp, inv, cp, "--json",
                         os.path.join(tmp, "coverage_report.json")], cwd=ROOT, capture_output=True, text=True)
     for line in r.stdout.splitlines():

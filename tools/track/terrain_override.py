@@ -32,8 +32,33 @@ Config (a list; absent = no change, every other track's heightfield byte for byt
 import numpy as np
 
 
-def polygon_xy(region, enu):
-    return np.array([enu(lat, lon) for lat, lon in region["latlon"]], float)
+def polygon_xy(region, enu, track=None):
+    """The region's polygon in ENU. follow_edge (Sonoma round 14B part 1b) [dict(side, i0, i1, off)]: the vertices i0..i1
+    stand on the course edge + off m; on a built course (track: the C, left, right arrays) they are re-made there, one
+    point every 2 m between the stations of vertices i0 and i1, so a moved edge carries the boundary with it (the owner's
+    red moved T7a's left edge up to 3 m beyond the round-14A boundary). Absent, or without a track: the declared points."""
+    P = np.array([enu(lat, lon) for lat, lon in region["latlon"]], float)
+    fe = region.get("follow_edge")
+    if not fe or track is None:
+        return P
+    C, L, R = (np.asarray(a, float)[:, :2] for a in track)
+    n = len(C)
+    from scipy.spatial import cKDTree
+    kd = cKDTree(C)
+    out, k = [], 0
+    for e in sorted(fe, key=lambda e: e["i0"]):
+        out.extend(P[k:e["i0"]])
+        E = L if e["side"] == "left" else R
+        u = E - C; u /= np.maximum(np.linalg.norm(u, axis=1, keepdims=True), 1e-9)
+        s0, s1 = int(kd.query(P[e["i0"]])[1]), int(kd.query(P[e["i1"]])[1])
+        span = (s1 - s0) % n if (s1 - s0) % n < n // 2 else -((s0 - s1) % n)
+        ks = [(s0 + j) % n for j in (range(0, span + 1, 2) if span >= 0 else range(0, span - 1, -2))]
+        if ks[-1] != s1 % n:
+            ks.append(s1 % n)
+        out.extend(E[ks] + float(e.get("off", 1.0)) * u[ks])
+        k = e["i1"] + 1
+    out.extend(P[k:])
+    return np.array(out, float)
 
 
 def inside_polygon(P, poly):
@@ -179,7 +204,7 @@ def deck_heights(P, dx, points, z0, raw_at, log=print):
     return out, off, int(np.isfinite(out).sum())
 
 
-def solve_region(hf, x0, y0, dx, region, enu, C, hl, hr, prof, fractions, log=print, points=None, z0=None):
+def solve_region(hf, x0, y0, dx, region, enu, C, hl, hr, prof, fractions, log=print, points=None, z0=None, track=None):
     """The override of one region on heightfield hf (ny, nx; modified copy returned) and its report."""
     import scipy.sparse as sp
     from scipy.sparse.linalg import spsolve
@@ -188,7 +213,7 @@ def solve_region(hf, x0, y0, dx, region, enu, C, hl, hr, prof, fractions, log=pr
     band = float(region.get("edge_band", 4.0))
     Lw = float(region.get("smooth_m", 40.0))
     sig_min = float(region.get("robust_sigma_min", 0.03))
-    poly = polygon_xy(region, enu)
+    poly = polygon_xy(region, enu, track)
     ny, nx = hf.shape
     # window of nodes around the polygon (+ margin + a stencil)
     pad = margin + 3 * dx
@@ -305,22 +330,22 @@ def solve_region(hf, x0, y0, dx, region, enu, C, hl, hr, prof, fractions, log=pr
     return out, rep
 
 
-def apply(hf, box, dx, regions, enu, C, hl, hr, prof, fractions, log=print, points=None, z0=None):
+def apply(hf, box, dx, regions, enu, C, hl, hr, prof, fractions, log=print, points=None, z0=None, track=None):
     """Every region of config `terrain_override` on the heightfield (a modified copy) and the reports. No regions: hf
     itself, untouched."""
     if not regions:
         return hf, []
     reps = []
     for r in regions:
-        hf, rep = solve_region(hf, box[0], box[1], dx, r, enu, C, hl, hr, prof, fractions, log=log, points=points, z0=z0)
+        hf, rep = solve_region(hf, box[0], box[1], dx, r, enu, C, hl, hr, prof, fractions, log=log, points=points, z0=z0, track=track)
         reps.append(rep)
     return hf, reps
 
 
-def scenery_regions(regions, enu):
+def scenery_regions(regions, enu, track=None):
     """scenery.json `terrain_override` (read by the physics, the app and the gates): the polygons in ENU and their ramp."""
     return {"regions": [{"name": r["name"], "ramp": float(r.get("ramp", 5.0)),
-                         "poly": [[round(float(x), 2), round(float(y), 2)] for x, y in polygon_xy(r, enu)]} for r in regions]}
+                         "poly": [[round(float(x), 2), round(float(y), 2)] for x, y in polygon_xy(r, enu, track)]} for r in regions]}
 
 
 def weight(P, sc_regions):
