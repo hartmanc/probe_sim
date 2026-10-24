@@ -373,3 +373,16 @@ cause: seeds 1-8 at ab4b15d (pre-edge) 0.051, at the fitted edges 0.058 (16 seed
   real race, and different every time.
 - Wishes: real per-car mass and power as raced (swaps), tyre class per car, real pit-lane penalty box
   position, a full-course-yellow log (the announcements file) to replay real yellows.
+
+## 24 Oct 2026: merged tree, own fields (Sonoma 134 cars, Buttonwillow 100): contacts by place, Buttonwillow knobs
+
+Details, tables and the rerun command lines: `tools/race/AI_READINESS.md`.
+
+- **Buttonwillow** `TRACKS.buttonwillow.ai = { followScale: 1.4, laneMargin: 0.7, shiftGrip: 1 }` (seeds 1-3, 4 laps):
+  contacts 0.058 -> 0.020 per car-lap, four-off 0.185 -> 0.033, race time -0.4 %, median best lap / target +5.6 %.
+- **Sonoma** knobs unchanged: 39 of 70 contacts (two seeds) are at T7 brake (s 2068-2081), where tyre run #9's oblique end
+  segments put `vehicle.ts collide()`'s through-the-wall band (hull point beyond the segment's line within its span, far
+  side from the CG) on the racing line: cars on the line are stopped or launched by a wall they never touch
+  (`tools/race/wall_phantoms.ts`; none on Laguna or Buttonwillow). Not fixable by knobs; physics or scenery, the owner's
+  call. Outside T7, laneMargin 0.7 halves the contacts: the first trial for the round-14B rerun.
+- No shared code changed, no AI_VERSION bump; Laguna seed 1 bit-identical (contacts, four-offs, finishing order).
