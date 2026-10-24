@@ -135,15 +135,15 @@
    "number": "0",
    "id": "0_sp",
    "file": "models/0_sp.glb",
-   "tris": 8540,
-   "bytes": 484292,
+   "tris": 11946,
+   "bytes": 573756,
    "materials": 2,
-   "length_m": 3.875,
+   "length_m": 3.965,
    "width_m": 1.666,
    "height_m": 1.331,
    "bbox_m": [
-    3.965,
-    1.933,
+    4.029,
+    1.855,
     1.48
    ],
    "wheelbase_m": 2.5,
@@ -177,31 +177,41 @@
    "car": "1990 Honda Civic EF 3-door hatchback",
    "brake_lamps": [
     [
-     0.52,
-     0.78,
-     -1.8206,
-     0.25
+     0.58,
+     0.71,
+     -1.8362,
+     0.21
     ],
     [
-     -0.52,
-     0.78,
-     -1.8199,
-     0.25
+     -0.58,
+     0.71,
+     -1.8356,
+     0.21
     ],
     [
-     0.12,
-     0.78,
-     -1.8229,
-     0.12
+     0.185,
+     0.71,
+     -1.8736,
+     0.18
     ],
     [
-     -0.12,
-     0.78,
-     -1.8229,
-     0.12
+     -0.185,
+     0.71,
+     -1.8743,
+     0.18
     ]
    ],
-   "brake_lamps_fallback": false
+   "brake_lamps_fallback": false,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 1.0080238700052417,
+    "source_tris": 999583,
+    "model_length": 4.004,
+    "model_width": 2.062,
+    "model_height": 1.333,
+    "tris": 5900,
+    "file": "tools/cars/kit/downloads/70_ef/model.glb"
+   }
   },
   {
    "number": "1",
@@ -485,61 +495,71 @@
    "number": "3",
    "id": "3_sp",
    "file": "models/3_sp.glb",
-   "tris": 9208,
-   "bytes": 488608,
-   "materials": 3,
-   "length_m": 4.78,
-   "width_m": 1.77,
-   "height_m": 1.41,
+   "tris": 8356,
+   "bytes": 472052,
+   "materials": 2,
+   "length_m": 4.285,
+   "width_m": 1.675,
+   "height_m": 1.26,
    "bbox_m": [
-    4.792,
-    2.071,
-    1.41
+    4.289,
+    1.718,
+    1.259
    ],
-   "wheelbase_m": 2.62,
-   "track_front_m": 1.51,
-   "track_rear_m": 1.51,
-   "tyre_radius_m": 0.31,
-   "tyre_radius_rear_m": 0.31,
+   "wheelbase_m": 2.42,
+   "track_front_m": 1.42,
+   "track_rear_m": 1.4,
+   "tyre_radius_m": 0.305,
+   "tyre_radius_rear_m": 0.305,
    "hubs": {
     "wheel_fl": [
-     0.755,
-     0.31,
-     1.31
+     0.71,
+     0.305,
+     1.21
     ],
     "wheel_fr": [
-     -0.755,
-     0.31,
-     1.31
+     -0.71,
+     0.305,
+     1.21
     ],
     "wheel_rl": [
-     0.755,
-     0.31,
-     -1.31
+     0.7,
+     0.305,
+     -1.21
     ],
     "wheel_rr": [
-     -0.755,
-     0.31,
-     -1.31
+     -0.7,
+     0.305,
+     -1.21
     ]
    },
    "team": "Swamp Turkey",
-   "car": "UNIDENTIFIED (generic 1990s sedan: Toyota Camry XV10 loft)",
+   "car": "1981 Mazda RX-7 (FB) coupe",
    "brake_lamps": [
     [
-     0.55,
-     0.6863,
-     -2.5152,
+     0.4512,
+     0.5333,
+     -2.1471,
      0.06
     ],
     [
-     -0.55,
-     0.6863,
-     -2.5152,
+     -0.4512,
+     0.5333,
+     -2.1471,
      0.06
     ]
    ],
-   "brake_lamps_fallback": true
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 1.0009513173677462,
+    "source_tris": 11418,
+    "model_length": 4.289,
+    "model_width": 1.718,
+    "model_height": 1.259,
+    "tris": 5884,
+    "file": "tools/cars/kit/downloads/82_fb/model.glb"
+   }
   },
   {
    "number": "4",
@@ -1147,61 +1167,61 @@
    "number": "13",
    "id": "13",
    "file": "models/13.glb",
-   "tris": 9208,
-   "bytes": 484436,
-   "materials": 3,
-   "length_m": 4.78,
-   "width_m": 1.77,
-   "height_m": 1.41,
+   "tris": 8168,
+   "bytes": 523988,
+   "materials": 2,
+   "length_m": 4.42,
+   "width_m": 1.78,
+   "height_m": 1.295,
    "bbox_m": [
-    4.792,
-    2.071,
-    1.41
+    4.431,
+    1.777,
+    1.294
    ],
-   "wheelbase_m": 2.62,
-   "track_front_m": 1.51,
-   "track_rear_m": 1.51,
-   "tyre_radius_m": 0.31,
-   "tyre_radius_rear_m": 0.31,
+   "wheelbase_m": 2.32,
+   "track_front_m": 1.44,
+   "track_rear_m": 1.44,
+   "tyre_radius_m": 0.313,
+   "tyre_radius_rear_m": 0.313,
    "hubs": {
     "wheel_fl": [
-     0.755,
-     0.31,
-     1.31
+     0.72,
+     0.313,
+     1.16
     ],
     "wheel_fr": [
-     -0.755,
-     0.31,
-     1.31
+     -0.72,
+     0.313,
+     1.16
     ],
     "wheel_rl": [
-     0.755,
-     0.31,
-     -1.31
+     0.72,
+     0.313,
+     -1.16
     ],
     "wheel_rr": [
-     -0.755,
-     0.31,
-     -1.31
+     -0.72,
+     0.313,
+     -1.16
     ]
    },
    "team": "Pacemaker Racing",
-   "car": "UNIDENTIFIED (generic 1990s sedan: Toyota Camry XV10 loft)",
+   "car": "1980 Datsun 280ZX (S130) 2-seater",
    "brake_lamps": [
     [
-     0.55,
-     0.6863,
-     -2.5152,
-     0.06
+     0.5,
+     0.7,
+     -2.0451,
+     0.21
     ],
     [
-     -0.55,
-     0.6863,
-     -2.5152,
-     0.06
+     -0.5,
+     0.7,
+     -2.0473,
+     0.21
     ]
    ],
-   "brake_lamps_fallback": true
+   "brake_lamps_fallback": false
   },
   {
    "number": "14",
@@ -1549,61 +1569,71 @@
    "number": "20",
    "id": "20_sp",
    "file": "models/20_sp.glb",
-   "tris": 9208,
-   "bytes": 487004,
-   "materials": 3,
-   "length_m": 4.78,
-   "width_m": 1.77,
-   "height_m": 1.41,
+   "tris": 8442,
+   "bytes": 463120,
+   "materials": 2,
+   "length_m": 4.285,
+   "width_m": 1.675,
+   "height_m": 1.26,
    "bbox_m": [
-    4.792,
-    2.071,
-    1.41
+    4.289,
+    1.718,
+    1.338
    ],
-   "wheelbase_m": 2.62,
-   "track_front_m": 1.51,
-   "track_rear_m": 1.51,
-   "tyre_radius_m": 0.31,
-   "tyre_radius_rear_m": 0.31,
+   "wheelbase_m": 2.42,
+   "track_front_m": 1.42,
+   "track_rear_m": 1.4,
+   "tyre_radius_m": 0.305,
+   "tyre_radius_rear_m": 0.305,
    "hubs": {
     "wheel_fl": [
-     0.755,
-     0.31,
-     1.31
+     0.71,
+     0.305,
+     1.21
     ],
     "wheel_fr": [
-     -0.755,
-     0.31,
-     1.31
+     -0.71,
+     0.305,
+     1.21
     ],
     "wheel_rl": [
-     0.755,
-     0.31,
-     -1.31
+     0.7,
+     0.305,
+     -1.21
     ],
     "wheel_rr": [
-     -0.755,
-     0.31,
-     -1.31
+     -0.7,
+     0.305,
+     -1.21
     ]
    },
    "team": "KFU Racing",
-   "car": "UNIDENTIFIED (generic 1990s sedan: Toyota Camry XV10 loft)",
+   "car": "1981 Mazda RX-7 (FB) coupe",
    "brake_lamps": [
     [
-     0.55,
-     0.6863,
-     -2.5152,
+     0.4512,
+     0.5333,
+     -2.1471,
      0.06
     ],
     [
-     -0.55,
-     0.6863,
-     -2.5152,
+     -0.4512,
+     0.5333,
+     -2.1471,
      0.06
     ]
    ],
-   "brake_lamps_fallback": true
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 1.0009513173677462,
+    "source_tris": 11418,
+    "model_length": 4.289,
+    "model_width": 1.718,
+    "model_height": 1.259,
+    "tris": 5884,
+    "file": "tools/cars/kit/downloads/82_fb/model.glb"
+   }
   },
   {
    "number": "21",
@@ -2119,61 +2149,75 @@
    "number": "32",
    "id": "32_sp",
    "file": "models/32_sp.glb",
-   "tris": 9208,
-   "bytes": 485980,
-   "materials": 3,
-   "length_m": 4.78,
-   "width_m": 1.77,
-   "height_m": 1.41,
+   "tris": 10050,
+   "bytes": 675744,
+   "materials": 2,
+   "length_m": 4.041,
+   "width_m": 1.764,
+   "height_m": 1.345,
    "bbox_m": [
-    4.792,
-    2.071,
-    1.41
+    4.287,
+    1.851,
+    1.659
    ],
-   "wheelbase_m": 2.62,
-   "track_front_m": 1.51,
+   "wheelbase_m": 2.42,
+   "track_front_m": 1.53,
    "track_rear_m": 1.51,
    "tyre_radius_m": 0.31,
    "tyre_radius_rear_m": 0.31,
    "hubs": {
     "wheel_fl": [
-     0.755,
+     0.765,
      0.31,
-     1.31
+     1.21
     ],
     "wheel_fr": [
-     -0.755,
+     -0.765,
      0.31,
-     1.31
+     1.21
     ],
     "wheel_rl": [
      0.755,
      0.31,
-     -1.31
+     -1.21
     ],
     "wheel_rr": [
      -0.755,
      0.31,
-     -1.31
+     -1.21
     ]
    },
    "team": "Nein-Speed Racing",
-   "car": "UNIDENTIFIED (generic 1990s sedan: Toyota Camry XV10 loft)",
+   "car": "2001 Audi TT (8N) roadster",
    "brake_lamps": [
     [
-     0.55,
-     0.6863,
-     -2.5152,
+     0.3616,
+     0.4765,
+     -1.9062,
      0.06
     ],
     [
-     -0.55,
-     0.6863,
-     -2.5152,
+     -0.3616,
+     0.4765,
+     -1.9033,
      0.06
     ]
    ],
-   "brake_lamps_fallback": true
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "named wheel parts",
+    "scale": 0.9991740426631827,
+    "source_tris": 741708,
+    "model_track": 1.517,
+    "model_tyre_radius": 0.316,
+    "hub_z_front": 0.31,
+    "hub_z_rear": 0.31,
+    "model_length": 4.019,
+    "model_width": 1.85,
+    "model_height": 1.536,
+    "tris": 7228,
+    "file": "tools/cars/kit/downloads/32_tt/model.glb"
+   }
   },
   {
    "number": "33",
@@ -2517,41 +2561,41 @@
    "number": "37",
    "id": "37_sp",
    "file": "models/37_sp.glb",
-   "tris": 8432,
-   "bytes": 469324,
+   "tris": 9728,
+   "bytes": 519664,
    "materials": 2,
-   "length_m": 4.533,
+   "length_m": 4.53,
    "width_m": 1.727,
    "height_m": 1.392,
    "bbox_m": [
-    4.541,
-    1.976,
-    1.403
+    4.52,
+    1.94,
+    1.43
    ],
    "wheelbase_m": 2.61,
-   "track_front_m": 1.45,
-   "track_rear_m": 1.47,
-   "tyre_radius_m": 0.307,
-   "tyre_radius_rear_m": 0.307,
+   "track_front_m": 1.51,
+   "track_rear_m": 1.51,
+   "tyre_radius_m": 0.305,
+   "tyre_radius_rear_m": 0.305,
    "hubs": {
     "wheel_fl": [
-     0.725,
-     0.307,
+     0.755,
+     0.305,
      1.305
     ],
     "wheel_fr": [
-     -0.725,
-     0.307,
+     -0.755,
+     0.305,
      1.305
     ],
     "wheel_rl": [
-     0.735,
-     0.307,
+     0.755,
+     0.305,
      -1.305
     ],
     "wheel_rr": [
-     -0.735,
-     0.307,
+     -0.755,
+     0.305,
      -1.305
     ]
    },
@@ -2559,19 +2603,29 @@
    "car": "1985 Merkur XR4Ti (archive only, no photos)",
    "brake_lamps": [
     [
-     0.4766,
-     0.4857,
-     -2.5213,
+     0.483,
+     0.6027,
+     -2.2535,
      0.06
     ],
     [
-     -0.4766,
-     0.4857,
-     -2.5215,
+     -0.483,
+     0.6027,
+     -2.2535,
      0.06
     ]
    ],
-   "brake_lamps_fallback": true
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 1.0038461538461538,
+    "source_tris": 18272,
+    "model_length": 4.52,
+    "model_width": 1.94,
+    "model_height": 1.43,
+    "tris": 7279,
+    "file": "tools/cars/kit/downloads/355_rs500/model.glb"
+   }
   },
   {
    "number": "38",
@@ -3677,61 +3731,71 @@
    "number": "53",
    "id": "53",
    "file": "models/53.glb",
-   "tris": 9208,
-   "bytes": 486144,
-   "materials": 3,
-   "length_m": 4.78,
-   "width_m": 1.77,
+   "tris": 10301,
+   "bytes": 581292,
+   "materials": 2,
+   "length_m": 4.785,
+   "width_m": 1.75,
    "height_m": 1.41,
    "bbox_m": [
-    4.792,
-    2.071,
-    1.41
+    4.803,
+    2.103,
+    1.394
    ],
-   "wheelbase_m": 2.62,
-   "track_front_m": 1.51,
-   "track_rear_m": 1.51,
+   "wheelbase_m": 2.77,
+   "track_front_m": 1.47,
+   "track_rear_m": 1.46,
    "tyre_radius_m": 0.31,
    "tyre_radius_rear_m": 0.31,
    "hubs": {
     "wheel_fl": [
-     0.755,
+     0.735,
      0.31,
-     1.31
+     1.385
     ],
     "wheel_fr": [
-     -0.755,
+     -0.735,
      0.31,
-     1.31
+     1.385
     ],
     "wheel_rl": [
-     0.755,
+     0.73,
      0.31,
-     -1.31
+     -1.385
     ],
     "wheel_rr": [
-     -0.755,
+     -0.73,
      0.31,
-     -1.31
+     -1.385
     ]
    },
    "team": "Sea Wolf.",
-   "car": "UNIDENTIFIED (generic 1990s sedan: Toyota Camry XV10 loft)",
+   "car": "1990 Volvo 740 sedan",
    "brake_lamps": [
     [
-     0.55,
-     0.6863,
-     -2.5152,
+     0.5607,
+     0.5478,
+     -2.3914,
      0.06
     ],
     [
-     -0.55,
-     0.6863,
-     -2.5152,
+     -0.5607,
+     0.5478,
+     -2.3914,
      0.06
     ]
    ],
-   "brake_lamps_fallback": true
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 1.7339593114241003,
+    "source_tris": 242280,
+    "model_length": 4.802,
+    "model_width": 2.112,
+    "model_height": 1.395,
+    "tris": 7865,
+    "file": "tools/cars/kit/downloads/53_740/model.glb"
+   }
   },
   {
    "number": "54",
@@ -3939,41 +4003,41 @@
    "number": "56",
    "id": "56",
    "file": "models/56.glb",
-   "tris": 9024,
-   "bytes": 512492,
+   "tris": 11184,
+   "bytes": 644452,
    "materials": 2,
-   "length_m": 4.836,
+   "length_m": 4.88,
    "width_m": 1.918,
    "height_m": 1.376,
    "bbox_m": [
-    4.888,
-    1.986,
-    1.769
+    4.874,
+    2.025,
+    1.78
    ],
    "wheelbase_m": 2.852,
-   "track_front_m": 1.62,
-   "track_rear_m": 1.63,
-   "tyre_radius_m": 0.355,
-   "tyre_radius_rear_m": 0.355,
+   "track_front_m": 1.58,
+   "track_rear_m": 1.58,
+   "tyre_radius_m": 0.365,
+   "tyre_radius_rear_m": 0.38,
    "hubs": {
     "wheel_fl": [
-     0.81,
-     0.355,
+     0.79,
+     0.365,
      1.426
     ],
     "wheel_fr": [
-     -0.81,
-     0.355,
+     -0.79,
+     0.365,
      1.426
     ],
     "wheel_rl": [
-     0.815,
-     0.355,
+     0.79,
+     0.38,
      -1.426
     ],
     "wheel_rr": [
-     -0.815,
-     0.355,
+     -0.79,
+     0.38,
      -1.426
     ]
    },
@@ -3981,19 +4045,29 @@
    "car": "2011 Chevrolet Camaro SS coupe",
    "brake_lamps": [
     [
-     0.58,
-     0.89,
-     -2.4356,
-     0.15
+     0.2935,
+     0.7427,
+     -2.4219,
+     0.06
     ],
     [
-     -0.58,
-     0.89,
-     -2.4359,
-     0.15
+     -0.2935,
+     0.7427,
+     -2.4219,
+     0.06
     ]
    ],
-   "brake_lamps_fallback": false
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 0.9937282229965156,
+    "source_tris": 138454,
+    "model_length": 4.864,
+    "model_width": 2.021,
+    "model_height": 1.403,
+    "tris": 7615,
+    "file": "tools/cars/kit/downloads/56_zl1/model.glb"
+   }
   },
   {
    "number": "58",
@@ -4699,16 +4773,16 @@
    "number": "70",
    "id": "70",
    "file": "models/70.glb",
-   "tris": 8228,
-   "bytes": 497344,
+   "tris": 11502,
+   "bytes": 579320,
    "materials": 2,
-   "length_m": 3.875,
+   "length_m": 3.965,
    "width_m": 1.666,
    "height_m": 1.331,
    "bbox_m": [
-    3.965,
-    1.939,
-    1.331
+    4.029,
+    1.855,
+    1.343
    ],
    "wheelbase_m": 2.5,
    "track_front_m": 1.45,
@@ -4741,31 +4815,41 @@
    "car": "1991 Honda Civic EF 3-door hatchback",
    "brake_lamps": [
     [
-     0.52,
-     0.78,
-     -1.8206,
-     0.25
+     0.58,
+     0.71,
+     -1.8362,
+     0.21
     ],
     [
-     -0.52,
-     0.78,
-     -1.8199,
-     0.25
+     -0.58,
+     0.71,
+     -1.8356,
+     0.21
     ],
     [
-     0.12,
-     0.78,
-     -1.8229,
-     0.12
+     0.185,
+     0.71,
+     -1.8736,
+     0.18
     ],
     [
-     -0.12,
-     0.78,
-     -1.8229,
-     0.12
+     -0.185,
+     0.71,
+     -1.8743,
+     0.18
     ]
    ],
-   "brake_lamps_fallback": false
+   "brake_lamps_fallback": false,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 1.0080238700052417,
+    "source_tris": 999583,
+    "model_length": 4.004,
+    "model_width": 2.062,
+    "model_height": 1.333,
+    "tris": 5900,
+    "file": "tools/cars/kit/downloads/70_ef/model.glb"
+   }
   },
   {
    "number": "71",
@@ -4845,16 +4929,16 @@
    "number": "71",
    "id": "71_sp",
    "file": "models/71_sp.glb",
-   "tris": 9108,
-   "bytes": 533000,
+   "tris": 10534,
+   "bytes": 557720,
    "materials": 2,
    "length_m": 4.45,
    "width_m": 1.695,
    "height_m": 1.39,
    "bbox_m": [
-    4.45,
-    1.876,
-    1.36
+    4.497,
+    1.834,
+    1.375
    ],
    "wheelbase_m": 2.62,
    "track_front_m": 1.475,
@@ -4887,19 +4971,47 @@
    "car": "2000 Honda Civic sedan (6th gen, EK facelift)",
    "brake_lamps": [
     [
-     0.4557,
-     0.68,
-     -2.2764,
-     0.06
+     0.56,
+     0.8,
+     -2.2113,
+     0.14
     ],
     [
-     -0.4557,
-     0.68,
-     -2.2763,
-     0.06
+     -0.56,
+     0.8,
+     -2.2123,
+     0.14
+    ],
+    [
+     0.56,
+     0.715,
+     -2.2137,
+     0.14
+    ],
+    [
+     -0.56,
+     0.715,
+     -2.2129,
+     0.14
+    ],
+    [
+     0.0,
+     0.775,
+     -2.1982,
+     0.28
     ]
    ],
-   "brake_lamps_fallback": true
+   "brake_lamps_fallback": false,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 0.45732239483330434,
+    "source_tris": 170520,
+    "model_length": 5.35,
+    "model_width": 2.421,
+    "model_height": 1.36,
+    "tris": 6199,
+    "file": "tools/cars/kit/downloads/140_ek/model.glb"
+   }
   },
   {
    "number": "72",
@@ -5243,61 +5355,61 @@
    "number": "76",
    "id": "76_sp",
    "file": "models/76_sp.glb",
-   "tris": 9208,
-   "bytes": 492076,
-   "materials": 3,
-   "length_m": 4.78,
-   "width_m": 1.77,
-   "height_m": 1.41,
+   "tris": 8032,
+   "bytes": 497432,
+   "materials": 2,
+   "length_m": 4.39,
+   "width_m": 1.715,
+   "height_m": 1.27,
    "bbox_m": [
-    4.792,
-    2.071,
-    1.41
+    4.431,
+    1.902,
+    1.27
    ],
-   "wheelbase_m": 2.62,
-   "track_front_m": 1.51,
-   "track_rear_m": 1.51,
-   "tyre_radius_m": 0.31,
-   "tyre_radius_rear_m": 0.31,
+   "wheelbase_m": 2.55,
+   "track_front_m": 1.47,
+   "track_rear_m": 1.47,
+   "tyre_radius_m": 0.295,
+   "tyre_radius_rear_m": 0.295,
    "hubs": {
     "wheel_fl": [
-     0.755,
-     0.31,
-     1.31
+     0.735,
+     0.295,
+     1.275
     ],
     "wheel_fr": [
-     -0.755,
-     0.31,
-     1.31
+     -0.735,
+     0.295,
+     1.275
     ],
     "wheel_rl": [
-     0.755,
-     0.31,
-     -1.31
+     0.735,
+     0.295,
+     -1.275
     ],
     "wheel_rr": [
-     -0.755,
-     0.31,
-     -1.31
+     -0.735,
+     0.295,
+     -1.275
     ]
    },
    "team": "Team Boulder",
-   "car": "UNIDENTIFIED (generic 1990s sedan: Toyota Camry XV10 loft)",
+   "car": "1992 Acura Integra 3-door (DA)",
    "brake_lamps": [
     [
-     0.55,
-     0.6863,
-     -2.5152,
-     0.06
+     0.52,
+     0.8,
+     -2.106,
+     0.2
     ],
     [
-     -0.55,
-     0.6863,
-     -2.5152,
-     0.06
+     -0.52,
+     0.8,
+     -2.106,
+     0.2
     ]
    ],
-   "brake_lamps_fallback": true
+   "brake_lamps_fallback": false
   },
   {
    "number": "77",
@@ -5377,16 +5489,16 @@
    "number": "77",
    "id": "77_sp",
    "file": "models/77_sp.glb",
-   "tris": 8536,
-   "bytes": 452556,
+   "tris": 11875,
+   "bytes": 541668,
    "materials": 2,
-   "length_m": 3.875,
+   "length_m": 3.965,
    "width_m": 1.666,
    "height_m": 1.331,
    "bbox_m": [
-    3.965,
-    1.933,
-    1.331
+    4.029,
+    1.855,
+    1.343
    ],
    "wheelbase_m": 2.5,
    "track_front_m": 1.45,
@@ -5419,31 +5531,41 @@
    "car": "1990 Honda Civic EF 3-door hatchback (archive / timing only, no photos)",
    "brake_lamps": [
     [
-     0.52,
-     0.78,
-     -1.8206,
-     0.25
+     0.58,
+     0.71,
+     -1.8362,
+     0.21
     ],
     [
-     -0.52,
-     0.78,
-     -1.8199,
-     0.25
+     -0.58,
+     0.71,
+     -1.8356,
+     0.21
     ],
     [
-     0.12,
-     0.78,
-     -1.8229,
-     0.12
+     0.185,
+     0.71,
+     -1.8736,
+     0.18
     ],
     [
-     -0.12,
-     0.78,
-     -1.8229,
-     0.12
+     -0.185,
+     0.71,
+     -1.8743,
+     0.18
     ]
    ],
-   "brake_lamps_fallback": false
+   "brake_lamps_fallback": false,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 1.0080238700052417,
+    "source_tris": 999583,
+    "model_length": 4.004,
+    "model_width": 2.062,
+    "model_height": 1.333,
+    "tris": 5900,
+    "file": "tools/cars/kit/downloads/70_ef/model.glb"
+   }
   },
   {
    "number": "78",
@@ -5759,41 +5881,41 @@
    "number": "82",
    "id": "82_sp",
    "file": "models/82_sp.glb",
-   "tris": 7648,
-   "bytes": 480352,
+   "tris": 8440,
+   "bytes": 457984,
    "materials": 2,
-   "length_m": 4.155,
+   "length_m": 4.285,
    "width_m": 1.675,
    "height_m": 1.26,
    "bbox_m": [
-    4.285,
-    1.872,
-    1.26
+    4.289,
+    1.718,
+    1.259
    ],
    "wheelbase_m": 2.42,
    "track_front_m": 1.42,
    "track_rear_m": 1.4,
-   "tyre_radius_m": 0.295,
-   "tyre_radius_rear_m": 0.295,
+   "tyre_radius_m": 0.305,
+   "tyre_radius_rear_m": 0.305,
    "hubs": {
     "wheel_fl": [
      0.71,
-     0.295,
+     0.305,
      1.21
     ],
     "wheel_fr": [
      -0.71,
-     0.295,
+     0.305,
      1.21
     ],
     "wheel_rl": [
      0.7,
-     0.295,
+     0.305,
      -1.21
     ],
     "wheel_rr": [
      -0.7,
-     0.295,
+     0.305,
      -1.21
     ]
    },
@@ -5801,19 +5923,29 @@
    "car": "1981 Mazda RX-7 (FB Series 2)",
    "brake_lamps": [
     [
-     0.52,
-     0.68,
-     -2.097,
-     0.21
+     0.4512,
+     0.5333,
+     -2.1471,
+     0.06
     ],
     [
-     -0.52,
-     0.68,
-     -2.0973,
-     0.21
+     -0.4512,
+     0.5333,
+     -2.1471,
+     0.06
     ]
    ],
-   "brake_lamps_fallback": false
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 1.0009513173677462,
+    "source_tris": 11418,
+    "model_length": 4.289,
+    "model_width": 1.718,
+    "model_height": 1.259,
+    "tris": 5884,
+    "file": "tools/cars/kit/downloads/82_fb/model.glb"
+   }
   },
   {
    "number": "83",
@@ -7015,15 +7147,15 @@
    "number": "101",
    "id": "101",
    "file": "models/101.glb",
-   "tris": 9312,
-   "bytes": 505280,
+   "tris": 10742,
+   "bytes": 546668,
    "materials": 2,
    "length_m": 4.45,
    "width_m": 1.695,
    "height_m": 1.39,
    "bbox_m": [
-    4.47,
-    1.876,
+    4.497,
+    1.834,
     2.202
    ],
    "wheelbase_m": 2.62,
@@ -7057,19 +7189,47 @@
    "car": "1998 Honda Civic sedan (6th gen, EK)",
    "brake_lamps": [
     [
-     0.4557,
-     0.68,
-     -2.2764,
-     0.06
+     0.56,
+     0.8,
+     -2.2113,
+     0.14
     ],
     [
-     -0.4557,
-     0.68,
-     -2.2763,
-     0.06
+     -0.56,
+     0.8,
+     -2.2123,
+     0.14
+    ],
+    [
+     0.56,
+     0.715,
+     -2.2137,
+     0.14
+    ],
+    [
+     -0.56,
+     0.715,
+     -2.2129,
+     0.14
+    ],
+    [
+     0.0,
+     0.775,
+     -2.1982,
+     0.28
     ]
    ],
-   "brake_lamps_fallback": true
+   "brake_lamps_fallback": false,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 0.45732239483330434,
+    "source_tris": 170520,
+    "model_length": 5.35,
+    "model_width": 2.421,
+    "model_height": 1.36,
+    "tris": 6199,
+    "file": "tools/cars/kit/downloads/140_ek/model.glb"
+   }
   },
   {
    "number": "103",
@@ -7499,61 +7659,61 @@
    "number": "120",
    "id": "120",
    "file": "models/120.glb",
-   "tris": 9208,
-   "bytes": 486036,
-   "materials": 3,
-   "length_m": 4.78,
-   "width_m": 1.77,
-   "height_m": 1.41,
+   "tris": 8790,
+   "bytes": 497116,
+   "materials": 2,
+   "length_m": 4.65,
+   "width_m": 1.857,
+   "height_m": 1.349,
    "bbox_m": [
-    4.792,
-    2.071,
-    1.41
+    4.685,
+    2.012,
+    1.351
    ],
-   "wheelbase_m": 2.62,
-   "track_front_m": 1.51,
-   "track_rear_m": 1.51,
-   "tyre_radius_m": 0.31,
-   "tyre_radius_rear_m": 0.31,
+   "wheelbase_m": 2.573,
+   "track_front_m": 1.54,
+   "track_rear_m": 1.5,
+   "tyre_radius_m": 0.326,
+   "tyre_radius_rear_m": 0.326,
    "hubs": {
     "wheel_fl": [
-     0.755,
-     0.31,
-     1.31
+     0.77,
+     0.326,
+     1.2865
     ],
     "wheel_fr": [
-     -0.755,
-     0.31,
-     1.31
+     -0.77,
+     0.326,
+     1.2865
     ],
     "wheel_rl": [
-     0.755,
-     0.31,
-     -1.31
+     0.75,
+     0.326,
+     -1.2865
     ],
     "wheel_rr": [
-     -0.755,
-     0.31,
-     -1.31
+     -0.75,
+     0.326,
+     -1.2865
     ]
    },
-   "team": "Royal Canadian Morning \u2026.",
-   "car": "UNIDENTIFIED (generic 1990s sedan: Toyota Camry XV10 loft)",
+   "team": "Royal Canadian Morning ....",
+   "car": "2000 Ford Mustang GT coupe (SN95 New Edge)",
    "brake_lamps": [
     [
-     0.55,
-     0.6863,
-     -2.5152,
-     0.06
+     0.58,
+     0.83,
+     -2.2774,
+     0.15
     ],
     [
-     -0.55,
-     0.6863,
-     -2.5152,
-     0.06
+     -0.58,
+     0.83,
+     -2.2785,
+     0.15
     ]
    ],
-   "brake_lamps_fallback": true
+   "brake_lamps_fallback": false
   },
   {
    "number": "121",
@@ -7753,61 +7913,61 @@
    "number": "123",
    "id": "123",
    "file": "models/123.glb",
-   "tris": 9208,
-   "bytes": 491196,
-   "materials": 3,
-   "length_m": 4.78,
-   "width_m": 1.77,
-   "height_m": 1.41,
+   "tris": 8796,
+   "bytes": 481764,
+   "materials": 2,
+   "length_m": 4.915,
+   "width_m": 1.882,
+   "height_m": 1.3,
    "bbox_m": [
-    4.792,
-    2.071,
-    1.41
+    4.97,
+    2.086,
+    1.403
    ],
-   "wheelbase_m": 2.62,
-   "track_front_m": 1.51,
-   "track_rear_m": 1.51,
-   "tyre_radius_m": 0.31,
-   "tyre_radius_rear_m": 0.31,
+   "wheelbase_m": 2.568,
+   "track_front_m": 1.54,
+   "track_rear_m": 1.54,
+   "tyre_radius_m": 0.33,
+   "tyre_radius_rear_m": 0.33,
    "hubs": {
     "wheel_fl": [
-     0.755,
-     0.31,
-     1.31
+     0.77,
+     0.33,
+     1.284
     ],
     "wheel_fr": [
-     -0.755,
-     0.31,
-     1.31
+     -0.77,
+     0.33,
+     1.284
     ],
     "wheel_rl": [
-     0.755,
-     0.31,
-     -1.31
+     0.77,
+     0.33,
+     -1.284
     ],
     "wheel_rr": [
-     -0.755,
-     0.31,
-     -1.31
+     -0.77,
+     0.33,
+     -1.284
     ]
    },
    "team": "Bad Loose Racing 2.0",
-   "car": "UNIDENTIFIED (generic 1990s sedan: Toyota Camry XV10 loft)",
+   "car": "1998 Chevrolet Camaro coupe (police-style)",
    "brake_lamps": [
     [
-     0.55,
-     0.6863,
-     -2.5152,
-     0.06
+     0.58,
+     0.82,
+     -2.487,
+     0.18
     ],
     [
-     -0.55,
-     0.6863,
-     -2.5152,
-     0.06
+     -0.58,
+     0.82,
+     -2.4869,
+     0.18
     ]
    ],
-   "brake_lamps_fallback": true
+   "brake_lamps_fallback": false
   },
   {
    "number": "124",
@@ -8231,16 +8391,16 @@
    "number": "140",
    "id": "140",
    "file": "models/140.glb",
-   "tris": 9304,
-   "bytes": 538740,
+   "tris": 10534,
+   "bytes": 539968,
    "materials": 2,
    "length_m": 4.45,
    "width_m": 1.695,
    "height_m": 1.39,
    "bbox_m": [
-    4.45,
-    1.69,
-    1.36
+    4.497,
+    1.834,
+    1.375
    ],
    "wheelbase_m": 2.62,
    "track_front_m": 1.475,
@@ -8273,19 +8433,47 @@
    "car": "2000 Honda Civic sedan (6th gen, EK facelift)",
    "brake_lamps": [
     [
-     0.4557,
-     0.68,
-     -2.2764,
-     0.06
+     0.56,
+     0.8,
+     -2.2113,
+     0.14
     ],
     [
-     -0.4557,
-     0.68,
-     -2.2763,
-     0.06
+     -0.56,
+     0.8,
+     -2.2123,
+     0.14
+    ],
+    [
+     0.56,
+     0.715,
+     -2.2137,
+     0.14
+    ],
+    [
+     -0.56,
+     0.715,
+     -2.2129,
+     0.14
+    ],
+    [
+     0.0,
+     0.775,
+     -2.1982,
+     0.28
     ]
    ],
-   "brake_lamps_fallback": true
+   "brake_lamps_fallback": false,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 0.45732239483330434,
+    "source_tris": 170520,
+    "model_length": 5.35,
+    "model_width": 2.421,
+    "model_height": 1.36,
+    "tris": 6199,
+    "file": "tools/cars/kit/downloads/140_ek/model.glb"
+   }
   },
   {
    "number": "141",
@@ -8831,61 +9019,71 @@
    "number": "171",
    "id": "171_sp",
    "file": "models/171_sp.glb",
-   "tris": 9208,
-   "bytes": 485284,
-   "materials": 3,
-   "length_m": 4.78,
-   "width_m": 1.77,
-   "height_m": 1.41,
+   "tris": 5881,
+   "bytes": 349784,
+   "materials": 2,
+   "length_m": 4.405,
+   "width_m": 1.69,
+   "height_m": 1.295,
    "bbox_m": [
-    4.792,
-    2.071,
-    1.41
+    4.407,
+    1.905,
+    1.254
    ],
-   "wheelbase_m": 2.62,
-   "track_front_m": 1.51,
-   "track_rear_m": 1.51,
-   "tyre_radius_m": 0.31,
-   "tyre_radius_rear_m": 0.31,
+   "wheelbase_m": 2.43,
+   "track_front_m": 1.415,
+   "track_rear_m": 1.435,
+   "tyre_radius_m": 0.32,
+   "tyre_radius_rear_m": 0.32,
    "hubs": {
     "wheel_fl": [
-     0.755,
-     0.31,
-     1.31
+     0.7075,
+     0.32,
+     1.215
     ],
     "wheel_fr": [
-     -0.755,
-     0.31,
-     1.31
+     -0.7075,
+     0.32,
+     1.215
     ],
     "wheel_rl": [
-     0.755,
-     0.31,
-     -1.31
+     0.7175,
+     0.32,
+     -1.215
     ],
     "wheel_rr": [
-     -0.755,
-     0.31,
-     -1.31
+     -0.7175,
+     0.32,
+     -1.215
     ]
    },
    "team": "Bucket List Racing",
-   "car": "UNIDENTIFIED (generic 1990s sedan: Toyota Camry XV10 loft)",
+   "car": "1986 Nissan 300ZX (Z31) 2+2 -- make unconfirmed (guess)",
    "brake_lamps": [
     [
-     0.55,
-     0.6863,
-     -2.5152,
+     0.5051,
+     0.4491,
+     -2.2383,
      0.06
     ],
     [
-     -0.55,
-     0.6863,
-     -2.5152,
+     -0.5051,
+     0.4491,
+     -2.2382,
      0.06
     ]
    ],
-   "brake_lamps_fallback": true
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 0.061286254728877686,
+    "source_tris": 13052,
+    "model_length": 4.407,
+    "model_width": 1.905,
+    "model_height": 1.254,
+    "tris": 3347,
+    "file": "tools/cars/kit/downloads/171_z31/model.glb"
+   }
   },
   {
    "number": "182",
@@ -8961,61 +9159,61 @@
    "number": "185",
    "id": "185",
    "file": "models/185.glb",
-   "tris": 9208,
-   "bytes": 487984,
-   "materials": 3,
-   "length_m": 4.78,
-   "width_m": 1.77,
-   "height_m": 1.41,
+   "tris": 8357,
+   "bytes": 498900,
+   "materials": 2,
+   "length_m": 4.078,
+   "width_m": 1.694,
+   "height_m": 1.422,
    "bbox_m": [
-    4.792,
-    2.071,
-    1.41
+    4.078,
+    2.021,
+    1.474
    ],
-   "wheelbase_m": 2.62,
-   "track_front_m": 1.51,
-   "track_rear_m": 1.51,
-   "tyre_radius_m": 0.31,
-   "tyre_radius_rear_m": 0.31,
+   "wheelbase_m": 2.471,
+   "track_front_m": 1.46,
+   "track_rear_m": 1.45,
+   "tyre_radius_m": 0.29,
+   "tyre_radius_rear_m": 0.29,
    "hubs": {
     "wheel_fl": [
-     0.755,
-     0.31,
-     1.31
+     0.73,
+     0.29,
+     1.2355
     ],
     "wheel_fr": [
-     -0.755,
-     0.31,
-     1.31
+     -0.73,
+     0.29,
+     1.2355
     ],
     "wheel_rl": [
-     0.755,
-     0.31,
-     -1.31
+     0.725,
+     0.29,
+     -1.2355
     ],
     "wheel_rr": [
-     -0.755,
-     0.31,
-     -1.31
+     -0.725,
+     0.29,
+     -1.2355
     ]
    },
    "team": "Cavity Creeps",
-   "car": "UNIDENTIFIED (generic 1990s sedan: Toyota Camry XV10 loft)",
+   "car": "1995 Volkswagen Golf Mk3 3-door hatchback",
    "brake_lamps": [
     [
-     0.55,
-     0.6863,
-     -2.5152,
-     0.06
+     0.58,
+     0.82,
+     -1.85,
+     0.12
     ],
     [
-     -0.55,
-     0.6863,
-     -2.5152,
-     0.06
+     -0.58,
+     0.82,
+     -1.85,
+     0.12
     ]
    ],
-   "brake_lamps_fallback": true
+   "brake_lamps_fallback": false
   },
   {
    "number": "189",
@@ -9225,61 +9423,61 @@
    "number": "198",
    "id": "198",
    "file": "models/198.glb",
-   "tris": 9208,
-   "bytes": 492096,
-   "materials": 3,
-   "length_m": 4.78,
-   "width_m": 1.77,
-   "height_m": 1.41,
+   "tris": 8480,
+   "bytes": 515660,
+   "materials": 2,
+   "length_m": 4.61,
+   "width_m": 1.824,
+   "height_m": 1.351,
    "bbox_m": [
-    4.792,
-    2.071,
-    1.41
+    4.651,
+    1.984,
+    1.351
    ],
-   "wheelbase_m": 2.62,
-   "track_front_m": 1.51,
-   "track_rear_m": 1.51,
-   "tyre_radius_m": 0.31,
-   "tyre_radius_rear_m": 0.31,
+   "wheelbase_m": 2.573,
+   "track_front_m": 1.54,
+   "track_rear_m": 1.5,
+   "tyre_radius_m": 0.326,
+   "tyre_radius_rear_m": 0.326,
    "hubs": {
     "wheel_fl": [
-     0.755,
-     0.31,
-     1.31
+     0.77,
+     0.326,
+     1.2865
     ],
     "wheel_fr": [
-     -0.755,
-     0.31,
-     1.31
+     -0.77,
+     0.326,
+     1.2865
     ],
     "wheel_rl": [
-     0.755,
-     0.31,
-     -1.31
+     0.75,
+     0.326,
+     -1.2865
     ],
     "wheel_rr": [
-     -0.755,
-     0.31,
-     -1.31
+     -0.75,
+     0.326,
+     -1.2865
     ]
    },
    "team": "Snek Car Racing",
-   "car": "UNIDENTIFIED (generic 1990s sedan: Toyota Camry XV10 loft)",
+   "car": "1996 Ford Mustang SVT Cobra-style coupe (SN95)",
    "brake_lamps": [
     [
-     0.55,
-     0.6863,
-     -2.5152,
-     0.06
+     0.53,
+     0.82,
+     -2.2619,
+     0.13
     ],
     [
-     -0.55,
-     0.6863,
-     -2.5152,
-     0.06
+     -0.53,
+     0.82,
+     -2.2626,
+     0.13
     ]
    ],
-   "brake_lamps_fallback": true
+   "brake_lamps_fallback": false
   },
   {
    "number": "200",
@@ -9693,61 +9891,71 @@
    "number": "238",
    "id": "238",
    "file": "models/238.glb",
-   "tris": 9208,
-   "bytes": 492160,
-   "materials": 3,
-   "length_m": 4.78,
-   "width_m": 1.77,
-   "height_m": 1.41,
+   "tris": 10138,
+   "bytes": 642524,
+   "materials": 2,
+   "length_m": 4.2,
+   "width_m": 1.735,
+   "height_m": 1.275,
    "bbox_m": [
-    4.792,
-    2.071,
-    1.41
+    4.221,
+    1.902,
+    1.28
    ],
-   "wheelbase_m": 2.62,
-   "track_front_m": 1.51,
-   "track_rear_m": 1.51,
-   "tyre_radius_m": 0.31,
-   "tyre_radius_rear_m": 0.31,
+   "wheelbase_m": 2.4,
+   "track_front_m": 1.48,
+   "track_rear_m": 1.45,
+   "tyre_radius_m": 0.315,
+   "tyre_radius_rear_m": 0.315,
    "hubs": {
     "wheel_fl": [
-     0.755,
-     0.31,
-     1.31
+     0.74,
+     0.315,
+     1.2
     ],
     "wheel_fr": [
-     -0.755,
-     0.31,
-     1.31
+     -0.74,
+     0.315,
+     1.2
     ],
     "wheel_rl": [
-     0.755,
-     0.31,
-     -1.31
+     0.725,
+     0.315,
+     -1.2
     ],
     "wheel_rr": [
-     -0.755,
-     0.31,
-     -1.31
+     -0.725,
+     0.315,
+     -1.2
     ]
    },
    "team": "Not-All-Us",
-   "car": "UNIDENTIFIED (generic 1990s sedan: Toyota Camry XV10 loft)",
+   "car": "1986 Porsche 944",
    "brake_lamps": [
     [
-     0.55,
-     0.6863,
-     -2.5152,
+     0.4088,
+     0.7295,
+     -2.0392,
      0.06
     ],
     [
-     -0.55,
-     0.6863,
-     -2.5152,
+     -0.4088,
+     0.7295,
+     -2.0385,
      0.06
     ]
    ],
-   "brake_lamps_fallback": true
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 0.06486486486486487,
+    "source_tris": 117196,
+    "model_length": 4.219,
+    "model_width": 1.902,
+    "model_height": 1.279,
+    "tris": 7499,
+    "file": "tools/cars/kit/downloads/82/model.glb"
+   }
   },
   {
    "number": "242",
@@ -10991,61 +11199,71 @@
    "number": "329",
    "id": "329",
    "file": "models/329.glb",
-   "tris": 9208,
-   "bytes": 491224,
-   "materials": 3,
-   "length_m": 4.78,
-   "width_m": 1.77,
-   "height_m": 1.41,
+   "tris": 11148,
+   "bytes": 610208,
+   "materials": 2,
+   "length_m": 3.992,
+   "width_m": 1.675,
+   "height_m": 1.225,
    "bbox_m": [
-    4.792,
-    2.071,
-    1.41
+    3.967,
+    1.78,
+    1.432
    ],
-   "wheelbase_m": 2.62,
-   "track_front_m": 1.51,
-   "track_rear_m": 1.51,
-   "tyre_radius_m": 0.31,
-   "tyre_radius_rear_m": 0.31,
+   "wheelbase_m": 2.265,
+   "track_front_m": 1.41,
+   "track_rear_m": 1.43,
+   "tyre_radius_m": 0.293,
+   "tyre_radius_rear_m": 0.293,
    "hubs": {
     "wheel_fl": [
-     0.755,
-     0.31,
-     1.31
+     0.705,
+     0.293,
+     1.1325
     ],
     "wheel_fr": [
-     -0.755,
-     0.31,
-     1.31
+     -0.705,
+     0.293,
+     1.1325
     ],
     "wheel_rl": [
-     0.755,
-     0.31,
-     -1.31
+     0.715,
+     0.293,
+     -1.1325
     ],
     "wheel_rr": [
-     -0.755,
-     0.31,
-     -1.31
+     -0.715,
+     0.293,
+     -1.1325
     ]
    },
    "team": "NEVER EVER SAY NEVER EVER",
-   "car": "UNIDENTIFIED (generic 1990s sedan: Toyota Camry XV10 loft)",
+   "car": "1991 Mazda MX-5 Miata (NA), black factory hardtop",
    "brake_lamps": [
     [
-     0.55,
-     0.6863,
-     -2.5152,
+     0.3285,
+     0.4241,
+     -1.8984,
      0.06
     ],
     [
-     -0.55,
-     0.6863,
-     -2.5152,
+     -0.3285,
+     0.4241,
+     -1.8976,
      0.06
     ]
    ],
-   "brake_lamps_fallback": true
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 0.5683814303638646,
+    "source_tris": 114755,
+    "model_length": 3.968,
+    "model_width": 1.785,
+    "model_height": 1.176,
+    "tris": 7998,
+    "file": "tools/cars/kit/downloads/711/model.glb"
+   }
   },
   {
    "number": "333",
@@ -11185,41 +11403,41 @@
    "number": "355",
    "id": "355",
    "file": "models/355.glb",
-   "tris": 8564,
-   "bytes": 525128,
+   "tris": 9860,
+   "bytes": 581560,
    "materials": 2,
-   "length_m": 4.533,
+   "length_m": 4.53,
    "width_m": 1.727,
    "height_m": 1.392,
    "bbox_m": [
-    4.548,
-    1.976,
-    1.403
+    4.529,
+    1.94,
+    1.43
    ],
    "wheelbase_m": 2.61,
-   "track_front_m": 1.45,
-   "track_rear_m": 1.47,
-   "tyre_radius_m": 0.307,
-   "tyre_radius_rear_m": 0.307,
+   "track_front_m": 1.51,
+   "track_rear_m": 1.51,
+   "tyre_radius_m": 0.305,
+   "tyre_radius_rear_m": 0.305,
    "hubs": {
     "wheel_fl": [
-     0.725,
-     0.307,
+     0.755,
+     0.305,
      1.305
     ],
     "wheel_fr": [
-     -0.725,
-     0.307,
+     -0.755,
+     0.305,
      1.305
     ],
     "wheel_rl": [
-     0.735,
-     0.307,
+     0.755,
+     0.305,
      -1.305
     ],
     "wheel_rr": [
-     -0.735,
-     0.307,
+     -0.755,
+     0.305,
      -1.305
     ]
    },
@@ -11227,19 +11445,29 @@
    "car": "1985-89 Merkur XR4Ti",
    "brake_lamps": [
     [
-     0.4766,
-     0.4857,
-     -2.5213,
+     0.483,
+     0.6027,
+     -2.2535,
      0.06
     ],
     [
-     -0.4766,
-     0.4857,
-     -2.5215,
+     -0.483,
+     0.6027,
+     -2.2535,
      0.06
     ]
    ],
-   "brake_lamps_fallback": true
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 1.0038461538461538,
+    "source_tris": 18272,
+    "model_length": 4.52,
+    "model_width": 1.94,
+    "model_height": 1.43,
+    "tris": 7279,
+    "file": "tools/cars/kit/downloads/355_rs500/model.glb"
+   }
   },
   {
    "number": "357",
@@ -12037,61 +12265,61 @@
    "number": "520",
    "id": "520",
    "file": "models/520.glb",
-   "tris": 9208,
-   "bytes": 488556,
-   "materials": 3,
-   "length_m": 4.78,
-   "width_m": 1.77,
-   "height_m": 1.41,
+   "tris": 8154,
+   "bytes": 513960,
+   "materials": 2,
+   "length_m": 4.877,
+   "width_m": 1.849,
+   "height_m": 1.3,
    "bbox_m": [
-    4.792,
-    2.071,
-    1.41
+    4.944,
+    2.082,
+    1.3
    ],
-   "wheelbase_m": 2.62,
-   "track_front_m": 1.51,
-   "track_rear_m": 1.51,
-   "tyre_radius_m": 0.31,
-   "tyre_radius_rear_m": 0.31,
+   "wheelbase_m": 2.565,
+   "track_front_m": 1.52,
+   "track_rear_m": 1.53,
+   "tyre_radius_m": 0.325,
+   "tyre_radius_rear_m": 0.325,
    "hubs": {
     "wheel_fl": [
-     0.755,
-     0.31,
-     1.31
+     0.76,
+     0.325,
+     1.2825
     ],
     "wheel_fr": [
-     -0.755,
-     0.31,
-     1.31
+     -0.76,
+     0.325,
+     1.2825
     ],
     "wheel_rl": [
-     0.755,
-     0.31,
-     -1.31
+     0.765,
+     0.325,
+     -1.2825
     ],
     "wheel_rr": [
-     -0.755,
-     0.31,
-     -1.31
+     -0.765,
+     0.325,
+     -1.2825
     ]
    },
    "team": "Generation Gap Racing",
-   "car": "UNIDENTIFIED (generic 1990s sedan: Toyota Camry XV10 loft)",
+   "car": "1986 Chevrolet Camaro IROC-Z",
    "brake_lamps": [
     [
-     0.55,
-     0.6863,
-     -2.5152,
-     0.06
+     0.42,
+     0.78,
+     -2.433,
+     0.35
     ],
     [
-     -0.55,
-     0.6863,
-     -2.5152,
-     0.06
+     -0.42,
+     0.78,
+     -2.433,
+     0.35
     ]
    ],
-   "brake_lamps_fallback": true
+   "brake_lamps_fallback": false
   },
   {
    "number": "525",
@@ -14151,61 +14379,61 @@
    "number": "831",
    "id": "831",
    "file": "models/831.glb",
-   "tris": 9208,
-   "bytes": 490552,
-   "materials": 3,
-   "length_m": 4.78,
-   "width_m": 1.77,
-   "height_m": 1.41,
+   "tris": 8372,
+   "bytes": 469312,
+   "materials": 2,
+   "length_m": 4.562,
+   "width_m": 1.755,
+   "height_m": 1.323,
    "bbox_m": [
-    4.792,
-    2.071,
-    1.41
+    4.62,
+    1.852,
+    1.323
    ],
-   "wheelbase_m": 2.62,
-   "track_front_m": 1.51,
-   "track_rear_m": 1.51,
-   "tyre_radius_m": 0.31,
-   "tyre_radius_rear_m": 0.31,
+   "wheelbase_m": 2.553,
+   "track_front_m": 1.45,
+   "track_rear_m": 1.46,
+   "tyre_radius_m": 0.326,
+   "tyre_radius_rear_m": 0.326,
    "hubs": {
     "wheel_fl": [
-     0.755,
-     0.31,
-     1.31
+     0.725,
+     0.326,
+     1.2765
     ],
     "wheel_fr": [
-     -0.755,
-     0.31,
-     1.31
+     -0.725,
+     0.326,
+     1.2765
     ],
     "wheel_rl": [
-     0.755,
-     0.31,
-     -1.31
+     0.73,
+     0.326,
+     -1.2765
     ],
     "wheel_rr": [
-     -0.755,
-     0.31,
-     -1.31
+     -0.73,
+     0.326,
+     -1.2765
     ]
    },
    "team": "Bernal Babies 2.0",
-   "car": "UNIDENTIFIED (generic 1990s sedan: Toyota Camry XV10 loft)",
+   "car": "Ford Mustang notchback (Fox body, 1979-86 face)",
    "brake_lamps": [
     [
      0.55,
-     0.6863,
-     -2.5152,
-     0.06
+     0.8,
+     -2.3455,
+     0.2
     ],
     [
      -0.55,
-     0.6863,
-     -2.5152,
-     0.06
+     0.8,
+     -2.3455,
+     0.2
     ]
    ],
-   "brake_lamps_fallback": true
+   "brake_lamps_fallback": false
   },
   {
    "number": "833",
@@ -14975,16 +15203,16 @@
    "number": "925",
    "id": "925",
    "file": "models/925.glb",
-   "tris": 8046,
-   "bytes": 505620,
+   "tris": 11478,
+   "bytes": 604420,
    "materials": 2,
-   "length_m": 3.875,
+   "length_m": 3.965,
    "width_m": 1.666,
    "height_m": 1.331,
    "bbox_m": [
-    3.965,
-    1.933,
-    1.331
+    4.029,
+    1.855,
+    1.343
    ],
    "wheelbase_m": 2.5,
    "track_front_m": 1.45,
@@ -15017,31 +15245,41 @@
    "car": "1990 Honda Civic EF 3-door hatchback",
    "brake_lamps": [
     [
-     0.52,
-     0.78,
-     -1.8206,
-     0.25
+     0.58,
+     0.71,
+     -1.8362,
+     0.21
     ],
     [
-     -0.52,
-     0.78,
-     -1.8199,
-     0.25
+     -0.58,
+     0.71,
+     -1.8356,
+     0.21
     ],
     [
-     0.12,
-     0.78,
-     -1.8229,
-     0.12
+     0.185,
+     0.71,
+     -1.8736,
+     0.18
     ],
     [
-     -0.12,
-     0.78,
-     -1.8229,
-     0.12
+     -0.185,
+     0.71,
+     -1.8743,
+     0.18
     ]
    ],
-   "brake_lamps_fallback": false
+   "brake_lamps_fallback": false,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 1.0080238700052417,
+    "source_tris": 999583,
+    "model_length": 4.004,
+    "model_width": 2.062,
+    "model_height": 1.333,
+    "tris": 5900,
+    "file": "tools/cars/kit/downloads/70_ef/model.glb"
+   }
   },
   {
    "number": "938",
