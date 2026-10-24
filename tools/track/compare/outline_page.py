@@ -60,6 +60,9 @@ def main():
     ap.add_argument('--title', default='Edges, round 9')
     ap.add_argument('--skip-render', action='store_true')
     ap.add_argument('--strokes'); ap.add_argument('--stroke-frames'); ap.add_argument('--mouths')
+    # round 14B (owner: "the white line is not very high contrast"): the capwin edge / zone style, passed through
+    ap.add_argument('--edge-color'); ap.add_argument('--edge-width'); ap.add_argument('--halo')
+    ap.add_argument('--zones-color'); ap.add_argument('--zones-from')
     ap.add_argument('--intro'); ap.add_argument('--extra'); ap.add_argument('--before-label', default='ccf00b4')
     a = ap.parse_args()
     cfg = trackcfg.load(a.track)
@@ -124,8 +127,10 @@ def main():
     for kind, s, half, mpp in items:
         name = f"{'w' if kind == 'lap' else 'close'}_s{int(round(s)):04d}.png"
         if not a.skip_render:
+            style = [x for k, v in (('--edge-color', a.edge_color), ('--edge-width', a.edge_width), ('--halo', a.halo),
+                                    ('--zones-color', a.zones_color), ('--zones-from', a.zones_from)) if v for x in (k, v)]
             subprocess.run([sys.executable, '-I', capwin, '--track', a.track, '--pkg', a.pkg, '--s', f'{s:.1f}', '--half', str(half),
-                            '--mpp', str(mpp), '--light', '--out', os.path.join(a.out, name)], check=True, capture_output=True)
+                            '--mpp', str(mpp), '--light', *style, '--out', os.path.join(a.out, name)], check=True, capture_output=True)
         k = int(round(s / sp)) % n; k0, k1 = int(round((s - half) / sp)), int(round((s + half) / sp))
         ks = np.arange(k0, k1 + 1) % n
         ov = overlay(name, os.path.join(a.out, name), s, half, mpp) if name[:-4] in strokes and a.stroke_frames else None
@@ -154,7 +159,8 @@ def main():
         f"<figure><div class=\"pair\"><img src=\"{e(r[4])}\" alt=\"s {r[1]:.0f}, the new fit\" loading=\"lazy\">"
         + (f"<img src=\"{e(r[10])}\" alt=\"s {r[1]:.0f}, the new fit with your strokes\" loading=\"lazy\">" if r[10] else '')
         + f"</div><figcaption><b>s {r[1]:.0f} m</b> "
-        f"({'close-up, ' if r[0] == 'close' else ''}{2 * r[2]:.0f} m across at {r[3]} m/px; stations {r[8]:.0f}-{r[9]:.0f} m): {e(r[5])}; "
+        + ("(second picture: your strokes as you drew them, thin bright red / green, over the haloed fit) " if r[10] else "")
+        + f"({'close-up, ' if r[0] == 'close' else ''}{2 * r[2]:.0f} m across at {r[3]} m/px; stations {r[8]:.0f}-{r[9]:.0f} m): {e(r[5])}; "
         f"width here {r[6]:.2f} m (before {r[11]:.2f} m), window median {r[7]:.2f} m (before {r[12]:.2f} m), range {r[13]:.2f}-{r[14]:.2f} m "
         f"(before {r[15]:.2f}-{r[16]:.2f} m)</figcaption></figure>" for r in rows)
     b = wr['bias'] if wr else None; ak = wr['at_kerb'] if wr else None
