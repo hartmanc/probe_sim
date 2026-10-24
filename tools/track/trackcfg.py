@@ -322,8 +322,6 @@ def remap_stations(cfg, n, length_m=None, C=None):
             lc['window'] = tuple(st(k) for k in lc['window'])
     elif c['centre'].get('local'):
         c['centre']['local']['window'] = tuple(st(k) for k in c['centre']['local']['window'])
-    if c['centre'].get('soft'):   # softer centre zones (Sonoma round 14B part 1b): (lo, hi, factor)
-        c['centre']['soft'] = [(st(lo), st(hi)) + tuple(rest) for lo, hi, *rest in c['centre']['soft']]
     if sp.get('refine'):   # local knot refinement zones (Sonoma round 14B part 1b): (lo, hi, knot stations)
         sp['refine'] = [(st(lo), st(hi)) + tuple(rest) for lo, hi, *rest in sp['refine']]
     for w in sp.get('owner_edges') or []:   # the owner's traced edge windows (Buttonwillow, 21 Oct 2026)

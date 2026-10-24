@@ -831,14 +831,8 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, pw, m
                 set_owner(cfgw, li)
                 hl3, hr3, frep = edges_spline.fit_periodic(Ccur, NL, hlp, hrp, tiles, features, sp_cfg, cc["mpp"],
                                                            {k: v for k, v in anchors.items() if v[0]}, hold=hold)
-                # centre.soft (round 14B part 1b): softer centre smoothing in zones overlapping this window (absent: None)
-                soft_ = None
-                for lo_s, hi_s, fac in (cfgw["centre"].get("soft") or []):
-                    if _overlaps((int(lo_s), int(hi_s)), tuple(lwin(cfgw, li)), n):
-                        soft_ = np.ones(n) if soft_ is None else soft_
-                        soft_[np.arange(int(lo_s), int(hi_s) + 1) % n] = float(fac)
                 fit2 = recentre.refit(Ccur, hlp, hrp, {"lat_left": hl3, "lat_right": -hr3}, [], [], None, None, pfa, pfb, 0,
-                                      cen["gps_margin"], cen["min_width"], merge=merge, width_cap=cen.get("width_cap", 16.0), soft=soft_)
+                                      cen["gps_margin"], cen["min_width"], merge=merge, width_cap=cen.get("width_cap", 16.0))
                 alpha = 1.0 if jt < 2 else 1.0 / jt
                 _, latc = B.project(fit2["C"], Ccur)
                 dm = alpha * hold["w"] * latc
@@ -870,6 +864,23 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, pw, m
             cfgw = trackcfg.remap_stations(cfg_loc, n, float(np.linalg.norm(np.roll(Ccur, -1, 0) - Ccur, axis=1).sum()), C=Ccur)
             _, dC = B.project(Ca, Ccur)
             log(f"local refit done after {jt + 1} refits: centre moved up to {np.abs(dC).max():.3f} m (station {int(np.argmax(np.abs(dC)))})")
+        if cfg_raw["spline"].get("owner_edges"):
+            # Sonoma round 14B part 1b: the fit gates' MEASUREMENT on the returned edges with the whole evidence. The last
+            # local refit's metrics held only its own window's owner lines (set_owner), so the capture rows inside the
+            # other owner windows were measured against his red there (the T7 road left read 50 %); and they were taken
+            # before the final re-stationing. Here one more fit_periodic pass with hold weight 0 everywhere (it returns
+            # the held edges exactly; its fit is discarded) measures the published edges on the published stations with
+            # every owner window in place: his reading replaces the capture rows where he drew, as in the single-window
+            # refit of part 1. The geometry is not touched (hl3 / hr3 stay as they are).
+            cfgm = trackcfg.remap_stations(cfg_loc, n, float(np.linalg.norm(np.roll(Ccur, -1, 0) - Ccur, axis=1).sum()), C=Ccur)
+            NLm = B.left_normals(Ccur)
+            am_, _, fm_ = build_anchors(cfgm, Ccur, NLm, hlp, hrp)
+            sp_cfg["_owner"] = owner_windows(cfg_raw, cfgm, n=n)
+            sp_cfg["_refine"] = []
+            _, _, frep = edges_spline.fit_periodic(Ccur, NLm, hlp, hrp, tiles, fm_, sp_cfg, cc["mpp"],
+                                                   {k: v for k, v in am_.items() if v[0]},
+                                                   hold={"w": np.zeros(n), "left": hl3, "right": hr3})
+            log("fit gates measured on the returned edges with every owner window (hold weight 0; geometry unchanged)")
     seg = np.linalg.norm(np.roll(Ccur, -1, 0) - Ccur, axis=1); L = float(seg.sum()); sp = L / n
     # -- gates of the fitted method (edge_gate.FITTED; a config may tighten them, never loosen)
     G = edge_gate.fitted_thresholds(cfg_raw["gate"])
@@ -893,36 +904,34 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, pw, m
                 log(f"     owner edge {w['side']} {w['lo']}-{w['hi']}: none drawn on this side (the detected edge stands)"); continue
             res = np.array([hw[k] - r[k] for k in ks_])
             a_st = np.abs(res); share_st = float(np.mean(a_st <= G["owner_tol"]))
-            # round 14B part 1b: the share and max measured GEOMETRICALLY: each fitted edge point's distance to his line
-            # (his readings, kerb shifts included, as one world polyline densified to 0.1 m), so the statistic does not
-            # move when the lap is re-stationed (station-based it read 92.3 / 89.8 % on T1 edges that had not moved)
+            # round 14B part 1b: the SHARE is measured geometrically: each fitted edge point's distance to his line (his
+            # readings, kerb shifts included, as one world polyline densified to 0.1 m, broken where his readings are more
+            # than 3 stations apart), so re-stationing the lap cannot move it (station-based it read 92.3 % on T1 in part 1
+            # and 89.8 % in 6784bcc on T1 edges that had not moved). Over every station of the window, his mouth segments
+            # included, as before. The max (and edge_gate.owner_station_gate's 0.40 m cap) stay station-based; the
+            # geometric max is printed beside them.
             sg_ = 1 if w["side"] == "left" else -1
             kk_ = np.array(sorted(r))
             Rw = Ccur[kk_] + sg_ * np.array([r[k] for k in kk_])[:, None] * NLf[kk_]
-            brk = np.flatnonzero(np.diff(kk_) > 3)
-            segs_ = np.split(np.arange(len(kk_)), brk + 1)
+            segs_ = np.split(np.arange(len(kk_)), np.flatnonzero(np.diff(kk_) > 3) + 1)
             tt_ = np.linspace(0, 1, 10, endpoint=False)[None, :, None]
-            dens = np.concatenate([(Rw[g_][:-1, None, :] + (Rw[g_][1:] - Rw[g_][:-1])[:, None, :] * tt_).reshape(-1, 2) if len(g_) > 1 else Rw[g_]
-                                   for g_ in segs_] + [Rw])
+            dens = np.concatenate([(Rw[g_][:-1, None, :] + (Rw[g_][1:] - Rw[g_][:-1])[:, None, :] * tt_).reshape(-1, 2)
+                                   for g_ in segs_ if len(g_) > 1] + [Rw])
             from scipy.spatial import cKDTree as _KD
             Fw = Ccur[np.array(ks_)] + sg_ * np.array([hw[k] for k in ks_])[:, None] * NLf[np.array(ks_)]
-            a_ = _KD(dens).query(Fw)[0]
-            share = float(np.mean(a_ <= G["owner_tol"]))
-            log(f"     owner edge {w['side']} {w['lo']}-{w['hi']}: station-based {share_st * 100:.1f} % within {G['owner_tol']} m, max {a_st.max():.3f} m; "
-                f"geometric (distance to his line) {share * 100:.1f} %, max {a_.max():.3f} m")
+            a_geo = _KD(dens).query(Fw)[0]
+            share = float(np.mean(a_geo <= G["owner_tol"]))
+            a_ = a_st
             OWNER_REPORT.append({"side": w["side"], "lo": w["lo"], "hi": w["hi"], "file": w["file"], "k": ks_, "owner": [r[k] for k in ks_],
-                                 "fit": [float(hw[k]) for k in ks_]})
+                                 "fit": [float(hw[k]) for k in ks_], "dist_geo": [round(float(v), 4) for v in a_geo]})
             if OREF is not None:
                 keep = np.array([not OREF["excl"][w["side"]][k] for k in ks_])
                 amax = float(a_[keep].max()) if keep.any() else 0.0
-                # round 14B part 1b: the share too is taken outside his mouth segments +-corner (the owner accepted T1's
-                # rounded pit-exit step as fitted; the spline turns a 4.4 m step there over ~15 stations); both printed
-                share_all = share
-                share = float(np.mean(a_[keep] <= G["owner_tol"])) if keep.any() else share
-                txt = (f" (share and max outside his {int((~keep).sum())} mouth-segment stations +-{edge_gate.OWNER_REF['corner']}; "
-                       f"with them {share_all * 100:.1f} % / {a_.max():.3f})")
+                gmax = float(a_geo[keep].max()) if keep.any() else 0.0
+                txt = (f" (max outside his {int((~keep).sum())} mouth-segment stations +-{edge_gate.OWNER_REF['corner']}; with them {a_.max():.3f}; "
+                       f"station-based share {share_st * 100:.1f} %; geometric max {gmax:.3f})")
             else:
-                amax, txt = float(a_.max()), ""
+                amax, txt = float(a_.max()), f" (station-based share {share_st * 100:.1f} %; geometric max {a_geo.max():.3f})"
             rep.check(f"owner edge {w['side']} {w['lo']}-{w['hi']}", share >= G["owner_within"] and amax <= G["owner_max"],
                       f"{len(ks_)} stations ({w['file']}): {share * 100:.1f} % within {G['owner_tol']} m of the owner's line (>= {G['owner_within'] * 100:.0f} %), "
                       f"|residual| p50 {np.median(a_):.3f} / p90 {np.percentile(a_, 90):.3f} / max {amax:.3f} m (<= {G['owner_max']}){txt}")
@@ -937,11 +946,12 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, pw, m
                 if not kk_:
                     continue
                 aw_ = np.abs(np.array([hw[k] - r[k] for k in kk_])); sh_ = float(np.mean(aw_ <= G["owner_tol"]))
+                gi_ = {k: i for i, k in enumerate(ks_)}; ag_ = a_geo[[gi_[k] for k in kk_]]
                 xm_ = np.array([bool(OREF["excl"][w["side"]][k]) for k in kk_]) if OREF is not None else np.zeros(len(kk_), bool)
                 sh2_ = float(np.mean(aw_[~xm_] <= G["owner_tol"])) if (~xm_).any() else float("nan")
                 log(f"     report owner edge {w['side']} window {os.path.basename(wf_)[:-5]} (not gated; the gate is the config window): "
                     f"{len(kk_)} stations {kk_[0]}-{kk_[-1]}: {sh_ * 100:.1f} % within {G['owner_tol']} m of his line, max {aw_.max():.3f} m; "
-                    f"outside his mouth segments +-{edge_gate.OWNER_REF['corner']} ({int((~xm_).sum())} stations) {sh2_ * 100:.1f} %")
+                    f"geometric {np.mean(ag_ <= G['owner_tol']) * 100:.1f} %, max {ag_.max():.3f} m; outside his mouth segments +-{edge_gate.OWNER_REF['corner']} ({int((~xm_).sum())} stations) {sh2_ * 100:.1f} %")
         json.dump(OWNER_REPORT, open(os.path.join(FIT_DUMP_DIR, "owner_edges_report.json"), "w"))
         if OREF is not None:
             om, of_ = edge_gate.owner_station_gate(hl3, hr3, OREF, cfg_raw["gate"], log=log)

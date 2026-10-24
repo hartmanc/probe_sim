@@ -104,8 +104,6 @@ CONFIG = dict(
                 # round 14B (owner, round-13 drive: his red on the T1-T2 outline windows): a second local window round
                 # T1 (config 114-383, his red 143-356 with the blend outside it), refitted after the first with
                 # everything outside it held; the first window's refit is exactly round 11's (centre.local list form)
-                # round 14B part 1b: at T9A the centre follows his corner (softer smoothing there; recentre.refit soft)
-                soft=[(3010, 3130, 0.01)],
                 local=[dict(window=(1643, 2091), blend=15,
                             why='round 11: the Carousel exit to T7 straights only (owner notes 64 / 69)'),
                        dict(window=(114, 383), blend=15,

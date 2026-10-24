@@ -288,3 +288,81 @@ the new fit, `_owner` overlays for the 13 drawn windows (T1's three and the ten)
 (`SurfaceSample.offCourse`), and the app's and the scoreboard's lap validity count a car on it as off
 (src/app/index.ts wheelOff, src/scoreboard/sim.ts allOff); vitest `offcourse.test.ts`. The course's white edge line runs
 along the fitted edge across its mouth (edge lines break only at kerbs).
+
+## Part 1b, second run (24 Oct 2026): local knot refinement; STOPPED, not published
+
+What was finished from the WIP (fdb6ab9), and what was dropped:
+- **Kept: `spline.refine`** (`edges_spline.REFINE`, a second layer of cubic B-splines at 3-station knots, only inside
+  [lo, hi] and only in the local refits whose window holds it; absent = the periodic spline exactly; test
+  `test_local_refinement_follows_a_tight_turn_and_is_inert_when_absent`). Zones (config stations): T7a exit 2240-2330,
+  T9A 3005-3135, T11 hairpin 3620-3745.
+- **Dropped: `centre.soft`** (softer centre smoothing at T9A). Its run (23:09 on 23 Oct, config 33f070ce, this branch's WIP)
+  bunched the left-edge stations at s 3087 to 0.07 m apart and spread the right ones to 2.0 m (the centre's radius
+  came down to the inside half-width), and world continuity read 0.12 / 0.17 m. Code, config and trackcfg remap removed;
+  recentre.py is back to 6784bcc.
+- **Measurement corrections (not loosenings; both numbers printed):** (1) the owner-edge share is geometric: each fitted
+  edge point's distance to his red (his readings with the kerb shifts, as one world polyline densified to 0.1 m, broken
+  at gaps > 3 stations), over every station of the config window, mouth segments included as before (the WIP had
+  taken it outside the mouths: reverted). The max and `owner_station_gate`'s 0.40 m cap stay station-based, with the
+  geometric max printed beside them. (2) The fit gates (observations, waviness, kink) are measured by one more
+  `fit_periodic` pass after the local refits, with hold weight 0 (it returns the held edges exactly, so the geometry
+  is not touched) and every owner window in place. Before this, the last local refit's metrics held only its own
+  window's owner lines, and were taken before the final re-stationing. So the capture rows inside the other owner
+  windows were scored against his red there (T7 road left 50 %). Only runs with `spline.owner_edges` and
+  `centre.local` reach this pass.
+
+Conventions kept from 6784bcc: red = the asphalt edge. Where a package kerb run lies beside his red, the course edge =
+his red + the kerb width (`kerb_inside`, 0.65 m), because his red is on the asphalt side of a kerb. Green = closed
+pavement. A stroke running more than 35 deg to the course is a line across, not an edge (`owner_edges.py --by-stroke`).
+T1 is accepted as fitted (the rounded pit-exit step; the paddock-mouth arc with its cone line). At w_s3000 / w_s3125
+his red is the course through T9A, and the paving straight on past the T9A entry is an ESCAPE ROAD ("no cones, just
+white lines; if you go off you get black flagged"), not a mouth: no exemption, no cone line.
+
+Stage 1 into `out/sonoma_r14b` (--write-on-fail, diagnosis only; 49 min; track.json sha256 3376e97393cc4046, lap
+4106.10 m, n 4108). Per config window (share geometric / station-based; max station-based / geometric, outside mouth
+segments):
+
+| window | left | right |
+|---|---|---|
+| T1 143-357 | **89.9 / 89.9 %**, max 0.366 / 0.363 (FAIL: share) | 96.8 %, 0.119 |
+| T2 exit 412-535 | none drawn | 100 %, 0.209 |
+| T7-T7a 2039-2379 | 98.8 / 98.5 %, 0.393 / 0.365 | 99.4 %, 0.272 / 0.269 |
+| T9 2668-2847 | 100 %, 0.129 | 100 %, 0.223 |
+| 9a / T9A 2883-3212 | 96.0 %, **0.910 / 0.809** at s 3047 (FAIL) | 97.2 %, **0.780 / 0.628** at s 3091 (FAIL) |
+| T10-T11 3297-3842 | 96.6 %, **0.784 / 0.501** at the hairpin outside (FAIL) | 100 %, 0.211 |
+
+Other gates: owner reference left 0.910 m (s 3047, 39 stations over 0.25) / right 0.780 m (s 3091, 11 over) FAIL; owner
+width 0.891 m (s 3091) FAIL; owner band left 0.308 m (s 3049, 2 stations) FAIL, right 0.257 ok; **world continuity left
+0.201 m (s 3047) / right 0.210 m (s 3079) FAIL** (<= 0.02); edge jumps 0.684 / 0.741 m FAIL; fit left observations 87.6 %
+FAIL (right 95.3 % ok); waviness, kink, coverage, gaps, edge gate, profile, cross slope, lap length, painted midpoint: ok.
+Compared with 6784bcc: T9A 1.81 / 2.30 -> 0.91 / 0.78 m, the T7a exit 0.62 -> 0.39 m, the hairpin outside 0.94 -> 0.78 m,
+but world continuity 0.093 / 0.079 -> 0.201 / 0.210 m.
+
+Stations over 0.25 m from his red: left 242-244 (T1), 2296-2298, 3038-3059 (T9A outside corner, up to 0.91), 3085-3087,
+3648-3654 and 3728-3733 (the hairpin's steps); right 2147, 3090-3098.
+
+**Why it stops here: a conflict between his red and the world-continuity gate.** `compare/owner_feasibility.py`
+(committed; `round14b/owner_feasibility.json`) fits the smoothest polyline at a uniform spacing that holds the gate's
+|third difference| <= 0.02 m to his red (kerb shifts included), with no data across his gaps. This is a lower bound
+for any station-indexed edge:
+- T9A left (outside of the right-hander, across the escape road's mouth): 0.19 m at 1 m spacing, but **2.00 m** at
+  the package's edge spacing there (p95 1.49 m: on the outside of a 22 m corner the edge's stations spread out).
+- T9A right (where his line comes back out of the escape road, s ~3091): 0.36 m at 1 m spacing, **2.84 m** at the
+  package's (p95 1.65 m).
+- T11 hairpin outside: **0.79 m at any spacing**. His red steps in 1.1 m at s ~3650 and out 1.5 m at s ~3730, where the
+  light band on the outside begins and ends. No package kerb lies there, so no `kerb_inside`. Both of his windows
+  (w_s3625, w_s3750) draw the same steps.
+- Everything else he drew can be followed within the gates (0.06-0.31 m). T1 left 0.93 m is his pit-exit step, a
+  declared mouth.
+Not done: no gate or test loosened; nothing published; part 2 not applied. For the owner / orchestrator: is the hairpin
+band a kerb (edge = his red + its width)? At T9A, which gives: the 0.40 m cap or the world-continuity limit (an
+evidence-cited local exemption would be a gate-design call, not taken here)?
+
+Regression: Laguna stage 1 (`out/laguna_r14b_repro`) reproduces the pipeline reference: heightfield.bin `cmp`-identical
+to `public/tracks/laguna_seca`, track.json sha256 d4e8634710813961, the one known `edge gate left` 0.105 m at 46. Sonoma
+outside the local windows: edges within 10.6 mm (left) / 8.2 mm (right) laterally of round 14A, centre within 2.4 mm
+p99 (the larger moves are in the windows' blend zones). Python tests: 59 passed (with requests, rasterio, pyproj,
+pandas, matplotlib added: without them `test_ground_lines` cannot import build_scenery).
+
+Outline page re-rendered on this fit: 36 windows red / green plus 13 `_owner` overlays (`edges_r14b/`, PNGs local);
+extra.html carries the three places still off his red.
