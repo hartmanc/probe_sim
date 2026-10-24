@@ -597,3 +597,26 @@ outside apron a kerb? Is the left s 735 bare head right? Are the T9A junction-co
 Tests on this tree (public still round 14A): full vitest 466 passed + 1 expected fail. Python 65 passed. Laguna stage 1
 reproduces (heightfield cmp-identical, track.json d4e8634710813961), and Laguna's ghosts.json reproduces byte for byte
 with the new line code.
+
+## Part 2, published (24 Oct 2026, the coordinator's decision): rev 6b766e08d6, lap 4105.328 m
+
+Published on the measured chicane margin (`ghosts.margin_zones`, right 1.5 m, s ~3000-3120, onboard t100). **The kerb
+traversal test passes at T9A at 14.0 deg (limit 15) with the probe car still departing** at the right-hander's exit and
+striking the infield bank ~40 m off. This is accepted because departing is the test's behaviour at every tight corner on
+three tracks (the departure list above), and round 14A departed at T9A on the line itself with a worse reserve (0.615
+against 0.805 now; the reserve table above). The T9A case differs only in what the car strikes 40 m off. The criterion is
+unchanged. Still open as the owner's options: a lap-wide line margin of 2.0, and a speed reserve in the AI's short-corner
+model. The reserve table goes to the AI stage as a finding.
+
+- `--publish` from the passing records. public/tracks/sonoma is byte-identical to out/sonoma_r14b (all 7 files, cmp).
+  `src/scoreboard/config.ts` TRACKS.sonoma: length_m 4105.328, rev 6b766e08d6. No changelog entry: by its rule a version
+  is per publish to lemons-sim.app (merge to main), not per package build.
+- Stage-3 gate CLI on public/tracks/sonoma: every gate ok (containment 0 escapes; pit connectivity, signs; wall ends
+  1 known exposure; tyre facings / faces 0; wall tops; joins; run gaps; pavement joins 0.0056 m / 1.63 deg; smoothness
+  0.0099 m; kerbs on surface 0.71 deg; ground marks 0.008 m).
+- Full vitest: 465 passed + 1 expected fail, 0 failures. The suite is one test smaller than round 14A's 466 + 1 because
+  tyrewall.test.ts runs one case per tyre run, and "run 23", the removed T7-approach tyre run, is gone. Python 65 passed.
+- Stills (local, reference only): `compare/sonoma/round14b/stills/` `*_before.jpg` (round 14A) and `*_after.jpg` for
+  hood_150..300, t1_220_right, t9a_3000..3120, hairpin_3600..3800, t10_grass_along_outer_wall, strip_continuation_to_T7,
+  plus t9a_escape_road_left (the escape road now paved beyond the white edge line), t7_approach_wall_left (the tyre stack
+  in front of the wall gone) and paddock_lot_left_2178.
