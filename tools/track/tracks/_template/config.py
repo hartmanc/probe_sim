@@ -99,7 +99,7 @@ CONFIG = dict(
         building_overrides=[],                   # newer evidence over the lidar, logged (SKILL 3.7)
         building_evidence=[],                    # the 2026 source of each building, or its drop (SKILL 3.7)
         season_tint=None,                        # the footage's season on the published ortho (SKILL 3.2)
-        gates=dict(allowed=[], paddock=[]),      # allowed runoff with the evidence that shows it open (SKILL 3.12)
+        gates=dict(allowed=[], paddock=[]),      # allowed runoff with the evidence that shows it open (SKILL 3.12); cones_exempt=[{src, why}]: pit separation lines on shared pavement
     ),
     # ---------------------------------------------------------------- pit lane, first-class (SKILL 3.5)
     pit_lane=dict(lane=dict(source='osm'), walls=[], boxes=None, buildings=[], furniture=[]),

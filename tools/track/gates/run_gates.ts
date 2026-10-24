@@ -1,11 +1,12 @@
 // CLI of the stage-3 scenery gates (sceneryGates.ts): npx tsx tools/track/gates/run_gates.ts <package dir> [gate config json]
-// Prints the three reports and a JSON summary line; exits 1 when a gate fails.
+// Gates: containment, pit connectivity, sign placement, wall ends, tyre facings, cones off the surface (round 11).
+// Prints the reports and a JSON summary line; exits 1 when a gate fails.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { containment, escapeRuns, exposedEnds, pitConnectivity, sideBySide, signPlacement, type GateConfig } from './sceneryGates';
+import { conesOffSurface, containment, escapeRuns, exposedEnds, pitConnectivity, sideBySide, signPlacement, type GateConfig } from './sceneryGates';
 
 const dir = process.argv[2];
-const cfg: GateConfig & { pit_box_s?: number } = process.argv[3] ? JSON.parse(readFileSync(process.argv[3], 'utf8')) : {};
+const cfg: GateConfig & { pit_box_s?: number; cone_tol?: number; cones_exempt?: { src: string; why: string }[] } = process.argv[3] ? JSON.parse(readFileSync(process.argv[3], 'utf8')) : {};
 const track = JSON.parse(readFileSync(join(dir, 'track.json'), 'utf8'));
 const sc = JSON.parse(readFileSync(join(dir, 'scenery.json'), 'utf8'));
 let fail = false;
@@ -43,6 +44,12 @@ console.log(`[${sb.length ? 'FAIL' : 'ok'}] tyre facings: ${sb.length} tyre runs
 for (const x of sb) console.log(`       side by side s ${x.s} (${x.off} m off): ${x.tyre} | ${x.wall}`);
 if (sb.length) fail = true;
 
+const co = conesOffSurface(track, sc, cfg.cone_tol ?? 0.15, 0.5, cfg.cones_exempt ?? []);
+console.log(`[${co.bad.length ? 'FAIL' : 'ok'}] cones off the surface: ${co.cones} cones on ${co.lines} lines (spots as the app places them), `
+  + `${co.bad.length} more than ${co.tol} m inside a course edge (deepest ${co.worst.toFixed(2)} m; ${co.onLane} on a pit lane's separation line, not gated)`);
+for (const b of co.bad.slice(0, 30)) console.log(`       cone on the surface: line ${b.line} s ${b.s} ${b.side}, ${b.depth.toFixed(2)} m inside: ${b.src}`);
+if (co.bad.length) fail = true;
+
 console.log('GATES_JSON ' + JSON.stringify({ containment: { escapes: c.escapes.length, runs, allowed: c.allowed.length, junctions: c.junctions },
-  pit: p, signs: g, ends: e, facings: sb, fail }));
+  pit: p, signs: g, ends: e, facings: sb, cones: co, fail }));
 process.exit(fail ? 1 : 0);

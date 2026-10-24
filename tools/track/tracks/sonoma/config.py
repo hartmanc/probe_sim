@@ -1043,7 +1043,11 @@ CONFIG = dict(
         bridge_stairs=True,
         # containment gate: paved surfaces the cars can really reach across open ground (no barrier in the captures or the
         # onboard), each with its evidence; everything else must be behind a barrier or a cone line
-        gates=dict(allowed=[
+        # cones-off-the-surface gate (round 11 of Buttonwillow, 23 Oct 2026): the pit-in cones stand ON the measured double
+        # white line between the track and the pit-in lane where the two share the pavement (owner notes 15-16), so that
+        # line is a pit lane's separation line, not a cone line on the racing surface
+        gates=dict(cones_exempt=[dict(src='pit-in double white line', why="the pit-in separation line's cones on the measured double white line (owner notes 15-16; Street View owner_15, onboard 1:58)")],
+                   allowed=[
             dict(target='pit lane', side='left', a=(38.1619904, -122.4554842), b=(38.1620676, -122.4556893),
                  why='the pit-wall nose at T1 (c20_s1815): beyond it the pit-out lane runs beside the track behind the painted blend line and its cones (pit_exit_cones) to the merge'),
             dict(target='the Chute (NASCAR short course, T4 to T7)', side='left', a=(38.1639396, -122.4634002), b=(38.1644795, -122.4623582),

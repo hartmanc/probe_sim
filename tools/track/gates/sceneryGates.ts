@@ -20,8 +20,8 @@ export interface SceneryLike {
   barriers?: { kind: string; pts: V3[]; src?: string }[];
   pit_lane?: { parts: PartLike[] } | null;
   paved_zones?: { parts: PartLike[] } | null;
-  pit_exit_cones?: { pts: V3[] } | null;
-  cone_lines?: { pts: V3[]; src?: string }[];
+  pit_exit_cones?: { pts: V3[]; spacing_m?: number; src?: string } | null;
+  cone_lines?: { pts: V3[]; src?: string; spacing_m?: number }[];
   landmarks?: { kind: string; text?: string; x: number; y: number }[];
 }
 export interface AllowedRunoff { target: string; side?: 'left' | 'right'; s0?: number; s1?: number; why: string }
@@ -517,4 +517,62 @@ export function sideBySide(t: TrackLike, sc: SceneryLike, opts: { facing?: numbe
     }
   }
   return out;
+}
+
+// ------------------------------------------------------------------ cones off the surface (round 11, 23 Oct 2026)
+/** The cone spots of one line exactly as the app places them (src/app/scenery.ts buildPitExitCones): one every
+ *  `spacing` m along the polyline, the remainder carried over each vertex, the first at the line's start. */
+export function coneSpots(pts: ArrayLike<ArrayLike<number>>, spacing?: number): V2[] {
+  const out: V2[] = [];
+  const step = spacing || 16;
+  let carry = 0;
+  for (let k = 0; k + 1 < pts.length; k++) {
+    const a = pts[k], b = pts[k + 1], L = Math.hypot(b[0] - a[0], b[1] - a[1]);
+    for (let d = carry; d < L; d += step) { const t = d / L; out.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]); }
+    carry = ((carry - L) % step + step) % step;
+  }
+  return out;
+}
+
+export interface ConeOnSurface { line: number; src: string; s: number; side: 'left' | 'right'; depth: number }
+export interface ConesReport { lines: number; cones: number; tol: number; bad: ConeOnSurface[]; worst: number; onLane: number }
+
+/** CONES OFF THE SURFACE (Buttonwillow round 11; judge r10: the Atlantic mouth cones stood up to 1.24 m inside the right
+ *  edge, on the racing surface). Every cone of every line (cone_lines and pit_exit_cones, spots as the app places them)
+ *  that stands inside the course polygon (the track's station quads) more than `tol` m (0.15) from the nearer edge
+ *  polyline fails. `depth` is that distance (m inside the edge); `worst` the largest over all cones (0 when none is
+ *  inside). One entry per offending cone.
+ *  Not gated (counted in `onLane`): the cones of a pit lane's separation line where the lane and the track share the
+ *  pavement (SKILL 3.5: pit-in / pit-out cones stand ON the measured painted blend line): the pit_exit_cones line, any
+ *  cone on the pit-lane paving (inside a pit_lane part or within `laneReach` m, 0.5, of its outline), and the cone
+ *  lines the track's gate config names in `exempt` (a substring of the line's src with the reason; Sonoma's pit-in
+ *  double white line). */
+export function conesOffSurface(t: TrackLike, sc: SceneryLike, tol = 0.15, laneReach = 0.5, exempt: { src: string; why: string }[] = []): ConesReport {
+  const proj = makeProjector(t);
+  const n = t.n, W = 6;
+  const lines = [...(sc.pit_exit_cones?.pts?.length ? [{ ...sc.pit_exit_cones, src: sc.pit_exit_cones.src ?? 'pit-exit cones', pit: true }] : []),
+    ...(sc.cone_lines ?? []).map((c) => ({ ...c, pit: exempt.some((e) => (c.src ?? '').includes(e.src)) }))];
+  const rep: ConesReport = { lines: lines.length, cones: 0, tol, bad: [], worst: 0, onLane: 0 };
+  const lane = (sc.pit_lane?.parts ?? []).map((q) => partPolygon(q));
+  const L2 = (p: V3): V2 => [p[0], p[1]];
+  lines.forEach((cl, li) => {
+    for (const p of coneSpots(cl.pts, cl.spacing_m)) {
+      rep.cones++;
+      const pr = proj(p, 60);
+      if (!pr) continue;
+      let inside = false, dl = Infinity, dr = Infinity;
+      for (let k = -W; k < W; k++) {
+        const a = (pr.i + k + n) % n, b = (a + 1) % n;
+        if (!inside && inPoly(p, [L2(t.left[a]), L2(t.left[b]), L2(t.right[b]), L2(t.right[a])])) inside = true;
+        dl = Math.min(dl, segDist(p, L2(t.left[a]), L2(t.left[b])));
+        dr = Math.min(dr, segDist(p, L2(t.right[a]), L2(t.right[b])));
+      }
+      if (!inside) continue;
+      if (cl.pit || lane.some((q) => inPoly(p, q) || q.some((a, k) => segDist(p, a, q[(k + 1) % q.length]) <= laneReach))) { rep.onLane++; continue; }
+      const depth = Math.min(dl, dr);
+      rep.worst = Math.max(rep.worst, depth);
+      if (depth > tol) rep.bad.push({ line: li, src: (cl.src ?? '').slice(0, 90), s: Math.round(pr.i * t.spacing_m * 10) / 10, side: dl < dr ? 'left' : 'right', depth: Math.round(depth * 100) / 100 });
+    }
+  });
+  return rep;
 }
