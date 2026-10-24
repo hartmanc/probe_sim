@@ -113,7 +113,9 @@ function ownField(): void {
   const cls = JSON.parse(readFileSync(resolve(DATA, `sessions_${SESSION}_classification.json`), 'utf8'));
   const lagunaNumbers = new Set(src.cars.map((c) => c.number));
   const sameCar = new Set(match.cars.filter((m: any) => m.status === 'same' && m[numKey] === m.laguna_number).map((m: any) => String(m.laguna_number)));
-  const idFor = (n: string) => (lagunaNumbers.has(n) && !sameCar.has(n) ? `${n}_${TRACK === 'buttonwillow' ? 'bw' : TRACK}` : n);
+  // the event's id suffix (Buttonwillow "_bw", Sonoma "_sp" as tools/race/data/sonoma/ids.json); another track: its id
+  const SUFFIX = ({ buttonwillow: 'bw', sonoma: 'sp' } as Record<string, string>)[TRACK] ?? TRACK;
+  const idFor = (n: string) => (lagunaNumbers.has(n) && !sameCar.has(n) ? `${n}_${SUFFIX}` : n);
   // the track's own identity.json (TRACKS[id].identity), when written, is the authority on ids: its row for a number
   // gives the id (Buttonwillow #670 is a different car from Laguna's #670 though the team matches: "670_bw") and the
   // model (`model_id`, else `laguna_number` when the car was renumbered: #6 Tinyvette = Laguna #8 -> model_id "8")
@@ -125,7 +127,7 @@ function ownField(): void {
   const keepScales = prev?.ai_version === AI_VERSION;
   const prevBy = new Map((prev?.cars ?? []).map((c) => [c.id ?? c.number, c]));
   const out: PaceCar[] = [];
-  const noLaps: string[] = [];
+  const noLaps: string[] = [], dropped: string[] = [];
   for (const r of cls.rows) {
     const number = String(r.startNumber);
     const j = byNr.get(number);
@@ -133,6 +135,9 @@ function ownField(): void {
     // an entrant with no timed lap in the session (did not start) has no pace of its own: left out, named in `source`
     if (!j.laps.length || !(r.numberOfLaps > 0)) { noLaps.push(number); continue; }
     const row = identBy.get(number);
+    // an entrant the track's own identity.json leaves out (the owner dropped it: Sonoma d08, 23 Oct 2026, #122 / #68 /
+    // #55 / #299 never found, no placeholder cars in the field) is not raced; the player's reference row is kept
+    if (identRows.length && !row && number !== PLAYER) { dropped.push(number); continue; }
     const id = row?.id != null ? String(row.id) : idFor(number);
     if (id !== idFor(number)) fromIdent.push(`#${number} ${id} (match rule: ${idFor(number)})`);
     const lagN = row?.laguna_number != null ? String(row.laguna_number) : null;
@@ -153,21 +158,39 @@ function ownField(): void {
       stints: pc.stints,
     });
   }
+  // the player's car did not race this event (Sonoma, March 2026): its reference row from the previous file is kept
+  // (marked in `targetSource`) so self-play's AI-driven player car keeps a calibrated pace; never an AI car
+  let playerKept = false;
+  if (!out.some((c) => c.number === PLAYER)) {
+    const pp = prev?.cars.find((c) => c.player && c.number === PLAYER);
+    if (pp) {
+      const { resolved: _r, ...rest } = pp as PaceCar & { resolved?: unknown };
+      out.push({ ...rest, grid: out.length + 1, targetSource: (pp as any).targetSource?.startsWith('KEPT') ? (pp as any).targetSource
+        : `KEPT from the previous ${TRACK} pace file: #${PLAYER} did not race MyLaps session ${SESSION}; ${(pp as any).targetSource ?? 'its own row'}` } as PaceCar);
+      playerKept = true;
+    }
+  }
   out.sort((a, b) => a.grid - b.grid);
-  const renamed = out.filter((c) => c.id !== c.number).map((c) => c.id!);
+  const renamed = out.filter((c) => c.id != null && c.id !== c.number).map((c) => c.id!);
   const label = arg('label') ?? TRACK;
   const ai = out.filter((c) => !c.player);
   const file: PaceJson = {
     ai_version: AI_VERSION,
-    source: arg('source') ?? `MyLaps session ${SESSION} (${label}): ${out.length} of its ${cls.rows.length} entrants from their own laps (${ai.length} AI cars + the player's `
-      + `#${PLAYER} as a reference row; ${noLaps.length ? `left out with no lap in the session: ${noLaps.map((n) => '#' + n).join(', ')}` : 'none left out'}), `
+    source: arg('source') ?? `MyLaps session ${SESSION} (${label}): ${out.length - (playerKept ? 1 : 0)} of its ${cls.rows.length} entrants from their own laps (${ai.length} AI cars + the player's `
+      + `#${PLAYER} as a reference row${playerKept ? ' kept from the previous file (it did not race this event)' : ''}; ${noLaps.length ? `left out with no lap in the session: ${noLaps.map((n) => '#' + n).join(', ')}` : 'none left out'}`
+      + `${dropped.length ? `; left out with no row in ${TRACKS[TRACK].identity} (dropped by the owner): ${dropped.map((n) => '#' + n).join(', ')}` : ''}), `
       + `tools/race/pace.ts rules (tools/race/pace_rules.ts); ids from ${identRows.length ? TRACKS[TRACK].identity : 'the match rule'}: numbers except ${renamed.length} of a different `
       + `car at Laguna: ${renamed.join(', ')}; tools/race/pace_track.ts --own`,
-    notes: `Ids: a number that is a different car at Laguna gets "<n>_bw" (${dirname(matchPath).replace(ROOT + '/', '')}/match_laguna.json not 'same'`
+    notes: `Ids: a number that is a different car at Laguna gets "<n>_${SUFFIX}" (${dirname(matchPath).replace(ROOT + '/', '')}/match_laguna.json not 'same'`
       + `${fromIdent.length ? `, overridden by ${TRACKS[TRACK].identity}: ${fromIdent.join(', ')}` : ''}). `
       + (noLaps.length ? `Left out: ${noLaps.map((n) => `#${n}${identBy.get(n)?.id && identBy.get(n).id !== n ? ` (${identBy.get(n).id})` : ''}`).join(', ')}, entrants with no lap in the session `
-        + `(classified ${noLaps.map((n) => cls.rows.find((r: any) => String(r.startNumber) === n).position).join(', ')} with 0 laps): with no clean laps there is no pace or stint to draw, `
-        + `the rule of tools/race/pace.ts (a car's pace is its own clean laps) has nothing to build them from. Their identity rows stay in identity.json.` : 'No entrant left out.'),
+        + `(classified ${noLaps.map((n) => cls.rows.find((r: any) => String(r.startNumber) === n).position).join(', ')} with 0 laps${(() => {
+        const odd = noLaps.filter((n) => cls.rows.find((r: any) => String(r.startNumber) === n).numberOfLaps > 0);
+        return odd.length ? `; ${odd.map((n) => `#${n} is classified with ${cls.rows.find((r: any) => String(r.startNumber) === n).numberOfLaps} laps but its lap file has none`).join(', ')}` : '';
+      })()}): with no clean laps there is no pace or stint to draw, `
+        + `the rule of tools/race/pace.ts (a car's pace is its own clean laps) has nothing to build them from. Their identity rows stay in identity.json.` : 'No entrant left out.')
+      + (dropped.length ? ` Also left out: ${dropped.map((n) => '#' + n).join(', ')}, entrants with no row in ${TRACKS[TRACK].identity} (dropped by the owner: no placeholder cars in the field).` : '')
+      + (playerKept ? ` #${PLAYER} did not race this event: its reference row (player: true, never an AI car) is kept from the previous file.` : ''),
     track: TRACK,
     cars: out,
   };
@@ -177,7 +200,7 @@ function ownField(): void {
   console.log(`${out.length} cars (${ai.length} AI), ${ai.reduce((a, c) => a + (c.stints?.length ?? 0), 0)} AI stints; ${noStint.length} AI cars without a stint `
     + `(car-level pace): ${noStint.map((c) => `#${c.number} (${c.greenLaps} green laps)`).join(', ') || 'none'}`);
   if (fromIdent.length) console.log(`ids from ${TRACKS[TRACK].identity}: ${fromIdent.join(', ')}`);
-  console.log(`renamed ids: ${renamed.join(', ')}; left out (no laps): ${noLaps.join(', ') || 'none'}`);
+  console.log(`renamed ids: ${renamed.join(', ')}; left out (no laps): ${noLaps.join(', ') || 'none'}; left out (no identity row): ${dropped.join(', ') || 'none'}${playerKept ? `; #${PLAYER} reference row kept from the previous file` : ''}`);
   console.log(`wrote ${pacePath(TRACK)}`);
 }
 
