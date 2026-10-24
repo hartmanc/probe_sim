@@ -98,11 +98,15 @@ export const TRACKS: Readonly<Record<string, TrackInfo>> = {
   // stage 1 + 2 only (20 Oct 2026): geometry and racing line, no scenery yet (the 1.10 review comes first); rev over the
   // files the package has. The pace file is Buttonwillow's own field (22 Oct 2026: tools/race/pace_track.ts --own, the
   // 100 cars of the Button Turrible 2026 race that ran a lap, each with its own stints; ids "<n>_bw" where the number
-  // is a different Laguna car's). No AI keys until stage 5. Package: round 10 (rev 7acf260f50, 4699.187 m).
+  // is a different Laguna car's). Package: round 10 (rev 7acf260f50, 4699.187 m).
   buttonwillow: { dir: 'tracks/buttonwillow/', name: 'Buttonwillow Raceway Park', short: 'Buttonwillow', length_m: 4699.187, pace: 'cars/field/buttonwillow/pace.json',
     identity: 'cars/field/buttonwillow/identity.json', rev: '7acf260f50',
     // on the front straight, ~115 m before the line (s 4580; the last corner T11 is at 4377)
-    start: { s_m: 4580, speed: ROLLING_START_SPEED } },
+    start: { s_m: 4580, speed: ROLLING_START_SPEED },
+    // 24 Oct 2026, 100 cars, 4 laps, seeds 1-3 (tools/race/AI_READINESS.md): AI-AI contacts 0.058 -> 0.020 per car-lap,
+    // four wheels off 0.185 -> 0.033 (shiftGrip: off-road rejoins and grip slides; laneMargin 0.7: inside passes into the
+    // T3 / T4 pinch; followScale 1.4); race time 771 -> 768 s mean
+    ai: { followScale: 1.4, laneMargin: 0.7, shiftGrip: 1 } },
 };
 /** The track when none is chosen (URL ?track=, Start menu). */
 export const DEFAULT_TRACK = 'laguna_seca';

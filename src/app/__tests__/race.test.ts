@@ -276,6 +276,7 @@ describe('per-track AI race parameters (TRACKS[id].ai → RaceConfig)', () => {
   it('Sonoma carries its headway, pass-lane margin and grip-capped lane changes; Laguna the defaults', () => {
     expect(raceAiConfig('sonoma')).toEqual({ followScale: 1.4, laneMargin: 0.85, shiftGrip: 1 });
     expect(raceAiConfig('laguna_seca')).toEqual({ followScale: 1, laneMargin: 1, shiftGrip: 0 });
+    expect(raceAiConfig('buttonwillow')).toEqual({ followScale: 1.4, laneMargin: 0.7, shiftGrip: 1 });
   });
 });
 
