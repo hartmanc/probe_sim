@@ -89,7 +89,7 @@ export const TRACKS: Readonly<Record<string, TrackInfo>> = {
   // files the package has. The pace file is the uncalibrated per-track build of tools/race/pace_track.ts (7 Laguna cars
   // from their own Button Turrible 2026 laps, the rest placeholders), there only because the registry needs one: no AI
   // keys and no calibration until stage 5.
-  buttonwillow: { dir: 'tracks/buttonwillow/', name: 'Buttonwillow Raceway Park', short: 'Buttonwillow', length_m: 4699.187, pace: 'cars/field/buttonwillow/pace.json', rev: '7acf260f50',
+  buttonwillow: { dir: 'tracks/buttonwillow/', name: 'Buttonwillow Raceway Park', short: 'Buttonwillow', length_m: 4699.187, pace: 'cars/field/buttonwillow/pace.json', rev: '69e80ace38',
     // on the front straight, ~115 m before the line (s 4580; the last corner T11 is at 4377)
     start: { s_m: 4580, speed: ROLLING_START_SPEED } },
 };
