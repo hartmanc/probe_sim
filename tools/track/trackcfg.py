@@ -66,7 +66,10 @@ Geometry (Stage 1)
           over [lo, hi] his red replaces the capture readings where he drew and anchors the fit (edges_spline.OWNER_W);
           the file's content enters the geometry hash; local=True: only in the local refit (centre.local) whose window
           it overlaps. owner_mouths: a compare/owner_mouths.py file whose 'red across' segments the owner-reference gates
-          leave out (+-12 stations; edge_gate.OWNER_REF, Buttonwillow round 10; enters the geometry hash)
+          leave out (+-12 stations; edge_gate.OWNER_REF, Buttonwillow round 10; enters the geometry hash).
+          refine [(lo, hi, knot)]: a second layer of cubic B-splines at `knot` stations inside [lo, hi] (Sonoma round 14B part 1b:
+          where his red turns tighter than 6-station knots can follow); used only in the local refits whose window it
+          overlaps; absent = the periodic spline alone
   features [(side, lo, hi, 'keep' | 'asphalt_end' | 'warm_end' | 'kerb' | 'kerb_band', why[, {local | replaced_by_local}])]   keep: the prior is held (legacy reproduction
                                              only; the fitted method ignores it); asphalt_end: where the dark asphalt
                                              ends; kerb: red-band (kerb outer limit) candidates only; warm_end: where
@@ -321,9 +324,6 @@ def remap_stations(cfg, n, length_m=None, C=None):
         sp['mask'] = [(a, st(lo), st(hi)) + tuple(rest) for a, lo, hi, *rest in sp['mask']]
     if sp.get('kerb_search'):
         sp['kerb_search'] = [(a, st(lo), st(hi)) + tuple(rest) for a, lo, hi, *rest in sp['kerb_search']]
-    for w in sp.get('owner_edges') or []:   # the owner's traced edge windows (Buttonwillow, 21 Oct 2026)
-        w['lo'], w['hi'] = st(w['lo']), st(w['hi'])
-        w['kerb_inside'] = [(a, st(lo), st(hi)) + tuple(rest) for a, lo, hi, *rest in w.get('kerb_inside', [])]
     if sp.get('width_model'):   # the width model's junction ranges (Buttonwillow round 9, 22 Oct 2026)
         sp['width_model']['junctions'] = [(a, st(lo), st(hi)) + tuple(rest) for a, lo, hi, *rest in sp['width_model'].get('junctions', [])]
     if sp.get('runs'):
@@ -335,6 +335,20 @@ def remap_stations(cfg, n, length_m=None, C=None):
             lc['window'] = tuple(st(k) for k in lc['window'])
     elif c['centre'].get('local'):
         c['centre']['local']['window'] = tuple(st(k) for k in c['centre']['local']['window'])
+    if sp.get('refine'):   # local knot refinement zones (Sonoma round 14B part 1b): (lo, hi, knot stations)
+        # sub-ranges (6th element) are world points (ENU, on the centre) and resolved on the built centre by the builder
+        sp['refine'] = [(st(lo), st(hi)) + tuple(rest) for lo, hi, *rest in sp['refine']]
+    for w in sp.get('owner_edges') or []:   # the owner's traced edge windows (Buttonwillow, 21 Oct 2026)
+        w['lo'], w['hi'] = st(w['lo']), st(w['hi'])
+        # a kerb run may be given by two world points (ENU, on the centre at the run's ends; Sonoma round 14B part 1b: at T9A the
+        # config stations map badly onto a centre that moved 3 m); resolved as the nearest stations of C
+        def _st_or_xy(v):
+            if isinstance(v, (tuple, list)):
+                import numpy as np
+                from scipy.spatial import cKDTree
+                return int(cKDTree(np.asarray(C, float)[:, :2]).query(np.asarray(v, float))[1]) if C is not None else None
+            return st(v)
+        w['kerb_inside'] = [(a, _st_or_xy(lo), _st_or_xy(hi)) + tuple(rest) for a, lo, hi, *rest in w.get('kerb_inside', [])]
     g = c['gate']
     g['exempt'] = [(a, st(lo), st(hi)) + tuple(rest) for a, lo, hi, *rest in g.get('exempt', [])]
     g['wall_gaps'] = [(a, b, st(lo), st(hi)) for a, b, lo, hi in g.get('wall_gaps', [])]

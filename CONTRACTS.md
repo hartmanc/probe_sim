@@ -334,7 +334,7 @@ Sketchfab downloads (`kit/sketchfab_fetch.py`) read the token from `.env.local` 
 
 ```ts
 export interface SurfaceSample { z: number; nx: number; ny: number; nz: number; onTrack: boolean; mu: number;
-  paved?: boolean; dirt?: number; muPaved?: number }                         // §4d
+  paved?: boolean; offCourse?: boolean; dirt?: number; muPaved?: number }    // §4d
 export interface Surface { sample(x: number, y: number): SurfaceSample }   // ground under world (x, y)
 
 export interface DriverInput {
@@ -416,6 +416,9 @@ with open differentials. `'awd'` is an open centre diff with a fixed torque spli
 - `SurfaceSample` gains optional `dirt` (0 on pavement, smoothstep to 1 over the first `SURFACE_GRIP_BLEND_M` = 1.0 m
   past the nearest paved edge; track, pit lane and paved runoff are pavement) and `muPaved` (= `muOnTrack`).
   `mu = muOnTrack + dirt·(muOffTrack − muOnTrack)`, continuous at the edge. Surfaces without `dirt` count as pavement.
+- `SurfaceSample.offCourse` (round 14B): true on a paved part the track package marks `off_course` (Sonoma's T9A escape
+  road): pavement for grip, but off the course for lap validity, like dirt (`wheelOff` in the app, `allOff` in the
+  scoreboard). Absent / false everywhere else.
 - `createTrackSurface` options: `{ far, pitLane, muOnTrack (1.0), muOffTrack (OFF_PAVEMENT_MU = 0.72, was 0.6),
   gripBlend (1.0 m), roughness (DIRT_ROUGHNESS_M = 0.012 m, 0 disables), edgeBlend (SHOULDER_WIDTH_M = 5 m) }`.
   Exported constants: `OFF_PAVEMENT_MU`, `SURFACE_GRIP_BLEND_M`, `DIRT_ROUGHNESS_M`, `SHOULDER_WIDTH_M`.

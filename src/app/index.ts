@@ -293,7 +293,11 @@ function createSim(assets: Assets) {
   // station, so sampling the sim's surface from the HUD would change the physics (docs/scoreboard.md §3.1)
   const surface: Surface = physics.createTrackSurface(track, heightfield, { far, pitLane, sausages: assets.scenery?.json.sausages ?? null, kerbs: assets.scenery?.json.kerbs ?? null, terrainOverride: assets.scenery?.json.terrain_override ?? null });
   /** A wheel is off track only if it is on neither the track nor the paved pit lane. */
-  const wheelOff = (w: { onTrack: boolean; pos: [number, number, number] }) => !w.onTrack && !surface.sample(w.pos[0], w.pos[1]).paved;
+  const wheelOff = (w: { onTrack: boolean; pos: [number, number, number] }) => {
+    if (w.onTrack) return false;
+    const smp = surface.sample(w.pos[0], w.pos[1]);
+    return !smp.paved || !!smp.offCourse;   // an off_course part (round 14B: an escape road) is paved but off
+  };
   const world: World = buildWorld(track, heightfield, assets.ortho, Math.min(quality.maxAnisotropy, renderer.capabilities.getMaxAnisotropy()), assets.scenery,
     (x, y) => surface.sample(x, y).z, { pbr: quality.tier !== 'phone', line: assets.ghosts?.line ? { s_grid_m: assets.ghosts.s_grid_m, offset_m: assets.ghosts.line.offset_m } : null });
   const thinned: ThinReport | null = applyQuality(quality, renderer, world, track);

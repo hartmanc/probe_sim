@@ -60,3 +60,23 @@ def test_laguna_declares_no_owner_edges():
     # Sonoma's (round 14B) are local to its T1-T2 window: test_owner_reference.test_sonoma_owner_edges_are_local
     assert not (trackcfg.load('laguna_seca')['spline'].get('owner_edges'))
     assert ES.OWNER == []
+
+
+def test_local_refinement_follows_a_tight_turn_and_is_inert_when_absent():
+    # round 14B part 1b (spline.refine): a 2 m step over 6 stations in the anchors; the 6-station periodic spline lags it,
+    # the refined layer (2-station knots inside the zone) follows; with REFINE empty the fit is the periodic one exactly
+    n = 300; K = n // 6; xs = np.arange(n, dtype=float)
+    y = np.where(xs < 150, 5.0, 7.0); y[147:153] = np.linspace(5.0, 7.0, 6)
+    args = (xs, y, K, n, 30.0, 0.25, xs, np.full(n, 6.0), np.full(n, 0.03), xs, y, np.full(n, 40.0))
+    ES.REFINE[:] = []
+    c0 = ES.periodic_fit(*args)
+    base = ES.periodic_basis(xs, K, n) @ c0
+    assert np.allclose(ES.basis(xs, K, n), ES.periodic_basis(xs, K, n))
+    ES.REFINE[:] = [(120, 180, 2)]
+    c1 = ES.periodic_fit(*args)
+    fine = ES.basis(xs, K, n) @ c1
+    ES.REFINE[:] = []
+    e0 = np.abs(base - y)[140:160].max(); e1 = np.abs(fine - y)[140:160].max()
+    assert e1 < 0.5 * e0
+    # the coarse coefficients near the zone adjust a little in the joint fit; away from it the curve is the same
+    assert np.abs(fine - base)[:90].max() < 2e-3 and np.abs(fine - base)[210:].max() < 2e-3

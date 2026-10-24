@@ -190,7 +190,7 @@ def _overlaps(a, b, n):
     return any(k % n in sa for k in range(b[0], b[1] + (n if b[1] < b[0] else 0) + 1))
 
 
-def owner_windows(cfg_raw, cfgw, window=None, phase=None, n=None):
+def owner_windows(cfg_raw, cfgw, window=None, phase=None, n=None, measure=False):
     """spline.owner_edges on this centre's stations (cfgw remapped): per window and side {side, lo, hi, pts (world xy),
     chains, kerb_inside [(lo, hi[, shift])], kerb_w, file}; the JSON (compare/owner_edges.py / owner_merge.py) is read
     from tracks/<id>/ (Buttonwillow 21 Oct 2026). Sonoma round 14B: an entry with local=True is used only in the local
@@ -207,12 +207,39 @@ def owner_windows(cfg_raw, cfgw, window=None, phase=None, n=None):
         if path not in _OWNER_CACHE:
             _OWNER_CACHE[path] = json.load(open(path))
         d = _OWNER_CACHE[path]
-        chains = edges_spline.owner_chains([[x, y] for side in ("left", "right") for x, y, *_ in d[side + "_enu_xys"]])
+        # chains (Buttonwillow): his lines re-assigned to the current centre's side; chains=False (Sonoma round 14B part
+        # 1b, the merged file's sides read on the 14B centre): the file's side labels as they are (at T9A his two lines
+        # came within the 3 m link of each other and one chain took both sides)
+        chains = (edges_spline.owner_chains([[x, y] for side in ("left", "right") for x, y, *_ in d[side + "_enu_xys"]])
+                  if w.get("chains", True) else None)
         for side in ("left", "right"):
             pts = np.array([[x, y] for x, y, *_ in d[side + "_enu_xys"]], float)
             out.append({"side": side, "lo": int(w["lo"]), "hi": int(w["hi"]), "pts": pts, "chains": chains, "file": w["file"], "kerb_w": kw,
                         "kerb_inside": [(lo, hi) + tuple(rest[:1]) for sd, lo, hi, *rest in w.get("kerb_inside", []) if sd == side],
-                        "windows": w.get("windows") or []})
+                        "windows": w.get("windows") or [], "kerb_ramp": cfgw["spline"].get("kerb_ramp"),
+                        "reach": w.get("reach"),
+                        # measure=True (the gates): spline.owner_measure 'foot' reads every window's line at the foot of
+                        # its normals (edges_spline.foot_project), so re-stationing the lap cannot move the owner statistics
+                        # (Sonoma round 14B part 1b: T1's edges within 3 mm of part 1 read 0.285 / 0.369 m by station)
+                        "project": "foot" if (measure and cfgw["spline"].get("owner_measure") == "foot") else w.get("project")})
+    return out
+
+
+def refine_zones(cfgw, window, n, C=None):
+    """spline.refine on this centre's stations (cfgw remapped): the zones overlapping a local refit's window.
+    (lo, hi, knot[, mult[, side[, [(enu_a, enu_b, mult_in), ...]]]]): mult scales the zone's fine-layer penalty, side
+    limits it to one edge, and each sub-range (two world points on the centre, resolved here on C as the nearest stations:
+    config stations map poorly where the centre has moved metres, as at T9A) takes the penalty mult_in"""
+    from scipy.spatial import cKDTree
+    out = []
+    for lo, hi, h, *rest in (cfgw["spline"].get("refine") or []):
+        if window is None or not _overlaps((int(lo), int(hi)), tuple(window), n):
+            continue
+        r_ = [v if isinstance(v, str) else float(v) for v in rest[:2]]
+        if len(rest) > 2 and C is not None:
+            kd = cKDTree(np.asarray(C)[:, :2])
+            r_.append([(int(kd.query(a)[1]), int(kd.query(b)[1]), float(m)) for a, b, m in rest[2]])
+        out.append((int(lo), int(hi), float(h)) + tuple(r_))
     return out
 
 
@@ -223,7 +250,7 @@ def owner_ref(cfg_raw, cfgw, C, n):
     C = np.asarray(C, float)[:, :2]
     NL = B.left_normals(C)
     rd = {"left": {}, "right": {}}
-    for w in owner_windows(cfg_raw, cfgw):
+    for w in owner_windows(cfg_raw, cfgw, measure=True):
         r = edges_spline.owner_readings(C, NL, w, n)
         for k, v in r.items():
             if (k - w["lo"]) % n <= (w["hi"] - w["lo"]) % n:
@@ -546,7 +573,8 @@ def stage_geometry(cfg, out, no_logger):
         hlt = np.maximum(np.linalg.norm(Lt - Ct, axis=1), 0.5)
         hrt = np.maximum(np.linalg.norm(Rt - Ct, axis=1), 0.5)
         hf, over_rep = TOV.apply(hf, box, B.HF_DX, cfg["terrain_override"], cfg.enu, Ct, hlt, hrt, np.array(T["profile"]["z"]),
-                                 T["profile"]["fractions"], log=log, points=V2.LIDAR_POINTS, z0=z0)
+                                 T["profile"]["fractions"], log=log, points=V2.LIDAR_POINTS, z0=z0,
+                                 track=(T["center"], T["left"], T["right"]))
         hf = hf.astype("<f4")
     # -- validation
     lc = cfg["loop_check"]
@@ -581,7 +609,16 @@ def stage_geometry(cfg, out, no_logger):
         rep.check("start/finish", np.linalg.norm(C1[0] - sf) <= 5, f"station 0 is {np.linalg.norm(C1[0] - sf):.2f} m from the configured timing line")
     dl = np.abs(np.diff(np.r_[hl3, hl3[:1]]))
     dr = np.abs(np.diff(np.r_[hr3, hr3[:1]]))
-    rep.check("edge jumps", max(dl.max(), dr.max()) <= V2.EDGE_JUMP, f"max lateral change between stations: left {dl.max():.3f} m, right {dr.max():.3f} m")
+    # declared junction corners (gate.continuity_exemptions, Sonoma round 14B part 1b): left out here and reported with
+    # the world-continuity gate as "exempt (junction corner)" with their measured values (edge_gate); absent: unchanged
+    exl = np.array(sorted(edge_gate.exempt_stations(cfg["gate"], "left", n, C1, (1, 0))), int)
+    exr = np.array(sorted(edge_gate.exempt_stations(cfg["gate"], "right", n, C1, (1, 0))), int)
+    if len(exl) or len(exr):
+        log(f"     edge jumps: declared junction corners left out (left {len(exl)}, right {len(exr)} stations): there left "
+            f"{(dl[exl].max() if len(exl) else 0):.3f} m, right {(dr[exr].max() if len(exr) else 0):.3f} m (exempt, reported)")
+        dl = dl.copy(); dr = dr.copy(); dl[exl] = 0.0; dr[exr] = 0.0
+    rep.check("edge jumps", max(dl.max(), dr.max()) <= V2.EDGE_JUMP, f"max lateral change between stations: left {dl.max():.3f} m, right {dr.max():.3f} m"
+              + (" outside the declared junction corners" if len(exl) or len(exr) else ""))
     fr = np.array(B.FRACTIONS)
     seg = np.diff(fr) * np.where(fr[1:] <= 0, hl3[:, None], hr3[:, None])
     cs = np.abs(np.diff(prof, axis=1)) / seg
@@ -930,14 +967,29 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, pw, m
                     sp_cfg[key_] = cfgw["spline"][key_]
             if cfgw["spline"].get("owner_edges"):
                 sp_cfg["_owner"] = owner_windows(cfg_raw, cfgw, window=lwin(cfgw, li), phase="local", n=n)
+            if cfgw["spline"].get("refine"):
+                sp_cfg["_refine"] = refine_zones(cfgw, lwin(cfgw, li), n, Ccur)
+            if cfgw["gate"].get("continuity_exemptions"):
+                # the declared steps in his red (kind 'step') inside this local window (edges_spline.step_profile)
+                sp_cfg["_steps"] = [(e["side"], e["lo"], e["hi"]) for e in edge_gate.exemptions(cfgw["gate"], Ccur)
+                                    if e.get("kind") == "step" and _overlaps((e["lo"], e["hi"]), tuple(lwin(cfgw, li)), n)]
         for li, lc in enumerate(locs):
             NLa = B.left_normals(Ccur)
             held = {"left": (Ccur + hl3[:, None] * NLa, 1), "right": (Ccur - hr3[:, None] * NLa, -1)}
             held_prior = {"left": (Ccur + hlp[:, None] * NLa, 1), "right": (Ccur - hrp[:, None] * NLa, -1)}   # the profile's edges
             Ca = Ccur.copy()
 
+            hl_a, hr_a = hl3.copy(), hr3.copy()
+
             def hold_for(Cx, cfgw):
-                return {"w": weights(cfgw, li), "left": on_centre(Cx, *held["left"]), "right": on_centre(Cx, *held["right"])}
+                w_ = weights(cfgw, li)
+                hl_, hr_ = on_centre(Cx, *held["left"]), on_centre(Cx, *held["right"])
+                if cen.get("restation") == "index":
+                    # Sonoma round 14B part 1b: outside the window (weight 0) the loop never moves the centre or its stations,
+                    # so the held edges there ARE the half-widths the window started with; re-projecting their world points
+                    # moved the T9A arc 0.15-0.24 m during the next window's refit (10 m out on a tight corner)
+                    hl_ = np.where(w_ > 0, hl_, hl_a); hr_ = np.where(w_ > 0, hr_, hr_a)
+                return {"w": w_, "left": hl_, "right": hr_}
             log(f"local refit (centre.local, {lc.get('why', '')[:80]}): window {lc['window']} "
                 f"(config stations), blend {lc.get('blend', 15)}")
             for jt in range(40):
@@ -976,12 +1028,74 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, pw, m
             hrp = wf * hrp + (1 - wf) * on_centre(Ccur, *held_prior["right"])
             # then uniform stations again (the contract's spacing L / n): the same centre curve and the same world edges,
             # re-expressed on the new stations (no refit)
+            if lc.get("centre_smooth"):
+                # Sonoma round 14B part 1b (centre.local window centre_smooth = sigma, stations): the window's centre
+                # Gaussian-smoothed (inside the window by its weights) before the uniform re-stationing. The refit loop
+                # leaves station-scale jitter in the centre's curvature (its own third difference 0.003 m) that the
+                # normals carry 10-12 m out to the edge on the outside of T7a and T9A (0.03-0.04 m there); sigma 1 moves
+                # the centre <= 0.03 m and takes it out. The edges are refitted on the result (refit_final); absent: unchanged
+                from scipy.ndimage import gaussian_filter1d
+                wsm = weights(cfgw, li)[:, None]
+                Csm = np.c_[gaussian_filter1d(Ccur[:, 0], float(lc["centre_smooth"]), mode="wrap"),
+                            gaussian_filter1d(Ccur[:, 1], float(lc["centre_smooth"]), mode="wrap")]
+                Cs_ = Ccur + wsm * (Csm - Ccur)
+                # outside the window (weight 0) the centre is unchanged and so are the half-widths (no re-projection)
+                in_ = wsm[:, 0] > 0
+                hl3, hr3, hlp, hrp = (np.where(in_, on_centre(Cs_, Ccur + sg_ * a_[:, None] * NL, sg_), a_)
+                                      for a_, sg_ in ((hl3, 1), (hr3, -1), (hlp, 1), (hrp, -1)))
+                Ccur = Cs_; NL = B.left_normals(Ccur)
             Cu, _ = B.resample_closed(Ccur, n=n, smooth=0.0)
-            hl3, hr3, hlp, hrp = (on_centre(Cu, Ccur + sg_ * a_[:, None] * NL, sg_) for a_, sg_ in ((hl3, 1), (hr3, -1), (hlp, 1), (hrp, -1)))
+            if cen.get("restation") == "index":
+                # Sonoma round 14B part 1b (centre.restation 'index'): the uniform stations lie on the same centre curve, so
+                # each new station takes the edge point at its own fractional OLD station (the edge polylines interpolated
+                # along the station index), not the projection of the old edge points onto the new centre: 10 m out on
+                # the outside of T9A that projection misplaces a point by up to a quarter station and, re-done by every
+                # later window's re-stationing, put 0.2-0.5 m lags and kinks into the arc his red draws; absent: unchanged
+                uq, _ = B.project(Ccur, Cu); NLu = B.left_normals(Cu)
+
+                def at_u(a_, sg_):
+                    W_ = Ccur + sg_ * a_[:, None] * NL; i0 = np.floor(uq).astype(int) % n; f_ = (uq - np.floor(uq))[:, None]
+                    return sg_ * (((1 - f_) * W_[i0] + f_ * W_[(i0 + 1) % n] - Cu) * NLu).sum(1)
+                hl3, hr3, hlp, hrp = (at_u(a_, sg_) for a_, sg_ in ((hl3, 1), (hr3, -1), (hlp, 1), (hrp, -1)))
+            else:
+                hl3, hr3, hlp, hrp = (on_centre(Cu, Ccur + sg_ * a_[:, None] * NL, sg_) for a_, sg_ in ((hl3, 1), (hr3, -1), (hlp, 1), (hrp, -1)))
             Ccur = Cu
             cfgw = trackcfg.remap_stations(cfg_loc, n, float(np.linalg.norm(np.roll(Ccur, -1, 0) - Ccur, axis=1).sum()), C=Ccur)
+            if lc.get("refit_final"):
+                # Sonoma round 14B part 1b (centre.local window refit_final=True): the window's last fit on the uniform
+                # stations themselves. Re-expressing the fitted edge on the re-spaced stations (linear in the projected
+                # station) spread his hairpin jog over two stations and, 10 m out on the outside of T9A, put kinks of
+                # 0.1-0.2 m into the arc across the escape road's mouth; absent: unchanged
+                NL = B.left_normals(Ccur)
+                anchors, str_rep, features = build_anchors(cfgw, Ccur, NL, hlp, hrp)
+                set_owner(cfgw, li)
+                hold_f = {"w": weights(cfgw, li), "left": on_centre(Ccur, *held["left"]), "right": on_centre(Ccur, *held["right"])}
+                if cen.get("restation") == "index":
+                    # outside the window: the held edges re-stationed along the index with the rest (hl3 / hr3 here)
+                    hold_f["left"] = np.where(hold_f["w"] > 0, hold_f["left"], hl3); hold_f["right"] = np.where(hold_f["w"] > 0, hold_f["right"], hr3)
+                hl3, hr3, frep = edges_spline.fit_periodic(Ccur, NL, hlp, hrp, tiles, features, sp_cfg, cc["mpp"],
+                                                           {k: v for k, v in anchors.items() if v[0]}, hold=hold_f)
+                log("     final fit on the uniform stations (refit_final)")
             _, dC = B.project(Ca, Ccur)
             log(f"local refit done after {jt + 1} refits: centre moved up to {np.abs(dC).max():.3f} m (station {int(np.argmax(np.abs(dC)))})")
+        if cfg_raw["spline"].get("owner_edges"):
+            # Sonoma round 14B part 1b: the fit gates' MEASUREMENT on the returned edges with the whole evidence. The last
+            # local refit's metrics held only its own window's owner lines (set_owner), so the capture rows inside the
+            # other owner windows were measured against his red there (the T7 road left read 50 %); and they were taken
+            # before the final re-stationing. Here one more fit_periodic pass with hold weight 0 everywhere (it returns
+            # the held edges exactly; its fit is discarded) measures the published edges on the published stations with
+            # every owner window in place: his reading replaces the capture rows where he drew, as in the single-window
+            # refit of part 1. The geometry is not touched (hl3 / hr3 stay as they are).
+            cfgm = trackcfg.remap_stations(cfg_loc, n, float(np.linalg.norm(np.roll(Ccur, -1, 0) - Ccur, axis=1).sum()), C=Ccur)
+            NLm = B.left_normals(Ccur)
+            am_, _, fm_ = build_anchors(cfgm, Ccur, NLm, hlp, hrp)
+            sp_cfg["_owner"] = owner_windows(cfg_raw, cfgm, n=n)
+            sp_cfg["_refine"] = []
+            sp_cfg["_steps"] = []
+            _, _, frep = edges_spline.fit_periodic(Ccur, NLm, hlp, hrp, tiles, fm_, sp_cfg, cc["mpp"],
+                                                   {k: v for k, v in am_.items() if v[0]},
+                                                   hold={"w": np.zeros(n), "left": hl3, "right": hr3})
+            log("fit gates measured on the returned edges with every owner window (hold weight 0; geometry unchanged)")
     seg = np.linalg.norm(np.roll(Ccur, -1, 0) - Ccur, axis=1); L = float(seg.sum()); sp = L / n
     # -- gates of the fitted method (edge_gate.FITTED; a config may tighten them, never loosen)
     G = edge_gate.fitted_thresholds(cfg_raw["gate"])
@@ -995,22 +1109,49 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, pw, m
         cfg_o = trackcfg.remap_stations(cfg_raw, n, float(np.linalg.norm(np.roll(Ccur, -1, 0) - Ccur, axis=1).sum()), C=Ccur)
         if cfg_raw["spline"].get("owner_mouths"):
             OREF = owner_ref(cfg_raw, cfg_o, Ccur, n)
-        for w in owner_windows(cfg_raw, cfg_o, n=n):
+        for w in owner_windows(cfg_raw, cfg_o, n=n, measure=True):
             r = edges_spline.owner_readings(Ccur, NLf, w, n)
             hw = hl3 if w["side"] == "left" else hr3
             ks_ = [k for k in r if (k - w["lo"]) % n <= (w["hi"] - w["lo"]) % n]
             if not ks_:
-                rep.check(f"owner edge {w['side']} {w['lo']}-{w['hi']}", False, "no owner reading in the window"); continue
+                # round 14B part 1b: he drew only the other side in this window (w_s0500: the right edge): no owner edge on
+                # this side here, the detected edge stands and its gates are the ordinary ones
+                log(f"     owner edge {w['side']} {w['lo']}-{w['hi']}: none drawn on this side (the detected edge stands)"); continue
             res = np.array([hw[k] - r[k] for k in ks_])
-            a_ = np.abs(res); share = float(np.mean(a_ <= G["owner_tol"]))
+            a_st = np.abs(res); share_st = float(np.mean(a_st <= G["owner_tol"]))
+            # round 14B part 1b: the SHARE is measured geometrically: each fitted edge point's distance to his line (his
+            # readings, kerb shifts included, as one world polyline densified to 0.1 m, broken where his readings are more
+            # than 3 stations apart), so re-stationing the lap cannot move it (station-based it read 92.3 % on T1 in part 1
+            # and 89.8 % in 6784bcc on T1 edges that had not moved). Over every station of the window, his mouth segments
+            # included, as before. The max (and edge_gate.owner_station_gate's 0.40 m cap) stay station-based; the
+            # geometric max is printed beside them.
+            sg_ = 1 if w["side"] == "left" else -1
+            kk_ = np.array(sorted(r))
+            Rw = Ccur[kk_] + sg_ * np.array([r[k] for k in kk_])[:, None] * NLf[kk_]
+            segs_ = np.split(np.arange(len(kk_)), np.flatnonzero(np.diff(kk_) > 3) + 1)
+            tt_ = np.linspace(0, 1, 10, endpoint=False)[None, :, None]
+            dens = np.concatenate([(Rw[g_][:-1, None, :] + (Rw[g_][1:] - Rw[g_][:-1])[:, None, :] * tt_).reshape(-1, 2)
+                                   for g_ in segs_ if len(g_) > 1] + [Rw])
+            from scipy.spatial import cKDTree as _KD
+            Fw = Ccur[np.array(ks_)] + sg_ * np.array([hw[k] for k in ks_])[:, None] * NLf[np.array(ks_)]
+            a_geo = _KD(dens).query(Fw)[0]
+            share = float(np.mean(a_geo <= G["owner_tol"]))
+            a_ = a_st
             OWNER_REPORT.append({"side": w["side"], "lo": w["lo"], "hi": w["hi"], "file": w["file"], "k": ks_, "owner": [r[k] for k in ks_],
-                                 "fit": [float(hw[k]) for k in ks_]})
+                                 "fit": [float(hw[k]) for k in ks_], "dist_geo": [round(float(v), 4) for v in a_geo]})
             if OREF is not None:
                 keep = np.array([not OREF["excl"][w["side"]][k] for k in ks_])
                 amax = float(a_[keep].max()) if keep.any() else 0.0
-                txt = f" (max outside his {int((~keep).sum())} mouth-segment stations +-{edge_gate.OWNER_REF['corner']}; with them {a_.max():.3f})"
+                gmax = float(a_geo[keep].max()) if keep.any() else 0.0
+                # coordinator decision 1 (24 Oct 2026): the accepted gate design is Buttonwillow round 10's
+                # (owner_station_gate on that branch): the cap AND the 0.25 m count are taken on the stations outside his
+                # mouth segments +-corner; the all-stations share is printed beside it
+                share_all = share
+                share = float(np.mean(a_geo[keep] <= G["owner_tol"])) if keep.any() else share
+                txt = (f" (share and max outside his {int((~keep).sum())} mouth-segment stations +-{edge_gate.OWNER_REF['corner']}; with them "
+                       f"{share_all * 100:.1f} % / {a_.max():.3f}; station-based share {share_st * 100:.1f} %; geometric max {gmax:.3f})")
             else:
-                amax, txt = float(a_.max()), ""
+                amax, txt = float(a_.max()), f" (station-based share {share_st * 100:.1f} %; geometric max {a_geo.max():.3f})"
             rep.check(f"owner edge {w['side']} {w['lo']}-{w['hi']}", share >= G["owner_within"] and amax <= G["owner_max"],
                       f"{len(ks_)} stations ({w['file']}): {share * 100:.1f} % within {G['owner_tol']} m of the owner's line (>= {G['owner_within'] * 100:.0f} %), "
                       f"|residual| p50 {np.median(a_):.3f} / p90 {np.percentile(a_, 90):.3f} / max {amax:.3f} m (<= {G['owner_max']}){txt}")
@@ -1025,11 +1166,12 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, pw, m
                 if not kk_:
                     continue
                 aw_ = np.abs(np.array([hw[k] - r[k] for k in kk_])); sh_ = float(np.mean(aw_ <= G["owner_tol"]))
+                gi_ = {k: i for i, k in enumerate(ks_)}; ag_ = a_geo[[gi_[k] for k in kk_]]
                 xm_ = np.array([bool(OREF["excl"][w["side"]][k]) for k in kk_]) if OREF is not None else np.zeros(len(kk_), bool)
                 sh2_ = float(np.mean(aw_[~xm_] <= G["owner_tol"])) if (~xm_).any() else float("nan")
                 log(f"     report owner edge {w['side']} window {os.path.basename(wf_)[:-5]} (not gated; the gate is the config window): "
                     f"{len(kk_)} stations {kk_[0]}-{kk_[-1]}: {sh_ * 100:.1f} % within {G['owner_tol']} m of his line, max {aw_.max():.3f} m; "
-                    f"outside his mouth segments +-{edge_gate.OWNER_REF['corner']} ({int((~xm_).sum())} stations) {sh2_ * 100:.1f} %")
+                    f"geometric {np.mean(ag_ <= G['owner_tol']) * 100:.1f} %, max {ag_.max():.3f} m; outside his mouth segments +-{edge_gate.OWNER_REF['corner']} ({int((~xm_).sum())} stations) {sh2_ * 100:.1f} %")
         json.dump(OWNER_REPORT, open(os.path.join(FIT_DUMP_DIR, "owner_edges_report.json"), "w"))
         if OREF is not None:
             om, of_ = edge_gate.owner_station_gate(hl3, hr3, OREF, cfg_raw["gate"], log=log)
@@ -1146,6 +1288,7 @@ def stage_scenery(cfg, out, no_logger):
         shutil.copyfile(os.path.join(out, f), os.path.join(tmp, f))
     log(f"\n================ STAGE 3 SCENERY: {cfg['id']} ================")
     Tt0 = json.load(open(os.path.join(out, "track.json")))
+    cfg_raw = cfg   # the owner gates remap the raw config themselves (round 14B: remapping the remapped one moved them)
     cfg = (trackcfg.remap_stations(cfg, Tt0["n"], Tt0["length_m"]) if (cfg.logger and not no_logger)
            else trackcfg.remap_stations(cfg, Tt0["n"], Tt0["length_m"], C=np.array(Tt0["center"])[:, :2]))
     BS.PITWALL_EDGE = None
@@ -1191,8 +1334,18 @@ def stage_scenery(cfg, out, no_logger):
         # round 14A: the override regions go to scenery.json (the physics drops its shoulder blend there and puts the
         # paved parts on the heightfield) and the paved parts inside them are draped on it (config-gated)
         import terrain_override as TOV
-        SC["terrain_override"] = TOV.scenery_regions(cfg["terrain_override"], cfg.enu)
+        SC["terrain_override"] = TOV.scenery_regions(cfg["terrain_override"], cfg.enu, (T["center"], T["left"], T["right"]))
         TOV.drape_parts(SC, T, hf_, SC["terrain_override"], log=log)
+    off_names = {r["name"] for r in scfg.get("closed_roads", []) if r.get("off_course")}
+    if off_names:
+        # round 14B (owner on T9A: "on the other side of its entry is an escape road ... If you go off, you get black
+        # flagged"): a closed road marked off_course is paved and drivable (the physics keeps it paved) but not course:
+        # its parts carry off_course, and the lap-validity checks count a car on it as off (src/physics/track.ts)
+        nmark = 0
+        for p_ in (SC.get("paved_zones") or {}).get("parts", []):
+            if p_.get("turn") in off_names:
+                p_["off_course"] = True; nmark += 1
+        log(f"off-course paved parts: {nmark} ({', '.join(sorted(off_names))})")
     if scfg.get("marks_on_surface"):
         # round 14B (judge r14a: a closed road's painted edge buried under its draped zone): every ground mark's stored
         # height on the package's own driven surface (tools/track/gates/groundMarks.ts drapeMarks: paint lines `lift` m
@@ -1210,8 +1363,8 @@ def stage_scenery(cfg, out, no_logger):
     if cfg["spline"].get("owner_edges") and cfg["spline"].get("owner_mouths"):
         # the owner's reference gates with the edge gate (Sonoma round 14B; track.json as stage 1 wrote it)
         Ct_ = np.array(T["center"])[:, :2]
-        cw_ = trackcfg.remap_stations(cfg, T["n"], T["n"] * T["spacing_m"], C=Ct_)
-        oref_ = owner_ref(cfg, cw_, Ct_, T["n"])
+        cw_ = trackcfg.remap_stations(cfg_raw, T["n"], T["n"] * T["spacing_m"], C=Ct_)
+        oref_ = owner_ref(cfg_raw, cw_, Ct_, T["n"])
         _, gf = edge_gate.owner_station_gate(*edge_gate.half_widths(T), oref_, cfg["gate"], log=log)
         rep.fails += gf
         _, gf = edge_gate.owner_gates(T, oref_, cfg["gate"], log=log)
@@ -1269,6 +1422,12 @@ def scenery_gates(cfg, T, SC, tmp, trk):
     # round 13: declared openings in a barrier line (the run-gaps gate): [{latlon, why}] -> ENU
     out["openings"] = [{"x": round(float(cfg.enu(*o_["latlon"])[0]), 1), "y": round(float(cfg.enu(*o_["latlon"])[1]), 1), "why": o_["why"]}
                        for o_ in g.get("openings", [])]
+    # round 14B part 2: wall heads the evidence shows bare (gates.known_exposures [{side, latlon, reason, evidence}]): the
+    # wall-ends gate lists an exposed head within 10 m of one as a known exposure for the owner (never as joined / ok)
+    out["known_exposures"] = []
+    for k_ in g.get("known_exposures", []):
+        i, _, _ = trk.project(np.array([cfg.enu(*k_["latlon"])]))
+        out["known_exposures"].append({"side": k_["side"], "s": round(float(i[0]) * sp, 1), "reason": k_["reason"], "evidence": k_["evidence"]})
     if g.get("pit_box_latlon"):
         i, _, _ = trk.project(np.array([cfg.enu(*g["pit_box_latlon"])]))
         out["pit_box_s"] = round(float(i[0]) * sp, 1)
@@ -1327,9 +1486,36 @@ def coverage_gates(cfg, tmp, trk, sp):
         log(f"[FAIL] coverage: no inventory ({os.path.relpath(inv, ROOT)}); the inventory stage is required before scenery (build-track skill)")
         return fails + ["coverage", "pit lane"]
     proj = lambda ll: round(float(trk.project(np.array([cfg.enu(*ll)]))[0][0]) * sp, 1)  # noqa: E731
+    disp = manifest_dispositions(cfg)
+    Iv = json.load(open(inv)); L_ = trk.n * sp
+    il_ = (cfg["scenery"].get("gates") or {}).get("inventory_lap")
+    R_ = json.load(open(os.path.join(HERE, il_))) if il_ else None
+    if R_ is not None and Iv.get("length_m") and abs(Iv["length_m"] - L_) > 1.0:
+        # Sonoma round 14B part 1b: the inventory's stations are on the lap it was measured on (inv length_m); where this
+        # package's lap differs by more than 1 m (T9A as he drew it: +6.5 m) each row's s is carried over by WORLD
+        # position: as the same fraction of the frozen lap the inventory was taken on (scenery.gates.inventory_lap: round
+        # 14A's centre, compare/<id>/inventory_lap.json), its point there, then the foot
+        # of its normal on this package's centre (edges_spline.foot_project; monotonic, unlike the nearest point at T9A).
+        # The manifest's dispositions (keyed by the row's s) move with their rows. Equal laps: unchanged
+        Cr = np.array(R_["center"], float)[:, :2]; nr = len(Cr); Lr = float(np.linalg.norm(np.roll(Cr, -1, 0) - Cr, axis=1).sum())
+        Cc = np.asarray(trk.C, float)[:, :2]; NLc = B.left_normals(Cc)
+        su, _ = edges_spline.foot_project(Cc, NLc, Cr)
+        su = np.unwrap(su * 2 * np.pi / trk.n) * trk.n / (2 * np.pi)
+
+        def remap_s(s_):
+            x = (float(s_) / Iv["length_m"]) * nr
+            return round(float(np.interp(x % nr, np.arange(nr), su, period=nr) % trk.n) * sp, 1)
+        for r_ in Iv["rows"]:
+            r_["s"] = remap_s(r_["s"])
+        for d_ in disp:
+            d_["s"] = remap_s(d_["s"])
+        Iv["length_m"] = round(L_, 2)
+        inv = os.path.join(tmp, "inventory_remapped.json")
+        json.dump(Iv, open(inv, "w"))
+        log(f"     coverage: inventory rows carried from its {Iv.get('track', '')} lap by world position onto this {L_:.1f} m lap")
     cp = os.path.join(tmp, "coverage_config.json")
     json.dump({"tol": cfg["scenery"].get("gates", {}).get("coverage_tol", 15), "pit_walls": trackcfg.pit_walls_for_gate(cfg, proj),
-               "dispositions": manifest_dispositions(cfg)}, open(cp, "w"))
+               "dispositions": disp}, open(cp, "w"))
     r = subprocess.run(["npx", "tsx", os.path.join(HERE, "gates", "run_coverage.ts"), tmp, inv, cp, "--json",
                         os.path.join(tmp, "coverage_report.json")], cwd=ROOT, capture_output=True, text=True)
     for line in r.stdout.splitlines():

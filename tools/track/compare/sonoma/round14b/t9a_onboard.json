@@ -1,0 +1,87 @@
+{
+ "frame": "RAZip6S84CM t100 (inventory frames)",
+ "s_m": 3055.5,
+ "camera_h_m": 1.08,
+ "method": "level pinhole: lateral X = (x - cx) H / (y - y_horizon) to the inner edge of the right-hander apex paint (red / white) on the near 40 % of rows",
+ "horizon_row": 522.0,
+ "rows": [
+  [
+   649,
+   1.735
+  ],
+  [
+   652,
+   1.529
+  ],
+  [
+   655,
+   1.713
+  ],
+  [
+   658,
+   1.469
+  ],
+  [
+   661,
+   1.585
+  ],
+  [
+   673,
+   2.575
+  ],
+  [
+   676,
+   2.637
+  ],
+  [
+   679,
+   0.358
+  ],
+  [
+   682,
+   0.203
+  ],
+  [
+   685,
+   2.253
+  ],
+  [
+   688,
+   0.397
+  ],
+  [
+   691,
+   0.275
+  ],
+  [
+   694,
+   0.188
+  ],
+  [
+   697,
+   0.037
+  ],
+  [
+   700,
+   0.0
+  ],
+  [
+   703,
+   0.0
+  ],
+  [
+   712,
+   2.342
+  ],
+  [
+   715,
+   2.205
+  ],
+  [
+   718,
+   2.011
+  ]
+ ],
+ "lateral_p50_m": 1.53,
+ "note": "noisy (row spread 0.0-2.6 m); the car runs at the apex, the left edge ~12 m away (package width at s 3055 ~14 m)"
+}

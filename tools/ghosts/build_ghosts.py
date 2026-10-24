@@ -68,11 +68,17 @@ def configure(cfg, no_logger=False):
     if SECTIONS:
         NS = len(SECTIONS) - 1
     g = cfg["ghosts"]
+    global CFG_GHOSTS, ENU
+    CFG_GHOSTS = g; ENU = cfg.enu
     MARGIN, KERB_MARGIN, NUDGE, LINE_JERK_W = g["margin"], g["kerb_margin"], g["nudge"], g["jerk_w"]
     IMPLIED_G_TURNS = g.get("implied_g_turns")
     IMPLIED_G_EXEMPT = list(g.get("implied_g_exempt", []))
     global KAPPA_DRIVERS
     KAPPA_DRIVERS = list(g.get("kappa_drivers", []))
+
+
+CFG_GHOSTS = {}   # the config's ghosts block (configure); margin_zones read from it
+ENU = None
 
 
 def log(*a):
@@ -360,8 +366,7 @@ def main():
     # +-0.5 m floor about the centre let the line run 0.25 m from that edge.
     fl_l = 0.5 - (hwr - MARGIN)
     fl_r = 0.5 - (hw - MARGIN)
-    lim = smooth_bound(np.maximum(hw - MARGIN, fl_l))  # left bound (+)
-    limr = smooth_bound(np.maximum(hwr - MARGIN, fl_r))  # right bound (-)
+    lim, limr = line_bounds(P, hw, hwr, fl_l, fl_r, m, track)
     if (mL < MARGIN).any() or (mR < MARGIN).any():
         lim = np.minimum(lim + gaussian_filter1d(MARGIN - mL, 1.0, mode="wrap"), np.maximum(hw - mL, fl_l))
         limr = np.minimum(limr + gaussian_filter1d(MARGIN - mR, 1.0, mode="wrap"), np.maximum(hwr - mR, fl_r))
@@ -463,6 +468,31 @@ def main():
     preview(track, grid, P, nlg, hw, e, e_mc, e_gps, laps, os.path.join(preview_dir, "preview_ghosts.png"))
 
 
+def line_bounds(P, hw, hwr, fl_l, fl_r, m, track):
+    """The racing line's smoothed bounds: MARGIN from each edge, or per stretch (config ghosts.margin_zones
+    [dict(side, a, b (lat, lon on the centre), margin, src)], Sonoma round 14B: the 9a chicane, where the onboard shows the
+    cars' own room to the edge) `margin` m from that side's edge between the grid points nearest a and b, eased in and out
+    over 10 m. Absent: exactly the global MARGIN bounds, as before."""
+    zL = np.full(m, MARGIN); zR = np.full(m, MARGIN)
+    step = DS * float(track.get("spacing_m", 1.0))
+    for z in (CFG_GHOSTS.get("margin_zones") or []):
+        from scipy.spatial import cKDTree
+        if not z.get("src"):
+            raise SystemExit("ghosts.margin_zones: an entry needs its src (the frames and the measurement)")
+        kd_ = cKDTree(P)
+        ia, ib = (int(kd_.query(np.array(ENU(*q)))[1]) for q in (z["a"], z["b"]))
+        idx = np.arange(m)
+        d_ = np.minimum(np.clip(idx - ia, 0, None), np.clip(ib - idx, 0, None)) * step
+        inside = (idx >= ia) & (idx <= ib)
+        w_ = np.where(inside, np.clip(d_ / 10.0, 0, 1), 0.0); w_ = w_ * w_ * (3 - 2 * w_)
+        tgt = zL if z["side"] == "left" else zR
+        tgt[:] = np.maximum(tgt, MARGIN + w_ * (float(z["margin"]) - MARGIN))
+        log(f"     line margin {z['margin']} m on the {z['side']} between grid points {ia}-{ib} ({z['src'][:70]})")
+    if (zL > MARGIN).any() or (zR > MARGIN).any():
+        return smooth_bound(np.maximum(hw - zL, fl_l)), smooth_bound(np.maximum(hwr - zR, fl_r))
+    return smooth_bound(np.maximum(hw - MARGIN, fl_l)), smooth_bound(np.maximum(hwr - MARGIN, fl_r))
+
+
 def no_logger_line(track, C, hw_full, hr_full, grid, gi, m, preview_dir, args):
     """No logger laps: the racing line is the pure bounded minimum-curvature line (MARGIN inside the smoothed edge
     envelope, the same floors), there are no ghost laps and no implied-g checks."""
@@ -472,8 +502,7 @@ def no_logger_line(track, C, hw_full, hr_full, grid, gi, m, preview_dir, args):
     nlg, _ = left_normals(P)
     fl_l = 0.5 - (hwr - MARGIN)
     fl_r = 0.5 - (hw - MARGIN)
-    lim = smooth_bound(np.maximum(hw - MARGIN, fl_l))
-    limr = smooth_bound(np.maximum(hwr - MARGIN, fl_r))
+    lim, limr = line_bounds(P, hw, hwr, fl_l, fl_r, m, track)
     e = min_curvature_line(P, nlg, -limr, lim)
     log("racing line: no logger laps, pure minimum-curvature line within the edges less "
         f"{MARGIN} m (offset range {e.min():+.2f}..{e.max():+.2f} m)")

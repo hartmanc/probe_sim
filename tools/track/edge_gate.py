@@ -418,12 +418,121 @@ def owner_gates(T, ref, g=None, log=print):
     return met, fails
 
 
-def world_continuity(T):
-    """max |third difference| of the left and right edge polylines (world metres) and where."""
+# Declared junction corners (config gate.continuity_exemptions, Sonoma round 14B part 1b, coordinator decision 24 Oct 2026):
+# [dict(side, lo, hi, reason, evidence)] on config stations (trackcfg remaps them). Where the course edge has a
+# real pavement angle (his red across an escape road's mouth and its two corners), the world-continuity gate and the
+# stage-1 edge-jump gate leave those stations out and REPORT them as "exempt (junction corner)" with the measured value,
+# never as a pass; within each entry the published edge must be straight (
+# every edge point within EXEMPT_CHORD m of the chord between the stretch's end points) OR smooth per metre (resampled at
+# 1 m arc length: |third difference| <= the gate's limit, curvature radius >= EXEMPT_RADIUS), checked here, so an
+# exemption cannot hide a kink. Absent (every other config): nothing changes.
+EXEMPT_CHORD = 0.10
+EXEMPT_RADIUS = 6.0
+STEP_SPAN = 2   # a declared step's jog spans at most this many station intervals
+
+
+def exemptions(g, C):
+    """gate.continuity_exemptions on centre C (n x 2): each entry's stretch from its two world points on his red ('enu',
+    ENU x, y: the stretch's corners) as the nearest stations of C, so re-stationing cannot move it. Returns
+    [dict(entry, lo, hi)] in driving order (lo before hi)."""
+    import numpy as np
+    from scipy.spatial import cKDTree
+    out = []
+    E = (g or {}).get('continuity_exemptions') or []
+    if not E:
+        return out
+    C = np.asarray(C, float)[:, :2]; n = len(C); kd = cKDTree(C)
+    for e in E:
+        a, b = (int(kd.query(np.asarray(p, float))[1]) for p in e['enu'])
+        if (b - a) % n > n // 2:
+            a, b = b, a
+        out.append(dict(e, lo=a, hi=a + (b - a) % n))
+    return out
+
+
+def exempt_stations(g, side, n, C=None, pad=(0, 0)):
+    """the stations a side's exemptions cover on centre C, widened by pad (before, after): the world-continuity stencil
+    (k-1 .. k+2) of a station within (lo - 2, hi + 1) reaches the stretch's corners"""
+    out = set()
+    if C is None:
+        return out
+    for e in exemptions(g, C):
+        if e['side'] == side:
+            out |= {k % n for k in range(e['lo'] - pad[0], e['hi'] + pad[1] + 1)}
+    return out
+
+
+def continuity_exemption_report(T, g):
+    """one line per declared entry: the third difference and the edge-jump inside it (exempt), and its shape check"""
+    import numpy as np
+    out = []
+    n = T['n']; C = np.array(T['center'])[:, :2]
+    t = np.roll(C, -1, 0) - np.roll(C, 1, 0); t /= np.linalg.norm(t, axis=1, keepdims=True); NL = np.c_[-t[:, 1], t[:, 0]]
+    for e in exemptions(g, C):
+        side = e['side']; sg = 1 if side == 'left' else -1
+        E = np.array(T[side])[:, :2]
+        ks = np.array([k % n for k in range(int(e['lo']), int(e['hi']) + (n if int(e['hi']) < int(e['lo']) else 0) + 1)])
+        d3 = np.linalg.norm(E[(ks + 2) % n] - 3 * E[(ks + 1) % n] + 3 * E[ks] - E[(ks - 1) % n], axis=1)
+        h = sg * ((E - C) * NL).sum(1); jump = np.abs(h[(ks + 1) % n] - h[ks])
+        P = E[ks]; c = P[-1] - P[0]; L = float(np.linalg.norm(c)) or 1.0
+        dev = float(np.abs((P - P[0]) @ (np.array([-c[1], c[0]]) / L)).max())
+        # or smooth per metre (coordinator, 24 Oct 2026): the stretch with 3 stations either side, resampled at 1 m arc
+        # length: |third difference| <= the gate's limit and the curvature radius >= EXEMPT_RADIUS (the per-station limit
+        # is spacing-dependent: on the outside of a tight corner the edge stations sit 1.3-1.6 m apart)
+        thr = fitted_thresholds(g)['world_d3']
+        kx = np.array([k % n for k in range(int(e['lo']) - 3, int(e['hi']) + (n if int(e['hi']) < int(e['lo']) else 0) + 4)])
+        Q = E[kx]; u = np.r_[0, np.cumsum(np.linalg.norm(np.diff(Q, axis=0), axis=1))]
+        from scipy.interpolate import CubicSpline
+        # the curve through the edge's stations (a cubic in arc length; a linear resample would read each station's
+        # own vertex as a kink) sampled every metre
+        um = np.arange(0, u[-1] + 1e-9, 1.0); M = CubicSpline(u, Q)(um)
+        d3m = float(np.linalg.norm(M[3:] - 3 * M[2:-1] + 3 * M[1:-2] - M[:-3], axis=1).max()) if len(M) > 3 else 0.0
+        hd = np.arctan2(np.diff(M[:, 1]), np.diff(M[:, 0])); dh = np.abs((np.diff(hd) + np.pi) % (2 * np.pi) - np.pi)
+        rmin = float(1.0 / max(dh.max(), 1e-9)) if len(dh) else float('inf')
+        straight = dev <= EXEMPT_CHORD
+        smooth = d3m <= thr and rmin >= EXEMPT_RADIUS
+        ok = straight or smooth
+        case = 'straight' if straight else ('smooth per metre' if smooth else 'neither')
+        if e.get('kind') == 'step' and not ok:
+            # a declared step in his red (the hairpin apron's ends): the edge jogs over ONE station interval (a straight
+            # segment, its two ends the corners) and is smooth per metre on either side of it inside the stretch
+            # the jog: the station intervals round the largest one where the half-width changes by more than max(0.2 m,
+            # 0.35 x the largest), at
+            # most STEP_SPAN of them (his notch crosses one or two stations' normals); the pieces either side smooth per
+            # metre. The jog's own points lie on his notch (the owner gates hold them to his red)
+            i0 = int(np.argmax(jump[:-1])); a_i = b_i = i0; thj = max(0.2, 0.35 * float(jump[i0]))
+            while a_i - 1 >= 0 and jump[a_i - 1] > thj: a_i -= 1
+            while b_i + 1 < len(ks) - 1 and jump[b_i + 1] > thj: b_i += 1
+            j, j2 = int(ks[a_i]), int(ks[b_i]) + 1
+            devj = 0.0 if (j2 - j) <= STEP_SPAN else 9.9
+            parts = []
+            for a_, b_ in ((int(e['lo']) - 3, j), (j2, int(e['hi']) + 3)):
+                Q = E[np.arange(a_, b_ + 1) % n]; u = np.r_[0, np.cumsum(np.linalg.norm(np.diff(Q, axis=0), axis=1))]
+                M = CubicSpline(u, Q)(np.arange(0, u[-1] + 1e-9, 1.0)) if len(Q) > 2 else Q
+                dd = float(np.linalg.norm(M[3:] - 3 * M[2:-1] + 3 * M[1:-2] - M[:-3], axis=1).max()) if len(M) > 3 else 0.0
+                hd_ = np.arctan2(np.diff(M[:, 1]), np.diff(M[:, 0])); dh_ = np.abs((np.diff(hd_) + np.pi) % (2 * np.pi) - np.pi)
+                parts.append((dd, float(1.0 / max(dh_.max(), 1e-9)) if len(dh_) else float('inf')))
+            ok = all(dd <= thr and rr >= EXEMPT_RADIUS for dd, rr in parts) and devj <= EXEMPT_CHORD
+            case = (f"step (jog {j}-{j2}, {j2 - j} station interval(s) <= {STEP_SPAN}; either side per metre "
+                    + ", ".join(f"|d3| {dd:.4f} R {rr:.1f}" for dd, rr in parts) + ")") if ok else 'neither'
+            d3m, rmin = max(p_[0] for p_ in parts), min(p_[1] for p_ in parts)
+        out.append((f"[{'exempt' if ok else 'FAIL'}] world continuity / edge jumps {side:5s} {int(e['lo'])}-{int(e['hi'])}: exempt (junction corner): "
+                    f"per station max |third difference| {d3.max():.4f} m, max half-width change {jump.max():.3f} m; shape {case}: "
+                    f"chord deviation {dev:.3f} m (<= {EXEMPT_CHORD}); at 1 m arc length |third difference| {d3m:.4f} m (<= {thr}), "
+                    f"min radius {rmin:.1f} m (>= {EXEMPT_RADIUS}); {e.get('reason', '')[:80]}", ok))
+    return out
+
+
+def world_continuity(T, exempt=None):
+    """max |third difference| of the left and right edge polylines (world metres) and where; exempt: stations left out
+    (gate.continuity_exemptions, the same set for both sides' call; each side passes its own through gate())."""
     out = {}
     for side in ('left', 'right'):
         E = T[side]; n = len(E); best = (0.0, 0)
+        ex = exempt.get(side, set()) if isinstance(exempt, dict) else set()
         for k in range(n):
+            if k in ex:
+                continue
             a, b, c, d = E[(k - 1) % n], E[k], E[(k + 1) % n], E[(k + 2) % n]
             v = math.hypot(d[0] - 3 * c[0] + 3 * b[0] - a[0], d[1] - 3 * c[1] + 3 * b[1] - a[1])
             if v > best[0]: best = (v, k)
@@ -470,12 +579,17 @@ def gate(T, SC=None, g=None, log=print, world=False):
             f'{top[2][0]:.3f}@{top[2][1]}; <= {g["step"]}) | max edge-column cross-section step {zs[0]:.3f} m at {zs[1]}')
         if not ok: fails.append(f'edge gate {side}')
     if world:
+        import numpy as np
         thr = fitted_thresholds(g)['world_d3']
-        for side, (v, k) in world_continuity(T).items():
+        for side, (v, k) in world_continuity(T, {sd: exempt_stations(g, sd, n, np.array(T['center'])[:, :2], (2, 1)) for sd in ('left', 'right')}).items():
             met[side]['world_d3'] = v
             ok = v <= thr
-            log(f'[{"ok" if ok else "FAIL"}] world continuity {side:5s}: max |third difference| of the edge polyline {v:.4f} m at station {k} (<= {thr})')
+            log(f'[{"ok" if ok else "FAIL"}] world continuity {side:5s}: max |third difference| of the edge polyline {v:.4f} m at station {k} (<= {thr})'
+                + (' outside the declared junction corners' if g.get('continuity_exemptions') else ''))
             if not ok: fails.append(f'world continuity {side}')
+        for line, ok in continuity_exemption_report(T, g):
+            log(line)
+            if not ok: fails.append('continuity exemption shape')
     allcol = max((abs((Z[(k + 1) % n][c] - Z[(k + 1) % n][ci]) - (Z[k][c] - Z[k][ci])), k, c) for k in range(n) for c in range(len(Z[0])))
     met['profile_step'] = allcol[0]
     ok = allcol[0] <= g['profile_step']

@@ -1050,8 +1050,14 @@ def barriers(trk, osm):
         # round 7f (Sonoma owner note 56): a declared pit wall (kind 'pitwall') uses the barrier-gap gate's pit-wall minimum,
         # 0.3 m, with the same 0.05 m margin (moved to 0.35 m), and every moved point is logged with its measured gap
         gmin = 0.3 if dw.get("kind") == "pitwall" else 0.5
+        # a declared run's own minimum (gap_min; Sonoma round 14B part 1b: a tyre wall whose stacks' track-side face must stay
+        # 0.2 m beyond an edge his red moved out to it); absent: as before
+        gmin = max(gmin, float(dw.get("gap_min", 0.0)))
         i, lat, dout = trk.project(P)
-        close = dout < gmin
+        # scenery.wall_gap_margin (Sonoma round 14B part 1b; absent 0): a point measured just outside the minimum (by less
+        # than the margin) is moved too, since the package rounds coordinates to 1 cm and the gate measures the rounded
+        # point (T7 approach left read 0.4995 m once his red brought the edge to the wall)
+        close = dout < gmin + float(SC_CFG.get("wall_gap_margin", 0.0))
         if close.any():
             sd = np.sign(lat[close]); P[close] = trk.edge_point(i[close], sd, gmin + 0.05)
             log(f"declared wall {dw['name']}: {int(close.sum())} points within {gmin} m of the fitted edge moved out "
@@ -1062,6 +1068,8 @@ def barriers(trk, osm):
         decl.append(P)
         rec = {"kind": dw.get("kind", "concrete"), "h": dw.get("h", 1.0), "fence": dw.get("fence", 3.0),
                "pts": with_z(trk, P), "src": f"declared: {dw['name']}" + (f" ({dw['src']})" if dw.get("src") else "")}
+        if dw.get("gap_min"):
+            rec["_gap_min"] = float(dw["gap_min"])   # read (and dropped) by tyre_facings
         # round 12: the lift that puts the wall's top level across a hollow (barrier_rules.py rule 1; the same rule as the
         # final top_z pass in scenery_post.py on the same points), for the boards standing on the wall
         lift = (BR.run_lift(rec["pts"], **HOLLOWS) if HOLLOWS is not None and rec["kind"] in BR.HOLLOW_KINDS
@@ -1297,11 +1305,19 @@ def closed_roads(trk, osm):
     ways = {w.get("id"): [x.get("ref") for x in w.iter("nd")] for w in root.iter("way")}
     for road in SC_CFG.get("closed_roads", []):
         for e in road["ways"]:
-            wid, *rng = str(e).split(":")
-            nd = ways[wid]
-            if rng:
-                a, b = nd.index(rng[0]), nd.index(rng[1]); nd = nd[min(a, b):max(a, b) + 1]
-            ll = np.array([nodes[i] for i in nd if i in nodes])
+            if isinstance(e, dict):
+                # a road with no OSM way (Sonoma round 14B: the owner's straight-on escape road at T9A): its centre line
+                # declared from the evidence ({latlon: [...], src}), built like a way
+                if not e.get("src"):
+                    raise SystemExit(f"closed road {road['name']}: a declared centre line needs its src")
+                ll = np.array(e["latlon"], float)
+                e = "declared"
+            else:
+                wid, *rng = str(e).split(":")
+                nd = ways[wid]
+                if rng:
+                    a, b = nd.index(rng[0]), nd.index(rng[1]); nd = nd[min(a, b):max(a, b) + 1]
+                ll = np.array([nodes[i] for i in nd if i in nodes])
             x, y = bl.enu(ll[:, 0], ll[:, 1])
             res = lane_parts(trk, np.c_[x, y], road.get("half_width", 5.0), f"{road['name']} ({e})",
                              clip=(2.5, road.get("max_half", 12.0)))
@@ -1600,6 +1616,7 @@ def tyre_facings(trk, bar, reach=2.5, off=0.55):
             continue
         P = np.array(b["pts"], float)
         moved = []
+        gmin_ = max(0.55, b.pop("_gap_min", 0.0) + 0.05)   # a declared run's own minimum (gap_min) holds here too
         for j in range(len(P)):
             q = P[j, :2]
             t = np.clip(((q - a) * d).sum(1) / L2, 0, 1)
@@ -1615,7 +1632,7 @@ def tyre_facings(trk, bar, reach=2.5, off=0.55):
             p_new = c + toward * off
             # never closer than 0.55 m to the fitted edge (the barrier-gap gate)
             i2, lat2, dout2 = trk.project(p_new[None])
-            if dout2[0] < 0.55:
+            if dout2[0] < gmin_:
                 continue
             P[j, :2] = p_new
             moved.append(int(i_[0]))

@@ -6,6 +6,9 @@ export type Vec3 = [number, number, number];
 
 export interface SurfaceSample {
   z: number; nx: number; ny: number; nz: number; onTrack: boolean; mu: number; paved?: boolean;
+  /** Paved but off the course (round 14B: a part marked off_course, Sonoma's T9A escape road): counts as off for lap
+   *  validity like dirt. Absent / false elsewhere. */
+  offCourse?: boolean;
   /** 0 on pavement → 1 fully off it (blended over the first metre past the paved edge). */
   dirt?: number;
   /** Friction multiplier of the pavement. */

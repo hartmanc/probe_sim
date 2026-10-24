@@ -1,0 +1,79 @@
+{
+ "rule": "T7-complex polygon vertices 16-19 redrawn 3.0 m in from the bridge deck edge (lidar class-17 returns, lidar_grids BRG, 1 m grid, along each vertex outward normal); creek bank = DEM |slope| > 25 %",
+ "captures": [
+  "c20_s3850",
+  "c20_s3905"
+ ],
+ "vertices": [
+  {
+   "vertex": 16,
+   "deck_edge_u_m": 0.5,
+   "new_enu": [
+    -501.73,
+    322.75
+   ],
+   "new_latlon": [
+    38.1655993,
+    -122.4633324
+   ],
+   "old_latlon": [
+    38.1656087,
+    -122.4633583
+   ]
+  },
+  {
+   "vertex": 17,
+   "deck_edge_u_m": 0.75,
+   "new_enu": [
+    -496.13,
+    330.3
+   ],
+   "new_latlon": [
+    38.1656672,
+    -122.4632684
+   ],
+   "old_latlon": [
+    38.1656797,
+    -122.4632886
+   ]
+  },
+  {
+   "vertex": 18,
+   "deck_edge_u_m": -0.25,
+   "new_enu": [
+    -489.06,
+    337.47
+   ],
+   "new_latlon": [
+    38.1657315,
+    -122.4631876
+   ],
+   "old_latlon": [
+    38.1657498,
+    -122.4632166
+   ]
+  },
+  {
+   "vertex": 19,
+   "deck_edge_u_m": 0.25,
+   "new_enu": [
+    -483.26,
+    345.57
+   ],
+   "new_latlon": [
+    38.1658043,
+    -122.4631213
+   ],
+   "old_latlon": [
+    38.1658198,
+    -122.4631458
+   ]
+  }
+ ],
+ "bank_top_u_m": {
+  "19": 7.75,
+  "20": 6.25,
+  "21": 7.0,
+  "16-18": "none within 8 m"
+ }
+}

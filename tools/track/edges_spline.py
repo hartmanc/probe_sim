@@ -101,6 +101,7 @@ KSEARCH = []
 # centre's stations. Empty (every config without spline.owner_edges): the fit is unchanged.
 OWNER = []
 KERB_RAMP = 6     # stations over which a kerb_inside shift ramps in at each end
+KERB_RAMP_SMOOTH = 10   # the smooth ramp's length (spline.kerb_ramp 'smooth'; absent: the linear KERB_RAMP)
 KERB_STEP = 0.08  # a measured-shift kerb zone (kerb_inside (side, lo, hi, shift), Buttonwillow round 10): the shift ramps
                   # in OUTSIDE the zone at most this much per station, so the whole measured kerb lies inside the edge
                   # and the edge-gate step (0.10 m per station) holds
@@ -477,13 +478,36 @@ def owner_readings(C, NL, w, n):
         P = np.asarray(w['pts'], float)
     if not len(P):
         return {}
-    _, k = cKDTree(C).query(P)
-    lat = sg * ((P - C[k]) * NL[k]).sum(1)
+    if w.get('project') == 'foot':
+        # Sonoma round 14B part 1b (owner_edges entry project='foot'): each point of his line at the foot of its normal on
+        # the centre (fractional station, the tangent interpolated between stations), his readings then interpolated to
+        # the integer stations along his line (no interpolation across a gap of more than 3 stations). The nearest
+        # centre point (below) puts a point 10 m out on the outside of a tight corner up to a station off its foot: his
+        # reading there moved 0.3-0.9 m with the stationing (T9A) and his smooth line read as a kink
+        su, latu = foot_project(C, NL, P)
+        latu = sg * latu
+        o_ = np.argsort(su); su, latu = su[o_], latu[o_]
+        lo_ = int(np.ceil(su.min())); hi_ = int(np.floor(su.max()))
+        kk_all = np.arange(lo_, hi_ + 1)
+        j_ = np.searchsorted(su, kk_all)
+        ok_ = (j_ > 0) & (j_ < len(su))
+        kk_all, j_ = kk_all[ok_], j_[ok_]
+        gap_ok = (su[j_] - su[j_ - 1]) <= 3.0
+        kk_all, j_ = kk_all[gap_ok], j_[gap_ok]
+        f_ = (kk_all - su[j_ - 1]) / np.maximum(su[j_] - su[j_ - 1], 1e-9)
+        vals = (1 - f_) * latu[j_ - 1] + f_ * latu[j_]
+        k = None
+        pairs = [(int(a) % n, float(b)) for a, b in zip(kk_all, vals)]
+    else:
+        _, k = cKDTree(C).query(P)
+        lat = sg * ((P - C[k]) * NL[k]).sum(1)
+        pairs = [(int(kk), float(np.median(lat[k == kk]))) for kk in np.unique(k)]
     out = {}
-    for kk in np.unique(k):
-        v = float(np.median(lat[k == kk]))
+    for kk, v in pairs:
         add = 0.0
         for a, b, *shift in w.get('kerb_inside', []):
+            if a is None or b is None or isinstance(a, (tuple, list)):
+                continue   # a world-point kerb run not resolved (no centre given to trackcfg.remap_stations)
             if shift:
                 # a measured shift (the band's outer limit from his line, compare/owner_kerbs.py): full over the zone,
                 # ramped in over ceil(shift / KERB_STEP) stations before it and out after it; where two zones' ramps
@@ -497,9 +521,36 @@ def owner_readings(C, NL, w, n):
                 # the kerb's width, ramped in over KERB_RAMP stations at each end of the run (a 0.9 m step in a reading
                 # is no edge: the asphalt end runs on past the block ends; round 5, run 41)
                 e = min((kk - a) % n, (b - kk) % n) + 1
-                v += w.get('kerb_w', 0.9) * min(1.0, e / KERB_RAMP)
+                if w.get('kerb_ramp') == 'smooth':
+                    # Sonoma round 14B part 1b (spline.kerb_ramp 'smooth'): a smoothstep over KERB_RAMP_SMOOTH stations; the
+                    # linear ramp's two corners read as third-difference kinks on the edge (world continuity)
+                    u_ = min(1.0, e / KERB_RAMP_SMOOTH)
+                    v += w.get('kerb_w', 0.9) * u_ * u_ * (3 - 2 * u_)
+                else:
+                    v += w.get('kerb_w', 0.9) * min(1.0, e / KERB_RAMP)
         out[int(kk)] = v + add
     return out
+
+
+def foot_project(C, NL, P, iters=8):
+    """the foot of each point's normal on the centre polyline C (n x 2; NL its left normals): fractional station s with
+    (P - C(s)) . T(s) = 0, C(s) linear between stations and T(s) the interpolated unit tangent; returns (s, lateral +left)"""
+    from scipy.spatial import cKDTree
+    n = len(C)
+    T_ = np.c_[NL[:, 1], -NL[:, 0]]
+    _, i = cKDTree(C).query(P)
+    s = i.astype(float)
+    for _ in range(iters):
+        i0 = np.floor(s).astype(int); f = (s - i0)[:, None]
+        a, b = i0 % n, (i0 + 1) % n
+        Cs = (1 - f) * C[a] + f * C[b]
+        Ts = (1 - f) * T_[a] + f * T_[b]; Ts /= np.linalg.norm(Ts, axis=1, keepdims=True)
+        seg = np.linalg.norm(C[b] - C[a], axis=1)
+        s = s + ((P - Cs) * Ts).sum(1) / np.maximum(seg, 1e-9)
+    i0 = np.floor(s).astype(int); f = (s - i0)[:, None]; a, b = i0 % n, (i0 + 1) % n
+    Cs = (1 - f) * C[a] + f * C[b]
+    Ns = (1 - f) * NL[a] + f * NL[b]; Ns /= np.linalg.norm(Ns, axis=1, keepdims=True)
+    return s, ((P - Cs) * Ns).sum(1)
 
 
 def periodic_basis(x, K, n):
@@ -511,9 +562,64 @@ def periodic_basis(x, K, n):
     return B
 
 
+# Local knot refinement (Sonoma round 14B part 1b, config spline.refine [(lo, hi, knot)] on the current centre's stations,
+# set per local refit like OWNER): inside [lo, hi] a second layer of uniform cubic B-splines at `knot` stations is added to
+# the periodic spline (only the functions whose support lies inside the zone, so the edge outside is the coarse spline's),
+# with the same third-difference penalty on its coefficients. One curve per side, fitted in one least squares; empty
+# (every config without spline.refine): the basis and the penalty are exactly the periodic ones.
+REFINE = []
+
+
+def _fine_basis(x, n):
+    x = np.asarray(x, float) % n
+    cols = []
+    for lo, hi, h, *_ in REFINE:
+        h = float(h); m = int((hi - lo) // h) - 3
+        for j in range(max(m, 0)):
+            u = (x - (lo + j * h)) / h
+            b = np.zeros(len(x))
+            for a, f in ((0, lambda v: v ** 3 / 6), (1, lambda v: (-3 * v ** 3 + 3 * v ** 2 + 3 * v + 1) / 6),
+                         (2, lambda v: (3 * v ** 3 - 6 * v ** 2 + 4) / 6), (3, lambda v: (1 - v) ** 3 / 6)):
+                sel = (u >= a) & (u < a + 1)
+                b[sel] = f(u[sel] - a)
+            cols.append(b)
+    return np.array(cols).T if cols else np.zeros((len(x), 0))
+
+
+def basis(x, K, n):
+    """the fit's design matrix: the periodic spline, plus the refinement layer where REFINE is set"""
+    B = periodic_basis(x, K, n)
+    return np.hstack([B, _fine_basis(x, n)]) if REFINE else B
+
+
+def _fine_penalty():
+    blocks = []
+    for lo, hi, h, *rest in REFINE:
+        # (lo, hi, knot[, mult[, side[, [(a, b, mult_in), ...]]]]): mult scales this zone's fine-layer third-difference
+        # penalty (lam * mult; default 1); each (a, b, mult_in) sets the penalty rows whose span centres on [a, b] to
+        # lam * mult_in instead (one knot grid, so no zone boundary inside the stretch his corner needs freedom in)
+        m = max(int((hi - lo) // float(h)) - 3, 0)
+        D_ = np.diff(np.eye(m), 3, axis=0) if m >= 4 else np.zeros((0, m))
+        wrow = np.full(D_.shape[0], float(rest[0]) if rest else 1.0)
+        for a, b, mi in (rest[2] if len(rest) > 2 else []):
+            c_ = lo + (np.arange(D_.shape[0]) + 3.5) * float(h)   # the centre of row r's coefficient span (r .. r + 3)
+            wrow[(c_ >= a) & (c_ <= b)] = float(mi)
+        if len(rest) > 2 and len(wrow) > 6:
+            # the change of penalty eased over +-3 rows (geometric), so the boundary of a sub-range is no kink of its own
+            lw = np.log(wrow); lw = np.convolve(np.r_[[lw[0]] * 3, lw, [lw[-1]] * 3], np.ones(7) / 7, 'valid'); wrow = np.exp(lw)
+        blocks.append(np.sqrt(wrow)[:, None] * D_)
+    tot = sum(b.shape[1] for b in blocks)
+    D = np.zeros((sum(b.shape[0] for b in blocks), tot)); r = c = 0
+    for b in blocks:
+        D[r:r + b.shape[0], c:c + b.shape[1]] = b; r += b.shape[0]; c += b.shape[1]
+    return D
+
+
 def periodic_fit(xo, yo, K, n, lam, huber, xp, yp, wp, xa=None, ya=None, wa=None, iters=8):
     """Robust penalised periodic spline: observations (Huber), a weak prior at every station (wp), and constraint
     anchors (declared straights, measured shapes: ya at stations xa with weights wa) inside the same least squares."""
+    if REFINE:
+        return _refined_fit(xo, yo, K, n, lam, huber, xp, yp, wp, xa, ya, wa, iters)
     B = periodic_basis(xo, K, n); Bp = periodic_basis(xp, K, n)
     D = np.zeros((K, K))
     for j in range(K):   # third difference, circulant
@@ -528,6 +634,74 @@ def periodic_fit(xo, yo, K, n, lam, huber, xp, yp, wp, xa=None, ya=None, wa=None
         c = np.linalg.solve(A, (B * rw[:, None]).T @ yo + rhs0)
         r = np.abs(B @ c - yo); rw = np.where(r <= huber, 1.0, huber / np.maximum(r, 1e-9))
     return c
+
+
+def _refined_fit(xo, yo, K, n, lam, huber, xp, yp, wp, xa, ya, wa, iters):
+    """periodic_fit with the REFINE layer (same penalties: the coarse circulant third difference, the fine one per zone)"""
+    B = basis(xo, K, n); Bp = basis(xp, K, n); M = B.shape[1]
+    Dc = np.zeros((K, K))
+    for j in range(K):
+        for o, cf in ((0, -1), (1, 3), (2, -3), (3, 1)): Dc[j, (j + o) % K] += cf
+    Df = _fine_penalty()
+    P = np.zeros((M, M)); P[:K, :K] = lam * Dc.T @ Dc; P[K:, K:] = lam * Df.T @ Df
+    P = P + (Bp * np.asarray(wp)[:, None]).T @ Bp
+    rhs0 = (Bp * np.asarray(wp)[:, None]).T @ yp
+    if xa is not None and len(xa):
+        Ba = basis(xa, K, n); P = P + (Ba * wa[:, None]).T @ Ba; rhs0 = rhs0 + (Ba * wa[:, None]).T @ ya
+    rw = np.ones(len(xo))
+    for _ in range(iters):
+        A = (B * rw[:, None]).T @ B + P
+        c = np.linalg.solve(A, (B * rw[:, None]).T @ yo + rhs0)
+        r = np.abs(B @ c - yo); rw = np.where(r <= huber, 1.0, huber / np.maximum(r, 1e-9))
+    return c
+
+
+STEP_TAPER = 30   # stations either side over which the smooth counterpart of a declared step spreads
+
+
+def step_profile(side, steps, owner, C, NL, n):
+    """J (n,) for the declared steps on this side (gate.continuity_exemptions kind 'step', on the current stations: [(side,
+    lo, hi)]): inside [lo, hi] his jog is the station pair (j, j + 1) where his reading changes most; its size = the
+    difference at j + 0.5 of a line through his 3 readings up to j and one through his 3 from j + 1; J = size * (the step
+    between j and j + 1 minus a smoothstep over [j - STEP_TAPER, j + 1 + STEP_TAPER]): sharp over that one station
+    interval, zero far from it. None when this side has no step."""
+    st = [(int(lo), int(hi)) for sd, lo, hi in steps if sd == side]
+    if not st:
+        return None
+    rd = {}
+    for w in owner:
+        if w['side'] == side:
+            rd.update(owner_readings(C, NL, w, n))
+    J = np.zeros(n); k = np.arange(n, dtype=float)
+    for lo0, hi0 in st:
+        # the jog: the largest change of his reading between two adjacent stations inside the declared stretch (given by
+        # world points a few stations either side of his step, so re-stationing cannot lose it); his readings at the
+        # foot of their normals cross his short notch over one or two stations, so the transition is widened to the
+        # stations that sit on neither side's line (a line through his 4 readings before / after, within 0.1 m)
+        pairs = [(abs(rd[j + 1] - rd[j]), j) for j in range(lo0, hi0) if j in rd and j + 1 in rd]
+        if not pairs:
+            continue
+        j0 = max(pairs)[1]
+        lo, hi = j0, j0 + 1
+        a = [(j, rd[j]) for j in range(j0 - 6, j0 - 1) if j in rd]; b = [(j, rd[j]) for j in range(j0 + 2, j0 + 7) if j in rd]
+        if len(a) < 2 or len(b) < 2:
+            continue
+        fa = np.polyfit(*np.array(a).T, 1); fb = np.polyfit(*np.array(b).T, 1)
+        while lo - 1 in rd and abs(rd[lo] - np.polyval(fa, lo)) > 0.1 and lo > j0 - 2:
+            lo -= 1
+        while hi + 1 in rd and abs(rd[hi] - np.polyval(fb, hi)) > 0.1 and hi < j0 + 3:
+            hi += 1
+        mid = 0.5 * (lo + hi)
+        size = float(np.polyval(fb, mid) - np.polyval(fa, mid))
+        ramp = np.clip((k - lo) / max(hi - lo, 1), 0, 1)
+        for j in range(lo + 1, hi):
+            # inside the transition the step follows his own reading (the fraction of the way from the before-line to
+            # the after-line), so his notch is followed where it lies within the station interval
+            if j in rd:
+                ramp[j % n] = float(np.clip((rd[j] - np.polyval(fa, j)) / (np.polyval(fb, j) - np.polyval(fa, j)), 0, 1))
+        u = np.clip((k - (lo - STEP_TAPER)) / (hi - lo + 2 * STEP_TAPER), 0, 1)
+        J += size * (ramp - u * u * (3 - 2 * u))
+    return J
 
 
 def tight_mask(C, radius=100.0, win=30):
@@ -569,18 +743,23 @@ def fit_periodic(C, NL, hl, hr, tiles, features, sp, mpp, anchors=None, log=_log
     for z in KSEARCH:
         if len({feature_at(features, z[0], k, n) for k in (z[1], z[2])}) != 1:
             raise SystemExit(f'spline.kerb_search {z[:4]}: its ends lie in different feature zones')
+    REF_ALL = list(sp.get('_refine') or [])
+    REFINE[:] = [z for z in REF_ALL if len(z) < 5]
     win = sp.get('search', (-4.5, 4.0)); U_ = np.arange(win[0], win[1] + 1e-4, 0.04)
     if obs is None:
         obs = gather(C, NL, hl, hr, tiles, features, sp['line_off'], mpp, U_)
     # obs given (width_model.py, round 9): the caller's own evidence rows; anchors_cover False: its constraints are
     # not evidence, coverage and gaps count the observations only
-    xs = np.arange(n, dtype=float); Bx = periodic_basis(xs, K, n)
+    xs = np.arange(n, dtype=float); Bx = basis(xs, K, n)
     tight = tight_mask(C)
     rep, out = {}, {}
     for side, hw in (('left', hl), ('right', hr)):
         O = obs[side]
         if not O:
             raise SystemExit(f'fit_periodic: no observations on the {side} side')
+        # spline.refine zones may name a side (5th element); a zone without one serves both sides
+        REFINE[:] = [z for z in REF_ALL if len(z) < 5 or z[4] == side]
+        Bx = basis(xs, K, n)
         xa = ya = wa = None
         if anchors and anchors.get(side):
             xa, ya, wa = (np.asarray(v, float) for v in anchors[side])
@@ -594,9 +773,25 @@ def fit_periodic(C, NL, hl, hr, tiles, features, sp, mpp, anchors=None, log=_log
                     ya = np.r_[ya if ya is not None else [], np.array([rd[k] for k in ks_])]
                     wa = np.r_[wa if wa is not None else [], np.full(len(ks_), OWNER_W)]
         wp = np.full(n, sp['prior'])
+        # declared steps in his red (gate.continuity_exemptions kind 'step', Sonoma round 14B part 1b: the T11 hairpin
+        # outside, where his red steps in / out at the light apron's ends): the spline fits his red with the step taken
+        # out (J, a sharp step over the declared stations minus a smoothstep of the same size over +-STEP_TAPER stations),
+        # and the step is put back on the returned edge, so the edge is smooth either side and jogs only over the
+        # declared stations (gated there as a junction corner: straight between them); absent: J = 0
+        J = step_profile(side, sp.get('_steps') or [], OWNER, C, NL, n)
+        if J is not None:
+            O = [(i, ti, [y - J[i] for y in c], kd) for i, ti, c, kd in O]
+            if xa is not None:
+                ya = ya - J[xa.astype(int) % n]
+            hw = hw - J
         xo_all = np.array([i for i, _, c, _ in O for _ in c], float); yo_all = np.array([y for _, _, c, _ in O for y in c])
         c0 = periodic_fit(xo_all, yo_all, K, n, sp['lam'] * sp['init_stiff'], 1.0, xs, hw, wp, xa, ya, wa)
-        cur = Bx @ c0
+        cur = Bx @ c0 + (J if J is not None else 0.0)
+        if J is not None:
+            O = [(i, ti, [y + J[i] for y in c], kd) for i, ti, c, kd in O]
+            if xa is not None:
+                ya = ya + J[xa.astype(int) % n]
+            hw = hw + J
         if hold is not None:   # the observations are associated with the edge that is returned (held outside the window)
             cur = hold['w'] * cur + (1.0 - hold['w']) * hold[side]
         # an owner window's stations associate his reading wherever it lies (his line is the evidence there; the outer
@@ -609,15 +804,29 @@ def fit_periodic(C, NL, hl, hr, tiles, features, sp, mpp, anchors=None, log=_log
                 zreach[np.arange(z[1], z[2] + 1) % n] = max(abs(z[3][0]), abs(z[3][1]))
         for w in OWNER:
             if w['side'] == side:
-                zreach[np.arange(w['lo'], w['hi'] + (n if w['hi'] < w['lo'] else 0) + 1) % n] = 50.0
+                if w.get('reach') == 'drawn':
+                    # Sonoma round 14B part 1b (owner_edges entry reach='drawn'): only the stations within 3 of a reading of his
+                    # (where his line replaced the capture rows); where he drew nothing on this side (w_s0500's left) or
+                    # left a gap (the pit-in split at s ~3480-3520) the capture rows keep the ordinary gate schedule, and
+                    # are not tied to an edge 2-4 m away
+                    rd_ = owner_readings(C, NL, w, n)
+                    zz = sorted({(k + d) % n for k in rd_ if (k - w['lo']) % n <= (w['hi'] - w['lo']) % n for d in range(-3, 4)})
+                    zreach[np.array(zz, int)] = 50.0 if zz else 0.0
+                else:
+                    zreach[np.arange(w['lo'], w['hi'] + (n if w['hi'] < w['lo'] else 0) + 1) % n] = 50.0
         for gate in (1.2, 1.0, 0.8, 0.6, 0.5, 0.5):
             xo, yo = [], []
             for i, _, c, _ in O:
                 d = np.abs(np.array(c) - cur[i]); j = int(d.argmin())
                 if d[j] <= max(gate, zreach[i]): xo.append(i); yo.append(c[j])
             xo = np.array(xo, float); yo = np.array(yo)
-            cf = periodic_fit(xo, yo, K, n, sp['lam'], sp['huber'], xs, hw, wp, xa, ya, wa)
-            cur = Bx @ cf
+            if J is None:
+                cf = periodic_fit(xo, yo, K, n, sp['lam'], sp['huber'], xs, hw, wp, xa, ya, wa)
+                cur = Bx @ cf
+            else:
+                cf = periodic_fit(xo, yo - J[xo.astype(int)], K, n, sp['lam'], sp['huber'], xs, hw - J, wp, xa,
+                                  None if ya is None else ya - J[xa.astype(int) % n], wa)
+                cur = Bx @ cf + J
             if hold is not None:
                 cur = hold['w'] * cur + (1.0 - hold['w']) * hold[side]
         # every capture row's nearest band to the final curve (not only the gated ones)
@@ -635,7 +844,7 @@ def fit_periodic(C, NL, hl, hr, tiles, features, sp, mpp, anchors=None, log=_log
         rep[side] = dict(obs=int(len(xo)), candidates=int(len(O)), within=float(np.mean(allres[assoc] <= 0.25)),
                          within_all=float(np.mean(allres <= 0.25)), assoc_share=float(assoc.mean()),
                          off_hist=np.histogram(allres[assoc & (allres > 0.25)], bins=[0.25, 0.4, 0.6, 0.8, 1.0, 1.2])[0].tolist(),
-                         within_gated=float(np.mean(np.abs(yo - (Bx[xo.astype(int)] @ cf if hold is None else cur[xo.astype(int)])) <= 0.25)),
+                         within_gated=float(np.mean(np.abs(yo - (Bx[xo.astype(int)] @ cf + (0.0 if J is None else J[xo.astype(int)]) if hold is None else cur[xo.astype(int)])) <= 0.25)),
                          covered=float(covered.mean()), longest_gap=int(glen[gi]) if glen else 0,
                          gap_at=gaps[gi] if glen else None, wave_rms=float(roll[loose].max()), wave_peak=float(np.abs(qq)[loose].max()),
                          kink=float(kink[loose].max()), kink_all=float(kink.max()), kink_at=int(np.argmax(np.where(loose, kink, 0))),

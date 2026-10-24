@@ -27,7 +27,9 @@ export interface TrackJson {
 export interface PitLaneJson {
   spacing_m: number;
   fractions: number[];
-  parts: { n: number; center: Vec3[]; left: Vec3[]; right: Vec3[]; profile_z: number[][] }[];
+  /** off_course (round 14B, Sonoma's T9A escape road): paved and drivable, but a car on it is off the course for lap
+   *  validity (SurfaceSample.offCourse); absent = course-neutral paving as before */
+  parts: { n: number; center: Vec3[]; left: Vec3[]; right: Vec3[]; profile_z: number[][]; off_course?: boolean }[];
 }
 
 /** Raised "sausage" kerbs (scenery.json `sausages`): a half-elliptical concrete hump `width` m wide and `height` m
@@ -495,14 +497,14 @@ class Terrain {
 // Pit lane: the parts are concatenated into one Geo (same arrays as the track, so profileAt works); segments that
 // would join the end of one part to the start of the next (or wrap) are marked invalid.
 
-interface PitGeo { g: Geo; valid: Uint8Array; first: Uint8Array; last: Uint8Array }
+interface PitGeo { g: Geo; valid: Uint8Array; first: Uint8Array; last: Uint8Array; offc: Uint8Array }
 
 function buildPitGeo(p: PitLaneJson): PitGeo | null {
   const parts = p.parts.filter((q) => q.n >= 2);
   const n = parts.reduce((a, q) => a + q.n, 0);
   if (n < 3) return null;
   const center: Vec3[] = [], left: Vec3[] = [], right: Vec3[] = [], z: number[][] = [];
-  const valid = new Uint8Array(n), first = new Uint8Array(n), last = new Uint8Array(n);
+  const valid = new Uint8Array(n), first = new Uint8Array(n), last = new Uint8Array(n), offc = new Uint8Array(n);
   let k = 0;
   for (const q of parts) {
     for (let i = 0; i < q.n; i++, k++) {
@@ -510,11 +512,12 @@ function buildPitGeo(p: PitLaneJson): PitGeo | null {
       valid[k] = i < q.n - 1 ? 1 : 0;
       first[k] = i === 0 ? 1 : 0;
       last[k] = i === q.n - 2 ? 1 : 0;
+      offc[k] = q.off_course ? 1 : 0;
     }
   }
   const pseudo = { n, spacing_m: p.spacing_m, length_m: n * p.spacing_m, center, left, right,
     profile: { fractions: p.fractions, z } } as unknown as TrackJson;
-  return { g: buildGeo(pseudo), valid, first, last };
+  return { g: buildGeo(pseudo), valid, first, last, offc };
 }
 
 interface PitLoc { seg: number; t: number; lateral: number; over: number }
@@ -618,6 +621,7 @@ export function createTrackSurface(track: TrackJson, heightfield: Float32Array, 
           setNormal(prof.dzds * tx - prof.dzdl * ty, prof.dzds * ty + prof.dzdl * tx);
           out.onTrack = true;
           out.paved = true;
+          out.offCourse = false;
           out.mu = muOn;
           out.dirt = 0;
           return out;
@@ -654,6 +658,7 @@ export function createTrackSurface(track: TrackJson, heightfield: Float32Array, 
             }
             out.onTrack = false;
             out.paved = true;
+            out.offCourse = pit.offc[ploc.seg] === 1;
             out.mu = muOn;
             out.dirt = 0;
             return out;
@@ -664,6 +669,7 @@ export function createTrackSurface(track: TrackJson, heightfield: Float32Array, 
       hf.sample(x, y);
       out.onTrack = false;
       out.paved = false;
+      out.offCourse = false;
       // grip: smoothstep from pavement to dirt over the first `gripBlend` m past the nearest paved edge
       const dOut = dOutT < dOutP ? dOutT : dOutP;
       const g01 = dOut >= gripBlend ? 1 : dOut / gripBlend;
