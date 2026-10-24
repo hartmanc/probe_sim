@@ -323,10 +323,19 @@ def remap_stations(cfg, n, length_m=None, C=None):
     elif c['centre'].get('local'):
         c['centre']['local']['window'] = tuple(st(k) for k in c['centre']['local']['window'])
     if sp.get('refine'):   # local knot refinement zones (Sonoma round 14B part 1b): (lo, hi, knot stations)
+        # sub-ranges (6th element) are world points (ENU, on the centre) and resolved on the built centre by the builder
         sp['refine'] = [(st(lo), st(hi)) + tuple(rest) for lo, hi, *rest in sp['refine']]
     for w in sp.get('owner_edges') or []:   # the owner's traced edge windows (Buttonwillow, 21 Oct 2026)
         w['lo'], w['hi'] = st(w['lo']), st(w['hi'])
-        w['kerb_inside'] = [(a, st(lo), st(hi)) + tuple(rest) for a, lo, hi, *rest in w.get('kerb_inside', [])]
+        # a kerb run may be given by two world points (ENU, on the centre at the run's ends; Sonoma round 14B part 1b: at T9A the
+        # config stations map badly onto a centre that moved 3 m); resolved as the nearest stations of C
+        def _st_or_xy(v):
+            if isinstance(v, (tuple, list)):
+                import numpy as np
+                from scipy.spatial import cKDTree
+                return int(cKDTree(np.asarray(C, float)[:, :2]).query(np.asarray(v, float))[1]) if C is not None else None
+            return st(v)
+        w['kerb_inside'] = [(a, _st_or_xy(lo), _st_or_xy(hi)) + tuple(rest) for a, lo, hi, *rest in w.get('kerb_inside', [])]
     g = c['gate']
     g['exempt'] = [(a, st(lo), st(hi)) + tuple(rest) for a, lo, hi, *rest in g.get('exempt', [])]
     g['wall_gaps'] = [(a, b, st(lo), st(hi)) for a, b, lo, hi in g.get('wall_gaps', [])]

@@ -104,16 +104,19 @@ CONFIG = dict(
                 # round 14B (owner, round-13 drive: his red on the T1-T2 outline windows): a second local window round
                 # T1 (config 114-383, his red 143-356 with the blend outside it), refitted after the first with
                 # everything outside it held; the first window's refit is exactly round 11's (centre.local list form)
+                # round 14B part 1b: the uniform re-stationing after each local window takes the edges along the station
+                # index (build_track, centre.restation 'index'), not by projecting them on the new centre
+                restation='index',
                 local=[dict(window=(1643, 2091), blend=15,
                             why='round 11: the Carousel exit to T7 straights only (owner notes 64 / 69)'),
                        dict(window=(114, 383), blend=15,
                             why='round 14B: T1-T2 edges from the owner\'s red (spline.owner_edges, owner/r14)'),
                        # round 14B part 1b: the ten windows he drew on the checkpoint page (owner/r14b), each stretch of his red
                        # with ~30 stations beyond it; refitted in order after the two above, everything outside held
-                       dict(window=(383, 560), blend=15, why='round 14B part 1b: T2 exit right (w_s0500)'),
-                       dict(window=(2005, 2413), blend=15, why='round 14B part 1b: T7 approach to the T7a exit (w_s2125, w_s2250)'),
-                       dict(window=(2645, 3228), blend=15, why='round 14B part 1b: T9 to T10 through 9a (w_s2750, w_s3000, w_s3125)'),
-                       dict(window=(3257, 3853), blend=15, why='round 14B part 1b: T10 exit to the T11 hairpin exit (w_s3375 .. w_s3750)')]),
+                       dict(window=(383, 560), blend=15, refit_final=True, centre_smooth=1.0, why='round 14B part 1b: T2 exit right (w_s0500)'),
+                       dict(window=(2005, 2413), blend=15, refit_final=True, centre_smooth=1.0, why='round 14B part 1b: T7 approach to the T7a exit (w_s2125, w_s2250)'),
+                       dict(window=(2645, 3228), blend=15, refit_final=True, centre_smooth=1.0, why='round 14B part 1b: T9 to T10 through 9a (w_s2750, w_s3000, w_s3125)'),
+                       dict(window=(3257, 3853), blend=15, refit_final=True, centre_smooth=1.0, why='round 14B part 1b: T10 exit to the T11 hairpin exit (w_s3375 .. w_s3750)')]),
     loop_check=dict(n_min=3900, n_max=4250, official_m=4088, elev_min=20, elev_max=80),
     captures=dict(
         z20_dir=None,
@@ -148,16 +151,20 @@ CONFIG = dict(
                              # onboard) lies beside his red and the fit sat 0.6-1.5 m outside it (T2 apex, T7 island, T7a exit
                              # outside, T9 exit, both 9a apexes, the T11 hairpin apex), the edge is his red moved out by the kerb
                              # width (kerb_inside, 0.65 m: scenery.kerb.width); at the O'Reilly island and the T10 exit outside his
-                             # red already sits at the kerb's outer limit (fit - red +0.14 / +0.29 m): no shift there
-                             dict(file='owner/r14b/merged.json', chains=False, lo=411, hi=533, local=True, windows=['owner/r14b/w_s0500.json', 'owner/r14b/w_s2125.json', 'owner/r14b/w_s2250.json', 'owner/r14b/w_s2750.json', 'owner/r14b/w_s3000.json', 'owner/r14b/w_s3125.json', 'owner/r14b/w_s3375.json', 'owner/r14b/w_s3500.json', 'owner/r14b/w_s3625.json', 'owner/r14b/w_s3750.json'],
+                             # red already sits at the kerb's outer limit (fit - red +0.14 / +0.29 m): no shift there.
+                             # Second pass (24 Oct 2026): reach='drawn' (his line ties the capture rows only within 3 stations of
+                             # a reading of his, not over gaps or the side he left undrawn), project='foot' (his line read at the
+                             # foot of its normals, edges_spline.foot_project); the 9a kerb runs by their world points (the
+                             # package's kerb strips: 9a right apex s 3020.0-3044.9, left 3059.9-3169.7 on round 14A)
+                             dict(file='owner/r14b/merged.json', chains=False, reach='drawn', project='foot', lo=411, hi=533, local=True, windows=['owner/r14b/w_s0500.json', 'owner/r14b/w_s2125.json', 'owner/r14b/w_s2250.json', 'owner/r14b/w_s2750.json', 'owner/r14b/w_s3000.json', 'owner/r14b/w_s3125.json', 'owner/r14b/w_s3375.json', 'owner/r14b/w_s3500.json', 'owner/r14b/w_s3625.json', 'owner/r14b/w_s3750.json'],
                                   kerb_inside=[('right', 397, 450)], src='owner round-14B checkpoint red (compare/sonoma/owner_edges_r14b, strokes.json vectors via owner_edges.py --by-stroke; owner/r14b/merged.json), T2 exit right'),
-                             dict(file='owner/r14b/merged.json', chains=False, lo=2033, hi=2385, local=True, windows=['owner/r14b/w_s0500.json', 'owner/r14b/w_s2125.json', 'owner/r14b/w_s2250.json', 'owner/r14b/w_s2750.json', 'owner/r14b/w_s3000.json', 'owner/r14b/w_s3125.json', 'owner/r14b/w_s3375.json', 'owner/r14b/w_s3500.json', 'owner/r14b/w_s3625.json', 'owner/r14b/w_s3750.json'],
+                             dict(file='owner/r14b/merged.json', chains=False, reach='drawn', project='foot', lo=2033, hi=2385, local=True, windows=['owner/r14b/w_s0500.json', 'owner/r14b/w_s2125.json', 'owner/r14b/w_s2250.json', 'owner/r14b/w_s2750.json', 'owner/r14b/w_s3000.json', 'owner/r14b/w_s3125.json', 'owner/r14b/w_s3375.json', 'owner/r14b/w_s3500.json', 'owner/r14b/w_s3625.json', 'owner/r14b/w_s3750.json'],
                                   kerb_inside=[('right', 2146, 2206), ('left', 2307, 2379)], src='owner round-14B checkpoint red (compare/sonoma/owner_edges_r14b, strokes.json vectors via owner_edges.py --by-stroke; owner/r14b/merged.json), T7 approach to T7a exit'),
-                             dict(file='owner/r14b/merged.json', chains=False, lo=2673, hi=2856, local=True, windows=['owner/r14b/w_s0500.json', 'owner/r14b/w_s2125.json', 'owner/r14b/w_s2250.json', 'owner/r14b/w_s2750.json', 'owner/r14b/w_s3000.json', 'owner/r14b/w_s3125.json', 'owner/r14b/w_s3375.json', 'owner/r14b/w_s3500.json', 'owner/r14b/w_s3625.json', 'owner/r14b/w_s3750.json'],
+                             dict(file='owner/r14b/merged.json', chains=False, reach='drawn', project='foot', lo=2673, hi=2856, local=True, windows=['owner/r14b/w_s0500.json', 'owner/r14b/w_s2125.json', 'owner/r14b/w_s2250.json', 'owner/r14b/w_s2750.json', 'owner/r14b/w_s3000.json', 'owner/r14b/w_s3125.json', 'owner/r14b/w_s3375.json', 'owner/r14b/w_s3500.json', 'owner/r14b/w_s3625.json', 'owner/r14b/w_s3750.json'],
                                   kerb_inside=[('right', 2699, 2746)], src='owner round-14B checkpoint red (compare/sonoma/owner_edges_r14b, strokes.json vectors via owner_edges.py --by-stroke; owner/r14b/merged.json), T9'),
-                             dict(file='owner/r14b/merged.json', chains=False, lo=2894, hi=3200, local=True, windows=['owner/r14b/w_s0500.json', 'owner/r14b/w_s2125.json', 'owner/r14b/w_s2250.json', 'owner/r14b/w_s2750.json', 'owner/r14b/w_s3000.json', 'owner/r14b/w_s3125.json', 'owner/r14b/w_s3375.json', 'owner/r14b/w_s3500.json', 'owner/r14b/w_s3625.json', 'owner/r14b/w_s3750.json'],
-                                  kerb_inside=[('right', 3039, 3068), ('left', 3072, 3165)], src='owner round-14B checkpoint red (compare/sonoma/owner_edges_r14b, strokes.json vectors via owner_edges.py --by-stroke; owner/r14b/merged.json), 9a to T10'),
-                             dict(file='owner/r14b/merged.json', chains=False, lo=3285, hi=3825, local=True, windows=['owner/r14b/w_s0500.json', 'owner/r14b/w_s2125.json', 'owner/r14b/w_s2250.json', 'owner/r14b/w_s2750.json', 'owner/r14b/w_s3000.json', 'owner/r14b/w_s3125.json', 'owner/r14b/w_s3375.json', 'owner/r14b/w_s3500.json', 'owner/r14b/w_s3625.json', 'owner/r14b/w_s3750.json'],
+                             dict(file='owner/r14b/merged.json', chains=False, reach='drawn', project='foot', lo=2894, hi=3200, local=True, windows=['owner/r14b/w_s0500.json', 'owner/r14b/w_s2125.json', 'owner/r14b/w_s2250.json', 'owner/r14b/w_s2750.json', 'owner/r14b/w_s3000.json', 'owner/r14b/w_s3125.json', 'owner/r14b/w_s3375.json', 'owner/r14b/w_s3500.json', 'owner/r14b/w_s3625.json', 'owner/r14b/w_s3750.json'],
+                                  kerb_inside=[('right', (206.22, 48.23), (219.96, 28.24)), ('left', (217.31, 13.66), (294.38, -38.52))], src='owner round-14B checkpoint red (compare/sonoma/owner_edges_r14b, strokes.json vectors via owner_edges.py --by-stroke; owner/r14b/merged.json), 9a to T10'),
+                             dict(file='owner/r14b/merged.json', chains=False, reach='drawn', project='foot', lo=3285, hi=3825, local=True, windows=['owner/r14b/w_s0500.json', 'owner/r14b/w_s2125.json', 'owner/r14b/w_s2250.json', 'owner/r14b/w_s2750.json', 'owner/r14b/w_s3000.json', 'owner/r14b/w_s3125.json', 'owner/r14b/w_s3375.json', 'owner/r14b/w_s3500.json', 'owner/r14b/w_s3625.json', 'owner/r14b/w_s3750.json'],
                                   kerb_inside=[('right', 3609, 3737)], src='owner round-14B checkpoint red (compare/sonoma/owner_edges_r14b, strokes.json vectors via owner_edges.py --by-stroke; owner/r14b/merged.json), T10 exit to the T11 hairpin exit')],
                 # his red arc across the paddock-side mouth at s ~166-179 (owner_mouths.py --across: his green, the
                 # access road's edge, ends on the arc at s 166; the arc rejoins his edge line at s 179): the course
@@ -167,13 +174,27 @@ CONFIG = dict(
                 # entry is an escape road (not a paddock road). No cones, just white lines." His red is the course edge through
                 # T9A; the V his strokes make into the escape road's mouth is read as an across line (owner_edges.py
                 # --by-stroke) and left out of the edge, so the edge runs along the course past the mouth, but it is NOT a
-                # mouth: no cones, no gate exemption, no owner-gate exclusion. The mouths stay round 14's.
+                # mouth: no cones, no mouth exemption, no owner-gate exclusion. The mouths stay round 14's. (Part 1b second pass:
+                # its corners are declared junction corners of the continuity gates, gate.continuity_exemptions.)
                 owner_mouths='owner/r14/mouths.json',
                 # round 14B part 1b (coordinator: his red wins where drawn, d14): where his red turns tighter than the 6-station
                 # knots can follow and the owner gates failed by more than the 0.40 m cap (T9A up to 1.8 / 2.3 m, the T7a exit
                 # left 0.62 m, the T11 hairpin outside 0.94 m), a local layer of finer knots (edges_spline.REFINE), used only
                 # in the local refits whose window holds it
-                refine=[(2240, 2330, 3), (3005, 3135, 3), (3620, 3745, 3)]),
+                # (lo, hi, knot[, penalty multiplier[, side[, sub-ranges]]]); round 14B part 1b second pass: T9A per side, 2 m
+                # knots, stiff (x10 left, x30 right; x50 over the right-hander's inside apex, where his readings jitter)
+                # except over his corners (sub-ranges by two world points on the centre, x0.3: the arc across the escape
+                # road's mouth on the left, the corner out of it on the right). The hairpin
+                # zone is gone (its steps are declared, gate.continuity_exemptions kind 'step')
+                refine=[(2240, 2330, 3, 3.0), (3005, 3135, 2, 10.0, 'left', [((215.0, 41.02), (219.81, 13.19), 0.3)]),
+                        (3005, 3135, 2, 30.0, 'right', [((217.16, 38.95), (223.16, 24.55), 50.0),
+                                                        ((217.68, 9.81), (221.03, -18.27), 0.3)])],
+                # the kerb_inside shift ramps in over 10 stations as a smoothstep (the linear 6-station ramp's corners read
+                # as third-difference kinks on the edge at the T9A and T7 apexes)
+                kerb_ramp='smooth',
+                # the owner gates read his lines at the foot of their normals (station-independent; the fit's own readings
+                # unchanged for T1's round-14 entry)
+                owner_measure='foot'),
     # Carousel exit (T6) to the T7 approach, stations ~1680-2060 (onboard youtube.com/watch?v=RAZip6S84CM 0:55-1:09):
     # the course is bounded by the PAVEMENT, not by cones or a painted line. On the shared drag-strip start (to ~1880) the
     # car runs right of the yellow lane line with the red/white kerb as the right edge (0:59-1:01) and crosses the lane
@@ -247,7 +268,37 @@ CONFIG = dict(
                       # as Buttonwillow's mouth exemptions (about +-20 stations round the mouth)
                       ('right', 145, 198, 'mouth of the paddock access road at T1 (round 14B: the owner\'s green, the road\'s pavement edge, '
                        'ends on his red arc at s 166, the arc rejoins his edge line at s 179; close_s0175 on c20_s1870 / c20_s1925); junction, real'),
-                      ('left', 1860, 1980, 'the T7 road forks off the drag strip to the left (c20_s3685/s3740; junction, real)')]),
+                      ('left', 1860, 1980, 'the T7 road forks off the drag strip to the left (c20_s3685/s3740; junction, real)')],
+              # round 14B part 1b (coordinator decisions 2 and 3, 24 Oct 2026; the owner away): declared junction corners where
+              # his red has a real pavement angle. World continuity and edge jumps leave the stretch out and report it as
+              # "exempt (junction corner)" with the measured values; inside it the edge must be straight (chord <= 0.10 m)
+              # or smooth per metre (1 m arc length: |third difference| <= 0.02 m, radius >= 6 m), or for a step one jog
+              # segment with smooth pieces either side (edge_gate.continuity_exemption_report). The stretch is given by two
+              # world points on his red (ENU, the corners), so re-stationing cannot move it.
+              continuity_exemptions=[
+                  dict(side='left', kind='arc', enu=[(221.62, 41.32), (226.45, 12.02)],
+                       reason='T9A: his red across the escape road\'s mouth (a convex arc, radius ~8 m, between his two green '
+                              'lines) from where it leaves the straight-on paving to where it rejoins the course; the outside of '
+                              'the R 22 m right-hander, edge stations 1.3-1.6 m apart',
+                       evidence='owner window w_s3000 / w_s3125 (compare/sonoma/owner_edges_r14b, strokes.json, his left red), '
+                                'captures c20_o0660 / c20_o0715; owner: "T9A is a sharp right hander; on the other side of its '
+                                'entry is an escape road"'),
+                  dict(side='right', kind='corner', enu=[(207.65, 8.03), (211.94, -21.24)],
+                       reason='T9A: his red where the course meets the escape road (the A road) beyond the right-hander, its '
+                              'straight line and the two corners (s ~3074-3096 of the round-14B part-1b run)',
+                       evidence='owner window w_s3125 (strokes.json, his right red; the V into the road read as a line across), '
+                                'captures c20_o0715 / c20_s0715'),
+                  dict(side='left', kind='step', enu=[(507.0, -423.92), (506.89, -434.26)],
+                       reason='T11 hairpin outside: his red steps in ~1.1 m where the light apron begins (his red on its '
+                              'asphalt side). The apron is 3.4-3.9 m wide in the hairpin and its outer edge does not continue '
+                              'the asphalt edge (+1.4 m at its start), so it is not a flush kerb-type strip',
+                       evidence='owner windows w_s3625 / w_s3750 (strokes.json, both draw the step); captures c20_s1265 / '
+                                'c20_s1320; compare/sonoma/round14b/hairpin_band.json (compare/band_measure.py)'),
+                  dict(side='left', kind='step', enu=[(442.3, -444.59), (438.01, -435.58)],
+                       reason='T11 hairpin outside: his red steps out ~1.5 m where the light apron ends (outer edge +4.1 m '
+                              'from his red beyond it: not a continuation)',
+                       evidence='owner windows w_s3625 / w_s3750; captures c20_s1320 / c20_s1375; '
+                                'compare/sonoma/round14b/hairpin_band.json')]),
     # ---------------------------------------------------------------- stage 1: terrain override (round 14A, 23 Oct 2026)
     # Owner, round-13 drive (compare/sonoma/owner_findings.md): from the T7 approach the inactive paving (the Chute, the
     # short-T7 road, the paddock) sits on another level from the course, with a ridge where it meets it, the kerbed island

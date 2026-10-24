@@ -366,3 +366,103 @@ pandas, matplotlib added: without them `test_ground_lines` cannot import build_s
 
 Outline page re-rendered on this fit: 36 windows red / green plus 13 `_owner` overlays (`edges_r14b/`, PNGs local);
 extra.html carries the three places still off his red.
+
+## Part 1b, finished (24 Oct 2026, coordinator decisions while the owner is away): stage 1 PASSES
+
+**Decisions (the coordinator's, each for the owner to check):**
+1. *T1 share.* The accepted gate design (Buttonwillow round 10's `owner_station_gate`): the 0.25 m count and the cap are
+   taken outside his mouth segments (+-12), the all-stations number printed beside it. Distance to his red (geometric).
+2. *T9A.* The course edge there has real pavement angles: where his red leaves the straight-on paving across the escape
+   road's mouth (left, a convex arc of radius ~8 m) and where it comes back out of the escape road (right). These are
+   declared junction corners, `gate.continuity_exemptions` (side, kind, two world points on his red, reason, evidence:
+   capture window and stroke). World continuity and edge jumps leave those stations out and report them as
+   "exempt (junction corner)" with the measured values, never as a pass. Inside a stretch the edge must be straight
+   (chord <= 0.10 m) or smooth per metre (cubic through the stations, sampled at 1 m of arc length: |third difference|
+   <= 0.02 m, radius >= 6 m). The gate prints which case holds. Rationale: the per-station limit depends on the spacing.
+   On the outside of the R 22 m corner the edge stations sit 1.3-1.6 m apart, so his arc reads 0.06 m per station while
+   it is as smooth per metre as anything the gate passes elsewhere.
+3. *T11 hairpin outside.* Measured on the clean captures (`compare/band_measure.py`, `round14b/hairpin_band.json`): the
+   light apron is 3.1 m wide (median; p10 1.0, p90 4.2), rgb ~186/185/183 (grey-white). Its outer edge does not continue
+   the asphalt edge on either side: +1.04 m at its start, +4.06 m at its end (limit 0.3 m). So it is not a flush kerb-type
+   strip, and the two steps are declared the same way, kind 'step': one jog over at most 2 station intervals, smooth per
+   metre either side. **Open question for the owner: is the hairpin apron a kerb?**
+4. Python tests with the full dependency list.
+
+**Builder changes (all config-gated; absent = unchanged):**
+- `gate.continuity_exemptions` (edge_gate `exemptions` / `exempt_stations` / `continuity_exemption_report`; build_track
+  edge jumps). Kinds: arc / corner (straight or smooth), step (jog <= 2 intervals). Stretches come from world points,
+  so re-stationing cannot move them.
+- Declared steps in his red: `edges_spline.step_profile`. The spline fits his red with the jog taken out (a sharp step
+  minus a smoothstep of the same size over +-30 stations, its size from lines through his readings either side, his own
+  fraction inside the jog), and the jog is put back on the edge.
+- `owner_edges` entry keys: `project='foot'` reads his line at the foot of its normals (`edges_spline.foot_project`; the
+  nearest centre point put a point 10 m out up to a station off its foot, so his reading moved 0.3-0.9 m with the
+  stationing and his smooth arc read as kinks); `reach='drawn'` ties capture rows to his line only within 3 stations of
+  a reading of his. Without it, at the T2 exit left (he drew only the right) and over the pit-in gap the capture rows
+  were associated with an edge 2-4 m away (T2 exit left 52 %).
+- `spline.owner_measure='foot'`: the owner gates read every window at the foot of the normals (T1's round-14 entry
+  keeps its fit readings). T1's edges, within 3 mm of part 1, had read 0.285 / 0.369 m by station.
+- `spline.kerb_ramp='smooth'`: kerb_inside ramps in as a smoothstep over 10 stations. The linear 6-station ramp's
+  corners read as third-difference kinks.
+- `kerb_inside` runs may be two world points: the 9a kerb runs from the package's kerb strips. At T9A, config stations
+  3022-3070 all map to current stations 3078-3086, because the centre moved 3.3 m and the frozen reference centre cuts
+  the S, so the 9a kerb shifts had landed 40 stations off.
+- `spline.refine` (lo, hi, knot[, mult[, side[, sub-ranges]]]): per-side zones; a penalty multiplier; sub-ranges given
+  by two world points on the centre, with the penalty change eased over +-3 rows. Config: T7a (2240-2330, 3 m, x3); T9A
+  left 2 m x10 (x0.3 over the arc); T9A right 2 m x30 (x50 over the right-hander's inside apex, where his readings
+  jitter; x0.3 over the corner out of the escape road). The hairpin zone is gone (its steps are declared).
+- `centre.local` window keys `refit_final=True` (the window's last fit on the uniform stations themselves) and
+  `centre_smooth=1.0`. The window's centre is Gaussian-smoothed, sigma 1 station, moving it <= 0.03 m: the refit loop's
+  station-scale curvature jitter, carried 10-12 m out by the normals, read 0.03-0.04 m at T7a and T9A. Both on the four
+  part-1b windows.
+- `centre.restation='index'`: the uniform re-stationing takes the edges along the station index. Outside the window the
+  held edges are the window's own half-widths, not re-projections, which had moved the T9A arc 0.15-0.24 m during the
+  next window's refit.
+
+**Gates (stage 1 into `out/sonoma_r14b`, passed, no --write-on-fail; track.json sha256 2c043135a7b27767, lap 4105.33 m,
+n 4108; 8 min 44 s):**
+
+| owner window (config) | left: share / max, station (geometric) | right |
+|---|---|---|
+| T1 143-357 | 97.8 % outside mouths (91.3 % all stations) / 0.350 (0.348) | 100 % (96.4 %) / 0.082 |
+| T2 exit 412-535 | none drawn | 100 % / 0.142 |
+| T7-T7a 2039-2379 | 99.4 % / 0.319 (0.317) | 100 % / 0.212 |
+| T9 2668-2847 | 100 % / 0.121 | 100 % / 0.154 |
+| 9a / T9A 2883-3211 | 99.4 % / 0.271 (0.259) | 98.6 % / 0.379 (0.325) |
+| T10-T11 3297-3842 | 99.8 % / 0.314 (0.259) | 100 % / 0.179 |
+
+Owner reference 0.350 m left (station 242) / 0.379 m right (3091), <= 0.40 at every station. Owner width 0.392 m (242).
+Owner band 0.160 / 0.122 m. Fit observations: left 90.9 %, right 95.4 %. Waviness, kink, coverage and gaps ok. Edge jumps
+outside the corners 0.313 / 0.416 m. World continuity outside the corners: left 0.0164 m (2260), right 0.0184 m (3043).
+Declared corners, exempt (measured):
+
+| stretch | per station: d3 / half-width change | shape |
+|---|---|---|
+| left 3037-3062 (T9A arc) | 0.063 / 0.775 m | smooth per metre: d3 0.0123 m, min radius 9.9 m |
+| right 3074-3096 (T9A out of the escape road) | 0.067 / 0.786 m | smooth per metre: d3 0.0099 m, radius 11.4 m |
+| left 3645-3654 (hairpin apron start) | 1.235 / 0.683 m | step: jog 3649-3651 (2 intervals), either side d3 <= 0.0028 m, R >= 48.8 m |
+| left 3726-3735 (hairpin apron end) | 1.564 / 0.857 m | step: jog 3729-3731 (2 intervals), either side d3 <= 0.0036 m, R >= 49.8 m |
+
+Lap length 4105.33 m (official 4088, 0.4 %). Painted-midpoint residual, cross slope, edge gate, profile: ok.
+
+Stations over 0.25 m from his red, station-based: left 10 (242-244 T1, the T9A arc flanks, hairpin jog ends), right 4
+(3089-3091).
+
+Width (median, round 14A -> 14B, same world points; max change): T2 exit 414-532 12.25 -> 11.49 (2.11: his right red
+2 m inside the 14A edge at s 455-470); T7 approach 11.36 -> 11.90 (0.75); T7 / T7a 16.65 -> 15.64 (3.92); T9 12.92 ->
+11.82 (4.64); back straight end 11.98 -> 11.46 (1.03); T9A 13.93 -> 13.64 (7.67: the corners); T9A exit 12.72 -> 12.80
+(0.58); T10 to T11 approach 13.00 -> 12.05 (2.50); T11 approach / pit-in 13.26 -> 11.54 (5.30); hairpin 12.60 -> 12.29
+(4.44).
+
+**Proofs.**
+- T1: part 1 (895c5dd) rebuilt in a temporary worktree reproduces its track.json (5bfe29bef15d7588, byte for byte).
+  The T1 edges of this build lie within 2.8 mm (left), 2.7 mm (right) and 1.9 mm (centre) of it over s 140-360.
+- Laguna stage 1 (`out/laguna_r14b_repro`): heightfield.bin `cmp`-identical, track.json d4e8634710813961, the one known
+  `edge gate left` 0.105 m at 46.
+- Sonoma outside the local windows against round 14A: centre <= 3.4 mm; edges <= 4.9 mm at s 2440-2630 and <= 1.4 mm at
+  3870-4100, but up to 19.2 / 12.9 mm at s 600-1640 (T3-T6: the index re-stationing replaces the projection, whose own
+  error was in round 14A's held edges there).
+
+Python tests: 65 passed (59 + 6 new in `test_continuity_exemptions.py`).
+Outline page re-rendered on this fit (36 windows + 13 `_owner` overlays; intro.html / extra.html for part 1b, with the
+decisions and the apron question).
