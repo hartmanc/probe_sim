@@ -12,6 +12,11 @@ and --strokes <strokes.json> keeps only the stroke-coloured pixels within 3 px o
 window (the page's own vectors), so red or green objects in the imagery (a red roof, a red trailer) are not read as his
 lines.
 
+--by-stroke (Sonoma round 14B, part 1b): the strokes are read from their vectors (strokes.json), not from the PNG (the
+round-14B marked windows carry the red fit under his red): each red stroke is sampled every 0.25 m, and a sample whose
+stroke runs at more than --across-deg (35) to the course at its nearest station is a line ACROSS (a mouth's boundary),
+kept apart in `across_enu` (one entry per run of such samples, with its stroke index) and left out of the edge points.
+
 The frame is the one capwin draws for the same --s / --half / --mpp on the same package (north up, the window centred on
 the centreline point at s): pixel (i, j) covers world x = cx - half + (i + 0.5) mpp, y = cy + half - (j + 0.5) mpp. Red
 pixels (the edges) are projected onto the centreline; per station and side (lateral sign) the median lateral offset gives
@@ -67,6 +72,53 @@ def stroke_band(strokes, size, colour, width=7):
     return np.asarray(im) > 0
 
 
+def run_strokes(strokes, s, half, mpp, track, centre, across_deg=35.0, step=0.25):
+    """--by-stroke: the edge points and the across lines from the stroke vectors (image pixels of the window)"""
+    C = np.array(track['center'])[:, :2]
+    sp = track['spacing_m']
+    t = np.roll(C, -1, 0) - np.roll(C, 1, 0); t /= np.linalg.norm(t, axis=1, keepdims=True)
+    NL = np.c_[-t[:, 1], t[:, 0]]
+    cx, cy = centre
+    from scipy.spatial import cKDTree
+    kd = cKDTree(C)
+    edge, G, across = [], [], []
+    cosmin = np.cos(np.radians(across_deg))
+    for si, st in enumerate(strokes):
+        P = np.array(st['pts'], float)
+        W = np.c_[cx - half + (P[:, 0] + 0.5) * mpp, cy + half - (P[:, 1] + 0.5) * mpp]
+        if len(W) < 2:
+            continue
+        seg = np.linalg.norm(np.diff(W, axis=0), axis=1); u = np.r_[0, np.cumsum(seg)]
+        if u[-1] <= 0:
+            continue
+        uu = np.arange(0, u[-1] + 1e-9, step)
+        Q = np.c_[np.interp(uu, u, W[:, 0]), np.interp(uu, u, W[:, 1])]
+        if st.get('c') == 'green':
+            G.extend(Q.tolist()); continue
+        d = np.gradient(Q, axis=0); d /= np.maximum(np.linalg.norm(d, axis=1, keepdims=True), 1e-9)
+        _, k = kd.query(Q)
+        along = np.abs((d * t[k]).sum(1)) >= cosmin
+        edge.extend(Q[along].tolist())
+        # runs of across samples, one line each
+        idx = np.flatnonzero(~along)
+        if len(idx):
+            br = np.flatnonzero(np.diff(idx) > 1); a0 = np.r_[0, br + 1]; a1 = np.r_[br, len(idx) - 1]
+            for a, b in zip(a0, a1):
+                seg_ = Q[idx[a]:idx[b] + 1]
+                if len(seg_) * step >= 1.0:
+                    across.append({'stroke': si, 'pts_enu': [[round(float(x), 3), round(float(y), 3)] for x, y in seg_[::4]] +
+                                   [[round(float(seg_[-1][0]), 3), round(float(seg_[-1][1]), 3)]]})
+    E = np.array(edge) if edge else np.zeros((0, 2))
+    out = per_station(E, C, NL, sp) if len(E) else {'left': [], 'right': []}
+    G = np.array(G) if G else np.zeros((0, 2))
+    if len(G):
+        cell = np.floor(G / 1.0).astype(int); _, idx = np.unique(cell, axis=0, return_index=True); G = G[np.sort(idx)]
+    return {'frame': {'s': float(s), 'half': float(half), 'mpp': float(mpp), 'centre_enu': [round(float(cx), 3), round(float(cy), 3)],
+                      'image_px': [int(round(2 * half / mpp))] * 2, 'by_stroke': True, 'across_deg': across_deg},
+            'left_enu_xys': out['left'], 'right_enu_xys': out['right'],
+            'green_enu_xy': [[round(float(x), 3), round(float(y), 3)] for x, y in G], 'across_enu': across}
+
+
 def run(png, s, half, mpp, track, centre=None, strokes=None):
     C = np.array(track['center'])[:, :2]
     sp = track['spacing_m']
@@ -92,7 +144,9 @@ def run(png, s, half, mpp, track, centre=None, strokes=None):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--track', required=True)
-    ap.add_argument('--png', required=True)
+    ap.add_argument('--png', help='the marked window (not with --by-stroke)')
+    ap.add_argument('--by-stroke', action='store_true', help='read the strokes from --strokes vectors, not from the PNG')
+    ap.add_argument('--across-deg', type=float, default=35.0)
     ap.add_argument('--s', type=float)
     ap.add_argument('--frames', help="the drawing page's frames.json (Sonoma round 14B): the window's centre, px and mpp")
     ap.add_argument('--window', help='the window name in --frames / --strokes')
@@ -109,8 +163,12 @@ def main():
         fr = json.load(open(a.frames))[a.window]
         centre = tuple(fr['centre']); a.mpp = float(fr['mpp']); a.half = fr['px'] * a.mpp / 2; a.s = float(fr['s'])
     strokes = json.load(open(a.strokes))[a.window]['strokes'] if a.strokes else None
-    d = {'track': a.track, 'src': a.src or f'owner drawing {os.path.basename(a.png)} (capwin --s {a.s} --half {a.half} --mpp {a.mpp})'}
-    d.update(run(a.png, a.s, a.half, a.mpp, track, centre, strokes))
+    d = {'track': a.track, 'src': a.src or f'owner drawing {os.path.basename(a.png or a.window)} (capwin --s {a.s} --half {a.half} --mpp {a.mpp})'}
+    if a.by_stroke:
+        d.update(run_strokes(strokes, a.s, a.half, a.mpp, track, centre, a.across_deg))
+        print(f"{a.window}: {len(d['across_enu'])} across lines: " + ', '.join(f"stroke {x['stroke']} {len(x['pts_enu'])} pts" for x in d['across_enu']))
+    else:
+        d.update(run(a.png, a.s, a.half, a.mpp, track, centre, strokes))
     json.dump(d, open(a.out, 'w'), indent=1)
     print(f"{a.out}: left {len(d['left_enu_xys'])} / right {len(d['right_enu_xys'])} stations, green {len(d['green_enu_xy'])} points")
 

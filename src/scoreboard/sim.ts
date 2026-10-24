@@ -311,7 +311,9 @@ export class HotlapSim {
     v.setScheduledGear(onLine ? scheduleTargetAt(this.schedule!, pr.s) : 0);
     let allOff = true;
     for (const w of st.wheels) {
-      if (w.onTrack || this.surface.sample(w.pos[0], w.pos[1]).paved) { allOff = false; break; }
+      if (w.onTrack) { allOff = false; break; }
+      const smp = this.surface.sample(w.pos[0], w.pos[1]);
+      if (smp.paved && !smp.offCourse) { allOff = false; break; }
     }
     // lost in the hills (src/physics/offtrack.ts): every wheel off any pavement and the car far off the track (past the
     // local limit or off the near heightfield), held for OFFTRACK_HOLD_S of sim time: launched like a hard wall hit

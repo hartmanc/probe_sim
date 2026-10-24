@@ -1,0 +1,82 @@
+{
+ "w_s0500": {
+  "s": 500,
+  "kind": "window",
+  "png": "tools/track/compare/sonoma/owner_edges_r14b/w_s0500_marked.png",
+  "strokes": 5,
+  "red": 5,
+  "green": 0
+ },
+ "w_s2125": {
+  "s": 2125,
+  "kind": "window",
+  "png": "tools/track/compare/sonoma/owner_edges_r14b/w_s2125_marked.png",
+  "strokes": 16,
+  "red": 6,
+  "green": 10
+ },
+ "w_s2250": {
+  "s": 2250,
+  "kind": "window",
+  "png": "tools/track/compare/sonoma/owner_edges_r14b/w_s2250_marked.png",
+  "strokes": 19,
+  "red": 12,
+  "green": 7
+ },
+ "w_s2750": {
+  "s": 2750,
+  "kind": "window",
+  "png": "tools/track/compare/sonoma/owner_edges_r14b/w_s2750_marked.png",
+  "strokes": 9,
+  "red": 6,
+  "green": 3
+ },
+ "w_s3000": {
+  "s": 3000,
+  "kind": "window",
+  "png": "tools/track/compare/sonoma/owner_edges_r14b/w_s3000_marked.png",
+  "strokes": 14,
+  "red": 10,
+  "green": 4
+ },
+ "w_s3125": {
+  "s": 3125,
+  "kind": "window",
+  "png": "tools/track/compare/sonoma/owner_edges_r14b/w_s3125_marked.png",
+  "strokes": 20,
+  "red": 13,
+  "green": 7
+ },
+ "w_s3375": {
+  "s": 3375,
+  "kind": "window",
+  "png": "tools/track/compare/sonoma/owner_edges_r14b/w_s3375_marked.png",
+  "strokes": 5,
+  "red": 5,
+  "green": 0
+ },
+ "w_s3500": {
+  "s": 3500,
+  "kind": "window",
+  "png": "tools/track/compare/sonoma/owner_edges_r14b/w_s3500_marked.png",
+  "strokes": 10,
+  "red": 4,
+  "green": 6
+ },
+ "w_s3625": {
+  "s": 3625,
+  "kind": "window",
+  "png": "tools/track/compare/sonoma/owner_edges_r14b/w_s3625_marked.png",
+  "strokes": 15,
+  "red": 15,
+  "green": 0
+ },
+ "w_s3750": {
+  "s": 3750,
+  "kind": "window",
+  "png": "tools/track/compare/sonoma/owner_edges_r14b/w_s3750_marked.png",
+  "strokes": 11,
+  "red": 11,
+  "green": 0
+ }
+}

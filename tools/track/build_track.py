@@ -870,7 +870,9 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, pw, m
             hw = hl3 if w["side"] == "left" else hr3
             ks_ = [k for k in r if (k - w["lo"]) % n <= (w["hi"] - w["lo"]) % n]
             if not ks_:
-                rep.check(f"owner edge {w['side']} {w['lo']}-{w['hi']}", False, "no owner reading in the window"); continue
+                # round 14B part 1b: he drew only the other side in this window (w_s0500: the right edge): no owner edge on
+                # this side here, the detected edge stands and its gates are the ordinary ones
+                log(f"     owner edge {w['side']} {w['lo']}-{w['hi']}: none drawn on this side (the detected edge stands)"); continue
             res = np.array([hw[k] - r[k] for k in ks_])
             a_ = np.abs(res); share = float(np.mean(a_ <= G["owner_tol"]))
             OWNER_REPORT.append({"side": w["side"], "lo": w["lo"], "hi": w["hi"], "file": w["file"], "k": ks_, "owner": [r[k] for k in ks_],
@@ -1043,6 +1045,16 @@ def stage_scenery(cfg, out, no_logger):
         import terrain_override as TOV
         SC["terrain_override"] = TOV.scenery_regions(cfg["terrain_override"], cfg.enu)
         TOV.drape_parts(SC, T, hf_, SC["terrain_override"], log=log)
+    off_names = {r["name"] for r in scfg.get("closed_roads", []) if r.get("off_course")}
+    if off_names:
+        # round 14B (owner on T9A: "on the other side of its entry is an escape road ... If you go off, you get black
+        # flagged"): a closed road marked off_course is paved and drivable (the physics keeps it paved) but not course:
+        # its parts carry off_course, and the lap-validity checks count a car on it as off (src/physics/track.ts)
+        nmark = 0
+        for p_ in (SC.get("paved_zones") or {}).get("parts", []):
+            if p_.get("turn") in off_names:
+                p_["off_course"] = True; nmark += 1
+        log(f"off-course paved parts: {nmark} ({', '.join(sorted(off_names))})")
     if scfg.get("marks_on_surface"):
         # round 14B (judge r14a: a closed road's painted edge buried under its draped zone): every ground mark's stored
         # height on the package's own driven surface (tools/track/gates/groundMarks.ts drapeMarks: paint lines `lift` m

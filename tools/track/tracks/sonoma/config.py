@@ -107,7 +107,13 @@ CONFIG = dict(
                 local=[dict(window=(1643, 2091), blend=15,
                             why='round 11: the Carousel exit to T7 straights only (owner notes 64 / 69)'),
                        dict(window=(114, 383), blend=15,
-                            why='round 14B: T1-T2 edges from the owner\'s red (spline.owner_edges, owner/r14)')]),
+                            why='round 14B: T1-T2 edges from the owner\'s red (spline.owner_edges, owner/r14)'),
+                       # round 14B part 1b: the ten windows he drew on the checkpoint page (owner/r14b), each stretch of his red
+                       # with ~30 stations beyond it; refitted in order after the two above, everything outside held
+                       dict(window=(383, 560), blend=15, why='round 14B part 1b: T2 exit right (w_s0500)'),
+                       dict(window=(2005, 2413), blend=15, why='round 14B part 1b: T7 approach to the T7a exit (w_s2125, w_s2250)'),
+                       dict(window=(2645, 3228), blend=15, why='round 14B part 1b: T9 to T10 through 9a (w_s2750, w_s3000, w_s3125)'),
+                       dict(window=(3257, 3853), blend=15, why='round 14B part 1b: T10 exit to the T11 hairpin exit (w_s3375 .. w_s3750)')]),
     loop_check=dict(n_min=3900, n_max=4250, official_m=4088, elev_min=20, elev_max=80),
     captures=dict(
         z20_dir=None,
@@ -136,11 +142,32 @@ CONFIG = dict(
                 owner_edges=[dict(file='owner/r14/merged.json', lo=143, hi=356, local=True,
                                   windows=['owner/r14/w_s0250.json', 'owner/r14/close_s0175.json', 'owner/r14/close_s0205.json'],
                                   src='owner round-13 drive red on edges windows w_s0250, close_s0175, close_s0205 '
-                                      '(compare/sonoma/owner_edges_r14/*_marked.png, local), s 144-356')],
+                                      '(compare/sonoma/owner_edges_r14/*_marked.png, local), s 144-356'),
+                             # round 14B part 1b (owner, checkpoint page: ten windows flagged and drawn). His red sits on the
+                             # asphalt side of a kerb; where the package's kerb run (scenery kerbs, each from the captures and the
+                             # onboard) lies beside his red and the fit sat 0.6-1.5 m outside it (T2 apex, T7 island, T7a exit
+                             # outside, T9 exit, both 9a apexes, the T11 hairpin apex), the edge is his red moved out by the kerb
+                             # width (kerb_inside, 0.65 m: scenery.kerb.width); at the O'Reilly island and the T10 exit outside his
+                             # red already sits at the kerb's outer limit (fit - red +0.14 / +0.29 m): no shift there
+                             dict(file='owner/r14b/merged.json', lo=411, hi=533, local=True, windows=['owner/r14b/w_s0500.json', 'owner/r14b/w_s2125.json', 'owner/r14b/w_s2250.json', 'owner/r14b/w_s2750.json', 'owner/r14b/w_s3000.json', 'owner/r14b/w_s3125.json', 'owner/r14b/w_s3375.json', 'owner/r14b/w_s3500.json', 'owner/r14b/w_s3625.json', 'owner/r14b/w_s3750.json'],
+                                  kerb_inside=[('right', 397, 450)], src='owner round-14B checkpoint red (compare/sonoma/owner_edges_r14b, strokes.json vectors via owner_edges.py --by-stroke; owner/r14b/merged.json), T2 exit right'),
+                             dict(file='owner/r14b/merged.json', lo=2033, hi=2385, local=True, windows=['owner/r14b/w_s0500.json', 'owner/r14b/w_s2125.json', 'owner/r14b/w_s2250.json', 'owner/r14b/w_s2750.json', 'owner/r14b/w_s3000.json', 'owner/r14b/w_s3125.json', 'owner/r14b/w_s3375.json', 'owner/r14b/w_s3500.json', 'owner/r14b/w_s3625.json', 'owner/r14b/w_s3750.json'],
+                                  kerb_inside=[('right', 2146, 2206), ('left', 2307, 2379)], src='owner round-14B checkpoint red (compare/sonoma/owner_edges_r14b, strokes.json vectors via owner_edges.py --by-stroke; owner/r14b/merged.json), T7 approach to T7a exit'),
+                             dict(file='owner/r14b/merged.json', lo=2673, hi=2856, local=True, windows=['owner/r14b/w_s0500.json', 'owner/r14b/w_s2125.json', 'owner/r14b/w_s2250.json', 'owner/r14b/w_s2750.json', 'owner/r14b/w_s3000.json', 'owner/r14b/w_s3125.json', 'owner/r14b/w_s3375.json', 'owner/r14b/w_s3500.json', 'owner/r14b/w_s3625.json', 'owner/r14b/w_s3750.json'],
+                                  kerb_inside=[('right', 2699, 2746)], src='owner round-14B checkpoint red (compare/sonoma/owner_edges_r14b, strokes.json vectors via owner_edges.py --by-stroke; owner/r14b/merged.json), T9'),
+                             dict(file='owner/r14b/merged.json', lo=2894, hi=3200, local=True, windows=['owner/r14b/w_s0500.json', 'owner/r14b/w_s2125.json', 'owner/r14b/w_s2250.json', 'owner/r14b/w_s2750.json', 'owner/r14b/w_s3000.json', 'owner/r14b/w_s3125.json', 'owner/r14b/w_s3375.json', 'owner/r14b/w_s3500.json', 'owner/r14b/w_s3625.json', 'owner/r14b/w_s3750.json'],
+                                  kerb_inside=[('right', 3039, 3068), ('left', 3072, 3165)], src='owner round-14B checkpoint red (compare/sonoma/owner_edges_r14b, strokes.json vectors via owner_edges.py --by-stroke; owner/r14b/merged.json), 9a to T10'),
+                             dict(file='owner/r14b/merged.json', lo=3285, hi=3825, local=True, windows=['owner/r14b/w_s0500.json', 'owner/r14b/w_s2125.json', 'owner/r14b/w_s2250.json', 'owner/r14b/w_s2750.json', 'owner/r14b/w_s3000.json', 'owner/r14b/w_s3125.json', 'owner/r14b/w_s3375.json', 'owner/r14b/w_s3500.json', 'owner/r14b/w_s3625.json', 'owner/r14b/w_s3750.json'],
+                                  kerb_inside=[('right', 3609, 3737)], src='owner round-14B checkpoint red (compare/sonoma/owner_edges_r14b, strokes.json vectors via owner_edges.py --by-stroke; owner/r14b/merged.json), T10 exit to the T11 hairpin exit')],
                 # his red arc across the paddock-side mouth at s ~166-179 (owner_mouths.py --across: his green, the
                 # access road's edge, ends on the arc at s 166; the arc rejoins his edge line at s 179): the course
                 # boundary there and a cone line ("Put a few cones there"); the owner-reference gates leave its
                 # stations +-12 out (edge_gate.OWNER_REF)
+                # round 14B part 1b: the owner on T9A (w_s3000 / w_s3125): "T9A is a sharp right hander; on the other side of its
+                # entry is an escape road (not a paddock road). No cones, just white lines." His red is the course edge through
+                # T9A; the V his strokes make into the escape road's mouth is read as an across line (owner_edges.py
+                # --by-stroke) and left out of the edge, so the edge runs along the course past the mouth, but it is NOT a
+                # mouth: no cones, no gate exemption, no owner-gate exclusion. The mouths stay round 14's.
                 owner_mouths='owner/r14/mouths.json'),
     # Carousel exit (T6) to the T7 approach, stations ~1680-2060 (onboard youtube.com/watch?v=RAZip6S84CM 0:55-1:09):
     # the course is bounded by the PAVEMENT, not by cones or a painted line. On the shared drag-strip start (to ~1880) the
@@ -1330,8 +1357,14 @@ CONFIG = dict(
         # parking bays); paint=True: its painted edge lines from the captures (closed_road_paint in build_scenery.py)
         closed_roads=[
             # mouth_cones (round 5): cones only at the mouths the onboard shows coned; the rest are open in the 2026 evidence
+            # round 14B (owner on the checkpoint page, T9A: "T9A is a sharp right hander; on the other side of its entry is an
+            # escape road (not a paddock road). No cones, just white lines. If you go off, you get black flagged."): this road,
+            # running on straight past the T9A entry between his green edges (w_s3000 / w_s3125), is the escape road: paved and
+            # drivable, no cones at its mouth (mouth_cones empty, no mouth exemption, no cone line), the course's white edge line
+            # runs along his red across its mouth (edge_lines are drawn along the whole fitted edge outside kerbs), and a car on
+            # it is off the course (off_course: its parts carry the flag, the lap-validity checks count it as off)
             dict(name='2020 fast bypass (8a to T10)', ways=['834728156', '116036857'], half_width=6.0, surface='asphalt', paint=True,
-                 mouth_cones=[]),
+                 mouth_cones=[], off_course=True, kind='escape road'),
             dict(name='the Chute (NASCAR short course, T4 to T7)', ways=['834724050', '230287122'], half_width=6.0, surface='asphalt', paint=True,
                  # round 13 part B (owner note 135): the T7 mouth part's painted lines wandered into a trailer parked along its SE wall
                  # (c20_s3850 / c20_s3905); no line is measurable there, so none is drawn on that part

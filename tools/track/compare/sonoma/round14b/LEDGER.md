@@ -208,3 +208,83 @@ The three worst (all left, all outside his window; the edges there are round 14A
 3. **s 1800-2000 (drag strip leg into the fork), 77.9 %:** at s 1860 readings 0.18-0.38 m outside (the strip's SW paint
    turning into the fork corner) and at 1900-2000 0.3-0.5 m inside (the fork junction, gate.exempt 1860-1980, then the
    asphalt end): a junction and a paint line crossing it.
+
+## Part 1b: the owner's ten checkpoint windows (stage 1; owner checkpoint, NOT published)
+
+The owner on the round-14B checkpoint page: no flags at T1 (accepted as fitted: the step and the arc stay); ten windows
+flagged and drawn: w_s0500, w_s2125, w_s2250, w_s2750, w_s3000, w_s3125, w_s3375, w_s3500, w_s3625, w_s3750
+(`compare/sonoma/owner_edges_r14b/`: strokes.json, docs, frames.json on the round-14B centre).
+
+**Digitising.** The marked PNGs carry the red fit under his red, so the strokes are read from their vectors:
+`owner_edges.py --by-stroke` samples each red stroke every 0.25 m and keeps apart the samples whose stroke runs at more than
+35 deg to the course at its nearest station (lines across). Per window (left / right stations, green points, lines across):
+w_s0500 0 / 118 (he drew the right edge only), w_s2125 122 / 188 (green 528), w_s2250 207 / 222 (349), w_s2750 175 / 186
+(144), w_s3000 200 / 167 (385; across 17.5 + 9.2 m), w_s3125 173 / 171 (310; across 17.3 + 12.0 m), w_s3375 158 / 161,
+w_s3500 120 / 158 (342), w_s3625 224 / 267, w_s3750 287 / 287; the other across samples are 1-2 m stroke ends. Merged
+(`owner/r14b/merged.json`): left 1300, right 1457 stations; 140 / 154 stations where two windows differ by more than 0.3 m.
+
+What the coordinator flagged, checked:
+- w_s3000 / w_s3125 (T9A): his red runs along the course past the escape road's mouth; the V his strokes make into the road
+  (lat -11 .. -24 m at s 3072-3083) is the across line, left out of the edge. Owner: "T9A is a sharp right hander; on the
+  other side of its entry is an escape road ... No cones, just white lines": no mouth, no cones, no exemption (config: the
+  2020 fast bypass is that escape road, `off_course` prepared for part 2, below).
+- w_s3375: his strokes are on the T10-T11 run (s 3302-3452), both edges; NONE on the front straight (no reading of his at
+  s 3841-4107 on either side), so the question of which pit-wall-side line he took does not arise in this window. His
+  left red lies on the fitted left edge (100 % within 0.25 m before the refit already); his right red ran 0.4-0.5 m inside
+  the round-14A right edge.
+- w_s3625 (T11 hairpin): his inner (right) red sits on the asphalt side of the apex kerb: the fit (the kerb's outer limit)
+  was 0.88 m outside it over the kerb run. Rule applied (his convention): where a package kerb run lies beside his red and
+  the fit sat more than half a kerb width outside it (T2 apex, T7 island, T7a exit outside, T9 exit, both T9A apexes, the
+  T11 hairpin apex: +0.62 .. +1.50 m), `kerb_inside` moves his reading out by the kerb width (0.65 m); at the O'Reilly
+  island (+0.14 m) and the T10 exit outside (+0.29 m) his red already sits at the kerb's outer limit, no shift.
+
+**Refit.** Owner windows (config) 411-533 (right only), 2033-2385, 2673-2856, 2894-3200, 3285-3825; local windows 383-560,
+2005-2413, 2645-3228, 3257-3853 refitted in order after round 11's and T1's. Lap 4105.78 m (was 4098.50; official 4088,
+0.4 %).
+
+| stretch (m) | width round 14A -> 14B (median) | max change |
+|---|---|---|
+| 414-532 T2 exit (right drawn) | 12.25 -> 12.16 | 1.72 |
+| 2038-2160 T7 approach | 11.37 -> 11.90 | 0.74 |
+| 2160-2375 T7 / T7a | 16.65 -> 15.67 | 4.11 |
+| 2668-2852 T9 | 12.92 -> 11.82 | 4.64 |
+| 2897-3030 back straight end | 11.98 -> 11.43 | 1.67 |
+| 3030-3110 T9A | 13.93 -> 13.44 | 4.48 |
+| 3110-3202 T9A exit to T10 | 12.72 -> 12.77 | 0.58 |
+| 3291-3480 T10 to T11 approach | 13.01 -> 12.05 | 2.51 |
+| 3480-3600 T11 approach / pit-in | 13.11 -> 11.56 | 4.84 |
+| 3600-3831 T11 hairpin | 12.58 -> 12.33 | 4.15 |
+
+**Gates** (stage 1 into `out/sonoma_r14b`, --write-on-fail; failing):
+
+| owner window (config) | left within 0.25 m / max | right within 0.25 m / max |
+|---|---|---|
+| 143-357 T1 | 89.8 % / 0.369 (FAIL; was 92.3 %: the later windows' refits re-station the lap) | 96.8 % / 0.121 |
+| 411-533 T2 exit | none drawn (printed, no gate: the run's "no owner reading" check failed it; fixed in code since) | 100 % / 0.207 |
+| 2033-2385 T7 / T7a | 96.3 % / 0.624 (FAIL: max) | 99.1 % / 0.269 |
+| 2673-2856 T9 | 100 % / 0.127 | 100 % / 0.211 |
+| 2894-3200 9a / T9A | 85.8 % / 1.812 (FAIL) | 85.1 % / 2.297 (FAIL) |
+| 3285-3825 T10 to T11 | 93.3 % / 0.938 (FAIL: max) | 100 % / 0.212 |
+
+Stations over 0.25 m from his red (owner reference, mouth segments left out): left 210 (0.25), 242-244 (0.37), 2262-2267
+(0.62), 2299-2304 (0.48), 3035-3070 (1.81), 3074-3080 (0.50), 3087, 3105, 3178, 3519 (0.25-0.27), 3647-3654 (0.74),
+3658-3665 (0.36), 3716-3722 (0.35), 3727-3735 (0.94); right 2150, 2203, 2255 (0.27), 3035-3055 (0.70), 3059-3066 (0.69),
+3071-3074 (0.52), 3078 (0.49), 3091-3093 (2.30), 3096-3105 (0.79). Owner reference left / right FAIL (1.812 / 2.297 m),
+owner width FAIL (2.285 m at 3091), owner band left / right FAIL (1.049 / 0.791 m, both at T9A), world continuity left /
+right FAIL (0.093 / 0.079 m at T9A), fit left waviness FAIL (rms 0.044 elsewhere), fit left observations 84.6 % FAIL;
+fit right 90.8 %, kinks, edge jumps (0.404 / 0.374 m), lap length, cross slope, edge gate, profile: ok.
+
+**Not done / open.** T9A: the fitted edges miss his red by up to 1.8 m (left) and 2.3 m (right) at s 3035-3105; the spline
+(6-station knots) on a centre refitted with stiff smoothing cannot turn the corner as tightly as he drew it, and the world-
+continuity gate fails there. Making it follow would take a finer knot spacing or a softer centre fit locally (a builder
+change not made this round). T7a exit left (0.62 m) and the T11 hairpin outside (0.94 m at 3727-3735) also exceed the 0.40 m
+cap. The page shows all of it to the owner.
+
+Outline page: `compare/sonoma/edges_r14b/index.html` (+ intro.html, extra.html), all 36 windows re-rendered red / green on
+the new fit, `_owner` overlays for the 13 drawn windows (T1's three and the ten).
+
+**Prepared for part 2 (scenery only, not applied):** the 2020 fast bypass is the T9A escape road (`off_course=True`,
+`kind='escape road'`, `mouth_cones` empty): stage 3 marks its parts `off_course`, the physics keeps them paved
+(`SurfaceSample.offCourse`), and the app's and the scoreboard's lap validity count a car on it as off
+(src/app/index.ts wheelOff, src/scoreboard/sim.ts allOff); vitest `offcourse.test.ts`. The course's white edge line runs
+along the fitted edge across its mouth (edge lines break only at kerbs).

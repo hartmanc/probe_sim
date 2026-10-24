@@ -33,6 +33,9 @@ tools/track/compare/sonoma/**
 !tools/track/compare/sonoma/**/*.md
 !tools/track/compare/sonoma/edges_r14b/index.html
 !tools/track/compare/sonoma/edges_r14b/intro.html
+!tools/track/compare/sonoma/edges_r14b/extra.html
+!tools/track/compare/sonoma/owner_edges_r14b/*.json
+!tools/track/compare/sonoma/owner_edges_r14b/docs/*.json
 # eye-level inventory (21 Oct 2026): the rows, sources and inventory.json are tracked for every circuit; the video
 # frames and the compare sheets (reference imagery) never are
 !tools/track/compare/*/inventory.json

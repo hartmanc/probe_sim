@@ -6,6 +6,9 @@ export interface SurfaceSample {
   z: number; nx: number; ny: number; nz: number; onTrack: boolean; mu: number;
   /** Paved surface: the track or the pit lane (onTrack is true only on the track). Not off track for lap validity. */
   paved?: boolean;
+  /** Paved but off the course (round 14B: a part marked off_course, Sonoma's T9A escape road): counts as off for lap
+   *  validity like dirt. Absent / false elsewhere. */
+  offCourse?: boolean;
   /** Off-pavement weight: 0 on pavement (track, pit lane, paved runoff), rising smoothly to 1 over the first
    *  SURFACE_GRIP_BLEND_M past the paved edge. Surfaces without it are treated as pavement (0). */
   dirt?: number;
