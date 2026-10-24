@@ -3,6 +3,8 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { containment, escapeRuns, exposedEnds, joinFaces, pitConnectivity, runGaps, sideBySide, signPlacement, tyreFaces, wallTops, type GateConfig } from './sceneryGates';
+import { terrainGates } from './terrainGates';
+import { loadHeightfield } from '../../../src/physics/index';
 
 const dir = process.argv[2];
 const cfg: GateConfig & { pit_box_s?: number; openings?: { x: number; y: number; why: string }[] } = process.argv[3] ? JSON.parse(readFileSync(process.argv[3], 'utf8')) : {};
@@ -70,6 +72,23 @@ for (const x of rg.openings) console.log(`       opening s ${x.s} (${x.gap} m): 
 for (const x of rg.gaps) console.log(`       hole ${x.side.padEnd(5)} s ${x.s} (${x.gap} m, ${x.out} m out, at ${x.x}, ${x.y}): ${x.a} | ${x.b}`);
 if (rg.gaps.length) fail = true;
 
-console.log('GATES_JSON ' + JSON.stringify({ runGaps: rg, containment: { escapes: c.escapes.length, runs, allowed: c.allowed.length, junctions: c.junctions },
+// round 14A (Sonoma owner, round-13 drive): the terrain-override gates (terrainGates.ts), on the package's own driven
+// surface; a package without scenery.json terrain_override has no region and passes them as n/a
+const tg = terrainGates(track, loadHeightfield(Uint8Array.from(readFileSync(join(dir, 'heightfield.bin'))).buffer), sc);
+if (!tg.regions) console.log('[ok] terrain override: no region (n/a)');
+else {
+  const j = tg.joins, m = tg.smooth, k = tg.kerbs;
+  console.log(`[${j.bad.length ? 'FAIL' : 'ok'}] pavement joins: ${j.checked} boundary points in ${tg.regions} override region(s) (course edges and paved-part edges, every metre; ${j.ramp} in the ramps not gated), `
+    + `max step ${j.maxStep.toFixed(4)} m (limit 0.02), max cross-slope change ${j.maxSlopeDeg.toFixed(2)} deg (limit 2), ${j.bad.length} over`);
+  for (const x of j.bad.slice(0, 12)) console.log(`       ${x.what} at (${x.x}, ${x.y}): step ${x.step} m, slope change ${x.slopeDeg} deg`);
+  console.log(`[${m.badD2.length || m.badDev.length ? 'FAIL' : 'ok'}] surface smoothness: ${m.profiles} cross-profiles, ${m.points} points at 1 m, max |second difference| ${m.maxD2.toFixed(4)} m (limit 0.01), `
+    + `deepest trough ${m.maxTrough.toFixed(4)} m, highest ridge ${m.maxRidge.toFixed(4)} m against the line 5 m either side (limit 0.05); ${m.badD2.length} + ${m.badDev.length} over`);
+  for (const x of [...m.badD2, ...m.badDev].slice(0, 12)) console.log(`       s ${x.s} ${x.side} +${x.off} m (${x.x}, ${x.y}): ${x.d2 !== undefined ? `second difference ${x.d2} m` : `${x.dev! < 0 ? 'trough' : 'ridge'} ${Math.abs(x.dev!)} m`}`);
+  console.log(`[${k.bad.length ? 'FAIL' : 'ok'}] kerbs on surface: ${k.blocks} kerb blocks in the region(s), max tilt from the surface ${k.maxTiltDeg.toFixed(2)} deg (limit 2), max gap under a block ${k.maxGap.toFixed(4)} m (limit 0); ${k.bad.length} over`);
+  for (const x of k.bad.slice(0, 12)) console.log(`       ${x.what} at (${x.x}, ${x.y}): tilt ${x.tiltDeg} deg, gap ${x.gap} m`);
+  if (tg.fail) fail = true;
+}
+
+console.log('GATES_JSON ' + JSON.stringify({ terrain: { regions: tg.regions, joins: { ...tg.joins, bad: tg.joins.bad.length }, smooth: { ...tg.smooth, badD2: tg.smooth.badD2.length, badDev: tg.smooth.badDev.length }, kerbs: { ...tg.kerbs, bad: tg.kerbs.bad.length } }, runGaps: rg, containment: { escapes: c.escapes.length, runs, allowed: c.allowed.length, junctions: c.junctions },
   pit: p, signs: g, ends: e, facings: sb, wallTops: wt, joins: jf, tyreFaces: tf, fail }));
 process.exit(fail ? 1 : 0);

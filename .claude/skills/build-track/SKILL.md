@@ -445,6 +445,36 @@ everything from raw inputs every time, which makes it idempotent; every argument
 **1.12 Paved shoulders in the same pass**, as `paved_zones` parts level with the road, wherever the onboard shows
 pavement to a wall or apron.
 
+**1.13 Terrain override where inactive paving meets the course** (config `terrain_override`, `terrain_override.py`;
+Sonoma round 14A, owner's round-13 drive: "the active and inactive track surfaces actually go together in a sensical way
+that doesn't break immersion"). Where closed roads, paddock lots and the islands between them touch the course, the raw
+bare-earth DEM under them (old paving edges, berms, trailers left in the ground class, grading of another year) and the
+zones' 7-point linear profiles put them on other levels than the course: steps and ridges at the joins, troughs in the
+islands, kerb blocks tilted on a trough's rim. **Every paved surface that touches the course joins it with no step, ridge
+or trough, and the ground between them lies on the same smooth surface; where the lidar disagrees, the lidar loses.**
+- Declare a region polygon (lat/lon) over the complex's paving and islands, the course through it included. Inside it,
+  stage 1 replaces the heightfield on its 2 m grid by ONE thin-plate surface: the course itself held on and `edge_hold`
+  m beyond its edges (the edge height continued with the edge third's cross-slope: C1 with the course), pulled to that
+  continuation over `edge_band` m, beyond it a robust (Tukey biweight, IRLS) misfit to the lidar ground with the
+  bending weight set by `smooth_m` (the shortest wavelength kept from the lidar). Outside the polygon the surface is
+  held to the lidar, stiffening over `margin` m, so no ditch or bank beyond the region is filled; the bend toward a
+  bank's toe falls there.
+- A paved road on a bridge is its deck, not the creek bed the DEM shows (`deck_returns`: the low percentile of the
+  lidar's class-17 returns per cell, the deck's interior cells held, the bed within `deck_reach` m no data, the sides
+  faded to the lidar over `deck_fade` m). Sonoma's Chute crosses the creek this way: built on the DEM it dived 5 m.
+- Stage 3 writes the regions to scenery.json `terrain_override` ({regions: [{name, ramp, poly (ENU)}]}); there the
+  physics (src/physics/track.ts) takes the off-pavement surface and the paved parts from the heightfield itself (no 5 m
+  shoulder blend: it flattens the cross-slope at every paved edge; no dirt roughness), weighted in over `ramp` m inside
+  the polygon, and the paved parts' profiles are draped on it (their zero-length stations dropped). Absent: bit for bit
+  as before (Laguna, Buttonwillow).
+- track.json, the racing line and ghosts.json are not changed by it (the course is the surface's boundary condition).
+- Draw the polygon from the captures and a lidar slope map: take in the paving and the islands, leave out real banks
+  (a creek bank along the course, a road's embankment) by running the boundary along the course edge + 1 m there, and
+  leave a road out where a steep bank separates it from the junction (Sonoma's drag strip SE of the T7 apex island).
+- Gates (stage 3, `gates/terrainGates.ts`, REQUIRED): pavement joins, surface smoothness, kerbs on surface (3.12).
+  Evidence for the owner: cross-profiles before / after at the complex's stations (`compare/terrain_sample.ts`), a height
+  map and the stills from the same poses.
+
 ## Stage 2: ghosts and racing line (`build_track.py --stage ghosts`; 3 steps)
 
 This runs `tools/ghosts/build_ghosts.py --config <id> --track-dir <dir>`. Output: `ghosts.json`,
@@ -797,6 +827,9 @@ measured lines with their colour.
 | coverage | every inventory row of a physical kind needs an object of that kind on that side within ±15 m of its station, else MISSING. MISSING walls, fences, kerbs, tyre walls and bridges always fail; a MISSING row of any other kind fails unless the manifest carries a valid disposition (3.13). Every object of those kinds needs an inventory row or a capture source within ±15 m, else UNSUPPORTED. HEIGHT mismatches (> max(0.3 m, 25 %), wall-mounted boards counting) are listed. No inventory = fail | `gates/coverageGate.ts`, `run_coverage.ts` |
 | pit lane | every pit-lane wall row of the inventory declared in `pit_lane.walls` on that side and standing as a barrier on that side of the lane within ±15 m | `coverageGate.ts` |
 | kerb traversal | on every registered track, every raised strip at line speed, on the line and 1 m either side: no roll past 15° and no rollover; no wheel lifted by a strip (`it.fails` for Sonoma pending the owner's suspension call) | `src/physics/__tests__/kerbgate.test.ts` (vitest) |
+| pavement joins (terrain override, 1.13) | inside a `terrain_override` region (weight 1), at every metre of the course's edges and of every paved part's edges and ends: a height step over 0.02 m across the boundary or a cross-slope change over 2° between the metre inside and the metre outside (the driven surface without kerb humps) | `gates/terrainGates.ts` via `run_gates.ts` |
+| surface smoothness (1.13) | cross-profiles of the course at every station in a region, 1 m spacing from 1 m inside each edge outward while in the region: a second difference over 0.01 m (1 % grade change per metre, R 100 m; paved lots: ACI 330's 6 mm under a 3 m straightedge, designed grade breaks 1-2 % over a metre or more), or a point more than 0.05 m below (trough) or above (ridge) the line between its neighbours 5 m either side | `terrainGates.ts` |
+| kerbs on surface (1.13) | every kerb block in a region (kerb_lines, the course's kerb strips): tilted more than 2° from the surface's own plane round it (the course's edge plane for a course kerb), or ground more than 0.05 m under a kerb_lines block's bottom (a gap) | `terrainGates.ts` |
 
 Laguna's logger build (report only, 20 Oct 2026): containment fails on its pit lane (s 375-573 left, the pit-out lane
 after T2, and two rays at T11), and it has no inventory. Its package is the reference for geometry, not for these gates.

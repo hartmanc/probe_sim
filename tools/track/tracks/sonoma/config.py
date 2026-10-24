@@ -183,6 +183,41 @@ CONFIG = dict(
                        'the edge steps in by ~5 m over 60 m as the lane leaves (junction, real)'),
                       ('left', 160, 260, 'pit-out lane joins on the left after T1 (c20_s1870/s1925; junction, real)'),
                       ('left', 1860, 1980, 'the T7 road forks off the drag strip to the left (c20_s3685/s3740; junction, real)')]),
+    # ---------------------------------------------------------------- stage 1: terrain override (round 14A, 23 Oct 2026)
+    # Owner, round-13 drive (compare/sonoma/owner_findings.md): from the T7 approach the inactive paving (the Chute, the
+    # short-T7 road, the paddock) sits on another level from the course, with a ridge where it meets it, the kerbed island
+    # reads as a trough and the paving beside the T7 kerb steps down; "we might have to deviate from the lidar scan ...
+    # The key thing is that the active and inactive track surfaces actually go together in a sensical way". Rule: every
+    # paved surface touching the course joins it with no step, ridge or trough, the islands between them on the same
+    # smooth surface; where the lidar disagrees, the lidar loses. Cause (compare/sonoma/round14a/LEDGER.md): the zones'
+    # 7-point linear profiles and the 5 m shoulder blend over the raw bare-earth DEM (old paving edges, berms, trailers,
+    # 0.1-0.5 m), a phantom paved plateau at the T7 inside runoff's start (zero-length stations), and the Chute built on
+    # the creek bed under its bridge (the DEM is bare earth; the deck is class-17 returns, up to 6.9 m higher).
+    # Inside the polygon: one thin-plate surface (tools/track/terrain_override.py) held on the course and its cross-slope
+    # 1 m beyond the edges, pulled to it over 4 m, robust (biweight) to the lidar ground beyond with a 40 m cutoff, the
+    # Chute's bridge deck returns where it has them; stiff to the lidar outside over 15 m (6 m fade beside the deck).
+    # The polygon: the junction and islands right of T7-T7a from the T7 apex island (s ~2110) round to the T7a exit
+    # (s ~2350), the drag strip's continuation to its fork, the T7 inside runoff, the O'Reilly island, the paddock lot
+    # left of T7-T7a to the wall below the T7a stands (c20_s3850 / c20_s3905 / cap_-430_430), the T7a outside paddock
+    # (c20_s3960 / c20_s4015), and the Chute from its T7 mouth across its bridge to its far abutment (the Chute zone + 4.5 m;
+    # lidar class 17); the course's left edge + 1 m along T6-T7 and T7a-T8 (the creek bank and the T8 bank stay lidar).
+    terrain_override=[
+        dict(name='T7 complex', margin=15.0, ramp=1.5, edge_hold=1.0, edge_band=4.0, smooth_m=40.0, deck_returns=True, deck_fade=6.0,
+             latlon=[(38.1657812, -122.4621941), (38.1658190, -122.4622957), (38.1658764, -122.4624488), (38.1659223, -122.4625562),
+                     (38.1659663, -122.4626865), (38.1659106, -122.4627436), (38.1658405, -122.4628156), (38.1657713, -122.4628876),
+                     (38.1657013, -122.4629584), (38.1656312, -122.4630304), (38.1655611, -122.4631012), (38.1654929, -122.4631755),
+                     (38.1654497, -122.4632886), (38.1653860, -122.4633549), (38.1654479, -122.4634531), (38.1655126, -122.4633869),
+                     (38.1656087, -122.4633583), (38.1656797, -122.4632886), (38.1657498, -122.4632166), (38.1658198, -122.4631458),
+                     (38.1658890, -122.4630738), (38.1659591, -122.4630030), (38.1660292, -122.4629310), (38.1660849, -122.4628739),
+                     (38.1662394, -122.4630384), (38.1663921, -122.4632098), (38.1666167, -122.4631983), (38.1668996, -122.4629813),
+                     (38.1666301, -122.4623849), (38.1666867, -122.4623483), (38.1667721, -122.4622763), (38.1668511, -122.4621792),
+                     (38.1668960, -122.4620912), (38.1669266, -122.4619747), (38.1669293, -122.4618467), (38.1669032, -122.4617393),
+                     (38.1669760, -122.4616217), (38.1669041, -122.4614617), (38.1667604, -122.4613817), (38.1666526, -122.4614160),
+                     (38.1666050, -122.4614811), (38.1662591, -122.4615463), (38.1658908, -122.4621221)],
+             src='owner round-13 drive (owner_findings.md, Round 13 drive); 2026 clean captures c20_s3850..s4015 and round 13B survey '
+                 'windows for the paving extents; lidar CA_NorthernCA_B22 ground (DEM) and bridge-deck (class 17) returns',
+             why='the inactive paving, the islands and the course on one smooth surface (round 14A)'),
+    ],
     # ---------------------------------------------------------------- stage 2: racing line only (no logger laps)
     ghosts=dict(margin=1.0, kerb_margin=1.0, nudge=0.3, jerk_w=3),
     # ---------------------------------------------------------------- stage 3: scenery by rule only (no footage rounds yet)

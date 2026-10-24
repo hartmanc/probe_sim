@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { trackDistance } from './quality';
 import { mergeGeometries, mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
-import type { PitLaneJson, SausageJson, TrackJson } from './physics-types';
+import type { PitLaneJson, SausageJson, TerrainOverrideJson, TrackJson } from './physics-types';
 import { PitExitCones, type PitExitConesJson } from './trackmath';
 import { TRACK } from './track-choice';
 import { buildStructures, selfLitMaterial, TERRACE_SELF_LIT, type StructureJson, type TerraceJson } from './structures';
@@ -43,6 +43,8 @@ export interface SceneryJson {
       /** per-strip paint [stripe, base] */ colors?: [string, string]; /** band centre beyond the edge, m (default: the inside convention) */ off?: number; src?: string }[] };
   /** raised yellow sausage kerbs beyond the apex kerbs (physics: src/physics/track.ts) */
   sausages?: SausageJson | null;
+  /** terrain override regions (Sonoma round 14A): off pavement inside them the heightfield is the surface (physics) */
+  terrain_override?: TerrainOverrideJson | null;
   edge_lines?: { width: number; inset: number; runs: { side: number; s0: number; s1: number }[] };
   /** Paved pit lane (CONTRACTS §2b); the physics reads the same block. gap_* = free width to the track edge. */
   pit_lane?: { spacing_m: number; fractions: number[]; open?: boolean; parts: (PitLaneJson['parts'][number] & { gap_left: number[]; gap_right: number[]; track_s: number[] })[] } | null;
@@ -1462,7 +1464,9 @@ function buildPaintLines(list: NonNullable<SceneryJson['paint_lines']>): THREE.G
 }
 
 /** Raised kerb strips off the lap (scenery.json `kerb_lines`, round 7b): a low box section along each measured line,
- *  coloured stripe / base every stripe_m, standing on the driven ground. Drawn only. */
+ *  coloured stripe / base every stripe_m, standing on the driven ground. Drawn only. Each side of a block stands on its
+ *  own ground (round 14A, Sonoma: drawn level across at the higher side's ground, a block on a 5 % fall left a gap
+ *  under its 0.05 m skirt on the low side; tools/track/gates/terrainGates.ts KERBS ON SURFACE). */
 function buildKerbLines(list: NonNullable<SceneryJson['kerb_lines']>, ground?: (x: number, y: number) => number): THREE.Mesh {
   const pos: number[] = [], col: number[] = [];
   const quad = (a: THREE.Vector3, b: THREE.Vector3, c: THREE.Vector3, d: THREE.Vector3, cc: THREE.Color) => {
@@ -1476,8 +1480,8 @@ function buildKerbLines(list: NonNullable<SceneryJson['kerb_lines']>, ground?: (
       const nx = (-(b[1] - a[1]) / L) * hw, ny = ((b[0] - a[0]) / L) * hw;
       const g = (x: number, y: number, z: number) => (ground ? ground(x, y) : z);
       const cc = C[Math.floor(acc / k.stripe_m) % C.length];
-      const za = Math.max(g(a[0] + nx, a[1] + ny, a[2]), g(a[0] - nx, a[1] - ny, a[2])), zb = Math.max(g(b[0] + nx, b[1] + ny, b[2]), g(b[0] - nx, b[1] - ny, b[2]));
-      const A0 = v3(a[0] + nx, a[1] + ny, za - 0.05), A1 = v3(a[0] - nx, a[1] - ny, za - 0.05), B0 = v3(b[0] + nx, b[1] + ny, zb - 0.05), B1 = v3(b[0] - nx, b[1] - ny, zb - 0.05);
+      const A0 = v3(a[0] + nx, a[1] + ny, g(a[0] + nx, a[1] + ny, a[2]) - 0.05), A1 = v3(a[0] - nx, a[1] - ny, g(a[0] - nx, a[1] - ny, a[2]) - 0.05);
+      const B0 = v3(b[0] + nx, b[1] + ny, g(b[0] + nx, b[1] + ny, b[2]) - 0.05), B1 = v3(b[0] - nx, b[1] - ny, g(b[0] - nx, b[1] - ny, b[2]) - 0.05);
       const up = (v: THREE.Vector3) => v.clone().add(new THREE.Vector3(0, k.height + 0.05, 0));
       quad(up(A0), up(A1), up(B1), up(B0), cc);
       quad(A0, up(A0), up(B0), B0, cc.clone().multiplyScalar(0.85));

@@ -22,7 +22,9 @@ const tag = opt('tag', 'sim')!;
 const out = resolve(opt('out', '.')!);
 const chromeBin = opt('chrome', '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome')!;
 const W = Number(opt('width', '1280')), H = Number(opt('height', '720'));
-const poses: { name: string; x: number; y: number; z: number | null; heading: number; yaw?: number; pitch?: number }[] = JSON.parse(readFileSync(posesPath, 'utf8'));
+// camera (round 14A): 'hood' (default) or 'chase' (the hot lap's start camera) for the whole walk (--camera) or per pose
+const poses: { name: string; x: number; y: number; z: number | null; heading: number; yaw?: number; pitch?: number; camera?: string }[] = JSON.parse(readFileSync(posesPath, 'utf8'));
+const cameraDefault = opt('camera', 'hood')!;
 
 // ------------------------------------------------------------------ minimal DevTools protocol client
 class CDP {
@@ -95,8 +97,10 @@ async function main() {
     if (hide) console.log('hidden', await cdp.eval<number>(`(() => { let n = 0; for (const nm of ${JSON.stringify(hide.split(','))}) window.__sim.world.scene.traverse((o) => { if (o.name === nm) { o.visible = false; n++; } }); return n; })()`));
     for (const p of poses) {
       const z = p.z === null || p.z === undefined ? await cdp.eval<number>(`window.__sim.surface.sample(${p.x}, ${p.y}).z`) : p.z;
+      const cam = p.camera ?? cameraDefault;
+      await cdp.eval(`window.__sim.setCamera(${JSON.stringify(cam)})`);
       await cdp.eval(`window.__sim.vehicle.reset(${JSON.stringify([p.x, p.y, z])}, ${p.heading}, 0)`);
-      await sleep(300);
+      await sleep(cam === 'hood' ? 300 : 2500);   // the chase camera eases in behind the car
       const r = await cdp.eval<{ url: string; calls: number; triangles: number; ms: number }>(`(() => { const S = window.__sim, cam = S.cams.camera, q = cam.quaternion.clone();
         cam.rotateY(${((p.yaw ?? 0) * Math.PI) / 180}); cam.rotateX(${((p.pitch ?? 0) * Math.PI) / 180}); cam.updateMatrixWorld(true);
         S.renderer.info.autoReset = false; S.renderer.info.reset(); S.renderer.render(S.world.scene, cam);

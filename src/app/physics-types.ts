@@ -91,6 +91,9 @@ export interface PitLaneJson {
 }
 
 /** Far heightfield passed to createTrackSurface (scenery.json far.heightfield grid + data). */
+/** Terrain override regions (scenery.json `terrain_override`, see src/physics/track.ts TerrainOverrideJson). */
+export interface TerrainOverrideJson { regions: { name?: string; ramp: number; poly: number[][] }[] }
+
 export interface FarHeightfield { heightfield: Float32Array; x0: number; y0: number; dx: number; nx: number; ny: number }
 
 export interface TrackCorner { name: string; s: number; turn?: string | null; dir?: string | null; radius_m?: number | null }
@@ -133,7 +136,7 @@ export interface GhostsJson {
 export interface PhysicsApi {
   Vehicle: new (spec: any, opts?: { autoShift?: boolean }) => VehicleLike;
   loadCarSpec(json: unknown): unknown;
-  createTrackSurface(track: TrackJson, heightfield: Float32Array, opts?: { far?: FarHeightfield | null; pitLane?: PitLaneJson | null; sausages?: SausageJson | null; kerbs?: KerbsJson | null }): Surface;
+  createTrackSurface(track: TrackJson, heightfield: Float32Array, opts?: { far?: FarHeightfield | null; pitLane?: PitLaneJson | null; sausages?: SausageJson | null; kerbs?: KerbsJson | null; terrainOverride?: TerrainOverrideJson | null }): Surface;
   /** Real physics only: static collision world from scenery.json (null scenery → boundary only). */
   createCollisionWorld?(scenery: unknown, track: TrackJson): unknown;
   /** Real physics only: the gear a ghost used at every grid point (from its rpm and speed channels). */

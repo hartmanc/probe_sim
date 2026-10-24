@@ -83,7 +83,7 @@ export function surfaceFactory(a: SimAssets): () => Surface {
   const pitLane: PitLaneJson | null = pit || zones
     ? { spacing_m: 1, fractions: (pit ?? zones)!.fractions, parts: [...(pit?.parts ?? []), ...(zones?.parts ?? [])] }
     : null;
-  return () => createTrackSurface(a.track, a.heightfield, { far, pitLane, sausages: a.scenery?.sausages ?? null, kerbs: a.scenery?.kerbs ?? null });
+  return () => createTrackSurface(a.track, a.heightfield, { far, pitLane, sausages: a.scenery?.sausages ?? null, kerbs: a.scenery?.kerbs ?? null, terrainOverride: a.scenery?.terrain_override ?? null });
 }
 
 const lineCache = new WeakMap<object, RaceLine>();

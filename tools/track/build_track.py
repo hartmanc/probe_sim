@@ -83,6 +83,8 @@ STAGE_NEEDS = {"geometry": [], "ghosts": ["track.json"], "scenery": ["track.json
 
 
 STAGE_KEYS = {"ghosts": ("ghosts",), "scenery": ("scenery", "gate", "pit_lane")}
+# stage 3 also reads terrain_override (the regions it writes to scenery.json and drapes the paved parts on); hashed only
+# when present, so every other track's scenery hash is unchanged
 
 
 def config_id(cfg, stage="geometry"):
@@ -97,6 +99,8 @@ def config_id(cfg, stage="geometry"):
         d = {k: cfg.get(k) for k in STAGE_KEYS[stage]}
         if stage == "scenery" and cfg.get("structures"):   # the buildings round's section (absent: hash unchanged)
             d["structures"] = cfg["structures"]
+        if stage == "scenery" and cfg.get("terrain_override"):   # round 14A (absent: hash unchanged)
+            d["terrain_override"] = cfg["terrain_override"]
     return hashlib.sha256(json.dumps(d, sort_keys=True, default=str).encode()).hexdigest()[:16]
 
 
@@ -458,6 +462,18 @@ def stage_geometry(cfg, out, no_logger):
                    "re-evaluated at the fitted edges from each section's quadratic",
     }
     T = track_dict(cfg, C1, hl3, hr3, prof, z0, sp, L1, corners, box, W, H, nx, ny, notes)
+    # -- terrain override (config terrain_override, round 14A): inside a declared region the heightfield is one smooth
+    # surface continuing the course as written to track.json (the physics' own arrays), robust to the lidar beyond it;
+    # absent (every other track): the heightfield untouched. track.json is not changed by it.
+    over_rep = []
+    if cfg.get("terrain_override"):
+        import terrain_override as TOV
+        Ct, Lt, Rt = (np.array(T[k])[:, :2] for k in ("center", "left", "right"))
+        hlt = np.maximum(np.linalg.norm(Lt - Ct, axis=1), 0.5)
+        hrt = np.maximum(np.linalg.norm(Rt - Ct, axis=1), 0.5)
+        hf, over_rep = TOV.apply(hf, box, B.HF_DX, cfg["terrain_override"], cfg.enu, Ct, hlt, hrt, np.array(T["profile"]["z"]),
+                                 T["profile"]["fractions"], log=log, points=V2.LIDAR_POINTS, z0=z0)
+        hf = hf.astype("<f4")
     # -- validation
     lc = cfg["loop_check"]
     rep.check("loop stations", lc["n_min"] <= n <= lc["n_max"], f"n = {n}")
@@ -514,6 +530,7 @@ def stage_geometry(cfg, out, no_logger):
                               "pit_parts": [p["track_s"] for p in (pit or {}).get("parts", [])]},
               "recentre": fit["report"], "spline": spline_rep, "straights": str_rep, "gate": met,
               "over_12pct": [int(i) for i in np.nonzero(cs.max(1) > B.CROSS_SOFT)[0]], "fails": rep.fails,
+              **({"terrain_override": over_rep} if over_rep else {}),
               "seconds": round(time.time() - t0, 1)}
     json.dump(report, open(os.path.join(work, "geometry_report.json"), "w"), indent=1, default=float)
     np.savez(os.path.join(work, "geometry_arrays.npz"), C_first=C, hl_first=hl, hr_first=hr, C=C1, hl_paint=hl1,
@@ -851,6 +868,12 @@ def stage_scenery(cfg, out, no_logger):
                                    cfg["captures"]["mpp"], cfg.enu, log=log)
         Image.fromarray(arr_).save(op_, quality=84, optimize=True)
         log(f"ortho pave: {npx_} px retextured")
+    if cfg.get("terrain_override"):
+        # round 14A: the override regions go to scenery.json (the physics drops its shoulder blend there and puts the
+        # paved parts on the heightfield) and the paved parts inside them are draped on it (config-gated)
+        import terrain_override as TOV
+        SC["terrain_override"] = TOV.scenery_regions(cfg["terrain_override"], cfg.enu)
+        TOV.drape_parts(SC, T, hf_, SC["terrain_override"], log=log)
     rep = Report("SCENERY VALIDATION")
     _, gf = edge_gate.gate(T, SC, cfg["gate"], log=log, world=not REPRO)
     rep.fails += gf

@@ -201,6 +201,58 @@ export interface TrackSurfaceOptions {
   /** Width beyond the edge over which the height blends from the profile edge to the heightfield, m.
    *  Default SHOULDER_WIDTH_M (5 m), the same shoulder the app renders, so the car drives on what is drawn. */
   edgeBlend?: number;
+  /** scenery.json `terrain_override` (Sonoma round 14A, 23 Oct 2026): regions where the heightfield is one smooth surface
+   *  built C1 with the course and the paved zones draped on it (tools/track/terrain_override.py). Off pavement inside a
+   *  region the surface is that heightfield itself: no shoulder blend (which would flatten the cross-slope at every
+   *  paved edge) and no dirt roughness, weighted in over the region's `ramp` m inside its polygon. Absent = unchanged. */
+  terrainOverride?: TerrainOverrideJson | null;
+}
+
+/** The override weight as a function of (x, y) (the gates and tools; null / no regions: always 0). */
+export function terrainOverrideWeightFn(j: TerrainOverrideJson | null | undefined): (x: number, y: number) => number {
+  const regs = buildOverride(j);
+  return (x, y) => terrainOverrideWeight(regs, x, y);
+}
+
+/** scenery.json `terrain_override`: ENU polygons and the ramp (m inside the polygon) over which the override takes over. */
+export interface TerrainOverrideJson { regions: { name?: string; ramp: number; poly: number[][] }[] }
+
+interface OverrideRegion { xs: Float64Array; ys: Float64Array; ramp: number; minx: number; maxx: number; miny: number; maxy: number }
+
+function buildOverride(j: TerrainOverrideJson | null | undefined): OverrideRegion[] | null {
+  const regs = (j?.regions ?? []).filter((r) => r.poly && r.poly.length >= 3);
+  if (!regs.length) return null;
+  return regs.map((r) => {
+    const xs = Float64Array.from(r.poly.map((p) => p[0])), ys = Float64Array.from(r.poly.map((p) => p[1]));
+    let minx = Infinity, maxx = -Infinity, miny = Infinity, maxy = -Infinity;
+    for (let k = 0; k < xs.length; k++) { minx = Math.min(minx, xs[k]); maxx = Math.max(maxx, xs[k]); miny = Math.min(miny, ys[k]); maxy = Math.max(maxy, ys[k]); }
+    return { xs, ys, ramp: Math.max(1e-6, r.ramp), minx, maxx, miny, maxy };
+  });
+}
+
+/** The override's weight at (x, y): 0 outside every region, smoothstep(distance inside the polygon / ramp) inside
+ *  (the max over the regions). Mirrors tools/track/terrain_override.py `weight`. */
+function terrainOverrideWeight(regs: OverrideRegion[] | null, x: number, y: number): number {
+  if (!regs) return 0;
+  let w = 0;
+  for (const r of regs) {
+    if (x < r.minx || x > r.maxx || y < r.miny || y > r.maxy) continue;
+    const n = r.xs.length;
+    let inside = false, d2 = Infinity;
+    for (let a = 0, b = n - 1; a < n; b = a++) {
+      const xa = r.xs[a], ya = r.ys[a], xb = r.xs[b], yb = r.ys[b];
+      if ((ya > y) !== (yb > y) && x < xa + ((y - ya) * (xb - xa)) / (yb - ya)) inside = !inside;
+      const ex = xb - xa, ey = yb - ya, L2 = ex * ex + ey * ey || 1e-12;
+      let t = ((x - xa) * ex + (y - ya) * ey) / L2;
+      t = t < 0 ? 0 : t > 1 ? 1 : t;
+      const px = x - xa - t * ex, py = y - ya - t * ey, dd = px * px + py * py;
+      if (dd < d2) d2 = dd;
+    }
+    if (!inside) continue;
+    const u = Math.min(1, Math.sqrt(d2) / r.ramp), v = u * u * (3 - 2 * u);
+    if (v > w) w = v;
+  }
+  return w;
 }
 
 /** Shoulder width outside each track edge: heights blend linearly from the ribbon edge to the heightfield.
@@ -487,6 +539,16 @@ function locatePit(pg: PitGeo, x: number, y: number, s: number, out: PitLoc): bo
  * Outside the near heightfield it falls back to `opts.far` (far_heightfield.bin,
  * CONTRACTS §2b) when given; beyond every grid it holds the edge height.
  */
+/** The surface options a package's scenery.json gives (the app's, the race's, the scoreboard's and the tools' surface):
+ *  the pit lane and the paved zones as one list of open paved parts, sausages, kerbs, the far terrain. */
+export function packageSurfaceOptions(scenery: any, far: TrackSurfaceOptions['far'] = null): TrackSurfaceOptions {
+  const pit = scenery?.pit_lane ?? null, zones = scenery?.paved_zones ?? null;
+  const pitLane: PitLaneJson | null = pit || zones
+    ? { spacing_m: 1, fractions: (pit ?? zones).fractions, parts: [...(pit?.parts ?? []), ...(zones?.parts ?? [])] } : null;
+  return { far, pitLane, sausages: scenery?.sausages ?? null, kerbs: scenery?.kerbs ?? null,
+    ...(scenery?.terrain_override ? { terrainOverride: scenery.terrain_override as TerrainOverrideJson } : {}) };
+}
+
 export function createTrackSurface(track: TrackJson, heightfield: Float32Array, opts: TrackSurfaceOptions = {}): Surface {
   const g = getGeo(track);
   const h = track.heightfield;
@@ -513,6 +575,7 @@ export function createTrackSurface(track: TrackJson, heightfield: Float32Array, 
   };
   const strips = opts.sausages && opts.sausages.strips?.length ? buildSausageStrips(track, opts.sausages) : null;
   const kerbStrips = opts.kerbs && opts.kerbs.profile && opts.kerbs.strips?.length ? buildKerbStrips(track, opts.kerbs) : null;
+  const over = buildOverride(opts.terrainOverride);
   const bump = { h: 0, gx: 0, gy: 0 }, kb = { h: 0, gx: 0, gy: 0 };
 
   const base: Surface = {
@@ -572,6 +635,15 @@ export function createTrackSurface(track: TrackJson, heightfield: Float32Array, 
             out.z = prof.z;
             const tx = pg.tx[ploc.seg], ty = pg.ty[ploc.seg];
             setNormal(prof.dzds * tx - prof.dzdl * ty, prof.dzds * ty + prof.dzdl * tx);
+            // inside a terrain override the paved part lies on the override surface (stage 3 drapes its profile on it):
+            // the heightfield itself, so the part's 7-point linear profile cannot step against the ground beside it
+            const wZ = over ? terrainOverrideWeight(over, x, y) : 0;
+            if (wZ > 0) {
+              hf.sample(x, y);
+              out.z = wZ * hf.z + (1 - wZ) * out.z;
+              const gxp = -out.nx / out.nz, gyp = -out.ny / out.nz;
+              setNormal(wZ * hf.gx + (1 - wZ) * gxp, wZ * hf.gy + (1 - wZ) * gyp);
+            }
             out.onTrack = false;
             out.paved = true;
             out.mu = muOn;
@@ -592,9 +664,11 @@ export function createTrackSurface(track: TrackJson, heightfield: Float32Array, 
       out.mu = muOn + dirt * (muOff - muOn);
       // low-frequency roughness, faded in with the dirt weight (zero at the paved edge, so heights stay continuous)
       let rz = 0, rgx = 0, rgy = 0;
-      if (rough > 0 && dirt > 0) {
+      // the terrain override (scenery.json terrain_override): inside a region the heightfield is the surface itself
+      const wO = over ? terrainOverrideWeight(over, x, y) : 0;
+      if (rough > 0 && dirt > 0 && wO < 1) {
         for (let k = 0; k < 3; k++) {
-          const wv = RW[k], ph = wv.kx * x + wv.ky * y + wv.ph, amp = rough * dirt * wv.a;
+          const wv = RW[k], ph = wv.kx * x + wv.ky * y + wv.ph, amp = rough * dirt * wv.a * (1 - wO);
           rz += amp * Math.sin(ph);
           const c = amp * Math.cos(ph);
           rgx += c * wv.kx; rgy += c * wv.ky;
@@ -612,6 +686,8 @@ export function createTrackSurface(track: TrackJson, heightfield: Float32Array, 
       // smoothstep across the shoulder: no slope break at the paved edge or where it meets the heightfield
       const u = 1 - Math.max(wT, wP);
       out.z = zE + u * u * (3 - 2 * u) * (hf.z - zE) + rz;
+      // inside an override region the heightfield already continues the course and the zones (C1): no shoulder
+      if (wO > 0) out.z = wO * (hf.z + rz) + (1 - wO) * out.z;
       return out;
     },
   };

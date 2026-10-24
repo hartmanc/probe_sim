@@ -67,6 +67,13 @@ Geometry (Stage 1)
              side PARALLEL to the other side's line already declared (one width; Buttonwillow round 8); local: applied only
              in the local refit (centre.local)   fit 'pitwall': the OSM rule pit wall (build_scenery.pit_wall_line; no scenery key)
   gate {straight_rms, step, profile_step, spline_obs_within}
+  terrain_override [{name, latlon [(lat, lon), ...] polygon, margin (m, 15: held to the lidar outside, stiffening),
+                     ramp (m, 1.5: inside the polygon, the physics' blend to the override), edge_hold (m, 1: the course's
+                     cross-slope held beyond its edges), edge_band (m, 4: pulled to it), smooth_m (m, 40: the shortest
+                     wavelength kept from the lidar), deck_returns (bool: a bridge deck's class-17 returns are the road),
+                     deck_reach (m, 8), deck_fade (m, 6), src, why}]   stage 1 (terrain_override.py) and stage 3 (scenery.json
+                     terrain_override, the paved parts draped); absent = the heightfield untouched (round 14A, build-track
+                     skill 1.13)
 Ghosts (Stage 2): ghosts {margin, kerb_margin, nudge, jerk_w}
 Scenery (Stage 3): scenery {...}, see build_scenery.py and scenery_post.py. Evidence keys added in the Sonoma scenery
   round 5 (21 Oct 2026), all optional (absent = the earlier behaviour, Laguna's package unchanged):

@@ -50,7 +50,7 @@ export function loadKerbPack(dir: string): KerbPack {
   try { scenery = JSON.parse(readFileSync(D + 'scenery.json', 'utf8')); } catch { scenery = null; }
   const pit = scenery?.pit_lane ?? null, zones = scenery?.paved_zones ?? null;
   const pitLane = pit || zones ? { spacing_m: 1, fractions: (pit ?? zones).fractions, parts: [...(pit?.parts ?? []), ...(zones?.parts ?? [])] } : null;
-  const surface = createTrackSurface(track, heightfield, { pitLane, sausages: scenery?.sausages ?? null, kerbs: scenery?.kerbs ?? null });
+  const surface = createTrackSurface(track, heightfield, { pitLane, sausages: scenery?.sausages ?? null, kerbs: scenery?.kerbs ?? null, terrainOverride: scenery?.terrain_override ?? null });
   const line = new RaceLine(track, ghosts);
   if (scenery?.pit_exit_cones?.pts?.length) line.restrictLeft(scenery.pit_exit_cones.pts);
   return { track, scenery, surface, line, heightfield, pitLane };
@@ -76,7 +76,7 @@ const KERB_WINDOW = 300;
 const plainCache = new WeakMap<object, Surface>();
 function plainOf(p: KerbPack): Surface {
   let s = plainCache.get(p);
-  if (!s) { s = createTrackSurface(p.track, p.heightfield, { pitLane: p.pitLane }); plainCache.set(p, s); }
+  if (!s) { s = createTrackSurface(p.track, p.heightfield, { pitLane: p.pitLane, terrainOverride: p.scenery?.terrain_override ?? null }); plainCache.set(p, s); }
   return s;
 }
 
