@@ -139,3 +139,72 @@ no frame shows cones there, his instruction).
 Every other stage-3 gate on the test build passes except the owner-reference ones (expected there: the round-14A edges lie
 up to 0.77 m from his red) and the wall ends above. Terrain gates unchanged (930 / 0 over; 0.0098 / 0.048).
 Full vitest: 464 passed + 1 expected fail (457 + 7 new).
+
+## Part 2, continued (orchestrator, while the T1 checkpoint is with the owner): the widened gate's four Sonoma heads
+
+Each measured on a straightened capture strip (capstrip, scenery and raw), a zoomed capture window, `wall_measure` and the
+package ortho (`round14b/ends/`, local PNGs); declared in config; test-built (stage 3 on the round-14A geometry,
+`out/sonoma_r14b_p2`, --write-on-fail); stills from the grass looking along each wall toward its head
+(`round14b/stills/end_*_after.jpg`, pose_walk on a dev server pointed at the test package).
+
+| head (round 14A) | what the place has (evidence) | declared | test build |
+|---|---|---|---|
+| right s 1062, crest wall at the culvert, 9.4 m out | the wall's end curves away from the track into the bank at the culvert: bright top 11.5 m out at the head, 9.1 m 10 m on (c20_s2750 / c20_s2805, wall_measure bright on a guide along the hook, 20 m, 98 % picked, contrast 87, rms 0.09 m); the round-6 line was the track-side shadow smoothed over 3 m, which lost the curve | the head's first 20 m on the measured top, then the existing line from s ~1090 | tapered (11.5 m at the head, 9.1 m 10 m on): ok |
+| left s 735, T4 approach wall below the T3a-T4 stands, 12.7 m out | a square concrete head with its catch-fence shadow in open grass; no tyres, no other run upstream (c20_s2420 at 0.02 m/px; strip s 680-790 left; the ortho, an older year, shows the wall ending ~5 m short of the 2026 head); the onboard (t022 / t024) does not resolve the head | nothing invented: **a bare head the real place has, listed for the owner** | still exposed (the one remaining wall-ends failure) |
+| left s 3165, T10-T11 board wall, 14.1 m out | ONE wall: the bypass board wall continues past its declared tail and bends toward the track into the T10-T11 board wall (wall_measure dark 51 % / 90 % picked, rms 0.55 / 0.74 m, bright 60 %, c20_s0715 / c20_s0770); round 5's head stood 6 m inside it, on the paddock lot's parked trucks | the board wall's first 35 m re-measured from the bypass wall's tail (joined) to s ~3200 | joined to run 66: ok |
+| right s 2080, drag strip NW far wall, 24.2 m out | round 5's third run lay on the continuation's NEAR painted edge line (0.3-0.9 m from the closed road's measured paint; a 0.2 m bright line, no shadow); the wall t066 shows stands at the FAR side: a light concrete wall from the island tip, where a black tyre bundle with a white top caps its head (c20_s0000 at 0.015 m/px), to the T8-8a wall (wall_measure bright, 56 m, 76 % picked, contrast 83, rms 0.22 m) | the wall moved to the far side, joined to the T8-8a wall; a 2 m tyre bundle at its head (a cushion) | joined to the tyre bundle: ok |
+
+Inventory: the t066 row ("light blue concrete wall beyond the Chute") corrected (`attrs.correction`, round 14B): the wall
+stands 40-45 m from the T7 road and nearer T8, so its nearest lap stations are T8's; `ahead_m` 125 -> 394.5 (s 2080.5 ->
+2350). Only that row of inventory.json is updated (a full regeneration on the current package moved every row ~0.1 m and
+unmatched four mast and one cone-line dispositions; not done; inventory.md not regenerated).
+
+Test build: wall ends 44 heads, 43 joined / lapped / cushioned / tapered, 1 exposed (left s 735, above); coverage passes
+(MISSING 0); every other stage-3 gate passes except the owner-reference gates (expected on the round-14A edges).
+
+## Laguna's two (report only; Laguna's package and config unchanged)
+
+| head | what the captures show | declaration needed |
+|---|---|---|
+| left s 3259, osm 640173934 (concrete, 2.2 m out) | an 8 m OSM concrete outline on top of a cluster of black tyre stacks, the bulged head of the tyre wall, 4 m upstream of the long tyre-faced run (strip s 3200-3320 left) | `osm_barrier_overrides`: this way as tyres (kind tyres), extended 4 m to the next run so it joins it; or a declared tyre run over the cluster |
+| right s 920, osm 640436959 (concrete, 9.6 m out) | the way is a CLOSED outline (first vertex = last): the gate takes its first vertex (s 920, the run's DOWNSTREAM end by the bridge pier's angled tyre wall) as its head; its real upstream end is at s ~866, where it meets the tyre run (strip s 860-980 right) | `osm_barrier_overrides`: the way as an open line in driving order (s 866 -> 920), or the gate to take a closed ring's lowest-s vertex as its head (a builder / gate change, not made) |
+
+## The failing stage-1 gate, by stretch (not changed; for the owner)
+
+Capture rows within 0.25 m of the fitted edge, 14B stage-1 output (`work/fit_assoc_*.json`; his readings excluded: left
+207 at 91.8 %, right 192 at 96.4 %):
+
+| s (m) | left rows | left within | right rows | right within |
+|---|---|---|---|---|
+| 0-200 | 364 | 89.6 % | 321 | 93.5 % |
+| 200-400 | 99 | 100.0 % | 133 | 100.0 % |
+| 400-600 | 205 | 84.4 % | 178 | 91.6 % |
+| 600-800 | 420 | 98.6 % | 390 | 95.1 % |
+| 800-1000 | 247 | 91.9 % | 302 | 89.4 % |
+| 1000-1200 | 321 | 90.3 % | 417 | 94.0 % |
+| 1200-1400 | 206 | 85.9 % | 261 | 92.3 % |
+| 1400-1600 | 421 | 98.3 % | 477 | 100.0 % |
+| 1600-1800 | 333 | 88.6 % | 279 | 94.6 % |
+| 1800-2000 | 412 | 77.9 % | 615 | 96.3 % |
+| 2000-2200 | 191 | 72.3 % | 425 | 83.1 % |
+| 2200-2400 | 191 | 80.1 % | 302 | 91.1 % |
+| 2400-2600 | 353 | 93.8 % | 407 | 96.3 % |
+| 2600-2800 | 273 | 91.2 % | 307 | 89.3 % |
+| 2800-3000 | 313 | 98.1 % | 216 | 94.0 % |
+| 3000-3200 | 236 | 85.2 % | 372 | 98.1 % |
+| 3200-3400 | 262 | 98.5 % | 302 | 91.4 % |
+| 3400-3600 | 436 | 87.8 % | 499 | 95.2 % |
+| 3600-3800 | 388 | 94.6 % | 416 | 90.9 % |
+| 3800-4000 | 557 | 89.4 % | 380 | 95.8 % |
+| 4000-4098 | 210 | 40.5 % | 211 | 92.9 % |
+
+The three worst (all left, all outside his window; the edges there are round 14A's to 1.7 mm):
+1. **s 4000-4098 (front straight before the line), 40.5 %, 125 misses:** a pair of parallel white lines along the pit-wall
+   side; the readings sit 0.34-0.36 m INSIDE the declared straight (fit 'paint') at s 4000-4060, 0.08-0.24 m at 4060-4098.
+   A double painted line, the straight held on the outer one.
+2. **s 2000-2200 (T7 road), 72.3 %:** the left edge is asphalt to the wall with no paint (feature asphalt_end); readings
+   0.3-0.5 m inside the declared parallel straight at s 1980-2010 and scattered either way at 2060 and 2120: an unpainted
+   asphalt end the detector reads ragged, the fit held by the straight.
+3. **s 1800-2000 (drag strip leg into the fork), 77.9 %:** at s 1860 readings 0.18-0.38 m outside (the strip's SW paint
+   turning into the fork corner) and at 1900-2000 0.3-0.5 m inside (the fork junction, gate.exempt 1860-1980, then the
+   asphalt end): a junction and a paint line crossing it.

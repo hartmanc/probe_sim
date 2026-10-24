@@ -3511,18 +3511,25 @@
     "type": "light blue concrete wall beyond the Chute",
     "h_m": 1.0,
     "h_method": "jersey-ref",
-    "ahead_m": 125,
+    "ahead_m": 394.5,
     "correction": {
-     "round": "scenery round 7 (22 Oct 2026)",
+     "round": "round 14B (23 Oct 2026)",
      "was": {
-      "ahead_m": null
+      "ahead_m": 125,
+      "correction": {
+       "round": "scenery round 7 (22 Oct 2026)",
+       "was": {
+        "ahead_m": null
+       },
+       "why": "frame t066 (owner note 36): the low light-blue wall stands far right ACROSS the drag strip continuation, 30 m or more from the T7 road; on c20_s3685 / c20_s3740 the measured wall at the strip's far side begins at s ~2081 (30 m right of the centre), ~125 m ahead of the car; nothing stands at the strip's near edge (t062 / t064 grass)"
+      }
      },
-     "why": "frame t066 (owner note 36): the low light-blue wall stands far right ACROSS the drag strip continuation, 30 m or more from the T7 road; on c20_s3685 / c20_s3740 the measured wall at the strip's far side begins at s ~2081 (30 m right of the centre), ~125 m ahead of the car; nothing stands at the strip's near edge (t062 / t064 grass)"
+     "why": "the wall t066 shows across the drag strip continuation was re-measured at the strip's FAR side (c20_s0000 / c20_s0055, wall_measure bright, 76 % picked): round 5's run at s ~2081 lay on the near edge's paint. The far wall stands 40-45 m from the T7 road and nearer T8, so its nearest lap stations are T8's (s 2347-2381, right): the row is placed there (s 1955.5 + 394.5 = 2350)"
     }
    },
    "confidence": 0.6,
    "t": 66,
-   "s": 2080.5,
+   "s": 2350.0,
    "source": "onboard:RAZip6S84CM@66.0",
    "frame": "t066.jpg",
    "scope": "lap",

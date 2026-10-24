@@ -526,7 +526,13 @@ CONFIG = dict(
             dict(name='T5 to the T6 crest, right', kind='concrete', h=1.0, fence=0.0, color=WALL_PALE_BLUE,
                  src='c20_s2805..s3080: s 1062-1112 dark line (99 % picked, rms 0.51 m), s 1115-1192 dark line re-measured across the capture boundary (100 %, rms 0.87 m), then the light wall line 3-6 m beyond the right edge (76 % picked); onboard 0:39-0:48.5 one continuous light concrete wall on the right (t042 / t044; not in the Jul 2011 Street View GMaTaipEd9Hm7fMNE26aGQ: built since)',
                  latlon=[
-                (38.1642349, -122.4628430), (38.1642667, -122.4627355), (38.1642887, -122.4626247), (38.1643083, -122.4625131),
+                # round 14B (widened wall-ends gate: this head, 9.4 m out, faced oncoming travel as declared): the head
+                # re-measured on its bright top (c20_s2750 / c20_s2805, wall_measure bright on a guide along the hook, 20 m,
+                # 98 % picked, contrast 87, rms 0.09 m; compare/sonoma/round14b/ends): the wall's end curves away from the
+                # track into the bank at the culvert, 11.5 m out at the head and 9.1 m 10 m on (a taper); the round-6 dark
+                # line (its track-side shadow, smoothed 3 m) had lost the curve
+                (38.1642162, -122.4628375), (38.1642279, -122.4628203), (38.1642377, -122.4628018), (38.1642459, -122.4627815), (38.1642536, -122.4627607), (38.1642599, -122.4627393), (38.1642653, -122.4627175), (38.1642699, -122.4626953), (38.1642743, -122.4626731), (38.1642787, -122.4626509), (38.1642833, -122.4626287),
+                (38.1643083, -122.4625131),
                 (38.1643267, -122.4624011), (38.1643439, -122.4622888),
                 (38.1643497, -122.4622479), (38.1643569, -122.4622031), (38.1643634, -122.462158), (38.1643695, -122.462113), (38.1643763, -122.4620682),
                 (38.1643836, -122.4620235), (38.1643929, -122.4619792), (38.1644049, -122.4619361), (38.1644088, -122.46189), (38.1644119, -122.4618443),
@@ -734,20 +740,12 @@ CONFIG = dict(
                 (38.1648827, -122.4575726), (38.1648592, -122.4575312),
                 ]),
             dict(name='T10 to T11, left wall with the ad boards', kind='concrete', h=1.2, fence=0.0, h_src='onboard 1:43-1:55: wall ~1.2 m under a continuous row of ~2.5 m ad boards (wall_boards); owner note 13/14 "much higher"', color=WALL_PALE_BLUE,
-                 src='c20_s0825..s1100 dark wall line 10-22 m left (96 % picked, rms 0.76 m); Street View jrXpHaDfJT2APw6zcyBKRA (ad boards); onboard 1:46-1:57 (Sunbelt, Toyota, zMAX boards on the wall)',
+                 src='c20_s0825..s1100 dark wall line 10-22 m left (96 % picked, rms 0.76 m); round 14B: its first 35 m re-measured on c20_s0715 / c20_s0770 from the bypass board wall\'s tail (one wall, joined; compare/sonoma/round14b/LEDGER.md); Street View jrXpHaDfJT2APw6zcyBKRA (ad boards); onboard 1:46-1:57 (Sunbelt, Toyota, zMAX boards on the wall)',
                  latlon=[
-                (38.1625428, -122.4542559), (38.1625395, -122.4541403), (38.1625247, -122.4540276),
-                (38.1625058, -122.453916), (38.1624965, -122.4538018), (38.1624702, -122.4536924),
-                (38.1624246, -122.4535929), (38.1623935, -122.4534861), (38.162358, -122.4533797),
-                (38.1623083, -122.4532829), (38.1622458, -122.4531995), (38.1621692, -122.4531349),
-                (38.162103, -122.4530595), (38.1620334, -122.452989), (38.1619606, -122.4529237),
-                (38.1618849, -122.4528645), (38.1618062, -122.4528116), (38.161727, -122.4527591),
-                (38.161642, -122.4527238), (38.1615634, -122.4526635), (38.1614796, -122.4526209),
-                (38.1613925, -122.4525888), (38.1613003, -122.4525877), (38.1612115, -122.4525684),
-                (38.1611243, -122.4525417), (38.1610372, -122.4525149), (38.1609531, -122.4524679),
-                (38.1608659, -122.4524393), (38.1607769, -122.4524242), (38.1606905, -122.4523933),
-                (38.160602, -122.4523738), (38.1605128, -122.4523564), (38.1604242, -122.4523371),
-                (38.1603536, -122.4523199),
+                # round 14B (widened wall-ends gate): the first 35 m re-measured from the end of the bypass board wall (its tail
+                # (296.9, -11.3): joined) along the board wall to s ~3200 (wall_measure dark, 51 % / 90 % picked, rms 0.55 / 0.74 m;
+                # bright 60 %); the round-5 head (292.7, -17.5) stood 6 m inside it on the paddock lot's parked trucks
+                (38.1625985, -122.4542021), (38.1625969, -122.4541793), (38.1625931, -122.4541569), (38.1625878, -122.4541348), (38.1625800, -122.4541172), (38.1625710, -122.4540974), (38.1625632, -122.4540768), (38.1625584, -122.4540719), (38.1625504, -122.4540513), (38.1625446, -122.4540294), (38.1625408, -122.4540062), (38.1625371, -122.4539830), (38.1625331, -122.4539612), (38.1625268, -122.4539398), (38.1625190, -122.4539190), (38.1625122, -122.4538979), (38.1625079, -122.4538758), (38.1625051, -122.4538530), (38.1624965, -122.4538018), (38.1624702, -122.4536924), (38.1624246, -122.4535929), (38.1623935, -122.4534861), (38.1623580, -122.4533797), (38.1623083, -122.4532829), (38.1622458, -122.4531995), (38.1621692, -122.4531349), (38.1621030, -122.4530595), (38.1620334, -122.4529890), (38.1619606, -122.4529237), (38.1618849, -122.4528645), (38.1618062, -122.4528116), (38.1617270, -122.4527591), (38.1616420, -122.4527238), (38.1615634, -122.4526635), (38.1614796, -122.4526209), (38.1613925, -122.4525888), (38.1613003, -122.4525877), (38.1612115, -122.4525684), (38.1611243, -122.4525417), (38.1610372, -122.4525149), (38.1609531, -122.4524679), (38.1608659, -122.4524393), (38.1607769, -122.4524242), (38.1606905, -122.4523933), (38.1606020, -122.4523738), (38.1605128, -122.4523564), (38.1604242, -122.4523371), (38.1603536, -122.4523199),
                 ]),
             dict(name='T10 to T11, right wall and catch fence', kind='concrete', h=1.1, fence=3.5, h_src='onboard 1:43.2-1:50: concrete ~1.1 m, catch-fence posts about three wall heights above it (~3.5 m)', color=WALL_PALE_BLUE,
                  src='c20_s0880..s1045 bright line ~18 m right (55 % picked, rms 0.60 m, gaps bridged); onboard 1:43-1:52 concrete wall with catch fence on the right',
@@ -885,11 +883,23 @@ CONFIG = dict(
                  latlon=[(38.1634226, -122.4602245), (38.1633499, -122.4601568), (38.1632764, -122.4600909), (38.1632014, -122.460028),
                          (38.1631256, -122.4599668), (38.1630498, -122.4599057), (38.1629731, -122.4598463), (38.1628974, -122.4597854),
                          (38.1628231, -122.4597217), (38.1627516, -122.4596522), (38.162684, -122.459575), (38.162658, -122.4595345)]),
+            # round 14B (widened wall-ends gate: this run's head stood 24 m out, bare): round 5's third run lay on the
+            # continuation's NEAR painted edge line (0.3-0.9 m from the closed road's measured paint, a 0.2 m bright line with
+            # no shadow, compare/sonoma/round14b/ends), not at its far side where the inventory row (t066, round-7
+            # correction) puts the wall. Re-measured at the far side on c20_s0000 / c20_s0055 (wall_measure bright, 56 m,
+            # 76 % picked, contrast 83, rms 0.22 m): a light concrete wall from the island tip, where a black tyre bundle
+            # with a white top caps its head (c20_s0000 at 0.015 m/px), along the strip to the T8-8a wall, which it meets
+            # (joined) at (-327.9, 367.6).
             dict(name='drag strip NW end: far wall beyond the fork (round 5)', kind='concrete', h=1.0, fence=0.0, color=WALL_PALE_BLUE,
                  h_src='inventory 1:06: light blue concrete wall 1.0 m (jersey-ref)',
-                 src='c20_s3685 / c20_s3740: wall_measure bright along the drag strip NW end, the third measured run only (s 2081-2100, 30-33 m right of the centre); onboard 1:04-1:06 (t064 / t066) the low white wall stands on the far side of the drag strip continuation, 30 m or more from the T7 road',
-                 cut='round 7 (owner note 36): the round-5 line began at s 1885, 0.5 m beyond the right edge, on the drag strip\'s NE paint / concrete edge (the bright line c20_s3630 shows): t062 / t064 show grass right off that edge and no wall before the fork; the first two measured runs and the 69 m bridge between them are dropped, the third run (the wall the footage shows) kept',
-                 latlon=[(38.165956, -122.4617028), (38.166008, -122.461796), (38.1660575, -122.4618781)]),
+                 src='round 14B: c20_s0000 / c20_s0055 wall_measure bright along the continuation\'s far side, 56 m, 76 % picked, contrast 83, '
+                     'rms 0.22 m, from the tyre bundle at the island tip to the T8-8a wall (joined); onboard 1:04-1:06 (t064 / t066) the low '
+                     'light-blue wall on the far side of the drag strip continuation; was round 5\'s third run on the near edge\'s paint',
+                 latlon=[(38.1662304, -122.4617816), (38.1662105, -122.4617402), (38.1661858, -122.4616924), (38.1661612, -122.4616446), (38.1661375, -122.4615960), (38.1661155, -122.4615461), (38.1660895, -122.4614994), (38.1660626, -122.4614534), (38.1660020, -122.4613468)]),
+            dict(name='drag strip NW end: tyre bundle at the far wall\'s head (round 14B)', kind='tyres', color=TYRE_BLACK, h=1.0, fence=0.0,
+                 src='c20_s0000 at 0.015 m/px: a black tyre bundle with a white top ~2 m across at the far wall\'s head on the island tip '
+                     '(compare/sonoma/round14b/ends/tip_raw.png, local); its tail on the wall (a cushion)',
+                 latlon=[(38.1662394, -122.4618079), (38.1662322, -122.4617862)]),
             # round 7e (owner note 57): the round-5 'tyre line across the continuation' (s 1934-1942) was a misread of t064; the
             # continuation is closed by a line of orange pylons (cone_lines_declared below, style 'delineator')
             dict(name='T7 approach, left: wall on to the T7 post (round 5)', kind='concrete', h=1.2, fence=0.0, color=WALL_PALE_BLUE,
