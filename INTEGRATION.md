@@ -36,3 +36,18 @@ the owner-edge station remap in trackcfg.py, see below).
 | `src/app/scenery.ts` `buildBarriers` | `drawn` parameter; walls from `foot()` to `atTop(top_z)` | `sliceLine`, `barrierSections` (colour sections along a run) | both: sections drawn per slice with the foot and the sliced `top_z` (a copy of the line at its top heights cut at the same arc lengths); without sections exactly track-pipeline's faces |
 | `src/app/scenery.ts` marshal posts | style 'deck' (Sonoma 8a tower), `D = m.d ?? W`, roof material from `m.roof` | style 'canopy', `fine` scaffold, dense rails, platform canopy and stair | one builder: canopy, else deck, else the hut / platform with the `fine` options; the hut roof in the roof colour (white when absent, as before) |
 | `.claude/skills/build-track/SKILL.md` gate table | four new rows (pavement joins, surface smoothness, ground marks on surface, kerbs on surface); kerb traversal row "no wheel lifted (`it.fails` for Sonoma)" | kerb traversal row: wheel lifts advisory (the owner, 21 Oct 2026) | buttonwillow's kerb traversal row (it matches the merged `kerbgate.test.ts`, which auto-merged to the owner's advisory rule) plus track-pipeline's four rows |
+
+## Merge 2: field-buttonwillow into integration
+
+field-buttonwillow branched from buttonwillow at ff2eb57 (before Buttonwillow rounds 9 and 10), so its track commits are
+already in. The only file changed on both sides since that base besides the auto-merged `src/app/modes/race.ts`
+(terrain override and the lost-in-the-hills reason on one side, the per-event model queue, ids and silent EVs on the
+other, in different places) was the registry.
+
+| file | integration (ours) intent | field-buttonwillow (theirs) intent | resolution |
+|---|---|---|---|
+| `src/scoreboard/config.ts` `TRACKS.buttonwillow` | the round-10 package: `length_m` 4699.187, `rev` '7acf260f50' | Buttonwillow's own field: the `--own` pace file comment and `identity: 'cars/field/buttonwillow/identity.json'` (package still the round-8 rev '6ebc6e3263', 4703.806 m) | the round-10 length and rev with the field's identity key and comment |
+
+Note for the pace stage: field-buttonwillow's AI_VERSION 8 calibration of the Buttonwillow field (884 fits) was made on
+the round-8 package (4703.806 m); the merged tree carries the round-10 package (4699.187 m, edges refit from the
+owner's red). The calibration itself is unchanged by this merge.

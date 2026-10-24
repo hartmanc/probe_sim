@@ -15,7 +15,7 @@ import type { PaceJson } from '../../physics/ai/field';
 import { STEP, type SimAssets } from '../../scoreboard';
 import { fmtTime } from '../hud';
 import type { MenuEntry, MenuPage } from '../menu';
-import { loadFieldData, loadFieldModel, type FieldData } from '../loader';
+import { loadFieldData, loadFieldModel, type FieldData, type FieldModelInfo } from '../loader';
 import { FieldCars, identityColor, type FieldCarInfo } from '../field-cars';
 import { RaceHudDom, raceHudView, raceTable, resultRows, rowStatus, type TableRow } from '../race-hud';
 export { rowStatus, type RowStatus } from '../race-hud';
@@ -133,6 +133,30 @@ export function fieldCarInfos(d: RaceDirector): FieldCarInfo[] {
   });
 }
 
+/**
+ * The models to load for a race: each models.json row (one global pool) whose `id` (loader.ts fills it with the number
+ * when absent) is an AI car's model key (RaceCar.model: pace `model_id`, else identity `model_id`, else its `id`, else
+ * the number), paired with that car's number
+ * (FieldCars is keyed by number), while the car still shows its placeholder. A car without a model row keeps the
+ * placeholder. Laguna (no ids anywhere) matches by number as before.
+ */
+export function modelQueue(models: readonly FieldModelInfo[], cars: readonly { id: string; model?: string; number: string; isPlayer: boolean }[], kindOf: (num: string) => 'placeholder' | 'model' | null): { car: string; model: FieldModelInfo }[] {
+  const byKey = new Map<string, FieldModelInfo>();
+  for (const m of models) { const k = m.id ?? m.number; if (!byKey.has(k)) byKey.set(k, m); }
+  const out: { car: string; model: FieldModelInfo }[] = [];
+  const seen = new Set<string>();
+  // models.json order (the load order), one entry per car; two cars may share a model row
+  for (const m of models) {
+    const k = m.id ?? m.number;
+    if (byKey.get(k) !== m) continue;
+    for (const c of cars) {
+      if (c.isPlayer || (c.model ?? c.id) !== k || seen.has(c.number) || kindOf(c.number) !== 'placeholder') continue;
+      seen.add(c.number); out.push({ car: c.number, model: m });
+    }
+  }
+  return out;
+}
+
 /** Per-car pitch trim 0.96..1.04 (stable per number): the fallback when index.json has no `cars` entry. */
 export function audioTrim(num: string): number {
   let h = 2166136261;
@@ -185,15 +209,21 @@ export function parseSoundIndex(raw: unknown): FieldSoundIndex | null {
 
 const numIn = (v: unknown, lo: number, hi: number, d: number) => (typeof v === 'number' && Number.isFinite(v) && v >= lo && v <= hi ? v : d);
 
+/** An engine with no combustion sound: battery-electric (field.ts resolveCarType layout 'EV', cylinders 0). The race
+ *  gives it no field-audio voice (silence) rather than a borrowed petrol family. */
+export function silentEngine(e: { layout: string; cylinders: number }): boolean {
+  return e.layout === 'EV' || !(e.cylinders > 0);
+}
+
 /**
- * How a car sounds: index.json's `cars[number]` row (family, trim, muffler, rpm_scale) when present and its family
+ * How a car sounds: index.json's `cars[id]` row (the car's field key: pace.json `id`, else its number) (family, trim, muffler, rpm_scale) when present and its family
  * exists, else familyFor() over identity.json's engine family / make / model, then cylinders + layout.
  */
-export function carSound(index: FieldSoundIndex | null, car: { number: string; identity: unknown; engine: { layout: string; cylinders: number; exhaustNote?: string | null } }): FieldCarSound {
-  const row = index?.cars?.[car.number];
+export function carSound(index: FieldSoundIndex | null, car: { number: string; id?: string; identity: unknown; engine: { layout: string; cylinders: number; exhaustNote?: string | null } }): FieldCarSound {
+  const row = index?.cars?.[car.id ?? car.number];
   const id = (car.identity ?? {}) as { make?: string; model?: string; engine?: { family?: string; exhaust_note?: string } };
   let family = '';
-  if (index) {
+  if (index && (row?.family || !silentEngine(car.engine))) {
     family = row?.family && index.families[row.family] ? row.family
       : familyFor(index, { engineFamily: id.engine?.family, make: id.make, model: id.model, cylinders: car.engine.cylinders, layout: layoutOf(car.engine.layout) });
   }
@@ -354,18 +384,18 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
     ctx.hud.toast(`Formation lap · seed ${seed} · you start P${dir.player.grid}`, 3000);
   };
 
-  /** Swap placeholders for real models one at a time, in the background. */
+  /** Swap placeholders for real models one at a time, in the background (models.json order; see modelQueue). */
   const loadModelsInBackground = () => {
-    if (modelsStarted || !field || !fieldCars) return;
+    if (modelsStarted || !field || !fieldCars || !d) return;
     modelsStarted = true;
     const fc = fieldCars;
-    const todo = field.models.filter((m) => fc.kindOf(m.number) === 'placeholder');
+    const todo = modelQueue(field.models, d.cars, (num) => fc.kindOf(num));
     void (async () => {
-      for (const m of todo) {
+      for (const { car: num, model: m } of todo) {
         if (disposed) return;
         const tpl = await deps.loadModel(m.file);
         if (disposed) return;
-        if (tpl) fc.useModel(m.number, tpl, typeof m.tyre_radius_m === 'number' ? m.tyre_radius_m : undefined, Array.isArray(m.brake_lamps) ? m.brake_lamps : undefined, m.brake_lamps_fallback === true);
+        if (tpl) fc.useModel(num, tpl, typeof m.tyre_radius_m === 'number' ? m.tyre_radius_m : undefined, Array.isArray(m.brake_lamps) ? m.brake_lamps : undefined, m.brake_lamps_fallback === true);
       }
     })();
   };
@@ -419,7 +449,8 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
       audioCars = []; audioSounds = []; audioPose = [];
       poses.forEach((p, i) => {
         if (p.isPlayer) return;
-        const snd = fieldAudio!.sound({ number: p.number, identity: p.identity, engine: p.engine });
+        const snd = fieldAudio!.sound({ number: p.number, id: p.id, identity: p.identity, engine: p.engine });
+        if (!snd.family && silentEngine(p.engine)) return;   // an electric car (#16 Bolt at Buttonwillow) with no index row: no voice
         audioSounds.push(snd); audioPose.push(i);
         audioCars.push(fillAudioCar({ id: p.number, pos: p.state.pos, vel: p.state.vel, rpm: 0, throttle: 0, redline: 0, family: '' }, p.state, p.engine.redline, snd));
       });

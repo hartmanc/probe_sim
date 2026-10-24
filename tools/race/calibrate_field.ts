@@ -3,6 +3,8 @@
 //
 //   npx tsx tools/race/calibrate_field.ts [--track <id>] [--only 711,619] [--workers 8] [--tol 0.002] [--dry]
 //
+// Identity: the track's own cars/field/<id>/identity.json (TRACKS[id].identity) when it exists, else the global one;
+// a car's row is found by its pace.json `id`, else its number (field.ts fieldKey), as in the app's race.
 // Per car: the AI driver alone on the track (registry id, default Laguna Seca) with the race physics (1 kHz, control at 500 Hz), 2
 // flying laps per evaluation, lap 2 counts. Bracketed secant / bisection on the scale (<= 8
 // evaluations), starting from the Probe's lap ratio. Writes scale + achievedLap into the track's pace file
@@ -15,9 +17,10 @@ import { Worker, isMainThread, parentPort, workerData } from 'node:worker_thread
 import { fileURLToPath } from 'node:url';
 import { loadTrackPack, loadProbeJson, loadPace, loadIdentity, pacePath, trackArg } from './load';
 import { runSolo } from '../../src/physics/ai/solo';
-import { AI_VERSION, PACE_MIN, PACE_MAX, describeAiCar, paceSplit, type PaceCar } from '../../src/physics/ai/field';
+import { AI_VERSION, PACE_MIN, PACE_MAX, describeAiCar, fieldKey, paceSplit, type PaceCar } from '../../src/physics/ai/field';
 
-interface Job { id: string; number: string; target: number; guess: number; tol: number }
+// number: the car (the player's #619 runs without identity); key: its identity row (pace.json `id`, else the number)
+interface Job { id: string; number: string; key: string; target: number; guess: number; tol: number }
 interface Fit { id: string; number: string; scale: number; lap: number; evals: number; ok: boolean; history: [number, number][] }
 
 const MAX_EVALS = 12;
@@ -60,9 +63,9 @@ function fitOne(job: Job, evalLap: (scale: number) => number): Fit {
 function makeEval(track: string) {
   const pack = loadTrackPack(track);
   const probe = loadProbeJson();
-  const ident = loadIdentity();
-  return (num: string) => (scale: number) => {
-    const r = runSolo(pack.line, pack.surface, probe, num === PLAYER ? null : ident.get(num) ?? null, scale, 2);
+  const ident = loadIdentity(track);   // the track's own identity.json, else the global one (tools/race/load.ts)
+  return (num: string, key: string = num) => (scale: number) => {
+    const r = runSolo(pack.line, pack.surface, probe, num === PLAYER ? null : ident.get(key) ?? null, scale, 2);
     return r.laps.length >= 2 && r.recoveries === 0 ? r.laps[1] : Number.NaN;   // spun / off / stuck: not a usable lap
   };
 }
@@ -70,7 +73,7 @@ function makeEval(track: string) {
 if (!isMainThread) {
   const evalFor = makeEval(workerData.track);
   const jobs: Job[] = workerData.jobs;
-  for (const job of jobs) parentPort!.postMessage(fitOne(job, evalFor(job.number)));
+  for (const job of jobs) parentPort!.postMessage(fitOne(job, evalFor(job.number, job.key)));
 } else {
   const argv = process.argv.slice(2);
   const arg = (k: string) => { const i = argv.indexOf(k); return i >= 0 ? argv[i + 1] : undefined; };
@@ -81,7 +84,7 @@ if (!isMainThread) {
   const track = trackArg(argv);
   const pace = loadPace(track);
   const probeJson = loadProbeJson();
-  const ident = loadIdentity();
+  const ident = loadIdentity(track);
   const cars = pace.cars.filter((c) => !only || only.includes(c.number));
   // reference: the Probe at scale 1
   const t0 = performance.now();
@@ -90,8 +93,9 @@ if (!isMainThread) {
   const fresh = pace.ai_version === AI_VERSION;
   const jobs: Job[] = [];
   for (const c of cars) {
-    jobs.push({ id: c.number, number: c.number, target: c.targetLap, guess: c.scale && fresh ? c.scale : ref / c.targetLap, tol });
-    for (const s of c.stints ?? []) jobs.push({ id: `${c.number}/${s.index}`, number: c.number, target: s.targetLap, guess: s.scale && fresh ? s.scale : ref / s.targetLap, tol });
+    const key = fieldKey(c);
+    jobs.push({ id: c.number, number: c.number, key, target: c.targetLap, guess: c.scale && fresh ? c.scale : ref / c.targetLap, tol });
+    for (const s of c.stints ?? []) jobs.push({ id: `${c.number}/${s.index}`, number: c.number, key, target: s.targetLap, guess: s.scale && fresh ? s.scale : ref / s.targetLap, tol });
   }
   console.log(`${jobs.length} fits (${cars.length} cars + their stints)`);
   const fits = new Map<string, Fit>();
@@ -132,7 +136,7 @@ if (!isMainThread) {
       s.scale = fs.scale; s.achievedLap = fs.lap;
     }
     // the player's car is the real Probe (car.json); its row is a reference AI fit without identity overrides
-    (c as PaceCar).resolved = describeAiCar(probeJson, c.player ? null : ident.get(c.number) ?? null, f.scale);
+    (c as PaceCar).resolved = describeAiCar(probeJson, c.player ? null : ident.get(fieldKey(c)) ?? null, f.scale);
   }
   console.log(`\nworst error ${worst.toFixed(2)} %, ${((performance.now() - t0) / 1000).toFixed(1)} s with ${nWorkers} workers`);
   pace.ai_version = AI_VERSION;

@@ -32,6 +32,33 @@ Tests: `src/app/__tests__/race.test.ts` (+ the race case in `modes.test.ts`).
 - **Scoreboard:** `setBoardContext({ raceAiVersion: '2' })` at each build; results → `submitRace({ metres, laps,
   aiVersion, seed, position, finished })` through the usual prompt; the results card reopens afterwards.
 
+## Per-event fields and field keys (22 Oct 2026)
+
+- **Files per track.** `TRACKS[id].pace` (required) and `TRACKS[id].identity` (optional, a circuit's own field:
+  `cars/field/<track>/identity.json`). `loadFieldData` loads the track's own identity file and falls back to the global
+  `cars/field/identity.json` (Laguna's) when the track has none or the file is missing / 404 (`loadIdentityWithFallback`;
+  the fallback is noted in `FieldData.missing` and `identityPath` says which file was used). `models.json` stays one
+  global pool for every track. The tools do the same (`tools/race/load.ts` `identityPath` / `loadIdentity(track)`).
+- **Field key = `id`, else the number** (`fieldKey`, src/physics/ai/field.ts). pace.json cars, identity.json rows and
+  models.json rows may carry `id`; the director finds a car's identity row by it (`RaceCar.id`, `CarPose.id`), the app
+  its model (`modelQueue` in modes/race.ts) and its index.json sound row. Laguna's files carry no ids, so everything
+  resolves by number exactly as before (seeded self-play unchanged). FieldCars, tints, stint draws, driver seeds and
+  results stay keyed by the number (unique within one race).
+- **Model key** (`modelKey`): the pace row's `model_id`, else the identity row's `model_id`, else the field key. A car
+  renumbered since an earlier event reuses its model that way (Buttonwillow #6 Tinyvette = Laguna #8 would get
+  `model_id: "8"`; #6 ran no lap, so it is not in this field, but the rule stays). `RaceCar.model` / `modelQueue`.
+- **Buttonwillow** (`tools/race/pace_track.ts --own`): the race's own 100 cars (99 AI + the player's reference row;
+  the five entrants with no lap, #89, #6, #43, #101, #222, left out and named in pace.json `notes`). Ids come from
+  `cars/field/buttonwillow/identity.json` (104 rows, all with `id`) when it exists, else the match rule: a number that
+  is a different car at Laguna gets `<n>_bw` (0, 1, 8, 9, 16, 40, 670, 711, 801 in the field; 43, 89 in identity only;
+  #670 Bernal Dads raced a Ram van here, not the Laguna Volvo), so it never shows the Laguna car's identity or model;
+  #38, 189, 544, 963 (and the player's 619) are the same cars and keep their numbers. A car without a model row keeps
+  the placeholder.
+- **Electric cars** (#16_bw, a Chevrolet Bolt: identity engine `layout: "EV"`, `cylinders: 0`): `resolveCarType` gives
+  layout `EV`, cylinders 0, a flat-then-constant-power torque shape, no turbo; nothing divides by the cylinder count
+  (engine inertia is 0.1 + 0.025 x cylinders). The field audio gives it no voice (`silentEngine`: silence rather than a
+  borrowed petrol family) unless index.json's `cars["16_bw"]` names a family.
+
 ## Dev overrides (URL)
 
 | param | effect |

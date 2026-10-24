@@ -20,7 +20,8 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { aggressionFor } from '../../src/physics/ai/rng';
-import { AI_VERSION, type PaceCar, type PaceJson, type PaceStint } from '../../src/physics/ai/field';
+import { AI_VERSION, type PaceCar, type PaceJson } from '../../src/physics/ai/field';
+import { carPace, parseLap } from './pace_rules';
 import { pacePath, trackArg } from './load';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
@@ -30,70 +31,24 @@ const TRACK = trackArg(ARGV);
 const DATA = resolve(ROOT, ARGV.includes('--data') ? ARGV[ARGV.indexOf('--data') + 1] : 'tools/race/data');
 const OUT = pacePath(TRACK);
 const PLAYER = '619';
-const MIN_STINT_LAPS = 5;
-
-function parseLap(s: string): number {
-  const parts = s.split(':').map(Number);
-  let t = 0;
-  for (const p of parts) t = t * 60 + p;
-  return t;
-}
-const median = (a: number[]) => { const b = [...a].sort((x, y) => x - y); const n = b.length; return n ? (n % 2 ? b[(n - 1) / 2] : 0.5 * (b[n / 2 - 1] + b[n / 2])) : NaN; };
-const robustSigma = (a: number[]) => { const m = median(a); return 1.4826 * median(a.map((t) => Math.abs(t - m))); };
 
 const cls = JSON.parse(readFileSync(resolve(DATA, 'sessions_12975608_classification.json'), 'utf8'));
 const prev: PaceJson | null = existsSync(OUT) ? JSON.parse(readFileSync(OUT, 'utf8')) : null;
 const prevBy = new Map((prev?.cars ?? []).map((c) => [c.number, c]));
 const keepScales = prev?.ai_version === AI_VERSION;
 
-interface Lap { nr: number; t: number; pit: boolean; ok: boolean }
-
 const cars: PaceCar[] = [];
 for (const r of cls.rows) {
   const f = resolve(DATA, `laps/pos${String(r.position).padStart(3, '0')}.json`);
   const lj = JSON.parse(readFileSync(f, 'utf8'));
   const info = lj.lapDataInfo.participantInfo;
-  const laps: Lap[] = lj.laps.map((l: any) => {
-    const st: string[] = Array.isArray(l.status) ? l.status : [l.status];
-    const t = parseLap(l.lapTime);
-    return { nr: l.lapNr, t, pit: !!l.inPit, ok: !l.inPit && st.length > 0 && st.every((x) => x === 'GREEN') && Number.isFinite(t) && t > 60 };
-  });
-  const green = laps.filter((l) => l.ok).map((l) => l.t);
-  const m0 = median(green);
-  const clean = green.filter((t) => t <= 1.3 * m0);
-  const med = median(clean);
-  const mad = median(clean.map((t) => Math.abs(t - med)));
-  const official = parseLap(r.bestTime);
   const number = String(r.startNumber);
   const p = prevBy.get(number);
-
-  // ---- stints
-  const stints: PaceStint[] = [];
-  let run: number[] = [], first = -1, afterPit = true;   // the race's first lap is an out lap too
-  const flush = () => {
-    if (run.length) {
-      const sm = median(run);
-      const keep = run.filter((t) => t <= 1.2 * sm && t <= 1.3 * m0 && t >= 0.97 * official);
-      if (keep.length >= MIN_STINT_LAPS) {
-        const k = stints.length;
-        const target = +median(keep).toFixed(3);
-        const old = keepScales ? p?.stints?.[k] : undefined;
-        stints.push({
-          index: k, laps: keep.length, firstLap: first, targetLap: target,
-          bestLap: +Math.min(...keep).toFixed(3), sigma: +robustSigma(keep).toFixed(3),
-          ...(old && old.targetLap === target && old.scale !== undefined ? { scale: old.scale, achievedLap: old.achievedLap } : {}),
-        });
-      }
-    }
-    run = []; first = -1;
-  };
-  for (const l of laps) {
-    if (l.pit) { flush(); afterPit = true; continue; }
-    if (afterPit) { afterPit = false; first = l.nr; continue; }     // out lap: starts the stint, never counts
-    if (first < 0) first = l.nr;
-    if (l.ok) run.push(l.t);
-  }
-  flush();
+  // the rules (stints, outliers): tools/race/pace_rules.ts
+  const pc = carPace(lj.laps, parseLap(r.bestTime), (k, target) => {
+    const old = keepScales ? p?.stints?.[k] : undefined;
+    return old && old.targetLap === target && old.scale !== undefined ? { scale: old.scale, achievedLap: old.achievedLap } : null;
+  });
 
   const car: PaceCar = {
     number,
@@ -103,14 +58,14 @@ for (const r of cls.rows) {
     finish: r.position,
     classFinish: r.positionInClass,
     lapsCompleted: r.numberOfLaps,
-    greenLaps: clean.length,
-    targetLap: +med.toFixed(3),
-    bestLap: +official.toFixed(3),
-    sigma: +(1.4826 * mad).toFixed(3),
+    greenLaps: pc.greenLaps,
+    targetLap: pc.targetLap,
+    bestLap: pc.bestLap,
+    sigma: pc.sigma,
     aggression: aggressionFor(number, r.resultClass),
     ...(number === PLAYER ? { player: true } : {}),
     ...(keepScales && p?.scale !== undefined ? { scale: p.scale, achievedLap: p.achievedLap } : {}),
-    stints,
+    stints: pc.stints,
   };
   cars.push(car);
 }

@@ -7,9 +7,11 @@ import * as THREE from 'three';
 import { HotlapSim } from '../../scoreboard';
 import { lagunaAssets, autopilot } from '../../scoreboard/__tests__/fixtures';
 import { HotlapLoop } from '../modes/hotlap';
-import { createRace, newSeed, parseRaceOverrides, raceAiConfig, raceResultFor, RACE_LAPS, type RaceDeps } from '../modes/race';
+import { carSound, createRace, modelQueue, silentEngine, newSeed, parseRaceOverrides, raceAiConfig, raceResultFor, RACE_LAPS, type RaceDeps } from '../modes/race';
 import type { ModeContext, RaceServices } from '../modes/mode';
-import type { FieldData } from '../loader';
+import { GLOBAL_IDENTITY, loadIdentityWithFallback, normaliseModelRows, type FieldData } from '../loader';
+import { describeAiCar, fieldKey, modelKey, parseIdentity, resolveCarType, type PaceJson } from '../../physics/ai/field';
+import { TRACKS } from '../../scoreboard/config';
 import { FieldCars, buildPlaceholderCar, identityColor, selectDrawn, triangleCount, PROBE_DIMS, type FieldCarInfo } from '../field-cars';
 import { raceHudView, resultRows } from '../race-hud';
 import type { RaceHud, ResultRow } from '../../physics/ai/race';
@@ -23,7 +25,7 @@ const fieldData = (): FieldData => ({
   models: readJson('cars/field/models.json').cars, missing: [],
 });
 
-function harness(search = '?seed=42&laps=2', rand: () => number = () => 0.5) {
+function harness(search = '?seed=42&laps=2', rand: () => number = () => 0.5, field: () => FieldData = fieldData, loadModel: RaceDeps['loadModel'] = async () => null) {
   const sim = new HotlapSim(lagunaAssets(), { record: true, autoShift: true });
   const pilot = { fn: autopilot(sim, 0.35) };
   const loop = new HotlapLoop(sim, () => ({ ...pilot.fn(), handbrake: false, tag: 'keys' as const }));
@@ -45,7 +47,7 @@ function harness(search = '?seed=42&laps=2', rand: () => number = () => 0.5) {
     toast: (m: string) => log.push(`toast:${m}`),
     race: services,
   } as unknown as ModeContext;
-  const deps: RaceDeps = { loadField: fieldData, loadModel: async () => null, random: rand, dom: false };
+  const deps: RaceDeps = { loadField: field, loadModel, random: rand, dom: false };
   const race = createRace(ctx, deps);
   loop.onStep = () => race.step(0.001);
   return { sim, loop, scene, race, log, pilot };
@@ -275,4 +277,176 @@ describe('per-track AI race parameters (TRACKS[id].ai → RaceConfig)', () => {
     expect(raceAiConfig('sonoma')).toEqual({ followScale: 1.4, laneMargin: 0.85, shiftGrip: 1 });
     expect(raceAiConfig('laguna_seca')).toEqual({ followScale: 1, laneMargin: 1, shiftGrip: 0 });
   });
+});
+
+describe('per-event fields: identity / model by field key (id, else number)', () => {
+  const lagIdent = parseIdentity(readJson('cars/field/identity.json'));
+  const bw: PaceJson = readJson('cars/field/buttonwillow/pace.json');
+
+  it('fieldKey and parseIdentity: id first, number as the fallback', () => {
+    expect(fieldKey({ number: '711' })).toBe('711');
+    expect(fieldKey({ id: '711_bw', number: '711' })).toBe('711_bw');
+    expect(fieldKey({ id: '', number: '8' })).toBe('8');
+    const m = parseIdentity([{ number: '0', make: 'Laguna zero' }, { id: '0_bw', number: '0', make: 'Buttonwillow zero' }, { number: 38, make: 'Same car' }]);
+    expect(m.get('0')!.make).toBe('Laguna zero');
+    expect(m.get('0_bw')!.make).toBe('Buttonwillow zero');
+    expect(m.get('0_bw')!.number).toBe('0');
+    expect(m.get('38')!.make).toBe('Same car');
+    // Laguna's identity.json has no ids: every row is keyed by its number, as before
+    for (const [k, v] of lagIdent) expect(k).toBe(v.number);
+  });
+
+  it('identity.json per track with the global fallback (the per-track file may be missing or 404)', async () => {
+    expect(TRACKS.laguna_seca.identity).toBeUndefined();
+    expect(TRACKS.buttonwillow.identity).toBe('cars/field/buttonwillow/identity.json');
+    expect(GLOBAL_IDENTITY).toBe('cars/field/identity.json');
+    const own = { cars: [{ id: '0_bw', number: '0' }] }, global = [{ number: '0' }];
+    const asked: string[] = [];
+    const get = (have: Record<string, unknown>) => async (u: string) => { asked.push(u); return have[u] ?? null; };
+    // own file present: used, the global one not fetched
+    expect(await loadIdentityWithFallback(TRACKS.buttonwillow.identity, get({ [TRACKS.buttonwillow.identity!]: own, [GLOBAL_IDENTITY]: global })))
+      .toEqual({ identity: own, path: TRACKS.buttonwillow.identity });
+    expect(asked).toEqual([TRACKS.buttonwillow.identity]);
+    // own file missing / 404 (fetchJson gives null): the global one
+    asked.length = 0;
+    expect(await loadIdentityWithFallback(TRACKS.buttonwillow.identity, get({ [GLOBAL_IDENTITY]: global }))).toEqual({ identity: global, path: GLOBAL_IDENTITY });
+    expect(asked).toEqual([TRACKS.buttonwillow.identity, GLOBAL_IDENTITY]);
+    // Laguna (no per-track file): straight to the global one
+    asked.length = 0;
+    expect(await loadIdentityWithFallback(TRACKS.laguna_seca.identity, get({ [GLOBAL_IDENTITY]: global }))).toEqual({ identity: global, path: GLOBAL_IDENTITY });
+    expect(asked).toEqual([GLOBAL_IDENTITY]);
+    // neither: null
+    expect(await loadIdentityWithFallback(TRACKS.buttonwillow.identity, get({}))).toEqual({ identity: null, path: null });
+  });
+
+  it('models.json rows get an id (the number when absent); the queue matches them to cars by field key', () => {
+    const rows = normaliseModelRows({ cars: [{ number: 0, file: 'models/0.glb' }, { id: '0_bw', number: '0', file: 'models/0_bw.glb' }, { number: '38', file: 'models/38.glb' }, { number: '5' }] });
+    expect(rows.map((r) => [r.number, r.id, r.file])).toEqual([['0', '0', 'models/0.glb'], ['0', '0_bw', 'models/0_bw.glb'], ['38', '38', 'models/38.glb']]);
+    const cars = [{ id: '0_bw', number: '0', isPlayer: false }, { id: '38', number: '38', isPlayer: false }, { id: '619', number: '619', isPlayer: true }];
+    const kinds: Record<string, 'placeholder' | 'model'> = { '0': 'placeholder', '38': 'placeholder' };
+    expect(modelQueue(rows, cars, (n) => kinds[n] ?? null).map((q) => [q.car, q.model.file])).toEqual([['0', 'models/0_bw.glb'], ['38', 'models/38.glb']]);
+    // the Laguna #0 model never lands on Buttonwillow's 0_bw; a car without a row keeps its placeholder
+    expect(modelQueue(rows.slice(0, 1), cars, (n) => kinds[n] ?? null)).toEqual([]);
+    kinds['38'] = 'model';
+    expect(modelQueue(rows, cars, (n) => kinds[n] ?? null).map((q) => q.car)).toEqual(['0']);
+    // Laguna's raw rows (no id) match by number
+    const lag = readJson('cars/field/models.json').cars;
+    expect(modelQueue(lag, [{ id: '711', number: '711', isPlayer: false }], () => 'placeholder').map((q) => q.model.file)).toEqual(['models/711.glb']);
+  });
+
+  it('the sound index row is found by field key', () => {
+    const index = { families: { v8: {}, i4: {} }, aliases: [], fallback: [], default: 'i4', cars: { '0': { family: 'v8' } } } as never;
+    const engine = { layout: 'I4', cylinders: 4 };
+    expect(carSound(index, { number: '0', identity: null, engine }).family).toBe('v8');
+    expect(carSound(index, { number: '0', id: '0', identity: null, engine }).family).toBe('v8');
+    expect(carSound(index, { number: '0', id: '0_bw', identity: null, engine }).family).not.toBe('v8');
+  });
+
+  it('Buttonwillow pace: ids by number, "<n>_bw" for a different Laguna car', () => {
+    const ids = bw.cars.map((c) => c.id);
+    expect(ids.every((x) => typeof x === 'string')).toBe(true);
+    expect(new Set(ids).size).toBe(bw.cars.length);
+    // the 11 "_bw" numbers less #43 and #89 (no lap in the session: left out, named in the notes); #670 is a different
+    // car from Laguna's (identity.json), though the team matches
+    expect(bw.cars.filter((c) => c.id !== c.number).map((c) => c.id).sort()).toEqual(['0_bw', '16_bw', '1_bw', '40_bw', '670_bw', '711_bw', '801_bw', '8_bw', '9_bw']);
+    expect(bw.notes).toMatch(/#89 \(89_bw\), #6, #43 \(43_bw\), #101, #222/);
+    // every AI car has an identity row by its id
+    const bwIdent = parseIdentity(readJson('cars/field/buttonwillow/identity.json'));
+    for (const c of bw.cars) if (!c.player) expect(bwIdent.has(fieldKey(c))).toBe(true);
+    for (const n of ['38', '189', '544', '619', '963']) expect(bw.cars.find((c) => c.number === n)!.id).toBe(n);
+    expect(bw.cars.filter((c) => c.player).map((c) => c.number)).toEqual(['619']);
+    for (const c of bw.cars) { expect(c.targetLap).toBeGreaterThan(100); expect((c.stints ?? []).length).toBeGreaterThan(0); }
+  });
+
+  it('the director resolves identity by id; the race loads models by id (Buttonwillow cars on the global fallback)', async () => {
+    const pick = ['0', '38', '711', '69', '619'];
+    const pace: PaceJson = { ...bw, cars: bw.cars.filter((c) => pick.includes(c.number)) };
+    const field = (): FieldData => ({ pace, identity: readJson('cars/field/identity.json'), models: normaliseModelRows(readJson('cars/field/models.json')), missing: [] });
+    const asked: string[] = [];
+    const { race } = harness('?seed=42&laps=2', () => 0.5, field, async (f) => { asked.push(f); return null; });
+    race.start();
+    const d = race.director!;
+    const car = (n: string) => d.cars.find((c) => c.number === n)!;
+    expect(d.cars.length).toBe(5);
+    expect(car('0').id).toBe('0_bw');
+    expect(car('0').identity).toBeNull();                      // not Laguna's #0
+    expect(car('711').identity).toBeNull();                    // not Laguna's #711 Miata
+    expect(car('38').identity!.make).toBe(lagIdent.get('38')!.make);   // the same car: its Laguna identity
+    expect(car('69').identity).toBeNull();                     // a Buttonwillow-only car: placeholder until its own row
+    expect(d.poses().find((p) => p.number === '0')!.id).toBe('0_bw');
+    await Promise.resolve(); await new Promise((r) => setTimeout(r, 0));
+    expect(asked).toContain('models/38.glb');
+    expect(asked).not.toContain('models/0.glb');
+    expect(asked).not.toContain('models/711.glb');
+    race.dispose();
+  }, 60000);
+
+  it('Laguna: every car keyed by its number, identity as before', () => {
+    const { race } = harness();
+    race.start();
+    const d = race.director!;
+    for (const c of d.cars) {
+      expect(c.id).toBe(c.number);
+      if (!c.isPlayer) expect(c.identity?.make).toBe(lagIdent.get(c.number)?.make);
+    }
+    race.dispose();
+  }, 60000);
+
+  it('model key: pace model_id, then identity model_id, then id, then number (a renumbered car reuses its model)', () => {
+    expect(modelKey({ number: '6', id: '6', model_id: '8' })).toBe('8');
+    expect(modelKey({ number: '6', id: '6' }, { model_id: '8' })).toBe('8');
+    expect(modelKey({ number: '6', id: '6', model_id: '8' }, { model_id: '9' })).toBe('8');
+    expect(modelKey({ number: '670', id: '670_bw' })).toBe('670_bw');
+    expect(modelKey({ number: '711' })).toBe('711');
+    const rows = normaliseModelRows(readJson('cars/field/models.json'));
+    const cars = [{ id: '6', model: '8', number: '6', isPlayer: false }, { id: '670_bw', model: '670_bw', number: '670', isPlayer: false }, { id: '8_bw', model: '8_bw', number: '8', isPlayer: false }];
+    // #6 shows Laguna #8's Opel GT; Buttonwillow's #670 van and #8 get their own _bw models, never Laguna's #670 / #8
+    expect(modelQueue(rows, cars, () => 'placeholder').map((q) => [q.car, q.model.file])).toEqual([['6', 'models/8.glb'], ['8', 'models/8_bw.glb'], ['670', 'models/670_bw.glb']]);
+  });
+
+  it('a battery-electric car (cylinders 0, layout EV): finite physics, no division by zero, silent in the field audio', () => {
+    const bolt = parseIdentity(readJson('cars/field/buttonwillow/identity.json')).get('16_bw')!;
+    expect(bolt.engine?.layout).toBe('EV');
+    const t = resolveCarType(bolt);
+    expect(t.engineLayout).toBe('EV');
+    expect(t.cylinders).toBe(0);
+    expect(t.turbo).toBe(false);
+    const probe = readJson('cars/probe_gt/car.json');
+    const r = describeAiCar(probe, bolt, 0.5);
+    for (const v of [r.massKg, r.powerKw, r.lateralG, r.topSpeedKph, ...r.gearRatios]) expect(Number.isFinite(v) && v > 0).toBe(true);
+    const engine = { layout: t.engineLayout, cylinders: t.cylinders, exhaustNote: t.exhaustNote };
+    expect(silentEngine(engine)).toBe(true);
+    expect(silentEngine({ layout: 'I4', cylinders: 4 })).toBe(false);
+    const index = { families: { v8: {}, i4: {} }, aliases: [['chevrolet', 'v8']], fallback: [{ cylinders: 4, family: 'i4' }], default: 'i4', cars: {} } as never;
+    const snd = carSound(index, { number: '16', id: '16_bw', identity: bolt, engine });
+    expect(snd.family).toBe('');                       // no borrowed petrol family: the race gives it no voice
+    expect(Number.isFinite(snd.trim) && Number.isFinite(snd.muffler) && Number.isFinite(snd.rpmScale)).toBe(true);
+    // an explicit index row still wins (an electric family some day)
+    expect(carSound({ ...(index as object), cars: { '16_bw': { family: 'i4' } } } as never, { number: '16', id: '16_bw', identity: bolt, engine }).family).toBe('i4');
+  });
+
+  it('a Buttonwillow race with its own identity.json: identity and models by id, #670 the van, #16 the Bolt', async () => {
+    const pick = ['16', '670', '38', '0', '619'];
+    const pace: PaceJson = { ...bw, cars: bw.cars.filter((c) => pick.includes(c.number)) };
+    const field = (): FieldData => ({ pace, identity: readJson('cars/field/buttonwillow/identity.json'), models: normaliseModelRows(readJson('cars/field/models.json')), missing: [] });
+    const asked: string[] = [];
+    const { race } = harness('?seed=42&laps=2', () => 0.5, field, async (f) => { asked.push(f); return null; });
+    race.start();
+    const d = race.director!;
+    const car = (n: string) => d.cars.find((c) => c.number === n)!;
+    expect(car('670').identity!.make).toBe('Dodge');
+    expect(car('16').identity!.model).toMatch(/Bolt/);
+    expect(car('0').id).toBe('0_bw');
+    expect(car('0').identity!.make).not.toBe(lagIdent.get('0')!.make);
+    const ev = d.poses().find((p) => p.number === '16')!;
+    expect(ev.engine.cylinders).toBe(0);
+    expect(Number.isFinite(ev.engine.redline)).toBe(true);
+    for (let k = 0; k < 500; k++) d.step(0.001);
+    expect(Number.isFinite(car('16').vehicle.state.pos[0])).toBe(true);
+    await new Promise((r) => setTimeout(r, 0));
+    expect(asked).toContain('models/38.glb');
+    expect(asked).not.toContain('models/670.glb');
+    expect(asked).not.toContain('models/0.glb');
+    race.dispose();
+  }, 60000);
 });

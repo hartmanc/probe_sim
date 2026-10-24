@@ -58,6 +58,9 @@ export interface TrackInfo {
   length_m: number;
   /** the race field's per-stint pace for this circuit (tools/race/pace.ts, calibrate_field.ts) */
   pace: string;
+  /** The race field's car identities for this circuit's own field (rows keyed by `id`, else number). Absent, missing or
+   *  404 = the global cars/field/identity.json (Laguna's; src/app/loader.ts loadFieldData, tools/race/load.ts). */
+  identity?: string;
   /** The rolling start of hot laps and replays (canonicalReset), an explicit fact of the track: either a distance before a
    *  named corner (Laguna: 230 m before T11, the rule its boards were recorded with) or a station in metres along the lap,
    *  and the speed. Part of every replay: changing it changes the board key's meaning. */
@@ -89,10 +92,11 @@ export const TRACKS: Readonly<Record<string, TrackInfo>> = {
     // laneMargin 0.85 on top 0.025 / 0.019 (inside passes at T4, T11); passes 73.0 -> 73.5 %
     ai: { followScale: 1.4, laneMargin: 0.85, shiftGrip: 1 } },
   // stage 1 + 2 only (20 Oct 2026): geometry and racing line, no scenery yet (the 1.10 review comes first); rev over the
-  // files the package has. The pace file is the uncalibrated per-track build of tools/race/pace_track.ts (7 Laguna cars
-  // from their own Button Turrible 2026 laps, the rest placeholders), there only because the registry needs one: no AI
-  // keys and no calibration until stage 5.
-  buttonwillow: { dir: 'tracks/buttonwillow/', name: 'Buttonwillow Raceway Park', short: 'Buttonwillow', length_m: 4699.187, pace: 'cars/field/buttonwillow/pace.json', rev: '7acf260f50',
+  // files the package has. The pace file is Buttonwillow's own field (22 Oct 2026: tools/race/pace_track.ts --own, the
+  // 100 cars of the Button Turrible 2026 race that ran a lap, each with its own stints; ids "<n>_bw" where the number
+  // is a different Laguna car's). No AI keys until stage 5. Package: round 10 (rev 7acf260f50, 4699.187 m).
+  buttonwillow: { dir: 'tracks/buttonwillow/', name: 'Buttonwillow Raceway Park', short: 'Buttonwillow', length_m: 4699.187, pace: 'cars/field/buttonwillow/pace.json',
+    identity: 'cars/field/buttonwillow/identity.json', rev: '7acf260f50',
     // on the front straight, ~115 m before the line (s 4580; the last corner T11 is at 4377)
     start: { s_m: 4580, speed: ROLLING_START_SPEED } },
 };

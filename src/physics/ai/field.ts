@@ -1,6 +1,13 @@
 // The AI field: pace.json / identity.json types, per-car CarSpec construction (Probe spec + identity
 // overrides + one pace scale), the per-car performance model the driver uses (acceleration table,
 // brake gain, understeer feed-forward) and the per-car target speed profile.
+//
+// Field keys (22 Oct 2026): a car's identity row and its model are found by its `id` (pace.json cars[].id, absent =
+// its number; `fieldKey`). identity.json / models.json rows are keyed the same way (`id`, else `number`), so the Laguna
+// files, which have no ids, resolve by number exactly as before. A circuit's own field (Buttonwillow) gives a car whose
+// number is a different Laguna car's an id of its own ("0_bw"), so it never picks up that car's identity or model.
+// A car may name its model explicitly with `model_id` (pace row, else identity row; modelKey): a renumbered car reuses
+// its earlier model.
 
 import { loadCarSpec, type CarSpec } from '../spec';
 import { Vehicle } from '../vehicle';
@@ -19,6 +26,13 @@ export const AI_VERSION = 8; // 8: an understeering car (front slip > 2x its pea
 export interface PaceCar {
   /** Where targetLap comes from when it is not this circuit's own result (tools/race/pace_sonoma.ts). */
   targetSource?: string;
+  /** The car's identity / model key (identity.json and models.json rows by `id`, else by number). Absent = `number`
+   *  (Laguna). A circuit's own field sets it on every car; a number that belongs to a different Laguna car gets
+   *  "<number>_<track>" (Buttonwillow "0_bw", tools/race/pace_track.ts --own). */
+  id?: string;
+  /** The models.json row this car shows when it is not its own id: a car renumbered since an earlier event reuses that
+   *  event's model (Buttonwillow #6 Team Tinyvette = Laguna #8: "8"). Resolution: model_id, then id, then number. */
+  model_id?: string;
   number: string;
   team: string;
   class: string;            // 'A' | 'B' | 'C'
@@ -85,14 +99,28 @@ export function drawPace(c: PaceCar, seed: number): DrawnPace {
 export interface PaceJson {
   ai_version: number;
   source?: string;
+  /** free-text notes on how the field was built (ids, cars left out) */
+  notes?: string;
   track?: string;
   /** Calibration metadata (written by calibrate_field.ts). */
   calibrated?: { ai_version: number; date?: string; tolerance?: number };
   cars: PaceCar[];
 }
 
+/** A field car's model key: the pace row's `model_id`, else the identity row's `model_id`, else its field key. */
+export function modelKey(c: { id?: unknown; number?: unknown; model_id?: unknown }, identity?: { [k: string]: unknown } | null): string {
+  const m = c.model_id ?? identity?.model_id;
+  return m != null && String(m) !== '' ? String(m) : fieldKey(c);
+}
+
+/** A field car's identity / model key: its `id`, else its number (pace.json cars, identity.json / models.json rows). */
+export function fieldKey(c: { id?: unknown; number?: unknown }): string {
+  return c.id != null && String(c.id) !== '' ? String(c.id) : String(c.number);
+}
+
 /**
- * Car identity (public/cars/field/identity.json, written by another tool). All fields optional; this
+ * Car identity (public/cars/field/identity.json, or the track's own cars/field/<track>/identity.json, written by
+ * another tool; rows keyed by `id`, else `number`). All fields optional; this
  * module reads several spellings (top level or under `dims` / `dimensions`) so the two can evolve
  * independently. Missing → Probe values.
  */
@@ -102,6 +130,8 @@ export interface IdentityEngine {
 }
 export interface IdentityCar {
   number: string;
+  /** the row's field key when it differs from the number ("0_bw"); see fieldKey */
+  id?: string;
   make?: string; model?: string; year?: number;
   mass_kg?: number;
   power_kw?: number;
@@ -125,19 +155,20 @@ function pickNum(o: any, keys: string[]): number | undefined {
 }
 const dimKeys = (k: string, extra: string[] = []) => [k, `dims.${k}`, `dimensions.${k}`, ...extra];
 
-/** Normalize identity.json (array, { cars: [...] } or { "<number>": {...} }) into a map by car number. */
+/** Normalize identity.json (array, { cars: [...] } or { "<number>": {...} }) into a map by field key (`id`, else number). */
 export function parseIdentity(json: unknown): Map<string, IdentityCar> {
   const out = new Map<string, IdentityCar>();
   if (!json || typeof json !== 'object') return out;
   const j: any = json;
   const list: any[] = Array.isArray(j) ? j : Array.isArray(j.cars) ? j.cars : Object.entries(j).filter(([, v]) => v && typeof v === 'object').map(([k, v]: [string, any]) => ({ number: k, ...v }));
   for (const c of list) {
-    if (!c || c.number == null) continue;
-    const num = String(c.number);
+    if (!c || (c.number == null && c.id == null)) continue;
+    const num = String(c.number ?? c.id);
+    const key = fieldKey(c);
     const kw = pickNum(c, dimKeys('power_kw', ['powerKw', 'power.kw']));
     const hp = pickNum(c, dimKeys('power_hp', ['hp', 'power.hp', 'horsepower']));
     const e = c.engine && typeof c.engine === 'object' ? c.engine : {};
-    out.set(num, {
+    out.set(key, {
       ...c,
       number: num,
       year: pickNum(c, ['year']),
@@ -220,9 +251,12 @@ export function resolveCarType(id: IdentityCar | null | undefined): CarType {
     : drive === 'fwd' ? 0.62 : drive === 'awd' ? 0.58 : 0.53;
   // ---- engine
   const aspiration = String(e.aspiration ?? '').toLowerCase();
-  const turbo = /turbo|super|charged|boost/.test(aspiration) || /turbo/i.test(name);
+  // a battery-electric car (identity layout "EV" / aspiration "EV", cylinders 0: Buttonwillow #16 Bolt): layout 'EV',
+  // cylinders 0 (callers must not divide by it), a constant-power torque shape, never turbo
+  const electric = /^(EV|BEV|ELECTRIC)$/i.test(String(e.layout ?? '').trim()) || /^(ev|bev|electric)$/.test(aspiration.trim());
+  const turbo = !electric && (/turbo|super|charged|boost/.test(aspiration) || /turbo/i.test(name));
   let cyl = e.cylinders ?? 0;
-  let layout = String(e.layout ?? '').toUpperCase().replace(/\s+/g, '');
+  let layout = electric ? 'EV' : String(e.layout ?? '').toUpperCase().replace(/\s+/g, '');
   if (/FLAT|BOXER|^H\d/.test(layout)) layout = cyl >= 6 || /6/.test(layout) ? 'flat6' : 'flat4';
   if (/ROTARY|WANKEL/.test(layout) || /rx-?\d|\b12a\b|\b13b\b/i.test(`${name} ${e.family ?? ''}`)) layout = 'rotary';
   if (!layout) {
@@ -234,7 +268,7 @@ export function resolveCarType(id: IdentityCar | null | undefined): CarType {
     else if (cyl > 0) layout = 'I4';
     else layout = drive === 'fwd' ? 'I4' : 'I4';
   }
-  if (!cyl) cyl = layout === 'V8' ? 8 : /6/.test(layout) ? 6 : layout === 'I5' ? 5 : layout === 'rotary' ? 2 : layout === 'V12' ? 12 : 4;
+  if (!cyl && !electric) cyl = layout === 'V8' ? 8 : /6/.test(layout) ? 6 : layout === 'I5' ? 5 : layout === 'rotary' ? 2 : layout === 'V12' ? 12 : 4;
   const disp = e.displacement_l ?? (cyl === 8 ? 5.0 : cyl === 6 ? 2.8 : cyl === 5 ? 2.3 : layout === 'rotary' ? 1.3 : 1.8);
   const redDefault = layout === 'V8' ? (disp >= 4.5 ? 5600 : 6200) : layout === 'I6' ? 6500 : layout === 'V6' ? 6300
     : layout === 'flat4' ? (/beetle|bug|karmann|type ?[123]|vanagon|bus/i.test(name) ? 4800 : 6200) : layout === 'flat6' ? 6800
@@ -256,6 +290,7 @@ export function resolveCarType(id: IdentityCar | null | undefined): CarType {
 function torqueShape(t: CarType): { rpm: number[]; tq: number[] } {
   if (t.turbo) return { rpm: [0.15, 0.3, 0.42, 0.55, 0.7, 0.85, 0.95, 1.0], tq: [0.45, 0.55, 0.85, 1.0, 1.0, 0.9, 0.8, 0.72] };
   switch (t.engineLayout) {
+    case 'EV': return { rpm: [0.1, 0.25, 0.4, 0.55, 0.7, 0.85, 1.0], tq: [1.0, 1.0, 1.0, 0.75, 0.6, 0.5, 0.42] };   // flat torque, then ~constant power
     case 'V8': return { rpm: [0.17, 0.3, 0.45, 0.6, 0.75, 0.88, 1.0], tq: [0.82, 0.95, 1.0, 0.98, 0.92, 0.82, 0.70] };
     case 'I6': case 'flat6': case 'I5': return { rpm: [0.15, 0.3, 0.45, 0.6, 0.72, 0.85, 0.95, 1.0], tq: [0.70, 0.82, 0.92, 0.99, 1.0, 0.95, 0.86, 0.80] };
     case 'V6': return { rpm: [0.15, 0.29, 0.43, 0.58, 0.7, 0.81, 0.9, 0.96, 1.0], tq: [0.71, 0.85, 0.94, 0.99, 1.0, 0.98, 0.92, 0.86, 0.76] };
