@@ -61,3 +61,21 @@ is empty), and the merged pool equals field-sonoma's. The other two files change
 and `src/physics/ai/field.ts`, auto-merged to field-buttonwillow's per-event identity code plus field-sonoma's
 `same_car` fields (FieldModelInfo, IdentityCar). `changelog.ts`, `package.json` and the track registry are unchanged by
 this merge.
+
+## Checks on the merged tree (6907760)
+
+- `npx vitest run`: 60 files, 502 tests passed, 0 expected failures (track-pipeline alone: 464 + 1 expected fail, the
+  Sonoma kerb wheel-lift `it.fails`, now an advisory report by buttonwillow's owner rule of 21 Oct).
+- `tsc --noEmit -p tsconfig.build.json`: clean. `npx vite build`: built (one 1.26 MB chunk).
+- Pipeline python tests (after merge 1, `uv run --python 3.12 ... -m pytest tools/track`): 71 passed, 3 skipped.
+- Self-play (`tools/race/selfplay.ts --track <id>`, defaults: 4 laps, seed 1, the track's AI knobs):
+
+| track | cars | line rms alone | contacts / car-lap (<= 0.02) | four-off / car-lap | same seed on the unmerged branch |
+|---|---|---|---|---|---|
+| laguna_seca | 45 | 0.30 m | 0.012 | 0.100 | (not run) |
+| buttonwillow | 100 | 0.37 m | 0.077 | 0.151 | field-buttonwillow (round-8 package): 0.38 m, 0.107, 0.189; race time 753 s there, 801 s merged |
+| sonoma | 45 | 0.46 m | 0.158 | 0.044 | track-pipeline: identical numbers (not caused by the merge) |
+
+- `calibrate_field.ts --track buttonwillow --only 619 --dry` (no file written): #619 refits to scale 0.8640 for its
+  160.51 s target on the round-10 package; the stored AI_VERSION 8 scale (fitted on round 8) is 0.87416. The
+  Buttonwillow field needs recalibrating on the merged geometry.
