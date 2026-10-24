@@ -1109,6 +1109,9 @@ def kerbs_declared(trk):
         if k.get("line_latlon"):
             out.append(kerb_run(trk, k, pal, max_step))
             continue
+        if k.get("zone"):
+            out.append(kerb_zone_strip(trk, k, pal))
+            continue
         side = 1 if k["side"] == "left" else -1
         P = np.array([bl.enu(*k["a"]), bl.enu(*k["b"])], float)
         i, lat, _ = trk.project(P)
@@ -1169,6 +1172,13 @@ def kerb_run(trk, k, pal, max_step=0.1):
     lat = np.interp(st, i_, lat_)
     hw = trk.hw(st % trk.n, side)
     off = side * lat - hw
+    if SC_CFG.get("kerb", {}).get("flush_runs"):
+        # round 10 (Buttonwillow, owner's decisions of 23 Oct 2026): every run is a stage-1 kerb zone, the edge at the band's
+        # outer limit and his red at its inner limit, so the strip lies flush inside the edge (off = -width / 2); the
+        # measured line gives the run's extent (s0..s1) only. Against the round-10 edges the round-5 block-line offsets
+        # ran up to 3.4 m outside the edge (left 1089-1116)
+        w_ = float(k.get("width") or SC_CFG.get("kerb", {}).get("width", 0.9))
+        off = np.full(len(off), -w_ / 2)
     if len(off) < 12:
         # a short run (under 12 m, round 8): one offset, its median (a 9 m block line set at an angle to an edge that bends
         # there read as a 0.7 m ramp the smoothing cannot hold under the step gate; the band is short enough to be one line)
@@ -1193,6 +1203,30 @@ def kerb_run(trk, k, pal, max_step=0.1):
                             "off_min": rnd(float(off.min()), 2), "off_max": rnd(float(off.max()), 2), "profile": k.get("profile")})
     if step > max_step:
         raise SystemExit(f"kerb run '{k.get('name')}': offset step {step:.3f} m between stations (> {max_step} m)")
+    return rec
+
+
+def kerb_zone_strip(trk, k, pal):
+    """A kerb strip over a stage-1 kerb zone (kerbs_declared entry with `zone` (lo, hi), stations of stations_ref,
+    mapped by world position; Buttonwillow round 10, the owner's decision of 23 Oct 2026 point 4, "the onboard wins"):
+    where the onboard shows a kerb run but the captures show no band beside his red, stage 1 moved the edge out by the
+    track's standard kerb width (spline.owner_edges kerb_inside); the strip fills that width, from the edge inward to
+    his red: `off` = -width / 2 (the band centre half a width inside the edge), width = scenery.kerb width unless the
+    entry sets one. No measured line: the strip follows the fitted edge."""
+    side = 1 if k["side"] == "left" else -1
+    lo, hi = (int(v) for v in k["zone"])
+    w = float(k.get("width") or SC_CFG.get("kerb", {}).get("width", 0.9))
+    rec = {"side": side, "s0": lo, "s1": lo + (hi - lo) % trk.n, "kind": k.get("kind", "kerb"), "off": rnd(-w / 2, 2), "width": w}
+    c = k.get("colors")
+    if isinstance(c, str):
+        c = pal[c]
+    if c:
+        rec["colors"] = list(c)
+    if k.get("profile"):
+        rec["profile"] = dict(k["profile"])
+    rec["src"] = (f"{k['name']}: " if k.get("name") else "") + k["src"] + (f"; colour: {k['colour_src']}" if k.get("colour_src") else "")
+    KERB_RUN_REPORT.append({"name": k.get("name", ""), "side": k["side"], "s0": lo, "s1": hi, "max_step": 0.0,
+                            "off_min": rec["off"], "off_max": rec["off"], "profile": k.get("profile")})
     return rec
 
 
@@ -1252,6 +1286,9 @@ def closed_roads(trk, osm):
                              clip=(2.5, road.get("max_half", 12.0)))
             if not res:
                 continue
+            if road.get("edges_from_green") and SC_CFG.get("owner_green"):
+                for part in res["parts"]:
+                    edges_from_green(trk, part, road["name"], SC_CFG["owner_green"])
             for part in res["parts"]:
                 part["turn"] = road["name"]
                 if road.get("surface"):
@@ -1286,6 +1323,55 @@ def closed_roads(trk, osm):
                 raise SystemExit(f"closed road {road['name']}: mouth_cones entry near {m['near']} matches no mouth")
     log(f"closed roads: {len(out_parts)} paved parts, {len(lines)} cone lines")
     return out_parts, lines
+
+
+_GREEN = {}
+
+
+def edges_from_green(trk, part, name, og):
+    """A closed road's paving edges on the owner's green lines (config scenery.owner_green {file, reach, along}, roads
+    with edges_from_green=True; Buttonwillow round 10): he drew green on the outline windows along the edges of the
+    paved roads and paddock the course does not use (owner/r10/merged.json green_enu_xy). At each centre point of the
+    part, his green points within `along` m along it on each side, the one group nearest the current (NAIP / OSM)
+    edge within `reach` m, median lateral; a 9-sample median and a 3 m Gaussian over runs of >= 10 stations; points on
+    the circuit's paved width are not his road edge and are skipped. Stations with no green keep their edge."""
+    from scipy.ndimage import gaussian_filter1d, median_filter
+    from scipy.spatial import cKDTree
+    f = og["file"]
+    if f not in _GREEN:
+        d = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "tracks", CFG_ALL["id"], f)))
+        G = np.array(d["green_enu_xy"], float)[:, :2]
+        _, _, outside = trk.project(G)
+        G = G[outside > 0.3]                       # his green on the circuit's own paving is a mouth contact, not a road edge
+        _GREEN[f] = (G, cKDTree(G))
+    G, kd = _GREEN[f]
+    reach, along = float(og.get("reach", 4.0)), float(og.get("along", 1.0))
+    C = np.array(part["center"])[:, :2]
+    if len(C) < 12:
+        return
+    tg = np.gradient(C, axis=0); tg /= np.maximum(np.linalg.norm(tg, axis=1, keepdims=True), 1e-9); NL = np.c_[-tg[:, 1], tg[:, 0]]
+    for side, key in ((1, "left"), (-1, "right")):
+        E = np.array(part[key], float)
+        cur = side * ((E[:, :2] - C) * NL).sum(1)
+        v = np.full(len(C), np.nan)
+        for i in range(len(C)):
+            idx = kd.query_ball_point(C[i], cur[i] + reach + 1.0)
+            if not idx:
+                continue
+            Q = G[idx] - C[i]; at = (Q * tg[i]).sum(1); lat = side * (Q * NL[i]).sum(1)
+            m = (np.abs(at) <= along) & (lat > 0.5) & (np.abs(lat - cur[i]) <= reach)
+            if m.sum():
+                v[i] = float(np.median(lat[m]))
+        ok = np.isfinite(v); runs = [(a, b) for a, b in _runs(ok) if b - a >= 9]
+        n_set = 0
+        for a, b in runs:
+            st = np.arange(a, b + 1)
+            vs = gaussian_filter1d(median_filter(v[st], min(9, len(st) - (1 - len(st) % 2)), mode="nearest"), 3, mode="nearest")
+            E[st, :2] = C[st] + NL[st] * (side * vs)[:, None]
+            n_set += len(st)
+        if n_set:
+            part[key] = [[rnd(x, 2), rnd(y, 2), rnd(z, 3)] for x, y, z in E]
+        log(f"closed road {name}: {key} paving edge on the owner's green at {n_set} of {len(C)} points")
 
 
 def closed_road_paint(trk, parts):
@@ -2232,6 +2318,50 @@ def declared_cone_lines(trk):
     return out
 
 
+_CAPS = []
+
+
+def _clean_captures():
+    """the clean z20 captures (name, centre x, y), for naming the capture under an owner stroke"""
+    if not _CAPS:
+        import captures as CAP_
+        _CAPS.extend(CAP_.capture_list(CFG_ALL, "clean"))
+    return _CAPS
+
+
+def owner_mouth_cones(trk):
+    """Cone lines ON the owner's red across each junction mouth (config scenery.owner_mouth_cones {from: the key holding
+    the mouths (owner_mouths_r10), spacing, size, color, style_src}; Buttonwillow round 10, the owner's decision of 23 Oct
+    2026 point 2): every mouth with cones=True gets one line on its line_latlon (his red, world points); cones=False
+    (the pit entry) gets none. The closed roads' rule cones at the same mouths are switched off in the config
+    (closed_roads[].mouth_cones); the cone_lines_declared rows stay (each is an onboard observation, not a rule).
+    Returns (lines, mouth station ranges {side: [(lo, hi)]} on this package)."""
+    oc = SC_CFG.get("owner_mouth_cones")
+    if not oc:
+        return [], {}
+    out, ranges = [], {1: [], -1: []}
+    for m in SC_CFG.get(oc.get("from", "owner_mouths_r10"), []):
+        P = _ll_line(m["line_latlon"], 0.5)
+        i, _, _ = trk.project(P)
+        i = np.sort(np.asarray(i))
+        if i[-1] - i[0] > trk.n / 2:
+            i = np.sort(np.where(i < trk.n / 2, i + trk.n, i))
+        sd = 1 if m["side"] == "left" else -1
+        if not m.get("cones", True):
+            log(f"owner mouth {m['side']} {m['lo']}-{m['hi']} ({m['kind']}): no cones ({m['src'][-120:]})")
+            continue
+        ranges[sd].append((int(i[0]), int(i[-1])))
+        mid = P[len(P) // 2]
+        caps = sorted(_clean_captures(), key=lambda t: np.hypot(t["x"] - mid[0], t["y"] - mid[1]))[:2]
+        out.append({"spacing_m": float(oc.get("spacing", 2.0)), "pts": with_z(trk, P),
+                    "src": f"owner round-10 mouth {m['side']} {m['lo']}-{m['hi']} ({m['kind']}): cones on his red, drawn on the outline window over "
+                           f"{' / '.join(t['name'] for t in caps)} ({m['src'][:120]}); style: {oc['style_src']}",
+                    **_cone_style(oc)})
+        log(f"owner mouth cones {m['side']} stations {int(i[0]) % trk.n}-{int(i[-1]) % trk.n}: {len(P) * 0.5:.0f} m on his red")
+    log(f"owner mouth cones: {len(out)} lines")
+    return out, ranges
+
+
 def surface_marks(trk):
     """Crack-seal lines measured on the clean captures (config scenery.surface_marks {max, min_len, contrast}, Buttonwillow
     owner lap 2 note 18): inside the track polygon, pixels darker than the road's local median by `contrast` that are
@@ -2672,7 +2802,8 @@ def main(cfg=None, out_dir=None):
         for p_ in zones["parts"]:
             p_["over"] = 2 if p_.get("kind") == "closed_road" else 1
         log(f"paved zones: {len(zones['parts'])} parts drawn over the neighbouring shoulders (scenery.paved_zones_over)")
-    cone_lines += declared_cone_lines(trk)
+    om_lines, om_ranges = owner_mouth_cones(trk)
+    cone_lines += om_lines + declared_cone_lines(trk)
     plines = closed_road_paint(trk, cr_parts) + declared_paint_lines(trk) + surface_marks(trk)
     pareas = paved_areas(trk, osm)
     cones = pit_exit_cones(trk, pit, bar)

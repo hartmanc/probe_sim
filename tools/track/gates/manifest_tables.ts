@@ -35,7 +35,7 @@ const miss = new Set(rep.missing.map((m) => `${m.s}|${m.kind}|${m.source}|${m.si
 const disp = new Map(rep.dispositioned.map((m) => [`${m.s}|${m.kind}|${m.source}|${m.side}`, `${m.disposition}: ${m.text}`] as const));
 for (const r of inv.rows) {
   const a = r.attrs ?? {};
-  const corr = a.correction ? ` (corrected in ${(a.correction as any).round}: ${Object.entries((a.correction as any).was).map(([k, v]) => `${k} was ${v ?? 'none'}`).join(', ')})` : '';
+  const corr = a.correction ? ` (corrected in ${(a.correction as any).round}: ${Object.entries((a.correction as any).was ?? {}).map(([k, v]) => `${k} was ${v ?? 'none'}`).join(', ')})` : '';
   const added = a.added ? ` (row added in ${a.added})` : '';
   let out: string;
   if ((r.scope ?? 'lap') === 'pit') out = r.kind === 'wall' ? 'pit-lane gate (pit_lane.walls)' : 'pit lane: not a checked kind for the lap';

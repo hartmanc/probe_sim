@@ -51,6 +51,8 @@ Geometry (Stage 1)
   spline {runs [(lo, hi)], knot, lam, huber, line_off, prior, init_stiff, captures, asphalt_end {jump, sat_max, lo, hi},
           warm_thr, mask [(side, lo, hi, src)], width_model {junctions [(side, lo, hi, kind, src)], ...} (width_model.py)}   (asphalt_end / warm_thr: detector parameters of those features;
           absent = the defaults; mask: stations whose capture readings are dropped, an object beside the edge, with its capture)
+          owner_mouths: a compare/owner_mouths.py file (tracks/<id>/...) whose 'red across' segments the owner-reference gates
+          leave out (edge_gate.OWNER_REF, Buttonwillow round 10; enters the geometry hash)
   features [(side, lo, hi, 'keep' | 'asphalt_end' | 'warm_end' | 'kerb' | 'kerb_band', why)]   keep: the prior is held (legacy reproduction
                                              only; the fitted method ignores it); asphalt_end: where the dark asphalt
                                              ends; kerb: red-band (kerb outer limit) candidates only; warm_end: where
@@ -311,6 +313,9 @@ def remap_stations(cfg, n, length_m=None, C=None):
         if s.get(key):
             for k in ('lo', 'hi', 'fit_lo', 'fit_hi'):
                 if k in s[key]: s[key][k] = st(s[key][k])
+    for e in s.get('kerbs_declared', []):   # a kerb strip over a stage-1 kerb zone (Buttonwillow round 10)
+        if e.get('zone'):
+            e['zone'] = (st(e['zone'][0]), st(e['zone'][1]))
     for e in s.get('kerb_extents', []):
         for k in ('near', 's0', 's1'): e[k] = fm_s(e[k])
     for e in s.get('edge_line_runs', []):

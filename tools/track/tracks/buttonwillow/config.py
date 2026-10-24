@@ -20,9 +20,12 @@ and 75-78 %). No package. The record and the options are in tools/track/compare/
 # the round-10 kerb zones beside the owner's red (compare/owner_kerbs.py over owner/r10/merged.json on the round-9
 # package tools/track/out/bw_r9e, then each matched to the onboard-confirmed stage-3 kerb run it belongs to; stations of
 # stations_ref): (side, lo, hi, shift) with shift = the block band's outer limit from his red (m, median over the zone).
-# Not placed: the declared runs with no band beside his red (left 538-560, 2837-2843, 3458-3505; right 1161-1182,
-# 1294-1299: the blocks lie away from his line) and the detected bands with no onboard-confirmed run (left 1956-1961,
-# 3105-3111; right 392-399, 1984-2005, 3672-3678, 3761-3772, 4410-4417: candidates for the owner).
+# Round 10 stage 2 (the owner's decision of 23 Oct 2026, point 4, "the onboard wins"): the five declared runs the onboard
+# shows with no band beside his red on the captures (left 538-560, 2837-2843, 3458-3505; right 1161-1182, 1294-1299:
+# their capture blocks lie away from his line) are kerb zones too, at the track's standard kerb width (scenery.kerb
+# width 0.9 m) outside his red; their strips stand between his red and the edge (kerbs_declared `zone`). Still not
+# placed: the detected bands with no kerb on the onboard (left 1956-1961, 3105-3111; right 392-399, 1984-2005,
+# 3672-3678, 3761-3772, 4410-4417).
 OWNER_KERBS_R10 = [
     ('left', 280, 322, 1.35),   # band +0.05..+1.35 m from his red, strip 0.95 m; run left s 283-322 (onboard-confirmed stage-3 run); c20_s0400, c20_s0450
     ('left', 742, 749, 0.55),   # band +0.25..+0.55 m from his red, strip 0.3 m; run left s 745-767 (onboard-confirmed stage-3 run); c20_s0850, c20_s0900
@@ -58,6 +61,12 @@ OWNER_KERBS_R10 = [
     ('right', 4013, 4110, 0.85),   # band +0.15..+0.85 m from his red, strip 0.45 m; run right s 4030-4127 (onboard-confirmed stage-3 run); c20_s4150, c20_s4200
     ('right', 4331, 4351, 1.25),   # band +0.15..+1.25 m from his red, strip 1.1 m; run right s 4321-4370 (onboard-confirmed stage-3 run); c20_s4450
     ('right', 4450, 4493, 0.95),   # band +0.05..+0.95 m from his red, strip 0.72 m; run right s 4424-4501 (onboard-confirmed stage-3 run); c20_s4600
+    # round 10, point 4 (the onboard wins): no band beside his red on the captures; the standard width outside it
+    ('left', 538, 560, 0.9),     # run left s 536-549 (onboard t022: red / white / blue kerb close left)
+    ('left', 2837, 2843, 0.9),   # run left s 2849-2855 (onboard-confirmed stage-3 run)
+    ('left', 3458, 3505, 0.9),   # run left s 3470-3518 (onboard-confirmed stage-3 run)
+    ('right', 1161, 1182, 0.9),  # run right s 1168-1191 (onboard-confirmed stage-3 run)
+    ('right', 1294, 1299, 0.9),  # run right s 1304-1309 (onboard-confirmed stage-3 run)
 ]
 
 CONFIG = dict(
@@ -355,6 +364,10 @@ CONFIG = dict(
                     dict(file='owner/r10/merged.json', lo=2346, hi=4691, kerb_inside=OWNER_KERBS_R10,
                          src="owner round-10 red on the 41 edges_r9 windows (compare/buttonwillow/owner_edges_r10/*_marked.png, local), s 2346-4691"),
                 ],
+                # round 10 (owner's decision 23 Oct 2026, point 3): where he drew both edges the width and waviness gates
+                # measure the fit against his red (edge_gate.OWNER_REF); the stations where his red runs across a mouth
+                # (the 'red across' segments of this file, by world position, +-12 stations) are left out of them
+                owner_mouths='owner/r10/mouths.json',
                 kerb_search=[
                     ('left', 1830, 1856, (-8.0, 1.5), 'the Dog Leg separation block line on the left (round 5 retry): the white blocks 4-7 m inside the fitted left edge, which ran round the Dog Leg branch beyond them (stage3_evidence/dog1843.png on c20_s1900 / c20_s1950; onboard t068)'),
                     ('left', 1198, 1274, (-8.0, 1.5), 'T4-exit left block line s ~1203-1274 (c20_s1300 / c20_s1350; stage3_evidence/gap1215_r32.png, round 5)'),
@@ -577,7 +590,7 @@ CONFIG = dict(
     # step, barrier, station, furniture and logo ledgers). No rule objects: no brake, turn or distance boards, no flag
     # stand, no rule pit wall (the onboard shows none of them).
     scenery=dict(
-        # round 10 (23 Oct 2026, stage-3 evidence, read by no builder yet): the junction mouths the owner closed with red on
+        # round 10 (23 Oct 2026, stage-3 evidence, read by owner_mouth_cones below): the junction mouths the owner closed with red on
         # the round-9 outline windows (compare/owner_mouths.py over owner/r10/merged.json: two contacts of his green with
         # his red on one side and his red between them). Each is the course boundary there and, unless cones=False, a cone
         # line ON his red (cone colour, size and spacing from the footage in the scenery pass, SKILL 3.5 / 3.8; the line
@@ -644,6 +657,20 @@ CONFIG = dict(
                  src="his red across the mouth: the course boundary and a cone line; mouth OSM 34351015 (infield connector) mouth, a front straight cro",
                  line_latlon=[(35.4886992, -119.5448841), (35.4887003, -119.5448621), (35.4887015, -119.5448401), (35.4887032, -119.5448182), (35.4887045, -119.5447962), (35.4887058, -119.5447743)]),
         ],
+        # round 10 stage 3 (the owner's decision of 23 Oct 2026 point 2): one cone line ON his red across each mouth above
+        # with cones=True (19: every 'red across' but the pit entry, and the T2 exception line at the kink of his green);
+        # none at the pit entry (left 4270-4304 here, 4280-4314 in mouths.json: his red there is the course boundary only,
+        # the cars drive through it to pit). The line replaces the closed-road rule cones at the same mouths (closed_roads[].mouth_cones;
+        # Atlantic's and the 34351015 crossover's); the cone_lines_declared rows are onboard observations and stay. Style from the
+        # footage's mouth rows: orange 0.7 m traffic cones (the circuit's cone, cone_lines_declared rows from onboard t012
+        # ... t150), 2 m apart as the closed-road mouth rows the onboard showed coned ("a clear row of cones closing the
+        # paved branch", judge r3 runoff_01 on onboard t010-t012; "cones across the crossover mouth", judge r2 runoff_02
+        # on onboard t068)
+        owner_mouth_cones=dict(**{'from': 'owner_mouths_r10'}, spacing=2.0, size=0.7,
+                               style_src='orange 0.7 m cones 2 m apart: the closed-road mouth rows of onboard t010-t012 (judge r3 runoff_01) and t068 (judge r2 runoff_02)'),
+        # round 10 stage 3: the closed roads' paving edges on the owner's green (his green on the 41 outline windows runs
+        # along the edges of the connector roads and the paddock lanes the course does not use; build_scenery.edges_from_green)
+        owner_green=dict(file='owner/r10/merged.json', reach=4.0, along=1.0),
         brake_board_corners=[],                  # none in the onboard (t000-t158): no 3-2-1 boards before any corner
         corner_boards=False,                     # no turn-number boards in the onboard
         flagstand=False,                         # the starter's stand is placed as a station (marshal_posts), not by rule
@@ -658,7 +685,10 @@ CONFIG = dict(
         # kerb_heights_lidar_r8.json; the closest frames, t116 and the third video's t476 / t560, show faces but no
         # measurable height); the T9 apex keeps its measured 6 cm (t114, its own profile); widths per run from the capture band
         kerb=dict(width=0.9, stripe_m=1.0, colors=['#b8433a', '#dedbd2'], profile=dict(height=0.10, face=0.15, back=0.30),
-                  palettes={'rwb': ['#c4463b', '#e2dfd6', '#4a7ccc'], 'wb': ['#4a7ccc', '#e2dfd6']}, require_colour_src=True),
+                  palettes={'rwb': ['#c4463b', '#e2dfd6', '#4a7ccc'], 'wb': ['#4a7ccc', '#e2dfd6']}, require_colour_src=True,
+                  # round 10: every run is a stage-1 kerb zone (OWNER_KERBS_R10): the strip flush inside the edge, between his red
+                  # and the edge; each run's measured line gives its extent only (build_scenery.kerb_run)
+                  flush_runs=True),
         # kerb runs: see kerbs_declared below (round 5; the round-4 pieces of <= 10 m each with its own offset are gone)
         kerbs_declared=[
             # kerb RUNS (round 5, the owner's lap 1: "a lot of weird, disjointed kerbs"): one run per block line from the
@@ -669,10 +699,10 @@ CONFIG = dict(
                
                  colour_src='t014.jpg (red / white / blue; inventory row s 300 left)',
                  src='kerb run (owner lap 1): the block line followed on c20_s0400 with the band reader (edges_spline.bands outer limits, the band centre 0.45 m inside), one continuous run'),
-            dict(side='left', line_latlon=[(35.4910984, -119.5414236), (35.4911112, -119.5414352), (35.4911238, -119.5414477), (35.4911365, -119.5414604), (35.4911478, -119.5414756), (35.4911597, -119.5414904), (35.4911706, -119.541507), (35.4911768, -119.5415146), (35.4911959, -119.5415378), (35.4912087, -119.5415538), (35.491222, -119.5415698), (35.4912358, -119.5415855)], colors='rwb', name='run left s 536-549', width=0.6,   # band width 0.6 m (p25-p75 0.47-0.8, 16 readings on the clean captures, round 8)
+            dict(side='left', zone=(538, 560), colors='rwb', name='run left s 536-549',   # band width 0.6 m (p25-p75 0.47-0.8, 16 readings on the clean captures, round 8)
                
                  colour_src='t022.jpg (red / white / blue; inventory row s 531 left)',
-                 src='kerb run (owner lap 1): the block line followed on c20_s0650 with the band reader (edges_spline.bands outer limits, the band centre 0.45 m inside), one continuous run; extended to s ~558 (judge r5 fwd_01 550 L): c20_s0650 shows the block line continuing ~9 m past the end of the band reader, at the last offset of the run'),
+                 src="round 10 (the owner's decision of 23 Oct 2026 point 4, the onboard wins): the strip over the stage-1 kerb zone (OWNER_KERBS_R10), between his red and the edge at the standard 0.9 m width; the capture block line it was read from lies away from his line and is no longer used. Before: kerb run (owner lap 1): the block line followed on c20_s0650 with the band reader (edges_spline.bands outer limits, the band centre 0.45 m inside), one continuous run; extended to s ~558 (judge r5 fwd_01 550 L): c20_s0650 shows the block line continuing ~9 m past the end of the band reader, at the last offset of the run"),
             dict(side='left', line_latlon=[(35.4911807, -119.5403341), (35.4911631, -119.5403277), (35.4911454, -119.540322), (35.4911278, -119.5403164), (35.491111, -119.5403087), (35.4910936, -119.5403031), (35.4910769, -119.5402952), (35.4910609, -119.5402857), (35.491044, -119.5402789), (35.4910266, -119.5402737), (35.4910097, -119.5402667), (35.4909928, -119.54026)], colors='rwb', name='run left s 745-767', width=1.05,   # band width 1.04 m (p25-p75 0.75-1.17, 24 readings on the clean captures, round 8)
                
                  colour_src='t032.jpg (white / red; inventory row s 738 left)',
@@ -713,9 +743,9 @@ CONFIG = dict(
                
                  colour_src='t092.jpg (red / white / blue; inventory row s 2696 left)',
                  src='kerb run (owner lap 1): the block line followed on c20_s2850 with the band reader (edges_spline.bands outer limits, the band centre 0.45 m inside), one continuous run'),
-            dict(side='left', line_latlon=[(35.4916648, -119.5503963), (35.4916777, -119.5503825), (35.4916911, -119.5503692), (35.4917059, -119.550359)], colors='rwb', name='run left s 2849-2855',
+            dict(side='left', zone=(2837, 2843), colors='rwb', name='run left s 2849-2855',
                  colour_src='colour unverified: no inventory kerb row on that side within 40 m of s 2849-2855',
-                 src='kerb run (owner lap 1): the block line followed on c20_s2950 with the band reader (edges_spline.bands outer limits, the band centre 0.45 m inside), one continuous run'),
+                 src="round 10 (the owner's decision of 23 Oct 2026 point 4, the onboard wins): the strip over the stage-1 kerb zone (OWNER_KERBS_R10), between his red and the edge at the standard 0.9 m width; the capture block line it was read from lies away from his line and is no longer used. Before: kerb run (owner lap 1): the block line followed on c20_s2950 with the band reader (edges_spline.bands outer limits, the band centre 0.45 m inside), one continuous run"),
             dict(side='left', line_latlon=[(35.4929388, -119.5497446), (35.492955, -119.5497402), (35.4929714, -119.5497346), (35.4929883, -119.5497324), (35.4930052, -119.5497295)], colors='rwb', name='run left s 3005-3013', width=1.1,   # band width 1.1 m (p25-p75 0.93-1.15, 10 readings on the clean captures, round 8)
                
                  colour_src='colour unverified: no inventory kerb row on that side within 40 m of s 3005-3013',
@@ -724,11 +754,11 @@ CONFIG = dict(
                
                  colour_src='t110.jpg (red / white / blue; inventory row s 3329 left)',
                  src='kerb run (owner lap 1): the block line followed on c20_s3500 with the band reader (edges_spline.bands outer limits, the band centre 0.45 m inside), one continuous run'),
-            dict(side='left', line_latlon=[(35.4965872, -119.5487644), (35.4965731, -119.5487478), (35.4965591, -119.5487316), (35.4965457, -119.5487151), (35.496531, -119.5487007), (35.4965176, -119.5486851), (35.4965038, -119.5486705), (35.4964906, -119.5486551), (35.4964771, -119.5486407), (35.4964636, -119.5486262), (35.4964502, -119.5486118), (35.4964365, -119.5485979), (35.4964226, -119.5485844), (35.4964106, -119.5485683), (35.4963981, -119.5485529), (35.4963855, -119.5485376), (35.4963728, -119.5485222), (35.4963598, -119.5485075), (35.4963438, -119.5484963), (35.4963301, -119.5484821), (35.4963202, -119.5484631), (35.496307, -119.5484482), (35.4962941, -119.5484329), (35.4962805, -119.5484185), (35.4962672, -119.5484037)], colors='rwb', name='run left s 3470-3518', width=0.75,   # band width 0.76 m (p25-p75 0.64-1.14, 55 readings on the clean captures, round 8)
+            dict(side='left', zone=(3458, 3505), colors='rwb', name='run left s 3470-3518',   # band width 0.76 m (p25-p75 0.64-1.14, 55 readings on the clean captures, round 8)
                   # round 8: raised 10 cm per the owner (lap 2 note 1) lifts a wheel in the traversal gate (215-562 ms); held flat pending the gate decision (report)
 
                  colour_src='t116.jpg (red / white / blue; inventory row s 3479 left)',
-                 src='kerb run (owner lap 1): the block line followed on c20_s3600 with the band reader (edges_spline.bands outer limits, the band centre 0.45 m inside), one continuous run; raised (round 8): owner lap 2: raised, aggressive; height from the owner pending (10 cm, the 6 cm of the apex run the floor; t114-t118 at full resolution show no resolvable face: t116, the closest frame, has a soft 2-3 px white-to-asphalt edge)'),
+                 src="round 10 (the owner's decision of 23 Oct 2026 point 4, the onboard wins): the strip over the stage-1 kerb zone (OWNER_KERBS_R10), between his red and the edge at the standard 0.9 m width; the capture block line it was read from lies away from his line and is no longer used. Before: kerb run (owner lap 1): the block line followed on c20_s3600 with the band reader (edges_spline.bands outer limits, the band centre 0.45 m inside), one continuous run; raised (round 8): owner lap 2: raised, aggressive; height from the owner pending (10 cm, the 6 cm of the apex run the floor; t114-t118 at full resolution show no resolvable face: t116, the closest frame, has a soft 2-3 px white-to-asphalt edge)"),
             dict(side='left', line_latlon=[(35.4947997, -119.5478563), (35.4947813, -119.5478611), (35.4947633, -119.5478667), (35.4947461, -119.5478749), (35.4947285, -119.5478816), (35.4947111, -119.547888), (35.4946935, -119.5478937), (35.4946761, -119.5478994), (35.4946588, -119.547905), (35.4946418, -119.5479112), (35.4946249, -119.5479172), (35.4946081, -119.5479231), (35.4945915, -119.5479287), (35.494575, -119.5479342), (35.4945587, -119.5479394), (35.4945424, -119.5479444), (35.4945263, -119.547949), (35.4945104, -119.5479533), (35.4944945, -119.5479573), (35.4944787, -119.5479608), (35.494463, -119.5479636), (35.4944474, -119.5479663), (35.4944317, -119.5479681), (35.4944162, -119.5479712), (35.4944005, -119.5479724), (35.4943848, -119.5479731), (35.4943691, -119.5479732), (35.4943532, -119.5479731), (35.4943371, -119.5479729), (35.4943211, -119.5479708), (35.4943049, -119.5479685), (35.4942885, -119.5479656), (35.494272, -119.5479622), (35.4942553, -119.5479579), (35.4942381, -119.5479548), (35.4942298, -119.5479516)], colors='rwb', name='run left s 3691-3760',
                  colour_src='t124.jpg (red / white / blue; inventory row s 3725 left)',
                  src='kerb run (owner lap 1): the block line followed on c20_s3850 with the band reader (edges_spline.bands outer limits, the band centre 0.45 m inside), one continuous run'),
@@ -762,12 +792,12 @@ CONFIG = dict(
                
                  colour_src='colour unverified: no inventory kerb row on that side within 40 m of s 1020-1049',
                  src='kerb run (owner lap 1): the block line followed on c20_s1150 with the band reader (edges_spline.bands outer limits, the band centre 0.45 m inside), one continuous run'),
-            dict(side='right', line_latlon=[(35.4876748, -119.5394222), (35.4876593, -119.5394181), (35.4876437, -119.5394148), (35.4876281, -119.5394124), (35.4876125, -119.5394108), (35.4875968, -119.5394101), (35.4875812, -119.5394102), (35.4875656, -119.5394111), (35.48755, -119.5394127), (35.4875343, -119.539415), (35.4875186, -119.539418), (35.4875029, -119.5394217), (35.487495, -119.5394237)], colors=['#b8433a', '#dedbd2'], name='run right s 1168-1191',
+            dict(side='right', zone=(1161, 1182), colors=['#b8433a', '#dedbd2'], name='run right s 1168-1191',
                  colour_src='t048.jpg (red / white; inventory row s 1175 right)',
-                 src='kerb run (owner lap 1): the round-4 strip extent on c20_s1300; the band reader found no line on the new edge: band centre 0.45 m inside the edge'),
-            dict(side='right', line_latlon=[(35.4866915, -119.5400635), (35.4866863, -119.5400815), (35.4866808, -119.5400993), (35.4866787, -119.5401086)], colors='rwb', name='run right s 1304-1309',
+                 src="round 10 (the owner's decision of 23 Oct 2026 point 4, the onboard wins): the strip over the stage-1 kerb zone (OWNER_KERBS_R10), between his red and the edge at the standard 0.9 m width; the capture block line it was read from lies away from his line and is no longer used. Before: kerb run (owner lap 1): the round-4 strip extent on c20_s1300; the band reader found no line on the new edge: band centre 0.45 m inside the edge"),
+            dict(side='right', zone=(1294, 1299), colors='rwb', name='run right s 1304-1309',
                  colour_src='t052.jpg (red / white / blue; inventory row s 1304 right)',
-                 src='kerb run (owner lap 1): the block line followed on c20_s1450 with the band reader (edges_spline.bands outer limits, the band centre 0.45 m inside), one continuous run'),
+                 src="round 10 (the owner's decision of 23 Oct 2026 point 4, the onboard wins): the strip over the stage-1 kerb zone (OWNER_KERBS_R10), between his red and the edge at the standard 0.9 m width; the capture block line it was read from lies away from his line and is no longer used. Before: kerb run (owner lap 1): the block line followed on c20_s1450 with the band reader (edges_spline.bands outer limits, the band centre 0.45 m inside), one continuous run"),
             dict(side='right', line_latlon=[(35.4867214, -119.5421104), (35.4867265, -119.5421294), (35.4867287, -119.5421489), (35.4867313, -119.5421681), (35.4867352, -119.542187), (35.4867403, -119.5422053), (35.4867463, -119.5422232), (35.4867528, -119.5422408), (35.4867607, -119.5422576), (35.4867706, -119.542273), (35.4867776, -119.5422905)], colors='rwb', name='run right s 1495-1515',
                  colour_src='t058.jpg (red / white / blue; inventory row s 1492 right)',
                  src='kerb run (owner lap 1): the block line followed on c20_s1650 with the band reader (edges_spline.bands outer limits, the band centre 0.45 m inside), one continuous run'),
@@ -1124,33 +1154,33 @@ CONFIG = dict(
             # round 8 (owner lap 2 note 15): the paddock lanes (OSM service parking aisles / driveways inside the paddock,
             # Slow Ln and the rows; confirmed on the 2026 z20 paddock captures satellite_paddock/pad_0..pad_7), paved in
             # the paddock's pale tone; none meets the track (no mouths, no cones); the ones beside the pit lane left out
-            dict(name='paddock lanes', ways=['10409812', '10409813', '10419514', '39224594', '39224625', '765811048', '765811049',
+            dict(edges_from_green=True, name='paddock lanes', ways=['10409812', '10409813', '10419514', '39224594', '39224625', '765811048', '765811049',
                                              '765811050', '765811051', '765811052', '765811053', '765811055'],
                  half_width=4.0, surface='apron', mouth_cones=[],
                  src='OSM service ways in the paddock; satellite_paddock/pad_0-pad_7 (2026 z20, headless maps captures)'),
-            dict(name='front-straight crossover (OSM 34351026)', ways=['34351026'], half_width=4.0, surface='asphalt',
+            dict(edges_from_green=True, name='front-straight crossover (OSM 34351026)', ways=['34351026'], half_width=4.0, surface='asphalt',
                  mouth_cones=[],   # the onboard's cones at its mouth (t006) are the cone_lines_declared entry at s 20-24 right
                  src='OSM 34351026; c20_s0150 / c20_s0200: pale concrete road south from the front straight'),
-            dict(name='Atlantic (OSM 34351042)', ways=['34351042'], half_width=4.0, surface='asphalt',
-                 mouth_cones=[dict(near=(35.4888057, -119.5425265), src='judge r3 runoff_01 (s 170 R): a clear row of cones closing the paved branch; onboard t010-t012')],
+            dict(edges_from_green=True, name='Atlantic (OSM 34351042)', ways=['34351042'], half_width=4.0, surface='asphalt',
+                 mouth_cones=[],   # round 10: its front-straight mouth (judge r3 runoff_01, onboard t010-t012) is coned on the owner's red (owner_mouth_cones, right 154-186)
                  src='OSM 34351042; c20_s0250 / c20_s0300: pale concrete road south-west from the front straight'),
-            dict(name='Pacific (OSM 34350988)', ways=['34350988'], half_width=4.0, surface='asphalt',
+            dict(edges_from_green=True, name='Pacific (OSM 34350988)', ways=['34350988'], half_width=4.0, surface='asphalt',
                  mouth_cones=[],   # judge r3 (4573 R EXTRA): the r2 mouth cones made the 4575 / 4593 singles read as one spaced line where the onboard (t002, t150) shows a single cone; dropped   # the onboard's cone at its mouth (t002) is the cone_lines_declared entry at s 4575 right
                  src='OSM 34350988; c20_s4650 / c20_s4700: pale concrete road south from the front straight'),
-            dict(name='crossover (OSM 34351015)', ways=['34351015'], half_width=4.0, surface='asphalt',
-                 mouth_cones=[dict(near=(35.487584, -119.5454944), src='onboard t068 (judge r2 runoff_02, s 1824 R): cones across the crossover mouth')],
+            dict(edges_from_green=True, name='crossover (OSM 34351015)', ways=['34351015'], half_width=4.0, surface='asphalt',
+                 mouth_cones=[],   # round 10: its mouth (onboard t068, judge r2 runoff_02) is coned on the owner's red (owner_mouth_cones, right 1811-1835)
                  src='OSM 34351015; c20_s0000 / c20_s0050: pale concrete road south from the front straight'),
             # surface 'apron' (judge r5 runoff_04 623 R): the unused loop is the pale weathered pavement of the onboard, the same
             # look as the T2 runoff that overlaps it (one material: no tone band where the two zones meet)
-            dict(name='outer T2 loop (OSM 39224609)', ways=['39224609'], half_width=5.5, surface='apron', mouth_cones=[],
+            dict(edges_from_green=True, name='outer T2 loop (OSM 39224609)', ways=['39224609:393994752:393994769'], half_width=5.5, surface='apron', mouth_cones=[],   # round 10: nodes 393994770-393994771 left out: they cross the hairpin onto the dirt inside it (owner window w_s0625 on c20_s0700: no pavement there; the 16 m part met the round-10 right edge at s 571)
                  src='OSM 39224609; c20_s0700 / c20_s0750 / c20_s0800: the outer hairpin road round the T2 pond, asphalt with white kerb blocks'),
-            dict(name='Dog Leg (OSM 39224483, west of the T5 turn)', ways=['39224483:469884764:393994724'], half_width=5.5, surface='asphalt', mouth_cones=[],
+            dict(edges_from_green=True, name='Dog Leg (OSM 39224483, west of the T5 turn)', ways=['39224483:469884764:393994724'], half_width=5.5, surface='asphalt', mouth_cones=[],
                  src='OSM 39224483; c20_s1650 .. c20_s2100: the straight asphalt road the course leaves at T5 and rejoins after Truck Stop'),
-            dict(name='Sweeper (OSM 34351309)', ways=['34351309'], half_width=5.5, surface='asphalt', mouth_cones=[],
+            dict(edges_from_green=True, name='Sweeper (OSM 34351309)', ways=['34351309'], half_width=5.5, surface='asphalt', mouth_cones=[],
                  src='OSM 34351309; c20_s3350 .. c20_s3600: the inner loop inside Star Mazda'),
-            dict(name='Zorros Corners (OSM 34351301)', ways=['34351301'], half_width=5.5, surface='asphalt', mouth_cones=[],
+            dict(edges_from_green=True, name='Zorros Corners (OSM 34351301)', ways=['34351301'], half_width=5.5, surface='asphalt', mouth_cones=[],
                  src='OSM 34351301; c20_s4250 / c20_s4300: the road from the drag strip to Sunset'),
-            dict(name='drag strip, south part (OSM 34351305)', ways=['34351305:469886349:469885942'], half_width=6.0, surface='asphalt', mouth_cones=[],
+            dict(edges_from_green=True, name='drag strip, south part (OSM 34351305)', ways=['34351305:469886349:469885942'], half_width=6.0, surface='asphalt', mouth_cones=[],
                  src='OSM 34351305; c20_s2600 .. c20_s3000: the straight the course leaves for Lost Hill'),
         ],
         closed_roads_clip_walls=False,
@@ -1283,6 +1313,8 @@ CONFIG = dict(
                  why='the outer T2 loop round the pond, open dirt between it and the track, no barrier (c20_s0650-c20_s0850; onboard t020-t032: open ground left)'),
             dict(target='pit lane', side='left', a=(35.4889184, -119.5421388), b=(35.4903837, -119.5410577),
                  why='the pit lane where it has no wall: the pit-in split before T11 (pit-lane video 20:31-20:40: the lane leaves the track with no wall until the pit-wall head) and the pit-out round the inside of T1, sharing the pavement with the track beside the white kerb blocks (c20_s0450-c20_s0650; onboard t016-t022)'),
+            dict(target='pit lane', side='left', a=(35.4896494, -119.5481346), b=(35.489345, -119.5480714),
+                 why="round 10, the owner's decision of 23 Oct 2026 point 2: no cones at the pit entry; his red across it is the course boundary only and the cars drive through it to pit (owner_mouths_r10 left 4270-4304; pit-lane video ucmXJu5QKFQ 20:31)"),
             dict(target='pit lane', side='left', a=(35.4893967, -119.5481311), b=(35.4886485, -119.546407),
                  why='the pit lane where it has no wall: the pit-in split before T11 (pit-lane video 20:31-20:40: the lane leaves the track with no wall until the pit-wall head) and the pit-out round the inside of T1, sharing the pavement with the track beside the white kerb blocks (c20_s0450-c20_s0650; onboard t016-t022)'),
             dict(target='Atlantic (OSM 34351042)', side='right', a=(35.4887925, -119.5441857), b=(35.4888995, -119.5424026),

@@ -97,6 +97,9 @@ def config_id(cfg, stage="geometry"):
             # the owner's traced edge files are stage-1 evidence: their content enters the hash (absent: hash unchanged)
             d["_owner_files"] = {w["file"]: hashlib.sha256(open(os.path.join(HERE, "tracks", cfg["id"], w["file"]), "rb").read()).hexdigest()
                                  for w in cfg["spline"]["owner_edges"]}
+            if cfg["spline"].get("owner_mouths"):   # round 10: the mouth segments the owner gates leave out
+                mf = cfg["spline"]["owner_mouths"]
+                d["_owner_files"][mf] = hashlib.sha256(open(os.path.join(HERE, "tracks", cfg["id"], mf), "rb").read()).hexdigest()
     else:
         d = {k: cfg.get(k) for k in STAGE_KEYS[stage]}
         if stage == "scenery" and cfg.get("structures"):   # the buildings round's section (absent: hash unchanged)
@@ -173,6 +176,7 @@ def run_ghosts(cfg, pkg, work, no_logger, write_on_fail=False, quiet=False):
 # ---------------------------------------------------------------- stage 1
 FIT_DUMP_DIR = '.'
 OWNER_REPORT = []
+OWNER_REF_REPORT = {}
 _OWNER_CACHE = {}
 
 
@@ -193,6 +197,27 @@ def owner_windows(cfg_raw, cfgw):
             out.append({"side": side, "lo": int(w["lo"]), "hi": int(w["hi"]), "pts": pts, "chains": chains, "file": w["file"], "kerb_w": kw,
                         "kerb_inside": [(lo, hi) + tuple(rest[:1]) for sd, lo, hi, *rest in w.get("kerb_inside", []) if sd == side]})
     return out
+
+
+def owner_ref(cfg_raw, cfgw, C, n):
+    """The owner's reference on centre C (edge_gate.owner_reference; Buttonwillow round 10): his readings per side
+    over every spline.owner_edges window (kerb shifts included, as the fit takes them), and his red across the mouths
+    of spline.owner_mouths (the 'red across' segments of compare/owner_mouths.py's file, world points)."""
+    import edges_spline as ES
+    C = np.asarray(C, float)[:, :2]
+    NL = B.left_normals(C)
+    rd = {"left": {}, "right": {}}
+    for w in owner_windows(cfg_raw, cfgw):
+        r = ES.owner_readings(C, NL, w, n)
+        for k, v in r.items():
+            if (k - w["lo"]) % n <= (w["hi"] - w["lo"]) % n:
+                rd[w["side"]][k] = v
+    lines = []
+    mf = cfg_raw["spline"].get("owner_mouths")
+    if mf:
+        M = json.load(open(os.path.join(HERE, "tracks", cfg_raw["id"], mf)))
+        lines = [(m["side"], np.array(m["line_enu"], float)) for m in M["mouths"] if m.get("kind") == "red across" and m.get("red_drawn", True)]
+    return edge_gate.owner_reference(C, rd, lines, n)
 
 
 def pit_merge_inputs(cfg, trk, osm):
@@ -546,7 +571,10 @@ def stage_geometry(cfg, out, no_logger):
     if cfg_raw["spline"].get("width_model"):
         # the width gates (round 9, REQUIRED with a width model): one width per section, no 20-80 m wave
         cw_ = trackcfg.remap_stations(cfg_raw, n, L1, C=C1)
-        met["width"], gf = edge_gate.width_gates(T, cw_["spline"]["width_model"]["junctions"], cfg_raw["gate"], log=log)
+        oref = owner_ref(cfg_raw, cw_, C1, n) if (cfg_raw["spline"].get("owner_edges") and cfg_raw["spline"].get("owner_mouths")) else None
+        met["width"], gf = edge_gate.width_gates(T, cw_["spline"]["width_model"]["junctions"], cfg_raw["gate"], log=log, owner=oref)
+        if oref is not None:
+            met["owner_reference"] = OWNER_REF_REPORT
         rep.fails += gf
         json.dump(WIDTH_REPORT, open(os.path.join(work, "width_model_report.json"), "w"), default=float)
     w = hl3 + hr3
@@ -815,9 +843,15 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, pw, m
     # -- gates of the fitted method (edge_gate.FITTED; a config may tighten them, never loosen)
     G = edge_gate.fitted_thresholds(cfg_raw["gate"])
     # the owner's traced edges (spline.owner_edges): the fitted edge follows his reading in every window
+    OREF = None
     if sp_cfg.get("_owner"):
         NLf = B.left_normals(Ccur)
-        for w in owner_windows(cfg_raw, trackcfg.remap_stations(cfg_raw, n, float(np.linalg.norm(np.roll(Ccur, -1, 0) - Ccur, axis=1).sum()), C=Ccur)):
+        cfg_o = trackcfg.remap_stations(cfg_raw, n, float(np.linalg.norm(np.roll(Ccur, -1, 0) - Ccur, axis=1).sum()), C=Ccur)
+        if cfg_raw["spline"].get("owner_mouths"):
+            # round 10 (owner's decision 23 Oct 2026, point 3): his reference on this centre; the max gate leaves out the
+            # stations where his red runs across a mouth (edge_gate.OWNER_REF: the segments +-corner)
+            OREF = owner_ref(cfg_raw, cfg_o, Ccur, n)
+        for w in owner_windows(cfg_raw, cfg_o):
             r = edges_spline.owner_readings(Ccur, NLf, w, n)
             hw = hl3 if w["side"] == "left" else hr3
             ks_ = [k for k in r if (k - w["lo"]) % n <= (w["hi"] - w["lo"]) % n]
@@ -826,10 +860,21 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, pw, m
             res = np.array([hw[k] - r[k] for k in ks_])
             a_ = np.abs(res); share = float(np.mean(a_ <= G["owner_tol"]))
             OWNER_REPORT.append({"side": w["side"], "lo": w["lo"], "hi": w["hi"], "file": w["file"], "k": ks_, "owner": [r[k] for k in ks_], "fit": [float(hw[k]) for k in ks_]})
-            rep.check(f"owner edge {w['side']} {w['lo']}-{w['hi']}", share >= G["owner_within"] and a_.max() <= G["owner_max"],
+            if OREF is not None:
+                keep = np.array([not OREF["excl"][w["side"]][k] for k in ks_])
+                amax = float(a_[keep].max()) if keep.any() else 0.0
+                txt = f" (max outside his {int((~keep).sum())} mouth-segment stations +-{edge_gate.OWNER_REF['corner']}; with them {a_.max():.3f})"
+            else:
+                amax, txt = float(a_.max()), ""
+            rep.check(f"owner edge {w['side']} {w['lo']}-{w['hi']}", share >= G["owner_within"] and amax <= G["owner_max"],
                       f"{len(ks_)} stations ({w['file']}): {share * 100:.1f} % within {G['owner_tol']} m of the owner's line (>= {G['owner_within'] * 100:.0f} %), "
-                      f"|residual| p50 {np.median(a_):.3f} / p90 {np.percentile(a_, 90):.3f} / max {a_.max():.3f} m (<= {G['owner_max']})")
+                      f"|residual| p50 {np.median(a_):.3f} / p90 {np.percentile(a_, 90):.3f} / max {amax:.3f} m (<= {G['owner_max']}){txt}")
         json.dump(OWNER_REPORT, open(os.path.join(FIT_DUMP_DIR, "owner_edges_report.json"), "w"))
+        if OREF is not None:
+            om, of_ = edge_gate.owner_station_gate(hl3, hr3, OREF, cfg_raw["gate"], log=log)
+            for f_ in of_:
+                rep.check(f_, False, "see the line above")
+            OWNER_REF_REPORT.update(om)
     for side in ("left", "right"):
         r = frep[side]
         # the declared junctions (config gate.exempt, pit-lane joins) are excluded from the waviness and kink metrics as
@@ -879,10 +924,25 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, pw, m
         bad = [f"{a}..{b} ({ln} st)" for (a, b), ln in r["gaps"] if ln > G["gap"]]
         rep.check(f"fit {side}: longest gap", not bad, f"{r['longest_gap']} st at {r['gap_at']} (<= {G['gap']})"
                   + (f"; over: {', '.join(bad)}" if bad else ""))
-        wr = edges_spline.ranges(r["loose"] & (r["roll"] > G["wave_rms"]), n)
-        rep.check(f"fit {side}: waviness", not wr and r["wave_peak"] <= G["wave_peak"],
-                  f"rolling-100 rms max {r['wave_rms']:.3f} m (<= {G['wave_rms']}), peak {r['wave_peak']:.3f} m (<= {G['wave_peak']}) "
-                  f"outside tight corners" + (f"; over at {wr[:8]}" if wr else ""))
+        if OREF is not None and OREF["edge"][side].any():
+            # round 10: on his both-edge stations the fit's waviness is held to his red's own (edge_gate.owner_waviness);
+            # on the other stations exactly as before
+            mo = OREF["edge"][side]
+            ow = edge_gate.owner_waviness(r["qq"], roll, lo_, OREF[side], mo, n)
+            wr = edges_spline.ranges(lo_ & ~mo & (roll > G["wave_rms"]), n) + edges_spline.ranges(ow["bad_roll"], n)
+            pk = lo_ & ~mo & (np.abs(r["qq"]) > G["wave_peak"])
+            pr = edges_spline.ranges(pk | ow["bad_peak"], n)
+            el = lo_ & ~mo
+            rep.check(f"fit {side}: waviness", not wr and not pr,
+                      f"on his {int((lo_ & mo).sum())} loose stations of this edge: rolling-100 rms max {roll[lo_ & mo].max():.3f} m against his red's own "
+                      f"(max {ow['red_roll_max']:.3f}; limit max({G['wave_rms']}, his)), peak {np.abs(r['qq'])[lo_ & mo].max():.3f} m (limit max({G['wave_peak']}, his)); "
+                      f"elsewhere rms max {(roll[el].max() if el.any() else 0):.3f} m (<= {G['wave_rms']}), peak {(np.abs(r['qq'])[el].max() if el.any() else 0):.3f} m (<= {G['wave_peak']})"
+                      + (f"; over at {(wr + pr)[:8]}: " + ", ".join(f"{a}: rms {roll[a]:.3f}/{ow['roll_limit'][a]:.3f} peak {abs(r['qq'][a]):.3f}/{ow['peak_limit'][a]:.3f}" for a, _ in (wr + pr)[:4]) if wr or pr else ""))
+        else:
+          wr = edges_spline.ranges(r["loose"] & (r["roll"] > G["wave_rms"]), n)
+          rep.check(f"fit {side}: waviness", not wr and r["wave_peak"] <= G["wave_peak"],
+                    f"rolling-100 rms max {r['wave_rms']:.3f} m (<= {G['wave_rms']}), peak {r['wave_peak']:.3f} m (<= {G['wave_peak']}) "
+                    f"outside tight corners" + (f"; over at {wr[:8]}" if wr else ""))
         kr = edges_spline.ranges(r["loose"] & (r["kinkv"] > G["kink"]), n)
         rep.check(f"fit {side}: kink", not kr, f"max {r['kink']:.2f} deg/station (<= {G['kink']}) outside tight corners; "
                   f"station 0 {r['seam_kink']:.2f}" + (f"; over at {kr[:8]}" if kr else ""))
