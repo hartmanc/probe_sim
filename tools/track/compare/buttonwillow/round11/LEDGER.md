@@ -228,3 +228,10 @@ orchestrator's).
 6. Crack-seal coverage: GitHub issue #10.
 7. Carried: the T2 patch curved line (side_02 590 R), the paddock lanes' square ends, the in-page surface scan
    (not rerun this round).
+
+## Verification note (24 Oct 2026, 11:35 PDT)
+
+The full test suite on this branch at 9c61d17, run on a quiet machine (1-minute load 2.2, nothing else heavy but one
+single-threaded Sonoma stage build): 53 files, 413 tests passed in 50 s (`npx vitest run`). The seven timing failures seen
+on 23 Oct (perf.test 2.4 s against its 2 s budget, replay, poses, scenerygates, ai_behaviour's 60 s self-play) were the
+machine's load at 30-70, not the branch; the preview's caveat is cleared.
