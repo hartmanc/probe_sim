@@ -40,5 +40,9 @@ const ai = dir.cars.filter((c) => !c.isPlayer && c.paceTarget > 0);
 const racePace = { bestOverTarget: +med(ai.map((c) => c.bestLap / c.paceTarget)).toFixed(4), lastOverTarget: +med(ai.map((c) => c.lastLap / c.paceTarget)).toFixed(4), followScale, laneMargin, shiftGrip };
 console.log(`(g) pace: median best lap / drawn target ${racePace.bestOverTarget}, last lap / target ${racePace.lastOverTarget}; knobs followScale ${followScale} laneMargin ${laneMargin} shiftGrip ${shiftGrip}`);
 (m as unknown as { pace: typeof racePace }).pace = racePace;
+// finishing order (the results frozen at the flag; else by race distance): the bit-identity check across knob changes
+const order = dir.getResults()?.map((r) => r.number) ?? dir.cars.map((c, i) => ({ c, U: dir.traffic.U[i] })).sort((a, b) => b.U - a.U).map((r) => r.c.number);
+(m as unknown as { order: string[] }).order = order;
+console.log(`(h) finishing order: ${order.slice(0, 10).join(' ')}${order.length > 10 ? ' ...' : ''} (${order.length} cars)`);
 const out = arg('--json', '');
 if (out) writeFileSync(out, JSON.stringify(m, null, 1));
