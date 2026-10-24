@@ -42,3 +42,16 @@ def test_knots_out_of_order_fail():
     except SystemExit:
         return
     raise AssertionError('expected SystemExit')
+
+
+def test_periodic_shift_joins_across_station_zero():
+    # round 10: a whole-lap entry (periodic) interpolates round the loop, the last knot joined to the first
+    C = loop()
+    n = len(C)
+    knots = [(C[k][1], C[k][0], 2.0 if k < n // 2 else 4.0) for k in range(10, n, 100)]
+    P, L = geo.prior_shift(C, [dict(knots=knots, periodic=True, src='test')], enu)
+    nl = geo.left_normals(C)
+    # between the last knot and the first (across station 0) the shift lies between 4 and 2 m, no zero gap
+    for k in (n - 5, 0, 5):
+        lat = geo.project(P, (C[k] + 3.0 * nl[k])[None])[1][0]
+        assert abs(lat) < 1.05

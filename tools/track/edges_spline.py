@@ -100,6 +100,9 @@ KSEARCH = []
 # [{side, lo, hi, pts (world xy, n x 2), kerb_inside: [(lo, hi)], kerb_w}] on the current centre's stations
 OWNER = []
 KERB_RAMP = 6     # stations over which a kerb_inside shift ramps in at each end
+KERB_STEP = 0.08  # a measured-shift kerb zone (kerb_inside (side, lo, hi, shift), Buttonwillow round 10): the shift ramps
+                  # in OUTSIDE the zone at most this much per station, so the whole measured kerb lies inside the edge
+                  # and the edge-gate step (0.10 m per station) holds
 OWNER_W = 40.0   # anchor weight per owner station (40 unit rows: his line outweighs the third-difference penalty;
                  # as plain rows, 8 copies left 0.5-0.7 m bumps of 10-15 m unfollowed, run 38, and copies swamped the side's kind counts, run 39)
 # stations whose capture readings are not used, per side (spline.mask [(side, lo, hi, src)]): an object beside the edge
@@ -478,13 +481,23 @@ def owner_readings(C, NL, w, n):
     out = {}
     for kk in np.unique(k):
         v = float(np.median(lat[k == kk]))
-        for a, b in w.get('kerb_inside', []):
+        add = 0.0
+        for a, b, *shift in w.get('kerb_inside', []):
+            if shift:
+                # a measured shift (the band's outer limit from his line, compare/owner_kerbs.py): full over the zone,
+                # ramped in over ceil(shift / KERB_STEP) stations before it and out after it; where two zones' ramps
+                # meet, the larger shift (never their sum)
+                r = int(np.ceil(shift[0] / KERB_STEP))
+                d = 0 if (kk - a) % n <= (b - a) % n else min((a - kk) % n, (kk - b) % n)
+                if d <= r:
+                    add = max(add, shift[0] * (1.0 - d / (r + 1)))
+                continue
             if (kk - a) % n <= (b - a) % n:
                 # the kerb's width, ramped in over KERB_RAMP stations at each end of the run (a 0.9 m step in a reading
                 # is no edge: the asphalt end runs on past the block ends; round 5, run 41)
                 e = min((kk - a) % n, (b - kk) % n) + 1
                 v += w.get('kerb_w', 0.9) * min(1.0, e / KERB_RAMP)
-        out[int(kk)] = v
+        out[int(kk)] = v + add
     return out
 
 

@@ -178,7 +178,7 @@ _OWNER_CACHE = {}
 
 def owner_windows(cfg_raw, cfgw):
     """spline.owner_edges on this centre's stations (cfgw remapped): per window and side {side, lo, hi, pts (world xy),
-    kerb_inside [(lo, hi)], kerb_w, file}; the JSON (compare/owner_edges.py) is read from tracks/<id>/"""
+    kerb_inside [(lo, hi[, shift])], kerb_w, file}; the JSON (compare/owner_edges.py) is read from tracks/<id>/"""
     out = []
     kw = float((cfg_raw["scenery"].get("kerb") or {}).get("width", 0.9))
     for w in cfgw["spline"]["owner_edges"]:
@@ -191,7 +191,7 @@ def owner_windows(cfg_raw, cfgw):
         for side in ("left", "right"):
             pts = np.array([[x, y] for x, y, *_ in d[side + "_enu_xys"]], float)
             out.append({"side": side, "lo": int(w["lo"]), "hi": int(w["hi"]), "pts": pts, "chains": chains, "file": w["file"], "kerb_w": kw,
-                        "kerb_inside": [(lo, hi) for sd, lo, hi in w.get("kerb_inside", []) if sd == side]})
+                        "kerb_inside": [(lo, hi) + tuple(rest[:1]) for sd, lo, hi, *rest in w.get("kerb_inside", []) if sd == side]})
     return out
 
 

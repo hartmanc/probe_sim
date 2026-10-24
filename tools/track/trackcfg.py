@@ -293,7 +293,7 @@ def remap_stations(cfg, n, length_m=None, C=None):
         sp['kerb_search'] = [(a, st(lo), st(hi)) + tuple(rest) for a, lo, hi, *rest in sp['kerb_search']]
     for w in sp.get('owner_edges') or []:   # the owner's traced edge windows (Buttonwillow, 21 Oct 2026)
         w['lo'], w['hi'] = st(w['lo']), st(w['hi'])
-        w['kerb_inside'] = [(a, st(lo), st(hi)) for a, lo, hi in w.get('kerb_inside', [])]
+        w['kerb_inside'] = [(a, st(lo), st(hi)) + tuple(rest) for a, lo, hi, *rest in w.get('kerb_inside', [])]
     if sp.get('width_model'):   # the width model's junction ranges (Buttonwillow round 9, 22 Oct 2026)
         sp['width_model']['junctions'] = [(a, st(lo), st(hi)) + tuple(rest) for a, lo, hi, *rest in sp['width_model'].get('junctions', [])]
     if sp.get('runs'):

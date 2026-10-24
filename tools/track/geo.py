@@ -509,6 +509,15 @@ def prior_shift(C, entries, enu_fn, log_fn=None):
         ks = np.unwrap(ks * 2 * np.pi / n) * n / (2 * np.pi)
         if np.any(np.diff(ks) <= 0):
             raise SystemExit(f"centre.prior_shift ({e.get('src', '')[:60]}): knots not in driving order")
+        if e.get("periodic"):
+            # a whole-lap shift (Buttonwillow round 10: the owner's midline round the lap): interpolated round the loop,
+            # the last knot joined to the first across station 0, no blend
+            o = np.argsort(ks % n)
+            shift += np.interp(np.arange(n), (ks % n)[o], dx[o], period=n)
+            if log_fn:
+                log_fn(f"first centre shifted (config centre.prior_shift, periodic) round the lap: {len(dx)} knots, |shift| p50 "
+                       f"{np.median(np.abs(dx)):.1f} / max {np.abs(dx).max():.1f} m; {e.get('src', '')}")
+            continue
         b = int(e.get("blend", 0))
         xs = np.r_[ks[0] - b, ks, ks[-1] + b] if b else ks
         ys = np.r_[0.0, dx, 0.0] if b else dx

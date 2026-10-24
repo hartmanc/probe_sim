@@ -37,6 +37,19 @@ def test_right_side_sign_and_kerb_inside():
     assert max(abs(r[k + 1] - r[k]) for k in range(10, 39)) <= 0.9 / ES.KERB_RAMP + 1e-9
 
 
+def test_measured_kerb_shift_ramps_outside_the_zone():
+    # round 10: (lo, hi, shift) puts the full measured shift over the whole zone and ramps it outside, <= KERB_STEP / station
+    C, NL = straight()
+    pts = np.c_[np.arange(0, 60, 1.0), np.full(60, 4.0)]
+    r = ES.owner_readings(C, NL, dict(side='left', pts=pts, kerb_inside=[(25, 35, 0.8)], kerb_w=0.9), len(C))
+    assert all(np.isclose(r[k], 4.8) for k in range(25, 36))
+    assert np.isclose(r[10], 4.0) and np.isclose(r[50], 4.0)
+    assert max(abs(r[k + 1] - r[k]) for k in range(0, 59)) <= ES.KERB_STEP + 1e-9
+    # two zones close together: their ramps meet at the larger shift, never the sum
+    r2 = ES.owner_readings(C, NL, dict(side='left', pts=pts, kerb_inside=[(10, 20, 0.8), (24, 34, 0.8)], kerb_w=0.9), len(C))
+    assert max(r2.values()) <= 4.8 + 1e-9
+
+
 def test_owner_chains_split_the_lines_and_drop_lone_points():
     a = np.c_[np.arange(0, 30, 1.0), np.zeros(30)]; b = np.c_[np.arange(0, 30, 1.0), np.full(30, 9.0)]
     ch = ES.owner_chains(np.r_[a, b, [[50.0, 50.0]]])

@@ -7,6 +7,12 @@ the width table per section (before / after) and the width gates' numbers.
         --pkg tools/track/out/bw_r9e --before public/tracks/buttonwillow --out tools/track/compare/buttonwillow/edges_r9 \
         [--every 125 --half 75 --mpp 0.12] [--close 4180,4354,4475 --close-half 30 --close-mpp 0.06]
 
+Round 10 (23 Oct 2026) adds, for every window the owner drew on, an overlay beside the plain window: his strokes as he
+drew them (--strokes: compare/edge_draw_render.py's strokes.json, image pixels of the window he drew on, whose frame
+--stroke-frames gives: the owner_edges.py JSON per window, frame centre / half / mpp) in thin red and green over the new
+fit, and the cone lines of the mouths he closed (--mouths: compare/owner_mouths.py) as orange dots. --intro / --extra:
+html fragments for the header paragraph and a section after the width tables (the round's own record).
+
 The PNGs are reference imagery and stay local (gitignored); the html is tracked.
 """
 import argparse
@@ -40,6 +46,8 @@ def main():
     ap.add_argument('--close', default='4180,4354,4475'); ap.add_argument('--close-half', type=float, default=30.0); ap.add_argument('--close-mpp', type=float, default=0.06)
     ap.add_argument('--title', default='Edges, round 9')
     ap.add_argument('--skip-render', action='store_true')
+    ap.add_argument('--strokes'); ap.add_argument('--stroke-frames'); ap.add_argument('--mouths')
+    ap.add_argument('--intro'); ap.add_argument('--extra'); ap.add_argument('--before-label', default='ccf00b4')
     a = ap.parse_args()
     cfg = trackcfg.load(a.track)
     T = json.load(open(os.path.join(a.pkg, 'track.json'))); T0 = json.load(open(os.path.join(a.before, 'track.json')))
@@ -67,6 +75,30 @@ def main():
     for c in a.close.split(','):
         if c:
             items.append(('close', float(c), a.close_half, a.close_mpp))
+    strokes = json.load(open(a.strokes)) if a.strokes else {}
+    mouths = json.load(open(a.mouths))['mouths'] if a.mouths else []
+    C_ = np.array(T['center'])[:, :2]
+
+    def overlay(name, png, s, half, mpp):
+        """the plain window plus his strokes (thin) and the cone lines, in the new window's pixels"""
+        from PIL import Image, ImageDraw
+        wid = name[:-4]
+        fr = json.load(open(os.path.join(a.stroke_frames, wid + '.json')))['frame']
+        ocx, ocy = fr['centre_enu']; oh, om = fr['half'], fr['mpp']
+        cx, cy = C_[int(round(s / sp)) % n]
+        im = Image.open(png).convert('RGB'); d = ImageDraw.Draw(im)
+        to_px = lambda x, y: ((x - (cx - half)) / mpp, ((cy + half) - y) / mpp)  # noqa: E731
+        for st in strokes[wid]['strokes']:
+            P = [to_px(ocx - oh + px_ * om, ocy + oh - py_ * om) for px_, py_ in st['pts']]
+            if len(P) == 1: P = P * 2
+            d.line(P, fill=(0, 224, 0) if st.get('c') == 'green' else (255, 0, 0), width=1)
+        for m in mouths:
+            if not m.get('cones', True):
+                continue
+            for x, y in m['line_enu']:
+                q = to_px(x, y); d.ellipse([q[0] - 3, q[1] - 3, q[0] + 3, q[1] + 3], outline=(255, 140, 0), width=2)
+        out = os.path.join(a.out, wid + '_owner.png'); im.save(out)
+        return os.path.basename(out)
     rows = []
     for kind, s, half, mpp in items:
         name = f"{'w' if kind == 'lap' else 'close'}_s{int(round(s)):04d}.png"
@@ -75,7 +107,8 @@ def main():
                             '--mpp', str(mpp), '--light', '--out', os.path.join(a.out, name)], check=True, capture_output=True)
         k = int(round(s / sp)) % n; k0, k1 = int(round((s - half) / sp)), int(round((s + half) / sp))
         ks = np.arange(k0, k1 + 1) % n
-        rows.append((kind, s, half, mpp, name, where(k), float(w[k]), float(np.median(w[ks])), k0 * sp, k1 * sp))
+        ov = overlay(name, os.path.join(a.out, name), s, half, mpp) if name[:-4] in strokes and a.stroke_frames else None
+        rows.append((kind, s, half, mpp, name, where(k), float(w[k]), float(np.median(w[ks])), k0 * sp, k1 * sp, ov))
     # the page
     e = html.escape
     sec_rows = []
@@ -91,28 +124,35 @@ def main():
                         f"<td>{e(', '.join(f'{k} {v}' for k, v in (ms['kinds'] if ms else {}).items() if v))}</td></tr>")
     j_rows = ''.join(f"<li>{e(j[0])} {j[1] * sp:.0f}-{j[2] * sp:.0f} m: {e(j[3])}</li>" for j in J)
     win_rows = ''.join(
-        f"<figure><img src=\"{e(r[4])}\" alt=\"s {r[1]:.0f}\" loading=\"lazy\"><figcaption><b>s {r[1]:.0f} m</b> "
+        f"<figure><div class=\"pair\"><img src=\"{e(r[4])}\" alt=\"s {r[1]:.0f}, the new fit\" loading=\"lazy\">"
+        + (f"<img src=\"{e(r[10])}\" alt=\"s {r[1]:.0f}, the new fit with your strokes\" loading=\"lazy\">" if r[10] else '')
+        + f"</div><figcaption><b>s {r[1]:.0f} m</b> "
         f"({'close-up, ' if r[0] == 'close' else ''}{2 * r[2]:.0f} m across at {r[3]} m/px; stations {r[8]:.0f}-{r[9]:.0f} m): {e(r[5])}; "
         f"width here {r[6]:.2f} m, window median {r[7]:.2f} m</figcaption></figure>" for r in rows)
     b = wr['bias']; ak = wr['at_kerb']
-    doc = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{e(a.title)}</title>
-<style>body{{font:15px/1.45 system-ui,sans-serif;margin:16px;max-width:1300px;background:#fff;color:#111}}img{{max-width:100%;height:auto;border:1px solid #888}}
-figure{{margin:0 0 22px}}figcaption{{font-size:14px}}table{{border-collapse:collapse;font-size:14px}}td,th{{border:1px solid #bbb;padding:2px 6px;text-align:right}}
-pre{{white-space:pre-wrap;font-size:13px}}</style></head><body>
-<h1>{e(a.title)}: {e(cfg['name'])}</h1>
-<p>The new fitted edges (white) over the clean 2026 captures, station ticks every 10 m (yellow, labels every 50 m), the whole lap
+    intro = open(a.intro).read() if a.intro else f"""<p>The new fitted edges (white) over the clean 2026 captures, station ticks every 10 m (yellow, labels every 50 m), the whole lap
 every {a.every:.0f} m in windows {2 * a.half:.0f} m across at {a.mpp} m/px, then close-ups of your three crops. Model: kerb bands anchor the edge at
 their inside line; the asphalt-end detector's outward bias, measured through the kerb anchors, is removed (left {b['left']:+.2f} m, right
 {b['right']:+.2f} m; at the kerb stations themselves the detector reads the band, {ak['left'][1]:+.2f} / {ak['right'][1]:+.2f} m from its inside line);
-one width per section between the junctions; the weaker side placed at that width from the stronger. Lap {L:.2f} m (before {T0['n'] * T0['spacing_m']:.2f} m).</p>
-<h2>Width gates</h2><pre>before (ccf00b4):
+one width per section between the junctions; the weaker side placed at that width from the stronger. Lap {L:.2f} m (before {T0['n'] * T0['spacing_m']:.2f} m).</p>"""
+    doc = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{e(a.title)}</title>
+<style>:root{{--bg:#fff;--fg:#111;--line:#bbb;--frame:#888}}
+@media (prefers-color-scheme: dark){{:root:not([data-theme="light"]){{--bg:#16181c;--fg:#e8e8e8;--line:#555;--frame:#666}}}}
+:root[data-theme="dark"]{{--bg:#16181c;--fg:#e8e8e8;--line:#555;--frame:#666}}
+body{{font:15px/1.45 system-ui,sans-serif;margin:16px;max-width:1300px;background:var(--bg);color:var(--fg)}}img{{max-width:100%;height:auto;border:1px solid var(--frame)}}
+figure{{margin:0 0 22px}}figcaption{{font-size:14px}}table{{border-collapse:collapse;font-size:14px;display:block;overflow-x:auto}}td,th{{border:1px solid var(--line);padding:2px 6px;text-align:right}}
+pre{{white-space:pre-wrap;font-size:13px}}.pair{{display:flex;gap:8px;flex-wrap:wrap}}.pair img{{flex:1 1 300px;min-width:0}}</style></head><body>
+<h1>{e(a.title)}: {e(cfg['name'])}</h1>
+{intro}
+<h2>Width gates</h2><pre>before ({e(a.before_label)}):
 {e(chr(10).join(lines0))}
 after:
 {e(chr(10).join(lines1))}</pre>
 <h2>Width per section (between the junctions)</h2>
 <table><tr><th>stations (m)</th><th>before: median width</th><th>before: max deviation</th><th>after: width</th><th>after: max deviation</th><th>observations</th><th>kinds (K kerb, D detector; left+right)</th></tr>
 {''.join(sec_rows)}</table>
+{open(a.extra).read() if a.extra else ""}
 <h2>Junction ranges (measured local width, blended into the sections)</h2><ul>{j_rows}</ul>
 <h2>Windows in lap order</h2>
 {win_rows}
