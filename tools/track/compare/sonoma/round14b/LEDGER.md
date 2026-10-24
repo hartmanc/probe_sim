@@ -466,3 +466,134 @@ Width (median, round 14A -> 14B, same world points; max change): T2 exit 414-532
 Python tests: 65 passed (59 + 6 new in `test_continuity_exemptions.py`).
 Outline page re-rendered on this fit (36 windows + 13 `_owner` overlays; intro.html / extra.html for part 1b, with the
 decisions and the apron question).
+
+## Part 2 (24 Oct 2026): stages 2 and 3 on the part-1b geometry. BUILT, NOT PUBLISHED (pending the owner's choice at T9A)
+
+The package is built in `out/sonoma_r14b`. All three stage records pass (no --write-on-fail). track.json is
+2c043135a7b27767, lap 4105.328 m, and the rev would be 6b766e08d6. On publish, `src/scoreboard/config.ts` TRACKS.sonoma
+becomes length_m 4105.328 and that rev. The package stays unpublished because the kerb traversal vitest passes at T9A
+only at 14.0° (limit 15), with the probe car still running off the road there (below). That choice goes to the owner.
+
+### Stage-3 fixes (config; evidence cited in the config comments)
+
+- **Owner gates in stage 3** read the raw config. Remapping the already remapped one moved T9A's windows: 0.67 / 0.85 m
+  false misses.
+- **Coverage, world-position carry.** The inventory's rows are on the lap it was taken on (4098.79 m). The lap is now
+  6.5 m longer at T9A, which moved three rows 15-18 m off their objects. Rows (and their manifest dispositions) are carried
+  from the frozen round-14A lap (`compare/sonoma/inventory_lap.json`) to the foot of the normal on this centre.
+  Equal laps are unchanged.
+- **Fence row t038** (right, s 1050.9, "fence on the hill top"). A logged correction, `ahead_m` 15: in frame t038 the
+  bank-top fence (declared round 5) begins ~15 m ahead, at s ~1066. The row sat at the gate's 15.0 m tolerance and fell
+  out when the lap was re-stationed. The same correction is in `inventory/observations.jsonl`.
+- **Pit-in mouth, s 3504 left, in containment's allowed list.** His red stops at s ~3479 and resumes at ~3519, where the
+  lane splits off along its dashed blend line (gate.exempt junction). With the edge ~1 m further in, the lane's paving
+  starts 1.5 m beyond the edge, over pavement (w_s3500; c20_s1155 / c20_s1210). One ray reached it at 1.5 m, over the
+  1.0 m junction allowance.
+- **T4 approach wall head (left, s 736): `gates.known_exposures`.** A square concrete head in open grass (c20_s2420,
+  capstrip s 680-790). The wall-ends gate lists it as a known exposure for the owner, never as ok.
+- **Wall gap:** `scenery.wall_gap_margin` 0.02. A declared wall point within 0.52 m of the edge moves out to 0.55 m. The
+  T7 approach wall read 0.4995 m after the 1 cm rounding. This is on the placement side; the gate still measures 0.5 m.
+- **T11 approach right tyre wall: `gap_min` 1.15.** His red put the edge under the stacks' track-side face (-0.18 m);
+  tyre_facings' snap holds it too.
+- **"T7 approach, left tyre wall" removed.** The onboard t066 / t068 / t070 (s ~1955-2112) shows the light-blue concrete
+  wall continuous at the asphalt's end with no tyres in front of it, and t072 shows its end at s ~2157. The dark line on
+  c20_s3850 lies behind that wall. The run had passed round 14A only through the facing snap. The Street View (2011)
+  tyre_wall row at s 2100 is corrected to the wall.
+- **Terrain polygon, T7 complex.**
+  - Its edge + 1 m vertices follow the built edge (`follow_edge`). His red had put T7a's left edge 3 m beyond the
+    round-14A line.
+  - `smooth_m` 40 -> 50, which cleared s 2223 left +1 m: 0.0107 -> 0.0088 m on the same stations.
+  - Vertices 16-19 (the Chute corridor's NW side) are redrawn 2.0 m in from the bridge deck's edge. The lidar class-17
+    returns end 0.5 / 0.75 / -0.25 / +0.25 m from the old vertices; the creek bank (DEM slope over 25 %) is 6-8 m further
+    out. The new vertices are on the deck's concrete shoulder (c20_s3850 / c20_s3905); evidence in
+    `round14b/chute_polygon_redraw.json`.
+  - Redrawn 3.0 m in, the Chute's left pavement edge sat 1.5 m inside the boundary and the joins gate read 2.0-3.9°.
+  - The two Chute points (s 2156 / 2157 left +64 / +52 m) now lie outside the region.
+  - The racing surface between the edges moved 0.0000 m (892 nodes).
+  - The largest heightfield change from smooth_m 50 is 0.31 m at ENU (-470, 406). That is the unmodelled paddock lot left
+    of T7-T7a, in no paved zone, reachable past the wall's end at s ~2157.
+- **The owner's escape road at T9A.** By his words and his two green strokes (w_s3000 / w_s3125) it is the paving
+  straight on past the right-hander's entry, on the course's LEFT. It has no OSM way.
+  - Modelled as a closed road from the midline of his green lines (`round14b/escape_road.json`): half-width 5.4-6.2 m,
+    median 5.6, one paved part of 78 m along s 3054-3175.
+  - Paved, off_course, kind 'escape road', no cones, white lines only (65 / 78 stations painted). Containment allows it
+    along T9A's left.
+  - Part 2's flag had been put on the 2020 fast bypass, the A road on the right of the back straight that joins T9A's exit.
+    That road is now kind 'closed road', still off_course (a lap is invalid if a car uses it).
+
+### Stage-3 gates (final build)
+
+| gate | result |
+|---|---|
+| edge with walls / bridges | ok |
+| world continuity | outside the four declared corners 0.0164 / 0.0184 m; the corners are exempt with their shapes held |
+| owner reference / width / band | 0.350 / 0.379 m, 0.392 m, 0.160 / 0.122 m |
+| barrier gaps | ok (min 0.34 m, the pit wall) |
+| containment | 0 escapes |
+| pit connectivity, signs | ok |
+| wall ends | 41 checked, 40 ok, 1 known exposure (T4 left s 736) |
+| tyre facings / faces | 0 / 0 |
+| wall tops, wall-tyre joins | ok |
+| pavement joins | max step 0.0056 m, 1.63° |
+| surface smoothness | 0.0099 m, 0 over |
+| kerbs on surface | 0.71° |
+| ground marks on surface | 0.008 .. 0.008 m |
+| coverage | MISSING 0, UNSUPPORTED 0 |
+| pit lane | ok |
+
+### T9A: the kerb traversal vitest
+
+- **Before the chicane margin:** "kerb 25 L s3062-3174 off -1: 15.7°"; 17.2° with the escape road modelled.
+- **Which bend.** The corner list's "9a chicane" (T9a) is the second bend, the left-hander at s 3083, R 18.1 m
+  (round 14A 22.1 m). The owner's T9A, the sharp right-hander, is the first, at s ~3043. Kerb 24 (right, s 3019-3044) is its
+  apex kerb. The kerb-25 case's lead-in runs through it.
+- **Racing-line radius** (line -1 / 0 / +1 m):
+
+| bend | this package | round 14A |
+|---|---|---|
+| right-hander, s 3046 | 24.8 / 25.6 / 26.4 m | 31.1 / 31.4 / 31.9 m |
+| left-hander, s 3083 | 17.2 / 16.3 / 15.4 m | 21.5 / 20.6 / 19.7 m |
+
+- **Probe trace (kerb 25, -1 m):**
+  - 31.1 m/s at s 3017, 23.0 m/s at the right-hander's apex.
+  - It leaves the asphalt at s 3055, lateral +9.4 m (left), on the exempt left arc. This is at the edge of the escape road:
+    paved / off-course for 1 m.
+  - It crosses the unpaved triangle between the escape road and the left-hander, rejoins at s 3108, and leaves on the right
+    at s 3116.
+  - It crosses the infield at 15-16 m/s and is airborne over a 2.3 m drop in ~8 m at ENU (273-274, -56). This is real lidar
+    ground, no object (the 9a-to-T10 wall is 5.2 m away).
+  - It lands on the hull, with wheel loads 0 and then 4.6-8.1 kN on two wheels.
+- **Round 14A, same cases** (-1 / 0 / +1 m): kerb 24 2.95 / 3.50 / 3.21°, kerb 25 4.48 / 4.34 / 3.57°.
+- **Onboard, RAZip6S84CM t100 (s ~3055):** the car runs at the right-hander's apex. The camera is ~1.5 m from the apex
+  paint (level pinhole, camera 1.08 m, p50 of the near rows, noisy 0.0-2.6 m; `round14b/t9a_onboard.json`). The left edge
+  is ~12 m away (package width ~14 m).
+- **Chicane margin.** `ghosts.margin_zones` holds the line 1.5 m from the right edge over s ~3000-3120 only (the global
+  1.0 m is unchanged), with that frame as src.
+  - Kerb 25: 14.0 / 8.3 / 6.4°; kerb 24: 3.6 / 4.8 / 4.6°. The full kerb gate passes.
+  - Autopilot lap: 2:24.08 -> 2:24.14 (round 14A 2:23.47).
+  - The line differs from the margin-1.0 line only at s 2990-3216, by up to 0.51 m.
+  - The -1 m run STILL leaves the road at s 3055 and strikes the same bank. It passes because that strike rolls 14.0°.
+- **Other margins, scratch tests only:** lap-wide 1.2 passes (13.1°, lap 2:24.05); lap-wide 1.5 fails (16.8°); lap-wide
+  2.0 passes with the -1 m run staying on the road (worst 10.4°).
+- **Departures elsewhere.** The traces of every kerb / sausage case leave the course on all three tracks: Sonoma 35 of 87
+  cases (T1, T2, T3a, T4, T7, T9, T9A, T11), Laguna 15 of 30 (T2, T6, T8, T9, T11), Buttonwillow 9 cases (T2-T5 kerbs; its
+  package read from the buttonwillow worktree, read only). They roll 2.6-8.2° except T9A, and Buttonwillow kerb 5 at 10.8°.
+  Departing is the test's nature: the probe car follows each line offset at the AI's line speed.
+- **Speed reserve at the tightest corners.** Each corner's line run at the AI speed also leaves the course. "Holds" is the
+  largest speed at which the -1 m path stays on it, between the apex - 20 m and + 35 m:
+
+| corner | AI line speed at the apex | -1 m path holds | ratio |
+|---|---|---|---|
+| Sonoma T9A right-hander (this package) | 23.1 m/s | 18.6 m/s (x0.868) | 0.805 |
+| Sonoma T9A right-hander (round 14A) | 23.8 m/s | 14.7 m/s (x0.677) | 0.615 |
+| Laguna T11 | 19.0 m/s | 16.7 m/s (x0.906) | 0.876 |
+| Laguna T2 | 19.8 m/s | 19.2 m/s (x0.966) | 0.968 |
+| Buttonwillow T2 | 17.7 m/s | 16.3 m/s (x0.936) | 0.918 |
+
+**For the owner (the coordinator takes it to him): at T9A, the measured chicane margin (the package as built), a lap-wide
+margin of 2.0, or a speed reserve in the AI's short-corner model (integration-branch work).** Also open: is the hairpin
+outside apron a kerb? Is the left s 735 bare head right? Are the T9A junction-corner exemptions acceptable?
+
+Tests on this tree (public still round 14A): full vitest 466 passed + 1 expected fail. Python 65 passed. Laguna stage 1
+reproduces (heightfield cmp-identical, track.json d4e8634710813961), and Laguna's ghosts.json reproduces byte for byte
+with the new line code.

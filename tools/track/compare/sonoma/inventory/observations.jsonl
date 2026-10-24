@@ -110,7 +110,7 @@
 {"t":38,"side":"left","kind":"tyre_wall","attrs":{"type":"low dark wall / tyre line","h_m":0.8,"h_method":"jersey-ref","ahead_m":30,"correction":{"round":"scenery round 5 (21 Oct 2026)","was":{"ahead_m":null},"why":"frame t038: the tyre line begins ahead-left (frame left edge, 20-30 m ahead); the T5 tyre wall begins at s ~1082 (c20_s2805)"}},"confidence":0.75,"note":"15-25 m left"}
 {"t":38,"side":"left","kind":"fence","attrs":{"type":"chain-link fence with posts","h_m":2.5,"h_method":"fence-post-ref","ahead_m":30,"correction":{"round":"scenery round 5 (21 Oct 2026)","was":{"ahead_m":null},"why":"frame t038: the fence behind the T5 tyre wall begins 20-30 m ahead-left"}},"confidence":0.7}
 {"t":38,"side":"right","kind":"wall","attrs":{"type":"light grey concrete wall at the foot of the bank","h_m":1.0,"h_method":"jersey-ref"},"confidence":0.9,"note":"T5 right wall begins, 5-8 m right"}
-{"t":38,"side":"right","kind":"fence","attrs":{"type":"fence on the hill top","h_m":1.5,"h_method":"unmeasured"},"confidence":0.6}
+{"t":38,"side":"right","kind":"fence","attrs":{"type":"fence on the hill top","h_m":1.5,"h_method":"unmeasured","ahead_m":15,"correction":{"round":"round 14B part 2 (24 Oct 2026)","was":{"ahead_m":null},"why":"frame t038: the bank-top fence begins at s ~1066, ~15 m ahead (inventory.json row corrected the same way)"}},"confidence":0.6}
 {"t":38,"side":"right","kind":"paint","attrs":{"type":"white edge line"},"confidence":0.9}
 {"t":40,"side":"left","kind":"tyre_wall","attrs":{"type":"black tyre stacks 2-3 high with a rail on top","h_m":0.8,"h_method":"tyre-ref"},"confidence":0.9,"note":"T5 outside, 15-25 m left"}
 {"t":40,"side":"left","kind":"runoff","attrs":{"type":"grass / dry grass"},"confidence":0.8}

@@ -2329,11 +2329,19 @@
    "attrs": {
     "type": "fence on the hill top",
     "h_m": 1.5,
-    "h_method": "unmeasured"
+    "h_method": "unmeasured",
+    "ahead_m": 15,
+    "correction": {
+     "round": "round 14B part 2 (24 Oct 2026)",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "frame t038: the fence on the hill top stands ahead-right; the bank-top fence (declared 'T5, right: fence on the bank top', round 5) begins at s ~1066, ~15 m ahead of the car; the row sat 15.0 m from it, on the gate's tolerance, and fell out when T9A as drawn re-stationed the lap"
+    }
    },
    "confidence": 0.6,
    "t": 38,
-   "s": 1050.9,
+   "s": 1065.9,
    "source": "onboard:RAZip6S84CM@38.0",
    "frame": "t038.jpg",
    "scope": "lap"
@@ -3537,9 +3545,16 @@
   },
   {
    "side": "left",
-   "kind": "tyre_wall",
+   "kind": "wall",
    "attrs": {
-    "type": "tyre walls left on the T7 approach"
+    "type": "tyre walls left on the T7 approach",
+    "correction": {
+     "round": "round 14B part 1b (24 Oct 2026)",
+     "was": {
+      "kind": "tyre_wall"
+     },
+     "why": "Street View is July 2011; the March 2026 onboard t066 / t068 / t070 shows the light-blue concrete wall continuous along the left at the asphalt's end on the T7 approach, no tyres in front of it (HEIGHTS.md rule: keep Street View only where the recent video shows the same structure); the row is that wall"
+    }
    },
    "confidence": 0.6,
    "t": null,

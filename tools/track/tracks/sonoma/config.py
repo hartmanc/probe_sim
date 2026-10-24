@@ -318,12 +318,28 @@ CONFIG = dict(
     # (c20_s3960 / c20_s4015), and the Chute from its T7 mouth across its bridge to its far abutment (the Chute zone + 4.5 m;
     # lidar class 17); the course's left edge + 1 m along T6-T7 and T7a-T8 (the creek bank and the T8 bank stay lidar).
     terrain_override=[
-        dict(name='T7 complex', margin=15.0, ramp=1.5, edge_hold=1.0, edge_band=4.0, smooth_m=40.0, deck_returns=True, deck_fade=6.0,
+        # round 14B part 1b: the boundary vertices drawn at the course edge + 1 m (T6-T7 left 0-3, T7a-T8 left 28-35 and 40, the
+        # two right-edge crossings 41 / 42) follow the built edge (terrain_override.polygon_xy follow_edge): his red moved
+        # T7a's left edge up to 3 m beyond the round-14A line, which put the course across the boundary
+        # round 14B part 1b (coordinator, 24 Oct 2026): vertices 16-19 (the Chute corridor's NW side over the bridge) redrawn 2.0 m
+        # in from the deck's edge: the lidar's class-17 (bridge deck) returns end 0.5 / 0.75 / -0.25 / +0.25 m from the old
+        # vertices along their outward normals (the creek bank, DEM slope > 25 %, only 6-8 m further out), so the old boundary
+        # stood on the deck's edge and the surface's fall to the creek beyond it showed 1.9 m inside (smoothness gate, s 2156 /
+        # 2157 left +64 / +52 m). The new vertices stand on the deck's concrete shoulder and asphalt (c20_s3850 / c20_s3905);
+        # compare/sonoma/round14b/chute_polygon_redraw.json. Was (lat, lon): 16 (38.1656087, -122.4633583), 17 (38.1656797,
+        # -122.4632886), 18 (38.1657498, -122.4632166), 19 (38.1658198, -122.4631458).
+        # round 14B part 1b (coordinator, 24 Oct 2026): smooth_m 40 -> 50, the smallest change that clears the smoothness gate
+        # at s 2156-2157 left +52 / +64 m (a round-14A surface feature by the Chute corridor's boundary that the re-stationed
+        # profiles now cross) and s 2223 left +1 m
+        dict(name='T7 complex', margin=15.0, ramp=1.5, edge_hold=1.0, edge_band=4.0, smooth_m=50.0, deck_returns=True, deck_fade=6.0,
+             follow_edge=[dict(side='left', i0=0, i1=3, off=1.0), dict(side='left', i0=28, i1=35, off=1.0),
+                          dict(side='left', i0=40, i1=40, off=1.0), dict(side='right', i0=41, i1=41, off=1.0),
+                          dict(side='right', i0=42, i1=42, off=1.0)],
              latlon=[(38.1657812, -122.4621941), (38.1658190, -122.4622957), (38.1658764, -122.4624488), (38.1659223, -122.4625562),
                      (38.1659663, -122.4626865), (38.1659106, -122.4627436), (38.1658405, -122.4628156), (38.1657713, -122.4628876),
                      (38.1657013, -122.4629584), (38.1656312, -122.4630304), (38.1655611, -122.4631012), (38.1654929, -122.4631755),
                      (38.1654497, -122.4632886), (38.1653860, -122.4633549), (38.1654479, -122.4634531), (38.1655126, -122.4633869),
-                     (38.1656087, -122.4633583), (38.1656797, -122.4632886), (38.1657498, -122.4632166), (38.1658198, -122.4631458),
+                     (38.165603, -122.4633427), (38.1656727, -122.4632774), (38.1657372, -122.4631965), (38.1658099, -122.4631302),
                      (38.1658890, -122.4630738), (38.1659591, -122.4630030), (38.1660292, -122.4629310), (38.1660849, -122.4628739),
                      (38.1662394, -122.4630384), (38.1663921, -122.4632098), (38.1666167, -122.4631983), (38.1668996, -122.4629813),
                      (38.1666301, -122.4623849), (38.1666867, -122.4623483), (38.1667721, -122.4622763), (38.1668511, -122.4621792),
@@ -335,7 +351,14 @@ CONFIG = dict(
              why='the inactive paving, the islands and the course on one smooth surface (round 14A)'),
     ],
     # ---------------------------------------------------------------- stage 2: racing line only (no logger laps)
-    ghosts=dict(margin=1.0, kerb_margin=1.0, nudge=0.3, jerk_w=3),
+    # round 14B part 2 (coordinator, 24 Oct 2026; kerb traversal gate at the 9a chicane): the onboard at the right-hander's
+    # exit (RAZip6S84CM t100, s ~3055: the car beside the right-hander's apex kerb, the left edge ~12 m away across the
+    # open escape-road mouth) shows the car's centre ~1.5 m from the apex paint (pinhole at camera 1.08 m, p50 of the near
+    # rows; compare/sonoma/round14b/t9a_onboard.json); the line keeps that 1.5 m on the right through the chicane only
+    # (s ~3000-3120), the global 1.0 m margin untouched
+    ghosts=dict(margin=1.0, kerb_margin=1.0, nudge=0.3, jerk_w=3,
+                margin_zones=[dict(side='right', a=(38.1632514, -122.4554393), b=(38.1624706, -122.4548632), margin=1.5,
+                                   src='onboard RAZip6S84CM t100 (s ~3055): car centre ~1.5 m from the right-hander apex paint')]),
     # ---------------------------------------------------------------- stage 3: scenery by rule only (no footage rounds yet)
     # ---------------------------------------------------------------- stage 3: scenery FROM EVIDENCE ONLY (20 Oct 2026)
     # Rule: no object without a cited source (owner, 20 Oct 2026, after the round-2 drive). Every kerb, wall, tyre wall,
@@ -350,6 +373,7 @@ CONFIG = dict(
         # -0.45 .. +0.26 m off the driven surface): every ground mark's stored height on the package's own driven surface
         # after the terrain-override drape (tools/track/gates/groundMarks.ts), paint lines 0.008 m up as the edge lines
         marks_on_surface=dict(lift=0.008, src='round 14B, judge r14a regression (strip_continuation_to_T7)'),
+        wall_gap_margin=0.02,   # round 14B part 1b: declared wall points within 0.52 m of the edge moved out to 0.55 m (1 cm rounding)
         brake_board_corners=[],      # no brake boards in the 2026 onboard at T2 (0:09-0:12), T4 (0:28-0:33), T7a (1:09-1:12), T11 (1:52-1:57)
         corner_boards=False,         # no turn boards either ("Turn 1" / "Turn 7" are painted on the road in Street View)
         flagstand=False,             # no starter's stand over the pit wall at the line (onboard 2:16-2:19)
@@ -594,13 +618,12 @@ CONFIG = dict(
                 (38.1655902, -122.4617079), (38.1656276, -122.4618119), (38.1656699, -122.4619127),
                 (38.1657118, -122.4620137), (38.1657519, -122.4621158), (38.1657757, -122.4621773),
                 ]),
-            dict(name='T7 approach, left tyre wall', kind='tyres', color=TYRE_BLACK, h=1.0, fence=0.0,
-                 src='c20_s3850 / c20_s3905 dark tyre stack 4-10 m beyond the left edge (96 % picked, rms 0.35 m); Street View gd1SNdksCq5QZtwlsrzR7g',
-                 latlon=[
-                (38.1655798, -122.4617596), (38.1656263, -122.4618583), (38.1656577, -122.4619656),
-                (38.1656929, -122.4620707), (38.1657243, -122.4621779), (38.1657594, -122.4622831),
-                (38.1657918, -122.4623896), (38.1658239, -122.4624963), (38.1658571, -122.4626024),
-                ]),
+            # round 14B part 1b (coordinator, 24 Oct 2026): the 'T7 approach, left tyre wall' run (c20_s3850 / c20_s3905 dark
+            # line 4-10 m beyond the left edge, round 5) is removed. The 2026 onboard t066 / t068 / t070 (s ~1955-2112) shows the
+            # light-blue concrete wall continuous at the asphalt's end with no tyres in front of it, and t072 its end at s ~2157;
+            # the dark line lies BEHIND that wall. It only passed round 14A because tyre_facings snapped it onto the wall's
+            # track side; with the owner's red 0.4 m further out there is no room, and a tyre run behind the wall is not a
+            # facing (the tyre-facings gate). The Street View row (2011) that cited it is corrected (inventory.json).
             # round 7 (owner note 39): ONE run from before T5 to the crest. Was two runs ('T5, right: wall before the T5-T6
             # wall', c20_s2805 / s2860 dark line 99 %, rms 0.51 m, s 1062-1150; and this one from s 1149) whose joint stepped
             # 2.6 m toward the track: the downstream start's end face stood exposed. The joint s 1115-1192 re-measured across
@@ -902,7 +925,10 @@ CONFIG = dict(
                      '(97 % picked, rms 0.72 m) on the same line within 0.5-1 m; was round 11\'s (403.5, -139)..(425.9, -197.0), its '
                      'head 5.5 m inside this line (compare/sonoma/round11/win_3385.png)',
                  latlon=[(38.1614790, -122.4530847), (38.1614414, -122.4530526), (38.1614025, -122.4530230), (38.1613616, -122.4529994), (38.1613213, -122.4529738), (38.1612807, -122.4529496), (38.1612384, -122.4529301), (38.1611962, -122.4529102), (38.1611547, -122.4528886), (38.1611141, -122.4528646), (38.1610730, -122.4528415), (38.1610327, -122.4528164), (38.1609930, -122.4527897), (38.1609530, -122.4527638), (38.1609296, -122.4527463), (38.1609312, -122.4527310)]),
-            dict(name='T11 approach, right: tyre wall and catch fence at the edge', kind='tyres', color=TYRE_BLACK, h=1.0, fence=3.5,
+            # round 14B part 1b: the owner's red at the T10-T11 run puts the right edge up to 0.4 m further out than round 14A,
+            # under the stacks' measured track-side face (-0.18 m; the dark line's rms 0.53 m): the run's points within
+            # 1.15 m of the edge move out to 1.20 m (its two rows of stacks face the track: face = 0.91 m inside the line)
+            dict(name='T11 approach, right: tyre wall and catch fence at the edge', kind='tyres', color=TYRE_BLACK, h=1.0, fence=3.5, gap_min=1.15,
                  src='2026 captures c20_s1045 / c20_s1100: wall_measure dark line, 97 % picked, rms 0.53 m; onboard 1:53-1:55 tyre stacks along the right edge with catch fence (an ambulance parked behind at 1:54.6)',
                  latlon=[(38.1609312, -122.4527310), (38.1608446, -122.4527009), (38.1607590, -122.4526659), (38.1606736, -122.4526305), (38.1605876, -122.4525984), (38.1604991, -122.4525756), (38.1604404, -122.4525457)]),
             dict(name='9a, right: tyre wall', kind='tyres', color=TYRE_BLACK, h=1.0, fence=0.0, cut='round 5: ends at s ~3132 where the dark tyre band ends on c20_s0715 / c20_s0770; the light concrete wall with its catch fence runs on from there (onboard 1:42-1:44)',
@@ -1419,8 +1445,17 @@ CONFIG = dict(
             # drivable, no cones at its mouth (mouth_cones empty, no mouth exemption, no cone line), the course's white edge line
             # runs along his red across its mouth (edge_lines are drawn along the whole fitted edge outside kerbs), and a car on
             # it is off the course (off_course: its parts carry the flag, the lap-validity checks count it as off)
+            # round 14B part 2 correction (coordinator, 24 Oct 2026): the owner's escape road is NOT the 2020 fast bypass. By his
+            # words ("on the other side of its entry is an escape road") and strokes (w_s3000 / w_s3125: two green lines running
+            # straight on south-east from the T9A right-hander's entry, on the course's LEFT) it is the paving straight on past
+            # the entry, which has no OSM way. Its centre is the midpoint of his two green lines every 6 m and its half-width
+            # theirs (5.4-6.2 m, median 5.6; compare/sonoma/round14b/escape_road.json; captures c20_o0660 / c20_o0715 /
+            # c20_s0715): paved, off the course, no cones, white lines only. The 2020 fast bypass (the A road on the right of the
+            # back straight, joining T9A's exit) stays as the evidence shows it: a paved closed road, lap invalid if used.
+            dict(name='T9A escape road (straight on past the entry)', ways=[dict(latlon=[[38.1628885, -122.4549141], [38.1628473, -122.4548575], [38.1628122, -122.4548093], [38.1627756, -122.454759], [38.1627352, -122.4547058], [38.1626996, -122.4546599], [38.1626635, -122.4546129], [38.1626248, -122.4545646], [38.162589, -122.4545096], [38.1625617, -122.4544625], [38.162531, -122.4544028], [38.1625069, -122.4543496], [38.1624846, -122.4542935], [38.162463, -122.4542307]], src='owner green strokes w_s3000 / w_s3125 (owner/r14b/merged.json green), midline every 6 m')],
+                 half_width=5.6, surface='asphalt', paint=True, mouth_cones=[], off_course=True, kind='escape road'),
             dict(name='2020 fast bypass (8a to T10)', ways=['834728156', '116036857'], half_width=6.0, surface='asphalt', paint=True,
-                 mouth_cones=[], off_course=True, kind='escape road'),
+                 mouth_cones=[], off_course=True, kind='closed road'),
             dict(name='the Chute (NASCAR short course, T4 to T7)', ways=['834724050', '230287122'], half_width=6.0, surface='asphalt', paint=True,
                  # round 13 part B (owner note 135): the T7 mouth part's painted lines wandered into a trailer parked along its SE wall
                  # (c20_s3850 / c20_s3905); no line is measurable there, so none is drawn on that part
@@ -1570,12 +1605,32 @@ CONFIG = dict(
         # containment gate: paved surfaces the cars can really reach across open ground (no barrier in the captures or the
         # onboard), each with its evidence; everything else must be behind a barrier or a cone line
         gates=dict(
+            # round 14B part 1b: the lap the inventory's stations are on (round 14A's centre, frozen): the coverage gate carries
+            # the rows onto a package whose lap differs by world position (build_track.coverage_gates)
+            inventory_lap='compare/sonoma/inventory_lap.json',
+            # round 14B part 2 (orchestrator): the one bare wall head the evidence shows. The T4 approach wall below the T3a-T4
+            # stands ends square in open grass (c20_s2420 at 0.02 m/px; strip s 680-790 left: no tyres, no other run
+            # upstream; the onboard t022 / t024 does not resolve it). The owner has not decided; nothing is invented. The
+            # wall-ends gate lists it as a known exposure (not as joined / ok); any other exposed head fails
+            known_exposures=[dict(side='left', latlon=(38.1624659, -122.4614208),
+                                  reason='T4 approach wall below the T3a-T4 stands: a square concrete head in open grass',
+                                  evidence='c20_s2420 (0.02 m/px), capstrip s 680-790 left; ledger round 14B part 2; owner to decide')],
             # round 13 (the run-gaps gate): holes in a barrier line that stay, each with its evidence
             openings=[dict(latlon=(38.1583683, -122.4519388), why='T11 hairpin outer wall (south), parts 1 / 2, 14.4 m apart at s ~3674, '
                            '18 m left: the lidar ground steps 1.0 m in 2 m across the hole (a joined wall fails the wall-tops gate, '
                            '0.51 m per m) and c20_s1320 cannot settle whether the dark line there is the wall or the level change; '
                            'left open for the owner (round 13)')],
             allowed=[
+            # round 14B part 2 (owner on T9A: "on the other side of its entry is an escape road ... No cones, just white lines.
+            # If you go off, you get black flagged"): the escape road is open from the course by design along T9A's left
+            dict(target='T9A escape road (straight on past the entry)', side='left', a=(38.1629903, -122.4550683), b=(38.1623431, -122.4541286),
+                 why="T9A, left: the owner's straight-on escape road, open to the course, white lines only, no cones (w_s3000 / w_s3125; c20_o0715 / c20_s0715)"),
+            # round 14B part 1b: the pit-in split before T11, left. The owner's red stops at s ~3479 and resumes at ~3519 (the
+            # lane leaves there along its dashed blend line; gate.exempt left 3480-3610, junction, real); his red brought the
+            # edge ~1 m in at the T11 approach, so at s ~3504 the lane's paving starts 1.5 m beyond the edge (pavement
+            # between, w_s3500 on c20_s1155 / c20_s1210): open to the lane by design, not an escape
+            dict(target='pit lane', side='left', a=(38.1601988, -122.4523774), b=(38.159972, -122.452308),
+                 why='T11 approach, left: the pit-in lane splits off along its dashed blend line (w_s3500; c20_s1155 / c20_s1210)'),
             dict(target='the Chute (NASCAR short course, T4 to T7)', side='left', a=(38.1639396, -122.4634002), b=(38.1644795, -122.4623582),
                  why='T4 exit, left: open dirt paddock to the Chute, no barrier (c20_s2750 / c20_s2805; onboard 0:34-0:38: cones at the Chute mouth, open ground left)'),
             dict(target='the Chute (NASCAR short course, T4 to T7)', side='left', a=(38.1659159, -122.4623605), b=(38.1661564, -122.4626504),
