@@ -2710,16 +2710,16 @@
    "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
   },
   "engine": {
-   "family": "Honda D16Z6 1.6 I4 (Del Sol Si)",
+   "family": "Honda B-series 1.8 I4 (B16/B18 swap)",
    "cylinders": 4,
    "layout": "I4",
-   "displacement_l": 1.6,
+   "displacement_l": 1.8,
    "aspiration": "NA",
-   "redline_rpm": 6800,
-   "stock_power_kw": 93,
+   "redline_rpm": 8000,
+   "stock_power_kw": 120,
    "exhaust_note": "stock muffler",
-   "confidence": "medium",
-   "evidence": "Stock engine assumed for the model"
+   "confidence": "high",
+   "evidence": "Owner (23 Oct 2026): a Honda B-series swap, not the stock D16 and not a V8; which B (B16 1.6 / B18 1.8) not stated, so 1.8 and a VTEC redline are assumed for the sound"
   },
   "colors": {
    "primary": "#1a1a1e",
