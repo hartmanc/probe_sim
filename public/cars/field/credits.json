@@ -1124,12 +1124,13 @@
    "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
   },
   "53": {
-   "title": "Volvo 740",
-   "author": "Dennis Andersson (bigslavehd)",
+   "title": "Volvo 740 (origin: a SketchUp 3D Warehouse model)",
+   "author": "Dennis Andersson (bigslavehd, the Sketchfab uploader)",
    "licence": "CC-BY-4.0",
    "licence_url": "http://creativecommons.org/licenses/by/4.0/",
    "url": "https://sketchfab.com/3d-models/volvo-740-2d44c05d36424ceb96e6da7451df782d",
-   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added",
+   "note": "Origin: a SketchUp 3D Warehouse model (SketchUp-style material names, Portuguese component names), re-uploaded to Sketchfab as an OBJ by bigslavehd (Dennis Andersson) under CC BY 4.0; accepted by the owner on 23 Oct 2026."
   },
   "32_sp": {
    "title": "3D AUDI TT 2001",
@@ -1153,6 +1154,38 @@
    "licence": "CC-BY-4.0",
    "licence_url": "http://creativecommons.org/licenses/by/4.0/",
    "url": "https://sketchfab.com/3d-models/nissan-300zx-z31-1983-lowpoly-for-3d-printing-22d22c8114a340b2a7d9ba6f7ee8a467",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "45": {
+   "title": "Subaru Impreza Hatchback WRX-STI for 3Dprinting",
+   "author": "fishermans garage (fishermans)",
+   "licence": "CC-BY-NC-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by-nc/4.0/",
+   "url": "https://sketchfab.com/3d-models/subaru-impreza-hatchback-wrx-sti-for-3dprinting-294d1602e10e446fb9d66ba3f5cad5fb",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "280": {
+   "title": "Ford Mustang SSP 1987",
+   "author": "Kyaie (SusAmongus69)",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/ford-mustang-ssp-1987-e9b4a542dd85457f86cc490f6823107c",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "515": {
+   "title": "Ford Mustang SSP 1987",
+   "author": "Kyaie (SusAmongus69)",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/ford-mustang-ssp-1987-e9b4a542dd85457f86cc490f6823107c",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "831": {
+   "title": "Ford Mustang SSP 1987",
+   "author": "Kyaie (SusAmongus69)",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/ford-mustang-ssp-1987-e9b4a542dd85457f86cc490f6823107c",
    "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
   }
  }
