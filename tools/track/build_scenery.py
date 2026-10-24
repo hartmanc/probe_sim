@@ -1195,11 +1195,19 @@ def closed_roads(trk, osm):
     ways = {w.get("id"): [x.get("ref") for x in w.iter("nd")] for w in root.iter("way")}
     for road in SC_CFG.get("closed_roads", []):
         for e in road["ways"]:
-            wid, *rng = str(e).split(":")
-            nd = ways[wid]
-            if rng:
-                a, b = nd.index(rng[0]), nd.index(rng[1]); nd = nd[min(a, b):max(a, b) + 1]
-            ll = np.array([nodes[i] for i in nd if i in nodes])
+            if isinstance(e, dict):
+                # a road with no OSM way (Sonoma round 14B: the owner's straight-on escape road at T9A): its centre line
+                # declared from the evidence ({latlon: [...], src}), built like a way
+                if not e.get("src"):
+                    raise SystemExit(f"closed road {road['name']}: a declared centre line needs its src")
+                ll = np.array(e["latlon"], float)
+                e = "declared"
+            else:
+                wid, *rng = str(e).split(":")
+                nd = ways[wid]
+                if rng:
+                    a, b = nd.index(rng[0]), nd.index(rng[1]); nd = nd[min(a, b):max(a, b) + 1]
+                ll = np.array([nodes[i] for i in nd if i in nodes])
             x, y = bl.enu(ll[:, 0], ll[:, 1])
             res = lane_parts(trk, np.c_[x, y], road.get("half_width", 5.0), f"{road['name']} ({e})",
                              clip=(2.5, road.get("max_half", 12.0)))
