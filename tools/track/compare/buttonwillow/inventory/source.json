@@ -1,0 +1,150 @@
+{
+ "video": {
+  "id": "7QS2M-HGSI4",
+  "url": "https://www.youtube.com/watch?v=7QS2M-HGSI4",
+  "title": "Buttonwillow 2026 Lemons, My best lap of the weekend",
+  "channel": "Daniel Peters",
+  "date": "24 Hours of Lemons Button Turrible, 26-27 Sep 2026 (uploaded 29 Sep 2026)",
+  "camera": "Garmin Catalyst hood camera, ~1.05 m above the road (camh from the pit-wall Jersey, t004); Catalyst overlay with lap time, speed and a GPS minimap",
+  "lap_s": 147.48,
+  "stepped": "every 2.0 s from 0:00 to 2:38 (80 frames; headless_capture.ts, 720p-1080p source); lap 21 runs from 0:05.47 to 2:32.95 (Catalyst lap timer 0:00.51 at 0:06, lap 22 timer 0:01.05 at 2:34)"
+ },
+ "pit_video": {
+  "id": "ucmXJu5QKFQ",
+  "url": "https://www.youtube.com/watch?v=ucmXJu5QKFQ",
+  "title": "Lemons 2026 at Buttonwillow - Saturday - Jason Evening Yellow Flag Tour",
+  "channel": "Jason Dosch",
+  "date": "Saturday 26 Sep 2026, end of the race session (uploaded 13 Oct 2026)",
+  "camera": "Garmin Catalyst, roof / windscreen",
+  "pit": "20:31 (1231 s) the car leaves the track left before T11 into the pit lane, 20:40-22:46 the lane end to end behind the pit wall to the starter's stand and the paddock (frames frames/pit_ucm/t<ms>.jpg every 9 s)"
+ },
+ "frames": "frames",
+ "frame_pattern": "t{t:03d}.jpg",
+ "interp": "profile",
+ "anchors": [
+  {
+   "name": "S/F",
+   "t": 5.47,
+   "sf": "start",
+   "how": "Catalyst lap timer: lap 21 at 0:00.51 at 0:06.00 (and lap 22 at 0:01.05 at 2:34.00, lap 21 = 2:27.48); the Catalyst line is within 10 m of the timing loop below the starter's stand"
+  },
+  {
+   "name": "GPS 10s",
+   "t": 10.0,
+   "s": 186.1,
+   "how": "Catalyst GPS dot on frame t010.jpg mapped to the published centre (inventory/catalyst_dots.py), 6.2 m off the centre"
+  },
+  {
+   "name": "GPS 20s",
+   "t": 20.0,
+   "s": 477.2,
+   "how": "Catalyst GPS dot on frame t020.jpg mapped to the published centre (inventory/catalyst_dots.py), 4.9 m off the centre"
+  },
+  {
+   "name": "GPS 30s",
+   "t": 30.0,
+   "s": 690.3,
+   "how": "Catalyst GPS dot on frame t030.jpg mapped to the published centre (inventory/catalyst_dots.py), 3.4 m off the centre"
+  },
+  {
+   "name": "GPS 40s",
+   "t": 40.0,
+   "s": 995.5,
+   "how": "Catalyst GPS dot on frame t040.jpg mapped to the published centre (inventory/catalyst_dots.py), 0.4 m off the centre"
+  },
+  {
+   "name": "GPS 50s",
+   "t": 50.0,
+   "s": 1223.6,
+   "how": "Catalyst GPS dot on frame t050.jpg mapped to the published centre (inventory/catalyst_dots.py), 0.9 m off the centre"
+  },
+  {
+   "name": "GPS 60s",
+   "t": 60.0,
+   "s": 1549.7,
+   "how": "Catalyst GPS dot on frame t060.jpg mapped to the published centre (inventory/catalyst_dots.py), 3.0 m off the centre"
+  },
+  {
+   "name": "GPS 70s",
+   "t": 70.0,
+   "s": 1877.9,
+   "how": "Catalyst GPS dot on frame t070.jpg mapped to the published centre (inventory/catalyst_dots.py), 4.2 m off the centre"
+  },
+  {
+   "name": "GPS 80s",
+   "t": 80.0,
+   "s": 2231.0,
+   "how": "Catalyst GPS dot on frame t080.jpg mapped to the published centre (inventory/catalyst_dots.py), 2.1 m off the centre"
+  },
+  {
+   "name": "GPS 90s",
+   "t": 90.0,
+   "s": 2620.2,
+   "how": "Catalyst GPS dot on frame t090.jpg mapped to the published centre (inventory/catalyst_dots.py), 6.3 m off the centre"
+  },
+  {
+   "name": "GPS 100s",
+   "t": 100.0,
+   "s": 2949.4,
+   "how": "Catalyst GPS dot on frame t100.jpg mapped to the published centre (inventory/catalyst_dots.py), 3.9 m off the centre"
+  },
+  {
+   "name": "GPS 110s",
+   "t": 110.0,
+   "s": 3328.6,
+   "how": "Catalyst GPS dot on frame t110.jpg mapped to the published centre (inventory/catalyst_dots.py), 0.6 m off the centre"
+  },
+  {
+   "name": "GPS 120s",
+   "t": 120.0,
+   "s": 3570.7,
+   "how": "Catalyst GPS dot on frame t120.jpg mapped to the published centre (inventory/catalyst_dots.py), 1.8 m off the centre"
+  },
+  {
+   "name": "GPS 130s",
+   "t": 130.0,
+   "s": 3913.8,
+   "how": "Catalyst GPS dot on frame t130.jpg mapped to the published centre (inventory/catalyst_dots.py), 0.7 m off the centre"
+  },
+  {
+   "name": "GPS 140s",
+   "t": 140.0,
+   "s": 4308.0,
+   "how": "Catalyst GPS dot on frame t140.jpg mapped to the published centre (inventory/catalyst_dots.py), 5.8 m off the centre"
+  },
+  {
+   "name": "GPS 150s",
+   "t": 150.0,
+   "s": 4593.1,
+   "how": "Catalyst GPS dot on frame t150.jpg mapped to the published centre (inventory/catalyst_dots.py), 5.0 m off the centre"
+  },
+  {
+   "name": "T2",
+   "t": 26.0,
+   "corner": "T2",
+   "how": "the hairpin's minimum speed (38 mph on the overlay at 0:26, 42 at 0:24, 44 at 0:28)"
+  },
+  {
+   "name": "T9",
+   "t": 113.5,
+   "corner": "T9",
+   "how": "Star Mazda: 49 mph at 1:52, 44 at 1:54 (minimum), apex kerb right alongside at 1:54 (frames t112, t114)"
+  },
+  {
+   "name": "S/F end",
+   "t": 152.95,
+   "sf": "end",
+   "how": "lap 22 Catalyst timer 0:01.05 at 2:34.00"
+  }
+ ],
+ "corrections": [
+  {
+   "round": "stage 1 round 5 (20 Oct 2026)",
+   "what": "GPS anchors re-mapped onto the published package (public/tracks/buttonwillow); they were on the run-5 diagnostic candidate"
+  }
+ ],
+ "observations": [
+  "observations.jsonl",
+  "pit.jsonl"
+ ]
+}

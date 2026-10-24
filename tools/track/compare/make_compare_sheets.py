@@ -166,6 +166,8 @@ def main():
     ppairs = []
     for sh in [s for s in walk['shots'] if s['side'] == 'pit']:
         fr = min(pit_frames, key=lambda r: min(abs(r['s'] - sh['s']), L - abs(r['s'] - sh['s'])), default=None)
+        if fr is not None and min(abs(fr['s'] - sh['s']), L - abs(fr['s'] - sh['s'])) > 30:
+            fr = None   # the pit-lane video does not cover this part of the lane: no frame rather than a far one
         pr = sorted({f"{r['side'][0].upper()} {r['kind']}" + (f" {r['attrs'].get('h_m')}m" if r['attrs'].get('h_m') else '') for r in pit_frames
                      if min(abs(r['s'] - sh['s']), L - abs(r['s'] - sh['s'])) <= 25})
         cap = [f"{sh.get('label', 'pit lane')}, abeam s {sh['s']:.0f} ({corner_at(track, sh['s'])})",

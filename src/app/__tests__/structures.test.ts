@@ -90,6 +90,17 @@ describe('structure kit', () => {
     expect(f.bounds().max[2]).toBeCloseTo(9, 6);
   });
 
+  it('block: discrete windows and doors (Buttonwillow tower, judge r5) instead of the continuous band', () => {
+    const plain = new Soup(); block({ ...blk, bands: [] }, plain);
+    const win = new Soup(); block({ ...blk, l: 14, w: 14, bands: [], windows: { w: 1.2, pitch: 4.5, z0: 1, z1: 2.2 } }, win);
+    const base = new Soup(); block({ ...blk, l: 14, w: 14, bands: [] }, base);
+    // 14 m faces: floor((14 - 1.2) / 4.5) = 2 windows a face, 4 faces, 2 triangles each
+    expect(win.tris - base.tris).toBe(2 * 4 * 2);
+    const door = new Soup(); block({ ...blk, l: 14, w: 14, bands: [], doors_at: [{ face: -1, at: 0, w: 1, h: 2.1 }] }, door);
+    expect(door.tris - base.tris).toBe(2);
+    expect(plain.tris).toBe(10 + 4 * 10);   // no bands: body and parapet only
+  });
+
   it('fence, masts, paint and boards', () => {
     const solid = new Soup(), fab = new Soup();
     fence(all[4] as never, solid, fab);

@@ -43,9 +43,10 @@ from geo import log as _log
 U = np.arange(-4.5, 4.0001, 0.04)
 
 
-def bands(v, valid):
+def bands(v, valid, U=U):
     """v: (len(U), 3) RGB outward along the normal; valid: bool per sample. Returns the painted bands with asphalt just
-    inside them: [(inner offset, outer offset from the current edge, has red, width)]."""
+    inside them: [(inner offset, outer offset from the current edge, has red, width)]. U: the offsets sampled (the
+    module default, or a kerb zone's own search window, spline.kerb_search)."""
     br = v.mean(1); sat = v.max(1) - v.min(1)
     grey = (sat < 30) & valid
     inner = (U < -1.5) & grey
@@ -82,26 +83,62 @@ def bands(v, valid):
 
 
 KEEP_W = 400.0
-# the owner's traced edges (spline.owner_edges, Buttonwillow 21 Oct 2026, ported to this branch for Sonoma round 14B;
-# build_track loads them into sp['_owner']): [{side, lo, hi, pts (world xy, n x 2), kerb_inside: [(lo, hi[, shift])],
-# kerb_w}] on the current centre's stations. Empty (every config without spline.owner_edges): the fit is unchanged.
+
+
+# asphalt_end detector parameters (spline.asphalt_end {jump, sat_max, lo, hi}); the defaults are the detector every
+# circuit used until 20 Oct 2026 (Sonoma's T7 wall-side asphalt). Buttonwillow's asphalt meets pale dusty dirt with a
+# smaller step (jump 8, sat_max 40, window -2.0..+2.0 m: on eight stretches of the 2026 captures 81 % of stations hit,
+# 98 % of hits within 0.25 m of the station's median over captures, against 65 % / 99 % with the defaults)
+AEND = dict(jump=10.0, sat_max=30.0, lo=-1.2, hi=2.0)
+MASK = []
+# kerb zones whose blocks lie beyond the default search window of the current edge (spline.kerb_search [(side, lo, hi,
+# (w_lo, w_hi), src)], Buttonwillow 20 Oct 2026: block-line kerbs laid on wider pavement, the paved apron beyond them
+# fitted as track by asphalt_end; the blocks 2-10 m inside that edge). The zone's feature kind reads its evidence over
+# the window: bands for kerb / kerb_band, the asphalt_end / warm_end detectors over the whole window for those kinds.
+KSEARCH = []
+# the owner's traced edges (spline.owner_edges, Buttonwillow 21 Oct 2026, also Sonoma round 14B; build_track loads them
+# into sp['_owner']): [{side, lo, hi, pts (world xy, n x 2), kerb_inside: [(lo, hi[, shift])], kerb_w}] on the current
+# centre's stations. Empty (every config without spline.owner_edges): the fit is unchanged.
 OWNER = []
 KERB_RAMP = 6     # stations over which a kerb_inside shift ramps in at each end
 KERB_STEP = 0.08  # a measured-shift kerb zone (kerb_inside (side, lo, hi, shift), Buttonwillow round 10): the shift ramps
                   # in OUTSIDE the zone at most this much per station, so the whole measured kerb lies inside the edge
                   # and the edge-gate step (0.10 m per station) holds
 OWNER_W = 40.0   # anchor weight per owner station (40 unit rows: his line outweighs the third-difference penalty;
-                 # as plain rows, 8 copies left 0.5-0.7 m bumps of 10-15 m unfollowed, Buttonwillow run 38)
+                 # as plain rows, 8 copies left 0.5-0.7 m bumps of 10-15 m unfollowed, run 38, and copies swamped the side's kind counts, run 39)
+# stations whose capture readings are not used, per side (spline.mask [(side, lo, hi, src)]): an object beside the edge
+# that the detector reads as the edge (Buttonwillow's T11-approach marshal mound, 20 Oct 2026); empty = every reading
 
 
-def asphalt_end(v, valid):
-    """offset where the dark asphalt ends: first point whose next 0.4 m is 10+ brighter than the 0.3-1.0 m before it."""
+def asphalt_end(v, valid, U=U, win=None):
+    """offset where the dark asphalt ends: first point whose next 0.4 m is `jump`+ brighter than the 0.3-1.0 m before it.
+    U / win: a search zone's own offsets and window (spline.kerb_search); default the module's."""
     br = v.mean(1); sat = v.max(1) - v.min(1); st = 0.04; q = lambda m: max(1, int(round(m / st)))
+    jump, sat_max, lo, hi = AEND['jump'], AEND['sat_max'], AEND['lo'], AEND['hi']
+    if win is not None: lo, hi = win
     for k in range(q(1.0), len(U) - q(0.4)):
         if not valid[k - q(1.0):k + q(0.4)].all(): continue
-        if U[k] < -1.2 or U[k] > 2.0: continue   # near the current edge only (the rubbered line brightens gently over 4 m)
+        if U[k] < lo or U[k] > hi: continue   # near the current edge only (the rubbered line brightens gently over 4 m)
         before = np.median(br[k - q(1.0):k - q(0.3)]); after = br[k:k + q(0.4)]
-        if (after > before + 10).mean() > 0.9 and np.median(sat[k:k + q(0.4)]) < 30: return float(U[k])
+        if (after > before + jump).mean() > 0.9 and np.median(sat[k:k + q(0.4)]) < sat_max: return float(U[k])
+    return None
+
+
+WARM_THR = 16.0   # R - B (8-bit) above which a pixel reads as dirt (spline.warm_thr; Buttonwillow, 20 Oct 2026)
+
+
+def warm_end(v, valid, thr=None, U=U, win=(-1.5, 2.5)):
+    """offset where the grey asphalt ends against warm dirt (feature 'warm_end'; circuits with no painted edge line whose
+    asphalt and dirt have the same brightness, Buttonwillow: asphalt R - B +8..+12, dirt +20..+31 on the 2026 captures):
+    the first point, from 1.5 m inside the current edge outward to 2.5 m beyond it, whose next 0.4 m reads warmer than
+    thr on 80 % of its samples while the 0.3-1.0 m before it has a median at least 5 below thr."""
+    thr = WARM_THR if thr is None else thr
+    w = v[:, 0] - v[:, 2]; st = 0.04; q = lambda m: max(1, int(round(m / st)))
+    for k in range(q(1.0), len(U) - q(0.4)):
+        if not valid[k - q(1.0):k + q(0.4)].all(): continue
+        if U[k] < win[0] or U[k] > win[1]: continue
+        if np.median(w[k - q(1.0):k - q(0.3)]) <= thr - 5 and (w[k:k + q(0.4)] >= thr).mean() >= 0.8:
+            return float(U[k])
     return None
 
 
@@ -295,6 +332,14 @@ def feature_at(features, side, k, n):
     return None
 
 
+def ksearch_at(side, k, n):
+    """the kerb_search window covering station k on `side`, or None"""
+    for z in KSEARCH:
+        if z[0] == side and (k - z[1]) % n <= (z[2] - z[1]) % n:
+            return z[3]
+    return None
+
+
 def gather(C, NL, hl, hr, tiles, features, line_off, mpp, U_=None):
     """Boundary evidence along every station's normal on every capture: for each side a list of (station, capture,
     [candidate half-widths], [kinds]). Features 'asphalt_end' and 'kerb' choose the kind of evidence; 'keep' is not a
@@ -319,13 +364,44 @@ def gather(C, NL, hl, hr, tiles, features, line_off, mpp, U_=None):
             V = bilinear(im, np.clip(px[rows], 1, W - 2), np.clip(py[rows], 1, H - 2))
             val = inside[rows] & mask[np.clip(np.round(py[rows]).astype(int), 0, H - 1), np.clip(np.round(px[rows]).astype(int), 0, W - 1)]
             for v, ok, i in zip(V, val, rows):
+                if MASK and any(m[0] == side and (ks[i] - m[1]) % n <= (m[2] - m[1]) % n for m in MASK): continue
+                if KSEARCH and ksearch_at(side, ks[i], n) is not None: continue
                 feat = feature_at(features, side, ks[i], n)
-                if feat == 'asphalt_end':
-                    e = asphalt_end(v, ok)
+                if feat in ('asphalt_end', 'warm_end'):
+                    e = asphalt_end(v, ok) if feat == 'asphalt_end' else warm_end(v, ok)
                     if e is not None: raw[side].append((i, ti, [(e, e + 0.1, False, -1.0)]))
                     continue
                 bl = bands(v, ok)
                 if bl: raw[side].append((i, ti, bl))
+    # kerb zones with their own search window (KSEARCH): the same band reading over the zone's offsets
+    for ti, t in enumerate(tiles):
+        im = None
+        for zs, z0, z1, win, *_ in KSEARCH:
+            sg = 1 if zs == 'left' else -1; hw = hl if zs == 'left' else hr
+            Uz = np.arange(win[0], win[1] + 1e-4, 0.04)
+            zk = (np.arange(z0, z1 + 1) % n)
+            lat = sg * (hw[zk][:, None] + Uz[None, :])
+            X = C[zk, 0:1] + lat * NL[zk, 0:1]; Y = C[zk, 1:2] + lat * NL[zk, 1:2]
+            if not (np.hypot(X.mean(1) - t['x'], Y.mean(1) - t['y']) <= 100).any(): continue
+            if im is None:
+                im = np.asarray(Image.open(t['path']).convert('RGB')).astype(np.float32)
+                H, W = im.shape[:2]; mask = t['mask'](H, W)
+            px = W / 2 + (X + t['dx'] - t['x']) / mpp; py = H / 2 - (Y + t['dy'] - t['y']) / mpp
+            inside = (px >= 1) & (px < W - 2) & (py >= 1) & (py < H - 2)
+            rows = np.where(inside.mean(1) > 0.6)[0]
+            if not len(rows): continue
+            V = bilinear(im, np.clip(px[rows], 1, W - 2), np.clip(py[rows], 1, H - 2))
+            val = inside[rows] & mask[np.clip(np.round(py[rows]).astype(int), 0, H - 1), np.clip(np.round(px[rows]).astype(int), 0, W - 1)]
+            for v, ok, r in zip(V, val, rows):
+                i = int(zk[r])
+                if MASK and any(m[0] == zs and (i - m[1]) % n <= (m[2] - m[1]) % n for m in MASK): continue
+                fz = feature_at(features, zs, i, n)
+                if fz in ('asphalt_end', 'warm_end'):
+                    e = asphalt_end(v, ok, Uz, win) if fz == 'asphalt_end' else warm_end(v, ok, None, Uz, win)
+                    if e is not None: raw[zs].append((i, ti, [(e, e + 0.1, False, -1.0)]))
+                    continue
+                bl = bands(v, ok, Uz)
+                if bl: raw[zs].append((i, ti, bl))
     obs = {'left': [], 'right': []}
     for side, hw in (('left', hl), ('right', hr)):
         red_st = np.zeros(n, bool)
@@ -336,6 +412,10 @@ def gather(C, NL, hl, hr, tiles, features, line_off, mpp, U_=None):
             feat = feature_at(features, side, ks[i], n)
             if feat == 'kerb':
                 c = [(u1, 2) for u0, u1, has_red, w in bl if has_red and 0.3 <= w <= 2.6]
+            elif feat == 'kerb_band':
+                # a kerb whose coloured blocks do not read as red on the captures (Buttonwillow's red / white / blue
+                # blocks are grey there): every band 0.3-2.6 m wide counts by its outer limit, as in a red kerb zone
+                c = candidates(bl, line_off, True)
             else:
                 c = candidates(bl, line_off, kerb_at[i])
             if c: obs[side].append((i, ti, [hw[i] + e for e, _ in c], [kd for _, kd in c]))
@@ -347,7 +427,7 @@ def gather(C, NL, hl, hr, tiles, features, line_off, mpp, U_=None):
             if not r:
                 continue
             # the owner's line replaces every other reading in its window on that side where he drew it (within 3
-            # stations of a reading of his); where he drew nothing the captures stand
+            # stations of a reading of his); where he drew nothing (T4 left 1115-1137) the captures stand
             inwin = {k % n for k in range(w['lo'], w['hi'] + (n if w['hi'] < w['lo'] else 0) + 1)}
             drawn = {(k + d) % n for k in r for d in range(-3, 4)} & inwin
             obs[side] = [o for o in obs[side] if o[0] not in drawn]
@@ -372,7 +452,7 @@ def owner_chains(pts, link=3.0, min_pts=5):
     for i, j in cKDTree(P).query_pairs(link):
         par[f(i)] = f(j)
     r = np.array([f(i) for i in range(len(P))])
-    # a line has many points; a lone pixel cluster is no line
+    # a line has many points; a lone pixel cluster (T4: one point) is no line
     return [P[r == u] for u in np.unique(r) if (r == u).sum() >= min_pts]
 
 
@@ -384,7 +464,8 @@ def owner_readings(C, NL, w, n):
     sg = 1 if w['side'] == 'left' else -1
     if w.get('chains'):
         # the drawing's continuous lines (owner_chains), each given to the side of the CURRENT centre that holds most of
-        # it: the JSON's left / right labels came from the centre it was traced against
+        # it: the JSON's left / right labels came from the centre it was traced against, which at T4 1118-1137 sat
+        # beside the right line (round 5: the right line's 1118-1137 points carried the 'left' label)
         T = cKDTree(C)
         keep = []
         for Q in w['chains']:
@@ -413,7 +494,8 @@ def owner_readings(C, NL, w, n):
                     add = max(add, shift[0] * (1.0 - d / (r + 1)))
                 continue
             if (kk - a) % n <= (b - a) % n:
-                # the kerb's width, ramped in over KERB_RAMP stations at each end of the run
+                # the kerb's width, ramped in over KERB_RAMP stations at each end of the run (a 0.9 m step in a reading
+                # is no edge: the asphalt end runs on past the block ends; round 5, run 41)
                 e = min((kk - a) % n, (b - kk) % n) + 1
                 v += w.get('kerb_w', 0.9) * min(1.0, e / KERB_RAMP)
         out[int(kk)] = v + add
@@ -470,17 +552,28 @@ def ranges(mask, n):
     return out
 
 
-def fit_periodic(C, NL, hl, hr, tiles, features, sp, mpp, anchors=None, log=_log, hold=None):
+def fit_periodic(C, NL, hl, hr, tiles, features, sp, mpp, anchors=None, log=_log, obs=None, anchors_cover=True, hold=None):
     """ONE periodic robust spline per side over the whole lap (no runs, no seam, no post-fit overwrite). anchors:
     {'left'|'right': (stations, half-widths, weights)} from declared straights and measured shapes, inside the fit.
     Returns (hl, hr, report) with per-side metrics for the gates (build_track.py): share of associated observations
     within 0.25 m, share of capture rows with a band within 1.2 m, coverage, gaps, waviness and kink per station.
-    hold (the local refit, config centre.local; None: off): {'w': (n,) weights, 'left' / 'right': (n,) half-widths}; the
-    returned edge is w * fit + (1 - w) * held, and every metric is measured on that returned edge."""
+    hold (the local refit, config centre.local, Sonoma round 11 / 14B; None: off): {'w': (n,) weights, 'left' / 'right':
+    (n,) half-widths}; the returned edge is w * fit + (1 - w) * held, and every metric is measured on that returned edge."""
+    global WARM_THR
     n = len(C); knot = sp['knot']; K = int(round(n / knot))
+    if sp.get('warm_thr') is not None: WARM_THR = float(sp['warm_thr'])
+    AEND.update(jump=10.0, sat_max=30.0, lo=-1.2, hi=2.0); AEND.update(sp.get('asphalt_end') or {})
+    MASK[:] = list(sp.get('mask') or [])
+    KSEARCH[:] = list(sp.get('kerb_search') or [])
     OWNER[:] = list(sp.get('_owner') or [])
+    for z in KSEARCH:
+        if len({feature_at(features, z[0], k, n) for k in (z[1], z[2])}) != 1:
+            raise SystemExit(f'spline.kerb_search {z[:4]}: its ends lie in different feature zones')
     win = sp.get('search', (-4.5, 4.0)); U_ = np.arange(win[0], win[1] + 1e-4, 0.04)
-    obs = gather(C, NL, hl, hr, tiles, features, sp['line_off'], mpp, U_)
+    if obs is None:
+        obs = gather(C, NL, hl, hr, tiles, features, sp['line_off'], mpp, U_)
+    # obs given (width_model.py, round 9): the caller's own evidence rows; anchors_cover False: its constraints are
+    # not evidence, coverage and gaps count the observations only
     xs = np.arange(n, dtype=float); Bx = periodic_basis(xs, K, n)
     tight = tight_mask(C)
     rep, out = {}, {}
@@ -507,8 +600,13 @@ def fit_periodic(C, NL, hl, hr, tiles, features, sp, mpp, anchors=None, log=_log
         if hold is not None:   # the observations are associated with the edge that is returned (held outside the window)
             cur = hold['w'] * cur + (1.0 - hold['w']) * hold[side]
         # an owner window's stations associate his reading wherever it lies (his line is the evidence there; the outer
-        # centre refits carry the edge to it); elsewhere the gate schedule below (zreach 0: unchanged)
+        # centre refits carry the edge to it).
+        # a search zone's stations associate over the zone's whole window (its blocks may lie metres from the prior;
+        # the outer centre refits carry the edge there step by step); elsewhere the gate schedule below
         zreach = np.zeros(n)
+        for z in KSEARCH:
+            if z[0] == side:
+                zreach[np.arange(z[1], z[2] + 1) % n] = max(abs(z[3][0]), abs(z[3][1]))
         for w in OWNER:
             if w['side'] == side:
                 zreach[np.arange(w['lo'], w['hi'] + (n if w['hi'] < w['lo'] else 0) + 1) % n] = 50.0
@@ -526,7 +624,7 @@ def fit_periodic(C, NL, hl, hr, tiles, features, sp, mpp, anchors=None, log=_log
         allres = np.array([min(abs(y - cur[i]) for y in c) for i, _, c, _ in O])
         assoc = allres <= 1.2   # rows whose nearest band lies within the association window: observations OF this edge
         covered = np.zeros(n, bool); covered[xo.astype(int)] = True
-        if xa is not None: covered[xa.astype(int) % n] = True     # a declared straight / shape is evidence too
+        if xa is not None and anchors_cover: covered[xa.astype(int) % n] = True     # a declared straight / shape is evidence too
         gaps = ranges(~covered, n); glen = [(b - a) % n + 1 for a, b in gaps]
         gi = int(np.argmax(glen)) if glen else 0
         qq = local_quad_resid(np.r_[cur[-25:], cur, cur[:25]], 25)[25:-25]
@@ -542,10 +640,39 @@ def fit_periodic(C, NL, hl, hr, tiles, features, sp, mpp, anchors=None, log=_log
                          gap_at=gaps[gi] if glen else None, wave_rms=float(roll[loose].max()), wave_peak=float(np.abs(qq)[loose].max()),
                          kink=float(kink[loose].max()), kink_all=float(kink.max()), kink_at=int(np.argmax(np.where(loose, kink, 0))),
                          seam_kink=float(kink[0]), roll=roll, qq=qq, kinkv=kink, loose=loose, gaps=list(zip(gaps, glen)))
-        # the associated readings' stations and signed residuals (diagnosis dumps, work/; never in the package)
+        # the associated readings' feature kinds and signed residuals (edge_gate.unpainted_side / bias_gate)
         rep[side]['assoc_x'] = xo.astype(int); rep[side]['assoc_res'] = yo - cur[xo.astype(int)]
-        own_k = {int(i_) for i_, ti_, c_, kd in O if ti_ == -1 and kd and kd[0] == 'owner'}
-        rep[side]['assoc_owner'] = np.array([int(i) in own_k for i in xo.astype(int)], bool)
+        own_k = {i for i, ti, c, kd in O if kd and kd[0] == 'owner'}
+        rep[side]['assoc_kind'] = ['owner' if int(i) in own_k else feature_at(features, side, int(i), n) for i in xo.astype(int)]
+        # the associated readings that are the owner's own (capture index -1; Sonoma round 14B, build_track's owner reports)
+        own_o = {int(i_) for i_, ti_, c_, kd in O if ti_ == -1 and kd and kd[0] == 'owner'}
+        rep[side]['assoc_owner'] = np.array([int(i) in own_o for i in xo.astype(int)], bool)
+        from edge_gate import unpainted_side
+        rep[side]['unpainted'] = unpainted_side(rep[side]['assoc_kind'])
+        if sp.get('report_by_kind') or rep[side]['unpainted']:
+            # report only (owner's gate decision for unpainted edges, Buttonwillow 20 Oct 2026; no gate reads these):
+            # the measures split by the evidence kind of each row's station, asphalt_end's 0.6 m share and its
+            # agreement with the station's own median over captures
+            kind = np.array([feature_at(features, side, int(i), n) or 'default' for i, _, _, _ in O], dtype=object)
+            rows_i = np.array([int(i) for i, _, _, _ in O])
+            gated = set(xo.astype(int).tolist()); bk = {}
+            for kname in sorted(set(kind.tolist())):
+                m = kind == kname
+                st_k = np.array([s_ for s_ in range(n) if (feature_at(features, side, s_, n) or 'default') == kname])
+                d = dict(rows=int(m.sum()), within_assoc=float(np.mean(allres[m & assoc] <= 0.25)) if (m & assoc).any() else float('nan'),
+                         within06_assoc=float(np.mean(allres[m & assoc] <= 0.6)) if (m & assoc).any() else float('nan'),
+                         coverage=float(np.mean([s_ in gated for s_ in st_k])) if len(st_k) else float('nan'), stations=int(len(st_k)))
+                if kname == 'asphalt_end':
+                    med = {}
+                    for (i, _, c, _), r in zip(O, allres):
+                        med.setdefault(int(i), []).append(c[int(np.argmin(np.abs(np.array(c) - cur[i])))])
+                    dev = [abs(v - np.median(vs)) <= 0.25 for vs in med.values() if len(vs) >= 2 for v in vs]
+                    d['within025_station_median'] = float(np.mean(dev)) if dev else float('nan')
+                bk[kname] = d
+                log(f"   report {side} {kname:12s}: {d['rows']} rows on {d['stations']} stations; within 0.25 m {d['within_assoc'] * 100:.1f} %, "
+                    f"within 0.6 m {d['within06_assoc'] * 100:.1f} % of the associated; coverage {d['coverage'] * 100:.0f} %"
+                    + (f"; readings within 0.25 m of their station's median over captures {d['within025_station_median'] * 100:.1f} %" if 'within025_station_median' in d else ''))
+            rep[side]['by_kind'] = bk
         out[side] = cur
         log(f"{side:5s} periodic fit: {len(xo)} of {len(O)} capture rows kept; within 0.25 m: {rep[side]['within_gated'] * 100:.1f} % of the "
             f"associated, {rep[side]['within'] * 100:.1f} % of the {rep[side]['assoc_share'] * 100:.0f} % of rows with a band within 1.2 m; "

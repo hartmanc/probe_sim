@@ -13,7 +13,8 @@ Identity and sources (Stage 0)
   loop_ways [way id, ...]                    the OSM highway=raceway ways forming the Lemons loop, stitched by shared end
                                              nodes starting at the first; the loop is then turned to `direction`. An
                                              entry 'way:from_node:to_node' takes the part of a way between two of its
-                                             nodes (a loop that leaves a long way for a bypass and rejoins it)
+                                             nodes (a loop that leaves a long way for a bypass and rejoins it); with
+                                             from_node after to_node the part is driven against the way's node order
   pit_lane_way                               OSM name of the pit-lane way (scenery: pit lane, pit wall, edge lines)
   dem_tiles [url, ...]                       USGS 3DEP 1 m DEM tiles (read as windows over HTTP, cached)
   lidar_ept, lidar_survey                    Entwine point tiles of the same survey; survey name for notes
@@ -57,16 +58,21 @@ Geometry (Stage 1)
   centre_captures ('z20' | 'clean'), centre_registration ('per_capture' | 'common')
   repave_fixes [(a, b, crest from, crest to, why)]
   captures {z20_dir, z20_index, z20_mask, clean_dir, clean_index, mpp, common_shift, exclude, cursor_boxes}
-  spline {runs [(lo, hi)], knot, lam, huber, line_off, prior, init_stiff, captures, owner_edges, owner_mouths}
+  spline {runs [(lo, hi)], knot, lam, huber, line_off, prior, init_stiff, captures, owner_edges, owner_mouths, asphalt_end {jump, sat_max, lo, hi},
+          warm_thr, mask [(side, lo, hi, src)], width_model {junctions [(side, lo, hi, kind, src)], ...} (width_model.py)}   (asphalt_end / warm_thr: detector parameters of those features;
+          absent = the defaults; mask: stations whose capture readings are dropped, an object beside the edge, with its capture)
           owner_edges [{file, lo, hi, kerb_inside [(side, lo, hi[, shift])], local, src}]: the owner's traced edges
           (compare/owner_edges.py / owner_merge.py JSON under tracks/<id>/; Buttonwillow 21 Oct 2026, Sonoma round 14B):
           over [lo, hi] his red replaces the capture readings where he drew and anchors the fit (edges_spline.OWNER_W);
           the file's content enters the geometry hash; local=True: only in the local refit (centre.local) whose window
           it overlaps. owner_mouths: a compare/owner_mouths.py file whose 'red across' segments the owner-reference gates
           leave out (+-12 stations; edge_gate.OWNER_REF, Buttonwillow round 10; enters the geometry hash)
-  features [(side, lo, hi, 'keep' | 'asphalt_end' | 'kerb', why[, {local | replaced_by_local}])]   keep: the prior is held (legacy reproduction
+  features [(side, lo, hi, 'keep' | 'asphalt_end' | 'warm_end' | 'kerb' | 'kerb_band', why[, {local | replaced_by_local}])]   keep: the prior is held (legacy reproduction
                                              only; the fitted method ignores it); asphalt_end: where the dark asphalt
-                                             ends; kerb: red-band (kerb outer limit) candidates only
+                                             ends; kerb: red-band (kerb outer limit) candidates only; warm_end: where
+                                             grey asphalt meets warm dirt (the warmth step, spline.warm_thr); kerb_band:
+                                             a kerb whose blocks are not red on the captures, every 0.3-2.6 m band by
+                                             its outer limit (Buttonwillow, 20 Oct 2026)
   prior {bridge_win, bridge_skip [first-centre stations], extra_bridges [first-centre stations of bridges OSM does not
          map], first_edge [(side, lo, hi, why)], interp [(side, lo, hi, why)]}
   shapes [{side, knots [(station, half-width)], blend, why, fitted_only}]   measured half-widths; in the fitted method
@@ -310,6 +316,16 @@ def remap_stations(cfg, n, length_m=None, C=None):
         for key in ('first_edge', 'interp'):
             p[key] = [(a, st(lo), st(hi)) + tuple(rest) for a, lo, hi, *rest in p.get(key, [])]
     sp = c['spline']
+    # stations of the edge fit's masks and kerb-search zones (Buttonwillow, 20 Oct 2026; no other circuit has them)
+    if sp.get('mask'):
+        sp['mask'] = [(a, st(lo), st(hi)) + tuple(rest) for a, lo, hi, *rest in sp['mask']]
+    if sp.get('kerb_search'):
+        sp['kerb_search'] = [(a, st(lo), st(hi)) + tuple(rest) for a, lo, hi, *rest in sp['kerb_search']]
+    for w in sp.get('owner_edges') or []:   # the owner's traced edge windows (Buttonwillow, 21 Oct 2026)
+        w['lo'], w['hi'] = st(w['lo']), st(w['hi'])
+        w['kerb_inside'] = [(a, st(lo), st(hi)) + tuple(rest) for a, lo, hi, *rest in w.get('kerb_inside', [])]
+    if sp.get('width_model'):   # the width model's junction ranges (Buttonwillow round 9, 22 Oct 2026)
+        sp['width_model']['junctions'] = [(a, st(lo), st(hi)) + tuple(rest) for a, lo, hi, *rest in sp['width_model'].get('junctions', [])]
     if sp.get('runs'):
         sp['runs'] = [(st(r[0]), st(r[1])) + tuple(r[2:]) for r in sp['runs']]
     c['repave_fixes'] = [(st(a), st(b), st(c0), st(c1), why) for a, b, c0, c1, why in c['repave_fixes']]
@@ -319,9 +335,6 @@ def remap_stations(cfg, n, length_m=None, C=None):
             lc['window'] = tuple(st(k) for k in lc['window'])
     elif c['centre'].get('local'):
         c['centre']['local']['window'] = tuple(st(k) for k in c['centre']['local']['window'])
-    for w in sp.get('owner_edges') or []:   # the owner's traced edge windows (Buttonwillow, 21 Oct 2026)
-        w['lo'], w['hi'] = st(w['lo']), st(w['hi'])
-        w['kerb_inside'] = [(a, st(lo), st(hi)) + tuple(rest) for a, lo, hi, *rest in w.get('kerb_inside', [])]
     g = c['gate']
     g['exempt'] = [(a, st(lo), st(hi)) + tuple(rest) for a, lo, hi, *rest in g.get('exempt', [])]
     g['wall_gaps'] = [(a, b, st(lo), st(hi)) for a, b, lo, hi in g.get('wall_gaps', [])]
@@ -333,6 +346,9 @@ def remap_stations(cfg, n, length_m=None, C=None):
         if s.get(key):
             for k in ('lo', 'hi', 'fit_lo', 'fit_hi'):
                 if k in s[key]: s[key][k] = st(s[key][k])
+    for e in s.get('kerbs_declared', []):   # a kerb strip over a stage-1 kerb zone (Buttonwillow round 10)
+        if e.get('zone'):
+            e['zone'] = (st(e['zone'][0]), st(e['zone'][1]))
     for e in s.get('kerb_extents', []):
         for k in ('near', 's0', 's1'): e[k] = fm_s(e[k])
     for e in s.get('edge_line_runs', []):

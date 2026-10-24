@@ -45,4 +45,15 @@ describe('raised kerb profile', () => {
   it('no profile: flat paint, the surface is unchanged (Laguna)', () => {
     for (const o of [-0.5, 0, 0.3, 0.6, 1]) expect(Math.abs(dz(flat, 115, o))).toBeLessThan(1e-12);
   });
+  it('a run\'s own profile (Buttonwillow T9, 21 Oct 2026): raised on that run only, the track default flat', () => {
+    const runs: KerbsJson = { width: 0.65, inside: true, profile: null,
+      strips: [{ side: 1, s0: 100, s1: 130, off: 0.3, profile: { height: 0.06, face: 0.15, back: 0.3 } }, { side: 1, s0: 200, s1: 230, off: 0.3 }] };
+    const r = createTrackSurface(dev.track, dev.heightfield, { kerbs: runs });
+    expect(dz(r, 115, 0.3)).toBeCloseTo(0.06, 3);
+    for (const o of [-0.5, 0, 0.3, 0.6, 1]) expect(Math.abs(dz(r, 215, o))).toBeLessThan(1e-12);
+  });
+  it('a run profile equal to the default gives the same surface as the default (Sonoma unchanged)', () => {
+    const same = createTrackSurface(dev.track, dev.heightfield, { kerbs: { ...K, strips: strips.map((s) => ({ ...s, profile: K.profile })) } });
+    for (const i of [100, 104, 115, 126, 130]) for (const o of [-0.5, -0.02, 0.1, 0.3, 0.6, 0.8, 1.1]) expect(dz(same, i, o)).toBe(dz(raised, i, o));
+  });
 });

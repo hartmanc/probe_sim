@@ -1,0 +1,367 @@
+{
+ "note": "Laguna field car (public/cars/field/identity.json numbering, MyLaps session 12975608) -> buttonwillow entrant (MyLaps session 12906863); the rule of tools/race/pace_track.ts --match (exact normalised team name, number tie-break, no fuzzy matches), written 20 Oct 2026",
+ "laguna_session": 12975608,
+ "buttonwillow_session": 12906863,
+ "cars": [
+  {
+   "laguna_number": "20",
+   "laguna_team": "NSF Racing",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "0",
+   "laguna_team": "The Supranos",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "58",
+   "laguna_team": "Italian job racing",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "97",
+   "laguna_team": "Louballers",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "670",
+   "laguna_team": "Bernal Dads Racing",
+   "buttonwillow_number": "670",
+   "buttonwillow_team": "Bernal Dads Racing",
+   "status": "same",
+   "evidence": "exact normalised team match; number matches"
+  },
+  {
+   "laguna_number": "37",
+   "laguna_team": "Caffeine Unlimited",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "189",
+   "laguna_team": "Tired Iron Racing",
+   "buttonwillow_number": "189",
+   "buttonwillow_team": "Tired Iron Racing",
+   "status": "same",
+   "evidence": "exact normalised team match; number matches"
+  },
+  {
+   "laguna_number": "9",
+   "laguna_team": "Arc Blast",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "38",
+   "laguna_team": "Another Fine Mess",
+   "buttonwillow_number": "38",
+   "buttonwillow_team": "Another Fine Mess",
+   "status": "same",
+   "evidence": "exact normalised team match; number matches"
+  },
+  {
+   "laguna_number": "759",
+   "laguna_team": "In search of Edselance",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "801",
+   "laguna_team": "Volatile RAM",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "74",
+   "laguna_team": "B Team - Just Plain Stupid",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "700",
+   "laguna_team": "SKINNY KOYOTE RACING Team A",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "711",
+   "laguna_team": "Eyesore Racing",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "100",
+   "laguna_team": "Sorry For Party Racing",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "2 entrants of that team, none numbered 100"
+  },
+  {
+   "laguna_number": "51",
+   "laguna_team": "Chase Race: The Best Damn\u2026.",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "49",
+   "laguna_team": "Ran When Parked Racing Entry C",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "544",
+   "laguna_team": "ONSET/Tetanus Racing",
+   "buttonwillow_number": "544",
+   "buttonwillow_team": "ONSET/Tetanus Racing",
+   "status": "same",
+   "evidence": "exact normalised team match; number matches"
+  },
+  {
+   "laguna_number": "83",
+   "laguna_team": "Dirty Duck Racing",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "619",
+   "laguna_team": "Anal Corkscrew Probe",
+   "buttonwillow_number": "619",
+   "buttonwillow_team": "Anal Corkscrew Probe",
+   "status": "same",
+   "evidence": "exact normalised team match; number matches"
+  },
+  {
+   "laguna_number": "89",
+   "laguna_team": "The Homer by Porcubimmer\u2026.",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "156",
+   "laguna_team": "TPF Racing",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "906",
+   "laguna_team": "Low Road Racing",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "34",
+   "laguna_team": "KnoxVegas LowBallerssss",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "16",
+   "laguna_team": "Scrubbing Bubbles",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "664",
+   "laguna_team": "NachoFriend Racing",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "169",
+   "laguna_team": "Mal\u00f6rt Racing Development (MRD)",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "40",
+   "laguna_team": "Mock Grass Racing",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "42",
+   "laguna_team": "Team Valiant Effort",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "105",
+   "laguna_team": "Scuderia Limoni",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "8",
+   "laguna_team": "Team Tinyvette",
+   "buttonwillow_number": "6",
+   "buttonwillow_team": "Team Tinyvette",
+   "status": "renumbered",
+   "evidence": "exact normalised team match"
+  },
+  {
+   "laguna_number": "41",
+   "laguna_team": "Distilled Racing",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "319",
+   "laguna_team": "Fancy Chicken Racing",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "76",
+   "laguna_team": "Salty Thunder Racing",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "963",
+   "laguna_team": "Borsche AG",
+   "buttonwillow_number": "963",
+   "buttonwillow_team": "Borsche AG",
+   "status": "same",
+   "evidence": "exact normalised team match; number matches"
+  },
+  {
+   "laguna_number": "1",
+   "laguna_team": "Team Bean Redux",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "2",
+   "laguna_team": "I Soar Racing",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "202",
+   "laguna_team": "Ur Moms Minivan Racing",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "785",
+   "laguna_team": "Race Rambler",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "143",
+   "laguna_team": "PIT CREW REVENGE \u2026.",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "43",
+   "laguna_team": "Faster Farms: 18 years of\u2026.",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "249",
+   "laguna_team": "Pony Keg",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "67",
+   "laguna_team": "Lost in Translation",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "55",
+   "laguna_team": "I Snore Racing",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "200",
+   "laguna_team": "Aggressively Adequate (R)",
+   "buttonwillow_number": null,
+   "buttonwillow_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  }
+ ]
+}

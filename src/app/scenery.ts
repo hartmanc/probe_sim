@@ -33,25 +33,37 @@ export interface SceneryJson {
     /** round 10 (Sonoma pit-out catch fence): angled arms on the fence posts, `len` m long at `deg` from vertical,
      *  leaning to `side` (+1 the left of the polyline, -1 the right), the mesh carried up them (absent: straight posts) */
     arm?: { len: number; deg: number; side: number };
+    /** colour sections along the run (Buttonwillow, 20 Oct 2026): an alternating pattern and / or explicit sections */
+    pattern?: { colors: string[]; period_m: number }; sections?: { from_m: number; to_m: number; color: string }[];
     /** tyres per stack (round 7; default from h) */ stack?: number;
     /** round 12 (Sonoma judge r11 N65): the absolute z of the wall's top per point where it is level across a hollow in
      *  its ground (tools/track/barrier_rules.py); absent: ground + h. The wall is drawn from the ground to this top. */
     top_z?: number[] }[];
-  kerbs: { width: number; inside?: boolean; stripe_m: number; /** [stripe, base] sRGB hex; default red / white */ colors?: [string, string];
+  kerbs: { width: number; inside?: boolean; stripe_m: number; /** [stripe, base] sRGB hex (default red / white), or [stripe, base, stripe 2]: the
+    *  two stripe colours alternate between base blocks (Buttonwillow's red / white / blue / white) */ colors?: KerbColors;
     /** raised concrete kerbs (physics: src/physics/track.ts KerbsJson); absent = flat paint */ profile?: { height: number; face: number; back: number } | null;
     strips: { side: number; s0: number; s1: number; kind: string; paint?: number; inset?: number ; /** verge: white line on the outer edge (default on) */ edge?: boolean;
-      /** per-strip paint [stripe, base] */ colors?: [string, string]; /** band centre beyond the edge, m (default: the inside convention) */ off?: number; src?: string }[] };
+      /** per-strip paint [stripe, base] or [stripe, base, stripe 2] */ colors?: KerbColors; /** band centre beyond the edge, m (default: the inside convention) */ off?: number; src?: string;
+      /** a kerb RUN (Buttonwillow, 21 Oct 2026): the band centre's offset per station from s0 (smoothed along the block line,
+       *  no steps), in place of the constant `off`; and the run's own raised profile over the track default */
+      offs?: number[]; profile?: { height: number; face: number; back: number } | null;
+      /** a run's own band width (m, measured on the captures; absent: the track's `width`) */ width?: number }[] };
   /** raised yellow sausage kerbs beyond the apex kerbs (physics: src/physics/track.ts) */
   sausages?: SausageJson | null;
   /** terrain override regions (Sonoma round 14A): off pavement inside them the heightfield is the surface (physics) */
   terrain_override?: TerrainOverrideJson | null;
   edge_lines?: { width: number; inset: number; runs: { side: number; s0: number; s1: number }[] };
   /** Paved pit lane (CONTRACTS §2b); the physics reads the same block. gap_* = free width to the track edge. */
-  pit_lane?: { spacing_m: number; fractions: number[]; open?: boolean; parts: (PitLaneJson['parts'][number] & { gap_left: number[]; gap_right: number[]; track_s: number[] })[] } | null;
+  pit_lane?: { spacing_m: number; fractions: number[]; open?: boolean; /** sides drawn without the white edge line */ no_edge_line?: ('left' | 'right')[];
+    /** pit-box line ranges [from_m, to_m] along the first part ([] = none; absent = the rule) */ boxes?: [number, number][]; parts: (PitLaneJson['parts'][number] & { gap_left: number[]; gap_right: number[]; track_s: number[] })[] } | null;
   /** Paved runoff (CONTRACTS §2b): same layout as pit_lane; rendered as asphalt, driven at full grip. */
   paved_zones?: { spacing_m: number; fractions: number[]; open?: boolean; parts: (PitLaneJson['parts'][number] & { gap_left: number[]; gap_right: number[]; track_s: number[]; turn?: string;
     /** closed roads (20 Oct 2026): 'asphalt' = the circuit's road material, 'concrete' = pale concrete; absent = the aerial photo's own colour (paved runoff) */
-    surface?: 'asphalt' | 'concrete' })[] } | null;
+    surface?: 'asphalt' | 'concrete' | 'apron';
+    /** texture pass (Buttonwillow, 21 Oct 2026): the zone's road surface draws over any overlapping ribbon (the track's
+     *  shoulder, another zone's shoulder; a higher `over` in front of a lower one: closed roads 2, runoff 1) and its own
+     *  shoulder draws behind them; absent = as before (Laguna, Sonoma) */
+    over?: number })[] } | null;
   /** painted lines off the track (closed roads' edge lines measured on the captures, 20 Oct 2026): white strips */
   paint_lines?: { width: number; side?: number; pts: V3[]; src?: string; /** round 7: line colour (default white) */ color?: string }[];
   /** painted ground logos as typed text (round 7b): centre, reading direction (rad, ENU), size, colours */
@@ -59,7 +71,9 @@ export interface SceneryJson {
   /** raised kerb strips off the lap (round 7b): centre line, width, height, stripe length, colours */
   kerb_lines?: { pts: V3[]; width: number; height: number; stripe_m: number; colors: string[]; src?: string }[];
   /** paved ground that is not driven (the paddock, 20 Oct 2026): plain paving over the terrain, no physics */
-  paved_areas?: { name: string; surface: 'asphalt' | 'concrete'; src: string; poly: V2[] }[];
+  paved_areas?: { name: string; surface: 'asphalt' | 'concrete' | 'apron'; src: string; poly: V2[]; /** a measured tone (#rrggbb) in place of the surface's */ color?: string;
+    /** per outline segment (poly[i] -> poly[i + 1]): fade it (true) or not (false: it meets the road edge; judge r6) */ feather?: boolean[];
+    /** 'lane' / 'concrete': drawn with the asphalt grain in the lane's or a pale concrete tone, not a flat colour */ look?: 'lane' | 'concrete' }[];
   /** Cone line between the pit-exit lane and the track (CONTRACTS §2b); crossing it is a black-flag offence. */
   pit_exit_cones?: PitExitConesJson | null;
   /** cone lines across the mouths of paved but unused roads (closed variants of the circuit, 20 Oct 2026): drawn only */
@@ -70,8 +84,13 @@ export interface SceneryJson {
     /** wall-board signs: the panel's top above the ground (m), for the coverage gate */ top?: number;
     /** 'impact' (impact barrier block at a wall's nose): its length along `heading`; 'marshal' (round 8): the hut's
      *  depth along `heading` (absent: w x w) */ d?: number;
-    /** 'marshal' (round 8, Sonoma owner note 61): the roof colour (absent: white) */ roof?: string;
-    /** wall boards with a typed name (round 6): the lettering's colour */ fg?: string }[];
+    /** wall boards with a typed name (round 6): the lettering's colour */ fg?: string;
+    /** marshal style 'canopy' (Buttonwillow, 20 Oct 2026): the earth mound under the posts (m), a deck railing, and for
+     *  style 'platform' an access stair */ mound_h?: number; railing?: boolean; stair?: boolean; /** platform: a fine scaffold frame */ fine?: boolean;
+    /** canopy style (judge r3): the base colour, a booth on the base (height, colour), a single central pole */
+    base_color?: string; body_h?: number; body_color?: string; pole?: boolean;
+    /** 'marshal': a string is the roof colour (round 8, Sonoma owner note 61; absent: white); on style 'platform' a
+     *  truthy value is the deck's small canopy (Buttonwillow judge r3) */ roof?: string | boolean }[];
   /** grandstands built into a hillside: stepped concrete rows following the ground (20 Oct 2026). Row r is a tread
    *  from a to b at height z, `run` m deep away from the track along `dir`; risers join consecutive rows. A terrace declared
    *  by its measured footprint (Sonoma round 6) has polyline rows that follow the stand (`pts`, `nrm`; structures.ts). */
@@ -661,6 +680,46 @@ export function tyreStackGeometry(n: number): THREE.BufferGeometry {
   return g;
 }
 
+/** Arc-length piece [a, b] (m) of a polyline, ends interpolated. */
+export function sliceLine(P: V3[], a: number, b: number): V3[] {
+  const out: V3[] = []; let acc = 0;
+  for (let i = 0; i < P.length - 1; i++) {
+    const p = P[i], q = P[i + 1], l = Math.hypot(q[0] - p[0], q[1] - p[1]);
+    const at = (d: number): V3 => { const t = l > 0 ? (d - acc) / l : 0; return [p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t, p[2] + (q[2] - p[2]) * t]; };
+    if (acc + l >= a && acc <= b) {
+      if (!out.length) out.push(at(Math.max(a, acc)));
+      if (acc + l <= b) out.push(q); else { out.push(at(b)); break; }
+    }
+    acc += l;
+  }
+  return out;
+}
+
+/** Colour sections of a wall run: explicit `sections` [{from_m, to_m, color}] along the run (the rest in the run's
+ *  colour), or an alternating `pattern` {colors, period_m} (each colour over period_m / colors.length); null without
+ *  either (the run is drawn in one colour, as before). */
+export function barrierSections(P: V3[], b: { color?: string; pattern?: { colors: string[]; period_m: number }; sections?: { from_m: number; to_m: number; color: string }[] }): { a: number; b: number; color: string }[] | null {
+  if (!b.pattern && !b.sections) return null;
+  let L = 0;
+  for (let i = 0; i < P.length - 1; i++) L += Math.hypot(P[i + 1][0] - P[i][0], P[i + 1][1] - P[i][1]);
+  const base: { a: number; b: number; color: string }[] = [];
+  if (b.pattern && b.pattern.colors.length && b.pattern.period_m > 0) {
+    const w = b.pattern.period_m / b.pattern.colors.length;
+    for (let k = 0, d = 0; d < L; k++, d += w) base.push({ a: d, b: Math.min(L, d + w), color: b.pattern.colors[k % b.pattern.colors.length] });
+  } else base.push({ a: 0, b: L, color: b.color ?? '#c9c5bb' });
+  if (!b.sections?.length) return base;
+  // explicit sections override the base pattern where they lie
+  const cuts = new Set<number>([0, L]);
+  for (const x of [...base, ...b.sections.map((q) => ({ a: q.from_m, b: q.to_m, color: q.color }))]) { cuts.add(Math.max(0, Math.min(L, x.a))); cuts.add(Math.max(0, Math.min(L, x.b))); }
+  const cs = [...cuts].sort((x, y) => x - y), out: { a: number; b: number; color: string }[] = [];
+  for (let i = 0; i < cs.length - 1; i++) {
+    const m = (cs[i] + cs[i + 1]) / 2;
+    const sec = b.sections.find((q) => q.from_m <= m && m <= q.to_m);
+    out.push({ a: cs[i], b: cs[i + 1], color: sec ? sec.color : base.find((q) => q.a <= m && m <= q.b)!.color });
+  }
+  return out;
+}
+
 function buildBarriers(list: SceneryJson['barriers'], drawn?: (x: number, y: number) => number): THREE.Group {
   const group = new THREE.Group();
   group.name = 'barriers';
@@ -682,9 +741,25 @@ function buildBarriers(list: SceneryJson['barriers'], drawn?: (x: number, y: num
       const th = 0.18;
       const L = offsetLine(P, th), R = offsetLine(P, -th);
       const cc = b.color ? new THREE.Color(b.color) : b.kind === 'pitwall' ? cPit : cConcrete;
-      concrete.add(foot(L), atTop(L, top), cc);
-      concrete.add(atTop(R, top), foot(R), cc);
-      concrete.add(atTop(L, top), atTop(R, top), b.color ? cc.clone().lerp(cTop, 0.35) : cTop);
+      const segs = barrierSections(P, b);
+      if (segs) {
+        // colour sections along the run (Buttonwillow judge r2: white K-rail with red sections): each section's faces in
+        // its own colour; the run's end caps below as before. The top per point (top_z, Sonoma round 12) is sliced with
+        // the run (the same arc-length cut of a copy of the line at its top heights)
+        const PT: V3[] = P.map((p, i) => [p[0], p[1], top[i]]);
+        for (const sg of segs) {
+          const Q = sliceLine(P, sg.a, sg.b), QT = sliceLine(PT, sg.a, sg.b).map((q) => q[2]);
+          if (Q.length < 2) continue;
+          const Ls = offsetLine(Q, th), Rs = offsetLine(Q, -th), c2 = new THREE.Color(sg.color);
+          concrete.add(foot(Ls), atTop(Ls, QT), c2);
+          concrete.add(atTop(Rs, QT), foot(Rs), c2);
+          concrete.add(atTop(Ls, QT), atTop(Rs, QT), c2.clone().lerp(cTop, 0.35));
+        }
+      } else {
+        concrete.add(foot(L), atTop(L, top), cc);
+        concrete.add(atTop(R, top), foot(R), cc);
+        concrete.add(atTop(L, top), atTop(R, top), b.color ? cc.clone().lerp(cTop, 0.35) : cTop);
+      }
       // end caps: close both ends of the run, else an open end shows the wall's inside (Sonoma owner note 36)
       for (const i of [0, P.length - 1]) {
         const e = [L[i], R[i]];
@@ -867,10 +942,14 @@ function buildSausages(track: TrackJson, j: SausageJson, ground?: (x: number, y:
 export interface PaintSurface {
   uv(x: number, y: number): [number, number];
   mesh(geo: THREE.BufferGeometry, paint: THREE.Texture, name: string, offsetUnits: number): THREE.Mesh;
+  /** a paved area in the apron look (pale weathered asphalt with grain); `pgA` = its weight (fade at the outline) */
+  apronMesh?(geo: THREE.BufferGeometry, name: string, offsetUnits: number): THREE.Mesh;
+  /** a paved area in the road's asphalt look (photo graded as the track) */
+  laneMesh?(geo: THREE.BufferGeometry, name: string, offsetUnits: number, tone?: [number, number, number]): THREE.Mesh;
 }
 
 /** Point `out` m outside (negative = inside) the edge on `side` at station i, `dz` above the driven surface (ENU). */
-function edgeFrame(track: TrackJson, ground: ((x: number, y: number) => number) | undefined) {
+export function edgeFrame(track: TrackJson, ground: ((x: number, y: number) => number) | undefined) {
   const n = track.n;
   return (i: number, side: number, out: number, dz: number): V3 => {
     const ii = ((i % n) + n) % n;
@@ -899,7 +978,8 @@ const PAINT_V = (band: keyof typeof PAINT_ROWS, t: number) => 1 - (PAINT_ROWS[ba
  * multiplies them by the aerial's local brightness so they pick up the same shade and grime as the road.
  */
 const hexRgb = (h: string): number[] => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
-export function kerbPaintTexture(stripeM: number, colors?: [string, string]): THREE.Texture {
+export type KerbColors = [string, string] | [string, string, string];
+export function kerbPaintTexture(stripeM: number, colors?: KerbColors): THREE.Texture {
   const key = `kerbpaint${stripeM}${colors ? colors.join('') : ''}`;
   const hit = texCache.get(key);
   if (hit) return hit;
@@ -924,6 +1004,8 @@ export function kerbPaintTexture(stripeM: number, colors?: [string, string]): TH
   const fade = lattice(24, 6), patch = lattice(96, 12), streak = lattice(48, 64), fine = lattice(512, 96), edgeJ = lattice(128, 4);
   const mix = (a: number[], b: number[], t: number) => a.map((v, k) => v + (b[k] - v) * t);
   const RED = colors ? hexRgb(colors[0]) : [172, 64, 56], WHITE = colors ? hexRgb(colors[1]) : [228, 225, 214], CONC = [170, 166, 156], RUBBER = [60, 58, 55];
+  // a third colour: the stripe colour of every second stripe (stripe, base, stripe 2, base: a period of four stripes)
+  const RED2 = colors && colors.length === 3 ? hexRgb(colors[2]) : RED;
   const GREEN = [60, 122, 72], DIRT = [168, 150, 118], LINE = [214, 212, 204];
   const stripePx = stripeM * PAINT_PX_M;
   const put = (x: number, y: number, c: number[], a: number) => {
@@ -939,7 +1021,8 @@ export function kerbPaintTexture(stripeM: number, colors?: [string, string]): TH
       const xb = x + (noise(edgeJ, x, y) - 0.5) * 5;                       // painted stripe ends, slightly ragged
       const ph = ((xb % (2 * stripePx)) + 2 * stripePx) % (2 * stripePx);
       const red = ss(-2.5, 2.5, ph) * (1 - ss(stripePx - 2.5, stripePx + 2.5, ph)) + ss(2 * stripePx - 2.5, 2 * stripePx + 2.5, ph);
-      let c = mix(WHITE, RED, Math.min(1, red));
+      const second = colors && colors.length === 3 && Math.floor((((xb % (4 * stripePx)) + 4 * stripePx) % (4 * stripePx)) / (2 * stripePx)) === 1;
+      let c = mix(WHITE, second ? RED2 : RED, Math.min(1, red));
       c = mix(c, CONC, 0.08 + 0.25 * ss(0.45, 0.85, nf));                // sun-faded paint
       c = mix(c, CONC, ss(0.66, 0.74, np) * 0.85);                        // worn through to the concrete
       const ride = ss(0.0, 0.12, t) * (1 - ss(0.45, 0.8, t));           // the half the tyres run on
@@ -973,18 +1056,20 @@ export function kerbPaintTexture(stripeM: number, colors?: [string, string]): TH
 /** Grid strips (stations along x columns across) on the driven surface, with the ribbon's shading attributes:
  *  pgA = 1 (asphalt grade), pgE = 1 with pgUvSrc 1.2 m inside the track side of the strip (the aerial smears asphalt
  *  and dirt at the edge, like the ribbon's edge columns), and pgPaintUv into the paint atlas. One merged mesh. */
-class PaintStrips {
+export class PaintStrips {
   pos: number[] = []; uv: number[] = []; src: number[] = []; puv: number[] = []; idx: number[] = [];
   /** `spacing` = track.spacing_m: strip ranges s0..s1 are metres along the lap (station = s / spacing). */
   constructor(private at: ReturnType<typeof edgeFrame>, private surf: PaintSurface | undefined, private spacing = 1) {}
-  add(side: number, sm0: number, sm1: number, cols: { out: number; dz: number; v: number }[], srcOut: number, u0: number): void {
+  add(side: number, sm0: number, sm1: number, cols: { out: number; dz: number; v: number }[], srcOut: number, u0: number, shift?: number[]): void {
     const base = this.pos.length / 3, K = cols.length;
     const s0 = Math.round(sm0 / this.spacing), s1 = Math.round(sm1 / this.spacing);
     for (let i = s0; i <= s1; i++) {
-      const sp = this.at(i, side, srcOut, 0);
+      // a run's per-station offset (shift[i - s0], clamped to its ends) moves every column with it
+      const sh = shift && shift.length ? shift[Math.min(shift.length - 1, Math.max(0, i - s0))] : 0;
+      const sp = this.at(i, side, srcOut + sh, 0);
       const su = this.surf ? this.surf.uv(sp[0], sp[1]) : [0, 0];
       for (const c of cols) {
-        const [x, y, z] = this.at(i, side, c.out, c.dz);
+        const [x, y, z] = this.at(i, side, c.out + sh, c.dz);
         const p = v3(x, y, z);
         this.pos.push(p.x, p.y, p.z);
         const uv = this.surf ? this.surf.uv(x, y) : [0, 0];
@@ -1030,27 +1115,29 @@ function buildKerbs(track: TrackJson, k: SceneryJson['kerbs'], ground?: (x: numb
   if (keys.length > 1) {
     const g = new THREE.Group(); g.name = 'kerbs';
     for (const key of keys) {
-      const sub = buildKerbs(track, { ...k, colors: (key === '|' ? k.colors : key.split('|')) as [string, string] | undefined, strips: k.strips.filter((s) => keyOf(s) === key).map((s) => ({ ...s, colors: undefined })) }, ground, surf);
+      const sub = buildKerbs(track, { ...k, colors: (key === '|' ? k.colors : key.split('|')) as KerbColors | undefined, strips: k.strips.filter((s) => keyOf(s) === key).map((s) => ({ ...s, colors: undefined })) }, ground, surf);
       if (sub) { sub.name = 'kerbs'; g.add(sub); }
     }
     return g;
   }
-  const colors = (k.strips[0]?.colors ?? k.colors) as [string, string] | undefined;
+  const colors = (k.strips[0]?.colors ?? k.colors) as KerbColors | undefined;
   const st = new PaintStrips(edgeFrame(track, ground), surf, track.spacing_m || 1);
-  const w = k.width;
   const period = 2 * k.stripe_m;
   k.strips.forEach((s, j) => {
+    // a run's own band width (Buttonwillow round 8, measured on the captures), else the track's
+    const w = s.width ?? k.width;
     // kerb band across the edge: inside it by default, or `off` m beyond it (centre) for a kerb measured outside the edge
-    const o0 = s.off !== undefined ? s.off - w / 2 : k.inside ? -w : -0.1, o1 = s.off !== undefined ? s.off + w / 2 : k.inside ? 0 : w;
+    const o0 = s.offs ? -w / 2 : s.off !== undefined ? s.off - w / 2 : k.inside ? -w : -0.1, o1 = s.offs ? w / 2 : s.off !== undefined ? s.off + w / 2 : k.inside ? 0 : w;
+    const prof = s.profile ?? k.profile;
     const u0 = (j * 3 % 4) * period;                        // vary the wear pattern between kerbs, keep red first
     // columns on the ribbon's own columns where possible (edge, 0.5 m inside) so the paint follows its surface; a raised
     // kerb (profile) gets columns every ~8 cm across its face and top so the paint follows the hump the physics carries,
     // plus its back face down to the ground
-    const across = k.profile
-      ? [...Array.from({ length: Math.max(3, Math.ceil(w / 0.08)) + 1 }, (_, q) => o0 + (w * q) / Math.max(3, Math.ceil(w / 0.08))), o1 + k.profile.back * 0.5, o1 + k.profile.back]
+    const across = prof
+      ? [...Array.from({ length: Math.max(3, Math.ceil(w / 0.08)) + 1 }, (_, q) => o0 + (w * q) / Math.max(3, Math.ceil(w / 0.08))), o1 + prof.back * 0.5, o1 + prof.back]
       : [o0, o1 - 0.5 > o0 + 0.1 ? o1 - 0.5 : (o0 + o1) / 2, o1];
     // kind 'verge': green verge paint only (no red/white kerb), e.g. the long painted aprons seen on satellite imagery
-    if (s.kind !== 'verge') st.add(s.side, s.s0, s.s1, across.map((o) => ({ out: o, dz: 0.008 + 0.002 * Math.min(1, (o - o0) / (o1 - o0)), v: PAINT_V('kerb', Math.min(1, (o - o0) / (o1 - o0))) })), o0 - 1.2, u0);
+    if (s.kind !== 'verge') st.add(s.side, s.s0, s.s1, across.map((o) => ({ out: o, dz: 0.008 + 0.002 * Math.min(1, (o - o0) / (o1 - o0)), v: PAINT_V('kerb', Math.min(1, (o - o0) / (o1 - o0))) })), o0 - 1.2, u0, s.offs);
     if (s.paint) {
       const P = s.paint;
       // verge strips may start `inset` m inside the edge (the v2 edge is wider than the painted road in places)
@@ -1545,7 +1632,7 @@ function buildGroundSigns(list: NonNullable<SceneryJson['ground_signs']>, ground
 
 /** Paved areas (scenery.json `paved_areas`): plain asphalt / concrete laid over the terrain on a 1.5 m grid inside the
  *  outline, so the aerial photo (parked trailers and cars in the NAIP) never shows there as ground. Drawn only. */
-function buildPavedAreas(list: NonNullable<SceneryJson['paved_areas']>, ground: (x: number, y: number) => number): THREE.Mesh | null {
+function buildPavedAreas(list: NonNullable<SceneryJson['paved_areas']>, ground: (x: number, y: number) => number, surf?: PaintSurface): THREE.Mesh | null {
   const pos: number[] = [], col: number[] = [];
   const inPoly = (x: number, y: number, P: V2[]) => {
     let c = false;
@@ -1556,9 +1643,108 @@ function buildPavedAreas(list: NonNullable<SceneryJson['paved_areas']>, ground: 
     return c;
   };
   const D = 1.5;
+  const sPos: number[] = [], sCol: number[] = [], sIdx: number[] = [];
+  const softArea = (a: NonNullable<SceneryJson['paved_areas']>[number], base: THREE.Color, edgeDist: (x: number, y: number) => number,
+    x0: number, x1: number, y0: number, y1: number) => {
+    const d = 0.5, nx = Math.ceil((x1 - x0) / d) + 1, ny = Math.ceil((y1 - y0) / d) + 1, b0 = sPos.length / 3;
+    const hash = (i: number, j: number) => { const h = Math.sin(i * 127.1 + j * 311.7) * 43758.5453; return h - Math.floor(h); };
+    for (let i = 0; i < nx; i++) for (let j = 0; j < ny; j++) {
+      const x = x0 + i * d, y = y0 + j * d, p = v3(x, y, ground(x, y) + 0.04);
+      // tone: two octaves of smooth value noise (2 m and 6 m), +-6 %
+      const k = 0.94 + 0.08 * hash(i >> 2, j >> 2) + 0.04 * hash(Math.floor(i / 12) + 91, Math.floor(j / 12) + 37);
+      const e = a.surface === 'apron' ? Math.min(1, edgeDist(x, y) / 2.5) : 1, al = a.surface === 'apron' ? e * e * (3 - 2 * e) : 1;
+      sPos.push(p.x, p.y, p.z); sCol.push(base.r * k, base.g * k, base.b * k, inPoly(x, y, a.poly) ? al : 0);
+    }
+    for (let i = 0; i < nx - 1; i++) for (let j = 0; j < ny - 1; j++) {
+      if (!inPoly(x0 + (i + 0.5) * d, y0 + (j + 0.5) * d, a.poly)) continue;
+      const q = b0 + i * ny + j;
+      sIdx.push(q, q + ny, q + 1, q + ny, q + ny + 1, q + 1);
+    }
+  };
+  // judge r5 (round 6): an apron in the apron look of the paint surface (pale weathered asphalt with the asphalt grain,
+  // the same as an apron zone), its weight pgA fading over 2.5 m of the outline into the photo
+  const roadDist = (a: NonNullable<SceneryJson['paved_areas']>[number], x: number, y: number) => {
+    let d = Infinity;
+    for (let i = 0; i < a.poly.length; i++) {
+      if (a.feather![i]) continue;
+      const [x1, y1] = a.poly[i], [x2, y2] = a.poly[(i + 1) % a.poly.length], dx = x2 - x1, dy = y2 - y1, l2 = dx * dx + dy * dy || 1;
+      const t = Math.max(0, Math.min(1, ((x - x1) * dx + (y - y1) * dy) / l2));
+      d = Math.min(d, Math.hypot(x - x1 - t * dx, y - y1 - t * dy));
+    }
+    return d;
+  };
+  const apr = { pos: [] as number[], uv: [] as number[], a: [] as number[], idx: [] as number[], w: [] as number[] };
+  const lane = { pos: [] as number[], uv: [] as number[], a: [] as number[], idx: [] as number[], w: [] as number[] };
+  const conc = { pos: [] as number[], uv: [] as number[], a: [] as number[], idx: [] as number[], w: [] as number[] };
+  const apronArea = (a: NonNullable<SceneryJson['paved_areas']>[number], edgeDist: (x: number, y: number) => number,
+    x0: number, x1: number, y0: number, y1: number) => {
+    const d = 0.5, nx = Math.ceil((x1 - x0) / d) + 1, ny = Math.ceil((y1 - y0) / d) + 1;
+    const T = a.look === 'lane' ? lane : a.look === 'concrete' ? conc : apr, b0 = T.pos.length / 3;
+    // round 8 (owner lap 2 note 4, the tan wedges between a kerb and an apron): grid vertices outside the outline are
+    // snapped onto it, and a cell is kept when any corner lies inside, so the mesh ends ON the outline (the road edge)
+    // instead of in 0.5 m grid steps
+    const snap = (x: number, y: number): [number, number] => {
+      if (inPoly(x, y, a.poly)) return [x, y];
+      let best = Infinity, bx = x, by = y;
+      for (let k = 0; k < a.poly.length; k++) {
+        const [xa, ya] = a.poly[k], [xb, yb] = a.poly[(k + 1) % a.poly.length], dx = xb - xa, dy = yb - ya, l2 = dx * dx + dy * dy || 1;
+        const t = Math.max(0, Math.min(1, ((x - xa) * dx + (y - ya) * dy) / l2)), qx = xa + t * dx, qy = ya + t * dy, dd = Math.hypot(x - qx, y - qy);
+        if (dd < best) { best = dd; bx = qx; by = qy; }
+      }
+      return [bx, by];
+    };
+    const inside: boolean[] = [];
+    for (let i = 0; i < nx; i++) for (let j = 0; j < ny; j++) {
+      const gx = x0 + i * d, gy = y0 + j * d; inside.push(inPoly(gx, gy, a.poly));
+      const [x, y] = snap(gx, gy), p = v3(x, y, ground(x, y) + 0.04), uv = surf!.uv(x, y);
+      // judge r6: a straight 1 m feather on the signed distance to the outline (-0.5 .. +0.5 m), so the apron's own
+      // tone covers the area and the edge follows the outline instead of the grid (no bites)
+      const sd = edgeDist(x, y), e = Math.min(1, Math.max(0, (sd - 0.0) / 1.0));   // fade inward over 1 m from the feathered outline
+      T.pos.push(p.x, p.y, p.z); T.uv.push(uv[0], uv[1]); T.a.push(e * e * (3 - 2 * e));
+      // wear: 1 at the road-edge (unfeathered) segments, 0 from 3 m in
+      T.w.push(a.feather ? Math.max(0, 1 - roadDist(a, x, y) / 3) : 0);
+    }
+    for (let i = 0; i < nx - 1; i++) for (let j = 0; j < ny - 1; j++) {
+      if (!(inside[i * ny + j] || inside[(i + 1) * ny + j] || inside[i * ny + j + 1] || inside[(i + 1) * ny + j + 1])) continue;
+      const q = b0 + i * ny + j;
+      T.idx.push(q, q + ny, q + 1, q + ny, q + ny + 1, q + 1);
+    }
+  };
   for (const a of list) {
-    const base = a.surface === 'concrete' ? new THREE.Color(0x9d9b95) : new THREE.Color(0x45474a);
+    // 'apron' (Buttonwillow judge r3): worn pale asphalt with a soft edge: cells within 2.5 m of the outline thin out
+    // towards it, so the paving frays into the ground instead of ending on a hard line
+    const base = a.color ? new THREE.Color(a.color) : a.surface === 'concrete' ? new THREE.Color(0x9d9b95) : a.surface === 'apron' ? new THREE.Color(0x6f6c66) : new THREE.Color(0x45474a);
+    const edgeDist = (x: number, y: number) => {
+      let d = Infinity;
+      for (let i = 0, j = a.poly.length - 1; i < a.poly.length; j = i++) {
+        const [x1, y1] = a.poly[j], [x2, y2] = a.poly[i], dx = x2 - x1, dy = y2 - y1, l2 = dx * dx + dy * dy || 1;
+        const t = Math.max(0, Math.min(1, ((x - x1) * dx + (y - y1) * dy) / l2));
+        d = Math.min(d, Math.hypot(x - x1 - t * dx, y - y1 - t * dy));
+      }
+      return d;
+    };
     const xs = a.poly.map((p) => p[0]), ys = a.poly.map((p) => p[1]);
+    if (a.surface === 'apron' || a.color || a.look) {
+      // texture pass (Buttonwillow owner lap 1, 21 Oct 2026, "some screwed up textures"): the apron's 1.5 m cells with a
+      // tone step per cell and whole cells dropped near the outline drew as a flat staircase of grey squares, and the
+      // pit-entry strip as a checker; a 0.5 m grid of shared vertices instead, the tone varying per vertex (smooth), an
+      // apron fading out over 2.5 m of its outline by vertex alpha (no holes, no steps). Areas without a measured colour
+      // or the apron surface keep the cells below (Sonoma, Laguna unchanged).
+      // with `feather`, the fade follows only the feathered segments (the road-edge ones meet the road unfaded)
+      const featherDist = a.feather ? (x: number, y: number) => {
+        let d = Infinity;
+        for (let i = 0; i < a.poly.length; i++) {
+          if (!a.feather![i]) continue;
+          const [x1, y1] = a.poly[i], [x2, y2] = a.poly[(i + 1) % a.poly.length], dx = x2 - x1, dy = y2 - y1, l2 = dx * dx + dy * dy || 1;
+          const t = Math.max(0, Math.min(1, ((x - x1) * dx + (y - y1) * dy) / l2));
+          d = Math.min(d, Math.hypot(x - x1 - t * dx, y - y1 - t * dy));
+        }
+        return d;
+      } : edgeDist;
+      if ((a.surface === 'apron' && surf?.apronMesh && !a.color) || (a.look && surf?.laneMesh)) apronArea(a, featherDist, Math.min(...xs) - 1, Math.max(...xs) + 1, Math.min(...ys) - 1, Math.max(...ys) + 1);
+      else softArea(a, base, edgeDist, Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys));
+      continue;
+    }
     for (let x = Math.min(...xs); x < Math.max(...xs); x += D) {
       for (let y = Math.min(...ys); y < Math.max(...ys); y += D) {
         if (!inPoly(x + D / 2, y + D / 2, a.poly)) continue;
@@ -1568,13 +1754,46 @@ function buildPavedAreas(list: NonNullable<SceneryJson['paved_areas']>, ground: 
       }
     }
   }
-  if (!pos.length) return null;
+  const soft = sIdx.length ? (() => {
+    const g2 = new THREE.BufferGeometry();
+    g2.setAttribute('position', new THREE.Float32BufferAttribute(sPos, 3));
+    g2.setAttribute('color', new THREE.Float32BufferAttribute(sCol, 4));
+    g2.setIndex(sIdx);
+    g2.computeVertexNormals();
+    const m2 = new THREE.Mesh(g2, new THREE.MeshLambertMaterial({ vertexColors: true, transparent: true, depthWrite: false, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }));
+    m2.name = 'paved_areas_soft';
+    return m2;
+  })() : null;
+  const mk = (B: typeof apr, fn: 'apronMesh' | 'laneMesh', name: string, tone?: [number, number, number]) => {
+    if (!B.idx.length) return null;
+    const g3 = new THREE.BufferGeometry();
+    g3.setAttribute('position', new THREE.Float32BufferAttribute(B.pos, 3));
+    g3.setAttribute('uv', new THREE.Float32BufferAttribute(B.uv, 2));
+    g3.setAttribute('pgA', new THREE.Float32BufferAttribute(B.a, 1));
+    g3.setAttribute('pgE', new THREE.Float32BufferAttribute(new Float32Array(B.a.length), 1));
+    g3.setAttribute('pgUvSrc', new THREE.Float32BufferAttribute(B.uv, 2));
+    g3.setAttribute('pgWear', new THREE.Float32BufferAttribute(B.w, 1));
+    g3.setIndex(B.idx);
+    g3.computeVertexNormals();
+    return fn === 'laneMesh' ? surf!.laneMesh!(g3, name, list.some((q) => q.feather) ? -4 : -1, tone) : surf!.apronMesh!(g3, name, list.some((q) => q.feather) ? -4 : -1);
+  };
+  const apronM = mk(apr, 'apronMesh', 'paved_areas_apron'), laneM = mk(lane, 'laneMesh', 'paved_areas_lane'), concM = mk(conc, 'laneMesh', 'paved_areas_concrete', [0.58, 0.575, 0.55]);
+  const apron = apronM || laneM || concM ? (() => { const g0 = new THREE.Group(); for (const m0 of [apronM, laneM, concM]) if (m0) g0.add(m0); return g0; })() : null;
+  if (apron) {
+    const grp = new THREE.Group(); grp.name = 'paved_areas_group'; grp.add(apron);
+    if (soft) grp.add(soft);
+    if (pos.length) { const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3)); g.computeVertexNormals();
+      const m = new THREE.Mesh(g, new THREE.MeshLambertMaterial({ vertexColors: true, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 })); m.name = 'paved_areas'; grp.add(m); }
+    return grp as unknown as THREE.Mesh;
+  }
+  if (!pos.length) return soft;
   const g = new THREE.BufferGeometry();
   g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
   g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
   g.computeVertexNormals();
   const m = new THREE.Mesh(g, new THREE.MeshLambertMaterial({ vertexColors: true, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }));
   m.name = 'paved_areas';
+  if (soft) { const grp = new THREE.Group(); grp.name = 'paved_areas_group'; grp.add(m, soft); return grp as unknown as THREE.Mesh; }
   return m;
 }
 
@@ -1654,14 +1873,31 @@ function buildLandmarks(list: SceneryJson['landmarks']): THREE.Group {
       // (deck at h - 2.6 m), a hut w x w (default 2.4 m) with an OPEN FRONT toward the track (+Z after yawFor faces the
       // heading), white walls with a coloured lower band (m.color, from the frames), a flat roof overhanging 0.6 m, and a
       // railing round the deck. style 'platform': deck and railing only. Round 8 (Sonoma owner note 61): a measured
-      // footprint gives the hut w across x d along the heading (absent: w x w) and m.roof the roof colour (absent: white).
+      // footprint gives the hut w across x d along the heading (absent: w x w) and a string m.roof the roof colour
+      // (absent: white); on a 'platform' a truthy m.roof is its small canopy (Buttonwillow judge r3).
       const W = m.w || 2.4, D = m.d ?? W, legH = Math.max(0.6, m.h - 2.6), wallH = 2.2, t = 0.08;
       const band = new THREE.MeshLambertMaterial({ color: m.color ?? '#2f5d9e' });
-      const roofMat = m.roof ? new THREE.MeshLambertMaterial({ color: m.roof }) : white;
+      const roofMat = typeof m.roof === 'string' ? new THREE.MeshLambertMaterial({ color: m.roof }) : white;
       const box = (sx: number, sy: number, sz: number, x: number, y: number, z: number, mat: THREE.Material) => {
         const b2 = new THREE.Mesh(new THREE.BoxGeometry(sx, sy, sz), mat); b2.position.set(x, y, z); g.add(b2);
       };
-      if (m.style === 'deck') {
+      if (m.style === 'canopy') {
+        // marshal canopy (Buttonwillow judge r2 / r3, per station from its own frame): a ROUNDED base (mound_h, radius
+        // W / 2 + 1.5 m, in base_color: earth, or pale where the frame shows a concrete / white-faced base), an optional
+        // booth on it (body_h, body_color: the dark / blue / white cabinet the frames show), and the roof in m.color on a
+        // single central pole (pole) or four posts, its underside at h
+        const mh = m.mound_h ?? 0, roofY = Math.max(mh + 2.0, m.h), R0 = W / 2 + 1.5;
+        if (mh > 0) {
+          const mound = new THREE.Mesh(new THREE.CylinderGeometry(R0 - 0.6, R0, mh, 20), new THREE.MeshLambertMaterial({ color: m.base_color ?? '#9a8a6c' }));
+          mound.position.set(0, mh / 2, 0); g.add(mound);
+        }
+        if (m.body_h) box(W * 0.55, m.body_h, W * 0.55, 0, mh + m.body_h / 2, -W * 0.1, new THREE.MeshLambertMaterial({ color: m.body_color ?? '#2b3f5c' }));
+        if (m.pole) box(0.12, roofY - mh, 0.12, 0, mh + (roofY - mh) / 2, 0, postMat);
+        else for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) box(0.1, roofY - mh, 0.1, x * (W / 2 - 0.05), mh + (roofY - mh) / 2, z * (D / 2 - 0.05), postMat);
+        box(W + 0.6, 0.12, D + 0.6, 0, roofY + 0.06, 0, band);
+        box(W + 0.6, 0.04, D + 0.6, 0, roofY - 0.01, 0, white);
+        if (m.railing) for (const z of [-1, 1]) box(W, 0.05, 0.05, 0, mh + 1.0, z * (D / 2 - 0.05), postMat);
+      } else if (m.style === 'deck') {
         // round 9 (Sonoma 8a station; owner_52, the May 2025 onboard frame): a solid lighter lower storey (m.color) up to a
         // sill 1.0 m above the deck level, an OPEN viewing deck above it (posts at the corners and mid-sides, a rail on the
         // sill, a dark deck floor, open all round), under a broad flat roof slab overhanging 0.9 m at the front (the
@@ -1678,30 +1914,57 @@ function buildLandmarks(list: SceneryJson['landmarks']): THREE.Group {
         box(W + 1.2, slab, D + 1.5, 0, under + slab / 2, 0.15, roofMat);                         // roof slab
         box(W + 1.22, 0.04, D + 1.52, 0, under - 0.02, 0.15, postMat);                           // its dark underside
       } else {
-        for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) box(0.16, legH, 0.16, x * (W / 2 - 0.1), legH / 2, z * (D / 2 - 0.1), white);
-        for (const z of [-1, 1]) box(W, 0.08, 0.08, 0, legH * 0.45, z * (D / 2 - 0.1), white);   // leg braces
-        box(W + 0.4, 0.14, D + 0.4, 0, legH, 0, white);                                          // deck
-        if (m.style !== 'platform') {
-          const y0 = legH + 0.07, bandH = Math.min(0.9, wallH * 0.4);
-          // back wall and the two side walls: coloured band below, white above; the front (track side) open
-          box(W, bandH, t, 0, y0 + bandH / 2, -D / 2 + t / 2, band);
-          box(W, wallH - bandH, t, 0, y0 + bandH + (wallH - bandH) / 2, -D / 2 + t / 2, white);
-          for (const x of [-1, 1]) {
-            box(t, bandH, D, x * (W / 2 - t / 2), y0 + bandH / 2, 0, band);
-            box(t, wallH - bandH, D, x * (W / 2 - t / 2), y0 + bandH + (wallH - bandH) / 2, 0, white);
-          }
-          box(W, bandH, t, 0, y0 + bandH / 2, D / 2 - t / 2, band);                               // low front sill (band colour)
-          for (const x of [-1, 1]) box(0.12, wallH, 0.12, x * (W / 2 - 0.06), y0 + wallH / 2, D / 2 - 0.06, white);  // front posts
-          box(W + 1.2, 0.14, D + 1.2, 0, y0 + wallH + 0.07, 0.15, roofMat);                        // roof, 0.6 m overhang
-          box(W + 1.2, 0.05, D + 1.2, 0, y0 + wallH - 0.01, 0.15, postMat);                         // its dark underside
-        } else {
-          for (const [x, z, sx, sz] of [[0, D / 2 + 0.2, W + 0.4, 0.05], [-W / 2 - 0.2, 0, 0.05, D + 0.4], [W / 2 + 0.2, 0, 0.05, D + 0.4]] as const) {
-            box(sx, 0.05, sz, x, legH + 1.0, z, postMat);
+      // `fine` (Buttonwillow judge r5, the starter's stand on t1339000): a scaffold of thin tubes with X braces, a thin
+      // deck and a thin roof, instead of the heavy legs and slab
+      const lw = m.fine ? 0.06 : 0.16, dk = m.fine ? 0.06 : 0.14;
+      for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) box(lw, legH, lw, x * (W / 2 - 0.1), legH / 2, z * (D / 2 - 0.1), white);
+      for (const z of [-1, 1]) box(W, m.fine ? 0.04 : 0.08, m.fine ? 0.04 : 0.08, 0, legH * 0.45, z * (D / 2 - 0.1), white);   // leg braces
+      if (m.fine) for (const z of [-1, 1]) for (const sgn of [-1, 1]) {
+        const L = Math.hypot(W - 0.2, legH), br = new THREE.Mesh(new THREE.BoxGeometry(0.035, L, 0.035), white);
+        br.position.set(0, legH / 2, z * (D / 2 - 0.1)); br.rotation.z = sgn * Math.atan2(W - 0.2, legH); g.add(br);
+      }
+      box(W + 0.4, dk, D + 0.4, 0, legH, 0, white);                                          // deck
+      if (m.style !== 'platform') {
+        const y0 = legH + 0.07, bandH = Math.min(0.9, wallH * 0.4);
+        // back wall and the two side walls: coloured band below, white above; the front (track side) open
+        box(W, bandH, t, 0, y0 + bandH / 2, -D / 2 + t / 2, band);
+        box(W, wallH - bandH, t, 0, y0 + bandH + (wallH - bandH) / 2, -D / 2 + t / 2, white);
+        for (const x of [-1, 1]) {
+          box(t, bandH, D, x * (W / 2 - t / 2), y0 + bandH / 2, 0, band);
+          box(t, wallH - bandH, D, x * (W / 2 - t / 2), y0 + bandH + (wallH - bandH) / 2, 0, white);
+        }
+        box(W, bandH, t, 0, y0 + bandH / 2, D / 2 - t / 2, band);                               // low front sill (band colour)
+        for (const x of [-1, 1]) box(0.12, wallH, 0.12, x * (W / 2 - 0.06), y0 + wallH / 2, D / 2 - 0.06, white);  // front posts
+        box(W + 1.2, 0.14, D + 1.2, 0, y0 + wallH + 0.07, 0.15, roofMat);                        // roof, 0.6 m overhang
+        box(W + 1.2, 0.05, D + 1.2, 0, y0 + wallH - 0.01, 0.15, postMat);                         // its dark underside
+      } else {
+        for (const [x, z, sx, sz] of [[0, D / 2 + 0.2, W + 0.4, 0.05], [-W / 2 - 0.2, 0, 0.05, D + 0.4], [W / 2 + 0.2, 0, 0.05, D + 0.4]] as const) {
+          box(sx, 0.05, sz, x, legH + 1.0, z, postMat);
+          if (m.fine) {
+            // judge r6 pit_02 4690 R: a denser rail (t1339000): a mid rail and balusters every 0.3 m
+            box(sx, 0.03, sz, x, legH + 0.5, z, postMat);
+            const L = Math.max(sx, sz), nb = Math.max(2, Math.round(L / 0.3));
+            for (let k = 0; k <= nb; k++) {
+              const t = -L / 2 + (L * k) / nb;
+              box(0.025, 1.0, 0.025, sx > sz ? x + t : x, legH + 0.5, sx > sz ? z : z + t, postMat);
+            }
           }
         }
-        // railing on the deck's open sides (the deck is 0.2 m wider than the hut all round)
-        for (const [x, z, sx, sz] of [[0, D / 2 + 0.18, W + 0.4, 0.05]] as const) box(sx, 0.05, sz, x, legH + 1.0, z, postMat);
-        for (const x of [-W / 2 - 0.18, 0, W / 2 + 0.18]) box(0.05, 1.0, 0.05, x, legH + 0.5, D / 2 + 0.18, postMat);
+        if (m.roof) {
+          // a small canopy over the deck (Buttonwillow's pit-wall stand, judge r3): two rear posts and a flat roof 2.2 m up
+          for (const x of [-1, 1]) box(m.fine ? 0.05 : 0.08, 2.2, m.fine ? 0.05 : 0.08, x * (W / 2), legH + 1.1, -D / 2, postMat);
+          if (m.fine) for (const x of [-1, 1]) box(0.05, 2.2, 0.05, x * (W / 2), legH + 1.1, D / 2, postMat);
+          box(W + 0.4, m.fine ? 0.04 : 0.08, D + 0.4, 0, legH + 2.2, 0, band);
+        }
+        if (m.stair) {
+          // an access stair down the back (Buttonwillow's pit-wall stand, judge r2 pit_02): a sloped stringer and treads
+          const run = legH * 1.2, n = Math.max(3, Math.round(legH / 0.2));
+          for (let k = 0; k < n; k++) box(0.9, 0.05, run / n, W / 2 - 0.5, legH * (k + 0.5) / n, -D / 2 - run + (n - k - 0.5) * run / n, white);
+        }
+      }
+      // railing on the deck's open sides (the deck is 0.2 m wider than the hut all round)
+      for (const [x, z, sx, sz] of [[0, D / 2 + 0.18, W + 0.4, 0.05]] as const) box(sx, 0.05, sz, x, legH + 1.0, z, postMat);
+      for (const x of [-W / 2 - 0.18, 0, W / 2 + 0.18]) box(0.05, 1.0, 0.05, x, legH + 0.5, D / 2 + 0.18, postMat);
       }
     } else if (m.kind === 'block') {
       // free-standing concrete block (round 7, Sonoma owner note 38: the T11 apex blocks): w across, d along the heading,
@@ -1721,9 +1984,20 @@ function buildLandmarks(list: SceneryJson['landmarks']): THREE.Group {
       }
     } else if (m.kind === 'impact') {
       // impact barrier (water-filled / foam block) at a wall's nose: a plain block, w across, d along the heading
-      const blk = new THREE.Mesh(new THREE.BoxGeometry(m.w, m.h, m.d ?? 2), new THREE.MeshLambertMaterial({ color: m.color ?? '#e8c21c' }));
-      blk.position.set(0, m.h / 2, 0);
-      g.add(blk);
+      const mat = new THREE.MeshLambertMaterial({ color: m.color ?? '#e8c21c' });
+      if (m.style === 'rounded') {
+        // bulky rounded protection (Buttonwillow's pit-wall nose, judge r3): a half-capsule, w across, d along, h tall
+        const r = m.w / 2, len = Math.max(0, (m.d ?? 2) - m.w);
+        const body = new THREE.Mesh(new THREE.CylinderGeometry(r, r, len, 16, 1, false, 0, Math.PI), mat);
+        body.rotation.x = Math.PI / 2; body.rotation.z = Math.PI / 2; body.scale.set(1, 1, m.h / r); body.position.set(0, 0, 0);
+        const nose = new THREE.Mesh(new THREE.SphereGeometry(r, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2), mat);
+        nose.scale.set(1, m.h / r, 1); nose.position.set(0, 0, len / 2);
+        g.add(body, nose);
+      } else {
+        const blk = new THREE.Mesh(new THREE.BoxGeometry(m.w, m.h, m.d ?? 2), mat);
+        blk.position.set(0, m.h / 2, 0);
+        g.add(blk);
+      }
     } else if (m.kind === 'tyres') {
       // free-standing tyre stack (style 'tyres': tyres lying flat, 0.21 m a layer) or a painted barrier block (style
       // 'blocks', red / white bands), 21 Oct 2026; drawn only, not in the collision world
@@ -1748,9 +2022,44 @@ function buildLandmarks(list: SceneryJson['landmarks']): THREE.Group {
       // light mast: a tapered grey pole with a lamp frame on top
       const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.22, m.h, 8), postMat);
       pole.position.set(0, m.h / 2, 0);
-      const head = new THREE.Mesh(new THREE.BoxGeometry(2.2, 1.0, 0.3), backMat);
-      head.position.set(0, m.h + 0.3, 0);
-      g.add(pole, head);
+      if (m.style === 'lattice') {
+        // a lattice communications tower (Buttonwillow judge r5 fwd_11 3400 L: the 49.5 m tower read as a thin pole):
+        // three legs tapering from 4 m at the foot to 1.2 m at the top, zig-zag bracing every ~3 m, ONE merged mesh
+        // (one draw call), a floodlight head on top that reads from both sides (back_05)
+        const geos: THREE.BufferGeometry[] = [];
+        const strut = (a: THREE.Vector3, b: THREE.Vector3, r: number) => {
+          const bx = new THREE.BoxGeometry(r, a.distanceTo(b), r);
+          const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), b.clone().sub(a).normalize());
+          bx.applyMatrix4(new THREE.Matrix4().compose(a.clone().add(b).multiplyScalar(0.5), q, new THREE.Vector3(1, 1, 1)));
+          geos.push(bx);
+        };
+        const leg = (k: number, y: number) => { const r = (2.0 - 1.4 * (y / m.h)) / Math.sqrt(3) * 1.0, a = (k * 2 * Math.PI) / 3; return new THREE.Vector3(r * Math.cos(a) * 1.15, y, r * Math.sin(a) * 1.15); };
+        const panels = Math.max(4, Math.round(m.h / 3));
+        for (let k = 0; k < 3; k++) strut(leg(k, 0), leg(k, m.h), 0.12);   // judge r8: thinner members, lighter (read as a solid shaft at distance)
+        for (let p = 0; p < panels; p++) {
+          const y0 = (p * m.h) / panels, y1 = ((p + 1) * m.h) / panels;
+          for (let k = 0; k < 3; k++) { strut(leg(k, y0), leg((k + 1) % 3, y1), 0.045); strut(leg(k, y1), leg((k + 1) % 3, y1), 0.045); }
+        }
+        const lat = new THREE.Mesh(mergeGeometries(geos)!, new THREE.MeshLambertMaterial({ color: 0xd4d7da }));
+        g.add(lat);
+        const frame = new THREE.Mesh(new THREE.BoxGeometry(3.0, 1.8, 0.4), new THREE.MeshLambertMaterial({ color: 0xd8dadc }));
+        frame.position.set(0, m.h + 0.4, 0);
+        g.add(frame);
+      } else if (m.style === 'flood') {
+        // a floodlight head (Buttonwillow judge r3): a frame with a 3 x 2 grid of lamps facing the heading
+        const frame = new THREE.Mesh(new THREE.BoxGeometry(2.6, 1.6, 0.15), postMat);
+        frame.position.set(0, m.h + 0.5, 0);
+        g.add(pole, frame);
+        const lamp = new THREE.MeshLambertMaterial({ color: 0xe9ecef, emissive: 0x2a2a2a });
+        for (let i = 0; i < 3; i++) for (let j = 0; j < 2; j++) {
+          const l2 = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.55, 0.25), lamp);
+          l2.position.set(-0.85 + i * 0.85, m.h + 0.15 + j * 0.7, 0.18); g.add(l2);
+        }
+      } else {
+        const head = new THREE.Mesh(new THREE.BoxGeometry(2.2, 1.0, 0.3), backMat);
+        head.position.set(0, m.h + 0.3, 0);
+        g.add(pole, head);
+      }
     } else if (m.kind === 'gantry' && m.x2 !== undefined && m.y2 !== undefined) {
       // two white lattice towers either side of the track with cables between their tops
       group.add(latticeTower(m.x, m.y, m.z, m.h, m.w, white), latticeTower(m.x2, m.y2, m.z2 ?? m.z, m.h, m.w, white));
@@ -1811,7 +2120,7 @@ export function buildScenery(track: TrackJson, _hf: Float32Array, sc: SceneryAss
   if (j.paint_lines?.length) { const m = buildPaintLines(j.paint_lines); if (m) root.add(m); }
   if (j.ground_signs?.length) { const m = buildGroundSigns(j.ground_signs, ground); if (m) root.add(m); }
   if (j.kerb_lines?.length) root.add(buildKerbLines(j.kerb_lines, ground));
-  if (j.paved_areas?.length && ground) { const m = buildPavedAreas(j.paved_areas, ground); if (m) root.add(m); }
+  if (j.paved_areas?.length && ground) { const m = buildPavedAreas(j.paved_areas, ground, paint); if (m) root.add(m); }
   if (j.bridges?.length) root.add(buildBridges(j.bridges, ground));
   if (j.landmarks?.length) root.add(buildLandmarks(j.landmarks));
   root.traverse((o) => { o.castShadow = false; if (o.name !== 'kerbs' && o.name !== 'edge_lines') o.receiveShadow = false; o.matrixAutoUpdate = false; o.updateMatrix(); });

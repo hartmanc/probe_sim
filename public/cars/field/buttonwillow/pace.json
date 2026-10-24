@@ -1,0 +1,2972 @@
+{
+ "ai_version": 8,
+ "source": "6 cars from their own laps at Buttonwillow (MyLaps session 12906863; tools/race/data/buttonwillow/match_laguna.json), 39 as Laguna (session 12975608) x 1.2065 (AI Probe solo-lap ratio, placeholder); tools/race/pace_track.ts",
+ "track": "buttonwillow",
+ "cars": [
+  {
+   "number": "20",
+   "team": "NSF Racing",
+   "class": "C",
+   "grid": 1,
+   "finish": 33,
+   "classFinish": 16,
+   "lapsCompleted": 116,
+   "greenLaps": 109,
+   "targetLap": 206.77,
+   "bestLap": 191.232,
+   "sigma": 11.22,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 18,
+     "firstLap": 1,
+     "targetLap": 203.796,
+     "bestLap": 191.232,
+     "sigma": 14.815
+    },
+    {
+     "index": 1,
+     "laps": 12,
+     "firstLap": 21,
+     "targetLap": 217.429,
+     "bestLap": 203.658,
+     "sigma": 2.733
+    },
+    {
+     "index": 2,
+     "laps": 11,
+     "firstLap": 37,
+     "targetLap": 220.926,
+     "bestLap": 214.334,
+     "sigma": 1.27
+    },
+    {
+     "index": 3,
+     "laps": 23,
+     "firstLap": 50,
+     "targetLap": 199.46,
+     "bestLap": 194.97,
+     "sigma": 3.01
+    },
+    {
+     "index": 4,
+     "laps": 9,
+     "firstLap": 75,
+     "targetLap": 197.747,
+     "bestLap": 191.552,
+     "sigma": 5.845
+    },
+    {
+     "index": 5,
+     "laps": 30,
+     "firstLap": 86,
+     "targetLap": 208.306,
+     "bestLap": 204.79,
+     "sigma": 3.346
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "0",
+   "team": "The Supranos",
+   "class": "A",
+   "grid": 2,
+   "finish": 38,
+   "classFinish": 8,
+   "lapsCompleted": 104,
+   "greenLaps": 91,
+   "targetLap": 157.391,
+   "bestLap": 135.88,
+   "sigma": 14.678,
+   "aggression": 2,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 6,
+     "firstLap": 1,
+     "targetLap": 151.031,
+     "bestLap": 146.57,
+     "sigma": 5.509
+    },
+    {
+     "index": 1,
+     "laps": 10,
+     "firstLap": 15,
+     "targetLap": 151.982,
+     "bestLap": 143.686,
+     "sigma": 3.814
+    },
+    {
+     "index": 2,
+     "laps": 6,
+     "firstLap": 27,
+     "targetLap": 157.863,
+     "bestLap": 145.681,
+     "sigma": 6.834
+    },
+    {
+     "index": 3,
+     "laps": 9,
+     "firstLap": 35,
+     "targetLap": 155.861,
+     "bestLap": 139.775,
+     "sigma": 11.106
+    },
+    {
+     "index": 4,
+     "laps": 23,
+     "firstLap": 46,
+     "targetLap": 172.499,
+     "bestLap": 157.273,
+     "sigma": 13.378
+    },
+    {
+     "index": 5,
+     "laps": 8,
+     "firstLap": 73,
+     "targetLap": 139.96,
+     "bestLap": 135.88,
+     "sigma": 3.411
+    },
+    {
+     "index": 6,
+     "laps": 5,
+     "firstLap": 86,
+     "targetLap": 157.444,
+     "bestLap": 152.3,
+     "sigma": 0.397
+    },
+    {
+     "index": 7,
+     "laps": 6,
+     "firstLap": 93,
+     "targetLap": 145.419,
+     "bestLap": 144.486,
+     "sigma": 1.339
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "58",
+   "team": "Italian job racing",
+   "class": "B",
+   "grid": 3,
+   "finish": 11,
+   "classFinish": 6,
+   "lapsCompleted": 163,
+   "greenLaps": 22,
+   "targetLap": 153.454,
+   "bestLap": 151.164,
+   "sigma": 5.376,
+   "aggression": 0,
+   "stints": [],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "97",
+   "team": "Louballers",
+   "class": "C",
+   "grid": 4,
+   "finish": 28,
+   "classFinish": 12,
+   "lapsCompleted": 128,
+   "greenLaps": 116,
+   "targetLap": 160.967,
+   "bestLap": 144.607,
+   "sigma": 12.605,
+   "aggression": 0,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 17,
+     "firstLap": 1,
+     "targetLap": 167.019,
+     "bestLap": 154.795,
+     "sigma": 3.632
+    },
+    {
+     "index": 1,
+     "laps": 28,
+     "firstLap": 20,
+     "targetLap": 150.918,
+     "bestLap": 144.607,
+     "sigma": 4.001
+    },
+    {
+     "index": 2,
+     "laps": 9,
+     "firstLap": 50,
+     "targetLap": 170.132,
+     "bestLap": 165.716,
+     "sigma": 1.63
+    },
+    {
+     "index": 3,
+     "laps": 6,
+     "firstLap": 61,
+     "targetLap": 198.872,
+     "bestLap": 188.029,
+     "sigma": 5.361
+    },
+    {
+     "index": 4,
+     "laps": 11,
+     "firstLap": 71,
+     "targetLap": 159.903,
+     "bestLap": 153.582,
+     "sigma": 4.288
+    },
+    {
+     "index": 5,
+     "laps": 8,
+     "firstLap": 84,
+     "targetLap": 170.519,
+     "bestLap": 167.665,
+     "sigma": 2.961
+    },
+    {
+     "index": 6,
+     "laps": 14,
+     "firstLap": 94,
+     "targetLap": 156.796,
+     "bestLap": 152.741,
+     "sigma": 3.939
+    },
+    {
+     "index": 7,
+     "laps": 11,
+     "firstLap": 110,
+     "targetLap": 150.219,
+     "bestLap": 147.14,
+     "sigma": 2.072
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "670",
+   "team": "Bernal Dads Racing",
+   "class": "A",
+   "grid": 5,
+   "finish": 14,
+   "classFinish": 5,
+   "lapsCompleted": 161,
+   "greenLaps": 111,
+   "targetLap": 163.444,
+   "bestLap": 154.24,
+   "sigma": 7.305,
+   "aggression": 2,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 37,
+     "firstLap": 1,
+     "targetLap": 164.358,
+     "bestLap": 158.429,
+     "sigma": 5.95
+    },
+    {
+     "index": 1,
+     "laps": 40,
+     "firstLap": 43,
+     "targetLap": 159.407,
+     "bestLap": 154.24,
+     "sigma": 4.036
+    },
+    {
+     "index": 2,
+     "laps": 16,
+     "firstLap": 85,
+     "targetLap": 164.442,
+     "bestLap": 159.87,
+     "sigma": 2.792
+    },
+    {
+     "index": 3,
+     "laps": 10,
+     "firstLap": 103,
+     "targetLap": 191.499,
+     "bestLap": 176.734,
+     "sigma": 11.537
+    }
+   ],
+   "targetSource": "Buttonwillow #670 Bernal Dads Racing (MyLaps 12906863; same: exact normalised team match)"
+  },
+  {
+   "number": "37",
+   "team": "Caffeine Unlimited",
+   "class": "A",
+   "grid": 6,
+   "finish": 12,
+   "classFinish": 4,
+   "lapsCompleted": 162,
+   "greenLaps": 154,
+   "targetLap": 149.224,
+   "bestLap": 138.849,
+   "sigma": 7.922,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 9,
+     "firstLap": 4,
+     "targetLap": 144.536,
+     "bestLap": 140.341,
+     "sigma": 4.966
+    },
+    {
+     "index": 1,
+     "laps": 31,
+     "firstLap": 15,
+     "targetLap": 150.083,
+     "bestLap": 143.234,
+     "sigma": 5.146
+    },
+    {
+     "index": 2,
+     "laps": 28,
+     "firstLap": 48,
+     "targetLap": 146.558,
+     "bestLap": 142.469,
+     "sigma": 4.014
+    },
+    {
+     "index": 3,
+     "laps": 14,
+     "firstLap": 79,
+     "targetLap": 149.847,
+     "bestLap": 147.566,
+     "sigma": 2.314
+    },
+    {
+     "index": 4,
+     "laps": 19,
+     "firstLap": 95,
+     "targetLap": 159.589,
+     "bestLap": 154.37,
+     "sigma": 7.413
+    },
+    {
+     "index": 5,
+     "laps": 5,
+     "firstLap": 116,
+     "targetLap": 160.116,
+     "bestLap": 155.846,
+     "sigma": 4.515
+    },
+    {
+     "index": 6,
+     "laps": 39,
+     "firstLap": 123,
+     "targetLap": 143.698,
+     "bestLap": 138.849,
+     "sigma": 3.01
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "189",
+   "team": "Tired Iron Racing",
+   "class": "A",
+   "grid": 7,
+   "finish": 2,
+   "classFinish": 2,
+   "lapsCompleted": 203,
+   "greenLaps": 215,
+   "targetLap": 154.462,
+   "bestLap": 145.328,
+   "sigma": 5.804,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 63,
+     "firstLap": 1,
+     "targetLap": 153.935,
+     "bestLap": 145.328,
+     "sigma": 5.837
+    },
+    {
+     "index": 1,
+     "laps": 54,
+     "firstLap": 67,
+     "targetLap": 156.561,
+     "bestLap": 147.588,
+     "sigma": 6.164
+    },
+    {
+     "index": 2,
+     "laps": 60,
+     "firstLap": 123,
+     "targetLap": 155.218,
+     "bestLap": 147.748,
+     "sigma": 5.787
+    },
+    {
+     "index": 3,
+     "laps": 17,
+     "firstLap": 196,
+     "targetLap": 150.193,
+     "bestLap": 145.464,
+     "sigma": 6.329
+    },
+    {
+     "index": 4,
+     "laps": 19,
+     "firstLap": 219,
+     "targetLap": 151.76,
+     "bestLap": 147.72,
+     "sigma": 2.147
+    }
+   ],
+   "targetSource": "Buttonwillow #189 Tired Iron Racing (MyLaps 12906863; same: exact normalised team match)"
+  },
+  {
+   "number": "9",
+   "team": "Arc Blast",
+   "class": "C",
+   "grid": 8,
+   "finish": 23,
+   "classFinish": 9,
+   "lapsCompleted": 144,
+   "greenLaps": 131,
+   "targetLap": 168.939,
+   "bestLap": 152.988,
+   "sigma": 10.826,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 20,
+     "firstLap": 1,
+     "targetLap": 162.394,
+     "bestLap": 154.255,
+     "sigma": 3.804
+    },
+    {
+     "index": 1,
+     "laps": 18,
+     "firstLap": 23,
+     "targetLap": 157.158,
+     "bestLap": 152.988,
+     "sigma": 3.32
+    },
+    {
+     "index": 2,
+     "laps": 20,
+     "firstLap": 47,
+     "targetLap": 185.42,
+     "bestLap": 178.457,
+     "sigma": 6.556
+    },
+    {
+     "index": 3,
+     "laps": 12,
+     "firstLap": 69,
+     "targetLap": 171.294,
+     "bestLap": 165.483,
+     "sigma": 3.418
+    },
+    {
+     "index": 4,
+     "laps": 11,
+     "firstLap": 89,
+     "targetLap": 171.706,
+     "bestLap": 167.988,
+     "sigma": 2.221
+    },
+    {
+     "index": 5,
+     "laps": 12,
+     "firstLap": 102,
+     "targetLap": 163.456,
+     "bestLap": 154.839,
+     "sigma": 7.546
+    },
+    {
+     "index": 6,
+     "laps": 11,
+     "firstLap": 117,
+     "targetLap": 165.569,
+     "bestLap": 158.052,
+     "sigma": 5.454
+    },
+    {
+     "index": 7,
+     "laps": 14,
+     "firstLap": 130,
+     "targetLap": 167.885,
+     "bestLap": 157.566,
+     "sigma": 6.934
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "38",
+   "team": "Another Fine Mess",
+   "class": "B",
+   "grid": 9,
+   "finish": 6,
+   "classFinish": 3,
+   "lapsCompleted": 172,
+   "greenLaps": 227,
+   "targetLap": 152.455,
+   "bestLap": 143.189,
+   "sigma": 6.243,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 37,
+     "firstLap": 7,
+     "targetLap": 153.421,
+     "bestLap": 143.739,
+     "sigma": 6.649
+    },
+    {
+     "index": 1,
+     "laps": 39,
+     "firstLap": 46,
+     "targetLap": 152.452,
+     "bestLap": 144.562,
+     "sigma": 6.623
+    },
+    {
+     "index": 2,
+     "laps": 16,
+     "firstLap": 90,
+     "targetLap": 154.263,
+     "bestLap": 147.485,
+     "sigma": 7.829
+    },
+    {
+     "index": 3,
+     "laps": 8,
+     "firstLap": 108,
+     "targetLap": 162.959,
+     "bestLap": 149.411,
+     "sigma": 15.693
+    },
+    {
+     "index": 4,
+     "laps": 15,
+     "firstLap": 119,
+     "targetLap": 154.876,
+     "bestLap": 148.867,
+     "sigma": 4.559
+    },
+    {
+     "index": 5,
+     "laps": 59,
+     "firstLap": 142,
+     "targetLap": 151.367,
+     "bestLap": 143.189,
+     "sigma": 5.179
+    },
+    {
+     "index": 6,
+     "laps": 45,
+     "firstLap": 209,
+     "targetLap": 150.679,
+     "bestLap": 144.91,
+     "sigma": 4.165
+    }
+   ],
+   "targetSource": "Buttonwillow #38 Another Fine Mess (MyLaps 12906863; same: exact normalised team match)"
+  },
+  {
+   "number": "759",
+   "team": "In search of Edselance",
+   "class": "B",
+   "grid": 10,
+   "finish": 29,
+   "classFinish": 10,
+   "lapsCompleted": 127,
+   "greenLaps": 117,
+   "targetLap": 155.959,
+   "bestLap": 143.544,
+   "sigma": 9.997,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 29,
+     "firstLap": 1,
+     "targetLap": 166.288,
+     "bestLap": 159.129,
+     "sigma": 7.162
+    },
+    {
+     "index": 1,
+     "laps": 34,
+     "firstLap": 32,
+     "targetLap": 149.196,
+     "bestLap": 143.544,
+     "sigma": 3.452
+    },
+    {
+     "index": 2,
+     "laps": 17,
+     "firstLap": 68,
+     "targetLap": 161.803,
+     "bestLap": 149.078,
+     "sigma": 5.923
+    },
+    {
+     "index": 3,
+     "laps": 21,
+     "firstLap": 93,
+     "targetLap": 150.281,
+     "bestLap": 145.09,
+     "sigma": 2.787
+    },
+    {
+     "index": 4,
+     "laps": 11,
+     "firstLap": 116,
+     "targetLap": 152.69,
+     "bestLap": 148.412,
+     "sigma": 4.846
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "801",
+   "team": "Volatile RAM",
+   "class": "B",
+   "grid": 11,
+   "finish": 13,
+   "classFinish": 7,
+   "lapsCompleted": 162,
+   "greenLaps": 156,
+   "targetLap": 153.903,
+   "bestLap": 142.9,
+   "sigma": 7.109,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 33,
+     "firstLap": 1,
+     "targetLap": 157.542,
+     "bestLap": 153.573,
+     "sigma": 3.15
+    },
+    {
+     "index": 1,
+     "laps": 34,
+     "firstLap": 36,
+     "targetLap": 153.959,
+     "bestLap": 147.429,
+     "sigma": 6.456
+    },
+    {
+     "index": 2,
+     "laps": 32,
+     "firstLap": 75,
+     "targetLap": 149.161,
+     "bestLap": 146.058,
+     "sigma": 2.373
+    },
+    {
+     "index": 3,
+     "laps": 27,
+     "firstLap": 109,
+     "targetLap": 151.771,
+     "bestLap": 147.545,
+     "sigma": 3.915
+    },
+    {
+     "index": 4,
+     "laps": 22,
+     "firstLap": 140,
+     "targetLap": 146.578,
+     "bestLap": 142.9,
+     "sigma": 3.142
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "74",
+   "team": "B Team - Just Plain Stupid",
+   "class": "A",
+   "grid": 12,
+   "finish": 20,
+   "classFinish": 6,
+   "lapsCompleted": 156,
+   "greenLaps": 149,
+   "targetLap": 137.907,
+   "bestLap": 128.528,
+   "sigma": 4.411,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 46,
+     "firstLap": 1,
+     "targetLap": 136.21,
+     "bestLap": 132.649,
+     "sigma": 2.119
+    },
+    {
+     "index": 1,
+     "laps": 43,
+     "firstLap": 49,
+     "targetLap": 140.883,
+     "bestLap": 135.918,
+     "sigma": 4.077
+    },
+    {
+     "index": 2,
+     "laps": 7,
+     "firstLap": 97,
+     "targetLap": 138.63,
+     "bestLap": 132.482,
+     "sigma": 4.265
+    },
+    {
+     "index": 3,
+     "laps": 18,
+     "firstLap": 106,
+     "targetLap": 135.759,
+     "bestLap": 129.611,
+     "sigma": 2.586
+    },
+    {
+     "index": 4,
+     "laps": 8,
+     "firstLap": 128,
+     "targetLap": 135.872,
+     "bestLap": 128.528,
+     "sigma": 2.616
+    },
+    {
+     "index": 5,
+     "laps": 18,
+     "firstLap": 138,
+     "targetLap": 138.049,
+     "bestLap": 132.04,
+     "sigma": 4.563
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "700",
+   "team": "SKINNY KOYOTE RACING Team A",
+   "class": "C",
+   "grid": 13,
+   "finish": 44,
+   "classFinish": 26,
+   "lapsCompleted": 24,
+   "greenLaps": 20,
+   "targetLap": 176.997,
+   "bestLap": 170.088,
+   "sigma": 5.281,
+   "aggression": 0,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 6,
+     "firstLap": 10,
+     "targetLap": 176.283,
+     "bestLap": 170.102,
+     "sigma": 1.836
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "711",
+   "team": "Eyesore Racing",
+   "class": "A",
+   "grid": 14,
+   "finish": 1,
+   "classFinish": 1,
+   "lapsCompleted": 203,
+   "greenLaps": 198,
+   "targetLap": 137.297,
+   "bestLap": 130.488,
+   "sigma": 3.576,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 36,
+     "firstLap": 1,
+     "targetLap": 137.44,
+     "bestLap": 133.099,
+     "sigma": 2.093
+    },
+    {
+     "index": 1,
+     "laps": 40,
+     "firstLap": 39,
+     "targetLap": 136.158,
+     "bestLap": 134.044,
+     "sigma": 2.127
+    },
+    {
+     "index": 2,
+     "laps": 17,
+     "firstLap": 82,
+     "targetLap": 135.315,
+     "bestLap": 130.488,
+     "sigma": 4.581
+    },
+    {
+     "index": 3,
+     "laps": 21,
+     "firstLap": 101,
+     "targetLap": 133.68,
+     "bestLap": 130.779,
+     "sigma": 2.487
+    },
+    {
+     "index": 4,
+     "laps": 37,
+     "firstLap": 124,
+     "targetLap": 137.094,
+     "bestLap": 134.487,
+     "sigma": 2.079
+    },
+    {
+     "index": 5,
+     "laps": 40,
+     "firstLap": 163,
+     "targetLap": 140.255,
+     "bestLap": 133.483,
+     "sigma": 4.241
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "100",
+   "team": "Sorry For Party Racing",
+   "class": "C",
+   "grid": 15,
+   "finish": 9,
+   "classFinish": 2,
+   "lapsCompleted": 165,
+   "greenLaps": 154,
+   "targetLap": 159.81,
+   "bestLap": 141.766,
+   "sigma": 13.267,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 14,
+     "firstLap": 1,
+     "targetLap": 149.718,
+     "bestLap": 145.701,
+     "sigma": 2.949
+    },
+    {
+     "index": 1,
+     "laps": 14,
+     "firstLap": 17,
+     "targetLap": 171.194,
+     "bestLap": 166.685,
+     "sigma": 2.897
+    },
+    {
+     "index": 2,
+     "laps": 16,
+     "firstLap": 33,
+     "targetLap": 151.409,
+     "bestLap": 145.828,
+     "sigma": 4.749
+    },
+    {
+     "index": 3,
+     "laps": 12,
+     "firstLap": 51,
+     "targetLap": 174.923,
+     "bestLap": 169.276,
+     "sigma": 6.36
+    },
+    {
+     "index": 4,
+     "laps": 13,
+     "firstLap": 65,
+     "targetLap": 159.182,
+     "bestLap": 151.299,
+     "sigma": 5.752
+    },
+    {
+     "index": 5,
+     "laps": 17,
+     "firstLap": 80,
+     "targetLap": 154.742,
+     "bestLap": 150.974,
+     "sigma": 3.902
+    },
+    {
+     "index": 6,
+     "laps": 13,
+     "firstLap": 99,
+     "targetLap": 160.732,
+     "bestLap": 155.667,
+     "sigma": 3.637
+    },
+    {
+     "index": 7,
+     "laps": 11,
+     "firstLap": 114,
+     "targetLap": 166.053,
+     "bestLap": 161.598,
+     "sigma": 4.497
+    },
+    {
+     "index": 8,
+     "laps": 10,
+     "firstLap": 127,
+     "targetLap": 168.396,
+     "bestLap": 161.878,
+     "sigma": 5.797
+    },
+    {
+     "index": 9,
+     "laps": 25,
+     "firstLap": 139,
+     "targetLap": 145.973,
+     "bestLap": 141.766,
+     "sigma": 4.421
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "51",
+   "team": "Chase Race: The Best Damn….",
+   "class": "C",
+   "grid": 16,
+   "finish": 39,
+   "classFinish": 21,
+   "lapsCompleted": 96,
+   "greenLaps": 85,
+   "targetLap": 212.992,
+   "bestLap": 174.917,
+   "sigma": 31.254,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 7,
+     "firstLap": 25,
+     "targetLap": 183.35,
+     "bestLap": 181.647,
+     "sigma": 1.687
+    },
+    {
+     "index": 1,
+     "laps": 9,
+     "firstLap": 34,
+     "targetLap": 228.305,
+     "bestLap": 224.757,
+     "sigma": 2.613
+    },
+    {
+     "index": 2,
+     "laps": 8,
+     "firstLap": 45,
+     "targetLap": 225.237,
+     "bestLap": 221.128,
+     "sigma": 2.948
+    },
+    {
+     "index": 3,
+     "laps": 9,
+     "firstLap": 55,
+     "targetLap": 184.236,
+     "bestLap": 180.389,
+     "sigma": 4.621
+    },
+    {
+     "index": 4,
+     "laps": 5,
+     "firstLap": 66,
+     "targetLap": 218.026,
+     "bestLap": 211.536,
+     "sigma": 5.635
+    },
+    {
+     "index": 5,
+     "laps": 9,
+     "firstLap": 73,
+     "targetLap": 218.691,
+     "bestLap": 209.41,
+     "sigma": 4.678
+    },
+    {
+     "index": 6,
+     "laps": 12,
+     "firstLap": 84,
+     "targetLap": 180.675,
+     "bestLap": 174.917,
+     "sigma": 4.646
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "49",
+   "team": "Ran When Parked Racing Entry C",
+   "class": "C",
+   "grid": 17,
+   "finish": 15,
+   "classFinish": 3,
+   "lapsCompleted": 161,
+   "greenLaps": 152,
+   "targetLap": 158.918,
+   "bestLap": 144.822,
+   "sigma": 8.99,
+   "aggression": 0,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 16,
+     "firstLap": 3,
+     "targetLap": 167.246,
+     "bestLap": 161.175,
+     "sigma": 3.978
+    },
+    {
+     "index": 1,
+     "laps": 23,
+     "firstLap": 21,
+     "targetLap": 161.88,
+     "bestLap": 151.74,
+     "sigma": 4.526
+    },
+    {
+     "index": 2,
+     "laps": 19,
+     "firstLap": 49,
+     "targetLap": 157.104,
+     "bestLap": 150.077,
+     "sigma": 4.103
+    },
+    {
+     "index": 3,
+     "laps": 23,
+     "firstLap": 70,
+     "targetLap": 158.5,
+     "bestLap": 151.441,
+     "sigma": 5.03
+    },
+    {
+     "index": 4,
+     "laps": 25,
+     "firstLap": 95,
+     "targetLap": 151.107,
+     "bestLap": 144.822,
+     "sigma": 3.511
+    },
+    {
+     "index": 5,
+     "laps": 13,
+     "firstLap": 122,
+     "targetLap": 154.898,
+     "bestLap": 149.13,
+     "sigma": 3.781
+    },
+    {
+     "index": 6,
+     "laps": 10,
+     "firstLap": 137,
+     "targetLap": 155.439,
+     "bestLap": 148.905,
+     "sigma": 5.146
+    },
+    {
+     "index": 7,
+     "laps": 12,
+     "firstLap": 149,
+     "targetLap": 181.005,
+     "bestLap": 179.571,
+     "sigma": 1.906
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "544",
+   "team": "ONSET/Tetanus Racing",
+   "class": "B",
+   "grid": 18,
+   "finish": 24,
+   "classFinish": 8,
+   "lapsCompleted": 136,
+   "greenLaps": 103,
+   "targetLap": 154.762,
+   "bestLap": 143.013,
+   "sigma": 6.741,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 58,
+     "firstLap": 1,
+     "targetLap": 155.022,
+     "bestLap": 144.316,
+     "sigma": 6.309
+    },
+    {
+     "index": 1,
+     "laps": 6,
+     "firstLap": 62,
+     "targetLap": 159.19,
+     "bestLap": 153.52,
+     "sigma": 4.354
+    },
+    {
+     "index": 2,
+     "laps": 7,
+     "firstLap": 71,
+     "targetLap": 149.42,
+     "bestLap": 145.78,
+     "sigma": 3.601
+    },
+    {
+     "index": 3,
+     "laps": 8,
+     "firstLap": 80,
+     "targetLap": 150.344,
+     "bestLap": 143.013,
+     "sigma": 3.811
+    },
+    {
+     "index": 4,
+     "laps": 10,
+     "firstLap": 95,
+     "targetLap": 148.962,
+     "bestLap": 143.963,
+     "sigma": 4.516
+    },
+    {
+     "index": 5,
+     "laps": 9,
+     "firstLap": 107,
+     "targetLap": 157.908,
+     "bestLap": 150.36,
+     "sigma": 4.225
+    }
+   ],
+   "targetSource": "Buttonwillow #544 ONSET/Tetanus Racing (MyLaps 12906863; same: exact normalised team match)"
+  },
+  {
+   "number": "83",
+   "team": "Dirty Duck Racing",
+   "class": "B",
+   "grid": 19,
+   "finish": 4,
+   "classFinish": 1,
+   "lapsCompleted": 188,
+   "greenLaps": 182,
+   "targetLap": 152.137,
+   "bestLap": 141.356,
+   "sigma": 5.75,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 13,
+     "firstLap": 1,
+     "targetLap": 158.825,
+     "bestLap": 152.603,
+     "sigma": 4.575
+    },
+    {
+     "index": 1,
+     "laps": 31,
+     "firstLap": 16,
+     "targetLap": 156.765,
+     "bestLap": 152.218,
+     "sigma": 3.626
+    },
+    {
+     "index": 2,
+     "laps": 32,
+     "firstLap": 49,
+     "targetLap": 151.146,
+     "bestLap": 146.371,
+     "sigma": 3.182
+    },
+    {
+     "index": 3,
+     "laps": 34,
+     "firstLap": 83,
+     "targetLap": 152.107,
+     "bestLap": 147.387,
+     "sigma": 3.61
+    },
+    {
+     "index": 4,
+     "laps": 30,
+     "firstLap": 119,
+     "targetLap": 150.419,
+     "bestLap": 145.913,
+     "sigma": 4.998
+    },
+    {
+     "index": 5,
+     "laps": 36,
+     "firstLap": 152,
+     "targetLap": 146.929,
+     "bestLap": 141.356,
+     "sigma": 3.16
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "619",
+   "team": "Anal Corkscrew Probe",
+   "class": "B",
+   "grid": 20,
+   "finish": 7,
+   "classFinish": 4,
+   "lapsCompleted": 170,
+   "greenLaps": 254,
+   "targetLap": 160.51,
+   "bestLap": 149.956,
+   "sigma": 10.202,
+   "aggression": 1,
+   "player": true,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 22,
+     "firstLap": 1,
+     "targetLap": 189.938,
+     "bestLap": 182.353,
+     "sigma": 4.421
+    },
+    {
+     "index": 1,
+     "laps": 30,
+     "firstLap": 29,
+     "targetLap": 168.238,
+     "bestLap": 158.395,
+     "sigma": 8.54
+    },
+    {
+     "index": 2,
+     "laps": 32,
+     "firstLap": 61,
+     "targetLap": 154.581,
+     "bestLap": 150.744,
+     "sigma": 3.306
+    },
+    {
+     "index": 3,
+     "laps": 24,
+     "firstLap": 95,
+     "targetLap": 165.19,
+     "bestLap": 150.703,
+     "sigma": 9.789
+    },
+    {
+     "index": 4,
+     "laps": 45,
+     "firstLap": 128,
+     "targetLap": 163.828,
+     "bestLap": 151.792,
+     "sigma": 13.997
+    },
+    {
+     "index": 5,
+     "laps": 23,
+     "firstLap": 185,
+     "targetLap": 160.575,
+     "bestLap": 156.144,
+     "sigma": 2.421
+    },
+    {
+     "index": 6,
+     "laps": 13,
+     "firstLap": 210,
+     "targetLap": 155.209,
+     "bestLap": 150.357,
+     "sigma": 5.383
+    },
+    {
+     "index": 7,
+     "laps": 10,
+     "firstLap": 225,
+     "targetLap": 152.781,
+     "bestLap": 149.956,
+     "sigma": 2.368
+    },
+    {
+     "index": 8,
+     "laps": 23,
+     "firstLap": 239,
+     "targetLap": 153.524,
+     "bestLap": 150.221,
+     "sigma": 2.015
+    },
+    {
+     "index": 9,
+     "laps": 23,
+     "firstLap": 264,
+     "targetLap": 154.431,
+     "bestLap": 150.883,
+     "sigma": 3.79
+    }
+   ],
+   "targetSource": "Buttonwillow #619 Anal Corkscrew Probe (MyLaps 12906863; same: exact normalised team match)"
+  },
+  {
+   "number": "89",
+   "team": "The Homer by Porcubimmer….",
+   "class": "A",
+   "grid": 21,
+   "finish": 3,
+   "classFinish": 3,
+   "lapsCompleted": 189,
+   "greenLaps": 183,
+   "targetLap": 148.293,
+   "bestLap": 137.436,
+   "sigma": 6.631,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 8,
+     "firstLap": 3,
+     "targetLap": 155.664,
+     "bestLap": 147.86,
+     "sigma": 0.783
+    },
+    {
+     "index": 1,
+     "laps": 27,
+     "firstLap": 13,
+     "targetLap": 148.518,
+     "bestLap": 146.064,
+     "sigma": 1.671
+    },
+    {
+     "index": 2,
+     "laps": 46,
+     "firstLap": 42,
+     "targetLap": 146.017,
+     "bestLap": 139.769,
+     "sigma": 3.254
+    },
+    {
+     "index": 3,
+     "laps": 40,
+     "firstLap": 91,
+     "targetLap": 154.361,
+     "bestLap": 148.048,
+     "sigma": 5.306
+    },
+    {
+     "index": 4,
+     "laps": 54,
+     "firstLap": 133,
+     "targetLap": 142.88,
+     "bestLap": 137.436,
+     "sigma": 2.786
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "156",
+   "team": "TPF Racing",
+   "class": "C",
+   "grid": 22,
+   "finish": 8,
+   "classFinish": 1,
+   "lapsCompleted": 168,
+   "greenLaps": 159,
+   "targetLap": 157.238,
+   "bestLap": 149.52,
+   "sigma": 5.252,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 9,
+     "firstLap": 1,
+     "targetLap": 164.748,
+     "bestLap": 159.701,
+     "sigma": 4.417
+    },
+    {
+     "index": 1,
+     "laps": 23,
+     "firstLap": 23,
+     "targetLap": 157.603,
+     "bestLap": 151.864,
+     "sigma": 4.371
+    },
+    {
+     "index": 2,
+     "laps": 33,
+     "firstLap": 48,
+     "targetLap": 157.431,
+     "bestLap": 154.027,
+     "sigma": 3.74
+    },
+    {
+     "index": 3,
+     "laps": 7,
+     "firstLap": 83,
+     "targetLap": 160.007,
+     "bestLap": 154.783,
+     "sigma": 6.602
+    },
+    {
+     "index": 4,
+     "laps": 23,
+     "firstLap": 92,
+     "targetLap": 156.504,
+     "bestLap": 149.52,
+     "sigma": 3.663
+    },
+    {
+     "index": 5,
+     "laps": 48,
+     "firstLap": 119,
+     "targetLap": 154.713,
+     "bestLap": 150.427,
+     "sigma": 4.101
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "906",
+   "team": "Low Road Racing",
+   "class": "C",
+   "grid": 23,
+   "finish": 42,
+   "classFinish": 24,
+   "lapsCompleted": 70,
+   "greenLaps": 68,
+   "targetLap": 170.04,
+   "bestLap": 157.818,
+   "sigma": 5.478,
+   "aggression": 0,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 23,
+     "firstLap": 1,
+     "targetLap": 166.966,
+     "bestLap": 157.818,
+     "sigma": 5.064
+    },
+    {
+     "index": 1,
+     "laps": 24,
+     "firstLap": 26,
+     "targetLap": 172.438,
+     "bestLap": 163.782,
+     "sigma": 7.185
+    },
+    {
+     "index": 2,
+     "laps": 18,
+     "firstLap": 52,
+     "targetLap": 169.904,
+     "bestLap": 165.116,
+     "sigma": 3.871
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "34",
+   "team": "KnoxVegas LowBallerssss",
+   "class": "B",
+   "grid": 24,
+   "finish": 27,
+   "classFinish": 9,
+   "lapsCompleted": 129,
+   "greenLaps": 119,
+   "targetLap": 160.975,
+   "bestLap": 143.847,
+   "sigma": 8.849,
+   "aggression": 2,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 15,
+     "firstLap": 3,
+     "targetLap": 158.092,
+     "bestLap": 151.755,
+     "sigma": 3.503
+    },
+    {
+     "index": 1,
+     "laps": 11,
+     "firstLap": 21,
+     "targetLap": 169.143,
+     "bestLap": 162.367,
+     "sigma": 6.98
+    },
+    {
+     "index": 2,
+     "laps": 23,
+     "firstLap": 34,
+     "targetLap": 165.325,
+     "bestLap": 159.401,
+     "sigma": 4.99
+    },
+    {
+     "index": 3,
+     "laps": 40,
+     "firstLap": 60,
+     "targetLap": 152.485,
+     "bestLap": 143.847,
+     "sigma": 5.959
+    },
+    {
+     "index": 4,
+     "laps": 21,
+     "firstLap": 103,
+     "targetLap": 160.153,
+     "bestLap": 155.834,
+     "sigma": 2.851
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "16",
+   "team": "Scrubbing Bubbles",
+   "class": "C",
+   "grid": 25,
+   "finish": 45,
+   "classFinish": 27,
+   "lapsCompleted": 16,
+   "greenLaps": 13,
+   "targetLap": 171.149,
+   "bestLap": 156.751,
+   "sigma": 18.878,
+   "aggression": 0,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 7,
+     "firstLap": 2,
+     "targetLap": 163.129,
+     "bestLap": 156.751,
+     "sigma": 6.987
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "664",
+   "team": "NachoFriend Racing",
+   "class": "C",
+   "grid": 26,
+   "finish": 18,
+   "classFinish": 6,
+   "lapsCompleted": 157,
+   "greenLaps": 151,
+   "targetLap": 164.088,
+   "bestLap": 151.374,
+   "sigma": 7.874,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 22,
+     "firstLap": 1,
+     "targetLap": 161.329,
+     "bestLap": 152.772,
+     "sigma": 4.961
+    },
+    {
+     "index": 1,
+     "laps": 29,
+     "firstLap": 25,
+     "targetLap": 165.174,
+     "bestLap": 157.565,
+     "sigma": 4.864
+    },
+    {
+     "index": 2,
+     "laps": 29,
+     "firstLap": 56,
+     "targetLap": 157.814,
+     "bestLap": 151.374,
+     "sigma": 5.878
+    },
+    {
+     "index": 3,
+     "laps": 27,
+     "firstLap": 88,
+     "targetLap": 160.528,
+     "bestLap": 153.196,
+     "sigma": 4.475
+    },
+    {
+     "index": 4,
+     "laps": 11,
+     "firstLap": 117,
+     "targetLap": 167.69,
+     "bestLap": 162.082,
+     "sigma": 4.611
+    },
+    {
+     "index": 5,
+     "laps": 19,
+     "firstLap": 139,
+     "targetLap": 172.675,
+     "bestLap": 164.126,
+     "sigma": 2.606
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "169",
+   "team": "Malört Racing Development (MRD)",
+   "class": "C",
+   "grid": 27,
+   "finish": 25,
+   "classFinish": 10,
+   "lapsCompleted": 136,
+   "greenLaps": 120,
+   "targetLap": 170.677,
+   "bestLap": 147.548,
+   "sigma": 17.724,
+   "aggression": 0,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 8,
+     "firstLap": 6,
+     "targetLap": 201.24,
+     "bestLap": 199.17,
+     "sigma": 1.893
+    },
+    {
+     "index": 1,
+     "laps": 10,
+     "firstLap": 20,
+     "targetLap": 161.167,
+     "bestLap": 154.925,
+     "sigma": 3.559
+    },
+    {
+     "index": 2,
+     "laps": 12,
+     "firstLap": 33,
+     "targetLap": 181.27,
+     "bestLap": 176.091,
+     "sigma": 6.059
+    },
+    {
+     "index": 3,
+     "laps": 5,
+     "firstLap": 47,
+     "targetLap": 160.518,
+     "bestLap": 154.997,
+     "sigma": 5.074
+    },
+    {
+     "index": 4,
+     "laps": 7,
+     "firstLap": 54,
+     "targetLap": 151.21,
+     "bestLap": 147.548,
+     "sigma": 5.429
+    },
+    {
+     "index": 5,
+     "laps": 13,
+     "firstLap": 76,
+     "targetLap": 164.085,
+     "bestLap": 155.916,
+     "sigma": 7.358
+    },
+    {
+     "index": 6,
+     "laps": 11,
+     "firstLap": 91,
+     "targetLap": 183.129,
+     "bestLap": 177.93,
+     "sigma": 3.244
+    },
+    {
+     "index": 7,
+     "laps": 13,
+     "firstLap": 105,
+     "targetLap": 157.37,
+     "bestLap": 153.613,
+     "sigma": 3.238
+    },
+    {
+     "index": 8,
+     "laps": 11,
+     "firstLap": 120,
+     "targetLap": 159.351,
+     "bestLap": 155.539,
+     "sigma": 4.04
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "40",
+   "team": "Mock Grass Racing",
+   "class": "C",
+   "grid": 28,
+   "finish": 21,
+   "classFinish": 8,
+   "lapsCompleted": 152,
+   "greenLaps": 146,
+   "targetLap": 156.119,
+   "bestLap": 144.155,
+   "sigma": 7.227,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 9,
+     "firstLap": 1,
+     "targetLap": 159.494,
+     "bestLap": 152.24,
+     "sigma": 8.147
+    },
+    {
+     "index": 1,
+     "laps": 27,
+     "firstLap": 12,
+     "targetLap": 161.048,
+     "bestLap": 152.268,
+     "sigma": 5.098
+    },
+    {
+     "index": 2,
+     "laps": 28,
+     "firstLap": 42,
+     "targetLap": 153.965,
+     "bestLap": 148.961,
+     "sigma": 3.445
+    },
+    {
+     "index": 3,
+     "laps": 23,
+     "firstLap": 72,
+     "targetLap": 155.572,
+     "bestLap": 151.19,
+     "sigma": 2.961
+    },
+    {
+     "index": 4,
+     "laps": 27,
+     "firstLap": 99,
+     "targetLap": 148.145,
+     "bestLap": 144.155,
+     "sigma": 3.238
+    },
+    {
+     "index": 5,
+     "laps": 24,
+     "firstLap": 128,
+     "targetLap": 157.283,
+     "bestLap": 152.668,
+     "sigma": 4.617
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "42",
+   "team": "Team Valiant Effort",
+   "class": "C",
+   "grid": 29,
+   "finish": 17,
+   "classFinish": 5,
+   "lapsCompleted": 157,
+   "greenLaps": 153,
+   "targetLap": 163.258,
+   "bestLap": 153.15,
+   "sigma": 6.304,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 53,
+     "firstLap": 1,
+     "targetLap": 164.106,
+     "bestLap": 156.461,
+     "sigma": 4.499
+    },
+    {
+     "index": 1,
+     "laps": 57,
+     "firstLap": 56,
+     "targetLap": 161.51,
+     "bestLap": 153.15,
+     "sigma": 6.235
+    },
+    {
+     "index": 2,
+     "laps": 25,
+     "firstLap": 115,
+     "targetLap": 160.763,
+     "bestLap": 154.476,
+     "sigma": 6.702
+    },
+    {
+     "index": 3,
+     "laps": 14,
+     "firstLap": 143,
+     "targetLap": 170.019,
+     "bestLap": 163.971,
+     "sigma": 4.388
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "105",
+   "team": "Scuderia Limoni",
+   "class": "C",
+   "grid": 30,
+   "finish": 26,
+   "classFinish": 11,
+   "lapsCompleted": 135,
+   "greenLaps": 125,
+   "targetLap": 161.364,
+   "bestLap": 149.45,
+   "sigma": 10.359,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 25,
+     "firstLap": 1,
+     "targetLap": 153.959,
+     "bestLap": 150.492,
+     "sigma": 2.825
+    },
+    {
+     "index": 1,
+     "laps": 21,
+     "firstLap": 28,
+     "targetLap": 158.682,
+     "bestLap": 154.666,
+     "sigma": 2.747
+    },
+    {
+     "index": 2,
+     "laps": 27,
+     "firstLap": 53,
+     "targetLap": 160.943,
+     "bestLap": 149.45,
+     "sigma": 7.85
+    },
+    {
+     "index": 3,
+     "laps": 25,
+     "firstLap": 82,
+     "targetLap": 175.666,
+     "bestLap": 166.469,
+     "sigma": 11.368
+    },
+    {
+     "index": 4,
+     "laps": 19,
+     "firstLap": 110,
+     "targetLap": 173.011,
+     "bestLap": 154.21,
+     "sigma": 5.987
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "8",
+   "team": "Team Tinyvette",
+   "class": "C",
+   "grid": 31,
+   "finish": 37,
+   "classFinish": 20,
+   "lapsCompleted": 107,
+   "greenLaps": 104,
+   "targetLap": 165.284,
+   "bestLap": 147.182,
+   "sigma": 11.223,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 39,
+     "firstLap": 1,
+     "targetLap": 153.28,
+     "bestLap": 147.182,
+     "sigma": 6.395
+    },
+    {
+     "index": 1,
+     "laps": 28,
+     "firstLap": 42,
+     "targetLap": 163.923,
+     "bestLap": 156.912,
+     "sigma": 4.263
+    },
+    {
+     "index": 2,
+     "laps": 16,
+     "firstLap": 72,
+     "targetLap": 183.254,
+     "bestLap": 175.365,
+     "sigma": 6.184
+    },
+    {
+     "index": 3,
+     "laps": 9,
+     "firstLap": 90,
+     "targetLap": 170.995,
+     "bestLap": 167.987,
+     "sigma": 2.54
+    },
+    {
+     "index": 4,
+     "laps": 8,
+     "firstLap": 101,
+     "targetLap": 167.907,
+     "bestLap": 166.977,
+     "sigma": 1.377
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; renumbered; matched #6 has no green laps)"
+  },
+  {
+   "number": "41",
+   "team": "Distilled Racing",
+   "class": "B",
+   "grid": 32,
+   "finish": 5,
+   "classFinish": 2,
+   "lapsCompleted": 179,
+   "greenLaps": 166,
+   "targetLap": 148.64,
+   "bestLap": 137.858,
+   "sigma": 7.151,
+   "aggression": 2,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 17,
+     "firstLap": 1,
+     "targetLap": 142.027,
+     "bestLap": 138.982,
+     "sigma": 4.234
+    },
+    {
+     "index": 1,
+     "laps": 13,
+     "firstLap": 20,
+     "targetLap": 151.853,
+     "bestLap": 147.158,
+     "sigma": 3.843
+    },
+    {
+     "index": 2,
+     "laps": 12,
+     "firstLap": 35,
+     "targetLap": 150.612,
+     "bestLap": 147.676,
+     "sigma": 2.723
+    },
+    {
+     "index": 3,
+     "laps": 5,
+     "firstLap": 49,
+     "targetLap": 141.081,
+     "bestLap": 139.738,
+     "sigma": 1.991
+    },
+    {
+     "index": 4,
+     "laps": 5,
+     "firstLap": 56,
+     "targetLap": 141.055,
+     "bestLap": 140.751,
+     "sigma": 0.451
+    },
+    {
+     "index": 5,
+     "laps": 12,
+     "firstLap": 63,
+     "targetLap": 150.738,
+     "bestLap": 146.439,
+     "sigma": 3.16
+    },
+    {
+     "index": 6,
+     "laps": 22,
+     "firstLap": 77,
+     "targetLap": 145.209,
+     "bestLap": 137.858,
+     "sigma": 7.394
+    },
+    {
+     "index": 7,
+     "laps": 21,
+     "firstLap": 101,
+     "targetLap": 142.052,
+     "bestLap": 139.011,
+     "sigma": 1.734
+    },
+    {
+     "index": 8,
+     "laps": 5,
+     "firstLap": 124,
+     "targetLap": 151.476,
+     "bestLap": 148.32,
+     "sigma": 4.679
+    },
+    {
+     "index": 9,
+     "laps": 11,
+     "firstLap": 131,
+     "targetLap": 144.227,
+     "bestLap": 141.011,
+     "sigma": 1.645
+    },
+    {
+     "index": 10,
+     "laps": 11,
+     "firstLap": 149,
+     "targetLap": 146.529,
+     "bestLap": 142.878,
+     "sigma": 4.427
+    },
+    {
+     "index": 11,
+     "laps": 17,
+     "firstLap": 162,
+     "targetLap": 153.301,
+     "bestLap": 147.758,
+     "sigma": 3.206
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "319",
+   "team": "Fancy Chicken Racing",
+   "class": "C",
+   "grid": 33,
+   "finish": 30,
+   "classFinish": 13,
+   "lapsCompleted": 126,
+   "greenLaps": 111,
+   "targetLap": 168.61,
+   "bestLap": 152.641,
+   "sigma": 9.493,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 9,
+     "firstLap": 1,
+     "targetLap": 168.61,
+     "bestLap": 161.135,
+     "sigma": 5.572
+    },
+    {
+     "index": 1,
+     "laps": 5,
+     "firstLap": 14,
+     "targetLap": 175.192,
+     "bestLap": 168.425,
+     "sigma": 4.64
+    },
+    {
+     "index": 2,
+     "laps": 11,
+     "firstLap": 21,
+     "targetLap": 161.1,
+     "bestLap": 153.362,
+     "sigma": 7.087
+    },
+    {
+     "index": 3,
+     "laps": 12,
+     "firstLap": 34,
+     "targetLap": 158.159,
+     "bestLap": 152.641,
+     "sigma": 3.459
+    },
+    {
+     "index": 4,
+     "laps": 11,
+     "firstLap": 48,
+     "targetLap": 169.69,
+     "bestLap": 160.658,
+     "sigma": 3.539
+    },
+    {
+     "index": 5,
+     "laps": 9,
+     "firstLap": 61,
+     "targetLap": 174.153,
+     "bestLap": 165.266,
+     "sigma": 9.37
+    },
+    {
+     "index": 6,
+     "laps": 8,
+     "firstLap": 89,
+     "targetLap": 172.623,
+     "bestLap": 161.178,
+     "sigma": 5.423
+    },
+    {
+     "index": 7,
+     "laps": 12,
+     "firstLap": 114,
+     "targetLap": 168.907,
+     "bestLap": 159.548,
+     "sigma": 4.955
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "76",
+   "team": "Salty Thunder Racing",
+   "class": "B",
+   "grid": 34,
+   "finish": 10,
+   "classFinish": 5,
+   "lapsCompleted": 164,
+   "greenLaps": 156,
+   "targetLap": 163.725,
+   "bestLap": 149.787,
+   "sigma": 7.559,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 23,
+     "firstLap": 1,
+     "targetLap": 158.274,
+     "bestLap": 149.787,
+     "sigma": 4.579
+    },
+    {
+     "index": 1,
+     "laps": 22,
+     "firstLap": 26,
+     "targetLap": 164.407,
+     "bestLap": 159.875,
+     "sigma": 2.67
+    },
+    {
+     "index": 2,
+     "laps": 29,
+     "firstLap": 55,
+     "targetLap": 161.663,
+     "bestLap": 151.568,
+     "sigma": 7.168
+    },
+    {
+     "index": 3,
+     "laps": 14,
+     "firstLap": 86,
+     "targetLap": 190.407,
+     "bestLap": 178.996,
+     "sigma": 10.106
+    },
+    {
+     "index": 4,
+     "laps": 27,
+     "firstLap": 103,
+     "targetLap": 162.706,
+     "bestLap": 153.548,
+     "sigma": 9.823
+    },
+    {
+     "index": 5,
+     "laps": 31,
+     "firstLap": 133,
+     "targetLap": 163.55,
+     "bestLap": 155.037,
+     "sigma": 4.562
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "963",
+   "team": "Borsche AG",
+   "class": "C",
+   "grid": 35,
+   "finish": 19,
+   "classFinish": 7,
+   "lapsCompleted": 157,
+   "greenLaps": 194,
+   "targetLap": 165.7,
+   "bestLap": 149.945,
+   "sigma": 14.306,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 28,
+     "firstLap": 1,
+     "targetLap": 167.836,
+     "bestLap": 153.609,
+     "sigma": 9.243
+    },
+    {
+     "index": 1,
+     "laps": 7,
+     "firstLap": 44,
+     "targetLap": 164.843,
+     "bestLap": 159.421,
+     "sigma": 1.997
+    },
+    {
+     "index": 2,
+     "laps": 23,
+     "firstLap": 53,
+     "targetLap": 159.486,
+     "bestLap": 150.305,
+     "sigma": 7.042
+    },
+    {
+     "index": 3,
+     "laps": 14,
+     "firstLap": 79,
+     "targetLap": 202.394,
+     "bestLap": 189.071,
+     "sigma": 9.238
+    },
+    {
+     "index": 4,
+     "laps": 10,
+     "firstLap": 104,
+     "targetLap": 194.3,
+     "bestLap": 190.786,
+     "sigma": 4.598
+    },
+    {
+     "index": 5,
+     "laps": 30,
+     "firstLap": 116,
+     "targetLap": 157.68,
+     "bestLap": 149.945,
+     "sigma": 8.066
+    },
+    {
+     "index": 6,
+     "laps": 7,
+     "firstLap": 155,
+     "targetLap": 155.074,
+     "bestLap": 150.861,
+     "sigma": 4.331
+    },
+    {
+     "index": 7,
+     "laps": 23,
+     "firstLap": 164,
+     "targetLap": 160.719,
+     "bestLap": 156.037,
+     "sigma": 3.413
+    },
+    {
+     "index": 8,
+     "laps": 26,
+     "firstLap": 191,
+     "targetLap": 181.505,
+     "bestLap": 170.382,
+     "sigma": 8.804
+    },
+    {
+     "index": 9,
+     "laps": 18,
+     "firstLap": 220,
+     "targetLap": 159.072,
+     "bestLap": 152.831,
+     "sigma": 4.392
+    }
+   ],
+   "targetSource": "Buttonwillow #963 Borsche AG (MyLaps 12906863; same: exact normalised team match)"
+  },
+  {
+   "number": "1",
+   "team": "Team Bean Redux",
+   "class": "C",
+   "grid": 36,
+   "finish": 36,
+   "classFinish": 19,
+   "lapsCompleted": 108,
+   "greenLaps": 99,
+   "targetLap": 178.474,
+   "bestLap": 161.522,
+   "sigma": 15.679,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 6,
+     "firstLap": 1,
+     "targetLap": 165.641,
+     "bestLap": 161.522,
+     "sigma": 4.143
+    },
+    {
+     "index": 1,
+     "laps": 22,
+     "firstLap": 14,
+     "targetLap": 198.779,
+     "bestLap": 186.658,
+     "sigma": 9.423
+    },
+    {
+     "index": 2,
+     "laps": 10,
+     "firstLap": 42,
+     "targetLap": 188.158,
+     "bestLap": 184.457,
+     "sigma": 2.997
+    },
+    {
+     "index": 3,
+     "laps": 30,
+     "firstLap": 54,
+     "targetLap": 170.917,
+     "bestLap": 163.198,
+     "sigma": 7.615
+    },
+    {
+     "index": 4,
+     "laps": 5,
+     "firstLap": 87,
+     "targetLap": 183.726,
+     "bestLap": 172.69,
+     "sigma": 3.548
+    },
+    {
+     "index": 5,
+     "laps": 14,
+     "firstLap": 94,
+     "targetLap": 171.984,
+     "bestLap": 166.96,
+     "sigma": 2.104
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "2",
+   "team": "I Soar Racing",
+   "class": "C",
+   "grid": 37,
+   "finish": 16,
+   "classFinish": 4,
+   "lapsCompleted": 160,
+   "greenLaps": 149,
+   "targetLap": 163.871,
+   "bestLap": 143.651,
+   "sigma": 21.79,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 6,
+     "firstLap": 1,
+     "targetLap": 159.814,
+     "bestLap": 151.268,
+     "sigma": 5.398
+    },
+    {
+     "index": 1,
+     "laps": 10,
+     "firstLap": 9,
+     "targetLap": 157.384,
+     "bestLap": 150.354,
+     "sigma": 4.161
+    },
+    {
+     "index": 2,
+     "laps": 27,
+     "firstLap": 21,
+     "targetLap": 149.707,
+     "bestLap": 144.315,
+     "sigma": 4.088
+    },
+    {
+     "index": 3,
+     "laps": 18,
+     "firstLap": 50,
+     "targetLap": 181.654,
+     "bestLap": 179.168,
+     "sigma": 1.585
+    },
+    {
+     "index": 4,
+     "laps": 20,
+     "firstLap": 70,
+     "targetLap": 186.974,
+     "bestLap": 175.388,
+     "sigma": 8.265
+    },
+    {
+     "index": 5,
+     "laps": 22,
+     "firstLap": 92,
+     "targetLap": 151.129,
+     "bestLap": 144.436,
+     "sigma": 3.85
+    },
+    {
+     "index": 6,
+     "laps": 18,
+     "firstLap": 116,
+     "targetLap": 168.153,
+     "bestLap": 161.762,
+     "sigma": 3.894
+    },
+    {
+     "index": 7,
+     "laps": 9,
+     "firstLap": 137,
+     "targetLap": 148.235,
+     "bestLap": 143.651,
+     "sigma": 2.442
+    },
+    {
+     "index": 8,
+     "laps": 11,
+     "firstLap": 149,
+     "targetLap": 190.607,
+     "bestLap": 163.405,
+     "sigma": 14.488
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "202",
+   "team": "Ur Moms Minivan Racing",
+   "class": "C",
+   "grid": 38,
+   "finish": 31,
+   "classFinish": 14,
+   "lapsCompleted": 124,
+   "greenLaps": 108,
+   "targetLap": 196.323,
+   "bestLap": 178.083,
+   "sigma": 16.477,
+   "aggression": 0,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 5,
+     "firstLap": 1,
+     "targetLap": 200.12,
+     "bestLap": 199.439,
+     "sigma": 1.009
+    },
+    {
+     "index": 1,
+     "laps": 5,
+     "firstLap": 8,
+     "targetLap": 223.81,
+     "bestLap": 216.325,
+     "sigma": 9.304
+    },
+    {
+     "index": 2,
+     "laps": 9,
+     "firstLap": 21,
+     "targetLap": 190.869,
+     "bestLap": 178.4,
+     "sigma": 6.443
+    },
+    {
+     "index": 3,
+     "laps": 7,
+     "firstLap": 32,
+     "targetLap": 188.719,
+     "bestLap": 181.986,
+     "sigma": 7.91
+    },
+    {
+     "index": 4,
+     "laps": 14,
+     "firstLap": 42,
+     "targetLap": 191.034,
+     "bestLap": 178.788,
+     "sigma": 7.66
+    },
+    {
+     "index": 5,
+     "laps": 12,
+     "firstLap": 58,
+     "targetLap": 211.378,
+     "bestLap": 200.533,
+     "sigma": 8.255
+    },
+    {
+     "index": 6,
+     "laps": 6,
+     "firstLap": 72,
+     "targetLap": 238.366,
+     "bestLap": 233.37,
+     "sigma": 1.87
+    },
+    {
+     "index": 7,
+     "laps": 14,
+     "firstLap": 80,
+     "targetLap": 185.493,
+     "bestLap": 178.083,
+     "sigma": 4.777
+    },
+    {
+     "index": 8,
+     "laps": 8,
+     "firstLap": 96,
+     "targetLap": 196.605,
+     "bestLap": 193.517,
+     "sigma": 3.11
+    },
+    {
+     "index": 9,
+     "laps": 14,
+     "firstLap": 106,
+     "targetLap": 185.763,
+     "bestLap": 180.407,
+     "sigma": 3.155
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "785",
+   "team": "Race Rambler",
+   "class": "C",
+   "grid": 39,
+   "finish": 32,
+   "classFinish": 15,
+   "lapsCompleted": 122,
+   "greenLaps": 109,
+   "targetLap": 172.158,
+   "bestLap": 155.816,
+   "sigma": 14.801,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 23,
+     "firstLap": 1,
+     "targetLap": 160.951,
+     "bestLap": 155.816,
+     "sigma": 3.47
+    },
+    {
+     "index": 1,
+     "laps": 20,
+     "firstLap": 31,
+     "targetLap": 176.371,
+     "bestLap": 171.962,
+     "sigma": 4.71
+    },
+    {
+     "index": 2,
+     "laps": 22,
+     "firstLap": 61,
+     "targetLap": 176.89,
+     "bestLap": 170.621,
+     "sigma": 4.389
+    },
+    {
+     "index": 3,
+     "laps": 20,
+     "firstLap": 85,
+     "targetLap": 164.295,
+     "bestLap": 157.059,
+     "sigma": 5.689
+    },
+    {
+     "index": 4,
+     "laps": 7,
+     "firstLap": 109,
+     "targetLap": 159.477,
+     "bestLap": 158.068,
+     "sigma": 0.41
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "143",
+   "team": "PIT CREW REVENGE ….",
+   "class": "C",
+   "grid": 40,
+   "finish": 34,
+   "classFinish": 17,
+   "lapsCompleted": 112,
+   "greenLaps": 98,
+   "targetLap": 179.072,
+   "bestLap": 164.521,
+   "sigma": 11.904,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 7,
+     "firstLap": 1,
+     "targetLap": 178.006,
+     "bestLap": 173.732,
+     "sigma": 3.707
+    },
+    {
+     "index": 1,
+     "laps": 7,
+     "firstLap": 10,
+     "targetLap": 194.818,
+     "bestLap": 183.806,
+     "sigma": 7.359
+    },
+    {
+     "index": 2,
+     "laps": 11,
+     "firstLap": 19,
+     "targetLap": 175.6,
+     "bestLap": 170.631,
+     "sigma": 5.544
+    },
+    {
+     "index": 3,
+     "laps": 20,
+     "firstLap": 32,
+     "targetLap": 191.998,
+     "bestLap": 177.746,
+     "sigma": 15.149
+    },
+    {
+     "index": 4,
+     "laps": 12,
+     "firstLap": 55,
+     "targetLap": 176.85,
+     "bestLap": 170.255,
+     "sigma": 7.342
+    },
+    {
+     "index": 5,
+     "laps": 6,
+     "firstLap": 72,
+     "targetLap": 222.063,
+     "bestLap": 213.644,
+     "sigma": 6.768
+    },
+    {
+     "index": 6,
+     "laps": 13,
+     "firstLap": 80,
+     "targetLap": 172.614,
+     "bestLap": 164.529,
+     "sigma": 4.617
+    },
+    {
+     "index": 7,
+     "laps": 13,
+     "firstLap": 95,
+     "targetLap": 169.485,
+     "bestLap": 164.521,
+     "sigma": 5.567
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "43",
+   "team": "Faster Farms: 18 years of….",
+   "class": "C",
+   "grid": 41,
+   "finish": 43,
+   "classFinish": 25,
+   "lapsCompleted": 32,
+   "greenLaps": 31,
+   "targetLap": 162.665,
+   "bestLap": 152.997,
+   "sigma": 5.281,
+   "aggression": 2,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 21,
+     "firstLap": 1,
+     "targetLap": 161.107,
+     "bestLap": 154.202,
+     "sigma": 3.176
+    },
+    {
+     "index": 1,
+     "laps": 8,
+     "firstLap": 24,
+     "targetLap": 163.766,
+     "bestLap": 152.997,
+     "sigma": 8.95
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "249",
+   "team": "Pony Keg",
+   "class": "C",
+   "grid": 42,
+   "finish": 40,
+   "classFinish": 22,
+   "lapsCompleted": 85,
+   "greenLaps": 81,
+   "targetLap": 150.857,
+   "bestLap": 139.724,
+   "sigma": 9.163,
+   "aggression": 2,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 18,
+     "firstLap": 1,
+     "targetLap": 149.432,
+     "bestLap": 143.647,
+     "sigma": 3.383
+    },
+    {
+     "index": 1,
+     "laps": 15,
+     "firstLap": 21,
+     "targetLap": 160.86,
+     "bestLap": 155.503,
+     "sigma": 3.848
+    },
+    {
+     "index": 2,
+     "laps": 13,
+     "firstLap": 38,
+     "targetLap": 151.573,
+     "bestLap": 145.454,
+     "sigma": 4.118
+    },
+    {
+     "index": 3,
+     "laps": 22,
+     "firstLap": 56,
+     "targetLap": 143.62,
+     "bestLap": 139.724,
+     "sigma": 3.935
+    },
+    {
+     "index": 4,
+     "laps": 5,
+     "firstLap": 81,
+     "targetLap": 150.815,
+     "bestLap": 148.862,
+     "sigma": 2.428
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "67",
+   "team": "Lost in Translation",
+   "class": "C",
+   "grid": 43,
+   "finish": 35,
+   "classFinish": 18,
+   "lapsCompleted": 110,
+   "greenLaps": 82,
+   "targetLap": 175.692,
+   "bestLap": 157.911,
+   "sigma": 16.722,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 5,
+     "firstLap": 77,
+     "targetLap": 169.053,
+     "bestLap": 161.791,
+     "sigma": 6.328
+    },
+    {
+     "index": 1,
+     "laps": 8,
+     "firstLap": 102,
+     "targetLap": 162.539,
+     "bestLap": 160.91,
+     "sigma": 2.39
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "55",
+   "team": "I Snore Racing",
+   "class": "C",
+   "grid": 44,
+   "finish": 41,
+   "classFinish": 23,
+   "lapsCompleted": 85,
+   "greenLaps": 72,
+   "targetLap": 191.639,
+   "bestLap": 171.317,
+   "sigma": 12.195,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 15,
+     "firstLap": 21,
+     "targetLap": 193.433,
+     "bestLap": 190.065,
+     "sigma": 4.181
+    },
+    {
+     "index": 1,
+     "laps": 12,
+     "firstLap": 44,
+     "targetLap": 177.567,
+     "bestLap": 171.317,
+     "sigma": 6.187
+    },
+    {
+     "index": 2,
+     "laps": 6,
+     "firstLap": 64,
+     "targetLap": 197.329,
+     "bestLap": 191.442,
+     "sigma": 6.731
+    },
+    {
+     "index": 3,
+     "laps": 12,
+     "firstLap": 73,
+     "targetLap": 184.183,
+     "bestLap": 177.966,
+     "sigma": 5.127
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  },
+  {
+   "number": "200",
+   "team": "Aggressively Adequate (R)",
+   "class": "A",
+   "grid": 45,
+   "finish": 22,
+   "classFinish": 7,
+   "lapsCompleted": 151,
+   "greenLaps": 134,
+   "targetLap": 151.578,
+   "bestLap": 131.058,
+   "sigma": 15.492,
+   "aggression": 2,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 11,
+     "firstLap": 1,
+     "targetLap": 142.853,
+     "bestLap": 136.197,
+     "sigma": 3.127
+    },
+    {
+     "index": 1,
+     "laps": 14,
+     "firstLap": 14,
+     "targetLap": 137.951,
+     "bestLap": 131.058,
+     "sigma": 3.08
+    },
+    {
+     "index": 2,
+     "laps": 9,
+     "firstLap": 30,
+     "targetLap": 146.134,
+     "bestLap": 139.097,
+     "sigma": 5.66
+    },
+    {
+     "index": 3,
+     "laps": 18,
+     "firstLap": 41,
+     "targetLap": 156.627,
+     "bestLap": 146.926,
+     "sigma": 5.959
+    },
+    {
+     "index": 4,
+     "laps": 10,
+     "firstLap": 61,
+     "targetLap": 154.256,
+     "bestLap": 147.65,
+     "sigma": 7.095
+    },
+    {
+     "index": 5,
+     "laps": 13,
+     "firstLap": 73,
+     "targetLap": 168.264,
+     "bestLap": 158.331,
+     "sigma": 9.289
+    },
+    {
+     "index": 6,
+     "laps": 15,
+     "firstLap": 91,
+     "targetLap": 153.916,
+     "bestLap": 145.638,
+     "sigma": 9.885
+    },
+    {
+     "index": 7,
+     "laps": 9,
+     "firstLap": 113,
+     "targetLap": 170.528,
+     "bestLap": 162.84,
+     "sigma": 7.551
+    },
+    {
+     "index": 8,
+     "laps": 17,
+     "firstLap": 125,
+     "targetLap": 137.507,
+     "bestLap": 133.412,
+     "sigma": 2.787
+    },
+    {
+     "index": 9,
+     "laps": 7,
+     "firstLap": 144,
+     "targetLap": 160.529,
+     "bestLap": 142.205,
+     "sigma": 12.707
+    }
+   ],
+   "targetSource": "PLACEHOLDER: Laguna target x 1.2065 (did not race Buttonwillow in the Button Turrible 2026 race; absent)"
+  }
+ ]
+}

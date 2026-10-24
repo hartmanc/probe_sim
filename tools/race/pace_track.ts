@@ -1,0 +1,123 @@
+// Field pace on any registered circuit: the Laguna field (identity.json, the 45 cars of MyLaps session 12975608) with
+// each car's targets from that circuit's own Lemons race where the car raced it, else a placeholder. The per-track
+// form of tools/race/pace_sonoma.ts (which stays as Sonoma's record; this tool reproduces its output).
+//
+//   npx tsx tools/race/pace_track.ts --track <id> --session <MyLaps session id> [--data tools/race/data/<id>] [--match]
+//       [--label <name in the notes>] [--when 'in March 2026'] [--source <the file's source line>]
+//       writes public/cars/field/<id>/pace.json (TRACKS[id].pace), then: npx tsx tools/race/calibrate_field.ts --track <id>
+//   --match   (re)write <data>/match_laguna.json from the classification: a Laguna car is matched to an entrant of the
+//             circuit's race when the normalised team names are equal (lower case, letters and digits only); a team with
+//             two entrants is matched by number, else it is not matched. No fuzzy matches (Buttonwillow: "TPF Racing" vs
+//             "PH Racing" scored 0.82 and is a different team).
+//
+// Inputs in <data>: sessions_<session>_classification.json and laps/posNNN.json (MyLaps / Speedhive event results
+// API, eventresults/sessions/<session>/classification and .../lapdata/<position>/laps), match_laguna.json.
+// Rules (tools/race/pace.ts): target = median of green non-pit laps after dropping those over 1.3 x the raw median;
+// stints between pit stops, out laps dropped, laps over 1.2 x the stint median or 1.3 x the car median or under
+// 0.97 x the best dropped, at least 5 laps. A car that did not race the circuit keeps a placeholder: its Laguna target x
+// the AI Probe's solo-lap ratio <id> / Laguna at scale 1, marked in `targetSource`.
+import { readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync } from 'node:fs';
+import { resolve, dirname } from 'node:path';
+import { loadTrackPack, loadProbeJson, loadPace, pacePath, trackArg, ROOT } from './load';
+import { runSolo } from '../../src/physics/ai/solo';
+import { AI_VERSION, type PaceJson, type PaceStint } from '../../src/physics/ai/field';
+
+const ARGV = process.argv.slice(2);
+const arg = (k: string) => { const i = ARGV.indexOf(`--${k}`); return i >= 0 ? ARGV[i + 1] : undefined; };
+const TRACK = trackArg(ARGV);
+const SESSION = arg('session');
+if (!SESSION) throw new Error('--session <MyLaps session id> required');
+const DATA = resolve(ROOT, arg('data') ?? `tools/race/data/${TRACK}`);
+const MIN_STINT_LAPS = 5;
+const parseLap = (s: string) => s.split(':').map(Number).reduce((t, p) => t * 60 + p, 0);
+const median = (a: number[]) => { const b = [...a].sort((x, y) => x - y); const n = b.length; return n ? (n % 2 ? b[(n - 1) / 2] : 0.5 * (b[n / 2 - 1] + b[n / 2])) : NaN; };
+const robustSigma = (a: number[]) => { const m = median(a); return 1.4826 * median(a.map((t) => Math.abs(t - m))); };
+const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+const src = loadPace('laguna_seca');
+const matchPath = resolve(DATA, 'match_laguna.json');
+if (ARGV.includes('--match') || !existsSync(matchPath)) {
+  const cls = JSON.parse(readFileSync(resolve(DATA, `sessions_${SESSION}_classification.json`), 'utf8'));
+  const rows: { name: string; startNumber: string }[] = cls.rows;
+  const cars = src.cars.map((c) => {
+    const same = rows.filter((r) => norm(r.name) === norm(c.team));
+    const pick = same.length === 1 ? same[0] : same.find((r) => r.startNumber === c.number);
+    if (!pick) return { laguna_number: c.number, laguna_team: c.team, [`${TRACK}_number`]: null, [`${TRACK}_team`]: null, status: 'absent',
+      evidence: same.length ? `${same.length} entrants of that team, none numbered ${c.number}` : 'no entrant with that normalised team name' };
+    return { laguna_number: c.number, laguna_team: c.team, [`${TRACK}_number`]: pick.startNumber, [`${TRACK}_team`]: pick.name,
+      status: pick.startNumber === c.number ? 'same' : 'renumbered', evidence: `exact normalised team match${pick.startNumber === c.number ? '; number matches' : ''}` };
+  });
+  writeFileSync(matchPath, JSON.stringify({ note: `Laguna field car (public/cars/field/identity.json numbering, MyLaps session 12975608) -> ${TRACK} entrant (MyLaps session ${SESSION}); tools/race/pace_track.ts --match`, laguna_session: 12975608, [`${TRACK}_session`]: Number(SESSION), cars }, null, 1) + '\n');
+}
+const match = JSON.parse(readFileSync(matchPath, 'utf8'));
+const numKey = `${TRACK}_number`, teamKey = `${TRACK}_team`;
+
+const byNr = new Map<string, any>();
+for (const f of readdirSync(resolve(DATA, 'laps'))) {
+  const j = JSON.parse(readFileSync(resolve(DATA, 'laps', f), 'utf8'));
+  byNr.set(String(j.lapDataInfo.participantInfo.startNr), j);
+}
+function ownPace(nr: string) {
+  const j = byNr.get(nr);
+  if (!j) throw new Error(`no ${TRACK} lap file for #${nr}`);
+  const laps = j.laps.map((l: any) => {
+    const st: string[] = Array.isArray(l.status) ? l.status : [l.status];
+    const t = parseLap(l.lapTime);
+    return { nr: l.lapNr, t, pit: !!l.inPit, ok: !l.inPit && st.length > 0 && st.every((x) => x === 'GREEN') && Number.isFinite(t) && t > 60 };
+  });
+  const green = laps.filter((l: any) => l.ok).map((l: any) => l.t);
+  if (!green.length) return { targetLap: NaN, bestLap: NaN, sigma: NaN, greenLaps: 0, stints: [] as PaceStint[] };
+  const m0 = median(green);
+  const clean = green.filter((t: number) => t <= 1.3 * m0);
+  const best = Math.min(...clean);
+  const stints: PaceStint[] = [];
+  let run: number[] = [], first = -1, afterPit = true;
+  const flush = () => {
+    if (run.length) {
+      const sm = median(run);
+      const keep = run.filter((t) => t <= 1.2 * sm && t <= 1.3 * m0 && t >= 0.97 * best);
+      if (keep.length >= MIN_STINT_LAPS) stints.push({ index: stints.length, laps: keep.length, firstLap: first, targetLap: +median(keep).toFixed(3), bestLap: +Math.min(...keep).toFixed(3), sigma: +robustSigma(keep).toFixed(3) });
+    }
+    run = []; first = -1;
+  };
+  for (const l of laps) {
+    if (l.pit) { flush(); afterPit = true; continue; }
+    if (afterPit) { afterPit = false; first = l.nr; continue; }
+    if (first < 0) first = l.nr;
+    if (l.ok) run.push(l.t);
+  }
+  flush();
+  return { targetLap: +median(clean).toFixed(3), bestLap: +best.toFixed(3), sigma: +robustSigma(clean).toFixed(3), greenLaps: clean.length, stints };
+}
+
+const probe = loadProbeJson();
+const solo = (id: string) => { const p = loadTrackPack(id); const r = runSolo(p.line, p.surface, probe, null, 1, 2); return r.laps[1]; };
+const a = solo('laguna_seca'), b = solo(TRACK), k = b / a;
+const r3 = (x: number) => +(x * k).toFixed(3);
+const label = arg('label') ?? TRACK;
+// the race in the placeholder note (Sonoma's record: 'in March 2026'); default the session
+const when = arg('when') ?? `in session ${SESSION}`;
+let real = 0;
+const cars = src.cars.map((c) => {
+  const m = match.cars.find((r: any) => r.laguna_number === c.number);
+  const p = m?.[numKey] && byNr.has(String(m[numKey])) ? ownPace(m[numKey]) : null;
+  if (p && p.greenLaps > 0) {
+    real++;
+    return { ...c, ...p, scale: undefined, achievedLap: undefined, resolved: undefined,
+      targetSource: `${label} #${m[numKey]} ${m[teamKey]} (MyLaps ${SESSION}; ${m.status}: ${m.evidence.split(';')[0]})` };
+  }
+  return { ...c, targetLap: r3(c.targetLap), bestLap: r3(c.bestLap), sigma: +(c.sigma * k).toFixed(3), scale: undefined, achievedLap: undefined, resolved: undefined,
+    stints: (c.stints ?? []).map((s) => ({ ...s, targetLap: r3(s.targetLap), bestLap: r3(s.bestLap), sigma: +(s.sigma * k).toFixed(3), scale: undefined, achievedLap: undefined })),
+    targetSource: `PLACEHOLDER: Laguna target x ${k.toFixed(4)} (did not race ${label} ${when}${m ? '; ' + m.status : ''}${m?.[numKey] ? `; matched #${m[numKey]} has no green laps` : ''})` };
+});
+const out: PaceJson = {
+  ai_version: AI_VERSION,
+  source: arg('source') ?? `${real} cars from their own laps at ${label} (MyLaps session ${SESSION}; ${dirname(matchPath).replace(ROOT + '/', '')}/match_laguna.json), `
+    + `${cars.length - real} as Laguna (session 12975608) x ${k.toFixed(4)} (AI Probe solo-lap ratio, placeholder); tools/race/pace_track.ts`,
+  track: TRACK,
+  cars: cars as PaceJson['cars'],
+};
+mkdirSync(dirname(pacePath(TRACK)), { recursive: true });
+writeFileSync(pacePath(TRACK), JSON.stringify(out, null, 1) + '\n');
+console.log(`AI Probe solo laps: Laguna ${a.toFixed(2)} s, ${TRACK} ${b.toFixed(2)} s, ratio ${k.toFixed(4)}; ${real} cars from ${TRACK} laps; wrote ${pacePath(TRACK)}`);
+for (const c of cars) if (!c.targetSource.startsWith('PLACEHOLDER')) console.log(`  #${c.number.padEnd(4)} target ${c.targetLap.toFixed(2)} (placeholder would be ${(src.cars.find((x) => x.number === c.number)!.targetLap * k).toFixed(2)})  ${c.targetSource}`);

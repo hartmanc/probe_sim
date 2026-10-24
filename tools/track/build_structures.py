@@ -128,6 +128,8 @@ def boxlike(trk, osm, it):
     for key in ("doors", "windows"):
         if key in it:
             out[key] = dict(it[key], side=_side(it[key], st))
+    if it["type"] == "block" and it.get("balcony"):
+        out["balcony"] = dict(it["balcony"], side=_side(it["balcony"], st))
     if it["type"] == "garage" and it.get("mono") is not None:
         out["mono"] = _side({"side": it["mono"]}, st)
     if it["type"] == "fuel" and it.get("pylon_at"):
@@ -137,8 +139,10 @@ def boxlike(trk, osm, it):
     h = {"garage": lambda: max(it["eave"], it["ridge"]) + it.get("parapet", 0), "block": lambda: it["h"] + it.get("parapet", 0),
          "fuel": lambda: it["h"] + it["fascia"] + it.get("hip", 0)}[it["type"]]()
     out["collide"] = [{"footprint": _poly(fp), "z": rnd(z), "h": rnd(h, 1)}] if it["type"] != "fuel" else \
-        [{"footprint": _poly(_corners(c + np.array([math.cos(hd), math.sin(hd)]) * t, hd, 0.4, 0.4)), "z": rnd(z), "h": rnd(it["h"], 1)}
-         for t in np.linspace(-l / 2 + 1, l / 2 - 1, max(1, it["posts"]))]
+        [{"footprint": _poly(_corners(c + np.array([math.cos(hd), math.sin(hd)]) * t + np.array([-math.sin(hd), math.cos(hd)]) * dd, hd, 0.4, 0.4)),
+          "z": rnd(z), "h": rnd(it["h"], 1)}
+         for t in np.linspace(-l / 2 + 1, l / 2 - 1, max(1, it["posts"]))
+         for dd in ((-w / 2 + 0.3, w / 2 - 0.3) if it.get("edge_posts") else (0.0,))]   # edge_posts: both long edges (judge r6)
     log(f"structure {it['type']} '{it['name']}': {l:.1f} x {w:.1f} m, heading {math.degrees(hd):.1f} deg, top {h:.1f} m, "
         f"z {z:.2f}, faces the track on side {st:+d}")
     return out, fp
@@ -228,7 +232,7 @@ def apply(trk, osm, sc, cfg):
             raise SystemExit(f"structures.suppress_osm: OSM way {wid} not found")
         xy = w["xy"][:-1] if np.linalg.norm(w["xy"][0] - w["xy"][-1]) < 0.5 else w["xy"]
         key = [[rnd(x, 1), rnd(y, 1)] for x, y in xy]
-        hit = [k for k, b in enumerate(sc["buildings"]) if b["src"] == "osm" and b["footprint"] == key]
+        hit = [k for k, b in enumerate(sc["buildings"]) if b["src"].split(" (")[0] == "osm" and b["footprint"] == key]   # src may carry its building_evidence
         if not hit:
             raise SystemExit(f"structures.suppress_osm: OSM building {wid} is not among the scenery's buildings")
         for k in reversed(hit):

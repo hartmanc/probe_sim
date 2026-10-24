@@ -29,6 +29,7 @@ STRUCT_CFG = None   # config `structures` (top level), set by configure()
 PITWALL_EDGE = None  # optional per-station lateral (+left, m) of the left edge the pit wall stands 0.6 m off
 SC_CFG = {}
 HOLLOWS = dict(BR.HOLLOW_DEFAULTS)   # config scenery.barrier_hollows {span, slope} (False: None, off), set by configure()
+CFG_ALL = None
 PIT_CFG = {}   # the track config's pit_lane section (trackcfg.py; walls with latlon get geometry here, 21 Oct 2026)
 PIT_EXIT = {}  # the track config's centre.pit_exit (stage 1's measured pit-exit blend line / wall end; trackcfg.py)
 UA = {"User-Agent": "probe-sim/0.1"}
@@ -44,7 +45,8 @@ def rnd(v, d=2):
 
 def configure(cfg, out_dir):
     """Point the module at one track's config and package directory (call geo.configure(cfg) first)."""
-    global CACHE, OUT, PREVIEWS, EPT, DEM13, PIT_WAY, SC_CFG, PIT_CFG, TYRE_CORNERS, PAVED_RUNOFF, BANNER_BOARDS, BANNERS, BRIDGE_STYLE, HANGARS
+    global CACHE, OUT, PREVIEWS, EPT, DEM13, PIT_WAY, SC_CFG, PIT_CFG, TYRE_CORNERS, PAVED_RUNOFF, BANNER_BOARDS, BANNERS, BRIDGE_STYLE, HANGARS, CFG_ALL
+    CFG_ALL = cfg
     CACHE, OUT, PREVIEWS = cfg.cache, out_dir, out_dir
     EPT, DEM13, PIT_WAY = cfg.get("lidar_ept"), cfg.get("dem13"), cfg["pit_lane_way"]
     SC_CFG = cfg["scenery"]
@@ -679,6 +681,14 @@ def trees(trk, G, taken):
         + ("" if SC_CFG.get("tree_imagery_check", True) else "; NOT applied (config scenery.tree_imagery_check False)"))
     if SC_CFG.get("tree_imagery_check", True):
         keep &= canopy_ok
+    tm = SC_CFG.get("tree_min")
+    if tm:
+        # round 8 (Buttonwillow owner lap 2 note 16): with the NAIP check off (it rejected 243 of 273 lidar crowns, the
+        # infield's willow / eucalyptus rows among them), poles, masts and fence posts are kept out by their crown: a
+        # crown at least `radius` m and `height` m
+        small = (rad < tm.get("radius", 3.0)) | (hmax < tm.get("height", 6.0))
+        log(f"trees: tree_min drops {int((keep & small).sum())} small crowns (radius < {tm.get('radius', 3.0)} m or height < {tm.get('height', 6.0)} m)")
+        keep &= ~small
     T = np.c_[x, y, z, hmax, rad][keep]
     log(f"trees: {len(T)} crowns; height p10/p50/p90 {np.percentile(T[:, 3], [10, 50, 90]).round(1)} m, "
         f"radius p50 {np.median(T[:, 4]):.1f} m")
@@ -1059,6 +1069,9 @@ def barriers(trk, osm):
         DECLARED_WALLS.setdefault(dw["name"], []).append((P.copy(), float(dw.get("h", 1.0)), lift))
         if dw.get("color"):
             rec["color"] = dw["color"]
+        for key_ in ("pattern", "sections"):   # colour sections along the run (Buttonwillow, 20 Oct 2026); absent: one colour
+            if dw.get(key_):
+                rec[key_] = dw[key_]
         if dw.get("stack"):
             rec["stack"] = int(dw["stack"])   # tyres per stack (round 7), from the evidence
         if dw.get("fence_arm"):
@@ -1109,9 +1122,16 @@ def kerbs_declared(trk):
     out = []
     kc_ = SC_CFG.get("kerb", {})
     pal = kc_.get("palettes", {})
+    max_step = float(kc_.get("run_max_step", 0.1))
     for k in SC_CFG["kerbs_declared"]:
         if kc_.get("require_colour_src") and k.get("kind", "kerb") == "kerb" and not k.get("colour_src"):
             raise SystemExit(f"kerbs_declared '{k.get('name')}': no colour_src (scenery.kerb.require_colour_src; SKILL 3.3)")
+        if k.get("line_latlon"):
+            out.append(kerb_run(trk, k, pal, max_step))
+            continue
+        if k.get("zone"):
+            out.append(kerb_zone_strip(trk, k, pal))
+            continue
         side = 1 if k["side"] == "left" else -1
         P = np.array([bl.enu(*k["a"]), bl.enu(*k["b"])], float)
         i, lat, _ = trk.project(P)
@@ -1137,7 +1157,97 @@ def kerbs_declared(trk):
         rec["src"] = (f"{k['name']}: " if k.get("name") else "") + k["src"] + (f"; colour: {k['colour_src']}" if k.get("colour_src") else "")
         out.append(rec)
     log(f"kerbs: {len(out)} declared strips (config scenery.kerbs_declared), {sum(k['s1'] - k['s0'] for k in out)} m; no rule kerbs")
+    for r in KERB_RUN_REPORT:
+        log(f"   kerb run {r['name']}: {r['side']} s {r['s0']}-{r['s1']}, offset {r['off_min']:+.2f}..{r['off_max']:+.2f} m, max step {r['max_step']:.3f} m"
+            + (f", raised {r['profile']}" if r.get("profile") else ""))
+    far = [k for k in out if abs(k.get("off", 0.0)) > 1.2]
+    if far:
+        # report (judge r2, Buttonwillow): strips standing more than 1.2 m off the fitted edge, each with its evidence: a
+        # block line the edge should reach (a stage-1 kerb zone) or a false detection to drop
+        log(f"kerbs: {len(far)} strips more than 1.2 m off the edge (report):")
+        for k in far:
+            log(f"   {'left' if k['side'] > 0 else 'right'} s {k['s0']:.0f}-{k['s1']:.0f} off {k['off']:+.2f} m: {k['src'][:140]}")
     return out
+
+
+KERB_RUN_REPORT = []
+
+
+def kerb_run(trk, k, pal, max_step=0.1):
+    """One kerb RUN along its block line (config kerbs_declared entry with `line_latlon`, Buttonwillow 21 Oct 2026, the
+    owner's "weird, disjointed kerbs"): the band centre's measured world line projected on the track every build, its
+    offset from the edge per station robust-smoothed over ~10 m (median 9, Gaussian 4: the band reader alternates between
+    a block's inner and outer limit on some lines, right 3888-3930), published as one strip with
+    `offs` per station (no steps between pieces) and `off` (the median, for the physics' band); optional `profile` (a
+    raised run). The run's largest station-to-station offset change is reported and must stay <= max_step."""
+    from scipy.ndimage import gaussian_filter1d, median_filter
+    side = 1 if k["side"] == "left" else -1
+    P = _ll_line(k["line_latlon"], 1.0)
+    i_, lat_, _ = trk.project(P)
+    o_ = np.argsort(i_); i_, lat_ = np.asarray(i_)[o_], np.asarray(lat_)[o_]
+    if i_[-1] - i_[0] > trk.n / 2:            # wraps the start line
+        i_ = np.where(i_ < trk.n / 2, i_ + trk.n, i_); o_ = np.argsort(i_); i_, lat_ = i_[o_], lat_[o_]
+    s0, s1 = int(np.ceil(i_[0])), int(np.floor(i_[-1]))
+    st = np.arange(s0, s1 + 1)
+    lat = np.interp(st, i_, lat_)
+    hw = trk.hw(st % trk.n, side)
+    off = side * lat - hw
+    if SC_CFG.get("kerb", {}).get("flush_runs"):
+        # round 10 (Buttonwillow, owner's decisions of 23 Oct 2026): every run is a stage-1 kerb zone, the edge at the band's
+        # outer limit and his red at its inner limit, so the strip lies flush inside the edge (off = -width / 2); the
+        # measured line gives the run's extent (s0..s1) only. Against the round-10 edges the round-5 block-line offsets
+        # ran up to 3.4 m outside the edge (left 1089-1116)
+        w_ = float(k.get("width") or SC_CFG.get("kerb", {}).get("width", 0.9))
+        off = np.full(len(off), -w_ / 2)
+    if len(off) < 12:
+        # a short run (under 12 m, round 8): one offset, its median (a 9 m block line set at an angle to an edge that bends
+        # there read as a 0.7 m ramp the smoothing cannot hold under the step gate; the band is short enough to be one line)
+        off = np.full(len(off), float(np.median(off)))
+    elif len(off) >= 3:
+        mw = min(9, len(off) - (1 - len(off) % 2))   # odd, at most the run's length (a 6 m run: 5)
+        off = gaussian_filter1d(median_filter(off, mw, mode="nearest"), 4, mode="nearest")
+    step = float(np.abs(np.diff(off)).max()) if len(off) > 1 else 0.0
+    rec = {"side": side, "s0": int(s0), "s1": int(s1), "kind": k.get("kind", "kerb"), "off": rnd(float(np.median(off)), 2),
+           "offs": [rnd(float(v), 2) for v in off]}
+    c = k.get("colors")
+    if isinstance(c, str):
+        c = pal[c]
+    if c:
+        rec["colors"] = list(c)
+    if k.get("profile"):
+        rec["profile"] = dict(k["profile"])
+    if k.get("width"):
+        rec["width"] = float(k["width"])   # the run's own band width (round 8, measured on the captures)
+    rec["src"] = (f"{k['name']}: " if k.get("name") else "") + k["src"] + (f"; colour: {k['colour_src']}" if k.get("colour_src") else "")
+    KERB_RUN_REPORT.append({"name": k.get("name", ""), "side": k["side"], "s0": int(s0), "s1": int(s1), "max_step": round(step, 3),
+                            "off_min": rnd(float(off.min()), 2), "off_max": rnd(float(off.max()), 2), "profile": k.get("profile")})
+    if step > max_step:
+        raise SystemExit(f"kerb run '{k.get('name')}': offset step {step:.3f} m between stations (> {max_step} m)")
+    return rec
+
+
+def kerb_zone_strip(trk, k, pal):
+    """A kerb strip over a stage-1 kerb zone (kerbs_declared entry with `zone` (lo, hi), stations of stations_ref,
+    mapped by world position; Buttonwillow round 10, the owner's decision of 23 Oct 2026 point 4, "the onboard wins"):
+    where the onboard shows a kerb run but the captures show no band beside his red, stage 1 moved the edge out by the
+    track's standard kerb width (spline.owner_edges kerb_inside); the strip fills that width, from the edge inward to
+    his red: `off` = -width / 2 (the band centre half a width inside the edge), width = scenery.kerb width unless the
+    entry sets one. No measured line: the strip follows the fitted edge."""
+    side = 1 if k["side"] == "left" else -1
+    lo, hi = (int(v) for v in k["zone"])
+    w = float(k.get("width") or SC_CFG.get("kerb", {}).get("width", 0.9))
+    rec = {"side": side, "s0": lo, "s1": lo + (hi - lo) % trk.n, "kind": k.get("kind", "kerb"), "off": rnd(-w / 2, 2), "width": w}
+    c = k.get("colors")
+    if isinstance(c, str):
+        c = pal[c]
+    if c:
+        rec["colors"] = list(c)
+    if k.get("profile"):
+        rec["profile"] = dict(k["profile"])
+    rec["src"] = (f"{k['name']}: " if k.get("name") else "") + k["src"] + (f"; colour: {k['colour_src']}" if k.get("colour_src") else "")
+    KERB_RUN_REPORT.append({"name": k.get("name", ""), "side": k["side"], "s0": lo, "s1": hi, "max_step": 0.0,
+                            "off_min": rec["off"], "off_max": rec["off"], "profile": k.get("profile")})
+    return rec
 
 
 def kerbs(trk):
@@ -1197,6 +1307,9 @@ def closed_roads(trk, osm):
                              clip=(2.5, road.get("max_half", 12.0)))
             if not res:
                 continue
+            if road.get("edges_from_green") and SC_CFG.get("owner_green"):
+                for part in res["parts"]:
+                    edges_from_green(trk, part, road["name"], SC_CFG["owner_green"])
             for part in res["parts"]:
                 part["turn"] = road["name"]
                 if road.get("surface"):
@@ -1251,6 +1364,55 @@ def closed_roads(trk, osm):
                 raise SystemExit(f"closed road {road['name']}: part_overrides entry near {m['near']} matches no part")
     log(f"closed roads: {len(out_parts)} paved parts, {len(lines)} cone lines")
     return out_parts, lines
+
+
+_GREEN = {}
+
+
+def edges_from_green(trk, part, name, og):
+    """A closed road's paving edges on the owner's green lines (config scenery.owner_green {file, reach, along}, roads
+    with edges_from_green=True; Buttonwillow round 10): he drew green on the outline windows along the edges of the
+    paved roads and paddock the course does not use (owner/r10/merged.json green_enu_xy). At each centre point of the
+    part, his green points within `along` m along it on each side, the one group nearest the current (NAIP / OSM)
+    edge within `reach` m, median lateral; a 9-sample median and a 3 m Gaussian over runs of >= 10 stations; points on
+    the circuit's paved width are not his road edge and are skipped. Stations with no green keep their edge."""
+    from scipy.ndimage import gaussian_filter1d, median_filter
+    from scipy.spatial import cKDTree
+    f = og["file"]
+    if f not in _GREEN:
+        d = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "tracks", CFG_ALL["id"], f)))
+        G = np.array(d["green_enu_xy"], float)[:, :2]
+        _, _, outside = trk.project(G)
+        G = G[outside > 0.3]                       # his green on the circuit's own paving is a mouth contact, not a road edge
+        _GREEN[f] = (G, cKDTree(G))
+    G, kd = _GREEN[f]
+    reach, along = float(og.get("reach", 4.0)), float(og.get("along", 1.0))
+    C = np.array(part["center"])[:, :2]
+    if len(C) < 12:
+        return
+    tg = np.gradient(C, axis=0); tg /= np.maximum(np.linalg.norm(tg, axis=1, keepdims=True), 1e-9); NL = np.c_[-tg[:, 1], tg[:, 0]]
+    for side, key in ((1, "left"), (-1, "right")):
+        E = np.array(part[key], float)
+        cur = side * ((E[:, :2] - C) * NL).sum(1)
+        v = np.full(len(C), np.nan)
+        for i in range(len(C)):
+            idx = kd.query_ball_point(C[i], cur[i] + reach + 1.0)
+            if not idx:
+                continue
+            Q = G[idx] - C[i]; at = (Q * tg[i]).sum(1); lat = side * (Q * NL[i]).sum(1)
+            m = (np.abs(at) <= along) & (lat > 0.5) & (np.abs(lat - cur[i]) <= reach)
+            if m.sum():
+                v[i] = float(np.median(lat[m]))
+        ok = np.isfinite(v); runs = [(a, b) for a, b in _runs(ok) if b - a >= 9]
+        n_set = 0
+        for a, b in runs:
+            st = np.arange(a, b + 1)
+            vs = gaussian_filter1d(median_filter(v[st], min(9, len(st) - (1 - len(st) % 2)), mode="nearest"), 3, mode="nearest")
+            E[st, :2] = C[st] + NL[st] * (side * vs)[:, None]
+            n_set += len(st)
+        if n_set:
+            part[key] = [[rnd(x, 2), rnd(y, 2), rnd(z, 3)] for x, y, z in E]
+        log(f"closed road {name}: {key} paving edge on the owner's green at {n_set} of {len(C)} points")
 
 
 def closed_road_paint(trk, parts):
@@ -1371,6 +1533,16 @@ def paved_areas(trk, osm):
     'concrete', src}. The OSM outline, drawn by the app as plain paving over the terrain (no physics change)."""
     out = []
     for pa in SC_CFG.get("paved_areas", []):
+        if pa.get("latlon"):
+            # an outline measured on the captures (Buttonwillow, 20 Oct 2026: the paved patch inside the T2 hairpin)
+            ll_ = np.array(pa["latlon"], float); xx, yy = bl.enu(ll_[:, 0], ll_[:, 1]); xy = np.c_[xx, yy]
+            extra = {}
+            if pa["surface"] == "apron" and SC_CFG.get("aprons_meet_road"):
+                xy, extra = _apron_meet_road(trk, xy)
+            out.append({"name": pa.get("name", "paved area"), "surface": pa["surface"], "src": pa["src"],
+                        "poly": [[rnd(x, 1), rnd(y, 1)] for x, y in xy], **({"color": pa["color"]} if pa.get("color") else {}), **({"look": pa["look"]} if pa.get("look") else {}), **extra})
+            log(f"paved area {pa.get('name', '')}: {len(xy)} vertices, {pa['surface']} (measured outline)")
+            continue
         w = next((w for w in osm.ways if w["id"] == str(pa["osm"])), None)
         if w is None:
             raise SystemExit(f"paved_areas: OSM way {pa['osm']} not found")
@@ -1379,6 +1551,30 @@ def paved_areas(trk, osm):
                     "poly": [[rnd(x, 1), rnd(y, 1)] for x, y in xy]})
         log(f"paved area {pa.get('name', pa['osm'])}: {len(xy)} vertices, {pa['surface']}")
     return out
+
+
+_ROAD_POLY = None
+
+
+def _apron_meet_road(trk, xy):
+    """An apron outline clipped to the road (config scenery.aprons_meet_road, Buttonwillow judge r6: the outline's own
+    steps along the track edge read as tan bites between the apron and the road): the outline minus the road polygon
+    (the largest piece, simplified 0.05 m), so the apron meets the fitted edge along it; `feather` per segment (poly[i]
+    -> poly[i+1]): False on the road edge (no fade there: the app draws it over the track's shoulder), True elsewhere."""
+    global _ROAD_POLY
+    from shapely.geometry import Point, Polygon
+    from shapely.ops import unary_union
+    if _ROAD_POLY is None:
+        L, R, n = trk.L[:, :2], trk.R[:, :2], trk.n
+        _ROAD_POLY = unary_union([Polygon([L[i], L[(i + 1) % n], R[(i + 1) % n], R[i]]).buffer(0) for i in range(n)])
+    g = Polygon(xy).buffer(0).difference(_ROAD_POLY)
+    if g.geom_type == "MultiPolygon":
+        g = max(g.geoms, key=lambda q: q.area)
+    g = g.simplify(0.05)
+    P = np.array(g.exterior.coords)[:-1]
+    fe = [bool(_ROAD_POLY.distance(Point((P[i] + P[(i + 1) % len(P)]) / 2)) > 0.2) for i in range(len(P))]
+    log(f"   apron meets the road: {len(P)} vertices, {sum(not f for f in fe)} segments on the road edge")
+    return P, {"feather": fe}
 
 
 def tyre_facings(trk, bar, reach=2.5, off=0.55):
@@ -1466,6 +1662,38 @@ def tyre_rows_outside(trk, bar, face_min=0.5, wall_reach=1.5):
             f"(stations {int(i.min())}..{int(i.max())}): reversed, rows behind the line, face now {flip.min():+.2f} m")
 
 
+def extend_parts_to_walls(parts, bar, reach=4.0, margin=0.3, label="pit lane"):
+    """The lane's paving out to its walls (config pit_lane.lane.to_walls {reach}, Buttonwillow judge r3: the footage has
+    pavement from the lane to the K-rails where the NAIP half-width left a pale verge): an edge point whose ray from the
+    part's centre, continued up to `reach` m past the edge, meets a wall run is moved to `margin` m short of it."""
+    S = [np.c_[np.array(b["pts"])[:-1, :2], np.array(b["pts"])[1:, :2]] for b in bar if b["kind"] in ("concrete", "pitwall")]
+    if not S:
+        return
+    S = np.concatenate(S); a0, a1 = S[:, :2], S[:, 2:]
+    moved = 0
+    for part in parts:
+        C = np.array(part["center"])[:, :2]
+        for side in ("left", "right"):
+            E = part[side]
+            for j in range(len(E)):
+                p, q = C[j], np.array(E[j][:2], float)
+                d = q - p; L0 = float(np.linalg.norm(d))
+                if L0 < 1e-6:
+                    continue
+                r = d / L0 * (L0 + reach); s_ = a1 - a0
+                den = r[0] * s_[:, 1] - r[1] * s_[:, 0]; ok = np.abs(den) > 1e-9; qp = a0 - p
+                t = np.where(ok, (qp[:, 0] * s_[:, 1] - qp[:, 1] * s_[:, 0]) / np.where(ok, den, 1), 9)
+                u = np.where(ok, (qp[:, 0] * r[1] - qp[:, 1] * r[0]) / np.where(ok, den, 1), 9)
+                hit = ok & (t >= 0) & (t <= 1) & (u >= 0) & (u <= 1)
+                if hit.any():
+                    tw = float(t[hit].min()) * float(np.linalg.norm(r)) - margin
+                    if tw > L0 + 0.05:
+                        nq = p + d / L0 * tw
+                        E[j] = [rnd(nq[0], 2), rnd(nq[1], 2)] + list(E[j][2:])
+                        moved += 1
+    log(f"{label}: {moved} edge points extended to the walls (pit_lane.lane.to_walls)")
+
+
 def clip_parts_at_walls(parts, bar, margin=0.3, label="closed roads"):
     """A closed road's paving stops at a wall (config scenery.closed_roads_clip_walls, 20 Oct 2026: the NAIP half-width
     of Sonoma's drag strip reached under the pit-straight wall): an edge point whose segment from the part's centre crosses
@@ -1500,6 +1728,53 @@ def clip_parts_at_walls(parts, bar, margin=0.3, label="closed roads"):
                     E[j, :2] = p + r * tt; moved += 1
             part[side] = [[rnd(x, 2), rnd(y, 2), rnd(z, 3)] for x, y, z in E]
     log(f"{label}: {moved} edge points clipped at walls")
+
+
+def ortho_paint_over(trk, img, items, ring=3.0, lift=18.0):
+    """NAIP marks painted over (config scenery.ortho_paint_over, Buttonwillow judge r5: white kerb blocks of the 2022
+    NAIP that now lie on the fitted road read as white smears on the asphalt): each {latlon: outline, src}; inside the
+    outline, the pixels ON THE ROAD (between the fitted edges) brighter than the road's own median there by `lift`
+    (luminance, 0-255) take the median colour of the road pixels of the outline grown by `ring` m."""
+    from PIL import Image, ImageDraw
+    o = trk.t["ortho"]
+    H, W = img.shape[:2]
+    sx, sy = W / (o["x1"] - o["x0"]), H / (o["y1"] - o["y0"])
+    px = lambda P: [((x - o["x0"]) * sx, (o["y1"] - y) * sy) for x, y in P]  # noqa: E731
+    road = Image.new("L", (W, H), 0); dr = ImageDraw.Draw(road)
+    Lq, Rq = trk.L[:, :2], trk.R[:, :2]
+    for i in range(trk.n):
+        j = (i + 1) % trk.n
+        dr.polygon(px([Lq[i], Lq[j], Rq[j], Rq[i]]), fill=1)
+    road = np.asarray(road, bool)
+    out = img.copy()
+    lum = img.astype(float) @ np.array([0.2126, 0.7152, 0.0722])
+    for it in items:
+        P = np.array([bl.enu(*q) for q in it["latlon"]], float)
+        # `on`: 'road' (default: only pixels between the fitted edges) or 'any' (judge r6: the NAIP hatch in the pit-entry
+        # gore, the drag-strip chevrons off the road; there the yellow cast counts as a mark too)
+        area = road if it.get("on", "road") == "road" else np.ones_like(road)
+        m = Image.new("L", (W, H), 0); ImageDraw.Draw(m).polygon(px(P), fill=1); m = np.asarray(m, bool) & area
+        c = P.mean(0); Pg = c + (P - c) * (1 + ring / max(1e-6, float(np.linalg.norm(P - c, axis=1).mean())))
+        g = Image.new("L", (W, H), 0); ImageDraw.Draw(g).polygon(px(Pg), fill=1); g = np.asarray(g, bool) & area
+        yel = img[..., 0].astype(float) - img[..., 2].astype(float)
+        mark = (lum > np.median(lum[g]) + lift) if not it.get("dark") else (lum < np.median(lum[g]) - lift)   # dark: a dark NAIP mark (round 8, the ~1100 stripe)
+        if it.get("on") == "any":
+            mark |= yel > np.median(yel[g]) + 25
+        ref = g & ~mark
+        med = np.median(img[ref], axis=0)
+        if it.get("tone") == "road":
+            # round 8 (owner lap 2 note 7): the pit-in gore is paved; the ring's median came out tan (dirt in the ring):
+            # the road's own median colour within 15 m of the outline instead
+            Pr = c + (P - c) * (1 + 15.0 / max(1e-6, float(np.linalg.norm(P - c, axis=1).mean())))
+            r_ = Image.new("L", (W, H), 0); ImageDraw.Draw(r_).polygon(px(Pr), fill=1); r_ = np.asarray(r_, bool) & road
+            med = np.median(img[r_ & (lum < np.median(lum[r_]) + lift)], axis=0)
+        if it.get("all"):
+            # recolour the whole outline to the ring's median (a tone patch, e.g. green-toned ground: round 8 cp5)
+            ref = g & ~m; med = np.median(img[ref], axis=0); mark = np.ones_like(mark)
+        hit = m & mark
+        out[hit] = med.astype(np.uint8)
+        log(f"ortho paint-over: {int(hit.sum())} px ({hit.sum() * 0.36:.0f} m2) {"on the road" if it.get("on", "road") == "road" else "in the outline"} -> {med.astype(int).tolist()} ({it['src'][:60]})")
+    return out
 
 
 def pit_tone_match(trk, pit, img, opt):
@@ -1861,21 +2136,8 @@ def paved_zones(trk, osm):
     W = np.concatenate(walls) if walls else np.zeros((0, 3))
     fr = trk.t["profile"]["fractions"]
     parts = []
-    for turn, before, after in PAVED_RUNOFF:
-        c = corners.get(turn)
-        if not c:
-            continue
-        side = -1 if c["dir"] == "left" else 1
-        st = np.arange(c["s"] - before, c["s"] + after + 1) % trk.n
-        wd = np.full(len(st), np.nan)
-        for k, sv in enumerate(st):
-            m = (np.abs(((W[:, 0] - sv + trk.n / 2) % trk.n) - trk.n / 2) < 4) & (np.sign(W[:, 1]) == side) & (W[:, 2] > 3) & (W[:, 2] < 40)
-            if m.any():
-                wd[k] = W[m, 2].min()
-        width = np.where(np.isfinite(wd), wd - 1.5, 12.0)
-        width = gaussian_filter1d(np.clip(ndi.median_filter(width, 9, mode="nearest"), 6, 25), 3, mode="nearest")
-        ramp = np.clip(np.minimum(np.arange(len(st)), np.arange(len(st))[::-1]) / 15.0, 0, 1)
-        width = np.maximum(width * (0.5 - 0.5 * np.cos(np.pi * ramp)), 0.4)
+
+    def make_part(turn, st, side, width):
         inner = trk.C[st, :2] + trk.N[st] * (side * trk.hw(st, side))[:, None]
         outer = inner + trk.N[st] * (side * width)[:, None]
         # smooth centreline with perpendicular edges: the track's station normals carry noise, and a wobbly zone
@@ -1917,8 +2179,39 @@ def paved_zones(trk, osm):
             "gap_right": [rnd(v, 2) for v in (gap_in if side > 0 else gap_out)],
             "track_s": [int(st[0]), int(st[-1])],
         })
+
+    for turn, before, after in PAVED_RUNOFF:
+        c = corners.get(turn)
+        if not c:
+            continue
+        side = -1 if c["dir"] == "left" else 1
+        st = np.arange(c["s"] - before, c["s"] + after + 1) % trk.n
+        wd = np.full(len(st), np.nan)
+        for k, sv in enumerate(st):
+            m = (np.abs(((W[:, 0] - sv + trk.n / 2) % trk.n) - trk.n / 2) < 4) & (np.sign(W[:, 1]) == side) & (W[:, 2] > 3) & (W[:, 2] < 40)
+            if m.any():
+                wd[k] = W[m, 2].min()
+        width = np.where(np.isfinite(wd), wd - 1.5, 12.0)
+        width = gaussian_filter1d(np.clip(ndi.median_filter(width, 9, mode="nearest"), 6, 25), 3, mode="nearest")
+        ramp = np.clip(np.minimum(np.arange(len(st)), np.arange(len(st))[::-1]) / 15.0, 0, 1)
+        width = np.maximum(width * (0.5 - 0.5 * np.cos(np.pi * ramp)), 0.4)
+        make_part(turn, st, side, width)
         log(f"paved runoff {turn}: s {st[0]}-{st[-1]}, {'left' if side > 0 else 'right'} side, width p50 {np.median(width):.1f} m "
             f"({np.isfinite(wd).mean():.0%} of stations bounded by an OSM wall)")
+    # drivable runoff zones bounded by measured lines (config scenery.runoff_zones, Buttonwillow 21 Oct 2026: the T2
+    # runoff the owner marked, from the track edge out to the outer-loop block line): {name, side, s: (s0, s1) track
+    # metres, outer_latlon, src}; the width per station is the outer line's distance beyond the edge, square ends
+    for z in SC_CFG.get("runoff_zones", []):
+        sd = 1 if z["side"] == "left" else -1
+        a_, b_ = (int(round(v / trk.sp)) for v in z["s"])
+        st = np.arange(a_, b_ + 1) % trk.n
+        O = _ll_line(z["outer_latlon"], 1.0)
+        i_, lat_, dout_ = trk.project(O)
+        wz = np.interp(np.arange(a_, b_ + 1), np.sort(i_), dout_[np.argsort(i_)])
+        make_part(z["name"], st, sd, np.clip(wz, 0.5, 60.0))
+        if z.get("surface"):
+            parts[-1]["surface"] = z["surface"]   # absent: the aerial photo's own colour (paved runoff)
+        log(f"runoff zone {z['name']}: s {a_}-{b_} {z['side']}, width {np.min(wz):.1f}-{np.max(wz):.1f} m ({z['src'][:60]})")
     return {"spacing_m": 1.0, "fractions": fr, "open": True, "parts": parts}
 
 
@@ -2073,10 +2366,11 @@ def impact_barriers(trk):
         a, b = (P[0], P[1]) if ib.get("end", "start") == "start" else (P[-1], P[-2])
         u = (a - b) / np.linalg.norm(a - b)        # pointing out of the wall's end
         d = ib.get("d", 2.0)
-        p = a + u * (d / 2 + 0.05)
+        # `overlap` (m, Buttonwillow judge r5): the block wraps the wall's square end by that much (one continuous nose)
+        p = a + u * (d / 2 + 0.05 - ib.get("overlap", 0.0))
         out.append({"kind": "impact", "text": "", "x": rnd(p[0], 2), "y": rnd(p[1], 2), "z": rnd(float(trk.ground(*p)[0]), 2),
                     "heading": rnd(math.atan2(u[1], u[0]), 3), "h": ib.get("h", 1.0), "w": ib.get("w", 1.0), "d": d,
-                    "color": ib.get("color", "#e8c21c"), "src": ib["src"]})
+                    "color": ib.get("color", "#e8c21c"), **({"style": ib["style"]} if ib.get("style") else {}), "src": ib["src"]})
         log(f"impact barrier at the {ib.get('end', 'start')} of {ib['wall']}")
     return out
 
@@ -2093,6 +2387,40 @@ def _cone_style(cl):
     return {**({"color": cl["color"]} if cl.get("color") else {}), **({"size": float(cl["size"])} if cl.get("size") else {}),
             # round 7e (Sonoma owner note 57): 'delineator' = a tall orange pylon post with white bands (app), else a cone
             **({"style": cl["style"]} if cl.get("style") else {})}
+
+
+def zones_meet_edge(trk, parts, reach=8.0, near=1.5, overlap=0.3):
+    """Zone ends meeting the track at an angle leave a dirt wedge between the far end corner and the edge (Buttonwillow
+    judge r5: tan strips at the crossover mouths). config scenery.zones_meet_edge: at an end whose nearest corner lies
+    within `near` m of the road, each end point (left, centre, right) is moved along the part's direction toward the
+    track until it lies `overlap` m inside the road (at most `reach` m); heights kept."""
+    from shapely.geometry import Point, Polygon
+    from shapely.ops import unary_union
+    L, R, n = trk.L[:, :2], trk.R[:, :2], trk.n
+    road = unary_union([Polygon([L[i], L[(i + 1) % n], R[(i + 1) % n], R[i]]).buffer(0) for i in range(n)])
+    inner = road.buffer(-overlap)
+    moved = 0
+    for p in parts:
+        C = np.array(p["center"])[:, :2]
+        if len(C) < 3:
+            continue
+        for end in (0, -1):
+            k, k2 = (0, 1) if end == 0 else (len(C) - 1, len(C) - 2)
+            ds = [road.distance(Point(np.array(p[sd][k][:2]))) for sd in ("left", "center", "right")]
+            if min(ds) > near or max(ds) < 0.05:
+                continue
+            t = C[k] - C[k2]; t /= np.linalg.norm(t)
+            for sd in ("left", "center", "right"):
+                q = np.array(p[sd][k][:2], float)
+                if inner.contains(Point(q)):
+                    continue
+                for step in np.arange(0.1, reach + 1e-6, 0.1):
+                    if inner.contains(Point(q + t * step)):
+                        nq = q + t * step
+                        p[sd][k] = [rnd(nq[0], 2), rnd(nq[1], 2)] + list(p[sd][k][2:])
+                        moved += 1
+                        break
+    log(f"zones meet the edge: {moved} end points moved onto the road (scenery.zones_meet_edge)")
 
 
 def declared_cone_lines(trk):
@@ -2113,6 +2441,108 @@ def declared_cone_lines(trk):
         P = trk.edge_point(st, sd, cl.get("off", 0.5))
         out.append({"spacing_m": cl.get("spacing", 4.0), "pts": with_z(trk, P), "src": cl["src"], **_cone_style(cl)})
         log(f"cone line {cl['side']} s {cl['s'][0]}-{cl['s'][1]} ({cl.get('off', 0.5)} m outside the edge)")
+    return out
+
+
+_CAPS = []
+
+
+def _clean_captures():
+    """the clean z20 captures (name, centre x, y), for naming the capture under an owner stroke"""
+    if not _CAPS:
+        import captures as CAP_
+        _CAPS.extend(CAP_.capture_list(CFG_ALL, "clean"))
+    return _CAPS
+
+
+def owner_mouth_cones(trk):
+    """Cone lines ON the owner's red across each junction mouth (config scenery.owner_mouth_cones {from: the key holding
+    the mouths (owner_mouths_r10), spacing, size, color, style_src}; Buttonwillow round 10, the owner's decision of 23 Oct
+    2026 point 2): every mouth with cones=True gets one line on its line_latlon (his red, world points); cones=False
+    (the pit entry) gets none. The closed roads' rule cones at the same mouths are switched off in the config
+    (closed_roads[].mouth_cones); the cone_lines_declared rows stay (each is an onboard observation, not a rule).
+    Returns (lines, mouth station ranges {side: [(lo, hi)]} on this package)."""
+    oc = SC_CFG.get("owner_mouth_cones")
+    if not oc:
+        return [], {}
+    out, ranges = [], {1: [], -1: []}
+    for m in SC_CFG.get(oc.get("from", "owner_mouths_r10"), []):
+        P = _ll_line(m["line_latlon"], 0.5)
+        i, _, _ = trk.project(P)
+        i = np.sort(np.asarray(i))
+        if i[-1] - i[0] > trk.n / 2:
+            i = np.sort(np.where(i < trk.n / 2, i + trk.n, i))
+        sd = 1 if m["side"] == "left" else -1
+        if not m.get("cones", True):
+            log(f"owner mouth {m['side']} {m['lo']}-{m['hi']} ({m['kind']}): no cones ({m['src'][-120:]})")
+            continue
+        ranges[sd].append((int(i[0]), int(i[-1])))
+        mid = P[len(P) // 2]
+        caps = sorted(_clean_captures(), key=lambda t: np.hypot(t["x"] - mid[0], t["y"] - mid[1]))[:2]
+        out.append({"spacing_m": float(oc.get("spacing", 2.0)), "pts": with_z(trk, P),
+                    "src": f"owner round-10 mouth {m['side']} {m['lo']}-{m['hi']} ({m['kind']}): cones on his red, drawn on the outline window over "
+                           f"{' / '.join(t['name'] for t in caps)} ({m['src'][:120]}); style: {oc['style_src']}",
+                    **_cone_style(oc)})
+        log(f"owner mouth cones {m['side']} stations {int(i[0]) % trk.n}-{int(i[-1]) % trk.n}: {len(P) * 0.5:.0f} m on his red")
+    log(f"owner mouth cones: {len(out)} lines")
+    return out, ranges
+
+
+def surface_marks(trk):
+    """Crack-seal lines measured on the clean captures (config scenery.surface_marks {max, min_len, contrast}, Buttonwillow
+    owner lap 2 note 18): inside the track polygon, pixels darker than the road's local median by `contrast` that are
+    also a thin dark ridge (black-hat over 0.7 m); connected components elongated (length >= min_len m, length / width
+    >= 6) become one straight segment each (principal axis); the strongest `max` kept; published as paint_lines (dark,
+    0.1 m). The captures are the measurement, never a texture."""
+    cfgm = SC_CFG.get("surface_marks")
+    if not cfgm:
+        return []
+    import captures as CAP_
+    from PIL import Image as Img, ImageDraw as IDraw
+    tiles = CAP_.capture_list(CFG_ALL, "clean")
+    mpp = (CFG_ALL["captures"]["mpp"])
+    L, R, n = trk.L[:, :2], trk.R[:, :2], trk.n
+    segs = []
+    for t in tiles:
+        im = np.asarray(Img.open(t["path"]).convert("L")).astype(np.float32); H, W = im.shape
+        m = t["mask"](H, W)
+        px = lambda P: [((x + t["dx"] - t["x"]) / mpp + W / 2, H / 2 - (y + t["dy"] - t["y"]) / mpp) for x, y in P]  # noqa: E731
+        road = Img.new("L", (W, H), 0); dr = IDraw.Draw(road)
+        near = np.hypot(trk.C[:, 0] - t["x"], trk.C[:, 1] - t["y"]) < 90
+        for i in np.nonzero(near)[0]:
+            j = (i + 1) % n
+            dr.polygon(px([L[i], L[j], R[j], R[i]]), fill=1)
+        road = ndi.binary_erosion(np.asarray(road, bool) & m, iterations=3)
+        if road.sum() < 2000:
+            continue
+        med = ndi.median_filter(im, size=31)
+        bh = ndi.grey_closing(im, size=(6, 6)) - im
+        mark = road & (bh > cfgm.get("contrast", 14)) & (im < med - cfgm.get("contrast", 14) * 0.6)
+        lab, k = ndi.label(mark, structure=np.ones((3, 3)))
+        for c in range(1, k + 1):
+            ys, xs = np.nonzero(lab == c)
+            if len(xs) < 15:
+                continue
+            Q = np.c_[xs, ys].astype(float); mu = Q.mean(0); u, sv, vt = np.linalg.svd(Q - mu, full_matrices=False)
+            ln = (sv[0] / math.sqrt(len(Q))) * math.sqrt(12) * mpp; wd = (sv[1] / math.sqrt(len(Q))) * math.sqrt(12) * mpp
+            if ln < cfgm.get("min_len", 3.0) or ln / max(wd, 0.05) < 6:
+                continue
+            a = mu - vt[0] * ln / mpp / 2; b = mu + vt[0] * ln / mpp / 2
+            wa = (t["x"] + (a[0] - W / 2) * mpp - t["dx"], t["y"] - (a[1] - H / 2) * mpp - t["dy"])
+            wb = (t["x"] + (b[0] - W / 2) * mpp - t["dx"], t["y"] - (b[1] - H / 2) * mpp - t["dy"])
+            segs.append((float(bh[ys, xs].mean() * len(xs)), wa, wb, t["name"]))
+    # one per place: drop a segment whose midpoint lies within 1 m of a stronger one's (captures overlap)
+    segs.sort(key=lambda q: -q[0]); kept = []
+    for sc, a, b, nm in segs:
+        mid = ((a[0] + b[0]) / 2, (a[1] + b[1]) / 2)
+        if any(math.dist(mid, ((k[1][0] + k[2][0]) / 2, (k[1][1] + k[2][1]) / 2)) < 1.0 for k in kept):
+            continue
+        kept.append((sc, a, b, nm))
+        if len(kept) >= cfgm.get("max", 1500):
+            break
+    out = [{"width": 0.1, "color": cfgm.get("color", "#2a2a2a"), "pts": with_z(trk, np.array([a, b]), 0.008),
+            "src": f"surface mark (crack seal) measured on {nm}"} for _, a, b, nm in kept]
+    log(f"surface marks: {len(segs)} candidate segments on the clean captures, {len(out)} kept (max {cfgm.get('max', 1500)})")
     return out
 
 
@@ -2210,7 +2640,9 @@ def landmarks(trk, T, brg):
                     "z": rnd(float(trk.ground(*xy)[0]), 2), "heading": rnd(hd, 3),
                     "h": mp.get("h", 3.0), "w": mp.get("w", 2.4), "style": mp.get("style", "tower"),
                     **({"d": mp["d"]} if mp.get("d") else {}), **({"roof": mp["roof"]} if mp.get("roof") else {}),
-                    **({"color": mp["color"]} if mp.get("color") else {}), "src": mp["src"]})
+                    **({"color": mp["color"]} if mp.get("color") else {}),
+                    **{k: mp[k] for k in ("mound_h", "railing", "stair", "base_color", "body_h", "body_color", "pole", "roof", "fine") if k in mp and not (k == "roof" and mp.get("roof"))},
+                    "src": mp["src"]})
     # free-standing tyre stacks and barrier blocks (config scenery.tyre_stacks, 21 Oct 2026): {latlon, h, w, style
     # 'tyres' | 'blocks', color, src}; drawn only (not in the collision world)
     for ts in SC_CFG.get("tyre_stacks", []):
@@ -2238,7 +2670,7 @@ def landmarks(trk, T, brg):
     for lm in SC_CFG.get("light_masts", []):
         xy = np.array(bl.enu(*lm["latlon"]), float)
         out.append({"kind": "mast", "text": "", "x": rnd(xy[0], 2), "y": rnd(xy[1], 2), "z": rnd(float(trk.ground(*xy)[0]), 2),
-                    "heading": 0, "h": lm.get("h", 18.0), "w": 1.2, "src": lm["src"]})
+                    "heading": 0, "h": lm.get("h", 18.0), "w": 1.2, **({"style": lm["style"]} if lm.get("style") else {}), "src": lm["src"]})
     # a landmark tree (Laguna: the Corkscrew oak, the biggest crown on the inside (left) of T8)
     oak = SC_CFG.get("oak")
     near = np.zeros(len(T), bool)
@@ -2469,24 +2901,59 @@ def main(cfg=None, out_dir=None):
         # 20 Oct 2026; Sonoma's OSM-width lane reached through the pit-in Jersey and the outer wall)
         # round 7 (owner note 37): and at the declared cone lines along it (the pit-in separation line before the nose)
         clip_parts_at_walls(pit["parts"], bar + [{"kind": "tyres", "pts": c_["pts"]} for c_ in declared_cone_lines(trk)], label="pit lane")
+    if pit and (PIT_CFG.get("lane") or {}).get("to_walls"):
+        extend_parts_to_walls(pit["parts"], bar, **PIT_CFG["lane"]["to_walls"])
+    if pit and (PIT_CFG.get("lane") or {}).get("boxes") is not None:
+        pit["boxes"] = [list(map(float, r)) for r in PIT_CFG["lane"]["boxes"]]   # pit-box line ranges (m along part 0); [] = none
+    if pit and (PIT_CFG.get("lane") or {}).get("no_edge_line"):
+        pit["no_edge_line"] = list(PIT_CFG["lane"]["no_edge_line"])   # the app draws no white edge line on these sides
     if pit and ortho_arr is not None and (PIT_CFG.get("lane") or {}).get("match_track_tone"):
-        Image.fromarray(pit_tone_match(trk, pit, ortho_arr, PIT_CFG["lane"]["match_track_tone"])).save(
-            os.path.join(OUT, "ortho.jpg"), quality=84, optimize=True)
+        ortho_arr = pit_tone_match(trk, pit, ortho_arr, PIT_CFG["lane"]["match_track_tone"])
+        Image.fromarray(ortho_arr).save(os.path.join(OUT, "ortho.jpg"), quality=84, optimize=True)
+    if ortho_arr is not None and SC_CFG.get("ortho_paint_over"):
+        ortho_arr = ortho_paint_over(trk, ortho_arr, SC_CFG["ortho_paint_over"])
+        Image.fromarray(ortho_arr).save(os.path.join(OUT, "ortho.jpg"), quality=84, optimize=True)
     zones = paved_zones(trk, osm)
     cr_parts, cone_lines = closed_roads(trk, osm) if SC_CFG.get("closed_roads") else ([], [])
     if cr_parts and SC_CFG.get("closed_roads_clip_walls"):
         clip_parts_at_walls(cr_parts, bar)
     if cr_parts:
         zones["parts"] += cr_parts
-    cone_lines += declared_cone_lines(trk)
-    plines = closed_road_paint(trk, cr_parts) + declared_paint_lines(trk)
+    if SC_CFG.get("zones_meet_edge"):
+        zones_meet_edge(trk, zones["parts"])
+    if SC_CFG.get("zone_end_feather"):
+        # judge r8 (cp6): a zone end more than 2 m from the road (on the dirt) is feathered by the app
+        from shapely.geometry import Point, Polygon
+        from shapely.ops import unary_union
+        L_, R_, n_ = trk.L[:, :2], trk.R[:, :2], trk.n
+        road_ = unary_union([Polygon([L_[i], L_[(i + 1) % n_], R_[(i + 1) % n_], R_[i]]).buffer(0) for i in range(n_)])
+        nf = 0
+        for p_ in zones["parts"]:
+            fe = [bool(road_.distance(Point(p_["center"][e][:2])) > 2.0) for e in (0, -1)]
+            if any(fe):
+                p_["feather_ends"] = fe; nf += sum(fe)
+        log(f"zone ends feathered: {nf} (scenery.zone_end_feather)")
+    if SC_CFG.get("paved_zones_over"):
+        # texture pass (Buttonwillow owner lap 1, 21 Oct 2026): every zone's road surface draws in front of the track's
+        # and the other zones' shoulders, its own shoulder behind them (the app's `over`); drawn only, no physics change
+        # (closed roads 2 in front of runoff zones 1: the T2 runoff reaches the outer-loop road's block line)
+        for p_ in zones["parts"]:
+            p_["over"] = 2 if p_.get("kind") == "closed_road" else 1
+        log(f"paved zones: {len(zones['parts'])} parts drawn over the neighbouring shoulders (scenery.paved_zones_over)")
+    om_lines, om_ranges = owner_mouth_cones(trk)
+    cone_lines += om_lines + declared_cone_lines(trk)
+    plines = closed_road_paint(trk, cr_parts) + declared_paint_lines(trk) + surface_marks(trk)
     pareas = paved_areas(trk, osm)
     cones = pit_exit_cones(trk, pit, bar)
     pc_ = SC_CFG.get("pit_exit_cones") or {}
+    if pc_.get("draw") is False:
+        # no cones where the footage shows none (Buttonwillow's pit-out merge, onboard 0:18-0:22): no cone line at all
+        log(f"pit-exit cones: none (config scenery.pit_exit_cones.draw False: {pc_.get('src', '')})")
+        cones = None
     # the measured blend line: scenery.pit_exit_cones.latlon, else stage 1's centre.pit_exit.line_latlon (one
     # measurement serves both; scenery.pit_exit_cones keeps the colour, size and spacing)
     ll_, src_ = (pc_.get("latlon"), pc_.get("src")) if pc_.get("latlon") else (PIT_EXIT.get("line_latlon"), PIT_EXIT.get("src", ""))
-    if ll_:
+    if ll_ and pc_.get("draw") is not False:
         # round 7 (Sonoma owner notes 42-43): the cones stand ON the painted blend line measured on the captures, from
         # the pit-wall nose to the merge, in the colour, size and spacing of the footage
         P_ = _ll_line(ll_, 2.0)

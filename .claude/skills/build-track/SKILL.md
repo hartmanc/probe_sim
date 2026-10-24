@@ -255,6 +255,20 @@ used, and the accepted track.json rebuilds byte for byte. Stage 3's cones take `
 it so station 0 is the start/finish. Use 1 m stations. The pit lane is a separate way. With a logger, check OSM against
 the GPS centreline (Laguna: median 3.2 m, p95 6.2 m) and station 0 against `centreline.npy[0]` (3.6 m).
 
+- **Where the OSM way runs on an apron**, the first centre is corrected by a measured shift or by the OSM way that
+  runs on the circuit, never by tracing. Otherwise the NAIP edges and the fit's search windows all start on the wrong
+  pavement, and no edge knob gets there.
+  - The OSM way on the circuit is a `loop_ways` part (`way:node:node`) when the ways share nodes.
+  - Otherwise use `centre.prior_shift` [dict(knots=[(lat, lon, dx_m)], blend, src)]: points of the first centre with
+    the lateral shift (+ left) of the real pavement's midline. The shift is interpolated along the stations and applied
+    before the NAIP edges and the fit; the edges stay fitted.
+  - The evidence form is a capture window with a 2 m ruler drawn across the first centre every 10 m, measured from the
+    midline between the asphalt end and the block line, cited in `src`.
+  - A shift changes the loop's length and so its station count. Freeze `stations_ref` (and `stations_ref.json`) to the
+    accepted station frame first, so the config's stations, masks and kerb-search zones map by world position.
+  - Buttonwillow, 20 Oct 2026: T1 exit, T10 and T11 exit, where the OSM ways run on the paved aprons beyond the block
+    lines. Shifts of +11.0, -10.9 and +14.4 m put all three edges on their blocks.
+
 **1.2 Frame registration before anything else.**
 - Phase-correlate the captures against the NAIP `ortho.jpg` (Laguna: Google minus NAIP = −0.3 m east, 0.0 m north,
   all 42 tiles under 1 m).
@@ -345,7 +359,7 @@ knot 6, lam 30, huber 0.25, line_off 0.26, prior 0.03), per side:
   in world position; the gates measure the held edges on those stations. Prove it: every polyline outside the window
   within ~1 cm of the accepted package (round 11: 6.5 mm).
 
-**1.5 The edge convention, at every station.**
+**1.5 The edge convention, at every station.** Where the evidence cannot settle an edge, the owner traces it (1.9, `spline.owner_edges`; `compare/owner_edges.py`).
 - **Where the edge is.** The painted line where there is no kerb, and the flat kerb's outer limit where there is one
   (sausage strips then sit behind the kerb). Kerbs and painted lines count as road.
 - **Per side.** Store left and right separately (median difference 0.8 m, up to 4.4 m at Laguna); the profile fractions
@@ -361,6 +375,23 @@ knot 6, lam 30, huber 0.25, line_off 0.26, prior 0.03), per side:
   interpolate the prior across ±35 stations (`prior.bridge_win`). Painted lines across the road, like Sonoma's chequered
   S/F stripe, go in `prior.extra_bridges`.
 - **Junctions.** Keep the old edge where a pit-lane join or the pit-exit blend lane touches the track.
+- **Block-line kerbs on wider pavement.** On a circuit where paved aprons or runoffs meet the track with no paint and a
+  line of kerb blocks separates them (Buttonwillow), an asphalt-end edge runs out to the far side of the apron.
+  - Reach the blocks. The kerb search must reach the blocks wherever they sit, not only ±1.5 m from the current edge.
+    Give each such zone a `kerb_band` feature and its own search window in `spline.kerb_search`
+    [(side, lo, hi, (w_lo, w_hi), src)]. The window also works for `asphalt_end` and `warm_end` zones.
+  - Cite the evidence. Each zone cites its capture window and onboard frame, and its side follows the onboard: blocks on
+    the car's right are the right edge.
+  - Look first. `kerb_detect.py --offs=-10,-1` lists the candidates.
+  - Buttonwillow, 20 Oct 2026. Nine block lines sat 1.3-16 m inside the fitted edges; 13 onboard kerb rows were MISSING
+    in stage 3. The T1-exit line runs diagonally across the whole fitted track, and the flying lap runs west of it.
+  - What the fit cannot do. It moves an edge only as far as its gate lets an observation pull the curve (1.2 m on the
+    first pass). It cannot jump 13-16 m. Where a block line ends and the apron edge runs on 4-5 m out, the edge-gate step
+    (0.1 m per station) fails. Both are reported, not forced.
+- **The operator's width range is a stage-1 advisory check.** Put the published track width in `spline.report_width`
+  (Buttonwillow: 36-55 ft = 10.97-16.76 m). Then read the report's shares of stations outside it. Stations over the top
+  usually mean an apron fitted as track, so look at each run on a capture window. Buttonwillow before the block-line
+  zones: p90 16.94 m, max 19.33 m at s 2437, 12.0 % of stations over 16.76 m.
 - **Laguna's result:** painted width median 12.9 → 11.6 m (p5 8.7, p95 16.0); apex half-widths such as T6 3.0/8.9 →
   4.1/4.8 m and T11 3.0/9.6 → 5.4/6.6 m; front straight 7.9/8.5 → 4.7/5.4 m. The AI Probe's solo lap went from 120.4 s
   on the wide track to 123.8 s on the painted road with the old driver, and to 120.2 s once the AI's speed profile
@@ -402,7 +433,70 @@ Named straights sit halfway between their corners.
 - No slope over 0.10 m per station outside tight corners.
 - The printed local waviness (residual about a ±25-station quadratic, rolling 100 m) and the kink per station pass.
 - Observation residuals: 90 %+ within 0.25 m.
-- Coverage passes.
+- Coverage passes (60 % of stations).
+- **Unpainted sides (the owner's decision, 20 Oct 2026; `edge_gate.UNPAINTED`, `side_within_gate`, code-defined, no
+  per-track numbers).** On a side with no painted edge line, the curve must run through the middle of the ragged evidence,
+  with the fit-quality gates binding; painted circuits are untouched.
+  - A side is unpainted when `asphalt_end` readings are the majority of its associated readings
+    (`asphalt_end_majority`).
+  - At Buttonwillow the 2026 captures and the 2021 lidar show a 2-4 m asphalt-to-dirt transition. The readings agree
+    across captures (98 % within 0.25 m of their station's median) but scatter along the track (46-50 % within 0.25 m
+    of the fitted edge).
+  - An unpainted side's within gate is a **bias gate over all its readings**, `asphalt_end` and kerb pooled: over
+    rolling 41-station windows holding at least 10 readings, the median signed residual (reading minus fitted edge) lies
+    within ±0.25 m in at least 90 % of the windows. The worst window is listed with its stations, and the spread is
+    printed, not gated.
+  - Its coverage threshold is 50 % of stations (Buttonwillow 54 / 56 %).
+  - Why kerbs are pooled: the grey block bands of an unpainted circuit blur on the captures like the asphalt end
+    (Buttonwillow: 85-86 % within 0.25 m, a 0.25-0.6 m tail, zone medians within ±0.05 m).
+  - The numbers per evidence kind are a printed report, never gated. The bias gate still catches a zone that sits off
+    centre: fix such a zone from its capture window.
+  - A painted side keeps the gates above, computed exactly as before. Longest gap, waviness, kink, the edge gate, world
+    continuity and profile are unchanged. A config may only tighten.
+  - An object beside an unpainted edge that the detector reads as the edge (a marshal mound) is masked with
+    `spline.mask` [(side, lo, hi, capture)], never exempted.
+- **The owner's traced edges** (`spline.owner_edges`, 21 Oct 2026, Buttonwillow T2 and T4). Where the captures cannot
+  settle an edge (a tone change mid-pavement, a block line inside a runoff), the owner draws it.
+  - The workflow:
+    1. Make a frame: `capwin.py --raw --s <s> --half 70 --mpp 0.1` (north up, centred on the centreline at s).
+    2. The owner draws on it: red = the track edges, on the track side of every block line; green = extra lines, such
+       as the end lines of a paved runoff.
+    3. `compare/owner_edges.py --png ... --s --half --mpp --pkg <the package the frame was cut from>` writes
+       `tracks/<id>/owner/<name>.json`: per station and side, the median of the red pixels as a world point, plus the
+       green points. The PNG stays local; the JSON is tracked.
+    4. Add `spline.owner_edges: [dict(file, lo, hi, kerb_inside=[(side, lo, hi)], src)]`.
+  - In the fit, each window station gets ONE 'owner' reading per side: the owner points projected on the current centre
+    at every refit, never their stored station. The side comes from the drawing's continuous lines (`owner_chains`:
+    3 m linkage, >= 5 points), each given to the side of the current centre holding most of it, never from the JSON's
+    labels (those came from the centre the frame was cut from: Buttonwillow T4's right line carried 'left' labels over
+    1118-1137). The readings replace the capture rows within 3 stations of a reading of his (where he drew nothing, the
+    captures stand), associate across any distance, and also enter the fit as weighted anchors (`OWNER_W`) so his line
+    outweighs the smoothness; the gates count each reading once.
+  - `kerb_inside` moves the reading outward by the kerb width where he drew inside a block line, so the strip stays
+    inside the edge, ramped in over `KERB_RAMP` stations at each end (a full-width step is no edge). Confirm those
+    stations with the capture's block line.
+  - Prior shifts from his midline only where he drew BOTH lines.
+  - The 'owner edge' gate: the fitted edge within 0.25 m of his reading at >= 90 % of the window's stations, never over
+    0.5 m (edge_gate.FITTED owner_*, tighten only).
+  - Add `centre.prior_shift` knots from his midline so the refit starts in the right place.
+  - The file's content enters the geometry config hash.
+- **The width-prior model and the width gates** (Buttonwillow round 9, 22 Oct 2026, owner lap 3 note 27: the
+  asphalt-end detector read the far side of the bleached shoulder; edges 1-2 m out, width p5/p50/p95 10.7/13.1/16.5 m,
+  every smoothness gate passing). Config `spline.width_model`; `width_model.py` after the fitted method converges:
+  - evidence once, in world coordinates, around the converged edges: every capture's asphalt-end reading, and kerb
+    anchors (kerb_detect's block pattern) at the band's INSIDE line (the owner's convention);
+  - the detector's bias measured THROUGH the anchors (at a kerb the detector reads the band itself, so kerb + detector
+    vs detector + detector widths, one L1 fit with one width per section); Buttonwillow: left +1.0, right +0.75 m;
+  - sections = the lap between declared junction ranges (`junctions`: mouths carry the edge across, pit-in / pit-out /
+    apron keep the measured local width, owner windows his lines, all blended over `blend` stations); the weaker side
+    placed at the section width from the stronger (kerb, owner, else the detector side by capture agreement);
+  - the placement enters fit_periodic as constraints with the corrected evidence as observations (coverage counts
+    evidence only).
+  - Gates (edge_gate.width_gates, REQUIRED with a width model): |width - section median| <= 0.3 m outside the
+    junction ranges, and the 20-80 m band of each edge's offset <= 0.3 m. Both failed on round 8's package
+    (4.9 m, 0.42 / 0.41 m), which every older gate passed.
+  - Reading the evidence a second time around the placed edges (`evidence_passes` 2) took the bias to ~0 and every
+    width up ~0.5 m, back into the shoulder: one pass.
 - World continuity: the edge polyline's third difference stays ≤ 2 cm.
 - Wall offsets stay steady where a wall runs parallel.
 - Width changes slowly except at kerbs and junctions.
@@ -587,9 +681,20 @@ Its object and row tables are generated by `manifest_tables.ts`.
   `colour_src` and in the manifest's per-strip kerb table. A strip no local frame shows keeps its colour with
   `colour_src='colour unverified: no local frame (...)'` and goes to the owner. `kerb.require_colour_src=True` fails the
   stage on a strip without one; `kerb.colors` stays only as the fallback.
+- **One kerb RUN per block line, never pieces** (Buttonwillow owner lap 1, 21 Oct 2026: "a lot of weird, disjointed
+  kerbs": 10 m strips each with its own `off` stepped up to 1.2 m at their joins). Declare a `kerbs_declared` entry with
+  `line_latlon`: the band centre's world line read by the band reader (`edges_spline.bands` outer limits, the band
+  centre half a width inside) over the run's measured extent. The builder (`build_scenery.kerb_run`) projects it on the
+  track every build, robust-smooths the offset (median 9, Gaussian 4: ~10 m) and publishes ONE strip with `offs` per
+  station (the kit moves every column by it; the paint's colour cycle runs on over the run). The builder log lists every
+  run with its max station-to-station offset step; over `kerb.run_max_step` (default 0.1 m, config may tighten) the
+  stage fails.
 - **Kerb height** per track (`kerb.profile` {height, face, back}) is read by the physics (`createTrackSurface` option
-  `kerbs`) and the app from scenery.json; absent means flat paint. The kerb traversal gate (3.12) holds it. Sonoma's
-  10 cm profile rolled the car (`compare/sonoma/kerb_rollover.md`); 5 cm over a 0.25 m face felt right.
+  `kerbs`) and the app from scenery.json; absent means flat paint. A RUN may carry its own `profile` over the track
+  default (Buttonwillow's Star Mazda apex kerb: the circuit's block lines are flat paint, that one is raised), measured
+  by `compare/HEIGHTS.md` (horizon ratio with the onboard camera's height from a known object in the same frame) and
+  cited with its frame. The kerb traversal gate (3.12) holds it: no roll past 15° relative to the road, no rollover; wheel lifts are reported, not gated (owner, Buttonwillow lap 2). Sonoma's 10 cm profile rolled the car
+  (`compare/sonoma/kerb_rollover.md`); 5 cm over a 0.25 m face felt right.
 - **Raised kerb lines** on island kerb paint (`kerb_lines`) are measured on the paint.
 - **Sausage kerbs** (`sausages`: height 0.06, width 0.5, gap 0.25, kerb_width 0.9) go only where stills show them. The
   raised-cosine profile with a tyre-widened half-width and slope cap 0.6 drives correctly; 13 cm with steep flanks rolled
@@ -665,6 +770,9 @@ Its object and row tables are generated by `manifest_tables.ts`.
   - the lane (`osm` or `declared` latlon, width_m);
   - the walls (side, stations or lat/lon ends, height, material, fence, src);
   - boxes, buildings and furniture.
+- Pave to the walls where the footage shows pavement there (`pit_lane.lane.to_walls.reach` covering the measured gap),
+  and drop the white edge line on a side the footage shows unpainted (`pit_lane.lane.no_edge_line`). Lane cones go at
+  the wall foot, within 0.3 m of the lane's boundary: the pit-connectivity gate keeps the lane itself clear.
 
   Each declared wall has geometry: `latlon` measured on the captures (built as a barrier), or `declared` naming the
   scenery wall it is. `pit_lane_clip_walls` keeps the lane polygon inside its walls. The lane is clipped at declared
@@ -711,6 +819,21 @@ Its object and row tables are generated by `manifest_tables.ts`.
   - its heights are the surface the car drives on, blending from the edge to the heightfield over 5 m. Never use a flat
     DEM fit, which creased the kerbs and paint at the zone ends;
   - it is rendered in the aerial's own colour.
+- **Surfaces of paved areas and zones** (Buttonwillow judge r5): `surface='apron'` is pale weathered asphalt WITH the
+  asphalt grain (the kit's photoGround `apron`), the same for `paved_areas` aprons (drawn through the paint surface,
+  faded into the photo over 2.5 m of the outline) and for zones / closed roads; overlapping zones take ONE material
+  (two looks at slightly different heights z-fight into blotches whatever the polygon offset). `scenery.zones_meet_edge`
+  moves a zone's end points onto the road where the end meets it at an angle (no dirt wedge at a mouth);
+  `scenery.paved_zones_over` draws zone roads over the neighbouring shoulders. `scenery.aprons_meet_road` clips an
+  apron outline to the road and leaves its road-edge segments unfaded (the outline's own steps read as bites); the
+  apron's feather is 1 m on the signed distance to the outline, so its own pale tone dominates (judge r6).
+- **NAIP marks on the road** (`scenery.ortho_paint_over`: outlines on the package ortho): inside each outline, road pixels
+  brighter than the road's median there take the road's median colour (stage 3's ortho step). Old kerb blocks the NAIP
+  shows inside a moved edge are the usual case.
+- **Runoff zones bounded by measured lines** (`scenery.runoff_zones` {name, side, s, outer_latlon, src}; Buttonwillow's
+  T2 runoff, which the owner marked as legitimate pavement): a drivable zone from the fitted edge out to a measured outer
+  line (the outer-loop block line traced on his frame) between his end lines; the same zone geometry as paved runoff,
+  listed in `gates.allowed`; a block line beyond it is drawn only (`blocks` with `latlon: [a, b], every`).
 
 **3.7 Stands, buildings and structures** (`scenery.terraces`, building keys, config `structures`).
 - **Hillside stands from a measured footprint,** not the OSM outline.
@@ -834,7 +957,7 @@ measured lines with their colour.
 | tyre facings | a tyre run parallel 0.8-2.5 m off a rigid wall for 2 m or more (joints within 1.5 m of a wall end and runs angling in are not counted) | `sceneryGates.ts` |
 | coverage | every inventory row of a physical kind needs an object of that kind on that side within ±15 m of its station, else MISSING. MISSING walls, fences, kerbs, tyre walls and bridges always fail; a MISSING row of any other kind fails unless the manifest carries a valid disposition (3.13). Every object of those kinds needs an inventory row or a capture source within ±15 m, else UNSUPPORTED. HEIGHT mismatches (> max(0.3 m, 25 %), wall-mounted boards counting) are listed. No inventory = fail | `gates/coverageGate.ts`, `run_coverage.ts` |
 | pit lane | every pit-lane wall row of the inventory declared in `pit_lane.walls` on that side and standing as a barrier on that side of the lane within ±15 m | `coverageGate.ts` |
-| kerb traversal | on every registered track, every raised strip at line speed, on the line and 1 m either side: no roll past 15° and no rollover; no wheel lifted by a strip (`it.fails` for Sonoma pending the owner's suspension call) | `src/physics/__tests__/kerbgate.test.ts` (vitest) |
+| kerb traversal | on every registered track, every raised strip at line speed, on the line and 1 m either side: no roll past 15° and no rollover (the gate); wheel lifts are an advisory report printed per pass (the owner, 21 Oct 2026: "Lifting a wheel isn't inherently a realism issue. Driving over a kerb and rolling over is an issue.") | `src/physics/__tests__/kerbgate.test.ts` (vitest) |
 | pavement joins (terrain override, 1.13) | inside a `terrain_override` region (weight 1), at every metre of the course's edges and of every paved part's edges and ends: a height step over 0.02 m across the boundary or a cross-slope change over 2° between the metre inside and the metre outside (the driven surface without kerb humps) | `gates/terrainGates.ts` via `run_gates.ts` |
 | surface smoothness (1.13) | cross-profiles of the course at every station in a region, 1 m spacing from 1 m inside each edge outward while in the region: a second difference over 0.01 m (1 % grade change per metre, R 100 m; paved lots: ACI 330's 6 mm under a 3 m straightedge, designed grade breaks 1-2 % over a metre or more), or a point more than 0.05 m below (trough) or above (ridge) the line between its neighbours 5 m either side | `terrainGates.ts` |
 | ground marks on surface (3.11) | every vertex of a paint line (its stored height), an edge line and a ground sign (as the app drapes them) more than 0.01 m above the driven surface or below it, region or not | `gates/groundMarks.ts` via `run_gates.ts` |
@@ -879,6 +1002,15 @@ Write the generated tables with `manifest_tables.ts` after each round.
 - **inside the pit lane end to end** every 25 m, facing the way the cars drive it;
 - **from every paved runoff and closed road the track reaches, looking back at the track** (the containment rays' runs,
   one pose per 150 m, 4 m inside the polygon, and each paved runoff zone).
+
+**4.1b Boundary audit (REQUIRED before the owner drives; Buttonwillow owner lap 2 note 13: "Check texture mash-ups and
+transitions along the track edges, pit in, pit out. This seems to be a common problem.")**:
+`python3 -I tools/track/compare/boundary_sheets.py poses --pkg public/tracks/<id>/ --out tools/track/compare/<id>/boundary_sheets`,
+then `pose_walk.ts --poses .../poses.json --tag b`, then `boundary_sheets.py sheets`. Every surface boundary (track edges,
+each paved area, each zone's edges, the pit lane's edges) gets a still every 30 m from 0.8 m looking along it and from
+2.5 m looking down (round 8: now 1.2 m up, 6 m to the unpaved side, looking across, every 25 m). Read every sheet; list each seam, overlap, gap, z-fight or tone step in the manifest (kind,
+stations, side, what, fixed / open) and fix what the kit can fix. Run it on the final package (boundaries move with
+the edges).
 
 These are the places the owner went on his laps. Every pose is recorded in `walk.json`, and `--replay <walk.json>`
 reshoots the same poses on another package. Sonoma: 344 stills (fwd 82, rows 173, back 41, pit 36, runoff 12).

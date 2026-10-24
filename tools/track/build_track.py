@@ -285,6 +285,10 @@ def stage_geometry(cfg, out, no_logger):
     else:
         sf = cfg.enu(*cfg["start_finish_latlon"])
         C, L = V2.osm_centre(C0box, ortho, sf, cen["osm_fit_a"], cen["osm_fit_b"])
+        if cen.get("prior_shift"):
+            # where the OSM way runs on a paved apron, the first centre is moved onto the circuit's pavement by the
+            # shift measured on the captures (config centre.prior_shift; SKILL 1.2), before the NAIP edges and the fit
+            C, L = B.prior_shift(C, cen["prior_shift"], cfg.enu, log)
     n = len(C)
     log(f"first centre: n={n}, spline length {L:.2f} m")
     cfg_raw = cfg
@@ -547,6 +551,8 @@ def stage_geometry(cfg, out, no_logger):
     # -- validation
     lc = cfg["loop_check"]
     rep.check("loop stations", lc["n_min"] <= n <= lc["n_max"], f"n = {n}")
+    if not lc.get("official_m"):
+        log(f"     lap length: {L1:.2f} m (no official figure in the config: loop_check.official_m is None)")
     if lc.get("official_m"):
         rep.check("lap length", abs(L1 - lc["official_m"]) <= 0.01 * lc["official_m"],
                   f"{L1:.2f} m (official {lc['official_m']}; spacing {sp:.6f})")
@@ -593,8 +599,17 @@ def stage_geometry(cfg, out, no_logger):
     log(f"     heightfield vs profile on the centre: median {np.median(dzc):.3f} m, p95 {np.percentile(dzc, 95):.3f} m (the profile carries the lidar correction)")
     met, gf = edge_gate.gate(T, None, cfg["gate"], log=log, world=not REPRO)
     rep.fails += gf
-    if cfg_raw["spline"].get("owner_edges") and cfg_raw["spline"].get("owner_mouths"):
-        # the owner's reference gates on the package as written (Sonoma round 14B, decision d14; edge_gate.owner_gates):
+    if cfg_raw["spline"].get("width_model"):
+        # the width gates (Buttonwillow round 9, REQUIRED with a width model): one width per section, no 20-80 m wave
+        cw_ = trackcfg.remap_stations(cfg_raw, n, L1, C=C1)
+        oref = owner_ref(cfg_raw, cw_, C1, n) if (cfg_raw["spline"].get("owner_edges") and cfg_raw["spline"].get("owner_mouths")) else None
+        met["width"], gf = edge_gate.width_gates(T, cw_["spline"]["width_model"]["junctions"], cfg_raw["gate"], log=log, owner=oref)
+        if oref is not None:
+            met["owner_reference"] = OWNER_REF_REPORT
+        rep.fails += gf
+        json.dump(WIDTH_REPORT, open(os.path.join(work, "width_model_report.json"), "w"), default=float)
+    elif cfg_raw["spline"].get("owner_edges") and cfg_raw["spline"].get("owner_mouths"):
+        # no width model: the owner's reference gates on the package as written (Sonoma round 14B, decision d14; edge_gate.owner_gates):
         # the width against the width between his lines, the 20-80 m band of (fit - his red)
         Ct_ = np.array(T["center"])[:, :2]
         cw_ = trackcfg.remap_stations(cfg_raw, n, L1, C=Ct_)
@@ -604,6 +619,12 @@ def stage_geometry(cfg, out, no_logger):
     w = hl3 + hr3
     log(f"     width: median {np.median(w):.1f} m (p5 {np.percentile(w, 5):.1f}, p95 {np.percentile(w, 95):.1f}); corners: "
         + ", ".join(f"{c['turn'] or c['name']} s={c['s']} R={c['radius_m']}" for c in corners))
+    if cfg["spline"].get("report_by_kind"):
+        # report only (no gate): the width against the operator's figure (config spline.report_width = (lo, hi) m)
+        lo_w, hi_w = cfg["spline"].get("report_width", (0.0, 1e9)); k0 = int(np.argmin(w))
+        log(f"     report width: median {np.median(w):.2f} m, p10 {np.percentile(w, 10):.2f}, p90 {np.percentile(w, 90):.2f}, "
+            f"min {w[k0]:.2f} m at station {k0}, max {w.max():.2f} m at station {int(np.argmax(w))}; "
+            f"{np.mean(w < lo_w) * 100:.1f} % of stations under {lo_w} m, {np.mean(w > hi_w) * 100:.1f} % over {hi_w} m")
     report = {"provisional": {"shadow_stations": [int(v) for v in shadow], "cones": [cones["s0"], cones["s1"]] if cones else None,
                               "pit_parts": [p["track_s"] for p in (pit or {}).get("parts", [])]},
               "recentre": fit["report"], "spline": spline_rep, "straights": str_rep, "gate": met,
@@ -628,6 +649,96 @@ def stage_geometry(cfg, out, no_logger):
         log("\nGEOMETRY STAGE FAILED:", rep.fails, "(written anyway: --write-on-fail, for diagnosis only)")
         return 1
     return 0
+
+
+WIDTH_REPORT = {}
+
+
+def width_model_pass(cfg_raw, Ccur, hl1, hr1, tiles, features, sp_cfg, cc, pfa, pfb, cen, merge, fit_last, rep):
+    """The width-prior edge model (width_model.py, config spline.width_model; Buttonwillow round 9): the evidence is
+    gathered once around the converged fitted-method edges, in world coordinates; then, on every centre, the bias and
+    the section widths are estimated, the edges placed (one width per section, the weaker side from the stronger) and
+    fitted (edges_spline.fit_periodic with the corrected evidence as observations and the placement as constraints),
+    and the centre refitted to their midpoint until it moves less than 5 cm."""
+    import width_model as WM
+    n = len(Ccur)
+    spm = dict(sp_cfg, kerb_search=[])      # the evidence is the model's; no search zone reaches across it
+    L0 = float(np.linalg.norm(np.roll(Ccur, -1, 0) - Ccur, axis=1).sum())
+    cfgw = trackcfg.remap_stations(cfg_raw, n, L0, C=Ccur)
+    wm = cfgw["spline"]["width_model"]
+    hlp, hrp, hl3, hr3 = hl1.copy(), hr1.copy(), hl1.copy(), hr1.copy()
+    # evidence passes (spline.width_model.evidence_passes): the detector's window follows the edge it searches around,
+    # so after the first pass the evidence is read again around the placed edges and the model re-run on it
+    for ep in range(int(wm.get("evidence_passes", 1))):
+      ke = wm.get("kerb_expect", -0.45)
+      wm_ep = dict(wm, kerb_expect=ke[min(ep, len(ke) - 1)] if isinstance(ke, (list, tuple)) else ke)   # where the band sits from the edge searched around
+      ev = WM.gather_world(cfg_raw, Ccur, B.left_normals(Ccur), hl3, hr3, tiles, cc["mpp"], wm_ep, mask=cfgw["spline"].get("mask") or [], log=log)
+      move = 1e9
+      for it in range(40):
+          L_ = float(np.linalg.norm(np.roll(Ccur, -1, 0) - Ccur, axis=1).sum())
+          cfgw = trackcfg.remap_stations(cfg_raw, n, L_, C=Ccur)
+          wm = cfgw["spline"]["width_model"]; J = wm["junctions"]
+          NL = B.left_normals(Ccur)
+          owner = owner_windows(cfg_raw, cfgw) if cfgw["spline"].get("owner_edges") else []
+          spm["_owner"] = owner
+          if cfgw["spline"].get("mask"):
+              spm["mask"] = cfgw["spline"]["mask"]
+          feats = [tuple(f[:4]) for f in cfgw["features"] if f[3] != "keep"]
+          E = WM.station_evidence(Ccur, NL, ev, n, owner)
+          jm, secs = WM.sections(n, J)
+          est = WM.estimate(E, n, secs, jm, int(wm.get("min_obs", 15)), log=log, agree=float(wm.get("agree_conf", 0.6)))
+          Ev = WM.corrected(E, est["bias"])
+          w = WM.width_function(n, secs, est["W"], J, Ev, int(wm.get("local_half", 15)), int(wm.get("blend", 15)))
+          mid, tl, tr, src = WM.targets(n, Ev, w, wm, WM.junction_side(n, J))
+          obs = WM.observations(E, est["bias"], n)
+          aw = float(wm.get("anchor_w", 20.0))
+          anchors = {"left": (np.arange(n), tl, np.full(n, aw)), "right": (np.arange(n), tr, np.full(n, aw))}
+          log(f"width model, evidence pass {ep + 1}, iteration {it + 1}: {len(secs)} sections, widths " + ", ".join(f"{a}-{b}: {W:.2f}" for (a, b), W in zip(secs, est["W"])))
+          hl3, hr3, frep = edges_spline.fit_periodic(Ccur, NL, hlp, hrp, tiles, feats, spm, cc["mpp"], anchors, obs=obs, anchors_cover=False)
+          if it >= 1 and move < 0.05:
+              break
+          P2 = {"lat_left": hl3, "lat_right": -hr3}
+          fit2 = recentre.refit(Ccur, hlp, hrp, P2, [], [], None, None, pfa, pfb, 0, cen["gps_margin"], cen["min_width"],
+                                merge=merge, width_cap=cen.get("width_cap", 16.0))
+          Cn = fit2["C"]
+          if it >= 2:
+              alpha = 1.0 / it
+              _, latc = B.project(Cn, Ccur)
+              Cd = Ccur - alpha * latc[:, None] * B.left_normals(Ccur)
+              Cn, _ = B.resample_closed(Cd, n=n, smooth=0.0)
+          _, lat = B.project(Cn, Ccur)
+          move = float(np.abs(lat).max())
+          for side, hw in (("left", hl3), ("right", hr3)):
+              sg = 1 if side == "left" else -1
+              sq, lq = B.project(Cn, Ccur + sg * hw[:, None] * NL); o_ = np.argsort(sq)
+              v = sg * np.interp(np.arange(n), sq[o_], lq[o_], period=n)
+              if side == "left": hlp = v
+              else: hrp = v
+          fit_last = fit2
+          log(f"width model: centre refit to the midpoint of the placed edges: max move {move:.3f} m at station {int(np.argmax(np.abs(lat)))}")
+          Ccur = Cn
+      else:
+          rep.check("width model convergence", False, f"evidence pass {ep + 1}: centre still moving {move:.3f} m after 40 refits")
+    # report (work/width_model_report.json; the outline page and the round's record read it)
+    kd = {}
+    for side, hw in (("left", hl3), ("right", hr3)):
+        kb = E[side]["kerb"]; m = ~np.isnan(kb); d = np.where(m, hw - kb, np.nan)
+        kd[side] = dict(stations=int(m.sum()), within_03=float(np.mean(np.abs(d[m]) <= 0.3)) if m.any() else None,
+                        over=[(a, b) for a, b in edges_spline.ranges(m & (np.abs(np.nan_to_num(d)) > 0.3), n)],
+                        max=float(np.nanmax(np.abs(d))) if m.any() else None)
+    from collections import Counter
+    WIDTH_REPORT.update(dict(bias=est["bias"], at_kerb=est["at_kerb"], kinds=est["kinds"], fallback=est["fallback"], lapW=est["lapW"],
+                             sections=[dict(lo=int(a), hi=int(b), W=round(float(W), 2), obs=int(c), kinds=kk_)
+                                       for (a, b), W, c, kk_ in zip(secs, est["W"], est["cnt"], est["kinds_by_sec"])],
+                             junctions=[list(j[:4]) for j in J], src=dict(Counter(src.tolist())), kerb_disagree=kd,
+                             width=[round(float(v), 3) for v in w], src_per_station=src.tolist(),
+                             per_station={sd: dict(val=[None if np.isnan(v) else round(float(v), 3) for v in Ev[sd][0]], kind=Ev[sd][1].tolist(),
+                                                   conf=[round(float(v), 2) for v in Ev[sd][2]]) for sd in ("left", "right")}))
+    for side in ("left", "right"):
+        log(f"width model: {side} edge vs the kerb anchors: {kd[side]['stations']} stations, {kd[side]['within_03'] * 100:.1f} % within 0.3 m, "
+            f"max {kd[side]['max']:.2f} m; over 0.3 m at {kd[side]['over'][:12]}")
+    log("width model: the stronger side per station: " + ", ".join(f"{k or 'none'} {v}" for k, v in sorted(WIDTH_REPORT["src"].items())))
+    return Ccur, hlp, hrp, hl3, hr3, frep, fit_last, cfgw
 
 
 def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, pw, merge, pfa, pfb, cen, cc, dem_s, z0, rep):
@@ -700,6 +811,10 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, pw, m
     fit_last = fit
     for it in range(40):
         cfgw = trackcfg.remap_stations(cfg_fit, n, float(np.linalg.norm(np.roll(Ccur, -1, 0) - Ccur, axis=1).sum()), C=Ccur)
+        # the edge fit's masks and kerb-search zones on this centre's stations, as the features (Buttonwillow; absent: unchanged)
+        for key_ in ("mask", "kerb_search"):
+            if cfgw["spline"].get(key_):
+                sp_cfg[key_] = cfgw["spline"][key_]
         NL = B.left_normals(Ccur)
         pcfg = cfgw.get("prior", {})
         # prior adjustments (the prior is only the fit's weak fallback where there is no evidence)
@@ -765,14 +880,26 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, pw, m
         if move < 0.05 and it >= 1:
             NL = B.left_normals(Ccur)
             cfgw = trackcfg.remap_stations(cfg_fit, n, fit2["L"], C=Ccur)
+            for key_ in ("mask", "kerb_search"):
+                if cfgw["spline"].get(key_):
+                    sp_cfg[key_] = cfgw["spline"][key_]
+            ow_ = owner_windows(cfg_raw, cfgw, phase="global" if loc else None, n=n) if cfgw["spline"].get("owner_edges") else []
+            if cfgw["spline"].get("kerb_search") or ow_:
+                # the features on the same remap as the search zones (Buttonwillow round 5: with the T2 / T4 owner edges
+                # the stations moved ~9 m and the loop's earlier features no longer matched the zone ends at 1921-1939);
+                # owner windows used only in a local refit (Sonoma round 14B) do not count here
+                features = [tuple(f[:4]) for f in cfgw["features"] if f[3] != "keep"]
             if cfgw["spline"].get("owner_edges"):
-                sp_cfg["_owner"] = owner_windows(cfg_raw, cfgw, phase="global" if loc else None, n=n)
+                sp_cfg["_owner"] = ow_
             hl3, hr3, frep = edges_spline.fit_periodic(Ccur, NL, hlp, hrp, tiles, features, sp_cfg, cc["mpp"],
                                                        {k: v for k, v in anchors.items() if v[0]})
             log(f"converged after {it + 1} centre refits")
             break
     else:
         rep.check("centre convergence", False, f"centre still moving {move:.3f} m after 40 refits")
+    if sp_cfg.get("width_model") and not cfg_raw.logger:
+        Ccur, hlp, hrp, hl3, hr3, frep, fit_last, cfgw = width_model_pass(cfg_raw, Ccur, hl3, hr3, tiles, features, sp_cfg, cc,
+                                                                          pfa, pfb, cen, merge, fit_last, rep)
     if loc:
         # -- the local refit (config centre.local): every straight (the `local` ones too) inside the window, the converged
         # geometry above held outside it in WORLD position. The centre moves only by the window weight (no re-stationing
@@ -798,6 +925,9 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, pw, m
             return w
 
         def set_owner(cfgw, li):
+            for key_ in ("mask", "kerb_search"):   # Buttonwillow's keys, on this centre's stations (absent: unchanged)
+                if cfgw["spline"].get(key_):
+                    sp_cfg[key_] = cfgw["spline"][key_]
             if cfgw["spline"].get("owner_edges"):
                 sp_cfg["_owner"] = owner_windows(cfg_raw, cfgw, window=lwin(cfgw, li), phase="local", n=n)
         for li, lc in enumerate(locs):
@@ -913,11 +1043,30 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, pw, m
         for sd, lo, hi, *_ in cfgw["gate"].get("exempt", []):
             if sd == side:
                 r["loose"][np.array([k % n for k in range(lo, hi + (n if hi < lo else 0) + 1)])] = False
-        rep.check(f"fit {side}: observations within 0.25 m", r["within_gated"] >= G["within"] and r["assoc_share"] >= G["assoc"],
-                  f"{r['within_gated'] * 100:.1f} % of the associated observations (>= {G['within'] * 100:.0f} %, the skill's measure); "
-                  f"{r['assoc_share'] * 100:.0f} % of capture rows have a band within 1.2 m (>= {G['assoc'] * 100:.0f} %); of those "
-                  f"{r['within'] * 100:.1f} % within 0.25 m, the rest at 0.25-0.4/0.4-0.6/0.6-0.8/0.8-1.0/1.0-1.2 m: {r['off_hist']}; "
-                  f"{r['within_all'] * 100:.0f} % of all rows")
+        Gs = edge_gate.unpainted_thresholds(cfg_raw["gate"]) if r.get("unpainted") else G
+        if r.get("unpainted"):
+            # the owner's decision of 20 Oct 2026 (edge_gate.UNPAINTED; a side whose associated readings are mostly
+            # asphalt_end): a bias gate over all its readings instead of the 0.25 m share
+            bg = edge_gate.side_within_gate(r, n, G)["bias"]
+            U_ = edge_gate.UNPAINTED; wb = bg["worst"]
+            worst_txt = f"worst {wb[0]:+.3f} m at {wb[1]} ({wb[2]}..{wb[3]})" if wb else "no window"
+            share_ae = sum(k == "asphalt_end" for k in r["assoc_kind"]) / max(1, len(r["assoc_kind"]))
+            rep.check(f"fit {side}: unpainted bias", bg["ok"] and r["assoc_share"] >= G["assoc"],
+                      f"unpainted side ({share_ae * 100:.0f} % of {len(r['assoc_kind'])} associated readings from asphalt_end, a majority); "
+                      f"{bg['share'] * 100:.1f} % of {bg['windows']} {U_['window']}-station windows have a median residual within "
+                      f"+-{U_['bias']} m (>= {U_['bias_windows'] * 100:.0f} %); {worst_txt}; "
+                      f"{r['assoc_share'] * 100:.0f} % of capture rows have a band within 1.2 m (>= {G['assoc'] * 100:.0f} %); "
+                      f"spread (printed, not gated): |residual| p10/p50/p90 {bg['spread']} m, {r['within_gated'] * 100:.1f} % within 0.25 m")
+        else:
+          rep.check(f"fit {side}: observations within 0.25 m", r["within_gated"] >= G["within"] and r["assoc_share"] >= G["assoc"],
+                    f"{r['within_gated'] * 100:.1f} % of the associated observations (>= {G['within'] * 100:.0f} %, the skill's measure); "
+                    f"{r['assoc_share'] * 100:.0f} % of capture rows have a band within 1.2 m (>= {G['assoc'] * 100:.0f} %); of those "
+                    f"{r['within'] * 100:.1f} % within 0.25 m, the rest at 0.25-0.4/0.4-0.6/0.6-0.8/0.8-1.0/1.0-1.2 m: {r['off_hist']}; "
+                    f"{r['within_all'] * 100:.0f} % of all rows")
+        if r.get("unpainted") or cfg_raw["spline"].get("report_by_kind"):
+            pk_ = edge_gate.per_kind_report(r["assoc_kind"], r["assoc_res"])
+            log(f"     report {side} per evidence kind (not gated): " + "; ".join(
+                f"{k_} {v['n']} readings ({v['share'] * 100:.0f} %), {v['within'] * 100:.1f} % within 0.25 m" for k_, v in pk_.items()))
         lo_ = r["loose"]
         # rolling waviness over the loose stations only (a junction or tight corner inside a 100-station window is left
         # out of that window's rms, not only the windows centred on it)
@@ -927,8 +1076,8 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, pw, m
             roll[k] = np.sqrt(np.mean(r["qq"][w_][m_] ** 2)) if m_.sum() >= 50 else 0.0
         r["roll"] = roll
         r["wave_rms"] = float(roll[lo_].max()); r["wave_peak"] = float(np.abs(r["qq"])[lo_].max()); r["kink"] = float(r["kinkv"][lo_].max())
-        rep.check(f"fit {side}: coverage", r["covered"] >= G["covered"],
-                  f"{r['covered'] * 100:.0f} % of stations (>= {G['covered'] * 100:.0f} %)")
+        rep.check(f"fit {side}: coverage", r["covered"] >= Gs["covered"],
+                  f"{r['covered'] * 100:.0f} % of stations (>= {Gs['covered'] * 100:.0f} %" + (", unpainted side)" if r.get("unpainted") else ")"))
         bad = [f"{a}..{b} ({ln} st)" for (a, b), ln in r["gaps"] if ln > G["gap"]]
         rep.check(f"fit {side}: longest gap", not bad, f"{r['longest_gap']} st at {r['gap_at']} (<= {G['gap']})"
                   + (f"; over: {', '.join(bad)}" if bad else ""))
@@ -969,9 +1118,10 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, pw, m
     prof = V2.reprofile(prof0, hlp, hrp, hl3, hr3)
     for s_ in ("left", "right"):
         # the associated readings (station, owner reading or capture, residual) for diagnosis (work/, not the package)
-        json.dump({"n": n, "x": [int(v) for v in frep[s_]["assoc_x"]], "owner": [bool(v) for v in frep[s_]["assoc_owner"]],
+        json.dump({"n": n, "x": [int(v) for v in frep[s_]["assoc_x"]], "kind": [k_ or "painted" for k_ in frep[s_]["assoc_kind"]],
+                   "owner": [bool(v) for v in frep[s_]["assoc_owner"]],
                    "res": [round(float(v), 3) for v in frep[s_]["assoc_res"]]}, open(os.path.join(FIT_DUMP_DIR, f"fit_assoc_{s_}.json"), "w"))
-    spline_rep = [{k: v for k, v in frep[s_].items() if k not in ("roll", "qq", "kinkv", "loose", "assoc_x", "assoc_res", "assoc_owner")} | {"side": s_}
+    spline_rep = [{k: v for k, v in frep[s_].items() if k not in ("roll", "qq", "kinkv", "loose", "assoc_x", "assoc_res", "assoc_kind", "assoc_owner")} | {"side": s_}
                   for s_ in ("left", "right")]
     return Ccur, hlp, hrp, hl3, hr3, sp, L, fit_last, corners, prof0, resurface, prof, spline_rep, str_rep, cfgw
 
@@ -1204,6 +1354,9 @@ def main():
     ap.add_argument("--write-on-fail", action="store_true", help="write a failed stage's outputs anyway (diagnosis only; still exits 1)")
     ap.add_argument("--publish", action="store_true", help="copy the package to public/tracks/<id>/ when every stage passed")
     ap.add_argument("--overwrite-package", action="store_true", help="with --publish: replace an existing public/tracks/<id>/")
+    ap.add_argument("--partial", action="store_true", help="with --publish: publish a package through its last passed stage "
+                    "(geometry, or geometry + ghosts) before stage 3 has run (a new circuit's 1.10 review); never over a "
+                    "package that has scenery")
     a = ap.parse_args()
     global WRITE_ON_FAIL, REPRO
     WRITE_ON_FAIL = a.write_on_fail
@@ -1238,11 +1391,23 @@ def main():
     if a.publish:
         # only a complete package whose three stage records passed with this config and are current (no output changed
         # since, every stage consumed the current geometry); copied to a temporary folder, then swapped in
-        for st in ("geometry", "ghosts", "scenery"):
+        through = ("geometry", "ghosts", "scenery")
+        if a.partial:
+            # the stages before scenery whose records are current, in order; the package carries their files only
+            through = tuple(st for i, st in enumerate(("geometry", "ghosts"))
+                            if all(record_ok(cfg, out, s_, a.no_logger)[0] for s_ in ("geometry", "ghosts")[:i + 1]))
+            if not through:
+                raise SystemExit(f"--publish --partial refused: {record_ok(cfg, out, 'geometry', a.no_logger)[1]}")
+            if os.path.exists(os.path.join(pub, "scenery.json")):
+                raise SystemExit(f"--publish --partial refused: {pub} has scenery (a complete package); publish it whole")
+        for st in through:
             ok, why = record_ok(cfg, out, st, a.no_logger)
             if not ok:
                 raise SystemExit(f"--publish refused: {why}")
         files = ("track.json", "heightfield.bin", "ortho.jpg", "ghosts.json", "scenery.json", "far_heightfield.bin", "far_ortho.jpg")
+        if a.partial:
+            files = ("track.json", "heightfield.bin", "ortho.jpg") + (("ghosts.json",) if "ghosts" in through else ())
+            log(f"partial publish through stage {through[-1]}: {', '.join(files)}")
         missing = [f for f in files if not os.path.exists(os.path.join(out, f))]
         if missing:
             raise SystemExit(f"--publish refused: package incomplete, missing {missing}")

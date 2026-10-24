@@ -5,7 +5,7 @@
 //
 //   npx tsx tools/track/compare/pose_walk.ts --track sonoma --poses poses.json --out <dir> [--port 5180] [--tag after]
 //
-// poses.json: [{name, x, y, z, heading (rad, ENU), yaw (deg, + = left), pitch (deg, + = up)}]; the car is placed at
+// poses.json: [{name, x, y, z, heading (rad, ENU), yaw (deg, + = left), pitch (deg, + = up), eye (m above the surface, optional: the camera then stands 4 m ahead of the car, clear of its body), camera ('hood' | 'chase', optional)}]; the car is placed at
 // (x, y, z) facing heading (z null: the drivable surface's height there, sampled in the page), the hood camera turned by yaw / pitch; --hide a,b hides scene objects by name. Writes <out>/<name>_<tag>.jpg and <out>/stats_<tag>.json.
 import { spawn, type ChildProcess } from 'node:child_process';
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
@@ -23,7 +23,7 @@ const out = resolve(opt('out', '.')!);
 const chromeBin = opt('chrome', '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome')!;
 const W = Number(opt('width', '1280')), H = Number(opt('height', '720'));
 // camera (round 14A): 'hood' (default) or 'chase' (the hot lap's start camera) for the whole walk (--camera) or per pose
-const poses: { name: string; x: number; y: number; z: number | null; heading: number; yaw?: number; pitch?: number; camera?: string }[] = JSON.parse(readFileSync(posesPath, 'utf8'));
+const poses: { name: string; x: number; y: number; z: number | null; heading: number; yaw?: number; pitch?: number; eye?: number; camera?: string }[] = JSON.parse(readFileSync(posesPath, 'utf8'));
 const cameraDefault = opt('camera', 'hood')!;
 
 // ------------------------------------------------------------------ minimal DevTools protocol client
@@ -101,14 +101,17 @@ async function main() {
       await cdp.eval(`window.__sim.setCamera(${JSON.stringify(cam)})`);
       await cdp.eval(`window.__sim.vehicle.reset(${JSON.stringify([p.x, p.y, z])}, ${p.heading}, 0)`);
       await sleep(cam === 'hood' ? 300 : 2500);   // the chase camera eases in behind the car
-      const r = await cdp.eval<{ url: string; calls: number; triangles: number; ms: number }>(`(() => { const S = window.__sim, cam = S.cams.camera, q = cam.quaternion.clone();
+      // eye (texture pass, 21 Oct 2026): the camera this many m above the surface at the pose (world y is up), else the hood
+      const eye = p.eye === undefined ? 'null' : String(p.eye);
+      const r = await cdp.eval<{ url: string; calls: number; triangles: number; ms: number }>(`(() => { const S = window.__sim, cam = S.cams.camera, q = cam.quaternion.clone(), p0 = cam.position.clone();
+        if (${eye} !== null) { cam.position.y = ${z} + ${eye}; cam.position.x += 4 * Math.cos(${p.heading}); cam.position.z -= 4 * Math.sin(${p.heading}); }   // 4 m ahead of the car: clear of the body
         cam.rotateY(${((p.yaw ?? 0) * Math.PI) / 180}); cam.rotateX(${((p.pitch ?? 0) * Math.PI) / 180}); cam.updateMatrixWorld(true);
         S.renderer.info.autoReset = false; S.renderer.info.reset(); S.renderer.render(S.world.scene, cam);
         const calls = S.renderer.info.render.calls, triangles = S.renderer.info.render.triangles;
         const gl = S.renderer.getContext(); const px = new Uint8Array(4); const t0 = performance.now();
         for (let i = 0; i < 20; i++) { S.renderer.render(S.world.scene, cam); gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px); }
         const ms = (performance.now() - t0) / 20; S.renderer.render(S.world.scene, cam);
-        const u = S.renderer.domElement.toDataURL('image/jpeg', 0.88); S.renderer.info.autoReset = true; cam.quaternion.copy(q); cam.updateMatrixWorld(true);
+        const u = S.renderer.domElement.toDataURL('image/jpeg', 0.88); S.renderer.info.autoReset = true; cam.quaternion.copy(q); cam.position.copy(p0); cam.updateMatrixWorld(true);
         return { url: u, calls, triangles, ms }; })()`);
       writeFileSync(join(out, `${p.name}_${tag}.jpg`), Buffer.from(r.url.slice(r.url.indexOf(',') + 1), 'base64'));
       stats.push({ pose: p.name, calls: r.calls, triangles: r.triangles, ms_per_render: Math.round(r.ms * 100) / 100 });

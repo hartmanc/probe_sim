@@ -66,7 +66,7 @@ export interface TrackInfo {
    *  a pass lane's own path (absent = 1, Laguna), shiftGrip caps lane changes by the spare lateral grip (absent = 0 = off). */
   ai?: { followScale?: number; laneMargin?: number; shiftGrip?: number };
   /** Revision of the published package: sha256 over the sha256 of track.json, heightfield.bin, ghosts.json, scenery.json
-   *  and far_heightfield.bin, first 10 hex (the registry test checks it), part of physicsVersion() and so
+   *  and far_heightfield.bin (those the package has: one before its scenery stage has neither of the last two), first 10 hex (the registry test checks it), part of physicsVersion() and so
    *  of the board key: a rebuilt package opens its own boards without a global PHYSICS_VERSION bump. Laguna has none
    *  (its key is unchanged since 0.2.0). */
   rev?: string;
@@ -88,6 +88,13 @@ export const TRACKS: Readonly<Record<string, TrackInfo>> = {
     // 16 seeds of 4 laps with kerbs: shiftGrip 1 contacts 0.047 -> 0.033, four-off 0.094 -> 0.031 (spins in the esses);
     // laneMargin 0.85 on top 0.025 / 0.019 (inside passes at T4, T11); passes 73.0 -> 73.5 %
     ai: { followScale: 1.4, laneMargin: 0.85, shiftGrip: 1 } },
+  // stage 1 + 2 only (20 Oct 2026): geometry and racing line, no scenery yet (the 1.10 review comes first); rev over the
+  // files the package has. The pace file is the uncalibrated per-track build of tools/race/pace_track.ts (7 Laguna cars
+  // from their own Button Turrible 2026 laps, the rest placeholders), there only because the registry needs one: no AI
+  // keys and no calibration until stage 5.
+  buttonwillow: { dir: 'tracks/buttonwillow/', name: 'Buttonwillow Raceway Park', short: 'Buttonwillow', length_m: 4699.187, pace: 'cars/field/buttonwillow/pace.json', rev: '7acf260f50',
+    // on the front straight, ~115 m before the line (s 4580; the last corner T11 is at 4377)
+    start: { s_m: 4580, speed: ROLLING_START_SPEED } },
 };
 /** The track when none is chosen (URL ?track=, Start menu). */
 export const DEFAULT_TRACK = 'laguna_seca';
