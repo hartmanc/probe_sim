@@ -19,7 +19,7 @@
 //   pit     inside the pit lane, end to end every --pit-step m along each lane part, facing the way the cars drive it
 //                                                                                sim/pit_p#_###.jpg
 //   runoff  from every paved polygon the track reaches before a barrier (the containment gate's rays, allowed runoff
-//           and closed roads, one pose per 150 m of each run, 4 m inside the polygon) and from every paved runoff zone,
+//           and closed roads, one pose per 150 m of each run, from the polygon's far side looking back across its paving: 5 m beyond it, or 25 m into a polygon deeper than 30 m) and from every paved runoff zone,
 //           looking back at the track                                          sim/runoff_##.jpg
 // --replay <walk.json> shoots the poses of an earlier walk again (another package, same poses: compare_packages.py).
 // Output: <out>/sim/*.jpg and <out>/walk.json. Local only (ignored by git).

@@ -955,6 +955,7 @@ measured lines with their colour.
 | signs | boards, banners, flag stands and posts on the track or inside a pit-lane, closed-road or `gates.paddock` polygon; brake and turn boards more than 15 m from an edge | `sceneryGates.ts` |
 | wall ends | a rigid run's upstream end within 30 m of an edge, a tyre run's (a cushion excepted) within 8 m, not joined / lapped by a run closer to the track / cushioned / tapered / leaving at > 60° (3.4) | `sceneryGates.ts` |
 | tyre facings | a tyre run parallel 0.8-2.5 m off a rigid wall for 2 m or more (joints within 1.5 m of a wall end and runs angling in are not counted) | `sceneryGates.ts` |
+| cones off the surface | any cone (its spots as the app places them) more than 0.15 m inside a course edge; a pit lane's separation line on shared pavement is exempt (the pit-exit cones, cones within 0.5 m of the pit-lane paving, `gates.cones_exempt` with the reason). Buttonwillow round 11: an owner mouth line ran 1.24 m onto the track where the edge was fitted off his red | `sceneryGates.ts` (`conesOffSurface`) |
 | coverage | every inventory row of a physical kind needs an object of that kind on that side within ±15 m of its station, else MISSING. MISSING walls, fences, kerbs, tyre walls and bridges always fail; a MISSING row of any other kind fails unless the manifest carries a valid disposition (3.13). Every object of those kinds needs an inventory row or a capture source within ±15 m, else UNSUPPORTED. HEIGHT mismatches (> max(0.3 m, 25 %), wall-mounted boards counting) are listed. No inventory = fail | `gates/coverageGate.ts`, `run_coverage.ts` |
 | pit lane | every pit-lane wall row of the inventory declared in `pit_lane.walls` on that side and standing as a barrier on that side of the lane within ±15 m | `coverageGate.ts` |
 | kerb traversal | on every registered track, every raised strip at line speed, on the line and 1 m either side: no roll past 15° and no rollover (the gate); wheel lifts are an advisory report printed per pass (the owner, 21 Oct 2026: "Lifting a wheel isn't inherently a realism issue. Driving over a kerb and rolling over is an issue.") | `src/physics/__tests__/kerbgate.test.ts` (vitest) |
@@ -1001,12 +1002,14 @@ Write the generated tables with `manifest_tables.ts` after each round.
 - **looking back every 100 m** (wall ends, joins and facings show from the other direction);
 - **inside the pit lane end to end** every 25 m, facing the way the cars drive it;
 - **from every paved runoff and closed road the track reaches, looking back at the track** (the containment rays' runs,
-  one pose per 150 m, 4 m inside the polygon, and each paved runoff zone).
+  one pose per 150 m from the polygon's far side looking back across its paving (5 m beyond a shallow one, 25 m into one
+  deeper than 30 m; round 11: from 4 m inside the near side the view left the paving at the hood), and each paved
+  runoff zone).
 
 **4.1b Boundary audit (REQUIRED before the owner drives; Buttonwillow owner lap 2 note 13: "Check texture mash-ups and
 transitions along the track edges, pit in, pit out. This seems to be a common problem.")**:
 `python3 -I tools/track/compare/boundary_sheets.py poses --pkg public/tracks/<id>/ --out tools/track/compare/<id>/boundary_sheets`,
-then `pose_walk.ts --poses .../poses.json --tag b`, then `boundary_sheets.py sheets`. Every surface boundary (track edges,
+then `pose_walk.ts --poses .../poses.json --out .../boundary_sheets --port <dev server> --tag b`, then `boundary_sheets.py sheets`. Every surface boundary (track edges,
 each paved area, each zone's edges, the pit lane's edges) gets a still every 30 m from 0.8 m looking along it and from
 2.5 m looking down (round 8: now 1.2 m up, 6 m to the unpaved side, looking across, every 25 m). Read every sheet; list each seam, overlap, gap, z-fight or tone step in the manifest (kind,
 stations, side, what, fixed / open) and fix what the kit can fix. Run it on the final package (boundaries move with

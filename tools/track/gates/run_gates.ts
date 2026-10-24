@@ -1,14 +1,16 @@
 // CLI of the stage-3 scenery gates (sceneryGates.ts): npx tsx tools/track/gates/run_gates.ts <package dir> [gate config json]
-// Prints the three reports and a JSON summary line; exits 1 when a gate fails.
+// Gates: containment, pit connectivity, sign placement, wall ends, tyre facings, wall tops, wall-tyre joins, tyre faces,
+// run gaps, terrain override (pavement joins, smoothness, kerbs on surface), ground marks, cones off the surface (round 11).
+// Prints the reports and a JSON summary line; exits 1 when a gate fails.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { containment, escapeRuns, exposedEnds, joinFaces, pitConnectivity, runGaps, sideBySide, signPlacement, tyreFaces, wallTops, type GateConfig } from './sceneryGates';
+import { conesOffSurface, containment, escapeRuns, exposedEnds, joinFaces, pitConnectivity, runGaps, sideBySide, signPlacement, tyreFaces, wallTops, type GateConfig } from './sceneryGates';
 import { terrainGates } from './terrainGates';
 import { groundMarksGate, MARKS_TOL } from './groundMarks';
 import { loadHeightfield } from '../../../src/physics/index';
 
 const dir = process.argv[2];
-const cfg: GateConfig & { pit_box_s?: number; openings?: { x: number; y: number; why: string }[] } = process.argv[3] ? JSON.parse(readFileSync(process.argv[3], 'utf8')) : {};
+const cfg: GateConfig & { pit_box_s?: number; openings?: { x: number; y: number; why: string }[]; cone_tol?: number; cones_exempt?: { src: string; why: string }[] } = process.argv[3] ? JSON.parse(readFileSync(process.argv[3], 'utf8')) : {};
 const track = JSON.parse(readFileSync(join(dir, 'track.json'), 'utf8'));
 const sc = JSON.parse(readFileSync(join(dir, 'scenery.json'), 'utf8'));
 let fail = false;
@@ -112,6 +114,13 @@ console.log(`[${gm.bad.length ? 'FAIL' : 'ok'}] ground marks on surface: ${gm.ve
 }
 if (gm.bad.length) fail = true;
 
+// Buttonwillow round 11 (judge r10: the Atlantic mouth cones on the racing surface): every cone of every line off the surface
+const co = conesOffSurface(track, sc, cfg.cone_tol ?? 0.15, 0.5, cfg.cones_exempt ?? []);
+console.log(`[${co.bad.length ? 'FAIL' : 'ok'}] cones off the surface: ${co.cones} cones on ${co.lines} lines (spots as the app places them), `
+  + `${co.bad.length} more than ${co.tol} m inside a course edge (deepest ${co.worst.toFixed(2)} m; ${co.onLane} on a pit lane's separation line, not gated)`);
+for (const b of co.bad.slice(0, 30)) console.log(`       cone on the surface: line ${b.line} s ${b.s} ${b.side}, ${b.depth.toFixed(2)} m inside: ${b.src}`);
+if (co.bad.length) fail = true;
+
 console.log('GATES_JSON ' + JSON.stringify({ marks: { ...gm, bad: gm.bad.length }, terrain: { regions: tg.regions, joins: { ...tg.joins, bad: tg.joins.bad.length }, smooth: { ...tg.smooth, badD2: tg.smooth.badD2.length, badDev: tg.smooth.badDev.length }, kerbs: { ...tg.kerbs, bad: tg.kerbs.bad.length } }, runGaps: rg, containment: { escapes: c.escapes.length, runs, allowed: c.allowed.length, junctions: c.junctions },
-  pit: p, signs: g, ends: e, facings: sb, wallTops: wt, joins: jf, tyreFaces: tf, fail }));
+  pit: p, signs: g, ends: e, facings: sb, wallTops: wt, joins: jf, tyreFaces: tf, cones: co, fail }));
 process.exit(fail ? 1 : 0);

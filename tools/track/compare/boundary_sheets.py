@@ -5,7 +5,9 @@ per `--step` m (default 25) of boundary: the camera 1.2 m up, 6 m to the unpaved
 boundary so both surfaces fill the frame (round 8, checkpoint 4: looking along it showed mostly one side). Then contact sheets with captions (boundary kind, stations / name, side).
 
     python3 -I tools/track/compare/boundary_sheets.py poses --pkg public/tracks/<id>/ --out <dir> [--step 30]
-    npx tsx tools/track/compare/pose_walk.ts --track <id> --poses <dir>/poses.json --out <dir> --tag b --port 5183
+    npx tsx tools/track/compare/pose_walk.ts --track <id> --poses <dir>/poses.json --out <dir> --tag b --port <dev server>
+
+Every pose name is unique (round 11): the parts of one paved road share a label and carry their index (-p00, -p01, ...).
     uv run --python 3.12 --with pillow python -I tools/track/compare/boundary_sheets.py sheets --out <dir>
 
 Read every sheet and list each seam, overlap, gap, z-fight or tone step as a manifest row (kind, stations, side, what,
@@ -52,12 +54,29 @@ def poses(pkg, out, step):
         cx = sum(p[0] for p in a['poly']) / len(a['poly']); cy = sum(p[1] for p in a['poly']) / len(a['poly'])
         along(a['poly'] + [a['poly'][0]], 'area', a['name'].replace(' ', '-')[:24], lambda x, y, cx=cx, cy=cy: (cx, cy))
     for parts, kind in (((S.get('paved_zones') or {}).get('parts', []), 'zone'), ((S.get('pit_lane') or {}).get('parts', []), 'pit')):
+        # round 11 (Buttonwillow round-10 audit: 214 stills overwritten): the parts of one road (the 12 paddock-lane
+        # parts, the 2 parts of the front-straight pale strips and of the front-straight crossover) share a label, so
+        # each part of a label used more than once gets its index (-p00, -p01, ...), as the round-10 reshoot named them
+        lab = lambda z: z.get('turn', kind)[:18]  # noqa: E731
+        count, seen = {}, {}
+        for z in parts:
+            count[lab(z)] = count.get(lab(z), 0) + 1
         for z in parts:
             Cz = z['center']
             def inside(x, y, Cz=Cz):
                 i = min(range(len(Cz)), key=lambda k: (Cz[k][0] - x) ** 2 + (Cz[k][1] - y) ** 2); return Cz[i][0], Cz[i][1]
+            k_ = seen.get(lab(z), 0); seen[lab(z)] = k_ + 1
+            part = f"-p{k_:02d}" if count[lab(z)] > 1 else ''
             for sd in ('left', 'right'):
-                along(z[sd], kind, (z.get('turn', kind)[:18] + '-' + sd).replace(' ', '-'), inside)
+                along(z[sd], kind, (lab(z) + '-' + sd + part).replace(' ', '-'), inside)
+    # every pose name unique (pose_walk writes <name>_<tag>.jpg: a repeated name overwrites a still); any repeat left
+    # (two paved areas with one truncated name) gets a running suffix
+    used = {}
+    for q in P:
+        k_ = used.get(q['name'], 0); used[q['name']] = k_ + 1
+        if k_:
+            q['name'] = f"{q['name']}-{k_}"
+    assert len({q['name'] for q in P}) == len(P), 'pose names not unique'
     os.makedirs(out, exist_ok=True)
     json.dump(P, open(os.path.join(out, 'poses.json'), 'w'))
     print(f"{len(P)} poses -> {out}/poses.json")

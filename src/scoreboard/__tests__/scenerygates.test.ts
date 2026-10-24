@@ -1,7 +1,7 @@
 // Pure parts of the stage-3 scenery gates (tools/track/gates/sceneryGates.ts, 20 Oct 2026): segment crossing, polygon
 // test, containment escapes / barriers / allowed runoff, pit connectivity and sign placement on a synthetic straight.
 import { describe, expect, it } from 'vitest';
-import { containment, escapeRuns, exposedEnds, inPoly, joinFaces, laneClearance, pitConnectivity, runGaps, segCross, sideBySide, signPlacement, tyreFaces, wallTops, type SceneryLike, type TrackLike, type V3 } from '../../../tools/track/gates/sceneryGates';
+import { coneSpots, conesOffSurface, containment, escapeRuns, exposedEnds, inPoly, joinFaces, laneClearance, pitConnectivity, runGaps, segCross, sideBySide, signPlacement, tyreFaces, wallTops, type SceneryLike, type TrackLike, type V3 } from '../../../tools/track/gates/sceneryGates';
 
 // a 400 m oval-ish closed loop: two 150 m straights joined by half circles R 30, 1 m stations, half-width 5
 function loop(): TrackLike {
@@ -239,5 +239,36 @@ describe('scenery gates: run gaps (round 13, Sonoma owner note 131)', () => {
   it('runs that do not face each other (side by side, or at right angles) are not a hole', () => {
     const perp = { kind: 'tyres', pts: [[66, -25, 0], [66, -45, 0]] as V3[], src: 'across' };
     expect(runGaps(T, { barriers: [a, perp] }).gaps).toHaveLength(0);
+  });
+});
+
+describe('scenery gates: cones off the surface (Buttonwillow round 11, judge r10 Atlantic mouth)', () => {
+  // the bottom straight runs along y = 0 with its right edge at y = -5
+  it('places the spots as the app does: every spacing m, the remainder carried over a vertex', () => {
+    expect(coneSpots([[0, 0, 0], [3, 0, 0], [6, 0, 0]], 2).map((p) => p[0])).toEqual([0, 2, 4]);
+    expect(coneSpots([[0, 0, 0], [3, 0, 0], [6, 0, 0]], 2).length).toBe(3);
+  });
+  it('a mouth line on or beyond the edge passes; one bulging 0.5 m onto the track fails at that cone', () => {
+    const ok: SceneryLike = { cone_lines: [{ pts: [[40, -5.1, 0], [70, -5.1, 0]], src: 'mouth', spacing_m: 2 }] };
+    const r0 = conesOffSurface(T, ok);
+    expect(r0.bad).toHaveLength(0);
+    expect(r0.cones).toBe(15);
+    const bulge: SceneryLike = { cone_lines: [{ pts: [[40, -5.1, 0], [55, -4.5, 0], [70, -5.1, 0]], src: 'mouth', spacing_m: 2 }] };
+    const r1 = conesOffSurface(T, bulge);
+    expect(r1.bad.length).toBeGreaterThan(0);
+    expect(r1.bad.every((b) => b.side === 'right' && b.depth > 0.15 && b.s > 40 && b.s < 70)).toBe(true);
+    expect(r1.worst).toBeCloseTo(0.5, 1);
+    // 0.1 m inside is within the 0.15 m tolerance
+    expect(conesOffSurface(T, { cone_lines: [{ pts: [[40, -4.9, 0], [70, -4.9, 0]], spacing_m: 2 }] }).bad).toHaveLength(0);
+  });
+  it("a pit lane's separation line on the shared pavement is not gated: pit_exit_cones, the lane paving, a declared exemption", () => {
+    const inside: V3[] = [[40, -3, 0], [70, -3, 0]];
+    expect(conesOffSurface(T, { cone_lines: [{ pts: inside, src: 'pit-in line', spacing_m: 2 }] }).bad.length).toBeGreaterThan(0);
+    expect(conesOffSurface(T, { pit_exit_cones: { pts: inside, spacing_m: 2 } }).bad).toHaveLength(0);
+    expect(conesOffSurface(T, { cone_lines: [{ pts: inside, src: 'pit-in line', spacing_m: 2 }] }, 0.15, 0.5, [{ src: 'pit-in', why: 'test' }]).bad).toHaveLength(0);
+    const lane = { center: [[40, -2, 0], [70, -2, 0]] as V3[], left: [[40, -1, 0], [70, -1, 0]] as V3[], right: [[40, -3, 0], [70, -3, 0]] as V3[] };
+    const r = conesOffSurface(T, { pit_lane: { parts: [lane] }, cone_lines: [{ pts: inside, src: 'blend', spacing_m: 2 }] });
+    expect(r.bad).toHaveLength(0);
+    expect(r.onLane).toBe(15);
   });
 });

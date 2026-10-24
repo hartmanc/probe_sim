@@ -40,6 +40,9 @@ export function pitPoses(t: TrackLike & { spacing_m: number }, sc: any, stepM: n
   return out;
 }
 
+/** metres beyond a runoff polygon's far side the car stands for a shallow polygon (the hood hides about the first 5 m) */
+export const RUNOFF_BACK = 5;
+
 export function runoffPoses(t: TrackLike & { spacing_m: number }, sc: any): Shot[] {
   const out: Shot[] = [];
   const { nl, hl, hr } = trackFrame(t);
@@ -57,10 +60,19 @@ export function runoffPoses(t: TrackLike & { spacing_m: number }, sc: any): Shot
       const s = r.s0 + (len * (j + 0.5)) / m, i = Math.round(s / sp) % n, side = r.side === 'left' ? 1 : -1;
       const o: V2 = [nl[i][0] * side, nl[i][1] * side], hw = side > 0 ? hl[i] : hr[i];
       const e: V2 = [t.center[i][0] + o[0] * hw, t.center[i][1] + o[1] * hw];
+      // round 11 (Buttonwillow round-10 prep: 15 of 31 runoff stills showed only dirt past the hood): the camera stood
+      // 4 m inside the polygon's near side looking at the track, so the view left the paving after 0.5-5 m, about
+      // where the hood ends. Now it stands at the polygon's FAR side on the same ray, looking back across it: the
+      // paving's depth D along the ray (entry to exit) lies in view; for D < 30 m the car stands RUNOFF_BACK (5) m
+      // beyond the far side so the hood's blind ground falls on the dirt behind it, for a deeper polygon (a road
+      // running away from the track) 25 m into it
       let d = r.dmin;
       for (let dd = 0.5; dd <= 120; dd += 0.5) if (inside([e[0] + o[0] * dd, e[1] + o[1] * dd], r.target)) { d = dd; break; }
-      out.push({ file: `sim/runoff_${String(k++).padStart(2, '0')}.jpg`, s: Math.round(s), side: 'runoff', pos: [e[0] + o[0] * (d + 4), e[1] + o[1] * (d + 4), null],
-        heading: Math.atan2(-o[1], -o[0]), yaw: 0, label: `${r.target}, ${r.side} of s ${r.s0.toFixed(0)}-${r.s1.toFixed(0)}` });
+      let D = 0;
+      for (let dd = d; dd <= d + 120; dd += 0.5) { if (!inside([e[0] + o[0] * dd, e[1] + o[1] * dd], r.target)) break; D = dd - d; }
+      const at = D >= 30 ? d + 25 : d + D + RUNOFF_BACK;
+      out.push({ file: `sim/runoff_${String(k++).padStart(2, '0')}.jpg`, s: Math.round(s), side: 'runoff', pos: [e[0] + o[0] * at, e[1] + o[1] * at, null],
+        heading: Math.atan2(-o[1], -o[0]), yaw: 0, label: `${r.target}, ${r.side} of s ${r.s0.toFixed(0)}-${r.s1.toFixed(0)} (across ${D.toFixed(0)} m of its paving)` });
     }
   }
   // paved runoff zones (not containment targets): from the middle of each, looking at the nearest centre point

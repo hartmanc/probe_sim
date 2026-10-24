@@ -65,7 +65,8 @@ export interface SceneryJson {
      *  shoulder draws behind them; absent = as before (Laguna, Sonoma) */
     over?: number })[] } | null;
   /** painted lines off the track (closed roads' edge lines measured on the captures, 20 Oct 2026): white strips */
-  paint_lines?: { width: number; side?: number; pts: V3[]; src?: string; /** round 7: line colour (default white) */ color?: string }[];
+  paint_lines?: { width: number; side?: number; pts: V3[]; src?: string; /** round 7: line colour (default white) */ color?: string;
+    /** round 11 (Buttonwillow crack seal): a specular sheen 0-1 (a lit standard material, roughness 1 - 0.8 gloss); absent = the flat Lambert paint */ gloss?: number }[];
   /** painted ground logos as typed text (round 7b): centre, reading direction (rad, ENU), size, colours */
   ground_signs?: { x: number; y: number; z: number; heading: number; length: number; height: number; text: string; fg: string; bg?: string; src?: string }[];
   /** raised kerb strips off the lap (round 7b): centre line, width, height, stripe length, colours */
@@ -1526,7 +1527,7 @@ function latticeTower(x: number, y: number, z: number, h: number, w: number, mat
 function buildPaintLines(list: NonNullable<SceneryJson['paint_lines']>): THREE.Group | null {
   const byColor = new Map<string, number[]>();
   for (const l of list) {
-    const key = l.color ?? '#e9e8e2';
+    const key = (l.color ?? '#e9e8e2') + (l.gloss !== undefined ? `|${l.gloss}` : '');
     const pos = byColor.get(key) ?? (byColor.set(key, []).get(key)!);
     const P = l.pts, hw = l.width / 2;
     for (let i = 0; i + 1 < P.length; i++) {
@@ -1538,12 +1539,15 @@ function buildPaintLines(list: NonNullable<SceneryJson['paint_lines']>): THREE.G
   }
   const grp = new THREE.Group();
   grp.name = 'paint_lines';
-  for (const [color, pos] of byColor) {
+  for (const [key, pos] of byColor) {
     if (!pos.length) continue;
     const g = new THREE.BufferGeometry();
     g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
     g.computeVertexNormals();
-    const m = new THREE.Mesh(g, new THREE.MeshLambertMaterial({ color, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -10 }));
+    const [color, gl] = key.split('|');
+    const off = { side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -10 } as const;
+    const m = new THREE.Mesh(g, gl === undefined ? new THREE.MeshLambertMaterial({ color, ...off })
+      : new THREE.MeshStandardMaterial({ color, roughness: 1 - 0.8 * Number(gl), metalness: 0, ...off }));
     m.name = 'paint_lines';
     grp.add(m);
   }

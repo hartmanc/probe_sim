@@ -689,6 +689,18 @@ def trees(trk, G, taken):
         small = (rad < tm.get("radius", 3.0)) | (hmax < tm.get("height", 6.0))
         log(f"trees: tree_min drops {int((keep & small).sum())} small crowns (radius < {tm.get('radius', 3.0)} m or height < {tm.get('height', 6.0)} m)")
         keep &= ~small
+    mc = SC_CFG.get("tree_mast_clear")
+    if mc:
+        # round 11 (Buttonwillow judge r10 fwd_10 / fwd_11 / back_05: the 49.5 m lattice mast at s 3445 L read as a solid
+        # green column): a lattice tower's lidar returns are multi-return like a crown, so the rule made a 49.8 m tree on
+        # the mast; no crown within `radius` m of a declared light mast (scenery.light_masts)
+        M_ = np.array([bl.enu(*lm["latlon"]) for lm in SC_CFG.get("light_masts", [])], float).reshape(-1, 2)
+        if len(M_):
+            dm = np.min(np.hypot(x[:, None] - M_[None, :, 0], y[:, None] - M_[None, :, 1]), 1)
+            on = keep & (dm < float(mc.get("radius", 6.0)))
+            for k_ in np.flatnonzero(on):
+                log(f"trees: crown on a light mast dropped at ({x[k_]:.1f}, {y[k_]:.1f}), {hmax[k_]:.1f} m high, {dm[k_]:.1f} m from the mast")
+            keep &= ~on
     T = np.c_[x, y, z, hmax, rad][keep]
     log(f"trees: {len(T)} crowns; height p10/p50/p90 {np.percentile(T[:, 3], [10, 50, 90]).round(1)} m, "
         f"radius p50 {np.median(T[:, 4]):.1f} m")
@@ -2474,7 +2486,7 @@ def _clean_captures():
 
 def owner_mouth_cones(trk):
     """Cone lines ON the owner's red across each junction mouth (config scenery.owner_mouth_cones {from: the key holding
-    the mouths (owner_mouths_r10), spacing, size, color, style_src}; Buttonwillow round 10, the owner's decision of 23 Oct
+    the mouths (owner_mouths_r10), spacing, size, color, style_src, clip_out}; Buttonwillow round 10, the owner's decision of 23 Oct
     2026 point 2): every mouth with cones=True gets one line on its line_latlon (his red, world points); cones=False
     (the pit entry) gets none. The closed roads' rule cones at the same mouths are switched off in the config
     (closed_roads[].mouth_cones); the cone_lines_declared rows stay (each is an onboard observation, not a rule).
@@ -2494,6 +2506,19 @@ def owner_mouth_cones(trk):
             log(f"owner mouth {m['side']} {m['lo']}-{m['hi']} ({m['kind']}): no cones ({m['src'][-120:]})")
             continue
         ranges[sd].append((int(i[0]), int(i[-1])))
+        if oc.get("clip_out") is not None:
+            # round 11 (judge r10: the Atlantic mouth cones stood up to 1.24 m inside the right edge, the crossover's
+            # 0.74 m): where his red crosses onto the course (his red bulges past the fitted edge at the mouth corners,
+            # which the owner-reference gates leave out +-12 stations), the line is clipped to the fitted edge: every
+            # point less than clip_out m outside the edge on the mouth's side moves out along the station normal to
+            # clip_out m beyond it; the line keeps its shape where it lies off the course
+            j_, lat_, dout_ = trk.project(P)
+            cut = dout_ < float(oc["clip_out"])
+            if cut.any():
+                P = P.copy()
+                P[cut] = trk.edge_point(j_[cut], sd, float(oc["clip_out"]))
+                log(f"owner mouth {m['side']} {m['lo']}-{m['hi']}: {int(cut.sum())} of {len(P)} points clipped to {oc['clip_out']} m "
+                    f"outside the edge (deepest {max(0.0, -float(dout_[cut].min())):.2f} m inside)")
         mid = P[len(P) // 2]
         caps = sorted(_clean_captures(), key=lambda t: np.hypot(t["x"] - mid[0], t["y"] - mid[1]))[:2]
         out.append({"spacing_m": float(oc.get("spacing", 2.0)), "pts": with_z(trk, P),
@@ -2510,7 +2535,9 @@ def surface_marks(trk):
     owner lap 2 note 18): inside the track polygon, pixels darker than the road's local median by `contrast` that are
     also a thin dark ridge (black-hat over 0.7 m); connected components elongated (length >= min_len m, length / width
     >= 6) become one straight segment each (principal axis); the strongest `max` kept; published as paint_lines (dark,
-    0.1 m). The captures are the measurement, never a texture."""
+    0.1 m). Round 11 options (Buttonwillow, the owner's "Redraw"): polyline (each mark on its own measured line, `step` m
+    bins), width, color, gloss (the paint line's specular sheen, 0-1), drop (measured reasons). The captures are the
+    measurement, never a texture."""
     cfgm = SC_CFG.get("surface_marks")
     if not cfgm:
         return []
@@ -2545,21 +2572,65 @@ def surface_marks(trk):
             if ln < cfgm.get("min_len", 3.0) or ln / max(wd, 0.05) < 6:
                 continue
             a = mu - vt[0] * ln / mpp / 2; b = mu + vt[0] * ln / mpp / 2
-            wa = (t["x"] + (a[0] - W / 2) * mpp - t["dx"], t["y"] - (a[1] - H / 2) * mpp - t["dy"])
-            wb = (t["x"] + (b[0] - W / 2) * mpp - t["dx"], t["y"] - (b[1] - H / 2) * mpp - t["dy"])
-            segs.append((float(bh[ys, xs].mean() * len(xs)), wa, wb, t["name"]))
+            wpt = lambda q: (t["x"] + (q[0] - W / 2) * mpp - t["dx"], t["y"] - (q[1] - H / 2) * mpp - t["dy"])  # noqa: E731
+            wa, wb = wpt(a), wpt(b)
+            line = None
+            if cfgm.get("polyline"):
+                # round 11 (the owner, 23 Oct 2026, "Redraw"): the mark's own wavy line, not the straight segment between
+                # its ends: its pixels binned along the principal axis every `step` m (0.4), the median offset across it
+                # per bin (median of 3 along), so the drawn line follows the seal as the capture shows it
+                tq = (Q - mu) @ vt[0]; oq = (Q - mu) @ vt[1]
+                bw = cfgm.get("step", 0.4) / mpp
+                edges_ = np.arange(tq.min(), tq.max() + bw, bw)
+                pts_ = []
+                for b0 in edges_[:-1]:
+                    sel = (tq >= b0) & (tq < b0 + bw)
+                    if sel.any():
+                        pts_.append((float(np.median(tq[sel])), float(np.median(oq[sel]))))
+                if len(pts_) >= 2:
+                    o_ = np.array([q[1] for q in pts_])
+                    if len(o_) >= 3:
+                        o_ = ndi.median_filter(o_, 3, mode="nearest")
+                    line = [wpt(mu + vt[0] * q[0] + vt[1] * oo) for q, oo in zip(pts_, o_)]
+            segs.append((float(bh[ys, xs].mean() * len(xs)), wa, wb, t["name"], line))
     # one per place: drop a segment whose midpoint lies within 1 m of a stronger one's (captures overlap)
     segs.sort(key=lambda q: -q[0]); kept = []
-    for sc, a, b, nm in segs:
+    for sc, a, b, nm, line in segs:
         mid = ((a[0] + b[0]) / 2, (a[1] + b[1]) / 2)
         if any(math.dist(mid, ((k[1][0] + k[2][0]) / 2, (k[1][1] + k[2][1]) / 2)) < 1.0 for k in kept):
             continue
-        kept.append((sc, a, b, nm))
+        kept.append((sc, a, b, nm, line))
         if len(kept) >= cfgm.get("max", 1500):
             break
-    out = [{"width": 0.1, "color": cfgm.get("color", "#2a2a2a"), "pts": with_z(trk, np.array([a, b]), 0.008),
-            "src": f"surface mark (crack seal) measured on {nm}"} for _, a, b, nm in kept]
-    log(f"surface marks: {len(segs)} candidate segments on the clean captures, {len(out)} kept (max {cfgm.get('max', 1500)})")
+    # round 11 (the owner, "Redraw"): marks dropped by a measured reason (surface_marks.drop [{a, b (lat, lon on the
+    # track), lengthwise (deg), why}]): a mark whose midpoint projects between a and b and that runs within `lengthwise`
+    # degrees of the track's direction (the pit-entry straight's centreline marks read as a dashed centre line)
+    drops = []
+    for d_ in cfgm.get("drop", []):
+        ia, _, _ = trk.project(np.array([bl.enu(*d_["a"]), bl.enu(*d_["b"])], float))
+        drops.append((int(ia[0]), int(ia[1]), float(d_.get("lengthwise", 30)), d_["why"]))
+    if drops:
+        keep2 = []
+        for q in kept:
+            a, b = np.array(q[1]), np.array(q[2]); mid = (a + b) / 2
+            i_, lat_, _ = trk.project(mid[None])
+            i_ = int(i_[0]); ang = math.degrees(math.acos(min(1.0, abs(float(((b - a) / (np.linalg.norm(b - a) or 1)) @ trk.T[i_])))))
+            hit = [d for d in drops if (d[0] <= i_ <= d[1]) and ang <= d[2]]
+            if hit:
+                log(f"   surface mark dropped: s {i_ * trk.sp:.0f}, lateral {float(lat_[0]):+.1f} m, {np.linalg.norm(b - a):.1f} m long, "
+                    f"{ang:.0f} deg to the track ({q[3]}): {hit[0][3][:100]}")
+                continue
+            keep2.append(q)
+        log(f"surface marks: {len(kept) - len(keep2)} dropped (surface_marks.drop)")
+        kept = keep2
+    style = {"width": float(cfgm.get("width", 0.1)), "color": cfgm.get("color", "#2a2a2a")}
+    if cfgm.get("gloss") is not None:
+        style["gloss"] = float(cfgm["gloss"])
+    out = [{**style, "pts": with_z(trk, np.array(line if (line and cfgm.get("polyline")) else [a, b]), 0.008),
+            "src": f"surface mark (crack seal) measured on {nm}" + (" (its measured line)" if line and cfgm.get("polyline") else "")}
+           for _, a, b, nm, line in kept]
+    log(f"surface marks: {len(segs)} candidate segments on the clean captures, {len(out)} kept (max {cfgm.get('max', 1500)})"
+        + (f"; drawn {style['width']} m {style['color']}" + (f", gloss {style['gloss']}" if 'gloss' in style else '') + ", each on its measured line" if cfgm.get("polyline") else ""))
     return out
 
 

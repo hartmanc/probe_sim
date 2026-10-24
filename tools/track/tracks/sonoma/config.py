@@ -1604,7 +1604,11 @@ CONFIG = dict(
                  dict(source='ortho', max=40.0, ground=True, ground_blend=5.0, smooth=5.0))],   # smooth: no folded strip (dark wedges)
         # containment gate: paved surfaces the cars can really reach across open ground (no barrier in the captures or the
         # onboard), each with its evidence; everything else must be behind a barrier or a cone line
+        # cones-off-the-surface gate (round 11 of Buttonwillow, 23 Oct 2026): the pit-in cones stand ON the measured double
+        # white line between the track and the pit-in lane where the two share the pavement (owner notes 15-16), so that
+        # line is a pit lane's separation line, not a cone line on the racing surface
         gates=dict(
+            cones_exempt=[dict(src='pit-in double white line', why="the pit-in separation line's cones on the measured double white line (owner notes 15-16; Street View owner_15, onboard 1:58)")],
             # round 14B part 1b: the lap the inventory's stations are on (round 14A's centre, frozen): the coverage gate carries
             # the rows onto a package whose lap differs by world position (build_track.coverage_gates)
             inventory_lap='compare/sonoma/inventory_lap.json',

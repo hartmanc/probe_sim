@@ -3,10 +3,24 @@
 // plus the renderer's draw calls and triangles at each pose and a timing of repeated renders (the frame-rate check).
 // Same headless-Chrome-over-CDP method as camera_walk.ts (throwaway profile, never the owner's browser).
 //
-//   npx tsx tools/track/compare/pose_walk.ts --track sonoma --poses poses.json --out <dir> [--port 5180] [--tag after]
+//   npx tsx tools/track/compare/pose_walk.ts --track <id> --poses <poses.json> --out <dir> --port <dev server port> \
+//       [--tag sim] [--hide a,b] [--width 1280] [--height 720] [--chrome <Chrome binary>]
 //
-// poses.json: [{name, x, y, z, heading (rad, ENU), yaw (deg, + = left), pitch (deg, + = up), eye (m above the surface, optional: the camera then stands 4 m ahead of the car, clear of its body), camera ('hood' | 'chase', optional)}]; the car is placed at
-// (x, y, z) facing heading (z null: the drivable surface's height there, sampled in the page), the hood camera turned by yaw / pitch; --hide a,b hides scene objects by name. Writes <out>/<name>_<tag>.jpg and <out>/stats_<tag>.json.
+// Flags (round 11, 23 Oct 2026: the walk wrote into the current directory and looked for the dev server on 5180 when
+// a brief named another port and folder; both are now given explicitly):
+//   --track   the package id: the page opens http://localhost:<port>/?track=<id> (public/tracks/<id>/)
+//   --poses   poses.json: [{name, x, y, z, heading (rad, ENU), yaw (deg, + = left), pitch (deg, + = up), eye (m above
+//             the surface, optional: the camera then stands 4 m ahead of the car, clear of its body), camera ('hood' |
+//             'chase', optional)}]; the car is placed
+//             at (x, y, z) facing heading (z null: the drivable surface's height there, sampled in the page), the hood
+//             camera turned by yaw / pitch
+//   --out     REQUIRED: the folder the stills go to (<out>/<name>_<tag>.jpg) with stats_<tag>.json; created if missing
+//   --port    REQUIRED: the port of the dev server already running from the worktree whose package is to be shot
+//             (npx vite --port <port> --strictPort); the walk checks it answers before launching Chrome
+//   --tag     the stills' suffix (default 'sim'), e.g. before / after
+//   --camera  'hood' (default) or 'chase' for the whole walk (round 14A); a pose's own camera wins
+//   --hide    hide the named scene objects (diagnosis: which mesh draws what)
+//   --width / --height  the render size (default 1280 x 720); --chrome the Chrome binary (default the macOS app)
 import { spawn, type ChildProcess } from 'node:child_process';
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -17,9 +31,12 @@ const opt = (k: string, d?: string) => { const i = argv.indexOf(`--${k}`); retur
 const id = opt('track');
 const posesPath = opt('poses');
 if (!id || !posesPath) { console.error('--track <id> --poses <json> required'); process.exit(2); }
-const port = Number(opt('port', '5180'));
+const portArg = opt('port'), outArg = opt('out');
+if (!portArg || !outArg) { console.error('--port <dev server port> and --out <dir> are required (see the header)'); process.exit(2); }
+const port = Number(portArg);
+if (!Number.isInteger(port) || port <= 0) { console.error(`--port ${portArg}: not a port number`); process.exit(2); }
 const tag = opt('tag', 'sim')!;
-const out = resolve(opt('out', '.')!);
+const out = resolve(outArg);
 const chromeBin = opt('chrome', '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome')!;
 const W = Number(opt('width', '1280')), H = Number(opt('height', '720'));
 // camera (round 14A): 'hood' (default) or 'chase' (the hot lap's start camera) for the whole walk (--camera) or per pose
@@ -70,7 +87,11 @@ async function launch(): Promise<{ proc: ChildProcess; ws: string; profile: stri
 }
 
 async function main() {
+  // the dev server must answer on the given port before Chrome is launched (no silent walk against another server)
+  try { const r = await fetch(`http://localhost:${port}/`); if (!r.ok) throw new Error(`HTTP ${r.status}`); }
+  catch (e) { throw new Error(`no dev server on localhost:${port} (${(e as Error).message}); start it with npx vite --port ${port} --strictPort`); }
   mkdirSync(out, { recursive: true });
+  console.log(`pose walk: ${poses.length} poses of ${id} from localhost:${port} into ${out} (tag ${tag})`);
   const { proc, ws, profile } = await launch();
   const cdp = new CDP();
   const stats: Record<string, unknown>[] = [];
