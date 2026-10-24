@@ -1,0 +1,182 @@
+{
+ "src": "owner_mouths.py --owner tools/track/tracks/sonoma/owner/r14/merged.json --pkg public/tracks/sonoma (stations of that package)",
+ "mouths": [
+  {
+   "side": "right",
+   "lo": 166,
+   "hi": 179,
+   "s0": 165.6,
+   "s1": 178.6,
+   "kind": "red across",
+   "cones": true,
+   "note": "the paddock-side mouth at T1: his red arc from where his green (the access road's edge) ends on it (s 166) to where it rejoins his edge line (s 179); owner 23 Oct 2026 20:30 PDT: Put a few cones there",
+   "red_drawn": true,
+   "declared": true,
+   "width_m": 13.36,
+   "junction": [],
+   "line_enu": [
+    [
+     105.74,
+     -55.09
+    ],
+    [
+     103.67,
+     -55.58
+    ],
+    [
+     101.62,
+     -56.1
+    ],
+    [
+     99.58,
+     -56.48
+    ],
+    [
+     97.55,
+     -56.73
+    ],
+    [
+     95.52,
+     -56.86
+    ],
+    [
+     93.5,
+     -56.86
+    ],
+    [
+     92.5,
+     -56.86
+    ]
+   ],
+   "line_latlon": [
+    [
+     38.1622051,
+     -122.4563919
+    ],
+    [
+     38.1622007,
+     -122.4564155
+    ],
+    [
+     38.162196,
+     -122.4564389
+    ],
+    [
+     38.1621927,
+     -122.4564623
+    ],
+    [
+     38.1621904,
+     -122.4564855
+    ],
+    [
+     38.1621892,
+     -122.4565087
+    ],
+    [
+     38.1621892,
+     -122.4565317
+    ],
+    [
+     38.1621893,
+     -122.4565432
+    ]
+   ]
+  },
+  {
+   "side": "left",
+   "lo": 223,
+   "hi": 230,
+   "s0": 222.5,
+   "s1": 229.5,
+   "kind": "junction step",
+   "cones": false,
+   "note": "the pit-exit lane's mouth after T1: his red along the blend line ends at s 223, resumes on the merged lane's outer edge at s 230 where his green (the pit-lane edge) meets it (single contact 228-233); no cones, the cars drive out of the pit lane here",
+   "red_drawn": false,
+   "declared": true,
+   "width_m": 7.61,
+   "junction": [],
+   "step_m": 4.36,
+   "line_enu": [
+    [
+     49.51,
+     -72.28
+    ],
+    [
+     48.64,
+     -72.95
+    ],
+    [
+     47.78,
+     -73.63
+    ],
+    [
+     46.94,
+     -74.31
+    ],
+    [
+     46.11,
+     -75.01
+    ],
+    [
+     45.29,
+     -75.71
+    ],
+    [
+     44.47,
+     -76.43
+    ],
+    [
+     43.66,
+     -77.14
+    ]
+   ],
+   "line_latlon": [
+    [
+     38.1620507,
+     -122.4570344
+    ],
+    [
+     38.1620447,
+     -122.4570443
+    ],
+    [
+     38.1620386,
+     -122.4570541
+    ],
+    [
+     38.1620324,
+     -122.4570637
+    ],
+    [
+     38.1620262,
+     -122.4570732
+    ],
+    [
+     38.1620199,
+     -122.4570826
+    ],
+    [
+     38.1620135,
+     -122.457092
+    ],
+    [
+     38.162007,
+     -122.4571012
+    ]
+   ]
+  }
+ ],
+ "singles": [
+  {
+   "side": "left",
+   "lo": 228,
+   "hi": 233
+  },
+  {
+   "side": "right",
+   "lo": 164,
+   "hi": 167
+  }
+ ]
+}

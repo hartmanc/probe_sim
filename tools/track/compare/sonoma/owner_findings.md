@@ -28,3 +28,27 @@
 - **Kerbs:** Sonoma's kerbs are BLUE and white (not red/white), low flat concrete, narrow (~0.5-0.6 m), blocks ~1 m long,
   faded and rubbered, with dirt right behind them (Street View on the T7 inside). "Gives the track a different feel than
   Laguna." Per-track kerb colours / width / block length belong in the config.
+
+## Round 13 drive (23 Oct 2026, 19:05 PDT, preview probe-acdxuugxf)
+- **T7 complex: better, but the terrain / elevation still mismatches.** His screenshot from the T7 approach (hot lap,
+  car stopped): the inactive pavement on the left (the Chute / short-T7 road) sits on a different level from the
+  racing surface, with a visible ridge where the dark inactive block meets the course; the island with the red/white
+  kerbs reads as a trough (green strip below the kerbs); the blue/white kerb run and the right-hand paddock pavement step
+  down at their edges. His words: "we might have to deviate from the lidar scan, if that's what's causing these
+  problems. The key thing is that the active and inactive track surfaces actually go together in a sensical way that
+  doesn't break immersion." Rule: every inactive paved surface that touches the course joins it with no step and no
+  trough, even where that means leaving the lidar.
+- **T10: a separate concrete wall end juts out into traffic.** From the grass on the driver's right past T10 (off
+  track, looking along the outer wall): the long outer wall on the right stops, and a short free-standing concrete wall
+  piece stands in the gap with its end facing oncoming cars; a dark strip on the ground beside it looks like a tyre
+  wall that was not built. His words: "I don't think this separate wall is sitting out by T10. As discussed before,
+  we should be skeptical of any concrete wall ends that jut out into traffic. This would kill someone if they ran into
+  it at speed. Seems likely that a section of wall is missing. I see a dark texture that looks like a missing tire
+  wall." Rule (reaffirmed): a wall end facing traffic is a missing section or a missing tyre wall, never a feature.
+  Round 14 part B.
+- **T1 edges from his strokes** (drawing page 6nG9T3NgsVajJPNSKkwhAc, read back 20:25 PDT, filed in
+  `compare/sonoma/owner_edges_r14/`): red = both asphalt edges through s ~150-330; the round-13 fit's bulge toward the
+  pit lane on the right at s ~195-250 is wrong ("I don't think this concave section on the right hand of the track is
+  here"), and so is its excursion into the paddock-side truck area on the left. Green = the pit-lane edge and the
+  paddock access roads (closed pavement). The red arc into the paddock-side mouth at s ~175 is the boundary and gets a
+  cone line: "Put a few cones there".

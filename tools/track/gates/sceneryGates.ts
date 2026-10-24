@@ -386,7 +386,13 @@ export interface ExposedEnd { label: string; side: 'left' | 'right'; s: number; 
 export interface EndsReport { checked: number; ok: { label: string; s: number; how: string }[]; exposed: ExposedEnd[] }
 
 /** Every rigid barrier run (concrete, pitwall, armco) whose upstream end (the end a car travelling the lap meets first)
- *  stands within `near` m (8) of the edge must be protected, else it is an end face exposed to oncoming travel:
+ *  stands within `near` m (30; 8 until Sonoma round 14B) of the edge must be protected, else it is an end face exposed to
+ *  oncoming travel. Round 14B (Sonoma owner, round-13 drive at T10: "we should be skeptical of any concrete wall ends
+ *  that jut out into traffic. This would kill someone if they ran into it at speed"): a car leaving the track meets a
+ *  bare head 11 m out as surely as one 7 m out (run 37's head stood 7 m inside the long outer wall's line, 11 m out, and
+ *  the 8 m gate never looked at it). Tyre runs keep `nearTyres` (8): their heads were gated from round 11 at 8 m. Every
+ *  end checked before is checked exactly as before (the old gate is a subset). A run standing OUTSIDE the head (further
+ *  from the track) protects nothing: only a lapping run closer to the track counts.
  *  - joined: another barrier, a tyre run or an impact block is within `join` m (1.5) of the end point (one wall, or a
  *    cushion at its head);
  *  - lapped: a run on the same side ends within `lap` m (25) upstream of it, or overlaps it, and stands closer to the
@@ -394,8 +400,8 @@ export interface EndsReport { checked: number; ok: { label: string; s: number; h
  *  - tapered: the run angles away from the track at its head (its end is at least `taper` m (1.5) further out than
  *    the run 10 m downstream).
  *  Runs from 25 m upstream of the end are compared on the end's own side. */
-export function exposedEnds(t: TrackLike, sc: SceneryLike & { landmarks?: { kind: string; x: number; y: number }[] }, opts: { near?: number; join?: number; lap?: number; taper?: number } = {}): EndsReport {
-  const near = opts.near ?? 8, join = opts.join ?? 1.5, lap = opts.lap ?? 25, taper = opts.taper ?? 1.5;
+export function exposedEnds(t: TrackLike, sc: SceneryLike & { landmarks?: { kind: string; x: number; y: number }[] }, opts: { near?: number; nearTyres?: number; join?: number; lap?: number; taper?: number } = {}): EndsReport {
+  const near = opts.near ?? 30, nearTyres = opts.nearTyres ?? 8, join = opts.join ?? 1.5, lap = opts.lap ?? 25, taper = opts.taper ?? 1.5;
   const proj = makeProjector(t), L = t.n * t.spacing_m;
   const dens = (P: V3[]): V2[] => {
     const o: V2[] = [];
@@ -436,7 +442,7 @@ export function exposedEnds(t: TrackLike, sc: SceneryLike & { landmarks?: { kind
       const cushion = len <= 12 && runs.some((q) => q !== r && q.kind !== 'tyres' && q.xy.some((p) => Math.hypot(p[0] - tail[0], p[1] - tail[1]) <= join));
       if (cushion) continue;
     }
-    if (r.out[h] > near || r.out[h] < -0.5) continue;
+    if (r.out[h] > (r.kind === 'tyres' ? nearTyres : near) || r.out[h] < -0.5) continue;
     // a run that crosses the track (a wall across a closed road's mouth, out < 0 on the road) is not a lap wall end
     rep.checked++;
     const side: 'left' | 'right' = r.lat[h] > 0 ? 'left' : 'right';

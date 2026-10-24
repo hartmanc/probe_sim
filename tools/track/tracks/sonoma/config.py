@@ -101,8 +101,13 @@ CONFIG = dict(
                 # round 11 (owner notes 64 / 69): the Carousel-exit-to-T7 straights (the `local` straights below) are
                 # refitted inside this window only, the accepted geometry held outside it (the refit loop's limit cycles
                 # at the T7 hairpin and 9a and the uniform re-stationing would otherwise move the whole lap by up to 2.6 m)
-                local=dict(window=(1643, 2091), blend=15,
-                           why='round 11: the Carousel exit to T7 straights only (owner notes 64 / 69)')),
+                # round 14B (owner, round-13 drive: his red on the T1-T2 outline windows): a second local window round
+                # T1 (config 114-383, his red 143-356 with the blend outside it), refitted after the first with
+                # everything outside it held; the first window's refit is exactly round 11's (centre.local list form)
+                local=[dict(window=(1643, 2091), blend=15,
+                            why='round 11: the Carousel exit to T7 straights only (owner notes 64 / 69)'),
+                       dict(window=(114, 383), blend=15,
+                            why='round 14B: T1-T2 edges from the owner\'s red (spline.owner_edges, owner/r14)')]),
     loop_check=dict(n_min=3900, n_max=4250, official_m=4088, elev_min=20, elev_max=80),
     captures=dict(
         z20_dir=None,
@@ -112,7 +117,31 @@ CONFIG = dict(
         clean_mask='clean',
         exclude=[],
     ),
-    spline=dict(runs=None, knot=6, lam=30.0, huber=0.25, line_off=0.26, prior=0.03, init_stiff=30.0, captures='clean'),
+    spline=dict(runs=None, knot=6, lam=30.0, huber=0.25, line_off=0.26, prior=0.03, init_stiff=30.0, captures='clean',
+                # round 14B (owner, round-13 drive, 23 Oct 2026; compare/sonoma/owner_findings.md "Round 13 drive"): his
+                # red on the T1-T2 outline windows (drawing page 6nG9T3NgsVajJPNSKkwhAc, read back 20:25 PDT; strokes in
+                # compare/sonoma/owner_edges_r14/), both asphalt edges through s ~144-356. compare/owner_edges.py per drawn
+                # window (w_s0250 at 0.12 m/px, close_s0175 / close_s0205 at 0.06 m/px; frames from frames.json,
+                # checked against capwin re-renders of public/tracks/sonoma: zero offset, JPEG noise only; pixels kept
+                # only on his stroke vectors, strokes.json) into owner/r14/<window>.json; compare/owner_merge.py
+                # cross-fades them into owner/r14/merged.json (left 207 stations 144-357, right 192 stations 145-337 of
+                # the round-14A package; 17 stations where two windows differ by > 0.3 m, his stroke repeatability).
+                # Where he drew, his red wins (the fit's readings there replaced, his line anchored, OWNER_W); the
+                # detected edge elsewhere; one global spline per side, refitted in the second local window only.
+                # What it changes: the pit-side (left) edge's early blend toward the pit-exit lane at s ~205-225 ("this
+                # concave section ... is not here") and its step onto the merged pit-exit lane at s ~228-233; the
+                # paddock-side (right) excursion into the mouth at s ~165-185 and the 0.3-0.6 m bulge at s ~212-235.
+                # His red sits on the asphalt edge, inside the kerbs; the right 180-260 'kerb' feature already puts the
+                # edge on the kerb runs' inner side here, so no kerb shift (kerb_inside) is applied.
+                owner_edges=[dict(file='owner/r14/merged.json', lo=143, hi=356, local=True,
+                                  windows=['owner/r14/w_s0250.json', 'owner/r14/close_s0175.json', 'owner/r14/close_s0205.json'],
+                                  src='owner round-13 drive red on edges windows w_s0250, close_s0175, close_s0205 '
+                                      '(compare/sonoma/owner_edges_r14/*_marked.png, local), s 144-356')],
+                # his red arc across the paddock-side mouth at s ~166-179 (owner_mouths.py --across: his green, the
+                # access road's edge, ends on the arc at s 166; the arc rejoins his edge line at s 179): the course
+                # boundary there and a cone line ("Put a few cones there"); the owner-reference gates leave its
+                # stations +-12 out (edge_gate.OWNER_REF)
+                owner_mouths='owner/r14/mouths.json'),
     # Carousel exit (T6) to the T7 approach, stations ~1680-2060 (onboard youtube.com/watch?v=RAZip6S84CM 0:55-1:09):
     # the course is bounded by the PAVEMENT, not by cones or a painted line. On the shared drag-strip start (to ~1880) the
     # car runs right of the yellow lane line with the red/white kerb as the right edge (0:59-1:01) and crosses the lane
@@ -182,6 +211,10 @@ CONFIG = dict(
               exempt=[('left', 3480, 3610, 'pit-in lane splits off on the left before T11 (dashed blend line, c20_s1155): '
                        'the edge steps in by ~5 m over 60 m as the lane leaves (junction, real)'),
                       ('left', 160, 260, 'pit-out lane joins on the left after T1 (c20_s1870/s1925; junction, real)'),
+                      # round 14B (the owner's red and green at T1, owner/r14): the paddock access road's mouth on the right,
+                      # as Buttonwillow's mouth exemptions (about +-20 stations round the mouth)
+                      ('right', 145, 198, 'mouth of the paddock access road at T1 (round 14B: the owner\'s green, the road\'s pavement edge, '
+                       'ends on his red arc at s 166, the arc rejoins his edge line at s 179; close_s0175 on c20_s1870 / c20_s1925); junction, real'),
                       ('left', 1860, 1980, 'the T7 road forks off the drag strip to the left (c20_s3685/s3740; junction, real)')]),
     # ---------------------------------------------------------------- stage 1: terrain override (round 14A, 23 Oct 2026)
     # Owner, round-13 drive (compare/sonoma/owner_findings.md): from the T7 approach the inactive paving (the Chute, the
@@ -229,6 +262,11 @@ CONFIG = dict(
     # kerbs red / white and the walls light blue), or an OSM id. The object-by-object record is compare/sonoma/
     # manifest.md. No rule-placed kerbs, boards, flag stand or pit wall at Sonoma (the rules stay for Laguna).
     scenery=dict(
+        # round 14B (judge r14a: the edge line along the drag-strip continuation toward T7 vanished under the draped zone;
+        # the paint lines measured on the 2026 captures took their zone's centre height or the raw heightfield and lay
+        # -0.45 .. +0.26 m off the driven surface): every ground mark's stored height on the package's own driven surface
+        # after the terrain-override drape (tools/track/gates/groundMarks.ts), paint lines 0.008 m up as the edge lines
+        marks_on_surface=dict(lift=0.008, src='round 14B, judge r14a regression (strip_continuation_to_T7)'),
         brake_board_corners=[],      # no brake boards in the 2026 onboard at T2 (0:09-0:12), T4 (0:28-0:33), T7a (1:09-1:12), T11 (1:52-1:57)
         corner_boards=False,         # no turn boards either ("Turn 1" / "Turn 7" are painted on the road in Street View)
         flagstand=False,             # no starter's stand over the pit wall at the line (onboard 2:16-2:19)
@@ -764,14 +802,25 @@ CONFIG = dict(
             # speed. As a general rule, the wall transition shown in the sim generally don't exist because they are extremely
             # dangerous"): the dark line converging across the verge onto the head of the T11-approach tyre wall is that wall:
             # concrete with its catch fence, the tyres standing in front of it at the edge
+            # round 14B (owner, round-13 drive at T10: "I don't think this separate wall is sitting out by T10 ... Seems likely
+            # that a section of wall is missing. I see a dark texture that looks like a missing tire wall"): round 11's line
+            # began at (403.5, -139), 5.5 m inside the outer wall's line and 4.8 m from the edge, its head facing traffic
+            # (passed by the wall-ends gate as 'tapered': 4.8 m out at the head, 3.3 m 10 m on). Re-measured on the
+            # captures with a guide along the dark line the straightened strip shows (compare/capstrip.py s 3240-3420,
+            # right): ONE line leaving the outer wall's line at s ~3324 and converging smoothly to the tyre wall's head at
+            # the edge (s 3398), the "dark texture" the owner saw being that wall's own line in the ground image; the
+            # round-11 picks between s 3335 and 3390 had run onto the parked trucks along its track side. Onboard t112: the
+            # pale wall with its catch fence angling in across the grass toward the edge.
             dict(name='T11 approach, right: wall and catch fence onto the tyre wall (round 11)', kind='concrete', h=1.1, fence=3.5,
                  color=WALL_PALE_BLUE,
                  h_src='onboard RAZip6S84CM 1:52 (t112): the pale wall with its catch fence angling in across the grass toward the edge, '
                        'its top at the tyre stacks\' top (4 tyres, ~1 m) where it meets them at 1:54 (t114); as the T10-T11 wall (1.1 m, fence ~3.5 m)',
-                 src='round 11: 2026 captures c20_s0990 / c20_s1045: wall_measure dark line on the guide (396,-110)..(425,-196.6) ENU, 97 % '
-                     'picked, rms 0.65 m (the convergent stretch from (403.5, -139) kept: north of it the picks run into the T10-exit dirt '
-                     'and tyre marks); ends on the tyre wall\'s head (joined); compare/sonoma/round11/win_3385.png',
-                 latlon=[(38.1614509, -122.4529900), (38.1614102, -122.4529627), (38.1613693, -122.4529369), (38.1613262, -122.4529205), (38.1612829, -122.4529064), (38.1612367, -122.4529034), (38.1611914, -122.4528967), (38.1611483, -122.4528803), (38.1611063, -122.4528597), (38.1610650, -122.4528363), (38.1610236, -122.4528130), (38.1609857, -122.4527866), (38.1609464, -122.4527582), (38.1609312, -122.4527310)]),
+                 src='round 14B: 2026 captures c20_s0935 / c20_s0990 / c20_s1045: wall_measure dark line on the s-guide 3290-3398 (from the outer '
+                     'wall\'s line, -18.7 m, to the tyre head, -7.4 m), 104 m, 99 % picked, contrast p50 78, rms 0.41 m; kept from s ~3324, '
+                     'where it leaves the outer wall (run 28, 0.5 m away: joined), to the tyre wall\'s head (joined); the bright top '
+                     '(97 % picked, rms 0.72 m) on the same line within 0.5-1 m; was round 11\'s (403.5, -139)..(425.9, -197.0), its '
+                     'head 5.5 m inside this line (compare/sonoma/round11/win_3385.png)',
+                 latlon=[(38.1614790, -122.4530847), (38.1614414, -122.4530526), (38.1614025, -122.4530230), (38.1613616, -122.4529994), (38.1613213, -122.4529738), (38.1612807, -122.4529496), (38.1612384, -122.4529301), (38.1611962, -122.4529102), (38.1611547, -122.4528886), (38.1611141, -122.4528646), (38.1610730, -122.4528415), (38.1610327, -122.4528164), (38.1609930, -122.4527897), (38.1609530, -122.4527638), (38.1609296, -122.4527463), (38.1609312, -122.4527310)]),
             dict(name='T11 approach, right: tyre wall and catch fence at the edge', kind='tyres', color=TYRE_BLACK, h=1.0, fence=3.5,
                  src='2026 captures c20_s1045 / c20_s1100: wall_measure dark line, 97 % picked, rms 0.53 m; onboard 1:53-1:55 tyre stacks along the right edge with catch fence (an ambulance parked behind at 1:54.6)',
                  latlon=[(38.1609312, -122.4527310), (38.1608446, -122.4527009), (38.1607590, -122.4526659), (38.1606736, -122.4526305), (38.1605876, -122.4525984), (38.1604991, -122.4525756), (38.1604404, -122.4525457)]),
@@ -1221,6 +1270,14 @@ CONFIG = dict(
         # the cone line along the double white line between the track and the pit-in lane, from where the lanes part
         # to the nose (owner_15: cones on the double line; c20_s1155 / c20_s1210: the solid double line from s ~3525)
         cone_lines_declared=[
+            # round 14B (owner, round-13 drive, 23 Oct 2026 20:30 PDT): his red arc across the paddock-side mouth at T1 is the
+            # course boundary there and a cone line, "Put a few cones there" (compare/sonoma/owner_edges_r14/close_s0175, his
+            # green the access road's edge ending on it); the line is his arc (tracks/sonoma/owner/r14/mouths.json, s 166-179
+            # of the round-14A package, 13.4 m): four cones 4.4 m apart; no frame shows cones there (his instruction), so the
+            # default orange cone
+            dict(latlon=[(38.1622051, -122.4563919), (38.1622007, -122.4564155), (38.1621960, -122.4564389), (38.1621927, -122.4564623), (38.1621904, -122.4564855), (38.1621892, -122.4565087), (38.1621892, -122.4565317), (38.1621893, -122.4565432)], spacing=4.4,
+                 src='owner round-13 drive: his red arc across the paddock-side mouth at T1, "Put a few cones there" (owner/r14/mouths.json, '
+                     'compare/sonoma/owner_edges_r14/close_s0175_marked.png, local); cones on his line'),
             # round 7 (owner note 49): the single orange marker cone on the left verge before the 9a chicane; onboard t096 shows
             # it ~85 m ahead by the wall, t098 ~15 m ahead mid-verge (the same cone: the car covers ~80 m in 2 s); position
             # from t098's perspective (between the edge and the wall, nearer the edge); none in t090-t094

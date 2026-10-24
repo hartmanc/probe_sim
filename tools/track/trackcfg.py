@@ -48,13 +48,22 @@ Geometry (Stage 1)
           edges outside it in world position (smoothstep blend over `blend` stations inside each end); the refit loop's
           limit cycles elsewhere (T7 hairpin, 9a) and the uniform re-stationing otherwise move the whole lap. A feature
           tuple's optional 6th element {local: True} applies it in the local refit only, {replaced_by_local: True}
-          before it only
+          before it only. A LIST of such dicts (Sonoma round 14B) runs the local refits in order, each holding
+          everything outside its window at the result of the one before (the first one is exactly the single-window
+          refit); a straight / feature marked local applies in every local refit (held outside its window anyway),
+          an owner_edges window only in the local refits whose window it overlaps
   reproduce {...}                            build artefacts of an accepted package (logger path only; see Laguna's;
                                              pit_exit_wall_end_latlon replaces centre.pit_exit.wall_end_latlon)
   centre_captures ('z20' | 'clean'), centre_registration ('per_capture' | 'common')
   repave_fixes [(a, b, crest from, crest to, why)]
   captures {z20_dir, z20_index, z20_mask, clean_dir, clean_index, mpp, common_shift, exclude, cursor_boxes}
-  spline {runs [(lo, hi)], knot, lam, huber, line_off, prior, init_stiff, captures}
+  spline {runs [(lo, hi)], knot, lam, huber, line_off, prior, init_stiff, captures, owner_edges, owner_mouths}
+          owner_edges [{file, lo, hi, kerb_inside [(side, lo, hi[, shift])], local, src}]: the owner's traced edges
+          (compare/owner_edges.py / owner_merge.py JSON under tracks/<id>/; Buttonwillow 21 Oct 2026, Sonoma round 14B):
+          over [lo, hi] his red replaces the capture readings where he drew and anchors the fit (edges_spline.OWNER_W);
+          the file's content enters the geometry hash; local=True: only in the local refit (centre.local) whose window
+          it overlaps. owner_mouths: a compare/owner_mouths.py file whose 'red across' segments the owner-reference gates
+          leave out (+-12 stations; edge_gate.OWNER_REF, Buttonwillow round 10; enters the geometry hash)
   features [(side, lo, hi, 'keep' | 'asphalt_end' | 'kerb', why[, {local | replaced_by_local}])]   keep: the prior is held (legacy reproduction
                                              only; the fitted method ignores it); asphalt_end: where the dark asphalt
                                              ends; kerb: red-band (kerb outer limit) candidates only
@@ -305,8 +314,14 @@ def remap_stations(cfg, n, length_m=None, C=None):
         sp['runs'] = [(st(r[0]), st(r[1])) + tuple(r[2:]) for r in sp['runs']]
     c['repave_fixes'] = [(st(a), st(b), st(c0), st(c1), why) for a, b, c0, c1, why in c['repave_fixes']]
     c['centre']['extra_shadow_stations'] = [st(k) for k in c['centre'].get('extra_shadow_stations', [])]
-    if c['centre'].get('local'):
+    if isinstance(c['centre'].get('local'), list):   # several local windows in order (Sonoma round 14B)
+        for lc in c['centre']['local']:
+            lc['window'] = tuple(st(k) for k in lc['window'])
+    elif c['centre'].get('local'):
         c['centre']['local']['window'] = tuple(st(k) for k in c['centre']['local']['window'])
+    for w in sp.get('owner_edges') or []:   # the owner's traced edge windows (Buttonwillow, 21 Oct 2026)
+        w['lo'], w['hi'] = st(w['lo']), st(w['hi'])
+        w['kerb_inside'] = [(a, st(lo), st(hi)) + tuple(rest) for a, lo, hi, *rest in w.get('kerb_inside', [])]
     g = c['gate']
     g['exempt'] = [(a, st(lo), st(hi)) + tuple(rest) for a, lo, hi, *rest in g.get('exempt', [])]
     g['wall_gaps'] = [(a, b, st(lo), st(hi)) for a, b, lo, hi in g.get('wall_gaps', [])]

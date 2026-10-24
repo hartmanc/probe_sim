@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { containment, escapeRuns, exposedEnds, joinFaces, pitConnectivity, runGaps, sideBySide, signPlacement, tyreFaces, wallTops, type GateConfig } from './sceneryGates';
 import { terrainGates } from './terrainGates';
+import { groundMarksGate, MARKS_TOL } from './groundMarks';
 import { loadHeightfield } from '../../../src/physics/index';
 
 const dir = process.argv[2];
@@ -37,7 +38,7 @@ for (const b of g.bad) console.log(`       ${b.kind} '${b.text}' at (${b.x.toFix
 if (g.bad.length) fail = true;
 
 const e = exposedEnds(track, sc);
-console.log(`[${e.exposed.length ? 'FAIL' : 'ok'}] wall ends: ${e.checked} upstream run ends within 8 m of an edge checked, ${e.ok.length} joined / cushioned / lapped / tapered, ${e.exposed.length} exposed to oncoming travel`);
+console.log(`[${e.exposed.length ? 'FAIL' : 'ok'}] wall ends: ${e.checked} upstream run ends within 30 m (tyre runs 8 m) of an edge checked, ${e.ok.length} joined / cushioned / lapped / tapered, ${e.exposed.length} exposed to oncoming travel`);
 for (const x of e.exposed) console.log(`       exposed ${x.side.padEnd(5)} s ${x.s} (${x.out} m out): ${x.label}`);
 if (e.exposed.length) fail = true;
 const sb = sideBySide(track, sc);
@@ -89,6 +90,18 @@ else {
   if (tg.fail) fail = true;
 }
 
-console.log('GATES_JSON ' + JSON.stringify({ terrain: { regions: tg.regions, joins: { ...tg.joins, bad: tg.joins.bad.length }, smooth: { ...tg.smooth, badD2: tg.smooth.badD2.length, badDev: tg.smooth.badDev.length }, kerbs: { ...tg.kerbs, bad: tg.kerbs.bad.length } }, runGaps: rg, containment: { escapes: c.escapes.length, runs, allowed: c.allowed.length, junctions: c.junctions },
+// round 14B (judge r14a: the drag-strip continuation's edge line buried by the draped zone): every vertex of a paint
+// line, edge line and ground sign within 0.01 m above the driven surface, never below it, region or not
+const gm = groundMarksGate(track, loadHeightfield(Uint8Array.from(readFileSync(join(dir, 'heightfield.bin'))).buffer), sc);
+console.log(`[${gm.bad.length ? 'FAIL' : 'ok'}] ground marks on surface: ${gm.vertices.paint} paint-line, ${gm.vertices.edge} edge-line and ${gm.vertices.sign} ground-sign vertices, `
+  + `height above the driven surface ${gm.minD.toFixed(3)} .. ${gm.maxD.toFixed(3)} m (0 .. ${MARKS_TOL}); ${gm.bad.length} off`);
+{
+  const by = new Map<string, { n: number; lo: number; hi: number }>();
+  for (const x of gm.bad) { const b = by.get(x.what) ?? { n: 0, lo: Infinity, hi: -Infinity }; b.n++; b.lo = Math.min(b.lo, x.d); b.hi = Math.max(b.hi, x.d); by.set(x.what, b); }
+  for (const [w, b] of [...by].slice(0, 20)) console.log(`       ${w}: ${b.n} vertices off, ${b.lo.toFixed(3)} .. ${b.hi.toFixed(3)} m`);
+}
+if (gm.bad.length) fail = true;
+
+console.log('GATES_JSON ' + JSON.stringify({ marks: { ...gm, bad: gm.bad.length }, terrain: { regions: tg.regions, joins: { ...tg.joins, bad: tg.joins.bad.length }, smooth: { ...tg.smooth, badD2: tg.smooth.badD2.length, badDev: tg.smooth.badDev.length }, kerbs: { ...tg.kerbs, bad: tg.kerbs.bad.length } }, runGaps: rg, containment: { escapes: c.escapes.length, runs, allowed: c.allowed.length, junctions: c.junctions },
   pit: p, signs: g, ends: e, facings: sb, wallTops: wt, joins: jf, tyreFaces: tf, fail }));
 process.exit(fail ? 1 : 0);

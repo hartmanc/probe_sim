@@ -120,7 +120,8 @@ describe('scenery gates: exposed wall ends (round 7, owner notes 39 / 41)', () =
     expect(cushion.exposed).toHaveLength(0);
     const tapered = exposedEnds(T, { barriers: [{ kind: 'concrete', pts: [[30, -10, 0], [42, -6, 0], [120, -6, 0]], src: 'taper' }] });
     expect(tapered.exposed).toHaveLength(0);
-    expect(exposedEnds(T, { barriers: [wall(40, 120, -20, 'far')] }).exposed).toHaveLength(0);
+    // beyond the 30 m reach (round 14B; 8 m before) a head is not checked
+    expect(exposedEnds(T, { barriers: [wall(40, 120, -40, 'far')] }).exposed).toHaveLength(0);
     // a wall leaving the edge at a right angle (across a runoff) faces across the lap, not along it
     expect(exposedEnds(T, { barriers: [{ kind: 'concrete', pts: [[60, -6, 0], [60, -30, 0]], src: 'across' }] }).exposed).toHaveLength(0);
   });
@@ -134,6 +135,36 @@ describe('scenery gates: exposed wall ends (round 7, owner notes 39 / 41)', () =
     // a long tyre run is not a cushion even if its tail meets a wall
     const long = exposedEnds(T, { barriers: [tyres(20, 40, -6, 'long'), wall(40, 120, -6, 'w')] });
     expect(long.exposed.some((e) => e.label === 'tyres: long')).toBe(true);
+  });
+});
+
+describe('scenery gates: wall ends within 30 m (Sonoma round 14B, owner round-13 drive at T10)', () => {
+  const wall = (x0: number, x1: number, y: number, src: string) => ({ kind: 'concrete', pts: [[x0, y, 0], [x1, y, 0]] as V3[], src });
+  const tyres = (pts: V3[], src: string) => ({ kind: 'tyres', pts, src });
+  it('a bare concrete head 11 m out fails now (the 8 m gate never saw it); 7 m out it fails as before', () => {
+    expect(exposedEnds(T, { barriers: [wall(40, 120, -16, 'head 11 m')] }).exposed.map((e) => e.label)).toEqual(['concrete: head 11 m']);
+    expect(exposedEnds(T, { barriers: [wall(40, 120, -16, 'head 11 m')] }, { near: 8 }).exposed).toHaveLength(0);   // the old reach
+    expect(exposedEnds(T, { barriers: [wall(40, 120, -12, 'head 7 m')] }).exposed).toHaveLength(1);
+  });
+  it('T10: a run whose head stands INSIDE a long outer wall is not protected by it; tyres from the outer wall to the head are', () => {
+    // the outer wall 18 m out from s 0 to 140 (run 28), the short wall from s 60 at 11 m out angling to 7 m (run 37)
+    // (its own head leaves the track at a right angle from 55 m out, so only the inner run's head is in question)
+    const outer = { kind: 'concrete', pts: [[0, -60, 0], [0, -23, 0], [140, -23, 0]] as V3[], src: 'outer' };
+    const inner = { kind: 'concrete', pts: [[60, -16, 0], [100, -14, 0], [123, -12, 0]] as V3[], src: 'inner' };
+    const bare = exposedEnds(T, { barriers: [outer, inner] });
+    expect(bare.exposed.some((e) => e.label === 'concrete: inner')).toBe(true);
+    // a tyre wall from the outer wall (upstream) onto the inner run's head closes it (joined); the tyres' own head
+    // stands on the outer wall (joined too)
+    const closed = exposedEnds(T, { barriers: [outer, inner, tyres([[40, -23, 0], [50, -19.5, 0], [60, -16, 0]], 'tyre link')] });
+    expect(closed.exposed).toHaveLength(0);
+    // tyres capping the head (a cushion of <= 12 m whose tail joins the wall) close it too
+    const capped = exposedEnds(T, { barriers: [outer, inner, tyres([[50, -16, 0], [60, -16, 0]], 'cap')] });
+    expect(capped.exposed).toHaveLength(0);
+  });
+  it('a pit wall and an armco head at 20 m are checked; a tyre run head at 20 m keeps the 8 m reach', () => {
+    expect(exposedEnds(T, { barriers: [{ kind: 'pitwall', pts: [[40, -25, 0], [120, -25, 0]], src: 'pw' }] }).exposed).toHaveLength(1);
+    expect(exposedEnds(T, { barriers: [{ kind: 'armco', pts: [[40, -25, 0], [120, -25, 0]], src: 'ar' }] }).exposed).toHaveLength(1);
+    expect(exposedEnds(T, { barriers: [tyres([[40, -25, 0], [120, -25, 0]], 'far tyres')] }).exposed).toHaveLength(0);
   });
 });
 

@@ -1500,7 +1500,7 @@ function buildKerbLines(list: NonNullable<SceneryJson['kerb_lines']>, ground?: (
   return m;
 }
 
-/** Painted ground logos (scenery.json `ground_signs`, round 7b): each a grid draped on the driven ground 2 cm up, a
+/** Painted ground logos (scenery.json `ground_signs`, round 7b): each a grid draped on the driven ground 8 mm up, a
  *  canvas texture with the name typed in the observed colours (no logo artwork). */
 function buildGroundSigns(list: NonNullable<SceneryJson['ground_signs']>, ground?: (x: number, y: number) => number): THREE.Group {
   const grp = new THREE.Group();
@@ -1523,7 +1523,9 @@ function buildGroundSigns(list: NonNullable<SceneryJson['ground_signs']>, ground
     for (let j = 0; j <= NY; j++) for (let i = 0; i <= NX; i++) {
       const a = (i / NX - 0.5) * gs.length, b = (j / NY - 0.5) * gs.height;
       const x = gs.x + ux * a + vx * b, y = gs.y + uy * a + vy * b;
-      pos.push(x, (ground ? ground(x, y) : gs.z) + 0.02, -y); uv.push(i / NX, j / NY);
+      // 0.008 m up like the edge lines (round 14B, tools/track/gates/groundMarks.ts GROUND_SIGN_LIFT: every ground mark
+      // within 0.01 m of the driven surface; was 0.02), the polygon offset keeps it over the ground
+      pos.push(x, (ground ? ground(x, y) : gs.z) + 0.008, -y); uv.push(i / NX, j / NY);
     }
     for (let j = 0; j < NY; j++) for (let i = 0; i < NX; i++) {
       const k = j * (NX + 1) + i;
