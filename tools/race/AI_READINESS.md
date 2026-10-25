@@ -357,8 +357,8 @@ each green pass.
 | buttonwillow | final | 1, 2 | **0.022** (0.019 / 0.025) | **0.017** (0.027 / 0.006) | 2 / 1 | 759 / 757 | 1.134 / 1.287 | 67.6 % |
 | laguna_seca | base | 1, 2 | **0.030** (0.012 / 0.049) | **0.084** (0.100 / 0.068) | 2 / 3 | 620 / 593 | 1.144 / 1.116 | 69.8 % |
 | laguna_seca | final | 1, 2 | **0.055** (0.061 / 0.049) | **0.092** (0.115 / 0.068) | 3 / 2 | 597 / 588 | 1.116 / 1.094 | 70.1 % |
-| laguna_seca | base | 1-8 | **0.031** (0.012 / 0.049 / 0.036 / 0.025 / 0.031 / 0.043 / 0.019 / 0.032) | **0.093** | 20 | 602 mean | 1.122 median | 68.8 % |
-| laguna_seca | final | 1-8 | **0.033** (0.061 / 0.049 / 0.018 / 0.044 / 0.044 / 0.024 / 0.024 / 0.000) | **0.085** | 26 | 601 mean | 1.112 median | 68.3 % |
+| laguna_seca | base | 1-8 | **0.031** (0.012 / 0.049 / 0.036 / 0.025 / 0.031 / 0.043 / 0.019 / 0.032) | **0.093** | 20 | 602 mean | 1.122 mean | 68.8 % |
+| laguna_seca | final | 1-8 | **0.033** (0.061 / 0.049 / 0.018 / 0.044 / 0.044 / 0.024 / 0.024 / 0.000) | **0.085** | 26 | 601 mean | 1.119 mean | 68.3 % |
 
 Race time: Sonoma +0.9 % (mean 674 -> 680 s), Buttonwillow +0.2 %, Laguna -0.2 % (8 seeds). Pass completion by pace
 ratio (< 0.85 / 0.85-0.92 / 0.92-0.97): Sonoma 76 / 62 / 52 % -> 74 / 61 / 54 %; Buttonwillow 83 / 70 / 57 -> 80 / 67 /
@@ -367,9 +367,9 @@ ratio (< 0.85 / 0.85-0.92 / 0.92-0.97): Sonoma 76 / 62 / 52 % -> 74 / 61 / 54 %;
 (219 / 230 / 185).
 
 Sonoma contacts by place (seeds 1-3 pooled): T9A entry s 3000-3050 **27 -> 6** (10 side-by-side + 10 quarter in a
-corner, 7 rear-end -> 3 side-by-side, 2 quarter, 1 rear-end); T11 entry s 3600-3700 8 -> 9 (the lane shuts there too, but
-over a longer braking zone from 35-40 m/s: the 2 s look-ahead starts the drop-back too late, see "not reached");
-T2 entry 3 -> 0 in s 350-400 (2 at T2 brake s 273-289); contact context pass 25 -> 7, line 31 -> 23. Recoveries 143 -> 103
+corner, 7 rear-end -> 3 side-by-side, 2 quarter, 1 rear-end); T11 s 3580-3720 10 -> 10 (the lane shuts there too, but
+after a longer braking zone from 35-40 m/s: the 2 s look-ahead starts the drop-back too late, see "not reached");
+T2 s 240-420 6 -> 5; contact context pass 25 -> 7, line 31 -> 23. Recoveries 143 -> 103
 (the lap-1/2 queue at T2 entry: 71 -> 49). Four-offs 30 -> 20.
 
 Buttonwillow (seeds 1-2): 13 -> 16 contacts, T11 entry s 4350-4400 4, T1 entry 3, T3 entry 2 (base: T3 exit 2, the T8
