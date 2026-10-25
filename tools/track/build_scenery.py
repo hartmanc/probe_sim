@@ -1077,6 +1077,20 @@ def barriers(trk, osm):
             if dw.get("kind") == "pitwall":
                 for i_, d_ in zip(i[close], dout[close]):
                     log(f"  pit wall point at station {int(i_)}: measured {d_:+.2f} m from the edge -> {gmin + 0.05:.2f} m")
+        if dw.get("seam") == "far":
+            # Buttonwillow round 12 (the wall-ends gate on the station surrounds): a CLOSED ring (a station's tyre surround,
+            # closed all round on the captures) has no end; its polyline's seam (first = last point) is a modelling
+            # artefact that the gate reads as a run head. seam='far' starts the ring at its point farthest from the track
+            # (the side away from the road). The ring's points and segments are unchanged, only where the loop starts;
+            # config-gated (absent: as before)
+            if len(P) < 4 or float(np.hypot(*(P[0] - P[-1]))) > 0.05:
+                raise SystemExit(f"declared wall {dw['name']}: seam='far' needs a closed ring (first point = last point)")
+            Q = P[:-1]
+            _, _, dq = trk.project(Q)
+            j_ = int(np.argmax(dq))
+            log(f"declared wall {dw['name']}: closed ring, seam moved to its far side ({float(dq[j_]):.1f} m beyond the edge; "
+                f"was {float(dq[0]):.1f} m)")
+            P = np.vstack([np.roll(Q, -j_, axis=0), Q[j_:j_ + 1]])
         decl.append(P)
         rec = {"kind": dw.get("kind", "concrete"), "h": dw.get("h", 1.0), "fence": dw.get("fence", 3.0),
                "pts": with_z(trk, P), "src": f"declared: {dw['name']}" + (f" ({dw['src']})" if dw.get("src") else "")}
