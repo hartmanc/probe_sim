@@ -225,7 +225,8 @@ player's car AI-driven); `ai_behaviour.test.ts` asserts the key numbers on short
   following and the pinch guard keep me behind the car (0.3 s tail) and I keep the lane. Clear of it: a slower car
   ahead in the racing lane within 60 m becomes the next target (trains in one go), else merge back when the racing lane
   is free around me (cars behind / alongside; a car ahead in it is simply followed). Abort: fallen 30 m back, lane
-  blocked ahead within 1 s (another lane around it if one is free), 30 s, flag, off.
+  blocked ahead within 1 s (another lane around it if one is free), 30 s, flag, off; the road shutting the lane beside it
+  before I am ahead, and a pass is not started in such a lane (24 Oct 2026, below).
 - **Being passed.** Never defends a clearly faster car (unchanged rule); holds its lane: the lane of a car passing it
   (within 25 m) is reserved in its corridor; where the road pushes the passer's lane onto it within 1 s it makes room
   (never beyond its own road); lifts to 97 % only when the passer is alongside (within 0.7 car length) and converging.
@@ -386,3 +387,47 @@ Details, tables and the rerun command lines: `tools/race/AI_READINESS.md`.
   (`tools/race/wall_phantoms.ts`; none on Laguna or Buttonwillow). Not fixable by knobs; physics or scenery, the owner's
   call. Outside T7, laneMargin 0.7 halves the contacts: the first trial for the round-14B rerun.
 - No shared code changed, no AI_VERSION bump; Laguna seed 1 bit-identical (contacts, four-offs, finishing order).
+
+## 24 Oct 2026: a pass needs its lane through the corner (branch `ai-passing`)
+
+Owner: no no-pass zone at Sonoma's T9A chicane ("cars pass each other at the chicane all the time"); fix the shared pass
+logic. Diagnosis, traces and tables: `tools/race/AI_READINESS.md` section 6.
+
+Mechanism (Sonoma T9A, T11 and T2 entries; Laguna's T4 and T11 exits the mirror case): the racing line runs to the inside
+edge at an apex (and to the outside edge at the track-out), so a lane measured from it on that side is clamped onto the line
+over 10-15 m. A car held in such a lane (a pass in hand, or a pass given up and waiting to merge back) while overlapping the
+car on the line is steered into it by the road; the car on the line cannot make 2-3 m of room at the limit in time.
+
+Changes (`driver.ts`, shared by every track, no station lists, no track names, no new knob):
+- **Pinch guard in lane coordinates.** Its "straight ahead: following handles it" skip and its side test compared the two
+  cars' absolute lateral offsets from the centre line. A few metres apart in a corner these differ by the line's sweep across
+  the road (2-3 m in T9A), so a car one lane over read as straight ahead while following, in lane coordinates, saw it in
+  another lane: neither held the car back. Both now use the lane coordinate e, as following does.
+- **Pinch guard sampled every 5 m** (was 10 m) over its look-ahead (`PINCH_T` = 2 s, unchanged): a 10-15 m shut could be
+  stepped over.
+- **`shutBeside` (a pass needs its lane through the corner).** The first station within max(12 m, PINCH_T s) where my pass
+  lane and the passed car's lane, both clamped to the road, come closer than the pinch guard's clearance; r = where I am
+  relative to that car when I get there at the closing speed. A pass in hand is given up (`passEnd` 'shut', then the
+  usual phase 2: the pinch guard, no longer exempting that car, drops me behind it, and the merge waits for a free lane)
+  when r is neither PINCH_OK car lengths ahead of it nor still behind it. Planning (`planLane`) does not start a pass in a
+  lane that the road shuts before I would be ahead of it by PINCH_OK car lengths. Horizon: my speed x the occupancy
+  horizon Tn = min(PLAN_T, D / adv) (the whole pass when it takes up to PLAN_T = 10 s, its first 10 s otherwise), never
+  less than the pass-in-hand look-ahead, at most PLAN_SHUT_MAX = 150 m; closing at the planned advantage or the speed
+  difference now if larger. (Checking long passes to their end instead: Sonoma contacts 0.022 -> 0.031, Laguna 0.033 ->
+  0.038 over 8 seeds, Sonoma green passes -6 %: not kept.) A lane that will be shut before I am ahead is no lane
+  (also when I would still be behind there: pulling out into the outside lane at an apex that the track-out takes away
+  put cars off Laguna's T4 exit).
+- Lanes in `shutBeside`: mine clamped as a pass lane is held (`laneAt`, PASS_EDGE from the edge, as the lateral target
+  in a pass), the passed car's with the 0.15 m road margin a car off a pass is held at: each where that car will be (the
+  pinch guard clamps both with the 0.15 m margin). The closing speed is floored at 0: a passer falling back is projected
+  where it is now, so a pass losing ground is given up rather than kept on the hope of being behind by the shut.
+- The Corkscrew no-pass is unchanged.
+
+Not kept: a 3 s pinch / pass look-ahead (Sonoma contacts 0.016 per car-lap, Laguna 0.018 / four-off 0.072 over 8 seeds)
+fails `ai_behaviour` "full field, 2 laps" (clearly faster completed 51 %, needs > 58 %; > 15 % quicker 63 %, needs > 72 %)
+and "within 3 %" (no defending move); 3 s only for a car in phase 2 still fails the full-field case (57 %); the planning
+check that let a pass start when I would still be behind at the shut raised Laguna's four-offs 0.093 -> 0.110 (8 seeds).
+
+Solo laps (`tools/race/out/solo_check.ts`, local: 4 cars per track at their fitted scales, 2 laps) are bit-identical to
+152d422 on Laguna, Sonoma and Buttonwillow: the changes act only with another car in reach. **No AI_VERSION bump** (8), the
+calibrations stand.

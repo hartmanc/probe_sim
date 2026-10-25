@@ -25,6 +25,8 @@ export interface SelfplayMetrics {
   cars: number; laps: number; carLaps: number; raceTime: number;
   line: { instRms: number; instP95: number; why: Record<string, number>; rms: number; p95: number; samples: number; trackRms: number; trackP95: number; maxErr: number; worstAt: number; corners: { name: string; rms: number; p95: number; samples: number }[] };
   passing: { attempts: number; ends: Record<string, number>; situations: number; reachedBrakeZone: number; setUp: number; completed: number; medianStuck: number; p90Stuck: number; passesTotal: number;
+    /** station of each green pass (the passing car's s when the order changed; sampled every 0.1 s) */
+    passAt?: number[];
     /** completion by pace ratio (target lap of the faster / the slower): < 0.85, 0.85-0.92, 0.92-0.97 */
     byRatio: { lo: number; hi: number; fails?: string[]; situations: number; completed: number; medianStuck: number; open: Record<string, number> }[] };
   defending: { vsClearlyFaster: number; within3: number; vsSlower: number; none: number };
@@ -54,6 +56,7 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
   const prevS = new Float64Array(n);
   const ahead = new Int8Array(n * n);      // sign of U[i] - U[j] (formation and green order tracking)
   let formationPasses = 0, passesTotal = 0;
+  const passAt: number[] = [];
   let contacts = 0, hard = 0;
   const pairSeen = new Map<number, number>();
   const offT = new Float64Array(n), onT = new Float64Array(n).fill(99), armed = new Uint8Array(n).fill(1);
@@ -104,7 +107,7 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
         const now = tr.U[i] > tr.U[j] ? 1 : -1, k = i * n + j, was = ahead[k];
         ahead[k] = now;
         if (was === -1 && now === 1 && Math.abs(tr.U[i] - tr.U[j]) < 50 && !tr.off[j] && !tr.away[j] && tr.v[j] > 5 && !cars[j].driver?.needsRecovery) {
-          if (phase === 'formation') formationPasses++; else passesTotal++;
+          if (phase === 'formation') formationPasses++; else { passesTotal++; passAt.push(Math.round(tr.s[i])); }
         }
       }
     }
@@ -216,7 +219,7 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
   return {
     cars: n, laps: dir.config.laps, carLaps, raceTime: dir.time,
     line: { instRms: inst.rms(), instP95: inst.pct(0.95), why: Object.fromEntries([...why].map(([k, v]) => [k, +(v / Math.max(1, all.n)).toFixed(4)])), rms: all.rms(), p95: all.pct(0.95), samples: all.n, trackRms: trk.rms(), trackP95: trk.pct(0.95), maxErr, worstAt, corners: corners.map((c, k) => ({ name: c.name, rms: cornerAcc[k].rms(), p95: cornerAcc[k].pct(0.95), samples: cornerAcc[k].n })) },
-    passing: { attempts: passStarts, ends: passEnds, situations: real.length, reachedBrakeZone: real.filter((s) => s.brakeZone).length, setUp: real.filter((s) => s.setup).length, completed: real.filter((s) => s.done).length, medianStuck: median(stuck), p90Stuck: pctl(stuck, 0.9), passesTotal,
+    passing: { attempts: passStarts, ends: passEnds, situations: real.length, reachedBrakeZone: real.filter((s) => s.brakeZone).length, setUp: real.filter((s) => s.setup).length, completed: real.filter((s) => s.done).length, medianStuck: median(stuck), p90Stuck: pctl(stuck, 0.9), passesTotal, passAt,
       byRatio: [[0, 0.85], [0.85, 0.92], [0.92, CLEAR]].map(([lo, hi]) => {
         const g = real.filter((s) => { const r = tr.pace[s.i] / tr.pace[s.j]; return r >= lo && r < hi; });
         const open: Record<string, number> = {};

@@ -93,6 +93,12 @@ const PLAN_T = 10;         // s plan horizon for the occupancy projection
 const PLAN_T_MAX = 40;     // s: a pass that would take longer than this is not started
 const MIN_ADV = 0.2;       // m/s mean speed advantage in the pass lane needed to start
 const PINCH_OK = 0.7;       // alongside = centres closer than 0.7 x (my front + its rear): where the lanes pinch, it makes room
+/** s of look-ahead for a lane the road shuts beside a car (pinch guard, pass rule). 3 s (24 Oct 2026) took Sonoma's
+ *  contacts to 0.016 per car-lap but failed ai_behaviour's full-field pass completion (51 %, > 58 %) and its within-3 %
+ *  defending case: kept at 2 s */
+const PINCH_T = 2;
+/** m: the most a pass plan looks ahead for a lane the road shuts (shutBeside, the whole pass up to here) */
+const PLAN_SHUT_MAX = 150;
 const DROP_BACK = 30;      // m: abort a pass when I have fallen this far behind the car
 const PASS_HEADWAY = 0.3;  // s: following the car I am passing (held in behind it where the lanes pinch), any aggression
 const PASS_T_MAX = 30;     // s: give up a pass after this long
@@ -572,23 +578,28 @@ export class AiDriver {
       if (ej > eMe) corHiE = Math.min(corHiE, ej - need); else corLoE = Math.max(corLoE, ej + need);
     }
     // pinch guard: a car alongside in the next lane whose lane and mine (both clamped to the road) close up within
-    // ~2 s (the racing line runs edge to edge, so lanes measured from it converge at turn-in, apex and exit): the car
-    // whose centre is further back drops behind it; the one ahead holds its lane
+    // PINCH_T s (the racing line runs edge to edge, so lanes measured from it converge at turn-in, apex and exit): the car
+    // whose centre is further back drops behind it; the one ahead holds its lane.
+    // (In lane coordinates, as following: the absolute lateral offsets of two cars a few metres apart differ by the
+    // line's sweep across the road between them, so in a corner a car one lane over read as "straight ahead" and was
+    // left to following, which saw it in another lane: neither held the car back (24 Oct 2026, Sonoma T9A). Sampled
+    // every 5 m: an apex shuts a lane over 10-15 m only, which 10 m steps could step over.)
     for (let k = 1; k < n; k++) {
       const j = order[(tr.rank[i] + k) % n];
       const d = tr.ds(i, j);
       if (d < 0 || d > myFront + tr.rear[j] + 4 + 1.5 * Math.max(0, v - tr.v[j])) break;
       if (tr.away[j] || tr.v[j] < 4) continue;                          // a (nearly) stopped car: following / planning handle it
-      if (Math.abs(lat - tr.lat[j]) < hwI + tr.hw[j] - 0.2) continue;   // straight ahead: following handles it
-      if (j === this.passTarget && d < PINCH_OK * (myFront + tr.rear[j])) continue;   // alongside on a pass: it makes room
+      if (Math.abs(eMe - tr.e[j]) < hwI + tr.hw[j] - 0.2) continue;     // straight ahead: following handles it
+      // alongside on a pass: it makes room (passStep gives the pass up first where the road shuts my lane beside it)
+      if (j === this.passTarget && d < PINCH_OK * (myFront + tr.rear[j])) continue;
       const need = hwI + tr.hw[j] + 0.3 + this.yawClr(s + 0.5 * v), ej = tr.eT[j], hwJ = tr.hw[j];
       const ePlan = this.passPhase === 1 || this.passPhase === 2 ? this.passE : this.passPhase === 3 ? 0 : this.shiftTarget;
-      const dist = Math.max(12, 2 * v);
-      for (let x = 0; x <= dist; x += 10) {
+      const dist = Math.max(12, PINCH_T * v);
+      for (let x = 0; x <= dist; x += 5) {
         const sx = s + x;
         const me = Math.max(this.roadLo(sx, hwI), Math.min(this.roadHi(sx, hwI), ePlan));
         const it = Math.max(this.roadLo(sx, hwJ), Math.min(this.roadHi(sx, hwJ), ej));
-        if (Math.abs(me - it) < need && (me - it) * (lat - tr.lat[j]) >= 0) {
+        if (Math.abs(me - it) < need && (me - it) * (eMe - tr.e[j]) >= 0) {
           const vp = Math.max(0.5 * tr.v[j], tr.v[j] - 4);
           if (vp < vCmd) { vCmd = vp; this.limiter = 'pinch'; aref = Math.min(aref, -1); }
           break;
@@ -781,6 +792,44 @@ export class AiDriver {
     return Math.max(this.roadLo(s, hw) + PASS_EDGE - 0.15, Math.min(this.roadHi(s, hw) - PASS_EDGE + 0.15, e));
   }
 
+  /**
+   * A pass lane that the road shuts beside the car being passed before I am ahead of it (NOTES "24 Oct 2026: a pass
+   * needs its lane through the corner"). The racing line runs to the inside edge at an apex (and to the outside edge at
+   * the track-out), so a lane measured from it on that side is clamped onto the line there; the car being passed cannot
+   * make 2-3 m of room at the limit in the corner (its lane changes are rate-limited), and a passer still beside it is
+   * squeezed into it. Looks at the first station ahead where my lane e on `side` of car j (+1 its left) and j's lane,
+   * both clamped to the road, come closer than the pinch guard's clearance; r = where I am relative to j when I get
+   * there at the closing speed dv. True when r is not ahead of j by PINCH_OK car lengths (ahead, j is the car further
+   * back and drops behind me) and, in a pass in hand, not still behind it (then following and the pinch guard keep me
+   * behind; with `plan`, starting a pass, that is a reason not to start: a lane that will be shut before I am ahead is
+   * no lane). Uses only the line, the road edges and the two cars: no track-specific data.
+   * Horizon: a pass in hand looks max(12 m, PINCH_T s) ahead (the pinch guard's look-ahead); planning (`plan`) looks
+   * `look` m (planLane: my speed x the occupancy horizon Tn = min(PLAN_T, D / adv), so a pass longer than PLAN_T = 10 s
+   * is checked over its first 10 s only), never less than the pass-in-hand look-ahead, at most PLAN_SHUT_MAX m.
+   * Lanes: mine is clamped as a pass lane is held (laneAt: PASS_EDGE from the edge, as the lateral target in a pass),
+   * j's as a car off a pass is held (the 0.15 m road margin): each where that car will actually be.
+   * dv is floored at 0: a passer falling back is projected where it is now (still beside it), not further back, so a
+   * pass that is losing ground is given up rather than kept on the hope of being behind by the shut.
+   */
+  private shutBeside(j: number, e: number, side: number, v: number, dv: number, look = 0, plan = false): boolean {
+    const tr = this.traffic, i = this.idx, s = tr.s[i], hwI = tr.hw[i], hwJ = tr.hw[j];
+    if (tr.v[j] < 4 || tr.off[j]) return false;           // a stopped / off car: planning and following handle it
+    const len = tr.front[i] + tr.rear[j], d = tr.ds(i, j);
+    if (d < -PINCH_OK * len) return false;                // already ahead of it
+    const need = hwI + hwJ + 0.3 + this.yawClr(s + 0.5 * v);
+    const dist = plan ? Math.min(PLAN_SHUT_MAX, Math.max(12, PINCH_T * v, look)) : Math.max(12, PINCH_T * v);
+    for (let x = 0; x <= dist; x += 5) {
+      const sx = s + x;
+      const me = this.laneAt(sx, e, hwI);
+      const it = Math.max(this.roadLo(sx, hwJ), Math.min(this.roadHi(sx, hwJ), tr.eT[j]));
+      if (side * (me - it) < need) {
+        const r = d - Math.max(0, dv) * x / Math.max(1, v);   // where I am relative to it when I get there
+        return r > -PINCH_OK * len && (plan || r < len + 1);
+      }
+    }
+    return false;
+  }
+
   /** Braking cushion (m) a car at vq behind me needs when I am in its lane in front of it at vMe. */
   private cushB(vq: number, vMe: number): number { return 2 + 0.2 * vq + 0.8 * Math.max(0, vq - vMe); }
 
@@ -888,6 +937,12 @@ export class AiDriver {
         if (adv < MIN_ADV) continue;
         const Tn = Math.min(PLAN_T, D / adv);
         if (D / adv > PLAN_T_MAX) continue;
+        // no lane beside j where the road shuts it before I would be ahead of it: looked at over the occupancy horizon
+        // Tn at my speed (the whole pass when it takes up to PLAN_T s; its first PLAN_T s otherwise), at most
+        // PLAN_SHUT_MAX m, closing at the planned advantage or the speed difference now if larger. (Checking passes
+        // longer than PLAN_T to their end, 24 Oct 2026: Sonoma contacts 0.022 -> 0.031, Laguna 0.033 -> 0.038 over
+        // 8 seeds, 6 % fewer green passes on Sonoma: not kept.)
+        if (this.shutBeside(j, e, side, v, Math.max(adv, v - vj), v * Tn, true)) continue;
         // (projected at the speed I plan to pass at: a slower car further up that lane blocks it)
         const tFree = this.laneBlock(e - hwI - LANE_CLR, e + hwI + LANE_CLR, Tn + 2, Math.max(v, vJ + adv), 150, 60, j, e, true);
         if (tFree < Tn + 0.5) continue;
@@ -912,6 +967,9 @@ export class AiDriver {
       else if (d > DROP_BACK) end = 'dropped';
       else if (this.passTimer > PASS_T_MAX) end = 'timeout';
       else if (this.noPassZone(tr.s[i]) && d > 0) end = 'corkscrew';   // still behind it: give it up, merge back
+      // the road shuts my lane beside it before I am ahead: give it up and tuck in behind it (the pinch guard no longer
+      // exempts it, so I drop back; the merge waits until its lane is free around me)
+      else if (this.shutBeside(j, this.passE, this.passSide, v, v - tr.v[j])) end = 'shut';
       if (end) { this.passEnd = end; this.passCool = 1.5; this.passPhase = 2; this.passTarget = -1; this.stuckTimer = 0; return; }
       if (d < -(tr.rear[i] + tr.front[j] + 1)) {
         // clear of j: a train? the next car ahead in the racing lane that I am catching → pass it in the same lane
