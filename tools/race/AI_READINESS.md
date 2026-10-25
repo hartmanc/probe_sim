@@ -200,7 +200,7 @@ Laguna unchanged. Knobs unchanged. The Sonoma self-plays below ran BEFORE the ro
 | lm70 | 1.4 / 0.7 / 1 | **0.039** (0.037 / 0.041) | 0.039 | **0.029** (0.028 / 0.030) | 51 / 106 | 686 / 690 | 1.284 / 1.265 | 58.0 % |
 | (14A head, section 2) | 1.4 / 0.85 / 1 | 0.080 | 0.034 | 0.022 | 210 / 172 | 688 / 690 | 1.310 / 1.272 | 60.1 % |
 
-T7 is clean: 0 contacts in s 2040-2110 in all four races (39 of 70 on 14A); marshal resets fell 382 -> 121 (head).
+T7 is clean: 0 contacts in s 2040-2110 in all four races (39 of 70 on 14A); recoveries (marshal resets) fell 382 -> 121 (head).
 The total halved (0.080 -> 0.046), but outside T7 it rose 0.034 -> 0.046, and the new top place is T9A.
 
 Head, seeds 1 + 2 pooled (900 car-laps; 41 contacts; kinds 17 quarter in a corner, 11 side-by-side in a corner, 5
@@ -250,3 +250,17 @@ which the physics drives on. Within the target at seed 1; the calibration (on ro
 Bit-identical: the same seed on the pre-merge code (b779969, run from a `git archive` copy) and on the refreshed tree
 give 2 contacts, 17 four-offs, 2 recoveries, race time 620.11 s, identical `contactAt`, `fourOffAt`, `recoveryAt` and
 45-car finishing order (40 83 0 1 156 ...).
+
+### Calibration on round 14B (rev 6b766e08d6)
+
+`npx tsx tools/race/calibrate_field.ts --track sonoma --workers 4` (as 3ba7d82, 4 workers instead of 7 for the
+machine's load rule; 1144 s), AI_VERSION 8, the track's own identity.json, 1195 fits (134 cars + 1061 stints). What
+moved:
+- AI Probe at scale 1: 141.73 s (14A) -> **143.42 s** (+1.2 %: the lap 6.5 m longer and the tighter T9A).
+- Scales: median new / old **1.020** (p5 1.007, p95 1.036; extremes 0.60 and 1.17 on the slow stints that sit on the
+  scale-0.6 floor): every car needs about 2 % more of its grip to hold its real lap on the slower lap.
+- Fit errors (1189 AI fits): median 0.11 %, p95 0.19 % (unchanged); outside 0.5 %: **5 fits in 2 cars** (17 in 8 on
+  14A): #685_sp (car +0.59 %, stints 0 +1.92 %, 2 +0.71 %, 9 +0.59 %) and #747 stint 6 (+0.98 %), left as the tool
+  wrote them; worst 1.92 % (14A 12.15 %, #515 stint 2, now within tolerance).
+- The Sonoma self-plays above ran on the 14A scales. **A seed 1-2 rerun at the kept knobs on these scales is still to do**
+  (not run: the machine was on battery when the calibration finished).

@@ -145,3 +145,17 @@ no duplicate beyond those explained.
   and Buttonwillow was never built with them. The Sonoma cone failure is new with this pair: buttonwillow's cone gate was
   checked on the round-14A Sonoma package, and round 14B's T1 refit put the edge 0.26 m past one cone of the owner's T1
   mouth line. Neither package is changed here (no package changes beyond the merge); both go to the coordinator.
+
+## AI reruns and calibration on the refreshed tree
+
+Details in `tools/race/AI_READINESS.md` section 5.
+- `wall_phantoms.ts`: 0 segments reach the racing line on Sonoma 14B (the T7 tyre run of 14A is gone), Buttonwillow
+  and Laguna.
+- Sonoma 14B, seeds 1-2, kept knobs (on the 14A calibration): contacts 0.046 per car-lap (14A 0.080), 0 at T7, four-off
+  0.011; T9A s 3000-3070 is the top place (13 of 41 contacts, 1 four-off). laneMargin 0.7: 0.039 / 0.029, not kept.
+- Buttonwillow r11 seed 1: 0.019 contacts, 0.019 four-off, 756 s; the round-10 package on the merged code reproduces the
+  round-10 row (0.025 / 0.033 / 11 recoveries), so the change is round 11's kerbs, not the merge.
+- Laguna seed 1: bit-identical to the pre-merge code (2 contacts, 17 four-offs, 620.11 s, same order and events).
+- Sonoma calibration on rev 6b766e08d6: Probe 143.42 s at scale 1 (141.73), scales +2.0 % median, 5 fits outside 0.5 % in
+  2 cars (17 in 8 before). Still to do: the Sonoma seed 1-2 self-play on the new scales, and a vitest / build pass after
+  this commit if the coordinator wants one (pace.json only).
