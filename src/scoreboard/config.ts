@@ -100,7 +100,7 @@ export const TRACKS: Readonly<Record<string, TrackInfo>> = {
   // 100 cars of the Button Turrible 2026 race that ran a lap, each with its own stints; ids "<n>_bw" where the number
   // is a different Laguna car's). Package: round 12 (rev 52bf051dcc, 4699.187 m; round 10's geometry, round 11's scenery passing the merged gates, the paddock openings and strip).
   buttonwillow: { dir: 'tracks/buttonwillow/', name: 'Buttonwillow Raceway Park', short: 'Buttonwillow', length_m: 4699.187, pace: 'cars/field/buttonwillow/pace.json',
-    identity: 'cars/field/buttonwillow/identity.json', rev: '795c09c6cb',
+    identity: 'cars/field/buttonwillow/identity.json', rev: 'b3f9b2d963',   // round 14 (scenery only: the front straight's dirt shoulder, the owner's fish mouths)
     // on the front straight, ~115 m before the line (s 4580; the last corner T11 is at 4377)
     start: { s_m: 4580, speed: ROLLING_START_SPEED },
     // 24 Oct 2026, 100 cars, 4 laps, seeds 1-3 (tools/race/AI_READINESS.md): AI-AI contacts 0.058 -> 0.020 per car-lap,
