@@ -281,3 +281,56 @@ gone with the round-14B package). The 0.02 target is not met; the chicane is now
 knob reaches it (laneMargin 0.7 tripled the four-offs in §5). Levers for the owner: a per-track no-pass stretch through the chicane
 (the Corkscrew rule in `driver.ts` is hard-coded; a per-track list would be the same mechanic), a per-track corner-speed reserve, or the
 lap-wide line margin; see the coordinator's matrix of 24 Oct.
+
+## 6. Passing where the lane closes at the apex (24 Oct 2026, branch `ai-passing`)
+
+Owner's call: no no-pass zone at the chicane, fix the shared pass logic. Traces: `selfplay` seeds 1 and 2 on Sonoma round
+14B at the registry knobs, every car every 0.1 s (a local copy of `selfplay_trace.ts` that also keeps the pass lane,
+pass phase and target, git-ignored), the 3-5 s before each contact in s 2950-3150, 3580-3680 and 330-420, plus a probe
+that replays one car's pinch-guard scan with the driver's own helpers.
+
+### Diagnosis
+
+The geometry (lane coordinates = offset from the racing line, [right edge / left edge]): T9A is a right-hander whose line
+runs from the left edge (s 2990: -10.2 / +1.0) to the right-hand apex at s 3048-3050 (-1.5 / +13.3) and back left for
+9a (s 3080: -16.8 / +3.6). An inside (right) lane 2.6 or 5.2 m right of the line exists down to s ~3035 (edge -6.8 at
+3033) and is gone over s ~3040-3058: the road clamps it onto the line, a 10-15 m stretch. T11 is the same shape
+(s 3641: -3.7, s 3651-3661: -2.0 / -1.9), T2 too (s 397-427: -2.3 to -1.2).
+
+Pooled seeds 1-2 at 152d422 (48 contacts, 22 in s 2950-3150): 33 traced in the windows. In the chicane and T11 the
+pattern is one: **a car held in a lane right of the line (a pass in hand, phase 1, or a pass just given up and waiting
+to merge back, phase 2) is level with or 1-5 m behind the car on the line (centre distance 0.4-5 m: overlapping) when the
+road shuts its lane at the apex.** The road edge sweeps 4-6 m across the lane coordinates in 20 m, the held shift is
+clamped to the road at the look point, so the car in the shut lane is steered left into the car on the line at 1-4 m/s
+(quarter and side-by-side contacts at s 3018-3050, closing 1-4 m/s). The car on the line makes room only for a car
+passing it (and only at its rate-limited lane-change speed, 0.8-2 m/s on Sonoma's shiftGrip), moving 1-2 m out by the
+contact. Of the 22 chicane contacts, 13 are of this kind; the others are lap 1-2 rear-ends on braking into a queue
+stopped at the apex (closing 5-8 m/s, s 2981-3018, line to line: the car ahead at 1-4 m/s), a different mechanism.
+
+Why the existing guards did not hold the car back: the **pinch guard** (a car ahead in the next lane whose lane and mine
+close up within 2 s: the car further back drops behind it) is the rule for exactly this case, but
+1. its "straight ahead, following handles it" skip compared the two cars' *absolute* lateral offsets from the centre
+   line, a few metres apart in s. In T9A the racing line moves 2-3 m across the road between them, so a car one lane
+   over read as straight ahead (|dlat| 0.4-0.7 m) while following, which works in lane coordinates, saw it 2.3 m over in
+   another lane and did not follow it: neither held the car back;
+2. it sampled its 2 s look-ahead every 10 m, so a lane shut for 10-15 m could be stepped over;
+3. a passer alongside its pass target (centres within 0.7 car lengths) was exempt ("it makes room"), which at an apex it
+   cannot do in time.
+
+**Example 1** (seed 1, #0 behind #701, contact s 3045, t 206.3, closing 1.3 m/s). #0 (target lap 153.4 s) had given up a
+pass on #701 (149.6 s; ended `blocked`) and was in phase 2 holding lane -2.6. t 203.4 s 2997: 13.7 m behind, 23.2 vs 15.3
+m/s. The probe at t 204.0-204.9 (s 3010-3025, 9.7-5.3 m behind): its own lane -2.6 is clamped to -1.45 ... -0.52 at
+s 3044-3050 (#701's lane 0: 0.5-1.5 m apart, needing 2.1), but |dlat| = 0.41-0.70 m, under the 1.6 m "straight ahead"
+threshold: the pinch guard skipped #701 and the limiter stayed `follow` / `lane` (a car further ahead) at 15.5-16.2 m/s.
+From s 3030 the road pushed #0's lane in (e -2.57 -> -0.64 at s 3046), #701 moved out 0 -> +1.8 (eT +2-3.6, making room
+as a car being squeezed) and #0's `alongside` give-way came 2 m behind its centre, too late.
+
+**Example 2** (seed 1, #41 passing #135, s 3043, t 396.2, closing 3.1 m/s). #41 (150.0 s) in lane -5.2 on #135 (131.1 s,
+itself passing in lane -2.6). t 393.3 s 2998: 11 m behind at 19.8 vs 9.9 m/s; from t 393.9 its limiter is `pinch` and
+`alongside`, 6.4 -> 4.3 m behind; at s 3028 (4.3 m behind its centre, overlapping) the lane -5.2 is shut ahead and the
+road takes #41 from -5.5 to -0.8 in 1.2 s into #135, which had pulled out to +2 (its own lane -2.6 clamped to the line
+too). Both slowed to 7-9 m/s against a profile of 16-17: the two lanes right of the line both end at the apex.
+
+T11 entry (s 3600-3650, 6 contacts pooled) is the same mechanism (e.g. seed 1 #938 passing #191 in lane -2.6, 3.5-4 m
+behind its centre at the shut, s 3641). T2 entry (s 350-420, 3) is mixed: one is the same (seed 2 #327 on #199, lane -5.2,
+s 367), the others are lap 1-2 queue rear-ends on the hill (#199 stopped, v 0-1 m/s).
