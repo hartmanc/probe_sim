@@ -261,11 +261,21 @@ describe('scenery gates: tyre rows and wall widths (Sonoma round 14D, T11)', () 
     expect(tyreFaces(T, { barriers: [away] })).toHaveLength(0);
     expect(tyreFaces(T, { barriers: [{ ...away, rows: 4 }] })).toHaveLength(0);
   });
-  it('a wall-tyre join measures the wall face at its own half width (w / 2), else the 0.18 m of before', () => {
-    const wall = { kind: 'concrete', pts: [[10, -12, 0], [25, -9, 0], [40, -6, 0]] as V3[], src: 'onto the tyres' };
-    const rev = { kind: 'tyres', pts: [[100, -6, 0], [70, -6, 0], [40, -6, 0]] as V3[], src: 'tyres' };
-    expect(joinFaces(T, { barriers: [wall, rev] })[0].step).toBeCloseTo(0.31 - 0.18, 2);
-    expect(joinFaces(T, { barriers: [{ ...wall, w: 0.96 }, rev] })[0].step).toBeCloseTo(0.31 - 0.48, 2);
+  it('side by side: a run with rows faces a wall with its last row; without rows, by its polyline as before', () => {
+    // a wall 12.2 m right of the bottom straight (7.2 m beyond the edge); 4 rows drawn toward it from 2.0 m beyond the edge
+    const wall = { kind: 'concrete', pts: [[20, -12.2, 0], [130, -12.2, 0]] as V3[], src: 'wall' };
+    const deep = { kind: 'tyres', pts: [[100, -9.6, 0], [50, -9.6, 0]] as V3[], src: 'deep', rows: 4 };
+    // polyline 2.6 m off the wall (outside the 0.8-2.5 band): passes as a legacy run
+    expect(sideBySide(T, { barriers: [wall, { ...deep, rows: undefined }] })).toHaveLength(0);
+    // 4 rows from 1.6 m off the wall: the last row's line 0.2 m beyond it, a facing
+    expect(sideBySide(T, { barriers: [wall, { ...deep, pts: [[100, -10.6, 0], [50, -10.6, 0]] as V3[] }] })).toHaveLength(0);
+    // 2 rows declared from 2.6 m off: the last row 2.0 m off the wall, parallel: side by side, a finding
+    expect(sideBySide(T, { barriers: [wall, { ...deep, rows: 2, pts: [[100, -9.6, 0], [50, -9.6, 0]] as V3[] }] })).toHaveLength(1);
+    // a thick wall's back face (hidden, 0.96 m beyond the front face the run faces) is not a second wall beside it
+    const front = { ...wall, box: { w: 0.96, side: -1 } }, back = { kind: 'concrete', pts: [[20, -13.16, 0], [130, -13.16, 0]] as V3[], src: 'back', hidden: true };
+    const facing = { ...deep, pts: [[100, -10.2, 0], [50, -10.2, 0]] as V3[] };   // last row 0.2 m before the front face, 1.16 m off the back
+    expect(sideBySide(T, { barriers: [front, back, facing] } as never)).toHaveLength(0);
+    expect(sideBySide(T, { barriers: [front, { ...back, hidden: undefined }, facing] } as never)).toHaveLength(1);
   });
 });
 

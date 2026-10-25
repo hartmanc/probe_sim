@@ -1026,7 +1026,27 @@ def barriers(trk, osm):
     # a declared wall is dropped there (the declared one is the measured position of the same wall).
     decl = []
     split = []
-    work = [(dw, None) for dw in SC_CFG.get("declared_walls", [])]
+    work = []
+    for dw in SC_CFG.get("declared_walls", []):
+        validate_declared_wall(dw)
+        if dw.get("w"):
+            # round 14D: a thick wall is its two faces (thick_wall_faces); the app draws the box between them from the
+            # front run (`box`), the back run draws no body (`hidden`) but carries the fence; both collide
+            ll = np.array(dw["latlon"], float)
+            x, y = bl.enu(ll[:, 0], ll[:, 1])
+            Pc = resample_line(np.c_[x, y], 2.0)
+            m_ = len(Pc) // 2
+            t_ = Pc[min(m_ + 1, len(Pc) - 1)] - Pc[max(m_ - 1, 0)]
+            n_ = np.array([-t_[1], t_[0]])
+            i_, _, _ = trk.project(Pc[m_:m_ + 1])
+            toward = 1 if float((trk.C[i_[0], :2] - Pc[m_]) @ n_) > 0 else -1
+            Pf, Pb, side = thick_wall_faces(Pc, toward, float(dw["w"]))
+            base = {k: v for k, v in dw.items() if k not in ("w", "latlon")}
+            work.append((dict(base, name=dw["name"] + " (front face)", fence=0.0, fence_arm=None, _box=dict(w=float(dw["w"]), side=side)), Pf))
+            work.append((dict(base, _hidden=True), Pb))
+            log(f"declared wall {dw['name']}: thick wall {dw['w']} m as two faces (front 'box', back 'hidden')")
+        else:
+            work.append((dw, None))
     # pit-lane walls with their own measured geometry (config pit_lane.walls[] with latlon, 21 Oct 2026); a pit-lane
     # wall that is one of the declared walls names it (`declared`) and adds no geometry
     PIT_MAT = {"pitbox_wall": ("concrete", "#e6e4de"), "jersey": ("concrete", "#e6e4de"), "board_wall": ("concrete", "#a9c9dd"),
@@ -1122,8 +1142,10 @@ def barriers(trk, osm):
         # polyline's left; absent: 2) and a thick wall's drawn width (absent: the app's 0.36 m); both from the evidence
         if dw.get("rows"):
             rec["rows"] = int(dw["rows"])
-        if dw.get("w"):
-            rec["w"] = float(dw["w"])
+        if dw.get("_box"):
+            rec["box"] = {"w": round(dw["_box"]["w"], 3), "side": int(dw["_box"]["side"])}   # the app draws the thick wall from here
+        if dw.get("_hidden"):
+            rec["hidden"] = True   # a thick wall's back face: collides, draws no body (its fence is drawn)
         if dw.get("fence_arm"):
             # round 10 (Sonoma pit-out catch fence): angled arms on the fence posts, leaning toward the track (the side of
             # the polyline the nearest track centre lies on; +1 = left, the app's offsetLine convention)
@@ -1552,6 +1574,43 @@ def closed_road_paint(trk, parts):
     return out
 
 
+TYRE_ROWS_MAX = 8
+
+
+def validate_declared_wall(dw):
+    """Round 14D (review of the Sonoma round-14D diff): the keys the app and the gates must read as the same numbers.
+    `rows` (a tyre run's drawn rows) must be an integer 1..TYRE_ROWS_MAX on a tyre run; `w` (a thick wall's width) is
+    only for a concrete run and must be > 0. Anything else fails the build with the wall's name."""
+    name = dw.get("name", "?")
+    if "rows" in dw:
+        r = dw["rows"]
+        if dw.get("kind") != "tyres":
+            raise SystemExit(f"declared wall {name!r}: `rows` is for a tyre run, not kind {dw.get('kind')!r}")
+        if isinstance(r, bool) or not isinstance(r, int) or not 1 <= r <= TYRE_ROWS_MAX:
+            raise SystemExit(f"declared wall {name!r}: `rows` must be an integer 1..{TYRE_ROWS_MAX}, got {r!r}")
+    if "w" in dw:
+        w = dw["w"]
+        if dw.get("kind", "concrete") != "concrete":
+            raise SystemExit(f"declared wall {name!r}: `w` (a thick wall's width) is only for a concrete run, not kind {dw.get('kind')!r}")
+        if isinstance(w, bool) or not isinstance(w, (int, float)) or not w > 0:
+            raise SystemExit(f"declared wall {name!r}: `w` must be a width > 0 m, got {w!r}")
+
+
+def thick_wall_faces(P, toward, w):
+    """Round 14D (review: the collision keeps a wall's centreline + 0.10 m skin and ignores a drawn width): a declared
+    concrete wall `w` m thick becomes its two FACES, each a concrete run the physics already collides with: the front
+    face w / 2 toward the track from the measured centre line, the back face w / 2 away from it. `toward` is +1 when the
+    track lies to the polyline's left, -1 when to its right. Returns (front, back, side): `side` is where the back face
+    lies from the front polyline (+1 its left, -1 its right), the side the app draws the box toward. Pure."""
+    P = np.asarray(P, float)
+    T = np.gradient(P, axis=0)
+    T /= np.maximum(np.linalg.norm(T, axis=1), 1e-9)[:, None]
+    NL = np.c_[-T[:, 1], T[:, 0]]
+    front = P + NL * (toward * w / 2.0)
+    back = P - NL * (toward * w / 2.0)
+    return front, back, -int(toward)
+
+
 def wall_at_edge(trk, P, ae, name):
     """A declared wall that stands AT the painted edge line over a stretch (config declared_walls[].at_edge, round 13,
     Sonoma owner note 136: "the wall should stand right against the painted edge line"): {side: 'left' | 'right',
@@ -1690,8 +1749,15 @@ def tyre_facings(trk, bar, reach=2.5, off=0.55):
         P = np.array(b["pts"], float)
         moved = []
         gmin_ = max(0.55, b.pop("_gap_min", 0.0) + 0.05)   # a declared run's own minimum (gap_min) holds here too
+        # round 14D: a run that declares its `rows` (row k drawn k x 0.6 m to the polyline's left) faces a wall with its
+        # LAST row: that row's line is tested and placed `off` in front of the wall, the polyline (row 0) kept that far in
+        # front of it; a run without `rows` is placed by its polyline as before
+        ext = (int(b["rows"]) - 1) * BR.TYRE_ROW if b.get("rows") else 0.0
+        if ext:
+            Tq = np.gradient(P[:, :2], axis=0); Tq /= np.maximum(np.linalg.norm(Tq, axis=1), 1e-9)[:, None]
+            NLq = np.c_[-Tq[:, 1], Tq[:, 0]]
         for j in range(len(P)):
-            q = P[j, :2]
+            q = P[j, :2] + (NLq[j] * ext if ext else 0.0)
             t0 = ((q - a) * d).sum(1) / L2
             t = np.clip(t0, 0, 1)
             C = a + d * t[:, None]
@@ -1713,6 +1779,8 @@ def tyre_facings(trk, bar, reach=2.5, off=0.55):
                 p2 = c2 + (-np.sign(lat3[1]) * trk.N[int(i3[1]) % trk.n]) * off
                 if free_end(int(wid[k]), E) and footprint_clear(int(wid[k]), ti, E, c2, p2):
                     c, i_, p_new = c2, i3, p2
+            if ext:
+                p_new = p_new - NLq[j] * ext   # back to the polyline (row 0)
             # never closer than 0.55 m to the fitted edge (the barrier-gap gate)
             i2, lat2, dout2 = trk.project(p_new[None])
             if dout2[0] < gmin_:
@@ -1802,7 +1870,7 @@ def extend_parts_to_walls(parts, bar, reach=4.0, margin=0.3, label="pit lane", a
     log(f"{label}: {moved} edge points extended to the walls (pit_lane.lane.to_walls)")
 
 
-def clip_parts_at_walls(parts, bar, margin=0.3, label="closed roads"):
+def clip_parts_at_walls(parts, bar, margin=0.3, label="closed roads", heads=False):
     """A closed road's paving stops at a wall (config scenery.closed_roads_clip_walls, 20 Oct 2026: the NAIP half-width
     of Sonoma's drag strip reached under the pit-straight wall): an edge point whose segment from the part's centre crosses
     a wall, tyre wall or Armco run is moved back to 0.3 m short of the crossing. Heights are kept (the profile is linear
@@ -1834,8 +1902,35 @@ def clip_parts_at_walls(parts, bar, margin=0.3, label="closed roads"):
                     tt = float(t[hit].min()); L = float(np.linalg.norm(r))
                     tt = max(0.0, tt - margin / max(L, 1e-6))
                     E[j, :2] = p + r * tt; moved += 1
+            if heads:
+                # round 14D (config scenery.pit_lane_clip_heads; Sonoma's T11 thick wall): a wall's END between two edge rows
+                # (the row before it misses the wall, the row after it is clipped) lies inside the strip between them; both
+                # rows are brought in to `margin` m short of the end along their own rays. Absent: as before
+                V = np.concatenate([np.array(b["pts"])[[0, -1], :2] for b in bar if b["kind"] in ("concrete", "pitwall", "tyres", "armco") and len(b["pts"]) >= 2])
+                for j in range(len(E) - 1):
+                    quad = np.array([C[j], E[j, :2], E[j + 1, :2], C[j + 1]])
+                    for v in V:
+                        if not _in_poly(v, quad):
+                            continue
+                        for k in (j, j + 1):
+                            r = E[k, :2] - C[k]; L = float(np.linalg.norm(r))
+                            if L < 1e-6:
+                                continue
+                            tv = float((v - C[k]) @ (r / L)) - margin
+                            if 0 < tv < L:
+                                E[k, :2] = C[k] + r / L * tv; moved += 1
             part[side] = [[rnd(x, 2), rnd(y, 2), rnd(z, 3)] for x, y, z in E]
     log(f"{label}: {moved} edge points clipped at walls")
+
+
+def _in_poly(p, P):
+    """Point in polygon (even-odd). Pure."""
+    x, y = float(p[0]), float(p[1]); inside = False
+    for i in range(len(P)):
+        x1, y1 = P[i]; x2, y2 = P[(i + 1) % len(P)]
+        if (y1 > y) != (y2 > y) and x < x1 + (y - y1) * (x2 - x1) / (y2 - y1):
+            inside = not inside
+    return inside
 
 
 def ortho_paint_over(trk, img, items, ring=3.0, lift=18.0):
@@ -3117,7 +3212,8 @@ def main(cfg=None, out_dir=None):
         # the lane's real width: its paving stops at the walls that bound it (config scenery.pit_lane_clip_walls,
         # 20 Oct 2026; Sonoma's OSM-width lane reached through the pit-in Jersey and the outer wall)
         # round 7 (owner note 37): and at the declared cone lines along it (the pit-in separation line before the nose)
-        clip_parts_at_walls(pit["parts"], bar + [{"kind": "tyres", "pts": c_["pts"]} for c_ in declared_cone_lines(trk)], label="pit lane")
+        clip_parts_at_walls(pit["parts"], bar + [{"kind": "tyres", "pts": c_["pts"]} for c_ in declared_cone_lines(trk)], label="pit lane",
+                            heads=bool(SC_CFG.get("pit_lane_clip_heads")))
     if pit and (PIT_CFG.get("lane") or {}).get("to_walls"):
         extend_parts_to_walls(pit["parts"], bar, **PIT_CFG["lane"]["to_walls"])
     if pit and (PIT_CFG.get("lane") or {}).get("boxes") is not None:

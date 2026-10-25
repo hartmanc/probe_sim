@@ -2,7 +2,7 @@
 // colour exactly as before (null: the old code path); a pattern alternates its colours along the run's length; explicit
 // sections override it where they lie.
 import { describe, expect, test } from 'vitest';
-import { barrierSections, paintLineZ, sliceLine, trussMembers, tyreRows, wallHalfThickness } from '../scenery';
+import { barrierSections, boxFaces, sliceLine, trussMembers, tyreRows } from '../scenery';
 
 const P: [number, number, number][] = [[0, 0, 0], [10, 0, 0], [10, 10, 0]];
 
@@ -37,9 +37,11 @@ describe('round 14D drawing helpers', () => {
     expect(tyreRows({ rows: 0 })).toEqual([0]);
     expect(tyreRows({ rows: 20 })).toHaveLength(8);
   });
-  test('wall half thickness: absent 0.18 (the 0.36 m wall), else w / 2', () => {
-    expect(wallHalfThickness({})).toBe(0.18);
-    expect(wallHalfThickness({ w: 0.96 })).toBeCloseTo(0.48, 6);
+  test('thick wall box: drawn between the front face run and the back face w m to its side', () => {
+    const P: [number, number][] = [[0, 0], [10, 0]];
+    const off = (Q: [number, number][], d: number) => Q.map(([x, y]) => [x, y + d] as [number, number]);   // left of +x is +y
+    expect(boxFaces(P, { w: 0.96, side: 1 }, off)).toEqual([[[0, 0.96], [10, 0.96]], [[0, 0], [10, 0]]]);
+    expect(boxFaces(P, { w: 0.96, side: -1 }, off)).toEqual([[[0, 0], [10, 0]], [[0, -0.96], [10, -0.96]]]);
   });
   test('truss end sections: verticals and diagonals over the first and last 4.5 m only, at both piers', () => {
     const m = trussMembers(34);
@@ -52,10 +54,3 @@ describe('round 14D drawing helpers', () => {
   });
 });
 
-describe('round 14D paint lines on open ground', () => {
-  test('a line keeps its package height unless the drawn terrain rises over it', () => {
-    expect(paintLineZ(2.38, 0, 0)).toBe(2.38);
-    expect(paintLineZ(2.38, 0, 0, () => 2.30)).toBe(2.38);             // a zone / ribbon over the sunk terrain: unchanged
-    expect(paintLineZ(2.38, 0, 0, () => 2.45)).toBeCloseTo(2.458, 6);   // buried by the 3 m mesh: 0.008 m over it
-  });
-});

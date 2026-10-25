@@ -814,9 +814,10 @@ CONFIG = dict(
             # wall 0.81 m as the exit wall it joins); the catch fence (top 3.0 m) on the white wall (t121-t123: the posts stand
             # behind the face), its posts curved-top (inventory s 3638 / 3670)
             # one run (two end to end left a 2.9 m hole after the builder's resampling): the light-blue face from the Jersey's tail,
-            # the white stacks from s ~3698 as a colour section (69.9 m along the declared line, 78.4 m in all)
+            # the white stacks from s ~3698 as a colour section (72.7 m along the declared line, 75.6 m in all), to s 3700
+            # where the band narrows (t11_profiles.json k 3700 outer 3.80 m, k 3704 2.92 m)
             dict(name='T11 hairpin outside: deep tyre wall (round 14D)', kind='tyres', color=WALL_PALE_BLUE, h=0.8, stack=2, rows=4, fence=0.0,
-                 sections=[dict(from_m=69.9, to_m=999.0, color=TYRE_WHITE)],
+                 sections=[dict(from_m=72.7, to_m=999.0, color=TYRE_WHITE)],
                  h_src='onboard RAZip6S84CM t122 / t124: the stacks two tyres high, 0.8 m (round 7, owner note 38)',
                  src='owner decision 25 Oct 2026 (round14d/OWNER_NOTES.md: a deep tyre wall from just before s 3648 round the outside of T11, no apron); c20_s1265 / c20_s1320 light band 0.1-3.8 m beyond the left edge (round14d/t11_profiles.json); 7hJizPBNrJ4 t 6.5-9.5 (2019: the deep tyre wall round the outside); RAZip6S84CM t121.5-t123.25 (2026: its light-blue face), t123.25 / t124 (white stacks from s ~3698)',
                  latlon=[
@@ -825,32 +826,44 @@ CONFIG = dict(
                 (38.1586053, -122.4518620), (38.1585848, -122.4518811), (38.1585565, -122.4519144), (38.1585395, -122.4519396),
                 (38.1585176, -122.4519810), (38.1585055, -122.4520107), (38.1584915, -122.4520578), (38.1584849, -122.4520905),
                 (38.1584795, -122.4521404), (38.1584787, -122.4521738), (38.1584816, -122.4522235), (38.1584862, -122.4522561),
-                (38.1585013, -122.4523185), (38.1585117, -122.4523480), (38.1585238, -122.4523760),
+                (38.1584928, -122.4522878), (38.1585013, -122.4523185),
                 ]),
+            # round 14D review (Astra, item 2): the thick wall is built as its two faces (build_scenery.thick_wall_faces): the front
+            # face 0.48 m toward the track from this centre line and the back face 0.48 m beyond it, each a concrete run the
+            # physics collides with; the app draws the 0.96 m box from the front run; the fence stands on the back face. Review
+            # item 6: the wall comes in at s 3700-3702 to 2.18 m (front face 1.70 m), behind the white 2-row facing on to the exit
+            # (the band at k 3704 / 3708 reads 2.92 / 2.84 m out: tyres from 0.55 m and the wall's back face at 2.66 m, no ground
+            # between), then joins the exit wall's head at s 3712. It starts at s 3652, past the owner's step: at s 3646 its front
+            # face stood within 1 m of the pit-in lane's path behind the Jersey (pit connectivity, the review rebuilds); the
+            # lane is clipped at its back face, its head included (pit_lane_clip_heads); the tyre wall's head and the Jersey's
+            # tail cover s 3645-3652 in front of it
             dict(name='T11 hairpin outside: thick white wall behind the tyre wall (round 14D)', kind='concrete', color='#e6e4de', h=0.81, w=0.96, fence=2.2,
                  fence_arm=dict(len=0.5, deg=45.0),
                  h_src='0.81 m as the white exit wall it joins (onboard 2:07, Jersey 0.81 m); fence top 3.0 m (round 5 / 7: between the 3.5 m catch fence at 2:02 and the 2.5 m chain-link at 2:04); curved-top posts (inventory s 3638 / 3670), arm as the pit-out fence (24of8fjjAug t0304)',
-                 src='owner decision 25 Oct 2026 (round14d/OWNER_NOTES.md: "the white is just a thick wall"); c20_s1265 / c20_s1320 / c20_s1375: width 0.96 m where it leaves the band at s 3734-3744, the band\'s outer edge 3.6-3.8 m beyond the left edge (round14d/t11_profiles.json); joined at its tail to the exit wall\'s head (s 3712)',
+                 src='owner decision 25 Oct 2026 (round14d/OWNER_NOTES.md: "the white is just a thick wall"); c20_s1265 / c20_s1320 / c20_s1375: width 0.96 m where it leaves the band at s 3734-3744, the band\'s outer edge 3.6-3.8 m beyond the left edge at s 3650-3700 and 2.8-2.9 m at s 3704-3708 (round14d/t11_profiles.json); joined at its tail to the exit wall\'s head (s 3712)',
                  latlon=[
-                (38.1588611, -122.4517635), (38.1588500, -122.4517618), (38.1587936, -122.4517705), (38.1587819, -122.4517702),
-                (38.1587581, -122.4517706), (38.1587460, -122.4517714), (38.1587216, -122.4517747), (38.1587093, -122.4517771),
-                (38.1586845, -122.4517838), (38.1586722, -122.4517882), (38.1586476, -122.4517990), (38.1586354, -122.4518056),
-                (38.1586117, -122.4518207), (38.1586001, -122.4518293), (38.1585778, -122.4518486), (38.1585670, -122.4518593),
-                (38.1585465, -122.4518827), (38.1585368, -122.4518954), (38.1585188, -122.4519225), (38.1585105, -122.4519368),
-                (38.1584955, -122.4519670), (38.1584888, -122.4519828), (38.1584770, -122.4520155), (38.1584720, -122.4520324),
-                (38.1584638, -122.4520670), (38.1584606, -122.4520846), (38.1584562, -122.4521201), (38.1584548, -122.4521380),
-                (38.1584540, -122.4521738), (38.1584544, -122.4521916), (38.1584571, -122.4522270), (38.1584592, -122.4522445),
-                (38.1584651, -122.4522788), (38.1584689, -122.4522957), (38.1584779, -122.4523285), (38.1584832, -122.4523445),
-                (38.1584950, -122.4523753), (38.1585017, -122.4523901), (38.1585161, -122.4524184), (38.1585239, -122.4524318),
+                (38.1587936, -122.4517705), (38.1587701, -122.4517702), (38.1587581, -122.4517706), (38.1587339, -122.4517728),
+                (38.1587216, -122.4517747), (38.1586969, -122.4517801), (38.1586845, -122.4517838), (38.1586598, -122.4517933),
+                (38.1586476, -122.4517990), (38.1586234, -122.4518128), (38.1586117, -122.4518207), (38.1585888, -122.4518386),
+                (38.1585778, -122.4518486), (38.1585566, -122.4518706), (38.1585465, -122.4518827), (38.1585276, -122.4519086),
+                (38.1585188, -122.4519225), (38.1585027, -122.4519517), (38.1584955, -122.4519670), (38.1584826, -122.4519990),
+                (38.1584770, -122.4520155), (38.1584676, -122.4520495), (38.1584638, -122.4520670), (38.1584581, -122.4521023),
+                (38.1584562, -122.4521201), (38.1584541, -122.4521559), (38.1584540, -122.4521738), (38.1584555, -122.4522093),
+                (38.1584571, -122.4522270), (38.1584619, -122.4522618), (38.1584651, -122.4522788), (38.1584731, -122.4523123),
+                (38.1584779, -122.4523285), (38.1584879, -122.4523422), (38.1584982, -122.4523551), (38.1585107, -122.4523844),
+                (38.1585175, -122.4523983), (38.1585324, -122.4524250), (38.1585404, -122.4524376), (38.1585574, -122.4524613),
                 (38.1585718, -122.4524793),
                 ]),
-            # round 14D: the white stacks' 2-row tail along the exit wall (s ~3708-3730), the round-7 run's last declared points
-            # (snapped onto the exit wall's face by tyre_facings, as before); its first 65 m are now the deep tyre wall above
-            dict(name='T11 hairpin, left tyre wall', kind='tyres', color=TYRE_WHITE, h=0.8, stack=2, fence=2.2, h_src='round 7 (owner note 38): onboard 2:02-2:04 (t122 / t124) the white-wrapped stacks are two tyres high, 0.8 m (inventory, tyre-ref); the fence top stays 3.0 m',
-                 src='c20_s1265 / c20_s1320 white tyre band on the outside of the hairpin (69 % picked, rms 0.35 m); onboard 2:04 white tyre stacks left; round 14D: its tail from s ~3708 (the deep tyre wall before it)',
+            # round 14D review (item 6): the white stacks' 2-row facing from s 3700 to the exit (was the round-7 run's last four points
+            # from s ~3708: the ground showed between the edge and the stacks at s 3704-3712): front row 0.55 m beyond the edge,
+            # rows toward the wall (`rows` 2: tyre_facings places its back row against the thick wall's front face and the exit wall)
+            dict(name='T11 hairpin, left tyre wall', kind='tyres', color=TYRE_WHITE, h=0.8, stack=2, rows=2, fence=2.2, h_src='round 7 (owner note 38): onboard 2:02-2:04 (t122 / t124) the white-wrapped stacks are two tyres high, 0.8 m (inventory, tyre-ref); the fence top stays 3.0 m (as before on this run)',
+                 src='c20_s1265 / c20_s1320 / c20_s1375 white tyre band on the outside of the hairpin exit (round14d/t11_profiles.json k 3704-3728); onboard 2:04 white tyre stacks left; round 14D: from s 3700 (the deep tyre wall before it)',
                  latlon=[
-                (38.1585634, -122.4524562), (38.1586344, -122.4525261), (38.1587172, -122.4525726),
-                (38.1587582, -122.4525939),
+                (38.1585013, -122.4523185), (38.1585117, -122.4523480), (38.1585238, -122.4523760), (38.1585374, -122.4524025),
+                (38.1585526, -122.4524272), (38.1585690, -122.4524499), (38.1585866, -122.4524705), (38.1586051, -122.4524891),
+                (38.1586244, -122.4525054), (38.1586442, -122.4525197), (38.1586643, -122.4525320), (38.1586846, -122.4525426),
+                (38.1587047, -122.4525519), (38.1587246, -122.4525600), (38.1587420, -122.4525731), (38.1587573, -122.4525912),
                 ]),
             dict(name='T3, right: low tyre-faced wall far out', kind='tyres', color=TYRE_BLACK, h=1.0, fence=0.0,
                  src='c20_s2365..s2475 dark line 34-36 m right (100 % picked, rms 0.70 m); Street View exOejoRD5-jF1wceBnhfjg',
@@ -1626,6 +1639,9 @@ CONFIG = dict(
         # a closed road's paving stops at its walls (the drag strip's NAIP width reached under the pit-straight wall)
         closed_roads_clip_walls=True,
         # the pit lane stops at the walls that bound it (round 4: the pit-in Jersey and outer wall; owner notes 15-16, 24)
+        # round 14D review (the T11 thick wall built as its two faces): a wall's end between two lane edge rows is clipped too
+        # (the back face's head stood inside the lane between a clipped row and the unclipped one before it)
+        pit_lane_clip_heads=True,
         pit_lane_clip_walls=True,
         # bridges meet the banks: abutments and stair flights at both span ends (round 4, owner note 29)
         bridge_stairs=True,

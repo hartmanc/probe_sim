@@ -17,8 +17,8 @@ export type V3 = [number, number, number];
 export interface TrackLike { n: number; spacing_m: number; center: V3[]; left: V3[]; right: V3[] }
 export interface PartLike { center: V3[]; left: V3[]; right: V3[]; gap_left?: number[]; gap_right?: number[]; turn?: string; kind?: string; name?: string }
 export interface SceneryLike {
-  /** rows: tyre rows drawn (absent 2); w: a concrete / pit wall's drawn thickness (absent 0.36), round 14D */
-  barriers?: { kind: string; pts: V3[]; src?: string; rows?: number; w?: number }[];
+  /** rows: a tyre run's drawn rows (absent 2; the builder admits integers 1-8 only), round 14D */
+  barriers?: { kind: string; pts: V3[]; src?: string; rows?: number }[];
   pit_lane?: { parts: PartLike[] } | null;
   paved_zones?: { parts: PartLike[] } | null;
   pit_exit_cones?: { pts: V3[]; spacing_m?: number; src?: string } | null;
@@ -524,6 +524,14 @@ export interface SideBySide { tyre: string; wall: string; s: number; off: number
  *  of the wall line) or meet it end to end; a tyre run standing `facing`..`reach` (2.5) m off a wall over a stretch is
  *  two runs of different kinds side by side with an offset. Points within `joint` m (1.5) of the wall's own end points
  *  are the joint and not counted. Returns one entry per (tyre run, wall) pair, at its first offending point. */
+/** The polyline offset d m to its left, per vertex (central-difference tangents). Pure. */
+export function leftOffset(P: V2[], d: number): V2[] {
+  return P.map((p, i) => {
+    const a = P[Math.max(0, i - 1)], b = P[Math.min(P.length - 1, i + 1)], l = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1;
+    return [p[0] - ((b[1] - a[1]) / l) * d, p[1] + ((b[0] - a[0]) / l) * d] as V2;
+  });
+}
+
 export function sideBySide(t: TrackLike, sc: SceneryLike, opts: { facing?: number; reach?: number; joint?: number } = {}): SideBySide[] {
   const facing = opts.facing ?? 0.8, reach = opts.reach ?? 2.5, joint = opts.joint ?? 1.5;
   const proj = makeProjector(t);
@@ -533,13 +541,18 @@ export function sideBySide(t: TrackLike, sc: SceneryLike, opts: { facing?: numbe
   for (const tb of bars) {
     if (tb.kind !== 'tyres') continue;
     const T: V2[] = [];
-    const P = xy(tb.pts);
+    // round 14D: a run that declares `rows` faces a wall with its last row (the builder's tyre_facings places that row):
+    // the samples are taken on that row's line, (rows - 1) x 0.6 m to the polyline's left; without `rows` on the polyline
+    const P = tb.rows ? leftOffset(xy(tb.pts), (tb.rows - 1) * 0.6) : xy(tb.pts);
     for (let i = 0; i + 1 < P.length; i++) {
       const d = Math.hypot(P[i + 1][0] - P[i][0], P[i + 1][1] - P[i][1]), n = Math.max(1, Math.ceil(d / 0.5));
       for (let k = 0; k < n; k++) T.push([P[i][0] + ((P[i + 1][0] - P[i][0]) * k) / n, P[i][1] + ((P[i + 1][1] - P[i][1]) * k) / n]);
     }
     for (const wb of bars) {
       if (!['concrete', 'pitwall', 'armco'].includes(wb.kind)) continue;
+      // round 14D: a thick wall is its two faces; the box is faced from its front face run (`box`), so its back face
+      // (`hidden`, w m further on) is not a second wall beside a facing of the front
+      if ((wb as { hidden?: boolean }).hidden) continue;
       const W = xy(wb.pts), e0 = W[0], e1 = W[W.length - 1];
       // side by side = PARALLEL at an offset: consecutive 0.5 m samples in the band whose offset changes under 0.1 m
       // per sample (< ~11 deg); a run angling in to meet the wall (a taper) changes faster and is not counted
@@ -569,12 +582,10 @@ export function sideBySide(t: TrackLike, sc: SceneryLike, opts: { facing?: numbe
 export const TYRE_R = 0.31, TYRE_ROW = 0.6;
 const RIGID_KINDS = ['concrete', 'pitwall', 'armco'];
 const HALF_THICK: Record<string, number> = { concrete: 0.18, pitwall: 0.18, armco: 0.05 };
-/** Round 14D (Sonoma T11, a deep tyre wall in front of a thick wall): a tyre run's drawn row extent beyond its line on the
- *  polyline's left ((rows - 1) x TYRE_ROW; rows absent = 2, the extent every gate assumed before) and a rigid run's drawn
- *  half thickness (w / 2 where the run gives its width, else the kind's). Identical to before for runs without them. */
+/** Round 14D (Sonoma T11, a deep tyre wall): a tyre run's drawn row extent beyond its line on the polyline's left
+ *  ((rows - 1) x TYRE_ROW; rows absent = 2, the extent every gate assumed before). Identical to before without `rows`. */
 export const tyreRowExtent = (b: { rows?: number }): number => Math.max(0, (b.rows ?? 2) - 1) * TYRE_ROW;
-export const halfThick = (b: { kind: string; w?: number }): number => (b.w && b.w > 0 ? b.w / 2 : HALF_THICK[b.kind] ?? 0.18);
-type BarrierTop = { kind: string; pts: V3[]; src?: string; h?: number; top_z?: number[]; rows?: number; w?: number };
+type BarrierTop = { kind: string; pts: V3[]; src?: string; h?: number; top_z?: number[]; rows?: number };
 const topsOf = (b: BarrierTop): number[] => (b.top_z && b.top_z.length === b.pts.length ? b.top_z : b.pts.map((p) => p[2] + (b.h ?? 0)));
 
 export interface WallTopsReport {
@@ -664,7 +675,7 @@ export function joinFaces(t: TrackLike, sc: SceneryLike & { barriers?: BarrierTo
           if (Math.hypot(E[0] - H[0], E[1] - H[1]) > join) continue;
           const wx0 = E[0] - we.q[0], wy0 = E[1] - we.q[1], wl = Math.hypot(wx0, wy0) || 1;   // out of the wall at its end
           if ((wx0 / wl) * ux + (wy0 / wl) * uy < 0.5) continue;   // not end to end (a facing or a crossing)
-          const wallFace = (E[0] - H[0]) * ntx + (E[1] - H[1]) * nty + halfThick(wb);
+          const wallFace = (E[0] - H[0]) * ntx + (E[1] - H[1]) * nty + (HALF_THICK[wb.kind] ?? 0.18);
           // driving direction at the joint (stations are in driving order): do the tyres run on downstream of it?
           const fa = t.center[(pr.i + 1) % t.n], fb = t.center[(pr.i - 1 + t.n) % t.n];
           const tyresDown = (fa[0] - fb[0]) * ux + (fa[1] - fb[1]) * uy > 0;

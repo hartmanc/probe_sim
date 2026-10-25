@@ -37,7 +37,9 @@ export interface SceneryJson {
     pattern?: { colors: string[]; period_m: number }; sections?: { from_m: number; to_m: number; color: string }[];
     /** tyres per stack (round 7; default from h) */ stack?: number;
     /** round 14D (Sonoma T11, a deep tyre wall): tyre rows, row k drawn k x 0.6 m to the polyline's left (absent: 2) */ rows?: number;
-    /** round 14D (Sonoma T11, a thick white wall): a concrete / pit wall's drawn thickness, m (absent: 0.36) */ w?: number;
+    /** round 14D (Sonoma T11, a thick white wall, built as its two faces): on the front face run, the box drawn from this
+     *  line `w` m to its left (side +1) or right (-1); on the back face run `hidden` (it collides, its body is the box) */
+    box?: { w: number; side: number }; hidden?: boolean;
     /** round 12 (Sonoma judge r11 N65): the absolute z of the wall's top per point where it is level across a hollow in
      *  its ground (tools/track/barrier_rules.py); absent: ground + h. The wall is drawn from the ground to this top. */
     top_z?: number[] }[];
@@ -723,9 +725,11 @@ export function barrierSections(P: V3[], b: { color?: string; pattern?: { colors
   return out;
 }
 
-/** Round 14D: a concrete / pit wall's drawn half thickness (its `w` / 2, else 0.18: the 0.36 m wall of every run before). */
-export function wallHalfThickness(b: { w?: number }): number {
-  return b.w && b.w > 0 ? b.w / 2 : 0.18;
+/** Round 14D: a thick wall's two drawn faces from its front face run (`box`: the back face `w` m to the polyline's left,
+ *  side +1, or right, -1), as [left line, right line] the way the wall body is drawn (left first). Pure. */
+export function boxFaces<T>(P: T[], box: { w: number; side: number }, offset: (P: T[], d: number) => T[]): [T[], T[]] {
+  const back = offset(P, box.side * box.w), front = offset(P, 0);
+  return box.side > 0 ? [back, front] : [front, back];
 }
 
 /** Round 14D: the row indices a tyre run draws (row k at k x 0.6 m to the polyline's left): `rows` (1-8), absent 2. */
@@ -770,9 +774,11 @@ function buildBarriers(list: SceneryJson['barriers'], drawn?: (x: number, y: num
     const P = b.pts;
     if (P.length < 2) continue;
     const top = b.top_z && b.top_z.length === P.length ? b.top_z : P.map((p) => p[2] + b.h);
-    if (b.kind === 'concrete' || b.kind === 'pitwall') {
-      const th = wallHalfThickness(b);
-      const L = offsetLine(P, th), R = offsetLine(P, -th);
+    if ((b.kind === 'concrete' || b.kind === 'pitwall') && b.hidden) {
+      // round 14D: a thick wall's back face: its body is drawn from the front face run (box); only its fence below
+    } else if (b.kind === 'concrete' || b.kind === 'pitwall') {
+      const th = 0.18;
+      const [L, R] = b.box ? boxFaces(P, b.box, offsetLine) : [offsetLine(P, th), offsetLine(P, -th)];
       const cc = b.color ? new THREE.Color(b.color) : b.kind === 'pitwall' ? cPit : cConcrete;
       const segs = barrierSections(P, b);
       if (segs) {
@@ -1580,15 +1586,7 @@ function latticeTower(x: number, y: number, z: number, h: number, w: number, mat
 }
 
 /** Painted lines off the track (scenery.json `paint_lines`): flat white strips just above the paving. */
-/** Round 14D (the owner's T1 service-road mouth line, on plain ground beyond a kerb): a paint-line vertex stands at its
- *  package height (the driven surface + 0.008 m), or 0.008 m over the terrain mesh as drawn where that lies higher (the
- *  3 m triangulation can rise a few cm over the heightfield and bury a line on open ground). On a ribbon or a zone the
- *  drawn terrain is sunk below the surface, so the line stays where the package put it. Pure. */
-export function paintLineZ(z: number, x: number, y: number, drawn?: (x: number, y: number) => number): number {
-  return drawn ? Math.max(z, drawn(x, y) + 0.008) : z;
-}
-
-function buildPaintLines(list: NonNullable<SceneryJson['paint_lines']>, drawn?: (x: number, y: number) => number): THREE.Group | null {
+function buildPaintLines(list: NonNullable<SceneryJson['paint_lines']>): THREE.Group | null {
   const byColor = new Map<string, number[]>();
   for (const l of list) {
     const key = (l.color ?? '#e9e8e2') + (l.gloss !== undefined ? `|${l.gloss}` : '');
@@ -1597,8 +1595,7 @@ function buildPaintLines(list: NonNullable<SceneryJson['paint_lines']>, drawn?: 
     for (let i = 0; i + 1 < P.length; i++) {
       const [ax, ay, az] = P[i], [bx, by, bz] = P[i + 1];
       const dx = bx - ax, dy = by - ay, d = Math.hypot(dx, dy) || 1, nx = (-dy / d) * hw, ny = (dx / d) * hw;
-      const zz = (x: number, y: number, z: number) => paintLineZ(z, x, y, drawn);
-      const q = [v3(ax + nx, ay + ny, zz(ax + nx, ay + ny, az)), v3(ax - nx, ay - ny, zz(ax - nx, ay - ny, az)), v3(bx + nx, by + ny, zz(bx + nx, by + ny, bz)), v3(bx - nx, by - ny, zz(bx - nx, by - ny, bz))];
+      const q = [v3(ax + nx, ay + ny, az), v3(ax - nx, ay - ny, az), v3(bx + nx, by + ny, bz), v3(bx - nx, by - ny, bz)];
       for (const k of [0, 1, 2, 1, 3, 2]) pos.push(q[k].x, q[k].y, q[k].z);
     }
   }
@@ -2186,7 +2183,7 @@ export function buildScenery(track: TrackJson, _hf: Float32Array, sc: SceneryAss
     const m = buildPitExitCones({ spacing_m: cl.spacing_m, s0: 0, s1: 0, pts: cl.pts, color: cl.color, size: cl.size, style: cl.style }, ground);
     if (m) { m.name = 'cone_line'; root.add(m); }
   }
-  if (j.paint_lines?.length) { const m = buildPaintLines(j.paint_lines, drawn); if (m) root.add(m); }
+  if (j.paint_lines?.length) { const m = buildPaintLines(j.paint_lines); if (m) root.add(m); }
   if (j.ground_signs?.length) { const m = buildGroundSigns(j.ground_signs, ground); if (m) root.add(m); }
   if (j.kerb_lines?.length) root.add(buildKerbLines(j.kerb_lines, ground));
   if (j.paved_areas?.length && ground) { const m = buildPavedAreas(j.paved_areas, ground, paint); if (m) root.add(m); }
