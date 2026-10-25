@@ -662,27 +662,73 @@ class Strip {
 const TYRE_R = 0.31, TYRE_H = 0.23, TYRE_PITCH = 0.62;
 /** Tyres in a stack of height h (m): one per 0.23 m, 1 to 6. */
 export function tyresInStack(h: number): number { return Math.max(1, Math.min(6, Math.round((h || 0.92) / TYRE_H))); }
-/** One stack of n tyres lying flat: a lathe whose profile bulges per tyre with a dark groove between tyres and a dark
- *  hole at the top (vertex colour by radius: tread 1, groove 0.45, hole 0.25). */
+/** The used-tyre look (Buttonwillow round 13, the owner's T2 note of 25 Oct 2026: "Try to make it look less dark / look
+ *  like an actual stack of used tires"), for every tyre wall on every track. Vertex shade of a stack: each tyre's tread
+ *  band `tread`, scaled per tyre by `level` (worn, newer and dustier casings side by side) and round the tyre by a wear
+ *  patch of +-`wear` (its own phase per tyre); the deep groove between two tyres `groove`; the hole on top `hole`. The
+ *  default casing colour (a run without a recorded colour) is `rubber`, the weathered grey of used tyres in the sun, not
+ *  flat black. */
+export const TYRE_LOOK = {
+  tread: 1.0, groove: 0.42, hole: 0.28, wear: 0.16,
+  level: [1.0, 0.86, 1.1, 0.93, 1.05, 0.88],
+  rubber: '#3b3c3d',
+  /** per stack: brightness +-`stackVar` and a random turn about its axis, so no two stacks show the same tyres */
+  stackVar: 0.1,
+  /** a recorded casing colour darker than `rubber` (flat black, e.g. Sonoma's #161616) is lifted this far toward it:
+   *  used tyres in daylight read as dark grey rubber, never as a black hole */
+  floor: 0.7,
+  /** the casing's roughness (MeshStandardMaterial): worn rubber, a faint sheen at grazing light */
+  roughness: 0.88,
+  /** the casing colour's gain in the renderer, set so a sunlit stack renders at its recorded colour (the T2 wall's
+   *  #3e443f, onboard t288 in the sun; round 13 stills, LEDGER.md) */
+  gain: 2.0,
+};
+/** The drawn casing colour for a recorded one (sRGB hex): colours darker than TYRE_LOOK.rubber move `floor` of the way
+ *  toward it (per channel), lighter ones (white stacks, painted or dusty casings) are kept. */
+export function tyreCasing(hex: string): string {
+  if (!/^#[0-9a-f]{6}$/i.test(hex)) return hex;
+  const a = parseInt(hex.slice(1), 16), b = parseInt(TYRE_LOOK.rubber.slice(1), 16);
+  let o = 0;
+  for (const sh of [16, 8, 0]) {
+    const ca = (a >> sh) & 255, cb = (b >> sh) & 255;
+    o |= Math.round(ca < cb ? ca + (cb - ca) * TYRE_LOOK.floor : ca) << sh;
+  }
+  return '#' + o.toString(16).padStart(6, '0');
+}
+const TYRE_SEGMENTS = 7;
+/** One stack of n tyres lying flat: a lathe whose profile gives each tyre a flat tread band between two rounded
+ *  shoulders and a deep groove to the next tyre, and the dark hole at the top. Three profile points per tyre and 7
+ *  segments (each stack turned by its own angle, so the facets do not line up): 224 triangles for a stack of 4 (round 7's
+ *  bulge-and-groove profile on 8 segments: 192). */
 export function tyreStackGeometry(n: number): THREE.BufferGeometry {
-  const P: THREE.Vector2[] = [new THREE.Vector2(0.001, 0), new THREE.Vector2(TYRE_R - 0.05, 0)];
-  // two profile points per tyre (the bulge, then the groove) and 8 segments: ~190 triangles for a stack of 4
+  const P: THREE.Vector2[] = [new THREE.Vector2(0.001, 0), new THREE.Vector2(TYRE_R - 0.075, 0)];
   for (let k = 0; k < n; k++) {
     const y0 = k * TYRE_H;
-    P.push(new THREE.Vector2(TYRE_R, y0 + TYRE_H / 2), new THREE.Vector2(TYRE_R - 0.05, y0 + TYRE_H));
+    P.push(new THREE.Vector2(TYRE_R - 0.012, y0 + 0.04), new THREE.Vector2(TYRE_R - 0.012, y0 + TYRE_H - 0.04),
+      new THREE.Vector2(TYRE_R - 0.075, y0 + TYRE_H));
   }
   const top = n * TYRE_H;
   P.push(new THREE.Vector2(0.17, top - 0.01), new THREE.Vector2(0.15, top - 0.14), new THREE.Vector2(0.001, top - 0.14));
-  const g = new THREE.LatheGeometry(P, 8);
+  const g = new THREE.LatheGeometry(P, TYRE_SEGMENTS);
   const p = g.attributes.position as THREE.BufferAttribute;
   const col = new Float32Array(p.count * 3);
+  const L = TYRE_LOOK;
   for (let i = 0; i < p.count; i++) {
-    const r = Math.hypot(p.getX(i), p.getZ(i));
-    const v = r > TYRE_R - 0.01 ? 1 : r > 0.2 ? 0.45 : 0.25;
+    const x = p.getX(i), y = p.getY(i), z = p.getZ(i), r = Math.hypot(x, z);
+    const k = Math.max(0, Math.min(n - 1, Math.floor(y / TYRE_H)));
+    let v: number;
+    if (r > TYRE_R - 0.03) v = L.tread * L.level[k % L.level.length] * (1 + L.wear * Math.cos(Math.atan2(z, x) - 2.4 * k));
+    else if (r > 0.2) v = L.groove;
+    else v = L.hole;
     col[i * 3] = col[i * 3 + 1] = col[i * 3 + 2] = v;
   }
   g.setAttribute('color', new THREE.BufferAttribute(col, 3));
   return g;
+}
+/** 0..1 from a stack's position (stable between loads: the same stack always gets the same turn and shade) */
+function tyreHash(x: number, y: number): number {
+  const s = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;
+  return s - Math.floor(s);
 }
 
 /** Arc-length piece [a, b] (m) of a polyline, ends interpolated. */
@@ -822,7 +868,9 @@ function buildBarriers(list: SceneryJson['barriers'], drawn?: (x: number, y: num
       let acc = 0, k = 0;
       // tyres per stack from the evidence (b.stack) or from h; the stack is scaled to stand exactly h high
       const nT = b.stack ?? tyresInStack(b.h), sy = (b.h || nT * TYRE_H) / (nT * TYRE_H);
-      const place = (x: number, y: number, z: number) => new THREE.Matrix4().makeTranslation(x, z, -y).multiply(new THREE.Matrix4().makeScale(1, sy, 1));
+      // round 13: each stack turned about its axis by its own amount (the wear patches of its tyres face different ways)
+      const place = (x: number, y: number, z: number) => new THREE.Matrix4().makeTranslation(x, z, -y)
+        .multiply(new THREE.Matrix4().makeRotationY(tyreHash(x, y) * 2 * Math.PI)).multiply(new THREE.Matrix4().makeScale(1, sy, 1));
       // round 14D: the run's rows (absent 2) and its colour sections along the run (pattern / sections, as on the walls)
       const rowsIdx = tyreRows(b), segs = barrierSections(P, b);
       let along = 0;
@@ -912,17 +960,28 @@ function buildBarriers(list: SceneryJson['barriers'], drawn?: (x: number, y: num
   if (tyres.length) {
     // stacked tyres (round 7, Sonoma owner note 38: the stacks read as a flat segmented wall): one lathe per stack height,
     // each tyre a rounded bulge with a dark groove between tyres and the dark hole at the top, so a run reads as tyres;
-    // one InstancedMesh per stack height, colour per instance (the run's recorded colour, black by default)
+    // one InstancedMesh per stack height, colour per instance (the run's recorded colour through tyreCasing, the used-rubber
+    // grey TYRE_LOOK.rubber by default; round 13)
     const byN = new Map<number, typeof tyres>();
     for (const t of tyres) { const a = byN.get(t.n); if (a) a.push(t); else byN.set(t.n, [t]); }
-    const black = new THREE.Color(0x202020), white = new THREE.Color(0xdedede);
+    const black = new THREE.Color(TYRE_LOOK.rubber), white = new THREE.Color(0xdedede);
     const tc = new Map<string, THREE.Color>();
+    const t0 = new THREE.Matrix4();
     for (const [nT, list2] of byN) {
       const g = tyreStackGeometry(nT);
-      const im = new THREE.InstancedMesh(g, lam({ vertexColors: true }), list2.length);
+      // round 13: a rough standard material, so the casings take the sky's light from the baked environment as the
+      // ground and the cars do (Lambert's hemisphere alone left a shaded face near black)
+      const im = new THREE.InstancedMesh(g, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: TYRE_LOOK.roughness, metalness: 0 }), list2.length);
       // a run's recorded colour (Sonoma: black-covered stacks, white at the T11 hairpin) for all its stacks; without one,
       // black with a white pair every 12 stacks (Laguna)
-      list2.forEach((t, i) => { im.setMatrixAt(i, t.m); im.setColorAt(i, t.color ? (tc.get(t.color) ?? tc.set(t.color, new THREE.Color(t.color)).get(t.color)!) : t.white ? white : black); });
+      // round 13: each stack's colour scaled by +-stackVar from its position (no two neighbours the same shade)
+      const c = new THREE.Color(), e = t0.elements;
+      list2.forEach((t, i) => {
+        im.setMatrixAt(i, t.m);
+        c.copy(t.color ? (tc.get(t.color) ?? tc.set(t.color, new THREE.Color(tyreCasing(t.color))).get(t.color)!) : t.white ? white : black);
+        t0.copy(t.m);
+        im.setColorAt(i, c.multiplyScalar(TYRE_LOOK.gain * (1 + TYRE_LOOK.stackVar * (2 * tyreHash(e[12] * 1.7 + 3.1, e[14] * 1.3 - 7.7) - 1))));
+      });
       im.computeBoundingSphere();
       im.name = 'tyre_walls';
       group.add(im);
@@ -2077,7 +2136,8 @@ function buildLandmarks(list: SceneryJson['landmarks']): THREE.Group {
         }
       } else {
         const layers = Math.max(1, Math.round(m.h / 0.21));
-        const tyreMat = new THREE.MeshLambertMaterial({ color: m.color ?? '#1d1e20' });
+        // round 13: the used-tyre casing, drawn as the tyre walls are (rough standard material, the same gain)
+        const tyreMat = new THREE.MeshStandardMaterial({ color: new THREE.Color(tyreCasing(m.color ?? TYRE_LOOK.rubber)).multiplyScalar(TYRE_LOOK.gain), roughness: TYRE_LOOK.roughness, metalness: 0 });
         for (let k = 0; k < layers; k++) {
           const t = new THREE.Mesh(new THREE.CylinderGeometry(m.w / 2, m.w / 2, 0.2, 14), tyreMat);
           t.position.set(0, 0.1 + k * 0.21, 0);

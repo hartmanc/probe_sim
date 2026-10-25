@@ -1409,7 +1409,7 @@ def scenery_gates(cfg, T, SC, tmp, trk):
     """Run the TypeScript scenery gates on scenery.json in `tmp` (written first) and print their report; returns the
     failed gate labels."""
     g = dict(cfg["scenery"].get("gates", {}))
-    out = {k: g[k] for k in ("reach", "step", "cones_exempt") if k in g}
+    out = {k: g[k] for k in ("reach", "step", "cones_exempt", "paved_coverage") if k in g}
     sp = T["spacing_m"]
     al = []
     for a in g.get("allowed", []):
