@@ -896,44 +896,51 @@ CONFIG = dict(
                  src='onboard t020 (0:20); c20_s0600 / c20_s0650 (the tyre ring round the station roof); position: 0.8 m beyond the fitted right edge at s 474-488, the mound face',
                  latlon=[(35.4906055, -119.5410192), (35.4906059, -119.5410526), (35.4906305, -119.5410667), (35.4906638, -119.5410826),
                          (35.4906971, -119.5410982), (35.4907226, -119.5411075), (35.4907385, -119.5410817)]),
+            # round 12 (the merged wall-ends gate: 826 R 5.4 m, 1185 R 7.8 m, T3 1020 R 6.8 m read as bare tyre heads facing
+            # oncoming travel): every station ring here is CLOSED all round on the 2026 captures (c20_s0550 / c20_s0950 at
+            # 826, c20_s1300 at 1185, c20_s1150 at T3: a continuous dark ring round the white roof; the only pale break, at
+            # 826, lies on the side away from the track) and on the onboard (stage3_evidence/station_crops.jpg t034 / t046 /
+            # t138: one unbroken low surround). A closed ring has no end facing travel; the head the gate read was the
+            # polyline's seam on the ring's track side. seam='far' (build_scenery) starts each ring at its point farthest
+            # from the track; points and segments unchanged. Applied to all nine closed station rings (one rule)
             # judge r8 (cp6): the pale protective surround the frames show round the stations without a declared ring (a ring of 3.5 m radius,
             # pale tyres 0.8 m, as the T3 / T5 rings); 2776 R (t092 does not show the station) and 3202 R left without one
-            dict(name='station 826 surround', kind='tyres', h=0.8, fence=0.0, color='#d2cab8',
+            dict(name='station 826 surround', kind='tyres', seam='far', h=0.8, fence=0.0, color='#d2cab8',
                  h_src='tyre-ref against the station base on t034',
                  src='onboard t034: a low pale surround round the station (stage3_evidence/station_crops.jpg); c20_s0600: a dark tyre ring round the white roof (blob_scan); 3.5 m radius as the T3 ring',
                  latlon=[(35.4904386, -119.5401737), (35.4904506, -119.5401767), (35.4904608, -119.540185), (35.4904677, -119.5401976), (35.49047, -119.5402123), (35.4904677, -119.5402271), (35.4904608, -119.5402396), (35.4904506, -119.540248), (35.4904386, -119.5402509), (35.4904266, -119.540248), (35.4904164, -119.5402396), (35.4904096, -119.5402271), (35.4904072, -119.5402123), (35.4904096, -119.5401976), (35.4904164, -119.540185), (35.4904266, -119.5401767), (35.4904386, -119.5401737)]),
-            dict(name='station 1185 surround', kind='tyres', h=0.8, fence=0.0, color='#d2cab8',
+            dict(name='station 1185 surround', kind='tyres', seam='far', h=0.8, fence=0.0, color='#d2cab8',
                  h_src='tyre-ref against the station base on t046',
                  src='onboard t046: a low pale surround round the station (stage3_evidence/station_crops.jpg); c20_s1300: a dark tyre ring round the white roof (blob_scan); 3.5 m radius as the T3 ring',
                  latlon=[(35.4875581, -119.5395148), (35.4875701, -119.5395178), (35.4875803, -119.5395261), (35.4875871, -119.5395387), (35.4875895, -119.5395534), (35.4875871, -119.5395682), (35.4875803, -119.5395807), (35.4875701, -119.5395891), (35.4875581, -119.5395921), (35.487546, -119.5395891), (35.4875358, -119.5395807), (35.487529, -119.5395682), (35.4875266, -119.5395534), (35.487529, -119.5395387), (35.4875358, -119.5395261), (35.487546, -119.5395178), (35.4875581, -119.5395148)]),
-            dict(name='station 2370 surround', kind='tyres', h=0.8, fence=0.0, color='#d2cab8',
+            dict(name='station 2370 surround', kind='tyres', seam='far', h=0.8, fence=0.0, color='#d2cab8',
                  h_src='tyre-ref against the station base on t082',
                  src='onboard t082: a low pale surround round the station (stage3_evidence/station_crops.jpg); c20_s2500: a dark tyre ring round the white roof (blob_scan); 3.5 m radius as the T3 ring',
                  latlon=[(35.487615, -119.5496438), (35.4876271, -119.5496467), (35.4876373, -119.5496551), (35.4876441, -119.5496676), (35.4876465, -119.5496824), (35.4876441, -119.5496972), (35.4876373, -119.5497097), (35.4876271, -119.5497181), (35.487615, -119.549721), (35.487603, -119.5497181), (35.4875928, -119.5497097), (35.487586, -119.5496972), (35.4875836, -119.5496824), (35.487586, -119.5496676), (35.4875928, -119.5496551), (35.487603, -119.5496467), (35.487615, -119.5496438)]),
-            dict(name='station 3433 surround', kind='tyres', h=0.8, fence=0.0, color='#d2cab8',
+            dict(name='station 3433 surround', kind='tyres', seam='far', h=0.8, fence=0.0, color='#d2cab8',
                  h_src='tyre-ref against the station base on t112',
                  src='onboard t112: a low pale surround round the station (stage3_evidence/station_crops.jpg); c20_s3500: a dark tyre ring round the white roof (blob_scan); 3.5 m radius as the T3 ring',
                  latlon=[(35.4964593, -119.5490965), (35.4964713, -119.5490995), (35.4964815, -119.5491078), (35.4964883, -119.5491204), (35.4964907, -119.5491351), (35.4964883, -119.5491499), (35.4964815, -119.5491625), (35.4964713, -119.5491708), (35.4964593, -119.5491738), (35.4964473, -119.5491708), (35.4964371, -119.5491625), (35.4964302, -119.5491499), (35.4964279, -119.5491351), (35.4964302, -119.5491204), (35.4964371, -119.5491078), (35.4964473, -119.5490995), (35.4964593, -119.5490965)]),
-            dict(name='station 3716 surround', kind='tyres', h=0.8, fence=0.0, color='#d2cab8',
+            dict(name='station 3716 surround', kind='tyres', seam='far', h=0.8, fence=0.0, color='#d2cab8',
                  h_src='tyre-ref against the station base on t122',
                  src='onboard t122: a low pale surround round the station (stage3_evidence/station_crops.jpg); c20_s3800: a dark tyre ring round the white roof (blob_scan); 3.5 m radius as the T3 ring',
                  latlon=[(35.4946445, -119.5481377), (35.4946566, -119.5481406), (35.4946668, -119.548149), (35.4946736, -119.5481615), (35.494676, -119.5481763), (35.4946736, -119.5481911), (35.4946668, -119.5482036), (35.4946566, -119.5482119), (35.4946445, -119.5482149), (35.4946325, -119.5482119), (35.4946223, -119.5482036), (35.4946155, -119.5481911), (35.4946131, -119.5481763), (35.4946155, -119.5481615), (35.4946223, -119.548149), (35.4946325, -119.5481406), (35.4946445, -119.5481377)]),
-            dict(name='T3 station mound tyres', kind='tyres', h=0.8, fence=0.0, color='#605d61',   # round 11 (judge r10 back_07 4300: pale stacks against the onboard's dark base): onboard t040 (0:40), the surround's face beside the T3 station: median #5d5858 (lower) / #626168 (upper), a dusty dark grey, as the capture's dark ring
+            dict(name='T3 station mound tyres', kind='tyres', seam='far', h=0.8, fence=0.0, color='#605d61',   # round 11 (judge r10 back_07 4300: pale stacks against the onboard's dark base): onboard t040 (0:40), the surround's face beside the T3 station: median #5d5858 (lower) / #626168 (upper), a dusty dark grey, as the capture's dark ring
                  
                  h_src='tyre-ref: one to two tyres high round the mound (onboard t040 (0:40))',
                  src='c20_s1100 / c20_s1150: the dark tyre ring round the station roof (compare/blob_scan.py); onboard t040 (0:40) (inventory station row s 996 right: a canopy on a tyre-walled mound); a ring of 3.5 m radius round the roof centroid, the mound size on the capture (judge r1 row)',
                  latlon=[(35.4888477, -119.5394132), (35.4888613, -119.539417), (35.4888723, -119.5394277), (35.4888784, -119.5394432), (35.4888784, -119.5394604), (35.4888723, -119.5394759), (35.4888613, -119.5394866), (35.4888477, -119.5394904), (35.4888341, -119.5394866), (35.4888231, -119.5394759), (35.488817, -119.5394604), (35.488817, -119.5394432), (35.4888231, -119.5394277), (35.4888341, -119.539417), (35.4888477, -119.5394132)]),
-            dict(name='T5 station mound tyres', kind='tyres', h=0.8, fence=0.0, color='#6f6662',   # round 11 (judge r10 back_07 4300: pale stacks against the onboard's dark base): no onboard frame shows its face (t058: the station beyond the frame edge); the median of the three measured faces (T3 #605d61, T6 #80736f, T11 #786255) with the capture's dark ring (c20_s1600)
+            dict(name='T5 station mound tyres', kind='tyres', seam='far', h=0.8, fence=0.0, color='#6f6662',   # round 11 (judge r10 back_07 4300: pale stacks against the onboard's dark base): no onboard frame shows its face (t058: the station beyond the frame edge); the median of the three measured faces (T3 #605d61, T6 #80736f, T11 #786255) with the capture's dark ring (c20_s1600)
                  
                  h_src='tyre-ref: one to two tyres high round the mound (onboard t058 (0:58))',
                  src='c20_s1600: the dark tyre ring round the station roof (compare/blob_scan.py); onboard t058 (0:58) (inventory station row s 1525 right: a canopy on a tyre-walled mound); a ring of 3.5 m radius round the roof centroid, the mound size on the capture (judge r1 row)',
                  latlon=[(35.4868397, -119.5420956), (35.4868533, -119.5420994), (35.4868643, -119.5421101), (35.4868704, -119.5421256), (35.4868704, -119.5421428), (35.4868643, -119.5421583), (35.4868533, -119.542169), (35.4868397, -119.5421728), (35.4868261, -119.542169), (35.4868151, -119.5421583), (35.486809, -119.5421428), (35.486809, -119.5421256), (35.4868151, -119.5421101), (35.4868261, -119.5420994), (35.4868397, -119.5420956)]),
-            dict(name='T6 (Riverside) station mound tyres', kind='tyres', h=0.8, fence=0.0, color='#80736f',   # round 11 (judge r10 back_07 4300: pale stacks against the onboard's dark base): onboard t074 (1:14), the surround's face: median #80736f
+            dict(name='T6 (Riverside) station mound tyres', kind='tyres', seam='far', h=0.8, fence=0.0, color='#80736f',   # round 11 (judge r10 back_07 4300: pale stacks against the onboard's dark base): onboard t074 (1:14), the surround's face: median #80736f
                  
                  h_src='tyre-ref: one to two tyres high round the mound (onboard t074 (1:14))',
                  src='c20_s2150: the dark tyre ring round the station roof (compare/blob_scan.py); onboard t074 (1:14) (inventory station row s 2054 right: a canopy on a tyre-walled mound); a ring of 3.5 m radius round the roof centroid, the mound size on the capture (judge r1 row)',
                  latlon=[(35.4865323, -119.5476852), (35.4865459, -119.547689), (35.4865569, -119.5476997), (35.486563, -119.5477152), (35.486563, -119.5477324), (35.4865569, -119.5477479), (35.4865459, -119.5477586), (35.4865323, -119.5477624), (35.4865187, -119.5477586), (35.4865077, -119.5477479), (35.4865016, -119.5477324), (35.4865016, -119.5477152), (35.4865077, -119.5476997), (35.4865187, -119.547689), (35.4865323, -119.5476852)]),
-            dict(name='T11 approach (Sunset) station mound tyres', kind='tyres', h=0.8, fence=0.0, color='#786255',   # round 11 (judge r10 back_07 4300: pale stacks against the onboard's dark base): onboard t138 (2:18), the surround's face under the trees: median #786255
+            dict(name='T11 approach (Sunset) station mound tyres', kind='tyres', seam='far', h=0.8, fence=0.0, color='#786255',   # round 11 (judge r10 back_07 4300: pale stacks against the onboard's dark base): onboard t138 (2:18), the surround's face under the trees: median #786255
                  
                  h_src='tyre-ref: one to two tyres high round the mound (onboard t138 (2:18))',
                  src='c20_s4400: the dark tyre ring round the station roof (compare/blob_scan.py); onboard t138 (2:18) (inventory station row s 4273 left: a canopy on a tyre-walled mound); a ring of 3.5 m radius round the roof centroid, the mound size on the capture (judge r1 row)',
@@ -1233,6 +1240,12 @@ CONFIG = dict(
         # straight s 4280-4323 (three on the centreline, measured on c20_s4400 / c20_s4450) are dropped: from the hood they
         # line up as a dashed centre line the onboard (fwd_14 s4250-4350) does not show. A procedural seal network is GitHub
         # issue #10 (future).
+        # round 12 (the merged gate 'ground marks on surface': 1680 paint-line vertices -0.063 .. +0.027 m off the driven
+        # surface against 0 .. 0.01 m, mostly the round-11 seal's polylines, whose 0.4 m points took heights from the
+        # stage-3 surface before the package's own drape): stage 3 drapes every ground mark on the package's own driven
+        # surface (drape_marks.ts, Sonoma round 14B), paint lines 0.008 m up as before; heights only, the measured
+        # wavy lines keep their plan shape
+        marks_on_surface=dict(lift=0.008, src='round 12: the merged ground-marks gate (1680 vertices off on rev 69e80ace38)'),
         surface_marks=dict(max=1200, min_len=3.0, contrast=9,   # cp5: 14 -> 9 (111 marks did not show at hood level)
                            polyline=True, step=0.4, width=0.05, color='#151515', gloss=0.5,
                            drop=[dict(a=(35.4896865, -119.5482053), b=(35.4892169, -119.5481165), lengthwise=30,
@@ -1374,7 +1387,18 @@ CONFIG = dict(
                  why='open dirt between Zorros Corners and Sunset / the drag strip, no barrier (c20_s4200-c20_s4350 and c20_s2650; onboard t128-t136: open ground right)'),
             dict(target='Zorros Corners (OSM 34351301)', side='right', a=(35.4912008, -119.5485186), b=(35.4888995, -119.5480436),
                  why='open dirt between Zorros Corners and Sunset / the drag strip, no barrier (c20_s4200-c20_s4350 and c20_s2650; onboard t128-t136: open ground right)'),
-        ], paddock=[]),
+        ], paddock=[],
+            # round 12 (the merged run-gaps gate): the two holes in the pit lane's paddock-side K-rail are real openings to the
+            # paddock. c20_p0420 / c20_p0480 (west of the tower) and c20_p0480 / c20_p0540 (east of it): the red / white
+            # K-rail stops and the paving runs through unbroken from the lane into the paddock (compare crops at the run ends;
+            # ~12 m each on the capture against the model's 12.5 / 14.5 m); pit-lane video ucmXJu5QKFQ 21:52 (t1312000): the
+            # K-rail ends at a pole west of the tower, people walk through the gap, a yellow and an orange cone in it
+            openings=[dict(latlon=(35.4890090, -119.5450117),
+                           why='pit lane, paddock side, west / tower runs (s ~4657 L, 12.5 m): a paddock opening, paving through '
+                               '(c20_p0420 / c20_p0480; pit-lane video t1312000: the K-rail ends, people and two cones in the gap)'),
+                      dict(latlon=(35.4890655, -119.5440304),
+                           why='pit lane, paddock side, tower / east runs (s ~47 L, 14.5 m): a paddock opening, paving through '
+                               '(c20_p0480 / c20_p0540: the K-rail stops either side of an unbroken paved gap)')]),
     ),
     # ---------------------------------------------------------------- pit lane, first-class (SKILL 3.5)
     pit_lane=dict(
