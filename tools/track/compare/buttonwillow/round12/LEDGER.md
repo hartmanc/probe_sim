@@ -10,7 +10,7 @@ Build: the round-11 build records (`probe_sim-wt/buttonwillow/tools/track/out/bw
 `tools/track/out/buttonwillow_r12/`; the worktree's track cache and compare imagery cloned (APFS `cp -c`, read only on
 the source) from the same worktree. Stage 3 run twice (check, then `--publish --overwrite-package`), both exit 0 with 0
 `[FAIL]` lines. Logs: `/tmp/bw12/stage3.log`, `/tmp/bw12/stage3_pub.log`. Package `public/tracks/buttonwillow`: rev
-**69e80ace38 -> 4c9dab5340**, lap 4699.187 m (unchanged).
+**69e80ace38 -> 4c9dab5340 -> 52bf051dcc** (the second after the review fixes below), lap 4699.187 m (unchanged).
 
 ## What failed (merged gate CLI on rev 69e80ace38)
 
@@ -45,9 +45,8 @@ Evidence: the capture crops at both holes (c20_p0420 / c20_p0480 west of the tow
 the red / white K-rail stops and the paving runs unbroken from the lane into the paddock, ~12 m wide on the capture
 each. Pit-lane video ucmXJu5QKFQ 21:52 (t1312000): the K-rail ends at a pole west of the tower, people walk through the
 gap, a yellow and an orange cone stand in it. Both declared with `why` and their frames; the walls are not moved.
-Observation, not changed: the capture puts the tower run's east end ~3 m further east than the model (its hole reads
-~11.6 m against 14.5 m), and the sim draws the paddock beyond both openings as dirt where the capture shows paving
-(`pairs_paddock.jpg` rows 1-2). For the owner.
+First pass: the run ends and the ground beyond were left as they were; both are fixed in the review round below
+(the run ends at their measured positions, the paddock strip paved).
 
 ### 3. Ground marks: `scenery.marks_on_surface` on (lift 0.008 m)
 
@@ -88,6 +87,8 @@ Tests on the branch after the change: `npm run build` clean; `npx vitest run` 62
 
 ## Geometry identity
 
+(First pass, rev 4c9dab5340. After the review round, ortho.jpg changes too: see R2.)
+
 `tools/track/out/buttonwillow_r12/` and `public/tracks/buttonwillow/` against rev 69e80ace38 (`git diff --quiet HEAD`
 and `cmp`): track.json, heightfield.bin, ghosts.json, ortho.jpg, far_heightfield.bin, far_ortho.jpg byte-identical
 (sha256 track.json 199358fe..., heightfield.bin 2c677efb..., ghosts.json e66b3218...). Stages 1 and 2 were not re-run
@@ -95,7 +96,7 @@ and `cmp`): track.json, heightfield.bin, ghosts.json, ortho.jpg, far_heightfield
 ring rotations, the paint-line heights and the cone heights above (the rest of its byte difference is number spelling,
 1.0 -> 1, from the JSON round trip through drape_marks.ts).
 
-`src/scoreboard/config.ts`: TRACKS.buttonwillow `rev` 69e80ace38 -> **4c9dab5340**, `length_m` unchanged.
+`src/scoreboard/config.ts`: TRACKS.buttonwillow `rev` 69e80ace38 -> 4c9dab5340 -> **52bf051dcc**, `length_m` unchanged.
 
 ## Stills (local only, `round12/stills/`; `pose_walk.ts --port 5212`, hood camera; `_before` = rev 69e80ace38 rendered on this branch, `_after` = 4c9dab5340)
 
@@ -106,9 +107,79 @@ ring rotations, the paint-line heights and the cone heights above (the rest of i
 - `pairs_seal.jpg`: the round-11 seal poses (hood 850, 1600, 1650, 4300; back 2600) plus hood 1000 / 1100.
 - Single stills `<pose>_before.jpg` / `<pose>_after.jpg`; poses in `/tmp/bw12/poses.json`.
 
+## Review round (GPT 6 Astra, verdict "ship with fixes"; 24 Oct 2026)
+
+Two fixes asked for; Astra's other notes needed no action (no gate loosened; 7 -> 4 checked ends is the consequence of
+closed rings having no ends; no hidden special case; the drape reads fine).
+
+### R1. seam='far' only ever rotates
+
+The first version accepted ring ends up to 0.05 m apart and then dropped the last point, which for a nearly-closed ring
+would change its closing segment. Now `build_scenery.seam_far` requires the first point IDENTICAL to the last and
+refuses anything else (SystemExit naming the wall and both ends); the ring is the same closed point list rotated.
+Tests (`tools/track/test_round12_scenery.py`): rotation by 0 / 1 / 5 / 10 keeps every vertex and every segment
+(the closing one included); a ring whose ends are 3 cm apart is refused; an open run is refused. Proof on the package:
+the nine station rings in rev 52bf051dcc are identical to rev 4c9dab5340, and each is a pure rotation of the round-11
+(69e80ace38) closed point list with every other key unchanged.
+
+### R2. The K-rail ends at their measured positions; the paddock beyond paved
+
+**Ends.** Measured on c20_p0420 / c20_p0480 (west opening) and c20_p0480 / c20_p0540 (east): the RGB profile along the
+K-rail's line through each opening every 0.12 m, the end = the last sample more than 40 RGB from the opening's paving
+(both captures of each opening agree to the sample). Moved (config latlon, comment with frame and measurement):
+
+| end | moved | opening |
+|---|---|---|
+| west run, east end | 0.95 m east | west: 12.5 -> **12.0 m** |
+| tower run, west end | 0.46 m east | |
+| tower run, east end | 2.80 m east | east: 14.5 -> **11.8 m** (11.7 m in the gate's rounding) |
+| east run, west end | 0.07 m: under the sampling, unchanged | |
+
+**The paddock strip.** On those captures the paving runs from the lane through both openings into a paddock strip
+north of the K-rail, up to the dirt and tree line: 21 m wide west of the tower (21.3 m at x -60, 21.8 m at x -35, 23.8 m
+at x -125), 22 m east of it (23 m at x 60, 22 m at x 100); the clean captures reach y -160 m (the paddock captures
+start north of that), the tower and its 2-3 m apron (x -10 .. 34) left out. Built as closed roads from declared centre
+lines (`paddock strip west / east of the tower, inner / outer`), x -128 .. -10 and 34 .. 100, surface 'apron' (the
+paddock lanes' pale paving), `off_course=True` (paved for grip, off for lap validity, as Sonoma's escape road), no
+mouths on the track, no cones, no paint. Three builder keys, config-gated (absent: as before), each tested:
+- `closed_roads[].min_half` (= max_half: the measured width, no NAIP edge search);
+- `pit_lane.lane.to_walls.across` (the two run-end pairs): in each opening the lane's paving edge goes out to the
+  K-rail's line (it stopped 3.3-4.3 m short before, a dirt strip), with no margin, where the strip starts;
+- `closed_roads[].join_lane {reach}`: the strip's inner band takes the lane's edge height where they meet (the two
+  DEM fits left a lip of up to 0.10 m, mean 0.066 m west / 0.041 m east), the correction fading to 0 by the bands'
+  bisector; the lane unchanged.
+Why two overlapping bands per strip: the physics gives a point to the paved part whose centre line is nearest (the pit
+lane and the zones are one list), so a single 21 m strip lost its first metres to the lane and a narrow band took the
+lane's last metres. Each band's half-width is the lane centre's distance south of the K-rail line (8.11 m west, from
+7.89-8.28 on the built lane; 7.27 m east, 6.98-7.57), which puts the lane / paddock boundary on the K-rail's line
+(within 0.2 m); the outer band ends at the measured width.
+
+**Checks on the built surface** (`/tmp/bw12/scripts/scan.ts`, the physics' own sampler, transects every 0.5 m across
+the strips, 0.1 m steps): in the openings, from 4 m inside the lane to 21 m into the paddock, the largest height step is
+**0.007 m** (west) / **0.008 m** (east) and every sample is paved; beside the walls the largest step is 0.073 m at the
+strip's west end (x -128, its feathered end on the dirt) and 0.028 m where the east strip meets the OSM paddock lanes;
+2-3 % of the samples 0.3-20 m in are unpaved (the strip ends). Containment, pit connectivity and every other gate
+unchanged (table below); run gaps now finds paving through both openings (they stay declared with their evidence).
+
+**Package changes** (rev 4c9dab5340 -> 52bf051dcc): barriers 1 and 2 (the moved ends; the tower run resampled 39 -> 41
+points); paved zones 25 -> 29 (the four bands; the 25 old parts identical); the pit lane's left edge (out to the wall's
+line in the openings and at the moved ends, up to 3.9 m; elsewhere <= 0.13 m from the tower run's resampled points);
+the six pit-lane cones at the wall foot re-draped (<= 0.04 m in height); ortho.jpg: 427 of 6.7 M pixels, the lane's
+tone match over its widened polygon in the openings. track.json, heightfield.bin, ghosts.json, far_heightfield.bin and
+far_ortho.jpg stay byte-identical to rev 69e80ace38 (`git diff --quiet 152d422`); scenery.json and ortho.jpg change.
+
+**Stills** (`round12/stills/pairs_paddock_openings.jpg`; `_r12a` = rev 4c9dab5340, `_r12b` = 52bf051dcc, same poses):
+pit_gapW_row / pit_gapE_row / pit_gapW_l40 / pit_gapE_l40: the paving now runs through both openings into the paddock,
+the east opening narrower, the tower run longer; no seam or flicker between the lane and the strip.
+
+**Gates on rev 52bf051dcc** (gate CLI with the publish run's gates_config.json, and both stage-3 runs, 0 `[FAIL]`):
+every gate ok, the same numbers as the table below except run gaps (2 openings, both "a paved surface"). Tests: `npm
+run build` clean; `npx vitest run` 62 files, **510 passed**; Python `pytest tools/track` **87 passed, 3 skipped** (79 +
+8 new in `test_round12_scenery.py`).
+
 ## Open (for the owner)
 
-1. The paddock beyond the two K-rail openings is drawn as dirt; the capture shows paving there.
-2. The tower run's east end ~3 m short of the capture's.
-3. Carried from round 11: the mouth lines without onboard cones, the T2 wall height, the 37 kerb-run extents, the hood
+1. The paddock beyond the clean captures' reach (north of y -160 m) and between the tower and the K-rail (x -10 .. 34)
+   is as before.
+2. Carried from round 11: the mouth lines without onboard cones, the T2 wall height, the 37 kerb-run extents, the hood
    camera.
