@@ -88,7 +88,7 @@ export const TRACKS: Readonly<Record<string, TrackInfo>> = {
   // MyLaps 11838772): the 133 cars of identity.json that ran a timed lap, each with its own stints; ids from
   // identity.json ("<n>_sp" where the number is a different Laguna / Buttonwillow car's, renumbered cars by the earlier id).
   sonoma: { dir: 'tracks/sonoma/', name: 'Sonoma Raceway', short: 'Sonoma', length_m: 4105.328, pace: 'cars/field/sonoma/pace.json',
-    identity: 'cars/field/sonoma/identity.json', rev: '6b766e08d6',
+    identity: 'cars/field/sonoma/identity.json', rev: 'f399cda140',   // round 14C (scenery only; round 14B's geometry, 6b766e08d6)
     // on the front straight, ~120 m before the line (230 m before the last corner, T12, was 26 m past the T11 apex)
     start: { s_m: 3975, speed: ROLLING_START_SPEED },
     // 20 Oct 2026, 8 seeds of 4 laps: AI-AI contacts 91 at the Laguna headways, 57 at x1.4, 51 at x1.8 (the rest are passes);
