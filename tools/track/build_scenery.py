@@ -1788,18 +1788,22 @@ def tyre_facings(trk, bar, reach=2.5, off=0.55):
     for ti, b in enumerate(bar):
         if b["kind"] != "tyres":
             continue
-        if b.get("stack_of"):
-            # round 14D review (A): a stacked deep tyre wall stands as declared (its rear run faces the wall behind it;
-            # the gates check that), its members are not moved one by one
+        so = b.get("stack_of")
+        if so and so["k"] < so["n"] - 1:
+            # round 14D third review (2): a stacked deep tyre wall is placed as ONE wall: its rear member faces the wall
+            # behind (below) and the members in front follow it at the row spacing; they are not placed on their own
             continue
+        # the group's row 0 lies (n - 1) x 1.2 m before the rear member's polyline (0 for a run on its own)
+        grp_ext = (so["n"] - 1) * 2 * BR.TYRE_ROW if so else 0.0
         P = np.array(b["pts"], float)
+        P_old = P.copy()
         moved = []
         gmin_ = max(0.55, b.pop("_gap_min", 0.0) + 0.05)   # a declared run's own minimum (gap_min) holds here too
         # round 14D: a run that declares its `rows` (row k drawn k x 0.6 m to the polyline's left) faces a wall with its
         # LAST row: that row's line is tested and placed `off` in front of the wall, the polyline (row 0) kept that far in
         # front of it; a run without `rows` is placed by its polyline as before
         ext = (int(b["rows"]) - 1) * BR.TYRE_ROW if b.get("rows") else 0.0
-        if ext:
+        if ext or grp_ext:
             Tq = np.gradient(P[:, :2], axis=0); Tq /= np.maximum(np.linalg.norm(Tq, axis=1), 1e-9)[:, None]
             NLq = np.c_[-Tq[:, 1], Tq[:, 0]]
         for j in range(len(P)):
@@ -1827,8 +1831,8 @@ def tyre_facings(trk, bar, reach=2.5, off=0.55):
                     c, i_, p_new = c2, i3, p2
             if ext:
                 p_new = p_new - NLq[j] * ext   # back to the polyline (row 0)
-            # never closer than 0.55 m to the fitted edge (the barrier-gap gate)
-            i2, lat2, dout2 = trk.project(p_new[None])
+            # never closer than 0.55 m to the fitted edge (the barrier-gap gate): for a stack, its front member's row 0
+            i2, lat2, dout2 = trk.project((p_new - NLq[j] * grp_ext if grp_ext else p_new)[None])
             if dout2[0] < gmin_:
                 continue
             P[j, :2] = p_new
@@ -1837,6 +1841,20 @@ def tyre_facings(trk, bar, reach=2.5, off=0.55):
             P[:, 2] = trk.ground(P[:, 0], P[:, 1])
             b["pts"] = [[rnd(x, 2), rnd(y, 2), rnd(z, 2)] for x, y, z in P]
             log(f"tyre facing: {str(b.get('src', ''))[:70]}: {len(moved)} points onto the wall line ({off} m in front), stations {min(moved)}..{max(moved)}")
+            if so:
+                # the members in front follow the rear member point by point (same declared points, row spacing kept)
+                disp = P[:, :2] - P_old[:, :2]
+                for m in bar:
+                    mo = m.get("stack_of")
+                    if m is b or not mo or mo["id"] != so["id"]:
+                        continue
+                    Q = np.array(m["pts"], float)
+                    if len(Q) != len(P):
+                        raise SystemExit(f"tyre facing: stack {so['id']!r}: members of unequal length ({len(Q)} / {len(P)} points)")
+                    Q[:, :2] += disp
+                    Q[:, 2] = trk.ground(Q[:, 0], Q[:, 1])
+                    m["pts"] = [[rnd(x, 2), rnd(y, 2), rnd(z, 2)] for x, y, z in Q]
+                    log(f"tyre facing: stack member {mo['k']} of {so['id'][:50]!r} follows the rear member ({len(moved)} points, max {np.hypot(*disp.T).max():.2f} m)")
 
 
 def tyre_rows_outside(trk, bar, face_min=0.5, wall_reach=1.5):
@@ -1966,35 +1984,53 @@ def clip_parts_at_walls(parts, bar, margin=0.3, label="closed roads", heads=Fals
                             if 0 < tv < L:
                                 E[k, :2] = C[k] + r / L * tv; moved += 1
             if heads:
-                # round 14D review (D): the clip's margin is taken along each row's ray, so on a curve the edge SEGMENT can
-                # come nearer a wall (or cross it between rows); enforce `margin` as a segment-to-segment clearance on the
-                # rounded output: every edge segment within margin of a wall segment (crossing = 0) has both its rows
-                # brought in along their rays until it clears, to at most 10 passes
+                # round 14D review (D, third review 3): `margin` holds as a segment-to-segment clearance on the ROUNDED edges,
+                # crossings included, against EVERY barrier run passed in: an edge segment nearer a run than `margin` has both
+                # its rows moved along the perpendicular from the run's nearest point by the deficit (+ 0.011 m), which
+                # converges where a ray-wise move does not (a wall almost parallel to the rays); a residual violation after
+                # 50 passes fails the build (and clearance_report is checked again after the clip, a postcondition)
                 from shapely.geometry import LineString
+                from shapely.ops import nearest_points
                 from shapely.strtree import STRtree
-                W_ = [LineString(np.array(b["pts"])[:, :2]) for b in bar
-                      if b["kind"] in ("concrete", "pitwall", "tyres", "armco") and b.get("src") and len(b["pts"]) >= 2]
+                W_ = [LineString(np.array(b_["pts"])[:, :2]) for b_ in bar
+                      if b_["kind"] in ("concrete", "pitwall", "tyres", "armco") and len(b_["pts"]) >= 2]
                 tree = STRtree(W_) if W_ else None
-                for _ in range(10):
+                for _ in range(50):
                     fixed = 0
-                    Er = np.round(E[:, :2], 2)
                     for j in range(len(E) - 1):
                         if tree is None:
                             break
+                        Er = np.round(E[:, :2], 2)
                         seg = LineString([tuple(Er[j]), tuple(Er[j + 1])])
                         near_ = [W_[k] for k in tree.query(seg.buffer(margin + 0.02))]
                         if not near_:
                             continue
-                        dmin = min(seg.distance(w_) for w_ in near_)
-                        if dmin < margin - 1e-6:
-                            for k in (j, j + 1):
-                                r = E[k, :2] - C[k]; L = float(np.linalg.norm(r))
-                                if L > 1e-6:
-                                    E[k, :2] = C[k] + r / L * max(0.0, L - (margin - dmin) - 0.011)
-                            fixed += 1
+                        w_ = min(near_, key=seg.distance)
+                        dmin = seg.distance(w_)
+                        if dmin >= margin - 1e-6:
+                            continue
+                        ps, pw = nearest_points(seg, w_)
+                        u = np.array([ps.x - pw.x, ps.y - pw.y])
+                        cm = (C[j] + C[j + 1]) / 2 - np.array([pw.x, pw.y])    # from the wall toward the lane's centre line
+                        step = margin - dmin + 0.011
+                        if np.linalg.norm(u) < 1e-9:
+                            u = cm                                              # crossing: toward the centre line
+                        elif float(u @ cm) < 0:
+                            # the edge lies BEYOND the run (the lane reaches over it): back across it, toward the centre line
+                            u, step = -u, margin + dmin + 0.011
+                        u /= max(np.linalg.norm(u), 1e-9)
+                        for k in (j, j + 1):
+                            E[k, :2] = E[k, :2] + u * step
+                        fixed += 1
                     moved += fixed
                     if not fixed:
                         break
+                Er = np.round(E[:, :2], 2)
+                res_ = [(j, LineString([tuple(Er[j]), tuple(Er[j + 1])]).distance(w_)) for j in range(len(E) - 1) for w_ in W_]
+                bad_ = [(j, d_) for j, d_ in res_ if d_ < margin - 1e-6]
+                if bad_:
+                    j_, d_ = min(bad_, key=lambda x: x[1])
+                    raise SystemExit(f"{label}: edge clearance {d_:.3f} m < {margin} m at {side} rows {j_}-{j_ + 1} after the clip (review D)")
             part[side] = [[rnd(x, 2), rnd(y, 2), rnd(z, 3)] for x, y, z in E]
     log(f"{label}: {moved} edge points clipped at walls")
 
@@ -3306,6 +3342,12 @@ def main(cfg=None, out_dir=None):
         # round 7 (owner note 37): and at the declared cone lines along it (the pit-in separation line before the nose)
         clip_parts_at_walls(pit["parts"], bar + [{"kind": "tyres", "pts": c_["pts"]} for c_ in declared_cone_lines(trk)], label="pit lane",
                             heads=bool(SC_CFG.get("pit_lane_clip_heads")))
+        if SC_CFG.get("pit_lane_clip_heads"):
+            # postcondition (round 14D third review 3): the stored lane edges clear every barrier run by the margin
+            d_, side_ = clearance_report(pit["parts"], bar + [{"kind": "tyres", "pts": c_["pts"]} for c_ in declared_cone_lines(trk)])
+            if d_ < 0.3 - 1e-6:
+                raise SystemExit(f"pit lane: edge clearance {d_:.3f} m < 0.3 m ({side_} edge) after the clip")
+            log(f"pit lane: edge clearance to every barrier run {d_:.3f} m (>= 0.3, a postcondition)")
     if pit and (PIT_CFG.get("lane") or {}).get("to_walls"):
         extend_parts_to_walls(pit["parts"], bar, **PIT_CFG["lane"]["to_walls"])
     if pit and (PIT_CFG.get("lane") or {}).get("boxes") is not None:

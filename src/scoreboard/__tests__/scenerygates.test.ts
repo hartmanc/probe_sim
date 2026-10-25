@@ -294,6 +294,31 @@ describe('scenery gates: tyre rows and wall widths (Sonoma round 14D, T11)', () 
     // the same front member without its stack tag reads 1.8 m off the wall: a finding (the tag is what pairs them)
     expect(sideBySide(T, { barriers: [wall, { ...m0b, stack_of: undefined }, m1b] } as never)).toHaveLength(1);
   });
+  it('third review (2): a wall IN FRONT of a stack is checked against the member exposed toward it', () => {
+    const m0 = { kind: 'tyres', src: 'deep', rows: 2, stack_of: { id: 'D', k: 0, n: 2 }, pts: [[100, -8.6, 0], [50, -8.6, 0]] as V3[] };
+    const m1 = { ...m0, stack_of: { id: 'D', k: 1, n: 2 }, pts: [[100, -9.8, 0], [50, -9.8, 0]] as V3[] };
+    const ahead = { kind: 'concrete', pts: [[20, -7.1, 0], [130, -7.1, 0]] as V3[], src: 'wall in front' };   // 1.5 m before row 0
+    expect(sideBySide(T, { barriers: [ahead, m0, m1] } as never)).toHaveLength(1);
+    expect(sideBySide(T, { barriers: [ahead, { ...m0, stack_of: undefined }, { ...m1, stack_of: undefined }] } as never).length).toBeGreaterThanOrEqual(1);
+  });
+  it('third review (1): a stack is ONE wall for the wall-ends and run-gaps gates', () => {
+    // a bare straight two-member stack 3 m right of the bottom straight's edge: its members 1.2 m apart must not join
+    // or protect each other; both heads (the group's end envelope) are exposed
+    const m0 = { kind: 'tyres', src: 'bare stack', rows: 2, stack_of: { id: 'B', k: 0, n: 2 }, pts: [[40, -8, 0], [70, -8, 0], [100, -8, 0]] as V3[] };
+    const m1 = { ...m0, stack_of: { id: 'B', k: 1, n: 2 }, pts: [[40, -6.8, 0], [70, -6.8, 0], [100, -6.8, 0]] as V3[] };
+    const rep = exposedEnds(T, { barriers: [m0, m1] });
+    expect(rep.exposed.length).toBe(2);
+    // untagged, the same two runs cover each other's heads (the loophole the tag closes)
+    expect(exposedEnds(T, { barriers: [{ ...m0, stack_of: undefined }, { ...m1, stack_of: undefined }] }).exposed.length).toBeLessThan(2);
+    // a wall head joined to by the stack's head is still joined (protection from outside the group counts)
+    const jersey = { kind: 'concrete', src: 'jersey', pts: [[10, -6.8, 0], [39.6, -6.8, 0]] as V3[] };
+    const rep2 = exposedEnds(T, { barriers: [jersey, m0, m1] });
+    expect(rep2.ok.some((o) => o.label.includes('bare stack') && o.how.startsWith('joined to concrete'))).toBe(true);
+    // a thick wall's two faces are one wall too: a bare box (front and back face 0.96 m apart) reports both heads
+    const fr = { kind: 'concrete', src: 'box front', wall_id: 'X', face: 'front', pts: [[40, -8, 0], [100, -8, 0]] as V3[] };
+    const bk = { kind: 'concrete', src: 'box back', wall_id: 'X', face: 'back', pts: [[40, -8.96, 0], [100, -8.96, 0]] as V3[] };
+    expect(exposedEnds(T, { barriers: [fr, bk] } as never).exposed.length).toBe(2);
+  });
   it('a wall-tyre join at a thick wall face run measures that face as drawn (review C)', () => {
     const wall = { kind: 'concrete', pts: [[10, -12, 0], [25, -9, 0], [40, -6, 0]] as V3[], src: 'onto the tyres' };
     const rev = { kind: 'tyres', pts: [[100, -6, 0], [70, -6, 0], [40, -6, 0]] as V3[], src: 'tyres' };

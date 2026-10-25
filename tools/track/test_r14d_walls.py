@@ -108,3 +108,51 @@ def test_odd_rows_and_sections_on_a_thick_wall_fail_the_build():
         BS.validate_declared_wall(dict(name="t", kind="concrete", w=0.96, sections=[dict(from_m=0, to_m=5, color="#fff")]))
     with pytest.raises(SystemExit, match="sections"):
         BS.validate_declared_wall(dict(name="t", kind="concrete", w=0.96, pattern=dict(colors=["#fff", "#000"], period_m=2)))
+
+
+def test_astras_nearly_parallel_wall_clears_or_fails():
+    # third review 3: centres (0,0),(0,1), left edges (10,0),(10,1), wall (-10,-0.51) to (20,0.09): the ray-wise loop
+    # stopped at 0.147 m; the perpendicular correction must end at or above 0.30 m (or the build fails)
+    part = dict(center=[[0.0, 0.0, 0.0], [0.0, 1.0, 0.0]], left=[[10.0, 0.0, 0.0], [10.0, 1.0, 0.0]], right=[[-1.0, 0.0, 0.0], [-1.0, 1.0, 0.0]])
+    wall = dict(kind="concrete", pts=[[-10.0, -0.51, 0.0], [20.0, 0.09, 0.0]])
+    BS.clip_parts_at_walls([part], [wall], margin=0.3, label="t", heads=True)
+    d, _ = BS.clearance_report([part], [wall])                     # 0.31 m: the edge rows moved 0.2 m off the wall
+    assert d >= 0.3 - 1e-6, d
+
+
+def test_an_unlabelled_barrier_counts_too():
+    C = [[float(k), 0.0, 0.0] for k in range(20)]
+    part = dict(center=C, left=[[x, 3.0, 0.0] for x, _, _ in C], right=[[x, -3.0, 0.0] for x, _, _ in C])
+    wall = dict(kind="tyres", pts=[[5.0, -2.85, 0.0], [15.0, -2.85, 0.0]])   # no src: a cone line passed as a run
+    BS.clip_parts_at_walls([part], [wall], margin=0.3, label="t", heads=True)
+    assert BS.clearance_report([part], [wall])[0] >= 0.3 - 1e-6
+
+
+def test_a_stack_is_placed_as_one_wall():
+    from test_tyre_facings import _straight
+    trk = _straight()
+    wall = dict(kind="concrete", pts=[[100.0, -12.0, 0.0], [200.0, -12.0, 0.0]])
+    # a 4-row stack drawn westward on the right side (rows toward the wall): row 0 at -6.0, rear member at -7.2, last row -7.8
+    rec = dict(kind="tyres", src="deep", pts=[[150.0, -6.0, 0.0], [145.0, -6.0, 0.0], [140.0, -6.0, 0.0]])
+    mem = BS.stacked_tyre_runs(rec, 4)
+    BS.tyre_facings(trk, [wall] + mem, reach=2.6, off=0.55)
+    # 4.2 m off the wall: out of reach, nothing moves
+    assert np.allclose(np.array(mem[0]["pts"])[:, 1], -6.0) and np.allclose(np.array(mem[1]["pts"])[:, 1], -7.2)
+    rec2 = dict(kind="tyres", src="deep2", pts=[[150.0, -8.0, 0.0], [145.0, -8.0, 0.0], [140.0, -8.0, 0.0]])
+    mem2 = BS.stacked_tyre_runs(rec2, 4)                        # last row at -9.8: 2.2 m off the wall, within reach
+    BS.tyre_facings(trk, [wall] + mem2, reach=2.6, off=0.55)
+    rear, front = np.array(mem2[1]["pts"])[:, 1], np.array(mem2[0]["pts"])[:, 1]
+    assert np.allclose(rear + -0.6, -11.45)                     # the rear member's last row 0.55 m in front of the wall
+    assert np.allclose(front - rear, 1.2)                       # the front member followed at the row spacing
+
+
+def test_an_edge_just_beyond_a_wall_is_brought_back_inside_it():
+    # the lane's right edge 0.1 m beyond a wall it reaches over (no crossing between rows, no ray hit at its ends): the
+    # correction must move it back toward the centre line, never further out
+    C = [[float(k), 0.0, 0.0] for k in range(6)]
+    part = dict(center=C, left=[[x, 3.0, 0.0] for x, _, _ in C], right=[[x, -3.0, 0.0] for x, _, _ in C])
+    wall = dict(kind="concrete", pts=[[1.5, -2.9, 0.0], [3.5, -2.9, 0.0]])   # between rows 1 / 4, 0.1 m inside the edge
+    BS.clip_parts_at_walls([part], [wall], margin=0.3, label="t", heads=True)
+    R = np.array(part["right"])[:, 1]
+    assert BS.clearance_report([part], [wall])[0] >= 0.3 - 1e-6
+    assert (R >= -3.0 - 1e-9).all()                                    # never pushed outward

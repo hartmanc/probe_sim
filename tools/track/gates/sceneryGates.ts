@@ -400,6 +400,12 @@ export function runLength(P: ArrayLike<ArrayLike<number>>): number {
  *  fewer than two points counts as length 0). Sonoma round 14C (issue #12, judge r14b A14): the "tyre bundle at the far
  *  wall's head" at s ~2347 was three coincident points, drew nothing, and the wall-ends gate counted the far wall's head
  *  as joined to it. A degenerate run never counts as a join, a cushion or a lapping run, and fails the wall-ends gate. */
+/** Round 14D third review: the runs that make ONE wall: the members of a stacked deep tyre wall (stack_of) and the two
+ *  faces of a thick wall (wall_id). None of them joins, laps or protects another of its group. */
+export function groupOf(b: { stack_of?: { id: string }; wall_id?: string }): string | undefined {
+  return b.stack_of ? `stack:${b.stack_of.id}` : b.wall_id ? `wall:${b.wall_id}` : undefined;
+}
+
 export function degenerateRuns(sc: SceneryLike, minLen = 0.5): DegenerateRun[] {
   const out: DegenerateRun[] = [];
   (sc.barriers ?? []).forEach((b, k) => {
@@ -441,7 +447,10 @@ export function exposedEnds(t: TrackLike, sc: SceneryLike & { landmarks?: { kind
     if (P.length) o.push([P[P.length - 1][0], P[P.length - 1][1]]);
     return o;
   };
-  interface Run { k: number; kind: string; label: string; xy: V2[]; s: number[]; out: number[]; lat: number[] }
+  // round 14D third review (1): the members of a stacked deep tyre wall (stack_of) are ONE wall: a member never joins,
+  // laps or protects another member of its group; each member's head (the group's end envelope) needs protection from
+  // outside the group
+  interface Run { k: number; kind: string; label: string; xy: V2[]; s: number[]; out: number[]; lat: number[]; group?: string }
   const runs: Run[] = [];
   (sc.barriers ?? []).forEach((b, k) => {
     if (b.pts.length < 2 || b.kind === 'fence' || skip.has(k)) return;
@@ -451,11 +460,12 @@ export function exposedEnds(t: TrackLike, sc: SceneryLike & { landmarks?: { kind
     // unwrap s along the run
     const s: number[] = [];
     pr.forEach((q, i) => { let v = q!.i * t.spacing_m; if (i) { while (v - s[i - 1] > L / 2) v -= L; while (s[i - 1] - v > L / 2) v += L; } s.push(v); });
-    runs.push({ k, kind: b.kind, label: `${b.kind}: ${(b.src ?? '').slice(0, 100)}`, xy, s, out: pr.map((q) => q!.out), lat: pr.map((q) => q!.lat) });
+    runs.push({ k, kind: b.kind, label: `${b.kind}: ${(b.src ?? '').slice(0, 100)}`, xy, s, out: pr.map((q) => q!.out), lat: pr.map((q) => q!.lat), group: groupOf(b) });
   });
   const cushions: V2[] = ((sc.landmarks ?? []) as { kind: string; x: number; y: number }[]).filter((m) => m.kind === 'impact').map((m) => [m.x, m.y]);
   const rep: EndsReport = { checked: 0, ok: [], exposed: [], degenerate };
   const sd = (a: number, b: number) => { let d = (b - a) % L; if (d > L / 2) d -= L; if (d < -L / 2) d += L; return d; };  // b - a, wrapped
+  const same = (a: Run, b: Run) => a === b || (!!a.group && a.group === b.group);
   for (const r of runs) {
     // the upstream end: the end with the lower s along the run's direction of travel
     const fwd = r.s[r.s.length - 1] >= r.s[0];
@@ -468,7 +478,7 @@ export function exposedEnds(t: TrackLike, sc: SceneryLike & { landmarks?: { kind
     if (r.kind === 'tyres') {
       const tail = r.xy[ord[ord.length - 1]];
       const len = r.xy.reduce((a, p, i) => (i ? a + Math.hypot(p[0] - r.xy[i - 1][0], p[1] - r.xy[i - 1][1]) : 0), 0);
-      const cushion = len <= 12 && runs.some((q) => q !== r && q.kind !== 'tyres' && q.xy.some((p) => Math.hypot(p[0] - tail[0], p[1] - tail[1]) <= join));
+      const cushion = len <= 12 && runs.some((q) => !same(q, r) && q.kind !== 'tyres' && q.xy.some((p) => Math.hypot(p[0] - tail[0], p[1] - tail[1]) <= join));
       if (cushion) continue;
     }
     if (r.out[h] > (r.kind === 'tyres' ? nearTyres : near) || r.out[h] < -0.5) continue;
@@ -480,13 +490,13 @@ export function exposedEnds(t: TrackLike, sc: SceneryLike & { landmarks?: { kind
     // joined / cushioned
     let how = '';
     for (const q of runs) {
-      if (q === r) continue;
+      if (same(q, r)) continue;
       if (q.xy.some((p) => Math.hypot(p[0] - P[0], p[1] - P[1]) <= join)) { how = `joined to ${q.kind} run ${q.k}`; break; }
     }
     if (!how && cushions.some((c) => Math.hypot(c[0] - P[0], c[1] - P[1]) <= join + 1.5)) how = 'impact block at its head';
     // lapped by an upstream run on the same side standing closer to the track
     if (!how) for (const q of runs) {
-      if (q === r) continue;
+      if (same(q, r)) continue;
       let best = Infinity;
       for (let i = 0; i < q.xy.length; i++) {
         if ((q.lat[i] > 0 ? 'left' : 'right') !== side) continue;
@@ -546,31 +556,45 @@ export function sideBySide(t: TrackLike, sc: SceneryLike, opts: { facing?: numbe
   for (const wb of bars) if (wb.wall_id && ['concrete', 'pitwall', 'armco'].includes(wb.kind)) {
     const a = pairs.get(wb.wall_id) ?? []; a.push(xy(wb.pts)); pairs.set(wb.wall_id, a);
   }
-  for (const tb of bars) {
-    if (tb.kind !== 'tyres') continue;
-    // round 14D review (A): a member of a stacked deep tyre wall that has another member behind it stands in front of
-    // that member, not beside the wall; the rear member (k = n - 1) is the one checked against the wall behind
-    if (tb.stack_of && tb.stack_of.k < tb.stack_of.n - 1) continue;
+  // the tyre units: a run on its own, or a stacked deep tyre wall's members as ONE unit (round 14D third review, 2); a
+  // unit's candidate lines are each run's row 0 (its polyline) and, for a run that declares `rows`, its last row's line
+  // ((rows - 1) x 0.6 m to its left). Against each wall the unit is evaluated on its candidate line nearest that wall (the
+  // row exposed toward it), so no member is dropped for every wall; a legacy run (no rows, no stack) has its polyline only
+  const units = new Map<string, { src: string; lines: V2[][] }>();
+  bars.forEach((tb, k) => {
+    if (tb.kind !== 'tyres' || tb.pts.length < 2) return;
+    const id = tb.stack_of ? `stack:${tb.stack_of.id}` : `run:${k}`;
+    const u = units.get(id) ?? { src: tb.src ?? '', lines: [] };
+    u.lines.push(xy(tb.pts));
+    if (tb.rows && tb.rows > 1) u.lines.push(leftOffset(xy(tb.pts), (tb.rows - 1) * 0.6));
+    if (tb.stack_of && tb.stack_of.k === 0) u.src = tb.src ?? u.src;
+    units.set(id, u);
+  });
+  const samples = (P: V2[]): V2[] => {
     const T: V2[] = [];
-    // round 14D: a run that declares `rows` faces a wall with its last row (the builder's tyre_facings places that row):
-    // the samples are taken on that row's line, (rows - 1) x 0.6 m to the polyline's left; without `rows` on the polyline
-    const P = tb.rows ? leftOffset(xy(tb.pts), (tb.rows - 1) * 0.6) : xy(tb.pts);
     for (let i = 0; i + 1 < P.length; i++) {
       const d = Math.hypot(P[i + 1][0] - P[i][0], P[i + 1][1] - P[i][1]), n = Math.max(1, Math.ceil(d / 0.5));
       for (let k = 0; k < n; k++) T.push([P[i][0] + ((P[i + 1][0] - P[i][0]) * k) / n, P[i][1] + ((P[i + 1][1] - P[i][1]) * k) / n]);
     }
+    return T;
+  };
+  for (const u of units.values()) {
+    const cand = u.lines.map(samples);
     for (const wb of bars) {
       if (!['concrete', 'pitwall', 'armco'].includes(wb.kind)) continue;
       // a thick wall's pair is evaluated once, from its front face entry, over both faces
       if (wb.wall_id && wb.face === 'back' && (pairs.get(wb.wall_id)?.length ?? 0) > 1) continue;
       const faces = wb.wall_id ? pairs.get(wb.wall_id)! : [xy(wb.pts)];
       const ends = faces.flatMap((W) => [W[0], W[W.length - 1]]);
+      const dist = (q: V2) => { let d = Infinity; for (const W of faces) for (let i = 0; i + 1 < W.length; i++) d = Math.min(d, segDist(q, W[i], W[i + 1])); return d; };
+      // the candidate line exposed toward this wall: the one coming nearest it
+      let T = cand[0], bestD = Infinity;
+      for (const c of cand) { let m = Infinity; for (const q of c) m = Math.min(m, dist(q)); if (m < bestD) { bestD = m; T = c; } }
       // side by side = PARALLEL at an offset: consecutive 0.5 m samples in the band whose offset changes under 0.1 m
       // per sample (< ~11 deg); a run angling in to meet the wall (a taper) changes faster and is not counted
       let bad = 0, best = 0, first: V2 | null = null, offAt = 0, prev = NaN;
       for (const q of T) {
-        let d = Infinity;
-        for (const W of faces) for (let i = 0; i + 1 < W.length; i++) d = Math.min(d, segDist(q, W[i], W[i + 1]));
+        const d = dist(q);
         const atJoint = ends.some((e) => Math.hypot(q[0] - e[0], q[1] - e[1]) < joint);
         if (!atJoint && d > facing && d < reach && Math.abs(d - prev) < 0.1) { bad++; if (bad > best) { best = bad; } if (!first) { first = q; offAt = d; } }
         else bad = 0;
@@ -578,7 +602,7 @@ export function sideBySide(t: TrackLike, sc: SceneryLike, opts: { facing?: numbe
       }
       if (best >= 4 && first) {   // >= 2 m of parallel run
         const pr = proj(first, 80);
-        out.push({ tyre: (tb.src ?? '').slice(0, 80), wall: (wb.src ?? '').slice(0, 80), s: pr ? Math.round(pr.i * t.spacing_m) : -1, off: Math.round(offAt * 10) / 10 });
+        out.push({ tyre: u.src.slice(0, 80), wall: (wb.src ?? '').slice(0, 80), s: pr ? Math.round(pr.i * t.spacing_m) : -1, off: Math.round(offAt * 10) / 10 });
       }
     }
   }
@@ -746,6 +770,11 @@ export function runGaps(t: TrackLike, sc: SceneryLike & { paved_areas?: { name?:
   // round 14C (issue #12): a degenerate run (under 0.5 m, degenerateRuns) is neither a run end nor a lapping run here
   const skip = new Set(degenerateRuns(sc).map((d) => d.k));
   const runs = (sc.barriers ?? []).map((b, k) => ({ b, k })).filter(({ b, k }) => kinds.includes(b.kind) && b.pts.length >= 2 && !skip.has(k));
+  // round 14D third review (1): a stacked deep tyre wall's members are one wall: no gap between two of them, and no member
+  // is the lapping run that closes a gap at another member of its group
+  const grp = new Map<number, string>();
+  for (const { b, k } of runs) { const g = groupOf(b); if (g) grp.set(k, g); }
+  const sameGrp = (a: number, b: number) => grp.has(a) && grp.get(a) === grp.get(b);
   interface End { k: number; label: string; p: V2; dir: V2 }
   const ends: End[] = [];
   for (const { b, k } of runs) {
@@ -772,13 +801,13 @@ export function runGaps(t: TrackLike, sc: SceneryLike & { paved_areas?: { name?:
     return '';
   };
   const segs = runs.map(({ b, k }) => ({ k, P: b.pts }));
-  const nearOther = (m: V2, ka: number, kb: number) => segs.some(({ k, P }) => k !== ka && k !== kb
+  const nearOther = (m: V2, ka: number, kb: number) => segs.some(({ k, P }) => k !== ka && k !== kb && !sameGrp(k, ka) && !sameGrp(k, kb)
     && P.some((_, i) => i > 0 && segDist(m, [P[i - 1][0], P[i - 1][1]], [P[i][0], P[i][1]]) <= 2));
   const rep: RunGapsReport = { checked: 0, gaps: [], openings: [] };
   const seen = new Set<string>();
   for (let i = 0; i < ends.length; i++) for (let j = 0; j < ends.length; j++) {
     const A = ends[i], B = ends[j];
-    if (A.k === B.k) continue;
+    if (A.k === B.k || sameGrp(A.k, B.k)) continue;
     const key = `${Math.min(i, j)}-${Math.max(i, j)}`;
     if (seen.has(key)) continue;
     const dx = B.p[0] - A.p[0], dy = B.p[1] - A.p[1], g = Math.hypot(dx, dy);
