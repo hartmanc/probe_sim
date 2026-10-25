@@ -1581,10 +1581,10 @@ itself measures the posts at 1.8-2.0 x the wall face above the wall.
 
 | object (config name) | side | s (m) | evidence |
 |---|---|---|---|
-| T11 hairpin outside: deep tyre wall (round 14D), light-blue face | left | 3645-3698 | owner decision 25 Oct (OWNER_NOTES.md); band on c20_s1265 / c20_s1320 0.1-3.8 m beyond the edge (round14d/t11_profiles.json); 7hJizPBNrJ4 t 6.5-9.5 (2019, black); RAZip6S84CM t121.5-t123.25 (2026, light-blue face) |
-| the same run, white section | left | 3698-3704 | RAZip6S84CM t123.25 / t124 white stacks; c20_s1320 band |
-| T11 hairpin outside: thick white wall behind the tyre wall (round 14D) | left | 3646-3712 | owner ("the white is just a thick wall"); 0.96 m where it leaves the band at s 3734-3744 (t11_profiles.json); joined to 'T11 exit to T12, left' |
-| T11 hairpin, left tyre wall (trimmed to its tail) | left | 3708-3730 | round 7 run's last declared points |
+| T11 hairpin outside: deep tyre wall (round 14D), light-blue face | left | 3645-3698 (to 3700) | owner decision 25 Oct (OWNER_NOTES.md); band on c20_s1265 / c20_s1320 0.1-3.8 m beyond the edge (round14d/t11_profiles.json); 7hJizPBNrJ4 t 6.5-9.5 (2019, black); RAZip6S84CM t121.5-t123.25 (2026, light-blue face) |
+| the same run, white section | left | 3698-3700 | RAZip6S84CM t123.25 / t124 white stacks; c20_s1320 band |
+| T11 hairpin outside: thick white wall behind the tyre wall (round 14D), built as its front / back face runs | left | 3652-3712 | owner ("the white is just a thick wall"); 0.96 m where it leaves the band at s 3734-3744 (t11_profiles.json); joined to 'T11 exit to T12, left' |
+| T11 hairpin, left tyre wall: white 2-row facing (rows 2) | left | 3700-3730 | c20_s1320 / s1375 band k 3704-3728 (review item 6) |
 | T11 entry, left: red / white wrapped tyre facing on the separation Jersey (round 14D) | left | 3592-3604 | RAZip6S84CM t119.5, onboard crop s3600 (judge r14b C1); the Jersey recoloured light blue (t119.5-t121) |
 | T4 approach, left: tyre cushion on the wall head (round 14D) | left | 733-735 | owner decision 25 Oct (decisions page Q3), head on c20_s2420 |
 | kerb 24, 9a right apex: end 3044 -> 3046 | right | 3019-3046 | RAZip6S84CM t99.75-t100.25 (the kerb ends abeam the grey tyre stack, s 3047) |

@@ -43,19 +43,34 @@
    "why": "the white exit wall where it leaves the band"
   },
   "model": {
-   "tyre_rows": 4,
-   "tyre_front_line_m": 0.55,
-   "tyre_face_m": 0.24,
-   "tyre_back_face_m": 2.66,
-   "wall_line_m": 3.3,
-   "wall_w_m": 0.96,
-   "wall_back_m": 3.78,
-   "tyre_line_to_wall_line_m": {
-    "deep_run": 2.683,
-    "white_section_part": 2.718
+   "deep_tyre_run": {
+    "rows": 4,
+    "s": [
+     3645,
+     3700
+    ],
+    "front_row_line_m": 0.55,
+    "face_m": 0.24,
+    "back_row_line_m": 2.35,
+    "white_from_s": 3698
    },
-   "why_2_75": "tyre_facings reach 2.6 m and the side-by-side gate's 0.8-2.5 m band",
-   "one_run": "one 4-row run from the Jersey tail (light-blue face) with a white section from 69.9 m along (s ~3698) to its end (s 3704)"
+   "thick_wall": {
+    "w_m": 0.96,
+    "centre_m_3652_3700": 3.3,
+    "centre_m_3702_3710": 2.18,
+    "faces": "front (box) and back (hidden) collision runs",
+    "start_s": 3652,
+    "joins": "exit wall head s 3712"
+   },
+   "exit_facing": {
+    "rows": 2,
+    "s": [
+     3700,
+     3730
+    ],
+    "front_row_line_m": 0.55
+   },
+   "review": "Astra HOLD 25 Oct; see LEDGER.md last section"
   },
   "colours": {
    "2026": "RAZip6S84CM t121.5 / t122.5 / t123.25: light-blue face from the entry; white stacks from s ~3698 (t123.25 / t124)",
@@ -148,7 +163,8 @@
   ],
   "kerb_back_m": 0.6,
   "line_centre_m": 1.3,
-  "why": "the kerb and its back slope hide a line on the arc (stills t1_mouth_arc_high); the app lifts a paint line 0.008 m over the drawn terrain where that lies higher (paintLineZ)"
+  "why": "the kerb and its back slope hide a line on the arc; no render-time lift (removed in the review)",
+  "capture_reading": "c20_s1870 / s1925 / s1815: kerb run 3 continues across the mouth; no painted line resolved outside it; line kept at the kerb outer foot (owner to rule)"
  },
  "t9a_mouth_paving": {
   "polygon": "left edge arc s 3036-3062 (0.1 m out) to the escape road zone cross-section 12",
@@ -283,5 +299,14 @@
    "kerbLiftMs": 0,
    "rolledOver": false
   }
- ]
+ ],
+ "pit_lane_t11": {
+  "min_perpendicular_gap_to_back_face_m": 0.275,
+  "clip_margin_along_ray_m": 0.3,
+  "back_face_vertices_inside_lane": 0
+ },
+ "collision_faces": {
+  "max_distance_drawn_face_to_collision_segment_m": 0.0,
+  "skin_m": 0.1
+ }
 }
