@@ -2,7 +2,8 @@
 
 Branch `sonoma-r14d`, from `integration` 893c961. Scenery only. Nothing pushed or deployed.
 
-**Package rev e1c10d4ef5** (was f399cda140), lap 4105.328 m. `src/scoreboard/config.ts` TRACKS.sonoma `rev` is updated.
+**Package rev 59abee785b** (was f399cda140; e1c10d4ef5 was this round's first publish, held by the review: see the
+last section), lap 4105.328 m. `src/scoreboard/config.ts` TRACKS.sonoma `rev` is updated.
 
 The work was built on battery (82-86 %) on the owner's instruction of 25 Oct: "Don't wait on power, just go." The rest of the
 health rule held: one heavy process at a time, 1-minute load 1.2-3.1, no other vitest running, 11 GB free.
@@ -55,8 +56,9 @@ a SAFER barrier)". The 6 ft in his frame is the tyre wall's END.
   side-by-side gate fails a parallel tyre run 0.8-2.5 m off a wall. This spacing clears both.
 - **The owner's step.** Neither line takes a point inside his 1.1 m step at s 3647-3651.
 - **The pit-lane walls entry** for the T11 outside wall (pit row s 3680) now names the white wall.
-- **The pit lane's paving moved.** Its right edge (`pit_lane.lane.to_walls`) now reaches this wall's back face at lane rows
-  140-227, up to 0.85 m nearer the course than before. Pit connectivity and lane clearance pass.
+- **The pit lane's paving moved.** (Corrected in the review, item 4.) The lane is CLIPPED at walls
+  (`scenery.pit_lane_clip_walls`; `to_walls` is not used at Sonoma). It now stops 0.3 m (along the clip ray) short of the
+  thick wall's back face, at lane rows 140-229. See the last section.
 - **Not done.** From s ~3704 to 3712 the band is too narrow for four rows, so up to ~1 m of ground remains between the edge and
   the 2-row facing there.
 
@@ -105,9 +107,8 @@ road mouth."
   and its raised back falls 0.6 m further (profile back 0.6).
 - The first two builds drew the line on the arc and then at 0.72 m. Both were hidden (stills t1_mouth_arc_high).
 - The 0.12 m white line now follows his arc at 1.30 m beyond the edge, at the foot of the kerb's back.
-- Over open ground the drawn 3 m terrain mesh rose over the line. The app now draws a paint line 0.008 m over the drawn terrain
-  where that lies higher (`paintLineZ`, with a test). On ribbons and zones the line is unchanged, because the drawn terrain
-  is sunk below them.
+- (Review item 1: the render-time lift `paintLineZ` of the first publish is removed. The line shows without it, so the drawn
+  heights are the stored ones the ground-marks gate checks. See the last section.)
 - The inventory has no row citing cones at this mouth, so nothing was corrected.
 
 Stills: t1_mouth_arc, t1_mouth_arc_high (cones gone), t1_mouth_line_close_after (the line beyond the kerb).
@@ -233,3 +234,133 @@ No --write-on-fail package was ever published.
 4. **The T9A mouth strip** between the arc and the escape road looks like asphalt now but drives as ground. Extending the
    escape road's paved zone to the arc would change the drivable surface; not done.
 5. **Kerb 24 ends at s 3046.** The 2026 onboard shows no kerb past the grey tyres.
+
+
+## Review of 25 Oct (GPT 6 Astra, via the coordinator): HOLD, one blocker and four fixes; fixed and re-published as rev 59abee785b
+
+The finding, in one line: a drawn face or height that a gate, the collision or the pit lane does not use.
+
+**1. BLOCKER, the paint lines' render-time lift: removed.**
+- The app had lifted a paint strip's corners to max(stored z, drawn terrain + 0.008). The ground-marks gate checks the stored
+  heights, so the gate did not certify what was drawn.
+- That lift turned out not to be needed. The first publish's diagnosis framed the camera so it never looked 1.3 m beyond the
+  kerb, so it did not show whether the line was buried.
+- **Test without the lift.** The same pose (`/tmp/r14d/dbg/t1_line_down_nolift.jpg`) against the same pose with the paint
+  lines hidden (`..._nopaint.jpg`) differs in 6054 px. Those pixels are the white line along the kerb's outer foot, visible at
+  its stored height.
+- So `paintLineZ` and its test are gone. The app draws paint lines at their stored heights again, which is what
+  `groundMarksGate` measures (0 .. 0.01 m above the driven surface; every vertex at 0.008).
+- No lift remains to certify against the drawn terrain, and no gate changed.
+
+**2. FIX, the thick wall's collision: it is now its two faces.**
+- `build_scenery.thick_wall_faces` turns a declared concrete wall with `w` into two concrete runs: the front face (w / 2 toward
+  the track) and the back face (w / 2 beyond). The physics collides with both as it does with any wall; the physics code is
+  unchanged.
+- The front run carries `box` {w, side}: the app draws the 0.96 m box from it. The back run is `hidden`: it draws no body, and
+  its fence (with the curved arms) is drawn.
+- **Proof on the collision world** (`createCollisionWorld` on the package, `/tmp/r14d/coll.ts`,
+  `/tmp/r14d/kt/collision_faces.json`): sampled points on both drawn faces lie 0.000 m from a collision segment. Contact begins
+  at the 0.10 m skin, so a car stops 0.10 m short of the visible face on either side, the track's or the pit lane's.
+- Gates:
+  - `sideBySide` skips a `hidden` back face. The box is faced from its front face; without the skip, the back face 0.96 m
+    further on read as a second wall beside the facing. Test: the same facing passes with the back face hidden and fails with
+    it not hidden.
+  - The gates' w / 2 reading of round 14D's first diff is gone, because no run carries `w` now. `joinFaces` is back to the
+    kinds' half thickness.
+
+**3. FIX, the new keys are validated in the builder.**
+- `build_scenery.validate_declared_wall` fails the build when `rows` is not an integer 1-8 on a tyre run (0, 9, 20, 2.5, "4",
+  True and rows on a wall are all rejected). It also fails when `w` is on anything but a concrete run (Armco, tyres, pit wall,
+  fence) or is not > 0.
+- Tests: `tools/track/test_r14d_walls.py`, 11 cases.
+- The app's clamp stays, but it can no longer see a value outside 1-8.
+- `rows` on a run also means its last row is the facing row:
+  - **tyre_facings** places the last row `off` in front of the wall and keeps row 0 that far before it.
+  - **sideBySide** samples the last row's line.
+  - **Without `rows`**, both behave as before (tests).
+
+**4. FIX, the pit lane at the thick wall.**
+- The lane is clipped at the back face run, so the margin is now taken from the visible back face.
+- One gap was left: the back face's head stood inside the lane, between a clipped edge row and the unclipped row before it.
+  That failed pit connectivity, "inside the lane".
+- New config-gated rule `scenery.pit_lane_clip_heads` (Sonoma only; absent: as before): a wall end inside the strip between two
+  edge rows brings both rows in to the margin short of it. Test: the row before a wall head is clipped only with the rule.
+- **Measured on the published lane** (`/tmp/r14d/scripts/lanechk.py`):
+  - no back-face vertex lies inside the lane.
+  - the lane's right edge is 0.275 m or more from the back face (perpendicular). The clip's 0.30 m is taken along each edge
+    row's ray from the lane centre, so on the curve the perpendicular gap reads up to 0.025 m less.
+- **Pit connectivity and the lane paths: ok** (0 obstacles).
+- **Other lane rows the head rule moved:**
+  - left s ~3567: rows 62-63, 0.37 m, at the pit-in separation's nose.
+  - right s ~157: rows 794-795, 0.65 m, at the pit-out K-rail's end.
+  - At both, a wall end stood inside the lane before, and the lane surface now stops 0.3 m short of it.
+- **T11 lane rows:** 140-143 and 151-229 moved, by up to 2.31 m. The lane had reached into the band.
+- **The wall's head moved to s 3652**, past the owner's step. At s 3646 its front face stood within 1 m of the pit-in lane's
+  path behind the Jersey. The tyre wall's head and the Jersey's tail cover s 3645-3652.
+
+**5. FIX (owner to rule), the T1 line: read on the 2026 captures.**
+- Crops (local): `frames/t1_mouth_c20_s1870_crop.png` (c20_s1870 / s1925 / s1815 at 0.04 m/px) and `..._overlay.png`, and
+  `frames/t1_mouth_c20_native.png` at 0.117 m/px.
+- What they show:
+  - Kerb run 3's red / white blocks continue round the outside arc across the service-road mouth.
+  - The dirt meets the kerb's outer side directly; **no painted line is resolved outside the kerb**.
+  - The course's white edge line runs to the kerb from the left and a light strip lies along the kerb's track side. At
+    0.117 m/px it cannot be told from the kerb's white blocks.
+- **So the line stays at the kerb's outer foot** (1.30 m beyond the edge, his arc pushed out past the kerb and its 0.6 m back).
+- **For the owner:** the capture shows the kerb across the mouth and no line beyond it. He can rule whether the white line
+  belongs there, along the kerb's track side, or nowhere (the kerb itself bounding the arc).
+- Still `stills/t1_mouth_line_along_after.jpg` (from s 158 along the arc): the white line runs continuously along the kerb's
+  outer side.
+
+**6. FIX, s 3704-3712 (no ground between the edge and the stacks).**
+- The band reads 2.92 / 2.84 m out at k 3704 / 3708 (t11_profiles.json), light from the edge. That is tyres and wall, not
+  ground.
+- **Deep tyre wall:** it now ends at s 3700.
+- **Thick wall:** it comes in over s 3700-3702 to a 2.18 m centre line (front face 1.70 m, back face 2.66 m) and joins the exit
+  wall's head at s 3712.
+- **Exit facing:** the round-7 run is now a white 2-row facing (`rows` 2) from s 3700 to 3730. Its front row is 0.55 m beyond
+  the edge (face 0.24 m) and its back row stands against the thick wall's front face.
+- Stills `t11_outside_high`, `hairpin_3720`, `t11_exit_lookback`: the stacks run continuously from the hairpin to the exit.
+
+**7. Test count reconciled.** I ran vitest on a copy of the branch base 893c961 (`git archive` into `/tmp/r14d/base2`,
+node_modules linked). It gives 515 tests, 2 of which fail there only because the archive has no audio assets. Now: 522.
+- **5 new tests:**
+  - barrier-sections:
+    - "tyre rows: absent 2 (the old two rows), else the given count, 1-8"
+    - "thick wall box: drawn between the front face run and the back face w m to its side"
+    - "truss end sections: verticals and diagonals over the first and last 4.5 m only, at both piers"
+  - scenerygates:
+    - "rows absent: the 2-row extent as before; rows 4 toward the track put the face 1.2 m nearer"
+    - "side by side: a run with rows faces a wall with its last row; without rows, by its polyline as before"
+- **2 generated tests:** `tyrewall.test.ts` makes one "a 12 m/s square hit stops outside the stacks" case per tyre run of each
+  package, and Sonoma now has two more tyre runs (runs 23 and 24).
+
+### Re-verification (rev 59abee785b)
+
+- **Stage 3**, publish run: every gate ok (`/tmp/r14d/logs/publish4.log`).
+  - barrier gaps 0.34 m over 78 runs.
+  - wall ends: 44 checked, 0 exposed, 0 degenerate.
+  - tyre facings 0; tyre faces 0.
+  - wall-tyre joins: 8, none proud.
+  - run gaps: 10 openings, 0 holes.
+  - pit connectivity ok; lane paths 0 obstacles.
+  - ground marks 0.008 .. 0.008 m.
+  - coverage: MISSING 0, UNSUPPORTED 0, 217 objects.
+  - pit lane, ground lines: ok.
+- **Gate CLI** on `public/tracks/sonoma`: 14 ok, 0 FAIL, exit 0. Coverage CLI exit 0.
+- **Build runs:**
+  - Review run 1: pit connectivity and side by side.
+  - Run 2: pit connectivity and side by side, after the start moved to s 3652.
+  - Run 3: pit connectivity, start at s 3655.
+  - Run 4: pit connectivity, start at s 3659.5.
+  - Run 5: passed, with `pit_lane_clip_heads` and the start back at s 3652.
+  - No --write-on-fail package was published.
+- **Identity:** track.json, heightfield.bin, ghosts.json, far_heightfield.bin and far_ortho.jpg are unchanged (git status
+  shows only scenery.json and ortho.jpg against e1c10d4ef5); out and public are cmp-identical.
+- **Builds and tests:**
+  - `npm run build` clean.
+  - `npx vitest run`: 63 files, 522 passed, 0 failed.
+  - Python: 105 passed (94 + 11 in test_r14d_walls.py).
+- **Health:** the full vitest, the baseline vitest and the two reporter runs were started at 1-minute loads of 8.6 / 9.0 with
+  the Buttonwillow round building beside them; the rule says under 8. Builds and stills ran at 4-5. The power source came
+  back during the review fixes (84 %, charging).
