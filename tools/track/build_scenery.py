@@ -1232,6 +1232,21 @@ def kerb_run(trk, k, pal, max_step=0.1):
     if i_[-1] - i_[0] > trk.n / 2:            # wraps the start line
         i_ = np.where(i_ < trk.n / 2, i_ + trk.n, i_); o_ = np.argsort(i_); i_, lat_ = i_[o_], lat_[o_]
     s0, s1 = int(np.ceil(i_[0])), int(np.floor(i_[-1]))
+    if k.get("extent") is not None:
+        # Buttonwillow round 13 (the owner's decision of 25 Oct 2026, point 2: each run's extent measured from dense
+        # onboard frames): the run's start and end, metres along the lap of this package, replace the block line's ends;
+        # the line still names the run. Only with flush_runs (the strip's offset is then the constant flush one, so the
+        # line's lateral offsets are not used) and with its evidence (extent_src)
+        if not SC_CFG.get("kerb", {}).get("flush_runs"):
+            raise SystemExit(f"kerb run '{k.get('name')}': extent needs scenery.kerb.flush_runs")
+        if not k.get("extent_src"):
+            raise SystemExit(f"kerb run '{k.get('name')}': extent without extent_src")
+        e0, e1 = (float(v) / trk.sp for v in k["extent"])
+        if not (0 < e1 - e0 < trk.n / 2):
+            raise SystemExit(f"kerb run '{k.get('name')}': extent {k['extent']} is not a run")
+        n0, n1 = int(round(e0)), int(round(e1))
+        log(f"   kerb run {k.get('name')}: extent stations {s0}-{s1} (block line) -> {n0}-{n1} ({k['extent_src'][:100]})")
+        s0, s1 = n0, n1
     st = np.arange(s0, s1 + 1)
     lat = np.interp(st, i_, lat_)
     hw = trk.hw(st % trk.n, side)
