@@ -2,7 +2,7 @@
 // colour exactly as before (null: the old code path); a pattern alternates its colours along the run's length; explicit
 // sections override it where they lie.
 import { describe, expect, test } from 'vitest';
-import { barrierSections, sliceLine, trussMembers, tyreRows, wallHalfThickness } from '../scenery';
+import { barrierSections, paintLineZ, sliceLine, trussMembers, tyreRows, wallHalfThickness } from '../scenery';
 
 const P: [number, number, number][] = [[0, 0, 0], [10, 0, 0], [10, 10, 0]];
 
@@ -49,5 +49,13 @@ describe('round 14D drawing helpers', () => {
     expect(m.filter((q) => q.rot !== 0).every((q) => Math.abs(q.len - Math.hypot(1.5, 1.1)) < 1e-9)).toBe(true);
     // a short span keeps its middle open: each end at most a quarter of it
     expect(Math.min(...trussMembers(8).map((q) => Math.abs(q.x)))).toBeGreaterThanOrEqual(2 - 1e-9);
+  });
+});
+
+describe('round 14D paint lines on open ground', () => {
+  test('a line keeps its package height unless the drawn terrain rises over it', () => {
+    expect(paintLineZ(2.38, 0, 0)).toBe(2.38);
+    expect(paintLineZ(2.38, 0, 0, () => 2.30)).toBe(2.38);             // a zone / ribbon over the sunk terrain: unchanged
+    expect(paintLineZ(2.38, 0, 0, () => 2.45)).toBeCloseTo(2.458, 6);   // buried by the 3 m mesh: 0.008 m over it
   });
 });

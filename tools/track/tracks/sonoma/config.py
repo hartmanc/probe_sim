@@ -807,44 +807,42 @@ CONFIG = dict(
             # (run 'T11 exit to T12, left'), reads 0.96 m wide. So: four tyre rows (front row 0.55 m beyond the edge, the barrier-gap
             # minimum + margin; face 0.24 m beyond the edge, on his red) and behind them the 0.96 m white wall, its line 3.30 m out
             # (2.75 m behind the tyre line: tyre_facings' 2.6 m reach and the 2.5 m side-by-side band stay clear; back face 3.78 m out,
-            # the band's outer edge). Colours from the 2026 onboard (RAZip6S84CM, March 2026; source precedence over the Aug 2019
+            # the band's outer edge; the tyre run starts on the Jersey's tail point, joined, and neither line takes a point inside the
+            # owner's 1.1 m step at s 3647-3651). Colours from the 2026 onboard (RAZip6S84CM, March 2026; source precedence over the Aug 2019
             # 7hJizPBNrJ4, whose tyre wall is black): t122.5 / t123.25 a light-blue face round the outside from the entry, white
             # stacks from s ~3698 to the exit (t123.25 / t124); heights as before (stacks 0.8 m, two high, t122 / t124; the white
             # wall 0.81 m as the exit wall it joins); the catch fence (top 3.0 m) on the white wall (t121-t123: the posts stand
             # behind the face), its posts curved-top (inventory s 3638 / 3670)
-            dict(name='T11 hairpin outside: deep tyre wall, light-blue face (round 14D)', kind='tyres', color=WALL_PALE_BLUE, h=0.8, stack=2, rows=4, fence=0.0,
+            # one run (two end to end left a 2.9 m hole after the builder's resampling): the light-blue face from the Jersey's tail,
+            # the white stacks from s ~3698 as a colour section (69.9 m along the declared line, 78.4 m in all)
+            dict(name='T11 hairpin outside: deep tyre wall (round 14D)', kind='tyres', color=WALL_PALE_BLUE, h=0.8, stack=2, rows=4, fence=0.0,
+                 sections=[dict(from_m=69.9, to_m=999.0, color=TYRE_WHITE)],
                  h_src='onboard RAZip6S84CM t122 / t124: the stacks two tyres high, 0.8 m (round 7, owner note 38)',
-                 src='owner decision 25 Oct 2026 (round14d/OWNER_NOTES.md: a deep tyre wall from just before s 3648 round the outside of T11, no apron); c20_s1265 / c20_s1320 light band 0.1-3.8 m beyond the left edge (round14d/t11_profiles.json); 7hJizPBNrJ4 t 6.5-9.5 (2019: the deep tyre wall round the outside); RAZip6S84CM t121.5-t123.25 (2026: its light-blue face)',
+                 src='owner decision 25 Oct 2026 (round14d/OWNER_NOTES.md: a deep tyre wall from just before s 3648 round the outside of T11, no apron); c20_s1265 / c20_s1320 light band 0.1-3.8 m beyond the left edge (round14d/t11_profiles.json); 7hJizPBNrJ4 t 6.5-9.5 (2019: the deep tyre wall round the outside); RAZip6S84CM t121.5-t123.25 (2026: its light-blue face), t123.25 / t124 (white stacks from s ~3698)',
                  latlon=[
-                (38.1588604, -122.4517949), (38.1588395, -122.4518012), (38.1588080, -122.4518024), (38.1587862, -122.4518011),
-                (38.1587526, -122.4518017), (38.1587297, -122.4518043), (38.1586950, -122.4518123), (38.1586719, -122.4518207),
-                (38.1586378, -122.4518384), (38.1586159, -122.4518535), (38.1585848, -122.4518811), (38.1585656, -122.4519027),
-                (38.1585395, -122.4519396), (38.1585244, -122.4519667), (38.1585055, -122.4520107), (38.1584956, -122.4520418),
-                (38.1584849, -122.4520905), (38.1584807, -122.4521237), (38.1584787, -122.4521738), (38.1584801, -122.4522071),
-                (38.1584862, -122.4522561), (38.1584928, -122.4522878),
-                ]),
-            dict(name='T11 hairpin outside: deep tyre wall, white stacks (round 14D)', kind='tyres', color=TYRE_WHITE, h=0.8, stack=2, rows=4, fence=0.0,
-                 h_src='onboard RAZip6S84CM t122 / t124: the white stacks two tyres high, 0.8 m',
-                 src='owner decision 25 Oct 2026 (round14d/OWNER_NOTES.md); c20_s1320 light band 0.1-3.7 m beyond the left edge (round14d/t11_profiles.json); RAZip6S84CM t123.25 / t124: white tyre stacks from s ~3698',
-                 latlon=[
-                (38.1584928, -122.4522878), (38.1585013, -122.4523185), (38.1585117, -122.4523480), (38.1585238, -122.4523760),
+                (38.1588708, -122.4517967), (38.1588080, -122.4518024), (38.1587751, -122.4518010), (38.1587526, -122.4518017),
+                (38.1587182, -122.4518064), (38.1586950, -122.4518123), (38.1586604, -122.4518259), (38.1586378, -122.4518384),
+                (38.1586053, -122.4518620), (38.1585848, -122.4518811), (38.1585565, -122.4519144), (38.1585395, -122.4519396),
+                (38.1585176, -122.4519810), (38.1585055, -122.4520107), (38.1584915, -122.4520578), (38.1584849, -122.4520905),
+                (38.1584795, -122.4521404), (38.1584787, -122.4521738), (38.1584816, -122.4522235), (38.1584862, -122.4522561),
+                (38.1585013, -122.4523185), (38.1585117, -122.4523480), (38.1585238, -122.4523760),
                 ]),
             dict(name='T11 hairpin outside: thick white wall behind the tyre wall (round 14D)', kind='concrete', color='#e6e4de', h=0.81, w=0.96, fence=2.2,
                  fence_arm=dict(len=0.5, deg=45.0),
                  h_src='0.81 m as the white exit wall it joins (onboard 2:07, Jersey 0.81 m); fence top 3.0 m (round 5 / 7: between the 3.5 m catch fence at 2:02 and the 2.5 m chain-link at 2:04); curved-top posts (inventory s 3638 / 3670), arm as the pit-out fence (24of8fjjAug t0304)',
                  src='owner decision 25 Oct 2026 (round14d/OWNER_NOTES.md: "the white is just a thick wall"); c20_s1265 / c20_s1320 / c20_s1375: width 0.96 m where it leaves the band at s 3734-3744, the band\'s outer edge 3.6-3.8 m beyond the left edge (round14d/t11_profiles.json); joined at its tail to the exit wall\'s head (s 3712)',
                  latlon=[
-                (38.1588611, -122.4517635), (38.1588500, -122.4517618), (38.1588279, -122.4517733), (38.1588166, -122.4517721),
-                (38.1587936, -122.4517705), (38.1587819, -122.4517702), (38.1587581, -122.4517706), (38.1587460, -122.4517714),
-                (38.1587216, -122.4517747), (38.1587093, -122.4517771), (38.1586845, -122.4517838), (38.1586722, -122.4517882),
-                (38.1586476, -122.4517990), (38.1586354, -122.4518056), (38.1586117, -122.4518207), (38.1586001, -122.4518293),
-                (38.1585778, -122.4518486), (38.1585670, -122.4518593), (38.1585465, -122.4518827), (38.1585368, -122.4518954),
-                (38.1585188, -122.4519225), (38.1585105, -122.4519368), (38.1584955, -122.4519670), (38.1584888, -122.4519828),
-                (38.1584770, -122.4520155), (38.1584720, -122.4520324), (38.1584638, -122.4520670), (38.1584606, -122.4520846),
-                (38.1584562, -122.4521201), (38.1584548, -122.4521380), (38.1584540, -122.4521738), (38.1584544, -122.4521916),
-                (38.1584571, -122.4522270), (38.1584592, -122.4522445), (38.1584651, -122.4522788), (38.1584689, -122.4522957),
-                (38.1584779, -122.4523285), (38.1584832, -122.4523445), (38.1584950, -122.4523753), (38.1585017, -122.4523901),
-                (38.1585161, -122.4524184), (38.1585239, -122.4524318), (38.1585718, -122.4524793),
+                (38.1588611, -122.4517635), (38.1588500, -122.4517618), (38.1587936, -122.4517705), (38.1587819, -122.4517702),
+                (38.1587581, -122.4517706), (38.1587460, -122.4517714), (38.1587216, -122.4517747), (38.1587093, -122.4517771),
+                (38.1586845, -122.4517838), (38.1586722, -122.4517882), (38.1586476, -122.4517990), (38.1586354, -122.4518056),
+                (38.1586117, -122.4518207), (38.1586001, -122.4518293), (38.1585778, -122.4518486), (38.1585670, -122.4518593),
+                (38.1585465, -122.4518827), (38.1585368, -122.4518954), (38.1585188, -122.4519225), (38.1585105, -122.4519368),
+                (38.1584955, -122.4519670), (38.1584888, -122.4519828), (38.1584770, -122.4520155), (38.1584720, -122.4520324),
+                (38.1584638, -122.4520670), (38.1584606, -122.4520846), (38.1584562, -122.4521201), (38.1584548, -122.4521380),
+                (38.1584540, -122.4521738), (38.1584544, -122.4521916), (38.1584571, -122.4522270), (38.1584592, -122.4522445),
+                (38.1584651, -122.4522788), (38.1584689, -122.4522957), (38.1584779, -122.4523285), (38.1584832, -122.4523445),
+                (38.1584950, -122.4523753), (38.1585017, -122.4523901), (38.1585161, -122.4524184), (38.1585239, -122.4524318),
+                (38.1585718, -122.4524793),
                 ]),
             # round 14D: the white stacks' 2-row tail along the exit wall (s ~3708-3730), the round-7 run's last declared points
             # (snapped onto the exit wall's face by tyre_facings, as before); its first 65 m are now the deep tyre wall above
@@ -1321,10 +1319,15 @@ CONFIG = dict(
                             src='round 7e (owner notes 55-56): the straight pit-out blend line from the west end of the pit-side wall s 134-158 (c20_s1815 / c20_s1870), along the paint on c20_s1870 / c20_s1925 (100 % picked, rms 0.044 m), 63.3 m (owner_56 drawing scaled by the wall), s 158-222; 2025 pit-out video 24of8fjjAug t=304: small yellow cones (~0.5 m) on the double yellow line, 15-20 m apart (17 m used); t=300: none before the nose'),
         paint_lines_declared=[
             # round 14D (owner, 25 Oct 2026: "a white painted line that follows the outside arc of the track at the service road
-            # mouth"): the course's 0.12 m white edge line along his red arc across the T1 paddock-side mouth (the course boundary
-            # there, owner/r14/mouths.json, the same 8 points as scenery.owner_mouths_r14), draped on the surface with every
-            # other ground mark (marks_on_surface); it meets the fitted edge's own line where his arc rejoins it (s ~179)
-            dict(latlon=[(38.1622051, -122.4563919), (38.1622007, -122.4564155), (38.1621960, -122.4564389), (38.1621927, -122.4564623), (38.1621904, -122.4564855), (38.1621892, -122.4565087), (38.1621892, -122.4565317), (38.1621893, -122.4565432)], width=0.12,
+            # mouth"): his red arc across the T1 paddock-side mouth (owner/r14/mouths.json, the 8 points of scenery.owner_mouths_r14)
+            # lies on the fitted right edge (-0.27 .. +0.25 m, s 166-179), and the red / white kerb run 3 (s 161-179, c20_s1870)
+            # covers 0 .. 0.63 m beyond the edge there, its raised back falling to the ground 0.6 m further (the track's kerb
+            # profile, back 0.6), so a line ON the arc is hidden under the kerb (the builds' stills t1_mouth_arc_high; 0.72 m was
+            # still under the back slope). The 0.12 m white line follows his arc just outside the kerb: each point of the arc
+            # (1 m apart) moved out along the station normal to 1.30 m beyond the edge (its inner side at the foot of the kerb's
+            # back), the outer arc
+            # the 2026 capture shows round the kerb; draped on the surface like every other ground mark (marks_on_surface)
+            dict(latlon=[(38.1622131, -122.4563923), (38.1622124, -122.4564003), (38.1622116, -122.4564082), (38.1622107, -122.4564162), (38.1622104, -122.4564241), (38.1622095, -122.4564320), (38.1622085, -122.4564399), (38.1622082, -122.4564477), (38.1622072, -122.4564556), (38.1622064, -122.4564634), (38.1622060, -122.4564712), (38.1622051, -122.4564789), (38.1622044, -122.4564867), (38.1622040, -122.4564944), (38.1622033, -122.4565021), (38.1622028, -122.4565098), (38.1622024, -122.4565174), (38.1622019, -122.4565251), (38.1622016, -122.4565327), (38.1622013, -122.4565384), (38.1622011, -122.4565441)], width=0.12,
                  src='owner decision 25 Oct 2026 (decisions page Q, round14d/LEDGER.md): white line on his red arc across the T1 service-road mouth, no cones (owner/r14/mouths.json; compare/sonoma/owner_edges_r14/close_s0175_marked.png on c20_s1870 / c20_s1925)'),
             # round 13 part B (owner note 135): the centre line of the drag strip's continuation past the T7 fork (a light grey
             # solid line on c20_s3740..s3960, from the T7 junction to ~70 m short of the fork)
@@ -1665,6 +1668,46 @@ CONFIG = dict(
                          (38.1673712, -122.4645694)],
                  src='c20_s3850 / c20_s3905 / c20_s3960 / c20_s4015 / c20_s0000 paving (round 13 part B survey windows '
                      'compare/sonoma/round13b/survey/cap_*.png); onboard t072 / t074 / t076 plain dark asphalt in the junction'),
+            # round 14D (judge r14b B7 / B8; the first round-14D build's still t9a_mouth_line_high): the course's white line along
+            # the arc across the T9A escape road's mouth is drawn and clear, but beyond it, between the arc and the escape road's
+            # first cross-section (the zone starts 3-10 m past the arc), the ground image showed blotchy dirt and grass with a
+            # pale transverse seam where the zone begins. The 2026 captures (c20_s0660 / c20_o0660 / c20_o0715) show that strip as
+            # dark asphalt, one surface with the escape road; the onboard s3050 a broad paved opening. Repainted in the paving tone
+            # (texture only: the strip's surface in the physics is unchanged); outline: the left edge arc (s 3036-3062, 0.1 m out)
+            # and the escape road zone's 13th cross-section (its edges' points 12; the second build's still t9a_mouth_close showed
+            # the zone's own blotch, NAIP-year patching, over its first 10 m)
+            # round 14D (judge r14b C3; stills hairpin_3760 / hairpin_3800 / t11_infield_3780): right of the T11 exit the ground image
+            # drew the paved infield and the paddock lot beside the course as a pale coarse surface with a hard seam at the edge;
+            # the onboard (RAZip6S84CM t126 / t128, crops s3750 / s3800) shows one grey asphalt beyond the white line, a shade
+            # lighter than the course; the 2026 captures (c20_s1210 / c20_s1375 / c20_s1430) show it paved to 20 m and more (the
+            # dark infield with its sponsor paint, then the lot with its parking bays). Repainted in the paving tone, texture only
+            # (no physics change; the ortho's logo art and bay lines there go with it), s 3738-3812 right, from 0.1 to 20 m beyond
+            # the edge (after the apex kerb's end at s 3737)
+            # ground_gain calibrated on the second build's still t11_infield_3780 (the T7 complex's method, round 13B): at the
+            # shared (0.97, 0.92, 0.88) the repainted ground rendered 107 / 112 / 117 against the road's 64 / 67 / 76 at the same
+            # depth; the onboard reads it a shade lighter than the course, so it is set to ~1.15 x the road: x 0.67 / 0.67 / 0.72
+            dict(name='T11 exit right: paved infield and paddock lot', mask='all', fill='paving', ground_gain=(0.65, 0.62, 0.63), grain=1.0,
+                 latlon=[(38.1588730, -122.4524792), (38.1589054, -122.4524943), (38.1589385, -122.4525092), (38.1589719, -122.4525244),
+                         (38.1590057, -122.4525396), (38.1590397, -122.4525542), (38.1590739, -122.4525682), (38.1591081, -122.4525818),
+                         (38.1591424, -122.4525953), (38.1591767, -122.4526088), (38.1592109, -122.4526224), (38.1592452, -122.4526360),
+                         (38.1592794, -122.4526497), (38.1593137, -122.4526633), (38.1593479, -122.4526770), (38.1593822, -122.4526907),
+                         (38.1594165, -122.4527043), (38.1594508, -122.4527180), (38.1594850, -122.4527317), (38.1595386, -122.4525148),
+                         (38.1595044, -122.4525011), (38.1594701, -122.4524874), (38.1594358, -122.4524738), (38.1594015, -122.4524601),
+                         (38.1593672, -122.4524464), (38.1593329, -122.4524327), (38.1592987, -122.4524191), (38.1592646, -122.4524055),
+                         (38.1592304, -122.4523919), (38.1591963, -122.4523785), (38.1591621, -122.4523650), (38.1591278, -122.4523514),
+                         (38.1590937, -122.4523374), (38.1590598, -122.4523229), (38.1590265, -122.4523079), (38.1589942, -122.4522932),
+                         (38.1589636, -122.4522793), (38.1589352, -122.4522660)],
+                 src='onboard RAZip6S84CM t126 / t128: one grey asphalt beyond the white line (round 14D, judge r14b C3); c20_s1210 / c20_s1375 / c20_s1430: paved infield and lot'),
+            dict(name='T9A escape road mouth: paving between the arc and the escape road', mask='all', fill='paving', ground_gain=(0.97, 0.92, 0.88), grain=1.0,
+                 latlon=[(38.1630649, -122.4550584), (38.1630576, -122.4550476), (38.1630502, -122.4550365), (38.1630425, -122.4550249),
+                         (38.1630346, -122.4550126), (38.1630264, -122.4549996), (38.1630178, -122.4549860), (38.1630086, -122.4549721),
+                         (38.1629985, -122.4549584), (38.1629874, -122.4549456), (38.1629755, -122.4549346), (38.1629626, -122.4549257),
+                         (38.1629489, -122.4549195), (38.1629348, -122.4549160), (38.1629205, -122.4549155), (38.1629063, -122.4549178),
+                         (38.1628924, -122.4549230), (38.1628791, -122.4549307), (38.1628666, -122.4549406), (38.1628551, -122.4549521),
+                         (38.1628443, -122.4549645), (38.1628344, -122.4549770), (38.1628251, -122.4549893), (38.1628163, -122.4550010),
+                         (38.1628080, -122.4550120), (38.1628001, -122.4550223), (38.1627923, -122.4550318), (38.1627789, -122.4548566),
+                         (38.1628605, -122.4547605)],
+                 src='c20_s0660 / c20_o0660 / c20_o0715: dark asphalt from the course arc to the escape road (round 14D, judge r14b B7 / B8); onboard s3050 (RAZip6S84CM t100): a paved opening straight on'),
             dict(name="O'Reilly island: its dark painted surface", mask='all', fill='paving', ground_gain=(0.97, 0.92, 0.88), grain=1.0,
                  latlon=[(38.1667200, -122.4620273), (38.1667536, -122.4619530), (38.1667514, -122.4618502), (38.1667245, -122.4617702),
                          (38.1666840, -122.4617245), (38.1666077, -122.4616845), (38.1665538, -122.4616674), (38.1664909, -122.4616531),

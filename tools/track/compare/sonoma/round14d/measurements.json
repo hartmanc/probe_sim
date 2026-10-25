@@ -51,10 +51,11 @@
    "wall_w_m": 0.96,
    "wall_back_m": 3.78,
    "tyre_line_to_wall_line_m": {
-    "light_blue_run": 2.672,
-    "white_run": 2.718
+    "deep_run": 2.683,
+    "white_section_part": 2.718
    },
-   "why_2_75": "tyre_facings reach 2.6 m and the side-by-side gate's 0.8-2.5 m band"
+   "why_2_75": "tyre_facings reach 2.6 m and the side-by-side gate's 0.8-2.5 m band",
+   "one_run": "one 4-row run from the Jersey tail (light-blue face) with a white section from 69.9 m along (s ~3698) to its end (s 3704)"
   },
   "colours": {
    "2026": "RAZip6S84CM t121.5 / t122.5 / t123.25: light-blue face from the entry; white stacks from s ~3698 (t123.25 / t124)",
@@ -135,5 +136,152 @@
    2.5
   ],
   "owner": "decisions page Q3, 25 Oct 2026: cushion"
- }
+ },
+ "t1_mouth_line": {
+  "arc_off_edge_m": [
+   -0.27,
+   0.25
+  ],
+  "kerb_run3_m": [
+   0.0,
+   0.63
+  ],
+  "kerb_back_m": 0.6,
+  "line_centre_m": 1.3,
+  "why": "the kerb and its back slope hide a line on the arc (stills t1_mouth_arc_high); the app lifts a paint line 0.008 m over the drawn terrain where that lies higher (paintLineZ)"
+ },
+ "t9a_mouth_paving": {
+  "polygon": "left edge arc s 3036-3062 (0.1 m out) to the escape road zone cross-section 12",
+  "px": 608,
+  "m2": 219
+ },
+ "t11_exit_right_paving": {
+  "s": [
+   3738,
+   3812
+  ],
+  "off_m": [
+   0.1,
+   20.0
+  ],
+  "ground_gain": [
+   0.65,
+   0.62,
+   0.63
+  ],
+  "calibration": "still t11_infield_3780: ground 107/112/117 vs road 64/67/76 at the shared gain; set to ~1.15 x the road"
+ },
+ "kerb_traversal_t9a": [
+  {
+   "label": "kerb 24 R s3019-3046 off -1",
+   "s0": 3019,
+   "s1": 3046,
+   "v0": 40.9703569713302,
+   "roll": 3.65,
+   "base": 3.65,
+   "onKerbMs": 0,
+   "maxKerbH": 0,
+   "kerbLiftMs": 0,
+   "liftGap": 0,
+   "rolledOver": false,
+   "fail": false
+  },
+  {
+   "label": "kerb 24 R s3019-3046 off +0",
+   "s0": 3019,
+   "s1": 3046,
+   "v0": 40.9703569713302,
+   "roll": 4.76,
+   "base": 4.76,
+   "onKerbMs": 0,
+   "maxKerbH": 0,
+   "kerbLiftMs": 0,
+   "liftGap": 0,
+   "rolledOver": false,
+   "fail": false
+  },
+  {
+   "label": "kerb 24 R s3019-3046 off +1",
+   "s0": 3019,
+   "s1": 3046,
+   "v0": 40.9703569713302,
+   "roll": 4.6,
+   "base": 4.6,
+   "onKerbMs": 0,
+   "maxKerbH": 0,
+   "kerbLiftMs": 0,
+   "liftGap": 0,
+   "rolledOver": false,
+   "fail": false
+  },
+  {
+   "label": "kerb 25 L s3062-3174 off -1",
+   "s0": 3062,
+   "s1": 3173.9,
+   "v0": 40.01733423466738,
+   "roll": 14.02,
+   "base": 14,
+   "onKerbMs": 189,
+   "maxKerbH": 0.050000000000000044,
+   "kerbLiftMs": 185,
+   "liftGap": 0.055836110936647865,
+   "rolledOver": false,
+   "fail": true
+  },
+  {
+   "label": "kerb 25 L s3062-3174 off +0",
+   "s0": 3062,
+   "s1": 3173.9,
+   "v0": 40.01733423466738,
+   "roll": 8.27,
+   "base": 7.95,
+   "onKerbMs": 180,
+   "maxKerbH": 0.050000000000000044,
+   "kerbLiftMs": 191,
+   "liftGap": 0.05643015890255976,
+   "rolledOver": false,
+   "fail": true
+  },
+  {
+   "label": "kerb 25 L s3062-3174 off +1",
+   "s0": 3062,
+   "s1": 3173.9,
+   "v0": 40.01733423466738,
+   "roll": 6.41,
+   "base": 6.41,
+   "onKerbMs": 169,
+   "maxKerbH": 0.050000000000000044,
+   "kerbLiftMs": 181,
+   "liftGap": 0.05715105628929962,
+   "rolledOver": false,
+   "fail": true
+  },
+  {
+   "label": "kerb 24 R s3019-3046 x5deg",
+   "roll": 3.62,
+   "base": 2.93,
+   "onKerbMs": 954,
+   "maxKerbH": 0.05,
+   "kerbLiftMs": 11,
+   "rolledOver": false
+  },
+  {
+   "label": "kerb 24 R s3019-3046 x10deg",
+   "roll": 5.61,
+   "base": 5.5,
+   "onKerbMs": 493,
+   "maxKerbH": 0.05,
+   "kerbLiftMs": 344,
+   "rolledOver": false
+  },
+  {
+   "label": "kerb 24 R s3019-3046 x20deg",
+   "roll": 2.89,
+   "base": 2.89,
+   "onKerbMs": 0,
+   "maxKerbH": 0,
+   "kerbLiftMs": 0,
+   "rolledOver": false
+  }
+ ]
 }
