@@ -177,3 +177,76 @@ npx tsx tools/race/selfplay.ts --track laguna_seca --laps 4 --seed 1 --quiet --j
 ```
 
 Each Sonoma self-play takes ~3.3 min, Buttonwillow ~2.5 min, Laguna ~45 s (single thread).
+
+## 5. Rerun on the final packages (24 Oct 2026, refreshed `integration`)
+
+Packages: Sonoma round 14B (rev 6b766e08d6, lap 4105.328 m), Buttonwillow round 11 (rev 69e80ace38, round-10 geometry),
+Laguna unchanged. Knobs unchanged. The Sonoma self-plays below ran BEFORE the round-14B recalibration (on 3ba7d82's
+14A scales); see "Calibration" at the end.
+
+### wall_phantoms
+
+| track | segments whose phantom band covers road | reaching the racing line +- 1 m |
+|---|---|---|
+| sonoma (14B) | 2: s 3729 L tyres seg 1948, s 3907-3908 R concrete seg 348, both reaching 0.0 m into the road | **0** (round 14A: segments 712 / 718 of tyre run #9 at T7, gone with the run in 14B) |
+| buttonwillow (r11) | 0 | 0 |
+| laguna_seca | 0 | 0 |
+
+### Sonoma 14B, seeds 1 and 2 (4 laps, 134 cars)
+
+| trial | knobs (fs / lm / sg) | contacts / car-lap | contacts outside 2040-2110 (T7) | four-off / car-lap | recoveries | race time (s) | median best lap / target | clearly-faster passes |
+|---|---|---|---|---|---|---|---|---|
+| head (kept) | 1.4 / 0.85 / 1 | **0.046** (0.039 / 0.052) | 0.046 | **0.011** (0.011 / 0.011) | 52 / 69 | 694 / 693 | 1.334 / 1.224 | 59.0 % |
+| lm70 | 1.4 / 0.7 / 1 | **0.039** (0.037 / 0.041) | 0.039 | **0.029** (0.028 / 0.030) | 51 / 106 | 686 / 690 | 1.284 / 1.265 | 58.0 % |
+| (14A head, section 2) | 1.4 / 0.85 / 1 | 0.080 | 0.034 | 0.022 | 210 / 172 | 688 / 690 | 1.310 / 1.272 | 60.1 % |
+
+T7 is clean: 0 contacts in s 2040-2110 in all four races (39 of 70 on 14A); marshal resets fell 382 -> 121 (head).
+The total halved (0.080 -> 0.046), but outside T7 it rose 0.034 -> 0.046, and the new top place is T9A.
+
+Head, seeds 1 + 2 pooled (900 car-laps; 41 contacts; kinds 17 quarter in a corner, 11 side-by-side in a corner, 5
+rear-end in a corner, 4 rear-end on braking, 2 quarter on a straight, 2 quarter on braking; context 27 line, 9 pass):
+
+| station (m) | place | contacts | kinds | four-offs |
+|---|---|---|---|---|
+| 3000-3050 | T9A entry | 11 | 5 side-by-side, 4 quarter, 2 rear-end in a corner | 0 |
+| 350-400 | T2 entry | 9 | 6 quarter, 2 side-by-side, 1 rear-end in a corner | 0 |
+| 3600-3650 | T11 entry | 6 | 4 quarter, 2 side-by-side in a corner | 0 |
+| 2500-2550 | T8a exit | 3 | 2 rear-end, 1 quarter in a corner | 0 |
+| 3050-3100 | T9a (left-hander) entry | 2 | 2 side-by-side in a corner | 1 (traffic follow) |
+| 2550-2600 / 300-350 / 250-300 / 200-250 | T8a exit, T2 brake, straight | 2 each | quarter / rear-end | 0 |
+| 2750-2800 | straight (bypass blend) | 0 | - | 3 (traffic grip) |
+
+lm70 pooled (894 car-laps; 35 contacts, 18 pass / 14 line): T9A entry 12 (6 quarter, 5 side-by-side, 1 rear-end in a
+corner), T11 entry 3 + 2, T2 entry 3, the back straight s 2750-2950 5 with 6 four-offs (traffic grip / rejoin), T9 exit
+1 + 2 four-offs. Four-offs 26: 12 traffic rejoin, 11 traffic grip.
+
+**T9A chicane, s 2990-3120 (tighter 14B radii: R 25.6 m right, 16.3 m left):** contacts head 6 + 7 = 13 of 41 (32 %;
+on 14A 5 of 70), all at s 3018-3070, the right-hander's apex and the turn to the left-hander, in a corner (side-by-side
+and quarter: the 14A racecraft pattern of a pass lane taken away at the apex); lm70 5 + 7 = 12. Four-offs there: head
+1 (s 3068, traffic follow), lm70 3 (s 3062-3065, grip / rejoin); none alone. So the tighter chicane is now the first
+contact place, with traffic four-offs at its exit; it is not an alone-car departure in these races (the kerb probe's
+-1 m run departs, the AI line does not).
+
+**Not kept:** laneMargin 0.7 cuts contacts 0.046 -> 0.039 (within the two-seed spread) but nearly triples the four-offs
+(0.011 -> 0.029, back-straight and T9 exit rejoins) for -1.0 % race time; on 14A outside T7 it halved them. Sonoma stays
+at 1.4 / 0.85 / 1. Target 0.02 is not met; T9A (13), T2 entry (9 + the lap-1/2 hill queue, 56 resets) and T11 entry
+(6) are the places. The owner's T9A options (ledger round 14B: the chicane margin as built, a lap-wide 2.0 margin, or a
+speed reserve in the short-corner model) stand; the reserve would be new AI mechanics, not done here.
+
+### Buttonwillow r11, seed 1 (kept knobs 1.4 / 0.7 / 1)
+
+| package | contacts / car-lap | four-off / car-lap | recoveries | race time | median best lap / target | first five |
+|---|---|---|---|---|---|---|
+| round 11 (merged tree) | 0.019 (7) | 0.019 (7) | 4 | 756.0 s | 1.157 | 562 48 26 333 9 |
+| round 10 package, merged code (diagnostic) | 0.025 (9) | 0.033 (12) | 11 | - | 1.155 | 48 333 26 562 9 |
+| round 10, section 2 (kept row, seed 1) | 0.025 | 0.033 | 11 | 765 s | 1.155 | - |
+
+Not the round-10 numbers: the round-10 package on the merged code reproduces section 2 exactly, so the merge changed
+nothing; the difference is round 11's kerbs (one strip dropped, 15 widths from the onboard, the T5 apex run extended),
+which the physics drives on. Within the target at seed 1; the calibration (on round 8/10 geometry) is unchanged.
+
+### Laguna seed 1
+
+Bit-identical: the same seed on the pre-merge code (b779969, run from a `git archive` copy) and on the refreshed tree
+give 2 contacts, 17 four-offs, 2 recoveries, race time 620.11 s, identical `contactAt`, `fourOffAt`, `recoveryAt` and
+45-car finishing order (40 83 0 1 156 ...).
