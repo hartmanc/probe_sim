@@ -2,8 +2,8 @@
 
 Branch `sonoma-r14d`, from `integration` 893c961. Scenery only. Nothing pushed or deployed.
 
-**Package rev 97b83d1378** (was f399cda140; e1c10d4ef5 and 59abee785b were this round's earlier publishes, held by the
-two reviews: see the last two sections), lap 4105.328 m. `src/scoreboard/config.ts` TRACKS.sonoma `rev` is updated.
+**Package rev 3cf8227da0** (was f399cda140; e1c10d4ef5, 59abee785b and 97b83d1378 were this round's earlier publishes,
+held by the three reviews: see the last three sections), lap 4105.328 m. `src/scoreboard/config.ts` TRACKS.sonoma `rev` is updated.
 
 The work was built on battery (82-86 %) on the owner's instruction of 25 Oct: "Don't wait on power, just go." The rest of the
 health rule held: one heavy process at a time, 1-minute load 1.2-3.1, no other vitest running, 11 GB free.
@@ -448,3 +448,83 @@ Tests: both rejections.
 - **Stills** (after): t11_outside_high / mid / entry, hairpin_3680 / 3720, t11_exit_lookback, pitin_facing_3590. The four rows
   are drawn as two members, unchanged to the eye.
 - **Health:** this pass ran on power (93 % charging), loads 2.8-5.7.
+
+
+## Third review (GPT 6 Astra, 25 Oct): HOLD, three HIGH findings (gates loosened by the stacked representation); fixed, rev 3cf8227da0
+
+Each finding came with a reproducer Astra ran.
+
+**1. Wall ends and run gaps: a group is ONE wall** (`sceneryGates.groupOf`).
+- A group is either the members of a stacked tyre wall (`stack_of`) or the two faces of a thick wall (`wall_id`).
+- No member of a group joins, cushions, laps or protects another member of it, in `exposedEnds` and in `runGaps` (gap pairs
+  and the lapping-run test). Each member's head, the group's end envelope, needs protection from outside the group.
+- Regressions (vitest):
+  - a bare straight two-member stack reports both heads exposed (untagged, the members cover each other);
+  - a bare box (two faces 0.96 m apart) reports both heads;
+  - a stack head joined by a wall that is not the stack is still joined.
+- Published T11:
+  - **both stack members' heads (s 3645) are "joined to concrete run 47"**, the pit-in separation Jersey. Before, they
+    certified each other.
+  - the thick wall's front face head (s 3652) is joined to the stack's rear member (run 21).
+  - its back face head is "lapped by tyres run 20" (0.5 m out vs 3.8 m). Before, it was joined to its own front face.
+  - Wall ends: 45 checked, 0 exposed.
+
+**2. Side by side, and the facing placement of a stack.**
+- The gate no longer drops any member globally. A tyre run on its own, or a stack's members together, is one unit whose
+  candidate lines are each run's row 0 and, for a run with `rows`, its last row.
+- Against each wall the unit is evaluated on the candidate line nearest that wall: the row exposed toward it.
+- Regression: a wall 1.5 m IN FRONT of a stack is a finding, tagged or untagged. The rear-member, behind-the-stack and
+  face-pair cases still behave as in the second review.
+- `tyre_facings` places a stack as one wall. The rear member is placed by its last row against the wall behind. The members in
+  front follow it point by point at the row spacing. The barrier-gap minimum is held on the front member's row 0.
+- Test: a stack within reach of a wall has its rear last row 0.55 m in front of the wall, with the front member 1.2 m before
+  it.
+
+**Placements changed under the group facing rule: none.**
+- At T11 the rear member's last row stands 0.38-0.61 m in front of the white wall's front face.
+- Placing it at 0.55 m would bring the front member's row 0 within 0.55 m of the edge, so every point keeps its declared place.
+- Every other tyre run is placed as before. Against rev 97b83d1378, all 79 barrier runs are point for point identical.
+
+**3. The lane clearance is a postcondition, corrected along the perpendicular, against every barrier.**
+- **The correction.** It moves an edge segment's two rows along the perpendicular from the nearest run point by the deficit
+  (+0.011 m). That direction is flipped toward the lane's centre line where the edge lies beyond the run, or where it crosses
+  one. It runs to 50 passes.
+- **Every barrier.** The src filter is gone, so the declared cone lines passed as runs count too.
+- **Postconditions.** `clip_parts_at_walls` fails the build on any residual segment under the margin. The stage checks
+  `clearance_report` again after the clip and fails below 0.3 m.
+- Regressions (Python):
+  - Astra's case (centres (0,0),(0,1); left edges (10,0),(10,1); wall (-10,-0.51)-(20,0.09)) ends at 0.31 m. The ray-wise loop
+    stopped at 0.147 m.
+  - an unlabelled run is cleared.
+  - an edge just beyond a wall is brought back inside it, never pushed out.
+- **Published:** "pit lane: edge clearance to every barrier run 0.300 m (>= 0.3, a postcondition)".
+- **Lane rows moved against 97b83d1378:** 68 left and 94 right by more than 1 cm. Most are 1-2 cm.
+  - 0.53 m at right s ~3573.
+  - 0.24-0.29 m at s ~3543 left, s ~3641 right, s ~3657 left and s ~170 left. At s ~3657 the left edge moved 0.28 m outward,
+    round the outer wall (east)'s end, to its 0.3 m clearance.
+  - 0.24 m at s ~98 right.
+- **Lane width at T11** (rows 150-229): 5.34-7.62 m (5.34-7.57 before).
+
+**Unchanged on Astra's word:** the 0.02 m nominal overlap between members (the row spacing), the +0.13 m join at s 3645, the T1
+line (the owner is asked).
+
+### Re-verification (rev 3cf8227da0)
+
+- **Stage 3** publish run: every gate ok.
+  - wall ends 45 / 0 exposed.
+  - tyre facings 0.
+  - wall-tyre joins: 9, none proud.
+  - run gaps: 10 openings, 0 holes.
+  - pit connectivity ok.
+  - lane clearance postcondition 0.300 m.
+  - coverage: MISSING 0, UNSUPPORTED 0.
+- **Gate CLI**: 14 ok, 0 FAIL. Coverage CLI exit 0.
+- **Identity:** track.json, heightfield.bin, ghosts.json and the far files are unchanged; out and public are cmp-identical.
+- **Collision world:** every drawn row of the stack still has a face at its depth (within 0.004 m). The thick wall's faces sit
+  0.000 m from collision segments.
+- **Builds and tests:**
+  - `npm run build` clean.
+  - `npx vitest run`: 527 passed, 0 failed. That is the base's 515, plus 9 named new tests (3 barrier-sections, 6 scenerygates),
+    plus 3 generated tyre-wall cases (Sonoma runs 23-25).
+  - Python: 112 passed (test_r14d_walls.py: 18).
+- **Health:** on power, loads 3.3-5.8.
