@@ -264,3 +264,20 @@ moved:
   wrote them; worst 1.92 % (14A 12.15 %, #515 stint 2, now within tolerance).
 - The Sonoma self-plays above ran on the 14A scales. **A seed 1-2 rerun at the kept knobs on these scales is still to do**
   (not run: the machine was on battery when the calibration finished).
+
+### 5b. Sonoma round 14B on the round-14B calibration (24 Oct 2026, 17:30 PDT; the rerun owed from §5)
+
+`selfplay.ts --track sonoma --laps 4 --seed {1,2} --quiet` at the registry knobs (followScale 1.4, laneMargin 0.85, shiftGrip 1),
+package rev 6b766e08d6, pace.json from cf2a09d (scales +2.0 % at the median):
+
+| seeds | contacts / car-lap | four-off / car-lap | recoveries | race time (s) | median best lap / target |
+|---|---|---|---|---|---|
+| 1, 2 pooled | **0.054** (0.038 / 0.071) | 0.024 (0.020 / 0.027) | 43 / 93 | 665 / 698 | 1.250 / 1.252 |
+| §5, 14A scales | 0.046 (0.039 / 0.052) | 0.011 | 121 | 694 / 693 | |
+
+Where the 48 pooled contacts are (50 m bins): **s 3000-3050: 21** (the T9A right-hander's entry and apex; 22 of 48 in s 2950-3150),
+s 3600-3650: 6 (the T11 hairpin entry), s 350-400: 3 (T2 entry), s 2150-2200: 3 (T7). T7 brake s 2040-2110: 0 (the phantom wall is
+gone with the round-14B package). The 0.02 target is not met; the chicane is now about half of Sonoma's AI contacts, and no existing
+knob reaches it (laneMargin 0.7 tripled the four-offs in §5). Levers for the owner: a per-track no-pass stretch through the chicane
+(the Corkscrew rule in `driver.ts` is hard-coded; a per-track list would be the same mechanic), a per-track corner-speed reserve, or the
+lap-wide line margin; see the coordinator's matrix of 24 Oct.
