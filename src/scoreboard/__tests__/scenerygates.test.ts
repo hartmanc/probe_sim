@@ -246,6 +246,96 @@ describe('scenery gates: wall tops, wall-tyre joins and tyre faces (round 12, So
   });
 });
 
+// Sonoma round 14D (the owner's T11 decision, 25 Oct 2026): a deep tyre wall (`rows`) in front of a thick wall (`w`). Runs
+// without them are measured exactly as before; with them the faces are the drawn ones.
+describe('scenery gates: tyre rows and wall widths (Sonoma round 14D, T11)', () => {
+  it('rows absent: the 2-row extent as before; rows 4 toward the track put the face 1.2 m nearer', () => {
+    // 2.0 m beyond the right edge, drawn eastward: the polyline's left (its rows) toward the track
+    const toward = { kind: 'tyres', pts: [[40, -7.0, 0], [100, -7.0, 0]] as V3[], src: 'rows toward the track' };
+    expect(tyreFaces(T, { barriers: [toward] })).toHaveLength(0);              // 2.0 - 0.91 = 1.09 m
+    const deep = tyreFaces(T, { barriers: [{ ...toward, rows: 4 }] });
+    expect(deep).toHaveLength(1);                                             // 2.0 - (1.8 + 0.31): on the road
+    expect(deep[0].face).toBeCloseTo(2.0 - 2.11, 2);
+    // drawn westward, rows away from the track: the front row's face (0.55 - 0.31) whatever the depth
+    const away = { kind: 'tyres', pts: [[100, -5.55, 0], [40, -5.55, 0]] as V3[], src: 'front row at 0.55 m' };
+    expect(tyreFaces(T, { barriers: [away] })).toHaveLength(0);
+    expect(tyreFaces(T, { barriers: [{ ...away, rows: 4 }] })).toHaveLength(0);
+  });
+  it('side by side: a run with rows faces a wall with its last row; without rows, by its polyline as before', () => {
+    // a wall 12.2 m right of the bottom straight (7.2 m beyond the edge); 4 rows drawn toward it from 2.0 m beyond the edge
+    const wall = { kind: 'concrete', pts: [[20, -12.2, 0], [130, -12.2, 0]] as V3[], src: 'wall' };
+    const deep = { kind: 'tyres', pts: [[100, -9.6, 0], [50, -9.6, 0]] as V3[], src: 'deep', rows: 4 };
+    // polyline 2.6 m off the wall (outside the 0.8-2.5 band): passes as a legacy run
+    expect(sideBySide(T, { barriers: [wall, { ...deep, rows: undefined }] })).toHaveLength(0);
+    // 4 rows from 1.6 m off the wall: the last row's line 0.2 m beyond it, a facing
+    expect(sideBySide(T, { barriers: [wall, { ...deep, pts: [[100, -10.6, 0], [50, -10.6, 0]] as V3[] }] })).toHaveLength(0);
+    // 2 rows declared from 2.6 m off: the last row 2.0 m off the wall, parallel: side by side, a finding
+    expect(sideBySide(T, { barriers: [wall, { ...deep, rows: 2, pts: [[100, -9.6, 0], [50, -9.6, 0]] as V3[] }] })).toHaveLength(1);
+    // round 14D review (B): a thick wall's two faces are one wall (wall_id), measured at the face exposed on the run's side
+    const front = { ...wall, wall_id: 'W', face: 'front' as const, box: { w: 0.96, side: -1 } };
+    const back = { kind: 'concrete', pts: [[20, -13.16, 0], [130, -13.16, 0]] as V3[], src: 'back', hidden: true, wall_id: 'W', face: 'back' as const };
+    const facing = { ...deep, pts: [[100, -10.2, 0], [50, -10.2, 0]] as V3[] };   // last row 0.2 m before the front face
+    expect(sideBySide(T, { barriers: [front, back, facing] } as never)).toHaveLength(0);
+    // the opposite side: a 2-row run whose rows stand 1.6 m BEHIND the back face (2.56 m from the front face, outside the
+    // 0.8-2.5 band) is side by side with the wall's back face; the round-14D first fix (skip every hidden face) missed it
+    const behind = { kind: 'tyres', src: 'behind', rows: 2, pts: [[50, -15.36, 0], [100, -15.36, 0]] as V3[] };   // eastward: its rows toward the track, the last at -14.76
+    expect(sideBySide(T, { barriers: [front, back, behind] } as never)).toHaveLength(1);
+    // untagged, the back face is a wall of its own: the same finding
+    expect(sideBySide(T, { barriers: [{ ...front, wall_id: undefined }, { ...back, wall_id: undefined }, behind] } as never)).toHaveLength(1);
+  });
+  it('a stacked deep tyre wall: the rear 2-row member faces the wall behind, the front member is not side by side', () => {
+    const wall = { kind: 'concrete', pts: [[20, -12.2, 0], [130, -12.2, 0]] as V3[], src: 'wall' };
+    const m0 = { kind: 'tyres', src: 'deep', rows: 2, stack_of: { id: 'D', k: 0, n: 2 }, pts: [[100, -8.6, 0], [50, -8.6, 0]] as V3[] };   // rows at -8.6, -9.2
+    const m1 = { ...m0, stack_of: { id: 'D', k: 1, n: 2 }, pts: [[100, -9.8, 0], [50, -9.8, 0]] as V3[] };                              // rows at -9.8, -10.4: 1.8 m off
+    expect(sideBySide(T, { barriers: [wall, m0, m1] } as never)).toHaveLength(1);           // the rear row 1.8 m off: a finding
+    const m1b = { ...m1, pts: [[100, -11.0, 0], [50, -11.0, 0]] as V3[] };                    // rear row at -11.6: 0.6 m off
+    const m0b = { ...m0, pts: [[100, -9.8, 0], [50, -9.8, 0]] as V3[] };
+    expect(sideBySide(T, { barriers: [wall, m0b, m1b] } as never)).toHaveLength(0);
+    // the same front member without its stack tag reads 1.8 m off the wall: a finding (the tag is what pairs them)
+    expect(sideBySide(T, { barriers: [wall, { ...m0b, stack_of: undefined }, m1b] } as never)).toHaveLength(1);
+  });
+  it('third review (2): a wall IN FRONT of a stack is checked against the member exposed toward it', () => {
+    const m0 = { kind: 'tyres', src: 'deep', rows: 2, stack_of: { id: 'D', k: 0, n: 2 }, pts: [[100, -8.6, 0], [50, -8.6, 0]] as V3[] };
+    const m1 = { ...m0, stack_of: { id: 'D', k: 1, n: 2 }, pts: [[100, -9.8, 0], [50, -9.8, 0]] as V3[] };
+    const ahead = { kind: 'concrete', pts: [[20, -7.1, 0], [130, -7.1, 0]] as V3[], src: 'wall in front' };   // 1.5 m before row 0
+    expect(sideBySide(T, { barriers: [ahead, m0, m1] } as never)).toHaveLength(1);
+    expect(sideBySide(T, { barriers: [ahead, { ...m0, stack_of: undefined }, { ...m1, stack_of: undefined }] } as never).length).toBeGreaterThanOrEqual(1);
+  });
+  it('fourth review (1): on a bent wall the exposed row is chosen along the run, not once for the whole wall', () => {
+    // Astra's reproducer: the rear row comes close to the wall's first leg at one end; the front row runs 1.5 m off its
+    // long leg; choosing one row per wall (the rear) hid the front row's finding
+    const m0 = { kind: 'tyres', src: 'bent-wall stack', rows: 2, stack_of: { id: 'S', k: 0, n: 2 }, pts: [[100, -8.6, 0], [50, -8.6, 0]] as V3[] };
+    const m1 = { ...m0, stack_of: { id: 'S', k: 1, n: 2 }, pts: [[100, -9.8, 0], [50, -9.8, 0]] as V3[] };
+    const bent = { kind: 'concrete', src: 'bent wall', pts: [[100, -10.95, 0], [110, -10.95, 0], [110, -7.1, 0], [20, -7.1, 0]] as V3[] };
+    expect(sideBySide(T, { barriers: [bent, { ...m0, stack_of: undefined }] } as never)).toHaveLength(1);   // the front member alone
+    expect(sideBySide(T, { barriers: [bent, m0, m1] } as never)).toHaveLength(1);                         // tagged: the same finding
+  });
+  it('third review (1): a stack is ONE wall for the wall-ends and run-gaps gates', () => {
+    // a bare straight two-member stack 3 m right of the bottom straight's edge: its members 1.2 m apart must not join
+    // or protect each other; both heads (the group's end envelope) are exposed
+    const m0 = { kind: 'tyres', src: 'bare stack', rows: 2, stack_of: { id: 'B', k: 0, n: 2 }, pts: [[40, -8, 0], [70, -8, 0], [100, -8, 0]] as V3[] };
+    const m1 = { ...m0, stack_of: { id: 'B', k: 1, n: 2 }, pts: [[40, -6.8, 0], [70, -6.8, 0], [100, -6.8, 0]] as V3[] };
+    const rep = exposedEnds(T, { barriers: [m0, m1] });
+    expect(rep.exposed.length).toBe(2);
+    // untagged, the same two runs cover each other's heads (the loophole the tag closes)
+    expect(exposedEnds(T, { barriers: [{ ...m0, stack_of: undefined }, { ...m1, stack_of: undefined }] }).exposed.length).toBeLessThan(2);
+    // a wall head joined to by the stack's head is still joined (protection from outside the group counts)
+    const jersey = { kind: 'concrete', src: 'jersey', pts: [[10, -6.8, 0], [39.6, -6.8, 0]] as V3[] };
+    const rep2 = exposedEnds(T, { barriers: [jersey, m0, m1] });
+    expect(rep2.ok.some((o) => o.label.includes('bare stack') && o.how.startsWith('joined to concrete'))).toBe(true);
+    // a thick wall's two faces are one wall too: a bare box (front and back face 0.96 m apart) reports both heads
+    const fr = { kind: 'concrete', src: 'box front', wall_id: 'X', face: 'front', pts: [[40, -8, 0], [100, -8, 0]] as V3[] };
+    const bk = { kind: 'concrete', src: 'box back', wall_id: 'X', face: 'back', pts: [[40, -8.96, 0], [100, -8.96, 0]] as V3[] };
+    expect(exposedEnds(T, { barriers: [fr, bk] } as never).exposed.length).toBe(2);
+  });
+  it('a wall-tyre join at a thick wall face run measures that face as drawn (review C)', () => {
+    const wall = { kind: 'concrete', pts: [[10, -12, 0], [25, -9, 0], [40, -6, 0]] as V3[], src: 'onto the tyres' };
+    const rev = { kind: 'tyres', pts: [[100, -6, 0], [70, -6, 0], [40, -6, 0]] as V3[], src: 'tyres' };
+    expect(joinFaces(T, { barriers: [wall, rev] })[0].step).toBeCloseTo(0.31 - 0.18, 2);
+    expect(joinFaces(T, { barriers: [{ ...wall, face: 'front' as const, wall_id: 'W' }, rev] })[0].step).toBeCloseTo(0.31, 2);
+  });
+});
+
 describe('scenery gates: run gaps (round 13, Sonoma owner note 131)', () => {
   // one tyre line 20 m right of the bottom straight, split 13.5 m apart at x 60-73.5 (the hole past the footbridge)
   const a = { kind: 'tyres', pts: [[10, -20, 0], [35, -20, 0], [60, -20, 0]] as V3[], src: 'part 1' };
