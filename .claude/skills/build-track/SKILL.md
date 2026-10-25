@@ -35,6 +35,17 @@ Read, in this order, before starting: `CONTRACTS.md` §1 (frames) and §2, §2b 
   and branch, and a report cap, and hands back numbers, not images. If a stage cannot be done from the data (lidar
   missing, fit impossible, line inconsistent with the paint), stop and report what it would take. Never hand-edit
   heights, edges or geometry.
+- **Owner checkpoint after edge detection (owner, 22 Oct 2026).** Stage 1 ends with the fitted edges drawn over
+  the clean captures for the whole lap, published as one page the owner can walk, and the round STOPS there. Nothing
+  downstream (stage 2, stage 3, a drive, a judge, a preview) is built until the owner has reviewed the outline and
+  advised. The same holds for any later edge refit. See "Owner checkpoint after edge detection" under stage 1.
+- **A long line in the ground texture is a missing feature (owner, 23 Oct 2026).** After his round-12 Sonoma lap: "if we are
+  modeling textures in a long line on the ground, it's likely we are missing a feature". The T1 tyre wall, the T2 and T4 wall
+  bases and the bridge footprint were all visible as dark or pale bands in the ortho with the model sitting behind or over
+  them. Stage 3 scans the ortho for long thin linear features in the scenery band and lists every one with no modelled
+  barrier, kerb, edge, cone line or paved area on it (the unmodelled-ground-lines gate, round 13); each finding is a feature
+  to place from the footage or a documented disposition, never left as texture. The ortho is inpainted under every modelled
+  structure footprint (bridges, stands) so the satellite's image of it does not show through.
 - **Contract first.** `CONTRACTS.md` fixes the local ENU frame and the byte formats of `track.json`, `heightfield.bin`,
   `ortho.jpg`, `ghosts.json` and `scenery.json`. Builders may append a dated note under "Deviations" but never edit the
   contract otherwise. Each build script prints a validation report and exits 1 without writing its outputs when a check
@@ -77,6 +88,7 @@ W='numpy,scipy,rasterio,pyproj,shapely,pillow,requests,pandas,matplotlib,laspy[l
 B="uv run --python 3.12 --with $W python -I tools/track/build_track.py --track <id>"
 python3 -I tools/track/inventory/inventory.py --track <id>   # stage 0: inventory.json + inventory.md (before ANY scenery)
 $B --stage geometry      # stage 1: track.json, heightfield.bin, ortho.jpg in tools/track/out/<id>/ (+ work/)
+                         # OWNER CHECKPOINT: edges over the captures as one page; stop; wait for the owner's review
 $B --stage ghosts        # stage 2: ghosts.json (no logger: racing line only)
 $B --stage scenery       # stage 3: scenery.json, far_*; post steps; every scenery gate (3.12)
 $B --publish             # all stages, then copy to public/tracks/<id>/ (refuses to replace a package without --overwrite-package)
@@ -397,6 +409,36 @@ knot 6, lam 30, huber 0.25, line_off 0.26, prior 0.03), per side:
   on the wide track to 123.8 s on the painted road with the old driver, and to 120.2 s once the AI's speed profile
   credited banking and crests (real best lap 119.3 s). Expect a lap-time step from an edge rebuild, and look for it in
   the driver before the tyres.
+
+### Owner checkpoint after edge detection (owner, 22 Oct 2026)
+
+Stage 1 is not finished when its gates pass; it is finished when the owner has looked at the edges. Buttonwillow
+showed why: its fitted edges passed every numeric gate and three judge rounds, and the owner found them 1 to 2 m
+outside the asphalt on his third lap, after five scenery checkpoints had been built on them. An edge error is
+obvious on an outline over the capture at once and costs a whole round once it is under a 3D track.
+
+1. **Render the outline.** The fitted edges over the clean captures (`compare/capwin.py --raw` with the edges as
+   `--poly`), the whole lap in windows of about 150 m at 0.12 m/px every 125 m, plus close-ups at 0.06 m/px wherever
+   the fit is uncertain (weak contrast, a junction, a kerb the fit sits outside), each window captioned with its
+   stations and the width the fit uses there. Put them on one page (`tools/track/compare/<id>/edges_r<n>/index.html`)
+   and publish it as an artifact the owner can walk; the page, not the gate numbers, is the deliverable.
+2. **Stop.** Commit the geometry and the page; do not run stage 2, stage 3, a drive, a judge pass or a preview.
+   Report the gate numbers, the per-section widths and what anchored them, and where the fit still disagrees with
+   a kerb band or a painted line by more than 0.3 m.
+3. **Wait for the owner's review and advice.** He marks the windows that are wrong (the digitisers in `compare/`
+   read his strokes: `owner_edges.py`, `owner_marks.py`); the next round refits from his evidence and renders the
+   outline again. Only an outline he has accepted goes on to stage 2.
+   **Give him the drawing page, not a paint program** (owner, 23 Oct 2026: he cannot draw a straight line on a
+   touchpad): `compare/edge_draw_page.py --src <edges_r<n> dir> --out <page dir> --title "<Track> Edge Strokes"`
+   builds one page with a canvas per window and Line / Arc / Curve / Freehand / Select / Erase tools (red = the
+   asphalt edge, green = an extra line such as the end of a paved runoff; shapes finish on their last click; a
+   margin round the photo takes a line's start). Publish it with the Artifact tool (`capabilities: {db: {}}`, the
+   windows as `files`), read the strokes back with ArtifactData (collection `edges`, `out_dir`), render them with
+   `compare/edge_draw_render.py --docs <out_dir>/edges --win <page dir>/win --out compare/<id>/owner_edges_r<n>`
+   and feed the `_marked.png` files to `owner_edges.py` window by window (`windows.json` carries each station).
+   A straight needs two clicks per side; a corner an Arc or a Curve with a point every 10 m or so.
+4. **The same for every later edge refit**, however local: render the refitted stretch over its captures and get
+   the owner's look before anything downstream is rebuilt on it.
 
 **1.6 Profile, heightfield, repaves.**
 - **Profile.** Set `z0_navd88` at the start/finish centre. Build the profile from the 1 m DEM smoothed σ = 0.7 m, then
