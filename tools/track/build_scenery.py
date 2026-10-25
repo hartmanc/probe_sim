@@ -1362,6 +1362,9 @@ def closed_roads(trk, osm):
                 if not e.get("src"):
                     raise SystemExit(f"closed road {road['name']}: a declared centre line needs its src")
                 ll = np.array(e["latlon"], float)
+                halves = e.get("halves")
+                if halves is not None and len(halves) != len(ll):
+                    raise SystemExit(f"closed road {road['name']}: halves has {len(halves)} values for {len(ll)} points")
                 e = "declared"
             else:
                 wid, *rng = str(e).split(":")
@@ -1369,9 +1372,11 @@ def closed_roads(trk, osm):
                 if rng:
                     a, b = nd.index(rng[0]), nd.index(rng[1]); nd = nd[min(a, b):max(a, b) + 1]
                 ll = np.array([nodes[i] for i in nd if i in nodes])
+                halves = None
             x, y = bl.enu(ll[:, 0], ll[:, 1])
             res = lane_parts(trk, np.c_[x, y], road.get("half_width", 5.0), f"{road['name']} ({e})",
-                             clip=(road.get("min_half", 2.5), road.get("max_half", 12.0)))   # min_half (round 12): = max_half for a measured fixed width
+                             clip=(road.get("min_half", 2.5), road.get("max_half", 12.0)),   # min_half (round 12): = max_half for a measured fixed width
+                             halves=halves)
             if not res:
                 continue
             if road.get("edges_from_green") and SC_CFG.get("owner_green"):
@@ -1952,13 +1957,24 @@ def pit_lane(trk, osm):
     return lane_parts(trk, w[0]["xy"], PIT_HALF_DEFAULT, "pit lane")
 
 
-def lane_parts(trk, xy, half_default, label, clip=(3.0, 6.0)):
-    """A paved lane along polyline xy as parts in the pit-lane strip layout (pit_lane's method; closed_roads too)."""
+def lane_parts(trk, xy, half_default, label, clip=(3.0, 6.0), halves=None):
+    """A paved lane along polyline xy as parts in the pit-lane strip layout (pit_lane's method; closed_roads too).
+    halves (Buttonwillow round 13, the paddock bands): one half-width per point of xy (the same both sides) in place of the
+    image's width; the points are then used as given (no resampling or smoothing; ~1 m apart), so the bands' centre lines
+    and widths are exactly the declared ones."""
     from PIL import Image
     from scipy.ndimage import gaussian_filter1d
 
-    P = resample_line(xy, 1.0)
-    P = np.c_[gaussian_filter1d(P[:, 0], 2, mode="nearest"), gaussian_filter1d(P[:, 1], 2, mode="nearest")]
+    if halves is None:
+        P = resample_line(xy, 1.0)
+        P = np.c_[gaussian_filter1d(P[:, 0], 2, mode="nearest"), gaussian_filter1d(P[:, 1], 2, mode="nearest")]
+    else:
+        # the declared points as given (one per metre): neighbouring bands declared on the same stations keep their
+        # points on common normals, so their ends line up and the nearest-centre choice between them is the perpendicular one
+        P = np.asarray(xy, float)
+        sp_ = np.hypot(*np.diff(P, axis=0).T)
+        if sp_.min() < 0.5 or sp_.max() > 1.5:
+            raise SystemExit(f"{label}: declared points with halves must be ~1 m apart ({sp_.min():.2f}-{sp_.max():.2f} m)")
     n = len(P)
     d = np.gradient(P, axis=0)
     T = d / np.linalg.norm(d, axis=1, keepdims=True)
@@ -1968,7 +1984,11 @@ def lane_parts(trk, xy, half_default, label, clip=(3.0, 6.0)):
     raw = os.path.join(CACHE, f"naip_{int(o['x0'])}_{int(o['y0'])}_{int(o['x1'])}_{int(o['y1'])}_{o['width_px']}x{o['height_px']}.png")
     half = np.full((n, 2), float(half_default))
     src = f"default {half_default} m"
-    if os.path.exists(raw):
+    if halves is not None:
+        h_ = np.asarray(halves, float)
+        half = np.c_[h_, h_]
+        src = f"declared per point ({h_.min():.2f}-{h_.max():.2f} m)"
+    elif os.path.exists(raw):
         ortho = bl.Ortho(np.asarray(Image.open(raw).convert("RGB")), trk.box)
         try:
             h, stats, ok = bl.detect_edges(P, ortho, reach=9.0)
