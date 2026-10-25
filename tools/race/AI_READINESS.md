@@ -403,3 +403,20 @@ move against a clearly faster car); the planning check letting a pass start when
 the shut (Laguna four-offs 0.093 -> 0.110 over 8 seeds: cars pulled into the outside lane at T4's apex that the track-out
 takes away). What remains at T9A and T11 is mostly a car waiting to merge back (phase 2) 1-5 m behind a car on the line,
 both braking at their limit, so the one behind cannot drop back in 2 s.
+
+### Review round (GPT 6 Astra, 24 Oct 2026)
+
+- **Planning horizon.** The code and NOTES now say what the check does: my speed x the occupancy horizon Tn =
+  min(PLAN_T, D / adv) (the whole pass up to 10 s, its first 10 s for a longer one), at least the pass-in-hand look-ahead,
+  at most PLAN_SHUT_MAX = 150 m (an absolute cap on the planning scan now). Checking long passes to their end (D / adv)
+  was tried, seeds as above: Sonoma 0.022 -> **0.031** (0.045 / 0.032 / 0.016), Buttonwillow 0.022 -> 0.019, Laguna
+  8 seeds 0.033 -> **0.038**, four-offs 0.085 -> 0.091, Sonoma green passes 3717 -> 3481 (-6 %): not kept. The kept code
+  reproduces the tables above bit for bit (Laguna seeds 1 and 4, Sonoma seed 1: contacts, race time, finishing order).
+- **Lane clamps.** Kept different and documented: the passer's lane as a pass lane is held (PASS_EDGE from the edge),
+  the passed car's as a car off a pass is held (0.15 m): each where that car will be.
+- **dv floored at 0.** Intended and documented: a passer falling back is projected where it is now.
+- **Tests.** `ai_passing.test.ts` now also covers planning (`planLane` rejects the inside lane 45 m before the slowest
+  corner's apex behind a car 15 % below its profile, finds a lane on the widest stretch) and a 8 s multi-tick run
+  (after 'shut' the car is behind the other car's rear at its apex and starts merging back). Deleting the planning check
+  fails the planning and multi-tick tests; deleting the 'shut' end fails the first and multi-tick tests.
+- vitest 513 passed (511 + 2 new), build clean.

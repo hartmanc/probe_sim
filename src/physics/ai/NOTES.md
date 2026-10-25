@@ -410,10 +410,17 @@ Changes (`driver.ts`, shared by every track, no station lists, no track names, n
   relative to that car when I get there at the closing speed. A pass in hand is given up (`passEnd` 'shut', then the
   usual phase 2: the pinch guard, no longer exempting that car, drops me behind it, and the merge waits for a free lane)
   when r is neither PINCH_OK car lengths ahead of it nor still behind it. Planning (`planLane`) does not start a pass in a
-  lane that the road shuts, over the whole pass (the distance covered until clear of it, at most 150 m, closing at the
-  planned advantage or the speed difference now if larger), before I would be ahead of it by PINCH_OK car lengths:
-  a lane that will be shut before I am ahead is no lane (also when I would still be behind there: pulling out into the
-  outside lane at an apex that the track-out takes away put cars off Laguna's T4 exit).
+  lane that the road shuts before I would be ahead of it by PINCH_OK car lengths. Horizon: my speed x the occupancy
+  horizon Tn = min(PLAN_T, D / adv) (the whole pass when it takes up to PLAN_T = 10 s, its first 10 s otherwise), never
+  less than the pass-in-hand look-ahead, at most PLAN_SHUT_MAX = 150 m; closing at the planned advantage or the speed
+  difference now if larger. (Checking long passes to their end instead: Sonoma contacts 0.022 -> 0.031, Laguna 0.033 ->
+  0.038 over 8 seeds, Sonoma green passes -6 %: not kept.) A lane that will be shut before I am ahead is no lane
+  (also when I would still be behind there: pulling out into the outside lane at an apex that the track-out takes away
+  put cars off Laguna's T4 exit).
+- Lanes in `shutBeside`: mine clamped as a pass lane is held (`laneAt`, PASS_EDGE from the edge, as the lateral target
+  in a pass), the passed car's with the 0.15 m road margin a car off a pass is held at: each where that car will be (the
+  pinch guard clamps both with the 0.15 m margin). The closing speed is floored at 0: a passer falling back is projected
+  where it is now, so a pass losing ground is given up rather than kept on the hope of being behind by the shut.
 - The Corkscrew no-pass is unchanged.
 
 Not kept: a 3 s pinch / pass look-ahead (Sonoma contacts 0.016 per car-lap, Laguna 0.018 / four-off 0.072 over 8 seeds)
