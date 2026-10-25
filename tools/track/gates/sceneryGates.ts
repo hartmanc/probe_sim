@@ -383,7 +383,31 @@ export function signPlacement(t: TrackLike, sc: SceneryLike, cfg: GateConfig = {
 
 // ------------------------------------------------------------------ exposed wall ends (round 7, Sonoma owner notes 39 / 41)
 export interface ExposedEnd { label: string; side: 'left' | 'right'; s: number; out: number; why: string }
-export interface EndsReport { checked: number; ok: { label: string; s: number; how: string }[]; exposed: ExposedEnd[] }
+/** a barrier run (tyres, concrete, pit wall, Armco) under `minLen` m long: it draws nothing (Sonoma round 14C, issue #12) */
+export interface DegenerateRun { k: number; label: string; len: number; x: number; y: number }
+export interface EndsReport { checked: number; ok: { label: string; s: number; how: string }[]; exposed: ExposedEnd[]; degenerate: DegenerateRun[] }
+
+/** Total polyline length of a run in plan, m. */
+export function runLength(P: ArrayLike<ArrayLike<number>>): number {
+  let a = 0;
+  for (let i = 1; i < P.length; i++) a += Math.hypot(P[i][0] - P[i - 1][0], P[i][1] - P[i - 1][1]);
+  return a;
+}
+/** The degenerate barrier runs of a scenery: every tyre / concrete / pit-wall / Armco run shorter than `minLen` m (0.5;
+ *  fewer than two points counts as length 0). Sonoma round 14C (issue #12, judge r14b A14): the "tyre bundle at the far
+ *  wall's head" at s ~2347 was three coincident points, drew nothing, and the wall-ends gate counted the far wall's head
+ *  as joined to it. A degenerate run never counts as a join, a cushion or a lapping run, and fails the wall-ends gate. */
+export function degenerateRuns(sc: SceneryLike, minLen = 0.5): DegenerateRun[] {
+  const out: DegenerateRun[] = [];
+  (sc.barriers ?? []).forEach((b, k) => {
+    if (!['tyres', 'concrete', 'pitwall', 'armco'].includes(b.kind)) return;
+    const len = runLength(b.pts ?? []);
+    if (len >= minLen) return;
+    const p = b.pts?.[0] ?? [NaN, NaN];
+    out.push({ k, label: `${b.kind} run ${k}: ${(b.src ?? '').slice(0, 100)}`, len: Math.round(len * 1000) / 1000, x: Math.round(p[0] * 100) / 100, y: Math.round(p[1] * 100) / 100 });
+  });
+  return out;
+}
 
 /** Every rigid barrier run (concrete, pitwall, armco) whose upstream end (the end a car travelling the lap meets first)
  *  stands within `near` m (30; 8 until Sonoma round 14B) of the edge must be protected, else it is an end face exposed to
@@ -400,8 +424,10 @@ export interface EndsReport { checked: number; ok: { label: string; s: number; h
  *  - tapered: the run angles away from the track at its head (its end is at least `taper` m (1.5) further out than
  *    the run 10 m downstream).
  *  Runs from 25 m upstream of the end are compared on the end's own side. */
-export function exposedEnds(t: TrackLike, sc: SceneryLike & { landmarks?: { kind: string; x: number; y: number }[] }, opts: { near?: number; nearTyres?: number; join?: number; lap?: number; taper?: number } = {}): EndsReport {
+export function exposedEnds(t: TrackLike, sc: SceneryLike & { landmarks?: { kind: string; x: number; y: number }[] }, opts: { near?: number; nearTyres?: number; join?: number; lap?: number; taper?: number; minLen?: number } = {}): EndsReport {
   const near = opts.near ?? 30, nearTyres = opts.nearTyres ?? 8, join = opts.join ?? 1.5, lap = opts.lap ?? 25, taper = opts.taper ?? 1.5;
+  // round 14C (issue #12): runs under minLen (0.5 m) draw nothing; they are listed as degenerate and take no part below
+  const degenerate = degenerateRuns(sc, opts.minLen ?? 0.5), skip = new Set(degenerate.map((d) => d.k));
   const proj = makeProjector(t), L = t.n * t.spacing_m;
   const dens = (P: V3[]): V2[] => {
     const o: V2[] = [];
@@ -415,7 +441,7 @@ export function exposedEnds(t: TrackLike, sc: SceneryLike & { landmarks?: { kind
   interface Run { k: number; kind: string; label: string; xy: V2[]; s: number[]; out: number[]; lat: number[] }
   const runs: Run[] = [];
   (sc.barriers ?? []).forEach((b, k) => {
-    if (b.pts.length < 2 || b.kind === 'fence') return;
+    if (b.pts.length < 2 || b.kind === 'fence' || skip.has(k)) return;
     const xy = dens(b.pts);
     const pr = xy.map((p) => proj(p, 120));
     if (pr.some((q) => !q)) return;
@@ -425,7 +451,7 @@ export function exposedEnds(t: TrackLike, sc: SceneryLike & { landmarks?: { kind
     runs.push({ k, kind: b.kind, label: `${b.kind}: ${(b.src ?? '').slice(0, 100)}`, xy, s, out: pr.map((q) => q!.out), lat: pr.map((q) => q!.lat) });
   });
   const cushions: V2[] = ((sc.landmarks ?? []) as { kind: string; x: number; y: number }[]).filter((m) => m.kind === 'impact').map((m) => [m.x, m.y]);
-  const rep: EndsReport = { checked: 0, ok: [], exposed: [] };
+  const rep: EndsReport = { checked: 0, ok: [], exposed: [], degenerate };
   const sd = (a: number, b: number) => { let d = (b - a) % L; if (d > L / 2) d -= L; if (d < -L / 2) d += L; return d; };  // b - a, wrapped
   for (const r of runs) {
     // the upstream end: the end with the lower s along the run's direction of travel
@@ -689,7 +715,9 @@ export function runGaps(t: TrackLike, sc: SceneryLike & { paved_areas?: { name?:
   const minGap = opts.minGap ?? 0.5, maxGap = opts.maxGap ?? 25, cosA = Math.cos(((opts.angle ?? 25) * Math.PI) / 180), tail = opts.tail ?? 6;
   const proj = makeProjector(t);
   const kinds = ['tyres', 'concrete', 'pitwall', 'armco'];
-  const runs = (sc.barriers ?? []).map((b, k) => ({ b, k })).filter(({ b }) => kinds.includes(b.kind) && b.pts.length >= 2);
+  // round 14C (issue #12): a degenerate run (under 0.5 m, degenerateRuns) is neither a run end nor a lapping run here
+  const skip = new Set(degenerateRuns(sc).map((d) => d.k));
+  const runs = (sc.barriers ?? []).map((b, k) => ({ b, k })).filter(({ b, k }) => kinds.includes(b.kind) && b.pts.length >= 2 && !skip.has(k));
   interface End { k: number; label: string; p: V2; dir: V2 }
   const ends: End[] = [];
   for (const { b, k } of runs) {

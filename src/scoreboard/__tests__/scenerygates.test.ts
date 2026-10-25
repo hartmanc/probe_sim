@@ -1,7 +1,7 @@
 // Pure parts of the stage-3 scenery gates (tools/track/gates/sceneryGates.ts, 20 Oct 2026): segment crossing, polygon
 // test, containment escapes / barriers / allowed runoff, pit connectivity and sign placement on a synthetic straight.
 import { describe, expect, it } from 'vitest';
-import { coneSpots, conesOffSurface, containment, escapeRuns, exposedEnds, inPoly, joinFaces, laneClearance, pitConnectivity, runGaps, segCross, sideBySide, signPlacement, tyreFaces, wallTops, type SceneryLike, type TrackLike, type V3 } from '../../../tools/track/gates/sceneryGates';
+import { coneSpots, conesOffSurface, containment, degenerateRuns, escapeRuns, exposedEnds, inPoly, joinFaces, laneClearance, pitConnectivity, runGaps, segCross, sideBySide, signPlacement, tyreFaces, wallTops, type SceneryLike, type TrackLike, type V3 } from '../../../tools/track/gates/sceneryGates';
 
 // a 400 m oval-ish closed loop: two 150 m straights joined by half circles R 30, 1 m stations, half-width 5
 function loop(): TrackLike {
@@ -165,6 +165,36 @@ describe('scenery gates: wall ends within 30 m (Sonoma round 14B, owner round-13
     expect(exposedEnds(T, { barriers: [{ kind: 'pitwall', pts: [[40, -25, 0], [120, -25, 0]], src: 'pw' }] }).exposed).toHaveLength(1);
     expect(exposedEnds(T, { barriers: [{ kind: 'armco', pts: [[40, -25, 0], [120, -25, 0]], src: 'ar' }] }).exposed).toHaveLength(1);
     expect(exposedEnds(T, { barriers: [tyres([[40, -25, 0], [120, -25, 0]], 'far tyres')] }).exposed).toHaveLength(0);
+  });
+});
+
+describe('scenery gates: degenerate runs (Sonoma round 14C, issue #12, judge r14b A14)', () => {
+  const wall = (x0: number, x1: number, y: number, src: string) => ({ kind: 'concrete', pts: [[x0, y, 0], [x1, y, 0]] as V3[], src });
+  it('a zero-length tyre "bundle" at a wall head is no cushion and no join: listed as degenerate, the head exposed', () => {
+    // the s 2347 case: three coincident points at the head of a wall standing 1 m beyond the right edge
+    const bundle = { kind: 'tyres', pts: [[40, -6, 0], [40, -6, 0], [40, -6, 0]] as V3[], src: 'bundle at the head' };
+    const r = exposedEnds(T, { barriers: [wall(40, 120, -6, 'far wall'), bundle] });
+    expect(r.degenerate.map((d) => d.label)).toEqual(['tyres run 1: bundle at the head']);
+    expect(r.degenerate[0].len).toBe(0);
+    expect(r.exposed.map((e) => e.label)).toEqual(['concrete: far wall']);
+    expect(r.ok.some((o) => o.how.includes('run 1'))).toBe(false);
+    // 0.4 m and a single point are degenerate too; 0.5 m is not
+    expect(degenerateRuns({ barriers: [wall(40, 40.4, -6, 'a'), { kind: 'armco', pts: [[1, -6, 0]] as V3[], src: 'b' }, wall(50, 50.5, -6, 'c'), { kind: 'fence', pts: [[1, -6, 0], [1, -6, 0]] as V3[] }] })
+      .map((d) => d.k)).toEqual([0, 1]);
+    // drawn as declared (2 m along the head, its tail on the wall) the bundle is the head's cushion again
+    const drawn = exposedEnds(T, { barriers: [wall(40, 120, -6, 'far wall'), { ...bundle, pts: [[38, -6, 0], [40, -6, 0]] as V3[] }] });
+    expect(drawn.degenerate).toHaveLength(0);
+    expect(drawn.exposed).toHaveLength(0);
+  });
+  it('a degenerate run is never a lapping run: neither for a wall head nor across a hole in a barrier line', () => {
+    // a 0.2 m stub closer to the track just upstream of a bare head does not lap it
+    const r = exposedEnds(T, { barriers: [wall(40, 120, -8, 'head'), wall(30, 30.2, -6, 'stub')] });
+    expect(r.exposed.map((e) => e.label)).toEqual(['concrete: head']);
+    expect(r.degenerate).toHaveLength(1);
+    // a 6 m hole 15 m out with a zero-length run at its midpoint is still a hole
+    const a = { kind: 'concrete', pts: [[20, -20, 0], [64, -20, 0]] as V3[], src: 'a' }, b = { kind: 'concrete', pts: [[70, -20, 0], [120, -20, 0]] as V3[], src: 'b' };
+    expect(runGaps(T, { barriers: [a, b, { kind: 'tyres', pts: [[67, -20, 0], [67, -20, 0]] as V3[], src: 'dot' }] }).gaps).toHaveLength(1);
+    expect(runGaps(T, { barriers: [a, b, { kind: 'tyres', pts: [[60, -21.5, 0], [74, -21.5, 0]] as V3[], src: 'lap' }] }).gaps).toHaveLength(0);
   });
 });
 

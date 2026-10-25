@@ -1289,6 +1289,27 @@ CONFIG = dict(
             dict(latlon=(38.1588066, -122.4521872), length=24.0, height=5.5, heading=14.3, text='Save Mart', fg='#ffffff',
                  src='c20_s1320 / c20_s1265: Save Mart lettering painted in the T11 hairpin infield (white, ~24 m)'),
         ],
+        # round 14C (merged cone gate "cones off the surface", Buttonwillow round 11: no cone more than 0.15 m inside a course
+        # edge): the owner's T1 paddock-side mouth (round 14B: his red arc across the mouth is the course boundary there and
+        # a cone line, "Put a few cones there"; owner/r14/mouths.json, the round-13 drive of 23 Oct 2026 20:30 PDT,
+        # compare/sonoma/owner_edges_r14/close_s0175_marked.png, local). Round 14B drew the line on his arc as a
+        # cone_lines_declared row; on the round-14B edges (refit from his round-14B red, the owner-reference gates leave the
+        # mouth's stations +-12 out) one of its four cones, s 173.9 right, stood 0.26 m inside the fitted edge. Drawn now
+        # the Buttonwillow way (owner_mouth_cones with clip_out 0.1, its round-11 fix of the same finding): every point of
+        # his arc less than 0.1 m outside the edge moves out along the station normal to 0.1 m beyond it; the rest of the
+        # line keeps his shape. Spacing and cone as round 14B (four 4.4 m apart over his 13.4 m arc, the default orange
+        # cone: no frame shows cones there; the owner, 23 Oct 2026: "I made no statement on cone placement or quantity").
+        # FOR THE OWNER: the clip moves three of the four cones off his drawn arc onto 0.1 m beyond the fitted edge, by
+        # 0.22 / 0.36 / 0.14 m (s 169.9 / 173.9 / 177.9); per-cone table (drawn vs placed) in compare/sonoma/round14c/LEDGER.md
+        owner_mouths_r14=[
+            dict(side='right', lo=166, hi=179, kind='red across', cones=True, width_m=13.36,
+                 src='owner round-13 drive: his red arc across the paddock-side mouth at T1, "Put a few cones there" (owner/r14/mouths.json, '
+                     'compare/sonoma/owner_edges_r14/close_s0175_marked.png, local); cones on his line',
+                 line_latlon=[(38.1622051, -122.4563919), (38.1622007, -122.4564155), (38.1621960, -122.4564389), (38.1621927, -122.4564623),
+                              (38.1621904, -122.4564855), (38.1621892, -122.4565087), (38.1621892, -122.4565317), (38.1621893, -122.4565432)]),
+        ],
+        owner_mouth_cones=dict(**{'from': 'owner_mouths_r14'}, spacing=4.4, clip_out=0.1, label='owner round-13 drive mouth',
+                               style_src='the default orange 0.7 m cone, 4.4 m apart on his 13.4 m arc as round 14B (no frame shows cones there)'),
         # tyre runs in front of a wall are facings of it (round 7b, owner note 48): stacks against the wall line, never side by
         # side at an offset (the captures put the dark tyre band and the bright wall top 1-2.5 m apart: one is the stack, the
         # other the concrete behind it); the wall-ends / facing gate checks it
@@ -1389,14 +1410,8 @@ CONFIG = dict(
         # the cone line along the double white line between the track and the pit-in lane, from where the lanes part
         # to the nose (owner_15: cones on the double line; c20_s1155 / c20_s1210: the solid double line from s ~3525)
         cone_lines_declared=[
-            # round 14B (owner, round-13 drive, 23 Oct 2026 20:30 PDT): his red arc across the paddock-side mouth at T1 is the
-            # course boundary there and a cone line, "Put a few cones there" (compare/sonoma/owner_edges_r14/close_s0175, his
-            # green the access road's edge ending on it); the line is his arc (tracks/sonoma/owner/r14/mouths.json, s 166-179
-            # of the round-14A package, 13.4 m): four cones 4.4 m apart; no frame shows cones there (his instruction), so the
-            # default orange cone
-            dict(latlon=[(38.1622051, -122.4563919), (38.1622007, -122.4564155), (38.1621960, -122.4564389), (38.1621927, -122.4564623), (38.1621904, -122.4564855), (38.1621892, -122.4565087), (38.1621892, -122.4565317), (38.1621893, -122.4565432)], spacing=4.4,
-                 src='owner round-13 drive: his red arc across the paddock-side mouth at T1, "Put a few cones there" (owner/r14/mouths.json, '
-                     'compare/sonoma/owner_edges_r14/close_s0175_marked.png, local); cones on his line'),
+            # round 14C: the T1 paddock-side mouth arc's cone line (round 14B's row here) is now drawn by owner_mouth_cones
+            # (above, scenery.owner_mouths_r14) with clip_out, the Buttonwillow round-11 mechanism
             # round 7 (owner note 49): the single orange marker cone on the left verge before the 9a chicane; onboard t096 shows
             # it ~85 m ahead by the wall, t098 ~15 m ahead mid-verge (the same cone: the car covers ~80 m in 2 s); position
             # from t098's perspective (between the edge and the wall, nearer the edge); none in t090-t094
