@@ -17,8 +17,10 @@ export type V3 = [number, number, number];
 export interface TrackLike { n: number; spacing_m: number; center: V3[]; left: V3[]; right: V3[] }
 export interface PartLike { center: V3[]; left: V3[]; right: V3[]; gap_left?: number[]; gap_right?: number[]; turn?: string; kind?: string; name?: string }
 export interface SceneryLike {
-  /** rows: a tyre run's drawn rows (absent 2; the builder admits integers 1-8 only), round 14D */
-  barriers?: { kind: string; pts: V3[]; src?: string; rows?: number }[];
+  /** round 14D: rows, a tyre run's drawn rows (absent 2; the builder emits 2-row runs); stack_of {id, k, n}, a member of a
+   *  deeper tyre wall emitted as 2-row runs back to back (k 0 nearest the track); wall_id / face, the two faces of one
+   *  thick wall ('front' drawn as the box, 'back' hidden) */
+  barriers?: { kind: string; pts: V3[]; src?: string; rows?: number; stack_of?: { id: string; k: number; n: number }; wall_id?: string; face?: 'front' | 'back'; hidden?: boolean }[];
   pit_lane?: { parts: PartLike[] } | null;
   paved_zones?: { parts: PartLike[] } | null;
   pit_exit_cones?: { pts: V3[]; spacing_m?: number; src?: string } | null;
@@ -538,8 +540,17 @@ export function sideBySide(t: TrackLike, sc: SceneryLike, opts: { facing?: numbe
   const out: SideBySide[] = [];
   const bars = sc.barriers ?? [];
   const xy = (P: V3[]): V2[] => P.map((p) => [p[0], p[1]]);
+  // round 14D review (B): the two faces of a thick wall are ONE wall: its distance from a tyre sample is that of the face
+  // exposed on the sample's side (the nearer face, the box lying between them), its joints both faces' ends
+  const pairs = new Map<string, V2[][]>();
+  for (const wb of bars) if (wb.wall_id && ['concrete', 'pitwall', 'armco'].includes(wb.kind)) {
+    const a = pairs.get(wb.wall_id) ?? []; a.push(xy(wb.pts)); pairs.set(wb.wall_id, a);
+  }
   for (const tb of bars) {
     if (tb.kind !== 'tyres') continue;
+    // round 14D review (A): a member of a stacked deep tyre wall that has another member behind it stands in front of
+    // that member, not beside the wall; the rear member (k = n - 1) is the one checked against the wall behind
+    if (tb.stack_of && tb.stack_of.k < tb.stack_of.n - 1) continue;
     const T: V2[] = [];
     // round 14D: a run that declares `rows` faces a wall with its last row (the builder's tyre_facings places that row):
     // the samples are taken on that row's line, (rows - 1) x 0.6 m to the polyline's left; without `rows` on the polyline
@@ -550,17 +561,17 @@ export function sideBySide(t: TrackLike, sc: SceneryLike, opts: { facing?: numbe
     }
     for (const wb of bars) {
       if (!['concrete', 'pitwall', 'armco'].includes(wb.kind)) continue;
-      // round 14D: a thick wall is its two faces; the box is faced from its front face run (`box`), so its back face
-      // (`hidden`, w m further on) is not a second wall beside a facing of the front
-      if ((wb as { hidden?: boolean }).hidden) continue;
-      const W = xy(wb.pts), e0 = W[0], e1 = W[W.length - 1];
+      // a thick wall's pair is evaluated once, from its front face entry, over both faces
+      if (wb.wall_id && wb.face === 'back' && (pairs.get(wb.wall_id)?.length ?? 0) > 1) continue;
+      const faces = wb.wall_id ? pairs.get(wb.wall_id)! : [xy(wb.pts)];
+      const ends = faces.flatMap((W) => [W[0], W[W.length - 1]]);
       // side by side = PARALLEL at an offset: consecutive 0.5 m samples in the band whose offset changes under 0.1 m
       // per sample (< ~11 deg); a run angling in to meet the wall (a taper) changes faster and is not counted
       let bad = 0, best = 0, first: V2 | null = null, offAt = 0, prev = NaN;
       for (const q of T) {
         let d = Infinity;
-        for (let i = 0; i + 1 < W.length; i++) d = Math.min(d, segDist(q, W[i], W[i + 1]));
-        const atJoint = Math.hypot(q[0] - e0[0], q[1] - e0[1]) < joint || Math.hypot(q[0] - e1[0], q[1] - e1[1]) < joint;
+        for (const W of faces) for (let i = 0; i + 1 < W.length; i++) d = Math.min(d, segDist(q, W[i], W[i + 1]));
+        const atJoint = ends.some((e) => Math.hypot(q[0] - e[0], q[1] - e[1]) < joint);
         if (!atJoint && d > facing && d < reach && Math.abs(d - prev) < 0.1) { bad++; if (bad > best) { best = bad; } if (!first) { first = q; offAt = d; } }
         else bad = 0;
         prev = d;
@@ -585,7 +596,7 @@ const HALF_THICK: Record<string, number> = { concrete: 0.18, pitwall: 0.18, armc
 /** Round 14D (Sonoma T11, a deep tyre wall): a tyre run's drawn row extent beyond its line on the polyline's left
  *  ((rows - 1) x TYRE_ROW; rows absent = 2, the extent every gate assumed before). Identical to before without `rows`. */
 export const tyreRowExtent = (b: { rows?: number }): number => Math.max(0, (b.rows ?? 2) - 1) * TYRE_ROW;
-type BarrierTop = { kind: string; pts: V3[]; src?: string; h?: number; top_z?: number[]; rows?: number };
+type BarrierTop = { kind: string; pts: V3[]; src?: string; h?: number; top_z?: number[]; rows?: number; face?: 'front' | 'back' };
 const topsOf = (b: BarrierTop): number[] => (b.top_z && b.top_z.length === b.pts.length ? b.top_z : b.pts.map((p) => p[2] + (b.h ?? 0)));
 
 export interface WallTopsReport {
@@ -675,7 +686,7 @@ export function joinFaces(t: TrackLike, sc: SceneryLike & { barriers?: BarrierTo
           if (Math.hypot(E[0] - H[0], E[1] - H[1]) > join) continue;
           const wx0 = E[0] - we.q[0], wy0 = E[1] - we.q[1], wl = Math.hypot(wx0, wy0) || 1;   // out of the wall at its end
           if ((wx0 / wl) * ux + (wy0 / wl) * uy < 0.5) continue;   // not end to end (a facing or a crossing)
-          const wallFace = (E[0] - H[0]) * ntx + (E[1] - H[1]) * nty + (HALF_THICK[wb.kind] ?? 0.18);
+          const wallFace = (E[0] - H[0]) * ntx + (E[1] - H[1]) * nty + (wb.face ? 0 : HALF_THICK[wb.kind] ?? 0.18);   // a thick wall's face run IS the drawn face (review C)
           // driving direction at the joint (stations are in driving order): do the tyres run on downstream of it?
           const fa = t.center[(pr.i + 1) % t.n], fb = t.center[(pr.i - 1 + t.n) % t.n];
           const tyresDown = (fa[0] - fb[0]) * ux + (fa[1] - fb[1]) * uy > 0;

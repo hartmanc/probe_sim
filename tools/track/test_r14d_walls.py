@@ -33,7 +33,7 @@ def test_rows_on_a_wall_and_w_on_armco_or_tyres_fail_the_build():
 
 
 def test_valid_keys_pass():
-    BS.validate_declared_wall(dict(name="t", kind="tyres", rows=1))
+    BS.validate_declared_wall(dict(name="t", kind="tyres", rows=2))
     BS.validate_declared_wall(dict(name="t", kind="tyres", rows=8))
     BS.validate_declared_wall(dict(name="t", kind="concrete", w=0.96))
     BS.validate_declared_wall(dict(name="t", w=0.96))     # kind absent: concrete
@@ -73,3 +73,38 @@ def test_clip_heads_brings_in_the_rows_round_a_wall_end_inside_the_strip():
 def json_copy(x):
     import json
     return json.loads(json.dumps(x))
+
+
+def test_clip_heads_enforces_the_margin_as_a_segment_clearance():
+    # a wall crossing obliquely between two rows' rays is caught by the segment check, not only by the rays
+    C = [[float(k), 0.0, 0.0] for k in range(20)]
+    part = dict(center=C, left=[[x, 3.0, 0.0] for x, _, _ in C], right=[[x, -3.0, 0.0] for x, _, _ in C])
+    wall = dict(kind="concrete", src="w", pts=[[5.0, -2.2, 0.0], [15.0, -2.2, 0.0]])
+    p = json_copy(part); BS.clip_parts_at_walls([p], [wall], margin=0.3, label="t", heads=True)
+    d, _ = BS.clearance_report([p], [wall])
+    assert d >= 0.3 - 1e-6
+    # a wall bowing between rows (its vertex between two rays) is cleared by the margin too
+    wall2 = dict(kind="concrete", src="w2", pts=[[8.0, -3.4, 0.0], [8.5, -2.4, 0.0], [9.0, -3.4, 0.0]])
+    p2 = json_copy(part); BS.clip_parts_at_walls([p2], [wall2], margin=0.3, label="t", heads=True)
+    d2, _ = BS.clearance_report([p2], [wall2])
+    assert d2 >= 0.3 - 1e-6
+
+
+def test_a_four_row_run_is_two_collided_two_row_runs():
+    rec = dict(kind="tyres", h=0.8, fence=0.0, src="declared: deep", pts=[[0.0, 0.0, 0.0], [10.0, 0.0, 0.0], [20.0, 0.0, 0.0]],
+               sections=[dict(from_m=10.0, to_m=999.0, color="#fff")])
+    mem = BS.stacked_tyre_runs(rec, 4)
+    assert len(mem) == 2 and all(m["rows"] == 2 for m in mem)
+    assert [m["stack_of"]["k"] for m in mem] == [0, 1] and all(m["stack_of"]["n"] == 2 for m in mem)
+    assert np.allclose(np.array(mem[1]["pts"])[:, 1], 1.2)       # 1.2 m to the polyline's left: rows 2 and 3
+    assert mem[1]["sections"][0]["from_m"] == 10.0
+
+
+def test_odd_rows_and_sections_on_a_thick_wall_fail_the_build():
+    for r in (1, 3, 5, 7):
+        with pytest.raises(SystemExit, match="even"):
+            BS.validate_declared_wall(dict(name="t", kind="tyres", rows=r))
+    with pytest.raises(SystemExit, match="sections"):
+        BS.validate_declared_wall(dict(name="t", kind="concrete", w=0.96, sections=[dict(from_m=0, to_m=5, color="#fff")]))
+    with pytest.raises(SystemExit, match="sections"):
+        BS.validate_declared_wall(dict(name="t", kind="concrete", w=0.96, pattern=dict(colors=["#fff", "#000"], period_m=2)))

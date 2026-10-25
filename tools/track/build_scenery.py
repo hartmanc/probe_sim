@@ -1042,8 +1042,8 @@ def barriers(trk, osm):
             toward = 1 if float((trk.C[i_[0], :2] - Pc[m_]) @ n_) > 0 else -1
             Pf, Pb, side = thick_wall_faces(Pc, toward, float(dw["w"]))
             base = {k: v for k, v in dw.items() if k not in ("w", "latlon")}
-            work.append((dict(base, name=dw["name"] + " (front face)", fence=0.0, fence_arm=None, _box=dict(w=float(dw["w"]), side=side)), Pf))
-            work.append((dict(base, _hidden=True), Pb))
+            work.append((dict(base, name=dw["name"] + " (front face)", fence=0.0, fence_arm=None, _box=dict(w=float(dw["w"]), side=side), _wall_id=dw["name"][:80]), Pf))
+            work.append((dict(base, _hidden=True, _wall_id=dw["name"][:80]), Pb))
             log(f"declared wall {dw['name']}: thick wall {dw['w']} m as two faces (front 'box', back 'hidden')")
         else:
             work.append((dw, None))
@@ -1144,8 +1144,10 @@ def barriers(trk, osm):
             rec["rows"] = int(dw["rows"])
         if dw.get("_box"):
             rec["box"] = {"w": round(dw["_box"]["w"], 3), "side": int(dw["_box"]["side"])}   # the app draws the thick wall from here
+            rec["wall_id"] = dw["_wall_id"]; rec["face"] = "front"   # review (B / C): the two faces of one wall, tagged
         if dw.get("_hidden"):
             rec["hidden"] = True   # a thick wall's back face: collides, draws no body (its fence is drawn)
+            rec["wall_id"] = dw["_wall_id"]; rec["face"] = "back"
         if dw.get("fence_arm"):
             # round 10 (Sonoma pit-out catch fence): angled arms on the fence posts, leaning toward the track (the side of
             # the polyline the nearest track centre lies on; +1 = left, the app's offsetLine convention)
@@ -1155,7 +1157,12 @@ def barriers(trk, osm):
             i_, _, _ = trk.project(P[m_:m_ + 1])
             side_ = 1 if float((trk.C[i_[0], :2] - P[m_]) @ n_) > 0 else -1
             rec["arm"] = {"len": float(dw["fence_arm"]["len"]), "deg": float(dw["fence_arm"]["deg"]), "side": side_}
-        out.append(rec)
+        if rec["kind"] == "tyres" and int(dw.get("rows") or 2) > 2:
+            mem = stacked_tyre_runs(rec, int(dw["rows"]), ground=trk.ground)
+            out += mem
+            log(f"declared wall {dw['name']}: {dw['rows']} rows as {len(mem)} stacked 2-row runs")
+        else:
+            out.append(rec)
         log(f"declared wall {dw['name']}: {len(P) * 2} m ({dw.get('kind', 'concrete')}, fence {dw.get('fence', 3.0)} m)")
     if decl:
         from scipy.spatial import cKDTree
@@ -1588,12 +1595,47 @@ def validate_declared_wall(dw):
             raise SystemExit(f"declared wall {name!r}: `rows` is for a tyre run, not kind {dw.get('kind')!r}")
         if isinstance(r, bool) or not isinstance(r, int) or not 1 <= r <= TYRE_ROWS_MAX:
             raise SystemExit(f"declared wall {name!r}: `rows` must be an integer 1..{TYRE_ROWS_MAX}, got {r!r}")
+        if r % 2:
+            # round 14D review (A): the physics collides every tyre run as two rows (src/physics/collision.ts TYRE_WALL);
+            # a deeper wall is emitted as 2-row runs back to back (stacked_tyre_runs), so an odd count cannot be honoured
+            raise SystemExit(f"declared wall {name!r}: `rows` must be even (2, 4, 6, 8: emitted as 2-row runs, each collided as two rows), got {r!r}")
     if "w" in dw:
         w = dw["w"]
         if dw.get("kind", "concrete") != "concrete":
             raise SystemExit(f"declared wall {name!r}: `w` (a thick wall's width) is only for a concrete run, not kind {dw.get('kind')!r}")
         if isinstance(w, bool) or not isinstance(w, (int, float)) or not w > 0:
             raise SystemExit(f"declared wall {name!r}: `w` must be a width > 0 m, got {w!r}")
+        if dw.get("sections") or dw.get("pattern"):
+            # round 14D review (E): the app draws colour sections as 0.36 m wall bodies; on a thick wall's box they are not drawn
+            raise SystemExit(f"declared wall {name!r}: colour `sections` / `pattern` are not supported on a thick wall (`w`)")
+
+
+def stacked_tyre_runs(rec, rows, ground=None):
+    """Round 14D review (A): a declared tyre run `rows` deep (even, > 2) as rows / 2 runs of two rows back to back, each
+    drawn and collided as the physics already does a tyre run (two rows: row 0 on its line, row 1 0.6 m to its left;
+    src/physics/collision.ts collides both faces and the end stacks). Member k stands k x 1.2 m to the polyline's left
+    of the declared line; every member carries rows 2 and the tag `stack_of` {id, k, n} (`stack` is tyres per stack) (the gates and tyre_facings read the
+    group as one wall: the rear member is the one facing a wall behind it). Colour sections are carried over by their
+    share of the member's length. Pure."""
+    n = rows // 2
+    P = np.array(rec["pts"], float)
+    T = np.gradient(P[:, :2], axis=0); T /= np.maximum(np.linalg.norm(T, axis=1), 1e-9)[:, None]
+    NL = np.c_[-T[:, 1], T[:, 0]]
+    L0 = float(np.linalg.norm(np.diff(P[:, :2], axis=0), axis=1).sum())
+    out = []
+    for k in range(n):
+        Q = P.copy(); Q[:, :2] = P[:, :2] + NL * (k * 2 * BR.TYRE_ROW)
+        if ground is not None and k:
+            Q[:, 2] = ground(Q[:, 0], Q[:, 1])
+        m = dict(rec, pts=[[rnd(x, 2), rnd(y, 2), rnd(z, 2)] for x, y, z in Q], rows=2,
+                 stack_of={"id": rec["src"][:80], "k": k, "n": n})
+        if k:
+            m["src"] = rec["src"] + f" (rows {2 * k + 1}-{2 * k + 2})"
+        Lk = float(np.linalg.norm(np.diff(Q[:, :2], axis=0), axis=1).sum())
+        if rec.get("sections") and L0 > 0:
+            m["sections"] = [dict(q, from_m=rnd(q["from_m"] * Lk / L0, 2), to_m=rnd(q["to_m"] * Lk / L0, 2)) for q in rec["sections"]]
+        out.append(m)
+    return out
 
 
 def thick_wall_faces(P, toward, w):
@@ -1745,6 +1787,10 @@ def tyre_facings(trk, bar, reach=2.5, off=0.55):
     L2 = np.maximum((d ** 2).sum(1), 1e-9)
     for ti, b in enumerate(bar):
         if b["kind"] != "tyres":
+            continue
+        if b.get("stack_of"):
+            # round 14D review (A): a stacked deep tyre wall stands as declared (its rear run faces the wall behind it;
+            # the gates check that), its members are not moved one by one
             continue
         P = np.array(b["pts"], float)
         moved = []
@@ -1919,8 +1965,54 @@ def clip_parts_at_walls(parts, bar, margin=0.3, label="closed roads", heads=Fals
                             tv = float((v - C[k]) @ (r / L)) - margin
                             if 0 < tv < L:
                                 E[k, :2] = C[k] + r / L * tv; moved += 1
+            if heads:
+                # round 14D review (D): the clip's margin is taken along each row's ray, so on a curve the edge SEGMENT can
+                # come nearer a wall (or cross it between rows); enforce `margin` as a segment-to-segment clearance on the
+                # rounded output: every edge segment within margin of a wall segment (crossing = 0) has both its rows
+                # brought in along their rays until it clears, to at most 10 passes
+                from shapely.geometry import LineString
+                from shapely.strtree import STRtree
+                W_ = [LineString(np.array(b["pts"])[:, :2]) for b in bar
+                      if b["kind"] in ("concrete", "pitwall", "tyres", "armco") and b.get("src") and len(b["pts"]) >= 2]
+                tree = STRtree(W_) if W_ else None
+                for _ in range(10):
+                    fixed = 0
+                    Er = np.round(E[:, :2], 2)
+                    for j in range(len(E) - 1):
+                        if tree is None:
+                            break
+                        seg = LineString([tuple(Er[j]), tuple(Er[j + 1])])
+                        near_ = [W_[k] for k in tree.query(seg.buffer(margin + 0.02))]
+                        if not near_:
+                            continue
+                        dmin = min(seg.distance(w_) for w_ in near_)
+                        if dmin < margin - 1e-6:
+                            for k in (j, j + 1):
+                                r = E[k, :2] - C[k]; L = float(np.linalg.norm(r))
+                                if L > 1e-6:
+                                    E[k, :2] = C[k] + r / L * max(0.0, L - (margin - dmin) - 0.011)
+                            fixed += 1
+                    moved += fixed
+                    if not fixed:
+                        break
             part[side] = [[rnd(x, 2), rnd(y, 2), rnd(z, 3)] for x, y, z in E]
     log(f"{label}: {moved} edge points clipped at walls")
+
+
+def clearance_report(parts, bar):
+    """Round 14D review (D): the smallest segment-to-segment distance between the parts' edges (as stored) and the wall,
+    tyre and Armco runs (crossing = 0), with where it is. Pure."""
+    from shapely.geometry import LineString
+    W_ = [LineString(np.array(b["pts"])[:, :2]) for b in bar if b["kind"] in ("concrete", "pitwall", "tyres", "armco") and len(b["pts"]) >= 2]
+    best = (np.inf, None)
+    for part in parts:
+        for side in ("left", "right"):
+            E = LineString(np.array(part[side])[:, :2])
+            for w_ in W_:
+                d = E.distance(w_)
+                if d < best[0]:
+                    best = (d, side)
+    return best
 
 
 def _in_poly(p, P):

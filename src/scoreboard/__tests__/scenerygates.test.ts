@@ -271,11 +271,34 @@ describe('scenery gates: tyre rows and wall widths (Sonoma round 14D, T11)', () 
     expect(sideBySide(T, { barriers: [wall, { ...deep, pts: [[100, -10.6, 0], [50, -10.6, 0]] as V3[] }] })).toHaveLength(0);
     // 2 rows declared from 2.6 m off: the last row 2.0 m off the wall, parallel: side by side, a finding
     expect(sideBySide(T, { barriers: [wall, { ...deep, rows: 2, pts: [[100, -9.6, 0], [50, -9.6, 0]] as V3[] }] })).toHaveLength(1);
-    // a thick wall's back face (hidden, 0.96 m beyond the front face the run faces) is not a second wall beside it
-    const front = { ...wall, box: { w: 0.96, side: -1 } }, back = { kind: 'concrete', pts: [[20, -13.16, 0], [130, -13.16, 0]] as V3[], src: 'back', hidden: true };
-    const facing = { ...deep, pts: [[100, -10.2, 0], [50, -10.2, 0]] as V3[] };   // last row 0.2 m before the front face, 1.16 m off the back
+    // round 14D review (B): a thick wall's two faces are one wall (wall_id), measured at the face exposed on the run's side
+    const front = { ...wall, wall_id: 'W', face: 'front' as const, box: { w: 0.96, side: -1 } };
+    const back = { kind: 'concrete', pts: [[20, -13.16, 0], [130, -13.16, 0]] as V3[], src: 'back', hidden: true, wall_id: 'W', face: 'back' as const };
+    const facing = { ...deep, pts: [[100, -10.2, 0], [50, -10.2, 0]] as V3[] };   // last row 0.2 m before the front face
     expect(sideBySide(T, { barriers: [front, back, facing] } as never)).toHaveLength(0);
-    expect(sideBySide(T, { barriers: [front, { ...back, hidden: undefined }, facing] } as never)).toHaveLength(1);
+    // the opposite side: a 2-row run whose rows stand 1.6 m BEHIND the back face (2.56 m from the front face, outside the
+    // 0.8-2.5 band) is side by side with the wall's back face; the round-14D first fix (skip every hidden face) missed it
+    const behind = { kind: 'tyres', src: 'behind', rows: 2, pts: [[50, -15.36, 0], [100, -15.36, 0]] as V3[] };   // eastward: its rows toward the track, the last at -14.76
+    expect(sideBySide(T, { barriers: [front, back, behind] } as never)).toHaveLength(1);
+    // untagged, the back face is a wall of its own: the same finding
+    expect(sideBySide(T, { barriers: [{ ...front, wall_id: undefined }, { ...back, wall_id: undefined }, behind] } as never)).toHaveLength(1);
+  });
+  it('a stacked deep tyre wall: the rear 2-row member faces the wall behind, the front member is not side by side', () => {
+    const wall = { kind: 'concrete', pts: [[20, -12.2, 0], [130, -12.2, 0]] as V3[], src: 'wall' };
+    const m0 = { kind: 'tyres', src: 'deep', rows: 2, stack_of: { id: 'D', k: 0, n: 2 }, pts: [[100, -8.6, 0], [50, -8.6, 0]] as V3[] };   // rows at -8.6, -9.2
+    const m1 = { ...m0, stack_of: { id: 'D', k: 1, n: 2 }, pts: [[100, -9.8, 0], [50, -9.8, 0]] as V3[] };                              // rows at -9.8, -10.4: 1.8 m off
+    expect(sideBySide(T, { barriers: [wall, m0, m1] } as never)).toHaveLength(1);           // the rear row 1.8 m off: a finding
+    const m1b = { ...m1, pts: [[100, -11.0, 0], [50, -11.0, 0]] as V3[] };                    // rear row at -11.6: 0.6 m off
+    const m0b = { ...m0, pts: [[100, -9.8, 0], [50, -9.8, 0]] as V3[] };
+    expect(sideBySide(T, { barriers: [wall, m0b, m1b] } as never)).toHaveLength(0);
+    // the same front member without its stack tag reads 1.8 m off the wall: a finding (the tag is what pairs them)
+    expect(sideBySide(T, { barriers: [wall, { ...m0b, stack_of: undefined }, m1b] } as never)).toHaveLength(1);
+  });
+  it('a wall-tyre join at a thick wall face run measures that face as drawn (review C)', () => {
+    const wall = { kind: 'concrete', pts: [[10, -12, 0], [25, -9, 0], [40, -6, 0]] as V3[], src: 'onto the tyres' };
+    const rev = { kind: 'tyres', pts: [[100, -6, 0], [70, -6, 0], [40, -6, 0]] as V3[], src: 'tyres' };
+    expect(joinFaces(T, { barriers: [wall, rev] })[0].step).toBeCloseTo(0.31 - 0.18, 2);
+    expect(joinFaces(T, { barriers: [{ ...wall, face: 'front' as const, wall_id: 'W' }, rev] })[0].step).toBeCloseTo(0.31, 2);
   });
 });
 

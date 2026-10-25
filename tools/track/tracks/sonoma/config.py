@@ -815,7 +815,9 @@ CONFIG = dict(
             # behind the face), its posts curved-top (inventory s 3638 / 3670)
             # one run (two end to end left a 2.9 m hole after the builder's resampling): the light-blue face from the Jersey's tail,
             # the white stacks from s ~3698 as a colour section (72.7 m along the declared line, 75.6 m in all), to s 3700
-            # where the band narrows (t11_profiles.json k 3700 outer 3.80 m, k 3704 2.92 m)
+            # where the band narrows (t11_profiles.json k 3700 outer 3.80 m, k 3704 2.92 m). Second review (A): emitted as two 2-row
+            # runs back to back (build_scenery.stacked_tyre_runs; the physics collides each as two rows), the rear one facing
+            # the thick wall's front face 0.38-0.61 m behind its last row
             dict(name='T11 hairpin outside: deep tyre wall (round 14D)', kind='tyres', color=WALL_PALE_BLUE, h=0.8, stack=2, rows=4, fence=0.0,
                  sections=[dict(from_m=72.7, to_m=999.0, color=TYRE_WHITE)],
                  h_src='onboard RAZip6S84CM t122 / t124: the stacks two tyres high, 0.8 m (round 7, owner note 38)',
@@ -1640,7 +1642,9 @@ CONFIG = dict(
         closed_roads_clip_walls=True,
         # the pit lane stops at the walls that bound it (round 4: the pit-in Jersey and outer wall; owner notes 15-16, 24)
         # round 14D review (the T11 thick wall built as its two faces): a wall's end between two lane edge rows is clipped too
-        # (the back face's head stood inside the lane between a clipped row and the unclipped one before it)
+        # (the back face's head stood inside the lane between a clipped row and the unclipped one before it); and (second
+        # review, D) the 0.3 m margin holds as a segment-to-segment clearance on the stored lane edges, crossings included
+        # (the ray-measured clip alone left 0.275 m at T11 and 0.003 m at the pit-in; build_scenery.clearance_report)
         pit_lane_clip_heads=True,
         pit_lane_clip_walls=True,
         # bridges meet the banks: abutments and stair flights at both span ends (round 4, owner note 29)
