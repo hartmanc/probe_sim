@@ -246,6 +246,29 @@ describe('scenery gates: wall tops, wall-tyre joins and tyre faces (round 12, So
   });
 });
 
+// Sonoma round 14D (the owner's T11 decision, 25 Oct 2026): a deep tyre wall (`rows`) in front of a thick wall (`w`). Runs
+// without them are measured exactly as before; with them the faces are the drawn ones.
+describe('scenery gates: tyre rows and wall widths (Sonoma round 14D, T11)', () => {
+  it('rows absent: the 2-row extent as before; rows 4 toward the track put the face 1.2 m nearer', () => {
+    // 2.0 m beyond the right edge, drawn eastward: the polyline's left (its rows) toward the track
+    const toward = { kind: 'tyres', pts: [[40, -7.0, 0], [100, -7.0, 0]] as V3[], src: 'rows toward the track' };
+    expect(tyreFaces(T, { barriers: [toward] })).toHaveLength(0);              // 2.0 - 0.91 = 1.09 m
+    const deep = tyreFaces(T, { barriers: [{ ...toward, rows: 4 }] });
+    expect(deep).toHaveLength(1);                                             // 2.0 - (1.8 + 0.31): on the road
+    expect(deep[0].face).toBeCloseTo(2.0 - 2.11, 2);
+    // drawn westward, rows away from the track: the front row's face (0.55 - 0.31) whatever the depth
+    const away = { kind: 'tyres', pts: [[100, -5.55, 0], [40, -5.55, 0]] as V3[], src: 'front row at 0.55 m' };
+    expect(tyreFaces(T, { barriers: [away] })).toHaveLength(0);
+    expect(tyreFaces(T, { barriers: [{ ...away, rows: 4 }] })).toHaveLength(0);
+  });
+  it('a wall-tyre join measures the wall face at its own half width (w / 2), else the 0.18 m of before', () => {
+    const wall = { kind: 'concrete', pts: [[10, -12, 0], [25, -9, 0], [40, -6, 0]] as V3[], src: 'onto the tyres' };
+    const rev = { kind: 'tyres', pts: [[100, -6, 0], [70, -6, 0], [40, -6, 0]] as V3[], src: 'tyres' };
+    expect(joinFaces(T, { barriers: [wall, rev] })[0].step).toBeCloseTo(0.31 - 0.18, 2);
+    expect(joinFaces(T, { barriers: [{ ...wall, w: 0.96 }, rev] })[0].step).toBeCloseTo(0.31 - 0.48, 2);
+  });
+});
+
 describe('scenery gates: run gaps (round 13, Sonoma owner note 131)', () => {
   // one tyre line 20 m right of the bottom straight, split 13.5 m apart at x 60-73.5 (the hole past the footbridge)
   const a = { kind: 'tyres', pts: [[10, -20, 0], [35, -20, 0], [60, -20, 0]] as V3[], src: 'part 1' };

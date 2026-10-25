@@ -1118,6 +1118,12 @@ def barriers(trk, osm):
                 rec[key_] = dw[key_]
         if dw.get("stack"):
             rec["stack"] = int(dw["stack"])   # tyres per stack (round 7), from the evidence
+        # round 14D (Sonoma T11, owner 25 Oct 2026): a deep tyre wall's rows (the app draws row k k x 0.6 m to the
+        # polyline's left; absent: 2) and a thick wall's drawn width (absent: the app's 0.36 m); both from the evidence
+        if dw.get("rows"):
+            rec["rows"] = int(dw["rows"])
+        if dw.get("w"):
+            rec["w"] = float(dw["w"])
         if dw.get("fence_arm"):
             # round 10 (Sonoma pit-out catch fence): angled arms on the fence posts, leaning toward the track (the side of
             # the polyline the nearest track centre lies on; +1 = left, the app's offsetLine convention)

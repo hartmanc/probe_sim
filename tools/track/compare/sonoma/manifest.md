@@ -1577,6 +1577,25 @@ HEIGHT mismatch (advisory), explained as in round 9: the inventory row s 184 fen
 2.8 m. The coverage check counts the vertical mesh only, 1.8 m over the 1.0 m wall; the arm tips reach ~3.15 m. Frame t006
 itself measures the posts at 1.8-2.0 x the wall face above the wall.
 
+## Round 14D (25 Oct 2026; the owner's decisions of 25 Oct and the round-14B judge's non-gate rows; ledger compare/sonoma/round14d/LEDGER.md)
+
+| object (config name) | side | s (m) | evidence |
+|---|---|---|---|
+| T11 hairpin outside: deep tyre wall, light-blue face (round 14D) | left | 3646-3698 | owner decision 25 Oct (OWNER_NOTES.md); band on c20_s1265 / c20_s1320 0.1-3.8 m beyond the edge (round14d/t11_profiles.json); 7hJizPBNrJ4 t 6.5-9.5 (2019, black); RAZip6S84CM t121.5-t123.25 (2026, light-blue face) |
+| T11 hairpin outside: deep tyre wall, white stacks (round 14D) | left | 3698-3704 | RAZip6S84CM t123.25 / t124 white stacks; c20_s1320 band |
+| T11 hairpin outside: thick white wall behind the tyre wall (round 14D) | left | 3646-3712 | owner ("the white is just a thick wall"); 0.96 m where it leaves the band at s 3734-3744 (t11_profiles.json); joined to 'T11 exit to T12, left' |
+| T11 hairpin, left tyre wall (trimmed to its tail) | left | 3708-3730 | round 7 run's last declared points |
+| T11 entry, left: red / white wrapped tyre facing on the separation Jersey (round 14D) | left | 3592-3604 | RAZip6S84CM t119.5, onboard crop s3600 (judge r14b C1); the Jersey recoloured light blue (t119.5-t121) |
+| T4 approach, left: tyre cushion on the wall head (round 14D) | left | 733-735 | owner decision 25 Oct (decisions page Q3), head on c20_s2420 |
+| kerb 24, 9a right apex: end 3044 -> 3046 | right | 3019-3046 | RAZip6S84CM t99.75-t100.25 (the kerb ends abeam the grey tyre stack, s 3047) |
+| T1 service-road mouth: white line on his arc, no cones | right | 166-179 | owner decision 25 Oct; owner/r14/mouths.json |
+| T7 road left: no edge line, no shoulder | left | 1909-2150 | RAZip6S84CM t066-t072 (judge r14b A10 / A11) |
+| T2 footbridge: open truss (bridge_style 'truss') | - | 295 | onboard s0250 / t008 (judge r14b A3) |
+| T7 Toyota boards alternate red / white | left | 2105-2140 | onboard s2100 / t070 (judge r14b A15) |
+| T10-entry boards: one SONOMA RACEWAY panel, two SUNBELT RENTALS, white TOYOTA run | left | 3118-3168 | RAZip6S84CM t103.5-t105.5 (judge r14b B12) |
+| pit-out paddock-side wall: red panels | left | 111-150 | RAZip6S84CM t004.0 / t004.5 (judge r14b A5; inventory s 111) |
+| curved-top catch-fence posts (fence_arm 0.5 m, 45 deg) on ten walls | both | lap | inventory fence rows "curved-top posts" (judge r14b B14) |
+
 ## Dispositions of the MISSING rows (codify round, 20 Oct 2026; read by the coverage gate)
 
 Every inventory kind now counts: a MISSING row of a kind outside wall / fence / kerb / tyre wall / bridge passes the

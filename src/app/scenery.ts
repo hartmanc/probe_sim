@@ -25,7 +25,7 @@ export interface SceneryJson {
   far_trees?: PackedTrees;
   /** plain: walls without the window / door facade (an evidence override, round 6) */
   buildings: { kind: string; name: string; z: number; h: number; footprint: V2[]; src: string; plain?: boolean }[];
-  bridges: { id: string; kind: string; name: string; s: number; deck_z: number; a: V2; b: V2; width: number; banners: string[][]; style?: 'deck' | 'arch' | 'sign';
+  bridges: { id: string; kind: string; name: string; s: number; deck_z: number; a: V2; b: V2; width: number; banners: string[][]; style?: 'deck' | 'arch' | 'sign' | 'truss';
     /** where the deck meets the banks (20 Oct 2026): an abutment at `at` from z_ground to the deck, stairs on to `to` */
     ends?: { at: V2; z_ground: number; to: V2; z_to: number }[] }[];
   /** color: the wall's paint where the evidence shows it (Sonoma 2026: light blue / green), default plain concrete */
@@ -36,6 +36,8 @@ export interface SceneryJson {
     /** colour sections along the run (Buttonwillow, 20 Oct 2026): an alternating pattern and / or explicit sections */
     pattern?: { colors: string[]; period_m: number }; sections?: { from_m: number; to_m: number; color: string }[];
     /** tyres per stack (round 7; default from h) */ stack?: number;
+    /** round 14D (Sonoma T11, a deep tyre wall): tyre rows, row k drawn k x 0.6 m to the polyline's left (absent: 2) */ rows?: number;
+    /** round 14D (Sonoma T11, a thick white wall): a concrete / pit wall's drawn thickness, m (absent: 0.36) */ w?: number;
     /** round 12 (Sonoma judge r11 N65): the absolute z of the wall's top per point where it is level across a hollow in
      *  its ground (tools/track/barrier_rules.py); absent: ground + h. The wall is drawn from the ground to this top. */
     top_z?: number[] }[];
@@ -721,6 +723,36 @@ export function barrierSections(P: V3[], b: { color?: string; pattern?: { colors
   return out;
 }
 
+/** Round 14D: a concrete / pit wall's drawn half thickness (its `w` / 2, else 0.18: the 0.36 m wall of every run before). */
+export function wallHalfThickness(b: { w?: number }): number {
+  return b.w && b.w > 0 ? b.w / 2 : 0.18;
+}
+
+/** Round 14D: the row indices a tyre run draws (row k at k x 0.6 m to the polyline's left): `rows` (1-8), absent 2. */
+export function tyreRows(b: { rows?: number }): number[] {
+  const n = Math.max(1, Math.min(8, Math.round(b.rows ?? 2)));
+  return Array.from({ length: n }, (_, i) => i);
+}
+
+/** Round 14D: the lattice of an open truss footbridge's end sections (style 'truss'): over the first and last `endLen` m
+ *  of the span (each at most a quarter of it), verticals every `bay` m from the deck (y 0) to the top chord (y `h`) and
+ *  one diagonal per bay, alternating; each member as its centre (x along the span from its middle, y up), length and
+ *  rotation about the across-span axis. Pure. */
+export function trussMembers(span: number, endLen = 4.5, bay = 1.5, h = 1.1): { x: number; y: number; len: number; rot: number }[] {
+  const out: { x: number; y: number; len: number; rot: number }[] = [];
+  const L = Math.min(endLen, span / 4), n = Math.max(1, Math.round(L / bay)), d = L / n;
+  for (const sgn of [-1, 1]) {
+    const x0 = sgn * (span / 2);   // the pier end
+    for (let i = 0; i <= n; i++) out.push({ x: x0 - sgn * i * d, y: h / 2, len: h, rot: 0 });
+    for (let i = 0; i < n; i++) {
+      const xa = x0 - sgn * i * d, xb = x0 - sgn * (i + 1) * d;
+      const up = i % 2 === 0 ? 1 : -1;
+      out.push({ x: (xa + xb) / 2, y: h / 2, len: Math.hypot(d, h), rot: up * sgn * Math.atan2(d, h) });
+    }
+  }
+  return out;
+}
+
 function buildBarriers(list: SceneryJson['barriers'], drawn?: (x: number, y: number) => number): THREE.Group {
   const group = new THREE.Group();
   group.name = 'barriers';
@@ -739,7 +771,7 @@ function buildBarriers(list: SceneryJson['barriers'], drawn?: (x: number, y: num
     if (P.length < 2) continue;
     const top = b.top_z && b.top_z.length === P.length ? b.top_z : P.map((p) => p[2] + b.h);
     if (b.kind === 'concrete' || b.kind === 'pitwall') {
-      const th = 0.18;
+      const th = wallHalfThickness(b);
       const L = offsetLine(P, th), R = offsetLine(P, -th);
       const cc = b.color ? new THREE.Color(b.color) : b.kind === 'pitwall' ? cPit : cConcrete;
       const segs = barrierSections(P, b);
@@ -785,6 +817,10 @@ function buildBarriers(list: SceneryJson['barriers'], drawn?: (x: number, y: num
       // tyres per stack from the evidence (b.stack) or from h; the stack is scaled to stand exactly h high
       const nT = b.stack ?? tyresInStack(b.h), sy = (b.h || nT * TYRE_H) / (nT * TYRE_H);
       const place = (x: number, y: number, z: number) => new THREE.Matrix4().makeTranslation(x, z, -y).multiply(new THREE.Matrix4().makeScale(1, sy, 1));
+      // round 14D: the run's rows (absent 2) and its colour sections along the run (pattern / sections, as on the walls)
+      const rowsIdx = tyreRows(b), segs = barrierSections(P, b);
+      let along = 0;
+      const colourAt = (d: number) => (segs ? (segs.find((q) => d >= q.a && d <= q.b) ?? segs[segs.length - 1]).color : b.color);
       for (let i = 0; i < P.length - 1; i++) {
         const a = P[i], c = P[i + 1];
         const seg = Math.hypot(c[0] - a[0], c[1] - a[1]);
@@ -792,25 +828,28 @@ function buildBarriers(list: SceneryJson['barriers'], drawn?: (x: number, y: num
           const f = acc / Math.max(seg, 1e-6);
           const x = a[0] + (c[0] - a[0]) * f, y = a[1] + (c[1] - a[1]) * f, z = a[2] + (c[2] - a[2]) * f;
           const nx = -(c[1] - a[1]) / seg, ny = (c[0] - a[0]) / seg;
-          for (const row of [0, 1]) {
-            const off = row * 0.6, sh = row * 0.31;
+          for (const row of rowsIdx) {
+            const off = row * 0.6, sh = (row % 2) * 0.31;
             const px = x + nx * off + ((c[0] - a[0]) / seg) * sh, py = y + ny * off + ((c[1] - a[1]) / seg) * sh;
-            tyres.push({ m: place(px, py, z), white: !b.color && k % 12 < 2, color: b.color, n: nT });   // mostly black with a white pair every 12 stacks
+            const col = colourAt(along + acc);
+            tyres.push({ m: place(px, py, z), white: !col && k % 12 < 2, color: col, n: nT });   // mostly black with a white pair every 12 stacks
           }
           k++;
           acc += TYRE_PITCH;
         }
         acc -= seg;
+        along += seg;
       }
       // close the run's far end: a last stack on the end point unless the spacing already put one within 0.2 m
       const last = P[P.length - 1], prev = P[P.length - 2];
       const segL = Math.hypot(last[0] - prev[0], last[1] - prev[1]);
       if (segL > 1e-6 && TYRE_PITCH - acc > 0.2) {
         const tx = (last[0] - prev[0]) / segL, ty = (last[1] - prev[1]) / segL;
-        for (const row of [0, 1]) {
-          const off = row * 0.6, sh = row * 0.31;
+        for (const row of rowsIdx) {
+          const off = row * 0.6, sh = (row % 2) * 0.31;
           const px = last[0] - ty * off - tx * sh, py = last[1] + tx * off - ty * sh;
-          tyres.push({ m: place(px, py, last[2]), white: !b.color && k % 12 < 2, color: b.color, n: nT });
+          const col = colourAt(along);
+          tyres.push({ m: place(px, py, last[2]), white: !col && k % 12 < 2, color: col, n: nT });
         }
       }
     }
@@ -1437,7 +1476,24 @@ function buildBridges(list: SceneryJson['bridges'], ground?: (x: number, y: numb
       if (face === 1) pl.rotation.y = Math.PI;
       g.add(pl);
     });
-    if (foot) {
+    if (foot && b.style === 'truss') {
+      // round 14D (Sonoma judge r14b A3; onboard s0250, RAZip6S84CM t008): an OPEN truss footbridge, no roof: the banners
+      // hang on the span, a top chord along each side at the handrail and lattice end sections (verticals and diagonals)
+      // over the first and last trussEnd m at both piers
+      for (const zz of [-w / 2, w / 2]) {
+        const chord = new THREE.Mesh(new THREE.BoxGeometry(span, 0.12, 0.12), steel);
+        chord.position.set(0, 1.1, zz);
+        g.add(chord);
+      }
+      for (const x of trussMembers(span)) {
+        for (const zz of [-w / 2, w / 2]) {
+          const m = new THREE.Mesh(new THREE.BoxGeometry(0.08, x.len, 0.08), steel);
+          m.position.set(x.x, x.y, zz);
+          m.rotation.z = x.rot;
+          g.add(m);
+        }
+      }
+    } else if (foot) {
       // roof truss and handrail posts so it reads as the covered footbridge
       const roof = new THREE.Mesh(new THREE.BoxGeometry(span, 0.2, w + 0.4), steel);
       roof.position.y = 2.7;

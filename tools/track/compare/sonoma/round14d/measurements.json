@@ -1,0 +1,139 @@
+{
+ "round": "Sonoma round 14D, 25 Oct 2026",
+ "frames_local": "tools/track/compare/sonoma/round14d/frames/ (reference only, not committed); captured in the agent's own Chrome tab from the watch page, muted and paused, the frame drawn from the video element",
+ "t11_outside": {
+  "band_profiles": "round14d/t11_profiles.json (compare/profile_measure.py, left edge, s 3620-3760 every 4 stations)",
+  "band": {
+   "from_s": 3648,
+   "to_s": 3730,
+   "inner_m": [
+    0.1,
+    0.6
+   ],
+   "outer_m_3650_3700": [
+    3.6,
+    3.8
+   ],
+   "outer_m_3704_3728": [
+    2.2,
+    2.9
+   ]
+  },
+  "white_wall_width_m": {
+   "value": 0.96,
+   "rows_k": [
+    3736,
+    3740,
+    3744
+   ],
+   "runs": [
+    [
+     -0.16,
+     0.84
+    ],
+    [
+     -0.04,
+     0.92
+    ],
+    [
+     -0.08,
+     0.88
+    ]
+   ],
+   "why": "the white exit wall where it leaves the band"
+  },
+  "model": {
+   "tyre_rows": 4,
+   "tyre_front_line_m": 0.55,
+   "tyre_face_m": 0.24,
+   "tyre_back_face_m": 2.66,
+   "wall_line_m": 3.3,
+   "wall_w_m": 0.96,
+   "wall_back_m": 3.78,
+   "tyre_line_to_wall_line_m": {
+    "light_blue_run": 2.672,
+    "white_run": 2.718
+   },
+   "why_2_75": "tyre_facings reach 2.6 m and the side-by-side gate's 0.8-2.5 m band"
+  },
+  "colours": {
+   "2026": "RAZip6S84CM t121.5 / t122.5 / t123.25: light-blue face from the entry; white stacks from s ~3698 (t123.25 / t124)",
+   "2019": "7hJizPBNrJ4 t 6.5-9.5: black tyre wall, white wall end at the entry (the owner's frame t 7.5)"
+  },
+  "heights": {
+   "tyres_m": 0.8,
+   "src": "t122 / t124 two tyres high (round 7)",
+   "white_wall_m": 0.81,
+   "src_wall": "the exit wall it joins (onboard 2:07)"
+  }
+ },
+ "kerb_24": {
+  "was": [
+   3019,
+   3044
+  ],
+  "now": [
+   3019,
+   3046
+  ],
+  "frames": [
+   "RAZip6S84CM t99.0 / t99.5 / t100.0",
+   "t99.75 / t100.0 / t100.25"
+  ],
+  "reading": "at t100.0 the right front is on the kerb's last blocks and the kerb ends abeam the two grey tyres (landmark s 3047, 1.5 m out); at t100.25 only the white line on the grass; no kerb past s ~3046",
+  "end_point_enu": [
+   219.96,
+   28.24
+  ],
+  "why_point": "the round-14B kerb_inside world point: the fitted edge already carries the kerb's 0.65 m to s 3046.0",
+  "width_m": 0.65,
+  "captures": "c20_o0660 / c20_s0660: parked trucks over the apex, end not measurable"
+ },
+ "t7_road_left": {
+  "s": [
+   1909,
+   2150
+  ],
+  "frames": "RAZip6S84CM t066 / t068 / t070 / t072: dark asphalt to the wall's foot, no paint; t064: the drag strip's SW line to the fork"
+ },
+ "pit_in_facing": {
+  "s": [
+   3592,
+   3604
+  ],
+  "frames": "RAZip6S84CM t119.5, onboard crop s3600",
+  "jersey_off_m": [
+   1.14,
+   1.23
+  ],
+  "facing_line": "Jersey line - 0.55 m"
+ },
+ "t10_entry_boards": {
+  "frames": "RAZip6S84CM t103.5 / t104.5 / t105.5",
+  "sequence": [
+   "SONOMA RACEWAY (one long dark panel)",
+   "SUNBELT RENTALS x2 (green)",
+   "TOYOTA (small white panels)"
+  ]
+ },
+ "pit_out_panels": {
+  "frames": "RAZip6S84CM t004.0 / t004.5",
+  "s": [
+   111,
+   150
+  ],
+  "panel_m": 2.0
+ },
+ "t4_cushion": {
+  "head_enu": [
+   -334.42,
+   -26.06
+  ],
+  "length_m": 2.0,
+  "from_head_m": [
+   0.5,
+   2.5
+  ],
+  "owner": "decisions page Q3, 25 Oct 2026: cushion"
+ }
+}

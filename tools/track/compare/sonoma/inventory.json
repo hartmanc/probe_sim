@@ -7329,14 +7329,103 @@
    "source": "onboard:24of8fjjAug@292",
    "frame": "pit_24of8fjjAug_t0292.jpg",
    "scope": "pit"
+  },
+  {
+   "confidence": 0.9,
+   "t": null,
+   "frame": "",
+   "scope": "lap",
+   "note": "the owner: \"a deep tire wall at T11 ... from just before station 3648 ... all the way around the outside of T11. There is no apron\"; band 0.1-3.8 m beyond the edge on c20_s1265 / c20_s1320 (round14d/t11_profiles.json); the 2026 face light blue (t122.5 / t123.25), the 2019 video black; s on the inventory lap (4098.8 m; the package lap +6.5 m from T9A on)",
+   "side": "left",
+   "kind": "tyre_wall",
+   "s": 3643.5,
+   "attrs": {
+    "type": "deep tyre wall round the T11 outside from just before s 3648, light-blue face (no apron)",
+    "h_m": 0.8,
+    "h_method": "tyre-ref",
+    "rows": 4,
+    "depth_m": 2.42,
+    "round": "14D"
+   },
+   "source": "owner:decision 2026-10-25 (round14d/OWNER_NOTES.md) + onboard:7hJizPBNrJ4@7.5 + onboard:RAZip6S84CM@122.5"
+  },
+  {
+   "confidence": 0.9,
+   "t": null,
+   "frame": "",
+   "scope": "lap",
+   "note": "white stacks from s ~3698 (t123.25 / t124); s on the inventory lap (4098.8 m; the package lap +6.5 m from T9A on)",
+   "side": "left",
+   "kind": "tyre_wall",
+   "s": 3693.5,
+   "attrs": {
+    "type": "deep tyre wall, white stacks to the T11 exit",
+    "h_m": 0.8,
+    "h_method": "tyre-ref",
+    "rows": 4,
+    "round": "14D"
+   },
+   "source": "owner:decision 2026-10-25 + onboard:RAZip6S84CM@123.25"
+  },
+  {
+   "confidence": 0.9,
+   "t": null,
+   "frame": "",
+   "scope": "lap",
+   "note": "the owner: \"I think the white is just a thick wall\"; width where it leaves the band at s 3734-3744 (round14d/t11_profiles.json); joined to the white exit wall at s 3712; s on the inventory lap (4098.8 m; the package lap +6.5 m from T9A on)",
+   "side": "left",
+   "kind": "wall",
+   "s": 3643.5,
+   "attrs": {
+    "type": "thick white wall behind the T11 tyre wall (maybe a SAFER barrier), 0.96 m wide",
+    "h_m": 0.81,
+    "h_method": "jersey-ref",
+    "w_m": 0.96,
+    "round": "14D"
+   },
+   "source": "owner:decision 2026-10-25 (round14d/OWNER_NOTES.md) + capture:c20_s1320"
+  },
+  {
+   "confidence": 0.9,
+   "t": null,
+   "frame": "",
+   "scope": "lap",
+   "note": "judge r14b C1: no inventory row before; s3600 crop and t119.5; s on the inventory lap (4098.8 m; the package lap +6.5 m from T9A on)",
+   "side": "left",
+   "kind": "tyre_wall",
+   "s": 3591.5,
+   "attrs": {
+    "type": "red / white wrapped tyre facing in front of the light-blue Jersey at the pit-in separation",
+    "h_m": 0.8,
+    "h_method": "jersey-ref",
+    "round": "14D"
+   },
+   "source": "onboard:RAZip6S84CM@119.5"
+  },
+  {
+   "confidence": 0.8,
+   "t": null,
+   "frame": "",
+   "scope": "lap",
+   "note": "the owner chose \"cushion\" knowing c20_s2420 shows the head bare (round14d/owner/t3_wall_end_s735_owner_satellite.png)",
+   "side": "left",
+   "kind": "tyre_wall",
+   "s": 734.0,
+   "attrs": {
+    "type": "tyre cushion on the T4 approach wall head (owner decision; the 2026 capture shows it bare)",
+    "h_m": 1.0,
+    "h_method": "unmeasured",
+    "round": "14D"
+   },
+   "source": "owner:decision 2026-10-25 (decisions page Q3) + capture:c20_s2420"
   }
  ],
  "counts": {
-  "wall": 102,
+  "wall": 103,
   "fence": 52,
   "runoff": 46,
   "paint": 32,
-  "tyre_wall": 32,
+  "tyre_wall": 36,
   "mast": 30,
   "kerb": 29,
   "stand": 23,

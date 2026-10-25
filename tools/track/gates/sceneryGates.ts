@@ -17,7 +17,8 @@ export type V3 = [number, number, number];
 export interface TrackLike { n: number; spacing_m: number; center: V3[]; left: V3[]; right: V3[] }
 export interface PartLike { center: V3[]; left: V3[]; right: V3[]; gap_left?: number[]; gap_right?: number[]; turn?: string; kind?: string; name?: string }
 export interface SceneryLike {
-  barriers?: { kind: string; pts: V3[]; src?: string }[];
+  /** rows: tyre rows drawn (absent 2); w: a concrete / pit wall's drawn thickness (absent 0.36), round 14D */
+  barriers?: { kind: string; pts: V3[]; src?: string; rows?: number; w?: number }[];
   pit_lane?: { parts: PartLike[] } | null;
   paved_zones?: { parts: PartLike[] } | null;
   pit_exit_cones?: { pts: V3[]; spacing_m?: number; src?: string } | null;
@@ -568,7 +569,12 @@ export function sideBySide(t: TrackLike, sc: SceneryLike, opts: { facing?: numbe
 export const TYRE_R = 0.31, TYRE_ROW = 0.6;
 const RIGID_KINDS = ['concrete', 'pitwall', 'armco'];
 const HALF_THICK: Record<string, number> = { concrete: 0.18, pitwall: 0.18, armco: 0.05 };
-type BarrierTop = { kind: string; pts: V3[]; src?: string; h?: number; top_z?: number[] };
+/** Round 14D (Sonoma T11, a deep tyre wall in front of a thick wall): a tyre run's drawn row extent beyond its line on the
+ *  polyline's left ((rows - 1) x TYRE_ROW; rows absent = 2, the extent every gate assumed before) and a rigid run's drawn
+ *  half thickness (w / 2 where the run gives its width, else the kind's). Identical to before for runs without them. */
+export const tyreRowExtent = (b: { rows?: number }): number => Math.max(0, (b.rows ?? 2) - 1) * TYRE_ROW;
+export const halfThick = (b: { kind: string; w?: number }): number => (b.w && b.w > 0 ? b.w / 2 : HALF_THICK[b.kind] ?? 0.18);
+type BarrierTop = { kind: string; pts: V3[]; src?: string; h?: number; top_z?: number[]; rows?: number; w?: number };
 const topsOf = (b: BarrierTop): number[] => (b.top_z && b.top_z.length === b.pts.length ? b.top_z : b.pts.map((p) => p[2] + (b.h ?? 0)));
 
 export interface WallTopsReport {
@@ -650,7 +656,7 @@ export function joinFaces(t: TrackLike, sc: SceneryLike & { barriers?: BarrierTo
       if (!pr) continue;
       const c = t.center[pr.i], trackLeft = (c[0] - H[0]) * nlx + (c[1] - H[1]) * nly > 0;
       const ntx = trackLeft ? nlx : -nlx, nty = trackLeft ? nly : -nly;   // toward the track
-      const tyreFace = trackLeft ? TYRE_ROW + TYRE_R : TYRE_R;
+      const tyreFace = trackLeft ? tyreRowExtent(tb) + TYRE_R : TYRE_R;
       for (const wb of bars) {
         if (!RIGID_KINDS.includes(wb.kind) || wb.pts.length < 2) continue;
         for (const we of ends(wb.pts)) {
@@ -658,7 +664,7 @@ export function joinFaces(t: TrackLike, sc: SceneryLike & { barriers?: BarrierTo
           if (Math.hypot(E[0] - H[0], E[1] - H[1]) > join) continue;
           const wx0 = E[0] - we.q[0], wy0 = E[1] - we.q[1], wl = Math.hypot(wx0, wy0) || 1;   // out of the wall at its end
           if ((wx0 / wl) * ux + (wy0 / wl) * uy < 0.5) continue;   // not end to end (a facing or a crossing)
-          const wallFace = (E[0] - H[0]) * ntx + (E[1] - H[1]) * nty + (HALF_THICK[wb.kind] ?? 0.18);
+          const wallFace = (E[0] - H[0]) * ntx + (E[1] - H[1]) * nty + halfThick(wb);
           // driving direction at the joint (stations are in driving order): do the tyres run on downstream of it?
           const fa = t.center[(pr.i + 1) % t.n], fb = t.center[(pr.i - 1 + t.n) % t.n];
           const tyresDown = (fa[0] - fb[0]) * ux + (fa[1] - fb[1]) * uy > 0;
@@ -690,7 +696,7 @@ export function tyreFaces(t: TrackLike, sc: SceneryLike, opts: { min?: number } 
       const pr = proj([P[i][0], P[i][1]], 60);
       if (!pr) continue;
       const c = t.center[pr.i], trackLeft = (c[0] - P[i][0]) * nlx + (c[1] - P[i][1]) * nly > 0;
-      const face = pr.out - (trackLeft ? TYRE_ROW + TYRE_R : TYRE_R);
+      const face = pr.out - (trackLeft ? tyreRowExtent(tb) + TYRE_R : TYRE_R);
       if (!worst || face < worst.face) worst = { tyres: (tb.src ?? '').slice(0, 90), s: Math.round(pr.i * t.spacing_m), face: Math.round(face * 100) / 100, rowsToTrack: trackLeft };
     }
     if (worst && worst.face < min) out.push(worst);

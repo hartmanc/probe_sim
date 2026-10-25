@@ -176,5 +176,16 @@
    "now": 115.0,
    "why": "T11-approach anchor: the 1:56 Jersey row mapped to s 3492 with no anchor between T10 (1:49) and T11 (2:02.5); round 5 read the impact block at s ~3586-3600 as the Jersey's nose and concluded the map ran ~90 m early; the Jersey starts at s 3468, so the 1:56 frame (Jersey alongside) is at s ~3500"
   }
+ ],
+ "secondary_videos": [
+  {
+   "id": "7hJizPBNrJ4",
+   "url": "https://www.youtube.com/watch?v=7hJizPBNrJ4",
+   "title": "Porsche GT3 RS Sonoma Raceway 1:44.8 laptime",
+   "date": "Aug 16, 2019 (uploaded; before the Dec 2023 - Feb 2024 repave)",
+   "camera": "in-car, driver's eye, 1080p",
+   "lap_s": 104.8,
+   "use": "round 14D (owner, 25 Oct 2026): the T11 outside, the deep tyre wall and the white wall (lap 3 T11 at video t 6.0-9.5; lap 4 starts at t 20.9); reference only, frames local (compare/sonoma/round14d/frames/7h_*.jpg), captured in the agent's own Chrome tab (muted, paused, drawn from the video element)"
+  }
  ]
 }
