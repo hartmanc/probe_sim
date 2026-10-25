@@ -98,9 +98,9 @@ export const TRACKS: Readonly<Record<string, TrackInfo>> = {
   // stage 1 + 2 only (20 Oct 2026): geometry and racing line, no scenery yet (the 1.10 review comes first); rev over the
   // files the package has. The pace file is Buttonwillow's own field (22 Oct 2026: tools/race/pace_track.ts --own, the
   // 100 cars of the Button Turrible 2026 race that ran a lap, each with its own stints; ids "<n>_bw" where the number
-  // is a different Laguna car's). Package: round 12 (rev 4c9dab5340, 4699.187 m; round 10's geometry, round 11's scenery passing the merged gates).
+  // is a different Laguna car's). Package: round 12 (rev 52bf051dcc, 4699.187 m; round 10's geometry, round 11's scenery passing the merged gates, the paddock openings and strip).
   buttonwillow: { dir: 'tracks/buttonwillow/', name: 'Buttonwillow Raceway Park', short: 'Buttonwillow', length_m: 4699.187, pace: 'cars/field/buttonwillow/pace.json',
-    identity: 'cars/field/buttonwillow/identity.json', rev: '4c9dab5340',
+    identity: 'cars/field/buttonwillow/identity.json', rev: '52bf051dcc',
     // on the front straight, ~115 m before the line (s 4580; the last corner T11 is at 4377)
     start: { s_m: 4580, speed: ROLLING_START_SPEED },
     // 24 Oct 2026, 100 cars, 4 laps, seeds 1-3 (tools/race/AI_READINESS.md): AI-AI contacts 0.058 -> 0.020 per car-lap,
