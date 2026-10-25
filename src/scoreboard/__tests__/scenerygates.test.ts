@@ -301,6 +301,15 @@ describe('scenery gates: tyre rows and wall widths (Sonoma round 14D, T11)', () 
     expect(sideBySide(T, { barriers: [ahead, m0, m1] } as never)).toHaveLength(1);
     expect(sideBySide(T, { barriers: [ahead, { ...m0, stack_of: undefined }, { ...m1, stack_of: undefined }] } as never).length).toBeGreaterThanOrEqual(1);
   });
+  it('fourth review (1): on a bent wall the exposed row is chosen along the run, not once for the whole wall', () => {
+    // Astra's reproducer: the rear row comes close to the wall's first leg at one end; the front row runs 1.5 m off its
+    // long leg; choosing one row per wall (the rear) hid the front row's finding
+    const m0 = { kind: 'tyres', src: 'bent-wall stack', rows: 2, stack_of: { id: 'S', k: 0, n: 2 }, pts: [[100, -8.6, 0], [50, -8.6, 0]] as V3[] };
+    const m1 = { ...m0, stack_of: { id: 'S', k: 1, n: 2 }, pts: [[100, -9.8, 0], [50, -9.8, 0]] as V3[] };
+    const bent = { kind: 'concrete', src: 'bent wall', pts: [[100, -10.95, 0], [110, -10.95, 0], [110, -7.1, 0], [20, -7.1, 0]] as V3[] };
+    expect(sideBySide(T, { barriers: [bent, { ...m0, stack_of: undefined }] } as never)).toHaveLength(1);   // the front member alone
+    expect(sideBySide(T, { barriers: [bent, m0, m1] } as never)).toHaveLength(1);                         // tagged: the same finding
+  });
   it('third review (1): a stack is ONE wall for the wall-ends and run-gaps gates', () => {
     // a bare straight two-member stack 3 m right of the bottom straight's edge: its members 1.2 m apart must not join
     // or protect each other; both heads (the group's end envelope) are exposed

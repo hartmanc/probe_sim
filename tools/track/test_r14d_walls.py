@@ -156,3 +156,19 @@ def test_an_edge_just_beyond_a_wall_is_brought_back_inside_it():
     R = np.array(part["right"])[:, 1]
     assert BS.clearance_report([part], [wall])[0] >= 0.3 - 1e-6
     assert (R >= -3.0 - 1e-9).all()                                    # never pushed outward
+
+
+@pytest.mark.parametrize("ys", [
+    (-7.61, -6.80, -7.63, -6.33),   # Astra's reproducer (fourth review 2; on this branch's earlier code its front row ended at 0.56 m)
+    (-7.21, -6.38, -7.25, -6.98),   # a case the earlier code failed: its second front point landed at y -5.53, 0.53 m from the edge
+])
+def test_a_bent_stack_never_brings_a_translated_member_inside_the_edge_minimum(ys):
+    from test_tyre_facings import _straight
+    trk = _straight()
+    rec = dict(kind="tyres", src="bent", pts=[[150.0 - i, y, 0.0] for i, y in enumerate(ys)])
+    mem = BS.stacked_tyre_runs(rec, 4)
+    wall = dict(kind="concrete", pts=[[100.0, -7.85, 0.0], [200.0, -7.85, 0.0]])
+    BS.tyre_facings(trk, [wall] + mem, reach=3.0, off=0.55)
+    for m in mem:
+        _, _, dout = trk.project(np.array(m["pts"])[:, :2])
+        assert (dout >= 0.55 - 1e-9).all(), (m["stack_of"], dout)

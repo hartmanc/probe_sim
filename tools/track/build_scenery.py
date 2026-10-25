@@ -1837,24 +1837,38 @@ def tyre_facings(trk, bar, reach=2.5, off=0.55):
                 continue
             P[j, :2] = p_new
             moved.append(int(i_[0]))
+        if moved and so:
+            # the members in front follow the rear member point by point (same declared points, row spacing kept). Fourth
+            # review (2): the ACTUAL translated members, rounded as stored, are checked against the edge minimum (on a bend
+            # the rear member's normal is not theirs); any point whose translated row 0 would come inside it is held at its
+            # declared place in every member, until the whole group passes
+            mems = [m for m in bar if m is not b and (m.get("stack_of") or {}).get("id") == so["id"]]
+            for m in mems:
+                if len(m["pts"]) != len(P):
+                    raise SystemExit(f"tyre facing: stack {so['id']!r}: members of unequal length ({len(m['pts'])} / {len(P)} points)")
+            olds = [np.array(m["pts"], float) for m in mems]
+            for _ in range(len(P) + 1):
+                disp = P[:, :2] - P_old[:, :2]
+                bad = set()
+                for Q0 in olds + [P_old]:
+                    Qr = np.round(Q0[:, :2] + disp, 2)
+                    _, _, dq = trk.project(Qr)
+                    bad |= {int(j) for j in np.nonzero((dq < gmin_ - 1e-9) & (np.hypot(*disp.T) > 0))[0]}
+                if not bad:
+                    break
+                for j in bad:
+                    P[j, :2] = P_old[j, :2]
+                log(f"tyre facing: stack {so['id'][:50]!r}: {len(bad)} points held where a translated member would come inside {gmin_} m of the edge")
+            moved = [i for i in moved] if np.hypot(*(P[:, :2] - P_old[:, :2]).T).max() > 0 else []
+            for m, Q0 in zip(mems, olds):
+                Q = Q0.copy(); Q[:, :2] += P[:, :2] - P_old[:, :2]
+                Q[:, 2] = trk.ground(Q[:, 0], Q[:, 1])
+                m["pts"] = [[rnd(x, 2), rnd(y, 2), rnd(z, 2)] for x, y, z in Q]
         if moved:
             P[:, 2] = trk.ground(P[:, 0], P[:, 1])
             b["pts"] = [[rnd(x, 2), rnd(y, 2), rnd(z, 2)] for x, y, z in P]
-            log(f"tyre facing: {str(b.get('src', ''))[:70]}: {len(moved)} points onto the wall line ({off} m in front), stations {min(moved)}..{max(moved)}")
-            if so:
-                # the members in front follow the rear member point by point (same declared points, row spacing kept)
-                disp = P[:, :2] - P_old[:, :2]
-                for m in bar:
-                    mo = m.get("stack_of")
-                    if m is b or not mo or mo["id"] != so["id"]:
-                        continue
-                    Q = np.array(m["pts"], float)
-                    if len(Q) != len(P):
-                        raise SystemExit(f"tyre facing: stack {so['id']!r}: members of unequal length ({len(Q)} / {len(P)} points)")
-                    Q[:, :2] += disp
-                    Q[:, 2] = trk.ground(Q[:, 0], Q[:, 1])
-                    m["pts"] = [[rnd(x, 2), rnd(y, 2), rnd(z, 2)] for x, y, z in Q]
-                    log(f"tyre facing: stack member {mo['k']} of {so['id'][:50]!r} follows the rear member ({len(moved)} points, max {np.hypot(*disp.T).max():.2f} m)")
+            log(f"tyre facing: {str(b.get('src', ''))[:70]}: {len(moved)} points onto the wall line ({off} m in front), stations {min(moved)}..{max(moved)}"
+                + (f" (stack {so['id'][:40]!r}: its members in front follow)" if so else ""))
 
 
 def tyre_rows_outside(trk, bar, face_min=0.5, wall_reach=1.5):

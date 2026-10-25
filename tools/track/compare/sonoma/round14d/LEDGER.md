@@ -528,3 +528,40 @@ line (the owner is asked).
     plus 3 generated tyre-wall cases (Sonoma runs 23-25).
   - Python: 112 passed (test_r14d_walls.py: 18).
 - **Health:** on power, loads 3.3-5.8.
+
+
+## Fourth review (GPT 6 Astra, 25 Oct): HOLD on two edge cases of the stack rules; fixed, package unchanged (rev 3cf8227da0)
+
+**1. HIGH, side by side on a bent wall** (`sceneryGates.sideBySide`).
+- **The fault.** The exposed row was chosen once per wall, by its smallest distance anywhere along it. A rear row's close
+  approach at one end then hid the front row's long violation elsewhere.
+- **The fix.** The exposed row is now chosen locally. A sample of a candidate line counts only where no other candidate line,
+  at its point nearest that sample, comes nearer the wall.
+- **Regression (vitest):** "fourth review (1): on a bent wall the exposed row is chosen along the run, not once for the whole
+  wall". This is Astra's reproducer: a westward stack at y -8.6 / -9.8, and the wall (100,-10.95) -> (110,-10.95) ->
+  (110,-7.1) -> (20,-7.1). The tagged stack now gives the same 1-finding result as the front member alone.
+
+**2. MEDIUM, the group facing placement on bends** (`build_scenery.tyre_facings`).
+- **The fault.** The edge minimum was checked on a hypothetical front point taken from the rear member's normal, so on a bend
+  the real translated front row could land inside the 0.55 m minimum.
+- **The fix.**
+  - The ACTUAL translated members, rounded as stored (the rear member's old line included), are checked against the edge
+    minimum.
+  - Any point where a member would come inside it is held at its declared place in every member, and the check repeats until
+    the whole group passes.
+- **Regression (Python):** `test_a_bent_stack_never_brings_a_translated_member_inside_the_edge_minimum`, parametrized:
+  - **Astra's reproducer**, (150,-7.61), (149,-6.80), (148,-7.63), (147,-6.33), wall y -7.85, reach 3, off 0.55. On this
+    branch's previous code its front row ended at 0.56 m, so it passed there; it is kept as a regression.
+  - **A case the previous code fails**, (-7.21, -6.38, -7.25, -6.98): its second front point landed at y -5.53, 0.53 m from
+    the edge. I ran it against HEAD's `build_scenery.py` and it fails there.
+
+### Re-verification
+
+- **Stage 3** rebuilt: every gate ok (28 ok lines, 0 FAIL); lane clearance postcondition 0.300 m.
+- **The package is unchanged.** All seven files are cmp-identical to `public/tracks/sonoma`, so nothing was re-published.
+  **Rev stays 3cf8227da0.**
+- **Gate CLI** on the package with the new side-by-side gate: 14 ok, 0 FAIL. Coverage CLI exit 0.
+- **Builds and tests:**
+  - `npm run build` clean.
+  - `npx vitest run`: 528 passed, 0 failed (+1: the bent-wall regression).
+  - Python: 114 passed (+2: the parametrized bent-stack regression).

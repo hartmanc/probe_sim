@@ -587,19 +587,30 @@ export function sideBySide(t: TrackLike, sc: SceneryLike, opts: { facing?: numbe
       const faces = wb.wall_id ? pairs.get(wb.wall_id)! : [xy(wb.pts)];
       const ends = faces.flatMap((W) => [W[0], W[W.length - 1]]);
       const dist = (q: V2) => { let d = Infinity; for (const W of faces) for (let i = 0; i + 1 < W.length; i++) d = Math.min(d, segDist(q, W[i], W[i + 1])); return d; };
-      // the candidate line exposed toward this wall: the one coming nearest it
-      let T = cand[0], bestD = Infinity;
-      for (const c of cand) { let m = Infinity; for (const q of c) m = Math.min(m, dist(q)); if (m < bestD) { bestD = m; T = c; } }
-      // side by side = PARALLEL at an offset: consecutive 0.5 m samples in the band whose offset changes under 0.1 m
-      // per sample (< ~11 deg); a run angling in to meet the wall (a taper) changes faster and is not counted
-      let bad = 0, best = 0, first: V2 | null = null, offAt = 0, prev = NaN;
-      for (const q of T) {
-        const d = dist(q);
-        const atJoint = ends.some((e) => Math.hypot(q[0] - e[0], q[1] - e[1]) < joint);
-        if (!atJoint && d > facing && d < reach && Math.abs(d - prev) < 0.1) { bad++; if (bad > best) { best = bad; } if (!first) { first = q; offAt = d; } }
-        else bad = 0;
-        prev = d;
-      }
+      // fourth review (1): the row exposed toward the wall is chosen LOCALLY: a sample of a candidate line counts only where
+      // no other candidate line, at its point nearest that sample, comes nearer the wall (on a bent wall the rear row may
+      // be nearest at one end and the front row along the rest)
+      const others = cand.map((c) => c);
+      let best = 0, first: V2 | null = null, offAt = 0;
+      cand.forEach((T, ci) => {
+        let bad = 0, prev = NaN;
+        for (const q of T) {
+          const d = dist(q);
+          let exposed = true;
+          for (let oj = 0; oj < others.length && exposed; oj++) {
+            if (oj === ci) continue;
+            let nq: V2 = others[oj][0], nd = Infinity;
+            for (const p of others[oj]) { const e = Math.hypot(p[0] - q[0], p[1] - q[1]); if (e < nd) { nd = e; nq = p; } }
+            if (dist(nq) < d - 1e-6) exposed = false;
+          }
+          const atJoint = ends.some((e) => Math.hypot(q[0] - e[0], q[1] - e[1]) < joint);
+          // side by side = PARALLEL at an offset: consecutive 0.5 m samples in the band whose offset changes under 0.1 m
+          // per sample (< ~11 deg); a run angling in to meet the wall (a taper) changes faster and is not counted
+          if (exposed && !atJoint && d > facing && d < reach && Math.abs(d - prev) < 0.1) { bad++; if (bad > best) { best = bad; first = first ?? q; offAt = offAt || d; } }
+          else bad = 0;
+          prev = d;
+        }
+      });
       if (best >= 4 && first) {   // >= 2 m of parallel run
         const pr = proj(first, 80);
         out.push({ tyre: u.src.slice(0, 80), wall: (wb.src ?? '').slice(0, 80), s: pr ? Math.round(pr.i * t.spacing_m) : -1, off: Math.round(offAt * 10) / 10 });
