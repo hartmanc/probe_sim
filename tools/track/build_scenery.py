@@ -1611,16 +1611,24 @@ def tyre_facings(trk, bar, reach=2.5, off=0.55):
     line, `off` m toward the track (the stacks stand against the wall), so the two never stand side by side at an offset;
     points further off are kept, so a run that angles in meets the facing as a taper; a point read just behind the wall
     line (the dark band beside the bright top) joins the facing too; a point the move would bring within 0.55 m of the
-    fitted edge stays. Logged per run."""
-    rig = []
+    fitted edge stays. Logged per run.
+    Round 14C (Sonoma issue #12): a tyre point whose nearest wall point is a wall's FREE END, lying beyond that end (past
+    the run's first point on its first segment, or its last point on its last segment), goes onto the wall's line
+    EXTENDED past that end (the same `off` in front), so it keeps its place along the line. Before, every such point
+    went onto the end point itself: the 2 m "tyre bundle at the far wall's head" (s ~2347) collapsed to three coincident
+    points and drew nothing."""
+    rig, head, tail = [], [], []
     for b in bar:
         if b["kind"] in ("concrete", "pitwall", "armco"):
             P = np.array(b["pts"])[:, :2]
             if len(P) >= 2:
                 rig.append(np.c_[P[:-1], P[1:]])
+                m_ = len(P) - 1
+                head.append(np.arange(m_) == 0); tail.append(np.arange(m_) == m_ - 1)
     if not rig:
         return
     S = np.concatenate(rig)
+    head, tail = np.concatenate(head), np.concatenate(tail)
     a, d = S[:, :2], S[:, 2:] - S[:, :2]
     L2 = np.maximum((d ** 2).sum(1), 1e-9)
     for b in bar:
@@ -1631,13 +1639,16 @@ def tyre_facings(trk, bar, reach=2.5, off=0.55):
         gmin_ = max(0.55, b.pop("_gap_min", 0.0) + 0.05)   # a declared run's own minimum (gap_min) holds here too
         for j in range(len(P)):
             q = P[j, :2]
-            t = np.clip(((q - a) * d).sum(1) / L2, 0, 1)
+            t0 = ((q - a) * d).sum(1) / L2
+            t = np.clip(t0, 0, 1)
             C = a + d * t[:, None]
             dist = np.linalg.norm(C - q, axis=1)
             k = int(np.argmin(dist))
             if dist[k] > reach:
                 continue
             c = C[k]
+            if (head[k] and t0[k] < 0) or (tail[k] and t0[k] > 1):
+                c = a[k] + d[k] * t0[k]   # beyond a wall's free end: onto the wall's line extended (round 14C)
             i_, lat_, _ = trk.project(np.array([q, c]))
             # in front of the wall or just behind it (the dark band read beside the bright wall top): one facing, in front
             toward = -np.sign(lat_[1]) * trk.N[int(i_[1]) % trk.n]
@@ -2486,7 +2497,8 @@ def _clean_captures():
 
 def owner_mouth_cones(trk):
     """Cone lines ON the owner's red across each junction mouth (config scenery.owner_mouth_cones {from: the key holding
-    the mouths (owner_mouths_r10), spacing, size, color, style_src, clip_out}; Buttonwillow round 10, the owner's decision of 23 Oct
+    the mouths (owner_mouths_r10), spacing, size, color, style_src, clip_out, label (the src's lead words; absent: "owner
+    round-10 mouth"; Sonoma round 14C)}; Buttonwillow round 10, the owner's decision of 23 Oct
     2026 point 2): every mouth with cones=True gets one line on its line_latlon (his red, world points); cones=False
     (the pit entry) gets none. The closed roads' rule cones at the same mouths are switched off in the config
     (closed_roads[].mouth_cones); the cone_lines_declared rows stay (each is an onboard observation, not a rule).
@@ -2522,7 +2534,7 @@ def owner_mouth_cones(trk):
         mid = P[len(P) // 2]
         caps = sorted(_clean_captures(), key=lambda t: np.hypot(t["x"] - mid[0], t["y"] - mid[1]))[:2]
         out.append({"spacing_m": float(oc.get("spacing", 2.0)), "pts": with_z(trk, P),
-                    "src": f"owner round-10 mouth {m['side']} {m['lo']}-{m['hi']} ({m['kind']}): cones on his red, drawn on the outline window over "
+                    "src": f"{oc.get('label', 'owner round-10 mouth')} {m['side']} {m['lo']}-{m['hi']} ({m['kind']}): cones on his red, drawn on the outline window over "
                            f"{' / '.join(t['name'] for t in caps)} ({m['src'][:120]}); style: {oc['style_src']}",
                     **_cone_style(oc)})
         log(f"owner mouth cones {m['side']} stations {int(i[0]) % trk.n}-{int(i[-1]) % trk.n}: {len(P) * 0.5:.0f} m on his red")
