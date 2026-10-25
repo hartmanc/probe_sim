@@ -1616,22 +1616,45 @@ def tyre_facings(trk, bar, reach=2.5, off=0.55):
     the run's first point on its first segment, or its last point on its last segment), goes onto the wall's line
     EXTENDED past that end (the same `off` in front), so it keeps its place along the line. Before, every such point
     went onto the end point itself: the 2 m "tyre bundle at the far wall's head" (s ~2347) collapsed to three coincident
-    points and drew nothing."""
-    rig, head, tail = [], [], []
-    for b in bar:
+    points and drew nothing. An end is FREE only when no other rigid run comes within `join` m (1.5, the wall-ends
+    gate's join) of it, and the extension is taken only when the stacks' footprint over it (the polygon wall end ->
+    wall-line point -> placed point, widened by the drawn row extent TYRE_ROW + TYRE_R, 0.91 m) crosses no other barrier
+    polyline; otherwise the point goes onto the end point as before (a joined corner keeps the clamp)."""
+    from shapely.geometry import LineString, Polygon
+    rig, head, tail, wid = [], [], [], []
+    for bi, b in enumerate(bar):
         if b["kind"] in ("concrete", "pitwall", "armco"):
             P = np.array(b["pts"])[:, :2]
             if len(P) >= 2:
                 rig.append(np.c_[P[:-1], P[1:]])
                 m_ = len(P) - 1
                 head.append(np.arange(m_) == 0); tail.append(np.arange(m_) == m_ - 1)
+                wid.append(np.full(m_, bi))
     if not rig:
         return
     S = np.concatenate(rig)
-    head, tail = np.concatenate(head), np.concatenate(tail)
+    head, tail, wid = np.concatenate(head), np.concatenate(tail), np.concatenate(wid)
+    join_ = 1.5
+    rigid_ = {bi: np.array(b["pts"], float)[:, :2] for bi, b in enumerate(bar)
+              if b["kind"] in ("concrete", "pitwall", "armco") and len(b["pts"]) >= 2}
+
+    def free_end(bi, E):
+        """no other rigid run within join_ m of this wall end"""
+        return not any(o != bi and np.hypot(*(Q - E).T).min() <= join_ for o, Q in rigid_.items())
+
+    def footprint_clear(bi, ti, E, c, p_new):
+        """the stacks over the extension cross no other barrier polyline (the wall itself and this tyre run excepted)"""
+        fp = Polygon([tuple(E), tuple(c), tuple(p_new)]).buffer(BR.TYRE_ROW + BR.TYRE_R) if np.hypot(*(c - E)) > 1e-6 \
+            else LineString([tuple(E), tuple(p_new)]).buffer(BR.TYRE_ROW + BR.TYRE_R)
+        for o, b in enumerate(bar):
+            if o in (bi, ti) or len(b["pts"]) < 2:
+                continue
+            if fp.intersects(LineString([tuple(q[:2]) for q in b["pts"]])):
+                return False
+        return True
     a, d = S[:, :2], S[:, 2:] - S[:, :2]
     L2 = np.maximum((d ** 2).sum(1), 1e-9)
-    for b in bar:
+    for ti, b in enumerate(bar):
         if b["kind"] != "tyres":
             continue
         P = np.array(b["pts"], float)
@@ -1647,12 +1670,19 @@ def tyre_facings(trk, bar, reach=2.5, off=0.55):
             if dist[k] > reach:
                 continue
             c = C[k]
-            if (head[k] and t0[k] < 0) or (tail[k] and t0[k] > 1):
-                c = a[k] + d[k] * t0[k]   # beyond a wall's free end: onto the wall's line extended (round 14C)
             i_, lat_, _ = trk.project(np.array([q, c]))
             # in front of the wall or just behind it (the dark band read beside the bright wall top): one facing, in front
             toward = -np.sign(lat_[1]) * trk.N[int(i_[1]) % trk.n]
             p_new = c + toward * off
+            if (head[k] and t0[k] < 0) or (tail[k] and t0[k] > 1):
+                # beyond a wall's end (round 14C): onto the wall's line extended, if the end is free and the stacks
+                # over the extension cross no other barrier; else onto the end point (the clamp) as before
+                E = C[k]
+                c2 = a[k] + d[k] * t0[k]
+                i3, lat3, _ = trk.project(np.array([q, c2]))
+                p2 = c2 + (-np.sign(lat3[1]) * trk.N[int(i3[1]) % trk.n]) * off
+                if free_end(int(wid[k]), E) and footprint_clear(int(wid[k]), ti, E, c2, p2):
+                    c, i_, p_new = c2, i3, p2
             # never closer than 0.55 m to the fitted edge (the barrier-gap gate)
             i2, lat2, dout2 = trk.project(p_new[None])
             if dout2[0] < gmin_:

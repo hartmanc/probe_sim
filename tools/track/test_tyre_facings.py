@@ -48,3 +48,28 @@ def test_a_facing_beside_the_wall_still_snaps_onto_its_face():
     tail = dict(kind="tyres", pts=[[201.0, -25.0, 0.0], [202.5, -25.0, 0.0]])
     BS.tyre_facings(trk, [wall, tail], reach=2.6, off=0.55)
     assert np.allclose(np.array(tail["pts"])[:, :2], [[201.0, -24.45], [202.5, -24.45]])
+
+
+def test_a_joined_corner_keeps_the_clamp():
+    # Astra's review of round 14C: at a wall end joined to another wall (a corner), a cushion beyond the end must not be
+    # extended along the line through the adjoining wall; it goes onto the end point as before
+    trk = _straight()
+    wall = dict(kind="concrete", pts=[[100.0, -25.0, 0.0], [200.0, -25.0, 0.0]])
+    corner = dict(kind="concrete", pts=[[100.0, -25.0, 0.0], [100.0, -45.0, 0.0]])   # the wall turns away at its head
+    bundle = dict(kind="tyres", pts=[[98.0, -25.0, 0.0], [99.0, -25.0, 0.0]])
+    BS.tyre_facings(trk, [wall, corner, bundle], reach=2.6, off=0.55)
+    P = np.array(bundle["pts"])[:, :2]
+    assert np.allclose(P, [[100.0, -24.45], [100.0, -24.45]])           # the clamp: nothing past the joined end
+
+
+def test_an_extension_crossing_another_barrier_keeps_the_clamp():
+    # a free end (no rigid run within 1.5 m) whose extension's stacks would cross another barrier line (a fence 1.7 m
+    # beyond the head)
+    trk = _straight()
+    wall = dict(kind="concrete", pts=[[100.0, -25.0, 0.0], [200.0, -25.0, 0.0]])
+    other = dict(kind="fence", pts=[[98.3, -23.0, 0.0], [98.3, -30.0, 0.0]])
+    cushion = dict(kind="tyres", pts=[[97.6, -25.0, 0.0], [99.5, -25.0, 0.0]])
+    BS.tyre_facings(trk, [wall, other, cushion], reach=2.6, off=0.55)
+    P = np.array(cushion["pts"])[:, :2]
+    assert np.allclose(P[0], [100.0, -24.45])                           # through the fence: clamped onto the end
+    assert np.allclose(P[1], [99.5, -24.45])                            # clear of it: on the extended line

@@ -1298,7 +1298,9 @@ CONFIG = dict(
         # the Buttonwillow way (owner_mouth_cones with clip_out 0.1, its round-11 fix of the same finding): every point of
         # his arc less than 0.1 m outside the edge moves out along the station normal to 0.1 m beyond it; the rest of the
         # line keeps his shape. Spacing and cone as round 14B (four 4.4 m apart over his 13.4 m arc, the default orange
-        # cone: no frame shows cones there; the owner, 23 Oct 2026: "I made no statement on cone placement or quantity")
+        # cone: no frame shows cones there; the owner, 23 Oct 2026: "I made no statement on cone placement or quantity").
+        # FOR THE OWNER: the clip moves three of the four cones off his drawn arc onto 0.1 m beyond the fitted edge, by
+        # 0.22 / 0.36 / 0.14 m (s 169.9 / 173.9 / 177.9); per-cone table (drawn vs placed) in compare/sonoma/round14c/LEDGER.md
         owner_mouths_r14=[
             dict(side='right', lo=166, hi=179, kind='red across', cones=True, width_m=13.36,
                  src='owner round-13 drive: his red arc across the paddock-side mouth at T1, "Put a few cones there" (owner/r14/mouths.json, '

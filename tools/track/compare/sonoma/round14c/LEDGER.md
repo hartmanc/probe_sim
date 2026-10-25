@@ -130,3 +130,71 @@ Poses: `/tmp/r14c/poses.json` (local).
   round 14B.
 - The judge's other round-14B rows (T7 approach edge line and pale shoulder, the T9A mouth line, the pre-existing
   items) are untouched.
+
+## Review (GPT 6 Astra, via the coordinator): hold, two items
+
+### 1. Fixed: the extension only at a genuinely free wall end (`build_scenery.py` tyre_facings)
+
+The round-14C rule took "free end" to mean any run's first or last segment, including an end joined to another wall,
+so at a joined corner it could place tyres through the adjoining wall. The extension is now taken only when both hold:
+
+- **The end is free.** No other rigid run (concrete, pit wall, Armco) comes within 1.5 m of the wall's end point (the
+  wall-ends gate's join distance).
+- **The stacks over the extension cross no other barrier polyline, of any kind.** The footprint checked is the polygon
+  wall end -> wall-line point -> placed point, widened by the drawn row extent TYRE_ROW + TYRE_R (0.91 m), not only the
+  vertices. The wall itself and the tyre run being placed are left out.
+
+Otherwise the point goes onto the end point as before (the clamp).
+
+- **Tests** (`tools/track/test_tyre_facings.py`, now 4):
+  - a cushion beyond a wall end joined to a wall that turns away stays on the clamp;
+  - a free end whose extension's stacks would cross a fence 1.7 m past the head keeps the clamp for that point, while
+    the point clear of the fence takes the extension.
+  - Both fail on the round-14C builder (bc5862d).
+- **Sonoma against rev f399cda140: no run changed.** The stage-3 rebuild is byte-identical in all 7 package files.
+  Each of the 9 points that take the extension stands at a free end with a clear footprint: the bundle (3), T8a-T9
+  bank (2), T11 hairpin left (1), T2 approach far left (1), 9a right (1) and T7a terrace tyre line (1). The rev stays
+  **f399cda140**.
+- **Laguna and Buttonwillow, old tool (5578d98's builder) against this one, identical inputs:** scenery.json, ortho.jpg,
+  far_ortho.jpg and far_heightfield.bin byte-identical, and the gate lines identical.
+
+### 2. Recorded: the T1 mouth-arc cones are not on the owner's drawn arc (no code change)
+
+`clip_out` 0.1 moves the arc's points that lie less than 0.1 m outside the fitted right edge onto 0.1 m beyond it
+(Buttonwillow round 11's precedent). Inside the mouth his drawn arc and the round-14B edge disagree, so three of the
+four cones move off his line toward the outside.
+
+- **Drawn:** the cone spots on his arc as round 14B placed them (rev 6b766e08d6).
+- **Placed:** this package.
+- **Offsets:** m outside (+) or inside (-) the round-14B right edge.
+
+| cone | station s | drawn (ENU) | placed (ENU) | moved | frame showing cones there |
+|---|---|---|---|---|---|
+| 1 | 164.9 | (105.74, -55.09), +0.43 m | (105.74, -55.09), +0.43 m | 0.00 m | none |
+| 2 | 169.9 | (101.46, -56.12), -0.13 m | (101.42, -55.90), +0.10 m | 0.22 m | none |
+| 3 | 173.9 | (97.11, -56.76), -0.26 m | (97.05, -56.41), +0.10 m | 0.36 m | none |
+| 4 | 177.9 | (92.72, -56.85), -0.03 m | (92.66, -56.73), +0.10 m | 0.14 m | none |
+
+No onboard frame or capture shows cones at this mouth. The line is his instruction ("Put a few cones there", round-13
+drive, owner/r14/mouths.json), and the count and spacing are round 14B's. The config comment at
+`scenery.owner_mouths_r14` names this table. **For the owner:** his arc against the edge inside the mouth.
+
+### Astra's other notes
+
+- **The clearance check is vertex-based.** The tyre-facings move tests only each placed point against the 0.55 m edge
+  minimum, and the barrier-gaps gate measures the barrier polyline's vertices. The new free-end footprint test (item 1)
+  is the one area check.
+- **cones_exempt** lives in the build's gates config (`work/scenery_tmp/gates_config.json`); the gate CLI shows 19
+  exempt on the pit-in line.
+- **The bundle's white top:** the tyre kind has no top-colour option (src/app/scenery.ts, build_scenery.py), so the
+  bundle stays black, as in round 14B. Noted, not added.
+
+### Re-verification after the review
+
+- Stage 3: rebuilt, then `--publish --overwrite-package`, every gate ok. Package **rev f399cda140**, unchanged; the 7
+  files are byte-identical to the first round-14C publish.
+- Stage-3 gate CLI on `public/tracks/sonoma`: 14 ok, 0 FAIL, exit 0. Wall ends 0 degenerate; cones off the surface 0
+  (deepest 0.08 m, 19 exempt on the pit-in line).
+- `npm run build`: clean.
+- `npx vitest run`: 62 files, 512 passed, 0 failed.
+- Python: 86 passed (84 + the 2 joined-corner tests).
