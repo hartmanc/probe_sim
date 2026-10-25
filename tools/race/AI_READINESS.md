@@ -334,3 +334,72 @@ too). Both slowed to 7-9 m/s against a profile of 16-17: the two lanes right of 
 T11 entry (s 3600-3650, 6 contacts pooled) is the same mechanism (e.g. seed 1 #938 passing #191 in lane -2.6, 3.5-4 m
 behind its centre at the shut, s 3641). T2 entry (s 350-420, 3) is mixed: one is the same (seed 2 #327 on #199, lane -5.2,
 s 367), the others are lap 1-2 queue rear-ends on the hill (#199 stopped, v 0-1 m/s).
+
+### The fix (`driver.ts`, NOTES "24 Oct 2026: a pass needs its lane through the corner")
+
+1. Pinch guard in lane coordinates (straight-ahead skip and side test on e, as following) and sampled every 5 m.
+2. `shutBeside`: a pass in hand is given up (`passEnd` 'shut') when the road shuts its lane beside the car being passed
+   within 2 s and the passer would get there neither PINCH_OK car lengths ahead of it nor still behind it; `planLane`
+   does not start a pass in a lane the road shuts before the passer would be ahead (over the whole pass, at most 150 m).
+The Corkscrew no-pass is unchanged. Solo laps bit-identical on all three tracks (4 cars each): AI_VERSION stays 8.
+
+### Verification: 152d422 (base) against the fix (final), same seeds, 4 laps, registry knobs
+
+`selfplay.ts --json`, base run from a `git archive` copy of 152d422 (it reproduces §5b: Sonoma seed 1 17 contacts, 43
+resets; Laguna seed 1 620.11 s, 2 contacts, 17 four-offs). `passAt` (new in `selfplay_metrics.ts`) is the station of
+each green pass.
+
+| track | trial | seeds | contacts / car-lap | four-off / car-lap | recoveries | race time (s) | median best lap / target | clearly-faster passes |
+|---|---|---|---|---|---|---|---|---|
+| sonoma | base | 1, 2, 3 | **0.046** (0.038 / 0.071 / 0.032) | **0.022** (0.020 / 0.027 / 0.020) | 43 / 93 / 7 | 665 / 698 / 658 | 1.250 / 1.252 / 1.232 | 59.2 % |
+| sonoma | final | 1, 2, 3 | **0.022** (0.026 / 0.018 / 0.022) | **0.015** (0.011 / 0.018 / 0.016) | 34 / 68 / 1 | 676 / 711 / 653 | 1.288 / 1.231 / 1.217 | 59.2 % |
+| buttonwillow | base | 1, 2 | **0.018** (0.019 / 0.017) | **0.011** (0.019 / 0.003) | 4 / 2 | 756 / 757 | 1.157 / 1.281 | 66.5 % |
+| buttonwillow | final | 1, 2 | **0.022** (0.019 / 0.025) | **0.017** (0.027 / 0.006) | 2 / 1 | 759 / 757 | 1.134 / 1.287 | 67.6 % |
+| laguna_seca | base | 1, 2 | **0.030** (0.012 / 0.049) | **0.084** (0.100 / 0.068) | 2 / 3 | 620 / 593 | 1.144 / 1.116 | 69.8 % |
+| laguna_seca | final | 1, 2 | **0.055** (0.061 / 0.049) | **0.092** (0.115 / 0.068) | 3 / 2 | 597 / 588 | 1.116 / 1.094 | 70.1 % |
+| laguna_seca | base | 1-8 | **0.031** (0.012 / 0.049 / 0.036 / 0.025 / 0.031 / 0.043 / 0.019 / 0.032) | **0.093** | 20 | 602 mean | 1.122 median | 68.8 % |
+| laguna_seca | final | 1-8 | **0.033** (0.061 / 0.049 / 0.018 / 0.044 / 0.044 / 0.024 / 0.024 / 0.000) | **0.085** | 26 | 601 mean | 1.112 median | 68.3 % |
+
+Race time: Sonoma +0.9 % (mean 674 -> 680 s), Buttonwillow +0.2 %, Laguna -0.2 % (8 seeds). Pass completion by pace
+ratio (< 0.85 / 0.85-0.92 / 0.92-0.97): Sonoma 76 / 62 / 52 % -> 74 / 61 / 54 %; Buttonwillow 83 / 70 / 57 -> 80 / 67 /
+62 %; Laguna (8 seeds) 87 / 64 / 48 -> 86 / 63 / 49 %. All green passes: Sonoma 3710 -> 3717, Laguna (8 seeds) -5 %.
+**Passing through the chicane is kept**: green passes in s 2950-3120, seeds 1-3, 571 (159 / 225 / 187) -> 634
+(219 / 230 / 185).
+
+Sonoma contacts by place (seeds 1-3 pooled): T9A entry s 3000-3050 **27 -> 6** (10 side-by-side + 10 quarter in a
+corner, 7 rear-end -> 3 side-by-side, 2 quarter, 1 rear-end); T11 entry s 3600-3700 8 -> 9 (the lane shuts there too, but
+over a longer braking zone from 35-40 m/s: the 2 s look-ahead starts the drop-back too late, see "not reached");
+T2 entry 3 -> 0 in s 350-400 (2 at T2 brake s 273-289); contact context pass 25 -> 7, line 31 -> 23. Recoveries 143 -> 103
+(the lap-1/2 queue at T2 entry: 71 -> 49). Four-offs 30 -> 20.
+
+Buttonwillow (seeds 1-2): 13 -> 16 contacts, T11 entry s 4350-4400 4, T1 entry 3, T3 entry 2 (base: T3 exit 2, the T8
+brake 2); four-offs 8 -> 12 (7 traffic grip). The two seeds are within the round-10 kept setting's spread (0.011-0.025
+per seed in §2).
+
+Laguna: seeds 1-2 are not the same races (the fix changes every pass decision, so the races diverge). Seed 1: contacts
+2 -> 10 (T3 brake 2, the Corkscrew brake s 2718-2749 3, T11 exit 2, T9 brake 2, T4 1), four-offs 17 -> 19, race time
+620.1 -> 596.8 s, winner #40 -> #0 (8 of 45 cars in the same place, mean move 3.9 places); seed 2: contacts 8 -> 8,
+four-offs 11 -> 11, 593.2 -> 587.5 s, winner #37 both (8 of 45 in place, mean move 3.1). Over 8 seeds (the band in
+NOTES has per-seed contacts 0.012-0.075) nothing moves beyond the spread: contacts 0.031 -> 0.033, four-offs
+0.093 -> 0.085, clearly-faster passes 68.8 -> 68.3 %, race time 602 -> 601 s.
+
+### Not reached, and the alternative that reaches it
+
+| | kept: 2 s look-ahead (fe) | 3 s look-ahead (ff) | base 152d422 |
+|---|---|---|---|
+| Sonoma contacts, seeds 1-3 (target <= 0.02) | 0.022: **not met** by 3 contacts | **0.016** | 0.046 |
+| Buttonwillow contacts, seeds 1-2 (<= 0.02) | 0.022: **not met** by 1.5 contacts | **0.014** | 0.018 |
+| Laguna contacts / four-offs, 8 seeds | 0.033 / 0.085 (= base) | **0.018 / 0.072** | 0.031 / 0.093 |
+| Laguna seed 1 contacts (0.012 today) | 0.061 | **0.000** | 0.012 |
+| Laguna clearly-faster passes, 8 seeds | 68.3 % (= base) | 66.2 %, all green passes -9 % | 68.8 % |
+| Sonoma race time | +0.9 % | +1.9 % | |
+| `ai_behaviour` at today's thresholds | **all pass** | **2 fail**: "full field, 2 laps" (completed 51 %, needs > 58 %; > 15 % quicker 63 %, needs > 72 %), "within 3 %" (no defending move) | pass |
+| verdict | kept: the only setting that passes every behaviour test | not allowed (would need a test loosened) | |
+
+Also tried and dropped (each fails "full field, 2 laps" at its threshold): 3 s for the pinch guard only (Sonoma 0.020,
+completion 59 % in the test but "within 3 %" fails); 3 s only for a car in a pass lane or waiting to merge (57 %);
+3 s only where a braking zone is ahead (profile 3 s ahead > 5 or 8 m/s below the current speed: 57-60 %, one defensive
+move against a clearly faster car); the planning check letting a pass start when the passer would still be behind at
+the shut (Laguna four-offs 0.093 -> 0.110 over 8 seeds: cars pulled into the outside lane at T4's apex that the track-out
+takes away). What remains at T9A and T11 is mostly a car waiting to merge back (phase 2) 1-5 m behind a car on the line,
+both braking at their limit, so the one behind cannot drop back in 2 s.
