@@ -3,7 +3,7 @@
 ## T11 hairpin outside: a deep tyre wall and a thick white wall, no apron (decisions page Q2)
 
 The owner, 25 Oct 2026, 00:10 PDT, with an onboard frame from https://www.youtube.com/watch?v=7hJizPBNrJ4 (a Porsche GT3 lap of
-Sonoma; the frame is `owner/t11_tyre_wall_owner_frame.png`, local, reference only; his annotation "6' wide end" on the white wall):
+Sonoma; the frame is `owner/t11_tyre_wall_owner_frame.png`, local, reference only; his annotation "6' wide end" marks the END OF THE TYRE WALL that encapsulates the white wall; the owner's correction of 25 Oct: the white band is NOT 6 ft wide):
 
 > In onboard (and from my experience), there is a deep tire wall at T11 that doesn't seem to appear in the satellite photos.
 > Looking at this video, it appears that the tire wall runs from just before station 3648 (so it can encapsulate the white wall
@@ -11,13 +11,13 @@ Sonoma; the frame is `owner/t11_tyre_wall_owner_frame.png`, local, reference onl
 > barrier, for the NASCAR guys that come flying into T11 from T10 in their layout).
 
 What this means for the package (rev f399cda140 models plain grey paving beyond the edge line there, "apron"):
-- The grey-white band measured 3.1 m wide on the captures (`round14b/hairpin_band.json`) is the top of a thick white wall
-  (about 1.8 m wide at its end) with a deep, multi-row black tyre wall in front of it, not paving. The tyre wall's face is the
+- The grey-white band measured 3.1 m wide on the captures (`round14b/hairpin_band.json`) is the top of a thick white wall of
+  unmeasured width with a deep, multi-row black tyre wall in front of and around it (the tyre wall's end about 1.8 m / 6 ft wide), not paving. The tyre wall's face is the
   course boundary; the owner's red (steps in ~1.1 m where the band begins at s ~3648, out ~1.5 m where it ends) already treats the
   band as outside the course, so the fitted edge and the junction corners stand (Q4).
 - Round 14D: replace the apron with (1) a declared tyre wall, several rows deep, from just before s 3648 around the outside of T11 to
   where the band ends (its extent measured on the 2026 captures and on the onboard frames of 7hJizPBNrJ4 and RAZip6S84CM), its face at
-  the owner's red; (2) behind it, the thick white wall (kind concrete, white, ~1.8 m thick at its end, height from the frame), joined
+  the owner's red; (2) behind it, the thick white wall (kind concrete, white; thickness and height measured on the frames and captures, not assumed), joined
   to the tyre wall; (3) no apron paving. Sources to cite: this note, the frames, the captures. New onboard source for the T11 area:
   7hJizPBNrJ4 (frames captured in the owner's Chrome tab the way the other onboard sources were; reference only).
 - Gates to watch: wall ends (both ends of the tyre wall and the white wall), tyre facings (the tyres face the course, within 0.8 m
