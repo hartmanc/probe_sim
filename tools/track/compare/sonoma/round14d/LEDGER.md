@@ -2,8 +2,8 @@
 
 Branch `sonoma-r14d`, from `integration` 893c961. Scenery only. Nothing pushed or deployed.
 
-**Package rev 59abee785b** (was f399cda140; e1c10d4ef5 was this round's first publish, held by the review: see the
-last section), lap 4105.328 m. `src/scoreboard/config.ts` TRACKS.sonoma `rev` is updated.
+**Package rev 97b83d1378** (was f399cda140; e1c10d4ef5 and 59abee785b were this round's earlier publishes, held by the
+two reviews: see the last two sections), lap 4105.328 m. `src/scoreboard/config.ts` TRACKS.sonoma `rev` is updated.
 
 The work was built on battery (82-86 %) on the owner's instruction of 25 Oct: "Don't wait on power, just go." The rest of the
 health rule held: one heavy process at a time, 1-minute load 1.2-3.1, no other vitest running, 11 GB free.
@@ -364,3 +364,87 @@ node_modules linked). It gives 515 tests, 2 of which fail there only because the
 - **Health:** the full vitest, the baseline vitest and the two reporter runs were started at 1-minute loads of 8.6 / 9.0 with
   the Buttonwillow round building beside them; the rule says under 8. Builds and stills ran at 4-5. The power source came
   back during the review fixes (84 %, charging).
+
+
+## Second review (GPT 6 Astra, 25 Oct): items 1, 3, 6, 7 closed; 4, 5 open; A-F; fixed and re-published as rev 97b83d1378
+
+**A. BLOCKER, four drawn rows against two collided rows: fixed in the builder (physics unchanged).**
+- `build_scenery.stacked_tyre_runs` emits a declared tyre run with `rows` > 2 as rows / 2 runs of two rows back to back. Each
+  run is drawn and collided as the physics already does a tyre run.
+- Member k stands k x 1.2 m behind the declared line and carries `rows` 2 and `stack_of` {id, k, n}. (`stack` was already the
+  key for tyres per stack; the first try reused it and the build caught the clash.)
+- Colour sections are carried over by length.
+- `rows` must be an even integer 2-8 in the config. An odd count fails the build, because the physics collides every run as two
+  rows. Each emitted run has 2.
+- tyre_facings leaves stack members as declared.
+- The side-by-side gate checks only the rear member, against the wall behind it.
+- Tests: "a four-row run is two collided two-row runs" (Python); the stacked-wall gate case (vitest), where the front member
+  without its tag is a finding.
+
+**Proof on the collision world** (`/tmp/r14d/coll2.ts`, `/tmp/r14d/kt/stack_collision.json`):
+- At sampled stations along the deep wall, each drawn row has a collision face at its depth, within 0.004 m:
+  - row 0's track face at -0.21 m;
+  - row 1's back at +0.81 m;
+  - row 2's front at +0.99 m;
+  - row 3's back at +2.01 m.
+- In each case contact begins 0.10 m inside the drawn face.
+- The rear member's last row stands 0.38-0.61 m in front of the white wall's front face: a facing (within 0.8 m).
+- sideBySide on the package: 0 findings.
+
+**B. FIX, the side-by-side skip: replaced by an explicit pair.**
+- The builder tags the two faces of a thick wall with one `wall_id` and `face` 'front' / 'back'.
+- The gate evaluates the pair once. Its distance from a tyre sample is the nearer face (the face exposed on the sample's side;
+  the box lies between them), and its joints are both faces' ends.
+- Regression: a 2-row run whose rows stand 1.6 m behind the back face (2.56 m from the front face, outside the band) is a
+  finding, tagged or untagged. Round 14D's first fix (skip every hidden face) missed it.
+
+**C. FIX, joinFaces at a face run.** A run tagged `face` is the drawn face: no 0.18 m half thickness is added. Test: the same
+join reads 0.31 m (was 0.31 - 0.18).
+
+**D. FIX, the lane clearance is enforced.**
+- With `pit_lane_clip_heads`, the 0.3 m margin holds as a segment-to-segment clearance on the stored (rounded) lane edges,
+  crossings included (shapely distance = 0). Every edge segment nearer a wall, tyre or Armco run has both its rows brought in
+  along their rays until it clears.
+- `build_scenery.clearance_report`: the published lane's minimum clearance is **0.300 m**. Before, it was 0.003 m on
+  rev 59abee785b and 0.275 m at T11.
+- Tests: an oblique wall between rows; a wall bowing between rays.
+- The lane rows this moved, against 59abee785b (the physics' pit-lane surface narrows by the same amounts):
+  - mostly 0.03-0.05 m all along both lane edges;
+  - 0.48-0.62 m at left s ~3537, s ~3657 and s ~169-179, and at right s ~97;
+  - 1.43 m at right s ~3639 (the T11 head).
+- Pit connectivity ok, 0 obstacles.
+
+**E. FIX, sections on a thick wall.** Rejected in `validate_declared_wall` (`sections` or `pattern` together with `w`).
+Tests: both rejections.
+
+**F. NOTE, the thick wall's end caps.**
+- The two face runs end 0.96 / 0.97 m apart (the published end points), and each end carries a 0.08 m collision post.
+- That leaves a 0.80 / 0.81 m nominal opening, or 0.60 / 0.61 m with the 0.10 m contact skin on each side, against the car's
+  1.72 m width.
+- A car cannot enter between the faces from either end. The drawn box closes both ends with its caps.
+
+**G.** The T1 line stays at the kerb's outer foot, pending the owner's ruling.
+
+### Re-verification (rev 97b83d1378)
+
+- **Stage 3**, publish run: every gate ok.
+  - barrier gaps 0.34 m over 79 runs.
+  - wall ends: 45 checked, 0 exposed.
+  - tyre facings 0; tyre faces 0.
+  - wall-tyre joins: 9, none proud. The new one, s 3645, rear stack member -1.07 m.
+  - run gaps: 0 holes.
+  - pit connectivity ok.
+  - ground marks 0.008 m.
+  - coverage: MISSING 0, UNSUPPORTED 0, 218 objects.
+- **Gate CLI**: 14 ok, 0 FAIL, exit 0. Coverage CLI exit 0.
+- **Identity:** track.json, heightfield.bin, ghosts.json and the far files are unchanged; out and public are cmp-identical.
+- **Builds and tests:**
+  - `npm run build` clean.
+  - `npx vitest run`: 525 passed, 0 failed. Against the base's 515:
+    - 7 named new: 3 barrier-sections, 4 scenerygates (rows extent, side by side with rows and the face pair, the stacked
+      wall, the join at a face run).
+    - 3 generated tyrewall.test.ts cases: Sonoma runs 23-25, one more than before, the stack's second member.
+  - Python: 108 passed (test_r14d_walls.py: 14).
+- **Stills** (after): t11_outside_high / mid / entry, hairpin_3680 / 3720, t11_exit_lookback, pitin_facing_3590. The four rows
+  are drawn as two members, unchanged to the eye.
+- **Health:** this pass ran on power (93 % charging), loads 2.8-5.7.
