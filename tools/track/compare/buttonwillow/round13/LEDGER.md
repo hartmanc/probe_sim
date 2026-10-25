@@ -4,7 +4,7 @@ The owner's decisions of 25 Oct 2026, scenery and look only. Branch `buttonwillo
 nothing pushed or deployed. Build: the round-12 records (`probe_sim-wt/buttonwillow-r12/tools/track/out/buttonwillow_r12/`)
 cloned to `tools/track/out/buttonwillow_r13/` and the round-12 caches / capture folders cloned (APFS `cp -c`, read only on
 the source). Stage 3 only, four check builds and one `--publish --overwrite-package`, every one exit 0 with 0 `[FAIL]`
-(logs `/tmp/bw13/logs/stage3*.log`). Package `public/tracks/buttonwillow`: rev **52bf051dcc -> 8d02b04cb4**.
+(logs `/tmp/bw13/logs/stage3*.log`). Package `public/tracks/buttonwillow`: rev **52bf051dcc -> 8d02b04cb4 -> 795c09c6cb** (the second after the review fix below).
 
 Machine: the first half ran on battery (light work only); builds, tests and renders ran after the owner's word relayed
 by the coordinator ("Don't wait on power, just go"), one heavy process at a time, battery never under 82 %.
@@ -57,7 +57,7 @@ corrected reading differs from the capture end by more than 5 m; otherwise it is
 | R 188-268 | 188.6-268.5 | start 182.1 (-1.9) | **180.0**-268.5 | t009877 / t009977 |
 | R 360-376 | 361.3-376.3 | paint unbroken to the next run | 361.3-**411.0** | t016683 / t016783 / t017784 / t017885 |
 | R 584-604 | 583.9-603.9 | end 611.4 (+0.0) | 583.9-**611.5** | t025692 / t025893 |
-| R 1020-1049 | 1020.1-1049.0 | start 1013.1 (+2.0) | **1015.0**-1049.0 | t040173 / t040374 |
+| R 1020-1049 | 1020.1-1049.0 | start 1013.1 (+2.0) | **1015.0**-1049.0 | t040173 / t040374 (a 5.1 m move against the 5 m deadband and +-3 m precision: marginal) |
 | R 1868-1933 | 1867.5-1932.4 | end 1956.0 (+0.5) | 1867.5-**1956.5** | t071171 / t071371 / t071772 / t071872 |
 | R 2315-2340 | 2313.7-2338.6 | start 2306.7 (-1.1) | **2305.5**-2338.6 | t081281 / t081381 |
 | R 3794-3810 | 3789.9-3805.9 | start 3769.9 (+1.4); end 3799.9 (+1.4, within 5 m: kept) | **3771.5**-3805.9 | t125692 / t125792 / t126493 / t126593 |
@@ -93,7 +93,8 @@ placed.
 shoulders and a deep groove (3 profile points per tyre, 7 lathe segments), per-tyre shade (levels 0.86-1.10) and a wear
 patch round each tyre (+-16 %), each stack turned by its own angle and its shade varied +-10 %; a rough standard material
 (roughness 0.88) so the casings take the sky light; flat-black recorded colours lifted 70 % toward the used-rubber grey
-#3b3c3d (Sonoma's #161616), lighter ones kept; the free-standing tyre stacks drawn the same way. Height unchanged (T2
+#3b3c3d (Sonoma's #161616), lighter ones kept. The free-standing tyre stacks (landmarks) get the same casing colour,
+gain and material, not the tread profile (they stay plain cylinders). Rendering only: no collision change. Height unchanged (T2
 wall 1.0 m). The renderer gain (2.0) was set from the stills: the T2 wall's lit faces from 9 m (p75 of the dark pixels)
 before (33, 37, 33) -> after (57, 62, 58), against the onboard t288 sunlit median #3c443e (60, 68, 62); median before
 (4, 8, 10). Tests: `src/app/__tests__/tyre-look.test.ts`.
@@ -109,23 +110,52 @@ the y -165 .. -140 m gap between the c20_p* and pad_* sets. Measured on the mosa
 paving = saturation < 0.14), north of the paddock-side K-rail every 5 m and along rows y -150 .. -180: the block round the
 timing tower is paved from the K-rail to the paddock road (x -32 .. 57 m; dirt and trees west of x -33 and east of x 57
 north of the strips); east of the round-12 strip the paving runs on to x ~156 m at 21 m (21.5 at x 110-135, 20-20.5 at
-140-150, 21 at 155). Built as round 12 (declared centre lines offset from the K-rail runs, fixed widths, 'apron',
-off_course), banded so the nearest-centre rule leaves no gap: tower inner (half 8.54 = the lane centre's distance,
-x -34 .. 68), tower block bands 2-4 (centres 22 / 36 / 50 m, halves 8 / 8 / 7.5, band 4's centre within 8 m of the
-paddock road), east beyond x 100 inner (half 6.76) and outer (9-21 m). The round-12 west bands' lines carried on straight
-to x ~13 so their ends lie under the tower.
+140-150, 21 at 155).
 
-Physics scan (the package's own sampler): tower block 16-52 m 467-550 of 61,560 samples unpaved; east extension 29 of
-22,018; the lane beside the K-rail unchanged against round 12 (190 unpaved / 94 off-course of 16,525, the same numbers).
-Left open: a ~4 m physics seam at x 30-35, 1-17 m north of the wall, where the round-12 east inner band ends (the drawn
-paving is continuous; extending that band would take the lane's last 0.8 m at the tower run), and a seam under the tower
-at x 12-18. **Not built:** the 8 m strip west of x -140 (x -163 .. -140, K-rail to y -200: a band that narrow would take the
-lane's last metres in the nearest-centre rule) and the 4-6 m apron along the paddock road's south side west of x -33;
-the east strip x 57-75 reads 26-28 m on the new captures against round 12's 22 m (kept).
+**Review fix (GPT 6 Astra, "ship with fixes"): the drawn paving and the physics must agree.** The physics gives a point
+to the paved part whose centre line is nearest (the pit lane and the zones are one list), so the first build's
+overlapping bands, ending inside one another's drawing, left seams under continuous drawn paving (the full scan of the
+drawn bands: 2,878 unpaved samples at 0.25 m; round 12's own strips had 245). The paddock paving is now seven declared
+bands laid out for that rule, each point with its own half-width (builder key `closed_roads[].ways[].halves`; points used
+as declared, one per metre on common normals of the K-rail, end segments parallel to it so the bands end on one normal):
+- **I** x -124 .. 154: centre and half-width = the lane centre's perpendicular distance D (6.5-8.9 m), so the lane / paddock
+  boundary lies on the K-rail line everywhere; `join_lane` in the openings.
+- **T** same x: up to the strip top (21 m west of x -32, ramped to 22 m by x -24, 22 m to x 98, 21 m east of x 102); over
+  the block from the I / T bisector, its top 22 m = the T / B2 bisector.
+- **B2-B5, U** x -22 .. 57 (the tower block): centres equally spaced from 44 - c_T to U's, U's centre 6.75 m south of the
+  paddock road's centre (the road keeps its southern edge) and its top 3.1 m south of it (short of the north-south lane
+  that starts on the road at x 11); each layer reaches its bisectors with 0.3 m overlap, tapered to 0 over the last 3 m
+  where the layers end (so no drawn point beyond an end is nearer that end than its own band).
+- The OSM paddock lane 765811053 along the east K-rail run (x 52 .. 165, 5-13 m north of it) is dropped: it lay wholly
+  inside the strip and its own centre line punched seams round its ends.
+
+**Postcondition:** stage-3 gate `paved coverage` (`tools/track/gates/pavedCoverage.ts`, config
+`gates.paved_coverage {parts ^paddock band, step 0.25, wall_clear 0.4, edge_tol 0.1}`, strict): every sample of the bands'
+drawn strips on a 0.25 m grid, 0.4 m round the barriers and 0.1 m along the drawn edges left out (the strip edges are
+chords at 0.01 m, the physics interpolates the half-width per segment; bands meet on their bisectors), must be paved.
+Published package: **129,608 samples, 0 unpaved** (5,059 edge samples left out). vitest
+`src/scoreboard/__tests__/pavedcoverage.test.ts`: the published bands pass; a narrow part inserted inside band T makes the
+gate find a seam (220 holes at 0.5 m, all within 8 m of it). The build with the first fixes failed on this gate (63, then
+41, 7, 3 unpaved) before the layout above passed.
+
+**Undrawn (dirt in the sim) though paved on the captures, said so:** x -163 .. -140 (an 8 m strip: a band that narrow would
+take the lane's last metres), x -130 .. -124 between the north-south paddock lane and the bands (that lane's centre is
+nearer there), the road-side apron west of x -33, the block above T at x -32 .. -22 and x 57 .. 65 (where the layers end).
+The OSM paddock lanes (round 8) keep junction seams elsewhere in the paddock (scan at 0.5 m: 283 unpaved in round 12,
+187 now, including 10 new ones where the road meets U's ends at x -28 and 56); not in this gate's scope.
+
+**Proof, the lane beside the K-rail (point by point, the same 27,018 sample points: x -165 .. 190 every 0.5 m, 0.4-8.0 m
+south of the K-rail line every 0.2 m, round 12 rev 52bf051dcc against 795c09c6cb):** 26,622 samples are lane in both with
+the same height (max |dz| 0.000000 m) and the same grip / course flags; 205 differ, all toward the lane: 141 that round
+12's bands took from the lane 0.4-1.2 m from the wall (paved apron, off-course; x -130 .. -100 and x 30 .. 50) are lane
+again, 63 unpaved in round 12 (0.4-1.4 m from the tower run, x 20 .. 50) are lane now, and 1 unpaved sample in both
+changes its shoulder height (x -127.5, 0.094 m). No sample went from paved to unpaved. (The first round-13 package,
+8d02b04cb4, was not unchanged, as its aggregate counts suggested: against round 12 it had 6 lane samples paved -> unpaved
+and 56 still off-course.)
 
 ## Gates (stage-3 build and the gate CLI on public/tracks/buttonwillow, every one ok)
 
-| gate | round 12 (52bf051dcc) | round 13 (8d02b04cb4) |
+| gate | round 12 (52bf051dcc) | round 13 (795c09c6cb) |
 |---|---|---|
 | edge (rms / step), world continuity, profile | ok 0.066 / 0.066; 0.0076 / 0.0073; 0.017 | ok, same |
 | owner reference / width / band | ok 0.381 / 0.328; 0.384; 0.136 / 0.120 | ok, same |
@@ -139,16 +169,18 @@ the east strip x 57-75 reads 26-28 m on the new captures against round 12's 22 m
 | cones off the surface | ok, 264 / 44 | ok, 182 / 38, deepest 0.00 m |
 | coverage | ok, MISSING 0, UNSUPPORTED 0, 5 dispositions | ok, same (87 rows, 161 objects) |
 | pit lane | ok, 7 rows | ok, 7 rows |
+| paved coverage (new) | (2,878 unpaved on the first round-13 bands) | ok, 7 parts, 129,608 samples, 0 unpaved |
 
-Tests: `npm run build` clean; `npx vitest run` 64 files, **522 passed** (515 + 7 tyre-look), 0 failed; `pytest
-tools/track` **96 passed, 3 skipped** (91 + 5 round-13).
+Tests (re-verified on 795c09c6cb): `npm run build` clean; `npx vitest run` 65 files, **524 passed** (515 + 7 tyre-look
++ 2 paved-coverage), 0 failed; `pytest tools/track` **96 passed, 3 skipped** (91 + 5 round-13). Gate CLI on
+`public/tracks/buttonwillow` with the publish run's gates_config.json: every gate ok, exit 0.
 
 ## Identity
 
 `git diff --quiet 893c961`: public/tracks/buttonwillow track.json, heightfield.bin, ghosts.json, ortho.jpg,
 far_heightfield.bin, far_ortho.jpg byte-identical (sha256 track.json 199358fe..., heightfield.bin 2c677efb..., ghosts.json
-e66b3218...); scenery.json is the only changed file. public/tracks/sonoma byte-identical, rev f399cda140.
-`src/scoreboard/config.ts` TRACKS.buttonwillow rev -> 8d02b04cb4. PHYSICS_VERSION and changelog untouched.
+e66b3218...); scenery.json is the only changed file (rev 795c09c6cb). public/tracks/sonoma byte-identical, rev f399cda140.
+`src/scoreboard/config.ts` TRACKS.buttonwillow rev -> 795c09c6cb. PHYSICS_VERSION and changelog untouched.
 
 ## Stills (local only, `round13/stills/`; pose_walk --port 5213; `_before` = rev 52bf051dcc with the old scenery.ts)
 
@@ -163,5 +195,5 @@ e66b3218...); scenery.json is the only changed file. public/tracks/sonoma byte-i
 1. T5 apex run reads ~20 m earlier on the onboard than placed (above); the Sweeper-exit right kerb and the drag-strip
    single cones (above).
 2. L 536-549 and L 1541-1574 extents not resolved by the frames.
-3. Paddock: the seam at x 30-35, the west 8 m strip, the road-side apron, the x 57-75 width (above).
+3. Paddock: the undrawn spots listed above, the OSM paddock lanes' own junction seams, the x 57-75 width (above).
 4. Carried: the hood camera (unchanged by the owner's decision).
