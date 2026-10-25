@@ -76,6 +76,10 @@ export interface TrackInfo {
   /** "Far off the track" for the lost-in-the-hills launch, m past the nearer track edge (absent = OFFTRACK_FAR_M, 40 m,
    *  src/physics/offtrack.ts). Only the player's car; outside the near heightfield always counts as far. */
   offTrackFarM?: number;
+  /** Work in progress (owner, 25 Oct 2026): the track ships in the bundle for its branch's previews and ?track= links
+   *  but the Start menu does not offer it (src/app/track-choice.ts TRACK_IDS), so a publish can carry a circuit that is
+   *  still being iterated without releasing it. */
+  wip?: boolean;
 }
 
 /** The track registry: every circuit the app, the scoreboard server and the tools know (whitelist). A new track gets an
@@ -99,8 +103,11 @@ export const TRACKS: Readonly<Record<string, TrackInfo>> = {
   // files the package has. The pace file is Buttonwillow's own field (22 Oct 2026: tools/race/pace_track.ts --own, the
   // 100 cars of the Button Turrible 2026 race that ran a lap, each with its own stints; ids "<n>_bw" where the number
   // is a different Laguna car's). Package: round 12 (rev 52bf051dcc, 4699.187 m; round 10's geometry, round 11's scenery passing the merged gates, the paddock openings and strip).
+  // wip (owner, 25 Oct 2026, after his acceptance drive of round 13: "Buttonwillow needs more work to be production ready";
+  // the front-straight shoulder is dirt except the fish-mouth flares he outlined in green): not in the Start menu of a
+  // publish; the rounds continue on their branch and the flag goes when he accepts the track.
   buttonwillow: { dir: 'tracks/buttonwillow/', name: 'Buttonwillow Raceway Park', short: 'Buttonwillow', length_m: 4699.187, pace: 'cars/field/buttonwillow/pace.json',
-    identity: 'cars/field/buttonwillow/identity.json', rev: '52bf051dcc',
+    identity: 'cars/field/buttonwillow/identity.json', rev: '52bf051dcc', wip: true,
     // on the front straight, ~115 m before the line (s 4580; the last corner T11 is at 4377)
     start: { s_m: 4580, speed: ROLLING_START_SPEED },
     // 24 Oct 2026, 100 cars, 4 laps, seeds 1-3 (tools/race/AI_READINESS.md): AI-AI contacts 0.058 -> 0.020 per car-lap,

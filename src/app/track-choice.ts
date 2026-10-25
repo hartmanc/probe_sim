@@ -5,8 +5,9 @@ import { DEFAULT_TRACK, TRACKS, resolveTrackId, type TrackInfo } from '../scoreb
 const search = typeof location !== 'undefined' ? location.search : '';
 export const TRACK_ID: string = resolveTrackId(new URLSearchParams(search).get('track'));
 export const TRACK: TrackInfo = TRACKS[TRACK_ID];
-/** Ids of every registered track, registry order. */
-export const TRACK_IDS: readonly string[] = Object.keys(TRACKS);
+/** Ids of the tracks the Start menu offers, registry order: every registered track that is not work in progress
+ *  (TrackInfo.wip; a wip track still loads from its ?track= link). */
+export const TRACK_IDS: readonly string[] = Object.keys(TRACKS).filter((id) => !TRACKS[id].wip);
 
 /** This page's URL with another track (the default track drops the parameter). */
 export function urlForTrack(id: string): string {

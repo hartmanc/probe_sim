@@ -27,12 +27,12 @@ export interface ChangeEntry {
 /** Newest first. Add a new entry at the top and mirror its version in package.json. */
 export const CHANGELOG: ChangeEntry[] = [
   {
-    version: '0.3.0', date: '', title: 'Sonoma Raceway',
+    version: '0.3.0', date: '2026-10-25', title: 'Sonoma Raceway',
     items: [
-      'Sonoma Raceway in its 24 Hours of Lemons layout: the road fitted to the painted lines in 2026 satellite imagery, the ground from USGS lidar, and the trackside built from the March 2026 onboard: walls at their real heights, catch fences, tyre walls, kerbs in their real colours, the pit lane with both walls, the hillside grandstands, the main grandstand and garages, marshal posts, the scoring tower, sponsor boards and painted logos. Unused roads are real pavement, coned off.',
+      'Sonoma Raceway in its 24 Hours of Lemons layout: the road fitted to the painted lines in 2026 satellite imagery, the ground from USGS lidar, and the trackside built from the March 2026 onboard: walls at their real heights, catch fences, the deep tyre wall round the T11 hairpin, kerbs in their real colours, the pit lane with both walls, the hillside grandstands, the main grandstand and garages, marshal posts, the scoring tower, sponsor boards and painted logos. Unused roads are real pavement, coned off.',
       'A track pipeline that builds a circuit from public data and recent video, with gates for containment, pit-lane connectivity, wall ends and coverage of everything the onboard shows, so the next circuits start at this level.',
-      'Race at Sonoma against the Laguna field, with the real Sonoma pace for the eleven cars that raced there in March 2026.',
-      'AI drivers at Sonoma: fewer collisions and spins than at Laguna (lane changes capped by spare grip, passing cars keep a margin); Laguna’s drivers are unchanged.',
+      'Race at Sonoma against the 136-car field of the March 2026 Sears Pointless race, each car modelled from its photos, with the pace it ran there.',
+      'AI drivers: at Sonoma their lane changes are capped by spare grip and a passing car keeps a margin; on every track a driver no longer commits to a pass where the road takes the lane away at the apex, and tucks back in instead. Laguna’s lap pace is unchanged.',
       'Sonoma’s kerbs are 5 cm raised concrete; a kerb traversal check keeps every kerb on every track from lifting a wheel at racing speed.',
       'Per-track scoreboards: a rebuilt circuit opens its own boards without resetting the others.',
       'Tyre walls are solid now, like the concrete ones, and rolling the car ends the run: “You are banned from Lemons for one year for rolling your hooptie”.',
