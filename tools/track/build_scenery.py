@@ -330,6 +330,20 @@ def resample_line(xy, step):
     return np.c_[np.interp(s, d, xy[:, 0]), np.interp(s, d, xy[:, 1])]
 
 
+def seam_far(P, j, name="ring"):
+    """A closed ring (first point IDENTICAL to the last) restarted at its vertex j: the same closed point list rotated, so
+    every vertex and every segment, the closing one included, is unchanged (Buttonwillow round 12, declared_walls
+    seam='far'). A ring whose ends are not identical is refused: dropping or snapping a point would change its closing
+    segment (GPT 6 Astra review of round 12)."""
+    P = np.asarray(P)
+    if len(P) < 4 or not np.array_equal(P[0], P[-1]):
+        raise SystemExit(f"declared wall {name}: seam='far' needs a closed ring whose first point is identical to its last "
+                         f"(ends {P[0].tolist()} / {P[-1].tolist()})")
+    Q = P[:-1]
+    j = int(j) % len(Q)
+    return np.vstack([np.roll(Q, -j, axis=0), Q[j:j + 1]])
+
+
 def grid_index(G, x, y):
     box = G["box"]
     c = np.clip(((np.asarray(x) - box[0]) / CELL).astype(int), 0, G["DEM"].shape[1] - 1)
@@ -1077,6 +1091,16 @@ def barriers(trk, osm):
             if dw.get("kind") == "pitwall":
                 for i_, d_ in zip(i[close], dout[close]):
                     log(f"  pit wall point at station {int(i_)}: measured {d_:+.2f} m from the edge -> {gmin + 0.05:.2f} m")
+        if dw.get("seam") == "far":
+            # Buttonwillow round 12 (the wall-ends gate on the station surrounds): a CLOSED ring (a station's tyre surround,
+            # closed all round on the captures) has no end; its polyline's seam (first = last point) is a modelling
+            # artefact that the gate reads as a run head. seam='far' starts the ring at its point farthest from the track
+            # (the side away from the road); config-gated (absent: as before)
+            _, _, dq = trk.project(P[:-1])
+            j_ = int(np.argmax(dq))
+            log(f"declared wall {dw['name']}: closed ring, seam moved to its far side ({float(dq[j_]):.1f} m beyond the edge; "
+                f"was {float(dq[0]):.1f} m)")
+            P = seam_far(P, j_, dw["name"])
         decl.append(P)
         rec = {"kind": dw.get("kind", "concrete"), "h": dw.get("h", 1.0), "fence": dw.get("fence", 3.0),
                "pts": with_z(trk, P), "src": f"declared: {dw['name']}" + (f" ({dw['src']})" if dw.get("src") else "")}
@@ -1332,7 +1356,7 @@ def closed_roads(trk, osm):
                 ll = np.array([nodes[i] for i in nd if i in nodes])
             x, y = bl.enu(ll[:, 0], ll[:, 1])
             res = lane_parts(trk, np.c_[x, y], road.get("half_width", 5.0), f"{road['name']} ({e})",
-                             clip=(2.5, road.get("max_half", 12.0)))
+                             clip=(road.get("min_half", 2.5), road.get("max_half", 12.0)))   # min_half (round 12): = max_half for a measured fixed width
             if not res:
                 continue
             if road.get("edges_from_green") and SC_CFG.get("owner_green"):
@@ -1732,14 +1756,21 @@ def tyre_rows_outside(trk, bar, face_min=0.5, wall_reach=1.5):
             f"(stations {int(i.min())}..{int(i.max())}): reversed, rows behind the line, face now {flip.min():+.2f} m")
 
 
-def extend_parts_to_walls(parts, bar, reach=4.0, margin=0.3, label="pit lane"):
+def extend_parts_to_walls(parts, bar, reach=4.0, margin=0.3, label="pit lane", across=None):
     """The lane's paving out to its walls (config pit_lane.lane.to_walls {reach}, Buttonwillow judge r3: the footage has
     pavement from the lane to the K-rails where the NAIP half-width left a pale verge): an edge point whose ray from the
-    part's centre, continued up to `reach` m past the edge, meets a wall run is moved to `margin` m short of it."""
+    part's centre, continued up to `reach` m past the edge, meets a wall run is moved to `margin` m short of it.
+    `across` (Buttonwillow round 12, to_walls.across: [((lat, lon), (lat, lon)), ...], the two run ends of a wall's
+    opening): the paving runs through the opening on the captures, so the edge in it goes out to the wall's line between
+    the ends (no margin: the paved zone beyond starts on that line); not a barrier. Absent: as before."""
     S = [np.c_[np.array(b["pts"])[:-1, :2], np.array(b["pts"])[1:, :2]] for b in bar if b["kind"] in ("concrete", "pitwall")]
+    M = [np.full(len(x), float(margin)) for x in S]
+    for a_, b_ in (across or []):
+        A_ = np.array(bl.enu(*a_), float); B_ = np.array(bl.enu(*b_), float)
+        S.append(np.r_[A_, B_][None, :]); M.append(np.zeros(1))
     if not S:
         return
-    S = np.concatenate(S); a0, a1 = S[:, :2], S[:, 2:]
+    S = np.concatenate(S); M = np.concatenate(M); a0, a1 = S[:, :2], S[:, 2:]
     moved = 0
     for part in parts:
         C = np.array(part["center"])[:, :2]
@@ -1756,7 +1787,8 @@ def extend_parts_to_walls(parts, bar, reach=4.0, margin=0.3, label="pit lane"):
                 u = np.where(ok, (qp[:, 0] * r[1] - qp[:, 1] * r[0]) / np.where(ok, den, 1), 9)
                 hit = ok & (t >= 0) & (t <= 1) & (u >= 0) & (u <= 1)
                 if hit.any():
-                    tw = float(t[hit].min()) * float(np.linalg.norm(r)) - margin
+                    k_ = np.nonzero(hit)[0][np.argmin(t[hit])]
+                    tw = float(t[k_]) * float(np.linalg.norm(r)) - float(M[k_])
                     if tw > L0 + 0.05:
                         nq = p + d / L0 * tw
                         E[j] = [rnd(nq[0], 2), rnd(nq[1], 2)] + list(E[j][2:])
@@ -2459,6 +2491,55 @@ def _cone_style(cl):
             **({"style": cl["style"]} if cl.get("style") else {})}
 
 
+def join_lane(lane_parts_, parts, fractions, near=0.6, ramp=4):
+    """Buttonwillow round 12 (config closed_roads[].join_lane {reach}): where a closed road's paving meets the pit lane's
+    paving edge to edge (the paddock strip in the paddock-side K-rail's openings: its right edge within `near` m of the
+    lane's edge), the two separate DEM fits left a lip (0.075 m in the west opening). The road's profile takes the lane's
+    edge height at the join, the correction fading linearly across the road to 0 at `reach` m from that edge and along it
+    over `ramp` stations either side of the join; the lane is unchanged. Absent: as before."""
+    from scipy.spatial import cKDTree
+    names = {r_["name"]: r_["join_lane"] for r_ in SC_CFG.get("closed_roads", []) if r_.get("join_lane")}
+    E, Z = [], []
+    for lp in lane_parts_:
+        for side, col in (("left", 0), ("right", -1)):
+            for e_, pz in zip(lp[side], lp["profile_z"]):
+                E.append(e_[:2]); Z.append(pz[col])
+    kd = cKDTree(np.array(E, float)); Z = np.array(Z, float)
+    fr = np.array(fractions, float)
+    for part in parts:
+        cfg_ = names.get(part.get("turn"))
+        if not cfg_:
+            continue
+        reach = float(cfg_["reach"])
+        prof = np.array(part["profile_z"], float); n = len(prof)
+        # the edge that meets the lane: whichever of left / right lies nearer to it
+        best = None
+        for side, col in (("right", -1), ("left", 0)):
+            d_, k_ = kd.query(np.array(part[side], float)[:, :2])
+            if best is None or np.sum(d_ < near) > np.sum(best[0] < near):
+                best = (d_, k_, side, col)
+        d_, k_, side, col = best
+        dz = np.where(d_ < near, Z[k_] - prof[:, col], 0.0)
+        hit = d_ < near
+        if not hit.any():
+            log(f"join lane: {part['turn']}: no station meets the lane"); continue
+        # ramp along the road beside each join run
+        dz_r = dz.copy()
+        idx = np.nonzero(hit)[0]
+        for a_, b_ in _runs(hit):
+            for k in range(1, ramp + 1):
+                w = 1 - k / (ramp + 1)
+                if a_ - k >= 0 and not hit[a_ - k]: dz_r[a_ - k] = dz[a_] * w
+                if b_ + k < n and not hit[b_ + k]: dz_r[b_ + k] = dz[b_] * w
+        width = np.linalg.norm(np.array(part["left"], float)[:, :2] - np.array(part["right"], float)[:, :2], axis=1)
+        dist = ((1 - fr) / 2 if side == "right" else (1 + fr) / 2)[None, :] * width[:, None]   # m from the joining edge
+        wcol = np.clip(1 - dist / reach, 0, 1)
+        prof = prof + dz_r[:, None] * wcol
+        part["profile_z"] = [[rnd(v, 3) for v in row] for row in prof]
+        log(f"join lane: {part['turn']}: {int(hit.sum())} stations meet the lane's edge ({side} edge), lip "
+            f"{float(np.abs(dz[hit]).max()):.3f} m closed (mean {float(dz[hit].mean()):+.3f} m), faded to 0 at {reach} m across")
+
+
 def zones_meet_edge(trk, parts, reach=8.0, near=1.5, overlap=0.3):
     """Zone ends meeting the track at an angle leave a dirt wedge between the far end corner and the edge (Buttonwillow
     judge r5: tan strips at the crossover mouths). config scenery.zones_meet_edge: at an end whose nearest corner lies
@@ -3049,6 +3130,8 @@ def main(cfg=None, out_dir=None):
         clip_parts_at_walls(cr_parts, bar)
     if cr_parts:
         zones["parts"] += cr_parts
+    if cr_parts and pit and any(r_.get("join_lane") for r_ in SC_CFG.get("closed_roads", [])):
+        join_lane(pit["parts"], cr_parts, zones.get("fractions") or trk.t["profile"]["fractions"])
     if SC_CFG.get("zones_meet_edge"):
         zones_meet_edge(trk, zones["parts"])
     if SC_CFG.get("zone_end_feather"):
