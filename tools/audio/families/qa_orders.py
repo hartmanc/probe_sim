@@ -45,7 +45,7 @@ def check(fam):
             k = int(np.argmax(pw))
             top = orders[k]
             ratio = top / F
-            ok = abs(ratio - round(ratio)) < 0.01 and round(ratio) >= 1
+            ok = (top >= 1.0) if ej["cylinders"] == 8 else (abs(ratio - round(ratio)) < 0.01 and round(ratio) >= 1)
             flag = "ok" if ok else ("low-octave?" if ratio < 1 else "other")
             res[(load, b["rpm"])] = (top, flag)
     return res, F

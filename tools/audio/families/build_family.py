@@ -201,14 +201,17 @@ def process(T: dict, cand, B: int, main_order: float, max_len: float):
 
 def order_ok(loop: np.ndarray, rpm: float, n_cyl: int) -> bool:
     """Octave guard: the loop's strongest engine order (0.5 steps up to 12, +-4 % windows) must sit on a whole multiple of
-    the firing order F = cylinders / 2. A loop whose label is an octave too high peaks at F/2 or lower. Not used for V8s
-    (a cross-plane V8's strongest order is the per-bank burble at 1 or 2, not the firing order)."""
+    the firing order F = cylinders / 2. A loop whose label is an octave too high peaks at F/2 or lower. For V8s only a
+    half order is rejected (a cross-plane V8's strongest order may be the per-bank burble at 1 or 2, not the firing order)."""
     X = np.abs(np.fft.rfft(np.tile(loop, 4) * np.hanning(4 * len(loop)))) ** 2
     fr = np.fft.rfftfreq(4 * len(loop), 1 / SR)
     f_rev = rpm / 60.0
     orders = np.arange(0.5, 12.01, 0.5)
     pw = [X[np.abs(fr - o * f_rev) <= 0.04 * o * f_rev].sum() for o in orders]
-    ratio = orders[int(np.argmax(pw))] / (n_cyl / 2.0)
+    top = orders[int(np.argmax(pw))]
+    if n_cyl == 8:  # cross-plane V8: the burble orders 1, 2 or the firing order 4 may lead; only a half order is wrong
+        return top >= 1.0
+    ratio = top / (n_cyl / 2.0)
     return ratio >= 0.99 and abs(ratio - round(ratio)) < 0.01
 
 
@@ -263,7 +266,7 @@ def build(fam: str, force_track: bool = False, bin_step: int | None = None):
                 except Exception as ex:  # too short to loop etc.
                     print(f"    skip candidate {c}: {ex}")
                     continue
-                if defs["cylinders"] != 8 and not order_ok(p["loop"], p["rpm"], defs["cylinders"]):
+                if not order_ok(p["loop"], p["rpm"], defs["cylinders"]):
                     continue  # strongest order off the firing ladder: an octave-slipped label
                 if p["tick"] > 8.0:  # a click / knock repeating once per loop: rather pitch-shift a neighbour
                     continue
