@@ -1,0 +1,67 @@
+OWNER REVIEW RECEIVED 26 OCTOBER 2026
+
+Authoritative export: edge-marks.json (exact copy of the supplied Downloads file).
+Frame geometry: frames.json, copied from edges_r2/windows.json by window ID.
+Source hash and counts: provenance.json.
+13 marked windows, 46 red strokes and 50 green strokes.
+
+Owner's explicit acceptance:
+"Other than the pit straight, and the transitions onto and off it, the fits were good."
+
+I rendered and inspected every marked window. No blocking question about the
+intended boundary convention or the distinction between red and green remains.
+This records review of the evidence; it does NOT claim the corrections are fitted.
+
+RED: corrections to the driven course boundaries, on the asphalt-facing side
+of kerbs. Do not widen them to include kerbs again.
+GREEN: extra paved boundaries, including pit-exit paving and inactive variants
+and connectors. They do not change the driven Lemons loop.
+
+Window findings:
+- w_s0000, w_s0125: straighten both pit-straight boundaries; the smooth fitted
+  curves are not a substitute for the owner's straight lines.
+- w_s0250, close_s0220: bridge approach/T1 entry. Carry the owner's lines
+  smoothly under the occluding bridge; retain the separate green pit pavement.
+- w_s0375, close_s0320: T1 kerb and pit-exit/apron separation. Red follows the
+  race-side kerb boundary, green the extra paved boundary behind it.
+- w_s0500: continue the corrected T1 exit boundary and preserve the green
+  boundaries of the unused joining road. Its red samples reach about s576 m.
+- w_s3375, w_s3500: last-corner exit/pit-entry/front-straight transition. Fit
+  the marked arcs and tangents rather than allowing a global fit to wander.
+- w_s0625, w_s0750, w_s0875, w_s1250: green-only paving/variant outlines;
+  retain for scenery/closed-road surfaces, not as new racing-course edges.
+
+The red evidence occupies the wrapped front-straight/T1 region: approximately
+s3428 m through S/F to s576 m in the ROUND-2 frame. This is a scoping guide,
+not a replacement for world-coordinate projection of the individual strokes.
+Hold the rest of the owner's accepted race edges in world position.
+
+Overlap caution:
+A check sampling the red vectors every 0.5 m, excluding across-course samples
+more than 35 degrees from the tangent, found 22 station/side combinations with
+overlapping stroke medians differing by more than 0.5 m. Largest difference
+was about 0.68 m. These are small local variations, not an unexplained layout
+change. Notable overlaps are right side s215-220 (w_s0250 versus close_s0220)
+and s3439 (w_s3375 versus w_s3500). The dated close_s0220 is a later, finer
+review than the imported, undated w_s0250. w_s3500 was saved after w_s3375.
+Use those clues plus the actual paint/kerb evidence; document the selected
+constraint where they disagree. Preserve all original vectors. Do not blindly
+average different intended boundaries or silently discard a marked line.
+
+All vectors in this export are ALREADY in round-two image coordinates,
+including earlier strokes carried over from round one. Do not transfer them
+from round one a second time. Use the saved center_enu, half and mpp per window,
+not a newly fitted center at the same station number. Control points and dense
+points are image-relative; the drawing canvas margin is not added to them.
+
+Use vector-based import. The rendered images contain fitted red lines and
+red objects as well as owner strokes; thresholding every red pixel is wrong.
+Green lines and red across-road lines must stay separate from longitudinal
+race-edge constraints. The existing owner_edges.py --by-stroke workflow is a
+starting point; verify its frame and pixel-center conventions against capwin.py
+and edge_mark_transfer.cjs before converting.
+
+Local rendered windows are in rendered/*_marked.png. They are reference only,
+ignored by git, and never package textures. docs/*.json is a generated split
+of edge-marks.json for edge_draw_render.py. The exact export and frame metadata
+are the durable evidence if generated files need to be recreated.

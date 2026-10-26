@@ -58,3 +58,23 @@ localhost while the target uses 127.0.0.1. Direct transfer, alternate-address
 retry, geographic registration, preservation of existing marks, duplicate
 prevention, explicit restoration and an unchanged source store all passed.
 The JSON file fallback was checked through the actual file input as well.
+
+## Completed owner review and hand-off, 26 October 2026
+
+The owner completed the review and said: "Other than the pit straight, and the
+transitions onto and off it, the fits were good." Preserve the accepted portion
+of the round-two race edges in world position. This is plan-edge acceptance
+outside the identified region, not acceptance of the unresolved T4 profile,
+nominal lap length, scenery or whole track package.
+
+The owner supplied `/Users/cobyhartman/Downloads/edge-marks.json`. An exact copy
+is preserved at `owner_review_r2/edge-marks.json`, together with frame metadata,
+source SHA-256 and review findings. It contains 46 red and 50 green strokes in
+13 marked windows. All windows were rendered and visually reviewed. No blocking
+clarification remained; mild overlapping-stroke differences are documented in
+`owner_review_r2/REVIEW.txt`. No owner corrections have yet been fitted.
+
+The ready-to-use takeover prompt is
+`tools/track/tracks/mid_ohio/HANDOFF_OPUS_5_5.txt`. It preserves the owner's
+inside-kerb convention, scoped acceptance, raw annotations and earlier reviews,
+and lists the work still needed to finish the track.

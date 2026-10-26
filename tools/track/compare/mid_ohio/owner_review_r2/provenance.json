@@ -1,0 +1,11 @@
+{
+  "source": "/Users/cobyhartman/Downloads/edge-marks.json",
+  "sha256": "fa8097582b27c2b8aec66ec4cf86db972b1f27b3c5811f3931e89a9b380bbeeb",
+  "round": 2,
+  "windows": 13,
+  "strokes": {
+    "red": 46,
+    "green": 50
+  },
+  "frame_metadata": "tools/track/compare/mid_ohio/edges_r2/windows.json"
+}
