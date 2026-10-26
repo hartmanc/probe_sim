@@ -169,7 +169,8 @@
     "t0": 15,
     "t1": 360,
     "notes": "VW Golf Mk2 GTI 8v (1.8 SOHC) rally stage onboard; very clean loud ladder, constant on/off cycling. Co-driver pacenotes faintly audible. Skip the 0-13 s intro tones.",
-    "upload_date": "20131113"
+    "upload_date": "20131113",
+    "why": "VW Golf Mk2 GTI 8v (SOHC-class loud four) rally stage onboard, two stretches of the same CC BY stage; supplies 21 real bins"
    },
    {
     "url": "https://www.youtube.com/watch?v=kWF6wrCWZqc",
@@ -181,7 +182,8 @@
     "t0": 380,
     "t1": 900,
     "notes": "Same stage(s), continued; brief gap/stop around 365-372 s excluded.",
-    "upload_date": "20131113"
+    "upload_date": "20131113",
+    "why": "VW Golf Mk2 GTI 8v (SOHC-class loud four) rally stage onboard, two stretches of the same CC BY stage; supplies 21 real bins"
    }
   ]
  },
@@ -970,7 +972,8 @@
     "t0": 10,
     "t1": 425,
     "notes": "Nissan S13 with 1JZ-GTE swap, raw drift onboard; strong ladder, a lot of limiter bouncing and clutch kicks; turbo/BOV audible. Music after ~440 s excluded.",
-    "upload_date": "20181214"
+    "upload_date": "20181214",
+    "why": "1JZ-GTE swapped S13 onboard (Auto Factory Realize), the only CC BY source with the turbo straight six; supplies 40 real bins"
    }
   ]
  },
@@ -1181,7 +1184,8 @@
     "t0": 90,
     "t1": 900,
     "notes": "MINI Cooper S R53 at Franciacorta, in-car; clean ladder, pulls and lifts; supercharger whine above 1 kHz. First 90 s pit/noise excluded. File is the first 900 s.",
-    "upload_date": "20110613"
+    "upload_date": "20110613",
+    "why": "R53 Mini Cooper S Tritec with the supercharger whine, Franciacorta track session; supplies 37 real bins"
    }
   ]
  }
