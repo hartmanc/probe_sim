@@ -1,0 +1,30 @@
+url http://localhost:4173/?track=sonoma&laps=1&phone=1
+date 2026-10-26T17:42:03.306Z
+loaded in 4.2 s; headers check: csp-enforced | DENY | strict-origin-when-cross-origin | camera=(), microphone=(), geolocation=()
+race row: Race · 1 lap vs the 2026 field40 of 133 cars on this device
+open howto: true
+open credits: true
+open scoreboard: true
+open whatsnew: true
+open feedback: true
+hotlap: true
+t+10s phase formation lap 1 cars 41 models 40 audio true
+t+20s phase green lap 1 cars 41 models 40 audio true
+t+30s phase green lap 1 cars 41 models 40 audio true
+t+40s phase green lap 1 cars 41 models 40 audio true
+t+50s phase green lap 1 cars 41 models 40 audio true
+t+60s phase green lap 1 cars 41 models 40 audio true
+t+70s phase green lap 1 cars 41 models 40 audio true
+t+80s phase green lap 1 cars 41 models 40 audio true
+t+90s phase green lap 1 cars 41 models 40 audio true
+t+100s phase green lap 1 cars 41 models 40 audio true
+t+110s phase green lap 1 cars 41 models 40 audio true
+t+120s phase green lap 1 cars 41 models 40 audio true
+t+130s phase green lap 1 cars 41 models 40 audio true
+t+140s phase green lap 1 cars 41 models 40 audio true
+t+150s phase green lap 1 cars 41 models 40 audio true
+t+160s phase green lap 1 cars 41 models 40 audio true
+t+170s phase chequered lap 1 cars 41 models 40 audio true
+results card after 180 s: 1 lap · seed 333030823 · P41 of 41 · 0L +0 m; rows: raceAgain,raceMain
+CSP report-only violations: []
+console / page errors: 0

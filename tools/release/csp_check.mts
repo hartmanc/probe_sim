@@ -96,11 +96,11 @@ try {
     writeFileSync(join(out, `og_${Date.now()}.jpg`), Buffer.from(shot.data, 'base64'));
   }
   const csp = await c.eval<unknown[]>(`window.__csp`);
-  say(`CSP report-only violations: ${JSON.stringify(csp)}`);
+  say(`CSP violations (securitypolicyviolation events, enforced or report-only): ${JSON.stringify(csp)}`);
   const errs = c.events.filter((e) => (e.method === 'Runtime.exceptionThrown') || (e.method === 'Log.entryAdded' && e.params.entry.level === 'error') || (e.method === 'Runtime.consoleAPICalled' && e.params.type === 'error'));
   say(`console / page errors: ${errs.length}`);
   for (const e of errs.slice(0, 20)) say('  ' + JSON.stringify(e.params).slice(0, 300));
-  writeFileSync(join(out, `${mode}_${new URL(url).searchParams.get('track') ?? 'default'}${new URL(url).searchParams.get('phone') === '1' ? '_phone' : ''}_${new Date().toISOString().slice(0, 16).replace(/[:T]/g, '')}.txt`), [`url ${url}`, `date ${new Date().toISOString()}`, ...log].join('\n') + '\n');
+  writeFileSync(join(out, `${mode}_${new URL(url).searchParams.get('track') ?? 'default'}${new URL(url).searchParams.get('phone') === '1' ? '_phone' : ''}_${new Date().toISOString().slice(0, 16).replace(':', '') + 'Z'}.txt`), [`url ${url}`, `date ${new Date().toISOString()}`, ...log].join('\n') + '\n');
 } finally {
   proc.kill('SIGTERM');
   await sleep(500);

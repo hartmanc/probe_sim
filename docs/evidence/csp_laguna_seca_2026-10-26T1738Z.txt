@@ -1,0 +1,28 @@
+url http://localhost:4173/?track=laguna_seca&laps=1
+date 2026-10-26T17:38:23.010Z
+loaded in 1.8 s; headers check: csp-enforced | DENY | strict-origin-when-cross-origin | camera=(), microphone=(), geolocation=()
+race row: Race · 1 lap vs the 2026 fieldall 44 cars
+open howto: true
+open credits: true
+open scoreboard: true
+open whatsnew: true
+open feedback: true
+hotlap: true
+t+10s phase formation lap 1 cars 45 models 44 audio true
+t+20s phase formation lap 1 cars 45 models 44 audio true
+t+30s phase green lap 1 cars 45 models 44 audio true
+t+40s phase green lap 1 cars 45 models 44 audio true
+t+50s phase green lap 1 cars 45 models 44 audio true
+t+60s phase green lap 1 cars 45 models 44 audio true
+t+70s phase green lap 1 cars 45 models 44 audio true
+t+80s phase green lap 1 cars 45 models 44 audio true
+t+90s phase green lap 1 cars 45 models 44 audio true
+t+100s phase green lap 1 cars 45 models 44 audio true
+t+110s phase green lap 1 cars 45 models 44 audio true
+t+120s phase green lap 1 cars 45 models 44 audio true
+t+130s phase green lap 1 cars 45 models 44 audio true
+t+140s phase green lap 1 cars 45 models 44 audio true
+t+150s phase green lap 1 cars 45 models 44 audio true
+results card after 160 s: 1 lap · seed 434892876 · P45 of 45 · 0L +0 m; rows: raceAgain,raceMain
+CSP report-only violations: []
+console / page errors: 0
