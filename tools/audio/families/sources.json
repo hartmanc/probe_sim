@@ -1,0 +1,504 @@
+{
+ "modern_i4_stock": {
+  "cylinders": 4,
+  "strokes": 4,
+  "fire": "even",
+  "layout": "inline",
+  "redline_rpm": 6600,
+  "idle_rpm": 750,
+  "notes": "Rejected: 'Montmagny Speedway 2018 Mazda3 2.0' (gf_mNI9YAl8) - engine buried in road/wind noise, speech blobs.",
+  "entries": [
+   {
+    "url": "https://www.youtube.com/watch?v=xizzqyJpLII",
+    "file": "cache/modern_i4_stock__mazda3_nordschleife.flac",
+    "title": "Nürburgring-Nordschleife Onboard, 2.7.2023, Mazda 3 2.0 G165, 1. lap",
+    "uploader": "Chemiekeule",
+    "licence": "Standard YouTube License",
+    "duration_s": 672,
+    "t0": 20,
+    "t1": 660,
+    "notes": "Mazda3 2.0 Skyactiv-G (G165, stock exhaust), one Nordschleife lap; clear order-2 ladder 3000-6500 rpm, pulls and lifts, cabin wind/road noise moderate."
+   }
+  ]
+ },
+ "sohc_i4_loud": {
+  "cylinders": 4,
+  "strokes": 4,
+  "fire": "even",
+  "layout": "inline",
+  "redline_rpm": 6000,
+  "idle_rpm": 800,
+  "notes": "Merged old vw_i4_8v here. Mk1 Golf candidates (Pau-Arnos test, Oettinger hillclimb, Golf 1 cabrio POV) downloaded but not reviewed/used; Golf Mk2 8v is the same EA827 1.8 8v.",
+  "entries": [
+   {
+    "url": "https://www.youtube.com/watch?v=kWF6wrCWZqc",
+    "file": "cache/sohc_i4_loud__golf2_jerez.flac",
+    "title": "Rally Crono Ciudad de Jerez 2013 Onboard VW Golf mk2 gti 8v",
+    "uploader": "Sixer Fotografia",
+    "licence": "Creative Commons Attribution (CC BY 3.0), YouTube",
+    "duration_s": 1823,
+    "t0": 15,
+    "t1": 360,
+    "notes": "VW Golf Mk2 GTI 8v (1.8 SOHC) rally stage onboard; very clean loud ladder, constant on/off cycling. Co-driver pacenotes faintly audible. Skip the 0-13 s intro tones.",
+    "upload_date": "20131113"
+   },
+   {
+    "url": "https://www.youtube.com/watch?v=kWF6wrCWZqc",
+    "file": "cache/sohc_i4_loud__golf2_jerez.flac",
+    "title": "Rally Crono Ciudad de Jerez 2013 Onboard VW Golf mk2 gti 8v",
+    "uploader": "Sixer Fotografia",
+    "licence": "Creative Commons Attribution (CC BY 3.0), YouTube",
+    "duration_s": 1823,
+    "t0": 380,
+    "t1": 900,
+    "notes": "Same stage(s), continued; brief gap/stop around 365-372 s excluded.",
+    "upload_date": "20131113"
+   }
+  ]
+ },
+ "classic_v8_lowrev": {
+  "cylinders": 8,
+  "strokes": 4,
+  "fire": "even",
+  "layout": "v",
+  "redline_rpm": 4800,
+  "idle_rpm": 650,
+  "notes": "Rejected: '1932 Ford Hot Rod' (music throughout), '1958 Plymouth POV' (mostly talking), '1956 Thunderbird binaural' (mostly talking; talk-free stretches 455-545, 720-800, 840-900 s if more is needed - file kept).",
+  "entries": [
+   {
+    "url": "https://www.youtube.com/watch?v=CiMqlaI1e-s",
+    "file": "cache/classic_v8_lowrev__ford36_sunday.flac",
+    "title": "1936 Ford V8 Sunday Drive",
+    "uploader": "AutoEsoterica",
+    "licence": "Standard YouTube License",
+    "duration_s": 253,
+    "t0": 35,
+    "t1": 248,
+    "notes": "1936 Ford flathead V8 (cross-plane, stock-ish), in-car country drive, no talking; low rpm 1000-3500, burbly. Some road noise.",
+    "context": "street"
+   },
+   {
+    "url": "https://www.youtube.com/watch?v=bDasNHd-CVk",
+    "file": "cache/classic_v8_lowrev__ford36_roadtrip.flac",
+    "title": "1936 Ford Flathead V8 Road Trip -- No Talking, No Music",
+    "uploader": "AutoEsoterica",
+    "licence": "Standard YouTube License",
+    "duration_s": 158,
+    "t0": 0,
+    "t1": 95,
+    "notes": "1936 Ford flathead V8, in-car, 'no talking, no music'; clear ladders in gear and coasting. After 95 s road noise dominates.",
+    "context": "street"
+   },
+   {
+    "url": "https://www.youtube.com/watch?v=mn9sgi-9HFQ",
+    "file": "cache/classic_v8_lowrev__charger318_onboard.flac",
+    "title": "Dodge Charger 318 Onboard",
+    "uploader": "André Carrillo - AV8",
+    "licence": "Standard YouTube License",
+    "duration_s": 40,
+    "t0": 8,
+    "t1": 40,
+    "notes": "Dodge Charger 318 (LA V8) onboard, a short rev/pull; clear ladder.",
+    "context": "street"
+   },
+   {
+    "url": "https://www.youtube.com/watch?v=Lq2F0o51PzE",
+    "file": "cache/classic_v8_lowrev__flathead_sunday.flac",
+    "title": "A little Sunday Flathead V8 sanity therapy.",
+    "uploader": "Y-Block Guy",
+    "licence": "Standard YouTube License",
+    "duration_s": 202,
+    "t0": 62,
+    "t1": 196,
+    "notes": "Flathead V8 hot rod (Y-Block Guy), steady cruise; speech at 0-22 s excluded. Fallback material.",
+    "context": "street",
+    "skip": true,
+    "skip_reason": "no frame reaches 2 dB comb contrast (engine buried under road/wind noise); not used"
+   }
+  ]
+ },
+ "vintage_i6": {
+  "cylinders": 6,
+  "strokes": 4,
+  "fire": "even",
+  "layout": "inline",
+  "redline_rpm": 4200,
+  "idle_rpm": 600,
+  "notes": "Rejected: '1946 Chevrolet truck drive' and '1951 Chevy pickup test drive' (engine faint under rumble). '1950 Hudson Drive Along' failed to download.",
+  "entries": [
+   {
+    "url": "https://www.youtube.com/watch?v=gFFxhT5_b-M",
+    "file": "cache/vintage_i6__hudson_lemons.flac",
+    "title": "Chase Race Hudson at LeMons Pacific Northworst 2013",
+    "uploader": "Bret Dodson",
+    "licence": "Standard YouTube License",
+    "duration_s": 495,
+    "t0": 14,
+    "t1": 495,
+    "notes": "1950s Hudson (308 straight six presumably) Lemons race car, in-car; strong steady ladder, mostly mid-rpm on track. Fixed tones near 470 and 800 Hz (probably camera/intake artefact). Other cars pass at times.",
+    "skip": true,
+    "skip_reason": "rpm track hops between two harmonic ladders (a second engine, probably the chase car, under the Hudson) plus fixed tones at 470/800 Hz; not used in the rough pass",
+    "context": "street"
+   },
+   {
+    "url": "https://www.youtube.com/watch?v=5NT9cUAKwvo",
+    "file": "cache/vintage_i6__polara_slant6.flac",
+    "title": "Dodge Polara R/T Slant Six OnBoard",
+    "uploader": "Yoryi",
+    "licence": "Standard YouTube License",
+    "duration_s": 87,
+    "t0": 0,
+    "t1": 86,
+    "notes": "Dodge Polara with Chrysler 225 slant-six, onboard drive, rising pulls; clean ladder. Not a 1950s engine but the same breed.",
+    "context": "street"
+   },
+   {
+    "url": "https://www.youtube.com/watch?v=hlZfkuikg78",
+    "file": "cache/vintage_i6__vette54_235.flac",
+    "title": "1954 Chevy Corvette C1 POV Test Drive",
+    "uploader": "@911r",
+    "licence": "Standard YouTube License",
+    "duration_s": 96,
+    "t0": 3,
+    "t1": 90,
+    "notes": "1954 Corvette C1 with 235 Blue Flame six, POV test drive; ladders visible, moderate road noise.",
+    "context": "street"
+   }
+  ]
+ },
+ "mazda_b_i4": {
+  "cylinders": 4,
+  "strokes": 4,
+  "fire": "even",
+  "layout": "inline",
+  "redline_rpm": 7000,
+  "idle_rpm": 850,
+  "notes": "Rejected: 'Learning Laguna Seca in a Spec Miata' (background music), 'Homestead 2003 Miata' (weak engine, noisy).",
+  "entries": [
+   {
+    "url": "https://www.youtube.com/watch?v=K5DDUCfYHGo",
+    "file": "cache/mazda_b_i4__midohio97.flac",
+    "title": "Mid-Ohio w/Chicane - 97 Miata - 1:48 lap",
+    "uploader": "Eastern Racing",
+    "licence": "Creative Commons Attribution (CC BY 3.0), YouTube",
+    "duration_s": 294,
+    "t0": 0,
+    "t1": 294,
+    "notes": "1997 Miata (1.8 BP) race car, full Mid-Ohio lap(s), in-car; very clean ladder, pulls to ~7000 and lifts.",
+    "upload_date": "20170604"
+   },
+   {
+    "url": "https://www.youtube.com/watch?v=3Fv5YkvPM80",
+    "file": "cache/mazda_b_i4__bigwillow.flac",
+    "title": "Big Willow Spec Miata Race Lap Record! | NASA SoCal Willow Springs",
+    "uploader": "the stiglette",
+    "licence": "Creative Commons Attribution (CC BY 3.0), YouTube",
+    "duration_s": 96,
+    "t0": 0,
+    "t1": 95,
+    "notes": "Spec Miata, Big Willow lap record, in-car; clean ladder, mostly high rpm.",
+    "upload_date": "20240418"
+   }
+  ]
+ },
+ "bmw_m20_i6": {
+  "cylinders": 6,
+  "strokes": 4,
+  "fire": "even",
+  "layout": "inline",
+  "redline_rpm": 6500,
+  "idle_rpm": 750,
+  "notes": "Le 12 Alpe d'Huez E30 325i (CC BY) also found; not needed.",
+  "entries": [
+   {
+    "url": "https://www.youtube.com/watch?v=6WRPJvR2WS4",
+    "file": "cache/bmw_m20_i6__condor_sebring.flac",
+    "title": "CONSPDSHP - In-car footage in our BMW E30 325i at Sebring International Raceway",
+    "uploader": "Condor Speed Shop",
+    "licence": "Creative Commons Attribution (CC BY 3.0), YouTube",
+    "duration_s": 1466,
+    "t0": 0,
+    "t1": 600,
+    "notes": "BMW E30 325i race car at Sebring, in-car; excellent ladder, long pulls and lifts. File is the first 600 s of the video.",
+    "upload_date": "20190124"
+   },
+   {
+    "url": "https://www.youtube.com/watch?v=HUAyMS1s-2o",
+    "file": "cache/bmw_m20_i6__naval_codines.flac",
+    "title": "Albert Naval - 45a Pujada Sant Feliu de Codines 2017 | ONBORD | BMW E30 325i",
+    "uploader": "Xavier FotoFilms",
+    "licence": "Creative Commons Attribution (CC BY 3.0), YouTube",
+    "duration_s": 210,
+    "t0": 30,
+    "t1": 205,
+    "notes": "E30 325i hillclimb onboard (Sant Feliu de Codines 2017); clean ladder; intro 0-30 s excluded.",
+    "upload_date": "20180123"
+   },
+   {
+    "url": "https://www.youtube.com/watch?v=dWwXwV9anu4",
+    "file": "cache/bmw_m20_i6__heup_hockenheim.flac",
+    "title": "Heup Motorsport BMW E30 325 Gr  A Mike Heup Trackday Hockenheimring Pistenclub",
+    "uploader": "Heup Motorsport",
+    "licence": "Creative Commons Attribution (CC BY 3.0), YouTube",
+    "duration_s": 155,
+    "t0": 3,
+    "t1": 147,
+    "notes": "E30 325 Group A (M20, race-tuned) trackday at Hockenheim, in-car; clean ladder.",
+    "upload_date": "20200131"
+   }
+  ]
+ },
+ "gm_sbc_v8": {
+  "cylinders": 8,
+  "strokes": 4,
+  "fire": "even",
+  "layout": "v",
+  "redline_rpm": 6000,
+  "idle_rpm": 750,
+  "notes": "Rejected: 1985 Camaro autocross (CC BY, 305 small-block) - not reviewed in detail, superseded.",
+  "entries": [
+   {
+    "url": "https://www.youtube.com/watch?v=zmyeCnDZ5is",
+    "file": "cache/gm_sbc_v8__camaro68_buttonwillow.flac",
+    "title": "Symphony of Horsepower 68 Camaro 3 laps at Buttonwillow Raceway Park",
+    "uploader": "AutoXandTrack",
+    "licence": "Standard YouTube License",
+    "duration_s": 422,
+    "t0": 10,
+    "t1": 420,
+    "notes": "1968 Camaro (small-block, headers) 3 laps at Buttonwillow, in-car; very strong ladder, pulls and lifts."
+   },
+   {
+    "url": "https://www.youtube.com/watch?v=kcOHE97mq-I",
+    "file": "cache/gm_sbc_v8__camaro68_alwin.flac",
+    "title": "1968 Chevy Camaro Race Car - Nasty 350 V8 Sound + Onboard!",
+    "uploader": "AlwinSV",
+    "licence": "Standard YouTube License",
+    "duration_s": 473,
+    "t0": 63,
+    "t1": 360,
+    "notes": "1968 Camaro race car, '350 V8', onboard; strong ladder; first 63 s is idle/exterior."
+   },
+   {
+    "url": "https://www.youtube.com/watch?v=d-9-DA15FDk",
+    "file": "cache/gm_sbc_v8__camaro69_bigrig.flac",
+    "title": "'69 Camaro. One Of The Nicest Race Cars I Have Seen... And Heard! (Raw In Car Noise!)",
+    "uploader": "Big Rig Racing",
+    "licence": "Standard YouTube License",
+    "duration_s": 1235,
+    "t0": 495,
+    "t1": 640,
+    "notes": "1969 Camaro race car, in-car on track; rest of video is talking. Only this stretch is clean.",
+    "octave": 2,
+    "octave_reason": "same open-header half-order spectrum as the other two Camaros (both relabelled x2 automatically); its median sat just above the track bound, so pinned for consistency"
+   }
+  ]
+ },
+ "twincam_i4_loud": {
+  "cylinders": 4,
+  "strokes": 4,
+  "fire": "even",
+  "layout": "inline",
+  "redline_rpm": 7000,
+  "idle_rpm": 900,
+  "notes": "No Alfa twin-cam source looked for. Rejected: AE86 Honjyo (squeal/blobs); 'KE70 4AGE Sepang' failed to download.",
+  "entries": [
+   {
+    "url": "https://www.youtube.com/watch?v=hEbxnRiE_8w",
+    "file": "cache/twincam_i4_loud__ae86_20v_buttonwillow.flac",
+    "title": "20v AE86 around ButtonWillow GOODSOUND",
+    "uploader": "iLLWiLLeM",
+    "licence": "Creative Commons Attribution (CC BY 3.0), YouTube",
+    "duration_s": 197,
+    "t0": 30,
+    "t1": 182,
+    "notes": "AE86 with 4A-GE 20v at Buttonwillow, in-car; clean ladder high rpm.",
+    "upload_date": "20140128"
+   }
+  ]
+ },
+ "ohv_v6": {
+  "cylinders": 6,
+  "strokes": 4,
+  "fire": "even",
+  "layout": "v",
+  "redline_rpm": 5600,
+  "idle_rpm": 700,
+  "notes": "Replaces ford_vulcan_v6. No Creative Commons Vulcan footage found. Rejected: 'ford taurus GL 3.0 0-60' and '90mph in Aerostar' (engine inaudible).",
+  "entries": [
+   {
+    "url": "https://www.youtube.com/watch?v=m6sHM0hV65o",
+    "file": "cache/ohv_v6__lemons_ranger92.flac",
+    "title": "24 Hours of Lemons - Vodden the Hell 2012 - '92 Ford Ranger",
+    "uploader": "Randy Wolfgram",
+    "licence": "Standard YouTube License",
+    "duration_s": 899,
+    "t0": 0,
+    "t1": 860,
+    "notes": "'92 Ford Ranger Lemons race car, in-car. Engine not stated: dominant line = firing frequency and shift points (~200-230 Hz) fit a 60-degree V6 (2.9 Cologne or 3.0 Vulcan) at 4000-4600 rpm, not a 2.3 I4 (would need 6000-6900). Excellent ladder."
+   },
+   {
+    "url": "https://www.youtube.com/watch?v=A0NxkzA4PYY",
+    "file": "cache/ohv_v6__taurus06_openheader.flac",
+    "title": "2006 Ford Taurus Vulcan 3.0L V6 Open Header Exhaust 0-60 mph and Top Speed...",
+    "uploader": "cjo1979",
+    "licence": "Standard YouTube License",
+    "duration_s": 31,
+    "t0": 0,
+    "t1": 24,
+    "notes": "2006 Taurus 3.0 Vulcan, open headers, WOT pulls through gears; very clean ladder. Short.",
+    "context": "street"
+   },
+   {
+    "url": "https://www.youtube.com/watch?v=NhnFVtWv8bg",
+    "file": "cache/ohv_v6__probelx91.flac",
+    "title": "Ford probe 91 Lx 3.0 V6",
+    "uploader": "joe sischo",
+    "licence": "Standard YouTube License",
+    "duration_s": 113,
+    "t0": 22,
+    "t1": 110,
+    "notes": "1991 Probe LX 3.0 Vulcan driving clip; moderate ladder, road noise.",
+    "context": "street"
+   },
+   {
+    "url": "https://www.youtube.com/watch?v=AMk9baVVCCg",
+    "file": "cache/ohv_v6__ranger04_wot.flac",
+    "title": "2004 Ford Ranger 3.0L V6 WOT 0-60",
+    "uploader": "Intechdude300",
+    "licence": "Standard YouTube License",
+    "duration_s": 16,
+    "t0": 0,
+    "t1": 16,
+    "notes": "2004 Ranger 3.0 Vulcan WOT 0-60; short, usable.",
+    "context": "street"
+   },
+   {
+    "url": "https://www.youtube.com/watch?v=NvJIHKApOOQ",
+    "file": "cache/ohv_v6__aerostar97_060.flac",
+    "title": "1997 Ford Aerostar 3.0L Vulcan V6 0-60 ( Rolling Start )",
+    "uploader": "Intechdude300",
+    "licence": "Standard YouTube License",
+    "duration_s": 18,
+    "t0": 0,
+    "t1": 18,
+    "notes": "1997 Aerostar 3.0 Vulcan 0-60 rolling start; marginal, noisy.",
+    "context": "street"
+   }
+  ]
+ },
+ "toyota_1jz_turbo": {
+  "cylinders": 6,
+  "strokes": 4,
+  "fire": "even",
+  "layout": "inline",
+  "redline_rpm": 7000,
+  "idle_rpm": 750,
+  "notes": "Both are drift cars (swap chassis), not Toyota chassis.",
+  "entries": [
+   {
+    "url": "https://www.youtube.com/watch?v=EogETCaowYw",
+    "file": "cache/toyota_1jz_turbo__s13_1jz_realize.flac",
+    "title": "Auto Factory Realize S13 1JZ RAW Onboard",
+    "uploader": "Auto Factory REALIZE",
+    "licence": "Creative Commons Attribution (CC BY 3.0), YouTube",
+    "duration_s": 463,
+    "t0": 10,
+    "t1": 425,
+    "notes": "Nissan S13 with 1JZ-GTE swap, raw drift onboard; strong ladder, a lot of limiter bouncing and clutch kicks; turbo/BOV audible. Music after ~440 s excluded.",
+    "upload_date": "20181214"
+   }
+  ]
+ },
+ "subaru_fa20_flat4": {
+  "cylinders": 4,
+  "strokes": 4,
+  "fire": "even",
+  "layout": "flat",
+  "redline_rpm": 7450,
+  "idle_rpm": 750,
+  "notes": "fire 'even' + layout 'flat': FA20 has equal-length headers, firing every 180 deg like an inline 4.",
+  "entries": [
+   {
+    "url": "https://www.youtube.com/watch?v=ulfEijjU_uo",
+    "file": "cache/subaru_fa20_flat4__brz_thunderhill.flac",
+    "title": "20190406 Thunderhill West Stock BRZ",
+    "uploader": "Tor C. Anderson",
+    "licence": "Creative Commons Attribution (CC BY 3.0), YouTube",
+    "duration_s": 272,
+    "t0": 3,
+    "t1": 271,
+    "notes": "Stock Subaru BRZ (FA20), Thunderhill West, in-car; clean ladder, stock exhaust; tyre squeal blobs at times.",
+    "upload_date": "20190412"
+   },
+   {
+    "url": "https://www.youtube.com/watch?v=frfVmzom6I8",
+    "file": "cache/subaru_fa20_flat4__brz_sonoma.flac",
+    "title": "20190525 Sonoma Stock BRZ",
+    "uploader": "Tor C. Anderson",
+    "licence": "Creative Commons Attribution (CC BY 3.0), YouTube",
+    "duration_s": 165,
+    "t0": 7,
+    "t1": 157,
+    "notes": "Stock BRZ at Sonoma, in-car; clean ladder.",
+    "upload_date": "20190527"
+   }
+  ]
+ },
+ "vw_aircooled_flat4": {
+  "cylinders": 4,
+  "strokes": 4,
+  "fire": "even",
+  "layout": "flat",
+  "redline_rpm": 4600,
+  "idle_rpm": 850,
+  "notes": "Rejected: 'NIMBLE VW Beetle Pure Sound' - mostly fly-bys (only 82-101 s onboard).",
+  "entries": [
+   {
+    "url": "https://www.youtube.com/watch?v=WiiIWCA499g",
+    "file": "cache/vw_aircooled_flat4__beetle67_lignieres.flac",
+    "title": "1967 VW Beetle on a Trackday on Circuit de Lignières",
+    "uploader": "TheSaemi",
+    "licence": "Standard YouTube License",
+    "duration_s": 346,
+    "t0": 26,
+    "t1": 340,
+    "notes": "1967 VW Beetle on a trackday at Lignieres, in-car; clean loud ladder, constant pulls and lifts."
+   },
+   {
+    "url": "https://www.youtube.com/watch?v=9QuhCZoFsLo",
+    "file": "cache/vw_aircooled_flat4__superbeetle_autox.flac",
+    "title": "1972 Volkswagen Super Beetle Autocross",
+    "uploader": "Travis B",
+    "licence": "Standard YouTube License",
+    "duration_s": 75,
+    "t0": 0,
+    "t1": 74,
+    "notes": "1972 Super Beetle autocross, in-car; clear ladder."
+   }
+  ]
+ },
+ "mini_supercharged_i4": {
+  "cylinders": 4,
+  "strokes": 4,
+  "fire": "even",
+  "layout": "inline",
+  "redline_rpm": 6750,
+  "idle_rpm": 800,
+  "notes": "",
+  "entries": [
+   {
+    "url": "https://www.youtube.com/watch?v=SBlZ5kUf6c0",
+    "file": "cache/mini_supercharged_i4__r53_franciacorta.flac",
+    "title": "Autodromo di Franciacorta - 09/06/2011 - MINI Cooper S (R53)",
+    "uploader": "Xendar",
+    "licence": "Creative Commons Attribution (CC BY 3.0), YouTube",
+    "duration_s": 1583,
+    "t0": 90,
+    "t1": 900,
+    "notes": "MINI Cooper S R53 at Franciacorta, in-car; clean ladder, pulls and lifts; supercharger whine above 1 kHz. First 90 s pit/noise excluded. File is the first 900 s.",
+    "upload_date": "20110613"
+   }
+  ]
+ }
+}
