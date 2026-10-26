@@ -63,6 +63,7 @@ export const SOFTWARE_CREDITS: StaticSection = {
   lines: [
     { text: 'three.js — Copyright © 2010-2026 three.js authors, MIT License', url: 'https://github.com/mrdoob/three.js/blob/dev/LICENSE' },
     { text: 'postprocessing — Copyright © 2015 Raoul van Rüschen, zlib License', url: 'https://github.com/pmndrs/postprocessing/blob/main/LICENSE' },
+    { text: 'optimized-routines (the physics\' pow, the same on every browser) — Copyright © 2018-2026 Arm Limited, MIT License', url: 'https://github.com/ARM-software/optimized-routines/blob/master/LICENSE' },
   ],
 };
 

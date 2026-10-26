@@ -10,8 +10,9 @@
 // by Google; V8 tag 14.6.202.34, the V8 of Node 26.12): __ieee754_rem_pio2, __kernel_rem_pio2 (prec 2), __kernel_sin,
 // __kernel_cos, __kernel_tan, sin / cos (Node's V8 is built without V8_USE_LIBM_TRIG_FUNCTIONS, so Math.sin / cos are
 // the fdlibm ones, not the glibc port Chrome ships), tan, atan, atan2, exp, log; and of V8's Torque builtin
-// FastMathHypot (src/builtins/math.tq) for hypot of 2 and 3 arguments. Math.pow is NOT here: V8 delegates it to the
-// platform C library (std::pow, flag --use-std-math-pow, default on), so there is no single V8 pow to match.
+// FastMathHypot (src/builtins/math.tq) for hypot of 2 and 3 arguments. Math.pow is not V8's: V8 delegates it to the
+// platform C library (std::pow, flag --use-std-math-pow, default on), so pow (section "pow" below) is the server's C
+// library pow: Szabolcs Nagy's 2018 double-precision pow from Arm's optimized-routines, as glibc 2.34 ships it.
 //
 // Only exact operations are used inside (no Math.* apart from abs / floor / trunc / sqrt). Word access goes through a
 // shared Float64Array / Uint32Array pair with the endianness detected once. The C integer conversions are mirrored:
@@ -26,6 +27,30 @@
 // is preserved.
 // ====================================================
 // Modifications Copyright 2016 the V8 project authors (BSD-style licence).
+//
+// pow (and its tables, dmath_pow_data.ts): licence source Arm's optimized-routines (math/pow.c, pow_log_data.c,
+// exp_data.c, https://github.com/ARM-software/optimized-routines), used under its MIT License:
+// ====================================================
+// Copyright (c) 2018-2026, Arm Limited.
+// SPDX-License-Identifier: MIT (the project is MIT OR Apache-2.0 WITH LLVM-exception)
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+// documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice
+// and this permission notice shall be included in all copies or substantial portions of the Software.
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+// WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+// COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+// ====================================================
+// Provenance: ported from glibc 2.34's copy (sysdeps/ieee754/dbl-64/e_pow.c, e_pow_log_data.c, e_exp_data.c), the
+// build the server runs. Checked equivalent to optimized-routines' math/pow.c (AI robustness round, 26 Oct 2026): the
+// same log_inline / exp_inline / specialcase / checkint / zeroinfnan code and fma sites (glibc's __FP_FAST_FMA is
+// optimized-routines' HAVE_FAST_FMA), the same configuration on x86-64 (POW_LOG_TABLE_BITS 7, POW_LOG_POLY_ORDER 8,
+// EXP_TABLE_BITS 7, EXP_POLY_ORDER 5, TOINT_INTRINSICS 0), the pow log table and polynomial identical value for value
+// (393 of 393) and every exp table value glibc has present in the same order (270 of 270); the differences are glibc's
+// symbol aliases, SVID wrappers and barriers, and a non-nearest-rounding DBL_MAX case optimized-routines added later,
+// none of which changes a result in round-to-nearest.
 
 import { POW_LN2HI, POW_LN2LO, POW_A, POW_TAB, EXP_INVLN2N, EXP_NEGLN2HIN, EXP_NEGLN2LON, EXP_SHIFT, EXP_C, EXP_TAB_U32 } from './dmath_pow_data';
 
@@ -784,8 +809,8 @@ export function hypot3(x: number, y: number, z: number): number {
 //
 // V8 hands Math.pow to the platform C library (math::pow: NaN / |x| = 1 with infinite y / y = 2 / y = 0.5 handled
 // first, then std::pow). The scoreboard server is Vercel's linux-x64 Node 24 with glibc 2.34 on an Intel Xeon, where
-// std::pow is glibc's __ieee754_pow_fma: sysdeps/ieee754/dbl-64/e_pow.c (Szabolcs Nagy's 2018 pow from ARM's
-// optimized-routines, MIT OR Apache-2.0 WITH LLVM-exception there) compiled with -mfma -mavx2 and GCC's default
+// std::pow is glibc's __ieee754_pow_fma: sysdeps/ieee754/dbl-64/e_pow.c (Szabolcs Nagy's 2018 pow from Arm's
+// optimized-routines, used here under its MIT License: see the header) compiled with -mfma -mavx2 and GCC's default
 // contraction, so besides its explicit __builtin_fma calls every a * b + c whose product feeds only additions is fused.
 // This port evaluates exactly that: each fused operation is an exactly emulated fma (below). Proven against the
 // server's own Math.pow on 600 006 arguments (tools/determinism/pow_server.json.gz, docs/determinism.md section 5).

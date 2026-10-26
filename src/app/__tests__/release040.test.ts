@@ -59,6 +59,7 @@ describe('How to play and Credits', () => {
     expect(text(DATA_CREDITS)).toMatch(/NAIP.*public domain/);
     expect(text(SOFTWARE_CREDITS)).toMatch(/three\.js.*MIT/);
     expect(text(SOFTWARE_CREDITS)).toMatch(/postprocessing.*zlib/i);
+    expect(text(SOFTWARE_CREDITS)).toMatch(/optimized-routines.*Arm.*MIT/);   // the physics' pow (dmath.ts), AI robustness round
     expect(NC_STATEMENT).toMatch(/no ads, no sponsorship and no sales/);
     expect(NC_STATEMENT).toMatch(/same licence/);
     for (const k of ['name you type', 'device id', 'keeps only its hash', 'sent with your posts', '10 minutes', 'Report button', 'Analytics', 'without cookies']) expect(text(PRIVACY)).toContain(k);
