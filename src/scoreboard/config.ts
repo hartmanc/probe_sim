@@ -123,8 +123,10 @@ export const TRACKS: Readonly<Record<string, TrackInfo>> = {
   // (cars/field/pace.json, cars/field/identity.json), not a Mid-Ohio calibration; the real field, the Lemons 2026
   // Mid-West Crisis (results page in tools/track/tracks/mid_ohio/sources.json), is deferred. The Start menu's race line
   // says so (fieldLabel). Rolling start 230 m before the last directed corner, T13 (s 3454 -> 3224), the skill's rule.
+  // OWNER QUESTION for the drive: the red / white kerbs are raised 5 cm (Sonoma's driven profile); their real height is not
+  // measured (no frame resolves it), so the 5 cm is a declaration, not a measurement (round7.md section 1).
   mid_ohio: { dir: 'tracks/mid_ohio/', name: 'Mid-Ohio Sports Car Course', short: 'Mid-Ohio', length_m: 3597.492, pace: 'cars/field/pace.json',
-    fieldLabel: 'a stand-in field (Laguna\'s)', rev: 'a692501d35', wip: true,
+    fieldLabel: 'a stand-in field (Laguna\'s)', rev: '748b55ca59', wip: true,
     start: { beforeCorner: 'T13', m: ROLLING_START_BEFORE_LAST_CORNER_M, speed: ROLLING_START_SPEED } },
 };
 /** The track when none is chosen (URL ?track=, Start menu). */
