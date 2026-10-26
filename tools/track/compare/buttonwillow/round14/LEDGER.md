@@ -393,3 +393,26 @@ every gate ok, exit 0 (containment 0 escapes, 3,295 allowed; pit connectivity 38
 36; ground marks 0 off; paved coverage as A1 / A5 / A7). track.json, heightfield.bin, ghosts.json, far_heightfield.bin,
 far_ortho.jpg identical to 95c8125; ortho.jpg as O1; Sonoma identical. TRACKS.buttonwillow rev 29f4afedba. Tests: `npm run
 build` clean; vitest 65 files **541 passed**; pytest **136 passed, 3 skipped** (131 + 5).
+
+### Provenance of the published files (coordinator check, 26 Oct 2026)
+
+The package rev 29f4afedba was published from `tools/track/out/bw14_diag` (stage 3 `--publish --overwrite-package`, 10:58).
+`tools/track/out/buttonwillow_r14` (25 Oct, 17:42) is the first review's build: its scenery.json and ortho.jpg equal
+rev 2503ea567c's committed package (2d46b54); it was not used this round. The stills' swap (the previous scenery and ortho
+copied into public/ for the `_before` kerb stills, then copied back) restored the files checked byte for byte against
+`bw14_diag`. To settle it, a fresh `--stage all` build from the committed config (commit 6adff4f's tree) into
+`tools/track/out/buttonwillow_r14_final` (exit 0, 0 `[FAIL]`) reproduces the published package byte for byte (sha256,
+first 12):
+
+| file | public/ | buttonwillow_r14_final | 95c8125 |
+|---|---|---|---|
+| track.json | 199358fe8ae0 | 199358fe8ae0 | 199358fe8ae0 |
+| heightfield.bin | 2c677efb17c5 | 2c677efb17c5 | 2c677efb17c5 |
+| ghosts.json | e66b3218befa | e66b3218befa | e66b3218befa |
+| far_heightfield.bin | ca1e58cf7dfd | ca1e58cf7dfd | ca1e58cf7dfd |
+| far_ortho.jpg | 7891d6d18a64 | 7891d6d18a64 | 7891d6d18a64 |
+| ortho.jpg | 265df3b3f350 | 265df3b3f350 | cce1506b1dad |
+| scenery.json | d3f8efc7df02 | d3f8efc7df02 | b394c9aafef9 |
+
+The package is unchanged (rev 29f4afedba); gate CLI on it exit 0; Sonoma identical to 95c8125. Out dirs kept:
+`bw14_diag` (this round's diagnostic and publish build), `buttonwillow_r14` (the first review's), `buttonwillow_r14_final`.
