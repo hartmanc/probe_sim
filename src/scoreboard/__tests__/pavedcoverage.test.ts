@@ -6,6 +6,7 @@ import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { pavedCoverage } from '../../../tools/track/gates/pavedCoverage';
 import { loadHeightfield } from '../../physics/index';
+import { createTrackSurface, packageSurfaceOptions } from '../../physics/track';
 
 const DIR = resolve(__dirname, '../../../public/tracks/buttonwillow');
 const track = JSON.parse(readFileSync(join(DIR, 'track.json'), 'utf8'));
@@ -41,23 +42,73 @@ describe('paved coverage of the Buttonwillow paddock bands', () => {
   }, 120000);
 });
 
-// round 14 review (GPT 6 Astra, the blocker): the pit lane's drawn strip beside the front straight is in the gate too
-// (lane_box), so a mouth part whose centre takes lane samples behind the pit wall fails the build
-const LANE = { parts: ['^front straight mouth '], step: 0.5, wall_clear: 0.4, edge_tol: 0.1, lane_box: [-205, -245, 245, -175] as [number, number, number, number] };
-describe('paved coverage of the front-straight mouths and the pit lane beside them', () => {
-  it('every drawn sample of the mouths and of the lane beside the straight is paved', () => {
+// round 14 (GPT 6 Astra's reviews; the owner's decisions of 26 Oct 2026): the pit lane's drawn strip in the box the
+// mouths reach (derived from their bounds + 10 m, not a hand box), the paddock aisle's end beside the lane, and the
+// owner's own outlines (owner/r14_mouths.json, his green strokes) are paved in the physics; a mouth part whose centre
+// takes lane samples fails; the lane's own edge on his line leaves the dirt median unpaved
+const OWN = JSON.parse(readFileSync(resolve(__dirname, '../../../tools/track/tracks/buttonwillow/owner/r14_mouths.json'), 'utf8'));
+const LANE = {
+  parts: ['^front straight mouth '], step: 0.5, wall_clear: 0.4, edge_tol: 0.1, lane: { margin: 10 },
+  also: [{ parts: ['^paddock lanes'], near_lane: 10 }],
+  outlines: OWN.mouths.map((m: any) => ({ name: m.name, poly: m.outline_enu })),
+};
+describe('paved coverage of the front-straight mouths, the pit lane beside them and the owner outlines', () => {
+  it('every drawn sample of the mouths, the lane, the aisle end and his outlines is paved', () => {
     const r = pavedCoverage(track, hf, scenery(), LANE);
-    expect(r.parts).toBeGreaterThanOrEqual(10);
-    expect(r.samples).toBeGreaterThan(20000);
+    expect(r.parts).toBeGreaterThanOrEqual(5);
+    expect(r.lane!.samples).toBeGreaterThan(15000);
+    expect(r.also!.samples).toBeGreaterThan(50);
+    expect(r.outlines!.samples).toBeGreaterThan(1500);
     expect(r.holes).toEqual([]);
-  }, 120000);
-  it('without the lane band behind mouth A the lane behind the wall is a seam the gate finds', () => {
+  }, 180000);
+  it('a mouth centre moved toward the lane takes lane samples: a seam the gate finds, by mouth B only', () => {
     const sc = scenery();
-    sc.paved_zones.parts = sc.paved_zones.parts.filter((p: any) => !/^front straight mouth A lane/.test(p.turn));
+    const B = sc.paved_zones.parts.find((p: any) => /^front straight mouth B/.test(p.turn));
+    B.center = B.center.map((c: number[]) => [c[0], c[1] + 6, c[2]]);
     const r = pavedCoverage(track, hf, sc, LANE);
     const lane = r.holes.filter((h) => h.part === 'pit lane');
     expect(lane.length).toBeGreaterThan(0);
-    // all of them behind mouth A (x -40 .. 10, north of the pit wall)
-    expect(lane.every((h) => h.x > -45 && h.x < 15 && h.y > -219)).toBe(true);
-  }, 120000);
+    expect(lane.every((h) => h.x > 25 && h.x < 75)).toBe(true);
+  }, 180000);
+  it('the aisle end keeps its round-13 footprint (to y -200.75), paved; without the block across it, it is not', () => {
+    // OSM 10409813's end as round 13 drew it: x -136.6 .. -128.6, y -200.75 .. -197 (0.2 m inside each side)
+    const paved = (sc: any) => {
+      const surf = createTrackSurface(track, hf, packageSurfaceOptions(sc));
+      let n = 0, p = 0;
+      for (let x = -136.4; x <= -128.8; x += 0.2) for (let y = -200.55; y <= -197.2; y += 0.2) { n++; if (surf.sample(x, y).paved) p++; }
+      return [n, p];
+    };
+    const [n, p] = paved(scenery());
+    expect(n).toBeGreaterThan(500);
+    expect(p).toBe(n);
+    const sc = scenery();
+    sc.paved_zones.parts = sc.paved_zones.parts.filter((q: any) => !/^paddock lanes \(the aisle end/.test(q.turn));
+    expect(paved(sc)[1]).toBeLessThan(n);
+  }, 180000);
+});
+
+// round 14 (Astra's second review 4): the physics' surface across a bent lane band's boundary and across each mouth's
+// boundary with the lane: no step between neighbouring samples 1 cm apart beyond the surface's own slope
+describe('the lane band and the mouths meet the lane level in the physics', () => {
+  it('transects every 1 m across mouths A, B, C and E and the lane: no step over 3 mm per cm', () => {
+    const surf = createTrackSurface(track, hf, packageSurfaceOptions(scenery()));
+    const sc = scenery();
+    const lane = sc.pit_lane.parts[0];
+    let worst = 0, at = '';
+    for (const [x0, x1] of [[-30, 0], [35, 65], [-205, -150], [215, 232]]) {
+      for (let x = x0; x <= x1; x += 1) {
+        // from the lane's centre (nearest station) south 12 m, every cm, paved samples only
+        const c = lane.center.reduce((b: number[], q: number[]) => (Math.abs(q[0] - x) < Math.abs(b[0] - x) ? q : b));
+        let prev: number | null = null;
+        for (let k = 0; k <= 1200; k++) {
+          const y = c[1] - k * 0.01;
+          const s = surf.sample(x, y);
+          if (!s.paved) { prev = null; continue; }
+          if (prev !== null && Math.abs(s.z - prev) > worst) { worst = Math.abs(s.z - prev); at = `${x}, ${y.toFixed(2)}`; }
+          prev = s.z;
+        }
+      }
+    }
+    expect(worst, at).toBeLessThan(0.003);
+  }, 180000);
 });
