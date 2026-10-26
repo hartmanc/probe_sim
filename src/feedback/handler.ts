@@ -7,7 +7,7 @@
 // or markup in the issue), no email field. The issue names the scoreboard name only when this device owns it (its
 // device secret matches, src/scoreboard/owner.ts); "anonymous" otherwise.
 import { clientIp, originAllowed } from '../scoreboard/http';
-import { ownership } from '../scoreboard/owner';
+import { ownership, sha256Hex } from '../scoreboard/owner';
 import type { ScoreStore } from '../scoreboard/store';
 import { nameKey, normalizeName } from '../scoreboard/validate';
 
@@ -17,6 +17,10 @@ export const FEEDBACK = {
   maxDescription: 2000,
   perIp: 3,
   windowS: 600,
+  /** GitHub must answer within this, ms */
+  upstreamTimeoutMs: 10_000,
+  /** the same report (IP + kind + description) within this is not filed twice, s */
+  dedupeS: 600,
 } as const;
 
 export type FeedbackKind = 'bug' | 'feature';
@@ -25,7 +29,7 @@ export type FeedbackKind = 'bug' | 'feature';
 export interface FeedbackContext { version?: string; sha?: string; track?: string; device?: string; ua?: string; screen?: string; error?: string }
 export interface FeedbackRequest { kind: FeedbackKind; description: string; context?: FeedbackContext; name?: string; secret?: string }
 
-type FetchLike = (url: string, init: { method: string; headers: Record<string, string>; body: string }) => Promise<{ ok: boolean; status: number; json(): Promise<unknown> }>;
+type FetchLike = (url: string, init: { method: string; headers: Record<string, string>; body: string; signal?: AbortSignal }) => Promise<{ ok: boolean; status: number; json(): Promise<unknown> }>;
 
 export interface FeedbackDeps {
   store: ScoreStore;
@@ -34,6 +38,27 @@ export interface FeedbackDeps {
   fetch?: FetchLike;
   allowedOrigins?: string[];
   log?: (msg: string) => void;
+  /** upstream timeout override, ms (tests) */
+  timeoutMs?: number;
+}
+
+/** The body as text, refusing (null) as soon as it passes `max` bytes, whatever Content-Length said. */
+export async function readCapped(req: Request, max: number): Promise<string | null> {
+  if (!req.body) return '';
+  const reader = req.body.getReader();
+  const parts: Uint8Array[] = [];
+  let n = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    n += value.byteLength;
+    if (n > max) { try { await reader.cancel(); } catch { /* already closed */ } return null; }
+    parts.push(value);
+  }
+  const all = new Uint8Array(n);
+  let o = 0;
+  for (const p of parts) { all.set(p, o); o += p.byteLength; }
+  return new TextDecoder().decode(all);
 }
 
 const CAPS: Record<keyof FeedbackContext, number> = { version: 20, sha: 12, track: 32, device: 16, ua: 300, screen: 32, error: 1500 };
@@ -103,26 +128,44 @@ export async function handleFeedback(req: Request, deps: FeedbackDeps): Promise<
     if (Number(req.headers.get('content-length') ?? '0') > FEEDBACK.maxBodyBytes) return fail(413, 'report too large', [`at most ${FEEDBACK.maxBodyBytes} bytes`]);
     const rl = await deps.store.hit(`feedback:${clientIp(req)}`, FEEDBACK.windowS);
     if (rl.count > FEEDBACK.perIp) return fail(429, 'rate limited', [`at most ${FEEDBACK.perIp} reports per ${FEEDBACK.windowS / 60} min`], { 'Retry-After': String(Math.max(1, rl.ttl)) });
-    const text = await req.text();
-    if (new TextEncoder().encode(text).length > FEEDBACK.maxBodyBytes) return fail(413, 'report too large', [`at most ${FEEDBACK.maxBodyBytes} bytes`]);
+    const text = await readCapped(req, FEEDBACK.maxBodyBytes);
+    if (text === null) return fail(413, 'report too large', [`at most ${FEEDBACK.maxBodyBytes} bytes`]);
     let body: unknown;
     try { body = JSON.parse(text); } catch { return fail(400, 'body is not valid JSON'); }
     const p = parseFeedback(body);
     if (!p.ok) return fail(422, 'rejected', p.reasons);
     if (!deps.token) return fail(503, 'reports are not set up yet');
+    // the same report again (a retry after a timeout, a double tap): answer with the first one, never a second issue
+    const dupKey = `sb:fbdup:${await sha256Hex(`${clientIp(req)}|${p.value.kind}|${p.value.description}`)}`;
+    if (!(await deps.store.kvSet(dupKey, 'pending', { nx: true, ex: FEEDBACK.dedupeS }))) {
+      const prev = await deps.store.kvGet(dupKey);
+      let j: { number?: number; url?: string } | null = null;
+      try { j = prev && prev !== 'pending' ? JSON.parse(prev) : null; } catch { j = null; }
+      if (j) return json(200, { ok: true, number: j.number ?? null, url: j.url ?? null, duplicate: true });
+      return fail(409, 'already sent', ['this report is already being filed (or GitHub did not answer in time): check the issues before sending it again']);
+    }
     const n = normalizeName(p.value.name);
     const who = n && (await ownership(deps.store, nameKey(n), p.value.secret)) === 'you' ? n : 'anonymous';
     const issue = issueFor(p.value, who);
-    const res = await (deps.fetch ?? (fetch as unknown as FetchLike))(`https://api.github.com/repos/${FEEDBACK.repo}/issues`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${deps.token}`, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28',
-        'User-Agent': 'probe-sim-feedback', 'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(issue),
-    });
-    if (!res.ok) { deps.log?.(`github answered ${res.status}`); return fail(502, 'could not file the report, try again later'); }
+    let res: Awaited<ReturnType<FetchLike>>;
+    try {
+      res = await (deps.fetch ?? (fetch as unknown as FetchLike))(`https://api.github.com/repos/${FEEDBACK.repo}/issues`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${deps.token}`, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28',
+          'User-Agent': 'probe-sim-feedback', 'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(issue),
+        signal: AbortSignal.timeout(deps.timeoutMs ?? FEEDBACK.upstreamTimeoutMs),
+      });
+    } catch (e) {
+      // no answer: the issue may or may not exist, so the dedupe key stays (a retry gets 409, not a second issue)
+      deps.log?.(`github did not answer: ${(e as Error)?.name ?? e}`);
+      return fail(504, 'GitHub did not answer in time; the report may have been filed');
+    }
+    if (!res.ok) { await deps.store.kvDel(dupKey); deps.log?.(`github answered ${res.status}`); return fail(502, 'could not file the report, try again later'); }
     const j = (await res.json()) as { number?: number; html_url?: string };
+    await deps.store.kvSet(dupKey, JSON.stringify({ number: j.number ?? null, url: j.html_url ?? null }), { ex: FEEDBACK.dedupeS });
     deps.log?.(`issue #${j.number} filed (${p.value.kind})`);
     return json(200, { ok: true, number: j.number ?? null, url: j.html_url ?? null });
   } catch (e) {

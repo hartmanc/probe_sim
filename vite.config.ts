@@ -16,8 +16,9 @@ const gitSha = (() => {
 // permissions), so a local preview shows the same CSP violations production would
 const vercelHeaders = (() => {
   try {
-    const v = JSON.parse(readFileSync('vercel.json', 'utf8')) as { headers?: { source: string; headers: { key: string; value: string }[] }[] };
-    const all = v.headers?.find((h) => h.source === '/(.*)');
+    const v = JSON.parse(readFileSync('vercel.json', 'utf8')) as { headers?: { source: string; has?: unknown; missing?: unknown; headers: { key: string; value: string }[] }[] };
+    // the unconditional rule (production's policy); the preview-only rule (missing host lemons-sim.app) is not mirrored
+    const all = v.headers?.find((h) => h.source === '/(.*)' && !h.has && !h.missing);
     return Object.fromEntries((all?.headers ?? []).map((h) => [h.key, h.value]));
   } catch { return {}; }
 })();

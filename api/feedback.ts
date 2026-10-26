@@ -1,4 +1,4 @@
-// Vercel Function: the in-game bug / feature report (src/feedback/handler.ts, docs/feedback.md).
+// Vercel Function: the in-game bug / feature report (src/feedback/handler.ts; docs/feedback.md: limits, token, labels).
 //   POST /api/feedback  { kind: 'bug'|'feature', description, context?, name?, secret? } -> { ok, number, url }
 // Files a GitHub issue on hartmanc/probe_sim with the token in GITHUB_ISSUES_TOKEN (a fine-grained token limited to
 // issues on that repo, set by the owner in Vercel). The rate limiter shares the scoreboard's store.

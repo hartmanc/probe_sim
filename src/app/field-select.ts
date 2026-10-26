@@ -4,8 +4,9 @@
 //
 //   the player's expected pace band = its pace.json row's targetLap ± sigma (Sonoma 151.7 ± 7.9 s; Laguna 128.7 ± 6.7 s);
 //   each AI car's distance = how far its targetLap lies outside that band (0 inside it); the 40 smallest win, ties by
-//   |targetLap − the player's targetLap|, then by the real grid. The chosen cars keep their real relative order (the
-//   pace.json order and grid numbers are untouched; the race director's seeded start-order shuffle applies as on desktop).
+//   |targetLap − the player's targetLap|, then by the real grid. The chosen cars keep their real relative order: the
+//   pace.json order and grid numbers are untouched, and the race starts them in that real grid order (RaceConfig.gridOrder
+//   'real', set by modes/race.ts only for a selection; desktop keeps the seeded start-order shuffle).
 //
 // Desktop keeps the full field; hot laps are unaffected. Pure (unit-tested).
 import type { DeviceClass } from './quality';

@@ -41,7 +41,7 @@ describe('feedback function', () => {
     const S = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
     await claim(d.store, 'coby', S);
     await handleFeedback(post({ kind: 'feature', description: 'Rain', name: 'Coby', secret: S }), d);
-    await handleFeedback(post({ kind: 'feature', description: 'Rain', name: 'Coby', secret: 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb' }), d);
+    await handleFeedback(post({ kind: 'feature', description: 'Rain please', name: 'Coby', secret: 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb' }), d);
     expect(sent[0].body.body).toContain('~~~text\nCoby\n~~~');
     expect(sent[0].body.labels).toEqual(['from-game', 'feature']);
     expect(sent[1].body.body).toContain('~~~text\nanonymous\n~~~');
@@ -89,5 +89,32 @@ describe('feedback function', () => {
     expect((await handleFeedback(post({ kind: 'bug', description: 'x' }), b.d)).status).toBe(502);
     expect((await handleFeedback(post({ kind: 'bug', description: 'x' }, { origin: 'https://evil.example' }), deps().d)).status).toBe(403);
     expect((await handleFeedback(new Request(`${ORIGIN}/api/feedback`, { headers: { host: 'probe.example' } }), deps().d)).status).toBe(405);
+  });
+
+  test('a repeated report does not file a second issue; a timeout leaves it guarded; a GitHub error lets a retry through', async () => {
+    const { d, sent } = deps();
+    const r1 = await (await handleFeedback(post({ kind: 'bug', description: 'Same text' }), d)).json();
+    const r2 = await handleFeedback(post({ kind: 'bug', description: 'Same text' }), d);
+    expect(r2.status).toBe(200);
+    expect(await r2.json()).toEqual({ ...(r1 as object), duplicate: true });
+    expect(sent).toHaveLength(1);
+    // GitHub never answers: 504 after the timeout, and the retry is refused rather than filed twice
+    const hang = deps({ timeoutMs: 50, fetch: (_u, init) => new Promise((_res, rej) => init.signal?.addEventListener('abort', () => rej(new DOMException('timeout', 'TimeoutError')))) });
+    expect((await handleFeedback(post({ kind: 'bug', description: 'slow' }), hang.d)).status).toBe(504);
+    expect((await handleFeedback(post({ kind: 'bug', description: 'slow' }), hang.d)).status).toBe(409);
+    // GitHub refused: nothing was filed, so the same report may be sent again
+    let fail = true;
+    const flaky = deps({ fetch: async () => (fail ? (fail = false, { ok: false, status: 500, json: async () => ({}) }) : { ok: true, status: 201, json: async () => ({ number: 7 }) }) });
+    expect((await handleFeedback(post({ kind: 'bug', description: 'flaky' }), flaky.d)).status).toBe(502);
+    expect(await (await handleFeedback(post({ kind: 'bug', description: 'flaky' }), flaky.d)).json()).toMatchObject({ ok: true, number: 7 });
+  });
+
+  test('a body over 4 KB is refused while reading, whatever Content-Length says', async () => {
+    const { d, sent } = deps();
+    const big = JSON.stringify({ kind: 'bug', description: 'x'.repeat(1000), pad: 'y'.repeat(5000) });
+    const stream = new ReadableStream({ start(c) { const b = new TextEncoder().encode(big); for (let i = 0; i < b.length; i += 512) c.enqueue(b.slice(i, i + 512)); c.close(); } });
+    const req = new Request(`${ORIGIN}/api/feedback`, { method: 'POST', headers: { 'content-type': 'application/json', host: 'probe.example', origin: ORIGIN }, body: stream, duplex: 'half' } as RequestInit);
+    expect((await handleFeedback(req, d)).status).toBe(413);
+    expect(sent).toHaveLength(0);
   });
 });

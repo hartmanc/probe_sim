@@ -44,14 +44,18 @@ Storage (Upstash Redis): one sorted set per board (`sb:z:<board>`, member = lowe
 hash of entry details (`sb:h:<board>`). Best per name is kept (`ZADD LT CH`), each board is trimmed to 100 entries,
 GET returns the top 10. **Old boards expire**: at most once an hour per warm instance, after a POST, the server lists the
 boards (`SCAN sb:z:*`) and gives every hot-lap board whose physics value is not the server's current one a 30-day TTL
-(`LIMITS.staleBoardTtlS`) on both keys; race boards are left alone while hidden.
+(`LIMITS.staleBoardTtlS`) on both keys; race boards are left alone while hidden. The sweep runs **only after a POST**
+(a quiet site expires nothing until the next post) and **skips race boards**, old ones included (their key carries the AI
+version; they stay as they were until race boards reopen or the owner deletes them in the console). The TTL is set once
+and not refreshed: a board that becomes stale is gone 30 days later even if it is read meanwhile.
 
 | key | what | written by |
 |---|---|---|
 | `sb:z:<board>`, `sb:h:<board>` | a board and its entry details | POST |
-| `sb:own:<name>` | name ownership: JSON `{ h: [sha256 of a device secret, …] (≤ 5), at }` | first POST of the name; `adopt` |
-| `sb:xfer:<name>` | the name's current transfer code (its hash), 1 h TTL, deleted when used | `transfer-code` |
-| `sb:rl:post:<ip>`, `sb:rl:code:<ip>`, `sb:rl:adopt:<ip>`, `sb:rl:adoptname:<name>`, `sb:rl:feedback:<ip>` | rate-limit counters, 10 min TTL | POST, ops, /api/feedback |
+| `sb:own:<name>` | name ownership: the string `v1\|<iso date>\|<hash>,<hash>,…` (sha256 of each device secret, ≤ 5) | first POST of the name (`SET NX`); `adopt` (Lua) |
+| `sb:xfer:<name>` | the name's current transfer code (its hash), 1 h TTL, deleted when used | `transfer-code` (Lua) |
+| `sb:fbdup:<sha256>` | a filed report (issue number) for 10 min, so a repeat is not filed twice | /api/feedback |
+| `sb:rl:post:<ip>`, `sb:rl:code:<ip>`, `sb:rl:adopt:<ip>`, `sb:rl:adoptname:<ip>:<name>`, `sb:rl:adoptname:<name>`, `sb:rl:feedback:<ip>` | rate-limit counters, 10 min TTL | POST, ops, /api/feedback |
 
 ### 1.1 Name ownership (owner, 26 Oct 2026)
 
@@ -63,9 +67,23 @@ boards (`SCAN sb:z:*`) and gives every hot-lap board whose physics value is not 
 - **Transfer code**: on the owning device, Scoreboard → Transfer code POSTs `{ op: 'transfer-code', name, secret }`
   and shows a six-character code (alphabet without 0/O/1/I/L, 31^6 ≈ 8.9e8 codes), valid one hour, single use, bound to
   that name. On the other device, Scoreboard → Use a transfer code POSTs `{ op: 'adopt', name, code, secret }`, which adds
-  that device's secret hash to the name (at most 5 devices; the oldest drops). The code alone cannot spoof a post: it
-  must be paired with the name, it only adds a device, it expires in an hour and it dies on first use; guessing is
-  limited to 5 adopts per IP and 10 per name per 10 minutes (on top of the 10-per-IP POST limit and the WAF rule).
+  that device's secret hash to the name (at most 5 devices; the oldest drops). An adopted device is a full owner: it can
+  issue codes and add devices too, and five adoptions in a row evict the first device.
+- **Atomic** (Astra review, 26 Oct 2026): issuing (check the owner, store the code) and adopting (check and consume the
+  code, then add the device only if the owner record still exists) are each ONE Redis operation, a Lua script under
+  `EVAL` (`LUA_ISSUE`, `LUA_ADOPT` in `src/scoreboard/store.ts`). Two devices racing with one code: exactly one wins; a
+  code issued meanwhile is not consumed by the wrong adoption; a manual release is never undone by an adoption in flight.
+  The memory store runs the same logic as one uninterrupted step (`owner-race.test.ts`). The scripts were not executed
+  against a real Redis in the 0.4.0 round (no Redis here): **smoke test on the first preview**: post a lap as a test
+  name from browser A, take its transfer code, type it in browser B (Scoreboard → Use a transfer code: "This device now
+  posts as …"), type the same code in browser C ("that code is wrong or expired"), and check in the Upstash console that
+  `GET sb:own:<name>` holds two hashes and `sb:xfer:<name>` is gone. A script error shows as a 500 and
+  `[scores] error: … redis: …` in the function log.
+- **Limits and the trade-off**: the code alone cannot spoof a post: it must be paired with the name, it only adds a
+  device, it expires in an hour and dies on first use. Adopt attempts: 5 per IP, 5 per IP + name and 100 per name from
+  all IPs per 10 minutes (on top of the 10-per-IP POST limit and the WAF rule). The per-name ceiling bounds brute force
+  (at most 600 guesses in a code's hour: ≈ 7e-7 chance); the price is that 20 or more addresses can block a name's
+  transfers for 10 minutes at a time. The owner's existing devices keep posting meanwhile.
 - **Existing entries** (posted before 0.4.0) keep their times; the first device to post that name afterwards claims it.
 - **Releasing a name** (owner, Upstash console → Data Browser or CLI): `DEL sb:own:<lower-cased name>` and
   `DEL sb:xfer:<lower-cased name>`. The next device to post the name claims it; its board entries are untouched (remove
@@ -255,11 +273,33 @@ The last call should answer `{"ok":true,...,"replayed":138.904}` (the autopilot 
 on the public board; the board has no delete endpoint, so remove it with the Upstash console
 (`ZREM sb:z:<board> "smoke test"` and `HDEL sb:h:<board> "smoke test"`) or use a name you are happy to keep.
 
-## 5.1 The report button (`/api/feedback`)
+## 5.1 Security headers (`vercel.json`)
+
+Every path gets an enforcing `Content-Security-Policy` (`default-src 'self'`; scripts only from the site; inline styles
+allowed for the DOM HUD; `blob:` for GLTF textures, images, audio and workers; `connect-src` adds the analytics host),
+`X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy: strict-origin-when-cross-origin` and a `Permissions-Policy`
+denying camera, microphone and geolocation. A second rule, for every host except `lemons-sim.app` (`missing` host),
+replaces the CSP with one that also allows the Vercel preview toolbar (`vercel.live`, `vercel.com`,
+`assets.vercel.com`, `wss://ws-us3.pusher.com`; https://vercel.com/docs/vercel-toolbar/managing-toolbar), so the toolbar
+works on preview deployments while production keeps the strict policy. Not verifiable locally: check once on the first
+preview that the toolbar loads, and on production that `curl -sI https://lemons-sim.app/` shows the strict policy.
+`vite preview` serves the production rule (vite.config.ts), so a local preview shows what production enforces.
+
+Evidence for the zero-violation claim: `tools/release/csp_check.mts` (headless Chrome against `vite preview`, collects
+`securitypolicyviolation` events and console errors while it opens every Start-menu page, drives a hot lap and races to
+the results card) and its logs in `docs/evidence/`. Rerun:
+
+```sh
+npm run build && npx vite preview --port 4173 --strictPort &
+npx tsx tools/release/csp_check.mts "http://localhost:4173/?track=sonoma&laps=1" csp docs/evidence
+npx tsx tools/release/csp_check.mts "http://localhost:4173/?track=laguna_seca&laps=1" csp docs/evidence
+```
+
+## 5.2 The report button (`/api/feedback`)
 
 `POST /api/feedback { kind: 'bug'|'feature', description, context?: { version, sha, track, device, ua, screen, error },
 name?, secret? }` → `{ ok, number, url }` files an issue on hartmanc/probe_sim with the labels `from-game` and the kind
-(`src/feedback/handler.ts`). Same origin only; 3 reports per IP per 10 min (the scores store's counter); body ≤ 4 KB;
+(`src/feedback/handler.ts`, `docs/feedback.md`). Same origin only; 3 reports per IP per 10 min (the scores store's counter); body ≤ 4 KB;
 description 1-2000 characters; control and format characters stripped; everything the player typed sits in code
 fences (no mentions, links or markup), the title's `@` becomes `(at)`. The issue carries the scoreboard name only when
 the device secret owns it, else "anonymous". No email field. 503 without `GITHUB_ISSUES_TOKEN`, 502 when GitHub refuses.

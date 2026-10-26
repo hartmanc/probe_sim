@@ -72,7 +72,7 @@ export const NC_STATEMENT = 'Ten of the car models are licensed CC BY-NC 4.0 or 
 export const PRIVACY: StaticSection = {
   title: 'Privacy',
   lines: [
-    'Scoreboard: the name you type, your times and input type, a random device id, and a hash of a secret made on this device (the secret itself stays on the device; it ties your name to it). Your IP address is kept for 10 minutes to limit how often one address can post.',
+    'Scoreboard: the name you type, your times and input type, a random device id, and a hash of a secret made on this device. The secret is stored on this device and sent with your posts, transfer requests and reports so the server can check it; the server keeps only its hash, which ties your name to this device. Your IP address is kept for 10 minutes to limit how often one address can post.',
     'Report button: what you type, the game version and build, the track, the device class (phone, tablet or computer), the browser\u2019s user agent, the screen size and the last error the game hit, plus your scoreboard name if this device registered one. It becomes a public GitHub issue. There is no email field.',
     'Analytics: Vercel Web Analytics counts page views without cookies (page, referrer, country, browser, operating system, device type); it builds no profile of you.',
     'This device keeps your settings, name, personal bests and the device secret in the browser\u2019s local storage; clearing the site data removes them.',

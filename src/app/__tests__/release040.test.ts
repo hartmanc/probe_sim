@@ -61,7 +61,7 @@ describe('How to play and Credits', () => {
     expect(text(SOFTWARE_CREDITS)).toMatch(/postprocessing.*zlib/i);
     expect(NC_STATEMENT).toMatch(/no ads, no sponsorship and no sales/);
     expect(NC_STATEMENT).toMatch(/same licence/);
-    for (const k of ['name you type', 'device id', 'hash', '10 minutes', 'Report button', 'Analytics', 'without cookies']) expect(text(PRIVACY)).toContain(k);
+    for (const k of ['name you type', 'device id', 'keeps only its hash', 'sent with your posts', '10 minutes', 'Report button', 'Analytics', 'without cookies']) expect(text(PRIVACY)).toContain(k);
   });
   test('engine-sound sources show the channel when recorded', () => {
     expect(creditLine({ title: 'Onboard', channel: 'SomeChannel', url: 'https://youtu.be/x', licence: 'CC BY 3.0' }, 'Engine sound')).toMatchObject({ author: 'SomeChannel', licence: 'CC BY 3.0', url: 'https://youtu.be/x' });
