@@ -97,3 +97,47 @@ def test_heightfield_changes_only_inside_the_interval_and_fades_beyond_the_outsi
     assert abs(d[row(7.5), 300] - delta[300, 0]) < 1e-5            # held over the 2 m shoulder
     assert np.all(d[row(15), :] == 0)                              # faded out by 2 + 6 m beyond
     assert abs(d[row(0), 300] - delta[300, 3]) < 1e-5              # the centre: the profile's change
+
+
+def _two_bank_fixture():
+    """Two separate inside-banked corners (s 300 and s 1200) on one straight centre."""
+    n = 1500
+    C = np.c_[np.arange(n, dtype=float), np.zeros(n)]
+    hl = np.full(n, 6.0); hr = np.full(n, 6.0)
+    lat = PB.lateral(hl, hr, FR)
+    s = np.arange(n, dtype=float)
+    bank = np.radians(4.4) * (np.exp(-((s - 300) / 40) ** 2) + np.exp(-((s - 1200) / 40) ** 2))
+    prof = 0.01 * s[:, None] + np.tan(bank)[:, None] * (lat + 6.0) - 0.0004 * lat ** 2
+    return C, hl, hr, prof
+
+
+def test_overlapping_rules_are_refused():
+    C, hl, hr, prof = _two_bank_fixture()
+    with pytest.raises(ValueError, match='overlap'):
+        PB.rules(C, prof, hl, hr, [rule(name='a'), rule(name='b', anchor_latlon=(330.0, 0.0))],
+                 lambda a, b: (a, b), FR)
+
+
+def test_two_separate_rules_each_apply_once_in_profile_and_heightfield():
+    C, hl, hr, prof = _two_bank_fixture()
+    enu = lambda a, b: (a, b)
+    ra, rb = rule(name='a'), rule(name='b', anchor_latlon=(1190.0, 0.0))
+    both = PB.rules(C, prof, hl, hr, [ra, rb], enu, FR)
+    new, delta, rep = PB.apply_profile(prof, hl, hr, both, FR, log=lambda *a: None)
+    qa = PB.rules(C, prof, hl, hr, [ra], enu, FR); _, da, _ = PB.apply_profile(prof, hl, hr, qa, FR, log=lambda *a: None)
+    qb = PB.rules(C, prof, hl, hr, [rb], enu, FR); _, db, _ = PB.apply_profile(prof, hl, hr, qb, FR, log=lambda *a: None)
+    assert np.array_equal(delta, da + db)                          # each rule once, nothing stacked
+    for pk in (300, 1200):                                         # each peak's chord bank halved, not quartered
+        g0 = (prof[pk, 0] - prof[pk, 6]) / 12; g1 = (new[pk, 0] - new[pk, 6]) / 12
+        assert abs(g1 - 0.5 * g0) < 1e-12
+    dx = 1.0
+    n = len(C)
+    box = (0.0, -30.0, n - 1.0, 30.0)
+    x, _ = np.meshgrid(np.arange(n, dtype=float), np.arange(-30.0, 31.0))
+    hf = (0.01 * x).astype('<f4')
+    out2, _ = PB.heightfield(hf, box, dx, C, hl, hr, delta, both, FR)
+    outa, _ = PB.heightfield(hf, box, dx, C, hl, hr, da, qa, FR)
+    outb, _ = PB.heightfield(hf, box, dx, C, hl, hr, db, qb, FR)
+    d2 = out2.astype(float) - hf; dsum = (outa.astype(float) - hf) + (outb.astype(float) - hf)
+    assert np.allclose(d2, dsum, atol=1e-5)                        # the heightfield carries each rule once
+    assert abs(d2[36, 300] - delta[300, 0]) < 1e-5 and abs(d2[36, 1200] - delta[1200, 0]) < 1e-5

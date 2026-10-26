@@ -77,7 +77,16 @@ def rules(C, prof, hl, hr, cfg_rules, enu, fractions):
                         g=g, i_in=i_in, i_out=i_out, u=u, lo_m=lo, hi_m=hi,
                         first=int(ids[np.argmin(u[ids])]), last=int(ids[np.argmax(u[ids])]),
                         core=(int((peak - round(half / sp)) % n), int((peak + round(half / sp)) % n)),
-                        shoulder_m=float(r.get('shoulder_m', 2.0)), lateral_fade=float(r.get('lateral_fade', 6.0))))
+                        shoulder_m=float(r.get('shoulder_m', 2.0)), lateral_fade=float(r.get('lateral_fade', 6.0)),
+                        stations=ids))
+    # overlapping rules would stack their scalings on one cross-section (each measures g on the unscaled profile):
+    # refused, so every station and heightfield cell belongs to at most one rule (Astra, round-4 review)
+    for a in range(len(out)):
+        for b in range(a + 1, len(out)):
+            both = np.intersect1d(out[a]['stations'], out[b]['stations'])
+            if len(both):
+                raise ValueError(f"profile_bank {out[a]['name']!r} and {out[b]['name']!r} overlap at stations "
+                                 f"{int(both.min())}..{int(both.max())}: one rule per stretch")
     return out
 
 
@@ -91,6 +100,7 @@ def apply_profile(prof, hl, hr, resolved, fractions, log=print):
         d = (lat - l_in[:, None]) * (1.0 if q['inside'] == 'right' else -1.0)   # 0 at the inside edge, W outside
         dq = -(1 - q['factor']) * q['w'][:, None] * np.maximum(q['g'], 0.0)[:, None] * d
         delta += dq
+        q['dq'] = dq   # this rule's own delta: the heightfield pass carries each rule's change, not the sum
         step = float(np.abs(np.diff(np.r_[dq, dq[:1]], axis=0)).max())
         ch = np.nonzero(np.abs(dq).max(1) > 1e-6)[0]
         rad = np.degrees(np.arctan(q['g']))
@@ -128,7 +138,8 @@ def heightfield(hf, box, dx, C, hl, hr, delta, resolved, fractions):
     lat_cols = lateral(hl, hr, fractions)
     rep = {}
     for q in resolved:
-        ids = np.nonzero(np.abs(delta).max(1) > 0)[0]
+        dlt = q.get('dq', delta)   # per-rule delta (apply_profile); the aggregate only for a caller that skipped it
+        ids = np.nonzero(np.abs(dlt).max(1) > 0)[0]
         if not len(ids):
             continue
         reach = float(np.max(np.maximum(hl, hr)[ids])) + q['shoulder_m'] + q['lateral_fade'] + 2 * dx
@@ -156,7 +167,7 @@ def heightfield(hf, box, dx, C, hl, hr, delta, resolved, fractions):
         # the delta across the section is linear in l between the edges (z' - z = -k * d(l), d linear in l)
         def at(k):
             lin, lout = lat_cols[k, q['i_in']], lat_cols[k, q['i_out']]
-            din, dout = delta[k, q['i_in']], delta[k, q['i_out']]
+            din, dout = dlt[k, q['i_in']], dlt[k, q['i_out']]
             return lin, lout, din, dout
         a0, b0, c0, e0 = at(i0); a1, b1, c1, e1 = at(i1)
         lin = (1 - f) * a0 + f * a1; lout = (1 - f) * b0 + f * b1
