@@ -13,8 +13,8 @@ Future kerb rendering must place the kerb outside this revised road boundary; it
 ## Carry-over of original review marks
 
 The owner requested existing round-one marks on this page as well. The updated
-page automatically reads only the original review's browser-storage key through
-`review_r1/edge_marks_to_5198.html`, a read-only bridge on port 5197. Original
+page attempts to read only the original review's browser-storage key through
+`review_r1/edge_marks_to_5198_v2.html`, a read-only bridge on port 5197. Original
 HTML, images and marks remain unchanged. Points and edit handles are mapped
 through each window's north-up ENU center, crop extent and pixel scale to the
 corresponding round-two window. Existing round-two marks are retained. A saved
@@ -37,3 +37,24 @@ Validation: four focused transfer tests pass. A temporary browser profile with
 sample original and new marks verified automatic cross-port import, geographic
 alignment, retention of new marks, duplicate prevention, respect for deletions,
 and an unchanged original browser store. No owner browser profile was accessed.
+
+### Transfer recovery after the owner's missing-marks report
+
+The owner still saw saved strokes on 5197 and no strokes on 5198. The original
+test used a single hostname and did not cover a blocked or partitioned embedded
+bridge. The exact cause in the owner's browser was not observable from here.
+
+The revised page provides a sticky **Bring original marks** button. It reads
+first-party source storage in a user-opened window, trying both local addresses
+without changing originals. It reports an actual import count. An explicit
+transfer can restore missing marks despite a previous import ledger; automatic
+reloads still respect deletions and existing round-two marks are merged.
+**Load original marks file** accepts the original page's Download marks JSON
+as a browser-independent fallback. A five-second timeout replaces silent
+waiting with a recovery instruction. The older bridge file is retained unchanged.
+
+Browser validation now also blocks the iframe request and stores originals at
+localhost while the target uses 127.0.0.1. Direct transfer, alternate-address
+retry, geographic registration, preservation of existing marks, duplicate
+prevention, explicit restoration and an unchanged source store all passed.
+The JSON file fallback was checked through the actual file input as well.

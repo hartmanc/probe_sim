@@ -12,9 +12,10 @@ Reference images remain local and must never be committed or used as textures.
 
 For browser-local carry-over, add --import-review <old-review-dir>
 --source-windows <old-windows.json> --target-windows <new-windows.json>.
-The old page and its storage remain unchanged. A read-only bridge at its origin
-copies marks through their ENU coordinates when the new page loads, merging
-with existing new marks. Ports default to 5197 (source) and 5198 (target).
+The old page and its storage remain unchanged. A read-only bridge attempts
+carry-over on load. Bring original marks opens the source directly if embedded
+storage is blocked; file import is also supported. Marks are mapped through ENU
+coordinates and merged with existing edits. Ports default to 5197 and 5198.
 """
 import argparse
 import hashlib
@@ -81,57 +82,93 @@ ADAPTER = r'''<script>
 
 TRANSFER = r'''
   document.addEventListener('DOMContentLoaded', function () {
-    var config = %CONFIG%, frames = [], imported = 0, recognized = 0, answered = 0;
+    var config = %CONFIG%, frames = [], imported = 0, recognized = 0, popup = null;
+    var panel = document.createElement('div'), status = document.createElement('span');
+    panel.style.cssText = 'display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 0;font-size:13px';
+    var bring = document.createElement('button'); bring.textContent = 'Bring original marks'; bring.id = 'bring-original-marks';
+    var load = document.createElement('button'); load.textContent = 'Load original marks file';
+    [bring, load].forEach(function (button) { button.style.cssText = 'padding:8px 10px;cursor:pointer'; panel.appendChild(button); });
+    var file = document.createElement('input'); file.type = 'file'; file.accept = '.json,application/json'; file.hidden = true;
+    panel.appendChild(file); status.setAttribute('role', 'status'); status.id = 'mark-transfer-status'; panel.appendChild(status);
+    document.querySelector('header.top').appendChild(panel);
+    function showTransfer(message) { status.textContent = message; }
+    showTransfer('Checking for original marks…');
     var ledgerKey = key + ':imports', ledger = [];
     try { ledger = JSON.parse(localStorage.getItem(ledgerKey) || '[]'); }
     catch (e) { showTransfer('Could not read transfer history; originals remain untouched.'); return; }
-    function showTransfer(message) {
-      var banner = document.getElementById('banner');
-      banner.textContent = message; banner.classList.add('show');
+    function nonce() { return crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random(); }
+    function importDocuments(documents, explicit) {
+      var result = EdgeMarkTransfer.merge(records, documents || {}, explicit ? [] : ledger,
+                                           config.sourceWindows, config.targetWindows, config.sourceKey);
+      if (result.recognized) {
+        localStorage.setItem(key, JSON.stringify(result.records));
+        records = result.records; ledger = Array.from(new Set(ledger.concat(result.imports))); notify();
+        imported += result.added; recognized += result.recognized;
+        localStorage.setItem(ledgerKey, JSON.stringify(ledger));
+      }
+      if (imported) showTransfer('Carried over ' + imported + ' original mark' + (imported === 1 ? '' : 's') + '. Original and round-two edits are preserved.');
+      else if (recognized) showTransfer('Previous transfer detected. Bring original marks restores any missing marks; round-two edits are preserved.');
+      return result;
     }
+    load.addEventListener('click', function () { file.click(); });
+    file.addEventListener('change', function () {
+      if (!file.files.length) return;
+      file.files[0].text().then(function (text) {
+        var result = importDocuments(JSON.parse(text), true);
+        if (!result.recognized) showTransfer('No original review marks were found in that file.');
+      }).catch(function (error) { showTransfer('Could not load marks: ' + error.message + '. Originals remain untouched.'); });
+      file.value = '';
+    });
+    function origin(host) { return 'http://' + host + ':' + config.sourcePort; }
+    function bridgeURL(record, mode) {
+      return record.origin + '/' + config.bridge + '?target=' + encodeURIComponent(location.origin) +
+             '&nonce=' + encodeURIComponent(record.nonce) + '&mode=' + mode;
+    }
+    bring.addEventListener('click', function () {
+      // A top-level window reads first-party storage even when embedded frames
+      // are partitioned or blocked. Try both original local addresses in turn.
+      popup = {origin: origin(location.hostname), nonce: nonce(), answered: false, alternate: false};
+      popup.window = window.open(bridgeURL(popup, 'popup'), 'original-review-marks', 'popup,width=620,height=360');
+      if (!popup.window) showTransfer('Allow the original-review window, or download marks on the original page and load that file here.');
+      else showTransfer('Reading marks directly from the original review…');
+    });
     window.addEventListener('message', function (event) {
       var frame = frames.find(function (f) { return f.window === event.source && f.origin === event.origin; });
+      if (popup && popup.window === event.source && popup.origin === event.origin) frame = popup;
       var message = event.data;
       if (!frame || !message || message.type !== 'probe-edge-review-transfer-v1' ||
           message.nonce !== frame.nonce || message.sourceKey !== config.sourceKey || frame.answered) return;
-      frame.answered = true; answered++;
-      if (message.error) {
-        if (!imported && !recognized) showTransfer('Original marks could not be read here. Open this page in the same browser used for round one.');
-        return;
-      }
+      frame.answered = true;
       try {
-        var result = EdgeMarkTransfer.merge(records, message.documents || {}, ledger,
-                                             config.sourceWindows, config.targetWindows, config.sourceKey);
-        if (result.recognized) {
-          // Write marks first, then publish to the drawing UI. A ledger failure
-          // must never leave the UI holding an older copy that can erase marks.
-          localStorage.setItem(key, JSON.stringify(result.records));
-          records = result.records; ledger = result.imports; notify();
-          imported += result.added; recognized += result.recognized;
-          try { localStorage.setItem(ledgerKey, JSON.stringify(ledger)); }
-          catch (e) { showTransfer('Marks carried over, but transfer history could not be saved. Download marks as a backup.'); return; }
+        var result = message.error ? {recognized: 0} : importDocuments(message.documents, frame === popup);
+        if (frame === popup && !result.recognized && !frame.alternate) {
+          frame.alternate = true; frame.answered = false; frame.nonce = nonce();
+          frame.origin = origin(location.hostname === 'localhost' ? '127.0.0.1' : 'localhost');
+          frame.window.location = bridgeURL(frame, 'popup');
+          return;
         }
-        if (imported) showTransfer('Carried over ' + imported + ' original mark' + (imported === 1 ? '' : 's') + '. Originals and existing round-two marks are preserved.');
-        else if (recognized) showTransfer('Your original marks have already been carried over. Existing round-two edits are preserved.');
-        else if (answered === frames.length) showTransfer('No original marks were found here. Open this page in the same browser and hostname used for round one.');
+        if (frame === popup) event.source.postMessage({type: 'probe-edge-review-transfer-ack', nonce: frame.nonce,
+          count: result.recognized}, event.origin);
+        if (!recognized && (frame === popup || frames.every(function (f) { return f.answered; })))
+          showTransfer('Marks have not transferred. Click Bring original marks, or download them on the original page and load the file here.');
       } catch (e) {
-        showTransfer('Transfer could not finish (' + e.message + '). Originals remain untouched.');
+        showTransfer('Transfer could not finish: ' + e.message + '. Originals remain untouched.');
       }
     });
     if (!['127.0.0.1', 'localhost'].includes(location.hostname) || location.port !== String(config.targetPort)) {
       showTransfer('Open this review on localhost port ' + config.targetPort + ' to carry over your original marks.'); return;
     }
-    // Try the current hostname first; localhost and 127.0.0.1 have separate
-    // browser stores. Each bridge reads only the known original review key.
     [location.hostname, location.hostname === 'localhost' ? '127.0.0.1' : 'localhost'].forEach(function (host) {
-      var origin = 'http://' + host + ':' + config.sourcePort;
-      var nonce = crypto.randomUUID();
       var element = document.createElement('iframe'); element.hidden = true;
-      var record = {origin: origin, nonce: nonce, answered: false, window: null};
+      var record = {origin: origin(host), nonce: nonce(), answered: false, window: null};
       frames.push(record);
-      element.src = origin + '/' + config.bridge + '?target=' + encodeURIComponent(location.origin) + '&nonce=' + encodeURIComponent(nonce);
+      element.src = bridgeURL(record, 'frame');
       document.body.appendChild(element); record.window = element.contentWindow;
     });
+    setTimeout(function () {
+      if (!recognized && !(popup && !popup.answered))
+        showTransfer('Original marks have not transferred. Click Bring original marks above.');
+    }, 5000);
   });
 '''
 
@@ -142,15 +179,33 @@ def transfer_setup(source_review, source_windows, target_windows, source_port, t
     if not match:
         raise ValueError('Original review storage key not found')
     source_key = match.group(0)
-    bridge_name = f'edge_marks_to_{target_port}.html'
-    bridge = '''<!doctype html><meta charset="utf-8"><script>
+    bridge_name = f'edge_marks_to_{target_port}_v2.html'
+    bridge = '''<!doctype html><meta charset="utf-8"><title>Original review marks</title>
+<style>body{font:18px/1.5 system-ui;margin:28px}button{padding:10px}</style>
+<h1>Original review marks</h1><p id="status">Reading saved marks. The original review is unchanged.</p>
+<button id="download">Download original marks</button><script>
 (() => {
   const query = new URLSearchParams(location.search), target = query.get('target');
-  if (!%ORIGINS%.includes(target) || parent === window) return;
+  if (!%ORIGINS%.includes(target)) return;
   const message = {type: 'probe-edge-review-transfer-v1', sourceKey: %KEY%, nonce: query.get('nonce')};
   try { message.documents = JSON.parse(localStorage.getItem(message.sourceKey) || '{}'); }
   catch (error) { message.error = 'Original browser storage is unavailable'; }
-  parent.postMessage(message, target);
+  const receiver = opener || (parent !== window ? parent : null);
+  const count = Object.values(message.documents || {}).reduce((n, doc) => n + (doc.strokes || []).length, 0);
+  document.getElementById('status').textContent = count ? 'Found ' + count + ' marks. Sending them to round two…' : 'No marks found at this address. The transfer will also try the alternate original address.';
+  document.getElementById('download').onclick = () => {
+    const url = URL.createObjectURL(new Blob([JSON.stringify(message.documents || {}, null, 2)], {type: 'application/json'}));
+    const a = document.createElement('a'); a.href = url; a.download = 'original-edge-marks.json'; a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
+  addEventListener('message', event => {
+    if (event.source !== receiver || event.origin !== target || !event.data ||
+        event.data.type !== 'probe-edge-review-transfer-ack' || event.data.nonce !== message.nonce) return;
+    document.getElementById('status').textContent = event.data.count ? 'Original marks delivered. You can return to round two.' : 'No marks were found. Use Download marks in the original review and Load original marks file in round two.';
+    if (event.data.count && opener) setTimeout(() => close(), 500);
+  });
+  if (receiver) receiver.postMessage(message, target);
+  else document.getElementById('status').textContent = 'Download original marks below, then use Load original marks file in round two.';
 })();
 </script>'''.replace('%ORIGINS%', json.dumps([f'http://127.0.0.1:{target_port}', f'http://localhost:{target_port}'])).replace('%KEY%', json.dumps(source_key))
     bridge_path = source_review / bridge_name
