@@ -70,6 +70,10 @@ export class RaceLine {
   readonly tx: Float64Array; readonly ty: Float64Array; readonly segLen: Float64Array;
   /** half widths to the left / right edge, m */
   readonly halfL: Float64Array; readonly halfR: Float64Array;
+  /** The paved left half width (halfL before any cone cap): where the car is actually off the road (AI robustness round) */
+  readonly halfLRoad: Float64Array;
+  /** 1 where restrictLeft capped halfL (a cone line on the left: a hard lane boundary, not the road's edge) */
+  readonly capL: Uint8Array;
   /** racing-line lateral offset (+left), line position, line arc length to the next station */
   readonly off: Float64Array; readonly lx: Float64Array; readonly ly: Float64Array; readonly lz: Float64Array; readonly ds: Float64Array;
   /** racing line curvature (1/m, + = left), grade (dz/ds), road bank toward the left (tan) */
@@ -107,6 +111,8 @@ export class RaceLine {
       this.halfL[i] = Math.max(0.5, dhypot(track.left[i][0] - this.cx[i], track.left[i][1] - this.cy[i]));
       this.halfR[i] = Math.max(0.5, dhypot(track.right[i][0] - this.cx[i], track.right[i][1] - this.cy[i]));
     }
+    this.halfLRoad = Float64Array.from(this.halfL);
+    this.capL = new Uint8Array(N);
     // racing line offset at each station (grid may be coarser than the stations)
     const g = ghosts.s_grid_m, offs = ghosts.line.offset_m, NG = offs.length;
     const gridAt = (arr: ArrayLike<number>, s: number) => {
@@ -236,7 +242,7 @@ export class RaceLine {
       const s = i * this.spacing;
       if (s < s0 || s > s1) continue;
       const cap = Math.max(1.5, latAt(s) - margin);
-      if (cap < this.halfL[i]) this.halfL[i] = cap;
+      if (cap < this.halfL[i]) { this.halfL[i] = cap; this.capL[i] = 1; }
       over = Math.max(over, this.off[i] - this.halfL[i]);
     }
     return over;

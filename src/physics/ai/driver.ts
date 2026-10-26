@@ -83,6 +83,14 @@ const GRIP_LIMIT = 1.5;
 /** Front slip angle (x the tyre's peak) above which an understeering car stops adding lock and unwinds it. */
 const STEER_PLOUGH = 2;
 const REAR_SLIP0 = 0.08, REAR_SLIPK = 6; // rad, 1/rad: ease the brake when the rear slides
+/** A cone cap ahead (RaceLine.capL) bounds the lateral target within CAP_LOOK m by an approach at CAP_ACC m/s² laterally. */
+const CAP_LOOK = 100, CAP_ACC = 3;
+/** A slide (AI robustness round, 26 Oct 2026): the rear's slip angle past SLIDE_REAR x the tyre's peak and over the front's
+ *  by half a peak, the yaw rate over the travel direction's turn rate by SLIDE_DIV rad/s. Then: brake at most SLIDE_BRAKE,
+ *  a driven rear at most SLIDE_THR throttle (a front-drive car at least SLIDE_THR), the fronts not steered into the
+ *  rotation past their direction of travel. */
+const SLIDE_REAR = 1.5, SLIDE_BRAKE = 0.1, SLIDE_THR = 0.15;
+const SLIDE_DIV = 0.15;
 // lane model (NOTES "Racecraft (the lane model) and mishaps")
 const LANE_CLR = 0.3;      // m each side of a car's span in lane-occupancy checks (adjacent lanes leave >= 0.6 m)
 const FOLLOW_CLR = 0.4;    // m edge to edge: a car ahead closer than this laterally is in my lane and followed
@@ -197,8 +205,12 @@ export class AiDriver {
   /** debug: why the speed is limited ('profile' | 'follow' | 'cap' | 'rejoin' | 'alongside') */
   limiter = 'profile';
   private readonly pt = new Float64Array(2);
+  /** (tools) an oversteer being caught on the last tick */
+  sliding = false;
   /** pure-pursuit path curvature commanded on the last tick, 1/m */
   private kCmd = 0;
+  /** the vehicle's steering shaping (spec.steering): full lock at speed v = max(minSteer, maxSteer / (1 + (v/shapeV)²)), rad */
+  private readonly lockMax: number; private readonly lockMin: number; private readonly lockV: number;
 
   constructor(vehicle: Vehicle, line: RaceLine, perf: CarPerf, spec: CarSpec, profile: Float64Array, params: AiDriverParams, idx: number, traffic: Traffic) {
     this.vehicle = vehicle; this.line = line; this.perf = perf; this.profile = driverProfile(line, perf, profile);
@@ -206,7 +218,7 @@ export class AiDriver {
     this.rng = new Rng(params.seed);
     const np = NO_PASS_CORNERS[line.trackId] ?? [];
     this.corkscrew = line.corners.findIndex((c) => np.includes(c.turn));
-    void spec;
+    this.lockMax = (spec.steering.maxAngleDeg * Math.PI) / 180; this.lockMin = (spec.steering.minAngleDeg * Math.PI) / 180; this.lockV = spec.steering.shapingSpeed;
   }
 
   /** Forget transient state (after a reset onto the track). */
@@ -288,7 +300,9 @@ export class AiDriver {
     let wheelsOff = 0;
     for (let k = 0; k < 4; k++) if (!st.wheels[k].onTrack) wheelsOff++;
     const edgeL = line.at(line.halfL, s), edgeR = line.at(line.halfR, s);
-    const outside = lat > edgeL + 0.3 || lat < -edgeR - 0.3;
+    // off the road = off the pavement: a cone cap (restrictLeft) is a lane boundary, not the road's edge, and counting the
+    // cap as the edge dropped the lane clamp right at it (AI robustness round, 26 Oct 2026)
+    const outside = lat > line.at(line.halfLRoad, s) + 0.3 || lat < -edgeR - 0.3;
     if (wheelsOff >= 3 || outside) {
       this.offTimer += dt; this.onTimer = 0;
       if (!this.offTrack && this.offTimer > 0.15) {
@@ -498,7 +512,11 @@ export class AiDriver {
           const j = order[(tr.rank[i] - k + n) % n];
           const d = -tr.ds(i, j);
           if (d < 0 || d > Math.min(28, Math.max(10, v))) break;
-          if (tr.away[j] || tr.off[j]) continue;
+          if (tr.away[j]) continue;
+          // a car rejoining right behind me is passed over for the next one, unless it is clearly faster: then whoever
+          // is behind it, covering the inside is a move against a clearly faster car (AI robustness round: seed 1's
+          // full field defended against a within-3 % car 19 m back with a clearly faster one rejoining 5 m back)
+          if (tr.off[j]) { if (tr.pace[j] < CLEARLY_FASTER * tr.pace[i]) break; continue; }
           const r = tr.pace[j] / tr.pace[i];
           if (r >= CLEARLY_FASTER && r <= 1 / CLEARLY_FASTER && d > myRear + tr.front[j] + 1) {
             const c = this.passableAhead(s, 120, 10);
@@ -617,7 +635,19 @@ export class AiDriver {
     {
       let tgt = shiftWant + push;
       const mg = this.passPhase !== 0 ? PASS_EDGE : 0.15;   // a pass lane keeps a little more room to the edge
-      const lo = -line.at(line.halfR, sLook) + hwI + mg - lineLook, hi = line.at(line.halfL, sLook) - hwI - mg - lineLook;
+      const lo = -line.at(line.halfR, sLook) + hwI + mg - lineLook;
+      let hi = line.at(line.halfL, sLook) - hwI - mg - lineLook;
+      // a cone cap ahead (RaceLine.capL: a hard lane boundary) is approached with bounded lateral acceleration: the shift
+      // (held relative to the line, so it travels with the line's sweep) stays under the cap's lane-coordinate limit x m
+      // further on plus what CAP_ACC brings back in the time to get there, so a pass lane or a room-making shift beside a
+      // cap that closes (the racing line sweeping toward it) eases off before it, instead of carrying the car's lateral
+      // speed into it (26 Oct 2026, Laguna's front straight: the line sweeps 4.8 m left toward the pit-exit cones)
+      for (let x = 0; x <= CAP_LOOK; x += 5) {
+        const sx = sLook + x;
+        if (!line.capL[Math.min(line.N - 1, Math.floor(line.wrap(sx) / line.spacing))]) continue;
+        const t = x / Math.max(5, v);
+        hi = Math.min(hi, line.at(line.halfL, sx) - hwI - mg - line.at(line.off, sx) + 0.5 * CAP_ACC * t * t);
+      }
       // corridor between the cars alongside (absolute lateral → shift at the look point)
       const cl = Math.max(corLo - lineLook, corLoE), ch = Math.min(corHi - lineLook, corHiE);
       let squeezed = cl > ch;
@@ -653,6 +683,20 @@ export class AiDriver {
       if (!this.offTrack && Number.isNaN(mishapLat)) this.shift = Math.max(lo, Math.min(hi, this.shift));
     }
 
+    // ---- a slide: the rear past SLIDE_REAR x the tyre's peak slip and over the front's by half a peak, while the car
+    // rotates faster than its direction of travel turns (yaw rate minus lateral acceleration / speed, same sign as the
+    // yaw rate, over SLIDE_DIV): an oversteer that is growing, not a car drifting steadily at the limit
+    let sliding = false;
+    {
+      const fpk = perf.peakSlipAngle, r = st.angVel[2];
+      const rsS = Math.max(Math.abs(st.wheels[2].slipAngle), Math.abs(st.wheels[3].slipAngle));
+      let fsS = 0;
+      for (let k = 0; k < 2; k++) { const w = st.wheels[k]; if (w.load > 1000) fsS = Math.max(fsS, Math.abs(w.slipAngle)); }
+      const excess = r - (st.gLat * G) / Math.max(5, v);
+      sliding = v > 6 && this.mishap === null && rsS > SLIDE_REAR * fpk && rsS > fsS + 0.5 * fpk && excess * r > 0 && Math.abs(excess) > SLIDE_DIV;
+    }
+    this.sliding = sliding;
+
     // ---- steering: pure pursuit from the rear axle
     {
       const cy = dcos(yaw), sy = dsin(yaw);
@@ -679,6 +723,19 @@ export class AiDriver {
         this.steerCap = plough ? Math.max(0.1, Math.min(this.steerCap, Math.abs(this.input.steer)) - 2 * dt) : Math.min(1, this.steerCap + 2 * dt);
         sc = Math.max(-this.steerCap, Math.min(this.steerCap, sc));
       }
+      // a slide (above): the front wheels never point further into the rotation than the front axle's direction of travel
+      // (road angle + ISO slip angle), so the fronts never push the nose further round. Pure pursuit aims the car's nose;
+      // in a slide the nose and the direction of travel part, and it steered further into the rotation (26 Oct 2026,
+      // Laguna: full lock into a slide on the front straight, the car spun into the pit-exit lane)
+      {
+        const w0 = st.wheels[0], w1 = st.wheels[1];
+        if (sliding && v > 8 && w0.load > 1000 && w1.load > 1000 && w0.paved && w1.paved) {   // (off the pavement the tyre's peak moves out)
+          const course = 0.5 * (w0.steer + w0.slipAngle + w1.steer + w1.slipAngle);
+          const vr = v / this.lockV, lock = Math.max(this.lockMin, this.lockMax / (1 + vr * vr));
+          const edge = course / lock;
+          if (st.angVel[2] > 0) sc = Math.max(-1, Math.min(sc, edge)); else sc = Math.min(1, Math.max(sc, edge));
+        }
+      }
       this.input.steer = sc;
     }
 
@@ -697,15 +754,24 @@ export class AiDriver {
       }
       let lock = 0, spin = 0;
       for (let k = 0; k < 4; k++) { const w = st.wheels[k]; if (w.load > 1000 && -w.slipRatio > lock) lock = -w.slipRatio; }
-      for (let k = perf.drivenFront ? 0 : 2; k < (perf.drivenRear ? 4 : 2); k++) { const w = st.wheels[k]; if (w.load > 1000 && w.slipRatio > spin) spin = w.slipRatio; }
       const kpk = perf.peakSlipRatio;
+      for (let k = perf.drivenFront ? 0 : 2; k < (perf.drivenRear ? 4 : 2); k++) { const w = st.wheels[k]; if (w.load > 1000 && w.slipRatio > spin) spin = w.slipRatio; }
       this.brakeCap = lock > 1.5 * kpk ? Math.max(0.25, Math.min(this.brakeCap, brake) - 3 * dt) : Math.min(1, this.brakeCap + 3 * dt);
       this.thrCap = spin > 1.5 * kpk ? Math.max(0.2, Math.min(this.thrCap, throttle) - 3 * dt) : Math.min(1, this.thrCap + 3 * dt);
       // rear stepping out on a trailing brake: ease off the brake (a driver's feel for entry oversteer)
       const rs = Math.max(Math.abs(st.wheels[2].slipAngle), Math.abs(st.wheels[3].slipAngle));
-      if (rs > REAR_SLIP0 && this.limiter === 'profile') brake *= Math.max(0.1, 1 - REAR_SLIPK * (rs - REAR_SLIP0));
+      if (rs > REAR_SLIP0 && (this.limiter === 'profile' || this.limiter === 'grip')) brake *= Math.max(0.1, 1 - REAR_SLIPK * (rs - REAR_SLIP0));
       brake = Math.min(brake, this.brakeCap);
       throttle = Math.min(throttle, this.thrCap);
+      // a slide (an oversteer growing, above): catch it, never feed it. The brake (any limiter: the grip limiter brakes for
+      // the pursuit's curvature, which in a slide is the rotation, not the path) comes off, since braking loads the front
+      // and unloads the rear; a driven rear gets no more than a maintenance throttle; a front-drive car keeps a little
+      // drive (it pulls the nose straight, a lift would add to the rotation). Steering: above. (AI robustness round, 26 Oct
+      // 2026: braking at 0.25-0.5 with the rear at 0.3-0.7 rad spun cars in Laguna's T4, T6 and T10)
+      if (sliding) {
+        if (this.limiter !== 'follow') brake = Math.min(brake, SLIDE_BRAKE);   // (stopping behind a car ahead comes first)
+        throttle = perf.drivenRear ? Math.min(throttle, SLIDE_THR) : Math.max(SLIDE_THR, Math.min(0.6, throttle));
+      }
       // rear-drive car sliding while the engine brakes the rear wheels: a little throttle to stop the engine braking
       // (a driver's blip; 18 Oct 2026: light, powerful RWD cars spun off the T3 exit on a closed throttle)
       if (perf.drivenRear && rs > REAR_SLIP0 && brake < 0.3) {
@@ -1010,7 +1076,10 @@ export class AiDriver {
       // back to the racing line once its lane is free around me (or straight away under a flag)
       const lo = Math.min(0, eMe) - hwI - LANE_CLR, hi = Math.max(0, eMe) + hwI + LANE_CLR;
       // (cars behind / alongside in it must not reach me; a car ahead in it is simply followed once I am back)
-      if (!green || this.offTrack || this.mishap !== null || this.noPassZone(tr.s[i], 0) || this.laneBlock(lo, hi, 1.5, v, MERGE_AHEAD, 60, -1) > 1.5) this.passPhase = 3;
+      // (or the road has already put me back on the line, behind the car I gave up on: in its lane following it, which
+      // blocks the lane check at following distance; waiting on, the lane comes back past the apex and steered me out
+      // into it again: AI robustness round, ai_passing "drops back behind it and merges")
+      if (!green || this.offTrack || this.mishap !== null || this.noPassZone(tr.s[i], 0) || Math.abs(eMe) < 0.4 || this.laneBlock(lo, hi, 1.5, v, MERGE_AHEAD, 60, -1) > 1.5) this.passPhase = 3;
       return;
     }
     // 3: merging
