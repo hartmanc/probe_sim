@@ -106,7 +106,7 @@ export function raceAiConfig(trackId: string): { followScale: number; laneMargin
 }
 
 /** Build the RaceDirector for the player's current HotlapSim car (call right after a rolling start). */
-export function buildDirector(sim: RaceServices['sim'], field: FieldData, o: { seed: number; laps: number }): RaceDirector {
+export function buildDirector(sim: RaceServices['sim'], field: FieldData, o: { seed: number; laps: number; realGrid?: boolean }): RaceDirector {
   const a = sim.assets;
   const makeSurface = surfaceFactory(a);
   const pit = a.scenery?.pit_lane ?? null;
@@ -116,7 +116,9 @@ export function buildDirector(sim: RaceServices['sim'], field: FieldData, o: { s
     pitLane: pit ? { spacing_m: 1, ...pit } : null,
     collisionWorld: sim.collision,
     playerVehicle: sim.vehicle, playerSurface: sim.surface,
-  }, { laps: o.laps, seed: o.seed, playerNumber: PLAYER_NUMBER, greenWindow: [5, 30], ...raceAiConfig(TRACK_ID) });
+  }, { laps: o.laps, seed: o.seed, playerNumber: PLAYER_NUMBER, greenWindow: [5, 30], ...raceAiConfig(TRACK_ID),
+    // phones and tablets (a selected 40-car field): the real grid order; desktop keeps the seeded shuffle
+    ...(o.realGrid ? { gridOrder: 'real' as const } : {}) });
 }
 
 /** FieldCars inputs for every AI car of a director (colour from identity.json, size from its physics spec). */
@@ -335,6 +337,8 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
   let d: RaceDirector | null = null;
   let field: FieldData | null = null;
   let fieldErr: string | null = null;
+  /** the field is the phone / tablet selection (field-select.ts): the director starts it in the real grid order */
+  let fieldSelected = false;
   let fieldCars: FieldCars | null = null;
   let dom: RaceHudDom | null = null;
   let marker: THREE.Object3D | null = null;
@@ -365,7 +369,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
     ctx.rollingStart();                 // fresh Vehicle + Surface + timer; step counter 0
     sv.sim.record = false;              // races are not replayed
     const t0 = performance.now();
-    d = buildDirector(sv.sim, field, { seed, laps });
+    d = buildDirector(sv.sim, field, { seed, laps, realGrid: fieldSelected });
     const dir = d;
     sv.sim.stepVehicle = (di) => dir.step(STEP, di as DriverInput);
     console.info(`race: seed ${seed}, ${dir.cars.length} cars, ${laps} laps, built in ${(performance.now() - t0).toFixed(0)} ms${dir.calibrationStale ? ' (pace.json calibration is stale)' : ''}`);
@@ -489,6 +493,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
       // phones and tablets: the player's 40 pace neighbours (field-select.ts); desktop: everyone
       const cap = fieldCapFor(sv.quality.device ?? 'desktop');
       field = Number.isFinite(cap) ? { ...f, pace: neighbourField(f.pace as PaceJson, cap, PLAYER_NUMBER) } : f;
+      fieldSelected = field.pace !== f.pace;   // a selection was made: start in the real grid order
       if (f.missing.length) console.warn('race field data missing:', f.missing.join(', '));
       build();
     };

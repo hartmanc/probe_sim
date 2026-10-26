@@ -64,3 +64,31 @@ describe('device class', () => {
     expect(settingsFor('phone', 'auto', true).device).toBe('phone');
   });
 });
+
+describe('the actual starting grid of a selected field (RaceDirector gridOrder)', () => {
+  test("'real': the 20 chosen cars and the player line up in the real grid order on the track; default still shuffles", async () => {
+    const { pack } = await import('../../physics/__tests__/ai_fixture');
+    const { RaceDirector } = await import('../../physics/ai/race');
+    const { createCollisionWorld } = await import('../../physics');
+    const p = pack();
+    const sel = neighbourField(p.pace, 20, '619');
+    const make = (cfg: Record<string, unknown>) => new RaceDirector({
+      line: p.line, surface: p.surface, makeSurface: p.makeSurface, probeJson: p.probeJson, pace: sel, identity: p.identity,
+      pitLane: p.scenery.pit_lane ?? null, collisionWorld: createCollisionWorld(p.scenery, p.track), playerVehicle: null,
+    }, { seed: 7, laps: 1, ...cfg });
+    const real = [...sel.cars].sort((a: { grid: number }, b: { grid: number }) => a.grid - b.grid).map((c: { number: string }) => c.number);
+    const d = make({ gridOrder: 'real' });
+    expect(d.cars).toHaveLength(21);
+    // on the track: the car furthest along (largest race distance U) is P1
+    const onTrack = [...d.cars].sort((a, b) => b.U - a.U).map((c) => c.number);
+    expect(onTrack).toEqual(real);
+    expect([...d.cars].sort((a, b) => a.grid - b.grid).map((c) => c.number)).toEqual(real);
+    // restarts keep it
+    d.restart(99);
+    expect([...d.cars].sort((a, b) => b.U - a.U).map((c) => c.number)).toEqual(real);
+    // the default (desktop) is the seeded shuffle as before
+    const shuffled = [...make({}).cars].sort((a, b) => b.U - a.U).map((c) => c.number);
+    expect(shuffled).not.toEqual(real);
+    expect([...shuffled].sort()).toEqual([...real].sort());
+  }, 60_000);
+});

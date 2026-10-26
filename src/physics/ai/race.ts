@@ -67,6 +67,12 @@ export interface RaceConfig {
    * room-making and pass lane changes at 2-4 m/s through the esses made the cars spin (driver.ts SHIFT_RATE_MIN).
    */
   shiftGrip: number;
+  /**
+   * Start order. 'shuffle' (default, owner 17 Oct 2026): a seeded shuffle of the whole field. 'real' (owner 26 Oct 2026):
+   * the pace file's real grid order (PaceCar.grid), used by phones and tablets, which race the player's 40 pace
+   * neighbours (src/app/field-select.ts) so the race around the player is the real one. 'shuffle' is the code path as before.
+   */
+  gridOrder: 'shuffle' | 'real';
 }
 
 /** One AI loss of control (director.mishapLog). */
@@ -78,6 +84,7 @@ export const DEFAULT_RACE_CONFIG: RaceConfig = {
   mishapRate: 0.0002,
   followScale: 1,
   laneMargin: 1,
+  gridOrder: 'shuffle',
   shiftGrip: 0,
 };
 
@@ -458,7 +465,8 @@ export class RaceDirector {
     // (U) and lap 1 begin at the line after the green: the leader starts far enough back to still be before the line
     // at the latest green moment (greenWindow[1] x formationSpeed + 30 m), each car ~gridGap behind the one ahead
     const sorted = [...this.cars];
-    for (let k = sorted.length - 1; k > 0; k--) { const j = this.rng.int(k + 1); const t = sorted[k]; sorted[k] = sorted[j]; sorted[j] = t; }
+    if (this.config.gridOrder === 'real') sorted.sort((a, b) => (a.pace?.grid ?? Infinity) - (b.pace?.grid ?? Infinity) || a.idx - b.idx);
+    else for (let k = sorted.length - 1; k > 0; k--) { const j = this.rng.int(k + 1); const t = sorted[k]; sorted[k] = sorted[j]; sorted[j] = t; }
     sorted.forEach((c, k) => { c.grid = k + 1; });
     const lenOf = (c: RaceCar) => c.spec.hull.front - c.spec.hull.rear;
     let s = L - (this.config.greenWindow[1] * this.config.formationSpeed + 30);
