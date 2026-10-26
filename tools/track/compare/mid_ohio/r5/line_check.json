@@ -1,0 +1,20 @@
+{
+ "stations": 3595,
+ "grid_points": 1798,
+ "s_grid_m": 2.001386,
+ "laps": 0,
+ "method": "min-curvature within edges less 1.0 m (no logger laps)",
+ "min_clearance_m": 1.0,
+ "at_station": 2951,
+ "side": "right",
+ "margin_m": 1.0,
+ "offset_range_m": [
+  -5.43,
+  5.46
+ ],
+ "line_length_m": 3524.4,
+ "centre_length_m": 3597.5,
+ "min_line_radius_m": 28.5,
+ "fails": [],
+ "n_fails": 0
+}
