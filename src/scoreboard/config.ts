@@ -167,4 +167,8 @@ export const LIMITS = {
   /** Rate limit: posts per window per IP. */
   ratePosts: 10,
   rateWindowS: 600,
+  /** A hot-lap board whose physics version is no longer the server's expires this long after the sweep finds it. */
+  staleBoardTtlS: 30 * 86400,
+  /** The sweep runs at most this often per warm function instance, s. */
+  sweepEveryS: 3600,
 } as const;

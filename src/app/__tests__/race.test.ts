@@ -265,7 +265,7 @@ describe('results → scoreboard', () => {
     };
     const client = new ScoreboardClient({ base: '/api/scores', fetch: fetchFn as any, storage: kv });
     client.setName('COBY');
-    setBoardContext({ client, track: 'laguna_seca', car: 'probe_gt', physics: 'p1', input: () => 'keys', assetsOk: true, raceAiVersion: '2', offer: undefined });
+    setBoardContext({ client, track: 'laguna_seca', car: 'probe_gt', physics: 'p1', input: () => 'keys', assetsOk: true, raceAiVersion: '2', offer: undefined, raceBoardsOpen: true });   // the race path is kept for when boards reopen
     const o = await submitRace(res);
     expect(o.status).toBe('submitted');
     expect(posted).toMatchObject({ mode: 'race', track: 'laguna_seca', car: 'probe_gt', ai_version: '2', name: 'COBY', metres: 35111.3, laps: 9, position: 2, finished: false, replay: { seed: 4242 } });

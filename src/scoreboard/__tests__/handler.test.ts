@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, test } from 'vitest';
-import { handleScores, type HandlerDeps } from '../handler';
+import { currentRaceAiVersion, handleScores, sweepStaleBoards, type HandlerDeps } from '../handler';
 import { MemoryStore } from '../store';
 import { physicsVersion } from '../hash';
 import { boardKey } from '../validate';
@@ -29,8 +29,10 @@ const post = (body: unknown, headers: Record<string, string> = {}) => new Reques
   body: typeof body === 'string' ? body : JSON.stringify(body),
 });
 const get = (q: string, headers: Record<string, string> = {}) => new Request(`${ORIGIN}/api/scores${q}`, { headers: { host: 'probe.example', ...headers } });
+const SECRET = '0123456789abcdef0123456789abcdef';
+const OTHER = 'fedcba9876543210fedcba9876543210';
 const hot = (over: Record<string, unknown> = {}) => ({
-  mode: 'hotlap', track: 'laguna_seca', car: 'probe_gt', physics: PV, name: 'Coby', input: 'pad',
+  mode: 'hotlap', track: 'laguna_seca', car: 'probe_gt', physics: PV, name: 'Coby', input: 'pad', secret: SECRET,
   time: lap.time, lap: lap.n, valid: true, trace, ...over,
 });
 // a fake replay so ranking tests do not re-run the physics for every entry
@@ -94,20 +96,83 @@ describe('api handler', () => {
     expect(g.you.rank).toBe(12);
   });
 
-  test('race: plausibility only, finishers by time then distance, keyed by ai_version', async () => {
-    const d = deps();
-    const race = (name: string, metres: number, laps: number, ai = 'ai-1', time?: number) => post({ mode: 'race', track: 'laguna_seca', car: 'probe_gt', physics: PV, name, input: 'keys', ai_version: ai, metres, laps, replay: null, ...(time ? { finished: true, time } : {}) }, { 'x-forwarded-for': name });
+  test('race: plausibility only, finishers by time then distance, current AI version only (with race boards open)', async () => {
+    const d = deps({ raceBoards: true });
+    const AI = currentRaceAiVersion();
+    const race = (name: string, metres: number, laps: number, ai = AI, time?: number) => post({ mode: 'race', track: 'laguna_seca', car: 'probe_gt', physics: PV, name, input: 'keys', secret: SECRET, ai_version: ai, metres, laps, replay: null, ...(time ? { finished: true, time } : {}) }, { 'x-forwarded-for': name });
     expect((await handleScores(race('a', 14_000, 3), d)).status).toBe(200);
-    expect(await (await handleScores(race('b', 16_000, 4), d)).json()).toMatchObject({ rank: 1, board: `race:laguna_seca:probe_gt:${PV}:ai-1` });
+    expect(await (await handleScores(race('b', 16_000, 4), d)).json()).toMatchObject({ rank: 1, board: `race:laguna_seca:probe_gt:${PV}:${AI}` });
     // a finisher ranks by race time, ahead of every car classified short
-    expect(await (await handleScores(race('f', 17_800, 5, 'ai-1', 700), d)).json()).toMatchObject({ rank: 1 });
-    expect(await (await handleScores(race('g', 17_800, 5, 'ai-1', 650), d)).json()).toMatchObject({ rank: 1 });
+    expect(await (await handleScores(race('f', 17_800, 5, AI, 700), d)).json()).toMatchObject({ rank: 1 });
+    expect(await (await handleScores(race('g', 17_800, 5, AI, 650), d)).json()).toMatchObject({ rank: 1 });
     expect(await (await handleScores(race('b2', 16_500, 4), d)).json()).toMatchObject({ rank: 3 });
-    expect(await (await handleScores(race('c', 1_000, 0, 'ai-2'), d)).json()).toMatchObject({ rank: 1, board: `race:laguna_seca:probe_gt:${PV}:ai-2` });
+    const old = await handleScores(race('c', 1_000, 0, 'ai-2'), d);
+    expect(old.status).toBe(422);
+    expect(((await old.json()) as { reasons: string[] }).reasons).toContain('race AI version is not current: reload the game');
     expect((await handleScores(race('d', 99_000, 5), d)).status).toBe(422);
-    const g = await (await handleScores(get(`?board=race:laguna_seca:probe_gt:${PV}:ai-1`), d)).json() as { entries: { name: string; laps: number; ai_version: string }[] };
+    const g = await (await handleScores(get(`?board=race:laguna_seca:probe_gt:${PV}:${AI}`), d)).json() as { entries: { name: string; laps: number; ai_version: string }[] };
     expect(g.entries.map((e) => e.name)).toEqual(['g', 'f', 'b2', 'b', 'a']);
-    expect(g.entries[0]).toMatchObject({ laps: 5, ai_version: 'ai-1' });
+    expect(g.entries[0]).toMatchObject({ laps: 5, ai_version: AI });
+  });
+
+  test('race boards are closed for the public: race posts and race board reads answer 410, nothing is stored', async () => {
+    const d = deps();
+    const r = await handleScores(post({ mode: 'race', track: 'laguna_seca', car: 'probe_gt', physics: PV, name: 'r', input: 'keys', secret: SECRET, ai_version: currentRaceAiVersion(), metres: 1000, laps: 0 }), d);
+    expect(r.status).toBe(410);
+    expect(((await r.json()) as { reasons: string[] }).reasons[0]).toMatch(/race boards are closed/);
+    expect(await d.store.boards()).toEqual([]);
+    expect((await handleScores(get(`?board=race:laguna_seca:probe_gt:${PV}:${currentRaceAiVersion()}`), d)).status).toBe(410);
+  });
+
+  test('name ownership: secret required, first device claims, another device is refused, transfer code adopts', async () => {
+    const d = deps({ verify: fakeVerify });
+    const noSecret = await handleScores(post(hot({ secret: undefined })), d);
+    expect(noSecret.status).toBe(422);
+    expect(((await noSecret.json()) as { reasons: string[] }).reasons).toContain('device secret missing: reload the game');
+    expect((await handleScores(post(hot({ secret: 'short' })), d)).status).toBe(422);
+    expect((await handleScores(post(hot()), d)).status).toBe(200);                          // claims "coby"
+    const other = await handleScores(post(hot({ name: 'COBY', secret: OTHER }), { 'x-forwarded-for': '7.7.7.7' }), d);
+    expect(other.status).toBe(403);
+    expect(await d.store.kvGet('sb:own:coby')).not.toContain(SECRET);                          // only a hash is stored
+    // the other device cannot ask for a code; the owner can
+    expect((await handleScores(post({ op: 'transfer-code', name: 'Coby', secret: OTHER }, { 'x-forwarded-for': '7.7.7.7' }), d)).status).toBe(403);
+    const free = await handleScores(post({ op: 'transfer-code', name: 'Nobody', secret: SECRET }, { 'x-forwarded-for': '7.7.7.8' }), d);
+    expect(free.status).toBe(404);
+    const c = await handleScores(post({ op: 'transfer-code', name: 'Coby', secret: SECRET }, { 'x-forwarded-for': '7.7.7.9' }), d);
+    const { code } = await c.json() as { code: string };
+    expect(code).toMatch(/^[A-HJKMNP-Z2-9]{6}$/);
+    // a wrong code, then the right one typed loosely
+    expect((await handleScores(post({ op: 'adopt', name: 'Coby', code: 'AAAAAA', secret: OTHER }, { 'x-forwarded-for': '6.6.6.1' }), d)).status).toBe(403);
+    const ok = await handleScores(post({ op: 'adopt', name: 'coby', code: ` ${code.slice(0, 3).toLowerCase()}-${code.slice(3)} `, secret: OTHER }, { 'x-forwarded-for': '6.6.6.2' }), d);
+    expect(ok.status).toBe(200);
+    expect((await handleScores(post(hot({ secret: OTHER, time: lap.time - 1 }), { 'x-forwarded-for': '6.6.6.3' }), d)).status).toBe(200);
+    expect((await handleScores(post(hot({ time: lap.time - 2 }), { 'x-forwarded-for': '6.6.6.4' }), d)).status).toBe(200);   // both devices post
+    // single use
+    expect((await handleScores(post({ op: 'adopt', name: 'Coby', code, secret: '11111111111111111111111111111111' }, { 'x-forwarded-for': '6.6.6.5' }), d)).status).toBe(403);
+  });
+
+  test('transfer codes: guessing is rate limited per IP and per name', async () => {
+    const d = deps({ verify: fakeVerify });
+    expect((await handleScores(post(hot()), d)).status).toBe(200);
+    await handleScores(post({ op: 'transfer-code', name: 'Coby', secret: SECRET }, { 'x-forwarded-for': '5.5.5.5' }), d);
+    const guess = (ip: string) => handleScores(post({ op: 'adopt', name: 'Coby', code: 'ZZZZZZ', secret: OTHER }, { 'x-forwarded-for': ip }), d);
+    for (let i = 0; i < 5; i++) expect((await guess('4.4.4.4')).status).toBe(403);
+    expect((await guess('4.4.4.4')).status).toBe(429);                                       // 5 per IP per 10 min
+    for (let i = 0; i < 5; i++) expect((await guess(`3.3.3.${i}`)).status).toBe(403);
+    expect((await guess('3.3.3.9')).status).toBe(429);                                       // 10 per name per 10 min
+  });
+
+  test('old boards expire: hot-lap boards keyed by a physics version that is not current get a TTL', async () => {
+    const store = new MemoryStore();
+    const d = deps({ store, verify: fakeVerify });
+    await store.submit(`hotlap:laguna_seca:probe_gt:oldphysics`, 'x', 120, true, '{}');
+    await store.submit(`race:laguna_seca:probe_gt:${PV}:7-5L`, 'y', 700, true, '{}');
+    expect((await handleScores(post(hot()), d)).status).toBe(200);
+    const cur = boardKey('hotlap', 'laguna_seca', 'probe_gt', PV);
+    expect(store.expiryOf('hotlap:laguna_seca:probe_gt:oldphysics')).not.toBeNull();
+    expect(store.expiryOf(cur)).toBeNull();
+    expect(store.expiryOf(`race:laguna_seca:probe_gt:${PV}:7-5L`)).toBeNull();
+    expect(await sweepStaleBoards(d)).toEqual(['hotlap:laguna_seca:probe_gt:oldphysics']);
   });
 
   test('rate limit: 10 posts per IP per window, then 429 with Retry-After', async () => {

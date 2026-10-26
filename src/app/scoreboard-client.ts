@@ -12,6 +12,11 @@ import type { Lap } from './timing';
 
 export const LS_NAME = 'probe-sim.scoreboard.name';
 export const LS_DEVICE = 'probe-sim.scoreboard.device';
+/** The device secret (owner.ts): 128 random bits, made once, sent with every post; the server keeps only its hash. */
+export const LS_SECRET = 'probe-sim.scoreboard.secret';
+/** Race boards stay hidden for the public until the server can replay a race (owner, 26 Oct 2026); the server
+ *  refuses race posts with 410 meanwhile. The race submission code below is kept for that day. */
+export const RACE_BOARDS_PUBLIC = false;
 export const lsPbKey = (board: string): string => `probe-sim.scoreboard.pb.${board}`;
 
 /** localStorage-like; every access is wrapped (private windows throw). */
@@ -22,10 +27,16 @@ function defaultStorage(): KV | null {
   try { return typeof localStorage === 'undefined' ? null : localStorage; } catch { return null; }
 }
 
-/** API endpoint: same-origin /api/scores, or `?api=<base>` (e.g. http://localhost:3000) for local testing. */
-export function apiBase(search: string = typeof location === 'undefined' ? '' : location.search): string {
+const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]', '::1']);
+
+/** API endpoint: same-origin /api/scores, or `?api=<base>` (e.g. http://localhost:3000) for local testing, honoured only
+ *  in a dev build or on localhost (a shared link must never send a player's posts and secret elsewhere). */
+export function apiBase(
+  search: string = typeof location === 'undefined' ? '' : location.search,
+  env: { dev: boolean; host: string } = { dev: !!import.meta.env?.DEV, host: typeof location === 'undefined' ? '' : location.hostname },
+): string {
   const p = new URLSearchParams(search).get('api');
-  if (p && /^https?:\/\/[^\s]+$/i.test(p)) {
+  if (p && (env.dev || LOCAL_HOSTS.has(env.host)) && /^https?:\/\/[^\s]+$/i.test(p)) {
     const b = p.replace(/\/+$/, '');
     return /\/api\/scores$/.test(b) ? b : `${b}/api/scores`;
   }
@@ -77,6 +88,16 @@ export class ScoreboardClient {
     return this.get(LS_DEVICE) === id ? id : undefined;
   }
 
+  /** The device secret: 32 hex characters (128 random bits), made once; undefined when storage is unavailable. */
+  get secret(): string | undefined {
+    const cur = this.get(LS_SECRET);
+    if (cur && /^[0-9a-f]{32}$/.test(cur)) return cur;
+    let id: string;
+    try { id = [...crypto.getRandomValues(new Uint8Array(16))].map((b) => b.toString(16).padStart(2, '0')).join(''); } catch { return undefined; }
+    this.set(LS_SECRET, id);
+    return this.get(LS_SECRET) === id ? id : undefined;
+  }
+
   /** This device's personal best on a board (lap time s or metres), or null. */
   pb(board: string): number | null {
     const v = Number(this.get(lsPbKey(board)));
@@ -120,15 +141,28 @@ export class ScoreboardClient {
     return this.call<Board>(`${this.base}?${q}`, { method: 'GET' }, 8000);
   }
 
-  /** POST a submission; on ok the PB for its board is updated. */
+  /** POST a submission (with this device's secret); on ok the PB for its board is updated. */
   async submit(sub: Submission): Promise<ApiResult<SubmitResult>> {
+    const secret = sub.secret ?? this.secret;
     const r = await this.call<SubmitResult>(this.base, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(sub),
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...sub, ...(secret ? { secret } : {}) }),
     }, 30000);
     if (r.ok) {
       const score = sub.mode === 'hotlap' ? (r.value.replayed ?? sub.time) : sub.metres;
       this.savePb(r.value.board, sub.mode, score);
     }
+    return r;
+  }
+
+  /** A transfer code for the stored name (this device must own it): typed once on another device to post as it there. */
+  transferCode(name: string | null = this.name): Promise<ApiResult<{ name: string; code: string; expires_s: number }>> {
+    return this.call(this.base, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ op: 'transfer-code', name, secret: this.secret }) }, 8000);
+  }
+
+  /** Adopt a name with the code from the device that owns it; on ok the name is stored on this device. */
+  async adopt(name: string, code: string): Promise<ApiResult<{ name: string }>> {
+    const r = await this.call<{ name: string }>(this.base, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ op: 'adopt', name, code, secret: this.secret }) }, 8000);
+    if (r.ok) this.setName(r.value.name);
     return r;
   }
 }
@@ -140,6 +174,8 @@ export const isBetter = (mode: Mode, a: number, b: number): boolean => (lowerIsB
 export function describeFailure(r: Exclude<ApiResult<unknown>, { ok: true }>): string {
   if (r.offline) return 'Scoreboard offline';
   if (r.status === 429) return 'Scoreboard: too many submissions, try again in a few minutes';
+  if (r.status === 403 && r.error === 'name taken') return `Scoreboard: ${r.reasons[0] ?? 'that name belongs to another device'}`;
+  if (r.status === 410) return 'Scoreboard: race boards are closed for now; hot laps can be posted';
   if (r.reasons.some((x) => /physics version mismatch/.test(x))) return 'Scoreboard: the game was updated — reload the page to submit';
   return `Scoreboard rejected it: ${r.reasons.length ? r.reasons.join('; ') : r.error}`;
 }
@@ -170,11 +206,12 @@ export function checkHotlap(lap: Lap, o: { pb: number | null; offered: number | 
   return { best, submittable: reason === undefined, reason };
 }
 
-export function buildHotlapSubmission(a: { lap: Lap; trace: InputTrace; name: string; input: InputType; device?: string }): HotlapSubmission {
+export function buildHotlapSubmission(a: { lap: Lap; trace: InputTrace; name: string; input: InputType; device?: string; secret?: string }): HotlapSubmission {
   const t = a.trace;
   return {
     mode: 'hotlap', track: t.track, car: t.car, physics: t.physics, name: a.name, input: a.input,
     ...(a.device ? { device: a.device } : {}),
+    ...(a.secret ? { secret: a.secret } : {}),
     time: a.lap.time, lap: a.lap.n, valid: a.lap.valid, trace: t,
   };
 }
@@ -210,6 +247,8 @@ export interface BoardContext {
   raceAiVersion?: string;
   /** The UI's new-best prompt (scoreboard-ui.ts); without it candidates are submitted directly if a name is stored. */
   offer?(c: Candidate): Promise<SubmitOutcome>;
+  /** Race boards shown and posted to (default RACE_BOARDS_PUBLIC; tests open them to keep the race path covered). */
+  raceBoardsOpen?: boolean;
 }
 
 let ctx: BoardContext | null = null;
@@ -224,7 +263,7 @@ export function hotlapBoard(c: BoardContext | null = ctx): string | null {
   return c ? boardKey('hotlap', c.track, c.car, c.physics) : null;
 }
 export function raceBoard(c: BoardContext | null = ctx): string | null {
-  return c?.raceAiVersion ? boardKey('race', c.track, c.car, c.physics, c.raceAiVersion) : null;
+  return c?.raceAiVersion && (c.raceBoardsOpen ?? RACE_BOARDS_PUBLIC) ? boardKey('race', c.track, c.car, c.physics, c.raceAiVersion) : null;
 }
 
 /** What the race mode reports at the end of a race (docs §2 race submission). */
@@ -252,7 +291,7 @@ export interface RaceResult {
 export async function submitRace(result: RaceResult): Promise<SubmitOutcome> {
   const c = ctx;
   const ai = result.aiVersion ?? c?.raceAiVersion;
-  if (!c || !ai || !c.assetsOk) return { status: 'unavailable' };
+  if (!c || !ai || !c.assetsOk || !(c.raceBoardsOpen ?? RACE_BOARDS_PUBLIC)) return { status: 'unavailable' };
   if (!c.raceAiVersion) setBoardContext({ raceAiVersion: ai });
   const board = boardKey('race', c.track, c.car, c.physics, ai);
   const pb = c.client.pb(board);

@@ -35,7 +35,7 @@ export function parseBoardKey(key: unknown): { mode: Mode; track: string; car: s
   const p = key.split(':');
   const [mode, track, car, physics, ai] = p;
   if (!(MODES as readonly string[]).includes(mode)) return null;
-  if (!(track in TRACKS) || !(car in CARS) || !/^[0-9a-z]{1,32}$/.test(physics ?? '')) return null;
+  if (!Object.hasOwn(TRACKS, track) || !Object.hasOwn(CARS, car) || !/^[0-9a-z]{1,32}$/.test(physics ?? '')) return null;
   if (mode === 'hotlap' && p.length === 4) return { mode, track, car, physics };
   if (mode === 'race' && p.length === 5 && AI_RE.test(ai)) return { mode, track, car, physics, ai_version: ai };
   return null;
@@ -69,10 +69,10 @@ export function validateSubmission(body: unknown, serverPhysics?: (track: string
   const mode = b.mode as Mode;
   if (!(MODES as readonly string[]).includes(mode as string)) r.push('mode must be hotlap or race');
   const track = b.track, car = b.car;
-  if (typeof track !== 'string' || !ID_RE.test(track) || !(track in TRACKS)) r.push('unknown track');
-  if (typeof car !== 'string' || !ID_RE.test(car) || !(car in CARS)) r.push('unknown car');
+  if (typeof track !== 'string' || !ID_RE.test(track) || !Object.hasOwn(TRACKS, track)) r.push('unknown track');
+  if (typeof car !== 'string' || !ID_RE.test(car) || !Object.hasOwn(CARS, car)) r.push('unknown car');
   if (typeof b.physics !== 'string' || !/^[0-9a-z]{1,32}$/.test(b.physics)) r.push('physics version missing');
-  else if (serverPhysics && typeof track === 'string' && typeof car === 'string' && track in TRACKS && car in CARS) {
+  else if (serverPhysics && typeof track === 'string' && typeof car === 'string' && Object.hasOwn(TRACKS, track) && Object.hasOwn(CARS, car)) {
     const sp = serverPhysics(track, car);
     if (sp !== undefined && sp !== b.physics) r.push('physics version mismatch: reload the game');
   }
@@ -94,7 +94,7 @@ export function validateSubmission(body: unknown, serverPhysics?: (track: string
     }
   } else if (mode === 'race') {
     if (typeof b.ai_version !== 'string' || !AI_RE.test(b.ai_version)) r.push('ai_version missing');
-    const L = typeof track === 'string' && track in TRACKS ? TRACKS[track].length_m : 0;
+    const L = typeof track === 'string' && Object.hasOwn(TRACKS, track) ? TRACKS[track].length_m : 0;
     const m = b.metres, laps = b.laps;
     const maxM = LIMITS.raceLaps * L + LIMITS.raceMarginM;
     if (typeof m !== 'number' || !Number.isFinite(m) || !(m > 0 && m <= maxM)) r.push(`metres must be > 0 and <= ${maxM}`);
@@ -111,6 +111,7 @@ export function validateSubmission(body: unknown, serverPhysics?: (track: string
   }
   if (r.length) return { ok: false, reasons: r };
   const value = { ...(b as object), name } as Submission;
+  delete (value as { secret?: unknown }).secret;   // checked by the handler (owner.ts), never stored
   if (value.mode === 'race') delete (value as RaceSubmission).replay; // reserved; not stored yet
   return { ok: true, reasons: [], value };
 }

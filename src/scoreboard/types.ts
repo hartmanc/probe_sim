@@ -41,6 +41,8 @@ interface SubmissionBase {
   input: InputType;
   /** Optional random per-browser id (localStorage); stored for moderation, not shown. */
   device?: string;
+  /** The device secret (32 hex, owner.ts): required by the server, checked against the name's owner, never stored. */
+  secret?: string;
 }
 
 export interface HotlapSubmission extends SubmissionBase {

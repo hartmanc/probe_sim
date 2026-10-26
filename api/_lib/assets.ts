@@ -45,7 +45,7 @@ function readTrack(track: string): TrackJson {
 
 /** Decoded sim assets for a whitelisted track + car, cached for the life of the (warm) function instance. */
 export async function loadSimAssets(track: string, car: string): Promise<SimAssets> {
-  if (!(track in TRACKS) || !(car in CARS)) throw new Error('not whitelisted');
+  if (!Object.hasOwn(TRACKS, track) || !Object.hasOwn(CARS, car)) throw new Error('not whitelisted');
   const key = `${track}/${car}`;
   let a = cache.get(key);
   if (a) return a;
@@ -68,6 +68,6 @@ export async function loadSimAssets(track: string, car: string): Promise<SimAsse
 
 /** The server's physicsVersion() for a track + car (reads only car.json and track.json). */
 export async function serverPhysics(track: string, car: string): Promise<string> {
-  if (!(track in TRACKS) || !(car in CARS)) throw new Error('not whitelisted');
+  if (!Object.hasOwn(TRACKS, track) || !Object.hasOwn(CARS, car)) throw new Error('not whitelisted');
   return physicsVersion(readCar(car), readTrack(track).length_m, TRACKS[track].rev);
 }

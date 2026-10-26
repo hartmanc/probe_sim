@@ -20,6 +20,15 @@ export interface ScoreStore {
   meta(board: string, member: string): Promise<string | null>;
   /** Fixed-window counter: increments `key`, starting a `windowS` expiry on the first hit. Returns count and seconds left. */
   hit(key: string, windowS: number): Promise<{ count: number; ttl: number }>;
+  /** Plain string keys (name ownership, transfer codes): get, set (nx = only if absent, ex = expiry s; false when nx
+   *  refused), delete. Keys are used as given (callers prefix them, `sb:own:`, `sb:xfer:`). */
+  kvGet(key: string): Promise<string | null>;
+  kvSet(key: string, value: string, opts?: { nx?: boolean; ex?: number }): Promise<boolean>;
+  kvDel(key: string): Promise<void>;
+  /** Every board that has entries (board keys, without the `sb:z:` prefix). */
+  boards(): Promise<string[]>;
+  /** Give a board (its sorted set and hash) an expiry of `seconds` unless it already has one. */
+  expireBoard(board: string, seconds: number): Promise<void>;
 }
 
 const zkey = (b: string) => `sb:z:${b}`;
@@ -31,9 +40,40 @@ export class MemoryStore implements ScoreStore {
   private z = new Map<string, Map<string, number>>();
   private h = new Map<string, Map<string, string>>();
   private c = new Map<string, { n: number; until: number }>();
+  private kv = new Map<string, { v: string; until: number }>();
+  /** board -> expiry time (ms); a board past it is gone, as in Redis */
+  private exp = new Map<string, number>();
   constructor(private readonly now: () => number = () => Date.now()) {}
 
+  private alive(board: string): void {
+    const t = this.exp.get(board);
+    if (t !== undefined && t <= this.now()) { this.z.delete(zkey(board)); this.h.delete(hkey(board)); this.exp.delete(board); }
+  }
+  async kvGet(key: string) {
+    const e = this.kv.get(key);
+    if (!e) return null;
+    if (e.until <= this.now()) { this.kv.delete(key); return null; }
+    return e.v;
+  }
+  async kvSet(key: string, value: string, opts: { nx?: boolean; ex?: number } = {}) {
+    if (opts.nx && (await this.kvGet(key)) !== null) return false;
+    this.kv.set(key, { v: value, until: opts.ex ? this.now() + opts.ex * 1000 : Infinity });
+    return true;
+  }
+  async kvDel(key: string) { this.kv.delete(key); }
+  async boards() {
+    const out: string[] = [];
+    for (const k of [...this.z.keys()]) { const b = k.slice(5); this.alive(b); if (this.z.has(k)) out.push(b); }
+    return out;
+  }
+  async expireBoard(board: string, seconds: number) {
+    if (this.z.has(zkey(board)) && !this.exp.has(board)) this.exp.set(board, this.now() + seconds * 1000);
+  }
+  /** test helper: the board's expiry time (ms) or null */
+  expiryOf(board: string): number | null { return this.exp.get(board) ?? null; }
+
   private sorted(board: string, asc: boolean): Member[] {
+    this.alive(board);
     const m = this.z.get(zkey(board));
     if (!m) return [];
     // Redis order: by score, ties by member (lexicographic); REV reverses both
@@ -62,8 +102,8 @@ export class MemoryStore implements ScoreStore {
     const i = this.sorted(board, asc).findIndex((e) => e.member === member);
     return i < 0 ? null : i;
   }
-  async score(board: string, member: string) { return this.z.get(zkey(board))?.get(member) ?? null; }
-  async meta(board: string, member: string) { return this.h.get(hkey(board))?.get(member) ?? null; }
+  async score(board: string, member: string) { this.alive(board); return this.z.get(zkey(board))?.get(member) ?? null; }
+  async meta(board: string, member: string) { this.alive(board); return this.h.get(hkey(board))?.get(member) ?? null; }
   async hit(key: string, windowS: number) {
     const t = this.now();
     let e = this.c.get(key);
@@ -134,6 +174,34 @@ export class UpstashStore implements ScoreStore {
     let t = Number(ttl);
     if (t < 0) { await this.pipe([['EXPIRE', k, windowS]]); t = windowS; }
     return { count: Number(n), ttl: t };
+  }
+  async kvGet(key: string) {
+    const [r] = await this.pipe([['GET', key]]);
+    return (r as string | null) ?? null;
+  }
+  async kvSet(key: string, value: string, opts: { nx?: boolean; ex?: number } = {}) {
+    const cmd: Cmd = ['SET', key, value];
+    if (opts.nx) cmd.push('NX');
+    if (opts.ex) cmd.push('EX', Math.max(1, Math.round(opts.ex)));
+    const [r] = await this.pipe([cmd]);
+    return r === 'OK';
+  }
+  async kvDel(key: string) { await this.pipe([['DEL', key]]); }
+  async boards() {
+    const out: string[] = [];
+    let cursor = '0';
+    for (let i = 0; i < 100; i++) {
+      const [r] = await this.pipe([['SCAN', cursor, 'MATCH', 'sb:z:*', 'COUNT', 500]]);
+      const [next, keys] = (r as [string, string[]]) ?? ['0', []];
+      for (const k of keys ?? []) out.push(k.slice(5));
+      cursor = String(next);
+      if (cursor === '0') break;
+    }
+    return [...new Set(out)];
+  }
+  async expireBoard(board: string, seconds: number) {
+    const [ttl] = await this.pipe([['TTL', zkey(board)]]);
+    if (Number(ttl) === -1) await this.pipe([['EXPIRE', zkey(board), seconds], ['EXPIRE', hkey(board), seconds]]);
   }
 }
 

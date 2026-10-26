@@ -7,7 +7,7 @@ import { HotlapLoop, type LiveSample } from '../modes/hotlap';
 import type { Lap } from '../timing';
 import {
   ScoreboardClient, apiBase, buildHotlapSubmission, checkHotlap, describeFailure, fmtMetres, isBetter, lsPbKey,
-  setBoardContext, submitRace, LS_NAME, type KV,
+  setBoardContext, submitRace, raceBoard, LS_NAME, LS_SECRET, RACE_BOARDS_PUBLIC, type KV,
 } from '../scoreboard-client';
 import { moveGridCursor } from '../scoreboard-ui';
 
@@ -80,6 +80,8 @@ describe('live hot-lap loop → trace → replay', () => {
     const client = new ScoreboardClient({ base: '/api/scores', fetch: fetchFn, storage: kv });
     expect(client.setName('  Coby   H ')).toBe('Coby H');
     const sub = buildHotlapSubmission({ lap: res.lap, trace: res.trace, name: client.name!, input: 'pad', device: client.device });
+    expect(client.secret).toMatch(/^[0-9a-f]{32}$/);
+    expect(client.secret).toBe(client.secret);                // made once, then kept
     const board = boardKey('hotlap', 'laguna_seca', 'probe_gt', physics);
     const r = await client.submit(sub);
     expect(r.ok).toBe(true);
@@ -96,10 +98,52 @@ describe('live hot-lap loop → trace → replay', () => {
 
 describe('scoreboard client', () => {
   it('api base: same origin by default, ?api= override', () => {
-    expect(apiBase('')).toBe('/api/scores');
-    expect(apiBase('?api=http://localhost:3000')).toBe('http://localhost:3000/api/scores');
-    expect(apiBase('?api=http://localhost:3000/api/scores/')).toBe('http://localhost:3000/api/scores');
-    expect(apiBase('?api=javascript:alert(1)')).toBe('/api/scores');
+    const dev = { dev: true, host: 'lemons-sim.app' };
+    expect(apiBase('', dev)).toBe('/api/scores');
+    expect(apiBase('?api=http://localhost:3000', dev)).toBe('http://localhost:3000/api/scores');
+    expect(apiBase('?api=http://localhost:3000/api/scores/', dev)).toBe('http://localhost:3000/api/scores');
+    expect(apiBase('?api=javascript:alert(1)', dev)).toBe('/api/scores');
+  });
+
+  it('?api= is honoured only in a dev build or on localhost', () => {
+    const q = '?api=https://evil.example';
+    expect(apiBase(q, { dev: false, host: 'lemons-sim.app' })).toBe('/api/scores');
+    expect(apiBase(q, { dev: false, host: 'probe-abc.vercel.app' })).toBe('/api/scores');
+    expect(apiBase('?api=http://localhost:3000', { dev: false, host: 'localhost' })).toBe('http://localhost:3000/api/scores');
+    expect(apiBase('?api=http://localhost:3000', { dev: false, host: '127.0.0.1' })).toBe('http://localhost:3000/api/scores');
+    expect(apiBase(q, { dev: true, host: 'lemons-sim.app' })).toBe('https://evil.example/api/scores');
+  });
+
+  it('every post carries the device secret; transfer code and adopt', async () => {
+    const kv = memKV();
+    const bodies: Record<string, unknown>[] = [];
+    const client = new ScoreboardClient({
+      base: '/x', storage: kv,
+      fetch: async (_u, init) => {
+        const b = JSON.parse(String(init?.body)) as Record<string, unknown>;
+        bodies.push(b);
+        const out = b.op === 'transfer-code' ? { ok: true, name: 'Coby', code: 'K7M4QX', expires_s: 3600 } : b.op === 'adopt' ? { ok: true, name: 'Coby' } : { ok: true, board: 'b', rank: 1, best: 120, improved: true };
+        return new Response(JSON.stringify(out), { headers: { 'content-type': 'application/json' } });
+      },
+    });
+    const secret = client.secret!;
+    expect(kv.m.get(LS_SECRET)).toBe(secret);
+    await client.submit({ mode: 'hotlap', track: 'laguna_seca', car: 'probe_gt', physics: 'p', name: 'Coby', input: 'pad', time: 120, lap: 1, valid: true, trace: {} as never });
+    expect(bodies[0].secret).toBe(secret);
+    const c = await client.transferCode('Coby');
+    expect(c.ok && c.value.code).toBe('K7M4QX');
+    expect(bodies[1]).toEqual({ op: 'transfer-code', name: 'Coby', secret });
+    expect((await client.adopt('Coby', 'k7m4qx')).ok).toBe(true);
+    expect(bodies[2]).toEqual({ op: 'adopt', name: 'Coby', code: 'k7m4qx', secret });
+    expect(client.name).toBe('Coby');
+  });
+
+  it('race boards are hidden by default: no race board, submitRace unavailable', async () => {
+    const client = new ScoreboardClient({ base: '/x', storage: memKV(), fetch: async () => { throw new Error('must not post'); } });
+    setBoardContext({ client, track: 'laguna_seca', car: 'probe_gt', physics: 'p', input: () => 'pad', assetsOk: true, offer: undefined, raceAiVersion: '8-5L', raceBoardsOpen: undefined });
+    expect(RACE_BOARDS_PUBLIC).toBe(false);
+    expect(raceBoard()).toBeNull();
+    expect((await submitRace({ metres: 14000, laps: 3 })).status).toBe('unavailable');
   });
 
   it('offline: network errors and non-JSON answers', async () => {
@@ -165,7 +209,7 @@ describe('scoreboard client', () => {
         return new Response(JSON.stringify({ ok: true, board: 'race:laguna_seca:probe_gt:p:ai-1', rank: 4, best: 30000, improved: true }), { headers: { 'content-type': 'application/json' } });
       },
     });
-    setBoardContext({ client, track: 'laguna_seca', car: 'probe_gt', physics: 'p', input: () => 'pad', assetsOk: true, offer: undefined });
+    setBoardContext({ client, track: 'laguna_seca', car: 'probe_gt', physics: 'p', input: () => 'pad', assetsOk: true, offer: undefined, raceBoardsOpen: true });
     expect((await submitRace({ metres: 14000, laps: 3, aiVersion: 'ai-1', seed: 7, position: 3 })).status).toBe('submitted');
     expect(body).toMatchObject({ mode: 'race', ai_version: 'ai-1', metres: 14000, laps: 3, name: 'Racer', input: 'pad', position: 3, replay: { seed: 7 } });
     expect((await submitRace({ metres: 12000, laps: 3, aiVersion: 'ai-1' })).status).toBe('not-best');

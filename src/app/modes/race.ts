@@ -19,7 +19,7 @@ import { loadFieldData, loadFieldModel, type FieldData, type FieldModelInfo } fr
 import { FieldCars, identityColor, type FieldCarInfo } from '../field-cars';
 import { RaceHudDom, raceHudView, raceTable, resultRows, rowStatus, type TableRow } from '../race-hud';
 export { rowStatus, type RowStatus } from '../race-hud';
-import { fmtLapTime, fmtMetres, setBoardContext, submitRace, type RaceResult, type SubmitOutcome } from '../scoreboard-client';
+import { RACE_BOARDS_PUBLIC, fmtLapTime, fmtMetres, setBoardContext, submitRace, type RaceResult, type SubmitOutcome } from '../scoreboard-client';
 import { LIMITS, TRACKS, resolveTrackId } from '../../scoreboard/config';
 import { TRACK, TRACK_ID } from '../track-choice';
 import { FieldAudio, familyFor, FIELD_VOICES_DESKTOP, FIELD_VOICES_PHONE, type FamilyIndex, type Layout } from '../audio-field';
@@ -532,11 +532,12 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
       subtitle: `${laps} lap${laps === 1 ? '' : 's'} · seed ${seed}${me ? ` · P${me.position} of ${rows.length} · ${me.time != null ? `${me.laps} laps in ${fmtLapTime(me.time)}` : fmtMetres(me.metres, Math.max(0, me.laps), L())}` : ''}`,
       body: () => raceTable(rows, L(), d?.getResults() ? `CHEQUERED FLAG · ${TRACK.short.toUpperCase()} · 2026 LEMONS FIELD` : 'OUT OF THE RACE · ORDER WHEN YOU LEFT'),
       entries: (): MenuEntry[] => [
-        {
+        // race boards are hidden until the server can replay a race (owner, 26 Oct 2026): no submit row meanwhile
+        ...(!RACE_BOARDS_PUBLIC ? [] : [{
           kind: 'action', id: 'raceSubmit', label: 'Submit to scoreboard',
           note: submitState === 'done' ? 'submitted' : submitState === 'busy' ? 'submitting…' : shortRace ? `${RACE_LAPS}-lap races only` : undefined,
           disabled: submitState !== 'idle' || shortRace || !me || !(me.metres > 0), run: submit,
-        },
+        } as MenuEntry]),
         { kind: 'action', id: 'raceAgain', label: 'Race again (new seed)', run: () => { mode.restart(); sv?.menu.close(); } },
         { kind: 'action', id: 'raceMain', label: 'Main menu', run: () => { resultsWanted = false; sv?.mainMenu(); } },
       ],

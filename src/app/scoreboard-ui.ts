@@ -76,6 +76,7 @@ export function editorBack(now: number, openedAt: number, lastDeleteAt: number, 
 
 export class NameEditor {
   readonly root = el('div', 'sb-editor hidden');
+  private title = el('h2', 'sb-title', 'ENTER YOUR NAME');
   private field = el('input', 'sb-name-field');
   private msg = el('div', 'sb-name-msg');
   private grid = el('div', 'sb-grid');
@@ -89,7 +90,7 @@ export class NameEditor {
 
   constructor(parent: HTMLElement, private touch: () => boolean, private hints: () => { select: string; back: string; menu: string; pad: boolean }) {
     const card = el('div', 'sb-card');
-    card.append(el('h2', 'sb-title', 'ENTER YOUR NAME'), this.field, this.msg, this.grid, this.hint);
+    card.append(this.title, this.field, this.msg, this.grid, this.hint);
     this.root.append(card);
     this.root.addEventListener('click', (e) => { if (e.target === this.root) this.finish(null); });
     this.field.type = 'text';
@@ -131,8 +132,9 @@ export class NameEditor {
     this.paint();
   }
 
-  open(initial: string | null, done: (name: string | null) => void): void {
+  open(initial: string | null, done: (name: string | null) => void, title = 'ENTER YOUR NAME'): void {
     this.done = done;
+    this.title.textContent = title;
     this.openedAt = performance.now();
     this.lastDeleteAt = 0;
     this.field.value = initial ?? '';
@@ -256,10 +258,46 @@ export class ScoreboardUI {
           } as MenuEntry] : []),
           { kind: 'action', id: 'sbRefresh', label: 'Refresh', run: () => this.load() },
           { kind: 'action', id: 'sbName', label: 'Name', note: o.client.name ?? 'not set', run: () => this.editName(() => this.load()) },
+          {
+            kind: 'action', id: 'sbCode', label: 'Transfer code', disabled: !o.client.name || this.codeBusy,
+            note: this.code ? `${this.code} · type it on your other device within an hour` : 'to post as this name on another device',
+            run: () => this.fetchCode(),
+          },
+          { kind: 'action', id: 'sbAdopt', label: 'Use a transfer code', note: 'from the device that owns the name', run: () => this.adoptFlow() },
           { kind: 'back', id: 'back', label: 'Back' },
         ];
       },
     };
+  }
+
+  private code: string | null = null;
+  private codeBusy = false;
+
+  /** Ask the server for a transfer code for this device's name (it must own it: a lap posted from here). */
+  private fetchCode(): void {
+    if (this.codeBusy) return;
+    this.codeBusy = true;
+    this.o.menu.refresh();
+    void this.o.client.transferCode().then((r) => {
+      this.codeBusy = false;
+      if (r.ok) { this.code = r.value.code; this.o.toast(`Transfer code ${r.value.code} (1 hour, one use)`, 8000); }
+      else this.o.toast(r.offline ? 'Scoreboard offline' : `Transfer code: ${r.reasons[0] ?? r.error}`, 6000);
+      this.o.menu.refresh();
+    });
+  }
+
+  /** On a new device: the name, then the code from the device that owns it. */
+  private adoptFlow(): void {
+    this.editor.open(this.o.client.name, (name) => {
+      if (!name) { this.o.menu.refresh(); return; }
+      setTimeout(() => this.editor.open('', (code) => {
+        if (!code) { this.o.menu.refresh(); return; }
+        void this.o.client.adopt(name, code).then((r) => {
+          this.o.toast(r.ok ? `This device now posts as ${r.value.name}` : r.offline ? 'Scoreboard offline' : `Transfer: ${r.reasons[0] ?? r.error}`, 6000);
+          this.load();
+        });
+      }, 'TRANSFER CODE'), 0);
+    }, 'NAME TO TRANSFER');
   }
 
   /** The Scoreboard submenu page (main + pause menus); fetches the board on open. */
@@ -321,7 +359,7 @@ export class ScoreboardUI {
     const key = this.key();
     const mode = this.mode;
     const ctx = boardContext();
-    box.append(el('div', 'sb-caption', `${mode === 'race' ? 'RACE · METRES IN 10 LAPS' : 'HOT LAP'} · ${TRACK.short.toUpperCase()} · PROBE GT`));
+    box.append(el('div', 'sb-caption', `${mode === 'race' ? `RACE · ${LIMITS.raceLaps} LAPS` : 'HOT LAP'} · ${TRACK.short.toUpperCase()} · PROBE GT`));
     const st = key ? this.states.get(key) : undefined;
     if (!key || !ctx) { box.append(el('div', 'sb-msg', 'LOADING THE TRACK…')); return box; }
     const me = this.o.client.name;
@@ -358,7 +396,7 @@ export class ScoreboardUI {
       pb !== null ? `DEVICE BEST ${fmtScore(mode, pb, undefined, 0)}` : '',
     ].filter(Boolean).join(' · ');
     box.append(el('div', 'sb-small', foot));
-    if (mode === 'hotlap') box.append(el('div', 'sb-small', `Valid laps 1–${LIMITS.maxLap} after a reset can be posted; they are replayed on the server.`));
+    if (mode === 'hotlap') box.append(el('div', 'sb-small', `Valid laps 1–${LIMITS.maxLap} after a reset can be posted; they are replayed on the server. Your first post claims your name for this device; a transfer code moves it to another.`));
     return box;
   }
 
