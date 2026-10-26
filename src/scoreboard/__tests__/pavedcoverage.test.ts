@@ -40,3 +40,24 @@ describe('paved coverage of the Buttonwillow paddock bands', () => {
     expect(r.holes.every(near)).toBe(true);
   }, 120000);
 });
+
+// round 14 review (GPT 6 Astra, the blocker): the pit lane's drawn strip beside the front straight is in the gate too
+// (lane_box), so a mouth part whose centre takes lane samples behind the pit wall fails the build
+const LANE = { parts: ['^front straight mouth '], step: 0.5, wall_clear: 0.4, edge_tol: 0.1, lane_box: [-205, -245, 245, -175] as [number, number, number, number] };
+describe('paved coverage of the front-straight mouths and the pit lane beside them', () => {
+  it('every drawn sample of the mouths and of the lane beside the straight is paved', () => {
+    const r = pavedCoverage(track, hf, scenery(), LANE);
+    expect(r.parts).toBeGreaterThanOrEqual(10);
+    expect(r.samples).toBeGreaterThan(20000);
+    expect(r.holes).toEqual([]);
+  }, 120000);
+  it('without the lane band behind mouth A the lane behind the wall is a seam the gate finds', () => {
+    const sc = scenery();
+    sc.paved_zones.parts = sc.paved_zones.parts.filter((p: any) => !/^front straight mouth A lane/.test(p.turn));
+    const r = pavedCoverage(track, hf, sc, LANE);
+    const lane = r.holes.filter((h) => h.part === 'pit lane');
+    expect(lane.length).toBeGreaterThan(0);
+    // all of them behind mouth A (x -40 .. 10, north of the pit wall)
+    expect(lane.every((h) => h.x > -45 && h.x < 15 && h.y > -219)).toBe(true);
+  }, 120000);
+});

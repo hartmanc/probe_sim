@@ -2500,6 +2500,107 @@ def pit_exit_line(trk, pit, pe, spacing=16.0):
     return _two_part_line(trk, s0, s1, spacing)
 
 
+LANE_PARTS = []   # the pit lane's parts (set before paved_zones: runoff_zones[].band follows them)
+
+
+def outline_polygon(trk, O, sd, name, backtrack_m=1.5):
+    """The closed outline of an outline zone (round 14 review: verified, never repaired): `O` his line from the course
+    edge out and back to it, closed 1.5 m inside the course edge. Fails the stage, naming the zone, if the closed ring is
+    not simple (it crosses itself), if it runs the wrong way round (it must be traversed in increasing track s: clockwise
+    on the left, counter-clockwise on the right), or if the line backtracks along the track by more than `backtrack_m`
+    m (a stroke traversed in the wrong direction)."""
+    from shapely.geometry import LinearRing, Polygon
+    e0, _, _ = trk.project(O[:1]); e1, _, _ = trk.project(O[-1:])
+    ring = np.r_[O, [O[-1] - trk.N[e1[0]] * sd * 1.5], [O[0] - trk.N[e0[0]] * sd * 1.5]]
+    lr = LinearRing(ring)
+    if not lr.is_simple:
+        raise SystemExit(f"runoff zone {name}: its outline crosses itself (not a simple ring)")
+    poly = Polygon(ring)
+    if not poly.is_valid:
+        raise SystemExit(f"runoff zone {name}: its outline is not a valid polygon")
+    area = 0.5 * float(np.sum(ring[:, 0] * np.roll(ring[:, 1], -1) - np.roll(ring[:, 0], -1) * ring[:, 1]))
+    if np.sign(area) != -sd:
+        raise SystemExit(f"runoff zone {name}: its outline runs the wrong way round (it must go out from the course edge "
+                         f"at its lower station, along, and back at its higher one)")
+    i, _, _ = trk.project(O)
+    sv = np.unwrap(i * (2 * np.pi / trk.n)) * trk.n / (2 * np.pi) * trk.sp
+    back = np.maximum.accumulate(sv) - sv
+    if back.max() > backtrack_m:
+        k = int(np.argmax(back))
+        raise SystemExit(f"runoff zone {name}: its outline backtracks {back.max():.1f} m along the track at point {k} "
+                         f"({O[k][0]:.1f}, {O[k][1]:.1f}); a stroke is traversed the wrong way")
+    return poly
+
+
+def check_strip(name, C, L, R):
+    """A generated zone strip (round 14 review): every section left of its centre on L and right of it on R, and each
+    cell between neighbouring sections a forward, uncrossed quad (no reversed or crossed sections). Fails the stage."""
+    T = np.gradient(C, axis=0); T /= np.linalg.norm(T, axis=1, keepdims=True)
+    cr = lambda a, b: a[:, 0] * b[:, 1] - a[:, 1] * b[:, 0]   # noqa: E731
+    if np.any(cr(T, L - C) <= 0) or np.any(cr(T, R - C) >= 0):
+        raise SystemExit(f"runoff zone {name}: a section's edges lie on the wrong side of its centre")
+    for E in (L, R, C):
+        d = np.diff(E, axis=0)
+        if np.any((d * T[:-1]).sum(1) <= 0):
+            raise SystemExit(f"runoff zone {name}: the strip's cells reverse (an edge runs backwards between sections)")
+    for i in range(len(C) - 1):
+        # the two sections L_i R_i and L_i+1 R_i+1 must not cross
+        p, r = L[i], R[i] - L[i]; q, u = L[i + 1], R[i + 1] - L[i + 1]
+        den = r[0] * u[1] - r[1] * u[0]
+        if abs(den) > 1e-12:
+            t = ((q - p)[0] * u[1] - (q - p)[1] * u[0]) / den; w = ((q - p)[0] * r[1] - (q - p)[1] * r[0]) / den
+            if 0 < t < 1 and 0 < w < 1:
+                raise SystemExit(f"runoff zone {name}: sections {i} and {i + 1} cross")
+
+
+def lane_surface_z(lane_parts_, P, fractions):
+    """The pit lane's own driven height at points P (the physics' rule, src/physics/track.ts, restricted to the lane's
+    parts: the nearest centre station, the nearer adjacent segment, the lateral fraction against that side's half,
+    the profile interpolated across and along). Returns (z, inside): inside = the point lies within the lane's paving
+    (|f| <= 1, not beyond an end)."""
+    from scipy.spatial import cKDTree
+    Cs, Ls, Rs, Zs, ends = [], [], [], [], []
+    for lp in lane_parts_:
+        n0 = len(Cs)
+        Cs += [c[:2] for c in lp["center"]]; Ls += [q[:2] for q in lp["left"]]; Rs += [q[:2] for q in lp["right"]]
+        Zs += lp["profile_z"]; ends.append((n0, len(Cs) - 1))
+    C = np.array(Cs, float); Lq = np.array(Ls, float); Rq = np.array(Rs, float); Z = np.array(Zs, float)
+    hL = np.maximum(0.5, np.linalg.norm(Lq - C, axis=1)); hR = np.maximum(0.5, np.linalg.norm(Rq - C, axis=1))
+    first = np.zeros(len(C), bool); last = np.zeros(len(C), bool)
+    for a, b in ends:
+        first[a] = True; last[b] = True
+    fr = np.array(fractions, float)
+    kd = cKDTree(C)
+    P = np.atleast_2d(P)[:, :2]
+    _, ks = kd.query(P)
+    zo = np.full(len(P), np.nan); ins = np.zeros(len(P), bool)
+    for j, (x, y) in enumerate(P):
+        k = int(ks[j]); best = None
+        for seg in (k - 1, k):
+            if seg < 0 or seg + 1 >= len(C) or last[seg]:   # no segment from a part's last point to the next part
+                continue
+            if seg + 1 < len(C) and first[seg + 1]:
+                continue
+            d = C[seg + 1] - C[seg]; l = np.hypot(*d); tx, ty = d / l
+            t = ((x - C[seg][0]) * tx + (y - C[seg][1]) * ty) / l
+            tc = min(max(t, 0.0), 1.0)
+            px, py = x - C[seg][0] - tc * l * tx, y - C[seg][1] - tc * l * ty
+            dd = px * px + py * py
+            if best is None or dd < best[0]:
+                over = (-t * l if (first[seg] and t < 0) else (t - 1) * l if (last[seg + 1] and t > 1) else 0.0)
+                best = (dd, seg, tc, -(x - C[seg][0]) * ty + (y - C[seg][1]) * tx, over)
+        if best is None:
+            continue
+        _, seg, t, lat, over = best
+        half = (hL[seg] + t * (hL[seg + 1] - hL[seg])) if lat > 0 else (hR[seg] + t * (hR[seg + 1] - hR[seg]))
+        f = -lat / half
+        ins[j] = abs(f) <= 1 and over <= 0
+        fc = min(max(f, -1.0), 1.0)
+        z0 = np.interp(fc, fr, Z[seg]); z1 = np.interp(fc, fr, Z[seg + 1])
+        zo[j] = z0 + t * (z1 - z0)
+    return zo, ins
+
+
 def paved_zones(trk, osm):
     """Paved runoff areas as open strips in the pit_lane part layout (same physics/rendering path). Inner edge = the
     track edge on the outside of the corner; width = distance to the nearest outside wall minus 1.5 m (6-25 m, 12 m
@@ -2590,8 +2691,7 @@ def paved_zones(trk, osm):
         ll_ = np.array(z["outer_latlon"], float)
         ox_, oy_ = bl.enu(ll_[:, 0], ll_[:, 1])
         O = np.c_[ox_, oy_]
-        e0, _, _ = trk.project(O[:1]); e1, _, _ = trk.project(O[-1:])
-        poly = Polygon(np.r_[O, [O[-1] - trk.N[e1[0]] * sd * 1.5], [O[0] - trk.N[e0[0]] * sd * 1.5]]).buffer(0)
+        poly = outline_polygon(trk, O, sd, z["name"], backtrack_m=float(o.get("backtrack_m", 1.5)))
         c_off, f_m = float(o["centre_off"]), float(o.get("from_m", 0.0))
         if not 0 <= f_m < c_off:
             raise SystemExit(f"runoff zone {z['name']}: outline needs 0 <= from_m < centre_off")
@@ -2619,19 +2719,139 @@ def paved_zones(trk, osm):
             for cap_, s0_, s1_ in caps:
                 if s0_ <= st[j] * trk.sp <= s1_:
                     far = min(far, float(cap_))
+            ck = o.get("cap_knots")
+            if ck and ck[0][0] <= st[j] * trk.sp <= ck[-1][0]:
+                # a cap piecewise linear in s (round 14 review: the bisector with a deep part whose centre bends)
+                far = min(far, float(np.interp(st[j] * trk.sp, [q[0] for q in ck], [q[1] for q in ck])))
             out_h[j] = far - c_off
         ok = np.isfinite(out_h) & (out_h >= 0.3)
         runs = [(a, b) for a, b in _runs(ok)]
         if not runs:
             raise SystemExit(f"runoff zone {z['name']}: the outline leaves no station")
-        a, b = max(runs, key=lambda r: r[1] - r[0])
+        if len(runs) > 1:
+            # a gap inside the stretch would silently drop paving the outline means (review, round 14)
+            raise SystemExit(f"runoff zone {z['name']}: the outline gives {len(runs)} separate runs of stations "
+                             f"({', '.join(f's {st[a] * trk.sp:.0f}-{st[b] * trk.sp:.0f}' for a, b in runs)}); one contiguous run expected")
+        a, b = runs[0]
         k = np.arange(a, b + 1)
         Lo = C0[k] + Nz[k] * out_h[k][:, None]          # outer edge
         In = C0[k] - Nz[k] * (c_off - f_m)               # inner edge
         L, R = (Lo, In) if sd > 0 else (In, Lo)
+        check_strip(z["name"], C0[k], L, R)
         add_part(z["name"], st[k], sd, L, R, np.full(len(k), f_m), centre=C0[k])
         log(f"runoff zone {z['name']}: outline, s {st[k][0]}-{st[k][-1]} {z['side']}, centre {c_off} m out, "
             f"from {f_m} m, outer {f_m:.1f}-{float(np.max(out_h[k]) + c_off):.1f} m beyond the edge ({z['src'][:60]})")
+
+    def make_band_part(z, sd):
+        """The pit lane's own paving where a mouth meets it (config runoff_zones[].band, Buttonwillow round 14 review: the
+        lane's drawn asphalt behind a wall-topped mouth went to the mouth's centre in the physics, src/physics/track.ts:
+        a point belongs to the part whose centre is nearest). The band spans the lane's full width (its inner edge on
+        `inner` knots beyond the course edge or the lane's right edge, its outer edge 0.05 m inside the lane's left edge),
+        drawn as the lane (surface asphalt) on the lane's own heights (lane_surface, join_lane_outline). Over `core`
+        (s0, s1) its centre is on the `centre` knots: the mirror of the mouth's centre about their boundary (the wall or
+        the lane's edge), so the boundary falls there; over `taper` m beyond each end of the core it bends back onto the
+        lane's centre line (cosine), and over its last `ends` m it IS the lane: the lane part's own points, copied, so a
+        point nearest to them is the lane's (equal centres: the lane comes first in the physics' list) and the lane
+        beyond the band's ends stays the lane's. Distances beyond the edge are measured on the station's normal against
+        the lane's centre and edge lines."""
+        from shapely.geometry import LineString
+        bd = z["band"]
+        lanes = [lp for lp in (LANE_PARTS or [])]
+        if not lanes:
+            raise SystemExit(f"runoff zone {z['name']}: band needs the pit lane")
+        s0c, s1c = bd["core"]
+        tap = bd.get("taper", 10.0); tw, te = (float(tap), float(tap)) if np.isscalar(tap) else map(float, tap)
+        ends = float(bd.get("ends", 3.0))
+        a_, b_ = int(round((s0c - tw) / trk.sp)), int(round((s1c + te) / trk.sp))
+        st = np.arange(a_, b_ + 1) % trk.n
+        sm = np.arange(a_, b_ + 1) * trk.sp
+        lp = max(lanes, key=lambda q: q["n"])
+        LCl, LLl, LRl = (LineString(np.array(lp[k], float)[:, :2]) for k in ("center", "left", "right"))
+        edge = trk.C[st, :2] + trk.N[st] * (sd * trk.hw(st, sd))[:, None]
+        def off(line):
+            o_ = np.full(len(st), np.nan)
+            for j in range(len(st)):
+                g = LineString([edge[j], edge[j] + trk.N[st[j]] * sd * 60.0]).intersection(line)
+                pts = [g] if g.geom_type == "Point" else [q for q in getattr(g, "geoms", []) if q.geom_type == "Point"]
+                if pts:
+                    o_[j] = min(float(np.hypot(*(np.array(q.coords[0]) - edge[j]))) for q in pts)
+            return o_
+        oc, ol, orr = off(LCl), off(LLl), off(LRl)
+        if not (np.isfinite(oc).all() and np.isfinite(ol).all() and np.isfinite(orr).all()):
+            raise SystemExit(f"runoff zone {z['name']}: band: a station's normal misses the lane")
+        kc = np.interp(sm, [q[0] for q in bd["centre"]], [q[1] for q in bd["centre"]])
+        ki = np.interp(sm, [q[0] for q in bd["inner"]], [q[1] for q in bd["inner"]])
+        w = np.clip(np.maximum((s0c - sm) / tw, (sm - s1c) / te), 0, 1)     # 0 in the core, 1 at the band's ends
+        w = 0.5 - 0.5 * np.cos(np.pi * w)
+        fc = kc * (1 - w) + oc * w
+        fi = np.minimum(ki, orr) * (1 - w) + orr * w
+        if bd.get("pair_inner"):
+            # the band meets a shallow mouth part (centre `centre` m beyond the edge) on their bisector: its inner edge
+            # `overlap` m short of it up to the core's end (the shallow part's cap_knots mirror it); before `lane_until`
+            # (track metres) no lower than the lane's own right edge (the ground between is his line's dirt)
+            pi_ = bd["pair_inner"]; bis = (float(pi_["centre"]) + fc) / 2 - float(pi_["overlap"])
+            fi = np.where(sm <= s1c, np.maximum(bis, ki), fi)
+            if pi_.get("lane_until") is not None:
+                fi = np.where(sm < float(pi_["lane_until"]), np.maximum(fi, orr - 0.15), fi)
+        if bd.get("inner_lane"):
+            fi = np.maximum(fi, orr - 0.15)   # never below the lane's own right edge (the dirt median east of the wall's lane stretch)
+        fo = ol - float(bd.get("outer_in", 0.05))
+        if np.any(fi >= fc - 0.3) or np.any(fo <= fc + 0.3):
+            raise SystemExit(f"runoff zone {z['name']}: band needs inner < centre - 0.3 < centre + 0.3 < outer at every station")
+        C0 = edge + trk.N[st] * (sd * fc)[:, None]
+        Tz = np.gradient(C0, axis=0); Tz /= np.linalg.norm(Tz, axis=1, keepdims=True)
+        Nz = np.c_[-Tz[:, 1], Tz[:, 0]] * sd
+        # each section (perpendicular to the band's own centre, as the physics and the app read it) ends where it meets
+        # the inner / outer line (edge + fi / fo on the track's normals): where the centre bends the section is turned,
+        # and a length taken on the track's normal would put its ends off those lines
+        def ext(Q):   # the line carried on 30 m straight past both ends (a turned end section may meet it beyond them)
+            a0 = Q[0] - (Q[1] - Q[0]) / np.linalg.norm(Q[1] - Q[0]) * 30.0; a1 = Q[-1] + (Q[-1] - Q[-2]) / np.linalg.norm(Q[-1] - Q[-2]) * 30.0
+            return LineString(np.r_[[a0], Q, [a1]])
+        Pin = ext(edge + trk.N[st] * (sd * fi)[:, None]); Pout = ext(edge + trk.N[st] * (sd * fo)[:, None])
+        def meet(line, j, sgn, guess):
+            g = LineString([C0[j], C0[j] + Nz[j] * sgn * (guess + 30.0)]).intersection(line)
+            pts = [g] if g.geom_type == "Point" else [q for q in getattr(g, "geoms", []) if q.geom_type == "Point"]
+            if not pts:
+                raise SystemExit(f"runoff zone {z['name']}: band section {j} misses its edge line")
+            return min((np.array(q.coords[0]) for q in pts), key=lambda q: np.hypot(*(q - C0[j])))
+        Lo = np.array([meet(Pout, j, 1, fo[j] - fc[j]) for j in range(len(st))])
+        In = np.array([meet(Pin, j, -1, fc[j] - fi[j]) for j in range(len(st))])
+        L, R = (Lo, In) if sd > 0 else (In, Lo)
+        check_strip(z["name"], C0, L, R)
+        add_part(z["name"], st, sd, L, R, fi.copy(), centre=C0)
+        part = parts[-1]
+        # the lane's own points over the last `ends` m at each end (they replace the band's first / last stations there)
+        Cl = np.array(lp["center"], float)[:, :2]
+        def lane_run(q, direction):
+            k0 = int(np.argmin(np.hypot(*(Cl - q).T)))
+            ks, acc = [k0], 0.0
+            while acc < ends and 0 < ks[-1] < len(Cl) - 1:
+                nk = ks[-1] + direction; acc += float(np.hypot(*(Cl[nk] - Cl[ks[-1]]))); ks.append(nk)
+            return ks
+        def band_dir(i0, i1):
+            k0 = int(np.argmin(np.hypot(*(Cl - C0[i0]).T))); k1 = int(np.argmin(np.hypot(*(Cl - C0[i1]).T)))
+            return 1 if k1 > k0 else -1
+        dirn = band_dir(0, len(C0) - 1)
+        head = lane_run(C0[0], -dirn)[::-1]          # lane points before the band's first station, ending on it
+        tail = lane_run(C0[-1], dirn)                 # from the band's last station on
+        # drop the band's own stations within `ends` m of the copied runs' inner points, then join
+        def dist_along(Q):
+            return np.r_[0, np.cumsum(np.hypot(*np.diff(Q, axis=0).T))]
+        da = dist_along(C0)
+        keep = (da > 0.5) & (da < da[-1] - 0.5)
+        idx = np.nonzero(keep)[0]
+        sel = lambda key, ks: [list(map(float, lp[key][k])) for k in ks]   # noqa: E731
+        for key in ("center", "left", "right", "profile_z"):
+            part[key] = sel(key, head) + [part[key][i] for i in idx] + sel(key, tail)
+        for key in ("gap_left", "gap_right"):
+            g0 = part[key]
+            part[key] = [g0[0]] * len(head) + [g0[i] for i in idx] + [g0[-1]] * len(tail)
+        part["n"] = len(part["center"])
+        part["lane_copy"] = [len(head), len(tail)]
+        check_strip(z["name"], np.array(part["center"])[:, :2], np.array(part["left"])[:, :2], np.array(part["right"])[:, :2])
+        log(f"runoff zone {z['name']}: band, s {st[0]}-{st[-1]} {z['side']} (core {s0c}-{s1c}), centre {fc.min():.1f}-{fc.max():.1f} m, "
+            f"inner {fi.min():.1f}-{fi.max():.1f} m, outer {fo.min():.1f}-{fo.max():.1f} m beyond the edge, the lane's own points "
+            f"{len(head)} / {len(tail)} at its ends")
 
     for turn, before, after in PAVED_RUNOFF:
         c = corners.get(turn)
@@ -2656,8 +2876,8 @@ def paved_zones(trk, osm):
     # metres, outer_latlon, src}; the width per station is the outer line's distance beyond the edge, square ends
     for z in SC_CFG.get("runoff_zones", []):
         sd = 1 if z["side"] == "left" else -1
-        if z.get("outline"):
-            make_outline_part(z, sd)
+        if z.get("outline") or z.get("band"):
+            (make_outline_part if z.get("outline") else make_band_part)(z, sd)
             if z.get("surface"):
                 parts[-1]["surface"] = z["surface"]
             continue
@@ -2896,47 +3116,107 @@ def join_lane(lane_parts_, parts, fractions, near=0.6, ramp=4):
             f"{float(np.abs(dz[hit]).max()):.3f} m closed (mean {float(dz[hit].mean()):+.3f} m), faded to 0 at {reach} m across")
 
 
-def join_lane_outline(lane_parts_, parts, fractions, near=2.5):
-    """Buttonwillow round 14 (config runoff_zones[].outline.join_lane {reach}): a mouth's deep part whose outer edge runs
-    inside the pit lane's paving (it reaches 1 m past the lane's edge so the nearest-centre boundary lies on the lane):
-    its profile takes the lane's edge height (the nearest lane edge point within `near` m of its outer edge), the
-    correction fading linearly across the part to 0 at `reach` m from the outer edge; the lane is unchanged. The part's
-    halves are unequal (its own centre), so each fraction's distance from the outer edge is measured on its section."""
-    from scipy.spatial import cKDTree
-    cfgs = {z["name"]: z for z in SC_CFG.get("runoff_zones", []) if (z.get("outline") or {}).get("join_lane")}
+def join_lane_outline(lane_parts_, parts, fractions, min_share=0.75, trk=None):
+    """Buttonwillow round 14 (config runoff_zones[].outline.join_lane {reach} and runoff_zones[].band.lane_surface
+    {reach}): a zone part whose paving runs into the pit lane's takes the LANE'S OWN DRIVEN HEIGHT wherever a profile
+    point lies inside the lane's paving (lane_surface_z: the physics' rule on the lane's parts), so the two surfaces are
+    one wherever their ownership boundary falls inside the lane; outside it the correction of the section's outermost
+    inside point fades linearly to 0 at `reach` m across, and along the part to 0 at `reach` m from the last section
+    that meets the lane (no switch-off step). Fails the stage when fewer than `min_share` of the part's sections meet
+    the lane (a join that matched one station would pass otherwise); the lane is unchanged. Review fix: the first
+    version matched the outer edge to the nearest sampled lane-edge height and stopped abruptly past 2.5 m."""
+    cfgs = {}
+    for z in SC_CFG.get("runoff_zones", []):
+        j = (z.get("outline") or {}).get("join_lane") or (z.get("band") or {}).get("lane_surface")
+        if j:
+            cfgs[z["name"]] = j
+    fr = np.array(fractions, float)
+    # planar mouths (outline.planar / band.planar): outside the lane the part's heights lie on ONE straight line per
+    # station from the course edge's height to the lane's own height at its right edge (on the station's normal), so a
+    # shallow and a deep part of a mouth, sampling the same line, meet with no step whatever their fractions (review:
+    # the shoulder rule's curve sampled at two parts' fractions left 1-2 cm at their boundary)
+    planar = {z["name"] for z in SC_CFG.get("runoff_zones", []) if (z.get("outline") or z.get("band") or {}).get("planar")}
+    if planar and trk is not None:
+        from shapely.geometry import LineString
+        lp = max(lane_parts_, key=lambda q: q["n"])
+        LR = LineString(np.array(lp["right"], float)[:, :2])
+        for part in parts:
+            if part.get("turn") not in planar:
+                continue
+            C = np.array(part["center"], float)[:, :2]; L = np.array(part["left"], float)[:, :2]; R = np.array(part["right"], float)[:, :2]
+            n, m = len(C), len(fr)
+            P = np.array([[C[i] + ((L[i] - C[i]) * -f if f < 0 else (R[i] - C[i]) * f) for f in fr] for i in range(n)]).reshape(-1, 2)
+            ii, lat, dout = trk.project(P)
+            sd = np.sign(lat)
+            ze = np.where(sd > 0, trk.L[ii, 2], trk.R[ii, 2])
+            prof = np.array(part["profile_z"], float).reshape(-1)
+            cache = {}
+            for k in range(len(P)):
+                i = int(ii[k])
+                if i not in cache:
+                    e = trk.C[i, :2] + trk.N[i] * (sd[k] * trk.hw(i, sd[k]))
+                    g = LineString([e, e + trk.N[i] * sd[k] * 60.0]).intersection(LR)
+                    pts = [g] if g.geom_type == "Point" else [q for q in getattr(g, "geoms", []) if q.geom_type == "Point"]
+                    if not pts:
+                        raise SystemExit(f"runoff zone {part['turn']}: planar: station {i}'s normal misses the lane's right edge")
+                    q = min((np.array(q.coords[0]) for q in pts), key=lambda q: np.hypot(*(q - e)))
+                    zq, _ = lane_surface_z(lane_parts_, q[None, :], fractions)
+                    cache[i] = (float(np.hypot(*(q - e))), float(zq[0]))
+                dl, zl = cache[i]
+                d = max(float(dout[k]), 0.0)
+                prof[k] = ze[k] + (zl - ze[k]) * min(d / dl, 1.0)
+            prof = prof.reshape(n, m)
+            part["profile_z"] = [[rnd(v, 3) for v in row] for row in prof]
+            log(f"planar: {part['turn']}: heights on the line from the course edge to the lane's right edge ({n} sections)")
     if not cfgs:
         return
-    E, Z = [], []
-    for lp in lane_parts_:
-        for side, col in (("left", 0), ("right", -1)):
-            for e_, pz in zip(lp[side], lp["profile_z"]):
-                E.append(e_[:2]); Z.append(pz[col])
-    kd = cKDTree(np.array(E, float)); Z = np.array(Z, float)
-    fr = np.array(fractions, float)
     for part in parts:
-        z = cfgs.get(part.get("turn"))
-        if not z:
+        j = cfgs.get(part.get("turn"))
+        if not j:
             continue
-        reach = float(z["outline"]["join_lane"]["reach"])
-        side, col = ("left", 0) if z["side"] == "left" else ("right", -1)
+        reach = float(j["reach"])
         prof = np.array(part["profile_z"], float)
-        Cc = np.array(part["center"], float)[:, :2]
-        hL = np.linalg.norm(np.array(part["left"], float)[:, :2] - Cc, axis=1)
-        hR = np.linalg.norm(np.array(part["right"], float)[:, :2] - Cc, axis=1)
-        # distance of each fraction's point from the left edge along the section (f -1 left, 0 centre, +1 right)
-        from_left = np.where(fr[None, :] < 0, hL[:, None] * (1 + fr[None, :]), hL[:, None] + hR[:, None] * fr[None, :])
-        dist = from_left if side == "left" else (hL + hR)[:, None] - from_left
-        d_, k_ = kd.query(np.array(part[side], float)[:, :2])
-        hit = d_ < near
-        if not hit.any():
-            raise SystemExit(f"runoff zone {part['turn']}: join_lane: no station's outer edge lies within {near} m of the lane's edge")
-        dz = np.where(hit, Z[k_] - prof[:, col], 0.0)
-        prof = prof + dz[:, None] * np.clip(1 - dist / reach, 0, 1)
-        part["profile_z"] = [[rnd(v, 3) for v in row] for row in prof]
-        part["center"] = [[c[0], c[1], rnd(float(r[len(fr) // 2]), 3)] for c, r in zip(part["center"], prof)]
-        part[side] = [[e[0], e[1], rnd(float(r[col]), 3)] for e, r in zip(part[side], prof)]
-        log(f"join lane: {part['turn']}: {int(hit.sum())} of {len(hit)} stations, lip {float(np.abs(dz[hit]).max()):.3f} m closed "
-            f"(mean {float(dz[hit].mean()):+.3f} m), faded to 0 at {reach} m across")
+        C = np.array(part["center"], float)[:, :2]; L = np.array(part["left"], float)[:, :2]; R = np.array(part["right"], float)[:, :2]
+        n, m = prof.shape
+        # each fraction's point where the physics puts it, and its distance across the section from the left edge
+        P = np.array([[C[i] + ((L[i] - C[i]) * -f if f < 0 else (R[i] - C[i]) * f) for f in fr] for i in range(n)])
+        acc = np.array([[np.hypot(*(P[i, k] - L[i])) for k in range(m)] for i in range(n)])
+        zl, ins = lane_surface_z(lane_parts_, P.reshape(-1, 2), fractions)
+        zl = zl.reshape(n, m); ins = ins.reshape(n, m)
+        hit = ins.any(1)
+        if hit.mean() < min_share:
+            raise SystemExit(f"runoff zone {part['turn']}: join to the lane: only {int(hit.sum())} of {n} sections reach into the lane's paving")
+        new = prof.copy()
+        dz_sec = np.full(n, np.nan); edge_acc = np.full(n, np.nan); side_in = np.zeros(n, int)
+        for i in np.nonzero(hit)[0]:
+            k_in = np.nonzero(ins[i])[0]
+            new[i, k_in] = zl[i, k_in]
+            # the inside run touches one side of the section: fade from its innermost point toward the other side
+            if k_in.min() == 0:
+                kb = k_in.max(); side_in[i] = 1           # lane on the left (f = -1) side
+            else:
+                kb = k_in.min(); side_in[i] = -1
+            dz_sec[i] = zl[i, kb] - prof[i, kb]; edge_acc[i] = acc[i, kb]
+            for k in range(m):
+                if not ins[i, k]:
+                    d = abs(acc[i, k] - acc[i, kb])
+                    new[i, k] = prof[i, k] + dz_sec[i] * max(0.0, 1 - d / reach)
+        # sections that do not reach the lane: the nearest reaching section's correction, faded along the part
+        idx = np.nonzero(hit)[0]
+        Cs = np.r_[0, np.cumsum(np.linalg.norm(np.diff(C, axis=0), axis=1))]
+        for i in np.nonzero(~hit)[0]:
+            jn = idx[np.argmin(np.abs(Cs[idx] - Cs[i]))]
+            w = max(0.0, 1 - abs(Cs[i] - Cs[jn]) / reach)
+            for k in range(m):
+                d = abs(acc[i, k] - edge_acc[jn])
+                new[i, k] = prof[i, k] + dz_sec[jn] * w * max(0.0, 1 - d / reach)
+        part["profile_z"] = [[rnd(v, 3) for v in row] for row in new]
+        mid = m // 2
+        part["center"] = [[c[0], c[1], rnd(float(r[mid]), 3)] for c, r in zip(part["center"], new)]
+        part["left"] = [[e[0], e[1], rnd(float(r[0]), 3)] for e, r in zip(part["left"], new)]
+        part["right"] = [[e[0], e[1], rnd(float(r[-1]), 3)] for e, r in zip(part["right"], new)]
+        log(f"join lane: {part['turn']}: {int(hit.sum())} of {n} sections reach the lane, {int(ins.sum())} profile points on "
+            f"the lane's own height (correction {float(np.nanmin(dz_sec)):+.3f} .. {float(np.nanmax(dz_sec)):+.3f} m), faded over {reach} m")
 
 
 def zones_meet_edge(trk, parts, reach=8.0, near=1.5, overlap=0.3):
@@ -3530,6 +3810,8 @@ def main(cfg=None, out_dir=None):
     if ortho_arr is not None and SC_CFG.get("ortho_paint_over"):
         ortho_arr = ortho_paint_over(trk, ortho_arr, SC_CFG["ortho_paint_over"])
         Image.fromarray(ortho_arr).save(os.path.join(OUT, "ortho.jpg"), quality=84, optimize=True)
+    global LANE_PARTS
+    LANE_PARTS = (pit or {}).get("parts") or []
     zones = paved_zones(trk, osm)
     cr_parts, cone_lines = closed_roads(trk, osm) if SC_CFG.get("closed_roads") else ([], [])
     if cr_parts and SC_CFG.get("closed_roads_clip_walls"):
@@ -3539,7 +3821,7 @@ def main(cfg=None, out_dir=None):
     if cr_parts and pit and any(r_.get("join_lane") for r_ in SC_CFG.get("closed_roads", [])):
         join_lane(pit["parts"], cr_parts, zones.get("fractions") or trk.t["profile"]["fractions"])
     if pit:
-        join_lane_outline(pit["parts"], zones["parts"], zones.get("fractions") or trk.t["profile"]["fractions"])
+        join_lane_outline(pit["parts"], zones["parts"], zones.get("fractions") or trk.t["profile"]["fractions"], trk=trk)
     if SC_CFG.get("zones_meet_edge"):
         zones_meet_edge(trk, zones["parts"])
     if SC_CFG.get("zone_end_feather"):

@@ -110,27 +110,117 @@ def test_a_zone_without_outline_is_built_as_before(monkeypatch):
     assert np.allclose(L[:, 1], 12.0, atol=0.05) and np.allclose(C[:, 1], 8.5, atol=0.05)   # the mid-line centre
 
 
-def test_join_lane_outline_takes_the_lanes_edge_height(monkeypatch):
-    z = dict(name="dp", side="left", s=(100, 120), outline=dict(centre_off=6.0, from_m=2.4, join_lane=dict(reach=4.0)),
-             outer_latlon=mouth(), src="t")
-    dp, = zones(monkeypatch, z)
-    # a lane whose right edge runs along y 15 at 0.05 m (the zone's outer edge, y 16, lies 1 m inside it)
-    xs = np.arange(90, 131, 1.0)
-    lane = {"left": [[x, 23.0, 0.05] for x in xs], "right": [[x, 15.0, 0.05] for x in xs],
-            "profile_z": [[0.05] * len(FR) for _ in xs]}
-    before = np.array(dp["profile_z"], float)
-    BS.join_lane_outline([lane], [dp], FR)
-    after = np.array(dp["profile_z"], float)
-    x = np.array(dp["center"], float)[:, 0]; mid = (x > 101) & (x < 119)
-    assert np.allclose(after[mid, 0], 0.05, atol=1e-3)               # the outer edge at the lane's height
-    assert np.allclose(after[mid, -1], before[mid, -1], atol=1e-6)   # 8.6 m from the outer edge: unchanged (reach 4 m)
-    assert np.allclose(np.array(dp["left"], float)[mid, 2], 0.05, atol=1e-3)
+def sloping_lane(y0=15.0, y1=23.0, x0=60, x1=160, z0=0.05, slope=0.02):
+    """a straight lane along +x from y0 (right edge) to y1 (left edge), its surface rising `slope` per metre across
+    (0.16 m over its 8 m) and along x by 0.001 per metre"""
+    xs = np.arange(x0, x1 + 1, 1.0)
+    z = lambda x, y: z0 + slope * (y - y0) + 0.001 * (x - x0)   # noqa: E731
+    fr = np.array(FR)
+    lane = {"n": len(xs), "center": [[x, (y0 + y1) / 2, z(x, (y0 + y1) / 2)] for x in xs],
+            "left": [[x, y1, z(x, y1)] for x in xs], "right": [[x, y0, z(x, y0)] for x in xs],
+            "profile_z": [[z(x, (y0 + y1) / 2 - f * (y1 - y0) / 2) for f in fr] for x in xs]}
+    return lane, z
 
 
-def test_join_lane_outline_needs_the_lane(monkeypatch):
-    z = dict(name="dp", side="left", s=(100, 120), outline=dict(centre_off=6.0, from_m=2.4, join_lane=dict(reach=4.0)),
+def test_lane_surface_z_reads_the_lane_as_the_physics_does():
+    lane, z = sloping_lane()
+    P = np.array([[100.3, 16.0], [120.7, 21.5], [100.0, 14.0], [100.0, 24.0]])
+    zz, ins = BS.lane_surface_z([lane], P, FR)
+    assert ins.tolist() == [True, True, False, False]
+    assert abs(zz[0] - z(100.3, 16.0)) < 1e-6 and abs(zz[1] - z(120.7, 21.5)) < 1e-6
+
+
+def test_join_lane_outline_meets_a_sloping_lane_with_no_step(monkeypatch):
+    """planar + join: the part's height at the ownership boundary (the lane's right edge) is the lane's own there, within 5 mm,
+    on a lane sloping 2 % across and 0.1 % along"""
+    lane, z = sloping_lane()
+    z = dict(name="dp", side="left", s=(100, 120), outline=dict(planar=True, centre_off=6.0, from_m=2.4, join_lane=dict(reach=1.0)),
+             outer_latlon=mouth(top=10.15), src="t")
+    dp, = zones(monkeypatch, z)
+    BS.join_lane_outline([lane], [dp], FR, trk=FakeTrack())
+    # sample both surfaces the physics' way along sections across the boundary (the lane's right edge, y 15)
+    C, L, R = (np.array(dp[k], float)[:, :2] for k in ("center", "left", "right"))
+    prof = np.array(dp["profile_z"], float); fr = np.array(FR)
+    worst = 0.0
+    for i in range(3, len(C) - 3):
+        hl = np.hypot(*(L[i] - C[i])); y_in = 15.0 + 0.0   # the boundary on the lane's edge
+        f = -(y_in - C[i][1]) / hl                      # left of the centre: f < 0
+        z_part = np.interp(f, fr, prof[i])
+        z_lane, _ = BS.lane_surface_z([lane], np.array([[C[i][0], y_in + 1e-6]]), FR)
+        worst = max(worst, abs(z_part - z_lane[0]))
+    assert worst < 0.005, worst
+
+
+def test_join_lane_outline_fails_when_few_sections_reach_the_lane(monkeypatch):
+    z = dict(name="dp", side="left", s=(100, 120), outline=dict(centre_off=6.0, from_m=2.4, join_lane=dict(reach=1.0)),
              outer_latlon=mouth(), src="t")
     dp, = zones(monkeypatch, z)
-    far = {"left": [[0, 90.0, 0.0], [1, 90.0, 0.0]], "right": [[0, 80.0, 0.0], [1, 80.0, 0.0]], "profile_z": [[0.0] * 7, [0.0] * 7]}
+    far, _ = sloping_lane(y0=80.0, y1=88.0)
     with pytest.raises(SystemExit):
         BS.join_lane_outline([far], [dp], FR)
+
+
+def test_a_self_intersecting_outline_fails(monkeypatch):
+    bad = ll([(98.0, 5.0), (100.0, 7.0), (100.0, 16.0), (120.0, 9.0), (110.0, 16.0), (120.0, 7.0), (122.0, 5.0)])
+    with pytest.raises(SystemExit, match="crosses itself"):
+        zones(monkeypatch, dict(name="m", side="left", s=(95, 125), outline=dict(centre_off=0.5), outer_latlon=bad, src="t"))
+
+
+def test_a_reversed_outline_fails(monkeypatch):
+    with pytest.raises(SystemExit, match="wrong way round"):
+        zones(monkeypatch, dict(name="m", side="left", s=(95, 125), outline=dict(centre_off=0.5), outer_latlon=mouth()[::-1], src="t"))
+
+
+def test_a_backtracking_outline_fails(monkeypatch):
+    # the round-14 bug: a turn-down traversed from its foot up (south first), so the line goes back along the track
+    back = ll([(98.0, 5.0), (100.0, 7.0), (100.0, 16.0), (112.0, 16.0), (112.0, 9.0), (109.0, 12.0), (115.0, 8.0), (120.0, 7.0), (122.0, 5.0)])
+    with pytest.raises(SystemExit):
+        zones(monkeypatch, dict(name="m", side="left", s=(95, 125), outline=dict(centre_off=0.5), outer_latlon=back, src="t"))
+
+
+def test_an_outline_with_a_gap_fails(monkeypatch):
+    # two mouths in one outline: the stations between them leave it, so one entry would make two runs
+    two = ll([(98.0, 5.0), (100.0, 9.0), (104.0, 9.0), (104.0, 5.0), (114.0, 5.0), (114.0, 9.0), (118.0, 9.0), (120.0, 5.0)])
+    with pytest.raises(SystemExit):
+        zones(monkeypatch, dict(name="m", side="left", s=(95, 125), outline=dict(centre_off=0.5), outer_latlon=two, src="t"))
+
+
+def test_check_strip_refuses_crossed_and_reversed_sections():
+    C = np.c_[np.arange(10.0), np.zeros(10)]
+    L = C + [0, 3.0]; R = C - [0, 2.0]
+    BS.check_strip("ok", C, L, R)
+    L2 = L.copy(); L2[5] = [3.5, 3.0]                    # the outer edge runs backwards between sections 4 .. 6
+    with pytest.raises(SystemExit):
+        BS.check_strip("rev", C, L2, R)
+    R3 = R.copy(); R3[4], R3[5] = R[5].copy(), R[4].copy()   # two sections cross
+    with pytest.raises(SystemExit):
+        BS.check_strip("cross", C, L, R3)
+    with pytest.raises(SystemExit):
+        BS.check_strip("side", C, R, L)                  # edges on the wrong sides
+
+
+def test_cap_knots_follow_a_line(monkeypatch):
+    p, = zones(monkeypatch, dict(name="m", side="left", s=(95, 125), outline=dict(centre_off=0.5, cap_knots=[(100, 3.0), (120, 7.0)]),
+                                 outer_latlon=mouth(), src="t"))
+    L = np.array(p["left"], float); x = L[:, 0]; m = (x > 101) & (x < 119)
+    assert np.allclose(L[m, 1], 5.0 + 3.0 + (x[m] - 100) * 0.2, atol=0.1)
+
+
+def test_band_spans_the_lane_and_ends_on_its_own_points(monkeypatch):
+    lane, _ = sloping_lane(y0=10.4, y1=26.0, x0=40, x1=180)
+    monkeypatch.setattr(BS, "LANE_PARTS", [lane])
+    z = dict(name="b", side="left", s=(80, 140), surface="asphalt", src="t",
+             band=dict(core=(100, 120), centre=[(100, 11.0), (120, 11.0)], inner=[(100, 5.3), (120, 5.3)], taper=20.0, ends=3.0,
+                       inner_lane=True, lane_surface=dict(reach=1.0)))
+    b, = zones(monkeypatch, z)
+    C, L, R = (np.array(b[k], float)[:, :2] for k in ("center", "left", "right"))
+    assert b["lane_copy"][0] >= 3 and b["lane_copy"][1] >= 3
+    lc = np.array(lane["center"], float)[:, :2]
+    for P in (C[0], C[-1]):                                       # its end points ARE lane centre points
+        assert np.min(np.hypot(*(lc - P).T)) < 1e-9
+    core = (C[:, 0] > 101) & (C[:, 0] < 119)
+    assert np.allclose(C[core, 1], 16.0, atol=0.05)               # 11 m beyond the edge (y 5)
+    assert np.all(L[:, 1] <= 26.0 + 1e-6) and np.all(R[:, 1] >= 10.4 - 0.2)   # never below the lane's right edge (inner_lane)
+    BS.check_strip("b", C, L, R)
+
+
