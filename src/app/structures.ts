@@ -90,6 +90,12 @@ export interface BlockJson {
    *  ground (m), its glazing divided by wall-coloured mullions every mullions_m (m), and a railing round its own top
    *  edge (the open deck on the lower storey's roof) */
   base?: number; mullions_m?: number; deck_rail?: boolean;
+  /** Mid-Ohio round 8 (the control tower): a hip roof over the block's top, its eaves `overhang` m out, rising `rise` m
+   *  to a ridge of `ridge` m along l (0: a pyramid); absent: the flat roof */
+  hip?: { rise: number; overhang: number; color: string; ridge?: number };
+  /** Mid-Ohio round 8: decks wrapping all four faces (floor slab `depth` m out at z above the block's base, a solid
+   *  railing `rail` m high in `color`); absent: none */
+  wrap_decks?: { z: number; depth: number; color: string; rail?: number; floor?: string }[];
   /** discrete windows instead of the continuous band (Buttonwillow's tower, judge r5: a solid lower storey with a few
    *  windows): `w` wide every `pitch` m along each face from z0 to z1 (m above the block's base), on the faces listed
    *  (+1 / -1 long sides, +2 / -2 the ends; absent: all four); and doors (`at` along the face from its centre) */
@@ -459,6 +465,22 @@ export function block(b: BlockJson, s: Soup): void {
     else if (d.face === -1) s.quad(f.p(a, -hw - e, 0), f.p(c, -hw - e, 0), f.p(c, -hw - e, d.h), f.p(a, -hw - e, d.h), cD);
     else if (d.face === 2) s.quad(f.p(hl + e, a, 0), f.p(hl + e, c, 0), f.p(hl + e, c, d.h), f.p(hl + e, a, d.h), cD);
     else s.quad(f.p(-hl - e, c, 0), f.p(-hl - e, a, 0), f.p(-hl - e, a, d.h), f.p(-hl - e, c, d.h), cD);
+  }
+  for (const dk of b.wrap_decks ?? []) {
+    const D = dk.depth, cF = rgb(dk.floor ?? '#8b8d90'), cRl = rgb(dk.color), rh = dk.rail ?? 1.0;
+    s.box(f, -hl - D, hl + D, -hw - D, hw + D, dk.z - 0.25, dk.z, cF, { bottom: true });
+    s.box(f, -hl - D, hl + D, -hw - D, -hw - D + 0.08, dk.z, dk.z + rh, cRl);
+    s.box(f, -hl - D, hl + D, hw + D - 0.08, hw + D, dk.z, dk.z + rh, cRl);
+    s.box(f, -hl - D, -hl - D + 0.08, -hw - D, hw + D, dk.z, dk.z + rh, cRl);
+    s.box(f, hl + D - 0.08, hl + D, -hw - D, hw + D, dk.z, dk.z + rh, cRl);
+  }
+  if (b.hip) {
+    const o = b.hip.overhang, z0 = b.h + (b.parapet ?? 0), z1 = z0 + b.hip.rise, cH = rgb(b.hip.color), cU = rgb(b.hip.color, 0.6);
+    const A = hl + o, B = hw + o, rl = Math.min(b.hip.ridge ?? 0, 2 * A) / 2;
+    const e0 = f.p(-A, -B, z0), e1 = f.p(A, -B, z0), e2 = f.p(A, B, z0), e3 = f.p(-A, B, z0), r0 = f.p(-rl, 0, z1), r1 = f.p(rl, 0, z1);
+    s.quad(e0, e1, r1, r0, rgb(b.hip.color, 0.92)); s.quad(e2, e3, r0, r1, rgb(b.hip.color, 0.86));
+    s.tri(e1, e2, r1, cH); s.tri(e3, e0, r0, rgb(b.hip.color, 0.8));
+    s.quad(e3, e2, e1, e0, cU);   // the soffit under the eaves
   }
   if (b.deck_rail) {
     const cR = rgb('#5d6166'), zr = b.h + 1.0;

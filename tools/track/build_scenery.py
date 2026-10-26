@@ -3602,6 +3602,18 @@ def main(cfg=None, out_dir=None):
             arr, share = season_tint(src_img, st_cfg, zone)
             Image.fromarray(arr).save(fp, quality=q, optimize=True)
             log(f"season tint on {f}: {share * 100:.1f} % of the pixels (mask mean), green {tuple(st_cfg.get('green', (0.38, 0.47, 0.24)))}")
+    gt_cfg = SC_CFG.get("grass_tone")
+    if gt_cfg:
+        # Mid-Ohio round 8 (owner's drive: "some grass is missing or is inexplicably dark or gray"): the NAIP's grass, dull
+        # and dark against the in-season tone, mapped to a measured target; on the published ground images only, after
+        # the season tint (absent: every other track unchanged)
+        for f, q in (("ortho.jpg", 84), ("far_ortho.jpg", 78)):
+            fp = os.path.join(OUT, f)
+            src_img = np.asarray(Image.open(fp).convert("RGB"))
+            o_ = trk.t["ortho"] if f == "ortho.jpg" else {"x0": -FAR_HALF, "x1": FAR_HALF}
+            arr, share, gain = grass_tone(src_img, dict(gt_cfg, mpp=(o_["x1"] - o_["x0"]) / src_img.shape[1]), G if f == "ortho.jpg" else None)
+            Image.fromarray(arr).save(fp, quality=q, optimize=True)
+            log(f"grass tone on {f}: {share * 100:.1f} % of the pixels, luminance gain {gain:.2f}, target {tuple(gt_cfg['target'])} ({gt_cfg['src'][:80]})")
     if os.path.getsize(os.path.join(OUT, "ortho.jpg")) > 1.5e6:
         log("WARNING: ortho.jpg over 1.5 MB")
 
@@ -4004,6 +4016,55 @@ def season_zone_mask(trk, opt, shape):
         dr.polygon(tox(poly), fill=255)
         log(f"season tint zone {z['side']} s {z['s'][0]}-{z['s'][1]} m, {a}-{b} m beyond the edge: {z['src'][:90]}")
     return np.asarray(img, np.float32) / 255.0
+
+
+def grass_tone(img, opt, G=None):
+    """Grass tone rule (config scenery.grass_tone {target: (r, g, b) 8-bit, the in-season grass measured on the clean
+    captures, chm_max (m, 1.0), strength (0..1, 1.0), src}, Mid-Ohio round 8). Grass pixels: green over red and blue (soft
+    over 1-5 grey levels), not sand (R - G under 6, soft), luminance 18..170, and, on the near ortho with the lidar grids G
+    (row 0 south, the ortho box), no canopy or roof over them (the 2019 class-1 surface under chm_max m above the DEM).
+    Each grass pixel takes the target hue at its own luminance times `gain` (the target's luminance over the grass
+    pixels' median), so the texture is kept and the median lands on the target; blended by the soft mask. Returns the
+    image, the mask's mean and the gain."""
+    im = img.astype(np.float32)
+    r, g, b = im[..., 0], im[..., 1], im[..., 2]
+    lum = 0.299 * r + 0.587 * g + 0.114 * b
+    m = np.clip((g - r - 1) / 4, 0, 1) * np.clip((g - b - 1) / 4, 0, 1) * np.clip((6 - (r - g)) / 4, 0, 1)
+    m *= np.clip((lum - 18) / 10, 0, 1) * np.clip((170 - lum) / 15, 0, 1)
+    if G is not None:
+        chm = np.nan_to_num(G["UNC"] - G["DEM"], nan=0.0)
+        H, W = lum.shape
+        rr = np.clip(((H - 1 - np.arange(H)) * chm.shape[0] / H).astype(int), 0, chm.shape[0] - 1)
+        cc = np.clip((np.arange(W) * chm.shape[1] / W).astype(int), 0, chm.shape[1] - 1)
+        canopy = (ndi.maximum_filter(chm, 3) > float(opt.get("chm_max", 1.0))).astype(np.float32)
+        canopy = ndi.gaussian_filter(canopy, 1.5)   # soft edges: the 1 m lidar cells must not print as squares
+        m *= 1.0 - np.clip(canopy[rr][:, cc] * 2.0, 0, 1)
+    if opt.get("mask_px"):
+        # the per-pixel class follows the source JPEG's 8-px blocks (a block a shade too neutral fails the green test and
+        # keeps its dark tone among lifted neighbours): the mask is taken over a neighbourhood
+        m = np.clip(ndi.gaussian_filter(m, float(opt["mask_px"])) * 1.6, 0, 1) * np.clip((lum - 12) / 10, 0, 1)
+    m *= float(opt.get("strength", 1.0))
+    tr, tg, tb = (float(v) for v in opt["target"])
+    tl = 0.299 * tr + 0.587 * tg + 0.114 * tb
+    sel = m > 0.5
+    gain = float(tl / max(np.median(lum[sel]), 1.0)) if sel.any() else 1.0
+    if opt.get("local_m"):
+        # the gain per pixel from the grass's local mean luminance (a Gaussian of `local_m` m), so tiles of different
+        # acquisitions land on the same target instead of one global lift (round 8: the NAIP's south row is brighter)
+        H_, W_ = lum.shape
+        sig = float(opt["local_m"]) / float(opt.get("mpp", 0.6))
+        wsum = ndi.gaussian_filter(m, sig)
+        lmean = ndi.gaussian_filter(lum * m, sig) / np.maximum(wsum, 1e-3)
+        lmean = np.where(wsum > 0.05, lmean, tl / gain)
+        # the ortho is a JPEG at ~0.6 m/px: its 8-px blocks print as ~5 m squares once the grass is lifted, so the relative
+        # luminance is taken from a lightly smoothed image and its contrast eased (`contrast`, 1.0 = unchanged)
+        lum_s = ndi.gaussian_filter(lum, float(opt.get("deblock_px", 0.0))) if opt.get("deblock_px") else lum
+        k = np.power(np.maximum(lum_s, 1.0) / np.maximum(lmean, 1.0), float(opt.get("contrast", 1.0)))
+    else:
+        k = lum * gain / tl
+    new = np.stack([tr * k, tg * k, tb * k], -1)
+    out = im * (1 - m[..., None]) + new * m[..., None]
+    return np.clip(out, 0, 255).astype(np.uint8), float(m.mean()), gain
 
 
 def season_tint(img, opt, zone=None):
