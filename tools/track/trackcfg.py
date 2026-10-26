@@ -75,6 +75,9 @@ Geometry (Stage 1)
           refine [(lo, hi, knot)]: a second layer of cubic B-splines at `knot` stations inside [lo, hi] (Sonoma round 14B part 1b:
           where his red turns tighter than 6-station knots can follow); used only in the local refits whose window it
           overlaps; absent = the periodic spline alone
+  spline.kerb_edge ('outer' default | 'inner')  choose the measured band's outer or asphalt-facing limit for every kerb
+                                             including declared red/white, yellow, kerb_band and automatically detected
+                                             kerbs; painted-line offsets are unchanged. Mid-Ohio owner instruction 25 Oct 2026.
   features [(side, lo, hi, 'keep' | 'asphalt_end' | 'warm_end' | 'kerb' | 'kerb_band' | 'kerb_yellow', why[, {local | replaced_by_local}])]   keep: the prior is held (legacy reproduction
                                              only; the fitted method ignores it); asphalt_end: where the dark asphalt
                                              ends; kerb: red-band (kerb outer limit) candidates only; warm_end: where

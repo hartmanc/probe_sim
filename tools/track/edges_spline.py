@@ -147,18 +147,22 @@ def warm_end(v, valid, thr=None, U=U, win=(-1.5, 2.5)):
     return None
 
 
-def candidates(bl, line_off, kerb):
+def candidates(bl, line_off, kerb, kerb_edge="outer"):
     """edge candidates from bands: in a kerb zone (red detected within +-4 stations on this side, any capture) every band
     0.3-2.6 m wide counts by its outer limit (the kerb's white blocks read as a white band across the normal); elsewhere
     a white band 0.06-2.0 m wide (the hairpin apex band is ~1.2 m) counts by its inner side + line_off and a red band
-    by its outer limit."""
+    by its outer limit. `kerb_edge='inner'` instead uses each measured kerb band's
+    asphalt-facing u0, for every kerb colour; ordinary painted lines are unchanged.
+    The default retains the earlier outer-limit behavior."""
+    if kerb_edge not in ('outer', 'inner'):
+        raise ValueError('kerb_edge must be outer or inner')
     out = []
     for u0, u1, has_red, w in bl:
         if w < 0: out.append((u0 + line_off, 1)); continue      # asphalt_end feature (FEATURES)
         if kerb:
-            if 0.3 <= w <= 2.6: out.append((u1, 2))
+            if 0.3 <= w <= 2.6: out.append((u0 if kerb_edge == 'inner' else u1, 2))
         elif has_red:
-            if w <= 2.6: out.append((u1, 2))
+            if w <= 2.6: out.append((u0 if kerb_edge == 'inner' else u1, 2))
         elif 0.06 <= w <= 2.0: out.append((u0 + line_off, 1))
     return out
 
@@ -233,6 +237,7 @@ def apply_shape(hw, knots, blend, n):
 def fit_run(C, NL, hl, hr, lo, hi, tiles, features, sp, mpp, side_sel="both", log=_log):
     """One spline run over stations lo..hi (may exceed n: wraps). hl/hr: current half-widths (full loop). sp: the
     `spline` config. Returns (hl, hr, report) with the fitted stretch replaced."""
+    kerb_edge = sp.get('kerb_edge', 'outer')
     n = len(C)
     a = type('A', (), dict(lo=lo, hi=hi, side=side_sel, knot=sp['knot'], lam=sp['lam'], huber=sp['huber'],
                          init_stiff=sp['init_stiff'], prior=sp['prior'], line_off=sp['line_off']))
@@ -275,11 +280,11 @@ def fit_run(C, NL, hl, hr, lo, hi, tiles, features, sp, mpp, side_sel="both", lo
         kerb_at = np.array([red_st[max(0, i - 4):i + 5].any() for i in range(len(ks))])
         for i, ti, bl in raw[side]:
             feat = next((f[3] for f in FEATURES if f[0] == side and f[1] <= ks[i] <= f[2]), None)
-            if feat == 'kerb':
-                # the edge is the kerb's outer limit here (apex kerb at the bottom of a V, dirt beyond): bands with red only
-                c = [(u1, 2) for u0, u1, has_red, w in bl if has_red and 0.3 <= w <= 2.6]
+            if feat in ('kerb', 'kerb_yellow'):
+                # Explicit kerb evidence takes the configured measured band limit.
+                c = [(u0 if kerb_edge == 'inner' else u1, 2) for u0, u1, has_red, w in bl if has_red and 0.3 <= w <= 2.6]
             else:
-                c = candidates(bl, a.line_off, kerb_at[i])
+                c = candidates(bl, a.line_off, kerb_at[i], kerb_edge)
             if c: obs[side].append((i, ti, [hw[kk[i]] + e for e, _ in c], [kd for _, kd in c]))
     knots_x = np.arange(a.lo - 3 * a.knot, a.hi + 3 * a.knot + 1, a.knot).astype(float)
     xa = np.r_[np.arange(a.lo - 12, a.lo), np.arange(a.hi + 1, a.hi + 13)].astype(float)
@@ -345,7 +350,7 @@ def ksearch_at(side, k, n):
     return None
 
 
-def gather(C, NL, hl, hr, tiles, features, line_off, mpp, U_=None):
+def gather(C, NL, hl, hr, tiles, features, line_off, mpp, U_=None, kerb_edge="outer"):
     """Boundary evidence along every station's normal on every capture: for each side a list of (station, capture,
     [candidate half-widths], [kinds]). Features 'asphalt_end' and 'kerb' choose the kind of evidence; 'keep' is not a
     method here (it froze a prior) and is ignored."""
@@ -416,13 +421,13 @@ def gather(C, NL, hl, hr, tiles, features, line_off, mpp, U_=None):
         for i, ti, bl in raw[side]:
             feat = feature_at(features, side, ks[i], n)
             if feat in ('kerb', 'kerb_yellow'):
-                c = [(u1, 2) for u0, u1, has_red, w in bl if has_red and 0.3 <= w <= 2.6]
+                c = [(u0 if kerb_edge == 'inner' else u1, 2) for u0, u1, has_red, w in bl if has_red and 0.3 <= w <= 2.6]
             elif feat == 'kerb_band':
                 # a kerb whose coloured blocks do not read as red on the captures (Buttonwillow's red / white / blue
                 # blocks are grey there): every band 0.3-2.6 m wide counts by its outer limit, as in a red kerb zone
-                c = candidates(bl, line_off, True)
+                c = candidates(bl, line_off, True, kerb_edge)
             else:
-                c = candidates(bl, line_off, kerb_at[i])
+                c = candidates(bl, line_off, kerb_at[i], kerb_edge)
             if c: obs[side].append((i, ti, [hw[i] + e for e, _ in c], [kd for _, kd in c]))
     for side, hw in (('left', hl), ('right', hr)):
         for w in OWNER:
@@ -751,7 +756,7 @@ def fit_periodic(C, NL, hl, hr, tiles, features, sp, mpp, anchors=None, log=_log
     REFINE[:] = [z for z in REF_ALL if len(z) < 5]
     win = sp.get('search', (-4.5, 4.0)); U_ = np.arange(win[0], win[1] + 1e-4, 0.04)
     if obs is None:
-        obs = gather(C, NL, hl, hr, tiles, features, sp['line_off'], mpp, U_)
+        obs = gather(C, NL, hl, hr, tiles, features, sp['line_off'], mpp, U_, kerb_edge=sp.get('kerb_edge', 'outer'))
     # obs given (width_model.py, round 9): the caller's own evidence rows; anchors_cover False: its constraints are
     # not evidence, coverage and gaps count the observations only
     xs = np.arange(n, dtype=float); Bx = basis(xs, K, n)

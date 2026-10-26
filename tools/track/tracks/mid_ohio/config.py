@@ -52,14 +52,16 @@ CONFIG = dict(
     stations_ref=(3595, 3589.22),
     centre=dict(pit_merge=False, pit_exit=dict(
         src='c20_s0200..c20_s0320 and 2026 N837 onboard t14/t16: hatched blend then raised red/white T1 kerb separates pit lane from course; automatic OSM lane-merge extent includes the inactive inside apron')),
-    spline=dict(report_width=(12.192, 12.192),
+    # Owner's second-pass instruction: race edge at asphalt-to-kerb boundary,
+    # all kerb colours; supersedes skill's outer-limit convention for this track.
+    spline=dict(kerb_edge='inner', report_width=(12.192, 12.192),
                 kerb_search=[('left', 285, 360, (-6, 1), 'c20_s0200..c20_s0320: inside kerb lies about 2–3m inside automatic apron boundary')],
                 mask=[('left', 210, 255, 'c20_s0160/c20_s0200: overhead bridge occludes the painted boundary')]),
     prior=dict(bridge_win=35),
     features=[
-        ('left', 285, 360, 'kerb', 'c20_s0200..c20_s0320; N837 onboard t16: raised red/white T1 inside kerb separates pit exit, use its outer band, not grass beyond apron'),
-        ('right', 365, 480, 'kerb_yellow', 'c20_s0280..c20_s0440; continuous yellow T1 exit kerb, outer painted limit'),
-        ('left', 1010, 1120, 'kerb_yellow', 'c20_s0960..c20_s1080; continuous yellow T2 exit kerb, outer painted limit'),
+        ('left', 285, 360, 'kerb', 'c20_s0200..c20_s0320; N837 onboard t16: raised red/white T1 inside kerb separates pit exit, use its track-side band, not grass beyond apron'),
+        ('right', 365, 480, 'kerb_yellow', 'c20_s0280..c20_s0440; continuous yellow T1 exit kerb, track-side painted limit'),
+        ('left', 1010, 1120, 'kerb_yellow', 'c20_s0960..c20_s1080; continuous yellow T2 exit kerb, track-side painted limit'),
     ],
     shapes=[], straights=[], repave_fixes=[],
     profile_gaps=[dict(

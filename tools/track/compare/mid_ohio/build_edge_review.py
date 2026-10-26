@@ -21,6 +21,8 @@ def main():
     ap.add_argument('--pkg', default='tools/track/out/mid_ohio')
     ap.add_argument('--out', default='tools/track/compare/mid_ohio/edges_r1')
     ap.add_argument('--close', default='', help='comma-separated extra stations, 0.06 m/px')
+    ap.add_argument('--round', type=int, default=1)
+    ap.add_argument('--kerb-edge', choices=['outer', 'inner'], default='outer')
     args = ap.parse_args()
     pkg, out = ROOT / args.pkg, ROOT / args.out
     out.mkdir(parents=True, exist_ok=True)
@@ -53,12 +55,14 @@ def main():
               '2023 repave and the 2024 T4 reconstruction (banking reduced from 4 to 2 degrees). '
               'No claim is made that the T4 elevation profile matches the reconstructed road.')
     body = ('<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" '
-            'content="width=device-width,initial-scale=1"><title>Mid-Ohio edge review — round 1</title>'
+            'content="width=device-width,initial-scale=1">'
+            f'<title>Mid-Ohio edge review — round {args.round}</title>'
             '<style>body{font:16px/1.5 system-ui;margin:24px auto;max-width:1100px;background:#181b20;color:#eee}'
             'h1,p{padding:0 16px}figure{margin:24px 0}img{width:100%;height:auto}figcaption{padding:8px 16px}'
-            'a{color:#70c5ff}</style><h1>Mid-Ohio edge review — round 1</h1>'
+            'a{color:#70c5ff}</style>'
+            f'<h1>Mid-Ohio edge review — round {args.round}</h1>'
             f'<p>{html.escape(limits)}</p><p>Length {length:.3f} m. The full outer T1–T2 loop is retained; '
-            'only the inner chicane is omitted. Review the red line against the paint and outer kerb boundary.</p>'
+            f'only the inner chicane is omitted. Review the red line against the paint and {args.kerb_edge} kerb boundary.</p>'
             + ''.join(figures) + '</html>')
     (out / 'index.html').write_text(body)
     (out / 'windows.json').write_text(json.dumps(windows, indent=2) + '\n')
