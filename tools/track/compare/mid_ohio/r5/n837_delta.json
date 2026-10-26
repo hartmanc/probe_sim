@@ -7,5 +7,5 @@
              "61": 4.24, "64": 4.69, "67": 4.91, "70": 5.09, "73": 5.25, "76": 5.30, "79": 5.55, "82": 5.82, "85": 5.90,
              "88": 6.03, "91": 6.66, "94": 7.29, "97": 7.62, "100": 7.78, "103": 8.05, "106": 8.60, "109": 9.32,
              "112": 9.67, "115": 9.91, "118": 10.58, "121": 10.73, "124": 10.80, "127": 10.93},
- "note": "keys are video t (s); lap 149 runs t 5.03 -> 129.87, so it ends 11.13 s off the session best (9.8 %); the loss is spread over the lap (about 0.09 s per s), faster than average at T1 (t10-16), T4 (t61-67), T8-T9 (t88-97: 1.26 s in 9 s), T11 (t103-109) and the Carousel (t115-118)"
+ "note": "keys are video t (s); lap 149 runs t 5.03 -> 129.87, so it ends 11.13 s off the session best (9.8 %); the loss is spread over the lap (about 0.09 s per s), faster than average at T1 (t10-16), T4 (t61-67), T8-T9 (t88-97: 1.59 s in 9 s), T11 (t103-109) and the Carousel (t115-118)"
 }
