@@ -92,10 +92,19 @@ export interface BlockJson {
   base?: number; mullions_m?: number; deck_rail?: boolean;
   /** Mid-Ohio round 8 (the control tower): a hip roof over the block's top, its eaves `overhang` m out, rising `rise` m
    *  to a ridge of `ridge` m along l (0: a pyramid); absent: the flat roof */
-  hip?: { rise: number; overhang: number; color: string; ridge?: number };
+  hip?: { rise: number; overhang: number; color: string; ridge?: number; /** round 9: the eaves' height above the block's base (absent: its top) */ z?: number };
   /** Mid-Ohio round 8: decks wrapping all four faces (floor slab `depth` m out at z above the block's base, a solid
    *  railing `rail` m high in `color`); absent: none */
   wrap_decks?: { z: number; depth: number; color: string; rail?: number; floor?: string }[];
+  /** Mid-Ohio round 9 (the control tower): corner columns from the ground to `z1`, standing `half` m from the centre on
+   *  both axes (a frame carrying the galleries and the roof), `w` m square, colour; absent: none */
+  columns?: { half: number; z1: number; w?: number; color: string };
+  /** Mid-Ohio round 9: a banner band round all four faces at `half` m from the centre, from z to z + h, typed names in turn
+   *  per panel of `panel` m (drawn by buildStructures with the label texture; the band's solid backing in `color`) */
+  banner?: { half: number; z: number; h: number; panel?: number; names: [string, string, string][]; color?: string };
+  /** Mid-Ohio round 9: an open crow's nest on the roof apex: a platform `w` m square at `z` (above the block's base),
+   *  railing, four legs down to the apex height `z0`, and a flag pole `pole` m above it */
+  nest?: { w: number; z0: number; z: number; rail?: number; pole?: number; color: string };
   /** discrete windows instead of the continuous band (Buttonwillow's tower, judge r5: a solid lower storey with a few
    *  windows): `w` wide every `pitch` m along each face from z0 to z1 (m above the block's base), on the faces listed
    *  (+1 / -1 long sides, +2 / -2 the ends; absent: all four); and doors (`at` along the face from its centre) */
@@ -138,7 +147,14 @@ export interface TerraceDressJson {
 
 /** every structure may carry solid outlines for the collision world (src/physics/collision.ts reads them like buildings) */
 export interface Collide { collide?: { footprint: V2[]; z: number; h: number }[] }
-export type StructureJson = (GrandstandJson | GarageJson | BlockJson | FuelJson | FenceJson | MastJson | PaintJson | BoardsJson | TerraceDressJson | ScoringTowerJson | CanopyJson) & Collide;
+/** Mid-Ohio round 9: the starter's stand: a cabin `w` x `d` on an open scaffold of four legs with cross braces to `legs`
+ *  m, the cabin's posts and windows to `cabin` m above that, a roof slab `roof` overhanging 0.4 m, a typed board under
+ *  the cabin (drawn by buildStructures) */
+export interface StarterStandJson {
+  type: 'starter_stand'; name?: string; src: string; c: V2; z: number; heading_deg: number; w: number; d: number; legs: number;
+  cabin: number; frame: string; roof: string; cabin_color?: string; board?: { text: string; bg: string; fg: string; h: number };
+}
+export type StructureJson = (GrandstandJson | GarageJson | BlockJson | FuelJson | FenceJson | MastJson | PaintJson | BoardsJson | TerraceDressJson | ScoringTowerJson | CanopyJson | StarterStandJson) & Collide;
 /** A terrace row: straight (a, b at height z), or, for a terrace declared by its measured footprint (Sonoma round 6), a
  *  polyline following the stand: `pts` [x, y, z, z_low, m] (tread height, the row below's height, metres along the front
  *  line) with `nrm` the uphill unit vector per vertex, and `k` the row number. */
@@ -474,8 +490,28 @@ export function block(b: BlockJson, s: Soup): void {
     s.box(f, -hl - D, -hl - D + 0.08, -hw - D, hw + D, dk.z, dk.z + rh, cRl);
     s.box(f, hl + D - 0.08, hl + D, -hw - D, hw + D, dk.z, dk.z + rh, cRl);
   }
+  if (b.columns) {
+    const C = b.columns, cw = (C.w ?? 0.5) / 2, cC = rgb(C.color);
+    for (const t of [-C.half, C.half]) for (const d of [-C.half, C.half]) s.box(f, t - cw, t + cw, d - cw, d + cw, -0.5 - (b.base ?? 0), C.z1, cC);
+  }
+  if (b.banner) {
+    const Bn = b.banner, cB = rgb(Bn.color ?? '#1f3f8f'), e = 0.12;
+    s.box(f, -Bn.half, Bn.half, -Bn.half - e, -Bn.half, Bn.z, Bn.z + Bn.h, cB); s.box(f, -Bn.half, Bn.half, Bn.half, Bn.half + e, Bn.z, Bn.z + Bn.h, cB);
+    s.box(f, -Bn.half - e, -Bn.half, -Bn.half, Bn.half, Bn.z, Bn.z + Bn.h, cB); s.box(f, Bn.half, Bn.half + e, -Bn.half, Bn.half, Bn.z, Bn.z + Bn.h, cB);
+  }
+  if (b.nest) {
+    const N = b.nest, hw2 = N.w / 2, cN = rgb(N.color), rl = N.rail ?? 1.0;
+    for (const t of [-hw2, hw2]) for (const d of [-hw2, hw2]) s.box(f, t - 0.07, t + 0.07, d - 0.07, d + 0.07, N.z0 - 1.5, N.z, cN);
+    s.box(f, -hw2, hw2, -hw2, hw2, N.z - 0.12, N.z, cN);
+    for (const [a0, a1, d0, d1] of [[-hw2, hw2, -hw2, -hw2 + 0.05], [-hw2, hw2, hw2 - 0.05, hw2], [-hw2, -hw2 + 0.05, -hw2, hw2], [hw2 - 0.05, hw2, -hw2, hw2]]) {
+      s.box(f, a0, a1, d0, d1, N.z + rl - 0.06, N.z + rl, cN);
+      s.box(f, a0, a1, d0, d1, N.z + rl / 2 - 0.04, N.z + rl / 2, cN);
+    }
+    for (const t of [-hw2, hw2]) for (const d of [-hw2, hw2]) s.box(f, t - 0.04, t + 0.04, d - 0.04, d + 0.04, N.z, N.z + rl, cN);
+    if (N.pole) s.box(f, -0.05, 0.05, -0.05, 0.05, N.z, N.z + N.pole, rgb('#d8d8d8'));
+  }
   if (b.hip) {
-    const o = b.hip.overhang, z0 = b.h + (b.parapet ?? 0), z1 = z0 + b.hip.rise, cH = rgb(b.hip.color), cU = rgb(b.hip.color, 0.6);
+    const o = b.hip.overhang, z0 = b.hip.z ?? b.h + (b.parapet ?? 0), z1 = z0 + b.hip.rise, cH = rgb(b.hip.color), cU = rgb(b.hip.color, 0.6);
     const A = hl + o, B = hw + o, rl = Math.min(b.hip.ridge ?? 0, 2 * A) / 2;
     const e0 = f.p(-A, -B, z0), e1 = f.p(A, -B, z0), e2 = f.p(A, B, z0), e3 = f.p(-A, B, z0), r0 = f.p(-rl, 0, z1), r1 = f.p(rl, 0, z1);
     s.quad(e0, e1, r1, r0, rgb(b.hip.color, 0.92)); s.quad(e2, e3, r0, r1, rgb(b.hip.color, 0.86));
@@ -607,6 +643,23 @@ export function scoringTower(u: ScoringTowerJson, s: Soup): void {
   const zc = hd ? u.h - hd.h : u.h;
   s.box(f, -u.w / 2, u.w / 2, -u.d / 2, u.d / 2, z0, zc, rgb(u.color));
   if (hd) s.box(f, -hd.w / 2, hd.w / 2, -hd.d / 2, hd.d / 2, zc, u.h, rgb(hd.color));
+}
+
+export function starterStand(u: StarterStandJson, s: Soup): void {
+  const f = Frame.heading(u.c, u.z, (u.heading_deg * Math.PI) / 180);
+  const hw = u.w / 2, hd = u.d / 2, cF = rgb(u.frame), L = u.legs, cC = rgb(u.cabin_color ?? '#e6e4de'), cR = rgb(u.roof);
+  for (const t of [-hw + 0.2, hw - 0.2]) for (const d of [-hd + 0.2, hd - 0.2]) s.box(f, t - 0.09, t + 0.09, d - 0.09, d + 0.09, -0.3, L, cF);
+  // cross braces on the two long faces, every ~2 m
+  const nb = Math.max(1, Math.round(L / 2));
+  for (const d of [-hd + 0.2, hd - 0.2]) for (let k = 0; k < nb; k++) {
+    const z0 = (L * k) / nb, z1 = (L * (k + 1)) / nb;
+    s.quad(f.p(-hw + 0.2, d, z0), f.p(hw - 0.2, d, z1 - 0.08), f.p(hw - 0.2, d, z1), f.p(-hw + 0.2, d, z0 + 0.08), cF);
+    s.box(f, -hw + 0.2, hw - 0.2, d - 0.05, d + 0.05, z1 - 0.08, z1, cF);
+  }
+  s.box(f, -hw, hw, -hd, hd, L - 0.2, L, cF, { bottom: true });            // floor
+  s.box(f, -hw, hw, -hd, hd, L, L + 1.0, cC);                              // cabin lower wall
+  for (const t of [-hw + 0.1, 0, hw - 0.1]) for (const d of [-hd + 0.1, hd - 0.1]) s.box(f, t - 0.06, t + 0.06, d - 0.06, d + 0.06, L + 1.0, L + u.cabin, cF);
+  s.box(f, -hw - 0.4, hw + 0.4, -hd - 0.4, hd + 0.4, L + u.cabin, L + u.cabin + 0.25, cR, { bottom: true });
 }
 
 export function canopy(u: CanopyJson, s: Soup): void {
@@ -919,6 +972,7 @@ export function structureSoups(list: StructureJson[], terraces: TerraceJson[] = 
       case 'paint': paint(u, pnt, ground); break;
       case 'boards': boards(u, solid); break;
       case 'scoring_tower': scoringTower(u, solid); break;
+      case 'starter_stand': starterStand(u, solid); break;
       case 'canopy': canopy(u, solid); break;
       case 'terrace_dress': { const t = terraces.find((x) => x.name === u.terrace); if (t) terraceDress(u, t, terr, ground); break; }
       default: break;
@@ -962,7 +1016,33 @@ export function buildStructures(list: StructureJson[], terraces: TerraceJson[] =
   const S = structureSoups(list, terraces, ground);
   if (label) {
     const mats = new Map<string, THREE.MeshLambertMaterial>();
+    const plane = (f: Frame, t: number, d: number, z: number, w: number, h: number, side: number, text: string, bg: string, fg: string) => {
+      const key = `${text}|${bg}|${fg}|${w.toFixed(1)}|${h}`;
+      if (!mats.has(key)) mats.set(key, new THREE.MeshLambertMaterial({ map: label(text, bg, fg, w, h) }));
+      const c = f.p(t, d, z);
+      const pl = new THREE.Mesh(new THREE.PlaneGeometry(w, h), mats.get(key)!);
+      pl.position.set(c[0], c[2], -c[1]);
+      const nx = f.ud[0] * side, ny = f.ud[1] * side;
+      pl.rotation.y = Math.atan2(nx, -ny);
+      grp.add(pl);
+    };
     for (const u of list) {
+      // Mid-Ohio round 9: a block's banner band (all four faces) and the starter stand's board, typed names
+      if (u.type === 'block' && u.banner) {
+        const Bn = u.banner, P = Bn.panel ?? 6, n = Math.max(1, Math.round((2 * Bn.half) / P)), pw = (2 * Bn.half) / n;
+        for (let face = 0; face < 4; face++) {
+          const hd = u.heading + (face * Math.PI) / 2;
+          const f = Frame.heading(u.c, u.z + (u.base ?? 0), hd);
+          for (let k = 0; k < n; k++) {
+            const [text, bg, fg] = Bn.names[(face * n + k) % Bn.names.length];
+            plane(f, -Bn.half + pw * (k + 0.5), -Bn.half - 0.14, Bn.z + Bn.h / 2, pw - 0.1, Bn.h, -1, text, bg, fg);
+          }
+        }
+      }
+      if (u.type === 'starter_stand' && u.board) {
+        const f = Frame.heading(u.c, u.z, (u.heading_deg * Math.PI) / 180), B = u.board;
+        for (const side of [1, -1]) plane(f, 0, side * (u.d / 2 + 0.06), u.legs - 0.2 - B.h / 2, u.w, B.h, side, B.text, B.bg, B.fg);
+      }
       if (u.type !== 'boards' || !u.names?.length) continue;
       for (const { f, l, dz, k } of boardPanels(u)) {
         const [text, bg, fg] = u.names[k % u.names.length];

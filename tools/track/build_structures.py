@@ -259,6 +259,12 @@ def apply(trk, osm, sc, cfg):
                 outlines.append(_corners(c_, hd_, l_, w_, pad))
         elif t == "mast":
             out += masts(trk, it)
+        elif t == "starter_stand":
+            # Mid-Ohio round 9: the starter's stand on its scaffold (app structures.ts starterStand); passed through with its
+            # centre in ENU and the ground there
+            p = _enu(it["at"])
+            out.append({k: v for k, v in it.items() if k not in ("at", "h_src")} | {"c": [rnd(p[0]), rnd(p[1])], "z": rnd(_ground(trk, p))})
+            log(f"structure starter stand '{it.get('name', '')}': {it['w']} x {it['d']} m on {it['legs']} m legs at ({p[0]:.1f}, {p[1]:.1f})")
         elif t == "scoring_tower":
             # round 6 (owner O1 / orchestrator F1): a slender scoring tower, column (+ optional head board) on a plinth
             p = _enu(it["at"])
