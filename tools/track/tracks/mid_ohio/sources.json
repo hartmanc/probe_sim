@@ -13,7 +13,7 @@
   "osm_url": "https://api.openstreetmap.org/api/0.6/map?bbox=-82.646,40.678,-82.625,40.699",
   "lemons_event": "https://24hoursoflemons.com/race/?id=439",
   "lemons_layout": "https://registration.24hoursoflemons.com/userfiles/races/24HoL__TrackMap_Mid-Ohio.png",
-  "layout_status": "Referenced by the live event HTML; image URL returns 404. User supplied image is reference only. Owner clarified: retain the full T1\u2013T2 outer loop and back straight; omit only the inner grey chicane.",
+  "layout_status": "Referenced by the live event HTML; image URL returns 404. User supplied image is reference only. Owner clarified: retain the full T1–T2 outer loop and back straight; omit only the inner grey chicane.",
   "dem_catalog": "https://tnmaccess.nationalmap.gov/api/v1/products?bbox=-82.646,40.678,-82.625,40.699&datasets=Digital%20Elevation%20Model%20(DEM)%201%20meter&max=50&outputFormat=JSON",
   "dem_tiles": [
     "https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/1m/Projects/OH_Statewide_Phase1_2019_B19/TIFF/USGS_1M_17_x36y451_OH_Statewide_Phase1_2019_B19.tif"
@@ -128,5 +128,21 @@
       720
     ],
     "verified": "Parent independently read decoded 10s frames plus t14/t16/t18 around pit exit; confirms full outer loop. Stale initial t60/t130 replaced by decoded retries. Full 2s inventory remains pending."
+  },
+  "field_source": {
+    "status": "DEFERRED until the owner accepts the track (owner, 26 Oct 2026); recorded so the build-field-cars run starts here",
+    "event": "24 Hours of Lemons 'Mid-West Crisis' 2026, Mid-Ohio Sports Car Course, 11-12 Apr 2026",
+    "results": "https://24hoursoflemons.com/results-2/?id=439",
+    "results_note": "page confirmed 26 Oct 2026 as the event's results page (award winners shown; full entrant list behind its 'View Full Results' link); nothing else fetched",
+    "plus": "the owner's own car, Probe #619"
+  },
+  "indycar_onboard_2026": {
+    "url": "https://youtu.be/9Drr1VkE1_U",
+    "title": "Onboard Highlights | Mid Ohio 2026 | Practice 1",
+    "supplied_by": "owner, 26 Oct 2026",
+    "date": "July 2026 per the owner (IndyCar Mid-Ohio 2026 Practice 1); exact upload date not read yet (the page fetch returned the title only)",
+    "nature": "compilation: each segment a different car and driver, each segment beginning in Thunder Valley (T10), not at S/F (owner's note, verbatim: \"Note that it's a cut of several different drivers, and also that each cut starts in Thunder Valley (not at start/finish)\")",
+    "use": "modern (post-2024 T4 reconstruction, post-2023 repave) reference for T4 banking, crown, kerbs and run-off, and the repave paint elsewhere; time-to-station anchored per segment from landmarks, never from S/F. Reference only: frames local, never committed, never textures",
+    "segments": "time ranges pending: survey not started in round 3 (see compare/mid_ohio/round3.md, T4 note)"
   }
 }

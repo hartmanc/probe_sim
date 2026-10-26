@@ -51,12 +51,34 @@ CONFIG = dict(
         lemons_layout='https://registration.24hoursoflemons.com/userfiles/races/24HoL__TrackMap_Mid-Ohio.png'),
     stations_ref=(3595, 3589.22),
     centre=dict(pit_merge=False, pit_exit=dict(
-        src='c20_s0200..c20_s0320 and 2026 N837 onboard t14/t16: hatched blend then raised red/white T1 kerb separates pit lane from course; automatic OSM lane-merge extent includes the inactive inside apron')),
+        src='c20_s0200..c20_s0320 and 2026 N837 onboard t14/t16: hatched blend then raised red/white T1 kerb separates pit lane from course; automatic OSM lane-merge extent includes the inactive inside apron'),
+        # Round 3 (owner's round-2 review, 26 Oct 2026: "Other than the pit straight, and the transitions onto and off
+        # it, the fits were good"): a LOCAL refit (SKILL 1.4, Sonoma round 11 / 14B) over the stations his red covers
+        # (3425..576 of the round-2 frame, through S/F) with ~30 stations beyond it; the global fit converges first
+        # exactly as round 2 (no other key changed), then only this window is refitted with his red, everything
+        # outside it held in world position (compare/mid_ohio/round3.md, held-edge table). restation 'index',
+        # refit_final and centre_smooth as Sonoma round 14B part 1b (window-only options)
+        restation='index',
+        local=dict(window=(3395, 610), blend=15, refit_final=True, centre_smooth=1.0,
+                   why='round 3: pit straight and its transitions from the owner\'s round-2 red (spline.owner_edges, owner/r2)')),
     # Owner's second-pass instruction: race edge at asphalt-to-kerb boundary,
     # all kerb colours; supersedes skill's outer-limit convention for this track.
     spline=dict(kerb_edge='inner', report_width=(12.192, 12.192),
                 kerb_search=[('left', 285, 360, (-6, 1), 'c20_s0200..c20_s0320: inside kerb lies about 2–3m inside automatic apron boundary')],
-                mask=[('left', 210, 255, 'c20_s0160/c20_s0200: overhead bridge occludes the painted boundary')]),
+                mask=[('left', 210, 255, 'c20_s0160/c20_s0200: overhead bridge occludes the painted boundary')],
+                # Round 3: the owner's round-2 red (compare/mid_ohio/owner_review_r2/edge-marks.json, sha256 fa809758...,
+                # 13 windows, 46 red / 50 green strokes) read from its vectors (compare/owner_edges.py --by-stroke
+                # --vector-origin continuous, frames from owner_review_r2/frames.json, on tools/track/out/mid_ohio_r2) into
+                # owner/r2/<window>.json and merged (owner/r2/merge.sh: compare/owner_merge.py with the recorded overlap
+                # dispositions, --drop) into owner/r2/merged.json. His red sits on the asphalt side of every kerb (the
+                # inner-kerb convention above): no kerb_inside shift. Used in the local refit only (centre.local).
+                owner_edges=[dict(file='owner/r2/merged.json', chains=False, reach='drawn', project='foot', lo=3425, hi=576, local=True,
+                                  windows=['owner/r2/w_s0000.json', 'owner/r2/w_s0125.json', 'owner/r2/w_s0250.json',
+                                           'owner/r2/w_s0375.json', 'owner/r2/w_s0500.json', 'owner/r2/w_s3375.json',
+                                           'owner/r2/w_s3500.json', 'owner/r2/close_s0220.json', 'owner/r2/close_s0320.json'],
+                                  src='owner round-2 review red (compare/mid_ohio/owner_review_r2/edge-marks.json; owner/r2/merged.json), '
+                                      'last corner exit / pit entry s ~3425 through S/F, the pit straight, bridge approach, T1 and T1 exit to s ~576')],
+                owner_measure='foot'),
     prior=dict(bridge_win=35),
     features=[
         ('left', 285, 360, 'kerb', 'c20_s0200..c20_s0320; N837 onboard t16: raised red/white T1 inside kerb separates pit exit, use its track-side band, not grass beyond apron'),

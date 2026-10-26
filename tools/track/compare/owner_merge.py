@@ -33,6 +33,9 @@ def main():
     ap.add_argument('--dir', required=True); ap.add_argument('--pkg', required=True); ap.add_argument('--out', required=True)
     ap.add_argument('--fill', action='append', default=[], help="file:side:lo:hi (stations of --pkg): an earlier owner drawing "
                     "(owner_edges.py JSON) fills that side's stations lo..hi where no window has red (the owner's word that the line there stands)")
+    ap.add_argument('--drop', action='append', default=[], help="window:side:lo:hi (stations of --pkg, wrap allowed): that "
+                    "window's red on that side over lo..hi is left out of the merge, a recorded disposition where two windows "
+                    "disagree and the evidence picks the other (Mid-Ohio round 3); the raw window JSON is kept as it is")
     ap.add_argument('--tol', type=float, default=0.3); ap.add_argument('--max-lat', type=float, default=20.0)
     a = ap.parse_args()
     T = json.load(open(os.path.join(a.pkg, 'track.json')))
@@ -43,6 +46,8 @@ def main():
     per = {'left': {}, 'right': {}}
     G = []
     dropped = 0
+    drops = [(w, sd, int(lo), int(hi)) for w, sd, lo, hi in (d_.split(':') for d_ in a.drop)]
+    dropped_by = {d_: 0 for d_ in a.drop}
     for f in files:
         J = json.load(open(os.path.join(a.dir, f)))
         name = f[:-5]; s0 = J['frame']['s']; half = J['frame']['half']; cx, cy = J['frame']['centre_enu']; res = 0.12 / J['frame']['mpp']
@@ -52,6 +57,9 @@ def main():
                 lat = sg * float(((np.array([x, y]) - C[k]) * NL[k]).sum())
                 if abs(lat) > a.max_lat:
                     dropped += 1; continue
+                hit = [f'{w}:{sd}:{lo}:{hi}' for w, sd, lo, hi in drops if w == name and sd == side and (k - lo) % n <= (hi - lo) % n]
+                if hit:
+                    dropped_by[hit[0]] += 1; continue
                 ds = abs(((k * sp - s0 + L / 2) % L) - L / 2)
                 wb = max(half - max(abs(x - cx), abs(y - cy)), 0.5) * res
                 per[side].setdefault(k, []).append((name, lat, ds, ds <= half, x, y, wb))
@@ -74,7 +82,7 @@ def main():
         fills.append(dict(file=fpath, side=side, lo=lo, hi=hi, stations=got))
         print(f"fill {side} {lo}..{hi} from {fpath}: {got} stations")
     out = {'track': T.get('id', ''), 'src': f'owner_merge.py over {len(files)} windows of {a.dir} on {a.pkg}', 'frame': {'pkg': a.pkg, 'n': n, 'spacing_m': sp}}
-    rep = {'windows': files, 'dropped_far': dropped, 'tol': a.tol, 'fills': fills}
+    rep = {'windows': files, 'dropped_far': dropped, 'tol': a.tol, 'fills': fills, 'drops': dropped_by}
     for side, sg in (('left', 1), ('right', -1)):
         pts, dis, nwin = [], [], {}
         for k in sorted(per[side]):
@@ -108,6 +116,8 @@ def main():
         out['green_enu_xy'] = []
     out['report'] = {s: {k: v for k, v in rep[s].items() if k != 'disagree'} for s in ('left', 'right')}
     out['report']['fills'] = fills
+    if a.drop:
+        out['report']['drops'] = dropped_by
     out['filled'] = filled
     json.dump(out, open(a.out, 'w'), indent=0)
     json.dump(rep, open(a.out.replace('.json', '_report.json'), 'w'), indent=1)
@@ -115,6 +125,8 @@ def main():
         r = rep[side]
         print(f"{side}: {r['stations']} of {n} stations, seen by {r['by_window_count']} windows; {r['disagreements']} stations where windows differ by more than {a.tol} m; missing runs (>= 3 st): {r['missing_runs']}")
     print(f"green: {len(out['green_enu_xy'])} points; dropped {dropped} red points farther than {a.max_lat} m from the centre")
+    for d_, c_ in dropped_by.items():
+        print(f"drop {d_}: {c_} station readings left out")
 
 
 if __name__ == '__main__':
