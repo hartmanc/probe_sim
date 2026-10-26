@@ -12,7 +12,7 @@ Machine health: battery 95-100 % (on charge at the start, discharging from the S
 1-minute load 1.5-10.6 (one burst to 10.6 while the Buttonwillow / Laguna checks overlapped another agent; one heavy
 process of mine at a time), 21 GB free.
 
-Package `public/tracks/mid_ohio/`, **rev a692501d35** (registry rule: sha256 over the sha256 of track.json,
+Package `public/tracks/mid_ohio/`, **rev 748b55ca59** (round 7b, section 13 on; was a692501d35 at the first hand-back) (registry rule: sha256 over the sha256 of track.json,
 heightfield.bin, ghosts.json, scenery.json, far_heightfield.bin).
 
 ## 1. Kerbs outside the race edges (step 1)
@@ -38,7 +38,7 @@ rejected: left 3595-2 (the S/F stripes and the pit-wall foot, c20_s3560). `r7/ke
 and `r7/kerb_table.json`; the frames are the inventory rows within 25 m.
 
 **Type and colour.** Red / white: low raised concrete kerbs with a rounded outer face (N837 t016, IndyCar t030); the
-height is NOT measured (no frame resolves it): declared 0.05 m over a 0.25 m face (Sonoma's driven profile). Yellow and
+height is NOT measured (no frame resolves it): declared 0.05 m over a 0.25 m face (Sonoma's driven profile). **Owner question** (also in the registry comment): the 5 cm is a declaration, not a measurement; the owner judges it in the drive. Yellow and
 the red outer bands: flush paint (N837 t042, 360 t036 / t054: no face). Colours from the sunlit 2025 frames (360 t054
 left / t130 right, IndyCar t022): red #c8443c, white #e2ddd4, yellow #e2b21c (the overcast N837 values read washed out,
 judge F1). Block length 1.0 m (c20_s0880). 13 strips keep the white edge line along their inner face where the captures
@@ -112,7 +112,7 @@ beams, app), `osm_fence` (overrides on OSM fences), and the OSM-wall name 'osm:<
 | white concrete | 3: T9-PERMCO wall 0.8 m (360 t104), T13 pit-entry side wall 1.04 m (IndyCar A t012), the black pit-in barrier 1.0 m with three yellow impact barrels (360 t018, N837 t125; measured `wall_measure.py --feature dark`, rms 0.56 m) | |
 | pit wall | 1 (measured, below) | |
 | fence (OSM, 2.4 m, height unmeasured) | 7 kept, 3 dropped (no 2026 evidence, off the captures) | c20 windows |
-| tyres | 1: a 6 m tyre cushion at the head of the T3 armco (c20_s1400 / c20_s1440 shows a tyre bundle there) | **note**: the brief says no tyre walls (none in any video); this is the capture's cushion at a wall head, not a tyre wall; for the owner |
+| tyres | 1: a 6 m tyre cushion at the head of the T3 armco (c20_s1400 / c20_s1440 shows a tyre bundle there) | kept: the capture is the evidence and wins over the brief's 'no tyre walls', which was a reading of the videos (the orchestrator's ruling, 27 Oct 2026) |
 | dropped OSM walls | 4 (the line behind the pit boxes: 360 t024-t030 left shows the boxes open to the paddock) + the OSM pit-wall line (superseded) + the OSM T1-inside armco (replaced by a declared run: under the footbridge the contaminated 2019 ground stepped its top 1.85 m) | |
 
 Wall ends: two known exposures (gate-listed for the owner): the armco head at the T5-T6 access-road mouth (9 m out,
@@ -249,18 +249,18 @@ Tests: `npm run build` ok; `npx vitest run` 64 files, 537 tests passed; `pytest 
 | 3.1 manifest | manifest.md round 7 (dispositions), `r7/manifest_tables.md` (generated), this file |
 | 3.2 ground, trees, far terrain | section 5 |
 | 3.3 kerbs | section 1 |
-| 3.4 walls | section 3; barrier scan: `r7/barrier_table.py` (every OSM run against its rows); **the per-capture barrier / station / logo scan ledgers over all 91 captures, both sides, are not written** (open) |
+| 3.4 walls | section 3; barrier scan: `r7/barrier_table.py` (every OSM run against its rows); per-capture scan ledgers: `r7/scan_ledger.md` (round 7b, section 14) |
 | 3.5 pit lane | section 4 |
 | 3.6 closed roads | section 2 |
 | 3.7 stands, buildings | section 3 |
 | 3.8 furniture | section 3 (one marshal post, two poles, cones) |
-| 3.9 boards, ground signs | section 3; ground-logo scan not done (open) |
+| 3.9 boards, ground signs | section 3; logo scan in `r7/scan_ledger.md`: none legible |
 | 3.10 bridges | two OSM bridges, lidar decks, stairs, banners |
 | 3.11 paint | edge lines (kept along 13 kerbs), the ladder line |
 | 3.12 gates | section 6 |
 | 3.13 dispositions | 15 |
 | 4.1 camera walk | 356 stills |
-| 4.1b boundary audit | **not done** (open) |
+| 4.1b boundary audit | section 15 (round 7b) |
 | 4.2 compare sheets | 67 sheets |
 | 4.3 judge | judge_r7.md (builder as judge; Astra unavailable) |
 | 4.4 structure stills | in the sheets; no separate pose_walk set (open) |
@@ -284,3 +284,129 @@ ledger): section 10. 8 (scan ledgers): **not complete**.
 - 4.9 % of the green strokes farther than 2 m from a modelled paved edge (section 2); the T4 bleachers render dark.
 - Buttonwillow's stage-3 byte identity (needs its captures).
 - The orchestrator's judge pass over compare_sheets_r7 and the Astra review (unavailable).
+
+
+## 13. Round 7b (27 Oct 2026, after the orchestrator's message): the steps left open, done
+
+Machine health: battery 92 -> 87 % discharging, never near 35 %; load 4.6-8.0 (one heavy process of mine at a time).
+The package changed (steps 2-4): **rev 748b55ca59**; every gate re-run (section 18); identities re-proved (section 19).
+
+## 14. Scan ledgers over all 91 captures (SKILL 3.4 barrier, 3.8 station / furniture, 3.9 logo; Acceptance 8)
+
+`r7/scan_ledger.md` (generated by `r7/scan_ledger.py` from the package and `r7/scan_notes.json`): 182 rows, every clean
+capture of `satellite_clean/tiles.json` and both sides, with the stations it covers, the modelled barrier runs, the
+stations / masts / towers / boards inside its footprint on that side, the logo column and the review note. Every
+capture was read on 3 x 4 contact grids (local). Findings the scan adds (not placed, all open for the owner):
+
+| capture | side | s (m) | what the capture shows | why not placed |
+|---|---|---|---|---|
+| c20_s0240 / c20_s0280 | left | ~330-370, 40-60 m out | two small bleacher stands on the T1 inside beyond the armco | the 360 lap t032-t034 left shows them only far and small; footprint not measured this round |
+| c20_s0240 | right | ~300 | a dark facing at the T1 gravel trap's far corner | the armco there is modelled; whether tyres face it is not resolvable from the frames |
+| c20_s0440 / c20_s1240-c20_s1320 | right | infield, 26 m out | the infield pair (OSM 969 / 970) reads as two lines of dark stacked objects, possibly tyres | modelled as armco from OSM; no onboard frame resolves it |
+| c20_s0800-c20_s0960 | right | ~870, 30 m out | a small concrete structure on a mound in the Keyhole infield | the 360 lap's right views show open infield; not resolvable |
+| c20_s1440 | left | ~1450 | a small hut at an armco gap | not resolvable from the frames (the yellow tower at ~1555 is placed from N837 t054) |
+| c20_s1520 / c20_s1560 | right | ~1590-1630 | a dark object inside the barrier outline right of T3 (also ground-lines 88-90) | no video frame shows it |
+| c20_s2280-c20_s2360 | right | ~2290-2330, 15-20 m out | short white low walls behind the armco | the 360 t090-t092 right show armco and grass; not resolvable |
+| c20_s3040 | right | ~3080, 8 m out | a small white hut at the armco | not resolvable from the frames |
+| c20_s3320 / c20_s3360 | right | ~3320-3340, 40 m out | two bleacher stands outside the Carousel | the 360 t016-t018 right show grass and armco; footprint not measured |
+
+Stations: one marshal post placed (the yellow tower, N837 t054); the scan found three more candidate huts (above), none
+confirmed by a frame. Logos: no painted ground logo is legible on any of the 91 captures (none placed). "Turn N" paint:
+none on the captures.
+
+## 15. Boundary audit (SKILL 4.1b)
+
+`boundary_sheets.py poses --step 30` (309 poses: both course edges, the pit lane's edges, the three closed roads'
+edges), `pose_walk.ts --tag b` on the dev server, `boundary_sheets.py sheets` -> `boundary_sheets_r7/` (13 sheets,
+local). Every sheet read:
+
+| # | kind | where | what | status |
+|---|---|---|---|---|
+| B1 | tone | edge_L_0000 (pit lane at the line) | a red smear on the pit-lane ground: the starter's stand's red post baked into the ortho | fixed: `ortho_paint_over` (on any, all) over the post (re-shot clean) |
+| B2 | tone | edge_R_0480 / 0630 / 0690, zone_* (all three closed roads) | the closed roads drawn in the ortho's own tone read as pale gravel with dark NAIP blotches | fixed: `surface='apron'` (pale weathered asphalt with the grain; re-shot uniform); still paler than the footage's "a touch lighter" grey: open, a look item |
+| B3 | boards | edge_L_0150-0210, edge_L_2910 | wall boards seen from behind (from the pit lane / beyond the fence) show their text mirrored | open: the kit's boards are double-faced planes on every track; not changed |
+| B4 | pose | edge_L_1710-1770, edge_L_2160, pit-left_0090, pit-right_0090-0390 | the camera 6 m to the unpaved side lands on a bank, inside a building or behind the pit wall | pose artefacts, no surface finding |
+| B5 | tone | edge_L_1320-1410 | dark ground beside the back straight: tree shadows of the NAIP on the verge | accepted: real trees stand there (modelled) |
+| B6 | paint | edge_L_0240-0360, edge_L_3420 | pale chevrons on the pit exit / pit-in paving | accepted: the NAIP's hatched blend paint, real (360 t030-t032, N837 t014) |
+
+No seam, gap, overlap or z-fight was found at the course edges, the kerb bands, the pit lane's edges or the closed-road
+mouths.
+
+## 16. Ground-lines dispositions (gate round 13)
+
+All 107 findings of the scan on the package were reviewed on ortho crops with the edges and barriers drawn (local
+grids) and each written into `scenery.ground_lines.dispositions` as "accepted as built: <why>" with its finding
+number (the key makes the gate strict on this track; it passes: 107 dispositioned, 0 open). By cause:
+
+| what | findings |
+|---|---|
+| paddock / service road edge or curb | 34 |
+| shadow of the modelled armco / catch fence | 15 |
+| gravel trap / grass boundary | 14 |
+| building edge or its shadow | 8 |
+| the T1 footbridge's access road and its shadow | 8 |
+| mown line or footpath in the grass | 5 |
+| the pit-in island and its barrier | 5 |
+| the armco itself in the NAIP | 4 |
+| the bleachers' rows or their pad | 4 |
+| dark enclosure inside the T3-right armco outline | 3 |
+| the kerb's outer edge / sand beside it | 2 |
+| the T5 scoring pylon's shadow | 2 |
+| the PERMCO footbridge's abutment and stairs | 1 |
+| paddock tents / parked trailers | 1 |
+| asphalt shoulder seam at the right edge | 1 |
+
+The three "dark enclosure inside the T3-right armco outline" findings (88-90) are dispositioned as built but flagged
+open for the owner (section 14). No finding called for a fix in the package.
+
+## 17. The T4 bleachers rendered dark (judge F19)
+
+Cause: the stands' rows face west, away from the stills' sun, and the structure soup is drawn with plain Lambert
+(`structures_solid`), so the seat faces received only the ambient term. Not a missing face or a flipped normal (the
+soup is double-sided; the boxes are closed). Fix (opt-in): grandstand `self_lit` in the app (`src/app/structures.ts`
+structureSoups: a stand with `self_lit` goes to the terraces' part-self-lit soup, TERRACE_SELF_LIT 0.45), set on the two
+T4 bleachers. Re-shot (row s 1813 left): light grey aluminium rows. Proof that other tracks are unchanged:
+`r7/soup_hash.ts` (sha256 of every structure soup's positions and colours) before / after the change: Sonoma
+f71411f3c2e78626, Laguna e3b0c44298fc1c14 (no structures), Buttonwillow 3da76e09e950dd5a, identical; Mid-Ohio
+changes as intended.
+
+## 18. Gates re-run on rev 748b55ca59
+
+`build_track.py --stage scenery --publish` (exit 0, every line `[ok]`, 21 lines), then on `public/tracks/mid_ohio`:
+`run_gates.ts` exit 0, `run_coverage.ts` exit 0, `edge_gate.py` exit 0; kerb traversal (vitest) ok.
+
+| gate | value | result |
+|---|---|---|
+| edge left / right | rms 0.023 / 0.023 m | ok |
+| world continuity | 0.0050 / 0.0073 m | ok |
+| profile | 0.021 m | ok |
+| barrier gaps | min 0.97 m over 43 runs | ok |
+| containment | 0 escapes | ok |
+| pit connectivity + lane paths | 0 crossings, 0 obstacles | ok |
+| signs | 121, 0 misplaced | ok |
+| wall ends | 2 declared known exposures | ok |
+| tyre facings / wall tops / wall-tyre joins / tyre faces / run gaps | as before | ok |
+| ground marks on surface / cones off the surface | 0 off / 0 inside | ok |
+| coverage | 251 rows, 0 MISSING, 0 UNSUPPORTED, 15 dispositioned | ok |
+| pit lane | 6 rows | ok |
+| ground lines (now strict: `scenery.ground_lines`) | 107 findings, 107 dispositioned, 0 open | ok |
+| kerb traversal | no roll > 15 deg | ok |
+
+## 19. Identities re-proved (rev 748b55ca59)
+
+- Published track.json d19cfb7823695525, heightfield.bin eb74f48192e28e3c, ghosts.json 9124c3d34baffcfd: `cmp`-identical
+  to round 5 (`tools/track/out/mid_ohio_r5`).
+- Sonoma: stage 3 rebuilt from its published stage-1 files: scenery.json and far_heightfield.bin `cmp`-identical to
+  `public/tracks/sonoma`.
+- Laguna: stage 3 on the stage-1 reproduction: scenery.json, far_heightfield.bin, far_ortho.jpg, ortho.jpg identical to
+  the b5343d7 builder's output.
+- App: the structure soups of Sonoma, Laguna and Buttonwillow identical before / after the `self_lit` change (section 17).
+- Buttonwillow's stage-3 byte identity: the orchestrator's (its captures are in another worktree).
+- `git diff b5343d7 -- public/tracks/sonoma public/tracks/laguna_seca public/tracks/buttonwillow`: empty.
+
+Registry: `mid_ohio.rev` 748b55ca59; the comment carries the kerb-height owner question.
+
+Open after round 7b (replacing section 12's scan / audit / ground-lines / bleacher items): the scan's unplaced
+candidates (section 14), B2's apron tone and B3's mirrored board backs (section 15), the 4.4 structure stills; the rest of
+section 12 stands (field, AI, pit-lane survey, T4 run-off raise, kerb height as an owner question, OSM fence heights,
+IndyCar B / C rows, Buttonwillow identity, the second judge's pass).
