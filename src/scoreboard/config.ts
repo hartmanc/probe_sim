@@ -9,6 +9,18 @@
  */
 export const PHYSICS_VERSION = 'probe-sim-2026-10-18-edges';
 
+/**
+ * Board-key pins (0.4.0, 26 Oct 2026): physicsVersion() now hashes car.json without its "_" comment keys, and the
+ * comments themselves were edited (team members' names replaced). Neither changes the physics, so each computed value
+ * below answers the key its boards were published under before, and the published boards keep their entries. Any real
+ * change to car.json, a track's rev or PHYSICS_VERSION computes a value not listed here and opens fresh boards as before.
+ */
+export const PHYSICS_KEY_PINS: Readonly<Record<string, string>> = {
+  '125i9t0phb6': '12oxe5efqsv',   // laguna_seca (0.2.0 / 0.3.0 boards)
+  '1f6fkp0s4bd': '0aitg05wi4d',   // sonoma, rev 3cf8227da0 (0.3.0 boards)
+  '1xmztptxrji': '0ewchkyn2w5',   // buttonwillow, rev 52bf051dcc (previews)
+};
+
 /** Input-trace format version (InputTrace.v). */
 export const TRACE_FORMAT = 1;
 
