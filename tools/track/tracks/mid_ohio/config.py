@@ -729,12 +729,23 @@ CONFIG = dict(
         # (24 m with the mast) above the ground. Massing: a 10 x 10 m shaft to 10.5 m (3 storeys), the upper block 13 x 13 m
         # from 10.5 to 16.8 m (2 storeys) with decks 1.5 m out at both floors, the hip roof 3 m out (19 m eaves) rising 5 m.
         # No logo artwork; the deck fascia boards are left plain (the lettering is not legible in the frames)
-        dict(type='block', name='Control tower', rect=dict(c=(40.6890853, -82.6353188), heading_deg=-3.39, l=11.0, w=11.0),
-             h=17.0, storeys=5, wall='#c4b29b', band='#2b2e33', roof='#c4b29b', bands=[3, 4], band_frac=[0.1, 0.92],
-             wrap_decks=[dict(z=10.2, depth=1.2, color='#ecebe6', rail=1.0), dict(z=13.6, depth=1.2, color='#3a3d42', rail=1.0)],
-             hip=dict(rise=4.5, overhang=4.0, color='#c4483c'),
-             src='second judge M1 / owner note: N837 t127 / t129 (Apr 2026): a slender square tan-grey shaft (side wall (105, 102, 109) overcast; 360 t024 (131, 128, 123) in sun) the full height, two upper levels of open, dark decks with a white fascia board between, a red hip roof with a lattice mast; lidar 2019: the roof 19 x 18 m over the shaft, eaves 17 m, top over 20 m (24 m with the mast)',
-             h_src='lidar 2019: eaves 17 m; 5 storeys of 3.4 m; the hip rising 4.5 m to 21.5 m'),
+        # round 9 (owner: "Please have the agent model the Mid Ohio control tower ... It should have the red pyramid roof"):
+        # the owner-supplied photo, ARCA 2024, pit straight (/Users/cobyhartman/.claude/jobs/dc9b3c29/tmp/ref_mo_tower/
+        # pitbox-midohio2024-owner-ref.jpg, reference only) with N837 t127 / t129 and the 360 lap t024: a tan masonry body with
+        # window bands; above it two open galleries wrapped round all four sides between four black corner columns that run from
+        # the ground to the eaves; a blue sponsor band on the lower gallery ("COOPER TIRES", white on blue, typed); a red
+        # pyramid roof with wide eaves; an open crow's nest with railings and a flag pole on the apex. Footprint and heights from
+        # the 2019 lidar (roof 19 x 18 m, eaves 17 m, top over 20 m); the proportions from the photo (scale 0.066 m/px from the
+        # 17 m eaves: the body to ~10 m, the banner 10.0-12.2 m, galleries at 12.2 and 14.6 m, the apex ~22.5 m, the nest to ~25 m)
+        dict(type='block', name='Control tower', rect=dict(c=(40.6890853, -82.6353188), heading_deg=-3.39, l=13.0, w=13.0),
+             h=10.0, storeys=4, wall='#c9b59a', band='#23262a', roof='#c9b59a', band_frac=[0.4, 0.82],
+             wrap_decks=[dict(z=12.2, depth=2.6, color='#2b2e33', rail=1.05, floor='#6d6f72'), dict(z=14.6, depth=2.6, color='#2b2e33', rail=1.05, floor='#6d6f72')],
+             columns=dict(half=8.9, z1=17.0, w=0.45, color='#1c1e21'),
+             banner=dict(half=9.1, z=10.0, h=2.2, panel=8.9, color='#1f3f8f', names=[('COOPER TIRES', '#1f4fa0', '#ffffff')]),
+             hip=dict(rise=5.5, overhang=3.0, color='#c8302a', z=17.0),
+             nest=dict(w=2.2, z0=22.0, z=23.0, rail=1.1, pole=4.5, color='#2a2c30'),
+             src='owner-supplied photo, ARCA 2024, pit straight (path above, reference only); N837 t127 / t129 (Apr 2026); 360 lap t022 / t024 (Jul 2025); lidar 2019 roof 19 x 18 m, eaves 17 m, top over 20 m (round8.md 1c)',
+             h_src='lidar 2019: eaves 17 m (the hip on the columns at 17 m over the 10 m body and the two galleries); photo scale 0.066 m/px for the gallery, banner, roof rise and nest proportions'),
         # the starter's stand over the pit wall at the line: a cabin on black steel legs with boards (360 t022 / t024: HONDA, 2025;
         # N837 t130: PERMCO, Apr 2026); its red post on the pit wall on c20_s3560 / c20_s0000 at (61.2, 47.8) ENU
         # the scoring pylon right of T5 (inventory rows 'scoring pylon' s 1989-2105 right; 360 t078-t082, N837 t067-t072: a tall
@@ -744,10 +755,17 @@ CONFIG = dict(
              color='#3a3c40', plinth=dict(w=4.6, h=0.6, color='#cfcdc6'), head=dict(h=1.2, w=4.0, d=4.0, color='#2a2c2f'),
              src='lidar 2019 isolated column 4 x 4 m, 30.7 m (r7 judge F6); 360 lap t078-t082 ahead / right, N837 t067-t072; c20_s2080 its shadow',
              h_src='lidar 2019 top 30.7 m above the class-2 ground'),
-        dict(type='scoring_tower', name='S/F starter stand', at=(40.6894294, -82.635275), heading_deg=-3.39, w=1.2, d=1.2, h=6.0, color='#202224',
-             head=dict(h=2.6, w=6.0, d=3.0, color='#2a5aa8'),
-             src='N837 OJaBJz18xEo t130 (Apr 2026): the PERMCO-boarded stand on black legs over the pit wall at the line; 360 t022 ahead / t024 left (2025, HONDA boards); c20_s3560 / c20_s0000: its post on the pit wall',
-             h_src='legs ~6 m and a ~2.6 m cabin against the 13 m starter tower beside it in t130 / t024'),
+        # round 9: the starter's stand on the pit wall at the line, replacing round 7's box on a post: the owner-supplied photo,
+        # ARCA 2024, pit straight (reference only; path at the control tower) shows a small red-roofed open cabin on a tall black
+        # scaffold with a white sponsor board under the cabin ("ZINSSER", typed, no logo) and a green flag; N837 t127 / t130
+        # (Apr 2026, PERMCO boards) and the 360 lap t022 / t024 (2025) give its place on the pit wall (c20_s3560 / c20_s0000:
+        # its post); scale from the photo against the 1.04 m pit wall (~0.06 m/px): board 1.8 m, its bottom ~5.8 m, cabin to
+        # ~8.4 m, 6.5 m wide
+        dict(type='starter_stand', name='S/F starter stand', at=(40.6894294, -82.635275), heading_deg=-3.39, w=6.5, d=2.6, legs=7.6,
+             cabin=2.0, frame='#1c1e21', roof='#b8443a', cabin_color='#e6e4de',
+             board=dict(text='ZINSSER', bg='#f2f2ee', fg='#c8202c', h=1.8),
+             src='owner-supplied photo, ARCA 2024, pit straight; N837 t127 / t130 (Apr 2026); 360 lap t022 ahead / t024 left (2025); c20_s3560 / c20_s0000: its post on the pit wall',
+             h_src='photo scale ~0.06 m/px against the 1.04 m pit wall: the board bottom ~5.8 m, the cabin floor 7.6 m, its roof ~9.6 m'),
     ]),
     app=dict(short='Mid-Ohio', pace='cars/field/mid_ohio/pace.json'),
 )
