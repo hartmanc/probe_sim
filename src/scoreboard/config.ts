@@ -76,6 +76,9 @@ export interface TrackInfo {
   /** "Far off the track" for the lost-in-the-hills launch, m past the nearer track edge (absent = OFFTRACK_FAR_M, 40 m,
    *  src/physics/offtrack.ts). Only the player's car; outside the near heightfield always counts as far. */
   offTrackFarM?: number;
+  /** The Start menu's race line names the field (src/app/modes/race.ts raceMenuLabel): a track whose pace / identity are
+   *  another event's stand-in says so here (Mid-Ohio round 7); absent: 'the 2026 field' (its own). */
+  fieldLabel?: string;
   /** Work in progress (owner, 25 Oct 2026): the track ships in the bundle for its branch's previews and ?track= links
    *  but the Start menu does not offer it (src/app/track-choice.ts TRACK_IDS), so a publish can carry a circuit that is
    *  still being iterated without releasing it. */
@@ -114,6 +117,15 @@ export const TRACKS: Readonly<Record<string, TrackInfo>> = {
     // four wheels off 0.185 -> 0.033 (shiftGrip: off-road rejoins and grip slides; laneMargin 0.7: inside passes into the
     // T3 / T4 pinch; followScale 1.4); race time 771 -> 768 s mean
     ai: { followScale: 1.4, laneMargin: 0.7, shiftGrip: 1 } },
+  // Mid-Ohio, the Lemons 13-turn outer loop (round 7, 27 Oct 2026: stage 3 built from the evidence, every stage-3 gate
+  // ok; tools/track/compare/mid_ohio/round7.md). wip: not in the Start menu until the owner accepts it (its ?track= link
+  // loads it). The FIELD IS A STAND-IN: pace (and identity, absent here = the global file) are LAGUNA's field
+  // (cars/field/pace.json, cars/field/identity.json), not a Mid-Ohio calibration; the real field, the Lemons 2026
+  // Mid-West Crisis (results page in tools/track/tracks/mid_ohio/sources.json), is deferred. The Start menu's race line
+  // says so (fieldLabel). Rolling start 230 m before the last directed corner, T13 (s 3454 -> 3224), the skill's rule.
+  mid_ohio: { dir: 'tracks/mid_ohio/', name: 'Mid-Ohio Sports Car Course', short: 'Mid-Ohio', length_m: 3597.492, pace: 'cars/field/pace.json',
+    fieldLabel: 'a stand-in field (Laguna\'s)', rev: 'a692501d35', wip: true,
+    start: { beforeCorner: 'T13', m: ROLLING_START_BEFORE_LAST_CORNER_M, speed: ROLLING_START_SPEED } },
 };
 /** The track when none is chosen (URL ?track=, Start menu). */
 export const DEFAULT_TRACK = 'laguna_seca';
