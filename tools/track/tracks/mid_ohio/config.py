@@ -335,13 +335,15 @@ CONFIG = dict(
                  src='c20_s3400-c20_s0200 wall top (wall_measure.py); 360 lap e25u_vjn1uM t020-t030 left, t128-t130 left; N837 t000-t010 left; inventory pit rows s 3496-216',
                  h_src='lidar 2019 1.04 m (r5/lidar_heights.json); horizon ratio 360 t026 left 1.03-1.08 m (camera 1.7 m, horizon from the heads in the lane)'),
         ],
-        tyre_facings=None, tyre_stacks=[], blocks=[],
+        tyre_facings=None, blocks=[],
+        # second judge m7: the three yellow water-filled barrels at the pit-in barrier's head as three 0.9 m cylinders (a yellow
+        # stack) in a line ahead of its head (360 lap t017-t018 left), not one box
+        tyre_stacks=[dict(latlon=(40.6888174, -82.633373), h=0.9, w=0.9, style='tyres', color='#e2c21e', src='360 lap t017-t018 left: yellow impact barrel at the pit-in barrier head; c20_s3360 (the barrier head)'), dict(latlon=(40.6888096, -82.6333672), h=0.9, w=0.9, style='tyres', color='#e2c21e', src='360 lap t017-t018 left: yellow impact barrel at the pit-in barrier head; c20_s3360 (the barrier head)'), dict(latlon=(40.6888017, -82.6333614), h=0.9, w=0.9, style='tyres', color='#e2c21e', src='360 lap t017-t018 left: yellow impact barrel at the pit-in barrier head; c20_s3360 (the barrier head)')],
         # the black-faced barrier along the grass island at the pit-in (c20_s3360 / c20_s3400: the dark line between the island and
         # the pit-in lane, wall_measure.py --guide 221,-20;212.2,0.2;202.7,17.7 --feature dark, 100 % picked, rms 0.56 m), joined to
         # the pit wall's island run; 360 lap t018 left (2025): a HONDA banner over it and three yellow impact barrels at its
         # head; N837 t125 (Apr 2026): its smooth black face (belting over the barrier: tyres not visible, drawn as a black wall)
-        impact_barriers=[dict(wall='pit-in barrier', end='start', w=2.4, d=1.0, h=1.0, color='#e2c21e',
-                              src='360 lap t018 left: three yellow water-filled barrels at the head of the pit-in barrier (2025)')],
+        impact_barriers=[],
         # PIT EXIT (step 4): no cones on the pit-exit merge (360 t030-t034 left, N837 t014-t016: the ladder paint and the T1
         # inside kerb, no cones)
         pit_exit_cones=dict(draw=False, src='no cones on the pit exit (360 lap t030-t034 left; N837 t014 / t016): the ladder line and the raised T1 inside kerb separate the lane'),
@@ -355,7 +357,7 @@ CONFIG = dict(
         bridge_stairs=True,
         # judge r7 F9: the banners the footage shows on the two footbridges, typed names (no logo artwork)
         bridge_banners={'444205416': [['Firestone|#f2f2ee|#c8202c'], ['HONDA|#c8302a|#f2f2ee']],
-                        '444205419': [['PERMCO|#2f6db3|#f2f2ee', 'Pumps and Motors|#e8ecef|#2f4f7a'], ['VELO|#2f6db3|#f2f2ee', 'VELO|#2f6db3|#f2f2ee']]},   # judge r7 F15: the far face (360 back t108) carries VELO
+                        '444205419': [['VELO|#2f6db3|#f2f2ee', 'VELO|#2f6db3|#f2f2ee'], ['PERMCO|#2f6db3|#f2f2ee', 'Pumps and Motors|#e8ecef|#2f4f7a']]},   # faces in the OSM way's frame (app: face 0 on the way's left); round 8 sheet fwd_s2800 showed VELO on the approach: swapped, so PERMCO / Pumps and Motors faces oncoming cars (N837 t100-t101) and VELO the far face (360 back t108)
         # CLOSED ROADS (step 2): the owner's GREEN strokes of round 2 (owner/r2/merged.json green_enu_xy: the extra paved
         # boundaries) are the paving edges (edges_from_green) of the unused roads OSM maps as raceway ways: the inner chicane
         # (444205376) and the two T1-T3 connectors (444205377 / 444205378). Grey asphalt a touch lighter than the racing
@@ -405,38 +407,46 @@ CONFIG = dict(
             dict(side='left', s=1837, off=11.1, text='300', w=0.7, h=1.8, src='360 lap t072 left and N837 t060: "300" (inventory row s 1813 left, sigma 20 m)'),
             dict(side='left', s=1867, off=11.6, text='200', w=0.7, h=1.8, src='N837 t060-t061 (beyond the 300); judge r7 F3'),
             dict(side='left', s=1898, off=12.2, text='100', w=0.7, h=1.8, src='360 lap t074: the "100" board crossed at s ~1898 (round4.md T4 placement)'),
+            dict(side='right', s=1776, off=9.9, text='500', w=0.7, h=1.8, src='360 lap t070.5 right (second judge crop t4boards): a "500" board on the right fence before T4'),
+            dict(side='left', s=2146, off=4.0, text='5', w=0.8, h=0.8, src='station 5 number post (second judge m10: the post is permanent, N837 t074 left shows it; the 2025 canopy was temporary)'),
             dict(side='right', s=1837, off=9.9, text='300', w=0.7, h=1.8, src='360 lap t072 right: "300" board right on the T4 approach (inventory row s 1813 right)'),
             dict(side='right', s=3022, off=2.1, text='200', w=0.7, h=1.8, src='N837 t106 (Apr 2026): "200" on the right fence before T11; judge r7 F3'),
             dict(side='right', s=3053, off=5.3, text='100', w=0.7, h=1.8, src='360 lap t112 right: "100" before T11 (inventory row s 3053)'),
         ],
-        # sponsor boards as typed names in the observed colours (the Laguna rule; no logo artwork): banners and hoardings on the
-        # armco line, 2.0 m panels from 0.1 m (360 t050-t052 / N837 t038-t040: the hoardings stand at the armco and rise above it)
+        # sponsor boards as typed names in the observed colours (the Laguna rule; no logo artwork): hoardings standing IN FRONT of
+        # the armco (round 8: 0.45 m in front from the ground; round 7 put them 0.3 m behind, hidden), 2.0 m panels (360 t050-t052 / N837 t038-t040: the hoardings stand at the armco and rise above it)
         wall_boards=[
-            dict(wall='osm:1315208944', s=(905, 1050), h=2.0, base=0.1, off=-0.3, panel=6.0,
+            dict(wall='osm:1315208944', s=(905, 1050), h=2.0, base=0.0, off=0.45, panel=6.0,
                  names=[('PERMCO', '#2a5aa8', '#f2f2ee'), ('HRC', '#dcdcd8', '#a3262a'), ('SUMMIT', '#dcdcd8', '#c8202c'), ('HONDA', '#c8302a', '#f2f2ee'),
                         ('START', '#1a1a1a', '#f2f2ee'), ("O'REILLY", '#c8302a', '#2e9e48'), ('HRC', '#e8e8e6', '#a3262a')],
                  src='N837 OJaBJz18xEo t038-t040 (Apr 2026): the Keyhole outside board wall PERMCO, HRC, SUMMIT, HONDA, START, O\'REILLY, HRC; 360 t048-t054 left (2025: HONDA, Firestone, Velo, PERMCO); inventory rows s 912-1044 left'),
-            dict(wall='osm:1315208940', s=(1880, 1949), h=2.0, base=0.1, off=-0.3, panel=6.0,
+            dict(wall='osm:1315208940', s=(1915, 1949), h=2.0, base=0.0, off=0.45, panel=6.0,
                  names=[('HONDA', '#c8302a', '#f2f2ee')],
                  src='360 lap t074-t076 left: Honda board wall along the T4 outside; N837 t064 left sponsor boards; inventory rows s 1898-1952 left'),
-            dict(wall='osm:1315208951', s=(2050, 2110), h=1.5, base=0.1, off=-0.3, panel=6.0,
+            dict(wall='osm:1315208951', s=(2050, 2110), h=1.2, base=0.0, off=0.45, panel=6.0,
                  names=[('HONDA', '#f2f2ee', '#c8302a'), ('HONDA', '#f2f2ee', '#c8302a')],
-                 src='360 lap t080 right: HONDA HONDA HONDA board wall on the T5 hillside (red text on white, black base); t082 right Honda boards; inventory rows s 2051-2100 right'),
-            dict(wall='osm:1315208937', s=(2280, 2380), h=1.5, base=0.1, off=-0.3, panel=6.0,
+                 src='360 lap t080 right: HONDA HONDA HONDA board wall on the T5 hillside (red text on white, black base) standing IN FRONT of the armco (second judge M2: round 7 put the panels 0.3 m behind the 1.2 m armco, hidden; pose still t5board); t082 right Honda boards; inventory rows s 2051-2100 right'),
+            dict(wall='osm:1315208937', s=(2280, 2380), h=1.5, base=0.0, off=0.45, panel=6.0,
                  names=[('Firestone', '#e8e8e6', '#b3242a'), ('HONDA', '#c8302a', '#f2f2ee')],
                  src='360 lap t088-t092 left: Firestone then Honda boards through T7; inventory rows s 2269-2371 left'),
-            dict(wall='osm:1315208923', s=(3555, 3596), h=2.0, base=0.1, off=-0.3, panel=8.0,
+            dict(wall='osm:1315208923', s=(3555, 3596), h=2.0, base=0.0, off=0.45, panel=8.0,
                  names=[('HONDA', '#c8302a', '#f2f2ee')],
                  src='360 lap t130 right: the large HONDA board wall after the main grandstand (white text on red); inventory row s 3557 right'),
-            dict(wall='osm:1315208942', s=(1500, 1557), h=2.0, base=0.1, off=-0.3, panel=6.0,
+            dict(wall='osm:1315208942', s=(1500, 1557), h=2.0, base=0.0, off=0.45, panel=6.0,
                  names=[('HONDA', '#c8302a', '#f2f2ee'), ('NTT DATA', '#1f3f8f', '#f2f2ee')],
                  src='360 lap t066 left: Honda and NTT Data boards on the fence; N837 t054 left: the HONDA billboard; inventory rows s 1527-1528 left'),
             # judge r7 F16-F18: boards the sheets showed missing
-            dict(wall='pit wall', s=(150, 212), h=0.9, base=0.05, off=-0.25, panel=6.0, names=[('VELO', '#2f6db3', '#f2f2ee')],
+            dict(wall='osm:1315208943', s=(963, 1070), h=2.0, base=0.0, off=0.45, panel=6.0,
+                 names=[('PERMCO', '#2a5aa8', '#f2f2ee'), ('VELO', '#2f6db3', '#f2f2ee'), ('SUMMIT', '#dcdcd8', '#c8202c'), ('HONDA', '#c8302a', '#f2f2ee'),
+                        ('START', '#1a1a1a', '#f2f2ee'), ("O'REILLY", '#c8302a', '#2e9e48'), ('HRC', '#e8e8e6', '#a3262a'), ('Firestone', '#e8e8e6', '#b3242a')],
+                 src='round 8 full-walk judge (row_s1035_left): the Keyhole-exit board wall continues past OSM 944 onto 943; 360 lap t053-t055 left (PERMCO, VELO, HONDA, START, O\'REILLY, HRC, Firestone), N837 t040-t042'),
+            dict(wall='osm:1315208956', s=(3048, 3058), h=1.6, base=1.4, off=0.05, panel=6.0, names=[('VELO', '#2f6db3', '#f2f2ee')],
+                 src='360 lap t112 right (Jul 2025): a blue VELO banner high on the catch fence before T11 (second judge m9)'),
+            dict(wall='pit wall', s=(150, 212), h=0.9, base=0.05, off=-0.25, panel=6.0, single=True, names=[('VELO', '#2f6db3', '#f2f2ee')],
                  src='360 lap t028-t029.5 left (Jul 2025): VELO banners on the pit wall toward the footbridge (inventory pit row s 154); judge r7 runoff_00'),
-            dict(wall='pit-in barrier', s=(3405, 3445), h=1.2, base=0.0, off=0.15, panel=6.0, names=[('HONDA', '#f2f2ee', '#c8302a')],
+            dict(wall='pit-in barrier', s=(3405, 3452), h=1.2, base=0.0, off=0.15, panel=6.0, names=[('HONDA', '#f2f2ee', '#c8302a')],
                  src='360 lap t017-t018.5 left: HONDA banners along the pit-in barrier (red text on white; inventory row s 3422 left); judge r7 side_33'),
-            dict(wall='osm:1315208933', s=(2860, 2916), h=1.5, base=0.1, off=-0.3, panel=6.0, names=[('VELO', '#2f6db3', '#f2f2ee')],
+            dict(wall='osm:1315208933', s=(2860, 2916), h=1.6, base=1.4, off=0.05, panel=6.0, names=[('VELO', '#2f6db3', '#f2f2ee')],
                  src='360 lap t108 left (Jul 2025): VELO banners on the fence at the PERMCO bridge (inventory row s 2880 left); judge r7 side_28'),
         ],
         pit_lane_clip_walls=True,
@@ -447,6 +457,8 @@ CONFIG = dict(
         # straight 1330-1600); found by r7 road-luminance scan (road median per station 15+ below its 101-station median), each
         # stretch +-4 stations painted to the road's median ('dark'); the bridge shadow at s 221-227 is left (a real shadow there)
         ortho_paint_over=[
+            dict(latlon=[(40.6895791, -82.6322178), (40.6895529, -82.6322073), (40.6895266, -82.6321969), (40.6895001, -82.6321866), (40.6894733, -82.6321767), (40.6894462, -82.6321673), (40.6894186, -82.6321587), (40.6893905, -82.6321511), (40.689362, -82.6321447), (40.689333, -82.6321399), (40.6893036, -82.6321369), (40.6892739, -82.6321358), (40.6892441, -82.6321369), (40.6892143, -82.6321401), (40.6891846, -82.6321454), (40.6891552, -82.6321529), (40.6891261, -82.6321624), (40.6890975, -82.6321738), (40.6890694, -82.632187), (40.6890419, -82.6322019), (40.6890151, -82.6322184), (40.6890642, -82.6323476), (40.6890863, -82.632334), (40.6891087, -82.6323219), (40.6891315, -82.6323115), (40.6891546, -82.6323026), (40.6891779, -82.6322954), (40.6892015, -82.6322899), (40.6892253, -82.632286), (40.6892493, -82.6322838), (40.6892734, -82.6322832), (40.6892977, -82.6322841), (40.6893221, -82.6322865), (40.6893467, -82.6322902), (40.6893714, -82.6322952), (40.6893963, -82.6323012), (40.6894213, -82.6323082), (40.6894465, -82.6323161), (40.6894718, -82.6323246), (40.6894972, -82.6323337), (40.6895226, -82.6323432), (40.6895481, -82.632353)], src='round 8 full-walk judge (back_s3300, second judge m14): a pale NAIP blotch on the road at s ~3250-3280'),
+            dict(latlon=[(40.6895791, -82.6322178), (40.6895529, -82.6322073), (40.6895266, -82.6321969), (40.6895001, -82.6321866), (40.6894733, -82.6321767), (40.6894462, -82.6321673), (40.6894186, -82.6321587), (40.6893905, -82.6321511), (40.689362, -82.6321447), (40.689333, -82.6321399), (40.6893036, -82.6321369), (40.6892739, -82.6321358), (40.6892441, -82.6321369), (40.6892143, -82.6321401), (40.6891846, -82.6321454), (40.6891552, -82.6321529), (40.6891261, -82.6321624), (40.6890975, -82.6321738), (40.6890694, -82.632187), (40.6890419, -82.6322019), (40.6890151, -82.6322184), (40.6890642, -82.6323476), (40.6890863, -82.632334), (40.6891087, -82.6323219), (40.6891315, -82.6323115), (40.6891546, -82.6323026), (40.6891779, -82.6322954), (40.6892015, -82.6322899), (40.6892253, -82.632286), (40.6892493, -82.6322838), (40.6892734, -82.6322832), (40.6892977, -82.6322841), (40.6893221, -82.6322865), (40.6893467, -82.6322902), (40.6893714, -82.6322952), (40.6893963, -82.6323012), (40.6894213, -82.6323082), (40.6894465, -82.6323161), (40.6894718, -82.6323246), (40.6894972, -82.6323337), (40.6895226, -82.6323432), (40.6895481, -82.632353)], dark=True, src='round 8 second walk (back_s3300): the dark half of the same NAIP blotch on the road at s ~3250-3280'),
             dict(latlon=[(40.6893908, -82.6353164), (40.6893908, -82.6352335), (40.6894671, -82.6352335), (40.6894671, -82.6353164)], on='any', all=True, src='boundary audit r7 B1: the red post of the starter\'s stand (c20_s3560 / c20_s0000) baked into the ortho as a red smear on the pit lane beside the modelled stand (edge_L_0000)'),
             dict(latlon=[(40.6841975, -82.6401885), (40.6842264, -82.6401988), (40.6842555, -82.640207), (40.6842845, -82.6402132), (40.6843134, -82.6402177), (40.684342, -82.6402208), (40.6843703, -82.6402229), (40.684384, -82.6400846), (40.6843583, -82.6400834), (40.684333, -82.6400812), (40.6843081, -82.6400778), (40.6842837, -82.6400729), (40.6842599, -82.6400664), (40.6842366, -82.640058)], dark=True, src='road-luminance scan s 1018-1029: a tree shadow on the NAIP road (judge r7 F12)'),
             dict(latlon=[(40.6870129, -82.6403402), (40.6870399, -82.640341), (40.6870668, -82.6403418), (40.6870938, -82.6403425), (40.6871207, -82.6403433), (40.6871477, -82.640344), (40.6871503, -82.6402015), (40.6871233, -82.6402005), (40.6870964, -82.6401995), (40.6870694, -82.6401985), (40.6870424, -82.6401975), (40.6870155, -82.6401965)], dark=True, src='road-luminance scan s 1330-1337: a tree shadow on the NAIP road (judge r7 F12)'),
@@ -625,7 +637,7 @@ CONFIG = dict(
             dict(contains=(40.6879265, -82.6371551), drop=True, src='no 2026 source (the clean captures mask it, no onboard frame shows it): NAIP ortho: the white tent roof in the paddock (lidar box 4.1 m; 360 t036 left: the hospitality tents beyond the infield)'),
             dict(contains=(40.6909529, -82.6346376), drop=True, src='no 2026 source (the clean captures mask it, no onboard frame shows it): NAIP ortho: the red roof among the trees in the infield (lidar box 3.1 m)'),
         ],
-        building_overrides=[],
+        building_overrides=[dict(osm='1315208919', plain=True, src='second judge m11: the building right of T5 is a dark-roofed open pavilion in 360 t082 right (Jul 2025), not a windowed office; c20_s2040 shows its red hip roof; drawn plain (no window facade), its lidar height kept')],
         marks_on_surface=dict(lift=0.008, src='round 7: every ground mark on the driven surface (Sonoma round 14B rule)'),
         gates=dict(
             known_exposures=[dict(side='left', latlon=(40.6893944, -82.6382391), reason='the T1 inside armco runs to the footbridge\'s abutment, which is drawn (bridge_stairs) but is not a barrier object; the run is stopped 9 m short of it because the 2019 ground under the deck is contaminated',
@@ -658,7 +670,7 @@ CONFIG = dict(
     # the track (the 360 lap's left views t020-t034, N837 t014-t016) and the clean captures (c20_s3400-c20_s0360). Sides as
     # driven down the lane: the pit wall stands on its RIGHT (between the lane and the track)
     pit_lane=dict(
-        lane=dict(source='osm', match_track_tone=dict(k=0.5, paint=0.97)),
+        lane=dict(source='osm', match_track_tone=dict(k=0.8, paint=0.97)),   # round 8 (second judge m14, the pit-out seam): k 0.5 -> 0.8
         walls=[
             dict(side='right', a=(40.6891509, -82.6336089), b=(40.6895232, -82.6377782), h=1.04, material='concrete', declared='pit wall',
                  src='the pit wall (declared_walls \'pit wall\', measured on the captures): 360 lap t020-t030 left (white concrete pit wall from the RESTART board at the T13 exit to the footbridge abutment), pit rows s 3496-216; h 1.04 m (2019 lidar; the 360 t026 left re-read 1.03-1.08 m)'),
@@ -701,12 +713,12 @@ CONFIG = dict(
         # catch fence, ~15 rows; c20_s1760 / c20_s1800: the grey seat field; OSM leisure=bleachers 1315208964 / 1315208921);
         # 2019 lidar box 4.8 m over the north one
         dict(type='grandstand', name='T4 bleachers north', front=[(40.6926231, -82.638648), (40.6922059, -82.6388404)],
-             base=dict(h=0.6, depth=1.0, color='#9da1a6'), rows=dict(n=14, depth=0.8, rise=0.3, z0=0.9, seat='#c9ccd0', riser='#8d9196', back=0.0),
+             base=dict(h=0.6, depth=1.0, color='#c3c7cc'), rows=dict(n=15, depth=0.8, rise=0.33, z0=0.9, seat='#dfe2e6', riser='#b4b8bd', back=0.0),
              aisles=dict(pitch=12.0, w=1.2, color='#b5b8bc'), self_lit=True,   # judge r7 F19: rows face away from the sun (plain Lambert rendered them dark)
              src='360 lap t072-t074 left (aluminium bleachers, inventory rows s 1792-1898 left); c20_s1760 / c20_s1800; OSM 1315208964',
              h_src='2019 lidar box 4.8 m (building_height_robust log); 14 rows of 0.3 m in t072 left'),
         dict(type='grandstand', name='T4 bleachers south', front=[(40.6915309, -82.6392064), (40.6911479, -82.6394012)],
-             base=dict(h=0.6, depth=1.0, color='#9da1a6'), rows=dict(n=14, depth=0.8, rise=0.3, z0=0.9, seat='#c9ccd0', riser='#8d9196', back=0.0),
+             base=dict(h=0.6, depth=1.0, color='#c3c7cc'), rows=dict(n=15, depth=0.8, rise=0.33, z0=0.9, seat='#dfe2e6', riser='#b4b8bd', back=0.0),
              aisles=dict(pitch=12.0, w=1.2, color='#b5b8bc'), self_lit=True,   # judge r7 F19: rows face away from the sun (plain Lambert rendered them dark)
              src='N837 t060 left (aluminium bleachers on the T4 approach, inventory row s 1792 left); c20_s1720 / c20_s1760; OSM 1315208921',
              h_src='as the north bleachers (same rows in the frames)'),
@@ -717,16 +729,12 @@ CONFIG = dict(
         # (24 m with the mast) above the ground. Massing: a 10 x 10 m shaft to 10.5 m (3 storeys), the upper block 13 x 13 m
         # from 10.5 to 16.8 m (2 storeys) with decks 1.5 m out at both floors, the hip roof 3 m out (19 m eaves) rising 5 m.
         # No logo artwork; the deck fascia boards are left plain (the lettering is not legible in the frames)
-        dict(type='block', name='Control tower shaft', rect=dict(c=(40.6890853, -82.6353188), heading_deg=-3.39, l=10.0, w=10.0),
-             h=10.5, storeys=3, wall='#4b4036', band='#25282c', roof='#4b4036', bands=[2],
-             src='N837 t004 / t128-t129; 360 lap t022 ahead, t024 left; lidar 2019 footprint (round8.md 1c)',
-             h_src='3 storeys under the upper block in the frames; the upper block floor at 10.5 m (lidar eaves 17 m less the 2 upper storeys and the roof thickness)'),
-        dict(type='block', name='Control tower', rect=dict(c=(40.6890853, -82.6353188), heading_deg=-3.39, l=13.0, w=13.0), base=10.5,
-             h=6.3, storeys=2, wall='#3d342d', band='#1f2328', roof='#3d342d', band_frac=[0.15, 0.85],
-             wrap_decks=[dict(z=0.0, depth=1.5, color='#e7e5df', rail=1.1), dict(z=3.15, depth=1.5, color='#e7e5df', rail=1.1)],
-             hip=dict(rise=5.0, overhang=3.0, color='#c4483c'),
-             src='N837 t004 / t128-t129 (red hip roof, the wrapped decks with white fascia, dark glazing); 360 lap t024 left; lidar 2019: roof 19 x 18 m, eaves 17 m, top over 20 m (24 m with the mast)',
-             h_src='lidar 2019: eaves 17 m (6.3 m of upper block from 10.5 m plus the roof base), top 21.8 m with the 5 m hip rise against the lidar ridge over 20 m'),
+        dict(type='block', name='Control tower', rect=dict(c=(40.6890853, -82.6353188), heading_deg=-3.39, l=11.0, w=11.0),
+             h=17.0, storeys=5, wall='#c4b29b', band='#2b2e33', roof='#c4b29b', bands=[3, 4], band_frac=[0.1, 0.92],
+             wrap_decks=[dict(z=10.2, depth=1.2, color='#ecebe6', rail=1.0), dict(z=13.6, depth=1.2, color='#3a3d42', rail=1.0)],
+             hip=dict(rise=4.5, overhang=4.0, color='#c4483c'),
+             src='second judge M1 / owner note: N837 t127 / t129 (Apr 2026): a slender square tan-grey shaft (side wall (105, 102, 109) overcast; 360 t024 (131, 128, 123) in sun) the full height, two upper levels of open, dark decks with a white fascia board between, a red hip roof with a lattice mast; lidar 2019: the roof 19 x 18 m over the shaft, eaves 17 m, top over 20 m (24 m with the mast)',
+             h_src='lidar 2019: eaves 17 m; 5 storeys of 3.4 m; the hip rising 4.5 m to 21.5 m'),
         # the starter's stand over the pit wall at the line: a cabin on black steel legs with boards (360 t022 / t024: HONDA, 2025;
         # N837 t130: PERMCO, Apr 2026); its red post on the pit wall on c20_s3560 / c20_s0000 at (61.2, 47.8) ENU
         # the scoring pylon right of T5 (inventory rows 'scoring pylon' s 1989-2105 right; 360 t078-t082, N837 t067-t072: a tall
