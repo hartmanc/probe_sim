@@ -401,7 +401,10 @@ changes as intended.
 - Laguna: stage 3 on the stage-1 reproduction: scenery.json, far_heightfield.bin, far_ortho.jpg, ortho.jpg identical to
   the b5343d7 builder's output.
 - App: the structure soups of Sonoma, Laguna and Buttonwillow identical before / after the `self_lit` change (section 17).
-- Buttonwillow's stage-3 byte identity: the orchestrator's (its captures are in another worktree).
+- Buttonwillow (the orchestrator's check, 27 Oct 2026): its gitignored capture folders (satellite_clean, streetview,
+  owner_edges_r10) copied into this worktree, then `build_track.py --track buttonwillow --stage all --out
+  tools/track/out/bw_idcheck` (rc 0): track.json, heightfield.bin, ghosts.json, scenery.json, far_heightfield.bin,
+  far_ortho.jpg and ortho.jpg all `cmp`-identical to `public/tracks/buttonwillow` with this branch's builder.
 - `git diff b5343d7 -- public/tracks/sonoma public/tracks/laguna_seca public/tracks/buttonwillow`: empty.
 
 Registry: `mid_ohio.rev` 748b55ca59; the comment carries the kerb-height owner question.
@@ -409,7 +412,7 @@ Registry: `mid_ohio.rev` 748b55ca59; the comment carries the kerb-height owner q
 Open after round 7b (replacing section 12's scan / audit / ground-lines / bleacher items): the scan's unplaced
 candidates (section 14), B2's apron tone and B3's mirrored board backs (section 15), the 4.4 structure stills; the rest of
 section 12 stands (field, AI, pit-lane survey, T4 run-off raise, kerb height as an owner question, OSM fence heights,
-IndyCar B / C rows, Buttonwillow identity, the second judge's pass).
+IndyCar B / C rows, the second judge's pass). The owner's preview probe-h8coektf2 is from e59c488 (rev a692501d35).
 
 Tests (round 7b final state): `npm run build` ok; full `npx vitest run` 536 / 537 with one timeout (the Laguna full-field
 `ai_behaviour.test.ts` case passed its 60 s limit at 1-minute load 9-12 with two other agents running); that file re-run
