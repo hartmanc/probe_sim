@@ -1,19 +1,19 @@
 // 360 lap e25u_vjn1uM (INDYCAR, 4 Jul 2025): four views every 2 s (frames_360/t###_{ahead,left,right,back}.jpg). Heights: camera
 // 1.7 m (Honda pace car roof 1.4 m + mount; the roof edge at -21..-25 deg agrees), horizon from the far ground; +-30 % (round4.md).
-{"t": 24, "side": "left", "kind": "wall", "attrs": {"type": "concrete pit wall", "colour": "white", "h_m": 0.7, "h_method": "horizon-ratio"}, "confidence": 0.8, "note": "pit wall, \"NTT INDYCAR SERIES\" lettering, the pit lane behind"}
+{"t": 24, "side": "left", "kind": "wall", "attrs": {"type": "concrete pit wall", "colour": "white", "h_m": 1.04, "h_method": "lidar", "correction": [{"round": 7, "was": {"attrs.h_m": 0.7, "attrs.h_method": "horizon-ratio"}, "why": "round 7: re-read on the 2025 360 lap t026 left (the pit wall abeam, base row 386, top row 346; horizon row 320-325 from the heads of the people standing in the pit lane and the bases of the far tents): horizon ratio with the 1.7 m camera 1.03-1.08 m; the 2019 lidar gives 1.04 m (r5/lidar_heights.json, top 0.98-1.11 m over the edge). The round-4 0.7 m put the horizon too low. Adopted 1.04 m (lidar), +-0.1 m"}]}, "confidence": 0.8, "note": "pit wall, \"NTT INDYCAR SERIES\" lettering, the pit lane behind"}
 {"t": 24, "side": "left", "kind": "building", "attrs": {"type": "starter tower, 4 storeys, red roof", "h_m": 13, "h_method": "storeys"}, "confidence": 0.8, "note": "starter tower behind the pit lane"}
-{"t": 24, "side": "left", "kind": "stand", "attrs": {"type": "Honda overhead starter gantry over the pit wall"}, "confidence": 0.8, "note": "S/F gantry"}
+{"t": 24, "side": "left", "kind": "tower", "attrs": {"type": "Honda overhead starter gantry over the pit wall", "correction": [{"round": 7, "was": {"kind": "stand"}, "why": "round 7: the overhead starter's stand at the line (360 t022 ahead / t024 left: a cabin with HONDA boards on black steel legs over the pit wall; N837 t130: the same with PERMCO boards, 2026) is a structure, not spectator seating: kind tower; placed as structures 'S/F starter stand'"}]}, "confidence": 0.8, "note": "S/F gantry"}
 {"t": 24, "side": "left", "kind": "paint", "attrs": {"type": "white timing stripe across the track"}, "confidence": 0.8, "note": "S/F line"}
 {"t": 24, "side": "right", "kind": "runoff", "attrs": {"type": "grass then sand/gravel"}, "confidence": 0.8}
 {"t": 24, "side": "right", "kind": "wall", "attrs": {"type": "armco (stacked W-beam)", "colour": "red", "h_m": 1.0, "h_method": "horizon-ratio"}, "confidence": 0.8, "note": "red armco at the back of the run-off"}
 {"t": 24, "side": "right", "kind": "stand", "attrs": {"type": "covered grandstand, red roof", "h_m": 7, "h_method": "storeys"}, "confidence": 0.8, "note": "main straight grandstand behind the armco"}
-{"t": 26, "side": "left", "kind": "wall", "attrs": {"type": "concrete pit wall", "colour": "white", "h_m": 0.7, "h_method": "horizon-ratio"}, "confidence": 0.8, "note": "pit wall continues"}
+{"t": 26, "side": "left", "kind": "wall", "attrs": {"type": "concrete pit wall", "colour": "white", "h_m": 1.04, "h_method": "lidar", "correction": [{"round": 7, "was": {"attrs.h_m": 0.7, "attrs.h_method": "horizon-ratio"}, "why": "round 7: re-read on the 2025 360 lap t026 left (the pit wall abeam, base row 386, top row 346; horizon row 320-325 from the heads of the people standing in the pit lane and the bases of the far tents): horizon ratio with the 1.7 m camera 1.03-1.08 m; the 2019 lidar gives 1.04 m (r5/lidar_heights.json, top 0.98-1.11 m over the edge). The round-4 0.7 m put the horizon too low. Adopted 1.04 m (lidar), +-0.1 m"}]}, "confidence": 0.8, "note": "pit wall continues"}
 {"t": 26, "side": "left", "kind": "building", "attrs": {"type": "pit garages / hospitality, red roofs", "h_m": 4, "h_method": "storeys"}, "confidence": 0.8, "note": "paddock row behind the pit lane"}
 {"t": 26, "side": "right", "kind": "runoff", "attrs": {"type": "grass"}, "confidence": 0.8, "note": "grass verge"}
 {"t": 26, "side": "right", "kind": "wall", "attrs": {"type": "armco (stacked W-beam)", "colour": "red", "h_m": 1.0, "h_method": "horizon-ratio"}, "confidence": 0.8}
 {"t": 26, "side": "right", "kind": "fence", "attrs": {"type": "catch fence on curved posts", "h_m": 3.5, "h_method": "fence-post-ref"}, "confidence": 0.8, "note": "catch fence over the armco"}
 {"t": 26, "side": "right", "kind": "stand", "attrs": {"type": "covered grandstand, red roof"}, "confidence": 0.8}
-{"t": 28, "side": "left", "kind": "wall", "attrs": {"type": "concrete pit wall", "colour": "white", "h_m": 0.7, "h_method": "horizon-ratio"}, "confidence": 0.8, "note": "pit wall; VELO banners on it toward the bridge"}
+{"t": 28, "side": "left", "kind": "wall", "attrs": {"type": "concrete pit wall", "colour": "white", "h_m": 1.04, "h_method": "lidar", "correction": [{"round": 7, "was": {"attrs.h_m": 0.7, "attrs.h_method": "horizon-ratio"}, "why": "round 7: re-read on the 2025 360 lap t026 left (the pit wall abeam, base row 386, top row 346; horizon row 320-325 from the heads of the people standing in the pit lane and the bases of the far tents): horizon ratio with the 1.7 m camera 1.03-1.08 m; the 2019 lidar gives 1.04 m (r5/lidar_heights.json, top 0.98-1.11 m over the edge). The round-4 0.7 m put the horizon too low. Adopted 1.04 m (lidar), +-0.1 m"}]}, "confidence": 0.8, "note": "pit wall; VELO banners on it toward the bridge"}
 {"t": 28, "side": "right", "kind": "wall", "attrs": {"type": "armco (stacked W-beam)", "colour": "red", "h_m": 1.0, "h_method": "horizon-ratio"}, "confidence": 0.8}
 {"t": 28, "side": "right", "kind": "fence", "attrs": {"type": "catch fence on curved posts", "h_m": 3.5, "h_method": "fence-post-ref"}, "confidence": 0.8}
 {"t": 28, "side": "right", "kind": "station", "attrs": {"type": "TV camera scaffold tower behind the fence"}, "confidence": 0.8}
@@ -21,7 +21,7 @@
 {"t": 30, "side": "ahead", "kind": "bridge", "attrs": {"type": "Firestone footbridge (deck with banners: Firestone facing the approach, HONDA the far side), concrete abutments"}, "confidence": 0.8, "note": "passes overhead at 0:30.0"}
 {"t": 30, "side": "right", "kind": "wall", "attrs": {"type": "concrete abutment then red concrete barrier", "colour": "red"}, "confidence": 0.8, "note": "bridge abutment and the red barrier run to it"}
 {"t": 30, "side": "right", "kind": "boards", "attrs": {"type": "Summit board on the fence"}, "confidence": 0.8}
-{"t": 30, "side": "left", "kind": "wall", "attrs": {"type": "pit wall end at the bridge abutment", "colour": "white"}, "confidence": 0.8, "note": "pit exit lane continues beside the track under the bridge"}
+{"t": 30, "side": "left", "kind": "wall", "attrs": {"type": "pit wall end at the bridge abutment", "colour": "white", "ahead_m": -20.0, "correction": [{"round": 7, "was": {"attrs.ahead_m": null}, "why": "round 7: station correction: the pit wall ends at s ~212, 15 m before the footbridge, where the painted ladder line between the pit exit and the track begins (c20_s0120 / c20_s0080; the 360 frame looks at the end from beside the abutment, time map sigma 17.9 m); ahead_m puts the row at the end"}]}, "confidence": 0.8, "note": "pit exit lane continues beside the track under the bridge"}
 {"t": 32, "side": "left", "kind": "kerb", "attrs": {"type": "T1 inside kerb, red/white, flat"}, "confidence": 0.8, "note": "apex kerb"}
 {"t": 32, "side": "left", "kind": "paint", "attrs": {"type": "white hatched pit-exit blend lines on asphalt"}, "confidence": 0.8, "note": "pit exit merge; same asphalt tone as the track"}
 {"t": 32, "side": "left", "kind": "wall", "attrs": {"type": "armco (stacked W-beam)", "colour": "red", "h_m": 1.0, "h_method": "horizon-ratio"}, "confidence": 0.8, "note": "low red armco beyond the infield grass"}
@@ -30,7 +30,7 @@
 {"t": 34, "side": "left", "kind": "runoff", "attrs": {"type": "grass"}, "confidence": 0.8}
 {"t": 34, "side": "left", "kind": "wall", "attrs": {"type": "armco (stacked W-beam)", "colour": "red", "h_m": 1.0, "h_method": "horizon-ratio"}, "confidence": 0.8}
 {"t": 34, "side": "right", "kind": "runoff", "attrs": {"type": "sand/gravel trap"}, "confidence": 0.8, "note": "T1 exit outside"}
-{"t": 34, "side": "right", "kind": "wall", "attrs": {"type": "armco (stacked W-beam)", "colour": "red", "h_m": 1.0, "h_method": "horizon-ratio"}, "confidence": 0.8}
+{"t": 34, "side": "right", "kind": "wall", "attrs": {"type": "armco (stacked W-beam)", "colour": "red", "h_m": 1.0, "h_method": "horizon-ratio", "ahead_m": 1242.0, "correction": [{"round": 7, "was": {"attrs.ahead_m": null}, "why": "round 7: the red armco seen across the T1 run-off from s 358 is the barrier between the T1 run-off and the back straight (OSM 1315208923 / 1315208948, 37-43 m right of s 358, c20_s0280-c20_s0360 / c20_s1520-c20_s1600); its points lie nearer the back straight than T1, so the coverage gate projects it there (s ~1560-1640 right): ahead_m puts the row at s 1600 where the gate looks for it"}]}, "confidence": 0.8}
 {"t": 34, "side": "right", "kind": "boards", "attrs": {"type": "Honda boards"}, "confidence": 0.8}
 {"t": 36, "side": "right", "kind": "kerb", "attrs": {"type": "T1 exit kerb, yellow, flat (rumble strip)"}, "confidence": 0.8, "note": "yellow exit kerb"}
 {"t": 36, "side": "right", "kind": "runoff", "attrs": {"type": "sand/gravel"}, "confidence": 0.8}
@@ -43,7 +43,7 @@
 {"t": 40, "side": "left", "kind": "fence", "attrs": {"type": "catch fence on curved posts", "h_m": 3.5, "h_method": "fence-post-ref"}, "confidence": 0.8}
 {"t": 40, "side": "right", "kind": "runoff", "attrs": {"type": "grass"}, "confidence": 0.8, "note": "wide infield"}
 {"t": 40, "side": "right", "kind": "paint", "attrs": {"type": "inactive chicane road: grey asphalt, slightly lighter than the racing surface"}, "confidence": 0.8, "note": "the unused chicane seen across the infield (owner green strokes)"}
-{"t": 42, "side": "right", "kind": "kerb", "attrs": {"type": "red/white kerb at the chicane re-join (inactive)"}, "confidence": 0.8, "note": "chicane mouth kerb"}
+{"t": 42, "side": "right", "kind": "paint", "attrs": {"type": "red/white kerb at the chicane re-join (inactive)", "correction": [{"round": 7, "was": {"kind": "kerb"}, "why": "round 7: the red/white kerb stands on the inside edge of the inactive chicane road (c20_s0600: it leaves the course's right edge at s ~655 and is 9 m from it by s ~690), not on the course; a closed road's kerb, placed as scenery.kerb_lines 'chicane re-join kerb' (the coverage gate's kerb kind is the course's kerb strips)"}]}, "confidence": 0.8, "note": "chicane mouth kerb"}
 {"t": 42, "side": "right", "kind": "paint", "attrs": {"type": "chicane mouth paving, same grey asphalt"}, "confidence": 0.8}
 {"t": 42, "side": "left", "kind": "wall", "attrs": {"type": "armco (stacked W-beam)", "colour": "red", "h_m": 1.0, "h_method": "horizon-ratio"}, "confidence": 0.8}
 {"t": 42, "side": "left", "kind": "fence", "attrs": {"type": "catch fence on curved posts", "h_m": 3.5, "h_method": "fence-post-ref"}, "confidence": 0.8}
@@ -109,11 +109,11 @@
 {"t": 76, "side": "left", "kind": "boards", "attrs": {"type": "Honda board wall along the outside"}, "confidence": 0.8, "note": "T4 outside"}
 {"t": 76, "side": "left", "kind": "runoff", "attrs": {"type": "grass then sand/gravel"}, "confidence": 0.8, "note": "T4 run-off (rebuilt 2024)"}
 {"t": 78, "side": "left", "kind": "runoff", "attrs": {"type": "sand/gravel, wide"}, "confidence": 0.8, "note": "T4 exit outside"}
-{"t": 78, "side": "left", "kind": "kerb", "attrs": {"type": "yellow kerb"}, "confidence": 0.8, "note": "T4 exit / T5 approach, outside"}
+{"t": 78, "side": "left", "kind": "kerb", "attrs": {"type": "yellow kerb", "ahead_m": 20.0, "correction": [{"round": 7, "was": {"attrs.ahead_m": null}, "why": "round 7: station correction: the row's time-map station s 1995 (sigma 8.2 m, direct) lies off the kerb it shows; T4 exit kerb (yellow) begins at s ~2008-2013 on c20_s1920 / c20_s1960 (kerb_scan 2013); the note says T4 exit / T5 approach: seen ahead-left; ahead_m puts it at s ~2015"}]}, "confidence": 0.8, "note": "T4 exit / T5 approach, outside"}
 {"t": 78, "side": "right", "kind": "runoff", "attrs": {"type": "grass"}, "confidence": 0.8}
 {"t": 78, "side": "right", "kind": "wall", "attrs": {"type": "armco (stacked W-beam)", "colour": "red", "h_m": 1.0, "h_method": "horizon-ratio"}, "confidence": 0.8, "note": "far"}
 {"t": 80, "side": "right", "kind": "boards", "attrs": {"type": "Honda board wall on the fence"}, "confidence": 0.8}
-{"t": 80, "side": "right", "kind": "stand", "attrs": {"type": "spectator hillside"}, "confidence": 0.8}
+{"t": 80, "side": "right", "kind": "runoff", "attrs": {"type": "spectator hillside", "correction": [{"round": 7, "was": {"kind": "stand"}, "why": "round 7: the 'spectator hillside' at T5 right (360 t080 right) is the grass slope behind the armco with the HONDA board wall on it: ground (the lidar terrain), no stand structure; kind runoff (the ground beside the track)"}]}, "confidence": 0.8}
 {"t": 80, "side": "left", "kind": "runoff", "attrs": {"type": "grass and sand"}, "confidence": 0.8}
 {"t": 82, "side": "left", "kind": "kerb", "attrs": {"type": "T5 apex kerb, red/white"}, "confidence": 0.8}
 {"t": 82, "side": "right", "kind": "tower", "attrs": {"type": "scoring pylon"}, "confidence": 0.8, "note": "tall timing pylon"}
@@ -152,7 +152,7 @@
 {"t": 104, "side": "right", "kind": "runoff", "attrs": {"type": "grass"}, "confidence": 0.8}
 {"t": 106, "side": "left", "kind": "wall", "attrs": {"type": "concrete wall", "colour": "white"}, "confidence": 0.8}
 {"t": 106, "side": "right", "kind": "wall", "attrs": {"type": "armco (stacked W-beam)", "colour": "red", "h_m": 1.0, "h_method": "horizon-ratio"}, "confidence": 0.8}
-{"t": 106, "side": "ahead", "kind": "bridge", "attrs": {"type": "PERMCO \"Pumps and Motors\" footbridge, blue banner"}, "confidence": 0.8, "note": "overhead at 1:47.0"}
+{"t": 106, "side": "ahead", "kind": "bridge", "attrs": {"type": "PERMCO \"Pumps and Motors\" footbridge, blue banner", "ahead_m": 42, "correction": [{"round": 7, "was": {"attrs.ahead_m": null}, "why": "round 7: the note says the bridge passes overhead at 1:47.0, 1 s after this frame; the time map gives s 2836 there (the PERMCO anchor), 42 m ahead"}]}, "confidence": 0.8, "note": "overhead at 1:47.0"}
 {"t": 108, "side": "left", "kind": "wall", "attrs": {"type": "armco (stacked W-beam)", "colour": "red", "h_m": 1.0, "h_method": "horizon-ratio"}, "confidence": 0.8}
 {"t": 108, "side": "left", "kind": "boards", "attrs": {"type": "Velo banners on the bridge"}, "confidence": 0.8}
 {"t": 108, "side": "left", "kind": "fence", "attrs": {"type": "catch fence on curved posts", "h_m": 3.5, "h_method": "fence-post-ref"}, "confidence": 0.8}
@@ -180,11 +180,11 @@
 {"t": 126, "side": "left", "kind": "boards", "attrs": {"type": "Honda board wall"}, "confidence": 0.8}
 {"t": 126, "side": "left", "kind": "kerb", "attrs": {"type": "T13 kerb, red/white"}, "confidence": 0.8, "note": "left, ahead"}
 {"t": 126, "side": "right", "kind": "runoff", "attrs": {"type": "grass"}, "confidence": 0.8}
-{"t": 128, "side": "left", "kind": "wall", "attrs": {"type": "concrete pit wall", "colour": "white", "h_m": 0.7, "h_method": "horizon-ratio"}, "confidence": 0.8, "note": "pit wall starts (\"RESTART\" board)"}
+{"t": 128, "side": "left", "kind": "wall", "attrs": {"type": "concrete pit wall", "colour": "white", "h_m": 1.04, "h_method": "lidar", "correction": [{"round": 7, "was": {"attrs.h_m": 0.7, "attrs.h_method": "horizon-ratio"}, "why": "round 7: re-read on the 2025 360 lap t026 left (the pit wall abeam, base row 386, top row 346; horizon row 320-325 from the heads of the people standing in the pit lane and the bases of the far tents): horizon ratio with the 1.7 m camera 1.03-1.08 m; the 2019 lidar gives 1.04 m (r5/lidar_heights.json, top 0.98-1.11 m over the edge). The round-4 0.7 m put the horizon too low. Adopted 1.04 m (lidar), +-0.1 m"}]}, "confidence": 0.8, "note": "pit wall starts (\"RESTART\" board)"}
 {"t": 128, "side": "left", "kind": "sign", "attrs": {"type": "\"RESTART\" board on the pit wall"}, "confidence": 0.8}
 {"t": 128, "side": "left", "kind": "building", "attrs": {"type": "starter tower"}, "confidence": 0.8}
 {"t": 128, "side": "right", "kind": "runoff", "attrs": {"type": "sand"}, "confidence": 0.8}
-{"t": 130, "side": "left", "kind": "wall", "attrs": {"type": "concrete pit wall", "colour": "white", "h_m": 0.7, "h_method": "horizon-ratio"}, "confidence": 0.8}
+{"t": 130, "side": "left", "kind": "wall", "attrs": {"type": "concrete pit wall", "colour": "white", "h_m": 1.04, "h_method": "lidar", "correction": [{"round": 7, "was": {"attrs.h_m": 0.7, "attrs.h_method": "horizon-ratio"}, "why": "round 7: re-read on the 2025 360 lap t026 left (the pit wall abeam, base row 386, top row 346; horizon row 320-325 from the heads of the people standing in the pit lane and the bases of the far tents): horizon ratio with the 1.7 m camera 1.03-1.08 m; the 2019 lidar gives 1.04 m (r5/lidar_heights.json, top 0.98-1.11 m over the edge). The round-4 0.7 m put the horizon too low. Adopted 1.04 m (lidar), +-0.1 m"}]}, "confidence": 0.8}
 {"t": 130, "side": "left", "kind": "building", "attrs": {"type": "starter tower, 4 storeys", "h_m": 13, "h_method": "storeys"}, "confidence": 0.8}
 {"t": 130, "side": "right", "kind": "kerb", "attrs": {"type": "yellow kerb"}, "confidence": 0.8, "note": "pit straight right"}
 {"t": 130, "side": "right", "kind": "runoff", "attrs": {"type": "sand/gravel"}, "confidence": 0.8}

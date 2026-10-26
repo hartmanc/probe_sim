@@ -563,9 +563,18 @@
   },
   {
    "side": "left",
-   "kind": "stand",
+   "kind": "tower",
    "attrs": {
-    "type": "Honda overhead starter gantry over the pit wall"
+    "type": "Honda overhead starter gantry over the pit wall",
+    "correction": [
+     {
+      "round": 7,
+      "was": {
+       "kind": "stand"
+      },
+      "why": "round 7: the overhead starter's stand at the line (360 t022 ahead / t024 left: a cabin with HONDA boards on black steel legs over the pit wall; N837 t130: the same with PERMCO boards, 2026) is a structure, not spectator seating: kind tower; placed as structures 'S/F starter stand'"
+     }
+    ]
    },
    "confidence": 0.8,
    "t": 24,
@@ -585,8 +594,18 @@
    "attrs": {
     "type": "concrete pit wall",
     "colour": "white",
-    "h_m": 0.7,
-    "h_method": "horizon-ratio"
+    "h_m": 1.04,
+    "h_method": "lidar",
+    "correction": [
+     {
+      "round": 7,
+      "was": {
+       "attrs.h_m": 0.7,
+       "attrs.h_method": "horizon-ratio"
+      },
+      "why": "round 7: re-read on the 2025 360 lap t026 left (the pit wall abeam, base row 386, top row 346; horizon row 320-325 from the heads of the people standing in the pit lane and the bases of the far tents): horizon ratio with the 1.7 m camera 1.03-1.08 m; the 2019 lidar gives 1.04 m (r5/lidar_heights.json, top 0.98-1.11 m over the edge). The round-4 0.7 m put the horizon too low. Adopted 1.04 m (lidar), +-0.1 m"
+     }
+    ]
    },
    "confidence": 0.8,
    "t": 24,
@@ -660,9 +679,18 @@
   },
   {
    "side": "left",
-   "kind": "stand",
+   "kind": "tower",
    "attrs": {
-    "type": "overhead S/F gantry with PERMCO banner"
+    "type": "overhead S/F gantry with PERMCO banner",
+    "correction": [
+     {
+      "round": 7,
+      "was": {
+       "kind": "stand"
+      },
+      "why": "round 7: the overhead starter's stand at the line (360 t022 ahead / t024 left: a cabin with HONDA boards on black steel legs over the pit wall; N837 t130: the same with PERMCO boards, 2026) is a structure, not spectator seating: kind tower; placed as structures 'S/F starter stand'"
+     }
+    ]
    },
    "confidence": 0.8,
    "t": 130,
@@ -805,8 +833,18 @@
    "attrs": {
     "type": "concrete pit wall",
     "colour": "white",
-    "h_m": 0.7,
-    "h_method": "horizon-ratio"
+    "h_m": 1.04,
+    "h_method": "lidar",
+    "correction": [
+     {
+      "round": 7,
+      "was": {
+       "attrs.h_m": 0.7,
+       "attrs.h_method": "horizon-ratio"
+      },
+      "why": "round 7: re-read on the 2025 360 lap t026 left (the pit wall abeam, base row 386, top row 346; horizon row 320-325 from the heads of the people standing in the pit lane and the bases of the far tents): horizon ratio with the 1.7 m camera 1.03-1.08 m; the 2019 lidar gives 1.04 m (r5/lidar_heights.json, top 0.98-1.11 m over the edge). The round-4 0.7 m put the horizon too low. Adopted 1.04 m (lidar), +-0.1 m"
+     }
+    ]
    },
    "confidence": 0.8,
    "t": 26,
@@ -1022,8 +1060,18 @@
    "attrs": {
     "type": "concrete pit wall",
     "colour": "white",
-    "h_m": 0.7,
-    "h_method": "horizon-ratio"
+    "h_m": 1.04,
+    "h_method": "lidar",
+    "correction": [
+     {
+      "round": 7,
+      "was": {
+       "attrs.h_m": 0.7,
+       "attrs.h_method": "horizon-ratio"
+      },
+      "why": "round 7: re-read on the 2025 360 lap t026 left (the pit wall abeam, base row 386, top row 346; horizon row 320-325 from the heads of the people standing in the pit lane and the bases of the far tents): horizon ratio with the 1.7 m camera 1.03-1.08 m; the 2019 lidar gives 1.04 m (r5/lidar_heights.json, top 0.98-1.11 m over the edge). The round-4 0.7 m put the horizon too low. Adopted 1.04 m (lidar), +-0.1 m"
+     }
+    ]
    },
    "confidence": 0.8,
    "t": 28,
@@ -1197,20 +1245,32 @@
    "placement": "corroborate"
   },
   {
-   "side": "ahead",
-   "kind": "bridge",
+   "side": "left",
+   "kind": "wall",
    "attrs": {
-    "type": "Firestone footbridge"
+    "type": "pit wall end at the bridge abutment",
+    "colour": "white",
+    "ahead_m": -20.0,
+    "correction": [
+     {
+      "round": 7,
+      "was": {
+       "attrs.ahead_m": null
+      },
+      "why": "round 7: station correction: the pit wall ends at s ~212, 15 m before the footbridge, where the painted ladder line between the pit exit and the track begins (c20_s0120 / c20_s0080; the 360 frame looks at the end from beside the abutment, time map sigma 17.9 m); ahead_m puts the row at the end"
+     }
+    ]
    },
    "confidence": 0.8,
-   "t": 12,
-   "s": 226.1,
-   "source": "onboard:OJaBJz18xEo@12.0",
-   "frame": "t012.jpg",
+   "t": 30,
+   "s": 213.2,
+   "source": "onboard:e25u_vjn1uM@30.0",
+   "frame": "t030_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "overhead at 0:12.3",
-   "sigma_s_m": 14.4,
-   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "note": "pit exit lane continues beside the track under the bridge",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
    "placement": "direct"
   },
   {
@@ -1227,6 +1287,33 @@
    "frame": "t012.jpg",
    "scope": "lap",
    "note": "run to the abutment",
+   "sigma_s_m": 14.4,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
+  },
+  {
+   "side": "ahead",
+   "kind": "bridge",
+   "attrs": {
+    "type": "Firestone footbridge",
+    "ahead_m": 7,
+    "correction": [
+     {
+      "round": 7,
+      "was": {
+       "attrs.ahead_m": null
+      },
+      "why": "round 7: the note says overhead at 0:12.3; the N837 map's footbridge anchor is t12.3 at s 233, 7 m ahead of this frame's s 226"
+     }
+    ]
+   },
+   "confidence": 0.8,
+   "t": 12,
+   "s": 233.1,
+   "source": "onboard:OJaBJz18xEo@12.0",
+   "frame": "t012.jpg",
+   "scope": "lap",
+   "note": "overhead at 0:12.3",
    "sigma_s_m": 14.4,
    "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
    "placement": "direct"
@@ -1266,25 +1353,6 @@
    "sigma_s_m": 60.1,
    "sigma_basis": "time map IndyCar segment B (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
    "placement": "corroborate"
-  },
-  {
-   "side": "left",
-   "kind": "wall",
-   "attrs": {
-    "type": "pit wall end at the bridge abutment",
-    "colour": "white"
-   },
-   "confidence": 0.8,
-   "t": 30,
-   "s": 233.2,
-   "source": "onboard:e25u_vjn1uM@30.0",
-   "frame": "t030_left.jpg",
-   "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap",
-   "note": "pit exit lane continues beside the track under the bridge",
-   "sigma_s_m": 17.9,
-   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
-   "placement": "direct"
   },
   {
    "side": "right",
@@ -1569,26 +1637,6 @@
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
    "note": "T1 exit outside",
-   "sigma_s_m": 20.4,
-   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
-   "placement": "direct"
-  },
-  {
-   "side": "right",
-   "kind": "wall",
-   "attrs": {
-    "type": "armco (stacked W-beam)",
-    "colour": "red",
-    "h_m": 1.0,
-    "h_method": "horizon-ratio"
-   },
-   "confidence": 0.8,
-   "t": 34,
-   "s": 358.1,
-   "source": "onboard:e25u_vjn1uM@34.0",
-   "frame": "t034_left.jpg",
-   "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap",
    "sigma_s_m": 20.4,
    "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
    "placement": "direct"
@@ -2190,9 +2238,18 @@
   },
   {
    "side": "right",
-   "kind": "kerb",
+   "kind": "paint",
    "attrs": {
-    "type": "red/white kerb at the chicane re-join (inactive)"
+    "type": "red/white kerb at the chicane re-join (inactive)",
+    "correction": [
+     {
+      "round": 7,
+      "was": {
+       "kind": "kerb"
+      },
+      "why": "round 7: the red/white kerb stands on the inside edge of the inactive chicane road (c20_s0600: it leaves the course's right edge at s ~655 and is 9 m from it by s ~690), not on the course; a closed road's kerb, placed as scenery.kerb_lines 'chicane re-join kerb' (the coverage gate's kerb kind is the course's kerb strips)"
+     }
+    ]
    },
    "confidence": 0.8,
    "t": 42,
@@ -3797,6 +3854,36 @@
    "placement": "corroborate"
   },
   {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio",
+    "ahead_m": 1242.0,
+    "correction": [
+     {
+      "round": 7,
+      "was": {
+       "attrs.ahead_m": null
+      },
+      "why": "round 7: the red armco seen across the T1 run-off from s 358 is the barrier between the T1 run-off and the back straight (OSM 1315208923 / 1315208948, 37-43 m right of s 358, c20_s0280-c20_s0360 / c20_s1520-c20_s1600); its points lie nearer the back straight than T1, so the coverage gate projects it there (s ~1560-1640 right): ahead_m puts the row at s 1600 where the gate looks for it"
+     }
+    ]
+   },
+   "confidence": 0.8,
+   "t": 34,
+   "s": 1600.1,
+   "source": "onboard:e25u_vjn1uM@34.0",
+   "frame": "t034_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
+  },
+  {
    "side": "left",
    "kind": "wall",
    "attrs": {
@@ -4206,24 +4293,6 @@
    "placement": "direct"
   },
   {
-   "side": "right",
-   "kind": "kerb",
-   "attrs": {
-    "type": "T4 apex kerb, red/white"
-   },
-   "confidence": 0.7,
-   "t": 114,
-   "s": 1857.4,
-   "source": "onboard:9Drr1VkE1_U@114.0",
-   "frame": "t114.jpg",
-   "map": "IndyCar segment B (9Drr1VkE1_U)",
-   "scope": "lap",
-   "note": "approach",
-   "sigma_s_m": 34.3,
-   "sigma_basis": "time map IndyCar segment B (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
-   "placement": "corroborate"
-  },
-  {
    "side": "left",
    "kind": "cone_line",
    "attrs": {
@@ -4240,24 +4309,6 @@
    "sigma_s_m": 14.8,
    "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
    "placement": "direct"
-  },
-  {
-   "side": "right",
-   "kind": "kerb",
-   "attrs": {
-    "type": "T4 apex kerb, red/white"
-   },
-   "confidence": 0.7,
-   "t": 180,
-   "s": 1897.2,
-   "source": "onboard:9Drr1VkE1_U@180.0",
-   "frame": "t180.jpg",
-   "map": "IndyCar segment C (9Drr1VkE1_U)",
-   "scope": "lap",
-   "note": "approach",
-   "sigma_s_m": 55.1,
-   "sigma_basis": "time map IndyCar segment C (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
-   "placement": "corroborate"
   },
   {
    "side": "left",
@@ -4328,24 +4379,6 @@
    "scope": "lap",
    "sigma_s_m": 20.4,
    "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
-   "placement": "direct"
-  },
-  {
-   "side": "right",
-   "kind": "kerb",
-   "attrs": {
-    "type": "T4 apex kerb, red/white"
-   },
-   "confidence": 0.7,
-   "t": 46,
-   "s": 1910.9,
-   "source": "onboard:9Drr1VkE1_U@46.0",
-   "frame": "t046.jpg",
-   "map": "IndyCar segment A (9Drr1VkE1_U)",
-   "scope": "lap",
-   "note": "approach",
-   "sigma_s_m": 22.4,
-   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
    "placement": "direct"
   },
   {
@@ -4439,6 +4472,90 @@
    "side": "right",
    "kind": "kerb",
    "attrs": {
+    "type": "T4 apex kerb, red/white",
+    "ahead_m": 42.1,
+    "correction": [
+     {
+      "round": 7,
+      "was": {
+       "attrs.ahead_m": null
+      },
+      "why": "round 7: station correction: the row's time-map station s 1911 (sigma 22.4 m, direct) lies off the kerb it shows; T4 apex kerb (red / white) s 1950-1984 on c20_s1880 / c20_s1920; the note says approach: seen ahead; ahead_m puts it at s ~1953"
+     }
+    ]
+   },
+   "confidence": 0.7,
+   "t": 46,
+   "s": 1953.0,
+   "source": "onboard:9Drr1VkE1_U@46.0",
+   "frame": "t046.jpg",
+   "map": "IndyCar segment A (9Drr1VkE1_U)",
+   "scope": "lap",
+   "note": "approach",
+   "sigma_s_m": 22.4,
+   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "T4 apex kerb, red/white",
+    "ahead_m": 95.6,
+    "correction": [
+     {
+      "round": 7,
+      "was": {
+       "attrs.ahead_m": null
+      },
+      "why": "round 7: station correction: the row's time-map station s 1857 (sigma 34.3 m, corroborate) lies off the kerb it shows; T4 apex kerb (red / white) s 1950-1984 on c20_s1880 / c20_s1920; the note says approach: seen ahead; ahead_m puts it at s ~1953"
+     }
+    ]
+   },
+   "confidence": 0.7,
+   "t": 114,
+   "s": 1953.0,
+   "source": "onboard:9Drr1VkE1_U@114.0",
+   "frame": "t114.jpg",
+   "map": "IndyCar segment B (9Drr1VkE1_U)",
+   "scope": "lap",
+   "note": "approach",
+   "sigma_s_m": 34.3,
+   "sigma_basis": "time map IndyCar segment B (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "T4 apex kerb, red/white",
+    "ahead_m": 55.8,
+    "correction": [
+     {
+      "round": 7,
+      "was": {
+       "attrs.ahead_m": null
+      },
+      "why": "round 7: station correction: the row's time-map station s 1897 (sigma 55.1 m, corroborate) lies off the kerb it shows; T4 apex kerb (red / white) s 1950-1984 on c20_s1880 / c20_s1920; the note says approach: seen ahead; ahead_m puts it at s ~1953"
+     }
+    ]
+   },
+   "confidence": 0.7,
+   "t": 180,
+   "s": 1953.0,
+   "source": "onboard:9Drr1VkE1_U@180.0",
+   "frame": "t180.jpg",
+   "map": "IndyCar segment C (9Drr1VkE1_U)",
+   "scope": "lap",
+   "note": "approach",
+   "sigma_s_m": 55.1,
+   "sigma_basis": "time map IndyCar segment C (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
     "type": "T4 apex kerb, red/white"
    },
    "confidence": 0.7,
@@ -4469,42 +4586,6 @@
    "placement": "direct"
   },
   {
-   "side": "left",
-   "kind": "kerb",
-   "attrs": {
-    "type": "yellow kerb"
-   },
-   "confidence": 0.7,
-   "t": 182,
-   "s": 1975.9,
-   "source": "onboard:9Drr1VkE1_U@182.0",
-   "frame": "t182.jpg",
-   "map": "IndyCar segment C (9Drr1VkE1_U)",
-   "scope": "lap",
-   "note": "T4 exit outside",
-   "sigma_s_m": 55.1,
-   "sigma_basis": "time map IndyCar segment C (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
-   "placement": "corroborate"
-  },
-  {
-   "side": "left",
-   "kind": "kerb",
-   "attrs": {
-    "type": "yellow kerb"
-   },
-   "confidence": 0.7,
-   "t": 48,
-   "s": 1989.1,
-   "source": "onboard:9Drr1VkE1_U@48.0",
-   "frame": "t048.jpg",
-   "map": "IndyCar segment A (9Drr1VkE1_U)",
-   "scope": "lap",
-   "note": "T4 exit outside",
-   "sigma_s_m": 22.4,
-   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
-   "placement": "direct"
-  },
-  {
    "side": "right",
    "kind": "tower",
    "attrs": {
@@ -4519,24 +4600,6 @@
    "scope": "lap",
    "sigma_s_m": 22.4,
    "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
-   "placement": "direct"
-  },
-  {
-   "side": "left",
-   "kind": "kerb",
-   "attrs": {
-    "type": "yellow kerb"
-   },
-   "confidence": 0.8,
-   "t": 78,
-   "s": 1995.0,
-   "source": "onboard:e25u_vjn1uM@78.0",
-   "frame": "t078_left.jpg",
-   "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap",
-   "note": "T4 exit / T5 approach, outside",
-   "sigma_s_m": 8.2,
-   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
    "placement": "direct"
   },
   {
@@ -4594,6 +4657,90 @@
    "sigma_s_m": 8.2,
    "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
    "placement": "direct"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "yellow kerb",
+    "ahead_m": 20.0,
+    "correction": [
+     {
+      "round": 7,
+      "was": {
+       "attrs.ahead_m": null
+      },
+      "why": "round 7: station correction: the row's time-map station s 1995 (sigma 8.2 m, direct) lies off the kerb it shows; T4 exit kerb (yellow) begins at s ~2008-2013 on c20_s1920 / c20_s1960 (kerb_scan 2013); the note says T4 exit / T5 approach: seen ahead-left; ahead_m puts it at s ~2015"
+     }
+    ]
+   },
+   "confidence": 0.8,
+   "t": 78,
+   "s": 2015.0,
+   "source": "onboard:e25u_vjn1uM@78.0",
+   "frame": "t078_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "T4 exit / T5 approach, outside",
+   "sigma_s_m": 8.2,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "yellow kerb",
+    "ahead_m": 25.9,
+    "correction": [
+     {
+      "round": 7,
+      "was": {
+       "attrs.ahead_m": null
+      },
+      "why": "round 7: station correction: the row's time-map station s 1989 (sigma 22.4 m, direct) lies off the kerb it shows; T4 exit kerb (yellow) begins at s ~2008-2013 on c20_s1920 / c20_s1960 (kerb_scan 2013); ahead_m puts it at s ~2015"
+     }
+    ]
+   },
+   "confidence": 0.7,
+   "t": 48,
+   "s": 2015.0,
+   "source": "onboard:9Drr1VkE1_U@48.0",
+   "frame": "t048.jpg",
+   "map": "IndyCar segment A (9Drr1VkE1_U)",
+   "scope": "lap",
+   "note": "T4 exit outside",
+   "sigma_s_m": 22.4,
+   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "yellow kerb",
+    "ahead_m": 39.1,
+    "correction": [
+     {
+      "round": 7,
+      "was": {
+       "attrs.ahead_m": null
+      },
+      "why": "round 7: station correction: the row's time-map station s 1976 (sigma 55.1 m, corroborate) lies off the kerb it shows; T4 exit kerb (yellow) begins at s ~2008-2013 on c20_s1920 / c20_s1960 (kerb_scan 2013); ahead_m puts it at s ~2015"
+     }
+    ]
+   },
+   "confidence": 0.7,
+   "t": 182,
+   "s": 2015.0,
+   "source": "onboard:9Drr1VkE1_U@182.0",
+   "frame": "t182.jpg",
+   "map": "IndyCar segment C (9Drr1VkE1_U)",
+   "scope": "lap",
+   "note": "T4 exit outside",
+   "sigma_s_m": 55.1,
+   "sigma_basis": "time map IndyCar segment C (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "left",
@@ -4664,9 +4811,18 @@
   },
   {
    "side": "right",
-   "kind": "stand",
+   "kind": "runoff",
    "attrs": {
-    "type": "spectator hillside"
+    "type": "spectator hillside",
+    "correction": [
+     {
+      "round": 7,
+      "was": {
+       "kind": "stand"
+      },
+      "why": "round 7: the 'spectator hillside' at T5 right (360 t080 right) is the grass slope behind the armco with the HONDA board wall on it: ground (the lidar terrain), no stand structure; kind runoff (the ground beside the track)"
+     }
+    ]
    },
    "confidence": 0.8,
    "t": 80,
@@ -4686,23 +4842,6 @@
     "type": "T5 kerb, red/white"
    },
    "confidence": 0.7,
-   "t": 184,
-   "s": 2069.5,
-   "source": "onboard:9Drr1VkE1_U@184.0",
-   "frame": "t184.jpg",
-   "map": "IndyCar segment C (9Drr1VkE1_U)",
-   "scope": "lap",
-   "sigma_s_m": 55.1,
-   "sigma_basis": "time map IndyCar segment C (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
-   "placement": "corroborate"
-  },
-  {
-   "side": "left",
-   "kind": "kerb",
-   "attrs": {
-    "type": "T5 kerb, red/white"
-   },
-   "confidence": 0.7,
    "t": 50,
    "s": 2081.9,
    "source": "onboard:9Drr1VkE1_U@50.0",
@@ -4712,6 +4851,33 @@
    "sigma_s_m": 22.4,
    "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
    "placement": "direct"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "T5 kerb, red/white",
+    "ahead_m": 20.5,
+    "correction": [
+     {
+      "round": 7,
+      "was": {
+       "attrs.ahead_m": null
+      },
+      "why": "round 7: station correction: the row's time-map station s 2070 (sigma 55.1 m, corroborate) lies off the kerb it shows; T5 apex kerb (red / white) s 2087-2138 on c20_s2040 / c20_s2080; ahead_m puts it at s ~2090"
+     }
+    ]
+   },
+   "confidence": 0.7,
+   "t": 184,
+   "s": 2090.0,
+   "source": "onboard:9Drr1VkE1_U@184.0",
+   "frame": "t184.jpg",
+   "map": "IndyCar segment C (9Drr1VkE1_U)",
+   "scope": "lap",
+   "sigma_s_m": 55.1,
+   "sigma_basis": "time map IndyCar segment C (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "left",
@@ -4957,40 +5123,6 @@
    "placement": "direct"
   },
   {
-   "side": "right",
-   "kind": "kerb",
-   "attrs": {
-    "type": "red/white kerb"
-   },
-   "confidence": 0.7,
-   "t": 188,
-   "s": 2243.2,
-   "source": "onboard:9Drr1VkE1_U@188.0",
-   "frame": "t188.jpg",
-   "map": "IndyCar segment C (9Drr1VkE1_U)",
-   "scope": "lap",
-   "sigma_s_m": 55.1,
-   "sigma_basis": "time map IndyCar segment C (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
-   "placement": "corroborate"
-  },
-  {
-   "side": "right",
-   "kind": "kerb",
-   "attrs": {
-    "type": "red/white kerb"
-   },
-   "confidence": 0.7,
-   "t": 54,
-   "s": 2252.4,
-   "source": "onboard:9Drr1VkE1_U@54.0",
-   "frame": "t054.jpg",
-   "map": "IndyCar segment A (9Drr1VkE1_U)",
-   "scope": "lap",
-   "sigma_s_m": 22.4,
-   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
-   "placement": "direct"
-  },
-  {
    "side": "left",
    "kind": "boards",
    "attrs": {
@@ -5043,6 +5175,60 @@
    "sigma_s_m": 19.6,
    "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
    "placement": "direct"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "red/white kerb",
+    "ahead_m": 19.6,
+    "correction": [
+     {
+      "round": 7,
+      "was": {
+       "attrs.ahead_m": null
+      },
+      "why": "round 7: station correction: the row's time-map station s 2252 (sigma 22.4 m, direct) lies off the kerb it shows; T7 apex kerb (red / white) s 2269-2304 on c20_s2200 / c20_s2240; ahead_m puts it at s ~2272"
+     }
+    ]
+   },
+   "confidence": 0.7,
+   "t": 54,
+   "s": 2272.0,
+   "source": "onboard:9Drr1VkE1_U@54.0",
+   "frame": "t054.jpg",
+   "map": "IndyCar segment A (9Drr1VkE1_U)",
+   "scope": "lap",
+   "sigma_s_m": 22.4,
+   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "red/white kerb",
+    "ahead_m": 28.8,
+    "correction": [
+     {
+      "round": 7,
+      "was": {
+       "attrs.ahead_m": null
+      },
+      "why": "round 7: station correction: the row's time-map station s 2243 (sigma 55.1 m, corroborate) lies off the kerb it shows; T7 apex kerb (red / white) s 2269-2304 on c20_s2200 / c20_s2240; ahead_m puts it at s ~2272"
+     }
+    ]
+   },
+   "confidence": 0.7,
+   "t": 188,
+   "s": 2272.0,
+   "source": "onboard:9Drr1VkE1_U@188.0",
+   "frame": "t188.jpg",
+   "map": "IndyCar segment C (9Drr1VkE1_U)",
+   "scope": "lap",
+   "sigma_s_m": 55.1,
+   "sigma_basis": "time map IndyCar segment C (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "right",
@@ -5722,24 +5908,6 @@
    "placement": "corroborate"
   },
   {
-   "side": "ahead",
-   "kind": "bridge",
-   "attrs": {
-    "type": "PERMCO \"Pumps and Motors\" footbridge, blue banner"
-   },
-   "confidence": 0.8,
-   "t": 106,
-   "s": 2794.0,
-   "source": "onboard:e25u_vjn1uM@106.0",
-   "frame": "t106_left.jpg",
-   "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap",
-   "note": "overhead at 1:47.0",
-   "sigma_s_m": 19.6,
-   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
-   "placement": "direct"
-  },
-  {
    "side": "left",
    "kind": "wall",
    "attrs": {
@@ -5781,17 +5949,55 @@
    "side": "ahead",
    "kind": "bridge",
    "attrs": {
-    "type": "PERMCO footbridge"
+    "type": "PERMCO footbridge",
+    "ahead_m": 29,
+    "correction": [
+     {
+      "round": 7,
+      "was": {
+       "attrs.ahead_m": null
+      },
+      "why": "round 7: the bridge is ahead in t100; the N837 map's PERMCO anchor is t100.9 at s 2836, 29 m ahead of this frame's s 2807"
+     }
+    ]
    },
    "confidence": 0.8,
    "t": 100,
-   "s": 2806.6,
+   "s": 2835.6,
    "source": "onboard:OJaBJz18xEo@100.0",
    "frame": "t100.jpg",
    "scope": "lap",
    "note": "ahead",
    "sigma_s_m": 13.7,
    "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
+  },
+  {
+   "side": "ahead",
+   "kind": "bridge",
+   "attrs": {
+    "type": "PERMCO \"Pumps and Motors\" footbridge, blue banner",
+    "ahead_m": 42,
+    "correction": [
+     {
+      "round": 7,
+      "was": {
+       "attrs.ahead_m": null
+      },
+      "why": "round 7: the note says the bridge passes overhead at 1:47.0, 1 s after this frame; the time map gives s 2836 there (the PERMCO anchor), 42 m ahead"
+     }
+    ]
+   },
+   "confidence": 0.8,
+   "t": 106,
+   "s": 2836.0,
+   "source": "onboard:e25u_vjn1uM@106.0",
+   "frame": "t106_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "overhead at 1:47.0",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
    "placement": "direct"
   },
   {
@@ -6412,6 +6618,87 @@
    "placement": "direct"
   },
   {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "Carousel kerb, red/white",
+    "ahead_m": -22.5,
+    "correction": [
+     {
+      "round": 7,
+      "was": {
+       "attrs.ahead_m": null
+      },
+      "why": "round 7: station correction: the row's time-map station s 3410 (sigma 13.1 m, direct) lies off the kerb it shows; Carousel apex kerb (red / white) s 3329-3389 on c20_s3280 / c20_s3320; no kerb on the right from 3390 to the pit straight kerb at 3513; ahead_m puts it at s ~3387"
+     }
+    ]
+   },
+   "confidence": 0.7,
+   "t": 12,
+   "s": 3387.0,
+   "source": "onboard:9Drr1VkE1_U@12.0",
+   "frame": "t012.jpg",
+   "map": "IndyCar segment A (9Drr1VkE1_U)",
+   "scope": "lap",
+   "sigma_s_m": 13.1,
+   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "Carousel / T13 kerb, red/white",
+    "ahead_m": -21.2,
+    "correction": [
+     {
+      "round": 7,
+      "was": {
+       "attrs.ahead_m": null
+      },
+      "why": "round 7: station correction: the row's time-map station s 3408 (sigma 60.1 m, corroborate) lies off the kerb it shows; Carousel apex kerb (red / white) s 3329-3389 on c20_s3280 / c20_s3320; no kerb on the right from 3390 to the pit straight kerb at 3513; ahead_m puts it at s ~3387"
+     }
+    ]
+   },
+   "confidence": 0.7,
+   "t": 82,
+   "s": 3387.0,
+   "source": "onboard:9Drr1VkE1_U@82.0",
+   "frame": "t082.jpg",
+   "map": "IndyCar segment B (9Drr1VkE1_U)",
+   "scope": "lap",
+   "sigma_s_m": 60.1,
+   "sigma_basis": "time map IndyCar segment B (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "Carousel kerb, red/white",
+    "ahead_m": -33.1,
+    "correction": [
+     {
+      "round": 7,
+      "was": {
+       "attrs.ahead_m": null
+      },
+      "why": "round 7: station correction: the row's time-map station s 3420 (sigma 44.3 m, corroborate) lies off the kerb it shows; Carousel apex kerb (red / white) s 3329-3389 on c20_s3280 / c20_s3320; no kerb on the right from 3390 to the pit straight kerb at 3513; ahead_m puts it at s ~3387"
+     }
+    ]
+   },
+   "confidence": 0.7,
+   "t": 146,
+   "s": 3387.0,
+   "source": "onboard:9Drr1VkE1_U@146.0",
+   "frame": "t146.jpg",
+   "map": "IndyCar segment C (9Drr1VkE1_U)",
+   "scope": "lap",
+   "sigma_s_m": 44.3,
+   "sigma_basis": "time map IndyCar segment C (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
+  },
+  {
    "side": "left",
    "kind": "runoff",
    "attrs": {
@@ -6446,23 +6733,6 @@
    "placement": "direct"
   },
   {
-   "side": "right",
-   "kind": "kerb",
-   "attrs": {
-    "type": "Carousel / T13 kerb, red/white"
-   },
-   "confidence": 0.7,
-   "t": 82,
-   "s": 3408.2,
-   "source": "onboard:9Drr1VkE1_U@82.0",
-   "frame": "t082.jpg",
-   "map": "IndyCar segment B (9Drr1VkE1_U)",
-   "scope": "lap",
-   "sigma_s_m": 60.1,
-   "sigma_basis": "time map IndyCar segment B (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
-   "placement": "corroborate"
-  },
-  {
    "side": "left",
    "kind": "wall",
    "attrs": {
@@ -6480,40 +6750,6 @@
    "sigma_s_m": 13.1,
    "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
    "placement": "direct"
-  },
-  {
-   "side": "right",
-   "kind": "kerb",
-   "attrs": {
-    "type": "Carousel kerb, red/white"
-   },
-   "confidence": 0.7,
-   "t": 12,
-   "s": 3409.5,
-   "source": "onboard:9Drr1VkE1_U@12.0",
-   "frame": "t012.jpg",
-   "map": "IndyCar segment A (9Drr1VkE1_U)",
-   "scope": "lap",
-   "sigma_s_m": 13.1,
-   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
-   "placement": "direct"
-  },
-  {
-   "side": "right",
-   "kind": "kerb",
-   "attrs": {
-    "type": "Carousel kerb, red/white"
-   },
-   "confidence": 0.7,
-   "t": 146,
-   "s": 3420.1,
-   "source": "onboard:9Drr1VkE1_U@146.0",
-   "frame": "t146.jpg",
-   "map": "IndyCar segment C (9Drr1VkE1_U)",
-   "scope": "lap",
-   "sigma_s_m": 44.3,
-   "sigma_basis": "time map IndyCar segment C (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
-   "placement": "corroborate"
   },
   {
    "side": "left",
@@ -6694,8 +6930,18 @@
    "attrs": {
     "type": "concrete pit wall",
     "colour": "white",
-    "h_m": 0.7,
-    "h_method": "horizon-ratio"
+    "h_m": 1.04,
+    "h_method": "lidar",
+    "correction": [
+     {
+      "round": 7,
+      "was": {
+       "attrs.h_m": 0.7,
+       "attrs.h_method": "horizon-ratio"
+      },
+      "why": "round 7: re-read on the 2025 360 lap t026 left (the pit wall abeam, base row 386, top row 346; horizon row 320-325 from the heads of the people standing in the pit lane and the bases of the far tents): horizon ratio with the 1.7 m camera 1.03-1.08 m; the 2019 lidar gives 1.04 m (r5/lidar_heights.json, top 0.98-1.11 m over the edge). The round-4 0.7 m put the horizon too low. Adopted 1.04 m (lidar), +-0.1 m"
+     }
+    ]
    },
    "confidence": 0.8,
    "t": 128,
@@ -6872,8 +7118,18 @@
    "attrs": {
     "type": "concrete pit wall",
     "colour": "white",
-    "h_m": 0.7,
-    "h_method": "horizon-ratio"
+    "h_m": 1.04,
+    "h_method": "lidar",
+    "correction": [
+     {
+      "round": 7,
+      "was": {
+       "attrs.h_m": 0.7,
+       "attrs.h_method": "horizon-ratio"
+      },
+      "why": "round 7: re-read on the 2025 360 lap t026 left (the pit wall abeam, base row 386, top row 346; horizon row 320-325 from the heads of the people standing in the pit lane and the bases of the far tents): horizon ratio with the 1.7 m camera 1.03-1.08 m; the 2019 lidar gives 1.04 m (r5/lidar_heights.json, top 0.98-1.11 m over the edge). The round-4 0.7 m put the horizon too low. Adopted 1.04 m (lidar), +-0.1 m"
+     }
+    ]
    },
    "confidence": 0.8,
    "t": 130,
@@ -7008,9 +7264,18 @@
   },
   {
    "side": "left",
-   "kind": "stand",
+   "kind": "tower",
    "attrs": {
-    "type": "Honda overhead starter gantry spanning the pit wall"
+    "type": "Honda overhead starter gantry spanning the pit wall",
+    "correction": [
+     {
+      "round": 7,
+      "was": {
+       "kind": "stand"
+      },
+      "why": "round 7: the overhead starter's stand at the line (360 t022 ahead / t024 left: a cabin with HONDA boards on black steel legs over the pit wall; N837 t130: the same with PERMCO boards, 2026) is a structure, not spectator seating: kind tower; placed as structures 'S/F starter stand'"
+     }
+    ]
    },
    "confidence": 0.7,
    "t": null,
@@ -7024,13 +7289,30 @@
    "placement": "direct"
   },
   {
-   "side": "left",
+   "side": "right",
    "kind": "wall",
    "attrs": {
     "type": "concrete pit wall",
     "colour": "white",
-    "h_m": 0.7,
-    "h_method": "horizon-ratio"
+    "h_m": 1.04,
+    "h_method": "lidar",
+    "correction": [
+     {
+      "round": 7,
+      "was": {
+       "attrs.h_m": 0.7,
+       "attrs.h_method": "horizon-ratio"
+      },
+      "why": "round 7: re-read on the 2025 360 lap t026 left (the pit wall abeam, base row 386, top row 346; horizon row 320-325 from the heads of the people standing in the pit lane and the bases of the far tents): horizon ratio with the 1.7 m camera 1.03-1.08 m; the 2019 lidar gives 1.04 m (r5/lidar_heights.json, top 0.98-1.11 m over the edge). The round-4 0.7 m put the horizon too low. Adopted 1.04 m (lidar), +-0.1 m"
+     },
+     {
+      "round": 7,
+      "was": {
+       "side": "left"
+      },
+      "why": "round 7: pit-scope sides are as driven down the lane (trackcfg.py pit_lane; the pit-lane gate reads them so); this row was logged from the track, where the pit wall stands on the track's left: on the lane it stands on the right (between the lane and the track)"
+     }
+    ]
    },
    "confidence": 0.7,
    "t": null,
@@ -7062,13 +7344,30 @@
    "placement": "direct"
   },
   {
-   "side": "left",
+   "side": "right",
    "kind": "wall",
    "attrs": {
     "type": "concrete pit wall",
     "colour": "white",
-    "h_m": 0.7,
-    "h_method": "horizon-ratio"
+    "h_m": 1.04,
+    "h_method": "lidar",
+    "correction": [
+     {
+      "round": 7,
+      "was": {
+       "attrs.h_m": 0.7,
+       "attrs.h_method": "horizon-ratio"
+      },
+      "why": "round 7: re-read on the 2025 360 lap t026 left (the pit wall abeam, base row 386, top row 346; horizon row 320-325 from the heads of the people standing in the pit lane and the bases of the far tents): horizon ratio with the 1.7 m camera 1.03-1.08 m; the 2019 lidar gives 1.04 m (r5/lidar_heights.json, top 0.98-1.11 m over the edge). The round-4 0.7 m put the horizon too low. Adopted 1.04 m (lidar), +-0.1 m"
+     },
+     {
+      "round": 7,
+      "was": {
+       "side": "left"
+      },
+      "why": "round 7: pit-scope sides are as driven down the lane (trackcfg.py pit_lane; the pit-lane gate reads them so); this row was logged from the track, where the pit wall stands on the track's left: on the lane it stands on the right (between the lane and the track)"
+     }
+    ]
    },
    "confidence": 0.7,
    "t": null,
@@ -7082,13 +7381,30 @@
    "placement": "direct"
   },
   {
-   "side": "left",
+   "side": "right",
    "kind": "wall",
    "attrs": {
     "type": "concrete pit wall",
     "colour": "white",
-    "h_m": 0.7,
-    "h_method": "horizon-ratio"
+    "h_m": 1.04,
+    "h_method": "lidar",
+    "correction": [
+     {
+      "round": 7,
+      "was": {
+       "attrs.h_m": 0.7,
+       "attrs.h_method": "horizon-ratio"
+      },
+      "why": "round 7: re-read on the 2025 360 lap t026 left (the pit wall abeam, base row 386, top row 346; horizon row 320-325 from the heads of the people standing in the pit lane and the bases of the far tents): horizon ratio with the 1.7 m camera 1.03-1.08 m; the 2019 lidar gives 1.04 m (r5/lidar_heights.json, top 0.98-1.11 m over the edge). The round-4 0.7 m put the horizon too low. Adopted 1.04 m (lidar), +-0.1 m"
+     },
+     {
+      "round": 7,
+      "was": {
+       "side": "left"
+      },
+      "why": "round 7: pit-scope sides are as driven down the lane (trackcfg.py pit_lane; the pit-lane gate reads them so); this row was logged from the track, where the pit wall stands on the track's left: on the lane it stands on the right (between the lane and the track)"
+     }
+    ]
    },
    "confidence": 0.7,
    "t": null,
@@ -7102,11 +7418,20 @@
    "placement": "direct"
   },
   {
-   "side": "left",
+   "side": "right",
    "kind": "wall",
    "attrs": {
     "type": "pit wall ends at the footbridge abutment",
-    "colour": "white"
+    "colour": "white",
+    "correction": [
+     {
+      "round": 7,
+      "was": {
+       "side": "left"
+      },
+      "why": "round 7: pit-scope sides are as driven down the lane (trackcfg.py pit_lane; the pit-lane gate reads them so); this row was logged from the track, where the pit wall stands on the track's left: on the lane it stands on the right (between the lane and the track)"
+     }
+    ]
    },
    "confidence": 0.7,
    "t": null,
@@ -7187,13 +7512,30 @@
    "placement": "direct"
   },
   {
-   "side": "left",
+   "side": "right",
    "kind": "wall",
    "attrs": {
     "type": "concrete pit wall",
     "colour": "white",
-    "h_m": 0.7,
-    "h_method": "horizon-ratio"
+    "h_m": 1.04,
+    "h_method": "lidar",
+    "correction": [
+     {
+      "round": 7,
+      "was": {
+       "attrs.h_m": 0.7,
+       "attrs.h_method": "horizon-ratio"
+      },
+      "why": "round 7: re-read on the 2025 360 lap t026 left (the pit wall abeam, base row 386, top row 346; horizon row 320-325 from the heads of the people standing in the pit lane and the bases of the far tents): horizon ratio with the 1.7 m camera 1.03-1.08 m; the 2019 lidar gives 1.04 m (r5/lidar_heights.json, top 0.98-1.11 m over the edge). The round-4 0.7 m put the horizon too low. Adopted 1.04 m (lidar), +-0.1 m"
+     },
+     {
+      "round": 7,
+      "was": {
+       "side": "left"
+      },
+      "why": "round 7: pit-scope sides are as driven down the lane (trackcfg.py pit_lane; the pit-lane gate reads them so); this row was logged from the track, where the pit wall stands on the track's left: on the lane it stands on the right (between the lane and the track)"
+     }
+    ]
    },
    "confidence": 0.7,
    "t": null,
@@ -7207,13 +7549,30 @@
    "placement": "direct"
   },
   {
-   "side": "left",
+   "side": "right",
    "kind": "wall",
    "attrs": {
     "type": "concrete pit wall",
     "colour": "white",
-    "h_m": 0.7,
-    "h_method": "horizon-ratio"
+    "h_m": 1.04,
+    "h_method": "lidar",
+    "correction": [
+     {
+      "round": 7,
+      "was": {
+       "attrs.h_m": 0.7,
+       "attrs.h_method": "horizon-ratio"
+      },
+      "why": "round 7: re-read on the 2025 360 lap t026 left (the pit wall abeam, base row 386, top row 346; horizon row 320-325 from the heads of the people standing in the pit lane and the bases of the far tents): horizon ratio with the 1.7 m camera 1.03-1.08 m; the 2019 lidar gives 1.04 m (r5/lidar_heights.json, top 0.98-1.11 m over the edge). The round-4 0.7 m put the horizon too low. Adopted 1.04 m (lidar), +-0.1 m"
+     },
+     {
+      "round": 7,
+      "was": {
+       "side": "left"
+      },
+      "why": "round 7: pit-scope sides are as driven down the lane (trackcfg.py pit_lane; the pit-lane gate reads them so); this row was logged from the track, where the pit wall stands on the track's left: on the lane it stands on the right (between the lane and the track)"
+     }
+    ]
    },
    "confidence": 0.7,
    "t": null,
@@ -7248,17 +7607,17 @@
  ],
  "counts": {
   "wall": 111,
-  "kerb": 80,
-  "runoff": 65,
+  "kerb": 79,
+  "runoff": 66,
   "fence": 38,
   "boards": 25,
-  "stand": 13,
   "bridge": 11,
   "building": 9,
+  "stand": 9,
   "sign": 9,
-  "paint": 7,
+  "paint": 8,
+  "tower": 7,
   "station": 5,
-  "tower": 4,
   "mast": 2,
   "cone_line": 1
  },
