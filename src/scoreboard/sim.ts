@@ -10,6 +10,7 @@ import {
   type GearSchedule,
   type SausageJson, type KerbsJson, type TerrainOverrideJson } from '../physics';
 import { LapTimer, type Lap } from '../app/timing';
+import { atan2 as datan2, cos as dcos, sin as dsin } from '../physics/dmath';   // the auto-launch steer in every engine alike
 import {
   STEP, SAMPLE_EVERY, TIMING_EVERY, ROLLING_START_BEFORE_LAST_CORNER_M, ROLLING_START_SPEED, START_BACK_M,
   FLAG_SHIFT_UP, FLAG_SHIFT_DOWN, FLAG_HANDBRAKE, FLAG_AUTOSHIFT, FLAG_ABS, QUANT, TRACE_FORMAT, TRACKS, type TrackInfo,
@@ -233,10 +234,10 @@ export class HotlapSim {
     const look = Math.min(32, Math.max(10, 0.7 * Math.abs(st.speed)));
     const tgt = lineToWorld(this.assets.track, (s) => this.lineOffsetAt(s), (((pr.s + look) % L) + L) % L);
     const [qx, qy, qz, qw] = st.quat;
-    const yaw = Math.atan2(2 * (qx * qy + qz * qw), 1 - 2 * (qy * qy + qz * qz));
-    let a = Math.atan2(tgt.pos[1] - st.pos[1], tgt.pos[0] - st.pos[0]) - yaw;
-    a = Math.atan2(Math.sin(a), Math.cos(a));
-    const delta = Math.atan2(2 * this.spec.wheelbase * Math.sin(a), look);
+    const yaw = datan2(2 * (qx * qy + qz * qw), 1 - 2 * (qy * qy + qz * qz));
+    let a = datan2(tgt.pos[1] - st.pos[1], tgt.pos[0] - st.pos[0]) - yaw;
+    a = datan2(dsin(a), dcos(a));
+    const delta = datan2(2 * this.spec.wheelbase * dsin(a), look);
     // the vehicle shapes the input by a speed-dependent maximum angle (Vehicle.step steering shaping): command
     // against the same limit so the road-wheel angle is the one pure pursuit asked for
     const sp = this.spec.steering, v = Math.abs(st.speed), vr = v / sp.shapingSpeed;

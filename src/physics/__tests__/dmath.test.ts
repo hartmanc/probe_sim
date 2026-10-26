@@ -106,10 +106,7 @@ describe('dmath stays exact and the replay path stays on it', () => {
     }
     // Math.pow: V8 calls the platform C library (std::pow), no V8 pow to port (docs/determinism.md section 5)
     expect(found).toEqual(['../vehicle.ts: Math.pow', '../vehicle.ts: Math.pow']);
-    // the sim: only the live auto-launch's lineSteer (its output is quantised and recorded, never replayed)
-    const sim = src('../../scoreboard/sim.ts');
-    const steer = sim.slice(sim.indexOf('  lineSteer(): number {'), sim.indexOf('\n  }\n', sim.indexOf('  lineSteer(): number {')));
-    expect(steer.length).toBeGreaterThan(100);
-    expect([...sim.replace(steer, '').matchAll(TRANSCENDENTAL)].map((m) => m[0])).toEqual([]);
+    // the sim (including the live auto-launch's lineSteer, whose output is recorded) and the dev / test track
+    for (const f of ['../../scoreboard/sim.ts', '../../scoreboard/replay.ts', '../devtrack.ts']) expect([...src(f).matchAll(TRANSCENDENTAL)].map((m) => `${f}: ${m[0]}`)).toEqual([]);
   });
 });

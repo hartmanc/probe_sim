@@ -1,6 +1,7 @@
 // Synthetic test fixtures: a 2 km oval with a gentle hill (valid track.json +
 // heightfield), and simple flat / split-mu surfaces.
 
+import { cos as dcos, exp as dexp, hypot as dhypot, sin as dsin } from './dmath';   // bit-identical to V8 on every engine (docs/determinism.md)
 import type { TrackJson } from './track';
 import type { SceneryCollisionJson } from './collision';
 import type { Surface, SurfaceSample, Vec3 } from './types';
@@ -17,7 +18,7 @@ export interface DevTrackOptions {
 /** Analytic ground height for the dev track (also used by tests). */
 export function devGround(x: number, y: number, o: Required<DevTrackOptions>): number {
   const dx = x, dy = y - o.radius; // hill centred on the back straight
-  return o.hillHeight * Math.exp(-(dx * dx + dy * dy) / (2 * o.hillSigma * o.hillSigma));
+  return o.hillHeight * dexp(-(dx * dx + dy * dy) / (2 * o.hillSigma * o.hillSigma));
 }
 
 export function devTrackOptions(opts: DevTrackOptions = {}): Required<DevTrackOptions> {
@@ -48,18 +49,18 @@ export function createDevTrack(opts: DevTrackOptions = {}): { track: TrackJson; 
     let s = (sIn + Ls / 2) % L; if (s < 0) s += L;
     if (s < Ls) return { x: -Ls / 2 + s, y: -R, h: 0 };
     s -= Ls;
-    if (s < Math.PI * R) { const th = s / R; return { x: Ls / 2 + R * Math.sin(th), y: -R * Math.cos(th), h: th }; }
+    if (s < Math.PI * R) { const th = s / R; return { x: Ls / 2 + R * dsin(th), y: -R * dcos(th), h: th }; }
     s -= Math.PI * R;
     if (s < Ls) return { x: Ls / 2 - s, y: R, h: Math.PI };
     s -= Ls;
     const th = s / R;
-    return { x: -Ls / 2 - R * Math.sin(th), y: R * Math.cos(th), h: Math.PI + th };
+    return { x: -Ls / 2 - R * dsin(th), y: R * dcos(th), h: Math.PI + th };
   };
 
   const center: Vec3[] = [], left: Vec3[] = [], right: Vec3[] = [], pz: number[][] = [];
   for (let i = 0; i < n; i++) {
     const p = pointAt(i * o.spacing);
-    const nx = -Math.sin(p.h), ny = Math.cos(p.h); // left normal
+    const nx = -dsin(p.h), ny = dcos(p.h); // left normal
     const zc = devGround(p.x, p.y, o);
     center.push([p.x, p.y, zc]);
     const lx = p.x + o.halfWidth * nx, ly = p.y + o.halfWidth * ny;
@@ -135,7 +136,7 @@ export interface DevScenery {
 export function createDevScenery(o: Required<DevTrackOptions> = devTrackOptions()): DevScenery {
   const R = o.radius;
   const Ls = (o.length - 2 * Math.PI * R) / 2;
-  const farGround = (x: number, y: number) => devGround(x, y, o) + 0.01 * Math.max(0, Math.hypot(x, y) - 600);
+  const farGround = (x: number, y: number) => devGround(x, y, o) + 0.01 * Math.max(0, dhypot(x, y) - 600);
   const run = (y: number, x0: number, x1: number) => {
     const pts: number[][] = [];
     for (let x = x0; x <= x1 + 1e-9; x += 2) pts.push([x, y, devGround(x, y, o)]);
