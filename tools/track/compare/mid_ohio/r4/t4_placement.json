@@ -1,0 +1,48 @@
+{
+ "rule": {
+  "from": "tools/track/out/mid_ohio_r4/work/geometry_report.json profile_bank",
+  "peak_station": 1968,
+  "core_stations": [
+   1889,
+   2047
+  ],
+  "interval_stations": [
+   1767,
+   2047
+  ],
+  "changed_stations": [
+   1864,
+   2005
+  ],
+  "peak_bank_deg": [
+   4.38,
+   2.2
+  ],
+  "outside_edge_max_drop_m": 0.46,
+  "heightfield_cells": 756
+ },
+ "observed_360_lap": {
+  "method": "2025 INDYCAR 360 lap e25u_vjn1uM: ahead views pitched -12..-14 deg at 0.5 s and 0.3-0.4 s (local cache t4fine/), stations from the 360 time map (residuals 7-20 m)",
+  "entry_seam": {
+   "seen": "transverse joint to darker, fresher asphalt ahead in the t73.4 frame (just past the '100' board), at mid-frame by t73.8",
+   "car_crosses_t": 74.0,
+   "s": 1898,
+   "uncertainty_m": 20
+  },
+  "exit_seam": {
+   "seen": "transverse joint from dark to lighter grey asphalt at the top of the t78.8 frame, upper third at t79.1, beside the T4-exit yellow kerb",
+   "car_crosses_t": 79.4,
+   "s": 2033,
+   "uncertainty_m": 20
+  },
+  "dark_surface_length_m": 135,
+  "dark_surface_centre_s": 1965,
+  "apex_kerb": "red/white T4 apex kerb on the right at t76.5 (s 1961): present in 2025, consistent with 'existing apex curbing kept'",
+  "run_off": "outside (left): grass then wide sand/gravel at t77-t79 with a flat yellow kerb at the exit; its height relative to the road is not measurable from the roof camera (no step visible at this resolution)"
+ },
+ "observed_indycar": {
+  "segments": "A 44.5-49, B 112-117.5, C 178.5-183 (0.5 s, frames_indy_half)",
+  "seen": "the same darker surface from the braking zone into T4 and lighter grey beyond the T4-exit yellow kerb; the joints are not resolvable to better than about 20 m at the roll-hoop camera's resolution and motion blur"
+ },
+ "verdict": "the rule's core (1889-2047, 158.5 m centred on the 2019 bank peak) and the observed new surface (about 1898-2033, centre 1965) agree within the time map's uncertainty at both ends (9 m at entry, 14 m at exit); the observed length (about 135 m) is shorter than the operator's 520 ft (158.5 m) by 23 m, inside the two seams' combined uncertainty. Placement kept as configured; the bank values themselves are not measured by any video."
+}

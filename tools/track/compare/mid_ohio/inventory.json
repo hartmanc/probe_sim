@@ -1198,7 +1198,7 @@
    },
    "confidence": 0.7,
    "t": 20,
-   "s": 273.5,
+   "s": 273.6,
    "source": "onboard:9Drr1VkE1_U@20.0",
    "frame": "t020.jpg",
    "map": "IndyCar segment A (9Drr1VkE1_U)",
@@ -1227,12 +1227,27 @@
    },
    "confidence": 0.8,
    "t": 32,
-   "s": 294.7,
+   "s": 294.8,
    "source": "onboard:e25u_vjn1uM@32.0",
    "frame": "t032_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
    "note": "apex kerb"
+  },
+  {
+   "side": "left",
+   "kind": "mast",
+   "attrs": {
+    "type": "timber utility poles with lines, several"
+   },
+   "confidence": 0.7,
+   "t": 32,
+   "s": 294.8,
+   "source": "onboard:e25u_vjn1uM@32.0",
+   "frame": "t032_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "T1 inside, beyond the infield armco"
   },
   {
    "side": "left",
@@ -1242,7 +1257,7 @@
    },
    "confidence": 0.8,
    "t": 32,
-   "s": 294.7,
+   "s": 294.8,
    "source": "onboard:e25u_vjn1uM@32.0",
    "frame": "t032_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -1260,7 +1275,7 @@
    },
    "confidence": 0.8,
    "t": 32,
-   "s": 294.7,
+   "s": 294.8,
    "source": "onboard:e25u_vjn1uM@32.0",
    "frame": "t032_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -1275,7 +1290,7 @@
    },
    "confidence": 0.8,
    "t": 32,
-   "s": 294.7,
+   "s": 294.8,
    "source": "onboard:e25u_vjn1uM@32.0",
    "frame": "t032_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -1290,7 +1305,7 @@
    },
    "confidence": 0.8,
    "t": 32,
-   "s": 294.7,
+   "s": 294.8,
    "source": "onboard:e25u_vjn1uM@32.0",
    "frame": "t032_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -1785,7 +1800,7 @@
    },
    "confidence": 0.7,
    "t": 94,
-   "s": 590.2,
+   "s": 590.3,
    "source": "onboard:9Drr1VkE1_U@94.0",
    "frame": "t094.jpg",
    "map": "IndyCar segment B (9Drr1VkE1_U)",
@@ -1800,7 +1815,7 @@
    },
    "confidence": 0.7,
    "t": 26,
-   "s": 631.6,
+   "s": 631.7,
    "source": "onboard:9Drr1VkE1_U@26.0",
    "frame": "t026.jpg",
    "map": "IndyCar segment A (9Drr1VkE1_U)",
@@ -1855,7 +1870,7 @@
    },
    "confidence": 0.7,
    "t": 160,
-   "s": 679.3,
+   "s": 679.4,
    "source": "onboard:9Drr1VkE1_U@160.0",
    "frame": "t160.jpg",
    "map": "IndyCar segment C (9Drr1VkE1_U)",
@@ -1972,7 +1987,7 @@
    },
    "confidence": 0.7,
    "t": 96,
-   "s": 763.9,
+   "s": 764.0,
    "source": "onboard:9Drr1VkE1_U@96.0",
    "frame": "t096.jpg",
    "map": "IndyCar segment B (9Drr1VkE1_U)",
@@ -2150,7 +2165,7 @@
    },
    "confidence": 0.7,
    "t": 30,
-   "s": 902.0,
+   "s": 902.1,
    "source": "onboard:9Drr1VkE1_U@30.0",
    "frame": "t030.jpg",
    "map": "IndyCar segment A (9Drr1VkE1_U)",
@@ -2645,7 +2660,7 @@
    },
    "confidence": 0.7,
    "t": 104,
-   "s": 1128.3,
+   "s": 1128.4,
    "source": "onboard:9Drr1VkE1_U@104.0",
    "frame": "t104.jpg",
    "map": "IndyCar segment B (9Drr1VkE1_U)",
@@ -3134,7 +3149,7 @@
    },
    "confidence": 0.7,
    "t": 174,
-   "s": 1458.9,
+   "s": 1459.0,
    "source": "onboard:9Drr1VkE1_U@174.0",
    "frame": "t174.jpg",
    "map": "IndyCar segment C (9Drr1VkE1_U)",
@@ -3395,7 +3410,7 @@
    },
    "confidence": 0.8,
    "t": 70,
-   "s": 1718.2,
+   "s": 1718.3,
    "source": "onboard:e25u_vjn1uM@70.0",
    "frame": "t070_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -3413,7 +3428,7 @@
    },
    "confidence": 0.8,
    "t": 70,
-   "s": 1718.2,
+   "s": 1718.3,
    "source": "onboard:e25u_vjn1uM@70.0",
    "frame": "t070_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -3427,7 +3442,7 @@
    },
    "confidence": 0.8,
    "t": 70,
-   "s": 1718.2,
+   "s": 1718.3,
    "source": "onboard:e25u_vjn1uM@70.0",
    "frame": "t070_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -3500,7 +3515,7 @@
    },
    "confidence": 0.8,
    "t": 72,
-   "s": 1813.3,
+   "s": 1813.4,
    "source": "onboard:e25u_vjn1uM@72.0",
    "frame": "t072_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -3514,7 +3529,7 @@
    },
    "confidence": 0.8,
    "t": 72,
-   "s": 1813.3,
+   "s": 1813.4,
    "source": "onboard:e25u_vjn1uM@72.0",
    "frame": "t072_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -3532,7 +3547,7 @@
    },
    "confidence": 0.8,
    "t": 72,
-   "s": 1813.3,
+   "s": 1813.4,
    "source": "onboard:e25u_vjn1uM@72.0",
    "frame": "t072_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -3546,7 +3561,7 @@
    },
    "confidence": 0.8,
    "t": 72,
-   "s": 1813.3,
+   "s": 1813.4,
    "source": "onboard:e25u_vjn1uM@72.0",
    "frame": "t072_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -3560,7 +3575,7 @@
    },
    "confidence": 0.8,
    "t": 72,
-   "s": 1813.3,
+   "s": 1813.4,
    "source": "onboard:e25u_vjn1uM@72.0",
    "frame": "t072_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -3836,7 +3851,7 @@
    },
    "confidence": 0.8,
    "t": 78,
-   "s": 1994.9,
+   "s": 1995.0,
    "source": "onboard:e25u_vjn1uM@78.0",
    "frame": "t078_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -3851,7 +3866,7 @@
    },
    "confidence": 0.8,
    "t": 78,
-   "s": 1994.9,
+   "s": 1995.0,
    "source": "onboard:e25u_vjn1uM@78.0",
    "frame": "t078_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -3866,7 +3881,7 @@
    },
    "confidence": 0.8,
    "t": 78,
-   "s": 1994.9,
+   "s": 1995.0,
    "source": "onboard:e25u_vjn1uM@78.0",
    "frame": "t078_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -3883,7 +3898,7 @@
    },
    "confidence": 0.8,
    "t": 78,
-   "s": 1994.9,
+   "s": 1995.0,
    "source": "onboard:e25u_vjn1uM@78.0",
    "frame": "t078_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -3925,7 +3940,7 @@
    },
    "confidence": 0.8,
    "t": 80,
-   "s": 2050.8,
+   "s": 2050.9,
    "source": "onboard:e25u_vjn1uM@80.0",
    "frame": "t080_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -3939,7 +3954,7 @@
    },
    "confidence": 0.8,
    "t": 80,
-   "s": 2050.8,
+   "s": 2050.9,
    "source": "onboard:e25u_vjn1uM@80.0",
    "frame": "t080_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -3953,7 +3968,7 @@
    },
    "confidence": 0.8,
    "t": 80,
-   "s": 2050.8,
+   "s": 2050.9,
    "source": "onboard:e25u_vjn1uM@80.0",
    "frame": "t080_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -4611,7 +4626,7 @@
    },
    "confidence": 0.8,
    "t": 100,
-   "s": 2616.0,
+   "s": 2616.1,
    "source": "onboard:e25u_vjn1uM@100.0",
    "frame": "t100_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -4625,7 +4640,7 @@
    },
    "confidence": 0.8,
    "t": 100,
-   "s": 2616.0,
+   "s": 2616.1,
    "source": "onboard:e25u_vjn1uM@100.0",
    "frame": "t100_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -4803,7 +4818,7 @@
    },
    "confidence": 0.7,
    "t": 66,
-   "s": 2784.8,
+   "s": 2784.9,
    "source": "onboard:9Drr1VkE1_U@66.0",
    "frame": "t066.jpg",
    "map": "IndyCar segment A (9Drr1VkE1_U)",
@@ -4832,7 +4847,7 @@
    },
    "confidence": 0.8,
    "t": 106,
-   "s": 2793.9,
+   "s": 2794.0,
    "source": "onboard:e25u_vjn1uM@106.0",
    "frame": "t106_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -4848,7 +4863,7 @@
    },
    "confidence": 0.8,
    "t": 106,
-   "s": 2793.9,
+   "s": 2794.0,
    "source": "onboard:e25u_vjn1uM@106.0",
    "frame": "t106_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -4865,7 +4880,7 @@
    },
    "confidence": 0.8,
    "t": 106,
-   "s": 2793.9,
+   "s": 2794.0,
    "source": "onboard:e25u_vjn1uM@106.0",
    "frame": "t106_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -5233,7 +5248,7 @@
    },
    "confidence": 0.8,
    "t": 116,
-   "s": 3171.9,
+   "s": 3172.0,
    "source": "onboard:e25u_vjn1uM@116.0",
    "frame": "t116_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -5247,7 +5262,7 @@
    },
    "confidence": 0.8,
    "t": 116,
-   "s": 3171.9,
+   "s": 3172.0,
    "source": "onboard:e25u_vjn1uM@116.0",
    "frame": "t116_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -5373,6 +5388,21 @@
    "side": "right",
    "kind": "kerb",
    "attrs": {
+    "type": "Carousel kerb, red/white"
+   },
+   "confidence": 0.8,
+   "t": 16,
+   "s": 3372.4,
+   "source": "onboard:e25u_vjn1uM@16.0",
+   "frame": "t016_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "lap 1 lead-in"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
     "type": "red/white kerb"
    },
    "confidence": 0.8,
@@ -5390,7 +5420,7 @@
    },
    "confidence": 0.8,
    "t": 124,
-   "s": 3394.9,
+   "s": 3394.7,
    "source": "onboard:e25u_vjn1uM@124.0",
    "frame": "t124_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -5404,11 +5434,84 @@
    },
    "confidence": 0.8,
    "t": 124,
-   "s": 3394.9,
+   "s": 3394.7,
    "source": "onboard:e25u_vjn1uM@124.0",
    "frame": "t124_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "Carousel / T13 kerb, red/white"
+   },
+   "confidence": 0.7,
+   "t": 82,
+   "s": 3408.2,
+   "source": "onboard:9Drr1VkE1_U@82.0",
+   "frame": "t082.jpg",
+   "map": "IndyCar segment B (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete wall",
+    "colour": "white"
+   },
+   "confidence": 0.6,
+   "t": 12,
+   "s": 3409.5,
+   "source": "onboard:9Drr1VkE1_U@12.0",
+   "frame": "t012.jpg",
+   "map": "IndyCar segment A (9Drr1VkE1_U)",
+   "scope": "lap",
+   "note": "pit-entry side"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "Carousel kerb, red/white"
+   },
+   "confidence": 0.7,
+   "t": 12,
+   "s": 3409.5,
+   "source": "onboard:9Drr1VkE1_U@12.0",
+   "frame": "t012.jpg",
+   "map": "IndyCar segment A (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "Carousel kerb, red/white"
+   },
+   "confidence": 0.7,
+   "t": 146,
+   "s": 3420.1,
+   "source": "onboard:9Drr1VkE1_U@146.0",
+   "frame": "t146.jpg",
+   "map": "IndyCar segment C (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "boards",
+   "attrs": {
+    "type": "Honda board wall"
+   },
+   "confidence": 0.8,
+   "t": 18,
+   "s": 3421.9,
+   "source": "onboard:e25u_vjn1uM@18.0",
+   "frame": "t018_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "lap 1 lead-in, T13"
   },
   {
    "side": "left",
@@ -5446,7 +5549,7 @@
    },
    "confidence": 0.8,
    "t": 126,
-   "s": 3447.6,
+   "s": 3447.4,
    "source": "onboard:e25u_vjn1uM@126.0",
    "frame": "t126_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -5460,7 +5563,7 @@
    },
    "confidence": 0.8,
    "t": 126,
-   "s": 3447.6,
+   "s": 3447.4,
    "source": "onboard:e25u_vjn1uM@126.0",
    "frame": "t126_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -5475,11 +5578,27 @@
    },
    "confidence": 0.8,
    "t": 126,
-   "s": 3447.6,
+   "s": 3447.4,
    "source": "onboard:e25u_vjn1uM@126.0",
    "frame": "t126_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete pit wall",
+    "colour": "white"
+   },
+   "confidence": 0.8,
+   "t": 20,
+   "s": 3471.7,
+   "source": "onboard:e25u_vjn1uM@20.0",
+   "frame": "t020_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "lap 1 lead-in: RESTART board, pit wall start"
   },
   {
    "side": "left",
@@ -5492,6 +5611,66 @@
    "s": 3473.6,
    "source": "onboard:OJaBJz18xEo@126.0",
    "frame": "t126.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "building",
+   "attrs": {
+    "type": "starter tower"
+   },
+   "confidence": 0.8,
+   "t": 128,
+   "s": 3495.6,
+   "source": "onboard:e25u_vjn1uM@128.0",
+   "frame": "t128_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "sign",
+   "attrs": {
+    "type": "\"RESTART\" board on the pit wall"
+   },
+   "confidence": 0.8,
+   "t": 128,
+   "s": 3495.6,
+   "source": "onboard:e25u_vjn1uM@128.0",
+   "frame": "t128_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete pit wall",
+    "colour": "white",
+    "h_m": 0.7,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 128,
+   "s": 3495.6,
+   "source": "onboard:e25u_vjn1uM@128.0",
+   "frame": "t128_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "pit wall starts (\"RESTART\" board)"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "sand"
+   },
+   "confidence": 0.8,
+   "t": 128,
+   "s": 3495.6,
+   "source": "onboard:e25u_vjn1uM@128.0",
+   "frame": "t128_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap"
   },
   {
@@ -5523,64 +5702,34 @@
    "note": "pit wall begins"
   },
   {
-   "side": "left",
-   "kind": "building",
+   "side": "right",
+   "kind": "kerb",
    "attrs": {
-    "type": "starter tower"
+    "type": "yellow kerb"
    },
-   "confidence": 0.8,
-   "t": 128,
-   "s": 3496.1,
-   "source": "onboard:e25u_vjn1uM@128.0",
-   "frame": "t128_left.jpg",
-   "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
-  },
-  {
-   "side": "left",
-   "kind": "sign",
-   "attrs": {
-    "type": "\"RESTART\" board on the pit wall"
-   },
-   "confidence": 0.8,
-   "t": 128,
-   "s": 3496.1,
-   "source": "onboard:e25u_vjn1uM@128.0",
-   "frame": "t128_left.jpg",
-   "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
-  },
-  {
-   "side": "left",
-   "kind": "wall",
-   "attrs": {
-    "type": "concrete pit wall",
-    "colour": "white",
-    "h_m": 0.7,
-    "h_method": "horizon-ratio"
-   },
-   "confidence": 0.8,
-   "t": 128,
-   "s": 3496.1,
-   "source": "onboard:e25u_vjn1uM@128.0",
-   "frame": "t128_left.jpg",
-   "map": "360 lap (e25u_vjn1uM)",
+   "confidence": 0.7,
+   "t": 148,
+   "s": 3522.9,
+   "source": "onboard:9Drr1VkE1_U@148.0",
+   "frame": "t148.jpg",
+   "map": "IndyCar segment C (9Drr1VkE1_U)",
    "scope": "lap",
-   "note": "pit wall starts (\"RESTART\" board)"
+   "note": "pit straight right"
   },
   {
    "side": "right",
-   "kind": "runoff",
+   "kind": "kerb",
    "attrs": {
-    "type": "sand"
+    "type": "yellow kerb"
    },
    "confidence": 0.8,
-   "t": 128,
-   "s": 3496.1,
-   "source": "onboard:e25u_vjn1uM@128.0",
-   "frame": "t128_left.jpg",
+   "t": 22,
+   "s": 3527.6,
+   "source": "onboard:e25u_vjn1uM@22.0",
+   "frame": "t022_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "note": "lap 1 lead-in"
   },
   {
    "side": "right",
@@ -5610,6 +5759,21 @@
    "scope": "lap"
   },
   {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "yellow kerb"
+   },
+   "confidence": 0.7,
+   "t": 84,
+   "s": 3543.8,
+   "source": "onboard:9Drr1VkE1_U@84.0",
+   "frame": "t084.jpg",
+   "map": "IndyCar segment B (9Drr1VkE1_U)",
+   "scope": "lap",
+   "note": "pit straight right"
+  },
+  {
    "side": "left",
    "kind": "building",
    "attrs": {
@@ -5619,7 +5783,7 @@
    },
    "confidence": 0.8,
    "t": 130,
-   "s": 3557.7,
+   "s": 3557.0,
    "source": "onboard:e25u_vjn1uM@130.0",
    "frame": "t130_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -5636,7 +5800,7 @@
    },
    "confidence": 0.8,
    "t": 130,
-   "s": 3557.7,
+   "s": 3557.0,
    "source": "onboard:e25u_vjn1uM@130.0",
    "frame": "t130_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -5650,7 +5814,7 @@
    },
    "confidence": 0.8,
    "t": 130,
-   "s": 3557.7,
+   "s": 3557.0,
    "source": "onboard:e25u_vjn1uM@130.0",
    "frame": "t130_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -5664,12 +5828,27 @@
    },
    "confidence": 0.8,
    "t": 130,
-   "s": 3557.7,
+   "s": 3557.0,
    "source": "onboard:e25u_vjn1uM@130.0",
    "frame": "t130_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
    "note": "pit straight right"
+  },
+  {
+   "side": "right",
+   "kind": "mast",
+   "attrs": {
+    "type": "scaffold masts with TV cameras / flood lights"
+   },
+   "confidence": 0.7,
+   "t": 130,
+   "s": 3557.0,
+   "source": "onboard:e25u_vjn1uM@130.0",
+   "frame": "t130_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "pit straight, behind the catch fence (k264)"
   },
   {
    "side": "right",
@@ -5679,7 +5858,7 @@
    },
    "confidence": 0.8,
    "t": 130,
-   "s": 3557.7,
+   "s": 3557.0,
    "source": "onboard:e25u_vjn1uM@130.0",
    "frame": "t130_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -5693,7 +5872,7 @@
    },
    "confidence": 0.8,
    "t": 130,
-   "s": 3557.7,
+   "s": 3557.0,
    "source": "onboard:e25u_vjn1uM@130.0",
    "frame": "t130_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
@@ -5928,11 +6107,11 @@
   }
  ],
  "counts": {
-  "wall": 109,
-  "kerb": 73,
+  "wall": 111,
+  "kerb": 80,
   "runoff": 65,
   "fence": 38,
-  "boards": 24,
+  "boards": 25,
   "stand": 13,
   "bridge": 11,
   "building": 9,
@@ -5940,6 +6119,7 @@
   "paint": 7,
   "station": 5,
   "tower": 4,
+  "mast": 2,
   "cone_line": 1
  },
  "unmeasured_heights": 0,
@@ -5958,52 +6138,67 @@
    "interp": "profile",
    "anchors": [
     {
+     "name": "T12 (Carousel), lead-in",
+     "t": 15.0,
+     "s": 3351.3
+    },
+    {
      "name": "S/F",
      "t": 24.0,
-     "s": 0.0
+     "s": 3597.492
     },
     {
      "name": "footbridge",
      "t": 30.0,
-     "s": 233.2
+     "s": 3830.7
     },
     {
      "name": "T2",
      "t": 50.0,
-     "s": 957.7
+     "s": 4555.2
     },
     {
      "name": "T4",
      "t": 76.5,
-     "s": 1961.4
+     "s": 5558.9
     },
     {
      "name": "T5",
      "t": 82.0,
-     "s": 2100.5
+     "s": 5698.0
     },
     {
      "name": "PERMCO bridge",
      "t": 107.0,
-     "s": 2836.0
+     "s": 6433.5
     },
     {
      "name": "T12",
      "t": 122.0,
-     "s": 3351.3
+     "s": 6948.8
     },
     {
      "name": "S/F lap 2",
      "t": 131.1,
-     "s": 3597.491335
+     "s": 7194.984
     }
    ],
    "anchor_residuals": [
     {
+     "name": "S/F",
+     "t": 24.0,
+     "s": 3597.492,
+     "loo_pred_s": 3579.6,
+     "loo_residual_m": 17.9,
+     "loo_residual_linear_m": -41.4,
+     "v_in": 27.4,
+     "v_out": 38.9
+    },
+    {
      "name": "footbridge",
      "t": 30.0,
-     "s": 233.2,
-     "loo_pred_s": 250.1,
+     "s": 3830.7,
+     "loo_pred_s": 3847.6,
      "loo_residual_m": -16.9,
      "loo_residual_linear_m": 12.2,
      "v_in": 38.9,
@@ -6012,8 +6207,8 @@
     {
      "name": "T2",
      "t": 50.0,
-     "s": 957.7,
-     "loo_pred_s": 937.3,
+     "s": 4555.2,
+     "loo_pred_s": 4534.8,
      "loo_residual_m": 20.4,
      "loo_residual_linear_m": -18.8,
      "v_in": 36.2,
@@ -6022,8 +6217,8 @@
     {
      "name": "T4",
      "t": 76.5,
-     "s": 1961.4,
-     "loo_pred_s": 1968.4,
+     "s": 5558.9,
+     "loo_pred_s": 5565.9,
      "loo_residual_m": -7.0,
      "loo_residual_linear_m": 57.3,
      "v_in": 37.9,
@@ -6032,8 +6227,8 @@
     {
      "name": "T5",
      "t": 82.0,
-     "s": 2100.5,
-     "loo_pred_s": 2108.7,
+     "s": 5698.0,
+     "loo_pred_s": 5706.2,
      "loo_residual_m": -8.2,
      "loo_residual_linear_m": -18.6,
      "v_in": 25.3,
@@ -6042,8 +6237,8 @@
     {
      "name": "PERMCO bridge",
      "t": 107.0,
-     "s": 2836.0,
-     "loo_pred_s": 2816.4,
+     "s": 6433.5,
+     "loo_pred_s": 6413.9,
      "loo_residual_m": 19.6,
      "loo_residual_linear_m": -46.2,
      "v_in": 29.4,
@@ -6052,21 +6247,21 @@
     {
      "name": "T12",
      "t": 122.0,
-     "s": 3351.3,
-     "loo_pred_s": 3349.8,
-     "loo_residual_m": 1.5,
+     "s": 6948.8,
+     "loo_pred_s": 6947.0,
+     "loo_residual_m": 1.8,
      "loo_residual_linear_m": 41.3,
      "v_in": 34.4,
      "v_out": 27.1
     }
    ],
-   "rows": 190,
+   "rows": 196,
    "covers_s": [
-    0.0,
+    3351.3,
     0.0
    ],
    "covers_t": [
-    24.0,
+    15.0,
     131.1
    ]
   },
@@ -6084,38 +6279,53 @@
    "interp": "profile",
    "anchors": [
     {
+     "name": "T12 (Carousel), lead-in",
+     "t": 10.5,
+     "s": 3351.3
+    },
+    {
      "name": "S/F",
      "t": 15.8,
-     "s": 0.0
+     "s": 3597.492
     },
     {
      "name": "footbridge",
      "t": 19.2,
-     "s": 233.2
+     "s": 3830.7
     },
     {
      "name": "T2",
      "t": 31.5,
-     "s": 957.7
+     "s": 4555.2
     },
     {
      "name": "T4",
      "t": 47.25,
-     "s": 1961.4
+     "s": 5558.9
     },
     {
      "name": "PERMCO bridge",
      "t": 66.8,
-     "s": 2836.0
+     "s": 6433.5
     }
    ],
    "anchor_residuals": [
     {
+     "name": "S/F",
+     "t": 15.8,
+     "s": 3597.492,
+     "loo_pred_s": 3584.4,
+     "loo_residual_m": 13.1,
+     "loo_residual_linear_m": -45.9,
+     "v_in": 46.5,
+     "v_out": 68.6
+    },
+    {
      "name": "footbridge",
      "t": 19.2,
-     "s": 233.2,
-     "loo_pred_s": 238.2,
-     "loo_residual_m": -5.0,
+     "s": 3830.7,
+     "loo_pred_s": 3835.6,
+     "loo_residual_m": -4.9,
      "loo_residual_linear_m": 25.8,
      "v_in": 68.6,
      "v_out": 58.9
@@ -6123,8 +6333,8 @@
     {
      "name": "T2",
      "t": 31.5,
-     "s": 957.7,
-     "loo_pred_s": 945.6,
+     "s": 4555.2,
+     "loo_pred_s": 4543.1,
      "loo_residual_m": 12.1,
      "loo_residual_linear_m": -33.3,
      "v_in": 58.9,
@@ -6133,21 +6343,21 @@
     {
      "name": "T4",
      "t": 47.25,
-     "s": 1961.4,
-     "loo_pred_s": 1983.8,
+     "s": 5558.9,
+     "loo_pred_s": 5581.3,
      "loo_residual_m": -22.4,
      "loo_residual_linear_m": 165.6,
      "v_in": 63.7,
      "v_out": 44.7
     }
    ],
-   "rows": 24,
+   "rows": 26,
    "covers_s": [
-    0.0,
+    3351.3,
     2836.0
    ],
    "covers_t": [
-    15.8,
+    10.5,
     66.8
    ]
   },
@@ -6165,32 +6375,47 @@
    "interp": "profile",
    "anchors": [
     {
+     "name": "T12 (Carousel), lead-in",
+     "t": 81.0,
+     "s": 3351.3
+    },
+    {
      "name": "S/F",
      "t": 84.6,
-     "s": 0.0
+     "s": 3597.492
     },
     {
      "name": "footbridge",
      "t": 88.0,
-     "s": 233.2
+     "s": 3830.7
     },
     {
      "name": "T2",
      "t": 99.75,
-     "s": 957.7
+     "s": 4555.2
     },
     {
      "name": "T4",
      "t": 116.2,
-     "s": 1961.4
+     "s": 5558.9
     }
    ],
    "anchor_residuals": [
     {
+     "name": "S/F",
+     "t": 84.6,
+     "s": 3597.492,
+     "loo_pred_s": 3537.4,
+     "loo_residual_m": 60.1,
+     "loo_residual_linear_m": -0.4,
+     "v_in": 68.4,
+     "v_out": 68.6
+    },
+    {
      "name": "footbridge",
      "t": 88.0,
-     "s": 233.2,
-     "loo_pred_s": 244.9,
+     "s": 3830.7,
+     "loo_pred_s": 3842.4,
      "loo_residual_m": -11.7,
      "loo_residual_linear_m": 18.3,
      "v_in": 68.6,
@@ -6199,21 +6424,21 @@
     {
      "name": "T2",
      "t": 99.75,
-     "s": 957.7,
-     "loo_pred_s": 923.4,
+     "s": 4555.2,
+     "loo_pred_s": 4520.9,
      "loo_residual_m": 34.3,
      "loo_residual_linear_m": 4.4,
      "v_in": 61.7,
      "v_out": 61.0
     }
    ],
-   "rows": 17,
+   "rows": 19,
    "covers_s": [
-    0.0,
+    3351.3,
     1961.4
    ],
    "covers_t": [
-    84.6,
+    81.0,
     116.2
    ]
   },
@@ -6231,37 +6456,52 @@
    "interp": "profile",
    "anchors": [
     {
+     "name": "T12 (Carousel), lead-in",
+     "t": 144.5,
+     "s": 3351.3
+    },
+    {
      "name": "S/F",
      "t": 149.1,
-     "s": 0.0
+     "s": 3597.492
     },
     {
      "name": "footbridge",
      "t": 152.9,
-     "s": 233.2
+     "s": 3830.7
     },
     {
      "name": "T2",
      "t": 164.75,
-     "s": 957.7
+     "s": 4555.2
     },
     {
      "name": "T4",
      "t": 181.6,
-     "s": 1961.4
+     "s": 5558.9
     },
     {
      "name": "PERMCO bridge",
      "t": 200.7,
-     "s": 2836.0
+     "s": 6433.5
     }
    ],
    "anchor_residuals": [
     {
+     "name": "S/F",
+     "t": 149.1,
+     "s": 3597.492,
+     "loo_pred_s": 3553.2,
+     "loo_residual_m": 44.3,
+     "loo_residual_linear_m": -16.3,
+     "v_in": 53.5,
+     "v_out": 61.4
+    },
+    {
      "name": "footbridge",
      "t": 152.9,
-     "s": 233.2,
-     "loo_pred_s": 259.3,
+     "s": 3830.7,
+     "loo_pred_s": 3856.8,
      "loo_residual_m": -26.1,
      "loo_residual_linear_m": 0.7,
      "v_in": 61.4,
@@ -6270,8 +6510,8 @@
     {
      "name": "T2",
      "t": 164.75,
-     "s": 957.7,
-     "loo_pred_s": 919.5,
+     "s": 4555.2,
+     "loo_pred_s": 4517.0,
      "loo_residual_m": 38.2,
      "loo_residual_linear_m": 10.9,
      "v_in": 61.1,
@@ -6280,21 +6520,21 @@
     {
      "name": "T4",
      "t": 181.6,
-     "s": 1961.4,
-     "loo_pred_s": 2016.5,
+     "s": 5558.9,
+     "loo_pred_s": 5614.0,
      "loo_residual_m": -55.1,
      "loo_residual_linear_m": 123.3,
      "v_in": 59.6,
      "v_out": 45.8
     }
    ],
-   "rows": 19,
+   "rows": 21,
    "covers_s": [
-    0.0,
+    3351.3,
     2836.0
    ],
    "covers_t": [
-    149.1,
+    144.5,
     200.7
    ]
   }

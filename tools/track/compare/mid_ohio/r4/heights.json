@@ -1,0 +1,75 @@
+{
+ "camera": {
+  "H_m": 1.7,
+  "method": "car-ref: Honda pace car roof about 1.4 m plus the 360 mount; the roof edge at -21..-25 deg below the camera agrees with a mount about 0.3 m above the roof",
+  "uncertainty": "+-0.3 m; the horizon in the side views read from the far ground (+-1 deg, the camera rolls about 1 deg)"
+ },
+ "measurements": [
+  {
+   "object": "pit wall (white concrete)",
+   "frame": "360 k52 (t26) left view, elevation grid (r4/measure_view.py)",
+   "top_deg": -7.0,
+   "base_deg": -11.5,
+   "horizon_deg": -1.0,
+   "h_m": 0.7,
+   "method": "horizon-ratio",
+   "range_m": [
+    0.64,
+    0.75
+   ]
+  },
+  {
+   "object": "red armco (stacked W-beam)",
+   "frame": "360 k116 (t58) left",
+   "top_deg": -5.5,
+   "base_deg": -9.5,
+   "horizon_deg": -1.5,
+   "h_m": 0.8,
+   "method": "horizon-ratio"
+  },
+  {
+   "object": "red armco (stacked W-beam)",
+   "frame": "360 k52 (t26) right",
+   "top_deg": -0.3,
+   "base_deg": -4.6,
+   "horizon_deg": 1.0,
+   "h_m": 1.3,
+   "method": "horizon-ratio",
+   "note": "far wall, small angles: sensitive to the horizon reading"
+  },
+  {
+   "object": "armco recorded",
+   "h_m": 1.0,
+   "note": "mean of the two readings, +-0.3 m; one value for every red armco row"
+  },
+  {
+   "object": "catch fence post top above ground",
+   "frame": "360 k116 left: post top +8 deg at the armco column",
+   "h_m": 3.5,
+   "method": "fence-post-ref",
+   "range_m": [
+    3.0,
+    4.5
+   ]
+  },
+  {
+   "object": "starter tower",
+   "h_m": 13,
+   "method": "storeys",
+   "note": "4 levels incl. the roof cabin, 3.2 m each"
+  },
+  {
+   "object": "pit garages",
+   "h_m": 4,
+   "method": "storeys",
+   "note": "single storey with a pitched red roof"
+  },
+  {
+   "object": "main straight covered grandstand",
+   "h_m": 7,
+   "method": "storeys",
+   "note": "two levels"
+  }
+ ],
+ "not_measured": "bridges (Firestone, PERMCO), the scoring pylon, the T4 bleachers, boards: no height in the rows (left for the scenery stage with the lidar)"
+}

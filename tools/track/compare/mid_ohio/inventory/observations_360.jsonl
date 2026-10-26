@@ -190,3 +190,9 @@
 {"t": 130, "side": "right", "kind": "runoff", "attrs": {"type": "sand/gravel"}, "confidence": 0.8}
 {"t": 130, "side": "right", "kind": "boards", "attrs": {"type": "Honda boards"}, "confidence": 0.8}
 {"t": 130, "side": "right", "kind": "stand", "attrs": {"type": "covered grandstand"}, "confidence": 0.8}
+{"t": 16, "side": "right", "kind": "kerb", "attrs": {"type": "Carousel kerb, red/white"}, "confidence": 0.8, "note": "lap 1 lead-in"}
+{"t": 18, "side": "left", "kind": "boards", "attrs": {"type": "Honda board wall"}, "confidence": 0.8, "note": "lap 1 lead-in, T13"}
+{"t": 20, "side": "left", "kind": "wall", "attrs": {"type": "concrete pit wall", "colour": "white"}, "confidence": 0.8, "note": "lap 1 lead-in: RESTART board, pit wall start"}
+{"t": 22, "side": "right", "kind": "kerb", "attrs": {"type": "yellow kerb"}, "confidence": 0.8, "note": "lap 1 lead-in"}
+{"t": 32, "side": "left", "kind": "mast", "attrs": {"type": "timber utility poles with lines, several"}, "confidence": 0.7, "note": "T1 inside, beyond the infield armco"}
+{"t": 130, "side": "right", "kind": "mast", "attrs": {"type": "scaffold masts with TV cameras / flood lights"}, "confidence": 0.7, "note": "pit straight, behind the catch fence (k264)"}

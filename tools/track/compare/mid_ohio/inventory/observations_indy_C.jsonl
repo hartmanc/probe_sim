@@ -18,3 +18,5 @@
 {"t": 192, "side": "left", "kind": "kerb", "attrs": {"type": "yellow kerb"}, "confidence": 0.7}
 {"t": 196, "side": "left", "kind": "kerb", "attrs": {"type": "yellow kerb"}, "confidence": 0.7, "note": "T9 exit"}
 {"t": 200, "side": "ahead", "kind": "bridge", "attrs": {"type": "PERMCO footbridge"}, "confidence": 0.7}
+{"t": 146, "side": "right", "kind": "kerb", "attrs": {"type": "Carousel kerb, red/white"}, "confidence": 0.7}
+{"t": 148, "side": "right", "kind": "kerb", "attrs": {"type": "yellow kerb"}, "confidence": 0.7, "note": "pit straight right"}

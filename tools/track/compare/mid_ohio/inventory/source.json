@@ -125,55 +125,61 @@
    "observations": [
     "observations_360.jsonl"
    ],
-   "note": "the video starts just past the PERMCO bridge (s ~2850), laps once (S/F 0:24.0 and 2:11.1, lap 107.1 s) and ends at the T1 exit; rows are taken over the lap between the two S/F crossings",
+   "note": "the video starts just past the PERMCO bridge (s ~2850), laps once (S/F 0:24.0 and 2:11.1, lap 107.1 s) and ends at the T1 exit; rows are taken over the lap between the two S/F crossings Stations run from the lead-in (s < L) across S/F (s = L) into the next lap (s - L wrapped on output).",
    "anchors": [
+    {
+     "name": "T12 (Carousel), lead-in",
+     "t": 15.0,
+     "s": 3351.3,
+     "how": "Carousel kerb (right) alongside k29-k33 (t 14.5-16.5); 122.0 - 107.1 s lap = 14.9"
+    },
     {
      "name": "S/F",
      "t": 24.0,
      "how": "white timing stripe under the car and the Honda starter gantry alongside left at 0.5 s step k48 (t 24.0)",
-     "sf": "start"
+     "s": 3597.492
     },
     {
      "name": "footbridge",
      "t": 30.0,
      "how": "Firestone footbridge overhead at k60 (t 30.0; k59 ahead, k61 behind)",
-     "s": 233.2
+     "s": 3830.7
     },
     {
      "name": "T2",
      "t": 50.0,
-     "how": "Keyhole kerb (right) alongside k95-k105; middle of the run (a long constant arc: +-1 s)",
-     "corner": "T2"
+     "how": "Keyhole kerb (right) alongside k95-k105; middle of the run (a long constant arc: +-1 s) (package corner s + one lap)",
+     "s": 4555.2
     },
     {
      "name": "T4",
      "t": 76.5,
-     "how": "T4 apex kerb (right) alongside at k153",
-     "corner": "T4"
+     "how": "T4 apex kerb (right) alongside at k153 (package corner s + one lap)",
+     "s": 5558.9
     },
     {
      "name": "T5",
      "t": 82.0,
-     "how": "T5 apex kerb (left) alongside in the t082 frame (2 s step)",
-     "corner": "T5"
+     "how": "T5 apex kerb (left) alongside in the t082 frame (2 s step) (package corner s + one lap)",
+     "s": 5698.0
     },
     {
      "name": "PERMCO bridge",
      "t": 107.0,
      "how": "footway bridge overhead at k214",
-     "s": 2836.0
+     "s": 6433.5
     },
     {
      "name": "T12",
      "t": 122.0,
-     "how": "Carousel apex kerb (right) alongside in the t122 frame (2 s step)",
-     "corner": "T12"
+     "how": "Carousel apex kerb (right) alongside in the t122 frame (2 s step) (package corner s + one lap)",
+     "s": 6948.8
     },
     {
      "name": "S/F lap 2",
      "t": 131.1,
      "how": "timing stripe at k262 and the starter gantry alongside k262-k263; the footbridge recurs at k274.5 (lap 107.25 s by the bridge, 107.1 s by the stripe)",
-     "sf": "end"
+     "s": 7194.984
     }
    ]
   },
@@ -205,36 +211,43 @@
    ],
    "anchors": [
     {
+     "name": "T12 (Carousel), lead-in",
+     "t": 10.5,
+     "s": 3351.3,
+     "how": "Carousel kerb (right) approaching in the t010 frame, alongside by t012 (2 s frames: +-1 s)"
+    },
+    {
      "name": "S/F",
      "t": 15.8,
      "how": "starter gantry overhead between 15.5 and 16.0 (0.5 s grid)",
-     "sf": "start"
+     "s": 3597.492
     },
     {
      "name": "footbridge",
      "t": 19.2,
      "how": "Firestone deck fills the top of the 19.0 frame, behind at 19.5",
-     "s": 233.2
+     "s": 3830.7
     },
     {
      "name": "T2",
      "t": 31.5,
-     "how": "Keyhole kerb (right) alongside 30-33, middle",
-     "corner": "T2"
+     "how": "Keyhole kerb (right) alongside 30-33, middle (package corner s + one lap)",
+     "s": 4555.2
     },
     {
      "name": "T4",
      "t": 47.25,
-     "how": "T4 apex kerb (right) alongside 47.0-47.5",
-     "corner": "T4"
+     "how": "T4 apex kerb (right) alongside 47.0-47.5 (package corner s + one lap)",
+     "s": 5558.9
     },
     {
      "name": "PERMCO bridge",
      "t": 66.8,
      "how": "PERMCO bridge overhead between 66.5 and 67.0",
-     "s": 2836.0
+     "s": 6433.5
     }
-   ]
+   ],
+   "note": "Stations run from the lead-in (s < L) across S/F (s = L) into the next lap (s - L wrapped on output)."
   },
   {
    "name": "IndyCar segment B (9Drr1VkE1_U)",
@@ -264,30 +277,37 @@
    ],
    "anchors": [
     {
+     "name": "T12 (Carousel), lead-in",
+     "t": 81.0,
+     "s": 3351.3,
+     "how": "Carousel kerb (right) alongside t080-t082 (2 s frames: +-1 s)"
+    },
+    {
      "name": "S/F",
      "t": 84.6,
      "how": "starter gantry overhead at 84.5",
-     "sf": "start"
+     "s": 3597.492
     },
     {
      "name": "footbridge",
      "t": 88.0,
      "how": "under the Firestone deck at 88.0",
-     "s": 233.2
+     "s": 3830.7
     },
     {
      "name": "T2",
      "t": 99.75,
-     "how": "Keyhole kerb (right) alongside 98-101.5, middle",
-     "corner": "T2"
+     "how": "Keyhole kerb (right) alongside 98-101.5, middle (package corner s + one lap)",
+     "s": 4555.2
     },
     {
      "name": "T4",
      "t": 116.2,
-     "how": "T4 apex kerb (right) alongside at 116.0-116.5",
-     "corner": "T4"
+     "how": "T4 apex kerb (right) alongside at 116.0-116.5 (package corner s + one lap)",
+     "s": 5558.9
     }
-   ]
+   ],
+   "note": "Stations run from the lead-in (s < L) across S/F (s = L) into the next lap (s - L wrapped on output)."
   },
   {
    "name": "IndyCar segment C (9Drr1VkE1_U)",
@@ -317,36 +337,43 @@
    ],
    "anchors": [
     {
+     "name": "T12 (Carousel), lead-in",
+     "t": 144.5,
+     "s": 3351.3,
+     "how": "Carousel kerb (right) alongside t144 (2 s frames: +-1 s)"
+    },
+    {
      "name": "S/F",
      "t": 149.1,
      "how": "starter gantry overhead at 149.0",
-     "sf": "start"
+     "s": 3597.492
     },
     {
      "name": "footbridge",
      "t": 152.9,
      "how": "under the Firestone deck at 153.0",
-     "s": 233.2
+     "s": 3830.7
     },
     {
      "name": "T2",
      "t": 164.75,
-     "how": "Keyhole kerb (right) alongside 163-166.5, middle",
-     "corner": "T2"
+     "how": "Keyhole kerb (right) alongside 163-166.5, middle (package corner s + one lap)",
+     "s": 4555.2
     },
     {
      "name": "T4",
      "t": 181.6,
-     "how": "T4 apex kerb (right) alongside 181.5-181.75",
-     "corner": "T4"
+     "how": "T4 apex kerb (right) alongside 181.5-181.75 (package corner s + one lap)",
+     "s": 5558.9
     },
     {
      "name": "PERMCO bridge",
      "t": 200.7,
      "how": "PERMCO banner overhead at 200.5-201",
-     "s": 2836.0
+     "s": 6433.5
     }
-   ]
+   ],
+   "note": "Stations run from the lead-in (s < L) across S/F (s = L) into the next lap (s - L wrapped on output)."
   }
  ]
 }
