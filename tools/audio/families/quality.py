@@ -199,7 +199,8 @@ def gate_failures(m: dict) -> dict:
         lo, hi = GATES[r["load"]]
         if r["ratio"] is None or not (lo <= r["ratio"] <= hi):
             out["ratio"].append(f"{tag} x{r['ratio']}")
-        if r["loop_s"] + 1e-3 < r["need_s"]:
+        # at least 1.0 s and at least 8 whole engine cycles (a loop is a whole number of cycles at its own rpm)
+        if r["loop_s"] + 1e-3 < GATES["min_loop_s"] or r["cycles"] + 0.02 < GATES["min_cycles"]:
             out["loop"].append(f"{tag} {r['loop_s']:.2f}<{r['need_s']:.2f}s")
     for ld in ("on", "off"):
         ip = m["idle_play"][ld]

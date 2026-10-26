@@ -120,27 +120,27 @@
    "rpm": 1500,
    "on": {
     "offset": 6.793104,
-    "duration": 1.120042,
-    "rpm": 1499.94,
+    "duration": 1.115917,
+    "rpm": 1505.49,
     "tier": "steady",
-    "source": "src9 @ 36.07 s",
-    "seam_corr": 0.206,
-    "tick": 2.47
+    "source": "src5 @ 508.32 s",
+    "seam_corr": 0.669,
+    "tick": 1.61
    },
    "off": {
     "offset": 6.793896,
-    "duration": 1.12,
-    "rpm": 1500.0,
-    "tier": "from-on",
-    "source": "the on-throttle 1500 rpm loop darkened (x1.000), src9 @ 36.07 s",
-    "seam_corr": 1.0,
-    "tick": 1.74
+    "duration": 1.120292,
+    "rpm": 1499.61,
+    "tier": "idle",
+    "source": "src8 @ 3.47 s",
+    "seam_corr": 0.944,
+    "tick": 2.06
    }
   },
   {
    "rpm": 1750,
    "on": {
-    "offset": 8.013146,
+    "offset": 8.009021,
     "duration": 1.097458,
     "rpm": 1749.5,
     "tier": "steady",
@@ -149,7 +149,7 @@
     "tick": 1.81
    },
    "off": {
-    "offset": 8.013896,
+    "offset": 8.014188,
     "duration": 1.103354,
     "rpm": 1740.15,
     "tier": "pitch-shifted",
@@ -161,7 +161,7 @@
   {
    "rpm": 2000,
    "on": {
-    "offset": 9.210604,
+    "offset": 9.206479,
     "duration": 1.141542,
     "rpm": 1997.3,
     "tier": "steady",
@@ -170,7 +170,7 @@
     "tick": 1.58
    },
    "off": {
-    "offset": 9.21725,
+    "offset": 9.217542,
     "duration": 1.13525,
     "rpm": 2008.37,
     "tier": "sweep",
@@ -182,7 +182,7 @@
   {
    "rpm": 2250,
    "on": {
-    "offset": 10.452146,
+    "offset": 10.448021,
     "duration": 1.117125,
     "rpm": 2255.79,
     "tier": "steady",
@@ -191,7 +191,7 @@
     "tick": 1.41
    },
    "off": {
-    "offset": 10.4525,
+    "offset": 10.452792,
     "duration": 1.126479,
     "rpm": 2237.06,
     "tier": "pitch-shifted",
@@ -203,7 +203,7 @@
   {
    "rpm": 2500,
    "on": {
-    "offset": 11.669271,
+    "offset": 11.665146,
     "duration": 1.102729,
     "rpm": 2502.88,
     "tier": "steady",
@@ -212,7 +212,7 @@
     "tick": 1.66
    },
    "off": {
-    "offset": 11.678979,
+    "offset": 11.679271,
     "duration": 1.056,
     "rpm": 2500.0,
     "tier": "sweep",
@@ -224,7 +224,7 @@
   {
    "rpm": 2750,
    "on": {
-    "offset": 12.872,
+    "offset": 12.867875,
     "duration": 1.135042,
     "rpm": 2748.8,
     "tier": "steady",
@@ -233,7 +233,7 @@
     "tick": 1.56
    },
    "off": {
-    "offset": 12.834979,
+    "offset": 12.835271,
     "duration": 1.047292,
     "rpm": 2749.95,
     "tier": "sweep",
@@ -245,7 +245,7 @@
   {
    "rpm": 3000,
    "on": {
-    "offset": 14.107042,
+    "offset": 14.102917,
     "duration": 1.08,
     "rpm": 3000.0,
     "tier": "steady",
@@ -254,7 +254,7 @@
     "tick": 2.38
    },
    "off": {
-    "offset": 13.982271,
+    "offset": 13.982563,
     "duration": 1.04,
     "rpm": 3000.0,
     "tier": "sweep",
@@ -266,7 +266,7 @@
   {
    "rpm": 3250,
    "on": {
-    "offset": 15.287042,
+    "offset": 15.282917,
     "duration": 1.140625,
     "rpm": 3261.37,
     "tier": "steady",
@@ -275,7 +275,7 @@
     "tick": 1.89
    },
    "off": {
-    "offset": 15.122271,
+    "offset": 15.122563,
     "duration": 1.144437,
     "rpm": 3250.51,
     "tier": "sweep",
@@ -287,7 +287,7 @@
   {
    "rpm": 3500,
    "on": {
-    "offset": 16.527667,
+    "offset": 16.523542,
     "duration": 1.13075,
     "rpm": 3502.1,
     "tier": "steady",
@@ -296,7 +296,7 @@
     "tick": 1.61
    },
    "off": {
-    "offset": 16.366708,
+    "offset": 16.367,
     "duration": 1.131292,
     "rpm": 3500.42,
     "tier": "sweep",
@@ -308,7 +308,7 @@
   {
    "rpm": 3750,
    "on": {
-    "offset": 17.758417,
+    "offset": 17.754292,
     "duration": 1.126458,
     "rpm": 3728.5,
     "tier": "steady",
@@ -317,7 +317,7 @@
     "tick": 1.99
    },
    "off": {
-    "offset": 17.598,
+    "offset": 17.598292,
     "duration": 1.114458,
     "rpm": 3768.65,
     "tier": "pitch-shifted",
@@ -329,7 +329,7 @@
   {
    "rpm": 4000,
    "on": {
-    "offset": 18.984875,
+    "offset": 18.98075,
     "duration": 1.134125,
     "rpm": 4020.72,
     "tier": "steady",
@@ -338,7 +338,7 @@
     "tick": 1.52
    },
    "off": {
-    "offset": 18.812458,
+    "offset": 18.81275,
     "duration": 1.139271,
     "rpm": 4002.56,
     "tier": "sweep",
@@ -350,7 +350,7 @@
   {
    "rpm": 4250,
    "on": {
-    "offset": 20.219,
+    "offset": 20.214875,
     "duration": 1.13075,
     "rpm": 4244.97,
     "tier": "steady",
@@ -359,7 +359,7 @@
     "tick": 2.81
    },
    "off": {
-    "offset": 20.051729,
+    "offset": 20.052021,
     "duration": 1.135104,
     "rpm": 4228.69,
     "tier": "sweep",
@@ -371,7 +371,7 @@
   {
    "rpm": 4500,
    "on": {
-    "offset": 21.44975,
+    "offset": 21.445625,
     "duration": 1.149479,
     "rpm": 4488.99,
     "tier": "sweep",
@@ -380,7 +380,7 @@
     "tick": 1.46
    },
    "off": {
-    "offset": 21.286833,
+    "offset": 21.287125,
     "duration": 1.140354,
     "rpm": 4524.91,
     "tier": "sweep",
@@ -392,7 +392,7 @@
   {
    "rpm": 4750,
    "on": {
-    "offset": 22.699229,
+    "offset": 22.695104,
     "duration": 1.141563,
     "rpm": 4730.36,
     "tier": "sweep",
@@ -401,7 +401,7 @@
     "tick": 6.2
    },
    "off": {
-    "offset": 22.527188,
+    "offset": 22.527479,
     "duration": 1.135771,
     "rpm": 4754.48,
     "tier": "sweep",
@@ -413,7 +413,7 @@
   {
    "rpm": 5000,
    "on": {
-    "offset": 23.940792,
+    "offset": 23.936667,
     "duration": 1.125563,
     "rpm": 5010.83,
     "tier": "steady",
@@ -422,7 +422,7 @@
     "tick": 7.33
    },
    "off": {
-    "offset": 23.762958,
+    "offset": 23.76325,
     "duration": 1.008,
     "rpm": 5000.0,
     "tier": "sweep",
@@ -434,7 +434,7 @@
   {
    "rpm": 5250,
    "on": {
-    "offset": 25.166354,
+    "offset": 25.162229,
     "duration": 1.146937,
     "rpm": 5231.32,
     "tier": "sweep",
@@ -443,7 +443,7 @@
     "tick": 2.97
    },
    "off": {
-    "offset": 24.870958,
+    "offset": 24.87125,
     "duration": 1.144937,
     "rpm": 5240.46,
     "tier": "sweep",
@@ -455,7 +455,7 @@
   {
    "rpm": 5500,
    "on": {
-    "offset": 26.413292,
+    "offset": 26.409167,
     "duration": 1.047458,
     "rpm": 5499.03,
     "tier": "sweep",
@@ -464,7 +464,7 @@
     "tick": 1.94
    },
    "off": {
-    "offset": 26.115896,
+    "offset": 26.116187,
     "duration": 1.003625,
     "rpm": 5500.06,
     "tier": "steady",
@@ -476,7 +476,7 @@
   {
    "rpm": 5750,
    "on": {
-    "offset": 27.56075,
+    "offset": 27.556625,
     "duration": 1.152458,
     "rpm": 5726.89,
     "tier": "sweep",
@@ -485,7 +485,7 @@
     "tick": 2.0
    },
    "off": {
-    "offset": 27.219521,
+    "offset": 27.219812,
     "duration": 1.1515,
     "rpm": 5731.65,
     "tier": "sweep",
@@ -497,7 +497,7 @@
   {
    "rpm": 6000,
    "on": {
-    "offset": 28.813208,
+    "offset": 28.809083,
     "duration": 1.144333,
     "rpm": 5977.28,
     "tier": "sweep",
@@ -506,7 +506,7 @@
     "tick": 2.2
    },
    "off": {
-    "offset": 28.471021,
+    "offset": 28.471312,
     "duration": 1.0,
     "rpm": 6000.0,
     "tier": "sweep",
@@ -518,7 +518,7 @@
  ],
  "real_bins": {
   "on": 23,
-  "off": 19
+  "off": 20
  },
  "family": "gm_sbc_v8",
  "cylinders": 8,

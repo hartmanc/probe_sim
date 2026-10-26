@@ -55,9 +55,9 @@ KBPS = 48
 LOOP_MIN_S, LOOP_CYCLES, LOOP_MAX_S = 1.0, 8, 1.5
 RATIO = {"on": (0.88, 1.14), "off": (0.85, 1.18)}
 REAL_TIERS = ("steady", "sweep", "idle")
-# at cut time a loop is rejected at half the gate's speech share (speechcheck.SPEECH_RULE), so a pitch-shifted copy of
+# at cut time a loop is rejected at well under the gate's speech share (speechcheck.SPEECH_RULE), so a pitch-shifted copy of
 # a borderline loop cannot cross the gate
-CUT_SPEECH_SHARE = 0.04
+CUT_SPEECH_SHARE = 0.03
 
 
 def loop_need(B: float) -> float:
@@ -442,7 +442,7 @@ def best_pair(T, cs, B, main_order, defs, need, tier, n_seg: int = 2):
         tick = transient_ratio(loop)
         if tick > 8.0:
             continue
-        score = float(np.mean([p["contrast"] for p in ps])) + 4.0 * rho - 0.5 * mis - 2.0 * max(0.0, tick - 2.5)
+        score = float(np.mean([p["contrast"] for p in ps])) + 8.0 * rho - 0.5 * mis - 2.0 * max(0.0, tick - 2.5)
         if best is None or score > best[0]:
             best = (score, ps, loop, rho, tick, mis)
     if best is None:
@@ -462,7 +462,7 @@ def best_pair(T, cs, B, main_order, defs, need, tier, n_seg: int = 2):
 
 def best_loop(T, cs, B, main_order, defs, need, tgt, tier):
     best = None
-    for c in cs[:8]:
+    for c in cs[:12]:
         try:
             p = process(T, c, B, main_order, tgt, need)
         except Exception as ex:  # too short to loop etc.
@@ -476,7 +476,8 @@ def best_loop(T, cs, B, main_order, defs, need, tgt, tier):
         if sf_["silero_share"] >= CUT_SPEECH_SHARE:
             print(f"    reject candidate {c[1:]}: speech in the loop (silero share {sf_['silero_share']})")
             continue
-        score = p["contrast"] + 4.0 * p["rho"] - 2.0 * max(0.0, p["tick"] - 2.5) - 60 * p["wobble"] * (tier in ("steady", "idle"))
+        # round two: the seam weighs double (a 1 s loop's seam is its one audible event per repeat)
+        score = p["contrast"] + 8.0 * p["rho"] - 2.0 * max(0.0, p["tick"] - 2.5) - 60 * p["wobble"] * (tier in ("steady", "idle"))
         if best is None or score > best[0]:
             best = (score, p)
     if best is None or best[1]["rho"] < 0.2:
@@ -548,8 +549,9 @@ def build(fam: str, force_track: bool = False, bin_step: int | None = None):
             if p is None and B <= 2.0 * defs["idle_rpm"]:
                 # near idle neither label is reliable: a steady unloaded stretch at this rpm (a high idle, rolling
                 # in neutral) serves both loads, as the idle bin does
-                for n_seg in (1, 2, 3):
-                    cs = candidates(T, B, "idle", min(60.0, 0.07 * B), need / n_seg + (0.35 if n_seg == 1 else 0.2),
+                for n_seg, itol in ((1, min(60.0, 0.07 * B)), (2, min(60.0, 0.07 * B)), (3, min(60.0, 0.07 * B)),
+                                    (1, 0.11 * B), (2, 0.11 * B), (3, 0.11 * B)):
+                    cs = candidates(T, B, "idle", itol, need / n_seg + (0.35 if n_seg == 1 else 0.2),
                                     min(1.5, 0.8 * conf_min), span_s=need / n_seg + 0.5)
                     if n_seg == 1 and cs:
                         p = best_loop(T, cs, B, main_order, defs, need, tgt, "idle")

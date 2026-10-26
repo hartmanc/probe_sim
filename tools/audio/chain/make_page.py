@@ -93,7 +93,19 @@ def main():
              else '<blockquote class="owner"><b>Round one:</b> no note yet.</blockquote>')
         tr = f'<p class="changed"><b>Traced to.</b> {html.escape(TRACED[fam])}</p>' if fam in TRACED else ""
         ch = f'<p class="changed"><b>What changed.</b> {html.escape(changed_text(fam, b, a, added, clips["clips"].get(fam)))}</p>'
-        card2 = re.sub(r'<p class="listen">.*?</p>', q + tr + ch, card, count=1, flags=re.S)
+        weak = ""
+        if os.path.exists(qa_path) and fam not in ("mazda_kl_v6", "sohc_i4_loud"):
+            F = json.load(open(qa_path))[fam]["fails"]
+            bits = []
+            if F["idle"]:
+                bits.append("no real idle recording near its idle yet (the lowest loop is pitched to it)")
+            if F["ratio"]:
+                bits.append("still pitch-shifted past the limit at " + ", ".join(x.split(" x")[0] for x in F["ratio"][:6]) + " rpm")
+            if a["seam_corr_med"] < b["seam_corr_med"]:
+                bits.append(f"loop seams a little less clean than round one's shorter loops (median correlation {a['seam_corr_med']:.2f} vs {b['seam_corr_med']:.2f}): listen for a soft repeat once a second")
+            if bits:
+                weak = f'<p class="changed"><b>Still weak.</b> {html.escape("; ".join(bits))}.</p>'
+        card2 = re.sub(r'<p class="listen">.*?</p>', lambda _m: q + tr + ch + weak, card, count=1, flags=re.S)
         # sources list from the shipped engine.json
         ej = os.path.join(ROOT, "public", "audio", "engine.json") if fam == "mazda_kl_v6" else \
             os.path.join(ROOT, "public", "audio", "families", fam, "engine.json")
@@ -102,8 +114,8 @@ def main():
             li = "".join(f'<li><a href="{html.escape(x["url"])}" target="_blank" rel="noopener">{html.escape(x.get("title") or "")}</a> '
                          f'<span class=\'mut\'>{html.escape(x.get("channel") or "")} · {html.escape(x.get("licence") or "")}</span></li>'
                          for x in E["sources"])
-            card2 = re.sub(r'<p class="mut">Sources \(\d+\), rendered through [^<]*</p><ul>.*?</ul>',
-                           f'<p class="mut">Sources ({len(E["sources"])}), rendered through the game\'s EngineVoice chain</p><ul>{li}</ul>',
+            rep = f'<p class="mut">Sources ({len(E["sources"])}), rendered through the game\'s EngineVoice chain</p><ul>{li}</ul>'
+            card2 = re.sub(r'<p class="mut">Sources \(\d+\), rendered through [^<]*</p><ul>.*?</ul>', lambda _m: rep,
                            card2, count=1, flags=re.S)
         else:
             card2 = card2.replace("rendered through the player's CarAudio chain", "rendered through the game's CarAudio chain")

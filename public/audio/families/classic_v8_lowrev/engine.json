@@ -48,8 +48,8 @@
     "duration": 1.241062,
     "rpm": 870.22,
     "tier": "idle",
-    "source": "src6 @ 35.87 s",
-    "seam_corr": 0.658,
+    "source": "src6 @ 35.92 s",
+    "seam_corr": 0.655,
     "tick": 2.63
    }
   },
@@ -66,12 +66,12 @@
    },
    "off": {
     "offset": 3.156167,
-    "duration": 1.08,
-    "rpm": 1000.0,
-    "tier": "pitch-shifted",
-    "source": "pitch-shifted from the 875 rpm bin (x1.149), src6 @ 35.87 s",
-    "seam_corr": 1.0,
-    "tick": 2.34
+    "duration": 1.079542,
+    "rpm": 1000.42,
+    "tier": "idle",
+    "source": "src1 @ 29.27 s",
+    "seam_corr": 0.752,
+    "tick": 2.22
    }
   },
   {
@@ -86,7 +86,7 @@
     "tick": 1.78
    },
    "off": {
-    "offset": 4.336167,
+    "offset": 4.335708,
     "duration": 1.059937,
     "rpm": 1245.36,
     "tier": "sweep",
@@ -107,7 +107,7 @@
     "tick": 1.83
    },
    "off": {
-    "offset": 5.496104,
+    "offset": 5.495646,
     "duration": 1.12,
     "rpm": 1500.0,
     "tier": "from-on",
@@ -128,7 +128,7 @@
     "tick": 1.51
    },
    "off": {
-    "offset": 6.716104,
+    "offset": 6.715646,
     "duration": 1.096667,
     "rpm": 1750.76,
     "tier": "pitch-shifted",
@@ -149,7 +149,7 @@
     "tick": 1.4
    },
    "off": {
-    "offset": 7.912771,
+    "offset": 7.912312,
     "duration": 1.135292,
     "rpm": 2008.29,
     "tier": "sweep",
@@ -170,7 +170,7 @@
     "tick": 1.79
    },
    "off": {
-    "offset": 9.148062,
+    "offset": 9.147604,
     "duration": 1.066667,
     "rpm": 2250.0,
     "tier": "sweep",
@@ -191,7 +191,7 @@
     "tick": 1.72
    },
    "off": {
-    "offset": 10.314729,
+    "offset": 10.314271,
     "duration": 1.100563,
     "rpm": 2507.81,
     "tier": "pitch-shifted",
@@ -212,7 +212,7 @@
     "tick": 1.52
    },
    "off": {
-    "offset": 11.515292,
+    "offset": 11.514833,
     "duration": 1.134667,
     "rpm": 2749.71,
     "tier": "from-on",
@@ -233,7 +233,7 @@
     "tick": 1.45
    },
    "off": {
-    "offset": 12.749958,
+    "offset": 12.7495,
     "duration": 1.119979,
     "rpm": 3000.06,
     "tier": "from-on",
@@ -254,7 +254,7 @@
     "tick": 2.34
    },
    "off": {
-    "offset": 13.969938,
+    "offset": 13.969479,
     "duration": 1.144625,
     "rpm": 3249.97,
     "tier": "from-on",
@@ -275,7 +275,7 @@
     "tick": 2.71
    },
    "off": {
-    "offset": 15.214562,
+    "offset": 15.214104,
     "duration": 1.131438,
     "rpm": 3499.97,
     "tier": "from-on",
@@ -296,7 +296,7 @@
     "tick": 3.05
    },
    "off": {
-    "offset": 16.446,
+    "offset": 16.445542,
     "duration": 1.12,
     "rpm": 3750.0,
     "tier": "from-on",
@@ -317,7 +317,7 @@
     "tick": 1.9
    },
    "off": {
-    "offset": 17.666,
+    "offset": 17.665542,
     "duration": 1.1335,
     "rpm": 4022.94,
     "tier": "from-on",
@@ -338,7 +338,7 @@
     "tick": 1.73
    },
    "off": {
-    "offset": 18.8995,
+    "offset": 18.899042,
     "duration": 1.129417,
     "rpm": 4249.98,
     "tier": "from-on",
@@ -359,7 +359,7 @@
     "tick": 1.71
    },
    "off": {
-    "offset": 20.128917,
+    "offset": 20.128458,
     "duration": 1.140813,
     "rpm": 4523.09,
     "tier": "from-on",
@@ -380,7 +380,7 @@
     "tick": 1.57
    },
    "off": {
-    "offset": 21.369729,
+    "offset": 21.369271,
     "duration": 1.143292,
     "rpm": 4723.2,
     "tier": "from-on",
@@ -401,7 +401,7 @@
     "tick": 1.57
    },
    "off": {
-    "offset": 22.613021,
+    "offset": 22.612562,
     "duration": 1.123563,
     "rpm": 5019.75,
     "tier": "from-on",
@@ -413,7 +413,7 @@
  ],
  "real_bins": {
   "on": 17,
-  "off": 5
+  "off": 6
  },
  "family": "classic_v8_lowrev",
  "cylinders": 8,
