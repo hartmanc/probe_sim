@@ -13,6 +13,11 @@ Inputs, all under tools/track/compare/<id>/inventory/ (tracked; the frames are n
   observations.jsonl    one row per line, written while stepping the video (2 s steps): {t, side, kind, attrs,
                         confidence, note}; rows with an explicit s instead of t (Street View, a second video) carry
                         {s, source, frame} and need no time map
+  extra_maps (optional, Mid-Ohio round 4): more videos (or segments of one compilation), each with its own time map
+                        [{name, video {id, url, title, date, camera}, anchors, observations, frames, frame_pattern,
+                        interp}]; their anchors need explicit s (or sf / corner), may start anywhere on the lap and run
+                        past L (a segment that starts in Thunder Valley crosses S/F at s = L); their rows' t must lie
+                        inside the segment's first..last anchor (no folding). Absent: the output is unchanged.
 Outputs: tools/track/compare/<id>/inventory.json (rows: t, s, side, kind, attrs, confidence, frame, source, note; plus
 the anchors, their leave-one-out residuals and the frame list) and inventory.md (the readable table).
 
@@ -76,7 +81,8 @@ class TimeMap:
     the map is piecewise linear in the speed profile's own time (interp 'profile', default when a profile is given:
     the car slows into corners) or in t itself (interp 'linear')."""
 
-    def __init__(self, anchors, length, profile=None, spacing=1.0):
+    def __init__(self, anchors, length, profile=None, spacing=1.0, strict=False):
+        self.strict = strict   # a partial lap (a segment): no folding, a time outside the anchors is an error
         a = sorted(anchors, key=lambda q: q['t'])
         if len(a) < 2:
             raise ValueError('need at least two anchors')
@@ -112,6 +118,8 @@ class TimeMap:
     def fold(self, t):
         if self.t0 <= t <= self.t1:
             return t, 0
+        if self.strict:
+            raise ValueError(f't {t} outside the anchored segment {self.t0}..{self.t1}')
         k = math.floor((t - self.t0) / self.lap)
         return t - k * self.lap, k
 
@@ -260,8 +268,47 @@ def build(track_id, root=ROOT, pkg=None):
             if out['frame'] and not os.path.exists(os.path.join(frames_dir, out['frame'])):
                 warn.append(f"{r['_where']}: frame {out['frame']} not in {frames_dir} (frames are local only)")
             rows.append(out)
+    extra = []
+    for m in src.get('extra_maps', []):
+        q_anchors, _ = anchors_from(m, track)
+        m_prof = (prof or speed_profile(track)) if m.get('interp', 'profile') == 'profile' else None
+        mtm = TimeMap(q_anchors, L, m_prof, track['spacing_m'], strict=True)
+        mdir = os.path.join(idir, m.get('frames', 'frames'))
+        n_rows = 0
+        for f in m.get('observations', []):
+            for r in load_rows(os.path.join(idir, f)):
+                errs += validate_row(r, r['_where'])
+                if errs and errs[-1].startswith(r['_where']):
+                    continue
+                if 't' not in r:
+                    errs.append(f"{r['_where']}: a row of extra map {m['name']} needs t")
+                    continue
+                try:
+                    s_ = mtm.s(r['t'])
+                except ValueError as e:
+                    errs.append(f"{r['_where']}: {e}")
+                    continue
+                out = {k: r[k] for k in ('side', 'kind', 'attrs', 'confidence') if k in r}
+                out.setdefault('attrs', {})
+                out['t'] = r['t']
+                out['s'] = round((s_ + float(out['attrs'].get('ahead_m', 0.0))) % L, 1)
+                out['source'] = r.get('source', f"onboard:{m['video']['id']}@{r['t']:.1f}")
+                out['frame'] = r.get('frame', m.get('frame_pattern', 't{t:03d}.jpg').format(t=int(round(r['t']))))
+                out['map'] = m['name']
+                out['scope'] = r.get('scope', 'lap')
+                if r.get('note'):
+                    out['note'] = r['note']
+                if out['frame'] and not os.path.exists(os.path.join(mdir, out['frame'])):
+                    warn.append(f"{r['_where']}: frame {out['frame']} not in {mdir} (frames are local only)")
+                rows.append(out)
+                n_rows += 1
+        extra.append({'name': m['name'], 'video': m['video'], 'interp': 'profile' if m_prof else 'linear',
+                      'anchors': [{k: a[k] for k in ('name', 't', 's') if k in a} for a in mtm.a],
+                      'anchor_residuals': mtm.residuals(), 'rows': n_rows,
+                      'covers_s': [round(mtm.a[0]['s'] % L, 1), round(mtm.a[-1]['s'] % L, 1)],
+                      'covers_t': [mtm.t0, mtm.t1]})
     rows.sort(key=lambda q: (q['scope'], q['s'], q['side'], q['kind']))
-    frames = sorted({(q['t'], q['frame']) for q in rows if q['t'] is not None})
+    frames = sorted({(q['t'], q['frame']) for q in rows if q['t'] is not None and 'map' not in q})
     unmeasured = [q for q in rows if q['attrs'].get('h_method') == 'unmeasured']
     inv = {
         'track': track_id, 'length_m': round(L, 2),
@@ -275,6 +322,8 @@ def build(track_id, root=ROOT, pkg=None):
         'counts': count(rows),
         'unmeasured_heights': len(unmeasured),
     }
+    if extra:
+        inv['extra_maps'] = extra
     return inv, tm, errs, warn
 
 
@@ -316,6 +365,19 @@ def markdown(inv):
         r = res.get(a['name'])
         L.append(f"| {a['name']} | {mmss(a['t'])} | {a['s']:.1f} | {r['loo_pred_s'] if r else '-'} | "
                  f"{r['loo_residual_m'] if r else '-'} | {r['loo_residual_linear_m'] if r else '-'} | {(str(r['v_in']) + ' / ' + str(r['v_out'])) if r else '-'} |")
+    for m in inv.get('extra_maps', []):
+        v = m['video']
+        L.append('')
+        L.append(f"### Time map: {m['name']} ({v.get('url', v['id'])}, {v.get('date', '')}; video {mmss(m['covers_t'][0])}-"
+                 f"{mmss(m['covers_t'][1])}, s {m['covers_s'][0]:.0f} -> {m['covers_s'][1]:.0f}; {m['rows']} rows; {m['interp']})")
+        L.append('')
+        L.append('| anchor | video t | track s (m) | leave-one-out predicted s | residual (m) | residual if linear in t (m) | speed in / out (m/s) |')
+        L.append('|---|---|---|---|---|---|---|')
+        res = {r['name']: r for r in m['anchor_residuals']}
+        for a in m['anchors']:
+            r = res.get(a['name'])
+            L.append(f"| {a['name']} | {mmss(a['t'])} | {a['s']:.1f} | {r['loo_pred_s'] if r else '-'} | "
+                     f"{r['loo_residual_m'] if r else '-'} | {r['loo_residual_linear_m'] if r else '-'} | {(str(r['v_in']) + ' / ' + str(r['v_out'])) if r else '-'} |")
     for scope, title in (('lap', 'Rows round the lap'), ('pit', 'Pit-lane rows')):
         rows = [r for r in inv['rows'] if r['scope'] == scope]
         if not rows:
@@ -361,6 +423,10 @@ def main():
     print('anchors (leave-one-out residual m, speed in/out m/s):')
     for r in inv['anchor_residuals']:
         print(f"  {r['name']:<10} t {r['t']:6.1f}  s {r['s']:7.1f}  residual {r['loo_residual_m']:+7.1f} (linear {r['loo_residual_linear_m']:+7.1f})  v {r['v_in']:5.1f} / {r['v_out']:5.1f}")
+    for m in inv.get('extra_maps', []):
+        print(f"{m['name']}: {m['rows']} rows, anchors (leave-one-out residual m, speed in/out m/s):")
+        for r in m['anchor_residuals']:
+            print(f"  {r['name']:<10} t {r['t']:6.1f}  s {r['s']:7.1f}  residual {r['loo_residual_m']:+7.1f} (linear {r['loo_residual_linear_m']:+7.1f})  v {r['v_in']:5.1f} / {r['v_out']:5.1f}")
     if args.check:
         return 0
     cdir = os.path.join(ROOT, 'tools', 'track', 'compare', args.track)

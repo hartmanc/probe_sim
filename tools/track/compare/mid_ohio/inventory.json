@@ -1,0 +1,6302 @@
+{
+ "track": "mid_ohio",
+ "length_m": 3597.49,
+ "video": {
+  "id": "OJaBJz18xEo",
+  "url": "https://www.youtube.com/watch?v=OJaBJz18xEo",
+  "title": "NickD Fastest lap at 24 hours of Lemons - Mid Ohio 2026",
+  "channel": "N837 Motorsport",
+  "date": "2026-04-15 (Lemons Mid-West Crisis, 11-12 Apr 2026)",
+  "camera": "hood / windscreen camera with a Garmin Catalyst overlay (speed, lap time, GPS minimap)",
+  "licence": "Standard YouTube licence (reference only)",
+  "lap_s": 124.84,
+  "stepped": "every 1.0 s from 0:00 to 2:15 (136 frames, headless_capture.ts; t061 stale twice, left out); rows every 2 s"
+ },
+ "anchors": [
+  {
+   "name": "S/F",
+   "t": 5.03,
+   "s": 0.0
+  },
+  {
+   "name": "footbridge",
+   "t": 12.26,
+   "s": 233.2
+  },
+  {
+   "name": "T1",
+   "t": 16.7,
+   "s": 357.2
+  },
+  {
+   "name": "T2",
+   "t": 36.84,
+   "s": 957.7
+  },
+  {
+   "name": "T3",
+   "t": 52.13,
+   "s": 1445.0
+  },
+  {
+   "name": "T5",
+   "t": 71.75,
+   "s": 2100.5
+  },
+  {
+   "name": "T7",
+   "t": 83.8,
+   "s": 2386.7
+  },
+  {
+   "name": "T9",
+   "t": 93.43,
+   "s": 2642.8
+  },
+  {
+   "name": "PERMCO bridge",
+   "t": 100.86,
+   "s": 2836.0
+  },
+  {
+   "name": "T10",
+   "t": 103.96,
+   "s": 2931.0
+  },
+  {
+   "name": "T12",
+   "t": 120.65,
+   "s": 3351.3
+  },
+  {
+   "name": "T13",
+   "t": 125.19,
+   "s": 3454.4
+  },
+  {
+   "name": "S/F lap 2",
+   "t": 129.87,
+   "s": 3597.491335
+  }
+ ],
+ "anchor_residuals": [
+  {
+   "name": "footbridge",
+   "t": 12.26,
+   "s": 233.2,
+   "loo_pred_s": 247.6,
+   "loo_residual_m": -14.4,
+   "loo_residual_linear_m": 11.9,
+   "v_in": 32.3,
+   "v_out": 27.9
+  },
+  {
+   "name": "T1",
+   "t": 16.7,
+   "s": 357.2,
+   "loo_pred_s": 347.3,
+   "loo_residual_m": 9.9,
+   "loo_residual_linear_m": -6.9,
+   "v_in": 27.9,
+   "v_out": 29.8
+  },
+  {
+   "name": "T2",
+   "t": 36.84,
+   "s": 957.7,
+   "loo_pred_s": 968.9,
+   "loo_residual_m": -11.2,
+   "loo_residual_linear_m": -17.9,
+   "v_in": 29.8,
+   "v_out": 31.9
+  },
+  {
+   "name": "T3",
+   "t": 52.13,
+   "s": 1445.0,
+   "loo_pred_s": 1442.8,
+   "loo_residual_m": 2.2,
+   "loo_residual_linear_m": -13.2,
+   "v_in": 31.9,
+   "v_out": 33.4
+  },
+  {
+   "name": "T5",
+   "t": 71.75,
+   "s": 2100.5,
+   "loo_pred_s": 2115.3,
+   "loo_residual_m": -14.8,
+   "loo_residual_linear_m": 72.1,
+   "v_in": 33.4,
+   "v_out": 23.8
+  },
+  {
+   "name": "T7",
+   "t": 83.8,
+   "s": 2386.7,
+   "loo_pred_s": 2387.4,
+   "loo_residual_m": -0.7,
+   "loo_residual_linear_m": -15.2,
+   "v_in": 23.8,
+   "v_out": 26.6
+  },
+  {
+   "name": "T9",
+   "t": 93.43,
+   "s": 2642.8,
+   "loo_pred_s": 2635.1,
+   "loo_residual_m": 7.7,
+   "loo_residual_linear_m": 2.5,
+   "v_in": 26.6,
+   "v_out": 26.0
+  },
+  {
+   "name": "PERMCO bridge",
+   "t": 100.86,
+   "s": 2836.0,
+   "loo_pred_s": 2822.3,
+   "loo_residual_m": 13.7,
+   "loo_residual_linear_m": -10.2,
+   "v_in": 26.0,
+   "v_out": 30.6
+  },
+  {
+   "name": "T10",
+   "t": 103.96,
+   "s": 2931.0,
+   "loo_pred_s": 2939.9,
+   "loo_residual_m": -8.9,
+   "loo_residual_linear_m": 14.3,
+   "v_in": 30.6,
+   "v_out": 25.2
+  },
+  {
+   "name": "T12",
+   "t": 120.65,
+   "s": 3351.3,
+   "loo_pred_s": 3363.6,
+   "loo_residual_m": -12.3,
+   "loo_residual_linear_m": 8.8,
+   "v_in": 25.2,
+   "v_out": 22.7
+  },
+  {
+   "name": "T13",
+   "t": 125.19,
+   "s": 3454.4,
+   "loo_pred_s": 3458.4,
+   "loo_residual_m": -4.0,
+   "loo_residual_linear_m": -18.1,
+   "v_in": 22.7,
+   "v_out": 30.6
+  }
+ ],
+ "interp": "profile",
+ "frames": [
+  {
+   "t": 0,
+   "frame": "t000.jpg",
+   "s": 3446.9
+  },
+  {
+   "t": 2,
+   "frame": "t002.jpg",
+   "s": 3495.9
+  },
+  {
+   "t": 4,
+   "frame": "t004.jpg",
+   "s": 3559.2
+  },
+  {
+   "t": 6,
+   "frame": "t006.jpg",
+   "s": 27.7
+  },
+  {
+   "t": 8,
+   "frame": "t008.jpg",
+   "s": 90.2
+  },
+  {
+   "t": 10,
+   "frame": "t010.jpg",
+   "s": 159.9
+  },
+  {
+   "t": 12,
+   "frame": "t012.jpg",
+   "s": 226.1
+  },
+  {
+   "t": 14,
+   "frame": "t014.jpg",
+   "s": 281.0
+  },
+  {
+   "t": 16,
+   "frame": "t016.jpg",
+   "s": 339.1
+  },
+  {
+   "t": 18,
+   "frame": "t018.jpg",
+   "s": 386.9
+  },
+  {
+   "t": 20,
+   "frame": "t020.jpg",
+   "s": 439.5
+  },
+  {
+   "t": 22,
+   "frame": "t022.jpg",
+   "s": 500.5
+  },
+  {
+   "t": 24,
+   "frame": "t024.jpg",
+   "s": 569.8
+  },
+  {
+   "t": 26,
+   "frame": "t026.jpg",
+   "s": 647.6
+  },
+  {
+   "t": 28,
+   "frame": "t028.jpg",
+   "s": 730.0
+  },
+  {
+   "t": 30,
+   "frame": "t030.jpg",
+   "s": 809.2
+  },
+  {
+   "t": 34,
+   "frame": "t034.jpg",
+   "s": 906.1
+  },
+  {
+   "t": 36,
+   "frame": "t036.jpg",
+   "s": 943.2
+  },
+  {
+   "t": 38,
+   "frame": "t038.jpg",
+   "s": 979.3
+  },
+  {
+   "t": 40,
+   "frame": "t040.jpg",
+   "s": 1019.1
+  },
+  {
+   "t": 42,
+   "frame": "t042.jpg",
+   "s": 1066.0
+  },
+  {
+   "t": 44,
+   "frame": "t044.jpg",
+   "s": 1122.6
+  },
+  {
+   "t": 46,
+   "frame": "t046.jpg",
+   "s": 1189.0
+  },
+  {
+   "t": 48,
+   "frame": "t048.jpg",
+   "s": 1265.0
+  },
+  {
+   "t": 50,
+   "frame": "t050.jpg",
+   "s": 1350.6
+  },
+  {
+   "t": 52,
+   "frame": "t052.jpg",
+   "s": 1439.2
+  },
+  {
+   "t": 54,
+   "frame": "t054.jpg",
+   "s": 1527.4
+  },
+  {
+   "t": 56,
+   "frame": "t056.jpg",
+   "s": 1615.6
+  },
+  {
+   "t": 58,
+   "frame": "t058.jpg",
+   "s": 1703.7
+  },
+  {
+   "t": 60,
+   "frame": "t060.jpg",
+   "s": 1791.9
+  },
+  {
+   "t": 62,
+   "frame": "t062.jpg",
+   "s": 1875.7
+  },
+  {
+   "t": 64,
+   "frame": "t064.jpg",
+   "s": 1935.1
+  },
+  {
+   "t": 66,
+   "frame": "t066.jpg",
+   "s": 1973.3
+  },
+  {
+   "t": 68,
+   "frame": "t068.jpg",
+   "s": 2015.2
+  },
+  {
+   "t": 72,
+   "frame": "t072.jpg",
+   "s": 2105.3
+  },
+  {
+   "t": 74,
+   "frame": "t074.jpg",
+   "s": 2146.4
+  },
+  {
+   "t": 76,
+   "frame": "t076.jpg",
+   "s": 2198.3
+  },
+  {
+   "t": 80,
+   "frame": "t080.jpg",
+   "s": 2295.3
+  },
+  {
+   "t": 84,
+   "frame": "t084.jpg",
+   "s": 2391.2
+  },
+  {
+   "t": 88,
+   "frame": "t088.jpg",
+   "s": 2503.6
+  },
+  {
+   "t": 92,
+   "frame": "t092.jpg",
+   "s": 2609.5
+  },
+  {
+   "t": 94,
+   "frame": "t094.jpg",
+   "s": 2652.9
+  },
+  {
+   "t": 96,
+   "frame": "t096.jpg",
+   "s": 2694.2
+  },
+  {
+   "t": 98,
+   "frame": "t098.jpg",
+   "s": 2745.5
+  },
+  {
+   "t": 100,
+   "frame": "t100.jpg",
+   "s": 2806.6
+  },
+  {
+   "t": 102,
+   "frame": "t102.jpg",
+   "s": 2870.0
+  },
+  {
+   "t": 104,
+   "frame": "t104.jpg",
+   "s": 2932.3
+  },
+  {
+   "t": 106,
+   "frame": "t106.jpg",
+   "s": 3000.2
+  },
+  {
+   "t": 108,
+   "frame": "t108.jpg",
+   "s": 3060.9
+  },
+  {
+   "t": 110,
+   "frame": "t110.jpg",
+   "s": 3103.0
+  },
+  {
+   "t": 112,
+   "frame": "t112.jpg",
+   "s": 3149.3
+  },
+  {
+   "t": 114,
+   "frame": "t114.jpg",
+   "s": 3204.0
+  },
+  {
+   "t": 120,
+   "frame": "t120.jpg",
+   "s": 3340.7
+  },
+  {
+   "t": 122,
+   "frame": "t122.jpg",
+   "s": 3378.2
+  },
+  {
+   "t": 124,
+   "frame": "t124.jpg",
+   "s": 3425.8
+  },
+  {
+   "t": 126,
+   "frame": "t126.jpg",
+   "s": 3473.6
+  },
+  {
+   "t": 128,
+   "frame": "t128.jpg",
+   "s": 3530.9
+  },
+  {
+   "t": 130,
+   "frame": "t130.jpg",
+   "s": 3.6
+  }
+ ],
+ "kinds": {
+  "physical": [
+   "wall",
+   "fence",
+   "kerb",
+   "tyre_wall",
+   "tyre_stack",
+   "stand",
+   "station",
+   "bridge",
+   "building",
+   "mast",
+   "cone_line"
+  ],
+  "other": [
+   "boards",
+   "paint",
+   "runoff",
+   "tower",
+   "pit_lane",
+   "sign"
+  ]
+ },
+ "height_methods": [
+  "jersey-ref",
+  "safer-ref",
+  "fence-post-ref",
+  "tyre-ref",
+  "cone-ref",
+  "person-ref",
+  "car-ref",
+  "door-ref",
+  "horizon-ratio",
+  "storeys",
+  "shadow",
+  "lidar",
+  "unmeasured"
+ ],
+ "rows": [
+  {
+   "side": "left",
+   "kind": "building",
+   "attrs": {
+    "type": "starter tower, 4 storeys, red roof",
+    "h_m": 13,
+    "h_method": "storeys"
+   },
+   "confidence": 0.8,
+   "t": 24,
+   "s": 0.0,
+   "source": "onboard:e25u_vjn1uM@24.0",
+   "frame": "t024_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "starter tower behind the pit lane"
+  },
+  {
+   "side": "left",
+   "kind": "paint",
+   "attrs": {
+    "type": "white timing stripe across the track"
+   },
+   "confidence": 0.8,
+   "t": 24,
+   "s": 0.0,
+   "source": "onboard:e25u_vjn1uM@24.0",
+   "frame": "t024_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "S/F line"
+  },
+  {
+   "side": "left",
+   "kind": "stand",
+   "attrs": {
+    "type": "Honda overhead starter gantry over the pit wall"
+   },
+   "confidence": 0.8,
+   "t": 24,
+   "s": 0.0,
+   "source": "onboard:e25u_vjn1uM@24.0",
+   "frame": "t024_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "S/F gantry"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete pit wall",
+    "colour": "white",
+    "h_m": 0.7,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 24,
+   "s": 0.0,
+   "source": "onboard:e25u_vjn1uM@24.0",
+   "frame": "t024_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "pit wall, \"NTT INDYCAR SERIES\" lettering, the pit lane behind"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass then sand/gravel"
+   },
+   "confidence": 0.8,
+   "t": 24,
+   "s": 0.0,
+   "source": "onboard:e25u_vjn1uM@24.0",
+   "frame": "t024_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "stand",
+   "attrs": {
+    "type": "covered grandstand, red roof",
+    "h_m": 7,
+    "h_method": "storeys"
+   },
+   "confidence": 0.8,
+   "t": 24,
+   "s": 0.0,
+   "source": "onboard:e25u_vjn1uM@24.0",
+   "frame": "t024_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "main straight grandstand behind the armco"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 24,
+   "s": 0.0,
+   "source": "onboard:e25u_vjn1uM@24.0",
+   "frame": "t024_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "red armco at the back of the run-off"
+  },
+  {
+   "side": "left",
+   "kind": "stand",
+   "attrs": {
+    "type": "overhead S/F gantry with PERMCO banner"
+   },
+   "confidence": 0.8,
+   "t": 130,
+   "s": 3.6,
+   "source": "onboard:OJaBJz18xEo@130.0",
+   "frame": "t130.jpg",
+   "scope": "lap",
+   "note": "Catalyst line"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "pit wall",
+    "colour": "white"
+   },
+   "confidence": 0.7,
+   "t": 16,
+   "s": 11.9,
+   "source": "onboard:9Drr1VkE1_U@16.0",
+   "frame": "t016.jpg",
+   "map": "IndyCar segment A (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "pit wall",
+    "colour": "white"
+   },
+   "confidence": 0.8,
+   "t": 6,
+   "s": 27.7,
+   "source": "onboard:OJaBJz18xEo@6.0",
+   "frame": "t006.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence"
+   },
+   "confidence": 0.8,
+   "t": 6,
+   "s": 27.7,
+   "source": "onboard:OJaBJz18xEo@6.0",
+   "frame": "t006.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.8,
+   "t": 6,
+   "s": 27.7,
+   "source": "onboard:OJaBJz18xEo@6.0",
+   "frame": "t006.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "pit wall",
+    "colour": "white"
+   },
+   "confidence": 0.7,
+   "t": 150,
+   "s": 50.0,
+   "source": "onboard:9Drr1VkE1_U@150.0",
+   "frame": "t150.jpg",
+   "map": "IndyCar segment C (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.7,
+   "t": 150,
+   "s": 50.0,
+   "source": "onboard:9Drr1VkE1_U@150.0",
+   "frame": "t150.jpg",
+   "map": "IndyCar segment C (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "building",
+   "attrs": {
+    "type": "pit garages / hospitality, red roofs",
+    "h_m": 4,
+    "h_method": "storeys"
+   },
+   "confidence": 0.8,
+   "t": 26,
+   "s": 72.0,
+   "source": "onboard:e25u_vjn1uM@26.0",
+   "frame": "t026_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "paddock row behind the pit lane"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete pit wall",
+    "colour": "white",
+    "h_m": 0.7,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 26,
+   "s": 72.0,
+   "source": "onboard:e25u_vjn1uM@26.0",
+   "frame": "t026_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "pit wall continues"
+  },
+  {
+   "side": "right",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence on curved posts",
+    "h_m": 3.5,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.8,
+   "t": 26,
+   "s": 72.0,
+   "source": "onboard:e25u_vjn1uM@26.0",
+   "frame": "t026_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "catch fence over the armco"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 26,
+   "s": 72.0,
+   "source": "onboard:e25u_vjn1uM@26.0",
+   "frame": "t026_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "grass verge"
+  },
+  {
+   "side": "right",
+   "kind": "stand",
+   "attrs": {
+    "type": "covered grandstand, red roof"
+   },
+   "confidence": 0.8,
+   "t": 26,
+   "s": 72.0,
+   "source": "onboard:e25u_vjn1uM@26.0",
+   "frame": "t026_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 26,
+   "s": 72.0,
+   "source": "onboard:e25u_vjn1uM@26.0",
+   "frame": "t026_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "pit wall",
+    "colour": "white"
+   },
+   "confidence": 0.8,
+   "t": 8,
+   "s": 90.2,
+   "source": "onboard:OJaBJz18xEo@8.0",
+   "frame": "t008.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence"
+   },
+   "confidence": 0.8,
+   "t": 8,
+   "s": 90.2,
+   "source": "onboard:OJaBJz18xEo@8.0",
+   "frame": "t008.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "stand",
+   "attrs": {
+    "type": "covered grandstand"
+   },
+   "confidence": 0.8,
+   "t": 8,
+   "s": 90.2,
+   "source": "onboard:OJaBJz18xEo@8.0",
+   "frame": "t008.jpg",
+   "scope": "lap",
+   "note": "behind the fence"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.8,
+   "t": 8,
+   "s": 90.2,
+   "source": "onboard:OJaBJz18xEo@8.0",
+   "frame": "t008.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "pit wall",
+    "colour": "white"
+   },
+   "confidence": 0.7,
+   "t": 86,
+   "s": 90.4,
+   "source": "onboard:9Drr1VkE1_U@86.0",
+   "frame": "t086.jpg",
+   "map": "IndyCar segment B (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.7,
+   "t": 86,
+   "s": 90.4,
+   "source": "onboard:9Drr1VkE1_U@86.0",
+   "frame": "t086.jpg",
+   "map": "IndyCar segment B (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.7,
+   "t": 18,
+   "s": 149.3,
+   "source": "onboard:9Drr1VkE1_U@18.0",
+   "frame": "t018.jpg",
+   "map": "IndyCar segment A (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete pit wall",
+    "colour": "white",
+    "h_m": 0.7,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 28,
+   "s": 154.4,
+   "source": "onboard:e25u_vjn1uM@28.0",
+   "frame": "t028_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "pit wall; VELO banners on it toward the bridge"
+  },
+  {
+   "side": "right",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence on curved posts",
+    "h_m": 3.5,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.8,
+   "t": 28,
+   "s": 154.4,
+   "source": "onboard:e25u_vjn1uM@28.0",
+   "frame": "t028_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "sign",
+   "attrs": {
+    "type": "brake board \"200\""
+   },
+   "confidence": 0.8,
+   "t": 28,
+   "s": 154.4,
+   "source": "onboard:e25u_vjn1uM@28.0",
+   "frame": "t028_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "T1 brake board on the right verge"
+  },
+  {
+   "side": "right",
+   "kind": "station",
+   "attrs": {
+    "type": "TV camera scaffold tower behind the fence"
+   },
+   "confidence": 0.8,
+   "t": 28,
+   "s": 154.4,
+   "source": "onboard:e25u_vjn1uM@28.0",
+   "frame": "t028_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 28,
+   "s": 154.4,
+   "source": "onboard:e25u_vjn1uM@28.0",
+   "frame": "t028_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "ahead",
+   "kind": "bridge",
+   "attrs": {
+    "type": "Firestone footbridge"
+   },
+   "confidence": 0.8,
+   "t": 10,
+   "s": 159.9,
+   "source": "onboard:OJaBJz18xEo@10.0",
+   "frame": "t010.jpg",
+   "scope": "lap",
+   "note": "ahead"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "pit wall",
+    "colour": "white"
+   },
+   "confidence": 0.8,
+   "t": 10,
+   "s": 159.9,
+   "source": "onboard:OJaBJz18xEo@10.0",
+   "frame": "t010.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence"
+   },
+   "confidence": 0.8,
+   "t": 10,
+   "s": 159.9,
+   "source": "onboard:OJaBJz18xEo@10.0",
+   "frame": "t010.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.8,
+   "t": 10,
+   "s": 159.9,
+   "source": "onboard:OJaBJz18xEo@10.0",
+   "frame": "t010.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "ahead",
+   "kind": "bridge",
+   "attrs": {
+    "type": "Firestone footbridge"
+   },
+   "confidence": 0.7,
+   "t": 152,
+   "s": 179.9,
+   "source": "onboard:9Drr1VkE1_U@152.0",
+   "frame": "t152.jpg",
+   "map": "IndyCar segment C (9Drr1VkE1_U)",
+   "scope": "lap",
+   "note": "passed at 152.9"
+  },
+  {
+   "side": "ahead",
+   "kind": "bridge",
+   "attrs": {
+    "type": "Firestone footbridge"
+   },
+   "confidence": 0.8,
+   "t": 12,
+   "s": 226.1,
+   "source": "onboard:OJaBJz18xEo@12.0",
+   "frame": "t012.jpg",
+   "scope": "lap",
+   "note": "overhead at 0:12.3"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "red concrete barrier",
+    "colour": "red"
+   },
+   "confidence": 0.8,
+   "t": 12,
+   "s": 226.1,
+   "source": "onboard:OJaBJz18xEo@12.0",
+   "frame": "t012.jpg",
+   "scope": "lap",
+   "note": "run to the abutment"
+  },
+  {
+   "side": "ahead",
+   "kind": "bridge",
+   "attrs": {
+    "type": "Firestone footbridge (deck with banners: Firestone facing the approach, HONDA the far side), concrete abutments"
+   },
+   "confidence": 0.8,
+   "t": 30,
+   "s": 233.2,
+   "source": "onboard:e25u_vjn1uM@30.0",
+   "frame": "t030_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "passes overhead at 0:30.0"
+  },
+  {
+   "side": "ahead",
+   "kind": "bridge",
+   "attrs": {
+    "type": "Firestone footbridge"
+   },
+   "confidence": 0.7,
+   "t": 88,
+   "s": 233.2,
+   "source": "onboard:9Drr1VkE1_U@88.0",
+   "frame": "t088.jpg",
+   "map": "IndyCar segment B (9Drr1VkE1_U)",
+   "scope": "lap",
+   "note": "passed at 88.0"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "pit wall end at the bridge abutment",
+    "colour": "white"
+   },
+   "confidence": 0.8,
+   "t": 30,
+   "s": 233.2,
+   "source": "onboard:e25u_vjn1uM@30.0",
+   "frame": "t030_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "pit exit lane continues beside the track under the bridge"
+  },
+  {
+   "side": "right",
+   "kind": "boards",
+   "attrs": {
+    "type": "Summit board on the fence"
+   },
+   "confidence": 0.8,
+   "t": 30,
+   "s": 233.2,
+   "source": "onboard:e25u_vjn1uM@30.0",
+   "frame": "t030_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete abutment then red concrete barrier",
+    "colour": "red"
+   },
+   "confidence": 0.8,
+   "t": 30,
+   "s": 233.2,
+   "source": "onboard:e25u_vjn1uM@30.0",
+   "frame": "t030_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "bridge abutment and the red barrier run to it"
+  },
+  {
+   "side": "ahead",
+   "kind": "bridge",
+   "attrs": {
+    "type": "Firestone footbridge"
+   },
+   "confidence": 0.7,
+   "t": 20,
+   "s": 273.5,
+   "source": "onboard:9Drr1VkE1_U@20.0",
+   "frame": "t020.jpg",
+   "map": "IndyCar segment A (9Drr1VkE1_U)",
+   "scope": "lap",
+   "note": "passed at 19.2"
+  },
+  {
+   "side": "left",
+   "kind": "paint",
+   "attrs": {
+    "type": "white hatched pit-exit blend"
+   },
+   "confidence": 0.8,
+   "t": 14,
+   "s": 281.0,
+   "source": "onboard:OJaBJz18xEo@14.0",
+   "frame": "t014.jpg",
+   "scope": "lap",
+   "note": "2026: blend lines and the asphalt of the pit exit, same tone"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "T1 inside kerb, red/white, flat"
+   },
+   "confidence": 0.8,
+   "t": 32,
+   "s": 294.7,
+   "source": "onboard:e25u_vjn1uM@32.0",
+   "frame": "t032_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "apex kerb"
+  },
+  {
+   "side": "left",
+   "kind": "paint",
+   "attrs": {
+    "type": "white hatched pit-exit blend lines on asphalt"
+   },
+   "confidence": 0.8,
+   "t": 32,
+   "s": 294.7,
+   "source": "onboard:e25u_vjn1uM@32.0",
+   "frame": "t032_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "pit exit merge; same asphalt tone as the track"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 32,
+   "s": 294.7,
+   "source": "onboard:e25u_vjn1uM@32.0",
+   "frame": "t032_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "low red armco beyond the infield grass"
+  },
+  {
+   "side": "right",
+   "kind": "boards",
+   "attrs": {
+    "type": "Honda / sponsor board wall"
+   },
+   "confidence": 0.8,
+   "t": 32,
+   "s": 294.7,
+   "source": "onboard:e25u_vjn1uM@32.0",
+   "frame": "t032_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "far"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "wide paved run-off, then sand/gravel"
+   },
+   "confidence": 0.8,
+   "t": 32,
+   "s": 294.7,
+   "source": "onboard:e25u_vjn1uM@32.0",
+   "frame": "t032_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "T1 outside"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "T1 inside kerb, red/white"
+   },
+   "confidence": 0.8,
+   "t": 16,
+   "s": 339.1,
+   "source": "onboard:OJaBJz18xEo@16.0",
+   "frame": "t016.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "T1 kerb, red/white"
+   },
+   "confidence": 0.7,
+   "t": 90,
+   "s": 341.1,
+   "source": "onboard:9Drr1VkE1_U@90.0",
+   "frame": "t090.jpg",
+   "map": "IndyCar segment B (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 34,
+   "s": 358.1,
+   "source": "onboard:e25u_vjn1uM@34.0",
+   "frame": "t034_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 34,
+   "s": 358.1,
+   "source": "onboard:e25u_vjn1uM@34.0",
+   "frame": "t034_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "boards",
+   "attrs": {
+    "type": "Honda boards"
+   },
+   "confidence": 0.8,
+   "t": 34,
+   "s": 358.1,
+   "source": "onboard:e25u_vjn1uM@34.0",
+   "frame": "t034_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "sand/gravel trap"
+   },
+   "confidence": 0.8,
+   "t": 34,
+   "s": 358.1,
+   "source": "onboard:e25u_vjn1uM@34.0",
+   "frame": "t034_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "T1 exit outside"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 34,
+   "s": 358.1,
+   "source": "onboard:e25u_vjn1uM@34.0",
+   "frame": "t034_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "T1 exit kerb, yellow"
+   },
+   "confidence": 0.7,
+   "t": 22,
+   "s": 373.6,
+   "source": "onboard:9Drr1VkE1_U@22.0",
+   "frame": "t022.jpg",
+   "map": "IndyCar segment A (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.8,
+   "t": 18,
+   "s": 386.9,
+   "source": "onboard:OJaBJz18xEo@18.0",
+   "frame": "t018.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 18,
+   "s": 386.9,
+   "source": "onboard:OJaBJz18xEo@18.0",
+   "frame": "t018.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "T1 exit kerb, yellow"
+   },
+   "confidence": 0.7,
+   "t": 156,
+   "s": 394.0,
+   "source": "onboard:9Drr1VkE1_U@156.0",
+   "frame": "t156.jpg",
+   "map": "IndyCar segment C (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "building",
+   "attrs": {
+    "type": "hospitality tents / covered stand, red roof"
+   },
+   "confidence": 0.8,
+   "t": 36,
+   "s": 418.9,
+   "source": "onboard:e25u_vjn1uM@36.0",
+   "frame": "t036_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "beyond the fence"
+  },
+  {
+   "side": "left",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 36,
+   "s": 418.9,
+   "source": "onboard:e25u_vjn1uM@36.0",
+   "frame": "t036_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "T1 exit kerb, yellow, flat (rumble strip)"
+   },
+   "confidence": 0.8,
+   "t": 36,
+   "s": 418.9,
+   "source": "onboard:e25u_vjn1uM@36.0",
+   "frame": "t036_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "yellow exit kerb"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "sand/gravel"
+   },
+   "confidence": 0.8,
+   "t": 36,
+   "s": 418.9,
+   "source": "onboard:e25u_vjn1uM@36.0",
+   "frame": "t036_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "T1 exit kerb, yellow, with red outer band"
+   },
+   "confidence": 0.8,
+   "t": 20,
+   "s": 439.5,
+   "source": "onboard:OJaBJz18xEo@20.0",
+   "frame": "t020.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "T1 exit kerb, yellow"
+   },
+   "confidence": 0.7,
+   "t": 92,
+   "s": 447.2,
+   "source": "onboard:9Drr1VkE1_U@92.0",
+   "frame": "t092.jpg",
+   "map": "IndyCar segment B (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.7,
+   "t": 24,
+   "s": 485.1,
+   "source": "onboard:9Drr1VkE1_U@24.0",
+   "frame": "t024.jpg",
+   "map": "IndyCar segment A (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence on curved posts",
+    "h_m": 3.5,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.8,
+   "t": 38,
+   "s": 492.9,
+   "source": "onboard:e25u_vjn1uM@38.0",
+   "frame": "t038_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 38,
+   "s": 492.9,
+   "source": "onboard:e25u_vjn1uM@38.0",
+   "frame": "t038_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 38,
+   "s": 492.9,
+   "source": "onboard:e25u_vjn1uM@38.0",
+   "frame": "t038_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "wide infield"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence"
+   },
+   "confidence": 0.8,
+   "t": 22,
+   "s": 500.5,
+   "source": "onboard:OJaBJz18xEo@22.0",
+   "frame": "t022.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.8,
+   "t": 22,
+   "s": 500.5,
+   "source": "onboard:OJaBJz18xEo@22.0",
+   "frame": "t022.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 22,
+   "s": 500.5,
+   "source": "onboard:OJaBJz18xEo@22.0",
+   "frame": "t022.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.7,
+   "t": 158,
+   "s": 518.0,
+   "source": "onboard:9Drr1VkE1_U@158.0",
+   "frame": "t158.jpg",
+   "map": "IndyCar segment C (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence"
+   },
+   "confidence": 0.8,
+   "t": 24,
+   "s": 569.8,
+   "source": "onboard:OJaBJz18xEo@24.0",
+   "frame": "t024.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "sign",
+   "attrs": {
+    "type": "brake boards"
+   },
+   "confidence": 0.8,
+   "t": 24,
+   "s": 569.8,
+   "source": "onboard:OJaBJz18xEo@24.0",
+   "frame": "t024.jpg",
+   "scope": "lap",
+   "note": "on the fence"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.8,
+   "t": 24,
+   "s": 569.8,
+   "source": "onboard:OJaBJz18xEo@24.0",
+   "frame": "t024.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 24,
+   "s": 569.8,
+   "source": "onboard:OJaBJz18xEo@24.0",
+   "frame": "t024.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence on curved posts",
+    "h_m": 3.5,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.8,
+   "t": 40,
+   "s": 580.2,
+   "source": "onboard:e25u_vjn1uM@40.0",
+   "frame": "t040_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 40,
+   "s": 580.2,
+   "source": "onboard:e25u_vjn1uM@40.0",
+   "frame": "t040_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "paint",
+   "attrs": {
+    "type": "inactive chicane road: grey asphalt, slightly lighter than the racing surface"
+   },
+   "confidence": 0.8,
+   "t": 40,
+   "s": 580.2,
+   "source": "onboard:e25u_vjn1uM@40.0",
+   "frame": "t040_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "the unused chicane seen across the infield (owner green strokes)"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 40,
+   "s": 580.2,
+   "source": "onboard:e25u_vjn1uM@40.0",
+   "frame": "t040_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "wide infield"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.7,
+   "t": 94,
+   "s": 590.2,
+   "source": "onboard:9Drr1VkE1_U@94.0",
+   "frame": "t094.jpg",
+   "map": "IndyCar segment B (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.7,
+   "t": 26,
+   "s": 631.6,
+   "source": "onboard:9Drr1VkE1_U@26.0",
+   "frame": "t026.jpg",
+   "map": "IndyCar segment A (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence"
+   },
+   "confidence": 0.8,
+   "t": 26,
+   "s": 647.6,
+   "source": "onboard:OJaBJz18xEo@26.0",
+   "frame": "t026.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.8,
+   "t": 26,
+   "s": 647.6,
+   "source": "onboard:OJaBJz18xEo@26.0",
+   "frame": "t026.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 26,
+   "s": 647.6,
+   "source": "onboard:OJaBJz18xEo@26.0",
+   "frame": "t026.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.7,
+   "t": 160,
+   "s": 679.3,
+   "source": "onboard:9Drr1VkE1_U@160.0",
+   "frame": "t160.jpg",
+   "map": "IndyCar segment C (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence on curved posts",
+    "h_m": 3.5,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.8,
+   "t": 42,
+   "s": 680.2,
+   "source": "onboard:e25u_vjn1uM@42.0",
+   "frame": "t042_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 42,
+   "s": 680.2,
+   "source": "onboard:e25u_vjn1uM@42.0",
+   "frame": "t042_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "red/white kerb at the chicane re-join (inactive)"
+   },
+   "confidence": 0.8,
+   "t": 42,
+   "s": 680.2,
+   "source": "onboard:e25u_vjn1uM@42.0",
+   "frame": "t042_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "chicane mouth kerb"
+  },
+  {
+   "side": "right",
+   "kind": "paint",
+   "attrs": {
+    "type": "chicane mouth paving, same grey asphalt"
+   },
+   "confidence": 0.8,
+   "t": 42,
+   "s": 680.2,
+   "source": "onboard:e25u_vjn1uM@42.0",
+   "frame": "t042_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence"
+   },
+   "confidence": 0.8,
+   "t": 28,
+   "s": 730.0,
+   "source": "onboard:OJaBJz18xEo@28.0",
+   "frame": "t028.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.8,
+   "t": 28,
+   "s": 730.0,
+   "source": "onboard:OJaBJz18xEo@28.0",
+   "frame": "t028.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 28,
+   "s": 730.0,
+   "source": "onboard:OJaBJz18xEo@28.0",
+   "frame": "t028.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.7,
+   "t": 96,
+   "s": 763.9,
+   "source": "onboard:9Drr1VkE1_U@96.0",
+   "frame": "t096.jpg",
+   "map": "IndyCar segment B (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence on curved posts",
+    "h_m": 3.5,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.8,
+   "t": 44,
+   "s": 783.4,
+   "source": "onboard:e25u_vjn1uM@44.0",
+   "frame": "t044_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "sign",
+   "attrs": {
+    "type": "brake board \"300\""
+   },
+   "confidence": 0.8,
+   "t": 44,
+   "s": 783.4,
+   "source": "onboard:e25u_vjn1uM@44.0",
+   "frame": "t044_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "Keyhole brake board"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 44,
+   "s": 783.4,
+   "source": "onboard:e25u_vjn1uM@44.0",
+   "frame": "t044_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 44,
+   "s": 783.4,
+   "source": "onboard:e25u_vjn1uM@44.0",
+   "frame": "t044_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "sign",
+   "attrs": {
+    "type": "brake board"
+   },
+   "confidence": 0.7,
+   "t": 28,
+   "s": 798.2,
+   "source": "onboard:9Drr1VkE1_U@28.0",
+   "frame": "t028.jpg",
+   "map": "IndyCar segment A (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "ahead",
+   "kind": "boards",
+   "attrs": {
+    "type": "red billboard on the hill"
+   },
+   "confidence": 0.8,
+   "t": 30,
+   "s": 809.2,
+   "source": "onboard:OJaBJz18xEo@30.0",
+   "frame": "t030.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.8,
+   "t": 30,
+   "s": 809.2,
+   "source": "onboard:OJaBJz18xEo@30.0",
+   "frame": "t030.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence on curved posts",
+    "h_m": 3.5,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.8,
+   "t": 46,
+   "s": 863.2,
+   "source": "onboard:e25u_vjn1uM@46.0",
+   "frame": "t046_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 46,
+   "s": 863.2,
+   "source": "onboard:e25u_vjn1uM@46.0",
+   "frame": "t046_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 46,
+   "s": 863.2,
+   "source": "onboard:e25u_vjn1uM@46.0",
+   "frame": "t046_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "Keyhole kerb, red/white"
+   },
+   "confidence": 0.7,
+   "t": 98,
+   "s": 889.8,
+   "source": "onboard:9Drr1VkE1_U@98.0",
+   "frame": "t098.jpg",
+   "map": "IndyCar segment B (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "Keyhole kerb, red/white"
+   },
+   "confidence": 0.7,
+   "t": 30,
+   "s": 902.0,
+   "source": "onboard:9Drr1VkE1_U@30.0",
+   "frame": "t030.jpg",
+   "map": "IndyCar segment A (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "Keyhole kerb, red/white"
+   },
+   "confidence": 0.8,
+   "t": 34,
+   "s": 906.1,
+   "source": "onboard:OJaBJz18xEo@34.0",
+   "frame": "t034.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "boards",
+   "attrs": {
+    "type": "sponsor board wall"
+   },
+   "confidence": 0.8,
+   "t": 48,
+   "s": 912.2,
+   "source": "onboard:e25u_vjn1uM@48.0",
+   "frame": "t048_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "outside of the Keyhole"
+  },
+  {
+   "side": "left",
+   "kind": "runoff",
+   "attrs": {
+    "type": "sand/gravel"
+   },
+   "confidence": 0.8,
+   "t": 48,
+   "s": 912.2,
+   "source": "onboard:e25u_vjn1uM@48.0",
+   "frame": "t048_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "Keyhole kerb, red/white, long"
+   },
+   "confidence": 0.8,
+   "t": 48,
+   "s": 912.2,
+   "source": "onboard:e25u_vjn1uM@48.0",
+   "frame": "t048_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "T2 apex kerb"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 48,
+   "s": 912.2,
+   "source": "onboard:e25u_vjn1uM@48.0",
+   "frame": "t048_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "infield"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "Keyhole kerb, red/white"
+   },
+   "confidence": 0.7,
+   "t": 164,
+   "s": 929.6,
+   "source": "onboard:9Drr1VkE1_U@164.0",
+   "frame": "t164.jpg",
+   "map": "IndyCar segment C (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "Keyhole kerb, red/white"
+   },
+   "confidence": 0.8,
+   "t": 36,
+   "s": 943.2,
+   "source": "onboard:OJaBJz18xEo@36.0",
+   "frame": "t036.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "boards",
+   "attrs": {
+    "type": "board wall: Honda, Firestone, Velo, PERMCO"
+   },
+   "confidence": 0.8,
+   "t": 50,
+   "s": 957.7,
+   "source": "onboard:e25u_vjn1uM@50.0",
+   "frame": "t050_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 50,
+   "s": 957.7,
+   "source": "onboard:e25u_vjn1uM@50.0",
+   "frame": "t050_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "Keyhole kerb, red/white, long"
+   },
+   "confidence": 0.8,
+   "t": 50,
+   "s": 957.7,
+   "source": "onboard:e25u_vjn1uM@50.0",
+   "frame": "t050_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "T2 apex kerb"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 50,
+   "s": 957.7,
+   "source": "onboard:e25u_vjn1uM@50.0",
+   "frame": "t050_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "infield"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "Keyhole kerb, red/white"
+   },
+   "confidence": 0.7,
+   "t": 100,
+   "s": 965.6,
+   "source": "onboard:9Drr1VkE1_U@100.0",
+   "frame": "t100.jpg",
+   "map": "IndyCar segment B (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "Keyhole kerb, red/white"
+   },
+   "confidence": 0.7,
+   "t": 32,
+   "s": 974.4,
+   "source": "onboard:9Drr1VkE1_U@32.0",
+   "frame": "t032.jpg",
+   "map": "IndyCar segment A (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "boards",
+   "attrs": {
+    "type": "board wall: Honda, HRC, Velo"
+   },
+   "confidence": 0.8,
+   "t": 38,
+   "s": 979.3,
+   "source": "onboard:OJaBJz18xEo@38.0",
+   "frame": "t038.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "Keyhole kerb, red/white"
+   },
+   "confidence": 0.7,
+   "t": 166,
+   "s": 998.0,
+   "source": "onboard:9Drr1VkE1_U@166.0",
+   "frame": "t166.jpg",
+   "map": "IndyCar segment C (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "boards",
+   "attrs": {
+    "type": "board wall: Honda, Firestone, PERMCO"
+   },
+   "confidence": 0.8,
+   "t": 52,
+   "s": 998.7,
+   "source": "onboard:e25u_vjn1uM@52.0",
+   "frame": "t052_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "station",
+   "attrs": {
+    "type": "TV camera scaffold"
+   },
+   "confidence": 0.8,
+   "t": 52,
+   "s": 998.7,
+   "source": "onboard:e25u_vjn1uM@52.0",
+   "frame": "t052_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "behind the boards"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "Keyhole kerb, red/white, long"
+   },
+   "confidence": 0.8,
+   "t": 52,
+   "s": 998.7,
+   "source": "onboard:e25u_vjn1uM@52.0",
+   "frame": "t052_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "T2 apex kerb"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 52,
+   "s": 998.7,
+   "source": "onboard:e25u_vjn1uM@52.0",
+   "frame": "t052_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "infield"
+  },
+  {
+   "side": "left",
+   "kind": "boards",
+   "attrs": {
+    "type": "board wall: HRC, Summit, Honda, Start, O'Reilly, HRC"
+   },
+   "confidence": 0.8,
+   "t": 40,
+   "s": 1019.1,
+   "source": "onboard:OJaBJz18xEo@40.0",
+   "frame": "t040.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "Keyhole kerb, red/white"
+   },
+   "confidence": 0.8,
+   "t": 40,
+   "s": 1019.1,
+   "source": "onboard:OJaBJz18xEo@40.0",
+   "frame": "t040.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "T2 exit kerb, yellow"
+   },
+   "confidence": 0.7,
+   "t": 102,
+   "s": 1035.1,
+   "source": "onboard:9Drr1VkE1_U@102.0",
+   "frame": "t102.jpg",
+   "map": "IndyCar segment B (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "boards",
+   "attrs": {
+    "type": "board wall: Velo, Summit, Honda, Start, O'Reilly, HRC"
+   },
+   "confidence": 0.8,
+   "t": 54,
+   "s": 1044.4,
+   "source": "onboard:e25u_vjn1uM@54.0",
+   "frame": "t054_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "same boards as the N837 onboard t40"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "T2 exit kerb, yellow, flat"
+   },
+   "confidence": 0.8,
+   "t": 54,
+   "s": 1044.4,
+   "source": "onboard:e25u_vjn1uM@54.0",
+   "frame": "t054_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 54,
+   "s": 1044.4,
+   "source": "onboard:e25u_vjn1uM@54.0",
+   "frame": "t054_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "T2 exit kerb, yellow with red band"
+   },
+   "confidence": 0.7,
+   "t": 34,
+   "s": 1049.8,
+   "source": "onboard:9Drr1VkE1_U@34.0",
+   "frame": "t034.jpg",
+   "map": "IndyCar segment A (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "T2 exit kerb, yellow with red band"
+   },
+   "confidence": 0.8,
+   "t": 42,
+   "s": 1066.0,
+   "source": "onboard:OJaBJz18xEo@42.0",
+   "frame": "t042.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "T2 exit kerb, yellow"
+   },
+   "confidence": 0.7,
+   "t": 168,
+   "s": 1074.5,
+   "source": "onboard:9Drr1VkE1_U@168.0",
+   "frame": "t168.jpg",
+   "map": "IndyCar segment C (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "yellow exit kerb ends"
+   },
+   "confidence": 0.8,
+   "t": 56,
+   "s": 1101.0,
+   "source": "onboard:e25u_vjn1uM@56.0",
+   "frame": "t056_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "runoff",
+   "attrs": {
+    "type": "sand/gravel"
+   },
+   "confidence": 0.8,
+   "t": 56,
+   "s": 1101.0,
+   "source": "onboard:e25u_vjn1uM@56.0",
+   "frame": "t056_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 56,
+   "s": 1101.0,
+   "source": "onboard:e25u_vjn1uM@56.0",
+   "frame": "t056_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence"
+   },
+   "confidence": 0.8,
+   "t": 44,
+   "s": 1122.6,
+   "source": "onboard:OJaBJz18xEo@44.0",
+   "frame": "t044.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.8,
+   "t": 44,
+   "s": 1122.6,
+   "source": "onboard:OJaBJz18xEo@44.0",
+   "frame": "t044.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 44,
+   "s": 1122.6,
+   "source": "onboard:OJaBJz18xEo@44.0",
+   "frame": "t044.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.7,
+   "t": 104,
+   "s": 1128.3,
+   "source": "onboard:9Drr1VkE1_U@104.0",
+   "frame": "t104.jpg",
+   "map": "IndyCar segment B (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.7,
+   "t": 36,
+   "s": 1153.3,
+   "source": "onboard:9Drr1VkE1_U@36.0",
+   "frame": "t036.jpg",
+   "map": "IndyCar segment A (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence on curved posts",
+    "h_m": 3.5,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.8,
+   "t": 58,
+   "s": 1168.8,
+   "source": "onboard:e25u_vjn1uM@58.0",
+   "frame": "t058_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "paddock / RVs behind"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 58,
+   "s": 1168.8,
+   "source": "onboard:e25u_vjn1uM@58.0",
+   "frame": "t058_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 58,
+   "s": 1168.8,
+   "source": "onboard:e25u_vjn1uM@58.0",
+   "frame": "t058_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "open infield"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.7,
+   "t": 170,
+   "s": 1178.3,
+   "source": "onboard:9Drr1VkE1_U@170.0",
+   "frame": "t170.jpg",
+   "map": "IndyCar segment C (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence"
+   },
+   "confidence": 0.8,
+   "t": 46,
+   "s": 1189.0,
+   "source": "onboard:OJaBJz18xEo@46.0",
+   "frame": "t046.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.8,
+   "t": 46,
+   "s": 1189.0,
+   "source": "onboard:OJaBJz18xEo@46.0",
+   "frame": "t046.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 46,
+   "s": 1189.0,
+   "source": "onboard:OJaBJz18xEo@46.0",
+   "frame": "t046.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence on curved posts",
+    "h_m": 3.5,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.8,
+   "t": 60,
+   "s": 1247.7,
+   "source": "onboard:e25u_vjn1uM@60.0",
+   "frame": "t060_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "paddock / RVs behind"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 60,
+   "s": 1247.7,
+   "source": "onboard:e25u_vjn1uM@60.0",
+   "frame": "t060_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 60,
+   "s": 1247.7,
+   "source": "onboard:e25u_vjn1uM@60.0",
+   "frame": "t060_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "open infield"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.7,
+   "t": 106,
+   "s": 1250.6,
+   "source": "onboard:9Drr1VkE1_U@106.0",
+   "frame": "t106.jpg",
+   "map": "IndyCar segment B (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence"
+   },
+   "confidence": 0.8,
+   "t": 48,
+   "s": 1265.0,
+   "source": "onboard:OJaBJz18xEo@48.0",
+   "frame": "t048.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.8,
+   "t": 48,
+   "s": 1265.0,
+   "source": "onboard:OJaBJz18xEo@48.0",
+   "frame": "t048.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 48,
+   "s": 1265.0,
+   "source": "onboard:OJaBJz18xEo@48.0",
+   "frame": "t048.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.7,
+   "t": 38,
+   "s": 1288.5,
+   "source": "onboard:9Drr1VkE1_U@38.0",
+   "frame": "t038.jpg",
+   "map": "IndyCar segment A (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence on curved posts",
+    "h_m": 3.5,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.8,
+   "t": 62,
+   "s": 1337.8,
+   "source": "onboard:e25u_vjn1uM@62.0",
+   "frame": "t062_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "paddock / RVs behind"
+  },
+  {
+   "side": "left",
+   "kind": "station",
+   "attrs": {
+    "type": "marshal post / scaffold behind the fence"
+   },
+   "confidence": 0.8,
+   "t": 62,
+   "s": 1337.8,
+   "source": "onboard:e25u_vjn1uM@62.0",
+   "frame": "t062_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 62,
+   "s": 1337.8,
+   "source": "onboard:e25u_vjn1uM@62.0",
+   "frame": "t062_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 62,
+   "s": 1337.8,
+   "source": "onboard:e25u_vjn1uM@62.0",
+   "frame": "t062_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "open infield"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence"
+   },
+   "confidence": 0.8,
+   "t": 50,
+   "s": 1350.6,
+   "source": "onboard:OJaBJz18xEo@50.0",
+   "frame": "t050.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.8,
+   "t": 50,
+   "s": 1350.6,
+   "source": "onboard:OJaBJz18xEo@50.0",
+   "frame": "t050.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 50,
+   "s": 1350.6,
+   "source": "onboard:OJaBJz18xEo@50.0",
+   "frame": "t050.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.7,
+   "t": 108,
+   "s": 1399.2,
+   "source": "onboard:9Drr1VkE1_U@108.0",
+   "frame": "t108.jpg",
+   "map": "IndyCar segment B (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence on curved posts",
+    "h_m": 3.5,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.8,
+   "t": 64,
+   "s": 1432.9,
+   "source": "onboard:e25u_vjn1uM@64.0",
+   "frame": "t064_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "paddock / RVs behind"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 64,
+   "s": 1432.9,
+   "source": "onboard:e25u_vjn1uM@64.0",
+   "frame": "t064_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "paint",
+   "attrs": {
+    "type": "inactive T1-T3 connector road meets the track: grey asphalt"
+   },
+   "confidence": 0.8,
+   "t": 64,
+   "s": 1432.9,
+   "source": "onboard:e25u_vjn1uM@64.0",
+   "frame": "t064_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "crossover (owner green strokes)"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 64,
+   "s": 1432.9,
+   "source": "onboard:e25u_vjn1uM@64.0",
+   "frame": "t064_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "open infield"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence"
+   },
+   "confidence": 0.8,
+   "t": 52,
+   "s": 1439.2,
+   "source": "onboard:OJaBJz18xEo@52.0",
+   "frame": "t052.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.8,
+   "t": 52,
+   "s": 1439.2,
+   "source": "onboard:OJaBJz18xEo@52.0",
+   "frame": "t052.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 52,
+   "s": 1439.2,
+   "source": "onboard:OJaBJz18xEo@52.0",
+   "frame": "t052.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "boards",
+   "attrs": {
+    "type": "sponsor boards"
+   },
+   "confidence": 0.7,
+   "t": 40,
+   "s": 1447.3,
+   "source": "onboard:9Drr1VkE1_U@40.0",
+   "frame": "t040.jpg",
+   "map": "IndyCar segment A (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.7,
+   "t": 174,
+   "s": 1458.9,
+   "source": "onboard:9Drr1VkE1_U@174.0",
+   "frame": "t174.jpg",
+   "map": "IndyCar segment C (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "boards",
+   "attrs": {
+    "type": "Honda board"
+   },
+   "confidence": 0.8,
+   "t": 54,
+   "s": 1527.4,
+   "source": "onboard:OJaBJz18xEo@54.0",
+   "frame": "t054.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "station",
+   "attrs": {
+    "type": "marshal post, yellow"
+   },
+   "confidence": 0.8,
+   "t": 54,
+   "s": 1527.4,
+   "source": "onboard:OJaBJz18xEo@54.0",
+   "frame": "t054.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "boards",
+   "attrs": {
+    "type": "Honda and NTT Data boards on the fence"
+   },
+   "confidence": 0.8,
+   "t": 66,
+   "s": 1528.0,
+   "source": "onboard:e25u_vjn1uM@66.0",
+   "frame": "t066_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 66,
+   "s": 1528.0,
+   "source": "onboard:e25u_vjn1uM@66.0",
+   "frame": "t066_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 66,
+   "s": 1528.0,
+   "source": "onboard:e25u_vjn1uM@66.0",
+   "frame": "t066_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.7,
+   "t": 110,
+   "s": 1552.4,
+   "source": "onboard:9Drr1VkE1_U@110.0",
+   "frame": "t110.jpg",
+   "map": "IndyCar segment B (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.7,
+   "t": 42,
+   "s": 1607.3,
+   "source": "onboard:9Drr1VkE1_U@42.0",
+   "frame": "t042.jpg",
+   "map": "IndyCar segment A (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence"
+   },
+   "confidence": 0.8,
+   "t": 56,
+   "s": 1615.6,
+   "source": "onboard:OJaBJz18xEo@56.0",
+   "frame": "t056.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.8,
+   "t": 56,
+   "s": 1615.6,
+   "source": "onboard:OJaBJz18xEo@56.0",
+   "frame": "t056.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 56,
+   "s": 1615.6,
+   "source": "onboard:OJaBJz18xEo@56.0",
+   "frame": "t056.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence on curved posts",
+    "h_m": 3.5,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.8,
+   "t": 68,
+   "s": 1623.1,
+   "source": "onboard:e25u_vjn1uM@68.0",
+   "frame": "t068_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "paddock / RVs behind"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 68,
+   "s": 1623.1,
+   "source": "onboard:e25u_vjn1uM@68.0",
+   "frame": "t068_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 68,
+   "s": 1623.1,
+   "source": "onboard:e25u_vjn1uM@68.0",
+   "frame": "t068_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "open infield"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence"
+   },
+   "confidence": 0.8,
+   "t": 58,
+   "s": 1703.7,
+   "source": "onboard:OJaBJz18xEo@58.0",
+   "frame": "t058.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.8,
+   "t": 58,
+   "s": 1703.7,
+   "source": "onboard:OJaBJz18xEo@58.0",
+   "frame": "t058.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 58,
+   "s": 1703.7,
+   "source": "onboard:OJaBJz18xEo@58.0",
+   "frame": "t058.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.7,
+   "t": 112,
+   "s": 1705.6,
+   "source": "onboard:9Drr1VkE1_U@112.0",
+   "frame": "t112.jpg",
+   "map": "IndyCar segment B (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence on curved posts",
+    "h_m": 3.5,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.8,
+   "t": 70,
+   "s": 1718.2,
+   "source": "onboard:e25u_vjn1uM@70.0",
+   "frame": "t070_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "paddock / RVs behind"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 70,
+   "s": 1718.2,
+   "source": "onboard:e25u_vjn1uM@70.0",
+   "frame": "t070_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 70,
+   "s": 1718.2,
+   "source": "onboard:e25u_vjn1uM@70.0",
+   "frame": "t070_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "open infield"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.7,
+   "t": 178,
+   "s": 1758.1,
+   "source": "onboard:9Drr1VkE1_U@178.0",
+   "frame": "t178.jpg",
+   "map": "IndyCar segment C (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.7,
+   "t": 44,
+   "s": 1767.3,
+   "source": "onboard:9Drr1VkE1_U@44.0",
+   "frame": "t044.jpg",
+   "map": "IndyCar segment A (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "stand",
+   "attrs": {
+    "type": "aluminium bleachers"
+   },
+   "confidence": 0.8,
+   "t": 60,
+   "s": 1791.9,
+   "source": "onboard:OJaBJz18xEo@60.0",
+   "frame": "t060.jpg",
+   "scope": "lap",
+   "note": "T4 approach"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.8,
+   "t": 60,
+   "s": 1791.9,
+   "source": "onboard:OJaBJz18xEo@60.0",
+   "frame": "t060.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "sign",
+   "attrs": {
+    "type": "brake board \"300\""
+   },
+   "confidence": 0.8,
+   "t": 72,
+   "s": 1813.3,
+   "source": "onboard:e25u_vjn1uM@72.0",
+   "frame": "t072_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "stand",
+   "attrs": {
+    "type": "aluminium bleachers"
+   },
+   "confidence": 0.8,
+   "t": 72,
+   "s": 1813.3,
+   "source": "onboard:e25u_vjn1uM@72.0",
+   "frame": "t072_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "T4 approach grandstand"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 72,
+   "s": 1813.3,
+   "source": "onboard:e25u_vjn1uM@72.0",
+   "frame": "t072_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 72,
+   "s": 1813.3,
+   "source": "onboard:e25u_vjn1uM@72.0",
+   "frame": "t072_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "sign",
+   "attrs": {
+    "type": "brake board \"300\""
+   },
+   "confidence": 0.8,
+   "t": 72,
+   "s": 1813.3,
+   "source": "onboard:e25u_vjn1uM@72.0",
+   "frame": "t072_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "T4 apex kerb, red/white"
+   },
+   "confidence": 0.7,
+   "t": 114,
+   "s": 1857.4,
+   "source": "onboard:9Drr1VkE1_U@114.0",
+   "frame": "t114.jpg",
+   "map": "IndyCar segment B (9Drr1VkE1_U)",
+   "scope": "lap",
+   "note": "approach"
+  },
+  {
+   "side": "left",
+   "kind": "cone_line",
+   "attrs": {
+    "type": "orange cones, two",
+    "colour": "orange"
+   },
+   "confidence": 0.8,
+   "t": 62,
+   "s": 1875.7,
+   "source": "onboard:OJaBJz18xEo@62.0",
+   "frame": "t062.jpg",
+   "scope": "lap",
+   "note": "Lemons event cones at the T4 braking zone (2026)"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "T4 apex kerb, red/white"
+   },
+   "confidence": 0.7,
+   "t": 180,
+   "s": 1897.2,
+   "source": "onboard:9Drr1VkE1_U@180.0",
+   "frame": "t180.jpg",
+   "map": "IndyCar segment C (9Drr1VkE1_U)",
+   "scope": "lap",
+   "note": "approach"
+  },
+  {
+   "side": "left",
+   "kind": "boards",
+   "attrs": {
+    "type": "Honda boards"
+   },
+   "confidence": 0.8,
+   "t": 74,
+   "s": 1897.8,
+   "source": "onboard:e25u_vjn1uM@74.0",
+   "frame": "t074_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "stand",
+   "attrs": {
+    "type": "aluminium bleachers"
+   },
+   "confidence": 0.8,
+   "t": 74,
+   "s": 1897.8,
+   "source": "onboard:e25u_vjn1uM@74.0",
+   "frame": "t074_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 74,
+   "s": 1897.8,
+   "source": "onboard:e25u_vjn1uM@74.0",
+   "frame": "t074_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 74,
+   "s": 1897.8,
+   "source": "onboard:e25u_vjn1uM@74.0",
+   "frame": "t074_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "T4 apex kerb, red/white"
+   },
+   "confidence": 0.7,
+   "t": 46,
+   "s": 1910.9,
+   "source": "onboard:9Drr1VkE1_U@46.0",
+   "frame": "t046.jpg",
+   "map": "IndyCar segment A (9Drr1VkE1_U)",
+   "scope": "lap",
+   "note": "approach"
+  },
+  {
+   "side": "left",
+   "kind": "boards",
+   "attrs": {
+    "type": "sponsor boards"
+   },
+   "confidence": 0.8,
+   "t": 64,
+   "s": 1935.1,
+   "source": "onboard:OJaBJz18xEo@64.0",
+   "frame": "t064.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "boards",
+   "attrs": {
+    "type": "Honda board wall along the outside"
+   },
+   "confidence": 0.8,
+   "t": 76,
+   "s": 1951.6,
+   "source": "onboard:e25u_vjn1uM@76.0",
+   "frame": "t076_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "T4 outside"
+  },
+  {
+   "side": "left",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass then sand/gravel"
+   },
+   "confidence": 0.8,
+   "t": 76,
+   "s": 1951.6,
+   "source": "onboard:e25u_vjn1uM@76.0",
+   "frame": "t076_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "T4 run-off (rebuilt 2024)"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "T4 apex kerb, red/white (kept in the 2024 rebuild)"
+   },
+   "confidence": 0.8,
+   "t": 76,
+   "s": 1951.6,
+   "source": "onboard:e25u_vjn1uM@76.0",
+   "frame": "t076_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "T4 apex"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 76,
+   "s": 1951.6,
+   "source": "onboard:e25u_vjn1uM@76.0",
+   "frame": "t076_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "T4 apex kerb, red/white"
+   },
+   "confidence": 0.7,
+   "t": 116,
+   "s": 1955.2,
+   "source": "onboard:9Drr1VkE1_U@116.0",
+   "frame": "t116.jpg",
+   "map": "IndyCar segment B (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "T4 apex kerb, red/white"
+   },
+   "confidence": 0.8,
+   "t": 66,
+   "s": 1973.3,
+   "source": "onboard:OJaBJz18xEo@66.0",
+   "frame": "t066.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "yellow kerb"
+   },
+   "confidence": 0.7,
+   "t": 182,
+   "s": 1975.9,
+   "source": "onboard:9Drr1VkE1_U@182.0",
+   "frame": "t182.jpg",
+   "map": "IndyCar segment C (9Drr1VkE1_U)",
+   "scope": "lap",
+   "note": "T4 exit outside"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "yellow kerb"
+   },
+   "confidence": 0.7,
+   "t": 48,
+   "s": 1989.1,
+   "source": "onboard:9Drr1VkE1_U@48.0",
+   "frame": "t048.jpg",
+   "map": "IndyCar segment A (9Drr1VkE1_U)",
+   "scope": "lap",
+   "note": "T4 exit outside"
+  },
+  {
+   "side": "right",
+   "kind": "tower",
+   "attrs": {
+    "type": "scoring pylon"
+   },
+   "confidence": 0.7,
+   "t": 48,
+   "s": 1989.1,
+   "source": "onboard:9Drr1VkE1_U@48.0",
+   "frame": "t048.jpg",
+   "map": "IndyCar segment A (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "yellow kerb"
+   },
+   "confidence": 0.8,
+   "t": 78,
+   "s": 1994.9,
+   "source": "onboard:e25u_vjn1uM@78.0",
+   "frame": "t078_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "T4 exit / T5 approach, outside"
+  },
+  {
+   "side": "left",
+   "kind": "runoff",
+   "attrs": {
+    "type": "sand/gravel, wide"
+   },
+   "confidence": 0.8,
+   "t": 78,
+   "s": 1994.9,
+   "source": "onboard:e25u_vjn1uM@78.0",
+   "frame": "t078_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "T4 exit outside"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 78,
+   "s": 1994.9,
+   "source": "onboard:e25u_vjn1uM@78.0",
+   "frame": "t078_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 78,
+   "s": 1994.9,
+   "source": "onboard:e25u_vjn1uM@78.0",
+   "frame": "t078_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "far"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.8,
+   "t": 68,
+   "s": 2015.2,
+   "source": "onboard:OJaBJz18xEo@68.0",
+   "frame": "t068.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "tower",
+   "attrs": {
+    "type": "scoring pylon"
+   },
+   "confidence": 0.8,
+   "t": 68,
+   "s": 2015.2,
+   "source": "onboard:OJaBJz18xEo@68.0",
+   "frame": "t068.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass and sand"
+   },
+   "confidence": 0.8,
+   "t": 80,
+   "s": 2050.8,
+   "source": "onboard:e25u_vjn1uM@80.0",
+   "frame": "t080_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "boards",
+   "attrs": {
+    "type": "Honda board wall on the fence"
+   },
+   "confidence": 0.8,
+   "t": 80,
+   "s": 2050.8,
+   "source": "onboard:e25u_vjn1uM@80.0",
+   "frame": "t080_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "stand",
+   "attrs": {
+    "type": "spectator hillside"
+   },
+   "confidence": 0.8,
+   "t": 80,
+   "s": 2050.8,
+   "source": "onboard:e25u_vjn1uM@80.0",
+   "frame": "t080_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "T5 kerb, red/white"
+   },
+   "confidence": 0.7,
+   "t": 184,
+   "s": 2069.5,
+   "source": "onboard:9Drr1VkE1_U@184.0",
+   "frame": "t184.jpg",
+   "map": "IndyCar segment C (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "T5 kerb, red/white"
+   },
+   "confidence": 0.7,
+   "t": 50,
+   "s": 2081.9,
+   "source": "onboard:9Drr1VkE1_U@50.0",
+   "frame": "t050.jpg",
+   "map": "IndyCar segment A (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "T5 apex kerb, red/white"
+   },
+   "confidence": 0.8,
+   "t": 82,
+   "s": 2100.5,
+   "source": "onboard:e25u_vjn1uM@82.0",
+   "frame": "t082_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "boards",
+   "attrs": {
+    "type": "Honda boards"
+   },
+   "confidence": 0.8,
+   "t": 82,
+   "s": 2100.5,
+   "source": "onboard:e25u_vjn1uM@82.0",
+   "frame": "t082_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "tower",
+   "attrs": {
+    "type": "scoring pylon"
+   },
+   "confidence": 0.8,
+   "t": 82,
+   "s": 2100.5,
+   "source": "onboard:e25u_vjn1uM@82.0",
+   "frame": "t082_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "tall timing pylon"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "T5 apex kerb, red/white"
+   },
+   "confidence": 0.8,
+   "t": 72,
+   "s": 2105.3,
+   "source": "onboard:OJaBJz18xEo@72.0",
+   "frame": "t072.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "tower",
+   "attrs": {
+    "type": "scoring pylon"
+   },
+   "confidence": 0.8,
+   "t": 72,
+   "s": 2105.3,
+   "source": "onboard:OJaBJz18xEo@72.0",
+   "frame": "t072.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.8,
+   "t": 74,
+   "s": 2146.4,
+   "source": "onboard:OJaBJz18xEo@74.0",
+   "frame": "t074.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.8,
+   "t": 74,
+   "s": 2146.4,
+   "source": "onboard:OJaBJz18xEo@74.0",
+   "frame": "t074.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "station",
+   "attrs": {
+    "type": "marshal post \"5\""
+   },
+   "confidence": 0.8,
+   "t": 84,
+   "s": 2147.1,
+   "source": "onboard:e25u_vjn1uM@84.0",
+   "frame": "t084_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 84,
+   "s": 2147.1,
+   "source": "onboard:e25u_vjn1uM@84.0",
+   "frame": "t084_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "T6 kerb, yellow"
+   },
+   "confidence": 0.8,
+   "t": 84,
+   "s": 2147.1,
+   "source": "onboard:e25u_vjn1uM@84.0",
+   "frame": "t084_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "yellow kerb"
+   },
+   "confidence": 0.8,
+   "t": 76,
+   "s": 2198.3,
+   "source": "onboard:OJaBJz18xEo@76.0",
+   "frame": "t076.jpg",
+   "scope": "lap",
+   "note": "T6 outside"
+  },
+  {
+   "side": "left",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 86,
+   "s": 2207.5,
+   "source": "onboard:e25u_vjn1uM@86.0",
+   "frame": "t086_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 86,
+   "s": 2207.5,
+   "source": "onboard:e25u_vjn1uM@86.0",
+   "frame": "t086_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 86,
+   "s": 2207.5,
+   "source": "onboard:e25u_vjn1uM@86.0",
+   "frame": "t086_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "red/white kerb"
+   },
+   "confidence": 0.7,
+   "t": 188,
+   "s": 2243.2,
+   "source": "onboard:9Drr1VkE1_U@188.0",
+   "frame": "t188.jpg",
+   "map": "IndyCar segment C (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "red/white kerb"
+   },
+   "confidence": 0.7,
+   "t": 54,
+   "s": 2252.4,
+   "source": "onboard:9Drr1VkE1_U@54.0",
+   "frame": "t054.jpg",
+   "map": "IndyCar segment A (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "boards",
+   "attrs": {
+    "type": "Firestone boards"
+   },
+   "confidence": 0.8,
+   "t": 88,
+   "s": 2269.2,
+   "source": "onboard:e25u_vjn1uM@88.0",
+   "frame": "t088_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 88,
+   "s": 2269.2,
+   "source": "onboard:e25u_vjn1uM@88.0",
+   "frame": "t088_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 88,
+   "s": 2269.2,
+   "source": "onboard:e25u_vjn1uM@88.0",
+   "frame": "t088_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "red/white kerb"
+   },
+   "confidence": 0.8,
+   "t": 80,
+   "s": 2295.3,
+   "source": "onboard:OJaBJz18xEo@80.0",
+   "frame": "t080.jpg",
+   "scope": "lap",
+   "note": "T7"
+  },
+  {
+   "side": "left",
+   "kind": "boards",
+   "attrs": {
+    "type": "Honda boards"
+   },
+   "confidence": 0.8,
+   "t": 90,
+   "s": 2313.5,
+   "source": "onboard:e25u_vjn1uM@90.0",
+   "frame": "t090_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence on curved posts",
+    "h_m": 3.5,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.8,
+   "t": 90,
+   "s": 2313.5,
+   "source": "onboard:e25u_vjn1uM@90.0",
+   "frame": "t090_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 90,
+   "s": 2313.5,
+   "source": "onboard:e25u_vjn1uM@90.0",
+   "frame": "t090_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "boards",
+   "attrs": {
+    "type": "Honda boards"
+   },
+   "confidence": 0.8,
+   "t": 92,
+   "s": 2371.3,
+   "source": "onboard:e25u_vjn1uM@92.0",
+   "frame": "t092_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "yellow kerb"
+   },
+   "confidence": 0.8,
+   "t": 92,
+   "s": 2371.3,
+   "source": "onboard:e25u_vjn1uM@92.0",
+   "frame": "t092_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "T8 outside"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 92,
+   "s": 2371.3,
+   "source": "onboard:e25u_vjn1uM@92.0",
+   "frame": "t092_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "yellow kerb"
+   },
+   "confidence": 0.8,
+   "t": 84,
+   "s": 2391.2,
+   "source": "onboard:OJaBJz18xEo@84.0",
+   "frame": "t084.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "yellow kerb"
+   },
+   "confidence": 0.7,
+   "t": 192,
+   "s": 2406.8,
+   "source": "onboard:9Drr1VkE1_U@192.0",
+   "frame": "t192.jpg",
+   "map": "IndyCar segment C (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "yellow kerb"
+   },
+   "confidence": 0.7,
+   "t": 58,
+   "s": 2411.3,
+   "source": "onboard:9Drr1VkE1_U@58.0",
+   "frame": "t058.jpg",
+   "map": "IndyCar segment A (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence on curved posts",
+    "h_m": 3.5,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.8,
+   "t": 94,
+   "s": 2426.8,
+   "source": "onboard:e25u_vjn1uM@94.0",
+   "frame": "t094_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "RV paddock behind"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 94,
+   "s": 2426.8,
+   "source": "onboard:e25u_vjn1uM@94.0",
+   "frame": "t094_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 94,
+   "s": 2426.8,
+   "source": "onboard:e25u_vjn1uM@94.0",
+   "frame": "t094_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence on curved posts",
+    "h_m": 3.5,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.8,
+   "t": 96,
+   "s": 2495.1,
+   "source": "onboard:e25u_vjn1uM@96.0",
+   "frame": "t096_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "RV paddock behind"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 96,
+   "s": 2495.1,
+   "source": "onboard:e25u_vjn1uM@96.0",
+   "frame": "t096_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 96,
+   "s": 2495.1,
+   "source": "onboard:e25u_vjn1uM@96.0",
+   "frame": "t096_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "red/white kerb"
+   },
+   "confidence": 0.8,
+   "t": 88,
+   "s": 2503.6,
+   "source": "onboard:OJaBJz18xEo@88.0",
+   "frame": "t088.jpg",
+   "scope": "lap",
+   "note": "T8"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "red/white kerb"
+   },
+   "confidence": 0.7,
+   "t": 60,
+   "s": 2511.8,
+   "source": "onboard:9Drr1VkE1_U@60.0",
+   "frame": "t060.jpg",
+   "map": "IndyCar segment A (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence on curved posts",
+    "h_m": 3.5,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.8,
+   "t": 98,
+   "s": 2551.0,
+   "source": "onboard:e25u_vjn1uM@98.0",
+   "frame": "t098_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "RV paddock behind"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 98,
+   "s": 2551.0,
+   "source": "onboard:e25u_vjn1uM@98.0",
+   "frame": "t098_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 98,
+   "s": 2551.0,
+   "source": "onboard:e25u_vjn1uM@98.0",
+   "frame": "t098_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "yellow kerb"
+   },
+   "confidence": 0.7,
+   "t": 196,
+   "s": 2603.2,
+   "source": "onboard:9Drr1VkE1_U@196.0",
+   "frame": "t196.jpg",
+   "map": "IndyCar segment C (9Drr1VkE1_U)",
+   "scope": "lap",
+   "note": "T9 exit"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "yellow kerb"
+   },
+   "confidence": 0.8,
+   "t": 92,
+   "s": 2609.5,
+   "source": "onboard:OJaBJz18xEo@92.0",
+   "frame": "t092.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "yellow kerb"
+   },
+   "confidence": 0.8,
+   "t": 100,
+   "s": 2616.0,
+   "source": "onboard:e25u_vjn1uM@100.0",
+   "frame": "t100_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 100,
+   "s": 2616.0,
+   "source": "onboard:e25u_vjn1uM@100.0",
+   "frame": "t100_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "red/white kerb"
+   },
+   "confidence": 0.8,
+   "t": 94,
+   "s": 2652.9,
+   "source": "onboard:OJaBJz18xEo@94.0",
+   "frame": "t094.jpg",
+   "scope": "lap",
+   "note": "T9"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "T9 apex kerb, red/white"
+   },
+   "confidence": 0.8,
+   "t": 102,
+   "s": 2664.5,
+   "source": "onboard:e25u_vjn1uM@102.0",
+   "frame": "t102_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 102,
+   "s": 2664.5,
+   "source": "onboard:e25u_vjn1uM@102.0",
+   "frame": "t102_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete wall",
+    "colour": "white"
+   },
+   "confidence": 0.7,
+   "t": 64,
+   "s": 2682.6,
+   "source": "onboard:9Drr1VkE1_U@64.0",
+   "frame": "t064.jpg",
+   "map": "IndyCar segment A (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete wall",
+    "colour": "white"
+   },
+   "confidence": 0.8,
+   "t": 96,
+   "s": 2694.2,
+   "source": "onboard:OJaBJz18xEo@96.0",
+   "frame": "t096.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "T9 exit kerb, yellow and red"
+   },
+   "confidence": 0.8,
+   "t": 104,
+   "s": 2721.5,
+   "source": "onboard:e25u_vjn1uM@104.0",
+   "frame": "t104_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete wall",
+    "colour": "white",
+    "h_m": 0.8,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 104,
+   "s": 2721.5,
+   "source": "onboard:e25u_vjn1uM@104.0",
+   "frame": "t104_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "white wall beyond the grass"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 104,
+   "s": 2721.5,
+   "source": "onboard:e25u_vjn1uM@104.0",
+   "frame": "t104_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 104,
+   "s": 2721.5,
+   "source": "onboard:e25u_vjn1uM@104.0",
+   "frame": "t104_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "T9 exit kerb, yellow and red"
+   },
+   "confidence": 0.8,
+   "t": 98,
+   "s": 2745.5,
+   "source": "onboard:OJaBJz18xEo@98.0",
+   "frame": "t098.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete wall",
+    "colour": "white"
+   },
+   "confidence": 0.8,
+   "t": 98,
+   "s": 2745.5,
+   "source": "onboard:OJaBJz18xEo@98.0",
+   "frame": "t098.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "ahead",
+   "kind": "bridge",
+   "attrs": {
+    "type": "PERMCO footbridge"
+   },
+   "confidence": 0.7,
+   "t": 66,
+   "s": 2784.8,
+   "source": "onboard:9Drr1VkE1_U@66.0",
+   "frame": "t066.jpg",
+   "map": "IndyCar segment A (9Drr1VkE1_U)",
+   "scope": "lap",
+   "note": "passed at 66.8"
+  },
+  {
+   "side": "ahead",
+   "kind": "bridge",
+   "attrs": {
+    "type": "PERMCO footbridge"
+   },
+   "confidence": 0.7,
+   "t": 200,
+   "s": 2789.9,
+   "source": "onboard:9Drr1VkE1_U@200.0",
+   "frame": "t200.jpg",
+   "map": "IndyCar segment C (9Drr1VkE1_U)",
+   "scope": "lap"
+  },
+  {
+   "side": "ahead",
+   "kind": "bridge",
+   "attrs": {
+    "type": "PERMCO \"Pumps and Motors\" footbridge, blue banner"
+   },
+   "confidence": 0.8,
+   "t": 106,
+   "s": 2793.9,
+   "source": "onboard:e25u_vjn1uM@106.0",
+   "frame": "t106_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "overhead at 1:47.0"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete wall",
+    "colour": "white"
+   },
+   "confidence": 0.8,
+   "t": 106,
+   "s": 2793.9,
+   "source": "onboard:e25u_vjn1uM@106.0",
+   "frame": "t106_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 106,
+   "s": 2793.9,
+   "source": "onboard:e25u_vjn1uM@106.0",
+   "frame": "t106_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "ahead",
+   "kind": "bridge",
+   "attrs": {
+    "type": "PERMCO footbridge"
+   },
+   "confidence": 0.8,
+   "t": 100,
+   "s": 2806.6,
+   "source": "onboard:OJaBJz18xEo@100.0",
+   "frame": "t100.jpg",
+   "scope": "lap",
+   "note": "ahead"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.8,
+   "t": 102,
+   "s": 2870.0,
+   "source": "onboard:OJaBJz18xEo@102.0",
+   "frame": "t102.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.8,
+   "t": 102,
+   "s": 2870.0,
+   "source": "onboard:OJaBJz18xEo@102.0",
+   "frame": "t102.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "boards",
+   "attrs": {
+    "type": "Velo banners on the bridge"
+   },
+   "confidence": 0.8,
+   "t": 108,
+   "s": 2879.6,
+   "source": "onboard:e25u_vjn1uM@108.0",
+   "frame": "t108_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence on curved posts",
+    "h_m": 3.5,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.8,
+   "t": 108,
+   "s": 2879.6,
+   "source": "onboard:e25u_vjn1uM@108.0",
+   "frame": "t108_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 108,
+   "s": 2879.6,
+   "source": "onboard:e25u_vjn1uM@108.0",
+   "frame": "t108_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence on curved posts",
+    "h_m": 3.5,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.8,
+   "t": 108,
+   "s": 2879.6,
+   "source": "onboard:e25u_vjn1uM@108.0",
+   "frame": "t108_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 108,
+   "s": 2879.6,
+   "source": "onboard:e25u_vjn1uM@108.0",
+   "frame": "t108_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence"
+   },
+   "confidence": 0.8,
+   "t": 104,
+   "s": 2932.3,
+   "source": "onboard:OJaBJz18xEo@104.0",
+   "frame": "t104.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.8,
+   "t": 104,
+   "s": 2932.3,
+   "source": "onboard:OJaBJz18xEo@104.0",
+   "frame": "t104.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 110,
+   "s": 2967.9,
+   "source": "onboard:e25u_vjn1uM@110.0",
+   "frame": "t110_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence on curved posts",
+    "h_m": 3.5,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.8,
+   "t": 110,
+   "s": 2967.9,
+   "source": "onboard:e25u_vjn1uM@110.0",
+   "frame": "t110_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 110,
+   "s": 2967.9,
+   "source": "onboard:e25u_vjn1uM@110.0",
+   "frame": "t110_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.8,
+   "t": 106,
+   "s": 3000.2,
+   "source": "onboard:OJaBJz18xEo@106.0",
+   "frame": "t106.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence"
+   },
+   "confidence": 0.8,
+   "t": 106,
+   "s": 3000.2,
+   "source": "onboard:OJaBJz18xEo@106.0",
+   "frame": "t106.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 112,
+   "s": 3052.6,
+   "source": "onboard:e25u_vjn1uM@112.0",
+   "frame": "t112_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence on curved posts",
+    "h_m": 3.5,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.8,
+   "t": 112,
+   "s": 3052.6,
+   "source": "onboard:e25u_vjn1uM@112.0",
+   "frame": "t112_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "sign",
+   "attrs": {
+    "type": "brake board \"100\""
+   },
+   "confidence": 0.8,
+   "t": 112,
+   "s": 3052.6,
+   "source": "onboard:e25u_vjn1uM@112.0",
+   "frame": "t112_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 112,
+   "s": 3052.6,
+   "source": "onboard:e25u_vjn1uM@112.0",
+   "frame": "t112_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco",
+    "colour": "red"
+   },
+   "confidence": 0.8,
+   "t": 108,
+   "s": 3060.9,
+   "source": "onboard:OJaBJz18xEo@108.0",
+   "frame": "t108.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "red/white kerb"
+   },
+   "confidence": 0.8,
+   "t": 110,
+   "s": 3103.0,
+   "source": "onboard:OJaBJz18xEo@110.0",
+   "frame": "t110.jpg",
+   "scope": "lap",
+   "note": "T11"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "red/white kerb"
+   },
+   "confidence": 0.8,
+   "t": 114,
+   "s": 3108.7,
+   "source": "onboard:e25u_vjn1uM@114.0",
+   "frame": "t114_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "T11"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "sand/gravel"
+   },
+   "confidence": 0.8,
+   "t": 114,
+   "s": 3108.7,
+   "source": "onboard:e25u_vjn1uM@114.0",
+   "frame": "t114_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "yellow kerb"
+   },
+   "confidence": 0.8,
+   "t": 112,
+   "s": 3149.3,
+   "source": "onboard:OJaBJz18xEo@112.0",
+   "frame": "t112.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "yellow kerb"
+   },
+   "confidence": 0.8,
+   "t": 116,
+   "s": 3171.9,
+   "source": "onboard:e25u_vjn1uM@116.0",
+   "frame": "t116_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "sand/gravel"
+   },
+   "confidence": 0.8,
+   "t": 116,
+   "s": 3171.9,
+   "source": "onboard:e25u_vjn1uM@116.0",
+   "frame": "t116_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "yellow kerb"
+   },
+   "confidence": 0.8,
+   "t": 114,
+   "s": 3204.0,
+   "source": "onboard:OJaBJz18xEo@114.0",
+   "frame": "t114.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 118,
+   "s": 3246.8,
+   "source": "onboard:e25u_vjn1uM@118.0",
+   "frame": "t118_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 118,
+   "s": 3246.8,
+   "source": "onboard:e25u_vjn1uM@118.0",
+   "frame": "t118_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence on curved posts",
+    "h_m": 3.5,
+    "h_method": "fence-post-ref"
+   },
+   "confidence": 0.8,
+   "t": 120,
+   "s": 3302.1,
+   "source": "onboard:e25u_vjn1uM@120.0",
+   "frame": "t120_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "armco (stacked W-beam)",
+    "colour": "red",
+    "h_m": 1.0,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 120,
+   "s": 3302.1,
+   "source": "onboard:e25u_vjn1uM@120.0",
+   "frame": "t120_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 120,
+   "s": 3302.1,
+   "source": "onboard:e25u_vjn1uM@120.0",
+   "frame": "t120_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "Carousel kerb, red/white"
+   },
+   "confidence": 0.8,
+   "t": 120,
+   "s": 3340.7,
+   "source": "onboard:OJaBJz18xEo@120.0",
+   "frame": "t120.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "Carousel kerb, red/white"
+   },
+   "confidence": 0.8,
+   "t": 122,
+   "s": 3351.3,
+   "source": "onboard:e25u_vjn1uM@122.0",
+   "frame": "t122_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "T12"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "red/white kerb"
+   },
+   "confidence": 0.8,
+   "t": 122,
+   "s": 3378.2,
+   "source": "onboard:OJaBJz18xEo@122.0",
+   "frame": "t122.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 124,
+   "s": 3394.9,
+   "source": "onboard:e25u_vjn1uM@124.0",
+   "frame": "t124_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "red/white kerb"
+   },
+   "confidence": 0.8,
+   "t": 124,
+   "s": 3394.9,
+   "source": "onboard:e25u_vjn1uM@124.0",
+   "frame": "t124_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "building",
+   "attrs": {
+    "type": "starter tower"
+   },
+   "confidence": 0.8,
+   "t": 124,
+   "s": 3425.8,
+   "source": "onboard:OJaBJz18xEo@124.0",
+   "frame": "t124.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete wall",
+    "colour": "white"
+   },
+   "confidence": 0.8,
+   "t": 0,
+   "s": 3446.9,
+   "source": "onboard:OJaBJz18xEo@0.0",
+   "frame": "t000.jpg",
+   "scope": "lap",
+   "note": "T13 exit: pit-lane side wall"
+  },
+  {
+   "side": "left",
+   "kind": "boards",
+   "attrs": {
+    "type": "Honda board wall"
+   },
+   "confidence": 0.8,
+   "t": 126,
+   "s": 3447.6,
+   "source": "onboard:e25u_vjn1uM@126.0",
+   "frame": "t126_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "T13 kerb, red/white"
+   },
+   "confidence": 0.8,
+   "t": 126,
+   "s": 3447.6,
+   "source": "onboard:e25u_vjn1uM@126.0",
+   "frame": "t126_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "left, ahead"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "grass"
+   },
+   "confidence": 0.8,
+   "t": 126,
+   "s": 3447.6,
+   "source": "onboard:e25u_vjn1uM@126.0",
+   "frame": "t126_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "T13 kerb"
+   },
+   "confidence": 0.8,
+   "t": 126,
+   "s": 3473.6,
+   "source": "onboard:OJaBJz18xEo@126.0",
+   "frame": "t126.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "building",
+   "attrs": {
+    "type": "starter tower"
+   },
+   "confidence": 0.8,
+   "t": 2,
+   "s": 3495.9,
+   "source": "onboard:OJaBJz18xEo@2.0",
+   "frame": "t002.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "pit wall",
+    "colour": "white"
+   },
+   "confidence": 0.8,
+   "t": 2,
+   "s": 3495.9,
+   "source": "onboard:OJaBJz18xEo@2.0",
+   "frame": "t002.jpg",
+   "scope": "lap",
+   "note": "pit wall begins"
+  },
+  {
+   "side": "left",
+   "kind": "building",
+   "attrs": {
+    "type": "starter tower"
+   },
+   "confidence": 0.8,
+   "t": 128,
+   "s": 3496.1,
+   "source": "onboard:e25u_vjn1uM@128.0",
+   "frame": "t128_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "sign",
+   "attrs": {
+    "type": "\"RESTART\" board on the pit wall"
+   },
+   "confidence": 0.8,
+   "t": 128,
+   "s": 3496.1,
+   "source": "onboard:e25u_vjn1uM@128.0",
+   "frame": "t128_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete pit wall",
+    "colour": "white",
+    "h_m": 0.7,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 128,
+   "s": 3496.1,
+   "source": "onboard:e25u_vjn1uM@128.0",
+   "frame": "t128_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "pit wall starts (\"RESTART\" board)"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "sand"
+   },
+   "confidence": 0.8,
+   "t": 128,
+   "s": 3496.1,
+   "source": "onboard:e25u_vjn1uM@128.0",
+   "frame": "t128_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "yellow kerb"
+   },
+   "confidence": 0.8,
+   "t": 128,
+   "s": 3530.9,
+   "source": "onboard:OJaBJz18xEo@128.0",
+   "frame": "t128.jpg",
+   "scope": "lap",
+   "note": "pit straight right"
+  },
+  {
+   "side": "right",
+   "kind": "stand",
+   "attrs": {
+    "type": "covered grandstand"
+   },
+   "confidence": 0.8,
+   "t": 128,
+   "s": 3530.9,
+   "source": "onboard:OJaBJz18xEo@128.0",
+   "frame": "t128.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "building",
+   "attrs": {
+    "type": "starter tower, 4 storeys",
+    "h_m": 13,
+    "h_method": "storeys"
+   },
+   "confidence": 0.8,
+   "t": 130,
+   "s": 3557.7,
+   "source": "onboard:e25u_vjn1uM@130.0",
+   "frame": "t130_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete pit wall",
+    "colour": "white",
+    "h_m": 0.7,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.8,
+   "t": 130,
+   "s": 3557.7,
+   "source": "onboard:e25u_vjn1uM@130.0",
+   "frame": "t130_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "boards",
+   "attrs": {
+    "type": "Honda boards"
+   },
+   "confidence": 0.8,
+   "t": 130,
+   "s": 3557.7,
+   "source": "onboard:e25u_vjn1uM@130.0",
+   "frame": "t130_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "yellow kerb"
+   },
+   "confidence": 0.8,
+   "t": 130,
+   "s": 3557.7,
+   "source": "onboard:e25u_vjn1uM@130.0",
+   "frame": "t130_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "note": "pit straight right"
+  },
+  {
+   "side": "right",
+   "kind": "runoff",
+   "attrs": {
+    "type": "sand/gravel"
+   },
+   "confidence": 0.8,
+   "t": 130,
+   "s": 3557.7,
+   "source": "onboard:e25u_vjn1uM@130.0",
+   "frame": "t130_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "stand",
+   "attrs": {
+    "type": "covered grandstand"
+   },
+   "confidence": 0.8,
+   "t": 130,
+   "s": 3557.7,
+   "source": "onboard:e25u_vjn1uM@130.0",
+   "frame": "t130_left.jpg",
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "yellow kerb"
+   },
+   "confidence": 0.8,
+   "t": 4,
+   "s": 3559.2,
+   "source": "onboard:OJaBJz18xEo@4.0",
+   "frame": "t004.jpg",
+   "scope": "lap",
+   "note": "pit straight right edge"
+  },
+  {
+   "side": "right",
+   "kind": "stand",
+   "attrs": {
+    "type": "covered grandstand, red roof"
+   },
+   "confidence": 0.8,
+   "t": 4,
+   "s": 3559.2,
+   "source": "onboard:OJaBJz18xEo@4.0",
+   "frame": "t004.jpg",
+   "scope": "lap"
+  },
+  {
+   "side": "left",
+   "kind": "stand",
+   "attrs": {
+    "type": "Honda overhead starter gantry spanning the pit wall"
+   },
+   "confidence": 0.7,
+   "t": null,
+   "s": 0.0,
+   "source": "onboard:e25u_vjn1uM@24",
+   "frame": "t024_left.jpg",
+   "scope": "pit",
+   "note": "S/F; the N837 frame t130 shows a PERMCO banner on the same gantry (2026)"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete pit wall",
+    "colour": "white",
+    "h_m": 0.7,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.7,
+   "t": null,
+   "s": 0.0,
+   "source": "onboard:e25u_vjn1uM@24",
+   "frame": "t024_left.jpg",
+   "scope": "pit",
+   "note": "\"NTT INDYCAR SERIES\" lettering (2025 event dress)"
+  },
+  {
+   "side": "left",
+   "kind": "building",
+   "attrs": {
+    "type": "pit garages, single storey, red roofs",
+    "h_m": 4,
+    "h_method": "storeys"
+   },
+   "confidence": 0.7,
+   "t": null,
+   "s": 72.0,
+   "source": "onboard:e25u_vjn1uM@26",
+   "frame": "t026_left.jpg",
+   "scope": "pit"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete pit wall",
+    "colour": "white",
+    "h_m": 0.7,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.7,
+   "t": null,
+   "s": 72.0,
+   "source": "onboard:e25u_vjn1uM@26",
+   "frame": "t026_left.jpg",
+   "scope": "pit",
+   "note": "pit garages / hospitality buildings with red roofs behind the lane"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete pit wall",
+    "colour": "white",
+    "h_m": 0.7,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.7,
+   "t": null,
+   "s": 154.4,
+   "source": "onboard:e25u_vjn1uM@28",
+   "frame": "t028_left.jpg",
+   "scope": "pit",
+   "note": "VELO banners on the wall toward the bridge"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "pit wall ends at the footbridge abutment",
+    "colour": "white"
+   },
+   "confidence": 0.7,
+   "t": null,
+   "s": 216.2,
+   "source": "onboard:e25u_vjn1uM@29.5",
+   "frame": "t029_left.jpg",
+   "scope": "pit",
+   "note": "the pit-exit lane runs on beside the track under the bridge"
+  },
+  {
+   "side": "both",
+   "kind": "bridge",
+   "attrs": {
+    "type": "Firestone footbridge over track and pit exit, concrete abutments"
+   },
+   "confidence": 0.7,
+   "t": null,
+   "s": 233.2,
+   "source": "onboard:e25u_vjn1uM@30",
+   "frame": "t030_left.jpg",
+   "scope": "pit"
+  },
+  {
+   "side": "left",
+   "kind": "paint",
+   "attrs": {
+    "type": "white hatched pit-exit blend lines, asphalt of the track tone"
+   },
+   "confidence": 0.7,
+   "t": null,
+   "s": 294.7,
+   "source": "onboard:e25u_vjn1uM@32",
+   "frame": "t032_left.jpg",
+   "scope": "pit",
+   "note": "pit-exit merge at T1 (also N837 t14, 2026)"
+  },
+  {
+   "side": "left",
+   "kind": "kerb",
+   "attrs": {
+    "type": "raised red/white T1 inside kerb separating the pit exit"
+   },
+   "confidence": 0.7,
+   "t": null,
+   "s": 310.9,
+   "source": "onboard:e25u_vjn1uM@32.5",
+   "frame": "t032_left.jpg",
+   "scope": "pit",
+   "note": "config features left 285-360"
+  },
+  {
+   "side": "left",
+   "kind": "sign",
+   "attrs": {
+    "type": "\"RESTART\" board on the pit wall nose"
+   },
+   "confidence": 0.7,
+   "t": null,
+   "s": 3496.1,
+   "source": "onboard:e25u_vjn1uM@128",
+   "frame": "t128_left.jpg",
+   "scope": "pit",
+   "note": "pit wall seen from the track: start of the white wall at the T13 exit"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete pit wall",
+    "colour": "white",
+    "h_m": 0.7,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.7,
+   "t": null,
+   "s": 3496.1,
+   "source": "onboard:e25u_vjn1uM@128",
+   "frame": "t128_left.jpg",
+   "scope": "pit",
+   "note": "pit wall begins (between the track and the pit lane); 360 view k256"
+  },
+  {
+   "side": "left",
+   "kind": "wall",
+   "attrs": {
+    "type": "concrete pit wall",
+    "colour": "white",
+    "h_m": 0.7,
+    "h_method": "horizon-ratio"
+   },
+   "confidence": 0.7,
+   "t": null,
+   "s": 3557.7,
+   "source": "onboard:e25u_vjn1uM@130",
+   "frame": "t130_left.jpg",
+   "scope": "pit",
+   "note": "pit wall, starter tower behind the lane"
+  },
+  {
+   "side": "left",
+   "kind": "building",
+   "attrs": {
+    "type": "starter tower, 4 storeys, red roof",
+    "h_m": 13,
+    "h_method": "storeys"
+   },
+   "confidence": 0.7,
+   "t": null,
+   "s": 3593.7,
+   "source": "onboard:e25u_vjn1uM@131",
+   "frame": "t131_left.jpg",
+   "scope": "pit",
+   "note": "behind the pit lane at the line"
+  }
+ ],
+ "counts": {
+  "wall": 109,
+  "kerb": 73,
+  "runoff": 65,
+  "fence": 38,
+  "boards": 24,
+  "stand": 13,
+  "bridge": 11,
+  "building": 9,
+  "sign": 9,
+  "paint": 7,
+  "station": 5,
+  "tower": 4,
+  "cone_line": 1
+ },
+ "unmeasured_heights": 0,
+ "extra_maps": [
+  {
+   "name": "360 lap (e25u_vjn1uM)",
+   "video": {
+    "id": "e25u_vjn1uM",
+    "url": "https://youtu.be/e25u_vjn1uM",
+    "title": "360 Ridealong Through the Heartland at Mid-Ohio Sports Car Course | INDYCAR",
+    "channel": "NTT INDYCAR SERIES",
+    "date": "2025-07-04 (uploaded 2025-07-05)",
+    "camera": "360 deg camera on the roof of the Honda pace car; equirectangular 3840x2048 (YouTube format 313), read with inventory/equirect.py: four 100 deg views every 2 s, three views every 0.5 s",
+    "licence": "Standard YouTube licence (reference only); downloaded under tools/track/cache (ignored), never executed"
+   },
+   "interp": "profile",
+   "anchors": [
+    {
+     "name": "S/F",
+     "t": 24.0,
+     "s": 0.0
+    },
+    {
+     "name": "footbridge",
+     "t": 30.0,
+     "s": 233.2
+    },
+    {
+     "name": "T2",
+     "t": 50.0,
+     "s": 957.7
+    },
+    {
+     "name": "T4",
+     "t": 76.5,
+     "s": 1961.4
+    },
+    {
+     "name": "T5",
+     "t": 82.0,
+     "s": 2100.5
+    },
+    {
+     "name": "PERMCO bridge",
+     "t": 107.0,
+     "s": 2836.0
+    },
+    {
+     "name": "T12",
+     "t": 122.0,
+     "s": 3351.3
+    },
+    {
+     "name": "S/F lap 2",
+     "t": 131.1,
+     "s": 3597.491335
+    }
+   ],
+   "anchor_residuals": [
+    {
+     "name": "footbridge",
+     "t": 30.0,
+     "s": 233.2,
+     "loo_pred_s": 250.1,
+     "loo_residual_m": -16.9,
+     "loo_residual_linear_m": 12.2,
+     "v_in": 38.9,
+     "v_out": 36.2
+    },
+    {
+     "name": "T2",
+     "t": 50.0,
+     "s": 957.7,
+     "loo_pred_s": 937.3,
+     "loo_residual_m": 20.4,
+     "loo_residual_linear_m": -18.8,
+     "v_in": 36.2,
+     "v_out": 37.9
+    },
+    {
+     "name": "T4",
+     "t": 76.5,
+     "s": 1961.4,
+     "loo_pred_s": 1968.4,
+     "loo_residual_m": -7.0,
+     "loo_residual_linear_m": 57.3,
+     "v_in": 37.9,
+     "v_out": 25.3
+    },
+    {
+     "name": "T5",
+     "t": 82.0,
+     "s": 2100.5,
+     "loo_pred_s": 2108.7,
+     "loo_residual_m": -8.2,
+     "loo_residual_linear_m": -18.6,
+     "v_in": 25.3,
+     "v_out": 29.4
+    },
+    {
+     "name": "PERMCO bridge",
+     "t": 107.0,
+     "s": 2836.0,
+     "loo_pred_s": 2816.4,
+     "loo_residual_m": 19.6,
+     "loo_residual_linear_m": -46.2,
+     "v_in": 29.4,
+     "v_out": 34.4
+    },
+    {
+     "name": "T12",
+     "t": 122.0,
+     "s": 3351.3,
+     "loo_pred_s": 3349.8,
+     "loo_residual_m": 1.5,
+     "loo_residual_linear_m": 41.3,
+     "v_in": 34.4,
+     "v_out": 27.1
+    }
+   ],
+   "rows": 190,
+   "covers_s": [
+    0.0,
+    0.0
+   ],
+   "covers_t": [
+    24.0,
+    131.1
+   ]
+  },
+  {
+   "name": "IndyCar segment A (9Drr1VkE1_U)",
+   "video": {
+    "id": "9Drr1VkE1_U",
+    "url": "https://www.youtube.com/watch?v=9Drr1VkE1_U",
+    "title": "Onboard Highlights | Mid Ohio 2026 | Practice 1 | Andretti",
+    "channel": "Andretti",
+    "date": "2026-07-03",
+    "camera": "IndyCar roll-hoop camera",
+    "licence": "Standard YouTube licence (reference only)"
+   },
+   "interp": "profile",
+   "anchors": [
+    {
+     "name": "S/F",
+     "t": 15.8,
+     "s": 0.0
+    },
+    {
+     "name": "footbridge",
+     "t": 19.2,
+     "s": 233.2
+    },
+    {
+     "name": "T2",
+     "t": 31.5,
+     "s": 957.7
+    },
+    {
+     "name": "T4",
+     "t": 47.25,
+     "s": 1961.4
+    },
+    {
+     "name": "PERMCO bridge",
+     "t": 66.8,
+     "s": 2836.0
+    }
+   ],
+   "anchor_residuals": [
+    {
+     "name": "footbridge",
+     "t": 19.2,
+     "s": 233.2,
+     "loo_pred_s": 238.2,
+     "loo_residual_m": -5.0,
+     "loo_residual_linear_m": 25.8,
+     "v_in": 68.6,
+     "v_out": 58.9
+    },
+    {
+     "name": "T2",
+     "t": 31.5,
+     "s": 957.7,
+     "loo_pred_s": 945.6,
+     "loo_residual_m": 12.1,
+     "loo_residual_linear_m": -33.3,
+     "v_in": 58.9,
+     "v_out": 63.7
+    },
+    {
+     "name": "T4",
+     "t": 47.25,
+     "s": 1961.4,
+     "loo_pred_s": 1983.8,
+     "loo_residual_m": -22.4,
+     "loo_residual_linear_m": 165.6,
+     "v_in": 63.7,
+     "v_out": 44.7
+    }
+   ],
+   "rows": 24,
+   "covers_s": [
+    0.0,
+    2836.0
+   ],
+   "covers_t": [
+    15.8,
+    66.8
+   ]
+  },
+  {
+   "name": "IndyCar segment B (9Drr1VkE1_U)",
+   "video": {
+    "id": "9Drr1VkE1_U",
+    "url": "https://www.youtube.com/watch?v=9Drr1VkE1_U",
+    "title": "Onboard Highlights | Mid Ohio 2026 | Practice 1 | Andretti",
+    "channel": "Andretti",
+    "date": "2026-07-03",
+    "camera": "IndyCar roll-hoop camera",
+    "licence": "Standard YouTube licence (reference only)"
+   },
+   "interp": "profile",
+   "anchors": [
+    {
+     "name": "S/F",
+     "t": 84.6,
+     "s": 0.0
+    },
+    {
+     "name": "footbridge",
+     "t": 88.0,
+     "s": 233.2
+    },
+    {
+     "name": "T2",
+     "t": 99.75,
+     "s": 957.7
+    },
+    {
+     "name": "T4",
+     "t": 116.2,
+     "s": 1961.4
+    }
+   ],
+   "anchor_residuals": [
+    {
+     "name": "footbridge",
+     "t": 88.0,
+     "s": 233.2,
+     "loo_pred_s": 244.9,
+     "loo_residual_m": -11.7,
+     "loo_residual_linear_m": 18.3,
+     "v_in": 68.6,
+     "v_out": 61.7
+    },
+    {
+     "name": "T2",
+     "t": 99.75,
+     "s": 957.7,
+     "loo_pred_s": 923.4,
+     "loo_residual_m": 34.3,
+     "loo_residual_linear_m": 4.4,
+     "v_in": 61.7,
+     "v_out": 61.0
+    }
+   ],
+   "rows": 17,
+   "covers_s": [
+    0.0,
+    1961.4
+   ],
+   "covers_t": [
+    84.6,
+    116.2
+   ]
+  },
+  {
+   "name": "IndyCar segment C (9Drr1VkE1_U)",
+   "video": {
+    "id": "9Drr1VkE1_U",
+    "url": "https://www.youtube.com/watch?v=9Drr1VkE1_U",
+    "title": "Onboard Highlights | Mid Ohio 2026 | Practice 1 | Andretti",
+    "channel": "Andretti",
+    "date": "2026-07-03",
+    "camera": "IndyCar roll-hoop camera",
+    "licence": "Standard YouTube licence (reference only)"
+   },
+   "interp": "profile",
+   "anchors": [
+    {
+     "name": "S/F",
+     "t": 149.1,
+     "s": 0.0
+    },
+    {
+     "name": "footbridge",
+     "t": 152.9,
+     "s": 233.2
+    },
+    {
+     "name": "T2",
+     "t": 164.75,
+     "s": 957.7
+    },
+    {
+     "name": "T4",
+     "t": 181.6,
+     "s": 1961.4
+    },
+    {
+     "name": "PERMCO bridge",
+     "t": 200.7,
+     "s": 2836.0
+    }
+   ],
+   "anchor_residuals": [
+    {
+     "name": "footbridge",
+     "t": 152.9,
+     "s": 233.2,
+     "loo_pred_s": 259.3,
+     "loo_residual_m": -26.1,
+     "loo_residual_linear_m": 0.7,
+     "v_in": 61.4,
+     "v_out": 61.1
+    },
+    {
+     "name": "T2",
+     "t": 164.75,
+     "s": 957.7,
+     "loo_pred_s": 919.5,
+     "loo_residual_m": 38.2,
+     "loo_residual_linear_m": 10.9,
+     "v_in": 61.1,
+     "v_out": 59.6
+    },
+    {
+     "name": "T4",
+     "t": 181.6,
+     "s": 1961.4,
+     "loo_pred_s": 2016.5,
+     "loo_residual_m": -55.1,
+     "loo_residual_linear_m": 123.3,
+     "v_in": 59.6,
+     "v_out": 45.8
+    }
+   ],
+   "rows": 19,
+   "covers_s": [
+    0.0,
+    2836.0
+   ],
+   "covers_t": [
+    149.1,
+    200.7
+   ]
+  }
+ ]
+}

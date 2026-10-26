@@ -1,0 +1,352 @@
+{
+ "video": {
+  "id": "OJaBJz18xEo",
+  "url": "https://www.youtube.com/watch?v=OJaBJz18xEo",
+  "title": "NickD Fastest lap at 24 hours of Lemons - Mid Ohio 2026",
+  "channel": "N837 Motorsport",
+  "date": "2026-04-15 (Lemons Mid-West Crisis, 11-12 Apr 2026)",
+  "camera": "hood / windscreen camera with a Garmin Catalyst overlay (speed, lap time, GPS minimap)",
+  "licence": "Standard YouTube licence (reference only)",
+  "lap_s": 124.84,
+  "stepped": "every 1.0 s from 0:00 to 2:15 (136 frames, headless_capture.ts; t061 stale twice, left out); rows every 2 s"
+ },
+ "frames": "frames_n837",
+ "frame_pattern": "t{t:03d}.jpg",
+ "interp": "profile",
+ "anchors": [
+  {
+   "name": "S/F",
+   "t": 5.03,
+   "how": "Catalyst lap-time readout: at media t 5.973 the new lap reads 0:00.94 (t - lap time = 5.03); the completed lap reads 2:04.84 at 129.87 (consistent to 0.01 s); Catalyst's own timing line, the overlay's PERMCO S/F gantry passes at t130",
+   "sf": "start"
+  },
+  {
+   "name": "footbridge",
+   "t": 12.26,
+   "how": "T1 footbridge (Firestone) overhead between the t012 and t013 frames; Catalyst GPS dot 226 m at t12, 253 m at t13 (catalyst_dots.py, r4/dots_n837.json) -> s 233.2 at 12.26",
+   "s": 233.2
+  },
+  {
+   "name": "T1",
+   "t": 16.7,
+   "how": "T1 apex kerb (left) alongside in t016-t017; GPS dot 334 m at t16, 367 m at t17",
+   "corner": "T1"
+  },
+  {
+   "name": "T2",
+   "t": 36.84,
+   "how": "Keyhole kerb (right) alongside t034-t040; GPS dot 941 m at t36, 961 m at t37 (the package corner 957.7)",
+   "corner": "T2"
+  },
+  {
+   "name": "T3",
+   "t": 52.13,
+   "how": "GPS dot 1439 m at t52, 1485 m at t53 (the T3 kink has no sharper landmark)",
+   "corner": "T3"
+  },
+  {
+   "name": "T5",
+   "t": 71.75,
+   "how": "T5 apex kerb (left) ahead at t072; GPS dot 2084 / 2106 at t71 / t72",
+   "corner": "T5"
+  },
+  {
+   "name": "T7",
+   "t": 83.8,
+   "how": "T7 apex; GPS dot 2362 / 2393 at t83 / t84",
+   "corner": "T7"
+  },
+  {
+   "name": "T9",
+   "t": 93.43,
+   "how": "T9; GPS dot 2635 / 2653 at t93 / t94",
+   "corner": "T9"
+  },
+  {
+   "name": "PERMCO bridge",
+   "t": 100.86,
+   "how": "footway bridge (OSM 444205419, PERMCO 'Pumps and Motors' banner) ahead at t100, overhead between t100 and t101; GPS dot 2811 / 2840",
+   "s": 2836.0
+  },
+  {
+   "name": "T10",
+   "t": 103.96,
+   "how": "T10 (Thunder Valley); GPS dot 2904 / 2932 at t103 / t104",
+   "corner": "T10"
+  },
+  {
+   "name": "T12",
+   "t": 120.65,
+   "how": "Carousel apex kerb (right) alongside t120-t122; GPS dot 3338 / 3358",
+   "corner": "T12"
+  },
+  {
+   "name": "T13",
+   "t": 125.19,
+   "how": "T13 apex kerb (left); GPS dot 3421 / 3449 at t124 / t125 (t126 stale)",
+   "corner": "T13"
+  },
+  {
+   "name": "S/F lap 2",
+   "t": 129.87,
+   "how": "lap-time readout 0:00.13 at media t 129.997",
+   "sf": "end"
+  }
+ ],
+ "corrections": [
+  {
+   "what": "T4 not an anchor for this video",
+   "why": "t061 stale (no presented frame, twice) and t062-t065 carry a player overlay; the GPS dot at t65/t66 (1961 / 1968 m) implies 7 m/s, inconsistent with 25 m/s either side"
+  },
+  {
+   "what": "T1 dropped as an anchor of the 360 lap and the three IndyCar segments",
+   "why": "the T1 inside kerb runs s 285-360 (config features); 'kerb alongside' on a 360 roof camera or a roll-hoop camera is not the package's curvature peak (357.2): it implied 45 m/s (360), 80 m/s (A) and 95 m/s (C) from the footbridge to T1; the N837 T1 anchor comes from its GPS dot and is kept"
+  }
+ ],
+ "observations": [
+  "observations.jsonl",
+  "pit.jsonl"
+ ],
+ "extra_maps": [
+  {
+   "name": "360 lap (e25u_vjn1uM)",
+   "video": {
+    "id": "e25u_vjn1uM",
+    "url": "https://youtu.be/e25u_vjn1uM",
+    "title": "360 Ridealong Through the Heartland at Mid-Ohio Sports Car Course | INDYCAR",
+    "channel": "NTT INDYCAR SERIES",
+    "date": "2025-07-04 (uploaded 2025-07-05)",
+    "camera": "360 deg camera on the roof of the Honda pace car; equirectangular 3840x2048 (YouTube format 313), read with inventory/equirect.py: four 100 deg views every 2 s, three views every 0.5 s",
+    "licence": "Standard YouTube licence (reference only); downloaded under tools/track/cache (ignored), never executed"
+   },
+   "frames": "frames_360",
+   "frame_pattern": "t{t:03d}_left.jpg",
+   "interp": "profile",
+   "observations": [
+    "observations_360.jsonl"
+   ],
+   "note": "the video starts just past the PERMCO bridge (s ~2850), laps once (S/F 0:24.0 and 2:11.1, lap 107.1 s) and ends at the T1 exit; rows are taken over the lap between the two S/F crossings",
+   "anchors": [
+    {
+     "name": "S/F",
+     "t": 24.0,
+     "how": "white timing stripe under the car and the Honda starter gantry alongside left at 0.5 s step k48 (t 24.0)",
+     "sf": "start"
+    },
+    {
+     "name": "footbridge",
+     "t": 30.0,
+     "how": "Firestone footbridge overhead at k60 (t 30.0; k59 ahead, k61 behind)",
+     "s": 233.2
+    },
+    {
+     "name": "T2",
+     "t": 50.0,
+     "how": "Keyhole kerb (right) alongside k95-k105; middle of the run (a long constant arc: +-1 s)",
+     "corner": "T2"
+    },
+    {
+     "name": "T4",
+     "t": 76.5,
+     "how": "T4 apex kerb (right) alongside at k153",
+     "corner": "T4"
+    },
+    {
+     "name": "T5",
+     "t": 82.0,
+     "how": "T5 apex kerb (left) alongside in the t082 frame (2 s step)",
+     "corner": "T5"
+    },
+    {
+     "name": "PERMCO bridge",
+     "t": 107.0,
+     "how": "footway bridge overhead at k214",
+     "s": 2836.0
+    },
+    {
+     "name": "T12",
+     "t": 122.0,
+     "how": "Carousel apex kerb (right) alongside in the t122 frame (2 s step)",
+     "corner": "T12"
+    },
+    {
+     "name": "S/F lap 2",
+     "t": 131.1,
+     "how": "timing stripe at k262 and the starter gantry alongside k262-k263; the footbridge recurs at k274.5 (lap 107.25 s by the bridge, 107.1 s by the stripe)",
+     "sf": "end"
+    }
+   ]
+  },
+  {
+   "name": "IndyCar segment A (9Drr1VkE1_U)",
+   "video": {
+    "id": "9Drr1VkE1_U",
+    "url": "https://www.youtube.com/watch?v=9Drr1VkE1_U",
+    "title": "Onboard Highlights | Mid Ohio 2026 | Practice 1 | Andretti",
+    "channel": "Andretti",
+    "date": "2026-07-03",
+    "camera": "IndyCar roll-hoop camera",
+    "licence": "Standard YouTube licence (reference only)"
+   },
+   "segment": {
+    "car": "yellow car, Practice 1 result P1",
+    "video_t": [
+     0,
+     68.5
+    ],
+    "starts": "Thunder Valley, just past the PERMCO bridge (s ~2850)",
+    "ends": "PERMCO bridge (A, C) / T9 exit (B, cut at 134.5)"
+   },
+   "frames": "frames_indy",
+   "frame_pattern": "t{t:03d}.jpg",
+   "interp": "profile",
+   "observations": [
+    "observations_indy_A.jsonl"
+   ],
+   "anchors": [
+    {
+     "name": "S/F",
+     "t": 15.8,
+     "how": "starter gantry overhead between 15.5 and 16.0 (0.5 s grid)",
+     "sf": "start"
+    },
+    {
+     "name": "footbridge",
+     "t": 19.2,
+     "how": "Firestone deck fills the top of the 19.0 frame, behind at 19.5",
+     "s": 233.2
+    },
+    {
+     "name": "T2",
+     "t": 31.5,
+     "how": "Keyhole kerb (right) alongside 30-33, middle",
+     "corner": "T2"
+    },
+    {
+     "name": "T4",
+     "t": 47.25,
+     "how": "T4 apex kerb (right) alongside 47.0-47.5",
+     "corner": "T4"
+    },
+    {
+     "name": "PERMCO bridge",
+     "t": 66.8,
+     "how": "PERMCO bridge overhead between 66.5 and 67.0",
+     "s": 2836.0
+    }
+   ]
+  },
+  {
+   "name": "IndyCar segment B (9Drr1VkE1_U)",
+   "video": {
+    "id": "9Drr1VkE1_U",
+    "url": "https://www.youtube.com/watch?v=9Drr1VkE1_U",
+    "title": "Onboard Highlights | Mid Ohio 2026 | Practice 1 | Andretti",
+    "channel": "Andretti",
+    "date": "2026-07-03",
+    "camera": "IndyCar roll-hoop camera",
+    "licence": "Standard YouTube licence (reference only)"
+   },
+   "segment": {
+    "car": "blue car, Practice 1 result P2",
+    "video_t": [
+     69,
+     134.5
+    ],
+    "starts": "Thunder Valley, just past the PERMCO bridge (s ~2850)",
+    "ends": "PERMCO bridge (A, C) / T9 exit (B, cut at 134.5)"
+   },
+   "frames": "frames_indy",
+   "frame_pattern": "t{t:03d}.jpg",
+   "interp": "profile",
+   "observations": [
+    "observations_indy_B.jsonl"
+   ],
+   "anchors": [
+    {
+     "name": "S/F",
+     "t": 84.6,
+     "how": "starter gantry overhead at 84.5",
+     "sf": "start"
+    },
+    {
+     "name": "footbridge",
+     "t": 88.0,
+     "how": "under the Firestone deck at 88.0",
+     "s": 233.2
+    },
+    {
+     "name": "T2",
+     "t": 99.75,
+     "how": "Keyhole kerb (right) alongside 98-101.5, middle",
+     "corner": "T2"
+    },
+    {
+     "name": "T4",
+     "t": 116.2,
+     "how": "T4 apex kerb (right) alongside at 116.0-116.5",
+     "corner": "T4"
+    }
+   ]
+  },
+  {
+   "name": "IndyCar segment C (9Drr1VkE1_U)",
+   "video": {
+    "id": "9Drr1VkE1_U",
+    "url": "https://www.youtube.com/watch?v=9Drr1VkE1_U",
+    "title": "Onboard Highlights | Mid Ohio 2026 | Practice 1 | Andretti",
+    "channel": "Andretti",
+    "date": "2026-07-03",
+    "camera": "IndyCar roll-hoop camera",
+    "licence": "Standard YouTube licence (reference only)"
+   },
+   "segment": {
+    "car": "teal car, Practice 1 result P8",
+    "video_t": [
+     135.5,
+     201
+    ],
+    "starts": "Thunder Valley, just past the PERMCO bridge (s ~2850)",
+    "ends": "PERMCO bridge (A, C) / T9 exit (B, cut at 134.5)"
+   },
+   "frames": "frames_indy",
+   "frame_pattern": "t{t:03d}.jpg",
+   "interp": "profile",
+   "observations": [
+    "observations_indy_C.jsonl"
+   ],
+   "anchors": [
+    {
+     "name": "S/F",
+     "t": 149.1,
+     "how": "starter gantry overhead at 149.0",
+     "sf": "start"
+    },
+    {
+     "name": "footbridge",
+     "t": 152.9,
+     "how": "under the Firestone deck at 153.0",
+     "s": 233.2
+    },
+    {
+     "name": "T2",
+     "t": 164.75,
+     "how": "Keyhole kerb (right) alongside 163-166.5, middle",
+     "corner": "T2"
+    },
+    {
+     "name": "T4",
+     "t": 181.6,
+     "how": "T4 apex kerb (right) alongside 181.5-181.75",
+     "corner": "T4"
+    },
+    {
+     "name": "PERMCO bridge",
+     "t": 200.7,
+     "how": "PERMCO banner overhead at 200.5-201",
+     "s": 2836.0
+    }
+   ]
+  }
+ ]
+}

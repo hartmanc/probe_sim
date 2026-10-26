@@ -43,6 +43,19 @@ class TimeMapTest(unittest.TestCase):
         self.assertAlmostEqual(r[0]['v_in'], 30.0)
 
 
+class StrictSegmentTest(unittest.TestCase):
+    """extra_maps (Mid-Ohio round 4): a segment that starts mid-lap and crosses S/F; no folding outside it."""
+    def test_segment_crosses_sf_and_refuses_outside(self):
+        A = [{'name': 'TV', 't': 10.0, 's': 300.0}, {'name': 'S/F', 't': 14.0, 's': 400.0}, {'name': 'T1', 't': 16.0, 's': 450.0}]
+        tm = inventory.TimeMap(A, 400.0, strict=True)
+        self.assertAlmostEqual(tm.s(12.0), 350.0)
+        self.assertAlmostEqual(tm.s(15.0), 25.0)                # past S/F: wrapped into the lap
+        with self.assertRaises(ValueError):
+            tm.s(9.0)
+        with self.assertRaises(ValueError):
+            tm.s(16.5)
+
+
 class RowTest(unittest.TestCase):
     def test_validation(self):
         ok = {'t': 2, 'side': 'left', 'kind': 'wall', 'confidence': 0.9, 'attrs': {'h_m': 1.0, 'h_method': 'jersey-ref'}}

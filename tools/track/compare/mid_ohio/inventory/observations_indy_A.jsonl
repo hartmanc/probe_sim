@@ -1,0 +1,25 @@
+// IndyCar compilation 9Drr1VkE1_U, segment A: roll-hoop camera, what it sees every 2 s inside the anchored range
+{"t": 16, "side": "left", "kind": "wall", "attrs": {"type": "pit wall", "colour": "white"}, "confidence": 0.7}
+{"t": 18, "side": "right", "kind": "wall", "attrs": {"type": "armco", "colour": "red"}, "confidence": 0.7}
+{"t": 20, "side": "ahead", "kind": "bridge", "attrs": {"type": "Firestone footbridge"}, "confidence": 0.7, "note": "passed at 19.2"}
+{"t": 22, "side": "right", "kind": "kerb", "attrs": {"type": "T1 exit kerb, yellow"}, "confidence": 0.7}
+{"t": 24, "side": "left", "kind": "wall", "attrs": {"type": "armco", "colour": "red"}, "confidence": 0.7}
+{"t": 26, "side": "left", "kind": "wall", "attrs": {"type": "armco", "colour": "red"}, "confidence": 0.7}
+{"t": 28, "side": "left", "kind": "sign", "attrs": {"type": "brake board"}, "confidence": 0.7}
+{"t": 30, "side": "right", "kind": "kerb", "attrs": {"type": "Keyhole kerb, red/white"}, "confidence": 0.7}
+{"t": 32, "side": "right", "kind": "kerb", "attrs": {"type": "Keyhole kerb, red/white"}, "confidence": 0.7}
+{"t": 34, "side": "left", "kind": "kerb", "attrs": {"type": "T2 exit kerb, yellow with red band"}, "confidence": 0.7}
+{"t": 36, "side": "left", "kind": "wall", "attrs": {"type": "armco", "colour": "red"}, "confidence": 0.7}
+{"t": 38, "side": "left", "kind": "wall", "attrs": {"type": "armco", "colour": "red"}, "confidence": 0.7}
+{"t": 40, "side": "left", "kind": "boards", "attrs": {"type": "sponsor boards"}, "confidence": 0.7}
+{"t": 42, "side": "left", "kind": "wall", "attrs": {"type": "armco", "colour": "red"}, "confidence": 0.7}
+{"t": 44, "side": "left", "kind": "wall", "attrs": {"type": "armco", "colour": "red"}, "confidence": 0.7}
+{"t": 46, "side": "right", "kind": "kerb", "attrs": {"type": "T4 apex kerb, red/white"}, "confidence": 0.7, "note": "approach"}
+{"t": 48, "side": "left", "kind": "kerb", "attrs": {"type": "yellow kerb"}, "confidence": 0.7, "note": "T4 exit outside"}
+{"t": 48, "side": "right", "kind": "tower", "attrs": {"type": "scoring pylon"}, "confidence": 0.7}
+{"t": 50, "side": "left", "kind": "kerb", "attrs": {"type": "T5 kerb, red/white"}, "confidence": 0.7}
+{"t": 54, "side": "right", "kind": "kerb", "attrs": {"type": "red/white kerb"}, "confidence": 0.7}
+{"t": 58, "side": "left", "kind": "kerb", "attrs": {"type": "yellow kerb"}, "confidence": 0.7}
+{"t": 60, "side": "right", "kind": "kerb", "attrs": {"type": "red/white kerb"}, "confidence": 0.7}
+{"t": 64, "side": "left", "kind": "wall", "attrs": {"type": "concrete wall", "colour": "white"}, "confidence": 0.7}
+{"t": 66, "side": "ahead", "kind": "bridge", "attrs": {"type": "PERMCO footbridge"}, "confidence": 0.7, "note": "passed at 66.8"}

@@ -1,0 +1,20 @@
+// IndyCar compilation 9Drr1VkE1_U, segment C: roll-hoop camera, what it sees every 2 s inside the anchored range
+{"t": 150, "side": "left", "kind": "wall", "attrs": {"type": "pit wall", "colour": "white"}, "confidence": 0.7}
+{"t": 150, "side": "right", "kind": "wall", "attrs": {"type": "armco", "colour": "red"}, "confidence": 0.7}
+{"t": 152, "side": "ahead", "kind": "bridge", "attrs": {"type": "Firestone footbridge"}, "confidence": 0.7, "note": "passed at 152.9"}
+{"t": 156, "side": "right", "kind": "kerb", "attrs": {"type": "T1 exit kerb, yellow"}, "confidence": 0.7}
+{"t": 158, "side": "left", "kind": "wall", "attrs": {"type": "armco", "colour": "red"}, "confidence": 0.7}
+{"t": 160, "side": "left", "kind": "wall", "attrs": {"type": "armco", "colour": "red"}, "confidence": 0.7}
+{"t": 164, "side": "right", "kind": "kerb", "attrs": {"type": "Keyhole kerb, red/white"}, "confidence": 0.7}
+{"t": 166, "side": "right", "kind": "kerb", "attrs": {"type": "Keyhole kerb, red/white"}, "confidence": 0.7}
+{"t": 168, "side": "left", "kind": "kerb", "attrs": {"type": "T2 exit kerb, yellow"}, "confidence": 0.7}
+{"t": 170, "side": "left", "kind": "wall", "attrs": {"type": "armco", "colour": "red"}, "confidence": 0.7}
+{"t": 174, "side": "left", "kind": "wall", "attrs": {"type": "armco", "colour": "red"}, "confidence": 0.7}
+{"t": 178, "side": "left", "kind": "wall", "attrs": {"type": "armco", "colour": "red"}, "confidence": 0.7}
+{"t": 180, "side": "right", "kind": "kerb", "attrs": {"type": "T4 apex kerb, red/white"}, "confidence": 0.7, "note": "approach"}
+{"t": 182, "side": "left", "kind": "kerb", "attrs": {"type": "yellow kerb"}, "confidence": 0.7, "note": "T4 exit outside"}
+{"t": 184, "side": "left", "kind": "kerb", "attrs": {"type": "T5 kerb, red/white"}, "confidence": 0.7}
+{"t": 188, "side": "right", "kind": "kerb", "attrs": {"type": "red/white kerb"}, "confidence": 0.7}
+{"t": 192, "side": "left", "kind": "kerb", "attrs": {"type": "yellow kerb"}, "confidence": 0.7}
+{"t": 196, "side": "left", "kind": "kerb", "attrs": {"type": "yellow kerb"}, "confidence": 0.7, "note": "T9 exit"}
+{"t": 200, "side": "ahead", "kind": "bridge", "attrs": {"type": "PERMCO footbridge"}, "confidence": 0.7}
