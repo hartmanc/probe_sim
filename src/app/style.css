@@ -398,3 +398,22 @@ html.touch .credits { max-height: 44vh; font-size: 12px; }
 .changelog .cl-items li + li { margin-top: 3px; }
 .changelog .cl-keys { margin-top: 14px; border-top: 1px dashed #1d2733; padding-top: 8px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; }
 .rt-row .st-finished { color: var(--good); }
+
+/* How to play (howto.ts): the credits box with a controls table */
+.howto .cr-intro { color: #c9d4de; font-size: 13px; }
+.howto .ht-table { border-collapse: collapse; width: 100%; font-size: 12px; margin-top: 4px; }
+.howto .ht-table th, .howto .ht-table td { text-align: left; padding: 2px 6px; border-top: 1px dashed #1d2733; vertical-align: top; }
+.howto .ht-table th { color: var(--muted); font-weight: 700; }
+
+/* Report a bug / request a feature (feedback.ts) */
+.feedback { text-align: left; display: flex; flex-direction: column; gap: 4px; }
+.feedback .fb-text { width: 100%; box-sizing: border-box; min-height: 7em; max-height: 34vh; resize: vertical; background: #05070a; color: #e8eef5;
+  border: 2px solid #1d2733; border-radius: 8px; padding: 8px 10px; font: inherit; font-size: 14px; line-height: 1.4; user-select: text; }
+.feedback .fb-text:focus { outline: none; border-color: var(--accent); }
+.feedback .fb-count { color: var(--muted); font-size: 11px; text-align: right; }
+.feedback .fb-note { color: var(--muted); font-size: 12px; }
+
+/* the GPU context was lost (index.ts showContextLost) */
+.context-lost { position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+  background: rgba(5, 7, 10, 0.92); color: #e8eef5; font-size: 16px; text-align: center; padding: 24px; }
+.context-lost button { font: inherit; font-weight: 800; padding: 10px 26px; border-radius: 8px; border: 0; background: var(--accent); color: #05070a; cursor: pointer; }

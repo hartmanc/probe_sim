@@ -9,10 +9,15 @@ import type * as THREE from 'three';
 import type { TrackJson } from './physics-types';
 
 export type Tier = 'phone' | 'desktop';
+/** What the device is (memory class), independent of the render tier the player picks: phones and tablets (iPad Safari
+ *  has the same memory limits as the iPhone) race a 40-car field (field-select.ts). */
+export type DeviceClass = 'phone' | 'tablet' | 'desktop';
 export type TierChoice = 'auto' | Tier;
 
 export interface QualitySettings {
   tier: Tier;
+  /** phone / tablet / desktop (deviceClass); the race field size follows it, the render tier does not */
+  device: DeviceClass;
   /** How the tier was chosen. */
   reason: 'url' | 'forced' | 'auto';
   /** Touch controls are shown (touch-first device or ?phone=1); independent of a forced render tier. */
@@ -61,13 +66,30 @@ export function pickTier(env: TierEnv): { tier: Tier; reason: QualitySettings['r
   return { tier: touchDevice ? 'phone' : 'desktop', reason: 'auto', touch };
 }
 
-export function settingsFor(tier: Tier, reason: QualitySettings['reason'], touch: boolean, opts: { aiShadows?: boolean } = {}): QualitySettings {
+export interface DeviceEnv { coarse: boolean; maxTouchPoints: number; search: string; platform: string; screenMin: number }
+
+/** iPadOS Safari presents itself as a Mac ("MacIntel") with touch points. */
+export const isIpad = (env: Pick<DeviceEnv, 'platform' | 'maxTouchPoints'>): boolean => env.platform === 'MacIntel' && env.maxTouchPoints > 1;
+
+/** Pure: the device class. ?phone=1 / ?phone=0 force phone / desktop; an iPad, or a touch-first device whose short screen
+ *  side is at least 600 CSS px, is a tablet; another touch-first device is a phone; the rest are desktops. */
+export function deviceClass(env: DeviceEnv): DeviceClass {
+  const p = new URLSearchParams(env.search).get('phone');
+  if (p === '1' || p === 'true') return 'phone';
+  if (p === '0' || p === 'false') return 'desktop';
+  if (isIpad(env)) return 'tablet';
+  if (env.coarse && env.maxTouchPoints > 0) return env.screenMin >= 600 ? 'tablet' : 'phone';
+  return 'desktop';
+}
+
+export function settingsFor(tier: Tier, reason: QualitySettings['reason'], touch: boolean, opts: { aiShadows?: boolean; device?: DeviceClass } = {}): QualitySettings {
+  const device = opts.device ?? (tier === 'phone' ? 'phone' : 'desktop');
   if (tier === 'phone') {
-    return { tier, reason, touch, maxAiCarsDrawn: 20, maxPixels: PHONE_MAX_PIXELS, maxPixelRatio: 1, shadows: false, maxAnisotropy: 2,
+    return { tier, device, reason, touch, maxAiCarsDrawn: 20, maxPixels: PHONE_MAX_PIXELS, maxPixelRatio: 1, shadows: false, maxAnisotropy: 2,
       aiShadowCasters: 0, shadowBoxM: PLAYER_BOX_M, shadowMapSize: PLAYER_MAP };
   }
   const ai = opts.aiShadows ?? true;
-  return { tier, reason, touch, maxAiCarsDrawn: 45, maxPixels: Infinity, maxPixelRatio: 1.5, shadows: true, maxAnisotropy: 16,
+  return { tier, device, reason, touch, maxAiCarsDrawn: 45, maxPixels: Infinity, maxPixelRatio: 1.5, shadows: true, maxAnisotropy: 16,
     aiShadowCasters: ai ? AI_SHADOW_CASTERS : 0, shadowBoxM: ai ? SHADOW_BOX_M : PLAYER_BOX_M, shadowMapSize: ai ? SHADOW_MAP : PLAYER_MAP };
 }
 
@@ -93,9 +115,12 @@ export function storedTierChoice(): TierChoice {
 
 function detect(): QualitySettings {
   if (typeof window === 'undefined') return settingsFor('desktop', 'auto', false);
-  const coarse = !!window.matchMedia?.('(pointer: coarse)').matches;
-  const r = pickTier({ coarse, maxTouchPoints: navigator.maxTouchPoints ?? 0, search: location.search, stored: readStored() });
-  return settingsFor(r.tier, r.reason, r.touch, { aiShadows: !aiShadowsUrlOff(location.search) });
+  const maxTouchPoints = navigator.maxTouchPoints ?? 0, platform = navigator.platform ?? '';
+  // an iPad with a trackpad reports a fine pointer; it is still a touch device with phone-class memory
+  const coarse = !!window.matchMedia?.('(pointer: coarse)').matches || isIpad({ platform, maxTouchPoints });
+  const r = pickTier({ coarse, maxTouchPoints, search: location.search, stored: readStored() });
+  const device = deviceClass({ coarse, maxTouchPoints, search: location.search, platform, screenMin: Math.min(screen.width || 0, screen.height || 0) });
+  return settingsFor(r.tier, r.reason, r.touch, { aiShadows: !aiShadowsUrlOff(location.search), device });
 }
 
 /** The settings for this page load. */

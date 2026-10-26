@@ -64,7 +64,7 @@ export interface RaceServices {
   menu: Menu;
   /** Back to the main menu (results screen). */
   mainMenu(): void;
-  quality: { maxAiCarsDrawn: number; shadows: boolean; aiShadowCasters: number };
+  quality: { maxAiCarsDrawn: number; shadows: boolean; aiShadowCasters: number; /** phones and tablets race the 40 pace neighbours (field-select.ts); absent = desktop */ device?: 'phone' | 'tablet' | 'desktop' };
   /** Impact thump (audio.impact), normal speed m/s. */
   impact(speedNormal: number): void;
   /** Field engine sounds (null: off / not available yet, e.g. no AudioContext). Called when the race wants them. */

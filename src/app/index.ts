@@ -3,6 +3,13 @@
 // stepped and audio is suspended while a menu or the controls panel is open.
 import * as THREE from 'three';
 import './style.css';
+import { inject as injectAnalytics } from '@vercel/analytics';
+import { installErrorCapture, recordError } from './errors';
+import { feedbackPage } from './feedback';
+import { howtoPage } from './howto';
+import { aiCount, fieldLine } from './field-select';
+import { loadFieldData } from './loader';
+import { NO_WEBGL2_MESSAGE, CONTEXT_LOST_MESSAGE, webgl2Available } from './webgl';
 import { physics, usingStub } from './physics-loader';
 import type { GhostLap, Surface, TrackJson, VehicleLike } from './physics-types';
 import { loadAssets, type Assets } from './loader';
@@ -43,6 +50,14 @@ import { TRACK, TRACK_ID, TRACK_IDS, urlForTrack } from './track-choice';
 import { TRACKS } from '../scoreboard/config';
 import { ROLLOVER_LINE, RolloverWatch } from './rollover';
 import { LOST_IN_HILLS_LINE } from './offtrack';
+
+// the last uncaught error, for the report button (errors.ts); first thing, before anything can throw
+installErrorCapture();
+// Vercel Web Analytics (owner, 26 Oct 2026): cookie-free page views; same-origin /_vercel/insights script on Vercel. Not on
+// a local preview / dev server, where that script does not exist.
+if (!/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)) {
+  try { injectAnalytics({ mode: import.meta.env.PROD ? 'production' : 'development' }); } catch (e) { recordError(e, 'analytics'); }
+}
 
 // The player's car runs in HotlapSim (src/scoreboard/sim.ts): 1000 Hz physics, 200 Hz timing, input sampled on a
 // 100 Hz grid, rolling start 230 m before the last corner (Laguna: T11) at 22 m/s. Its constants live in
@@ -130,6 +145,11 @@ const progressBar = loadBox.querySelector('.progress > div') as HTMLDivElement;
 const loadLabel = loadBox.querySelector('.load-label') as HTMLDivElement;
 
 let sim: Sim | null = null;
+/** No WebGL 2 (or the renderer could not start): the drive rows say so instead of "loading…". */
+let noWebgl = false;
+const loadingNote = () => (noWebgl ? 'needs WebGL 2' : 'loading…');
+/** AI cars in this track's field (pace.json), for the Race row's field line; null until loaded. */
+let fieldTotal: number | null = null;
 
 /** Start-menu track choice: only when more than one track is registered (a pick reloads with ?track=<id>). */
 const trackEntry = (): MenuEntry[] => TRACK_IDS.length < 2 ? [] : [{
@@ -143,8 +163,10 @@ const mainPage: MenuPage = {
   subtitle: '1993 Ford Probe GT · 24 Hours of Lemons #619',
   entries: (): MenuEntry[] => [
     ...trackEntry(),
-    { kind: 'action', id: 'hotlap', label: 'Hot lap', note: sim ? undefined : 'loading…', disabled: !sim, run: () => startMode('hotlap') },
-    { kind: 'action', id: 'race', label: raceMenuLabel(location.search), note: sim ? undefined : 'loading…', disabled: !sim, run: () => startMode('race') },
+    { kind: 'action', id: 'hotlap', label: 'Hot lap', note: sim ? undefined : loadingNote(), disabled: !sim, run: () => startMode('hotlap') },
+    // the field line: phones and tablets race the player's 40 pace neighbours (field-select.ts)
+    { kind: 'action', id: 'race', label: raceMenuLabel(location.search), note: sim ? (fieldTotal !== null ? fieldLine(fieldTotal, quality.device) : undefined) : loadingNote(), disabled: !sim, run: () => startMode('race') },
+    { kind: 'submenu', id: 'howto', label: 'How to play', page: () => howtoPage({ rows: () => input.helpRows(), touch: quality.touch, raceLaps: LIMITS.raceLaps, fieldLine: () => (fieldTotal !== null ? fieldLine(fieldTotal, quality.device) : null) }) },
     ...(touch ? [{ kind: 'submenu', id: 'touch', label: 'Touch controls', page: () => touchPage(touch) } as MenuEntry] : []),
     ...(showControlsPanelRow() ? [{ kind: 'action', id: 'controls', label: 'Controls & calibration', run: () => controlsPanel.open() } as MenuEntry] : []),
     graphicsEntry(),
@@ -152,6 +174,14 @@ const mainPage: MenuPage = {
     scoreboardEntry(),
     { kind: 'submenu', id: 'whatsnew', label: "What's new", note: `v${APP_VERSION}`, page: () => changelogPage(GIT_SHA) },
     { kind: 'submenu', id: 'credits', label: 'Credits', page: creditsPage },
+    {
+      kind: 'submenu', id: 'feedback', label: 'Report a bug / request a feature',
+      page: () => feedbackPage({
+        version: APP_VERSION, sha: GIT_SHA, track: TRACK_ID, device: quality.device,
+        name: () => scoreClient.name, secret: () => scoreClient.secret,
+        toast: (m, ms) => hud.toast(m, ms), refresh: () => menu.refresh(),
+      }),
+    },
   ],
 };
 
@@ -237,7 +267,32 @@ for (const ev of ['touchend', 'pointerup'] as const) document.addEventListener(e
 
 // ---------------------------------------------------------------- boot
 
+function showNoWebgl(message: string): void {
+  noWebgl = true;
+  loadBox.querySelector('.progress')?.classList.add('hidden');
+  loadLabel.className = 'load-label err';
+  loadLabel.textContent = message;
+  menu.refresh();
+}
+
+/** The GPU context went away (driver reset, the browser reclaimed memory on a phone): say so and offer a reload. */
+function showContextLost(): void {
+  if (document.querySelector('.context-lost')) return;
+  const box = document.createElement('div');
+  box.className = 'context-lost';
+  const msg = document.createElement('div');
+  msg.textContent = CONTEXT_LOST_MESSAGE;
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.textContent = 'Reload';
+  btn.addEventListener('click', () => location.reload());
+  box.append(msg, btn);
+  app.appendChild(box);
+}
+
 async function boot(): Promise<void> {
+  // no WebGL 2: a plain message with the browsers that work, instead of loading assets for nothing
+  if (!webgl2Available()) { showNoWebgl(NO_WEBGL2_MESSAGE); return; }
   let assets: Assets;
   try {
     assets = await loadAssets((f, label) => {
@@ -247,10 +302,16 @@ async function boot(): Promise<void> {
   } catch (e) {
     loadLabel.className = 'load-label err';
     loadLabel.textContent = `Failed to load: ${String((e as Error)?.stack ?? e)}`;
+    recordError(e, 'load');
     throw e;
   }
   progressBar.style.width = '100%';
-  sim = createSim(assets);
+  try { sim = createSim(assets); } catch (e) {
+    recordError(e, 'renderer');
+    showNoWebgl(`${NO_WEBGL2_MESSAGE} (${String((e as Error)?.message ?? e).slice(0, 200)})`);
+    return;
+  }
+  void loadFieldData().then((f) => { fieldTotal = f.pace ? aiCount(f.pace, '619') : null; menu.refresh(); }).catch(() => {});
   loadLabel.textContent = assets.fallbacks.length ? `Using stand-ins: ${assets.fallbacks.join(', ')}` : 'Ready';
   loadBox.classList.add('done');
   if (menu.isOpen && menu.variant === 'main' && menu.state?.depth === 1) menu.state.focus(0); // Hot lap is now pickable
@@ -274,6 +335,7 @@ function createSim(assets: Assets) {
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFShadowMap;
   renderer.domElement.className = 'view';
+  renderer.domElement.addEventListener('webglcontextlost', (e) => { e.preventDefault(); recordError(new Error('WebGL context lost'), 'webgl'); showContextLost(); });
   app.insertBefore(renderer.domElement, app.firstChild);
 
   // the physics surface (ribbon profile + blended shoulder + heightfield) also shapes the rendered shoulder, kerbs

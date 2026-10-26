@@ -3,6 +3,8 @@
 import { CARS, LIMITS, TRACKS } from './config';
 import { AI_VERSION } from '../physics/ai/field';
 import { verifyHotlap } from './replay';
+import { clientIp, originAllowed } from './http';
+export { clientIp, originAllowed };
 import { OWNER, SECRET_RE, adopt, claim, issueCode, normalizeCode, ownership } from './owner';
 import type { SimAssets } from './sim';
 import type { ScoreStore } from './store';
@@ -47,21 +49,6 @@ function json(status: number, body: unknown, extra: Record<string, string> = {})
 }
 const fail = (status: number, error: string, reasons?: string[], extra?: Record<string, string>) =>
   json(status, { ok: false, error, ...(reasons && reasons.length ? { reasons } : {}) } satisfies ApiError, extra);
-
-/** Same-origin check: no Origin header (curl, same-origin GET) passes; otherwise its host must be ours or allowed. */
-function originAllowed(req: Request, deps: HandlerDeps): { ok: boolean; origin: string | null } {
-  const origin = req.headers.get('origin');
-  if (!origin) return { ok: true, origin: null };
-  if (deps.allowedOrigins?.includes(origin)) return { ok: true, origin };
-  const host = req.headers.get('x-forwarded-host') ?? req.headers.get('host') ?? new URL(req.url).host;
-  try { return { ok: new URL(origin).host === host, origin }; } catch { return { ok: false, origin }; }
-}
-
-function clientIp(req: Request): string {
-  const xff = req.headers.get('x-forwarded-for');
-  const ip = (xff ? xff.split(',')[0] : req.headers.get('x-real-ip')) ?? 'unknown';
-  return ip.trim().slice(0, 64) || 'unknown';
-}
 
 function toScore(rank: number, score: number, meta: string | null, member: string): Score {
   let m: Partial<Meta> = {};

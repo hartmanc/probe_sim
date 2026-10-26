@@ -33,6 +33,52 @@ export const PHOTO_CREDITS: CreditLine[] = [{
   note: 'used as reference only (liveries, numbers, car identities); no photos are shipped',
 }];
 
+/** A fixed section of the credits page (pure data; the dynamic lists follow). Lines are text or a link. */
+export interface StaticSection { title: string; lines: (string | { text: string; url: string })[] }
+
+export const ISSUES_URL = 'https://github.com/hartmanc/probe_sim/issues';
+export const CONTACT_EMAIL = 'cobylhartman@gmail.com';
+
+export const ABOUT: StaticSection = {
+  title: 'About',
+  lines: [
+    'An unofficial fan project, not affiliated with 24 Hours of Lemons, the circuits or the teams shown.',
+    'Real teams: the cars, numbers, team names and paces come from public race results and photos. A team that would rather not appear is taken out on request: open an issue or write to the address below.',
+    { text: 'GitHub issues: github.com/hartmanc/probe_sim/issues', url: ISSUES_URL },
+    { text: CONTACT_EMAIL, url: `mailto:${CONTACT_EMAIL}` },
+  ],
+};
+
+export const DATA_CREDITS: StaticSection = {
+  title: 'Maps and terrain',
+  lines: [
+    { text: 'Track outlines and roads: © OpenStreetMap contributors, available under the Open Database License (ODbL)', url: 'https://www.openstreetmap.org/copyright' },
+    { text: 'Ground and track heights: USGS 3D Elevation Program (3DEP) lidar, public domain', url: 'https://www.usgs.gov/3d-elevation-program' },
+    { text: 'Ground imagery: USDA NAIP aerial photography via USGS, public domain', url: 'https://naip-usdaonline.hub.arcgis.com/' },
+  ],
+};
+
+export const SOFTWARE_CREDITS: StaticSection = {
+  title: 'Software',
+  lines: [
+    { text: 'three.js — Copyright © 2010-2026 three.js authors, MIT License', url: 'https://github.com/mrdoob/three.js/blob/dev/LICENSE' },
+    { text: 'postprocessing — Copyright © 2015 Raoul van Rüschen, zlib License', url: 'https://github.com/pmndrs/postprocessing/blob/main/LICENSE' },
+  ],
+};
+
+/** The non-commercial models' obligation (owner's decision: the 10 NC models stay, 26 Oct 2026). */
+export const NC_STATEMENT = 'Ten of the car models are licensed CC BY-NC 4.0 or CC BY-NC-SA 4.0 (marked below). Because of them this game is non-commercial: no ads, no sponsorship and no sales. The five CC BY-NC-SA models, as changed here (decimated, re-textured with the race livery, given the kit wheels, cabin and props), are shared under the same licence.';
+
+export const PRIVACY: StaticSection = {
+  title: 'Privacy',
+  lines: [
+    'Scoreboard: the name you type, your times and input type, a random device id, and a hash of a secret made on this device (the secret itself stays on the device; it ties your name to it). Your IP address is kept for 10 minutes to limit how often one address can post.',
+    'Report button: what you type, the game version and build, the track, the device class (phone, tablet or computer), the browser\u2019s user agent, the screen size and the last error the game hit, plus your scoreboard name if this device registered one. It becomes a public GitHub issue. There is no email field.',
+    'Analytics: Vercel Web Analytics counts page views without cookies (page, referrer, country, browser, operating system, device type); it builds no profile of you.',
+    'This device keeps your settings, name, personal bests and the device secret in the browser\u2019s local storage; clearing the site data removes them.',
+  ],
+};
+
 // ---------------------------------------------------------------- parsing (pure)
 
 const str = (v: unknown): string | undefined => (typeof v === 'string' && v.trim() ? v.trim() : typeof v === 'number' ? String(v) : undefined);
@@ -49,7 +95,7 @@ export function creditLine(raw: unknown, kind: string): CreditLine | null {
   const line: CreditLine = {
     kind: pick(o, ['kind', 'type']) ?? kind,
     title,
-    author: pick(o, ['author', 'by', 'creator', 'artist', 'uploader', 'owner']),
+    author: pick(o, ['author', 'by', 'creator', 'artist', 'uploader', 'owner', 'channel']),
     licence: pick(o, ['licence', 'license']),
     licenceUrl: pick(o, ['licence_url', 'license_url', 'licenceUrl', 'licenseUrl']),
     url: isUrl(url) ? url : undefined,
@@ -204,9 +250,21 @@ export function renderCredits(d: CreditsData, box: HTMLElement): void {
     parts.push(s);
     return s;
   };
+  const fixed = (st: StaticSection) => {
+    const s = section(st.title);
+    for (const l of st.lines) {
+      if (typeof l === 'string') { s.append(el('div', 'cr-intro', l)); continue; }
+      const a = el('a', 'cr-title cr-link', l.text);
+      a.href = l.url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+      const row = el('div', 'cr-line'); row.append(a); s.append(row);
+    }
+  };
+  fixed(ABOUT);
+  fixed(DATA_CREDITS);
+  fixed(SOFTWARE_CREDITS);
   const ph = section('Race photos');
   for (const l of d.photos) ph.append(lineEl(l, false));
-  const cars = section('Field cars', d.about.join(' ') || undefined);
+  const cars = section('Field cars', [d.about.join(' '), NC_STATEMENT].filter(Boolean).join(' '));
   if (!d.cars.length) cars.append(el('div', 'cr-intro', 'No third-party car material listed yet.'));
   for (const c of d.cars) {
     const g = el('div', 'cr-group');
@@ -214,7 +272,7 @@ export function renderCredits(d: CreditsData, box: HTMLElement): void {
     for (const l of c.lines) g.append(lineEl(l));
     cars.append(g);
   }
-  const au = section('AI engine sounds', 'Loops cut from onboard videos; each family plays for several cars.');
+  const au = section('AI engine sounds', 'Loops cut from onboard videos shared under Creative Commons Attribution (CC BY); each family plays for several cars. Every source video, its channel where recorded, and its licence:');
   if (!d.audio.length) au.append(el('div', 'cr-intro', 'No engine-sound sources listed yet.'));
   for (const a of d.audio) {
     const g = el('div', 'cr-group');
@@ -222,6 +280,7 @@ export function renderCredits(d: CreditsData, box: HTMLElement): void {
     for (const l of a.lines) g.append(lineEl(l, false));
     au.append(g);
   }
+  fixed(PRIVACY);
   box.replaceChildren(...parts);
 }
 

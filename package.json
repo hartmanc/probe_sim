@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@types/three": "^0.186.0",
+    "@vercel/analytics": "^2.0.1",
     "postprocessing": "^6.39.5",
     "three": "^0.186.1",
     "typescript": "^7.0.2",

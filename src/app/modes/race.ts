@@ -17,6 +17,7 @@ import { fmtTime } from '../hud';
 import type { MenuEntry, MenuPage } from '../menu';
 import { loadFieldData, loadFieldModel, type FieldData, type FieldModelInfo } from '../loader';
 import { FieldCars, identityColor, type FieldCarInfo } from '../field-cars';
+import { fieldCapFor, neighbourField } from '../field-select';
 import { RaceHudDom, raceHudView, raceTable, resultRows, rowStatus, type TableRow } from '../race-hud';
 export { rowStatus, type RowStatus } from '../race-hud';
 import { RACE_BOARDS_PUBLIC, fmtLapTime, fmtMetres, setBoardContext, submitRace, type RaceResult, type SubmitOutcome } from '../scoreboard-client';
@@ -485,7 +486,9 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
     const use = (f: FieldData) => {
       if (disposed) return;
       if (!f.pace) { fieldErr = 'pace.json is missing — no field'; dom?.waiting('No race data (pace.json missing)'); sv.sim.stepVehicle = null; ctx.toast(fieldErr); return; }
-      field = f;
+      // phones and tablets: the player's 40 pace neighbours (field-select.ts); desktop: everyone
+      const cap = fieldCapFor(sv.quality.device ?? 'desktop');
+      field = Number.isFinite(cap) ? { ...f, pace: neighbourField(f.pace as PaceJson, cap, PLAYER_NUMBER) } : f;
       if (f.missing.length) console.warn('race field data missing:', f.missing.join(', '));
       build();
     };
