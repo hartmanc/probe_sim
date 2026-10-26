@@ -149,7 +149,7 @@ def rms_db(y: np.ndarray) -> float:
     return 20 * np.log10(np.sqrt(np.mean(ya ** 2)) + 1e-12)
 
 
-def pitch_shift(src: dict, B: int, max_len_s: float = 1.0) -> dict:
+def pitch_shift(src: dict, B: int, max_len_s: float = 1.0, min_len_s: float | None = None) -> dict:
     """Resample the source's processed segment so its engine runs at B rpm, then loop it again."""
     ratio = B / src["rpm"]
     y = src["long"]
@@ -157,7 +157,7 @@ def pitch_shift(src: dict, B: int, max_len_s: float = 1.0) -> dict:
     z = sinc_interp(y, pos)
     if ratio > 1:  # raising pitch: band-limit first to avoid aliasing above Nyquist
         z = signal.sosfiltfilt(signal.butter(8, 0.95 * SR / 2 / ratio, fs=SR, output="sos"), z) if ratio > 1.05 else z
-    a_, L, rho, n_cyc = find_loop(z, B, max_len_s=max_len_s, min_len_s=min(0.4, max_len_s))
+    a_, L, rho, n_cyc = find_loop(z, B, max_len_s=max_len_s, min_len_s=min(0.4, max_len_s) if min_len_s is None else min_len_s)
     lp = make_loop(z, a_, L, rho)
     return {"loop": lp, "rho": rho, "tick": transient_ratio(lp), "rpm": n_cyc * 120.0 * SR / L, "n_cycles": n_cyc,
             "long": z, "name": src["name"], "t": src["t"], "from_rpm": src["bin"], "ratio": ratio}

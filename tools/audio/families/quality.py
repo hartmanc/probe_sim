@@ -43,7 +43,8 @@ sys.path.insert(0, HERE)
 import speechcheck as sc  # noqa: E402
 
 ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
-AUD = os.path.join(ROOT, "public", "audio")
+# QUALITY_PUBLIC: another public/audio tree to measure (e.g. release-040's, extracted with git archive) instead of ours
+AUD = os.environ.get("QUALITY_PUBLIC") or os.path.join(ROOT, "public", "audio")
 FAM = os.path.join(AUD, "families")
 SR = 48000
 FFMPEG = "/opt/homebrew/bin/ffmpeg"

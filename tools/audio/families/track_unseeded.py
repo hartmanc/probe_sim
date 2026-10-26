@@ -92,8 +92,8 @@ def analysis_spectrum(x: np.ndarray):
     return freqs[:kmax], t, W, bands
 
 
-def rpm_grid(rpm_max: float = RPM_MAX):
-    return RPM_MIN * (1 + GRID_STEP) ** np.arange(int(np.log(rpm_max / RPM_MIN) / np.log1p(GRID_STEP)) + 1)
+def rpm_grid(rpm_max: float = RPM_MAX, rpm_min: float = RPM_MIN):
+    return rpm_min * (1 + GRID_STEP) ** np.arange(int(np.log(rpm_max / rpm_min) / np.log1p(GRID_STEP)) + 1)
 
 
 def comb_scores(W: np.ndarray, freqs: np.ndarray, grid: np.ndarray, cylinders: int, fire: str, layout: str,
@@ -219,11 +219,11 @@ def fix_octave_segments(rpm: np.ndarray, conf: np.ndarray, jump: float = 1.75, s
 
 
 def track(x: np.ndarray, cylinders: int, fire: str = "even", layout: str = "inline", rpm_max: float = RPM_MAX,
-          prior_rpm: float | None = None, prior_w: float = 1.5, **comb_kw) -> dict:
+          prior_rpm: float | None = None, prior_w: float = 1.5, rpm_min: float = RPM_MIN, **comb_kw) -> dict:
     """Track rpm in mono 48 kHz audio x. Returns per-frame arrays: t, rpm, conf (comb contrast, dB),
     octave_margin (dB), load (+1 on, -1 off, 0 unknown), slope (rpm/s), level/tilt residuals."""
     freqs, t, W, bands = analysis_spectrum(x)
-    grid = rpm_grid(rpm_max)
+    grid = rpm_grid(rpm_max, rpm_min)
     S, C, main = comb_scores(W, freqs, grid, cylinders, fire, layout, **comb_kw)
     if prior_rpm:
         # weak log-normal prior: when every half order is present the comb cannot tell rpm from rpm/2 by itself
@@ -239,7 +239,7 @@ def track(x: np.ndarray, cylinders: int, fire: str = "even", layout: str = "inli
     d = np.where(np.abs(den) > 1e-6, 0.5 * (a - c) / np.where(den == 0, 1, den), 0.0)
     rpm = grid[i] * (1 + GRID_STEP) ** np.clip(d, -1, 1)
     conf = C[rows, path].astype(np.float32)
-    rpm = fix_octave_segments(rpm, conf, rpm_max=rpm_max)
+    rpm = fix_octave_segments(rpm, conf, rpm_min=rpm_min, rpm_max=rpm_max)
     # octave check: best score within ±3 % of rpm/2 and rpm·2
     oct_best = np.full(len(path), -np.inf)
     for fac in (0.5, 2.0):
