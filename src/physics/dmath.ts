@@ -41,6 +41,11 @@ function fromWords(hi: number, lo: number): number { U32[HI] = hi; U32[LO] = lo;
 /** SET_LOW_WORD(x, 0). */
 function clearLow(x: number): number { F64[0] = x; U32[LO] = 0; return F64[0]; }
 
+/** The double whose high word is `hi` and low word 0. For a non-NaN x with high word hx (sign masked: ix),
+ *  `ix < hi` is exactly `|x| < atHi(hi)` and `ix >= hi` is `|x| >= atHi(hi)`: the hot paths compare doubles instead of
+ *  extracting words (same branches, no typed-array round trip). */
+function atHi(hi: number): number { return fromWords(hi, 0); }
+
 /** scalbn(x, n) = x · 2^n, exact for the normal-range results it is used for here (stepwise like the C library's). */
 function scalbn(x: number, n: number): number {
   while (n > 1023) { x *= 8.98846567431158e307; n -= 1023; }          // 0x1p1023
@@ -223,23 +228,26 @@ function kernelRemPio2(x: Float64Array, e0: number, nx: number): number {
 }
 
 /** __ieee754_rem_pio2(x, y): x - n·pi/2 in Y0 + Y1, returns n. Callers handle |x| <= pi/4 and non-finite x. */
+const RP_3PIO4 = atHi(0x4002D97C), RP_PIO2_LO = atHi(0x3FF921FB), RP_PIO2_HI = atHi(0x3FF921FC);
 function remPio2(x: number): number {
-  const hx = hiWord(x);
-  const ix = hx & 0x7FFFFFFF;
+  const ax = Math.abs(x);
   let z: number;
-  if (ix < 0x4002D97C) {   /* |x| < 3pi/4, special case with n=+-1 */
-    if (hx > 0) {
+  if (ax < RP_3PIO4) {   /* |x| < 3pi/4, special case with n=+-1 */
+    const nearPio2 = ax >= RP_PIO2_LO && ax < RP_PIO2_HI;   /* ix == 0x3FF921FB */
+    if (x > 0) {
       z = x - pio2_1;
-      if (ix !== 0x3FF921FB) { Y0 = z - pio2_1t; Y1 = (z - Y0) - pio2_1t; }
+      if (!nearPio2) { Y0 = z - pio2_1t; Y1 = (z - Y0) - pio2_1t; }
       else { z -= pio2_2; Y0 = z - pio2_2t; Y1 = (z - Y0) - pio2_2t; }
       return 1;
     } else {
       z = x + pio2_1;
-      if (ix !== 0x3FF921FB) { Y0 = z + pio2_1t; Y1 = (z - Y0) + pio2_1t; }
+      if (!nearPio2) { Y0 = z + pio2_1t; Y1 = (z - Y0) + pio2_1t; }
       else { z += pio2_2; Y0 = z + pio2_2t; Y1 = (z - Y0) + pio2_2t; }
       return -1;
     }
   }
+  const hx = hiWord(x);
+  const ix = hx & 0x7FFFFFFF;
   if (ix <= 0x413921FB) {   /* |x| ~<= 2^19*(pi/2), medium size */
     let t = Math.abs(x);
     const n = (t * invpio2 + 0.5) | 0;
@@ -299,17 +307,21 @@ const C5 = 2.08757232129817482790e-09;  /* 0x3E21EE9E, 0xBDB4B1C4 */
 const C6 = -1.13596475577881948265e-11; /* 0xBDA8FAE9, 0xBE8838D4 */
 
 /** __kernel_cos(x, y). */
+const KC_TINY = atHi(0x3E400000), KC_03 = atHi(0x3FD33333), KC_078 = atHi(0x3FE90001);
 function kernelCos(x: number, y: number): number {
-  const ix = hiWord(x) & 0x7FFFFFFF;
-  if (ix < 0x3E400000) {   /* if x < 2**27 */
+  const ax = Math.abs(x);
+  if (ax < KC_TINY) {   /* if x < 2**27 */
     if ((x | 0) === 0) return 1.0;
   }
   const z = x * x;
   const r = z * (C1 + z * (C2 + z * (C3 + z * (C4 + z * (C5 + z * C6)))));
-  if (ix < 0x3FD33333) {   /* if |x| < 0.3 */
+  if (ax < KC_03) {   /* if |x| < 0.3 */
     return 1.0 - (0.5 * z - (z * r - x * y));
   }
-  const qx = ix > 0x3FE90000 ? 0.28125 : fromWords(ix - 0x00200000, 0);   /* x > 0.78125 ? 0.28125 : x/4 */
+  /* x > 0.78125 ? 0.28125 : x/4 with the low word cleared (INSERT_WORDS(qx, ix - 0x00200000, 0)) */
+  // clearLow(|x|) / 4 without the word round trip: |x| in [0.3, 0.78125) has exponent -2 or -1, so clearing the low 32
+  // mantissa bits is truncating to multiples of 2^-22 or 2^-21 (exact: floor of an exact power-of-two scaling)
+  const qx = ax >= KC_078 ? 0.28125 : ax < 0.5 ? Math.floor(ax * 4194304) * 5.960464477539063e-8 : Math.floor(ax * 2097152) * 1.1920928955078125e-7;
   const iz = 0.5 * z - qx;
   const a = 1.0 - qx;
   return a - (iz - (z * r - x * y));
@@ -324,8 +336,7 @@ const S6 = 1.58969099521155010221e-10;  /* 0x3DE5D93A, 0x5ACFD57C */
 
 /** __kernel_sin(x, y, iy). */
 function kernelSin(x: number, y: number, iy: number): number {
-  const ix = hiWord(x) & 0x7FFFFFFF;
-  if (ix < 0x3E400000) {   /* |x| < 2**-27 */
+  if (Math.abs(x) < KC_TINY) {   /* |x| < 2**-27 */
     if ((x | 0) === 0) return x;
   }
   const z = x * x;
@@ -405,10 +416,19 @@ function kernelTan(x: number, y: number, iy: number): number {
 // ---------------------------------------------------------------- public functions
 
 /** Math.sin as V8 (fdlibm sin). */
+const PIO4_UP = atHi(0x3FE921FC);   /* ix <= 0x3FE921FB  <=>  |x| < PIO4_UP */
 export function sin(x: number): number {
-  const ix = hiWord(x) & 0x7FFFFFFF;
-  if (ix <= 0x3FE921FB) return kernelSin(x, 0.0, 0);
-  if (ix >= 0x7FF00000) return x - x;
+  // the common case (89 % of the physics' calls: 2^-27 <= |x| < pi/4, __kernel_sin with iy = 0) inline-sized
+  const ax = Math.abs(x);
+  if (ax < PIO4_UP && ax >= KC_TINY) {
+    const z = x * x, v = z * x;
+    return x + v * (S1 + z * (S2 + z * (S3 + z * (S4 + z * (S5 + z * S6)))));
+  }
+  return sinRest(x, ax);
+}
+function sinRest(x: number, ax: number): number {
+  if (ax < PIO4_UP) return kernelSin(x, 0.0, 0);
+  if (!(ax < Infinity)) return x - x;
   const n = remPio2(x);
   switch (n & 3) {
     case 0: return kernelSin(Y0, Y1, 1);
@@ -420,9 +440,9 @@ export function sin(x: number): number {
 
 /** Math.cos as V8 (fdlibm cos). */
 export function cos(x: number): number {
-  const ix = hiWord(x) & 0x7FFFFFFF;
-  if (ix <= 0x3FE921FB) return kernelCos(x, 0.0);
-  if (ix >= 0x7FF00000) return x - x;
+  const ax = Math.abs(x);
+  if (ax < PIO4_UP) return kernelCos(x, 0.0);
+  if (!(ax < Infinity)) return x - x;
   const n = remPio2(x);
   switch (n & 3) {
     case 0: return kernelCos(Y0, Y1);
@@ -453,6 +473,8 @@ const ATANLO = new Float64Array([
   1.39033110312309984516e-17, /* atan(1.5)lo 0x3C700788, 0x7AF0CBBD */
   6.12323399573676603587e-17, /* atan(inf)lo 0x3C91A626, 0x33145C07 */
 ]);
+const ATANHI0 = ATANHI[0], ATANHI1 = ATANHI[1], ATANHI2 = ATANHI[2], ATANHI3 = ATANHI[3];
+const ATANLO0 = ATANLO[0], ATANLO1 = ATANLO[1], ATANLO2 = ATANLO[2], ATANLO3 = ATANLO[3];
 const aT0 = 3.33333333333329318027e-01;  /* 0x3FD55555, 0x5555550D */
 const aT1 = -1.99999999998764832476e-01; /* 0xBFC99999, 0x9998EBC4 */
 const aT2 = 1.42857142725034663711e-01;  /* 0x3FC24924, 0x920083FF */
@@ -466,32 +488,38 @@ const aT9 = -3.65315727442169155270e-02; /* 0xBFA2B444, 0x2C6A6C2F */
 const aT10 = 1.62858201153657823623e-02; /* 0x3F90AD3A, 0xE322DA11 */
 
 /** Math.atan as V8 (fdlibm atan). */
+const AT_2P66 = atHi(0x44100000), AT_04375 = atHi(0x3FDC0000), AT_TINY = atHi(0x3E400000), AT_11875 = atHi(0x3FF30000),
+  AT_06875 = atHi(0x3FE60000), AT_24375 = atHi(0x40038000);
 export function atan(x: number): number {
-  const hx = hiWord(x);
-  const ix = hx & 0x7FFFFFFF;
-  let id: number;
-  if (ix >= 0x44100000) {   /* if |x| >= 2^66 */
-    if (x !== x) return x + x;   /* NaN */
-    return hx > 0 ? ATANHI[3] + ATANLO[3] : -ATANHI[3] - ATANLO[3];
+  // the common case (82 % of the physics' calls: |x| < 0.4375) in a function small enough for the JIT to inline
+  const ax = Math.abs(x);
+  if (ax < AT_04375 && ax >= AT_TINY) {
+    const z = x * x, w = z * z;
+    const s1 = z * (aT0 + w * (aT2 + w * (aT4 + w * (aT6 + w * (aT8 + w * aT10)))));
+    const s2 = w * (aT1 + w * (aT3 + w * (aT5 + w * (aT7 + w * aT9))));
+    return x - x * (s1 + s2);
   }
-  if (ix < 0x3FDC0000) {   /* |x| < 0.4375 */
-    if (ix < 0x3E400000) return x;   /* |x| < 2^-27 (huge + x > one is always true) */
-    id = -1;
-  } else {
-    x = Math.abs(x);
-    if (ix < 0x3FF30000) {   /* |x| < 1.1875 */
-      if (ix < 0x3FE60000) { id = 0; x = (2.0 * x - 1.0) / (2.0 + x); }   /* 7/16 <=|x|<11/16 */
-      else { id = 1; x = (x - 1.0) / (x + 1.0); }                          /* 11/16<=|x|< 19/16 */
-    } else if (ix < 0x40038000) { id = 2; x = (x - 1.5) / (1.0 + 1.5 * x); }   /* |x| < 2.4375 */
-    else { id = 3; x = -1.0 / x; }                                              /* 2.4375 <= |x| < 2^66 */
-  }
-  const z = x * x;
-  const w = z * z;
+  return atanRest(x, ax);
+}
+function atanRest(x: number, ax: number): number {
+  if (ax < AT_TINY) return x;   /* |x| < 2^-27 (huge + x > one is always true) */
+  if (!(ax < AT_2P66)) return atanHuge(x);   /* |x| >= 2^66, or NaN */
+  let t: number, hi: number, lo: number;
+  if (ax < AT_11875) {   /* |x| < 1.1875 */
+    if (ax < AT_06875) { t = (2.0 * ax - 1.0) / (2.0 + ax); hi = ATANHI0; lo = ATANLO0; }   /* 7/16 <=|x|<11/16 */
+    else { t = (ax - 1.0) / (ax + 1.0); hi = ATANHI1; lo = ATANLO1; }                     /* 11/16<=|x|< 19/16 */
+  } else if (ax < AT_24375) { t = (ax - 1.5) / (1.0 + 1.5 * ax); hi = ATANHI2; lo = ATANLO2; }   /* |x| < 2.4375 */
+  else { t = -1.0 / ax; hi = ATANHI3; lo = ATANLO3; }                                           /* 2.4375 <= |x| < 2^66 */
+  const z = t * t, w = z * z;
   const s1 = z * (aT0 + w * (aT2 + w * (aT4 + w * (aT6 + w * (aT8 + w * aT10)))));
   const s2 = w * (aT1 + w * (aT3 + w * (aT5 + w * (aT7 + w * aT9))));
-  if (id < 0) return x - x * (s1 + s2);
-  const zz = ATANHI[id] - ((x * (s1 + s2) - ATANLO[id]) - x);
-  return hx < 0 ? -zz : zz;
+  const zz = hi - ((t * (s1 + s2) - lo) - t);
+  return x < 0 ? -zz : zz;   /* hx < 0 (x is not -0 here) */
+}
+/** atan's |x| >= 2^66 and NaN branch, kept out of the hot function. */
+function atanHuge(x: number): number {
+  if (x !== x) return x + x;   /* NaN */
+  return x < 0 ? -ATANHI3 - ATANLO3 : ATANHI3 + ATANLO3;
 }
 
 const tiny = 1.0e-300;
