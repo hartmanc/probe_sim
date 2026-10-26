@@ -72,7 +72,7 @@ def entry_file(e: dict, fam: str, k: int) -> str:
         raise FileNotFoundError(p)
     os.makedirs(CACHE, exist_ok=True)
     stem = os.path.splitext(p)[0] + ".dl"
-    subprocess.run(["uvx", "yt-dlp", "-q", "--no-playlist", "-f", "bestaudio", "-o", stem + ".%(ext)s", e["url"]],
+    subprocess.run(["uvx", "yt-dlp", "--js-runtimes", "node", "-q", "--no-playlist", "-f", "bestaudio", "-o", stem + ".%(ext)s", e["url"]],
                    check=True, cwd=CACHE)
     got = [f for f in os.listdir(CACHE) if f.startswith(os.path.basename(stem) + ".")]
     subprocess.run([FFMPEG, "-v", "error", "-y", "-i", os.path.join(CACHE, got[0]), "-vn", "-ac", "1", "-ar",
@@ -199,6 +199,19 @@ def process(T: dict, cand, B: int, main_order: float, max_len: float):
             "contrast": float(np.mean(r["conf"][a:b])), "long": y, "raw": highpass(x)}
 
 
+def order_ok(loop: np.ndarray, rpm: float, n_cyl: int) -> bool:
+    """Octave guard: the loop's strongest engine order (0.5 steps up to 12, +-4 % windows) must sit on a whole multiple of
+    the firing order F = cylinders / 2. A loop whose label is an octave too high peaks at F/2 or lower. Not used for V8s
+    (a cross-plane V8's strongest order is the per-bank burble at 1 or 2, not the firing order)."""
+    X = np.abs(np.fft.rfft(np.tile(loop, 4) * np.hanning(4 * len(loop)))) ** 2
+    fr = np.fft.rfftfreq(4 * len(loop), 1 / SR)
+    f_rev = rpm / 60.0
+    orders = np.arange(0.5, 12.01, 0.5)
+    pw = [X[np.abs(fr - o * f_rev) <= 0.04 * o * f_rev].sum() for o in orders]
+    ratio = orders[int(np.argmax(pw))] / (n_cyl / 2.0)
+    return ratio >= 0.99 and abs(ratio - round(ratio)) < 0.01
+
+
 def darken(p: dict, fc: float = 1800.0) -> dict:
     q = dict(p)
     sos = signal.butter(2, fc, "lowpass", fs=SR, output="sos")
@@ -250,6 +263,8 @@ def build(fam: str, force_track: bool = False, bin_step: int | None = None):
                 except Exception as ex:  # too short to loop etc.
                     print(f"    skip candidate {c}: {ex}")
                     continue
+                if defs["cylinders"] != 8 and not order_ok(p["loop"], p["rpm"], defs["cylinders"]):
+                    continue  # strongest order off the firing ladder: an octave-slipped label
                 if p["tick"] > 8.0:  # a click / knock repeating once per loop: rather pitch-shift a neighbour
                     continue
                 score = p["contrast"] + 4.0 * p["rho"] - 2.0 * max(0.0, p["tick"] - 2.5) - 60 * p["wobble"] * (tier == "steady")
@@ -299,6 +314,13 @@ def build(fam: str, force_track: bool = False, bin_step: int | None = None):
             p = pitch_shift(s, B, max_len_s=max_len)
             p["tier"], p["bin"] = "pitch-shifted", B
             final[load][B] = p
+    return write_family(fam, defs, T, final, BINS, gap, main_order, borrowed)
+
+
+def write_family(fam: str, defs: dict, T: dict, final: dict, BINS: list, gap: float, main_order: float,
+                 borrowed: dict, sources: list | None = None, plot: bool = True):
+    """Levels, the two Opus sprites, engine.json and the listening sweep, from the finished per-bin loops
+    (final[load][bin] = {loop, tier, rpm, rho, tick, name, t, ...}). Shared with the synthesiser (synth_engine.py)."""
     real_bins = {load: sum(1 for B in BINS if final[load][B]["tier"] in ("steady", "sweep")) for load in final}
     print("  real bins", real_bins, "of", len(BINS), "borrowed", borrowed)
 
@@ -345,16 +367,18 @@ def build(fam: str, force_track: bool = False, bin_step: int | None = None):
     index.update({"family": fam, "cylinders": defs["cylinders"], "layout": defs["layout"], "fire": defs["fire"],
                   "redline_rpm": defs["redline_rpm"], "idle_rpm": defs["idle_rpm"], "main_order": main_order,
                   "borrowed_load": borrowed or None,
-                  "sources": [{"src": f"src{k}", "url": d["meta"].get("url"), "title": d["meta"].get("title"),
-                               "channel": d["meta"].get("uploader"), "upload_date": d["meta"].get("upload_date"),
-                               "licence": d["meta"].get("licence"), "t0": d["meta"].get("t0"),
-                               "octave_relabel": float(d["res"]["octave"]),
-                               "t1": d["meta"].get("t1")} for k, d in T.items()]})
+                  "sources": sources if sources is not None else
+                  [{"src": f"src{k}", "url": d["meta"].get("url"), "title": d["meta"].get("title"),
+                    "channel": d["meta"].get("uploader"), "upload_date": d["meta"].get("upload_date"),
+                    "licence": d["meta"].get("licence"), "t0": d["meta"].get("t0"),
+                    "octave_relabel": float(d["res"]["octave"]),
+                    "t1": d["meta"].get("t1")} for k, d in T.items()]})
     json.dump(index, open(os.path.join(out, "engine.json"), "w"), indent=1)
     sizes = {f: os.path.getsize(os.path.join(out, f)) for f in ("engine_on.ogg", "engine_off.ogg", "engine.json")}
     print("  sizes", sizes, "total", sum(sizes.values()))
     sweep = render_preview(out, index, defs)  # for listening checks: written to cache/, never shipped
-    plot_preview(fam, T, final, BINS, index, sweep)
+    if plot:
+        plot_preview(fam, T, final, BINS, index, sweep)
     return index
 
 
