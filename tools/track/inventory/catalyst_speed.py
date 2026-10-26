@@ -54,6 +54,42 @@ def glyphs(path, crop, thr=170):
     return [g for _, g, _ in out], [b for _, _, b in out]
 
 
+def validate_times(t):
+    """Sample times must be finite and strictly increasing (a stale or reordered frame would fold the trapezoid)."""
+    t = np.asarray(t, float)
+    if len(t) < 2:
+        raise ValueError('speed integration: fewer than two samples')
+    if not np.all(np.isfinite(t)):
+        raise ValueError('speed integration: non-finite sample time')
+    bad = np.nonzero(np.diff(t) <= 0)[0]
+    if len(bad):
+        k = int(bad[0])
+        raise ValueError(f'speed integration: sample times not strictly increasing at {t[k]:.3f} -> {t[k + 1]:.3f} s')
+    return t
+
+
+def series(rows, units='mph'):
+    """(t, v m/s) from the OCR rows, frames without a reading (missing samples) left out; times validated."""
+    ok = [r for r in rows if r['reading'] is not None]
+    t = validate_times([r['t'] for r in ok])
+    return t, np.array([r['reading'] for r in ok], float) * UNIT[units]
+
+
+def integrate(tt, vv, t0, t1):
+    """Distance between the crossings t0 < t1: the samples strictly inside, the speed at each crossing interpolated
+    linearly from its neighbours, trapezoid in time. A missing sample is bridged linearly by its neighbours. Both
+    crossings must lie within the samples' time span (no extrapolation)."""
+    tt = validate_times(tt); vv = np.asarray(vv, float)
+    if not (t0 < t1):
+        raise ValueError(f'speed integration: crossings out of order ({t0} >= {t1})')
+    if t0 < tt[0] or t1 > tt[-1]:
+        raise ValueError(f'speed integration: crossings {t0}..{t1} s outside the samples {tt[0]}..{tt[-1]} s')
+    inside = (tt > t0) & (tt < t1)
+    T_ = np.r_[t0, tt[inside], t1]
+    V_ = np.r_[np.interp(t0, tt, vv), vv[inside], np.interp(t1, tt, vv)]
+    return float(np.trapezoid(V_, T_)), int(inside.sum())
+
+
 def frame_times(frames_dir):
     meta = glob.glob(os.path.join(frames_dir, '_frames_*.json'))
     t = {}
@@ -109,17 +145,10 @@ def main():
                          glyphs=len(gs), score=round(score, 3)))
     ok = [r for r in rows if r['reading'] is not None]
     # integrate between the crossings: samples inside, the speed at the crossings interpolated
-    t = np.array([r['t'] for r in ok]); v = np.array([r['reading'] for r in ok], float) * UNIT[a.units]
-
-    def integrate(tt, vv):
-        inside = (tt > a.t0) & (tt < a.t1)
-        T_ = np.r_[a.t0, tt[inside], a.t1]
-        V_ = np.r_[np.interp(a.t0, tt, vv), vv[inside], np.interp(a.t1, tt, vv)]
-        return float(np.trapezoid(V_, T_)), int(inside.sum())
-
-    D1, n1 = integrate(t, v)
-    D2, n2 = integrate(t[::2], v[::2])
-    D2b, _ = integrate(t[1::2], v[1::2])
+    t, v = series(rows, a.units)
+    D1, n1 = integrate(t, v, a.t0, a.t1)
+    D2, n2 = integrate(t[::2], v[::2], a.t0, a.t1)
+    D2b, _ = integrate(t[1::2], v[1::2], a.t0, a.t1)
     lap = a.t1 - a.t0
     q = 0.5 * UNIT[a.units] * lap
     res = dict(t0=a.t0, t1=a.t1, lap_s=round(lap, 3), samples=n1, distance_m=round(D1, 1),
