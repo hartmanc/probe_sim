@@ -37,6 +37,7 @@ export const CHANGELOG: ChangeEntry[] = [
       'A plain message when the browser cannot run WebGL 2, and a reload button when the graphics drop out.',
       'The team’s ghost laps are labelled driver A to D.',
       'Hot laps replay on the scoreboard server exactly as you drove them, from Safari, iPhones, Chrome or Firefox: the car’s physics and the AI now do all their maths in the game’s own code, with the same digits in every browser as on the server.',
+      'AI drivers catch a slide instead of steering into it or braking through it, so far fewer spin on their own, and a car passing on Laguna’s front straight eases off before the pit-exit cones instead of running over them. At Buttonwillow they now pass at T8, which had been treated like Laguna’s Corkscrew.',
     ],
   },
   {

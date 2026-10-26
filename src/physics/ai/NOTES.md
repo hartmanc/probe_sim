@@ -431,3 +431,77 @@ check that let a pass start when I would still be behind at the shut raised Lagu
 Solo laps (`tools/race/out/solo_check.ts`, local: 4 cars per track at their fitted scales, 2 laps) are bit-identical to
 152d422 on Laguna, Sonoma and Buttonwillow: the changes act only with another car in reach. **No AI_VERSION bump** (8), the
 calibrations stand.
+
+## 26 Oct 2026: AI robustness (branch `ai-robust`, after the determinism round)
+
+With the physics and the AI on one arithmetic (`dmath`, the server's), two seeded tests failed on every host. Both now
+pass, fixed as driver logic; no test, threshold or physics changed, no AI_VERSION bump (solo calibration laps move by at
+most 0.19 %, inside the calibration tolerance). Tools: `tools/race/cone_trace.ts` (replays the 45-car test race or any
+self-play and prints each pit-exit cone crossing / spin with the driver's state; `--detail` per-wheel slips), and
+self-play now reports (r) cone crossings (in control or not) and spins (heading > 1.3 rad off) without a mishap.
+
+**Diagnoses (traces, `ai_race` seed 1 and self-play seeds 1-3).**
+- #49 (Triumph Mayflower, RWD) on Laguna's front straight: pushed 1.8 m right by a car alongside while the racing line
+  sweeps 4.8 m left toward the pit-exit cones (s 150-240), at 32-34 m/s the driven rear right wheel ran at combined
+  slip 1.3-1.8 on full throttle; the rear let go (rear slip 0.09 -> 0.45 rad in 1 s). Pure pursuit aims the nose, so
+  with the nose 0.2-0.5 rad left of the direction of travel it kept steering left (into the rotation), the grip
+  limiter braked at 0.25-0.3 for the pursuit's curvature (the rotation, not the path), and by the time the target
+  swung to the right of the nose the car was beyond what 10 degrees of speed-shaped lock can catch. No mishap is
+  counted because mishaps are only the seeded ones: this was an unplanned spin. The same mechanism (rear past its peak
+  under trail braking or the grip limiter's braking, steering not opposing the rotation) made the other spins without a
+  mishap at T4, T6 and T10 (16 in seeds 1-3 at Laguna).
+- #37: a pass lane 5.3 m left planned at s 147 where the cap allowed it; the line then sweeps toward the cap, the
+  shift clamp at the look point shut the lane abruptly while the car moved left at 6 m/s absolute, and it overshot by
+  2.2 m. At the cap the driver counted itself off track (`outside` used the capped edge), which dropped the clamp and
+  started a slow rejoin from where it was. A pass lane runs into the cap because the clamp looked only 10 m ahead.
+- Passes (`ai_behaviour` full field, 2 laps): not a pass-logic weakness. Seeds 1-6, this test's measure:
+
+| code | passes per seed (1-6) | mean |
+|---|---|---|
+| release-040 on this Mac's FMA-contracted maths | 168, 165, 158, 102, 203, 235 | 171.8 |
+| determinism (the server's maths) | 140, 146, 186, 112, 215, 213 | 168.7 |
+| this round | 168, 142, 160, 148, 166, 229 | 168.8 |
+
+  Seed 1's 140 was one draw of a chaotic race (seeds 2 and 4 are under 150 under every arithmetic). The check that also
+  failed under the new code, "no defending against a clearly faster car", was real: a defender skipped a clearly faster
+  car rejoining 5 m behind it and covered the inside against the within-3 % car behind that (fixed below; 0 on all six
+  seeds now, release-040 had 2 and 1 on seeds 2 and 6).
+
+**Fixes (`driver.ts`, `line.ts`).**
+- A slide = rear slip past 1.5 x the tyre's peak and over the front's by half a peak, and the car rotating faster than
+  its direction of travel turns (yaw rate - a_lat / v, same sign, > 0.15 rad/s). Then the front wheels are never
+  steered into the rotation past their own direction of travel (road angle + ISO slip angle); the brake comes off (at
+  most 0.1, except when following a car ahead); a driven rear gets at most 0.15 throttle, a front-drive car at least
+  0.15. The rear-slide brake easing (REAR_SLIP) also applies under the grip limiter.
+- Off the road = off the pavement (`RaceLine.halfLRoad`): the cone cap is a lane boundary. A cap ahead
+  (`RaceLine.capL`) bounds the shift, in lane coordinates, by an approach at 3 m/s^2 laterally over 100 m.
+- Defending: a clearly faster car rejoining right behind is not skipped.
+- A pass given up merges once the road has put the car back on the line (in phase 2 it followed the car ahead at
+  headway, which the lane check reads as occupied, and steered back out past the apex; `ai_passing` "drops back").
+- Tried and dropped: a symmetric front-slip band (fronts within 1.2 x peak of their travel direction) slowed solo laps
+  by up to 2.4 %; traction on the combined slip of a driven wheel moved solo laps 0.5-1.4 %; counter-steering at
+  0.5 x peak against the rotation cost one Buttonwillow car 5 % solo (it bound in normal limit driving).
+
+**Issue #19.** `NO_PASS_CORNERS = { laguna_seca: ['T8'] }` keyed by `RaceLine.trackId` and `LineCorner.turn`. Laguna
+seed 1 and Sonoma seed 1 self-play are identical (every metric); Sonoma never had a T8 on the line (merged into T7a).
+Buttonwillow's T8 opens: "corkscrew" pass ends 36 / 43 / 45 -> 0 (seeds 1-3), pass attempts 1041 / 1058 / 1009 ->
+1107 / 1122 / 1055, green passes 305 / 340 / 336 -> 313 / 365 / 318, passes in T8's old zone (s 2580-2864) 9 / 29 / 15
+-> 17 / 15 / 6 (the race diverges from the first T8 passage, so the per-zone counts are one draw each), contacts
+0.021 -> 0.009 per car-lap pooled.
+
+**Bands (self-play, `selfplay.ts`; baseline = determinism fa342f6, same arithmetic; Buttonwillow also against #19 alone).**
+Pooled per car-lap (per-seed tables in the round's hand-back):
+
+| track (laps, seeds) | run | contacts (max seed) | four-off | passes / car-lap | in-control cone crossings | spins without a mishap |
+|---|---|---|---|---|---|---|
+| Laguna (4, 1-6) | baseline | 0.041 (0.054) | 0.093 | 1.76 | 7 | 34 |
+| Laguna (4, 1-6) | this round | 0.018 (0.026) | 0.071 | 1.72 | 0 | 9 |
+| Sonoma (2, 1-12) | baseline | 0.028 (0.052) | 0.016 | 2.98 | 0 | 28 |
+| Sonoma (2, 1-12) | this round | 0.030 (0.062) | 0.008 | 3.04 | 0 | 9 |
+| Buttonwillow (2, 1-3) | baseline / #19 only | 0.021 / 0.009 (0.024 / 0.020) | 0.030 / 0.022 | 2.10 / 2.16 | 0 | 6 / 6 |
+| Buttonwillow (2, 1-3) | this round | 0.017 (0.026) | 0.013 | 2.17 | 0 | 0 |
+
+Median best lap / drawn target per seed stays in the baseline's spread (Laguna 1.10-1.16 vs 1.10-1.14, Sonoma
+1.18-1.29 vs 1.19-1.36, Buttonwillow 1.25-1.33 vs 1.23-1.34); line rms alone unchanged (0.25-0.40 m). Open: one Sonoma
+seed (7: 0.062) and one Buttonwillow seed (3: 0.026, one contact) sit above the baseline's worst seed although the pooled
+rates are flat or lower, and 9 + 9 unplanned spins remain (all from deeper slides at T4 / T10 Laguna, T2 / T10 Sonoma).

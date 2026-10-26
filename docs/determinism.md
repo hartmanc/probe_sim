@@ -9,7 +9,8 @@ the server's results (the 0.3.0 boards and their keys stay valid). Code: `src/ph
 to the server, `Math.pow` included (proven against the Vercel function itself, section 5). The server's results are
 unchanged; six-lap traces from WebKit, Chrome and Firefox replay on Node to the bit (section 5). Two AI tests fail on
 every host now that the whole race runs on the server's arithmetic (section 4.1): their fixes are AI controller work,
-left for the AI round.**
+left for the AI round.** (AI robustness round, 26 Oct 2026: both pass again, fixed as driver logic; `src/physics/ai/NOTES.md`
+"26 Oct 2026: AI robustness".)
 
 ## 1. Inventory: what on the replay path can differ between engines
 
@@ -95,7 +96,7 @@ of Node 26.12) and of V8's Torque builtin `FastMathHypot` (`src/builtins/math.tq
 | log | `log` (`__ieee754_log`) |
 | hypot (2 and 3 arguments) | `FastMathHypot`: `sqrt((a/m)² + (b/m)²)·m`, the 3-argument form with its compensation term |
 | cbrt (round 2, the AI) | `cbrt` (FreeBSD / fdlibm) |
-| pow (round 2) | V8's `math::pow` special cases (`src/numbers/ieee754.cc`), then **glibc 2.34's** `__ieee754_pow_fma` (`sysdeps/ieee754/dbl-64/e_pow.c`, Szabolcs Nagy 2018, from ARM's optimized-routines, MIT OR Apache-2.0 WITH LLVM-exception there; tables in `src/physics/dmath_pow_data.ts`), see section 5 |
+| pow (round 2) | V8's `math::pow` special cases (`src/numbers/ieee754.cc`), then **glibc 2.34's** `__ieee754_pow_fma` (`sysdeps/ieee754/dbl-64/e_pow.c`, Szabolcs Nagy 2018, from Arm's optimized-routines; tables in `src/physics/dmath_pow_data.ts`), see section 5. Licence source (AI robustness round): optimized-routines' `math/pow.c`, MIT, checked equivalent (same code paths and fma sites in the x86-64 configuration, tables identical value for value: `tools/determinism/pow_or_tables.py`); notice in `dmath.ts` and on the Credits page |
 
 Only exact operations inside (+ − × ÷, `Math.sqrt / abs / floor / trunc`; a test checks); word access through one shared
 `Float64Array` / `Uint32Array`; C's `(int32_t)` casts as `| 0`, arithmetic `>>` as `>>`. No tables apart from fdlibm's
@@ -282,7 +283,7 @@ pre-splitting more constants) are possible without changing a bit.
   server's maths it could be tightened to bits; not done here, because a 0.3.0 page still open in a browser (same board
   key, native maths) would then be rejected outright. A candidate for after the 0.4.0 launch.
 - No client note ("phone laps verify best early in a session"): the cross-engine proof passed in every engine tested.
-- Open: the two AI tests (section 4.1), the AI round.
+- The two AI tests (section 4.1): fixed in the AI robustness round (`src/physics/ai/NOTES.md`).
 
 ## 8. Re-running the proofs
 
