@@ -36,14 +36,14 @@ describe('device secret and transfer code', () => {
     let now = 0;
     const s = new MemoryStore(() => now);
     await claim(s, 'coby', A);
-    const code = await issueCode(s, 'coby');
+    const code = (await issueCode(s, 'coby', A))!;
     expect(await adopt(s, 'coby', 'ZZZZZZ', B)).toBe('bad-code');
     expect(await adopt(s, 'other', code, B)).toBe('bad-code');      // a code is bound to its name
     expect(await adopt(s, 'coby', code, B)).toBe('ok');
     expect(await ownership(s, 'coby', B)).toBe('you');
     expect(await ownership(s, 'coby', A)).toBe('you');
     expect(await adopt(s, 'coby', code, 'cccccccccccccccccccccccccccccccc')).toBe('bad-code');
-    const c2 = await issueCode(s, 'coby');
+    const c2 = (await issueCode(s, 'coby', A))!;
     now += 3601_000;
     expect(await adopt(s, 'coby', c2, 'cccccccccccccccccccccccccccccccc')).toBe('bad-code');
   });

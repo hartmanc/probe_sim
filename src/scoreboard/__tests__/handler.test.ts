@@ -151,15 +151,18 @@ describe('api handler', () => {
     expect((await handleScores(post({ op: 'adopt', name: 'Coby', code, secret: '11111111111111111111111111111111' }, { 'x-forwarded-for': '6.6.6.5' }), d)).status).toBe(403);
   });
 
-  test('transfer codes: guessing is rate limited per IP and per name', async () => {
+  test('transfer codes: guessing is rate limited per IP, per IP + name, and per name from all IPs', async () => {
     const d = deps({ verify: fakeVerify });
     expect((await handleScores(post(hot()), d)).status).toBe(200);
     await handleScores(post({ op: 'transfer-code', name: 'Coby', secret: SECRET }, { 'x-forwarded-for': '5.5.5.5' }), d);
     const guess = (ip: string) => handleScores(post({ op: 'adopt', name: 'Coby', code: 'ZZZZZZ', secret: OTHER }, { 'x-forwarded-for': ip }), d);
     for (let i = 0; i < 5; i++) expect((await guess('4.4.4.4')).status).toBe(403);
     expect((await guess('4.4.4.4')).status).toBe(429);                                       // 5 per IP per 10 min
-    for (let i = 0; i < 5; i++) expect((await guess(`3.3.3.${i}`)).status).toBe(403);
-    expect((await guess('3.3.3.9')).status).toBe(429);                                       // 10 per name per 10 min
+    // per name from all IPs: 100 per 10 min (5 here + 95 from 19 more addresses), then 429 for everyone
+    for (let k = 0; k < 19; k++) for (let i = 0; i < 5; i++) expect((await guess(`3.3.${k}.1`)).status).toBe(403);
+    expect((await guess('3.3.99.1')).status).toBe(429);
+    // the owner's device is unaffected: it still posts
+    expect((await handleScores(post(hot({ time: lap.time - 1 }), { 'x-forwarded-for': '2.2.2.2' }), d)).status).toBe(200);
   });
 
   test('old boards expire: hot-lap boards keyed by a physics version that is not current get a TTL', async () => {

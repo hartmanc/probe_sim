@@ -2,13 +2,13 @@
 //
 // - Every device makes a random 128-bit secret once (32 hex characters, localStorage) and sends it with every post.
 // - The first device to post a name claims it: the server keeps a SHA-256 of that secret against the lower-cased name
-//   (Redis `sb:own:<name>`, JSON { h: [hash, …], at }). Posts of an owned name without a matching secret are refused.
+//   (Redis `sb:own:<name>`, the string "v1|<iso date>|<hash>,<hash>,…"). Posts of an owned name without a matching secret are refused.
 // - Transfer: the owning device asks for a six-character code (`sb:xfer:<name>`, the code's hash, 1 hour, one use) and
 //   the player types it once on another device, which then adds its own secret's hash to the name. The code alone is
-//   useless without the name, it expires, it is single-use, and guesses are rate limited per IP (5) and per name (10 per 10 min).
+//   useless without the name, it expires, it is single-use, and guesses are rate limited per IP (5 per 10 min, also per IP + name) and per name (100 per 10 min from all IPs).
 // - The owner releases a name in the Upstash console with `DEL sb:own:<name>` (and `DEL sb:xfer:<name>`); the next
 //   device to post it claims it. Entries already on the boards keep their times either way.
-import type { ScoreStore } from './store';
+import { decodeOwner, encodeOwner, type ScoreStore } from './store';
 
 export const SECRET_RE = /^[0-9a-f]{32}$/;
 /** Transfer-code alphabet: no 0/O, 1/I/L (read aloud or copied from another screen). 31^6 ≈ 8.9e8 codes. */
@@ -22,8 +22,8 @@ export const OWNER = {
   codeTtlS: 3600,
   /** adopt attempts per IP per window */
   adoptPerIp: 5,
-  /** adopt attempts per name per window (from any IP) */
-  adoptPerName: 10,
+  /** adopt attempts per name per window from all IPs together (per IP + name the limit is adoptPerIp) */
+  adoptPerName: 100,
   windowS: 600,
   /** transfer-code requests per IP per window */
   codesPerIp: 10,
@@ -31,8 +31,6 @@ export const OWNER = {
 
 export const ownerKey = (nameKey: string): string => `sb:own:${nameKey}`;
 export const xferKey = (nameKey: string): string => `sb:xfer:${nameKey}`;
-
-export interface OwnerRecord { h: string[]; at: string }
 
 function hex(buf: ArrayBuffer): string {
   return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
@@ -58,47 +56,33 @@ export function normalizeCode(raw: unknown): string | null {
   return c.length === CODE_LEN && [...c].every((ch) => CODE_ALPHABET.includes(ch)) ? c : null;
 }
 
-function parseRecord(raw: string | null): OwnerRecord | null {
-  if (!raw) return null;
-  try {
-    const r = JSON.parse(raw) as OwnerRecord;
-    return r && Array.isArray(r.h) ? r : null;
-  } catch { return null; }
-}
-
 export type Ownership = 'free' | 'you' | 'other';
 
 /** Who owns `nameKey` relative to this secret (a missing / malformed secret is never 'you'). */
 export async function ownership(store: ScoreStore, nameKey: string, secret: unknown): Promise<Ownership> {
-  const rec = parseRecord(await store.kvGet(ownerKey(nameKey)));
+  const rec = decodeOwner(await store.kvGet(ownerKey(nameKey)));
   if (!rec) return 'free';
   if (typeof secret !== 'string' || !SECRET_RE.test(secret)) return 'other';
   return rec.h.includes(await secretHash(secret)) ? 'you' : 'other';
 }
 
-/** Claim a free name for this secret. False when another device claimed it first. */
+/** Claim a free name for this secret (SET NX: atomic). False when another device claimed it first. */
 export async function claim(store: ScoreStore, nameKey: string, secret: string, now = new Date()): Promise<boolean> {
   const h = await secretHash(secret);
-  if (await store.kvSet(ownerKey(nameKey), JSON.stringify({ h: [h], at: now.toISOString() } satisfies OwnerRecord), { nx: true })) return true;
+  if (await store.kvSet(ownerKey(nameKey), encodeOwner(now.toISOString(), [h]), { nx: true })) return true;
   return (await ownership(store, nameKey, secret)) === 'you';
 }
 
-/** Issue a transfer code for a name this secret owns (replaces any earlier code). */
-export async function issueCode(store: ScoreStore, nameKey: string): Promise<string> {
+/** Issue a transfer code for a name this secret owns (replaces any earlier code); null when the device does not own it.
+ *  Checking the owner and storing the code is one atomic store operation. */
+export async function issueCode(store: ScoreStore, nameKey: string, secret: string): Promise<string | null> {
   const code = newTransferCode();
-  await store.kvSet(xferKey(nameKey), await codeHash(nameKey, code), { ex: OWNER.codeTtlS });
-  return code;
+  const r = await store.issueTransfer(ownerKey(nameKey), xferKey(nameKey), await secretHash(secret), await codeHash(nameKey, code), OWNER.codeTtlS);
+  return r === 'ok' ? code : null;
 }
 
-/** Adopt a name on a new device with a transfer code: adds this secret's hash, consumes the code. */
+/** Adopt a name on a new device with a transfer code: in ONE atomic store operation the code is checked and consumed and
+ *  this secret's hash is added to the name. Two devices racing with one code: exactly one gets 'ok'. */
 export async function adopt(store: ScoreStore, nameKey: string, code: string, secret: string): Promise<'ok' | 'bad-code' | 'not-registered'> {
-  const want = await store.kvGet(xferKey(nameKey));
-  if (!want || want !== (await codeHash(nameKey, code))) return 'bad-code';
-  const rec = parseRecord(await store.kvGet(ownerKey(nameKey)));
-  if (!rec) return 'not-registered';
-  const h = await secretHash(secret);
-  const hs = [...rec.h.filter((x) => x !== h), h].slice(-OWNER.maxDevices);
-  await store.kvSet(ownerKey(nameKey), JSON.stringify({ h: hs, at: rec.at } satisfies OwnerRecord));
-  await store.kvDel(xferKey(nameKey));
-  return 'ok';
+  return store.adoptTransfer(ownerKey(nameKey), xferKey(nameKey), await codeHash(nameKey, code), await secretHash(secret), OWNER.maxDevices);
 }

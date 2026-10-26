@@ -173,16 +173,20 @@ async function nameOp(req: Request, b: Record<string, unknown>, deps: HandlerDep
   if (b.op === 'transfer-code') {
     const rl = await deps.store.hit(`code:${ip}`, OWNER.windowS);
     if (rl.count > OWNER.codesPerIp) return fail(429, 'rate limited', ['too many transfer codes, try again in a few minutes'], { 'Retry-After': String(Math.max(1, rl.ttl)) });
-    const own = await ownership(deps.store, member, secret);
-    if (own === 'free') return fail(404, 'not registered', [`"${name}" has no scores from this device yet: post a lap first`]);
-    if (own === 'other') return fail(403, 'name taken', [`"${name}" belongs to another device`]);
-    return json(200, { ok: true, name, code: await issueCode(deps.store, member), expires_s: OWNER.codeTtlS });
+    const code = await issueCode(deps.store, member, secret);
+    if (code) return json(200, { ok: true, name, code, expires_s: OWNER.codeTtlS });
+    if ((await ownership(deps.store, member, secret)) === 'free') return fail(404, 'not registered', [`"${name}" has no scores from this device yet: post a lap first`]);
+    return fail(403, 'name taken', [`"${name}" belongs to another device`]);
   }
   if (b.op === 'adopt') {
     const rl = await deps.store.hit(`adopt:${ip}`, OWNER.windowS);
     if (rl.count > OWNER.adoptPerIp) return fail(429, 'rate limited', ['too many attempts, try again in a few minutes'], { 'Retry-After': String(Math.max(1, rl.ttl)) });
+    // per IP + name (5, as per IP) and a per-name ceiling (100) that takes 20 addresses to reach: a lockout of a name's
+    // transfers needs many IPs, and brute force stays bounded (100 guesses / 10 min over 31^6 codes that live 1 hour)
+    const ipName = await deps.store.hit(`adoptname:${ip}:${member}`, OWNER.windowS);
+    if (ipName.count > OWNER.adoptPerIp) return fail(429, 'rate limited', ['too many attempts for this name, try again in a few minutes'], { 'Retry-After': String(Math.max(1, ipName.ttl)) });
     const per = await deps.store.hit(`adoptname:${member}`, OWNER.windowS);
-    if (per.count > OWNER.adoptPerName) return fail(429, "rate limited", ["too many attempts for this name, try again later"], { 'Retry-After': String(Math.max(1, per.ttl)) });
+    if (per.count > OWNER.adoptPerName) return fail(429, 'rate limited', ['too many attempts for this name, try again later'], { 'Retry-After': String(Math.max(1, per.ttl)) });
     const code = normalizeCode(b.code);
     const r = code ? await adopt(deps.store, member, code, secret) : 'bad-code';
     if (r === 'ok') { deps.log?.(`name adopted: ${member}`); return json(200, { ok: true, name }); }

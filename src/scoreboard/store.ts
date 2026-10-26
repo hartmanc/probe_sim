@@ -25,6 +25,17 @@ export interface ScoreStore {
   kvGet(key: string): Promise<string | null>;
   kvSet(key: string, value: string, opts?: { nx?: boolean; ex?: number }): Promise<boolean>;
   kvDel(key: string): Promise<void>;
+  /**
+   * Name ownership, atomic (owner.ts). The owner record is a string "v1|<iso date>|<hash>,<hash>,…" at `ownerKey`;
+   * the transfer code's hash sits at `xferKey`. Each call is ONE Redis operation (a Lua script under EVAL on Upstash; a
+   * synchronous step on the memory store), so concurrent adoptions, a code issued meanwhile or a manual release
+   * cannot interleave with it.
+   * issueTransfer: when `deviceHash` is in the record, store `codeHash` (replacing any earlier code) for `ttlS`.
+   * adoptTransfer: when `codeHash` is the current code, consume it; then, when the record exists, add `deviceHash`
+   * (moved to the end if present; the oldest dropped past `maxDevices`).
+   */
+  issueTransfer(ownerKey: string, xferKey: string, deviceHash: string, codeHash: string, ttlS: number): Promise<'ok' | 'free' | 'other'>;
+  adoptTransfer(ownerKey: string, xferKey: string, codeHash: string, deviceHash: string, maxDevices: number): Promise<'ok' | 'bad-code' | 'not-registered'>;
   /** Every board that has entries (board keys, without the `sb:z:` prefix). */
   boards(): Promise<string[]>;
   /** Give a board (its sorted set and hash) an expiry of `seconds` unless it already has one. */
@@ -32,6 +43,38 @@ export interface ScoreStore {
 }
 
 const zkey = (b: string) => `sb:z:${b}`;
+
+// ------------------------------------------------------------------ owner records ("v1|<at>|<h>,<h>,…")
+export function encodeOwner(at: string, hashes: string[]): string { return `v1|${at}|${hashes.join(',')}`; }
+export function decodeOwner(raw: string | null): { at: string; h: string[] } | null {
+  if (!raw || !raw.startsWith('v1|')) return null;
+  const i = raw.indexOf('|', 3);
+  if (i < 0) return null;
+  return { at: raw.slice(3, i), h: raw.slice(i + 1).split(',').filter(Boolean) };
+}
+/** The Lua twins of the memory store's issueTransfer / adoptTransfer (KEYS[1] owner, KEYS[2] xfer). */
+export const LUA_ISSUE = `local rec = redis.call('GET', KEYS[1])
+if not rec then return 'free' end
+local i = string.find(rec, '|', 4, true)
+if not i then return 'other' end
+local list = ',' .. string.sub(rec, i + 1) .. ','
+if not string.find(list, ',' .. ARGV[1] .. ',', 1, true) then return 'other' end
+redis.call('SET', KEYS[2], ARGV[2], 'EX', tonumber(ARGV[3]))
+return 'ok'`;
+export const LUA_ADOPT = `local want = redis.call('GET', KEYS[2])
+if (not want) or want ~= ARGV[1] then return 'bad-code' end
+redis.call('DEL', KEYS[2])
+local rec = redis.call('GET', KEYS[1])
+if not rec then return 'not-registered' end
+local i = string.find(rec, '|', 4, true)
+if not i then return 'not-registered' end
+local out = {}
+for h in string.gmatch(string.sub(rec, i + 1), '[^,]+') do if h ~= ARGV[2] then table.insert(out, h) end end
+table.insert(out, ARGV[2])
+local max = tonumber(ARGV[3])
+while #out > max do table.remove(out, 1) end
+redis.call('SET', KEYS[1], string.sub(rec, 1, i) .. table.concat(out, ','))
+return 'ok'`;
 const hkey = (b: string) => `sb:h:${b}`;
 
 // ------------------------------------------------------------------ in-memory
@@ -68,6 +111,31 @@ export class MemoryStore implements ScoreStore {
   }
   async expireBoard(board: string, seconds: number) {
     if (this.z.has(zkey(board)) && !this.exp.has(board)) this.exp.set(board, this.now() + seconds * 1000);
+  }
+  // no await inside: each runs as one uninterrupted step, like the Lua scripts
+  async issueTransfer(ownerKey: string, xferKey: string, deviceHash: string, codeHash: string, ttlS: number) {
+    const rec = decodeOwner(this.kvGetSync(ownerKey));
+    if (!rec) return 'free' as const;
+    if (!rec.h.includes(deviceHash)) return 'other' as const;
+    this.kv.set(xferKey, { v: codeHash, until: this.now() + ttlS * 1000 });
+    return 'ok' as const;
+  }
+  async adoptTransfer(ownerKey: string, xferKey: string, codeHash: string, deviceHash: string, maxDevices: number) {
+    const want = this.kvGetSync(xferKey);
+    if (want === null || want !== codeHash) return 'bad-code' as const;
+    this.kv.delete(xferKey);
+    const raw = this.kvGetSync(ownerKey);
+    const rec = decodeOwner(raw);
+    if (!rec) return 'not-registered' as const;
+    const hs = [...rec.h.filter((x) => x !== deviceHash), deviceHash].slice(-maxDevices);
+    this.kv.set(ownerKey, { v: encodeOwner(rec.at, hs), until: this.kv.get(ownerKey)!.until });
+    return 'ok' as const;
+  }
+  private kvGetSync(key: string): string | null {
+    const e = this.kv.get(key);
+    if (!e) return null;
+    if (e.until <= this.now()) { this.kv.delete(key); return null; }
+    return e.v;
   }
   /** test helper: the board's expiry time (ms) or null */
   expiryOf(board: string): number | null { return this.exp.get(board) ?? null; }
@@ -187,6 +255,14 @@ export class UpstashStore implements ScoreStore {
     return r === 'OK';
   }
   async kvDel(key: string) { await this.pipe([['DEL', key]]); }
+  async issueTransfer(ownerKey: string, xferKey: string, deviceHash: string, codeHash: string, ttlS: number) {
+    const [r] = await this.pipe([['EVAL', LUA_ISSUE, 2, ownerKey, xferKey, deviceHash, codeHash, Math.max(1, Math.round(ttlS))]]);
+    return (r === 'ok' || r === 'free' ? r : 'other') as 'ok' | 'free' | 'other';
+  }
+  async adoptTransfer(ownerKey: string, xferKey: string, codeHash: string, deviceHash: string, maxDevices: number) {
+    const [r] = await this.pipe([['EVAL', LUA_ADOPT, 2, ownerKey, xferKey, codeHash, deviceHash, maxDevices]]);
+    return (r === 'ok' || r === 'not-registered' ? r : 'bad-code') as 'ok' | 'bad-code' | 'not-registered';
+  }
   async boards() {
     const out: string[] = [];
     let cursor = '0';
