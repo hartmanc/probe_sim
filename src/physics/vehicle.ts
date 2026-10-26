@@ -3,7 +3,7 @@
 // Hot path rules: no allocations in step(), all state in typed arrays or
 // number fields, Surface.sample() results are consumed immediately.
 
-import { atan as datan, atan2 as datan2, cos as dcos, exp as dexp, hypot as dhypot, hypot3 as dhypot3, sin as dsin, tan as dtan } from './dmath';   // bit-identical to V8 on every engine (docs/determinism.md)
+import { atan as datan, atan2 as datan2, cos as dcos, exp as dexp, hypot as dhypot, hypot3 as dhypot3, pow as dpow, sin as dsin, tan as dtan } from './dmath';   // bit-identical to V8 on every engine (docs/determinism.md)
 import type { CarSpec } from './spec';
 import { mfShape, solveMfB } from './tyre';
 import type { DriverInput, Surface, VehicleState, WheelState, Vec3, ImpactInfo } from './types';
@@ -1140,9 +1140,8 @@ export class Vehicle {
 
     let muV = 1;
     if (this.muSlope > 0 && absVx > this.muRefV) { muV = 1 - this.muSlope * (absVx - this.muRefV); if (muV < 0.6) muV = 0.6; }
-    // Math.pow stays native (determinism round, 26 Oct 2026): V8 hands it to the platform C library (std::pow), so the
-    // server's value is glibc's and no single V8 pow exists to port; open, the owner's call (docs/determinism.md section 5)
-    const lsf = Math.pow(Fz / this.Fz0, this.lsExp) * Fz * mu;
+    // dpow: the server's pow (glibc's, which V8 calls) in every engine (docs/determinism.md section 5)
+    const lsf = dpow(Fz / this.Fz0, this.lsExp) * Fz * mu;
     const Dx = this.mu0x * lsf, Dy = this.mu0y * lsf * muV;
     const sx = kappa / this.kpX, sy = alpha / apY;
     const rho = Math.sqrt(sx * sx + sy * sy);
@@ -1225,7 +1224,7 @@ export class Vehicle {
     } else this.clutchLocked = false;
 
     // brakes + rolling resistance as friction constraints on wheel spin
-    const pl = this.pedalExp === 1 ? brk : Math.pow(brk, this.pedalExp); // line pressure
+    const pl = this.pedalExp === 1 ? brk : dpow(brk, this.pedalExp); // line pressure
     const bf = (pl * this.brakeMax * this.brakeBias) / 2;
     const pr = pl <= this.propKnee ? pl : this.propKnee + this.propSlope * (pl - this.propKnee);
     const br = (pr * this.brakeMax * (1 - this.brakeBias)) / 2 + (hb ? this.hbTorque / 2 : 0);

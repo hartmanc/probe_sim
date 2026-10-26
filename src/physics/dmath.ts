@@ -27,19 +27,23 @@
 // ====================================================
 // Modifications Copyright 2016 the V8 project authors (BSD-style licence).
 
+import { POW_LN2HI, POW_LN2LO, POW_A, POW_TAB, EXP_INVLN2N, EXP_NEGLN2HIN, EXP_NEGLN2LON, EXP_SHIFT, EXP_C, EXP_TAB_U32 } from './dmath_pow_data';
+
 const F64 = new Float64Array(1);
 const U32 = new Uint32Array(F64.buffer);
-const LITTLE = new Uint8Array(new Uint16Array([1]).buffer)[0] === 1;
-const HI = LITTLE ? 1 : 0, LO = LITTLE ? 0 : 1;
+// Word order: every engine this ships to runs little-endian (x86-64, arm64); literal indices keep the hot paths free of a
+// module-level lookup. A big-endian host would get wrong bits, so refuse it loudly.
+if (new Uint8Array(new Uint16Array([1]).buffer)[0] !== 1) throw new Error('dmath: big-endian host not supported');
+const HI = 1, LO = 0;
 
 /** High 32 bits of x as a signed int32 (C: int32_t hx = bits >> 32). */
-function hiWord(x: number): number { F64[0] = x; return U32[HI] | 0; }
+function hiWord(x: number): number { F64[0] = x; return U32[1] | 0; }
 /** Low 32 bits of x as an unsigned int32. */
-function loWord(x: number): number { F64[0] = x; return U32[LO]; }
+function loWord(x: number): number { F64[0] = x; return U32[0]; }
 /** INSERT_WORDS. */
-function fromWords(hi: number, lo: number): number { U32[HI] = hi; U32[LO] = lo; return F64[0]; }
+function fromWords(hi: number, lo: number): number { U32[1] = hi; U32[0] = lo; return F64[0]; }
 /** SET_LOW_WORD(x, 0). */
-function clearLow(x: number): number { F64[0] = x; U32[LO] = 0; return F64[0]; }
+function clearLow(x: number): number { F64[0] = x; U32[0] = 0; return F64[0]; }
 
 /** The double whose high word is `hi` and low word 0. For a non-NaN x with high word hx (sign masked: ix),
  *  `ix < hi` is exactly `|x| < atHi(hi)` and `ix >= hi` is `|x| >= atHi(hi)`: the hot paths compare doubles instead of
@@ -738,4 +742,215 @@ export function hypot3(x: number, y: number, z: number): number {
   const compensation = (powerA + powerB) - powerA - powerB;
   const powerC = (c / max) * (c / max) - compensation;
   return Math.sqrt(powerA + powerB + powerC) * max;
+}
+
+// ---------------------------------------------------------------- pow (the server's: glibc's, as V8 calls it)
+//
+// V8 hands Math.pow to the platform C library (math::pow: NaN / |x| = 1 with infinite y / y = 2 / y = 0.5 handled
+// first, then std::pow). The scoreboard server is Vercel's linux-x64 Node 24 with glibc 2.34 on an Intel Xeon, where
+// std::pow is glibc's __ieee754_pow_fma: sysdeps/ieee754/dbl-64/e_pow.c (Szabolcs Nagy's 2018 pow from ARM's
+// optimized-routines, MIT OR Apache-2.0 WITH LLVM-exception there) compiled with -mfma -mavx2 and GCC's default
+// contraction, so besides its explicit __builtin_fma calls every a * b + c whose product feeds only additions is fused.
+// This port evaluates exactly that: each fused operation is an exactly emulated fma (below). Proven against the
+// server's own Math.pow on 600 006 arguments (tools/determinism/pow_server.json.gz, docs/determinism.md section 5).
+
+/** fma(a, b, c) = RN(a·b + c): Dekker's exact product, then Boldo & Melquiond's emulation (RN(th + RO(tl + pl))). Exact for
+ *  operands whose product neither overflows nor underflows, which holds on every path of pow below. */
+function fma(a: number, b: number, c: number): number {
+  const p = a * b;
+  let t = 134217729 * a; const ah = t - (t - a), al = a - ah;
+  t = 134217729 * b; const bh = t - (t - b), bl = b - bh;
+  const pl = ((ah * bh - p) + ah * bl + al * bh) + al * bl;
+  const th = c + p, z = th - c, tl = (c - (th - z)) + (p - z);
+  let v = tl + pl;
+  const w = v - tl, e = (tl - (v - w)) + (pl - w);
+  return finishFma(th, v, e);
+}
+/** The exact rounding error of a·b (fma(a, b, -RN(a·b))), Dekker. */
+function prodErr(a: number, b: number, p: number): number {
+  let t = 134217729 * a; const ah = t - (t - a), al = a - ah;
+  t = 134217729 * b; const bh = t - (t - b), bl = b - bh;
+  return ((ah * bh - p) + ah * bl + al * bh) + al * bl;
+}
+
+/** Veltkamp halves of a constant, for fmaK. */
+function hiHalf(b: number): number { const t = 134217729 * b; return t - (t - b); }
+/** fma(a, b, c) with b a constant pre-split into bh + bl (same result as fma, one split fewer). */
+function fmaK(a: number, b: number, bh: number, bl: number, c: number): number {
+  const p = a * b;
+  const t = 134217729 * a, ah = t - (t - a), al = a - ah;
+  const pl = ((ah * bh - p) + ah * bl + al * bh) + al * bl;
+  const th = c + p, z = th - c, tl = (c - (th - z)) + (p - z);
+  let v = tl + pl;
+  const w = v - tl, e = (tl - (v - w)) + (pl - w);
+  return finishFma(th, v, e);
+}
+/**
+ * RN(th + v + e) from th, v = RN(tl + pl) and its exact error e (the last step of the fma emulation). RN(th + v) is already
+ * right unless th + v is exactly halfway between two doubles while e != 0 (the double-rounding case): then the exact sum
+ * lies off the midpoint on e's side. (With |tl| <= ulp(th)/2 and |pl| <= ulp(a·b)/2, e != 0 only when |v| <= 2^-50 |th|, so
+ * no other boundary is within reach of e; with strong cancellation th is exact and e = 0.) Checked against an exact
+ * BigInt fma on 10^7 operand triples (tools/determinism, docs section 5).
+ */
+function finishFma(th: number, v: number, e: number): number {
+  const res = th + v;
+  if (e === 0) return res;
+  const bb = res - th, err = (th - (res - bb)) + (v - bb);   // th + v = res + err exactly
+  // a tie: err is exactly half an ulp of res, i.e. res + 2·err is the next double and the step is exact
+  if (err !== 0 && (res + 2 * err) - res === 2 * err) return (e > 0) === (err > 0) ? res + 2 * err : res;
+  return res;
+}
+const PA0 = POW_A[0], PA1 = POW_A[1], PA2 = POW_A[2], PA3 = POW_A[3], PA4 = POW_A[4], PA5 = POW_A[5], PA6 = POW_A[6];
+const EC2 = EXP_C[0], EC3 = EXP_C[1], EC4 = EXP_C[2], EC5 = EXP_C[3];
+const PA2H = hiHalf(PA2), PA2L = PA2 - PA2H, PA4H = hiHalf(PA4), PA4L = PA4 - PA4H, PA6H = hiHalf(PA6), PA6L = PA6 - PA6H;
+const EC3H = hiHalf(EC3), EC3L = EC3 - EC3H, EC5H = hiHalf(EC5), EC5L = EC5 - EC5H;
+const LN2LOH = hiHalf(POW_LN2LO), LN2LOL = POW_LN2LO - LN2LOH, NLLH = hiHalf(EXP_NEGLN2LON), NLLL = EXP_NEGLN2LON - NLLH;
+const ILNH = hiHalf(EXP_INVLN2N), ILNL = EXP_INVLN2N - ILNH;
+const SIGN_BIAS = 0x800 << 7;
+const LOG_TAIL = new Float64Array(1);   // a typed slot: a module-level `let` double would be re-boxed on every store
+
+/** log_inline(ix): the words of x (normalised in the subnormal range); returns hi, the tail in LOG_TAIL. */
+function powLog(hi32: number, lo32: number): number {
+  const tmpHi = (hi32 - 0x3FE69555) >>> 0;           // tmp = ix - OFF (OFF's low word is 0)
+  const i = (tmpHi >>> 13) & 127;                    // (tmp >> (52 - 7)) % N
+  const k = (tmpHi | 0) >> 20;                       // (int64_t) tmp >> 52
+  const z = fromWords((hi32 - (tmpHi & 0xFFF00000)) >>> 0, lo32);
+  const kd = k;
+  const invc = POW_TAB[3 * i], logc = POW_TAB[3 * i + 1], logctail = POW_TAB[3 * i + 2];
+  const pz = z * invc;
+  const r = (pz - 1.0) + prodErr(z, invc, pz);       // __builtin_fma (z, invc, -1.0): exactly representable
+  const t1 = kd * POW_LN2HI + logc;                 // fused in glibc; exact either way (checked for every entry and k)
+  const t2 = t1 + r;
+  const lo1 = (k < 16 && k > -16) ? kd * POW_LN2LO + logctail : fmaK(kd, POW_LN2LO, LN2LOH, LN2LOL, logctail);   // |k| < 16: the product is exact
+  const lo2 = t1 - t2 + r;
+  const ar = PA0 * r;
+  const ar2 = r * ar;
+  const ar3 = r * ar2;
+  const hi = t2 + ar2;
+  const lo3 = prodErr(ar, r, ar2);                   // __builtin_fma (ar, r, -ar2)
+  const lo4 = t2 - hi + ar2;
+  const p = fma(ar2, fma(ar2, fmaK(r, PA6, PA6H, PA6L, PA5), fmaK(r, PA4, PA4H, PA4L, PA3)), fmaK(r, PA2, PA2H, PA2L, PA1));
+  const lo = fma(ar3, p, lo1 + lo2 + lo3 + lo4);
+  const y = hi + lo;
+  LOG_TAIL[0] = hi - y + lo;
+  return y;
+}
+
+/** specialcase(tmp, sbits, ki) of exp_inline. */
+function powExpSpecial(tmp: number, sbHi: number, sbLo: number, kNeg: boolean): number {
+  if (!kNeg) {   /* k > 0, the exponent of scale might have overflowed by <= 460. */
+    const scale = fromWords((sbHi - (1009 << 20)) >>> 0, sbLo);
+    return 5.486124068793689e303 * fma(scale, tmp, scale);   // 0x1p1009
+  }
+  /* k < 0, need special care in the subnormal range. */
+  const adjHi = (sbHi + (1022 << 20)) >>> 0;
+  const scale = fromWords(adjHi, sbLo);
+  let y = fma(scale, tmp, scale);
+  if (Math.abs(y) < 1.0) {
+    const one = y < 0.0 ? -1.0 : 1.0;
+    let lo = fma(scale, tmp, scale - y);
+    const hi = one + y;
+    lo = one - hi + y + lo;
+    y = (hi + lo) - one;
+    if (y === 0.0) y = (adjHi & 0x80000000) !== 0 ? -0.0 : 0.0;   /* fix the sign of 0 */
+  }
+  return 2.2250738585072014e-308 * y;   // 0x1p-1022
+}
+
+/** exp_inline(x, xtail, sign_bias). */
+function powExp(x: number, xtail: number, signBias: number): number {
+  let abstop = (hiWord(x) >>> 20) & 0x7FF;
+  if (((abstop - 0x3C9) >>> 0) >= 0x408 - 0x3C9) {   /* top12(0x1p-54), top12(512.0) */
+    if (((abstop - 0x3C9) >>> 0) >= 0x80000000) { const one = 1.0 + x; return signBias ? -one : one; }
+    if (abstop >= 0x409) {   /* top12(1024.0) */
+      if (x < 0) return signBias ? -0.0 : 0.0;          /* __math_uflow (sign_bias) */
+      return signBias ? -Infinity : Infinity;            /* __math_oflow (sign_bias) */
+    }
+    abstop = 0;   /* large x is special cased below */
+  }
+  // kd = RN(InvLn2N * x + Shift) - Shift (one fused operation in glibc) is the integer nearest to the exact product, ties
+  // to even: from the rounded product, its exact error and the exact remainder against the nearest integer
+  const zr = x * EXP_INVLN2N;
+  const ta = 134217729 * x, xh = ta - (ta - x), xl = x - xh;
+  const ez = ((xh * ILNH - zr) + xh * ILNL + xl * ILNH) + xl * ILNL;
+  let k = (zr + EXP_SHIFT) - EXP_SHIFT;
+  const d0 = zr - k, rem = d0 + ez, remErr = (d0 - (rem - (rem - d0))) + (ez - (rem - d0));
+  if (rem > 0.5 || (rem === 0.5 && (remErr > 0 || (remErr === 0 && (k & 1) !== 0)))) k += 1;
+  else if (rem < -0.5 || (rem === -0.5 && (remErr < 0 || (remErr === 0 && (k & 1) !== 0)))) k -= 1;
+  const kd = k;
+  const kiLo = k | 0;                                  // the low word of asuint64 (Shift + k)
+  const r0 = (k < 131072 && k > -131072) ? kd * EXP_NEGLN2HIN + x : fma(kd, EXP_NEGLN2HIN, x);   // the product is exact for |k| < 2^17
+  let r = k === 0 ? r0 : fmaK(kd, EXP_NEGLN2LON, NLLH, NLLL, r0);
+  r += xtail;
+  const idx = 2 * (kiLo & 127);
+  const topHi = ((k + signBias) << 13) >>> 0;          // (ki + sign_bias) << (52 - 7): only the low 19 bits of k survive
+  const tail = fromWords(EXP_TAB_U32[2 * idx], EXP_TAB_U32[2 * idx + 1]);
+  const sbHi = (EXP_TAB_U32[2 * idx + 2] + topHi) >>> 0, sbLo = EXP_TAB_U32[2 * idx + 3];
+  const r2 = r * r;
+  const tmp = fma(r2 * r2, fmaK(r, EC5, EC5H, EC5L, EC4), fma(r2, fmaK(r, EC3, EC3H, EC3L, EC2), tail + r));
+  if (abstop === 0) return powExpSpecial(tmp, sbHi, sbLo, (kiLo & 0x80000000) !== 0);
+  const scale = fromWords(sbHi, sbLo);
+  return fma(scale, tmp, scale);
+}
+
+/** checkint: 0 not an integer, 1 odd, 2 even (finite non-zero y). */
+function checkint(y: number): number {
+  if (!Number.isInteger(y)) return 0;
+  const a = Math.abs(y);
+  if (a >= 9007199254740992) return 2;
+  return a % 2 === 1 ? 1 : 2;
+}
+
+/** Math.pow as the server computes it: V8's math::pow special cases, then glibc 2.34's __pow (FMA build). */
+export function pow(x: number, y: number): number {
+  // V8 math::pow (src/numbers/ieee754.cc, use_std_math_pow)
+  if (y !== y) return NaN;
+  if ((y === Infinity || y === -Infinity) && (x === 1 || x === -1)) return NaN;
+  if (y === 2) return x * x;
+  if (y === 0.5) return x === -Infinity ? Infinity : Math.sqrt(x + 0);
+  // glibc __pow
+  let signBias = 0;
+  let hx = hiWord(x) >>> 0, lx = loWord(x);
+  const hy = hiWord(y) >>> 0;
+  let topx = hx >>> 20;
+  const topy = hy >>> 20;
+  if (((topx - 0x001) >>> 0) >= 0x7FF - 0x001 || (((topy & 0x7FF) - 0x3BE) >>> 0) >= 0x43E - 0x3BE) {
+    if (y === 0 || !Number.isFinite(y)) {   /* zeroinfnan (iy) */
+      if (y === 0) return 1.0;
+      if (x === 1) return 1.0;
+      if (x !== x) return x + y;
+      if (x === 1 || x === -1) return 1.0;
+      if ((Math.abs(x) < 1) === !(hy >>> 31)) return 0.0;   /* |x|<1 && y==inf or |x|>1 && y==-inf */
+      return y * y;
+    }
+    if (x === 0 || !Number.isFinite(x)) {   /* zeroinfnan (ix) */
+      let x2 = x * x;
+      if ((hx >>> 31) !== 0 && checkint(y) === 1) x2 = -x2;
+      return (hy >>> 31) !== 0 ? 1 / x2 : x2;
+    }
+    /* here x and y are non-zero finite */
+    if ((hx >>> 31) !== 0) {
+      const yint = checkint(y);
+      if (yint === 0) return NaN;   /* __math_invalid */
+      if (yint === 1) signBias = SIGN_BIAS;
+      hx &= 0x7FFFFFFF;
+      topx &= 0x7FF;
+    }
+    if ((((topy & 0x7FF) - 0x3BE) >>> 0) >= 0x43E - 0x3BE) {
+      const ax = Math.abs(x);
+      if (ax === 1) return 1.0;
+      if ((topy & 0x7FF) < 0x3BE) return ax > 1 ? 1.0 + y : 1.0 - y;   /* |y| < 2^-65, x^y ~= 1 + y*log(x) */
+      return (ax > 1) === (topy < 0x800) ? Infinity : 0.0;           /* __math_oflow (0) : __math_uflow (0) */
+    }
+    if (topx === 0) {   /* normalise subnormal x so the exponent becomes negative */
+      const xs = Math.abs(x) * 4503599627370496;   // 0x1p52
+      hx = ((hiWord(xs) & 0x7FFFFFFF) - (52 << 20)) >>> 0;
+      lx = loWord(xs);
+    }
+  }
+  const hi = powLog(hx, lx);
+  const lo = LOG_TAIL[0];
+  const ehi = y * hi;
+  const elo = fma(y, lo, prodErr(y, hi, ehi));        // y * lo + __builtin_fma (y, hi, -ehi)
+  return powExp(ehi, elo, signBias);
 }

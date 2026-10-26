@@ -6,6 +6,9 @@
 // strict host and the port is also compared with its Math.* element by element; a Node built with FP contraction (the
 // Homebrew arm64 build on the owner's Mac) is not the server's maths, and the test says so instead.
 import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { gunzipSync } from 'node:zlib';
+import { powSets } from '../../../tools/determinism/pow_cases';
 import { describe, expect, test } from 'vitest';
 import * as D from '../dmath';
 import { ARITY, CASE_SETS, bits, dmathFn, edgeCases, fromBits, mathFn, runSet, type FnName } from './dmath_cases';
@@ -85,6 +88,44 @@ describe('dmath: bit-identical to V8 (strict fdlibm and FastMathHypot)', () => {
   });
 });
 
+describe('dmath.pow: bit-identical to the server\'s Math.pow (Vercel linux-x64, Node 24, glibc 2.34)', () => {
+  const srv = JSON.parse(gunzipSync(readFileSync(new URL('../../../tools/determinism/pow_server.json.gz', import.meta.url))).toString('utf8')) as
+    { arch: string; version: string; glibc: string; sets: Record<string, { n: number; args: string; pow: string; first64: string[] }> };
+  test(`the probe ran on the server (${srv.arch} ${srv.version} glibc ${srv.glibc})`, () => {
+    expect(srv.arch).toBe('x64');
+    expect(Object.keys(srv.sets).sort()).toEqual(Object.keys(powSets()).sort());
+  });
+  for (const [k, a] of Object.entries(powSets())) {
+    test(`${k}: ${a.length / 2} arguments, the SHA-256 of the results is the server's`, () => {
+      const s = srv.sets[k];
+      expect(createHash('sha256').update(Buffer.from(a.buffer)).digest('hex')).toBe(s.args);   // same arguments
+      const n = a.length / 2, r = new Float64Array(n);
+      for (let i = 0; i < n; i++) r[i] = D.pow(a[2 * i], a[2 * i + 1]);
+      const b = Buffer.from(r.buffer);
+      expect(Array.from({ length: Math.min(64, n) }, (_, i) => b.subarray(i * 8, i * 8 + 8).toString('hex'))).toEqual(s.first64);
+      expect(createHash('sha256').update(b).digest('hex')).toBe(s.pow);
+    });
+  }
+  test('V8\'s special cases before std::pow, and glibc\'s', () => {
+    expect(D.pow(0, NaN)).toBeNaN();               // V8: y NaN -> NaN
+    expect(D.pow(NaN, 0)).toBe(1);                 // glibc: y = 0 -> 1
+    expect(D.pow(1, Infinity)).toBeNaN();
+    expect(D.pow(-1, -Infinity)).toBeNaN();
+    expect(D.pow(3, 2)).toBe(9);
+    expect(D.pow(-0, 0.5)).toBe(0);
+    expect(Object.is(D.pow(-0, 0.5), 0)).toBe(true);
+    expect(D.pow(-Infinity, 0.5)).toBe(Infinity);
+    expect(D.pow(-8, 1 / 3)).toBeNaN();
+    expect(D.pow(-2, 3)).toBe(-8);
+    expect(Object.is(D.pow(-0, 3), -0)).toBe(true);
+    expect(D.pow(0, -1)).toBe(Infinity);
+    expect(D.pow(2, 1e10)).toBe(Infinity);
+    expect(D.pow(0.5, 1e10)).toBe(0);
+    expect(D.pow(1, 1e300)).toBe(1);
+    for (const [x, y] of [[2, 0.5], [10, 3], [2, -1074], [2, 1023], [5e-324, 0.5]]) expect(D.pow(x, y)).toBe(Math.pow(x, y));
+  });
+});
+
 describe('dmath stays exact and the replay path stays on it', () => {
   const src = (p: string) => readFileSync(new URL(p, import.meta.url), 'utf8');
   const TRANSCENDENTAL = /\bMath\.(sin|cos|tan|asin|acos|atan|atan2|sinh|cosh|tanh|asinh|acosh|atanh|exp|expm1|log|log1p|log2|log10|pow|cbrt|hypot)\b/g;
@@ -93,9 +134,10 @@ describe('dmath stays exact and the replay path stays on it', () => {
     const code = src('../dmath.ts').replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '');
     const used = [...new Set([...code.matchAll(/\bMath\.([a-zA-Z0-9]+)/g)].map((m) => m[1]))].sort();
     expect(used.every((f) => ['abs', 'floor', 'trunc', 'sqrt'].includes(f)), used.join(', ')).toBe(true);
+    expect(code.includes('**')).toBe(false);
   });
 
-  test('no native transcendental call in the replayed physics, the sim step or the lap timer (Math.pow excepted, open)', () => {
+  test('no native transcendental call (pow included) in the replayed physics, the sim step or the lap timer', () => {
     const files = ['../vehicle.ts', '../tyre.ts', '../track.ts', '../collision.ts', '../rollover.ts', '../gearschedule.ts', '../cars.ts',
       '../offtrack.ts', '../spec.ts', '../types.ts', '../../app/timing.ts'];
     const found: string[] = [];
@@ -104,8 +146,7 @@ describe('dmath stays exact and the replay path stays on it', () => {
       for (const m of code.matchAll(TRANSCENDENTAL)) found.push(`${f}: ${m[0]}`);
       for (const m of code.matchAll(/\*\*/g)) found.push(`${f}: ** at ${m.index}`);   // the exponent operator is Math.pow
     }
-    // Math.pow: V8 calls the platform C library (std::pow), no V8 pow to port (docs/determinism.md section 5)
-    expect(found).toEqual(['../vehicle.ts: Math.pow', '../vehicle.ts: Math.pow']);
+    expect(found).toEqual([]);
     // the sim (including the live auto-launch's lineSteer, whose output is recorded) and the dev / test track
     for (const f of ['../../scoreboard/sim.ts', '../../scoreboard/replay.ts', '../devtrack.ts']) expect([...src(f).matchAll(TRANSCENDENTAL)].map((m) => `${f}: ${m[0]}`)).toEqual([]);
   });
