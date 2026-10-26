@@ -321,3 +321,6 @@ rules in 3.1**. Things in the current code that break it if the app does not go 
   Firefox can differ from V8 (Node/Chrome) in the last bit and a long lap could drift past 0.05 s.
   Not testable here; if Safari players see rejections, the fix is deterministic math helpers in
   src/physics (or a wider tolerance).
+- **Done in the 0.4.0 determinism round (docs/determinism.md):** the physics calls `src/physics/dmath.ts`, a port of
+  V8's fdlibm and hypot bit-identical to the server's V8, in every engine; six-lap WebKit and Chrome traces replay on
+  Node to the bit. Still native and open: `Math.pow` (V8 uses the platform C library's), the owner's decision.

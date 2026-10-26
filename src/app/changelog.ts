@@ -36,6 +36,7 @@ export const CHANGELOG: ChangeEntry[] = [
       'How to play, and a Credits page with the data, software, models and engine-sound sources, the privacy note and how a team can ask to be left out.',
       'A plain message when the browser cannot run WebGL 2, and a reload button when the graphics drop out.',
       'The team’s ghost laps are labelled driver A to D.',
+      'Hot laps driven in Safari, on iPhones and in Chrome replay on the scoreboard server much more closely: the car’s physics now does its trigonometry in the game’s own code, the same in every browser as on the server.',
     ],
   },
   {
