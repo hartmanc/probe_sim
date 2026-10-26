@@ -32,12 +32,12 @@ const dir = new RaceDirector({
   line: pack.line, surface: pack.surface, makeSurface,
   probeJson: loadProbeJson(), pace, identity, pitLane: pack.scenery?.pit_lane ?? null, collisionWorld: createCollisionWorld(pack.scenery, pack.track),
 }, { laps, seed, playerAi: true, maxAi, followScale, laneMargin, shiftGrip, ...(mishapRate !== undefined ? { mishapRate } : {}) });
-const m = runSelfplay(dir, makeSurface(), { log: !argv.includes('--quiet') });
+const m = runSelfplay(dir, makeSurface(), { log: !argv.includes('--quiet'), cones: pack.scenery?.pit_exit_cones ?? null });
 printReport(m);
 // race pace against the calibrated pace: each AI car's best and last lap over the target lap of the stint it drew
 const med = (a: number[]) => { const b = a.filter(Number.isFinite).sort((x, y) => x - y); return b.length ? b[Math.floor(b.length / 2)] : NaN; };
 const ai = dir.cars.filter((c) => !c.isPlayer && c.paceTarget > 0);
-const racePace = { bestOverTarget: +med(ai.map((c) => c.bestLap / c.paceTarget)).toFixed(4), lastOverTarget: +med(ai.map((c) => c.lastLap / c.paceTarget)).toFixed(4), followScale, laneMargin, shiftGrip };
+const racePace = { bestOverTarget: +med(ai.map((c) => c.bestLap / c.paceTarget)).toFixed(4), worstBestOverTarget: +Math.max(...ai.map((c) => c.bestLap / c.paceTarget).filter(Number.isFinite)).toFixed(4), lastOverTarget: +med(ai.map((c) => c.lastLap / c.paceTarget)).toFixed(4), followScale, laneMargin, shiftGrip };
 console.log(`(g) pace: median best lap / drawn target ${racePace.bestOverTarget}, last lap / target ${racePace.lastOverTarget}; knobs followScale ${followScale} laneMargin ${laneMargin} shiftGrip ${shiftGrip}`);
 (m as unknown as { pace: typeof racePace }).pace = racePace;
 // finishing order (the results frozen at the flag; else by race distance): the bit-identity check across knob changes

@@ -33,6 +33,15 @@ export interface SelfplayMetrics {
   rules: { contacts: number; contactsPerCarLap: number; hardContacts: number; fourOff: number; fourOffMishap: number; fourOffPerCarLap: number; fourOffNonMishapPerCarLap: number; formationPasses: number; recoveries: number; recoveryAt?: { s: number; t: number; car: string; phase: string }[]; fourOffAt: { s: number; t?: number; car: string; ctx: string }[]; contactAt: { s: number; t: number; a: string; b: string; closing: number; ctx: string; phase?: string; ds?: number; dl?: number }[] };
   mishaps: { total: number; perCarLap: number; wide: number; spin: number; byCorner: Record<string, number>; lossMedian: number; lossMin: number; lossMax: number; losses: { kind: string; corner: string; loss: number }[] };
   cost: { usPerStep: number; usPerCar: number };
+  /**
+   * (AI robustness round, 26 Oct 2026) Pit-exit cone crossings: an AI car's centre > 0.2 m left of the cone line between
+   * its stations (sampled every 20 ms as ai_race.test.ts; one event per car and passage); "in control" = no mishap active
+   * or in the 15 s before and no marshal reset in the 15 s before (the test's rule, per event). Spins: an AI car in green
+   * whose heading is more than 1.3 rad off the track's (the spin mishap's own threshold), one event per car until it is
+   * back within 0.3 rad for 3 s; "without a mishap" = no mishap active or in the 15 s before.
+   */
+  robust: { coneCrossings: { car: string; t: number; s: number; over: number; samples: number; inControl: boolean }[]; coneInControl: number;
+    spins: { car: string; t: number; s: number; mishap: boolean }[]; spinsNoMishap: number };
 }
 
 interface Situation { i: number; j: number; base: number; t0: number; tClose: number; setup: boolean; brakeZone: boolean; done: boolean; tDone: number; seen: number; why?: string }
@@ -40,7 +49,7 @@ interface Situation { i: number; j: number; base: number; t0: number; tClose: nu
 const median = (a: number[]) => { if (!a.length) return NaN; const b = [...a].sort((x, y) => x - y); return b[Math.floor(b.length / 2)]; };
 const pctl = (a: number[], p: number) => { if (!a.length) return NaN; const b = [...a].sort((x, y) => x - y); return b[Math.min(b.length - 1, Math.floor(p * b.length))]; };
 
-export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: boolean; maxTime?: number } = {}): SelfplayMetrics {
+export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: boolean; maxTime?: number; cones?: { s0: number; s1: number; pts: number[][] } | null } = {}): SelfplayMetrics {
   const line = dir.line, L = line.L, tr = dir.traffic, n = dir.cars.length, cars = dir.cars;
   const corners = line.corners;
   const cornerAcc = corners.map(() => new Acc());
@@ -75,6 +84,15 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
   const anyDir = dir as unknown as { mishapLog?: { t: number; idx: number; corner: string; kind: string }[] };
   const drv = (i: number) => cars[i].driver as unknown as { passTarget: number; passSide: number; defendSide: number; offTrack: boolean; mishapActive?: boolean; profile: Float64Array } | null;
 
+  // pit-exit cone line (driver's left) in the line frame, as ai_race.test.ts
+  const cones = opts.cones && opts.cones.pts?.length ? opts.cones : null;
+  const coneLat: [number, number][] = cones ? cones.pts.map((p) => { const q = line.project(p[0], p[1]); return [q.s, q.lateral] as [number, number]; }).sort((a, b) => a[0] - b[0]) : [];
+  const coneAt = (s: number) => { let lo = 0, hi = coneLat.length - 1; while (hi - lo > 1) { const m = (lo + hi) >> 1; if (coneLat[m][0] <= s) lo = m; else hi = m; } const [sa, la] = coneLat[lo], [sb, lb] = coneLat[hi]; return la + (sb > sa ? (s - sa) / (sb - sa) : 0) * (lb - la); };
+  const coneOpen = new Int32Array(n).fill(-1);
+  const coneCrossings: SelfplayMetrics['robust']['coneCrossings'] = [];
+  const spins: SelfplayMetrics['robust']['spins'] = [];
+  const spinArmed = new Uint8Array(n).fill(1), spinCalm = new Float64Array(n);
+  const lastRecT = new Float64Array(n).fill(-1e9);
   const expectedTime = (prof: Float64Array, U0: number, dist: number) => { let t = 0; for (let d = 0; d < dist; d += 2) t += 2 / Math.max(3, line.at(prof, U0 + d)); return t; };
 
   while (dir.time < maxTime) {
@@ -111,6 +129,19 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
         }
       }
     }
+    // ---- pit-exit cone crossings, every 20 ms in every phase (as ai_race.test.ts)
+    if (cones && steps % 20 === 0) for (let i = 0; i < n; i++) {
+      const d = drv(i);
+      if (!d) continue;
+      const s = tr.s[i], calm = !d.mishapActive && t - lastMishapT[i] >= 15;
+      const over = s >= cones.s0 && s <= cones.s1 ? tr.lat[i] - coneAt(s) : -1;
+      if (over > 0.2) {
+        if (coneOpen[i] < 0) { coneOpen[i] = coneCrossings.length; coneCrossings.push({ car: cars[i].number, t: +t.toFixed(2), s: Math.round(s), over: 0, samples: 0, inControl: calm && t - lastRecT[i] >= 15 }); }
+        const c = coneCrossings[coneOpen[i]]; c.samples++; c.over = Math.max(c.over, +over.toFixed(2));
+        if (!(calm && t - lastRecT[i] >= 15)) c.inControl = false;
+      } else if (s < cones.s0 || s > cones.s1) coneOpen[i] = -1;
+    }
+
     if (phase !== 'green') continue;
     // ---- mishap log: time lost over the next 600 m vs the car's own profile
     const log = anyDir.mishapLog;
@@ -181,6 +212,15 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
       if (allOff) { offT[i] += h; onT[i] = 0; } else { offT[i] = 0; onT[i] += h; }
       if (onT[i] >= 2) armed[i] = 1;
       if (allOff && offT[i] >= 0.25 && armed[i]) { armed[i] = 0; fourOff++; fourOffAt.push({ s: Math.round(s), t: +t.toFixed(1), car: cars[i].number, ctx: (d.passTarget >= 0 ? 'pass' : d.defendSide ? 'defend' : dA < ALONE || dB < ALONE ? 'traffic' : 'alone') + '/' + ((d as unknown as { passPhase?: number }).passPhase ?? '-') + '/' + ((d as unknown as { limiter: string }).limiter) }); if (t - lastMishapT[i] < 15 || d.mishapActive) fourOffMishap++; }
+      // ---- robustness: pit-exit cone crossings (every 20 ms) and spins
+      const calm = !d.mishapActive && t - lastMishapT[i] >= 15;
+      {
+        const [qx, qy, qz, qw] = st.quat;
+        let herr = Math.atan2(2 * (qx * qy + qz * qw), 1 - 2 * (qy * qy + qz * qz)) - line.headingAt(s);
+        while (herr > Math.PI) herr -= 2 * Math.PI; while (herr < -Math.PI) herr += 2 * Math.PI;
+        if (Math.abs(herr) > 1.3 && spinArmed[i]) { spinArmed[i] = 0; spinCalm[i] = 0; spins.push({ car: cars[i].number, t: +t.toFixed(1), s: Math.round(s), mishap: !calm }); }
+        if (!spinArmed[i]) { if (Math.abs(herr) < 0.3) { spinCalm[i] += h; if (spinCalm[i] >= 3) spinArmed[i] = 1; } else spinCalm[i] = 0; }
+      }
     }
     // ---- situations: progress, setup at passable brake points, completion, expiry
     for (const [key, sit] of situations) {
@@ -202,7 +242,7 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
     }
     for (let i = 0; i < n; i++) prevS[i] = tr.s[i];
     // marshal resets (stuck > 4 s / wrong way > 2.5 s): where (the car's station after the reset) and when
-    for (let i = 0; i < n; i++) if (cars[i].recoveries !== prevRec[i]) { prevRec[i] = cars[i].recoveries; if (cars[i].driver) recoveryAt.push({ s: Math.round(tr.s[i]), t: +dir.time.toFixed(1), car: cars[i].number, phase: dir.phase }); }
+    for (let i = 0; i < n; i++) if (cars[i].recoveries !== prevRec[i]) { prevRec[i] = cars[i].recoveries; lastRecT[i] = dir.time; if (cars[i].driver) recoveryAt.push({ s: Math.round(tr.s[i]), t: +dir.time.toFixed(1), car: cars[i].number, phase: dir.phase }); }
     if (opts.log && steps % 60000 === 0) { const hh = dir.hud(); console.log(`t ${t.toFixed(0)} ${hh.phase} lap ${hh.lap} ${(ms * 1000 / steps / n).toFixed(2)} µs/car-step`); }
   }
   for (const s of situations.values()) { s.why = 'end'; closed.push(s); }
@@ -230,6 +270,7 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
     rules: { contacts, contactsPerCarLap: contacts / Math.max(1e-9, carLaps), hardContacts: hard, fourOff, fourOffMishap, fourOffPerCarLap: fourOff / Math.max(1e-9, carLaps), fourOffNonMishapPerCarLap: (fourOff - fourOffMishap) / Math.max(1e-9, carLaps), formationPasses, recoveries: dir.recoveries, fourOffAt, contactAt, recoveryAt },
     mishaps: { total: totalM, perCarLap: totalM / Math.max(1e-9, carLaps), wide, spin, byCorner, lossMedian: median(ls), lossMin: ls.length ? Math.min(...ls) : NaN, lossMax: ls.length ? Math.max(...ls) : NaN, losses },
     cost: { usPerStep, usPerCar: usPerStep / n },
+    robust: { coneCrossings, coneInControl: coneCrossings.filter((c) => c.inControl).length, spins, spinsNoMishap: spins.filter((x) => !x.mishap).length },
   };
 }
 
@@ -247,5 +288,7 @@ export function printReport(m: SelfplayMetrics): void {
   console.log(`(d) contacts (>1 m/s, AI-AI, per pair per 1 s) ${r.contacts} = ${f(r.contactsPerCarLap, 3)} per car-lap (>3 m/s: ${r.hardContacts}) [<= 0.02]; four-off ${r.fourOff} (${r.fourOffMishap} from mishaps) = ${f(r.fourOffPerCarLap, 3)} per car-lap, non-mishap ${f(r.fourOffNonMishapPerCarLap, 3)}; formation passes ${r.formationPasses}; recoveries ${r.recoveries}`);
   const mi = m.mishaps;
   console.log(`(e) mishaps ${mi.total} = ${f(mi.perCarLap, 4)} per car-lap (wide ${mi.wide}, spin ${mi.spin}); loss median ${f(mi.lossMedian, 1)} s [${f(mi.lossMin, 1)}..${f(mi.lossMax, 1)}]; by corner ${JSON.stringify(mi.byCorner)}`);
+  const ro = m.robust;
+  console.log(`(r) pit-exit cone crossings ${ro.coneCrossings.length} (in control ${ro.coneInControl})${ro.coneCrossings.length ? ': ' + ro.coneCrossings.map((c) => `#${c.car} t${c.t} s${c.s} +${c.over} m${c.inControl ? ' IN CONTROL' : ''}`).join(', ') : ''}; spins ${ro.spins.length} (without a mishap ${ro.spinsNoMishap})${ro.spins.length ? ': ' + ro.spins.map((x) => `#${x.car} t${x.t} s${x.s}${x.mishap ? ' (mishap)' : ''}`).join(', ') : ''}`);
   console.log(`(f) cost ${f(m.cost.usPerStep, 1)} µs per step, ${f(m.cost.usPerCar)} µs per car`);
 }
