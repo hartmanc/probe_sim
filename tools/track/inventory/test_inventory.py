@@ -56,6 +56,30 @@ class StrictSegmentTest(unittest.TestCase):
             tm.s(16.5)
 
 
+class UncertaintyTest(unittest.TestCase):
+    """position_uncertainty (Mid-Ohio round 5): sigma from the bracketing anchors' leave-one-out residuals; a map whose
+    largest residual exceeds corroborate_over_m marks its rows 'corroborate'; explicit-s rows use their video's map."""
+    GOOD = [{'name': 'S/F', 't': 0.0, 's': 0.0}, {'name': 'a', 't': 10.0, 's': 105.0}, {'name': 'b', 't': 20.0, 's': 200.0},
+            {'name': 'end', 't': 40.0, 's': 400.0}]
+    WEAK = [{'name': 'p', 't': 0.0, 's': 0.0}, {'name': 'q', 't': 10.0, 's': 160.0}, {'name': 'r', 't': 20.0, 's': 200.0}]
+
+    def test_sigma_and_placement(self):
+        g = inventory.TimeMap(self.GOOD, 400.0)
+        w = inventory.TimeMap(self.WEAK, 400.0, strict=True)
+        res = {r['name']: abs(r['loo_residual_m']) for r in g.residuals()}
+        self.assertEqual(inventory.sigma_at(g, 5.0), round(res['a'], 1))            # S/F has none: anchor a's
+        self.assertEqual(inventory.sigma_at(g, 15.0), round(max(res['a'], res['b']), 1))
+        rows = [{'t': 5.0, 'map': 'weak'}, {'t': 15.0}, {'t': None, 'source': 'onboard:vg@15'},
+                {'t': None, 'source': 'streetview:x@0'}]
+        inventory.add_uncertainty(rows, {'primary': ('vg', g), 'weak': ('vw', w)}, {'corroborate_over_m': 40})
+        self.assertEqual(rows[0]['placement'], 'corroborate')                        # |residual| 60 m > 40 m
+        self.assertEqual(rows[0]['sigma_s_m'], 60.0)
+        self.assertEqual(rows[1]['placement'], 'direct')
+        self.assertEqual(rows[2]['sigma_s_m'], rows[1]['sigma_s_m'])                 # explicit s: its video's map at t
+        self.assertIsNone(rows[3]['sigma_s_m'])
+        self.assertEqual(rows[3]['placement'], 'corroborate')
+
+
 class RowTest(unittest.TestCase):
     def test_validation(self):
         ok = {'t': 2, 'side': 'left', 'kind': 'wall', 'confidence': 0.9, 'attrs': {'h_m': 1.0, 'h_method': 'jersey-ref'}}

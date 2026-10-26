@@ -70,392 +70,404 @@ Interpolation between anchors: profile (profile: shared out by a curvature speed
 | T4 | 3:01.6 | 5558.9 | 5614.0 | -55.1 | 123.3 | 59.6 / 45.8 |
 | PERMCO bridge | 3:20.7 | 6433.5 | - | - | - | - |
 
+## Positional uncertainty by time map
+
+Each row's sigma_s_m is the larger leave-one-out residual of the two anchors bracketing it (an indicator, not a guaranteed bound). Rows of a map whose largest residual exceeds 40 m are 'corroborate': the scenery stage places no precise endpoint from them alone (build-track SKILL.md 0.7 (where a time map is +-40 m, add an anchor before trusting its rows); Astra round-4 review: IndyCar maps B and C (55-60 m leave-one-out residuals) need corroboration from N837, the 360 lap or another anchor before scenery places precise endpoints from them).
+
+| time map | largest abs residual (m) | rows | placement |
+|---|---|---|---|
+| primary | 14.8 | 105 | direct |
+| 360 lap (e25u_vjn1uM) | 20.4 | 209 | direct |
+| IndyCar segment A (9Drr1VkE1_U) | 22.4 | 26 | direct |
+| IndyCar segment B (9Drr1VkE1_U) | 60.1 | 19 | corroborate |
+| IndyCar segment C (9Drr1VkE1_U) | 55.1 | 21 | corroborate |
+
 ## Rows round the lap (367)
 
-| s (m) | t | side | kind | what | height | conf | source | note |
-|---|---|---|---|---|---|---|---|---|
-| 0 | 0:24.0 | left | building | starter tower, 4 storeys, red roof | 13 m (storeys) | 0.8 | onboard:e25u_vjn1uM@24.0 | starter tower behind the pit lane |
-| 0 | 0:24.0 | left | paint | white timing stripe across the track |  | 0.8 | onboard:e25u_vjn1uM@24.0 | S/F line |
-| 0 | 0:24.0 | left | stand | Honda overhead starter gantry over the pit wall |  | 0.8 | onboard:e25u_vjn1uM@24.0 | S/F gantry |
-| 0 | 0:24.0 | left | wall | concrete pit wall, white | 0.7 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@24.0 | pit wall, "NTT INDYCAR SERIES" lettering, the pit lane behind |
-| 0 | 0:24.0 | right | runoff | grass then sand/gravel |  | 0.8 | onboard:e25u_vjn1uM@24.0 |  |
-| 0 | 0:24.0 | right | stand | covered grandstand, red roof | 7 m (storeys) | 0.8 | onboard:e25u_vjn1uM@24.0 | main straight grandstand behind the armco |
-| 0 | 0:24.0 | right | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@24.0 | red armco at the back of the run-off |
-| 4 | 2:10.0 | left | stand | overhead S/F gantry with PERMCO banner |  | 0.8 | onboard:OJaBJz18xEo@130.0 | Catalyst line |
-| 12 | 0:16.0 | left | wall | pit wall, white |  | 0.7 | onboard:9Drr1VkE1_U@16.0 |  |
-| 28 | 0:06.0 | left | wall | pit wall, white |  | 0.8 | onboard:OJaBJz18xEo@6.0 |  |
-| 28 | 0:06.0 | right | fence | catch fence |  | 0.8 | onboard:OJaBJz18xEo@6.0 |  |
-| 28 | 0:06.0 | right | wall | armco, red |  | 0.8 | onboard:OJaBJz18xEo@6.0 |  |
-| 50 | 2:30.0 | left | wall | pit wall, white |  | 0.7 | onboard:9Drr1VkE1_U@150.0 |  |
-| 50 | 2:30.0 | right | wall | armco, red |  | 0.7 | onboard:9Drr1VkE1_U@150.0 |  |
-| 72 | 0:26.0 | left | building | pit garages / hospitality, red roofs | 4 m (storeys) | 0.8 | onboard:e25u_vjn1uM@26.0 | paddock row behind the pit lane |
-| 72 | 0:26.0 | left | wall | concrete pit wall, white | 0.7 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@26.0 | pit wall continues |
-| 72 | 0:26.0 | right | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | onboard:e25u_vjn1uM@26.0 | catch fence over the armco |
-| 72 | 0:26.0 | right | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@26.0 | grass verge |
-| 72 | 0:26.0 | right | stand | covered grandstand, red roof |  | 0.8 | onboard:e25u_vjn1uM@26.0 |  |
-| 72 | 0:26.0 | right | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@26.0 |  |
-| 90 | 0:08.0 | left | wall | pit wall, white |  | 0.8 | onboard:OJaBJz18xEo@8.0 |  |
-| 90 | 0:08.0 | right | fence | catch fence |  | 0.8 | onboard:OJaBJz18xEo@8.0 |  |
-| 90 | 0:08.0 | right | stand | covered grandstand |  | 0.8 | onboard:OJaBJz18xEo@8.0 | behind the fence |
-| 90 | 0:08.0 | right | wall | armco, red |  | 0.8 | onboard:OJaBJz18xEo@8.0 |  |
-| 90 | 1:26.0 | left | wall | pit wall, white |  | 0.7 | onboard:9Drr1VkE1_U@86.0 |  |
-| 90 | 1:26.0 | right | wall | armco, red |  | 0.7 | onboard:9Drr1VkE1_U@86.0 |  |
-| 149 | 0:18.0 | right | wall | armco, red |  | 0.7 | onboard:9Drr1VkE1_U@18.0 |  |
-| 154 | 0:28.0 | left | wall | concrete pit wall, white | 0.7 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@28.0 | pit wall; VELO banners on it toward the bridge |
-| 154 | 0:28.0 | right | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | onboard:e25u_vjn1uM@28.0 |  |
-| 154 | 0:28.0 | right | sign | brake board "200" |  | 0.8 | onboard:e25u_vjn1uM@28.0 | T1 brake board on the right verge |
-| 154 | 0:28.0 | right | station | TV camera scaffold tower behind the fence |  | 0.8 | onboard:e25u_vjn1uM@28.0 |  |
-| 154 | 0:28.0 | right | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@28.0 |  |
-| 160 | 0:10.0 | ahead | bridge | Firestone footbridge |  | 0.8 | onboard:OJaBJz18xEo@10.0 | ahead |
-| 160 | 0:10.0 | left | wall | pit wall, white |  | 0.8 | onboard:OJaBJz18xEo@10.0 |  |
-| 160 | 0:10.0 | right | fence | catch fence |  | 0.8 | onboard:OJaBJz18xEo@10.0 |  |
-| 160 | 0:10.0 | right | wall | armco, red |  | 0.8 | onboard:OJaBJz18xEo@10.0 |  |
-| 180 | 2:32.0 | ahead | bridge | Firestone footbridge |  | 0.7 | onboard:9Drr1VkE1_U@152.0 | passed at 152.9 |
-| 226 | 0:12.0 | ahead | bridge | Firestone footbridge |  | 0.8 | onboard:OJaBJz18xEo@12.0 | overhead at 0:12.3 |
-| 226 | 0:12.0 | right | wall | red concrete barrier, red |  | 0.8 | onboard:OJaBJz18xEo@12.0 | run to the abutment |
-| 233 | 0:30.0 | ahead | bridge | Firestone footbridge (deck with banners: Firestone facing the approach, HONDA the far side), concrete abutments |  | 0.8 | onboard:e25u_vjn1uM@30.0 | passes overhead at 0:30.0 |
-| 233 | 1:28.0 | ahead | bridge | Firestone footbridge |  | 0.7 | onboard:9Drr1VkE1_U@88.0 | passed at 88.0 |
-| 233 | 0:30.0 | left | wall | pit wall end at the bridge abutment, white |  | 0.8 | onboard:e25u_vjn1uM@30.0 | pit exit lane continues beside the track under the bridge |
-| 233 | 0:30.0 | right | boards | Summit board on the fence |  | 0.8 | onboard:e25u_vjn1uM@30.0 |  |
-| 233 | 0:30.0 | right | wall | concrete abutment then red concrete barrier, red |  | 0.8 | onboard:e25u_vjn1uM@30.0 | bridge abutment and the red barrier run to it |
-| 274 | 0:20.0 | ahead | bridge | Firestone footbridge |  | 0.7 | onboard:9Drr1VkE1_U@20.0 | passed at 19.2 |
-| 281 | 0:14.0 | left | paint | white hatched pit-exit blend |  | 0.8 | onboard:OJaBJz18xEo@14.0 | 2026: blend lines and the asphalt of the pit exit, same tone |
-| 295 | 0:32.0 | left | kerb | T1 inside kerb, red/white, flat |  | 0.8 | onboard:e25u_vjn1uM@32.0 | apex kerb |
-| 295 | 0:32.0 | left | mast | timber utility poles with lines, several |  | 0.7 | onboard:e25u_vjn1uM@32.0 | T1 inside, beyond the infield armco |
-| 295 | 0:32.0 | left | paint | white hatched pit-exit blend lines on asphalt |  | 0.8 | onboard:e25u_vjn1uM@32.0 | pit exit merge; same asphalt tone as the track |
-| 295 | 0:32.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@32.0 | low red armco beyond the infield grass |
-| 295 | 0:32.0 | right | boards | Honda / sponsor board wall |  | 0.8 | onboard:e25u_vjn1uM@32.0 | far |
-| 295 | 0:32.0 | right | runoff | wide paved run-off, then sand/gravel |  | 0.8 | onboard:e25u_vjn1uM@32.0 | T1 outside |
-| 339 | 0:16.0 | left | kerb | T1 inside kerb, red/white |  | 0.8 | onboard:OJaBJz18xEo@16.0 |  |
-| 341 | 1:30.0 | left | kerb | T1 kerb, red/white |  | 0.7 | onboard:9Drr1VkE1_U@90.0 |  |
-| 358 | 0:34.0 | left | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@34.0 |  |
-| 358 | 0:34.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@34.0 |  |
-| 358 | 0:34.0 | right | boards | Honda boards |  | 0.8 | onboard:e25u_vjn1uM@34.0 |  |
-| 358 | 0:34.0 | right | runoff | sand/gravel trap |  | 0.8 | onboard:e25u_vjn1uM@34.0 | T1 exit outside |
-| 358 | 0:34.0 | right | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@34.0 |  |
-| 374 | 0:22.0 | right | kerb | T1 exit kerb, yellow |  | 0.7 | onboard:9Drr1VkE1_U@22.0 |  |
-| 387 | 0:18.0 | left | wall | armco, red |  | 0.8 | onboard:OJaBJz18xEo@18.0 |  |
-| 387 | 0:18.0 | right | runoff | grass |  | 0.8 | onboard:OJaBJz18xEo@18.0 |  |
-| 394 | 2:36.0 | right | kerb | T1 exit kerb, yellow |  | 0.7 | onboard:9Drr1VkE1_U@156.0 |  |
-| 419 | 0:36.0 | left | building | hospitality tents / covered stand, red roof |  | 0.8 | onboard:e25u_vjn1uM@36.0 | beyond the fence |
-| 419 | 0:36.0 | left | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@36.0 |  |
-| 419 | 0:36.0 | right | kerb | T1 exit kerb, yellow, flat (rumble strip) |  | 0.8 | onboard:e25u_vjn1uM@36.0 | yellow exit kerb |
-| 419 | 0:36.0 | right | runoff | sand/gravel |  | 0.8 | onboard:e25u_vjn1uM@36.0 |  |
-| 440 | 0:20.0 | right | kerb | T1 exit kerb, yellow, with red outer band |  | 0.8 | onboard:OJaBJz18xEo@20.0 |  |
-| 447 | 1:32.0 | right | kerb | T1 exit kerb, yellow |  | 0.7 | onboard:9Drr1VkE1_U@92.0 |  |
-| 485 | 0:24.0 | left | wall | armco, red |  | 0.7 | onboard:9Drr1VkE1_U@24.0 |  |
-| 493 | 0:38.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | onboard:e25u_vjn1uM@38.0 |  |
-| 493 | 0:38.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@38.0 |  |
-| 493 | 0:38.0 | right | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@38.0 | wide infield |
-| 500 | 0:22.0 | left | fence | catch fence |  | 0.8 | onboard:OJaBJz18xEo@22.0 |  |
-| 500 | 0:22.0 | left | wall | armco, red |  | 0.8 | onboard:OJaBJz18xEo@22.0 |  |
-| 500 | 0:22.0 | right | runoff | grass |  | 0.8 | onboard:OJaBJz18xEo@22.0 |  |
-| 518 | 2:38.0 | left | wall | armco, red |  | 0.7 | onboard:9Drr1VkE1_U@158.0 |  |
-| 570 | 0:24.0 | left | fence | catch fence |  | 0.8 | onboard:OJaBJz18xEo@24.0 |  |
-| 570 | 0:24.0 | left | sign | brake boards |  | 0.8 | onboard:OJaBJz18xEo@24.0 | on the fence |
-| 570 | 0:24.0 | left | wall | armco, red |  | 0.8 | onboard:OJaBJz18xEo@24.0 |  |
-| 570 | 0:24.0 | right | runoff | grass |  | 0.8 | onboard:OJaBJz18xEo@24.0 |  |
-| 580 | 0:40.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | onboard:e25u_vjn1uM@40.0 |  |
-| 580 | 0:40.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@40.0 |  |
-| 580 | 0:40.0 | right | paint | inactive chicane road: grey asphalt, slightly lighter than the racing surface |  | 0.8 | onboard:e25u_vjn1uM@40.0 | the unused chicane seen across the infield (owner green strokes) |
-| 580 | 0:40.0 | right | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@40.0 | wide infield |
-| 590 | 1:34.0 | left | wall | armco, red |  | 0.7 | onboard:9Drr1VkE1_U@94.0 |  |
-| 632 | 0:26.0 | left | wall | armco, red |  | 0.7 | onboard:9Drr1VkE1_U@26.0 |  |
-| 648 | 0:26.0 | left | fence | catch fence |  | 0.8 | onboard:OJaBJz18xEo@26.0 |  |
-| 648 | 0:26.0 | left | wall | armco, red |  | 0.8 | onboard:OJaBJz18xEo@26.0 |  |
-| 648 | 0:26.0 | right | runoff | grass |  | 0.8 | onboard:OJaBJz18xEo@26.0 |  |
-| 679 | 2:40.0 | left | wall | armco, red |  | 0.7 | onboard:9Drr1VkE1_U@160.0 |  |
-| 680 | 0:42.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | onboard:e25u_vjn1uM@42.0 |  |
-| 680 | 0:42.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@42.0 |  |
-| 680 | 0:42.0 | right | kerb | red/white kerb at the chicane re-join (inactive) |  | 0.8 | onboard:e25u_vjn1uM@42.0 | chicane mouth kerb |
-| 680 | 0:42.0 | right | paint | chicane mouth paving, same grey asphalt |  | 0.8 | onboard:e25u_vjn1uM@42.0 |  |
-| 730 | 0:28.0 | left | fence | catch fence |  | 0.8 | onboard:OJaBJz18xEo@28.0 |  |
-| 730 | 0:28.0 | left | wall | armco, red |  | 0.8 | onboard:OJaBJz18xEo@28.0 |  |
-| 730 | 0:28.0 | right | runoff | grass |  | 0.8 | onboard:OJaBJz18xEo@28.0 |  |
-| 764 | 1:36.0 | left | wall | armco, red |  | 0.7 | onboard:9Drr1VkE1_U@96.0 |  |
-| 783 | 0:44.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | onboard:e25u_vjn1uM@44.0 |  |
-| 783 | 0:44.0 | left | sign | brake board "300" |  | 0.8 | onboard:e25u_vjn1uM@44.0 | Keyhole brake board |
-| 783 | 0:44.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@44.0 |  |
-| 783 | 0:44.0 | right | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@44.0 |  |
-| 798 | 0:28.0 | left | sign | brake board |  | 0.7 | onboard:9Drr1VkE1_U@28.0 |  |
-| 809 | 0:30.0 | ahead | boards | red billboard on the hill |  | 0.8 | onboard:OJaBJz18xEo@30.0 |  |
-| 809 | 0:30.0 | left | wall | armco, red |  | 0.8 | onboard:OJaBJz18xEo@30.0 |  |
-| 863 | 0:46.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | onboard:e25u_vjn1uM@46.0 |  |
-| 863 | 0:46.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@46.0 |  |
-| 863 | 0:46.0 | right | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@46.0 |  |
-| 890 | 1:38.0 | right | kerb | Keyhole kerb, red/white |  | 0.7 | onboard:9Drr1VkE1_U@98.0 |  |
-| 902 | 0:30.0 | right | kerb | Keyhole kerb, red/white |  | 0.7 | onboard:9Drr1VkE1_U@30.0 |  |
-| 906 | 0:34.0 | right | kerb | Keyhole kerb, red/white |  | 0.8 | onboard:OJaBJz18xEo@34.0 |  |
-| 912 | 0:48.0 | left | boards | sponsor board wall |  | 0.8 | onboard:e25u_vjn1uM@48.0 | outside of the Keyhole |
-| 912 | 0:48.0 | left | runoff | sand/gravel |  | 0.8 | onboard:e25u_vjn1uM@48.0 |  |
-| 912 | 0:48.0 | right | kerb | Keyhole kerb, red/white, long |  | 0.8 | onboard:e25u_vjn1uM@48.0 | T2 apex kerb |
-| 912 | 0:48.0 | right | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@48.0 | infield |
-| 930 | 2:44.0 | right | kerb | Keyhole kerb, red/white |  | 0.7 | onboard:9Drr1VkE1_U@164.0 |  |
-| 943 | 0:36.0 | right | kerb | Keyhole kerb, red/white |  | 0.8 | onboard:OJaBJz18xEo@36.0 |  |
-| 958 | 0:50.0 | left | boards | board wall: Honda, Firestone, Velo, PERMCO |  | 0.8 | onboard:e25u_vjn1uM@50.0 |  |
-| 958 | 0:50.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@50.0 |  |
-| 958 | 0:50.0 | right | kerb | Keyhole kerb, red/white, long |  | 0.8 | onboard:e25u_vjn1uM@50.0 | T2 apex kerb |
-| 958 | 0:50.0 | right | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@50.0 | infield |
-| 966 | 1:40.0 | right | kerb | Keyhole kerb, red/white |  | 0.7 | onboard:9Drr1VkE1_U@100.0 |  |
-| 974 | 0:32.0 | right | kerb | Keyhole kerb, red/white |  | 0.7 | onboard:9Drr1VkE1_U@32.0 |  |
-| 979 | 0:38.0 | left | boards | board wall: Honda, HRC, Velo |  | 0.8 | onboard:OJaBJz18xEo@38.0 |  |
-| 998 | 2:46.0 | right | kerb | Keyhole kerb, red/white |  | 0.7 | onboard:9Drr1VkE1_U@166.0 |  |
-| 999 | 0:52.0 | left | boards | board wall: Honda, Firestone, PERMCO |  | 0.8 | onboard:e25u_vjn1uM@52.0 |  |
-| 999 | 0:52.0 | left | station | TV camera scaffold |  | 0.8 | onboard:e25u_vjn1uM@52.0 | behind the boards |
-| 999 | 0:52.0 | right | kerb | Keyhole kerb, red/white, long |  | 0.8 | onboard:e25u_vjn1uM@52.0 | T2 apex kerb |
-| 999 | 0:52.0 | right | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@52.0 | infield |
-| 1019 | 0:40.0 | left | boards | board wall: HRC, Summit, Honda, Start, O'Reilly, HRC |  | 0.8 | onboard:OJaBJz18xEo@40.0 |  |
-| 1019 | 0:40.0 | right | kerb | Keyhole kerb, red/white |  | 0.8 | onboard:OJaBJz18xEo@40.0 |  |
-| 1035 | 1:42.0 | left | kerb | T2 exit kerb, yellow |  | 0.7 | onboard:9Drr1VkE1_U@102.0 |  |
-| 1044 | 0:54.0 | left | boards | board wall: Velo, Summit, Honda, Start, O'Reilly, HRC |  | 0.8 | onboard:e25u_vjn1uM@54.0 | same boards as the N837 onboard t40 |
-| 1044 | 0:54.0 | left | kerb | T2 exit kerb, yellow, flat |  | 0.8 | onboard:e25u_vjn1uM@54.0 |  |
-| 1044 | 0:54.0 | right | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@54.0 |  |
-| 1050 | 0:34.0 | left | kerb | T2 exit kerb, yellow with red band |  | 0.7 | onboard:9Drr1VkE1_U@34.0 |  |
-| 1066 | 0:42.0 | left | kerb | T2 exit kerb, yellow with red band |  | 0.8 | onboard:OJaBJz18xEo@42.0 |  |
-| 1074 | 2:48.0 | left | kerb | T2 exit kerb, yellow |  | 0.7 | onboard:9Drr1VkE1_U@168.0 |  |
-| 1101 | 0:56.0 | left | kerb | yellow exit kerb ends |  | 0.8 | onboard:e25u_vjn1uM@56.0 |  |
-| 1101 | 0:56.0 | left | runoff | sand/gravel |  | 0.8 | onboard:e25u_vjn1uM@56.0 |  |
-| 1101 | 0:56.0 | right | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@56.0 |  |
-| 1123 | 0:44.0 | left | fence | catch fence |  | 0.8 | onboard:OJaBJz18xEo@44.0 |  |
-| 1123 | 0:44.0 | left | wall | armco, red |  | 0.8 | onboard:OJaBJz18xEo@44.0 |  |
-| 1123 | 0:44.0 | right | runoff | grass |  | 0.8 | onboard:OJaBJz18xEo@44.0 |  |
-| 1128 | 1:44.0 | left | wall | armco, red |  | 0.7 | onboard:9Drr1VkE1_U@104.0 |  |
-| 1153 | 0:36.0 | left | wall | armco, red |  | 0.7 | onboard:9Drr1VkE1_U@36.0 |  |
-| 1169 | 0:58.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | onboard:e25u_vjn1uM@58.0 | paddock / RVs behind |
-| 1169 | 0:58.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@58.0 |  |
-| 1169 | 0:58.0 | right | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@58.0 | open infield |
-| 1178 | 2:50.0 | left | wall | armco, red |  | 0.7 | onboard:9Drr1VkE1_U@170.0 |  |
-| 1189 | 0:46.0 | left | fence | catch fence |  | 0.8 | onboard:OJaBJz18xEo@46.0 |  |
-| 1189 | 0:46.0 | left | wall | armco, red |  | 0.8 | onboard:OJaBJz18xEo@46.0 |  |
-| 1189 | 0:46.0 | right | runoff | grass |  | 0.8 | onboard:OJaBJz18xEo@46.0 |  |
-| 1248 | 1:00.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | onboard:e25u_vjn1uM@60.0 | paddock / RVs behind |
-| 1248 | 1:00.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@60.0 |  |
-| 1248 | 1:00.0 | right | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@60.0 | open infield |
-| 1251 | 1:46.0 | left | wall | armco, red |  | 0.7 | onboard:9Drr1VkE1_U@106.0 |  |
-| 1265 | 0:48.0 | left | fence | catch fence |  | 0.8 | onboard:OJaBJz18xEo@48.0 |  |
-| 1265 | 0:48.0 | left | wall | armco, red |  | 0.8 | onboard:OJaBJz18xEo@48.0 |  |
-| 1265 | 0:48.0 | right | runoff | grass |  | 0.8 | onboard:OJaBJz18xEo@48.0 |  |
-| 1288 | 0:38.0 | left | wall | armco, red |  | 0.7 | onboard:9Drr1VkE1_U@38.0 |  |
-| 1338 | 1:02.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | onboard:e25u_vjn1uM@62.0 | paddock / RVs behind |
-| 1338 | 1:02.0 | left | station | marshal post / scaffold behind the fence |  | 0.8 | onboard:e25u_vjn1uM@62.0 |  |
-| 1338 | 1:02.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@62.0 |  |
-| 1338 | 1:02.0 | right | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@62.0 | open infield |
-| 1351 | 0:50.0 | left | fence | catch fence |  | 0.8 | onboard:OJaBJz18xEo@50.0 |  |
-| 1351 | 0:50.0 | left | wall | armco, red |  | 0.8 | onboard:OJaBJz18xEo@50.0 |  |
-| 1351 | 0:50.0 | right | runoff | grass |  | 0.8 | onboard:OJaBJz18xEo@50.0 |  |
-| 1399 | 1:48.0 | left | wall | armco, red |  | 0.7 | onboard:9Drr1VkE1_U@108.0 |  |
-| 1433 | 1:04.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | onboard:e25u_vjn1uM@64.0 | paddock / RVs behind |
-| 1433 | 1:04.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@64.0 |  |
-| 1433 | 1:04.0 | right | paint | inactive T1-T3 connector road meets the track: grey asphalt |  | 0.8 | onboard:e25u_vjn1uM@64.0 | crossover (owner green strokes) |
-| 1433 | 1:04.0 | right | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@64.0 | open infield |
-| 1439 | 0:52.0 | left | fence | catch fence |  | 0.8 | onboard:OJaBJz18xEo@52.0 |  |
-| 1439 | 0:52.0 | left | wall | armco, red |  | 0.8 | onboard:OJaBJz18xEo@52.0 |  |
-| 1439 | 0:52.0 | right | runoff | grass |  | 0.8 | onboard:OJaBJz18xEo@52.0 |  |
-| 1447 | 0:40.0 | left | boards | sponsor boards |  | 0.7 | onboard:9Drr1VkE1_U@40.0 |  |
-| 1459 | 2:54.0 | left | wall | armco, red |  | 0.7 | onboard:9Drr1VkE1_U@174.0 |  |
-| 1527 | 0:54.0 | left | boards | Honda board |  | 0.8 | onboard:OJaBJz18xEo@54.0 |  |
-| 1527 | 0:54.0 | left | station | marshal post, yellow |  | 0.8 | onboard:OJaBJz18xEo@54.0 |  |
-| 1528 | 1:06.0 | left | boards | Honda and NTT Data boards on the fence |  | 0.8 | onboard:e25u_vjn1uM@66.0 |  |
-| 1528 | 1:06.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@66.0 |  |
-| 1528 | 1:06.0 | right | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@66.0 |  |
-| 1552 | 1:50.0 | left | wall | armco, red |  | 0.7 | onboard:9Drr1VkE1_U@110.0 |  |
-| 1607 | 0:42.0 | left | wall | armco, red |  | 0.7 | onboard:9Drr1VkE1_U@42.0 |  |
-| 1616 | 0:56.0 | left | fence | catch fence |  | 0.8 | onboard:OJaBJz18xEo@56.0 |  |
-| 1616 | 0:56.0 | left | wall | armco, red |  | 0.8 | onboard:OJaBJz18xEo@56.0 |  |
-| 1616 | 0:56.0 | right | runoff | grass |  | 0.8 | onboard:OJaBJz18xEo@56.0 |  |
-| 1623 | 1:08.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | onboard:e25u_vjn1uM@68.0 | paddock / RVs behind |
-| 1623 | 1:08.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@68.0 |  |
-| 1623 | 1:08.0 | right | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@68.0 | open infield |
-| 1704 | 0:58.0 | left | fence | catch fence |  | 0.8 | onboard:OJaBJz18xEo@58.0 |  |
-| 1704 | 0:58.0 | left | wall | armco, red |  | 0.8 | onboard:OJaBJz18xEo@58.0 |  |
-| 1704 | 0:58.0 | right | runoff | grass |  | 0.8 | onboard:OJaBJz18xEo@58.0 |  |
-| 1706 | 1:52.0 | left | wall | armco, red |  | 0.7 | onboard:9Drr1VkE1_U@112.0 |  |
-| 1718 | 1:10.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | onboard:e25u_vjn1uM@70.0 | paddock / RVs behind |
-| 1718 | 1:10.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@70.0 |  |
-| 1718 | 1:10.0 | right | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@70.0 | open infield |
-| 1758 | 2:58.0 | left | wall | armco, red |  | 0.7 | onboard:9Drr1VkE1_U@178.0 |  |
-| 1767 | 0:44.0 | left | wall | armco, red |  | 0.7 | onboard:9Drr1VkE1_U@44.0 |  |
-| 1792 | 1:00.0 | left | stand | aluminium bleachers |  | 0.8 | onboard:OJaBJz18xEo@60.0 | T4 approach |
-| 1792 | 1:00.0 | right | wall | armco, red |  | 0.8 | onboard:OJaBJz18xEo@60.0 |  |
-| 1813 | 1:12.0 | left | sign | brake board "300" |  | 0.8 | onboard:e25u_vjn1uM@72.0 |  |
-| 1813 | 1:12.0 | left | stand | aluminium bleachers |  | 0.8 | onboard:e25u_vjn1uM@72.0 | T4 approach grandstand |
-| 1813 | 1:12.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@72.0 |  |
-| 1813 | 1:12.0 | right | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@72.0 |  |
-| 1813 | 1:12.0 | right | sign | brake board "300" |  | 0.8 | onboard:e25u_vjn1uM@72.0 |  |
-| 1857 | 1:54.0 | right | kerb | T4 apex kerb, red/white |  | 0.7 | onboard:9Drr1VkE1_U@114.0 | approach |
-| 1876 | 1:02.0 | left | cone_line | orange cones, two, orange |  | 0.8 | onboard:OJaBJz18xEo@62.0 | Lemons event cones at the T4 braking zone (2026) |
-| 1897 | 3:00.0 | right | kerb | T4 apex kerb, red/white |  | 0.7 | onboard:9Drr1VkE1_U@180.0 | approach |
-| 1898 | 1:14.0 | left | boards | Honda boards |  | 0.8 | onboard:e25u_vjn1uM@74.0 |  |
-| 1898 | 1:14.0 | left | stand | aluminium bleachers |  | 0.8 | onboard:e25u_vjn1uM@74.0 |  |
-| 1898 | 1:14.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@74.0 |  |
-| 1898 | 1:14.0 | right | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@74.0 |  |
-| 1911 | 0:46.0 | right | kerb | T4 apex kerb, red/white |  | 0.7 | onboard:9Drr1VkE1_U@46.0 | approach |
-| 1935 | 1:04.0 | left | boards | sponsor boards |  | 0.8 | onboard:OJaBJz18xEo@64.0 |  |
-| 1952 | 1:16.0 | left | boards | Honda board wall along the outside |  | 0.8 | onboard:e25u_vjn1uM@76.0 | T4 outside |
-| 1952 | 1:16.0 | left | runoff | grass then sand/gravel |  | 0.8 | onboard:e25u_vjn1uM@76.0 | T4 run-off (rebuilt 2024) |
-| 1952 | 1:16.0 | right | kerb | T4 apex kerb, red/white (kept in the 2024 rebuild) |  | 0.8 | onboard:e25u_vjn1uM@76.0 | T4 apex |
-| 1952 | 1:16.0 | right | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@76.0 |  |
-| 1955 | 1:56.0 | right | kerb | T4 apex kerb, red/white |  | 0.7 | onboard:9Drr1VkE1_U@116.0 |  |
-| 1973 | 1:06.0 | right | kerb | T4 apex kerb, red/white |  | 0.8 | onboard:OJaBJz18xEo@66.0 |  |
-| 1976 | 3:02.0 | left | kerb | yellow kerb |  | 0.7 | onboard:9Drr1VkE1_U@182.0 | T4 exit outside |
-| 1989 | 0:48.0 | left | kerb | yellow kerb |  | 0.7 | onboard:9Drr1VkE1_U@48.0 | T4 exit outside |
-| 1989 | 0:48.0 | right | tower | scoring pylon |  | 0.7 | onboard:9Drr1VkE1_U@48.0 |  |
-| 1995 | 1:18.0 | left | kerb | yellow kerb |  | 0.8 | onboard:e25u_vjn1uM@78.0 | T4 exit / T5 approach, outside |
-| 1995 | 1:18.0 | left | runoff | sand/gravel, wide |  | 0.8 | onboard:e25u_vjn1uM@78.0 | T4 exit outside |
-| 1995 | 1:18.0 | right | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@78.0 |  |
-| 1995 | 1:18.0 | right | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@78.0 | far |
-| 2015 | 1:08.0 | left | wall | armco, red |  | 0.8 | onboard:OJaBJz18xEo@68.0 |  |
-| 2015 | 1:08.0 | right | tower | scoring pylon |  | 0.8 | onboard:OJaBJz18xEo@68.0 |  |
-| 2051 | 1:20.0 | left | runoff | grass and sand |  | 0.8 | onboard:e25u_vjn1uM@80.0 |  |
-| 2051 | 1:20.0 | right | boards | Honda board wall on the fence |  | 0.8 | onboard:e25u_vjn1uM@80.0 |  |
-| 2051 | 1:20.0 | right | stand | spectator hillside |  | 0.8 | onboard:e25u_vjn1uM@80.0 |  |
-| 2070 | 3:04.0 | left | kerb | T5 kerb, red/white |  | 0.7 | onboard:9Drr1VkE1_U@184.0 |  |
-| 2082 | 0:50.0 | left | kerb | T5 kerb, red/white |  | 0.7 | onboard:9Drr1VkE1_U@50.0 |  |
-| 2100 | 1:22.0 | left | kerb | T5 apex kerb, red/white |  | 0.8 | onboard:e25u_vjn1uM@82.0 |  |
-| 2100 | 1:22.0 | right | boards | Honda boards |  | 0.8 | onboard:e25u_vjn1uM@82.0 |  |
-| 2100 | 1:22.0 | right | tower | scoring pylon |  | 0.8 | onboard:e25u_vjn1uM@82.0 | tall timing pylon |
-| 2105 | 1:12.0 | left | kerb | T5 apex kerb, red/white |  | 0.8 | onboard:OJaBJz18xEo@72.0 |  |
-| 2105 | 1:12.0 | right | tower | scoring pylon |  | 0.8 | onboard:OJaBJz18xEo@72.0 |  |
-| 2146 | 1:14.0 | left | wall | armco, red |  | 0.8 | onboard:OJaBJz18xEo@74.0 |  |
-| 2146 | 1:14.0 | right | wall | armco, red |  | 0.8 | onboard:OJaBJz18xEo@74.0 |  |
-| 2147 | 1:24.0 | left | station | marshal post "5" |  | 0.8 | onboard:e25u_vjn1uM@84.0 |  |
-| 2147 | 1:24.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@84.0 |  |
-| 2147 | 1:24.0 | right | kerb | T6 kerb, yellow |  | 0.8 | onboard:e25u_vjn1uM@84.0 |  |
-| 2198 | 1:16.0 | right | kerb | yellow kerb |  | 0.8 | onboard:OJaBJz18xEo@76.0 | T6 outside |
-| 2208 | 1:26.0 | left | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@86.0 |  |
-| 2208 | 1:26.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@86.0 |  |
-| 2208 | 1:26.0 | right | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@86.0 |  |
-| 2243 | 3:08.0 | right | kerb | red/white kerb |  | 0.7 | onboard:9Drr1VkE1_U@188.0 |  |
-| 2252 | 0:54.0 | right | kerb | red/white kerb |  | 0.7 | onboard:9Drr1VkE1_U@54.0 |  |
-| 2269 | 1:28.0 | left | boards | Firestone boards |  | 0.8 | onboard:e25u_vjn1uM@88.0 |  |
-| 2269 | 1:28.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@88.0 |  |
-| 2269 | 1:28.0 | right | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@88.0 |  |
-| 2295 | 1:20.0 | right | kerb | red/white kerb |  | 0.8 | onboard:OJaBJz18xEo@80.0 | T7 |
-| 2314 | 1:30.0 | left | boards | Honda boards |  | 0.8 | onboard:e25u_vjn1uM@90.0 |  |
-| 2314 | 1:30.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | onboard:e25u_vjn1uM@90.0 |  |
-| 2314 | 1:30.0 | right | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@90.0 |  |
-| 2371 | 1:32.0 | left | boards | Honda boards |  | 0.8 | onboard:e25u_vjn1uM@92.0 |  |
-| 2371 | 1:32.0 | left | kerb | yellow kerb |  | 0.8 | onboard:e25u_vjn1uM@92.0 | T8 outside |
-| 2371 | 1:32.0 | right | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@92.0 |  |
-| 2391 | 1:24.0 | left | kerb | yellow kerb |  | 0.8 | onboard:OJaBJz18xEo@84.0 |  |
-| 2407 | 3:12.0 | left | kerb | yellow kerb |  | 0.7 | onboard:9Drr1VkE1_U@192.0 |  |
-| 2411 | 0:58.0 | left | kerb | yellow kerb |  | 0.7 | onboard:9Drr1VkE1_U@58.0 |  |
-| 2427 | 1:34.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | onboard:e25u_vjn1uM@94.0 | RV paddock behind |
-| 2427 | 1:34.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@94.0 |  |
-| 2427 | 1:34.0 | right | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@94.0 |  |
-| 2495 | 1:36.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | onboard:e25u_vjn1uM@96.0 | RV paddock behind |
-| 2495 | 1:36.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@96.0 |  |
-| 2495 | 1:36.0 | right | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@96.0 |  |
-| 2504 | 1:28.0 | right | kerb | red/white kerb |  | 0.8 | onboard:OJaBJz18xEo@88.0 | T8 |
-| 2512 | 1:00.0 | right | kerb | red/white kerb |  | 0.7 | onboard:9Drr1VkE1_U@60.0 |  |
-| 2551 | 1:38.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | onboard:e25u_vjn1uM@98.0 | RV paddock behind |
-| 2551 | 1:38.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@98.0 |  |
-| 2551 | 1:38.0 | right | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@98.0 |  |
-| 2603 | 3:16.0 | left | kerb | yellow kerb |  | 0.7 | onboard:9Drr1VkE1_U@196.0 | T9 exit |
-| 2610 | 1:32.0 | left | kerb | yellow kerb |  | 0.8 | onboard:OJaBJz18xEo@92.0 |  |
-| 2616 | 1:40.0 | left | kerb | yellow kerb |  | 0.8 | onboard:e25u_vjn1uM@100.0 |  |
-| 2616 | 1:40.0 | right | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@100.0 |  |
-| 2653 | 1:34.0 | right | kerb | red/white kerb |  | 0.8 | onboard:OJaBJz18xEo@94.0 | T9 |
-| 2664 | 1:42.0 | right | kerb | T9 apex kerb, red/white |  | 0.8 | onboard:e25u_vjn1uM@102.0 |  |
-| 2664 | 1:42.0 | right | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@102.0 |  |
-| 2683 | 1:04.0 | left | wall | concrete wall, white |  | 0.7 | onboard:9Drr1VkE1_U@64.0 |  |
-| 2694 | 1:36.0 | left | wall | concrete wall, white |  | 0.8 | onboard:OJaBJz18xEo@96.0 |  |
-| 2722 | 1:44.0 | left | kerb | T9 exit kerb, yellow and red |  | 0.8 | onboard:e25u_vjn1uM@104.0 |  |
-| 2722 | 1:44.0 | left | wall | concrete wall, white | 0.8 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@104.0 | white wall beyond the grass |
-| 2722 | 1:44.0 | right | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@104.0 |  |
-| 2722 | 1:44.0 | right | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@104.0 |  |
-| 2746 | 1:38.0 | left | kerb | T9 exit kerb, yellow and red |  | 0.8 | onboard:OJaBJz18xEo@98.0 |  |
-| 2746 | 1:38.0 | left | wall | concrete wall, white |  | 0.8 | onboard:OJaBJz18xEo@98.0 |  |
-| 2785 | 1:06.0 | ahead | bridge | PERMCO footbridge |  | 0.7 | onboard:9Drr1VkE1_U@66.0 | passed at 66.8 |
-| 2790 | 3:20.0 | ahead | bridge | PERMCO footbridge |  | 0.7 | onboard:9Drr1VkE1_U@200.0 |  |
-| 2794 | 1:46.0 | ahead | bridge | PERMCO "Pumps and Motors" footbridge, blue banner |  | 0.8 | onboard:e25u_vjn1uM@106.0 | overhead at 1:47.0 |
-| 2794 | 1:46.0 | left | wall | concrete wall, white |  | 0.8 | onboard:e25u_vjn1uM@106.0 |  |
-| 2794 | 1:46.0 | right | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@106.0 |  |
-| 2807 | 1:40.0 | ahead | bridge | PERMCO footbridge |  | 0.8 | onboard:OJaBJz18xEo@100.0 | ahead |
-| 2870 | 1:42.0 | left | wall | armco, red |  | 0.8 | onboard:OJaBJz18xEo@102.0 |  |
-| 2870 | 1:42.0 | right | wall | armco, red |  | 0.8 | onboard:OJaBJz18xEo@102.0 |  |
-| 2880 | 1:48.0 | left | boards | Velo banners on the bridge |  | 0.8 | onboard:e25u_vjn1uM@108.0 |  |
-| 2880 | 1:48.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | onboard:e25u_vjn1uM@108.0 |  |
-| 2880 | 1:48.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@108.0 |  |
-| 2880 | 1:48.0 | right | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | onboard:e25u_vjn1uM@108.0 |  |
-| 2880 | 1:48.0 | right | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@108.0 |  |
-| 2932 | 1:44.0 | right | fence | catch fence |  | 0.8 | onboard:OJaBJz18xEo@104.0 |  |
-| 2932 | 1:44.0 | right | wall | armco, red |  | 0.8 | onboard:OJaBJz18xEo@104.0 |  |
-| 2968 | 1:50.0 | left | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@110.0 |  |
-| 2968 | 1:50.0 | right | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | onboard:e25u_vjn1uM@110.0 |  |
-| 2968 | 1:50.0 | right | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@110.0 |  |
-| 3000 | 1:46.0 | left | wall | armco, red |  | 0.8 | onboard:OJaBJz18xEo@106.0 |  |
-| 3000 | 1:46.0 | right | fence | catch fence |  | 0.8 | onboard:OJaBJz18xEo@106.0 |  |
-| 3053 | 1:52.0 | left | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@112.0 |  |
-| 3053 | 1:52.0 | right | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | onboard:e25u_vjn1uM@112.0 |  |
-| 3053 | 1:52.0 | right | sign | brake board "100" |  | 0.8 | onboard:e25u_vjn1uM@112.0 |  |
-| 3053 | 1:52.0 | right | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@112.0 |  |
-| 3061 | 1:48.0 | right | wall | armco, red |  | 0.8 | onboard:OJaBJz18xEo@108.0 |  |
-| 3103 | 1:50.0 | left | kerb | red/white kerb |  | 0.8 | onboard:OJaBJz18xEo@110.0 | T11 |
-| 3109 | 1:54.0 | left | kerb | red/white kerb |  | 0.8 | onboard:e25u_vjn1uM@114.0 | T11 |
-| 3109 | 1:54.0 | right | runoff | sand/gravel |  | 0.8 | onboard:e25u_vjn1uM@114.0 |  |
-| 3149 | 1:52.0 | right | kerb | yellow kerb |  | 0.8 | onboard:OJaBJz18xEo@112.0 |  |
-| 3172 | 1:56.0 | right | kerb | yellow kerb |  | 0.8 | onboard:e25u_vjn1uM@116.0 |  |
-| 3172 | 1:56.0 | right | runoff | sand/gravel |  | 0.8 | onboard:e25u_vjn1uM@116.0 |  |
-| 3204 | 1:54.0 | right | kerb | yellow kerb |  | 0.8 | onboard:OJaBJz18xEo@114.0 |  |
-| 3247 | 1:58.0 | left | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@118.0 |  |
-| 3247 | 1:58.0 | right | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@118.0 |  |
-| 3302 | 2:00.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | onboard:e25u_vjn1uM@120.0 |  |
-| 3302 | 2:00.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@120.0 |  |
-| 3302 | 2:00.0 | right | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@120.0 |  |
-| 3341 | 2:00.0 | right | kerb | Carousel kerb, red/white |  | 0.8 | onboard:OJaBJz18xEo@120.0 |  |
-| 3351 | 2:02.0 | right | kerb | Carousel kerb, red/white |  | 0.8 | onboard:e25u_vjn1uM@122.0 | T12 |
-| 3372 | 0:16.0 | right | kerb | Carousel kerb, red/white |  | 0.8 | onboard:e25u_vjn1uM@16.0 | lap 1 lead-in |
-| 3378 | 2:02.0 | right | kerb | red/white kerb |  | 0.8 | onboard:OJaBJz18xEo@122.0 |  |
-| 3395 | 2:04.0 | left | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@124.0 |  |
-| 3395 | 2:04.0 | right | kerb | red/white kerb |  | 0.8 | onboard:e25u_vjn1uM@124.0 |  |
-| 3408 | 1:22.0 | right | kerb | Carousel / T13 kerb, red/white |  | 0.7 | onboard:9Drr1VkE1_U@82.0 |  |
-| 3410 | 0:12.0 | left | wall | concrete wall, white |  | 0.6 | onboard:9Drr1VkE1_U@12.0 | pit-entry side |
-| 3410 | 0:12.0 | right | kerb | Carousel kerb, red/white |  | 0.7 | onboard:9Drr1VkE1_U@12.0 |  |
-| 3420 | 2:26.0 | right | kerb | Carousel kerb, red/white |  | 0.7 | onboard:9Drr1VkE1_U@146.0 |  |
-| 3422 | 0:18.0 | left | boards | Honda board wall |  | 0.8 | onboard:e25u_vjn1uM@18.0 | lap 1 lead-in, T13 |
-| 3426 | 2:04.0 | left | building | starter tower |  | 0.8 | onboard:OJaBJz18xEo@124.0 |  |
-| 3447 | 0:00.0 | left | wall | concrete wall, white |  | 0.8 | onboard:OJaBJz18xEo@0.0 | T13 exit: pit-lane side wall |
-| 3447 | 2:06.0 | left | boards | Honda board wall |  | 0.8 | onboard:e25u_vjn1uM@126.0 |  |
-| 3447 | 2:06.0 | left | kerb | T13 kerb, red/white |  | 0.8 | onboard:e25u_vjn1uM@126.0 | left, ahead |
-| 3447 | 2:06.0 | right | runoff | grass |  | 0.8 | onboard:e25u_vjn1uM@126.0 |  |
-| 3472 | 0:20.0 | left | wall | concrete pit wall, white |  | 0.8 | onboard:e25u_vjn1uM@20.0 | lap 1 lead-in: RESTART board, pit wall start |
-| 3474 | 2:06.0 | left | kerb | T13 kerb |  | 0.8 | onboard:OJaBJz18xEo@126.0 |  |
-| 3496 | 2:08.0 | left | building | starter tower |  | 0.8 | onboard:e25u_vjn1uM@128.0 |  |
-| 3496 | 2:08.0 | left | sign | "RESTART" board on the pit wall |  | 0.8 | onboard:e25u_vjn1uM@128.0 |  |
-| 3496 | 2:08.0 | left | wall | concrete pit wall, white | 0.7 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@128.0 | pit wall starts ("RESTART" board) |
-| 3496 | 2:08.0 | right | runoff | sand |  | 0.8 | onboard:e25u_vjn1uM@128.0 |  |
-| 3496 | 0:02.0 | left | building | starter tower |  | 0.8 | onboard:OJaBJz18xEo@2.0 |  |
-| 3496 | 0:02.0 | left | wall | pit wall, white |  | 0.8 | onboard:OJaBJz18xEo@2.0 | pit wall begins |
-| 3523 | 2:28.0 | right | kerb | yellow kerb |  | 0.7 | onboard:9Drr1VkE1_U@148.0 | pit straight right |
-| 3528 | 0:22.0 | right | kerb | yellow kerb |  | 0.8 | onboard:e25u_vjn1uM@22.0 | lap 1 lead-in |
-| 3531 | 2:08.0 | right | kerb | yellow kerb |  | 0.8 | onboard:OJaBJz18xEo@128.0 | pit straight right |
-| 3531 | 2:08.0 | right | stand | covered grandstand |  | 0.8 | onboard:OJaBJz18xEo@128.0 |  |
-| 3544 | 1:24.0 | right | kerb | yellow kerb |  | 0.7 | onboard:9Drr1VkE1_U@84.0 | pit straight right |
-| 3557 | 2:10.0 | left | building | starter tower, 4 storeys | 13 m (storeys) | 0.8 | onboard:e25u_vjn1uM@130.0 |  |
-| 3557 | 2:10.0 | left | wall | concrete pit wall, white | 0.7 m (horizon-ratio) | 0.8 | onboard:e25u_vjn1uM@130.0 |  |
-| 3557 | 2:10.0 | right | boards | Honda boards |  | 0.8 | onboard:e25u_vjn1uM@130.0 |  |
-| 3557 | 2:10.0 | right | kerb | yellow kerb |  | 0.8 | onboard:e25u_vjn1uM@130.0 | pit straight right |
-| 3557 | 2:10.0 | right | mast | scaffold masts with TV cameras / flood lights |  | 0.7 | onboard:e25u_vjn1uM@130.0 | pit straight, behind the catch fence (k264) |
-| 3557 | 2:10.0 | right | runoff | sand/gravel |  | 0.8 | onboard:e25u_vjn1uM@130.0 |  |
-| 3557 | 2:10.0 | right | stand | covered grandstand |  | 0.8 | onboard:e25u_vjn1uM@130.0 |  |
-| 3559 | 0:04.0 | right | kerb | yellow kerb |  | 0.8 | onboard:OJaBJz18xEo@4.0 | pit straight right edge |
-| 3559 | 0:04.0 | right | stand | covered grandstand, red roof |  | 0.8 | onboard:OJaBJz18xEo@4.0 |  |
+| s (m) | t | side | kind | what | height | conf | sigma s (m) | placement | source | note |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 0 | 0:24.0 | left | building | starter tower, 4 storeys, red roof | 13 m (storeys) | 0.8 | 17.9 | direct | onboard:e25u_vjn1uM@24.0 | starter tower behind the pit lane |
+| 0 | 0:24.0 | left | paint | white timing stripe across the track |  | 0.8 | 17.9 | direct | onboard:e25u_vjn1uM@24.0 | S/F line |
+| 0 | 0:24.0 | left | stand | Honda overhead starter gantry over the pit wall |  | 0.8 | 17.9 | direct | onboard:e25u_vjn1uM@24.0 | S/F gantry |
+| 0 | 0:24.0 | left | wall | concrete pit wall, white | 0.7 m (horizon-ratio) | 0.8 | 17.9 | direct | onboard:e25u_vjn1uM@24.0 | pit wall, "NTT INDYCAR SERIES" lettering, the pit lane behind |
+| 0 | 0:24.0 | right | runoff | grass then sand/gravel |  | 0.8 | 17.9 | direct | onboard:e25u_vjn1uM@24.0 |  |
+| 0 | 0:24.0 | right | stand | covered grandstand, red roof | 7 m (storeys) | 0.8 | 17.9 | direct | onboard:e25u_vjn1uM@24.0 | main straight grandstand behind the armco |
+| 0 | 0:24.0 | right | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 17.9 | direct | onboard:e25u_vjn1uM@24.0 | red armco at the back of the run-off |
+| 4 | 2:10.0 | left | stand | overhead S/F gantry with PERMCO banner |  | 0.8 | 4.0 | direct | onboard:OJaBJz18xEo@130.0 | Catalyst line |
+| 12 | 0:16.0 | left | wall | pit wall, white |  | 0.7 | 13.1 | direct | onboard:9Drr1VkE1_U@16.0 |  |
+| 28 | 0:06.0 | left | wall | pit wall, white |  | 0.8 | 14.4 | direct | onboard:OJaBJz18xEo@6.0 |  |
+| 28 | 0:06.0 | right | fence | catch fence |  | 0.8 | 14.4 | direct | onboard:OJaBJz18xEo@6.0 |  |
+| 28 | 0:06.0 | right | wall | armco, red |  | 0.8 | 14.4 | direct | onboard:OJaBJz18xEo@6.0 |  |
+| 50 | 2:30.0 | left | wall | pit wall, white |  | 0.7 | 44.3 | corroborate | onboard:9Drr1VkE1_U@150.0 |  |
+| 50 | 2:30.0 | right | wall | armco, red |  | 0.7 | 44.3 | corroborate | onboard:9Drr1VkE1_U@150.0 |  |
+| 72 | 0:26.0 | left | building | pit garages / hospitality, red roofs | 4 m (storeys) | 0.8 | 17.9 | direct | onboard:e25u_vjn1uM@26.0 | paddock row behind the pit lane |
+| 72 | 0:26.0 | left | wall | concrete pit wall, white | 0.7 m (horizon-ratio) | 0.8 | 17.9 | direct | onboard:e25u_vjn1uM@26.0 | pit wall continues |
+| 72 | 0:26.0 | right | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | 17.9 | direct | onboard:e25u_vjn1uM@26.0 | catch fence over the armco |
+| 72 | 0:26.0 | right | runoff | grass |  | 0.8 | 17.9 | direct | onboard:e25u_vjn1uM@26.0 | grass verge |
+| 72 | 0:26.0 | right | stand | covered grandstand, red roof |  | 0.8 | 17.9 | direct | onboard:e25u_vjn1uM@26.0 |  |
+| 72 | 0:26.0 | right | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 17.9 | direct | onboard:e25u_vjn1uM@26.0 |  |
+| 90 | 0:08.0 | left | wall | pit wall, white |  | 0.8 | 14.4 | direct | onboard:OJaBJz18xEo@8.0 |  |
+| 90 | 0:08.0 | right | fence | catch fence |  | 0.8 | 14.4 | direct | onboard:OJaBJz18xEo@8.0 |  |
+| 90 | 0:08.0 | right | stand | covered grandstand |  | 0.8 | 14.4 | direct | onboard:OJaBJz18xEo@8.0 | behind the fence |
+| 90 | 0:08.0 | right | wall | armco, red |  | 0.8 | 14.4 | direct | onboard:OJaBJz18xEo@8.0 |  |
+| 90 | 1:26.0 | left | wall | pit wall, white |  | 0.7 | 60.1 | corroborate | onboard:9Drr1VkE1_U@86.0 |  |
+| 90 | 1:26.0 | right | wall | armco, red |  | 0.7 | 60.1 | corroborate | onboard:9Drr1VkE1_U@86.0 |  |
+| 149 | 0:18.0 | right | wall | armco, red |  | 0.7 | 13.1 | direct | onboard:9Drr1VkE1_U@18.0 |  |
+| 154 | 0:28.0 | left | wall | concrete pit wall, white | 0.7 m (horizon-ratio) | 0.8 | 17.9 | direct | onboard:e25u_vjn1uM@28.0 | pit wall; VELO banners on it toward the bridge |
+| 154 | 0:28.0 | right | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | 17.9 | direct | onboard:e25u_vjn1uM@28.0 |  |
+| 154 | 0:28.0 | right | sign | brake board "200" |  | 0.8 | 17.9 | direct | onboard:e25u_vjn1uM@28.0 | T1 brake board on the right verge |
+| 154 | 0:28.0 | right | station | TV camera scaffold tower behind the fence |  | 0.8 | 17.9 | direct | onboard:e25u_vjn1uM@28.0 |  |
+| 154 | 0:28.0 | right | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 17.9 | direct | onboard:e25u_vjn1uM@28.0 |  |
+| 160 | 0:10.0 | ahead | bridge | Firestone footbridge |  | 0.8 | 14.4 | direct | onboard:OJaBJz18xEo@10.0 | ahead |
+| 160 | 0:10.0 | left | wall | pit wall, white |  | 0.8 | 14.4 | direct | onboard:OJaBJz18xEo@10.0 |  |
+| 160 | 0:10.0 | right | fence | catch fence |  | 0.8 | 14.4 | direct | onboard:OJaBJz18xEo@10.0 |  |
+| 160 | 0:10.0 | right | wall | armco, red |  | 0.8 | 14.4 | direct | onboard:OJaBJz18xEo@10.0 |  |
+| 180 | 2:32.0 | ahead | bridge | Firestone footbridge |  | 0.7 | 44.3 | corroborate | onboard:9Drr1VkE1_U@152.0 | passed at 152.9 |
+| 226 | 0:12.0 | ahead | bridge | Firestone footbridge |  | 0.8 | 14.4 | direct | onboard:OJaBJz18xEo@12.0 | overhead at 0:12.3 |
+| 226 | 0:12.0 | right | wall | red concrete barrier, red |  | 0.8 | 14.4 | direct | onboard:OJaBJz18xEo@12.0 | run to the abutment |
+| 233 | 0:30.0 | ahead | bridge | Firestone footbridge (deck with banners: Firestone facing the approach, HONDA the far side), concrete abutments |  | 0.8 | 17.9 | direct | onboard:e25u_vjn1uM@30.0 | passes overhead at 0:30.0 |
+| 233 | 1:28.0 | ahead | bridge | Firestone footbridge |  | 0.7 | 60.1 | corroborate | onboard:9Drr1VkE1_U@88.0 | passed at 88.0 |
+| 233 | 0:30.0 | left | wall | pit wall end at the bridge abutment, white |  | 0.8 | 17.9 | direct | onboard:e25u_vjn1uM@30.0 | pit exit lane continues beside the track under the bridge |
+| 233 | 0:30.0 | right | boards | Summit board on the fence |  | 0.8 | 17.9 | direct | onboard:e25u_vjn1uM@30.0 |  |
+| 233 | 0:30.0 | right | wall | concrete abutment then red concrete barrier, red |  | 0.8 | 17.9 | direct | onboard:e25u_vjn1uM@30.0 | bridge abutment and the red barrier run to it |
+| 274 | 0:20.0 | ahead | bridge | Firestone footbridge |  | 0.7 | 12.1 | direct | onboard:9Drr1VkE1_U@20.0 | passed at 19.2 |
+| 281 | 0:14.0 | left | paint | white hatched pit-exit blend |  | 0.8 | 14.4 | direct | onboard:OJaBJz18xEo@14.0 | 2026: blend lines and the asphalt of the pit exit, same tone |
+| 295 | 0:32.0 | left | kerb | T1 inside kerb, red/white, flat |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@32.0 | apex kerb |
+| 295 | 0:32.0 | left | mast | timber utility poles with lines, several |  | 0.7 | 20.4 | direct | onboard:e25u_vjn1uM@32.0 | T1 inside, beyond the infield armco |
+| 295 | 0:32.0 | left | paint | white hatched pit-exit blend lines on asphalt |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@32.0 | pit exit merge; same asphalt tone as the track |
+| 295 | 0:32.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@32.0 | low red armco beyond the infield grass |
+| 295 | 0:32.0 | right | boards | Honda / sponsor board wall |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@32.0 | far |
+| 295 | 0:32.0 | right | runoff | wide paved run-off, then sand/gravel |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@32.0 | T1 outside |
+| 339 | 0:16.0 | left | kerb | T1 inside kerb, red/white |  | 0.8 | 14.4 | direct | onboard:OJaBJz18xEo@16.0 |  |
+| 341 | 1:30.0 | left | kerb | T1 kerb, red/white |  | 0.7 | 34.3 | corroborate | onboard:9Drr1VkE1_U@90.0 |  |
+| 358 | 0:34.0 | left | runoff | grass |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@34.0 |  |
+| 358 | 0:34.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@34.0 |  |
+| 358 | 0:34.0 | right | boards | Honda boards |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@34.0 |  |
+| 358 | 0:34.0 | right | runoff | sand/gravel trap |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@34.0 | T1 exit outside |
+| 358 | 0:34.0 | right | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@34.0 |  |
+| 374 | 0:22.0 | right | kerb | T1 exit kerb, yellow |  | 0.7 | 12.1 | direct | onboard:9Drr1VkE1_U@22.0 |  |
+| 387 | 0:18.0 | left | wall | armco, red |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@18.0 |  |
+| 387 | 0:18.0 | right | runoff | grass |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@18.0 |  |
+| 394 | 2:36.0 | right | kerb | T1 exit kerb, yellow |  | 0.7 | 38.2 | corroborate | onboard:9Drr1VkE1_U@156.0 |  |
+| 419 | 0:36.0 | left | building | hospitality tents / covered stand, red roof |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@36.0 | beyond the fence |
+| 419 | 0:36.0 | left | runoff | grass |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@36.0 |  |
+| 419 | 0:36.0 | right | kerb | T1 exit kerb, yellow, flat (rumble strip) |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@36.0 | yellow exit kerb |
+| 419 | 0:36.0 | right | runoff | sand/gravel |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@36.0 |  |
+| 440 | 0:20.0 | right | kerb | T1 exit kerb, yellow, with red outer band |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@20.0 |  |
+| 447 | 1:32.0 | right | kerb | T1 exit kerb, yellow |  | 0.7 | 34.3 | corroborate | onboard:9Drr1VkE1_U@92.0 |  |
+| 485 | 0:24.0 | left | wall | armco, red |  | 0.7 | 12.1 | direct | onboard:9Drr1VkE1_U@24.0 |  |
+| 493 | 0:38.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@38.0 |  |
+| 493 | 0:38.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@38.0 |  |
+| 493 | 0:38.0 | right | runoff | grass |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@38.0 | wide infield |
+| 500 | 0:22.0 | left | fence | catch fence |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@22.0 |  |
+| 500 | 0:22.0 | left | wall | armco, red |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@22.0 |  |
+| 500 | 0:22.0 | right | runoff | grass |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@22.0 |  |
+| 518 | 2:38.0 | left | wall | armco, red |  | 0.7 | 38.2 | corroborate | onboard:9Drr1VkE1_U@158.0 |  |
+| 570 | 0:24.0 | left | fence | catch fence |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@24.0 |  |
+| 570 | 0:24.0 | left | sign | brake boards |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@24.0 | on the fence |
+| 570 | 0:24.0 | left | wall | armco, red |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@24.0 |  |
+| 570 | 0:24.0 | right | runoff | grass |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@24.0 |  |
+| 580 | 0:40.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@40.0 |  |
+| 580 | 0:40.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@40.0 |  |
+| 580 | 0:40.0 | right | paint | inactive chicane road: grey asphalt, slightly lighter than the racing surface |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@40.0 | the unused chicane seen across the infield (owner green strokes) |
+| 580 | 0:40.0 | right | runoff | grass |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@40.0 | wide infield |
+| 590 | 1:34.0 | left | wall | armco, red |  | 0.7 | 34.3 | corroborate | onboard:9Drr1VkE1_U@94.0 |  |
+| 632 | 0:26.0 | left | wall | armco, red |  | 0.7 | 12.1 | direct | onboard:9Drr1VkE1_U@26.0 |  |
+| 648 | 0:26.0 | left | fence | catch fence |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@26.0 |  |
+| 648 | 0:26.0 | left | wall | armco, red |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@26.0 |  |
+| 648 | 0:26.0 | right | runoff | grass |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@26.0 |  |
+| 679 | 2:40.0 | left | wall | armco, red |  | 0.7 | 38.2 | corroborate | onboard:9Drr1VkE1_U@160.0 |  |
+| 680 | 0:42.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@42.0 |  |
+| 680 | 0:42.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@42.0 |  |
+| 680 | 0:42.0 | right | kerb | red/white kerb at the chicane re-join (inactive) |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@42.0 | chicane mouth kerb |
+| 680 | 0:42.0 | right | paint | chicane mouth paving, same grey asphalt |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@42.0 |  |
+| 730 | 0:28.0 | left | fence | catch fence |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@28.0 |  |
+| 730 | 0:28.0 | left | wall | armco, red |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@28.0 |  |
+| 730 | 0:28.0 | right | runoff | grass |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@28.0 |  |
+| 764 | 1:36.0 | left | wall | armco, red |  | 0.7 | 34.3 | corroborate | onboard:9Drr1VkE1_U@96.0 |  |
+| 783 | 0:44.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@44.0 |  |
+| 783 | 0:44.0 | left | sign | brake board "300" |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@44.0 | Keyhole brake board |
+| 783 | 0:44.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@44.0 |  |
+| 783 | 0:44.0 | right | runoff | grass |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@44.0 |  |
+| 798 | 0:28.0 | left | sign | brake board |  | 0.7 | 12.1 | direct | onboard:9Drr1VkE1_U@28.0 |  |
+| 809 | 0:30.0 | ahead | boards | red billboard on the hill |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@30.0 |  |
+| 809 | 0:30.0 | left | wall | armco, red |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@30.0 |  |
+| 863 | 0:46.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@46.0 |  |
+| 863 | 0:46.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@46.0 |  |
+| 863 | 0:46.0 | right | runoff | grass |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@46.0 |  |
+| 890 | 1:38.0 | right | kerb | Keyhole kerb, red/white |  | 0.7 | 34.3 | corroborate | onboard:9Drr1VkE1_U@98.0 |  |
+| 902 | 0:30.0 | right | kerb | Keyhole kerb, red/white |  | 0.7 | 12.1 | direct | onboard:9Drr1VkE1_U@30.0 |  |
+| 906 | 0:34.0 | right | kerb | Keyhole kerb, red/white |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@34.0 |  |
+| 912 | 0:48.0 | left | boards | sponsor board wall |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@48.0 | outside of the Keyhole |
+| 912 | 0:48.0 | left | runoff | sand/gravel |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@48.0 |  |
+| 912 | 0:48.0 | right | kerb | Keyhole kerb, red/white, long |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@48.0 | T2 apex kerb |
+| 912 | 0:48.0 | right | runoff | grass |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@48.0 | infield |
+| 930 | 2:44.0 | right | kerb | Keyhole kerb, red/white |  | 0.7 | 38.2 | corroborate | onboard:9Drr1VkE1_U@164.0 |  |
+| 943 | 0:36.0 | right | kerb | Keyhole kerb, red/white |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@36.0 |  |
+| 958 | 0:50.0 | left | boards | board wall: Honda, Firestone, Velo, PERMCO |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@50.0 |  |
+| 958 | 0:50.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@50.0 |  |
+| 958 | 0:50.0 | right | kerb | Keyhole kerb, red/white, long |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@50.0 | T2 apex kerb |
+| 958 | 0:50.0 | right | runoff | grass |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@50.0 | infield |
+| 966 | 1:40.0 | right | kerb | Keyhole kerb, red/white |  | 0.7 | 34.3 | corroborate | onboard:9Drr1VkE1_U@100.0 |  |
+| 974 | 0:32.0 | right | kerb | Keyhole kerb, red/white |  | 0.7 | 22.4 | direct | onboard:9Drr1VkE1_U@32.0 |  |
+| 979 | 0:38.0 | left | boards | board wall: Honda, HRC, Velo |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@38.0 |  |
+| 998 | 2:46.0 | right | kerb | Keyhole kerb, red/white |  | 0.7 | 55.1 | corroborate | onboard:9Drr1VkE1_U@166.0 |  |
+| 999 | 0:52.0 | left | boards | board wall: Honda, Firestone, PERMCO |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@52.0 |  |
+| 999 | 0:52.0 | left | station | TV camera scaffold |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@52.0 | behind the boards |
+| 999 | 0:52.0 | right | kerb | Keyhole kerb, red/white, long |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@52.0 | T2 apex kerb |
+| 999 | 0:52.0 | right | runoff | grass |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@52.0 | infield |
+| 1019 | 0:40.0 | left | boards | board wall: HRC, Summit, Honda, Start, O'Reilly, HRC |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@40.0 |  |
+| 1019 | 0:40.0 | right | kerb | Keyhole kerb, red/white |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@40.0 |  |
+| 1035 | 1:42.0 | left | kerb | T2 exit kerb, yellow |  | 0.7 | 34.3 | corroborate | onboard:9Drr1VkE1_U@102.0 |  |
+| 1044 | 0:54.0 | left | boards | board wall: Velo, Summit, Honda, Start, O'Reilly, HRC |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@54.0 | same boards as the N837 onboard t40 |
+| 1044 | 0:54.0 | left | kerb | T2 exit kerb, yellow, flat |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@54.0 |  |
+| 1044 | 0:54.0 | right | runoff | grass |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@54.0 |  |
+| 1050 | 0:34.0 | left | kerb | T2 exit kerb, yellow with red band |  | 0.7 | 22.4 | direct | onboard:9Drr1VkE1_U@34.0 |  |
+| 1066 | 0:42.0 | left | kerb | T2 exit kerb, yellow with red band |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@42.0 |  |
+| 1074 | 2:48.0 | left | kerb | T2 exit kerb, yellow |  | 0.7 | 55.1 | corroborate | onboard:9Drr1VkE1_U@168.0 |  |
+| 1101 | 0:56.0 | left | kerb | yellow exit kerb ends |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@56.0 |  |
+| 1101 | 0:56.0 | left | runoff | sand/gravel |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@56.0 |  |
+| 1101 | 0:56.0 | right | runoff | grass |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@56.0 |  |
+| 1123 | 0:44.0 | left | fence | catch fence |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@44.0 |  |
+| 1123 | 0:44.0 | left | wall | armco, red |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@44.0 |  |
+| 1123 | 0:44.0 | right | runoff | grass |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@44.0 |  |
+| 1128 | 1:44.0 | left | wall | armco, red |  | 0.7 | 34.3 | corroborate | onboard:9Drr1VkE1_U@104.0 |  |
+| 1153 | 0:36.0 | left | wall | armco, red |  | 0.7 | 22.4 | direct | onboard:9Drr1VkE1_U@36.0 |  |
+| 1169 | 0:58.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@58.0 | paddock / RVs behind |
+| 1169 | 0:58.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@58.0 |  |
+| 1169 | 0:58.0 | right | runoff | grass |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@58.0 | open infield |
+| 1178 | 2:50.0 | left | wall | armco, red |  | 0.7 | 55.1 | corroborate | onboard:9Drr1VkE1_U@170.0 |  |
+| 1189 | 0:46.0 | left | fence | catch fence |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@46.0 |  |
+| 1189 | 0:46.0 | left | wall | armco, red |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@46.0 |  |
+| 1189 | 0:46.0 | right | runoff | grass |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@46.0 |  |
+| 1248 | 1:00.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@60.0 | paddock / RVs behind |
+| 1248 | 1:00.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@60.0 |  |
+| 1248 | 1:00.0 | right | runoff | grass |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@60.0 | open infield |
+| 1251 | 1:46.0 | left | wall | armco, red |  | 0.7 | 34.3 | corroborate | onboard:9Drr1VkE1_U@106.0 |  |
+| 1265 | 0:48.0 | left | fence | catch fence |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@48.0 |  |
+| 1265 | 0:48.0 | left | wall | armco, red |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@48.0 |  |
+| 1265 | 0:48.0 | right | runoff | grass |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@48.0 |  |
+| 1288 | 0:38.0 | left | wall | armco, red |  | 0.7 | 22.4 | direct | onboard:9Drr1VkE1_U@38.0 |  |
+| 1338 | 1:02.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@62.0 | paddock / RVs behind |
+| 1338 | 1:02.0 | left | station | marshal post / scaffold behind the fence |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@62.0 |  |
+| 1338 | 1:02.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@62.0 |  |
+| 1338 | 1:02.0 | right | runoff | grass |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@62.0 | open infield |
+| 1351 | 0:50.0 | left | fence | catch fence |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@50.0 |  |
+| 1351 | 0:50.0 | left | wall | armco, red |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@50.0 |  |
+| 1351 | 0:50.0 | right | runoff | grass |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@50.0 |  |
+| 1399 | 1:48.0 | left | wall | armco, red |  | 0.7 | 34.3 | corroborate | onboard:9Drr1VkE1_U@108.0 |  |
+| 1433 | 1:04.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@64.0 | paddock / RVs behind |
+| 1433 | 1:04.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@64.0 |  |
+| 1433 | 1:04.0 | right | paint | inactive T1-T3 connector road meets the track: grey asphalt |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@64.0 | crossover (owner green strokes) |
+| 1433 | 1:04.0 | right | runoff | grass |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@64.0 | open infield |
+| 1439 | 0:52.0 | left | fence | catch fence |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@52.0 |  |
+| 1439 | 0:52.0 | left | wall | armco, red |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@52.0 |  |
+| 1439 | 0:52.0 | right | runoff | grass |  | 0.8 | 11.2 | direct | onboard:OJaBJz18xEo@52.0 |  |
+| 1447 | 0:40.0 | left | boards | sponsor boards |  | 0.7 | 22.4 | direct | onboard:9Drr1VkE1_U@40.0 |  |
+| 1459 | 2:54.0 | left | wall | armco, red |  | 0.7 | 55.1 | corroborate | onboard:9Drr1VkE1_U@174.0 |  |
+| 1527 | 0:54.0 | left | boards | Honda board |  | 0.8 | 14.8 | direct | onboard:OJaBJz18xEo@54.0 |  |
+| 1527 | 0:54.0 | left | station | marshal post, yellow |  | 0.8 | 14.8 | direct | onboard:OJaBJz18xEo@54.0 |  |
+| 1528 | 1:06.0 | left | boards | Honda and NTT Data boards on the fence |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@66.0 |  |
+| 1528 | 1:06.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@66.0 |  |
+| 1528 | 1:06.0 | right | runoff | grass |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@66.0 |  |
+| 1552 | 1:50.0 | left | wall | armco, red |  | 0.7 | 34.3 | corroborate | onboard:9Drr1VkE1_U@110.0 |  |
+| 1607 | 0:42.0 | left | wall | armco, red |  | 0.7 | 22.4 | direct | onboard:9Drr1VkE1_U@42.0 |  |
+| 1616 | 0:56.0 | left | fence | catch fence |  | 0.8 | 14.8 | direct | onboard:OJaBJz18xEo@56.0 |  |
+| 1616 | 0:56.0 | left | wall | armco, red |  | 0.8 | 14.8 | direct | onboard:OJaBJz18xEo@56.0 |  |
+| 1616 | 0:56.0 | right | runoff | grass |  | 0.8 | 14.8 | direct | onboard:OJaBJz18xEo@56.0 |  |
+| 1623 | 1:08.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@68.0 | paddock / RVs behind |
+| 1623 | 1:08.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@68.0 |  |
+| 1623 | 1:08.0 | right | runoff | grass |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@68.0 | open infield |
+| 1704 | 0:58.0 | left | fence | catch fence |  | 0.8 | 14.8 | direct | onboard:OJaBJz18xEo@58.0 |  |
+| 1704 | 0:58.0 | left | wall | armco, red |  | 0.8 | 14.8 | direct | onboard:OJaBJz18xEo@58.0 |  |
+| 1704 | 0:58.0 | right | runoff | grass |  | 0.8 | 14.8 | direct | onboard:OJaBJz18xEo@58.0 |  |
+| 1706 | 1:52.0 | left | wall | armco, red |  | 0.7 | 34.3 | corroborate | onboard:9Drr1VkE1_U@112.0 |  |
+| 1718 | 1:10.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@70.0 | paddock / RVs behind |
+| 1718 | 1:10.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@70.0 |  |
+| 1718 | 1:10.0 | right | runoff | grass |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@70.0 | open infield |
+| 1758 | 2:58.0 | left | wall | armco, red |  | 0.7 | 55.1 | corroborate | onboard:9Drr1VkE1_U@178.0 |  |
+| 1767 | 0:44.0 | left | wall | armco, red |  | 0.7 | 22.4 | direct | onboard:9Drr1VkE1_U@44.0 |  |
+| 1792 | 1:00.0 | left | stand | aluminium bleachers |  | 0.8 | 14.8 | direct | onboard:OJaBJz18xEo@60.0 | T4 approach |
+| 1792 | 1:00.0 | right | wall | armco, red |  | 0.8 | 14.8 | direct | onboard:OJaBJz18xEo@60.0 |  |
+| 1813 | 1:12.0 | left | sign | brake board "300" |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@72.0 |  |
+| 1813 | 1:12.0 | left | stand | aluminium bleachers |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@72.0 | T4 approach grandstand |
+| 1813 | 1:12.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@72.0 |  |
+| 1813 | 1:12.0 | right | runoff | grass |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@72.0 |  |
+| 1813 | 1:12.0 | right | sign | brake board "300" |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@72.0 |  |
+| 1857 | 1:54.0 | right | kerb | T4 apex kerb, red/white |  | 0.7 | 34.3 | corroborate | onboard:9Drr1VkE1_U@114.0 | approach |
+| 1876 | 1:02.0 | left | cone_line | orange cones, two, orange |  | 0.8 | 14.8 | direct | onboard:OJaBJz18xEo@62.0 | Lemons event cones at the T4 braking zone (2026) |
+| 1897 | 3:00.0 | right | kerb | T4 apex kerb, red/white |  | 0.7 | 55.1 | corroborate | onboard:9Drr1VkE1_U@180.0 | approach |
+| 1898 | 1:14.0 | left | boards | Honda boards |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@74.0 |  |
+| 1898 | 1:14.0 | left | stand | aluminium bleachers |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@74.0 |  |
+| 1898 | 1:14.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@74.0 |  |
+| 1898 | 1:14.0 | right | runoff | grass |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@74.0 |  |
+| 1911 | 0:46.0 | right | kerb | T4 apex kerb, red/white |  | 0.7 | 22.4 | direct | onboard:9Drr1VkE1_U@46.0 | approach |
+| 1935 | 1:04.0 | left | boards | sponsor boards |  | 0.8 | 14.8 | direct | onboard:OJaBJz18xEo@64.0 |  |
+| 1952 | 1:16.0 | left | boards | Honda board wall along the outside |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@76.0 | T4 outside |
+| 1952 | 1:16.0 | left | runoff | grass then sand/gravel |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@76.0 | T4 run-off (rebuilt 2024) |
+| 1952 | 1:16.0 | right | kerb | T4 apex kerb, red/white (kept in the 2024 rebuild) |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@76.0 | T4 apex |
+| 1952 | 1:16.0 | right | runoff | grass |  | 0.8 | 20.4 | direct | onboard:e25u_vjn1uM@76.0 |  |
+| 1955 | 1:56.0 | right | kerb | T4 apex kerb, red/white |  | 0.7 | 34.3 | corroborate | onboard:9Drr1VkE1_U@116.0 |  |
+| 1973 | 1:06.0 | right | kerb | T4 apex kerb, red/white |  | 0.8 | 14.8 | direct | onboard:OJaBJz18xEo@66.0 |  |
+| 1976 | 3:02.0 | left | kerb | yellow kerb |  | 0.7 | 55.1 | corroborate | onboard:9Drr1VkE1_U@182.0 | T4 exit outside |
+| 1989 | 0:48.0 | left | kerb | yellow kerb |  | 0.7 | 22.4 | direct | onboard:9Drr1VkE1_U@48.0 | T4 exit outside |
+| 1989 | 0:48.0 | right | tower | scoring pylon |  | 0.7 | 22.4 | direct | onboard:9Drr1VkE1_U@48.0 |  |
+| 1995 | 1:18.0 | left | kerb | yellow kerb |  | 0.8 | 8.2 | direct | onboard:e25u_vjn1uM@78.0 | T4 exit / T5 approach, outside |
+| 1995 | 1:18.0 | left | runoff | sand/gravel, wide |  | 0.8 | 8.2 | direct | onboard:e25u_vjn1uM@78.0 | T4 exit outside |
+| 1995 | 1:18.0 | right | runoff | grass |  | 0.8 | 8.2 | direct | onboard:e25u_vjn1uM@78.0 |  |
+| 1995 | 1:18.0 | right | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 8.2 | direct | onboard:e25u_vjn1uM@78.0 | far |
+| 2015 | 1:08.0 | left | wall | armco, red |  | 0.8 | 14.8 | direct | onboard:OJaBJz18xEo@68.0 |  |
+| 2015 | 1:08.0 | right | tower | scoring pylon |  | 0.8 | 14.8 | direct | onboard:OJaBJz18xEo@68.0 |  |
+| 2051 | 1:20.0 | left | runoff | grass and sand |  | 0.8 | 8.2 | direct | onboard:e25u_vjn1uM@80.0 |  |
+| 2051 | 1:20.0 | right | boards | Honda board wall on the fence |  | 0.8 | 8.2 | direct | onboard:e25u_vjn1uM@80.0 |  |
+| 2051 | 1:20.0 | right | stand | spectator hillside |  | 0.8 | 8.2 | direct | onboard:e25u_vjn1uM@80.0 |  |
+| 2070 | 3:04.0 | left | kerb | T5 kerb, red/white |  | 0.7 | 55.1 | corroborate | onboard:9Drr1VkE1_U@184.0 |  |
+| 2082 | 0:50.0 | left | kerb | T5 kerb, red/white |  | 0.7 | 22.4 | direct | onboard:9Drr1VkE1_U@50.0 |  |
+| 2100 | 1:22.0 | left | kerb | T5 apex kerb, red/white |  | 0.8 | 8.2 | direct | onboard:e25u_vjn1uM@82.0 |  |
+| 2100 | 1:22.0 | right | boards | Honda boards |  | 0.8 | 8.2 | direct | onboard:e25u_vjn1uM@82.0 |  |
+| 2100 | 1:22.0 | right | tower | scoring pylon |  | 0.8 | 8.2 | direct | onboard:e25u_vjn1uM@82.0 | tall timing pylon |
+| 2105 | 1:12.0 | left | kerb | T5 apex kerb, red/white |  | 0.8 | 14.8 | direct | onboard:OJaBJz18xEo@72.0 |  |
+| 2105 | 1:12.0 | right | tower | scoring pylon |  | 0.8 | 14.8 | direct | onboard:OJaBJz18xEo@72.0 |  |
+| 2146 | 1:14.0 | left | wall | armco, red |  | 0.8 | 14.8 | direct | onboard:OJaBJz18xEo@74.0 |  |
+| 2146 | 1:14.0 | right | wall | armco, red |  | 0.8 | 14.8 | direct | onboard:OJaBJz18xEo@74.0 |  |
+| 2147 | 1:24.0 | left | station | marshal post "5" |  | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@84.0 |  |
+| 2147 | 1:24.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@84.0 |  |
+| 2147 | 1:24.0 | right | kerb | T6 kerb, yellow |  | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@84.0 |  |
+| 2198 | 1:16.0 | right | kerb | yellow kerb |  | 0.8 | 14.8 | direct | onboard:OJaBJz18xEo@76.0 | T6 outside |
+| 2208 | 1:26.0 | left | runoff | grass |  | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@86.0 |  |
+| 2208 | 1:26.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@86.0 |  |
+| 2208 | 1:26.0 | right | runoff | grass |  | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@86.0 |  |
+| 2243 | 3:08.0 | right | kerb | red/white kerb |  | 0.7 | 55.1 | corroborate | onboard:9Drr1VkE1_U@188.0 |  |
+| 2252 | 0:54.0 | right | kerb | red/white kerb |  | 0.7 | 22.4 | direct | onboard:9Drr1VkE1_U@54.0 |  |
+| 2269 | 1:28.0 | left | boards | Firestone boards |  | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@88.0 |  |
+| 2269 | 1:28.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@88.0 |  |
+| 2269 | 1:28.0 | right | runoff | grass |  | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@88.0 |  |
+| 2295 | 1:20.0 | right | kerb | red/white kerb |  | 0.8 | 14.8 | direct | onboard:OJaBJz18xEo@80.0 | T7 |
+| 2314 | 1:30.0 | left | boards | Honda boards |  | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@90.0 |  |
+| 2314 | 1:30.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@90.0 |  |
+| 2314 | 1:30.0 | right | runoff | grass |  | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@90.0 |  |
+| 2371 | 1:32.0 | left | boards | Honda boards |  | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@92.0 |  |
+| 2371 | 1:32.0 | left | kerb | yellow kerb |  | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@92.0 | T8 outside |
+| 2371 | 1:32.0 | right | runoff | grass |  | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@92.0 |  |
+| 2391 | 1:24.0 | left | kerb | yellow kerb |  | 0.8 | 7.7 | direct | onboard:OJaBJz18xEo@84.0 |  |
+| 2407 | 3:12.0 | left | kerb | yellow kerb |  | 0.7 | 55.1 | corroborate | onboard:9Drr1VkE1_U@192.0 |  |
+| 2411 | 0:58.0 | left | kerb | yellow kerb |  | 0.7 | 22.4 | direct | onboard:9Drr1VkE1_U@58.0 |  |
+| 2427 | 1:34.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@94.0 | RV paddock behind |
+| 2427 | 1:34.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@94.0 |  |
+| 2427 | 1:34.0 | right | runoff | grass |  | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@94.0 |  |
+| 2495 | 1:36.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@96.0 | RV paddock behind |
+| 2495 | 1:36.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@96.0 |  |
+| 2495 | 1:36.0 | right | runoff | grass |  | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@96.0 |  |
+| 2504 | 1:28.0 | right | kerb | red/white kerb |  | 0.8 | 7.7 | direct | onboard:OJaBJz18xEo@88.0 | T8 |
+| 2512 | 1:00.0 | right | kerb | red/white kerb |  | 0.7 | 22.4 | direct | onboard:9Drr1VkE1_U@60.0 |  |
+| 2551 | 1:38.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@98.0 | RV paddock behind |
+| 2551 | 1:38.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@98.0 |  |
+| 2551 | 1:38.0 | right | runoff | grass |  | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@98.0 |  |
+| 2603 | 3:16.0 | left | kerb | yellow kerb |  | 0.7 | 55.1 | corroborate | onboard:9Drr1VkE1_U@196.0 | T9 exit |
+| 2610 | 1:32.0 | left | kerb | yellow kerb |  | 0.8 | 7.7 | direct | onboard:OJaBJz18xEo@92.0 |  |
+| 2616 | 1:40.0 | left | kerb | yellow kerb |  | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@100.0 |  |
+| 2616 | 1:40.0 | right | runoff | grass |  | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@100.0 |  |
+| 2653 | 1:34.0 | right | kerb | red/white kerb |  | 0.8 | 13.7 | direct | onboard:OJaBJz18xEo@94.0 | T9 |
+| 2664 | 1:42.0 | right | kerb | T9 apex kerb, red/white |  | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@102.0 |  |
+| 2664 | 1:42.0 | right | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@102.0 |  |
+| 2683 | 1:04.0 | left | wall | concrete wall, white |  | 0.7 | 22.4 | direct | onboard:9Drr1VkE1_U@64.0 |  |
+| 2694 | 1:36.0 | left | wall | concrete wall, white |  | 0.8 | 13.7 | direct | onboard:OJaBJz18xEo@96.0 |  |
+| 2722 | 1:44.0 | left | kerb | T9 exit kerb, yellow and red |  | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@104.0 |  |
+| 2722 | 1:44.0 | left | wall | concrete wall, white | 0.8 m (horizon-ratio) | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@104.0 | white wall beyond the grass |
+| 2722 | 1:44.0 | right | runoff | grass |  | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@104.0 |  |
+| 2722 | 1:44.0 | right | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@104.0 |  |
+| 2746 | 1:38.0 | left | kerb | T9 exit kerb, yellow and red |  | 0.8 | 13.7 | direct | onboard:OJaBJz18xEo@98.0 |  |
+| 2746 | 1:38.0 | left | wall | concrete wall, white |  | 0.8 | 13.7 | direct | onboard:OJaBJz18xEo@98.0 |  |
+| 2785 | 1:06.0 | ahead | bridge | PERMCO footbridge |  | 0.7 | 22.4 | direct | onboard:9Drr1VkE1_U@66.0 | passed at 66.8 |
+| 2790 | 3:20.0 | ahead | bridge | PERMCO footbridge |  | 0.7 | 55.1 | corroborate | onboard:9Drr1VkE1_U@200.0 |  |
+| 2794 | 1:46.0 | ahead | bridge | PERMCO "Pumps and Motors" footbridge, blue banner |  | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@106.0 | overhead at 1:47.0 |
+| 2794 | 1:46.0 | left | wall | concrete wall, white |  | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@106.0 |  |
+| 2794 | 1:46.0 | right | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@106.0 |  |
+| 2807 | 1:40.0 | ahead | bridge | PERMCO footbridge |  | 0.8 | 13.7 | direct | onboard:OJaBJz18xEo@100.0 | ahead |
+| 2870 | 1:42.0 | left | wall | armco, red |  | 0.8 | 13.7 | direct | onboard:OJaBJz18xEo@102.0 |  |
+| 2870 | 1:42.0 | right | wall | armco, red |  | 0.8 | 13.7 | direct | onboard:OJaBJz18xEo@102.0 |  |
+| 2880 | 1:48.0 | left | boards | Velo banners on the bridge |  | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@108.0 |  |
+| 2880 | 1:48.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@108.0 |  |
+| 2880 | 1:48.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@108.0 |  |
+| 2880 | 1:48.0 | right | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@108.0 |  |
+| 2880 | 1:48.0 | right | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@108.0 |  |
+| 2932 | 1:44.0 | right | fence | catch fence |  | 0.8 | 12.3 | direct | onboard:OJaBJz18xEo@104.0 |  |
+| 2932 | 1:44.0 | right | wall | armco, red |  | 0.8 | 12.3 | direct | onboard:OJaBJz18xEo@104.0 |  |
+| 2968 | 1:50.0 | left | runoff | grass |  | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@110.0 |  |
+| 2968 | 1:50.0 | right | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@110.0 |  |
+| 2968 | 1:50.0 | right | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@110.0 |  |
+| 3000 | 1:46.0 | left | wall | armco, red |  | 0.8 | 12.3 | direct | onboard:OJaBJz18xEo@106.0 |  |
+| 3000 | 1:46.0 | right | fence | catch fence |  | 0.8 | 12.3 | direct | onboard:OJaBJz18xEo@106.0 |  |
+| 3053 | 1:52.0 | left | runoff | grass |  | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@112.0 |  |
+| 3053 | 1:52.0 | right | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@112.0 |  |
+| 3053 | 1:52.0 | right | sign | brake board "100" |  | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@112.0 |  |
+| 3053 | 1:52.0 | right | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@112.0 |  |
+| 3061 | 1:48.0 | right | wall | armco, red |  | 0.8 | 12.3 | direct | onboard:OJaBJz18xEo@108.0 |  |
+| 3103 | 1:50.0 | left | kerb | red/white kerb |  | 0.8 | 12.3 | direct | onboard:OJaBJz18xEo@110.0 | T11 |
+| 3109 | 1:54.0 | left | kerb | red/white kerb |  | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@114.0 | T11 |
+| 3109 | 1:54.0 | right | runoff | sand/gravel |  | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@114.0 |  |
+| 3149 | 1:52.0 | right | kerb | yellow kerb |  | 0.8 | 12.3 | direct | onboard:OJaBJz18xEo@112.0 |  |
+| 3172 | 1:56.0 | right | kerb | yellow kerb |  | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@116.0 |  |
+| 3172 | 1:56.0 | right | runoff | sand/gravel |  | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@116.0 |  |
+| 3204 | 1:54.0 | right | kerb | yellow kerb |  | 0.8 | 12.3 | direct | onboard:OJaBJz18xEo@114.0 |  |
+| 3247 | 1:58.0 | left | runoff | grass |  | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@118.0 |  |
+| 3247 | 1:58.0 | right | runoff | grass |  | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@118.0 |  |
+| 3302 | 2:00.0 | left | fence | catch fence on curved posts | 3.5 m (fence-post-ref) | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@120.0 |  |
+| 3302 | 2:00.0 | left | wall | armco (stacked W-beam), red | 1.0 m (horizon-ratio) | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@120.0 |  |
+| 3302 | 2:00.0 | right | runoff | grass |  | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@120.0 |  |
+| 3341 | 2:00.0 | right | kerb | Carousel kerb, red/white |  | 0.8 | 12.3 | direct | onboard:OJaBJz18xEo@120.0 |  |
+| 3351 | 2:02.0 | right | kerb | Carousel kerb, red/white |  | 0.8 | 19.6 | direct | onboard:e25u_vjn1uM@122.0 | T12 |
+| 3372 | 0:16.0 | right | kerb | Carousel kerb, red/white |  | 0.8 | 17.9 | direct | onboard:e25u_vjn1uM@16.0 | lap 1 lead-in |
+| 3378 | 2:02.0 | right | kerb | red/white kerb |  | 0.8 | 12.3 | direct | onboard:OJaBJz18xEo@122.0 |  |
+| 3395 | 2:04.0 | left | runoff | grass |  | 0.8 | 1.8 | direct | onboard:e25u_vjn1uM@124.0 |  |
+| 3395 | 2:04.0 | right | kerb | red/white kerb |  | 0.8 | 1.8 | direct | onboard:e25u_vjn1uM@124.0 |  |
+| 3408 | 1:22.0 | right | kerb | Carousel / T13 kerb, red/white |  | 0.7 | 60.1 | corroborate | onboard:9Drr1VkE1_U@82.0 |  |
+| 3410 | 0:12.0 | left | wall | concrete wall, white |  | 0.6 | 13.1 | direct | onboard:9Drr1VkE1_U@12.0 | pit-entry side |
+| 3410 | 0:12.0 | right | kerb | Carousel kerb, red/white |  | 0.7 | 13.1 | direct | onboard:9Drr1VkE1_U@12.0 |  |
+| 3420 | 2:26.0 | right | kerb | Carousel kerb, red/white |  | 0.7 | 44.3 | corroborate | onboard:9Drr1VkE1_U@146.0 |  |
+| 3422 | 0:18.0 | left | boards | Honda board wall |  | 0.8 | 17.9 | direct | onboard:e25u_vjn1uM@18.0 | lap 1 lead-in, T13 |
+| 3426 | 2:04.0 | left | building | starter tower |  | 0.8 | 12.3 | direct | onboard:OJaBJz18xEo@124.0 |  |
+| 3447 | 0:00.0 | left | wall | concrete wall, white |  | 0.8 | 14.4 | direct | onboard:OJaBJz18xEo@0.0 | T13 exit: pit-lane side wall |
+| 3447 | 2:06.0 | left | boards | Honda board wall |  | 0.8 | 1.8 | direct | onboard:e25u_vjn1uM@126.0 |  |
+| 3447 | 2:06.0 | left | kerb | T13 kerb, red/white |  | 0.8 | 1.8 | direct | onboard:e25u_vjn1uM@126.0 | left, ahead |
+| 3447 | 2:06.0 | right | runoff | grass |  | 0.8 | 1.8 | direct | onboard:e25u_vjn1uM@126.0 |  |
+| 3472 | 0:20.0 | left | wall | concrete pit wall, white |  | 0.8 | 17.9 | direct | onboard:e25u_vjn1uM@20.0 | lap 1 lead-in: RESTART board, pit wall start |
+| 3474 | 2:06.0 | left | kerb | T13 kerb |  | 0.8 | 4.0 | direct | onboard:OJaBJz18xEo@126.0 |  |
+| 3496 | 2:08.0 | left | building | starter tower |  | 0.8 | 1.8 | direct | onboard:e25u_vjn1uM@128.0 |  |
+| 3496 | 2:08.0 | left | sign | "RESTART" board on the pit wall |  | 0.8 | 1.8 | direct | onboard:e25u_vjn1uM@128.0 |  |
+| 3496 | 2:08.0 | left | wall | concrete pit wall, white | 0.7 m (horizon-ratio) | 0.8 | 1.8 | direct | onboard:e25u_vjn1uM@128.0 | pit wall starts ("RESTART" board) |
+| 3496 | 2:08.0 | right | runoff | sand |  | 0.8 | 1.8 | direct | onboard:e25u_vjn1uM@128.0 |  |
+| 3496 | 0:02.0 | left | building | starter tower |  | 0.8 | 14.4 | direct | onboard:OJaBJz18xEo@2.0 |  |
+| 3496 | 0:02.0 | left | wall | pit wall, white |  | 0.8 | 14.4 | direct | onboard:OJaBJz18xEo@2.0 | pit wall begins |
+| 3523 | 2:28.0 | right | kerb | yellow kerb |  | 0.7 | 44.3 | corroborate | onboard:9Drr1VkE1_U@148.0 | pit straight right |
+| 3528 | 0:22.0 | right | kerb | yellow kerb |  | 0.8 | 17.9 | direct | onboard:e25u_vjn1uM@22.0 | lap 1 lead-in |
+| 3531 | 2:08.0 | right | kerb | yellow kerb |  | 0.8 | 4.0 | direct | onboard:OJaBJz18xEo@128.0 | pit straight right |
+| 3531 | 2:08.0 | right | stand | covered grandstand |  | 0.8 | 4.0 | direct | onboard:OJaBJz18xEo@128.0 |  |
+| 3544 | 1:24.0 | right | kerb | yellow kerb |  | 0.7 | 60.1 | corroborate | onboard:9Drr1VkE1_U@84.0 | pit straight right |
+| 3557 | 2:10.0 | left | building | starter tower, 4 storeys | 13 m (storeys) | 0.8 | 1.8 | direct | onboard:e25u_vjn1uM@130.0 |  |
+| 3557 | 2:10.0 | left | wall | concrete pit wall, white | 0.7 m (horizon-ratio) | 0.8 | 1.8 | direct | onboard:e25u_vjn1uM@130.0 |  |
+| 3557 | 2:10.0 | right | boards | Honda boards |  | 0.8 | 1.8 | direct | onboard:e25u_vjn1uM@130.0 |  |
+| 3557 | 2:10.0 | right | kerb | yellow kerb |  | 0.8 | 1.8 | direct | onboard:e25u_vjn1uM@130.0 | pit straight right |
+| 3557 | 2:10.0 | right | mast | scaffold masts with TV cameras / flood lights |  | 0.7 | 1.8 | direct | onboard:e25u_vjn1uM@130.0 | pit straight, behind the catch fence (k264) |
+| 3557 | 2:10.0 | right | runoff | sand/gravel |  | 0.8 | 1.8 | direct | onboard:e25u_vjn1uM@130.0 |  |
+| 3557 | 2:10.0 | right | stand | covered grandstand |  | 0.8 | 1.8 | direct | onboard:e25u_vjn1uM@130.0 |  |
+| 3559 | 0:04.0 | right | kerb | yellow kerb |  | 0.8 | 14.4 | direct | onboard:OJaBJz18xEo@4.0 | pit straight right edge |
+| 3559 | 0:04.0 | right | stand | covered grandstand, red roof |  | 0.8 | 14.4 | direct | onboard:OJaBJz18xEo@4.0 |  |
 
 ## Pit-lane rows (13)
 
-| s (m) | t | side | kind | what | height | conf | source | note |
-|---|---|---|---|---|---|---|---|---|
-| 0 |  | left | stand | Honda overhead starter gantry spanning the pit wall |  | 0.7 | onboard:e25u_vjn1uM@24 | S/F; the N837 frame t130 shows a PERMCO banner on the same gantry (2026) |
-| 0 |  | left | wall | concrete pit wall, white | 0.7 m (horizon-ratio) | 0.7 | onboard:e25u_vjn1uM@24 | "NTT INDYCAR SERIES" lettering (2025 event dress) |
-| 72 |  | left | building | pit garages, single storey, red roofs | 4 m (storeys) | 0.7 | onboard:e25u_vjn1uM@26 |  |
-| 72 |  | left | wall | concrete pit wall, white | 0.7 m (horizon-ratio) | 0.7 | onboard:e25u_vjn1uM@26 | pit garages / hospitality buildings with red roofs behind the lane |
-| 154 |  | left | wall | concrete pit wall, white | 0.7 m (horizon-ratio) | 0.7 | onboard:e25u_vjn1uM@28 | VELO banners on the wall toward the bridge |
-| 216 |  | left | wall | pit wall ends at the footbridge abutment, white |  | 0.7 | onboard:e25u_vjn1uM@29.5 | the pit-exit lane runs on beside the track under the bridge |
-| 233 |  | both | bridge | Firestone footbridge over track and pit exit, concrete abutments |  | 0.7 | onboard:e25u_vjn1uM@30 |  |
-| 295 |  | left | paint | white hatched pit-exit blend lines, asphalt of the track tone |  | 0.7 | onboard:e25u_vjn1uM@32 | pit-exit merge at T1 (also N837 t14, 2026) |
-| 311 |  | left | kerb | raised red/white T1 inside kerb separating the pit exit |  | 0.7 | onboard:e25u_vjn1uM@32.5 | config features left 285-360 |
-| 3496 |  | left | sign | "RESTART" board on the pit wall nose |  | 0.7 | onboard:e25u_vjn1uM@128 | pit wall seen from the track: start of the white wall at the T13 exit |
-| 3496 |  | left | wall | concrete pit wall, white | 0.7 m (horizon-ratio) | 0.7 | onboard:e25u_vjn1uM@128 | pit wall begins (between the track and the pit lane); 360 view k256 |
-| 3558 |  | left | wall | concrete pit wall, white | 0.7 m (horizon-ratio) | 0.7 | onboard:e25u_vjn1uM@130 | pit wall, starter tower behind the lane |
-| 3594 |  | left | building | starter tower, 4 storeys, red roof | 13 m (storeys) | 0.7 | onboard:e25u_vjn1uM@131 | behind the pit lane at the line |
+| s (m) | t | side | kind | what | height | conf | sigma s (m) | placement | source | note |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 0 |  | left | stand | Honda overhead starter gantry spanning the pit wall |  | 0.7 | 17.9 | direct | onboard:e25u_vjn1uM@24 | S/F; the N837 frame t130 shows a PERMCO banner on the same gantry (2026) |
+| 0 |  | left | wall | concrete pit wall, white | 0.7 m (horizon-ratio) | 0.7 | 17.9 | direct | onboard:e25u_vjn1uM@24 | "NTT INDYCAR SERIES" lettering (2025 event dress) |
+| 72 |  | left | building | pit garages, single storey, red roofs | 4 m (storeys) | 0.7 | 17.9 | direct | onboard:e25u_vjn1uM@26 |  |
+| 72 |  | left | wall | concrete pit wall, white | 0.7 m (horizon-ratio) | 0.7 | 17.9 | direct | onboard:e25u_vjn1uM@26 | pit garages / hospitality buildings with red roofs behind the lane |
+| 154 |  | left | wall | concrete pit wall, white | 0.7 m (horizon-ratio) | 0.7 | 17.9 | direct | onboard:e25u_vjn1uM@28 | VELO banners on the wall toward the bridge |
+| 216 |  | left | wall | pit wall ends at the footbridge abutment, white |  | 0.7 | 17.9 | direct | onboard:e25u_vjn1uM@29.5 | the pit-exit lane runs on beside the track under the bridge |
+| 233 |  | both | bridge | Firestone footbridge over track and pit exit, concrete abutments |  | 0.7 | 17.9 | direct | onboard:e25u_vjn1uM@30 |  |
+| 295 |  | left | paint | white hatched pit-exit blend lines, asphalt of the track tone |  | 0.7 | 20.4 | direct | onboard:e25u_vjn1uM@32 | pit-exit merge at T1 (also N837 t14, 2026) |
+| 311 |  | left | kerb | raised red/white T1 inside kerb separating the pit exit |  | 0.7 | 20.4 | direct | onboard:e25u_vjn1uM@32.5 | config features left 285-360 |
+| 3496 |  | left | sign | "RESTART" board on the pit wall nose |  | 0.7 | 1.8 | direct | onboard:e25u_vjn1uM@128 | pit wall seen from the track: start of the white wall at the T13 exit |
+| 3496 |  | left | wall | concrete pit wall, white | 0.7 m (horizon-ratio) | 0.7 | 1.8 | direct | onboard:e25u_vjn1uM@128 | pit wall begins (between the track and the pit lane); 360 view k256 |
+| 3558 |  | left | wall | concrete pit wall, white | 0.7 m (horizon-ratio) | 0.7 | 1.8 | direct | onboard:e25u_vjn1uM@130 | pit wall, starter tower behind the lane |
+| 3594 |  | left | building | starter tower, 4 storeys, red roof | 13 m (storeys) | 0.7 | 1.8 | direct | onboard:e25u_vjn1uM@131 | behind the pit lane at the line |

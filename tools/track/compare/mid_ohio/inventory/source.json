@@ -375,5 +375,9 @@
    ],
    "note": "Stations run from the lead-in (s < L) across S/F (s = L) into the next lap (s - L wrapped on output)."
   }
- ]
+ ],
+ "position_uncertainty": {
+  "corroborate_over_m": 40,
+  "src": "build-track SKILL.md 0.7 (where a time map is +-40 m, add an anchor before trusting its rows); Astra round-4 review: IndyCar maps B and C (55-60 m leave-one-out residuals) need corroboration from N837, the 360 lap or another anchor before scenery places precise endpoints from them"
+ }
 }

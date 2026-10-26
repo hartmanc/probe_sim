@@ -538,7 +538,10 @@
    "frame": "t024_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "starter tower behind the pit lane"
+   "note": "starter tower behind the pit lane",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -553,7 +556,10 @@
    "frame": "t024_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "S/F line"
+   "note": "S/F line",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -568,7 +574,10 @@
    "frame": "t024_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "S/F gantry"
+   "note": "S/F gantry",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -586,7 +595,10 @@
    "frame": "t024_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "pit wall, \"NTT INDYCAR SERIES\" lettering, the pit lane behind"
+   "note": "pit wall, \"NTT INDYCAR SERIES\" lettering, the pit lane behind",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -600,7 +612,10 @@
    "source": "onboard:e25u_vjn1uM@24.0",
    "frame": "t024_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -617,7 +632,10 @@
    "frame": "t024_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "main straight grandstand behind the armco"
+   "note": "main straight grandstand behind the armco",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -635,7 +653,10 @@
    "frame": "t024_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "red armco at the back of the run-off"
+   "note": "red armco at the back of the run-off",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -649,7 +670,10 @@
    "source": "onboard:OJaBJz18xEo@130.0",
    "frame": "t130.jpg",
    "scope": "lap",
-   "note": "Catalyst line"
+   "note": "Catalyst line",
+   "sigma_s_m": 4.0,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -664,7 +688,10 @@
    "source": "onboard:9Drr1VkE1_U@16.0",
    "frame": "t016.jpg",
    "map": "IndyCar segment A (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 13.1,
+   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -678,7 +705,10 @@
    "s": 27.7,
    "source": "onboard:OJaBJz18xEo@6.0",
    "frame": "t006.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 14.4,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -691,7 +721,10 @@
    "s": 27.7,
    "source": "onboard:OJaBJz18xEo@6.0",
    "frame": "t006.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 14.4,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -705,7 +738,10 @@
    "s": 27.7,
    "source": "onboard:OJaBJz18xEo@6.0",
    "frame": "t006.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 14.4,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -720,7 +756,10 @@
    "source": "onboard:9Drr1VkE1_U@150.0",
    "frame": "t150.jpg",
    "map": "IndyCar segment C (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 44.3,
+   "sigma_basis": "time map IndyCar segment C (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "right",
@@ -735,7 +774,10 @@
    "source": "onboard:9Drr1VkE1_U@150.0",
    "frame": "t150.jpg",
    "map": "IndyCar segment C (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 44.3,
+   "sigma_basis": "time map IndyCar segment C (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "left",
@@ -752,7 +794,10 @@
    "frame": "t026_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "paddock row behind the pit lane"
+   "note": "paddock row behind the pit lane",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -770,7 +815,10 @@
    "frame": "t026_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "pit wall continues"
+   "note": "pit wall continues",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -787,7 +835,10 @@
    "frame": "t026_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "catch fence over the armco"
+   "note": "catch fence over the armco",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -802,7 +853,10 @@
    "frame": "t026_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "grass verge"
+   "note": "grass verge",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -816,7 +870,10 @@
    "source": "onboard:e25u_vjn1uM@26.0",
    "frame": "t026_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -833,7 +890,10 @@
    "source": "onboard:e25u_vjn1uM@26.0",
    "frame": "t026_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -847,7 +907,10 @@
    "s": 90.2,
    "source": "onboard:OJaBJz18xEo@8.0",
    "frame": "t008.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 14.4,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -860,7 +923,10 @@
    "s": 90.2,
    "source": "onboard:OJaBJz18xEo@8.0",
    "frame": "t008.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 14.4,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -874,7 +940,10 @@
    "source": "onboard:OJaBJz18xEo@8.0",
    "frame": "t008.jpg",
    "scope": "lap",
-   "note": "behind the fence"
+   "note": "behind the fence",
+   "sigma_s_m": 14.4,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -888,7 +957,10 @@
    "s": 90.2,
    "source": "onboard:OJaBJz18xEo@8.0",
    "frame": "t008.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 14.4,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -903,7 +975,10 @@
    "source": "onboard:9Drr1VkE1_U@86.0",
    "frame": "t086.jpg",
    "map": "IndyCar segment B (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 60.1,
+   "sigma_basis": "time map IndyCar segment B (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "right",
@@ -918,7 +993,10 @@
    "source": "onboard:9Drr1VkE1_U@86.0",
    "frame": "t086.jpg",
    "map": "IndyCar segment B (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 60.1,
+   "sigma_basis": "time map IndyCar segment B (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "right",
@@ -933,7 +1011,10 @@
    "source": "onboard:9Drr1VkE1_U@18.0",
    "frame": "t018.jpg",
    "map": "IndyCar segment A (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 13.1,
+   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -951,7 +1032,10 @@
    "frame": "t028_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "pit wall; VELO banners on it toward the bridge"
+   "note": "pit wall; VELO banners on it toward the bridge",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -967,7 +1051,10 @@
    "source": "onboard:e25u_vjn1uM@28.0",
    "frame": "t028_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -982,7 +1069,10 @@
    "frame": "t028_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "T1 brake board on the right verge"
+   "note": "T1 brake board on the right verge",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -996,7 +1086,10 @@
    "source": "onboard:e25u_vjn1uM@28.0",
    "frame": "t028_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -1013,7 +1106,10 @@
    "source": "onboard:e25u_vjn1uM@28.0",
    "frame": "t028_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "ahead",
@@ -1027,7 +1123,10 @@
    "source": "onboard:OJaBJz18xEo@10.0",
    "frame": "t010.jpg",
    "scope": "lap",
-   "note": "ahead"
+   "note": "ahead",
+   "sigma_s_m": 14.4,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -1041,7 +1140,10 @@
    "s": 159.9,
    "source": "onboard:OJaBJz18xEo@10.0",
    "frame": "t010.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 14.4,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -1054,7 +1156,10 @@
    "s": 159.9,
    "source": "onboard:OJaBJz18xEo@10.0",
    "frame": "t010.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 14.4,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -1068,7 +1173,10 @@
    "s": 159.9,
    "source": "onboard:OJaBJz18xEo@10.0",
    "frame": "t010.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 14.4,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "ahead",
@@ -1083,7 +1191,10 @@
    "frame": "t152.jpg",
    "map": "IndyCar segment C (9Drr1VkE1_U)",
    "scope": "lap",
-   "note": "passed at 152.9"
+   "note": "passed at 152.9",
+   "sigma_s_m": 44.3,
+   "sigma_basis": "time map IndyCar segment C (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "ahead",
@@ -1097,7 +1208,10 @@
    "source": "onboard:OJaBJz18xEo@12.0",
    "frame": "t012.jpg",
    "scope": "lap",
-   "note": "overhead at 0:12.3"
+   "note": "overhead at 0:12.3",
+   "sigma_s_m": 14.4,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -1112,7 +1226,10 @@
    "source": "onboard:OJaBJz18xEo@12.0",
    "frame": "t012.jpg",
    "scope": "lap",
-   "note": "run to the abutment"
+   "note": "run to the abutment",
+   "sigma_s_m": 14.4,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "ahead",
@@ -1127,7 +1244,10 @@
    "frame": "t030_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "passes overhead at 0:30.0"
+   "note": "passes overhead at 0:30.0",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "ahead",
@@ -1142,7 +1262,10 @@
    "frame": "t088.jpg",
    "map": "IndyCar segment B (9Drr1VkE1_U)",
    "scope": "lap",
-   "note": "passed at 88.0"
+   "note": "passed at 88.0",
+   "sigma_s_m": 60.1,
+   "sigma_basis": "time map IndyCar segment B (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "left",
@@ -1158,7 +1281,10 @@
    "frame": "t030_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "pit exit lane continues beside the track under the bridge"
+   "note": "pit exit lane continues beside the track under the bridge",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -1172,7 +1298,10 @@
    "source": "onboard:e25u_vjn1uM@30.0",
    "frame": "t030_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -1188,7 +1317,10 @@
    "frame": "t030_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "bridge abutment and the red barrier run to it"
+   "note": "bridge abutment and the red barrier run to it",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "ahead",
@@ -1203,7 +1335,10 @@
    "frame": "t020.jpg",
    "map": "IndyCar segment A (9Drr1VkE1_U)",
    "scope": "lap",
-   "note": "passed at 19.2"
+   "note": "passed at 19.2",
+   "sigma_s_m": 12.1,
+   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -1217,7 +1352,10 @@
    "source": "onboard:OJaBJz18xEo@14.0",
    "frame": "t014.jpg",
    "scope": "lap",
-   "note": "2026: blend lines and the asphalt of the pit exit, same tone"
+   "note": "2026: blend lines and the asphalt of the pit exit, same tone",
+   "sigma_s_m": 14.4,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -1232,7 +1370,10 @@
    "frame": "t032_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "apex kerb"
+   "note": "apex kerb",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -1247,7 +1388,10 @@
    "frame": "t032_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "T1 inside, beyond the infield armco"
+   "note": "T1 inside, beyond the infield armco",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -1262,7 +1406,10 @@
    "frame": "t032_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "pit exit merge; same asphalt tone as the track"
+   "note": "pit exit merge; same asphalt tone as the track",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -1280,7 +1427,10 @@
    "frame": "t032_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "low red armco beyond the infield grass"
+   "note": "low red armco beyond the infield grass",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -1295,7 +1445,10 @@
    "frame": "t032_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "far"
+   "note": "far",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -1310,7 +1463,10 @@
    "frame": "t032_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "T1 outside"
+   "note": "T1 outside",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -1323,7 +1479,10 @@
    "s": 339.1,
    "source": "onboard:OJaBJz18xEo@16.0",
    "frame": "t016.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 14.4,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -1337,7 +1496,10 @@
    "source": "onboard:9Drr1VkE1_U@90.0",
    "frame": "t090.jpg",
    "map": "IndyCar segment B (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 34.3,
+   "sigma_basis": "time map IndyCar segment B (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "left",
@@ -1351,7 +1513,10 @@
    "source": "onboard:e25u_vjn1uM@34.0",
    "frame": "t034_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -1368,7 +1533,10 @@
    "source": "onboard:e25u_vjn1uM@34.0",
    "frame": "t034_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -1382,7 +1550,10 @@
    "source": "onboard:e25u_vjn1uM@34.0",
    "frame": "t034_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -1397,7 +1568,10 @@
    "frame": "t034_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "T1 exit outside"
+   "note": "T1 exit outside",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -1414,7 +1588,10 @@
    "source": "onboard:e25u_vjn1uM@34.0",
    "frame": "t034_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -1428,7 +1605,10 @@
    "source": "onboard:9Drr1VkE1_U@22.0",
    "frame": "t022.jpg",
    "map": "IndyCar segment A (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 12.1,
+   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -1442,7 +1622,10 @@
    "s": 386.9,
    "source": "onboard:OJaBJz18xEo@18.0",
    "frame": "t018.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -1455,7 +1638,10 @@
    "s": 386.9,
    "source": "onboard:OJaBJz18xEo@18.0",
    "frame": "t018.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -1469,7 +1655,10 @@
    "source": "onboard:9Drr1VkE1_U@156.0",
    "frame": "t156.jpg",
    "map": "IndyCar segment C (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 38.2,
+   "sigma_basis": "time map IndyCar segment C (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "left",
@@ -1484,7 +1673,10 @@
    "frame": "t036_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "beyond the fence"
+   "note": "beyond the fence",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -1498,7 +1690,10 @@
    "source": "onboard:e25u_vjn1uM@36.0",
    "frame": "t036_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -1513,7 +1708,10 @@
    "frame": "t036_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "yellow exit kerb"
+   "note": "yellow exit kerb",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -1527,7 +1725,10 @@
    "source": "onboard:e25u_vjn1uM@36.0",
    "frame": "t036_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -1540,7 +1741,10 @@
    "s": 439.5,
    "source": "onboard:OJaBJz18xEo@20.0",
    "frame": "t020.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -1554,7 +1758,10 @@
    "source": "onboard:9Drr1VkE1_U@92.0",
    "frame": "t092.jpg",
    "map": "IndyCar segment B (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 34.3,
+   "sigma_basis": "time map IndyCar segment B (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "left",
@@ -1569,7 +1776,10 @@
    "source": "onboard:9Drr1VkE1_U@24.0",
    "frame": "t024.jpg",
    "map": "IndyCar segment A (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 12.1,
+   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -1585,7 +1795,10 @@
    "source": "onboard:e25u_vjn1uM@38.0",
    "frame": "t038_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -1602,7 +1815,10 @@
    "source": "onboard:e25u_vjn1uM@38.0",
    "frame": "t038_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -1617,7 +1833,10 @@
    "frame": "t038_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "wide infield"
+   "note": "wide infield",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -1630,7 +1849,10 @@
    "s": 500.5,
    "source": "onboard:OJaBJz18xEo@22.0",
    "frame": "t022.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -1644,7 +1866,10 @@
    "s": 500.5,
    "source": "onboard:OJaBJz18xEo@22.0",
    "frame": "t022.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -1657,7 +1882,10 @@
    "s": 500.5,
    "source": "onboard:OJaBJz18xEo@22.0",
    "frame": "t022.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -1672,7 +1900,10 @@
    "source": "onboard:9Drr1VkE1_U@158.0",
    "frame": "t158.jpg",
    "map": "IndyCar segment C (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 38.2,
+   "sigma_basis": "time map IndyCar segment C (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "left",
@@ -1685,7 +1916,10 @@
    "s": 569.8,
    "source": "onboard:OJaBJz18xEo@24.0",
    "frame": "t024.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -1699,7 +1933,10 @@
    "source": "onboard:OJaBJz18xEo@24.0",
    "frame": "t024.jpg",
    "scope": "lap",
-   "note": "on the fence"
+   "note": "on the fence",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -1713,7 +1950,10 @@
    "s": 569.8,
    "source": "onboard:OJaBJz18xEo@24.0",
    "frame": "t024.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -1726,7 +1966,10 @@
    "s": 569.8,
    "source": "onboard:OJaBJz18xEo@24.0",
    "frame": "t024.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -1742,7 +1985,10 @@
    "source": "onboard:e25u_vjn1uM@40.0",
    "frame": "t040_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -1759,7 +2005,10 @@
    "source": "onboard:e25u_vjn1uM@40.0",
    "frame": "t040_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -1774,7 +2023,10 @@
    "frame": "t040_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "the unused chicane seen across the infield (owner green strokes)"
+   "note": "the unused chicane seen across the infield (owner green strokes)",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -1789,7 +2041,10 @@
    "frame": "t040_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "wide infield"
+   "note": "wide infield",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -1804,7 +2059,10 @@
    "source": "onboard:9Drr1VkE1_U@94.0",
    "frame": "t094.jpg",
    "map": "IndyCar segment B (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 34.3,
+   "sigma_basis": "time map IndyCar segment B (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "left",
@@ -1819,7 +2077,10 @@
    "source": "onboard:9Drr1VkE1_U@26.0",
    "frame": "t026.jpg",
    "map": "IndyCar segment A (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 12.1,
+   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -1832,7 +2093,10 @@
    "s": 647.6,
    "source": "onboard:OJaBJz18xEo@26.0",
    "frame": "t026.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -1846,7 +2110,10 @@
    "s": 647.6,
    "source": "onboard:OJaBJz18xEo@26.0",
    "frame": "t026.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -1859,7 +2126,10 @@
    "s": 647.6,
    "source": "onboard:OJaBJz18xEo@26.0",
    "frame": "t026.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -1874,7 +2144,10 @@
    "source": "onboard:9Drr1VkE1_U@160.0",
    "frame": "t160.jpg",
    "map": "IndyCar segment C (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 38.2,
+   "sigma_basis": "time map IndyCar segment C (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "left",
@@ -1890,7 +2163,10 @@
    "source": "onboard:e25u_vjn1uM@42.0",
    "frame": "t042_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -1907,7 +2183,10 @@
    "source": "onboard:e25u_vjn1uM@42.0",
    "frame": "t042_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -1922,7 +2201,10 @@
    "frame": "t042_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "chicane mouth kerb"
+   "note": "chicane mouth kerb",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -1936,7 +2218,10 @@
    "source": "onboard:e25u_vjn1uM@42.0",
    "frame": "t042_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -1949,7 +2234,10 @@
    "s": 730.0,
    "source": "onboard:OJaBJz18xEo@28.0",
    "frame": "t028.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -1963,7 +2251,10 @@
    "s": 730.0,
    "source": "onboard:OJaBJz18xEo@28.0",
    "frame": "t028.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -1976,7 +2267,10 @@
    "s": 730.0,
    "source": "onboard:OJaBJz18xEo@28.0",
    "frame": "t028.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -1991,7 +2285,10 @@
    "source": "onboard:9Drr1VkE1_U@96.0",
    "frame": "t096.jpg",
    "map": "IndyCar segment B (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 34.3,
+   "sigma_basis": "time map IndyCar segment B (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "left",
@@ -2007,7 +2304,10 @@
    "source": "onboard:e25u_vjn1uM@44.0",
    "frame": "t044_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2022,7 +2322,10 @@
    "frame": "t044_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "Keyhole brake board"
+   "note": "Keyhole brake board",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2039,7 +2342,10 @@
    "source": "onboard:e25u_vjn1uM@44.0",
    "frame": "t044_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -2053,7 +2359,10 @@
    "source": "onboard:e25u_vjn1uM@44.0",
    "frame": "t044_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2067,7 +2376,10 @@
    "source": "onboard:9Drr1VkE1_U@28.0",
    "frame": "t028.jpg",
    "map": "IndyCar segment A (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 12.1,
+   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "ahead",
@@ -2080,7 +2392,10 @@
    "s": 809.2,
    "source": "onboard:OJaBJz18xEo@30.0",
    "frame": "t030.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2094,7 +2409,10 @@
    "s": 809.2,
    "source": "onboard:OJaBJz18xEo@30.0",
    "frame": "t030.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2110,7 +2428,10 @@
    "source": "onboard:e25u_vjn1uM@46.0",
    "frame": "t046_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2127,7 +2448,10 @@
    "source": "onboard:e25u_vjn1uM@46.0",
    "frame": "t046_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -2141,7 +2465,10 @@
    "source": "onboard:e25u_vjn1uM@46.0",
    "frame": "t046_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -2155,7 +2482,10 @@
    "source": "onboard:9Drr1VkE1_U@98.0",
    "frame": "t098.jpg",
    "map": "IndyCar segment B (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 34.3,
+   "sigma_basis": "time map IndyCar segment B (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "right",
@@ -2169,7 +2499,10 @@
    "source": "onboard:9Drr1VkE1_U@30.0",
    "frame": "t030.jpg",
    "map": "IndyCar segment A (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 12.1,
+   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -2182,7 +2515,10 @@
    "s": 906.1,
    "source": "onboard:OJaBJz18xEo@34.0",
    "frame": "t034.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2197,7 +2533,10 @@
    "frame": "t048_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "outside of the Keyhole"
+   "note": "outside of the Keyhole",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2211,7 +2550,10 @@
    "source": "onboard:e25u_vjn1uM@48.0",
    "frame": "t048_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -2226,7 +2568,10 @@
    "frame": "t048_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "T2 apex kerb"
+   "note": "T2 apex kerb",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -2241,7 +2586,10 @@
    "frame": "t048_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "infield"
+   "note": "infield",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -2255,7 +2603,10 @@
    "source": "onboard:9Drr1VkE1_U@164.0",
    "frame": "t164.jpg",
    "map": "IndyCar segment C (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 38.2,
+   "sigma_basis": "time map IndyCar segment C (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "right",
@@ -2268,7 +2619,10 @@
    "s": 943.2,
    "source": "onboard:OJaBJz18xEo@36.0",
    "frame": "t036.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2282,7 +2636,10 @@
    "source": "onboard:e25u_vjn1uM@50.0",
    "frame": "t050_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2299,7 +2656,10 @@
    "source": "onboard:e25u_vjn1uM@50.0",
    "frame": "t050_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -2314,7 +2674,10 @@
    "frame": "t050_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "T2 apex kerb"
+   "note": "T2 apex kerb",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -2329,7 +2692,10 @@
    "frame": "t050_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "infield"
+   "note": "infield",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -2343,7 +2709,10 @@
    "source": "onboard:9Drr1VkE1_U@100.0",
    "frame": "t100.jpg",
    "map": "IndyCar segment B (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 34.3,
+   "sigma_basis": "time map IndyCar segment B (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "right",
@@ -2357,7 +2726,10 @@
    "source": "onboard:9Drr1VkE1_U@32.0",
    "frame": "t032.jpg",
    "map": "IndyCar segment A (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 22.4,
+   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2370,7 +2742,10 @@
    "s": 979.3,
    "source": "onboard:OJaBJz18xEo@38.0",
    "frame": "t038.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -2384,7 +2759,10 @@
    "source": "onboard:9Drr1VkE1_U@166.0",
    "frame": "t166.jpg",
    "map": "IndyCar segment C (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 55.1,
+   "sigma_basis": "time map IndyCar segment C (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "left",
@@ -2398,7 +2776,10 @@
    "source": "onboard:e25u_vjn1uM@52.0",
    "frame": "t052_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2413,7 +2794,10 @@
    "frame": "t052_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "behind the boards"
+   "note": "behind the boards",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -2428,7 +2812,10 @@
    "frame": "t052_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "T2 apex kerb"
+   "note": "T2 apex kerb",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -2443,7 +2830,10 @@
    "frame": "t052_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "infield"
+   "note": "infield",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2456,7 +2846,10 @@
    "s": 1019.1,
    "source": "onboard:OJaBJz18xEo@40.0",
    "frame": "t040.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -2469,7 +2862,10 @@
    "s": 1019.1,
    "source": "onboard:OJaBJz18xEo@40.0",
    "frame": "t040.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2483,7 +2879,10 @@
    "source": "onboard:9Drr1VkE1_U@102.0",
    "frame": "t102.jpg",
    "map": "IndyCar segment B (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 34.3,
+   "sigma_basis": "time map IndyCar segment B (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "left",
@@ -2498,7 +2897,10 @@
    "frame": "t054_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "same boards as the N837 onboard t40"
+   "note": "same boards as the N837 onboard t40",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2512,7 +2914,10 @@
    "source": "onboard:e25u_vjn1uM@54.0",
    "frame": "t054_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -2526,7 +2931,10 @@
    "source": "onboard:e25u_vjn1uM@54.0",
    "frame": "t054_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2540,7 +2948,10 @@
    "source": "onboard:9Drr1VkE1_U@34.0",
    "frame": "t034.jpg",
    "map": "IndyCar segment A (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 22.4,
+   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2553,7 +2964,10 @@
    "s": 1066.0,
    "source": "onboard:OJaBJz18xEo@42.0",
    "frame": "t042.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2567,7 +2981,10 @@
    "source": "onboard:9Drr1VkE1_U@168.0",
    "frame": "t168.jpg",
    "map": "IndyCar segment C (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 55.1,
+   "sigma_basis": "time map IndyCar segment C (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "left",
@@ -2581,7 +2998,10 @@
    "source": "onboard:e25u_vjn1uM@56.0",
    "frame": "t056_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2595,7 +3015,10 @@
    "source": "onboard:e25u_vjn1uM@56.0",
    "frame": "t056_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -2609,7 +3032,10 @@
    "source": "onboard:e25u_vjn1uM@56.0",
    "frame": "t056_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2622,7 +3048,10 @@
    "s": 1122.6,
    "source": "onboard:OJaBJz18xEo@44.0",
    "frame": "t044.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2636,7 +3065,10 @@
    "s": 1122.6,
    "source": "onboard:OJaBJz18xEo@44.0",
    "frame": "t044.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -2649,7 +3081,10 @@
    "s": 1122.6,
    "source": "onboard:OJaBJz18xEo@44.0",
    "frame": "t044.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2664,7 +3099,10 @@
    "source": "onboard:9Drr1VkE1_U@104.0",
    "frame": "t104.jpg",
    "map": "IndyCar segment B (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 34.3,
+   "sigma_basis": "time map IndyCar segment B (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "left",
@@ -2679,7 +3117,10 @@
    "source": "onboard:9Drr1VkE1_U@36.0",
    "frame": "t036.jpg",
    "map": "IndyCar segment A (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 22.4,
+   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2696,7 +3137,10 @@
    "frame": "t058_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "paddock / RVs behind"
+   "note": "paddock / RVs behind",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2713,7 +3157,10 @@
    "source": "onboard:e25u_vjn1uM@58.0",
    "frame": "t058_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -2728,7 +3175,10 @@
    "frame": "t058_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "open infield"
+   "note": "open infield",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2743,7 +3193,10 @@
    "source": "onboard:9Drr1VkE1_U@170.0",
    "frame": "t170.jpg",
    "map": "IndyCar segment C (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 55.1,
+   "sigma_basis": "time map IndyCar segment C (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "left",
@@ -2756,7 +3209,10 @@
    "s": 1189.0,
    "source": "onboard:OJaBJz18xEo@46.0",
    "frame": "t046.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2770,7 +3226,10 @@
    "s": 1189.0,
    "source": "onboard:OJaBJz18xEo@46.0",
    "frame": "t046.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -2783,7 +3242,10 @@
    "s": 1189.0,
    "source": "onboard:OJaBJz18xEo@46.0",
    "frame": "t046.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2800,7 +3262,10 @@
    "frame": "t060_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "paddock / RVs behind"
+   "note": "paddock / RVs behind",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2817,7 +3282,10 @@
    "source": "onboard:e25u_vjn1uM@60.0",
    "frame": "t060_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -2832,7 +3300,10 @@
    "frame": "t060_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "open infield"
+   "note": "open infield",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2847,7 +3318,10 @@
    "source": "onboard:9Drr1VkE1_U@106.0",
    "frame": "t106.jpg",
    "map": "IndyCar segment B (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 34.3,
+   "sigma_basis": "time map IndyCar segment B (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "left",
@@ -2860,7 +3334,10 @@
    "s": 1265.0,
    "source": "onboard:OJaBJz18xEo@48.0",
    "frame": "t048.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2874,7 +3351,10 @@
    "s": 1265.0,
    "source": "onboard:OJaBJz18xEo@48.0",
    "frame": "t048.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -2887,7 +3367,10 @@
    "s": 1265.0,
    "source": "onboard:OJaBJz18xEo@48.0",
    "frame": "t048.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2902,7 +3385,10 @@
    "source": "onboard:9Drr1VkE1_U@38.0",
    "frame": "t038.jpg",
    "map": "IndyCar segment A (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 22.4,
+   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2919,7 +3405,10 @@
    "frame": "t062_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "paddock / RVs behind"
+   "note": "paddock / RVs behind",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2933,7 +3422,10 @@
    "source": "onboard:e25u_vjn1uM@62.0",
    "frame": "t062_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2950,7 +3442,10 @@
    "source": "onboard:e25u_vjn1uM@62.0",
    "frame": "t062_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -2965,7 +3460,10 @@
    "frame": "t062_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "open infield"
+   "note": "open infield",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2978,7 +3476,10 @@
    "s": 1350.6,
    "source": "onboard:OJaBJz18xEo@50.0",
    "frame": "t050.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -2992,7 +3493,10 @@
    "s": 1350.6,
    "source": "onboard:OJaBJz18xEo@50.0",
    "frame": "t050.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -3005,7 +3509,10 @@
    "s": 1350.6,
    "source": "onboard:OJaBJz18xEo@50.0",
    "frame": "t050.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3020,7 +3527,10 @@
    "source": "onboard:9Drr1VkE1_U@108.0",
    "frame": "t108.jpg",
    "map": "IndyCar segment B (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 34.3,
+   "sigma_basis": "time map IndyCar segment B (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "left",
@@ -3037,7 +3547,10 @@
    "frame": "t064_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "paddock / RVs behind"
+   "note": "paddock / RVs behind",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3054,7 +3567,10 @@
    "source": "onboard:e25u_vjn1uM@64.0",
    "frame": "t064_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -3069,7 +3585,10 @@
    "frame": "t064_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "crossover (owner green strokes)"
+   "note": "crossover (owner green strokes)",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -3084,7 +3603,10 @@
    "frame": "t064_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "open infield"
+   "note": "open infield",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3097,7 +3619,10 @@
    "s": 1439.2,
    "source": "onboard:OJaBJz18xEo@52.0",
    "frame": "t052.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3111,7 +3636,10 @@
    "s": 1439.2,
    "source": "onboard:OJaBJz18xEo@52.0",
    "frame": "t052.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -3124,7 +3652,10 @@
    "s": 1439.2,
    "source": "onboard:OJaBJz18xEo@52.0",
    "frame": "t052.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3138,7 +3669,10 @@
    "source": "onboard:9Drr1VkE1_U@40.0",
    "frame": "t040.jpg",
    "map": "IndyCar segment A (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 22.4,
+   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3153,7 +3687,10 @@
    "source": "onboard:9Drr1VkE1_U@174.0",
    "frame": "t174.jpg",
    "map": "IndyCar segment C (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 55.1,
+   "sigma_basis": "time map IndyCar segment C (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "left",
@@ -3166,7 +3703,10 @@
    "s": 1527.4,
    "source": "onboard:OJaBJz18xEo@54.0",
    "frame": "t054.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 14.8,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3179,7 +3719,10 @@
    "s": 1527.4,
    "source": "onboard:OJaBJz18xEo@54.0",
    "frame": "t054.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 14.8,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3193,7 +3736,10 @@
    "source": "onboard:e25u_vjn1uM@66.0",
    "frame": "t066_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3210,7 +3756,10 @@
    "source": "onboard:e25u_vjn1uM@66.0",
    "frame": "t066_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -3224,7 +3773,10 @@
    "source": "onboard:e25u_vjn1uM@66.0",
    "frame": "t066_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3239,7 +3791,10 @@
    "source": "onboard:9Drr1VkE1_U@110.0",
    "frame": "t110.jpg",
    "map": "IndyCar segment B (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 34.3,
+   "sigma_basis": "time map IndyCar segment B (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "left",
@@ -3254,7 +3809,10 @@
    "source": "onboard:9Drr1VkE1_U@42.0",
    "frame": "t042.jpg",
    "map": "IndyCar segment A (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 22.4,
+   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3267,7 +3825,10 @@
    "s": 1615.6,
    "source": "onboard:OJaBJz18xEo@56.0",
    "frame": "t056.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 14.8,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3281,7 +3842,10 @@
    "s": 1615.6,
    "source": "onboard:OJaBJz18xEo@56.0",
    "frame": "t056.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 14.8,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -3294,7 +3858,10 @@
    "s": 1615.6,
    "source": "onboard:OJaBJz18xEo@56.0",
    "frame": "t056.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 14.8,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3311,7 +3878,10 @@
    "frame": "t068_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "paddock / RVs behind"
+   "note": "paddock / RVs behind",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3328,7 +3898,10 @@
    "source": "onboard:e25u_vjn1uM@68.0",
    "frame": "t068_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -3343,7 +3916,10 @@
    "frame": "t068_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "open infield"
+   "note": "open infield",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3356,7 +3932,10 @@
    "s": 1703.7,
    "source": "onboard:OJaBJz18xEo@58.0",
    "frame": "t058.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 14.8,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3370,7 +3949,10 @@
    "s": 1703.7,
    "source": "onboard:OJaBJz18xEo@58.0",
    "frame": "t058.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 14.8,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -3383,7 +3965,10 @@
    "s": 1703.7,
    "source": "onboard:OJaBJz18xEo@58.0",
    "frame": "t058.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 14.8,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3398,7 +3983,10 @@
    "source": "onboard:9Drr1VkE1_U@112.0",
    "frame": "t112.jpg",
    "map": "IndyCar segment B (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 34.3,
+   "sigma_basis": "time map IndyCar segment B (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "left",
@@ -3415,7 +4003,10 @@
    "frame": "t070_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "paddock / RVs behind"
+   "note": "paddock / RVs behind",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3432,7 +4023,10 @@
    "source": "onboard:e25u_vjn1uM@70.0",
    "frame": "t070_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -3447,7 +4041,10 @@
    "frame": "t070_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "open infield"
+   "note": "open infield",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3462,7 +4059,10 @@
    "source": "onboard:9Drr1VkE1_U@178.0",
    "frame": "t178.jpg",
    "map": "IndyCar segment C (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 55.1,
+   "sigma_basis": "time map IndyCar segment C (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "left",
@@ -3477,7 +4077,10 @@
    "source": "onboard:9Drr1VkE1_U@44.0",
    "frame": "t044.jpg",
    "map": "IndyCar segment A (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 22.4,
+   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3491,7 +4094,10 @@
    "source": "onboard:OJaBJz18xEo@60.0",
    "frame": "t060.jpg",
    "scope": "lap",
-   "note": "T4 approach"
+   "note": "T4 approach",
+   "sigma_s_m": 14.8,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -3505,7 +4111,10 @@
    "s": 1791.9,
    "source": "onboard:OJaBJz18xEo@60.0",
    "frame": "t060.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 14.8,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3519,7 +4128,10 @@
    "source": "onboard:e25u_vjn1uM@72.0",
    "frame": "t072_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3534,7 +4146,10 @@
    "frame": "t072_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "T4 approach grandstand"
+   "note": "T4 approach grandstand",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3551,7 +4166,10 @@
    "source": "onboard:e25u_vjn1uM@72.0",
    "frame": "t072_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -3565,7 +4183,10 @@
    "source": "onboard:e25u_vjn1uM@72.0",
    "frame": "t072_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -3579,7 +4200,10 @@
    "source": "onboard:e25u_vjn1uM@72.0",
    "frame": "t072_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -3594,7 +4218,10 @@
    "frame": "t114.jpg",
    "map": "IndyCar segment B (9Drr1VkE1_U)",
    "scope": "lap",
-   "note": "approach"
+   "note": "approach",
+   "sigma_s_m": 34.3,
+   "sigma_basis": "time map IndyCar segment B (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "left",
@@ -3609,7 +4236,10 @@
    "source": "onboard:OJaBJz18xEo@62.0",
    "frame": "t062.jpg",
    "scope": "lap",
-   "note": "Lemons event cones at the T4 braking zone (2026)"
+   "note": "Lemons event cones at the T4 braking zone (2026)",
+   "sigma_s_m": 14.8,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -3624,7 +4254,10 @@
    "frame": "t180.jpg",
    "map": "IndyCar segment C (9Drr1VkE1_U)",
    "scope": "lap",
-   "note": "approach"
+   "note": "approach",
+   "sigma_s_m": 55.1,
+   "sigma_basis": "time map IndyCar segment C (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "left",
@@ -3638,7 +4271,10 @@
    "source": "onboard:e25u_vjn1uM@74.0",
    "frame": "t074_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3652,7 +4288,10 @@
    "source": "onboard:e25u_vjn1uM@74.0",
    "frame": "t074_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3669,7 +4308,10 @@
    "source": "onboard:e25u_vjn1uM@74.0",
    "frame": "t074_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -3683,7 +4325,10 @@
    "source": "onboard:e25u_vjn1uM@74.0",
    "frame": "t074_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -3698,7 +4343,10 @@
    "frame": "t046.jpg",
    "map": "IndyCar segment A (9Drr1VkE1_U)",
    "scope": "lap",
-   "note": "approach"
+   "note": "approach",
+   "sigma_s_m": 22.4,
+   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3711,7 +4359,10 @@
    "s": 1935.1,
    "source": "onboard:OJaBJz18xEo@64.0",
    "frame": "t064.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 14.8,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3726,7 +4377,10 @@
    "frame": "t076_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "T4 outside"
+   "note": "T4 outside",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3741,7 +4395,10 @@
    "frame": "t076_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "T4 run-off (rebuilt 2024)"
+   "note": "T4 run-off (rebuilt 2024)",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -3756,7 +4413,10 @@
    "frame": "t076_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "T4 apex"
+   "note": "T4 apex",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -3770,7 +4430,10 @@
    "source": "onboard:e25u_vjn1uM@76.0",
    "frame": "t076_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -3784,7 +4447,10 @@
    "source": "onboard:9Drr1VkE1_U@116.0",
    "frame": "t116.jpg",
    "map": "IndyCar segment B (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 34.3,
+   "sigma_basis": "time map IndyCar segment B (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "right",
@@ -3797,7 +4463,10 @@
    "s": 1973.3,
    "source": "onboard:OJaBJz18xEo@66.0",
    "frame": "t066.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 14.8,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3812,7 +4481,10 @@
    "frame": "t182.jpg",
    "map": "IndyCar segment C (9Drr1VkE1_U)",
    "scope": "lap",
-   "note": "T4 exit outside"
+   "note": "T4 exit outside",
+   "sigma_s_m": 55.1,
+   "sigma_basis": "time map IndyCar segment C (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "left",
@@ -3827,7 +4499,10 @@
    "frame": "t048.jpg",
    "map": "IndyCar segment A (9Drr1VkE1_U)",
    "scope": "lap",
-   "note": "T4 exit outside"
+   "note": "T4 exit outside",
+   "sigma_s_m": 22.4,
+   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -3841,7 +4516,10 @@
    "source": "onboard:9Drr1VkE1_U@48.0",
    "frame": "t048.jpg",
    "map": "IndyCar segment A (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 22.4,
+   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3856,7 +4534,10 @@
    "frame": "t078_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "T4 exit / T5 approach, outside"
+   "note": "T4 exit / T5 approach, outside",
+   "sigma_s_m": 8.2,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3871,7 +4552,10 @@
    "frame": "t078_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "T4 exit outside"
+   "note": "T4 exit outside",
+   "sigma_s_m": 8.2,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -3885,7 +4569,10 @@
    "source": "onboard:e25u_vjn1uM@78.0",
    "frame": "t078_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 8.2,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -3903,7 +4590,10 @@
    "frame": "t078_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "far"
+   "note": "far",
+   "sigma_s_m": 8.2,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3917,7 +4607,10 @@
    "s": 2015.2,
    "source": "onboard:OJaBJz18xEo@68.0",
    "frame": "t068.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 14.8,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -3930,7 +4623,10 @@
    "s": 2015.2,
    "source": "onboard:OJaBJz18xEo@68.0",
    "frame": "t068.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 14.8,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3944,7 +4640,10 @@
    "source": "onboard:e25u_vjn1uM@80.0",
    "frame": "t080_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 8.2,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -3958,7 +4657,10 @@
    "source": "onboard:e25u_vjn1uM@80.0",
    "frame": "t080_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 8.2,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -3972,7 +4674,10 @@
    "source": "onboard:e25u_vjn1uM@80.0",
    "frame": "t080_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 8.2,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -3986,7 +4691,10 @@
    "source": "onboard:9Drr1VkE1_U@184.0",
    "frame": "t184.jpg",
    "map": "IndyCar segment C (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 55.1,
+   "sigma_basis": "time map IndyCar segment C (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "left",
@@ -4000,7 +4708,10 @@
    "source": "onboard:9Drr1VkE1_U@50.0",
    "frame": "t050.jpg",
    "map": "IndyCar segment A (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 22.4,
+   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4014,7 +4725,10 @@
    "source": "onboard:e25u_vjn1uM@82.0",
    "frame": "t082_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 8.2,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -4028,7 +4742,10 @@
    "source": "onboard:e25u_vjn1uM@82.0",
    "frame": "t082_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 8.2,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -4043,7 +4760,10 @@
    "frame": "t082_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "tall timing pylon"
+   "note": "tall timing pylon",
+   "sigma_s_m": 8.2,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4056,7 +4776,10 @@
    "s": 2105.3,
    "source": "onboard:OJaBJz18xEo@72.0",
    "frame": "t072.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 14.8,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -4069,7 +4792,10 @@
    "s": 2105.3,
    "source": "onboard:OJaBJz18xEo@72.0",
    "frame": "t072.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 14.8,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4083,7 +4809,10 @@
    "s": 2146.4,
    "source": "onboard:OJaBJz18xEo@74.0",
    "frame": "t074.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 14.8,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -4097,7 +4826,10 @@
    "s": 2146.4,
    "source": "onboard:OJaBJz18xEo@74.0",
    "frame": "t074.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 14.8,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4111,7 +4843,10 @@
    "source": "onboard:e25u_vjn1uM@84.0",
    "frame": "t084_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4128,7 +4863,10 @@
    "source": "onboard:e25u_vjn1uM@84.0",
    "frame": "t084_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -4142,7 +4880,10 @@
    "source": "onboard:e25u_vjn1uM@84.0",
    "frame": "t084_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -4156,7 +4897,10 @@
    "source": "onboard:OJaBJz18xEo@76.0",
    "frame": "t076.jpg",
    "scope": "lap",
-   "note": "T6 outside"
+   "note": "T6 outside",
+   "sigma_s_m": 14.8,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4170,7 +4914,10 @@
    "source": "onboard:e25u_vjn1uM@86.0",
    "frame": "t086_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4187,7 +4934,10 @@
    "source": "onboard:e25u_vjn1uM@86.0",
    "frame": "t086_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -4201,7 +4951,10 @@
    "source": "onboard:e25u_vjn1uM@86.0",
    "frame": "t086_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -4215,7 +4968,10 @@
    "source": "onboard:9Drr1VkE1_U@188.0",
    "frame": "t188.jpg",
    "map": "IndyCar segment C (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 55.1,
+   "sigma_basis": "time map IndyCar segment C (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "right",
@@ -4229,7 +4985,10 @@
    "source": "onboard:9Drr1VkE1_U@54.0",
    "frame": "t054.jpg",
    "map": "IndyCar segment A (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 22.4,
+   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4243,7 +5002,10 @@
    "source": "onboard:e25u_vjn1uM@88.0",
    "frame": "t088_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4260,7 +5022,10 @@
    "source": "onboard:e25u_vjn1uM@88.0",
    "frame": "t088_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -4274,7 +5039,10 @@
    "source": "onboard:e25u_vjn1uM@88.0",
    "frame": "t088_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -4288,7 +5056,10 @@
    "source": "onboard:OJaBJz18xEo@80.0",
    "frame": "t080.jpg",
    "scope": "lap",
-   "note": "T7"
+   "note": "T7",
+   "sigma_s_m": 14.8,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4302,7 +5073,10 @@
    "source": "onboard:e25u_vjn1uM@90.0",
    "frame": "t090_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4318,7 +5092,10 @@
    "source": "onboard:e25u_vjn1uM@90.0",
    "frame": "t090_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -4332,7 +5109,10 @@
    "source": "onboard:e25u_vjn1uM@90.0",
    "frame": "t090_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4346,7 +5126,10 @@
    "source": "onboard:e25u_vjn1uM@92.0",
    "frame": "t092_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4361,7 +5144,10 @@
    "frame": "t092_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "T8 outside"
+   "note": "T8 outside",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -4375,7 +5161,10 @@
    "source": "onboard:e25u_vjn1uM@92.0",
    "frame": "t092_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4388,7 +5177,10 @@
    "s": 2391.2,
    "source": "onboard:OJaBJz18xEo@84.0",
    "frame": "t084.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 7.7,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4402,7 +5194,10 @@
    "source": "onboard:9Drr1VkE1_U@192.0",
    "frame": "t192.jpg",
    "map": "IndyCar segment C (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 55.1,
+   "sigma_basis": "time map IndyCar segment C (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "left",
@@ -4416,7 +5211,10 @@
    "source": "onboard:9Drr1VkE1_U@58.0",
    "frame": "t058.jpg",
    "map": "IndyCar segment A (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 22.4,
+   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4433,7 +5231,10 @@
    "frame": "t094_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "RV paddock behind"
+   "note": "RV paddock behind",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4450,7 +5251,10 @@
    "source": "onboard:e25u_vjn1uM@94.0",
    "frame": "t094_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -4464,7 +5268,10 @@
    "source": "onboard:e25u_vjn1uM@94.0",
    "frame": "t094_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4481,7 +5288,10 @@
    "frame": "t096_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "RV paddock behind"
+   "note": "RV paddock behind",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4498,7 +5308,10 @@
    "source": "onboard:e25u_vjn1uM@96.0",
    "frame": "t096_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -4512,7 +5325,10 @@
    "source": "onboard:e25u_vjn1uM@96.0",
    "frame": "t096_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -4526,7 +5342,10 @@
    "source": "onboard:OJaBJz18xEo@88.0",
    "frame": "t088.jpg",
    "scope": "lap",
-   "note": "T8"
+   "note": "T8",
+   "sigma_s_m": 7.7,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -4540,7 +5359,10 @@
    "source": "onboard:9Drr1VkE1_U@60.0",
    "frame": "t060.jpg",
    "map": "IndyCar segment A (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 22.4,
+   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4557,7 +5379,10 @@
    "frame": "t098_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "RV paddock behind"
+   "note": "RV paddock behind",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4574,7 +5399,10 @@
    "source": "onboard:e25u_vjn1uM@98.0",
    "frame": "t098_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -4588,7 +5416,10 @@
    "source": "onboard:e25u_vjn1uM@98.0",
    "frame": "t098_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4603,7 +5434,10 @@
    "frame": "t196.jpg",
    "map": "IndyCar segment C (9Drr1VkE1_U)",
    "scope": "lap",
-   "note": "T9 exit"
+   "note": "T9 exit",
+   "sigma_s_m": 55.1,
+   "sigma_basis": "time map IndyCar segment C (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "left",
@@ -4616,7 +5450,10 @@
    "s": 2609.5,
    "source": "onboard:OJaBJz18xEo@92.0",
    "frame": "t092.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 7.7,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4630,7 +5467,10 @@
    "source": "onboard:e25u_vjn1uM@100.0",
    "frame": "t100_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -4644,7 +5484,10 @@
    "source": "onboard:e25u_vjn1uM@100.0",
    "frame": "t100_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -4658,7 +5501,10 @@
    "source": "onboard:OJaBJz18xEo@94.0",
    "frame": "t094.jpg",
    "scope": "lap",
-   "note": "T9"
+   "note": "T9",
+   "sigma_s_m": 13.7,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -4672,7 +5518,10 @@
    "source": "onboard:e25u_vjn1uM@102.0",
    "frame": "t102_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -4689,7 +5538,10 @@
    "source": "onboard:e25u_vjn1uM@102.0",
    "frame": "t102_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4704,7 +5556,10 @@
    "source": "onboard:9Drr1VkE1_U@64.0",
    "frame": "t064.jpg",
    "map": "IndyCar segment A (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 22.4,
+   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4718,7 +5573,10 @@
    "s": 2694.2,
    "source": "onboard:OJaBJz18xEo@96.0",
    "frame": "t096.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 13.7,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4732,7 +5590,10 @@
    "source": "onboard:e25u_vjn1uM@104.0",
    "frame": "t104_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4750,7 +5611,10 @@
    "frame": "t104_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "white wall beyond the grass"
+   "note": "white wall beyond the grass",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -4764,7 +5628,10 @@
    "source": "onboard:e25u_vjn1uM@104.0",
    "frame": "t104_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -4781,7 +5648,10 @@
    "source": "onboard:e25u_vjn1uM@104.0",
    "frame": "t104_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4794,7 +5664,10 @@
    "s": 2745.5,
    "source": "onboard:OJaBJz18xEo@98.0",
    "frame": "t098.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 13.7,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4808,7 +5681,10 @@
    "s": 2745.5,
    "source": "onboard:OJaBJz18xEo@98.0",
    "frame": "t098.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 13.7,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "ahead",
@@ -4823,7 +5699,10 @@
    "frame": "t066.jpg",
    "map": "IndyCar segment A (9Drr1VkE1_U)",
    "scope": "lap",
-   "note": "passed at 66.8"
+   "note": "passed at 66.8",
+   "sigma_s_m": 22.4,
+   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "ahead",
@@ -4837,7 +5716,10 @@
    "source": "onboard:9Drr1VkE1_U@200.0",
    "frame": "t200.jpg",
    "map": "IndyCar segment C (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 55.1,
+   "sigma_basis": "time map IndyCar segment C (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "ahead",
@@ -4852,7 +5734,10 @@
    "frame": "t106_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "overhead at 1:47.0"
+   "note": "overhead at 1:47.0",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4867,7 +5752,10 @@
    "source": "onboard:e25u_vjn1uM@106.0",
    "frame": "t106_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -4884,7 +5772,10 @@
    "source": "onboard:e25u_vjn1uM@106.0",
    "frame": "t106_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "ahead",
@@ -4898,7 +5789,10 @@
    "source": "onboard:OJaBJz18xEo@100.0",
    "frame": "t100.jpg",
    "scope": "lap",
-   "note": "ahead"
+   "note": "ahead",
+   "sigma_s_m": 13.7,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4912,7 +5806,10 @@
    "s": 2870.0,
    "source": "onboard:OJaBJz18xEo@102.0",
    "frame": "t102.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 13.7,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -4926,7 +5823,10 @@
    "s": 2870.0,
    "source": "onboard:OJaBJz18xEo@102.0",
    "frame": "t102.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 13.7,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4940,7 +5840,10 @@
    "source": "onboard:e25u_vjn1uM@108.0",
    "frame": "t108_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4956,7 +5859,10 @@
    "source": "onboard:e25u_vjn1uM@108.0",
    "frame": "t108_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -4973,7 +5879,10 @@
    "source": "onboard:e25u_vjn1uM@108.0",
    "frame": "t108_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -4989,7 +5898,10 @@
    "source": "onboard:e25u_vjn1uM@108.0",
    "frame": "t108_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5006,7 +5918,10 @@
    "source": "onboard:e25u_vjn1uM@108.0",
    "frame": "t108_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5019,7 +5934,10 @@
    "s": 2932.3,
    "source": "onboard:OJaBJz18xEo@104.0",
    "frame": "t104.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 12.3,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5033,7 +5951,10 @@
    "s": 2932.3,
    "source": "onboard:OJaBJz18xEo@104.0",
    "frame": "t104.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 12.3,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -5047,7 +5968,10 @@
    "source": "onboard:e25u_vjn1uM@110.0",
    "frame": "t110_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5063,7 +5987,10 @@
    "source": "onboard:e25u_vjn1uM@110.0",
    "frame": "t110_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5080,7 +6007,10 @@
    "source": "onboard:e25u_vjn1uM@110.0",
    "frame": "t110_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -5094,7 +6024,10 @@
    "s": 3000.2,
    "source": "onboard:OJaBJz18xEo@106.0",
    "frame": "t106.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 12.3,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5107,7 +6040,10 @@
    "s": 3000.2,
    "source": "onboard:OJaBJz18xEo@106.0",
    "frame": "t106.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 12.3,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -5121,7 +6057,10 @@
    "source": "onboard:e25u_vjn1uM@112.0",
    "frame": "t112_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5137,7 +6076,10 @@
    "source": "onboard:e25u_vjn1uM@112.0",
    "frame": "t112_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5151,7 +6093,10 @@
    "source": "onboard:e25u_vjn1uM@112.0",
    "frame": "t112_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5168,7 +6113,10 @@
    "source": "onboard:e25u_vjn1uM@112.0",
    "frame": "t112_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5182,7 +6130,10 @@
    "s": 3060.9,
    "source": "onboard:OJaBJz18xEo@108.0",
    "frame": "t108.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 12.3,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -5196,7 +6147,10 @@
    "source": "onboard:OJaBJz18xEo@110.0",
    "frame": "t110.jpg",
    "scope": "lap",
-   "note": "T11"
+   "note": "T11",
+   "sigma_s_m": 12.3,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -5211,7 +6165,10 @@
    "frame": "t114_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "T11"
+   "note": "T11",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5225,7 +6182,10 @@
    "source": "onboard:e25u_vjn1uM@114.0",
    "frame": "t114_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5238,7 +6198,10 @@
    "s": 3149.3,
    "source": "onboard:OJaBJz18xEo@112.0",
    "frame": "t112.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 12.3,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5252,7 +6215,10 @@
    "source": "onboard:e25u_vjn1uM@116.0",
    "frame": "t116_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5266,7 +6232,10 @@
    "source": "onboard:e25u_vjn1uM@116.0",
    "frame": "t116_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5279,7 +6248,10 @@
    "s": 3204.0,
    "source": "onboard:OJaBJz18xEo@114.0",
    "frame": "t114.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 12.3,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -5293,7 +6265,10 @@
    "source": "onboard:e25u_vjn1uM@118.0",
    "frame": "t118_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5307,7 +6282,10 @@
    "source": "onboard:e25u_vjn1uM@118.0",
    "frame": "t118_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -5323,7 +6301,10 @@
    "source": "onboard:e25u_vjn1uM@120.0",
    "frame": "t120_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -5340,7 +6321,10 @@
    "source": "onboard:e25u_vjn1uM@120.0",
    "frame": "t120_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5354,7 +6338,10 @@
    "source": "onboard:e25u_vjn1uM@120.0",
    "frame": "t120_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5367,7 +6354,10 @@
    "s": 3340.7,
    "source": "onboard:OJaBJz18xEo@120.0",
    "frame": "t120.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 12.3,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5382,7 +6372,10 @@
    "frame": "t122_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "T12"
+   "note": "T12",
+   "sigma_s_m": 19.6,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5397,7 +6390,10 @@
    "frame": "t016_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "lap 1 lead-in"
+   "note": "lap 1 lead-in",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5410,7 +6406,10 @@
    "s": 3378.2,
    "source": "onboard:OJaBJz18xEo@122.0",
    "frame": "t122.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 12.3,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -5424,7 +6423,10 @@
    "source": "onboard:e25u_vjn1uM@124.0",
    "frame": "t124_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 1.8,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5438,7 +6440,10 @@
    "source": "onboard:e25u_vjn1uM@124.0",
    "frame": "t124_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 1.8,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5452,7 +6457,10 @@
    "source": "onboard:9Drr1VkE1_U@82.0",
    "frame": "t082.jpg",
    "map": "IndyCar segment B (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 60.1,
+   "sigma_basis": "time map IndyCar segment B (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "left",
@@ -5468,7 +6476,10 @@
    "frame": "t012.jpg",
    "map": "IndyCar segment A (9Drr1VkE1_U)",
    "scope": "lap",
-   "note": "pit-entry side"
+   "note": "pit-entry side",
+   "sigma_s_m": 13.1,
+   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5482,7 +6493,10 @@
    "source": "onboard:9Drr1VkE1_U@12.0",
    "frame": "t012.jpg",
    "map": "IndyCar segment A (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 13.1,
+   "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5496,7 +6510,10 @@
    "source": "onboard:9Drr1VkE1_U@146.0",
    "frame": "t146.jpg",
    "map": "IndyCar segment C (9Drr1VkE1_U)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 44.3,
+   "sigma_basis": "time map IndyCar segment C (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "left",
@@ -5511,7 +6528,10 @@
    "frame": "t018_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "lap 1 lead-in, T13"
+   "note": "lap 1 lead-in, T13",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -5524,7 +6544,10 @@
    "s": 3425.8,
    "source": "onboard:OJaBJz18xEo@124.0",
    "frame": "t124.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 12.3,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -5539,7 +6562,10 @@
    "source": "onboard:OJaBJz18xEo@0.0",
    "frame": "t000.jpg",
    "scope": "lap",
-   "note": "T13 exit: pit-lane side wall"
+   "note": "T13 exit: pit-lane side wall",
+   "sigma_s_m": 14.4,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -5553,7 +6579,10 @@
    "source": "onboard:e25u_vjn1uM@126.0",
    "frame": "t126_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 1.8,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -5568,7 +6597,10 @@
    "frame": "t126_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "left, ahead"
+   "note": "left, ahead",
+   "sigma_s_m": 1.8,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5582,7 +6614,10 @@
    "source": "onboard:e25u_vjn1uM@126.0",
    "frame": "t126_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 1.8,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -5598,7 +6633,10 @@
    "frame": "t020_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "lap 1 lead-in: RESTART board, pit wall start"
+   "note": "lap 1 lead-in: RESTART board, pit wall start",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -5611,7 +6649,10 @@
    "s": 3473.6,
    "source": "onboard:OJaBJz18xEo@126.0",
    "frame": "t126.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 4.0,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -5625,7 +6666,10 @@
    "source": "onboard:e25u_vjn1uM@128.0",
    "frame": "t128_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 1.8,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -5639,7 +6683,10 @@
    "source": "onboard:e25u_vjn1uM@128.0",
    "frame": "t128_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 1.8,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -5657,7 +6704,10 @@
    "frame": "t128_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "pit wall starts (\"RESTART\" board)"
+   "note": "pit wall starts (\"RESTART\" board)",
+   "sigma_s_m": 1.8,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5671,7 +6721,10 @@
    "source": "onboard:e25u_vjn1uM@128.0",
    "frame": "t128_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 1.8,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -5684,7 +6737,10 @@
    "s": 3495.9,
    "source": "onboard:OJaBJz18xEo@2.0",
    "frame": "t002.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 14.4,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -5699,7 +6755,10 @@
    "source": "onboard:OJaBJz18xEo@2.0",
    "frame": "t002.jpg",
    "scope": "lap",
-   "note": "pit wall begins"
+   "note": "pit wall begins",
+   "sigma_s_m": 14.4,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5714,7 +6773,10 @@
    "frame": "t148.jpg",
    "map": "IndyCar segment C (9Drr1VkE1_U)",
    "scope": "lap",
-   "note": "pit straight right"
+   "note": "pit straight right",
+   "sigma_s_m": 44.3,
+   "sigma_basis": "time map IndyCar segment C (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "right",
@@ -5729,7 +6791,10 @@
    "frame": "t022_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "lap 1 lead-in"
+   "note": "lap 1 lead-in",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5743,7 +6808,10 @@
    "source": "onboard:OJaBJz18xEo@128.0",
    "frame": "t128.jpg",
    "scope": "lap",
-   "note": "pit straight right"
+   "note": "pit straight right",
+   "sigma_s_m": 4.0,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5756,7 +6824,10 @@
    "s": 3530.9,
    "source": "onboard:OJaBJz18xEo@128.0",
    "frame": "t128.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 4.0,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5771,7 +6842,10 @@
    "frame": "t084.jpg",
    "map": "IndyCar segment B (9Drr1VkE1_U)",
    "scope": "lap",
-   "note": "pit straight right"
+   "note": "pit straight right",
+   "sigma_s_m": 60.1,
+   "sigma_basis": "time map IndyCar segment B (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "corroborate"
   },
   {
    "side": "left",
@@ -5787,7 +6861,10 @@
    "source": "onboard:e25u_vjn1uM@130.0",
    "frame": "t130_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 1.8,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -5804,7 +6881,10 @@
    "source": "onboard:e25u_vjn1uM@130.0",
    "frame": "t130_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 1.8,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5818,7 +6898,10 @@
    "source": "onboard:e25u_vjn1uM@130.0",
    "frame": "t130_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 1.8,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5833,7 +6916,10 @@
    "frame": "t130_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "pit straight right"
+   "note": "pit straight right",
+   "sigma_s_m": 1.8,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5848,7 +6934,10 @@
    "frame": "t130_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
    "scope": "lap",
-   "note": "pit straight, behind the catch fence (k264)"
+   "note": "pit straight, behind the catch fence (k264)",
+   "sigma_s_m": 1.8,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5862,7 +6951,10 @@
    "source": "onboard:e25u_vjn1uM@130.0",
    "frame": "t130_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 1.8,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5876,7 +6968,10 @@
    "source": "onboard:e25u_vjn1uM@130.0",
    "frame": "t130_left.jpg",
    "map": "360 lap (e25u_vjn1uM)",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 1.8,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5890,7 +6985,10 @@
    "source": "onboard:OJaBJz18xEo@4.0",
    "frame": "t004.jpg",
    "scope": "lap",
-   "note": "pit straight right edge"
+   "note": "pit straight right edge",
+   "sigma_s_m": 14.4,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "right",
@@ -5903,7 +7001,10 @@
    "s": 3559.2,
    "source": "onboard:OJaBJz18xEo@4.0",
    "frame": "t004.jpg",
-   "scope": "lap"
+   "scope": "lap",
+   "sigma_s_m": 14.4,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -5917,7 +7018,10 @@
    "source": "onboard:e25u_vjn1uM@24",
    "frame": "t024_left.jpg",
    "scope": "pit",
-   "note": "S/F; the N837 frame t130 shows a PERMCO banner on the same gantry (2026)"
+   "note": "S/F; the N837 frame t130 shows a PERMCO banner on the same gantry (2026)",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -5934,7 +7038,10 @@
    "source": "onboard:e25u_vjn1uM@24",
    "frame": "t024_left.jpg",
    "scope": "pit",
-   "note": "\"NTT INDYCAR SERIES\" lettering (2025 event dress)"
+   "note": "\"NTT INDYCAR SERIES\" lettering (2025 event dress)",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -5949,7 +7056,10 @@
    "s": 72.0,
    "source": "onboard:e25u_vjn1uM@26",
    "frame": "t026_left.jpg",
-   "scope": "pit"
+   "scope": "pit",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -5966,7 +7076,10 @@
    "source": "onboard:e25u_vjn1uM@26",
    "frame": "t026_left.jpg",
    "scope": "pit",
-   "note": "pit garages / hospitality buildings with red roofs behind the lane"
+   "note": "pit garages / hospitality buildings with red roofs behind the lane",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -5983,7 +7096,10 @@
    "source": "onboard:e25u_vjn1uM@28",
    "frame": "t028_left.jpg",
    "scope": "pit",
-   "note": "VELO banners on the wall toward the bridge"
+   "note": "VELO banners on the wall toward the bridge",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -5998,7 +7114,10 @@
    "source": "onboard:e25u_vjn1uM@29.5",
    "frame": "t029_left.jpg",
    "scope": "pit",
-   "note": "the pit-exit lane runs on beside the track under the bridge"
+   "note": "the pit-exit lane runs on beside the track under the bridge",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "both",
@@ -6011,7 +7130,10 @@
    "s": 233.2,
    "source": "onboard:e25u_vjn1uM@30",
    "frame": "t030_left.jpg",
-   "scope": "pit"
+   "scope": "pit",
+   "sigma_s_m": 17.9,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -6025,7 +7147,10 @@
    "source": "onboard:e25u_vjn1uM@32",
    "frame": "t032_left.jpg",
    "scope": "pit",
-   "note": "pit-exit merge at T1 (also N837 t14, 2026)"
+   "note": "pit-exit merge at T1 (also N837 t14, 2026)",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -6039,7 +7164,10 @@
    "source": "onboard:e25u_vjn1uM@32.5",
    "frame": "t032_left.jpg",
    "scope": "pit",
-   "note": "config features left 285-360"
+   "note": "config features left 285-360",
+   "sigma_s_m": 20.4,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -6053,7 +7181,10 @@
    "source": "onboard:e25u_vjn1uM@128",
    "frame": "t128_left.jpg",
    "scope": "pit",
-   "note": "pit wall seen from the track: start of the white wall at the T13 exit"
+   "note": "pit wall seen from the track: start of the white wall at the T13 exit",
+   "sigma_s_m": 1.8,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -6070,7 +7201,10 @@
    "source": "onboard:e25u_vjn1uM@128",
    "frame": "t128_left.jpg",
    "scope": "pit",
-   "note": "pit wall begins (between the track and the pit lane); 360 view k256"
+   "note": "pit wall begins (between the track and the pit lane); 360 view k256",
+   "sigma_s_m": 1.8,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -6087,7 +7221,10 @@
    "source": "onboard:e25u_vjn1uM@130",
    "frame": "t130_left.jpg",
    "scope": "pit",
-   "note": "pit wall, starter tower behind the lane"
+   "note": "pit wall, starter tower behind the lane",
+   "sigma_s_m": 1.8,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   },
   {
    "side": "left",
@@ -6103,7 +7240,10 @@
    "source": "onboard:e25u_vjn1uM@131",
    "frame": "t131_left.jpg",
    "scope": "pit",
-   "note": "behind the pit lane at the line"
+   "note": "behind the pit lane at the line",
+   "sigma_s_m": 1.8,
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
   }
  ],
  "counts": {
@@ -6538,5 +7678,36 @@
     200.7
    ]
   }
- ]
+ ],
+ "position_uncertainty": {
+  "corroborate_over_m": 40,
+  "src": "build-track SKILL.md 0.7 (where a time map is +-40 m, add an anchor before trusting its rows); Astra round-4 review: IndyCar maps B and C (55-60 m leave-one-out residuals) need corroboration from N837, the 360 lap or another anchor before scenery places precise endpoints from them",
+  "maps": {
+   "primary": {
+    "max_abs_loo_residual_m": 14.8,
+    "placement": "direct",
+    "rows": 105
+   },
+   "360 lap (e25u_vjn1uM)": {
+    "max_abs_loo_residual_m": 20.4,
+    "placement": "direct",
+    "rows": 209
+   },
+   "IndyCar segment A (9Drr1VkE1_U)": {
+    "max_abs_loo_residual_m": 22.4,
+    "placement": "direct",
+    "rows": 26
+   },
+   "IndyCar segment B (9Drr1VkE1_U)": {
+    "max_abs_loo_residual_m": 60.1,
+    "placement": "corroborate",
+    "rows": 19
+   },
+   "IndyCar segment C (9Drr1VkE1_U)": {
+    "max_abs_loo_residual_m": 55.1,
+    "placement": "corroborate",
+    "rows": 21
+   }
+  }
+ }
 }
