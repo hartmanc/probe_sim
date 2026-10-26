@@ -150,10 +150,10 @@ lines below (`tools/track/manifest.py`); each is a MISSING inventory row of a ki
 | stand | right | 72 | covered grandstand, red roof | onboard:e25u_vjn1uM@26.0 | placed: T1 approach covered stand (the long covered stand 44-51 m right of s 93-183, seen across the run-off from s 72) |
 | stand | right | 3530.9 | covered grandstand | onboard:OJaBJz18xEo@128.0 | placed: Main grandstand (covered) (s 3554-3593 right, 31 m out, seen ahead from s 3531) |
 | stand | left | 1897.8 | aluminium bleachers | onboard:e25u_vjn1uM@74.0 | placed: T4 bleachers north (s ~1800-1850 left, 40 m out, seen behind from s 1898) |
-| building | left | 3425.8 | starter tower | onboard:OJaBJz18xEo@124.0 | placed: Starter tower (s ~3592 left, 45 m out, seen ahead from the T13 exit) |
-| building | left | 3495.6 | starter tower | onboard:e25u_vjn1uM@128.0 | placed: Starter tower (s ~3592 left, seen ahead) |
-| building | left | 3495.9 | starter tower | onboard:OJaBJz18xEo@2.0 | placed: Starter tower (s ~3592 left, seen ahead) |
-| building | left | 3557 | starter tower, 4 storeys | onboard:e25u_vjn1uM@130.0 | placed: Starter tower (s ~3592 left, seen ahead) |
+| building | left | 3425.8 | starter tower | onboard:OJaBJz18xEo@124.0 | placed: Control tower (s ~3592 left, 45 m out, seen ahead from the T13 exit) |
+| building | left | 3495.6 | starter tower | onboard:e25u_vjn1uM@128.0 | placed: Control tower (s ~3592 left, seen ahead) |
+| building | left | 3495.9 | starter tower | onboard:OJaBJz18xEo@2.0 | placed: Control tower (s ~3592 left, seen ahead) |
+| building | left | 3557 | starter tower, 4 storeys | onboard:e25u_vjn1uM@130.0 | placed: Control tower (s ~3592 left, seen ahead) |
 | building | left | 418.9 | hospitality tents / covered stand, red roof | onboard:e25u_vjn1uM@36.0 | rejected: temporary hospitality tents of the IndyCar weekend (360 lap t036 left, 4 Jul 2025: white tents and a red-roofed canopy far across the infield); the 2026 Lemons onboard N837 t018-t020 shows open infield there and no 2026 capture covers the place (the NAIP's white tent roof is not a 2026 source) |
 | mast | left | 294.8 | timber utility poles with lines, several | onboard:e25u_vjn1uM@32.0 | placed: timber utility pole (the two poles the 2019 lidar resolves on the T1 inside, s 252 and 366 left, 38-41 m out; c20_s0200-c20_s0280) |
 | mast | right | 3557 | scaffold masts with TV cameras / flood lights | onboard:e25u_vjn1uM@130.0 | rejected: temporary TV and flood-light scaffold masts of the IndyCar weekend (360 lap t130 right, Jul 2025); the Apr 2026 Lemons onboard N837 t128 / t004 shows the fence and the grandstand with no scaffold masts |

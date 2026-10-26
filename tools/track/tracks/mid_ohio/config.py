@@ -469,6 +469,16 @@ CONFIG = dict(
         # the unmodelled-ground-lines scan (round 13 gate, gates/ground_lines.py): every one of the 107 findings of the round-7
         # package reviewed on its ortho crop (round7.md section 13) and dispositioned; the key makes the gate strict on this track
         ground_lines=dict(dispositions=[
+            # round 8: the lines the grass tone made visible (r8 build 5 crops, round8.md 2a)
+            dict(side='left', s=(2595.0, 2618.0), tone='dark', what='the armco and its shadow (modelled OSM run within 2-6 m)', why='accepted as built: the T8-T9 back armco (OSM 1315208935, 38-48 m out) and its shadow, found after the round-8 grass hue (build 8)'),
+            dict(side='left', s=(468.0, 489.0), tone='pale', what='paddock service road edge beyond the fence', why='accepted as built: the paddock road 32-34 m out behind the T1-exit fence (as round-7 finding 2 of this stretch), found after the round-8 grass hue (build 8)'),
+            dict(side='left', s=(2822.0, 2859.0), tone='dark', what='paddock service road edge beside the trees (beyond the fence)', why='accepted as built: found after the round-8 grass tone lifted the grass beside it (r8 finding 0, 42-59 m out); paddock service road edge beside the trees (beyond the fence)'),
+            dict(side='left', s=(2864.0, 2914.0), tone='dark', what='the armco and its shadow (modelled OSM run within 2-6 m)', why='accepted as built: found after the round-8 grass tone lifted the grass beside it (r8 finding 1, 5-8 m out); the armco and its shadow (modelled OSM run within 2-6 m)'),
+            dict(side='left', s=(3060.1, 3101.1), tone='dark', what='the edge of the ploughed field beyond the PERMCO-bridge fence (off the circuit)', why='accepted as built: found after the round-8 grass tone lifted the grass beside it (r8 finding 2, 19-25 m out); the edge of the ploughed field beyond the PERMCO-bridge fence (off the circuit)'),
+            dict(side='left', s=(3124.2, 3209.2), tone='dark', what='the armco and its shadow (modelled OSM run within 2-6 m)', why='accepted as built: found after the round-8 grass tone lifted the grass beside it (r8 finding 3, 13-20 m out); the armco and its shadow (modelled OSM run within 2-6 m)'),
+            dict(side='left', s=(3367.3, 3388.3), tone='dark', what='the armco head and the parked vehicles behind it at T11 (the 2022 NAIP)', why='accepted as built: found after the round-8 grass tone lifted the grass beside it (r8 finding 4, 17-31 m out); the armco head and the parked vehicles behind it at T11 (the 2022 NAIP)'),
+            dict(side='left', s=(1268.9, 1301.9), tone='dark', what='the armco and its shadow (modelled OSM run within 2-6 m)', why='accepted as built: found after the round-8 grass tone lifted the grass beside it (r8 finding 5, 8-9 m out); the armco and its shadow (modelled OSM run within 2-6 m)'),
+            dict(side='left', s=(510.4, 539.4), tone='pale', what='the pit-in island wall and its shadow (modelled: pit wall, pit-in barrier)', why='accepted as built: found after the round-8 grass tone lifted the grass beside it (r8 finding 6, 31-34 m out); the pit-in island wall and its shadow (modelled: pit wall, pit-in barrier)'),
             dict(side='left', s=(0.0, 27.0), tone='pale', what='paddock / service road edge or curb', why='accepted as built: beyond the barriers and fences, in the paddock or on a service path the course cannot reach (ortho crop, judge r7 ground-lines review); no barrier there in the footage (finding 0, 23-24 m out)'),
             dict(side='left', s=(4.0, 24.0), tone='pale', what='building edge or its shadow', why='accepted as built: a building footprint or its shadow in the NAIP (ortho crop); the building is modelled or off the scenery band (finding 1, 43-60 m out)'),
             dict(side='left', s=(101.1, 128.1), tone='pale', what='paddock / service road edge or curb', why='accepted as built: beyond the barriers and fences, in the paddock or on a service path the course cannot reach (ortho crop, judge r7 ground-lines review); no barrier there in the footage (finding 2, 37-41 m out)'),
@@ -578,6 +588,21 @@ CONFIG = dict(
             dict(side='right', s=(3586.5, 3597.5), tone='pale', what='paddock / service road edge or curb', why='accepted as built: beyond the barriers and fences, in the paddock or on a service path the course cannot reach (ortho crop, judge r7 ground-lines review); no barrier there in the footage (finding 106, 55-60 m out)'),
             dict(side='right', s=(0.0, 93.1), tone='pale', what='paddock / service road edge or curb', why='accepted as built: beyond the barriers and fences, in the paddock or on a service path the course cannot reach (ortho crop, judge r7 ground-lines review); no barrier there in the footage (finding 106, 55-60 m out)'),
         ]),
+        # round 8 (owner's drive: "some grass is missing or is inexplicably dark or gray"; round8.md 1a): the NAIP grass is dull
+        # and dark (median luminance ~62 on the near ortho, 60-95 % of the 3-40 m bands under 70) against the in-season grass
+        # of the 2026 clean captures (median of 3.4 M grass pixels over all 91 captures (86.0, 103.0, 87.0), r8/capture_grass.json);
+        # the grass pixels (no lidar canopy or roof over them) take that tone at their own relative luminance. Target: the
+        # captures' luminance (98) with the hue between the captures' (B / G 0.84) and the in-season frames' (N837 t026-t104
+        # (104-122, 116-140, 55-97) and the 360 lap t040-t110: B / G 0.32-0.70, R / G 0.78-0.90): R / G 0.85, B / G 0.65 ->
+        # (93, 110, 71). The first round-8 pass on the captures' own hue (86, 103, 87) still read grey-blue at hood level
+        # (compare_sheets_r8 fwd_00, round8.md 3)
+        grass_tone=dict(target=(93.0, 110.0, 71.0), chm_max=1.0, strength=1.0, local_m=40.0, deblock_px=1.0, contrast=0.7, mask_px=4.0,
+                        src='2026 clean captures, grass median over all 91 (r8/capture_grass.json); 360 lap / N837 frames: green grass in season'),
+        # round 8 (owner: "there should be a lot more trees, or denser trees, especially by the back straight and going through
+        # Thunder Valley"; round8.md 1b): the NAIP imagery check rejected 2491 of 3729 lidar crowns (67 %: the dull NAIP grass
+        # and the leaf-off canopy fail its "darker than the 35th percentile" test), so the modelled crown cover was 20-25 % of
+        # the 2019 lidar canopy; off, with poles, masts and fence posts kept out by their crown size (the Buttonwillow rule)
+        tree_imagery_check=False, tree_min=dict(radius=2.0, height=5.0),
         building_height_robust=True,
         # buildings: every kept OSM / lidar footprint with its evidence (capture or the NAIP ortho; round7.md building table)
         building_evidence=[
@@ -685,15 +710,23 @@ CONFIG = dict(
              aisles=dict(pitch=12.0, w=1.2, color='#b5b8bc'), self_lit=True,   # judge r7 F19: rows face away from the sun (plain Lambert rendered them dark)
              src='N837 t060 left (aluminium bleachers on the T4 approach, inventory row s 1792 left); c20_s1720 / c20_s1760; OSM 1315208921',
              h_src='as the north bleachers (same rows in the frames)'),
-        # the starter tower behind the pit lane at the line: 4 storeys, dark walls with balconies, red hip roof (N837 t004 / t128,
-        # 360 t022 ahead / t024 left); its red roof 17.6 m square on c20_s3520 / c20_s0000 at (57.2, 11.0) ENU, where the 2019 lidar
-        # has its 15 m top (the OSM outline 1315208899 lies 8.6 m west of both); the walls 10.5 m square under the overhanging hip roof
-        # (360 t022 ahead: width / eave height ~0.7 at 4 storeys); drawn as a 4-storey block, the hip roof as a flat red roof (the kit
-        # has no hip roof); wall colour from N837 t004 / 360 t022 (dark brown-grey)
-        dict(type='block', name='Starter tower', rect=dict(c=(40.6890988, -82.6353223), heading_deg=-3.39, l=10.5, w=10.5),
-             h=12.8, storeys=4, parapet=0.5, wall='#a08e78', band='#3a3d42', roof='#c0483c',
-             src='N837 t004 / t128 (2026), 360 t022 ahead, t024 left (2025): the 4-storey starter tower with a red hip roof; c20_s3520 / c20_s0000: the roof and its long shadow',
-             h_src='4 storeys x 3.2 m (storeys); 2019 lidar top 15 m with the roof'),
+        # the control tower behind the pit lane at the line (round 8, owner's drive: "Control tower doesn't look like the control
+        # tower"; round8.md 1c). Frames: N837 t004 / t128-t129 (Apr 2026), 360 lap t022 ahead / t024 left / h0046 (Jul 2025): a
+        # dark brown shaft, two upper storeys of dark glazing wrapped by decks with white fascia, a red hip roof with a mast and
+        # flag. Lidar 2019 (r8/tower_lidar): the roof 19 x 18 m (x 48..67, y 0..18 ENU), its eaves 17 m and its top over 20 m
+        # (24 m with the mast) above the ground. Massing: a 10 x 10 m shaft to 10.5 m (3 storeys), the upper block 13 x 13 m
+        # from 10.5 to 16.8 m (2 storeys) with decks 1.5 m out at both floors, the hip roof 3 m out (19 m eaves) rising 5 m.
+        # No logo artwork; the deck fascia boards are left plain (the lettering is not legible in the frames)
+        dict(type='block', name='Control tower shaft', rect=dict(c=(40.6890853, -82.6353188), heading_deg=-3.39, l=10.0, w=10.0),
+             h=10.5, storeys=3, wall='#4b4036', band='#25282c', roof='#4b4036', bands=[2],
+             src='N837 t004 / t128-t129; 360 lap t022 ahead, t024 left; lidar 2019 footprint (round8.md 1c)',
+             h_src='3 storeys under the upper block in the frames; the upper block floor at 10.5 m (lidar eaves 17 m less the 2 upper storeys and the roof thickness)'),
+        dict(type='block', name='Control tower', rect=dict(c=(40.6890853, -82.6353188), heading_deg=-3.39, l=13.0, w=13.0), base=10.5,
+             h=6.3, storeys=2, wall='#3d342d', band='#1f2328', roof='#3d342d', band_frac=[0.15, 0.85],
+             wrap_decks=[dict(z=0.0, depth=1.5, color='#e7e5df', rail=1.1), dict(z=3.15, depth=1.5, color='#e7e5df', rail=1.1)],
+             hip=dict(rise=5.0, overhang=3.0, color='#c4483c'),
+             src='N837 t004 / t128-t129 (red hip roof, the wrapped decks with white fascia, dark glazing); 360 lap t024 left; lidar 2019: roof 19 x 18 m, eaves 17 m, top over 20 m (24 m with the mast)',
+             h_src='lidar 2019: eaves 17 m (6.3 m of upper block from 10.5 m plus the roof base), top 21.8 m with the 5 m hip rise against the lidar ridge over 20 m'),
         # the starter's stand over the pit wall at the line: a cabin on black steel legs with boards (360 t022 / t024: HONDA, 2025;
         # N837 t130: PERMCO, Apr 2026); its red post on the pit wall on c20_s3560 / c20_s0000 at (61.2, 47.8) ENU
         # the scoring pylon right of T5 (inventory rows 'scoring pylon' s 1989-2105 right; 360 t078-t082, N837 t067-t072: a tall
