@@ -2534,10 +2534,32 @@
    "frame": "pit_ucm/t1267000.jpg",
    "scope": "pit",
    "note": "a long low shade roof on posts behind the paddock-side wall west of the tower (also t1303000, and past the wall on the onboard t000)"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "short flat painted kerb at the Sweeper's inner-loop rejoin, just past the mouth's white dashed line",
+    "colour": "red / white / blue",
+    "raised": false,
+    "added": true,
+    "correction": {
+     "round": "round 14, 26 Oct 2026 (the owner, q3 'add')",
+     "was": {},
+     "why": "added: the owner's answer of 26 Oct 2026; onboard dense frames t123100 / t123300 (round 13's finding)"
+    }
+   },
+   "confidence": 0.8,
+   "t": null,
+   "s": 3684.5,
+   "source": "onboard:7QS2M-HGSI4@123.2 (dense frames t123100-t123300, reference only)",
+   "frame": "",
+   "scope": "lap",
+   "note": "Sweeper exit kerb (right), package s 3679.5-3689.5"
   }
  ],
  "counts": {
-  "kerb": 38,
+  "kerb": 39,
   "cone_line": 28,
   "wall": 14,
   "station": 14,

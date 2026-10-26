@@ -144,3 +144,5 @@ Interpolation between anchors: profile (profile: shared out by a curvature speed
 | 4655 |  | right | wall | concrete K-rail, white with red panels | 0.81 m (jersey-ref) | 0.8 | onboard:ucmXJu5QKFQ@21:52 | pit wall |
 | 4683 |  | both | cone_line | orange cones in two lines along the lane, orange | 0.46 m (cone-ref) | 0.7 | onboard:ucmXJu5QKFQ@22:19 | cones lining the lane at the tower and the stand (t1339000, t1348000) |
 | 4683 |  | right | station | starter's stand: scaffold tower with a deck and canopy on the pit wall, white |  | 0.9 | onboard:ucmXJu5QKFQ@22:19 | the starter's stand at the timing line, ahead right (t1339000), alongside at 22:28 (t1348000) |
+
+Round 14 (26 Oct 2026, the owner's q3 'add'): row added by hand to inventory.json and observations.jsonl (a full regeneration remaps every row onto the current package; not done in this round): right, kerb, s 3684.5, short flat red / white / blue kerb at the Sweeper's inner-loop rejoin (onboard 7QS2M-HGSI4 dense frames t123100-t123300).
