@@ -70,24 +70,37 @@ add('B', wB, wall_between(wB[-1, 0] + 0.3, eB[0, 0] - 0.3), eB, 'pit wall (conti
     ['c20_s0050', 'c20_s0100', 'onboard t005500-t006500', 'pit-lane t1303000'],
     'w_s0000 #7 (west) / #8 (east) from the course edge to the wall; north of the wall his flares #10 / #9 meet his lane-side line')
 # C: the pit-wall head apron, x -200 .. -148: his line from the course edge to the lane (w_s4500 #4 + #10), the lane's
-# edge across (package lane right edge, 1.0 m into the lane), his turn-down to the wall head (#6), the wall, #5
+# edge across (package lane right edge, 0.15 m into the lane), his turn-down to the wall head (#6), the wall, #5
 wC = np.r_[orient(st('w_s4500', 4)), st('w_s4500', 10)[1:]]
-xs = np.arange(-194.5, -172.6, 1.0); topC = np.c_[xs, [lane_y(x) + 1.0 for x in xs]]
-d6 = st('w_s4500', 6); d6 = d6[np.argsort(-d6[:, 1])][::-1]  # from the lane line down to the wall head
+# his line up to where it meets the top (0.15 m inside the lane's right edge); his hook beyond it (#10's last 1 m, inside
+# the lane) is the lane's own paving (review: the hook crossed the lowered top)
+k_ = next(i for i, (x, y) in enumerate(wC) if y >= lane_y(x) + 0.15)
+a_, b_ = wC[k_ - 1], wC[k_]; ga, gb = a_[1] - lane_y(a_[0]) - 0.15, b_[1] - lane_y(b_[0]) - 0.15
+wC = np.r_[wC[:k_], [a_ + (b_ - a_) * (ga / (ga - gb))]]
+# the top along the lane's edge to x -174.5 (east of it the lane's edge drops round the nose to the wall head; the
+# line goes on to his turn-down #6, whose top is his lane line)
+xs = np.arange(np.ceil(wC[-1, 0] + 0.5), -174.4, 1.0); topC = np.c_[xs, [lane_y(x) + 0.15 for x in xs]]
+d6 = st('w_s4500', 6); d6 = d6[np.argsort(-d6[:, 1])]  # north first: from the lane line down to the wall head (review fix: was south first, a backtrack)
 wl = wall_between(d6[-1, 0] + 0.5, -151.5)
 eC = np.r_[d6, wl, orient(st('w_s4500', 5))[::-1]]
-add('C', wC, topC, eC, 'pit lane (1.0 m into its right edge) then the pit-wall head and the wall',
+add('C', wC, topC, eC, 'pit lane (0.15 m into its right edge) then the pit-wall head and the wall',
     ['c20_s4550', 'c20_s4600', 'c20_s4650', 'onboard t146000-t148500', 'onboard t000000-t001000', 'pit-lane t1240000'],
     'w_s4500 #4 + #10 (west, edge to the lane), #6 (lane line to the wall head), #5 (wall to the edge, east)')
 # E: past the pit wall's east end, x 220.8 .. 228.3: his west line #12 + #17 (to y -196), across to the package lane's
-# right edge (+1.0 m), his east line #16
+# right edge (+0.15 m), his east line #16
 wE = np.r_[orient(st('w_s0250', 12)), st('w_s0250', 17)]
 wE = wE[np.argsort(-wE[:, 1])][::-1] if False else wE
 e16 = st('w_s0250', 16)  # (228.0,-193.3) -> (228.3,-204.2)
-xs = np.arange(wE[-1, 0], e16[0, 0] + 0.01, 1.0); topE = np.c_[xs, [lane_y(x) + 1.0 for x in xs]]
-add('E', wE, topE, e16, 'pit-out lane (1.0 m into its right edge)',
+xs = np.arange(wE[-1, 0], e16[0, 0] + 0.01, 1.0); topE = np.c_[xs, [lane_y(x) + 0.15 for x in xs]]
+add('E', wE, topE, e16, 'pit-out lane (0.15 m into its right edge)',
     ['c20_s0250', 'c20_s0300', 'onboard t009500-t011000'],
     'w_s0250 #12 + #17 (west), #16 (east); his lane-side flare #13 and line #18 run along the dirt between the wall end and the lane')
+# the outline traversed once, in order: its station along the track never falls back more than his own stroke's hook
+for m in M:
+    sv, _ = proj(np.array(m['outline_enu']))
+    back = float((np.maximum.accumulate(sv) - sv).max())
+    m['max_backtrack_m'] = round(back, 2)
+    print(m['name'], 'max backtrack along the track %.2f m' % back)
 for m in M:
     print(m['name'], 's', m['s'], 'edge w', m['width_at_edge_m'], 'top w', m['width_at_top_m'], 'depth', m['depth_m'], len(m['outline_enu']), 'pts')
 json.dump(dict(src='round 14 (tools/track/compare/buttonwillow/round14/LEDGER.md): the owner round-10 green strokes (compare/buttonwillow/owner_edges_r10/strokes.json, '
