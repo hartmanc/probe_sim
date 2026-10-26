@@ -1,6 +1,6 @@
 """Mid-Ohio round 3 owner checkpoint, changed region only: windows over the clean captures (reference only, local PNGs,
-never committed) with the round-3 fitted edges (left red, right magenta), the owner's round-2 red strokes as applied
-(a cyan band under the fit; read from owner_review_r2/edge-marks.json through each round-2 window's frame, continuous canvas
+never committed) with the round-3 fitted edges (left red, right magenta), the owner's round-2 red strokes as drawn
+(a cyan band under the fit, every stroke as drawn, those set aside included; read from owner_review_r2/edge-marks.json through each round-2 window's frame, continuous canvas
 coordinates), the local window's limits and blend ends (white bars across the road, labelled), and station ticks every
 10 m (yellow, labelled every 50 m). Writes <out>/<name>.png, <out>/index.html (figcaptions for edge_draw_page.py) and
 <out>/frames.json ({name: {s, half, mpp, centre_enu, image_px}}).
@@ -34,6 +34,20 @@ for win, doc in D.items():
     for st in doc['strokes']:
         if st['c'] == 'red':
             P = np.array(st['pts'], float); strokes.append(np.c_[cx - h + P[:, 0] * m, cy + h - P[:, 1] * m])
+# the overlap dispositions of round3.md (round-2 stations; round 3 keeps the station count, so the same numbers), shown
+# beside each window they touch (Astra review of round 3: the page must say which of his strokes were set aside)
+DISP = [('D1', 'right', 186, 243, 'right s 186-243: where w_s0250 and close_s0220 disagree (up to 0.67 m), your close-up line '
+         '(close_s0220, on the white line by the wall) was used; the w_s0250 stroke there was set aside.'),
+        ('D2', 'left', 189, 200, 'left s 189-200: the end of your w_s0125 straight (its window border) was set aside for w_s0250 / close_s0220.'),
+        ('D3', 'left', 274, 295, 'left s 274-295: your w_s0250 arc was set aside for the T1 close-up (close_s0320), which sits on the kerb line.'),
+        ('D3', 'left', 311, 323, 'left s 311-323: your w_s0375 arc was set aside for the T1 close-up (close_s0320).'),
+        ('D4', 'right', 339, 340, 'right s 339-340: two stations of w_s0375 set aside for close_s0320.'),
+        ('D5', 'right', 427, 475, 'D5, NEEDS YOUR CALL: your T1-exit right arc (s 427-475) was set aside for the kerb line; the replacement '
+         'still misses a capture reading by 0.49 m at s 458; approve or reject.'),
+        ('D6', 'left', 3519, 3538, 'left s 3519-3538 (and right 3519-3524): the west end of your pit-straight line (its window border) '
+         'was set aside for your w_s3500 line; the two blend by s 3575.'),
+        ('D7', 'right', 3431, 3443, 'right s 3431-3443: your w_s3500 curve (outside the white line, on the grass) was set aside for your w_s3375 line.'),
+        ('--', 'left', 363, 390, 'left s 363-390: none of your windows has red here; the capture readings set the edge.')]
 tiles = CAP.capture_list(cfg, 'clean')
 os.makedirs(os.path.join(ROOT, a.out), exist_ok=True)
 frames, figs = {}, []
@@ -75,9 +89,12 @@ for s in [int(x) for x in a.stations.split(',')]:
     inwin = (k - wlo) % n <= (whi - wlo) % n
     cap = (f's {(k * sp - half) % T["length_m"]:.0f} to {(k * sp + half) % T["length_m"]:.0f} m (round-3 stations, lap {T["length_m"]:.1f} m); '
            f'width p5 / median / p95 {q[0]:.2f} / {q[1]:.2f} / {q[2]:.2f} m; {mpp} m/px, north up. '
-           f'Red: round-3 left edge; magenta: round-3 right edge; cyan band: your round-2 red strokes as applied (under the fitted lines); '
+           f'Red: round-3 left edge; magenta: round-3 right edge; cyan band: your round-2 red strokes as drawn, every one of them, including those set aside (under the fitted lines); '
            f'white bars: refit window {wlo}-{whi} and its {bl}-station blend ends; yellow: station ticks. '
            + ('Inside the refitted region.' if inwin else 'Held from round 2 (outside the refit window).'))
+    touch = [txt for _, sd, lo_, hi_, txt in DISP if any(((kk - k + int(half / sp)) % n) <= 2 * int(half / sp) for kk in range(lo_, hi_ + 1))]
+    if touch:
+        cap += ' Set aside or undrawn here: ' + ' '.join(touch)
     figs.append(f'<figure id="{name}"><img src="{name}.png" alt="{name}"><figcaption>{html.escape(cap)}</figcaption></figure>')
     print(name, Wp, 'px', sorted(used.items(), key=lambda kv: -kv[1])[:2])
 open(os.path.join(ROOT, a.out, 'index.html'), 'w').write(

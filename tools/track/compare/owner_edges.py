@@ -173,8 +173,9 @@ def main():
             centre = tuple(fr['centre']); a.half = fr['px'] * a.mpp / 2
         else:
             # the outline windows' own record (build_edge_review.py windows.json / owner_review frames.json: center_enu,
-            # half; Mid-Ohio round 3)
-            centre = tuple(fr['center_enu']); a.half = float(fr['half'])
+            # half; the round-3 checkpoint's frames.json: centre_enu, half, image_px; Mid-Ohio round 3)
+            centre = tuple(fr['center_enu'] if 'center_enu' in fr else fr['centre_enu'])
+            a.half = float(fr['half']) if 'half' in fr else float(fr['image_px'][0]) * a.mpp / 2
     strokes = json.load(open(a.strokes))[a.window]['strokes'] if a.strokes else None
     d = {'track': a.track, 'src': a.src or f'owner drawing {os.path.basename(a.png or a.window)} (capwin --s {a.s} --half {a.half} --mpp {a.mpp})'}
     if a.by_stroke:
