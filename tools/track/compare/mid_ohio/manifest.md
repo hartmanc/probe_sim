@@ -137,3 +137,28 @@ not claimed. Both reproductions remain required before any future merge.
 Independent final edge_gate rerun by parent exited 0: left/right RMS 0.030 /
 0.022 m, max width steps 0.053 / 0.061 m. Exit-width advisories remain at T1
 (+1.08 m), T2 (+2.36 m), T11 (+1.99 m); they are shown for owner review.
+
+## Round 7 (27 Oct 2026): stage 3, the scenery
+
+The object manifest, scans and ledgers of the scenery round are in `round7.md`. The coverage gate reads the disposition
+lines below (`tools/track/manifest.py`); each is a MISSING inventory row of a kind the gate lets a disposition settle.
+
+### Dispositions (coverage gate, SKILL 3.13)
+
+| kind | side | s (m) | what | source | disposition |
+|---|---|---|---|---|---|
+| stand | right | 72 | covered grandstand, red roof | onboard:e25u_vjn1uM@26.0 | placed: T1 approach covered stand (the long covered stand 44-51 m right of s 93-183, seen across the run-off from s 72) |
+| stand | right | 3530.9 | covered grandstand | onboard:OJaBJz18xEo@128.0 | placed: Main grandstand (covered) (s 3554-3593 right, 31 m out, seen ahead from s 3531) |
+| stand | left | 1897.8 | aluminium bleachers | onboard:e25u_vjn1uM@74.0 | placed: T4 bleachers north (s ~1800-1850 left, 40 m out, seen behind from s 1898) |
+| building | left | 3425.8 | starter tower | onboard:OJaBJz18xEo@124.0 | placed: Starter tower (s ~3592 left, 45 m out, seen ahead from the T13 exit) |
+| building | left | 3495.6 | starter tower | onboard:e25u_vjn1uM@128.0 | placed: Starter tower (s ~3592 left, seen ahead) |
+| building | left | 3495.9 | starter tower | onboard:OJaBJz18xEo@2.0 | placed: Starter tower (s ~3592 left, seen ahead) |
+| building | left | 3557 | starter tower, 4 storeys | onboard:e25u_vjn1uM@130.0 | placed: Starter tower (s ~3592 left, seen ahead) |
+| building | left | 418.9 | hospitality tents / covered stand, red roof | onboard:e25u_vjn1uM@36.0 | rejected: temporary hospitality tents of the IndyCar weekend (360 lap t036 left, 4 Jul 2025: white tents and a red-roofed canopy far across the infield); the 2026 Lemons onboard N837 t018-t020 shows open infield there and no 2026 capture covers the place (the NAIP's white tent roof is not a 2026 source) |
+| mast | left | 294.8 | timber utility poles with lines, several | onboard:e25u_vjn1uM@32.0 | placed: timber utility pole (the two poles the 2019 lidar resolves on the T1 inside, s 252 and 366 left, 38-41 m out; c20_s0200-c20_s0280) |
+| mast | right | 3557 | scaffold masts with TV cameras / flood lights | onboard:e25u_vjn1uM@130.0 | rejected: temporary TV and flood-light scaffold masts of the IndyCar weekend (360 lap t130 right, Jul 2025); the Apr 2026 Lemons onboard N837 t128 / t004 shows the fence and the grandstand with no scaffold masts |
+| station | right | 154.4 | TV camera scaffold tower behind the fence | onboard:e25u_vjn1uM@28.0 | rejected: a temporary TV camera scaffold of the IndyCar weekend (360 lap t028 right, Jul 2025); the Apr 2026 Lemons onboard N837 t008 / t010 shows the fence and the stand with no scaffold |
+| station | left | 998.7 | TV camera scaffold | onboard:e25u_vjn1uM@52.0 | rejected: a temporary TV camera scaffold behind the Keyhole boards (360 lap t052 left, Jul 2025); N837 t038 / t040 (Apr 2026) show the board wall with no scaffold behind it |
+| station | left | 1337.8 | marshal post / scaffold behind the fence | onboard:e25u_vjn1uM@62.0 | rejected: a bare scaffold tower behind the fence (360 lap t062 left, Jul 2025: scaffold only, no hut); N837 t050 (Apr 2026) shows no structure there |
+| station | left | 2147.1 | marshal post "5" | onboard:e25u_vjn1uM@84.0 | rejected: station 5 is a sign post with a temporary pop-up canopy (360 lap t084 left, Jul 2025); N837 t074 (Apr 2026) shows the '5' sign post only, no hut |
+| station | left | 1527.4 | marshal post, yellow | onboard:OJaBJz18xEo@54.0 | placed: back-straight tower (yellow, red roof) (s ~1555 left behind the armco, seen ahead in t054) |
