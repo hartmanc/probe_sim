@@ -506,7 +506,7 @@ function maxIn(v: ArrayLike<number>, a: number, b: number): { v: number; s: numb
 const corners = CORNERS.map(([name, a, b]) => {
   const e = minIn(driver_a.v_mps, a, b), o = minIn(opt.v_mps, a, b), m = minIn(simV, a, b);
   return { name, driver_a: kmh(e.v), optimal: kmh(o.v), sim: kmh(m.v), simS: m.s, driver_aS: e.s,
-    errdriver A: (m.v / e.v - 1) * 100, errOpt: (m.v / o.v - 1) * 100 };
+    errDriverA: (m.v / e.v - 1) * 100, errOpt: (m.v / o.v - 1) * 100 };
 });
 // straights: from corner exit minimum to the max before the next braking point
 const STRAIGHTS: [string, number, number, number, number][] = trackCorners.map((c, i) => {
@@ -573,7 +573,7 @@ function decelPeaks(l: any): { s: number; g: number }[] {
   }
   return out;
 }
-const brakingdriver A = decelPeaks(driver_a), brakingOpt = decelPeaks(opt);
+const brakingDriverA = decelPeaks(driver_a), brakingOpt = decelPeaks(opt);
 const simPeakDecel = Math.max(0, ...rows.map((r) => -r.gLong));
 const simPeakLat = Math.max(0, ...rows.map((r) => Math.abs(r.gLat)));
 
@@ -582,7 +582,7 @@ const summary = {
   complete: lapsDone === 1 && !spun, spun, lapTime, maxLatErr, offTrackSteps,
   flatTopSpeedKmh: kmh(flatTopSpeed), thresholdBrake: bestBrake, fullPedalBrake: fullBrake, brakeSweep,
   accTable: Array.from(ACC).map((a, i) => [i * VB + VB / 2, a]),
-  front, corners, straights, brakingdriver A, brakingOpt, simPeakDecel, simPeakLat,
+  front, corners, straights, brakingDriverA, brakingOpt, simPeakDecel, simPeakLat,
   profileLapTime: (() => { let tt = 0; for (let i = 0; i < N; i++) tt += DS[i] / Math.max(1, 0.5 * (vProf[i] + vProf[(i + 1) % N])); return tt; })(),
 };
 
@@ -626,7 +626,7 @@ if (args.json) {
   console.log(`longest straight (${front.name}): max sim ${fmt(front.sim)}  driver A ${fmt(front.driver_a)}  optimal ${fmt(front.optimal)} km/h; flat-ground top speed ${fmt(summary.flatTopSpeedKmh)} km/h`);
   console.log('\ncorner minimum speeds (km/h)');
   console.log('corner             driver A  optimal    sim   vs driver A  vs opt');
-  for (const c of corners) console.log(`${c.name.padEnd(17)} ${fmt(c.driver_a).padStart(6)} ${fmt(c.optimal).padStart(8)} ${fmt(c.sim).padStart(6)} ${(fmt(c.errdriver A) + '%').padStart(9)} ${(fmt(c.errOpt) + '%').padStart(7)}`);
+  for (const c of corners) console.log(`${c.name.padEnd(17)} ${fmt(c.driver_a).padStart(6)} ${fmt(c.optimal).padStart(8)} ${fmt(c.sim).padStart(6)} ${(fmt(c.errDriverA) + '%').padStart(9)} ${(fmt(c.errOpt) + '%').padStart(7)}`);
   console.log('\nstraights: exit min -> max before braking (km/h)');
   console.log('straight                      driver A            optimal          sim              gain E/O/sim');
   for (const s of straights) {
@@ -641,7 +641,7 @@ if (args.json) {
     console.log(`${s.name.padEnd(29)} ${(fmt(m.vlo, 0) + '->' + fmt(m.vhi, 0)).padEnd(14)} ${fmt(m.driver_a, 0).padStart(6)} ${fmt(m.optimal, 0).padStart(8)} ${fmt(m.sim, 0).padStart(6)}`);
   }
   console.log('\nbraking: ghost peak decel per zone (g), driver A / optimal');
-  console.log('  ' + brakingdriver A.map((b, i) => `${b.s}:${fmt(b.g, 2)}/${fmt(brakingOpt[i].g, 2)}`).join('  '));
+  console.log('  ' + brakingDriverA.map((b, i) => `${b.s}:${fmt(b.g, 2)}/${fmt(brakingOpt[i].g, 2)}`).join('  '));
   console.log(`  sim: threshold (no lock) ${fmt(bestBrake.decel, 3)} g at pedal ${fmt(bestBrake.pedal, 2)}; full pedal ${fmt(fullBrake.decel, 3)} g locked=${fullBrake.locked}; peak decel in lap ${fmt(simPeakDecel, 2)} g; peak lateral ${fmt(simPeakLat, 2)} g`);
   }
 }
