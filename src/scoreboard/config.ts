@@ -126,7 +126,7 @@ export const TRACKS: Readonly<Record<string, TrackInfo>> = {
   // OWNER QUESTION for the drive: the red / white kerbs are raised 5 cm (Sonoma's driven profile); their real height is not
   // measured (no frame resolves it), so the 5 cm is a declaration, not a measurement (round7.md section 1).
   mid_ohio: { dir: 'tracks/mid_ohio/', name: 'Mid-Ohio Sports Car Course', short: 'Mid-Ohio', length_m: 3597.492, pace: 'cars/field/pace.json',
-    fieldLabel: 'a stand-in field (Laguna\'s)', rev: '9538d19a7d', wip: true,
+    fieldLabel: 'a stand-in field (Laguna\'s)', rev: 'cf609d6a3e', wip: true,
     start: { beforeCorner: 'T13', m: ROLLING_START_BEFORE_LAST_CORNER_M, speed: ROLLING_START_SPEED } },
 };
 /** The track when none is chosen (URL ?track=, Start menu). */
