@@ -62,14 +62,23 @@ if (argsDir) {
     const raw = readFileSync(join(argsDir, f));
     const all = new Float64Array(raw.buffer, raw.byteOffset, raw.byteLength / 8);
     const arity = fn === 'hypot3' ? 3 : fn === 'atan2' || fn === 'hypot' ? 2 : 1;
-    // unique argument tuples (bit patterns), in first-seen order
-    const seen = new Set<string>(); const uniq: number[] = [];
-    const b = Buffer.from(all.buffer, all.byteOffset, all.byteLength);
-    for (let i = 0; i < all.length; i += arity) {
-      const key = b.toString('latin1', i * 8, (i + arity) * 8);
-      if (!seen.has(key)) { seen.add(key); for (let k = 0; k < arity; k++) uniq.push(all[i + k]); }
+    // unique argument tuples (bit patterns): one-argument functions by sorting the bit patterns (tens of millions of
+    // calls), the others with a set of their bytes
+    let u: Float64Array;
+    if (arity === 1) {
+      const bitsArr = new BigUint64Array(all.length); bitsArr.set(new BigUint64Array(all.buffer.slice(all.byteOffset, all.byteOffset + all.byteLength)));
+      bitsArr.sort();
+      let n = 0; for (let i = 0; i < bitsArr.length; i++) if (i === 0 || bitsArr[i] !== bitsArr[i - 1]) bitsArr[n++] = bitsArr[i];
+      u = new Float64Array(bitsArr.buffer.slice(0, n * 8));
+    } else {
+      const seen = new Set<string>(); const uniq: number[] = [];
+      const b = Buffer.from(all.buffer, all.byteOffset, all.byteLength);
+      for (let i = 0; i < all.length; i += arity) {
+        const key = b.toString('latin1', i * 8, (i + arity) * 8);
+        if (!seen.has(key)) { seen.add(key); for (let k = 0; k < arity; k++) uniq.push(all[i + k]); }
+      }
+      u = new Float64Array(uniq);
     }
-    const u = new Float64Array(uniq);
     let mism = 0; let first: unknown = null;
     const CH = 600_000 - (600_000 % arity);
     const outs: number[] = [];
