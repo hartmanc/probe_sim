@@ -3,11 +3,22 @@
 // Hot path rules: no allocations in step(), all state in typed arrays or
 // number fields, Surface.sample() results are consumed immediately.
 
-import { atan as datan, atan2 as datan2, cos as dcos, exp as dexp, hypot as dhypot, hypot3 as dhypot3, pow as dpow, sin as dsin, tan as dtan } from './dmath';   // bit-identical to V8 on every engine (docs/determinism.md)
+import { atan as datan, atan2 as datan2, cos as dcos, exp as dexp, hypot as dhypot, hypot3 as dhypot3, log as dlog, sin as dsin, tan as dtan } from './dmath';   // bit-identical to V8 on every engine (docs/determinism.md)
 import type { CarSpec } from './spec';
 import { mfShape, solveMfB } from './tyre';
 import type { DriverInput, Surface, VehicleState, WheelState, Vec3, ImpactInfo } from './types';
 import { COLLISION_KINDS, KIND_PROPS, type CollisionWorld } from './collision';
+
+/** x^y for x in [0, 1] and y in [0.5, 4] (the brake pedal map): exactly specified IEEE operations for the small
+ *  rationals, else dmath's exp and log (x = 0 -> 0 as pow does; y > 0 by the spec's clamp). Same bits in every engine. */
+function powUnit(x: number, y: number): number {
+  if (!(x > 0)) return x === 0 ? 0 : NaN;
+  if (y === 2) return x * x;
+  if (y === 0.5) return Math.sqrt(x);
+  if (y === 1.5) return x * Math.sqrt(x);
+  if (y === 3) return x * x * x;
+  return dexp(y * dlog(x));
+}
 
 /** Closing speed normal to a wall above which the car blasts into space. */
 export const LAUNCH_SPEED = 25;
@@ -1140,8 +1151,9 @@ export class Vehicle {
 
     let muV = 1;
     if (this.muSlope > 0 && absVx > this.muRefV) { muV = 1 - this.muSlope * (absVx - this.muRefV); if (muV < 0.6) muV = 0.6; }
-    // dpow: the server's pow (glibc's, which V8 calls) in every engine (docs/determinism.md section 5)
-    const lsf = dpow(Fz / this.Fz0, this.lsExp) * Fz * mu;
+    // x^y = exp(y ln x) with dmath's own exp and log (x = Fz / Fz0 > 0 here: Fz >= 1), the same bits in every engine
+    // (docs/determinism.md section 7); the load-sensitivity exponent is a free car.json number, so no small-rational form
+    const lsf = dexp(this.lsExp * dlog(Fz / this.Fz0)) * Fz * mu;
     const Dx = this.mu0x * lsf, Dy = this.mu0y * lsf * muV;
     const sx = kappa / this.kpX, sy = alpha / apY;
     const rho = Math.sqrt(sx * sx + sy * sy);
@@ -1224,7 +1236,7 @@ export class Vehicle {
     } else this.clutchLocked = false;
 
     // brakes + rolling resistance as friction constraints on wheel spin
-    const pl = this.pedalExp === 1 ? brk : dpow(brk, this.pedalExp); // line pressure
+    const pl = this.pedalExp === 1 ? brk : powUnit(brk, this.pedalExp); // line pressure
     const bf = (pl * this.brakeMax * this.brakeBias) / 2;
     const pr = pl <= this.propKnee ? pl : this.propKnee + this.propSlope * (pl - this.propKnee);
     const br = (pr * this.brakeMax * (1 - this.brakeBias)) / 2 + (hb ? this.hbTorque / 2 : 0);

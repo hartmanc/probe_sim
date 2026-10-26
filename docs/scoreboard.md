@@ -31,10 +31,7 @@ heightfield.bin, scenery.json (walls, pit lane, paved zones, far terrain), ghost
 offsets), src/app/timing.ts (the lap timer the replay uses), or `src/scoreboard/sim.ts`. Otherwise old traces
 stop replaying and players get "lap time differs" rejections.
 
-Since 0.4.0 the hash ignores car.json's `"_"` comment keys (src/physics/spec.ts ignores them too), and
-`PHYSICS_KEY_PINS` in `config.ts` maps the computed values of the shipped car.json to the keys the 0.3.0 boards were
-published under, so the boards kept their entries through the comment edit. Any real change computes an unpinned
-value and opens fresh boards as before. The server accepts only its own current physics value (`422 physics version
+Since 0.4.0 the hash ignores car.json's `"_"` comment keys (src/physics/spec.ts ignores them too). The 0.3.0 board-key pins were dropped in the cheaper-pow round (the 0.3.0 hot-lap boards restart; old keys are just boards nobody posts to, and the stale sweep expires them). The server accepts only its own current physics value (`422 physics version
 mismatch`) and, for a race, only the current AI board version (`currentRaceAiVersion()` = `<AI_VERSION>-<laps>L`).
 
 Whitelists (`config.ts`, checked with `Object.hasOwn`): tracks = the keys of `TRACKS` (Laguna Seca, Sonoma,
