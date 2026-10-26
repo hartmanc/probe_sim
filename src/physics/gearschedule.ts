@@ -1,6 +1,7 @@
 // Gear schedule from a ghost lap: which gear the driver used at every point of the lap,
 // derived from the logger's rpm and speed with the car's overall ratios.
 
+import { log as dlog } from './dmath';   // bit-identical to V8 on every engine (docs/determinism.md)
 import type { CarSpec } from './spec';
 
 /** The parts of a ghosts.json lap the schedule needs. */
@@ -36,10 +37,10 @@ export function deriveGearSchedule(spec: CarSpec, lap: GhostLapLike, grid = 2, m
     const ratio = (rp * 2 * Math.PI * r) / (60 * v[i]);
     let best = 0, bd = Infinity;
     for (let k = 0; k < ratios.length; k++) {
-      const d = Math.abs(Math.log(ratio / ratios[k]));
+      const d = Math.abs(dlog(ratio / ratios[k]));
       if (d < bd) { bd = d; best = k + 1; }
     }
-    if (bd < Math.log(1.12)) raw[i] = best;
+    if (bd < dlog(1.12)) raw[i] = best;
   }
   // fill unknown samples from the nearest known neighbour (wrapping: the lap is a loop)
   const g = new Int8Array(n);

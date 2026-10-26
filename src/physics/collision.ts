@@ -4,6 +4,7 @@
 // heightfield's border. A uniform grid over all items makes a query around the
 // car cost a few microseconds.
 
+import { cos as dcos, hypot as dhypot } from './dmath';   // bit-identical to V8 on every engine (docs/determinism.md)
 import type { TrackJson } from './track';
 
 /** Kinds of obstacle. Index = kind code stored in the world. */
@@ -58,11 +59,11 @@ const WALL_SKIN = 0.1;
 /** The polyline offset by d m to its left (per-vertex mitred normal, the miter capped at 2 x d). */
 export function offsetLeft(pts: number[][], d: number): number[][] {
   const n = pts.length, out: number[][] = [];
-  const nrm = (a: number[], b: number[]) => { const dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1; return [-dy / l, dx / l]; };
+  const nrm = (a: number[], b: number[]) => { const dx = b[0] - a[0], dy = b[1] - a[1], l = dhypot(dx, dy) || 1; return [-dy / l, dx / l]; };
   for (let i = 0; i < n; i++) {
     const na = i > 0 ? nrm(pts[i - 1], pts[i]) : nrm(pts[i], pts[i + 1]);
     const nb = i < n - 1 ? nrm(pts[i], pts[i + 1]) : na;
-    let mx = na[0] + nb[0], my = na[1] + nb[1]; const ml = Math.hypot(mx, my);
+    let mx = na[0] + nb[0], my = na[1] + nb[1]; const ml = dhypot(mx, my);
     if (ml < 1e-9) { mx = nb[0]; my = nb[1]; } else { mx /= ml; my /= ml; }
     const c = mx * nb[0] + my * nb[1]; const k = Math.min(2, 1 / Math.max(c, 0.5));
     out.push([pts[i][0] + mx * d * k, pts[i][1] + my * d * k, pts[i][2] ?? 0]);
@@ -215,13 +216,13 @@ export function createCollisionWorld(scenery: SceneryCollisionJson | null | unde
   const runs: { kind: string; h: number; fence?: number; pts: number[][] }[] = [];
   for (const b of sc.barriers ?? []) {
     if (b.kind !== 'tyres' || !Array.isArray(b.pts) || b.pts.length < 2) { runs.push(b); continue; }
-    const P = b.pts.filter((p, i) => i === 0 || Math.hypot(p[0] - b.pts[i - 1][0], p[1] - b.pts[i - 1][1]) >= 1e-3);
+    const P = b.pts.filter((p, i) => i === 0 || dhypot(p[0] - b.pts[i - 1][0], p[1] - b.pts[i - 1][1]) >= 1e-3);
     if (P.length < 2) continue;
     runs.push({ ...b, pts: offsetLeft(P, -(TYRE_WALL.r - WALL_SKIN)) });
     runs.push({ ...b, pts: offsetLeft(P, TYRE_WALL.row + TYRE_WALL.r - WALL_SKIN) });
     const kt = KIND_CODE('tyres'), h = Math.max(0, b.h ?? 1), fence = Math.max(0, b.fence ?? 0);
     for (const [p, q, sgn] of [[P[0], P[1], 1], [P[P.length - 1], P[P.length - 2], -1]] as const) {
-      const l = Math.hypot(q[0] - p[0], q[1] - p[1]), tx = (q[0] - p[0]) / l, ty = (q[1] - p[1]) / l;
+      const l = dhypot(q[0] - p[0], q[1] - p[1]), tx = (q[0] - p[0]) / l, ty = (q[1] - p[1]) / l;
       const lx = sgn > 0 ? -ty : ty, ly = sgn > 0 ? tx : -tx;   // the run's left normal at this end
       const zb = p[2] ?? 0;
       cyls.push([p[0], p[1], TYRE_WALL.r, zb, zb + h, zb + h + fence, kt]);
@@ -234,10 +235,10 @@ export function createCollisionWorld(scenery: SceneryCollisionJson | null | unde
     const isFence = b.kind === 'fence';
     const k = KIND_CODE(b.kind);
     const h = Math.max(0, b.h ?? 1), fence = Math.max(0, b.fence ?? 0);
-    const closed = pts.length > 2 && Math.hypot(pts[0][0] - pts[pts.length - 1][0], pts[0][1] - pts[pts.length - 1][1]) < 0.05;
+    const closed = pts.length > 2 && dhypot(pts[0][0] - pts[pts.length - 1][0], pts[0][1] - pts[pts.length - 1][1]) < 0.05;
     for (let i = 0; i + 1 < pts.length; i++) {
       const a = pts[i], c = pts[i + 1];
-      if (Math.hypot(c[0] - a[0], c[1] - a[1]) < 1e-3) continue;
+      if (dhypot(c[0] - a[0], c[1] - a[1]) < 1e-3) continue;
       const zb = Math.min(a[2] ?? 0, c[2] ?? 0);
       // a standalone fence run is soft over its whole height
       const zt = isFence ? zb : zb + h;
@@ -253,8 +254,8 @@ export function createCollisionWorld(scenery: SceneryCollisionJson | null | unde
       else {
         const prev = pts[(i - 1 + pts.length) % pts.length], next = pts[(i + 1) % pts.length];
         const ux = p[0] - prev[0], uy = p[1] - prev[1], vx = next[0] - p[0], vy = next[1] - p[1];
-        const lu = Math.hypot(ux, uy), lv = Math.hypot(vx, vy);
-        if (lu > 1e-6 && lv > 1e-6) corner = (ux * vx + uy * vy) / (lu * lv) < Math.cos((25 * Math.PI) / 180);
+        const lu = dhypot(ux, uy), lv = dhypot(vx, vy);
+        if (lu > 1e-6 && lv > 1e-6) corner = (ux * vx + uy * vy) / (lu * lv) < dcos((25 * Math.PI) / 180);
       }
       if (corner) {
         const zb = p[2] ?? 0;
@@ -270,7 +271,7 @@ export function createCollisionWorld(scenery: SceneryCollisionJson | null | unde
     const zb = bd.z ?? 0, zt = zb + Math.max(1, bd.h ?? 3);
     for (let i = 0; i < fp.length; i++) {
       const a = fp[i], c = fp[(i + 1) % fp.length];
-      if (Math.hypot(c[0] - a[0], c[1] - a[1]) < 1e-3) continue;
+      if (dhypot(c[0] - a[0], c[1] - a[1]) < 1e-3) continue;
       segs.push([a[0], a[1], c[0], c[1], zb - 1, zt, zt, kb]);
       cyls.push([a[0], a[1], 0.05, zb - 1, zt, zt, kb]);
     }

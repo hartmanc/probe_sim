@@ -7,6 +7,7 @@
 // neighbours within `reach` metres along s are tested, so the cost is ~O(n). The contact point is
 // placed at each car's CG height, so impulses give yaw but no roll (no launches off a bump).
 
+import { hypot as dhypot } from './dmath';   // bit-identical to V8 on every engine (docs/determinism.md)
 import type { Vehicle } from './vehicle';
 
 export interface CarBody {
@@ -68,7 +69,7 @@ export class CarCollider {
     const [qx, qy, qz, qw] = st.quat;
     // body x axis in world, projected on the ground plane
     let fx = 1 - 2 * (qy * qy + qz * qz), fy = 2 * (qx * qy + qz * qw);
-    const l = Math.hypot(fx, fy) || 1;
+    const l = dhypot(fx, fy) || 1;
     fx /= l; fy /= l;
     const mid = 0.5 * (c.front + c.rear);
     out[0] = st.pos[0] + fx * mid; out[1] = st.pos[1] + fy * mid;
@@ -189,7 +190,7 @@ export class CarCollider {
     let tx = this.vb[0] - this.va[0], ty = this.vb[1] - this.va[1];
     const vnn = tx * nx + ty * ny;
     tx -= vnn * nx; ty -= vnn * ny;
-    const vt = Math.hypot(tx, ty);
+    const vt = dhypot(tx, ty);
     if (vt < 1e-4) return;
     tx /= vt; ty /= vt;
     const kt = A.invMassAt(ev.x, ev.y, za, tx, ty, 0) + B.invMassAt(ev.x, ev.y, zb, tx, ty, 0);

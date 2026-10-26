@@ -1,5 +1,6 @@
 // Track geometry: Surface from track.json + heightfield, projector, lineToWorld.
 
+import { atan2 as datan2, cos as dcos, hypot as dhypot, sin as dsin } from './dmath';   // bit-identical to V8 on every engine (docs/determinism.md)
 import type { Surface, SurfaceSample, Vec3 } from './types';
 
 /** Mirrors public/tracks/<track>/track.json (CONTRACTS.md §2). */
@@ -55,7 +56,7 @@ function buildSausageStrips(track: TrackJson, j: SausageJson): SausageStrip[] {
     for (let k = 0; k < m; k++) {
       const i = (((i0 + k) % n) + n) % n;
       const a = track.center[(i - 1 + n) % n], b = track.center[(i + 1) % n];
-      const dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1;
+      const dx = b[0] - a[0], dy = b[1] - a[1], l = dhypot(dx, dy) || 1;
       const e = st.side > 0 ? track.left[i] : track.right[i];
       xs[k] = e[0] + (-dy / l) * st.side * off;
       ys[k] = e[1] + (dx / l) * st.side * off;
@@ -63,7 +64,7 @@ function buildSausageStrips(track: TrackJson, j: SausageJson): SausageStrip[] {
     const tx = new Float64Array(m - 1), ty = new Float64Array(m - 1), len = new Float64Array(m - 1);
     let L = 0, minx = Infinity, maxx = -Infinity, miny = Infinity, maxy = -Infinity;
     for (let k = 0; k < m - 1; k++) {
-      const dx = xs[k + 1] - xs[k], dy = ys[k + 1] - ys[k], l = Math.hypot(dx, dy) || 1e-6;
+      const dx = xs[k + 1] - xs[k], dy = ys[k + 1] - ys[k], l = dhypot(dx, dy) || 1e-6;
       tx[k] = dx / l; ty[k] = dy / l; len[k] = l; L += l;
     }
     for (let k = 0; k < m; k++) { minx = Math.min(minx, xs[k]); maxx = Math.max(maxx, xs[k]); miny = Math.min(miny, ys[k]); maxy = Math.max(maxy, ys[k]); }
@@ -105,8 +106,8 @@ function sausageAt(strips: SausageStrip[], j: SausageJson, x: number, y: number,
     const ramp = Math.min(1, Math.min(u, s.L - u) / SAUSAGE_RAMP_M);
     if (ramp <= 0) continue;
     // raised cosine over the tyre-widened half-width: continuous height and slope at the edges
-    const h = j.height * 0.5 * (1 + Math.cos(Math.PI * q)) * ramp;
-    let slope = -j.height * 0.5 * Math.PI * Math.sin(Math.PI * q) / Wh * ramp;   // dh/dd
+    const h = j.height * 0.5 * (1 + dcos(Math.PI * q)) * ramp;
+    let slope = -j.height * 0.5 * Math.PI * dsin(Math.PI * q) / Wh * ramp;   // dh/dd
     if (slope > SAUSAGE_MAX_SLOPE) slope = SAUSAGE_MAX_SLOPE; else if (slope < -SAUSAGE_MAX_SLOPE) slope = -SAUSAGE_MAX_SLOPE;
     if (h > out.h) { out.h = h; out.gx = slope * -s.ty[bk]; out.gy = slope * s.tx[bk]; }
   }
@@ -149,6 +150,8 @@ function buildKerbStrips(track: TrackJson, k: KerbsJson): (SausageStrip & { side
   return out;
 }
 
+/** v * v: the same bits as v ** 2 in V8 (math::pow special-cases y = 2), without relying on any engine's pow. */
+const sq = (v: number): number => v * v;
 const smooth01 = (t: number) => (t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t));
 const dsmooth01 = (t: number) => (t <= 0 || t >= 1 ? 0 : 6 * t * (1 - t));
 
@@ -279,9 +282,9 @@ export const DIRT_ROUGHNESS_M = 0.012;
 // Roughness: three plane waves (wavelengths 3.7, 5.3 and 8.9 m, odd directions so the pattern never lines up with
 // the track), amplitude split 0.4/0.35/0.25. Deterministic in (x, y); faded in with the dirt weight.
 const RW = [
-  { kx: (2 * Math.PI / 3.7) * Math.cos(0.41), ky: (2 * Math.PI / 3.7) * Math.sin(0.41), a: 0.4, ph: 1.3 },
-  { kx: (2 * Math.PI / 5.3) * Math.cos(2.17), ky: (2 * Math.PI / 5.3) * Math.sin(2.17), a: 0.35, ph: 4.1 },
-  { kx: (2 * Math.PI / 8.9) * Math.cos(-1.05), ky: (2 * Math.PI / 8.9) * Math.sin(-1.05), a: 0.25, ph: 2.6 },
+  { kx: (2 * Math.PI / 3.7) * dcos(0.41), ky: (2 * Math.PI / 3.7) * dsin(0.41), a: 0.4, ph: 1.3 },
+  { kx: (2 * Math.PI / 5.3) * dcos(2.17), ky: (2 * Math.PI / 5.3) * dsin(2.17), a: 0.35, ph: 4.1 },
+  { kx: (2 * Math.PI / 8.9) * dcos(-1.05), ky: (2 * Math.PI / 8.9) * dsin(-1.05), a: 0.25, ph: 2.6 },
 ];
 
 /** Decode heightfield.bin (float32 little-endian). */
@@ -333,14 +336,14 @@ function buildGeo(t: TrackJson): Geo {
   for (let i = 0; i < n; i++) {
     const j = (i + 1) % n;
     const dx = cx[j] - cx[i], dy = cy[j] - cy[i];
-    const l = Math.hypot(dx, dy) || 1e-9;
+    const l = dhypot(dx, dy) || 1e-9;
     tx[i] = dx / l; ty[i] = dy / l; segLen[i] = l;
   }
   const halfL = new Float64Array(n), halfR = new Float64Array(n);
   let maxHalf = 0;
   for (let i = 0; i < n; i++) {
-    halfL[i] = Math.max(0.5, Math.hypot(t.left[i][0] - cx[i], t.left[i][1] - cy[i]));
-    halfR[i] = Math.max(0.5, Math.hypot(t.right[i][0] - cx[i], t.right[i][1] - cy[i]));
+    halfL[i] = Math.max(0.5, dhypot(t.left[i][0] - cx[i], t.left[i][1] - cy[i]));
+    halfR[i] = Math.max(0.5, dhypot(t.right[i][0] - cx[i], t.right[i][1] - cy[i]));
     maxHalf = Math.max(maxHalf, halfL[i], halfR[i]);
   }
   const fr = Float64Array.from(t.profile.fractions);
@@ -596,12 +599,12 @@ export function createTrackSurface(track: TrackJson, heightfield: Float32Array, 
       if (cache >= 0) {
         // walk downhill in distance from the cached station (cheap for nearby queries)
         let best = cache;
-        let bd = (x - g.cx[best]) ** 2 + (y - g.cy[best]) ** 2;
+        let bd = sq(x - g.cx[best]) + sq(y - g.cy[best]);
         let converged = false;
         for (let step = 0; step < 24; step++) {
           const a = (best + 1) % g.n, b = (best - 1 + g.n) % g.n;
-          const da = (x - g.cx[a]) ** 2 + (y - g.cy[a]) ** 2;
-          const db = (x - g.cx[b]) ** 2 + (y - g.cy[b]) ** 2;
+          const da = sq(x - g.cx[a]) + sq(y - g.cy[a]);
+          const db = sq(x - g.cx[b]) + sq(y - g.cy[b]);
           if (da < bd && da <= db) { best = a; bd = da; } else if (db < bd) { best = b; bd = db; } else { converged = true; break; }
         }
         if (converged && bd <= near * near) s = best;
@@ -683,8 +686,8 @@ export function createTrackSurface(track: TrackJson, heightfield: Float32Array, 
       if (rough > 0 && dirt > 0 && wO < 1) {
         for (let k = 0; k < 3; k++) {
           const wv = RW[k], ph = wv.kx * x + wv.ky * y + wv.ph, amp = rough * dirt * wv.a * (1 - wO);
-          rz += amp * Math.sin(ph);
-          const c = amp * Math.cos(ph);
+          rz += amp * dsin(ph);
+          const c = amp * dcos(ph);
           rgx += c * wv.kx; rgy += c * wv.ky;
         }
       }
@@ -764,7 +767,7 @@ export function createEdgeDistance(track: TrackJson): (x: number, y: number) => 
     locateAt(g, x, y, s, loc);
     const seg = loc.seg, t = loc.t, j = (seg + 1) % g.n;
     const px = g.cx[seg] + t * (g.cx[j] - g.cx[seg]), py = g.cy[seg] + t * (g.cy[j] - g.cy[seg]);
-    const dx = x - px, dy = y - py, r = Math.hypot(dx, dy);
+    const dx = x - px, dy = y - py, r = dhypot(dx, dy);
     const half = loc.lateral > 0
       ? g.halfL[seg] + t * (g.halfL[j] - g.halfL[seg])
       : g.halfR[seg] + t * (g.halfR[j] - g.halfR[seg]);
@@ -801,6 +804,6 @@ export function lineToWorld(track: TrackJson, offsetAtS: (s: number) => number, 
   const ds = 0.5 * g.spacing;
   lineXY(g, offsetAtS, s - ds, a);
   lineXY(g, offsetAtS, s + ds, b);
-  const heading = Math.atan2(b.y - a.y, b.x - a.x);
+  const heading = datan2(b.y - a.y, b.x - a.x);
   return { pos: [c.x, c.y, prof.z], heading };
 }

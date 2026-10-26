@@ -3,6 +3,7 @@
 // Hot path rules: no allocations in step(), all state in typed arrays or
 // number fields, Surface.sample() results are consumed immediately.
 
+import { atan as datan, atan2 as datan2, cos as dcos, exp as dexp, hypot as dhypot, hypot3 as dhypot3, sin as dsin, tan as dtan } from './dmath';   // bit-identical to V8 on every engine (docs/determinism.md)
 import type { CarSpec } from './spec';
 import { mfShape, solveMfB } from './tyre';
 import type { DriverInput, Surface, VehicleState, WheelState, Vec3, ImpactInfo } from './types';
@@ -255,7 +256,9 @@ export class Vehicle {
       this.dKnee[i] = ax.damperKnee; this.dHi[i] = ax.damperHighSpeedRatio;
       this.kArb[i] = ax.antiRollRate;
       this.cStatic[i] = ax.staticCompression;
-      const bs = ax.staticCompression > this.bumpStart ? this.kBump * (ax.staticCompression - this.bumpStart) ** 2 : 0;
+      // d * d, not d ** 2: the same bits in V8 (math::pow special-cases y = 2), without relying on any engine's pow
+      const dBs = ax.staticCompression - this.bumpStart;
+      const bs = ax.staticCompression > this.bumpStart ? this.kBump * (dBs * dBs) : 0;
       this.preload[i] = Ws - ax.springRate * ax.staticCompression - bs;
       if (this.preload[i] < 0) throw new Error(`car spec: staticCompression too large for the spring rate (negative preload on wheel ${i})`);
       // Hub at full droop sits so that at static load the ground is at body z = 0.
@@ -267,7 +270,7 @@ export class Vehicle {
     this.Bx = solveMfB(this.Cx, this.Ex, this.kpX);
     this.sigX = ty.longitudinal.relaxationLength; this.mu0x = ty.longitudinal.mu0;
     this.Cy = ty.lateral.C; this.Ey = ty.lateral.E; this.apY = (ty.lateral.peakSlipAngleDeg * Math.PI) / 180;
-    this.tanApY = Math.tan(this.apY);
+    this.tanApY = dtan(this.apY);
     this.By = solveMfB(this.Cy, this.Ey, this.apY);
     this.sigY = ty.lateral.relaxationLength; this.mu0y = ty.lateral.mu0;
     this.Fz0 = ty.Fz0; this.lsExp = ty.loadSensitivity;
@@ -368,10 +371,10 @@ export class Vehicle {
   reset(pos: [number, number, number], headingRad: number, speed = 0, up?: readonly number[]): void {
     if (up && Math.abs(up[2]) > 0.3) {
       let ux = up[0], uy = up[1], uz = up[2];
-      const un = Math.hypot(ux, uy, uz) || 1; ux /= un; uy /= un; uz /= un;
-      let fx = Math.cos(headingRad), fy = Math.sin(headingRad), fz = 0;
+      const un = dhypot3(ux, uy, uz) || 1; ux /= un; uy /= un; uz /= un;
+      let fx = dcos(headingRad), fy = dsin(headingRad), fz = 0;
       const d = fx * ux + fy * uy; fx -= d * ux; fy -= d * uy; fz -= d * uz;            // forward in the ground plane
-      const fn = Math.hypot(fx, fy, fz) || 1; fx /= fn; fy /= fn; fz /= fn;
+      const fn = dhypot3(fx, fy, fz) || 1; fx /= fn; fy /= fn; fz /= fn;
       const lx = uy * fz - uz * fy, ly = uz * fx - ux * fz, lz = ux * fy - uy * fx;   // left = up × forward
       // body axes (x forward, y left, z up) as matrix columns → quaternion (x, y, z, w)
       const m00 = fx, m10 = fy, m20 = fz, m01 = lx, m11 = ly, m21 = lz, m02 = ux, m12 = uy, m22 = uz;
@@ -384,7 +387,7 @@ export class Vehicle {
       this.q[0] = qx; this.q[1] = qy; this.q[2] = qz; this.q[3] = qw;
     } else {
       const hz = 0.5 * headingRad;
-      this.q[0] = 0; this.q[1] = 0; this.q[2] = Math.sin(hz); this.q[3] = Math.cos(hz);
+      this.q[0] = 0; this.q[1] = 0; this.q[2] = dsin(hz); this.q[3] = dcos(hz);
     }
     this.updateR();
     const R = this.R;
@@ -545,10 +548,10 @@ export class Vehicle {
       const dc = this.steerCmd * maxA;
       let dl = dc, dr = dc;
       if (Math.abs(dc) > 1e-6) {
-        const Rt = this.wheelbase / Math.tan(Math.abs(dc));
+        const Rt = this.wheelbase / dtan(Math.abs(dc));
         const half = this.trackF / 2;
-        const inner = Math.atan(this.wheelbase / Math.max(Rt - half, 1e-3));
-        const outer = Math.atan(this.wheelbase / (Rt + half));
+        const inner = datan(this.wheelbase / Math.max(Rt - half, 1e-3));
+        const outer = datan(this.wheelbase / (Rt + half));
         const a = Math.abs(dc);
         const inA = a + this.ackermann * (inner - a);
         const outA = a + this.ackermann * (outer - a);
@@ -649,7 +652,7 @@ export class Vehicle {
 
       // wheel heading projected into the ground plane
       const da = this.steerAng[i] + this.compl[i] * this.fyFilt[i];
-      const cs = Math.cos(da), sn = Math.sin(da);
+      const cs = dcos(da), sn = dsin(da);
       let fx = exx * cs + eyx * sn, fy = exy * cs + eyy * sn, fz = exz * cs + eyz * sn;
       const dn = fx * nx + fy * ny + fz * nz;
       fx -= dn * nx; fy -= dn * ny; fz -= dn * nz;
@@ -763,7 +766,7 @@ export class Vehicle {
     if (!this.finite()) {
       this.nanResets++;
       const g = this.lastGood;
-      const yaw = 2 * Math.atan2(g[5], g[6]);
+      const yaw = 2 * datan2(g[5], g[6]);
       const t = this.simTime;
       this.reset([g[0], g[1], g[2]], yaw);
       this.simTime = t; // a NaN recovery keeps the clock
@@ -847,7 +850,7 @@ export class Vehicle {
     }
     // footprint box (horizontal projection of the body x axis)
     let fx = R[0], fy = R[3];
-    const fl = Math.hypot(fx, fy);
+    const fl = dhypot(fx, fy);
     const boxOk = fl > 0.3;
     if (boxOk) { fx /= fl; fy /= fl; } else { fx = 1; fy = 0; }
     const lx = -fy, ly = fx;
@@ -1000,7 +1003,7 @@ export class Vehicle {
       sx += N[2 * k] * excess * rate;
       sy += N[2 * k + 1] * excess * rate;
     }
-    const sl = Math.hypot(sx, sy);
+    const sl = dhypot(sx, sy);
     const maxPush = 0.01;
     if (sl > maxPush) { sx *= maxPush / sl; sy *= maxPush / sl; }
     p[0] += sx; p[1] += sy;
@@ -1069,7 +1072,7 @@ export class Vehicle {
   private stepLaunched(dt: number): void {
     this.updateR();
     this.v[2] += 3 * dt;
-    const decay = Math.exp(-dt * 0.9);
+    const decay = dexp(-dt * 0.9);
     this.omegaE *= decay;
     for (let i = 0; i < 4; i++) { this.omega[i] *= decay; this.spin[i] += this.omega[i] * dt; }
     this.thrOut = 0;
@@ -1097,7 +1100,7 @@ export class Vehicle {
     const r = this.radius;
     // kLat < 1 (off pavement): lower cornering stiffness, the lateral peak moves out to apY / kLat
     const apY = kLat === 1 ? this.apY : this.apY / kLat;
-    const tanApY = kLat === 1 ? this.tanApY : Math.tan(apY);
+    const tanApY = kLat === 1 ? this.tanApY : dtan(apY);
     const absVx = Math.abs(Vx);
     const Vsx = this.omega[i] * r - Vx;
     const vden = absVx > this.vFloor ? absVx : this.vFloor;
@@ -1129,7 +1132,7 @@ export class Vehicle {
       if (tss < -tanApY) { tanA = tss; satY = true; } else tanA = -tanApY;
     } else tanA = wv / this.sigY;
     this.defW[i] = wv;
-    const alpha = Math.atan(tanA);
+    const alpha = datan(tanA);
     this.slipK[i] = kappa;
     this.slipA[i] = -alpha; // ISO sign
 
@@ -1137,6 +1140,8 @@ export class Vehicle {
 
     let muV = 1;
     if (this.muSlope > 0 && absVx > this.muRefV) { muV = 1 - this.muSlope * (absVx - this.muRefV); if (muV < 0.6) muV = 0.6; }
+    // Math.pow stays native (determinism round, 26 Oct 2026): V8 hands it to the platform C library (std::pow), so the
+    // server's value is glibc's and no single V8 pow exists to port; open, the owner's call (docs/determinism.md section 5)
     const lsf = Math.pow(Fz / this.Fz0, this.lsExp) * Fz * mu;
     const Dx = this.mu0x * lsf, Dy = this.mu0y * lsf * muV;
     const sx = kappa / this.kpX, sy = alpha / apY;
@@ -1157,7 +1162,7 @@ export class Vehicle {
 
     let wl = 0;
     if (absVx < this.vBlend) {
-      wl = 0.5 * (1 + Math.cos((Math.PI * absVx) / this.vBlend));
+      wl = 0.5 * (1 + dcos((Math.PI * absVx) / this.vBlend));
       if (!satX) fx += this.cLx * wl * Vsx;
       if (!satY) fy -= this.cLy * wl * Vy;
     }
@@ -1435,8 +1440,8 @@ export class Vehicle {
     g[1] = this.p[1] - (R[3] * this.cgX + R[5] * this.cgZ);
     g[2] = this.p[2] - (R[6] * this.cgX + R[8] * this.cgZ);
     // yaw only, as a half-angle quaternion pair
-    const yaw = Math.atan2(R[3], R[0]);
-    g[5] = Math.sin(yaw / 2); g[6] = Math.cos(yaw / 2);
+    const yaw = datan2(R[3], R[0]);
+    g[5] = dsin(yaw / 2); g[6] = dcos(yaw / 2);
   }
 
   private writeState(): void {
