@@ -49,6 +49,12 @@ describe('api handler', () => {
     expect(await r.json()).toEqual({ ok: true, store: 'memory', boards });
   });
 
+  test('a GET for a retired physics key (the 0.3.0 boards) is an empty board, not an error', async () => {
+    const r = await handleScores(get(`?board=${encodeURIComponent('hotlap:laguna_seca:probe_gt:12oxe5efqsv')}&name=COBY`), deps());
+    expect(r.status).toBe(200);
+    expect(await r.json()).toMatchObject({ ok: true, entries: [], you: null });
+  });
+
   test('POST a real hot lap: replayed on the server, stored, ranked; GET shows it', async () => {
     const d = deps();
     const r = await handleScores(post(hot()), d);
