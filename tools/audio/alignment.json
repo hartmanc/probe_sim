@@ -1,0 +1,11 @@
+{
+ "logger_offset_s": 3444.4000000518317,
+ "file_correction_s": {
+  "GL010045": -20.21,
+  "GL020045": -25.29,
+  "GL030045": -0.38,
+  "GL040045": -6.44
+ },
+ "meaning": "audio time tau in proxy F lines up with logger time (timestamp_utc + logger_offset_s) = STARTS[F] + tau - file_correction_s[F]; the correction is constant within each file (checked in 300 s windows), so it is an error in the camera's per-chapter start time",
+ "method": "max mean whitened level at logger-predicted order 3 and 6 harmonics"
+}

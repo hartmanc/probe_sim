@@ -1,0 +1,781 @@
+{
+ "assignments": {
+  "public/cars/field/identity.json": {
+   "0": "toyota_1jz_turbo",
+   "1": "sohc_i4_loud",
+   "2": "twincam_i4_loud",
+   "8": "twincam_i4_loud",
+   "9": "sohc_i4_loud",
+   "16": "vw_aircooled_flat4",
+   "20": "modern_i4_stock",
+   "34": "modern_i4_stock",
+   "37": "bmw_m20_i6",
+   "38": "modern_i4_stock",
+   "40": "modern_i4_stock",
+   "41": "classic_v8_lowrev",
+   "42": "vintage_i6",
+   "43": "classic_v8_lowrev",
+   "49": "twincam_i4_loud",
+   "51": "vintage_i6",
+   "55": "vintage_i6",
+   "58": "mini_supercharged_i4",
+   "67": "modern_i4_stock",
+   "74": "gm_sbc_v8",
+   "76": "ohv_v6",
+   "83": "sohc_i4_loud",
+   "89": "bmw_m20_i6",
+   "97": "sohc_i4_loud",
+   "100": "gm_sbc_v8",
+   "105": "twincam_i4_loud",
+   "143": "classic_v8_lowrev",
+   "156": "modern_i4_stock",
+   "169": "sohc_i4_loud",
+   "189": "mazda_b_i4",
+   "200": "subaru_fa20_flat4",
+   "202": "ohv_v6",
+   "249": "classic_v8_lowrev",
+   "319": "modern_i4_stock",
+   "544": "sohc_i4_loud",
+   "619": "mazda_kl_v6",
+   "664": "sohc_i4_loud",
+   "670": "sohc_i4_loud",
+   "700": "bmw_m20_i6",
+   "711": "mazda_b_i4",
+   "759": "classic_v8_lowrev",
+   "785": "vintage_i6",
+   "801": "twincam_i4_loud",
+   "906": "vintage_i6",
+   "963": "modern_i4_stock"
+  },
+  "public/cars/field/buttonwillow/identity.json": {
+   "3": "gm_sbc_v8",
+   "5": "sohc_i4_loud",
+   "6": "twincam_i4_loud",
+   "11": "subaru_fa20_flat4",
+   "23": "sohc_i4_loud",
+   "24": "mazda_b_i4",
+   "26": "bmw_m20_i6",
+   "32": "bmw_m20_i6",
+   "33": "vintage_i6",
+   "36": "sohc_i4_loud",
+   "38": "modern_i4_stock",
+   "39": "sohc_i4_loud",
+   "44": "mini_supercharged_i4",
+   "47": "sohc_i4_loud",
+   "48": "ohv_v6",
+   "50": "sohc_i4_loud",
+   "61": "sohc_i4_loud",
+   "62": "sohc_i4_loud",
+   "63": "sohc_i4_loud",
+   "64": "vw_aircooled_flat4",
+   "69": "vintage_i6",
+   "71": "gm_sbc_v8",
+   "72": "mazda_b_i4",
+   "75": "sohc_i4_loud",
+   "77": "vintage_i6",
+   "78": "vintage_i6",
+   "80": "ohv_v6",
+   "81": "modern_i4_stock",
+   "82": "sohc_i4_loud",
+   "84": "sohc_i4_loud",
+   "88": "vintage_i6",
+   "90": "sohc_i4_loud",
+   "95": "sohc_i4_loud",
+   "96": "vintage_i6",
+   "98": "vintage_i6",
+   "99": "sohc_i4_loud",
+   "101": "sohc_i4_loud",
+   "103": "vintage_i6",
+   "104": "mazda_b_i4",
+   "111": "subaru_fa20_flat4",
+   "117": "mini_supercharged_i4",
+   "118": "toyota_1jz_turbo",
+   "121": "sohc_i4_loud",
+   "124": "sohc_i4_loud",
+   "128": "bmw_m20_i6",
+   "129": "sohc_i4_loud",
+   "136": "mazda_b_i4",
+   "170": "mazda_b_i4",
+   "171": "sohc_i4_loud",
+   "182": "sohc_i4_loud",
+   "189": "mazda_b_i4",
+   "191": "vintage_i6",
+   "192": "sohc_i4_loud",
+   "213": "twincam_i4_loud",
+   "222": "sohc_i4_loud",
+   "245": "sohc_i4_loud",
+   "250": "vintage_i6",
+   "257": "sohc_i4_loud",
+   "259": "bmw_m20_i6",
+   "261": "mazda_b_i4",
+   "282": "sohc_i4_loud",
+   "316": "sohc_i4_loud",
+   "325": "mazda_b_i4",
+   "328": "vintage_i6",
+   "333": "bmw_m20_i6",
+   "357": "sohc_i4_loud",
+   "404": "sohc_i4_loud",
+   "414": "sohc_i4_loud",
+   "420": "mini_supercharged_i4",
+   "444": "classic_v8_lowrev",
+   "530": "vintage_i6",
+   "544": "sohc_i4_loud",
+   "562": "vintage_i6",
+   "630": "vintage_i6",
+   "685": "classic_v8_lowrev",
+   "702": "mazda_b_i4",
+   "703": "mazda_b_i4",
+   "707": "sohc_i4_loud",
+   "717": "sohc_i4_loud",
+   "745": "sohc_i4_loud",
+   "757": "classic_v8_lowrev",
+   "858": "mazda_b_i4",
+   "883": "ohv_v6",
+   "888": "bmw_m20_i6",
+   "900": "sohc_i4_loud",
+   "911": "sohc_i4_loud",
+   "963": "modern_i4_stock",
+   "969": "classic_v8_lowrev",
+   "971": "mazda_b_i4",
+   "975": "mazda_b_i4",
+   "988": "bmw_m20_i6",
+   "989": "ohv_v6",
+   "999": "sohc_i4_loud",
+   "0_bw": "sohc_i4_loud",
+   "8_bw": "mazda_b_i4",
+   "1_bw": "mazda_b_i4",
+   "801_bw": "sohc_i4_loud",
+   "9_bw": "vintage_i6",
+   "16_bw": "sohc_i4_loud",
+   "670_bw": "classic_v8_lowrev",
+   "711_bw": "sohc_i4_loud",
+   "40_bw": "sohc_i4_loud",
+   "89_bw": "sohc_i4_loud",
+   "43_bw": "sohc_i4_loud"
+  },
+  "public/cars/field/sonoma/identity.json": {
+   "4": "sohc_i4_loud",
+   "7": "sohc_i4_loud",
+   "13": "sohc_i4_loud",
+   "14": "classic_v8_lowrev",
+   "18": "sohc_i4_loud",
+   "21": "subaru_fa20_flat4",
+   "26": "bmw_m20_i6",
+   "27": "mazda_b_i4",
+   "33": "vintage_i6",
+   "35": "vintage_i6",
+   "36": "sohc_i4_loud",
+   "39": "sohc_i4_loud",
+   "41": "classic_v8_lowrev",
+   "42": "vintage_i6",
+   "43": "classic_v8_lowrev",
+   "45": "subaru_fa20_flat4",
+   "48": "ohv_v6",
+   "53": "sohc_i4_loud",
+   "54": "mazda_b_i4",
+   "56": "classic_v8_lowrev",
+   "59": "sohc_i4_loud",
+   "60": "sohc_i4_loud",
+   "62": "sohc_i4_loud",
+   "63": "sohc_i4_loud",
+   "64": "vw_aircooled_flat4",
+   "69": "vintage_i6",
+   "70": "sohc_i4_loud",
+   "72": "mazda_b_i4",
+   "81": "modern_i4_stock",
+   "83": "sohc_i4_loud",
+   "84": "sohc_i4_loud",
+   "85": "sohc_i4_loud",
+   "86": "vintage_i6",
+   "87": "sohc_i4_loud",
+   "91": "vintage_i6",
+   "95": "sohc_i4_loud",
+   "99": "sohc_i4_loud",
+   "101": "sohc_i4_loud",
+   "103": "vintage_i6",
+   "117": "mini_supercharged_i4",
+   "118": "toyota_1jz_turbo",
+   "120": "ohv_v6",
+   "123": "ohv_v6",
+   "124": "sohc_i4_loud",
+   "129": "sohc_i4_loud",
+   "135": "vintage_i6",
+   "140": "sohc_i4_loud",
+   "141": "mazda_kl_v6",
+   "144": "bmw_m20_i6",
+   "150": "sohc_i4_loud",
+   "185": "sohc_i4_loud",
+   "189": "mazda_b_i4",
+   "191": "vintage_i6",
+   "198": "ohv_v6",
+   "203": "sohc_i4_loud",
+   "213": "twincam_i4_loud",
+   "220": "vintage_i6",
+   "222": "ohv_v6",
+   "238": "sohc_i4_loud",
+   "242": "bmw_m20_i6",
+   "245": "sohc_i4_loud",
+   "268": "sohc_i4_loud",
+   "280": "classic_v8_lowrev",
+   "282": "sohc_i4_loud",
+   "300": "bmw_m20_i6",
+   "321": "mini_supercharged_i4",
+   "327": "sohc_i4_loud",
+   "329": "mazda_b_i4",
+   "333": "bmw_m20_i6",
+   "343": "sohc_i4_loud",
+   "355": "sohc_i4_loud",
+   "357": "sohc_i4_loud",
+   "360": "bmw_m20_i6",
+   "414": "sohc_i4_loud",
+   "427": "mazda_kl_v6",
+   "440": "sohc_i4_loud",
+   "444": "classic_v8_lowrev",
+   "502": "sohc_i4_loud",
+   "515": "classic_v8_lowrev",
+   "520": "classic_v8_lowrev",
+   "525": "vintage_i6",
+   "530": "vintage_i6",
+   "544": "sohc_i4_loud",
+   "547": "bmw_m20_i6",
+   "562": "vintage_i6",
+   "605": "ohv_v6",
+   "680": "ohv_v6",
+   "696": "vintage_i6",
+   "701": "mazda_b_i4",
+   "702": "mazda_b_i4",
+   "703": "mazda_b_i4",
+   "707": "sohc_i4_loud",
+   "711": "mazda_b_i4",
+   "740": "ohv_v6",
+   "747": "mazda_b_i4",
+   "750": "mazda_b_i4",
+   "785": "vintage_i6",
+   "831": "classic_v8_lowrev",
+   "833": "toyota_1jz_turbo",
+   "902": "sohc_i4_loud",
+   "911": "sohc_i4_loud",
+   "916": "sohc_i4_loud",
+   "919": "vintage_i6",
+   "925": "sohc_i4_loud",
+   "938": "sohc_i4_loud",
+   "969": "classic_v8_lowrev",
+   "988": "bmw_m20_i6",
+   "989": "ohv_v6",
+   "124_sp": "mazda_b_i4",
+   "49_sp": "sohc_i4_loud",
+   "1_bw": "mazda_b_i4",
+   "3_sp": "sohc_i4_loud",
+   "75_sp": "classic_v8_lowrev",
+   "77_sp": "sohc_i4_loud",
+   "121_sp": "mini_supercharged_i4",
+   "76_sp": "sohc_i4_loud",
+   "888_sp": "sohc_i4_loud",
+   "171_sp": "ohv_v6",
+   "32_sp": "sohc_i4_loud",
+   "420_sp": "sohc_i4_loud",
+   "20_sp": "sohc_i4_loud",
+   "5_sp": "mini_supercharged_i4",
+   "88_sp": "sohc_i4_loud",
+   "71_sp": "sohc_i4_loud",
+   "16_bw": "sohc_i4_loud",
+   "90_sp": "ohv_v6",
+   "0_sp": "sohc_i4_loud",
+   "26_sp": "mini_supercharged_i4",
+   "44_sp": "sohc_i4_loud",
+   "670_bw": "classic_v8_lowrev",
+   "685_sp": "classic_v8_lowrev",
+   "37_sp": "sohc_i4_loud",
+   "82_sp": "sohc_i4_loud",
+   "51_sp": "mazda_b_i4",
+   "78_sp": "modern_i4_stock",
+   "100_sp": "sohc_i4_loud"
+  }
+ },
+ "index": {
+  "families": [
+   "bmw_m20_i6",
+   "classic_v8_lowrev",
+   "gm_sbc_v8",
+   "mazda_b_i4",
+   "mazda_kl_v6",
+   "mini_supercharged_i4",
+   "modern_i4_stock",
+   "ohv_v6",
+   "sohc_i4_loud",
+   "subaru_fa20_flat4",
+   "toyota_1jz_turbo",
+   "twincam_i4_loud",
+   "vintage_i6",
+   "vw_aircooled_flat4"
+  ],
+  "aliases": [
+   [
+    "V12|DB7|Aston",
+    "bmw_m20_i6",
+    {
+     "trim": 1.06
+    }
+   ],
+   [
+    "\\bKL-?DE\\b|Probe",
+    "mazda_kl_v6"
+   ],
+   [
+    "Mazda B[P6]\\b|Miata|MX-?5",
+    "mazda_b_i4"
+   ],
+   [
+    "\\bM20\\b|\\bE30\\b",
+    "bmw_m20_i6"
+   ],
+   [
+    "1JZ|2JZ",
+    "toyota_1jz_turbo"
+   ],
+   [
+    "Tritec|Cooper S",
+    "mini_supercharged_i4"
+   ],
+   [
+    "FA20|FR-?S|BRZ|Toyota 86|GT86",
+    "subaru_fa20_flat4"
+   ],
+   [
+    "Type 1|air-?cooled|Beetle|\\bBus\\b",
+    "vw_aircooled_flat4"
+   ],
+   [
+    "small-?block|\\bSBC\\b|350|5\\.7 V8",
+    "gm_sbc_v8"
+   ],
+   [
+    "Y-block|\\b318\\b|LA 318|Olds(mobile)? 307|\\b460\\b|\\b385\\b|\\b292\\b|V8",
+    "classic_v8_lowrev"
+   ],
+   [
+    "Hudson|Stovebolt|flathead 230|flathead.*I6|slant-?6|slant-?six|AMC 196|\\bI6\\b.*(19[3-6]\\d)",
+    "vintage_i6"
+   ],
+   [
+    "4A-?GE|Alfa Romeo twin-?cam|twin-?cam|CIH|Honda K2[04]|K-?series|DOHC",
+    "twincam_i4_loud"
+   ],
+   [
+    "Vulcan|60-degree 2\\.8|60° 2\\.8|\\bV6\\b",
+    "ohv_v6"
+   ],
+   [
+    "Suzuki G10|\\bI3\\b",
+    "modern_i4_stock",
+    {
+     "rpm_scale": 0.75,
+     "trim": 1.04
+    }
+   ],
+   [
+    "Duratec|Beta 2\\.0|T8D|Saturn 1\\.9|CG13|GA16|Chrysler 2\\.2|DOHC",
+    "modern_i4_stock"
+   ],
+   [
+    "EA827|B230|B18|L20B|22R|3T-?C|Lima|A-series|sidevalve|Pinto|Volvo|Datsun",
+    "sohc_i4_loud"
+   ]
+  ],
+  "fallback": [
+   {
+    "cylinders": 8,
+    "layout": "v",
+    "family": "classic_v8_lowrev"
+   },
+   {
+    "cylinders": 6,
+    "layout": "v",
+    "family": "ohv_v6"
+   },
+   {
+    "cylinders": 6,
+    "layout": "inline",
+    "family": "vintage_i6"
+   },
+   {
+    "cylinders": 4,
+    "layout": "flat",
+    "family": "subaru_fa20_flat4"
+   },
+   {
+    "cylinders": 4,
+    "layout": "inline",
+    "family": "sohc_i4_loud"
+   },
+   {
+    "cylinders": 3,
+    "layout": "inline",
+    "family": "modern_i4_stock"
+   }
+  ],
+  "default": "sohc_i4_loud",
+  "cars": {
+   "0": {
+    "family": "toyota_1jz_turbo",
+    "trim": 1.0127,
+    "muffler": 0.1,
+    "rpm_scale": 1,
+    "redline": 7000,
+    "engine": "Toyota 1JZ-GTE 2.5 I6 turbo (swap)"
+   },
+   "1": {
+    "family": "sohc_i4_loud",
+    "trim": 0.9825,
+    "muffler": 0.1,
+    "rpm_scale": 1,
+    "redline": 6500,
+    "engine": "BMC A-series 0.85-1.3 I4"
+   },
+   "2": {
+    "family": "twincam_i4_loud",
+    "trim": 1.0212,
+    "muffler": 0.6,
+    "rpm_scale": 1,
+    "redline": 6500,
+    "engine": "Saturn 1.9 DOHC I4"
+   },
+   "8": {
+    "family": "twincam_i4_loud",
+    "trim": 1.0296,
+    "muffler": 0.1,
+    "rpm_scale": 1,
+    "redline": 6000,
+    "engine": "Opel CIH 1.9 I4 (team-built 2.5 stroker)"
+   },
+   "9": {
+    "family": "sohc_i4_loud",
+    "trim": 0.9725,
+    "muffler": 0.1,
+    "rpm_scale": 1,
+    "redline": 6000,
+    "engine": "Nissan L20B 2.0 I4"
+   },
+   "16": {
+    "family": "vw_aircooled_flat4",
+    "trim": 0.975,
+    "muffler": 0.1,
+    "rpm_scale": 1,
+    "redline": 4600,
+    "engine": "VW Type 1 1.2-1.6 flat-4"
+   },
+   "20": {
+    "family": "modern_i4_stock",
+    "trim": 1.004,
+    "muffler": 0.6,
+    "rpm_scale": 1,
+    "redline": 5500,
+    "engine": "Chrysler 2.2 I4"
+   },
+   "34": {
+    "family": "modern_i4_stock",
+    "trim": 1.04,
+    "muffler": 0.1,
+    "rpm_scale": 0.75,
+    "redline": 6000,
+    "engine": "Suzuki G10 1.0 I3"
+   },
+   "37": {
+    "family": "bmw_m20_i6",
+    "trim": 1.0177,
+    "muffler": 0.1,
+    "rpm_scale": 1,
+    "redline": 6500,
+    "engine": "BMW M20 2.5 I6"
+   },
+   "38": {
+    "family": "modern_i4_stock",
+    "trim": 0.9914,
+    "muffler": 0.6,
+    "rpm_scale": 1,
+    "redline": 6500,
+    "engine": "Hyundai Beta 2.0 I4"
+   },
+   "40": {
+    "family": "modern_i4_stock",
+    "trim": 1.0111,
+    "muffler": 0.6,
+    "rpm_scale": 1,
+    "redline": 6500,
+    "engine": "Kia T8D 1.8 I4"
+   },
+   "41": {
+    "family": "classic_v8_lowrev",
+    "trim": 0.9977,
+    "muffler": 0.15,
+    "rpm_scale": 1,
+    "redline": 3800,
+    "engine": "Ford flathead 3.9 V8"
+   },
+   "42": {
+    "family": "vintage_i6",
+    "trim": 1.0044,
+    "muffler": 0.1,
+    "rpm_scale": 1,
+    "redline": 4800,
+    "engine": "Chrysler slant-6 225 3.7 I6"
+   },
+   "43": {
+    "family": "classic_v8_lowrev",
+    "trim": 0.9706,
+    "muffler": 0.1,
+    "rpm_scale": 1,
+    "redline": 4800,
+    "engine": "Chrysler LA 318 5.2 V8"
+   },
+   "49": {
+    "family": "twincam_i4_loud",
+    "trim": 0.9808,
+    "muffler": 0.1,
+    "rpm_scale": 1,
+    "redline": 7000,
+    "engine": "Honda K24 2.4 I4 (swap; owner confirmed)"
+   },
+   "51": {
+    "family": "vintage_i6",
+    "trim": 1.0131,
+    "muffler": 0.1,
+    "rpm_scale": 1,
+    "redline": 3800,
+    "engine": "Hudson H-145 308 5.0 I6"
+   },
+   "55": {
+    "family": "vintage_i6",
+    "trim": 1.0035,
+    "muffler": 0,
+    "rpm_scale": 1,
+    "redline": 3600,
+    "engine": "Chrysler flathead 230 3.8 I6"
+   },
+   "58": {
+    "family": "mini_supercharged_i4",
+    "trim": 0.994,
+    "muffler": 0.6,
+    "rpm_scale": 1,
+    "redline": 6750,
+    "engine": "Tritec 1.6 I4 supercharged"
+   },
+   "67": {
+    "family": "modern_i4_stock",
+    "trim": 0.9882,
+    "muffler": 0.6,
+    "rpm_scale": 1,
+    "redline": 6500,
+    "engine": "Nissan CG13DE 1.3 I4"
+   },
+   "74": {
+    "family": "gm_sbc_v8",
+    "trim": 0.9773,
+    "muffler": 0.1,
+    "rpm_scale": 1,
+    "redline": 6000,
+    "engine": "GM small-block 5.7 V8 (swap; stock was Lotus 907 2.0)"
+   },
+   "76": {
+    "family": "ohv_v6",
+    "trim": 1.02,
+    "muffler": 0.1,
+    "rpm_scale": 1,
+    "redline": 5800,
+    "engine": "GM 60-degree 2.8 V6"
+   },
+   "83": {
+    "family": "sohc_i4_loud",
+    "trim": 0.9994,
+    "muffler": 0.1,
+    "rpm_scale": 1,
+    "redline": 6000,
+    "engine": "VW EA827 1.7 I4"
+   },
+   "89": {
+    "family": "bmw_m20_i6",
+    "trim": 0.9753,
+    "muffler": 0.1,
+    "rpm_scale": 1,
+    "redline": 6500,
+    "engine": "BMW M20 2.5 I6"
+   },
+   "97": {
+    "family": "sohc_i4_loud",
+    "trim": 1.0003,
+    "muffler": 0.6,
+    "rpm_scale": 1,
+    "redline": 5500,
+    "engine": "Ford Lima 2.3 I4"
+   },
+   "100": {
+    "family": "gm_sbc_v8",
+    "trim": 0.9815,
+    "muffler": 0.1,
+    "rpm_scale": 1,
+    "redline": 5000,
+    "engine": "GM small-block 5.7 V8"
+   },
+   "105": {
+    "family": "twincam_i4_loud",
+    "trim": 1.0228,
+    "muffler": 0.1,
+    "rpm_scale": 1,
+    "redline": 6200,
+    "engine": "Alfa Romeo twin-cam 2.0 I4"
+   },
+   "143": {
+    "family": "classic_v8_lowrev",
+    "trim": 1.0273,
+    "muffler": 0.1,
+    "rpm_scale": 1,
+    "redline": 4400,
+    "engine": "Ford 385 460 7.5 V8"
+   },
+   "156": {
+    "family": "modern_i4_stock",
+    "trim": 0.9926,
+    "muffler": 0.6,
+    "rpm_scale": 1,
+    "redline": 6700,
+    "engine": "Ford Duratec 2.5 I4"
+   },
+   "169": {
+    "family": "sohc_i4_loud",
+    "trim": 0.979,
+    "muffler": 0.1,
+    "rpm_scale": 1,
+    "redline": 5600,
+    "engine": "Toyota 3T-C 1.8 I4"
+   },
+   "189": {
+    "family": "mazda_b_i4",
+    "trim": 1.0237,
+    "muffler": 0.1,
+    "rpm_scale": 1,
+    "redline": 7200,
+    "engine": "Mazda B6 1.6 I4"
+   },
+   "200": {
+    "family": "subaru_fa20_flat4",
+    "trim": 1.0074,
+    "muffler": 0.6,
+    "rpm_scale": 1,
+    "redline": 7450,
+    "engine": "Subaru FA20 2.0 flat-4"
+   },
+   "202": {
+    "family": "ohv_v6",
+    "trim": 0.9771,
+    "muffler": 0.6,
+    "rpm_scale": 1,
+    "redline": 5500,
+    "engine": "Ford Vulcan 3.0 V6"
+   },
+   "249": {
+    "family": "classic_v8_lowrev",
+    "trim": 1.0258,
+    "muffler": 0.1,
+    "rpm_scale": 1,
+    "redline": 4500,
+    "engine": "Oldsmobile 307 5.0 V8"
+   },
+   "319": {
+    "family": "modern_i4_stock",
+    "trim": 1.0094,
+    "muffler": 0.6,
+    "rpm_scale": 1,
+    "redline": 6750,
+    "engine": "Ford Duratec 2.0 I4"
+   },
+   "544": {
+    "family": "sohc_i4_loud",
+    "trim": 1.0132,
+    "muffler": 0.1,
+    "rpm_scale": 1,
+    "redline": 6000,
+    "engine": "Volvo B18 1.8 I4"
+   },
+   "619": {
+    "family": "mazda_kl_v6",
+    "trim": 1.0254,
+    "muffler": 0.1,
+    "rpm_scale": 1,
+    "redline": 6500,
+    "engine": "Mazda KL-DE 2.5 V6"
+   },
+   "664": {
+    "family": "sohc_i4_loud",
+    "trim": 1.002,
+    "muffler": 0.1,
+    "rpm_scale": 1,
+    "redline": 5500,
+    "engine": "Toyota 22R-E 2.4 I4"
+   },
+   "670": {
+    "family": "sohc_i4_loud",
+    "trim": 0.9768,
+    "muffler": 0.6,
+    "rpm_scale": 1,
+    "redline": 6000,
+    "engine": "Volvo B230F 2.3 I4"
+   },
+   "700": {
+    "family": "bmw_m20_i6",
+    "trim": 1.06,
+    "muffler": 0.1,
+    "rpm_scale": 1,
+    "redline": 7000,
+    "engine": "Aston Martin AM2 5.9 V12"
+   },
+   "711": {
+    "family": "mazda_b_i4",
+    "trim": 0.9984,
+    "muffler": 0.1,
+    "rpm_scale": 1,
+    "redline": 7000,
+    "engine": "Mazda BP 1.8 I4"
+   },
+   "759": {
+    "family": "classic_v8_lowrev",
+    "trim": 1.0218,
+    "muffler": 0.1,
+    "rpm_scale": 1,
+    "redline": 4800,
+    "engine": "Ford Y-block 292 4.8 V8"
+   },
+   "785": {
+    "family": "vintage_i6",
+    "trim": 0.9797,
+    "muffler": 0.1,
+    "rpm_scale": 1,
+    "redline": 4700,
+    "engine": "AMC 196 OHV 3.2 I6"
+   },
+   "801": {
+    "family": "twincam_i4_loud",
+    "trim": 0.9898,
+    "muffler": 0.1,
+    "rpm_scale": 1,
+    "redline": 7600,
+    "engine": "Toyota 4A-GE 1.6 I4"
+   },
+   "906": {
+    "family": "vintage_i6",
+    "trim": 0.993,
+    "muffler": 0.1,
+    "rpm_scale": 1,
+    "redline": 3800,
+    "engine": "Chevrolet Stovebolt 216 3.5 I6"
+   },
+   "963": {
+    "family": "modern_i4_stock",
+    "trim": 0.9876,
+    "muffler": 0.6,
+    "rpm_scale": 1,
+    "redline": 6500,
+    "engine": "Nissan GA16DE 1.6 I4"
+   }
+  }
+ }
+}

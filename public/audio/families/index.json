@@ -13,8 +13,8 @@
     "off": "modern_i4_stock/engine_off.ogg"
    },
    "real_bins": {
-    "on": 21,
-    "off": 15
+    "on": 23,
+    "off": 24
    },
    "character": "modern DOHC/SOHC I4, stock muffler, quiet"
   },
@@ -30,7 +30,7 @@
    },
    "real_bins": {
     "on": 23,
-    "off": 21
+    "off": 19
    },
    "character": "older SOHC/OHV/sidevalve fours, loud exhausts"
   },
@@ -45,8 +45,8 @@
     "off": "classic_v8_lowrev/engine_off.ogg"
    },
    "real_bins": {
-    "on": 11,
-    "off": 14
+    "on": 15,
+    "off": 10
    },
    "character": "lazy burbly big/old V8s"
   },
@@ -61,8 +61,8 @@
     "off": "vintage_i6/engine_off.ogg"
    },
    "real_bins": {
-    "on": 16,
-    "off": 9
+    "on": 14,
+    "off": 12
    },
    "character": "1950s-60s inline sixes"
   },
@@ -109,8 +109,8 @@
     "off": "gm_sbc_v8/engine_off.ogg"
    },
    "real_bins": {
-    "on": 19,
-    "off": 16
+    "on": 21,
+    "off": 19
    },
    "character": "small-block Chevy with headers, loud"
   },
@@ -125,8 +125,8 @@
     "off": "twincam_i4_loud/engine_off.ogg"
    },
    "real_bins": {
-    "on": 12,
-    "off": 13
+    "on": 13,
+    "off": 12
    },
    "character": "4A-GE / Alfa twin-cam / Opel CIH stroker, loud"
   },
@@ -141,8 +141,8 @@
     "off": "ohv_v6/engine_off.ogg"
    },
    "real_bins": {
-    "on": 20,
-    "off": 13
+    "on": 18,
+    "off": 16
    },
    "character": "Ford Vulcan 3.0 / GM 60-degree 2.8 pushrod V6"
   },
@@ -157,8 +157,8 @@
     "off": "toyota_1jz_turbo/engine_off.ogg"
    },
    "real_bins": {
-    "on": 25,
-    "off": 23
+    "on": 22,
+    "off": 18
    },
    "character": "1JZ-GTE, turbo whistle"
   },
@@ -190,7 +190,7 @@
    },
    "real_bins": {
     "on": 16,
-    "off": 13
+    "off": 12
    },
    "character": "VW Type 1 air-cooled, loud"
   },
@@ -205,8 +205,8 @@
     "off": "mini_supercharged_i4/engine_off.ogg"
    },
    "real_bins": {
-    "on": 22,
-    "off": 20
+    "on": 20,
+    "off": 17
    },
    "character": "R53 Tritec with supercharger whine"
   },

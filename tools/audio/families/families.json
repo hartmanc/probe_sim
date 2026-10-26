@@ -1,0 +1,248 @@
+{
+ "_doc": "Engine families for the AI field. build_family.py reads the engine definition (cylinders, layout, fire, idle_rpm, redline_rpm = top of the bin range = the highest member's redline); make_index.py turns this file plus public/cars/field/identity.json into public/audio/families/index.json. aliases: [regex, family, {optional per-car overrides}] tested in order, case-insensitive, against '<engine.family> <make> <model>'. muffler: identity engine.exhaust_note -> 0..1 (0 = open pipe, 1 = heavily muffled).",
+ "families": {
+  "modern_i4_stock": {
+   "cylinders": 4,
+   "layout": "inline",
+   "fire": "even",
+   "idle_rpm": 750,
+   "redline_rpm": 6750,
+   "character": "modern DOHC/SOHC I4, stock muffler, quiet"
+  },
+  "sohc_i4_loud": {
+   "cylinders": 4,
+   "layout": "inline",
+   "fire": "even",
+   "idle_rpm": 800,
+   "redline_rpm": 6500,
+   "character": "older SOHC/OHV/sidevalve fours, loud exhausts"
+  },
+  "classic_v8_lowrev": {
+   "cylinders": 8,
+   "layout": "v",
+   "fire": "even",
+   "idle_rpm": 650,
+   "redline_rpm": 4800,
+   "character": "lazy burbly big/old V8s"
+  },
+  "vintage_i6": {
+   "cylinders": 6,
+   "layout": "inline",
+   "fire": "even",
+   "idle_rpm": 600,
+   "redline_rpm": 4800,
+   "character": "1950s-60s inline sixes"
+  },
+  "mazda_b_i4": {
+   "cylinders": 4,
+   "layout": "inline",
+   "fire": "even",
+   "idle_rpm": 850,
+   "redline_rpm": 7200,
+   "character": "Miata B6/BP, loud open exhaust"
+  },
+  "bmw_m20_i6": {
+   "cylinders": 6,
+   "layout": "inline",
+   "fire": "even",
+   "idle_rpm": 750,
+   "redline_rpm": 6500,
+   "character": "E30 M20 2.5, loud"
+  },
+  "gm_sbc_v8": {
+   "cylinders": 8,
+   "layout": "v",
+   "fire": "even",
+   "idle_rpm": 750,
+   "redline_rpm": 6000,
+   "character": "small-block Chevy with headers, loud"
+  },
+  "twincam_i4_loud": {
+   "cylinders": 4,
+   "layout": "inline",
+   "fire": "even",
+   "idle_rpm": 900,
+   "redline_rpm": 7600,
+   "character": "4A-GE / Alfa twin-cam / Opel CIH stroker, loud"
+  },
+  "ohv_v6": {
+   "cylinders": 6,
+   "layout": "v",
+   "fire": "even",
+   "idle_rpm": 700,
+   "redline_rpm": 5800,
+   "character": "Ford Vulcan 3.0 / GM 60-degree 2.8 pushrod V6"
+  },
+  "toyota_1jz_turbo": {
+   "cylinders": 6,
+   "layout": "inline",
+   "fire": "even",
+   "idle_rpm": 750,
+   "redline_rpm": 7000,
+   "character": "1JZ-GTE, turbo whistle"
+  },
+  "subaru_fa20_flat4": {
+   "cylinders": 4,
+   "layout": "flat",
+   "fire": "even",
+   "idle_rpm": 750,
+   "redline_rpm": 7450,
+   "character": "FA20 boxer, stock"
+  },
+  "vw_aircooled_flat4": {
+   "cylinders": 4,
+   "layout": "flat",
+   "fire": "even",
+   "idle_rpm": 850,
+   "redline_rpm": 4600,
+   "character": "VW Type 1 air-cooled, loud"
+  },
+  "mini_supercharged_i4": {
+   "cylinders": 4,
+   "layout": "inline",
+   "fire": "even",
+   "idle_rpm": 800,
+   "redline_rpm": 6750,
+   "character": "R53 Tritec with supercharger whine"
+  }
+ },
+ "probe": {
+  "id": "mazda_kl_v6",
+  "cylinders": 6,
+  "layout": "v",
+  "fire": "even",
+  "idle_rpm": 850,
+  "redline_rpm": 6900,
+  "engine": "../engine.json",
+  "sprites": {
+   "on": "../engine_on.ogg",
+   "off": "../engine_off.ogg"
+  },
+  "note": "the player's own set (public/audio), referenced, not copied"
+ },
+ "aliases": [
+  [
+   "V12|DB7|Aston",
+   "bmw_m20_i6",
+   {
+    "trim": 1.06
+   }
+  ],
+  [
+   "\\bKL-?DE\\b|Probe",
+   "mazda_kl_v6"
+  ],
+  [
+   "Mazda B[P6]\\b|Miata|MX-?5",
+   "mazda_b_i4"
+  ],
+  [
+   "\\bM20\\b|\\bE30\\b",
+   "bmw_m20_i6"
+  ],
+  [
+   "1JZ|2JZ",
+   "toyota_1jz_turbo"
+  ],
+  [
+   "Tritec|Cooper S",
+   "mini_supercharged_i4"
+  ],
+  [
+   "FA20|FR-?S|BRZ|Toyota 86|GT86",
+   "subaru_fa20_flat4"
+  ],
+  [
+   "Type 1|air-?cooled|Beetle|\\bBus\\b",
+   "vw_aircooled_flat4"
+  ],
+  [
+   "small-?block|\\bSBC\\b|350|5\\.7 V8",
+   "gm_sbc_v8"
+  ],
+  [
+   "Y-block|\\b318\\b|LA 318|Olds(mobile)? 307|\\b460\\b|\\b385\\b|\\b292\\b|V8",
+   "classic_v8_lowrev"
+  ],
+  [
+   "Hudson|Stovebolt|flathead 230|flathead.*I6|slant-?6|slant-?six|AMC 196|\\bI6\\b.*(19[3-6]\\d)",
+   "vintage_i6"
+  ],
+  [
+   "4A-?GE|Alfa Romeo twin-?cam|twin-?cam|CIH|Honda K2[04]|K-?series|DOHC",
+   "twincam_i4_loud"
+  ],
+  [
+   "Vulcan|60-degree 2\\.8|60\u00b0 2\\.8|\\bV6\\b",
+   "ohv_v6"
+  ],
+  [
+   "Suzuki G10|\\bI3\\b",
+   "modern_i4_stock",
+   {
+    "rpm_scale": 0.75,
+    "trim": 1.04
+   }
+  ],
+  [
+   "Duratec|Beta 2\\.0|T8D|Saturn 1\\.9|CG13|GA16|Chrysler 2\\.2|DOHC",
+   "modern_i4_stock"
+  ],
+  [
+   "EA827|B230|B18|L20B|22R|3T-?C|Lima|A-series|sidevalve|Pinto|Volvo|Datsun",
+   "sohc_i4_loud"
+  ]
+ ],
+ "fallback": [
+  {
+   "cylinders": 8,
+   "layout": "v",
+   "family": "classic_v8_lowrev"
+  },
+  {
+   "cylinders": 6,
+   "layout": "v",
+   "family": "ohv_v6"
+  },
+  {
+   "cylinders": 6,
+   "layout": "inline",
+   "family": "vintage_i6"
+  },
+  {
+   "cylinders": 4,
+   "layout": "flat",
+   "family": "subaru_fa20_flat4"
+  },
+  {
+   "cylinders": 4,
+   "layout": "inline",
+   "family": "sohc_i4_loud"
+  },
+  {
+   "cylinders": 3,
+   "layout": "inline",
+   "family": "modern_i4_stock"
+  }
+ ],
+ "default": "sohc_i4_loud",
+ "muffler": [
+  [
+   "straight pipe|stacks",
+   0.0
+  ],
+  [
+   "side-exit",
+   0.15
+  ],
+  [
+   "loud",
+   0.1
+  ],
+  [
+   "stock muffler|stock",
+   0.6
+  ]
+ ],
+ "muffler_default": 0.3
+}
