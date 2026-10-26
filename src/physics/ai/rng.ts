@@ -1,5 +1,6 @@
 // Seeded PRNG for everything random in a race (grid jitter, green-flag moment, per-lap pace noise,
 // driver decisions). A race is reproducible from (seed, ai_version): never call Math.random in src/physics/ai.
+import { cos as dcos, log as dlog } from '../dmath';   // the AI computes like the physics: the same bits on every host and engine
 
 /** mulberry32: 32-bit state, period 2^32, good enough for game decisions. */
 export class Rng {
@@ -21,7 +22,7 @@ export class Rng {
   normal(): number {
     let u = this.next();
     if (u < 1e-12) u = 1e-12;
-    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * this.next());
+    return Math.sqrt(-2 * dlog(u)) * dcos(2 * Math.PI * this.next());
   }
   /** Index drawn from unnormalized weights. */
   pick(weights: readonly number[]): number {

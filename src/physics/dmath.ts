@@ -718,6 +718,42 @@ export function log(x: number): number {
   return dk * ln2_hi - ((s * (f - R) - dk * ln2_lo) - f);
 }
 
+const CB_P0 = 1.87595182427177009643;   /* 0x3FFE03E6, 0x0F61E692 */
+const CB_P1 = -1.88497979543377169875;  /* 0xBFFE28E0, 0x92F02420 */
+const CB_P2 = 1.621429720105354466140;  /* 0x3FF9F160, 0x4A49D6C2 */
+const CB_P3 = -0.758397934778766047437; /* 0xBFE844CB, 0xBEE751D9 */
+const CB_P4 = 0.145996192886612446982;  /* 0x3FC2B000, 0xD4E4EDD7 */
+
+/** Math.cbrt as V8 (fdlibm / FreeBSD cbrt in V8's ieee754.cc). */
+export function cbrt(x: number): number {
+  let hx = hiWord(x);
+  const low = loWord(x);
+  const sign = hx & 0x80000000;
+  hx = (hx ^ sign) >>> 0;
+  if (hx >= 0x7FF00000) return x + x;   /* cbrt(NaN,INF) is itself */
+  let t: number;
+  if (hx < 0x00100000) {   /* zero or subnormal? */
+    if ((hx | low) === 0) return x;   /* cbrt(0) is itself */
+    t = 18014398509481984 * x;          /* t = 2**54 * x */
+    const high = hiWord(t) >>> 0;
+    t = fromWords((sign | (Math.trunc((high & 0x7FFFFFFF) / 3) + 696219795)) >>> 0, 0);   /* B2 */
+  } else {
+    t = fromWords((sign | (Math.trunc(hx / 3) + 715094163)) >>> 0, 0);                    /* B1 */
+  }
+  let r = (t * t) * (t / x);
+  t = t * ((CB_P0 + r * (CB_P1 + r * CB_P2)) + ((r * r) * r) * (CB_P3 + r * CB_P4));
+  /* round t away from zero to 23 bits: bits = (bits + 0x80000000) & 0xFFFFFFFFC0000000 */
+  let lo = loWord(t) + 0x80000000, hi = hiWord(t) >>> 0;
+  if (lo > 0xFFFFFFFF) { lo -= 4294967296; hi = (hi + 1) >>> 0; }
+  t = fromWords(hi, (lo & 0xC0000000) >>> 0);
+  /* one step Newton iteration to 53 bits with error < 0.667 ulps */
+  const s = t * t;
+  r = x / s;
+  const w = t + t;
+  r = (r - t) / (w + r);
+  return t + t * r;
+}
+
 /** Math.hypot(a, b) as V8 (Torque FastMathHypot, two arguments). */
 export function hypot(x: number, y: number): number {
   const a = Math.abs(x), b = Math.abs(y);

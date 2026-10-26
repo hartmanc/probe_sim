@@ -27,7 +27,7 @@ export function pow2(e: number): number {
   return wordsToDouble(1 << 20, 0) * wordsToDouble((e + 1022 + 1023) << 20, 0);   // 2^-1022 · 2^(e+1022), exact
 }
 
-export type Fn1 = 'sin' | 'cos' | 'tan' | 'atan' | 'exp' | 'log';
+export type Fn1 = 'sin' | 'cos' | 'tan' | 'atan' | 'exp' | 'log' | 'cbrt';
 export type Fn2 = 'atan2' | 'hypot';
 export type Fn3 = 'hypot3';
 export type FnName = Fn1 | Fn2 | Fn3;
@@ -64,6 +64,8 @@ export const CASE_SETS: CaseSet[] = [
   { id: 'log.1e6', fn: 'log', n: 1_000_000, seed: 114, gen: uni(0, 1e6) },
   { id: 'log.near1', fn: 'log', n: 200_000, seed: 115, gen: uni(0.999, 1.001) },
   { id: 'log.wide', fn: 'log', n: 200_000, seed: 116, gen: (r) => Math.abs(logu(-1074, 1023)(r)) },
+  { id: 'cbrt.1e6', fn: 'cbrt', n: 1_000_000, seed: 123, gen: sym(1e6) },
+  { id: 'cbrt.wide', fn: 'cbrt', n: 200_000, seed: 124, gen: logu(-1074, 1023) },
   { id: 'atan2.100', fn: 'atan2', n: 1_000_000, seed: 117, gen: sym(100) },
   { id: 'atan2.wide', fn: 'atan2', n: 200_000, seed: 118, gen: logu(-1074, 1023) },
   { id: 'hypot.100', fn: 'hypot', n: 1_000_000, seed: 119, gen: sym(100) },
@@ -72,7 +74,7 @@ export const CASE_SETS: CaseSet[] = [
   { id: 'hypot3.wide', fn: 'hypot3', n: 200_000, seed: 122, gen: logu(-1074, 1023) },
 ];
 
-export const ARITY: Record<FnName, number> = { sin: 1, cos: 1, tan: 1, atan: 1, exp: 1, log: 1, atan2: 2, hypot: 2, hypot3: 3 };
+export const ARITY: Record<FnName, number> = { cbrt: 1, sin: 1, cos: 1, tan: 1, atan: 1, exp: 1, log: 1, atan2: 2, hypot: 2, hypot3: 3 };
 
 /** The engine's own Math function for `fn` (hypot3 = Math.hypot with three arguments). */
 export function mathFn(fn: FnName, M: Math = Math): (a: number, b: number, c: number) => number {
@@ -150,7 +152,7 @@ const SPECIAL = [0, -0, 5e-324, -5e-324, 2.2250738585072014e-308, -2.22507385850
 /** The edge cases: every special value per function, and their pairs / triples for the multi-argument ones. */
 export function edgeCases(): { fn: FnName; args: number[] }[] {
   const out: { fn: FnName; args: number[] }[] = [];
-  for (const fn of ['sin', 'cos', 'tan', 'atan', 'exp', 'log'] as const) {
+  for (const fn of ['sin', 'cos', 'tan', 'atan', 'exp', 'log', 'cbrt'] as const) {
     for (const x of SPECIAL) out.push({ fn, args: [x] });
     // the neighbours of each special value
     for (const x of SPECIAL) if (Number.isFinite(x) && x !== 0) { out.push({ fn, args: [x * (1 + pow2(-52))] }, { fn, args: [x * (1 - pow2(-53))] }); }

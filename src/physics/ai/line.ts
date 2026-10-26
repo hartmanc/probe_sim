@@ -2,8 +2,12 @@
 // line.offset_m), its curvature / grade / banking, the ghost speed shape, and a cheap incremental
 // projector (hint-based local search, no allocation). Built once per race, shared by all drivers.
 
+import { atan2 as datan2, exp as dexp, hypot as dhypot, hypot3 as dhypot3 } from '../dmath';   // the AI computes like the physics: the same bits on every host and engine
 import type { TrackJson } from '../track';
 import { createTrackProjector } from '../track';
+
+/** v * v: the same bits as v ** 2 in V8, without relying on any engine's pow. */
+const sq = (v: number): number => v * v;
 
 export interface GhostsJsonLike {
   s_grid_m: number;
@@ -16,7 +20,7 @@ const TAU = 2 * Math.PI;
 function smoothPeriodic(a: Float64Array, sigma: number): Float64Array {
   const r = Math.ceil(3 * sigma), w: number[] = [];
   let ws = 0;
-  for (let k = -r; k <= r; k++) { const x = Math.exp(-0.5 * (k / sigma) ** 2); w.push(x); ws += x; }
+  for (let k = -r; k <= r; k++) { const x = dexp(-0.5 * sq(k / sigma)); w.push(x); ws += x; }
   const n = a.length, out = new Float64Array(n);
   for (let i = 0; i < n; i++) {
     let acc = 0;
@@ -86,13 +90,13 @@ export class RaceLine {
     this.tx = new Float64Array(N); this.ty = new Float64Array(N); this.segLen = new Float64Array(N);
     for (let i = 0; i < N; i++) {
       const j = (i + 1) % N, dx = this.cx[j] - this.cx[i], dy = this.cy[j] - this.cy[i];
-      const l = Math.hypot(dx, dy) || 1e-9;
+      const l = dhypot(dx, dy) || 1e-9;
       this.tx[i] = dx / l; this.ty[i] = dy / l; this.segLen[i] = l;
     }
     this.halfL = new Float64Array(N); this.halfR = new Float64Array(N);
     for (let i = 0; i < N; i++) {
-      this.halfL[i] = Math.max(0.5, Math.hypot(track.left[i][0] - this.cx[i], track.left[i][1] - this.cy[i]));
-      this.halfR[i] = Math.max(0.5, Math.hypot(track.right[i][0] - this.cx[i], track.right[i][1] - this.cy[i]));
+      this.halfL[i] = Math.max(0.5, dhypot(track.left[i][0] - this.cx[i], track.left[i][1] - this.cy[i]));
+      this.halfR[i] = Math.max(0.5, dhypot(track.right[i][0] - this.cx[i], track.right[i][1] - this.cy[i]));
     }
     // racing line offset at each station (grid may be coarser than the stations)
     const g = ghosts.s_grid_m, offs = ghosts.line.offset_m, NG = offs.length;
@@ -112,9 +116,9 @@ export class RaceLine {
       this.lz[i] = this.cz[i];
     }
     this.ds = new Float64Array(N);
-    for (let i = 0; i < N; i++) { const j = (i + 1) % N; this.ds[i] = Math.hypot(this.lx[j] - this.lx[i], this.ly[j] - this.ly[i], this.lz[j] - this.lz[i]) || 1e-3; }
+    for (let i = 0; i < N; i++) { const j = (i + 1) % N; this.ds[i] = dhypot3(this.lx[j] - this.lx[i], this.ly[j] - this.ly[i], this.lz[j] - this.lz[i]) || 1e-3; }
     const head = new Float64Array(N);
-    for (let i = 0; i < N; i++) { const a = (i - 1 + N) % N, b = (i + 1) % N; head[i] = Math.atan2(this.ly[b] - this.ly[a], this.lx[b] - this.lx[a]); }
+    for (let i = 0; i < N; i++) { const a = (i - 1 + N) % N, b = (i + 1) % N; head[i] = datan2(this.ly[b] - this.ly[a], this.lx[b] - this.lx[a]); }
     const kRaw = new Float64Array(N), gRaw = new Float64Array(N);
     for (let i = 0; i < N; i++) {
       const a = (i - 1 + N) % N, b = (i + 1) % N;
@@ -250,7 +254,7 @@ export class RaceLine {
   headingAt(s: number): number {
     const u = this.wrap(s) / this.spacing;
     let i = Math.floor(u); if (i >= this.N) i = this.N - 1;
-    return Math.atan2(this.ty[i], this.tx[i]);
+    return datan2(this.ty[i], this.tx[i]);
   }
 
   /**
@@ -261,10 +265,10 @@ export class RaceLine {
     const N = this.N, cx = this.cx, cy = this.cy;
     let i = hint;
     if (i >= 0 && i < N) {
-      let d = (x - cx[i]) ** 2 + (y - cy[i]) ** 2;
+      let d = sq(x - cx[i]) + sq(y - cy[i]);
       for (let it = 0; it < 64; it++) {
         const a = i + 1 === N ? 0 : i + 1, b = i === 0 ? N - 1 : i - 1;
-        const da = (x - cx[a]) ** 2 + (y - cy[a]) ** 2, db = (x - cx[b]) ** 2 + (y - cy[b]) ** 2;
+        const da = sq(x - cx[a]) + sq(y - cy[a]), db = sq(x - cx[b]) + sq(y - cy[b]);
         if (da < d && da <= db) { i = a; d = da; } else if (db < d) { i = b; d = db; } else break;
       }
       if (d > 900) i = -1; // far from the centre: let the global projector decide

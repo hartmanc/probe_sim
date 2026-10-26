@@ -5,6 +5,7 @@
 //
 // Per physics step (dt = 0.001 s): step(dt, playerInput). Per frame: hud(), poses().
 
+import { atan2 as datan2, hypot as dhypot } from '../dmath';   // the AI computes like the physics: the same bits on every host and engine
 import type { DriverInput, Surface, VehicleState } from '../types';
 import type { PitLaneJson } from '../track';
 import type { CollisionWorld } from '../collision';
@@ -16,6 +17,9 @@ import { AiDriver, type MishapKind } from './driver';
 import { AI_VERSION, resolveCarType, aiCarJson, buildSpeedProfile, measureCarPerf, parseIdentity, drawPace, fieldKey, modelKey, type CarPerf, type IdentityCar, type PaceCar, type PaceJson } from './field';
 import { Traffic } from './traffic';
 import { Rng, hashSeed } from './rng';
+
+/** v * v: the same bits as v ** 2 in V8, without relying on any engine's pow. */
+const sq = (v: number): number => v * v;
 
 export type RacePhase = 'formation' | 'green' | 'yellow' | 'chequered' | 'finished';
 export type RaceFlag = 'yellow' | 'green' | 'chequered' | 'black';
@@ -245,7 +249,7 @@ class PenaltyBox {
       for (let k = 0; k < this.n; k++) {
         const c = part.center[i0 + k], l = part.left[i0 + k], r = part.right[i0 + k];
         this.cx[k] = c[0]; this.cy[k] = c[1];
-        this.hw[k] = 0.5 * Math.hypot(l[0] - r[0], l[1] - r[1]) + 0.3;
+        this.hw[k] = 0.5 * dhypot(l[0] - r[0], l[1] - r[1]) + 0.3;
       }
       this.fallback = false;
     } else { this.n = 0; this.cx = this.cy = this.hw = new Float64Array(0); this.fallback = true; }
@@ -254,7 +258,7 @@ class PenaltyBox {
   spot(): { x: number; y: number; heading: number } | null {
     if (this.fallback || this.n < 3) return null;
     const k = this.n >> 1;
-    return { x: this.cx[k], y: this.cy[k], heading: Math.atan2(this.cy[k + 1] - this.cy[k - 1], this.cx[k + 1] - this.cx[k - 1]) };
+    return { x: this.cx[k], y: this.cy[k], heading: datan2(this.cy[k + 1] - this.cy[k - 1], this.cx[k + 1] - this.cx[k - 1]) };
   }
   contains(x: number, y: number, s: number, lat: number): boolean {
     if (this.fallback) {
@@ -266,7 +270,7 @@ class PenaltyBox {
     }
     let best = Infinity, bk = -1;
     for (let k = 0; k < this.n; k++) {
-      const d = (x - this.cx[k]) ** 2 + (y - this.cy[k]) ** 2;
+      const d = sq(x - this.cx[k]) + sq(y - this.cy[k]);
       if (d < best) { best = d; bk = k; }
     }
     return bk > 0 && bk < this.n - 1 && Math.sqrt(best) < this.hw[bk];

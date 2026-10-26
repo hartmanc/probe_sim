@@ -6,5 +6,5 @@
 // sin/cos/tan/atan/atan2/exp/log/hypot and pow (the server's glibc pow, since round 2).
 import * as D from './dmath.mjs';
 const nh = Math.hypot;
-Object.assign(Math, { pow: D.pow, sin: D.sin, cos: D.cos, tan: D.tan, atan: D.atan, atan2: D.atan2, exp: D.exp, log: D.log,
+Object.assign(Math, { pow: D.pow, cbrt: D.cbrt, sin: D.sin, cos: D.cos, tan: D.tan, atan: D.atan, atan2: D.atan2, exp: D.exp, log: D.log,
   hypot: (...a) => a.length === 2 ? D.hypot(a[0], a[1]) : a.length === 3 ? D.hypot3(a[0], a[1], a[2]) : nh(...a) });

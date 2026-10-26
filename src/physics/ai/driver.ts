@@ -14,6 +14,7 @@
 // into a free lane; single file under yellow / formation.
 // Mishaps: a seeded per-corner loss of control (run wide / spin). See NOTES "Racecraft (the lane model) and mishaps".
 
+import { atan as datan, atan2 as datan2, cos as dcos, hypot as dhypot, sin as dsin } from '../dmath';   // the AI computes like the physics: the same bits on every host and engine
 import type { DriverInput } from '../types';
 import type { Vehicle } from '../vehicle';
 import type { CarSpec } from '../spec';
@@ -276,7 +277,7 @@ export class AiDriver {
 
     // ---- heading, off track, stuck
     const [qx, qy, qz, qw] = st.quat;
-    const yaw = Math.atan2(2 * (qx * qy + qz * qw), 1 - 2 * (qy * qy + qz * qz));
+    const yaw = datan2(2 * (qx * qy + qz * qw), 1 - 2 * (qy * qy + qz * qz));
     let herr = yaw - line.headingAt(s);
     while (herr > Math.PI) herr -= 2 * Math.PI;
     while (herr < -Math.PI) herr += 2 * Math.PI;
@@ -650,17 +651,17 @@ export class AiDriver {
 
     // ---- steering: pure pursuit from the rear axle
     {
-      const cy = Math.cos(yaw), sy = Math.sin(yaw);
+      const cy = dcos(yaw), sy = dsin(yaw);
       const rx = st.pos[0] - cy * L / 2, ry = st.pos[1] - sy * L / 2;
       const Ld = LD0 + LDK * v;
       const sT = s - L / 2 + Ld;
       line.pointAt(sT, line.at(line.off, sT) + this.shift, this.pt);
       const dx = this.pt[0] - rx, dy = this.pt[1] - ry;
-      const alpha = Math.atan2(-sy * dx + cy * dy, cy * dx + sy * dy);
-      const dist = Math.max(1, Math.hypot(dx, dy));
-      const kappa = 2 * Math.sin(alpha) / dist;
+      const alpha = datan2(-sy * dx + cy * dy, cy * dx + sy * dy);
+      const dist = Math.max(1, dhypot(dx, dy));
+      const kappa = 2 * dsin(alpha) / dist;
       this.kCmd = kappa;
-      let delta = Math.atan(L * kappa) + KR * (v * kappa - st.angVel[2]);
+      let delta = datan(L * kappa) + KR * (v * kappa - st.angVel[2]);
       delta += perf.kUs * Math.max(-1.3, Math.min(1.3, (v * v * kappa) / G));
       let sc = Math.max(-1, Math.min(1, delta / perf.maxSteer));
       // front axle sliding past its peak (understeer, at speed): hold / unwind the lock. More lock only pushes the front

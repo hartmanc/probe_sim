@@ -9,6 +9,7 @@
 // A car may name its model explicitly with `model_id` (pace row, else identity row; modelKey): a renumbered car reuses
 // its earlier model.
 
+import { cbrt as dcbrt, pow as dpow } from '../dmath';   // the AI computes like the physics: the same bits on every host and engine
 import { loadCarSpec, type CarSpec } from '../spec';
 import { Vehicle } from '../vehicle';
 import { createFlatSurface } from '../devtrack';
@@ -329,7 +330,7 @@ export const KWT_MAX = 150;
 export function paceSplit(scale: number): { grip: number; power: number } {
   const s = Math.min(PACE_MAX, Math.max(PACE_MIN, scale));
   const grip = Math.min(GRIP_MAX, Math.max(GRIP_MIN, s));
-  const power = s < GRIP_MIN ? Math.pow(s / GRIP_MIN, 3) : s > GRIP_MAX ? Math.pow(s / GRIP_MAX, 3) : 1;
+  const power = s < GRIP_MIN ? dpow(s / GRIP_MIN, 3) : s > GRIP_MAX ? dpow(s / GRIP_MAX, 3) : 1;
   return { grip, power };
 }
 const RPMK = 60 / (2 * Math.PI);
@@ -380,7 +381,7 @@ export function aiCarJson(probeJson: any, identity: IdentityCar | null | undefin
   j.brakes.handbrakeTorque *= mr;
   // CG: a little higher for tall cars, but race-lowered so the static rollover threshold T/2h stays
   // above 1.35 g (narrow, tall classics otherwise tip over when nudged at high grip)
-  j.cgHeight = Math.min(j.cgHeight * hr ** 0.5, (0.5 * (tr + j.trackRear)) / 2.7);
+  j.cgHeight = Math.min(j.cgHeight * dpow(hr, 0.5), (0.5 * (tr + j.trackRear)) / 2.7);
   j.hull.front *= lr; j.hull.rear *= lr; j.hull.roofFront *= lr; j.hull.roofRear *= lr;
   j.hull.halfWidth *= wr; j.hull.roof *= hr;
   j.aero.frontalArea *= wr * hr;
@@ -431,7 +432,7 @@ export function aiCarJson(probeJson: any, identity: IdentityCar | null | undefin
     const P = effKw * 1000 * p3 * 0.9;
     const cda = j.aero.cd * j.aero.frontalArea, mg = j.mass * 9.81;
     let vTop = 40;
-    for (let it = 0; it < 40; it++) vTop = Math.cbrt(Math.max(1, P - j.rollingResistance * mg * vTop) / (0.5 * j.aero.airDensity * cda));
+    for (let it = 0; it < 40; it++) vTop = dcbrt(Math.max(1, P - j.rollingResistance * mg * vTop) / (0.5 * j.aero.airDensity * cda));
     const r = j.wheel.radius;
     const wTop = type.shiftRpm / RPMK;
     const top = wTop * r / (1.04 * vTop);
@@ -439,7 +440,7 @@ export function aiCarJson(probeJson: any, identity: IdentityCar | null | undefin
     const ratios: number[] = [];
     for (let k = 0; k < type.gears; k++) {
       const f = 1 - k / (type.gears - 1);
-      ratios.push(+(top * Math.pow(spread, Math.pow(f, 1.12))).toFixed(4)); // slightly closer upper gears
+      ratios.push(+(top * dpow(spread, dpow(f, 1.12))).toFixed(4)); // slightly closer upper gears
     }
     j.drivetrain.gearRatios = ratios;
     j.drivetrain.reverseRatio = ratios[0];
@@ -489,7 +490,7 @@ export function describeAiCar(probeJson: any, identity: IdentityCar | null | und
   const perf = measureCarPerf(loadCarSpec(j));
   const P = peakPowerKw(j) * 1000 * 0.9, cda = j.aero.cd * j.aero.frontalArea, mg = j.mass * 9.81;
   let vTop = 40;
-  for (let it = 0; it < 40; it++) vTop = Math.cbrt(Math.max(1, P - j.rollingResistance * mg * vTop) / (0.5 * j.aero.airDensity * cda));
+  for (let it = 0; it < 40; it++) vTop = dcbrt(Math.max(1, P - j.rollingResistance * mg * vTop) / (0.5 * j.aero.airDensity * cda));
   return {
     make: (identity?.make as string) ?? null, model: (identity?.model as string) ?? null,
     drive: t.drive, enginePos: t.enginePos, frontWeight: j.frontWeightFraction,
@@ -612,7 +613,7 @@ export function measureCarPerf(spec: CarSpec): CarPerf {
   return {
     acc, brakeGain, kUs,
     // grip budget: narrow, tall cars lose more to load transfer (track / 2h relative to the Probe's 1.51)
-    alat: 0.955 * spec.tyre.lateral.mu0 * Math.min(1, Math.pow((0.5 * (spec.trackFront + spec.trackRear)) / (2 * spec.cgHeight) / 1.51, 0.4)),
+    alat: 0.955 * spec.tyre.lateral.mu0 * Math.min(1, dpow((0.5 * (spec.trackFront + spec.trackRear)) / (2 * spec.cgHeight) / 1.51, 0.4)),
     abrake: 0.95 * spec.tyre.longitudinal.mu0 / 1.08,
     maxSteer, wheelbase: L, mass: m, aeroK, crr: spec.rollingResistance,
     peakSlipRatio: spec.tyre.longitudinal.peakSlipRatio,
