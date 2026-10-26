@@ -1,11 +1,12 @@
 # Scoreboard: contract and client integration
 
-A public arcade scoreboard: top 10 per board, no login, names of up to 12 characters. Two modes:
+A public arcade scoreboard: top 10 per board, no login, names of up to 12 characters, each name owned by the device(s)
+that posted it (§1.1). Two modes:
 
 | mode | score | order | how it is checked |
 |---|---|---|---|
 | `hotlap` | best valid lap time, s | lower is better | plausibility checks, then the server **replays the input trace** with the real physics |
-| `race` | metres covered in a 10-lap race against the AI | higher is better | plausibility checks only (`replay` field reserved) |
+| `race` | finish time of a 5-lap race (`LIMITS.raceLaps`) against the AI; a car classified short by distance, encoded above `LIMITS.raceDnfBase` | lower is better | plausibility checks only (`replay` field reserved). **Closed for the public since 0.4.0** (owner, 26 Oct 2026): until the server can replay a race, race posts and race board reads answer `410` and the client hides the race board and the results' submit row (`RACE_BOARDS_PUBLIC` in `src/app/scoreboard-client.ts`). The code paths stay and are tested with `HandlerDeps.raceBoards = true`. |
 
 Code: `src/scoreboard/` (pure TS, shared by client and server), `api/scores.ts` (Vercel Function), `vercel.json`.
 
@@ -30,11 +31,45 @@ heightfield.bin, scenery.json (walls, pit lane, paved zones, far terrain), ghost
 offsets), src/app/timing.ts (the lap timer the replay uses), or `src/scoreboard/sim.ts`. Otherwise old traces
 stop replaying and players get "lap time differs" rejections.
 
-Whitelists (`config.ts`): tracks `laguna_seca`, cars `probe_gt`, modes `hotlap`/`race`, input `pad`/`keys`/`phone`.
+Since 0.4.0 the hash ignores car.json's `"_"` comment keys (src/physics/spec.ts ignores them too), and
+`PHYSICS_KEY_PINS` in `config.ts` maps the computed values of the shipped car.json to the keys the 0.3.0 boards were
+published under, so the boards kept their entries through the comment edit. Any real change computes an unpinned
+value and opens fresh boards as before. The server accepts only its own current physics value (`422 physics version
+mismatch`) and, for a race, only the current AI board version (`currentRaceAiVersion()` = `<AI_VERSION>-<laps>L`).
 
-Storage: one Redis sorted set per board (`sb:z:<board>`, member = lower-cased name, score = time or metres)
-plus a hash of entry details (`sb:h:<board>`). Best per name is kept (`ZADD LT|GT CH`), each board is
-trimmed to 100 entries, GET returns the top 10.
+Whitelists (`config.ts`, checked with `Object.hasOwn`): tracks = the keys of `TRACKS` (Laguna Seca, Sonoma,
+Buttonwillow), cars `probe_gt`, modes `hotlap`/`race`, input `pad`/`keys`/`phone`.
+
+Storage (Upstash Redis): one sorted set per board (`sb:z:<board>`, member = lower-cased name, score = time) plus a
+hash of entry details (`sb:h:<board>`). Best per name is kept (`ZADD LT CH`), each board is trimmed to 100 entries,
+GET returns the top 10. **Old boards expire**: at most once an hour per warm instance, after a POST, the server lists the
+boards (`SCAN sb:z:*`) and gives every hot-lap board whose physics value is not the server's current one a 30-day TTL
+(`LIMITS.staleBoardTtlS`) on both keys; race boards are left alone while hidden.
+
+| key | what | written by |
+|---|---|---|
+| `sb:z:<board>`, `sb:h:<board>` | a board and its entry details | POST |
+| `sb:own:<name>` | name ownership: JSON `{ h: [sha256 of a device secret, …] (≤ 5), at }` | first POST of the name; `adopt` |
+| `sb:xfer:<name>` | the name's current transfer code (its hash), 1 h TTL, deleted when used | `transfer-code` |
+| `sb:rl:post:<ip>`, `sb:rl:code:<ip>`, `sb:rl:adopt:<ip>`, `sb:rl:adoptname:<name>`, `sb:rl:feedback:<ip>` | rate-limit counters, 10 min TTL | POST, ops, /api/feedback |
+
+### 1.1 Name ownership (owner, 26 Oct 2026)
+
+- Every device makes a **secret** once: 128 random bits as 32 hex characters, `localStorage['probe-sim.scoreboard.secret']`,
+  sent as `secret` with every POST. The server stores only `SHA-256("probe-sim/owner/v1/" + secret)`.
+- **The first device to post a name claims it** (`SET sb:own:<name> … NX` after the lap passes the replay). A POST
+  without a well-formed secret answers `422 device secret missing: reload the game`; a POST of a name owned by other
+  devices answers `403 name taken` **before** any replay.
+- **Transfer code**: on the owning device, Scoreboard → Transfer code POSTs `{ op: 'transfer-code', name, secret }`
+  and shows a six-character code (alphabet without 0/O/1/I/L, 31^6 ≈ 8.9e8 codes), valid one hour, single use, bound to
+  that name. On the other device, Scoreboard → Use a transfer code POSTs `{ op: 'adopt', name, code, secret }`, which adds
+  that device's secret hash to the name (at most 5 devices; the oldest drops). The code alone cannot spoof a post: it
+  must be paired with the name, it only adds a device, it expires in an hour and it dies on first use; guessing is
+  limited to 5 adopts per IP and 10 per name per 10 minutes (on top of the 10-per-IP POST limit and the WAF rule).
+- **Existing entries** (posted before 0.4.0) keep their times; the first device to post that name afterwards claims it.
+- **Releasing a name** (owner, Upstash console → Data Browser or CLI): `DEL sb:own:<lower-cased name>` and
+  `DEL sb:xfer:<lower-cased name>`. The next device to post the name claims it; its board entries are untouched (remove
+  an entry with `ZREM sb:z:<board> "<name>"` and `HDEL sb:h:<board> "<name>"`).
 
 ## 2. HTTP API (`/api/scores`)
 
@@ -44,11 +79,13 @@ All responses are JSON with `Cache-Control: no-store`. Errors: `{ ok: false, err
 |---|---|
 | `GET /api/scores` | `{ ok, store: "memory"\|"upstash", boards: { "laguna_seca/probe_gt": "<current hot-lap board key>" } }` |
 | `GET /api/scores?board=<key>[&name=<name>]` | `{ ok, board, mode, entries: Score[], you?: Score\|null }` (`you` only when `name` is given) |
-| `POST /api/scores` with a `Submission` (JSON) | `{ ok, board, rank, best, improved, replayed? }` |
+| `POST /api/scores` with a `Submission` (JSON, with `secret`) | `{ ok, board, rank, best, improved, replayed? }` |
+| `POST /api/scores` `{ op: 'transfer-code', name, secret }` | `{ ok, name, code, expires_s }` (404 name not registered, 403 another device's) |
+| `POST /api/scores` `{ op: 'adopt', name, code, secret }` | `{ ok, name }` (403 wrong or expired code) |
 
 `Score = { rank, name, score, input, at, ai_version?, laps? }`. Status codes: 400 bad JSON / board key,
-403 foreign `Origin`, 413 body > 2.5 MB, 415 not JSON, 422 rejected (with `reasons`), 429 rate limited
-(10 POSTs per IP per 10 min, `Retry-After`), 503 server assets missing, 500 otherwise.
+403 foreign `Origin` or `name taken`, 410 race board / race post (closed), 413 body > 2.5 MB, 415 not JSON, 422 rejected
+(with `reasons`), 429 rate limited (10 POSTs per IP per 10 min, `Retry-After`), 503 server assets missing, 500 otherwise.
 
 Same origin only: requests without an `Origin` header (same-origin GETs, curl) pass; a present `Origin`
 must match the request host or be listed in `SCOREBOARD_ALLOWED_ORIGINS` (comma separated; e.g. the Vite
@@ -70,8 +107,8 @@ dev server when testing against `vercel dev`).
 Plausibility (`validateSubmission`): whitelisted ids; `physics` equals the server's (else "reload the
 game"); name 1-12 printable characters after trimming and collapsing spaces (no control, format or
 zero-width characters); hot lap: 90 s < time < 600 s, `valid === true`, `lap` 1..6, trace present and
-well formed and matching track/car/physics; race: 0 < metres <= 10 x track length + 250 m, `laps` 0..10
-and consistent with metres (+-250 m), `finished` implies 10 laps. The hot lap is then replayed: lap `lap`
+well formed and matching track/car/physics; race: 0 < metres <= 5 x track length + 250 m, `laps` 0..5
+and consistent with metres (+-250 m), `finished` implies 5 laps and a race time. The hot lap is then replayed: lap `lap`
 must complete, be valid, and |replayed - claimed| <= 0.05 s. The **replayed** time is what is stored.
 
 ### Input trace (`InputTrace`)
@@ -79,7 +116,7 @@ must complete, be valid, and |replayed - claimed| <= 0.05 s. The **replayed** ti
 ```ts
 { v: 1, physics, track, car, hz: 100, dt: 0.001,
   reset: { pos: [x, y, z], heading, speed },     // the canonical rolling start (checked)
-  ref: [[0, 'driver_a_best'], [step, id|null], ...], // gear-schedule reference ghost changes
+  ref: [[0, 'driver_a_best'], [step, id|null], ...], // gear-schedule reference ghost changes (Laguna's ids)
   rows: [[step, steer, throttle, brake, flags], ...],
   steps }                                         // physics steps from the reset to the submit
 ```
@@ -157,8 +194,8 @@ Wrap all `localStorage` access in try/catch (private windows). Never block drivi
   (or take `boards['laguna_seca/probe_gt']` from `GET /api/scores`).
 - `GET /api/scores?board=<key>&name=<stored name>`; render `entries` as rank, name, time
   (`m:ss.sss`), input icon; if `you` is set and `you.rank > 10`, add a separator row with it.
-- Race tab (once the AI lands): key `boardKey('race', track, car, physics, AI_VERSION)`; metres shown as
-  laps + distance; entries carry `laps` and `ai_version`.
+- Race tab (hidden while `RACE_BOARDS_PUBLIC` is false): key `boardKey('race', track, car, physics,
+  raceBoardVersion(AI_VERSION))`; finish time, or laps + distance for a car classified short.
 - Fetch on open, no polling; show "offline" on failure. Responses are `no-store`.
 
 ## 4. Server notes
@@ -186,6 +223,7 @@ Wrap all `localStorage` access in try/catch (private windows). Never block drivi
 | `KV_REST_API_URL`, `KV_REST_API_TOKEN` | the same, under the names the Vercel Marketplace integration injects |
 | `SCOREBOARD_ALLOWED_ORIGINS` | optional extra allowed origins (comma separated) |
 | `SCOREBOARD_ASSET_ROOT` | optional override of the public/ directory the replay reads |
+| `GITHUB_ISSUES_TOKEN` | api/feedback.ts only: a fine-grained GitHub token limited to Issues (read and write) on hartmanc/probe_sim; unset = the report button answers 503 |
 
 With neither Redis pair set the function uses an in-memory store (local dev, tests; on Vercel that would
 mean per-instance, throwaway boards, and `GET /api/scores` reports `"store": "memory"`).
@@ -208,7 +246,7 @@ curl -s -X POST https://$HOST/api/scores -H 'Content-Type: application/json' \
 # full round trip with a real autopilot lap (prints the claimed lap time, writes sub.json):
 npx tsx -e "import {writeFileSync} from 'node:fs'; import {recordLap} from './src/scoreboard/__tests__/fixtures';
   const {lap,trace}=recordLap(); writeFileSync('sub.json', JSON.stringify({mode:'hotlap',track:'laguna_seca',
-  car:'probe_gt',physics:trace.physics,name:'smoke test',input:'pad',time:lap.time,lap:lap.n,valid:lap.valid,trace}));
+  car:'probe_gt',physics:trace.physics,name:'smoke test',secret:'0123456789abcdef0123456789abcdef',input:'pad',time:lap.time,lap:lap.n,valid:lap.valid,trace}));
   console.log(lap.time)"
 curl -s -X POST https://$HOST/api/scores -H 'Content-Type: application/json' --data-binary @sub.json
 ```
@@ -216,6 +254,15 @@ curl -s -X POST https://$HOST/api/scores -H 'Content-Type: application/json' --d
 The last call should answer `{"ok":true,...,"replayed":138.904}` (the autopilot lap). That entry then sits
 on the public board; the board has no delete endpoint, so remove it with the Upstash console
 (`ZREM sb:z:<board> "smoke test"` and `HDEL sb:h:<board> "smoke test"`) or use a name you are happy to keep.
+
+## 5.1 The report button (`/api/feedback`)
+
+`POST /api/feedback { kind: 'bug'|'feature', description, context?: { version, sha, track, device, ua, screen, error },
+name?, secret? }` → `{ ok, number, url }` files an issue on hartmanc/probe_sim with the labels `from-game` and the kind
+(`src/feedback/handler.ts`). Same origin only; 3 reports per IP per 10 min (the scores store's counter); body ≤ 4 KB;
+description 1-2000 characters; control and format characters stripped; everything the player typed sits in code
+fences (no mentions, links or markup), the title's `@` becomes `(at)`. The issue carries the scoreboard name only when
+the device secret owns it, else "anonymous". No email field. 503 without `GITHUB_ISSUES_TOKEN`, 502 when GitHub refuses.
 
 ## 6. Determinism findings (for the physics owner)
 
