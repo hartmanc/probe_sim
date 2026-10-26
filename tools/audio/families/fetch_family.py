@@ -24,4 +24,7 @@ for e in src["entries"]:
         continue
     if not os.path.exists(p):
         print("fetch", vid, e.get("title", "")[:60], flush=True)
-        fetch_audio.main(fam, vid, max_s=int(max(900, float(e.get("t1") or 0) + 5)))
+        try:
+            fetch_audio.main(fam, vid, max_s=int(max(900, float(e.get("t1") or 0) + 5)))
+        except Exception as ex:  # a video that will not download now: the build skips it (and says so)
+            print("  FAILED", vid, type(ex).__name__, flush=True)

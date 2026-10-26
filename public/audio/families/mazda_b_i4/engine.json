@@ -7,560 +7,581 @@
  },
  "padding_s": 0.05,
  "levels": {
-  "off_minus_on_db": -5.23,
+  "off_minus_on_db": -4.0,
   "on_rms_dbA": -24.0
  },
  "bins": [
   {
-   "rpm": 1000,
+   "rpm": 850,
    "on": {
     "offset": 0.15,
-    "duration": 0.36,
-    "rpm": 1000.0,
+    "duration": 1.270583,
+    "rpm": 850.0,
     "tier": "pitch-shifted",
-    "source": "pitch-shifted from the 1500 rpm bin (x0.667), src0 @ 0.71 s",
-    "seam_corr": 0.753,
-    "tick": 1.72
+    "source": "pitch-shifted from the 1000 rpm bin (x0.850), src2 @ 388.71 s",
+    "seam_corr": 0.721,
+    "tick": 2.3
    },
    "off": {
     "offset": 0.15,
-    "duration": 0.358625,
-    "rpm": 1003.83,
+    "duration": 1.270583,
+    "rpm": 850.0,
     "tier": "pitch-shifted",
-    "source": "pitch-shifted from the 2250 rpm bin (x0.447), src0 @ 125.06 s",
-    "seam_corr": 0.72,
-    "tick": 1.46
+    "source": "pitch-shifted from the 1000 rpm bin (x0.850), src2 @ 388.71 s",
+    "seam_corr": 0.721,
+    "tick": 2.3
+   }
+  },
+  {
+   "rpm": 1000,
+   "on": {
+    "offset": 1.520583,
+    "duration": 1.080375,
+    "rpm": 999.65,
+    "tier": "idle",
+    "source": "src2 @ 388.71 s",
+    "seam_corr": 0.714,
+    "tick": 2.03
+   },
+   "off": {
+    "offset": 1.520583,
+    "duration": 1.080375,
+    "rpm": 999.65,
+    "tier": "idle",
+    "source": "src2 @ 388.71 s",
+    "seam_corr": 0.714,
+    "tick": 2.03
    }
   },
   {
    "rpm": 1250,
    "on": {
-    "offset": 0.61,
-    "duration": 0.384083,
-    "rpm": 1249.73,
-    "tier": "pitch-shifted",
-    "source": "pitch-shifted from the 1500 rpm bin (x0.833), src0 @ 0.71 s",
-    "seam_corr": 0.814,
-    "tick": 1.8
+    "offset": 2.700958,
+    "duration": 1.05575,
+    "rpm": 1250.3,
+    "tier": "idle",
+    "source": "src0 @ 55.04 s",
+    "seam_corr": 0.714,
+    "tick": 1.68
    },
    "off": {
-    "offset": 0.608625,
-    "duration": 0.384354,
-    "rpm": 1248.85,
-    "tier": "pitch-shifted",
-    "source": "pitch-shifted from the 2250 rpm bin (x0.559), src0 @ 125.06 s",
-    "seam_corr": 0.787,
-    "tick": 1.42
+    "offset": 2.700958,
+    "duration": 1.05575,
+    "rpm": 1250.3,
+    "tier": "idle",
+    "source": "src0 @ 55.04 s",
+    "seam_corr": 0.714,
+    "tick": 1.68
    }
   },
   {
    "rpm": 1500,
    "on": {
-    "offset": 1.094083,
-    "duration": 0.399979,
-    "rpm": 1500.08,
-    "tier": "sweep",
-    "source": "src0 @ 0.71 s",
-    "seam_corr": 0.771,
-    "tick": 1.64
+    "offset": 3.856708,
+    "duration": 1.120292,
+    "rpm": 1499.61,
+    "tier": "idle",
+    "source": "src3 @ 110.66 s",
+    "seam_corr": 0.89,
+    "tick": 1.62
    },
    "off": {
-    "offset": 1.092979,
-    "duration": 0.400792,
-    "rpm": 1497.04,
-    "tier": "pitch-shifted",
-    "source": "pitch-shifted from the 2250 rpm bin (x0.671), src0 @ 125.06 s",
-    "seam_corr": 0.729,
-    "tick": 1.43
+    "offset": 3.856708,
+    "duration": 1.120292,
+    "rpm": 1499.61,
+    "tier": "idle",
+    "source": "src3 @ 110.66 s",
+    "seam_corr": 0.89,
+    "tick": 1.62
    }
   },
   {
    "rpm": 1750,
    "on": {
-    "offset": 1.594062,
-    "duration": 0.411354,
-    "rpm": 1750.32,
-    "tier": "steady",
-    "source": "src0 @ 221.64 s",
-    "seam_corr": 0.739,
-    "tick": 1.36
+    "offset": 5.077,
+    "duration": 1.092563,
+    "rpm": 1757.34,
+    "tier": "pitch-shifted",
+    "source": "pitch-shifted from the 1500 rpm bin (x1.167), src3 @ 110.66 s",
+    "seam_corr": 0.85,
+    "tick": 1.63
    },
    "off": {
-    "offset": 1.593771,
-    "duration": 0.410167,
-    "rpm": 1755.38,
+    "offset": 5.077,
+    "duration": 1.092563,
+    "rpm": 1757.34,
     "tier": "pitch-shifted",
-    "source": "pitch-shifted from the 2250 rpm bin (x0.782), src0 @ 125.06 s",
-    "seam_corr": 0.841,
-    "tick": 1.82
+    "source": "pitch-shifted from the 1500 rpm bin (x1.167), src3 @ 110.66 s",
+    "seam_corr": 0.85,
+    "tick": 1.63
    }
   },
   {
    "rpm": 2000,
    "on": {
-    "offset": 2.105417,
-    "duration": 0.420042,
-    "rpm": 1999.8,
+    "offset": 6.269563,
+    "duration": 1.135,
+    "rpm": 2008.81,
     "tier": "pitch-shifted",
-    "source": "pitch-shifted from the 1750 rpm bin (x1.143), src0 @ 221.64 s",
-    "seam_corr": 0.694,
-    "tick": 1.31
+    "source": "pitch-shifted from the 2250 rpm bin (x0.889), src3 @ 94.71 s",
+    "seam_corr": 0.949,
+    "tick": 1.9
    },
    "off": {
-    "offset": 2.103937,
-    "duration": 0.42,
-    "rpm": 2000.0,
-    "tier": "pitch-shifted",
-    "source": "pitch-shifted from the 2250 rpm bin (x0.894), src0 @ 125.06 s",
-    "seam_corr": 1.0,
-    "tick": 1.71
+    "offset": 6.269563,
+    "duration": 1.135,
+    "rpm": 2008.81,
+    "tier": "from-on",
+    "source": "the on-throttle 2250 rpm loop darkened (x0.889), src3 @ 94.71 s",
+    "seam_corr": 0.956,
+    "tick": 1.72
    }
   },
   {
    "rpm": 2250,
    "on": {
-    "offset": 2.625458,
-    "duration": 0.426812,
-    "rpm": 2249.23,
-    "tier": "pitch-shifted",
-    "source": "pitch-shifted from the 2500 rpm bin (x0.900), src0 @ 40.06 s",
-    "seam_corr": 0.759,
-    "tick": 1.47
+    "offset": 7.504562,
+    "duration": 1.066667,
+    "rpm": 2250.0,
+    "tier": "steady",
+    "source": "src3 @ 94.71 s + src3 @ 71.81 s",
+    "seam_corr": 0.552,
+    "tick": 2.05
    },
    "off": {
-    "offset": 2.623937,
-    "duration": 0.375563,
-    "rpm": 2236.65,
-    "tier": "sweep",
-    "source": "src0 @ 125.06 s",
-    "seam_corr": 0.582,
-    "tick": 1.68
+    "offset": 7.504562,
+    "duration": 1.126708,
+    "rpm": 2236.6,
+    "tier": "pitch-shifted",
+    "source": "pitch-shifted from the 2500 rpm bin (x0.900), src3 @ 62.94 s",
+    "seam_corr": 0.96,
+    "tick": 8.14
    }
   },
   {
    "rpm": 2500,
    "on": {
-    "offset": 3.152271,
-    "duration": 0.431917,
-    "rpm": 2500.48,
-    "tier": "sweep",
-    "source": "src0 @ 40.06 s",
-    "seam_corr": 0.769,
-    "tick": 1.55
+    "offset": 8.671229,
+    "duration": 1.056,
+    "rpm": 2500.0,
+    "tier": "steady",
+    "source": "src3 @ 74.36 s + src3 @ 95.71 s",
+    "seam_corr": 0.867,
+    "tick": 2.05
    },
    "off": {
-    "offset": 3.0995,
-    "duration": 0.289187,
-    "rpm": 2489.73,
+    "offset": 8.731271,
+    "duration": 1.008,
+    "rpm": 2500.0,
     "tier": "sweep",
-    "source": "src0 @ 125.89 s",
-    "seam_corr": 0.646,
-    "tick": 1.63
+    "source": "src3 @ 62.94 s + src3 @ 39.54 s + src3 @ 114.99 s",
+    "seam_corr": 0.887,
+    "tick": 5.98
    }
   },
   {
    "rpm": 2750,
    "on": {
-    "offset": 3.684188,
-    "duration": 0.436292,
-    "rpm": 2750.45,
+    "offset": 9.827229,
+    "duration": 1.128792,
+    "rpm": 2764.02,
     "tier": "steady",
-    "source": "src0 @ 40.06 s",
-    "seam_corr": 0.743,
-    "tick": 1.44
+    "source": "src3 @ 96.91 s",
+    "seam_corr": 0.952,
+    "tick": 1.96
    },
    "off": {
-    "offset": 3.488688,
-    "duration": 0.43425,
-    "rpm": 2763.39,
+    "offset": 9.839271,
+    "duration": 1.047292,
+    "rpm": 2749.95,
     "tier": "sweep",
-    "source": "src0 @ 118.99 s",
-    "seam_corr": 0.304,
-    "tick": 2.04
+    "source": "src3 @ 167.46 s + src3 @ 62.89 s",
+    "seam_corr": 0.849,
+    "tick": 4.28
    }
   },
   {
    "rpm": 3000,
    "on": {
-    "offset": 4.220479,
-    "duration": 0.440354,
-    "rpm": 2997.59,
+    "offset": 11.056021,
+    "duration": 1.04,
+    "rpm": 3000.0,
     "tier": "steady",
-    "source": "src0 @ 58.94 s",
-    "seam_corr": 0.767,
-    "tick": 1.57
+    "source": "src3 @ 123.76 s + src3 @ 99.04 s",
+    "seam_corr": 0.762,
+    "tick": 1.49
    },
    "off": {
-    "offset": 4.022938,
-    "duration": 0.438812,
-    "rpm": 3008.12,
-    "tier": "sweep",
-    "source": "src0 @ 118.76 s",
-    "seam_corr": 0.553,
-    "tick": 3.12
+    "offset": 10.986562,
+    "duration": 1.123104,
+    "rpm": 2991.71,
+    "tier": "pitch-shifted",
+    "source": "pitch-shifted from the 2750 rpm bin (x1.091), src3 @ 167.46 s",
+    "seam_corr": 0.977,
+    "tick": 5.39
    }
   },
   {
    "rpm": 3250,
    "on": {
-    "offset": 4.760833,
-    "duration": 0.442667,
-    "rpm": 3253.01,
-    "tier": "steady",
-    "source": "src0 @ 72.64 s",
-    "seam_corr": 0.754,
-    "tick": 1.45
+    "offset": 12.196021,
+    "duration": 1.144208,
+    "rpm": 3251.16,
+    "tier": "sweep",
+    "source": "src3 @ 51.99 s",
+    "seam_corr": 0.759,
+    "tick": 1.72
    },
    "off": {
-    "offset": 4.56175,
-    "duration": 0.441875,
-    "rpm": 3258.84,
-    "tier": "sweep",
-    "source": "src0 @ 118.76 s",
-    "seam_corr": 0.469,
-    "tick": 3.11
+    "offset": 12.209667,
+    "duration": 1.144625,
+    "rpm": 3249.97,
+    "tier": "from-on",
+    "source": "the on-throttle 3250 rpm loop darkened (x1.000), src3 @ 51.99 s",
+    "seam_corr": 1.0,
+    "tick": 1.58
    }
   },
   {
    "rpm": 3500,
    "on": {
-    "offset": 5.3035,
-    "duration": 0.412,
-    "rpm": 3495.15,
+    "offset": 13.440229,
+    "duration": 1.131167,
+    "rpm": 3500.81,
     "tier": "sweep",
-    "source": "src0 @ 149.94 s",
-    "seam_corr": 0.593,
-    "tick": 1.47
+    "source": "src2 @ 387.71 s",
+    "seam_corr": 0.821,
+    "tick": 2.4
    },
    "off": {
-    "offset": 5.103625,
-    "duration": 0.411438,
-    "rpm": 3499.92,
-    "tier": "pitch-shifted",
-    "source": "pitch-shifted from the 3250 rpm bin (x1.074), src0 @ 118.76 s",
-    "seam_corr": 0.999,
-    "tick": 2.84
+    "offset": 13.454292,
+    "duration": 1.131417,
+    "rpm": 3500.04,
+    "tier": "from-on",
+    "source": "the on-throttle 3500 rpm loop darkened (x1.000), src2 @ 387.71 s",
+    "seam_corr": 0.837,
+    "tick": 1.49
    }
   },
   {
    "rpm": 3750,
    "on": {
-    "offset": 5.8155,
-    "duration": 0.256521,
-    "rpm": 3742.39,
-    "tier": "sweep",
-    "source": "src0 @ 150.61 s",
-    "seam_corr": 0.371,
-    "tick": 1.39
+    "offset": 14.671396,
+    "duration": 1.119896,
+    "rpm": 3750.35,
+    "tier": "steady",
+    "source": "src2 @ 387.84 s",
+    "seam_corr": 0.82,
+    "tick": 2.03
    },
    "off": {
-    "offset": 5.615062,
-    "duration": 0.415687,
-    "rpm": 3752.82,
-    "tier": "pitch-shifted",
-    "source": "pitch-shifted from the 4250 rpm bin (x0.882), src0 @ 271.41 s",
-    "seam_corr": 0.818,
-    "tick": 1.68
+    "offset": 14.685708,
+    "duration": 1.12,
+    "rpm": 3750.0,
+    "tier": "from-on",
+    "source": "the on-throttle 3750 rpm loop darkened (x1.000), src2 @ 387.84 s",
+    "seam_corr": 0.839,
+    "tick": 1.5
    }
   },
   {
    "rpm": 4000,
    "on": {
-    "offset": 6.172021,
-    "duration": 0.42,
+    "offset": 15.891292,
+    "duration": 1.02,
     "rpm": 4000.0,
-    "tier": "pitch-shifted",
-    "source": "pitch-shifted from the 4250 rpm bin (x0.942), src0 @ 201.84 s",
-    "seam_corr": 0.679,
-    "tick": 1.55
+    "tier": "steady",
+    "source": "src2 @ 389.31 s + src2 @ 379.34 s",
+    "seam_corr": 0.809,
+    "tick": 1.9
    },
    "off": {
-    "offset": 6.13075,
-    "duration": 0.420146,
-    "rpm": 3998.61,
-    "tier": "pitch-shifted",
-    "source": "pitch-shifted from the 4250 rpm bin (x0.941), src0 @ 271.41 s",
-    "seam_corr": 0.852,
-    "tick": 1.71
+    "offset": 15.905708,
+    "duration": 1.14675,
+    "rpm": 3976.46,
+    "tier": "from-on",
+    "source": "the on-throttle 4000 rpm loop darkened (x1.000), src2 @ 389.31 s",
+    "seam_corr": 0.937,
+    "tick": 2.03
    }
   },
   {
    "rpm": 4250,
    "on": {
-    "offset": 6.692021,
-    "duration": 0.423896,
-    "rpm": 4246.33,
-    "tier": "sweep",
-    "source": "src0 @ 201.84 s",
-    "seam_corr": 0.609,
-    "tick": 1.62
+    "offset": 17.011292,
+    "duration": 1.016458,
+    "rpm": 4250.05,
+    "tier": "steady",
+    "source": "src2 @ 306.44 s + src2 @ 352.71 s",
+    "seam_corr": 0.689,
+    "tick": 2.63
    },
    "off": {
-    "offset": 6.650896,
-    "duration": 0.423229,
-    "rpm": 4253.02,
-    "tier": "sweep",
-    "source": "src0 @ 271.41 s",
-    "seam_corr": 0.7,
-    "tick": 1.69
+    "offset": 17.152458,
+    "duration": 1.127208,
+    "rpm": 4258.31,
+    "tier": "pitch-shifted",
+    "source": "pitch-shifted from the 5000 rpm bin (x0.850), src3 @ 465.21 s",
+    "seam_corr": 0.975,
+    "tick": 10.35
    }
   },
   {
    "rpm": 4500,
    "on": {
-    "offset": 7.215917,
-    "duration": 0.426729,
-    "rpm": 4499.34,
-    "tier": "sweep",
-    "source": "src0 @ 201.84 s",
-    "seam_corr": 0.608,
-    "tick": 1.78
+    "offset": 18.12775,
+    "duration": 1.013333,
+    "rpm": 4500.0,
+    "tier": "steady",
+    "source": "src3 @ 670.69 s + src3 @ 198.91 s",
+    "seam_corr": 0.925,
+    "tick": 1.89
    },
    "off": {
-    "offset": 7.174125,
-    "duration": 0.4275,
-    "rpm": 4491.23,
-    "tier": "sweep",
-    "source": "src0 @ 201.24 s",
-    "seam_corr": 0.607,
-    "tick": 1.69
+    "offset": 18.379667,
+    "duration": 1.144062,
+    "rpm": 4510.24,
+    "tier": "pitch-shifted",
+    "source": "pitch-shifted from the 5000 rpm bin (x0.900), src3 @ 465.21 s",
+    "seam_corr": 0.969,
+    "tick": 9.54
    }
   },
   {
    "rpm": 4750,
    "on": {
-    "offset": 7.742646,
-    "duration": 0.429792,
-    "rpm": 4746.49,
+    "offset": 19.241083,
+    "duration": 1.010542,
+    "rpm": 4749.93,
     "tier": "steady",
-    "source": "src0 @ 232.64 s",
-    "seam_corr": 0.395,
-    "tick": 1.31
+    "source": "src2 @ 479.99 s + src2 @ 493.39 s",
+    "seam_corr": 0.882,
+    "tick": 1.51
    },
    "off": {
-    "offset": 7.701625,
-    "duration": 0.428292,
-    "rpm": 4763.11,
-    "tier": "sweep",
-    "source": "src0 @ 198.29 s",
-    "seam_corr": 0.735,
-    "tick": 1.23
+    "offset": 19.623729,
+    "duration": 1.138313,
+    "rpm": 4743.86,
+    "tier": "pitch-shifted",
+    "source": "pitch-shifted from the 5000 rpm bin (x0.950), src3 @ 465.21 s",
+    "seam_corr": 0.968,
+    "tick": 9.42
    }
   },
   {
    "rpm": 5000,
    "on": {
-    "offset": 8.272438,
-    "duration": 0.407813,
-    "rpm": 5002.3,
-    "tier": "sweep",
-    "source": "src1 @ 42.09 s",
-    "seam_corr": 0.91,
-    "tick": 2.19
+    "offset": 20.351625,
+    "duration": 1.008,
+    "rpm": 5000.0,
+    "tier": "steady",
+    "source": "src2 @ 481.31 s + src2 @ 506.59 s",
+    "seam_corr": 0.877,
+    "tick": 1.51
    },
    "off": {
-    "offset": 8.229917,
-    "duration": 0.263146,
-    "rpm": 5016.23,
+    "offset": 20.862042,
+    "duration": 1.008,
+    "rpm": 5000.0,
     "tier": "sweep",
-    "source": "src0 @ 201.24 s",
-    "seam_corr": 0.606,
-    "tick": 1.61
+    "source": "src3 @ 465.21 s + src3 @ 662.64 s + src3 @ 393.81 s",
+    "seam_corr": 0.669,
+    "tick": 1.7
    }
   },
   {
    "rpm": 5250,
    "on": {
-    "offset": 8.78025,
-    "duration": 0.434271,
-    "rpm": 5250.18,
+    "offset": 21.459625,
+    "duration": 1.005708,
+    "rpm": 5250.03,
     "tier": "steady",
-    "source": "src1 @ 43.24 s",
-    "seam_corr": 0.883,
-    "tick": 1.47
+    "source": "src2 @ 482.34 s + src2 @ 495.04 s",
+    "seam_corr": 0.757,
+    "tick": 1.49
    },
    "off": {
-    "offset": 8.593063,
-    "duration": 0.252917,
-    "rpm": 5219.11,
+    "offset": 21.970042,
+    "duration": 1.028563,
+    "rpm": 5250.05,
     "tier": "sweep",
-    "source": "src0 @ 273.41 s",
-    "seam_corr": 0.622,
-    "tick": 1.65
+    "source": "src3 @ 465.21 s + src3 @ 470.21 s + src3 @ 662.46 s",
+    "seam_corr": 0.735,
+    "tick": 1.79
    }
   },
   {
    "rpm": 5500,
    "on": {
-    "offset": 9.314521,
-    "duration": 0.436146,
-    "rpm": 5502.75,
+    "offset": 22.565333,
+    "duration": 1.139604,
+    "rpm": 5475.59,
     "tier": "steady",
-    "source": "src0 @ 212.56 s",
-    "seam_corr": 0.699,
-    "tick": 1.41
+    "source": "src3 @ 213.54 s",
+    "seam_corr": 0.75,
+    "tick": 1.85
    },
    "off": {
-    "offset": 8.945979,
-    "duration": 0.347292,
-    "rpm": 5528.49,
+    "offset": 23.098604,
+    "duration": 1.04725,
+    "rpm": 5500.12,
     "tier": "sweep",
-    "source": "src1 @ 31.04 s",
-    "seam_corr": 0.765,
-    "tick": 1.66
+    "source": "src3 @ 465.21 s + src3 @ 640.19 s + src3 @ 662.46 s",
+    "seam_corr": 0.841,
+    "tick": 2.23
    }
   },
   {
    "rpm": 5750,
    "on": {
-    "offset": 9.850667,
-    "duration": 0.437896,
-    "rpm": 5754.79,
+    "offset": 23.804938,
+    "duration": 1.147208,
+    "rpm": 5753.1,
     "tier": "steady",
-    "source": "src1 @ 44.36 s",
-    "seam_corr": 0.867,
-    "tick": 1.6
+    "source": "src3 @ 215.14 s",
+    "seam_corr": 0.924,
+    "tick": 1.78
    },
    "off": {
-    "offset": 9.393271,
-    "duration": 0.436417,
-    "rpm": 5774.3,
+    "offset": 24.245854,
+    "duration": 1.00175,
+    "rpm": 5749.94,
     "tier": "sweep",
-    "source": "src0 @ 240.69 s",
-    "seam_corr": 0.411,
-    "tick": 1.89
+    "source": "src3 @ 10.86 s + src3 @ 640.19 s",
+    "seam_corr": 0.853,
+    "tick": 6.34
    }
   },
   {
    "rpm": 6000,
    "on": {
-    "offset": 10.388563,
-    "duration": 0.44,
-    "rpm": 6000.0,
+    "offset": 25.052146,
+    "duration": 1.135292,
+    "rpm": 6024.88,
     "tier": "steady",
-    "source": "src1 @ 44.94 s",
-    "seam_corr": 0.802,
-    "tick": 1.61
+    "source": "src3 @ 684.94 s",
+    "seam_corr": 0.844,
+    "tick": 1.53
    },
    "off": {
-    "offset": 9.929688,
-    "duration": 0.437937,
-    "rpm": 6028.26,
-    "tier": "sweep",
-    "source": "src0 @ 240.69 s",
-    "seam_corr": 0.436,
-    "tick": 2.01
+    "offset": 25.347604,
+    "duration": 1.135583,
+    "rpm": 6023.34,
+    "tier": "pitch-shifted",
+    "source": "pitch-shifted from the 5750 rpm bin (x1.043), src3 @ 10.86 s",
+    "seam_corr": 0.901,
+    "tick": 6.79
    }
   },
   {
    "rpm": 6250,
    "on": {
-    "offset": 10.928562,
-    "duration": 0.441396,
-    "rpm": 6252.89,
+    "offset": 26.287437,
+    "duration": 1.132375,
+    "rpm": 6252.35,
     "tier": "steady",
-    "source": "src1 @ 51.54 s",
-    "seam_corr": 0.85,
-    "tick": 1.65
+    "source": "src3 @ 686.56 s",
+    "seam_corr": 0.806,
+    "tick": 1.54
    },
    "off": {
-    "offset": 10.467625,
-    "duration": 0.288458,
-    "rpm": 6240.07,
-    "tier": "sweep",
-    "source": "src0 @ 240.69 s",
-    "seam_corr": 0.312,
-    "tick": 2.05
+    "offset": 26.583188,
+    "duration": 1.127542,
+    "rpm": 6279.15,
+    "tier": "pitch-shifted",
+    "source": "pitch-shifted from the 5750 rpm bin (x1.087), src3 @ 10.86 s",
+    "seam_corr": 0.847,
+    "tick": 7.6
    }
   },
   {
    "rpm": 6500,
    "on": {
-    "offset": 11.469958,
-    "duration": 0.443312,
-    "rpm": 6496.55,
+    "offset": 27.519813,
+    "duration": 1.033833,
+    "rpm": 6500.08,
     "tier": "steady",
-    "source": "src0 @ 10.39 s",
-    "seam_corr": 0.737,
-    "tick": 1.6
+    "source": "src3 @ 205.49 s + src3 @ 679.16 s",
+    "seam_corr": 0.771,
+    "tick": 1.63
    },
    "off": {
-    "offset": 10.856083,
-    "duration": 0.405021,
-    "rpm": 6518.18,
-    "tier": "sweep",
-    "source": "src0 @ 247.71 s",
-    "seam_corr": 0.278,
-    "tick": 2.1
+    "offset": 27.810729,
+    "duration": 1.139563,
+    "rpm": 6528.82,
+    "tier": "pitch-shifted",
+    "source": "pitch-shifted from the 5750 rpm bin (x1.130), src3 @ 10.86 s",
+    "seam_corr": 0.801,
+    "tick": 6.73
    }
   },
   {
    "rpm": 6750,
    "on": {
-    "offset": 12.013271,
-    "duration": 0.444063,
-    "rpm": 6755.81,
-    "tier": "steady",
-    "source": "src1 @ 46.54 s",
-    "seam_corr": 0.642,
-    "tick": 1.64
+    "offset": 28.653646,
+    "duration": 1.048729,
+    "rpm": 6751.03,
+    "tier": "sweep",
+    "source": "src3 @ 461.29 s",
+    "seam_corr": 0.817,
+    "tick": 1.59
    },
    "off": {
-    "offset": 11.361104,
-    "duration": 0.283271,
-    "rpm": 6777.97,
-    "tier": "sweep",
-    "source": "src0 @ 11.31 s",
-    "seam_corr": 0.743,
-    "tick": 1.4
+    "offset": 29.050292,
+    "duration": 1.137708,
+    "rpm": 6750.41,
+    "tier": "from-on",
+    "source": "the on-throttle 6750 rpm loop darkened (x1.000), src3 @ 461.29 s",
+    "seam_corr": 0.957,
+    "tick": 1.6
    }
   },
   {
    "rpm": 7000,
    "on": {
-    "offset": 12.557333,
-    "duration": 0.428438,
-    "rpm": 7002.19,
-    "tier": "steady",
-    "source": "src1 @ 47.16 s",
-    "seam_corr": 0.557,
-    "tick": 1.41
+    "offset": 29.802375,
+    "duration": 1.147729,
+    "rpm": 7005.14,
+    "tier": "sweep",
+    "source": "src3 @ 678.84 s",
+    "seam_corr": 0.742,
+    "tick": 1.31
    },
    "off": {
-    "offset": 11.744375,
-    "duration": 0.428875,
-    "rpm": 6995.05,
-    "tier": "pitch-shifted",
-    "source": "pitch-shifted from the 6750 rpm bin (x1.033), src0 @ 11.31 s",
-    "seam_corr": 0.848,
-    "tick": 1.44
+    "offset": 30.288,
+    "duration": 1.148562,
+    "rpm": 7000.05,
+    "tier": "from-on",
+    "source": "the on-throttle 7000 rpm loop darkened (x0.999), src3 @ 678.84 s",
+    "seam_corr": 1.0,
+    "tick": 1.57
    }
   },
   {
    "rpm": 7250,
    "on": {
-    "offset": 13.085771,
-    "duration": 0.430292,
-    "rpm": 7250.9,
+    "offset": 31.050104,
+    "duration": 1.026208,
+    "rpm": 7249.99,
     "tier": "sweep",
-    "source": "src1 @ 46.86 s",
-    "seam_corr": 0.677,
-    "tick": 1.42
+    "source": "src3 @ 679.61 s + src3 @ 482.51 s",
+    "seam_corr": 0.71,
+    "tick": 1.38
    },
    "off": {
-    "offset": 12.27325,
-    "duration": 0.430667,
-    "rpm": 7244.58,
-    "tier": "pitch-shifted",
-    "source": "pitch-shifted from the 6750 rpm bin (x1.070), src0 @ 11.31 s",
-    "seam_corr": 0.842,
-    "tick": 1.53
+    "offset": 31.536562,
+    "duration": 1.139417,
+    "rpm": 7266.88,
+    "tier": "from-on",
+    "source": "the on-throttle 7250 rpm loop darkened (x1.000), src3 @ 679.61 s",
+    "seam_corr": 0.861,
+    "tick": 1.66
    }
   }
  ],
  "real_bins": {
-  "on": 21,
-  "off": 16
+  "on": 24,
+  "off": 9
  },
  "family": "mazda_b_i4",
  "cylinders": 4,
@@ -575,6 +596,8 @@
    "src": "src0",
    "url": "https://www.youtube.com/watch?v=K5DDUCfYHGo",
    "title": "Mid-Ohio w/Chicane - 97 Miata - 1:48 lap",
+   "channel": "Eastern Racing",
+   "upload_date": "20170604",
    "licence": "Creative Commons Attribution (CC BY 3.0), YouTube",
    "t0": 0,
    "octave_relabel": 1.0,
@@ -584,10 +607,67 @@
    "src": "src1",
    "url": "https://www.youtube.com/watch?v=3Fv5YkvPM80",
    "title": "Big Willow Spec Miata Race Lap Record! | NASA SoCal Willow Springs",
+   "channel": "the stiglette",
+   "upload_date": "20240418",
    "licence": "Creative Commons Attribution (CC BY 3.0), YouTube",
    "t0": 0,
    "octave_relabel": 2.0,
    "t1": 95
+  },
+  {
+   "src": "src2",
+   "url": "https://www.youtube.com/watch?v=wKeTXxwpkS0",
+   "title": "MAZDA MX5 Miata 1.6L exhaust sound sample",
+   "channel": "Ride in Japan",
+   "upload_date": "20260418",
+   "licence": "Creative Commons Attribution license (reuse allowed)",
+   "t0": 0.0,
+   "octave_relabel": 1.0,
+   "t1": 551.0
+  },
+  {
+   "src": "src3",
+   "url": "https://www.youtube.com/watch?v=3Z5yoO60x_4",
+   "title": "Pissed Off Going from Last to First - Spec Miata ABCC",
+   "channel": "Brandon Collins",
+   "upload_date": "20230809",
+   "licence": "Creative Commons Attribution license (reuse allowed)",
+   "t0": 0.0,
+   "octave_relabel": 1.0,
+   "t1": 700.0
+  },
+  {
+   "src": "src4",
+   "url": "https://www.youtube.com/watch?v=4_5_lk5uQbc",
+   "title": "Track POV - MX-5 NB | Vasco Sameiro Circuit",
+   "channel": "Touge Terapy",
+   "upload_date": "20241006",
+   "licence": "Creative Commons Attribution license (reuse allowed)",
+   "t0": 0.0,
+   "octave_relabel": 1.0,
+   "t1": 140.0
+  },
+  {
+   "src": "src5",
+   "url": "https://www.youtube.com/watch?v=XaYJHuqgYts",
+   "title": "Mazda MX5 NB Super Bird [Down on the Street]",
+   "channel": "banpeinet",
+   "upload_date": "20160308",
+   "licence": "Creative Commons Attribution license (reuse allowed)",
+   "t0": 0.0,
+   "octave_relabel": 1.0,
+   "t1": 124.0
+  },
+  {
+   "src": "src6",
+   "url": "https://www.youtube.com/watch?v=a4kX_e9rCs0",
+   "title": "Drift Wet Touge Uphill | MX-5 NB [POV]",
+   "channel": "Touge Terapy",
+   "upload_date": "20241012",
+   "licence": "Creative Commons Attribution license (reuse allowed)",
+   "t0": 0.0,
+   "octave_relabel": 1.0,
+   "t1": 68.0
   }
  ],
  "fallback": {
@@ -601,8 +681,8 @@
   },
   "priming_s": 0.044,
   "lengths_s": {
-   "on": 13.674667,
-   "off": 12.864
+   "on": 32.234667,
+   "off": 32.832
   }
  }
 }
