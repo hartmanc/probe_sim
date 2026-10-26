@@ -367,8 +367,12 @@ def stage_geometry(cfg, out, no_logger):
     # -- provisional package on the first centre: racing line (start of the paint walk, logged line) and the pit lane
     v2dir = os.path.join(work, "v2")
     os.makedirs(v2dir, exist_ok=True)
-    prof_v2, res_v2 = V2.profile(C, hl, hr, dem_s, z0, cfg["repave_fixes"])
+    prof_v2, res_v2 = V2.profile(C, hl, hr, dem_s, z0, cfg["repave_fixes"], profile_gaps=cfg.get("profile_gaps"))
     hf_v2, nx, ny = V2.heightfield(box, dem, z0, C, hl, hr, res_v2)
+    if cfg.get("profile_gaps"):
+        import profile_gap
+        gap_wins = profile_gap.windows(C, cfg["profile_gaps"], cfg.enu)
+        hf_v2 = profile_gap.heightfield(hf_v2, box, B.HF_DX, C, hl, hr, prof_v2, gap_wins)
     T_v2 = track_dict(cfg, C, hl, hr, prof_v2, z0, 1.0, n, corners0, box, W, H, nx, ny, {"stage": "provisional"})
     T_v2["length_m"] = float(n)
     json.dump(T_v2, open(os.path.join(v2dir, "track.json"), "w"), separators=(",", ":"))
@@ -468,7 +472,7 @@ def stage_geometry(cfg, out, no_logger):
             for c in corners:
                 c["s"] = round(c["s"] * sp, 1)
         # -- profile at the paint-step edges (the spline and the straights re-evaluate it from each section's quadratic)
-        prof0, resurface = V2.profile(C1, hl1, hr1, dem_s, z0, cfg["repave_fixes"])
+        prof0, resurface = V2.profile(C1, hl1, hr1, dem_s, z0, cfg["repave_fixes"], profile_gaps=cfg.get("profile_gaps"))
         # -- edges: prior adjustments, shapes, spline runs, declared straights
         hl2, hr2 = hl1.copy(), hr1.copy()
         pcfg = cfg.get("prior", {})
@@ -563,6 +567,11 @@ def stage_geometry(cfg, out, no_logger):
                    "re-evaluated at the fitted edges from each section's quadratic",
     }
     T = track_dict(cfg, C1, hl3, hr3, prof, z0, sp, L1, corners, box, W, H, nx, ny, notes)
+    if cfg.get("profile_gaps"):
+        import profile_gap
+        wins = profile_gap.windows(C1, cfg["profile_gaps"], cfg.enu)
+        hf = profile_gap.heightfield(hf, box, B.HF_DX, C1, hl3, hr3, prof, wins)
+        notes["profile_gaps"] = cfg["profile_gaps"]
     # -- terrain override (config terrain_override, round 14A): inside a declared region the heightfield is one smooth
     # surface continuing the course as written to track.json (the physics' own arrays), robust to the lidar beyond it;
     # absent (every other track): the heightfield untouched. track.json is not changed by it.
@@ -1256,7 +1265,7 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, pw, m
         c["s"] = round(c["s"] * sp, 1)
     for f in cf:
         rep.check(f, False, "no curvature peak of the corner's direction near its anchor")
-    prof0, resurface = V2.profile(Ccur, hlp, hrp, dem_s, z0, cfgw["repave_fixes"])
+    prof0, resurface = V2.profile(Ccur, hlp, hrp, dem_s, z0, cfgw["repave_fixes"], profile_gaps=cfgw.get("profile_gaps"))
     prof = V2.reprofile(prof0, hlp, hrp, hl3, hr3)
     for s_ in ("left", "right"):
         # the associated readings (station, owner reading or capture, residual) for diagnosis (work/, not the package)

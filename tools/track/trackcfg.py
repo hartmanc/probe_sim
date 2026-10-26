@@ -53,6 +53,11 @@ Geometry (Stage 1)
           everything outside its window at the result of the one before (the first one is exactly the single-window
           refit); a straight / feature marked local applies in every local refit (held outside its window anyway),
           an owner_edges window only in the local refits whose window it overlaps
+  profile_gaps [{name, latlon, half_m, fit_m (7), lateral_fade (6), src, why}]
+                                             opt-in bridge-deck occlusions: ignore class-2 deck readings in the measured
+                                             short interval, reconstruct each profile column from clean endpoint heights
+                                             and slopes, carry its banked plane into the heightfield with lateral fade.
+                                             No prescribed elevations; absent preserves earlier builds byte for byte.
   reproduce {...}                            build artefacts of an accepted package (logger path only; see Laguna's;
                                              pit_exit_wall_end_latlon replaces centre.pit_exit.wall_end_latlon)
   centre_captures ('z20' | 'clean'), centre_registration ('per_capture' | 'common')
@@ -70,7 +75,7 @@ Geometry (Stage 1)
           refine [(lo, hi, knot)]: a second layer of cubic B-splines at `knot` stations inside [lo, hi] (Sonoma round 14B part 1b:
           where his red turns tighter than 6-station knots can follow); used only in the local refits whose window it
           overlaps; absent = the periodic spline alone
-  features [(side, lo, hi, 'keep' | 'asphalt_end' | 'warm_end' | 'kerb' | 'kerb_band', why[, {local | replaced_by_local}])]   keep: the prior is held (legacy reproduction
+  features [(side, lo, hi, 'keep' | 'asphalt_end' | 'warm_end' | 'kerb' | 'kerb_band' | 'kerb_yellow', why[, {local | replaced_by_local}])]   keep: the prior is held (legacy reproduction
                                              only; the fitted method ignores it); asphalt_end: where the dark asphalt
                                              ends; kerb: red-band (kerb outer limit) candidates only; warm_end: where
                                              grey asphalt meets warm dirt (the warmth step, spline.warm_thr); kerb_band:

@@ -166,7 +166,7 @@ def clean_profile(prof, lat):
 LIDAR_POINTS = None   # path of the box's lidar point cache (build_track.py stage 1)
 
 
-def lidar_correct(PX, PY, prof, z0, radius=1.0, max_corr=1.0):
+def lidar_correct(PX, PY, prof, z0, radius=1.0, max_corr=1.0, ignore_stations=None):
     """Pull the DEM profile onto the lidar point cloud's ground returns (class 2), median within 1 m of each
     profile point. The DEM is the same 2017 lidar, gridded and smoothed; at a few places it departs from the
     returns on the road: 0.2 m low over s~150-185 (the T1 footbridge), 0.45 m high at Rainey's inside edge
@@ -190,7 +190,7 @@ def lidar_correct(PX, PY, prof, z0, radius=1.0, max_corr=1.0):
     have = np.zeros(prof.shape, bool)
     for k in range(prof.shape[1]):
         for i, idx in enumerate(tree.query_ball_point(np.c_[PX[:, k], PY[:, k]], radius)):
-            if len(idx) >= 3:
+            if len(idx) >= 3 and (ignore_stations is None or not ignore_stations[i]):
                 d = np.median(z[idx]) - prof[i, k]
                 if abs(d) <= max_corr:
                     corr[i, k], have[i, k] = d, True
@@ -339,7 +339,7 @@ def lateral(hl, hr):
     return np.where(fr[None, :] < 0, -fr[None, :] * hl[:, None], -fr[None, :] * hr[:, None])  # +left
 
 
-def profile(C, hl, hr, dem_s, z0, repave_fixes, log=B.log):
+def profile(C, hl, hr, dem_s, z0, repave_fixes, log=B.log, profile_gaps=None):
     """Cross-section heights (profile fractions piecewise: f<0 scales the left half-width, f>0 the right, as
     src/physics/track.ts reads them): DEM smoothed sigma 0.7 m, 1.5 m Gaussian along s, lidar_correct, clean_profile,
     then the repave crest fixes (same height change across the section, banking kept). Returns prof and the centre
@@ -350,8 +350,15 @@ def profile(C, hl, hr, dem_s, z0, repave_fixes, log=B.log):
     PX = C[:, 0:1] + lat * nl[:, 0:1]
     PY = C[:, 1:2] + lat * nl[:, 1:2]
     prof = gaussian_filter1d(dem_s(PX, PY) - z0, 1.5, axis=0, mode="wrap")
-    prof = lidar_correct(PX, PY, prof, z0)
+    wins = []
+    if profile_gaps:
+        import profile_gap
+        wins = profile_gap.windows(C, profile_gaps, B.enu)
+    ignored = profile_gap.mask(n, wins) if wins else None
+    prof = lidar_correct(PX, PY, prof, z0, ignore_stations=ignored)
     prof = clean_profile(prof, lat)
+    if wins:
+        prof = profile_gap.repair(prof, wins, log)
     resurface = np.zeros(n)
     for a, b, c0, c1, why in repave_fixes:
         zn, cv, rb, ra = crest_fix(prof[:, 3], a, b, c0, c1)

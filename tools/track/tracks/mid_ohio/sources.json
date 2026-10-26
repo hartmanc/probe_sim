@@ -1,0 +1,132 @@
+{
+  "researched": "2026-10-25",
+  "origin": [
+    40.689,
+    -82.636
+  ],
+  "osm_bbox": [
+    -82.646,
+    40.678,
+    -82.625,
+    40.699
+  ],
+  "osm_url": "https://api.openstreetmap.org/api/0.6/map?bbox=-82.646,40.678,-82.625,40.699",
+  "lemons_event": "https://24hoursoflemons.com/race/?id=439",
+  "lemons_layout": "https://registration.24hoursoflemons.com/userfiles/races/24HoL__TrackMap_Mid-Ohio.png",
+  "layout_status": "Referenced by the live event HTML; image URL returns 404. User supplied image is reference only. Owner clarified: retain the full T1\u2013T2 outer loop and back straight; omit only the inner grey chicane.",
+  "dem_catalog": "https://tnmaccess.nationalmap.gov/api/v1/products?bbox=-82.646,40.678,-82.625,40.699&datasets=Digital%20Elevation%20Model%20(DEM)%201%20meter&max=50&outputFormat=JSON",
+  "dem_tiles": [
+    "https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/1m/Projects/OH_Statewide_Phase1_2019_B19/TIFF/USGS_1M_17_x36y451_OH_Statewide_Phase1_2019_B19.tif"
+  ],
+  "lidar_ept": "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/OH_Statewide_Phase1_3_2019/",
+  "lidar_survey": "OH_Statewide_Phase1_2019_B19",
+  "dem_publication": "2023-07-04",
+  "dem_vertical_datum": "NAVD88 metres",
+  "dem_horizontal_crs": "NAD83 UTM zone 17N",
+  "dem13": "https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/13/TIFF/current/n41w083/USGS_13_n41w083.tif",
+  "repave": {
+    "source": "https://www.midohio.com/news-m/938-full-repave-of-racing-surface-completed-at-mid-ohio-sports-car-course",
+    "completed": "2023-10-27",
+    "published_width_m": 12.192,
+    "note": "2019 lidar predates entire circuit repave. No invented elevation corrections."
+  },
+  "turn4_reconstruction": {
+    "source": "https://www.midohio.com/news-m/1084-track-and-facility-improvements-completed-at-mid-ohio-sports-car-course",
+    "completed": "2024-11-08",
+    "original_banking_deg": 4,
+    "current_banking_deg": 2,
+    "reconstructed_length_m": 158.496,
+    "outside_excavation_max_m": 0.4572,
+    "note": "Apex footprint and inside kerb preserved. Outside track lowered, runoff raised. A 2019 profile cannot be accepted as current without addressing this reconstruction."
+  },
+  "onboard_candidates": {
+    "discovery": "https://www.lemonswiki.com/track/mid-ohio-sports-car-course/",
+    "videos": [
+      {
+        "id": "RADyiGMCy60",
+        "title": "LemonAid Racing at MidOhio for 24 Hours of Lemons' Mid-West Crisis 2026 - Stint 2 (James) Sunday",
+        "url": "https://www.youtube.com/watch?v=RADyiGMCy60",
+        "status": "discovered; video not yet surveyed"
+      },
+      {
+        "id": "HO1TAoCHEa4",
+        "title": "TPF Racing Mid Ohio 2026 Saturday 24 Hours of Lemons",
+        "url": "https://www.youtube.com/watch?v=HO1TAoCHEa4",
+        "status": "discovered; video not yet surveyed"
+      },
+      {
+        "id": "OJaBJz18xEo",
+        "title": "NickD Fastest lap at 24 hours of Lemons - Mid Ohio 2026",
+        "url": "https://www.youtube.com/watch?v=OJaBJz18xEo",
+        "status": "discovered; video not yet surveyed"
+      },
+      {
+        "id": "7UC1ZFYBxU8",
+        "title": "TMMI Motorsports - 24HoursofLemons at Mid-Ohio Race 2026-4-11",
+        "url": "https://www.youtube.com/watch?v=7UC1ZFYBxU8",
+        "status": "discovered; video not yet surveyed"
+      },
+      {
+        "id": "siyqI8WBbRk",
+        "title": "Mid-Ohio, lemons race",
+        "url": "https://www.youtube.com/watch?v=siyqI8WBbRk",
+        "status": "discovered; video not yet surveyed"
+      },
+      {
+        "id": "qT4omApkqZY",
+        "title": "NateR Fastest lap at 24 Hours of Lemons Mid-Ohio 2026",
+        "url": "https://www.youtube.com/watch?v=qT4omApkqZY",
+        "status": "discovered; video not yet surveyed"
+      },
+      {
+        "id": "oXmCpoyPcNM",
+        "title": "TPF Racing Mid Ohio 2026 Sunday 24 Hours of Lemons",
+        "url": "https://www.youtube.com/watch?v=oXmCpoyPcNM",
+        "status": "discovered; video not yet surveyed"
+      },
+      {
+        "id": "if3DFgEbMcI",
+        "title": "Bill Sunday - Lemons Mid-Ohio 2026",
+        "url": "https://www.youtube.com/watch?v=if3DFgEbMcI",
+        "status": "discovered; video not yet surveyed"
+      },
+      {
+        "id": "19Chmx7QODw",
+        "title": "Lemons Mid-Ohio 2026 - Mark and Brett Saturday Stint",
+        "url": "https://www.youtube.com/watch?v=19Chmx7QODw",
+        "status": "discovered; video not yet surveyed"
+      },
+      {
+        "id": "6KGhQ-RG2OU",
+        "title": "Highlights/Lowlights - 24 Hours of Lemons at Mid-Ohio 2026",
+        "url": "https://www.youtube.com/watch?v=6KGhQ-RG2OU",
+        "status": "discovered; video not yet surveyed"
+      },
+      {
+        "id": "O4rN5_uJ3ZY",
+        "title": "24 Hours of Lemons Invades Mid-Ohio Sports Car Course!",
+        "url": "https://www.youtube.com/watch?v=O4rN5_uJ3ZY",
+        "status": "discovered; video not yet surveyed"
+      },
+      {
+        "id": "xTNTaEQc4sE",
+        "title": "2026 Lemons Mid Ohio - Bob Archer Session 2 Vid 1",
+        "url": "https://www.youtube.com/watch?v=xTNTaEQc4sE",
+        "status": "discovered; video not yet surveyed"
+      }
+    ]
+  },
+  "lidar_ept_note": "TNM vendor metadata names subproject8, but that EPT cloud misses Mid-Ohio. Bounds and root hierarchy show EPT3 holds circuit data (EPT1 and6 have only ancestor nodes here).",
+  "confirmed_onboard": {
+    "id": "OJaBJz18xEo",
+    "title": "NickD Fastest lap at 24 hours of Lemons - Mid Ohio 2026",
+    "author": "N837 Motorsport",
+    "date": "2026-04-15",
+    "duration_s": 135.941,
+    "source_size": [
+      1280,
+      720
+    ],
+    "verified": "Parent independently read decoded 10s frames plus t14/t16/t18 around pit exit; confirms full outer loop. Stale initial t60/t130 replaced by decoded retries. Full 2s inventory remains pending."
+  }
+}

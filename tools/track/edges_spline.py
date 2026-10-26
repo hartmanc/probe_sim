@@ -43,7 +43,7 @@ from geo import log as _log
 U = np.arange(-4.5, 4.0001, 0.04)
 
 
-def bands(v, valid, U=U):
+def bands(v, valid, U=U, yellow=False):
     """v: (len(U), 3) RGB outward along the normal; valid: bool per sample. Returns the painted bands with asphalt just
     inside them: [(inner offset, outer offset from the current edge, has red, width)]. U: the offsets sampled (the
     module default, or a kerb zone's own search window, spline.kerb_search)."""
@@ -59,6 +59,10 @@ def bands(v, valid, U=U):
     thin[d:-d] = (br[d:-d] - np.maximum(br[:-2 * d], br[2 * d:]) > 25) & (sat[d:-d] < 45)
     white = white | (thin & valid)
     red = valid & (v[:, 0] > 100) & (v[:, 0] - v[:, 1] > 25) & (v[:, 0] - v[:, 2] > 20)
+    if yellow:
+        # Explicitly surveyed yellow kerb only. Mid-Ohio's continuous yellow
+        # face has no white/red blocks for the default detector to associate.
+        red |= valid & (v[:, 0] > 110) & (v[:, 1] > 110) & (np.minimum(v[:, 0], v[:, 1])-v[:, 2] > 35) & (np.abs(v[:, 0]-v[:, 1]) < 70)
     st = 0.04; q = lambda m: max(1, int(round(m / st))); out = []; N = len(U)
     k = 0
     while k < N:
@@ -261,7 +265,7 @@ def fit_run(C, NL, hl, hr, lo, hi, tiles, features, sp, mpp, side_sel="both", lo
                     e = asphalt_end(v, ok)
                     if e is not None: raw[side].append((i, ti, [(e, e + 0.1, False, -1.0)]))
                     continue
-                bl = bands(v, ok)
+                bl = bands(v, ok, yellow=feat == 'kerb_yellow')
                 if bl: raw[side].append((i, ti, bl))
     obs = {'left': [], 'right': []}
     for side, hw in (('left', hl), ('right', hr)):
@@ -372,7 +376,7 @@ def gather(C, NL, hl, hr, tiles, features, line_off, mpp, U_=None):
                     e = asphalt_end(v, ok) if feat == 'asphalt_end' else warm_end(v, ok)
                     if e is not None: raw[side].append((i, ti, [(e, e + 0.1, False, -1.0)]))
                     continue
-                bl = bands(v, ok)
+                bl = bands(v, ok, yellow=feat == 'kerb_yellow')
                 if bl: raw[side].append((i, ti, bl))
     # kerb zones with their own search window (KSEARCH): the same band reading over the zone's offsets
     for ti, t in enumerate(tiles):
@@ -401,7 +405,7 @@ def gather(C, NL, hl, hr, tiles, features, line_off, mpp, U_=None):
                     e = asphalt_end(v, ok, Uz, win) if fz == 'asphalt_end' else warm_end(v, ok, None, Uz, win)
                     if e is not None: raw[zs].append((i, ti, [(e, e + 0.1, False, -1.0)]))
                     continue
-                bl = bands(v, ok, Uz)
+                bl = bands(v, ok, Uz, yellow=fz == 'kerb_yellow')
                 if bl: raw[zs].append((i, ti, bl))
     obs = {'left': [], 'right': []}
     for side, hw in (('left', hl), ('right', hr)):
@@ -411,7 +415,7 @@ def gather(C, NL, hl, hr, tiles, features, line_off, mpp, U_=None):
         kerb_at = np.array([red_st[np.arange(i - 4, i + 5) % n].any() for i in range(n)])
         for i, ti, bl in raw[side]:
             feat = feature_at(features, side, ks[i], n)
-            if feat == 'kerb':
+            if feat in ('kerb', 'kerb_yellow'):
                 c = [(u1, 2) for u0, u1, has_red, w in bl if has_red and 0.3 <= w <= 2.6]
             elif feat == 'kerb_band':
                 # a kerb whose coloured blocks do not read as red on the captures (Buttonwillow's red / white / blue
