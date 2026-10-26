@@ -2726,6 +2726,9 @@ def wall_boards(trk):
                         "heading": rnd(math.atan2(n_[1], n_[0]), 3), "h": wb["h"], "w": rnd(w + 0.02, 2),
                         "color": cols[k % len(cols)], **({"fg": names[k % len(names)][2]} if names else {}),
                         "src": f"wall board on {wb['wall']} ({wb['src']})",
+                        # round 8 (Mid-Ohio): a board seen only from the track (single-sided: no mirrored text from behind,
+                        # e.g. the pit wall's banners seen from the lane); absent: double-sided as before
+                        **({"single": True} if wb.get("single") else {}),
                         # the top of a panel standing ON the wall (no `base`: boards on posts behind a wall are not
                         # part of its face), above the ground, for the coverage gate's wall heights (21 Oct 2026)
                         **({} if "base" in wb else {"top": rnd(wh + wb["h"], 2)})})

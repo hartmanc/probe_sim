@@ -87,7 +87,7 @@ export interface SceneryJson {
   cone_lines?: { spacing_m: number; pts: [number, number, number][]; src?: string; color?: string; size?: number; style?: 'cone' | 'delineator' }[];
   /** kinds: brake | corner | flagstand | oak | banner (ad board facing the track) | sign (on a wall at z) | gantry (two
    *  lattice towers at (x, y, z) and (x2, y2, z2) with cables across the track) */
-  landmarks: { kind: string; text: string; x: number; y: number; z: number; heading: number; h: number; w: number; x2?: number; y2?: number; z2?: number; color?: string; style?: string; src?: string;
+  landmarks: { kind: string; text: string; x: number; y: number; z: number; heading: number; h: number; w: number; x2?: number; y2?: number; z2?: number; color?: string; style?: string; src?: string; /** Mid-Ohio round 8: draw a sign on its track face only */ single?: boolean;
     /** wall-board signs: the panel's top above the ground (m), for the coverage gate */ top?: number;
     /** 'impact' (impact barrier block at a wall's nose): its length along `heading`; 'marshal' (round 8): the hut's
      *  depth along `heading` (absent: w x w) */ d?: number;
@@ -1948,7 +1948,8 @@ function buildLandmarks(list: SceneryJson['landmarks']): THREE.Group {
       // ad board facing the track (two posts) or a sign on a wall at z (no posts)
       const bottom = m.kind === 'banner' ? 0.25 : 0;
       const tex = bannerTexture([m.text], m.w, m.h, m.color, m.fg);
-      const face = new THREE.Mesh(new THREE.PlaneGeometry(m.w, m.h), new THREE.MeshLambertMaterial({ map: tex, side: THREE.DoubleSide }));
+      // Mid-Ohio round 8: `single` boards are drawn on their track face only (no mirrored text from behind); absent: both
+      const face = new THREE.Mesh(new THREE.PlaneGeometry(m.w, m.h), new THREE.MeshLambertMaterial({ map: tex, side: m.single ? THREE.FrontSide : THREE.DoubleSide }));
       face.position.set(0, bottom + m.h / 2, 0.04);
       g.add(face);
       if (m.kind === 'banner') {
