@@ -1,8 +1,8 @@
 // Cross-engine replay (docs/determinism.md section 5): six hot laps recorded in WebKit (Playwright 1.61.1's WebKit 26.5,
 // the engine of Safari and every iPhone browser) on the built game by tools/determinism/browser_trace.mts, replayed here
 // with the server's code. Every lap time and the final state must be WebKit's to the bit.
-// The expected bits were computed on macOS, whose C library also supplies Node's Math.pow there; Math.pow is the one
-// function still native (open, section 5), so on a host with another pow (glibc) this test may legitimately differ.
+// Re-recorded 26 Oct 2026 for the cheaper-pow physics (docs/determinism.md section 9): the same trace and bits came out of
+// WebKit, Chrome and Firefox. The maths is the game's own on every host, so the bits hold on any machine.
 import { readFileSync } from 'node:fs';
 import { gunzipSync } from 'node:zlib';
 import { describe, expect, test } from 'vitest';
