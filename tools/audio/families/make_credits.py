@@ -15,7 +15,14 @@ OUT = os.path.join(HERE, "..", "..", "..", "public", "audio", "families")
 CC = "Creative Commons Attribution license (reuse allowed)"  # as YouTube shows it for CC BY 3.0 videos
 
 
+def uploaders():
+    """url -> channel from sources.json, for families built before engine.json recorded the channel."""
+    src = json.load(open(os.path.join(HERE, "sources.json")))
+    return {e["url"]: e.get("uploader") for v in src.values() for e in v["entries"] if e.get("url")}
+
+
 def main():
+    ups = uploaders()
     idx = json.load(open(os.path.join(OUT, "index.json")))
     fams = {}
     for fid, f in idx["families"].items():
@@ -36,7 +43,7 @@ def main():
                 continue
             seen.add(s["url"])
             lic = s["licence"]
-            rows.append({"title": s["title"], "channel": s.get("channel") or "", "url": s["url"],
+            rows.append({"title": s["title"], "channel": s.get("channel") or ups.get(s["url"]) or "", "url": s["url"],
                          "licence": CC if lic.startswith("Creative Commons Attribution") else lic})
         fams[fid] = rows
     json.dump({"families": fams}, open(os.path.join(OUT, "credits.json"), "w"), indent=1, ensure_ascii=False)

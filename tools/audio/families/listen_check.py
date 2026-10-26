@@ -5,8 +5,8 @@ idle, mid and redline.
 
 There is no ear in the loop here. For each of the three bins the table gives: the loop's rpm, level (dB re full scale,
 RMS), peak, spectral centroid (Hz), the share of power under 300 Hz, the strongest engine order (order 1 = crank rev)
-and the firing order's share of the power in orders 0.5-12, the wrap step (largest sample jump at the loop seam over
-the median jump: ~1 is seamless, > 6 clicks) and the off-throttle level relative to on.
+and the firing order's share of the power in orders 0.5-12, the wrap step (the sample jump across the loop seam over the
+95th percentile of the loop's own sample steps: <= 1 is seamless, > 3 would click) and the off-throttle level relative to on.
 """
 import json
 import os
@@ -48,7 +48,7 @@ def analyse(fam):
             # the player loops [a, a+L): the seam is lp[-1] -> lp[0]
             x = np.concatenate([lp[-64:], lp[:64]])
             jump = np.abs(np.diff(x))
-            med = np.median(np.abs(np.diff(lp))) + 1e-12
+            med = np.percentile(np.abs(np.diff(lp)), 95) + 1e-12
             X = np.abs(np.fft.rfft(np.tile(lp, 4) * np.hanning(4 * L))) ** 2
             fr = np.fft.rfftfreq(4 * L, 1 / SR)
             f_rev = r["rpm"] / 60.0

@@ -49,30 +49,30 @@ import build_family as bf  # noqa: E402
 # bank_delay_ms: extra pipe delay of bank 1 (unequal-length headers); tick_hz: valve-train tick band.
 PROFILES = {
     "vintage_i6": {"pulse_deg": 46, "pipe_f1": 62, "tail_fc": 1500, "amp_jit": 0.10, "ang_jit": 0.35,
-                   "w_exh": 1.0, "w_int": 0.35, "w_mech": 0.22, "w_floor": 0.06, "banks": None, "bank_delay_ms": 0.0,
+                   "w_exh": 1.0, "w_int": 0.35, "w_mech": 0.22, "w_floor": 0.19, "banks": None, "bank_delay_ms": 0.0,
                    "tick_hz": 2600, "int_fc": 190, "ref": "bmw_m20_i6"},
     "ohv_v6": {"pulse_deg": 38, "pipe_f1": 74, "tail_fc": 2100, "amp_jit": 0.14, "ang_jit": 0.5,
-               "w_exh": 1.0, "w_int": 0.42, "w_mech": 0.30, "w_floor": 0.08, "banks": [0, 1, 0, 1, 0, 1],
+               "w_exh": 1.0, "w_int": 0.42, "w_mech": 0.30, "w_floor": 0.26, "banks": [0, 1, 0, 1, 0, 1],
                "bank_delay_ms": 0.35, "tick_hz": 3200, "int_fc": 230, "ref": "probe"},
     "classic_v8_lowrev": {"pulse_deg": 52, "pipe_f1": 55, "tail_fc": 1300, "amp_jit": 0.16, "ang_jit": 0.7,
-                          "w_exh": 1.0, "w_int": 0.40, "w_mech": 0.20, "w_floor": 0.05,
+                          "w_exh": 1.0, "w_int": 0.40, "w_mech": 0.20, "w_floor": 0.16,
                           "banks": [0, 1, 1, 0, 1, 0, 0, 1], "bank_delay_ms": 0.6, "tick_hz": 2200, "int_fc": 150,
                           "ref": "probe"},
     "gm_sbc_v8": {"pulse_deg": 40, "pipe_f1": 68, "tail_fc": 2600, "amp_jit": 0.12, "ang_jit": 0.5,
-                  "w_exh": 1.0, "w_int": 0.45, "w_mech": 0.28, "w_floor": 0.07,
+                  "w_exh": 1.0, "w_int": 0.45, "w_mech": 0.28, "w_floor": 0.22,
                   "banks": [0, 1, 1, 0, 1, 0, 0, 1], "bank_delay_ms": 0.5, "tick_hz": 3000, "int_fc": 210,
                   "ref": "probe"},
     "vw_aircooled_flat4": {"pulse_deg": 44, "pipe_f1": 80, "tail_fc": 1900, "amp_jit": 0.13, "ang_jit": 0.6,
-                           "w_exh": 1.0, "w_int": 0.30, "w_mech": 0.55, "w_floor": 0.10,
+                           "w_exh": 1.0, "w_int": 0.30, "w_mech": 0.55, "w_floor": 0.45,
                            "banks": [0, 1, 1, 0], "bank_delay_ms": 0.9, "tick_hz": 2400, "int_fc": 260,
                            "ref": "subaru_fa20_flat4"},
 }
 
 
-def firing_angles(n_cyl: int, banks: list | None, ang_jit: float, rng) -> np.ndarray:
-    """Crank angles (deg, within 720) of the firing events in firing order, plus bank ids."""
-    base = np.arange(n_cyl) * 720.0 / n_cyl
-    return base
+EQ_FILE = os.path.join(HERE, "synth_eq.json")   # fixed-in-Hz gain curves per family, written by --fit-eq --save
+if os.path.exists(EQ_FILE):
+    for _f, _eq in json.load(open(EQ_FILE)).items():
+        PROFILES.get(_f, {}).update(_eq)
 
 
 def _fft_filter(x: np.ndarray, H: np.ndarray) -> np.ndarray:
@@ -158,6 +158,7 @@ def synth_loop(B: int, load: str, prof: dict, n_cyl: int, max_len: float, seed: 
     # rpm-dependent loudness (engines get louder with speed), then a gentle 40 Hz high-pass like the sprites
     y = signal.sosfilt(signal.butter(2, 40, "highpass", fs=SR, output="sos"), np.tile(y, 3))[L:2 * L]
     y = y - np.mean(y)
+    y = apply_eq(y, prof.get("eq_" + load))
     return y.astype(np.float64), rpm_eff
 
 
@@ -174,6 +175,58 @@ def band_levels(x: np.ndarray, fs: int = SR) -> tuple[np.ndarray, np.ndarray]:
     return centres, lv - lv.max()
 
 
+BANDS = 1000 * 2.0 ** (np.arange(-13, 10) / 3.0)   # 1/3-octave centres, 50 Hz .. ~8 kHz
+
+
+def harmonic_envelope(x: np.ndarray, rpm: float) -> np.ndarray:
+    """Level (dB) of the engine-order harmonics (multiples of the cycle frequency, rpm/120 Hz, +-2 % windows), averaged
+    in 1/3-octave bands: the 'formant' shape of the note, free of the lumpiness of a few sparse bins."""
+    X = np.abs(np.fft.rfft(np.tile(x, 4) * np.hanning(4 * len(x)))) ** 2
+    fr = np.fft.rfftfreq(4 * len(x), 1 / SR)
+    fc = rpm / 120.0
+    pk, hf = [], []
+    for k in range(1, int(8000 / fc)):
+        m = np.abs(fr - k * fc) <= 0.02 * k * fc
+        if m.any():
+            pk.append(X[m].max())
+            hf.append(k * fc)
+    pk, hf = np.array(pk), np.array(hf)
+    out = np.full(len(BANDS), np.nan)
+    for i, c in enumerate(BANDS):
+        m = (hf >= c / 2 ** (1 / 6)) & (hf < c * 2 ** (1 / 6))
+        if m.any():
+            out[i] = 10 * np.log10(pk[m].mean() + 1e-18)
+    # fill empty bands by interpolation in log-frequency, normalise to the 63 Hz-2 kHz mean
+    ok = ~np.isnan(out)
+    out = np.interp(np.log(BANDS), np.log(BANDS[ok]), out[ok])
+    sel = (BANDS >= 63) & (BANDS <= 2000)
+    return out - out[sel].mean()
+
+
+def floor_contrast(x: np.ndarray, rpm: float) -> float:
+    """Mean harmonic-peak level minus the level half-way between harmonics (dB), 100 Hz-3 kHz: how 'tonal' the note is."""
+    X = 10 * np.log10(np.abs(np.fft.rfft(np.tile(x, 4) * np.hanning(4 * len(x)))) ** 2 + 1e-18)
+    fr = np.fft.rfftfreq(4 * len(x), 1 / SR)
+    fc = rpm / 120.0
+    p, q = [], []
+    for k in range(1, int(3000 / fc)):
+        if k * fc < 100:
+            continue
+        p.append(X[np.abs(fr - k * fc) <= 0.02 * k * fc].max())
+        mid = (k + 0.5) * fc
+        q.append(X[np.abs(fr - mid) <= 0.1 * fc].mean())
+    return float(np.mean(p) - np.mean(q)) if p else 0.0
+
+
+def apply_eq(y: np.ndarray, eq_db) -> np.ndarray:
+    """Fixed-in-Hz gain curve (dB per BANDS entry) on the loop's own FFT grid, so the loop stays periodic."""
+    if not eq_db:
+        return y
+    f = np.fft.rfftfreq(len(y), 1 / SR)
+    g = np.interp(np.log(np.maximum(f, 1.0)), np.log(BANDS), np.asarray(eq_db), left=eq_db[0], right=eq_db[-1])
+    return np.fft.irfft(np.fft.rfft(y) * 10 ** (g / 20), n=len(y))
+
+
 def ref_loop(ref: str, rpm: int, load: str):
     """The bin nearest `rpm` of a real reference family (decoded from its Ogg sprite) as a numpy loop."""
     if ref == "probe":
@@ -188,24 +241,47 @@ def ref_loop(ref: str, rpm: int, load: str):
     return spr[a:a + int(round(r["duration"] * SR))], b["rpm"]
 
 
-def compare(fam: str, prof: dict, defs: dict, ref: str, max_len: float, seed: int) -> dict:
-    """Mean absolute 1/3-octave difference (dB, shape only, both normalised to their own peak band) at 3 rpm points,
-    on and off throttle, between the synthesised loop and the reference family's loop at the same rpm."""
-    out = {}
+def compare_points(defs: dict):
+    pts = []
     for frac in (0.3, 0.55, 0.85):
-        B = int(round((defs["idle_rpm"] + frac * (defs["redline_rpm"] - defs["idle_rpm"])) / 250.0) * 250)
+        pts.append(int(round((defs["idle_rpm"] + frac * (defs["redline_rpm"] - defs["idle_rpm"])) / 250.0) * 250))
+    return pts
+
+
+def compare(fam: str, prof: dict, defs: dict, ref: str, max_len: float, seed: int) -> dict:
+    """Mean absolute difference (dB) of the harmonic-envelope shape (63 Hz-5 kHz) between the synthesised loop and the
+    reference family's loop at the same rpm, three rpm points x on / off, plus the harmonic-to-floor contrast of both."""
+    out = {}
+    keep = (BANDS >= 63) & (BANDS <= 5000)
+    for B in compare_points(defs):
         for load in ("on", "off"):
-            y, _ = synth_loop(B, load, prof, defs["cylinders"], max_len, seed + B, defs["idle_rpm"])
-            try:
-                r, rb = ref_loop(ref, B, load)
-            except Exception as ex:  # noqa: BLE001
-                out[f"{load}@{B}"] = None
-                continue
-            c, ls = band_levels(y)
-            _, lr = band_levels(r)
-            keep = (c >= 63) & (c <= 5000)
-            out[f"{load}@{B}"] = round(float(np.mean(np.abs(ls[keep] - lr[keep]))), 2)
+            y, re_ = synth_loop(B, load, prof, defs["cylinders"], max_len, seed + B, defs["idle_rpm"])
+            r, _ = ref_loop(ref, B, load)
+            # the reference bin's own rpm is B too (family bins are on the same 250 grid up to the probe's offsets)
+            es, er = harmonic_envelope(y, re_), harmonic_envelope(r, B)
+            out[f"{load}@{B}"] = {"env_dB": round(float(np.mean(np.abs(es[keep] - er[keep]))), 2),
+                                  "tonal_synth": round(floor_contrast(y, re_), 1), "tonal_ref": round(floor_contrast(r, B), 1)}
     return out
+
+
+def fit_eq(fam: str, prof: dict, defs: dict, ref: str, max_len: float, seed: int, clip: float = 12.0):
+    """Fixed-in-Hz EQ per load: the mean over the three rpm points of (reference - synth) harmonic envelope, smoothed
+    over three bands and clipped to +-clip dB. This is the only place the reference is used; it is a tuning step whose
+    result (a short list of numbers) is stored in PROFILES, the generator itself never reads the reference."""
+    res = {}
+    base = dict(prof)
+    base.pop("eq_on", None)
+    base.pop("eq_off", None)
+    for load in ("on", "off"):
+        diffs = []
+        for B in compare_points(defs):
+            y, re_ = synth_loop(B, load, base, defs["cylinders"], max_len, seed + B, defs["idle_rpm"])
+            r, _ = ref_loop(ref, B, load)
+            diffs.append(harmonic_envelope(r, B) - harmonic_envelope(y, re_))
+        d = np.mean(diffs, axis=0)
+        d = np.convolve(np.pad(d, 1, mode="edge"), np.ones(3) / 3, mode="valid")
+        res["eq_" + load] = [round(float(v), 1) for v in np.clip(d - np.mean(d[(BANDS >= 63) & (BANDS <= 2000)]), -clip, clip)]
+    return res
 
 
 def build(fam: str, compare_ref: str | None = None, seed: int = 7):
@@ -218,7 +294,7 @@ def build(fam: str, compare_ref: str | None = None, seed: int = 7):
     sec_total = (bf.BUDGET_BYTES - 12_000) * 8 / (bf.KBPS * 1000) * 0.93
     max_len = float(min(1.0, sec_total / 2 / len(BINS) - 2 * PAD / SR - 0.4 / len(BINS)))
     cmp_ = compare(fam, prof, defs, ref, max_len, seed)
-    print(f"  spectrum match vs {ref} (mean |dB| over 1/3-octave bands 63 Hz-5 kHz):", cmp_)
+    print(f"  harmonic-envelope match vs {ref} (mean |dB|, 1/3-octave bands 63 Hz-5 kHz):", json.dumps(cmp_))
     final = {"on": {}, "off": {}}
     for load in ("on", "off"):
         for B in BINS:
@@ -241,5 +317,28 @@ if __name__ == "__main__":
     ap.add_argument("--family", required=True)
     ap.add_argument("--compare", default=None)
     ap.add_argument("--seed", type=int, default=7)
+    ap.add_argument("--fit-eq", action="store_true", help="print the eq_on / eq_off lists to paste into PROFILES")
+    ap.add_argument("--save", action="store_true", help="with --fit-eq: store the curves in synth_eq.json")
+    ap.add_argument("--compare-only", action="store_true", help="print the match against the reference, write nothing")
     a = ap.parse_args()
-    build(a.family, a.compare, a.seed)
+    if a.fit_eq:
+        defs_, _ = bf.load_defs(a.family)
+        pr = PROFILES[a.family]
+        sec = (bf.BUDGET_BYTES - 12_000) * 8 / (bf.KBPS * 1000) * 0.93
+        nb = len(range(750 if defs_["idle_rpm"] < 700 else 1000, int(np.ceil(defs_["redline_rpm"] / 250.0) * 250) + 1, 250))
+        ml = float(min(1.0, sec / 2 / nb - 2 * PAD / SR - 0.4 / nb))
+        eq = fit_eq(a.family, pr, defs_, a.compare or pr["ref"], ml, a.seed)
+        print(json.dumps(eq))
+        if a.save:
+            allq = json.load(open(EQ_FILE)) if os.path.exists(EQ_FILE) else {}
+            allq[a.family] = eq
+            json.dump(allq, open(EQ_FILE, "w"), indent=1)
+    elif a.compare_only:
+        defs_, _ = bf.load_defs(a.family)
+        pr = PROFILES[a.family]
+        sec = (bf.BUDGET_BYTES - 12_000) * 8 / (bf.KBPS * 1000) * 0.93
+        nb = len(range(750 if defs_["idle_rpm"] < 700 else 1000, int(np.ceil(defs_["redline_rpm"] / 250.0) * 250) + 1, 250))
+        ml = float(min(1.0, sec / 2 / nb - 2 * PAD / SR - 0.4 / nb))
+        print(json.dumps(compare(a.family, pr, defs_, a.compare or pr["ref"], ml, a.seed)))
+    else:
+        build(a.family, a.compare, a.seed)
