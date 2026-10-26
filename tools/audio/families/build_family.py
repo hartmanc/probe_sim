@@ -162,6 +162,29 @@ def speech_map(x: np.ndarray, cp: str) -> np.ndarray:
     return p
 
 
+def track_speed(defs: dict) -> int:
+    """V8s are tracked on the audio played at double speed (round two): their half-order ladder at 650-2000 rpm is
+    5-17 Hz apart, inside the tracker's 170 ms window resolution, so the comb contrast stayed near 0 dB on every old-V8
+    source; at x2 the same window spans 340 ms of the engine and the median contrast rises from ~0.1 to 1-2.4 dB
+    (idle, dyno and autocross clips), with the idle read where the cycle autocorrelation puts it."""
+    return 2 if defs["cylinders"] == 8 else 1
+
+
+def run_track(x: np.ndarray, defs: dict, rpm_max: float, rpm_min: float) -> dict:
+    k = track_speed(defs)
+    xs = signal.resample_poly(x.astype(np.float64), 1, k) if k > 1 else x
+    r = tu.track(xs, defs["cylinders"], defs["fire"], defs["layout"], rpm_max=rpm_max * k, rpm_min=rpm_min * k)
+    if k > 1:
+        r["rpm"] = (r["rpm"] / k).astype(np.float32)
+        r["t"] = r["t"] * k
+        r["slope"] = (r["slope"] / (k * k)).astype(np.float32)
+    return r
+
+
+def frame_s(r: dict) -> float:
+    return float(r["t"][1] - r["t"][0]) if len(r["t"]) > 1 else tu.FRAME
+
+
 def idle_track(x: np.ndarray, defs: dict, res: dict, cp: str):
     """Idle stretches. The full-range tracker reads a quiet idle an octave up (the I4's order 2 at 750 rpm is 25 Hz, the
     bottom of the comb band), so idle gets its own track over 0.6-1.6 x the family idle. A frame is idle when that
@@ -171,7 +194,7 @@ def idle_track(x: np.ndarray, defs: dict, res: dict, cp: str):
     if os.path.exists(cp):
         ri = dict(np.load(cp))
     else:
-        ri = tu.track(x, defs["cylinders"], defs["fire"], defs["layout"], rpm_max=1.6 * idle, rpm_min=0.6 * idle)
+        ri = run_track(x, defs, 1.6 * idle, 0.6 * idle)
         ri = {k: ri[k] for k in ("t", "rpm", "conf", "slope", "octave_margin")}
         np.savez_compressed(cp, **ri)
     t = ri["t"]
@@ -183,7 +206,7 @@ def idle_track(x: np.ndarray, defs: dict, res: dict, cp: str):
     inside = (ri["rpm"][:n] > 0.62 * idle) & (ri["rpm"][:n] < 1.55 * idle)  # not pinned to the search edge
     ok = (ri["conf"][:n] >= 1.5) & (np.abs(ri["slope"][:n]) < 120) & inside & quiet & ~res["speech"][:n]
     ok = signal.medfilt(ok.astype(np.float64), 7) > 0.5
-    if ok.sum() < int(1.2 / tu.FRAME):
+    if ok.sum() < int(1.2 / frame_s(ri)):
         return None
     return {"t": t[:n], "rpm": ri["rpm"][:n], "conf": ri["conf"][:n], "slope": ri["slope"][:n],
             "octave_margin": np.full(n, 1.0, np.float32), "load": np.zeros(n, np.int8), "speech": ~ok,
@@ -199,20 +222,19 @@ def tracks(fam: str, defs: dict, src: dict, force: bool):
             continue
         p = entry_file(e, fam, k)
         x = read_span(p, float(e.get("t0", 0.0)), e.get("t1"))
-        key = hashlib.sha1(json.dumps([os.path.basename(p), e.get("t0"), e.get("t1"), defs, 7, rpm_min]).encode()).hexdigest()[:10]
+        key = hashlib.sha1(json.dumps([os.path.basename(p), e.get("t0"), e.get("t1"), defs, 7, rpm_min, track_speed(defs)]).encode()).hexdigest()[:10]
         cp = os.path.join(CACHE, f"track_{fam}_{k}_{key}.npz")
         if os.path.exists(cp) and not force:
             res = dict(np.load(cp))
         else:
-            res = tu.track(x, defs["cylinders"], defs["fire"], defs["layout"],
-                           rpm_max=min(tu.RPM_MAX, defs["redline_rpm"] * 1.15), rpm_min=rpm_min)
+            res = run_track(x, defs, min(tu.RPM_MAX, defs["redline_rpm"] * 1.15), rpm_min)
             np.savez_compressed(cp, **res)
         sp = speech_map(x, os.path.join(CACHE, f"speech_{fam}_{k}_{key}.npz"))
         # per tracker frame: speech within +-0.3 s
         tf = res["t"]
         ps = np.interp(tf, (np.arange(len(sp)) + 0.5) * 0.032, sp) if len(sp) else np.zeros(len(tf))
         sm = ps > 0.5
-        sm = ndimage.binary_dilation(sm, iterations=int(round(0.3 / tu.FRAME))) if sm.any() else sm
+        sm = ndimage.binary_dilation(sm, iterations=int(round(0.3 / frame_s(res)))) if sm.any() else sm
         res["speech"] = sm
         res["octave"] = octave_check(res, defs, e)
         res["label_name"] = f"src{k}"
@@ -251,16 +273,17 @@ def candidates(T: dict, B: int, load: str, tol: float, min_s: float, conf_min: f
         m = signal.medfilt(m.astype(np.float64), 5) > 0.5
         m &= ~r["speech"]
         for s, e in runs(m):
-            dur = (e - s) * tu.FRAME
+            FR = frame_s(r)
+            dur = (e - s) * FR
             if dur < min_s:
                 continue
-            span = int(round(span_s / tu.FRAME))
+            span = int(round(span_s / FR))
             best = None
             for a in range(s, max(s + 1, e - span + 1), 4):
                 b = min(e, a + span)
                 c = float(np.mean(r["conf"][a:b]))
                 sd = float(np.std(ra[a:b] - np.polyval(np.polyfit(np.arange(b - a), ra[a:b], 1), np.arange(b - a)))) if b - a > 3 else 0.0
-                score = c - sd / 40.0 + 1.5 * min((b - a) * tu.FRAME, 0.9) + 0.3 * float(np.mean(r["octave_margin"][a:b]))
+                score = c - sd / 40.0 + 1.5 * min((b - a) * FR, 0.9) + 0.3 * float(np.mean(r["octave_margin"][a:b]))
                 if best is None or score > best[0]:
                     best = (score, a, b)
             out.append((best[0], k, best[1], best[2]))
@@ -288,7 +311,7 @@ def process(T: dict, cand, B: int, main_order: float, max_len: float, min_len: f
     loop = make_loop(y, a_, L, rho)
     return {"loop": loop, "rho": rho, "tick": transient_ratio(loop), "rpm": n_cyc * 120.0 * SR / L,
             "n_cycles": n_cyc, "wobble": wobble, "name": f"src{d.get('of', k)}", "src": d.get("of", k),
-            "t": float(d["t0"] + t[a]), "dur_src": float((b - a) * tu.FRAME),
+            "t": float(d["t0"] + t[a]), "dur_src": float((b - a) * frame_s(r)),
             "contrast": float(np.mean(r["conf"][a:b])), "long": y, "raw": highpass(x)}
 
 
