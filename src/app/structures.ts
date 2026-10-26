@@ -38,6 +38,9 @@ export interface GrandstandJson {
   tower?: { t0: number; t1: number; d0: number; d1: number; z0: number; h: number; color: string; glass: string; roof: string };
   /** rear wall under the deck (ground to the floor) */
   rear?: { color: string };
+  /** Mid-Ohio round 7: drawn part self-lit (TERRACE_SELF_LIT) like the terraces: aluminium bleachers that face away from
+   *  the sun stay light; absent: plain Lambert */
+  self_lit?: boolean;
   /** Mid-Ohio round 7: a roof over the rows (covered grandstand): d0..d1 from the front line (default 0 .. the top row
    *  + 0.5 m), its underside at z0 (front) and z1 (back), colours, column pitch, an optional fascia band across the
    *  front at z (a two-tier stand's middle deck); absent: no roof (every other track's grandstands unchanged) */
@@ -883,7 +886,9 @@ export function structureSoups(list: StructureJson[], terraces: TerraceJson[] = 
   for (const u of list) {
     const before = solid.tris + pnt.tris + fabric.tris + terr.tris;
     switch (u.type) {
-      case 'grandstand': grandstand(u, solid); break;
+      // Mid-Ohio round 7 (the T4 bleachers rendered dark: their rows face away from the sun, plain Lambert): `self_lit`
+      // draws a stand with the terraces' part-self-lit concrete; absent: the solid soup as before
+      case 'grandstand': grandstand(u, u.self_lit ? terr : solid); break;
       case 'garage': garage(u, solid); break;
       case 'block': block(u, solid); break;
       case 'fuel': fuel(u, solid); break;
