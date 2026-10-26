@@ -187,7 +187,7 @@ band the gate finds the lane seam behind mouth A (all holes there).
 
 **The lane, point by point against 95c8125** (its drawn strip in the box, 0.25 m, the gate's exclusions; 94,809 samples):
 paved -> paved 85,188, **paved -> unpaved 0**, unpaved -> paved 9,621 (the band the round-8 pale strips had taken), unpaved ->
-unpaved 0; where paved in both, max |dz| 0.013 m (x 235, E's band end, a gradual change, no step: below).
+unpaved 0; where paved in both, max |dz| 0.013 m (x 235, E's band end; the boundary steps are the table below, not zero).
 
 ### 2. FIX: outline validity verified, not repaired (fixed)
 
@@ -206,8 +206,8 @@ self-intersecting, a reversed, a backtracking and a gapped outline each fail; cr
 physics' rule restricted to the lane's parts), outside it the correction of the section's outermost inside point fades
 linearly over `reach`, and along the part over `reach` from the last section that meets the lane; fewer than 75 % of
 sections meeting the lane fails. `planar` (C, C deep, E, E deep): outside the lane the heights lie on one straight line
-per station from the course edge to the lane's own height at its right edge, so shallow and deep parts meet with no
-step. Test on a lane sloping 2 % across and 0.1 % along: the part's height at the boundary within 5 mm of the lane's.
+per station from the course edge to the lane's own height at its right edge, so shallow and deep parts sample one
+line (their boundary keeps the interpolation between each part's own profile points: millimetres, measured below). Test on a lane sloping 2 % across and 0.1 % along: the part's height at the boundary within 5 mm of the lane's.
 
 **Steps measured** (transects every 0.5 m across, 0.05 m along each, every ownership boundary crossed: shallow / deep,
 deep / lane, band / lane, mouth / band at the wall, including the parts' ends; 0.4 m round the barriers left out):
@@ -256,3 +256,140 @@ the surface 168 / 36; ground marks 0 off; paved coverage as item 1). track.json,
 far_heightfield.bin, far_ortho.jpg identical to 95c8125; ortho.jpg differs only in the paint-over box (1,105 px, x
 83.4 .. 103.2, y -214.8 .. -195.0); Sonoma identical (3cf8227da0). TRACKS.buttonwillow rev 2503ea567c. Tests: `npm run
 build` clean; vitest 65 files **539 passed** (537 + 2); pytest **131 passed, 3 skipped** (116 + 15 round 14).
+
+## Second review round (GPT 6 Astra, HOLD, eight items) and the owner's decisions of 26 Oct 2026
+
+Rev 2503ea567c -> **29f4afedba**. Astra's fixes first, then the owner's four items, one build. Every number below was
+measured on the published package (physics surface, `createTrackSurface` / the gate's `plainSurface`).
+
+### A1. The lane box derived, not hand numbers
+
+`gates.paved_coverage.lane = {margin: 10}`: the box is the bounds of every named part's drawn strip (the round-13 set,
+below) grown by 10 m: **[-210.42, -244.70, 238.44, -129.68]**; the pit lane's drawn strip inside it **77,779 samples,
+0 unpaved** (925 within 0.1 m of a drawn edge left out). `lane_box` is gone from the gate and the tests.
+
+### A2. OSM 10409813's footprint restored; the lane seam at x -140 .. -127
+
+The aisle's own part ends at y -197.73 (its declared first node); across its end a block part (`scenery.block_parts`,
+build_scenery `block_part`): its centre line runs through the aisle's end point (1 cm beyond it, moved +0.76 m from the
+declared y -198.5) with a centre point there, so every sample beyond the aisle's end has a block centre point nearest
+(the physics' nearest-centre rule; the aisle's `over` region is a 5 mm sliver), halves 4.04 m (north, over the aisle's
+end) / 3.01 m (south, to y -200.75: round 13's end), x -136.8 .. -128.2, the aisle's own heights. Its centre is 8.5 m or
+more from the lane's samples by the paddock-side K-rail (the lane's centre is 8.2 m), so it takes none.
+Coverage: the aisle beside the lane is checked (`also: ^paddock lanes`, within 10 m of the lane's strip): **443
+samples, 0 unpaved**. Against 95c8125, point by point: **(a)** every sample of 95c8125's paddock strips paved there,
+**523,044: still paved 523,044, 0 now unpaved**; **(b)** the new lane strip, paved in 95c8125: **81,227, still paved
+81,227, 0 now unpaved** (max |dz| 11.5 mm at (-195.5, -224.25), C's nose, the band below). vitest: the footprint box
+x -136.4 .. -128.8, y -200.55 .. -197.2 is paved at every 0.2 m sample; without the block it is not.
+
+### A3. Mouth C pale over the mouth; the lane's asphalt only over the lane
+
+C's apron part draws pale over all of his outline (`draw_full`); the C lane band (`make_lane_band`, on the lane's own
+stations) is not drawn (`draw: false`); the lane draws its own paving, which now stops at his line (O1). The band's
+right edge reaches toward the course only inside his C outline (`lane_band.within`: from the lane's edge along each
+section as far as his outline runs; a section whose lane edge lies outside it keeps the lane's edge): to the course at
+24 of 121 stations. Stills (local, `round14/stills/r3/`): `mouthC_s4478`, `laneC_nose`, `laneC_behind_wall`
+(`pairs_r3_a.jpg`): the nose reads pale over the mouth, asphalt over the lane, dirt beyond his line.
+
+### A4. B's join step; the bent band in the physics
+
+B has no band now: its centre is the lane's centre mirrored about the pit wall's line (`outline.centre = 'mirror_wall'`),
+so the nearest-centre boundary with the lane lies on the wall and the lane paves the channel above it itself. C: the
+apron part takes the band's own surface wherever its profile points lie in the band (`outline.surface_from`, 196 of
+1,477 points, change -4.4 .. +4.2 mm), so the two meet on one surface. **Transects** (physics, every 0.5 m across, 1 cm
+along, from the lane's centre 15 m toward the course, every paved sample; max |dz| between neighbours / max second
+difference):
+
+| region | rev 29f4afedba | rev 2503ea567c | 95c8125 |
+|---|---|---|---|
+| A, x -30 .. 0 | 1.86 mm at (-8.5, -221.04): the course edge itself / 1.89 | 1.05 | 1.08 |
+| B, x 35 .. 65 | **0.19 mm** / 0.14 | 0.68 | 0.54 |
+| C, x -205 .. -150 | 1.90 mm at (-184.5, -233.48) / 1.93 (3.90 before `surface_from`) | 3.41 | 0.28 |
+| E, x 215 .. 232 | 0.48 mm / 0.53 | 3.81 | 0.08 |
+
+(Astra's 7.4 mm at B was measured her way; on these transects rev 2503ea567c shows 0.68 mm there.) A's maximum is the
+course's edge (paved -> on track at y -221.04), not a part boundary. Tests: pytest
+`test_lane_band_meets_the_lane_with_its_surface_on_a_bent_band` (the C construction, kinked and bent back, on a lane
+twisting 1-3 % across: every 1 mm sample across paved, worst step beyond the slope < 0.1 mm); vitest transects on the
+package (< 3 mm per cm at A, B, C, E).
+
+### A5. Round-13's check kept exactly
+
+The round-13 check samples the named parts' drawn strips with their own edge exclusions, as before; the lane, the aisle
+and his outlines are three separate sample sets, each with its own exclusions. The only change to the round-13 set:
+a part with `draw: false` (none existed in round 13) has no drawn strip and is not in it (its paving is checked as the
+lane's and his outlines'). Published: **12 parts, 139,086 samples, 0 unpaved** (5,428 on an edge left out).
+
+### A6. Outline validation: closed (no change).
+
+### A7. His outlines, paved
+
+`gates.paved_coverage.outlines = 'runoff_zones'`: each mouth's outline as he drew it (`owner_outline_latlon`, else
+`outer_latlon`), closed 3 m inside the course; every sample in them off the course must be paved: **4 outlines, 10,227
+samples, 0 unpaved** (449 on an outline edge left out). What made it so: sections every 0.25 m; each section's outer
+edge the farthest reach of its own ray and the rays a third of a step either side; a push where a corner of his outline
+lies between two sections beyond the physics' interpolated half-width (A 22, B 17, C 2, E 15 section edges); tips kept to
+0.05 m; 0.3 m pads past each part's end sections; on the lane, 14 pushes where his line's corners (the channels' feet)
+lie between two lane stations. **Paved outside his outlines and his lane line** (the bounded deviation; 0.25 m grid
+between the course edge and the lane, 0.4 m round barriers left out): **257 samples (16.1 m2), at most 1.10 m from
+his outline or the lane's edge**: by x, C's west flare (x -200 .. -175) 73, C's east end (-175 .. -150) 55 + 8, A 28, B
+18, E 75: the corners' chamfers, the end pads, and C's band reaching his outline's top across the flare's slanted side.
+
+### A8. Wording
+
+"meet with no step" (review item 3) and "a gradual change, no step" (item 1) are corrected above: the boundaries are the
+millimetres in A4's table. The A / B lane-band descriptions of the first review (20 m tapers) describe rev 2503ea567c;
+those bands are gone in this round (A4).
+
+### O1. The pit lane stops at his line: dirt median, A and B as channels
+
+`pit_lane.lane.edge_line` (`owner/r14_lane_line.json`, his lane-side green from w_s4500 / w_s4625 / w_s0000 / w_s0125,
+one point a metre, with his detours down A's #12 / #11 and B's #10 / #9 flares to the wall face + 0.3 m): each lane
+station whose right edge lay beyond his line moves onto it (never outward; the farthest of the station's own ray and
+the rays half a station either side, then the corner pushes), **241 stations moved more than 1 cm, x -194.2 ..
+68.95** (the build logs 244 points moved, 14 pushes); the centre (the AI's
+pit path) does not move; the profile on the cut side is re-read on the lane's own surface. East of x 64: his line runs
+on to x 216, but the lane's edge lies beyond it only to x 68.95 (5 stations x 64 .. 69, 5.3 m on average, where his
+stroke closes onto the wall); from x 69 east the lane's edge is on or inside his line and the lane is kept as it was.
+The median: 95c8125's lane strip outside the new one, paved there **7,652 samples (478 m2): now dirt 7,466**, still
+paved 186 (the channels and mouths). The AI's path: the lane's least right half-width beside the straight is **3.31 m
+at station 208 (-142.4, -216.1)** (95c8125: 3.99 m); the lane centre sampled every 0.1 station: 1 unpaved sample, as in
+95c8125; pit connectivity ok (388 m out, 382 m in, 0 barrier crossings, 2 m unpaved, as before). A and B: the lane
+paves each channel above the wall; the mouths pave from the course edge to his wall-top line (`mirror_wall`). C and E
+join the lane as before. Ortho: differs from 95c8125 in 1,919 px (691 m2, x -296 .. 186, y -229 .. -172: the median's
+tone with the lane's paving gone from it) and from rev 2503ea567c in 1,615 px in the same box. Stills:
+`laneA_channel`, `laneB_channel`, `lane_median_x-100`, `lane_median_x150` (`pairs_r3_a / b.jpg`).
+
+### O2. T5 apex: the right run moved to the dense frames' reading
+
+`kerbs_declared` 'run right s 1304-1323': `extent = (1282.0, 1308.0)` with `extent_src` (round 13's frames t051385 /
+t051485, t052286 / t052386; the line scan's raw paint 1280-1309 m; width 0.9 m, the standard block). Was 1304.6-1322.5.
+Kerb traversal (Probe at line speed): **R s1282-1308: 3.17 / 3.14 / 7.97 deg** (line -1 / 0 / +1 m; +1 m lifts a wheel
+385 ms, 8.1 cm). Stills `kerbT5_near`, `kerbT5_mid` (`pairs_r3_kerbs.jpg`).
+
+### O3. The Sweeper exit kerb added
+
+'run right s 3680-3690 (Sweeper exit)': flat red / white / blue strip, `extent = (3679.5, 3689.5)` m, width 0.4 m:
+onboard 0.5 s frames 2:00-2:05.5 and 0.1 s 2:02.7-2:05.9 (t123100 far, t123300 passing the hood); the line scan's red and
+blue rows on the right at 3677-3688 m of the overlay-speed map, + 1.4 m (its local offset at R 3794-3810, round 13).
+Inventory row added (`observations.jsonl`, `inventory.json`: kerb rows 39). Kerb traversal **R s3679-3689: 1.42 / 1.32 /
+1.40 deg**, no lift. The kerbs-on-surface gate (`kerbsOnSurface`) runs on terrain-override kerb lines only (none at
+Buttonwillow, n/a); the strip's build log: max step 0.000 m, ground marks 0 off. Still `kerbSweeper_near`.
+
+### O4. His kerb ticks (w_s0547, w_s1557)
+
+Stations re-derived from his strokes on the capwin frames (ENU x = cx + (px - 666.5) 0.06, y = cy - (py - 666.5) 0.06,
+projected onto this package's edges): **L 536-549 -> 522.7-550.6 m**, **L 1541-1574 -> 1539.7-1574.0 m** (`extent`,
+`extent_src` citing the strokes' pixels). Third ticks: w_s0547's on the RIGHT edge at 583.1 m, 0.8 m from R 584-604's
+start (583.9): within a metre, so the start is 583.1 (end 611.5 kept); w_s1557's at 1514.1 m on the right, on R
+1495-1515's end (1514.2): no change. Kerb traversal: **L s523-551 (T2 entry): 2.86 / 2.95 / 8.27 deg** (+1 m lifts 360
+ms, 7.5 cm); **L s1540-1574 (after T5): 3.15 / 3.07 / 3.08 deg**; R s583-612: 3.59 / 3.44 / 3.44 deg. Every Buttonwillow
+pass: 117, worst 10.80 deg (gate 15). Stills `kerbL523_start`, `kerbL550_end`, `kerbL1540_start`, `kerbL1574_end`.
+
+### Gates and identity (rev 29f4afedba)
+
+Stage 3 `--publish --overwrite-package` exit 0, 0 `[FAIL]`; build == package (every file); gate CLI on the package
+every gate ok, exit 0 (containment 0 escapes, 3,295 allowed; pit connectivity 388 / 382 m; cones off the surface 168 /
+36; ground marks 0 off; paved coverage as A1 / A5 / A7). track.json, heightfield.bin, ghosts.json, far_heightfield.bin,
+far_ortho.jpg identical to 95c8125; ortho.jpg as O1; Sonoma identical. TRACKS.buttonwillow rev 29f4afedba. Tests: `npm run
+build` clean; vitest 65 files **541 passed**; pytest **136 passed, 3 skipped** (131 + 5).
