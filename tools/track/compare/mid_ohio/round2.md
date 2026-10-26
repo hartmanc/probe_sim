@@ -9,3 +9,31 @@ Independent validation: 15 focused tests passed (`test_yellow_kerb.py`, `test_pr
 Visual checks: T1 red/white kerb at close_s0320 matches the owner's boundary example; T2 yellow kerb close_s1060 and T4 red/white close_s1960 also follow the asphalt-facing boundary. Edge width still varies at junctions; advisory exit-width findings at T1, Carousel and T13 remain for review. Reports: `geometry_report_r2.json`, `stage_geometry_r2.json`.
 
 Future kerb rendering must place the kerb outside this revised road boundary; it must not reuse an assumption that the road edge includes the entire kerb. The current round changes geometry only.
+
+## Carry-over of original review marks
+
+The owner requested existing round-one marks on this page as well. The updated
+page automatically reads only the original review's browser-storage key through
+`review_r1/edge_marks_to_5198.html`, a read-only bridge on port 5197. Original
+HTML, images and marks remain unchanged. Points and edit handles are mapped
+through each window's north-up ENU center, crop extent and pixel scale to the
+corresponding round-two window. Existing round-two marks are retained. A saved
+import ledger prevents duplicate imports and respects later deletions.
+
+Actual marks stay in the owner's browser; the transfer occurs on the next load
+of round two in that browser. Both localhost and 127.0.0.1 source origins are
+supported, and messages are restricted to the explicit local review origins.
+The original and revised storage keys were checked unchanged.
+
+Rebuild the drawing page with the existing flags plus:
+
+```
+--import-review tools/track/compare/mid_ohio/review_r1
+--source-windows tools/track/compare/mid_ohio/edges_r1/windows.json
+--target-windows tools/track/compare/mid_ohio/edges_r2/windows.json
+```
+
+Validation: four focused transfer tests pass. A temporary browser profile with
+sample original and new marks verified automatic cross-port import, geographic
+alignment, retention of new marks, duplicate prevention, respect for deletions,
+and an unchanged original browser store. No owner browser profile was accessed.

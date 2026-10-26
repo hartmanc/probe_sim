@@ -47,7 +47,78 @@ footer{font-size:13px;color:var(--muted);margin-top:24px}
 .stage.draw canvas{touch-action:none;cursor:crosshair}
 .stage.sel canvas{cursor:default}
 </style>
-</head><body><script>
+</head><body><script>/* Transfer review strokes through their north-up ENU window coordinates. */
+(function (root) {
+  'use strict';
+  function identity(stroke) {
+    return JSON.stringify([stroke.c, stroke.kind || 'free', stroke.pts, stroke.ctrl || null]);
+  }
+  function dimensions(window) {
+    const size = Math.floor(2 * window.half / window.mpp);
+    return {w: size, h: size, margin: Math.round(0.1 * size)};
+  }
+  function project(stroke, source, target) {
+    function point(p) {
+      if (!Array.isArray(p) || p.length !== 2 || !p.every(Number.isFinite)) {
+        throw new Error('Invalid mark coordinates');
+      }
+      const x = source.center_enu[0] - source.half + p[0] * source.mpp;
+      const y = source.center_enu[1] + source.half - p[1] * source.mpp;
+      return [(x - target.center_enu[0] + target.half) / target.mpp,
+              (target.center_enu[1] + target.half - y) / target.mpp];
+    }
+    if (!['red', 'green'].includes(stroke.c) || !Array.isArray(stroke.pts) || !stroke.pts.length) {
+      throw new Error('Invalid review mark');
+    }
+    const result = Object.assign({}, stroke, {pts: stroke.pts.map(point)});
+    if (stroke.ctrl) result.ctrl = stroke.ctrl.map(point);
+    return result;
+  }
+  function merge(existing, documents, previousImports, sourceWindows, targetWindows, sourceKey) {
+    const records = Object.assign({}, existing);
+    const seen = new Set(previousImports);
+    let added = 0, importedWindows = 0, recognized = 0;
+    for (const [id, target] of Object.entries(targetWindows)) {
+      const source = sourceWindows[id], document = documents[id];
+      if (!source || !document || !Array.isArray(document.strokes)) continue;
+      const size = dimensions(target), originalSize = dimensions(source);
+      if (document.w !== originalSize.w || document.h !== originalSize.h) {
+        throw new Error('Original image dimensions do not match ' + id);
+      }
+      const current = records[id];
+      if (current && (current.w !== size.w || current.h !== size.h)) {
+        throw new Error('Existing round-two image dimensions do not match ' + id);
+      }
+      const strokes = current ? current.strokes.slice() : [];
+      const present = new Set(strokes.map(identity));
+      let windowAdded = 0;
+      document.strokes.forEach(function (stroke, index) {
+        recognized++;
+        // The full source identity avoids collisions and remembers deliberately
+        // erased imports, so a reload never puts a deleted stroke back.
+        const importId = JSON.stringify([sourceKey, id, index, identity(stroke)]);
+        if (seen.has(importId)) return;
+        const transformed = project(stroke, source, target);
+        const fingerprint = identity(transformed);
+        if (!present.has(fingerprint)) {
+          strokes.push(transformed); present.add(fingerprint);
+          added++; windowAdded++;
+        }
+        seen.add(importId);
+      });
+      if (windowAdded) {
+        importedWindows++;
+        records[id] = Object.assign({}, current || {}, size, {strokes: strokes});
+      }
+    }
+    return {records: records, imports: Array.from(seen), added: added,
+            windows: importedWindows, recognized: recognized};
+  }
+  const api = {project: project, merge: merge, dimensions: dimensions};
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  else root.EdgeMarkTransfer = api;
+})(globalThis);
+</script><script>
 (function () {
   'use strict';
   var key = "probe-edge-review:d933485240492d0be5576cd02c6bc391704f4edce56f814b2e34a34e2c3ad2b0", records = {}, listeners = [], readError = '';
@@ -76,6 +147,61 @@ footer{font-size:13px;color:var(--muted);margin-top:24px}
     }}; }
   };
   window.claude = {use: function () { return Promise.resolve(db); }};
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var config = {"sourceKey": "probe-edge-review:d00f33a3bc8353a6ccf81eabd5ddf65ebf2ffc824433b08893cbfa6d54676aa4", "sourceWindows": {"w_s0000": {"center_enu": [61.686, 54.149], "half": 75, "mpp": 0.12}, "w_s0125": {"center_enu": [-62.926, 60.583], "half": 75, "mpp": 0.12}, "w_s0250": {"center_enu": [-187.481, 65.522], "half": 75, "mpp": 0.12}, "w_s0375": {"center_enu": [-270.277, -18.416], "half": 75, "mpp": 0.12}, "w_s0500": {"center_enu": [-269.243, -142.955], "half": 75, "mpp": 0.12}, "w_s0625": {"center_enu": [-266.216, -267.715], "half": 75, "mpp": 0.12}, "w_s0750": {"center_enu": [-261.701, -392.406], "half": 75, "mpp": 0.12}, "w_s0875": {"center_enu": [-254.074, -516.957], "half": 75, "mpp": 0.12}, "w_s1000": {"center_enu": [-342.782, -542.859], "half": 75, "mpp": 0.12}, "w_s1125": {"center_enu": [-353.764, -419.713], "half": 75, "mpp": 0.12}, "w_s1250": {"center_enu": [-357.962, -294.987], "half": 75, "mpp": 0.12}, "w_s1375": {"center_enu": [-361.453, -170.24], "half": 75, "mpp": 0.12}, "w_s1500": {"center_enu": [-352.98, -46.11], "half": 75, "mpp": 0.12}, "w_s1625": {"center_enu": [-313.598, 73.162], "half": 75, "mpp": 0.12}, "w_s1750": {"center_enu": [-268.175, 189.399], "half": 75, "mpp": 0.12}, "w_s1875": {"center_enu": [-222.918, 305.7], "half": 75, "mpp": 0.12}, "w_s2000": {"center_enu": [-139.102, 374.147], "half": 75, "mpp": 0.12}, "w_s2125": {"center_enu": [-29.357, 361.334], "half": 75, "mpp": 0.12}, "w_s2250": {"center_enu": [-25.067, 485.619], "half": 75, "mpp": 0.12}, "w_s2375": {"center_enu": [79.884, 520.043], "half": 75, "mpp": 0.12}, "w_s2500": {"center_enu": [173.974, 597.626], "half": 75, "mpp": 0.12}, "w_s2625": {"center_enu": [294.232, 615.753], "half": 75, "mpp": 0.12}, "w_s2750": {"center_enu": [335.278, 508.035], "half": 75, "mpp": 0.12}, "w_s2875": {"center_enu": [337.444, 382.308], "half": 75, "mpp": 0.12}, "w_s3000": {"center_enu": [294.518, 266.894], "half": 75, "mpp": 0.12}, "w_s3125": {"center_enu": [263.08, 155.016], "half": 75, "mpp": 0.12}, "w_s3250": {"center_enu": [318.468, 44.192], "half": 75, "mpp": 0.12}, "w_s3375": {"center_enu": [243.811, -19.382], "half": 75, "mpp": 0.12}, "w_s3500": {"center_enu": [150.401, 49.475], "half": 75, "mpp": 0.12}, "close_s0220": {"center_enu": [-157.551, 66.358], "half": 40, "mpp": 0.06}, "close_s0320": {"center_enu": [-247.051, 30.601], "half": 40, "mpp": 0.06}, "close_s0420": {"center_enu": [-272.79, -63.166], "half": 40, "mpp": 0.06}, "close_s1060": {"center_enu": [-352.443, -484.59], "half": 40, "mpp": 0.06}, "close_s1960": {"center_enu": [-178.169, 374.787], "half": 40, "mpp": 0.06}, "close_s2800": {"center_enu": [336.827, 457.141], "half": 40, "mpp": 0.06}}, "targetWindows": {"w_s0000": {"center_enu": [61.713, 54.673], "half": 75, "mpp": 0.12}, "w_s0125": {"center_enu": [-63.202, 61.017], "half": 75, "mpp": 0.12}, "w_s0250": {"center_enu": [-188.07, 65.684], "half": 75, "mpp": 0.12}, "w_s0375": {"center_enu": [-269.852, -17.278], "half": 75, "mpp": 0.12}, "w_s0500": {"center_enu": [-269.137, -142.216], "half": 75, "mpp": 0.12}, "w_s0625": {"center_enu": [-266.224, -267.258], "half": 75, "mpp": 0.12}, "w_s0750": {"center_enu": [-261.706, -392.23], "half": 75, "mpp": 0.12}, "w_s0875": {"center_enu": [-253.34, -515.999], "half": 75, "mpp": 0.12}, "w_s1000": {"center_enu": [-341.345, -546.268], "half": 75, "mpp": 0.12}, "w_s1125": {"center_enu": [-353.632, -423.06], "half": 75, "mpp": 0.12}, "w_s1250": {"center_enu": [-357.862, -298.056], "half": 75, "mpp": 0.12}, "w_s1375": {"center_enu": [-361.408, -173.031], "half": 75, "mpp": 0.12}, "w_s1500": {"center_enu": [-353.516, -48.561], "half": 75, "mpp": 0.12}, "w_s1625": {"center_enu": [-314.745, 70.139], "half": 75, "mpp": 0.12}, "w_s1750": {"center_enu": [-269.23, 186.64], "half": 75, "mpp": 0.12}, "w_s1875": {"center_enu": [-223.894, 303.211], "half": 75, "mpp": 0.12}, "w_s2000": {"center_enu": [-141.839, 374.9], "half": 75, "mpp": 0.12}, "w_s2125": {"center_enu": [-30.603, 358.364], "half": 75, "mpp": 0.12}, "w_s2250": {"center_enu": [-25.308, 481.638], "half": 75, "mpp": 0.12}, "w_s2375": {"center_enu": [75.571, 519.114], "half": 75, "mpp": 0.12}, "w_s2500": {"center_enu": [170.215, 593.757], "half": 75, "mpp": 0.12}, "w_s2625": {"center_enu": [288.89, 616.579], "half": 75, "mpp": 0.12}, "w_s2750": {"center_enu": [335.125, 513.887], "half": 75, "mpp": 0.12}, "w_s2875": {"center_enu": [337.909, 388.863], "half": 75, "mpp": 0.12}, "w_s3000": {"center_enu": [298.078, 272.092], "half": 75, "mpp": 0.12}, "w_s3125": {"center_enu": [260.469, 160.93], "half": 75, "mpp": 0.12}, "w_s3250": {"center_enu": [317.072, 50.379], "half": 75, "mpp": 0.12}, "w_s3375": {"center_enu": [250.31, -24.045], "half": 75, "mpp": 0.12}, "w_s3500": {"center_enu": [158.594, 48.983], "half": 75, "mpp": 0.12}, "close_s0220": {"center_enu": [-158.073, 65.64], "half": 40, "mpp": 0.06}, "close_s0320": {"center_enu": [-247.692, 31.928], "half": 40, "mpp": 0.06}, "close_s0420": {"center_enu": [-271.968, -62.227], "half": 40, "mpp": 0.06}, "close_s1060": {"center_enu": [-351.097, -488.049], "half": 40, "mpp": 0.06}, "close_s1960": {"center_enu": [-180.872, 374.327], "half": 40, "mpp": 0.06}, "close_s2800": {"center_enu": [336.623, 463.879], "half": 40, "mpp": 0.06}}, "sourcePort": 5197, "targetPort": 5198, "bridge": "edge_marks_to_5198.html"}, frames = [], imported = 0, recognized = 0, answered = 0;
+    var ledgerKey = key + ':imports', ledger = [];
+    try { ledger = JSON.parse(localStorage.getItem(ledgerKey) || '[]'); }
+    catch (e) { showTransfer('Could not read transfer history; originals remain untouched.'); return; }
+    function showTransfer(message) {
+      var banner = document.getElementById('banner');
+      banner.textContent = message; banner.classList.add('show');
+    }
+    window.addEventListener('message', function (event) {
+      var frame = frames.find(function (f) { return f.window === event.source && f.origin === event.origin; });
+      var message = event.data;
+      if (!frame || !message || message.type !== 'probe-edge-review-transfer-v1' ||
+          message.nonce !== frame.nonce || message.sourceKey !== config.sourceKey || frame.answered) return;
+      frame.answered = true; answered++;
+      if (message.error) {
+        if (!imported && !recognized) showTransfer('Original marks could not be read here. Open this page in the same browser used for round one.');
+        return;
+      }
+      try {
+        var result = EdgeMarkTransfer.merge(records, message.documents || {}, ledger,
+                                             config.sourceWindows, config.targetWindows, config.sourceKey);
+        if (result.recognized) {
+          // Write marks first, then publish to the drawing UI. A ledger failure
+          // must never leave the UI holding an older copy that can erase marks.
+          localStorage.setItem(key, JSON.stringify(result.records));
+          records = result.records; ledger = result.imports; notify();
+          imported += result.added; recognized += result.recognized;
+          try { localStorage.setItem(ledgerKey, JSON.stringify(ledger)); }
+          catch (e) { showTransfer('Marks carried over, but transfer history could not be saved. Download marks as a backup.'); return; }
+        }
+        if (imported) showTransfer('Carried over ' + imported + ' original mark' + (imported === 1 ? '' : 's') + '. Originals and existing round-two marks are preserved.');
+        else if (recognized) showTransfer('Your original marks have already been carried over. Existing round-two edits are preserved.');
+        else if (answered === frames.length) showTransfer('No original marks were found here. Open this page in the same browser and hostname used for round one.');
+      } catch (e) {
+        showTransfer('Transfer could not finish (' + e.message + '). Originals remain untouched.');
+      }
+    });
+    if (!['127.0.0.1', 'localhost'].includes(location.hostname) || location.port !== String(config.targetPort)) {
+      showTransfer('Open this review on localhost port ' + config.targetPort + ' to carry over your original marks.'); return;
+    }
+    // Try the current hostname first; localhost and 127.0.0.1 have separate
+    // browser stores. Each bridge reads only the known original review key.
+    [location.hostname, location.hostname === 'localhost' ? '127.0.0.1' : 'localhost'].forEach(function (host) {
+      var origin = 'http://' + host + ':' + config.sourcePort;
+      var nonce = crypto.randomUUID();
+      var element = document.createElement('iframe'); element.hidden = true;
+      var record = {origin: origin, nonce: nonce, answered: false, window: null};
+      frames.push(record);
+      element.src = origin + '/' + config.bridge + '?target=' + encodeURIComponent(location.origin) + '&nonce=' + encodeURIComponent(nonce);
+      document.body.appendChild(element); record.window = element.contentWindow;
+    });
+  });
+
   document.addEventListener('DOMContentLoaded', function () {
     var intro = document.querySelector('.intro');
     var controls = document.createElement('p');
@@ -103,7 +229,7 @@ footer{font-size:13px;color:var(--muted);margin-top:24px}
   <div class="row"><h1>Mid-Ohio edge review — round 2</h1><span class="count" id="count">0 of 35 marked</span></div>
   <div class="bar"><i id="barfill"></i></div>
 </header>
-<p class="intro"><strong>Mid-Ohio edge review — round 2.</strong> Red race edges now follow the <b>asphalt-facing, inside boundary of the kerbs</b>, including red/white and yellow kerbs, per your example. Green marks are for additional paved boundaries.<br><br>This is a separate review: <a href="http://127.0.0.1:5197/edges.html">your original review remains available here</a>. Previous marks have not been copied onto the revised geometry. Use Draw and Line / Arc / Curve to mark further corrections; Download marks saves a file you can send back.<br><br>Edge and profile checks pass. Length is 3597.18 m versus the published 3633.934 m (1.01% short), so the candidate still fails that gate. The older T4 elevation survey remains unresolved. This page is for edge review; no playable track has been published.</p>
+<p class="intro"><strong>Mid-Ohio edge review — round 2.</strong> Red race edges now follow the <b>asphalt-facing, inside boundary of the kerbs</b>, including red/white and yellow kerbs, per your example. Green marks are for additional paved boundaries.<br><br>This is a separate review: <a href="http://127.0.0.1:5197/edges.html">your original review remains available here</a>. Original marks are carried over automatically when this page is opened in the same browser. Their positions are aligned to the revised images; originals and any new round-two marks are preserved. Use Draw and Line / Arc / Curve to mark further corrections; Download marks saves a file you can send back.<br><br>Edge and profile checks pass. Length is 3597.18 m versus the published 3633.934 m (1.01% short), so the candidate still fails that gate. The older T4 elevation survey remains unresolved. This page is for edge review; no playable track has been published.</p>
 <div class="banner" id="banner"></div>
 <section class="win" id="w_s0000" data-key="w_s0000">
   <h3>1 of 35: station 0000</h3>
