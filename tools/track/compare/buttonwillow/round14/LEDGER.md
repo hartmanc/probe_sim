@@ -2,7 +2,8 @@
 
 The owner's finding on his acceptance drive of round 13, scenery only. Branch `buttonwillow-r14` (from `integration`
 95c8125); nothing pushed or deployed. Build records, caches and capture folders cloned from `probe_sim-wt/buttonwillow-r13`
-(APFS `cp -c`, read only on the source). Package `public/tracks/buttonwillow`: rev **795c09c6cb -> b3f9b2d963**.
+(APFS `cp -c`, read only on the source). Package `public/tracks/buttonwillow`: rev **795c09c6cb -> b3f9b2d963 -> 2503ea567c** (the second after the review round below,
+which supersedes the first's lane numbers).
 Machine: on the charger throughout (91-100 %), load under 3.1, disk 10-11 GB free; one heavy process at a time.
 
 ## The finding
@@ -153,3 +154,105 @@ Tests: `npm run build` clean; `npx vitest run` 65 files, **537 passed**, 0 faile
    lane is paved and drawn to the wall (round 4). Should the lane's paving stop at his line (the median dirt, the paved
    channels of A and B through it)? Not changed: the lane's geometry was outside this round.
 2. The cone lines across A and B on his red (round 10, cones=True) stay; round 13's onboard check did not cover them.
+
+
+## Review round (GPT 6 Astra, HOLD: one blocker, two fixes, three notes; 25 Oct 2026)
+
+Rev b3f9b2d963 -> **2503ea567c**. The pit lane's drawn extent is unchanged (the dirt-median question stays the owner's).
+
+### 1. BLOCKER: the lane's drawn asphalt paved in the physics (fixed)
+
+Cause: the physics gives a point to the part whose centre is nearest (lane and zones are one list); the mouths'
+centres, 0.5 m beyond the course edge, were nearer to the lane's samples behind the pit wall than the lane's own centre
+(8.7-9.5 m beyond the wall), and a part's END takes every nearer point beyond it. Fix: the pit lane's own paving at
+each mouth as a band part (`runoff_zones[].band`, build_scenery `make_band_part`): spanning the lane's full width, drawn
+as the lane (asphalt) on the lane's own heights, its centre over the mouth the mirror of the mouth's centre about their
+boundary (2 x wall distance - 0.5 m at A / B: the boundary on the wall line; 3.5 m beyond the lane's edge at E), bending
+over 20 m (A, B) / 10 m (E) onto the lane's centre line and ending on 3 m of the lane's own points (equal centres: the
+lane comes first in the physics' list, so the lane beyond the band is the lane's). Mouth C's deep part is now such a band
+across the nose and behind the wall stretch (centre 6.5 m beyond the course edge, bending over 28 m at both ends), its
+inner edge on the bisector with C's shallow part (3.5 m; where the deep centre bends near its west end the shallow
+cap follows the bisector, `cap_knots`), beyond his line #5 (s 4532.6) from the wall only. The drawn look: C's paving
+beyond 3.5-7 m from the course edge now reads as the lane (asphalt) rather than apron (stills below).
+
+A seam found by the new lane scan that was not this round's: the end of OSM paddock lane 10409813 (x -132.6, y -201.5,
+6 m north of the paddock-side K-rail) took the lane's samples 0.4-1.0 m from that K-rail at x -140 .. -127 (dirt since
+round 8). The way is declared with its first node 4.0 m further north (y -197.5): 4 m of the paddock lane (paved on
+satellite_paddock/pad_0) are dirt in the sim now; said here.
+
+**Gate:** `gates.paved_coverage.lane_box [-205, -245, 245, -175]`: the gate now scans the pit lane's drawn strip beside the
+straight too (same 0.25 m grid, 0.4 m round barriers, 0.1 m round drawn edges, strict). Published: **17 parts, 232,192
+samples, 0 unpaved** (the lane's strip in the box 102,590 samples with the mouths, 0 unpaved). vitest: without mouth A's
+band the gate finds the lane seam behind mouth A (all holes there).
+
+**The lane, point by point against 95c8125** (its drawn strip in the box, 0.25 m, the gate's exclusions; 94,809 samples):
+paved -> paved 85,188, **paved -> unpaved 0**, unpaved -> paved 9,621 (the band the round-8 pale strips had taken), unpaved ->
+unpaved 0; where paved in both, max |dz| 0.013 m (x 235, E's band end, a gradual change, no step: below).
+
+### 2. FIX: outline validity verified, not repaired (fixed)
+
+`outline_polygon`: the closed outline must be a simple ring, run the right way round (increasing s) and not backtrack
+along the track by more than 1.5 m; otherwise the stage fails naming the zone (no `buffer(0)`). More than one run of
+stations fails (no "longest run kept"). `check_strip`: every generated strip (outline and band) with an edge on the
+wrong side, an edge running backwards or two sections crossing fails. The traversal bug: `d6` was sorted south-first,
+so C's outline went up #6 from the wall head and back down to the wall (a zigzag); now north first, and the end of his
+#10 hook that lies inside the lane is cut at the top. Proof (`owner/r14_mouths.json`, `max_backtrack_m`): A 0.36 m, B
+0.03 m, C 0.05 m, E 0.59 m (his own strokes' curls), every outline a simple ring traversed once. Tests: a
+self-intersecting, a reversed, a backtracking and a gapped outline each fail; crossed / reversed / wrong-side strips fail.
+
+### 3. FIX: the lane join (fixed)
+
+`join_lane_outline`: inside the lane a part's profile points take the LANE'S OWN DRIVEN HEIGHT (`lane_surface_z`: the
+physics' rule restricted to the lane's parts), outside it the correction of the section's outermost inside point fades
+linearly over `reach`, and along the part over `reach` from the last section that meets the lane; fewer than 75 % of
+sections meeting the lane fails. `planar` (C, C deep, E, E deep): outside the lane the heights lie on one straight line
+per station from the course edge to the lane's own height at its right edge, so shallow and deep parts meet with no
+step. Test on a lane sloping 2 % across and 0.1 % along: the part's height at the boundary within 5 mm of the lane's.
+
+**Steps measured** (transects every 0.5 m across, 0.05 m along each, every ownership boundary crossed: shallow / deep,
+deep / lane, band / lane, mouth / band at the wall, including the parts' ends; 0.4 m round the barriers left out):
+
+| region | round 14 rev 2503ea567c | 95c8125 there |
+|---|---|---|
+| C, x -205 .. -140 | 0.0029 m at (-188, -222.35) | 0.0015 m |
+| A, x -40 .. 10 | 0.0022 m | 0.0030 m |
+| B, x 15 .. 80 | **0.0074 m** at (70.5, -200.85), B's band / lane boundary in its east bend, 1.3 m from the lane centre | 0.0038 m |
+| E, x 195 .. 240 | 0.0039 m at (224, -191.45) | 0.0019 m |
+
+(b3f9b2d963 had 0.0117 m at C's lane join and 0.0154 m at C's shallow / deep boundary.) The 7 mm in B's bend is the
+band's 7 fractions across the lane against the lane's own: left as measured.
+
+### 4. NOTE: ends by evidence
+
+Each mouth part's two ends (its drawn samples within 3 m of its first / last section): A 140 / 104, B 114 / 142, C 92 /
+122, C deep 362 / 763, E 107 / 244, E deep 378 / 378, A band 761 / 787, B band 762 / 497, E band 361 / 362 samples, **0
+unpaved** at every end. Beyond his outlines and the lane's drawn strip (course edge + 0.3 m to the lane): 105 paved of
+46,199 samples, 13 of them more than 0.3 m outside, at most 0.6 m (C at the top of #4 / #10, x -195; C at the top of #5,
+x -151; B's band at x 71.5). Paving he drew that is not drawn: about 2 m2 at C's #4 / #10 top (s 4489.8-4491.5) and 0.6
+m2 at the top of #5 (s 4532.6-4533.5), where a shallow and a deep part cannot both reach.
+
+### 5. NOTE: wording
+
+The overlap claims are reworded to what was measured: the transects of item 3, the gate of item 1.
+
+### 6. Stills (local, `round14/stills/review/`; `_before` = rev b3f9b2d963)
+
+`pairs_review_a.jpg`: mouths A (s 4655) and B (s 22), the cone lines gone; C (s 4478); E (s 200). `pairs_review_b.jpg`:
+the lane at C's nose and behind it, the lane at E. `overhead_after_W / M / E.jpg`: the physics surface over the
+captures: the lane paved to the wall everywhere beside the straight, the mouths his outlines.
+
+### Cones at A and B (the owner's round-13 rule)
+
+Onboard 7QS2M-HGSI4 at 0.5 s, left side at full resolution: A t004000-t005000 (the mouth's paving to the continuous
+K-rail at t004500), B t005500-t006500: no cone on or across either mouth. Both round-10 lines removed (`owner_mouths_r10`
+left 29-41 and 4655-4669, cones=False with `cones_src`). Cones 182 -> 168 on 38 -> 36 lines. No inventory row describes
+these lines (they came from his round-10 red); nothing to correct there.
+
+### Gates and identity (rev 2503ea567c)
+
+Stage 3 `--publish --overwrite-package` exit 0, 0 `[FAIL]`; build == package (every file); gate CLI on the package: every
+gate ok, exit 0 (containment 0 escapes, 3296 allowed; pit connectivity 388 / 382 m, lane paths 0 obstacles; cones off
+the surface 168 / 36; ground marks 0 off; paved coverage as item 1). track.json, heightfield.bin, ghosts.json,
+far_heightfield.bin, far_ortho.jpg identical to 95c8125; ortho.jpg differs only in the paint-over box (1,105 px, x
+83.4 .. 103.2, y -214.8 .. -195.0); Sonoma identical (3cf8227da0). TRACKS.buttonwillow rev 2503ea567c. Tests: `npm run
+build` clean; vitest 65 files **539 passed** (537 + 2); pytest **131 passed, 3 skipped** (116 + 15 round 14).
