@@ -358,10 +358,15 @@ CONFIG = dict(
                 # outer limit (kerb_inside (side, lo, hi, shift), the shift ramped in outside the zone at <= 0.08 m / station,
                 # edges_spline.KERB_STEP) and the kit's strip lies between his red and the edge. The whole lap in two
                 # entries (one file); the T2 / T4 drawings of round 5 are superseded.
+                # Round 15 (the owner's decision of 26 Oct 2026, item 19 'outside_band'): the race edges lie ON his red
+                # everywhere (his red = the asphalt edge = the kerb's inside); no kerb_inside shift, no kerb-zone widening,
+                # no ramps. The kerbs are bands OUTSIDE the edge (scenery.kerb.inside False) and the track limit is the
+                # kerb's outside (physics: the band counts as course for the track-limit test). OWNER_KERBS_R10 is kept as
+                # the record of the band widths measured beside his red; no key reads it.
                 owner_edges=[
-                    dict(file='owner/r10/merged.json', lo=0, hi=2345, kerb_inside=OWNER_KERBS_R10,
+                    dict(file='owner/r10/merged.json', lo=0, hi=2345,
                          src="owner round-10 red on the 41 edges_r9 windows (compare/buttonwillow/owner_edges_r10/*_marked.png, local), s 0-2345"),
-                    dict(file='owner/r10/merged.json', lo=2346, hi=4691, kerb_inside=OWNER_KERBS_R10,
+                    dict(file='owner/r10/merged.json', lo=2346, hi=4691,
                          src="owner round-10 red on the 41 edges_r9 windows (compare/buttonwillow/owner_edges_r10/*_marked.png, local), s 2346-4691"),
                 ],
                 # round 10 (owner's decision 23 Oct 2026, point 3): where he drew both edges the width and waviness gates
