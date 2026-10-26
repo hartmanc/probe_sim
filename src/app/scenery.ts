@@ -1567,7 +1567,15 @@ function boardTexture(kind: string, text: string): THREE.Texture {
       g.fillStyle = '#f4f4f2'; g.fillRect(0, 0, 256, 384);
       g.strokeStyle = '#111'; g.lineWidth = 14; g.strokeRect(7, 7, 242, 370);
       g.fillStyle = '#111'; g.textAlign = 'center'; g.textBaseline = 'middle';
-      g.font = `800 300px ${FONT}`; g.fillText(text, 128, 205);
+      if (text.length > 1) {
+        // Mid-Ohio round 7: a distance board's digits stacked top to bottom (the 300 / 200 / 100 boards on the fence, N837
+        // t029-t031, t059-t060); a one-digit board (Laguna's 3-2-1) as before
+        const n = text.length, step = 350 / n;
+        g.font = `800 ${Math.round(step * 1.05)}px ${FONT}`;
+        [...text].forEach((ch, i) => g.fillText(ch, 128, 17 + step * (i + 0.55)));
+      } else {
+        g.font = `800 300px ${FONT}`; g.fillText(text, 128, 205);
+      }
     } else {
       g.fillStyle = '#1b3f8f'; g.fillRect(0, 0, 256, 384);
       g.fillStyle = '#ffffff'; g.textAlign = 'center'; g.textBaseline = 'middle';

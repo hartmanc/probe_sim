@@ -2281,6 +2281,29 @@
    "placement": "direct"
   },
   {
+   "side": "right",
+   "kind": "cone_line",
+   "attrs": {
+    "type": "orange cones, four, across the inactive chicane mouth",
+    "colour": "orange",
+    "ahead_m": 34,
+    "added": {
+     "round": 7,
+     "why": "judge r7 F4: the 1 s frames t026 / t027 show four orange traffic cones across the chicane's rejoin mouth (right) ~35 m ahead; not logged in round 4"
+    }
+   },
+   "confidence": 0.8,
+   "t": 26,
+   "s": 681.6,
+   "source": "onboard:OJaBJz18xEo@26.0",
+   "frame": "t026.jpg",
+   "scope": "lap",
+   "note": "2026 Lemons event cones",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
+  },
+  {
    "side": "left",
    "kind": "fence",
    "attrs": {
@@ -2467,6 +2490,29 @@
    "source": "onboard:OJaBJz18xEo@30.0",
    "frame": "t030.jpg",
    "scope": "lap",
+   "sigma_s_m": 11.2,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
+   "placement": "direct"
+  },
+  {
+   "side": "left",
+   "kind": "cone_line",
+   "attrs": {
+    "type": "orange cones, two, on the left verge",
+    "colour": "orange",
+    "ahead_m": 32,
+    "added": {
+     "round": 7,
+     "why": "judge r7 F4: t029 / t030 show two orange cones on the left verge at the end of the Keyhole braking zone, ~30 m ahead of t030; not logged in round 4"
+    }
+   },
+   "confidence": 0.7,
+   "t": 30,
+   "s": 841.2,
+   "source": "onboard:OJaBJz18xEo@30.0",
+   "frame": "t030.jpg",
+   "scope": "lap",
+   "note": "2026 Lemons event cones",
    "sigma_s_m": 11.2,
    "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
    "placement": "direct"
@@ -4167,6 +4213,26 @@
    "scope": "lap",
    "sigma_s_m": 22.4,
    "sigma_basis": "time map IndyCar segment A (9Drr1VkE1_U): bracketing anchors' leave-one-out residual",
+   "placement": "direct"
+  },
+  {
+   "side": "left",
+   "kind": "fence",
+   "attrs": {
+    "type": "catch fence on curved posts over the armco, in front of the bleachers",
+    "added": {
+     "round": 7,
+     "why": "judge r7 F14: N837 t059 / t060 show the catch-fence posts over the armco along the T4-approach bleachers; round 4 logged the bleachers and armco only"
+    }
+   },
+   "confidence": 0.8,
+   "t": 60,
+   "s": 1791.9,
+   "source": "onboard:OJaBJz18xEo@60.0",
+   "frame": "t060.jpg",
+   "scope": "lap",
+   "sigma_s_m": 14.8,
+   "sigma_basis": "time map primary: bracketing anchors' leave-one-out residual",
    "placement": "direct"
   },
   {
@@ -7609,7 +7675,7 @@
   "wall": 111,
   "kerb": 79,
   "runoff": 66,
-  "fence": 38,
+  "fence": 39,
   "boards": 25,
   "bridge": 11,
   "building": 9,
@@ -7618,8 +7684,8 @@
   "paint": 8,
   "tower": 7,
   "station": 5,
-  "mast": 2,
-  "cone_line": 1
+  "cone_line": 3,
+  "mast": 2
  },
  "unmeasured_heights": 0,
  "extra_maps": [
@@ -8045,7 +8111,7 @@
    "primary": {
     "max_abs_loo_residual_m": 14.8,
     "placement": "direct",
-    "rows": 105
+    "rows": 108
    },
    "360 lap (e25u_vjn1uM)": {
     "max_abs_loo_residual_m": 20.4,

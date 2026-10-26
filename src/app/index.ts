@@ -144,7 +144,7 @@ const mainPage: MenuPage = {
   entries: (): MenuEntry[] => [
     ...trackEntry(),
     { kind: 'action', id: 'hotlap', label: 'Hot lap', note: sim ? undefined : 'loading…', disabled: !sim, run: () => startMode('hotlap') },
-    { kind: 'action', id: 'race', label: raceMenuLabel(location.search), note: sim ? undefined : 'loading…', disabled: !sim, run: () => startMode('race') },
+    { kind: 'action', id: 'race', label: raceMenuLabel(location.search, TRACK.fieldLabel), note: sim ? undefined : 'loading…', disabled: !sim, run: () => startMode('race') },
     ...(touch ? [{ kind: 'submenu', id: 'touch', label: 'Touch controls', page: () => touchPage(touch) } as MenuEntry] : []),
     ...(showControlsPanelRow() ? [{ kind: 'action', id: 'controls', label: 'Controls & calibration', run: () => controlsPanel.open() } as MenuEntry] : []),
     graphicsEntry(),

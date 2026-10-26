@@ -299,9 +299,10 @@ export function fieldAudioHook(
 // ---------------------------------------------------------------- results helpers (unit-tested)
 
 /** The main-menu Race row: the configured lap count (`?laps=` included). */
-export function raceMenuLabel(search: string): string {
+export function raceMenuLabel(search: string, field?: string): string {
   const n = parseRaceOverrides(search).laps ?? RACE_LAPS;
-  return `Race · ${n} lap${n === 1 ? '' : 's'} vs the 2026 field`;
+  // `field` (TrackInfo.fieldLabel, Mid-Ohio round 7): a track racing a stand-in field says so; absent: the track's own field
+  return `Race · ${n} lap${n === 1 ? '' : 's'} vs ${field ?? 'the 2026 field'}`;
 }
 
 // ---------------------------------------------------------------- the mode
