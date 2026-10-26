@@ -8,10 +8,14 @@ AI, preview) was started.
 
 ## History
 
-- Round 1 (14976d4): source-derived geometry, outer-kerb convention, `edges_r1/`, `review_r1/` (port 5197).
-- Round 2 (4937ab5, e217c6b, 0deae2e): inside-kerb convention (`spline.kerb_edge='inner'`), `edges_r2/`, `review_r2/`
+Commit references were updated on 26 Oct 2026 (round 4): the repository's history was rewritten that day, so every
+hash changed. Current hashes: round 1 603a90c; round 2 bb27b86, f659250, 0993678; the owner's evidence and the
+hand-off 8eab1bd; round 3 b4ddf70 (the refit), bf1a458 (the checkpoint), 0db0524 and 2a90e8a (the review fixes).
+
+- Round 1 (603a90c): source-derived geometry, outer-kerb convention, `edges_r1/`, `review_r1/` (port 5197).
+- Round 2 (bb27b86, f659250, 0993678): inside-kerb convention (`spline.kerb_edge='inner'`), `edges_r2/`, `review_r2/`
   (port 5198), round-1 marks carried over (`round2.md`).
-- Owner review of round 2 (ff01b8d, `owner_review_r2/`): "Other than the pit straight, and the transitions onto and off
+- Owner review of round 2 (8eab1bd, `owner_review_r2/`): "Other than the pit straight, and the transitions onto and off
   it, the fits were good." 13 windows, 46 red and 50 green strokes.
 - Round 3 (this file): the local refit below. Package `tools/track/out/mid_ohio_r3/` (local, DIAGNOSTIC: written with
   `--write-on-fail`, see "Length"). Page `owner_review_r3/` (new; no earlier review directory touched).
@@ -45,14 +49,14 @@ AI, preview) was started.
    | D3a | left 274-295 | w_s0250 vs close_s0320 / w_s0375 (0.48 m) | close_s0320 0.28 m from the kerb / paint readings vs 0.65 m | close_s0320, w_s0375 | w_s0250 |
    | D3b | left 311-323 | w_s0375 vs close_s0320 (0.33 m) | close_s0320 0.09 m vs 0.23 m (T1 inside kerb) | close_s0320 | w_s0375 |
    | D4 | right 339-340 | w_s0375 vs close_s0320 (0.35 m) | 0.02 m vs 0.34 m | close_s0320 | w_s0375 |
-   | D5 (PROVISIONAL, for his approval) | right 427-475 | w_s0500 vs w_s0375 (0.49 m) | w_s0500's right red is ONE 3-point Arc over 150 m (control points 426 / 480 / 576 within 0.04-0.35 m of the kerb line); between them it bows up to 0.67 m inside the yellow T1-exit kerb's asphalt-side limit, which the capture shows straight (close-up E) and w_s0375 traces (kerb readings 0.05 m vs 0.42 m). The arc is his stroke; the image cannot establish whether the bow was intended. Over 452-475 it is his ONLY red, so setting it aside removes his constraint there and the capture readings set the edge; the replacement still misses a capture reading by 0.49 m at s 458 (the kerb's end). Asked on the page | w_s0375 to 451; captures 452-475; w_s0500 from 476 | w_s0500 427-475 |
+   | D5 (APPROVED by the owner, 26 Oct 2026 evening) | right 427-475 | w_s0500 vs w_s0375 (0.49 m) | w_s0500's right red is ONE 3-point Arc over 150 m (control points 426 / 480 / 576 within 0.04-0.35 m of the kerb line); between them it bows up to 0.67 m inside the yellow T1-exit kerb's asphalt-side limit, which the capture shows straight (close-up E) and w_s0375 traces (kerb readings 0.05 m vs 0.42 m). The arc is his stroke; the image cannot establish whether the bow was intended. Over 452-475 it is his ONLY red, so setting it aside removes his constraint there and the capture readings set the edge; the replacement still misses a capture reading by 0.49 m at s 458 (the kerb's end). Asked on the page | w_s0375 to 451; captures 452-475; w_s0500 from 476 | w_s0500 427-475 |
    | D6 | left 3519-3538, right 3519-3524 | w_s0000 vs w_s3500 (0.41 / 0.32 m) | w_s0000's two-click straight ends at its window border (s 3522); w_s3500 is interior there and 0.09 m from the paint vs 0.44 m; the two cross-fade over 3539-3575 (within 0.3 m) | w_s3500 | w_s0000 (there only) |
    | D7 | right 3431-3443 | w_s3500 vs w_s3375 (0.61 m at 3437) | close-up F: w_s3500 runs 0.3-0.6 m outside the white edge line onto the grass; w_s3375 on the line's asphalt side (0.21 m vs 0.41 m). The paint overrides REVIEW.txt's save-order clue here | w_s3375 | w_s3500 |
    | – | right 268 | close_s0320 vs w_s0250 (0.33 m) | close_s0320's reading is its window border (merge weight 1.0 vs 55.5): the merge follows w_s0250 | weighted | none |
 
    Merged (`owner/r2/merged.json`): left 712 stations, right 722; no remaining spread over 0.3 m except the weighted
    border reading at right 268. No window has red on left 363-390; on right 452-475 his only red (the D5 arc) is set
-   aside, provisionally. The capture readings set the edge on both.
+   aside (provisionally in round 3; approved by the owner on 26 Oct 2026). The capture readings set the edge on both.
 3. **Local refit** (config `centre.local` window 3395..610 through S/F, blend 15, `restation 'index'`, `refit_final`,
    `centre_smooth 1.0`; `spline.owner_edges` one entry, `local=True`, lo 3425 / hi 576, `chains=False`,
    `reach='drawn'`, `project='foot'`; `spline.owner_measure 'foot'`). The global fit converges first with no other
@@ -114,7 +118,7 @@ T1 exit 11.79/12.14/14.62 → 11.81/12.07/13.92 (published 40 ft = 12.19 m, advi
 
 Where the round-3 fit still differs from a capture kerb / paint reading by more than 0.3 m inside the window (no owner
 reading there): left 365 (+0.36 m) and 373 (-0.36 m), painted, inside left 363-390 where no window has red; right 458 (+0.49 m),
-the yellow kerb's end, inside D5's 452-475 (his arc set aside there, provisionally).
+the yellow kerb's end, inside D5's 452-475 (his arc set aside there; approved 26 Oct 2026).
 
 ## Gates and tests (round 3)
 
@@ -245,7 +249,20 @@ edge; cyan band under them: every round-2 red stroke as drawn, those set aside i
 3410 / 595 / 610; yellow: ticks. Each caption lists the dispositions in that window; the intro asks D5 plainly.
 Renderer `r3/review_windows.py`. To be published by the orchestrator (capabilities db, files win/*).
 
-## Questions for the owner
+## Owner's answers (26 Oct 2026 evening): checkpoint ACCEPTED
+
+The checkpoint is accepted with no red marks: "I've not done the green marks yet, but don't want to hold the track
+builder agent. I will do those later if necessary." The green strokes of round two (`owner/r2`, `merged.json`
+`green_enu_xy`) remain the paved-boundary evidence for the scenery stage. His answers to the three questions below:
+
+1. Length: the Buttonwillow rule (`official_m` None, the OSM-loop check kept, the speed-integrated lap added as the
+   second independent measure; the published 2.258 mi stays as information). Applied in round 4.
+2. D5 stands: the T1-exit right edge follows the kerb line; his round-two arc (w_s0500, s 427-475) is set aside with
+   his approval. No geometry change (round 3 already applied it provisionally).
+3. T4: apply the bank-halving rule, flagged, every element of the assumption table listed as an assumption, its
+   placement checked against the 360 lap and the IndyCar onboards. Applied in round 4 (`round4.md`).
+
+## Questions for the owner (as asked in round 3; answered above)
 
 1. Length (his decision; `official_m` unchanged). Matrix:
 

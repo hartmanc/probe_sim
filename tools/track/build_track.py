@@ -566,12 +566,24 @@ def stage_geometry(cfg, out, no_logger):
         "profile": "DEM sigma 0.7 m + lidar ground returns + clean_profile + repave fixes at the paint-step edges, "
                    "re-evaluated at the fitted edges from each section's quadratic",
     }
+    # -- bank-scaling rule (config profile_bank, Mid-Ohio round 4): a documented reconstruction's banking change, the
+    # measured cross-section rotated about its inside edge over a declared interval; absent (every other track): unchanged
+    bank_rep, bank_q, bank_delta = [], [], None
+    if cfg.get("profile_bank"):
+        import profile_bank
+        bank_q = profile_bank.rules(C1, prof, hl3, hr3, cfg["profile_bank"], cfg.enu, B.FRACTIONS)
+        prof, bank_delta, bank_rep = profile_bank.apply_profile(prof, hl3, hr3, bank_q, B.FRACTIONS, log=log)
+        notes["profile_bank"] = {"rules": cfg["profile_bank"], "applied": bank_rep}
     T = track_dict(cfg, C1, hl3, hr3, prof, z0, sp, L1, corners, box, W, H, nx, ny, notes)
     if cfg.get("profile_gaps"):
         import profile_gap
         wins = profile_gap.windows(C1, cfg["profile_gaps"], cfg.enu)
         hf = profile_gap.heightfield(hf, box, B.HF_DX, C1, hl3, hr3, prof, wins)
         notes["profile_gaps"] = cfg["profile_gaps"]
+    if bank_q:
+        hf, bank_hf = profile_bank.heightfield(hf, box, B.HF_DX, C1, hl3, hr3, bank_delta, bank_q, B.FRACTIONS)
+        log(f"     profile bank heightfield: {bank_hf}")
+        bank_rep = {"profile": bank_rep, "heightfield": bank_hf}
     # -- terrain override (config terrain_override, round 14A): inside a declared region the heightfield is one smooth
     # surface continuing the course as written to track.json (the physics' own arrays), robust to the lidar beyond it;
     # absent (every other track): the heightfield untouched. track.json is not changed by it.
@@ -593,6 +605,13 @@ def stage_geometry(cfg, out, no_logger):
     if lc.get("official_m"):
         rep.check("lap length", abs(L1 - lc["official_m"]) <= 0.01 * lc["official_m"],
                   f"{L1:.2f} m (official {lc['official_m']}; spacing {sp:.6f})")
+    if lc.get("osm_tol"):
+        # with no applicable official figure (official_m None, the Buttonwillow rule), the built centre against the raw
+        # stitched OSM loop of the config's loop_ways (Mid-Ohio round 4; absent: no check, every other track unchanged)
+        L_osm = float(np.linalg.norm(np.diff(np.r_[P, P[:1]], axis=0), axis=1).sum())
+        rep.check("lap length vs OSM loop", abs(L1 / L_osm - 1) <= lc["osm_tol"],
+                  f"{L1:.2f} m vs the raw OSM loop {L_osm:.2f} m ({(L1 / L_osm - 1) * 100:+.2f} %, limit "
+                  f"{lc['osm_tol'] * 100:.1f} %)")
     zc = prof[:, 3]
     rep.check("elevation range", lc["elev_min"] <= zc.max() - zc.min() <= lc["elev_max"], f"{zc.max() - zc.min():.1f} m (z0 {z0:.2f} NAVD88)")
     area = 0.5 * np.sum(C1[:, 0] * np.roll(C1[:, 1], -1) - np.roll(C1[:, 0], -1) * C1[:, 1])
@@ -676,6 +695,7 @@ def stage_geometry(cfg, out, no_logger):
               "recentre": fit["report"], "spline": spline_rep, "straights": str_rep, "gate": met,
               "over_12pct": [int(i) for i in np.nonzero(cs.max(1) > B.CROSS_SOFT)[0]], "fails": rep.fails,
               **({"terrain_override": over_rep} if over_rep else {}),
+              **({"profile_bank": bank_rep} if bank_rep else {}),
               "seconds": round(time.time() - t0, 1)}
     json.dump(report, open(os.path.join(work, "geometry_report.json"), "w"), indent=1, default=float)
     np.savez(os.path.join(work, "geometry_arrays.npz"), C_first=C, hl_first=hl, hr_first=hr, C=C1, hl_paint=hl1,

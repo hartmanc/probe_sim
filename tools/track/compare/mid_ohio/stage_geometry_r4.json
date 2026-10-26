@@ -1,0 +1,20 @@
+{
+ "stage": "geometry",
+ "passed": true,
+ "config": "0860a545270a7218",
+ "no_logger": false,
+ "time": "2026-10-26 09:35:16",
+ "consumed": {},
+ "wrote": {
+  "track.json": "d19cfb7823695525",
+  "heightfield.bin": "eb74f48192e28e3c",
+  "ortho.jpg": "b37c53514194aa37"
+ },
+ "inputs": {
+  "lidar_points": {
+   "path": "tools/track/cache/mid_ohio/lidar_points.npz",
+   "bytes": 401783195,
+   "sha256": "c7113d0aa9c7d38a"
+  }
+ }
+}

@@ -1,4 +1,4 @@
-"""Mid-Ohio, Lemons 13-turn outer loop; stage-1 candidate, not accepted.
+"""Mid-Ohio, Lemons 13-turn outer loop; stage-1 geometry checkpoint accepted 26 Oct 2026 (round 3, no red marks).
 
 Owner clarification 25 Oct 2026: follow the black numbered circuit in the
 supplied Lemons map, retaining T2 and the full back straight. Skip the grey
@@ -43,7 +43,15 @@ CONFIG = dict(
         ('T12', 'Carousel', 'right', None, 40.6887509, -82.6327886),
         ('T13', None, 'left', None, 40.6893954, -82.6336601),
     ],
-    loop_check=dict(n_min=3500, n_max=3750, official_m=3633.934, elev_min=0, elev_max=100),
+    # Lap length (owner's decision, 26 Oct 2026 evening: "the Buttonwillow rule"). The published 2.258 mi (3633.934 m;
+    # operator midohio.com news 1084, Wikipedia, IMSA: the 13-turn "straight option" between T1 and the Keyhole) is
+    # INFORMATION, not a gate: no source states the line or method it is measured on, and the built centre is -1.0 %
+    # against it while the scale is confirmed to 0.1 % (compare/mid_ohio/round3.md "Length", r3/scale_check.py).
+    # Independent measures of THIS loop instead: (1) the raw stitched OSM loop of loop_ways (3620.2 m; the built centre
+    # -0.63 %), a gate here (osm_tol 1 %, as Buttonwillow's manifest check); (2) the N837 onboard's (OJaBJz18xEo,
+    # 15 Apr 2026) Catalyst speed readout integrated over one lap between two S/F crossings (compare/mid_ohio/round4.md
+    # "Speed-integrated lap"), recorded in the ledger beside the OSM check.
+    loop_check=dict(n_min=3500, n_max=3750, official_m=None, osm_tol=0.01, elev_min=0, elev_max=100),
     captures=dict(clean_dir='compare/mid_ohio/satellite_clean', clean_index='tiles.json',
                   mpp=0.1132013752, common_shift=None, clean_mask='clean'),
     sources=dict(
@@ -78,6 +86,8 @@ CONFIG = dict(
                                            'owner/r2/w_s3500.json', 'owner/r2/close_s0220.json', 'owner/r2/close_s0320.json'],
                                   src='owner round-2 review red (compare/mid_ohio/owner_review_r2/edge-marks.json; owner/r2/merged.json), '
                                       'last corner exit / pit entry s ~3425 through S/F, the pit straight, bridge approach, T1 and T1 exit to s ~576')],
+                # D5 APPROVED (owner, 26 Oct 2026 evening): the T1-exit right edge follows the kerb line; his round-two
+                # arc (w_s0500, s 427-475) is set aside with his approval (owner/r2/merge.sh, round3.md D5).
                 owner_measure='foot'),
     prior=dict(bridge_win=35),
     features=[
@@ -86,6 +96,32 @@ CONFIG = dict(
         ('left', 1010, 1120, 'kerb_yellow', 'c20_s0960..c20_s1080; continuous yellow T2 exit kerb, track-side painted limit'),
     ],
     shapes=[], straights=[], repave_fixes=[],
+    # T4 2024 reconstruction (owner's decision, 26 Oct 2026 evening: "apply the bank-halving rule, flagged"). The 2019
+    # lidar predates it. Operator, midohio.com news 1084 (19 Dec 2024): "banking was reduced from 4 to 2 degrees by
+    # removing 520 feet of track surface and excavating up to 18 inches along the outside edge"; "the existing apex
+    # curbing kept in place at driver's right"; "both sides of the track were regraded starting 400 feet before the
+    # turn". Rule (profile_bank.py): over 520 ft (158.5 m) centred on the measured 2019 bank peak, the chord bank toward
+    # the inside (right) halved about the inside edge, crown kept, a smoothstep over the 400 ft (121.9 m) before it.
+    # Every element below 'assumptions' is an ASSUMPTION (compare/mid_ohio/round3.md T4 table; round4.md placement).
+    profile_bank=[dict(
+        name='T4 2024 reconstruction', anchor_latlon=(40.6924266, -82.6379702), search_m=40, inside='right',
+        length_m=158.496, approach_m=121.92, exit_m=0.0, factor=0.5, shoulder_m=2.0, lateral_fade=6.0,
+        src='midohio.com news 1084 (19 Dec 2024, Kokosing, 14 Oct - 8 Nov 2024); 2019 lidar bank 3.9-4.4 deg over s ~1950-1975 '
+            '(round3.md); placement checked against the 2025 INDYCAR 360 lap (e25u_vjn1uM) and the 2026 IndyCar onboards '
+            '(9Drr1VkE1_U) through T4 (round4.md)',
+        why='the 2019 survey predates the 2024 T4 rebuild that halved its banking; the measured section rotated about the '
+            'kept inside (apex kerb) edge instead of an invented height',
+        assumptions=[
+            'the rebuilt 158.5 m lies symmetric about the 2019 bank peak (the operator gives the length, not the position)',
+            'the inside edge keeps its 2019 elevation (footprint and apex curbing kept: plan, not height)',
+            'the chord bank toward the inside is halved everywhere in the interval (4 to 2 deg is the ratio at the peak); '
+            'an adverse slope (T5 approach, from s ~2005) is left as measured',
+            'the outside edge drops by the rotation (excavation = lowering; magnitude agrees with "up to 18 inches")',
+            'smoothstep transition over the 400 ft regraded approach; no exit taper (the measured bank toward the inside '
+            'is zero by s ~2005, inside the core)',
+            'crown (the section shape about its chord) and the inside edge longitudinal profile unchanged',
+            'run-off: the outside edge change held 2 m beyond the edge and faded over 6 m back to the 2019 ground (the '
+            'operator\'s raise has no numbers)'])],
     profile_gaps=[dict(
         name='T1 approach footbridge', latlon=(40.689589, -82.638024),
         half_m=15, fit_m=7, lateral_fade=6,

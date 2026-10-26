@@ -29,7 +29,9 @@ Corners
                                              corner is the signed-curvature peak within +-45 m of it
   named_straights [(name, from turn, to turn)]
 Geometry (Stage 1)
-  loop_check {n_min, n_max, official_m, elev_min, elev_max}
+  loop_check {n_min, n_max, official_m, elev_min, elev_max, osm_tol}   osm_tol (default None: no check): the built centre
+                                             within this fraction of the raw stitched OSM loop (a gate; Mid-Ohio round 4,
+                                             with official_m None under the Buttonwillow rule)
   centre {naip_fit_a, naip_fit_b (logger: driven line -> NAIP midpoint), osm_fit_a, osm_fit_b (no logger: OSM loop ->
           NAIP midpoint), paint_fit_a, paint_fit_b, bridge_win, gps_margin, min_width, extra_shadow_stations,
           pit_merge (default True: through the pit merges the midpoint target takes the circuit's own edge, the cone
@@ -58,6 +60,12 @@ Geometry (Stage 1)
                                              short interval, reconstruct each profile column from clean endpoint heights
                                              and slopes, carry its banked plane into the heightfield with lateral fade.
                                              No prescribed elevations; absent preserves earlier builds byte for byte.
+  profile_bank [{name, anchor_latlon, search_m (40), inside 'left'|'right', length_m, approach_m, exit_m (0), factor (0.5),
+                shoulder_m (2), lateral_fade (6), src, why, assumptions}]   opt-in (profile_bank.py, Mid-Ohio T4 round 4):
+                                             a documented reconstruction's bank change; the measured chord bank toward
+                                             the inside scaled by factor about the inside edge over length_m centred on
+                                             the measured bank peak (smoothstep over approach_m before), crown kept, the
+                                             heightfield carried with it only inside the interval. Absent: unchanged.
   reproduce {...}                            build artefacts of an accepted package (logger path only; see Laguna's;
                                              pit_exit_wall_end_latlon replaces centre.pit_exit.wall_end_latlon)
   centre_captures ('z20' | 'clean'), centre_registration ('per_capture' | 'common')
