@@ -23,7 +23,10 @@ import { plainSurface } from './terrainGates';
 import type { TrackJson } from '../../../src/physics/index';
 
 export interface PavedCoverageOptions { parts: string[]; step?: number; wall_clear?: number; edge_tol?: number;
-  lane?: { margin?: number }; also?: { parts: string[]; near_lane?: number }[]; outlines?: { name: string; poly: number[][] }[] }
+  lane?: { margin?: number }; also?: { parts: string[]; near_lane?: number }[]; outlines?: { name: string; poly: number[][] }[];
+  /** round 15 (Buttonwillow): parts matching these patterns are checked even with draw: false (paved in the physics,
+   *  not drawn: the paddock bands, so the ortho's paddock shows); their strips are the paving the physics must carry */
+  undrawn?: string[] }
 export interface PavedCoverageReport {
   parts: number; samples: number; holes: { x: number; y: number; part: string }[]; step: number; wallClear: number; edgeTol: number; onEdge: number;
   lane?: { box: number[]; parts: number; samples: number; onEdge: number; holes: number };
@@ -93,7 +96,8 @@ export function pavedCoverage(track: TrackJson, hf: Float32Array, sc: any, o: Pa
   const pats = o.parts.map((p) => new RegExp(p));
   // a part the app does not draw (draw: false, round 14: the lane bands, paving under the lane's own drawing) has no
   // drawn strip to check; its paving is checked as the lane's (lane) and the owner's outlines' (outlines)
-  const parts = (sc.paved_zones?.parts ?? []).filter((p: any) => p.draw !== false && pats.some((r) => r.test(p.turn ?? '')));
+  const und = (o.undrawn ?? []).map((p) => new RegExp(p));
+  const parts = (sc.paved_zones?.parts ?? []).filter((p: any) => (p.draw !== false || und.some((r) => r.test(p.turn ?? ''))) && pats.some((r) => r.test(p.turn ?? '')));
   const rep: PavedCoverageReport = { parts: parts.length, samples: 0, holes: [], step, wallClear, edgeTol, onEdge: 0 };
   if (!parts.length) return rep;
   const { surf } = plainSurface(track, hf, sc);

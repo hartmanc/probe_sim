@@ -265,6 +265,50 @@ def _ref_polyline(cfg):
     return json.load(open(p)) if os.path.exists(p) else None
 
 
+def remap_metres(cfg, C):
+    """Package metres given on an earlier package (config scenery.metres_ref {file: the frozen centre polyline of that
+    package with its spacing_m, src}; Buttonwillow round 15: the round-13 / 14 kerb extents and the round-14 fish-mouth
+    zones were measured in metres along rev 29f4afedba, and the round-15 edges changed the lap by 6.8 m) mapped by WORLD
+    POSITION onto the built centre C: s -> the reference centre point at s -> its foot on C -> metres of C. Mapped:
+    kerbs_declared[].extent, runoff_zones[].s and their lane_band kink / to_course. Absent key: unchanged."""
+    import copy
+    import numpy as np
+    mr = cfg['scenery']['metres_ref']
+    R = json.load(open(os.path.join(TRACKS, cfg['id'], mr['file'])))
+    Cr = np.array(R['center'], float)[:, :2]; spr = float(R['spacing_m']); nr = len(Cr)
+    C = np.asarray(C, float)[:, :2]; nc = len(C)
+    seg = np.roll(C, -1, 0) - C; sl = np.linalg.norm(seg, axis=1); cum = np.r_[0.0, np.cumsum(sl)]
+
+    def fm(s_m):
+        u = float(s_m) / spr; k = int(np.floor(u)); f = u - k
+        P = Cr[k % nr] * (1 - f) + Cr[(k + 1) % nr] * f
+        j = int(np.argmin(((C - P) ** 2).sum(1)))
+        best = None
+        for a in ((j - 1) % nc, j):
+            t = float(np.clip(((P - C[a]) * seg[a]).sum() / max(1e-12, sl[a] ** 2), 0, 1))
+            d = float(np.hypot(*(C[a] + t * seg[a] - P)))
+            if best is None or d < best[0]:
+                best = (d, cum[a] + t * sl[a])
+        out = best[1] + (k // nr) * cum[-1]   # keep a range that wraps past the lap (s >= L)
+        return round(float(out), 2)
+    c = copy.deepcopy(cfg)
+    s = c['scenery']
+    for e in s.get('kerbs_declared', []):
+        if e.get('extent') is not None:
+            a, b = fm(e['extent'][0]), fm(e['extent'][1])
+            e['extent'] = (a, b + (cum[-1] if b < a else 0.0))
+    for z in s.get('runoff_zones', []):
+        if z.get('s') is not None:
+            a, b = fm(z['s'][0]), fm(z['s'][1])
+            z['s'] = (a, b + (cum[-1] if b < a else 0.0))
+        lb = z.get('lane_band')
+        if lb:
+            for k in ('kink', 'to_course'):
+                if lb.get(k) is not None:
+                    lb[k] = tuple(fm(v) for v in lb[k])
+    return c
+
+
 def remap_stations(cfg, n, length_m=None, C=None):
     """Config station numbers are those of the geometry the config was written for (`stations_ref` = (n, length_m),
     whose centre polyline is frozen in tracks/<id>/stations_ref.json). With a built centre C (n, 2) they are mapped by
@@ -274,6 +318,8 @@ def remap_stations(cfg, n, length_m=None, C=None):
     Returns a new Config (the same object when nothing changes)."""
     import copy
     ref = cfg.get('stations_ref')
+    if C is not None and (cfg.get('scenery') or {}).get('metres_ref'):
+        cfg = remap_metres(cfg, C)
     if not ref or (ref[0] == n and (length_m is None or abs(ref[1] - length_m) < 1e-6)):
         return cfg
     c = copy.deepcopy(cfg)

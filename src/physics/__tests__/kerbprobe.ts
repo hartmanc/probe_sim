@@ -11,7 +11,10 @@ import { RaceLine } from '../ai/line';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
-export interface KerbPack { track: TrackJson; scenery: any; surface: Surface; line: RaceLine; heightfield: Float32Array; pitLane: PitLaneJson | null }
+export interface KerbPack { track: TrackJson; scenery: any; surface: Surface; line: RaceLine; heightfield: Float32Array; pitLane: PitLaneJson | null;
+  /** the player's speed along the lap (m/s at track s), or null: the package's fastest ghost lap (logger tracks), else
+   *  the onboard's overlay speed of tools/track/compare/<id>/inventory/overlay_speed.json (round 15, Buttonwillow) */
+  playerSpeed: ((s: number) => number) | null; playerSpeedSrc: string }
 export interface TraversalCase {
   kind: 'kerb' | 'sausage'; index: number;
   /** lateral offset from the racing line, m, + toward the strip's side */
@@ -19,7 +22,13 @@ export interface TraversalCase {
   /** > 0: a crossing path over the band at this angle (deg) instead of the offset line */
   angleDeg: number;
   speedScale?: number;
+  /** round 15 crest case: the player's car at the player's speed (KerbPack.playerSpeed, the real lap's speed at the
+   *  station, not the AI line's) on a path along the strip whose strip-side wheels run CREST_ONTO_M past the strip's
+   *  track-side edge (the inner wheels on the strip's top, the outer ones over its back) */
+  crest?: boolean;
 }
+/** The crest case's reach: the strip-side wheels this far past the strip's track-side edge ("2 m onto the strip"). */
+export const CREST_ONTO_M = 2.0;
 export interface TraversalResult {
   label: string; s0: number; s1: number; v0: number;
   /** ms with any wheel on the raised strip (ground under the hub above the plain road by > 5 mm) */
@@ -53,7 +62,48 @@ export function loadKerbPack(dir: string): KerbPack {
   const surface = createTrackSurface(track, heightfield, { pitLane, sausages: scenery?.sausages ?? null, kerbs: scenery?.kerbs ?? null, terrainOverride: scenery?.terrain_override ?? null });
   const line = new RaceLine(track, ghosts);
   if (scenery?.pit_exit_cones?.pts?.length) line.restrictLeft(scenery.pit_exit_cones.pts);
-  return { track, scenery, surface, line, heightfield, pitLane };
+  const ps = playerSpeedOf(track, ghosts, dir);
+  return { track, scenery, surface, line, heightfield, pitLane, playerSpeed: ps.fn, playerSpeedSrc: ps.src };
+}
+
+/** The player's speed along the lap (round 15 crest case): the fastest ghost lap's v at s, else the onboard overlay
+ *  speed (t, mph every 0.5 s) mapped to s by its own integral scaled to the lap between the two S/F times (the round-13
+ *  speed map), else null. */
+function playerSpeedOf(track: TrackJson, ghosts: any, dir: string): { fn: ((s: number) => number) | null; src: string } {
+  const L = track.length_m;
+  const laps = (ghosts?.laps ?? []).filter((l: any) => Array.isArray(l.v_mps) && l.v_mps.length > 1);
+  if (laps.length) {
+    const lap = laps.reduce((a: any, b: any) => (b.lap_time_s < a.lap_time_s ? b : a));
+    const g = ghosts.s_grid_m, v = lap.v_mps as number[];
+    return { fn: (s: number) => { const u = (((s % L) + L) % L) / g, i = Math.min(v.length - 2, Math.floor(u)); return v[i] + (u - i) * (v[i + 1] - v[i]); },
+      src: `ghost lap ${lap.driver ?? lap.id} (${lap.lap_time_s} s)` };
+  }
+  const id = dir.replace(/\/$/, '').split('/').pop();
+  let ov: any = null;
+  try { ov = JSON.parse(readFileSync(fileURLToPath(new URL(`../../../tools/track/compare/${id}/inventory/overlay_speed.json`, import.meta.url)), 'utf8')); } catch { ov = null; }
+  if (!ov) return { fn: null, src: 'none (no ghost lap, no onboard overlay speed)' };
+  const T: number[] = ov.t, V: number[] = ov.mph.map((m: number) => m * 0.44704);
+  // s(t): the speed integrated (linear between readings, 0.01 s steps), scaled so t_sf[0] -> 0 and t_sf[1] -> L
+  const dt = 0.01, n = Math.round((T[T.length - 1] - T[0]) / dt) + 1;
+  const tt = new Float64Array(n), cum = new Float64Array(n), vv = new Float64Array(n);
+  let j = 0;
+  for (let k = 0; k < n; k++) {
+    const t = T[0] + k * dt; tt[k] = t;
+    while (j < T.length - 2 && T[j + 1] < t) j++;
+    vv[k] = V[j] + ((t - T[j]) / (T[j + 1] - T[j])) * (V[j + 1] - V[j]);
+    if (k) cum[k] = cum[k - 1] + 0.5 * (vv[k] + vv[k - 1]) * dt;
+  }
+  const at = (t: number) => { const k = Math.max(0, Math.min(n - 2, Math.floor((t - T[0]) / dt))); const f = (t - tt[k]) / dt; return cum[k] + f * (cum[k + 1] - cum[k]); };
+  const c0 = at(ov.t_sf[0]), K = L / (at(ov.t_sf[1]) - c0);
+  // s of each sample over one lap, then v at s by interpolation
+  const S: number[] = [], VS: number[] = [];
+  for (let k = 0; k < n; k++) { const s = (cum[k] - c0) * K; if (s >= 0 && s <= L) { S.push(s); VS.push(vv[k]); } }
+  return { fn: (s: number) => {
+    const x = ((s % L) + L) % L;
+    let lo = 0, hi = S.length - 1;
+    while (hi - lo > 1) { const m = (lo + hi) >> 1; if (S[m] <= x) lo = m; else hi = m; }
+    return VS[lo] + ((x - S[lo]) / Math.max(1e-9, S[hi] - S[lo])) * (VS[hi] - VS[lo]);
+  }, src: `onboard overlay speed ${ov.video} (${T.length} readings)` };
 }
 
 /** The kerb traversal gate's cases: every RAISED strip (kerbs with a profile, sausages) at line speed, line +-1 m. */
@@ -66,6 +116,20 @@ export function gateCases(p: KerbPack, offsets: number[] = [-1, 0, 1], angles: n
   // a run's own profile (Buttonwillow T9, 21 Oct 2026) is raised too; the track default as before (Sonoma unchanged)
   if (k) k.strips.forEach((st: any, i: number) => { if (st.kind !== 'verge' && (k.profile || st.profile)) add('kerb', i); });
   if (sa) sa.strips.forEach((_: any, i: number) => add('sausage', i));
+  return out;
+}
+
+/** Round 15: the crest cases (the player's car at the player's speed, CREST_ONTO_M onto each raised strip); none
+ *  without a player speed (KerbPack.playerSpeed null). A strip whose own profile is 0 m high is flat paint, not raised. */
+export function crestCases(p: KerbPack): TraversalCase[] {
+  if (!p.playerSpeed) return [];
+  const out: TraversalCase[] = [];
+  const k = p.scenery?.kerbs, sa = p.scenery?.sausages;
+  if (k) k.strips.forEach((st: any, i: number) => {
+    const pr = st.profile ?? k.profile;
+    if (st.kind !== 'verge' && st.kind !== 'blocks' && pr && pr.height > 0) out.push({ kind: 'kerb', index: i, offset: 0, angleDeg: 0, crest: true });
+  });
+  if (sa) sa.strips.forEach((_: any, i: number) => out.push({ kind: 'sausage', index: i, offset: 0, angleDeg: 0, crest: true }));
   return out;
 }
 /** Steps after the reset before anything is measured (the car settles on its springs; the strip is >= 100 m ahead). */
@@ -203,11 +267,26 @@ export function kerbTraversal(p: KerbPack, probe: any, c: TraversalCase, opts: {
   const line = p.line;
   const st = c.kind === 'kerb' ? p.scenery.kerbs.strips[c.index] : p.scenery.sausages.strips[c.index];
   const prof = lineProfile(p, probe), sc = c.speedScale ?? 1;
-  const vAt = (s: number) => sc * line.at(prof, s);
+  const ps = p.playerSpeed;
+  const vAt = c.crest && ps ? (s: number) => sc * ps(s) : (s: number) => sc * line.at(prof, s);
   const sMid = st.s0 + ((st.s1 - st.s0 + line.L) % line.L) / 2;
   const sA = st.s0 - 100, sB = st.s1 + 30;
   let latAt: (s: number) => number;
-  if (c.angleDeg > 0) {
+  if (c.crest) {
+    // the strip's track-side edge, the car's centre so its strip-side wheels run CREST_ONTO_M past it; from the line
+    // 60 m before the strip, blended over 50 m, back to the line over 25 m after it
+    const w = st.width ?? (c.kind === 'kerb' ? p.scenery.kerbs.width : p.scenery.sausages.width);
+    const half = Math.max(probe.trackFront, probe.trackRear) / 2;
+    const onto = (s: number) => bandLat(p, c.kind, st, s) - st.side * (w / 2) + st.side * (CREST_ONTO_M - half);
+    const sm = (u: number) => (u <= 0 ? 0 : u >= 1 ? 1 : u * u * (3 - 2 * u));
+    latAt = (s: number) => {
+      let d0 = s - st.s0; if (d0 > line.L / 2) d0 -= line.L; else if (d0 < -line.L / 2) d0 += line.L;
+      let d1 = s - st.s1; if (d1 > line.L / 2) d1 -= line.L; else if (d1 < -line.L / 2) d1 += line.L;
+      const wgt = d0 < 0 ? sm((d0 + 60) / 50) : d1 > 0 ? 1 - sm(d1 / 25) : 1;
+      const l0 = line.at(line.off, s);
+      return l0 + wgt * (onto(s) - l0);
+    };
+  } else if (c.angleDeg > 0) {
     const tn = Math.tan((c.angleDeg * Math.PI) / 180);
     latAt = (s: number) => {
       let d = s - sMid; if (d > line.L / 2) d -= line.L; else if (d < -line.L / 2) d += line.L;
@@ -228,7 +307,7 @@ export function kerbTraversal(p: KerbPack, probe: any, c: TraversalCase, opts: {
     if (m & ~bm) kerbLift++;
   }
   const deg = 180 / Math.PI;
-  const label = `${c.kind} ${String(c.index).padStart(2)} ${st.side > 0 ? 'L' : 'R'} s${Math.round(st.s0)}-${Math.round(st.s1)} ${c.angleDeg > 0 ? `x${c.angleDeg}deg` : `off ${c.offset >= 0 ? '+' : ''}${c.offset}`}`;
+  const label = `${c.kind} ${String(c.index).padStart(2)} ${st.side > 0 ? 'L' : 'R'} s${Math.round(st.s0)}-${Math.round(st.s1)} ${c.crest ? `crest ${CREST_ONTO_M} m onto at ${(vAt(sMid) * 3.6).toFixed(0)} km/h` : c.angleDeg > 0 ? `x${c.angleDeg}deg` : `off ${c.offset >= 0 ? '+' : ''}${c.offset}`}`;
   const maxRollDeg = a.roll * deg;
   return {
     label, s0: st.s0, s1: st.s1, v0: vAt(sA), onKerbMs: a.onKerbMs, maxKerbH: a.maxH,

@@ -176,7 +176,8 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
       // ---- four wheels off (unpaved), sustained 0.25 s, re-armed after 2 s back on
       const st = cars[i].vehicle.state;
       let allOff = true;
-      for (const w of st.wheels) { if (w.onTrack) { allOff = false; break; } if (surface.sample(w.pos[0], w.pos[1]).paved) { allOff = false; break; } }
+      // round 15: a kerb band outside the edge (kerbs.inside false) is course for the track limit (SurfaceSample.onKerbBand)
+      for (const w of st.wheels) { if (w.onTrack) { allOff = false; break; } const sm = surface.sample(w.pos[0], w.pos[1]); if (sm.paved || sm.onKerbBand) { allOff = false; break; } }
       const h = SAMPLE * dt;
       if (allOff) { offT[i] += h; onT[i] = 0; } else { offT[i] = 0; onT[i] += h; }
       if (onT[i] >= 2) armed[i] = 1;

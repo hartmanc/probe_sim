@@ -12,7 +12,8 @@ const DIR = resolve(__dirname, '../../../public/tracks/buttonwillow');
 const track = JSON.parse(readFileSync(join(DIR, 'track.json'), 'utf8'));
 const hf = Float32Array.from(loadHeightfield(Uint8Array.from(readFileSync(join(DIR, 'heightfield.bin'))).buffer));
 const scenery = () => JSON.parse(readFileSync(join(DIR, 'scenery.json'), 'utf8'));
-const OPTS = { parts: ['^paddock band '], step: 0.5, wall_clear: 0.4, edge_tol: 0.1 };
+// round 15: the paddock bands are paved but not drawn (draw: false, the ortho's paddock shows): checked as undrawn parts
+const OPTS = { parts: ['^paddock band '], step: 0.5, wall_clear: 0.4, edge_tol: 0.1, undrawn: ['^paddock band '] };
 
 describe('paved coverage of the Buttonwillow paddock bands', () => {
   it('every drawn sample off the edges is paved', () => {

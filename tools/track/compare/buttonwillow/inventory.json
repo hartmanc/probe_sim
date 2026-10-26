@@ -2052,11 +2052,19 @@
    "attrs": {
     "type": "flat painted kerb",
     "colour": "white / blue / red",
-    "raised": false
+    "raised": false,
+    "ahead_m": 15,
+    "correction": {
+     "round": "round 15, 26 Oct 2026",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "t144 shows the T11 exit kerb beginning ahead on the right (its nearest blocks ~10-20 m beyond the hood; t146 is alongside it at s 4458); on the round-15 package, 6.8 m longer, the run starts at s 4428, 18 m past the row"
+    }
    },
    "confidence": 0.9,
    "t": 144,
-   "s": 4410.1,
+   "s": 4425.1,
    "source": "onboard:7QS2M-HGSI4@144.0",
    "frame": "t144.jpg",
    "scope": "lap",

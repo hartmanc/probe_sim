@@ -1252,6 +1252,11 @@ def kerbs_declared(trk):
 KERB_RUN_REPORT = []
 
 
+def _flush_sign():
+    """-1: a flush strip lies inside the edge (the default); +1: beyond it (config scenery.kerb.inside False, round 15)."""
+    return 1.0 if SC_CFG.get("kerb", {}).get("inside", True) is False else -1.0
+
+
 def kerb_run(trk, k, pal, max_step=0.1):
     """One kerb RUN along its block line (config kerbs_declared entry with `line_latlon`, Buttonwillow 21 Oct 2026, the
     owner's "weird, disjointed kerbs"): the band centre's measured world line projected on the track every build, its
@@ -1292,7 +1297,9 @@ def kerb_run(trk, k, pal, max_step=0.1):
         # measured line gives the run's extent (s0..s1) only. Against the round-10 edges the round-5 block-line offsets
         # ran up to 3.4 m outside the edge (left 1089-1116)
         w_ = float(k.get("width") or SC_CFG.get("kerb", {}).get("width", 0.9))
-        off = np.full(len(off), -w_ / 2)
+        # round 15 (Buttonwillow, the owner's decision of 26 Oct 2026, item 19): with scenery.kerb.inside False the race
+        # edge is on his red, the kerb's inside, and the strip is the band beyond it (off = +width / 2); absent: inside
+        off = np.full(len(off), _flush_sign() * w_ / 2)
     if len(off) < 12:
         # a short run (under 12 m, round 8): one offset, its median (a 9 m block line set at an angle to an edge that bends
         # there read as a 0.7 m ramp the smoothing cannot hold under the step gate; the band is short enough to be one line)
@@ -1340,7 +1347,7 @@ def kerb_zone_strip(trk, k, pal):
     else:
         lo, hi = (int(v) for v in k["zone"])
     w = float(k.get("width") or SC_CFG.get("kerb", {}).get("width", 0.9))
-    rec = {"side": side, "s0": lo, "s1": lo + (hi - lo) % trk.n, "kind": k.get("kind", "kerb"), "off": rnd(-w / 2, 2), "width": w}
+    rec = {"side": side, "s0": lo, "s1": lo + (hi - lo) % trk.n, "kind": k.get("kind", "kerb"), "off": rnd(_flush_sign() * w / 2, 2), "width": w}
     c = k.get("colors")
     if isinstance(c, str):
         c = pal[c]
@@ -1453,6 +1460,12 @@ def closed_roads(trk, osm):
                 # 20 Oct 2026: a closed road is other pavement for the containment gate (an inside runoff the cars may
                 # use, cones False, is not: it is runoff)
                 part["kind"] = "closed_road" if road.get("cones", True) else "runoff"
+                if road.get("draw") is False:
+                    # round 15 (Buttonwillow, the owner's drive of round 14: "a giant gray rectangle where pit in should
+                    # be"): paved in the physics, not drawn, so the ortho's own ground shows (draw_src required)
+                    if not road.get("draw_src"):
+                        raise SystemExit(f"closed road {road['name']}: draw False without draw_src")
+                    part["draw"] = False
                 out_parts.append(part)
                 # cone line across each end that touches the track: from one lane edge to the other, 1 m off the edge
                 for end in ((0, -1) if road.get("cones", True) else ()):
@@ -3808,11 +3821,32 @@ def owner_mouth_cones(trk):
                 P[cut] = trk.edge_point(j_[cut], sd, float(oc["clip_out"]))
                 log(f"owner mouth {m['side']} {m['lo']}-{m['hi']}: {int(cut.sum())} of {len(P)} points clipped to {oc['clip_out']} m "
                     f"outside the edge (deepest {max(0.0, -float(dout_[cut].min())):.2f} m inside)")
+        spacing = float(oc.get("spacing", 2.0))
+        sp_note = ""
+        if oc.get("count"):
+            # round 15 (Buttonwillow, the owner, 26 Oct 2026: "Should just be a few in the areas where other parts of the
+            # track are shut off"): count (lo, hi) cones across the mouth, from one end of his red to the other, at the
+            # onboard's spacing (the mouth's own `cone_spacing` with its `cone_spacing_src`, else `spacing`):
+            # n = round(width / spacing) + 1 clamped to (lo, hi), evenly spread (spacing = width / (n - 1)); the line
+            # keeps his whole red (the containment gate's barrier) and runs 0.05 m past its end so the last cone stands
+            # on the end (the app places cones every spacing m from the start while d < length)
+            lo_, hi_ = (int(v) for v in oc["count"])
+            if m.get("cone_spacing") is not None and not m.get("cone_spacing_src"):
+                raise SystemExit(f"owner mouth {m['side']} {m['lo']}-{m['hi']}: cone_spacing without cone_spacing_src")
+            want = float(m.get("cone_spacing", spacing))
+            W = float(np.hypot(*np.diff(P, axis=0).T).sum())
+            ncone = int(min(hi_, max(lo_, round(W / want) + 1)))
+            spacing = W / (ncone - 1)
+            d_ = P[-1] - P[-2]
+            P = np.vstack([P, P[-1] + d_ / max(1e-9, float(np.hypot(*d_))) * 0.05])
+            sp_note = (f"; {ncone} cones {spacing:.1f} m apart across his {W:.1f} m of red (the onboard's {want:g} m: "
+                       f"{m.get('cone_spacing_src') or oc.get('spacing_src', oc['style_src'])})")
+            log(f"owner mouth cones {m['side']} {m['lo']}-{m['hi']}: {ncone} cones, {spacing:.2f} m apart over {W:.1f} m (wanted {want:g} m)")
         mid = P[len(P) // 2]
         caps = sorted(_clean_captures(), key=lambda t: np.hypot(t["x"] - mid[0], t["y"] - mid[1]))[:2]
-        out.append({"spacing_m": float(oc.get("spacing", 2.0)), "pts": with_z(trk, P),
+        out.append({"spacing_m": round(spacing, 4) if oc.get("count") else spacing, "pts": with_z(trk, P),
                     "src": f"{oc.get('label', 'owner round-10 mouth')} {m['side']} {m['lo']}-{m['hi']} ({m['kind']}): cones on his red, drawn on the outline window over "
-                           f"{' / '.join(t['name'] for t in caps)} ({m['src'][:120]}); style: {oc['style_src']}",
+                           f"{' / '.join(t['name'] for t in caps)} ({m['src'][:120]}); style: {oc['style_src']}{sp_note}",
                     **_cone_style(oc)})
         log(f"owner mouth cones {m['side']} stations {int(i[0]) % trk.n}-{int(i[-1]) % trk.n}: {len(P) * 0.5:.0f} m on his red")
     log(f"owner mouth cones: {len(out)} lines")
@@ -4426,7 +4460,10 @@ def main(cfg=None, out_dir=None):
         "buildings": bld,
         "bridges": brg,
         "barriers": bar,
-        "kerbs": {"width": SC_CFG.get("kerb", {}).get("width", KERB_W), "inside": True,
+        # round 7 (Mid-Ohio, owner's decision 2: the race edges are the asphalt-facing face of every kerb): config
+        # scenery.kerb.inside False puts every strip without its own `off` / `offs` in the band beyond the edge (physics
+        # kerbBandCentre, app buildKerbs, terrainGates read it); absent: True, every other track unchanged
+        "kerbs": {"width": SC_CFG.get("kerb", {}).get("width", KERB_W), "inside": bool(SC_CFG.get("kerb", {}).get("inside", True)),
                   "stripe_m": SC_CFG.get("kerb", {}).get("stripe_m", 2.0), "strips": kerb,
                   # per-track paint (config scenery.kerb.colors = [stripe, base]); absent: the app's red / white (Laguna)
                   **({"colors": SC_CFG["kerb"]["colors"]} if SC_CFG.get("kerb", {}).get("colors") else {}),

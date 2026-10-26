@@ -296,6 +296,7 @@ function createSim(assets: Assets) {
   const wheelOff = (w: { onTrack: boolean; pos: [number, number, number] }) => {
     if (w.onTrack) return false;
     const smp = surface.sample(w.pos[0], w.pos[1]);
+    if (smp.onKerbBand) return false;       // round 15: a kerb band outside the edge is course (the limit is its outside)
     return !smp.paved || !!smp.offCourse;   // an off_course part (round 14B: an escape road) is paved but off
   };
   const world: World = buildWorld(track, heightfield, assets.ortho, Math.min(quality.maxAnisotropy, renderer.capabilities.getMaxAnisotropy()), assets.scenery,

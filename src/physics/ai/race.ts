@@ -740,7 +740,7 @@ export class RaceDirector {
     for (const w of st.wheels) {
       if (w.onTrack) { allOff = false; break; }
       const smp = this.surface.sample(w.pos[0], w.pos[1]);
-      if (smp.paved) { allOff = false; break; }
+      if (smp.paved || smp.onKerbBand) { allOff = false; break; }   // round 15: outside kerb bands are course
     }
     if (allOff) { this.offT += dt; this.onT = 0; } else { this.offT = 0; this.onT += dt; }
     if (this.onT >= 2) this.offArmed = true;
