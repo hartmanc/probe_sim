@@ -57,18 +57,36 @@ def add(name, west, top, east, top_kind, frames, notes):
                   width_at_top_m=round(float(np.hypot(*(east[0] - west[-1]))), 1),
                   depth_m=round(float(d.max()), 1), outline_enu=[[round(float(a), 2), round(float(b), 2)] for a, b in out],
                   outline_latlon=[ll(float(a), float(b)) for a, b in out], strokes=notes, frames=frames))
-# A: x -22.6 .. -6.6, the crossover OSM 34351015 across the track into the lane
-# up to the pit wall (continuous across it); his flares w_s0000 #12 / #11 continue the channel north of the wall, through
-# the dirt median, to his lane-side line: that part lies in the pit lane's own paving (paved to the wall) and is not drawn
+# A: x -22.6 .. -6.6, the crossover OSM 34351015 across the track into the lane: round 14, the owner's decision of
+# 26 Oct 2026 ("Stop the lane paving at my line: dirt median, A and B as channels"): the channel runs from the course
+# edge across the pit wall (continuous) and the dirt median to his lane-side line: his #13 + #12 (west) / #11 + #14
+# (east), the top along his line between the flares' tops
+LINE = np.array(json.load(open(f'{R}/tracks/buttonwillow/owner/r14_lane_line.json'))['enu'])
+def line_between(xa, xb):
+    xs = np.arange(np.ceil(min(xa, xb) + 0.3), max(xa, xb) - 0.3, 1.0)
+    P = np.c_[xs, np.interp(xs, LINE[:, 0], LINE[:, 1])]
+    return P if xa < xb else P[::-1]
+wA = np.r_[orient(st('w_s0000', 13)), st('w_s0000', 12)]
+eA = np.r_[st('w_s0000', 11)[::-1], orient(st('w_s0000', 14))[::-1]]
+add('A_channel', wA, line_between(wA[-1, 0], eA[0, 0]), eA, "his lane-side line (the channel through the dirt median; the pit wall continuous across it)",
+    ['c20_s4650', 'c20_s4700', 'c20_s0000', 'onboard t004000-t005000', 'pit-lane t1312000'],
+    'his whole green at A (the coverage check): w_s0000 #13 + #12 (west) / #11 + #14 (east), the top along his lane-side line')
+# the mouth part itself: course edge to the pit wall (north of the wall the channel is the pit lane's paving: the lane's
+# edge follows his flares #12 / #11 down to the wall there, owner/r14_lane_line.json)
 wA = orient(st('w_s0000', 13)); eA = orient(st('w_s0000', 14))[::-1]
 add('A', wA, wall_between(wA[-1, 0] + 0.3, eA[0, 0] - 0.3), eA, 'pit wall (continuous)',
     ['c20_s4650', 'c20_s4700', 'c20_s0000', 'onboard t004000-t005000', 'pit-lane t1312000'],
-    'w_s0000 #13 (west) / #14 (east) from the course edge to the wall, the same mouth in w_s4625 #12+#18 / #19+#13; north of the wall his flares #12 / #11 (w_s4625 #14 / #15) meet his lane-side line')
-# B: x 43.3 .. 56.0, the crossover OSM 34351026 across the track into the lane
+    'w_s0000 #13 (west) / #14 (east) from the course edge to the wall, the same mouth in w_s4625 #12+#18 / #19+#13')
+# B: x 43.3 .. 56.0, the crossover OSM 34351026 across the track into the lane; a channel to his line as A
+wB = np.r_[orient(st('w_s0000', 7)), st('w_s0000', 10)]
+eB = np.r_[st('w_s0000', 9)[::-1], orient(st('w_s0000', 8))[::-1]]
+add('B_channel', wB, line_between(wB[-1, 0], eB[0, 0]), eB, "his lane-side line (the channel through the dirt median; the pit wall continuous across it)",
+    ['c20_s0050', 'c20_s0100', 'onboard t005500-t006500', 'pit-lane t1303000'],
+    'his whole green at B (the coverage check): w_s0000 #7 + #10 (west) / #9 + #8 (east), the top along his lane-side line')
 wB = orient(st('w_s0000', 7)); eB = orient(st('w_s0000', 8))[::-1]
 add('B', wB, wall_between(wB[-1, 0] + 0.3, eB[0, 0] - 0.3), eB, 'pit wall (continuous)',
     ['c20_s0050', 'c20_s0100', 'onboard t005500-t006500', 'pit-lane t1303000'],
-    'w_s0000 #7 (west) / #8 (east) from the course edge to the wall; north of the wall his flares #10 / #9 meet his lane-side line')
+    'w_s0000 #7 (west) / #8 (east) from the course edge to the wall; north of the wall the channel is the lane (its edge on his flares #10 / #9)')
 # C: the pit-wall head apron, x -200 .. -148: his line from the course edge to the lane (w_s4500 #4 + #10), the lane's
 # edge across (package lane right edge, 0.15 m into the lane), his turn-down to the wall head (#6), the wall, #5
 wC = np.r_[orient(st('w_s4500', 4)), st('w_s4500', 10)[1:]]

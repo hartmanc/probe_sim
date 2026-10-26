@@ -71,8 +71,9 @@ def test_outline_part_follows_the_outline_with_a_constant_centre(monkeypatch):
     x = C[:, 0]
     mid = (x > 100.5) & (x < 119.5)
     assert np.allclose(L[mid, 1], 16.0, atol=0.05)                   # the outer edge on his line across the top
-    fl = (x > 98.2) & (x < 99.8)                                     # the flare: 2 m deep over 2 m
-    assert np.allclose(L[fl, 1], 5.0 + (x[fl] - 98.0), atol=0.1)
+    fl = (x > 98.2) & (x < 99.6)                                     # the flare: 2 m deep over 2 m
+    # the farthest reach of the section's own ray and the rays a third of a step (1 m) either side (corners kept)
+    assert np.all(L[fl, 1] >= 5.0 + (x[fl] - 98.0) - 0.1) and np.all(L[fl, 1] <= 5.0 + (x[fl] + 1 / 3 - 98.0) + 0.1)
     assert x.min() >= 98.0 and x.max() <= 122.0                      # stations past the outline are left out
     assert p["surface"] == "apron" and p["turn"] == "m"
     assert np.allclose(np.array(p["gap_right"]), 0.0)                # the inner side touches the track
@@ -224,3 +225,111 @@ def test_band_spans_the_lane_and_ends_on_its_own_points(monkeypatch):
     BS.check_strip("b", C, L, R)
 
 
+
+
+# ---- round 14, second review: the lane band on the lane's own stations, the lane's edge on the owner's line, the aisle
+# end's block part, the mouth centre mirrored about the lane's edge
+
+def twisted_lane(y0=10.4, y1=26.0, x0=40, x1=200):
+    """a lane along +x between y0 (right edge) and y1 (left edge), its cross-slope twisting along x (1 % to 3 %) and a
+    longitudinal slope: a surface no single plane fits"""
+    xs = np.arange(x0, x1 + 1, 1.0)
+    z = lambda x, y: 0.05 + (0.01 + 0.02 * (x - x0) / (x1 - x0)) * (y - y0) + 0.002 * (x - x0)   # noqa: E731
+    fr = np.array(FR)
+    yc = (y0 + y1) / 2
+    lane = {"n": len(xs), "center": [[x, yc, z(x, yc)] for x in xs], "left": [[x, y1, z(x, y1)] for x in xs],
+            "right": [[x, y0, z(x, y0)] for x in xs],
+            "profile_z": [[z(x, yc - f * (y1 - y0) / 2) for f in fr] for x in xs]}
+    return lane, z
+
+
+def test_lane_band_meets_the_lane_with_its_surface_on_a_bent_band(monkeypatch):
+    """mouth C's construction on a twisting lane: the band on the lane's own stations, its right edge 3 m beyond the
+    course edge over `to_course`, its centre bent by the kink rule ((3 r - 3) / 2) and back onto the lane's centre at
+    both ends; the physics' rule (nearest centre over the lane and the band, lane_surface_z on both) sampled every 1 mm
+    across the lane: every sample paved, and no step between neighbours beyond the surface's own slope"""
+    lane, z = twisted_lane(y0=15.2, y1=22.8)              # its right edge 10.2 m beyond the course edge, centre 14 m (C's nose)
+    monkeypatch.setattr(BS, "LANE_PARTS", [lane])
+    zb = dict(name="b", side="left", s=(60, 180), draw=False, src="t",
+              lane_band=dict(kink=(100, 140), kink_from=3.0, to_course=(100, 140), smooth=2.0, taper=20.0, ends=3.0))
+    b, = zones(monkeypatch, zb)
+    assert b["draw"] is False
+    worst = 0.0
+    for x in np.arange(70.0, 170.0, 0.5):
+        y_lo = 8.05 if 102 <= x <= 138 else 15.25                 # the mouth (from 3 m beyond the course edge) where the band reaches it
+        ys = np.arange(y_lo, 22.75, 0.001)
+        zz, ins = BS.lane_surface_z([lane, b], np.c_[np.full(len(ys), x), ys], FR)
+        assert ins.all(), (x, ys[~ins][:3])
+        d = np.abs(np.diff(zz)) - 0.04 * 0.001 - 1e-9          # beyond the steepest slope (the lane's 3 %, the mouth's line) over 1 mm
+        worst = max(worst, float(d.max()))
+    assert worst < 1e-4, worst                                 # 0.1 mm (the profile's 4-decimal rounding)
+
+
+def test_lane_band_ends_are_the_lanes_own_points(monkeypatch):
+    lane, _ = twisted_lane()
+    monkeypatch.setattr(BS, "LANE_PARTS", [lane])
+    lane, _ = twisted_lane(y0=15.2, y1=22.8)
+    monkeypatch.setattr(BS, "LANE_PARTS", [lane])
+    b, = zones(monkeypatch, dict(name="b", side="left", s=(60, 180), draw=False, src="t",
+                                 lane_band=dict(kink=(100, 140), kink_from=3.0, to_course=(100, 140), taper=20.0, ends=3.0)))
+    lc = [tuple(c[:2]) for c in lane["center"]]
+    assert tuple(b["center"][0][:2]) in lc and tuple(b["center"][-1][:2]) in lc
+
+
+def test_lane_edge_moves_onto_the_line_and_keeps_its_heights(monkeypatch, tmp_path):
+    lane, z = twisted_lane()
+    line = [(x, 14.0 + 0.01 * (x - 40)) for x in np.arange(60.0, 181.0, 1.0)]
+    os.makedirs(tmp_path / "tracks" / "fake", exist_ok=True)
+    import json
+    (tmp_path / "tracks" / "fake" / "line.json").write_text(json.dumps({"latlon": ll(line)}))
+    monkeypatch.setattr(BS, "CFG_ALL", {"id": "fake"})
+    monkeypatch.setattr(BS.os.path, "dirname", lambda p, _d=os.path.dirname: str(tmp_path) if p.endswith("build_scenery.py") else _d(p))
+    before = [list(r) for r in lane["profile_z"]]
+    BS.lane_edge_to_line([lane], dict(side="right", file="line.json", src="t"), FR)
+    R = np.array(lane["right"], float); C = np.array(lane["center"], float)
+    on = (R[:, 0] >= 61) & (R[:, 0] <= 179)
+    assert np.allclose(R[on, 1], 14.0 + 0.01 * (R[on, 0] - 40), atol=0.02)          # on the line
+    assert np.allclose(C[:, 1], 18.2)                                                # the centre (the AI's path) stays
+    for i in np.nonzero(on)[0]:                                                       # heights: the old surface
+        hr = R[i, 1] - C[i, 1]
+        for m, f in enumerate(FR):
+            if f > 0:
+                assert abs(lane["profile_z"][i][m] - z(C[i, 0], C[i, 1] + f * hr)) < 0.002
+            else:
+                assert lane["profile_z"][i][m] == before[i][m]
+
+
+def test_block_part_runs_through_the_end_of_the_part_it_continues():
+    """an aisle running north (x 100, y 12 .. 40, 4 m halves, sloping) and a block declared across its end at y 12.3:
+    the block's centre moves onto the aisle's end point (1 cm beyond it), with a centre point there, its edges stay where
+    declared, its heights are the aisle's; every sample beyond the aisle's end has a block centre point nearest (the
+    physics' rule: no `over` region of the aisle's end left but a 5 mm sliver)"""
+    ys = np.arange(12.0, 41.0, 1.0)
+    zf = lambda y: 0.1 + 0.01 * y                                                    # noqa: E731
+    aisle = {"n": len(ys), "turn": "aisle", "center": [[100.0, y, zf(y)] for y in ys],
+             "left": [[96.0, y, zf(y)] for y in ys], "right": [[104.0, y, zf(y)] for y in ys],
+             "profile_z": [[zf(y)] * len(FR) for y in ys]}
+    bp = dict(name="blk", latlon=ll([(96.0, 12.3), (104.0, 12.3)]), left=0.5, right=3.0, heights_from="aisle",
+              surface="apron", src="t")
+    p = BS.block_part(FakeTrack(), bp, [aisle], FR)
+    C, L, R = (np.array(p[k], float) for k in ("center", "left", "right"))
+    assert np.allclose(C[:, 1], 11.99, atol=1e-3)                                   # through the end, 1 cm beyond
+    assert np.min(np.hypot(C[:, 0] - 100.0, C[:, 1] - 11.99)) < 1e-3                 # a centre point there
+    assert np.allclose(L[:, 1], 12.8, atol=1e-3) and np.allclose(R[:, 1], 9.3, atol=1e-3)   # the declared edges
+    assert np.allclose(C[:, 2], zf(11.99), atol=2e-3) and p["surface"] == "apron"
+    Ac = np.array(aisle["center"], float)[:, :2]
+    for x in np.arange(96.5, 103.6, 0.25):
+        for y in np.arange(9.5, 11.985, 0.25):
+            da = np.min(np.hypot(Ac[:, 0] - x, Ac[:, 1] - y)); db = np.min(np.hypot(C[:, 0] - x, C[:, 1] - y))
+            assert db <= da, (x, y)
+
+
+def test_outline_centre_mirrors_the_lane_centre_about_its_edge(monkeypatch):
+    lane, _ = twisted_lane(y0=15.0, y1=23.0)                     # its right edge 10 m beyond the course edge (y 5), centre 14 m
+    monkeypatch.setattr(BS, "LANE_PARTS", [lane])
+    p, = zones(monkeypatch, dict(name="m", side="left", s=(95, 125), outline=dict(centre="mirror_lane", step=0.25),
+                                 outer_latlon=mouth(top=10.0), src="t"))
+    C = np.array(p["center"], float)
+    mid = (C[:, 0] > 102) & (C[:, 0] < 118)
+    assert np.allclose(C[mid, 1], 5.0 + (2 * 10.0 - 14.0), atol=0.05)   # 2 r - c = 6 m beyond the course edge
+    assert np.diff(C[:, 0]).max() < 0.3                                    # sections every 0.25 m

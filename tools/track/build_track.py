@@ -1410,6 +1410,26 @@ def scenery_gates(cfg, T, SC, tmp, trk):
     failed gate labels."""
     g = dict(cfg["scenery"].get("gates", {}))
     out = {k: g[k] for k in ("reach", "step", "cones_exempt", "paved_coverage") if k in g}
+    pc_ = out.get("paved_coverage")
+    if pc_ and pc_.get("outlines") == "runoff_zones":
+        # round 14 (Astra's second review): the owner's own outlines (runoff_zones[].outline's outer_latlon, his strokes),
+        # closed 3 m inside the course edge, for the paved-coverage gate's check against his intent
+        pc_ = dict(pc_); seen_ = set(); polys_ = []
+        for z_ in cfg["scenery"].get("runoff_zones", []):
+            if not z_.get("outline"):
+                continue
+            ol_ = z_.get("owner_outline_latlon") or z_["outer_latlon"]
+            key_ = tuple(map(tuple, ol_))
+            if key_ in seen_:
+                continue
+            seen_.add(key_)
+            O_ = np.array([cfg.enu(*q) for q in ol_], float)
+            sd_ = 1 if z_["side"] == "left" else -1
+            i0_, _, _ = trk.project(O_[:1]); i1_, _, _ = trk.project(O_[-1:])
+            ring_ = np.r_[O_, [O_[-1] - trk.N[i1_[0]] * sd_ * 3.0], [O_[0] - trk.N[i0_[0]] * sd_ * 3.0]]
+            polys_.append({"name": z_["name"], "poly": [[round(float(x), 3), round(float(y), 3)] for x, y in ring_]})
+        pc_["outlines"] = polys_
+        out["paved_coverage"] = pc_
     sp = T["spacing_m"]
     al = []
     for a in g.get("allowed", []):

@@ -131,8 +131,11 @@ let pc: any = null;
 if (cfg.paved_coverage) {
   pc = pavedCoverage(track, loadHeightfield(Uint8Array.from(readFileSync(join(dir, 'heightfield.bin'))).buffer), sc, cfg.paved_coverage);
   const by = new Map<string, number>(); for (const h of pc.holes) by.set(h.part, (by.get(h.part) ?? 0) + 1);
-  console.log(`[${pc.holes.length || !pc.parts ? 'FAIL' : 'ok'}] paved coverage: ${pc.parts} parts (${cfg.paved_coverage.parts.join(', ')}), ${pc.samples} samples on a ${pc.step} m grid inside their drawn strips `
+  console.log(`[${pc.holes.length || !pc.parts ? 'FAIL' : 'ok'}] paved coverage: ${pc.parts} parts (${cfg.paved_coverage.parts.join(', ')}), ${pc.samples} samples on a ${pc.step} m grid inside their drawn strips (round-13 check) `
     + `(${pc.wallClear} m round the barriers and ${pc.onEdge} samples within ${pc.edgeTol} m of a drawn edge left out), ${pc.holes.length} unpaved in the physics` + (pc.parts ? '' : '; no part matched'));
+  if (pc.lane) console.log(`       the pit lane's drawn strip in the parts' box [${pc.lane.box.join(', ')}] (round 14): ${pc.lane.samples} samples, ${pc.lane.holes} unpaved (${pc.lane.onEdge} on an edge left out)`);
+  if (pc.also) console.log(`       also (${(cfg.paved_coverage.also ?? []).map((a: any) => a.parts.join(', ')).join('; ')}) in that box: ${pc.also.parts} parts, ${pc.also.samples} samples, ${pc.also.holes} unpaved`);
+  if (pc.outlines) console.log(`       the owner's outlines (${pc.outlines.polys}): ${pc.outlines.samples} samples off the course, ${pc.outlines.holes} unpaved (${pc.outlines.onEdge} on an edge left out)`);
   for (const [k, v] of by) console.log(`       ${k}: ${v} unpaved, first at (${pc.holes.find((h: any) => h.part === k).x}, ${pc.holes.find((h: any) => h.part === k).y})`);
   if (pc.holes.length || !pc.parts) fail = true;
 }
