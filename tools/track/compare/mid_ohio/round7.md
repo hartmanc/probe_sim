@@ -410,3 +410,7 @@ Open after round 7b (replacing section 12's scan / audit / ground-lines / bleach
 candidates (section 14), B2's apron tone and B3's mirrored board backs (section 15), the 4.4 structure stills; the rest of
 section 12 stands (field, AI, pit-lane survey, T4 run-off raise, kerb height as an owner question, OSM fence heights,
 IndyCar B / C rows, Buttonwillow identity, the second judge's pass).
+
+Tests (round 7b final state): `npm run build` ok; full `npx vitest run` 536 / 537 with one timeout (the Laguna full-field
+`ai_behaviour.test.ts` case passed its 60 s limit at 1-minute load 9-12 with two other agents running); that file re-run
+alone: 7 / 7 passed. `src/scoreboard`, the kerb gate and `src/app`: 365 passed.
