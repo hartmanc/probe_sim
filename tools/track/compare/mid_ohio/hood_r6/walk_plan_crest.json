@@ -1,0 +1,31 @@
+{
+ "track": "mid_ohio",
+ "shots": [
+  {
+   "file": "sim/t8_crest_minus60_s2394_centre.jpg",
+   "s": 2394,
+   "side": "fwd",
+   "pos": [
+    93.239,
+    522.53,
+    -13.9
+   ],
+   "heading": 0.37029601997670925,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/t8_crest_minus60_s2394_line.jpg",
+   "s": 2394,
+   "side": "fwd",
+   "pos": [
+    91.50781630282751,
+    526.9894718166115,
+    null
+   ],
+   "heading": 0.37029601997670925,
+   "yaw": 0,
+   "kind": "line"
+  }
+ ]
+}
