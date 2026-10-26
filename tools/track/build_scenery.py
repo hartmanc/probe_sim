@@ -981,12 +981,16 @@ def barriers(trk, osm):
             rec = {"kind": kind, "h": 1.0 if kind == "concrete" else 0.75,
                    "fence": 3.0 if kind == "concrete" else 0.0, "pts": with_z(trk, run), "src": f"osm:{w['id']}"}
             if ov is not None:
-                rec.update({k: ov[k] for k in ("kind", "h", "fence", "color") if k in ov})
+                rec.update({k: ov[k] for k in ("kind", "h", "fence", "color", "rails") if k in ov})   # rails: round 7 (stacked armco)
                 rec["src"] = f"osm:{w['id']} ({ov['src']})"
                 log(f"OSM wall {w['id']}: {kind} -> {rec['kind']} h {rec['h']} fence {rec['fence']} by evidence override")
             out.append(rec)
+            if ov is not None:
+                # round 7 (Mid-Ohio): an evidence-overridden OSM wall can carry wall_boards by the name 'osm:<way id>'
+                # (registered only; nothing is written for it)
+                DECLARED_WALLS.setdefault(f"osm:{w['id']}", []).append((np.asarray(run, float).copy(), float(rec["h"]), np.zeros(len(run))))
             wall_pts.append(np.c_[run, i, lat, dout])
-    for k in set(ovr) - used:
+    for k in set(ovr) - used - {k_ for k_, v_ in ovr.items() if v_.get("osm_fence")}:
         raise SystemExit(f"osm_barrier_overrides: OSM wall {k} not found in the box")
     W = np.concatenate(wall_pts) if wall_pts else np.zeros((0, 5))
     # tyre walls in front of the outside barrier of the big stops
@@ -1138,6 +1142,8 @@ def barriers(trk, osm):
                 rec[key_] = dw[key_]
         if dw.get("stack"):
             rec["stack"] = int(dw["stack"])   # tyres per stack (round 7), from the evidence
+        if dw.get("rails"):
+            rec["rails"] = int(dw["rails"])   # Mid-Ohio round 7: stacked W-beams of an armco run (app); absent: one beam
         # round 14D (Sonoma T11, owner 25 Oct 2026): a deep tyre wall's rows (the app draws row k k x 0.6 m to the
         # polyline's left; absent: 2) and a thick wall's drawn width (absent: the app's 0.36 m); both from the evidence
         if dw.get("rows"):
@@ -1177,9 +1183,27 @@ def barriers(trk, osm):
                     kept.append(dict(b, pts=[list(map(float, q)) for q in P[a_:b2 + 1]]))
         out[:] = kept
     # catch fence round the paddock
+    fovr = {k: v for k, v in ovr.items() if v.get("osm_fence")}
     for w in osm.select(lambda t: t.get("barrier") == "fence", trk.box):
+        # round 7 (Mid-Ohio): an osm_barrier_overrides entry with osm_fence=True applies to an OSM barrier=fence way
+        # (drop, or fence height / colour from the footage; logged); absent: every OSM fence as before (2.4 m)
+        ov = fovr.get(str(w["id"]))
+        if ov is not None:
+            used.add(str(w["id"]))
+            if not ov.get("src"):
+                raise SystemExit(f"osm_barrier_overrides[{w['id']}]: no evidence (src) given")
+            if ov.get("drop"):
+                log(f"OSM fence {w['id']}: DROPPED by evidence override: {ov['src']}")
+                continue
         for run in polyline_runs(trk, w["xy"], step=3.0, max_out=400):
-            out.append({"kind": "fence", "h": 0.0, "fence": 2.4, "pts": with_z(trk, run), "src": f"osm:{w['id']}"})
+            rec = {"kind": "fence", "h": 0.0, "fence": 2.4, "pts": with_z(trk, run), "src": f"osm:{w['id']}"}
+            if ov is not None:
+                rec.update({k: ov[k] for k in ("h", "fence", "color") if k in ov})
+                rec["src"] = f"osm:{w['id']} ({ov['src']})"
+                log(f"OSM fence {w['id']}: fence {rec['fence']} m by evidence override")
+            out.append(rec)
+    for k in set(fovr) - used:
+        raise SystemExit(f"osm_barrier_overrides: OSM fence {k} not found in the box")
     tot = {}
     for b in out:
         P = np.array(b["pts"])
@@ -1231,6 +1255,12 @@ def kerbs_declared(trk):
             raise SystemExit(f"kerbs_declared '{k.get('name')}': unknown pattern {k['pattern']!r} (blocks | plain)")
         if k.get("off") is not None:
             rec["off"] = float(k["off"])
+        if k.get("width"):
+            rec["width"] = float(k["width"])   # round 7 (Mid-Ohio): the strip's measured band width; absent: the track's
+        if k.get("edge_line"):
+            rec["edge_line"] = True   # round 7 (Mid-Ohio): the white edge line runs on along this strip (edge_lines)
+        if k.get("profile"):
+            rec["profile"] = dict(k["profile"])   # round 7 (Mid-Ohio): a strip's own raised profile; absent: the track default
         if k.get("paint"):
             rec["paint"] = float(k["paint"])
         rec["src"] = (f"{k['name']}: " if k.get("name") else "") + k["src"] + (f"; colour: {k['colour_src']}" if k.get("colour_src") else "")
@@ -2575,7 +2605,9 @@ def edge_lines(trk, kerb, osm, gap=3, min_run=10):
     for side in (1, -1):
         on = np.ones(n, bool)
         for k in kerb:
-            if k["side"] == side:
+            # round 7 (Mid-Ohio): a strip with edge_line True keeps the white line along its inner face (the kerb lies
+            # beyond the edge and the captures show the line there); absent: broken through the kerb as before
+            if k["side"] == side and not k.get("edge_line"):
                 on[np.arange(k["s0"] - gap, k["s1"] + gap) % n] = False
         # (pit-lane merges keep the line: it is the painted blend line between pit exit and track)
         # contiguous runs on the closed loop
@@ -3060,6 +3092,15 @@ def landmarks(trk, T, brg):
         side = -1 if c["dir"] == "left" else 1
         for k, dist in ((3, 150), (2, 100), (1, 50)):
             out.append(board(trk, c["s"] - dist, side, 3.0, "brake", str(k), h=1.6, w=1.0))
+    # round 7 (Mid-Ohio): distance boards the footage shows (config scenery.brake_boards_declared [{side, s (track metres),
+    # off (m beyond the edge), text, h, w, src}]): one board each, where the frames show it; absent: none (no rule boards)
+    for bb in SC_CFG.get("brake_boards_declared", []):
+        if not bb.get("src"):
+            raise SystemExit(f"brake_boards_declared {bb.get('text')!r} at s {bb.get('s')}: no src")
+        rec_ = board(trk, int(round(bb["s"] / trk.sp)), 1 if bb["side"] == "left" else -1, float(bb.get("off", 3.0)), "brake",
+                     str(bb["text"]), h=bb.get("h", 1.6), w=bb.get("w", 1.0))
+        rec_["src"] = bb["src"]
+        out.append(rec_)
     # corner-number boards at turn-in, outside (config scenery.corner_boards False: none, e.g. Sonoma, where the 2026
     # onboard shows no turn boards)
     for t, c in (corners.items() if SC_CFG.get("corner_boards", True) else []):
@@ -3489,7 +3530,10 @@ def main(cfg=None, out_dir=None):
         "buildings": bld,
         "bridges": brg,
         "barriers": bar,
-        "kerbs": {"width": SC_CFG.get("kerb", {}).get("width", KERB_W), "inside": True,
+        # round 7 (Mid-Ohio, owner's decision 2: the race edges are the asphalt-facing face of every kerb): config
+        # scenery.kerb.inside False puts every strip without its own `off` / `offs` in the band beyond the edge (physics
+        # kerbBandCentre, app buildKerbs, terrainGates read it); absent: True, every other track unchanged
+        "kerbs": {"width": SC_CFG.get("kerb", {}).get("width", KERB_W), "inside": bool(SC_CFG.get("kerb", {}).get("inside", True)),
                   "stripe_m": SC_CFG.get("kerb", {}).get("stripe_m", 2.0), "strips": kerb,
                   # per-track paint (config scenery.kerb.colors = [stripe, base]); absent: the app's red / white (Laguna)
                   **({"colors": SC_CFG["kerb"]["colors"]} if SC_CFG.get("kerb", {}).get("colors") else {}),

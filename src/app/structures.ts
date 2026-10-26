@@ -38,6 +38,11 @@ export interface GrandstandJson {
   tower?: { t0: number; t1: number; d0: number; d1: number; z0: number; h: number; color: string; glass: string; roof: string };
   /** rear wall under the deck (ground to the floor) */
   rear?: { color: string };
+  /** Mid-Ohio round 7: a roof over the rows (covered grandstand): d0..d1 from the front line (default 0 .. the top row
+   *  + 0.5 m), its underside at z0 (front) and z1 (back), colours, column pitch, an optional fascia band across the
+   *  front at z (a two-tier stand's middle deck); absent: no roof (every other track's grandstands unchanged) */
+  cover?: { z0: number; z1: number; d0?: number; d1?: number; color: string; fascia?: string; under?: string; post?: string;
+    posts?: number; band?: { z: number; h: number; color: string } };
 }
 
 /** Single-storey garage row: box l (along heading) x w, eaves at `eave`, ridge along the length at `ridge`
@@ -292,6 +297,24 @@ export function grandstand(g: GrandstandJson, s: Soup): void {
       const dz = zf + (zr - zf) * 0.5, d = Su.d0 + (dr - Su.d0) * 0.5;
       mastAt(s, f.p(t, d, dz), Su.lights.h, [3, 2], Math.atan2(-g.dir[1], -g.dir[0]), '#8c9196');
     }
+  }
+  const Cv = g.cover;
+  if (Cv) {
+    // Mid-Ohio round 7: a roof over the rows (the covered grandstands of the pit straight), a slab from d0 to d1 sloping
+    // from z0 (front) to z1 (back) with a fascia band, on columns along the front and the back every `posts` m
+    const d0 = Cv.d0 ?? 0, d1 = Cv.d1 ?? dTop + 0.5, cR = rgb(Cv.color), cF = rgb(Cv.fascia ?? Cv.color, 0.85), cP = rgb(Cv.post ?? '#5d6166');
+    const th = 0.35;
+    s.quad(f.p(-0.3, d0, Cv.z0 + th), f.p(L + 0.3, d0, Cv.z0 + th), f.p(L + 0.3, d1, Cv.z1 + th), f.p(-0.3, d1, Cv.z1 + th), cR);   // top
+    s.quad(f.p(-0.3, d1, Cv.z1), f.p(L + 0.3, d1, Cv.z1), f.p(L + 0.3, d0, Cv.z0), f.p(-0.3, d0, Cv.z0), rgb(Cv.under ?? '#55585c'));  // underside
+    s.quad(f.p(-0.3, d0, Cv.z0), f.p(L + 0.3, d0, Cv.z0), f.p(L + 0.3, d0, Cv.z0 + th), f.p(-0.3, d0, Cv.z0 + th), cF);   // front fascia
+    s.quad(f.p(L + 0.3, d1, Cv.z1), f.p(-0.3, d1, Cv.z1), f.p(-0.3, d1, Cv.z1 + th), f.p(L + 0.3, d1, Cv.z1 + th), cF);   // back fascia
+    const pitch = Cv.posts ?? 8;
+    for (let t = 0; t <= L + 1e-6; t += Math.max(2, L / Math.max(1, Math.round(L / pitch)))) {
+      s.box(f, t - 0.12, t + 0.12, d0 + 0.1, d0 + 0.34, -0.3, Cv.z0, cP, { top: null });
+      s.box(f, t - 0.12, t + 0.12, d1 - 0.34, d1 - 0.1, -0.3, Cv.z1, cP, { top: null });
+    }
+    // a second, lower roof band across the front (the two-tier stand's middle deck fascia), optional
+    if (Cv.band) s.box(f, 0, L, d0 - 0.2, d0 + 0.2, Cv.band.z, Cv.band.z + Cv.band.h, rgb(Cv.band.color));
   }
   const T = g.tower;
   if (T) {

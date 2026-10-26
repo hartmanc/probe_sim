@@ -30,6 +30,8 @@ export interface SceneryJson {
     ends?: { at: V2; z_ground: number; to: V2; z_to: number }[] }[];
   /** color: the wall's paint where the evidence shows it (Sonoma 2026: light blue / green), default plain concrete */
   barriers: { kind: 'concrete' | 'armco' | 'tyres' | 'pitwall' | 'fence'; h: number; fence: number; pts: V3[]; src: string; color?: string;
+    /** armco only (Mid-Ohio round 7): stacked W-beams to the run's height h; absent: the single 0.44-0.76 m beam */
+    rails?: number;
     /** round 10 (Sonoma pit-out catch fence): angled arms on the fence posts, `len` m long at `deg` from vertical,
      *  leaning to `side` (+1 the left of the polyline, -1 the right), the mesh carried up them (absent: straight posts) */
     arm?: { len: number; deg: number; side: number };
@@ -803,6 +805,20 @@ function buildBarriers(list: SceneryJson['barriers'], drawn?: (x: number, y: num
       for (const i of [0, P.length - 1]) {
         const e = [L[i], R[i]];
         concrete.add(foot(e), atTop(e, [top[i], top[i]]), cc);
+      }
+    } else if (b.kind === 'armco' && b.rails) {
+      // stacked W-beam (Mid-Ohio round 7: `rails` beams of 0.31 m stacked to the run's height h, in its `color`; the
+      // 2025-26 footage's red triple armco); opt-in per run, every run without `rails` is drawn as below
+      const mid = offsetLine(P, 0.05), cR = b.color ? new THREE.Color(b.color) : cRail, bh = 0.31;
+      for (let r = 0; r < b.rails; r++) {
+        const z1 = b.h - r * bh, z0 = z1 - bh, zm = (z0 + z1) / 2;
+        armco.add(up(P, z0), up(mid, zm), cR);
+        armco.add(up(mid, zm), up(P, z1), cR);
+        for (const i of [0, P.length - 1]) armco.add(up([P[i], mid[i]], z0), up([P[i], mid[i]], z1), cR);
+      }
+      const sy = b.h / 0.8;
+      for (let i = 0; i < P.length; i++) {
+        posts.push(new THREE.Matrix4().compose(v3(P[i][0], P[i][1], P[i][2] + b.h / 2 - 0.02), new THREE.Quaternion(), new THREE.Vector3(1, sy, 1)));
       }
     } else if (b.kind === 'armco') {
       // W-beam: top and bottom edges forward, the groove set back 5 cm

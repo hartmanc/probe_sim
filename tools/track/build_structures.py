@@ -111,6 +111,10 @@ def grandstand(trk, it):
     su = it.get("suites")
     dback = max(su["d1"] + su.get("back", {}).get("depth", 0), 0) if su else it["base"]["depth"] + it["rows"]["n"] * it["rows"]["depth"]
     htop = max(su["roof"][:3]) if su else it["rows"]["z0"] + it["rows"]["n"] * it["rows"]["rise"]
+    if it.get("cover"):
+        # Mid-Ohio round 7: a covered grandstand's roof is part of its collision box (absent: unchanged)
+        cv = it["cover"]
+        dback = max(dback, cv.get("d1", dback)); htop = max(htop, cv["z0"], cv["z1"]) + 0.35
     fp = [a, b, b + n * dback, a + n * dback]
     out["collide"] = [{"footprint": _poly(fp), "z": rnd(z), "h": rnd(htop, 1)}]
     log(f"structure grandstand '{it['name']}': front {L:.1f} m, {it['rows']['n']} rows, depth {dback:.1f} m, top {htop:.1f} m, "
