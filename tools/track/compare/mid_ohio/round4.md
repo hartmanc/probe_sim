@@ -44,7 +44,7 @@ Assumptions (round 3's table, all kept as assumptions):
 | the outside edge drops by the rotation (excavation = lowering) | assumed; 0.46 m against "up to 18 inches" (0.457 m) |
 | smoothstep over the 400 ft regraded approach; no exit taper | assumed (approach bank toward the inside is 0 until s ~1864) |
 | crown and the inside edge's longitudinal profile unchanged | assumed |
-| run-off: the outside change held 2 m, faded over 6 m to the 2019 ground | assumed (the operator's raise has no numbers; not measurable from the videos) |
+| run-off: the outside change held 2 m, faded over 6 m to the 2019 ground | assumed (the operator's raise has no numbers; not measurable from the videos). **Unresolved** (round 5 correction): the rule lowers the outside shoulder and fades it back to the 2019 ground; it does not reconstruct the documented run-off fill/raise |
 
 Placement evidence (`r4/t4_placement.json`; frames local under `tools/track/cache/mid_ohio/video/t4fine/` and
 `inventory/frames_360_half/`): in the 2025 360 lap's ahead views (pitched down, 0.3-0.5 s) a transverse joint to darker,
@@ -92,8 +92,11 @@ eb74f481... (round 3: 738ba625..., f8d5993b...).
 `loop_check.osm_tol`. Sonoma stage-1 reproduction (`--out tools/track/out/sonoma_repro_r4`, exit 0, 1019 s):
 track.json and heightfield.bin byte-identical to `public/tracks/sonoma` (`cmp`). Laguna reproduction: NOT obtained:
 the run stops in the provisional racing line (`tools/ghosts/build_ghosts.py` on the logger laps raises "argmin of an
-empty sequence" in pandas) before any round-4 code is reached; pre-existing in this environment, not investigated
-further this round (open item). `inventory.py`'s new `extra_maps` key: Sonoma and Buttonwillow inventory outputs from
+empty sequence" in pandas) before any round-4 code is reached. Corrected diagnosis (round 5, after Astra's review): not
+a missing cache and not a round-4 regression, but inconsistent driver labels: the builder normalises one logger section
+label to the repository's "driver A" while the logger exports on disk keep their original labels, so the official-lap
+lookup finds zero rows. Fixed in round 5 with an untracked alias file; the reproduction then matches the reference
+(`round5.md` section 1). `inventory.py`'s new `extra_maps` key: Sonoma and Buttonwillow inventory outputs from
 the new and HEAD versions compared byte-identical (`cmp`).
 
 ## 4. Stage 0: sources (licences)
@@ -136,15 +139,16 @@ zone). Output `r4/speed_lap_n837.json`.
 
 | measure | length (m) | vs built centre |
 |---|---|---|
-| speed-integrated lap, N837 lap 149 (driven line) | **3558.9** (every other sample 3561.9 / 3555.5; display quantisation bound +-27.9) | -1.07 % |
+| speed-integrated lap, N837 lap 149 (driven line) | **3558.9** (every other sample 3561.9 / 3555.5; display-rounding term +-27.9 m: the +-0.5 mph display rounding alone, not telemetry bias, timing or interpolation error; a truncating display would need a different, one-sided bound) | -1.07 % |
 | built centre (round 4) | 3597.5 | |
 | raw OSM loop | 3620.2 | +0.63 % |
 | published 2.258 mi (information) | 3633.9 | +1.01 % |
 
 Consistency check: over 10-120 s the integrated distance is 0.9 % shorter than the GPS dots' advance on the centre
 (3138 vs 3167 m), the same order as the whole lap (the dots are fitted to the centre, so this is a check, not a third
-measure). A driven line runs about 1 % inside a centreline (Buttonwillow: 4650 m driven vs 4701 m OSM); the measure
-agrees with the built centre and OSM, and would need a 2.1 % driven-line deficit to match the published figure.
+measure). Measured statement only (round 5 correction; the earlier general rule about driven lines is withdrawn):
+this driven lap integrates 1.07 % shorter than the built centre and 1.69 % shorter than the raw OSM loop; it would need
+a 2.1 % driven-line deficit to match the published figure.
 
 ## 7. Inventory summary (`inventory.json`, `inventory.md`)
 
@@ -157,6 +161,12 @@ red stacked W-beam armco is the common barrier). Heights: 75 rows carry one (`r4
 roof + mount, roof-edge check), horizon-ratio pit wall 0.7 m (0.64-0.75), armco 1.0 m (two readings 0.8 and 1.3 m:
 +-0.3 m), catch fence 3.5 m (fence-post-ref, 3.0-4.5), starter tower 13 m, pit garages 4 m, covered grandstand 7 m
 (storeys); 0 rows marked unmeasured; bridges, pylon, bleachers and boards carry no height (scenery stage with lidar).
+Round 5 correction: the 75 heights are a few measurements (about seven readings) propagated to every row of the same
+kind, not 75 independent measurements; they rest on two assumptions: the 1.7 m camera height (+-0.3 m) and one height
+for every red armco run (two readings, 0.8 and 1.3 m). "0 unmeasured" counts the explicit markers, not measurement
+completeness. Cross-checked against the 2019 lidar where it has the object (`r5/lidar_heights.json`, `round5.md`): pit
+wall lidar 1.04 m vs 0.7 m (disagrees), T1 footbridge deck 4.42 m over the road (no video height), covered grandstand
+6.3-6.9 m vs 7 m (agrees).
 
 Paved extras (owner's round-2 green strokes): the unused chicane and the T1-T3 connector are grey asphalt, a touch
 lighter than the racing surface (360 t40, t42, t64); the pit-exit apron at T1 is the track's asphalt with white hatched
@@ -181,7 +191,7 @@ blend lines (360 t32, N837 t14). A measured tone (capture RGB inside the green o
 | 0.4 recent video | N837 2026, IndyCar 2026, 360 2025; pit-lane video: none found |
 | 0.5 Street View | coverage checked: paddock roads only; not surveyed (`streetview.md`) |
 | 0.6 2 s steps | 360 S/F -> S/F both sides; N837 0-130 s; IndyCar segments inside their anchors |
-| 0.7 time maps | four maps (N837 primary + three extra maps for 360 / IndyCar A-C as `extra_maps`), residuals above |
+| 0.7 time maps | five maps in total (N837 primary + four extra maps: 360, IndyCar A, B, C as `extra_maps`), residuals above |
 | 0.8 pit / Street View rows | `pit.jsonl` 13 rows (from the track) |
 | 0.9 heights | `r4/heights.json`, methods cited per row |
 | 0.10 validate | `inventory.py --track mid_ohio --pkg tools/track/out/mid_ohio_r4`: 0 errors |
