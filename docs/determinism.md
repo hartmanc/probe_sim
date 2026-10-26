@@ -5,9 +5,11 @@ Firefox / SpiderMonkey) replays on the scoreboard server (Vercel, Node 24, V8) t
 the server's results (the 0.3.0 boards and their keys stay valid). Code: `src/physics/dmath.ts`; proofs:
 `src/physics/__tests__/dmath.test.ts`, `tools/determinism/`.
 
-**Status: done for every transcendental function the physics uses except `Math.pow`, which is open (section 5): six-lap
-WebKit and Chrome traces replay on Node to the bit, the server's results are unchanged, the browsers' step cost is
-within 10 % (Node on this Mac +18.6 %). One AI test fails on this Mac (section 4.1).**
+**Status (round 2, 26 Oct 2026): every transcendental function the physics and the AI call is in software, bit-identical
+to the server, `Math.pow` included (proven against the Vercel function itself, section 5). The server's results are
+unchanged; six-lap traces from WebKit, Chrome and Firefox replay on Node to the bit (section 5). Two AI tests fail on
+every host now that the whole race runs on the server's arithmetic (section 4.1): their fixes are AI controller work,
+left for the AI round.**
 
 ## 1. Inventory: what on the replay path can differ between engines
 
@@ -45,17 +47,23 @@ start (`canonicalReset` → `lineToWorld`).
 | rollover.ts:13 | `rollOf` (rollover game over, kerb gate) | atan2 | app, not replayed |
 | gearschedule.ts:40, 43 | `deriveGearSchedule` (log ratio match) | log | when the reference changes |
 | cars.ts:72, 193 | car-vs-car contacts (race only) | hypot | race only |
-| **vehicle.ts:1145** | **`tyre`, load sensitivity `(Fz/Fz0)^-0.1`** | **pow (native, open)** | **4** |
-| vehicle.ts:1228 | brake pedal map `brk^pedalExponent` | pow (native) | never: pedalExponent is 1 |
+| vehicle.ts:1145 | `tyre`, load sensitivity `(Fz/Fz0)^-0.1` | pow (round 2: the server's glibc pow) | 4 |
+| vehicle.ts:1228 | brake pedal map `brk^pedalExponent` | pow (round 2) | never: pedalExponent is 1 |
+| devtrack.ts:20-138 | the synthetic oval and its scenery (tests only) | exp, sin, cos, hypot (8 calls) | round 2: dmath |
+| src/scoreboard/sim.ts:236-239 | `lineSteer`, the live auto-launch (recorded, never replayed) | atan2, sin, cos | round 2: dmath |
+| src/physics/ai/*.ts | the AI: pursuit, line build / projection, field derivation, seeded normal draw | atan, atan2, sin, cos, exp, log, hypot, pow, cbrt | round 2: dmath |
 
 Measured on two autopilot replays (Laguna Seca 139.351 s, Sonoma 154.872 s; 324 865 steps,
 `tools/determinism/record_args.mts`): atan 7 140 667 calls, sin 4 220 476, cos 1 635 966, hypot 397 372,
 atan2 324 871, tan 324 231, log 10 680, exp 0 and hypot (3 args) 0 (launch / reset only). About 42 transcendental
 calls per step, plus 4 `Math.pow`.
 
-Not on the replay path and left on `Math.*`: `HotlapSim.lineSteer` (the live auto-launch; its output is quantised and
-recorded as trace rows, so a replay never calls it), `src/physics/devtrack.ts` (the synthetic dev oval), the AI
-(`src/physics/ai/`, races are not replayed), rendering and UI.
+Round 2 (26 Oct 2026): every remaining native call in `src/physics` and the sim is converted, load-time code included
+(geometry, collision world, kerb strips, spec derivations, the rolling start were already on dmath; the eight calls left
+in `src/physics` were all in `devtrack.ts`, used only by tests). `dmath.test.ts` forbids any native transcendental call
+and `**` in the physics, the sim, the replay and the timer. Still on `Math.*`: rendering and UI, the test drivers and
+tools' own autopilots, and `src/app/devtrack.ts` (the app's fallback oval, `?devtrack=1`), whose physics key matches no
+board, so such a lap cannot be posted.
 
 ### 1.2 Everything else that could differ
 
@@ -86,6 +94,8 @@ of Node 26.12) and of V8's Torque builtin `FastMathHypot` (`src/builtins/math.tq
 | exp | `exp` (with V8's `exp(1) = E` special case) |
 | log | `log` (`__ieee754_log`) |
 | hypot (2 and 3 arguments) | `FastMathHypot`: `sqrt((a/m)² + (b/m)²)·m`, the 3-argument form with its compensation term |
+| cbrt (round 2, the AI) | `cbrt` (FreeBSD / fdlibm) |
+| pow (round 2) | V8's `math::pow` special cases (`src/numbers/ieee754.cc`), then **glibc 2.34's** `__ieee754_pow_fma` (`sysdeps/ieee754/dbl-64/e_pow.c`, Szabolcs Nagy 2018, from ARM's optimized-routines, MIT OR Apache-2.0 WITH LLVM-exception there; tables in `src/physics/dmath_pow_data.ts`), see section 5 |
 
 Only exact operations inside (+ − × ÷, `Math.sqrt / abs / floor / trunc`; a test checks); word access through one shared
 `Float64Array` / `Uint32Array`; C's `(int32_t)` casts as `| 0`, arithmetic `>>` as `>>`. No tables apart from fdlibm's
@@ -111,8 +121,8 @@ V8's fdlibm is C++, and its results depend on whether the compiler fused `a * b 
 So the reference for "bit-identical to V8" is the plain evaluation, which is what the server computes; this machine's
 Node is not a valid oracle. The proofs use Chromium's V8 with the fdlibm trig flag (`tools/determinism/oracle.mts`).
 On a strict Node (any linux-x64 build, e.g. CI) `dmath.test.ts` also compares element by element with `Math.*`.
-**Assumption to confirm on the first preview:** the Vercel function runs on x86-64. On an arm64 (Graviton) host, the
-official linux-arm64 Node is GCC-built with contraction and would itself differ from the plain evaluation.
+**Confirmed (round 2, the probe in section 5):** the Vercel function runs linux x64, Node v24.21.0 (V8 13.6.233.17),
+glibc 2.34, on an Intel Xeon @ 3.00 GHz.
 
 ## 3. Proof: the port is bit-identical to V8
 
@@ -138,48 +148,84 @@ For comparison, the same sets against other engines' `Math.*` (mismatches per 10
 | Homebrew Node 26 on this Mac (FMA-contracted fdlibm) | 5 688 | 5 105 | 10 612 | 1 103 | 470 | 419 | 1 667 | 0 | 0 |
 | the port (every engine) | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 
-No function needed to be given up: every function the physics calls except `Math.pow` (section 5) is bit-identical.
+Round 2 adds cbrt (1.2·10^6 random arguments plus edges, 0 mismatches; 3 343 edge cases in all). No function was given up.
 
 ## 4. Proof: the server's results are unchanged
 
-The server is a strict V8 (section 2.1), so "unchanged" means: release-040 run with the strict maths gives the same
-bits as this branch. On this Mac that is checked by running release-040 (a `git archive` copy) and this branch with
-`tools/determinism/strict-math.mjs`, which makes `Math.sin / cos / tan / atan / atan2 / exp / log / hypot` the port (=
-the strict V8) for the whole process; `Math.pow` is the host's in both.
+The server computes V8's fdlibm without contraction and glibc 2.34's pow (section 2.1, section 5), so "unchanged" means:
+release-040 run with the server's maths gives the same bits as this branch. On this Mac that is checked by running
+release-040 (a `git archive` copy) with `tools/determinism/strict-math.mjs`, which makes `Math.sin / cos / tan / atan /
+atan2 / exp / log / hypot / cbrt / pow` the port (= the server) for the whole process, and this branch natively.
 
-| check | release-040, strict maths | this branch | identical |
+| check (round 2) | release-040 with the server's maths | this branch, natively | identical |
 |---|---|---|---|
-| replay of a 2-lap Laguna autopilot trace (`replay_compare.mts`) | 139.3511 / 139.3541 s, state `edbab2b4…` | the same, natively and with the harness | yes, every bit |
-| replay of a 2-lap Sonoma autopilot trace | 154.8720 / 154.5286 s, state `d1adb5d7…` | the same | yes |
-| self-play Laguna, 4 laps, seed 1 (`--json`) | 45 cars, 162.6 car-laps, race 599 s, order 83 0 40 58 105 … | the same | yes: every metric and the order; only the measured µs per step differ |
-| self-play Sonoma, 2 laps, seed 1 | 134 cars, 194.6 car-laps, race 299 s | the same | yes |
-| `tools/calibrate/drive.ts` autopilot lap (`--json`) | 123.85261100167271 s, JSON sha `78daea58…` | the same | yes |
+| replay of a 2-lap Laguna autopilot trace (`replay_compare.mts`) | 139.3511 / 139.3709 s, state `7b70235f…` | the same | yes, every bit |
+| replay of a 2-lap Sonoma autopilot trace | 154.8720 / 154.5286 s, state `46318a7c…` | the same | yes |
+| self-play Laguna, 4 laps, seed 1 (`--json`) | 45 cars, 167.1 car-laps, race 612 s, 0.054 contacts / car-lap | the same | yes: every metric and the order; only the measured µs per step differ |
+| self-play Sonoma, 2 laps, seed 1 | 134 cars, 192.3 car-laps, race 297 s, 0.021 contacts / car-lap | the same | yes |
+| `tools/calibrate/drive.ts` autopilot lap (`--json`) | 123.85261100167408 s, JSON sha `c9db261c…` | the same with the harness (the tool's own autopilot uses `Math.*`) | yes |
 | board keys (`pins.test.ts`) | 12oxe5efqsv, 0aitg05wi4d, 0ewchkyn2w5 | the same | yes: they hash PHYSICS_VERSION, car.json, the track length and rev, not the code |
 
-The scoreboard replay tests (`replay.test.ts`: record live, replay, lap time `toBe` and state) pass. They record and
-replay in the same process, so they hold on any host; there are no stored traces from before this round.
+Since round 2 the whole race (the AI included) computes the server's values natively on any host, so self-play is
+identical without the harness. The scoreboard replay tests (record live, replay, lap time `toBe` and state) pass.
 
-What this Mac's own Node computes is not the server's: release-040 run natively here replays the same Laguna trace
-to 139.3509 / **139.3826** s (the server: 139.3511 / 139.3541), and self-play / drive.ts give other numbers too
-(drive.ts 123.83767973117908 s). Numbers measured on this Mac before this round were the Mac's, not the server's.
-After this round the physics computes the server's values on this Mac as well; tools that also use `Math.*` outside
-the physics (the self-play AI, test drivers) still see the Mac's maths there.
+What this Mac's own Node computed before is not the server's: release-040 run natively here replays the Laguna trace to
+139.3509 / 139.3826 s, the server 139.3511 / **139.3709** s. Pow alone moves that second lap by 17 ms (139.3541 with
+Apple's pow, round 1): ulp differences in the tyre grow into lap time over a lap, which is why pow had to match.
 
-### 4.1 Tests that moved on this Mac
+### 4.1 Tests that moved
 
-- `surface.test.ts` "9 s Laguna drive is bit-identical to the fixture": the fixture had been recorded with this Mac's
-  contracted maths. Re-recorded with its own tool (`record_onpave.ts`); the test stays bit-exact. Evidence that only the
-  maths moved: release-040 and this branch, both with the strict harness, give the same trace (sha `f69802f0…`).
-- **`ai_race.test.ts` "45 cars, 3 laps …" fails on this Mac (open).** Its last check, "a car in control never crosses
-  the pit-exit cones", sees car #49 cross for 42 samples (0.84 s) with no mishap or recovery. The AI keeps `Math.*`
-  (brief), so on this Mac the race now runs on mixed maths (physics strict, AI contracted) and takes a different
-  course. It is not a regression on the server's maths: release-040 and this branch, both strict, pass this test and
-  give the same race. With the strict maths everywhere, release-040 itself fails `ai_behaviour.test.ts` "full field, 2
-  laps" (`expected 1 to be +0`), which this branch also does, identically. These AI tests hold on the arithmetic they were
-  tuned on and break on another; the cone crossing is real AI behaviour (a car in control in the pit-exit lane) that
-  any browser's maths could produce. Not loosened; left for an AI round or the owner's call (section 7).
+- `surface.test.ts` "9 s Laguna drive is bit-identical to the fixture": recorded with this Mac's contracted maths and
+  Apple's pow; re-recorded with its own tool (`record_onpave.ts`), the test stays bit-exact. (Its driver uses `Math.*`,
+  so the fixture is this host's.)
+- `crossengine.test.ts`: the WebKit fixture is re-recorded with the server's pow (section 5).
+- **Two AI tests fail on every host now (open, the AI round).** With the AI on dmath the whole race runs on one
+  arithmetic, the server's; on it (and also with release-040 run on the server's maths) two seeded checks fail. They had
+  passed only on this Mac's contracted maths:
+  - `ai_race.test.ts` "45 cars, 3 laps": "a car in control never crosses the pit-exit cones". #49 spins on its own at
+    T11 exit (no contact: one wheel off at the right edge, full right lock, the car rotates and slides 17 m left into the
+    pit-exit lane at 10 m/s, then backwards), and #37 in a pass lane (target 5.3 m left of the line) while the racing
+    line itself sweeps 4.8 m left over 90 m at 28 m/s overshoots the cone cap by 0.2 m; at the cap the driver flags
+    itself "off track" (the cap counts as the road edge), which drops the lane clamp and rejoins slowly from where it is.
+    Neither car has a counted mishap or recovery.
+  - `ai_behaviour.test.ts` "full field, 2 laps": 140 passes, the test wants > 150 (every other check passes: 99 / 165
+    clearly-faster situations completed, 41 / 56 of those > 15 % quicker, 0.026 contacts per car-lap).
+  Tried and reverted (bound: no tuning in this round): (1) off-track detection against the pavement instead of the cone
+  cap: #37's crossing shrinks to one 20 ms sample at +0.20 m, #49 unchanged; seeds 2 and 3 then show other in-control
+  crossings (#200, #58). (2) A cone-cap guard pulling the shift back by the car's predicted overshoot (lateral velocity ×
+  0.4 s): seed 1 clean, but on seeds 2 and 3 it yanks cars into spins (shift to −6 m, speed to 0) and adds crossings.
+  A crossing-proof rule needs lateral-momentum-aware lane planning near capped edges and spin handling at T11 exit,
+  which changes driving and must be checked against pace and contact bands: the AI round.
 
-## 5. Proof: cross-engine identity, and what is open
+## 5. Proof: cross-engine identity, and pow
+
+### 5.1 Pow: the server as the oracle
+
+V8 13.6 / 14.6 (Node 24 / 26, Chrome) has `--use-std-math-pow` on by default: `Math.pow` is the platform C library's
+`std::pow` after V8's special cases (y NaN, |x| = 1 with infinite y, y = 2, y = 0.5). The only valid reference is the
+server itself. A throwaway preview (branch `powprobe`, `api/powprobe.ts`, never merged; preview
+`probe-igzqkxs8x-coby-hartmans-projects.vercel.app`, fetched with `vercel curl`) evaluated the physics' pow sites:
+
+| set (`tools/determinism/pow_cases.ts`) | arguments | this Mac (Apple libm) vs server | the port vs server |
+|---|---|---|---|
+| load: `(Fz/Fz0)^-0.1`, ratio 0..3 | 100 001 | 194 differ (1 ulp) | **identical** (SHA-256 and every value) |
+| pedal: `brk^e`, 0..1, e = 1, 1.5, 2.5 | 3 × 100 001 | e = 1 identical, others differ | **identical** |
+| random: log-uniform x in 2^-20..2^21, y in [-8, 8) | 100 000 | 149 differ (1 ulp) | **identical** (every value) |
+
+Server: linux x64, Node v24.21.0, V8 13.6.233.17, glibc 2.34, Intel Xeon @ 3.00 GHz (results in
+`tools/determinism/pow_server.json.gz`, checked by `dmath.test.ts`). glibc picks `__ieee754_pow_fma` there: e_pow.c built
+with `-mfma -mavx2` and GCC's default contraction, so besides its explicit `__builtin_fma` calls every multiply-add whose
+product feeds only additions is fused. Testing each contraction site on and off against the server singled out exactly
+that build (all fused: 0 mismatches; the final `scale + scale * tmp` unfused: 13 + 10 of 40 000 differ). The port
+emulates each fused operation exactly: Dekker's product, then a correction of the one double-rounding case (a tie)
+(checked against an exact BigInt fma on 10^7 triples and on 3·10^6 near-tie triples where the uncorrected sum is wrong
+6 334 times: 0 mismatches), plus exact shortcuts where the fused and unfused results provably agree (`k·ln2hi + logc`
+is exact for all 128 entries and every k, checked; small-k products are exact). The port also matched an exact-fma
+reference on 10^6 wide-range arguments including overflow and underflow.
+
+Pow is therefore no longer open: every engine computes the server's pow.
+
+### 5.2 Six-lap traces from three engines
 
 `tools/determinism/browser_trace.mts` loads the built game (`npm run build`, `npx vite preview --port 4173`) in a
 Playwright engine, starts a hot lap through the game's own `HotlapLoop` / `HotlapSim` and recording (rolling start with
@@ -191,72 +237,52 @@ replays with `replayTrace`'s loop without the cap.
 
 | engine | track | steps | laps (s) | lap times | final state |
 |---|---|---|---|---|---|
-| WebKit 26.5 (Playwright 1.61.1, `webkit-2311`) | Laguna Seca | 859 999 | 139.3537, 139.3511, 139.3506, 139.3489, 139.3499, 139.3500 | **6 / 6 bit-identical** | **bit-identical** |
-| WebKit 26.5 | Sonoma | 932 999 | 154.8721, 154.5268, 154.5308, 154.5297, 154.5306, 154.5297 | **6 / 6** | **bit-identical** |
-| Chrome 149 headless (control, default flags) | Laguna Seca | 859 999 | as WebKit | **6 / 6** | **bit-identical** |
-| Chrome 149 headless | Sonoma | 932 999 | as WebKit | **6 / 6** | **bit-identical** |
-| Firefox / SpiderMonkey | — | — | — | not run: Playwright's Firefox is not installed here and was not downloaded (about 100 MB; a download that would be executed) | — |
+| WebKit 26.5 (Playwright 1.61.1, `webkit-2311`) | Laguna Seca | 859 999 | 139.3537, 139.3511, 139.3505, 139.3502, 139.3489, 139.3499 | **6 / 6 bit-identical** | **bit-identical** |
+| Chrome 149 headless (default flags) | Laguna Seca | 859 999 | the same | **6 / 6** | **bit-identical** |
+| Firefox 151.0 (Playwright `firefox-1532`, downloaded in round 2: 98.8 MiB from Playwright's CDN) | Laguna Seca | 859 999 | the same | **6 / 6** | **bit-identical** |
+| WebKit 26.5 | Sonoma | 932 999 | 154.8721, 154.5268, 154.5315, 154.5285, 154.5310, 154.5297 | **6 / 6** | **bit-identical** |
+| Chrome 149 | Sonoma | 932 999 | the same | **6 / 6** | **bit-identical** |
+| Firefox 151.0 | Sonoma | 932 999 | the same | **6 / 6** | **bit-identical** |
 
-Before (the release-040 build, same tool, replayed with release-040 code on the strict maths): the WebKit trace's
-lap 5 is 139.3500 s in WebKit and 139.2977 s on the server; the Chrome trace drifts by lap 3 (139.3505 against
-139.3491) and the replay never completes lap 4. Replaying one autopilot trace in each engine with release-040 code
-gives lap 2 = 139.3970 (Chrome), 139.3539 (WebKit), 139.3541 (server); with this branch 139.3541 in all three.
+The three engines' traces of a track came out with identical rows (sha `1f1e6b30` Laguna, `b3551721` Sonoma): the
+autopilot's own engine-specific maths never changed a quantised input, itself a check that the engines ran identical
+physics for the whole 860-930 s. With release-040's code the same autopilot trace replays in each engine to a different
+lap 2: Chrome 139.3970, WebKit 139.3539, Firefox 139.3541, the server 139.3709; with this branch 139.3709 in all.
 
-The WebKit and Chrome traces of a track came out with identical rows: the autopilot's own (engine-specific) maths
-never changed a quantised input, which is itself a check that the two engines ran the identical physics for the
-whole 860 s. `src/scoreboard/__tests__/crossengine.test.ts` keeps the WebKit Laguna trace (403 KB gzipped) and its
-WebKit lap and state bits.
+Before (round 1, the release-040 build, replayed with release-040 code on the strict maths): the WebKit trace's lap 5 is
+139.3500 s in WebKit and 139.2977 s on the server; the Chrome trace drifts by lap 3 and the replay never completes lap 4.
 
-### Open: `Math.pow` (stopped, the owner's decision)
-
-The tyre's load sensitivity calls `Math.pow(Fz / Fz0, -0.1)` four times a step. V8 14.6 (Node 24 and 26, Chrome) has
-`--use-std-math-pow` on by default: `Math.pow` is the platform C library's `std::pow` after a few special cases, so
-there is no V8 pow to port. The server's pow is glibc's (Vercel, linux-x64), the iPhone's and every Mac's is Apple's,
-Windows Chrome's is the UCRT's, Firefox's is its platform's. Glibc's pow (ARM optimized-routines, < 0.52 ulp, not
-correctly rounded) has FMA and non-FMA code paths selected by CPU, so even a port of it could only be proven against
-the server on a Linux x86-64 machine, which this round does not have. Node 22 would have used V8's own fdlibm pow
-(the same on every platform, and portable to JS), but the project runs Node 24.
-
-So the cross-engine proof above holds with pow equal on both sides, which it is on this Mac (WebKit, Chrome and Node
-all call Apple's libm). Between an iPhone and the server, pow can still differ in the last bit for some loads, and a
-lap can drift from there. Options:
-
-| | A. port glibc's pow, verify on Linux | B. software pow + PHYSICS_VERSION bump | C. leave pow native |
-|---|---|---|---|
-| server results | unchanged if the port matches Vercel's glibc bit for bit | change: new boards, the old ones expire by the 30-day TTL | unchanged |
-| iPhone / Firefox / Windows identical to the server | yes | yes | no: pow can differ in the last bit |
-| proof needed | a Linux x86-64 run (CI, a container, or a preview function) of the 76 M recorded arguments against Node's Math.pow; glibc's FMA path vs non-FMA path matters | the same proofs as this round (port = its own reference) | none |
-| work | port ~300 lines + two 128-entry tables, exact FMA emulation (two-product) | port fdlibm's `__ieee754_pow` (V8's `legacy::pow`, already in V8's sources) | none |
-| risk | the Vercel host is not x86-64 (arm64 would differ again), or glibc changes | players lose their 0.3.0 times | Safari players' laps can be rejected or replayed a little differently |
-
-Until then the 0.05 s tolerance stays as it is (section 6) and no client note was added (section 7).
+`src/scoreboard/__tests__/crossengine.test.ts` keeps the WebKit Laguna trace (gzipped) and its WebKit lap and state bits.
 
 ## 6. Performance
 
-The physics step on the 302 380-step Laguna autopilot replay (`tools/determinism/bench.mts`, best of 5-7):
+The physics step on the 302 380-step Laguna autopilot replay (`tools/determinism/bench.mts`, best of 5-7). The budget
+basis is the browsers (the Mac's contracted Node is not a comparable baseline); round 1 was within it (+8.5 % / +6.8 %):
 
-| engine | release-040 (native Math) | this branch (dmath) | change |
-|---|---|---|---|
-| Chrome 149 headless | 1.766 µs | 1.921 µs | +8.5 % |
-| WebKit 26.5 | 1.605 µs | 1.714 µs | +6.8 % |
-| Node 26.12 on this Mac | 1.62 µs | 1.92 µs | **+18.6 %** (over the 10 % budget) |
+| engine | release-040 (native Math) | this branch, round 1 (pow native) | this branch, round 2 (all software) | change vs release-040 |
+|---|---|---|---|---|
+| Chrome 149 headless | 1.766 µs | 1.921 µs (+8.5 %) | 2.373 µs | **+34 %** |
+| WebKit 26.5 | 1.579-1.605 µs | 1.714 µs (+6.8 %) | 1.994 µs | **+26 %** |
+| Firefox 151.0 | 2.515 µs | — | 3.626 µs | **+44 %** |
+| Node 26.12 on this Mac (contracted, not a budget basis) | 1.62 µs | 1.92 µs | 2.43 µs | +50 % |
 
-In the browsers the cost is within 10 %. A 60 Hz frame steps ~17 times: 33 µs of a 16.7 ms frame (0.2 %).
-On Node the baseline is this Mac's FMA-contracted C fdlibm; the port's atan (22 calls a step, 82 % on its short path)
-is the largest share. Optimisations done: double-threshold range tests instead of word extraction, inline-sized fast
-paths for atan and sin, constants as scalars, no allocation. A server replay of one lap (159 000 steps) goes from about
-0.26 s to 0.31 s of CPU; the worst case (720 000 steps) about 1.4 s, within `maxDuration` 30 s. Not measured on
-linux-x64, where the native baseline has no FMA and is likely slower.
+Over the 10 % budget since pow joined: the software pow is ~0.4-0.6 µs of each step. A 60 Hz frame steps 17 times:
+about 40 µs of a 16.7 ms frame in Chrome (0.24 %). A server replay of one lap (159 000 steps) goes from about 0.26 s to
+0.39 s of CPU (the 720 000-step worst case about 1.75 s, within `maxDuration` 30 s). Self-play cost (all cars):
+Laguna 45 cars 115 µs a step, Sonoma 134 cars 380 µs a step on this Mac.
+
+Pow costs about 145 ns a call in the port (native: 17 ns; 4 calls a step): about 14 exactly emulated fused
+multiply-adds each. The per-step share is small against a 16.7 ms frame (17 steps a frame), but it is the largest
+single cost of the port and it also lands on every AI car in a race. Further speed-ups (merging the log / exp stages,
+pre-splitting more constants) are possible without changing a bit.
 
 ## 7. Scoreboard tolerance and client note
 
-- `verifyHotlap` keeps `|replayed − claimed| ≤ 0.05 s` and stores the replayed time. Not tightened to bits: pow
-  (section 5) can still make an iPhone lap differ from the server's in the last bits, and a 0.3.0 page still open in
-  a browser (same board key, native maths) would be rejected outright. Tighten when pow is settled.
-- The client note ("phone laps verify best early in a session") was not added: the cross-engine proof passed for
-  WebKit and Chrome. Whether Safari players need it depends on the pow decision.
-- Open for the owner: the pow choice (section 5); `ai_race.test.ts` on this Mac (section 4.1); confirming the Vercel
-  function's architecture (x86-64) on the first preview.
+- `verifyHotlap` keeps `|replayed − claimed| ≤ 0.05 s` and stores the replayed time. With every engine now computing the
+  server's maths it could be tightened to bits; not done here, because a 0.3.0 page still open in a browser (same board
+  key, native maths) would then be rejected outright. A candidate for after the 0.4.0 launch.
+- No client note ("phone laps verify best early in a session"): the cross-engine proof passed in every engine tested.
+- Open: the two AI tests (section 4.1), the AI round.
 
 ## 8. Re-running the proofs
 
@@ -265,6 +291,6 @@ npx vitest run src/physics/__tests__/dmath.test.ts src/scoreboard/__tests__/cros
 npx tsx tools/determinism/record_args.mts /tmp/dmath_args [browser traces …]       # replay arguments
 npx tsx tools/determinism/oracle.mts --args /tmp/dmath_args [--write]               # vs Chromium's strict V8
 npm run build && npx vite preview --port 4173 --strictPort &
-npx tsx tools/determinism/browser_trace.mts webkit --track laguna_seca --laps 6 --out /tmp/wk.json
+npx tsx tools/determinism/browser_trace.mts webkit|chromium|firefox --track laguna_seca --laps 6 --out /tmp/wk.json
 npx tsx tools/determinism/bench.mts . /tmp/trace.json --engine chromium
 ```

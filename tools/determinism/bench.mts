@@ -32,13 +32,13 @@ if (engine === 'node') {
   const pw = await playwright();
   const b = await pw[engine].launch();
   const p = await b.newPage({ bypassCSP: true });
-  await p.goto(url + 'favicon.ico').catch(() => {});
+  await p.goto(url + 'cars/probe_gt/car.json');   // a same-origin page for the asset fetches
   await p.evaluate(lib);
   // a plain string (tsx would wrap a function argument in its __name helper, unknown in the page)
-  const PAGE = `async (traceText, reps) => {
+  const PAGE = `async (traceText, reps, BASE) => {
     const RB = globalThis.RB, t = JSON.parse(traceText);
     const T = RB.TRACKS[t.track], dir = T.dir, C = RB.CARS[t.car].dir;
-    const j = async (u) => (await fetch(u)).json(), bin = async (u) => (await fetch(u)).arrayBuffer();
+    const j = async (u) => (await fetch(new URL(u, BASE))).json(), bin = async (u) => (await fetch(new URL(u, BASE))).arrayBuffer();
     const track = await j(dir + 'track.json'), scenery = await j(dir + 'scenery.json').catch(() => null);
     const far = scenery?.far?.heightfield?.file;
     const a = { trackId: t.track, carId: t.car, track, heightfield: RB.loadHeightfield(await bin(dir + (track.heightfield?.file ?? 'heightfield.bin'))),
@@ -48,7 +48,7 @@ if (engine === 'node') {
     us.sort((x, y) => x - y);
     return { best: us[0], median: us[us.length >> 1], lapTimes, ua: navigator.userAgent };
   }`;
-  const out = await p.evaluate(`(${PAGE})(${JSON.stringify(traceText)}, ${reps})`);
+  const out = await p.evaluate(`(${PAGE})(${JSON.stringify(traceText)}, ${reps}, ${JSON.stringify(url)})`);
   await b.close();
-  console.log(`${engine} (${out.ua.match(/(Chrome|Version)\/[\d.]+/)?.[0]}) ${root.split('/').pop()}: best ${out.best.toFixed(3)} µs/step, median ${out.median.toFixed(3)} µs/step; laps ${out.lapTimes}`);
+  console.log(`${engine} (${out.ua.match(/(Chrome|Version|Firefox)\/[\d.]+/)?.[0]}) ${root.split('/').pop()}: best ${out.best.toFixed(3)} µs/step, median ${out.median.toFixed(3)} µs/step; laps ${out.lapTimes}`);
 }
