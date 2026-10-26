@@ -1,0 +1,197 @@
+{
+ "r3_s01_at3400": {
+  "s": 3400.4,
+  "station": 3398,
+  "half": 40.0,
+  "mpp": 0.06,
+  "centre_enu": [
+   231.916,
+   -7.227
+  ],
+  "image_px": [
+   1333,
+   1333
+  ],
+  "pkg": "tools/track/out/mid_ohio_r3"
+ },
+ "r3_s02_at3470": {
+  "s": 3470.4,
+  "station": 3468,
+  "half": 40.0,
+  "mpp": 0.06,
+  "centre_enu": [
+   188.255,
+   44.617
+  ],
+  "image_px": [
+   1333,
+   1333
+  ],
+  "pkg": "tools/track/out/mid_ohio_r3"
+ },
+ "r3_s03_at3540": {
+  "s": 3540.5,
+  "station": 3538,
+  "half": 40.0,
+  "mpp": 0.06,
+  "centre_enu": [
+   118.674,
+   51.684
+  ],
+  "image_px": [
+   1333,
+   1333
+  ],
+  "pkg": "tools/track/out/mid_ohio_r3"
+ },
+ "r3_s04_at0000": {
+  "s": 0.0,
+  "station": 0,
+  "half": 40.0,
+  "mpp": 0.06,
+  "centre_enu": [
+   61.721,
+   54.82
+  ],
+  "image_px": [
+   1333,
+   1333
+  ],
+  "pkg": "tools/track/out/mid_ohio_r3"
+ },
+ "r3_s05_at0070": {
+  "s": 70.0,
+  "station": 70,
+  "half": 40.0,
+  "mpp": 0.06,
+  "centre_enu": [
+   -8.235,
+   58.424
+  ],
+  "image_px": [
+   1333,
+   1333
+  ],
+  "pkg": "tools/track/out/mid_ohio_r3"
+ },
+ "r3_s06_at0140": {
+  "s": 140.1,
+  "station": 140,
+  "half": 40.0,
+  "mpp": 0.06,
+  "centre_enu": [
+   -78.189,
+   62.075
+  ],
+  "image_px": [
+   1333,
+   1333
+  ],
+  "pkg": "tools/track/out/mid_ohio_r3"
+ },
+ "r3_s07_at0210": {
+  "s": 210.1,
+  "station": 210,
+  "half": 40.0,
+  "mpp": 0.06,
+  "centre_enu": [
+   -148.156,
+   65.459
+  ],
+  "image_px": [
+   1333,
+   1333
+  ],
+  "pkg": "tools/track/out/mid_ohio_r3"
+ },
+ "r3_s08_at0280": {
+  "s": 280.2,
+  "station": 280,
+  "half": 40.0,
+  "mpp": 0.06,
+  "centre_enu": [
+   -216.651,
+   56.621
+  ],
+  "image_px": [
+   1333,
+   1333
+  ],
+  "pkg": "tools/track/out/mid_ohio_r3"
+ },
+ "r3_s09_at0350": {
+  "s": 350.2,
+  "station": 350,
+  "half": 40.0,
+  "mpp": 0.06,
+  "centre_enu": [
+   -264.555,
+   6.969
+  ],
+  "image_px": [
+   1333,
+   1333
+  ],
+  "pkg": "tools/track/out/mid_ohio_r3"
+ },
+ "r3_s10_at0420": {
+  "s": 420.3,
+  "station": 420,
+  "half": 40.0,
+  "mpp": 0.06,
+  "centre_enu": [
+   -271.846,
+   -62.133
+  ],
+  "image_px": [
+   1333,
+   1333
+  ],
+  "pkg": "tools/track/out/mid_ohio_r3"
+ },
+ "r3_s11_at0490": {
+  "s": 490.3,
+  "station": 490,
+  "half": 40.0,
+  "mpp": 0.06,
+  "centre_enu": [
+   -269.553,
+   -132.135
+  ],
+  "image_px": [
+   1333,
+   1333
+  ],
+  "pkg": "tools/track/out/mid_ohio_r3"
+ },
+ "r3_s12_at0560": {
+  "s": 560.4,
+  "station": 560,
+  "half": 40.0,
+  "mpp": 0.06,
+  "centre_enu": [
+   -267.599,
+   -202.156
+  ],
+  "image_px": [
+   1333,
+   1333
+  ],
+  "pkg": "tools/track/out/mid_ohio_r3"
+ },
+ "r3_s13_at0620": {
+  "s": 620.4,
+  "station": 620,
+  "half": 40.0,
+  "mpp": 0.06,
+  "centre_enu": [
+   -266.376,
+   -262.185
+  ],
+  "image_px": [
+   1333,
+   1333
+  ],
+  "pkg": "tools/track/out/mid_ohio_r3"
+ }
+}

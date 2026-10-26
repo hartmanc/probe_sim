@@ -127,7 +127,8 @@
       1280,
       720
     ],
-    "verified": "Parent independently read decoded 10s frames plus t14/t16/t18 around pit exit; confirms full outer loop. Stale initial t60/t130 replaced by decoded retries. Full 2s inventory remains pending."
+    "verified": "Parent independently read decoded 10s frames plus t14/t16/t18 around pit exit; confirms full outer loop. Stale initial t60/t130 replaced by decoded retries. Full 2s inventory remains pending.",
+    "t4_frames": "round 3: t62..t69 (1 s) through T4 and T5, inventory/frames_t4_N837 (t65 shows the player's end-screen overlay: unusable); media_t checked"
   },
   "field_source": {
     "status": "DEFERRED until the owner accepts the track (owner, 26 Oct 2026); recorded so the build-field-cars run starts here",
@@ -140,9 +141,22 @@
     "url": "https://youtu.be/9Drr1VkE1_U",
     "title": "Onboard Highlights | Mid Ohio 2026 | Practice 1",
     "supplied_by": "owner, 26 Oct 2026",
-    "date": "July 2026 per the owner (IndyCar Mid-Ohio 2026 Practice 1); exact upload date not read yet (the page fetch returned the title only)",
+    "date": "2026-07-03 (upload, read from the player page 26 Oct 2026)",
     "nature": "compilation: each segment a different car and driver, each segment beginning in Thunder Valley (T10), not at S/F (owner's note, verbatim: \"Note that it's a cut of several different drivers, and also that each cut starts in Thunder Valley (not at start/finish)\")",
     "use": "modern (post-2024 T4 reconstruction, post-2023 repave) reference for T4 banking, crown, kerbs and run-off, and the repave paint elsewhere; time-to-station anchored per segment from landmarks, never from S/F. Reference only: frames local, never committed, never textures",
-    "segments": "time ranges pending: survey not started in round 3 (see compare/mid_ohio/round3.md, T4 note)"
+    "segments": "time ranges pending: survey not started in round 3 (see compare/mid_ohio/round3.md, T4 note)",
+    "channel": "Andretti",
+    "duration_s": 201
+  },
+  "indycar_360_lap_2025": {
+    "url": "https://youtu.be/e25u_vjn1uM",
+    "title": "360° Ridealong Through the Heartland at Mid-Ohio Sports Car Course",
+    "channel": "INDYCAR | NTT INDYCAR SERIES",
+    "date": "2025-07-04 (upload, read from the player page 26 Oct 2026; the owner remembered ~Oct 2025); after the 2023 repave and the 2024 T4 rebuild",
+    "duration_s": 146,
+    "is_360": true,
+    "supplied_by": "owner, 26 Oct 2026: \"360 degree view of the track, taken a year ago. In YouTube, I can click and drag to rotate the view around.\"",
+    "use": "stage-0 inventory and heights (next run): equirectangular frames reprojected to look-left / ahead / right / back views by a python -I reader kept with the inventory readers; the lap starts where the uploader started it, so time-to-station is anchored from landmarks. Reference only, never committed, never textures",
+    "used_in_round3": "metadata only (headless player, one frame at t5, inventory/meta_e25u_vjn1uM); no equirectangular download yet"
   }
 }

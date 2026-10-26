@@ -308,8 +308,9 @@ def main():
     ap.add_argument('--out', required=True, help='page directory to write (edges.html, win/, manifest.json)')
     ap.add_argument('--title', required=True)
     ap.add_argument('--coll', default='edges', help='artifact db collection name (default edges)')
+    ap.add_argument('--intro', help='intro paragraph (HTML) in place of the whole-lap default (a later local refit: the changed region only)')
     a = ap.parse_args()
-    page, items = build(a.src, a.out, a.title, a.coll)
+    page, items = build(a.src, a.out, a.title, a.coll, a.intro)
     print(f'{len(items)} windows -> {page} ({os.path.getsize(page)} bytes); publish with capabilities {{db: {{}}}} and files win/*')
 
 
