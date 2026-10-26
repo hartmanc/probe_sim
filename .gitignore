@@ -64,3 +64,5 @@ tools/track/kit/stills/
 
 # tools/race: self-play traces and trial outputs (summaries go in tools/race/AI_READINESS.md)
 tools/race/out
+# local driver-label aliases for the logger exports (tools/ghosts/build_ghosts.py docstring): never committed
+tools/ghosts/drivers.local.json
