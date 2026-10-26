@@ -115,6 +115,9 @@ const SHIFT_RATE = 2.2;                    // m/s lateral change of the target o
  *  3-5 x the line's curvature, the grip limiter braked with the rear sliding and the car spun. */
 const SHIFT_RATE_MIN = 0.8;
 const KR = 0.25, LD0 = 3, LDK = 0.25;
+/** No-passing corners by track id and corner id (track.json `turn`; noPassZone). Laguna Seca's Corkscrew (T8, merged with
+ *  T8A) only: keyed to the track, not to a corner's name (issue #19: every track's T8 was treated as the Corkscrew). */
+export const NO_PASS_CORNERS: Readonly<Record<string, readonly string[]>> = { laguna_seca: ['T8'] };
 
 /**
  * The driver's own copy of the car's speed profile (field.ts buildSpeedProfile = the car's full grip):
@@ -201,7 +204,8 @@ export class AiDriver {
     this.vehicle = vehicle; this.line = line; this.perf = perf; this.profile = driverProfile(line, perf, profile);
     this.params = params; this.idx = idx; this.traffic = traffic;
     this.rng = new Rng(params.seed);
-    this.corkscrew = line.corners.findIndex((c) => /corkscrew/i.test(c.name));
+    const np = NO_PASS_CORNERS[line.trackId] ?? [];
+    this.corkscrew = line.corners.findIndex((c) => np.includes(c.turn));
     void spec;
   }
 

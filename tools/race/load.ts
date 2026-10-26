@@ -64,7 +64,9 @@ export function loadTrackPack(idOrDir: string = DEFAULT_TRACK): TrackPack {
   // sausages, no kerb profile, no far terrain, unlike the app's race)
   const makeSurface = () => createTrackSurface(track, heightfield, { far, pitLane, sausages: scenery?.sausages ?? null, kerbs: scenery?.kerbs ?? null });
   const surface = makeSurface();
-  const line = new RaceLine(track, ghosts);
+  // the track id keys corner-specific racecraft (issue #19); a package given by directory takes the id whose dir it is
+  const trackId = Object.prototype.hasOwnProperty.call(TRACKS, idOrDir) ? idOrDir : Object.keys(TRACKS).find((k) => resolve(ROOT, 'public/' + TRACKS[k].dir) === D) ?? '';
+  const line = new RaceLine(track, ghosts, undefined, trackId);
   if (scenery?.pit_exit_cones?.pts?.length) line.restrictLeft(scenery.pit_exit_cones.pts);
   return { track, ghosts, scenery, surface, line, pitLane, heightfield, farHeightfield, makeSurface };
 }

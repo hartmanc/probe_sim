@@ -91,7 +91,7 @@ const lineCache = new WeakMap<object, RaceLine>();
 function raceLine(a: SimAssets): RaceLine {
   let l = lineCache.get(a.track);
   if (!l) {
-    l = new R.RaceLine(a.track, a.ghosts as unknown as ConstructorParameters<typeof R.RaceLine>[1]);
+    l = new R.RaceLine(a.track, a.ghosts as unknown as ConstructorParameters<typeof R.RaceLine>[1], undefined, resolveTrackId(a.trackId));
     const cones = (a.scenery as { pit_exit_cones?: { pts?: number[][] } | null } | null | undefined)?.pit_exit_cones;
     if (cones?.pts?.length) l.restrictLeft(cones.pts);   // the AI keeps right of the pit-exit cones, as the player must
     lineCache.set(a.track, l);

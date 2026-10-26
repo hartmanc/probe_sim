@@ -35,7 +35,11 @@ function smoothPeriodic(a: Float64Array, sigma: number): Float64Array {
  * track.json corners and the ghost speed shape).
  */
 export interface LineCorner {
+  /** display name: the corner id, "T8 Corkscrew" for Laguna Seca's merged T8 / T8A */
   name: string;
+  /** the corner id from track.json (`turn`, e.g. "T8"; a merged pair keeps the first one's). Racecraft rules that belong
+   *  to one real corner are keyed to (RaceLine.trackId, turn), never to the name (issue #19) */
+  turn: string;
   /** station of the slowest ghost speed (the apex) and of the braking point (fastest ghost speed in the 300 m before) */
   apex: number; brake: number;
   /** +1 left-hander, -1 right-hander (sign of the racing-line curvature at the apex) */
@@ -80,8 +84,13 @@ export class RaceLine {
   private readonly globalProj: { project(x: number, y: number): { s: number; lateral: number; index: number } };
   private readonly out: LineProjection = { s: 0, lateral: 0, index: 0 };
 
-  constructor(track: TrackJson, ghosts: GhostsJsonLike, ghostId = 'driver_a_best') {
+  /** The track's id (src/scoreboard/config.ts TRACKS key, e.g. "laguna_seca"); '' when the builder did not say. Keys
+   *  corner-specific racecraft (driver.ts NO_PASS_CORNERS) and the Corkscrew's name. */
+  readonly trackId: string;
+
+  constructor(track: TrackJson, ghosts: GhostsJsonLike, ghostId = 'driver_a_best', trackId = '') {
     this.track = track;
+    this.trackId = trackId;
     const N = (this.N = track.n);
     this.spacing = track.spacing_m;
     this.L = track.length_m;
@@ -189,8 +198,9 @@ export class RaceLine {
       for (let d = -40; d <= 40; d++) kPeak = Math.max(kPeak, Math.abs(this.at(this.curv, apex + d)));
       let grade = 0;
       for (let d = -60; d <= 20; d++) grade += this.at(this.grade, apex + d) / 81;
-      const name = c.turn === 'T8' || c.turn === 'T8A' ? 'T8 Corkscrew' : (c.turn as string);
-      out.push({ name, apex, brake, dir: this.at(this.curv, apex) >= 0 ? 1 : -1, vEntry: vEn, vApex: vAp, kPeak, grade,
+      // (issue #19: only Laguna Seca's T8 / T8A is the Corkscrew; on other tracks a T8 is just T8)
+      const name = this.trackId === 'laguna_seca' && (c.turn === 'T8' || c.turn === 'T8A') ? 'T8 Corkscrew' : (c.turn as string);
+      out.push({ name, turn: c.turn as string, apex, brake, dir: this.at(this.curv, apex) >= 0 ? 1 : -1, vEntry: vEn, vApex: vAp, kPeak, grade,
         difficulty: kPeak * vEn * vAp * (1 + 6 * Math.max(0, -grade)), passable: vEn / vAp > 1.15 });
     }
     out.sort((a, b) => a.apex - b.apex);
