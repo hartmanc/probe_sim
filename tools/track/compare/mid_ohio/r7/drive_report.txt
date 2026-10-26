@@ -1,0 +1,63 @@
+flat: top speed 190.3 km/h, threshold brake 0.914 g @ pedal 0.75, full pedal 0.868 g locked=true
+understeer: 2.33 deg/g at 0.39 g (feed-forward)
+learn 0: lap 130.51 s, max err 13.55 m
+learn 1: lap 127.83 s, max err 11.13 m
+learn 2: lap 125.98 s, max err 9.26 m
+learn 3: lap 124.01 s, max err 7.99 m
+learn 4: lap 122.42 s, max err 6.52 m
+learn 5: lap 121.49 s, max err 4.84 m
+learn 6: lap 120.20 s, max err 3.22 m
+learn 7: lap 119.84 s, max err 1.56 m
+learn 8: lap 119.59 s, max err 0.95 m (clean)
+learn 9: lap 119.54 s, max err 0.95 m (clean)
+learn 10: lap 119.48 s, max err 0.95 m (clean)
+learn 11: lap 119.46 s, max err 0.95 m (clean)
+learn 12: lap 119.40 s, max err 0.95 m (clean)
+learn 13: lap 119.36 s, max err 0.95 m (clean)
+learn 14: lap 119.28 s, max err 0.95 m (clean)
+learn 15: lap 119.25 s, max err 0.95 m (clean)
+learn 16: lap 119.26 s, max err 0.95 m (clean)
+learn 17: lap 119.26 s, max err 0.95 m (clean)
+learn 18: lap 119.26 s, max err 0.95 m (clean)
+learn 19: lap 119.25 s, max err 0.94 m (clean)
+learn 20: lap 119.26 s, max err 0.94 m (clean)
+learn 21: lap 119.26 s, max err 0.94 m (clean)
+learn 22: lap 119.25 s, max err 0.94 m (clean)
+learn 23: lap 119.26 s, max err 0.94 m (clean)
+learn 24: lap 119.25 s, max err 0.94 m (clean)
+learn 25: lap 119.26 s, max err 0.94 m (clean)
+lap: complete  time 1:59.25  (profile 1:56.43, no reference laps)
+line tracking: max |lateral error| 0.94 m, wheel-off-track steps 290
+no reference laps (ghosts.json has none; --ref-ghosts <ghosts.json> of the same circuit gives them): sim only
+longest straight (T1 -> T2 Keyhole): sim max 134.9 km/h; flat-ground top speed 190.3 km/h
+
+corner minimum speeds (km/h), sim
+T1                 109.2 at 348 m
+T2 Keyhole          70.2 at 949 m
+T3                 141.2 at 1387 m
+T4                  70.2 at 1971 m
+T5 Madness          69.9 at 2119 m
+T6                  66.7 at 2296 m
+T7                  73.9 at 2328 m
+T8                 101.9 at 2462 m
+T9                  75.2 at 2660 m
+T10 Thunder Valle  115.1 at 2872 m
+T11                 90.8 at 3108 m
+T12 Carousel        67.1 at 3362 m
+T13                 72.6 at 3396 m
+
+straights: exit min -> max before braking (km/h), sim
+T1 -> T2 Keyhole              109->135
+T2 Keyhole -> T3              70->144
+T3 -> T4                      141->168
+T4 -> T5 Madness              70->95
+T5 Madness -> T6              70->104
+T6 -> T7                      67->81
+T7 -> T8                      74->108
+T8 -> T9                      102->118
+T9 -> T10 Thunder Valle       75->118
+T10 Thunder Valle -> T11      115->126
+T11 -> T12 Carousel           91->106
+T12 Carousel -> T13           67->84
+T13 -> T1                     73->133
+  sim: threshold (no lock) 0.914 g at pedal 0.75; peak decel in lap 0.88 g; peak lateral 1.36 g

@@ -1,0 +1,26 @@
+t 60 green lap 1 2.46 µs/car-step
+t 120 green lap 1 2.44 µs/car-step
+t 180 green lap 1 2.29 µs/car-step
+t 240 green lap 2 2.24 µs/car-step
+
+=== self-play: 45 cars, 2 laps, 78.0 car-laps (green), race time 282 s
+(a) line when alone (>= 2 s with nobody within 30 m): rms 0.27 m, p95 0.56 m (186886 samples)   [target rms < 0.5]; with no deliberate offset: rms 0.27 p95 0.55; worst 2.40 m at s 1553; instantaneous (any moment nobody within 30 m) rms 0.39 p95 0.59
+      T1            rms 0.50  p95 0.86  n 11296
+      T2            rms 0.34  p95 0.54  n 14312
+      T4            rms 0.37  p95 0.58  n 12850
+      T5            rms 0.26  p95 0.44  n 7862
+      T6            rms 0.27  p95 0.45  n 4189
+      T7            rms 0.14  p95 0.33  n 1592
+      T8 Corkscrew  rms 0.48  p95 0.81  n 2346
+      T9            rms 0.36  p95 0.61  n 4793
+      T11           rms 0.36  p95 0.60  n 4231
+      T12           rms 0.34  p95 0.53  n 10588
+      T13           rms 0.13  p95 0.28  n 1971
+(b) clearly faster (>3 %) behind a car: 182 situations, 119 reached a passable braking zone close, 81 set up on the inside, 128 completed; stuck median 16.5 s, p90 55.5 s; all green passes 167; pass attempts 371, ended {"corkscrew":21,"shut":47,"dropped":82,"blocked":104,"done":88,"timeout":18}
+    by pace ratio: 0-0.85: 74/88 (84 %, stuck 12.1 s, not done {"unseen":5,"gap":1,"off":2,"end":6}), 0.85-0.92: 31/47 (66 %, stuck 21.1 s, not done {"gap":4,"unseen":7,"off":2,"end":3}), 0.92-0.97: 23/47 (49 %, stuck 21.5 s, not done {"unseen":12,"gap":3,"off":3,"end":6})
+(c) defensive moves: vs clearly faster 0, within 3 % 37, vs slower 0, nobody close 0   [vs clearly faster ~0]
+(d) contacts (>1 m/s, AI-AI, per pair per 1 s) 0 = 0.000 per car-lap (>3 m/s: 0) [<= 0.02]; four-off 8 (0 from mishaps) = 0.103 per car-lap, non-mishap 0.103; formation passes 0; recoveries 1
+(e) mishaps 0 = 0.0000 per car-lap (wide 0, spin 0); loss median - s [-..-]; by corner {}
+(f) cost 98.8 µs per step, 2.20 µs per car
+(g) pace: median best lap / drawn target 1.2182, last lap / target 1.2182; knobs followScale 1 laneMargin 1 shiftGrip 0
+(h) finishing order: 37 74 319 189 9 8 89 58 544 711 ... (45 cars)

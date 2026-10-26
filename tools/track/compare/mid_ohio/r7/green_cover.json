@@ -1,0 +1,66 @@
+{
+ "points": 1223,
+ "within_0_5": 0.7375306623058054,
+ "within_1_0": 0.8094848732624693,
+ "within_2_0": 0.9509403107113655,
+ "p50": 0.11097196843246554,
+ "p90": 1.3724733657787291,
+ "runs": [
+  {
+   "n": 10,
+   "x": -137.6,
+   "y": 44.8,
+   "d_max": 6.02,
+   "nearest": "pit lane left edge"
+  },
+  {
+   "n": 14,
+   "x": -166.5,
+   "y": 53.5,
+   "d_max": 2.18,
+   "nearest": "pit lane left edge"
+  },
+  {
+   "n": 1,
+   "x": -139.9,
+   "y": 47.2,
+   "d_max": 2.36,
+   "nearest": "pit lane left edge"
+  },
+  {
+   "n": 7,
+   "x": -280.3,
+   "y": -108.3,
+   "d_max": 3.61,
+   "nearest": "course right edge"
+  },
+  {
+   "n": 6,
+   "x": -275.4,
+   "y": -262.6,
+   "d_max": 3.23,
+   "nearest": "T1-T3 connector, south (OSM 444205377) right edge"
+  },
+  {
+   "n": 13,
+   "x": -275.6,
+   "y": -316.1,
+   "d_max": 4.58,
+   "nearest": "course right edge"
+  },
+  {
+   "n": 5,
+   "x": -263.1,
+   "y": -503.4,
+   "d_max": 3.01,
+   "nearest": "course right edge"
+  },
+  {
+   "n": 4,
+   "x": -350.5,
+   "y": -265.4,
+   "d_max": 2.82,
+   "nearest": "course right edge"
+  }
+ ]
+}
