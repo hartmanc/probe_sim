@@ -100,45 +100,68 @@ NAIP dark-canopy blobs, 7000).
 
 ### 2c. The control tower
 
-Two blocks (structures 'Control tower shaft' and 'Control tower'), replacing round 7's 'Starter tower': the shaft 10 x
-10 m to 10.5 m (3 storeys, dark brown, one glazed band at the top storey), the upper block 13 x 13 m from 10.5 to 16.8 m
-(2 storeys of dark glazing) wrapped by two decks 1.5 m out with white 1.1 m fascia rails, a red hip roof 3 m out (19 m
-eaves, the lidar roof 19 x 18 m) rising 5 m (top 21.8 m against the lidar's over 20 m). New opt-in app keys on the
-block kit: `hip` and `wrap_decks` (absent on every other block). Typed signage only: none (the fascia lettering is not
-legible in the frames). The manifest's 'placed' dispositions now name 'Control tower'.
+One slender block ('Control tower', replacing round 7's 'Starter tower' and this round's first two-block attempt, which
+the second judge rejected as a dark office cube): an 11 x 11 m tan shaft (#c4b29b, from N837 t129's overcast side
+wall (105, 102, 109) and the 360 lap t024's sunlit (131, 128, 123), lightened for the renderer) to 17 m (the lidar
+eaves), five storeys with dark glazing on the top two, two wrap decks 1.2 m out at 10.2 and 13.6 m (white and dark
+rails: the open, railed observation levels of N837 t127-t129), a red hip roof 4 m out (19 m eaves, the lidar's 19 x
+18 m roof) rising 4.5 m (21.5 m; lidar top over 20 m, 24 m with the mast). New opt-in app keys on the block kit:
+`hip`, `wrap_decks` (absent on every other block). No signage (not legible). The manifest's 'placed' dispositions name
+'Control tower'.
 
-## 3. Compare sheets and judge (round 8, the changed places)
+## 3. The second judge's round-7 findings (`review_mo_r7/judge.md`) and their disposition
 
-`compare_sheets_r8/` (local): 82 stills (forward every 50 m, side views at the inventory rows, back every 100 m) over
-the back straight (s 1450-1950), Thunder Valley (2800-3100) and the pit straight (3450-60), plus
-`tower_r7_vs_real.jpg`; 17 sheets. Judged by this agent against JUDGE.md (the second judge's round-7 findings are to
-come; the round stays open for them):
+| # | finding | fix / disposition | still (compare_sheets_r8_full/sim) |
+|---|---|---|---|
+| M1 | starter / control tower a dark flat cube | section 2c | fwd_s3550, row_s0012_left, pit_p0_0xx |
+| M2 | T5 HONDA boards invisible | cause: every board run sat 0.3 m BEHIND its 1.2 m armco (`off=-0.3`; the round-7 armco is taller than the old single beam), so the armco hid them; all armco board runs now 0.45 m in front from the ground (`off=0.45, base=0`); proven with a pose facing a board (t5board) and the walk | row_s2051_right, row_s2105_right |
+| M3 | T4 bleachers low and dark | `self_lit` (7b) + silver seats / risers (#dfe2e6 / #b4b8bd), 15 rows of 0.33 m (top 5.85 m: the frames' rows rise above the 3.5 m fence) | row_s1792_left, row_s1813_left |
+| M4 | sheets made before the published build | the final walk and sheets are made FROM the published package after the last build; `compare_sheets_r8_full/index.md` records the rev, the scenery.json time and the walk / sheet times | index.md |
+| m5 | T4 board run starts early | s 1915-1949 (360 t075.5) | row_s1935_left |
+| m6 | pit-in banner run short | to s 3452 (360 t019) | row_s3422_left / row_s3426_left |
+| m7 | barrels drawn as one box | three 0.9 m yellow cylinders (`tyre_stacks`, 360 t017-t018) | pit_p0_001 |
+| m8 | PERMCO-bridge VELO too low | base 1.4 m, h 1.6 m on the fence (360 t108) | row_s2880_left |
+| m9 | VELO at T11 missing | declared on OSM 956 s 3048-3058, high on the fence (360 t112) | row_s3053_right |
+| m10 | station 5 post missing | a '5' number board on a post (N837 t074); manifest re-dispositioned | row_s2146_left |
+| m11 | pylon face; white office at T5 | the building drawn plain (`building_overrides` plain, 360 t082: an open pavilion); the pylon's lit scoreboard face is not modelled (the kit has no digit board): open | row_s2105_right |
+| m12 | video board on legs at s 1792-1813 right | not placed: N837 t059-t061 (Apr 2026) show no video board there; a temporary of the 2025 IndyCar weekend (360 t071) | - |
+| m13 | infield structures s 1600-1616 R, s 1952 R | not placed: the s 1600-1616 dark board / scaffold and the s 1952 white covered structure appear in the 2025 360 lap only; N837 t056-t057 and t064-t066 (Apr 2026) show open infield; temporaries | - |
+| m14 | road smear s 3300-3400; pit-out seam | `ortho_paint_over` pale and dark over s 3235-3295; pit lane `match_track_tone` k 0.5 -> 0.8 | back_s3300, pit_p0_023 |
+| n15 | marshal tower yellow vs the 2025 dark cabin | kept yellow: N837 t054 (Apr 2026) shows the yellow tower; newer evidence wins | - |
+| n16 | T11 exit kerb end | the capture scan ends the yellow at s 3203 (c20_s3160 / c20_s3200); kept | - |
+| n17 | fence posts over the T9 white wall | not placed: N837 t096-t098 show the white wall with no catch fence over it; the posts in the 360 frame stand behind it (the OSM fence 1315208958 line, modelled) | - |
+| n18 | T1 hospitality rejection | re-dispositioned 'not resolvable' (manifest): the red-roofed shelter (OSM 1315208908) has no measurable 2026 footprint or height | - |
 
-| # | sheet | s | finding | status |
-|---|---|---|---|---|
-| R1 | fwd_00, fwd_02 | 0-1900 | grass read grey-blue after the first pass (captures' hue) | fixed: target hue from the frames |
-| R2 | fwd_05, side_00 | 3500-3596, 0-50 L | tower: a box with a flat roof (r7) | fixed: shaft, glazed upper block, decks, red hip roof; matches N837 t127-t129 and 360 t024 in massing and colour |
-| R3 | fwd_05 | 3550 L | a lidar crown growing out of the tower roof | fixed: trees cleared under the eaves |
-| R4 | fwd_00-02 | 1450-1900 L | the woods wall along the back straight | ok: dense trees behind the fence as N837 t052-t060 / 360 t064-t074 (the real trees are leaf-off in April) |
-| R5 | fwd_03-04 | 2800-3100 | Thunder Valley trees | ok: trees both sides, sparser on the right as the lidar has it |
-| R6 | side_00 | 0 L | the starter's stand is a blue box on a post (real: a boarded cabin on black legs) | open (not the owner's note) |
-| R7 | fwd_02 | 1750-1900 | grass a little duller than the 360 lap's July green | accepted: between the April (N837) and July references |
+Also from my own walk of the published package: the PERMCO bridge's banner faces were swapped (VELO faced oncoming
+cars; now PERMCO / Pumps and Motors on the approach, VELO on the far face), the Keyhole board wall continued onto OSM 943
+(s 963-1070, 360 t053-t055), and the pit wall's VELO banners are single-sided (`single`, opt-in: no mirrored text from
+the lane).
 
-## 4. Gates, proofs, registry, tests
+## 4. Compare sheets of the published package, and the judge pass
+
+`compare_sheets_r8_full/` (local): 356 stills (fwd 72, rows 215, back 36, pit 25, runoff 9) and 67 sheets, made after
+the final build from `public/tracks/mid_ohio` (rev cf609d6a3e; index.md: scenery.json written 15:26:17, walk finished
+15:28:23, sheets 15:28:29). Earlier passes kept for the record: `compare_sheets_r8_pass1..3` (each superseded by a fix
+and a rebuild). Judged by this agent against JUDGE.md on all 67 sheets: the findings of passes 1-3 were fixed (bridge
+faces, the Keyhole board run, the boards hidden behind the armco, the road smear, the T11 banner extent); on the final
+sheets no MAJOR remains. Open: the pylon's scoreboard face (m11), the starter's stand still a boarded box on a post
+(NOTE), the closed roads' apron tone (round 7 B2), the grass a little duller than July (between April and July
+references). Boards are counted placed only where a still shows them (the C14 rule the second judge set).
+
+## 5. Gates, proofs, registry, tests
 
 `build_track.py --stage scenery --publish` (exit 0, 21 lines `[ok]`); on the package `run_gates.ts` exit 0,
 `run_coverage.ts` exit 0. Every gate as round 7b's table (round7.md section 18), with ground lines 162 lines, 114
 dispositioned, 0 open; coverage 251 rows, 0 MISSING, 0 UNSUPPORTED.
 
-**Package rev 9538d19a7d** (registry `mid_ohio.rev`).
+**Package rev cf609d6a3e** (registry `mid_ohio.rev`).
 
 Identity: track.json, heightfield.bin, ghosts.json `cmp`-identical to round 5; Sonoma stage 3 from its published files:
 scenery.json and far_heightfield.bin identical; Laguna stage 3 on its reproduction: all four outputs identical to the
 b5343d7 builder's; structure soups of Sonoma, Laguna and Buttonwillow identical (`r7/soup_hash.ts`: f71411f3c2e78626,
-e3b0c44298fc1c14, 3da76e09e950dd5a); Buttonwillow stage all into `tools/track/out/bw_idcheck`: see section 5.
+e3b0c44298fc1c14, 3da76e09e950dd5a); Buttonwillow: `build_track.py --track buttonwillow --stage all --out tools/track/out/bw_idcheck` (rc 0, after the final build): all seven files `cmp`-identical to `public/tracks/buttonwillow`. CLIs on the package: `run_gates.ts`, `run_coverage.ts`, `edge_gate.py` exit 0; the build 21 lines `[ok]` (ground lines strict, 0 open). Tests: `npm run build` ok; full `npx vitest run` 64 files, 537 tests passed (no timeout this run).
 
 ## 6. Open
 
-- The second judge's round-7 findings (to come; this round stays open for them).
-- The starter's stand's look (R6); the far trees beyond the lidar box are the NAIP blobs (unchanged).
+- The starter's stand's look (R6), the T5 pylon's scoreboard face (m11); the far trees beyond the lidar box are the NAIP blobs (unchanged).
 - Round 7's open items stand (field, AI, pit-lane survey, T4 run-off raise, kerb height as an owner question).
