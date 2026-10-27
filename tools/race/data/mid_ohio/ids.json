@@ -109,7 +109,7 @@
   {
    "number": "89",
    "id": "89_mo",
-   "evidence": "number is the id of a different car in an earlier field: laguna #89 The Homer by Porcubimmer\u2026."
+   "evidence": "number is the id of a different car in an earlier field: laguna #89 The Homer by Porcubimmer…."
   },
   {
    "number": "54",
@@ -118,9 +118,9 @@
   },
   {
    "number": "56",
-   "id": "156",
+   "id": "56_mo",
    "laguna_number": "156",
-   "evidence": "exact normalised team name 'TPF Racing' = Laguna #156 (Mercury Milan, id 156); renumbered 156 -> 56; the Sonoma #56 'Garage 69 Cumaero' (id 56) is a different car, so the id stays 156"
+   "evidence": "exact normalised team name 'TPF Racing' = Laguna #156 (Mercury Milan, id 156); renumbered 156 -> 56; the Sonoma #56 'Garage 69 Cumaero' (id 56) is a different car, so the id stays 156; 27 Oct 2026: id 56_mo, its own Mid-Ohio build (the Laguna body with the number 56), dims/engine/colours still from the Laguna row"
   },
   {
    "number": "8",
@@ -145,7 +145,7 @@
   {
    "number": "5",
    "id": "5_mo",
-   "evidence": "number is the id of a different car in an earlier field: buttonwillow #5 Richie Bobby Racing \u2026."
+   "evidence": "number is the id of a different car in an earlier field: buttonwillow #5 Richie Bobby Racing …."
   },
   {
    "number": "250",
@@ -255,7 +255,7 @@
   {
    "number": "90",
    "id": "90_mo",
-   "evidence": "number is the id of a different car in an earlier field: buttonwillow #90 NB TuRD North \u2026. (R)"
+   "evidence": "number is the id of a different car in an earlier field: buttonwillow #90 NB TuRD North …. (R)"
   },
   {
    "number": "17",
@@ -405,7 +405,7 @@
   {
    "number": "888",
    "id": "888_mo",
-   "evidence": "number is the id of a different car in an earlier field: buttonwillow #888 True Performance \u2026."
+   "evidence": "number is the id of a different car in an earlier field: buttonwillow #888 True Performance …."
   },
   {
    "number": "318",
