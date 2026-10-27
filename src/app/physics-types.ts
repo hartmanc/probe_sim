@@ -9,6 +9,8 @@ export interface SurfaceSample {
   /** Paved but off the course (round 14B: a part marked off_course, Sonoma's T9A escape road): counts as off for lap
    *  validity like dirt. Absent / false elsewhere. */
   offCourse?: boolean;
+  /** On a kerb band outside the course edge (round 15, `kerbs.inside` false): on the course for the track-limit test. */
+  onKerbBand?: boolean;
   /** 0 on pavement → 1 fully off it (blended over the first metre past the paved edge). */
   dirt?: number;
   /** Friction multiplier of the pavement. */

@@ -134,6 +134,30 @@ export function kerbBandCentre(k: KerbsJson, st: { off?: number }): number {
   return st.off !== undefined ? st.off : (k.inside ?? true) ? -k.width / 2 : k.width / 2;
 }
 
+/** Round 15 (Buttonwillow, the owner's decision of 26 Oct 2026, item 19): with `kerbs.inside === false` the race edges are
+ *  the kerbs' asphalt side and every strip is a band OUTSIDE the edge, yet the track limit stays the kerb's OUTSIDE (two
+ *  wheels on a kerb are on the course; four wheels beyond its outer edge are off). Per station and side, the outer limit
+ *  (m beyond the edge) of the kerb bands there, raised or flat paint ('verge' / 'blocks' strips excepted); NaN where none.
+ *  Null when the package keeps its kerbs inside the edge (absent `inside`: Laguna, Sonoma) or has no strips. */
+function buildKerbBandLimits(track: TrackJson, k: KerbsJson | null | undefined): { L: Float64Array; R: Float64Array } | null {
+  if (!k || k.inside !== false || !k.strips?.length) return null;
+  const n = track.n, sp = track.spacing_m || 1;
+  const L = new Float64Array(n).fill(NaN), R = new Float64Array(n).fill(NaN);
+  for (const st of k.strips) {
+    if (st.kind === 'verge' || st.kind === 'blocks') continue;
+    const w = st.width ?? k.width;
+    const hi = kerbBandCentre(k, st) + w / 2;
+    if (!(hi > 0)) continue;
+    const arr = st.side > 0 ? L : R;
+    const i0 = Math.round(st.s0 / sp), i1 = Math.round(st.s1 / sp);
+    for (let i = i0; i <= i1; i++) {
+      const j = ((i % n) + n) % n;
+      if (!(arr[j] >= hi)) arr[j] = hi;
+    }
+  }
+  return { L, R };
+}
+
 /** Each raised kerb strip's centreline (1 m points beyond/inside the edge) in the sausage strip layout. */
 function buildKerbStrips(track: TrackJson, k: KerbsJson): (SausageStrip & { side: number; pr: KerbProfileJson; hw: number })[] {
   const out: (SausageStrip & { side: number; pr: KerbProfileJson; hw: number })[] = [];
@@ -588,6 +612,8 @@ export function createTrackSurface(track: TrackJson, heightfield: Float32Array, 
     ? buildKerbStrips(track, opts.kerbs) : null;
   const over = buildOverride(opts.terrainOverride);
   const bump = { h: 0, gx: 0, gy: 0 }, kb = { h: 0, gx: 0, gy: 0 };
+  // round 15: the outside kerb bands count as course for the track-limit test only (SurfaceSample.onKerbBand)
+  const bandLim = buildKerbBandLimits(track, opts.kerbs);
 
   const base: Surface = {
     sample(x: number, y: number): SurfaceSample {
@@ -622,6 +648,7 @@ export function createTrackSurface(track: TrackJson, heightfield: Float32Array, 
           out.onTrack = true;
           out.paved = true;
           out.offCourse = false;
+          out.onKerbBand = false;
           out.mu = muOn;
           out.dirt = 0;
           return out;
@@ -631,6 +658,15 @@ export function createTrackSurface(track: TrackJson, heightfield: Float32Array, 
           : g.halfR[loc.seg] + loc.t * (g.halfR[(loc.seg + 1) % g.n] - g.halfR[loc.seg]);
         dOutT = (af - 1) * half;
         if (dOutT < blend) { profileAt(g, loc.seg, loc.t, loc.lateral, prof, true); zT = prof.z; }
+      }
+      // round 15: within an outside kerb band (its outer limit at the nearer of the two stations' bands, the other where
+      // only one has a band): on the course for the track-limit test
+      let kerbBand = false;
+      if (bandLim && s >= 0 && dOutT < Infinity) {
+        const arr = loc.lateral > 0 ? bandLim.L : bandLim.R;
+        const a = arr[loc.seg], b = arr[(loc.seg + 1) % g.n];
+        const lim = a === a ? (b === b ? a + loc.t * (b - a) : (loc.t < 0.5 ? a : NaN)) : (b === b && loc.t >= 0.5 ? b : NaN);
+        kerbBand = lim === lim && dOutT <= lim;
       }
       // pit lane: paved footprint -> its profile; else edge height and distance for the blend
       let dOutP = Infinity, zP = 0;
@@ -659,6 +695,7 @@ export function createTrackSurface(track: TrackJson, heightfield: Float32Array, 
             out.onTrack = false;
             out.paved = true;
             out.offCourse = pit.offc[ploc.seg] === 1;
+            out.onKerbBand = kerbBand;
             out.mu = muOn;
             out.dirt = 0;
             return out;
@@ -670,6 +707,7 @@ export function createTrackSurface(track: TrackJson, heightfield: Float32Array, 
       out.onTrack = false;
       out.paved = false;
       out.offCourse = false;
+      out.onKerbBand = kerbBand;
       // grip: smoothstep from pavement to dirt over the first `gripBlend` m past the nearest paved edge
       const dOut = dOutT < dOutP ? dOutT : dOutP;
       const g01 = dOut >= gripBlend ? 1 : dOut / gripBlend;
