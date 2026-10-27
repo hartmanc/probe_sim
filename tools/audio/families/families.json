@@ -23,7 +23,8 @@
    "fire": "even",
    "idle_rpm": 650,
    "redline_rpm": 4800,
-   "character": "lazy burbly big/old V8s"
+   "character": "lazy burbly big/old V8s",
+   "alias_of": "gm_sbc_v8"
   },
   "vintage_i6": {
    "cylinders": 6,
@@ -173,7 +174,7 @@
    "twincam_i4_loud"
   ],
   [
-   "Vulcan|60-degree 2\\.8|60\u00b0 2\\.8|\\bV6\\b",
+   "Vulcan|60-degree 2\\.8|60° 2\\.8|\\bV6\\b",
    "ohv_v6"
   ],
   [

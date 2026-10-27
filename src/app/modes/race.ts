@@ -239,16 +239,34 @@ export function carSound(index: FieldSoundIndex | null, car: { number: string; i
   };
 }
 
+/** A car's gearbox as the engine sound needs it: overall ratios per gear and the wheel radius, m. */
+export interface AudioGearbox { ratios: number[]; radius: number }
+
+/**
+ * Road-speed clutch-side engine speed, rpm: |speed| / wheel radius x the overall ratio of the current gear (what the
+ * engine turns at in this gear without wheelspin). undefined in neutral / reverse or without a gearbox.
+ */
+export function boxRpmOf(st: { gear?: number; speed?: number }, gb: AudioGearbox | undefined): number | undefined {
+  const g = st.gear ?? 0;
+  if (!gb || !(gb.radius > 0) || g < 1 || g > gb.ratios.length || st.speed === undefined) return undefined;
+  return ((Math.abs(st.speed) / gb.radius) * gb.ratios[g - 1] * 60) / (2 * Math.PI);
+}
+
 /**
  * This frame's engine data for one AI car. rpm and redline are both scaled by the car's rpm_scale (e.g. #34's
  * three-cylinder plays an I4 family at 0.75 × rpm), so the voice's limiter still trips at the car's own redline.
+ * With the car's gearbox, also the gear and the clutch-side rpm (scaled the same way) for the voice's ShiftDrop.
  */
-export function fillAudioCar(c: FieldAudioCar, st: { pos: [number, number, number]; vel: [number, number, number]; rpm: number; throttleOut: number }, redline: number, snd: FieldCarSound): FieldAudioCar {
+export function fillAudioCar(c: FieldAudioCar, st: { pos: [number, number, number]; vel: [number, number, number]; rpm: number; throttleOut: number; gear?: number; speed?: number }, redline: number, snd: FieldCarSound, gearbox?: AudioGearbox): FieldAudioCar {
   c.pos = st.pos; c.vel = st.vel;
   c.rpm = st.rpm * snd.rpmScale;
   c.redline = redline * snd.rpmScale;
   c.throttle = st.throttleOut;
   c.family = snd.family; c.trim = snd.trim; c.muffler = snd.muffler;
+  if (gearbox) {
+    const b = boxRpmOf(st, gearbox);
+    c.gear = st.gear; c.boxRpm = b === undefined ? undefined : b * snd.rpmScale;
+  }
   return c;
 }
 
@@ -286,7 +304,8 @@ export function fieldAudioHook(
         return;
       }
       index = i;
-      try { fa = new FieldAudio(ctx, destination, { index: i, base, maxVoices, ...(fetchFn ? { fetchFn } : {}) }); } catch (e) { console.warn('field audio:', e); fa = null; }
+      // shiftDrop: on an upshift the AI voice's note falls with the clutch instead of gliding (audio-field.ts ShiftDrop)
+      try { fa = new FieldAudio(ctx, destination, { index: i, base, maxVoices, shiftDrop: true, ...(fetchFn ? { fetchFn } : {}) }); } catch (e) { console.warn('field audio:', e); fa = null; }
     });
   };
   const ready = load();
@@ -346,6 +365,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
   let audioCars: FieldAudioCar[] = [];
   let audioSounds: FieldCarSound[] = [];
   let audioPose: number[] = [];           // poses() index of each audioCars entry
+  let audioGear: (AudioGearbox | undefined)[] = []; // each audioCars entry's gearbox (ShiftDrop's clutch-side rpm)
   let audioFor: FieldAudioLike | null = null, audioDir: RaceDirector | null = null;
   let audioTriedAt = -Infinity, audioErr = false;
   let cone: ConeLineLike | null = null;
@@ -451,18 +471,20 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
     const poses = dir.poses();
     if (fa !== audioFor || dir !== audioDir) {
       audioFor = fa; audioDir = dir;
-      audioCars = []; audioSounds = []; audioPose = [];
+      audioCars = []; audioSounds = []; audioPose = []; audioGear = [];
       poses.forEach((p, i) => {
         if (p.isPlayer) return;
         const snd = fieldAudio!.sound({ number: p.number, id: p.id, identity: p.identity, engine: p.engine });
         if (!snd.family && silentEngine(p.engine)) return;   // an electric car (#16 Bolt at Buttonwillow) with no index row: no voice
         audioSounds.push(snd); audioPose.push(i);
-        audioCars.push(fillAudioCar({ id: p.number, pos: p.state.pos, vel: p.state.vel, rpm: 0, throttle: 0, redline: 0, family: '' }, p.state, p.engine.redline, snd));
+        const sp = dir.cars[i]?.spec;
+        audioGear.push(sp ? { ratios: sp.drivetrain.gearRatios, radius: sp.wheel.radius } : undefined);
+        audioCars.push(fillAudioCar({ id: p.number, pos: p.state.pos, vel: p.state.vel, rpm: 0, throttle: 0, redline: 0, family: '' }, p.state, p.engine.redline, snd, audioGear[audioGear.length - 1]));
       });
     }
     for (let k = 0; k < audioCars.length; k++) {
       const p = poses[audioPose[k]];
-      fillAudioCar(audioCars[k], p.state, p.engine.redline, audioSounds[k]);
+      fillAudioCar(audioCars[k], p.state, p.engine.redline, audioSounds[k], audioGear[k]);
     }
     const st = dir.player.vehicle.state;
     try { fa.update({ pos: st.pos, vel: st.vel, quat: st.quat }, audioCars); } catch (e) {

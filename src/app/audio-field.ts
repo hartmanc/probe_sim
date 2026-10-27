@@ -110,6 +110,12 @@ export function loadFamily(ctx: BaseAudioContext, engineJsonUrl: string, fetchFn
 export interface VoiceOptions {
   /** Pitch trim factor, 0.96..1.04 (per-car variation within a family). */
   trim?: number;
+  /**
+   * Opt-in upshift shaping (ShiftDrop): on a gear increment the note falls to the clutch-side rpm (FieldCar.boxRpm)
+   * with a fast time constant instead of gliding down with the physics' slipping clutch. Off: the voice plays the
+   * physics rpm exactly as before. Fixed at construction.
+   */
+  shiftDrop?: boolean;
   /** 0 = open exhaust (low-pass at ~12 kHz) … 1 = heavily muffled (~900 Hz). */
   muffler?: number;
   redline?: number;
@@ -117,6 +123,72 @@ export interface VoiceOptions {
 }
 
 const LOAD_UP = 0.035, LOAD_DOWN = 0.07; // throttle-layer lag, s (as in audio.ts)
+/** ShiftDrop: time constant of the note's fall to the clutch-side rpm, s (95 % within the 0.15 s torque cut). */
+export const SHIFT_DROP_TAU = 0.05;
+/** ShiftDrop: longest the note may stay off the physics rpm after an upshift, s (then it blends back). */
+export const SHIFT_DROP_MAX_S = 1.0;
+/** ShiftDrop: the note rejoins the physics rpm once they are within this fraction. */
+export const SHIFT_DROP_MEET = 0.02;
+
+/**
+ * Upshift note shaping (round two of the engine sounds, 26 Oct 2026). Through an upshift the physics cuts the torque
+ * for 0.15 s and then re-engages its automatic clutch with the throttle back on; the driven wheels spin up to meet the
+ * engine and the wheelspin dies away over 0.3-0.6 s, so the engine rpm glides down to the next gear under load (60-75 %
+ * of the drop with throttleOut = 1; tools/audio/shift_trace.ts). Played as a loaded loop pitched smoothly through
+ * that glide it reads as a sustained, organ-like note; a real upshift drops with the clutch. ShiftDrop: on a gear
+ * increment the played rpm leaves the physics rpm and falls with SHIFT_DROP_TAU to the landing rpm (the road-speed
+ * clutch-side rpm in the new gear, `boxRpm`, times the slip the engine ran at before the shift), never above the
+ * physics rpm; it rejoins the physics rpm once within SHIFT_DROP_MEET of it, or blends back after SHIFT_DROP_MAX_S.
+ * Downshifts and frames without gear / boxRpm pass the physics rpm through unchanged. Pure logic (no Web Audio).
+ */
+export class ShiftDrop {
+  private gear = 0;
+  private active = false;
+  private blending = false;
+  private t = 0;
+  private r = 0;
+  private slip = 1;
+  private target = 0;
+  /** True while the played rpm is off the physics rpm (diagnostics / tests). */
+  get shaping(): boolean { return this.active || this.blending; }
+  reset(): void { this.gear = 0; this.active = false; this.blending = false; this.t = 0; this.r = 0; this.slip = 1; this.target = 0; }
+
+  /** The rpm to play this frame. */
+  step(rpm: number, gear: number | undefined, boxRpm: number | undefined, dt: number): number {
+    if (gear === undefined || boxRpm === undefined || !(boxRpm > 0) || !isFinite(boxRpm)) {
+      this.reset();
+      return rpm;
+    }
+    const prev = this.gear;
+    this.gear = gear;
+    if (gear > prev && prev >= 1 && rpm > boxRpm * this.slip * (1 + SHIFT_DROP_MEET)) {
+      // start from the note being played (a second upshift mid-shape continues from where the note is)
+      this.r = this.active || this.blending ? Math.min(this.r, rpm) : rpm;
+      this.active = true; this.blending = false; this.t = 0;
+    } else if (gear < prev && this.active) {
+      this.active = false; this.blending = true; // a downshift mid-shape: back to the physics rpm
+    }
+    if (this.active) {
+      this.t += dt;
+      this.target = boxRpm * this.slip;
+      this.r += (this.target - this.r) * (1 - Math.exp(-dt / SHIFT_DROP_TAU));
+      if (this.r > rpm) this.r = rpm;
+      if (Math.abs(rpm - this.r) <= SHIFT_DROP_MEET * rpm) { this.active = false; this.r = rpm; return rpm; }
+      if (this.t >= SHIFT_DROP_MAX_S) { this.active = false; this.blending = true; }
+      else return this.r;
+    }
+    if (this.blending) {
+      this.r += (rpm - this.r) * (1 - Math.exp(-dt / 0.1));
+      if (Math.abs(rpm - this.r) <= 0.005 * rpm) { this.blending = false; this.r = rpm; return rpm; }
+      return this.r;
+    }
+    // steady in gear: learn the slip the engine runs at over the road-speed clutch side (wheelspin under power)
+    if (gear >= 1) this.slip += (Math.min(1.25, Math.max(1, rpm / boxRpm)) - this.slip) * (1 - Math.exp(-dt / 0.2));
+    this.r = rpm;
+    return rpm;
+  }
+}
+
 const LIMITER_HZ = 16;
 const N_SRC = 4;
 
@@ -139,11 +211,13 @@ export class EngineVoice {
   private load = 0;
   private lastT = -1;
   private limiting = false;
-  private opts: Required<VoiceOptions>;
+  private opts: Required<Omit<VoiceOptions, 'shiftDrop'>>;
+  private shift: ShiftDrop | null;
   disposed = false;
 
   constructor(private ctx: BaseAudioContext, destination: AudioNode, readonly assets: FamilyAssets, opts: VoiceOptions = {}) {
     this.opts = { trim: 1, muffler: 0.3, redline: assets.redline, idle: assets.idle };
+    this.shift = opts.shiftDrop ? new ShiftDrop() : null;
     this.setOptions(opts);
     // sources -> sum -> gate (limiter) -> level -> muffler low-pass -> output (fade / distance) -> destination
     this.sum = ctx.createGain();
@@ -210,11 +284,15 @@ export class EngineVoice {
   /** The playbackRate a layer of loop rpm `loopRpm` gets at this rpm (rpm / loopRpm × trim × rateFactor). */
   rateFor(rpm: number, loopRpm: number, rateFactor = 1): number { return Math.max(0.25, (rpm * this.opts.trim * rateFactor) / loopRpm); }
 
-  /** Per frame. rateFactor carries the Doppler shift. */
-  update(rpm: number, throttle: number, rateFactor: number, t: number): void {
+  /**
+   * Per frame. rateFactor carries the Doppler shift. gear and boxRpm (the clutch-side rpm in the current gear) are
+   * only read with the shiftDrop option.
+   */
+  update(rpm: number, throttle: number, rateFactor: number, t: number, gear?: number, boxRpm?: number): void {
     if (this.disposed) return;
     const dt = this.lastT < 0 ? 0.016 : Math.min(0.1, Math.max(0, t - this.lastT));
     this.lastT = t;
+    if (this.shift) rpm = this.shift.step(rpm, gear, boxRpm, dt);
     rpm = Math.max(1, rpm);
     const thr = Math.min(1, Math.max(0, throttle));
     this.load += (thr - this.load) * (1 - Math.exp(-dt / (thr > this.load ? LOAD_UP : LOAD_DOWN)));
@@ -269,6 +347,7 @@ export class EngineVoice {
     }
     this.load = 0;
     this.lastT = -1;
+    this.shift?.reset();
   }
 
   /** Number of live buffer sources (for tests / diagnostics). */
@@ -295,6 +374,8 @@ export interface FieldCar {
   rpm: number; throttle: number; redline: number;
   family: string;
   trim?: number; muffler?: number;
+  /** Current gear and the road-speed clutch-side rpm in it (speed / wheel radius x ratio, x rpm_scale): read by shiftDrop. */
+  gear?: number; boxRpm?: number;
 }
 
 export interface Listener { pos: Vec3; vel: Vec3; quat?: [number, number, number, number] }
@@ -313,6 +394,8 @@ export interface FieldOptions {
   refDistance?: number;
   /** Lowest distance gain inside the range (before the edge fade). */
   floor?: number;
+  /** Upshift note shaping for every voice (VoiceOptions.shiftDrop); off by default. */
+  shiftDrop?: boolean;
 }
 
 export const FIELD_VOICES_DESKTOP = 8;
@@ -399,6 +482,7 @@ export class FieldAudio {
   private fetchFn: FetchFn;
   private ref: number;
   private floor: number;
+  private shiftDrop: boolean;
   private lastT = -1;
 
   constructor(private ctx: BaseAudioContext, private destination: AudioNode, opts: FieldOptions = {}) {
@@ -408,6 +492,7 @@ export class FieldAudio {
     this.fetchFn = opts.fetchFn ?? defaultFetch;
     this.ref = opts.refDistance ?? 5;
     this.floor = opts.floor ?? 0.04;
+    this.shiftDrop = opts.shiftDrop ?? false;
     this.indexP = opts.index
       ? Promise.resolve(opts.index)
       : this.fetchFn(this.base + 'index.json').then((r) => r.json() as Promise<FamilyIndex>).catch(() => null);
@@ -459,7 +544,7 @@ export class FieldAudio {
     panner.rolloffFactor = 0; // our own distance gain
     panner.refDistance = 1; panner.maxDistance = 1e4;
     panner.connect(this.destination);
-    const voice = new EngineVoice(ctx, panner, a);
+    const voice = new EngineVoice(ctx, panner, a, this.shiftDrop ? { shiftDrop: true } : {});
     const pv: PooledVoice = { voice, panner, family: fam, carId: null, releasedAt: -Infinity, doppler: 1 };
     this.pool.push(pv);
     return pv;
@@ -530,7 +615,7 @@ export class FieldAudio {
       const d = Math.hypot(c.pos[0] - listener.pos[0], c.pos[1] - listener.pos[1], c.pos[2] - listener.pos[2]);
       const df = dopplerFactor(listener.pos, listener.vel, c.pos, c.vel);
       pv.doppler += (df - pv.doppler) * (1 - Math.exp(-dt / 0.1));
-      pv.voice.update(c.rpm, c.throttle, pv.doppler, t);
+      pv.voice.update(c.rpm, c.throttle, pv.doppler, t, c.gear, c.boxRpm);
       pv.voice.fadeTo(distanceGain(d, this.range, this.ref, this.floor), t, FADE_IN_TAU);
       const P = pv.panner as PannerNode & Partial<Record<'positionX' | 'positionY' | 'positionZ', AudioParam>>;
       const ptau = fresh ? 0 : 0.01; // a (re)assigned voice jumps to its car while silent

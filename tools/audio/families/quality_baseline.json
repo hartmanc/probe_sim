@@ -1,0 +1,157 @@
+{
+ "modern_i4_stock": {
+  "seam_corr_med": 0.9025000000000001,
+  "bytes": 182910,
+  "loop_med": 0.4799,
+  "real_on": 23,
+  "real_off": 24,
+  "ratio_fail": 0,
+  "speech": 1,
+  "loop_fail": 48,
+  "idle_ok": false
+ },
+ "sohc_i4_loud": {
+  "seam_corr_med": 0.8254999999999999,
+  "bytes": 183299,
+  "loop_med": 0.48055000000000003,
+  "real_on": 23,
+  "real_off": 19,
+  "ratio_fail": 1,
+  "speech": 0,
+  "loop_fail": 46,
+  "idle_ok": false
+ },
+ "classic_v8_lowrev": {
+  "seam_corr_med": 0.7235,
+  "bytes": 168911,
+  "loop_med": 0.60825,
+  "real_on": 15,
+  "real_off": 10,
+  "ratio_fail": 3,
+  "speech": 1,
+  "loop_fail": 36,
+  "idle_ok": false
+ },
+ "vintage_i6": {
+  "seam_corr_med": 0.8405,
+  "bytes": 157125,
+  "loop_med": 0.6475,
+  "real_on": 14,
+  "real_off": 12,
+  "ratio_fail": 1,
+  "speech": 6,
+  "loop_fail": 36,
+  "idle_ok": false
+ },
+ "mazda_b_i4": {
+  "seam_corr_med": 0.732,
+  "bytes": 189963,
+  "loop_med": 0.42355,
+  "real_on": 21,
+  "real_off": 16,
+  "ratio_fail": 7,
+  "speech": 0,
+  "loop_fail": 52,
+  "idle_ok": false
+ },
+ "bmw_m20_i6": {
+  "seam_corr_med": 0.707,
+  "bytes": 172276,
+  "loop_med": 0.48119999999999996,
+  "real_on": 23,
+  "real_off": 13,
+  "ratio_fail": 3,
+  "speech": 0,
+  "loop_fail": 46,
+  "idle_ok": false
+ },
+ "gm_sbc_v8": {
+  "seam_corr_med": 0.681,
+  "bytes": 161875,
+  "loop_med": 0.5378000000000001,
+  "real_on": 21,
+  "real_off": 19,
+  "ratio_fail": 0,
+  "speech": 6,
+  "loop_fail": 42,
+  "idle_ok": false
+ },
+ "twincam_i4_loud": {
+  "seam_corr_med": 0.7315,
+  "bytes": 145810,
+  "loop_med": 0.5983499999999999,
+  "real_on": 13,
+  "real_off": 12,
+  "ratio_fail": 2,
+  "speech": 1,
+  "loop_fail": 28,
+  "idle_ok": false
+ },
+ "ohv_v6": {
+  "seam_corr_med": 0.8405,
+  "bytes": 174409,
+  "loop_med": 0.5185,
+  "real_on": 18,
+  "real_off": 16,
+  "ratio_fail": 1,
+  "speech": 13,
+  "loop_fail": 42,
+  "idle_ok": false
+ },
+ "toyota_1jz_turbo": {
+  "seam_corr_med": 0.823,
+  "bytes": 167147,
+  "loop_med": 0.4309,
+  "real_on": 22,
+  "real_off": 18,
+  "ratio_fail": 2,
+  "speech": 0,
+  "loop_fail": 50,
+  "idle_ok": false
+ },
+ "subaru_fa20_flat4": {
+  "seam_corr_med": 0.611,
+  "bytes": 174507,
+  "loop_med": 0.4021,
+  "real_on": 27,
+  "real_off": 21,
+  "ratio_fail": 2,
+  "speech": 4,
+  "loop_fail": 54,
+  "idle_ok": false
+ },
+ "vw_aircooled_flat4": {
+  "seam_corr_med": 0.7525,
+  "bytes": 154015,
+  "loop_med": 0.7194499999999999,
+  "real_on": 16,
+  "real_off": 12,
+  "ratio_fail": 2,
+  "speech": 10,
+  "loop_fail": 32,
+  "idle_ok": false
+ },
+ "mini_supercharged_i4": {
+  "seam_corr_med": 0.7825,
+  "bytes": 180145,
+  "loop_med": 0.4799,
+  "real_on": 20,
+  "real_off": 17,
+  "ratio_fail": 7,
+  "speech": 0,
+  "loop_fail": 48,
+  "idle_ok": false
+ },
+ "mazda_kl_v6": {
+  "seam_corr_med": 0.6505000000000001,
+  "bytes": 335710,
+  "loop_med": 0.84735,
+  "real_on": 20,
+  "real_off": 20,
+  "ratio_fail": 2,
+  "speech": 0,
+  "loop_fail": 45,
+  "idle_ok": false
+ },
+ "_doc": "Round one (release-040, 8d2608f) family summaries from quality.py, the baseline the seam-correlation gate compares against."
+}

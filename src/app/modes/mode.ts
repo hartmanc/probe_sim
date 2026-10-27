@@ -26,6 +26,8 @@ export interface FieldAudioCar {
   rpm: number; throttle: number; redline: number;
   family: string;
   trim?: number; muffler?: number;
+  /** current gear and the clutch-side rpm in it (race.ts boxRpmOf), for the voice's upshift shaping */
+  gear?: number; boxRpm?: number;
 }
 /**
  * The AI engine sounds as the race mode sees them: FieldAudio (audio-field.ts) satisfies this structurally.

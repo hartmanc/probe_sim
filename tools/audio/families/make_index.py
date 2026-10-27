@@ -35,14 +35,17 @@ def main(check: bool = False):
     F = json.load(open(os.path.join(HERE, "families.json")))
     fams = {}
     for fid, d in F["families"].items():
-        ej = os.path.join(OUT, fid, "engine.json")
+        src = d.get("alias_of", fid)  # an alias plays another family's sprites (one set of files, one credits set)
+        ej = os.path.join(OUT, src, "engine.json")
         if not os.path.exists(ej) and not check:
             continue
         idx = json.load(open(ej)) if os.path.exists(ej) else {}
         fams[fid] = {"cylinders": d["cylinders"], "layout": d["layout"], "redline": d["redline_rpm"],
-                     "idle": d["idle_rpm"], "engine": f"{fid}/engine.json",
-                     "sprites": {"on": f"{fid}/engine_on.ogg", "off": f"{fid}/engine_off.ogg"},
+                     "idle": d["idle_rpm"], "engine": f"{src}/engine.json",
+                     "sprites": {"on": f"{src}/engine_on.ogg", "off": f"{src}/engine_off.ogg"},
                      "real_bins": idx.get("real_bins"), "character": d.get("character")}
+        if src != fid:
+            fams[fid]["alias_of"] = src
     p = F["probe"]
     fams[p["id"]] = {"cylinders": p["cylinders"], "layout": p["layout"], "redline": p["redline_rpm"],
                      "idle": p["idle_rpm"], "engine": p["engine"], "sprites": p["sprites"], "note": p["note"]}
@@ -98,7 +101,7 @@ def refresh_real_bins():
     idx = json.load(open(p))
     for fid, f in idx["families"].items():
         ej = os.path.join(OUT, f["engine"])
-        if "real_bins" in f and os.path.exists(ej):
+        if "real_bins" in f and os.path.exists(ej):  # an alias reads its target's engine.json, so it follows too
             f["real_bins"] = json.load(open(ej))["real_bins"]
     json.dump(idx, open(p, "w"), indent=1)
 

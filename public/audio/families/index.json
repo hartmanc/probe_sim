@@ -13,8 +13,8 @@
     "off": "modern_i4_stock/engine_off.ogg"
    },
    "real_bins": {
-    "on": 23,
-    "off": 24
+    "on": 25,
+    "off": 17
    },
    "character": "modern DOHC/SOHC I4, stock muffler, quiet"
   },
@@ -39,16 +39,17 @@
    "layout": "v",
    "redline": 4800,
    "idle": 650,
-   "engine": "classic_v8_lowrev/engine.json",
+   "engine": "gm_sbc_v8/engine.json",
    "sprites": {
-    "on": "classic_v8_lowrev/engine_on.ogg",
-    "off": "classic_v8_lowrev/engine_off.ogg"
+    "on": "gm_sbc_v8/engine_on.ogg",
+    "off": "gm_sbc_v8/engine_off.ogg"
    },
    "real_bins": {
-    "on": 15,
-    "off": 10
+    "on": 23,
+    "off": 20
    },
-   "character": "lazy burbly big/old V8s"
+   "character": "lazy burbly big/old V8s",
+   "alias_of": "gm_sbc_v8"
   },
   "vintage_i6": {
    "cylinders": 6,
@@ -61,8 +62,8 @@
     "off": "vintage_i6/engine_off.ogg"
    },
    "real_bins": {
-    "on": 14,
-    "off": 12
+    "on": 10,
+    "off": 2
    },
    "character": "1950s-60s inline sixes"
   },
@@ -77,8 +78,8 @@
     "off": "mazda_b_i4/engine_off.ogg"
    },
    "real_bins": {
-    "on": 21,
-    "off": 16
+    "on": 25,
+    "off": 10
    },
    "character": "Miata B6/BP, loud open exhaust"
   },
@@ -93,8 +94,8 @@
     "off": "bmw_m20_i6/engine_off.ogg"
    },
    "real_bins": {
-    "on": 23,
-    "off": 13
+    "on": 25,
+    "off": 12
    },
    "character": "E30 M20 2.5, loud"
   },
@@ -109,8 +110,8 @@
     "off": "gm_sbc_v8/engine_off.ogg"
    },
    "real_bins": {
-    "on": 21,
-    "off": 19
+    "on": 23,
+    "off": 20
    },
    "character": "small-block Chevy with headers, loud"
   },
@@ -125,8 +126,8 @@
     "off": "twincam_i4_loud/engine_off.ogg"
    },
    "real_bins": {
-    "on": 13,
-    "off": 12
+    "on": 29,
+    "off": 23
    },
    "character": "4A-GE / Alfa twin-cam / Opel CIH stroker, loud"
   },
@@ -141,8 +142,8 @@
     "off": "ohv_v6/engine_off.ogg"
    },
    "real_bins": {
-    "on": 18,
-    "off": 16
+    "on": 15,
+    "off": 3
    },
    "character": "Ford Vulcan 3.0 / GM 60-degree 2.8 pushrod V6"
   },
@@ -157,8 +158,8 @@
     "off": "toyota_1jz_turbo/engine_off.ogg"
    },
    "real_bins": {
-    "on": 22,
-    "off": 18
+    "on": 26,
+    "off": 13
    },
    "character": "1JZ-GTE, turbo whistle"
   },
@@ -173,8 +174,8 @@
     "off": "subaru_fa20_flat4/engine_off.ogg"
    },
    "real_bins": {
-    "on": 27,
-    "off": 21
+    "on": 29,
+    "off": 19
    },
    "character": "FA20 boxer, stock"
   },
@@ -190,7 +191,7 @@
    },
    "real_bins": {
     "on": 16,
-    "off": 12
+    "off": 4
    },
    "character": "VW Type 1 air-cooled, loud"
   },
@@ -205,8 +206,8 @@
     "off": "mini_supercharged_i4/engine_off.ogg"
    },
    "real_bins": {
-    "on": 20,
-    "off": 17
+    "on": 25,
+    "off": 15
    },
    "character": "R53 Tritec with supercharger whine"
   },

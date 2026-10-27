@@ -33,22 +33,57 @@ import sys
 
 import numpy as np
 import soundfile as sf
-from scipy import signal
+from scipy import ndimage, signal
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.dirname(HERE))
 sys.path.insert(0, HERE)
 from common import FFMPEG, ROOT, SR  # noqa: E402
-from loopkit import (PAD, find_loop, highpass, make_loop, pitch_shift, rms_db, runs, spectral_gate,  # noqa: E402
+from loopkit import (PAD, XFADE, find_loop, highpass, make_loop, pitch_shift, rms_db, runs, spectral_gate,  # noqa: E402
                      transient_ratio, warp_flat)
+import speechcheck as sc  # noqa: E402
 import track_unseeded as tu  # noqa: E402
 
 CACHE = os.path.join(HERE, "cache")
 OUT_BASE = os.path.join(ROOT, "public", "audio", "families")
 PREV = os.path.join(HERE, "previews")
 TARGET_RMS_DB = -24.0
-BUDGET_BYTES = 200_000
 KBPS = 48
+# round two (26 Oct 2026): the quality gates (quality.py GATES) are build rules. Loops at least LOOP_MIN_S and
+# LOOP_CYCLES engine cycles long (the old 200 KB budget gave 0.4-0.6 s loops that repeat audibly), every bin either
+# real or pitch-shifted within the on / off ratio window of a real recording, a real idle bin, no speech.
+LOOP_MIN_S, LOOP_CYCLES, LOOP_MAX_S = 1.0, 8, 1.5
+RATIO = {"on": (0.88, 1.14), "off": (0.85, 1.18)}
+REAL_TIERS = ("steady", "sweep", "idle")
+# at cut time a loop is rejected at well under the gate's speech share (speechcheck.SPEECH_RULE), so a pitch-shifted copy of
+# a borderline loop cannot cross the gate
+CUT_SPEECH_SHARE = 0.03
+
+
+def loop_need(B: float) -> float:
+    """Shortest loop allowed at bin rpm B, s: 1.0 s and at least 8 engine cycles (2 revs each)."""
+    return max(LOOP_MIN_S, LOOP_CYCLES * 120.0 / B)
+
+
+def loop_target(B: float) -> float:
+    """Longest loop searched at bin rpm B: the need plus a little over one engine cycle (find_loop takes whole cycles),
+    capped at LOOP_MAX_S above 1000 rpm."""
+    return max(min(LOOP_MAX_S, loop_need(B) + 0.15), loop_need(B) + 1.05 * 120.0 / B)
+
+
+def bin_grid(idle: int, redline: int) -> list:
+    """The idle bin, then multiples of 125 rpm up to 1000 (no two bins more than x1.25 apart at the bottom), then
+    250 rpm steps to the first bin at or above the redline."""
+    idle = int(idle)
+    bins = [idle]
+    b = (idle // 125 + 1) * 125
+    while b < 1000:
+        if b > idle + 60:
+            bins.append(b)
+        b += 125
+    hi = int(np.ceil(redline / 250.0) * 250)
+    bins += [x for x in range(1000, hi + 1, 250) if x > idle + 60]
+    return bins
 
 
 # ---------------------------------------------------------------- inputs
@@ -117,59 +152,145 @@ def octave_check(res: dict, defs: dict, e: dict) -> float:
     return f
 
 
+def speech_map(x: np.ndarray, cp: str) -> np.ndarray:
+    """Silero speech probability per 32 ms of the whole source (16 kHz), cached; candidates that overlap speech are
+    never cut (round two: the 'weird speech' in modern_i4_stock was a narrated stretch)."""
+    if os.path.exists(cp):
+        return np.load(cp)["p"]
+    from speechcheck import silero_probs
+    x16 = signal.resample_poly(x.astype(np.float64), 1, 3)
+    g = 10 ** (-20 / 20) / (np.sqrt(np.mean(x16 ** 2)) + 1e-12)
+    p = silero_probs(x16 * g).astype(np.float32)
+    np.savez_compressed(cp, p=p)
+    return p
+
+
+def track_speed(defs: dict) -> int:
+    """V8s are tracked on the audio played at double speed (round two): their half-order ladder at 650-2000 rpm is
+    5-17 Hz apart, inside the tracker's 170 ms window resolution, so the comb contrast stayed near 0 dB on every old-V8
+    source; at x2 the same window spans 340 ms of the engine and the median contrast rises from ~0.1 to 1-2.4 dB
+    (idle, dyno and autocross clips), with the idle read where the cycle autocorrelation puts it."""
+    return 2 if defs["cylinders"] == 8 else 1
+
+
+def run_track(x: np.ndarray, defs: dict, rpm_max: float, rpm_min: float) -> dict:
+    k = track_speed(defs)
+    xs = signal.resample_poly(x.astype(np.float64), 1, k) if k > 1 else x
+    r = tu.track(xs, defs["cylinders"], defs["fire"], defs["layout"], rpm_max=rpm_max * k, rpm_min=rpm_min * k)
+    if k > 1:
+        r["rpm"] = (r["rpm"] / k).astype(np.float32)
+        r["t"] = r["t"] * k
+        r["slope"] = (r["slope"] / (k * k)).astype(np.float32)
+    return r
+
+
+def frame_s(r: dict) -> float:
+    return float(r["t"][1] - r["t"][0]) if len(r["t"]) > 1 else tu.FRAME
+
+
+def idle_track(x: np.ndarray, defs: dict, res: dict, cp: str):
+    """Idle stretches. The full-range tracker reads a quiet idle an octave up (the I4's order 2 at 750 rpm is 25 Hz, the
+    bottom of the comb band), so idle gets its own track over 0.6-2.2 x the family idle. A frame is idle when that
+    track is confident and steady, off the search edges, and the source is quiet there (bottom 40 % of its frame
+    levels): a car standing still, engine running. Returns a tracker-like dict or None."""
+    idle = defs["idle_rpm"]
+    if os.path.exists(cp):
+        ri = dict(np.load(cp))
+    else:
+        ri = run_track(x, defs, 2.2 * idle, 0.6 * idle)
+        ri = {k: ri[k] for k in ("t", "rpm", "conf", "slope", "octave_margin")}
+        np.savez_compressed(cp, **ri)
+    t = ri["t"]
+    n = min(len(t), len(res["t"]))
+    fl = int(0.05 * SR)
+    lev = np.array([np.sqrt(np.mean(x[max(0, int(tt * SR) - fl // 2):int(tt * SR) + fl // 2] ** 2) + 1e-12) for tt in t[:n]])
+    quiet = 20 * np.log10(lev) <= np.percentile(20 * np.log10(lev), 50)
+    # (the full track is no check here: it reads a quiet idle at 2-6x)
+    inside = (ri["rpm"][:n] > 0.62 * idle) & (ri["rpm"][:n] < 2.1 * idle)  # not pinned to the search edge
+    ok = (ri["conf"][:n] >= 1.5) & (np.abs(ri["slope"][:n]) < 120) & inside & quiet & ~res["speech"][:n]
+    ok = signal.medfilt(ok.astype(np.float64), 7) > 0.5
+    if ok.sum() < int(1.2 / frame_s(ri)):
+        return None
+    return {"t": t[:n], "rpm": ri["rpm"][:n], "conf": ri["conf"][:n], "slope": ri["slope"][:n],
+            "octave_margin": np.full(n, 1.0, np.float32), "load": np.zeros(n, np.int8), "speech": ~ok,
+            "main_order": res["main_order"], "octave": 1.0, "label_name": res["label_name"] + "-idle"}
+
+
 def tracks(fam: str, defs: dict, src: dict, force: bool):
     """Per entry: {'x': audio, 'res': tracker output, 'meta': entry}."""
     T = {}
+    rpm_min = min(tu.RPM_MIN, 0.8 * defs["idle_rpm"])
     for k, e in enumerate(src["entries"]):
         if e.get("skip"):
             continue
-        p = entry_file(e, fam, k)
+        try:
+            p = entry_file(e, fam, k)
+        except Exception as ex:
+            print(f"  src{k}: NOT AVAILABLE ({type(ex).__name__}), skipped this build: {e.get('title', '')[:60]}")
+            continue
         x = read_span(p, float(e.get("t0", 0.0)), e.get("t1"))
-        key = hashlib.sha1(json.dumps([p, e.get("t0"), e.get("t1"), defs, 6]).encode()).hexdigest()[:10]
+        key = hashlib.sha1(json.dumps([os.path.basename(p), e.get("t0"), e.get("t1"), defs, 7, rpm_min, track_speed(defs)]).encode()).hexdigest()[:10]
         cp = os.path.join(CACHE, f"track_{fam}_{k}_{key}.npz")
         if os.path.exists(cp) and not force:
             res = dict(np.load(cp))
         else:
-            res = tu.track(x, defs["cylinders"], defs["fire"], defs["layout"],
-                           rpm_max=min(tu.RPM_MAX, defs["redline_rpm"] * 1.15))
+            res = run_track(x, defs, min(tu.RPM_MAX, defs["redline_rpm"] * 1.15), rpm_min)
             np.savez_compressed(cp, **res)
+        sp = speech_map(x, os.path.join(CACHE, f"speech_{fam}_{k}_{key}.npz"))
+        # per tracker frame: speech within +-0.3 s
+        tf = res["t"]
+        ps = np.interp(tf, (np.arange(len(sp)) + 0.5) * 0.032, sp) if len(sp) else np.zeros(len(tf))
+        sm = ps > 0.5
+        sm = ndimage.binary_dilation(sm, iterations=int(round(0.3 / frame_s(res)))) if sm.any() else sm
+        res["speech"] = sm
         res["octave"] = octave_check(res, defs, e)
         res["label_name"] = f"src{k}"
         T[k] = {"x": x, "res": res, "meta": e, "t0": float(e.get("t0", 0.0))}
+        ri = idle_track(x, defs, res, os.path.join(CACHE, f"idle3_{fam}_{k}_{key}.npz"))
+        if ri is not None:
+            T[f"{k}i"] = {"x": x, "res": ri, "meta": e, "t0": float(e.get("t0", 0.0)), "idle_only": True, "of": k}
         r = res
         good = r["conf"] > 2.0
         print(f"  src{k}: {len(x) / SR:.0f} s, conf median {np.median(r['conf']):.1f} dB, "
               f"{100 * good.mean():.0f}% frames > 2 dB, rpm p5-p95 {np.percentile(r['rpm'][good], 5) if good.any() else 0:.0f}"
               f"-{np.percentile(r['rpm'][good], 95) if good.any() else 0:.0f}, on {100 * np.mean(r['load'] == 1):.0f}% "
-              f"off {100 * np.mean(r['load'] == -1):.0f}%, octave x{r['octave']:g}  ({e.get('title', '')[:50]})")
+              f"off {100 * np.mean(r['load'] == -1):.0f}%, octave x{r['octave']:g}, speech {100 * np.mean(r['speech']):.0f}%  ({e.get('title', '')[:50]})")
     return T
 
 
 # ---------------------------------------------------------------- candidates and processing
 
-def candidates(T: dict, B: int, load: str, tol: float, min_s: float, conf_min: float):
+def candidates(T: dict, B: int, load: str, tol: float, min_s: float, conf_min: float, span_s: float = 1.0):
+    """load 'on' / 'off' / 'idle' (idle: steady near B, any label, |slope| < 150 rpm/s)."""
     out = []
-    want = 1 if load == "on" else -1
+    want = {"on": 1, "off": -1}.get(load, 0)
     for k, d in T.items():
+        if bool(d.get("idle_only")) != (load == "idle"):
+            continue
         r = d["res"]
         ra = r["rpm"]
-        lab = r["load"] == want
+        if load == "idle":
+            lab = np.abs(r["slope"]) < 100
+        else:
+            lab = r["load"] == want
         if load == "off":  # overrun: clearly falling, not a clutch-in shift drop
             lab &= (r["slope"] < -150) & (r["slope"] > -3000)
         m = (np.abs(ra - B) <= tol) & lab & (r["conf"] >= conf_min) & (r["octave_margin"] > -0.5)
         # bridge 1-2 frame dropouts
         m = signal.medfilt(m.astype(np.float64), 5) > 0.5
+        m &= ~r["speech"]
         for s, e in runs(m):
-            dur = (e - s) * tu.FRAME
+            FR = frame_s(r)
+            dur = (e - s) * FR
             if dur < min_s:
                 continue
-            span = int(round(1.0 / tu.FRAME))
+            span = int(round(span_s / FR))
             best = None
             for a in range(s, max(s + 1, e - span + 1), 4):
                 b = min(e, a + span)
                 c = float(np.mean(r["conf"][a:b]))
                 sd = float(np.std(ra[a:b] - np.polyval(np.polyfit(np.arange(b - a), ra[a:b], 1), np.arange(b - a)))) if b - a > 3 else 0.0
-                score = c - sd / 40.0 + 1.5 * min((b - a) * tu.FRAME, 0.9) + 0.3 * float(np.mean(r["octave_margin"][a:b]))
+                score = c - sd / 40.0 + 1.5 * min((b - a) * FR, 0.9) + 0.3 * float(np.mean(r["octave_margin"][a:b]))
                 if best is None or score > best[0]:
                     best = (score, a, b)
             out.append((best[0], k, best[1], best[2]))
@@ -177,25 +298,27 @@ def candidates(T: dict, B: int, load: str, tol: float, min_s: float, conf_min: f
     return out
 
 
-def process(T: dict, cand, B: int, main_order: float, max_len: float):
+def process(T: dict, cand, B: int, main_order: float, max_len: float, min_len: float | None = None):
     _, k, a, b = cand
     d = T[k]
     r = d["res"]
     t = r["t"]
-    t0 = max(0.0, t[a] - 0.3)
-    t1 = min(len(d["x"]) / SR, t[b - 1] + 0.3)
+    t0 = max(0.0, t[a] - 0.25)
+    t1 = min(len(d["x"]) / SR, t[b - 1] + 0.25)
     x = d["x"][int(t0 * SR):int(t1 * SR)].astype(np.float64)
     fr = (t >= t0) & (t <= t1)
     y, wobble = warp_flat(x, t[fr] - t0, r["rpm"][fr], np.clip(r["conf"][fr], 0.1, None), B)
     y = highpass(spectral_gate(y, B, -10.0, order_step=min(1.0, main_order)))
     trim = int(0.2 * SR)
-    if len(y) - 2 * trim > 2 * PAD + int(0.3 * SR):
+    if len(y) - 2 * trim > 2 * PAD + XFADE + int((min_len or 0.3) * SR):
         y = y[trim:len(y) - trim]
-    a_, L, rho, n_cyc = find_loop(y, B, max_len_s=max_len, min_len_s=0.8 * max_len)
+    a_, L, rho, n_cyc = find_loop(y, B, max_len_s=max_len, min_len_s=min_len or 0.8 * max_len)
+    if min_len and L < min_len * SR * 0.995:
+        raise ValueError(f"loop {L / SR:.2f} s < {min_len:.2f} s")
     loop = make_loop(y, a_, L, rho)
     return {"loop": loop, "rho": rho, "tick": transient_ratio(loop), "rpm": n_cyc * 120.0 * SR / L,
-            "n_cycles": n_cyc, "wobble": wobble, "name": f"src{k}", "src": k,
-            "t": float(d["t0"] + t[a]), "dur_src": float((b - a) * tu.FRAME),
+            "n_cycles": n_cyc, "wobble": wobble, "name": f"src{d.get('of', k)}", "src": d.get("of", k),
+            "t": float(d["t0"] + t[a]), "dur_src": float((b - a) * frame_s(r)),
             "contrast": float(np.mean(r["conf"][a:b])), "long": y, "raw": highpass(x)}
 
 
@@ -225,6 +348,143 @@ def darken(p: dict, fc: float = 1800.0) -> dict:
 
 # ---------------------------------------------------------------- main build
 
+def chain_loop(ys: list, B: float, need: float):
+    """A loop of 2 or 3 real segments at the same rpm: [A | B (| C)], each a whole number of engine cycles; each
+    segment's head is crossfaded with what follows the previous segment's tail in its own recording (the same
+    power-preserving crossfade as make_loop), the start points chosen to maximise the weakest join correlation. The
+    repeat is need s or longer although no single recording holds a steady need s. Returns (loop, rho_min) or None."""
+    n = len(ys)
+    m = SR * 120.0 / B
+    ncyc = [int(np.ceil(need * SR / n / m))] * n
+    Ls = [int(round(c * m)) for c in ncyc]
+    band = lambda y: signal.sosfiltfilt(signal.butter(2, [60, 3000], "bandpass", fs=SR, output="sos"), y)
+    bs = [band(y) for y in ys]
+    step = int((0.004 if n == 2 else 0.008) * SR)
+    starts = [np.arange(PAD, len(y) - L - XFADE - PAD, step) for y, L in zip(ys, Ls)]
+    if any(len(st) < 1 for st in starts):
+        return None
+
+    def win(b, st):
+        W = np.stack([b[s0:s0 + XFADE] for s0 in st])
+        return W / (np.linalg.norm(W, axis=1, keepdims=True) + 1e-12)
+    heads = [win(b, st) for b, st in zip(bs, starts)]
+    tails = [win(b, st + L) for b, st, L in zip(bs, starts, Ls)]
+    # J[i]: head of segment (i+1) % n against the tail of segment i, shape [starts_i, starts_{i+1}]
+    J = [tails[i] @ heads[(i + 1) % n].T for i in range(n)]
+    if n == 2:
+        sc_ = np.minimum(J[0], J[1].T)
+        i0, i1 = np.unravel_index(int(np.argmax(sc_)), sc_.shape)
+        idx = [int(i0), int(i1)]
+        rho = float(sc_[i0, i1])
+    else:
+        best = (-2.0, None)
+        for i1 in range(len(starts[1])):
+            sc_ = np.minimum(np.minimum(J[0][:, i1][:, None], J[1][i1, :][None, :]), J[2].T)
+            k = int(np.argmax(sc_))
+            if sc_.flat[k] > best[0]:
+                i0, i2 = np.unravel_index(k, sc_.shape)
+                best = (float(sc_.flat[k]), [int(i0), i1, int(i2)])
+        rho, idx = best
+    st = [int(starts[i][idx[i]]) for i in range(n)]
+    segs = [ys[i][st[i]:st[i] + Ls[i]].copy() for i in range(n)]
+    gs = [np.sqrt(np.mean(sg ** 2)) + 1e-12 for sg in segs]
+    g = float(np.exp(np.mean(np.log(gs))))
+    sx = (np.arange(XFADE) + 0.5) / XFADE
+    out = []
+    for i in range(n):
+        prev = (i - 1) % n
+        cont = ys[prev][st[prev] + Ls[prev]:st[prev] + Ls[prev] + XFADE] * g / gs[prev]
+        head = segs[i][:XFADE] * g / gs[i]
+        r = float(np.clip(J[prev][idx[prev], idx[i]], 0.0, 1.0))
+        kk = 1.0 / np.sqrt(sx * sx + (1 - sx) ** 2 + 2 * r * sx * (1 - sx))
+        seg = segs[i] * g / gs[i]
+        seg[:XFADE] = sx * kk * head + (1 - sx) * kk * cont
+        out.append(seg)
+    return np.concatenate(out), rho
+
+
+def best_pair(T, cs, B, main_order, defs, need, tier, n_seg: int = 2):
+    """n_seg (2 or 3) shorter real candidates joined into one loop (chain_loop), for a bin where no single stretch is
+    long enough. Segments must match in timbre (1/3-octave envelope within 6 dB on average)."""
+    seg = need / n_seg + 1.05 * 120.0 / B
+    procs = []
+    for c in cs[:7]:
+        try:
+            p = process(T, c, B, main_order, seg, min(seg, 0.3))
+        except Exception:
+            continue
+        if not order_ok(p["loop"], p["rpm"], defs["cylinders"]) or p["tick"] > 8.0:
+            continue
+        procs.append(p)
+
+    def env(y):
+        X = np.abs(np.fft.rfft(y * np.hanning(len(y)))) ** 2
+        fr = np.fft.rfftfreq(len(y), 1 / SR)
+        edges = 63 * 2 ** (np.arange(0, 22) / 3)
+        e = np.array([10 * np.log10(X[(fr >= lo) & (fr < hi)].sum() + 1e-20) for lo, hi in zip(edges[:-1], edges[1:])])
+        return e - e.mean()
+    envs = [env(p["loop"]) for p in procs]
+    import itertools
+    best = None
+    for combo in itertools.combinations(range(len(procs)), n_seg):
+        ps = [procs[i] for i in combo]
+        if any(a["src"] == b["src"] and abs(a["t"] - b["t"]) < 0.3 for a, b in itertools.combinations(ps, 2)):
+            continue
+        mis = max(float(np.mean(np.abs(envs[i] - envs[j]))) for i, j in itertools.combinations(combo, 2))
+        if mis > 6.0:
+            continue
+        r = chain_loop([p["long"] for p in ps], B, need)
+        if r is None:
+            continue
+        loop, rho = r
+        if rho < 0.3:
+            continue
+        tick = transient_ratio(loop)
+        if tick > 8.0:
+            continue
+        score = float(np.mean([p["contrast"] for p in ps])) + 8.0 * rho - 0.5 * mis - 2.0 * max(0.0, tick - 2.5)
+        if best is None or score > best[0]:
+            best = (score, ps, loop, rho, tick, mis)
+    if best is None:
+        return None
+    _, ps, loop, rho, tick, mis = best
+    sf_ = sc.speech_features(loop, B, periodic=True)
+    if sf_["silero_share"] >= CUT_SPEECH_SHARE:
+        return None
+    q = dict(ps[0])
+    q.update({"loop": loop, "rho": rho, "tick": tick, "name2": " + ".join(p["name"] for p in ps[1:]),
+              "t2": ps[1]["t"], "parts": [(p["name"], round(p["t"], 2)) for p in ps],
+              "long": np.concatenate([p["long"] for p in ps]), "pair_mismatch_db": mis})
+    m = SR * 120.0 / B
+    q["rpm"] = (round(len(loop) / m) * 120.0 * SR) / len(loop)
+    return q
+
+
+def best_loop(T, cs, B, main_order, defs, need, tgt, tier):
+    best = None
+    for c in cs[:12]:
+        try:
+            p = process(T, c, B, main_order, tgt, need)
+        except Exception as ex:  # too short to loop etc.
+            print(f"    skip candidate {c[1:]}: {ex}")
+            continue
+        if not order_ok(p["loop"], p["rpm"], defs["cylinders"]):
+            continue  # strongest order off the firing ladder: an octave-slipped label
+        if p["tick"] > 8.0:  # a click / knock repeating once per loop: rather pitch-shift a neighbour
+            continue
+        sf_ = sc.speech_features(p["loop"], p["rpm"], periodic=True)
+        if sf_["silero_share"] >= CUT_SPEECH_SHARE:
+            print(f"    reject candidate {c[1:]}: speech in the loop (silero share {sf_['silero_share']})")
+            continue
+        # round two: the seam weighs double (a 1 s loop's seam is its one audible event per repeat)
+        score = p["contrast"] + 8.0 * p["rho"] - 2.0 * max(0.0, p["tick"] - 2.5) - 60 * p["wobble"] * (tier in ("steady", "idle"))
+        if best is None or score > best[0]:
+            best = (score, p)
+    if best is None or best[1]["rho"] < 0.2:
+        return None
+    return best[1]
+
+
 def build(fam: str, force_track: bool = False, bin_step: int | None = None):
     defs, src = load_defs(fam)
     print(f"{fam}: {defs}")
@@ -232,91 +492,155 @@ def build(fam: str, force_track: bool = False, bin_step: int | None = None):
     if not T:
         raise SystemExit("no usable source entries")
     main_order = float(next(iter(T.values()))["res"]["main_order"])
-    lo = 750 if defs["idle_rpm"] < 700 else 1000
-    hi = int(np.ceil(defs["redline_rpm"] / 250.0) * 250)
-    step = bin_step or 250
-    # loop length from the size budget: ~(budget − json) at KBPS split over both sprites
-    sec_total = (BUDGET_BYTES - 12_000) * 8 / (KBPS * 1000) * 0.93
-    nb = len(range(lo, hi + 1, step))
-    max_len = sec_total / 2 / nb - 2 * PAD / SR - 0.4 / nb
-    if max_len < 0.42 and bin_step is None:
-        step = 500
-        nb = len(range(lo, hi + 1, step))
-        max_len = sec_total / 2 / nb - 2 * PAD / SR - 0.4 / nb
-    max_len = float(min(1.0, max_len))
-    BINS = list(range(lo, hi + 1, step))
-    allconf = np.concatenate([d["res"]["conf"] for d in T.values()])
+    allconf = np.concatenate([d["res"]["conf"] for d in T.values() if not d.get("idle_only")])
     conf_min = max(1.2, float(np.percentile(allconf, 35)))
-    print(f"  bins {lo}..{hi} step {step} ({nb}), loop <= {max_len:.2f} s, conf_min {conf_min:.2f} dB")
-
     chosen = {"on": {}, "off": {}}
+    # the idle bin: a steady idle recording (neither label), the same loop for both loads. It sits at the recording's
+    # own rpm, which must play the family idle within the pitch window of both loads (x0.88-1.14)
+    idle = defs["idle_rpm"]
+    lo_r, hi_r = idle / RATIO["on"][1], idle / RATIO["on"][0]
+    c_r, tol_r = 0.5 * (lo_r + hi_r), 0.5 * (hi_r - lo_r)
+    p = None
+    for n_seg in (1, 2, 3):
+        need0 = loop_need(c_r)
+        cs = candidates(T, c_r, "idle", tol_r, need0 / n_seg + (0.35 if n_seg == 1 else 0.2), min(1.5, 0.8 * conf_min),
+                        span_s=need0 / n_seg + 0.5)
+        # prefer stretches whose own rpm is nearest the family idle
+        cs = sorted(cs, key=lambda c: (abs(float(np.median(T[c[1]]["res"]["rpm"][c[2]:c[3]])) - idle) > 0.06 * idle, -c[0]))
+        if not cs:
+            continue
+        B0 = int(round(float(np.median(T[cs[0][1]]["res"]["rpm"][cs[0][2]:cs[0][3]])) / 5.0) * 5)
+        need, tgt = loop_need(B0), loop_target(B0)
+        if n_seg == 1:
+            p = best_loop(T, cs, B0, main_order, defs, need, tgt, "idle")
+        elif len(cs) >= n_seg:
+            p = best_pair(T, cs, B0, main_order, defs, need, "idle", n_seg)
+        if p is not None:
+            break
+    if p is not None:
+        p["tier"], p["bin"] = "idle", B0
+        chosen["on"][B0] = chosen["off"][B0] = p
+        print(f"  idle {B0:5d} idle   {p['name']} t={p['t']:.2f} conf={p['contrast']:.1f} rho={p['rho']:.3f} "
+              f"loop={len(p['loop']) / SR:.3f}s rpm_eff={p['rpm']:.1f}")
+    else:
+        B0 = idle
+        print(f"  idle {idle}: no steady idle stretch within the window found")
+    BINS = bin_grid(B0, defs["redline_rpm"])
+    print(f"  bins {BINS[0]}..{BINS[-1]} ({len(BINS)}): {BINS[:6]}..., loops >= max(1.0 s, 8 cycles), conf_min {conf_min:.2f} dB")
     for load in ("on", "off"):
         for B in BINS:
-            tier = "steady"
-            cs = candidates(T, B, load, 120, 0.45, conf_min)
-            if not cs:
-                tier = "sweep"
-                cs = candidates(T, B, load, 0.09 * B + 80, 0.3, conf_min)
-            if not cs:
+            if B in chosen[load]:
                 continue
-            best = None
-            for c in cs[:8]:
-                try:
-                    p = process(T, c, B, main_order, max_len)
-                except Exception as ex:  # too short to loop etc.
-                    print(f"    skip candidate {c}: {ex}")
-                    continue
-                if not order_ok(p["loop"], p["rpm"], defs["cylinders"]):
-                    continue  # strongest order off the firing ladder: an octave-slipped label
-                if p["tick"] > 8.0:  # a click / knock repeating once per loop: rather pitch-shift a neighbour
-                    continue
-                score = p["contrast"] + 4.0 * p["rho"] - 2.0 * max(0.0, p["tick"] - 2.5) - 60 * p["wobble"] * (tier == "steady")
-                if best is None or score > best[0]:
-                    best = (score, p)
-            if best is None or best[1]["rho"] < 0.2:
+            need, tgt = loop_need(B), loop_target(B)
+            p = None
+            for tier, tol, min_s in (("steady", min(120.0, 0.06 * B), need + 0.35), ("sweep", min(0.09 * B + 80, 0.11 * B), need + 0.25)):
+                cs = candidates(T, B, load, tol, min_s, conf_min, span_s=need + 0.5)
+                if cs:
+                    p = best_loop(T, cs, B, main_order, defs, need, tgt, tier)
+                for n_seg in (2, 3):  # two or three shorter real stretches joined
+                    if p is not None:
+                        break
+                    cs = candidates(T, B, load, tol, need / n_seg + 0.2, conf_min, span_s=need / n_seg + 0.45)
+                    if len(cs) >= n_seg:
+                        p = best_pair(T, cs, B, main_order, defs, need, tier, n_seg)
+                if p is not None:
+                    p["tier"] = tier
+                    break
+            if p is None and B <= 2.0 * defs["idle_rpm"]:
+                # near idle neither label is reliable: a steady unloaded stretch at this rpm (a high idle, rolling
+                # in neutral) serves both loads, as the idle bin does
+                for n_seg, itol in ((1, min(60.0, 0.07 * B)), (2, min(60.0, 0.07 * B)), (3, min(60.0, 0.07 * B)),
+                                    (1, 0.11 * B), (2, 0.11 * B), (3, 0.11 * B)):
+                    cs = candidates(T, B, "idle", itol, need / n_seg + (0.35 if n_seg == 1 else 0.2),
+                                    min(1.5, 0.8 * conf_min), span_s=need / n_seg + 0.5)
+                    if n_seg == 1 and cs:
+                        p = best_loop(T, cs, B, main_order, defs, need, tgt, "idle")
+                    elif len(cs) >= n_seg:
+                        p = best_pair(T, cs, B, main_order, defs, need, "idle", n_seg)
+                    if p is not None:
+                        p["tier"] = "idle"
+                        other = "off" if load == "on" else "on"
+                        chosen[other].setdefault(B, p)
+                        break
+            if p is None:
                 continue
-            p = best[1]
-            p["tier"], p["bin"] = tier, B
+            p["bin"] = B
             chosen[load][B] = p
-            print(f"  {load:3s} {B:5d} {tier:6s} {p['name']} t={p['t']:.2f} conf={p['contrast']:.1f} rho={p['rho']:.3f} "
+            print(f"  {load:3s} {B:5d} {p['tier']:6s} {p['name']} t={p['t']:.2f} conf={p['contrast']:.1f} rho={p['rho']:.3f} "
                   f"tick={p['tick']:.1f} loop={len(p['loop']) / SR:.3f}s rpm_eff={p['rpm']:.1f}")
 
     if not chosen["on"] and not chosen["off"]:
         raise SystemExit("no bin found any candidate")
-    # a load with no real bin at all borrows the other load (darkened for the overrun)
     borrowed = {}
-    for load, other in (("on", "off"), ("off", "on")):
-        if not chosen[load] and chosen[other]:
-            borrowed[load] = other
-            for B, p in chosen[other].items():
-                q = darken(p) if load == "off" else dict(p)
-                q["tier"] = f"from-{other}"
-                chosen[load][B] = q
-    on_db = {B: rms_db(p["loop"]) for B, p in chosen["on"].items()}
-    off_db = {B: rms_db(p["loop"]) for B, p in chosen["off"].items()}
+    on_db = {B: rms_db(p["loop"]) for B, p in chosen["on"].items() if p["tier"] != "idle"}
+    off_db = {B: rms_db(p["loop"]) for B, p in chosen["off"].items() if p["tier"] != "idle"}
     both = sorted(set(on_db) & set(off_db))
     diffs = np.array([off_db[B] - on_db[B] for B in both]) if both else np.array([])
     # one constant gap: the recordings differ in gain and distance, so a slope over rpm fitted across them is noise
-    gap = float(np.clip(np.median(diffs), -9.0, -4.0)) if (len(both) >= 3 and not borrowed) else -6.0
-    fit = np.array([0.0, gap])
-    print("  off-on level fit", fit)
+    gap = float(np.clip(np.median(diffs), -9.0, -4.0)) if len(both) >= 3 else -6.0
+    print("  off-on level gap", round(gap, 2))
 
     final = {"on": {}, "off": {}}
+    gate_fail = []
     for load in ("on", "off"):
-        real = sorted(chosen[load])
+        other = "off" if load == "on" else "on"
+        lo, hi = RATIO[load]
         for B in BINS:
             if B in chosen[load]:
                 final[load][B] = chosen[load][B]
                 continue
-            sb = min(real, key=lambda R: (abs(R - B), -R))
-            s = dict(chosen[load][sb])
-            s["bin"] = sb
-            need = (max_len + 2 * PAD / SR + 0.25) * SR * (B / s["rpm"])
-            if len(s["long"]) < need:  # a short segment shifted up: tile its (seamless) loop instead
-                s["long"] = np.tile(s["loop"], int(np.ceil(need / len(s["loop"]))) + 1)
-            p = pitch_shift(s, B, max_len_s=max_len)
-            p["tier"], p["bin"] = "pitch-shifted", B
+            need, tgt = loop_need(B), loop_target(B)
+            # 1. a real loop of the same load within the ratio window, 2. a real loop of the other load at this rpm
+            # (darkened for the overrun), 3. the nearest same-load loop anyway (a gate failure, reported)
+            same = sorted([R for R, q in chosen[load].items() if lo <= B / q["rpm"] <= hi],
+                          key=lambda R: (abs(np.log(B / chosen[load][R]["rpm"])), -R))
+            oth = sorted([R for R, q in chosen[other].items() if lo <= B / q["rpm"] <= hi and q["tier"] != "idle"],
+                         key=lambda R: (abs(np.log(B / chosen[other][R]["rpm"])), -R))
+            opts = [(R, chosen[load], "pitch-shifted") for R in same] + [(R, chosen[other], f"from-{other}") for R in oth]
+            if not opts:
+                real = sorted(chosen[load]) or sorted(chosen[other])
+                pool = chosen[load] if chosen[load] else chosen[other]
+                sb = min(real, key=lambda R: (abs(R - B), -R))
+                gate_fail.append(f"{load} {B} from {sb} x{B / pool[sb]['rpm']:.3f}")
+                opts = [(sb, pool, "pitch-shifted")]
+            p = None
+            for sb, pool, how in opts:
+                s_ = dict(pool[sb])
+                if how == "from-on" and load == "off":
+                    s_ = darken(s_)
+                s_["bin"] = sb
+                need_n = (tgt + 2 * PAD / SR + 0.25) * SR * (B / s_["rpm"])
+                if len(s_["long"]) < need_n:  # a short segment shifted up: tile its (seamless) loop instead
+                    s_["long"] = np.tile(s_["loop"], int(np.ceil(need_n / len(s_["loop"]))) + 1)
+                q = pitch_shift(s_, B, max_len_s=tgt, min_len_s=need)
+                if sc.speech_features(q["loop"], B, periodic=True)["silero_share"] >= CUT_SPEECH_SHARE:
+                    print(f"    {load} {B}: the copy of the {sb} loop reads as speech; trying the next")
+                    continue
+                p = q
+                break
+            if p is None:
+                # no in-window copy is free of speech: the nearest speech-free copy from further away (a ratio-gate
+                # failure, reported) rather than a voice
+                far = sorted([(R, chosen[load]) for R in chosen[load]] + [(R, chosen[other]) for R in chosen[other]],
+                             key=lambda z: abs(np.log(B / z[1][z[0]]["rpm"])))
+                for sb, pool in far:
+                    s_ = dict(pool[sb])
+                    s_["bin"] = sb
+                    need_n = (tgt + 2 * PAD / SR + 0.25) * SR * (B / s_["rpm"])
+                    if len(s_["long"]) < need_n:
+                        s_["long"] = np.tile(s_["loop"], int(np.ceil(need_n / len(s_["loop"]))) + 1)
+                    q = pitch_shift(s_, B, max_len_s=tgt, min_len_s=need)
+                    if sc.speech_features(q["loop"], B, periodic=True)["silero_share"] < CUT_SPEECH_SHARE:
+                        p, how = q, ("pitch-shifted" if pool is chosen[load] else f"from-{other}")
+                        break
+                gate_fail.append(f"{load} {B}: every in-window copy reads as speech, used {sb} x{B / pool[sb]['rpm']:.3f}")
+                if p is None:
+                    p = q
+            p["tier"], p["bin"], p["how"] = ("pitch-shifted" if how == "pitch-shifted" else how), B, how
+            p["from_load"] = load if how == "pitch-shifted" else other
             final[load][B] = p
+    if gate_fail:
+        print("  RATIO GATE FAILS (need more real bins):", "; ".join(gate_fail))
     return write_family(fam, defs, T, final, BINS, gap, main_order, borrowed)
 
 
@@ -324,7 +648,7 @@ def write_family(fam: str, defs: dict, T: dict, final: dict, BINS: list, gap: fl
                  borrowed: dict, sources: list | None = None, plot: bool = True):
     """Levels, the two Opus sprites, engine.json and the listening sweep, from the finished per-bin loops
     (final[load][bin] = {loop, tier, rpm, rho, tick, name, t, ...}). Shared with the synthesiser (synth_engine.py)."""
-    real_bins = {load: sum(1 for B in BINS if final[load][B]["tier"] in ("steady", "sweep")) for load in final}
+    real_bins = {load: sum(1 for B in BINS if final[load][B]["tier"] in REAL_TIERS) for load in final}
     print("  real bins", real_bins, "of", len(BINS), "borrowed", borrowed)
 
     out = os.path.join(OUT_BASE, fam)
@@ -350,10 +674,15 @@ def write_family(fam: str, defs: dict, T: dict, final: dict, BINS: list, gap: fl
             p = final[load][B]
             lp = scaled[load][B] * g
             parts.append(np.concatenate([lp[-PAD:], lp, lp[:PAD]]))
-            if p["tier"] == "pitch-shifted":
+            if p.get("source_text"):  # repair_family.py: a kept bin's recorded source, or a repaired bin's description
+                srcs = p["source_text"]
+            elif p["tier"] == "pitch-shifted":
                 srcs = f"pitch-shifted from the {p['from_rpm']} rpm bin (x{p['ratio']:.3f}), {p['name']} @ {p['t']:.2f} s"
+            elif p["tier"].startswith("from-"):
+                srcs = (f"the {p['from_load']}-throttle {p['from_rpm']} rpm loop{' darkened' if p['from_load'] == 'on' else ''} "
+                        f"(x{p['ratio']:.3f}), {p['name']} @ {p['t']:.2f} s")
             else:
-                srcs = f"{p['name']} @ {p['t']:.2f} s"
+                srcs = (" + ".join(f"{n_} @ {t_:.2f} s" for n_, t_ in p["parts"]) if p.get("parts") else f"{p['name']} @ {p['t']:.2f} s")
             entries[B][load] = {"offset": round((pos + PAD) / SR, 6), "duration": round(len(lp) / SR, 6),
                                 "rpm": round(p["rpm"], 2), "tier": p["tier"], "source": srcs,
                                 "seam_corr": round(p["rho"], 3), "tick": round(p["tick"], 2)}
@@ -375,7 +704,7 @@ def write_family(fam: str, defs: dict, T: dict, final: dict, BINS: list, gap: fl
                     "channel": d["meta"].get("uploader"), "upload_date": d["meta"].get("upload_date"),
                     "licence": d["meta"].get("licence"), "t0": d["meta"].get("t0"),
                     "octave_relabel": float(d["res"]["octave"]),
-                    "t1": d["meta"].get("t1")} for k, d in T.items()]})
+                    "t1": d["meta"].get("t1")} for k, d in T.items() if not d.get("idle_only")]})
     json.dump(index, open(os.path.join(out, "engine.json"), "w"), indent=1)
     sizes = {f: os.path.getsize(os.path.join(out, f)) for f in ("engine_on.ogg", "engine_off.ogg", "engine.json")}
     print("  sizes", sizes, "total", sum(sizes.values()))
@@ -481,6 +810,7 @@ def render_preview(out: str, index: dict, defs: dict) -> np.ndarray:
 
 
 def plot_preview(fam: str, T: dict, final: dict, BINS: list, index: dict, sweep: np.ndarray):
+    T = {k: v for k, v in T.items() if not v.get("idle_only")}
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt

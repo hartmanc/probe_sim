@@ -289,3 +289,332 @@ is the one YouTube shows. Rebuild with `python3 -I tools/audio/families/make_cre
 
 Disk was 11-14 GB free throughout; the audio cache stayed under 1.7 GB and was emptied to 80 MB (json records and rpm
 tracks) at the end, FLACs are re-fetched from the url on a rebuild. Battery never under 56 %. One heavy process at a time.
+
+
+# Round two: quality gates (26 Oct 2026, branch `audio-quality` from `release-040`)
+
+The owner listened to round one's clips and wrote: `mazda_kl_v6` "OK"; `sohc_i4_loud` "OK"; `modern_i4_stock` "Weird
+speech at 0:03 / High revs / upshift sounds like an organ note at 0:05"; `classic_v8_lowrev` "Doesn't sound correct.
+0:01 sounds like a VHS tape rewinding. Sounds loopy, dropping revs sound squeaky". Nobody here can listen, so his words
+became measurable gates, the families were rebuilt against them, and the clips were rendered again for his ear.
+
+## The measurement (`families/quality.py`, `families/speechcheck.py`)
+
+Decodes each family's shipped Ogg sprites as Chrome does, heals the seams as `audio.ts` does, and measures every bin
+and load: **speech** (the Silero VAD over the loop tiled to 3 s; webrtcvad, the engine-cycle residual's voice-band level
+and spectral flux are reported too, but webrtcvad calls 97-100 % of every engine loop speech, so it cannot decide);
+**pitch ratio** from the real recording the loop came from; **idle playback** (the family idle played on the lowest
+bin); **loop length** and engine cycles; **loopiness** (envelope autocorrelation at the loop period); **seam**
+correlation and step; **ladder share** (tonality); **A-weighted level**; sprite **bytes**.
+
+Speech rule: Silero in at least 8 % of the 32 ms windows. Calibrated on round one's loops: clean engine loops reach at
+most 5 %; a synthetic voice (macOS `say`) mixed into `sohc_i4_loud` / `modern_i4_stock` loops at -6 dB reaches 78-92 %
+(median), at 0 dB 97-100 %. The build rejects at 3 % (so a pitch-shifted copy cannot cross the gate) and also runs Silero
+over every whole source, so a candidate overlapping a voice (+-0.3 s) is never cut.
+
+Gates (`test_quality.py`): no speech in any family; every bin within x0.88-1.14 (on) / x0.85-1.18 (off) of a real
+recording; the lowest bin a real idle recording that plays the family idle inside those windows; every loop >= 1.0 s
+and >= 8 engine cycles; family median seam correlation not below round one's (`quality_baseline.json`); Ogg + json
+<= 650 KB. `mazda_kl_v6` and `sohc_i4_loud` are held to the speech gate only (the owner's ear; both pass it).
+
+## His notes, traced
+
+- **"Weird speech at 0:03"** (`modern_i4_stock`): a real voice. The clip reaches 4250 rpm at 3.8 s of the first-gear
+  climb; that on-throttle loop was cut from the Nissan B13 track-day video (src6 @ 56.9 s). Silero hears speech in 100 %
+  of the loop and, on the source itself, 0.96 mean probability over 55-59.5 s. Across all 14 families round one had
+  speech in 42 loops: `ohv_v6` 13, `vw_aircooled_flat4` 10, `vintage_i6` 6, `gm_sbc_v8` 6, `subaru_fa20_flat4` 4,
+  `modern_i4_stock`, `classic_v8_lowrev` and `twincam_i4_loud` 1 each (narrated reviews and in-car voices); none in the
+  owner's two. After: 0 in every family.
+- **"Organ note" on the upshift at 0:05** (`modern_i4_stock`). (a) The clip: a linear 0.25 s glide from the redline to
+  62 % with the load crossfading to the off layer; round one's off loops at 4000-5750 rpm were strongly tonal (ladder
+  share 0.75-0.97, the spectral gate leaves almost no noise between harmonics), so the glide is a clean harmonic tone
+  sliding in pitch. (b) The game: `tools/audio/shift_trace.ts` runs the physics (car #38 built as the race builds it,
+  #41 and the Probe) at full throttle. The torque cut lasts 0.15 s, then the automatic clutch re-engages with the
+  throttle back on, the driven wheels spin up and the slip dies away: 59-74 % of the rpm drop happens with throttleOut = 1,
+  and 90 % of it takes 0.42-0.77 s. `audio-field.ts` follows the physics rpm within 8 ms, so in the game the loaded
+  on-layer glides for half a second, longer than in the clip. The game does it too. Fixed on the game side (below).
+- **"VHS tape rewinding" at 0:01** (`classic_v8_lowrev`): the idle. 650 rpm was played on the 750 bin, a sweep loop
+  recorded at 748 rpm (x0.87), with no real idle anywhere in the family; every family's idle was pitched (x0.35-0.87).
+- **"Dropping revs sound squeaky"**: the off-throttle loops above 3750 rpm were one recording pitched up x1.06-1.33.
+- **"Loopy"**: round one's `classic_v8_lowrev` loops were 0.24-0.68 s (median 0.61): a lumpy V8 burble repeating
+  1.5-4 times a second. Every family's loops were 0.36-0.85 s.
+
+## Before / after (quality.py on the shipped sprites)
+
+| Family | when | real on/off | speech loops | ratio fails (min-max) | real idle in gate | loop median s (fails) | seam corr median | Ogg + json |
+|---|---|---|---|---|---|---|---|---|
+| `modern_i4_stock` | before | 23/24 | 1 | 0 (0.99-1.04) | no | 0.48 (48) | 0.90 | 182 KB |
+| | after | 25/17 | 0 | 0 (0.91-1.17) | yes | 1.12 (0) | 0.85 | 385 KB |
+| `sohc_i4_loud` | before | 23/19 | 0 | 1 (0.80-1.04) | no | 0.48 (46) | 0.83 | 183 KB |
+| | after | 23/19 | 0 | 1 (0.80-1.04) | no | 0.48 (46) | 0.83 | 183 KB |
+| `classic_v8_lowrev` | before | 15/10 | 1 | 3 (0.86-1.33) | no | 0.61 (36) | 0.72 | 168 KB |
+| | after | 17/6 | 0 | 0 (0.87-1.11) | yes | 1.12 (0) | 0.63 | 313 KB |
+| `vintage_i6` | before | 14/12 | 6 | 1 (0.75-1.08) | no | 0.65 (36) | 0.84 | 157 KB |
+| | after | 10/2 | 0 | 6 (0.85-2.07) | yes | 1.13 (0) | 0.87 | 310 KB |
+| `mazda_b_i4` | before | 21/16 | 0 | 7 (0.45-1.14) | no | 0.42 (52) | 0.73 | 189 KB |
+| | after | 25/10 | 0 | 2 (0.85-1.16) | no | 1.12 (0) | 0.82 | 435 KB |
+| `bmw_m20_i6` | before | 23/13 | 0 | 3 (0.50-1.09) | no | 0.48 (46) | 0.71 | 172 KB |
+| | after | 25/12 | 0 | 0 (0.86-1.13) | yes | 1.13 (0) | 0.81 | 387 KB |
+| `gm_sbc_v8` | before | 21/19 | 6 | 0 (0.96-1.05) | no | 0.54 (42) | 0.68 | 161 KB |
+| | after | 23/20 | 0 | 1 (0.88-1.14) | yes | 1.13 (0) | 0.61 | 357 KB |
+| `twincam_i4_loud` | before | 13/12 | 1 | 2 (0.66-1.01) | no | 0.60 (28) | 0.73 | 145 KB |
+| | after | 29/23 | 0 | 0 (0.97-1.14) | yes | 1.12 (0) | 0.72 | 465 KB |
+| `ohv_v6` | before | 18/16 | 13 | 1 (0.81-1.13) | no | 0.52 (42) | 0.84 | 174 KB |
+| | after | 19/5 | 0 | 3 (0.70-1.14) | no | 1.13 (0) | 0.84 | 367 KB |
+| `toyota_1jz_turbo` | before | 22/18 | 0 | 2 (0.57-1.08) | no | 0.43 (50) | 0.82 | 167 KB |
+| | after | 26/13 | 0 | 0 (0.91-1.17) | yes | 1.13 (0) | 0.87 | 406 KB |
+| `subaru_fa20_flat4` | before | 27/21 | 4 | 2 (0.67-1.14) | no | 0.40 (54) | 0.61 | 174 KB |
+| | after | 29/19 | 0 | 0 (0.86-1.14) | yes | 1.12 (0) | 0.70 | 436 KB |
+| `vw_aircooled_flat4` | before | 16/12 | 10 | 2 (0.57-1.00) | no | 0.72 (32) | 0.75 | 154 KB |
+| | after | 16/4 | 0 | 0 (1.00-1.17) | yes | 1.13 (0) | 0.76 | 260 KB |
+| `mini_supercharged_i4` | before | 20/17 | 0 | 7 (0.44-1.00) | no | 0.48 (48) | 0.78 | 180 KB |
+| | after | 25/15 | 0 | 0 (0.89-1.01) | no | 1.10 (0) | 0.68 | 394 KB |
+| `mazda_kl_v6` | before | 20/20 | 0 | 2 (0.66-1.13) | no | 0.85 (45) | 0.65 | 335 KB |
+| | after | 20/20 | 0 | 2 (0.66-1.13) | no | 0.85 (45) | 0.65 | 335 KB |
+
+
+Not in the table: loopiness (envelope repeat salience) stays 0.6-0.85 median in every family before and after (it
+measures how distinct one repeat is, not how often it comes); what changed is the rate: a 1.1 s loop repeats 0.9 times
+a second instead of 2-4. Sprite size roughly doubled (Ogg + json 145-190 KB to 260-470 KB per family; the AAC fallback
+pair is about 2x the Ogg); a race loads only the families on the grid.
+
+**Tests** (`uv run --with pytest,numpy,scipy,soundfile,webrtcvad-wheels,onnxruntime python -I -m pytest
+tools/audio/test_quality.py tools/audio/test_licences.py`): on round one's audio (`QUALITY_PUBLIC` = release-040's
+public/audio) **42 failed, 35 passed**; on round two **12 failed, 69 passed** (licence gate 4/4 passed). The 12:
+pitch ratio `vintage_i6`, `mazda_b_i4`, `gm_sbc_v8`, `ohv_v6`; real idle `mazda_b_i4`, `ohv_v6`,
+`mini_supercharged_i4`; seam median `modern_i4_stock` (0.85 vs 0.90), `classic_v8_lowrev` (0.63 vs 0.72), `gm_sbc_v8`
+(0.61 vs 0.68), `twincam_i4_loud` (0.72 vs 0.73), `mini_supercharged_i4` (0.68 vs 0.78). No gate was loosened.
+
+## What changed in the build (`build_family.py`)
+
+- Loops >= max(1.0 s, 8 engine cycles), up to 1.5 s. Where no single steady stretch is that long, **two or three real
+  stretches at the same rpm are joined** (`chain_loop`): each a whole number of cycles, each head crossfaded with what
+  follows the previous segment in its own recording, start points chosen for the weakest join, segments within 6 dB of
+  each other's 1/3-octave envelope. Tier stays steady / sweep / idle (all real); `source` names every part.
+- **Idle bin**: the full-range tracker reads a quiet idle 2-6x too high, so idle has its own track over 0.6-2.2 x the
+  family idle (confident, steady, in the source's quieter half, no speech). The idle bin sits at the recording's own rpm
+  inside the gate window and serves both loads (tier `idle`). The grid below 1000 rpm is in 125 rpm steps (no two bins
+  more than x1.25 apart); near idle (<= 2 x idle) an unloaded steady stretch can serve a bin for both loads.
+- **Fill rule**: a missing bin is pitch-shifted only from a real loop of the same load within the window, else it is
+  the other load's real loop at that rpm (an on loop is darkened for the overrun: tier `from-on`), else the nearest
+  (reported as a gate failure). Every filled copy is speech-checked; a voice-like copy makes the next option be tried.
+- **V8s are tracked at double speed**: their half-order ladder at 650-2000 rpm is 5-17 Hz apart, inside the tracker's
+  170 ms window resolution, so the comb contrast was ~0.1 dB on every old-V8 source (0-23 % of frames > 2 dB). At x2
+  the median rises to 1-3 dB (12-79 % of frames), and the idle reads where the cycle autocorrelation puts it.
+- Speech: Silero over every source (cached `cache/speech_*.npz`), rejection at 3 % per candidate loop.
+- Start-up / rev clips get `octave: 1.0` in `sources.json` (the per-source median rule assumes driving footage).
+- The seam weighs double in the candidate score (8 x rho).
+
+## Sources added (87, all CC BY: licence read from each video's page by `fetch_audio.py` before the audio-only download)
+
+**`classic_v8_lowrev`** (17)
+- Aaron Starnes - Driving a 1949 Ford Flathead with Three on the Tree (20190611) https://www.youtube.com/watch?v=pZXO6CXJH3Q
+- Erwin Lindsen - Ford Model A 3.6 V8 1929 Hotrod Exhaust Sound (20160127) https://www.youtube.com/watch?v=JZMyQQ23FzI [octave pinned x1]
+- Erwin Lindsen - Dodge Panel Delivery Van 5.2 V8 Ratlook 1947 Sound and Driving away (20160124) https://www.youtube.com/watch?v=EkOh-ScdSCk
+- Clay Benson - 1954 Cadillac Series 62 Coupe Start and Drive (20111212) https://www.youtube.com/watch?v=2BUGK30gZJs
+- Erwin Lindsen - Ford 2 Door Saloon 1937 Hot Rod V8 Exhaust Sound (20170130) https://www.youtube.com/watch?v=R-O0YFaofaY [octave pinned x1]
+- Mirko Lorenz - Ford V8 289 CI Engine: Testrun (20120403) https://www.youtube.com/watch?v=eqbbKYs8P3Y
+- Mustang Bob - Engine Surge 289 V8 (20181006) https://www.youtube.com/watch?v=N6eG2-oHC6Y
+- MicrophonicFool - 1951 Mercury Starts and Smells (20190428) https://www.youtube.com/watch?v=Dzq3sYlYqdg
+- Buddy Huggins - 1950 Ford Flathead V8 Engine 3 Speed For Sale near Rogersville MO (20170824) https://www.youtube.com/watch?v=TfiPg_VH-sA
+- Classic Muscle Cars - 68 MUSTANG FASTBACK  : Dyno, Cold Start, & Acceleration (20201224) https://www.youtube.com/watch?v=4mNaAH76kVE
+- Erwin Lindsen - Ford Pickup Hot Rod 1935 Sound (20120409) https://www.youtube.com/watch?v=j0KQWKYqmKs [octave pinned x1]
+- BigBarkozSpeedShop - BBSS - 1961 Buick LeSabre Cold Start (20200415) https://www.youtube.com/watch?v=Lm1FTfIo9kA [octave pinned x1]
+- Erik Lundgren - Ardun Equipped Ford Flathead V8 - #57 Ford Special (20140121) https://www.youtube.com/watch?v=Ce7rHmN7kEU
+- JohnOdahl - Ford 1932 v8 roadster on dyno (20190709) https://www.youtube.com/watch?v=0EQArgz_vt4
+- Js Antiguidades - MOTOR V8 FORD FLATHEAD 8BA (20161101) https://www.youtube.com/watch?v=l0flubp4CKI [octave pinned x1]
+- bevmushroomhead - 67 Oldsmobile Cutlass 430 big block buick test run (20120513) https://www.youtube.com/watch?v=af6bAtKnc2o
+- Parley Banz - Ford flathead V8 starting up after 10 years of sitting (20141228) https://www.youtube.com/watch?v=r7oief2WVew [octave pinned x1]
+
+**`vintage_i6`** (9)
+- Burnitzki Cars & More - 1964 Plymouth Valiant 225 Slant Six Cold Start (20181225) https://www.youtube.com/watch?v=GtmyEycIJ_w [octave pinned x1]
+- MicrophonicFool - 1966 Valiant Custom 200 Engine Start (20150703) https://www.youtube.com/watch?v=NwhDaWYbl1g [octave pinned x1]
+- 53hornet - Revving a Hudson 308 Big Six - Now This Is Just Fooling Around (20161218) https://www.youtube.com/watch?v=_1T2XLeRStg [octave pinned x1]
+- 53hornet - Hudson Hornet First Start! (20141007) https://www.youtube.com/watch?v=aLf3KejsISA [octave pinned x1]
+- Erwin Lindsen - Jeep Cherokee 4.0i Acceleration, Exhaust Sound & Revs (20160822) https://www.youtube.com/watch?v=0BsZzuX1SLs [octave pinned x1]
+- Erwin Lindsen - Jeep Cherokee 4.0i Exhaust Sound & Revs (20160505) https://www.youtube.com/watch?v=07NO6_8Yrp8 [octave pinned x1]
+- Luciano's Classics - Text 1992 Jeep Wrangler Islander 4.0 HO Walkaround, Startup and Sound (short version) (20260223) https://www.youtube.com/watch?v=CaSqMZcMEEs [octave pinned x1]
+- Jacob Neal - 1993 Ford F150 4x4 5spd 4.9L L6 300 Straight Six Walkaround (20131120) https://www.youtube.com/watch?v=wznw1qMkx60 [octave pinned x1]
+- Luciano's Classics - 1988 Jeep Wrangler Laredo Walkaround, Startup and Sound (short version) (20250419) https://www.youtube.com/watch?v=rrXg781iefo [octave pinned x1]
+
+**`mazda_b_i4`** (9)
+- Ride in Japan - MAZDA MX5 Miata 1.6L exhaust sound sample (20260418) https://www.youtube.com/watch?v=wKeTXxwpkS0
+- Brandon Collins - Pissed Off Going from Last to First - Spec Miata ABCC (20230809) https://www.youtube.com/watch?v=3Z5yoO60x_4
+- Touge Terapy - Track POV - MX-5 NB | Vasco Sameiro Circuit (20241006) https://www.youtube.com/watch?v=4_5_lk5uQbc
+- banpeinet - Mazda MX5 NB Super Bird [Down on the Street] (20160308) https://www.youtube.com/watch?v=XaYJHuqgYts
+- Touge Terapy - Drift Wet Touge Uphill | MX-5 NB [POV] (20241012) https://www.youtube.com/watch?v=a4kX_e9rCs0
+- Dover Labs - 1990 Miata Cold Start Magnaflow Cat and Borla Dual Exhaust Cold Start (20120413) https://www.youtube.com/watch?v=QtGJauSXC9s [octave pinned x1]
+- MarcinGP - Mazda MX-5 (Miata) cold start / zimny rozruch (1) #shorts (20210126) https://www.youtube.com/watch?v=U8UsbgtuQA0 [octave pinned x1]
+- MarcinGP - Mazda MX-5 (Miata) cold start / zimny rozruch (3) #shorts (20210128) https://www.youtube.com/watch?v=qVYVW9C8HQo [octave pinned x1]
+- MarcinGP - Mazda MX-5 (Miata) cold start / zimny rozruch (2) #shorts (20210126) https://www.youtube.com/watch?v=uFjYN40w50g [octave pinned x1]
+
+**`bmw_m20_i6`** (6)
+- Old Man - E30 m20 amazing exhaust sound (20150502) https://www.youtube.com/watch?v=HRAfguZA4NY [octave pinned x1]
+- Old Man - E30 m20 tunnel pure sound (20170521) https://www.youtube.com/watch?v=fnXZ4Tn1Uh0 [octave pinned x1]
+- Old Man - E30 m20 tunnel sound , night (20170510) https://www.youtube.com/watch?v=oDad7Etf4eE [octave pinned x1]
+- AUTO INSIGHTS KE - BMW E30 325i M20b25 amazing exhaust sound #bmw #bmwe30 #m20b25 #e30 (20241102) https://www.youtube.com/watch?v=3j_186SQb_c [octave pinned x1]
+- Marjan_Z_BMW - BMW E30 327i M20B27  orginal sound (20220322) https://www.youtube.com/watch?v=CVH_ifxb37Q [octave pinned x1]
+- Foot to Pedal - BMW E30 POV Country Road Drive | 1989 E30 320i Touring | Scorpion Exhaust Pure Sound (20210611) https://www.youtube.com/watch?v=-J5IxZUuwlI
+
+**`twincam_i4_loud`** (5)
+- Wishlist Project - 4age 16v ITB test running (20211127) https://www.youtube.com/watch?v=ZH4s9gxKErc [octave pinned x1]
+- Driven Auto Enthusiasts - Toyota 4AGE sound compilation 1 ASMR (20210516) https://www.youtube.com/watch?v=_3kHos_9iwM [octave pinned x1]
+- Luciano's Classics - 1987 Toyota MR2 AW11 Exhaust Sound (20241226) https://www.youtube.com/watch?v=FXQccDRSiMM [octave pinned x1]
+- Tumyp ZAkadrom - 4A-GE sound silver top (20210803) https://www.youtube.com/watch?v=2H-5-IvYI6E [octave pinned x1]
+- Wishlist Project - AE86 POV - Sungai Petani Version (20230629) https://www.youtube.com/watch?v=T6PevOGAJf0
+
+**`ohv_v6`** (13)
+- Luciano's Classics - 1988 Pontiac Fiero GT Walkaround, Startup and Sound (20260918) https://www.youtube.com/watch?v=tnSj38IeCfQ [octave pinned x1]
+- Luciano's Classics - 1988 Pontiac Fiero GT Walkaround, Startup and Sound (short version) (20261022) https://www.youtube.com/watch?v=GRIS9mm51uE [octave pinned x1]
+- James Barbour - FieroColdStart (20210613) https://www.youtube.com/watch?v=0IWsq_0YYsQ [octave pinned x1]
+- Joshua Hasson - '96 Mustang, 3.8 new project (20130403) https://www.youtube.com/watch?v=Xl3PeqVa_H8 [octave pinned x1]
+- mad monkey - 2003 Mazda Tribute |3.0 V6 197 HP| POV Test Drive (20211013) https://www.youtube.com/watch?v=xcuw8pFvPVk
+- Brewton Garage - 1989 Chevy Beretta  3400 cold start and drive (20181016) https://www.youtube.com/watch?v=lpLcICHN_Zg
+- Purple Wave - 2006 Ford Taurus SE for sale | sold at auction October 16, 2014 (20141008) https://www.youtube.com/watch?v=fOxndSFQW-E [octave pinned x1]
+- Purple Wave - 2001 Ford Taurus LX for sale | sold at auction March 21, 2013 (20130228) https://www.youtube.com/watch?v=TmQvCVV4wbg [octave pinned x1]
+- Purple Wave - 1996 Ford Taurus GL for sale | sold at auction March 21, 2013 (20130228) https://www.youtube.com/watch?v=kNtDfg8Th-s [octave pinned x1]
+- HunteR82 - 1988 3.1 V6 Camaro vs 1991 V8 5.7 Caprice (1\4 mile) (20110709) https://www.youtube.com/watch?v=JDry3aTX3gM
+- Late Night Auto Mods - Mustang V6 Drifting @ Club Loose - Pitt Race (20190926) https://www.youtube.com/watch?v=TQGEqGZBQwg
+- Belal Qaradaxe - Mustang V6 Drifting training (20200423) https://www.youtube.com/watch?v=IIJZ4lr8bmE
+- David Martin (DAVe3283) - 1998 Grand Prix GTP Drag Race (20190722) https://www.youtube.com/watch?v=Yw501dcl-aI
+
+**`toyota_1jz_turbo`** (8)
+- jamesmglover - Starting and idling with all the sensors wired in. (no down pipe) (20120902) https://www.youtube.com/watch?v=B2hZqvr9QrA [octave pinned x1]
+- Light Touch Tuning - Kris 1JZ MA70 (20211029) https://www.youtube.com/watch?v=v_5Ge_essAE [octave pinned x1]
+- Light Touch Tuning - Stock 1JZ Swapped MK3 SuPrA w/ECUmasters EMU Classic PnP (20211027) https://www.youtube.com/watch?v=RX5CdVro2TA [octave pinned x1]
+- Bryant Takahashi - NIGHT DRIVE POV | 400HP 1JZGTE TOYOTA CHASER JZX100 (20250605) https://www.youtube.com/watch?v=aQrmJ_2wGg0
+- Black Raven Motorsport - JZX100 Chaser's First Real Test on the Circuit (20171119) https://www.youtube.com/watch?v=Ev0W5xk1ZQ0
+- JZX100K-sN 1JZ - 1JZ ドリフトミーティング　2016 3 (20161011) https://www.youtube.com/watch?v=QHAIpn4pGj0
+- Turbulenzz - Markus Muller E46 1JZ Drift RAW - Nurburgring - TFB Media - pure sound (20160306) https://www.youtube.com/watch?v=zSaJLB7UUww [octave pinned x1]
+- JZAirlines - Toyota Chaser JZX100 JZAirlines Drift trainig DSL 2018 st2 (20180703) https://www.youtube.com/watch?v=IWZzEfSHCRI
+
+**`subaru_fa20_flat4`** (8)
+- TheAverageDriver - Roller Coaster Roads in Adelaide Hills - POV Drive [Subaru BRZ] (20240812) https://www.youtube.com/watch?v=7qqj0yadN88
+- TheAverageDriver - Chill Drive to the Beach - POV Drive [Subaru BRZ] (20240820) https://www.youtube.com/watch?v=yOvbnpeQ9JM
+- David Mazary - FR-S Cold Start with Nameless track pipe and full exhaust (20161205) https://www.youtube.com/watch?v=tned3KSmjnU [octave pinned x1]
+- Isaiah  - QUICK POV OF 2020 BRZ tS (20240826) https://www.youtube.com/watch?v=gwB-ZSZ16gA
+- TheAverageDriver - First Drive in the Adelaide Hills - POV Drive [Subaru BRZ] (20240809) https://www.youtube.com/watch?v=UV9vrZqKw0I
+- Touge Motorsports - Red Scion FRS - 2023.7.8 Touge.ca Cayuga TMP Track Event - 360 footage - GS010343 (20230816) https://www.youtube.com/watch?v=WeYIBR1Z-0Y
+- Touge Motorsports - White Scion FRS footage @ 2024.8.5 Touge.ca Mosport DDT Track event  GS020501 (20240830) https://www.youtube.com/watch?v=4u_J_2aEc6o
+- Touge Motorsports - White Scion FRS footage - 2024.7.1 Touge.ca Mosport DDT Track event - GS010481 (20240704) https://www.youtube.com/watch?v=6e9Sp--zUUM
+
+**`vw_aircooled_flat4`** (6)
+- Luciano's Classics - 1972 VW Beetle 1300 Walkaround, Startup & Sound (short version) (20260528) https://www.youtube.com/watch?v=eleSzd9bHsA [octave pinned x1]
+- Jesse Mast - Jesse/DVK Volkswagen '64 - 2176cc (20110628) https://www.youtube.com/watch?v=NLbnvS1_GrY [octave pinned x1]
+- Southern Fried Autocross - VW Bug 1679cc (20140419) https://www.youtube.com/watch?v=wSLjeGppjB0 [octave pinned x1]
+- yellowdcap - First idle in 5 years (20120108) https://www.youtube.com/watch?v=Ff5o02IoKBI [octave pinned x1]
+- trucksplususayakima - 1972 Volkswagen Beetle Karmann Covertible (20111103) https://www.youtube.com/watch?v=ofyUOGh0EoI [octave pinned x1]
+- SCAT VW - Orange #VW Bug Engine | Luis A. Dominguez (20221017) https://www.youtube.com/watch?v=nD-PWaX1Cn8 [octave pinned x1]
+
+**`mini_supercharged_i4`** (6)
+- Xantix - CRUISE IN MINI R53 [POV] (20240331) https://www.youtube.com/watch?v=h4KMYYr3hl8
+- Torvek Motors - POV Drive On The Mini Cooper S To Pick Up New Parts (20210404) https://www.youtube.com/watch?v=6WJga9j35f8
+- IvoJan - MINI Cooper S R53 2004 with jetex fortex exhaust (20120417) https://www.youtube.com/watch?v=8p8kQ1vOc00 [octave pinned x1]
+- FlorisDiemel - Mini R53 PlayMini exhaust (20110717) https://www.youtube.com/watch?v=pTD7ikh9nzc [octave pinned x1]
+- FlorisDiemel - PlayMini exhaust on R53 (20110723) https://www.youtube.com/watch?v=zJnHRC5AZpM [octave pinned x1]
+- MC - Mini John Cooper Works GP r53. Exhaust sound, acceleration and flat out. (Pure car sound) (20131124) https://www.youtube.com/watch?v=EC0shmCAyzg [octave pinned x1]
+
+
+`credits.json` rebuilt from the engine.json sources (`make_credits.py`); `index.json` `real_bins` refreshed. Three
+round-one sources failed to download once (a transient yt-dlp n-challenge error) and were fetched on retry; every family
+in the final build has all its listed sources.
+
+## The game-side change: ShiftDrop (`src/app/audio-field.ts`, `src/app/modes/race.ts`)
+
+An opt-in shaping of the rpm an `EngineVoice` plays (`VoiceOptions.shiftDrop`, `FieldOptions.shiftDrop`, off by
+default, so without it the voice plays the physics rpm exactly as before). On a gear increment the played rpm leaves
+the physics rpm and falls with a 50 ms time constant to the landing rpm: the road-speed clutch-side rpm in the new gear
+(speed / wheel radius x the gear's overall ratio, `boxRpm`) times the wheel slip the engine ran at before the shift. It
+never goes above the physics rpm, rejoins it within 2 %, or blends back (100 ms) after 1.0 s; downshifts (the blips)
+are untouched. The on / off crossfade is unchanged: the 0.15 s torque cut brings the off layer up within its 70 ms lag
+while the note falls, and the new gear pulls on the on layer. Race mode turns it on for the AI field and passes each
+car's gear and `boxRpm` (`boxRpmOf`, from `dir.cars[i].spec`, app code only; no physics or AI change). Measured on the
+physics (90 % of the drop): #38 2->3 0.60 s physics / 0.03 s played, 3->4 0.47 / 0.07, 4->5 0.43 / 0.08; #41 1->2
+0.42 / 0.08, 2->3 0.42 / 0.10. **The Probe's CarAudio is unchanged (byte-identical).** The owner's own set is affected
+the same way by the physics (1->2 0.77 s, 2->3 0.45 s, 3->4 0.45 s; ShiftDrop would make them 0.05-0.08 s), but he
+heard it as OK, so it is left for him to decide. Test: `src/app/__tests__/audio-shift.test.ts` (9 tests: ShiftDrop
+against the physics of #38, #41 and the Probe, edge cases, the race-mode wiring, EngineVoice with and without the option).
+
+## The clips (`tools/audio/chain/`)
+
+Rendered through the game's real chain: `render_chain.ts` bundles `entry.ts` with esbuild, serves public/ locally and
+runs the game's `EngineVoice` (AI families: trim 1, muffler 0.3, shiftDrop on, the scenario's gear and clutch-side rpm)
+or the player's `CarAudio` (`mazda_kl_v6`) in an OfflineAudioContext in headless Chrome, updated at 60 Hz as the race
+mode does (seeded Math.random). The scenario is round one's (`scenario.py`). **Loudness-matched**: every clip has the
+same A-weighted RMS over its 25 s (LAeq -30.4 dBFS), the highest common level at which every peak stays at or under
+-1 dBFS; no limiter. MP3 128 kbps 48 kHz mono, in `tmp/sound_demo2/clips/` with `clips.json` (raw LAeq, gain, peak).
+The page `tmp/sound_demo2/index.html` ("Engine Listening Room 2") quotes his round-one note on each card with what it
+traced to, what changed, and what is still weak; the notes boxes and the db script are round one's.
+
+## Still weak
+
+1. **Off-throttle layers are thin on real recordings.** A 1 s overrun stretch inside the pitch window is rare in
+   onboard footage, so many off bins are the on loop at its own pitch, darkened (`from-on`): `classic_v8_lowrev` 11 of
+   19, `modern_i4_stock` 2. No squeak (no upward shift beyond x1.18), but a lift may sound like a quieter pull.
+2. **Idles.** No real idle inside the window for `mazda_b_i4` (850), `ohv_v6` (700), `mini_supercharged_i4` (800):
+   the clips found idle at 1000-1150 rpm (cold or high idle), and the family idle values are lower than any recording.
+3. **Low on-throttle bins** (750-1500 rpm) still pitch-shifted past the window in `vintage_i6`, `ohv_v6`,
+   `mazda_b_i4`, `gm_sbc_v8` (x1.143 against 1.14).
+4. **Seams**: 1 s loops and joined segments have lower seam correlation than round one's short loops in five
+   families (above). Listen for a soft once-a-second repeat.
+5. The V8 octave: double-speed tracking fixed the contrast, but whole V8 sources still rest on the per-source octave
+   rule; the rev clips are pinned x1.
+6. The speech detector is Silero; it cannot hear music. Sources with music beds would pass.
+7. `sohc_i4_loud` and `mazda_kl_v6` keep their round-one loops (0.48 / 0.85 s, pitched idles), by the owner's ear.
+
+## Machine notes
+
+Battery 75-100 % throughout (briefly discharging), load average 2-4, one heavy process at a time. Disk dipped to 9.4 GB
+free mid-run; `uv cache prune` and dropping each family's FLACs after its build kept it above 10 GB afterwards; the audio
+cache ends at about 0.6 GB (rpm, idle and speech tracks; no FLACs).
+
+# Round three: the owner's notes of 26 Oct 2026 (evening), branch `audio-quality`
+
+Listening Room 2 verdicts: OK for `modern_i4_stock`, `sohc_i4_loud`, `mazda_kl_v6`, `mazda_b_i4`, `gm_sbc_v8`,
+`twincam_i4_loud`, `toyota_1jz_turbo`, `subaru_fa20_flat4`, `vw_aircooled_flat4`, `mini_supercharged_i4`; later
+`bmw_m20_i6` too (its "error during playback" was the player: it played on retry, so no change and no re-render, 11 OK).
+His rule: weaker is fine so long as it does not sound terrible or like something other than an ICE.
+
+**No new source audio.** `yt-dlp` is refused by YouTube from this machine ("confirm you are not a bot"; the cookie route is not
+used) and round two's FLACs were dropped after each build, so nothing was re-cut from sources. Steps 2 and 3 repair the
+shipped sprites (`families/repair_family.py`): unlisted bins keep loop, tier, rpm, seam and source text; listed bins become a
+pitch-shifted copy of the nearest clean real donor of the same load (else the other load's, darkened when an on loop serves
+an off bin); `build_family.write_family` writes the Opus sprites again (one more lossy pass on every bin), `encode_fallback.py`
+the AAC pair. The contamination metric is the standard deviation (dB, 10 ms frames) of the 5-12 kHz band over the loop:
+clean loops of the families the owner passed are 1-4 (medians 1.9-3.6); gated or pulsed loops are 6-16.
+
+| Family | owner's note | cause found | change | gates after |
+|---|---|---|---|---|
+| `classic_v8_lowrev` | "moaning at 0:05, 0:08-0:10, VHS rewind noise, just use the sbc sound" | its own round-two bins | alias of `gm_sbc_v8` (families.json `alias_of`, index.json entry points at the sbc engine.json and sprites; own sprites deleted; its 21 sources kept in sources.json marked `unused`; cars, idle 650 and redline 4800 keep their own specs) | none of its own: `test_quality` skips it with the reason |
+| `ohv_v6` | "noise / distortion, FM radio at idle, a drum beat" | idle loops (700, 875, 1000 on / off, 1250 off) carry gated, pulsed 5-15 kHz hiss with clicks; 700 and 875 were the 1000 loop slowed x0.70 / x0.875 | on 700-1000: the 1250 on loop, low-passed at 4.5 kHz, slowed x0.56 / 0.70 / 0.80; off 700-1000 and 1250 off: that loop darkened; 1250 on: the 1500 on loop x0.83 | speech 0; ratio fails 3 to 7 (0.56-1.14); idle gate fails (bin 0 is not a real idle: it was already failing); seam median 0.89 vs 0.84; 4750-6000 rpm bins (from src17, 182 s) show a milder pulsed band and were left, listed as open |
+| `vintage_i6` | "weird noises at 0:04-0:05, recurring at that rev range" | the clip is at 3300-4300 rpm then: on loops 4000-4750 and off 3750, 4000, 4500, 4750 are gated (loud half the loop, near silent the other, 1.7 times a second) | on 4000-4750 from the clean 3500 on loop (x1.14-1.36); off from the clean 4250 off loop (x0.88-1.12) | speech 0; ratio fails 6 to 10 (0.85-1.43, all upward on-throttle); idle ok; loops ok; seam median 0.89 vs 0.84 |
+| `bmw_m20_i6` | "error during playback?" | the player, not the file (played on retry) | none | unchanged |
+
+Contaminated-looking bins of `vintage_i6` left alone because the owner heard them as fine: 605 on / off (idle), 1250 off,
+2500 on / off (the clip's first 3.3 s).
+
+**Provisional table** (`test_quality.PROVISIONAL`, strict xfail with the reason, gates unchanged): `modern_i4_stock` seam,
+`twincam_i4_loud` seam, `gm_sbc_v8` ratio + seam, `mini_supercharged_i4` idle + seam, `mazda_b_i4` ratio + idle (8 pairs).
+`ohv_v6` and `vintage_i6` are not in it: their remaining failures stay failing until the owner listens again.
+
+**Tests**: `pytest tools/audio` 64 passed, 3 failed (`vintage_i6` ratio, `ohv_v6` ratio, `ohv_v6` idle), 8 xfailed, 6 skipped
+(the alias's six gate tests; round two: 69 / 12). `npx vitest run` 602 passed (73 files), `npm run build` green.
+The licence gate counts 12 engine.json files (13 families, one an alias).
+
+**Clips** re-rendered (the game's real chain, as round two): `classic_v8_lowrev` (the sbc sound at its cars' revs), `ohv_v6`,
+`vintage_i6`, into `tmp/sound_demo2/clips/` with `clips.json` merged (`--target=-30.39` in `make_clips.py` keeps the common
+loudness). `classic_v8_lowrev` is held at -32.09 LAeq: at -30.39 its peak would be +0.7 dBFS. `bmw_m20_i6` was not re-rendered.
+
+**Not done**: new CC BY sources for `ohv_v6` / `vintage_i6` (downloads refused); no change to the game's audio chain, ShiftDrop or physics.
+
+## Round three b (27 Oct 2026): the owner's second listen
+
+`classic_v8_lowrev` OK, `vintage_i6` OK, `ohv_v6` "a scraping noise at 0:04 that recurs throughout ... otherwise OK".
+- `vintage_i6` joins `test_quality.PROVISIONAL` for its ratio gate ("owner passed by ear, 27 Oct 2026: OK"); nothing else changed.
+- `ohv_v6`: 0:04 is about 3900 rpm on throttle (the bins 3750-4250), and the clip crosses 4250-4500 in every gear. The 3250-4000 on
+  loops are an ordinary ladder (src0); the 4250 on (steady) and 4500 on (sweep) loops, both from the Taurus start-up clip (src14,
+  55-57 s), are a flat 0-15 kHz wash with no ladder, and the 4250 / 4500 off bins were their darkened copies. The 5-12 kHz std metric
+  did not flag them (1.2-1.8 dB): the cue was the spectrogram. Rebuilt: 4250 on / 4500 on from the 4000 on loop (x1.06 / x1.12), the
+  two off bins that loop darkened (all inside the ratio window; `repair_family.py` now takes an in-window donor first and `--maxdonor`).
+  Gates: unchanged from round three (ratio 7 fails, idle fails, speech 0; seam median 0.90 vs 0.84). The 4750-6000 bins
+  (pulsed band) are untouched and still listed as open. Only the `ohv_v6` clip was re-rendered (common loudness -30.39 LAeq).

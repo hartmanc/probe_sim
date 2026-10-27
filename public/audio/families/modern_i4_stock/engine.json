@@ -8,517 +8,559 @@
  "padding_s": 0.05,
  "levels": {
   "off_minus_on_db": -4.0,
-  "on_rms_dbA": -24.74
+  "on_rms_dbA": -26.44
  },
  "bins": [
   {
-   "rpm": 1000,
+   "rpm": 755,
    "on": {
     "offset": 0.15,
-    "duration": 0.479938,
-    "rpm": 1000.13,
-    "tier": "steady",
-    "source": "src4 @ 5.04 s",
-    "seam_corr": 0.837,
-    "tick": 1.36
+    "duration": 1.430375,
+    "rpm": 755.05,
+    "tier": "idle",
+    "source": "src5 @ 216.29 s",
+    "seam_corr": 0.634,
+    "tick": 2.61
    },
    "off": {
     "offset": 0.15,
-    "duration": 0.359208,
-    "rpm": 1002.2,
-    "tier": "sweep",
-    "source": "src5 @ 412.49 s",
-    "seam_corr": 0.758,
-    "tick": 2.63
+    "duration": 1.430375,
+    "rpm": 755.05,
+    "tier": "idle",
+    "source": "src5 @ 216.29 s",
+    "seam_corr": 0.634,
+    "tick": 2.61
+   }
+  },
+  {
+   "rpm": 875,
+   "on": {
+    "offset": 1.680375,
+    "duration": 1.097125,
+    "rpm": 875.01,
+    "tier": "idle",
+    "source": "src5 @ 381.44 s + src5 @ 382.79 s",
+    "seam_corr": 0.724,
+    "tick": 2.36
+   },
+   "off": {
+    "offset": 1.680375,
+    "duration": 1.097125,
+    "rpm": 875.01,
+    "tier": "idle",
+    "source": "src5 @ 381.44 s + src5 @ 382.79 s",
+    "seam_corr": 0.724,
+    "tick": 2.36
+   }
+  },
+  {
+   "rpm": 1000,
+   "on": {
+    "offset": 2.8775,
+    "duration": 1.076104,
+    "rpm": 1003.62,
+    "tier": "idle",
+    "source": "src3 @ 53.69 s",
+    "seam_corr": 0.805,
+    "tick": 1.37
+   },
+   "off": {
+    "offset": 2.8775,
+    "duration": 1.076104,
+    "rpm": 1003.62,
+    "tier": "idle",
+    "source": "src3 @ 53.69 s",
+    "seam_corr": 0.805,
+    "tick": 1.37
    }
   },
   {
    "rpm": 1250,
    "on": {
-    "offset": 0.729938,
-    "duration": 0.479708,
-    "rpm": 1250.76,
-    "tier": "steady",
-    "source": "src5 @ 351.31 s",
-    "seam_corr": 0.904,
-    "tick": 1.53
+    "offset": 4.053604,
+    "duration": 1.054458,
+    "rpm": 1251.83,
+    "tier": "sweep",
+    "source": "src2 @ 234.59 s",
+    "seam_corr": 0.836,
+    "tick": 2.9
    },
    "off": {
-    "offset": 0.609208,
-    "duration": 0.381688,
-    "rpm": 1257.57,
-    "tier": "sweep",
-    "source": "src1 @ 223.26 s",
-    "seam_corr": 0.391,
-    "tick": 1.67
+    "offset": 4.053604,
+    "duration": 1.05575,
+    "rpm": 1250.3,
+    "tier": "idle",
+    "source": "src5 @ 43.81 s",
+    "seam_corr": 0.974,
+    "tick": 1.32
    }
   },
   {
    "rpm": 1500,
    "on": {
-    "offset": 1.309646,
-    "duration": 0.480292,
-    "rpm": 1499.09,
+    "offset": 5.208062,
+    "duration": 1.2,
+    "rpm": 1500.0,
     "tier": "steady",
-    "source": "src0 @ 199.19 s",
-    "seam_corr": 0.955,
-    "tick": 1.71
+    "source": "src0 @ 230.64 s + src0 @ 216.31 s + src2 @ 107.39 s",
+    "seam_corr": 0.765,
+    "tick": 2.03
    },
    "off": {
-    "offset": 1.090896,
-    "duration": 0.398354,
-    "rpm": 1506.2,
-    "tier": "sweep",
-    "source": "src0 @ 246.24 s",
-    "seam_corr": 0.941,
-    "tick": 2.07
+    "offset": 5.209354,
+    "duration": 1.120562,
+    "rpm": 1499.25,
+    "tier": "idle",
+    "source": "src5 @ 244.44 s",
+    "seam_corr": 0.92,
+    "tick": 1.95
    }
   },
   {
    "rpm": 1750,
    "on": {
-    "offset": 1.889938,
-    "duration": 0.480583,
-    "rpm": 1747.88,
+    "offset": 6.508063,
+    "duration": 1.096208,
+    "rpm": 1751.49,
     "tier": "steady",
-    "source": "src0 @ 256.49 s",
-    "seam_corr": 0.979,
-    "tick": 1.53
+    "source": "src0 @ 256.56 s",
+    "seam_corr": 0.943,
+    "tick": 2.19
    },
    "off": {
-    "offset": 1.58925,
-    "duration": 0.479896,
-    "rpm": 1750.38,
-    "tier": "steady",
-    "source": "src3 @ 361.41 s",
-    "seam_corr": 0.9,
-    "tick": 2.05
+    "offset": 6.429917,
+    "duration": 1.097042,
+    "rpm": 1750.16,
+    "tier": "pitch-shifted",
+    "source": "pitch-shifted from the 1500 rpm bin (x1.167), src5 @ 244.44 s",
+    "seam_corr": 0.912,
+    "tick": 1.84
    }
   },
   {
    "rpm": 2000,
    "on": {
-    "offset": 2.470521,
-    "duration": 0.479938,
-    "rpm": 2000.26,
+    "offset": 7.704271,
+    "duration": 1.140521,
+    "rpm": 1999.09,
     "tier": "steady",
     "source": "src5 @ 367.54 s",
-    "seam_corr": 0.967,
-    "tick": 1.47
+    "seam_corr": 0.924,
+    "tick": 1.51
    },
    "off": {
-    "offset": 2.169146,
-    "duration": 0.419958,
-    "rpm": 2000.2,
-    "tier": "sweep",
-    "source": "src5 @ 53.66 s",
-    "seam_corr": 0.896,
-    "tick": 1.75
+    "offset": 7.626958,
+    "duration": 1.14,
+    "rpm": 2000.0,
+    "tier": "from-on",
+    "source": "the on-throttle 2000 rpm loop darkened (x1.000), src5 @ 367.54 s",
+    "seam_corr": 1.0,
+    "tick": 1.66
    }
   },
   {
    "rpm": 2250,
    "on": {
-    "offset": 3.050458,
-    "duration": 0.479979,
-    "rpm": 2250.1,
+    "offset": 8.944792,
+    "duration": 1.119667,
+    "rpm": 2250.67,
     "tier": "steady",
-    "source": "src5 @ 23.36 s",
-    "seam_corr": 0.951,
-    "tick": 1.56
+    "source": "src5 @ 22.96 s",
+    "seam_corr": 0.828,
+    "tick": 7.34
    },
    "off": {
-    "offset": 2.689104,
-    "duration": 0.425104,
-    "rpm": 2258.27,
-    "tier": "steady",
-    "source": "src2 @ 208.36 s",
-    "seam_corr": 0.979,
-    "tick": 1.42
+    "offset": 8.866958,
+    "duration": 1.12,
+    "rpm": 2250.0,
+    "tier": "from-on",
+    "source": "the on-throttle 2250 rpm loop darkened (x1.000), src5 @ 22.96 s",
+    "seam_corr": 0.829,
+    "tick": 1.75
    }
   },
   {
    "rpm": 2500,
    "on": {
-    "offset": 3.630438,
-    "duration": 0.479208,
-    "rpm": 2504.13,
+    "offset": 10.164458,
+    "duration": 1.10375,
+    "rpm": 2500.57,
     "tier": "steady",
-    "source": "src5 @ 24.94 s",
-    "seam_corr": 0.86,
-    "tick": 1.88
+    "source": "src5 @ 24.64 s",
+    "seam_corr": 0.567,
+    "tick": 1.86
    },
    "off": {
-    "offset": 3.214208,
-    "duration": 0.480896,
-    "rpm": 2495.34,
-    "tier": "steady",
-    "source": "src3 @ 305.69 s",
-    "seam_corr": 0.954,
-    "tick": 1.31
+    "offset": 10.086958,
+    "duration": 1.10925,
+    "rpm": 2488.17,
+    "tier": "pitch-shifted",
+    "source": "pitch-shifted from the 2750 rpm bin (x0.909), src5 @ 217.04 s",
+    "seam_corr": 0.917,
+    "tick": 24.76
    }
   },
   {
    "rpm": 2750,
    "on": {
-    "offset": 4.209646,
-    "duration": 0.480167,
-    "rpm": 2749.05,
+    "offset": 11.368208,
+    "duration": 1.134042,
+    "rpm": 2751.22,
     "tier": "steady",
-    "source": "src5 @ 419.59 s",
-    "seam_corr": 0.922,
-    "tick": 1.86
+    "source": "src1 @ 119.94 s",
+    "seam_corr": 0.969,
+    "tick": 2.18
    },
    "off": {
-    "offset": 3.795104,
-    "duration": 0.479208,
-    "rpm": 2754.54,
-    "tier": "steady",
-    "source": "src3 @ 304.31 s",
-    "seam_corr": 0.938,
-    "tick": 1.42
+    "offset": 11.296208,
+    "duration": 1.047292,
+    "rpm": 2749.95,
+    "tier": "sweep",
+    "source": "src5 @ 217.04 s + src5 @ 193.34 s",
+    "seam_corr": 0.664,
+    "tick": 2.16
    }
   },
   {
    "rpm": 3000,
    "on": {
-    "offset": 4.789813,
-    "duration": 0.481104,
-    "rpm": 2993.11,
+    "offset": 12.60225,
+    "duration": 1.04,
+    "rpm": 3000.0,
     "tier": "steady",
-    "source": "src3 @ 347.94 s",
-    "seam_corr": 0.853,
-    "tick": 1.69
+    "source": "src5 @ 196.86 s + src5 @ 59.81 s",
+    "seam_corr": 0.818,
+    "tick": 1.6
    },
    "off": {
-    "offset": 4.374313,
-    "duration": 0.480917,
-    "rpm": 2994.28,
+    "offset": 12.4435,
+    "duration": 1.04,
+    "rpm": 3000.0,
     "tier": "steady",
-    "source": "src5 @ 193.14 s",
-    "seam_corr": 0.791,
-    "tick": 1.49
+    "source": "src5 @ 216.74 s + src5 @ 193.14 s",
+    "seam_corr": 0.629,
+    "tick": 2.25
    }
   },
   {
    "rpm": 3250,
    "on": {
-    "offset": 5.370917,
-    "duration": 0.4435,
-    "rpm": 3246.9,
+    "offset": 13.74225,
+    "duration": 1.033833,
+    "rpm": 3250.04,
     "tier": "steady",
-    "source": "src5 @ 333.49 s",
-    "seam_corr": 0.879,
-    "tick": 2.28
+    "source": "src5 @ 197.96 s + src5 @ 425.21 s",
+    "seam_corr": 0.873,
+    "tick": 1.5
    },
    "off": {
-    "offset": 4.955229,
-    "duration": 0.479312,
-    "rpm": 3254.66,
-    "tier": "steady",
-    "source": "src5 @ 170.96 s",
-    "seam_corr": 0.963,
-    "tick": 1.62
+    "offset": 13.5835,
+    "duration": 1.145042,
+    "rpm": 3248.79,
+    "tier": "sweep",
+    "source": "src5 @ 169.86 s",
+    "seam_corr": 0.967,
+    "tick": 1.76
    }
   },
   {
    "rpm": 3500,
    "on": {
-    "offset": 5.914417,
-    "duration": 0.480146,
-    "rpm": 3498.94,
+    "offset": 14.876083,
+    "duration": 1.028583,
+    "rpm": 3499.96,
     "tier": "steady",
-    "source": "src5 @ 164.06 s",
-    "seam_corr": 0.973,
-    "tick": 1.91
+    "source": "src5 @ 482.74 s + src5 @ 30.16 s",
+    "seam_corr": 0.895,
+    "tick": 4.49
    },
    "off": {
-    "offset": 5.534542,
-    "duration": 0.480229,
-    "rpm": 3498.33,
-    "tier": "steady",
-    "source": "src5 @ 169.86 s",
-    "seam_corr": 0.974,
-    "tick": 1.5
+    "offset": 14.828542,
+    "duration": 1.131917,
+    "rpm": 3498.49,
+    "tier": "sweep",
+    "source": "src5 @ 169.49 s",
+    "seam_corr": 0.961,
+    "tick": 1.53
    }
   },
   {
    "rpm": 3750,
    "on": {
-    "offset": 6.494562,
-    "duration": 0.4805,
-    "rpm": 3746.1,
+    "offset": 16.004667,
+    "duration": 1.024,
+    "rpm": 3750.0,
     "tier": "steady",
-    "source": "src5 @ 32.01 s",
-    "seam_corr": 0.988,
-    "tick": 1.45
+    "source": "src5 @ 32.01 s + src5 @ 484.56 s",
+    "seam_corr": 0.852,
+    "tick": 1.8
    },
    "off": {
-    "offset": 6.114771,
-    "duration": 0.480229,
-    "rpm": 3748.21,
+    "offset": 16.060458,
+    "duration": 1.120437,
+    "rpm": 3748.54,
     "tier": "sweep",
     "source": "src5 @ 169.49 s",
-    "seam_corr": 0.991,
-    "tick": 1.41
+    "seam_corr": 0.959,
+    "tick": 1.44
    }
   },
   {
    "rpm": 4000,
    "on": {
-    "offset": 7.075062,
-    "duration": 0.480063,
-    "rpm": 3999.48,
+    "offset": 17.128667,
+    "duration": 1.02,
+    "rpm": 4000.0,
     "tier": "steady",
-    "source": "src5 @ 456.01 s",
-    "seam_corr": 0.963,
-    "tick": 1.99
+    "source": "src5 @ 456.01 s + src5 @ 496.36 s",
+    "seam_corr": 0.935,
+    "tick": 1.66
    },
    "off": {
-    "offset": 6.695,
-    "duration": 0.449833,
-    "rpm": 4001.48,
-    "tier": "steady",
-    "source": "src5 @ 474.34 s",
-    "seam_corr": 0.879,
-    "tick": 2.42
+    "offset": 17.280896,
+    "duration": 1.139125,
+    "rpm": 4003.07,
+    "tier": "pitch-shifted",
+    "source": "pitch-shifted from the 4250 rpm bin (x0.941), src3 @ 357.16 s",
+    "seam_corr": 0.945,
+    "tick": 40.38
    }
   },
   {
    "rpm": 4250,
    "on": {
-    "offset": 7.655125,
-    "duration": 0.480687,
-    "rpm": 4243.92,
+    "offset": 18.248667,
+    "duration": 1.016458,
+    "rpm": 4250.05,
     "tier": "steady",
-    "source": "src6 @ 56.86 s",
-    "seam_corr": 0.301,
-    "tick": 2.02
+    "source": "src5 @ 487.41 s + src5 @ 441.56 s",
+    "seam_corr": 0.872,
+    "tick": 1.59
    },
    "off": {
-    "offset": 7.244833,
-    "duration": 0.478938,
-    "rpm": 4259.43,
+    "offset": 18.520021,
+    "duration": 1.016458,
+    "rpm": 4250.05,
     "tier": "steady",
-    "source": "src7 @ 190.19 s",
-    "seam_corr": 0.946,
-    "tick": 2.56
+    "source": "src3 @ 357.16 s + src3 @ 352.01 s",
+    "seam_corr": 0.864,
+    "tick": 3.77
    }
   },
   {
    "rpm": 4500,
    "on": {
-    "offset": 8.235812,
-    "duration": 0.480063,
-    "rpm": 4499.41,
+    "offset": 19.365125,
+    "duration": 1.147292,
+    "rpm": 4497.55,
     "tier": "steady",
-    "source": "src5 @ 463.11 s",
-    "seam_corr": 0.901,
-    "tick": 1.34
+    "source": "src5 @ 461.31 s",
+    "seam_corr": 0.804,
+    "tick": 1.46
    },
    "off": {
-    "offset": 7.823771,
-    "duration": 0.479646,
-    "rpm": 4503.32,
-    "tier": "steady",
-    "source": "src6 @ 316.59 s",
-    "seam_corr": 0.695,
-    "tick": 1.73
+    "offset": 19.636479,
+    "duration": 1.139958,
+    "rpm": 4526.48,
+    "tier": "sweep",
+    "source": "src3 @ 370.51 s",
+    "seam_corr": 0.938,
+    "tick": 1.98
    }
   },
   {
    "rpm": 4750,
    "on": {
-    "offset": 8.815875,
-    "duration": 0.479646,
-    "rpm": 4753.51,
+    "offset": 20.612417,
+    "duration": 1.010542,
+    "rpm": 4749.93,
     "tier": "steady",
-    "source": "src5 @ 491.61 s",
-    "seam_corr": 0.742,
-    "tick": 1.47
+    "source": "src5 @ 491.61 s + src6 @ 598.16 s",
+    "seam_corr": 0.593,
+    "tick": 1.39
    },
    "off": {
-    "offset": 8.403417,
-    "duration": 0.481896,
-    "rpm": 4731.31,
-    "tier": "steady",
-    "source": "src7 @ 167.26 s",
-    "seam_corr": 0.964,
-    "tick": 3.87
+    "offset": 20.876438,
+    "duration": 1.136854,
+    "rpm": 4749.95,
+    "tier": "sweep",
+    "source": "src3 @ 319.91 s",
+    "seam_corr": 0.93,
+    "tick": 1.51
    }
   },
   {
    "rpm": 5000,
    "on": {
-    "offset": 9.395521,
-    "duration": 0.479896,
-    "rpm": 5001.09,
-    "tier": "steady",
-    "source": "src3 @ 96.49 s",
-    "seam_corr": 0.959,
-    "tick": 1.63
+    "offset": 21.722958,
+    "duration": 1.127208,
+    "rpm": 5003.51,
+    "tier": "sweep",
+    "source": "src3 @ 316.96 s",
+    "seam_corr": 0.958,
+    "tick": 1.69
    },
    "off": {
-    "offset": 8.985312,
-    "duration": 0.482563,
-    "rpm": 4973.45,
+    "offset": 22.113292,
+    "duration": 1.008,
+    "rpm": 5000.0,
     "tier": "steady",
-    "source": "src6 @ 180.04 s",
-    "seam_corr": 0.814,
-    "tick": 1.4
+    "source": "src3 @ 319.91 s + src9 @ 380.94 s + src6 @ 464.39 s",
+    "seam_corr": 0.587,
+    "tick": 1.64
    }
   },
   {
    "rpm": 5250,
    "on": {
-    "offset": 9.975417,
-    "duration": 0.480375,
-    "rpm": 5245.9,
+    "offset": 22.950167,
+    "duration": 1.142208,
+    "rpm": 5252.98,
     "tier": "steady",
-    "source": "src7 @ 179.89 s",
-    "seam_corr": 0.91,
-    "tick": 2.12
+    "source": "src3 @ 317.04 s",
+    "seam_corr": 0.961,
+    "tick": 1.54
    },
    "off": {
-    "offset": 9.567875,
-    "duration": 0.478479,
-    "rpm": 5266.69,
-    "tier": "steady",
-    "source": "src9 @ 367.01 s",
-    "seam_corr": 0.834,
-    "tick": 1.75
+    "offset": 23.221292,
+    "duration": 1.142583,
+    "rpm": 5251.26,
+    "tier": "sweep",
+    "source": "src3 @ 319.91 s",
+    "seam_corr": 0.879,
+    "tick": 1.51
    }
   },
   {
    "rpm": 5500,
    "on": {
-    "offset": 10.555792,
-    "duration": 0.480875,
-    "rpm": 5489.99,
+    "offset": 24.192375,
+    "duration": 1.04725,
+    "rpm": 5500.12,
     "tier": "steady",
-    "source": "src3 @ 83.51 s",
-    "seam_corr": 0.938,
-    "tick": 1.85
+    "source": "src9 @ 296.39 s + src9 @ 371.66 s + src9 @ 88.04 s",
+    "seam_corr": 0.648,
+    "tick": 1.74
    },
    "off": {
-    "offset": 10.146354,
-    "duration": 0.478271,
-    "rpm": 5519.89,
+    "offset": 24.463875,
+    "duration": 1.138562,
+    "rpm": 5480.6,
     "tier": "sweep",
-    "source": "src9 @ 366.74 s",
-    "seam_corr": 0.837,
-    "tick": 1.74
+    "source": "src9 @ 293.19 s",
+    "seam_corr": 0.511,
+    "tick": 1.69
    }
   },
   {
    "rpm": 5750,
    "on": {
-    "offset": 11.136667,
-    "duration": 0.479958,
-    "rpm": 5750.5,
+    "offset": 25.339625,
+    "duration": 1.144854,
+    "rpm": 5764.93,
     "tier": "steady",
-    "source": "src3 @ 84.06 s",
-    "seam_corr": 0.958,
-    "tick": 1.42
+    "source": "src9 @ 297.26 s",
+    "seam_corr": 0.474,
+    "tick": 1.45
    },
    "off": {
-    "offset": 10.724625,
-    "duration": 0.458979,
-    "rpm": 5751.9,
-    "tier": "steady",
-    "source": "src6 @ 114.24 s",
-    "seam_corr": 0.781,
-    "tick": 1.59
+    "offset": 25.702437,
+    "duration": 1.088896,
+    "rpm": 5730.58,
+    "tier": "sweep",
+    "source": "src9 @ 293.19 s",
+    "seam_corr": 0.507,
+    "tick": 1.72
    }
   },
   {
    "rpm": 6000,
    "on": {
-    "offset": 11.716625,
-    "duration": 0.479792,
-    "rpm": 6002.61,
-    "tier": "steady",
-    "source": "src3 @ 84.89 s",
-    "seam_corr": 0.937,
-    "tick": 1.6
+    "offset": 26.584479,
+    "duration": 1.140333,
+    "rpm": 5998.25,
+    "tier": "sweep",
+    "source": "src3 @ 83.71 s",
+    "seam_corr": 0.906,
+    "tick": 1.56
    },
    "off": {
-    "offset": 11.283604,
-    "duration": 0.48175,
-    "rpm": 5978.2,
-    "tier": "sweep",
-    "source": "src2 @ 27.29 s",
-    "seam_corr": 0.618,
-    "tick": 3.97
+    "offset": 26.891333,
+    "duration": 1.145146,
+    "rpm": 5973.04,
+    "tier": "pitch-shifted",
+    "source": "pitch-shifted from the 5750 rpm bin (x1.047), src9 @ 293.19 s",
+    "seam_corr": 0.832,
+    "tick": 1.75
    }
   },
   {
    "rpm": 6250,
    "on": {
-    "offset": 12.296417,
-    "duration": 0.460646,
-    "rpm": 6252.09,
-    "tier": "steady",
-    "source": "src7 @ 98.41 s",
-    "seam_corr": 0.922,
-    "tick": 2.54
+    "offset": 27.824813,
+    "duration": 1.133417,
+    "rpm": 6246.6,
+    "tier": "sweep",
+    "source": "src9 @ 297.21 s",
+    "seam_corr": 0.381,
+    "tick": 1.68
    },
    "off": {
-    "offset": 11.865354,
-    "duration": 0.48175,
-    "rpm": 6227.3,
-    "tier": "sweep",
-    "source": "src2 @ 27.29 s",
-    "seam_corr": 0.617,
-    "tick": 3.84
+    "offset": 28.136479,
+    "duration": 1.137646,
+    "rpm": 6223.38,
+    "tier": "pitch-shifted",
+    "source": "pitch-shifted from the 5750 rpm bin (x1.091), src9 @ 293.19 s",
+    "seam_corr": 0.846,
+    "tick": 1.75
    }
   },
   {
    "rpm": 6500,
    "on": {
-    "offset": 12.857062,
-    "duration": 0.478875,
-    "rpm": 6515.27,
-    "tier": "steady",
-    "source": "src8 @ 219.34 s",
-    "seam_corr": 0.227,
-    "tick": 1.92
+    "offset": 29.058229,
+    "duration": 1.033833,
+    "rpm": 6500.08,
+    "tier": "sweep",
+    "source": "src7 @ 97.91 s + src7 @ 153.54 s",
+    "seam_corr": 0.958,
+    "tick": 3.1
    },
    "off": {
-    "offset": 12.447104,
-    "duration": 0.481646,
-    "rpm": 6477.79,
-    "tier": "sweep",
-    "source": "src2 @ 27.29 s",
-    "seam_corr": 0.562,
-    "tick": 4.01
+    "offset": 29.374125,
+    "duration": 1.149375,
+    "rpm": 6473.08,
+    "tier": "pitch-shifted",
+    "source": "pitch-shifted from the 5750 rpm bin (x1.134), src9 @ 293.19 s",
+    "seam_corr": 0.842,
+    "tick": 1.76
    }
   },
   {
    "rpm": 6750,
    "on": {
-    "offset": 13.435937,
-    "duration": 0.48,
-    "rpm": 6750.0,
+    "offset": 30.192062,
+    "duration": 1.132229,
+    "rpm": 6783.08,
     "tier": "pitch-shifted",
-    "source": "pitch-shifted from the 6500 rpm bin (x1.036), src8 @ 219.34 s",
-    "seam_corr": 0.887,
-    "tick": 1.99
+    "source": "pitch-shifted from the 6500 rpm bin (x1.038), src7 @ 97.91 s",
+    "seam_corr": 0.983,
+    "tick": 31.66
    },
    "off": {
-    "offset": 13.02875,
-    "duration": 0.478708,
-    "rpm": 6768.21,
-    "tier": "sweep",
-    "source": "src6 @ 651.24 s",
-    "seam_corr": 0.718,
-    "tick": 1.89
+    "offset": 30.6235,
+    "duration": 1.133396,
+    "rpm": 6776.1,
+    "tier": "pitch-shifted",
+    "source": "pitch-shifted from the 5750 rpm bin (x1.178), src9 @ 293.19 s",
+    "seam_corr": 0.816,
+    "tick": 1.77
    }
   }
  ],
  "real_bins": {
-  "on": 23,
-  "off": 24
+  "on": 25,
+  "off": 17
  },
  "family": "modern_i4_stock",
  "cylinders": 4,
@@ -625,7 +667,7 @@
    "upload_date": "20150329",
    "licence": "Creative Commons Attribution license (reuse allowed)",
    "t0": 0.0,
-   "octave_relabel": 2.0,
+   "octave_relabel": 1.0,
    "t1": 254.0
   },
   {
@@ -644,15 +686,15 @@
   "on": "engine_on.m4a",
   "off": "engine_off.m4a",
   "format": "m4a AAC-LC 96kbps 48 kHz mono (aac_at)",
-  "offset_s": -0.0,
+  "offset_s": 8e-07,
   "offsets_s": {
    "on": -0.0,
-   "off": -0.0
+   "off": 8e-07
   },
   "priming_s": 0.044,
   "lengths_s": {
-   "on": 14.08,
-   "off": 13.674667
+   "on": 31.488,
+   "off": 31.914667
   }
  }
 }
