@@ -1433,6 +1433,12 @@ def closed_roads(trk, osm):
                     # its material in the app (asphalt = the circuit's road look, concrete = pale concrete); absent:
                     # the aerial photo's own colour, as before (20 Oct 2026, owner: "it's usable track, just not in use")
                     part["surface"] = road["surface"]
+                if road.get("tone"):
+                    # round 11: the road's measured asphalt tone for the apron look (scenery.json part `tone`; absent = the pale
+                    # default apron; the app reads it only on an apron part)
+                    if not road.get("tone_src"):
+                        raise SystemExit(f"closed road {road['name']}: tone needs its tone_src")
+                    part["tone"] = [round(float(v), 4) for v in road["tone"]]
                 # per-part overrides (config closed_roads[].part_overrides: [{near: (lat, lon), surface, src}], round 11):
                 # the part whose centre line passes within 25 m of `near` takes that surface (it was read nowhere until
                 # 22 Oct 2026, so the round-7e override was a no-op); an entry matching no part fails the stage
@@ -3053,6 +3059,38 @@ def declared_paint_lines(trk):
     return out
 
 
+def blend_line(trk, pit):
+    """The pit-exit blend line (config scenery.blend_line {paint_line: index into paint_lines_declared, side: 'inner' | 'outer'
+    (the ladder's line on the race edge or the one 0.8 m beyond it), label, src}, Mid-Ohio round 11): the polyline of one of the
+    declared ladder lines, in driving direction, with the side the pit exit lies on, for the runtime rule (src/physics/
+    blendline.ts: two wheels across it, strictly, are a black flag and an invalid lap). Absent: no `blend_line` key (every other
+    track unchanged)."""
+    bc = SC_CFG["blend_line"]
+    pl = SC_CFG["paint_lines_declared"][bc["paint_line"]]
+    P = _ll_line(pl["latlon"], 1.0)
+    t = np.gradient(P, axis=0); t /= np.linalg.norm(t, axis=1, keepdims=True)
+    half = (pl.get("double") or 0.0) / 2
+    off = {"inner": -half, "outer": half, "centre": 0.0}[bc.get("side", "inner")]
+    Q = P + np.c_[-t[:, 1], t[:, 0]] * off
+    # stations and lateral of the line against the course's left edge (a check, and the ledger's words)
+    kd = trk.kd
+    ds, ii = kd.query(Q)
+    lat = np.array([float((Q[k] - trk.C[i, :2]) @ trk.N[i]) - float(trk.hl[i]) for k, i in enumerate(ii)])
+    # the pit exit's side of the line: the nearest pit lane centre point to the line's middle, left (+1) or right (-1) of its direction
+    mid = Q[len(Q) // 2]
+    pc = np.array([c[:2] for p_ in pit["parts"] for c in p_["center"]])
+    nearest = pc[int(np.argmin(np.hypot(*(pc - mid).T)))]
+    k = len(Q) // 2
+    side = 1 if float(t[k, 0] * (nearest[1] - mid[1]) - t[k, 1] * (nearest[0] - mid[0])) > 0 else -1
+    if bc.get("pit_side") and (1 if bc["pit_side"] == "left" else -1) != side:
+        raise SystemExit(f"blend_line: the pit lane lies on the {'left' if side > 0 else 'right'} of the line, the config says {bc['pit_side']}")
+    s0, s1 = float(ii[0]) * trk.sp, float(ii[-1]) * trk.sp
+    log(f"blend line: {len(Q)} points, {float(np.sum(np.hypot(*np.diff(Q, axis=0).T))):.1f} m, stations {s0:.0f}-{s1:.0f}, "
+        f"{lat.min():+.2f}..{lat.max():+.2f} m beyond the left edge, pit side {'left' if side > 0 else 'right'}")
+    return {"pts": [[rnd(a, 2), rnd(b, 2)] for a, b in Q], "pit_side": side, "label": bc.get("label", "crossed the blend line"),
+            "s": [round(s0, 1), round(s1, 1)], "src": bc["src"]}
+
+
 def kerb_lines(trk):
     """Raised kerb strips off the lap (config scenery.kerb_lines, round 7b, Sonoma owner note 45): the painted kerbs round
     the closed roads' islands, measured on the captures as lat/lon lines (the kerb's centre); {latlon, width, colors
@@ -3731,6 +3769,7 @@ def main(cfg=None, out_dir=None):
         "pit_exit_cones": cones,
         **({"cone_lines": cone_lines} if cone_lines else {}),
         **({"paint_lines": plines} if plines else {}),
+        **({"blend_line": blend_line(trk, pit)} if SC_CFG.get("blend_line") else {}),
         **({"paved_areas": pareas} if pareas else {}),
         **({"ground_signs": ground_signs(trk)} if SC_CFG.get("ground_signs") else {}),
         **({"kerb_lines": kerb_lines(trk)} if SC_CFG.get("kerb_lines") else {}),
@@ -3797,7 +3836,8 @@ def main(cfg=None, out_dir=None):
             fp = os.path.join(OUT, f)
             src_img = np.asarray(Image.open(fp).convert("RGB"))
             o_ = trk.t["ortho"] if f == "ortho.jpg" else {"x0": -FAR_HALF, "x1": FAR_HALF}
-            arr, share, gain = grass_tone(src_img, dict(gt_cfg, mpp=(o_["x1"] - o_["x0"]) / src_img.shape[1]), G if f == "ortho.jpg" else None)
+            vm = grass_verge_mask(trk, SC_CFG, sc, src_img.shape) if (f == "ortho.jpg" and gt_cfg.get("verge")) else None
+            arr, share, gain = grass_tone(src_img, dict(gt_cfg, mpp=(o_["x1"] - o_["x0"]) / src_img.shape[1]), G if f == "ortho.jpg" else None, vm)
             Image.fromarray(arr).save(fp, quality=q, optimize=True)
             log(f"grass tone on {f}: {share * 100:.1f} % of the pixels, luminance gain {gain:.2f}, target {tuple(gt_cfg['target'])} ({gt_cfg['src'][:80]})")
     if os.path.getsize(os.path.join(OUT, "ortho.jpg")) > 1.5e6:
@@ -4204,7 +4244,40 @@ def season_zone_mask(trk, opt, shape):
     return np.asarray(img, np.float32) / 255.0
 
 
-def grass_tone(img, opt, G=None):
+def grass_verge_mask(trk, sc_cfg, sc, shape):
+    """Verge band of the grass tone (config scenery.grass_tone.verge {band_m, fade_m, skip: [{side, s: (s0, s1), why}]}, Mid-Ohio
+    round 11): 1 on ground within band_m of the course edge on either side (outside the course, the pit lane and the paved
+    zones), fading to 0 over fade_m; the skipped runs (the pit side) are 0. Returns a float mask over ortho.jpg."""
+    from PIL import Image, ImageDraw
+    vopt = sc_cfg["grass_tone"]["verge"]
+    o = trk.t["ortho"]; H, W = shape[:2]; sx = (o["x1"] - o["x0"]) / W
+    tox = lambda P: [((p[0] - o["x0"]) / sx, (o["y1"] - p[1]) / sx) for p in P]  # noqa: E731
+    paved = Image.new("L", (W, H), 0); d = ImageDraw.Draw(paved)
+    d.polygon(tox(trk.L[:, :2]), fill=255); d.polygon(tox(trk.R[:, :2]), fill=0)
+    for grp in (sc.get("pit_lane"), sc.get("paved_zones")):
+        for pt in (grp or {}).get("parts", []):
+            if pt.get("n", 2) >= 2:
+                d.polygon(tox([q[:2] for q in pt["left"]] + [q[:2] for q in pt["right"]][::-1]), fill=255)
+    paved = np.asarray(paved) > 0
+    dist = ndi.distance_transform_edt(~paved) * sx
+    band, fade = float(vopt.get("band_m", 30.0)), float(vopt.get("fade_m", 5.0))
+    m = np.clip((band + fade - dist) / max(fade, 1e-6), 0, 1)
+    # skipped runs: the ground beside them is taken out by painting a polygon of 0 over the run's strip
+    skip = Image.new("L", (W, H), 0); ds = ImageDraw.Draw(skip)
+    C = trk.C[:, :2]; n = trk.n
+    for z in vopt.get("skip", []):
+        E = (trk.L if z["side"] == "left" else trk.R)[:, :2]
+        a, b = z["s"]
+        ks = [k % n for k in range(int(round(a / trk.sp)), int(round(b / trk.sp)) + (1 if b > a else 1 + n))]
+        nrm = np.array([(E[k] - C[k]) / max(np.linalg.norm(E[k] - C[k]), 1e-6) for k in ks])
+        poly = [E[k] - nrm[i] * 2.0 for i, k in enumerate(ks)] + [E[k] + nrm[i] * (band + fade + 2.0) for i, k in reversed(list(enumerate(ks)))]
+        ds.polygon(tox(poly), fill=255)
+        log(f"grass tone verge skip {z['side']} s {a}-{b}: {z.get('why', '')[:90]}")
+    m *= 1.0 - ndi.gaussian_filter((np.asarray(skip) > 0).astype(np.float32), 1.0)
+    return m.astype(np.float32)
+
+
+def grass_tone(img, opt, G=None, verge=None):
     """Grass tone rule (config scenery.grass_tone {target: (r, g, b) 8-bit, the in-season grass measured on the clean
     captures, chm_max (m, 1.0), strength (0..1, 1.0), src}, Mid-Ohio round 8). Grass pixels: green over red and blue (soft
     over 1-5 grey levels), not sand (R - G under 6, soft), luminance 18..170, and, on the near ortho with the lidar grids G
@@ -4230,22 +4303,44 @@ def grass_tone(img, opt, G=None):
         # keeps its dark tone among lifted neighbours): the mask is taken over a neighbourhood
         m = np.clip(ndi.gaussian_filter(m, float(opt["mask_px"])) * 1.6, 0, 1) * np.clip((lum - 12) / 10, 0, 1)
     m *= float(opt.get("strength", 1.0))
+    m_base = m
+    w2 = None
+    vopt = opt.get("verge")
+    if verge is not None and vopt:
+        # Mid-Ohio round 11 (owner: "a lot of these brown / dark areas have been reintroduced; I mostly see green grass when
+        # looking at the Google satellite photos"): the verge band beside the course keeps the NAIP's shadowed and dulled
+        # grass (tree, armco and fence shadows, dull olive-brown that fails the green test above). Dark ground there, not
+        # tan or red (sand, dirt, kerb paint stay), under no canopy, takes the grass target at its own relative luminance
+        # with a floor (`k_min`: the shade of the in-season frames is a mid green, not near black)
+        w2 = np.clip((float(vopt.get("lum_max", 110)) - lum) / 15, 0, 1) * np.clip((lum - float(vopt.get("lum_min", 6))) / 6, 0, 1)
+        w2 *= np.clip((float(vopt.get("rg_max", 14)) - (r - g)) / 4, 0, 1)
+        if G is not None:
+            # the canopy test of the verge is the tall crowns only (`chm_max`, 3 m, no dilation): fences, armco and posts
+            # (1-2.5 m, modelled as barriers) leave their shadow strips to the tone
+            canopy_v = ndi.gaussian_filter((chm > float(vopt.get("chm_max", 3.0))).astype(np.float32), 1.0)
+            w2 *= 1.0 - np.clip(canopy_v[rr][:, cc] * 2.0, 0, 1)
+        if vopt.get("mask_px"):
+            w2 = np.clip(ndi.gaussian_filter(w2, float(vopt["mask_px"])) * 1.6, 0, 1) * (w2 > 0.02)
+        w2 = (w2 * verge * float(vopt.get("strength", 1.0))).astype(np.float32)
+        m = np.maximum(m, w2)
     tr, tg, tb = (float(v) for v in opt["target"])
     tl = 0.299 * tr + 0.587 * tg + 0.114 * tb
-    sel = m > 0.5
+    sel = m_base > 0.5
     gain = float(tl / max(np.median(lum[sel]), 1.0)) if sel.any() else 1.0
     if opt.get("local_m"):
         # the gain per pixel from the grass's local mean luminance (a Gaussian of `local_m` m), so tiles of different
         # acquisitions land on the same target instead of one global lift (round 8: the NAIP's south row is brighter)
         H_, W_ = lum.shape
         sig = float(opt["local_m"]) / float(opt.get("mpp", 0.6))
-        wsum = ndi.gaussian_filter(m, sig)
-        lmean = ndi.gaussian_filter(lum * m, sig) / np.maximum(wsum, 1e-3)
+        wsum = ndi.gaussian_filter(m_base, sig)
+        lmean = ndi.gaussian_filter(lum * m_base, sig) / np.maximum(wsum, 1e-3)
         lmean = np.where(wsum > 0.05, lmean, tl / gain)
         # the ortho is a JPEG at ~0.6 m/px: its 8-px blocks print as ~5 m squares once the grass is lifted, so the relative
         # luminance is taken from a lightly smoothed image and its contrast eased (`contrast`, 1.0 = unchanged)
         lum_s = ndi.gaussian_filter(lum, float(opt.get("deblock_px", 0.0))) if opt.get("deblock_px") else lum
         k = np.power(np.maximum(lum_s, 1.0) / np.maximum(lmean, 1.0), float(opt.get("contrast", 1.0)))
+        if w2 is not None:
+            k = k * (1 - w2) + np.maximum(k, float(vopt.get("k_min", 0.6))) * w2
     else:
         k = lum * gain / tl
     new = np.stack([tr * k, tg * k, tb * k], -1)

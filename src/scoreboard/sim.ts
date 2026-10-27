@@ -4,8 +4,8 @@
 // Pure TS: no DOM, no Node built-ins.
 import {
   Vehicle, loadCarSpec, createTrackSurface, createTrackProjector, createCollisionWorld, lineToWorld,
-  deriveGearSchedule, scheduleTargetAt, createOffTrackJudge, OffTrackWatch, OFFTRACK_FAR_M,
-  type OffTrackJudge,
+  deriveGearSchedule, scheduleTargetAt, createOffTrackJudge, OffTrackWatch, OFFTRACK_FAR_M, BlendLine, BlendLineWatch, BlendFlag,
+  type OffTrackJudge, type BlendLineJson,
   type CarSpec, type DriverInput, type Surface, type TrackJson, type PitLaneJson, type SceneryCollisionJson, type CollisionWorld,
   type GearSchedule,
   type SausageJson, type KerbsJson, type TerrainOverrideJson } from '../physics';
@@ -28,6 +28,8 @@ export interface SceneryLike extends SceneryCollisionJson {
   kerbs?: KerbsJson | null;
   /** terrain override regions (physics: src/physics/track.ts TerrainOverrideJson; Sonoma round 14A) */
   terrain_override?: TerrainOverrideJson | null;
+  /** the pit-exit blend line (src/physics/blendline.ts; Mid-Ohio round 11): absent = no rule */
+  blend_line?: BlendLineJson | null;
 }
 
 /** ghosts.json fields the sim uses. */
@@ -167,6 +169,12 @@ export class HotlapSim {
   private readonly offTrackJudge: OffTrackJudge;
   private readonly offTrack = new OffTrackWatch();
   private offTrackLaunchAt = NaN;
+  /** The pit-exit blend line rule (a package that declares scenery `blend_line`): two wheels across it invalidates the lap. */
+  private readonly blend: BlendFlag | null;
+  /** Blend-line violations since the last reset (the app's hot-lap mode toasts when it rises). */
+  blendFlags = 0;
+  /** The words of the last violation, or null. */
+  lastBlendReason: string | null = null;
 
   constructor(readonly assets: SimAssets, opts: HotlapSimOptions = {}) {
     const a = assets;
@@ -184,6 +192,7 @@ export class HotlapSim {
     this.timer = new LapTimer(a.track.length_m);
     this.lineOffsets = a.ghosts.line?.offset_m ?? [];
     this.offTrackJudge = createOffTrackJudge(a.track, { farM: TRACKS[a.trackId]?.offTrackFarM ?? OFFTRACK_FAR_M, barriers: a.scenery?.barriers ?? null });
+    this.blend = a.scenery?.blend_line ? new BlendFlag(new BlendLineWatch(new BlendLine(a.scenery.blend_line))) : null;
     this.autoShift = opts.autoShift ?? true;
     this.abs = opts.abs ?? this.spec.brakes.abs.enabled >= 0.5;
     this.ref = opts.ref === undefined ? defaultRefGhost(a.ghosts) : opts.ref;
@@ -210,6 +219,7 @@ export class HotlapSim {
     this.appliedRef = undefined; this.schedule = null;
     this.rows = []; this.refs = []; this.last = null;
     this.offTrack.reset(); this.offTrackLaunchAt = NaN;
+    this.blend?.reset(); this.blendFlags = 0; this.lastBlendReason = null;
   }
 
   private applyRef(): void {
@@ -321,6 +331,11 @@ export class HotlapSim {
     if (this.offTrack.update(far, STEP * TIMING_EVERY)) {
       this.offTrackLaunchAt = v.launchIntoSpace(this.offTrackJudge.away.x, this.offTrackJudge.away.y);
       this.offTrack.reset();   // re-armed for a car put back on the road (race recovery resets the vehicle in place)
+    }
+    if (this.blend && this.blend.update(st.pos[0], st.pos[1], st.wheels, STEP * TIMING_EVERY)) {
+      this.blendFlags++;
+      this.lastBlendReason = this.blend.watch.line.label;
+      this.timer.invalidate(this.lastBlendReason);
     }
     return this.timer.update(this.simTime, pr.s, Math.abs(st.speed), allOff, STEP * TIMING_EVERY);
   }

@@ -69,7 +69,9 @@ export interface SceneryJson {
     /** texture pass (Buttonwillow, 21 Oct 2026): the zone's road surface draws over any overlapping ribbon (the track's
      *  shoulder, another zone's shoulder; a higher `over` in front of a lower one: closed roads 2, runoff 1) and its own
      *  shoulder draws behind them; absent = as before (Laguna, Sonoma) */
-    over?: number })[] } | null;
+    over?: number;
+    /** a closed road's measured asphalt tone in the apron look (linear-ish RGB, like the default pale 0.50 / 0.49 / 0.46); absent = that default (Mid-Ohio round 11) */
+    tone?: [number, number, number] })[] } | null;
   /** painted lines off the track (closed roads' edge lines measured on the captures, 20 Oct 2026): white strips */
   paint_lines?: { width: number; side?: number; pts: V3[]; src?: string; /** round 7: line colour (default white) */ color?: string;
     /** round 11 (Buttonwillow crack seal): a specular sheen 0-1 (a lit standard material, roughness 1 - 0.8 gloss); absent = the flat Lambert paint */ gloss?: number }[];

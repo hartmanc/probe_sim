@@ -1,0 +1,108 @@
+{
+ "left_0000": {
+  "green": 0.136,
+  "dark": 0.105
+ },
+ "left_0300": {
+  "green": 0.89,
+  "dark": 0.022
+ },
+ "left_0600": {
+  "green": 0.986,
+  "dark": 0.0
+ },
+ "left_0900": {
+  "green": 0.793,
+  "dark": 0.0
+ },
+ "left_1200": {
+  "green": 0.87,
+  "dark": 0.127
+ },
+ "left_1500": {
+  "green": 0.784,
+  "dark": 0.202
+ },
+ "left_1800": {
+  "green": 0.794,
+  "dark": 0.002
+ },
+ "left_2100": {
+  "green": 0.82,
+  "dark": 0.104
+ },
+ "left_2400": {
+  "green": 0.729,
+  "dark": 0.024
+ },
+ "left_2700": {
+  "green": 0.809,
+  "dark": 0.101
+ },
+ "left_3000": {
+  "green": 0.933,
+  "dark": 0.005
+ },
+ "left_3300": {
+  "green": 0.361,
+  "dark": 0.078
+ },
+ "right_0000": {
+  "green": 0.917,
+  "dark": 0.021
+ },
+ "right_0300": {
+  "green": 0.436,
+  "dark": 0.002
+ },
+ "right_0600": {
+  "green": 0.96,
+  "dark": 0.0
+ },
+ "right_0900": {
+  "green": 0.769,
+  "dark": 0.0
+ },
+ "right_1200": {
+  "green": 0.851,
+  "dark": 0.001
+ },
+ "right_1500": {
+  "green": 0.921,
+  "dark": 0.002
+ },
+ "right_1800": {
+  "green": 0.937,
+  "dark": 0.005
+ },
+ "right_2100": {
+  "green": 0.969,
+  "dark": 0.008
+ },
+ "right_2400": {
+  "green": 0.977,
+  "dark": 0.0
+ },
+ "right_2700": {
+  "green": 0.975,
+  "dark": 0.006
+ },
+ "right_3000": {
+  "green": 0.859,
+  "dark": 0.0
+ },
+ "right_3300": {
+  "green": 0.753,
+  "dark": 0.009
+ },
+ "total": {
+  "left": {
+   "green": 0.742,
+   "dark": 0.064
+  },
+  "right": {
+   "green": 0.86,
+   "dark": 0.004
+  }
+ }
+}

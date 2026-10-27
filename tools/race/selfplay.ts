@@ -30,7 +30,7 @@ const pace: PaceJson = pacePath ? JSON.parse(readFileSync(pacePath, 'utf8')) : l
 const makeSurface = argv.includes('--no-kerbs') ? () => createTrackSurface(pack.track, pack.heightfield, { pitLane: pack.pitLane }) : pack.makeSurface;
 const dir = new RaceDirector({
   line: pack.line, surface: pack.surface, makeSurface,
-  probeJson: loadProbeJson(), pace, identity, pitLane: pack.scenery?.pit_lane ?? null, collisionWorld: createCollisionWorld(pack.scenery, pack.track),
+  probeJson: loadProbeJson(), pace, identity, pitLane: pack.scenery?.pit_lane ?? null, blendLine: pack.scenery?.blend_line ?? null, collisionWorld: createCollisionWorld(pack.scenery, pack.track),
 }, { laps, seed, playerAi: true, maxAi, followScale, laneMargin, shiftGrip, ...(mishapRate !== undefined ? { mishapRate } : {}) });
 const m = runSelfplay(dir, makeSurface(), { log: !argv.includes('--quiet') });
 printReport(m);

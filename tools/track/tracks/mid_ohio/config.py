@@ -364,6 +364,14 @@ CONFIG = dict(
         # blend'); the two long lines drawn, the rungs not (the kit has no ladder pattern)
         paint_lines_declared=[dict(latlon=[(40.689529, -82.6377819), (40.6895299, -82.6378173), (40.6895309, -82.6378525), (40.6895317, -82.6378878), (40.6895323, -82.637923), (40.6895328, -82.6379582), (40.6895331, -82.6379933), (40.6895332, -82.6380283), (40.6895332, -82.638063), (40.6895331, -82.6380975), (40.6895327, -82.6381316), (40.689532, -82.6381654), (40.6895306, -82.6381988), (40.6895285, -82.6382318), (40.6895255, -82.6382643), (40.6895216, -82.6382965), (40.6895167, -82.6383284), (40.6895107, -82.6383599), (40.6895037, -82.6383909), (40.6894954, -82.6384216), (40.6894861, -82.6384518), (40.6894757, -82.6384815), (40.6894645, -82.6385108), (40.6894526, -82.6385398), (40.68944, -82.6385684), (40.6894269, -82.6385968), (40.6894132, -82.6386248), (40.689399, -82.6386524), (40.689384, -82.6386795)], width=0.15, double=0.8, color='#e8e8e4',
                                    src='pit-exit ladder line: c20_s0080-c20_s0280 (r7/kerb_scan.py profile, s 240-298 left); 360 lap t030-t032 left; N837 t014')],
+        # the blend line (round 11, the owner's drive of round 10: "the invalid lap or black flag for crossing into the pit exit at T1
+        # should be pretty strict ... 'Black flag for crossing the blend line at T1'"): the INNER line of the ladder above (the
+        # line on the race edge, 0.10 m beyond it at stations 212-296 on the captures), from the pit wall's end (s 212, c20_s0120)
+        # to where the raised red / white T1 inside kerb takes over (its first block s 299.2): the pit exit is to its left. The
+        # runtime rule (src/physics/blendline.ts): two wheels across it, none allowed beyond a wheel's own width (grace 0), a car on
+        # its lap with two wheels on the pit side, or a car leaving the pits with two wheels on the course side
+        blend_line=dict(paint_line=0, side='inner', pit_side='left', label='crossed the blend line at T1',
+                        src='the pit-exit ladder (c20_s0080-c20_s0280, 360 lap t030-t032 left, N837 t014 "white hatched pit-exit blend"): its inner line, on the race edge'),
         bridge_stairs=True,
         # judge r7 F9: the banners the footage shows on the two footbridges, typed names (no logo artwork)
         bridge_banners={'444205416': [['Firestone|#f2f2ee|#c8202c'], ['HONDA|#c8302a|#f2f2ee']],
@@ -375,14 +383,14 @@ CONFIG = dict(
         # t042 right, t064 right: open mouths) -> mouth_cones [] and the containment rays onto them listed in gates.allowed
         owner_green=dict(file='owner/r2/merged.json', reach=4.0, along=1.0),
         closed_roads=[
-            dict(edges_from_green=True, name='inner chicane (OSM 444205376)', ways=['444205376'], half_width=4.5, surface='apron',   # boundary audit r7 B2: the ortho's own tone read as pale gravel at hood level with dark NAIP blotches; 'apron' is pale weathered asphalt with the grain (360 t040 / t064: grey asphalt a touch lighter than the course)
+            dict(edges_from_green=True, name='inner chicane (OSM 444205376)', ways=['444205376'], half_width=4.5, surface='apron', tone=(0.05, 0.045, 0.038), tone_src="round 11 (owner drive of round 10: 'texture mismatches on the straight after T1'): the pale default apron (0.50 / 0.49 / 0.46) read as a flat pale-grey plane beside the course at the connector mouth; N837 t021 (Apr 2026) shows the connector asphalt a little darker and warmer than the course (patch means 144 / 131 / 116 and 135 / 121 / 106 against the course 156 / 147 / 138, 161 / 152 / 144); the 360 lap t036-t064 right reads it 'a touch lighter' in the sun; set to match the course's own render (apron luminance about the course's, warm: measured by shooting the sim at the mouth, round11.md 1)",   # boundary audit r7 B2: the ortho's own tone read as pale gravel at hood level with dark NAIP blotches; 'apron' is pale weathered asphalt with the grain (360 t040 / t064: grey asphalt a touch lighter than the course)
                 
                  mouth_cones=[dict(near=(40.6860895, -82.6392579), src='N837 OJaBJz18xEo t026 / t027 (Lemons, Apr 2026): four orange cones across the chicane mouth where it rejoins on the right (judge r7 F4); the 2025 360 lap t040-t042 shows it open (IndyCar weekend)')],
                  src='OSM 444205376; the owner green strokes w_s0625 / w_s0750 / w_s0875; c20_s0560-c20_s0840: the unused inner chicane, grey asphalt; 360 t040 / t042 right'),
-            dict(edges_from_green=True, name='T1-T3 connector, south (OSM 444205377)', ways=['444205377'], half_width=4.5, surface='apron',   # boundary audit r7 B2: the ortho's own tone read as pale gravel at hood level with dark NAIP blotches; 'apron' is pale weathered asphalt with the grain (360 t040 / t064: grey asphalt a touch lighter than the course)
+            dict(edges_from_green=True, name='T1-T3 connector, south (OSM 444205377)', ways=['444205377'], half_width=4.5, surface='apron', tone=(0.05, 0.045, 0.038), tone_src="round 11 (owner drive of round 10: 'texture mismatches on the straight after T1'): the pale default apron (0.50 / 0.49 / 0.46) read as a flat pale-grey plane beside the course at the connector mouth; N837 t021 (Apr 2026) shows the connector asphalt a little darker and warmer than the course (patch means 144 / 131 / 116 and 135 / 121 / 106 against the course 156 / 147 / 138, 161 / 152 / 144); the 360 lap t036-t064 right reads it 'a touch lighter' in the sun; set to match the course's own render (apron luminance about the course's, warm: measured by shooting the sim at the mouth, round11.md 1)",   # boundary audit r7 B2: the ortho's own tone read as pale gravel at hood level with dark NAIP blotches; 'apron' is pale weathered asphalt with the grain (360 t040 / t064: grey asphalt a touch lighter than the course)
                  mouth_cones=[],
                  src='OSM 444205377; the owner green strokes w_s1250; c20_s1280 / c20_s0480: the unused connector between the T1-Keyhole straight and the return straight; 360 t064 right'),
-            dict(edges_from_green=True, name='T1-T3 connector, north (OSM 444205378)', ways=['444205378'], half_width=4.5, surface='apron',   # boundary audit r7 B2: the ortho's own tone read as pale gravel at hood level with dark NAIP blotches; 'apron' is pale weathered asphalt with the grain (360 t040 / t064: grey asphalt a touch lighter than the course)
+            dict(edges_from_green=True, name='T1-T3 connector, north (OSM 444205378)', ways=['444205378'], half_width=4.5, surface='apron', tone=(0.05, 0.045, 0.038), tone_src="round 11 (owner drive of round 10: 'texture mismatches on the straight after T1'): the pale default apron (0.50 / 0.49 / 0.46) read as a flat pale-grey plane beside the course at the connector mouth; N837 t021 (Apr 2026) shows the connector asphalt a little darker and warmer than the course (patch means 144 / 131 / 116 and 135 / 121 / 106 against the course 156 / 147 / 138, 161 / 152 / 144); the 360 lap t036-t064 right reads it 'a touch lighter' in the sun; set to match the course's own render (apron luminance about the course's, warm: measured by shooting the sim at the mouth, round11.md 1)",   # boundary audit r7 B2: the ortho's own tone read as pale gravel at hood level with dark NAIP blotches; 'apron' is pale weathered asphalt with the grain (360 t040 / t064: grey asphalt a touch lighter than the course)
                  mouth_cones=[],
                  src='OSM 444205378; the owner green strokes w_s0500 / w_s1250; c20_s0440 / c20_s1360: the unused connector at the T1 exit; 360 t064 right (the connector meets the track)'),
         ],
@@ -606,7 +614,9 @@ CONFIG = dict(
             dict(side='right', s=(3103.1, 3454.4), tone='pale', what='paddock / service road edge or curb', why='accepted as built: beyond the barriers and fences, in the paddock or on a service path the course cannot reach (ortho crop, judge r7 ground-lines review); no barrier there in the footage (finding 102, 39-60 m out)'),
             dict(side='right', s=(3479.4, 2.0), tone='dark', what="the kerb's outer edge / sand beside it", why='accepted as built: the outer limit of a modelled kerb band and the sand beyond it (finding 103, 2-4 m out)'),
             dict(side='right', s=(3482.4, 3502.4), tone='dark', what='shadow of the modelled armco / catch fence', why='accepted as built: the NAIP band beside a modelled barrier run (within 2-6 m): the armco or fence and its shadow; the run is modelled from OSM and the footage (finding 104, 15-17 m out)'),
-            dict(side='right', s=(3503.4, 3.0), tone='dark', what='shadow of the modelled armco / catch fence', why='accepted as built: the NAIP band beside a modelled barrier run (within 2-6 m): the armco or fence and its shadow; the run is modelled from OSM and the footage (finding 105, 14-18 m out)'),
+            dict(side='right', s=(3503.4, 3597.5), tone='dark', what='shadow of the modelled armco / catch fence', why="accepted as built: the NAIP band beside a modelled barrier run (within 2-6 m): the armco or fence and its shadow; the run is modelled from OSM and the footage (finding 105, 14-18 m out; round 11: the entry's wrapped range (3503.4, 3.0) overlapped no finding that starts after s 3503 and wraps the line, so it is split at the line)"),
+            dict(side='right', s=(0.0, 3.0), tone='dark', what='shadow of the modelled armco / catch fence', why="accepted as built: the NAIP band beside a modelled barrier run (within 2-6 m): the armco or fence and its shadow; the run is modelled from OSM and the footage (finding 105, 14-18 m out; the wrapped part of the entry above)"),
+            dict(side='left', s=(480.0, 560.0), tone='dark', what='shadow of the modelled armco / catch fence', why="accepted as built: the NAIP band beside a modelled barrier run (within 2-6 m): the armco or fence and its shadow; the run is modelled from OSM and the footage (round 11: the strip beside the T1-exit left armco 11-12 m out, 28 m long, contrast 20 after the verge tone lifted the grass beside it (before it was part of the 82 m line dispositioned by the entry at s 575-632))"),
             dict(side='right', s=(3586.5, 3597.5), tone='pale', what='paddock / service road edge or curb', why='accepted as built: beyond the barriers and fences, in the paddock or on a service path the course cannot reach (ortho crop, judge r7 ground-lines review); no barrier there in the footage (finding 106, 55-60 m out)'),
             dict(side='right', s=(0.0, 93.1), tone='pale', what='paddock / service road edge or curb', why='accepted as built: beyond the barriers and fences, in the paddock or on a service path the course cannot reach (ortho crop, judge r7 ground-lines review); no barrier there in the footage (finding 106, 55-60 m out)'),
         ]),
@@ -619,6 +629,16 @@ CONFIG = dict(
         # (93, 110, 71). The first round-8 pass on the captures' own hue (86, 103, 87) still read grey-blue at hood level
         # (compare_sheets_r8 fwd_00, round8.md 3)
         grass_tone=dict(target=(93.0, 110.0, 71.0), chm_max=1.0, strength=1.0, local_m=40.0, deblock_px=1.0, contrast=0.7, mask_px=4.0,
+                        # round 11 (owner drive of round 10: "a lot of these brown / dark areas have been reintroduced. I mostly see green
+                        # grass when looking at the Google satellite photos"; round11.md 2): the verge band keeps the NAIP's shadowed
+                        # and dulled grass (woods, armco and fence shadows: (12, 20, 31) on the back straight left, olive-brown (70, 70, 55)
+                        # elsewhere) that failed the green test; dark ground (luminance under 110, not tan or red: sand, dirt, kerb paint
+                        # stay) within 30 m of the edge and under no canopy takes the target at its relative luminance, floored at 0.6 of
+                        # the local mean (360 lap t070 left: the verge in the woods' shade reads mid green). The pit side is skipped
+                        # (paddock, boxes, roofs: out of scope, "the pits are rough, but whatever")
+                        verge=dict(band_m=30.0, fade_m=5.0, lum_max=110.0, lum_min=-6.0, rg_max=14.0, k_min=0.6, mask_px=2.0,
+                                   skip=[dict(side='left', s=(3370, 3597), why='the pit lane, paddock and boxes (out of scope)'),
+                                         dict(side='left', s=(0, 380), why='the pit lane, paddock and boxes (out of scope)')]),
                         src='2026 clean captures, grass median over all 91 (r8/capture_grass.json); 360 lap / N837 frames: green grass in season'),
         # round 8 (owner: "there should be a lot more trees, or denser trees, especially by the back straight and going through
         # Thunder Valley"; round8.md 1b): the NAIP imagery check rejected 2491 of 3729 lidar crowns (67 %: the dull NAIP grass
@@ -781,7 +801,15 @@ CONFIG = dict(
         # (Apr 2026, PERMCO boards) and the 360 lap t022 / t024 (2025) give its place on the pit wall (c20_s3560 / c20_s0000:
         # its post); scale from the photo against the 1.04 m pit wall (~0.06 m/px): board 1.8 m, its bottom ~5.8 m, cabin to
         # ~8.4 m, 6.5 m wide
-        dict(type='starter_stand', name='S/F starter stand', at=(40.6894294, -82.635275), heading_deg=-3.39, w=6.5, d=2.6, legs=7.6,
+        # ROUND 11 (owner drive of round 10: "the marshal stand at start / finish has no legs on the track side of the pit wall. Its legs
+        # are only on the pit side, and the stand is cantilevered over"): the round-9 stand stood with its centre 1.0 m inside the pit
+        # wall's line, its track-side legs ON the course edge (lateral 5.94 m against the edge's 6.02) and its pit-side legs touching
+        # the wall (the wall runs 8.1-8.6 m out there), so the wall hid the feet and no leg stood on the apron. Now the scaffold straddles
+        # the wall: centre 0.9 m toward the pit side (lateral 7.94 m), depth 2.9 m, legs 2.5 m apart: the track-side pair 6.67 m
+        # (0.56 m clear of the edge) on the apron between the wall and the course, the pit-side pair 9.2 m (0.65 m behind the wall),
+        # the wall passing between them; the long faces braced on both sides. 360 lap t022-t024 left: the braced scaffold stands
+        # astride the wall line (the wall band is interrupted under it in the 2022 NAIP, r11/overlay_stand.py)
+        dict(type='starter_stand', name='S/F starter stand', at=(40.6894213, -82.6352756), heading_deg=-3.39, w=6.5, d=2.9, legs=7.6,
              cabin=2.0, frame='#1c1e21', roof='#b8443a', cabin_color='#e6e4de',
              board=dict(text='ZINSSER', bg='#f2f2ee', fg='#c8202c', h=1.8),
              src='owner-supplied photo, ARCA 2024, pit straight; N837 t127 / t130 (Apr 2026); 360 lap t022 ahead / t024 left (2025); c20_s3560 / c20_s0000: its post on the pit wall',

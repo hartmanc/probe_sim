@@ -395,6 +395,7 @@ function createSim(assets: Assets) {
     physics, track, timer, ghosts, ghostData: assets.ghosts, hud, input,
     get vehicle() { return veh(); },
     simTime: () => hsim.simTime,
+    blendFlags: () => ({ count: hsim.blendFlags, reason: hsim.lastBlendReason }),
     s: () => hsim.s,
     playerPos: () => car.root.position,
     rollingStart,

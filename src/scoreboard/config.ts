@@ -126,7 +126,7 @@ export const TRACKS: Readonly<Record<string, TrackInfo>> = {
   // OWNER QUESTION for the drive: the red / white kerbs are raised 5 cm (Sonoma's driven profile); their real height is not
   // measured (no frame resolves it), so the 5 cm is a declaration, not a measurement (round7.md section 1).
   mid_ohio: { dir: 'tracks/mid_ohio/', name: 'Mid-Ohio Sports Car Course', short: 'Mid-Ohio', length_m: 3597.492, pace: 'cars/field/pace.json',
-    fieldLabel: 'a stand-in field (Laguna\'s)', rev: 'ea1a07f8bd', wip: true,
+    fieldLabel: 'a stand-in field (Laguna\'s)', rev: '7dcbb9c278', wip: true,
     // owner, 26 Oct 2026, after his round-9 drive: "I don't think the carousel is a good place to start the hot lap. I keep
     // driving right off the track when the control is given to me. Coming onto the front straight might be better."
     // The 230 m rule put the hand-over at s ~3224 inside the Carousel; now an explicit station at the T13 exit (T13 at

@@ -113,6 +113,7 @@ export function buildDirector(sim: RaceServices['sim'], field: FieldData, o: { s
     line: raceLine(a), surface: makeSurface(), makeSurface,
     probeJson: a.carJson, pace: field.pace as PaceJson, identity: field.identity ?? null,
     pitLane: pit ? { spacing_m: 1, ...pit } : null,
+    blendLine: a.scenery?.blend_line ?? null,
     collisionWorld: sim.collision,
     playerVehicle: sim.vehicle, playerSurface: sim.surface,
   }, { laps: o.laps, seed: o.seed, playerNumber: PLAYER_NUMBER, greenWindow: [5, 30], ...raceAiConfig(TRACK_ID) });

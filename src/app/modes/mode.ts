@@ -104,6 +104,8 @@ export interface ModeContext {
   input: Input;
   /** Sim time since the last start procedure / reset (s); stops while the car is launched. */
   simTime(): number;
+  /** Pit-exit blend line violations of the player's car since the last reset and their words (HotlapSim; 0 / null on a package without the line). */
+  blendFlags(): { count: number; reason: string | null };
   /** Player's projected distance along the track (m), updated at 200 Hz. */
   s(): number;
   /** Player position in the scene (for ghost hiding near the cockpit cameras). */

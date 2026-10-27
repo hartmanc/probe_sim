@@ -17,3 +17,5 @@ export * as race from './ai/index';
 export { ROLLOVER_RAD, rollOf, isRolledOver } from './rollover';
 export { OFFTRACK_FAR_M, OFFTRACK_HOLD_S, OFFTRACK_BARRIER_MARGIN_M, OFFTRACK_BARRIER_REACH_M, OffTrackWatch, createOffTrackJudge } from './offtrack';
 export type { OffTrackJudge, OffTrackOptions } from './offtrack';
+export { BlendLine, BlendLineWatch, BlendFlag, BLEND_LINE_LABEL } from './blendline';
+export type { BlendLineJson, BlendViolation } from './blendline';
