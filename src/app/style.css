@@ -171,7 +171,7 @@ canvas.view { display: block; width: 100%; height: 100%; }
 .menu-select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 @media (max-width: 440px) { .menu-select { max-width: 58%; font-size: 15px; } }
 /* the censored word in the title (censor.ts): a pixel mosaic, em-sized so the title line keeps its metrics */
-.censor { display: inline-block; width: 2.15em; height: 0.74em; vertical-align: -0.04em; image-rendering: pixelated; filter: blur(0.7px); border-radius: 0.06em; user-select: none; -webkit-user-select: none; pointer-events: none; }
+.censor { display: inline-block; width: 2.15em; height: 0.72em; vertical-align: baseline; /* issue #23: bottom on the baseline, top at the cap height, like the word it stands for */ image-rendering: pixelated; filter: blur(0.7px); border-radius: 0.06em; user-select: none; -webkit-user-select: none; pointer-events: none; }
 .menu-footer { margin-top: 16px; color: var(--muted); font-size: 13px; text-align: center; min-height: 18px; }
 
 /* ---- mode banner (race) ---- */
