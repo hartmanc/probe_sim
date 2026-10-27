@@ -2151,7 +2151,7 @@
    "id": "30",
    "file": "models/30.glb",
    "tris": 10006,
-   "bytes": 491604,
+   "bytes": 492096,
    "materials": 2,
    "length_m": 4.532,
    "width_m": 1.71,
@@ -16768,6 +16768,158 @@
     "model_height": 1.366,
     "tris": 7665,
     "file": "tools/cars/kit/downloads/77_lx/model.glb"
+   }
+  },
+  {
+   "number": "147",
+   "id": "147",
+   "file": "models/147.glb",
+   "tris": 11690,
+   "bytes": 584084,
+   "materials": 2,
+   "length_m": 3.965,
+   "width_m": 1.666,
+   "height_m": 1.331,
+   "bbox_m": [
+    4.266,
+    1.855,
+    1.396
+   ],
+   "wheelbase_m": 2.5,
+   "track_front_m": 1.45,
+   "track_rear_m": 1.46,
+   "tyre_radius_m": 0.289,
+   "tyre_radius_rear_m": 0.289,
+   "hubs": {
+    "wheel_fl": [
+     0.725,
+     0.289,
+     1.25
+    ],
+    "wheel_fr": [
+     -0.725,
+     0.289,
+     1.25
+    ],
+    "wheel_rl": [
+     0.73,
+     0.289,
+     -1.25
+    ],
+    "wheel_rr": [
+     -0.73,
+     0.289,
+     -1.25
+    ]
+   },
+   "team": "NOT-e Boys",
+   "car": "1990 Honda Civic EF 3-door hatchback",
+   "brake_lamps": [
+    [
+     0.58,
+     0.71,
+     -1.8362,
+     0.21
+    ],
+    [
+     -0.58,
+     0.71,
+     -1.8356,
+     0.21
+    ],
+    [
+     0.185,
+     0.71,
+     -1.8736,
+     0.18
+    ],
+    [
+     -0.185,
+     0.71,
+     -1.8743,
+     0.18
+    ]
+   ],
+   "brake_lamps_fallback": false,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 1.0080238700052417,
+    "source_tris": 999583,
+    "model_length": 4.004,
+    "model_width": 2.062,
+    "model_height": 1.333,
+    "tris": 5900,
+    "file": "tools/cars/kit/downloads/70_ef/model.glb"
+   }
+  },
+  {
+   "number": "562",
+   "id": "562_mo",
+   "file": "models/562_mo.glb",
+   "tris": 10685,
+   "bytes": 631080,
+   "materials": 2,
+   "length_m": 4.775,
+   "width_m": 1.8,
+   "height_m": 1.435,
+   "bbox_m": [
+    4.776,
+    2.042,
+    1.462
+   ],
+   "wheelbase_m": 2.83,
+   "track_front_m": 1.512,
+   "track_rear_m": 1.526,
+   "tyre_radius_m": 0.315,
+   "tyre_radius_rear_m": 0.315,
+   "hubs": {
+    "wheel_fl": [
+     0.756,
+     0.315,
+     1.415
+    ],
+    "wheel_fr": [
+     -0.756,
+     0.315,
+     1.415
+    ],
+    "wheel_rl": [
+     0.763,
+     0.315,
+     -1.415
+    ],
+    "wheel_rr": [
+     -0.763,
+     0.315,
+     -1.415
+    ]
+   },
+   "team": "SUPERCHEAT (has a....)",
+   "car": "2000 BMW 5 Series sedan (E39)",
+   "brake_lamps": [
+    [
+     0.4454,
+     0.5277,
+     -2.4652,
+     0.06
+    ],
+    [
+     -0.4454,
+     0.5277,
+     -2.4655,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "none found: scaled by length, hubs from front_overhang",
+    "scale": 0.9920806704856515,
+    "source_tris": 234205,
+    "model_length": 4.775,
+    "model_width": 2.043,
+    "model_height": 1.449,
+    "tris": 8101,
+    "file": "tools/cars/kit/downloads/69/model.glb"
    }
   }
  ]
