@@ -42,17 +42,20 @@ def main():
             lp = q.loop_of(spr[ld], r).copy()
             final[ld][b["rpm"]] = {"loop": lp, "tier": r["tier"], "rpm": r["rpm"], "rho": r.get("seam_corr") or 0.0,
                                    "tick": r.get("tick") or 0.0, "name": "", "t": 0.0, "source_text": r["source"]}
+    maxd = next((float(a.split("=")[1]) for a in sys.argv if a.startswith("--maxdonor=")), 1e9)  # no donor above this bin
+
     def donor(ld, B):
         cands = []
         for dl in (ld, "off" if ld == "on" else "on"):
             for R, p in final[dl].items():
-                if (R, dl) in flagged or p["tier"] not in bf.REAL_TIERS:
+                if R > maxd or (R, dl) in flagged or p["tier"] not in bf.REAL_TIERS:
                     continue
                 if dl == "off" and ld == "on":
                     continue  # an overrun loop does not stand in for a pull
                 ratio = B / p["rpm"]
                 cands.append((abs(np.log(ratio)) + (0.0 if dl == ld else 0.15), dl, R, ratio))
-        cands.sort()
+        lo, hi = q.GATES[ld]
+        cands.sort(key=lambda c: (0 if lo <= c[3] <= hi else 1, c[0]))  # a copy inside the ratio window first
         return cands[0]
     orig = {k: dict(v) for k, v in ((ld, final[ld]) for ld in final)}
     out = {"on": dict(final["on"]), "off": dict(final["off"])}

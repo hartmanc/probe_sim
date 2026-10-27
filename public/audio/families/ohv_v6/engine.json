@@ -330,48 +330,48 @@
    "rpm": 4250,
    "on": {
     "offset": 18.722417,
-    "duration": 1.1305,
-    "rpm": 4245.91,
-    "tier": "steady",
-    "source": "src14 @ 56.84 s",
-    "seam_corr": 0.292,
-    "tick": 1.91
+    "duration": 1.129396,
+    "rpm": 4250.06,
+    "tier": "pitch-shifted",
+    "source": "pitch-shifted from the 4000 rpm bin (x1.062), round three repair of the contaminated on loop; donor: src0 @ 42.51 s",
+    "seam_corr": 0.979,
+    "tick": 1.56
    },
    "off": {
     "offset": 18.831146,
     "duration": 1.129396,
     "rpm": 4250.06,
     "tier": "from-on",
-    "source": "the on-throttle 4250 rpm loop darkened (x1.001), src14 @ 56.84 s",
-    "seam_corr": 0.33,
-    "tick": 1.64
+    "source": "the on-throttle 4000 rpm loop darkened (x1.062), round three repair; donor: src0 @ 42.51 s",
+    "seam_corr": 0.987,
+    "tick": 1.74
    }
   },
   {
    "rpm": 4500,
    "on": {
-    "offset": 19.952917,
-    "duration": 1.143479,
-    "rpm": 4512.54,
-    "tier": "sweep",
-    "source": "src14 @ 55.19 s",
-    "seam_corr": 0.278,
-    "tick": 1.58
+    "offset": 19.951812,
+    "duration": 1.146688,
+    "rpm": 4499.92,
+    "tier": "pitch-shifted",
+    "source": "pitch-shifted from the 4000 rpm bin (x1.124), round three repair of the contaminated on loop; donor: src0 @ 42.51 s",
+    "seam_corr": 0.961,
+    "tick": 1.52
    },
    "off": {
     "offset": 20.060542,
-    "duration": 1.146667,
-    "rpm": 4500.0,
+    "duration": 1.146688,
+    "rpm": 4499.92,
     "tier": "from-on",
-    "source": "the on-throttle 4500 rpm loop darkened (x0.997), src14 @ 55.19 s",
-    "seam_corr": 1.0,
-    "tick": 1.39
+    "source": "the on-throttle 4000 rpm loop darkened (x1.124), round three repair; donor: src0 @ 42.51 s",
+    "seam_corr": 0.968,
+    "tick": 1.68
    }
   },
   {
    "rpm": 4750,
    "on": {
-    "offset": 21.196396,
+    "offset": 21.1985,
     "duration": 1.140833,
     "rpm": 4733.38,
     "tier": "sweep",
@@ -380,7 +380,7 @@
     "tick": 4.17
    },
    "off": {
-    "offset": 21.307208,
+    "offset": 21.307229,
     "duration": 1.136833,
     "rpm": 4750.04,
     "tier": "from-on",
@@ -392,7 +392,7 @@
   {
    "rpm": 5000,
    "on": {
-    "offset": 22.437229,
+    "offset": 22.439333,
     "duration": 1.127958,
     "rpm": 5000.18,
     "tier": "sweep",
@@ -401,7 +401,7 @@
     "tick": 4.17
    },
    "off": {
-    "offset": 22.544042,
+    "offset": 22.544062,
     "duration": 1.128,
     "rpm": 5000.0,
     "tier": "from-on",
@@ -413,7 +413,7 @@
   {
    "rpm": 5250,
    "on": {
-    "offset": 23.665187,
+    "offset": 23.667292,
     "duration": 1.142875,
     "rpm": 5249.92,
     "tier": "sweep",
@@ -422,7 +422,7 @@
     "tick": 5.23
    },
    "off": {
-    "offset": 23.772042,
+    "offset": 23.772063,
     "duration": 1.142854,
     "rpm": 5250.01,
     "tier": "from-on",
@@ -434,7 +434,7 @@
   {
    "rpm": 5500,
    "on": {
-    "offset": 24.908062,
+    "offset": 24.910167,
     "duration": 1.134479,
     "rpm": 5500.32,
     "tier": "sweep",
@@ -443,7 +443,7 @@
     "tick": 5.48
    },
    "off": {
-    "offset": 25.014896,
+    "offset": 25.014917,
     "duration": 1.134542,
     "rpm": 5500.02,
     "tier": "from-on",
@@ -455,7 +455,7 @@
   {
    "rpm": 5750,
    "on": {
-    "offset": 26.142542,
+    "offset": 26.144646,
     "duration": 1.147771,
     "rpm": 5750.28,
     "tier": "pitch-shifted",
@@ -464,7 +464,7 @@
     "tick": 6.31
    },
    "off": {
-    "offset": 26.249437,
+    "offset": 26.249458,
     "duration": 1.147771,
     "rpm": 5750.28,
     "tier": "from-on",
@@ -476,7 +476,7 @@
   {
    "rpm": 6000,
    "on": {
-    "offset": 27.390313,
+    "offset": 27.392417,
     "duration": 1.139917,
     "rpm": 6000.44,
     "tier": "pitch-shifted",
@@ -485,7 +485,7 @@
     "tick": 5.7
    },
    "off": {
-    "offset": 27.497208,
+    "offset": 27.497229,
     "duration": 1.139917,
     "rpm": 6000.44,
     "tier": "from-on",
@@ -496,7 +496,7 @@
   }
  ],
  "real_bins": {
-  "on": 17,
+  "on": 15,
   "off": 3
  },
  "family": "ohv_v6",
@@ -711,10 +711,10 @@
   "on": "engine_on.m4a",
   "off": "engine_off.m4a",
   "format": "m4a AAC-LC 96kbps 48 kHz mono (aac_at)",
-  "offset_s": 1e-07,
+  "offset_s": -1e-07,
   "offsets_s": {
-   "on": 1e-07,
-   "off": 0.0
+   "on": -1e-07,
+   "off": -1e-07
   },
   "priming_s": 0.044,
   "lengths_s": {
