@@ -9972,7 +9972,7 @@
    "bbox_m": [
     4.518,
     1.744,
-    1.34
+    1.35
    ],
    "wheelbase_m": 2.6,
    "track_front_m": 1.43,
@@ -19890,6 +19890,366 @@
      1.0,
      -2.0664,
      0.15
+    ]
+   ],
+   "brake_lamps_fallback": false
+  },
+  {
+   "number": "1",
+   "id": "1_mo",
+   "file": "models/1_mo.glb",
+   "tris": 8928,
+   "bytes": 523008,
+   "materials": 2,
+   "length_m": 4.496,
+   "width_m": 1.735,
+   "height_m": 1.344,
+   "bbox_m": [
+    4.548,
+    1.947,
+    1.344
+   ],
+   "wheelbase_m": 2.537,
+   "track_front_m": 1.44,
+   "track_rear_m": 1.44,
+   "tyre_radius_m": 0.3,
+   "tyre_radius_rear_m": 0.3,
+   "hubs": {
+    "wheel_fl": [
+     0.72,
+     0.3,
+     1.2685
+    ],
+    "wheel_fr": [
+     -0.72,
+     0.3,
+     1.2685
+    ],
+    "wheel_rl": [
+     0.72,
+     0.3,
+     -1.2685
+    ],
+    "wheel_rr": [
+     -0.72,
+     0.3,
+     -1.2685
+    ]
+   },
+   "team": "Silent But Deadly Racing",
+   "car": "1990 Ford Tempo 2-door coupe (low confidence)",
+   "brake_lamps": [
+    [
+     0.55,
+     0.82,
+     -2.2845,
+     0.225
+    ],
+    [
+     -0.55,
+     0.82,
+     -2.2844,
+     0.225
+    ]
+   ],
+   "brake_lamps_fallback": false
+  },
+  {
+   "number": "33",
+   "id": "33_mo",
+   "file": "models/33_mo.glb",
+   "tris": 9670,
+   "bytes": 521136,
+   "materials": 2,
+   "length_m": 4.55,
+   "width_m": 1.695,
+   "height_m": 1.4,
+   "bbox_m": [
+    4.55,
+    1.96,
+    1.545
+   ],
+   "wheelbase_m": 2.6,
+   "track_front_m": 1.47,
+   "track_rear_m": 1.47,
+   "tyre_radius_m": 0.3,
+   "tyre_radius_rear_m": 0.3,
+   "hubs": {
+    "wheel_fl": [
+     0.735,
+     0.3,
+     1.3
+    ],
+    "wheel_fr": [
+     -0.735,
+     0.3,
+     1.3
+    ],
+    "wheel_rl": [
+     0.735,
+     0.3,
+     -1.3
+    ],
+    "wheel_rr": [
+     -0.735,
+     0.3,
+     -1.3
+    ]
+   },
+   "team": "Red Ace Racing",
+   "car": "2002 Mitsubishi Lancer OZ Rally sedan",
+   "brake_lamps": [
+    [
+     0.4613,
+     0.7631,
+     -2.32,
+     0.06
+    ],
+    [
+     -0.4613,
+     0.7631,
+     -2.32,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true
+  },
+  {
+   "number": "88",
+   "id": "88_mo",
+   "file": "models/88_mo.glb",
+   "tris": 8536,
+   "bytes": 464756,
+   "materials": 2,
+   "length_m": 4.968,
+   "width_m": 1.892,
+   "height_m": 1.321,
+   "bbox_m": [
+    5.042,
+    2.086,
+    1.303
+   ],
+   "wheelbase_m": 2.568,
+   "track_front_m": 1.54,
+   "track_rear_m": 1.54,
+   "tyre_radius_m": 0.33,
+   "tyre_radius_rear_m": 0.33,
+   "hubs": {
+    "wheel_fl": [
+     0.77,
+     0.33,
+     1.284
+    ],
+    "wheel_fr": [
+     -0.77,
+     0.33,
+     1.284
+    ],
+    "wheel_rl": [
+     0.77,
+     0.33,
+     -1.284
+    ],
+    "wheel_rr": [
+     -0.77,
+     0.33,
+     -1.284
+    ]
+   },
+   "team": "Flying Farmers",
+   "car": "1996 Pontiac Firebird coupe",
+   "brake_lamps": [
+    [
+     0.58,
+     0.82,
+     -2.4872,
+     0.18
+    ],
+    [
+     -0.58,
+     0.82,
+     -2.4872,
+     0.18
+    ]
+   ],
+   "brake_lamps_fallback": false
+  },
+  {
+   "number": "89",
+   "id": "89_mo",
+   "file": "models/89_mo.glb",
+   "tris": 9610,
+   "bytes": 543900,
+   "materials": 2,
+   "length_m": 4.34,
+   "width_m": 1.69,
+   "height_m": 1.405,
+   "bbox_m": [
+    4.415,
+    1.856,
+    1.405
+   ],
+   "wheelbase_m": 2.52,
+   "track_front_m": 1.47,
+   "track_rear_m": 1.47,
+   "tyre_radius_m": 0.3,
+   "tyre_radius_rear_m": 0.3,
+   "hubs": {
+    "wheel_fl": [
+     0.735,
+     0.3,
+     1.26
+    ],
+    "wheel_fr": [
+     -0.735,
+     0.3,
+     1.26
+    ],
+    "wheel_rl": [
+     0.735,
+     0.3,
+     -1.26
+    ],
+    "wheel_rr": [
+     -0.735,
+     0.3,
+     -1.26
+    ]
+   },
+   "team": "S.H.I.T.box brought to....",
+   "car": "1997 Subaru Impreza wagon (GC)",
+   "brake_lamps": [
+    [
+     0.6,
+     0.84,
+     -2.1475,
+     0.11
+    ],
+    [
+     -0.6,
+     0.84,
+     -2.1475,
+     0.11
+    ]
+   ],
+   "brake_lamps_fallback": false
+  },
+  {
+   "number": "153",
+   "id": "153",
+   "file": "models/153.glb",
+   "tris": 9440,
+   "bytes": 548220,
+   "materials": 2,
+   "length_m": 4.34,
+   "width_m": 1.69,
+   "height_m": 1.405,
+   "bbox_m": [
+    4.415,
+    1.856,
+    1.65
+   ],
+   "wheelbase_m": 2.52,
+   "track_front_m": 1.47,
+   "track_rear_m": 1.47,
+   "tyre_radius_m": 0.31,
+   "tyre_radius_rear_m": 0.31,
+   "hubs": {
+    "wheel_fl": [
+     0.735,
+     0.31,
+     1.26
+    ],
+    "wheel_fr": [
+     -0.735,
+     0.31,
+     1.26
+    ],
+    "wheel_rl": [
+     0.735,
+     0.31,
+     -1.26
+    ],
+    "wheel_rr": [
+     -0.735,
+     0.31,
+     -1.26
+    ]
+   },
+   "team": "Dumpster Fire Motorsports",
+   "car": "1997 Subaru Impreza wagon (GC)",
+   "brake_lamps": [
+    [
+     0.6,
+     0.84,
+     -2.1475,
+     0.11
+    ],
+    [
+     -0.6,
+     0.84,
+     -2.1475,
+     0.11
+    ]
+   ],
+   "brake_lamps_fallback": false
+  },
+  {
+   "number": "626",
+   "id": "626",
+   "file": "models/626.glb",
+   "tris": 9418,
+   "bytes": 518516,
+   "materials": 2,
+   "length_m": 4.46,
+   "width_m": 1.62,
+   "height_m": 1.35,
+   "bbox_m": [
+    4.507,
+    1.85,
+    1.35
+   ],
+   "wheelbase_m": 2.51,
+   "track_front_m": 1.4,
+   "track_rear_m": 1.4,
+   "tyre_radius_m": 0.29,
+   "tyre_radius_rear_m": 0.29,
+   "hubs": {
+    "wheel_fl": [
+     0.7,
+     0.29,
+     1.255
+    ],
+    "wheel_fr": [
+     -0.7,
+     0.29,
+     1.255
+    ],
+    "wheel_rl": [
+     0.7,
+     0.29,
+     -1.255
+    ],
+    "wheel_rr": [
+     -0.7,
+     0.29,
+     -1.255
+    ]
+   },
+   "team": "Brown Rubber Soul Racing",
+   "car": "1981 Mazda 626 coupe (CB)",
+   "brake_lamps": [
+    [
+     0.58,
+     0.8,
+     -2.3856,
+     0.17
+    ],
+    [
+     -0.58,
+     0.8,
+     -2.3855,
+     0.17
     ]
    ],
    "brake_lamps_fallback": false
