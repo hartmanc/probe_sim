@@ -326,6 +326,16 @@ CONFIG = dict(
             dict(name='T3 armco head cushion', kind='tyres', h=0.84, fence=0.0, color='#161616',
                  latlon=[(40.6883487, -82.6398503), (40.6884071, -82.6398385)],
                  src='c20_s1400 / c20_s1440: the tyre bundle at the head of the armco (OSM 1315208948)', h_src='4 tyres (0.21 m) assumed: the capture shows the bundle, not its height'),
+            # round 10 (owner drive of round 9, 26 Oct 2026: "I think there is a tire wall at the far end of China Beach that is missing
+            # in the sim. I see the tell-tale black line on the ground."): the black-and-white tyre wall along the far (north-east)
+            # edge of the T4 sand trap, a black / white-topped stack line in the 2022 NAIP ortho from the trap's west corner round
+            # to the head of the T4-exit armco (OSM 1315208939), ~93 m; traced by r10/trace_t4_tyres.py (the sand's edge going out
+            # plus half the wall; its last point stands 0.75 m off the armco's end so the two faces meet flush, the wall-tyre join gate). The wall lies 64-88 m beyond the
+            # edge, outside the ground-line gate's 2-60 m band, so no 'accepted as built' disposition named it (findings 44 / 45 at s 1951-1966 are the sand's own edge)
+            dict(name='T4 China Beach tyre wall (far end of the sand trap)', kind='tyres', h=1.0, fence=0.0,
+                 latlon=[(40.6931899, -82.6380317), (40.6932168, -82.6379877), (40.6932294, -82.6379418), (40.6932349, -82.6378949), (40.6932368, -82.6378475), (40.6932369, -82.6377999), (40.6932316, -82.6377525), (40.6932256, -82.6377084), (40.693218, -82.637662), (40.6932105, -82.6376157), (40.6932011, -82.6375699), (40.6931866, -82.637526), (40.6931747, -82.6374861), (40.6931541, -82.6374472), (40.6931391, -82.6374025), (40.693117, -82.6373651), (40.693095, -82.6373277), (40.6930714, -82.637291), (40.6930463, -82.637256), (40.6930192, -82.6372249), (40.6929523, -82.6371894)],
+                 src='NAIP ortho (2022): black and white-topped tyres in a line along the far edge of the T4 sand trap, r10/trace_t4_tyres.py; 360 lap t076-t078 left (2025) and N837 t066-t068: a dark low wall at the far edge of the sand under the catch fence',
+                 h_src='frames: the dark wall stands a little under the 1.2 m red armco beside it (360 t076 ahead); 1.0 m as Sonoma\'s black tyre runs (4 stacked tyres, 0.21 m each, plus the belt)'),
             dict(name='pit-in barrier', kind='concrete', h=1.0, fence=0.0, color='#1d1d1f',
                  latlon=[(40.6888221, -82.6333765), (40.6888536, -82.6333998), (40.6888866, -82.6334184), (40.6889208, -82.6334335), (40.6889552, -82.633448), (40.6889883, -82.6334667), (40.6890211, -82.6334879), (40.6890532, -82.6335093), (40.6890841, -82.6335336), (40.6891142, -82.6335598), (40.6891437, -82.6335874), (40.6891548, -82.6335978)],
                  src='c20_s3360 / c20_s3400 dark line (wall_measure.py); 360 lap t018 left; N837 t125; IndyCar A t012 left (pit-entry side wall)',
@@ -615,6 +625,16 @@ CONFIG = dict(
         # and the leaf-off canopy fail its "darker than the 35th percentile" test), so the modelled crown cover was 20-25 % of
         # the 2019 lidar canopy; off, with poles, masts and fence posts kept out by their crown size (the Buttonwillow rule)
         tree_imagery_check=False, tree_min=dict(radius=2.0, height=5.0),
+        # round 10 (owner drive of round 9: "the far tree lines are missing"; round10.md): the far layer's NAIP blobs (the
+        # dull NAIP's local-mean test sees only a stand's edges, capped at 7000) leave the horizon open; inside the 2019 lidar
+        # ring (the EPT cloud, octree depth <= 10, 2 m cells, outside the near box) the crowns are the lidar's own (the round-8
+        # crown method), beyond it the OpenStreetMap landuse=forest polygons (ODbL, fetched read-only 26 Oct 2026, r10/osm_wood.json)
+        # are filled at the cover and crown size the lidar measures inside the polygons within the ring (frames: 360 lap t036-t046
+        # right, t064-t110 both sides, N837 and the IndyCar onboard show continuous lines); the NAIP blobs outside the ring and
+        # the polygons stay
+        far_canopy=dict(box=[-1100.0, -1250.0, 1100.0, 1350.0], max_depth=10, peak_px=7, tree_min=dict(radius=2.0, height=5.0),
+                        osm_wood='compare/mid_ohio/r10/osm_wood.json', fill_cover=0.55, fill_cover_max=0.75, seed=10,
+                        src='USGS 3DEP 2019 EPT (OH_Statewide_Phase1_2019_B19); OpenStreetMap landuse=forest (ODbL); 360 lap Jul 2025, N837 Apr 2026, IndyCar onboard Jul 2026 frames'),
         building_height_robust=True,
         # buildings: every kept OSM / lidar footprint with its evidence (capture or the NAIP ortho; round7.md building table)
         building_evidence=[

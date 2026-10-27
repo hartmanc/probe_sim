@@ -7669,6 +7669,25 @@
    "sigma_s_m": 1.8,
    "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
    "placement": "direct"
+  },
+  {
+   "map": "360 lap (e25u_vjn1uM)",
+   "scope": "lap",
+   "sigma_basis": "time map 360 lap (e25u_vjn1uM): bracketing anchors' leave-one-out residual",
+   "placement": "direct",
+   "side": "left",
+   "kind": "tyre_wall",
+   "attrs": {
+    "type": "low black wall at the far edge of the T4 sand trap (tyres not resolved at this range; the 2022 NAIP shows a black and white-topped tyre line there)",
+    "colour": "black",
+    "h_method": "unmeasured"
+   },
+   "confidence": 0.6,
+   "t": 79.0,
+   "s": 2010.0,
+   "source": "onboard:e25u_vjn1uM@78.0",
+   "frame": "t078_left.jpg",
+   "note": "round 10 addition (owner drive of round 9: a tyre wall at the far end of China Beach): t078 left and t076 ahead show a dark low continuous wall under the catch fence along the far edge of the sand, a little under the 1.2 m red armco; added by hand from those frames, not from a re-run of inventory.py"
   }
  ],
  "counts": {

@@ -127,7 +127,11 @@ export const TRACKS: Readonly<Record<string, TrackInfo>> = {
   // measured (no frame resolves it), so the 5 cm is a declaration, not a measurement (round7.md section 1).
   mid_ohio: { dir: 'tracks/mid_ohio/', name: 'Mid-Ohio Sports Car Course', short: 'Mid-Ohio', length_m: 3597.492, pace: 'cars/field/pace.json',
     fieldLabel: 'a stand-in field (Laguna\'s)', rev: 'eeee12ff99', wip: true,
-    start: { beforeCorner: 'T13', m: ROLLING_START_BEFORE_LAST_CORNER_M, speed: ROLLING_START_SPEED } },
+    // owner, 26 Oct 2026, after his round-9 drive: "I don't think the carousel is a good place to start the hot lap. I keep
+    // driving right off the track when the control is given to me. Coming onto the front straight might be better."
+    // The 230 m rule put the hand-over at s ~3224 inside the Carousel; now an explicit station at the T13 exit (T13 at
+    // s 3454), where the racing line's radius has opened to 218 m and is 600 m by s 3550 (round10.md)
+    start: { s_m: 3500, speed: ROLLING_START_SPEED } },
 };
 /** The track when none is chosen (URL ?track=, Start menu). */
 export const DEFAULT_TRACK = 'laguna_seca';

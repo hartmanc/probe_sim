@@ -3301,6 +3301,188 @@ def far_trees(trk, img, Zf, fmeta, n_max=7000):
     return T
 
 
+def far_canopy_cells(box, max_depth, cell=2.0):
+    """Round 10 (Mid-Ohio far tree lines): the 2019 EPT lidar beyond the near box, as 2 m grids (ground = lowest class-2
+    return, VEG = highest class-1 return, MULTI = share of the class-1 returns that are part of a multi-return pulse),
+    from the octree nodes down to `max_depth` only (a thinned cloud: the canopy needs 2 m cells, not the near box's full
+    density). Cached beside the other lidar files; the same dataset and the same nodes cache as lidar_points()."""
+    cache = cache_file("far_canopy_cells.npz", box)
+    x0, y0, x1, y1 = box
+    nx, ny = int(round((x1 - x0) / cell)), int(round((y1 - y0) / cell))
+    if os.path.exists(cache):
+        d = np.load(cache)
+        if np.allclose(d["box"], box) and int(d["max_depth"]) == int(max_depth):
+            return d["DEM"], d["VEG"], d["MULTI"], d["N1"]
+    import laspy
+
+    meta = json.loads(get(EPT + "ept.json", os.path.join(CACHE, "ept.json")))
+    b = meta["bounds"]
+    mx0, my0 = merc(x0, y0)
+    mx1, my1 = merc(x1, y1)
+    edir = os.path.join(CACHE, "ept")
+    os.makedirs(edir, exist_ok=True)
+
+    def hits(key):
+        d, x, y, _ = map(int, key.split("-"))
+        s = (b[3] - b[0]) / 2 ** d
+        a = (b[0] + x * s, b[1] + y * s, b[0] + (x + 1) * s, b[1] + (y + 1) * s)
+        return a[0] < mx1 and a[2] > mx0 and a[1] < my1 and a[3] > my0
+
+    keys, todo = [], ["0-0-0-0"]
+    while todo:
+        hk = todo.pop()
+        h = json.loads(get(EPT + f"ept-hierarchy/{hk}.json", os.path.join(edir, f"h_{hk}.json")))
+        for k, cnt in h.items():
+            if not hits(k):
+                continue
+            if cnt == -1:
+                todo.append(k)
+            elif cnt > 0 and int(k.split("-")[0]) <= max_depth:
+                keys.append(k)
+    log(f"far canopy: {len(keys)} EPT nodes (depth <= {max_depth}) intersect the far-lidar box")
+    DEM = np.full((ny, nx), np.inf, np.float32)
+    VEG = np.full((ny, nx), -np.inf, np.float32)
+    N1 = np.zeros((ny, nx), np.int32)
+    NM = np.zeros((ny, nx), np.int32)
+
+    def fetch(k):
+        data = get(EPT + f"ept-data/{k}.laz", os.path.join(edir, f"{k}.laz"))
+        las = laspy.read(io.BytesIO(data))
+        m = (las.x >= mx0) & (las.x <= mx1) & (las.y >= my0) & (las.y <= my1)
+        return (np.asarray(las.x)[m], np.asarray(las.y)[m], np.asarray(las.z)[m].astype(np.float32),
+                np.asarray(las.classification)[m], np.asarray(las.number_of_returns)[m])
+
+    with ThreadPoolExecutor(12) as ex:
+        for i, (mx, my, z, c, nr) in enumerate(ex.map(fetch, keys)):
+            x, y = merc_to_enu(mx, my)
+            ix = np.clip(((x - x0) / cell).astype(int), 0, nx - 1)
+            iy = np.clip(((y - y0) / cell).astype(int), 0, ny - 1)
+            g = c == 2
+            np.minimum.at(DEM, (iy[g], ix[g]), z[g])
+            v = c == 1
+            np.maximum.at(VEG, (iy[v], ix[v]), z[v])
+            np.add.at(N1, (iy[v], ix[v]), 1)
+            np.add.at(NM, (iy[v & (nr > 1)], ix[v & (nr > 1)]), 1)
+            if i % 100 == 0:
+                log(f"  {i}/{len(keys)} nodes")
+    empty = ~np.isfinite(DEM)
+    idx = ndi.distance_transform_edt(empty, return_distances=False, return_indices=True)
+    DEM = DEM[tuple(idx)]
+    VEG = np.where(np.isfinite(VEG), VEG, DEM)
+    MULTI = NM / np.maximum(N1, 1)
+    np.savez(cache, box=np.array(box), max_depth=max_depth, DEM=DEM, VEG=VEG, MULTI=MULTI.astype(np.float32), N1=N1)
+    return DEM, VEG, MULTI.astype(np.float32), N1
+
+
+def far_canopy(trk, Tf, Zf, fmeta):
+    """Round 10 (Mid-Ohio owner drive of round 9: the far tree lines on the horizon are missing; round10.md): opt-in
+    (config scenery.far_canopy). The far layer's NAIP blobs cannot see a continuous stand (their local-mean test is the
+    failure round 8 found for the near trees) and OpenStreetMap has no woodland within 600 m of the circuit; so
+      1. inside `box` (the lidar ring, outside the near box) the crowns are the 2019 lidar's own (the round-8 crown
+         method on 2 m cells of the thinned cloud) and the NAIP blobs there are dropped;
+      2. beyond `box` the OpenStreetMap woodland polygons are filled with crowns at the cover and the crown size the
+         lidar measures inside the polygons that lie within the ring (the frames show continuous lines there);
+      3. the NAIP blobs outside the box and outside the polygons stay as they were."""
+    cfg = SC_CFG.get("far_canopy")
+    if not cfg:
+        return Tf
+    from PIL import Image, ImageDraw
+
+    cell = 2.0
+    box = tuple(cfg["box"])
+    DEM, VEG, MULTI, N1 = far_canopy_cells(box, int(cfg.get("max_depth", 10)), cell)
+    ny, nx = DEM.shape
+    CHM = np.clip(VEG - DEM, 0, None)
+    veg = (CHM > 2.0) & (MULTI > float(cfg.get("multi_min", 0.18)))
+    veg = ndi.binary_opening(veg, iterations=1)
+    S = ndi.gaussian_filter(np.where(veg, CHM, 0), 1.0)
+    pk = int(cfg.get("peak_px", 7))
+    peaks = (S == ndi.maximum_filter(S, size=pk)) & (S > 3.0) & veg
+    pr, pc = np.nonzero(peaks)
+    marker = np.zeros((ny, nx), np.int32)
+    marker[pr, pc] = np.arange(1, len(pr) + 1)
+    dist, (ir, ic) = ndi.distance_transform_edt(marker == 0, return_indices=True)
+    owner = marker[ir, ic]
+    canopy = (CHM > 2.0) & (MULTI > 0.1) & (dist < 12 / cell * 1.0)
+    area = np.bincount(owner[canopy], minlength=len(pr) + 1)[1:] * cell * cell
+    hmax = ndi.maximum_filter(CHM, size=3)[pr, pc]
+    rad = np.clip(np.sqrt(area / np.pi), 1.2, 11.0)
+    x = box[0] + (pc + 0.5) * cell
+    y = box[1] + (pr + 0.5) * cell
+    tm = cfg.get("tree_min", {})
+    keep = (rad >= tm.get("radius", 2.0)) & (hmax >= tm.get("height", 5.0))
+    b = trk.box
+    outside_near = ~((x > b[0] + 10) & (x < b[2] - 10) & (y > b[1] + 10) & (y < b[3] - 10))
+    # calibration of the thinned cloud: its crowns inside the near box against the near trees the full cloud gave
+    nn = int((keep & ~outside_near).sum())
+    log(f"far canopy: {len(pr)} crown maxima, {int(keep.sum())} kept (radius >= {tm.get('radius', 2.0)} m, height >= {tm.get('height', 5.0)} m); "
+        f"{nn} inside the near box (calibration: the near box has its own full-density crowns)")
+    Lc = np.c_[x, y, 0 * x, hmax, rad][keep & outside_near]
+    Lc[:, 2] = ndi.map_coordinates(Zf, [(Lc[:, 1] - fmeta["y0"]) / FAR_DX, (Lc[:, 0] - fmeta["x0"]) / FAR_DX], order=1, mode="nearest")
+    # OSM woodland raster on the far grid (5 m, north up)
+    W_ = int(2 * FAR_HALF / FAR_ORTHO_PX)
+    im = Image.new("L", (W_, W_), 0)
+    dr = ImageDraw.Draw(im)
+    wood = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), cfg["osm_wood"])))
+
+    def ring_px(geom):
+        P = [bl.enu(g["lat"], g["lon"]) for g in geom]
+        return [((px + FAR_HALF) / FAR_ORTHO_PX, (FAR_HALF - py) / FAR_ORTHO_PX) for px, py in P]
+
+    n_poly = 0
+    for e in wood["elements"]:
+        if e["type"] == "way" and e.get("geometry"):
+            dr.polygon(ring_px(e["geometry"]), fill=1)
+            n_poly += 1
+    for e in wood["elements"]:
+        if e["type"] == "relation":
+            for m in e["members"]:
+                if m["type"] == "way" and m.get("geometry"):
+                    dr.polygon(ring_px(m["geometry"]), fill=1 if m["role"] == "outer" else 0)
+    osm = np.array(im, bool)
+    cx_ = -FAR_HALF + (np.arange(W_) + 0.5) * FAR_ORTHO_PX
+    GX, GY = np.meshgrid(cx_, cx_[::-1])
+    in_box = (GX >= box[0]) & (GX <= box[2]) & (GY >= box[1]) & (GY <= box[3])
+    in_near = ~(~((GX > b[0] + 10) & (GX < b[2] - 10) & (GY > b[1] + 10) & (GY < b[3] - 10)))
+    # measured inside the ring: the lidar crowns standing in OSM woodland there
+    lr, lc_ = ((FAR_HALF - Lc[:, 1]) / FAR_ORTHO_PX).astype(int), ((Lc[:, 0] + FAR_HALF) / FAR_ORTHO_PX).astype(int)
+    inwood = osm[np.clip(lr, 0, W_ - 1), np.clip(lc_, 0, W_ - 1)]
+    wood_area = float((osm & in_box & ~in_near).sum()) * FAR_ORTHO_PX ** 2
+    if inwood.sum() >= int(cfg.get("min_measured", 30)) and wood_area > 0:
+        cover = float((np.pi * Lc[inwood, 4] ** 2).sum()) / wood_area
+        src_ = f"measured: {int(inwood.sum())} lidar crowns in {wood_area / 1e4:.1f} ha of OSM woodland inside the ring"
+        pool = Lc[inwood]
+    else:
+        cover = float(cfg["fill_cover"])
+        src_ = "declared fill_cover (too little OSM woodland inside the ring to measure)"
+        pool = Lc
+    cover = min(cover, float(cfg.get("fill_cover_max", 0.75)))
+    rng = np.random.default_rng(int(cfg.get("seed", 10)))
+    rmean = float(np.sqrt((pool[:, 4] ** 2).mean()))
+    sp = rmean * math.sqrt(math.pi / cover)
+    fill_mask = osm & ~in_box
+    log(f"far canopy: OSM woodland {n_poly} ways, {int(osm.sum()) * FAR_ORTHO_PX ** 2 / 1e6:.2f} km2 in the far box, {int(fill_mask.sum()) * FAR_ORTHO_PX ** 2 / 1e6:.2f} km2 beyond the ring; "
+        f"crown cover {cover:.2f} ({src_}); fill spacing {sp:.1f} m, crown radius rms {rmean:.1f} m")
+    gx_, gy_ = np.meshgrid(np.arange(-FAR_HALF, FAR_HALF, sp), np.arange(-FAR_HALF, FAR_HALF, sp))
+    fx = (gx_ + rng.uniform(-0.5, 0.5, gx_.shape) * sp).ravel()
+    fy = (gy_ + rng.uniform(-0.5, 0.5, gy_.shape) * sp).ravel()
+    ok = (np.abs(fx) < FAR_HALF) & (np.abs(fy) < FAR_HALF)
+    fx, fy = fx[ok], fy[ok]
+    ok = fill_mask[((FAR_HALF - fy) / FAR_ORTHO_PX).astype(int), ((fx + FAR_HALF) / FAR_ORTHO_PX).astype(int)]
+    fx, fy = fx[ok], fy[ok]
+    pick = pool[rng.integers(0, len(pool), len(fx))]
+    Fc = np.c_[fx, fy, 0 * fx, pick[:, 3], pick[:, 4]]
+    Fc[:, 2] = ndi.map_coordinates(Zf, [(Fc[:, 1] - fmeta["y0"]) / FAR_DX, (Fc[:, 0] - fmeta["x0"]) / FAR_DX], order=1, mode="nearest")
+    # the NAIP blobs: dropped inside the ring and inside the polygons, kept elsewhere
+    ib = (Tf[:, 0] >= box[0]) & (Tf[:, 0] <= box[2]) & (Tf[:, 1] >= box[1]) & (Tf[:, 1] <= box[3])
+    iw = osm[np.clip(((FAR_HALF - Tf[:, 1]) / FAR_ORTHO_PX).astype(int), 0, W_ - 1), np.clip(((Tf[:, 0] + FAR_HALF) / FAR_ORTHO_PX).astype(int), 0, W_ - 1)]
+    kept = Tf[~ib & ~iw]
+    out = np.vstack([kept, Lc, Fc])
+    log(f"far canopy: far trees {len(Tf)} NAIP blobs -> {len(kept)} kept (dropped {int(ib.sum())} inside the ring, {int((~ib & iw).sum())} in OSM woodland) "
+        f"+ {len(Lc)} lidar crowns + {len(Fc)} OSM-woodland crowns = {len(out)}")
+    return out
+
+
 def preview(trk, T, Tf, bld, bar, kerb, brg, marks, path):
     from PIL import Image, ImageDraw
 
@@ -3484,6 +3666,7 @@ def main(cfg=None, out_dir=None):
     Zf, fmeta = far_terrain(trk)
     fimg = far_ortho()
     Tf = far_trees(trk, fimg, Zf, fmeta)
+    Tf = far_canopy(trk, Tf, Zf, fmeta)   # opt-in (config scenery.far_canopy), Mid-Ohio round 10
     Image.fromarray(bl.grade_ortho(fimg)).save(os.path.join(OUT, "far_ortho.jpg"), quality=78, optimize=True)
     Zf.tofile(os.path.join(OUT, "far_heightfield.bin"))
 
