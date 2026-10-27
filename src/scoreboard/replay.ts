@@ -58,8 +58,9 @@ export interface ReplayResult {
 /**
  * Re-run `trace` from the canonical reset in a fresh HotlapSim until lap `lapN` completes (or the trace's
  * steps + 1 s run out). Throws on a reset mismatch or unknown reference ghost (callers map to a rejection).
+ * `onStep` (optional, read-only: the client's ghost rebuild, ghostlap.ts) is called after every physics step.
  */
-export function replayTrace(assets: SimAssets, trace: InputTrace, lapN = Infinity, nowMs: () => number = () => Date.now()): ReplayResult {
+export function replayTrace(assets: SimAssets, trace: InputTrace, lapN = Infinity, nowMs: () => number = () => Date.now(), onStep?: (sim: HotlapSim) => void): ReplayResult {
   const t0 = nowMs();
   const sim = new HotlapSim(assets, { record: false, ref: trace.ref[0]?.[1] ?? null });
   const r = sim.start;   // canonicalReset on the racing line (the sim applies the ghost line's offset)
@@ -82,6 +83,7 @@ export function replayTrace(assets: SimAssets, trace: InputTrace, lapN = Infinit
       sim.applyRow(rows[ri], rows[ri][0] === k);
     }
     const ev = sim.advance();
+    onStep?.(sim);
     if (ev && ev !== 'start') {
       laps.push(ev);
       if (ev.n === lapN) { lap = ev; break; }
