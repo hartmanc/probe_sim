@@ -1,5 +1,5 @@
 {
- "about": "Field car models built by tools/cars/build_car.py. Frame as CONTRACTS.md \u00a71/\u00a73: glTF +Z nose, +Y up, +X left, metres; nodes body + wheel_fl/fr/rl/rr (hub pivots, axle local +X). hubs are glTF translations; tyre_radius_m is the wheel mesh radius.",
+ "about": "Field car models built by tools/cars/build_car.py. Frame as CONTRACTS.md §1/§3: glTF +Z nose, +Y up, +X left, metres; nodes body + wheel_fl/fr/rl/rr (hub pivots, axle local +X). hubs are glTF translations; tyre_radius_m is the wheel mesh radius.",
  "cars": [
   {
    "number": "0",
@@ -9369,7 +9369,7 @@
      -1.2
     ]
    },
-   "team": "Mal\u00f6rt Racing Development (MRD)",
+   "team": "Malört Racing Development (MRD)",
    "car": "1981 Toyota Corolla (E70) wagon",
    "brake_lamps": [
     [
@@ -17268,6 +17268,386 @@
      1.0,
      -2.0664,
      0.15
+    ]
+   ],
+   "brake_lamps_fallback": false
+  },
+  {
+   "number": "29",
+   "id": "29",
+   "file": "models/29.glb",
+   "tris": 9200,
+   "bytes": 596888,
+   "materials": 2,
+   "length_m": 4.4,
+   "width_m": 1.69,
+   "height_m": 1.38,
+   "bbox_m": [
+    4.5,
+    1.848,
+    1.72
+   ],
+   "wheelbase_m": 2.6,
+   "track_front_m": 1.45,
+   "track_rear_m": 1.43,
+   "tyre_radius_m": 0.3,
+   "tyre_radius_rear_m": 0.3,
+   "hubs": {
+    "wheel_fl": [
+     0.725,
+     0.3,
+     1.3
+    ],
+    "wheel_fr": [
+     -0.725,
+     0.3,
+     1.3
+    ],
+    "wheel_rl": [
+     0.715,
+     0.3,
+     -1.3
+    ],
+    "wheel_rr": [
+     -0.715,
+     0.3,
+     -1.3
+    ]
+   },
+   "team": "Sesame Street Outlaws",
+   "car": "1996 Saturn SL1 sedan",
+   "brake_lamps": [
+    [
+     0.62,
+     0.88,
+     -2.2816,
+     0.11
+    ],
+    [
+     -0.62,
+     0.88,
+     -2.2817,
+     0.11
+    ]
+   ],
+   "brake_lamps_fallback": false
+  },
+  {
+   "number": "54",
+   "id": "54_mo",
+   "file": "models/54_mo.glb",
+   "tris": 8194,
+   "bytes": 485056,
+   "materials": 2,
+   "length_m": 4.877,
+   "width_m": 1.849,
+   "height_m": 1.3,
+   "bbox_m": [
+    4.973,
+    2.082,
+    1.535
+   ],
+   "wheelbase_m": 2.565,
+   "track_front_m": 1.52,
+   "track_rear_m": 1.53,
+   "tyre_radius_m": 0.325,
+   "tyre_radius_rear_m": 0.325,
+   "hubs": {
+    "wheel_fl": [
+     0.76,
+     0.325,
+     1.2825
+    ],
+    "wheel_fr": [
+     -0.76,
+     0.325,
+     1.2825
+    ],
+    "wheel_rl": [
+     0.765,
+     0.325,
+     -1.2825
+    ],
+    "wheel_rr": [
+     -0.765,
+     0.325,
+     -1.2825
+    ]
+   },
+   "team": "Cross Thread Racing",
+   "car": "1988 Chevrolet Camaro IROC-Z",
+   "brake_lamps": [
+    [
+     0.42,
+     0.78,
+     -2.433,
+     0.35
+    ],
+    [
+     -0.42,
+     0.78,
+     -2.433,
+     0.35
+    ]
+   ],
+   "brake_lamps_fallback": false
+  },
+  {
+   "number": "87",
+   "id": "87_mo",
+   "file": "models/87_mo.glb",
+   "tris": 10222,
+   "bytes": 621960,
+   "materials": 2,
+   "length_m": 4.2,
+   "width_m": 1.735,
+   "height_m": 1.275,
+   "bbox_m": [
+    4.28,
+    1.902,
+    1.42
+   ],
+   "wheelbase_m": 2.4,
+   "track_front_m": 1.48,
+   "track_rear_m": 1.45,
+   "tyre_radius_m": 0.315,
+   "tyre_radius_rear_m": 0.315,
+   "hubs": {
+    "wheel_fl": [
+     0.74,
+     0.315,
+     1.2
+    ],
+    "wheel_fr": [
+     -0.74,
+     0.315,
+     1.2
+    ],
+    "wheel_rl": [
+     0.725,
+     0.315,
+     -1.2
+    ],
+    "wheel_rr": [
+     -0.725,
+     0.315,
+     -1.2
+    ]
+   },
+   "team": "Rumple Minze & Rumble",
+   "car": "1984 Porsche 944",
+   "brake_lamps": [
+    [
+     0.4088,
+     0.7295,
+     -2.0392,
+     0.06
+    ],
+    [
+     -0.4088,
+     0.7295,
+     -2.0385,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 0.06486486486486487,
+    "source_tris": 117196,
+    "model_length": 4.219,
+    "model_width": 1.902,
+    "model_height": 1.279,
+    "tris": 7499,
+    "file": "tools/cars/kit/downloads/82/model.glb"
+   }
+  },
+  {
+   "number": "217",
+   "id": "217",
+   "file": "models/217.glb",
+   "tris": 9104,
+   "bytes": 529140,
+   "materials": 2,
+   "length_m": 4.4,
+   "width_m": 1.69,
+   "height_m": 1.38,
+   "bbox_m": [
+    4.5,
+    1.848,
+    1.385
+   ],
+   "wheelbase_m": 2.6,
+   "track_front_m": 1.45,
+   "track_rear_m": 1.43,
+   "tyre_radius_m": 0.3,
+   "tyre_radius_rear_m": 0.3,
+   "hubs": {
+    "wheel_fl": [
+     0.725,
+     0.3,
+     1.3
+    ],
+    "wheel_fr": [
+     -0.725,
+     0.3,
+     1.3
+    ],
+    "wheel_rl": [
+     0.715,
+     0.3,
+     -1.3
+    ],
+    "wheel_rr": [
+     -0.715,
+     0.3,
+     -1.3
+    ]
+   },
+   "team": "Twolemmatree Racing",
+   "car": "1995 Saturn SL2 sedan",
+   "brake_lamps": [
+    [
+     0.62,
+     0.88,
+     -2.2816,
+     0.11
+    ],
+    [
+     -0.62,
+     0.88,
+     -2.2817,
+     0.11
+    ]
+   ],
+   "brake_lamps_fallback": false
+  },
+  {
+   "number": "555",
+   "id": "555",
+   "file": "models/555.glb",
+   "tris": 10150,
+   "bytes": 581120,
+   "materials": 2,
+   "length_m": 4.2,
+   "width_m": 1.735,
+   "height_m": 1.275,
+   "bbox_m": [
+    4.221,
+    1.902,
+    1.28
+   ],
+   "wheelbase_m": 2.4,
+   "track_front_m": 1.48,
+   "track_rear_m": 1.45,
+   "tyre_radius_m": 0.315,
+   "tyre_radius_rear_m": 0.315,
+   "hubs": {
+    "wheel_fl": [
+     0.74,
+     0.315,
+     1.2
+    ],
+    "wheel_fr": [
+     -0.74,
+     0.315,
+     1.2
+    ],
+    "wheel_rl": [
+     0.725,
+     0.315,
+     -1.2
+    ],
+    "wheel_rr": [
+     -0.725,
+     0.315,
+     -1.2
+    ]
+   },
+   "team": "Triple Nickel Racing",
+   "car": "1986 Porsche 944",
+   "brake_lamps": [
+    [
+     0.4088,
+     0.7295,
+     -2.0392,
+     0.06
+    ],
+    [
+     -0.4088,
+     0.7295,
+     -2.0385,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 0.06486486486486487,
+    "source_tris": 117196,
+    "model_length": 4.219,
+    "model_width": 1.902,
+    "model_height": 1.279,
+    "tris": 7499,
+    "file": "tools/cars/kit/downloads/82/model.glb"
+   }
+  },
+  {
+   "number": "667",
+   "id": "667",
+   "file": "models/667.glb",
+   "tris": 9520,
+   "bytes": 563340,
+   "materials": 2,
+   "length_m": 4.216,
+   "width_m": 1.759,
+   "height_m": 1.475,
+   "bbox_m": [
+    4.241,
+    2.005,
+    1.505
+   ],
+   "wheelbase_m": 2.578,
+   "track_front_m": 1.54,
+   "track_rear_m": 1.51,
+   "tyre_radius_m": 0.3,
+   "tyre_radius_rear_m": 0.3,
+   "hubs": {
+    "wheel_fl": [
+     0.77,
+     0.3,
+     1.289
+    ],
+    "wheel_fr": [
+     -0.77,
+     0.3,
+     1.289
+    ],
+    "wheel_rl": [
+     0.755,
+     0.3,
+     -1.289
+    ],
+    "wheel_rr": [
+     -0.755,
+     0.3,
+     -1.289
+    ]
+   },
+   "team": "Highway to Schnell",
+   "car": "2006 Volkswagen Golf Mk5 3-door",
+   "brake_lamps": [
+    [
+     0.62,
+     1.0,
+     -1.8694,
+     0.1
+    ],
+    [
+     -0.62,
+     1.0,
+     -1.869,
+     0.1
     ]
    ],
    "brake_lamps_fallback": false
