@@ -5,7 +5,7 @@
 import { raceScore, raceScoreView } from '../scoreboard/validate';
 import {
   TRACKS, LIMITS, boardKey, lowerIsBetter, normalizeName,
-  type ApiError, type Board, type HotlapSubmission, type InputTrace, type InputType, type Mode, type RaceSubmission,
+  type ApiError, type Board, type GhostReply, type HotlapSubmission, type InputTrace, type InputType, type Mode, type RaceSubmission,
   type Submission, type SubmitResult,
 } from '../scoreboard';
 import type { Lap } from './timing';
@@ -139,6 +139,11 @@ export class ScoreboardClient {
     const q = new URLSearchParams({ board: key });
     if (name) q.set('name', name);
     return this.call<Board>(`${this.base}?${q}`, { method: 'GET' }, 8000);
+  }
+
+  /** GET the board's #1 lap with its input trace (the all-time-best ghost); a read-only route, no device secret. */
+  ghost(boardKey: string): Promise<ApiResult<GhostReply>> {
+    return this.call<GhostReply>(`${this.base}?${new URLSearchParams({ ghost: boardKey })}`, { method: 'GET' }, 15000);
   }
 
   /** POST a submission (with this device's secret); on ok the PB for its board is updated. */

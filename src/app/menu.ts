@@ -17,7 +17,8 @@ interface EntryBase {
 }
 export interface ActionEntry extends EntryBase { kind: 'action'; run(): void }
 export interface ToggleEntry extends EntryBase { kind: 'toggle'; get(): boolean; set(on: boolean): void }
-export interface ChoiceOption { value: string; label: string }
+/** `disabled`: shown, but cycling skips it (a choice that does not apply here, e.g. a Laguna-only reference). */
+export interface ChoiceOption { value: string; label: string; disabled?: boolean }
 export interface ChoiceEntry extends EntryBase { kind: 'choice'; options: ChoiceOption[]; get(): string; set(v: string): void }
 export interface SubmenuEntry extends EntryBase { kind: 'submenu'; page(): MenuPage }
 export interface BackEntry extends EntryBase { kind: 'back' }
@@ -96,8 +97,13 @@ export class MenuModel {
     if (e.kind === 'choice' && e.options.length) {
       const i = e.options.findIndex((o) => o.value === e.get());
       const n = e.options.length;
-      e.set(e.options[((i < 0 ? 0 : i) + dir + n) % n].value);
-      return 'changed';
+      for (let k = 1; k <= n; k++) {
+        const o = e.options[(((i < 0 ? 0 : i) + dir * k) % n + n) % n];
+        if (o.disabled) continue;
+        e.set(o.value);
+        return 'changed';
+      }
+      return 'none';
     }
     return 'none';
   }

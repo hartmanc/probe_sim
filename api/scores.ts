@@ -1,6 +1,7 @@
 // Vercel Function: the public scoreboard (docs/scoreboard.md).
 //   GET  /api/scores                       -> server's current boards + store kind
 //   GET  /api/scores?board=<key>[&name=X]  -> top 10 (+ X's rank)
+//   GET  /api/scores?ghost=<board key>      -> the board's #1 lap with its input trace (all-time-best ghost)
 //   POST /api/scores  (JSON Submission)    -> validate, replay hot laps, store, rank
 // Storage: Upstash Redis when UPSTASH_REDIS_REST_URL/_TOKEN or KV_REST_API_URL/_TOKEN are set, else in-memory.
 import { installResolveHook } from './_lib/resolve-hook.js';

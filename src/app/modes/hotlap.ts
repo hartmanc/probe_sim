@@ -8,32 +8,46 @@ import { minAround, TRACE_GRID_M, type Lap } from '../timing';
 import { STEP, type HotlapSim, type InputType, type RawInput } from '../../scoreboard';
 import { LAUNCH_S } from '../../scoreboard/config';
 import { fmtTime, type CornerRow } from '../hud';
-import type { Ghost } from '../ghosts';
+import { LapRecorder, type RefChoice, type RefController } from '../refs';
 import type { MenuEntry } from '../menu';
 import type { GameMode, ModeContext, ModeHud } from './mode';
 import { pitExitConeWatcher } from '../scenery';
 
+/** The "Ghost & delta" row (Start menu settings and the pause menu): session best, the board's all-time best, the real lap. */
+export function ghostRefEntry(refs: RefController): MenuEntry {
+  return {
+    kind: 'choice', id: 'ghostRef', label: 'Ghost & delta',
+    options: ghostRefOptions(refs.hasReal),
+    get: () => refs.choice, set: (v) => refs.o.pref.set(v as RefChoice),
+    note: refs.o.pref.choice === 'real' && !refs.hasReal ? 'no real lap here: session best' : undefined,
+  };
+}
+export function ghostRefOptions(hasReal: boolean): { value: string; label: string; disabled?: boolean }[] {
+  return [
+    { value: 'session', label: 'Session best' },
+    { value: 'board', label: 'All-time best' },
+    { value: 'real', label: hasReal ? 'Real lap' : 'Real lap (Laguna only)', disabled: !hasReal },
+  ];
+}
+
 export function createHotLap(ctx: ModeContext): GameMode {
   const { ghosts, timer, hud, track } = ctx;
-  let ref: Ghost | null = (() => {
-    const fr = ghosts.fastestReal();
-    return ghosts.ghosts.find((g) => g.lap === fr) ?? ghosts.ghosts[0] ?? null;
-  })();
-
-  const applyRef = () => {
-    hud.setRefName(ref?.lap.label ?? '');
-    ctx.setScheduleLap(ref?.lap ?? null);
-  };
+  const { refs } = ctx;
+  const recorder = new LapRecorder();
+  // the gear schedule auto-shift follows is the fastest real lap whatever the reference is (the reference only moves the
+  // ghost car and the delta; the physics and the trace are as before)
+  const applyRef = () => ctx.setScheduleLap(ghosts.fastestReal());
+  let shownRef = '';
 
   const cornerTable = (lap: Lap) => {
-    if (!ref) return;
-    const r = ref;
+    const r = refs.active().lap;
+    if (!r) return;
     const rows: CornerRow[] = track.corners.map((c) => ({
       name: c.name,
       player: minAround(lap.speedTrace, TRACE_GRID_M, c.s),
-      ref: minAround(r.lap.v_mps, ctx.ghostData.s_grid_m, c.s),
+      ref: minAround(r.v_mps, ctx.ghostData.s_grid_m, c.s),
     }));
-    hud.showCorners(lap, r.lap.driver, rows);
+    hud.showCorners(lap, r.driver, rows);
   };
 
   // pit-exit cones (scenery.json pit_exit_cones): crossing the line is a black flag; shown as a toast and, for a few
@@ -57,18 +71,13 @@ export function createHotLap(ctx: ModeContext): GameMode {
     blendSeen = b.count;
   };
 
+  // the team's ghosts toggle one by one; the player's own (session best, all-time best) follow the "Ghost & delta" choice
   const ghostsPage = (): MenuEntry[] => [
-    ...ghosts.ghosts.map((g): MenuEntry => ({
+    ghostRefEntry(refs),
+    ...ghosts.ghosts.filter((g) => !g.slot).map((g): MenuEntry => ({
       kind: 'toggle', id: `ghost:${g.lap.id}`, label: g.lap.label,
       get: () => g.visible, set: (on) => ghosts.setVisible(g.lap.id, on),
     })),
-    {
-      kind: 'choice', id: 'ref', label: 'Delta reference',
-      options: ghosts.ghosts.map((g) => ({ value: g.lap.id, label: g.lap.label })),
-      get: () => ref?.lap.id ?? '',
-      set: (id) => { ref = ghosts.ghosts.find((g) => g.lap.id === id) ?? ref; applyRef(); },
-      disabled: ghosts.ghosts.length < 2,
-    },
     { kind: 'back', id: 'back', label: 'Back' },
   ];
 
@@ -79,6 +88,9 @@ export function createHotLap(ctx: ModeContext): GameMode {
       ghosts.group.visible = true;
       applyRef();
       timer.clearSession();
+      recorder.clear();
+      refs.clearSession();
+      void refs.ensureBoard();
       hud.hideCorners();
       hud.setBanner(null);
       blackFlags = 0; flagUntil = -1; blendSeen = 0;
@@ -87,8 +99,16 @@ export function createHotLap(ctx: ModeContext): GameMode {
     },
     restart() { this.start(); },
     reset() { cones?.clear(); ctx.rollingStart({ launch: true }); ctx.toast('Reset: launching'); },
-    step() { /* nothing per step: timing is fed by the core */ },
+    step() {
+      // timing is fed by the core; the session's laps are sampled here (every step, kept at the 200 Hz ticks) so the best one
+      // can become a ghost
+      recorder.feed(timer.started, timer.lapNumber, timer.current(ctx.simTime()), ctx.s(), ctx.vehicle.state.speed);
+    },
     onLap(lap) {
+      if (timer.best === lap) {   // valid and the session's fastest so far: it is the session-best ghost from now on
+        const g = recorder.finish(lap.time, track.length_m, ctx.ghostData.s_grid_m);
+        if (g) refs.setSession(g);
+      }
       cornerTable(lap);
       ctx.toast(`Lap ${lap.n}: ${fmtTime(lap.time)}${lap.valid ? '' : ' (invalid)'}`);
     },
@@ -99,7 +119,9 @@ export function createHotLap(ctx: ModeContext): GameMode {
       ghosts.update(tau, ctx.playerPos());
     },
     hud(): ModeHud {
-      const delta = timer.started && ref ? timer.current(ctx.simTime()) - ref.trace.tAt(ctx.s()) : null;
+      const act = refs.active();
+      if (act.label !== shownRef) { shownRef = act.label; hud.setRefName(act.label); }
+      const delta = timer.started && act.trace ? timer.current(ctx.simTime()) - act.trace.tAt(ctx.s()) : null;
       const t = ctx.simTime();
       // the launch countdown (3, 2, 1, GO) wins over the black-flag banner
       const launch = t < LAUNCH_S ? String(Math.ceil(LAUNCH_S - t)) : t < LAUNCH_S + 0.8 ? 'GO' : null;
@@ -107,8 +129,7 @@ export function createHotLap(ctx: ModeContext): GameMode {
       return { banner: launch ?? flag, timing: true, delta, showDelta: true };
     },
     pauseEntries(): MenuEntry[] {
-      if (!ghosts.ghosts.length) return [];
-      return [{ kind: 'submenu', id: 'ghosts', label: 'Ghosts', page: () => ({ title: 'Ghosts', entries: ghostsPage }) }];
+      return [ghostRefEntry(refs), ...(ghosts.ghosts.some((g) => !g.slot) ? [{ kind: 'submenu', id: 'ghosts', label: 'Ghosts', page: () => ({ title: 'Ghosts', entries: ghostsPage }) } as MenuEntry] : [])];
     },
     dispose() {
       ghosts.group.visible = false;

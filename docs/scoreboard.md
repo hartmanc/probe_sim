@@ -39,7 +39,14 @@ Buttonwillow), cars `probe_gt`, modes `hotlap`/`race`, input `pad`/`keys`/`phone
 
 Storage (Upstash Redis): one sorted set per board (`sb:z:<board>`, member = lower-cased name, score = time) plus a
 hash of entry details (`sb:h:<board>`). Best per name is kept (`ZADD LT CH`), each board is trimmed to 100 entries,
-GET returns the top 10. **Old boards expire**: at most once an hour per warm instance, after a POST, the server lists the
+GET returns the top 10. **The #1 trace** (all-time-best ghost, owner 26 Oct 2026): when a verified hot lap improves its name's entry and
+ends at rank 1, its trace is also written to one string key per board, `sb:top:<board>` = `{ v:1, name, score, at, input, lap, trace }`
+(JSON; a lap's trace is about 100-300 KB, at most `LIMITS.maxBodyBytes`), overwritten by the next #1 and never appended. `GET ?ghost=`
+serves it only when it is still valid: `checkTrace` passes, the trace's physics / track / car equal the board key's, and the board's
+current #1 is that name with that score (otherwise 404, so a race between two posts or a trimmed entry never serves a wrong lap).
+The client (`src/app/refs.ts`) replays it with `replayTrace` (`src/scoreboard/ghostlap.ts`, a read-only per-step hook collecting
+time and speed along the lap) to rebuild the ghost, so its time is the board's time. The key expires with the stale board
+(`expireKey`, the same 30-day TTL, set once). **Old boards expire**: at most once an hour per warm instance, after a POST, the server lists the
 boards (`SCAN sb:z:*`) and gives every hot-lap board whose physics value is not the server's current one a 30-day TTL
 (`LIMITS.staleBoardTtlS`) on both keys; race boards are left alone while hidden. The sweep runs **only after a POST**
 (a quiet site expires nothing until the next post) and **skips race boards**, old ones included (their key carries the AI
@@ -94,6 +101,7 @@ All responses are JSON with `Cache-Control: no-store`. Errors: `{ ok: false, err
 |---|---|
 | `GET /api/scores` | `{ ok, store: "memory"\|"upstash", boards: { "laguna_seca/probe_gt": "<current hot-lap board key>" } }` |
 | `GET /api/scores?board=<key>[&name=<name>]` | `{ ok, board, mode, entries: Score[], you?: Score\|null }` (`you` only when `name` is given) |
+| `GET /api/scores?ghost=<hot-lap board key>` | `{ ok, board, name, score, at, input, lap, trace }`: the board's #1 lap and the `InputTrace` that made it (read-only, no device secret, `Cache-Control: no-store`); 404 `no ghost` when the board is empty or its #1 has no kept trace (set before this feature, or trimmed), 400 for a non-hot-lap key, 429 over 30 per IP per 10 min |
 | `POST /api/scores` with a `Submission` (JSON, with `secret`) | `{ ok, board, rank, best, improved, replayed? }` |
 | `POST /api/scores` `{ op: 'transfer-code', name, secret }` | `{ ok, name, code, expires_s }` (404 name not registered, 403 another device's) |
 | `POST /api/scores` `{ op: 'adopt', name, code, secret }` | `{ ok, name }` (403 wrong or expired code) |
@@ -343,6 +351,9 @@ A, loses the name: the script evicts, it does not refuse); an expired code (the 
 Redis, the handler's TTL being a fixed 1 h) refused; race board GET and POST 410; an unknown name's GET (`you` null) and an
 empty board; tampered replays (one altered input row; a claimed time off by 1 s) refused with the board unchanged; MemoryStore
 and the Redis-backed store answering the owner operations identically.
+
+Also covers the ghost route: an unknown board 404s; the board's #1 `?ghost=` reply (name, replayed score, no secret) rebuilds
+through `ghostFromTrace` to the board's time within 1 ms.
 
 Second mode (off by default): `E2E_BASE_URL=https://<deployment> npm run test:e2e` runs the flow over HTTP against a
 deployment; `E2E_BYPASS_HEADER='Header-Name: value'` adds a protection-bypass header (neither is printed). It skips the

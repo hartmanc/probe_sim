@@ -22,6 +22,7 @@ import { currentRaceAiVersion, handleScores, type HandlerDeps } from '../handler
 import { OWNER, ownerKey, xferKey } from '../owner';
 import { MemoryStore, UpstashStore, decodeOwner, type ScoreStore } from '../store';
 import { replayTrace } from '../replay';
+import { ghostFromTrace } from '../ghostlap';
 import { LIMITS } from '../config';
 import { boardKey, nameKey } from '../validate';
 import type { InputTrace } from '../types';
@@ -179,6 +180,25 @@ function scenario(label: string, mk: () => Promise<Ctx>, finish: () => Promise<v
       const g = await s.ctx.api.get(`?board=${encodeURIComponent(s.board)}&name=${name}`);
       expect(g.body.entries.filter((e: { name: string }) => e.name === name)).toHaveLength(1);   // one entry per name
       expect(g.body.you.score).toBeCloseTo(better, 3);
+    }, 120_000);
+
+    test('the board\'s #1 ghost: GET ?ghost= returns the top lap\'s trace, which replays to the board\'s time to the millisecond', async () => {
+      const nobody = await s.ctx.api.get(`?ghost=${encodeURIComponent(boardKey('hotlap', 'laguna_seca', 'probe_gt', 'zzzzzzzz'))}`);
+      expect(nobody.status).toBe(404);
+      expect(nobody.body).toMatchObject({ ok: false, error: 'no ghost' });
+      const board = (await s.ctx.api.get(`?board=${encodeURIComponent(s.board)}`)).body;
+      const top = board.entries[0] as { name: string; score: number };
+      const g = await s.ctx.api.get(`?ghost=${encodeURIComponent(s.board)}`);
+      expect(g.status, JSON.stringify(g.body).slice(0, 300)).toBe(200);
+      expect(g.body).toMatchObject({ ok: true, board: s.board, name: top.name });
+      expect(g.body.score).toBeCloseTo(top.score, 3);
+      expect(g.body).not.toHaveProperty('secret');
+      // the client\'s rebuild: the same replay the server ran, to the posted time
+      const built = ghostFromTrace(assetsCache!, g.body.trace as InputTrace, g.body.lap as number, { id: 'board_best', driver: top.name, label: () => top.name })!;
+      expect(built).not.toBeNull();
+      expect(Math.abs(built.time - top.score)).toBeLessThan(0.001);
+      expect(built.lap.t[0]).toBe(0);
+      expect(built.lap.t.length).toBeGreaterThan(1000);
     }, 120_000);
 
     test('the other owned device still posts (A is still an owner after B joined)', async () => {

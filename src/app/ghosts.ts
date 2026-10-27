@@ -121,6 +121,18 @@ export interface Ghost {
   rig: CarRig;
   color: number;
   visible: boolean;
+  /** Set for the ghosts the player makes (refs.ts): 'session' (best lap of this session) or 'board' (the leaderboard's #1). */
+  slot?: GhostSlot;
+}
+
+export type GhostSlot = 'session' | 'board';
+const SLOT_TINT: Record<GhostSlot, number> = { session: 0x7cff6b, board: 0xffb020 };
+
+/** The fastest lap of the package's own ghosts.json that a real driver drove (not the synthetic stand-ins). */
+export function realLapOf(data: GhostsJson): GhostLap | null {
+  let best: GhostLap | null = null;
+  for (const l of data.laps) if (l.kind === 'real' && !l.id.startsWith('synthetic_') && (!best || l.lap_time_s < best.lap_time_s)) best = l;
+  return best;
 }
 
 export class GhostManager {
@@ -129,40 +141,52 @@ export class GhostManager {
   private offset: (s: number) => number;
   private _p = new THREE.Vector3();
 
-  constructor(private physics: PhysicsApi, private track: TrackJson, readonly data: GhostsJson, template: THREE.Object3D) {
+  constructor(private physics: PhysicsApi, private track: TrackJson, readonly data: GhostsJson, private template: THREE.Object3D) {
     this.offset = makeOffsetFn(data, track.length_m);
     const fastestReal = this.fastestReal();
     data.laps.forEach((lap, k) => {
-      const color = TINTS[k % TINTS.length];
-      const model = template.clone(true);
-      const tint = new THREE.Color(color);
-      const cache = new Map<THREE.Material, THREE.Material>();
-      model.traverse((o) => {
-        const mesh = o as THREE.Mesh;
-        if (!mesh.isMesh) return;
-        const conv = (mat: THREE.Material) => {
-          let c = cache.get(mat);
-          if (!c) {
-            c = mat.clone();
-            c.transparent = true; c.opacity = 0.35; c.depthWrite = false;
-            const anyc = c as THREE.MeshStandardMaterial;
-            if (anyc.color) anyc.color.lerp(tint, 0.65);
-            if (anyc.emissive) anyc.emissive.copy(tint).multiplyScalar(0.25);
-            cache.set(mat, c);
-          }
-          return c;
-        };
-        mesh.material = Array.isArray(mesh.material) ? mesh.material.map(conv) : conv(mesh.material);
-        mesh.castShadow = false;
-      });
-      const rig = new CarRig(model);
-      rig.root.traverse((o) => { o.castShadow = false; });
-      rig.root.add(labelSprite(lap.label, color));
-      this.group.add(rig.root);
-      const visible = lap.kind === 'optimal' || lap === fastestReal;
-      rig.root.visible = visible;
-      this.ghosts.push({ lap, trace: new GhostTrace(lap, data.s_grid_m, track.length_m), rig, color, visible });
+      this.ghosts.push(this.make(lap, TINTS[k % TINTS.length], lap.kind === 'optimal' || lap === fastestReal));
     });
+  }
+
+  private make(lap: GhostLap, color: number, visible: boolean, slot?: GhostSlot): Ghost {
+    const model = this.template.clone(true);
+    const tint = new THREE.Color(color);
+    const cache = new Map<THREE.Material, THREE.Material>();
+    model.traverse((o) => {
+      const mesh = o as THREE.Mesh;
+      if (!mesh.isMesh) return;
+      const conv = (mat: THREE.Material) => {
+        let c = cache.get(mat);
+        if (!c) {
+          c = mat.clone();
+          c.transparent = true; c.opacity = 0.35; c.depthWrite = false;
+          const anyc = c as THREE.MeshStandardMaterial;
+          if (anyc.color) anyc.color.lerp(tint, 0.65);
+          if (anyc.emissive) anyc.emissive.copy(tint).multiplyScalar(0.25);
+          cache.set(mat, c);
+        }
+        return c;
+      };
+      mesh.material = Array.isArray(mesh.material) ? mesh.material.map(conv) : conv(mesh.material);
+      mesh.castShadow = false;
+    });
+    const rig = new CarRig(model);
+    rig.root.traverse((o) => { o.castShadow = false; });
+    rig.root.add(labelSprite(lap.label, color));
+    this.group.add(rig.root);
+    rig.root.visible = visible;
+    return { lap, trace: new GhostTrace(lap, this.data.s_grid_m, this.track.length_m), rig, color, visible, ...(slot ? { slot } : {}) };
+  }
+
+  /** Put the player's own ghost (session best / leaderboard #1) in its slot, replacing the previous one; null removes it. */
+  setSlot(slot: GhostSlot, lap: GhostLap | null, visible = true): Ghost | null {
+    const i = this.ghosts.findIndex((g) => g.slot === slot);
+    if (i >= 0) { this.group.remove(this.ghosts[i].rig.root); this.ghosts.splice(i, 1); }
+    if (!lap) return null;
+    const g = this.make(lap, SLOT_TINT[slot], visible, slot);
+    this.ghosts.push(g);
+    return g;
   }
 
   fastestReal(): GhostLap | null {

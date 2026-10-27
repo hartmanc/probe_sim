@@ -22,7 +22,7 @@ export function howtoSections(o: { raceLaps: number; touch: boolean; fieldLine: 
       'Auto-shift is on by default (pause menu); with it off, shift up and down yourself. ABS is the crude 1993 kind.',
     ] },
     { title: 'Modes', lines: [
-      `Hot lap: a rolling start, then lap after lap against the team's logged ghosts. Off track with all four wheels for more than 2 s makes the lap invalid. R resets to the start.`,
+      `Hot lap: a rolling start, then lap after lap against the team's logged ghosts. Off track with all four wheels for more than 2 s makes the lap invalid. R resets to the start. Ghost & delta (Start or pause menu) picks the lap the ghost car and the delta timer follow: your session best, the scoreboard's all-time best, or the team's real lap (Laguna only).`,
       `Race: ${o.raceLaps} laps against the real field of a 2026 Lemons race on that track, each car with the pace its drivers ran there. Black flags, as at a real Lemons race, for four wheels off, for contact you cause, for passing under yellow and for crossing the pit-exit cones; a stop-and-go in the pit lane serves them. Hit a wall hard and you are out.`,
       o.fieldLine ? `On phones and tablets the race is the ${MOBILE_FIELD} cars whose real pace is closest to the Probe's (${o.fieldLine}); a computer races the whole field.` : `On phones and tablets the race is the ${MOBILE_FIELD} cars whose real pace is closest to the Probe's; a computer races the whole field.`,
     ] },

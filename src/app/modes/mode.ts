@@ -13,6 +13,7 @@ import type { TrackMarks } from '../marks';
 import type { MenuEntry } from '../menu';
 import type { GhostLap, GhostsJson, PhysicsApi, TrackJson, VehicleLike } from '../physics-types';
 import type { GhostManager } from '../ghosts';
+import type { RefController, RefChoice } from '../refs';
 import type { Hud } from '../hud';
 import type { Input } from '../input';
 import type { Lap, LapTimer } from '../timing';
@@ -102,6 +103,8 @@ export interface ModeContext {
   timer: LapTimer;
   ghosts: GhostManager;
   ghostData: GhostsJson;
+  /** The reference lap of the ghost car and the delta ("Ghost & delta", refs.ts). */
+  refs: RefController;
   hud: Hud;
   input: Input;
   /** Sim time since the last start procedure / reset (s); stops while the car is launched. */
