@@ -21,15 +21,27 @@ export const FEEDBACK = {
   upstreamTimeoutMs: 10_000,
   /** the same report (IP + kind + description) within this is not filed twice, s */
   dedupeS: 600,
+  /** pictures (owner, 27 Oct 2026): at most this many per report, each / all together decoded, the body that carries them */
+  maxImages: 3,
+  maxImageBytes: 900 * 1024,
+  maxImagesTotal: 2.5 * 1024 * 1024,
+  maxBodyBytesWithImages: 3_800_000,
+  /** the whole upload step (branch check + PUTs) must end within this, ms; the Function's maxDuration is 10 s */
+  uploadBudgetMs: 6000,
+  /** header the client sets when the body carries pictures: only then is the larger body cap used */
+  imagesHeader: 'x-feedback-images',
+  imageBranch: 'feedback-images',
 } as const;
 
 export type FeedbackKind = 'bug' | 'feature';
 
 /** What the game attaches (all optional strings; each capped). */
 export interface FeedbackContext { version?: string; sha?: string; track?: string; device?: string; ua?: string; screen?: string; error?: string }
+export interface FeedbackImageIn { name?: string; type: string; data: string }
+export interface FeedbackImage { type: 'image/jpeg' | 'image/png'; data: string; bytes: number }
 export interface FeedbackRequest { kind: FeedbackKind; description: string; context?: FeedbackContext; name?: string; secret?: string }
 
-type FetchLike = (url: string, init: { method: string; headers: Record<string, string>; body: string; signal?: AbortSignal }) => Promise<{ ok: boolean; status: number; json(): Promise<unknown> }>;
+type FetchLike = (url: string, init: { method: string; headers: Record<string, string>; body?: string; signal?: AbortSignal }) => Promise<{ ok: boolean; status: number; json(): Promise<unknown> }>;
 
 export interface FeedbackDeps {
   store: ScoreStore;
@@ -91,10 +103,38 @@ export function parseFeedback(body: unknown): { ok: true; value: FeedbackRequest
   return { ok: true, value: { kind: kind!, description: d, context, ...(typeof b.name === 'string' ? { name: b.name } : {}), ...(typeof b.secret === 'string' ? { secret: b.secret } : {}) } };
 }
 
+const MAGIC: Record<FeedbackImage['type'], number[]> = { 'image/jpeg': [0xff, 0xd8, 0xff], 'image/png': [0x89, 0x50, 0x4e, 0x47] };
+
+/** Validate the pictures of a report (absent = none); reasons when anything is wrong, nothing is filed then. */
+export function parseImages(raw: unknown): { ok: true; images: FeedbackImage[] } | { ok: false; reasons: string[] } {
+  if (raw === undefined || raw === null) return { ok: true, images: [] };
+  if (!Array.isArray(raw)) return { ok: false, reasons: ['images must be a list'] };
+  if (raw.length > FEEDBACK.maxImages) return { ok: false, reasons: [`at most ${FEEDBACK.maxImages} pictures per report`] };
+  const out: FeedbackImage[] = [];
+  let total = 0;
+  for (let i = 0; i < raw.length; i++) {
+    const it = raw[i] as Record<string, unknown> | null;
+    const n = i + 1;
+    if (!it || typeof it !== 'object') return { ok: false, reasons: [`picture ${n} is not an object`] };
+    const type = it.type;
+    if (type !== 'image/jpeg' && type !== 'image/png') return { ok: false, reasons: [`picture ${n}: type must be image/jpeg or image/png`] };
+    const data = typeof it.data === 'string' ? it.data : '';
+    if (!data || data.length % 4 !== 0 || !/^[A-Za-z0-9+/]+={0,2}$/.test(data)) return { ok: false, reasons: [`picture ${n} is not valid base64`] };
+    let bin: string;
+    try { bin = atob(data); } catch { return { ok: false, reasons: [`picture ${n} is not valid base64`] }; }
+    if (!MAGIC[type].every((b, k) => bin.charCodeAt(k) === b)) return { ok: false, reasons: [`picture ${n} is not really a ${type === 'image/png' ? 'PNG' : 'JPEG'}`] };
+    if (bin.length > FEEDBACK.maxImageBytes) return { ok: false, reasons: [`picture ${n} is over ${FEEDBACK.maxImageBytes / 1024} KB`] };
+    total += bin.length;
+    if (total > FEEDBACK.maxImagesTotal) return { ok: false, reasons: [`the pictures together are over ${FEEDBACK.maxImagesTotal / 1024 / 1024} MB`] };
+    out.push({ type, data, bytes: bin.length });
+  }
+  return { ok: true, images: out };
+}
+
 const fence = (s: string) => `~~~text\n${s}\n~~~`;
 
 /** The issue: title from the first line, the description and the context in code blocks (nothing user-typed renders). */
-export function issueFor(f: FeedbackRequest, who: string): { title: string; body: string; labels: string[] } {
+export function issueFor(f: FeedbackRequest, who: string, pics?: { urls: string[]; failed: number; failStatus?: number | string }): { title: string; body: string; labels: string[] } {
   const first = clean(f.description.split('\n')[0]).replace(/@/g, '(at)').replace(/[<>[\]]/g, '');
   const title = `[${f.kind}] ${[...first].length > 70 ? [...first].slice(0, 69).join('') + '…' : first}`;
   const c = f.context ?? {};
@@ -111,6 +151,8 @@ export function issueFor(f: FeedbackRequest, who: string): { title: string; body
     'Context:',
     fence(ctx || '(none)'),
     ...(c.error ? ['', 'Last error:', fence(c.error)] : []),
+    ...(pics?.urls.length ? ['', '## Pictures', '', ...pics.urls.map((u, i) => `![picture ${i + 1}](${u})`)] : []),
+    ...(pics?.failed ? ['', `_${pics.failed} picture(s) could not be uploaded (HTTP ${pics.failStatus ?? '?'})_`] : []),
   ].join('\n');
   return { title, body, labels: ['from-game', f.kind] };
 }
@@ -119,21 +161,72 @@ const HEADERS = { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Cont
 const json = (status: number, body: unknown, extra: Record<string, string> = {}) => new Response(JSON.stringify(body), { status, headers: { ...HEADERS, ...extra } });
 const fail = (status: number, error: string, reasons?: string[], extra?: Record<string, string>) => json(status, { ok: false, error, ...(reasons?.length ? { reasons } : {}) }, extra);
 
+const GH = 'https://api.github.com';
+
+/** Put each picture on the `feedback-images` branch (made from the default branch's HEAD when missing); never throws. */
+async function uploadImages(images: FeedbackImage[], deps: FeedbackDeps, now: Date): Promise<{ urls: string[]; failed: number; failStatus?: number | string }> {
+  const f = deps.fetch ?? (fetch as unknown as FetchLike);
+  const signal = AbortSignal.timeout(deps.timeoutMs ?? FEEDBACK.uploadBudgetMs);
+  const headers = {
+    Authorization: `Bearer ${deps.token}`, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28',
+    'User-Agent': 'probe-sim-feedback', 'Content-Type': 'application/json',
+  };
+  const call = (method: string, path: string, body?: unknown) =>
+    f(`${GH}/repos/${FEEDBACK.repo}${path ? `/${path}` : ''}`, { method, headers, ...(body === undefined ? {} : { body: JSON.stringify(body) }), signal });
+  const failAll = (status: number | string) => ({ urls: [] as string[], failed: images.length, failStatus: status });
+  try {
+    const ref = await call('GET', `git/ref/heads/${FEEDBACK.imageBranch}`);
+    if (ref.status === 404) {
+      const repo = await call('GET', '');
+      if (!repo.ok) return failAll(repo.status);
+      const def = ((await repo.json()) as { default_branch?: string }).default_branch ?? 'main';
+      const head = await call('GET', `git/ref/heads/${def}`);
+      if (!head.ok) return failAll(head.status);
+      const sha = ((await head.json()) as { object?: { sha?: string } }).object?.sha;
+      if (!sha) return failAll('no HEAD');
+      const mk = await call('POST', 'git/refs', { ref: `refs/heads/${FEEDBACK.imageBranch}`, sha });
+      // 422 = somebody created it between the check and now: fine
+      if (!mk.ok && mk.status !== 422) return failAll(mk.status);
+    } else if (!ref.ok) return failAll(ref.status);
+    const yyyy = String(now.getUTCFullYear()), mm = String(now.getUTCMonth() + 1).padStart(2, '0');
+    const put = async (im: FeedbackImage, i: number): Promise<{ url: string } | { status: number | string }> => {
+      const path = `${FEEDBACK.imageBranch}/${yyyy}/${mm}/${now.getTime()}-${i + 1}.${im.type === 'image/png' ? 'png' : 'jpg'}`;
+      const body = { message: 'feedback image for a report', content: im.data, branch: FEEDBACK.imageBranch, committer: { name: 'probe-sim-feedback', email: 'feedback@probe-sim.invalid' } };
+      try {
+        const r = await call('PUT', `contents/${path}`, body);
+        return r.ok ? { url: `https://raw.githubusercontent.com/${FEEDBACK.repo}/${FEEDBACK.imageBranch}/${path}` } : { status: r.status };
+      } catch { return { status: 'no answer' }; }
+    };
+    const res = await Promise.all(images.map(put));
+    // parallel commits to one branch can race (409): retry those once, one after another
+    for (let i = 0; i < res.length; i++) { const r = res[i]; if ('status' in r && r.status === 409) res[i] = await put(images[i], i); }
+    const urls = res.flatMap((r) => ('url' in r ? [r.url] : []));
+    const bad = res.find((r): r is { status: number | string } => 'status' in r);
+    return { urls, failed: images.length - urls.length, ...(bad ? { failStatus: bad.status } : {}) };
+  } catch (e) {
+    deps.log?.(`picture upload failed: ${(e as Error)?.name ?? e}`);
+    return failAll('no answer');
+  }
+}
+
 export async function handleFeedback(req: Request, deps: FeedbackDeps): Promise<Response> {
   const o = originAllowed(req, deps);
   if (!o.ok) return fail(403, 'cross-origin requests are not allowed');
   if (req.method !== 'POST') return fail(405, 'method not allowed', undefined, { Allow: 'POST' });
   try {
     if (!(req.headers.get('content-type') ?? '').toLowerCase().startsWith('application/json')) return fail(415, 'content-type must be application/json');
-    if (Number(req.headers.get('content-length') ?? '0') > FEEDBACK.maxBodyBytes) return fail(413, 'report too large', [`at most ${FEEDBACK.maxBodyBytes} bytes`]);
+    const cap = req.headers.get(FEEDBACK.imagesHeader) ? FEEDBACK.maxBodyBytesWithImages : FEEDBACK.maxBodyBytes;
+    if (Number(req.headers.get('content-length') ?? '0') > cap) return fail(413, 'report too large', [`at most ${cap} bytes`]);
     const rl = await deps.store.hit(`feedback:${clientIp(req)}`, FEEDBACK.windowS);
     if (rl.count > FEEDBACK.perIp) return fail(429, 'rate limited', [`at most ${FEEDBACK.perIp} reports per ${FEEDBACK.windowS / 60} min`], { 'Retry-After': String(Math.max(1, rl.ttl)) });
-    const text = await readCapped(req, FEEDBACK.maxBodyBytes);
-    if (text === null) return fail(413, 'report too large', [`at most ${FEEDBACK.maxBodyBytes} bytes`]);
+    const text = await readCapped(req, cap);
+    if (text === null) return fail(413, 'report too large', [`at most ${cap} bytes`]);
     let body: unknown;
     try { body = JSON.parse(text); } catch { return fail(400, 'body is not valid JSON'); }
     const p = parseFeedback(body);
     if (!p.ok) return fail(422, 'rejected', p.reasons);
+    const im = parseImages((body as Record<string, unknown>).images);
+    if (!im.ok) return fail(400, 'pictures rejected', im.reasons);
     if (!deps.token) return fail(503, 'reports are not set up yet');
     // the same report again (a retry after a timeout, a double tap): answer with the first one, never a second issue
     const dupKey = `sb:fbdup:${await sha256Hex(`${clientIp(req)}|${p.value.kind}|${p.value.description}`)}`;
@@ -146,7 +239,11 @@ export async function handleFeedback(req: Request, deps: FeedbackDeps): Promise<
     }
     const n = normalizeName(p.value.name);
     const who = n && (await ownership(deps.store, nameKey(n), p.value.secret)) === 'you' ? n : 'anonymous';
-    const issue = issueFor(p.value, who);
+    const started = Date.now();
+    const pics = im.images.length ? await uploadImages(im.images, deps, new Date(started)) : undefined;
+    const issue = issueFor(p.value, who, pics);
+    // the Function lives 10 s: the issue gets what the uploads left
+    const issueTimeout = deps.timeoutMs ?? (pics ? Math.max(2000, FEEDBACK.upstreamTimeoutMs - 500 - (Date.now() - started)) : FEEDBACK.upstreamTimeoutMs);
     let res: Awaited<ReturnType<FetchLike>>;
     try {
       res = await (deps.fetch ?? (fetch as unknown as FetchLike))(`https://api.github.com/repos/${FEEDBACK.repo}/issues`, {
@@ -156,7 +253,7 @@ export async function handleFeedback(req: Request, deps: FeedbackDeps): Promise<
           'User-Agent': 'probe-sim-feedback', 'Content-Type': 'application/json',
         },
         body: JSON.stringify(issue),
-        signal: AbortSignal.timeout(deps.timeoutMs ?? FEEDBACK.upstreamTimeoutMs),
+        signal: AbortSignal.timeout(issueTimeout),
       });
     } catch (e) {
       // no answer: the issue may or may not exist, so the dedupe key stays (a retry gets 409, not a second issue)
@@ -167,7 +264,7 @@ export async function handleFeedback(req: Request, deps: FeedbackDeps): Promise<
     const j = (await res.json()) as { number?: number; html_url?: string };
     await deps.store.kvSet(dupKey, JSON.stringify({ number: j.number ?? null, url: j.html_url ?? null }), { ex: FEEDBACK.dedupeS });
     deps.log?.(`issue #${j.number} filed (${p.value.kind})`);
-    return json(200, { ok: true, number: j.number ?? null, url: j.html_url ?? null });
+    return json(200, { ok: true, number: j.number ?? null, url: j.html_url ?? null, ...(pics ? { images: { uploaded: pics.urls.length, failed: pics.failed } } : {}) });
   } catch (e) {
     deps.log?.(`error: ${(e as Error)?.message ?? e}`);
     return fail(500, 'internal error');
