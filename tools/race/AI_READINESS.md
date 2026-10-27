@@ -420,3 +420,27 @@ both braking at their limit, so the one behind cannot drop back in 2 s.
   (after 'shut' the car is behind the other car's rear at its apex and starts merging back). Deleting the planning check
   fails the planning and multi-tick tests; deleting the 'shut' end fails the first and multi-tick tests.
 - vitest 513 passed (511 + 2 new), build clean.
+
+## Mid-Ohio field pace and calibration (26-27 Oct 2026, branch `field-mid-ohio`, stage 4)
+
+The real Lemons "Mid-West Crisis" field (MyLaps race session 11926749, 10-12 Apr 2026), not the registry's Laguna
+stand-in. `TRACKS.mid_ohio` still points at `cars/field/pace.json` (+ the global identity), so the tools take
+`FIELD_TRACK=mid_ohio FIELD_PACE=cars/field/mid_ohio/pace.json FIELD_IDENTITY=cars/field/mid_ohio/identity.json`
+(tools/race/load.ts `pacePath` / `identityPath`, inert when unset: Buttonwillow and Sonoma regenerate byte-identically
+with the old and the new tool, Laguna's files are not touched).
+```
+FIELD_TRACK=mid_ohio FIELD_PACE=cars/field/mid_ohio/pace.json FIELD_IDENTITY=cars/field/mid_ohio/identity.json \
+  npx tsx tools/race/pace_track.ts --track mid_ohio --session 11926749 --own --label "Mid-Ohio (Mid-West Crisis, 10-12 Apr 2026)" --source "<the file's source line>"
+FIELD_TRACK=... (same three)  npx tsx tools/race/calibrate_field.ts --track mid_ohio --workers 6     # 677 s
+```
+- **Field**: 85 cars (90 classified; ids from identity.json: 36 `_mo`, #56 TPF Racing = id 156), 702 stints (every car has
+  at least one), no player row (#619 did not race). Left out as at Buttonwillow (no lap: #164, #713, #991) and Sonoma
+  (no identity row, no placeholder cars: #643, #116); all five named in `source`.
+- **Rules** (pace.ts / pace_rules.ts): green non-pit laps, outliers over 1.3 x the raw median dropped, stints between
+  stops, out laps dropped, laps over 1.2 x the stint median or under 0.97 x the official best dropped, 5 laps minimum.
+- **Spread**: car target laps 107.755 s (#372 Lemonaid) to 137.418 s (#318 Fat Bastard Racing), median 121.87 s; stint
+  targets 105.11 to 162.78 s; the widest car has a slowest/fastest stint ratio of 1.30.
+- **Calibration** (AI_VERSION 8, the track's own identity.json, 787 fits = 85 cars + 702 stints, tolerance 0.2 %): AI
+  Probe at scale 1 on the Mid-Ohio package (rev ea1a07f8bd) 118.55 s. Fit errors: median 0.12 %, p95 0.19 %, worst
+  0.40 %, none outside 0.5 %, none not converged. Scales: median 0.871, range 0.375 to 1.372 (21 fits under 0.6, the slow
+  stints; 202 at or above 1.0).
