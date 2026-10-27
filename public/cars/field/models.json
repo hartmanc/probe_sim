@@ -16921,6 +16921,356 @@
     "tris": 8101,
     "file": "tools/cars/kit/downloads/69/model.glb"
    }
+  },
+  {
+   "number": "12",
+   "id": "12",
+   "file": "models/12.glb",
+   "tris": 11700,
+   "bytes": 699100,
+   "materials": 2,
+   "length_m": 4.21,
+   "width_m": 1.698,
+   "height_m": 1.393,
+   "bbox_m": [
+    4.402,
+    1.781,
+    1.47
+   ],
+   "wheelbase_m": 2.7,
+   "track_front_m": 1.42,
+   "track_rear_m": 1.43,
+   "tyre_radius_m": 0.3,
+   "tyre_radius_rear_m": 0.3,
+   "hubs": {
+    "wheel_fl": [
+     0.71,
+     0.3,
+     1.35
+    ],
+    "wheel_fr": [
+     -0.71,
+     0.3,
+     1.35
+    ],
+    "wheel_rl": [
+     0.715,
+     0.3,
+     -1.35
+    ],
+    "wheel_rr": [
+     -0.715,
+     0.3,
+     -1.35
+    ]
+   },
+   "team": "Murder Whornet",
+   "car": "1996 BMW 318ti (E36 Compact)",
+   "brake_lamps": [
+    [
+     0.3902,
+     0.5528,
+     -2.1352,
+     0.06
+    ],
+    [
+     -0.3902,
+     0.5528,
+     -2.1304,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 0.9926470588235295,
+    "source_tris": 998542,
+    "model_length": 4.238,
+    "model_width": 1.786,
+    "model_height": 1.401,
+    "tris": 9352,
+    "file": "tools/cars/kit/downloads/0_bw/model.glb"
+   }
+  },
+  {
+   "number": "330",
+   "id": "330",
+   "file": "models/330.glb",
+   "tris": 11820,
+   "bytes": 704944,
+   "materials": 2,
+   "length_m": 4.21,
+   "width_m": 1.698,
+   "height_m": 1.393,
+   "bbox_m": [
+    4.414,
+    1.781,
+    1.43
+   ],
+   "wheelbase_m": 2.7,
+   "track_front_m": 1.42,
+   "track_rear_m": 1.43,
+   "tyre_radius_m": 0.3,
+   "tyre_radius_rear_m": 0.3,
+   "hubs": {
+    "wheel_fl": [
+     0.71,
+     0.3,
+     1.35
+    ],
+    "wheel_fr": [
+     -0.71,
+     0.3,
+     1.35
+    ],
+    "wheel_rl": [
+     0.715,
+     0.3,
+     -1.35
+    ],
+    "wheel_rr": [
+     -0.715,
+     0.3,
+     -1.35
+    ]
+   },
+   "team": "Rubber City Racing",
+   "car": "1996 BMW 318ti (E36 Compact)",
+   "brake_lamps": [
+    [
+     0.3902,
+     0.5528,
+     -2.1352,
+     0.06
+    ],
+    [
+     -0.3902,
+     0.5528,
+     -2.1304,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 0.9926470588235295,
+    "source_tris": 998542,
+    "model_length": 4.238,
+    "model_width": 1.786,
+    "model_height": 1.401,
+    "tris": 9352,
+    "file": "tools/cars/kit/downloads/0_bw/model.glb"
+   }
+  },
+  {
+   "number": "513",
+   "id": "513",
+   "file": "models/513.glb",
+   "tris": 11764,
+   "bytes": 710452,
+   "materials": 2,
+   "length_m": 4.21,
+   "width_m": 1.698,
+   "height_m": 1.393,
+   "bbox_m": [
+    4.378,
+    1.781,
+    1.889
+   ],
+   "wheelbase_m": 2.7,
+   "track_front_m": 1.42,
+   "track_rear_m": 1.43,
+   "tyre_radius_m": 0.3,
+   "tyre_radius_rear_m": 0.3,
+   "hubs": {
+    "wheel_fl": [
+     0.71,
+     0.3,
+     1.35
+    ],
+    "wheel_fr": [
+     -0.71,
+     0.3,
+     1.35
+    ],
+    "wheel_rl": [
+     0.715,
+     0.3,
+     -1.35
+    ],
+    "wheel_rr": [
+     -0.715,
+     0.3,
+     -1.35
+    ]
+   },
+   "team": "Team Non Sequitur",
+   "car": "1995 BMW 318ti (E36 Compact)",
+   "brake_lamps": [
+    [
+     0.3822,
+     0.5585,
+     -2.137,
+     0.06
+    ],
+    [
+     -0.3822,
+     0.5585,
+     -2.1324,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 0.9926470588235295,
+    "source_tris": 998542,
+    "model_length": 4.238,
+    "model_width": 1.786,
+    "model_height": 1.401,
+    "tris": 8708,
+    "file": "tools/cars/kit/downloads/0_bw/model.glb"
+   }
+  },
+  {
+   "number": "691",
+   "id": "691",
+   "file": "models/691.glb",
+   "tris": 11700,
+   "bytes": 757220,
+   "materials": 2,
+   "length_m": 4.21,
+   "width_m": 1.698,
+   "height_m": 1.393,
+   "bbox_m": [
+    4.39,
+    1.781,
+    1.403
+   ],
+   "wheelbase_m": 2.7,
+   "track_front_m": 1.42,
+   "track_rear_m": 1.43,
+   "tyre_radius_m": 0.3,
+   "tyre_radius_rear_m": 0.3,
+   "hubs": {
+    "wheel_fl": [
+     0.71,
+     0.3,
+     1.35
+    ],
+    "wheel_fr": [
+     -0.71,
+     0.3,
+     1.35
+    ],
+    "wheel_rl": [
+     0.715,
+     0.3,
+     -1.35
+    ],
+    "wheel_rr": [
+     -0.715,
+     0.3,
+     -1.35
+    ]
+   },
+   "team": "Layin Pipe Racing",
+   "car": "1996 BMW 318ti (E36 Compact)",
+   "brake_lamps": [
+    [
+     0.3902,
+     0.5528,
+     -2.1352,
+     0.06
+    ],
+    [
+     -0.3902,
+     0.5528,
+     -2.1304,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 0.9926470588235295,
+    "source_tris": 998542,
+    "model_length": 4.238,
+    "model_width": 1.786,
+    "model_height": 1.401,
+    "tris": 9352,
+    "file": "tools/cars/kit/downloads/0_bw/model.glb"
+   }
+  },
+  {
+   "number": "969",
+   "id": "969_mo",
+   "file": "models/969_mo.glb",
+   "tris": 11820,
+   "bytes": 749064,
+   "materials": 2,
+   "length_m": 4.21,
+   "width_m": 1.698,
+   "height_m": 1.393,
+   "bbox_m": [
+    4.402,
+    1.781,
+    1.45
+   ],
+   "wheelbase_m": 2.7,
+   "track_front_m": 1.42,
+   "track_rear_m": 1.43,
+   "tyre_radius_m": 0.3,
+   "tyre_radius_rear_m": 0.3,
+   "hubs": {
+    "wheel_fl": [
+     0.71,
+     0.3,
+     1.35
+    ],
+    "wheel_fr": [
+     -0.71,
+     0.3,
+     1.35
+    ],
+    "wheel_rl": [
+     0.715,
+     0.3,
+     -1.35
+    ],
+    "wheel_rr": [
+     -0.715,
+     0.3,
+     -1.35
+    ]
+   },
+   "team": "COLD BEER",
+   "car": "1996 BMW 318ti (E36 Compact)",
+   "brake_lamps": [
+    [
+     0.3902,
+     0.5528,
+     -2.1352,
+     0.06
+    ],
+    [
+     -0.3902,
+     0.5528,
+     -2.1304,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 0.9926470588235295,
+    "source_tris": 998542,
+    "model_length": 4.238,
+    "model_width": 1.786,
+    "model_height": 1.401,
+    "tris": 9352,
+    "file": "tools/cars/kit/downloads/0_bw/model.glb"
+   }
   }
  ]
 }
