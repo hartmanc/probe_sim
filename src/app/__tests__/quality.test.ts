@@ -33,6 +33,34 @@ describe('tier', () => {
   });
 });
 
+describe('balanced tier', () => {
+  const env = (o: Partial<Parameters<typeof pickTier>[0]>) => ({ coarse: false, maxTouchPoints: 0, search: '', stored: null, ...o });
+  it('settings: 30 AI cars drawn, 4 casters at 2048 px, 2.5 MP, anisotropy 8, shadows on', () => {
+    const b = settingsFor('balanced', 'forced', false);
+    expect([b.tier, b.device, b.maxAiCarsDrawn, b.aiShadowCasters, b.shadowMapSize, b.maxPixels, b.maxAnisotropy, b.shadows]).toEqual(['balanced', 'desktop', 30, 4, 2048, 2.5e6, 8, true]);
+    expect(settingsFor('balanced', 'forced', false, { aiShadows: false }).aiShadowCasters).toBe(0);
+    expect(settingsFor('balanced', 'forced', true, { device: 'tablet' }).device).toBe('tablet');
+  });
+  it('is a stored choice; ?phone= still wins; an unknown stored value is auto', () => {
+    expect(pickTier(env({ stored: 'balanced' }))).toEqual({ tier: 'balanced', reason: 'forced', touch: false });
+    expect(pickTier(env({ stored: 'balanced', search: '?phone=1' })).tier).toBe('phone');
+    expect(pickTier(env({ stored: 'balanced', search: '?phone=0' })).tier).toBe('desktop');
+    expect(pickTier(env({ stored: 'ultra' })).reason).toBe('auto');
+  });
+  it('pixel budget: a 1080p window at ratio 2 renders at most 2.5 MP', () => {
+    const r = pixelRatioFor(settingsFor('balanced', 'forced', false), 2, 1920, 1080);
+    expect(1920 * 1080 * r * r).toBeLessThanOrEqual(2.5e6 + 1);
+    expect(r).toBeGreaterThan(1);
+  });
+});
+
+describe('desktop trims (perf round 1)', () => {
+  it('budget 3.5 MP, anisotropy 16', () => {
+    const d = settingsFor('desktop', 'auto', false);
+    expect(d.maxPixels).toBe(3.5e6); expect(d.maxAnisotropy).toBe(16);
+  });
+});
+
 describe('pixel ratio', () => {
   const phone = settingsFor('phone', 'auto', true), desk = settingsFor('desktop', 'auto', false);
   it('phone: ≤ 1 and ≤ 1.2 MP', () => {

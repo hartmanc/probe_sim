@@ -1,4 +1,5 @@
-// Render tier: 'phone' (touch-first device, or ?phone=1) or 'desktop'. The phone tier caps the canvas at about
+// Render tier: 'phone' (touch-first device, or ?phone=1), 'desktop' or 'balanced' (desktop field and device class, lighter
+// rendering: 30 AI cars drawn, 4 AI shadow casters, 2.5 MP, anisotropy 8; perf round 1, 27 Oct 2026; chosen in the Graphics menu). The phone tier caps the canvas at about
 // 1.2 MP with pixel ratio ≤ 1, turns shadow maps off, lowers texture anisotropy and thins the scenery after
 // buildWorld (scene.ts / scenery.ts are not changed): tree instances away from the track are dropped.
 // `quality.maxAiCarsDrawn` is the cap the race integration must respect when it adds AI car rigs.
@@ -8,7 +9,7 @@
 import type * as THREE from 'three';
 import type { TrackJson } from './physics-types';
 
-export type Tier = 'phone' | 'desktop';
+export type Tier = 'phone' | 'desktop' | 'balanced';
 /** What the device is (memory class), independent of the render tier the player picks: phones and tablets (iPad Safari
  *  has the same memory limits as the iPhone) race a 40-car field (field-select.ts). */
 export type DeviceClass = 'phone' | 'tablet' | 'desktop';
@@ -57,6 +58,8 @@ export function aiShadowsUrlOff(search: string): boolean {
 export const PHONE_MAX_PIXELS = 1.2e6;
 /** Desktop pixel budget (perf round 1, 27 Oct 2026): a 4K display at ratio 1.5 would render 4.7 MP; this keeps it at 3.5. */
 export const DESKTOP_MAX_PIXELS = 3.5e6;
+/** The Balanced tier (menu choice): 30 AI cars, 4 shadow casters, 2.5 MP, anisotropy 8, shadows at 2048 px, no scenery thinning. */
+export const BALANCED = { maxAiCarsDrawn: 30, maxPixels: 2.5e6, aiShadowCasters: 4, maxAnisotropy: 8 } as const;
 const TREE_NEAR_M = 60;     // every tree within this of the centreline is kept on the phone tier
 const TREE_MID_M = 400;     // beyond: keep 1 in 2; beyond TREE_MID_M: 1 in 4
 
@@ -69,7 +72,7 @@ export function pickTier(env: TierEnv): { tier: Tier; reason: QualitySettings['r
   if (p === '1' || p === 'true') return { tier: 'phone', reason: 'url', touch: true };
   if (p === '0' || p === 'false') return { tier: 'desktop', reason: 'url', touch: false };
   const touch = touchDevice;
-  if (env.stored === 'phone' || env.stored === 'desktop') return { tier: env.stored, reason: 'forced', touch };
+  if (env.stored === 'phone' || env.stored === 'desktop' || env.stored === 'balanced') return { tier: env.stored, reason: 'forced', touch };
   return { tier: touchDevice ? 'phone' : 'desktop', reason: 'auto', touch };
 }
 
@@ -96,6 +99,10 @@ export function settingsFor(tier: Tier, reason: QualitySettings['reason'], touch
       aiShadowCasters: 0, shadowBoxM: PLAYER_BOX_M, shadowMapSize: PLAYER_MAP };
   }
   const ai = opts.aiShadows ?? true;
+  if (tier === 'balanced') {
+    return { tier, device, reason, touch, maxAiCarsDrawn: BALANCED.maxAiCarsDrawn, maxPixels: BALANCED.maxPixels, maxPixelRatio: 1.5, shadows: true, maxAnisotropy: BALANCED.maxAnisotropy,
+      aiShadowCasters: ai ? BALANCED.aiShadowCasters : 0, shadowBoxM: ai ? (opts.shadowBoxM ?? SHADOW_BOX_M) : PLAYER_BOX_M, shadowMapSize: ai ? SHADOW_MAP : PLAYER_MAP };
+  }
   return { tier, device, reason, touch, maxAiCarsDrawn: 45, maxPixels: DESKTOP_MAX_PIXELS, maxPixelRatio: 1.5, shadows: true, maxAnisotropy: 16,
     aiShadowCasters: ai ? AI_SHADOW_CASTERS : 0, shadowBoxM: ai ? (opts.shadowBoxM ?? SHADOW_BOX_M) : PLAYER_BOX_M, shadowMapSize: ai ? SHADOW_MAP : PLAYER_MAP };
 }
@@ -117,7 +124,7 @@ export function storeTierChoice(c: TierChoice): void {
 }
 export function storedTierChoice(): TierChoice {
   const s = readStored();
-  return s === 'phone' || s === 'desktop' ? s : 'auto';
+  return s === 'phone' || s === 'desktop' || s === 'balanced' ? s : 'auto';
 }
 
 function detect(): QualitySettings {

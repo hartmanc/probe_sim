@@ -129,7 +129,7 @@ let tierChoice: TierChoice = storedTierChoice();
 const graphicsEntry = (): MenuEntry => ({
   kind: 'choice', id: 'graphics', label: 'Graphics',
   note: tierChoice === (quality.reason === 'forced' ? quality.tier : 'auto') ? `${quality.tier}${quality.reason === 'url' ? ' (URL)' : ''}` : 'reload to apply',
-  options: [{ value: 'auto', label: 'Auto' }, { value: 'phone', label: 'Phone' }, { value: 'desktop', label: 'Desktop' }],
+  options: [{ value: 'auto', label: 'Auto' }, { value: 'phone', label: 'Phone' }, { value: 'balanced', label: 'Balanced' }, { value: 'desktop', label: 'Desktop' }],
   get: () => tierChoice, set: (v) => { tierChoice = v as TierChoice; storeTierChoice(tierChoice); },
 });
 const reloadEntry = (): MenuEntry[] => tierChoice !== (quality.reason === 'forced' ? quality.tier : 'auto')
