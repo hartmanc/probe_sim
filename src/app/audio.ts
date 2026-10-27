@@ -238,6 +238,8 @@ export const FIELD_BUS_GAIN = 0.55;
 
 export class CarAudio {
   private ctx: BaseAudioContext | null = null;
+  /** A context made inside an earlier real gesture (prime()), waiting for the first start(). */
+  private primed: BaseAudioContext | null = null;
   private master!: GainNode;
   private engineIn!: GainNode;
   private engineGate!: GainNode;
@@ -315,13 +317,12 @@ export class CarAudio {
     if (this.ctx) { this.unlock(); return Promise.resolve(); }
     let ctx: BaseAudioContext;
     if (ctxIn) ctx = ctxIn;
-    else {
-      // iOS: play through the ring / silent switch like a game, not as "ambient" sound (Safari 16.4+)
-      try { const s = (navigator as unknown as { audioSession?: { type: string } }).audioSession; if (s) s.type = 'playback'; } catch { /* older */ }
-      try { ctx = new AudioContext({ sampleRate: 48000, latencyHint: 'interactive' }); } catch { ctx = new AudioContext(); }
-      // must run inside the user gesture (iOS creates the context suspended)
-      void (ctx as AudioContext).resume();
-    }
+    else if (this.primed) {
+      // made inside an earlier click, tap or key (prime()): a start from the gamepad, which is no gesture to the
+      // browser's autoplay rule, inherits it running
+      ctx = this.primed; this.primed = null;
+      void (ctx as AudioContext).resume?.();
+    } else ctx = CarAudio.makeContext();   // must run inside the user gesture (iOS creates the context suspended)
     this.ctx = ctx;
     this.buildGraph(ctx);
     this.preload();
@@ -468,10 +469,34 @@ export class CarAudio {
   }
 
   suspend(): void { if (this.ctx instanceof AudioContext) void this.ctx.suspend(); }
+  /** The browser's AudioContext: iOS plays it through the ring / silent switch like a game, not as "ambient" sound
+   *  (Safari 16.4+); resumed at once, which only takes inside a user gesture. */
+  private static makeContext(): BaseAudioContext {
+    try { const s = (navigator as unknown as { audioSession?: { type: string } }).audioSession; if (s) s.type = 'playback'; } catch { /* older */ }
+    let ctx: AudioContext;
+    try { ctx = new AudioContext({ sampleRate: 48000, latencyHint: 'interactive' }); } catch { ctx = new AudioContext(); }
+    void ctx.resume();
+    return ctx;
+  }
+
+  /** Call from any real user gesture (click, tap, key) before the first start(): the context is made and resumed in that
+   *  gesture, so a session started from a gamepad (polled input, no gesture for the browser's autoplay rule) has sound.
+   *  Owner, 27 Oct 2026: "sometimes the sound doesn't load; if I refresh, typically I get it". After start(): unlock(). */
+  prime(make: () => BaseAudioContext = CarAudio.makeContext): void {
+    if (this.ctx) { this.unlock(); return; }
+    if (!this.primed) this.primed = make();
+  }
+
+  /** True while the browser keeps the context suspended (no gesture has reached it): ask the player for a tap or key. */
+  get suspended(): boolean {
+    const c = (this.ctx ?? this.primed) as { state?: string } | null;
+    return !!c && typeof c.state === 'string' && c.state !== 'running';
+  }
+
   /** Resume a context the browser suspended or interrupted (iOS after a call / backgrounding); call from a gesture. */
   unlock(): void {
-    const c = this.ctx;
-    if (c instanceof AudioContext && c.state !== 'running') void c.resume();
+    const c = this.ctx as { state?: string; resume?: () => Promise<void> } | null;
+    if (c && typeof c.state === 'string' && c.state !== 'running') void c.resume?.();
   }
   resume(): void { if (this.ctx instanceof AudioContext) void this.ctx.resume(); }
 

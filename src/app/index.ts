@@ -212,6 +212,9 @@ function showMainMenu(): void {
 function startMode(id: ModeId): void {
   if (!sim) return;
   void audio.start(); // synchronously inside the tap / click: unlocks the AudioContext on iOS
+  // a start from the gamepad is no gesture to the browser's autoplay rule: if the context is still suspended shortly
+  // after, ask for one (the gesture listener at the bottom resumes it); a click, tap or key beforehand primes it instead
+  setTimeout(() => { if (audio.suspended) hud.toast('Press any key or tap the screen for sound', 5000); }, 700);
   if (touch) { touch.requestTilt(); touch.recentre(); } // tilt permission prompt needs this gesture too
   sim.setMode(id);
   menu.close();
@@ -280,8 +283,10 @@ function uiTick(now: number): void {
 }
 requestAnimationFrame(uiTick);
 
-// iOS suspends ("interrupts") the AudioContext after a call, Siri or backgrounding; resume on the next tap
-for (const ev of ['touchend', 'pointerup'] as const) document.addEventListener(ev, () => { if (!uiPaused) audio.unlock(); }, { capture: true, passive: true });
+// iOS suspends ("interrupts") the AudioContext after a call, Siri or backgrounding; resume on the next tap, click or key.
+// The same gesture primes the context before the first start (audio.prime), so a session the gamepad starts has sound:
+// pad input is polled, no gesture for the browser's autoplay rule (owner, 27 Oct 2026: "sometimes the sound doesn't load")
+for (const ev of ['touchend', 'pointerdown', 'pointerup', 'keydown'] as const) document.addEventListener(ev, () => { if (!uiPaused) { audio.prime(); audio.unlock(); } }, { capture: true, passive: true });
 
 // ---------------------------------------------------------------- boot
 
