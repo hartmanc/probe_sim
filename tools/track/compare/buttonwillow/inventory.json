@@ -1609,19 +1609,20 @@
   },
   {
    "side": "left",
-   "kind": "paint",
+   "kind": "kerb",
    "attrs": {
-    "type": "white painted blocks at the left edge",
+    "type": "flat painted kerb",
     "colour": "white",
+    "raised": false,
     "ahead_m": 40
    },
-   "confidence": 0.5,
+   "confidence": 0.7,
    "t": 96,
    "s": 2856.6,
    "source": "onboard:7QS2M-HGSI4@96.0",
    "frame": "t096.jpg",
    "scope": "lap",
-   "note": "where Lost Hill joins the drag strip"
+   "note": "the small white kerb on the inside of the drag-strip left kink after Phil Hill (round 16: was a paint row and a dropped kerb run)"
   },
   {
    "side": "left",
@@ -2567,11 +2568,11 @@
   }
  ],
  "counts": {
-  "kerb": 39,
+  "kerb": 40,
   "cone_line": 28,
   "wall": 14,
   "station": 14,
-  "paint": 4,
+  "paint": 3,
   "building": 3,
   "runoff": 2,
   "tyre_wall": 1,

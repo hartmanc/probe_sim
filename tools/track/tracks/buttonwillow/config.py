@@ -791,10 +791,29 @@ CONFIG = dict(
                
                  colour_src='t110.jpg (red / white / blue; inventory row s 3329 left)',
                  src='kerb run (owner lap 1): the block line followed on c20_s3500 with the band reader (edges_spline.bands outer limits, the band centre 0.45 m inside), one continuous run'),
+            # round 16 (the owner, 26 Oct 2026, drive of round 15: "a small kerb on the inside of the left hand kink after Phil Hill that
+            # is missing in the sim"): Phil Hill is the bulge east of the Drag Strip's north end (the circuit's Race 1 map; OSM 'Lost
+            # Hill', T8, apex right s ~2770); the left-hand kink after it is the drag-strip kink at package s ~2846-2866 (round-14
+            # metres 2841.7-2860.6). Round 11 dropped 'run left s 2849-2855' on a misread of t096 (no kerb); t096 shows a short run of
+            # white blocks at the left edge and the capwin window (package rev d65c062829, s 2860, half 45 m) shows the white blocks
+            # along the left edge from ~2846 to ~2865. Flat painted white blocks (no face on t096): flat, outside the edge.
+            dict(side='left', extent=(2841.7, 2860.6), colors=['#e2dfd6', '#8f8c86'], name='run left s 2846-2865 (Phil Hill kink)', width=0.9,
+                 width_src="round 16: the track's standard 0.9 m; the blocks of t096 span the same ~1 m as the T8 apex blocks of t094 (0.86 m), capwin s 2860 shows a band of the same width at the edge",
+                 extent_src="round 16: capwin window at s 2860 (half 45 m, 0.1 m/px, package rev d65c062829): ticks every 10 m, white blocks from just before the 2850 tick to between the 2860 and 2870 ticks: 2846-2865 package metres = 2841.7-2860.6 round-14 metres (the round-14 centre mapped by world position, tracks/buttonwillow/metres_ref_r14.json); onboard t096 (1:36, 66 mph) agrees: about 8-10 white blocks of ~1 m",
+                 profile=dict(height=0.0, face=0.15, back=0.30),
+                 profile_src="round 16: onboard t096 shows painted white blocks flush with the asphalt, no face band (as t094 at the T8 apex); the owner calls it small",
+                 colour_src='t096.jpg (white blocks; inventory row s 2856.6 left)',
+                 src='round 16, the owner 26 Oct 2026: the small flat white kerb on the inside of the drag-strip left kink after Phil Hill'),
             dict(side='left', zone=(3458, 3505), colors='rwb', name='run left s 3470-3518',   # band width 0.76 m (p25-p75 0.64-1.14, 55 readings on the clean captures, round 8)
                   # round 8: raised 10 cm per the owner (lap 2 note 1) lifts a wheel in the traversal gate (215-562 ms); held flat pending the gate decision (report)
                   # round 15 (item 18): its frame resolves flat (t116: a face of 1-2 px, <= 0.02 m, the T9 measurement's own note)
-                  profile=dict(height=0.0, face=0.15, back=0.30),
+                  # round 16 (the owner, 26 Oct 2026 evening, drive of round 15: "the outside kerb at Star Mazda ... in my memory, it is
+                  # taller"; 26 Oct 2026): the frames cannot measure a taller kerb (t116 is the closest frame and shows a flush edge, face
+                  # <= 0.02 m), so the owner's memory is the evidence of the real kerb and the run takes the next taller profile the
+                  # kerb family has, the measured T9 apex 6 cm over a 0.15 m face (t114); not 10 cm: round 8's 10 cm lifted a wheel in
+                  # the traversal gate here (215-562 ms). Dated note: round16.md.
+                  profile=dict(height=0.06, face=0.15, back=0.30),
+                  profile_src="round 16 (26 Oct 2026): the owner's memory of a taller outside kerb at Star Mazda (his drive of round 15) over t116's flush frame (face <= 0.02 m); the next taller profile of the family, the T9 apex's measured 6 cm / 0.15 m face (t114)",
 
                  colour_src='t116.jpg (red / white / blue; inventory row s 3479 left)',
                  src="round 10 (the owner's decision of 23 Oct 2026 point 4, the onboard wins): the strip over the stage-1 kerb zone (OWNER_KERBS_R10), between his red and the edge at the standard 0.9 m width; the capture block line it was read from lies away from his line and is no longer used. Before: kerb run (owner lap 1): the block line followed on c20_s3600 with the band reader (edges_spline.bands outer limits, the band centre 0.45 m inside), one continuous run; raised (round 8): owner lap 2: raised, aggressive; height from the owner pending (10 cm, the 6 cm of the apex run the floor; t114-t118 at full resolution show no resolvable face: t116, the closest frame, has a soft 2-3 px white-to-asphalt edge)"),

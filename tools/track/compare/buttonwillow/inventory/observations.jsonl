@@ -53,7 +53,7 @@
 {"t":92,"side":"left","kind":"cone_line","attrs":{"type":"two orange cones","colour":"orange","h_m":0.7,"h_method":"cone-ref"},"confidence":0.6,"note":""}
 {"t":92,"side":"right","kind":"station","attrs":{"type":"corner station: canopy on posts","ahead_m":80},"confidence":0.6,"note":""}
 {"t":94,"side":"right","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"red / white / blue","raised":false},"confidence":0.9,"note":"T8 (Lost Hill right) apex kerb"}
-{"t":96,"side":"left","kind":"paint","attrs":{"type":"white painted blocks at the left edge","colour":"white","ahead_m":40},"confidence":0.5,"note":"where Lost Hill joins the drag strip"}
+{"t":96,"side":"left","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"white","raised":false,"ahead_m":40},"confidence":0.7,"note":"the small white kerb on the inside of the drag-strip left kink after Phil Hill (round 16: was a paint row and a dropped kerb run)"}
 {"t":106,"side":"ahead","kind":"mast","attrs":{"type":"tall pole (light / camera mast)","ahead_m":289,"correction":{"round":"stage-3 pass, 20 Oct 2026","was":{"ahead_m":250},"why":"the mast is the OSM communications tower 10220517717 / the lidar's 49.5 m spike, abeam s 3439 (left, ~400 m off); ahead_m was estimated by eye"}},"confidence":0.5,"note":"seen ahead-right on the run north (t106-t112)"}
 {"t":110,"side":"left","kind":"kerb","attrs":{"type":"flat painted kerb","colour":"red / white / blue","raised":false},"confidence":0.9,"note":"T9 (Star Mazda) entry, outside (left)"}
 {"t":112,"side":"right","kind":"station","attrs":{"type":"corner station: roofed platform on stilts","colour":"dark","ahead_m":40},"confidence":0.8,"note":"T9 station right"}
