@@ -118,14 +118,16 @@ export const TRACKS: Readonly<Record<string, TrackInfo>> = {
     ai: { followScale: 1.4, laneMargin: 0.7, shiftGrip: 1 } },
   // Mid-Ohio, the Lemons 13-turn outer loop (round 7, 27 Oct 2026: stage 3 built from the evidence, every stage-3 gate
   // ok; tools/track/compare/mid_ohio/round7.md). wip: not in the Start menu until the owner accepts it (its ?track= link
-  // loads it). The FIELD IS A STAND-IN: pace (and identity, absent here = the global file) are LAGUNA's field
-  // (cars/field/pace.json, cars/field/identity.json), not a Mid-Ohio calibration; the real field, the Lemons 2026
-  // Mid-West Crisis (results page in tools/track/tracks/mid_ohio/sources.json), is deferred. The Start menu's race line
-  // says so (fieldLabel). Rolling start 230 m before the last directed corner, T13 (s 3454 -> 3224), the skill's rule.
+  // loads it). The field is Mid-Ohio's own (27 Oct 2026): the Lemons 2026 Mid-West Crisis, MyLaps session 11926749
+  // (85 of the 90 classified cars; the five with no photo and no archive car, or 0 laps, are not rows), pace from each
+  // car's own stints (tools/race/pace_track.ts, calibrated, worst error 0.40 %), identities from the SmugMug gallery and
+  // the award archive (tools/cars/field/cars_data_mid_ohio.py); ids "<n>_mo" where the number is a different earlier
+  // car's, #56 TPF Racing = Laguna's #156 Milan built as 56_mo. Rolling start 230 m before the last directed corner,
+  // T13 (s 3454 -> 3224), the skill's rule.
   // OWNER QUESTION for the drive: the red / white kerbs are raised 5 cm (Sonoma's driven profile); their real height is not
   // measured (no frame resolves it), so the 5 cm is a declaration, not a measurement (round7.md section 1).
-  mid_ohio: { dir: 'tracks/mid_ohio/', name: 'Mid-Ohio Sports Car Course', short: 'Mid-Ohio', length_m: 3597.492, pace: 'cars/field/pace.json',
-    fieldLabel: 'a stand-in field (Laguna\'s)', rev: '7dcbb9c278', wip: true,
+  mid_ohio: { dir: 'tracks/mid_ohio/', name: 'Mid-Ohio Sports Car Course', short: 'Mid-Ohio', length_m: 3597.492, pace: 'cars/field/mid_ohio/pace.json',
+    identity: 'cars/field/mid_ohio/identity.json', rev: '7dcbb9c278', wip: true,
     // owner, 26 Oct 2026, after his round-9 drive: "I don't think the carousel is a good place to start the hot lap. I keep
     // driving right off the track when the control is given to me. Coming onto the front straight might be better."
     // The 230 m rule put the hand-over at s ~3224 inside the Carousel; now an explicit station at the T13 exit (T13 at

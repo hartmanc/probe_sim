@@ -17,14 +17,19 @@ export function trackArg(argv: string[] = process.argv.slice(2)): string {
   return id;
 }
 /** The track's field pace file (TRACKS[id].pace, relative to public/). */
-export function pacePath(trackId: string = DEFAULT_TRACK): string { return resolve(ROOT, 'public', TRACKS[trackId].pace); }
+export function pacePath(trackId: string = DEFAULT_TRACK): string {
+  // FIELD_TRACK=<id> FIELD_PACE=<path under public/>: write / read ONE track's pace elsewhere than its registry entry
+  // (Mid-Ohio's real field, 26 Oct 2026, while the registry still points at the Laguna stand-in); unset: the registry
+  if (process.env.FIELD_TRACK === trackId && process.env.FIELD_PACE) return resolve(ROOT, 'public', process.env.FIELD_PACE);
+  return resolve(ROOT, 'public', TRACKS[trackId].pace);
+}
 export const PACE_PATH = pacePath(DEFAULT_TRACK);
 /** The global identity.json (Laguna's field; the fallback of a track without its own). */
 export const IDENTITY_PATH = resolve(ROOT, 'public/cars/field/identity.json');
 /** The identity file a track's race uses, as the app (src/app/loader.ts loadFieldData): TRACKS[id].identity when that
  *  file exists, else the global IDENTITY_PATH. Rows are keyed by `id`, else number (field.ts fieldKey). */
 export function identityPath(trackId: string = DEFAULT_TRACK): string {
-  const own = TRACKS[trackId]?.identity;
+  const own = process.env.FIELD_TRACK === trackId && process.env.FIELD_IDENTITY ? process.env.FIELD_IDENTITY : TRACKS[trackId]?.identity;
   return own && existsSync(resolve(ROOT, 'public', own)) ? resolve(ROOT, 'public', own) : IDENTITY_PATH;
 }
 /** The track's identity.json contents (identityPath), or null when there is none. */

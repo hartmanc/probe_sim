@@ -1,0 +1,367 @@
+{
+ "note": "Laguna field car (public/cars/field/identity.json numbering, MyLaps session 12975608) -> mid_ohio entrant (MyLaps session 11926749); tools/race/pace_track.ts --match rule (exact normalised team name, number tie-break), computed by script",
+ "laguna_session": 12975608,
+ "mid_ohio_session": 11926749,
+ "cars": [
+  {
+   "laguna_number": "20",
+   "laguna_team": "NSF Racing",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "0",
+   "laguna_team": "The Supranos",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "58",
+   "laguna_team": "Italian job racing",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "97",
+   "laguna_team": "Louballers",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "670",
+   "laguna_team": "Bernal Dads Racing",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "37",
+   "laguna_team": "Caffeine Unlimited",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "189",
+   "laguna_team": "Tired Iron Racing",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "9",
+   "laguna_team": "Arc Blast",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "38",
+   "laguna_team": "Another Fine Mess",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "759",
+   "laguna_team": "In search of Edselance",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "801",
+   "laguna_team": "Volatile RAM",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "74",
+   "laguna_team": "B Team - Just Plain Stupid",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "700",
+   "laguna_team": "SKINNY KOYOTE RACING Team A",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "711",
+   "laguna_team": "Eyesore Racing",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "100",
+   "laguna_team": "Sorry For Party Racing",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "51",
+   "laguna_team": "Chase Race: The Best Damn\u2026.",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "49",
+   "laguna_team": "Ran When Parked Racing Entry C",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "544",
+   "laguna_team": "ONSET/Tetanus Racing",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "83",
+   "laguna_team": "Dirty Duck Racing",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "619",
+   "laguna_team": "Anal Corkscrew Probe",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "89",
+   "laguna_team": "The Homer by Porcubimmer\u2026.",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "156",
+   "laguna_team": "TPF Racing",
+   "mid_ohio_number": "56",
+   "mid_ohio_team": "TPF Racing",
+   "status": "renumbered",
+   "evidence": "exact normalised team match"
+  },
+  {
+   "laguna_number": "906",
+   "laguna_team": "Low Road Racing",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "34",
+   "laguna_team": "KnoxVegas LowBallerssss",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "16",
+   "laguna_team": "Scrubbing Bubbles",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "664",
+   "laguna_team": "NachoFriend Racing",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "169",
+   "laguna_team": "Mal\u00f6rt Racing Development (MRD)",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "40",
+   "laguna_team": "Mock Grass Racing",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "42",
+   "laguna_team": "Team Valiant Effort",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "105",
+   "laguna_team": "Scuderia Limoni",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "8",
+   "laguna_team": "Team Tinyvette",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "41",
+   "laguna_team": "Distilled Racing",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "319",
+   "laguna_team": "Fancy Chicken Racing",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "76",
+   "laguna_team": "Salty Thunder Racing",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "963",
+   "laguna_team": "Borsche AG",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "1",
+   "laguna_team": "Team Bean Redux",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "2",
+   "laguna_team": "I Soar Racing",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "202",
+   "laguna_team": "Ur Moms Minivan Racing",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "785",
+   "laguna_team": "Race Rambler",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "143",
+   "laguna_team": "PIT CREW REVENGE \u2026.",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "43",
+   "laguna_team": "Faster Farms: 18 years of\u2026.",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "249",
+   "laguna_team": "Pony Keg",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "67",
+   "laguna_team": "Lost in Translation",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "55",
+   "laguna_team": "I Snore Racing",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  },
+  {
+   "laguna_number": "200",
+   "laguna_team": "Aggressively Adequate (R)",
+   "mid_ohio_number": null,
+   "mid_ohio_team": null,
+   "status": "absent",
+   "evidence": "no entrant with that normalised team name"
+  }
+ ]
+}

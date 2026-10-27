@@ -17,8 +17,8 @@ const modelBy = new Map(models.map((m) => [m.id, m]));
 const withIdentity = Object.entries(TRACKS).filter(([, t]) => t.identity);
 
 describe('field wiring: tracks with their own identity.json', () => {
-  it('Buttonwillow and Sonoma race their own fields', () => {
-    expect(withIdentity.map(([id]) => id).sort()).toEqual(['buttonwillow', 'sonoma']);
+  it('Buttonwillow, Mid-Ohio and Sonoma race their own fields', () => {
+    expect(withIdentity.map(([id]) => id).sort()).toEqual(['buttonwillow', 'mid_ohio', 'sonoma']);
   });
   for (const [track, t] of withIdentity) {
     it(`${track}: every identity row has a pace row, and every AI car an identity row and a model`, () => {
@@ -31,8 +31,12 @@ describe('field wiring: tracks with their own identity.json', () => {
       const noLap = new Set((/left out with no lap in the session: ([^;)]*)/.exec(pace.source ?? '')?.[1] ?? '').split(', ').map((s) => s.replace('#', '').trim()).filter(Boolean));
       const unpaced = [...ident.values()].filter((r) => !paceKeys.has(fieldKey(r)) && !noLap.has(String(r.number)));
       expect(unpaced.map((r) => fieldKey(r))).toEqual([]);
-      // every left-out entrant is in identity.json (so the exemption names real rows)
-      for (const n of noLap) expect([...ident.values()].some((r) => String(r.number) === n)).toBe(true);
+      // every left-out entrant is in identity.json (so the exemption names real rows) where the field keeps such rows
+      // (Buttonwillow, Sonoma: an entrant with no lap is a row without pace); a field built with no placeholder cars at
+      // all (Mid-Ohio, owner decision d08 of 23 Oct 2026: no photo, no archive car or no lap = not a row) has no row
+      // without pace, and then the exemption names nobody in identity.json by design
+      const rowsWithoutPace = [...ident.values()].filter((r) => !paceKeys.has(fieldKey(r)));
+      if (rowsWithoutPace.length > 0) for (const n of noLap) expect([...ident.values()].some((r) => String(r.number) === n)).toBe(true);
       const keys = ai.map((c) => fieldKey(c));
       expect(new Set(keys).size).toBe(keys.length);                     // ids unique
       expect(new Set(ai.map((c) => c.number)).size).toBe(ai.length);    // numbers unique (calibration keys fits by number)

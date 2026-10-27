@@ -1,0 +1,431 @@
+{
+ "note": "Mid-West Crisis, Mid-Ohio, 10-12 Apr 2026 (MyLaps session 11926749) entrant -> car id. id = number, except a number that is the id of a DIFFERENT car in the Laguna, Buttonwillow or Sonoma field gets <number>_mo; the same car at an earlier event keeps its earlier id (only #56 TPF Racing = Laguna #156). Only exact normalised team-name matches were linked; same-number cars with a different team name were treated as different cars (not checked against photos one by one). #619 is not an entrant. Not in the field (no placeholder cars): #643, #116 (no photo, no archive car), #164, #713, #991 (0 laps).",
+ "cars": [
+  {
+   "number": "372",
+   "id": "372",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "97",
+   "id": "97_mo",
+   "evidence": "number is the id of a different car in an earlier field: laguna #97 Louballers"
+  },
+  {
+   "number": "13",
+   "id": "13_mo",
+   "evidence": "number is the id of a different car in an earlier field: sonoma #13 Pacemaker Racing"
+  },
+  {
+   "number": "31",
+   "id": "31",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "30",
+   "id": "30",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "256",
+   "id": "256",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "535",
+   "id": "535",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "49",
+   "id": "49_mo",
+   "evidence": "number is the id of a different car in an earlier field: laguna #49 Ran When Parked Racing Entry C"
+  },
+  {
+   "number": "147",
+   "id": "147",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "57",
+   "id": "57",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "609",
+   "id": "609",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "187",
+   "id": "187",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "806",
+   "id": "806",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "330",
+   "id": "330",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "33",
+   "id": "33_mo",
+   "evidence": "number is the id of a different car in an earlier field: buttonwillow #33 BM Badwrench Racing; sonoma #33 BM Badwrench Racing"
+  },
+  {
+   "number": "87",
+   "id": "87_mo",
+   "evidence": "number is the id of a different car in an earlier field: sonoma #87 CR-X T C"
+  },
+  {
+   "number": "82",
+   "id": "82_mo",
+   "evidence": "number is the id of a different car in an earlier field: buttonwillow #82 Duct Tape n' Hammers"
+  },
+  {
+   "number": "88",
+   "id": "88_mo",
+   "evidence": "number is the id of a different car in an earlier field: buttonwillow #88 BM Badwrench Racing"
+  },
+  {
+   "number": "667",
+   "id": "667",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "29",
+   "id": "29",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "1",
+   "id": "1_mo",
+   "evidence": "number is the id of a different car in an earlier field: laguna #1 Team Bean Redux"
+  },
+  {
+   "number": "89",
+   "id": "89_mo",
+   "evidence": "number is the id of a different car in an earlier field: laguna #89 The Homer by Porcubimmer…."
+  },
+  {
+   "number": "54",
+   "id": "54_mo",
+   "evidence": "number is the id of a different car in an earlier field: sonoma #54 Zoom Zoom Kaboom"
+  },
+  {
+   "number": "56",
+   "id": "56_mo",
+   "laguna_number": "156",
+   "evidence": "exact normalised team name 'TPF Racing' = Laguna #156 (Mercury Milan, id 156); renumbered 156 -> 56; the Sonoma #56 'Garage 69 Cumaero' (id 56) is a different car, so the id stays 156; 27 Oct 2026: id 56_mo, its own Mid-Ohio build (the Laguna body with the number 56), dims/engine/colours still from the Laguna row"
+  },
+  {
+   "number": "8",
+   "id": "8_mo",
+   "evidence": "number is the id of a different car in an earlier field: laguna #8 Team Tinyvette"
+  },
+  {
+   "number": "15",
+   "id": "15",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "151",
+   "id": "151",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "3",
+   "id": "3_mo",
+   "evidence": "number is the id of a different car in an earlier field: buttonwillow #3 Surfs up (R)"
+  },
+  {
+   "number": "5",
+   "id": "5_mo",
+   "evidence": "number is the id of a different car in an earlier field: buttonwillow #5 Richie Bobby Racing …."
+  },
+  {
+   "number": "250",
+   "id": "250_mo",
+   "evidence": "number is the id of a different car in an earlier field: buttonwillow #250 Los Huevos Rancheros"
+  },
+  {
+   "number": "513",
+   "id": "513",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "21",
+   "id": "21_mo",
+   "evidence": "number is the id of a different car in an earlier field: sonoma #21 TOP Drivers (R)"
+  },
+  {
+   "number": "269",
+   "id": "269",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "190",
+   "id": "190",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "153",
+   "id": "153",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "661",
+   "id": "661",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "814",
+   "id": "814",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "248",
+   "id": "248",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "66",
+   "id": "66",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "123",
+   "id": "123_mo",
+   "evidence": "number is the id of a different car in an earlier field: sonoma #123 Bad Loose Racing 2.0"
+  },
+  {
+   "number": "678",
+   "id": "678",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "691",
+   "id": "691",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "112",
+   "id": "112",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "803",
+   "id": "803",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "690",
+   "id": "690",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "160",
+   "id": "160",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "188",
+   "id": "188",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "7",
+   "id": "7_mo",
+   "evidence": "number is the id of a different car in an earlier field: sonoma #7 RUN-CRV"
+  },
+  {
+   "number": "38",
+   "id": "38_mo",
+   "evidence": "number is the id of a different car in an earlier field: laguna #38 Another Fine Mess; buttonwillow #38 Another Fine Mess"
+  },
+  {
+   "number": "11",
+   "id": "11_mo",
+   "evidence": "number is the id of a different car in an earlier field: buttonwillow #11 Degens"
+  },
+  {
+   "number": "90",
+   "id": "90_mo",
+   "evidence": "number is the id of a different car in an earlier field: buttonwillow #90 NB TuRD North …. (R)"
+  },
+  {
+   "number": "17",
+   "id": "17",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "264",
+   "id": "264",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "555",
+   "id": "555",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "86",
+   "id": "86_mo",
+   "evidence": "number is the id of a different car in an earlier field: sonoma #86 Candyland Racing"
+  },
+  {
+   "number": "869",
+   "id": "869",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "132",
+   "id": "132",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "404",
+   "id": "404_mo",
+   "evidence": "number is the id of a different car in an earlier field: buttonwillow #404 Sticky-TC (R)"
+  },
+  {
+   "number": "217",
+   "id": "217",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "134",
+   "id": "134",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "12",
+   "id": "12",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "48",
+   "id": "48_mo",
+   "evidence": "number is the id of a different car in an earlier field: buttonwillow #48 LiMoNada; sonoma #48 LiMoNada"
+  },
+  {
+   "number": "124",
+   "id": "124_mo",
+   "evidence": "number is the id of a different car in an earlier field: buttonwillow #124 Sorry For Party Racing; sonoma #2 Sorry For Party Racing"
+  },
+  {
+   "number": "20",
+   "id": "20_mo",
+   "evidence": "number is the id of a different car in an earlier field: laguna #20 NSF Racing"
+  },
+  {
+   "number": "113",
+   "id": "113",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "312",
+   "id": "312",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "172",
+   "id": "172",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "2",
+   "id": "2_mo",
+   "evidence": "number is the id of a different car in an earlier field: laguna #2 I Soar Racing"
+  },
+  {
+   "number": "626",
+   "id": "626",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "78",
+   "id": "78_mo",
+   "evidence": "number is the id of a different car in an earlier field: buttonwillow #78 Super Troop"
+  },
+  {
+   "number": "969",
+   "id": "969_mo",
+   "evidence": "number is the id of a different car in an earlier field: buttonwillow #969 Sierra Auto Recycling; sonoma #969 Sierra Auto Recycling"
+  },
+  {
+   "number": "600",
+   "id": "600",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "77",
+   "id": "77_mo",
+   "evidence": "number is the id of a different car in an earlier field: buttonwillow #77 Dough-ba-mens"
+  },
+  {
+   "number": "845",
+   "id": "845",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "696",
+   "id": "696_mo",
+   "evidence": "number is the id of a different car in an earlier field: sonoma #696 Scuderia Limone Corroto"
+  },
+  {
+   "number": "339",
+   "id": "339",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "240",
+   "id": "240",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "98",
+   "id": "98_mo",
+   "evidence": "number is the id of a different car in an earlier field: buttonwillow #98 Whale Wars Racing"
+  },
+  {
+   "number": "64",
+   "id": "64_mo",
+   "evidence": "number is the id of a different car in an earlier field: buttonwillow #64 Bare Minimum; sonoma #64 Bare Minimum"
+  },
+  {
+   "number": "562",
+   "id": "562_mo",
+   "evidence": "number is the id of a different car in an earlier field: buttonwillow #562 3off Racing (B Team!); sonoma #562 3off Racing (B Team!)"
+  },
+  {
+   "number": "888",
+   "id": "888_mo",
+   "evidence": "number is the id of a different car in an earlier field: buttonwillow #888 True Performance …."
+  },
+  {
+   "number": "318",
+   "id": "318",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "700",
+   "id": "700_mo",
+   "evidence": "number is the id of a different car in an earlier field: laguna #700 SKINNY KOYOTE RACING Team A"
+  },
+  {
+   "number": "601",
+   "id": "601",
+   "evidence": "number free in the Laguna, Buttonwillow and Sonoma fields"
+  },
+  {
+   "number": "24",
+   "id": "24_mo",
+   "evidence": "number is the id of a different car in an earlier field: buttonwillow #24 Lucky Ass Grass Glass Racing"
+  }
+ ]
+}

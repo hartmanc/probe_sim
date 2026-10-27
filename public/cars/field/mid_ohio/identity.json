@@ -1,0 +1,5696 @@
+[
+ {
+  "number": "372",
+  "team": "Lemonaid",
+  "class": "A",
+  "grid": 37,
+  "finish": 1,
+  "class_finish": 1,
+  "laps": 411,
+  "best_lap_s": 98.835,
+  "make": "BMW",
+  "model": "323Ci coupe",
+  "generation": "E46 (1998-2006)",
+  "year": 2000,
+  "body": "coupe",
+  "confidence": "high",
+  "evidence": "Lemons award page id 439 (Mid-West Crisis 2026): '2000 bmw 323' (Winner on Laps, Class A winner, team Lemonaid); Photos (Mid-West Crisis gallery, numbers read off the car): black E46 coupe with dark-green panels and 'BUZWERKS' decals on the tail wing, number 372 | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.725,
+   "length_m": 4.49,
+   "width_m": 1.77,
+   "height_m": 1.365,
+   "track_m": 1.48,
+   "mass_kg": 1400,
+   "power_kw": 125,
+   "source": "https://en.wikipedia.org/wiki/BMW_3_Series_(E46)",
+   "verified_this_run": true,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M52TU 2.5 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 125,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#1a1a1c",
+   "secondary": "#1e5a32",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Black with dark-green panels, blue 'BUZWERKS' lettering, small deck wing",
+  "theme": "Lemonaid (lemon-drink pun)",
+  "photos": [
+   "JSG_3799.jpg",
+   "JSG_3800.jpg",
+   "JSG_3799_XL.jpg",
+   "JSG_3800_XL.jpg"
+  ],
+  "photo_sightings": 2,
+  "id": "372",
+  "photo_dir": "photos/mid_ohio/372",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "97",
+  "team": "Frankenstein Motorworks",
+  "class": "A",
+  "grid": 25,
+  "finish": 2,
+  "class_finish": 2,
+  "laps": 411,
+  "best_lap_s": 102.522,
+  "make": "Toyota",
+  "model": "MR2 Spyder",
+  "generation": "W30 (2000-05)",
+  "year": 2001,
+  "body": "roadster",
+  "confidence": "high",
+  "evidence": "Lemons award archive: '2001 Toyota MR2, Indianapolis IN' (team Frankenstein Motorworks, pages 324 and 423); Photos (Mid-West Crisis gallery, numbers read off the car): white open MR2 Spyder with a tall rear wing and a number 97 | id: number is the id of a different car in an earlier field: laguna #97 Louballers",
+  "dims": {
+   "wheelbase_m": 2.451,
+   "length_m": 3.886,
+   "width_m": 1.694,
+   "height_m": 1.24,
+   "track_m": 1.455,
+   "mass_kg": 1000,
+   "power_kw": 103,
+   "source": "https://en.wikipedia.org/wiki/Toyota_MR2_(W30)",
+   "verified_this_run": true,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Toyota 1ZZ-FE 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 6800,
+   "stock_power_kw": 103,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#f2f2ee",
+   "secondary": "#2a2a2e",
+   "accents": []
+  },
+  "numbers": {
+   "color": "black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "White with black numerals, tall GT wing on the tail",
+  "theme": "Frankenstein Motorworks",
+  "photos": [
+   "JSG_3774.jpg",
+   "JSG_4472.jpg",
+   "JSG_3774_XL.jpg",
+   "JSG_4472_XL.jpg"
+  ],
+  "photo_sightings": 2,
+  "id": "97_mo",
+  "photo_dir": "photos/mid_ohio/97",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "13",
+  "team": "Froning Farms",
+  "class": "A",
+  "grid": 55,
+  "finish": 3,
+  "class_finish": 3,
+  "laps": 407,
+  "best_lap_s": 101.797,
+  "make": "BMW",
+  "model": "3 Series sedan",
+  "generation": "E46 (1998-2006)",
+  "year": 2006,
+  "body": "sedan",
+  "confidence": "medium",
+  "evidence": "Lemons award archive (earlier page): '2006 Bmw Bmw, Cookeville' (team Froning Farms, page 432); Photos (Mid-West Crisis gallery, numbers read off the car): silver-blue E46 sedan, red 13, 'Mayhem' and 'ROGUE' decals, tall wing | id: number is the id of a different car in an earlier field: sonoma #13 Pacemaker Racing",
+  "dims": {
+   "wheelbase_m": 2.725,
+   "length_m": 4.471,
+   "width_m": 1.739,
+   "height_m": 1.415,
+   "track_m": 1.48,
+   "mass_kg": 1400,
+   "power_kw": 141,
+   "source": "https://en.wikipedia.org/wiki/BMW_3_Series_(E46)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M54 2.5 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 141,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#a8b4b8",
+   "secondary": "#c83020",
+   "accents": []
+  },
+  "numbers": {
+   "color": "red",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Pale silver-blue with a red 13 and ROGUE/Mayhem decals",
+  "theme": "Froning Farms (the team also runs #48)",
+  "photos": [
+   "JSG_4388.jpg",
+   "JSG_4966.jpg",
+   "JSG_4967.jpg",
+   "JSG_4388_XL.jpg",
+   "JSG_4966_XL.jpg",
+   "JSG_4967_XL.jpg"
+  ],
+  "photo_sightings": 3,
+  "id": "13_mo",
+  "photo_dir": "photos/mid_ohio/13",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "31",
+  "team": "Rod Throwin' Fools",
+  "class": "A",
+  "grid": 36,
+  "finish": 4,
+  "class_finish": 4,
+  "laps": 400,
+  "best_lap_s": 103.648,
+  "make": "Toyota",
+  "model": "MR2",
+  "generation": "AW11 (1984-89)",
+  "year": 1987,
+  "body": "coupe",
+  "confidence": "medium",
+  "evidence": "Lemons award archive (earlier page): '1987 Toyota MR2, Lafayette Indiana' (team Rod Throwin' Fools, pages 189, 199); Photos (Mid-West Crisis gallery, numbers read off the car): multi-colour patchwork 2-door with 'MRX-7' lettering on the bonnet and a yellow 31 roundel, damaged nose | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.32,
+   "length_m": 3.925,
+   "width_m": 1.665,
+   "height_m": 1.25,
+   "track_m": 1.44,
+   "mass_kg": 1050,
+   "power_kw": 84,
+   "source": "https://en.wikipedia.org/wiki/Toyota_MR2_(W10)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Toyota 4A-GE 1.6 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.6,
+   "aspiration": "NA",
+   "redline_rpm": 7600,
+   "stock_power_kw": 84,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#2a2a2e",
+   "secondary": "#e8742a",
+   "accents": [
+    "#2a6ac8"
+   ]
+  },
+  "numbers": {
+   "color": "black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Black, orange and blue patchwork, yellow roundel 31, MRX-7 lettering",
+  "theme": "Rod Throwin' Fools (MRX-7 joke)",
+  "photos": [
+   "JSG_3740.jpg",
+   "JSG_4926.jpg",
+   "JSG_3740_XL.jpg",
+   "JSG_4926_XL.jpg"
+  ],
+  "photo_sightings": 2,
+  "id": "31",
+  "photo_dir": "photos/mid_ohio/31",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "30",
+  "team": "Its all about the Waste",
+  "class": "A",
+  "grid": 27,
+  "finish": 5,
+  "class_finish": 5,
+  "laps": 393,
+  "best_lap_s": 106.757,
+  "make": "BMW",
+  "model": "3 Series coupe",
+  "generation": "E36 (1990-99)",
+  "year": 1996,
+  "body": "coupe",
+  "confidence": "medium",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): white E36 coupe with 'CHASING Crappy CARS' decals (the archive lists a 1996 BMW 328is for a team with the same name at an earlier event, number 3) | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.7,
+   "length_m": 4.433,
+   "width_m": 1.698,
+   "height_m": 1.354,
+   "track_m": 1.42,
+   "mass_kg": 1290,
+   "power_kw": 125,
+   "source": "https://en.wikipedia.org/wiki/BMW_3_Series_(E36)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M50 2.5 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 125,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#f2f2f2",
+   "secondary": "#1a1a1e",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "White with black 'Chasing Crappy Cars' decals",
+  "theme": "Its All About The Waste",
+  "photos": [
+   "JSG_4393.jpg",
+   "JSG_4742.jpg",
+   "JSG_4393_XL.jpg",
+   "JSG_4742_XL.jpg"
+  ],
+  "photo_sightings": 2,
+  "id": "30",
+  "photo_dir": "photos/mid_ohio/30",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "256",
+  "team": "BMW of Frederick",
+  "class": "A",
+  "grid": 19,
+  "finish": 6,
+  "class_finish": 6,
+  "laps": 392,
+  "best_lap_s": 106.36,
+  "make": "BMW",
+  "model": "3 Series sedan",
+  "generation": "E36 (1990-99)",
+  "year": 1995,
+  "body": "sedan",
+  "confidence": "medium",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): maroon/brown E36 4-door with a white 256 oval; no archive record | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.7,
+   "length_m": 4.433,
+   "width_m": 1.698,
+   "height_m": 1.393,
+   "track_m": 1.42,
+   "mass_kg": 1300,
+   "power_kw": 125,
+   "source": "https://en.wikipedia.org/wiki/BMW_3_Series_(E36)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M50 2.5 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 125,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#7a3028",
+   "secondary": "#f2f2f2",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Brown-maroon with a white oval 256 on the doors",
+  "theme": "BMW of Frederick",
+  "photos": [
+   "JSG_3749.jpg",
+   "JSG_4483.jpg",
+   "JSG_4888.jpg",
+   "JSG_4889.jpg",
+   "JSG_3749_XL.jpg",
+   "JSG_4483_XL.jpg",
+   "JSG_4888_XL.jpg",
+   "JSG_4889_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "256",
+  "photo_dir": "photos/mid_ohio/256",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "535",
+  "team": "Mushroom Cloud Racing",
+  "class": "A",
+  "grid": 15,
+  "finish": 7,
+  "class_finish": 7,
+  "laps": 388,
+  "best_lap_s": 107.557,
+  "make": "BMW",
+  "model": "3 Series sedan",
+  "generation": "E46 (1998-2006)",
+  "year": 2002,
+  "body": "sedan",
+  "confidence": "high",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): black E46 sedan with green panels, 'THPBPT' lettering, 535 on a race-number plate and a whip antenna on the boot; no archive record | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.725,
+   "length_m": 4.471,
+   "width_m": 1.739,
+   "height_m": 1.415,
+   "track_m": 1.48,
+   "mass_kg": 1400,
+   "power_kw": 141,
+   "source": "https://en.wikipedia.org/wiki/BMW_3_Series_(E46)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M54 2.5 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 141,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#1a1a1e",
+   "secondary": "#1e5a32",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Black with green panels, 'THPBP!' (Powered By Cat Gas) and a tall boot antenna",
+  "theme": "Mushroom Cloud Racing",
+  "photos": [
+   "JSG_3762.jpg",
+   "JSG_3763.jpg",
+   "JSG_4608.jpg",
+   "JSG_4766.jpg",
+   "JSG_4955.jpg",
+   "JSG_4956.jpg",
+   "JSG_3762_XL.jpg",
+   "JSG_3763_XL.jpg",
+   "JSG_4608_XL.jpg",
+   "JSG_4766_XL.jpg",
+   "JSG_4955_XL.jpg",
+   "JSG_4956_XL.jpg"
+  ],
+  "photo_sightings": 6,
+  "id": "535",
+  "photo_dir": "photos/mid_ohio/535",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "49",
+  "team": "Pile of Dead Raccoons Racing",
+  "class": "A",
+  "grid": 35,
+  "finish": 8,
+  "class_finish": 8,
+  "laps": 387,
+  "best_lap_s": 106.17,
+  "make": "BMW",
+  "model": "3 Series sedan",
+  "generation": "E46 (1998-2006)",
+  "year": 2001,
+  "body": "sedan",
+  "confidence": "medium",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): cream/silver E46 4-door with a USAAF star-and-bar roundel, number 49 and a chequered wing | id: number is the id of a different car in an earlier field: laguna #49 Ran When Parked Racing Entry C",
+  "dims": {
+   "wheelbase_m": 2.725,
+   "length_m": 4.471,
+   "width_m": 1.739,
+   "height_m": 1.415,
+   "track_m": 1.48,
+   "mass_kg": 1400,
+   "power_kw": 141,
+   "source": "https://en.wikipedia.org/wiki/BMW_3_Series_(E46)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M54 2.5 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 141,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#d8d4c0",
+   "secondary": "#2a3a6a",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Silver-cream with a WWII USAAF roundel and chequered tail wing",
+  "theme": "Pile of Dead Raccoons Racing",
+  "photos": [
+   "JSG_3794.jpg",
+   "JSG_4442.jpg",
+   "JSG_4538.jpg",
+   "JSG_4951.jpg",
+   "JSG_3794_XL.jpg",
+   "JSG_4442_XL.jpg",
+   "JSG_4538_XL.jpg",
+   "JSG_4951_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "49_mo",
+  "photo_dir": "photos/mid_ohio/49",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "147",
+  "team": "NOT-e Boys",
+  "class": "A",
+  "grid": 12,
+  "finish": 9,
+  "class_finish": 9,
+  "laps": 385,
+  "best_lap_s": 102.16,
+  "make": "Honda",
+  "model": "Civic hatch",
+  "generation": "EF (1988-91)",
+  "year": 1990,
+  "body": "hatch",
+  "confidence": "high",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): yellow EF hatch with a roll cage, front splitter and black numerals 147; hood reads 'Blast Off' E=mc2 | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.5,
+   "length_m": 4.05,
+   "width_m": 1.68,
+   "height_m": 1.35,
+   "track_m": 1.45,
+   "mass_kg": 900,
+   "power_kw": 66,
+   "source": "https://en.wikipedia.org/wiki/Honda_Civic_(fourth_generation)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Honda D16A6 1.6 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.6,
+   "aspiration": "NA",
+   "redline_rpm": 6800,
+   "stock_power_kw": 66,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#f0d820",
+   "secondary": "#1a1a1e",
+   "accents": []
+  },
+  "numbers": {
+   "color": "black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Yellow with a black 147 and a front splitter",
+  "theme": "NOT-e Boys (Blast Off, E=mc2)",
+  "photos": [
+   "JSG_3742.jpg",
+   "JSG_4604.jpg",
+   "JSG_4935.jpg",
+   "JSG_4936.jpg",
+   "JSG_3742_XL.jpg",
+   "JSG_4604_XL.jpg",
+   "JSG_4935_XL.jpg",
+   "JSG_4936_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "147",
+  "photo_dir": "photos/mid_ohio/147",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "57",
+  "team": "Garage 57",
+  "class": "A",
+  "grid": 66,
+  "finish": 10,
+  "class_finish": 10,
+  "laps": 382,
+  "best_lap_s": 108.026,
+  "make": "Ford",
+  "model": "Mustang notchback",
+  "generation": "Fox (1979-93)",
+  "year": 1993,
+  "body": "coupe",
+  "confidence": "medium",
+  "evidence": "Lemons award archive (earlier page): '1993 Ford Mustang, Shippensburg PA' (team Garage 57, page 419); Photos (Mid-West Crisis gallery, numbers read off the car): white 2-door with a red 57 and an orange/blue phoenix livery, Ford oval on the nose | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.55,
+   "length_m": 4.57,
+   "width_m": 1.75,
+   "height_m": 1.31,
+   "track_m": 1.46,
+   "mass_kg": 1250,
+   "power_kw": 110,
+   "source": "https://en.wikipedia.org/wiki/Ford_Mustang_(third_generation)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Ford Windsor 5.0 V8",
+   "cylinders": 8,
+   "layout": "V8",
+   "displacement_l": 5.0,
+   "aspiration": "NA",
+   "redline_rpm": 5500,
+   "stock_power_kw": 112,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#f2f2f2",
+   "secondary": "#e8742a",
+   "accents": [
+    "#2a5ac8"
+   ]
+  },
+  "numbers": {
+   "color": "red",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "White with an orange, red and blue phoenix and a red 57",
+  "theme": "Garage 57",
+  "photos": [
+   "JSG_3922.jpg",
+   "JSG_4273.jpg",
+   "JSG_4492.jpg",
+   "JSG_4592.jpg",
+   "JSG_4747.jpg",
+   "JSG_3922_XL.jpg",
+   "JSG_4273_XL.jpg",
+   "JSG_4492_XL.jpg",
+   "JSG_4592_XL.jpg",
+   "JSG_4747_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "57",
+  "photo_dir": "photos/mid_ohio/57",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "609",
+  "team": "FrogLegs Racing",
+  "class": "A",
+  "grid": 10,
+  "finish": 11,
+  "class_finish": 11,
+  "laps": 381,
+  "best_lap_s": 107.676,
+  "make": "BMW",
+  "model": "3 Series coupe",
+  "generation": "E46 (1998-2006)",
+  "year": 2001,
+  "body": "coupe",
+  "confidence": "medium",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): dark-green E46 coupe with orange 609 and a trunk spoiler; no archive record | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.725,
+   "length_m": 4.49,
+   "width_m": 1.77,
+   "height_m": 1.365,
+   "track_m": 1.48,
+   "mass_kg": 1400,
+   "power_kw": 125,
+   "source": "https://en.wikipedia.org/wiki/BMW_3_Series_(E46)",
+   "verified_this_run": true,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M52TU 2.5 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 125,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#1e4a2a",
+   "secondary": "#e8742a",
+   "accents": []
+  },
+  "numbers": {
+   "color": "#e8742a",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Dark green with orange 609 numerals and a trunk spoiler",
+  "theme": "FrogLegs Racing",
+  "photos": [
+   "JSG_4372.jpg",
+   "JSG_4430.jpg",
+   "JSG_4537.jpg",
+   "JSG_4613.jpg",
+   "JSG_4614.jpg",
+   "JSG_4965.jpg",
+   "JSG_4372_XL.jpg",
+   "JSG_4430_XL.jpg",
+   "JSG_4537_XL.jpg",
+   "JSG_4613_XL.jpg",
+   "JSG_4614_XL.jpg",
+   "JSG_4965_XL.jpg"
+  ],
+  "photo_sightings": 7,
+  "id": "609",
+  "photo_dir": "photos/mid_ohio/609",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "187",
+  "team": "CROWN HICKTORIOUS\u2026.",
+  "class": "B",
+  "grid": 24,
+  "finish": 12,
+  "class_finish": 1,
+  "laps": 376,
+  "best_lap_s": 109.45,
+  "make": "Ford",
+  "model": "Probe GT",
+  "generation": "2nd gen (1993-97)",
+  "year": 1993,
+  "body": "coupe",
+  "confidence": "high",
+  "evidence": "Lemons award page id 439 (Mid-West Crisis 2026): '1993 FORD PROBE GTR, MOUNT VERNON OHIO' (Winner, Class B, team CROWN HICKTORIOUS); Photos (Mid-West Crisis gallery, numbers read off the car): yellow, blue and white Probe with number 187 | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.61,
+   "length_m": 4.53,
+   "width_m": 1.77,
+   "height_m": 1.32,
+   "track_m": 1.52,
+   "mass_kg": 1300,
+   "power_kw": 122,
+   "source": "https://en.wikipedia.org/wiki/Ford_Probe",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Mazda KL-DE 2.5 V6",
+   "cylinders": 6,
+   "layout": "V6",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 122,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#f0d020",
+   "secondary": "#2a5ac8",
+   "accents": [
+    "#f2f2f2"
+   ]
+  },
+  "numbers": {
+   "color": "black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "White nose, blue door panel and yellow tail",
+  "theme": "CROWN HICKTORIOUS (Crown Vic gag)",
+  "photos": [
+   "JSG_3788.jpg",
+   "JSG_4585.jpg",
+   "JSG_4745.jpg",
+   "JSG_4970.jpg",
+   "JSG_5060.jpg",
+   "JSG_5062.jpg",
+   "JSG_3788_XL.jpg",
+   "JSG_4585_XL.jpg",
+   "JSG_4745_XL.jpg",
+   "JSG_4970_XL.jpg",
+   "JSG_5060_XL.jpg",
+   "JSG_5062_XL.jpg"
+  ],
+  "photo_sightings": 6,
+  "id": "187",
+  "photo_dir": "photos/mid_ohio/187",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "806",
+  "team": "Cougar Racing (R)",
+  "class": "A",
+  "grid": 52,
+  "finish": 13,
+  "class_finish": 12,
+  "laps": 376,
+  "best_lap_s": 109.162,
+  "make": "BMW",
+  "model": "3 Series coupe",
+  "generation": "E46 / E92 (undetermined)",
+  "year": 2005,
+  "body": "coupe",
+  "confidence": "low",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): orange and grey 3-series coupe with 'Cougar' script on the door and a 806 plate; the rear lamps could be E92 | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.725,
+   "length_m": 4.49,
+   "width_m": 1.77,
+   "height_m": 1.365,
+   "track_m": 1.48,
+   "mass_kg": 1400,
+   "power_kw": 125,
+   "source": "https://en.wikipedia.org/wiki/BMW_3_Series_(E46)",
+   "verified_this_run": true,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M52TU 2.5 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 125,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#e86a2a",
+   "secondary": "#5a5a5a",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Orange front, grey rear half with gold 'Cougar' script",
+  "theme": "Cougar Racing",
+  "photos": [
+   "JSG_3757.jpg",
+   "JSG_3758.jpg",
+   "JSG_3757_XL.jpg",
+   "JSG_3758_XL.jpg"
+  ],
+  "photo_sightings": 2,
+  "id": "806",
+  "photo_dir": "photos/mid_ohio/806",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "330",
+  "team": "Rubber City Racing",
+  "class": "A",
+  "grid": 45,
+  "finish": 14,
+  "class_finish": 13,
+  "laps": 374,
+  "best_lap_s": 103.6,
+  "make": "BMW",
+  "model": "318ti (E36 compact)",
+  "generation": "E36 compact (1994-99)",
+  "year": 1996,
+  "body": "hatch",
+  "confidence": "medium",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): orange E36 compact hatch with 'Rubber City' blackletter on the door, white 330 and a flag-topped wing | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.7,
+   "length_m": 4.21,
+   "width_m": 1.7,
+   "height_m": 1.36,
+   "track_m": 1.42,
+   "mass_kg": 1250,
+   "power_kw": 103,
+   "source": "https://en.wikipedia.org/wiki/BMW_3_Series_(E36)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M42 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 103,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#e8742a",
+   "secondary": "#1a1a1e",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Orange with a white 330 and 'Rubber City' lettering",
+  "theme": "Rubber City Racing",
+  "photos": [
+   "JSG_3914.jpg",
+   "JSG_3915.jpg",
+   "JSG_4515.jpg",
+   "JSG_3914_XL.jpg",
+   "JSG_3915_XL.jpg",
+   "JSG_4515_XL.jpg"
+  ],
+  "photo_sightings": 3,
+  "id": "330",
+  "photo_dir": "photos/mid_ohio/330",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "33",
+  "team": "Red Ace Racing",
+  "class": "B",
+  "grid": 22,
+  "finish": 15,
+  "class_finish": 2,
+  "laps": 371,
+  "best_lap_s": 114.661,
+  "make": "Mitsubishi",
+  "model": "Lancer OZ Rally",
+  "generation": "CS (2002-03)",
+  "year": 2002,
+  "body": "sedan",
+  "confidence": "medium",
+  "evidence": "Lemons award archive (earlier page): '2002 Mitsubishi Lancer OZ, Peoria IL' (team Red Ace Racing, page 317, number 22 then); Photos (Mid-West Crisis gallery, numbers read off the car): light-blue Lancer sedan with a taxi roof sign, yellow 33 and a yellow wing | id: number is the id of a different car in an earlier field: buttonwillow #33 BM Badwrench Racing; sonoma #33 BM Badwrench Racing",
+  "dims": {
+   "wheelbase_m": 2.6,
+   "length_m": 4.55,
+   "width_m": 1.695,
+   "height_m": 1.4,
+   "track_m": 1.47,
+   "mass_kg": 1250,
+   "power_kw": 89,
+   "source": "https://en.wikipedia.org/wiki/Mitsubishi_Lancer",
+   "verified_this_run": true,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Mitsubishi 4G94 2.0 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.0,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 89,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#7ab0e0",
+   "secondary": "#f0d020",
+   "accents": []
+  },
+  "numbers": {
+   "color": "#f0d020",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Light blue with yellow 33 and a yellow wing and roof lamp",
+  "theme": "Red Ace Racing (taxi roof sign)",
+  "photos": [
+   "JSG_4643.jpg",
+   "JSG_4774.jpg",
+   "JSG_4928.jpg",
+   "JSG_4643_XL.jpg",
+   "JSG_4774_XL.jpg",
+   "JSG_4928_XL.jpg"
+  ],
+  "photo_sightings": 3,
+  "id": "33_mo",
+  "photo_dir": "photos/mid_ohio/33",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "87",
+  "team": "Rumple Minze & Rumble\u2026.",
+  "class": "B",
+  "grid": 29,
+  "finish": 16,
+  "class_finish": 3,
+  "laps": 369,
+  "best_lap_s": 113.414,
+  "make": "Porsche",
+  "model": "944",
+  "generation": "944 (1982-91)",
+  "year": 1984,
+  "body": "coupe",
+  "confidence": "high",
+  "evidence": "Lemons award archive (earlier page): '1984 Porsche 944, Peoria IL' (team Rumple Minze & Rumble, page 443); Photos (Mid-West Crisis gallery, numbers read off the car): black 944 with orange/yellow/red stripes, a white 87 roundel and a large wing | id: number is the id of a different car in an earlier field: sonoma #87 CR-X T C",
+  "dims": {
+   "wheelbase_m": 2.4,
+   "length_m": 4.32,
+   "width_m": 1.735,
+   "height_m": 1.275,
+   "track_m": 1.48,
+   "mass_kg": 1180,
+   "power_kw": 110,
+   "source": "https://en.wikipedia.org/wiki/Porsche_944",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Porsche M44 2.5 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6400,
+   "stock_power_kw": 110,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#1a1a1e",
+   "secondary": "#e8742a",
+   "accents": [
+    "#f0c020"
+   ]
+  },
+  "numbers": {
+   "color": "black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Black with orange, yellow and red stripes, white roundel 87",
+  "theme": "Rumple Minze & Rumble",
+  "photos": [
+   "JSG_4638.jpg",
+   "JSG_4638_XL.jpg"
+  ],
+  "photo_sightings": 1,
+  "id": "87_mo",
+  "photo_dir": "photos/mid_ohio/87",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "82",
+  "team": "Hoffshaw\u2019s FrankenStang",
+  "class": "B",
+  "grid": 33,
+  "finish": 17,
+  "class_finish": 4,
+  "laps": 367,
+  "best_lap_s": 109.467,
+  "make": "Ford",
+  "model": "Mustang notchback",
+  "generation": "Fox (1979-93)",
+  "year": 1985,
+  "body": "coupe",
+  "confidence": "high",
+  "evidence": "Lemons award archive (earlier page): '1985 Ford Mustang, Detroit' (team Hoffshaw's FrankenStang, page 267); Photos (Mid-West Crisis gallery, numbers read off the car): white notchback with a brown stripe and a dark-green 82 roundel | id: number is the id of a different car in an earlier field: buttonwillow #82 Duct Tape n' Hammers",
+  "dims": {
+   "wheelbase_m": 2.55,
+   "length_m": 4.57,
+   "width_m": 1.75,
+   "height_m": 1.31,
+   "track_m": 1.46,
+   "mass_kg": 1250,
+   "power_kw": 110,
+   "source": "https://en.wikipedia.org/wiki/Ford_Mustang_(third_generation)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Ford Windsor 5.0 V8",
+   "cylinders": 8,
+   "layout": "V8",
+   "displacement_l": 5.0,
+   "aspiration": "NA",
+   "redline_rpm": 5500,
+   "stock_power_kw": 112,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#f2f2f2",
+   "secondary": "#6a4a30",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "White with a brown belt stripe and a dark roundel 82",
+  "theme": "Hoffshaw's FrankenStang",
+  "photos": [
+   "JSG_3885.jpg",
+   "JSG_3886.jpg",
+   "JSG_4380.jpg",
+   "JSG_4735.jpg",
+   "JSG_4786.jpg",
+   "JSG_3885_XL.jpg",
+   "JSG_3886_XL.jpg",
+   "JSG_4380_XL.jpg",
+   "JSG_4735_XL.jpg",
+   "JSG_4786_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "82_mo",
+  "photo_dir": "photos/mid_ohio/82",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "88",
+  "team": "Flying Farmers",
+  "class": "B",
+  "grid": 77,
+  "finish": 18,
+  "class_finish": 5,
+  "laps": 367,
+  "best_lap_s": 110.357,
+  "make": "Pontiac",
+  "model": "Firebird",
+  "generation": "4th gen (1993-2002)",
+  "year": 1996,
+  "body": "coupe",
+  "confidence": "medium",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): orange-red Firebird (T-top, pop-up-less) with a white 88 circle; no archive record | id: number is the id of a different car in an earlier field: buttonwillow #88 BM Badwrench Racing",
+  "dims": {
+   "wheelbase_m": 2.568,
+   "length_m": 4.968,
+   "width_m": 1.892,
+   "height_m": 1.321,
+   "track_m": 1.55,
+   "mass_kg": 1580,
+   "power_kw": 147,
+   "source": "https://en.wikipedia.org/wiki/Pontiac_Firebird",
+   "verified_this_run": true,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "GM L36 3.8 V6",
+   "cylinders": 6,
+   "layout": "V6",
+   "displacement_l": 3.8,
+   "aspiration": "NA",
+   "redline_rpm": 5200,
+   "stock_power_kw": 147,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#d85a20",
+   "secondary": "#f2f2f2",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Orange-red with a white 88 roundel",
+  "theme": "Flying Farmers",
+  "photos": [
+   "JSG_3843.jpg",
+   "JSG_4381.jpg",
+   "JSG_4444.jpg",
+   "JSG_3843_XL.jpg",
+   "JSG_4381_XL.jpg",
+   "JSG_4444_XL.jpg"
+  ],
+  "photo_sightings": 3,
+  "id": "88_mo",
+  "photo_dir": "photos/mid_ohio/88",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "667",
+  "team": "Highway to Schnell",
+  "class": "B",
+  "grid": 26,
+  "finish": 19,
+  "class_finish": 6,
+  "laps": 367,
+  "best_lap_s": 114.784,
+  "make": "Volkswagen",
+  "model": "Golf 3-door",
+  "generation": "Mk5 (2003-08)",
+  "year": 2006,
+  "body": "hatch",
+  "confidence": "medium",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): black 3-door Mk5 with orange, yellow and red German-flag stripes and red 667 | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.578,
+   "length_m": 4.204,
+   "width_m": 1.759,
+   "height_m": 1.485,
+   "track_m": 1.54,
+   "mass_kg": 1350,
+   "power_kw": 147,
+   "source": "https://en.wikipedia.org/wiki/Volkswagen_Golf_Mk5",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "VW EA113 2.0T I4 turbo",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.0,
+   "aspiration": "turbo",
+   "redline_rpm": 6500,
+   "stock_power_kw": 147,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#1a1a1e",
+   "secondary": "#e8742a",
+   "accents": [
+    "#f0c020"
+   ]
+  },
+  "numbers": {
+   "color": "red",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Black with orange/yellow/red stripes, red 667",
+  "theme": "Highway to Schnell (Autobahn)",
+  "photos": [
+   "JSG_3821.jpg",
+   "JSG_4600.jpg",
+   "JSG_4906.jpg",
+   "JSG_3821_XL.jpg",
+   "JSG_4600_XL.jpg",
+   "JSG_4906_XL.jpg"
+  ],
+  "photo_sightings": 3,
+  "id": "667",
+  "photo_dir": "photos/mid_ohio/667",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "29",
+  "team": "Sesame Street Outlaws",
+  "class": "C",
+  "grid": 13,
+  "finish": 20,
+  "class_finish": 1,
+  "laps": 360,
+  "best_lap_s": 120.693,
+  "make": "Saturn",
+  "model": "SL1",
+  "generation": "S-Series (1991-2002)",
+  "year": 1996,
+  "body": "sedan",
+  "confidence": "high",
+  "evidence": "Lemons award page id 439 (Mid-West Crisis 2026): '1996 Saturn SL1, Beacon NY' for team Sesame Street Outlaws (also on #124's team name); Photos (Mid-West Crisis gallery, numbers read off the car): navy and white zig-zag striped Saturn sedan with a roof beacon and 29 | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.6,
+   "length_m": 4.5,
+   "width_m": 1.69,
+   "height_m": 1.38,
+   "track_m": 1.45,
+   "mass_kg": 1080,
+   "power_kw": 93,
+   "source": "https://en.wikipedia.org/wiki/Saturn_S-Series",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Saturn 1.9 DOHC I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.9,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 93,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#2a3a5a",
+   "secondary": "#f2f2f2",
+   "accents": []
+  },
+  "numbers": {
+   "color": "black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Navy and white chevron stripes, a number-29 beacon on the roof",
+  "theme": "Sesame Street Outlaws (hazard stripes)",
+  "photos": [
+   "JSG_3831.jpg",
+   "JSG_4804.jpg",
+   "JSG_4952.jpg",
+   "JSG_3831_XL.jpg",
+   "JSG_4804_XL.jpg",
+   "JSG_4952_XL.jpg"
+  ],
+  "photo_sightings": 3,
+  "id": "29",
+  "photo_dir": "photos/mid_ohio/29",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "1",
+  "team": "Silent But Deadly Racing",
+  "class": "B",
+  "grid": 73,
+  "finish": 21,
+  "class_finish": 7,
+  "laps": 360,
+  "best_lap_s": 110.256,
+  "make": "Ford",
+  "model": "Tempo / Topaz-style 2-door",
+  "generation": "1984-94 (undetermined)",
+  "year": 1990,
+  "body": "coupe",
+  "confidence": "low",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): blue, white and silver battered 2-door with a crushed nose and a white replacement tail, white 1 on the door; archive lists T-bird and Q45 for this team at other events, not this car | id: number is the id of a different car in an earlier field: laguna #1 Team Bean Redux",
+  "dims": {
+   "wheelbase_m": 2.537,
+   "length_m": 4.496,
+   "width_m": 1.735,
+   "height_m": 1.344,
+   "track_m": 1.44,
+   "mass_kg": 1150,
+   "power_kw": 74,
+   "source": "https://en.wikipedia.org/wiki/Ford_Tempo",
+   "verified_this_run": true,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Ford HSC 2.3 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.3,
+   "aspiration": "NA",
+   "redline_rpm": 5500,
+   "stock_power_kw": 74,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#7ab0d8",
+   "secondary": "#d8d8d8",
+   "accents": []
+  },
+  "numbers": {
+   "color": "black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Light blue with silver/white panels and a white 1",
+  "theme": "Silent But Deadly Racing",
+  "photos": [
+   "JSG_3782.jpg",
+   "JSG_4427.jpg",
+   "JSG_4610.jpg",
+   "JSG_4981.jpg",
+   "JSG_3782_XL.jpg",
+   "JSG_4427_XL.jpg",
+   "JSG_4610_XL.jpg",
+   "JSG_4981_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "1_mo",
+  "photo_dir": "photos/mid_ohio/1",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "89",
+  "team": "S.H.I.T.box brought to\u2026.",
+  "class": "B",
+  "grid": 54,
+  "finish": 22,
+  "class_finish": 8,
+  "laps": 359,
+  "best_lap_s": 112.692,
+  "make": "Subaru",
+  "model": "Impreza wagon",
+  "generation": "GC/GF (1993-2001)",
+  "year": 1997,
+  "body": "wagon",
+  "confidence": "high",
+  "evidence": "Lemons award archive (earlier page): '1997 Subaru Impreza, Chicago Illinois' (team S.H.I.T.box brought to...., page 410); Photos (Mid-West Crisis gallery, numbers read off the car): lime-green wagon with lilac wave graphics and a black 89 roundel | id: number is the id of a different car in an earlier field: laguna #89 The Homer by Porcubimmer\u2026.",
+  "dims": {
+   "wheelbase_m": 2.52,
+   "length_m": 4.34,
+   "width_m": 1.69,
+   "height_m": 1.405,
+   "track_m": 1.47,
+   "mass_kg": 1200,
+   "power_kw": 99,
+   "source": "https://en.wikipedia.org/wiki/Subaru_Impreza",
+   "verified_this_run": true,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Subaru EJ22 2.2 flat-4",
+   "cylinders": 4,
+   "layout": "flat4",
+   "displacement_l": 2.2,
+   "aspiration": "NA",
+   "redline_rpm": 6000,
+   "stock_power_kw": 99,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#a8d838",
+   "secondary": "#9a7ad8",
+   "accents": []
+  },
+  "numbers": {
+   "color": "black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Lime green with lilac flame/wave graphics, 89 on a white roundel",
+  "theme": "S.H.I.T.box brought to (...)",
+  "photos": [
+   "JSG_3917.jpg",
+   "JSG_4614.jpg",
+   "JSG_3917_XL.jpg",
+   "JSG_4614_XL.jpg"
+  ],
+  "photo_sightings": 2,
+  "id": "89_mo",
+  "photo_dir": "photos/mid_ohio/89",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "54",
+  "team": "Cross Thread Racing",
+  "class": "A",
+  "grid": 11,
+  "finish": 23,
+  "class_finish": 14,
+  "laps": 358,
+  "best_lap_s": 104.565,
+  "make": "Chevrolet",
+  "model": "Camaro",
+  "generation": "3rd gen (1982-92)",
+  "year": 1988,
+  "body": "coupe",
+  "confidence": "medium",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): blue/yellow Camaro with a Chevy bowtie on the door, a US flag and a big wing, white 54 plate (the archive lists a 1990 Volvo 240DL for the team at an earlier event) | id: number is the id of a different car in an earlier field: sonoma #54 Zoom Zoom Kaboom",
+  "dims": {
+   "wheelbase_m": 2.565,
+   "length_m": 4.87,
+   "width_m": 1.85,
+   "height_m": 1.29,
+   "track_m": 1.5,
+   "mass_kg": 1500,
+   "power_kw": 165,
+   "source": "https://en.wikipedia.org/wiki/Chevrolet_Camaro_(third_generation)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "GM L98 5.0 V8",
+   "cylinders": 8,
+   "layout": "V8",
+   "displacement_l": 5.0,
+   "aspiration": "NA",
+   "redline_rpm": 5000,
+   "stock_power_kw": 165,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#2a5ac8",
+   "secondary": "#f0d020",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Blue with yellow bowtie stripe, US flag, big rear wing",
+  "theme": "Cross Thread Racing",
+  "photos": [
+   "JSG_3829.jpg",
+   "JSG_3830.jpg",
+   "JSG_4463.jpg",
+   "JSG_4780.jpg",
+   "JSG_3829_XL.jpg",
+   "JSG_3830_XL.jpg",
+   "JSG_4463_XL.jpg",
+   "JSG_4780_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "54_mo",
+  "photo_dir": "photos/mid_ohio/54",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "56",
+  "team": "TPF Racing",
+  "class": "C",
+  "grid": 7,
+  "finish": 24,
+  "class_finish": 2,
+  "laps": 357,
+  "best_lap_s": 115.479,
+  "make": "Mercury",
+  "model": "Milan",
+  "generation": "1st gen (2006-11)",
+  "year": 2010,
+  "body": "sedan",
+  "confidence": "high",
+  "dims": {
+   "wheelbase_m": 2.725,
+   "length_m": 4.87,
+   "width_m": 1.83,
+   "height_m": 1.45,
+   "track_m": 1.56,
+   "mass_kg": 1500,
+   "power_kw": 130,
+   "source": "https://en.wikipedia.org/wiki/Mercury_Milan",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Ford Duratec 2.5 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6700,
+   "stock_power_kw": 130,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Base 2.5 I4 assumed (3.0 V6 also offered)"
+  },
+  "colors": {
+   "primary": "#c8c8c8",
+   "secondary": "#5a3a20",
+   "accents": [
+    "#d0a040"
+   ]
+  },
+  "numbers": {
+   "color": "brown/gold script on silver",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Silver with a brown stripe and gold script '156', cartoon cowboy/prospector art",
+  "theme": "Old-West / gold-rush cartoon characters",
+  "evidence": "exact normalised team name 'TPF Racing' = Laguna #156 (Mercury Milan, id 156); renumbered 156 -> 56; the Sonoma #56 'Garage 69 Cumaero' (id 56) is a different car, so the id stays 156; 27 Oct 2026: id 56_mo, its own Mid-Ohio build (the Laguna body with the number 56), dims/engine/colours still from the Laguna row [same car as Laguna #156: make/model/dims/engine/colours/livery taken from that identity row]",
+  "photos": [
+   "JSG_3816.jpg",
+   "JSG_3817.jpg",
+   "JSG_3818.jpg",
+   "JSG_4466.jpg",
+   "JSG_4741.jpg",
+   "JSG_3816_XL.jpg",
+   "JSG_3817_XL.jpg",
+   "JSG_3818_XL.jpg",
+   "JSG_4466_XL.jpg",
+   "JSG_4741_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "56_mo",
+  "laguna_number": "156",
+  "photo_dir": "photos/mid_ohio/56",
+  "event": "mid_ohio",
+  "source_rows": {
+   "laguna": true,
+   "buttonwillow": false
+  }
+ },
+ {
+  "number": "8",
+  "team": "Ate Mile Motorsports",
+  "class": "B",
+  "grid": 31,
+  "finish": 25,
+  "class_finish": 9,
+  "laps": 356,
+  "best_lap_s": 110.859,
+  "make": "Chevrolet",
+  "model": "S-10 (lowered 2-door)",
+  "generation": "S-10 (1994-2004)",
+  "year": 2002,
+  "body": "truck",
+  "confidence": "medium",
+  "evidence": "Lemons award archive (earlier page): '2002 Chevrolet Blazer, Farmington Hills MI' (team Ate Mile Motorsports, pages 230, 443; the S-10 and the S-10 Blazer share the front end); Photos (Mid-West Crisis gallery, numbers read off the car): grey/tan lowered S-10 pickup with a HURTS roundel and a wing on the tailgate | id: number is the id of a different car in an earlier field: laguna #8 Team Tinyvette",
+  "dims": {
+   "wheelbase_m": 2.751,
+   "length_m": 4.826,
+   "width_m": 1.725,
+   "height_m": 1.613,
+   "track_m": 1.44,
+   "mass_kg": 1250,
+   "power_kw": 88,
+   "source": "https://en.wikipedia.org/wiki/Chevrolet_S-10",
+   "verified_this_run": true,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "GM 2200 2.2 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.2,
+   "aspiration": "NA",
+   "redline_rpm": 5200,
+   "stock_power_kw": 88,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#a8a490",
+   "secondary": "#e8742a",
+   "accents": []
+  },
+  "numbers": {
+   "color": "black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Sand-grey with a white 8 and a Hurts logo",
+  "theme": "Ate Mile Motorsports (8 Mile)",
+  "photos": [
+   "JSG_3925.jpg",
+   "JSG_4638.jpg",
+   "JSG_4732.jpg",
+   "JSG_4797.jpg",
+   "JSG_4798.jpg",
+   "JSG_3925_XL.jpg",
+   "JSG_4638_XL.jpg",
+   "JSG_4732_XL.jpg",
+   "JSG_4797_XL.jpg",
+   "JSG_4798_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "8_mo",
+  "photo_dir": "photos/mid_ohio/8",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "15",
+  "team": "Slippery Slope",
+  "class": "B",
+  "grid": 62,
+  "finish": 26,
+  "class_finish": 10,
+  "laps": 356,
+  "best_lap_s": 111.65,
+  "make": "BMW",
+  "model": "5 Series sedan",
+  "generation": "E34 (1988-95)",
+  "year": 1992,
+  "body": "sedan",
+  "confidence": "low",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): white boxy 4-door with a blue splatter, a green 15 roundel, a roof rack and a trunk wing; the nose may be E34/E28 | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.76,
+   "length_m": 4.72,
+   "width_m": 1.75,
+   "height_m": 1.415,
+   "track_m": 1.47,
+   "mass_kg": 1450,
+   "power_kw": 135,
+   "source": "https://en.wikipedia.org/wiki/BMW_5_Series_(E34)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M50 2.5 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 135,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#f2f2f2",
+   "secondary": "#2a8a60",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "White with blue splatter, green 15 roundel, roof rack",
+  "theme": "Slippery Slope",
+  "photos": [
+   "JSG_4459.jpg",
+   "JSG_4459_XL.jpg"
+  ],
+  "photo_sightings": 1,
+  "id": "15",
+  "photo_dir": "photos/mid_ohio/15",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "151",
+  "team": "Alpha Wolf Squadron",
+  "class": "B",
+  "grid": 58,
+  "finish": 27,
+  "class_finish": 11,
+  "laps": 355,
+  "best_lap_s": 110.891,
+  "make": "Mini",
+  "model": "Cooper (cut-roof, caged)",
+  "generation": "R53 (2002-06)",
+  "year": 2003,
+  "body": "hatch",
+  "confidence": "medium",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): grey/olive Cooper cut down to an open car with a full cage, a tall rear wing and a red 151 | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.467,
+   "length_m": 3.655,
+   "width_m": 1.688,
+   "height_m": 1.416,
+   "track_m": 1.46,
+   "mass_kg": 1140,
+   "power_kw": 120,
+   "source": "https://en.wikipedia.org/wiki/Mini_Hatch_(R50)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Tritec 1.6 I4 supercharged",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.6,
+   "aspiration": "super",
+   "redline_rpm": 6750,
+   "stock_power_kw": 120,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#8a8e84",
+   "secondary": "#e8542a",
+   "accents": []
+  },
+  "numbers": {
+   "color": "red",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Grey-olive with a red 151 and a tall wing on the cage",
+  "theme": "Alpha Wolf Squadron (wolf decals)",
+  "photos": [
+   "JSG_3718.jpg",
+   "JSG_3799.jpg",
+   "JSG_3800.jpg",
+   "JSG_4602.jpg",
+   "JSG_4769.jpg",
+   "JSG_4903.jpg",
+   "JSG_3718_XL.jpg",
+   "JSG_3799_XL.jpg",
+   "JSG_3800_XL.jpg",
+   "JSG_4602_XL.jpg",
+   "JSG_4769_XL.jpg",
+   "JSG_4903_XL.jpg"
+  ],
+  "photo_sightings": 8,
+  "id": "151",
+  "photo_dir": "photos/mid_ohio/151",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "3",
+  "team": "Snap Crackle \u2026.",
+  "class": "B",
+  "grid": 57,
+  "finish": 28,
+  "class_finish": 12,
+  "laps": 351,
+  "best_lap_s": 113.653,
+  "make": "Mazda",
+  "model": "MX-5 Miata",
+  "generation": "NA (1989-97)",
+  "year": 1991,
+  "body": "roadster",
+  "confidence": "high",
+  "evidence": "Lemons award page id 439 (Mid-West Crisis 2026): '1991 Mazda Miata, Saint Louis Missouri' (Organizers' Choice, team Snap Crackle Pharmaceuticals Racing); Photos (Mid-West Crisis gallery, numbers read off the car): light-blue NA with a green-yellow fade, a MIAGRA banner and a boot-lid wing | id: number is the id of a different car in an earlier field: buttonwillow #3 Surfs up (R)",
+  "dims": {
+   "wheelbase_m": 2.265,
+   "length_m": 3.95,
+   "width_m": 1.675,
+   "height_m": 1.225,
+   "track_m": 1.41,
+   "mass_kg": 990,
+   "power_kw": 96,
+   "source": "https://en.wikipedia.org/wiki/Mazda_MX-5_(NA)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Mazda BP 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 7000,
+   "stock_power_kw": 96,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#8ad0f0",
+   "secondary": "#a8d838",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Light blue to lime fade, MIAGRA lettering",
+  "theme": "Snap Crackle Pharmaceuticals (MIAGRA)",
+  "photos": [
+   "JSG_3846.jpg",
+   "JSG_4893.jpg",
+   "JSG_3846_XL.jpg",
+   "JSG_4893_XL.jpg"
+  ],
+  "photo_sightings": 2,
+  "id": "3_mo",
+  "photo_dir": "photos/mid_ohio/3",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "5",
+  "team": "Bo Knows Lemons!",
+  "class": "C",
+  "grid": 14,
+  "finish": 29,
+  "class_finish": 3,
+  "laps": 349,
+  "best_lap_s": 114.63,
+  "make": "Honda",
+  "model": "Accord sedan",
+  "generation": "7th gen (2003-07)",
+  "year": 2004,
+  "body": "sedan",
+  "confidence": "medium",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): dark-blue Accord with a gold 5, 'UNITED STATES OF LEMONS' stripes and rocket pods on a roof rack | id: number is the id of a different car in an earlier field: buttonwillow #5 Richie Bobby Racing \u2026.",
+  "dims": {
+   "wheelbase_m": 2.741,
+   "length_m": 4.834,
+   "width_m": 1.818,
+   "height_m": 1.453,
+   "track_m": 1.55,
+   "mass_kg": 1450,
+   "power_kw": 119,
+   "source": "https://en.wikipedia.org/wiki/Honda_Accord_(North_America_seventh_generation)",
+   "verified_this_run": true,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Honda K24A4 2.4 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.4,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 119,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#1e2a5a",
+   "secondary": "#c8a040",
+   "accents": []
+  },
+  "numbers": {
+   "color": "#c8a040",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Dark blue with a red/gold stripe and rocket pods on the roof",
+  "theme": "Bo Knows Lemons! (Bo Jackson)",
+  "photos": [
+   "JSG_4376.jpg",
+   "JSG_4544.jpg",
+   "JSG_4984.jpg",
+   "JSG_4376_XL.jpg",
+   "JSG_4544_XL.jpg",
+   "JSG_4984_XL.jpg"
+  ],
+  "photo_sightings": 3,
+  "id": "5_mo",
+  "photo_dir": "photos/mid_ohio/5",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "250",
+  "team": "Heads you Win - Tails we\u2026.",
+  "class": "C",
+  "grid": 70,
+  "finish": 30,
+  "class_finish": 4,
+  "laps": 347,
+  "best_lap_s": 118.253,
+  "make": "Lincoln",
+  "model": "Mark VIII",
+  "generation": "1993-98",
+  "year": 1994,
+  "body": "coupe",
+  "confidence": "low",
+  "evidence": "Lemons award archive (earlier page): '1994 Lincoln Mark VIII, Columbus Ohio' (team Heads you Win - Tails we..., page 214); Photos (Mid-West Crisis gallery, numbers read off the car): US-flag-livery coupe with an Uncle Sam hat on the roof and a 250 in NASCAR style | id: number is the id of a different car in an earlier field: buttonwillow #250 Los Huevos Rancheros",
+  "dims": {
+   "wheelbase_m": 2.87,
+   "length_m": 5.255,
+   "width_m": 1.895,
+   "height_m": 1.361,
+   "track_m": 1.56,
+   "mass_kg": 1790,
+   "power_kw": 209,
+   "source": "https://en.wikipedia.org/wiki/Lincoln_Mark_VIII",
+   "verified_this_run": true,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Ford Modular 4.6 DOHC V8",
+   "cylinders": 8,
+   "layout": "V8",
+   "displacement_l": 4.6,
+   "aspiration": "NA",
+   "redline_rpm": 6000,
+   "stock_power_kw": 209,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#2a3a8a",
+   "secondary": "#c83030",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Red, white and blue stars-and-stripes, Uncle Sam top hat",
+  "theme": "Heads You Win, Tails We Lose (coin)",
+  "photos": [
+   "JSG_4752.jpg",
+   "JSG_4752_XL.jpg"
+  ],
+  "photo_sightings": 1,
+  "id": "250_mo",
+  "photo_dir": "photos/mid_ohio/250",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "513",
+  "team": "Team Non Sequitur",
+  "class": "A",
+  "grid": 56,
+  "finish": 31,
+  "class_finish": 15,
+  "laps": 345,
+  "best_lap_s": 104.884,
+  "make": "BMW",
+  "model": "318ti (E36 compact)",
+  "generation": "E36 compact (1994-99)",
+  "year": 1996,
+  "body": "hatch",
+  "confidence": "high",
+  "evidence": "Lemons award archive (earlier page): '1995 BMW 318ti, Cincinnati OH' (team Team Non Sequitur, pages 391, 445, 456); Photos (Mid-West Crisis gallery, numbers read off the car): black E36 compact with yellow 'eurauto' panels, a frog figure on the roof and a white 513 | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.7,
+   "length_m": 4.21,
+   "width_m": 1.7,
+   "height_m": 1.36,
+   "track_m": 1.42,
+   "mass_kg": 1250,
+   "power_kw": 103,
+   "source": "https://en.wikipedia.org/wiki/BMW_3_Series_(E36)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M42 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 103,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#1a1a1e",
+   "secondary": "#f0d020",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Black and yellow, 'eurauto' decals, a frog on the roof",
+  "theme": "Team Non Sequitur",
+  "photos": [
+   "JSG_4383.jpg",
+   "JSG_4510.jpg",
+   "JSG_4632.jpg",
+   "JSG_4633.jpg",
+   "JSG_4938.jpg",
+   "JSG_4939.jpg",
+   "JSG_4383_XL.jpg",
+   "JSG_4510_XL.jpg",
+   "JSG_4632_XL.jpg",
+   "JSG_4633_XL.jpg",
+   "JSG_4938_XL.jpg",
+   "JSG_4939_XL.jpg"
+  ],
+  "photo_sightings": 6,
+  "id": "513",
+  "photo_dir": "photos/mid_ohio/513",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "21",
+  "team": "Sakai Project",
+  "class": "B",
+  "grid": 67,
+  "finish": 32,
+  "class_finish": 13,
+  "laps": 338,
+  "best_lap_s": 114.446,
+  "make": "Ford",
+  "model": "Mustang GT",
+  "generation": "S197 (2005-09)",
+  "year": 2006,
+  "body": "coupe",
+  "confidence": "medium",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): dark-green and black GT with a white side stripe and a white 21 circle (the archive lists a 1998 Dodge Neon for the team at an earlier event) | id: number is the id of a different car in an earlier field: sonoma #21 TOP Drivers (R)",
+  "dims": {
+   "wheelbase_m": 2.72,
+   "length_m": 4.765,
+   "width_m": 1.875,
+   "height_m": 1.384,
+   "track_m": 1.57,
+   "mass_kg": 1650,
+   "power_kw": 224,
+   "source": "https://en.wikipedia.org/wiki/Ford_Mustang_(fifth_generation)",
+   "verified_this_run": true,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Ford Modular 4.6 3V V8",
+   "cylinders": 8,
+   "layout": "V8",
+   "displacement_l": 4.6,
+   "aspiration": "NA",
+   "redline_rpm": 6000,
+   "stock_power_kw": 224,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#1e3a2a",
+   "secondary": "#1a1a1e",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Dark green with a white stripe and a white 21 circle",
+  "theme": "Sakai Project",
+  "photos": [
+   "JSG_3721.jpg",
+   "JSG_4416.jpg",
+   "JSG_4603.jpg",
+   "JSG_3721_XL.jpg",
+   "JSG_4416_XL.jpg",
+   "JSG_4603_XL.jpg"
+  ],
+  "photo_sightings": 3,
+  "id": "21_mo",
+  "photo_dir": "photos/mid_ohio/21",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "269",
+  "team": "Poor Boy Racing",
+  "class": "B",
+  "grid": 20,
+  "finish": 33,
+  "class_finish": 14,
+  "laps": 337,
+  "best_lap_s": 110.416,
+  "make": "Chevrolet",
+  "model": "Cobalt coupe",
+  "generation": "1st gen (2005-10)",
+  "year": 2007,
+  "body": "coupe",
+  "confidence": "medium",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): purple Cobalt coupe with a large rear wing and a white 269 plate; no archive record | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.624,
+   "length_m": 4.585,
+   "width_m": 1.725,
+   "height_m": 1.41,
+   "track_m": 1.45,
+   "mass_kg": 1300,
+   "power_kw": 108,
+   "source": "https://en.wikipedia.org/wiki/Chevrolet_Cobalt",
+   "verified_this_run": true,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "GM Ecotec 2.2 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.2,
+   "aspiration": "NA",
+   "redline_rpm": 6200,
+   "stock_power_kw": 108,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#5a2a8a",
+   "secondary": "#1a1a1e",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Purple with a black wing and white plate 269",
+  "theme": "Poor Boy Racing",
+  "photos": [
+   "JSG_3761.jpg",
+   "JSG_3761_XL.jpg"
+  ],
+  "photo_sightings": 1,
+  "id": "269",
+  "photo_dir": "photos/mid_ohio/269",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "190",
+  "team": "Peacockified Racing",
+  "class": "C",
+  "grid": 16,
+  "finish": 34,
+  "class_finish": 5,
+  "laps": 334,
+  "best_lap_s": 119.202,
+  "make": "Hyundai",
+  "model": "Elantra sedan",
+  "generation": "XD (2001-06)",
+  "year": 2004,
+  "body": "sedan",
+  "confidence": "high",
+  "evidence": "Lemons award page id 439 (Mid-West Crisis 2026): '2004 Hyundai Elantra, Louisville KY' (Winner on Index of Effluency, team Peacockified Racing); Photos (Mid-West Crisis gallery, numbers read off the car): black 4-door with 'Peacock Technologies' lettering and 190, small wing | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.61,
+   "length_m": 4.52,
+   "width_m": 1.72,
+   "height_m": 1.425,
+   "track_m": 1.5,
+   "mass_kg": 1250,
+   "power_kw": 103,
+   "source": "https://en.wikipedia.org/wiki/Hyundai_Elantra_(XD)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Hyundai Beta 2.0 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.0,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 103,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#1a1a1e",
+   "secondary": "#2a8ac8",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Black with blue 'Peacock Technologies' lettering",
+  "theme": "Peacockified Racing (peacock)",
+  "photos": [
+   "JSG_4582.jpg",
+   "JSG_4899.jpg",
+   "JSG_4582_XL.jpg",
+   "JSG_4899_XL.jpg"
+  ],
+  "photo_sightings": 2,
+  "id": "190",
+  "photo_dir": "photos/mid_ohio/190",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "153",
+  "team": "Dumpster Fire Motorsports",
+  "class": "C",
+  "grid": 6,
+  "finish": 35,
+  "class_finish": 6,
+  "laps": 331,
+  "best_lap_s": 113.322,
+  "make": "Subaru",
+  "model": "Impreza wagon",
+  "generation": "GC/GF (1993-2001)",
+  "year": 1997,
+  "body": "wagon",
+  "confidence": "high",
+  "evidence": "Lemons award archive (earlier page): '1997 Subaru Impreza, Chicago Illinois' (team Dumpster Fire Motorsports, page 404); Photos (Mid-West Crisis gallery, numbers read off the car): orange, teal and green flame livery on a wagon with a roof spoiler and 153 | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.52,
+   "length_m": 4.34,
+   "width_m": 1.69,
+   "height_m": 1.405,
+   "track_m": 1.47,
+   "mass_kg": 1200,
+   "power_kw": 99,
+   "source": "https://en.wikipedia.org/wiki/Subaru_Impreza",
+   "verified_this_run": true,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Subaru EJ22 2.2 flat-4",
+   "cylinders": 4,
+   "layout": "flat4",
+   "displacement_l": 2.2,
+   "aspiration": "NA",
+   "redline_rpm": 6000,
+   "stock_power_kw": 99,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#e8742a",
+   "secondary": "#2aa8a0",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Orange/teal/green flames, white 153, roof spoiler",
+  "theme": "Dumpster Fire Motorsports (flames)",
+  "photos": [
+   "JSG_4409.jpg",
+   "JSG_4506.jpg",
+   "JSG_4907.jpg",
+   "JSG_4908.jpg",
+   "JSG_4409_XL.jpg",
+   "JSG_4506_XL.jpg",
+   "JSG_4907_XL.jpg",
+   "JSG_4908_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "153",
+  "photo_dir": "photos/mid_ohio/153",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "661",
+  "team": "Jagoff Motorwerks",
+  "class": "B",
+  "grid": 34,
+  "finish": 36,
+  "class_finish": 15,
+  "laps": 330,
+  "best_lap_s": 110.865,
+  "make": "Ford",
+  "model": "Taurus-type 4-door",
+  "generation": "1992-95 (undetermined)",
+  "year": 1993,
+  "body": "sedan",
+  "confidence": "low",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): orange and green 4-door with an 'RS' decal and 'SHE-GIRLS' lettering, white 661; make and model guessed from the profile | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.692,
+   "length_m": 4.877,
+   "width_m": 1.808,
+   "height_m": 1.39,
+   "track_m": 1.55,
+   "mass_kg": 1450,
+   "power_kw": 104,
+   "source": "https://en.wikipedia.org/wiki/Ford_Taurus_(second_generation)",
+   "verified_this_run": true,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Ford Vulcan 3.0 V6",
+   "cylinders": 6,
+   "layout": "V6",
+   "displacement_l": 3.0,
+   "aspiration": "NA",
+   "redline_rpm": 5200,
+   "stock_power_kw": 104,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#e8742a",
+   "secondary": "#38a038",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Orange upper, green lower with a white 661 and 'SHE-GIRLS RS'",
+  "theme": "Jagoff Motorwerks (She-Girls decals)",
+  "photos": [
+   "JSG_3777.jpg",
+   "JSG_3778.jpg",
+   "JSG_4916.jpg",
+   "JSG_5056.jpg",
+   "JSG_5057.jpg",
+   "JSG_3777_XL.jpg",
+   "JSG_3778_XL.jpg",
+   "JSG_4916_XL.jpg",
+   "JSG_5056_XL.jpg",
+   "JSG_5057_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "661",
+  "photo_dir": "photos/mid_ohio/661",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "814",
+  "team": "The Gang Buys a Race Car",
+  "class": "B",
+  "grid": 84,
+  "finish": 37,
+  "class_finish": 16,
+  "laps": 329,
+  "best_lap_s": 109.263,
+  "make": "Ford",
+  "model": "Mustang GT / Cobra-style",
+  "generation": "SN95 New Edge (1999-2004)",
+  "year": 2003,
+  "body": "coupe",
+  "confidence": "medium",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): silver Mustang with a hood scoop and an 814 roundel on the door | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.573,
+   "length_m": 4.61,
+   "width_m": 1.83,
+   "height_m": 1.34,
+   "track_m": 1.5,
+   "mass_kg": 1450,
+   "power_kw": 142,
+   "source": "https://en.wikipedia.org/wiki/Ford_Mustang_(fourth_generation)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Ford Essex 3.8 V6",
+   "cylinders": 6,
+   "layout": "V6",
+   "displacement_l": 3.8,
+   "aspiration": "NA",
+   "redline_rpm": 5500,
+   "stock_power_kw": 142,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#a8a8aa",
+   "secondary": "#1a1a1e",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Silver-grey with a white 814 circle",
+  "theme": "The Gang Buys a Race Car",
+  "photos": [
+   "JSG_3840.jpg",
+   "JSG_3841.jpg",
+   "JSG_3951.jpg",
+   "JSG_4455.jpg",
+   "JSG_4601.jpg",
+   "JSG_4768.jpg",
+   "JSG_3840_XL.jpg",
+   "JSG_3841_XL.jpg",
+   "JSG_3951_XL.jpg",
+   "JSG_4455_XL.jpg",
+   "JSG_4601_XL.jpg",
+   "JSG_4768_XL.jpg"
+  ],
+  "photo_sightings": 7,
+  "id": "814",
+  "photo_dir": "photos/mid_ohio/814",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "248",
+  "team": "3 Gena + 2",
+  "class": "B",
+  "grid": 46,
+  "finish": 38,
+  "class_finish": 17,
+  "laps": 326,
+  "best_lap_s": 115.299,
+  "make": "Plymouth",
+  "model": "Neon sedan",
+  "generation": "1st gen (1995-99)",
+  "year": 1997,
+  "body": "sedan",
+  "confidence": "high",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): white 4-door with black 248 on the door, rounded Neon nose and tail | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.642,
+   "length_m": 4.37,
+   "width_m": 1.7,
+   "height_m": 1.4,
+   "track_m": 1.45,
+   "mass_kg": 1100,
+   "power_kw": 98,
+   "source": "https://en.wikipedia.org/wiki/Dodge_Neon",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Chrysler 2.0 SOHC I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.0,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 98,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#f2f2f2",
+   "secondary": "#1a1a1e",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "White with black 248",
+  "theme": "3 Gena + 2",
+  "photos": [
+   "JSG_3762.jpg",
+   "JSG_4411.jpg",
+   "JSG_4542.jpg",
+   "JSG_4589.jpg",
+   "JSG_4763.jpg",
+   "JSG_4971.jpg",
+   "JSG_3762_XL.jpg",
+   "JSG_4411_XL.jpg",
+   "JSG_4542_XL.jpg",
+   "JSG_4589_XL.jpg",
+   "JSG_4763_XL.jpg",
+   "JSG_4971_XL.jpg"
+  ],
+  "photo_sightings": 7,
+  "id": "248",
+  "photo_dir": "photos/mid_ohio/248",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "66",
+  "team": "Bad Decisions Racing",
+  "class": "C",
+  "grid": 61,
+  "finish": 39,
+  "class_finish": 7,
+  "laps": 317,
+  "best_lap_s": 116.403,
+  "make": "Chevrolet",
+  "model": "Malibu Maxx",
+  "generation": "6th gen (2004-07)",
+  "year": 2005,
+  "body": "hatch",
+  "confidence": "high",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): orange 5-door hatch with a white 66 plate and green wheels | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.852,
+   "length_m": 4.77,
+   "width_m": 1.773,
+   "height_m": 1.476,
+   "track_m": 1.52,
+   "mass_kg": 1500,
+   "power_kw": 150,
+   "source": "https://en.wikipedia.org/wiki/Chevrolet_Malibu",
+   "verified_this_run": true,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "GM LX9 3.5 V6",
+   "cylinders": 6,
+   "layout": "V6",
+   "displacement_l": 3.5,
+   "aspiration": "NA",
+   "redline_rpm": 5800,
+   "stock_power_kw": 150,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#e8742a",
+   "secondary": "#38a038",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Orange with a white 66 plate",
+  "theme": "Bad Decisions Racing",
+  "photos": [
+   "JSG_3835.jpg",
+   "JSG_4268.jpg",
+   "JSG_3835_XL.jpg",
+   "JSG_4268_XL.jpg"
+  ],
+  "photo_sightings": 2,
+  "id": "66",
+  "photo_dir": "photos/mid_ohio/66",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "123",
+  "team": "CROWN HICKTORIOUS\u2026.",
+  "class": "B",
+  "grid": 23,
+  "finish": 40,
+  "class_finish": 18,
+  "laps": 312,
+  "best_lap_s": 115.072,
+  "make": "Ford",
+  "model": "Crown Victoria P71",
+  "generation": "2nd gen (1998-2011)",
+  "year": 2008,
+  "body": "sedan",
+  "confidence": "medium",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): white/silver Crown Victoria with a blue stripe, RCD.com decals and a 123 plate; sister of #187 under the CROWN HICKTORIOUS banner | id: number is the id of a different car in an earlier field: sonoma #123 Bad Loose Racing 2.0",
+  "dims": {
+   "wheelbase_m": 2.91,
+   "length_m": 5.38,
+   "width_m": 1.98,
+   "height_m": 1.45,
+   "track_m": 1.62,
+   "mass_kg": 1800,
+   "power_kw": 186,
+   "source": "https://en.wikipedia.org/wiki/Ford_Crown_Victoria",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Ford Modular 4.6 V8",
+   "cylinders": 8,
+   "layout": "V8",
+   "displacement_l": 4.6,
+   "aspiration": "NA",
+   "redline_rpm": 5500,
+   "stock_power_kw": 186,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#d8d8dc",
+   "secondary": "#2a5ac8",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Silver-white with blue RCD decals, 123",
+  "theme": "CROWN HICKTORIOUS (second entry)",
+  "photos": [
+   "JSG_3890.jpg",
+   "JSG_3891.jpg",
+   "JSG_4269.jpg",
+   "JSG_3890_XL.jpg",
+   "JSG_3891_XL.jpg",
+   "JSG_4269_XL.jpg"
+  ],
+  "photo_sightings": 3,
+  "id": "123_mo",
+  "photo_dir": "photos/mid_ohio/123",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "678",
+  "team": "CRASH",
+  "class": "B",
+  "grid": 38,
+  "finish": 41,
+  "class_finish": 19,
+  "laps": 311,
+  "best_lap_s": 110.846,
+  "make": "Honda",
+  "model": "Prelude",
+  "generation": "5th gen (1997-2001)",
+  "year": 1999,
+  "body": "coupe",
+  "confidence": "high",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): teal Prelude with purple and orange stripes and a white 678 plate | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.585,
+   "length_m": 4.52,
+   "width_m": 1.75,
+   "height_m": 1.315,
+   "track_m": 1.51,
+   "mass_kg": 1300,
+   "power_kw": 142,
+   "source": "https://en.wikipedia.org/wiki/Honda_Prelude",
+   "verified_this_run": true,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Honda H22A 2.2 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.2,
+   "aspiration": "NA",
+   "redline_rpm": 7200,
+   "stock_power_kw": 142,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#2aa8a0",
+   "secondary": "#7a4aa0",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Teal with purple and orange stripes, 678",
+  "theme": "CRASH",
+  "photos": [
+   "JSG_3767.jpg",
+   "JSG_3768.jpg",
+   "JSG_4634.jpg",
+   "JSG_4635.jpg",
+   "JSG_4912.jpg",
+   "JSG_3767_XL.jpg",
+   "JSG_3768_XL.jpg",
+   "JSG_4634_XL.jpg",
+   "JSG_4635_XL.jpg",
+   "JSG_4912_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "678",
+  "photo_dir": "photos/mid_ohio/678",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "691",
+  "team": "Layin Pipe racing",
+  "class": "A",
+  "grid": 69,
+  "finish": 42,
+  "class_finish": 16,
+  "laps": 309,
+  "best_lap_s": 107.123,
+  "make": "BMW",
+  "model": "318ti (E36 compact)",
+  "generation": "E36 compact (1994-99)",
+  "year": 1996,
+  "body": "hatch",
+  "confidence": "high",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): orange-red E36 compact with an olive bonnet, red 691 and flame decals, 'Layin Pipe Racing' on the sill | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.7,
+   "length_m": 4.21,
+   "width_m": 1.7,
+   "height_m": 1.36,
+   "track_m": 1.42,
+   "mass_kg": 1250,
+   "power_kw": 103,
+   "source": "https://en.wikipedia.org/wiki/BMW_3_Series_(E36)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M42 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 103,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#e8542a",
+   "secondary": "#7a8a3a",
+   "accents": []
+  },
+  "numbers": {
+   "color": "#f0c020",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Orange-red with an olive bonnet and orange flame decals",
+  "theme": "Layin Pipe Racing",
+  "photos": [
+   "JSG_3766.jpg",
+   "JSG_3767.jpg",
+   "JSG_4442.jpg",
+   "JSG_4542.jpg",
+   "JSG_4902.jpg",
+   "JSG_3766_XL.jpg",
+   "JSG_3767_XL.jpg",
+   "JSG_4442_XL.jpg",
+   "JSG_4542_XL.jpg",
+   "JSG_4902_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "691",
+  "photo_dir": "photos/mid_ohio/691",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "112",
+  "team": "Poor Energy Racing",
+  "class": "C",
+  "grid": 68,
+  "finish": 43,
+  "class_finish": 8,
+  "laps": 304,
+  "best_lap_s": 116.663,
+  "make": "Toyota",
+  "model": "Tacoma regular cab (BMW-front swap)",
+  "generation": "1st gen (1995-2004)",
+  "year": 2003,
+  "body": "truck",
+  "confidence": "high",
+  "evidence": "Lemons award archive (earlier page): '2003 Toyota (mostly) Tacoma (mostly), Lexington Kentucky' (team Poor Energy Racing, page 419); Photos (Mid-West Crisis gallery, numbers read off the car): cream/gold single-cab pickup with a black BMW-style front clip, 'ENERGY' and 'FNone' lettering and a 112 | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.624,
+   "length_m": 4.44,
+   "width_m": 1.689,
+   "height_m": 1.588,
+   "track_m": 1.45,
+   "mass_kg": 1250,
+   "power_kw": 106,
+   "source": "https://en.wikipedia.org/wiki/Toyota_Tacoma",
+   "verified_this_run": true,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Toyota 2RZ-FE 2.4 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.4,
+   "aspiration": "NA",
+   "redline_rpm": 5200,
+   "stock_power_kw": 106,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#d8c8a0",
+   "secondary": "#1a1a1e",
+   "accents": []
+  },
+  "numbers": {
+   "color": "black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Cream body, black BMW-style front end, ENERGY lettering",
+  "theme": "Poor Energy Racing (energy drink)",
+  "photos": [
+   "JSG_3830.jpg",
+   "JSG_4649.jpg",
+   "JSG_4650.jpg",
+   "JSG_4954.jpg",
+   "JSG_3830_XL.jpg",
+   "JSG_4649_XL.jpg",
+   "JSG_4650_XL.jpg",
+   "JSG_4954_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "112",
+  "photo_dir": "photos/mid_ohio/112",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "803",
+  "team": "Queers Shiftin' Gears",
+  "class": "C",
+  "grid": 44,
+  "finish": 44,
+  "class_finish": 9,
+  "laps": 303,
+  "best_lap_s": 115.929,
+  "make": "Nissan",
+  "model": "Maxima",
+  "generation": "A32 (1995-99)",
+  "year": 1996,
+  "body": "sedan",
+  "confidence": "medium",
+  "evidence": "Lemons award archive (earlier page): '1996 Nissan Maxima, Cleveland' (team Queers Shiftin' Gears, page 456); Photos (Mid-West Crisis gallery, numbers read off the car): rainbow leopard-print 4-door with a cage and 803 | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.7,
+   "length_m": 4.811,
+   "width_m": 1.77,
+   "height_m": 1.415,
+   "track_m": 1.5,
+   "mass_kg": 1370,
+   "power_kw": 142,
+   "source": "https://en.wikipedia.org/wiki/Nissan_Maxima",
+   "verified_this_run": true,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Nissan VQ30DE 3.0 V6",
+   "cylinders": 6,
+   "layout": "V6",
+   "displacement_l": 3.0,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 142,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#d83a8a",
+   "secondary": "#f0c020",
+   "accents": [
+    "#2a8ad8"
+   ]
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Rainbow and leopard-print wrap, 803",
+  "theme": "Queers Shiftin' Gears",
+  "photos": [
+   "JSG_4271.jpg",
+   "JSG_4272.jpg",
+   "JSG_4452.jpg",
+   "JSG_4764.jpg",
+   "JSG_4271_XL.jpg",
+   "JSG_4272_XL.jpg",
+   "JSG_4452_XL.jpg",
+   "JSG_4764_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "803",
+  "photo_dir": "photos/mid_ohio/803",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "690",
+  "team": "Spontaneous Rodents",
+  "class": "B",
+  "grid": 59,
+  "finish": 45,
+  "class_finish": 20,
+  "laps": 301,
+  "best_lap_s": 110.195,
+  "make": "Ford",
+  "model": "Escort ZX2",
+  "generation": "1998-2003",
+  "year": 2002,
+  "body": "coupe",
+  "confidence": "medium",
+  "evidence": "Lemons award archive (earlier page): '2002 Ford Escort Zx2, Speedway IN' (team Spontaneous Rodents, page 425); Photos (Mid-West Crisis gallery, numbers read off the car): light-blue 2-door with a small spoiler and 690 'DINOGO' in white tape letters | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.499,
+   "length_m": 4.45,
+   "width_m": 1.712,
+   "height_m": 1.328,
+   "track_m": 1.46,
+   "mass_kg": 1100,
+   "power_kw": 97,
+   "source": "https://en.wikipedia.org/wiki/Ford_Escort_(North_America)",
+   "verified_this_run": true,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Ford Zetec 2.0 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.0,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 97,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#4a8ad8",
+   "secondary": "#f2f2f2",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Light blue with white tape numerals 690 and 'DINOGO'",
+  "theme": "Spontaneous Rodents (dinosaur gag)",
+  "photos": [
+   "JSG_3816.jpg",
+   "JSG_3817.jpg",
+   "JSG_4421.jpg",
+   "JSG_3816_XL.jpg",
+   "JSG_3817_XL.jpg",
+   "JSG_4421_XL.jpg"
+  ],
+  "photo_sightings": 3,
+  "id": "690",
+  "photo_dir": "photos/mid_ohio/690",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "160",
+  "team": "Here For The Bier\u2026.",
+  "class": "B",
+  "grid": 28,
+  "finish": 46,
+  "class_finish": 21,
+  "laps": 295,
+  "best_lap_s": 116.365,
+  "make": "Mini",
+  "model": "Cooper",
+  "generation": "R56 (2007-13)",
+  "year": 2008,
+  "body": "hatch",
+  "confidence": "high",
+  "evidence": "Lemons award archive (earlier page): '2008 Mini Cooper, Milford Michigan' (team Here For The Bier, page 351); Photos (Mid-West Crisis gallery, numbers read off the car): green Cooper with a white roof and 'JOHN BEERE' lettering, 160 | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.467,
+   "length_m": 3.714,
+   "width_m": 1.683,
+   "height_m": 1.408,
+   "track_m": 1.46,
+   "mass_kg": 1175,
+   "power_kw": 128,
+   "source": "https://en.wikipedia.org/wiki/Mini_Hatch_(R56)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Prince 1.6 I4 turbo",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.6,
+   "aspiration": "turbo",
+   "redline_rpm": 6500,
+   "stock_power_kw": 128,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#38a038",
+   "secondary": "#f2f2f2",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "John Deere green with a white roof, JOHN BEERE",
+  "theme": "Here For The Bier (John Deere pun)",
+  "photos": [
+   "JSG_4784.jpg",
+   "JSG_4784_XL.jpg"
+  ],
+  "photo_sightings": 1,
+  "id": "160",
+  "photo_dir": "photos/mid_ohio/160",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "188",
+  "team": "Awoo Racing 1",
+  "class": "C",
+  "grid": 53,
+  "finish": 47,
+  "class_finish": 10,
+  "laps": 295,
+  "best_lap_s": 113.947,
+  "make": "Hyundai",
+  "model": "Tiburon",
+  "generation": "GK (2003-08)",
+  "year": 2003,
+  "body": "coupe",
+  "confidence": "high",
+  "evidence": "Lemons award archive (earlier page): '2003 Hyundai Tiburon, Versailles KY' (team Awoo Racing, page 445); Photos (Mid-West Crisis gallery, numbers read off the car): orange nose, blue body with white stars and a lightning split, 'WORLD POLICE' on the door, 188 | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.53,
+   "length_m": 4.395,
+   "width_m": 1.76,
+   "height_m": 1.33,
+   "track_m": 1.51,
+   "mass_kg": 1300,
+   "power_kw": 104,
+   "source": "https://en.wikipedia.org/wiki/Hyundai_Tiburon",
+   "verified_this_run": true,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Hyundai Beta 2.0 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.0,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 104,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#2a5ac8",
+   "secondary": "#e8742a",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Orange nose with a blue star-spangled body, WORLD POLICE",
+  "theme": "Awoo Racing 1 (World Police)",
+  "photos": [
+   "JSG_4406.jpg",
+   "JSG_4504.jpg",
+   "JSG_4618.jpg",
+   "JSG_4781.jpg",
+   "JSG_4782.jpg",
+   "JSG_4921.jpg",
+   "JSG_4406_XL.jpg",
+   "JSG_4504_XL.jpg",
+   "JSG_4618_XL.jpg",
+   "JSG_4781_XL.jpg",
+   "JSG_4782_XL.jpg",
+   "JSG_4921_XL.jpg"
+  ],
+  "photo_sightings": 7,
+  "id": "188",
+  "photo_dir": "photos/mid_ohio/188",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "7",
+  "team": "A futile and stupid \u2026.",
+  "class": "B",
+  "grid": 65,
+  "finish": 48,
+  "class_finish": 22,
+  "laps": 293,
+  "best_lap_s": 112.02,
+  "make": "Mazda",
+  "model": "MX-5 Miata",
+  "generation": "NA (1989-97)",
+  "year": 1990,
+  "body": "roadster",
+  "confidence": "high",
+  "evidence": "Lemons award archive (earlier page): '1990 Mazda Miata, Eagleville TN' (team A futile and stupid ..., page 380); Photos (Mid-West Crisis gallery, numbers read off the car): white NA Miata with a roof-bar rack and a rear wing, blue cursive 7 | id: number is the id of a different car in an earlier field: sonoma #7 RUN-CRV",
+  "dims": {
+   "wheelbase_m": 2.265,
+   "length_m": 3.95,
+   "width_m": 1.675,
+   "height_m": 1.225,
+   "track_m": 1.41,
+   "mass_kg": 990,
+   "power_kw": 96,
+   "source": "https://en.wikipedia.org/wiki/Mazda_MX-5_(NA)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Mazda BP 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 7000,
+   "stock_power_kw": 96,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#f2f2f2",
+   "secondary": "#2a6ad8",
+   "accents": []
+  },
+  "numbers": {
+   "color": "#2a6ad8",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "White with a blue cursive 7 and a rack wing",
+  "theme": "A futile and stupid gesture",
+  "photos": [
+   "JSG_4402.jpg",
+   "JSG_4402_XL.jpg"
+  ],
+  "photo_sightings": 1,
+  "id": "7_mo",
+  "photo_dir": "photos/mid_ohio/7",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "38",
+  "team": "Speed Daddy Racing",
+  "class": "B",
+  "grid": 8,
+  "finish": 49,
+  "class_finish": 23,
+  "laps": 292,
+  "best_lap_s": 116.327,
+  "make": "Honda",
+  "model": "Civic Si hatch",
+  "generation": "EP3 (2002-05)",
+  "year": 2003,
+  "body": "hatch",
+  "confidence": "high",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): white/silver 3-door EP3 with black-outlined 38 on the door | id: number is the id of a different car in an earlier field: laguna #38 Another Fine Mess; buttonwillow #38 Another Fine Mess",
+  "dims": {
+   "wheelbase_m": 2.581,
+   "length_m": 4.277,
+   "width_m": 1.72,
+   "height_m": 1.491,
+   "track_m": 1.475,
+   "mass_kg": 1200,
+   "power_kw": 118,
+   "source": "https://en.wikipedia.org/wiki/Honda_Civic_(seventh_generation)",
+   "verified_this_run": true,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Honda K20A3 2.0 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.0,
+   "aspiration": "NA",
+   "redline_rpm": 7400,
+   "stock_power_kw": 118,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#e8e8ea",
+   "secondary": "#1a1a1e",
+   "accents": []
+  },
+  "numbers": {
+   "color": "black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "White-silver with a black-outlined 38",
+  "theme": "Speed Daddy Racing",
+  "photos": [
+   "JSG_4755.jpg",
+   "JSG_4756.jpg",
+   "JSG_4755_XL.jpg",
+   "JSG_4756_XL.jpg"
+  ],
+  "photo_sightings": 2,
+  "id": "38_mo",
+  "photo_dir": "photos/mid_ohio/38",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "11",
+  "team": "Lemon Lime Hawaiian\u2026.",
+  "class": "B",
+  "grid": 39,
+  "finish": 50,
+  "class_finish": 24,
+  "laps": 291,
+  "best_lap_s": 110.998,
+  "make": "Mazda",
+  "model": "MX-5 Miata",
+  "generation": "NA (1989-97)",
+  "year": 1992,
+  "body": "roadster",
+  "confidence": "medium",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): dark-green NA with a yellow nose and an '11 SM' circle on the door | id: number is the id of a different car in an earlier field: buttonwillow #11 Degens",
+  "dims": {
+   "wheelbase_m": 2.265,
+   "length_m": 3.95,
+   "width_m": 1.675,
+   "height_m": 1.225,
+   "track_m": 1.41,
+   "mass_kg": 990,
+   "power_kw": 96,
+   "source": "https://en.wikipedia.org/wiki/Mazda_MX-5_(NA)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Mazda BP 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 7000,
+   "stock_power_kw": 96,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#1e5a32",
+   "secondary": "#f0d820",
+   "accents": []
+  },
+  "numbers": {
+   "color": "black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Dark green with a yellow nose and an 11 SM roundel",
+  "theme": "Lemon Lime Hawaiian... (lemon-lime drink)",
+  "photos": [
+   "JSG_4403.jpg",
+   "JSG_4501.jpg",
+   "JSG_4595.jpg",
+   "JSG_4596.jpg",
+   "JSG_4851.jpg",
+   "JSG_4960.jpg",
+   "JSG_4403_XL.jpg",
+   "JSG_4501_XL.jpg",
+   "JSG_4595_XL.jpg",
+   "JSG_4596_XL.jpg",
+   "JSG_4851_XL.jpg",
+   "JSG_4960_XL.jpg"
+  ],
+  "photo_sightings": 6,
+  "id": "11_mo",
+  "photo_dir": "photos/mid_ohio/11",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "90",
+  "team": "Maximum Effort Racing",
+  "class": "C",
+  "grid": 1,
+  "finish": 51,
+  "class_finish": 11,
+  "laps": 287,
+  "best_lap_s": 115.78,
+  "make": "Honda",
+  "model": "Civic coupe",
+  "generation": "8th gen (2006-11)",
+  "year": 2008,
+  "body": "coupe",
+  "confidence": "high",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): red-orange Civic coupe with a Deadpool 'MAXIMUM EFFORT' bonnet and a grey 90 roundel | id: number is the id of a different car in an earlier field: buttonwillow #90 NB TuRD North \u2026. (R)",
+  "dims": {
+   "wheelbase_m": 2.65,
+   "length_m": 4.44,
+   "width_m": 1.75,
+   "height_m": 1.359,
+   "track_m": 1.51,
+   "mass_kg": 1250,
+   "power_kw": 103,
+   "source": "https://en.wikipedia.org/wiki/Honda_Civic_(eighth_generation)",
+   "verified_this_run": true,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Honda R18A 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 6800,
+   "stock_power_kw": 103,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#d84a28",
+   "secondary": "#1a1a1e",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Red-orange with a Deadpool bonnet and a grey 90 roundel",
+  "theme": "Maximum Effort Racing (Deadpool)",
+  "photos": [
+   "JSG_4484.jpg",
+   "JSG_4598.jpg",
+   "JSG_4760.jpg",
+   "JSG_4761.jpg",
+   "JSG_4939.jpg",
+   "JSG_4940.jpg",
+   "JSG_4484_XL.jpg",
+   "JSG_4598_XL.jpg",
+   "JSG_4760_XL.jpg",
+   "JSG_4761_XL.jpg",
+   "JSG_4939_XL.jpg",
+   "JSG_4940_XL.jpg"
+  ],
+  "photo_sightings": 6,
+  "id": "90_mo",
+  "photo_dir": "photos/mid_ohio/90",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "17",
+  "team": "Lemon Law Racing",
+  "class": "B",
+  "grid": 72,
+  "finish": 52,
+  "class_finish": 25,
+  "laps": 282,
+  "best_lap_s": 110.437,
+  "make": "Honda",
+  "model": "Accord 4-door",
+  "generation": "CB (1990-93)",
+  "year": 1991,
+  "body": "sedan",
+  "confidence": "medium",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): red-brown 4-door with a white 17 and a 'CRT' sill decal; no archive record | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.72,
+   "length_m": 4.7,
+   "width_m": 1.7,
+   "height_m": 1.38,
+   "track_m": 1.47,
+   "mass_kg": 1300,
+   "power_kw": 95,
+   "source": "https://en.wikipedia.org/wiki/Honda_Accord_(fourth_generation)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Honda F22A 2.2 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.2,
+   "aspiration": "NA",
+   "redline_rpm": 5800,
+   "stock_power_kw": 95,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#a8482a",
+   "secondary": "#f2f2f2",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Rusty red-brown with a white 17",
+  "theme": "Lemon Law Racing",
+  "photos": [
+   "JSG_4622.jpg",
+   "JSG_4946.jpg",
+   "JSG_4947.jpg",
+   "JSG_4622_XL.jpg",
+   "JSG_4946_XL.jpg",
+   "JSG_4947_XL.jpg"
+  ],
+  "photo_sightings": 3,
+  "id": "17",
+  "photo_dir": "photos/mid_ohio/17",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "264",
+  "team": "Scuderia Fartari",
+  "class": "B",
+  "grid": 48,
+  "finish": 53,
+  "class_finish": 26,
+  "laps": 277,
+  "best_lap_s": 115.382,
+  "make": "Pontiac",
+  "model": "Fiero",
+  "generation": "1984-88 (guess)",
+  "year": 1986,
+  "body": "coupe",
+  "confidence": "low",
+  "evidence": "Lemons award archive (earlier page): '2018 Fartari Pootarossa, Rainsville AL' (team Scuderia Fartari, page 218: a joke declaration); Photos (Mid-West Crisis gallery, numbers read off the car): orange-red mid-engine coupe with side vents, a big wing, a Ferrari-style bonnet stripe and four rectangular lamps in the nose; the Fiero guess is from the Ferrari-replica theme | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.375,
+   "length_m": 4.07,
+   "width_m": 1.75,
+   "height_m": 1.19,
+   "track_m": 1.47,
+   "mass_kg": 1150,
+   "power_kw": 104,
+   "source": "https://en.wikipedia.org/wiki/Pontiac_Fiero",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "GM 60-degree 2.8 V6",
+   "cylinders": 6,
+   "layout": "V6",
+   "displacement_l": 2.8,
+   "aspiration": "NA",
+   "redline_rpm": 5800,
+   "stock_power_kw": 104,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#e84a20",
+   "secondary": "#f0d020",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Orange-red with a Ferrari-style stripe and a yellow crest, 264",
+  "theme": "Scuderia Fartari (Ferrari parody)",
+  "photos": [
+   "JSG_4648.jpg",
+   "JSG_4648_XL.jpg"
+  ],
+  "photo_sightings": 1,
+  "id": "264",
+  "photo_dir": "photos/mid_ohio/264",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "555",
+  "team": "Triple Nickel Racing",
+  "class": "B",
+  "grid": 64,
+  "finish": 54,
+  "class_finish": 27,
+  "laps": 270,
+  "best_lap_s": 112.555,
+  "make": "Porsche",
+  "model": "944",
+  "generation": "944 (1982-91)",
+  "year": 1986,
+  "body": "coupe",
+  "confidence": "medium",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): orange-red 944 with yellow wheels and a green circle 555 (read on frames 331-332); no archive record | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.4,
+   "length_m": 4.32,
+   "width_m": 1.735,
+   "height_m": 1.275,
+   "track_m": 1.48,
+   "mass_kg": 1180,
+   "power_kw": 110,
+   "source": "https://en.wikipedia.org/wiki/Porsche_944",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Porsche M44 2.5 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6400,
+   "stock_power_kw": 110,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#e8542a",
+   "secondary": "#f0d020",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Orange-red with yellow wheels and a green 555 roundel",
+  "theme": "Triple Nickel Racing",
+  "photos": [
+   "JSG_4606.jpg",
+   "JSG_4607.jpg",
+   "JSG_4606_XL.jpg",
+   "JSG_4607_XL.jpg"
+  ],
+  "photo_sightings": 2,
+  "id": "555",
+  "photo_dir": "photos/mid_ohio/555",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "86",
+  "team": "Initial D-NF",
+  "class": "A",
+  "grid": 50,
+  "finish": 55,
+  "class_finish": 17,
+  "laps": 269,
+  "best_lap_s": 108.527,
+  "make": "Ford",
+  "model": "Mustang notchback (rat-rod)",
+  "generation": "Fox (1979-93, guess)",
+  "year": 1987,
+  "body": "coupe",
+  "confidence": "low",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): rusted red-orange boxy 2-door with a hood scoop and a white 86 roundel; the team name is an AE86 joke, but the nose reads Fox Mustang; the archive lists a 1990 RX-7 for the team at an earlier event | id: number is the id of a different car in an earlier field: sonoma #86 Candyland Racing",
+  "dims": {
+   "wheelbase_m": 2.55,
+   "length_m": 4.57,
+   "width_m": 1.75,
+   "height_m": 1.31,
+   "track_m": 1.46,
+   "mass_kg": 1250,
+   "power_kw": 110,
+   "source": "https://en.wikipedia.org/wiki/Ford_Mustang_(third_generation)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Ford Windsor 5.0 V8",
+   "cylinders": 8,
+   "layout": "V8",
+   "displacement_l": 5.0,
+   "aspiration": "NA",
+   "redline_rpm": 5500,
+   "stock_power_kw": 112,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#b84a28",
+   "secondary": "#f2f2f2",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Rust-patina orange and red with a white 86",
+  "theme": "Initial D-NF (AE86 joke)",
+  "photos": [
+   "JSG_3752.jpg",
+   "JSG_4771.jpg",
+   "JSG_4924.jpg",
+   "JSG_4925.jpg",
+   "JSG_3752_XL.jpg",
+   "JSG_4771_XL.jpg",
+   "JSG_4924_XL.jpg",
+   "JSG_4925_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "86_mo",
+  "photo_dir": "photos/mid_ohio/86",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "869",
+  "team": "Charlie Day's Angels",
+  "class": "C",
+  "grid": 80,
+  "finish": 56,
+  "class_finish": 12,
+  "laps": 265,
+  "best_lap_s": 113.604,
+  "make": "Toyota",
+  "model": "Supra",
+  "generation": "A70 (1986-92)",
+  "year": 1988,
+  "body": "hatch",
+  "confidence": "medium",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): red-over-white liftback with front damage and 869 on the door; no archive record | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.596,
+   "length_m": 4.62,
+   "width_m": 1.76,
+   "height_m": 1.31,
+   "track_m": 1.5,
+   "mass_kg": 1500,
+   "power_kw": 149,
+   "source": "https://en.wikipedia.org/wiki/Toyota_Supra",
+   "verified_this_run": true,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Toyota 7M-GE 3.0 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 3.0,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 149,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#d83a2a",
+   "secondary": "#f2f2f2",
+   "accents": []
+  },
+  "numbers": {
+   "color": "black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Red upper, white lower, 869",
+  "theme": "Charlie Day's Angels (It's Always Sunny)",
+  "photos": [
+   "JSG_5004.jpg",
+   "JSG_5004_XL.jpg"
+  ],
+  "photo_sightings": 1,
+  "id": "869",
+  "photo_dir": "photos/mid_ohio/869",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "132",
+  "team": "Focus? Foc U 2!",
+  "class": "B",
+  "grid": 83,
+  "finish": 57,
+  "class_finish": 28,
+  "laps": 259,
+  "best_lap_s": 111.161,
+  "make": "Ford",
+  "model": "Focus ZX3",
+  "generation": "1st gen (2000-04)",
+  "year": 2002,
+  "body": "hatch",
+  "confidence": "medium",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): blue 3-door hatch with orange front damage and 132 on the door | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.615,
+   "length_m": 4.17,
+   "width_m": 1.7,
+   "height_m": 1.43,
+   "track_m": 1.49,
+   "mass_kg": 1150,
+   "power_kw": 101,
+   "source": "https://en.wikipedia.org/wiki/Ford_Focus_(first_generation)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Ford Duratec 2.0 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.0,
+   "aspiration": "NA",
+   "redline_rpm": 6750,
+   "stock_power_kw": 101,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#2a5ac8",
+   "secondary": "#e8742a",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Blue with orange nose repair and 132",
+  "theme": "Focus? Foc U 2!",
+  "photos": [
+   "JSG_3838.jpg",
+   "JSG_3838_XL.jpg"
+  ],
+  "photo_sightings": 1,
+  "id": "132",
+  "photo_dir": "photos/mid_ohio/132",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "404",
+  "team": "Racecar Vitamin (R)",
+  "class": "C",
+  "grid": 85,
+  "finish": 58,
+  "class_finish": 13,
+  "laps": 258,
+  "best_lap_s": 113.705,
+  "make": "Nissan",
+  "model": "Sentra",
+  "generation": "B15 (2000-06)",
+  "year": 2006,
+  "body": "sedan",
+  "confidence": "high",
+  "evidence": "Lemons award page id 439 (Mid-West Crisis 2026): '2006 Nissan Sentra, Massillon Ohio' (Judges' Choice, team Racecar Vitamin); Photos (Mid-West Crisis gallery, numbers read off the car): cream/silver 4-door with a rainbow 'Sentra' livery and 404 | id: number is the id of a different car in an earlier field: buttonwillow #404 Sticky-TC (R)",
+  "dims": {
+   "wheelbase_m": 2.535,
+   "length_m": 4.508,
+   "width_m": 1.709,
+   "height_m": 1.41,
+   "track_m": 1.47,
+   "mass_kg": 1170,
+   "power_kw": 85,
+   "source": "https://en.wikipedia.org/wiki/Nissan_Sentra",
+   "verified_this_run": true,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Nissan QG18DE 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 85,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#e8e4d0",
+   "secondary": "#f0c020",
+   "accents": [
+    "#e83a3a",
+    "#2a8ad8"
+   ]
+  },
+  "numbers": {
+   "color": "black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Cream with a rainbow 'Sentra' stripe, 404",
+  "theme": "Racecar Vitamin (Sentra vitamins)",
+  "photos": [
+   "JSG_3758.jpg",
+   "JSG_3759.jpg",
+   "JSG_4472.jpg",
+   "JSG_4932.jpg",
+   "JSG_4933.jpg",
+   "JSG_3758_XL.jpg",
+   "JSG_3759_XL.jpg",
+   "JSG_4472_XL.jpg",
+   "JSG_4932_XL.jpg",
+   "JSG_4933_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "404_mo",
+  "photo_dir": "photos/mid_ohio/404",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "217",
+  "team": "Twolemmatree Racing",
+  "class": "C",
+  "grid": 82,
+  "finish": 59,
+  "class_finish": 14,
+  "laps": 257,
+  "best_lap_s": 114.377,
+  "make": "Saturn",
+  "model": "SL2",
+  "generation": "S-Series (1991-2002)",
+  "year": 1995,
+  "body": "sedan",
+  "confidence": "medium",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): pale-blue 4-door with a cursive 'Howdy' on the door and a yellow 217 | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.6,
+   "length_m": 4.5,
+   "width_m": 1.69,
+   "height_m": 1.38,
+   "track_m": 1.45,
+   "mass_kg": 1080,
+   "power_kw": 93,
+   "source": "https://en.wikipedia.org/wiki/Saturn_S-Series",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Saturn 1.9 DOHC I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.9,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 93,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#8ab0d8",
+   "secondary": "#f0d020",
+   "accents": []
+  },
+  "numbers": {
+   "color": "#f0d020",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Pale blue with 'Howdy' script and yellow 217",
+  "theme": "Twolemmatree Racing (Howdy / cowboy)",
+  "photos": [
+   "JSG_3777.jpg",
+   "JSG_3778.jpg",
+   "JSG_4495.jpg",
+   "JSG_3777_XL.jpg",
+   "JSG_3778_XL.jpg",
+   "JSG_4495_XL.jpg"
+  ],
+  "photo_sightings": 3,
+  "id": "217",
+  "photo_dir": "photos/mid_ohio/217",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "134",
+  "team": "Shifty Shifting Racing",
+  "class": "B",
+  "grid": 86,
+  "finish": 60,
+  "class_finish": 29,
+  "laps": 257,
+  "best_lap_s": 115.561,
+  "make": "Saab",
+  "model": "9000",
+  "generation": "1985-98",
+  "year": 1992,
+  "body": "sedan",
+  "confidence": "low",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): black 4-door with a pink tongue on the nose and a lifted boot lid; Saab 9000 guessed from the profile | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.672,
+   "length_m": 4.782,
+   "width_m": 1.763,
+   "height_m": 1.42,
+   "track_m": 1.5,
+   "mass_kg": 1300,
+   "power_kw": 125,
+   "source": "https://en.wikipedia.org/wiki/Saab_9000",
+   "verified_this_run": true,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Saab B234 2.3 I4 turbo",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.3,
+   "aspiration": "turbo",
+   "redline_rpm": 6000,
+   "stock_power_kw": 125,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#1a1a1e",
+   "secondary": "#e85a9a",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Black with a pink tongue graphic on the nose",
+  "theme": "Shifty Shifting Racing",
+  "photos": [
+   "JSG_4804.jpg",
+   "JSG_4909.jpg",
+   "JSG_4910.jpg",
+   "JSG_4804_XL.jpg",
+   "JSG_4909_XL.jpg",
+   "JSG_4910_XL.jpg"
+  ],
+  "photo_sightings": 3,
+  "id": "134",
+  "photo_dir": "photos/mid_ohio/134",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "12",
+  "team": "Murder Whornet",
+  "class": "A",
+  "grid": 30,
+  "finish": 61,
+  "class_finish": 18,
+  "laps": 249,
+  "best_lap_s": 107.361,
+  "make": "BMW",
+  "model": "318ti (E36 compact)",
+  "generation": "E36 compact (1994-99)",
+  "year": 1996,
+  "body": "hatch",
+  "confidence": "medium",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): dark-green E36 compact with a leaf-pattern wrap, white 12 and a tall wing | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.7,
+   "length_m": 4.21,
+   "width_m": 1.7,
+   "height_m": 1.36,
+   "track_m": 1.42,
+   "mass_kg": 1250,
+   "power_kw": 103,
+   "source": "https://en.wikipedia.org/wiki/BMW_3_Series_(E36)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M42 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 103,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#1e5a32",
+   "secondary": "#2a7a4a",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Dark green with a leaf-pattern wrap, white 12",
+  "theme": "Murder Whornet",
+  "photos": [
+   "JSG_3780.jpg",
+   "JSG_3891.jpg",
+   "JSG_4382.jpg",
+   "JSG_4512.jpg",
+   "JSG_4549.jpg",
+   "JSG_4981.jpg",
+   "JSG_3780_XL.jpg",
+   "JSG_3891_XL.jpg",
+   "JSG_4382_XL.jpg",
+   "JSG_4512_XL.jpg",
+   "JSG_4549_XL.jpg",
+   "JSG_4981_XL.jpg"
+  ],
+  "photo_sightings": 7,
+  "id": "12",
+  "photo_dir": "photos/mid_ohio/12",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "48",
+  "team": "Froning Farms 2",
+  "class": "B",
+  "grid": 76,
+  "finish": 62,
+  "class_finish": 30,
+  "laps": 247,
+  "best_lap_s": 110.143,
+  "make": "Ford",
+  "model": "Mustang",
+  "generation": "SN95 (1994-98)",
+  "year": 1995,
+  "body": "coupe",
+  "confidence": "high",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): orange-red 94-98 Mustang with 'FRONING FARMS' on the door and a white 48 | id: number is the id of a different car in an earlier field: buttonwillow #48 LiMoNada; sonoma #48 LiMoNada",
+  "dims": {
+   "wheelbase_m": 2.573,
+   "length_m": 4.61,
+   "width_m": 1.83,
+   "height_m": 1.34,
+   "track_m": 1.5,
+   "mass_kg": 1450,
+   "power_kw": 142,
+   "source": "https://en.wikipedia.org/wiki/Ford_Mustang_(fourth_generation)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Ford Essex 3.8 V6",
+   "cylinders": 6,
+   "layout": "V6",
+   "displacement_l": 3.8,
+   "aspiration": "NA",
+   "redline_rpm": 5500,
+   "stock_power_kw": 142,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#e8542a",
+   "secondary": "#f0d020",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Orange-red with 'Froning Farms' decals, white 48",
+  "theme": "Froning Farms 2 (sister of #13)",
+  "photos": [
+   "JSG_3913.jpg",
+   "JSG_3914.jpg",
+   "JSG_4583.jpg",
+   "JSG_4750.jpg",
+   "JSG_4985.jpg",
+   "JSG_4986.jpg",
+   "JSG_3913_XL.jpg",
+   "JSG_3914_XL.jpg",
+   "JSG_4583_XL.jpg",
+   "JSG_4750_XL.jpg",
+   "JSG_4985_XL.jpg",
+   "JSG_4986_XL.jpg"
+  ],
+  "photo_sightings": 6,
+  "id": "48_mo",
+  "photo_dir": "photos/mid_ohio/48",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "124",
+  "team": "Sesame Street Outlaws",
+  "class": "C",
+  "grid": 18,
+  "finish": 63,
+  "class_finish": 15,
+  "laps": 234,
+  "best_lap_s": 116.589,
+  "make": "Saturn",
+  "model": "SW1 wagon",
+  "generation": "S-Series wagon (1993-2001)",
+  "year": 1996,
+  "body": "wagon",
+  "confidence": "medium",
+  "evidence": "Lemons award page id 439 (Mid-West Crisis 2026): same team name as #29 (Sesame Street Outlaws, '1996 Saturn SL1, Beacon NY'); Photos (Mid-West Crisis gallery, numbers read off the car): white and teal small wagon with red hearts and 'ICE CREAM' / 'Elm's Key Engr' on the door, 124 | id: number is the id of a different car in an earlier field: buttonwillow #124 Sorry For Party Racing; sonoma #2 Sorry For Party Racing",
+  "dims": {
+   "wheelbase_m": 2.6,
+   "length_m": 4.491,
+   "width_m": 1.694,
+   "height_m": 1.384,
+   "track_m": 1.43,
+   "mass_kg": 1100,
+   "power_kw": 74,
+   "source": "https://en.wikipedia.org/wiki/Saturn_S-Series",
+   "verified_this_run": true,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Saturn 1.9 SOHC I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.9,
+   "aspiration": "NA",
+   "redline_rpm": 6000,
+   "stock_power_kw": 74,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#f2f2f2",
+   "secondary": "#2aa8a0",
+   "accents": []
+  },
+  "numbers": {
+   "color": "#c83030",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "White front, teal rear, red hearts, ICE CREAM lettering",
+  "theme": "Sesame Street Outlaws (Elmo, ice cream)",
+  "photos": [
+   "JSG_3723.jpg",
+   "JSG_3723_XL.jpg"
+  ],
+  "photo_sightings": 1,
+  "id": "124_mo",
+  "photo_dir": "photos/mid_ohio/124",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "20",
+  "team": "The Udderly Terrible\u2026.",
+  "class": "B",
+  "grid": 60,
+  "finish": 64,
+  "class_finish": 31,
+  "laps": 227,
+  "best_lap_s": 109.881,
+  "make": "Ford",
+  "model": "Mustang GT",
+  "generation": "SN95 (1994-98)",
+  "year": 1996,
+  "body": "coupe",
+  "confidence": "medium",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): black Mustang with white horse decals, a pink 20 and a large wing | id: number is the id of a different car in an earlier field: laguna #20 NSF Racing",
+  "dims": {
+   "wheelbase_m": 2.573,
+   "length_m": 4.61,
+   "width_m": 1.83,
+   "height_m": 1.34,
+   "track_m": 1.5,
+   "mass_kg": 1450,
+   "power_kw": 142,
+   "source": "https://en.wikipedia.org/wiki/Ford_Mustang_(fourth_generation)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Ford Essex 3.8 V6",
+   "cylinders": 6,
+   "layout": "V6",
+   "displacement_l": 3.8,
+   "aspiration": "NA",
+   "redline_rpm": 5500,
+   "stock_power_kw": 142,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#1a1a1e",
+   "secondary": "#e85a9a",
+   "accents": []
+  },
+  "numbers": {
+   "color": "#e85a9a",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Black with white horse decals and a pink 20",
+  "theme": "The Udderly Terrible (cow/horse prints)",
+  "photos": [
+   "JSG_3805.jpg",
+   "JSG_3919.jpg",
+   "JSG_4759.jpg",
+   "JSG_4760.jpg",
+   "JSG_5002.jpg",
+   "JSG_3805_XL.jpg",
+   "JSG_3919_XL.jpg",
+   "JSG_4759_XL.jpg",
+   "JSG_4760_XL.jpg",
+   "JSG_5002_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "20_mo",
+  "photo_dir": "photos/mid_ohio/20",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "113",
+  "team": "Slothman's Racing",
+  "class": "C",
+  "grid": 21,
+  "finish": 65,
+  "class_finish": 16,
+  "laps": 226,
+  "best_lap_s": 121.011,
+  "make": "Volkswagen",
+  "model": "New Beetle",
+  "generation": "1998-2010",
+  "year": 1998,
+  "body": "hatch",
+  "confidence": "high",
+  "evidence": "Lemons award page id 439 (Mid-West Crisis 2026): '1998 VW Beetle, Apollo Pa' (the archive row for team Slothman's Racing, page 456); Photos (Mid-West Crisis gallery, numbers read off the car): white, blue and yellow Beetle with 'Slothmans BEETLE' and 'Volkswagen Racing' decals, 113 | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.515,
+   "length_m": 4.08,
+   "width_m": 1.725,
+   "height_m": 1.5,
+   "track_m": 1.49,
+   "mass_kg": 1250,
+   "power_kw": 85,
+   "source": "https://en.wikipedia.org/wiki/Volkswagen_New_Beetle",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "VW AEG 2.0 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.0,
+   "aspiration": "NA",
+   "redline_rpm": 6000,
+   "stock_power_kw": 85,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#f2f2f2",
+   "secondary": "#3a4aa0",
+   "accents": [
+    "#f0c020"
+   ]
+  },
+  "numbers": {
+   "color": "black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "White nose, blue body, yellow/orange stripe, Slothmans decals",
+  "theme": "Slothman's Racing (sloth)",
+  "photos": [
+   "JSG_3850.jpg",
+   "JSG_4405.jpg",
+   "JSG_4533.jpg",
+   "JSG_4589.jpg",
+   "JSG_4771.jpg",
+   "JSG_4999.jpg",
+   "JSG_3850_XL.jpg",
+   "JSG_4405_XL.jpg",
+   "JSG_4533_XL.jpg",
+   "JSG_4589_XL.jpg",
+   "JSG_4771_XL.jpg",
+   "JSG_4999_XL.jpg"
+  ],
+  "photo_sightings": 7,
+  "id": "113",
+  "photo_dir": "photos/mid_ohio/113",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "312",
+  "team": "Napoleon Complex",
+  "class": "B",
+  "grid": 9,
+  "finish": 66,
+  "class_finish": 32,
+  "laps": 221,
+  "best_lap_s": 110.541,
+  "make": "Mini",
+  "model": "Cooper S",
+  "generation": "R53 (2002-06)",
+  "year": 2004,
+  "body": "hatch",
+  "confidence": "high",
+  "evidence": "Lemons award archive (earlier page): '2004 Mini Cooper S, Chicago' (team Napoleon Complex, pages 316, 372); Photos (Mid-West Crisis gallery, numbers read off the car): orange-red with a black roof and a 'NAPOLEON COMPLEX' door panel, 312 | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.467,
+   "length_m": 3.655,
+   "width_m": 1.688,
+   "height_m": 1.416,
+   "track_m": 1.46,
+   "mass_kg": 1140,
+   "power_kw": 120,
+   "source": "https://en.wikipedia.org/wiki/Mini_Hatch_(R50)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Tritec 1.6 I4 supercharged",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.6,
+   "aspiration": "super",
+   "redline_rpm": 6750,
+   "stock_power_kw": 120,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#e8542a",
+   "secondary": "#1a1a1e",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Orange-red with a black roof, 'NAPOLEON COMPLEX' on the door",
+  "theme": "Napoleon Complex",
+  "photos": [
+   "JSG_3841.jpg",
+   "JSG_3948.jpg",
+   "JSG_4374.jpg",
+   "JSG_4449.jpg",
+   "JSG_4627.jpg",
+   "JSG_3841_XL.jpg",
+   "JSG_3948_XL.jpg",
+   "JSG_4374_XL.jpg",
+   "JSG_4449_XL.jpg",
+   "JSG_4627_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "312",
+  "photo_dir": "photos/mid_ohio/312",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "172",
+  "team": "More Right Rudder",
+  "class": "C",
+  "grid": 32,
+  "finish": 68,
+  "class_finish": 17,
+  "laps": 211,
+  "best_lap_s": 121.054,
+  "make": "Volkswagen",
+  "model": "Passat TDI Variant",
+  "generation": "B4 (1994-97)",
+  "year": 1996,
+  "body": "wagon",
+  "confidence": "high",
+  "evidence": "Lemons award archive (earlier page): '1996 Volkswagen Passat TDI Variant, Cape Girardeau MO' (team More Right Rudder, page 432); Photos (Mid-West Crisis gallery, numbers read off the car): blue-grey wagon with a roof rack and 'PORKIN' on the door, 172 | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.624,
+   "length_m": 4.597,
+   "width_m": 1.714,
+   "height_m": 1.491,
+   "track_m": 1.46,
+   "mass_kg": 1300,
+   "power_kw": 66,
+   "source": "https://en.wikipedia.org/wiki/Volkswagen_Passat_(B4)",
+   "verified_this_run": true,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "VW 1Z 1.9 TDI I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.9,
+   "aspiration": "diesel turbo",
+   "redline_rpm": 4500,
+   "stock_power_kw": 66,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#5a7aa8",
+   "secondary": "#f2f2f2",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Blue-grey wagon with a roof rack, 'PORKIN' decal, 172",
+  "theme": "More Right Rudder (aviation)",
+  "photos": [
+   "JSG_3766.jpg",
+   "JSG_3767.jpg",
+   "JSG_3768.jpg",
+   "JSG_4466.jpg",
+   "JSG_4790.jpg",
+   "JSG_4898.jpg",
+   "JSG_3766_XL.jpg",
+   "JSG_3767_XL.jpg",
+   "JSG_3768_XL.jpg",
+   "JSG_4466_XL.jpg",
+   "JSG_4790_XL.jpg",
+   "JSG_4898_XL.jpg"
+  ],
+  "photo_sightings": 8,
+  "id": "172",
+  "photo_dir": "photos/mid_ohio/172",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "2",
+  "team": "MBTL Racing",
+  "class": "B",
+  "grid": 3,
+  "finish": 69,
+  "class_finish": 34,
+  "laps": 208,
+  "best_lap_s": 120.307,
+  "make": "Mercury",
+  "model": "Cougar XR7 (MN12, guess)",
+  "generation": "MN12 (1989-97)",
+  "year": 1993,
+  "body": "coupe",
+  "confidence": "low",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): very dark long 2-door coupe with a formal roofline and hidden lamps, white 2; Ford Thunderbird / Mercury Cougar MN12 shape guessed | id: number is the id of a different car in an earlier field: laguna #2 I Soar Racing",
+  "dims": {
+   "wheelbase_m": 2.87,
+   "length_m": 5.05,
+   "width_m": 1.85,
+   "height_m": 1.35,
+   "track_m": 1.55,
+   "mass_kg": 1700,
+   "power_kw": 104,
+   "source": "https://en.wikipedia.org/wiki/Ford_Thunderbird_(tenth_generation)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Ford Essex 3.8 V6",
+   "cylinders": 6,
+   "layout": "V6",
+   "displacement_l": 3.8,
+   "aspiration": "NA",
+   "redline_rpm": 5000,
+   "stock_power_kw": 104,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#1a1a2a",
+   "secondary": "#f2f2f2",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Near-black with a white 2",
+  "theme": "MBTL Racing",
+  "photos": [
+   "JSG_4640.jpg",
+   "JSG_4641.jpg",
+   "JSG_4733.jpg",
+   "JSG_4802.jpg",
+   "JSG_4640_XL.jpg",
+   "JSG_4641_XL.jpg",
+   "JSG_4733_XL.jpg",
+   "JSG_4802_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "2_mo",
+  "photo_dir": "photos/mid_ohio/2",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "626",
+  "team": "Brown Rubber Soul Racing",
+  "class": "C",
+  "grid": 51,
+  "finish": 70,
+  "class_finish": 18,
+  "laps": 207,
+  "best_lap_s": 111.678,
+  "make": "Mazda",
+  "model": "626 coupe",
+  "generation": "CB (1979-82)",
+  "year": 1981,
+  "body": "coupe",
+  "confidence": "high",
+  "evidence": "Lemons award archive (earlier page): '1981 Mazda 626, Bay Village OH' (team Brown Rubber Soul Racing, pages 250, 276, 295); Photos (Mid-West Crisis gallery, numbers read off the car): brown 2-door coupe with a BMW 'M' tricolour stripe, a spoiler and white 626 | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.51,
+   "length_m": 4.28,
+   "width_m": 1.62,
+   "height_m": 1.35,
+   "track_m": 1.4,
+   "mass_kg": 1000,
+   "power_kw": 59,
+   "source": "https://en.wikipedia.org/wiki/Mazda_Capella",
+   "verified_this_run": true,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Mazda FE 2.0 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.0,
+   "aspiration": "NA",
+   "redline_rpm": 5500,
+   "stock_power_kw": 59,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#7a5a30",
+   "secondary": "#f2f2f2",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Brown with the BMW M tricolour stripe and a white 626",
+  "theme": "Brown Rubber Soul Racing (Beatles pun)",
+  "photos": [
+   "JSG_4548.jpg",
+   "JSG_4949.jpg",
+   "JSG_4548_XL.jpg",
+   "JSG_4949_XL.jpg"
+  ],
+  "photo_sightings": 2,
+  "id": "626",
+  "photo_dir": "photos/mid_ohio/626",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "78",
+  "team": "Four Idiots",
+  "class": "A",
+  "grid": 81,
+  "finish": 71,
+  "class_finish": 19,
+  "laps": 204,
+  "best_lap_s": 105.937,
+  "make": "Mazda",
+  "model": "MX-5 Miata",
+  "generation": "NA (1989-97)",
+  "year": 1993,
+  "body": "roadster",
+  "confidence": "low",
+  "evidence": "Lemons award archive (earlier page): '1997 Geo Metro, Orinda' (team Four Idiots, page 217, number 4: a different car); Photos (Mid-West Crisis gallery, numbers read off the car): teal open roadster with a rear wing and a white 78 | id: number is the id of a different car in an earlier field: buttonwillow #78 Super Troop",
+  "dims": {
+   "wheelbase_m": 2.265,
+   "length_m": 3.95,
+   "width_m": 1.675,
+   "height_m": 1.225,
+   "track_m": 1.41,
+   "mass_kg": 990,
+   "power_kw": 96,
+   "source": "https://en.wikipedia.org/wiki/Mazda_MX-5_(NA)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Mazda BP 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 7000,
+   "stock_power_kw": 96,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#2aa8a0",
+   "secondary": "#f2f2f2",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Teal with white 78",
+  "theme": "Four Idiots",
+  "photos": [
+   "JSG_4242.jpg",
+   "JSG_4242_XL.jpg"
+  ],
+  "photo_sightings": 1,
+  "id": "78_mo",
+  "photo_dir": "photos/mid_ohio/78",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "969",
+  "team": "COLD BEER",
+  "class": "B",
+  "grid": 4,
+  "finish": 72,
+  "class_finish": 35,
+  "laps": 203,
+  "best_lap_s": 114.889,
+  "make": "BMW",
+  "model": "318ti (E36 compact)",
+  "generation": "E36 compact (1994-99)",
+  "year": 1996,
+  "body": "hatch",
+  "confidence": "medium",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): orange, black and blue E36 compact with a flag-topped wing and '969' on the sill | id: number is the id of a different car in an earlier field: buttonwillow #969 Sierra Auto Recycling; sonoma #969 Sierra Auto Recycling",
+  "dims": {
+   "wheelbase_m": 2.7,
+   "length_m": 4.21,
+   "width_m": 1.7,
+   "height_m": 1.36,
+   "track_m": 1.42,
+   "mass_kg": 1250,
+   "power_kw": 103,
+   "source": "https://en.wikipedia.org/wiki/BMW_3_Series_(E36)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M42 1.8 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.8,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 103,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#e8742a",
+   "secondary": "#2a3a8a",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Orange and navy bands, 969, flag wing",
+  "theme": "COLD BEER",
+  "photos": [
+   "JSG_3785.jpg",
+   "JSG_3785_XL.jpg"
+  ],
+  "photo_sightings": 1,
+  "id": "969_mo",
+  "photo_dir": "photos/mid_ohio/969",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "600",
+  "team": "Cream Team",
+  "class": "C",
+  "grid": 74,
+  "finish": 73,
+  "class_finish": 19,
+  "laps": 199,
+  "best_lap_s": 112.646,
+  "make": "Honda",
+  "model": "Civic hatch (undetermined 5-door)",
+  "generation": "small 5-door hatch, 1990s",
+  "year": 1994,
+  "body": "hatch",
+  "confidence": "low",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): dark-green 5-door hatch with 'Cream Ale' leaf decals, a roof spoiler and white 600; model not determined | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.62,
+   "length_m": 4.08,
+   "width_m": 1.695,
+   "height_m": 1.335,
+   "track_m": 1.48,
+   "mass_kg": 1000,
+   "power_kw": 75,
+   "source": "https://en.wikipedia.org/wiki/Honda_Civic_(fifth_generation)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Honda D16Z6 1.6 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.6,
+   "aspiration": "NA",
+   "redline_rpm": 6800,
+   "stock_power_kw": 75,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#1e4a3a",
+   "secondary": "#f2f2f2",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Dark green with 'Cream Ale' lettering, 600",
+  "theme": "Cream Team (Cream Ale)",
+  "photos": [
+   "JSG_3829.jpg",
+   "JSG_3830.jpg",
+   "JSG_3946.jpg",
+   "JSG_4528.jpg",
+   "JSG_4615.jpg",
+   "JSG_3829_XL.jpg",
+   "JSG_3830_XL.jpg",
+   "JSG_3946_XL.jpg",
+   "JSG_4528_XL.jpg",
+   "JSG_4615_XL.jpg"
+  ],
+  "photo_sightings": 5,
+  "id": "600",
+  "photo_dir": "photos/mid_ohio/600",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "77",
+  "team": "Project Merkur Space\u2026.",
+  "class": "B",
+  "grid": 87,
+  "finish": 74,
+  "class_finish": 36,
+  "laps": 160,
+  "best_lap_s": 109.248,
+  "make": "Merkur",
+  "model": "XR4Ti",
+  "generation": "1985-89",
+  "year": 1989,
+  "body": "hatch",
+  "confidence": "high",
+  "evidence": "Lemons award page id 439 (Mid-West Crisis 2026): '1989 Merkur XR4Ti, Canal Winchester OH' (Heroic Fix, team Project Merkur Space Program); Photos (Mid-West Crisis gallery, numbers read off the car): white Sierra-body XR4Ti with the biplane wing, a rainbow nose stripe and a black 77 | id: number is the id of a different car in an earlier field: buttonwillow #77 Dough-ba-mens",
+  "dims": {
+   "wheelbase_m": 2.61,
+   "length_m": 4.46,
+   "width_m": 1.71,
+   "height_m": 1.34,
+   "track_m": 1.45,
+   "mass_kg": 1250,
+   "power_kw": 110,
+   "source": "https://en.wikipedia.org/wiki/Merkur_XR4Ti",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Ford Lima 2.3 I4 turbo",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.3,
+   "aspiration": "turbo",
+   "redline_rpm": 5800,
+   "stock_power_kw": 129,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#f2f2f2",
+   "secondary": "#2a5ac8",
+   "accents": [
+    "#e83a3a"
+   ]
+  },
+  "numbers": {
+   "color": "black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "White with a BMW-M-style rainbow nose stripe, biplane wing",
+  "theme": "Project Merkur Space Program",
+  "photos": [
+   "JSG_5052.jpg",
+   "JSG_5056.jpg",
+   "JSG_5057.jpg",
+   "JSG_5058.jpg",
+   "JSG_5065.jpg",
+   "JSG_5066.jpg",
+   "JSG_5052_XL.jpg",
+   "JSG_5056_XL.jpg",
+   "JSG_5057_XL.jpg",
+   "JSG_5058_XL.jpg",
+   "JSG_5065_XL.jpg",
+   "JSG_5066_XL.jpg"
+  ],
+  "photo_sightings": 6,
+  "id": "77_mo",
+  "photo_dir": "photos/mid_ohio/77",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "845",
+  "team": "Team Musan",
+  "class": "B",
+  "grid": 79,
+  "finish": 75,
+  "class_finish": 37,
+  "laps": 142,
+  "best_lap_s": 119.686,
+  "make": "Ford",
+  "model": "Mustang",
+  "generation": "SN95 New Edge (1999-2004)",
+  "year": 2000,
+  "body": "coupe",
+  "confidence": "medium",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): orange-red coupe with 845 on the door; no archive record | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.573,
+   "length_m": 4.61,
+   "width_m": 1.83,
+   "height_m": 1.34,
+   "track_m": 1.5,
+   "mass_kg": 1450,
+   "power_kw": 142,
+   "source": "https://en.wikipedia.org/wiki/Ford_Mustang_(fourth_generation)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Ford Essex 3.8 V6",
+   "cylinders": 6,
+   "layout": "V6",
+   "displacement_l": 3.8,
+   "aspiration": "NA",
+   "redline_rpm": 5500,
+   "stock_power_kw": 142,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#e8542a",
+   "secondary": "#f2f2f2",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Orange-red with white 845",
+  "theme": "Team Musan",
+  "photos": [
+   "JSG_4159.jpg",
+   "JSG_4243.jpg",
+   "JSG_4159_XL.jpg",
+   "JSG_4243_XL.jpg"
+  ],
+  "photo_sightings": 2,
+  "id": "845",
+  "photo_dir": "photos/mid_ohio/845",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "696",
+  "team": "D.O.M. Racing",
+  "class": "B",
+  "grid": 42,
+  "finish": 76,
+  "class_finish": 38,
+  "laps": 140,
+  "best_lap_s": 119.128,
+  "make": "Ford",
+  "model": "Mustang hatch",
+  "generation": "Fox (1979-93)",
+  "year": 1988,
+  "body": "hatch",
+  "confidence": "medium",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): dark-green 3-door with a small spoiler, white 696 and driver names on the quarter; the Sonoma #696 is a different team | id: number is the id of a different car in an earlier field: sonoma #696 Scuderia Limone Corroto",
+  "dims": {
+   "wheelbase_m": 2.55,
+   "length_m": 4.57,
+   "width_m": 1.75,
+   "height_m": 1.31,
+   "track_m": 1.46,
+   "mass_kg": 1250,
+   "power_kw": 110,
+   "source": "https://en.wikipedia.org/wiki/Ford_Mustang_(third_generation)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Ford Windsor 5.0 V8",
+   "cylinders": 8,
+   "layout": "V8",
+   "displacement_l": 5.0,
+   "aspiration": "NA",
+   "redline_rpm": 5500,
+   "stock_power_kw": 112,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#1e3a2a",
+   "secondary": "#f0d020",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Dark green with white 696 and driver names",
+  "theme": "D.O.M. Racing",
+  "photos": [
+   "JSG_3770.jpg",
+   "JSG_4538.jpg",
+   "JSG_4962.jpg",
+   "JSG_4963.jpg",
+   "JSG_3770_XL.jpg",
+   "JSG_4538_XL.jpg",
+   "JSG_4962_XL.jpg",
+   "JSG_4963_XL.jpg"
+  ],
+  "photo_sightings": 4,
+  "id": "696_mo",
+  "photo_dir": "photos/mid_ohio/696",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "339",
+  "team": "It's Probably Fine",
+  "class": "B",
+  "grid": 47,
+  "finish": 77,
+  "class_finish": 39,
+  "laps": 139,
+  "best_lap_s": 112.438,
+  "make": "Nissan",
+  "model": "Sentra SE-R",
+  "generation": "B13 (1991-94)",
+  "year": 1991,
+  "body": "sedan",
+  "confidence": "high",
+  "evidence": "Lemons award page id 439 (Mid-West Crisis 2026): '1991 Nissan Sentra SE-R, Pittsburgh PA' (Halloween Meets Gasoline Prize, team It's Probably Fine); Photos (Mid-West Crisis gallery, numbers read off the car): cream/mint 2-door with an orange-red stripe and 339 | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.43,
+   "length_m": 4.32,
+   "width_m": 1.645,
+   "height_m": 1.38,
+   "track_m": 1.43,
+   "mass_kg": 1000,
+   "power_kw": 82,
+   "source": "https://en.wikipedia.org/wiki/Nissan_Sentra_(B13)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Nissan GA16DE 1.6 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.6,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 82,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#e8e4d0",
+   "secondary": "#e8542a",
+   "accents": []
+  },
+  "numbers": {
+   "color": "black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Cream/mint with an orange-red stripe, 339",
+  "theme": "It's Probably Fine (a check from team #339 appears in the gallery)",
+  "photos": [
+   "JSG_3987.jpg",
+   "JSG_4078.jpg",
+   "JSG_3987_XL.jpg",
+   "JSG_4078_XL.jpg"
+  ],
+  "photo_sightings": 2,
+  "id": "339",
+  "photo_dir": "photos/mid_ohio/339",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "240",
+  "team": "EAD Racing",
+  "class": "A",
+  "grid": 5,
+  "finish": 78,
+  "class_finish": 20,
+  "laps": 133,
+  "best_lap_s": 107.269,
+  "make": "BMW",
+  "model": "3 Series sedan",
+  "generation": "E36 (1990-99)",
+  "year": 1995,
+  "body": "sedan",
+  "confidence": "medium",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): black E36 4-door with a Steelers logo, a big wing and 240 | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.7,
+   "length_m": 4.433,
+   "width_m": 1.698,
+   "height_m": 1.393,
+   "track_m": 1.42,
+   "mass_kg": 1300,
+   "power_kw": 125,
+   "source": "https://en.wikipedia.org/wiki/BMW_3_Series_(E36)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M50 2.5 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 125,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#1a1a1e",
+   "secondary": "#f0c020",
+   "accents": []
+  },
+  "numbers": {
+   "color": "black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Black with a Steelers logo, a black 240 on a white board",
+  "theme": "EAD Racing",
+  "photos": [
+   "JSG_4370.jpg",
+   "JSG_4416.jpg",
+   "JSG_4370_XL.jpg",
+   "JSG_4416_XL.jpg"
+  ],
+  "photo_sightings": 2,
+  "id": "240",
+  "photo_dir": "photos/mid_ohio/240",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "98",
+  "team": "TMMI Motorsports",
+  "class": "A",
+  "grid": 63,
+  "finish": 79,
+  "class_finish": 21,
+  "laps": 128,
+  "best_lap_s": 102.395,
+  "make": "Toyota",
+  "model": "Camry",
+  "generation": "XV20 (1997-2001)",
+  "year": 1999,
+  "body": "sedan",
+  "confidence": "medium",
+  "evidence": "Lemons award archive (earlier page): '1999 Toyota Camry, Princeton IN' (team TMMI Motorsports, pages 218, 229, 257: TMMI is Toyota's Indiana plant); Photos (Mid-West Crisis gallery, numbers read off the car): digital-camo wrapped 4-door with a tall trunk wing and a white 98 plate | id: number is the id of a different car in an earlier field: buttonwillow #98 Whale Wars Racing",
+  "dims": {
+   "wheelbase_m": 2.67,
+   "length_m": 4.765,
+   "width_m": 1.786,
+   "height_m": 1.43,
+   "track_m": 1.5,
+   "mass_kg": 1400,
+   "power_kw": 97,
+   "source": "https://en.wikipedia.org/wiki/Toyota_Camry_(XV20)",
+   "verified_this_run": true,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Toyota 5S-FE 2.2 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.2,
+   "aspiration": "NA",
+   "redline_rpm": 5800,
+   "stock_power_kw": 97,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#6a7a5a",
+   "secondary": "#c8c0a0",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Digital-camo wrap, white 98",
+  "theme": "TMMI Motorsports (Toyota plant team)",
+  "photos": [
+   "JSG_3745.jpg",
+   "JSG_4488.jpg",
+   "JSG_3745_XL.jpg",
+   "JSG_4488_XL.jpg"
+  ],
+  "photo_sightings": 2,
+  "id": "98_mo",
+  "photo_dir": "photos/mid_ohio/98",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "64",
+  "team": "Misfortune Cookie",
+  "class": "A",
+  "grid": 2,
+  "finish": 80,
+  "class_finish": 22,
+  "laps": 115,
+  "best_lap_s": 104.227,
+  "make": "Mini",
+  "model": "Cooper S",
+  "generation": "R53 (2002-06)",
+  "year": 2004,
+  "body": "hatch",
+  "confidence": "high",
+  "evidence": "Lemons award archive (earlier page): '2004 Mini Cooper S, Royal Oak Michigan' (team Misfortune Cookie, page 370); Photos (Mid-West Crisis gallery, numbers read off the car): grey Cooper S with a chequered roof and a black-and-white 64 roundel | id: number is the id of a different car in an earlier field: buttonwillow #64 Bare Minimum; sonoma #64 Bare Minimum",
+  "dims": {
+   "wheelbase_m": 2.467,
+   "length_m": 3.655,
+   "width_m": 1.688,
+   "height_m": 1.416,
+   "track_m": 1.46,
+   "mass_kg": 1140,
+   "power_kw": 120,
+   "source": "https://en.wikipedia.org/wiki/Mini_Hatch_(R50)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Tritec 1.6 I4 supercharged",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.6,
+   "aspiration": "super",
+   "redline_rpm": 6750,
+   "stock_power_kw": 120,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#8a8e94",
+   "secondary": "#f2f2f2",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Grey with a chequered roof, 64 roundel",
+  "theme": "Misfortune Cookie",
+  "photos": [
+   "JSG_3824.jpg",
+   "JSG_3825.jpg",
+   "JSG_4477.jpg",
+   "JSG_3824_XL.jpg",
+   "JSG_3825_XL.jpg",
+   "JSG_4477_XL.jpg"
+  ],
+  "photo_sightings": 3,
+  "id": "64_mo",
+  "photo_dir": "photos/mid_ohio/64",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "562",
+  "team": "SUPERCHEAT (has a\u2026.",
+  "class": "A",
+  "grid": 40,
+  "finish": 81,
+  "class_finish": 23,
+  "laps": 78,
+  "best_lap_s": 106.968,
+  "make": "BMW",
+  "model": "5 Series sedan",
+  "generation": "E39 (1995-2003)",
+  "year": 1998,
+  "body": "sedan",
+  "confidence": "high",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): purple, red and yellow E39 sedan with 'SUPERCHEAT AUTO' on the door and 562 on the roof; the BW / Sonoma #562 '3off Racing' is a different team | id: number is the id of a different car in an earlier field: buttonwillow #562 3off Racing (B Team!); sonoma #562 3off Racing (B Team!)",
+  "dims": {
+   "wheelbase_m": 2.83,
+   "length_m": 4.775,
+   "width_m": 1.8,
+   "height_m": 1.435,
+   "track_m": 1.53,
+   "mass_kg": 1550,
+   "power_kw": 170,
+   "source": "https://en.wikipedia.org/wiki/BMW_5_Series_(E39)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M54 3.0 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 3.0,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 170,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#7a3aa8",
+   "secondary": "#f0d020",
+   "accents": [
+    "#d83a3a"
+   ]
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Purple front, red and yellow rear, 'SUPERCHEAT AUTO'",
+  "theme": "SUPERCHEAT Auto",
+  "photos": [
+   "JSG_3719.jpg",
+   "JSG_3803.jpg",
+   "JSG_3719_XL.jpg",
+   "JSG_3803_XL.jpg"
+  ],
+  "photo_sightings": 2,
+  "id": "562_mo",
+  "photo_dir": "photos/mid_ohio/562",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "888",
+  "team": "The Volvo from Hell",
+  "class": "C",
+  "grid": 49,
+  "finish": 82,
+  "class_finish": 20,
+  "laps": 66,
+  "best_lap_s": 128.189,
+  "make": "Volvo",
+  "model": "244 sedan",
+  "generation": "240 (1975-93)",
+  "year": 1985,
+  "body": "sedan",
+  "confidence": "medium",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): orange and black 4-door with black flame decals and a white 888; BW / Sonoma #888 are different teams | id: number is the id of a different car in an earlier field: buttonwillow #888 True Performance \u2026.",
+  "dims": {
+   "wheelbase_m": 2.649,
+   "length_m": 4.823,
+   "width_m": 1.709,
+   "height_m": 1.43,
+   "track_m": 1.43,
+   "mass_kg": 1300,
+   "power_kw": 85,
+   "source": "https://en.wikipedia.org/wiki/Volvo_200_Series",
+   "verified_this_run": true,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Volvo B230F 2.3 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 2.3,
+   "aspiration": "NA",
+   "redline_rpm": 5500,
+   "stock_power_kw": 85,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#e8742a",
+   "secondary": "#1a1a1e",
+   "accents": []
+  },
+  "numbers": {
+   "color": "white",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Orange and black with flame decals, white 888",
+  "theme": "The Volvo from Hell",
+  "photos": [
+   "JSG_3942.jpg",
+   "JSG_3942_XL.jpg"
+  ],
+  "photo_sightings": 1,
+  "id": "888_mo",
+  "photo_dir": "photos/mid_ohio/888",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "318",
+  "team": "Fat Bastard Racing.",
+  "class": "C",
+  "grid": 78,
+  "finish": 83,
+  "class_finish": 21,
+  "laps": 57,
+  "best_lap_s": 127.332,
+  "make": "Chrysler",
+  "model": "Fifth Avenue",
+  "generation": "M-body (1982-83)",
+  "year": 1983,
+  "body": "sedan",
+  "confidence": "high",
+  "evidence": "Lemons award archive (earlier page): '1982 Chrysler Fifth Avenue, Greensburg Kentucky' and '1983 Chrylser Fifth Avenure' (team Fat Bastard Racing, pages 391, 439: the I Got Screwed award); Photos (Mid-West Crisis gallery, numbers read off the car): cream/silver M-body sedan with a roof satellite dish, a bonnet scoop and a 318 on the tail | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.863,
+   "length_m": 5.25,
+   "width_m": 1.839,
+   "height_m": 1.4,
+   "track_m": 1.5,
+   "mass_kg": 1500,
+   "power_kw": 97,
+   "source": "https://en.wikipedia.org/wiki/Chrysler_Fifth_Avenue",
+   "verified_this_run": true,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Chrysler LA 318 5.2 V8",
+   "cylinders": 8,
+   "layout": "V8",
+   "displacement_l": 5.2,
+   "aspiration": "NA",
+   "redline_rpm": 4500,
+   "stock_power_kw": 97,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#d8d4c0",
+   "secondary": "#8a8e94",
+   "accents": []
+  },
+  "numbers": {
+   "color": "black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Cream and silver, a satellite dish on the roof, a hood scoop",
+  "theme": "Fat Bastard Racing (I Got Screwed award)",
+  "photos": [
+   "JSG_3928.jpg",
+   "JSG_3928_XL.jpg"
+  ],
+  "photo_sightings": 1,
+  "id": "318",
+  "photo_dir": "photos/mid_ohio/318",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "700",
+  "team": "Dickie Speedmaster Racing",
+  "class": "A",
+  "grid": 75,
+  "finish": 85,
+  "class_finish": 24,
+  "laps": 56,
+  "best_lap_s": 116.211,
+  "make": "Toyota",
+  "model": "MR2",
+  "generation": "AW11 (1984-89)",
+  "year": 1987,
+  "body": "coupe",
+  "confidence": "high",
+  "evidence": "Lemons award archive (earlier page): '1987 Toyota MR6, Columbus OH' (team Dickie Speedmaster Racing, page 397, number 700 then); Photos (Mid-West Crisis gallery, numbers read off the car): white mid-engine coupe with a US flag decal and 700 on the door | id: number is the id of a different car in an earlier field: laguna #700 SKINNY KOYOTE RACING Team A",
+  "dims": {
+   "wheelbase_m": 2.32,
+   "length_m": 3.925,
+   "width_m": 1.665,
+   "height_m": 1.25,
+   "track_m": 1.44,
+   "mass_kg": 1050,
+   "power_kw": 84,
+   "source": "https://en.wikipedia.org/wiki/Toyota_MR2_(W10)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "Toyota 4A-GE 1.6 I4",
+   "cylinders": 4,
+   "layout": "I4",
+   "displacement_l": 1.6,
+   "aspiration": "NA",
+   "redline_rpm": 7600,
+   "stock_power_kw": 84,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#f2f2f2",
+   "secondary": "#d83a3a",
+   "accents": []
+  },
+  "numbers": {
+   "color": "black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "White with a US flag decal, 700",
+  "theme": "Dickie Speedmaster Racing (MR6 joke)",
+  "photos": [
+   "JSG_4925.jpg",
+   "JSG_4925_XL.jpg"
+  ],
+  "photo_sightings": 1,
+  "id": "700_mo",
+  "photo_dir": "photos/mid_ohio/700",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "601",
+  "team": "CREAM Logistics",
+  "class": "A",
+  "grid": 43,
+  "finish": 86,
+  "class_finish": 25,
+  "laps": 52,
+  "best_lap_s": 110.59,
+  "make": "BMW",
+  "model": "3 Series coupe",
+  "generation": "E30 (1982-91)",
+  "year": 1988,
+  "body": "coupe",
+  "confidence": "medium",
+  "evidence": "Photos (Mid-West Crisis gallery, numbers read off the car): yellow and black DHL-livery 2-door with a red 601 | id: number free in the Laguna, Buttonwillow and Sonoma fields",
+  "dims": {
+   "wheelbase_m": 2.57,
+   "length_m": 4.325,
+   "width_m": 1.645,
+   "height_m": 1.375,
+   "track_m": 1.41,
+   "mass_kg": 1150,
+   "power_kw": 125,
+   "source": "https://en.wikipedia.org/wiki/BMW_3_Series_(E30)",
+   "verified_this_run": false,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "BMW M20 2.5 I6",
+   "cylinders": 6,
+   "layout": "I6",
+   "displacement_l": 2.5,
+   "aspiration": "NA",
+   "redline_rpm": 6500,
+   "stock_power_kw": 125,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#f0d020",
+   "secondary": "#1a1a1e",
+   "accents": []
+  },
+  "numbers": {
+   "color": "#d83a3a",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Yellow with red DHL lettering and black rear",
+  "theme": "CREAM Logistics (DHL parody)",
+  "photos": [
+   "JSG_3791.jpg",
+   "JSG_4365.jpg",
+   "JSG_3791_XL.jpg",
+   "JSG_4365_XL.jpg"
+  ],
+  "photo_sightings": 2,
+  "id": "601",
+  "photo_dir": "photos/mid_ohio/601",
+  "event": "mid_ohio"
+ },
+ {
+  "number": "24",
+  "team": "Pat-a-PaLemons",
+  "class": "C",
+  "grid": 17,
+  "finish": 87,
+  "class_finish": 22,
+  "laps": 52,
+  "best_lap_s": 127.623,
+  "make": "Buick",
+  "model": "LeSabre",
+  "generation": "7th gen (2000-05)",
+  "year": 2000,
+  "body": "sedan",
+  "confidence": "high",
+  "evidence": "Lemons award page id 439 (Mid-West Crisis 2026): '2000 Buick LeSabre, Columbus OH' (Is There Anything More Ohio Than a LeSabre?, team Pat-a-PaLemons); Photos (Mid-West Crisis gallery, numbers read off the car): cream sedan with a camper-style box on the roof and a crest on the door, 24 | id: number is the id of a different car in an earlier field: buttonwillow #24 Lucky Ass Grass Glass Racing",
+  "dims": {
+   "wheelbase_m": 2.85,
+   "length_m": 5.08,
+   "width_m": 1.867,
+   "height_m": 1.448,
+   "track_m": 1.6,
+   "mass_kg": 1550,
+   "power_kw": 150,
+   "source": "https://en.wikipedia.org/wiki/Buick_LeSabre",
+   "verified_this_run": true,
+   "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
+  },
+  "engine": {
+   "family": "GM 3800 Series II 3.8 V6",
+   "cylinders": 6,
+   "layout": "V6",
+   "displacement_l": 3.8,
+   "aspiration": "NA",
+   "redline_rpm": 5200,
+   "stock_power_kw": 150,
+   "exhaust_note": "stock muffler",
+   "confidence": "medium",
+   "evidence": "Stock engine assumed for the model"
+  },
+  "colors": {
+   "primary": "#e8e0c8",
+   "secondary": "#8a6a3a",
+   "accents": []
+  },
+  "numbers": {
+   "color": "black",
+   "boards": [
+    "door"
+   ]
+  },
+  "livery": "Cream with a camper roof box and eagle crest",
+  "theme": "Pat-a-PaLemons (Pat-a-Cake)",
+  "photos": [
+   "JSG_4469.jpg",
+   "JSG_4469_XL.jpg"
+  ],
+  "photo_sightings": 1,
+  "id": "24_mo",
+  "photo_dir": "photos/mid_ohio/24",
+  "event": "mid_ohio"
+ }
+]
