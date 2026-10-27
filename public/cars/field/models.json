@@ -17651,6 +17651,346 @@
     ]
    ],
    "brake_lamps_fallback": false
+  },
+  {
+   "number": "3",
+   "id": "3_mo",
+   "file": "models/3_mo.glb",
+   "tris": 10534,
+   "bytes": 540368,
+   "materials": 2,
+   "length_m": 3.992,
+   "width_m": 1.675,
+   "height_m": 1.225,
+   "bbox_m": [
+    3.967,
+    1.78,
+    1.28
+   ],
+   "wheelbase_m": 2.265,
+   "track_front_m": 1.41,
+   "track_rear_m": 1.43,
+   "tyre_radius_m": 0.293,
+   "tyre_radius_rear_m": 0.293,
+   "hubs": {
+    "wheel_fl": [
+     0.705,
+     0.293,
+     1.1325
+    ],
+    "wheel_fr": [
+     -0.705,
+     0.293,
+     1.1325
+    ],
+    "wheel_rl": [
+     0.715,
+     0.293,
+     -1.1325
+    ],
+    "wheel_rr": [
+     -0.715,
+     0.293,
+     -1.1325
+    ]
+   },
+   "team": "Snap Crackle Pharmaceuticals Racing",
+   "car": "1991 Mazda MX-5 Miata (NA)",
+   "brake_lamps": [
+    [
+     0.3285,
+     0.4241,
+     -1.8984,
+     0.06
+    ],
+    [
+     -0.3285,
+     0.4241,
+     -1.8976,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 0.5683814303638646,
+    "source_tris": 114755,
+    "model_length": 3.968,
+    "model_width": 1.785,
+    "model_height": 1.176,
+    "tris": 7998,
+    "file": "tools/cars/kit/downloads/711/model.glb"
+   }
+  },
+  {
+   "number": "7",
+   "id": "7_mo",
+   "file": "models/7_mo.glb",
+   "tris": 10810,
+   "bytes": 583340,
+   "materials": 2,
+   "length_m": 3.992,
+   "width_m": 1.675,
+   "height_m": 1.225,
+   "bbox_m": [
+    3.967,
+    1.78,
+    1.439
+   ],
+   "wheelbase_m": 2.265,
+   "track_front_m": 1.41,
+   "track_rear_m": 1.43,
+   "tyre_radius_m": 0.293,
+   "tyre_radius_rear_m": 0.293,
+   "hubs": {
+    "wheel_fl": [
+     0.705,
+     0.293,
+     1.1325
+    ],
+    "wheel_fr": [
+     -0.705,
+     0.293,
+     1.1325
+    ],
+    "wheel_rl": [
+     0.715,
+     0.293,
+     -1.1325
+    ],
+    "wheel_rr": [
+     -0.715,
+     0.293,
+     -1.1325
+    ]
+   },
+   "team": "A futile and stupid gesture",
+   "car": "1990 Mazda MX-5 Miata (NA)",
+   "brake_lamps": [
+    [
+     0.3285,
+     0.4241,
+     -1.8984,
+     0.06
+    ],
+    [
+     -0.3285,
+     0.4241,
+     -1.8976,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 0.5683814303638646,
+    "source_tris": 114755,
+    "model_length": 3.968,
+    "model_width": 1.785,
+    "model_height": 1.176,
+    "tris": 7998,
+    "file": "tools/cars/kit/downloads/711/model.glb"
+   }
+  },
+  {
+   "number": "11",
+   "id": "11_mo",
+   "file": "models/11_mo.glb",
+   "tris": 10864,
+   "bytes": 581568,
+   "materials": 2,
+   "length_m": 3.992,
+   "width_m": 1.675,
+   "height_m": 1.225,
+   "bbox_m": [
+    3.967,
+    1.78,
+    1.245
+   ],
+   "wheelbase_m": 2.265,
+   "track_front_m": 1.41,
+   "track_rear_m": 1.43,
+   "tyre_radius_m": 0.293,
+   "tyre_radius_rear_m": 0.293,
+   "hubs": {
+    "wheel_fl": [
+     0.705,
+     0.293,
+     1.1325
+    ],
+    "wheel_fr": [
+     -0.705,
+     0.293,
+     1.1325
+    ],
+    "wheel_rl": [
+     0.715,
+     0.293,
+     -1.1325
+    ],
+    "wheel_rr": [
+     -0.715,
+     0.293,
+     -1.1325
+    ]
+   },
+   "team": "Lemon Lime Hawaiian...",
+   "car": "1992 Mazda MX-5 Miata (NA), hardtop",
+   "brake_lamps": [
+    [
+     0.3285,
+     0.4241,
+     -1.8984,
+     0.06
+    ],
+    [
+     -0.3285,
+     0.4241,
+     -1.8976,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 0.5683814303638646,
+    "source_tris": 114755,
+    "model_length": 3.968,
+    "model_width": 1.785,
+    "model_height": 1.176,
+    "tris": 7998,
+    "file": "tools/cars/kit/downloads/711/model.glb"
+   }
+  },
+  {
+   "number": "78",
+   "id": "78_mo",
+   "file": "models/78_mo.glb",
+   "tris": 10804,
+   "bytes": 557196,
+   "materials": 2,
+   "length_m": 3.992,
+   "width_m": 1.675,
+   "height_m": 1.225,
+   "bbox_m": [
+    3.967,
+    1.78,
+    1.245
+   ],
+   "wheelbase_m": 2.265,
+   "track_front_m": 1.41,
+   "track_rear_m": 1.43,
+   "tyre_radius_m": 0.293,
+   "tyre_radius_rear_m": 0.293,
+   "hubs": {
+    "wheel_fl": [
+     0.705,
+     0.293,
+     1.1325
+    ],
+    "wheel_fr": [
+     -0.705,
+     0.293,
+     1.1325
+    ],
+    "wheel_rl": [
+     0.715,
+     0.293,
+     -1.1325
+    ],
+    "wheel_rr": [
+     -0.715,
+     0.293,
+     -1.1325
+    ]
+   },
+   "team": "Four Idiots",
+   "car": "Mazda MX-5 Miata, hardtop (NA body)",
+   "brake_lamps": [
+    [
+     0.3285,
+     0.4241,
+     -1.8984,
+     0.06
+    ],
+    [
+     -0.3285,
+     0.4241,
+     -1.8976,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 0.5683814303638646,
+    "source_tris": 114755,
+    "model_length": 3.968,
+    "model_width": 1.785,
+    "model_height": 1.176,
+    "tris": 7998,
+    "file": "tools/cars/kit/downloads/711/model.glb"
+   }
+  },
+  {
+   "number": "190",
+   "id": "190",
+   "file": "models/190.glb",
+   "tris": 8514,
+   "bytes": 527468,
+   "materials": 2,
+   "length_m": 4.38,
+   "width_m": 1.72,
+   "height_m": 1.425,
+   "bbox_m": [
+    4.52,
+    1.92,
+    1.425
+   ],
+   "wheelbase_m": 2.61,
+   "track_front_m": 1.47,
+   "track_rear_m": 1.46,
+   "tyre_radius_m": 0.3,
+   "tyre_radius_rear_m": 0.3,
+   "hubs": {
+    "wheel_fl": [
+     0.735,
+     0.3,
+     1.305
+    ],
+    "wheel_fr": [
+     -0.735,
+     0.3,
+     1.305
+    ],
+    "wheel_rl": [
+     0.73,
+     0.3,
+     -1.305
+    ],
+    "wheel_rr": [
+     -0.73,
+     0.3,
+     -1.305
+    ]
+   },
+   "team": "Peacockified Racing",
+   "car": "2004 Hyundai Elantra (XD) sedan",
+   "brake_lamps": [
+    [
+     0.62,
+     0.93,
+     -2.2446,
+     0.12
+    ],
+    [
+     -0.62,
+     0.93,
+     -2.2447,
+     0.12
+    ]
+   ],
+   "brake_lamps_fallback": false
   }
  ]
 }
