@@ -1,5 +1,5 @@
 {
- "about": "Field car models built by tools/cars/build_car.py. Frame as CONTRACTS.md §1/§3: glTF +Z nose, +Y up, +X left, metres; nodes body + wheel_fl/fr/rl/rr (hub pivots, axle local +X). hubs are glTF translations; tyre_radius_m is the wheel mesh radius.",
+ "about": "Field car models built by tools/cars/build_car.py. Frame as CONTRACTS.md \u00a71/\u00a73: glTF +Z nose, +Y up, +X left, metres; nodes body + wheel_fl/fr/rl/rr (hub pivots, axle local +X). hubs are glTF translations; tyre_radius_m is the wheel mesh radius.",
  "cars": [
   {
    "number": "0",
@@ -1161,6 +1161,76 @@
     "model_height": 1.407,
     "tris": 4664,
     "file": "tools/cars/kit/downloads/11/model.glb"
+   }
+  },
+  {
+   "number": "12",
+   "id": "12",
+   "file": "models/12.glb",
+   "tris": 11700,
+   "bytes": 699100,
+   "materials": 2,
+   "length_m": 4.21,
+   "width_m": 1.698,
+   "height_m": 1.393,
+   "bbox_m": [
+    4.402,
+    1.781,
+    1.47
+   ],
+   "wheelbase_m": 2.7,
+   "track_front_m": 1.42,
+   "track_rear_m": 1.43,
+   "tyre_radius_m": 0.3,
+   "tyre_radius_rear_m": 0.3,
+   "hubs": {
+    "wheel_fl": [
+     0.71,
+     0.3,
+     1.35
+    ],
+    "wheel_fr": [
+     -0.71,
+     0.3,
+     1.35
+    ],
+    "wheel_rl": [
+     0.715,
+     0.3,
+     -1.35
+    ],
+    "wheel_rr": [
+     -0.715,
+     0.3,
+     -1.35
+    ]
+   },
+   "team": "Murder Whornet",
+   "car": "1996 BMW 318ti (E36 Compact)",
+   "brake_lamps": [
+    [
+     0.3902,
+     0.5528,
+     -2.1352,
+     0.06
+    ],
+    [
+     -0.3902,
+     0.5528,
+     -2.1304,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 0.9926470588235295,
+    "source_tris": 998542,
+    "model_length": 4.238,
+    "model_width": 1.786,
+    "model_height": 1.401,
+    "tris": 9352,
+    "file": "tools/cars/kit/downloads/0_bw/model.glb"
    }
   },
   {
@@ -4318,6 +4388,80 @@
    }
   },
   {
+   "number": "57",
+   "id": "57",
+   "file": "models/57.glb",
+   "tris": 3769,
+   "bytes": 291440,
+   "materials": 2,
+   "length_m": 4.562,
+   "width_m": 1.755,
+   "height_m": 1.323,
+   "bbox_m": [
+    4.549,
+    1.709,
+    1.348
+   ],
+   "wheelbase_m": 2.553,
+   "track_front_m": 1.45,
+   "track_rear_m": 1.46,
+   "tyre_radius_m": 0.326,
+   "tyre_radius_rear_m": 0.326,
+   "hubs": {
+    "wheel_fl": [
+     0.725,
+     0.326,
+     1.2765
+    ],
+    "wheel_fr": [
+     -0.725,
+     0.326,
+     1.2765
+    ],
+    "wheel_rl": [
+     0.73,
+     0.326,
+     -1.2765
+    ],
+    "wheel_rr": [
+     -0.73,
+     0.326,
+     -1.2765
+    ]
+   },
+   "team": "Garage 57",
+   "car": "1993 Ford Mustang notchback (Fox body)",
+   "brake_lamps": [
+    [
+     0.51,
+     0.735,
+     -2.2002,
+     0.12
+    ],
+    [
+     -0.51,
+     0.735,
+     -2.2004,
+     0.12
+    ]
+   ],
+   "brake_lamps_fallback": false,
+   "import": {
+    "method": "named wheel parts",
+    "scale": 0.8481962398861695,
+    "source_tris": 4230,
+    "model_track": 1.497,
+    "model_tyre_radius": 0.322,
+    "hub_z_front": 0.321,
+    "hub_z_rear": 0.331,
+    "model_length": 4.544,
+    "model_width": 1.774,
+    "model_height": 1.348,
+    "tris": 957,
+    "file": "tools/cars/kit/downloads/280_ssp/model.glb"
+   }
+  },
+  {
    "number": "58",
    "id": "58",
    "file": "models/58.glb",
@@ -6136,6 +6280,80 @@
    }
   },
   {
+   "number": "82",
+   "id": "82_mo",
+   "file": "models/82_mo.glb",
+   "tris": 3969,
+   "bytes": 315444,
+   "materials": 2,
+   "length_m": 4.562,
+   "width_m": 1.755,
+   "height_m": 1.323,
+   "bbox_m": [
+    4.549,
+    1.709,
+    1.348
+   ],
+   "wheelbase_m": 2.553,
+   "track_front_m": 1.45,
+   "track_rear_m": 1.46,
+   "tyre_radius_m": 0.326,
+   "tyre_radius_rear_m": 0.326,
+   "hubs": {
+    "wheel_fl": [
+     0.725,
+     0.326,
+     1.2765
+    ],
+    "wheel_fr": [
+     -0.725,
+     0.326,
+     1.2765
+    ],
+    "wheel_rl": [
+     0.73,
+     0.326,
+     -1.2765
+    ],
+    "wheel_rr": [
+     -0.73,
+     0.326,
+     -1.2765
+    ]
+   },
+   "team": "Hoffshaw's FrankenStang",
+   "car": "1985 Ford Mustang (Fox body)",
+   "brake_lamps": [
+    [
+     0.51,
+     0.735,
+     -2.2002,
+     0.12
+    ],
+    [
+     -0.51,
+     0.735,
+     -2.2004,
+     0.12
+    ]
+   ],
+   "brake_lamps_fallback": false,
+   "import": {
+    "method": "named wheel parts",
+    "scale": 0.8481962398861695,
+    "source_tris": 4230,
+    "model_track": 1.497,
+    "model_tyre_radius": 0.322,
+    "hub_z_front": 0.321,
+    "hub_z_rear": 0.331,
+    "model_length": 4.544,
+    "model_width": 1.774,
+    "model_height": 1.348,
+    "tris": 957,
+    "file": "tools/cars/kit/downloads/280_ssp/model.glb"
+   }
+  },
+  {
    "number": "83",
    "id": "83",
    "file": "models/83.glb",
@@ -6397,6 +6615,80 @@
     "model_height": 1.41,
     "tris": 7071,
     "file": "tools/cars/kit/downloads/191/model.glb"
+   }
+  },
+  {
+   "number": "86",
+   "id": "86_mo",
+   "file": "models/86_mo.glb",
+   "tris": 3985,
+   "bytes": 397892,
+   "materials": 2,
+   "length_m": 4.562,
+   "width_m": 1.755,
+   "height_m": 1.323,
+   "bbox_m": [
+    4.549,
+    1.709,
+    1.348
+   ],
+   "wheelbase_m": 2.553,
+   "track_front_m": 1.45,
+   "track_rear_m": 1.46,
+   "tyre_radius_m": 0.326,
+   "tyre_radius_rear_m": 0.326,
+   "hubs": {
+    "wheel_fl": [
+     0.725,
+     0.326,
+     1.2765
+    ],
+    "wheel_fr": [
+     -0.725,
+     0.326,
+     1.2765
+    ],
+    "wheel_rl": [
+     0.73,
+     0.326,
+     -1.2765
+    ],
+    "wheel_rr": [
+     -0.73,
+     0.326,
+     -1.2765
+    ]
+   },
+   "team": "Initial D-NF",
+   "car": "1987 Ford Mustang notchback (Fox body)",
+   "brake_lamps": [
+    [
+     0.51,
+     0.735,
+     -2.2002,
+     0.12
+    ],
+    [
+     -0.51,
+     0.735,
+     -2.2004,
+     0.12
+    ]
+   ],
+   "brake_lamps_fallback": false,
+   "import": {
+    "method": "named wheel parts",
+    "scale": 0.8481962398861695,
+    "source_tris": 4230,
+    "model_track": 1.497,
+    "model_tyre_radius": 0.322,
+    "hub_z_front": 0.321,
+    "hub_z_rear": 0.331,
+    "model_length": 4.544,
+    "model_width": 1.774,
+    "model_height": 1.348,
+    "tris": 957,
+    "file": "tools/cars/kit/downloads/280_ssp/model.glb"
    }
   },
   {
@@ -8824,6 +9116,88 @@
    }
   },
   {
+   "number": "147",
+   "id": "147",
+   "file": "models/147.glb",
+   "tris": 11690,
+   "bytes": 584084,
+   "materials": 2,
+   "length_m": 3.965,
+   "width_m": 1.666,
+   "height_m": 1.331,
+   "bbox_m": [
+    4.266,
+    1.855,
+    1.396
+   ],
+   "wheelbase_m": 2.5,
+   "track_front_m": 1.45,
+   "track_rear_m": 1.46,
+   "tyre_radius_m": 0.289,
+   "tyre_radius_rear_m": 0.289,
+   "hubs": {
+    "wheel_fl": [
+     0.725,
+     0.289,
+     1.25
+    ],
+    "wheel_fr": [
+     -0.725,
+     0.289,
+     1.25
+    ],
+    "wheel_rl": [
+     0.73,
+     0.289,
+     -1.25
+    ],
+    "wheel_rr": [
+     -0.73,
+     0.289,
+     -1.25
+    ]
+   },
+   "team": "NOT-e Boys",
+   "car": "1990 Honda Civic EF 3-door hatchback",
+   "brake_lamps": [
+    [
+     0.58,
+     0.71,
+     -1.8362,
+     0.21
+    ],
+    [
+     -0.58,
+     0.71,
+     -1.8356,
+     0.21
+    ],
+    [
+     0.185,
+     0.71,
+     -1.8736,
+     0.18
+    ],
+    [
+     -0.185,
+     0.71,
+     -1.8743,
+     0.18
+    ]
+   ],
+   "brake_lamps_fallback": false,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 1.0080238700052417,
+    "source_tris": 999583,
+    "model_length": 4.004,
+    "model_width": 2.062,
+    "model_height": 1.333,
+    "tris": 5900,
+    "file": "tools/cars/kit/downloads/70_ef/model.glb"
+   }
+  },
+  {
    "number": "150",
    "id": "150",
    "file": "models/150.glb",
@@ -8995,7 +9369,7 @@
      -1.2
     ]
    },
-   "team": "Malört Racing Development (MRD)",
+   "team": "Mal\u00f6rt Racing Development (MRD)",
    "car": "1981 Toyota Corolla (E70) wagon",
    "brake_lamps": [
     [
@@ -9342,6 +9716,92 @@
     ]
    ],
    "brake_lamps_fallback": false
+  },
+  {
+   "number": "187",
+   "id": "187",
+   "file": "models/187.glb",
+   "tris": 11692,
+   "bytes": 557568,
+   "materials": 2,
+   "length_m": 4.544,
+   "width_m": 1.773,
+   "height_m": 1.311,
+   "bbox_m": [
+    4.602,
+    1.794,
+    1.312
+   ],
+   "wheelbase_m": 2.611,
+   "track_front_m": 1.514,
+   "track_rear_m": 1.509,
+   "tyre_radius_m": 0.316,
+   "tyre_radius_rear_m": 0.316,
+   "hubs": {
+    "wheel_fl": [
+     0.757,
+     0.316,
+     1.3055
+    ],
+    "wheel_fr": [
+     -0.757,
+     0.316,
+     1.3055
+    ],
+    "wheel_rl": [
+     0.7545,
+     0.316,
+     -1.3055
+    ],
+    "wheel_rr": [
+     -0.7545,
+     0.316,
+     -1.3055
+    ]
+   },
+   "team": "CROWN HICKTORIOUS",
+   "car": "1993 Ford Probe GT (2nd gen)",
+   "brake_lamps": [
+    [
+     0.45,
+     0.8,
+     -2.2625,
+     0.28
+    ],
+    [
+     -0.45,
+     0.8,
+     -2.2625,
+     0.28
+    ],
+    [
+     0.1,
+     0.8,
+     -2.2772,
+     0.1
+    ],
+    [
+     -0.1,
+     0.8,
+     -2.2772,
+     0.1
+    ]
+   ],
+   "brake_lamps_fallback": false,
+   "import": {
+    "method": "named wheel parts",
+    "scale": 0.998852302248714,
+    "source_tris": 74890,
+    "model_track": 1.512,
+    "model_tyre_radius": 0.316,
+    "hub_z_front": 0.316,
+    "hub_z_rear": 0.316,
+    "model_length": 4.623,
+    "model_width": 1.944,
+    "model_height": 1.997,
+    "tris": 8996,
+    "file": "public/cars/probe_gt/probe.glb"
+   }
   },
   {
    "number": "189",
@@ -11496,6 +11956,76 @@
    }
   },
   {
+   "number": "330",
+   "id": "330",
+   "file": "models/330.glb",
+   "tris": 11820,
+   "bytes": 704944,
+   "materials": 2,
+   "length_m": 4.21,
+   "width_m": 1.698,
+   "height_m": 1.393,
+   "bbox_m": [
+    4.414,
+    1.781,
+    1.43
+   ],
+   "wheelbase_m": 2.7,
+   "track_front_m": 1.42,
+   "track_rear_m": 1.43,
+   "tyre_radius_m": 0.3,
+   "tyre_radius_rear_m": 0.3,
+   "hubs": {
+    "wheel_fl": [
+     0.71,
+     0.3,
+     1.35
+    ],
+    "wheel_fr": [
+     -0.71,
+     0.3,
+     1.35
+    ],
+    "wheel_rl": [
+     0.715,
+     0.3,
+     -1.35
+    ],
+    "wheel_rr": [
+     -0.715,
+     0.3,
+     -1.35
+    ]
+   },
+   "team": "Rubber City Racing",
+   "car": "1996 BMW 318ti (E36 Compact)",
+   "brake_lamps": [
+    [
+     0.3902,
+     0.5528,
+     -2.1352,
+     0.06
+    ],
+    [
+     -0.3902,
+     0.5528,
+     -2.1304,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 0.9926470588235295,
+    "source_tris": 998542,
+    "model_length": 4.238,
+    "model_width": 1.786,
+    "model_height": 1.401,
+    "tris": 9352,
+    "file": "tools/cars/kit/downloads/0_bw/model.glb"
+   }
+  },
+  {
    "number": "333",
    "id": "333",
    "file": "models/333.glb",
@@ -12506,6 +13036,76 @@
    "brake_lamps_fallback": false
   },
   {
+   "number": "513",
+   "id": "513",
+   "file": "models/513.glb",
+   "tris": 11764,
+   "bytes": 710452,
+   "materials": 2,
+   "length_m": 4.21,
+   "width_m": 1.698,
+   "height_m": 1.393,
+   "bbox_m": [
+    4.378,
+    1.781,
+    1.889
+   ],
+   "wheelbase_m": 2.7,
+   "track_front_m": 1.42,
+   "track_rear_m": 1.43,
+   "tyre_radius_m": 0.3,
+   "tyre_radius_rear_m": 0.3,
+   "hubs": {
+    "wheel_fl": [
+     0.71,
+     0.3,
+     1.35
+    ],
+    "wheel_fr": [
+     -0.71,
+     0.3,
+     1.35
+    ],
+    "wheel_rl": [
+     0.715,
+     0.3,
+     -1.35
+    ],
+    "wheel_rr": [
+     -0.715,
+     0.3,
+     -1.35
+    ]
+   },
+   "team": "Team Non Sequitur",
+   "car": "1995 BMW 318ti (E36 Compact)",
+   "brake_lamps": [
+    [
+     0.3822,
+     0.5585,
+     -2.137,
+     0.06
+    ],
+    [
+     -0.3822,
+     0.5585,
+     -2.1324,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 0.9926470588235295,
+    "source_tris": 998542,
+    "model_length": 4.238,
+    "model_width": 1.786,
+    "model_height": 1.401,
+    "tris": 8708,
+    "file": "tools/cars/kit/downloads/0_bw/model.glb"
+   }
+  },
+  {
    "number": "515",
    "id": "515",
    "file": "models/515.glb",
@@ -12787,8 +13387,8 @@
    "number": "535",
    "id": "535",
    "file": "models/535.glb",
-   "tris": 10233,
-   "bytes": 552940,
+   "tris": 10245,
+   "bytes": 557184,
    "materials": 2,
    "length_m": 4.558,
    "width_m": 1.739,
@@ -13066,6 +13666,76 @@
    }
   },
   {
+   "number": "562",
+   "id": "562_mo",
+   "file": "models/562_mo.glb",
+   "tris": 10685,
+   "bytes": 631080,
+   "materials": 2,
+   "length_m": 4.775,
+   "width_m": 1.8,
+   "height_m": 1.435,
+   "bbox_m": [
+    4.776,
+    2.042,
+    1.462
+   ],
+   "wheelbase_m": 2.83,
+   "track_front_m": 1.512,
+   "track_rear_m": 1.526,
+   "tyre_radius_m": 0.315,
+   "tyre_radius_rear_m": 0.315,
+   "hubs": {
+    "wheel_fl": [
+     0.756,
+     0.315,
+     1.415
+    ],
+    "wheel_fr": [
+     -0.756,
+     0.315,
+     1.415
+    ],
+    "wheel_rl": [
+     0.763,
+     0.315,
+     -1.415
+    ],
+    "wheel_rr": [
+     -0.763,
+     0.315,
+     -1.415
+    ]
+   },
+   "team": "SUPERCHEAT (has a....)",
+   "car": "2000 BMW 5 Series sedan (E39)",
+   "brake_lamps": [
+    [
+     0.4454,
+     0.5277,
+     -2.4652,
+     0.06
+    ],
+    [
+     -0.4454,
+     0.5277,
+     -2.4655,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "none found: scaled by length, hubs from front_overhang",
+    "scale": 0.9920806704856515,
+    "source_tris": 234205,
+    "model_length": 4.775,
+    "model_width": 2.043,
+    "model_height": 1.449,
+    "tris": 8101,
+    "file": "tools/cars/kit/downloads/69/model.glb"
+   }
+  },
+  {
    "number": "605",
    "id": "605",
    "file": "models/605.glb",
@@ -13124,6 +13794,80 @@
     ]
    ],
    "brake_lamps_fallback": true
+  },
+  {
+   "number": "609",
+   "id": "609",
+   "file": "models/609.glb",
+   "tris": 10260,
+   "bytes": 514940,
+   "materials": 2,
+   "length_m": 4.54,
+   "width_m": 1.757,
+   "height_m": 1.369,
+   "bbox_m": [
+    4.507,
+    1.961,
+    1.366
+   ],
+   "wheelbase_m": 2.725,
+   "track_front_m": 1.48,
+   "track_rear_m": 1.5,
+   "tyre_radius_m": 0.317,
+   "tyre_radius_rear_m": 0.317,
+   "hubs": {
+    "wheel_fl": [
+     0.74,
+     0.317,
+     1.3625
+    ],
+    "wheel_fr": [
+     -0.74,
+     0.317,
+     1.3625
+    ],
+    "wheel_rl": [
+     0.75,
+     0.317,
+     -1.3625
+    ],
+    "wheel_rr": [
+     -0.75,
+     0.317,
+     -1.3625
+    ]
+   },
+   "team": "FrogLegs Racing",
+   "car": "2001 BMW 330Ci coupe (E46)",
+   "brake_lamps": [
+    [
+     0.406,
+     0.6021,
+     -2.3174,
+     0.06
+    ],
+    [
+     -0.406,
+     0.6021,
+     -2.3177,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "named wheel parts",
+    "scale": 0.937485672033081,
+    "source_tris": 32788,
+    "model_track": 1.534,
+    "model_tyre_radius": 0.313,
+    "hub_z_front": 0.317,
+    "hub_z_rear": 0.317,
+    "model_length": 4.508,
+    "model_width": 1.961,
+    "model_height": 1.366,
+    "tris": 7665,
+    "file": "tools/cars/kit/downloads/77_lx/model.glb"
+   }
   },
   {
    "number": "630",
@@ -13573,6 +14317,76 @@
    "brake_lamps_fallback": false
   },
   {
+   "number": "691",
+   "id": "691",
+   "file": "models/691.glb",
+   "tris": 11700,
+   "bytes": 757220,
+   "materials": 2,
+   "length_m": 4.21,
+   "width_m": 1.698,
+   "height_m": 1.393,
+   "bbox_m": [
+    4.39,
+    1.781,
+    1.403
+   ],
+   "wheelbase_m": 2.7,
+   "track_front_m": 1.42,
+   "track_rear_m": 1.43,
+   "tyre_radius_m": 0.3,
+   "tyre_radius_rear_m": 0.3,
+   "hubs": {
+    "wheel_fl": [
+     0.71,
+     0.3,
+     1.35
+    ],
+    "wheel_fr": [
+     -0.71,
+     0.3,
+     1.35
+    ],
+    "wheel_rl": [
+     0.715,
+     0.3,
+     -1.35
+    ],
+    "wheel_rr": [
+     -0.715,
+     0.3,
+     -1.35
+    ]
+   },
+   "team": "Layin Pipe Racing",
+   "car": "1996 BMW 318ti (E36 Compact)",
+   "brake_lamps": [
+    [
+     0.3902,
+     0.5528,
+     -2.1352,
+     0.06
+    ],
+    [
+     -0.3902,
+     0.5528,
+     -2.1304,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 0.9926470588235295,
+    "source_tris": 998542,
+    "model_length": 4.238,
+    "model_width": 1.786,
+    "model_height": 1.401,
+    "tris": 9352,
+    "file": "tools/cars/kit/downloads/0_bw/model.glb"
+   }
+  },
+  {
    "number": "696",
    "id": "696",
    "file": "models/696.glb",
@@ -13711,13 +14525,13 @@
    "id": "700_mo",
    "file": "models/700_mo.glb",
    "tris": 4750,
-   "bytes": 333776,
+   "bytes": 334656,
    "materials": 2,
    "length_m": 3.925,
    "width_m": 1.665,
    "height_m": 1.25,
    "bbox_m": [
-    4.012,
+    3.981,
     1.911,
     1.252
    ],
@@ -14841,6 +15655,80 @@
     ]
    ],
    "brake_lamps_fallback": false
+  },
+  {
+   "number": "806",
+   "id": "806",
+   "file": "models/806.glb",
+   "tris": 10224,
+   "bytes": 530424,
+   "materials": 2,
+   "length_m": 4.54,
+   "width_m": 1.757,
+   "height_m": 1.369,
+   "bbox_m": [
+    4.5,
+    1.961,
+    1.366
+   ],
+   "wheelbase_m": 2.725,
+   "track_front_m": 1.48,
+   "track_rear_m": 1.5,
+   "tyre_radius_m": 0.317,
+   "tyre_radius_rear_m": 0.317,
+   "hubs": {
+    "wheel_fl": [
+     0.74,
+     0.317,
+     1.3625
+    ],
+    "wheel_fr": [
+     -0.74,
+     0.317,
+     1.3625
+    ],
+    "wheel_rl": [
+     0.75,
+     0.317,
+     -1.3625
+    ],
+    "wheel_rr": [
+     -0.75,
+     0.317,
+     -1.3625
+    ]
+   },
+   "team": "Cougar Racing",
+   "car": "2005 BMW 3 Series coupe (E46 shell, E92 suspected)",
+   "brake_lamps": [
+    [
+     0.406,
+     0.6021,
+     -2.3174,
+     0.06
+    ],
+    [
+     -0.406,
+     0.6021,
+     -2.3177,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "named wheel parts",
+    "scale": 0.937485672033081,
+    "source_tris": 32788,
+    "model_track": 1.534,
+    "model_tyre_radius": 0.313,
+    "hub_z_front": 0.317,
+    "hub_z_rear": 0.317,
+    "model_length": 4.508,
+    "model_width": 1.961,
+    "model_height": 1.366,
+    "tris": 7665,
+    "file": "tools/cars/kit/downloads/77_lx/model.glb"
+   }
   },
   {
    "number": "831",
@@ -15981,6 +16869,76 @@
    }
   },
   {
+   "number": "969",
+   "id": "969_mo",
+   "file": "models/969_mo.glb",
+   "tris": 11820,
+   "bytes": 749064,
+   "materials": 2,
+   "length_m": 4.21,
+   "width_m": 1.698,
+   "height_m": 1.393,
+   "bbox_m": [
+    4.402,
+    1.781,
+    1.45
+   ],
+   "wheelbase_m": 2.7,
+   "track_front_m": 1.42,
+   "track_rear_m": 1.43,
+   "tyre_radius_m": 0.3,
+   "tyre_radius_rear_m": 0.3,
+   "hubs": {
+    "wheel_fl": [
+     0.71,
+     0.3,
+     1.35
+    ],
+    "wheel_fr": [
+     -0.71,
+     0.3,
+     1.35
+    ],
+    "wheel_rl": [
+     0.715,
+     0.3,
+     -1.35
+    ],
+    "wheel_rr": [
+     -0.715,
+     0.3,
+     -1.35
+    ]
+   },
+   "team": "COLD BEER",
+   "car": "1996 BMW 318ti (E36 Compact)",
+   "brake_lamps": [
+    [
+     0.3902,
+     0.5528,
+     -2.1352,
+     0.06
+    ],
+    [
+     -0.3902,
+     0.5528,
+     -2.1304,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 0.9926470588235295,
+    "source_tris": 998542,
+    "model_length": 4.238,
+    "model_width": 1.786,
+    "model_height": 1.401,
+    "tris": 9352,
+    "file": "tools/cars/kit/downloads/0_bw/model.glb"
+   }
+  },
+  {
    "number": "971",
    "id": "971",
    "file": "models/971.glb",
@@ -16313,964 +17271,6 @@
     ]
    ],
    "brake_lamps_fallback": false
-  },
-  {
-   "number": "57",
-   "id": "57",
-   "file": "models/57.glb",
-   "tris": 3769,
-   "bytes": 291440,
-   "materials": 2,
-   "length_m": 4.562,
-   "width_m": 1.755,
-   "height_m": 1.323,
-   "bbox_m": [
-    4.549,
-    1.709,
-    1.348
-   ],
-   "wheelbase_m": 2.553,
-   "track_front_m": 1.45,
-   "track_rear_m": 1.46,
-   "tyre_radius_m": 0.326,
-   "tyre_radius_rear_m": 0.326,
-   "hubs": {
-    "wheel_fl": [
-     0.725,
-     0.326,
-     1.2765
-    ],
-    "wheel_fr": [
-     -0.725,
-     0.326,
-     1.2765
-    ],
-    "wheel_rl": [
-     0.73,
-     0.326,
-     -1.2765
-    ],
-    "wheel_rr": [
-     -0.73,
-     0.326,
-     -1.2765
-    ]
-   },
-   "team": "Garage 57",
-   "car": "1993 Ford Mustang notchback (Fox body)",
-   "brake_lamps": [
-    [
-     0.51,
-     0.735,
-     -2.2002,
-     0.12
-    ],
-    [
-     -0.51,
-     0.735,
-     -2.2004,
-     0.12
-    ]
-   ],
-   "brake_lamps_fallback": false,
-   "import": {
-    "method": "named wheel parts",
-    "scale": 0.8481962398861695,
-    "source_tris": 4230,
-    "model_track": 1.497,
-    "model_tyre_radius": 0.322,
-    "hub_z_front": 0.321,
-    "hub_z_rear": 0.331,
-    "model_length": 4.544,
-    "model_width": 1.774,
-    "model_height": 1.348,
-    "tris": 957,
-    "file": "tools/cars/kit/downloads/280_ssp/model.glb"
-   }
-  },
-  {
-   "number": "82",
-   "id": "82_mo",
-   "file": "models/82_mo.glb",
-   "tris": 3969,
-   "bytes": 315444,
-   "materials": 2,
-   "length_m": 4.562,
-   "width_m": 1.755,
-   "height_m": 1.323,
-   "bbox_m": [
-    4.549,
-    1.709,
-    1.348
-   ],
-   "wheelbase_m": 2.553,
-   "track_front_m": 1.45,
-   "track_rear_m": 1.46,
-   "tyre_radius_m": 0.326,
-   "tyre_radius_rear_m": 0.326,
-   "hubs": {
-    "wheel_fl": [
-     0.725,
-     0.326,
-     1.2765
-    ],
-    "wheel_fr": [
-     -0.725,
-     0.326,
-     1.2765
-    ],
-    "wheel_rl": [
-     0.73,
-     0.326,
-     -1.2765
-    ],
-    "wheel_rr": [
-     -0.73,
-     0.326,
-     -1.2765
-    ]
-   },
-   "team": "Hoffshaw's FrankenStang",
-   "car": "1985 Ford Mustang (Fox body)",
-   "brake_lamps": [
-    [
-     0.51,
-     0.735,
-     -2.2002,
-     0.12
-    ],
-    [
-     -0.51,
-     0.735,
-     -2.2004,
-     0.12
-    ]
-   ],
-   "brake_lamps_fallback": false,
-   "import": {
-    "method": "named wheel parts",
-    "scale": 0.8481962398861695,
-    "source_tris": 4230,
-    "model_track": 1.497,
-    "model_tyre_radius": 0.322,
-    "hub_z_front": 0.321,
-    "hub_z_rear": 0.331,
-    "model_length": 4.544,
-    "model_width": 1.774,
-    "model_height": 1.348,
-    "tris": 957,
-    "file": "tools/cars/kit/downloads/280_ssp/model.glb"
-   }
-  },
-  {
-   "number": "86",
-   "id": "86_mo",
-   "file": "models/86_mo.glb",
-   "tris": 3985,
-   "bytes": 397892,
-   "materials": 2,
-   "length_m": 4.562,
-   "width_m": 1.755,
-   "height_m": 1.323,
-   "bbox_m": [
-    4.549,
-    1.709,
-    1.348
-   ],
-   "wheelbase_m": 2.553,
-   "track_front_m": 1.45,
-   "track_rear_m": 1.46,
-   "tyre_radius_m": 0.326,
-   "tyre_radius_rear_m": 0.326,
-   "hubs": {
-    "wheel_fl": [
-     0.725,
-     0.326,
-     1.2765
-    ],
-    "wheel_fr": [
-     -0.725,
-     0.326,
-     1.2765
-    ],
-    "wheel_rl": [
-     0.73,
-     0.326,
-     -1.2765
-    ],
-    "wheel_rr": [
-     -0.73,
-     0.326,
-     -1.2765
-    ]
-   },
-   "team": "Initial D-NF",
-   "car": "1987 Ford Mustang notchback (Fox body)",
-   "brake_lamps": [
-    [
-     0.51,
-     0.735,
-     -2.2002,
-     0.12
-    ],
-    [
-     -0.51,
-     0.735,
-     -2.2004,
-     0.12
-    ]
-   ],
-   "brake_lamps_fallback": false,
-   "import": {
-    "method": "named wheel parts",
-    "scale": 0.8481962398861695,
-    "source_tris": 4230,
-    "model_track": 1.497,
-    "model_tyre_radius": 0.322,
-    "hub_z_front": 0.321,
-    "hub_z_rear": 0.331,
-    "model_length": 4.544,
-    "model_width": 1.774,
-    "model_height": 1.348,
-    "tris": 957,
-    "file": "tools/cars/kit/downloads/280_ssp/model.glb"
-   }
-  },
-  {
-   "number": "187",
-   "id": "187",
-   "file": "models/187.glb",
-   "tris": 11692,
-   "bytes": 557568,
-   "materials": 2,
-   "length_m": 4.544,
-   "width_m": 1.773,
-   "height_m": 1.311,
-   "bbox_m": [
-    4.602,
-    1.794,
-    1.312
-   ],
-   "wheelbase_m": 2.611,
-   "track_front_m": 1.514,
-   "track_rear_m": 1.509,
-   "tyre_radius_m": 0.316,
-   "tyre_radius_rear_m": 0.316,
-   "hubs": {
-    "wheel_fl": [
-     0.757,
-     0.316,
-     1.3055
-    ],
-    "wheel_fr": [
-     -0.757,
-     0.316,
-     1.3055
-    ],
-    "wheel_rl": [
-     0.7545,
-     0.316,
-     -1.3055
-    ],
-    "wheel_rr": [
-     -0.7545,
-     0.316,
-     -1.3055
-    ]
-   },
-   "team": "CROWN HICKTORIOUS",
-   "car": "1993 Ford Probe GT (2nd gen)",
-   "brake_lamps": [
-    [
-     0.45,
-     0.8,
-     -2.2625,
-     0.28
-    ],
-    [
-     -0.45,
-     0.8,
-     -2.2625,
-     0.28
-    ],
-    [
-     0.1,
-     0.8,
-     -2.2772,
-     0.1
-    ],
-    [
-     -0.1,
-     0.8,
-     -2.2772,
-     0.1
-    ]
-   ],
-   "brake_lamps_fallback": false,
-   "import": {
-    "method": "named wheel parts",
-    "scale": 0.998852302248714,
-    "source_tris": 74890,
-    "model_track": 1.512,
-    "model_tyre_radius": 0.316,
-    "hub_z_front": 0.316,
-    "hub_z_rear": 0.316,
-    "model_length": 4.623,
-    "model_width": 1.944,
-    "model_height": 1.997,
-    "tris": 8996,
-    "file": "public/cars/probe_gt/probe.glb"
-   }
-  },
-  {
-   "number": "609",
-   "id": "609",
-   "file": "models/609.glb",
-   "tris": 10260,
-   "bytes": 514940,
-   "materials": 2,
-   "length_m": 4.54,
-   "width_m": 1.757,
-   "height_m": 1.369,
-   "bbox_m": [
-    4.507,
-    1.961,
-    1.366
-   ],
-   "wheelbase_m": 2.725,
-   "track_front_m": 1.48,
-   "track_rear_m": 1.5,
-   "tyre_radius_m": 0.317,
-   "tyre_radius_rear_m": 0.317,
-   "hubs": {
-    "wheel_fl": [
-     0.74,
-     0.317,
-     1.3625
-    ],
-    "wheel_fr": [
-     -0.74,
-     0.317,
-     1.3625
-    ],
-    "wheel_rl": [
-     0.75,
-     0.317,
-     -1.3625
-    ],
-    "wheel_rr": [
-     -0.75,
-     0.317,
-     -1.3625
-    ]
-   },
-   "team": "FrogLegs Racing",
-   "car": "2001 BMW 330Ci coupe (E46)",
-   "brake_lamps": [
-    [
-     0.406,
-     0.6021,
-     -2.3174,
-     0.06
-    ],
-    [
-     -0.406,
-     0.6021,
-     -2.3177,
-     0.06
-    ]
-   ],
-   "brake_lamps_fallback": true,
-   "import": {
-    "method": "named wheel parts",
-    "scale": 0.937485672033081,
-    "source_tris": 32788,
-    "model_track": 1.534,
-    "model_tyre_radius": 0.313,
-    "hub_z_front": 0.317,
-    "hub_z_rear": 0.317,
-    "model_length": 4.508,
-    "model_width": 1.961,
-    "model_height": 1.366,
-    "tris": 7665,
-    "file": "tools/cars/kit/downloads/77_lx/model.glb"
-   }
-  },
-  {
-   "number": "806",
-   "id": "806",
-   "file": "models/806.glb",
-   "tris": 10224,
-   "bytes": 530424,
-   "materials": 2,
-   "length_m": 4.54,
-   "width_m": 1.757,
-   "height_m": 1.369,
-   "bbox_m": [
-    4.5,
-    1.961,
-    1.366
-   ],
-   "wheelbase_m": 2.725,
-   "track_front_m": 1.48,
-   "track_rear_m": 1.5,
-   "tyre_radius_m": 0.317,
-   "tyre_radius_rear_m": 0.317,
-   "hubs": {
-    "wheel_fl": [
-     0.74,
-     0.317,
-     1.3625
-    ],
-    "wheel_fr": [
-     -0.74,
-     0.317,
-     1.3625
-    ],
-    "wheel_rl": [
-     0.75,
-     0.317,
-     -1.3625
-    ],
-    "wheel_rr": [
-     -0.75,
-     0.317,
-     -1.3625
-    ]
-   },
-   "team": "Cougar Racing",
-   "car": "2005 BMW 3 Series coupe (E46 shell, E92 suspected)",
-   "brake_lamps": [
-    [
-     0.406,
-     0.6021,
-     -2.3174,
-     0.06
-    ],
-    [
-     -0.406,
-     0.6021,
-     -2.3177,
-     0.06
-    ]
-   ],
-   "brake_lamps_fallback": true,
-   "import": {
-    "method": "named wheel parts",
-    "scale": 0.937485672033081,
-    "source_tris": 32788,
-    "model_track": 1.534,
-    "model_tyre_radius": 0.313,
-    "hub_z_front": 0.317,
-    "hub_z_rear": 0.317,
-    "model_length": 4.508,
-    "model_width": 1.961,
-    "model_height": 1.366,
-    "tris": 7665,
-    "file": "tools/cars/kit/downloads/77_lx/model.glb"
-   }
-  },
-  {
-   "number": "147",
-   "id": "147",
-   "file": "models/147.glb",
-   "tris": 11690,
-   "bytes": 584084,
-   "materials": 2,
-   "length_m": 3.965,
-   "width_m": 1.666,
-   "height_m": 1.331,
-   "bbox_m": [
-    4.266,
-    1.855,
-    1.396
-   ],
-   "wheelbase_m": 2.5,
-   "track_front_m": 1.45,
-   "track_rear_m": 1.46,
-   "tyre_radius_m": 0.289,
-   "tyre_radius_rear_m": 0.289,
-   "hubs": {
-    "wheel_fl": [
-     0.725,
-     0.289,
-     1.25
-    ],
-    "wheel_fr": [
-     -0.725,
-     0.289,
-     1.25
-    ],
-    "wheel_rl": [
-     0.73,
-     0.289,
-     -1.25
-    ],
-    "wheel_rr": [
-     -0.73,
-     0.289,
-     -1.25
-    ]
-   },
-   "team": "NOT-e Boys",
-   "car": "1990 Honda Civic EF 3-door hatchback",
-   "brake_lamps": [
-    [
-     0.58,
-     0.71,
-     -1.8362,
-     0.21
-    ],
-    [
-     -0.58,
-     0.71,
-     -1.8356,
-     0.21
-    ],
-    [
-     0.185,
-     0.71,
-     -1.8736,
-     0.18
-    ],
-    [
-     -0.185,
-     0.71,
-     -1.8743,
-     0.18
-    ]
-   ],
-   "brake_lamps_fallback": false,
-   "import": {
-    "method": "hubs_hint",
-    "scale": 1.0080238700052417,
-    "source_tris": 999583,
-    "model_length": 4.004,
-    "model_width": 2.062,
-    "model_height": 1.333,
-    "tris": 5900,
-    "file": "tools/cars/kit/downloads/70_ef/model.glb"
-   }
-  },
-  {
-   "number": "562",
-   "id": "562_mo",
-   "file": "models/562_mo.glb",
-   "tris": 10685,
-   "bytes": 631080,
-   "materials": 2,
-   "length_m": 4.775,
-   "width_m": 1.8,
-   "height_m": 1.435,
-   "bbox_m": [
-    4.776,
-    2.042,
-    1.462
-   ],
-   "wheelbase_m": 2.83,
-   "track_front_m": 1.512,
-   "track_rear_m": 1.526,
-   "tyre_radius_m": 0.315,
-   "tyre_radius_rear_m": 0.315,
-   "hubs": {
-    "wheel_fl": [
-     0.756,
-     0.315,
-     1.415
-    ],
-    "wheel_fr": [
-     -0.756,
-     0.315,
-     1.415
-    ],
-    "wheel_rl": [
-     0.763,
-     0.315,
-     -1.415
-    ],
-    "wheel_rr": [
-     -0.763,
-     0.315,
-     -1.415
-    ]
-   },
-   "team": "SUPERCHEAT (has a....)",
-   "car": "2000 BMW 5 Series sedan (E39)",
-   "brake_lamps": [
-    [
-     0.4454,
-     0.5277,
-     -2.4652,
-     0.06
-    ],
-    [
-     -0.4454,
-     0.5277,
-     -2.4655,
-     0.06
-    ]
-   ],
-   "brake_lamps_fallback": true,
-   "import": {
-    "method": "none found: scaled by length, hubs from front_overhang",
-    "scale": 0.9920806704856515,
-    "source_tris": 234205,
-    "model_length": 4.775,
-    "model_width": 2.043,
-    "model_height": 1.449,
-    "tris": 8101,
-    "file": "tools/cars/kit/downloads/69/model.glb"
-   }
-  },
-  {
-   "number": "12",
-   "id": "12",
-   "file": "models/12.glb",
-   "tris": 11700,
-   "bytes": 699100,
-   "materials": 2,
-   "length_m": 4.21,
-   "width_m": 1.698,
-   "height_m": 1.393,
-   "bbox_m": [
-    4.402,
-    1.781,
-    1.47
-   ],
-   "wheelbase_m": 2.7,
-   "track_front_m": 1.42,
-   "track_rear_m": 1.43,
-   "tyre_radius_m": 0.3,
-   "tyre_radius_rear_m": 0.3,
-   "hubs": {
-    "wheel_fl": [
-     0.71,
-     0.3,
-     1.35
-    ],
-    "wheel_fr": [
-     -0.71,
-     0.3,
-     1.35
-    ],
-    "wheel_rl": [
-     0.715,
-     0.3,
-     -1.35
-    ],
-    "wheel_rr": [
-     -0.715,
-     0.3,
-     -1.35
-    ]
-   },
-   "team": "Murder Whornet",
-   "car": "1996 BMW 318ti (E36 Compact)",
-   "brake_lamps": [
-    [
-     0.3902,
-     0.5528,
-     -2.1352,
-     0.06
-    ],
-    [
-     -0.3902,
-     0.5528,
-     -2.1304,
-     0.06
-    ]
-   ],
-   "brake_lamps_fallback": true,
-   "import": {
-    "method": "hubs_hint",
-    "scale": 0.9926470588235295,
-    "source_tris": 998542,
-    "model_length": 4.238,
-    "model_width": 1.786,
-    "model_height": 1.401,
-    "tris": 9352,
-    "file": "tools/cars/kit/downloads/0_bw/model.glb"
-   }
-  },
-  {
-   "number": "330",
-   "id": "330",
-   "file": "models/330.glb",
-   "tris": 11820,
-   "bytes": 704944,
-   "materials": 2,
-   "length_m": 4.21,
-   "width_m": 1.698,
-   "height_m": 1.393,
-   "bbox_m": [
-    4.414,
-    1.781,
-    1.43
-   ],
-   "wheelbase_m": 2.7,
-   "track_front_m": 1.42,
-   "track_rear_m": 1.43,
-   "tyre_radius_m": 0.3,
-   "tyre_radius_rear_m": 0.3,
-   "hubs": {
-    "wheel_fl": [
-     0.71,
-     0.3,
-     1.35
-    ],
-    "wheel_fr": [
-     -0.71,
-     0.3,
-     1.35
-    ],
-    "wheel_rl": [
-     0.715,
-     0.3,
-     -1.35
-    ],
-    "wheel_rr": [
-     -0.715,
-     0.3,
-     -1.35
-    ]
-   },
-   "team": "Rubber City Racing",
-   "car": "1996 BMW 318ti (E36 Compact)",
-   "brake_lamps": [
-    [
-     0.3902,
-     0.5528,
-     -2.1352,
-     0.06
-    ],
-    [
-     -0.3902,
-     0.5528,
-     -2.1304,
-     0.06
-    ]
-   ],
-   "brake_lamps_fallback": true,
-   "import": {
-    "method": "hubs_hint",
-    "scale": 0.9926470588235295,
-    "source_tris": 998542,
-    "model_length": 4.238,
-    "model_width": 1.786,
-    "model_height": 1.401,
-    "tris": 9352,
-    "file": "tools/cars/kit/downloads/0_bw/model.glb"
-   }
-  },
-  {
-   "number": "513",
-   "id": "513",
-   "file": "models/513.glb",
-   "tris": 11764,
-   "bytes": 710452,
-   "materials": 2,
-   "length_m": 4.21,
-   "width_m": 1.698,
-   "height_m": 1.393,
-   "bbox_m": [
-    4.378,
-    1.781,
-    1.889
-   ],
-   "wheelbase_m": 2.7,
-   "track_front_m": 1.42,
-   "track_rear_m": 1.43,
-   "tyre_radius_m": 0.3,
-   "tyre_radius_rear_m": 0.3,
-   "hubs": {
-    "wheel_fl": [
-     0.71,
-     0.3,
-     1.35
-    ],
-    "wheel_fr": [
-     -0.71,
-     0.3,
-     1.35
-    ],
-    "wheel_rl": [
-     0.715,
-     0.3,
-     -1.35
-    ],
-    "wheel_rr": [
-     -0.715,
-     0.3,
-     -1.35
-    ]
-   },
-   "team": "Team Non Sequitur",
-   "car": "1995 BMW 318ti (E36 Compact)",
-   "brake_lamps": [
-    [
-     0.3822,
-     0.5585,
-     -2.137,
-     0.06
-    ],
-    [
-     -0.3822,
-     0.5585,
-     -2.1324,
-     0.06
-    ]
-   ],
-   "brake_lamps_fallback": true,
-   "import": {
-    "method": "hubs_hint",
-    "scale": 0.9926470588235295,
-    "source_tris": 998542,
-    "model_length": 4.238,
-    "model_width": 1.786,
-    "model_height": 1.401,
-    "tris": 8708,
-    "file": "tools/cars/kit/downloads/0_bw/model.glb"
-   }
-  },
-  {
-   "number": "691",
-   "id": "691",
-   "file": "models/691.glb",
-   "tris": 11700,
-   "bytes": 757220,
-   "materials": 2,
-   "length_m": 4.21,
-   "width_m": 1.698,
-   "height_m": 1.393,
-   "bbox_m": [
-    4.39,
-    1.781,
-    1.403
-   ],
-   "wheelbase_m": 2.7,
-   "track_front_m": 1.42,
-   "track_rear_m": 1.43,
-   "tyre_radius_m": 0.3,
-   "tyre_radius_rear_m": 0.3,
-   "hubs": {
-    "wheel_fl": [
-     0.71,
-     0.3,
-     1.35
-    ],
-    "wheel_fr": [
-     -0.71,
-     0.3,
-     1.35
-    ],
-    "wheel_rl": [
-     0.715,
-     0.3,
-     -1.35
-    ],
-    "wheel_rr": [
-     -0.715,
-     0.3,
-     -1.35
-    ]
-   },
-   "team": "Layin Pipe Racing",
-   "car": "1996 BMW 318ti (E36 Compact)",
-   "brake_lamps": [
-    [
-     0.3902,
-     0.5528,
-     -2.1352,
-     0.06
-    ],
-    [
-     -0.3902,
-     0.5528,
-     -2.1304,
-     0.06
-    ]
-   ],
-   "brake_lamps_fallback": true,
-   "import": {
-    "method": "hubs_hint",
-    "scale": 0.9926470588235295,
-    "source_tris": 998542,
-    "model_length": 4.238,
-    "model_width": 1.786,
-    "model_height": 1.401,
-    "tris": 9352,
-    "file": "tools/cars/kit/downloads/0_bw/model.glb"
-   }
-  },
-  {
-   "number": "969",
-   "id": "969_mo",
-   "file": "models/969_mo.glb",
-   "tris": 11820,
-   "bytes": 749064,
-   "materials": 2,
-   "length_m": 4.21,
-   "width_m": 1.698,
-   "height_m": 1.393,
-   "bbox_m": [
-    4.402,
-    1.781,
-    1.45
-   ],
-   "wheelbase_m": 2.7,
-   "track_front_m": 1.42,
-   "track_rear_m": 1.43,
-   "tyre_radius_m": 0.3,
-   "tyre_radius_rear_m": 0.3,
-   "hubs": {
-    "wheel_fl": [
-     0.71,
-     0.3,
-     1.35
-    ],
-    "wheel_fr": [
-     -0.71,
-     0.3,
-     1.35
-    ],
-    "wheel_rl": [
-     0.715,
-     0.3,
-     -1.35
-    ],
-    "wheel_rr": [
-     -0.715,
-     0.3,
-     -1.35
-    ]
-   },
-   "team": "COLD BEER",
-   "car": "1996 BMW 318ti (E36 Compact)",
-   "brake_lamps": [
-    [
-     0.3902,
-     0.5528,
-     -2.1352,
-     0.06
-    ],
-    [
-     -0.3902,
-     0.5528,
-     -2.1304,
-     0.06
-    ]
-   ],
-   "brake_lamps_fallback": true,
-   "import": {
-    "method": "hubs_hint",
-    "scale": 0.9926470588235295,
-    "source_tris": 998542,
-    "model_length": 4.238,
-    "model_width": 1.786,
-    "model_height": 1.401,
-    "tris": 9352,
-    "file": "tools/cars/kit/downloads/0_bw/model.glb"
-   }
   }
  ]
 }
