@@ -165,7 +165,7 @@ atan2 / exp / log / hypot / cbrt / pow` the port (= the server) for the whole pr
 | self-play Laguna, 4 laps, seed 1 (`--json`) | 45 cars, 167.1 car-laps, race 612 s, 0.054 contacts / car-lap | the same | yes: every metric and the order; only the measured µs per step differ |
 | self-play Sonoma, 2 laps, seed 1 | 134 cars, 192.3 car-laps, race 297 s, 0.021 contacts / car-lap | the same | yes |
 | `tools/calibrate/drive.ts` autopilot lap (`--json`) | 123.85261100167408 s, JSON sha `c9db261c…` | the same with the harness (the tool's own autopilot uses `Math.*`) | yes |
-| board keys (`pins.test.ts`) | 12oxe5efqsv, 0aitg05wi4d, 0ewchkyn2w5 | the same | yes: they hash PHYSICS_VERSION, car.json, the track length and rev, not the code |
+| board keys (`pins.test.ts`, round 2; the pins were dropped in section 9) | 12oxe5efqsv, 0aitg05wi4d, 0ewchkyn2w5 | the same | yes: they hash PHYSICS_VERSION, car.json, the track length and rev, not the code |
 
 Since round 2 the whole race (the AI included) computes the server's values natively on any host, so self-play is
 identical without the harness. The scoreboard replay tests (record live, replay, lap time `toBe` and state) pass.
@@ -272,6 +272,8 @@ about 40 µs of a 16.7 ms frame in Chrome (0.24 %). A server replay of one lap (
 0.39 s of CPU (the 720 000-step worst case about 1.75 s, within `maxDuration` 30 s). Self-play cost (all cars):
 Laguna 45 cars 115 µs a step, Sonoma 134 cars 380 µs a step on this Mac.
 
+Round 5 (cheaper pow, section 9) took the software pow out of the step: Chrome 1.871 µs, WebKit 1.672 µs, Firefox 2.842 µs on the day's machine (parent 2.291 / 1.978 / 3.561).
+
 Pow costs about 145 ns a call in the port (native: 17 ns; 4 calls a step): about 14 exactly emulated fused
 multiply-adds each. The per-step share is small against a 16.7 ms frame (17 steps a frame), but it is the largest
 single cost of the port and it also lands on every AI car in a race. Further speed-ups (merging the log / exp stages,
@@ -295,3 +297,36 @@ npm run build && npx vite preview --port 4173 --strictPort &
 npx tsx tools/determinism/browser_trace.mts webkit|chromium|firefox --track laguna_seca --laps 6 --out /tmp/wk.json
 npx tsx tools/determinism/bench.mts . /tmp/trace.json --engine chromium
 ```
+
+## 9. Cheaper pow (26 Oct 2026, owner decision: "why agonize over physics results to the last bit?")
+
+What changed (`src/physics/vehicle.ts`): the tyre load-sensitivity term `(Fz/Fz0)^lsExp` is now `dexp(lsExp * dlog(Fz/Fz0))`
+(the exponent is a free car.json number, -0.1; Fz >= 1 there, so the argument is positive), and the brake pedal map
+`brk^pedalExp` is `powUnit` (`Math.sqrt` and multiplications for 0.5, 1.5, 2, 3, else `dexp(y * dlog(x))`, 0 at 0; the
+shipped car has pedalExponent 1 and skips it). `dmath.pow` stays for the AI's one-off construction maths (`ai/field.ts`).
+Results differ from 0.4.0-as-built in the last bits, accepted. `PHYSICS_KEY_PINS` is gone and `PHYSICS_VERSION` is
+`probe-sim-2026-10-26-cheap-pow`: the 0.3.0 hot-lap boards restart (a GET for an old key returns an empty board, a POST
+with one gets the usual 422; the stale sweep expires the old boards). Fixtures re-recorded: `webkit_laguna_6.json.gz`,
+`onpave_drive.json` (`record_onpave.ts`).
+
+Proof, six laps recorded in each engine on the built game, replayed on Node under `strict-math.mjs`
+(`browser_trace.mts`): lap times and the 59 state values bit-identical in every row.
+
+| engine | Laguna Seca (859 999 steps, rows sha 3f0dac4f) | Sonoma (932 999 steps, rows sha 3d281add) |
+|---|---|---|
+| WebKit 26.5 | 139.3537 139.3511 139.3504 139.3502 139.3484 139.3506: 6/6, state bit-identical | 154.8721 154.5269 154.5314 154.5294 154.5308 154.5292: 6/6, state bit-identical |
+| Chrome 149 | the same, bit-identical | the same, bit-identical |
+| Firefox 151.0 | the same, bit-identical | the same, bit-identical |
+
+`dmath.ts` is unchanged (exp and log were already proven), so no re-run of `strict-math.mjs` / the oracle.
+
+Cost (`bench.mts`, 302 285-step Laguna replay, best of 2 runs of 7, parent = 85020e0):
+
+| engine | before | after | change |
+|---|---|---|---|
+| Chrome 149 headless | 2.291 µs | 1.871 µs | -18 % |
+| WebKit 26.5 | 1.978 µs | 1.672 µs | -15 % |
+| Firefox 151.0 | 3.561 µs | 2.842 µs | -20 % |
+
+The machine was slower than in the earlier rounds (same method), so compare the before and after columns, not the old table.
+Self-play bands and solo laps are in `src/physics/ai/NOTES.md`'s numbers: no test, threshold or AI change.
