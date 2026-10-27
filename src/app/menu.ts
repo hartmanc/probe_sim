@@ -20,12 +20,17 @@ export interface ToggleEntry extends EntryBase { kind: 'toggle'; get(): boolean;
 /** `disabled`: shown, but cycling skips it (a choice that does not apply here, e.g. a Laguna-only reference). */
 export interface ChoiceOption { value: string; label: string; disabled?: boolean }
 export interface ChoiceEntry extends EntryBase { kind: 'choice'; options: ChoiceOption[]; get(): string; set(v: string): void }
+/** A drop-down: mouse and touch open a native <select> (nothing happens until a pick; a pick calls `set` once); keys
+ *  and the pad open the options as a page of actions (select = pick). Left/right do nothing, so cycling never loads. */
+export interface SelectEntry extends EntryBase { kind: 'select'; options: ChoiceOption[]; get(): string; set(v: string): void }
 export interface SubmenuEntry extends EntryBase { kind: 'submenu'; page(): MenuPage }
 export interface BackEntry extends EntryBase { kind: 'back' }
-export type MenuEntry = ActionEntry | ToggleEntry | ChoiceEntry | SubmenuEntry | BackEntry;
+export type MenuEntry = ActionEntry | ToggleEntry | ChoiceEntry | SelectEntry | SubmenuEntry | BackEntry;
 
 export interface MenuPage {
   title: string;
+  /** Rich title content (the censored header); `title` stays the accessible name. */
+  titleNodes?(): Node[];
   subtitle?: string;
   /** Called on every render, so labels and enabled states stay current. */
   entries(): MenuEntry[];
@@ -37,6 +42,17 @@ export interface MenuPage {
 export type NavResult = 'none' | 'moved' | 'changed' | 'pushed' | 'popped' | 'close';
 
 const selectable = (e: MenuEntry | undefined) => !!e && !e.disabled;
+
+/** The options of a select as a page: picking one calls set (the Track select reloads) and closes the page. */
+function selectPage(e: SelectEntry): MenuPage {
+  return {
+    title: e.label,
+    entries: () => [
+      ...e.options.map((o): MenuEntry => ({ kind: 'action', id: `${e.id}:${o.value}`, label: o.label, note: o.value === e.get() ? 'current' : undefined, disabled: o.disabled, run: () => { if (o.value !== e.get()) e.set(o.value); } })),
+      { kind: 'back', id: 'back', label: 'Back' },
+    ],
+  };
+}
 
 /**
  * Stack of pages with a cursor per page. Up/down wrap and skip disabled rows;
@@ -114,6 +130,7 @@ export class MenuModel {
     switch (e.kind) {
       case 'action': e.run(); return 'changed';
       case 'toggle': case 'choice': return this.adjust(1);
+      case 'select': this.stack.push({ page: selectPage(e), index: Math.max(0, e.options.findIndex((o) => o.value === e.get())) }); this.fixCursor(1); return 'pushed';
       case 'submenu': this.stack.push({ page: e.page(), index: 0 }); this.fixCursor(1); return 'pushed';
       case 'back': return this.back();
     }
@@ -287,7 +304,8 @@ export class Menu {
   private render(): void {
     const m = this.model!;
     const page = m.page;
-    this.titleEl.textContent = page.title;
+    if (page.titleNodes) { this.titleEl.replaceChildren(...page.titleNodes()); this.titleEl.setAttribute('aria-label', page.title); }
+    else { this.titleEl.textContent = page.title; this.titleEl.removeAttribute('aria-label'); }
     this.subEl.textContent = page.subtitle ?? '';
     this.subEl.classList.toggle('hidden', !page.subtitle);
     this.extra.classList.toggle('hidden', m.depth > 1 || !this.extra.childElementCount);
@@ -296,8 +314,9 @@ export class Menu {
     this.bodyEl.classList.toggle('hidden', !body);
     const rows: HTMLElement[] = [];
     m.entries.forEach((e, i) => {
-      const row = el('button', 'menu-row');
-      row.type = 'button';
+      const isSelect = e.kind === 'select';
+      const row = (isSelect ? el('div', 'menu-row menu-select-row') : el('button', 'menu-row')) as HTMLElement;
+      if (row instanceof HTMLButtonElement) row.type = 'button';
       row.dataset.id = e.id;
       if (i === m.index) row.classList.add('active');
       if (e.disabled) { row.classList.add('disabled'); row.setAttribute('aria-disabled', 'true'); }
@@ -315,11 +334,31 @@ export class Menu {
         next.addEventListener('click', (ev) => { ev.stopPropagation(); if (m.focus(i)) this.after(m.adjust(1)); });
         val.append(prev, el('span', 'menu-choice', cur?.label ?? '–'), next);
         row.append(val);
+      } else if (e.kind === 'select') {
+        const sel = el('select', 'menu-select');
+        sel.setAttribute('aria-label', e.label);
+        sel.disabled = !!e.disabled;
+        const cur = e.get();
+        for (const o of e.options) {
+          const opt = el('option', undefined, o.label);
+          opt.value = o.value;
+          opt.disabled = !!o.disabled;
+          opt.selected = o.value === cur;
+          sel.append(opt);
+        }
+        sel.addEventListener('click', (ev) => ev.stopPropagation());
+        sel.addEventListener('focus', () => { if (m.index !== i && m.focus(i)) this.markActive(i); });
+        sel.addEventListener('change', () => { if (sel.value !== e.get()) e.set(sel.value); }); // a pick, once
+        row.append(sel);
       } else if (e.kind === 'submenu') {
         row.append(el('span', 'menu-val', '›'));
       }
       row.addEventListener('click', () => {
         if (!m.focus(i)) return;
+        const sel = row.querySelector('select');
+        if (sel) { // the label side of a select row opens the native list; no picker support: the options page
+          try { (sel as HTMLSelectElement & { showPicker(): void }).showPicker(); this.markActive(i); return; } catch { /* fall through */ }
+        }
         this.after(m.select());
       });
       row.addEventListener('pointermove', () => {

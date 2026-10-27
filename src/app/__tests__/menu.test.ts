@@ -94,3 +94,44 @@ describe('repeat gate', () => {
     expect(g.update('up', 350)).toBe('up');
   });
 });
+
+describe('select entry (the Track drop-down)', () => {
+  const make = () => {
+    const picks: string[] = [];
+    let cur = 'laguna';
+    const page: MenuPage = {
+      title: 'Root',
+      entries: () => [{
+        kind: 'select', id: 'track', label: 'Track',
+        options: [{ value: 'laguna', label: 'Laguna' }, { value: 'sonoma', label: 'Sonoma' }, { value: 'bw', label: 'Buttonwillow' }, { value: 'mo', label: 'Mid-Ohio' }],
+        get: () => cur, set: (v) => { picks.push(v); cur = v; },
+      }],
+    };
+    return { page, picks };
+  };
+  it('left/right never pick (no load on the way through)', () => {
+    const { page, picks } = make();
+    const m = new MenuModel(page);
+    expect(m.nav('right')).toBe('none'); expect(m.nav('left')).toBe('none');
+    expect(picks).toEqual([]);
+  });
+  it('opening lists every option with the cursor on the current one, without picking', () => {
+    const { page, picks } = make();
+    const m = new MenuModel(page);
+    expect(m.nav('select')).toBe('pushed');
+    expect(m.entries.filter((e) => e.kind === 'action').map((e) => e.label)).toEqual(['Laguna', 'Sonoma', 'Buttonwillow', 'Mid-Ohio']);
+    expect(m.current?.id).toBe('track:laguna');
+    m.nav('down'); m.nav('down');
+    expect(picks).toEqual([]);
+  });
+  it('a pick calls set once; picking the current one does nothing; back closes the list', () => {
+    const { page, picks } = make();
+    const m = new MenuModel(page);
+    m.nav('select'); m.nav('select'); // current option
+    expect(picks).toEqual([]);
+    m.nav('down'); m.nav('select');
+    expect(picks).toEqual(['sonoma']);
+    expect(m.nav('back')).toBe('popped');
+    expect(m.page.title).toBe('Root');
+  });
+});
