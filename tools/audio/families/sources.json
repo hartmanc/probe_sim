@@ -208,7 +208,8 @@
     "t1": 579.0,
     "context": "street",
     "notes": "",
-    "why": "Old / lazy V8 (Buick Roadmaster, Ford flathead and Model A pickups) at low to mid rpm; the Roadmaster autocross run supplies the upper bins; supplies 5 real bins"
+    "why": "Old / lazy V8 (Buick Roadmaster, Ford flathead and Model A pickups) at low to mid rpm; the Roadmaster autocross run supplies the upper bins; supplies 5 real bins",
+    "unused": true
    },
    {
     "url": "https://www.youtube.com/watch?v=wz5KhVihj9w",
@@ -222,7 +223,8 @@
     "t1": 185.0,
     "context": "street",
     "notes": "",
-    "why": "Old / lazy V8 (Buick Roadmaster, Ford flathead and Model A pickups) at low to mid rpm; the Roadmaster autocross run supplies the upper bins; supplies 1 real bins"
+    "why": "Old / lazy V8 (Buick Roadmaster, Ford flathead and Model A pickups) at low to mid rpm; the Roadmaster autocross run supplies the upper bins; supplies 1 real bins",
+    "unused": true
    },
    {
     "url": "https://www.youtube.com/watch?v=pZXO6CXJH3Q",
@@ -237,7 +239,8 @@
     "context": "street",
     "notes": "",
     "skip_reason": "supplied no real bin once the octave guard and the candidate scoring had run; not shipped",
-    "why": "Round two: idle, low-rpm and free-rev (overrun) material for the old V8 class (flathead, 289, nailhead start-up / idle / rev clips and drives)"
+    "why": "Round two: idle, low-rpm and free-rev (overrun) material for the old V8 class (flathead, 289, nailhead start-up / idle / rev clips and drives)",
+    "unused": true
    },
    {
     "url": "https://www.youtube.com/watch?v=SNOKBHvGkMM",
@@ -251,7 +254,8 @@
     "t1": 585.0,
     "context": "street",
     "notes": "",
-    "why": "Old / lazy V8 (Buick Roadmaster, Ford flathead and Model A pickups) at low to mid rpm; the Roadmaster autocross run supplies the upper bins; supplies 18 real bins"
+    "why": "Old / lazy V8 (Buick Roadmaster, Ford flathead and Model A pickups) at low to mid rpm; the Roadmaster autocross run supplies the upper bins; supplies 18 real bins",
+    "unused": true
    },
    {
     "url": "https://www.youtube.com/watch?v=wNmK7ktrYt8",
@@ -265,7 +269,8 @@
     "t1": 273.0,
     "context": "street",
     "notes": "",
-    "why": "Old / lazy V8 (Buick Roadmaster, Ford flathead and Model A pickups) at low to mid rpm; the Roadmaster autocross run supplies the upper bins; supplies 1 real bins"
+    "why": "Old / lazy V8 (Buick Roadmaster, Ford flathead and Model A pickups) at low to mid rpm; the Roadmaster autocross run supplies the upper bins; supplies 1 real bins",
+    "unused": true
    },
    {
     "url": "https://www.youtube.com/watch?v=JZMyQQ23FzI",
@@ -281,7 +286,8 @@
     "notes": " octave pinned x1 (round two): a start-up / rev clip at idle and free revs, not driving, so the per-source median rule does not apply",
     "skip_reason": "supplied no real bin once the octave guard and the candidate scoring had run; not shipped",
     "why": "Round two: idle, low-rpm and free-rev (overrun) material for the old V8 class (flathead, 289, nailhead start-up / idle / rev clips and drives)",
-    "octave": 1.0
+    "octave": 1.0,
+    "unused": true
    },
    {
     "url": "https://www.youtube.com/watch?v=EkOh-ScdSCk",
@@ -296,7 +302,8 @@
     "context": "street",
     "notes": "",
     "skip_reason": "supplied no real bin once the octave guard and the candidate scoring had run; not shipped",
-    "why": "Round two: idle, low-rpm and free-rev (overrun) material for the old V8 class (flathead, 289, nailhead start-up / idle / rev clips and drives)"
+    "why": "Round two: idle, low-rpm and free-rev (overrun) material for the old V8 class (flathead, 289, nailhead start-up / idle / rev clips and drives)",
+    "unused": true
    },
    {
     "url": "https://www.youtube.com/watch?v=2BUGK30gZJs",
@@ -311,7 +318,8 @@
     "context": "street",
     "notes": "",
     "skip_reason": "supplied no real bin once the octave guard and the candidate scoring had run; not shipped",
-    "why": "Round two: idle, low-rpm and free-rev (overrun) material for the old V8 class (flathead, 289, nailhead start-up / idle / rev clips and drives)"
+    "why": "Round two: idle, low-rpm and free-rev (overrun) material for the old V8 class (flathead, 289, nailhead start-up / idle / rev clips and drives)",
+    "unused": true
    },
    {
     "url": "https://www.youtube.com/watch?v=R-O0YFaofaY",
@@ -327,7 +335,8 @@
     "notes": " octave pinned x1 (round two): a start-up / rev clip at idle and free revs, not driving, so the per-source median rule does not apply",
     "skip_reason": "supplied no real bin once the octave guard and the candidate scoring had run; not shipped",
     "why": "Round two: idle, low-rpm and free-rev (overrun) material for the old V8 class (flathead, 289, nailhead start-up / idle / rev clips and drives)",
-    "octave": 1.0
+    "octave": 1.0,
+    "unused": true
    },
    {
     "url": "https://www.youtube.com/watch?v=eqbbKYs8P3Y",
@@ -341,7 +350,8 @@
     "t1": 181.0,
     "context": "street",
     "notes": "round two",
-    "why": "Round two: idle, low-rpm and free-rev (overrun) material for the old V8 class (flathead, 289, nailhead start-up / idle / rev clips and drives)"
+    "why": "Round two: idle, low-rpm and free-rev (overrun) material for the old V8 class (flathead, 289, nailhead start-up / idle / rev clips and drives)",
+    "unused": true
    },
    {
     "url": "https://www.youtube.com/watch?v=N6eG2-oHC6Y",
@@ -355,7 +365,8 @@
     "t1": 581.0,
     "context": "street",
     "notes": "round two",
-    "why": "Round two: idle, low-rpm and free-rev (overrun) material for the old V8 class (flathead, 289, nailhead start-up / idle / rev clips and drives)"
+    "why": "Round two: idle, low-rpm and free-rev (overrun) material for the old V8 class (flathead, 289, nailhead start-up / idle / rev clips and drives)",
+    "unused": true
    },
    {
     "url": "https://www.youtube.com/watch?v=Dzq3sYlYqdg",
@@ -369,7 +380,8 @@
     "t1": 345.0,
     "context": "street",
     "notes": "round two",
-    "why": "Round two: idle, low-rpm and free-rev (overrun) material for the old V8 class (flathead, 289, nailhead start-up / idle / rev clips and drives)"
+    "why": "Round two: idle, low-rpm and free-rev (overrun) material for the old V8 class (flathead, 289, nailhead start-up / idle / rev clips and drives)",
+    "unused": true
    },
    {
     "url": "https://www.youtube.com/watch?v=TfiPg_VH-sA",
@@ -383,7 +395,8 @@
     "t1": 227.0,
     "context": "street",
     "notes": "round two",
-    "why": "Round two: idle, low-rpm and free-rev (overrun) material for the old V8 class (flathead, 289, nailhead start-up / idle / rev clips and drives)"
+    "why": "Round two: idle, low-rpm and free-rev (overrun) material for the old V8 class (flathead, 289, nailhead start-up / idle / rev clips and drives)",
+    "unused": true
    },
    {
     "url": "https://www.youtube.com/watch?v=4mNaAH76kVE",
@@ -397,7 +410,8 @@
     "t1": 106.0,
     "context": "street",
     "notes": "round two",
-    "why": "Round two: idle, low-rpm and free-rev (overrun) material for the old V8 class (flathead, 289, nailhead start-up / idle / rev clips and drives)"
+    "why": "Round two: idle, low-rpm and free-rev (overrun) material for the old V8 class (flathead, 289, nailhead start-up / idle / rev clips and drives)",
+    "unused": true
    },
    {
     "url": "https://www.youtube.com/watch?v=j0KQWKYqmKs",
@@ -412,7 +426,8 @@
     "context": "street",
     "notes": "round two octave pinned x1 (round two): a start-up / rev clip at idle and free revs, not driving, so the per-source median rule does not apply",
     "why": "Round two: idle, low-rpm and free-rev (overrun) material for the old V8 class (flathead, 289, nailhead start-up / idle / rev clips and drives)",
-    "octave": 1.0
+    "octave": 1.0,
+    "unused": true
    },
    {
     "url": "https://www.youtube.com/watch?v=Lm1FTfIo9kA",
@@ -427,7 +442,8 @@
     "context": "street",
     "notes": "round two octave pinned x1 (round two): a start-up / rev clip at idle and free revs, not driving, so the per-source median rule does not apply",
     "why": "Round two: idle, low-rpm and free-rev (overrun) material for the old V8 class (flathead, 289, nailhead start-up / idle / rev clips and drives)",
-    "octave": 1.0
+    "octave": 1.0,
+    "unused": true
    },
    {
     "url": "https://www.youtube.com/watch?v=Ce7rHmN7kEU",
@@ -441,7 +457,8 @@
     "t1": 94.0,
     "context": "street",
     "notes": "round two",
-    "why": "Round two: old-V8 free revs, engine runs and a dyno pull (overrun and upper-rpm material)"
+    "why": "Round two: old-V8 free revs, engine runs and a dyno pull (overrun and upper-rpm material)",
+    "unused": true
    },
    {
     "url": "https://www.youtube.com/watch?v=0EQArgz_vt4",
@@ -455,7 +472,8 @@
     "t1": 65.0,
     "context": "street",
     "notes": "round two",
-    "why": "Round two: old-V8 free revs, engine runs and a dyno pull (overrun and upper-rpm material)"
+    "why": "Round two: old-V8 free revs, engine runs and a dyno pull (overrun and upper-rpm material)",
+    "unused": true
    },
    {
     "url": "https://www.youtube.com/watch?v=l0flubp4CKI",
@@ -470,7 +488,8 @@
     "context": "street",
     "notes": "round two octave pinned x1 (round two): a start-up / rev clip at idle and free revs, not driving, so the per-source median rule does not apply",
     "why": "Round two: old-V8 free revs, engine runs and a dyno pull (overrun and upper-rpm material)",
-    "octave": 1.0
+    "octave": 1.0,
+    "unused": true
    },
    {
     "url": "https://www.youtube.com/watch?v=af6bAtKnc2o",
@@ -484,7 +503,8 @@
     "t1": 157.0,
     "context": "street",
     "notes": "round two",
-    "why": "Round two: old-V8 free revs, engine runs and a dyno pull (overrun and upper-rpm material)"
+    "why": "Round two: old-V8 free revs, engine runs and a dyno pull (overrun and upper-rpm material)",
+    "unused": true
    },
    {
     "url": "https://www.youtube.com/watch?v=r7oief2WVew",
@@ -499,9 +519,11 @@
     "context": "street",
     "notes": "round two octave pinned x1 (round two): a start-up / rev clip at idle and free revs, not driving, so the per-source median rule does not apply",
     "why": "Round two: old-V8 free revs, engine runs and a dyno pull (overrun and upper-rpm material)",
-    "octave": 1.0
+    "octave": 1.0,
+    "unused": true
    }
-  ]
+  ],
+  "unused": "round three (26 Oct 2026): classic_v8_lowrev plays the gm_sbc_v8 sprites (alias_of in families.json); these sources are kept for the licence ledger and are in no shipped file"
  },
  "vintage_i6": {
   "cylinders": 6,

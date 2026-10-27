@@ -251,6 +251,12 @@ def all_families() -> list:
     return list(json.load(open(os.path.join(FAM, "index.json")))["families"])
 
 
+def aliases() -> dict:
+    """{alias family: target} for families that play another family's sprites (index.json alias_of)."""
+    return {k: v["alias_of"] for k, v in json.load(open(os.path.join(FAM, "index.json")))["families"].items()
+            if v.get("alias_of")}
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("families", nargs="*")
@@ -258,7 +264,7 @@ if __name__ == "__main__":
     ap.add_argument("--md", action="store_true")
     ap.add_argument("--no-speech", action="store_true")
     a = ap.parse_args()
-    fams = a.families or all_families()
+    fams = a.families or [f for f in all_families() if f not in aliases()]
     res = {}
     for fam in fams:
         m = measure(fam, speech=not a.no_speech)

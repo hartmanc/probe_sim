@@ -39,16 +39,17 @@
    "layout": "v",
    "redline": 4800,
    "idle": 650,
-   "engine": "classic_v8_lowrev/engine.json",
+   "engine": "gm_sbc_v8/engine.json",
    "sprites": {
-    "on": "classic_v8_lowrev/engine_on.ogg",
-    "off": "classic_v8_lowrev/engine_off.ogg"
+    "on": "gm_sbc_v8/engine_on.ogg",
+    "off": "gm_sbc_v8/engine_off.ogg"
    },
    "real_bins": {
-    "on": 17,
-    "off": 6
+    "on": 23,
+    "off": 20
    },
-   "character": "lazy burbly big/old V8s"
+   "character": "lazy burbly big/old V8s",
+   "alias_of": "gm_sbc_v8"
   },
   "vintage_i6": {
    "cylinders": 6,

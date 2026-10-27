@@ -24,7 +24,7 @@ def allowed(licence: str, src: str) -> bool:
 
 def test_every_family_source_is_cc_by_owner_or_synth():
     files = sorted(glob.glob(os.path.join(FAM, "*", "engine.json")))
-    assert len(files) >= 13
+    assert len(files) >= 12  # 13 AI families, one of them (classic_v8_lowrev) an alias of gm_sbc_v8 with no files of its own
     bad = []
     for f in files:
         d = json.load(open(f))
