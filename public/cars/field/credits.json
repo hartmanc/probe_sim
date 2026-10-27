@@ -1411,6 +1411,46 @@
    "licence_url": "http://creativecommons.org/licenses/by/4.0/",
    "url": "https://sketchfab.com/3d-models/1990-mazda-miata-na-7acee5044310499f85df631b203227b5",
    "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "97_mo": {
+   "title": "259: 2005 Toyota MR2 Spyder",
+   "author": "alexdelker",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/259-2005-toyota-mr2-spyder-9cc8dbbd68514a0fa8c2d14595cade99",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "123_mo": {
+   "title": "[FREE] Ford Crown Victoria 2005",
+   "author": "Velrifea",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/free-ford-crown-victoria-2005-91b2d4d7fe5b4197928c2f0315e24a67",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "160": {
+   "title": "Mini Cooper S",
+   "author": "cenobyte",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/mini-cooper-s-b262744901a04cda823f17289d1a4847",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "8_mo": {
+   "title": "Chevy S10 pickup 1990 (clean)",
+   "author": "zhe_kan",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/chevy-s10-pickup-1990-clean-f29928031bbe4fe2bb5f09c31dff78f0",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "15": {
+   "title": "BMW 525i",
+   "author": "Xico CGI",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/bmw-525i-0f017b95016c40b9838d2e6924252137",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
   }
  }
 }
