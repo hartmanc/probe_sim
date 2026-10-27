@@ -1484,6 +1484,14 @@
    "url": "https://sketchfab.com/3d-models/1998-volkswagen-new-beetle-81d1dbbf18e841a184c51f028e652879",
    "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added",
    "note": "Uploader flagged: other Ddiaz Design uploads carry game-asset names inside (M_CarPaint_Max, _Low, *_lod0). This file was scanned on 22 Oct 2026 and its node, mesh, material, texture and image names carry no such names; kept on the owner's decision."
+  },
+  "151": {
+   "title": "Mini Cooper S",
+   "author": "cenobyte",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/mini-cooper-s-b262744901a04cda823f17289d1a4847",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
   }
  }
 }

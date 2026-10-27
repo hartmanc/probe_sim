@@ -1729,8 +1729,8 @@
    "number": "15",
    "id": "15",
    "file": "models/15.glb",
-   "tris": 10964,
-   "bytes": 643772,
+   "tris": 10904,
+   "bytes": 639556,
    "materials": 2,
    "length_m": 4.72,
    "width_m": 1.751,
@@ -1738,7 +1738,7 @@
    "bbox_m": [
     4.751,
     1.841,
-    1.421
+    1.38
    ],
    "wheelbase_m": 2.761,
    "track_front_m": 1.47,
@@ -19064,6 +19064,140 @@
     "model_height": 1.215,
     "tris": 7499,
     "file": "tools/cars/kit/downloads/76/model.glb"
+   }
+  },
+  {
+   "number": "56",
+   "id": "56_mo",
+   "file": "models/56_mo.glb",
+   "tris": 10138,
+   "bytes": 591592,
+   "materials": 3,
+   "length_m": 4.87,
+   "width_m": 1.83,
+   "height_m": 1.45,
+   "bbox_m": [
+    4.982,
+    2.065,
+    1.697
+   ],
+   "wheelbase_m": 2.725,
+   "track_front_m": 1.56,
+   "track_rear_m": 1.55,
+   "tyre_radius_m": 0.33,
+   "tyre_radius_rear_m": 0.33,
+   "hubs": {
+    "wheel_fl": [
+     0.78,
+     0.33,
+     1.3625
+    ],
+    "wheel_fr": [
+     -0.78,
+     0.33,
+     1.3625
+    ],
+    "wheel_rl": [
+     0.775,
+     0.33,
+     -1.3625
+    ],
+    "wheel_rr": [
+     -0.775,
+     0.33,
+     -1.3625
+    ]
+   },
+   "team": "TPF Racing",
+   "car": "2010 Mercury Milan 4-door sedan",
+   "brake_lamps": [
+    [
+     0.6007,
+     0.8,
+     -2.3275,
+     0.06
+    ],
+    [
+     -0.6007,
+     0.8,
+     -2.3275,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true
+  },
+  {
+   "number": "151",
+   "id": "151",
+   "file": "models/151.glb",
+   "tris": 9148,
+   "bytes": 438312,
+   "materials": 3,
+   "length_m": 3.655,
+   "width_m": 1.688,
+   "height_m": 1.416,
+   "bbox_m": [
+    3.843,
+    1.874,
+    1.6
+   ],
+   "wheelbase_m": 2.467,
+   "track_front_m": 1.46,
+   "track_rear_m": 1.46,
+   "tyre_radius_m": 0.322,
+   "tyre_radius_rear_m": 0.322,
+   "hubs": {
+    "wheel_fl": [
+     0.73,
+     0.322,
+     1.2335
+    ],
+    "wheel_fr": [
+     -0.73,
+     0.322,
+     1.2335
+    ],
+    "wheel_rl": [
+     0.73,
+     0.322,
+     -1.2335
+    ],
+    "wheel_rr": [
+     -0.73,
+     0.322,
+     -1.2335
+    ]
+   },
+   "team": "Alpha Wolf Squadron",
+   "car": "2003 MINI Cooper S (R53), roof removed",
+   "brake_lamps": [
+    [
+     0.4053,
+     0.4326,
+     -1.754,
+     0.06
+    ],
+    [
+     -0.4053,
+     0.4326,
+     -1.754,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "named wheel parts",
+    "scale": 0.05000000661038982,
+    "source_tris": 34481,
+    "model_track": 1.453,
+    "model_tyre_radius": 0.317,
+    "hub_z_front": 0.322,
+    "hub_z_rear": 0.322,
+    "model_length": 3.699,
+    "model_width": 1.875,
+    "model_height": 1.433,
+    "tris": 5992,
+    "file": "tools/cars/kit/downloads/58/model_clean.glb"
    }
   }
  ]
