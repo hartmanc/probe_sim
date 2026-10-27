@@ -321,3 +321,35 @@ rules in 3.1**. Things in the current code that break it if the app does not go 
 - **Done in the 0.4.0 determinism round (docs/determinism.md):** the physics calls `src/physics/dmath.ts`, a port of
   V8's fdlibm and hypot bit-identical to the server's V8, in every engine; six-lap WebKit and Chrome traces replay on
   Node to the bit. Still native and open: `Math.pow` (V8 uses the platform C library's), the owner's decision.
+
+## 7. E2E
+
+`npm run test:e2e` (`src/scoreboard/__tests__/e2e.scoreboard.test.ts`) drives the scoreboard flow end to end so a hot lap
+does not have to be driven by hand to check a revision. It is excluded from `npx vitest run` (`vitest.config.ts` drops
+`e2e.*.test.ts` unless `E2E=1`), and **the normal suite needs no Redis**.
+
+Run it locally: `brew install redis`, then `npm run test:e2e` (about 10 s). The test starts its own throwaway
+`redis-server --port 6399 --save "" --appendonly no --dir <tmp>`, binds the real handler to `UpstashStore` over a RESP
+adapter (`__tests__/support/respAdapter.ts`: the store's REST pipeline function replaced by ioredis, so the real `LUA_ISSUE` /
+`LUA_ADOPT` scripts run on a real Redis with the same commands, keys and args the Upstash client sends; RESP2, as Upstash
+answers), flushes it at the end (asserting the database is empty) and shuts it down. Without the binary it skips with
+`redis-server not found: brew install redis`. The adapter has unit tests in the normal suite (`respAdapter.test.ts`).
+
+Covers: the recorded first lap of `webkit_laguna_6.json.gz`, cut to the lap, posted by device A under `e2e-<hex>` and
+verified by the server replay (200, on the board); a second device refused before adopting; transfer-code issue, adopt
+("now posts as"), single use (a second device with the used code is refused); device B's second lap (lap 2) and the board
+holding the better time; devices D, E, F adopting up to the limit of 5; the sixth adoption (it succeeds and the oldest device,
+A, loses the name: the script evicts, it does not refuse); an expired code (the live code key is given a 1 s life through
+Redis, the handler's TTL being a fixed 1 h) refused; race board GET and POST 410; an unknown name's GET (`you` null) and an
+empty board; tampered replays (one altered input row; a claimed time off by 1 s) refused with the board unchanged; MemoryStore
+and the Redis-backed store answering the owner operations identically.
+
+Second mode (off by default): `E2E_BASE_URL=https://<deployment> npm run test:e2e` runs the flow over HTTP against a
+deployment; `E2E_BYPASS_HEADER='Header-Name: value'` adds a protection-bypass header (neither is printed). It skips the
+device-limit, expiry and parity tests (they need many source addresses and store access). It writes real `e2e-<hex>` entries
+to that deployment's store and cannot delete them: use a preview with its own store, not production.
+
+Cannot cover: Upstash-specific REST behaviour (its HTTP layer, limits, latency, RESP3 vs REST encodings), the real deployment
+protection and the Vercel function's environment (asset bundling via `includeFiles`, the cold start, the body size limit at the
+edge), and anything the browser does (the client's secret storage, the dialogs). `E2E_STORE=memory` runs the file's own logic
+on MemoryStore as a dry run for editing the test; it is not an E2E.

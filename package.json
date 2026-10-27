@@ -8,7 +8,8 @@
     "dev:https": "vite --config vite.https.config.ts",
     "build": "tsc --noEmit -p tsconfig.build.json && vite build",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:e2e": "E2E=1 vitest run src/scoreboard/__tests__/e2e.scoreboard.test.ts"
   },
   "dependencies": {
     "@types/three": "^0.186.0",
@@ -22,6 +23,7 @@
   "devDependencies": {
     "@types/node": "^24.19.2",
     "@vitejs/plugin-basic-ssl": "^2.3.0",
+    "ioredis": "^6.0.0",
     "tsx": "^4.23.15"
   }
 }
