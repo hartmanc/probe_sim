@@ -610,5 +610,20 @@
    "octave_relabel": 1.0,
    "t1": 60.0
   }
- ]
+ ],
+ "fallback": {
+  "on": "engine_on.m4a",
+  "off": "engine_off.m4a",
+  "format": "m4a AAC-LC 96kbps 48 kHz mono (aac_at)",
+  "offset_s": 2e-07,
+  "offsets_s": {
+   "on": 0.0,
+   "off": 2e-07
+  },
+  "priming_s": 0.044,
+  "lengths_s": {
+   "on": 25.194667,
+   "off": 25.408
+  }
+ }
 }
