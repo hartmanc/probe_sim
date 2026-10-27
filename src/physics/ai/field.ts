@@ -103,6 +103,8 @@ export interface PaceJson {
   /** free-text notes on how the field was built (ids, cars left out) */
   notes?: string;
   track?: string;
+  /** Which statistic of the clean laps the targets are (tools/race/pace_rules.ts): the quantile `q`; 0.5 is the median. */
+  pace?: { stat: 'quantile'; q: number };
   /** Calibration metadata (written by calibrate_field.ts). */
   calibrated?: { ai_version: number; date?: string; tolerance?: number };
   cars: PaceCar[];

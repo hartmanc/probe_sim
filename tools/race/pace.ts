@@ -1,6 +1,6 @@
 // Per-car race pace from the real MYLAPS results of the 2026-10-12 Laguna Seca Lemons race.
 //
-//   npx tsx tools/race/pace.ts [--track <id>] [--data <dir>]   # writes the track's pace file (TRACKS[id].pace,
+//   npx tsx tools/race/pace.ts [--track <id>] [--data <dir>] [--quantile <q>]   # writes the track's pace file (TRACKS[id].pace,
 //                                          Laguna: public/cars/field/pace.json), keeping fitted scales already there
 //
 // Input: tools/race/data/sessions_12975608_classification.json + tools/race/data/laps/posNNN.json.
@@ -13,6 +13,10 @@
 // median of that driver's clean laps, after dropping: non-green laps, the pit lap, the out lap after it
 // (and lap 1 of the race), laps slower than 1.2 x the stint's own median or 1.3 x the car's median, and
 // anything faster than 0.97 x the official best. A stint needs MIN_STINT_LAPS clean laps.
+// The statistic is the quantile q of those clean laps (--quantile <q>, default 0.5 = the median, as the public files
+// are); a lower q anchors the solo lap nearer the car's free pace, because the median of a race stint already carries
+// the real race's traffic and the sim adds its own on top (owner, 27 Oct 2026: "They don't seem very fast, and I have
+// no problem passing them."). The file header records it as pace: { stat: "quantile", q }. tools/race/pace_rules.ts.
 // Chosen against the owner's real result (the Probe ran P5-P7): averaged over the draw, the stint median
 // puts 5-6 AI cars ahead of a 2:00-2:02 Probe; the 25th percentile would put 6-8 ahead.
 
@@ -31,6 +35,8 @@ const TRACK = trackArg(ARGV);
 const DATA = resolve(ROOT, ARGV.includes('--data') ? ARGV[ARGV.indexOf('--data') + 1] : 'tools/race/data');
 const OUT = pacePath(TRACK);
 const PLAYER = '619';
+const Q = ARGV.includes('--quantile') ? Number(ARGV[ARGV.indexOf('--quantile') + 1]) : 0.5;
+if (!(Q >= 0 && Q <= 1)) throw new Error('--quantile: a number from 0 to 1');
 
 const cls = JSON.parse(readFileSync(resolve(DATA, 'sessions_12975608_classification.json'), 'utf8'));
 const prev: PaceJson | null = existsSync(OUT) ? JSON.parse(readFileSync(OUT, 'utf8')) : null;
@@ -48,7 +54,7 @@ for (const r of cls.rows) {
   const pc = carPace(lj.laps, parseLap(r.bestTime), (k, target) => {
     const old = keepScales ? p?.stints?.[k] : undefined;
     return old && old.targetLap === target && old.scale !== undefined ? { scale: old.scale, achievedLap: old.achievedLap } : null;
-  });
+  }, Q);
 
   const car: PaceCar = {
     number,
@@ -64,7 +70,7 @@ for (const r of cls.rows) {
     sigma: pc.sigma,
     aggression: aggressionFor(number, r.resultClass),
     ...(number === PLAYER ? { player: true } : {}),
-    ...(keepScales && p?.scale !== undefined ? { scale: p.scale, achievedLap: p.achievedLap } : {}),
+    ...(keepScales && p?.scale !== undefined && p.targetLap === pc.targetLap ? { scale: p.scale, achievedLap: p.achievedLap } : {}),
     stints: pc.stints,
   };
   cars.push(car);
@@ -75,6 +81,7 @@ const out: PaceJson = {
   source: ARGV.includes('--source') ? ARGV[ARGV.indexOf('--source') + 1]
     : 'MYLAPS session 12975608 (24 Hours of Lemons, WeatherTech Raceway Laguna Seca, 2026-10-12); tools/race/pace.ts',
   track: TRACK,
+  pace: { stat: 'quantile', q: Q },
   cars,
 };
 mkdirSync(dirname(OUT), { recursive: true });

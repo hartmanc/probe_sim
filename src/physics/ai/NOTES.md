@@ -133,6 +133,12 @@ bestLap, status 'running'|'ejected', player).
   firstLap, targetLap = median of the stint's clean laps, bestLap, sigma, scale, achievedLap; outlier rules
   in tools/race/pace.ts). A race draws ONE stint per AI car with `drawPace(car, seed)` (uniform, seeded);
   the director builds the car at that stint's scale and `restart(seed)` redraws. Never shown to the player.
+  The statistic is a parameter (AI round 1, 27 Oct 2026): `targetLap` (car and stint) is the quantile `q` of the clean
+  laps (`--quantile <q>` on pace.ts, pace_track.ts, pace_sonoma.ts; default 0.5 = the median, every public file so far;
+  recorded in the header as `pace: { stat: "quantile", q }`; outlier cuts still reference the median). Why: a race
+  stint's median already carries the real race's traffic and the sim adds its own, so the field ran slow (owner: "They
+  don't seem very fast, and I have no problem passing them."). `calibrate_field.ts --pace <file>` calibrates a
+  candidate file (tools/race/out/pace_q/<q>/<track>/pace.json) without touching the public one.
   Regenerate: `npx tsx tools/race/pace.ts` (keeps fitted scales), then
   `npx tsx tools/race/calibrate_field.ts`. Bump AI_VERSION whenever driver / car construction changes; the
   director sets `calibrationStale` when pace.json is older (it then estimates scale = 121.5 s / target).

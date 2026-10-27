@@ -8,6 +8,13 @@
 // after dropping: non-green laps, the pit lap, the out lap after it (and lap 1 of the race), laps slower than 1.2 x the
 // stint's own median or 1.3 x the car's median, and anything faster than 0.97 x the official best. A stint needs
 // MIN_STINT_LAPS clean laps.
+//
+// The pace statistic is a quantile q of those clean laps (default 0.5, the median, which is every public pace file to
+// date; AI round 1, 27 Oct 2026). Why: the median of a race stint already carries the real race's traffic (it sits
+// about 9 % above the same car's best lap on every field) and the sim adds its own traffic on top, so the AI field ran
+// 15-30 % slower than the real cars could. Owner: "They don't seem very fast, and I have no problem passing them."
+// A lower q anchors the solo lap nearer the car's free pace. The outlier cuts keep referencing the MEDIAN, so the set of
+// clean laps does not move with q; sigma stays the robust sigma about the median.
 import type { PaceStint } from '../../src/physics/ai/field';
 
 export const MIN_STINT_LAPS = 5;
@@ -19,6 +26,14 @@ export function parseLap(s: string): number {
   return t;
 }
 export const median = (a: number[]) => { const b = [...a].sort((x, y) => x - y); const n = b.length; return n ? (n % 2 ? b[(n - 1) / 2] : 0.5 * (b[n / 2 - 1] + b[n / 2])) : NaN; };
+/** Quantile q (0..1) of `a` by linear interpolation between order statistics (position (n-1) q); equals median(a) at
+ *  q = 0.5 for every length (the two middle values are averaged as 0.5 (x + y), as median does). NaN for no values. */
+export const quantile = (a: number[], q: number) => {
+  const b = [...a].sort((x, y) => x - y); const n = b.length;
+  if (!n) return NaN;
+  const pos = (n - 1) * Math.min(1, Math.max(0, q)), lo = Math.floor(pos), hi = Math.ceil(pos), f = pos - lo;
+  return f === 0 ? b[lo] : f === 0.5 ? 0.5 * (b[lo] + b[hi]) : b[lo] + f * (b[hi] - b[lo]);
+};
 export const robustSigma = (a: number[]) => { const m = median(a); return 1.4826 * median(a.map((t) => Math.abs(t - m))); };
 
 interface Lap { nr: number; t: number; pit: boolean; ok: boolean }
@@ -33,9 +48,9 @@ export interface CarPaceStats {
 /**
  * One car's pace from its MyLaps lap file (`laps` of .../lapdata/<position>/laps) and its official best lap (s).
  * `prevStint(k, target)` may return the fitted scale of the same stint in a previous file (pace.ts keeps it when the
- * target is unchanged).
+ * target is unchanged). `q`: the quantile of the clean laps that is the target (default 0.5 = the median).
  */
-export function carPace(lapsJson: any[], official: number, prevStint?: (k: number, target: number) => { scale: number; achievedLap?: number } | null): CarPaceStats {
+export function carPace(lapsJson: any[], official: number, prevStint?: (k: number, target: number) => { scale: number; achievedLap?: number } | null, q = 0.5): CarPaceStats {
   const laps: Lap[] = lapsJson.map((l: any) => {
     const st: string[] = Array.isArray(l.status) ? l.status : [l.status];
     const t = parseLap(l.lapTime);
@@ -55,7 +70,7 @@ export function carPace(lapsJson: any[], official: number, prevStint?: (k: numbe
       const keep = run.filter((t) => t <= 1.2 * sm && t <= 1.3 * m0 && t >= 0.97 * official);
       if (keep.length >= MIN_STINT_LAPS) {
         const k = stints.length;
-        const target = +median(keep).toFixed(3);
+        const target = +quantile(keep, q).toFixed(3);
         const old = prevStint?.(k, target);
         stints.push({
           index: k, laps: keep.length, firstLap: first, targetLap: target,
@@ -73,5 +88,5 @@ export function carPace(lapsJson: any[], official: number, prevStint?: (k: numbe
     if (l.ok) run.push(l.t);
   }
   flush();
-  return { greenLaps: clean.length, targetLap: +med.toFixed(3), bestLap: +official.toFixed(3), sigma: +(1.4826 * mad).toFixed(3), stints };
+  return { greenLaps: clean.length, targetLap: +quantile(clean, q).toFixed(3), bestLap: +official.toFixed(3), sigma: +(1.4826 * mad).toFixed(3), stints };
 }
