@@ -1451,6 +1451,39 @@
    "licence_url": "http://creativecommons.org/licenses/by/4.0/",
    "url": "https://sketchfab.com/3d-models/bmw-525i-0f017b95016c40b9838d2e6924252137",
    "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "21_mo": {
+   "title": "2005 Ford Mustang GT",
+   "author": "Ricy (ngon_3d)",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/2005-ford-mustang-gt-26b6b60cf2804370ac3c64424242dc1f",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "17": {
+   "title": "Honda Accord 01 (Raw Scan)",
+   "author": "Renafox (kryik1023)",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/honda-accord-01-raw-scan-131086244a634257ae941cc918f37be3",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "264": {
+   "title": "1986 Pontiac Fiero",
+   "author": "Romanov_13",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/1986-pontiac-fiero-723ae108310a45e3a9086b7adfa0a1a3",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "113": {
+   "title": "1998 Volkswagen New Beetle",
+   "author": "Ddiaz Design",
+   "licence": "CC-BY-NC-SA-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by-nc-sa/4.0/",
+   "url": "https://sketchfab.com/3d-models/1998-volkswagen-new-beetle-81d1dbbf18e841a184c51f028e652879",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added",
+   "note": "Uploader flagged: other Ddiaz Design uploads carry game-asset names inside (M_CarPaint_Max, _Low, *_lod0). This file was scanned on 22 Oct 2026 and its node, mesh, material, texture and image names carry no such names; kept on the owner's decision."
   }
  }
 }

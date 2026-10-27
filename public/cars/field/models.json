@@ -1110,6 +1110,80 @@
    }
   },
   {
+   "number": "8",
+   "id": "8_mo",
+   "file": "models/8_mo.glb",
+   "tris": 9952,
+   "bytes": 569756,
+   "materials": 2,
+   "length_m": 4.526,
+   "width_m": 1.643,
+   "height_m": 1.51,
+   "bbox_m": [
+    4.773,
+    2.024,
+    1.461
+   ],
+   "wheelbase_m": 2.751,
+   "track_front_m": 1.39,
+   "track_rear_m": 1.39,
+   "tyre_radius_m": 0.3,
+   "tyre_radius_rear_m": 0.3,
+   "hubs": {
+    "wheel_fl": [
+     0.695,
+     0.3,
+     1.3755
+    ],
+    "wheel_fr": [
+     -0.695,
+     0.3,
+     1.3755
+    ],
+    "wheel_rl": [
+     0.695,
+     0.3,
+     -1.3755
+    ],
+    "wheel_rr": [
+     -0.695,
+     0.3,
+     -1.3755
+    ]
+   },
+   "team": "Ate Mile Motorsports",
+   "car": "2002 Chevrolet S-10 (lowered, standard cab)",
+   "brake_lamps": [
+    [
+     0.5827,
+     0.4287,
+     -2.5188,
+     0.06
+    ],
+    [
+     -0.5827,
+     0.4287,
+     -2.5188,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "named wheel parts",
+    "scale": 0.36012877292338735,
+    "source_tris": 425486,
+    "model_track": 1.436,
+    "model_tyre_radius": 0.343,
+    "hub_z_front": 0.3,
+    "hub_z_rear": 0.3,
+    "model_length": 4.741,
+    "model_width": 2.027,
+    "model_height": 1.462,
+    "tris": 7600,
+    "file": "tools/cars/kit/downloads/883/model.glb"
+   }
+  },
+  {
    "number": "9",
    "id": "9",
    "file": "models/9.glb",
@@ -1652,6 +1726,76 @@
    }
   },
   {
+   "number": "15",
+   "id": "15",
+   "file": "models/15.glb",
+   "tris": 10964,
+   "bytes": 643772,
+   "materials": 2,
+   "length_m": 4.72,
+   "width_m": 1.751,
+   "height_m": 1.412,
+   "bbox_m": [
+    4.751,
+    1.841,
+    1.421
+   ],
+   "wheelbase_m": 2.761,
+   "track_front_m": 1.47,
+   "track_rear_m": 1.495,
+   "tyre_radius_m": 0.31,
+   "tyre_radius_rear_m": 0.31,
+   "hubs": {
+    "wheel_fl": [
+     0.735,
+     0.31,
+     1.3805
+    ],
+    "wheel_fr": [
+     -0.735,
+     0.31,
+     1.3805
+    ],
+    "wheel_rl": [
+     0.7475,
+     0.31,
+     -1.3805
+    ],
+    "wheel_rr": [
+     -0.7475,
+     0.31,
+     -1.3805
+    ]
+   },
+   "team": "Slippery Slope",
+   "car": "1992 BMW 5 Series sedan (E34)",
+   "brake_lamps": [
+    [
+     0.4968,
+     0.5472,
+     -2.416,
+     0.06
+    ],
+    [
+     -0.4968,
+     0.5472,
+     -2.419,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 1.078515625,
+    "source_tris": 561082,
+    "model_length": 4.749,
+    "model_width": 5.412,
+    "model_height": 1.536,
+    "tris": 7999,
+    "file": "tools/cars/kit/downloads/525/model.glb"
+   }
+  },
+  {
    "number": "16",
    "id": "16",
    "file": "models/16.glb",
@@ -1990,6 +2134,66 @@
    }
   },
   {
+   "number": "20",
+   "id": "20_mo",
+   "file": "models/20_mo.glb",
+   "tris": 8916,
+   "bytes": 514988,
+   "materials": 2,
+   "length_m": 4.61,
+   "width_m": 1.824,
+   "height_m": 1.351,
+   "bbox_m": [
+    4.672,
+    1.984,
+    1.534
+   ],
+   "wheelbase_m": 2.573,
+   "track_front_m": 1.54,
+   "track_rear_m": 1.5,
+   "tyre_radius_m": 0.326,
+   "tyre_radius_rear_m": 0.326,
+   "hubs": {
+    "wheel_fl": [
+     0.77,
+     0.326,
+     1.2865
+    ],
+    "wheel_fr": [
+     -0.77,
+     0.326,
+     1.2865
+    ],
+    "wheel_rl": [
+     0.75,
+     0.326,
+     -1.2865
+    ],
+    "wheel_rr": [
+     -0.75,
+     0.326,
+     -1.2865
+    ]
+   },
+   "team": "The Udderly Terrible",
+   "car": "1996 Ford Mustang coupe (SN95, 1994-98)",
+   "brake_lamps": [
+    [
+     0.53,
+     0.82,
+     -2.2619,
+     0.13
+    ],
+    [
+     -0.53,
+     0.82,
+     -2.2626,
+     0.13
+    ]
+   ],
+   "brake_lamps_fallback": false
+  },
+  {
    "number": "21",
    "id": "21",
    "file": "models/21.glb",
@@ -2062,6 +2266,80 @@
     "model_height": 1.412,
     "tris": 8204,
     "file": "tools/cars/kit/downloads/200/model.glb"
+   }
+  },
+  {
+   "number": "21",
+   "id": "21_mo",
+   "file": "models/21_mo.glb",
+   "tris": 10376,
+   "bytes": 530220,
+   "materials": 2,
+   "length_m": 4.7,
+   "width_m": 1.875,
+   "height_m": 1.384,
+   "bbox_m": [
+    4.722,
+    2.112,
+    1.377
+   ],
+   "wheelbase_m": 2.72,
+   "track_front_m": 1.57,
+   "track_rear_m": 1.58,
+   "tyre_radius_m": 0.325,
+   "tyre_radius_rear_m": 0.325,
+   "hubs": {
+    "wheel_fl": [
+     0.785,
+     0.325,
+     1.36
+    ],
+    "wheel_fr": [
+     -0.785,
+     0.325,
+     1.36
+    ],
+    "wheel_rl": [
+     0.79,
+     0.325,
+     -1.36
+    ],
+    "wheel_rr": [
+     -0.79,
+     0.325,
+     -1.36
+    ]
+   },
+   "team": "Sakai Project",
+   "car": "2006 Ford Mustang GT (S197)",
+   "brake_lamps": [
+    [
+     0.5378,
+     0.5074,
+     -2.4094,
+     0.06
+    ],
+    [
+     -0.5378,
+     0.5074,
+     -2.4116,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "named wheel parts",
+    "scale": 1.0961309038061522,
+    "source_tris": 51507,
+    "model_track": 1.608,
+    "model_tyre_radius": 0.346,
+    "hub_z_front": 0.325,
+    "hub_z_rear": 0.325,
+    "model_length": 4.727,
+    "model_width": 2.118,
+    "model_height": 1.375,
+    "tris": 8000,
+    "file": "tools/cars/kit/downloads/21_mo/model.glb"
    }
   },
   {
@@ -8930,6 +9208,80 @@
    "brake_lamps_fallback": false
   },
   {
+   "number": "123",
+   "id": "123_mo",
+   "file": "models/123_mo.glb",
+   "tris": 10363,
+   "bytes": 516348,
+   "materials": 2,
+   "length_m": 5.385,
+   "width_m": 1.963,
+   "height_m": 1.443,
+   "bbox_m": [
+    5.435,
+    2.182,
+    1.484
+   ],
+   "wheelbase_m": 2.913,
+   "track_front_m": 1.61,
+   "track_rear_m": 1.66,
+   "tyre_radius_m": 0.338,
+   "tyre_radius_rear_m": 0.338,
+   "hubs": {
+    "wheel_fl": [
+     0.805,
+     0.338,
+     1.4565
+    ],
+    "wheel_fr": [
+     -0.805,
+     0.338,
+     1.4565
+    ],
+    "wheel_rl": [
+     0.83,
+     0.338,
+     -1.4565
+    ],
+    "wheel_rr": [
+     -0.83,
+     0.338,
+     -1.4565
+    ]
+   },
+   "team": "CROWN HICKTORIOUS",
+   "car": "2008 Ford Crown Victoria Police Interceptor",
+   "brake_lamps": [
+    [
+     0.66,
+     0.86,
+     -2.6281,
+     0.13
+    ],
+    [
+     -0.66,
+     0.86,
+     -2.6293,
+     0.13
+    ]
+   ],
+   "brake_lamps_fallback": false,
+   "import": {
+    "method": "named wheel parts",
+    "scale": 1.8478373993131045,
+    "source_tris": 39668,
+    "model_track": 1.652,
+    "model_tyre_radius": 0.361,
+    "hub_z_front": 0.338,
+    "hub_z_rear": 0.338,
+    "model_length": 5.407,
+    "model_width": 2.182,
+    "model_height": 1.485,
+    "tris": 7998,
+    "file": "tools/cars/kit/downloads/969/model.glb"
+   }
+  },
+  {
    "number": "124",
    "id": "124",
    "file": "models/124.glb",
@@ -9866,6 +10218,80 @@
     ]
    ],
    "brake_lamps_fallback": true
+  },
+  {
+   "number": "160",
+   "id": "160",
+   "file": "models/160.glb",
+   "tris": 8951,
+   "bytes": 419732,
+   "materials": 3,
+   "length_m": 3.728,
+   "width_m": 1.684,
+   "height_m": 1.407,
+   "bbox_m": [
+    3.727,
+    1.877,
+    1.492
+   ],
+   "wheelbase_m": 2.467,
+   "track_front_m": 1.46,
+   "track_rear_m": 1.46,
+   "tyre_radius_m": 0.32,
+   "tyre_radius_rear_m": 0.32,
+   "hubs": {
+    "wheel_fl": [
+     0.73,
+     0.32,
+     1.2335
+    ],
+    "wheel_fr": [
+     -0.73,
+     0.32,
+     1.2335
+    ],
+    "wheel_rl": [
+     0.73,
+     0.32,
+     -1.2335
+    ],
+    "wheel_rr": [
+     -0.73,
+     0.32,
+     -1.2335
+    ]
+   },
+   "team": "Here For The Bier",
+   "car": "2008 MINI Cooper (R56)",
+   "brake_lamps": [
+    [
+     0.4092,
+     0.4315,
+     -1.7534,
+     0.06
+    ],
+    [
+     -0.4092,
+     0.4315,
+     -1.7534,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "named wheel parts",
+    "scale": 0.05000000661038982,
+    "source_tris": 34953,
+    "model_track": 1.453,
+    "model_tyre_radius": 0.317,
+    "hub_z_front": 0.32,
+    "hub_z_rear": 0.32,
+    "model_length": 3.713,
+    "model_width": 1.875,
+    "model_height": 1.492,
+    "tris": 5997,
+    "file": "tools/cars/kit/downloads/58/model_clean.glb"
+   }
   },
   {
    "number": "169",
@@ -11412,6 +11838,66 @@
     ]
    ],
    "brake_lamps_fallback": false
+  },
+  {
+   "number": "248",
+   "id": "248",
+   "file": "models/248.glb",
+   "tris": 9478,
+   "bytes": 535372,
+   "materials": 2,
+   "length_m": 4.364,
+   "width_m": 1.715,
+   "height_m": 1.394,
+   "bbox_m": [
+    4.364,
+    1.98,
+    1.39
+   ],
+   "wheelbase_m": 2.642,
+   "track_front_m": 1.46,
+   "track_rear_m": 1.46,
+   "tyre_radius_m": 0.3,
+   "tyre_radius_rear_m": 0.3,
+   "hubs": {
+    "wheel_fl": [
+     0.73,
+     0.3,
+     1.321
+    ],
+    "wheel_fr": [
+     -0.73,
+     0.3,
+     1.321
+    ],
+    "wheel_rl": [
+     0.73,
+     0.3,
+     -1.321
+    ],
+    "wheel_rr": [
+     -0.73,
+     0.3,
+     -1.321
+    ]
+   },
+   "team": "3 Gena + 2",
+   "car": "1997 Plymouth Neon sedan",
+   "brake_lamps": [
+    [
+     0.4764,
+     0.7161,
+     -2.1744,
+     0.06
+    ],
+    [
+     -0.4764,
+     0.7161,
+     -2.1744,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true
   },
   {
    "number": "249",
@@ -16521,6 +17007,66 @@
    }
   },
   {
+   "number": "814",
+   "id": "814",
+   "file": "models/814.glb",
+   "tris": 8180,
+   "bytes": 453320,
+   "materials": 2,
+   "length_m": 4.65,
+   "width_m": 1.857,
+   "height_m": 1.349,
+   "bbox_m": [
+    4.732,
+    2.012,
+    1.47
+   ],
+   "wheelbase_m": 2.573,
+   "track_front_m": 1.54,
+   "track_rear_m": 1.5,
+   "tyre_radius_m": 0.326,
+   "tyre_radius_rear_m": 0.326,
+   "hubs": {
+    "wheel_fl": [
+     0.77,
+     0.326,
+     1.2865
+    ],
+    "wheel_fr": [
+     -0.77,
+     0.326,
+     1.2865
+    ],
+    "wheel_rl": [
+     0.75,
+     0.326,
+     -1.2865
+    ],
+    "wheel_rr": [
+     -0.75,
+     0.326,
+     -1.2865
+    ]
+   },
+   "team": "The Gang Buys a Race Car",
+   "car": "2003 Ford Mustang GT coupe (SN95 New Edge)",
+   "brake_lamps": [
+    [
+     0.58,
+     0.83,
+     -2.2774,
+     0.15
+    ],
+    [
+     -0.58,
+     0.83,
+     -2.2785,
+     0.15
+    ]
+   ],
+   "brake_lamps_fallback": false
+  },
+  {
    "number": "831",
    "id": "831",
    "file": "models/831.glb",
@@ -16667,6 +17213,66 @@
     "tris": 8499,
     "file": "tools/cars/kit/downloads/118/model.glb"
    }
+  },
+  {
+   "number": "845",
+   "id": "845",
+   "file": "models/845.glb",
+   "tris": 8126,
+   "bytes": 467832,
+   "materials": 2,
+   "length_m": 4.65,
+   "width_m": 1.857,
+   "height_m": 1.349,
+   "bbox_m": [
+    4.685,
+    2.012,
+    1.351
+   ],
+   "wheelbase_m": 2.573,
+   "track_front_m": 1.54,
+   "track_rear_m": 1.5,
+   "tyre_radius_m": 0.326,
+   "tyre_radius_rear_m": 0.326,
+   "hubs": {
+    "wheel_fl": [
+     0.77,
+     0.326,
+     1.2865
+    ],
+    "wheel_fr": [
+     -0.77,
+     0.326,
+     1.2865
+    ],
+    "wheel_rl": [
+     0.75,
+     0.326,
+     -1.2865
+    ],
+    "wheel_rr": [
+     -0.75,
+     0.326,
+     -1.2865
+    ]
+   },
+   "team": "Team Musan",
+   "car": "2000 Ford Mustang coupe (SN95 New Edge)",
+   "brake_lamps": [
+    [
+     0.58,
+     0.83,
+     -2.2774,
+     0.15
+    ],
+    [
+     -0.58,
+     0.83,
+     -2.2785,
+     0.15
+    ]
+   ],
+   "brake_lamps_fallback": false
   },
   {
    "number": "858",
@@ -18063,346 +18669,88 @@
    "brake_lamps_fallback": false
   },
   {
-   "number": "20",
-   "id": "20_mo",
-   "file": "models/20_mo.glb",
-   "tris": 8916,
-   "bytes": 514988,
+   "number": "17",
+   "id": "17",
+   "file": "models/17.glb",
+   "tris": 11468,
+   "bytes": 598268,
+   "materials": 2,
+   "length_m": 4.704,
+   "width_m": 1.704,
+   "height_m": 1.341,
+   "bbox_m": [
+    4.791,
+    2.018,
+    1.382
+   ],
+   "wheelbase_m": 2.72,
+   "track_front_m": 1.476,
+   "track_rear_m": 1.481,
+   "tyre_radius_m": 0.307,
+   "tyre_radius_rear_m": 0.307,
+   "hubs": {
+    "wheel_fl": [
+     0.738,
+     0.307,
+     1.36
+    ],
+    "wheel_fr": [
+     -0.738,
+     0.307,
+     1.36
+    ],
+    "wheel_rl": [
+     0.7405,
+     0.307,
+     -1.36
+    ],
+    "wheel_rr": [
+     -0.7405,
+     0.307,
+     -1.36
+    ]
+   },
+   "team": "Lemon Law Racing",
+   "car": "1991 Honda Accord 4-door (CB)",
+   "brake_lamps": [
+    [
+     0.55,
+     0.86,
+     -2.3559,
+     0.2
+    ],
+    [
+     -0.55,
+     0.86,
+     -2.3609,
+     0.2
+    ]
+   ],
+   "brake_lamps_fallback": false,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 0.20918249634699687,
+    "source_tris": 2500000,
+    "model_length": 4.776,
+    "model_width": 2.014,
+    "model_height": 1.369,
+    "tris": 8000,
+    "file": "tools/cars/kit/downloads/192/model.glb"
+   }
+  },
+  {
+   "number": "48",
+   "id": "48_mo",
+   "file": "models/48_mo.glb",
+   "tris": 8400,
+   "bytes": 466064,
    "materials": 2,
    "length_m": 4.61,
    "width_m": 1.824,
    "height_m": 1.351,
    "bbox_m": [
-    4.672,
+    4.645,
     1.984,
-    1.534
-   ],
-   "wheelbase_m": 2.573,
-   "track_front_m": 1.54,
-   "track_rear_m": 1.5,
-   "tyre_radius_m": 0.326,
-   "tyre_radius_rear_m": 0.326,
-   "hubs": {
-    "wheel_fl": [
-     0.77,
-     0.326,
-     1.2865
-    ],
-    "wheel_fr": [
-     -0.77,
-     0.326,
-     1.2865
-    ],
-    "wheel_rl": [
-     0.75,
-     0.326,
-     -1.2865
-    ],
-    "wheel_rr": [
-     -0.75,
-     0.326,
-     -1.2865
-    ]
-   },
-   "team": "The Udderly Terrible",
-   "car": "1996 Ford Mustang coupe (SN95, 1994-98)",
-   "brake_lamps": [
-    [
-     0.53,
-     0.82,
-     -2.2619,
-     0.13
-    ],
-    [
-     -0.53,
-     0.82,
-     -2.2626,
-     0.13
-    ]
-   ],
-   "brake_lamps_fallback": false
-  },
-  {
-   "number": "123",
-   "id": "123_mo",
-   "file": "models/123_mo.glb",
-   "tris": 10363,
-   "bytes": 516348,
-   "materials": 2,
-   "length_m": 5.385,
-   "width_m": 1.963,
-   "height_m": 1.443,
-   "bbox_m": [
-    5.435,
-    2.182,
-    1.484
-   ],
-   "wheelbase_m": 2.913,
-   "track_front_m": 1.61,
-   "track_rear_m": 1.66,
-   "tyre_radius_m": 0.338,
-   "tyre_radius_rear_m": 0.338,
-   "hubs": {
-    "wheel_fl": [
-     0.805,
-     0.338,
-     1.4565
-    ],
-    "wheel_fr": [
-     -0.805,
-     0.338,
-     1.4565
-    ],
-    "wheel_rl": [
-     0.83,
-     0.338,
-     -1.4565
-    ],
-    "wheel_rr": [
-     -0.83,
-     0.338,
-     -1.4565
-    ]
-   },
-   "team": "CROWN HICKTORIOUS",
-   "car": "2008 Ford Crown Victoria Police Interceptor",
-   "brake_lamps": [
-    [
-     0.66,
-     0.86,
-     -2.6281,
-     0.13
-    ],
-    [
-     -0.66,
-     0.86,
-     -2.6293,
-     0.13
-    ]
-   ],
-   "brake_lamps_fallback": false,
-   "import": {
-    "method": "named wheel parts",
-    "scale": 1.8478373993131045,
-    "source_tris": 39668,
-    "model_track": 1.652,
-    "model_tyre_radius": 0.361,
-    "hub_z_front": 0.338,
-    "hub_z_rear": 0.338,
-    "model_length": 5.407,
-    "model_width": 2.182,
-    "model_height": 1.485,
-    "tris": 7998,
-    "file": "tools/cars/kit/downloads/969/model.glb"
-   }
-  },
-  {
-   "number": "160",
-   "id": "160",
-   "file": "models/160.glb",
-   "tris": 8951,
-   "bytes": 419732,
-   "materials": 3,
-   "length_m": 3.728,
-   "width_m": 1.684,
-   "height_m": 1.407,
-   "bbox_m": [
-    3.727,
-    1.877,
-    1.492
-   ],
-   "wheelbase_m": 2.467,
-   "track_front_m": 1.46,
-   "track_rear_m": 1.46,
-   "tyre_radius_m": 0.32,
-   "tyre_radius_rear_m": 0.32,
-   "hubs": {
-    "wheel_fl": [
-     0.73,
-     0.32,
-     1.2335
-    ],
-    "wheel_fr": [
-     -0.73,
-     0.32,
-     1.2335
-    ],
-    "wheel_rl": [
-     0.73,
-     0.32,
-     -1.2335
-    ],
-    "wheel_rr": [
-     -0.73,
-     0.32,
-     -1.2335
-    ]
-   },
-   "team": "Here For The Bier",
-   "car": "2008 MINI Cooper (R56)",
-   "brake_lamps": [
-    [
-     0.4092,
-     0.4315,
-     -1.7534,
-     0.06
-    ],
-    [
-     -0.4092,
-     0.4315,
-     -1.7534,
-     0.06
-    ]
-   ],
-   "brake_lamps_fallback": true,
-   "import": {
-    "method": "named wheel parts",
-    "scale": 0.05000000661038982,
-    "source_tris": 34953,
-    "model_track": 1.453,
-    "model_tyre_radius": 0.317,
-    "hub_z_front": 0.32,
-    "hub_z_rear": 0.32,
-    "model_length": 3.713,
-    "model_width": 1.875,
-    "model_height": 1.492,
-    "tris": 5997,
-    "file": "tools/cars/kit/downloads/58/model_clean.glb"
-   }
-  },
-  {
-   "number": "248",
-   "id": "248",
-   "file": "models/248.glb",
-   "tris": 9478,
-   "bytes": 535372,
-   "materials": 2,
-   "length_m": 4.364,
-   "width_m": 1.715,
-   "height_m": 1.394,
-   "bbox_m": [
-    4.364,
-    1.98,
-    1.39
-   ],
-   "wheelbase_m": 2.642,
-   "track_front_m": 1.46,
-   "track_rear_m": 1.46,
-   "tyre_radius_m": 0.3,
-   "tyre_radius_rear_m": 0.3,
-   "hubs": {
-    "wheel_fl": [
-     0.73,
-     0.3,
-     1.321
-    ],
-    "wheel_fr": [
-     -0.73,
-     0.3,
-     1.321
-    ],
-    "wheel_rl": [
-     0.73,
-     0.3,
-     -1.321
-    ],
-    "wheel_rr": [
-     -0.73,
-     0.3,
-     -1.321
-    ]
-   },
-   "team": "3 Gena + 2",
-   "car": "1997 Plymouth Neon sedan",
-   "brake_lamps": [
-    [
-     0.4764,
-     0.7161,
-     -2.1744,
-     0.06
-    ],
-    [
-     -0.4764,
-     0.7161,
-     -2.1744,
-     0.06
-    ]
-   ],
-   "brake_lamps_fallback": true
-  },
-  {
-   "number": "814",
-   "id": "814",
-   "file": "models/814.glb",
-   "tris": 8180,
-   "bytes": 453320,
-   "materials": 2,
-   "length_m": 4.65,
-   "width_m": 1.857,
-   "height_m": 1.349,
-   "bbox_m": [
-    4.732,
-    2.012,
-    1.47
-   ],
-   "wheelbase_m": 2.573,
-   "track_front_m": 1.54,
-   "track_rear_m": 1.5,
-   "tyre_radius_m": 0.326,
-   "tyre_radius_rear_m": 0.326,
-   "hubs": {
-    "wheel_fl": [
-     0.77,
-     0.326,
-     1.2865
-    ],
-    "wheel_fr": [
-     -0.77,
-     0.326,
-     1.2865
-    ],
-    "wheel_rl": [
-     0.75,
-     0.326,
-     -1.2865
-    ],
-    "wheel_rr": [
-     -0.75,
-     0.326,
-     -1.2865
-    ]
-   },
-   "team": "The Gang Buys a Race Car",
-   "car": "2003 Ford Mustang GT coupe (SN95 New Edge)",
-   "brake_lamps": [
-    [
-     0.58,
-     0.83,
-     -2.2774,
-     0.15
-    ],
-    [
-     -0.58,
-     0.83,
-     -2.2785,
-     0.15
-    ]
-   ],
-   "brake_lamps_fallback": false
-  },
-  {
-   "number": "845",
-   "id": "845",
-   "file": "models/845.glb",
-   "tris": 8126,
-   "bytes": 467832,
-   "materials": 2,
-   "length_m": 4.65,
-   "width_m": 1.857,
-   "height_m": 1.349,
-   "bbox_m": [
-    4.685,
-    2.012,
     1.351
    ],
    "wheelbase_m": 2.573,
@@ -18432,166 +18780,290 @@
      -1.2865
     ]
    },
-   "team": "Team Musan",
-   "car": "2000 Ford Mustang coupe (SN95 New Edge)",
+   "team": "Froning Farms 2",
+   "car": "1995 Ford Mustang SN95 coupe",
    "brake_lamps": [
     [
-     0.58,
-     0.83,
-     -2.2774,
-     0.15
+     0.53,
+     0.82,
+     -2.2619,
+     0.13
     ],
     [
-     -0.58,
-     0.83,
-     -2.2785,
-     0.15
+     -0.53,
+     0.82,
+     -2.2626,
+     0.13
     ]
    ],
    "brake_lamps_fallback": false
   },
   {
-   "number": "8",
-   "id": "8_mo",
-   "file": "models/8_mo.glb",
-   "tris": 9952,
-   "bytes": 569756,
+   "number": "90",
+   "id": "90_mo",
+   "file": "models/90_mo.glb",
+   "tris": 9892,
+   "bytes": 557824,
    "materials": 2,
-   "length_m": 4.526,
-   "width_m": 1.643,
-   "height_m": 1.51,
+   "length_m": 4.441,
+   "width_m": 1.75,
+   "height_m": 1.359,
    "bbox_m": [
-    4.773,
-    2.024,
-    1.461
+    4.441,
+    1.969,
+    1.359
    ],
-   "wheelbase_m": 2.751,
-   "track_front_m": 1.39,
-   "track_rear_m": 1.39,
-   "tyre_radius_m": 0.3,
-   "tyre_radius_rear_m": 0.3,
+   "wheelbase_m": 2.65,
+   "track_front_m": 1.5,
+   "track_rear_m": 1.52,
+   "tyre_radius_m": 0.315,
+   "tyre_radius_rear_m": 0.315,
    "hubs": {
     "wheel_fl": [
-     0.695,
-     0.3,
-     1.3755
+     0.75,
+     0.315,
+     1.325
     ],
     "wheel_fr": [
-     -0.695,
-     0.3,
-     1.3755
+     -0.75,
+     0.315,
+     1.325
     ],
     "wheel_rl": [
-     0.695,
-     0.3,
-     -1.3755
+     0.76,
+     0.315,
+     -1.325
     ],
     "wheel_rr": [
-     -0.695,
-     0.3,
-     -1.3755
+     -0.76,
+     0.315,
+     -1.325
     ]
    },
-   "team": "Ate Mile Motorsports",
-   "car": "2002 Chevrolet S-10 (lowered, standard cab)",
+   "team": "Maximum Effort Racing",
+   "car": "2008 Honda Civic coupe (8th gen, FG)",
    "brake_lamps": [
     [
-     0.5827,
-     0.4287,
-     -2.5188,
+     0.4841,
+     0.7172,
+     -2.2478,
      0.06
     ],
     [
-     -0.5827,
-     0.4287,
-     -2.5188,
+     -0.4841,
+     0.7172,
+     -2.2478,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true
+  },
+  {
+   "number": "113",
+   "id": "113",
+   "file": "models/113.glb",
+   "tris": 9917,
+   "bytes": 569628,
+   "materials": 2,
+   "length_m": 4.08,
+   "width_m": 1.721,
+   "height_m": 1.51,
+   "bbox_m": [
+    4.068,
+    1.742,
+    1.569
+   ],
+   "wheelbase_m": 2.515,
+   "track_front_m": 1.5,
+   "track_rear_m": 1.49,
+   "tyre_radius_m": 0.31,
+   "tyre_radius_rear_m": 0.31,
+   "hubs": {
+    "wheel_fl": [
+     0.75,
+     0.31,
+     1.2575
+    ],
+    "wheel_fr": [
+     -0.75,
+     0.31,
+     1.2575
+    ],
+    "wheel_rl": [
+     0.745,
+     0.31,
+     -1.2575
+    ],
+    "wheel_rr": [
+     -0.745,
+     0.31,
+     -1.2575
+    ]
+   },
+   "team": "Slothman's Racing",
+   "car": "1998 Volkswagen New Beetle",
+   "brake_lamps": [
+    [
+     0.3755,
+     0.392,
+     -1.9532,
+     0.06
+    ],
+    [
+     -0.3755,
+     0.392,
+     -1.9519,
      0.06
     ]
    ],
    "brake_lamps_fallback": true,
    "import": {
     "method": "named wheel parts",
-    "scale": 0.36012877292338735,
-    "source_tris": 425486,
-    "model_track": 1.436,
-    "model_tyre_radius": 0.343,
-    "hub_z_front": 0.3,
-    "hub_z_rear": 0.3,
-    "model_length": 4.741,
-    "model_width": 2.027,
-    "model_height": 1.462,
-    "tris": 7600,
-    "file": "tools/cars/kit/downloads/883/model.glb"
+    "scale": 99.60488917800173,
+    "source_tris": 151727,
+    "model_track": 1.475,
+    "model_tyre_radius": 0.318,
+    "hub_z_front": 0.31,
+    "hub_z_rear": 0.31,
+    "model_length": 4.068,
+    "model_width": 1.743,
+    "model_height": 1.781,
+    "tris": 7399,
+    "file": "tools/cars/kit/downloads/64/model.glb"
    }
   },
   {
-   "number": "15",
-   "id": "15",
-   "file": "models/15.glb",
-   "tris": 10964,
-   "bytes": 643772,
+   "number": "132",
+   "id": "132",
+   "file": "models/132.glb",
+   "tris": 10358,
+   "bytes": 578020,
    "materials": 2,
-   "length_m": 4.72,
-   "width_m": 1.751,
-   "height_m": 1.412,
+   "length_m": 4.26,
+   "width_m": 1.7,
+   "height_m": 1.46,
    "bbox_m": [
-    4.751,
-    1.841,
-    1.421
+    4.286,
+    1.966,
+    1.495
    ],
-   "wheelbase_m": 2.761,
-   "track_front_m": 1.47,
-   "track_rear_m": 1.495,
+   "wheelbase_m": 2.615,
+   "track_front_m": 1.48,
+   "track_rear_m": 1.49,
    "tyre_radius_m": 0.31,
    "tyre_radius_rear_m": 0.31,
    "hubs": {
     "wheel_fl": [
-     0.735,
+     0.74,
      0.31,
-     1.3805
+     1.3075
+    ],
+    "wheel_fr": [
+     -0.74,
+     0.31,
+     1.3075
+    ],
+    "wheel_rl": [
+     0.745,
+     0.31,
+     -1.3075
+    ],
+    "wheel_rr": [
+     -0.745,
+     0.31,
+     -1.3075
+    ]
+   },
+   "team": "Focus? Foc U 2!",
+   "car": "2002 Ford Focus ZX3",
+   "brake_lamps": [
+    [
+     0.63,
+     1.18,
+     -1.5397,
+     0.12
+    ],
+    [
+     -0.63,
+     1.18,
+     -1.5411,
+     0.12
+    ]
+   ],
+   "brake_lamps_fallback": false
+  },
+  {
+   "number": "264",
+   "id": "264",
+   "file": "models/264.glb",
+   "tris": 10115,
+   "bytes": 558140,
+   "materials": 2,
+   "length_m": 4.124,
+   "width_m": 1.75,
+   "height_m": 1.19,
+   "bbox_m": [
+    4.091,
+    1.931,
+    1.215
+   ],
+   "wheelbase_m": 2.375,
+   "track_front_m": 1.47,
+   "track_rear_m": 1.5,
+   "tyre_radius_m": 0.3,
+   "tyre_radius_rear_m": 0.31,
+   "hubs": {
+    "wheel_fl": [
+     0.735,
+     0.3,
+     1.1875
     ],
     "wheel_fr": [
      -0.735,
-     0.31,
-     1.3805
+     0.3,
+     1.1875
     ],
     "wheel_rl": [
-     0.7475,
+     0.75,
      0.31,
-     -1.3805
+     -1.1875
     ],
     "wheel_rr": [
-     -0.7475,
+     -0.75,
      0.31,
-     -1.3805
+     -1.1875
     ]
    },
-   "team": "Slippery Slope",
-   "car": "1992 BMW 5 Series sedan (E34)",
+   "team": "Scuderia Fartari",
+   "car": "Pontiac Fiero (1984-88, guess)",
    "brake_lamps": [
     [
-     0.4968,
-     0.5472,
-     -2.416,
+     0.507,
+     0.472,
+     -2.0521,
      0.06
     ],
     [
-     -0.4968,
-     0.5472,
-     -2.419,
+     -0.507,
+     0.472,
+     -2.0523,
      0.06
     ]
    ],
    "brake_lamps_fallback": true,
    "import": {
-    "method": "hubs_hint",
-    "scale": 1.078515625,
-    "source_tris": 561082,
-    "model_length": 4.749,
-    "model_width": 5.412,
-    "model_height": 1.536,
-    "tris": 7999,
-    "file": "tools/cars/kit/downloads/525/model.glb"
+    "method": "named wheel parts",
+    "scale": 0.22751447026211388,
+    "source_tris": 364048,
+    "model_track": 1.666,
+    "model_tyre_radius": 0.195,
+    "hub_z_front": 0.302,
+    "hub_z_rear": 0.308,
+    "model_length": 4.09,
+    "model_width": 1.933,
+    "model_height": 1.215,
+    "tris": 7499,
+    "file": "tools/cars/kit/downloads/76/model.glb"
    }
   }
  ]
