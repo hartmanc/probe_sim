@@ -19,7 +19,9 @@ import { upgradeCarMaterials } from './car-materials';
 import { TrackMarks } from './marks';
 import { setFieldLook } from './field-cars';
 import { CarRig } from './car';
-import { GhostManager } from './ghosts';
+import { GhostManager, realLapOf } from './ghosts';
+import { BOARD_LAP_ID, RefController, RefPref, fmtRefTime } from './refs';
+import { ghostFromTrace } from '../scoreboard/ghostlap';
 import { CAMERA_MODES, CameraRig, DRIVER_VIEW_DEFAULTS, EYE_RANGE, FOV_CHOICES, OFFSET_STEP, SEAT_RANGE, type CameraMode } from './cameras';
 import { Input, type Action } from './input';
 import { ControlsPanel } from './controls-panel';
@@ -27,7 +29,7 @@ import { Hud } from './hud';
 import { CarAudio, audioParamsFromCarJson } from './audio';
 import { Menu, type MenuEntry, type MenuPage } from './menu';
 import { ModeHost, type GameMode, type ModeContext, type ModeId } from './modes/mode';
-import { createHotLap, HotlapLoop } from './modes/hotlap';
+import { createHotLap, ghostRefEntry, ghostRefOptions, HotlapLoop } from './modes/hotlap';
 import { createRace, fieldAudioHook, fieldAudioUrlOff, fieldVoicesFor, raceMenuLabel } from './modes/race';
 import { pitExitConeWatcher } from './scenery';
 import { creditsPage } from './credits';
@@ -88,6 +90,13 @@ const scoreUI = new ScoreboardUI({
   trackLength: () => sim?.trackLength ?? 0,
   onChange: () => sim?.markDirty(),
 });
+// "Ghost & delta": the device's reference lap for the ghost car and the delta (refs.ts); the controller exists once the track is loaded
+const refPref = new RefPref();
+let refs: RefController | null = null;
+const ghostRefRow = (): MenuEntry => refs ? ghostRefEntry(refs) : {
+  kind: 'choice', id: 'ghostRef', label: 'Ghost & delta', note: 'loading…', disabled: true,
+  options: ghostRefOptions(false), get: () => refPref.choice, set: () => { /* not yet */ },
+};
 const scoreboardEntry = (): MenuEntry => ({
   kind: 'submenu', id: 'scoreboard', label: 'Scoreboard', note: sim ? undefined : 'loading…', disabled: !sim, page: () => scoreUI.open(),
 });
@@ -169,6 +178,7 @@ const mainPage: MenuPage = {
     { kind: 'submenu', id: 'howto', label: 'How to play', page: () => howtoPage({ rows: () => input.helpRows(), touch: quality.touch, raceLaps: LIMITS.raceLaps, fieldLine: () => (fieldTotal !== null ? fieldLine(fieldTotal, quality.device) : null) }) },
     ...(touch ? [{ kind: 'submenu', id: 'touch', label: 'Touch controls', page: () => touchPage(touch) } as MenuEntry] : []),
     ...(showControlsPanelRow() ? [{ kind: 'action', id: 'controls', label: 'Controls & calibration', run: () => controlsPanel.open() } as MenuEntry] : []),
+    ghostRefRow(),
     graphicsEntry(),
     ...reloadEntry(),
     scoreboardEntry(),
@@ -397,6 +407,22 @@ function createSim(assets: Assets) {
   const ghosts = new GhostManager(physics, track, assets.ghosts, ghostTemplate);
   ghosts.group.visible = false; // a mode shows them
   world.scene.add(ghosts.group);
+  // the reference lap of the ghost car and the delta: the session's best, the board's #1 (fetched when chosen and rebuilt
+  // here from its input trace with the server's replay), or the package's real logger lap
+  refs = new RefController({
+    pref: refPref, real: realLapOf(assets.ghosts), length: track.length_m, grid: assets.ghosts.s_grid_m, cars: ghosts,
+    async loadBoard() {
+      const board = hotlapBoard();
+      if (!board || !assetsOk) return null;   // stand-in assets: the rebuild would not match the server's
+      const r = await scoreClient.ghost(board);
+      if (!r.ok) { if (r.status === 404 || r.status === 410) return null; throw new Error(r.error); }
+      const g = r.value;
+      await new Promise((done) => setTimeout(done, 0));   // let the HUD show "loading" before the replay holds the thread
+      const built = ghostFromTrace(simAssets, g.trace, g.lap, { id: BOARD_LAP_ID, driver: g.name, label: (t) => `${g.name} ${fmtRefTime(t)}`, kind: 'board' });
+      if (!built || Math.abs(built.time - g.score) > 0.001) throw new Error('the rebuilt lap does not match the board');
+      return { lap: built.lap, name: g.name, time: built.time };
+    },
+  });
 
   const cams = new CameraRig(window.innerWidth / window.innerHeight);
   const look = new Look(renderer, world, cams.camera, quality, { sun: sunFromUrl(location.search), post: !postUrlOff(location.search), fogHeightM: track.center[0][2] });
@@ -453,7 +479,7 @@ function createSim(assets: Assets) {
 
   const ctx: ModeContext = {
     marks,
-    physics, track, timer, ghosts, ghostData: assets.ghosts, hud, input,
+    physics, track, timer, ghosts, ghostData: assets.ghosts, refs, hud, input,
     get vehicle() { return veh(); },
     simTime: () => hsim.simTime,
     s: () => hsim.s,
