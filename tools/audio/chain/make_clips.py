@@ -43,7 +43,8 @@ def laeq(x):
 
 def main():
     out = os.path.abspath(sys.argv[1])
-    fams = sys.argv[2:]
+    tg = [a for a in sys.argv[2:] if a.startswith("--target=")]  # a fixed common target (re-rendering a few clips of a set)
+    fams = [a for a in sys.argv[2:] if not a.startswith("--")]
     idx = json.load(open(os.path.join(ROOT, "public", "audio", "families", "index.json")))["families"]
     fams = fams or list(idx)
     work = os.path.join(ROOT, "tools", "audio", "cache", "clips_raw")
@@ -56,16 +57,20 @@ def main():
     raw = {f: np.fromfile(os.path.join(work, f + ".f32"), np.float32).astype(np.float64) for f in fams}
     la = {f: laeq(x) for f, x in raw.items()}
     pk = {f: 20 * np.log10(np.max(np.abs(x)) + 1e-12) for f, x in raw.items()}
-    target = min(-16.0, min(-1.0 - (pk[f] - la[f]) for f in fams))
-    rec = {"target_laeq_dbfs": round(target, 2), "method": "A-weighted RMS over the whole 25 s clip, one common target, "
+    target = float(tg[0].split("=")[1]) if tg else min(-16.0, min(-1.0 - (pk[f] - la[f]) for f in fams))
+    prev = os.path.join(out, "clips.json")
+    old = json.load(open(prev)) if tg and os.path.exists(prev) else None
+    rec = old if old else {"target_laeq_dbfs": round(target, 2), "method": "A-weighted RMS over the whole 25 s clip, one common target, "
            "the highest at which every peak stays <= -1 dBFS; no limiter", "clips": {}}
+    rec["clips"] = rec.get("clips", {})
     for f in fams:
-        g = 10 ** ((target - la[f]) / 20)
+        tf = min(target, -1.0 - (pk[f] - la[f]))  # with a fixed --target a clip whose peak would pass -1 dBFS stays below it
+        g = 10 ** ((tf - la[f]) / 20)
         y = (raw[f] * g).astype(np.float32)
         p = subprocess.run([FFMPEG, "-v", "error", "-y", "-f", "f32le", "-ar", str(SR), "-ac", "1", "-i", "-", "-c:a", "libmp3lame",
                             "-b:a", "128k", "-ar", str(SR), os.path.join(out, f + ".mp3")], input=y.tobytes(), check=True)
-        rec["clips"][f] = {"raw_laeq_dbfs": round(la[f], 2), "gain_db": round(target - la[f], 2),
-                           "peak_dbfs": round(pk[f] + target - la[f], 2), "bytes": os.path.getsize(os.path.join(out, f + ".mp3"))}
+        rec["clips"][f] = {"raw_laeq_dbfs": round(la[f], 2), "gain_db": round(tf - la[f], 2),
+                           "peak_dbfs": round(pk[f] + tf - la[f], 2), "laeq_dbfs": round(tf, 2), "bytes": os.path.getsize(os.path.join(out, f + ".mp3"))}
         print(f, rec["clips"][f], flush=True)
     json.dump(rec, open(os.path.join(out, "clips.json"), "w"), indent=1)
 

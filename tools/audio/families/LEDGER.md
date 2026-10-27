@@ -567,3 +567,42 @@ traced to, what changed, and what is still weak; the notes boxes and the db scri
 Battery 75-100 % throughout (briefly discharging), load average 2-4, one heavy process at a time. Disk dipped to 9.4 GB
 free mid-run; `uv cache prune` and dropping each family's FLACs after its build kept it above 10 GB afterwards; the audio
 cache ends at about 0.6 GB (rpm, idle and speech tracks; no FLACs).
+
+# Round three: the owner's notes of 26 Oct 2026 (evening), branch `audio-quality`
+
+Listening Room 2 verdicts: OK for `modern_i4_stock`, `sohc_i4_loud`, `mazda_kl_v6`, `mazda_b_i4`, `gm_sbc_v8`,
+`twincam_i4_loud`, `toyota_1jz_turbo`, `subaru_fa20_flat4`, `vw_aircooled_flat4`, `mini_supercharged_i4`; later
+`bmw_m20_i6` too (its "error during playback" was the player: it played on retry, so no change and no re-render, 11 OK).
+His rule: weaker is fine so long as it does not sound terrible or like something other than an ICE.
+
+**No new source audio.** `yt-dlp` is refused by YouTube from this machine ("confirm you are not a bot"; the cookie route is not
+used) and round two's FLACs were dropped after each build, so nothing was re-cut from sources. Steps 2 and 3 repair the
+shipped sprites (`families/repair_family.py`): unlisted bins keep loop, tier, rpm, seam and source text; listed bins become a
+pitch-shifted copy of the nearest clean real donor of the same load (else the other load's, darkened when an on loop serves
+an off bin); `build_family.write_family` writes the Opus sprites again (one more lossy pass on every bin), `encode_fallback.py`
+the AAC pair. The contamination metric is the standard deviation (dB, 10 ms frames) of the 5-12 kHz band over the loop:
+clean loops of the families the owner passed are 1-4 (medians 1.9-3.6); gated or pulsed loops are 6-16.
+
+| Family | owner's note | cause found | change | gates after |
+|---|---|---|---|---|
+| `classic_v8_lowrev` | "moaning at 0:05, 0:08-0:10, VHS rewind noise, just use the sbc sound" | its own round-two bins | alias of `gm_sbc_v8` (families.json `alias_of`, index.json entry points at the sbc engine.json and sprites; own sprites deleted; its 21 sources kept in sources.json marked `unused`; cars, idle 650 and redline 4800 keep their own specs) | none of its own: `test_quality` skips it with the reason |
+| `ohv_v6` | "noise / distortion, FM radio at idle, a drum beat" | idle loops (700, 875, 1000 on / off, 1250 off) carry gated, pulsed 5-15 kHz hiss with clicks; 700 and 875 were the 1000 loop slowed x0.70 / x0.875 | on 700-1000: the 1250 on loop, low-passed at 4.5 kHz, slowed x0.56 / 0.70 / 0.80; off 700-1000 and 1250 off: that loop darkened; 1250 on: the 1500 on loop x0.83 | speech 0; ratio fails 3 to 7 (0.56-1.14); idle gate fails (bin 0 is not a real idle: it was already failing); seam median 0.89 vs 0.84; 4750-6000 rpm bins (from src17, 182 s) show a milder pulsed band and were left, listed as open |
+| `vintage_i6` | "weird noises at 0:04-0:05, recurring at that rev range" | the clip is at 3300-4300 rpm then: on loops 4000-4750 and off 3750, 4000, 4500, 4750 are gated (loud half the loop, near silent the other, 1.7 times a second) | on 4000-4750 from the clean 3500 on loop (x1.14-1.36); off from the clean 4250 off loop (x0.88-1.12) | speech 0; ratio fails 6 to 10 (0.85-1.43, all upward on-throttle); idle ok; loops ok; seam median 0.89 vs 0.84 |
+| `bmw_m20_i6` | "error during playback?" | the player, not the file (played on retry) | none | unchanged |
+
+Contaminated-looking bins of `vintage_i6` left alone because the owner heard them as fine: 605 on / off (idle), 1250 off,
+2500 on / off (the clip's first 3.3 s).
+
+**Provisional table** (`test_quality.PROVISIONAL`, strict xfail with the reason, gates unchanged): `modern_i4_stock` seam,
+`twincam_i4_loud` seam, `gm_sbc_v8` ratio + seam, `mini_supercharged_i4` idle + seam, `mazda_b_i4` ratio + idle (8 pairs).
+`ohv_v6` and `vintage_i6` are not in it: their remaining failures stay failing until the owner listens again.
+
+**Tests**: `pytest tools/audio` 64 passed, 3 failed (`vintage_i6` ratio, `ohv_v6` ratio, `ohv_v6` idle), 8 xfailed, 6 skipped
+(the alias's six gate tests; round two: 69 / 12). `npx vitest run` 602 passed (73 files), `npm run build` green.
+The licence gate counts 12 engine.json files (13 families, one an alias).
+
+**Clips** re-rendered (the game's real chain, as round two): `classic_v8_lowrev` (the sbc sound at its cars' revs), `ohv_v6`,
+`vintage_i6`, into `tmp/sound_demo2/clips/` with `clips.json` merged (`--target=-30.39` in `make_clips.py` keeps the common
+loudness). `classic_v8_lowrev` is held at -32.09 LAeq: at -30.39 its peak would be +0.7 dBFS. `bmw_m20_i6` was not re-rendered.
+
+**Not done**: new CC BY sources for `ohv_v6` / `vintage_i6` (downloads refused); no change to the game's audio chain, ShiftDrop or physics.
