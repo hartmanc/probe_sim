@@ -1,5 +1,5 @@
 {
- "about": "Field car models built by tools/cars/build_car.py. Frame as CONTRACTS.md §1/§3: glTF +Z nose, +Y up, +X left, metres; nodes body + wheel_fl/fr/rl/rr (hub pivots, axle local +X). hubs are glTF translations; tyre_radius_m is the wheel mesh radius.",
+ "about": "Field car models built by tools/cars/build_car.py. Frame as CONTRACTS.md \u00a71/\u00a73: glTF +Z nose, +Y up, +X left, metres; nodes body + wheel_fl/fr/rl/rr (hub pivots, axle local +X). hubs are glTF translations; tyre_radius_m is the wheel mesh radius.",
  "cars": [
   {
    "number": "0",
@@ -478,6 +478,66 @@
    "brake_lamps_fallback": false
   },
   {
+   "number": "2",
+   "id": "2_mo",
+   "file": "models/2_mo.glb",
+   "tris": 8358,
+   "bytes": 460204,
+   "materials": 2,
+   "length_m": 5.094,
+   "width_m": 1.847,
+   "height_m": 1.339,
+   "bbox_m": [
+    5.137,
+    2.092,
+    1.339
+   ],
+   "wheelbase_m": 2.87,
+   "track_front_m": 1.56,
+   "track_rear_m": 1.53,
+   "tyre_radius_m": 0.325,
+   "tyre_radius_rear_m": 0.325,
+   "hubs": {
+    "wheel_fl": [
+     0.78,
+     0.325,
+     1.435
+    ],
+    "wheel_fr": [
+     -0.78,
+     0.325,
+     1.435
+    ],
+    "wheel_rl": [
+     0.765,
+     0.325,
+     -1.435
+    ],
+    "wheel_rr": [
+     -0.765,
+     0.325,
+     -1.435
+    ]
+   },
+   "team": "MBTL Racing",
+   "car": "1993 Mercury Cougar XR7 / Ford Thunderbird (MN12)",
+   "brake_lamps": [
+    [
+     0.5,
+     0.82,
+     -2.8577,
+     0.35
+    ],
+    [
+     -0.5,
+     0.82,
+     -2.8579,
+     0.35
+    ]
+   ],
+   "brake_lamps_fallback": false
+  },
+  {
    "number": "3",
    "id": "3",
    "file": "models/3.glb",
@@ -884,6 +944,66 @@
     "tris": 5997,
     "file": "tools/cars/kit/downloads/58/model_clean.glb"
    }
+  },
+  {
+   "number": "5",
+   "id": "5_mo",
+   "file": "models/5_mo.glb",
+   "tris": 9178,
+   "bytes": 517940,
+   "materials": 2,
+   "length_m": 4.834,
+   "width_m": 1.818,
+   "height_m": 1.453,
+   "bbox_m": [
+    4.92,
+    1.983,
+    1.535
+   ],
+   "wheelbase_m": 2.741,
+   "track_front_m": 1.55,
+   "track_rear_m": 1.55,
+   "tyre_radius_m": 0.305,
+   "tyre_radius_rear_m": 0.305,
+   "hubs": {
+    "wheel_fl": [
+     0.775,
+     0.305,
+     1.3705
+    ],
+    "wheel_fr": [
+     -0.775,
+     0.305,
+     1.3705
+    ],
+    "wheel_rl": [
+     0.775,
+     0.305,
+     -1.3705
+    ],
+    "wheel_rr": [
+     -0.775,
+     0.305,
+     -1.3705
+    ]
+   },
+   "team": "Bo Knows Lemons!",
+   "car": "2004 Honda Accord sedan (CM)",
+   "brake_lamps": [
+    [
+     0.68,
+     0.93,
+     -2.4635,
+     0.18
+    ],
+    [
+     -0.68,
+     0.93,
+     -2.4635,
+     0.18
+    ]
+   ],
+   "brake_lamps_fallback": false
   },
   {
    "number": "7",
@@ -9520,6 +9640,66 @@
    "brake_lamps_fallback": true
   },
   {
+   "number": "112",
+   "id": "112",
+   "file": "models/112.glb",
+   "tris": 8082,
+   "bytes": 504556,
+   "materials": 2,
+   "length_m": 4.38,
+   "width_m": 1.689,
+   "height_m": 1.588,
+   "bbox_m": [
+    4.586,
+    1.904,
+    1.7
+   ],
+   "wheelbase_m": 2.624,
+   "track_front_m": 1.45,
+   "track_rear_m": 1.45,
+   "tyre_radius_m": 0.325,
+   "tyre_radius_rear_m": 0.325,
+   "hubs": {
+    "wheel_fl": [
+     0.725,
+     0.325,
+     1.312
+    ],
+    "wheel_fr": [
+     -0.725,
+     0.325,
+     1.312
+    ],
+    "wheel_rl": [
+     0.725,
+     0.325,
+     -1.312
+    ],
+    "wheel_rr": [
+     -0.725,
+     0.325,
+     -1.312
+    ]
+   },
+   "team": "Poor Energy Racing",
+   "car": "2003 Toyota Tacoma regular cab (BMW-front swap)",
+   "brake_lamps": [
+    [
+     0.76,
+     0.9,
+     -2.0028,
+     0.11
+    ],
+    [
+     -0.76,
+     0.9,
+     -2.0031,
+     0.11
+    ]
+   ],
+   "brake_lamps_fallback": false
+  },
+  {
    "number": "113",
    "id": "113",
    "file": "models/113.glb",
@@ -11387,7 +11567,7 @@
      -1.2
     ]
    },
-   "team": "Malört Racing Development (MRD)",
+   "team": "Mal\u00f6rt Racing Development (MRD)",
    "car": "1981 Toyota Corolla (E70) wagon",
    "brake_lamps": [
     [
@@ -13092,6 +13272,66 @@
    }
   },
   {
+   "number": "250",
+   "id": "250_mo",
+   "file": "models/250_mo.glb",
+   "tris": 8724,
+   "bytes": 532184,
+   "materials": 2,
+   "length_m": 5.315,
+   "width_m": 1.895,
+   "height_m": 1.361,
+   "bbox_m": [
+    5.341,
+    1.905,
+    1.771
+   ],
+   "wheelbase_m": 2.87,
+   "track_front_m": 1.56,
+   "track_rear_m": 1.55,
+   "tyre_radius_m": 0.335,
+   "tyre_radius_rear_m": 0.335,
+   "hubs": {
+    "wheel_fl": [
+     0.78,
+     0.335,
+     1.435
+    ],
+    "wheel_fr": [
+     -0.78,
+     0.335,
+     1.435
+    ],
+    "wheel_rl": [
+     0.775,
+     0.335,
+     -1.435
+    ],
+    "wheel_rr": [
+     -0.775,
+     0.335,
+     -1.435
+    ]
+   },
+   "team": "Heads you Win - Tails we....",
+   "car": "1994 Lincoln Mark VIII coupe",
+   "brake_lamps": [
+    [
+     0.62,
+     0.87,
+     -2.667,
+     0.31
+    ],
+    [
+     -0.62,
+     0.87,
+     -2.6667,
+     0.31
+    ]
+   ],
+   "brake_lamps_fallback": false
+  },
+  {
    "number": "256",
    "id": "256",
    "file": "models/256.glb",
@@ -13526,6 +13766,66 @@
     "tris": 7497,
     "file": "tools/cars/kit/downloads/47/model.glb"
    }
+  },
+  {
+   "number": "269",
+   "id": "269",
+   "file": "models/269.glb",
+   "tris": 8160,
+   "bytes": 477312,
+   "materials": 2,
+   "length_m": 4.585,
+   "width_m": 1.725,
+   "height_m": 1.41,
+   "bbox_m": [
+    4.623,
+    1.725,
+    1.41
+   ],
+   "wheelbase_m": 2.624,
+   "track_front_m": 1.45,
+   "track_rear_m": 1.45,
+   "tyre_radius_m": 0.31,
+   "tyre_radius_rear_m": 0.31,
+   "hubs": {
+    "wheel_fl": [
+     0.725,
+     0.31,
+     1.312
+    ],
+    "wheel_fr": [
+     -0.725,
+     0.31,
+     1.312
+    ],
+    "wheel_rl": [
+     0.725,
+     0.31,
+     -1.312
+    ],
+    "wheel_rr": [
+     -0.725,
+     0.31,
+     -1.312
+    ]
+   },
+   "team": "Poor Boy Racing",
+   "car": "2007 Chevrolet Cobalt coupe",
+   "brake_lamps": [
+    [
+     0.62,
+     0.9,
+     -2.373,
+     0.1
+    ],
+    [
+     -0.62,
+     0.9,
+     -2.373,
+     0.1
+    ]
+   ],
+   "brake_lamps_fallback": false
   },
   {
    "number": "280",
@@ -16576,6 +16876,66 @@
    "brake_lamps_fallback": false
   },
   {
+   "number": "661",
+   "id": "661",
+   "file": "models/661.glb",
+   "tris": 8688,
+   "bytes": 506596,
+   "materials": 2,
+   "length_m": 4.877,
+   "width_m": 1.808,
+   "height_m": 1.39,
+   "bbox_m": [
+    4.942,
+    1.808,
+    1.39
+   ],
+   "wheelbase_m": 2.692,
+   "track_front_m": 1.55,
+   "track_rear_m": 1.55,
+   "tyre_radius_m": 0.31,
+   "tyre_radius_rear_m": 0.31,
+   "hubs": {
+    "wheel_fl": [
+     0.775,
+     0.31,
+     1.346
+    ],
+    "wheel_fr": [
+     -0.775,
+     0.31,
+     1.346
+    ],
+    "wheel_rl": [
+     0.775,
+     0.31,
+     -1.346
+    ],
+    "wheel_rr": [
+     -0.775,
+     0.31,
+     -1.346
+    ]
+   },
+   "team": "Jagoff Motorwerks",
+   "car": "1993 Ford Taurus sedan",
+   "brake_lamps": [
+    [
+     0.66,
+     0.92,
+     -2.531,
+     0.2
+    ],
+    [
+     -0.66,
+     0.92,
+     -2.531,
+     0.2
+    ]
+   ],
+   "brake_lamps_fallback": false
+  },
+  {
    "number": "664",
    "id": "664",
    "file": "models/664.glb",
@@ -19139,6 +19499,76 @@
    "brake_lamps_fallback": true
   },
   {
+   "number": "888",
+   "id": "888_mo",
+   "file": "models/888_mo.glb",
+   "tris": 10527,
+   "bytes": 502892,
+   "materials": 2,
+   "length_m": 4.823,
+   "width_m": 1.709,
+   "height_m": 1.43,
+   "bbox_m": [
+    4.85,
+    1.818,
+    1.693
+   ],
+   "wheelbase_m": 2.649,
+   "track_front_m": 1.43,
+   "track_rear_m": 1.43,
+   "tyre_radius_m": 0.29,
+   "tyre_radius_rear_m": 0.29,
+   "hubs": {
+    "wheel_fl": [
+     0.715,
+     0.29,
+     1.3245
+    ],
+    "wheel_fr": [
+     -0.715,
+     0.29,
+     1.3245
+    ],
+    "wheel_rl": [
+     0.715,
+     0.29,
+     -1.3245
+    ],
+    "wheel_rr": [
+     -0.715,
+     0.29,
+     -1.3245
+    ]
+   },
+   "team": "The Volvo from Hell",
+   "car": "1985 Volvo 244 sedan",
+   "brake_lamps": [
+    [
+     0.4673,
+     0.5458,
+     -2.4293,
+     0.06
+    ],
+    [
+     -0.4673,
+     0.5458,
+     -2.4293,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "hubs_hint",
+    "scale": 0.9594349873234335,
+    "source_tris": 62916,
+    "model_length": 4.85,
+    "model_width": 4.884,
+    "model_height": 1.445,
+    "tris": 7923,
+    "file": "tools/cars/kit/downloads/888_mo/model.glb"
+   }
+  },
+  {
    "number": "900",
    "id": "900",
    "file": "models/900.glb",
@@ -20250,366 +20680,6 @@
      1.0,
      -2.0664,
      0.15
-    ]
-   ],
-   "brake_lamps_fallback": false
-  },
-  {
-   "number": "2",
-   "id": "2_mo",
-   "file": "models/2_mo.glb",
-   "tris": 8358,
-   "bytes": 460204,
-   "materials": 2,
-   "length_m": 5.094,
-   "width_m": 1.847,
-   "height_m": 1.339,
-   "bbox_m": [
-    5.137,
-    2.092,
-    1.339
-   ],
-   "wheelbase_m": 2.87,
-   "track_front_m": 1.56,
-   "track_rear_m": 1.53,
-   "tyre_radius_m": 0.325,
-   "tyre_radius_rear_m": 0.325,
-   "hubs": {
-    "wheel_fl": [
-     0.78,
-     0.325,
-     1.435
-    ],
-    "wheel_fr": [
-     -0.78,
-     0.325,
-     1.435
-    ],
-    "wheel_rl": [
-     0.765,
-     0.325,
-     -1.435
-    ],
-    "wheel_rr": [
-     -0.765,
-     0.325,
-     -1.435
-    ]
-   },
-   "team": "MBTL Racing",
-   "car": "1993 Mercury Cougar XR7 / Ford Thunderbird (MN12)",
-   "brake_lamps": [
-    [
-     0.5,
-     0.82,
-     -2.8577,
-     0.35
-    ],
-    [
-     -0.5,
-     0.82,
-     -2.8579,
-     0.35
-    ]
-   ],
-   "brake_lamps_fallback": false
-  },
-  {
-   "number": "5",
-   "id": "5_mo",
-   "file": "models/5_mo.glb",
-   "tris": 9178,
-   "bytes": 517940,
-   "materials": 2,
-   "length_m": 4.834,
-   "width_m": 1.818,
-   "height_m": 1.453,
-   "bbox_m": [
-    4.92,
-    1.983,
-    1.535
-   ],
-   "wheelbase_m": 2.741,
-   "track_front_m": 1.55,
-   "track_rear_m": 1.55,
-   "tyre_radius_m": 0.305,
-   "tyre_radius_rear_m": 0.305,
-   "hubs": {
-    "wheel_fl": [
-     0.775,
-     0.305,
-     1.3705
-    ],
-    "wheel_fr": [
-     -0.775,
-     0.305,
-     1.3705
-    ],
-    "wheel_rl": [
-     0.775,
-     0.305,
-     -1.3705
-    ],
-    "wheel_rr": [
-     -0.775,
-     0.305,
-     -1.3705
-    ]
-   },
-   "team": "Bo Knows Lemons!",
-   "car": "2004 Honda Accord sedan (CM)",
-   "brake_lamps": [
-    [
-     0.68,
-     0.93,
-     -2.4635,
-     0.18
-    ],
-    [
-     -0.68,
-     0.93,
-     -2.4635,
-     0.18
-    ]
-   ],
-   "brake_lamps_fallback": false
-  },
-  {
-   "number": "112",
-   "id": "112",
-   "file": "models/112.glb",
-   "tris": 8082,
-   "bytes": 504556,
-   "materials": 2,
-   "length_m": 4.38,
-   "width_m": 1.689,
-   "height_m": 1.588,
-   "bbox_m": [
-    4.586,
-    1.904,
-    1.7
-   ],
-   "wheelbase_m": 2.624,
-   "track_front_m": 1.45,
-   "track_rear_m": 1.45,
-   "tyre_radius_m": 0.325,
-   "tyre_radius_rear_m": 0.325,
-   "hubs": {
-    "wheel_fl": [
-     0.725,
-     0.325,
-     1.312
-    ],
-    "wheel_fr": [
-     -0.725,
-     0.325,
-     1.312
-    ],
-    "wheel_rl": [
-     0.725,
-     0.325,
-     -1.312
-    ],
-    "wheel_rr": [
-     -0.725,
-     0.325,
-     -1.312
-    ]
-   },
-   "team": "Poor Energy Racing",
-   "car": "2003 Toyota Tacoma regular cab (BMW-front swap)",
-   "brake_lamps": [
-    [
-     0.76,
-     0.9,
-     -2.0028,
-     0.11
-    ],
-    [
-     -0.76,
-     0.9,
-     -2.0031,
-     0.11
-    ]
-   ],
-   "brake_lamps_fallback": false
-  },
-  {
-   "number": "250",
-   "id": "250_mo",
-   "file": "models/250_mo.glb",
-   "tris": 8724,
-   "bytes": 532184,
-   "materials": 2,
-   "length_m": 5.315,
-   "width_m": 1.895,
-   "height_m": 1.361,
-   "bbox_m": [
-    5.341,
-    1.905,
-    1.771
-   ],
-   "wheelbase_m": 2.87,
-   "track_front_m": 1.56,
-   "track_rear_m": 1.55,
-   "tyre_radius_m": 0.335,
-   "tyre_radius_rear_m": 0.335,
-   "hubs": {
-    "wheel_fl": [
-     0.78,
-     0.335,
-     1.435
-    ],
-    "wheel_fr": [
-     -0.78,
-     0.335,
-     1.435
-    ],
-    "wheel_rl": [
-     0.775,
-     0.335,
-     -1.435
-    ],
-    "wheel_rr": [
-     -0.775,
-     0.335,
-     -1.435
-    ]
-   },
-   "team": "Heads you Win - Tails we....",
-   "car": "1994 Lincoln Mark VIII coupe",
-   "brake_lamps": [
-    [
-     0.62,
-     0.87,
-     -2.667,
-     0.31
-    ],
-    [
-     -0.62,
-     0.87,
-     -2.6667,
-     0.31
-    ]
-   ],
-   "brake_lamps_fallback": false
-  },
-  {
-   "number": "269",
-   "id": "269",
-   "file": "models/269.glb",
-   "tris": 8160,
-   "bytes": 477312,
-   "materials": 2,
-   "length_m": 4.585,
-   "width_m": 1.725,
-   "height_m": 1.41,
-   "bbox_m": [
-    4.623,
-    1.725,
-    1.41
-   ],
-   "wheelbase_m": 2.624,
-   "track_front_m": 1.45,
-   "track_rear_m": 1.45,
-   "tyre_radius_m": 0.31,
-   "tyre_radius_rear_m": 0.31,
-   "hubs": {
-    "wheel_fl": [
-     0.725,
-     0.31,
-     1.312
-    ],
-    "wheel_fr": [
-     -0.725,
-     0.31,
-     1.312
-    ],
-    "wheel_rl": [
-     0.725,
-     0.31,
-     -1.312
-    ],
-    "wheel_rr": [
-     -0.725,
-     0.31,
-     -1.312
-    ]
-   },
-   "team": "Poor Boy Racing",
-   "car": "2007 Chevrolet Cobalt coupe",
-   "brake_lamps": [
-    [
-     0.62,
-     0.9,
-     -2.373,
-     0.1
-    ],
-    [
-     -0.62,
-     0.9,
-     -2.373,
-     0.1
-    ]
-   ],
-   "brake_lamps_fallback": false
-  },
-  {
-   "number": "661",
-   "id": "661",
-   "file": "models/661.glb",
-   "tris": 8688,
-   "bytes": 506596,
-   "materials": 2,
-   "length_m": 4.877,
-   "width_m": 1.808,
-   "height_m": 1.39,
-   "bbox_m": [
-    4.942,
-    1.808,
-    1.39
-   ],
-   "wheelbase_m": 2.692,
-   "track_front_m": 1.55,
-   "track_rear_m": 1.55,
-   "tyre_radius_m": 0.31,
-   "tyre_radius_rear_m": 0.31,
-   "hubs": {
-    "wheel_fl": [
-     0.775,
-     0.31,
-     1.346
-    ],
-    "wheel_fr": [
-     -0.775,
-     0.31,
-     1.346
-    ],
-    "wheel_rl": [
-     0.775,
-     0.31,
-     -1.346
-    ],
-    "wheel_rr": [
-     -0.775,
-     0.31,
-     -1.346
-    ]
-   },
-   "team": "Jagoff Motorwerks",
-   "car": "1993 Ford Taurus sedan",
-   "brake_lamps": [
-    [
-     0.66,
-     0.92,
-     -2.531,
-     0.2
-    ],
-    [
-     -0.66,
-     0.92,
-     -2.531,
-     0.2
     ]
    ],
    "brake_lamps_fallback": false

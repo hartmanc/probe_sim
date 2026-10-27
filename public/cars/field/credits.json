@@ -404,7 +404,7 @@
   },
   "989": {
    "title": "1968 Chevrolet C-10 pickup",
-   "author": "✮𝖀𝖓𝖋𝖔𝖗𝖌𝖊𝖙𝖙𝖆𝖇𝖑𝖊 𝕹𝖆𝖒𝖊✮ (UnforgettableName)",
+   "author": "\u272e\ud835\udd80\ud835\udd93\ud835\udd8b\ud835\udd94\ud835\udd97\ud835\udd8c\ud835\udd8a\ud835\udd99\ud835\udd99\ud835\udd86\ud835\udd87\ud835\udd91\ud835\udd8a \ud835\udd79\ud835\udd86\ud835\udd92\ud835\udd8a\u272e (UnforgettableName)",
    "licence": "CC-BY-NC-4.0",
    "licence_url": "http://creativecommons.org/licenses/by-nc/4.0/",
    "url": "https://sketchfab.com/3d-models/1968-chevrolet-c-10-pickup-056face816c04b05859610681ed02942",
@@ -621,7 +621,7 @@
   },
   "414": {
    "title": "BMW 2002ti",
-   "author": "Kemal Çolak (colakart)",
+   "author": "Kemal \u00c7olak (colakart)",
    "licence": "CC-BY-4.0",
    "licence_url": "http://creativecommons.org/licenses/by/4.0/",
    "url": "https://sketchfab.com/3d-models/bmw-2002ti-be22631374fd4cf086be3a6271cb6838",
@@ -629,7 +629,7 @@
   },
   "707": {
    "title": "BMW 2002ti",
-   "author": "Kemal Çolak (colakart)",
+   "author": "Kemal \u00c7olak (colakart)",
    "licence": "CC-BY-4.0",
    "licence_url": "http://creativecommons.org/licenses/by/4.0/",
    "url": "https://sketchfab.com/3d-models/bmw-2002ti-be22631374fd4cf086be3a6271cb6838",
@@ -1587,6 +1587,14 @@
    "licence": "CC-BY-4.0",
    "licence_url": "http://creativecommons.org/licenses/by/4.0/",
    "url": "https://sketchfab.com/3d-models/3d-scanned-volkswagen-golf-mk5-2003-free-682a6bc4c3e0430db33c7fcd02ee1e3f",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "888_mo": {
+   "title": "Volvo 240 styled sedan car downloadable",
+   "author": "Libau Media (robinmikart)",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/volvo-240-styled-sedan-car-downloadable-66697669831b47cea7874fc8c4544e74",
    "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
   }
  }
