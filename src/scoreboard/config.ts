@@ -131,7 +131,10 @@ export const TRACKS: Readonly<Record<string, TrackInfo>> = {
     // driving right off the track when the control is given to me. Coming onto the front straight might be better."
     // The 230 m rule put the hand-over at s ~3224 inside the Carousel; now an explicit station at the T13 exit (T13 at
     // s 3454), where the racing line's radius has opened to 218 m and is 600 m by s 3550 (round10.md)
-    start: { s_m: 3500, speed: ROLLING_START_SPEED } },
+    // 26 Oct 2026 evening: s 3460, not 3500: at 3500 the launch handed over at s 3573 with two wheels beyond the left edge
+    // (the line at -5.0 m on a 6.1 m half-width, no kerb strip there to count as course); at 3460 it hands over at s 3534
+    // with all four on, on the exit onto the front straight (the owner: "coming onto the front straight might be better")
+    start: { s_m: 3460, speed: ROLLING_START_SPEED } },
 };
 /** The track when none is chosen (URL ?track=, Start menu). */
 export const DEFAULT_TRACK = 'laguna_seca';
