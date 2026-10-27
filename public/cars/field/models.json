@@ -1,5 +1,5 @@
 {
- "about": "Field car models built by tools/cars/build_car.py. Frame as CONTRACTS.md §1/§3: glTF +Z nose, +Y up, +X left, metres; nodes body + wheel_fl/fr/rl/rr (hub pivots, axle local +X). hubs are glTF translations; tyre_radius_m is the wheel mesh radius.",
+ "about": "Field car models built by tools/cars/build_car.py. Frame as CONTRACTS.md \u00a71/\u00a73: glTF +Z nose, +Y up, +X left, metres; nodes body + wheel_fl/fr/rl/rr (hub pivots, axle local +X). hubs are glTF translations; tyre_radius_m is the wheel mesh radius.",
  "cars": [
   {
    "number": "0",
@@ -2737,6 +2737,66 @@
    }
   },
   {
+   "number": "24",
+   "id": "24_mo",
+   "file": "models/24_mo.glb",
+   "tris": 9168,
+   "bytes": 471600,
+   "materials": 2,
+   "length_m": 4.98,
+   "width_m": 1.867,
+   "height_m": 1.8,
+   "bbox_m": [
+    5.08,
+    2.147,
+    1.9
+   ],
+   "wheelbase_m": 2.85,
+   "track_front_m": 1.6,
+   "track_rear_m": 1.6,
+   "tyre_radius_m": 0.33,
+   "tyre_radius_rear_m": 0.33,
+   "hubs": {
+    "wheel_fl": [
+     0.8,
+     0.33,
+     1.425
+    ],
+    "wheel_fr": [
+     -0.8,
+     0.33,
+     1.425
+    ],
+    "wheel_rl": [
+     0.8,
+     0.33,
+     -1.425
+    ],
+    "wheel_rr": [
+     -0.8,
+     0.33,
+     -1.425
+    ]
+   },
+   "team": "Pat-a-PaLemons",
+   "car": "2000 Buick LeSabre camper",
+   "brake_lamps": [
+    [
+     0.7,
+     0.84,
+     -2.4397,
+     0.11
+    ],
+    [
+     -0.7,
+     0.84,
+     -2.4397,
+     0.11
+    ]
+   ],
+   "brake_lamps_fallback": false
+  },
+  {
    "number": "26",
    "id": "26",
    "file": "models/26.glb",
@@ -3837,6 +3897,66 @@
     ]
    ],
    "brake_lamps_fallback": false
+  },
+  {
+   "number": "38",
+   "id": "38_mo",
+   "file": "models/38_mo.glb",
+   "tris": 9210,
+   "bytes": 498828,
+   "materials": 2,
+   "length_m": 4.277,
+   "width_m": 1.72,
+   "height_m": 1.491,
+   "bbox_m": [
+    4.36,
+    1.986,
+    1.491
+   ],
+   "wheelbase_m": 2.581,
+   "track_front_m": 1.475,
+   "track_rear_m": 1.475,
+   "tyre_radius_m": 0.286,
+   "tyre_radius_rear_m": 0.286,
+   "hubs": {
+    "wheel_fl": [
+     0.7375,
+     0.286,
+     1.2905
+    ],
+    "wheel_fr": [
+     -0.7375,
+     0.286,
+     1.2905
+    ],
+    "wheel_rl": [
+     0.7375,
+     0.286,
+     -1.2905
+    ],
+    "wheel_rr": [
+     -0.7375,
+     0.286,
+     -1.2905
+    ]
+   },
+   "team": "Speed Daddy Racing",
+   "car": "2003 Honda Civic Si hatch (EP3)",
+   "brake_lamps": [
+    [
+     0.5595,
+     0.7407,
+     -2.0365,
+     0.06
+    ],
+    [
+     -0.5595,
+     0.7407,
+     -2.0365,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true
   },
   {
    "number": "39",
@@ -9074,6 +9194,66 @@
    }
   },
   {
+   "number": "98",
+   "id": "98_mo",
+   "file": "models/98_mo.glb",
+   "tris": 9528,
+   "bytes": 576696,
+   "materials": 2,
+   "length_m": 4.665,
+   "width_m": 1.786,
+   "height_m": 1.43,
+   "bbox_m": [
+    4.765,
+    2.065,
+    1.62
+   ],
+   "wheelbase_m": 2.67,
+   "track_front_m": 1.5,
+   "track_rear_m": 1.5,
+   "tyre_radius_m": 0.3,
+   "tyre_radius_rear_m": 0.3,
+   "hubs": {
+    "wheel_fl": [
+     0.75,
+     0.3,
+     1.335
+    ],
+    "wheel_fr": [
+     -0.75,
+     0.3,
+     1.335
+    ],
+    "wheel_rl": [
+     0.75,
+     0.3,
+     -1.335
+    ],
+    "wheel_rr": [
+     -0.75,
+     0.3,
+     -1.335
+    ]
+   },
+   "team": "TMMI Motorsports",
+   "car": "1999 Toyota Camry (XV20)",
+   "brake_lamps": [
+    [
+     0.62,
+     0.9,
+     -2.38,
+     0.15
+    ],
+    [
+     -0.62,
+     0.9,
+     -2.3799,
+     0.15
+    ]
+   ],
+   "brake_lamps_fallback": false
+  },
+  {
    "number": "99",
    "id": "99",
    "file": "models/99.glb",
@@ -10634,6 +10814,66 @@
    "brake_lamps_fallback": false
   },
   {
+   "number": "134",
+   "id": "134",
+   "file": "models/134.glb",
+   "tris": 9490,
+   "bytes": 518832,
+   "materials": 2,
+   "length_m": 4.642,
+   "width_m": 1.763,
+   "height_m": 1.42,
+   "bbox_m": [
+    4.967,
+    2.032,
+    1.54
+   ],
+   "wheelbase_m": 2.672,
+   "track_front_m": 1.5,
+   "track_rear_m": 1.5,
+   "tyre_radius_m": 0.307,
+   "tyre_radius_rear_m": 0.307,
+   "hubs": {
+    "wheel_fl": [
+     0.75,
+     0.307,
+     1.336
+    ],
+    "wheel_fr": [
+     -0.75,
+     0.307,
+     1.336
+    ],
+    "wheel_rl": [
+     0.75,
+     0.307,
+     -1.336
+    ],
+    "wheel_rr": [
+     -0.75,
+     0.307,
+     -1.336
+    ]
+   },
+   "team": "Shifty Shifting Racing",
+   "car": "1992 Saab 9000 CD",
+   "brake_lamps": [
+    [
+     0.66,
+     0.9,
+     -2.3978,
+     0.13
+    ],
+    [
+     -0.66,
+     0.9,
+     -2.3978,
+     0.13
+    ]
+   ],
+   "brake_lamps_fallback": false
+  },
+  {
    "number": "135",
    "id": "135",
    "file": "models/135.glb",
@@ -11547,7 +11787,7 @@
      -1.2
     ]
    },
-   "team": "Malört Racing Development (MRD)",
+   "team": "Mal\u00f6rt Racing Development (MRD)",
    "car": "1981 Toyota Corolla (E70) wagon",
    "brake_lamps": [
     [
@@ -11766,6 +12006,66 @@
    }
   },
   {
+   "number": "172",
+   "id": "172",
+   "file": "models/172.glb",
+   "tris": 11232,
+   "bytes": 615076,
+   "materials": 2,
+   "length_m": 4.597,
+   "width_m": 1.714,
+   "height_m": 1.465,
+   "bbox_m": [
+    4.67,
+    2.001,
+    1.621
+   ],
+   "wheelbase_m": 2.624,
+   "track_front_m": 1.46,
+   "track_rear_m": 1.46,
+   "tyre_radius_m": 0.317,
+   "tyre_radius_rear_m": 0.317,
+   "hubs": {
+    "wheel_fl": [
+     0.73,
+     0.317,
+     1.312
+    ],
+    "wheel_fr": [
+     -0.73,
+     0.317,
+     1.312
+    ],
+    "wheel_rl": [
+     0.73,
+     0.317,
+     -1.312
+    ],
+    "wheel_rr": [
+     -0.73,
+     0.317,
+     -1.312
+    ]
+   },
+   "team": "More Right Rudder",
+   "car": "1996 Volkswagen Passat TDI Variant (B4)",
+   "brake_lamps": [
+    [
+     0.7,
+     0.86,
+     -2.339,
+     0.09
+    ],
+    [
+     -0.7,
+     0.86,
+     -2.339,
+     0.09
+    ]
+   ],
+   "brake_lamps_fallback": false
+  },
+  {
    "number": "182",
    "id": "182",
    "file": "models/182.glb",
@@ -11980,6 +12280,66 @@
     "tris": 8996,
     "file": "public/cars/probe_gt/probe.glb"
    }
+  },
+  {
+   "number": "188",
+   "id": "188",
+   "file": "models/188.glb",
+   "tris": 9238,
+   "bytes": 516208,
+   "materials": 2,
+   "length_m": 4.395,
+   "width_m": 1.76,
+   "height_m": 1.33,
+   "bbox_m": [
+    4.421,
+    1.958,
+    1.33
+   ],
+   "wheelbase_m": 2.53,
+   "track_front_m": 1.51,
+   "track_rear_m": 1.51,
+   "tyre_radius_m": 0.31,
+   "tyre_radius_rear_m": 0.31,
+   "hubs": {
+    "wheel_fl": [
+     0.755,
+     0.31,
+     1.265
+    ],
+    "wheel_fr": [
+     -0.755,
+     0.31,
+     1.265
+    ],
+    "wheel_rl": [
+     0.755,
+     0.31,
+     -1.265
+    ],
+    "wheel_rr": [
+     -0.755,
+     0.31,
+     -1.265
+    ]
+   },
+   "team": "Awoo Racing 1",
+   "car": "2003 Hyundai Tiburon (GK)",
+   "brake_lamps": [
+    [
+     0.37,
+     0.47,
+     -2.1533,
+     0.06
+    ],
+    [
+     -0.37,
+     0.47,
+     -2.1533,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true
   },
   {
    "number": "189",
@@ -15282,6 +15642,66 @@
    }
   },
   {
+   "number": "404",
+   "id": "404_mo",
+   "file": "models/404_mo.glb",
+   "tris": 9040,
+   "bytes": 517664,
+   "materials": 2,
+   "length_m": 4.508,
+   "width_m": 1.709,
+   "height_m": 1.41,
+   "bbox_m": [
+    4.541,
+    1.86,
+    1.41
+   ],
+   "wheelbase_m": 2.535,
+   "track_front_m": 1.47,
+   "track_rear_m": 1.47,
+   "tyre_radius_m": 0.3,
+   "tyre_radius_rear_m": 0.3,
+   "hubs": {
+    "wheel_fl": [
+     0.735,
+     0.3,
+     1.2675
+    ],
+    "wheel_fr": [
+     -0.735,
+     0.3,
+     1.2675
+    ],
+    "wheel_rl": [
+     0.735,
+     0.3,
+     -1.2675
+    ],
+    "wheel_rr": [
+     -0.735,
+     0.3,
+     -1.2675
+    ]
+   },
+   "team": "Racecar Vitamin (R)",
+   "car": "2006 Nissan Sentra (B15)",
+   "brake_lamps": [
+    [
+     0.4783,
+     0.7228,
+     -2.3091,
+     0.06
+    ],
+    [
+     -0.4783,
+     0.7228,
+     -2.3091,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true
+  },
+  {
    "number": "414",
    "id": "414",
    "file": "models/414.glb",
@@ -16576,6 +16996,66 @@
    }
   },
   {
+   "number": "600",
+   "id": "600",
+   "file": "models/600.glb",
+   "tris": 9536,
+   "bytes": 556260,
+   "materials": 2,
+   "length_m": 3.99,
+   "width_m": 1.695,
+   "height_m": 1.335,
+   "bbox_m": [
+    4.08,
+    1.918,
+    1.448
+   ],
+   "wheelbase_m": 2.62,
+   "track_front_m": 1.48,
+   "track_rear_m": 1.48,
+   "tyre_radius_m": 0.29,
+   "tyre_radius_rear_m": 0.29,
+   "hubs": {
+    "wheel_fl": [
+     0.74,
+     0.29,
+     1.31
+    ],
+    "wheel_fr": [
+     -0.74,
+     0.29,
+     1.31
+    ],
+    "wheel_rl": [
+     0.74,
+     0.29,
+     -1.31
+    ],
+    "wheel_rr": [
+     -0.74,
+     0.29,
+     -1.31
+    ]
+   },
+   "team": "Cream Team",
+   "car": "Honda Civic 5-door hatch (identity row, 1990s)",
+   "brake_lamps": [
+    [
+     0.66,
+     0.82,
+     -1.9095,
+     0.1
+    ],
+    [
+     -0.66,
+     0.82,
+     -1.9096,
+     0.1
+    ]
+   ],
+   "brake_lamps_fallback": false
+  },
+  {
    "number": "601",
    "id": "601",
    "file": "models/601.glb",
@@ -17053,16 +17533,16 @@
    "number": "667",
    "id": "667",
    "file": "models/667.glb",
-   "tris": 11812,
-   "bytes": 615020,
+   "tris": 9520,
+   "bytes": 563340,
    "materials": 2,
    "length_m": 4.216,
    "width_m": 1.759,
    "height_m": 1.475,
    "bbox_m": [
-    4.273,
-    2.043,
-    1.543
+    4.241,
+    2.005,
+    1.505
    ],
    "wheelbase_m": 2.578,
    "track_front_m": 1.54,
@@ -17097,27 +17577,17 @@
     [
      0.62,
      1.0,
-     -1.8474,
+     -1.8694,
      0.1
     ],
     [
      -0.62,
      1.0,
-     -1.8411,
+     -1.869,
      0.1
     ]
    ],
-   "brake_lamps_fallback": false,
-   "import": {
-    "method": "none found: scaled by length, hubs from front_overhang",
-    "scale": 0.992670517213532,
-    "source_tris": 62114,
-    "model_length": 4.216,
-    "model_width": 1.99,
-    "model_height": 1.478,
-    "tris": 8000,
-    "file": "tools/cars/kit/downloads/717_scan/model.glb"
-   }
+   "brake_lamps_fallback": false
   },
   {
    "number": "670",
@@ -17493,6 +17963,66 @@
     ]
    ],
    "brake_lamps_fallback": false
+  },
+  {
+   "number": "690",
+   "id": "690",
+   "file": "models/690.glb",
+   "tris": 9162,
+   "bytes": 498048,
+   "materials": 2,
+   "length_m": 4.452,
+   "width_m": 1.712,
+   "height_m": 1.328,
+   "bbox_m": [
+    4.461,
+    1.972,
+    1.328
+   ],
+   "wheelbase_m": 2.499,
+   "track_front_m": 1.46,
+   "track_rear_m": 1.46,
+   "tyre_radius_m": 0.3,
+   "tyre_radius_rear_m": 0.3,
+   "hubs": {
+    "wheel_fl": [
+     0.73,
+     0.3,
+     1.2495
+    ],
+    "wheel_fr": [
+     -0.73,
+     0.3,
+     1.2495
+    ],
+    "wheel_rl": [
+     0.73,
+     0.3,
+     -1.2495
+    ],
+    "wheel_rr": [
+     -0.73,
+     0.3,
+     -1.2495
+    ]
+   },
+   "team": "Spontaneous Rodents",
+   "car": "2002 Ford Escort ZX2",
+   "brake_lamps": [
+    [
+     0.4872,
+     0.5532,
+     -2.1929,
+     0.06
+    ],
+    [
+     -0.4872,
+     0.5532,
+     -2.1929,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true
   },
   {
    "number": "691",
@@ -18264,16 +18794,16 @@
    "number": "717",
    "id": "717",
    "file": "models/717.glb",
-   "tris": 11724,
-   "bytes": 597812,
+   "tris": 9552,
+   "bytes": 571904,
    "materials": 2,
    "length_m": 4.216,
    "width_m": 1.759,
    "height_m": 1.475,
    "bbox_m": [
-    4.273,
-    2.043,
-    1.563
+    4.261,
+    2.005,
+    1.525
    ],
    "wheelbase_m": 2.578,
    "track_front_m": 1.54,
@@ -18308,27 +18838,17 @@
     [
      0.62,
      1.0,
-     -1.8474,
+     -1.8694,
      0.1
     ],
     [
      -0.62,
      1.0,
-     -1.8411,
+     -1.869,
      0.1
     ]
    ],
-   "brake_lamps_fallback": false,
-   "import": {
-    "method": "none found: scaled by length, hubs from front_overhang",
-    "scale": 0.992670517213532,
-    "source_tris": 62114,
-    "model_length": 4.216,
-    "model_width": 1.99,
-    "model_height": 1.478,
-    "tris": 8000,
-    "file": "tools/cars/kit/downloads/717_scan/model.glb"
-   }
+   "brake_lamps_fallback": false
   },
   {
    "number": "740",
@@ -18919,6 +19439,66 @@
    "brake_lamps_fallback": false
   },
   {
+   "number": "803",
+   "id": "803",
+   "file": "models/803.glb",
+   "tris": 9760,
+   "bytes": 560500,
+   "materials": 2,
+   "length_m": 4.811,
+   "width_m": 1.77,
+   "height_m": 1.415,
+   "bbox_m": [
+    4.812,
+    2.012,
+    1.415
+   ],
+   "wheelbase_m": 2.7,
+   "track_front_m": 1.52,
+   "track_rear_m": 1.5,
+   "tyre_radius_m": 0.315,
+   "tyre_radius_rear_m": 0.315,
+   "hubs": {
+    "wheel_fl": [
+     0.76,
+     0.315,
+     1.35
+    ],
+    "wheel_fr": [
+     -0.76,
+     0.315,
+     1.35
+    ],
+    "wheel_rl": [
+     0.75,
+     0.315,
+     -1.35
+    ],
+    "wheel_rr": [
+     -0.75,
+     0.315,
+     -1.35
+    ]
+   },
+   "team": "Queers Shiftin' Gears",
+   "car": "1996 Nissan Maxima (A32)",
+   "brake_lamps": [
+    [
+     0.5292,
+     0.6791,
+     -2.4491,
+     0.06
+    ],
+    [
+     -0.5292,
+     0.6791,
+     -2.4492,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true
+  },
+  {
    "number": "806",
    "id": "806",
    "file": "models/806.glb",
@@ -19329,6 +19909,66 @@
     "tris": 7999,
     "file": "tools/cars/kit/downloads/711/model.glb"
    }
+  },
+  {
+   "number": "869",
+   "id": "869",
+   "file": "models/869.glb",
+   "tris": 9454,
+   "bytes": 579064,
+   "materials": 2,
+   "length_m": 4.62,
+   "width_m": 1.76,
+   "height_m": 1.31,
+   "bbox_m": [
+    4.646,
+    1.76,
+    1.31
+   ],
+   "wheelbase_m": 2.596,
+   "track_front_m": 1.5,
+   "track_rear_m": 1.5,
+   "tyre_radius_m": 0.31,
+   "tyre_radius_rear_m": 0.31,
+   "hubs": {
+    "wheel_fl": [
+     0.75,
+     0.31,
+     1.298
+    ],
+    "wheel_fr": [
+     -0.75,
+     0.31,
+     1.298
+    ],
+    "wheel_rl": [
+     0.75,
+     0.31,
+     -1.298
+    ],
+    "wheel_rr": [
+     -0.75,
+     0.31,
+     -1.298
+    ]
+   },
+   "team": "Charlie Day's Angels",
+   "car": "1988 Toyota Supra (A70)",
+   "brake_lamps": [
+    [
+     0.5832,
+     0.7116,
+     -2.332,
+     0.06
+    ],
+    [
+     -0.5832,
+     0.7116,
+     -2.332,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true
   },
   {
    "number": "883",
@@ -20723,666 +21363,6 @@
     ]
    ],
    "brake_lamps_fallback": false
-  },
-  {
-   "number": "24",
-   "id": "24_mo",
-   "file": "models/24_mo.glb",
-   "tris": 9168,
-   "bytes": 471600,
-   "materials": 2,
-   "length_m": 4.98,
-   "width_m": 1.867,
-   "height_m": 1.8,
-   "bbox_m": [
-    5.08,
-    2.147,
-    1.9
-   ],
-   "wheelbase_m": 2.85,
-   "track_front_m": 1.6,
-   "track_rear_m": 1.6,
-   "tyre_radius_m": 0.33,
-   "tyre_radius_rear_m": 0.33,
-   "hubs": {
-    "wheel_fl": [
-     0.8,
-     0.33,
-     1.425
-    ],
-    "wheel_fr": [
-     -0.8,
-     0.33,
-     1.425
-    ],
-    "wheel_rl": [
-     0.8,
-     0.33,
-     -1.425
-    ],
-    "wheel_rr": [
-     -0.8,
-     0.33,
-     -1.425
-    ]
-   },
-   "team": "Pat-a-PaLemons",
-   "car": "2000 Buick LeSabre camper",
-   "brake_lamps": [
-    [
-     0.7,
-     0.84,
-     -2.4397,
-     0.11
-    ],
-    [
-     -0.7,
-     0.84,
-     -2.4397,
-     0.11
-    ]
-   ],
-   "brake_lamps_fallback": false
-  },
-  {
-   "number": "98",
-   "id": "98_mo",
-   "file": "models/98_mo.glb",
-   "tris": 9528,
-   "bytes": 576696,
-   "materials": 2,
-   "length_m": 4.665,
-   "width_m": 1.786,
-   "height_m": 1.43,
-   "bbox_m": [
-    4.765,
-    2.065,
-    1.62
-   ],
-   "wheelbase_m": 2.67,
-   "track_front_m": 1.5,
-   "track_rear_m": 1.5,
-   "tyre_radius_m": 0.3,
-   "tyre_radius_rear_m": 0.3,
-   "hubs": {
-    "wheel_fl": [
-     0.75,
-     0.3,
-     1.335
-    ],
-    "wheel_fr": [
-     -0.75,
-     0.3,
-     1.335
-    ],
-    "wheel_rl": [
-     0.75,
-     0.3,
-     -1.335
-    ],
-    "wheel_rr": [
-     -0.75,
-     0.3,
-     -1.335
-    ]
-   },
-   "team": "TMMI Motorsports",
-   "car": "1999 Toyota Camry (XV20)",
-   "brake_lamps": [
-    [
-     0.62,
-     0.9,
-     -2.38,
-     0.15
-    ],
-    [
-     -0.62,
-     0.9,
-     -2.3799,
-     0.15
-    ]
-   ],
-   "brake_lamps_fallback": false
-  },
-  {
-   "number": "134",
-   "id": "134",
-   "file": "models/134.glb",
-   "tris": 9490,
-   "bytes": 518832,
-   "materials": 2,
-   "length_m": 4.642,
-   "width_m": 1.763,
-   "height_m": 1.42,
-   "bbox_m": [
-    4.967,
-    2.032,
-    1.54
-   ],
-   "wheelbase_m": 2.672,
-   "track_front_m": 1.5,
-   "track_rear_m": 1.5,
-   "tyre_radius_m": 0.307,
-   "tyre_radius_rear_m": 0.307,
-   "hubs": {
-    "wheel_fl": [
-     0.75,
-     0.307,
-     1.336
-    ],
-    "wheel_fr": [
-     -0.75,
-     0.307,
-     1.336
-    ],
-    "wheel_rl": [
-     0.75,
-     0.307,
-     -1.336
-    ],
-    "wheel_rr": [
-     -0.75,
-     0.307,
-     -1.336
-    ]
-   },
-   "team": "Shifty Shifting Racing",
-   "car": "1992 Saab 9000 CD",
-   "brake_lamps": [
-    [
-     0.66,
-     0.9,
-     -2.3978,
-     0.13
-    ],
-    [
-     -0.66,
-     0.9,
-     -2.3978,
-     0.13
-    ]
-   ],
-   "brake_lamps_fallback": false
-  },
-  {
-   "number": "172",
-   "id": "172",
-   "file": "models/172.glb",
-   "tris": 11232,
-   "bytes": 615076,
-   "materials": 2,
-   "length_m": 4.597,
-   "width_m": 1.714,
-   "height_m": 1.465,
-   "bbox_m": [
-    4.67,
-    2.001,
-    1.621
-   ],
-   "wheelbase_m": 2.624,
-   "track_front_m": 1.46,
-   "track_rear_m": 1.46,
-   "tyre_radius_m": 0.317,
-   "tyre_radius_rear_m": 0.317,
-   "hubs": {
-    "wheel_fl": [
-     0.73,
-     0.317,
-     1.312
-    ],
-    "wheel_fr": [
-     -0.73,
-     0.317,
-     1.312
-    ],
-    "wheel_rl": [
-     0.73,
-     0.317,
-     -1.312
-    ],
-    "wheel_rr": [
-     -0.73,
-     0.317,
-     -1.312
-    ]
-   },
-   "team": "More Right Rudder",
-   "car": "1996 Volkswagen Passat TDI Variant (B4)",
-   "brake_lamps": [
-    [
-     0.7,
-     0.86,
-     -2.339,
-     0.09
-    ],
-    [
-     -0.7,
-     0.86,
-     -2.339,
-     0.09
-    ]
-   ],
-   "brake_lamps_fallback": false
-  },
-  {
-   "number": "600",
-   "id": "600",
-   "file": "models/600.glb",
-   "tris": 9536,
-   "bytes": 556260,
-   "materials": 2,
-   "length_m": 3.99,
-   "width_m": 1.695,
-   "height_m": 1.335,
-   "bbox_m": [
-    4.08,
-    1.918,
-    1.448
-   ],
-   "wheelbase_m": 2.62,
-   "track_front_m": 1.48,
-   "track_rear_m": 1.48,
-   "tyre_radius_m": 0.29,
-   "tyre_radius_rear_m": 0.29,
-   "hubs": {
-    "wheel_fl": [
-     0.74,
-     0.29,
-     1.31
-    ],
-    "wheel_fr": [
-     -0.74,
-     0.29,
-     1.31
-    ],
-    "wheel_rl": [
-     0.74,
-     0.29,
-     -1.31
-    ],
-    "wheel_rr": [
-     -0.74,
-     0.29,
-     -1.31
-    ]
-   },
-   "team": "Cream Team",
-   "car": "Honda Civic 5-door hatch (identity row, 1990s)",
-   "brake_lamps": [
-    [
-     0.66,
-     0.82,
-     -1.9095,
-     0.1
-    ],
-    [
-     -0.66,
-     0.82,
-     -1.9096,
-     0.1
-    ]
-   ],
-   "brake_lamps_fallback": false
-  },
-  {
-   "number": "38",
-   "id": "38_mo",
-   "file": "models/38_mo.glb",
-   "tris": 9210,
-   "bytes": 498828,
-   "materials": 2,
-   "length_m": 4.277,
-   "width_m": 1.72,
-   "height_m": 1.491,
-   "bbox_m": [
-    4.36,
-    1.986,
-    1.491
-   ],
-   "wheelbase_m": 2.581,
-   "track_front_m": 1.475,
-   "track_rear_m": 1.475,
-   "tyre_radius_m": 0.286,
-   "tyre_radius_rear_m": 0.286,
-   "hubs": {
-    "wheel_fl": [
-     0.7375,
-     0.286,
-     1.2905
-    ],
-    "wheel_fr": [
-     -0.7375,
-     0.286,
-     1.2905
-    ],
-    "wheel_rl": [
-     0.7375,
-     0.286,
-     -1.2905
-    ],
-    "wheel_rr": [
-     -0.7375,
-     0.286,
-     -1.2905
-    ]
-   },
-   "team": "Speed Daddy Racing",
-   "car": "2003 Honda Civic Si hatch (EP3)",
-   "brake_lamps": [
-    [
-     0.5595,
-     0.7407,
-     -2.0365,
-     0.06
-    ],
-    [
-     -0.5595,
-     0.7407,
-     -2.0365,
-     0.06
-    ]
-   ],
-   "brake_lamps_fallback": true
-  },
-  {
-   "number": "188",
-   "id": "188",
-   "file": "models/188.glb",
-   "tris": 9238,
-   "bytes": 516208,
-   "materials": 2,
-   "length_m": 4.395,
-   "width_m": 1.76,
-   "height_m": 1.33,
-   "bbox_m": [
-    4.421,
-    1.958,
-    1.33
-   ],
-   "wheelbase_m": 2.53,
-   "track_front_m": 1.51,
-   "track_rear_m": 1.51,
-   "tyre_radius_m": 0.31,
-   "tyre_radius_rear_m": 0.31,
-   "hubs": {
-    "wheel_fl": [
-     0.755,
-     0.31,
-     1.265
-    ],
-    "wheel_fr": [
-     -0.755,
-     0.31,
-     1.265
-    ],
-    "wheel_rl": [
-     0.755,
-     0.31,
-     -1.265
-    ],
-    "wheel_rr": [
-     -0.755,
-     0.31,
-     -1.265
-    ]
-   },
-   "team": "Awoo Racing 1",
-   "car": "2003 Hyundai Tiburon (GK)",
-   "brake_lamps": [
-    [
-     0.37,
-     0.47,
-     -2.1533,
-     0.06
-    ],
-    [
-     -0.37,
-     0.47,
-     -2.1533,
-     0.06
-    ]
-   ],
-   "brake_lamps_fallback": true
-  },
-  {
-   "number": "404",
-   "id": "404_mo",
-   "file": "models/404_mo.glb",
-   "tris": 9040,
-   "bytes": 517664,
-   "materials": 2,
-   "length_m": 4.508,
-   "width_m": 1.709,
-   "height_m": 1.41,
-   "bbox_m": [
-    4.541,
-    1.86,
-    1.41
-   ],
-   "wheelbase_m": 2.535,
-   "track_front_m": 1.47,
-   "track_rear_m": 1.47,
-   "tyre_radius_m": 0.3,
-   "tyre_radius_rear_m": 0.3,
-   "hubs": {
-    "wheel_fl": [
-     0.735,
-     0.3,
-     1.2675
-    ],
-    "wheel_fr": [
-     -0.735,
-     0.3,
-     1.2675
-    ],
-    "wheel_rl": [
-     0.735,
-     0.3,
-     -1.2675
-    ],
-    "wheel_rr": [
-     -0.735,
-     0.3,
-     -1.2675
-    ]
-   },
-   "team": "Racecar Vitamin (R)",
-   "car": "2006 Nissan Sentra (B15)",
-   "brake_lamps": [
-    [
-     0.4783,
-     0.7228,
-     -2.3091,
-     0.06
-    ],
-    [
-     -0.4783,
-     0.7228,
-     -2.3091,
-     0.06
-    ]
-   ],
-   "brake_lamps_fallback": true
-  },
-  {
-   "number": "690",
-   "id": "690",
-   "file": "models/690.glb",
-   "tris": 9162,
-   "bytes": 498048,
-   "materials": 2,
-   "length_m": 4.452,
-   "width_m": 1.712,
-   "height_m": 1.328,
-   "bbox_m": [
-    4.461,
-    1.972,
-    1.328
-   ],
-   "wheelbase_m": 2.499,
-   "track_front_m": 1.46,
-   "track_rear_m": 1.46,
-   "tyre_radius_m": 0.3,
-   "tyre_radius_rear_m": 0.3,
-   "hubs": {
-    "wheel_fl": [
-     0.73,
-     0.3,
-     1.2495
-    ],
-    "wheel_fr": [
-     -0.73,
-     0.3,
-     1.2495
-    ],
-    "wheel_rl": [
-     0.73,
-     0.3,
-     -1.2495
-    ],
-    "wheel_rr": [
-     -0.73,
-     0.3,
-     -1.2495
-    ]
-   },
-   "team": "Spontaneous Rodents",
-   "car": "2002 Ford Escort ZX2",
-   "brake_lamps": [
-    [
-     0.4872,
-     0.5532,
-     -2.1929,
-     0.06
-    ],
-    [
-     -0.4872,
-     0.5532,
-     -2.1929,
-     0.06
-    ]
-   ],
-   "brake_lamps_fallback": true
-  },
-  {
-   "number": "803",
-   "id": "803",
-   "file": "models/803.glb",
-   "tris": 9760,
-   "bytes": 560500,
-   "materials": 2,
-   "length_m": 4.811,
-   "width_m": 1.77,
-   "height_m": 1.415,
-   "bbox_m": [
-    4.812,
-    2.012,
-    1.415
-   ],
-   "wheelbase_m": 2.7,
-   "track_front_m": 1.52,
-   "track_rear_m": 1.5,
-   "tyre_radius_m": 0.315,
-   "tyre_radius_rear_m": 0.315,
-   "hubs": {
-    "wheel_fl": [
-     0.76,
-     0.315,
-     1.35
-    ],
-    "wheel_fr": [
-     -0.76,
-     0.315,
-     1.35
-    ],
-    "wheel_rl": [
-     0.75,
-     0.315,
-     -1.35
-    ],
-    "wheel_rr": [
-     -0.75,
-     0.315,
-     -1.35
-    ]
-   },
-   "team": "Queers Shiftin' Gears",
-   "car": "1996 Nissan Maxima (A32)",
-   "brake_lamps": [
-    [
-     0.5292,
-     0.6791,
-     -2.4491,
-     0.06
-    ],
-    [
-     -0.5292,
-     0.6791,
-     -2.4492,
-     0.06
-    ]
-   ],
-   "brake_lamps_fallback": true
-  },
-  {
-   "number": "869",
-   "id": "869",
-   "file": "models/869.glb",
-   "tris": 9454,
-   "bytes": 579064,
-   "materials": 2,
-   "length_m": 4.62,
-   "width_m": 1.76,
-   "height_m": 1.31,
-   "bbox_m": [
-    4.646,
-    1.76,
-    1.31
-   ],
-   "wheelbase_m": 2.596,
-   "track_front_m": 1.5,
-   "track_rear_m": 1.5,
-   "tyre_radius_m": 0.31,
-   "tyre_radius_rear_m": 0.31,
-   "hubs": {
-    "wheel_fl": [
-     0.75,
-     0.31,
-     1.298
-    ],
-    "wheel_fr": [
-     -0.75,
-     0.31,
-     1.298
-    ],
-    "wheel_rl": [
-     0.75,
-     0.31,
-     -1.298
-    ],
-    "wheel_rr": [
-     -0.75,
-     0.31,
-     -1.298
-    ]
-   },
-   "team": "Charlie Day's Angels",
-   "car": "1988 Toyota Supra (A70)",
-   "brake_lamps": [
-    [
-     0.5832,
-     0.7116,
-     -2.332,
-     0.06
-    ],
-    [
-     -0.5832,
-     0.7116,
-     -2.332,
-     0.06
-    ]
-   ],
-   "brake_lamps_fallback": true
   }
  ]
 }
