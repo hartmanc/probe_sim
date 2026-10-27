@@ -40,6 +40,8 @@ export interface ScoreStore {
   boards(): Promise<string[]>;
   /** Give a board (its sorted set and hash) an expiry of `seconds` unless it already has one. */
   expireBoard(board: string, seconds: number): Promise<void>;
+  /** Give a plain string key an expiry of `seconds` unless it already has one (the #1 ghost trace of a stale board). */
+  expireKey(key: string, seconds: number): Promise<void>;
 }
 
 const zkey = (b: string) => `sb:z:${b}`;
@@ -111,6 +113,10 @@ export class MemoryStore implements ScoreStore {
   }
   async expireBoard(board: string, seconds: number) {
     if (this.z.has(zkey(board)) && !this.exp.has(board)) this.exp.set(board, this.now() + seconds * 1000);
+  }
+  async expireKey(key: string, seconds: number) {
+    const e = this.kv.get(key);
+    if (e && e.until === Infinity) e.until = this.now() + seconds * 1000;
   }
   // no await inside: each runs as one uninterrupted step, like the Lua scripts
   async issueTransfer(ownerKey: string, xferKey: string, deviceHash: string, codeHash: string, ttlS: number) {
@@ -278,6 +284,10 @@ export class UpstashStore implements ScoreStore {
   async expireBoard(board: string, seconds: number) {
     const [ttl] = await this.pipe([['TTL', zkey(board)]]);
     if (Number(ttl) === -1) await this.pipe([['EXPIRE', zkey(board), seconds], ['EXPIRE', hkey(board), seconds]]);
+  }
+  async expireKey(key: string, seconds: number) {
+    const [ttl] = await this.pipe([['TTL', key]]);
+    if (Number(ttl) === -1) await this.pipe([['EXPIRE', key, seconds]]);
   }
 }
 

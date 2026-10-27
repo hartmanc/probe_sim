@@ -116,3 +116,17 @@ export interface ApiError {
   error: string;
   reasons?: string[];
 }
+
+/** GET ?ghost=<hot-lap board key>: the board's current #1 lap and the input trace that made it (replayable to `score`). */
+export interface GhostReply {
+  ok: true;
+  board: string;
+  name: string;
+  /** The replayed lap time, s (what the board shows). */
+  score: number;
+  at: string;
+  input: InputType;
+  /** Lap number the trace's time belongs to (HotlapSubmission.lap). */
+  lap: number;
+  trace: InputTrace;
+}

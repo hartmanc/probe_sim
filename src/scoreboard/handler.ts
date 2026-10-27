@@ -2,13 +2,13 @@
 // Pure TS: storage and asset loading are injected.
 import { CARS, LIMITS, TRACKS } from './config';
 import { AI_VERSION } from '../physics/ai/field';
-import { verifyHotlap } from './replay';
+import { checkTrace, verifyHotlap } from './replay';
 import { clientIp, originAllowed } from './http';
 export { clientIp, originAllowed };
 import { OWNER, SECRET_RE, adopt, claim, issueCode, normalizeCode, ownership } from './owner';
 import type { SimAssets } from './sim';
 import type { ScoreStore } from './store';
-import type { ApiError, Board, HotlapSubmission, InputType, RaceSubmission, Score, SubmitResult } from './types';
+import type { ApiError, Board, GhostReply, HotlapSubmission, InputType, RaceSubmission, Score, SubmitResult } from './types';
 import { boardKey, lowerIsBetter, nameKey, normalizeName, parseBoardKey, raceScore, validateSubmission } from './validate';
 
 export interface HandlerDeps {
@@ -59,8 +59,37 @@ function toScore(rank: number, score: number, meta: string | null, member: strin
   return s;
 }
 
+/** Where a hot-lap board's current #1 lap is kept: one string key per board, overwritten by the next #1, expired with the stale board. */
+export const topKey = (board: string): string => `sb:top:${board}`;
+
+interface TopRecord { v: 1; name: string; score: number; at: string; input: InputType; lap: number; trace: HotlapSubmission['trace'] }
+
+/** GET ?ghost=<board key>: the board's #1 lap with its input trace, validated as it was on the way in. */
+async function getGhost(req: Request, key: string, deps: HandlerDeps): Promise<Response> {
+  const none = (reason: string) => fail(404, 'no ghost', [reason]);
+  const b = parseBoardKey(key);
+  if (!b || b.mode !== 'hotlap') return fail(400, 'bad board key', ['ghost needs a hot-lap board key: hotlap:<track>:<car>:<physics>']);
+  const rl = await deps.store.hit(`ghost:${clientIp(req)}`, LIMITS.rateWindowS);
+  if (rl.count > LIMITS.rateGhosts) return fail(429, 'rate limited', [`at most ${LIMITS.rateGhosts} ghost downloads per ${LIMITS.rateWindowS / 60} min`], { 'Retry-After': String(Math.max(1, rl.ttl)) });
+  const raw = await deps.store.kvGet(topKey(key));
+  if (!raw) return none('this board has no stored top lap yet');
+  let rec: Partial<TopRecord>;
+  try { rec = JSON.parse(raw) as Partial<TopRecord>; } catch { return none('the stored top lap is unreadable'); }
+  const t = rec.trace;
+  if (rec.v !== 1 || typeof rec.name !== 'string' || typeof rec.score !== 'number' || !Number.isFinite(rec.score) || typeof rec.at !== 'string'
+    || typeof rec.lap !== 'number' || !Number.isInteger(rec.lap) || rec.lap < 1 || rec.lap > LIMITS.maxLap || !t || typeof t !== 'object') return none('the stored top lap is malformed');
+  if (checkTrace(t).length || t.physics !== b.physics || t.track !== b.track || t.car !== b.car) return none('the stored top lap does not match this board');
+  // the stored lap must still be the board's #1 (a concurrent post or a trimmed entry could have left it behind)
+  const [top] = await deps.store.top(key, 1, true);
+  if (!top || top.member !== nameKey(rec.name) || Math.abs(top.score - rec.score) > 1e-6) return none('the stored top lap is not the board\'s #1 any more');
+  const out: GhostReply = { ok: true, board: key, name: rec.name, score: rec.score, at: rec.at, input: rec.input === 'pad' || rec.input === 'phone' ? rec.input : 'keys', lap: rec.lap, trace: t };
+  return json(200, out);
+}
+
 async function getBoard(req: Request, deps: HandlerDeps): Promise<Response> {
   const u = new URL(req.url);
+  const gk = u.searchParams.get('ghost');
+  if (gk) return getGhost(req, gk, deps);
   const key = u.searchParams.get('board');
   if (!key) {
     // discovery: the server's current hot-lap boards (handy for the client and for smoke tests)
@@ -154,6 +183,12 @@ async function postScore(req: Request, deps: HandlerDeps): Promise<Response> {
   const asc = lowerIsBetter(sub.mode);
   const res = await deps.store.submit(key, member, score, asc, JSON.stringify(meta), LIMITS.keep);
   const rk = await deps.store.rank(key, member, asc);
+  // a new #1 keeps its trace (one bounded key per board) so the game can rebuild the all-time-best ghost (GET ?ghost=)
+  if (sub.mode === 'hotlap' && res.improved && rk === 0) {
+    const s = sub as HotlapSubmission;
+    const rec: TopRecord = { v: 1, name, score, at, input: s.input, lap: s.lap, trace: s.trace };
+    try { await deps.store.kvSet(topKey(key), JSON.stringify(rec)); } catch (e) { deps.log?.(`top trace not kept: ${(e as Error).message}`); }
+  }
   const out: SubmitResult = { ok: true, board: key, rank: rk === null ? null : rk + 1, best: res.best, improved: res.improved };
   if (replayed !== undefined) out.replayed = replayed;
   return json(200, out);
@@ -204,7 +239,7 @@ export async function sweepStaleBoards(deps: HandlerDeps): Promise<string[]> {
     if (b?.mode === 'race') continue;   // race boards are hidden, not swept (their key carries the AI version)
     let stale = !b;
     if (b) { try { stale = b.physics !== (await deps.physics(b.track, b.car)); } catch { stale = false; } }
-    if (stale) { await deps.store.expireBoard(key, LIMITS.staleBoardTtlS); expired.push(key); }
+    if (stale) { await deps.store.expireBoard(key, LIMITS.staleBoardTtlS); await deps.store.expireKey(topKey(key), LIMITS.staleBoardTtlS); expired.push(key); }
   }
   if (expired.length) deps.log?.(`stale boards expire in ${LIMITS.staleBoardTtlS / 86400} d: ${expired.join(', ')}`);
   return expired;
