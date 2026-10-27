@@ -6085,16 +6085,16 @@
    "number": "66",
    "id": "66",
    "file": "models/66.glb",
-   "tris": 10510,
-   "bytes": 544296,
-   "materials": 1,
+   "tris": 8746,
+   "bytes": 513120,
+   "materials": 2,
    "length_m": 4.77,
    "width_m": 1.773,
    "height_m": 1.476,
    "bbox_m": [
-    4.796,
-    1.876,
-    1.499
+    4.847,
+    1.929,
+    1.476
    ],
    "wheelbase_m": 2.852,
    "track_front_m": 1.52,
@@ -6129,27 +6129,17 @@
     [
      0.7,
      0.92,
-     -2.062,
-     0.16
+     -2.3082,
+     0.15
     ],
     [
      -0.7,
      0.92,
-     -2.0696,
-     0.16
+     -2.308,
+     0.15
     ]
    ],
-   "brake_lamps_fallback": false,
-   "import": {
-    "method": "hubs_hint",
-    "scale": 0.9958100558659218,
-    "source_tris": 35916,
-    "model_length": 4.776,
-    "model_width": 1.877,
-    "model_height": 1.495,
-    "tris": 7999,
-    "file": "tools/cars/kit/downloads/66/model.glb"
-   }
+   "brake_lamps_fallback": false
   },
   {
    "number": "67",
@@ -10383,16 +10373,16 @@
    "number": "124",
    "id": "124_mo",
    "file": "models/124_mo.glb",
-   "tris": 11313,
-   "bytes": 658692,
+   "tris": 9574,
+   "bytes": 584624,
    "materials": 3,
    "length_m": 4.491,
    "width_m": 1.694,
    "height_m": 1.384,
    "bbox_m": [
-    4.518,
-    1.743,
-    1.36
+    4.527,
+    1.69,
+    1.384
    ],
    "wheelbase_m": 2.6,
    "track_front_m": 1.43,
@@ -10425,29 +10415,19 @@
    "car": "1996 Saturn SW1 wagon",
    "brake_lamps": [
     [
-     0.4234,
-     0.4744,
-     -2.2161,
-     0.06
+     0.62,
+     0.8,
+     -2.291,
+     0.1
     ],
     [
-     -0.4234,
-     0.4744,
-     -2.2052,
-     0.06
+     -0.62,
+     0.8,
+     -2.291,
+     0.1
     ]
    ],
-   "brake_lamps_fallback": true,
-   "import": {
-    "method": "hubs_hint",
-    "scale": 0.9900990099009902,
-    "source_tris": 274391,
-    "model_length": 4.564,
-    "model_width": 2.11,
-    "model_height": 1.344,
-    "tris": 8000,
-    "file": "tools/cars/kit/downloads/124_mo/model.glb"
-   }
+   "brake_lamps_fallback": false
   },
   {
    "number": "128",
@@ -14182,6 +14162,66 @@
     "tris": 7495,
     "file": "tools/cars/kit/downloads/23_sedan/model.glb"
    }
+  },
+  {
+   "number": "318",
+   "id": "318",
+   "file": "models/318.glb",
+   "tris": 9312,
+   "bytes": 528316,
+   "materials": 2,
+   "length_m": 5.09,
+   "width_m": 1.839,
+   "height_m": 1.4,
+   "bbox_m": [
+    5.25,
+    2.062,
+    1.732
+   ],
+   "wheelbase_m": 2.863,
+   "track_front_m": 1.5,
+   "track_rear_m": 1.5,
+   "tyre_radius_m": 0.31,
+   "tyre_radius_rear_m": 0.31,
+   "hubs": {
+    "wheel_fl": [
+     0.75,
+     0.31,
+     1.4315
+    ],
+    "wheel_fr": [
+     -0.75,
+     0.31,
+     1.4315
+    ],
+    "wheel_rl": [
+     0.75,
+     0.31,
+     -1.4315
+    ],
+    "wheel_rr": [
+     -0.75,
+     0.31,
+     -1.4315
+    ]
+   },
+   "team": "Fat Bastard Racing.",
+   "car": "1983 Chrysler Fifth Avenue (M-body sedan)",
+   "brake_lamps": [
+    [
+     0.66,
+     0.74,
+     -2.6872,
+     0.2
+    ],
+    [
+     -0.66,
+     0.74,
+     -2.687,
+     0.2
+    ]
+   ],
+   "brake_lamps_fallback": false
   },
   {
    "number": "319",
