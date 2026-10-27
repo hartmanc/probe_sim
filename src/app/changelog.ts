@@ -27,7 +27,7 @@ export interface ChangeEntry {
 /** Newest first. Add a new entry at the top and mirror its version in package.json. */
 export const CHANGELOG: ChangeEntry[] = [
   {
-    version: '0.4.0', date: '', title: 'Ready for the paddock',
+    version: '0.4.0', date: '2026-10-27', title: 'Ready for the paddock',
     items: [
       '**Buttonwillow Raceway Park** in its Lemons configuration: the road and kerbs fitted to the owner’s own edge drawings over the 2026 imagery, the ground from lidar, the trackside from the September 2026 onboard. Race the Button Turrible 2026 field, the 100 cars that ran a lap, each modelled from its photos with the pace it ran there.',
       '**Mid-Ohio Sports Car Course**, the 13-turn Lemons layout, with the Mid-West Crisis 2026 field: 85 cars from their photos, each with its own pace. A strict black flag for crossing the blend line at the pit exit. The pit lane is still rough; it gets its own round next.',
