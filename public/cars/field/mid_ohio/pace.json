@@ -1,0 +1,7069 @@
+{
+ "ai_version": 8,
+ "source": "MyLaps session 11926749 (24 Hours of Lemons Mid-West Crisis, Mid-Ohio Sports Car Course, 10-12 Apr 2026): 85 of its 90 classified entrants from their own laps (tools/race/pace.ts rules, tools/race/pace_rules.ts); left out with no lap in the session: #164, #713, #991; left out with no row in cars/field/mid_ohio/identity.json (no photo or archive car, no placeholder cars): #643, #116; #619 is not an entrant (no player reference row); ids from cars/field/mid_ohio/identity.json (36 numbers carry _mo; #56 TPF Racing is Laguna #156 and keeps id 156); tools/race/pace_track.ts --own",
+ "notes": "Ids: a number that is a different car at Laguna gets \"<n>_mo\" (tools/race/data/mid_ohio/match_laguna.json not 'same', overridden by cars/field/mid_ohio/identity.json: #13 13_mo (match rule: 13), #33 33_mo (match rule: 33), #87 87_mo (match rule: 87), #82 82_mo (match rule: 82), #88 88_mo (match rule: 88), #54 54_mo (match rule: 54), #56 156 (match rule: 56), #3 3_mo (match rule: 3), #5 5_mo (match rule: 5), #250 250_mo (match rule: 250), #21 21_mo (match rule: 21), #123 123_mo (match rule: 123), #7 7_mo (match rule: 7), #11 11_mo (match rule: 11), #90 90_mo (match rule: 90), #86 86_mo (match rule: 86), #404 404_mo (match rule: 404), #48 48_mo (match rule: 48), #124 124_mo (match rule: 124), #78 78_mo (match rule: 78), #969 969_mo (match rule: 969), #77 77_mo (match rule: 77), #696 696_mo (match rule: 696), #98 98_mo (match rule: 98), #64 64_mo (match rule: 64), #562 562_mo (match rule: 562), #888 888_mo (match rule: 888), #24 24_mo (match rule: 24)). Left out: #164, #713, #991, entrants with no lap in the session (classified 88, 89, 90 with 0 laps): with no clean laps there is no pace or stint to draw, the rule of tools/race/pace.ts (a car's pace is its own clean laps) has nothing to build them from. Their identity rows stay in identity.json. Also left out: #643, #116, entrants with no row in cars/field/mid_ohio/identity.json (dropped by the owner: no placeholder cars in the field).",
+ "track": "mid_ohio",
+ "cars": [
+  {
+   "id": "90_mo",
+   "number": "90",
+   "team": "Maximum Effort Racing",
+   "class": "C",
+   "grid": 1,
+   "finish": 51,
+   "classFinish": 11,
+   "lapsCompleted": 287,
+   "greenLaps": 256,
+   "targetLap": 132.054,
+   "bestLap": 115.78,
+   "sigma": 10.6,
+   "aggression": 0,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 10,
+     "firstLap": 6,
+     "targetLap": 124.624,
+     "bestLap": 121.094,
+     "sigma": 2.452
+    },
+    {
+     "index": 1,
+     "laps": 15,
+     "firstLap": 22,
+     "targetLap": 126.27,
+     "bestLap": 118.855,
+     "sigma": 6.667
+    },
+    {
+     "index": 2,
+     "laps": 19,
+     "firstLap": 44,
+     "targetLap": 138.17,
+     "bestLap": 130.628,
+     "sigma": 5.423
+    },
+    {
+     "index": 3,
+     "laps": 7,
+     "firstLap": 69,
+     "targetLap": 120.246,
+     "bestLap": 119.265,
+     "sigma": 1.454
+    },
+    {
+     "index": 4,
+     "laps": 23,
+     "firstLap": 78,
+     "targetLap": 119.584,
+     "bestLap": 115.78,
+     "sigma": 4.363
+    },
+    {
+     "index": 5,
+     "laps": 61,
+     "firstLap": 105,
+     "targetLap": 133.475,
+     "bestLap": 127.616,
+     "sigma": 3.653
+    },
+    {
+     "index": 6,
+     "laps": 30,
+     "firstLap": 169,
+     "targetLap": 127.65,
+     "bestLap": 119.455,
+     "sigma": 9.427
+    },
+    {
+     "index": 7,
+     "laps": 27,
+     "firstLap": 205,
+     "targetLap": 153.679,
+     "bestLap": 146.295,
+     "sigma": 5.695
+    },
+    {
+     "index": 8,
+     "laps": 17,
+     "firstLap": 234,
+     "targetLap": 120.085,
+     "bestLap": 117.608,
+     "sigma": 2.599
+    },
+    {
+     "index": 9,
+     "laps": 20,
+     "firstLap": 253,
+     "targetLap": 137.276,
+     "bestLap": 133.457,
+     "sigma": 3.087
+    },
+    {
+     "index": 10,
+     "laps": 22,
+     "firstLap": 275,
+     "targetLap": 127.903,
+     "bestLap": 124.188,
+     "sigma": 2.638
+    }
+   ]
+  },
+  {
+   "id": "64_mo",
+   "number": "64",
+   "team": "Misfortune Cookie",
+   "class": "A",
+   "grid": 2,
+   "finish": 80,
+   "classFinish": 22,
+   "lapsCompleted": 115,
+   "greenLaps": 89,
+   "targetLap": 114.295,
+   "bestLap": 104.227,
+   "sigma": 8.108,
+   "aggression": 2,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 7,
+     "firstLap": 7,
+     "targetLap": 123.018,
+     "bestLap": 115.053,
+     "sigma": 5.672
+    },
+    {
+     "index": 1,
+     "laps": 41,
+     "firstLap": 21,
+     "targetLap": 108.775,
+     "bestLap": 104.227,
+     "sigma": 2.157
+    },
+    {
+     "index": 2,
+     "laps": 16,
+     "firstLap": 80,
+     "targetLap": 114.66,
+     "bestLap": 111.467,
+     "sigma": 2.172
+    },
+    {
+     "index": 3,
+     "laps": 14,
+     "firstLap": 100,
+     "targetLap": 117.326,
+     "bestLap": 114.295,
+     "sigma": 1.555
+    }
+   ]
+  },
+  {
+   "id": "2_mo",
+   "number": "2",
+   "team": "MBTL Racing",
+   "class": "B",
+   "grid": 3,
+   "finish": 69,
+   "classFinish": 34,
+   "lapsCompleted": 208,
+   "greenLaps": 169,
+   "targetLap": 130.44,
+   "bestLap": 120.307,
+   "sigma": 7.213,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 7,
+     "firstLap": 5,
+     "targetLap": 148.615,
+     "bestLap": 143.517,
+     "sigma": 4.97
+    },
+    {
+     "index": 1,
+     "laps": 9,
+     "firstLap": 16,
+     "targetLap": 129.793,
+     "bestLap": 122.791,
+     "sigma": 2.356
+    },
+    {
+     "index": 2,
+     "laps": 5,
+     "firstLap": 38,
+     "targetLap": 140.959,
+     "bestLap": 136.035,
+     "sigma": 6.861
+    },
+    {
+     "index": 3,
+     "laps": 12,
+     "firstLap": 45,
+     "targetLap": 139.12,
+     "bestLap": 133.518,
+     "sigma": 3.477
+    },
+    {
+     "index": 4,
+     "laps": 17,
+     "firstLap": 63,
+     "targetLap": 135.986,
+     "bestLap": 129.287,
+     "sigma": 5.833
+    },
+    {
+     "index": 5,
+     "laps": 40,
+     "firstLap": 82,
+     "targetLap": 128.044,
+     "bestLap": 121.779,
+     "sigma": 4.295
+    },
+    {
+     "index": 6,
+     "laps": 7,
+     "firstLap": 126,
+     "targetLap": 126.428,
+     "bestLap": 125.608,
+     "sigma": 0.426
+    },
+    {
+     "index": 7,
+     "laps": 17,
+     "firstLap": 135,
+     "targetLap": 123.369,
+     "bestLap": 120.307,
+     "sigma": 2.784
+    },
+    {
+     "index": 8,
+     "laps": 12,
+     "firstLap": 154,
+     "targetLap": 129.944,
+     "bestLap": 125.468,
+     "sigma": 3.111
+    },
+    {
+     "index": 9,
+     "laps": 7,
+     "firstLap": 168,
+     "targetLap": 131.383,
+     "bestLap": 125.146,
+     "sigma": 4.777
+    },
+    {
+     "index": 10,
+     "laps": 26,
+     "firstLap": 177,
+     "targetLap": 130.098,
+     "bestLap": 124.63,
+     "sigma": 3.93
+    }
+   ]
+  },
+  {
+   "id": "969_mo",
+   "number": "969",
+   "team": "COLD BEER",
+   "class": "B",
+   "grid": 4,
+   "finish": 72,
+   "classFinish": 35,
+   "lapsCompleted": 203,
+   "greenLaps": 172,
+   "targetLap": 124.814,
+   "bestLap": 114.889,
+   "sigma": 7.664,
+   "aggression": 2,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 26,
+     "firstLap": 1,
+     "targetLap": 130.901,
+     "bestLap": 120.538,
+     "sigma": 5.967
+    },
+    {
+     "index": 1,
+     "laps": 10,
+     "firstLap": 32,
+     "targetLap": 125.698,
+     "bestLap": 121.272,
+     "sigma": 2.271
+    },
+    {
+     "index": 2,
+     "laps": 8,
+     "firstLap": 45,
+     "targetLap": 134.251,
+     "bestLap": 127.69,
+     "sigma": 5.042
+    },
+    {
+     "index": 3,
+     "laps": 13,
+     "firstLap": 55,
+     "targetLap": 123.068,
+     "bestLap": 119.078,
+     "sigma": 4.611
+    },
+    {
+     "index": 4,
+     "laps": 17,
+     "firstLap": 73,
+     "targetLap": 135.283,
+     "bestLap": 129.19,
+     "sigma": 5.948
+    },
+    {
+     "index": 5,
+     "laps": 9,
+     "firstLap": 94,
+     "targetLap": 122.512,
+     "bestLap": 118.002,
+     "sigma": 2.864
+    },
+    {
+     "index": 6,
+     "laps": 28,
+     "firstLap": 107,
+     "targetLap": 117.04,
+     "bestLap": 114.889,
+     "sigma": 2.17
+    },
+    {
+     "index": 7,
+     "laps": 13,
+     "firstLap": 137,
+     "targetLap": 126.656,
+     "bestLap": 120.212,
+     "sigma": 5.754
+    },
+    {
+     "index": 8,
+     "laps": 20,
+     "firstLap": 152,
+     "targetLap": 125.725,
+     "bestLap": 120.863,
+     "sigma": 2.526
+    },
+    {
+     "index": 9,
+     "laps": 24,
+     "firstLap": 178,
+     "targetLap": 119.668,
+     "bestLap": 116.631,
+     "sigma": 1.698
+    }
+   ]
+  },
+  {
+   "id": "240",
+   "number": "240",
+   "team": "EAD Racing",
+   "class": "A",
+   "grid": 5,
+   "finish": 78,
+   "classFinish": 20,
+   "lapsCompleted": 133,
+   "greenLaps": 108,
+   "targetLap": 115.029,
+   "bestLap": 107.269,
+   "sigma": 3.88,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 33,
+     "firstLap": 1,
+     "targetLap": 115.298,
+     "bestLap": 110.363,
+     "sigma": 3.127
+    },
+    {
+     "index": 1,
+     "laps": 41,
+     "firstLap": 40,
+     "targetLap": 115.241,
+     "bestLap": 109.917,
+     "sigma": 2.744
+    },
+    {
+     "index": 2,
+     "laps": 30,
+     "firstLap": 89,
+     "targetLap": 112.696,
+     "bestLap": 107.269,
+     "sigma": 3.812
+    }
+   ]
+  },
+  {
+   "id": "153",
+   "number": "153",
+   "team": "Dumpster Fire Motorsports",
+   "class": "C",
+   "grid": 6,
+   "finish": 35,
+   "classFinish": 6,
+   "lapsCompleted": 331,
+   "greenLaps": 285,
+   "targetLap": 126.158,
+   "bestLap": 113.322,
+   "sigma": 8.492,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 21,
+     "firstLap": 1,
+     "targetLap": 129.772,
+     "bestLap": 123.359,
+     "sigma": 4.667
+    },
+    {
+     "index": 1,
+     "laps": 7,
+     "firstLap": 26,
+     "targetLap": 148.75,
+     "bestLap": 141.778,
+     "sigma": 5.873
+    },
+    {
+     "index": 2,
+     "laps": 21,
+     "firstLap": 40,
+     "targetLap": 123.179,
+     "bestLap": 118.344,
+     "sigma": 2.832
+    },
+    {
+     "index": 3,
+     "laps": 17,
+     "firstLap": 65,
+     "targetLap": 133.325,
+     "bestLap": 126.194,
+     "sigma": 7.03
+    },
+    {
+     "index": 4,
+     "laps": 11,
+     "firstLap": 87,
+     "targetLap": 137.047,
+     "bestLap": 134.189,
+     "sigma": 3.007
+    },
+    {
+     "index": 5,
+     "laps": 26,
+     "firstLap": 107,
+     "targetLap": 120.997,
+     "bestLap": 114.771,
+     "sigma": 4.586
+    },
+    {
+     "index": 6,
+     "laps": 10,
+     "firstLap": 135,
+     "targetLap": 123.486,
+     "bestLap": 122.68,
+     "sigma": 0.64
+    },
+    {
+     "index": 7,
+     "laps": 25,
+     "firstLap": 153,
+     "targetLap": 132.166,
+     "bestLap": 124.069,
+     "sigma": 4.982
+    },
+    {
+     "index": 8,
+     "laps": 26,
+     "firstLap": 180,
+     "targetLap": 120.326,
+     "bestLap": 113.322,
+     "sigma": 6.355
+    },
+    {
+     "index": 9,
+     "laps": 23,
+     "firstLap": 208,
+     "targetLap": 123.272,
+     "bestLap": 119.156,
+     "sigma": 2.784
+    },
+    {
+     "index": 10,
+     "laps": 21,
+     "firstLap": 233,
+     "targetLap": 134.163,
+     "bestLap": 126.347,
+     "sigma": 4.353
+    },
+    {
+     "index": 11,
+     "laps": 25,
+     "firstLap": 256,
+     "targetLap": 117.843,
+     "bestLap": 113.501,
+     "sigma": 2.58
+    },
+    {
+     "index": 12,
+     "laps": 23,
+     "firstLap": 284,
+     "targetLap": 123.043,
+     "bestLap": 118.134,
+     "sigma": 3.683
+    },
+    {
+     "index": 13,
+     "laps": 22,
+     "firstLap": 309,
+     "targetLap": 115.939,
+     "bestLap": 113.491,
+     "sigma": 3.48
+    }
+   ]
+  },
+  {
+   "id": "156",
+   "number": "56",
+   "team": "TPF Racing",
+   "class": "C",
+   "grid": 7,
+   "finish": 24,
+   "classFinish": 2,
+   "lapsCompleted": 357,
+   "greenLaps": 318,
+   "targetLap": 125.487,
+   "bestLap": 115.479,
+   "sigma": 6.586,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 22,
+     "firstLap": 1,
+     "targetLap": 126.802,
+     "bestLap": 123.055,
+     "sigma": 3.112
+    },
+    {
+     "index": 1,
+     "laps": 9,
+     "firstLap": 26,
+     "targetLap": 124.44,
+     "bestLap": 120.929,
+     "sigma": 4.973
+    },
+    {
+     "index": 2,
+     "laps": 21,
+     "firstLap": 41,
+     "targetLap": 126.984,
+     "bestLap": 122.139,
+     "sigma": 2.426
+    },
+    {
+     "index": 3,
+     "laps": 21,
+     "firstLap": 67,
+     "targetLap": 133.724,
+     "bestLap": 130.288,
+     "sigma": 2.781
+    },
+    {
+     "index": 4,
+     "laps": 12,
+     "firstLap": 92,
+     "targetLap": 140.288,
+     "bestLap": 137.571,
+     "sigma": 0.935
+    },
+    {
+     "index": 5,
+     "laps": 28,
+     "firstLap": 110,
+     "targetLap": 126.543,
+     "bestLap": 122.203,
+     "sigma": 3.46
+    },
+    {
+     "index": 6,
+     "laps": 56,
+     "firstLap": 140,
+     "targetLap": 123.04,
+     "bestLap": 119.213,
+     "sigma": 3.366
+    },
+    {
+     "index": 7,
+     "laps": 19,
+     "firstLap": 198,
+     "targetLap": 133.083,
+     "bestLap": 127.431,
+     "sigma": 3.526
+    },
+    {
+     "index": 8,
+     "laps": 23,
+     "firstLap": 219,
+     "targetLap": 129.305,
+     "bestLap": 121.055,
+     "sigma": 7.235
+    },
+    {
+     "index": 9,
+     "laps": 28,
+     "firstLap": 248,
+     "targetLap": 121.806,
+     "bestLap": 117.107,
+     "sigma": 2.413
+    },
+    {
+     "index": 10,
+     "laps": 54,
+     "firstLap": 278,
+     "targetLap": 119.118,
+     "bestLap": 115.479,
+     "sigma": 2.179
+    },
+    {
+     "index": 11,
+     "laps": 22,
+     "firstLap": 334,
+     "targetLap": 126.446,
+     "bestLap": 122.383,
+     "sigma": 3.529
+    }
+   ]
+  },
+  {
+   "id": "38_mo",
+   "number": "38",
+   "team": "Speed Daddy Racing",
+   "class": "B",
+   "grid": 8,
+   "finish": 49,
+   "classFinish": 23,
+   "lapsCompleted": 292,
+   "greenLaps": 250,
+   "targetLap": 122.125,
+   "bestLap": 116.327,
+   "sigma": 3.787,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 6,
+     "firstLap": 15,
+     "targetLap": 124.692,
+     "bestLap": 120.104,
+     "sigma": 3.115
+    },
+    {
+     "index": 1,
+     "laps": 21,
+     "firstLap": 24,
+     "targetLap": 124.041,
+     "bestLap": 120.889,
+     "sigma": 3.318
+    },
+    {
+     "index": 2,
+     "laps": 11,
+     "firstLap": 54,
+     "targetLap": 123.462,
+     "bestLap": 121.374,
+     "sigma": 2.63
+    },
+    {
+     "index": 3,
+     "laps": 16,
+     "firstLap": 67,
+     "targetLap": 121.513,
+     "bestLap": 117.812,
+     "sigma": 3.142
+    },
+    {
+     "index": 4,
+     "laps": 47,
+     "firstLap": 85,
+     "targetLap": 121.182,
+     "bestLap": 116.832,
+     "sigma": 2.909
+    },
+    {
+     "index": 5,
+     "laps": 22,
+     "firstLap": 134,
+     "targetLap": 122.721,
+     "bestLap": 117.095,
+     "sigma": 5.847
+    },
+    {
+     "index": 6,
+     "laps": 14,
+     "firstLap": 158,
+     "targetLap": 119.922,
+     "bestLap": 116.327,
+     "sigma": 1.943
+    },
+    {
+     "index": 7,
+     "laps": 26,
+     "firstLap": 178,
+     "targetLap": 121.716,
+     "bestLap": 118.34,
+     "sigma": 2.839
+    },
+    {
+     "index": 8,
+     "laps": 7,
+     "firstLap": 206,
+     "targetLap": 122.154,
+     "bestLap": 120.675,
+     "sigma": 1.382
+    },
+    {
+     "index": 9,
+     "laps": 15,
+     "firstLap": 219,
+     "targetLap": 121.658,
+     "bestLap": 119.679,
+     "sigma": 2.262
+    },
+    {
+     "index": 10,
+     "laps": 24,
+     "firstLap": 236,
+     "targetLap": 121.231,
+     "bestLap": 117.41,
+     "sigma": 2.815
+    },
+    {
+     "index": 11,
+     "laps": 28,
+     "firstLap": 262,
+     "targetLap": 123.751,
+     "bestLap": 118.299,
+     "sigma": 4.907
+    }
+   ]
+  },
+  {
+   "id": "312",
+   "number": "312",
+   "team": "Napoleon Complex",
+   "class": "B",
+   "grid": 9,
+   "finish": 66,
+   "classFinish": 32,
+   "lapsCompleted": 221,
+   "greenLaps": 181,
+   "targetLap": 121.885,
+   "bestLap": 110.541,
+   "sigma": 10.841,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 27,
+     "firstLap": 5,
+     "targetLap": 118.179,
+     "bestLap": 112.994,
+     "sigma": 4.467
+    },
+    {
+     "index": 1,
+     "laps": 47,
+     "firstLap": 37,
+     "targetLap": 130.211,
+     "bestLap": 124.829,
+     "sigma": 3.6
+    },
+    {
+     "index": 2,
+     "laps": 34,
+     "firstLap": 90,
+     "targetLap": 126.332,
+     "bestLap": 114.039,
+     "sigma": 9.77
+    },
+    {
+     "index": 3,
+     "laps": 29,
+     "firstLap": 137,
+     "targetLap": 114.607,
+     "bestLap": 111.098,
+     "sigma": 3.342
+    },
+    {
+     "index": 4,
+     "laps": 30,
+     "firstLap": 174,
+     "targetLap": 113.053,
+     "bestLap": 110.541,
+     "sigma": 2.394
+    },
+    {
+     "index": 5,
+     "laps": 7,
+     "firstLap": 213,
+     "targetLap": 124.148,
+     "bestLap": 121.885,
+     "sigma": 1.689
+    }
+   ]
+  },
+  {
+   "id": "609",
+   "number": "609",
+   "team": "FrogLegs Racing",
+   "class": "A",
+   "grid": 10,
+   "finish": 11,
+   "classFinish": 11,
+   "lapsCompleted": 381,
+   "greenLaps": 342,
+   "targetLap": 115.477,
+   "bestLap": 107.676,
+   "sigma": 5.096,
+   "aggression": 2,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 24,
+     "firstLap": 1,
+     "targetLap": 125.587,
+     "bestLap": 118,
+     "sigma": 4.623
+    },
+    {
+     "index": 1,
+     "laps": 18,
+     "firstLap": 30,
+     "targetLap": 122.314,
+     "bestLap": 117.793,
+     "sigma": 4.063
+    },
+    {
+     "index": 2,
+     "laps": 47,
+     "firstLap": 55,
+     "targetLap": 114.949,
+     "bestLap": 110.115,
+     "sigma": 3.425
+    },
+    {
+     "index": 3,
+     "laps": 20,
+     "firstLap": 111,
+     "targetLap": 119.183,
+     "bestLap": 115.484,
+     "sigma": 4.28
+    },
+    {
+     "index": 4,
+     "laps": 56,
+     "firstLap": 138,
+     "targetLap": 114.565,
+     "bestLap": 108.333,
+     "sigma": 3.092
+    },
+    {
+     "index": 5,
+     "laps": 23,
+     "firstLap": 198,
+     "targetLap": 111.163,
+     "bestLap": 108.273,
+     "sigma": 3.151
+    },
+    {
+     "index": 6,
+     "laps": 62,
+     "firstLap": 223,
+     "targetLap": 111.917,
+     "bestLap": 107.676,
+     "sigma": 2.056
+    },
+    {
+     "index": 7,
+     "laps": 56,
+     "firstLap": 291,
+     "targetLap": 116.139,
+     "bestLap": 113.588,
+     "sigma": 2.509
+    },
+    {
+     "index": 8,
+     "laps": 28,
+     "firstLap": 351,
+     "targetLap": 113.507,
+     "bestLap": 109.665,
+     "sigma": 3.61
+    }
+   ]
+  },
+  {
+   "id": "54_mo",
+   "number": "54",
+   "team": "Cross Thread Racing",
+   "class": "A",
+   "grid": 11,
+   "finish": 23,
+   "classFinish": 14,
+   "lapsCompleted": 358,
+   "greenLaps": 304,
+   "targetLap": 112.549,
+   "bestLap": 104.565,
+   "sigma": 4.546,
+   "aggression": 2,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 6,
+     "firstLap": 5,
+     "targetLap": 115.779,
+     "bestLap": 112.468,
+     "sigma": 3.643
+    },
+    {
+     "index": 1,
+     "laps": 10,
+     "firstLap": 16,
+     "targetLap": 121.197,
+     "bestLap": 115.74,
+     "sigma": 5.106
+    },
+    {
+     "index": 2,
+     "laps": 21,
+     "firstLap": 33,
+     "targetLap": 114.195,
+     "bestLap": 107.657,
+     "sigma": 2.122
+    },
+    {
+     "index": 3,
+     "laps": 25,
+     "firstLap": 62,
+     "targetLap": 114.558,
+     "bestLap": 110.019,
+     "sigma": 2.765
+    },
+    {
+     "index": 4,
+     "laps": 11,
+     "firstLap": 94,
+     "targetLap": 116.962,
+     "bestLap": 110.76,
+     "sigma": 6.682
+    },
+    {
+     "index": 5,
+     "laps": 6,
+     "firstLap": 114,
+     "targetLap": 112.74,
+     "bestLap": 109.558,
+     "sigma": 2.837
+    },
+    {
+     "index": 6,
+     "laps": 31,
+     "firstLap": 123,
+     "targetLap": 113.077,
+     "bestLap": 107.578,
+     "sigma": 4.824
+    },
+    {
+     "index": 7,
+     "laps": 37,
+     "firstLap": 156,
+     "targetLap": 113.497,
+     "bestLap": 106.629,
+     "sigma": 4.566
+    },
+    {
+     "index": 8,
+     "laps": 23,
+     "firstLap": 195,
+     "targetLap": 112.448,
+     "bestLap": 107.635,
+     "sigma": 2.543
+    },
+    {
+     "index": 9,
+     "laps": 17,
+     "firstLap": 220,
+     "targetLap": 111.422,
+     "bestLap": 108.136,
+     "sigma": 2.959
+    },
+    {
+     "index": 10,
+     "laps": 27,
+     "firstLap": 239,
+     "targetLap": 109.022,
+     "bestLap": 104.565,
+     "sigma": 2.67
+    },
+    {
+     "index": 11,
+     "laps": 29,
+     "firstLap": 268,
+     "targetLap": 109.968,
+     "bestLap": 106.213,
+     "sigma": 2.39
+    },
+    {
+     "index": 12,
+     "laps": 24,
+     "firstLap": 301,
+     "targetLap": 111.124,
+     "bestLap": 107.284,
+     "sigma": 3.342
+    },
+    {
+     "index": 13,
+     "laps": 29,
+     "firstLap": 327,
+     "targetLap": 109.413,
+     "bestLap": 105.405,
+     "sigma": 4.461
+    }
+   ]
+  },
+  {
+   "id": "147",
+   "number": "147",
+   "team": "NOT-e Boys",
+   "class": "A",
+   "grid": 12,
+   "finish": 9,
+   "classFinish": 9,
+   "lapsCompleted": 385,
+   "greenLaps": 341,
+   "targetLap": 113.044,
+   "bestLap": 102.16,
+   "sigma": 4.925,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 30,
+     "firstLap": 1,
+     "targetLap": 114.783,
+     "bestLap": 107.566,
+     "sigma": 3.761
+    },
+    {
+     "index": 1,
+     "laps": 21,
+     "firstLap": 38,
+     "targetLap": 117.549,
+     "bestLap": 113.601,
+     "sigma": 2.632
+    },
+    {
+     "index": 2,
+     "laps": 33,
+     "firstLap": 67,
+     "targetLap": 111.993,
+     "bestLap": 105.495,
+     "sigma": 4.445
+    },
+    {
+     "index": 3,
+     "laps": 10,
+     "firstLap": 107,
+     "targetLap": 111.944,
+     "bestLap": 109.038,
+     "sigma": 3.555
+    },
+    {
+     "index": 4,
+     "laps": 20,
+     "firstLap": 119,
+     "targetLap": 112.71,
+     "bestLap": 109.335,
+     "sigma": 3.472
+    },
+    {
+     "index": 5,
+     "laps": 79,
+     "firstLap": 145,
+     "targetLap": 113.09,
+     "bestLap": 105.773,
+     "sigma": 4.642
+    },
+    {
+     "index": 6,
+     "laps": 35,
+     "firstLap": 226,
+     "targetLap": 109.878,
+     "bestLap": 102.16,
+     "sigma": 4.51
+    },
+    {
+     "index": 7,
+     "laps": 42,
+     "firstLap": 268,
+     "targetLap": 108.826,
+     "bestLap": 105.594,
+     "sigma": 2.574
+    },
+    {
+     "index": 8,
+     "laps": 14,
+     "firstLap": 312,
+     "targetLap": 111.706,
+     "bestLap": 108.075,
+     "sigma": 3.807
+    },
+    {
+     "index": 9,
+     "laps": 20,
+     "firstLap": 329,
+     "targetLap": 117.217,
+     "bestLap": 113.67,
+     "sigma": 3.1
+    },
+    {
+     "index": 10,
+     "laps": 9,
+     "firstLap": 351,
+     "targetLap": 116.9,
+     "bestLap": 113.87,
+     "sigma": 3.136
+    },
+    {
+     "index": 11,
+     "laps": 23,
+     "firstLap": 362,
+     "targetLap": 113.155,
+     "bestLap": 110.349,
+     "sigma": 2.941
+    }
+   ]
+  },
+  {
+   "id": "29",
+   "number": "29",
+   "team": "Sesame Street Outlaws",
+   "class": "C",
+   "grid": 13,
+   "finish": 20,
+   "classFinish": 1,
+   "lapsCompleted": 360,
+   "greenLaps": 325,
+   "targetLap": 126.794,
+   "bestLap": 120.693,
+   "sigma": 3.935,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 34,
+     "firstLap": 1,
+     "targetLap": 127.737,
+     "bestLap": 123.653,
+     "sigma": 3.282
+    },
+    {
+     "index": 1,
+     "laps": 52,
+     "firstLap": 45,
+     "targetLap": 129.061,
+     "bestLap": 125.474,
+     "sigma": 3.821
+    },
+    {
+     "index": 2,
+     "laps": 142,
+     "firstLap": 106,
+     "targetLap": 126.561,
+     "bestLap": 120.693,
+     "sigma": 3.756
+    },
+    {
+     "index": 3,
+     "laps": 38,
+     "firstLap": 263,
+     "targetLap": 124.988,
+     "bestLap": 121.808,
+     "sigma": 3.434
+    },
+    {
+     "index": 4,
+     "laps": 55,
+     "firstLap": 303,
+     "targetLap": 124.918,
+     "bestLap": 122.113,
+     "sigma": 2.426
+    }
+   ]
+  },
+  {
+   "id": "5_mo",
+   "number": "5",
+   "team": "Bo Knows Lemons!",
+   "class": "C",
+   "grid": 14,
+   "finish": 29,
+   "classFinish": 3,
+   "lapsCompleted": 349,
+   "greenLaps": 308,
+   "targetLap": 121.928,
+   "bestLap": 114.63,
+   "sigma": 4.426,
+   "aggression": 0,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 29,
+     "firstLap": 1,
+     "targetLap": 124.22,
+     "bestLap": 118.944,
+     "sigma": 2.897
+    },
+    {
+     "index": 1,
+     "laps": 13,
+     "firstLap": 35,
+     "targetLap": 125.279,
+     "bestLap": 120.342,
+     "sigma": 4.55
+    },
+    {
+     "index": 2,
+     "laps": 30,
+     "firstLap": 55,
+     "targetLap": 123.093,
+     "bestLap": 118.401,
+     "sigma": 3.621
+    },
+    {
+     "index": 3,
+     "laps": 19,
+     "firstLap": 88,
+     "targetLap": 133.103,
+     "bestLap": 125.632,
+     "sigma": 4.466
+    },
+    {
+     "index": 4,
+     "laps": 77,
+     "firstLap": 116,
+     "targetLap": 121.181,
+     "bestLap": 117.094,
+     "sigma": 3.014
+    },
+    {
+     "index": 5,
+     "laps": 14,
+     "firstLap": 197,
+     "targetLap": 126.543,
+     "bestLap": 122.41,
+     "sigma": 2.629
+    },
+    {
+     "index": 6,
+     "laps": 31,
+     "firstLap": 216,
+     "targetLap": 121.54,
+     "bestLap": 117.543,
+     "sigma": 2.049
+    },
+    {
+     "index": 7,
+     "laps": 46,
+     "firstLap": 249,
+     "targetLap": 119.1,
+     "bestLap": 115.492,
+     "sigma": 2.883
+    },
+    {
+     "index": 8,
+     "laps": 11,
+     "firstLap": 297,
+     "targetLap": 117.773,
+     "bestLap": 115.522,
+     "sigma": 2.119
+    },
+    {
+     "index": 9,
+     "laps": 37,
+     "firstLap": 310,
+     "targetLap": 117.73,
+     "bestLap": 114.63,
+     "sigma": 1.524
+    }
+   ]
+  },
+  {
+   "id": "535",
+   "number": "535",
+   "team": "Mushroom Cloud Racing",
+   "class": "A",
+   "grid": 15,
+   "finish": 7,
+   "classFinish": 7,
+   "lapsCompleted": 388,
+   "greenLaps": 351,
+   "targetLap": 115.115,
+   "bestLap": 107.557,
+   "sigma": 3.726,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 73,
+     "firstLap": 1,
+     "targetLap": 115.016,
+     "bestLap": 109.624,
+     "sigma": 2.832
+    },
+    {
+     "index": 1,
+     "laps": 31,
+     "firstLap": 86,
+     "targetLap": 117.084,
+     "bestLap": 113.418,
+     "sigma": 3.414
+    },
+    {
+     "index": 2,
+     "laps": 29,
+     "firstLap": 130,
+     "targetLap": 116.26,
+     "bestLap": 111.267,
+     "sigma": 2.56
+    },
+    {
+     "index": 3,
+     "laps": 68,
+     "firstLap": 161,
+     "targetLap": 113.32,
+     "bestLap": 109.088,
+     "sigma": 2.973
+    },
+    {
+     "index": 4,
+     "laps": 43,
+     "firstLap": 231,
+     "targetLap": 114.619,
+     "bestLap": 111.908,
+     "sigma": 2.556
+    },
+    {
+     "index": 5,
+     "laps": 56,
+     "firstLap": 280,
+     "targetLap": 112.311,
+     "bestLap": 107.557,
+     "sigma": 2.61
+    },
+    {
+     "index": 6,
+     "laps": 47,
+     "firstLap": 339,
+     "targetLap": 118.407,
+     "bestLap": 112.758,
+     "sigma": 2.74
+    }
+   ]
+  },
+  {
+   "id": "190",
+   "number": "190",
+   "team": "Peacockified Racing",
+   "class": "C",
+   "grid": 16,
+   "finish": 34,
+   "classFinish": 5,
+   "lapsCompleted": 334,
+   "greenLaps": 294,
+   "targetLap": 127.213,
+   "bestLap": 119.202,
+   "sigma": 6.404,
+   "aggression": 0,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 22,
+     "firstLap": 1,
+     "targetLap": 127.041,
+     "bestLap": 125.514,
+     "sigma": 2.237
+    },
+    {
+     "index": 1,
+     "laps": 20,
+     "firstLap": 29,
+     "targetLap": 129.112,
+     "bestLap": 123.04,
+     "sigma": 5.72
+    },
+    {
+     "index": 2,
+     "laps": 10,
+     "firstLap": 54,
+     "targetLap": 129.286,
+     "bestLap": 121.055,
+     "sigma": 5.609
+    },
+    {
+     "index": 3,
+     "laps": 25,
+     "firstLap": 66,
+     "targetLap": 140.249,
+     "bestLap": 137.315,
+     "sigma": 2.54
+    },
+    {
+     "index": 4,
+     "laps": 90,
+     "firstLap": 104,
+     "targetLap": 126.728,
+     "bestLap": 119.731,
+     "sigma": 5.445
+    },
+    {
+     "index": 5,
+     "laps": 32,
+     "firstLap": 196,
+     "targetLap": 123.524,
+     "bestLap": 119.202,
+     "sigma": 3.299
+    },
+    {
+     "index": 6,
+     "laps": 34,
+     "firstLap": 234,
+     "targetLap": 136.12,
+     "bestLap": 132.482,
+     "sigma": 2.034
+    },
+    {
+     "index": 7,
+     "laps": 33,
+     "firstLap": 270,
+     "targetLap": 125.748,
+     "bestLap": 120.899,
+     "sigma": 3.124
+    },
+    {
+     "index": 8,
+     "laps": 27,
+     "firstLap": 305,
+     "targetLap": 124.502,
+     "bestLap": 120.935,
+     "sigma": 2.384
+    }
+   ]
+  },
+  {
+   "id": "24_mo",
+   "number": "24",
+   "team": "Pat-a-PaLemons",
+   "class": "C",
+   "grid": 17,
+   "finish": 87,
+   "classFinish": 22,
+   "lapsCompleted": 52,
+   "greenLaps": 33,
+   "targetLap": 135.007,
+   "bestLap": 127.623,
+   "sigma": 4.836,
+   "aggression": 0,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 10,
+     "firstLap": 1,
+     "targetLap": 133.846,
+     "bestLap": 131.509,
+     "sigma": 3.107
+    },
+    {
+     "index": 1,
+     "laps": 6,
+     "firstLap": 13,
+     "targetLap": 134.26,
+     "bestLap": 131.575,
+     "sigma": 2.993
+    },
+    {
+     "index": 2,
+     "laps": 9,
+     "firstLap": 33,
+     "targetLap": 135.49,
+     "bestLap": 127.797,
+     "sigma": 4.931
+    }
+   ]
+  },
+  {
+   "id": "124_mo",
+   "number": "124",
+   "team": "Sesame Street Outlaws",
+   "class": "C",
+   "grid": 18,
+   "finish": 63,
+   "classFinish": 15,
+   "lapsCompleted": 234,
+   "greenLaps": 196,
+   "targetLap": 126.364,
+   "bestLap": 116.589,
+   "sigma": 5.871,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 58,
+     "firstLap": 1,
+     "targetLap": 127.457,
+     "bestLap": 122.649,
+     "sigma": 2.911
+    },
+    {
+     "index": 1,
+     "laps": 6,
+     "firstLap": 72,
+     "targetLap": 121.963,
+     "bestLap": 118.633,
+     "sigma": 3.687
+    },
+    {
+     "index": 2,
+     "laps": 21,
+     "firstLap": 82,
+     "targetLap": 123.389,
+     "bestLap": 119.4,
+     "sigma": 2.574
+    },
+    {
+     "index": 3,
+     "laps": 33,
+     "firstLap": 109,
+     "targetLap": 134.256,
+     "bestLap": 127.649,
+     "sigma": 3.702
+    },
+    {
+     "index": 4,
+     "laps": 24,
+     "firstLap": 144,
+     "targetLap": 121.043,
+     "bestLap": 118.876,
+     "sigma": 2.13
+    },
+    {
+     "index": 5,
+     "laps": 10,
+     "firstLap": 174,
+     "targetLap": 127.212,
+     "bestLap": 116.589,
+     "sigma": 7.674
+    },
+    {
+     "index": 6,
+     "laps": 12,
+     "firstLap": 189,
+     "targetLap": 127.183,
+     "bestLap": 123.865,
+     "sigma": 2.76
+    },
+    {
+     "index": 7,
+     "laps": 29,
+     "firstLap": 203,
+     "targetLap": 122.892,
+     "bestLap": 118.744,
+     "sigma": 3.241
+    }
+   ]
+  },
+  {
+   "id": "256",
+   "number": "256",
+   "team": "BMW of Frederick",
+   "class": "A",
+   "grid": 19,
+   "finish": 6,
+   "classFinish": 6,
+   "lapsCompleted": 392,
+   "greenLaps": 353,
+   "targetLap": 115.949,
+   "bestLap": 106.36,
+   "sigma": 6.224,
+   "aggression": 2,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 41,
+     "firstLap": 1,
+     "targetLap": 114.041,
+     "bestLap": 107.644,
+     "sigma": 3.4
+    },
+    {
+     "index": 1,
+     "laps": 57,
+     "firstLap": 53,
+     "targetLap": 122.601,
+     "bestLap": 116.591,
+     "sigma": 3.145
+    },
+    {
+     "index": 2,
+     "laps": 18,
+     "firstLap": 119,
+     "targetLap": 117.309,
+     "bestLap": 113.414,
+     "sigma": 5.356
+    },
+    {
+     "index": 3,
+     "laps": 35,
+     "firstLap": 143,
+     "targetLap": 113.922,
+     "bestLap": 110.377,
+     "sigma": 2.307
+    },
+    {
+     "index": 4,
+     "laps": 44,
+     "firstLap": 180,
+     "targetLap": 110.623,
+     "bestLap": 106.36,
+     "sigma": 2.395
+    },
+    {
+     "index": 5,
+     "laps": 59,
+     "firstLap": 226,
+     "targetLap": 120.09,
+     "bestLap": 113.521,
+     "sigma": 3.327
+    },
+    {
+     "index": 6,
+     "laps": 51,
+     "firstLap": 291,
+     "targetLap": 113.972,
+     "bestLap": 110.503,
+     "sigma": 2.667
+    },
+    {
+     "index": 7,
+     "laps": 45,
+     "firstLap": 344,
+     "targetLap": 111.186,
+     "bestLap": 107.325,
+     "sigma": 4.704
+    }
+   ]
+  },
+  {
+   "id": "269",
+   "number": "269",
+   "team": "Poor Boy Racing",
+   "class": "B",
+   "grid": 20,
+   "finish": 33,
+   "classFinish": 14,
+   "lapsCompleted": 337,
+   "greenLaps": 298,
+   "targetLap": 123.077,
+   "bestLap": 110.416,
+   "sigma": 9.744,
+   "aggression": 0,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 23,
+     "firstLap": 1,
+     "targetLap": 120.826,
+     "bestLap": 113.216,
+     "sigma": 4.982
+    },
+    {
+     "index": 1,
+     "laps": 12,
+     "firstLap": 34,
+     "targetLap": 124.308,
+     "bestLap": 117.402,
+     "sigma": 6.583
+    },
+    {
+     "index": 2,
+     "laps": 22,
+     "firstLap": 49,
+     "targetLap": 118.742,
+     "bestLap": 112.345,
+     "sigma": 2.708
+    },
+    {
+     "index": 3,
+     "laps": 8,
+     "firstLap": 82,
+     "targetLap": 125.421,
+     "bestLap": 116.291,
+     "sigma": 8.076
+    },
+    {
+     "index": 4,
+     "laps": 14,
+     "firstLap": 92,
+     "targetLap": 129.806,
+     "bestLap": 122.869,
+     "sigma": 6.108
+    },
+    {
+     "index": 5,
+     "laps": 36,
+     "firstLap": 114,
+     "targetLap": 138.998,
+     "bestLap": 128.748,
+     "sigma": 6.655
+    },
+    {
+     "index": 6,
+     "laps": 46,
+     "firstLap": 151,
+     "targetLap": 117.233,
+     "bestLap": 112.409,
+     "sigma": 2.529
+    },
+    {
+     "index": 7,
+     "laps": 50,
+     "firstLap": 199,
+     "targetLap": 121.382,
+     "bestLap": 112.39,
+     "sigma": 4.732
+    },
+    {
+     "index": 8,
+     "laps": 39,
+     "firstLap": 255,
+     "targetLap": 138.964,
+     "bestLap": 129.185,
+     "sigma": 6.042
+    },
+    {
+     "index": 9,
+     "laps": 18,
+     "firstLap": 296,
+     "targetLap": 118.395,
+     "bestLap": 112.597,
+     "sigma": 5.953
+    },
+    {
+     "index": 10,
+     "laps": 21,
+     "firstLap": 316,
+     "targetLap": 114.701,
+     "bestLap": 110.416,
+     "sigma": 4.431
+    }
+   ]
+  },
+  {
+   "id": "113",
+   "number": "113",
+   "team": "Slothman's Racing",
+   "class": "C",
+   "grid": 21,
+   "finish": 65,
+   "classFinish": 16,
+   "lapsCompleted": 226,
+   "greenLaps": 189,
+   "targetLap": 132.684,
+   "bestLap": 121.011,
+   "sigma": 11.785,
+   "aggression": 2,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 11,
+     "firstLap": 4,
+     "targetLap": 143.313,
+     "bestLap": 141.052,
+     "sigma": 2.434
+    },
+    {
+     "index": 1,
+     "laps": 6,
+     "firstLap": 18,
+     "targetLap": 141.017,
+     "bestLap": 131.639,
+     "sigma": 1.931
+    },
+    {
+     "index": 2,
+     "laps": 11,
+     "firstLap": 31,
+     "targetLap": 146.344,
+     "bestLap": 141.463,
+     "sigma": 1.964
+    },
+    {
+     "index": 3,
+     "laps": 20,
+     "firstLap": 47,
+     "targetLap": 131.551,
+     "bestLap": 126.151,
+     "sigma": 4.445
+    },
+    {
+     "index": 4,
+     "laps": 14,
+     "firstLap": 70,
+     "targetLap": 128.834,
+     "bestLap": 124.529,
+     "sigma": 4.242
+    },
+    {
+     "index": 5,
+     "laps": 16,
+     "firstLap": 93,
+     "targetLap": 140.484,
+     "bestLap": 131.88,
+     "sigma": 7.144
+    },
+    {
+     "index": 6,
+     "laps": 69,
+     "firstLap": 111,
+     "targetLap": 126.595,
+     "bestLap": 121.011,
+     "sigma": 5.34
+    },
+    {
+     "index": 7,
+     "laps": 14,
+     "firstLap": 186,
+     "targetLap": 126.081,
+     "bestLap": 123.035,
+     "sigma": 1.782
+    },
+    {
+     "index": 8,
+     "laps": 18,
+     "firstLap": 208,
+     "targetLap": 147.168,
+     "bestLap": 139.494,
+     "sigma": 3.85
+    }
+   ]
+  },
+  {
+   "id": "33_mo",
+   "number": "33",
+   "team": "Red Ace Racing",
+   "class": "B",
+   "grid": 22,
+   "finish": 15,
+   "classFinish": 2,
+   "lapsCompleted": 371,
+   "greenLaps": 337,
+   "targetLap": 120.457,
+   "bestLap": 114.661,
+   "sigma": 2.738,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 40,
+     "firstLap": 1,
+     "targetLap": 121.992,
+     "bestLap": 118.075,
+     "sigma": 2.572
+    },
+    {
+     "index": 1,
+     "laps": 51,
+     "firstLap": 52,
+     "targetLap": 120.208,
+     "bestLap": 116.203,
+     "sigma": 2.053
+    },
+    {
+     "index": 2,
+     "laps": 54,
+     "firstLap": 112,
+     "targetLap": 120.061,
+     "bestLap": 114.661,
+     "sigma": 3.437
+    },
+    {
+     "index": 3,
+     "laps": 57,
+     "firstLap": 173,
+     "targetLap": 121.567,
+     "bestLap": 117.085,
+     "sigma": 3.192
+    },
+    {
+     "index": 4,
+     "laps": 55,
+     "firstLap": 232,
+     "targetLap": 119.419,
+     "bestLap": 115.98,
+     "sigma": 1.692
+    },
+    {
+     "index": 5,
+     "laps": 52,
+     "firstLap": 291,
+     "targetLap": 120.294,
+     "bestLap": 117.319,
+     "sigma": 2.423
+    },
+    {
+     "index": 6,
+     "laps": 25,
+     "firstLap": 345,
+     "targetLap": 121.607,
+     "bestLap": 116.929,
+     "sigma": 4.239
+    }
+   ]
+  },
+  {
+   "id": "123_mo",
+   "number": "123",
+   "team": "CROWN HICKTORIOUS….",
+   "class": "B",
+   "grid": 23,
+   "finish": 40,
+   "classFinish": 18,
+   "lapsCompleted": 312,
+   "greenLaps": 268,
+   "targetLap": 122.764,
+   "bestLap": 115.072,
+   "sigma": 5.022,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 29,
+     "firstLap": 1,
+     "targetLap": 122.106,
+     "bestLap": 119.388,
+     "sigma": 1.835
+    },
+    {
+     "index": 1,
+     "laps": 8,
+     "firstLap": 35,
+     "targetLap": 129.81,
+     "bestLap": 124.977,
+     "sigma": 3.609
+    },
+    {
+     "index": 2,
+     "laps": 17,
+     "firstLap": 49,
+     "targetLap": 126.897,
+     "bestLap": 118.912,
+     "sigma": 5.294
+    },
+    {
+     "index": 3,
+     "laps": 23,
+     "firstLap": 72,
+     "targetLap": 125.407,
+     "bestLap": 118.309,
+     "sigma": 4.899
+    },
+    {
+     "index": 4,
+     "laps": 74,
+     "firstLap": 105,
+     "targetLap": 121.268,
+     "bestLap": 115.072,
+     "sigma": 3.534
+    },
+    {
+     "index": 5,
+     "laps": 5,
+     "firstLap": 181,
+     "targetLap": 134.708,
+     "bestLap": 127.249,
+     "sigma": 7.162
+    },
+    {
+     "index": 6,
+     "laps": 21,
+     "firstLap": 188,
+     "targetLap": 121.48,
+     "bestLap": 116.601,
+     "sigma": 4.81
+    },
+    {
+     "index": 7,
+     "laps": 37,
+     "firstLap": 216,
+     "targetLap": 118.876,
+     "bestLap": 115.755,
+     "sigma": 2.104
+    },
+    {
+     "index": 8,
+     "laps": 29,
+     "firstLap": 255,
+     "targetLap": 123.297,
+     "bestLap": 117.566,
+     "sigma": 3.926
+    },
+    {
+     "index": 9,
+     "laps": 20,
+     "firstLap": 290,
+     "targetLap": 134.715,
+     "bestLap": 123.266,
+     "sigma": 6.276
+    }
+   ]
+  },
+  {
+   "id": "187",
+   "number": "187",
+   "team": "CROWN HICKTORIOUS….",
+   "class": "B",
+   "grid": 24,
+   "finish": 12,
+   "classFinish": 1,
+   "lapsCompleted": 376,
+   "greenLaps": 335,
+   "targetLap": 116.054,
+   "bestLap": 109.45,
+   "sigma": 3.684,
+   "aggression": 0,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 37,
+     "firstLap": 1,
+     "targetLap": 117.343,
+     "bestLap": 109.725,
+     "sigma": 3.847
+    },
+    {
+     "index": 1,
+     "laps": 27,
+     "firstLap": 48,
+     "targetLap": 117.169,
+     "bestLap": 111.201,
+     "sigma": 3.582
+    },
+    {
+     "index": 2,
+     "laps": 22,
+     "firstLap": 79,
+     "targetLap": 120.232,
+     "bestLap": 116.185,
+     "sigma": 2.366
+    },
+    {
+     "index": 3,
+     "laps": 32,
+     "firstLap": 110,
+     "targetLap": 114.148,
+     "bestLap": 110.076,
+     "sigma": 4.357
+    },
+    {
+     "index": 4,
+     "laps": 26,
+     "firstLap": 146,
+     "targetLap": 118.099,
+     "bestLap": 111.918,
+     "sigma": 4.005
+    },
+    {
+     "index": 5,
+     "laps": 42,
+     "firstLap": 173,
+     "targetLap": 112.952,
+     "bestLap": 109.45,
+     "sigma": 3.085
+    },
+    {
+     "index": 6,
+     "laps": 35,
+     "firstLap": 217,
+     "targetLap": 114.932,
+     "bestLap": 112.358,
+     "sigma": 1.975
+    },
+    {
+     "index": 7,
+     "laps": 37,
+     "firstLap": 258,
+     "targetLap": 117.212,
+     "bestLap": 113.287,
+     "sigma": 2.615
+    },
+    {
+     "index": 8,
+     "laps": 39,
+     "firstLap": 297,
+     "targetLap": 114.191,
+     "bestLap": 110.659,
+     "sigma": 2.015
+    },
+    {
+     "index": 9,
+     "laps": 36,
+     "firstLap": 338,
+     "targetLap": 116.35,
+     "bestLap": 113.889,
+     "sigma": 2.392
+    }
+   ]
+  },
+  {
+   "id": "97_mo",
+   "number": "97",
+   "team": "Frankenstein Motorworks",
+   "class": "A",
+   "grid": 25,
+   "finish": 2,
+   "classFinish": 2,
+   "lapsCompleted": 411,
+   "greenLaps": 373,
+   "targetLap": 110.344,
+   "bestLap": 102.522,
+   "sigma": 3.871,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 35,
+     "firstLap": 1,
+     "targetLap": 115.778,
+     "bestLap": 110.259,
+     "sigma": 2.851
+    },
+    {
+     "index": 1,
+     "laps": 44,
+     "firstLap": 41,
+     "targetLap": 111.85,
+     "bestLap": 107.946,
+     "sigma": 2.377
+    },
+    {
+     "index": 2,
+     "laps": 40,
+     "firstLap": 92,
+     "targetLap": 107.424,
+     "bestLap": 103.425,
+     "sigma": 1.75
+    },
+    {
+     "index": 3,
+     "laps": 101,
+     "firstLap": 147,
+     "targetLap": 110.342,
+     "bestLap": 106.954,
+     "sigma": 2.206
+    },
+    {
+     "index": 4,
+     "laps": 44,
+     "firstLap": 250,
+     "targetLap": 110.585,
+     "bestLap": 107.834,
+     "sigma": 2.3
+    },
+    {
+     "index": 5,
+     "laps": 59,
+     "firstLap": 300,
+     "targetLap": 105.873,
+     "bestLap": 102.522,
+     "sigma": 1.884
+    },
+    {
+     "index": 6,
+     "laps": 8,
+     "firstLap": 361,
+     "targetLap": 110.565,
+     "bestLap": 107.384,
+     "sigma": 3.563
+    },
+    {
+     "index": 7,
+     "laps": 37,
+     "firstLap": 371,
+     "targetLap": 109.226,
+     "bestLap": 105.161,
+     "sigma": 3.849
+    }
+   ]
+  },
+  {
+   "id": "667",
+   "number": "667",
+   "team": "Highway to Schnell",
+   "class": "B",
+   "grid": 26,
+   "finish": 19,
+   "classFinish": 6,
+   "lapsCompleted": 367,
+   "greenLaps": 330,
+   "targetLap": 121.488,
+   "bestLap": 114.784,
+   "sigma": 4.019,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 41,
+     "firstLap": 1,
+     "targetLap": 126.635,
+     "bestLap": 120.261,
+     "sigma": 6.225
+    },
+    {
+     "index": 1,
+     "laps": 29,
+     "firstLap": 50,
+     "targetLap": 125.028,
+     "bestLap": 119.455,
+     "sigma": 4.446
+    },
+    {
+     "index": 2,
+     "laps": 28,
+     "firstLap": 83,
+     "targetLap": 122.631,
+     "bestLap": 116.868,
+     "sigma": 4.33
+    },
+    {
+     "index": 3,
+     "laps": 97,
+     "firstLap": 125,
+     "targetLap": 121.279,
+     "bestLap": 116.591,
+     "sigma": 2.664
+    },
+    {
+     "index": 4,
+     "laps": 41,
+     "firstLap": 224,
+     "targetLap": 118.243,
+     "bestLap": 115.352,
+     "sigma": 1.815
+    },
+    {
+     "index": 5,
+     "laps": 47,
+     "firstLap": 271,
+     "targetLap": 120.57,
+     "bestLap": 114.784,
+     "sigma": 4.305
+    },
+    {
+     "index": 6,
+     "laps": 24,
+     "firstLap": 320,
+     "targetLap": 120.198,
+     "bestLap": 115.438,
+     "sigma": 4.865
+    },
+    {
+     "index": 7,
+     "laps": 21,
+     "firstLap": 346,
+     "targetLap": 122.561,
+     "bestLap": 117.222,
+     "sigma": 4.378
+    }
+   ]
+  },
+  {
+   "id": "30",
+   "number": "30",
+   "team": "Its all about the Waste",
+   "class": "A",
+   "grid": 27,
+   "finish": 5,
+   "classFinish": 5,
+   "lapsCompleted": 393,
+   "greenLaps": 351,
+   "targetLap": 113.953,
+   "bestLap": 106.757,
+   "sigma": 4.813,
+   "aggression": 2,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 17,
+     "firstLap": 1,
+     "targetLap": 121.212,
+     "bestLap": 116.474,
+     "sigma": 4.377
+    },
+    {
+     "index": 1,
+     "laps": 49,
+     "firstLap": 20,
+     "targetLap": 115.429,
+     "bestLap": 110.949,
+     "sigma": 4.99
+    },
+    {
+     "index": 2,
+     "laps": 51,
+     "firstLap": 83,
+     "targetLap": 117.309,
+     "bestLap": 110.947,
+     "sigma": 3.938
+    },
+    {
+     "index": 3,
+     "laps": 17,
+     "firstLap": 147,
+     "targetLap": 116.742,
+     "bestLap": 111.087,
+     "sigma": 2.709
+    },
+    {
+     "index": 4,
+     "laps": 90,
+     "firstLap": 166,
+     "targetLap": 113.822,
+     "bestLap": 106.881,
+     "sigma": 3.146
+    },
+    {
+     "index": 5,
+     "laps": 75,
+     "firstLap": 262,
+     "targetLap": 110.681,
+     "bestLap": 106.757,
+     "sigma": 2.869
+    },
+    {
+     "index": 6,
+     "laps": 26,
+     "firstLap": 339,
+     "targetLap": 110.901,
+     "bestLap": 107.908,
+     "sigma": 2.079
+    },
+    {
+     "index": 7,
+     "laps": 24,
+     "firstLap": 367,
+     "targetLap": 109.719,
+     "bestLap": 107.129,
+     "sigma": 1.509
+    }
+   ]
+  },
+  {
+   "id": "160",
+   "number": "160",
+   "team": "Here For The Bier….",
+   "class": "B",
+   "grid": 28,
+   "finish": 46,
+   "classFinish": 21,
+   "lapsCompleted": 295,
+   "greenLaps": 258,
+   "targetLap": 127.297,
+   "bestLap": 116.365,
+   "sigma": 6.342,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 11,
+     "firstLap": 7,
+     "targetLap": 127.849,
+     "bestLap": 126.53,
+     "sigma": 1.956
+    },
+    {
+     "index": 1,
+     "laps": 21,
+     "firstLap": 22,
+     "targetLap": 127.039,
+     "bestLap": 123.057,
+     "sigma": 3.268
+    },
+    {
+     "index": 2,
+     "laps": 18,
+     "firstLap": 53,
+     "targetLap": 135.36,
+     "bestLap": 129.978,
+     "sigma": 3.48
+    },
+    {
+     "index": 3,
+     "laps": 21,
+     "firstLap": 78,
+     "targetLap": 122.935,
+     "bestLap": 118.43,
+     "sigma": 2.885
+    },
+    {
+     "index": 4,
+     "laps": 55,
+     "firstLap": 102,
+     "targetLap": 131.33,
+     "bestLap": 121.279,
+     "sigma": 5.33
+    },
+    {
+     "index": 5,
+     "laps": 31,
+     "firstLap": 160,
+     "targetLap": 126.496,
+     "bestLap": 116.365,
+     "sigma": 6.366
+    },
+    {
+     "index": 6,
+     "laps": 31,
+     "firstLap": 197,
+     "targetLap": 122.312,
+     "bestLap": 118.118,
+     "sigma": 3.784
+    },
+    {
+     "index": 7,
+     "laps": 32,
+     "firstLap": 231,
+     "targetLap": 126.535,
+     "bestLap": 119.56,
+     "sigma": 3.802
+    },
+    {
+     "index": 8,
+     "laps": 28,
+     "firstLap": 265,
+     "targetLap": 126.658,
+     "bestLap": 119.228,
+     "sigma": 3.457
+    }
+   ]
+  },
+  {
+   "id": "87_mo",
+   "number": "87",
+   "team": "Rumple Minze & Rumble….",
+   "class": "B",
+   "grid": 29,
+   "finish": 16,
+   "classFinish": 3,
+   "lapsCompleted": 369,
+   "greenLaps": 335,
+   "targetLap": 121.051,
+   "bestLap": 113.414,
+   "sigma": 4.77,
+   "aggression": 2,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 33,
+     "firstLap": 1,
+     "targetLap": 132.366,
+     "bestLap": 124.711,
+     "sigma": 5.775
+    },
+    {
+     "index": 1,
+     "laps": 45,
+     "firstLap": 44,
+     "targetLap": 121.077,
+     "bestLap": 117.449,
+     "sigma": 2.593
+    },
+    {
+     "index": 2,
+     "laps": 125,
+     "firstLap": 98,
+     "targetLap": 120.469,
+     "bestLap": 115.773,
+     "sigma": 3.419
+    },
+    {
+     "index": 3,
+     "laps": 37,
+     "firstLap": 234,
+     "targetLap": 124.605,
+     "bestLap": 120.114,
+     "sigma": 3.557
+    },
+    {
+     "index": 4,
+     "laps": 47,
+     "firstLap": 273,
+     "targetLap": 116.049,
+     "bestLap": 113.414,
+     "sigma": 1.947
+    },
+    {
+     "index": 5,
+     "laps": 44,
+     "firstLap": 323,
+     "targetLap": 119.839,
+     "bestLap": 115.263,
+     "sigma": 4.113
+    }
+   ]
+  },
+  {
+   "id": "12",
+   "number": "12",
+   "team": "Murder Whornet",
+   "class": "A",
+   "grid": 30,
+   "finish": 61,
+   "classFinish": 18,
+   "lapsCompleted": 249,
+   "greenLaps": 225,
+   "targetLap": 112.385,
+   "bestLap": 107.361,
+   "sigma": 3.451,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 35,
+     "firstLap": 1,
+     "targetLap": 114.5,
+     "bestLap": 109.053,
+     "sigma": 3.967
+    },
+    {
+     "index": 1,
+     "laps": 52,
+     "firstLap": 45,
+     "targetLap": 111.208,
+     "bestLap": 107.361,
+     "sigma": 2.273
+    },
+    {
+     "index": 2,
+     "laps": 44,
+     "firstLap": 103,
+     "targetLap": 114.238,
+     "bestLap": 108.274,
+     "sigma": 3.294
+    },
+    {
+     "index": 3,
+     "laps": 75,
+     "firstLap": 157,
+     "targetLap": 111.477,
+     "bestLap": 107.808,
+     "sigma": 3.263
+    },
+    {
+     "index": 4,
+     "laps": 14,
+     "firstLap": 234,
+     "targetLap": 110.144,
+     "bestLap": 107.69,
+     "sigma": 1.732
+    }
+   ]
+  },
+  {
+   "id": "8_mo",
+   "number": "8",
+   "team": "Ate Mile Motorsports",
+   "class": "B",
+   "grid": 31,
+   "finish": 25,
+   "classFinish": 9,
+   "lapsCompleted": 356,
+   "greenLaps": 325,
+   "targetLap": 121.82,
+   "bestLap": 110.859,
+   "sigma": 10.131,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 32,
+     "firstLap": 1,
+     "targetLap": 121.294,
+     "bestLap": 112.844,
+     "sigma": 5.815
+    },
+    {
+     "index": 1,
+     "laps": 32,
+     "firstLap": 46,
+     "targetLap": 117.404,
+     "bestLap": 112.814,
+     "sigma": 4.453
+    },
+    {
+     "index": 2,
+     "laps": 40,
+     "firstLap": 81,
+     "targetLap": 138.926,
+     "bestLap": 128.097,
+     "sigma": 5.971
+    },
+    {
+     "index": 3,
+     "laps": 90,
+     "firstLap": 131,
+     "targetLap": 118.46,
+     "bestLap": 111.062,
+     "sigma": 5.443
+    },
+    {
+     "index": 4,
+     "laps": 61,
+     "firstLap": 227,
+     "targetLap": 133.162,
+     "bestLap": 120.622,
+     "sigma": 5.717
+    },
+    {
+     "index": 5,
+     "laps": 63,
+     "firstLap": 290,
+     "targetLap": 115.555,
+     "bestLap": 110.859,
+     "sigma": 3.14
+    }
+   ]
+  },
+  {
+   "id": "172",
+   "number": "172",
+   "team": "More Right Rudder",
+   "class": "C",
+   "grid": 32,
+   "finish": 68,
+   "classFinish": 17,
+   "lapsCompleted": 211,
+   "greenLaps": 181,
+   "targetLap": 129.371,
+   "bestLap": 121.054,
+   "sigma": 5.856,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 21,
+     "firstLap": 1,
+     "targetLap": 129.372,
+     "bestLap": 124.854,
+     "sigma": 3.051
+    },
+    {
+     "index": 1,
+     "laps": 11,
+     "firstLap": 25,
+     "targetLap": 129.269,
+     "bestLap": 126.079,
+     "sigma": 2.123
+    },
+    {
+     "index": 2,
+     "laps": 10,
+     "firstLap": 43,
+     "targetLap": 134.502,
+     "bestLap": 129.838,
+     "sigma": 2.61
+    },
+    {
+     "index": 3,
+     "laps": 25,
+     "firstLap": 55,
+     "targetLap": 129.662,
+     "bestLap": 122.679,
+     "sigma": 5.023
+    },
+    {
+     "index": 4,
+     "laps": 13,
+     "firstLap": 82,
+     "targetLap": 128.627,
+     "bestLap": 125.494,
+     "sigma": 3.361
+    },
+    {
+     "index": 5,
+     "laps": 8,
+     "firstLap": 99,
+     "targetLap": 130.159,
+     "bestLap": 123.151,
+     "sigma": 9.391
+    },
+    {
+     "index": 6,
+     "laps": 19,
+     "firstLap": 115,
+     "targetLap": 133.595,
+     "bestLap": 129.755,
+     "sigma": 2.451
+    },
+    {
+     "index": 7,
+     "laps": 70,
+     "firstLap": 136,
+     "targetLap": 125.851,
+     "bestLap": 121.054,
+     "sigma": 4.371
+    }
+   ]
+  },
+  {
+   "id": "82_mo",
+   "number": "82",
+   "team": "Hoffshaw’s FrankenStang",
+   "class": "B",
+   "grid": 33,
+   "finish": 17,
+   "classFinish": 4,
+   "lapsCompleted": 367,
+   "greenLaps": 326,
+   "targetLap": 117.44,
+   "bestLap": 109.467,
+   "sigma": 4.629,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 16,
+     "firstLap": 1,
+     "targetLap": 119.834,
+     "bestLap": 114.724,
+     "sigma": 4.217
+    },
+    {
+     "index": 1,
+     "laps": 37,
+     "firstLap": 30,
+     "targetLap": 118.554,
+     "bestLap": 114.865,
+     "sigma": 1.972
+    },
+    {
+     "index": 2,
+     "laps": 45,
+     "firstLap": 72,
+     "targetLap": 117.438,
+     "bestLap": 112.977,
+     "sigma": 3.463
+    },
+    {
+     "index": 3,
+     "laps": 92,
+     "firstLap": 130,
+     "targetLap": 116.457,
+     "bestLap": 111.048,
+     "sigma": 3.526
+    },
+    {
+     "index": 4,
+     "laps": 37,
+     "firstLap": 224,
+     "targetLap": 121.16,
+     "bestLap": 117.849,
+     "sigma": 1.956
+    },
+    {
+     "index": 5,
+     "laps": 48,
+     "firstLap": 269,
+     "targetLap": 113.057,
+     "bestLap": 109.467,
+     "sigma": 2.4
+    },
+    {
+     "index": 6,
+     "laps": 46,
+     "firstLap": 319,
+     "targetLap": 115.843,
+     "bestLap": 111.706,
+     "sigma": 3.303
+    }
+   ]
+  },
+  {
+   "id": "661",
+   "number": "661",
+   "team": "Jagoff Motorwerks",
+   "class": "B",
+   "grid": 34,
+   "finish": 36,
+   "classFinish": 15,
+   "lapsCompleted": 330,
+   "greenLaps": 294,
+   "targetLap": 123.465,
+   "bestLap": 110.865,
+   "sigma": 6.558,
+   "aggression": 0,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 21,
+     "firstLap": 1,
+     "targetLap": 128.734,
+     "bestLap": 125.196,
+     "sigma": 3.112
+    },
+    {
+     "index": 1,
+     "laps": 22,
+     "firstLap": 25,
+     "targetLap": 131.544,
+     "bestLap": 125.323,
+     "sigma": 5.851
+    },
+    {
+     "index": 2,
+     "laps": 21,
+     "firstLap": 54,
+     "targetLap": 129.337,
+     "bestLap": 123.873,
+     "sigma": 5.671
+    },
+    {
+     "index": 3,
+     "laps": 25,
+     "firstLap": 85,
+     "targetLap": 122.015,
+     "bestLap": 116.876,
+     "sigma": 3.97
+    },
+    {
+     "index": 4,
+     "laps": 36,
+     "firstLap": 119,
+     "targetLap": 119.714,
+     "bestLap": 114.629,
+     "sigma": 3.709
+    },
+    {
+     "index": 5,
+     "laps": 42,
+     "firstLap": 157,
+     "targetLap": 123.618,
+     "bestLap": 119.196,
+     "sigma": 2.646
+    },
+    {
+     "index": 6,
+     "laps": 43,
+     "firstLap": 202,
+     "targetLap": 124.726,
+     "bestLap": 119.588,
+     "sigma": 2.448
+    },
+    {
+     "index": 7,
+     "laps": 37,
+     "firstLap": 248,
+     "targetLap": 115.867,
+     "bestLap": 110.865,
+     "sigma": 2.91
+    },
+    {
+     "index": 8,
+     "laps": 41,
+     "firstLap": 287,
+     "targetLap": 116.58,
+     "bestLap": 111.003,
+     "sigma": 4.498
+    }
+   ]
+  },
+  {
+   "id": "49_mo",
+   "number": "49",
+   "team": "Pile of Dead Raccoons Racing",
+   "class": "A",
+   "grid": 35,
+   "finish": 8,
+   "classFinish": 8,
+   "lapsCompleted": 387,
+   "greenLaps": 349,
+   "targetLap": 112.993,
+   "bestLap": 106.17,
+   "sigma": 3.813,
+   "aggression": 0,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 35,
+     "firstLap": 1,
+     "targetLap": 116.052,
+     "bestLap": 111.941,
+     "sigma": 4.44
+    },
+    {
+     "index": 1,
+     "laps": 49,
+     "firstLap": 43,
+     "targetLap": 113.478,
+     "bestLap": 108.904,
+     "sigma": 3.758
+    },
+    {
+     "index": 2,
+     "laps": 16,
+     "firstLap": 99,
+     "targetLap": 116.974,
+     "bestLap": 110.407,
+     "sigma": 3.931
+    },
+    {
+     "index": 3,
+     "laps": 18,
+     "firstLap": 125,
+     "targetLap": 114.559,
+     "bestLap": 110.486,
+     "sigma": 3.975
+    },
+    {
+     "index": 4,
+     "laps": 97,
+     "firstLap": 147,
+     "targetLap": 112.905,
+     "bestLap": 108.268,
+     "sigma": 2.544
+    },
+    {
+     "index": 5,
+     "laps": 39,
+     "firstLap": 246,
+     "targetLap": 110.634,
+     "bestLap": 107.856,
+     "sigma": 2.079
+    },
+    {
+     "index": 6,
+     "laps": 49,
+     "firstLap": 291,
+     "targetLap": 110.21,
+     "bestLap": 106.17,
+     "sigma": 3.18
+    },
+    {
+     "index": 7,
+     "laps": 14,
+     "firstLap": 343,
+     "targetLap": 113.883,
+     "bestLap": 110.946,
+     "sigma": 2.847
+    },
+    {
+     "index": 8,
+     "laps": 21,
+     "firstLap": 359,
+     "targetLap": 112.63,
+     "bestLap": 109.22,
+     "sigma": 3.266
+    }
+   ]
+  },
+  {
+   "id": "31",
+   "number": "31",
+   "team": "Rod Throwin' Fools",
+   "class": "A",
+   "grid": 36,
+   "finish": 4,
+   "classFinish": 4,
+   "lapsCompleted": 400,
+   "greenLaps": 372,
+   "targetLap": 110.376,
+   "bestLap": 103.648,
+   "sigma": 4.056,
+   "aggression": 2,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 50,
+     "firstLap": 1,
+     "targetLap": 117.589,
+     "bestLap": 107.682,
+     "sigma": 6.215
+    },
+    {
+     "index": 1,
+     "laps": 55,
+     "firstLap": 61,
+     "targetLap": 109.454,
+     "bestLap": 104.439,
+     "sigma": 3.462
+    },
+    {
+     "index": 2,
+     "laps": 55,
+     "firstLap": 126,
+     "targetLap": 110.484,
+     "bestLap": 105.671,
+     "sigma": 4.526
+    },
+    {
+     "index": 3,
+     "laps": 69,
+     "firstLap": 184,
+     "targetLap": 110.36,
+     "bestLap": 107.564,
+     "sigma": 2.428
+    },
+    {
+     "index": 4,
+     "laps": 74,
+     "firstLap": 259,
+     "targetLap": 110.066,
+     "bestLap": 105.388,
+     "sigma": 3.099
+    },
+    {
+     "index": 5,
+     "laps": 67,
+     "firstLap": 335,
+     "targetLap": 107.654,
+     "bestLap": 103.648,
+     "sigma": 2.657
+    }
+   ]
+  },
+  {
+   "id": "372",
+   "number": "372",
+   "team": "Lemonaid",
+   "class": "A",
+   "grid": 37,
+   "finish": 1,
+   "classFinish": 1,
+   "lapsCompleted": 411,
+   "greenLaps": 372,
+   "targetLap": 107.755,
+   "bestLap": 98.835,
+   "sigma": 4.431,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 34,
+     "firstLap": 1,
+     "targetLap": 110.504,
+     "bestLap": 101.549,
+     "sigma": 3.325
+    },
+    {
+     "index": 1,
+     "laps": 18,
+     "firstLap": 40,
+     "targetLap": 106.233,
+     "bestLap": 102.038,
+     "sigma": 3.264
+    },
+    {
+     "index": 2,
+     "laps": 47,
+     "firstLap": 64,
+     "targetLap": 109.85,
+     "bestLap": 102.879,
+     "sigma": 3.247
+    },
+    {
+     "index": 3,
+     "laps": 16,
+     "firstLap": 127,
+     "targetLap": 111.809,
+     "bestLap": 108.359,
+     "sigma": 3.008
+    },
+    {
+     "index": 4,
+     "laps": 19,
+     "firstLap": 146,
+     "targetLap": 106.869,
+     "bestLap": 103.101,
+     "sigma": 3.241
+    },
+    {
+     "index": 5,
+     "laps": 23,
+     "firstLap": 167,
+     "targetLap": 114.413,
+     "bestLap": 106.138,
+     "sigma": 6.288
+    },
+    {
+     "index": 6,
+     "laps": 59,
+     "firstLap": 191,
+     "targetLap": 105.112,
+     "bestLap": 98.835,
+     "sigma": 3.029
+    },
+    {
+     "index": 7,
+     "laps": 67,
+     "firstLap": 253,
+     "targetLap": 106.227,
+     "bestLap": 102.477,
+     "sigma": 2.583
+    },
+    {
+     "index": 8,
+     "laps": 61,
+     "firstLap": 326,
+     "targetLap": 106.799,
+     "bestLap": 102.562,
+     "sigma": 3.638
+    },
+    {
+     "index": 9,
+     "laps": 23,
+     "firstLap": 389,
+     "targetLap": 107.483,
+     "bestLap": 102.857,
+     "sigma": 2.586
+    }
+   ]
+  },
+  {
+   "id": "678",
+   "number": "678",
+   "team": "CRASH",
+   "class": "B",
+   "grid": 38,
+   "finish": 41,
+   "classFinish": 19,
+   "lapsCompleted": 311,
+   "greenLaps": 275,
+   "targetLap": 118.543,
+   "bestLap": 110.846,
+   "sigma": 4.037,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 41,
+     "firstLap": 1,
+     "targetLap": 120.971,
+     "bestLap": 114.776,
+     "sigma": 2.861
+    },
+    {
+     "index": 1,
+     "laps": 42,
+     "firstLap": 52,
+     "targetLap": 117.761,
+     "bestLap": 113.89,
+     "sigma": 2.574
+    },
+    {
+     "index": 2,
+     "laps": 13,
+     "firstLap": 101,
+     "targetLap": 118.586,
+     "bestLap": 115.79,
+     "sigma": 1.702
+    },
+    {
+     "index": 3,
+     "laps": 13,
+     "firstLap": 126,
+     "targetLap": 117.939,
+     "bestLap": 113.043,
+     "sigma": 3.515
+    },
+    {
+     "index": 4,
+     "laps": 75,
+     "firstLap": 141,
+     "targetLap": 119.173,
+     "bestLap": 110.846,
+     "sigma": 5.831
+    },
+    {
+     "index": 5,
+     "laps": 7,
+     "firstLap": 219,
+     "targetLap": 120.408,
+     "bestLap": 116.464,
+     "sigma": 2.847
+    },
+    {
+     "index": 6,
+     "laps": 49,
+     "firstLap": 228,
+     "targetLap": 116.645,
+     "bestLap": 112.773,
+     "sigma": 2.565
+    },
+    {
+     "index": 7,
+     "laps": 29,
+     "firstLap": 281,
+     "targetLap": 115.993,
+     "bestLap": 113.235,
+     "sigma": 2.341
+    }
+   ]
+  },
+  {
+   "id": "11_mo",
+   "number": "11",
+   "team": "Lemon Lime Hawaiian….",
+   "class": "B",
+   "grid": 39,
+   "finish": 50,
+   "classFinish": 24,
+   "lapsCompleted": 291,
+   "greenLaps": 242,
+   "targetLap": 119.936,
+   "bestLap": 110.998,
+   "sigma": 5.802,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 14,
+     "firstLap": 1,
+     "targetLap": 119.857,
+     "bestLap": 114.701,
+     "sigma": 2.504
+    },
+    {
+     "index": 1,
+     "laps": 10,
+     "firstLap": 17,
+     "targetLap": 127.21,
+     "bestLap": 119.662,
+     "sigma": 5.244
+    },
+    {
+     "index": 2,
+     "laps": 21,
+     "firstLap": 33,
+     "targetLap": 123.136,
+     "bestLap": 118.869,
+     "sigma": 4.673
+    },
+    {
+     "index": 3,
+     "laps": 6,
+     "firstLap": 59,
+     "targetLap": 116.953,
+     "bestLap": 114.493,
+     "sigma": 2.423
+    },
+    {
+     "index": 4,
+     "laps": 13,
+     "firstLap": 73,
+     "targetLap": 115.076,
+     "bestLap": 112.368,
+     "sigma": 1.994
+    },
+    {
+     "index": 5,
+     "laps": 27,
+     "firstLap": 89,
+     "targetLap": 123.112,
+     "bestLap": 118.468,
+     "sigma": 4.701
+    },
+    {
+     "index": 6,
+     "laps": 13,
+     "firstLap": 123,
+     "targetLap": 124.171,
+     "bestLap": 120.007,
+     "sigma": 4.331
+    },
+    {
+     "index": 7,
+     "laps": 31,
+     "firstLap": 138,
+     "targetLap": 117.691,
+     "bestLap": 113.188,
+     "sigma": 4.211
+    },
+    {
+     "index": 8,
+     "laps": 8,
+     "firstLap": 174,
+     "targetLap": 117.248,
+     "bestLap": 110.998,
+     "sigma": 5.706
+    },
+    {
+     "index": 9,
+     "laps": 20,
+     "firstLap": 188,
+     "targetLap": 119.147,
+     "bestLap": 114.326,
+     "sigma": 2.392
+    },
+    {
+     "index": 10,
+     "laps": 29,
+     "firstLap": 214,
+     "targetLap": 115.545,
+     "bestLap": 112.602,
+     "sigma": 2.646
+    },
+    {
+     "index": 11,
+     "laps": 14,
+     "firstLap": 250,
+     "targetLap": 112.311,
+     "bestLap": 111.032,
+     "sigma": 1.029
+    },
+    {
+     "index": 12,
+     "laps": 11,
+     "firstLap": 266,
+     "targetLap": 126.59,
+     "bestLap": 122.638,
+     "sigma": 4.655
+    },
+    {
+     "index": 13,
+     "laps": 12,
+     "firstLap": 280,
+     "targetLap": 118.817,
+     "bestLap": 114.608,
+     "sigma": 2.831
+    }
+   ]
+  },
+  {
+   "id": "562_mo",
+   "number": "562",
+   "team": "SUPERCHEAT (has a….",
+   "class": "A",
+   "grid": 40,
+   "finish": 81,
+   "classFinish": 23,
+   "lapsCompleted": 78,
+   "greenLaps": 59,
+   "targetLap": 115.437,
+   "bestLap": 106.968,
+   "sigma": 4.678,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 28,
+     "firstLap": 1,
+     "targetLap": 114.669,
+     "bestLap": 110.317,
+     "sigma": 3.574
+    },
+    {
+     "index": 1,
+     "laps": 7,
+     "firstLap": 34,
+     "targetLap": 116.227,
+     "bestLap": 106.968,
+     "sigma": 2.944
+    },
+    {
+     "index": 2,
+     "laps": 6,
+     "firstLap": 52,
+     "targetLap": 125.552,
+     "bestLap": 111.27,
+     "sigma": 7.553
+    },
+    {
+     "index": 3,
+     "laps": 15,
+     "firstLap": 62,
+     "targetLap": 114.744,
+     "bestLap": 110.258,
+     "sigma": 3.982
+    }
+   ]
+  },
+  {
+   "id": "696_mo",
+   "number": "696",
+   "team": "D.O.M. Racing",
+   "class": "B",
+   "grid": 42,
+   "finish": 76,
+   "classFinish": 38,
+   "lapsCompleted": 140,
+   "greenLaps": 113,
+   "targetLap": 135.76,
+   "bestLap": 119.128,
+   "sigma": 13.225,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 26,
+     "firstLap": 1,
+     "targetLap": 134.976,
+     "bestLap": 123.284,
+     "sigma": 7.983
+    },
+    {
+     "index": 1,
+     "laps": 11,
+     "firstLap": 33,
+     "targetLap": 145.994,
+     "bestLap": 137.258,
+     "sigma": 3.661
+    },
+    {
+     "index": 2,
+     "laps": 11,
+     "firstLap": 49,
+     "targetLap": 141.628,
+     "bestLap": 138.722,
+     "sigma": 3.542
+    },
+    {
+     "index": 3,
+     "laps": 14,
+     "firstLap": 66,
+     "targetLap": 162.777,
+     "bestLap": 159.846,
+     "sigma": 3.894
+    },
+    {
+     "index": 4,
+     "laps": 11,
+     "firstLap": 87,
+     "targetLap": 126.84,
+     "bestLap": 121.506,
+     "sigma": 4.409
+    },
+    {
+     "index": 5,
+     "laps": 38,
+     "firstLap": 100,
+     "targetLap": 127.311,
+     "bestLap": 119.128,
+     "sigma": 8.699
+    }
+   ]
+  },
+  {
+   "id": "601",
+   "number": "601",
+   "team": "CREAM Logistics",
+   "class": "A",
+   "grid": 43,
+   "finish": 86,
+   "classFinish": 25,
+   "lapsCompleted": 52,
+   "greenLaps": 42,
+   "targetLap": 116.804,
+   "bestLap": 110.59,
+   "sigma": 5.969,
+   "aggression": 2,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 33,
+     "firstLap": 1,
+     "targetLap": 114.326,
+     "bestLap": 110.59,
+     "sigma": 3.591
+    },
+    {
+     "index": 1,
+     "laps": 8,
+     "firstLap": 43,
+     "targetLap": 121.514,
+     "bestLap": 118.592,
+     "sigma": 4.253
+    }
+   ]
+  },
+  {
+   "id": "803",
+   "number": "803",
+   "team": "Queers Shiftin' Gears",
+   "class": "C",
+   "grid": 44,
+   "finish": 44,
+   "classFinish": 9,
+   "lapsCompleted": 303,
+   "greenLaps": 258,
+   "targetLap": 128.347,
+   "bestLap": 115.929,
+   "sigma": 8.537,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 20,
+     "firstLap": 1,
+     "targetLap": 144.409,
+     "bestLap": 139.701,
+     "sigma": 3.254
+    },
+    {
+     "index": 1,
+     "laps": 38,
+     "firstLap": 26,
+     "targetLap": 126.397,
+     "bestLap": 120.105,
+     "sigma": 3.921
+    },
+    {
+     "index": 2,
+     "laps": 32,
+     "firstLap": 74,
+     "targetLap": 123.38,
+     "bestLap": 118.675,
+     "sigma": 3.049
+    },
+    {
+     "index": 3,
+     "laps": 33,
+     "firstLap": 119,
+     "targetLap": 134.663,
+     "bestLap": 129.291,
+     "sigma": 3.105
+    },
+    {
+     "index": 4,
+     "laps": 19,
+     "firstLap": 154,
+     "targetLap": 137.049,
+     "bestLap": 131.188,
+     "sigma": 2.535
+    },
+    {
+     "index": 5,
+     "laps": 6,
+     "firstLap": 175,
+     "targetLap": 120.027,
+     "bestLap": 118.179,
+     "sigma": 2.343
+    },
+    {
+     "index": 6,
+     "laps": 19,
+     "firstLap": 183,
+     "targetLap": 121.186,
+     "bestLap": 117.64,
+     "sigma": 2.221
+    },
+    {
+     "index": 7,
+     "laps": 29,
+     "firstLap": 204,
+     "targetLap": 128.127,
+     "bestLap": 121.84,
+     "sigma": 3.543
+    },
+    {
+     "index": 8,
+     "laps": 8,
+     "firstLap": 235,
+     "targetLap": 128.643,
+     "bestLap": 125.859,
+     "sigma": 2.351
+    },
+    {
+     "index": 9,
+     "laps": 21,
+     "firstLap": 245,
+     "targetLap": 130.335,
+     "bestLap": 124.815,
+     "sigma": 5.18
+    },
+    {
+     "index": 10,
+     "laps": 13,
+     "firstLap": 268,
+     "targetLap": 120.94,
+     "bestLap": 118.219,
+     "sigma": 4.034
+    },
+    {
+     "index": 11,
+     "laps": 19,
+     "firstLap": 284,
+     "targetLap": 119.37,
+     "bestLap": 115.929,
+     "sigma": 4.507
+    }
+   ]
+  },
+  {
+   "id": "330",
+   "number": "330",
+   "team": "Rubber City Racing",
+   "class": "A",
+   "grid": 45,
+   "finish": 14,
+   "classFinish": 13,
+   "lapsCompleted": 374,
+   "greenLaps": 345,
+   "targetLap": 114.964,
+   "bestLap": 103.6,
+   "sigma": 6.199,
+   "aggression": 2,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 58,
+     "firstLap": 1,
+     "targetLap": 121.023,
+     "bestLap": 114.986,
+     "sigma": 3.622
+    },
+    {
+     "index": 1,
+     "laps": 19,
+     "firstLap": 72,
+     "targetLap": 112.764,
+     "bestLap": 107.542,
+     "sigma": 3.761
+    },
+    {
+     "index": 2,
+     "laps": 124,
+     "firstLap": 98,
+     "targetLap": 116.344,
+     "bestLap": 107.344,
+     "sigma": 4.568
+    },
+    {
+     "index": 3,
+     "laps": 73,
+     "firstLap": 227,
+     "targetLap": 109.542,
+     "bestLap": 103.6,
+     "sigma": 2.881
+    },
+    {
+     "index": 4,
+     "laps": 69,
+     "firstLap": 302,
+     "targetLap": 112.385,
+     "bestLap": 108.177,
+     "sigma": 3.063
+    }
+   ]
+  },
+  {
+   "id": "248",
+   "number": "248",
+   "team": "3 Gena + 2",
+   "class": "B",
+   "grid": 46,
+   "finish": 38,
+   "classFinish": 17,
+   "lapsCompleted": 326,
+   "greenLaps": 288,
+   "targetLap": 124.065,
+   "bestLap": 115.299,
+   "sigma": 6.755,
+   "aggression": 0,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 18,
+     "firstLap": 3,
+     "targetLap": 121.822,
+     "bestLap": 119.172,
+     "sigma": 1.165
+    },
+    {
+     "index": 1,
+     "laps": 14,
+     "firstLap": 24,
+     "targetLap": 139.286,
+     "bestLap": 133.877,
+     "sigma": 3.382
+    },
+    {
+     "index": 2,
+     "laps": 35,
+     "firstLap": 40,
+     "targetLap": 126.154,
+     "bestLap": 120.262,
+     "sigma": 4.05
+    },
+    {
+     "index": 3,
+     "laps": 27,
+     "firstLap": 82,
+     "targetLap": 122.172,
+     "bestLap": 117.345,
+     "sigma": 4.479
+    },
+    {
+     "index": 4,
+     "laps": 67,
+     "firstLap": 118,
+     "targetLap": 126.234,
+     "bestLap": 119.609,
+     "sigma": 8.316
+    },
+    {
+     "index": 5,
+     "laps": 8,
+     "firstLap": 187,
+     "targetLap": 138.172,
+     "bestLap": 134.9,
+     "sigma": 1.11
+    },
+    {
+     "index": 6,
+     "laps": 23,
+     "firstLap": 197,
+     "targetLap": 120.913,
+     "bestLap": 118.5,
+     "sigma": 1.589
+    },
+    {
+     "index": 7,
+     "laps": 12,
+     "firstLap": 224,
+     "targetLap": 120.37,
+     "bestLap": 119.106,
+     "sigma": 1.826
+    },
+    {
+     "index": 8,
+     "laps": 28,
+     "firstLap": 238,
+     "targetLap": 134.083,
+     "bestLap": 126.845,
+     "sigma": 4.656
+    },
+    {
+     "index": 9,
+     "laps": 54,
+     "firstLap": 270,
+     "targetLap": 119.459,
+     "bestLap": 115.299,
+     "sigma": 2.628
+    }
+   ]
+  },
+  {
+   "id": "339",
+   "number": "339",
+   "team": "It's Probably Fine",
+   "class": "B",
+   "grid": 47,
+   "finish": 77,
+   "classFinish": 39,
+   "lapsCompleted": 139,
+   "greenLaps": 114,
+   "targetLap": 124.861,
+   "bestLap": 112.438,
+   "sigma": 7.867,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 39,
+     "firstLap": 1,
+     "targetLap": 127.539,
+     "bestLap": 121.417,
+     "sigma": 4.516
+    },
+    {
+     "index": 1,
+     "laps": 6,
+     "firstLap": 50,
+     "targetLap": 127.372,
+     "bestLap": 120.216,
+     "sigma": 2.221
+    },
+    {
+     "index": 2,
+     "laps": 19,
+     "firstLap": 59,
+     "targetLap": 122.87,
+     "bestLap": 118.927,
+     "sigma": 2.715
+    },
+    {
+     "index": 3,
+     "laps": 9,
+     "firstLap": 84,
+     "targetLap": 135.879,
+     "bestLap": 132.928,
+     "sigma": 2.482
+    },
+    {
+     "index": 4,
+     "laps": 24,
+     "firstLap": 100,
+     "targetLap": 116.028,
+     "bestLap": 112.438,
+     "sigma": 2.54
+    },
+    {
+     "index": 5,
+     "laps": 8,
+     "firstLap": 131,
+     "targetLap": 121.365,
+     "bestLap": 114.636,
+     "sigma": 6.72
+    }
+   ]
+  },
+  {
+   "id": "264",
+   "number": "264",
+   "team": "Scuderia Fartari",
+   "class": "B",
+   "grid": 48,
+   "finish": 53,
+   "classFinish": 26,
+   "lapsCompleted": 277,
+   "greenLaps": 250,
+   "targetLap": 125.838,
+   "bestLap": 115.382,
+   "sigma": 5.819,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 25,
+     "firstLap": 1,
+     "targetLap": 132.755,
+     "bestLap": 125.747,
+     "sigma": 3.987
+    },
+    {
+     "index": 1,
+     "laps": 5,
+     "firstLap": 31,
+     "targetLap": 134.246,
+     "bestLap": 131.597,
+     "sigma": 3.806
+    },
+    {
+     "index": 2,
+     "laps": 21,
+     "firstLap": 38,
+     "targetLap": 124.21,
+     "bestLap": 115.382,
+     "sigma": 9.005
+    },
+    {
+     "index": 3,
+     "laps": 23,
+     "firstLap": 63,
+     "targetLap": 128.99,
+     "bestLap": 119.363,
+     "sigma": 5.589
+    },
+    {
+     "index": 4,
+     "laps": 46,
+     "firstLap": 88,
+     "targetLap": 128.101,
+     "bestLap": 119.247,
+     "sigma": 4.942
+    },
+    {
+     "index": 5,
+     "laps": 40,
+     "firstLap": 137,
+     "targetLap": 122.365,
+     "bestLap": 117.729,
+     "sigma": 2.291
+    },
+    {
+     "index": 6,
+     "laps": 48,
+     "firstLap": 183,
+     "targetLap": 122.492,
+     "bestLap": 116.752,
+     "sigma": 2.689
+    },
+    {
+     "index": 7,
+     "laps": 38,
+     "firstLap": 236,
+     "targetLap": 126.62,
+     "bestLap": 121.931,
+     "sigma": 3.122
+    }
+   ]
+  },
+  {
+   "id": "888_mo",
+   "number": "888",
+   "team": "The Volvo from Hell",
+   "class": "C",
+   "grid": 49,
+   "finish": 82,
+   "classFinish": 20,
+   "lapsCompleted": 66,
+   "greenLaps": 36,
+   "targetLap": 135.135,
+   "bestLap": 128.189,
+   "sigma": 6.492,
+   "aggression": 0,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 5,
+     "firstLap": 29,
+     "targetLap": 146.312,
+     "bestLap": 142.96,
+     "sigma": 3.496
+    },
+    {
+     "index": 1,
+     "laps": 5,
+     "firstLap": 36,
+     "targetLap": 133.412,
+     "bestLap": 130.681,
+     "sigma": 1.449
+    },
+    {
+     "index": 2,
+     "laps": 5,
+     "firstLap": 43,
+     "targetLap": 135.448,
+     "bestLap": 133.898,
+     "sigma": 2.298
+    }
+   ]
+  },
+  {
+   "id": "86_mo",
+   "number": "86",
+   "team": "Initial D-NF",
+   "class": "A",
+   "grid": 50,
+   "finish": 55,
+   "classFinish": 17,
+   "lapsCompleted": 269,
+   "greenLaps": 230,
+   "targetLap": 116.68,
+   "bestLap": 108.527,
+   "sigma": 4.073,
+   "aggression": 2,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 7,
+     "firstLap": 6,
+     "targetLap": 122.587,
+     "bestLap": 120.09,
+     "sigma": 1.346
+    },
+    {
+     "index": 1,
+     "laps": 5,
+     "firstLap": 15,
+     "targetLap": 126.713,
+     "bestLap": 124.891,
+     "sigma": 2.701
+    },
+    {
+     "index": 2,
+     "laps": 8,
+     "firstLap": 30,
+     "targetLap": 122.083,
+     "bestLap": 117.682,
+     "sigma": 3.067
+    },
+    {
+     "index": 3,
+     "laps": 74,
+     "firstLap": 51,
+     "targetLap": 114.861,
+     "bestLap": 108.527,
+     "sigma": 4.248
+    },
+    {
+     "index": 4,
+     "laps": 26,
+     "firstLap": 127,
+     "targetLap": 119.498,
+     "bestLap": 114.589,
+     "sigma": 2.207
+    },
+    {
+     "index": 5,
+     "laps": 36,
+     "firstLap": 161,
+     "targetLap": 115.488,
+     "bestLap": 112.012,
+     "sigma": 2.424
+    },
+    {
+     "index": 6,
+     "laps": 8,
+     "firstLap": 199,
+     "targetLap": 114.984,
+     "bestLap": 113.814,
+     "sigma": 1.532
+    },
+    {
+     "index": 7,
+     "laps": 35,
+     "firstLap": 211,
+     "targetLap": 115.21,
+     "bestLap": 113.758,
+     "sigma": 1.337
+    },
+    {
+     "index": 8,
+     "laps": 18,
+     "firstLap": 248,
+     "targetLap": 117.785,
+     "bestLap": 113.132,
+     "sigma": 4.474
+    }
+   ]
+  },
+  {
+   "id": "626",
+   "number": "626",
+   "team": "Brown Rubber Soul Racing",
+   "class": "C",
+   "grid": 51,
+   "finish": 70,
+   "classFinish": 18,
+   "lapsCompleted": 207,
+   "greenLaps": 167,
+   "targetLap": 118.627,
+   "bestLap": 111.678,
+   "sigma": 3.681,
+   "aggression": 2,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 18,
+     "firstLap": 1,
+     "targetLap": 118.504,
+     "bestLap": 115.714,
+     "sigma": 2.795
+    },
+    {
+     "index": 1,
+     "laps": 5,
+     "firstLap": 21,
+     "targetLap": 120.143,
+     "bestLap": 115.616,
+     "sigma": 6.712
+    },
+    {
+     "index": 2,
+     "laps": 15,
+     "firstLap": 31,
+     "targetLap": 116.602,
+     "bestLap": 114.956,
+     "sigma": 2.09
+    },
+    {
+     "index": 3,
+     "laps": 26,
+     "firstLap": 54,
+     "targetLap": 122.975,
+     "bestLap": 117.295,
+     "sigma": 4.116
+    },
+    {
+     "index": 4,
+     "laps": 11,
+     "firstLap": 85,
+     "targetLap": 120.855,
+     "bestLap": 116.729,
+     "sigma": 1.554
+    },
+    {
+     "index": 5,
+     "laps": 45,
+     "firstLap": 105,
+     "targetLap": 118.868,
+     "bestLap": 114.641,
+     "sigma": 2.549
+    },
+    {
+     "index": 6,
+     "laps": 13,
+     "firstLap": 152,
+     "targetLap": 117.876,
+     "bestLap": 115.37,
+     "sigma": 1.927
+    },
+    {
+     "index": 7,
+     "laps": 16,
+     "firstLap": 171,
+     "targetLap": 114.414,
+     "bestLap": 111.714,
+     "sigma": 1.647
+    },
+    {
+     "index": 8,
+     "laps": 6,
+     "firstLap": 189,
+     "targetLap": 117.549,
+     "bestLap": 111.678,
+     "sigma": 0.924
+    },
+    {
+     "index": 9,
+     "laps": 8,
+     "firstLap": 198,
+     "targetLap": 116.361,
+     "bestLap": 114.096,
+     "sigma": 1.399
+    }
+   ]
+  },
+  {
+   "id": "806",
+   "number": "806",
+   "team": "Cougar Racing (R)",
+   "class": "A",
+   "grid": 52,
+   "finish": 13,
+   "classFinish": 12,
+   "lapsCompleted": 376,
+   "greenLaps": 344,
+   "targetLap": 118.483,
+   "bestLap": 109.162,
+   "sigma": 5.06,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 31,
+     "firstLap": 1,
+     "targetLap": 125.04,
+     "bestLap": 119.47,
+     "sigma": 5.008
+    },
+    {
+     "index": 1,
+     "laps": 48,
+     "firstLap": 41,
+     "targetLap": 117.572,
+     "bestLap": 111.262,
+     "sigma": 3.823
+    },
+    {
+     "index": 2,
+     "laps": 43,
+     "firstLap": 94,
+     "targetLap": 120.056,
+     "bestLap": 114.27,
+     "sigma": 3.619
+    },
+    {
+     "index": 3,
+     "laps": 86,
+     "firstLap": 147,
+     "targetLap": 120.995,
+     "bestLap": 110.063,
+     "sigma": 4.362
+    },
+    {
+     "index": 4,
+     "laps": 53,
+     "firstLap": 235,
+     "targetLap": 115.065,
+     "bestLap": 110.748,
+     "sigma": 1.615
+    },
+    {
+     "index": 5,
+     "laps": 44,
+     "firstLap": 291,
+     "targetLap": 117.469,
+     "bestLap": 113.995,
+     "sigma": 2.233
+    },
+    {
+     "index": 6,
+     "laps": 36,
+     "firstLap": 338,
+     "targetLap": 116.745,
+     "bestLap": 109.162,
+     "sigma": 3.946
+    }
+   ]
+  },
+  {
+   "id": "188",
+   "number": "188",
+   "team": "Awoo Racing 1",
+   "class": "C",
+   "grid": 53,
+   "finish": 47,
+   "classFinish": 10,
+   "lapsCompleted": 295,
+   "greenLaps": 247,
+   "targetLap": 129.18,
+   "bestLap": 113.947,
+   "sigma": 7.784,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 9,
+     "firstLap": 1,
+     "targetLap": 138.233,
+     "bestLap": 135.194,
+     "sigma": 2.185
+    },
+    {
+     "index": 1,
+     "laps": 5,
+     "firstLap": 12,
+     "targetLap": 147.475,
+     "bestLap": 142.801,
+     "sigma": 0.876
+    },
+    {
+     "index": 2,
+     "laps": 27,
+     "firstLap": 20,
+     "targetLap": 126.743,
+     "bestLap": 117.721,
+     "sigma": 2.971
+    },
+    {
+     "index": 3,
+     "laps": 12,
+     "firstLap": 53,
+     "targetLap": 127.295,
+     "bestLap": 122.199,
+     "sigma": 4.974
+    },
+    {
+     "index": 4,
+     "laps": 12,
+     "firstLap": 67,
+     "targetLap": 121.022,
+     "bestLap": 118.734,
+     "sigma": 2.481
+    },
+    {
+     "index": 5,
+     "laps": 20,
+     "firstLap": 92,
+     "targetLap": 137.411,
+     "bestLap": 131.262,
+     "sigma": 6.34
+    },
+    {
+     "index": 6,
+     "laps": 9,
+     "firstLap": 116,
+     "targetLap": 128.323,
+     "bestLap": 125.958,
+     "sigma": 2.623
+    },
+    {
+     "index": 7,
+     "laps": 36,
+     "firstLap": 127,
+     "targetLap": 126.682,
+     "bestLap": 121.442,
+     "sigma": 5.847
+    },
+    {
+     "index": 8,
+     "laps": 12,
+     "firstLap": 168,
+     "targetLap": 143.45,
+     "bestLap": 134.175,
+     "sigma": 6.043
+    },
+    {
+     "index": 9,
+     "laps": 14,
+     "firstLap": 182,
+     "targetLap": 123.952,
+     "bestLap": 119.799,
+     "sigma": 3.433
+    },
+    {
+     "index": 10,
+     "laps": 25,
+     "firstLap": 202,
+     "targetLap": 132.033,
+     "bestLap": 125.279,
+     "sigma": 3.535
+    },
+    {
+     "index": 11,
+     "laps": 8,
+     "firstLap": 229,
+     "targetLap": 126.791,
+     "bestLap": 121.422,
+     "sigma": 5.231
+    },
+    {
+     "index": 12,
+     "laps": 20,
+     "firstLap": 239,
+     "targetLap": 127.923,
+     "bestLap": 122.549,
+     "sigma": 5.461
+    },
+    {
+     "index": 13,
+     "laps": 25,
+     "firstLap": 262,
+     "targetLap": 122.985,
+     "bestLap": 113.947,
+     "sigma": 5.687
+    }
+   ]
+  },
+  {
+   "id": "89_mo",
+   "number": "89",
+   "team": "S.H.I.T.box brought to….",
+   "class": "B",
+   "grid": 54,
+   "finish": 22,
+   "classFinish": 8,
+   "lapsCompleted": 359,
+   "greenLaps": 319,
+   "targetLap": 119.097,
+   "bestLap": 112.692,
+   "sigma": 4.343,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 26,
+     "firstLap": 1,
+     "targetLap": 120.828,
+     "bestLap": 115.315,
+     "sigma": 3.503
+    },
+    {
+     "index": 1,
+     "laps": 47,
+     "firstLap": 43,
+     "targetLap": 122.034,
+     "bestLap": 117.916,
+     "sigma": 3.303
+    },
+    {
+     "index": 2,
+     "laps": 43,
+     "firstLap": 97,
+     "targetLap": 118.798,
+     "bestLap": 112.767,
+     "sigma": 4.856
+    },
+    {
+     "index": 3,
+     "laps": 52,
+     "firstLap": 146,
+     "targetLap": 117.576,
+     "bestLap": 113.725,
+     "sigma": 2.69
+    },
+    {
+     "index": 4,
+     "laps": 15,
+     "firstLap": 200,
+     "targetLap": 116.628,
+     "bestLap": 114.896,
+     "sigma": 1.417
+    },
+    {
+     "index": 5,
+     "laps": 53,
+     "firstLap": 217,
+     "targetLap": 116.282,
+     "bestLap": 112.692,
+     "sigma": 2.251
+    },
+    {
+     "index": 6,
+     "laps": 53,
+     "firstLap": 274,
+     "targetLap": 120.561,
+     "bestLap": 116.305,
+     "sigma": 2.933
+    },
+    {
+     "index": 7,
+     "laps": 27,
+     "firstLap": 329,
+     "targetLap": 116.531,
+     "bestLap": 113.337,
+     "sigma": 2.901
+    }
+   ]
+  },
+  {
+   "id": "13_mo",
+   "number": "13",
+   "team": "Froning Farms",
+   "class": "A",
+   "grid": 55,
+   "finish": 3,
+   "classFinish": 3,
+   "lapsCompleted": 407,
+   "greenLaps": 375,
+   "targetLap": 109.108,
+   "bestLap": 101.797,
+   "sigma": 4.222,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 35,
+     "firstLap": 1,
+     "targetLap": 112.817,
+     "bestLap": 105.418,
+     "sigma": 4.56
+    },
+    {
+     "index": 1,
+     "laps": 44,
+     "firstLap": 42,
+     "targetLap": 110.44,
+     "bestLap": 104.176,
+     "sigma": 5.261
+    },
+    {
+     "index": 2,
+     "laps": 27,
+     "firstLap": 99,
+     "targetLap": 112.693,
+     "bestLap": 107.525,
+     "sigma": 5.268
+    },
+    {
+     "index": 3,
+     "laps": 109,
+     "firstLap": 140,
+     "targetLap": 108.552,
+     "bestLap": 103.246,
+     "sigma": 3.453
+    },
+    {
+     "index": 4,
+     "laps": 49,
+     "firstLap": 251,
+     "targetLap": 107.139,
+     "bestLap": 103.152,
+     "sigma": 2.583
+    },
+    {
+     "index": 5,
+     "laps": 49,
+     "firstLap": 307,
+     "targetLap": 109.625,
+     "bestLap": 103.589,
+     "sigma": 5.435
+    },
+    {
+     "index": 6,
+     "laps": 55,
+     "firstLap": 358,
+     "targetLap": 107.712,
+     "bestLap": 101.797,
+     "sigma": 3.308
+    }
+   ]
+  },
+  {
+   "id": "513",
+   "number": "513",
+   "team": "Team Non Sequitur",
+   "class": "A",
+   "grid": 56,
+   "finish": 31,
+   "classFinish": 15,
+   "lapsCompleted": 345,
+   "greenLaps": 307,
+   "targetLap": 112.335,
+   "bestLap": 104.884,
+   "sigma": 3.772,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 49,
+     "firstLap": 1,
+     "targetLap": 112.736,
+     "bestLap": 105.059,
+     "sigma": 4.638
+    },
+    {
+     "index": 1,
+     "laps": 16,
+     "firstLap": 60,
+     "targetLap": 113.775,
+     "bestLap": 110.065,
+     "sigma": 2.997
+    },
+    {
+     "index": 2,
+     "laps": 19,
+     "firstLap": 80,
+     "targetLap": 111.309,
+     "bestLap": 106.894,
+     "sigma": 2.643
+    },
+    {
+     "index": 3,
+     "laps": 46,
+     "firstLap": 103,
+     "targetLap": 113.322,
+     "bestLap": 107.945,
+     "sigma": 3.042
+    },
+    {
+     "index": 4,
+     "laps": 66,
+     "firstLap": 158,
+     "targetLap": 111.362,
+     "bestLap": 104.884,
+     "sigma": 6.225
+    },
+    {
+     "index": 5,
+     "laps": 20,
+     "firstLap": 227,
+     "targetLap": 109.85,
+     "bestLap": 107.869,
+     "sigma": 2.551
+    },
+    {
+     "index": 6,
+     "laps": 42,
+     "firstLap": 250,
+     "targetLap": 112.472,
+     "bestLap": 107.196,
+     "sigma": 3.661
+    },
+    {
+     "index": 7,
+     "laps": 20,
+     "firstLap": 294,
+     "targetLap": 112.739,
+     "bestLap": 109.13,
+     "sigma": 1.491
+    },
+    {
+     "index": 8,
+     "laps": 24,
+     "firstLap": 318,
+     "targetLap": 110.35,
+     "bestLap": 107.644,
+     "sigma": 1.804
+    }
+   ]
+  },
+  {
+   "id": "3_mo",
+   "number": "3",
+   "team": "Snap Crackle ….",
+   "class": "B",
+   "grid": 57,
+   "finish": 28,
+   "classFinish": 12,
+   "lapsCompleted": 351,
+   "greenLaps": 311,
+   "targetLap": 125.549,
+   "bestLap": 113.653,
+   "sigma": 8.559,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 31,
+     "firstLap": 1,
+     "targetLap": 123.475,
+     "bestLap": 119.036,
+     "sigma": 3.987
+    },
+    {
+     "index": 1,
+     "laps": 36,
+     "firstLap": 38,
+     "targetLap": 140.007,
+     "bestLap": 132.602,
+     "sigma": 6.558
+    },
+    {
+     "index": 2,
+     "laps": 32,
+     "firstLap": 79,
+     "targetLap": 121.066,
+     "bestLap": 117.884,
+     "sigma": 2.167
+    },
+    {
+     "index": 3,
+     "laps": 72,
+     "firstLap": 128,
+     "targetLap": 125.025,
+     "bestLap": 113.653,
+     "sigma": 12.234
+    },
+    {
+     "index": 4,
+     "laps": 8,
+     "firstLap": 202,
+     "targetLap": 121.089,
+     "bestLap": 119.437,
+     "sigma": 1.962
+    },
+    {
+     "index": 5,
+     "laps": 40,
+     "firstLap": 212,
+     "targetLap": 126.834,
+     "bestLap": 121.963,
+     "sigma": 3.898
+    },
+    {
+     "index": 6,
+     "laps": 51,
+     "firstLap": 258,
+     "targetLap": 119.012,
+     "bestLap": 115.045,
+     "sigma": 2.823
+    },
+    {
+     "index": 7,
+     "laps": 27,
+     "firstLap": 313,
+     "targetLap": 127.182,
+     "bestLap": 120.962,
+     "sigma": 4.089
+    },
+    {
+     "index": 8,
+     "laps": 8,
+     "firstLap": 344,
+     "targetLap": 124.953,
+     "bestLap": 119.962,
+     "sigma": 3.379
+    }
+   ]
+  },
+  {
+   "id": "151",
+   "number": "151",
+   "team": "Alpha Wolf Squadron",
+   "class": "B",
+   "grid": 58,
+   "finish": 27,
+   "classFinish": 11,
+   "lapsCompleted": 355,
+   "greenLaps": 314,
+   "targetLap": 121.871,
+   "bestLap": 110.891,
+   "sigma": 7.694,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 22,
+     "firstLap": 1,
+     "targetLap": 121.725,
+     "bestLap": 117.452,
+     "sigma": 2.65
+    },
+    {
+     "index": 1,
+     "laps": 10,
+     "firstLap": 25,
+     "targetLap": 128.397,
+     "bestLap": 122.121,
+     "sigma": 4.895
+    },
+    {
+     "index": 2,
+     "laps": 19,
+     "firstLap": 38,
+     "targetLap": 129.403,
+     "bestLap": 122.739,
+     "sigma": 4.334
+    },
+    {
+     "index": 3,
+     "laps": 17,
+     "firstLap": 60,
+     "targetLap": 141.276,
+     "bestLap": 132.793,
+     "sigma": 5.893
+    },
+    {
+     "index": 4,
+     "laps": 17,
+     "firstLap": 79,
+     "targetLap": 119.157,
+     "bestLap": 116.208,
+     "sigma": 2.288
+    },
+    {
+     "index": 5,
+     "laps": 13,
+     "firstLap": 102,
+     "targetLap": 122.315,
+     "bestLap": 117.617,
+     "sigma": 5.447
+    },
+    {
+     "index": 6,
+     "laps": 20,
+     "firstLap": 123,
+     "targetLap": 122.457,
+     "bestLap": 119.42,
+     "sigma": 2.248
+    },
+    {
+     "index": 7,
+     "laps": 31,
+     "firstLap": 145,
+     "targetLap": 118.245,
+     "bestLap": 112.903,
+     "sigma": 4.959
+    },
+    {
+     "index": 8,
+     "laps": 23,
+     "firstLap": 187,
+     "targetLap": 120.354,
+     "bestLap": 112.9,
+     "sigma": 6.153
+    },
+    {
+     "index": 9,
+     "laps": 39,
+     "firstLap": 212,
+     "targetLap": 120.077,
+     "bestLap": 112.47,
+     "sigma": 4.516
+    },
+    {
+     "index": 10,
+     "laps": 31,
+     "firstLap": 257,
+     "targetLap": 134.178,
+     "bestLap": 129.23,
+     "sigma": 3.508
+    },
+    {
+     "index": 11,
+     "laps": 29,
+     "firstLap": 291,
+     "targetLap": 118.441,
+     "bestLap": 113.549,
+     "sigma": 2.632
+    },
+    {
+     "index": 12,
+     "laps": 31,
+     "firstLap": 322,
+     "targetLap": 117.664,
+     "bestLap": 110.891,
+     "sigma": 4.74
+    }
+   ]
+  },
+  {
+   "id": "690",
+   "number": "690",
+   "team": "Spontaneous Rodents",
+   "class": "B",
+   "grid": 59,
+   "finish": 45,
+   "classFinish": 20,
+   "lapsCompleted": 301,
+   "greenLaps": 259,
+   "targetLap": 118.621,
+   "bestLap": 110.195,
+   "sigma": 4.273,
+   "aggression": 0,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 30,
+     "firstLap": 1,
+     "targetLap": 121.756,
+     "bestLap": 117.872,
+     "sigma": 3.575
+    },
+    {
+     "index": 1,
+     "laps": 17,
+     "firstLap": 36,
+     "targetLap": 120.194,
+     "bestLap": 114.056,
+     "sigma": 2.962
+    },
+    {
+     "index": 2,
+     "laps": 23,
+     "firstLap": 59,
+     "targetLap": 118.621,
+     "bestLap": 115.346,
+     "sigma": 3.632
+    },
+    {
+     "index": 3,
+     "laps": 22,
+     "firstLap": 87,
+     "targetLap": 120.908,
+     "bestLap": 116.371,
+     "sigma": 2.987
+    },
+    {
+     "index": 4,
+     "laps": 13,
+     "firstLap": 121,
+     "targetLap": 116.595,
+     "bestLap": 111.403,
+     "sigma": 3.672
+    },
+    {
+     "index": 5,
+     "laps": 40,
+     "firstLap": 136,
+     "targetLap": 114.221,
+     "bestLap": 110.195,
+     "sigma": 3.759
+    },
+    {
+     "index": 6,
+     "laps": 39,
+     "firstLap": 178,
+     "targetLap": 117.374,
+     "bestLap": 112.022,
+     "sigma": 2.442
+    },
+    {
+     "index": 7,
+     "laps": 26,
+     "firstLap": 219,
+     "targetLap": 117.934,
+     "bestLap": 112.207,
+     "sigma": 2.037
+    },
+    {
+     "index": 8,
+     "laps": 30,
+     "firstLap": 248,
+     "targetLap": 115.932,
+     "bestLap": 113.853,
+     "sigma": 1.832
+    },
+    {
+     "index": 9,
+     "laps": 9,
+     "firstLap": 286,
+     "targetLap": 121.135,
+     "bestLap": 117.668,
+     "sigma": 3.557
+    }
+   ]
+  },
+  {
+   "id": "20_mo",
+   "number": "20",
+   "team": "The Udderly Terrible….",
+   "class": "B",
+   "grid": 60,
+   "finish": 64,
+   "classFinish": 31,
+   "lapsCompleted": 227,
+   "greenLaps": 199,
+   "targetLap": 122.863,
+   "bestLap": 109.881,
+   "sigma": 6.479,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 11,
+     "firstLap": 15,
+     "targetLap": 131.611,
+     "bestLap": 125.978,
+     "sigma": 7.087
+    },
+    {
+     "index": 1,
+     "laps": 31,
+     "firstLap": 30,
+     "targetLap": 120.615,
+     "bestLap": 116.497,
+     "sigma": 3.712
+    },
+    {
+     "index": 2,
+     "laps": 27,
+     "firstLap": 67,
+     "targetLap": 126.422,
+     "bestLap": 120.419,
+     "sigma": 5.721
+    },
+    {
+     "index": 3,
+     "laps": 67,
+     "firstLap": 100,
+     "targetLap": 123.541,
+     "bestLap": 115.237,
+     "sigma": 5.171
+    },
+    {
+     "index": 4,
+     "laps": 36,
+     "firstLap": 169,
+     "targetLap": 115.325,
+     "bestLap": 109.881,
+     "sigma": 2.973
+    },
+    {
+     "index": 5,
+     "laps": 19,
+     "firstLap": 207,
+     "targetLap": 125.283,
+     "bestLap": 122.663,
+     "sigma": 2.982
+    }
+   ]
+  },
+  {
+   "id": "66",
+   "number": "66",
+   "team": "Bad Decisions Racing",
+   "class": "C",
+   "grid": 61,
+   "finish": 39,
+   "classFinish": 7,
+   "lapsCompleted": 317,
+   "greenLaps": 264,
+   "targetLap": 132.335,
+   "bestLap": 116.403,
+   "sigma": 8.913,
+   "aggression": 0,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 20,
+     "firstLap": 1,
+     "targetLap": 132.153,
+     "bestLap": 128.731,
+     "sigma": 2.612
+    },
+    {
+     "index": 1,
+     "laps": 13,
+     "firstLap": 26,
+     "targetLap": 129.601,
+     "bestLap": 125.518,
+     "sigma": 5.972
+    },
+    {
+     "index": 2,
+     "laps": 16,
+     "firstLap": 47,
+     "targetLap": 153.081,
+     "bestLap": 148.746,
+     "sigma": 3.399
+    },
+    {
+     "index": 3,
+     "laps": 19,
+     "firstLap": 68,
+     "targetLap": 138.335,
+     "bestLap": 134.553,
+     "sigma": 2.661
+    },
+    {
+     "index": 4,
+     "laps": 15,
+     "firstLap": 93,
+     "targetLap": 134.463,
+     "bestLap": 128.196,
+     "sigma": 3.014
+    },
+    {
+     "index": 5,
+     "laps": 56,
+     "firstLap": 119,
+     "targetLap": 127.72,
+     "bestLap": 116.403,
+     "sigma": 9.491
+    },
+    {
+     "index": 6,
+     "laps": 14,
+     "firstLap": 177,
+     "targetLap": 128.663,
+     "bestLap": 121.993,
+     "sigma": 4.842
+    },
+    {
+     "index": 7,
+     "laps": 20,
+     "firstLap": 203,
+     "targetLap": 161.323,
+     "bestLap": 155.012,
+     "sigma": 2.411
+    },
+    {
+     "index": 8,
+     "laps": 19,
+     "firstLap": 225,
+     "targetLap": 136.535,
+     "bestLap": 130.265,
+     "sigma": 3.45
+    },
+    {
+     "index": 9,
+     "laps": 30,
+     "firstLap": 247,
+     "targetLap": 127.734,
+     "bestLap": 123.924,
+     "sigma": 2.282
+    },
+    {
+     "index": 10,
+     "laps": 36,
+     "firstLap": 279,
+     "targetLap": 123.673,
+     "bestLap": 116.949,
+     "sigma": 5.979
+    }
+   ]
+  },
+  {
+   "id": "15",
+   "number": "15",
+   "team": "Slippery Slope",
+   "class": "B",
+   "grid": 62,
+   "finish": 26,
+   "classFinish": 10,
+   "lapsCompleted": 356,
+   "greenLaps": 328,
+   "targetLap": 127.159,
+   "bestLap": 111.65,
+   "sigma": 9.157,
+   "aggression": 0,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 51,
+     "firstLap": 1,
+     "targetLap": 124.46,
+     "bestLap": 116.35,
+     "sigma": 6.445
+    },
+    {
+     "index": 1,
+     "laps": 41,
+     "firstLap": 61,
+     "targetLap": 138.675,
+     "bestLap": 131.954,
+     "sigma": 4.627
+    },
+    {
+     "index": 2,
+     "laps": 58,
+     "firstLap": 110,
+     "targetLap": 126.683,
+     "bestLap": 119.952,
+     "sigma": 5.774
+    },
+    {
+     "index": 3,
+     "laps": 64,
+     "firstLap": 171,
+     "targetLap": 125.121,
+     "bestLap": 118.707,
+     "sigma": 4.347
+    },
+    {
+     "index": 4,
+     "laps": 58,
+     "firstLap": 240,
+     "targetLap": 134.088,
+     "bestLap": 123.829,
+     "sigma": 4.288
+    },
+    {
+     "index": 5,
+     "laps": 54,
+     "firstLap": 300,
+     "targetLap": 116.833,
+     "bestLap": 111.65,
+     "sigma": 4.424
+    }
+   ]
+  },
+  {
+   "id": "98_mo",
+   "number": "98",
+   "team": "TMMI Motorsports",
+   "class": "A",
+   "grid": 63,
+   "finish": 79,
+   "classFinish": 21,
+   "lapsCompleted": 128,
+   "greenLaps": 111,
+   "targetLap": 112.241,
+   "bestLap": 102.395,
+   "sigma": 5.996,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 23,
+     "firstLap": 1,
+     "targetLap": 117.595,
+     "bestLap": 111.96,
+     "sigma": 3.775
+    },
+    {
+     "index": 1,
+     "laps": 26,
+     "firstLap": 29,
+     "targetLap": 113.949,
+     "bestLap": 105.515,
+     "sigma": 5.989
+    },
+    {
+     "index": 2,
+     "laps": 48,
+     "firstLap": 64,
+     "targetLap": 109.818,
+     "bestLap": 102.395,
+     "sigma": 3.569
+    },
+    {
+     "index": 3,
+     "laps": 11,
+     "firstLap": 127,
+     "targetLap": 107.672,
+     "bestLap": 103.603,
+     "sigma": 1.927
+    }
+   ]
+  },
+  {
+   "id": "555",
+   "number": "555",
+   "team": "Triple Nickel Racing",
+   "class": "B",
+   "grid": 64,
+   "finish": 54,
+   "classFinish": 27,
+   "lapsCompleted": 270,
+   "greenLaps": 260,
+   "targetLap": 121.555,
+   "bestLap": 112.555,
+   "sigma": 4.889,
+   "aggression": 0,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 6,
+     "firstLap": 1,
+     "targetLap": 126.472,
+     "bestLap": 120.202,
+     "sigma": 4.926
+    },
+    {
+     "index": 1,
+     "laps": 21,
+     "firstLap": 11,
+     "targetLap": 121.578,
+     "bestLap": 117.358,
+     "sigma": 3.474
+    },
+    {
+     "index": 2,
+     "laps": 27,
+     "firstLap": 38,
+     "targetLap": 123.084,
+     "bestLap": 117.647,
+     "sigma": 2.446
+    },
+    {
+     "index": 3,
+     "laps": 8,
+     "firstLap": 67,
+     "targetLap": 127.672,
+     "bestLap": 123.471,
+     "sigma": 4.267
+    },
+    {
+     "index": 4,
+     "laps": 19,
+     "firstLap": 83,
+     "targetLap": 120.29,
+     "bestLap": 115.57,
+     "sigma": 3.873
+    },
+    {
+     "index": 5,
+     "laps": 58,
+     "firstLap": 104,
+     "targetLap": 122.906,
+     "bestLap": 114.137,
+     "sigma": 6.65
+    },
+    {
+     "index": 6,
+     "laps": 8,
+     "firstLap": 164,
+     "targetLap": 119.236,
+     "bestLap": 118.033,
+     "sigma": 1.607
+    },
+    {
+     "index": 7,
+     "laps": 9,
+     "firstLap": 174,
+     "targetLap": 119.984,
+     "bestLap": 117.155,
+     "sigma": 3.871
+    },
+    {
+     "index": 8,
+     "laps": 20,
+     "firstLap": 185,
+     "targetLap": 118.42,
+     "bestLap": 112.555,
+     "sigma": 4.174
+    },
+    {
+     "index": 9,
+     "laps": 28,
+     "firstLap": 207,
+     "targetLap": 119.855,
+     "bestLap": 117.013,
+     "sigma": 3.706
+    },
+    {
+     "index": 10,
+     "laps": 28,
+     "firstLap": 237,
+     "targetLap": 123.323,
+     "bestLap": 117.637,
+     "sigma": 3.349
+    },
+    {
+     "index": 11,
+     "laps": 25,
+     "firstLap": 267,
+     "targetLap": 116.737,
+     "bestLap": 112.608,
+     "sigma": 4.03
+    }
+   ]
+  },
+  {
+   "id": "7_mo",
+   "number": "7",
+   "team": "A futile and stupid ….",
+   "class": "B",
+   "grid": 65,
+   "finish": 48,
+   "classFinish": 22,
+   "lapsCompleted": 293,
+   "greenLaps": 249,
+   "targetLap": 123.41,
+   "bestLap": 112.02,
+   "sigma": 6.897,
+   "aggression": 0,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 31,
+     "firstLap": 1,
+     "targetLap": 129.043,
+     "bestLap": 122.969,
+     "sigma": 4.703
+    },
+    {
+     "index": 1,
+     "laps": 34,
+     "firstLap": 39,
+     "targetLap": 119.507,
+     "bestLap": 112.847,
+     "sigma": 4.128
+    },
+    {
+     "index": 2,
+     "laps": 8,
+     "firstLap": 77,
+     "targetLap": 123.302,
+     "bestLap": 115.356,
+     "sigma": 8.834
+    },
+    {
+     "index": 3,
+     "laps": 19,
+     "firstLap": 87,
+     "targetLap": 127.287,
+     "bestLap": 121.676,
+     "sigma": 3.118
+    },
+    {
+     "index": 4,
+     "laps": 5,
+     "firstLap": 119,
+     "targetLap": 133.096,
+     "bestLap": 129.957,
+     "sigma": 3.067
+    },
+    {
+     "index": 5,
+     "laps": 28,
+     "firstLap": 125,
+     "targetLap": 121.505,
+     "bestLap": 115.972,
+     "sigma": 4.214
+    },
+    {
+     "index": 6,
+     "laps": 16,
+     "firstLap": 155,
+     "targetLap": 120.195,
+     "bestLap": 114.747,
+     "sigma": 4.251
+    },
+    {
+     "index": 7,
+     "laps": 14,
+     "firstLap": 173,
+     "targetLap": 126.745,
+     "bestLap": 121.397,
+     "sigma": 5.213
+    },
+    {
+     "index": 8,
+     "laps": 6,
+     "firstLap": 193,
+     "targetLap": 125.178,
+     "bestLap": 121.601,
+     "sigma": 3.469
+    },
+    {
+     "index": 9,
+     "laps": 40,
+     "firstLap": 201,
+     "targetLap": 125.276,
+     "bestLap": 117.724,
+     "sigma": 4.564
+    },
+    {
+     "index": 10,
+     "laps": 40,
+     "firstLap": 249,
+     "targetLap": 115.968,
+     "bestLap": 112.02,
+     "sigma": 2.921
+    }
+   ]
+  },
+  {
+   "id": "57",
+   "number": "57",
+   "team": "Garage 57",
+   "class": "A",
+   "grid": 66,
+   "finish": 10,
+   "classFinish": 10,
+   "lapsCompleted": 382,
+   "greenLaps": 340,
+   "targetLap": 115.422,
+   "bestLap": 108.026,
+   "sigma": 4.351,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 19,
+     "firstLap": 1,
+     "targetLap": 121.902,
+     "bestLap": 116.924,
+     "sigma": 3.035
+    },
+    {
+     "index": 1,
+     "laps": 38,
+     "firstLap": 29,
+     "targetLap": 118.255,
+     "bestLap": 113.887,
+     "sigma": 3.402
+    },
+    {
+     "index": 2,
+     "laps": 32,
+     "firstLap": 75,
+     "targetLap": 115.871,
+     "bestLap": 113.205,
+     "sigma": 2.268
+    },
+    {
+     "index": 3,
+     "laps": 102,
+     "firstLap": 121,
+     "targetLap": 115.474,
+     "bestLap": 108.026,
+     "sigma": 4.784
+    },
+    {
+     "index": 4,
+     "laps": 43,
+     "firstLap": 227,
+     "targetLap": 114.826,
+     "bestLap": 111.558,
+     "sigma": 2.171
+    },
+    {
+     "index": 5,
+     "laps": 51,
+     "firstLap": 277,
+     "targetLap": 112.977,
+     "bestLap": 109.401,
+     "sigma": 3.168
+    },
+    {
+     "index": 6,
+     "laps": 13,
+     "firstLap": 330,
+     "targetLap": 112.583,
+     "bestLap": 110.338,
+     "sigma": 2.445
+    },
+    {
+     "index": 7,
+     "laps": 35,
+     "firstLap": 345,
+     "targetLap": 112.025,
+     "bestLap": 108.777,
+     "sigma": 2.343
+    }
+   ]
+  },
+  {
+   "id": "21_mo",
+   "number": "21",
+   "team": "Sakai Project",
+   "class": "B",
+   "grid": 67,
+   "finish": 32,
+   "classFinish": 13,
+   "lapsCompleted": 338,
+   "greenLaps": 304,
+   "targetLap": 128.507,
+   "bestLap": 114.446,
+   "sigma": 9.544,
+   "aggression": 0,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 76,
+     "firstLap": 1,
+     "targetLap": 134.757,
+     "bestLap": 122.131,
+     "sigma": 6.707
+    },
+    {
+     "index": 1,
+     "laps": 36,
+     "firstLap": 89,
+     "targetLap": 125.679,
+     "bestLap": 116.893,
+     "sigma": 7.197
+    },
+    {
+     "index": 2,
+     "laps": 39,
+     "firstLap": 135,
+     "targetLap": 140.763,
+     "bestLap": 128.536,
+     "sigma": 6.685
+    },
+    {
+     "index": 3,
+     "laps": 15,
+     "firstLap": 176,
+     "targetLap": 128.616,
+     "bestLap": 124.118,
+     "sigma": 4.876
+    },
+    {
+     "index": 4,
+     "laps": 66,
+     "firstLap": 193,
+     "targetLap": 122.804,
+     "bestLap": 118.259,
+     "sigma": 3.44
+    },
+    {
+     "index": 5,
+     "laps": 45,
+     "firstLap": 266,
+     "targetLap": 123.667,
+     "bestLap": 115.084,
+     "sigma": 5.533
+    },
+    {
+     "index": 6,
+     "laps": 21,
+     "firstLap": 314,
+     "targetLap": 118.545,
+     "bestLap": 114.446,
+     "sigma": 4.529
+    }
+   ]
+  },
+  {
+   "id": "112",
+   "number": "112",
+   "team": "Poor Energy Racing",
+   "class": "C",
+   "grid": 68,
+   "finish": 43,
+   "classFinish": 8,
+   "lapsCompleted": 304,
+   "greenLaps": 265,
+   "targetLap": 122.616,
+   "bestLap": 116.663,
+   "sigma": 4.052,
+   "aggression": 2,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 41,
+     "firstLap": 1,
+     "targetLap": 122.659,
+     "bestLap": 117.406,
+     "sigma": 3.325
+    },
+    {
+     "index": 1,
+     "laps": 17,
+     "firstLap": 52,
+     "targetLap": 120.596,
+     "bestLap": 116.915,
+     "sigma": 2.264
+    },
+    {
+     "index": 2,
+     "laps": 30,
+     "firstLap": 74,
+     "targetLap": 120.314,
+     "bestLap": 116.663,
+     "sigma": 2.976
+    },
+    {
+     "index": 3,
+     "laps": 42,
+     "firstLap": 110,
+     "targetLap": 125.815,
+     "bestLap": 119.29,
+     "sigma": 4.628
+    },
+    {
+     "index": 4,
+     "laps": 48,
+     "firstLap": 160,
+     "targetLap": 126.073,
+     "bestLap": 119.834,
+     "sigma": 4.525
+    },
+    {
+     "index": 5,
+     "laps": 13,
+     "firstLap": 210,
+     "targetLap": 122.111,
+     "bestLap": 120.015,
+     "sigma": 1.297
+    },
+    {
+     "index": 6,
+     "laps": 43,
+     "firstLap": 225,
+     "targetLap": 120.549,
+     "bestLap": 117.261,
+     "sigma": 3.05
+    },
+    {
+     "index": 7,
+     "laps": 17,
+     "firstLap": 273,
+     "targetLap": 120.95,
+     "bestLap": 117.856,
+     "sigma": 3.088
+    },
+    {
+     "index": 8,
+     "laps": 11,
+     "firstLap": 292,
+     "targetLap": 121.15,
+     "bestLap": 118.455,
+     "sigma": 1.462
+    }
+   ]
+  },
+  {
+   "id": "691",
+   "number": "691",
+   "team": "Layin Pipe racing",
+   "class": "A",
+   "grid": 69,
+   "finish": 42,
+   "classFinish": 16,
+   "lapsCompleted": 309,
+   "greenLaps": 271,
+   "targetLap": 116.166,
+   "bestLap": 107.123,
+   "sigma": 4.796,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 31,
+     "firstLap": 1,
+     "targetLap": 117.342,
+     "bestLap": 113.655,
+     "sigma": 2.66
+    },
+    {
+     "index": 1,
+     "laps": 6,
+     "firstLap": 37,
+     "targetLap": 128.105,
+     "bestLap": 120.131,
+     "sigma": 7.744
+    },
+    {
+     "index": 2,
+     "laps": 24,
+     "firstLap": 48,
+     "targetLap": 120.82,
+     "bestLap": 114.358,
+     "sigma": 3.546
+    },
+    {
+     "index": 3,
+     "laps": 48,
+     "firstLap": 77,
+     "targetLap": 115.593,
+     "bestLap": 111.153,
+     "sigma": 3.553
+    },
+    {
+     "index": 4,
+     "laps": 5,
+     "firstLap": 140,
+     "targetLap": 114.865,
+     "bestLap": 114.073,
+     "sigma": 1.174
+    },
+    {
+     "index": 5,
+     "laps": 38,
+     "firstLap": 146,
+     "targetLap": 119.733,
+     "bestLap": 113.734,
+     "sigma": 5.025
+    },
+    {
+     "index": 6,
+     "laps": 48,
+     "firstLap": 186,
+     "targetLap": 114.265,
+     "bestLap": 109.754,
+     "sigma": 2.804
+    },
+    {
+     "index": 7,
+     "laps": 68,
+     "firstLap": 240,
+     "targetLap": 113.107,
+     "bestLap": 107.123,
+     "sigma": 4.121
+    }
+   ]
+  },
+  {
+   "id": "250_mo",
+   "number": "250",
+   "team": "Heads you Win - Tails we….",
+   "class": "C",
+   "grid": 70,
+   "finish": 30,
+   "classFinish": 4,
+   "lapsCompleted": 347,
+   "greenLaps": 314,
+   "targetLap": 130.358,
+   "bestLap": 118.253,
+   "sigma": 6.246,
+   "aggression": 2,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 30,
+     "firstLap": 1,
+     "targetLap": 133.374,
+     "bestLap": 125.904,
+     "sigma": 6.083
+    },
+    {
+     "index": 1,
+     "laps": 42,
+     "firstLap": 36,
+     "targetLap": 126.797,
+     "bestLap": 118.253,
+     "sigma": 5.227
+    },
+    {
+     "index": 2,
+     "laps": 33,
+     "firstLap": 83,
+     "targetLap": 128.606,
+     "bestLap": 121.946,
+     "sigma": 7.039
+    },
+    {
+     "index": 3,
+     "laps": 83,
+     "firstLap": 129,
+     "targetLap": 130.083,
+     "bestLap": 118.93,
+     "sigma": 7.284
+    },
+    {
+     "index": 4,
+     "laps": 38,
+     "firstLap": 214,
+     "targetLap": 133.448,
+     "bestLap": 124.723,
+     "sigma": 5.14
+    },
+    {
+     "index": 5,
+     "laps": 45,
+     "firstLap": 258,
+     "targetLap": 129.109,
+     "bestLap": 121.953,
+     "sigma": 4.285
+    },
+    {
+     "index": 6,
+     "laps": 40,
+     "firstLap": 305,
+     "targetLap": 131.137,
+     "bestLap": 119.782,
+     "sigma": 7.275
+    }
+   ]
+  },
+  {
+   "id": "17",
+   "number": "17",
+   "team": "Lemon Law Racing",
+   "class": "B",
+   "grid": 72,
+   "finish": 52,
+   "classFinish": 25,
+   "lapsCompleted": 282,
+   "greenLaps": 252,
+   "targetLap": 125.076,
+   "bestLap": 110.437,
+   "sigma": 12.278,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 28,
+     "firstLap": 1,
+     "targetLap": 140.611,
+     "bestLap": 132.769,
+     "sigma": 3.979
+    },
+    {
+     "index": 1,
+     "laps": 11,
+     "firstLap": 45,
+     "targetLap": 132.877,
+     "bestLap": 128.065,
+     "sigma": 1.647
+    },
+    {
+     "index": 2,
+     "laps": 49,
+     "firstLap": 60,
+     "targetLap": 116.646,
+     "bestLap": 111.242,
+     "sigma": 4.276
+    },
+    {
+     "index": 3,
+     "laps": 57,
+     "firstLap": 112,
+     "targetLap": 128.221,
+     "bestLap": 113.662,
+     "sigma": 6.604
+    },
+    {
+     "index": 4,
+     "laps": 52,
+     "firstLap": 172,
+     "targetLap": 125.039,
+     "bestLap": 119.528,
+     "sigma": 4.664
+    },
+    {
+     "index": 5,
+     "laps": 11,
+     "firstLap": 226,
+     "targetLap": 113.152,
+     "bestLap": 112.263,
+     "sigma": 1.318
+    },
+    {
+     "index": 6,
+     "laps": 38,
+     "firstLap": 242,
+     "targetLap": 115.507,
+     "bestLap": 110.437,
+     "sigma": 4.151
+    }
+   ]
+  },
+  {
+   "id": "1_mo",
+   "number": "1",
+   "team": "Silent But Deadly Racing",
+   "class": "B",
+   "grid": 73,
+   "finish": 21,
+   "classFinish": 7,
+   "lapsCompleted": 360,
+   "greenLaps": 320,
+   "targetLap": 118.726,
+   "bestLap": 110.256,
+   "sigma": 4.356,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 50,
+     "firstLap": 1,
+     "targetLap": 119.419,
+     "bestLap": 115.192,
+     "sigma": 4.074
+    },
+    {
+     "index": 1,
+     "laps": 29,
+     "firstLap": 67,
+     "targetLap": 117.559,
+     "bestLap": 111.73,
+     "sigma": 2.651
+    },
+    {
+     "index": 2,
+     "laps": 84,
+     "firstLap": 109,
+     "targetLap": 121.858,
+     "bestLap": 116.504,
+     "sigma": 3.718
+    },
+    {
+     "index": 3,
+     "laps": 14,
+     "firstLap": 195,
+     "targetLap": 124.723,
+     "bestLap": 116.938,
+     "sigma": 5.847
+    },
+    {
+     "index": 4,
+     "laps": 44,
+     "firstLap": 211,
+     "targetLap": 115.998,
+     "bestLap": 112.681,
+     "sigma": 1.567
+    },
+    {
+     "index": 5,
+     "laps": 47,
+     "firstLap": 261,
+     "targetLap": 116.999,
+     "bestLap": 113.843,
+     "sigma": 2.891
+    },
+    {
+     "index": 6,
+     "laps": 46,
+     "firstLap": 312,
+     "targetLap": 115.15,
+     "bestLap": 110.256,
+     "sigma": 3.849
+    }
+   ]
+  },
+  {
+   "id": "600",
+   "number": "600",
+   "team": "Cream Team",
+   "class": "C",
+   "grid": 74,
+   "finish": 73,
+   "classFinish": 19,
+   "lapsCompleted": 199,
+   "greenLaps": 178,
+   "targetLap": 125.751,
+   "bestLap": 112.646,
+   "sigma": 6.034,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 30,
+     "firstLap": 1,
+     "targetLap": 128.789,
+     "bestLap": 122.578,
+     "sigma": 3.039
+    },
+    {
+     "index": 1,
+     "laps": 42,
+     "firstLap": 42,
+     "targetLap": 124.232,
+     "bestLap": 115.039,
+     "sigma": 5.393
+    },
+    {
+     "index": 2,
+     "laps": 14,
+     "firstLap": 89,
+     "targetLap": 124.325,
+     "bestLap": 119.581,
+     "sigma": 4.331
+    },
+    {
+     "index": 3,
+     "laps": 8,
+     "firstLap": 108,
+     "targetLap": 138.409,
+     "bestLap": 131.545,
+     "sigma": 8.801
+    },
+    {
+     "index": 4,
+     "laps": 6,
+     "firstLap": 118,
+     "targetLap": 127.939,
+     "bestLap": 125.732,
+     "sigma": 2.785
+    },
+    {
+     "index": 5,
+     "laps": 71,
+     "firstLap": 126,
+     "targetLap": 121.835,
+     "bestLap": 112.646,
+     "sigma": 5.601
+    },
+    {
+     "index": 6,
+     "laps": 5,
+     "firstLap": 199,
+     "targetLap": 127.836,
+     "bestLap": 125.413,
+     "sigma": 3.592
+    }
+   ]
+  },
+  {
+   "id": "700_mo",
+   "number": "700",
+   "team": "Dickie Speedmaster Racing",
+   "class": "A",
+   "grid": 75,
+   "finish": 85,
+   "classFinish": 24,
+   "lapsCompleted": 56,
+   "greenLaps": 35,
+   "targetLap": 123.426,
+   "bestLap": 116.211,
+   "sigma": 4.36,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 7,
+     "firstLap": 5,
+     "targetLap": 126.367,
+     "bestLap": 120.289,
+     "sigma": 4.334
+    },
+    {
+     "index": 1,
+     "laps": 11,
+     "firstLap": 28,
+     "targetLap": 123.033,
+     "bestLap": 117.393,
+     "sigma": 3.644
+    },
+    {
+     "index": 2,
+     "laps": 8,
+     "firstLap": 41,
+     "targetLap": 120.769,
+     "bestLap": 116.211,
+     "sigma": 5.808
+    },
+    {
+     "index": 3,
+     "laps": 5,
+     "firstLap": 51,
+     "targetLap": 122.835,
+     "bestLap": 121.012,
+     "sigma": 1.09
+    }
+   ]
+  },
+  {
+   "id": "48_mo",
+   "number": "48",
+   "team": "Froning Farms 2",
+   "class": "B",
+   "grid": 76,
+   "finish": 62,
+   "classFinish": 30,
+   "lapsCompleted": 247,
+   "greenLaps": 216,
+   "targetLap": 116.883,
+   "bestLap": 110.143,
+   "sigma": 3.889,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 32,
+     "firstLap": 1,
+     "targetLap": 118.929,
+     "bestLap": 113.969,
+     "sigma": 3.443
+    },
+    {
+     "index": 1,
+     "laps": 9,
+     "firstLap": 41,
+     "targetLap": 118.317,
+     "bestLap": 111.058,
+     "sigma": 8.733
+    },
+    {
+     "index": 2,
+     "laps": 10,
+     "firstLap": 52,
+     "targetLap": 116.197,
+     "bestLap": 111.311,
+     "sigma": 4.444
+    },
+    {
+     "index": 3,
+     "laps": 26,
+     "firstLap": 70,
+     "targetLap": 116.471,
+     "bestLap": 111.425,
+     "sigma": 3.138
+    },
+    {
+     "index": 4,
+     "laps": 97,
+     "firstLap": 105,
+     "targetLap": 117.91,
+     "bestLap": 112.096,
+     "sigma": 3.926
+    },
+    {
+     "index": 5,
+     "laps": 38,
+     "firstLap": 204,
+     "targetLap": 113.068,
+     "bestLap": 110.143,
+     "sigma": 1.484
+    }
+   ]
+  },
+  {
+   "id": "88_mo",
+   "number": "88",
+   "team": "Flying Farmers",
+   "class": "B",
+   "grid": 77,
+   "finish": 18,
+   "classFinish": 5,
+   "lapsCompleted": 367,
+   "greenLaps": 335,
+   "targetLap": 120.423,
+   "bestLap": 110.357,
+   "sigma": 4.212,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 74,
+     "firstLap": 1,
+     "targetLap": 120.477,
+     "bestLap": 115.208,
+     "sigma": 3.315
+    },
+    {
+     "index": 1,
+     "laps": 19,
+     "firstLap": 85,
+     "targetLap": 132.779,
+     "bestLap": 123.264,
+     "sigma": 5.997
+    },
+    {
+     "index": 2,
+     "laps": 38,
+     "firstLap": 110,
+     "targetLap": 119.768,
+     "bestLap": 112.96,
+     "sigma": 4.01
+    },
+    {
+     "index": 3,
+     "laps": 56,
+     "firstLap": 153,
+     "targetLap": 122.048,
+     "bestLap": 113.452,
+     "sigma": 4.095
+    },
+    {
+     "index": 4,
+     "laps": 45,
+     "firstLap": 212,
+     "targetLap": 119.782,
+     "bestLap": 112.271,
+     "sigma": 3.008
+    },
+    {
+     "index": 5,
+     "laps": 48,
+     "firstLap": 263,
+     "targetLap": 117.986,
+     "bestLap": 110.357,
+     "sigma": 3.486
+    },
+    {
+     "index": 6,
+     "laps": 52,
+     "firstLap": 313,
+     "targetLap": 119.672,
+     "bestLap": 114.318,
+     "sigma": 3.018
+    }
+   ]
+  },
+  {
+   "id": "318",
+   "number": "318",
+   "team": "Fat Bastard Racing.",
+   "class": "C",
+   "grid": 78,
+   "finish": 83,
+   "classFinish": 21,
+   "lapsCompleted": 57,
+   "greenLaps": 39,
+   "targetLap": 137.418,
+   "bestLap": 127.332,
+   "sigma": 5.512,
+   "aggression": 0,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 11,
+     "firstLap": 3,
+     "targetLap": 140.16,
+     "bestLap": 133.7,
+     "sigma": 4.065
+    },
+    {
+     "index": 1,
+     "laps": 12,
+     "firstLap": 20,
+     "targetLap": 143.556,
+     "bestLap": 136.124,
+     "sigma": 7.97
+    },
+    {
+     "index": 2,
+     "laps": 5,
+     "firstLap": 36,
+     "targetLap": 134.575,
+     "bestLap": 133.925,
+     "sigma": 0.964
+    },
+    {
+     "index": 3,
+     "laps": 10,
+     "firstLap": 47,
+     "targetLap": 130.391,
+     "bestLap": 127.332,
+     "sigma": 2.808
+    }
+   ]
+  },
+  {
+   "id": "845",
+   "number": "845",
+   "team": "Team Musan",
+   "class": "B",
+   "grid": 79,
+   "finish": 75,
+   "classFinish": 37,
+   "lapsCompleted": 142,
+   "greenLaps": 103,
+   "targetLap": 128.826,
+   "bestLap": 119.686,
+   "sigma": 6.455,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 13,
+     "firstLap": 13,
+     "targetLap": 135.013,
+     "bestLap": 130.251,
+     "sigma": 3.185
+    },
+    {
+     "index": 1,
+     "laps": 13,
+     "firstLap": 31,
+     "targetLap": 132.843,
+     "bestLap": 125.563,
+     "sigma": 6.179
+    },
+    {
+     "index": 2,
+     "laps": 10,
+     "firstLap": 50,
+     "targetLap": 129.292,
+     "bestLap": 123.996,
+     "sigma": 7.851
+    },
+    {
+     "index": 3,
+     "laps": 17,
+     "firstLap": 69,
+     "targetLap": 126.429,
+     "bestLap": 120.77,
+     "sigma": 4.262
+    },
+    {
+     "index": 4,
+     "laps": 5,
+     "firstLap": 88,
+     "targetLap": 134.931,
+     "bestLap": 128.407,
+     "sigma": 9.346
+    },
+    {
+     "index": 5,
+     "laps": 22,
+     "firstLap": 95,
+     "targetLap": 125.566,
+     "bestLap": 119.686,
+     "sigma": 4.073
+    },
+    {
+     "index": 6,
+     "laps": 14,
+     "firstLap": 120,
+     "targetLap": 124.229,
+     "bestLap": 120.885,
+     "sigma": 2.033
+    },
+    {
+     "index": 7,
+     "laps": 6,
+     "firstLap": 136,
+     "targetLap": 127.474,
+     "bestLap": 124.855,
+     "sigma": 3.525
+    }
+   ]
+  },
+  {
+   "id": "869",
+   "number": "869",
+   "team": "Charlie Day's Angels",
+   "class": "C",
+   "grid": 80,
+   "finish": 56,
+   "classFinish": 12,
+   "lapsCompleted": 265,
+   "greenLaps": 231,
+   "targetLap": 122.703,
+   "bestLap": 113.604,
+   "sigma": 4.854,
+   "aggression": 0,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 8,
+     "firstLap": 1,
+     "targetLap": 133.45,
+     "bestLap": 130.898,
+     "sigma": 1.615
+    },
+    {
+     "index": 1,
+     "laps": 10,
+     "firstLap": 11,
+     "targetLap": 135.527,
+     "bestLap": 130.608,
+     "sigma": 3.519
+    },
+    {
+     "index": 2,
+     "laps": 8,
+     "firstLap": 28,
+     "targetLap": 123.528,
+     "bestLap": 119.564,
+     "sigma": 1.712
+    },
+    {
+     "index": 3,
+     "laps": 12,
+     "firstLap": 51,
+     "targetLap": 126.905,
+     "bestLap": 122.571,
+     "sigma": 5.948
+    },
+    {
+     "index": 4,
+     "laps": 66,
+     "firstLap": 67,
+     "targetLap": 120.387,
+     "bestLap": 113.604,
+     "sigma": 6.417
+    },
+    {
+     "index": 5,
+     "laps": 16,
+     "firstLap": 135,
+     "targetLap": 122.715,
+     "bestLap": 119.342,
+     "sigma": 2.595
+    },
+    {
+     "index": 6,
+     "laps": 29,
+     "firstLap": 153,
+     "targetLap": 122.478,
+     "bestLap": 117.092,
+     "sigma": 3.754
+    },
+    {
+     "index": 7,
+     "laps": 25,
+     "firstLap": 184,
+     "targetLap": 121.422,
+     "bestLap": 118.326,
+     "sigma": 2.457
+    },
+    {
+     "index": 8,
+     "laps": 7,
+     "firstLap": 211,
+     "targetLap": 128.737,
+     "bestLap": 125.179,
+     "sigma": 0.981
+    },
+    {
+     "index": 9,
+     "laps": 22,
+     "firstLap": 220,
+     "targetLap": 121.668,
+     "bestLap": 118.776,
+     "sigma": 2.739
+    },
+    {
+     "index": 10,
+     "laps": 21,
+     "firstLap": 244,
+     "targetLap": 120.393,
+     "bestLap": 117.599,
+     "sigma": 2.724
+    }
+   ]
+  },
+  {
+   "id": "78_mo",
+   "number": "78",
+   "team": "Four Idiots",
+   "class": "A",
+   "grid": 81,
+   "finish": 71,
+   "classFinish": 19,
+   "lapsCompleted": 204,
+   "greenLaps": 169,
+   "targetLap": 116.886,
+   "bestLap": 105.937,
+   "sigma": 6.838,
+   "aggression": 2,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 19,
+     "firstLap": 1,
+     "targetLap": 115.668,
+     "bestLap": 112.329,
+     "sigma": 4.231
+    },
+    {
+     "index": 1,
+     "laps": 7,
+     "firstLap": 22,
+     "targetLap": 116.925,
+     "bestLap": 111.397,
+     "sigma": 2.617
+    },
+    {
+     "index": 2,
+     "laps": 13,
+     "firstLap": 35,
+     "targetLap": 117.704,
+     "bestLap": 115.09,
+     "sigma": 2.91
+    },
+    {
+     "index": 3,
+     "laps": 5,
+     "firstLap": 50,
+     "targetLap": 126.413,
+     "bestLap": 123.181,
+     "sigma": 2.581
+    },
+    {
+     "index": 4,
+     "laps": 13,
+     "firstLap": 58,
+     "targetLap": 124.246,
+     "bestLap": 121.56,
+     "sigma": 3.025
+    },
+    {
+     "index": 5,
+     "laps": 8,
+     "firstLap": 76,
+     "targetLap": 115.721,
+     "bestLap": 111.865,
+     "sigma": 1.948
+    },
+    {
+     "index": 6,
+     "laps": 16,
+     "firstLap": 86,
+     "targetLap": 113.706,
+     "bestLap": 110.209,
+     "sigma": 3.047
+    },
+    {
+     "index": 7,
+     "laps": 9,
+     "firstLap": 105,
+     "targetLap": 111.146,
+     "bestLap": 108.947,
+     "sigma": 2.848
+    },
+    {
+     "index": 8,
+     "laps": 12,
+     "firstLap": 120,
+     "targetLap": 114.328,
+     "bestLap": 111.779,
+     "sigma": 2.864
+    },
+    {
+     "index": 9,
+     "laps": 17,
+     "firstLap": 134,
+     "targetLap": 112.295,
+     "bestLap": 109.31,
+     "sigma": 1.517
+    },
+    {
+     "index": 10,
+     "laps": 29,
+     "firstLap": 153,
+     "targetLap": 124.319,
+     "bestLap": 116.886,
+     "sigma": 4.301
+    },
+    {
+     "index": 11,
+     "laps": 19,
+     "firstLap": 184,
+     "targetLap": 109.818,
+     "bestLap": 105.937,
+     "sigma": 2.549
+    }
+   ]
+  },
+  {
+   "id": "217",
+   "number": "217",
+   "team": "Twolemmatree Racing",
+   "class": "C",
+   "grid": 82,
+   "finish": 59,
+   "classFinish": 14,
+   "lapsCompleted": 257,
+   "greenLaps": 221,
+   "targetLap": 123.719,
+   "bestLap": 114.377,
+   "sigma": 4.799,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 21,
+     "firstLap": 1,
+     "targetLap": 126.304,
+     "bestLap": 120.048,
+     "sigma": 4.23
+    },
+    {
+     "index": 1,
+     "laps": 17,
+     "firstLap": 32,
+     "targetLap": 123.775,
+     "bestLap": 119.776,
+     "sigma": 3.25
+    },
+    {
+     "index": 2,
+     "laps": 26,
+     "firstLap": 51,
+     "targetLap": 127.014,
+     "bestLap": 122.294,
+     "sigma": 3.409
+    },
+    {
+     "index": 3,
+     "laps": 16,
+     "firstLap": 79,
+     "targetLap": 123.881,
+     "bestLap": 120.019,
+     "sigma": 2.663
+    },
+    {
+     "index": 4,
+     "laps": 25,
+     "firstLap": 104,
+     "targetLap": 124.667,
+     "bestLap": 120.388,
+     "sigma": 3.724
+    },
+    {
+     "index": 5,
+     "laps": 49,
+     "firstLap": 132,
+     "targetLap": 123.714,
+     "bestLap": 116.856,
+     "sigma": 4.802
+    },
+    {
+     "index": 6,
+     "laps": 26,
+     "firstLap": 183,
+     "targetLap": 120.791,
+     "bestLap": 116.463,
+     "sigma": 2.747
+    },
+    {
+     "index": 7,
+     "laps": 28,
+     "firstLap": 212,
+     "targetLap": 119.86,
+     "bestLap": 114.377,
+     "sigma": 2.587
+    },
+    {
+     "index": 8,
+     "laps": 7,
+     "firstLap": 242,
+     "targetLap": 120.395,
+     "bestLap": 116.348,
+     "sigma": 3.506
+    },
+    {
+     "index": 9,
+     "laps": 5,
+     "firstLap": 251,
+     "targetLap": 119.892,
+     "bestLap": 117.067,
+     "sigma": 3.389
+    }
+   ]
+  },
+  {
+   "id": "132",
+   "number": "132",
+   "team": "Focus? Foc U 2!",
+   "class": "B",
+   "grid": 83,
+   "finish": 57,
+   "classFinish": 28,
+   "lapsCompleted": 259,
+   "greenLaps": 222,
+   "targetLap": 117.94,
+   "bestLap": 111.161,
+   "sigma": 4.346,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 5,
+     "firstLap": 1,
+     "targetLap": 125.279,
+     "bestLap": 121.285,
+     "sigma": 5.922
+    },
+    {
+     "index": 1,
+     "laps": 30,
+     "firstLap": 21,
+     "targetLap": 116.787,
+     "bestLap": 113.086,
+     "sigma": 3.494
+    },
+    {
+     "index": 2,
+     "laps": 8,
+     "firstLap": 53,
+     "targetLap": 119.188,
+     "bestLap": 114.336,
+     "sigma": 2.884
+    },
+    {
+     "index": 3,
+     "laps": 76,
+     "firstLap": 66,
+     "targetLap": 120.724,
+     "bestLap": 111.161,
+     "sigma": 8.568
+    },
+    {
+     "index": 4,
+     "laps": 44,
+     "firstLap": 150,
+     "targetLap": 117.62,
+     "bestLap": 113.764,
+     "sigma": 2.801
+    },
+    {
+     "index": 5,
+     "laps": 10,
+     "firstLap": 198,
+     "targetLap": 118.464,
+     "bestLap": 114.792,
+     "sigma": 2.279
+    },
+    {
+     "index": 6,
+     "laps": 27,
+     "firstLap": 210,
+     "targetLap": 117.985,
+     "bestLap": 114.119,
+     "sigma": 2.514
+    },
+    {
+     "index": 7,
+     "laps": 16,
+     "firstLap": 243,
+     "targetLap": 114.83,
+     "bestLap": 112.508,
+     "sigma": 2.244
+    }
+   ]
+  },
+  {
+   "id": "814",
+   "number": "814",
+   "team": "The Gang Buys a Race Car",
+   "class": "B",
+   "grid": 84,
+   "finish": 37,
+   "classFinish": 16,
+   "lapsCompleted": 329,
+   "greenLaps": 294,
+   "targetLap": 117.74,
+   "bestLap": 109.263,
+   "sigma": 4.929,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 34,
+     "firstLap": 5,
+     "targetLap": 117.096,
+     "bestLap": 113.143,
+     "sigma": 4.096
+    },
+    {
+     "index": 1,
+     "laps": 16,
+     "firstLap": 46,
+     "targetLap": 122.751,
+     "bestLap": 116.724,
+     "sigma": 4.978
+    },
+    {
+     "index": 2,
+     "laps": 28,
+     "firstLap": 68,
+     "targetLap": 118.62,
+     "bestLap": 113.87,
+     "sigma": 2.926
+    },
+    {
+     "index": 3,
+     "laps": 67,
+     "firstLap": 107,
+     "targetLap": 119.227,
+     "bestLap": 113.569,
+     "sigma": 4.209
+    },
+    {
+     "index": 4,
+     "laps": 12,
+     "firstLap": 176,
+     "targetLap": 118.359,
+     "bestLap": 116.849,
+     "sigma": 1.428
+    },
+    {
+     "index": 5,
+     "laps": 29,
+     "firstLap": 190,
+     "targetLap": 116.383,
+     "bestLap": 113.613,
+     "sigma": 1.592
+    },
+    {
+     "index": 6,
+     "laps": 50,
+     "firstLap": 221,
+     "targetLap": 112.718,
+     "bestLap": 109.263,
+     "sigma": 2.328
+    },
+    {
+     "index": 7,
+     "laps": 52,
+     "firstLap": 275,
+     "targetLap": 121.092,
+     "bestLap": 112.73,
+     "sigma": 8.185
+    }
+   ]
+  },
+  {
+   "id": "404_mo",
+   "number": "404",
+   "team": "Racecar Vitamin (R)",
+   "class": "C",
+   "grid": 85,
+   "finish": 58,
+   "classFinish": 13,
+   "lapsCompleted": 258,
+   "greenLaps": 201,
+   "targetLap": 123.39,
+   "bestLap": 113.705,
+   "sigma": 8.254,
+   "aggression": 2,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 9,
+     "firstLap": 7,
+     "targetLap": 140.544,
+     "bestLap": 129.359,
+     "sigma": 6.989
+    },
+    {
+     "index": 1,
+     "laps": 9,
+     "firstLap": 18,
+     "targetLap": 134.592,
+     "bestLap": 127.397,
+     "sigma": 5.4
+    },
+    {
+     "index": 2,
+     "laps": 6,
+     "firstLap": 31,
+     "targetLap": 132.305,
+     "bestLap": 126.769,
+     "sigma": 8.143
+    },
+    {
+     "index": 3,
+     "laps": 9,
+     "firstLap": 39,
+     "targetLap": 124.65,
+     "bestLap": 118.945,
+     "sigma": 2.126
+    },
+    {
+     "index": 4,
+     "laps": 8,
+     "firstLap": 73,
+     "targetLap": 120.517,
+     "bestLap": 115.142,
+     "sigma": 3.34
+    },
+    {
+     "index": 5,
+     "laps": 6,
+     "firstLap": 83,
+     "targetLap": 137.058,
+     "bestLap": 131.812,
+     "sigma": 4.257
+    },
+    {
+     "index": 6,
+     "laps": 13,
+     "firstLap": 91,
+     "targetLap": 123.731,
+     "bestLap": 119.345,
+     "sigma": 6.503
+    },
+    {
+     "index": 7,
+     "laps": 10,
+     "firstLap": 107,
+     "targetLap": 120.174,
+     "bestLap": 117.878,
+     "sigma": 2.047
+    },
+    {
+     "index": 8,
+     "laps": 23,
+     "firstLap": 119,
+     "targetLap": 118.445,
+     "bestLap": 114.968,
+     "sigma": 2.982
+    },
+    {
+     "index": 9,
+     "laps": 11,
+     "firstLap": 150,
+     "targetLap": 116.389,
+     "bestLap": 113.705,
+     "sigma": 1.195
+    },
+    {
+     "index": 10,
+     "laps": 11,
+     "firstLap": 168,
+     "targetLap": 127.936,
+     "bestLap": 121.652,
+     "sigma": 4.136
+    },
+    {
+     "index": 11,
+     "laps": 14,
+     "firstLap": 181,
+     "targetLap": 132.585,
+     "bestLap": 126.254,
+     "sigma": 4.218
+    },
+    {
+     "index": 12,
+     "laps": 14,
+     "firstLap": 197,
+     "targetLap": 118.595,
+     "bestLap": 116.238,
+     "sigma": 2.162
+    },
+    {
+     "index": 13,
+     "laps": 9,
+     "firstLap": 213,
+     "targetLap": 115.756,
+     "bestLap": 114.277,
+     "sigma": 1.878
+    },
+    {
+     "index": 14,
+     "laps": 16,
+     "firstLap": 224,
+     "targetLap": 119.837,
+     "bestLap": 116.414,
+     "sigma": 3.497
+    },
+    {
+     "index": 15,
+     "laps": 12,
+     "firstLap": 246,
+     "targetLap": 126.041,
+     "bestLap": 119.999,
+     "sigma": 2.859
+    }
+   ]
+  },
+  {
+   "id": "134",
+   "number": "134",
+   "team": "Shifty Shifting Racing",
+   "class": "B",
+   "grid": 86,
+   "finish": 60,
+   "classFinish": 29,
+   "lapsCompleted": 257,
+   "greenLaps": 184,
+   "targetLap": 125.819,
+   "bestLap": 115.561,
+   "sigma": 4.976,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 25,
+     "firstLap": 1,
+     "targetLap": 127.145,
+     "bestLap": 118.105,
+     "sigma": 2.486
+    },
+    {
+     "index": 1,
+     "laps": 72,
+     "firstLap": 61,
+     "targetLap": 123.612,
+     "bestLap": 115.561,
+     "sigma": 5.896
+    },
+    {
+     "index": 2,
+     "laps": 48,
+     "firstLap": 168,
+     "targetLap": 124.445,
+     "bestLap": 121.214,
+     "sigma": 2.288
+    },
+    {
+     "index": 3,
+     "laps": 35,
+     "firstLap": 220,
+     "targetLap": 128.21,
+     "bestLap": 119.086,
+     "sigma": 6.448
+    }
+   ]
+  },
+  {
+   "id": "77_mo",
+   "number": "77",
+   "team": "Project Merkur Space….",
+   "class": "B",
+   "grid": 87,
+   "finish": 74,
+   "classFinish": 36,
+   "lapsCompleted": 160,
+   "greenLaps": 141,
+   "targetLap": 119.148,
+   "bestLap": 109.248,
+   "sigma": 5.521,
+   "aggression": 1,
+   "stints": [
+    {
+     "index": 0,
+     "laps": 15,
+     "firstLap": 1,
+     "targetLap": 127.446,
+     "bestLap": 123.87,
+     "sigma": 3.158
+    },
+    {
+     "index": 1,
+     "laps": 16,
+     "firstLap": 20,
+     "targetLap": 120.913,
+     "bestLap": 115.582,
+     "sigma": 7.561
+    },
+    {
+     "index": 2,
+     "laps": 35,
+     "firstLap": 39,
+     "targetLap": 116.61,
+     "bestLap": 112.579,
+     "sigma": 3.216
+    },
+    {
+     "index": 3,
+     "laps": 20,
+     "firstLap": 80,
+     "targetLap": 119.755,
+     "bestLap": 118.23,
+     "sigma": 1.066
+    },
+    {
+     "index": 4,
+     "laps": 25,
+     "firstLap": 102,
+     "targetLap": 111.591,
+     "bestLap": 109.248,
+     "sigma": 2.297
+    },
+    {
+     "index": 5,
+     "laps": 28,
+     "firstLap": 130,
+     "targetLap": 117.453,
+     "bestLap": 112.027,
+     "sigma": 4.554
+    }
+   ]
+  }
+ ]
+}
