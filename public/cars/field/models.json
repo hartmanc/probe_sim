@@ -1224,6 +1224,80 @@
    "brake_lamps_fallback": false
   },
   {
+   "number": "13",
+   "id": "13_mo",
+   "file": "models/13_mo.glb",
+   "tris": 10317,
+   "bytes": 541796,
+   "materials": 2,
+   "length_m": 4.558,
+   "width_m": 1.739,
+   "height_m": 1.415,
+   "bbox_m": [
+    4.592,
+    1.959,
+    1.53
+   ],
+   "wheelbase_m": 2.725,
+   "track_front_m": 1.481,
+   "track_rear_m": 1.493,
+   "tyre_radius_m": 0.317,
+   "tyre_radius_rear_m": 0.317,
+   "hubs": {
+    "wheel_fl": [
+     0.7405,
+     0.317,
+     1.3625
+    ],
+    "wheel_fr": [
+     -0.7405,
+     0.317,
+     1.3625
+    ],
+    "wheel_rl": [
+     0.7465,
+     0.317,
+     -1.3625
+    ],
+    "wheel_rr": [
+     -0.7465,
+     0.317,
+     -1.3625
+    ]
+   },
+   "team": "Froning Farms",
+   "car": "2006 BMW 3 Series sedan (E46)",
+   "brake_lamps": [
+    [
+     0.422,
+     0.6028,
+     -2.4017,
+     0.06
+    ],
+    [
+     -0.422,
+     0.6028,
+     -2.402,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "named wheel parts",
+    "scale": 0.3634047382573181,
+    "source_tris": 50570,
+    "model_track": 1.519,
+    "model_tyre_radius": 0.324,
+    "hub_z_front": 0.317,
+    "hub_z_rear": 0.317,
+    "model_length": 4.503,
+    "model_width": 1.958,
+    "model_height": 1.41,
+    "tris": 7667,
+    "file": "tools/cars/kit/downloads/191/model.glb"
+   }
+  },
+  {
    "number": "14",
    "id": "14",
    "file": "models/14.glb",
@@ -2070,6 +2144,80 @@
     "model_height": 1.176,
     "tris": 8000,
     "file": "tools/cars/kit/downloads/711/model.glb"
+   }
+  },
+  {
+   "number": "31",
+   "id": "31",
+   "file": "models/31.glb",
+   "tris": 4594,
+   "bytes": 336320,
+   "materials": 2,
+   "length_m": 3.925,
+   "width_m": 1.665,
+   "height_m": 1.25,
+   "bbox_m": [
+    3.981,
+    1.911,
+    1.252
+   ],
+   "wheelbase_m": 2.32,
+   "track_front_m": 1.44,
+   "track_rear_m": 1.43,
+   "tyre_radius_m": 0.29,
+   "tyre_radius_rear_m": 0.29,
+   "hubs": {
+    "wheel_fl": [
+     0.72,
+     0.29,
+     1.16
+    ],
+    "wheel_fr": [
+     -0.72,
+     0.29,
+     1.16
+    ],
+    "wheel_rl": [
+     0.715,
+     0.29,
+     -1.16
+    ],
+    "wheel_rr": [
+     -0.715,
+     0.29,
+     -1.16
+    ]
+   },
+   "team": "Rod Throwin' Fools",
+   "car": "1987 Toyota MR2 (AW11)",
+   "brake_lamps": [
+    [
+     0.4989,
+     0.6218,
+     -1.7985,
+     0.06
+    ],
+    [
+     -0.4989,
+     0.6218,
+     -1.7997,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "named wheel parts",
+    "scale": 0.8285240676938161,
+    "source_tris": 10118,
+    "model_track": 1.413,
+    "model_tyre_radius": 0.274,
+    "hub_z_front": 0.29,
+    "hub_z_rear": 0.29,
+    "model_length": 4.026,
+    "model_width": 1.911,
+    "model_height": 1.252,
+    "tris": 2184,
+    "file": "tools/cars/kit/downloads/801/model.glb"
    }
   },
   {
@@ -3520,6 +3668,80 @@
     ]
    ],
    "brake_lamps_fallback": true
+  },
+  {
+   "number": "49",
+   "id": "49_mo",
+   "file": "models/49_mo.glb",
+   "tris": 10143,
+   "bytes": 566132,
+   "materials": 2,
+   "length_m": 4.558,
+   "width_m": 1.739,
+   "height_m": 1.415,
+   "bbox_m": [
+    4.556,
+    1.959,
+    1.495
+   ],
+   "wheelbase_m": 2.725,
+   "track_front_m": 1.481,
+   "track_rear_m": 1.493,
+   "tyre_radius_m": 0.317,
+   "tyre_radius_rear_m": 0.317,
+   "hubs": {
+    "wheel_fl": [
+     0.7405,
+     0.317,
+     1.3625
+    ],
+    "wheel_fr": [
+     -0.7405,
+     0.317,
+     1.3625
+    ],
+    "wheel_rl": [
+     0.7465,
+     0.317,
+     -1.3625
+    ],
+    "wheel_rr": [
+     -0.7465,
+     0.317,
+     -1.3625
+    ]
+   },
+   "team": "Pile of Dead Raccoons Racing",
+   "car": "2001 BMW 3 Series sedan (E46)",
+   "brake_lamps": [
+    [
+     0.422,
+     0.6028,
+     -2.4017,
+     0.06
+    ],
+    [
+     -0.422,
+     0.6028,
+     -2.402,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "named wheel parts",
+    "scale": 0.3634047382573181,
+    "source_tris": 50570,
+    "model_track": 1.519,
+    "model_tyre_radius": 0.324,
+    "hub_z_front": 0.317,
+    "hub_z_rear": 0.317,
+    "model_length": 4.503,
+    "model_width": 1.958,
+    "model_height": 1.41,
+    "tris": 7667,
+    "file": "tools/cars/kit/downloads/191/model.glb"
+   }
   },
   {
    "number": "50",
@@ -11404,6 +11626,80 @@
    }
   },
   {
+   "number": "372",
+   "id": "372",
+   "file": "models/372.glb",
+   "tris": 10302,
+   "bytes": 557628,
+   "materials": 2,
+   "length_m": 4.54,
+   "width_m": 1.757,
+   "height_m": 1.369,
+   "bbox_m": [
+    4.558,
+    1.961,
+    1.538
+   ],
+   "wheelbase_m": 2.725,
+   "track_front_m": 1.48,
+   "track_rear_m": 1.5,
+   "tyre_radius_m": 0.317,
+   "tyre_radius_rear_m": 0.317,
+   "hubs": {
+    "wheel_fl": [
+     0.74,
+     0.317,
+     1.3625
+    ],
+    "wheel_fr": [
+     -0.74,
+     0.317,
+     1.3625
+    ],
+    "wheel_rl": [
+     0.75,
+     0.317,
+     -1.3625
+    ],
+    "wheel_rr": [
+     -0.75,
+     0.317,
+     -1.3625
+    ]
+   },
+   "team": "Lemonaid",
+   "car": "2000 BMW 323i coupe (E46)",
+   "brake_lamps": [
+    [
+     0.406,
+     0.6021,
+     -2.3174,
+     0.06
+    ],
+    [
+     -0.406,
+     0.6021,
+     -2.3177,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "named wheel parts",
+    "scale": 0.937485672033081,
+    "source_tris": 32788,
+    "model_track": 1.534,
+    "model_tyre_radius": 0.313,
+    "hub_z_front": 0.317,
+    "hub_z_rear": 0.317,
+    "model_length": 4.508,
+    "model_width": 1.961,
+    "model_height": 1.366,
+    "tris": 7665,
+    "file": "tools/cars/kit/downloads/77_lx/model.glb"
+   }
+  },
+  {
    "number": "404",
    "id": "404",
    "file": "models/404.glb",
@@ -12266,6 +12562,80 @@
    }
   },
   {
+   "number": "535",
+   "id": "535",
+   "file": "models/535.glb",
+   "tris": 10233,
+   "bytes": 552940,
+   "materials": 2,
+   "length_m": 4.558,
+   "width_m": 1.739,
+   "height_m": 1.415,
+   "bbox_m": [
+    4.498,
+    1.959,
+    1.93
+   ],
+   "wheelbase_m": 2.725,
+   "track_front_m": 1.481,
+   "track_rear_m": 1.493,
+   "tyre_radius_m": 0.317,
+   "tyre_radius_rear_m": 0.317,
+   "hubs": {
+    "wheel_fl": [
+     0.7405,
+     0.317,
+     1.3625
+    ],
+    "wheel_fr": [
+     -0.7405,
+     0.317,
+     1.3625
+    ],
+    "wheel_rl": [
+     0.7465,
+     0.317,
+     -1.3625
+    ],
+    "wheel_rr": [
+     -0.7465,
+     0.317,
+     -1.3625
+    ]
+   },
+   "team": "Mushroom Cloud Racing",
+   "car": "2002 BMW 3 Series sedan (E46)",
+   "brake_lamps": [
+    [
+     0.422,
+     0.6028,
+     -2.4017,
+     0.06
+    ],
+    [
+     -0.422,
+     0.6028,
+     -2.402,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "named wheel parts",
+    "scale": 0.3634047382573181,
+    "source_tris": 50570,
+    "model_track": 1.519,
+    "model_tyre_radius": 0.324,
+    "hub_z_front": 0.317,
+    "hub_z_rear": 0.317,
+    "model_length": 4.503,
+    "model_width": 1.958,
+    "model_height": 1.41,
+    "tris": 7667,
+    "file": "tools/cars/kit/downloads/191/model.glb"
+   }
+  },
+  {
    "number": "544",
    "id": "544",
    "file": "models/544.glb",
@@ -13113,6 +13483,80 @@
     ]
    ],
    "brake_lamps_fallback": false
+  },
+  {
+   "number": "700",
+   "id": "700_mo",
+   "file": "models/700_mo.glb",
+   "tris": 4750,
+   "bytes": 333776,
+   "materials": 2,
+   "length_m": 3.925,
+   "width_m": 1.665,
+   "height_m": 1.25,
+   "bbox_m": [
+    4.012,
+    1.911,
+    1.252
+   ],
+   "wheelbase_m": 2.32,
+   "track_front_m": 1.44,
+   "track_rear_m": 1.43,
+   "tyre_radius_m": 0.29,
+   "tyre_radius_rear_m": 0.29,
+   "hubs": {
+    "wheel_fl": [
+     0.72,
+     0.29,
+     1.16
+    ],
+    "wheel_fr": [
+     -0.72,
+     0.29,
+     1.16
+    ],
+    "wheel_rl": [
+     0.715,
+     0.29,
+     -1.16
+    ],
+    "wheel_rr": [
+     -0.715,
+     0.29,
+     -1.16
+    ]
+   },
+   "team": "Dickie Speedmaster Racing",
+   "car": "1987 Toyota MR2 (AW11)",
+   "brake_lamps": [
+    [
+     0.4989,
+     0.6218,
+     -1.7985,
+     0.06
+    ],
+    [
+     -0.4989,
+     0.6218,
+     -1.7997,
+     0.06
+    ]
+   ],
+   "brake_lamps_fallback": true,
+   "import": {
+    "method": "named wheel parts",
+    "scale": 0.8285240676938161,
+    "source_tris": 10118,
+    "model_track": 1.413,
+    "model_tyre_radius": 0.274,
+    "hub_z_front": 0.29,
+    "hub_z_rear": 0.29,
+    "model_length": 4.026,
+    "model_width": 1.911,
+    "model_height": 1.252,
+    "tris": 2184,
+    "file": "tools/cars/kit/downloads/801/model.glb"
+   }
   },
   {
    "number": "701",
