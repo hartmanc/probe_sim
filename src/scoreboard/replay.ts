@@ -106,7 +106,7 @@ export function verifyHotlap(assets: SimAssets, trace: InputTrace, lapN: number,
   const reasons: string[] = [];
   if (!res.lap) reasons.push(`replay: lap ${lapN} did not complete`);
   else {
-    if (!res.lap.valid) reasons.push('replay: lap invalid (more than 2 s off track)');
+    if (!res.lap.valid) reasons.push(`replay: lap invalid (${res.lap.reason ?? 'more than 2 s off track'})`);
     const dt = Math.abs(res.lap.time - claimed);
     if (!(dt <= LIMITS.replayTolerance)) reasons.push(`replay: lap time ${res.lap.time.toFixed(3)} s differs from the claimed ${claimed.toFixed(3)} s`);
   }

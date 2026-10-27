@@ -1,0 +1,355 @@
+{
+ "z0_navd88": 413.254,
+ "lidar": "USGS OH_Statewide_Phase1_3_2019 (EPT), local cache",
+ "package": "tools/track/out/mid_ohio_r5",
+ "pit_wall": {
+  "inventory": {
+   "h_m": 0.7,
+   "method": "horizon-ratio",
+   "range_m": [
+    0.64,
+    0.75
+   ],
+   "frame": "360 k52 (t26) left"
+  },
+  "sections": [
+   {
+    "s": 3510,
+    "offset_from_edge_m": 0.62,
+    "top_above_track_edge_m": 1.03,
+    "top_above_pit_side_m": 1.23,
+    "ridge_width_m": 1.75
+   },
+   {
+    "s": 3540,
+    "offset_from_edge_m": 0.62,
+    "top_above_track_edge_m": 1.07,
+    "top_above_pit_side_m": 1.0,
+    "ridge_width_m": 1.75
+   },
+   {
+    "s": 3570,
+    "offset_from_edge_m": 0.88,
+    "top_above_track_edge_m": 1.06,
+    "top_above_pit_side_m": 0.87,
+    "ridge_width_m": 1.75
+   },
+   {
+    "s": 20,
+    "offset_from_edge_m": 0.88,
+    "top_above_track_edge_m": 1.07,
+    "top_above_pit_side_m": 1.03,
+    "ridge_width_m": 2.0
+   },
+   {
+    "s": 50,
+    "offset_from_edge_m": 1.12,
+    "top_above_track_edge_m": 1.04,
+    "top_above_pit_side_m": 1.07,
+    "ridge_width_m": 2.0
+   },
+   {
+    "s": 80,
+    "offset_from_edge_m": 1.12,
+    "top_above_track_edge_m": 0.98,
+    "top_above_pit_side_m": 1.04,
+    "ridge_width_m": 1.75
+   },
+   {
+    "s": 110,
+    "offset_from_edge_m": 1.38,
+    "top_above_track_edge_m": 1.04,
+    "top_above_pit_side_m": 0.91,
+    "ridge_width_m": 2.0
+   },
+   {
+    "s": 140,
+    "offset_from_edge_m": 1.12,
+    "top_above_track_edge_m": 1.11,
+    "top_above_pit_side_m": 1.1,
+    "ridge_width_m": 2.0
+   },
+   {
+    "s": 170,
+    "offset_from_edge_m": 2.12,
+    "top_above_track_edge_m": 1.04,
+    "top_above_pit_side_m": 1.11,
+    "ridge_width_m": 1.25
+   },
+   {
+    "s": 200,
+    "offset_from_edge_m": 0.88,
+    "top_above_track_edge_m": 1.05,
+    "top_above_pit_side_m": 1.01,
+    "ridge_width_m": 1.25
+   }
+  ],
+  "median_above_track_edge_m": 1.04,
+  "median_above_pit_side_m": 1.04
+ },
+ "footbridge": {
+  "inventory": "no height (bridges deferred to the scenery stage with lidar)",
+  "sections": [
+   {
+    "s": 224,
+    "returns": 239,
+    "over_road": 4,
+    "deck_p50_above_road_m": 2.68,
+    "deck_p90_above_road_m": 3.08,
+    "classes": [
+     1
+    ]
+   },
+   {
+    "s": 226,
+    "returns": 157,
+    "over_road": 8,
+    "deck_p50_above_road_m": 3.34,
+    "deck_p90_above_road_m": 4.01,
+    "classes": [
+     1
+    ]
+   },
+   {
+    "s": 228,
+    "returns": 296,
+    "over_road": 241,
+    "deck_p50_above_road_m": 4.48,
+    "deck_p90_above_road_m": 4.55,
+    "classes": [
+     1,
+     2,
+     17
+    ]
+   },
+   {
+    "s": 230,
+    "returns": 227,
+    "over_road": 227,
+    "deck_p50_above_road_m": 4.44,
+    "deck_p90_above_road_m": 4.46,
+    "classes": [
+     1,
+     2,
+     17
+    ]
+   },
+   {
+    "s": 232,
+    "returns": 227,
+    "over_road": 227,
+    "deck_p50_above_road_m": 4.42,
+    "deck_p90_above_road_m": 4.45,
+    "classes": [
+     1,
+     2,
+     17
+    ]
+   },
+   {
+    "s": 234,
+    "returns": 234,
+    "over_road": 234,
+    "deck_p50_above_road_m": 4.42,
+    "deck_p90_above_road_m": 4.47,
+    "classes": [
+     1,
+     2,
+     17
+    ]
+   },
+   {
+    "s": 236,
+    "returns": 226,
+    "over_road": 226,
+    "deck_p50_above_road_m": 4.37,
+    "deck_p90_above_road_m": 4.4,
+    "classes": [
+     1,
+     2,
+     17
+    ]
+   },
+   {
+    "s": 238,
+    "returns": 325,
+    "over_road": 251,
+    "deck_p50_above_road_m": 4.36,
+    "deck_p90_above_road_m": 4.51,
+    "classes": [
+     1,
+     2,
+     17
+    ]
+   },
+   {
+    "s": 240,
+    "returns": 193,
+    "over_road": 13,
+    "deck_p50_above_road_m": 3.36,
+    "deck_p90_above_road_m": 3.76,
+    "classes": [
+     1
+    ]
+   },
+   {
+    "s": 242,
+    "returns": 236,
+    "over_road": 8,
+    "deck_p50_above_road_m": 2.73,
+    "deck_p90_above_road_m": 2.97,
+    "classes": [
+     1
+    ]
+   }
+  ],
+  "deck_stations": [
+   228,
+   238
+  ],
+  "deck_top_above_road_m": 4.42
+ },
+ "grandstand": {
+  "inventory": {
+   "h_m": 7,
+   "method": "storeys",
+   "rows": "covered grandstand, red roof, right of the main straight"
+  },
+  "sections": [
+   {
+    "s": 3530,
+    "highest_beyond_right_edge_m": 26.8,
+    "above_right_edge_m": 2.4,
+    "above_ground_between_m": 2.78
+   },
+   {
+    "s": 3545,
+    "highest_beyond_right_edge_m": 18.0,
+    "above_right_edge_m": 0.39,
+    "above_ground_between_m": 0.82
+   },
+   {
+    "s": 3560,
+    "highest_beyond_right_edge_m": 27.9,
+    "above_right_edge_m": 6.47,
+    "above_ground_between_m": 6.87
+   },
+   {
+    "s": 3575,
+    "highest_beyond_right_edge_m": 114.8,
+    "above_right_edge_m": 7.22,
+    "above_ground_between_m": 10.59
+   },
+   {
+    "s": 3590,
+    "highest_beyond_right_edge_m": 29.1,
+    "above_right_edge_m": 6.3,
+    "above_ground_between_m": 6.77
+   },
+   {
+    "s": 0,
+    "highest_beyond_right_edge_m": 19.8,
+    "above_right_edge_m": 0.59,
+    "above_ground_between_m": 1.07
+   },
+   {
+    "s": 15,
+    "highest_beyond_right_edge_m": 20.7,
+    "above_right_edge_m": 0.86,
+    "above_ground_between_m": 1.23
+   },
+   {
+    "s": 30,
+    "highest_beyond_right_edge_m": 21.2,
+    "above_right_edge_m": 3.56,
+    "above_ground_between_m": 3.93
+   },
+   {
+    "s": 45,
+    "highest_beyond_right_edge_m": 13.3,
+    "above_right_edge_m": 0.55,
+    "above_ground_between_m": 0.85
+   },
+   {
+    "s": 60,
+    "highest_beyond_right_edge_m": 12.8,
+    "above_right_edge_m": 0.66,
+    "above_ground_between_m": 0.93
+   },
+   {
+    "s": 75,
+    "highest_beyond_right_edge_m": 25.0,
+    "above_right_edge_m": 1.89,
+    "above_ground_between_m": 2.14
+   },
+   {
+    "s": 90,
+    "highest_beyond_right_edge_m": 41.8,
+    "above_right_edge_m": 6.65,
+    "above_ground_between_m": 6.88
+   },
+   {
+    "s": 105,
+    "highest_beyond_right_edge_m": 42.7,
+    "above_right_edge_m": 6.43,
+    "above_ground_between_m": 6.79
+   },
+   {
+    "s": 120,
+    "highest_beyond_right_edge_m": 43.8,
+    "above_right_edge_m": 5.89,
+    "above_ground_between_m": 6.47
+   },
+   {
+    "s": 135,
+    "highest_beyond_right_edge_m": 44.9,
+    "above_right_edge_m": 5.44,
+    "above_ground_between_m": 6.13
+   },
+   {
+    "s": 150,
+    "highest_beyond_right_edge_m": 45.6,
+    "above_right_edge_m": 5.08,
+    "above_ground_between_m": 5.78
+   },
+   {
+    "s": 165,
+    "highest_beyond_right_edge_m": 47.0,
+    "above_right_edge_m": 4.75,
+    "above_ground_between_m": 5.61
+   },
+   {
+    "s": 180,
+    "highest_beyond_right_edge_m": 47.7,
+    "above_right_edge_m": 4.53,
+    "above_ground_between_m": 5.52
+   },
+   {
+    "s": 195,
+    "highest_beyond_right_edge_m": 58.8,
+    "above_right_edge_m": 0.73,
+    "above_ground_between_m": 1.8
+   }
+  ],
+  "sections_over_4m": [
+   3560,
+   3575,
+   3590,
+   90,
+   105,
+   120,
+   135,
+   150,
+   165,
+   180
+  ],
+  "above_right_edge_m": [
+   4.53,
+   7.22
+  ],
+  "above_ground_between_m": [
+   5.52,
+   10.59
+  ]
+ }
+}

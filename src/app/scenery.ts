@@ -30,6 +30,8 @@ export interface SceneryJson {
     ends?: { at: V2; z_ground: number; to: V2; z_to: number }[] }[];
   /** color: the wall's paint where the evidence shows it (Sonoma 2026: light blue / green), default plain concrete */
   barriers: { kind: 'concrete' | 'armco' | 'tyres' | 'pitwall' | 'fence'; h: number; fence: number; pts: V3[]; src: string; color?: string;
+    /** armco only (Mid-Ohio round 7): stacked W-beams to the run's height h; absent: the single 0.44-0.76 m beam */
+    rails?: number;
     /** round 10 (Sonoma pit-out catch fence): angled arms on the fence posts, `len` m long at `deg` from vertical,
      *  leaning to `side` (+1 the left of the polyline, -1 the right), the mesh carried up them (absent: straight posts) */
     arm?: { len: number; deg: number; side: number };
@@ -67,7 +69,9 @@ export interface SceneryJson {
     /** texture pass (Buttonwillow, 21 Oct 2026): the zone's road surface draws over any overlapping ribbon (the track's
      *  shoulder, another zone's shoulder; a higher `over` in front of a lower one: closed roads 2, runoff 1) and its own
      *  shoulder draws behind them; absent = as before (Laguna, Sonoma) */
-    over?: number })[] } | null;
+    over?: number;
+    /** a closed road's measured asphalt tone in the apron look (linear-ish RGB, like the default pale 0.50 / 0.49 / 0.46); absent = that default (Mid-Ohio round 11) */
+    tone?: [number, number, number] })[] } | null;
   /** painted lines off the track (closed roads' edge lines measured on the captures, 20 Oct 2026): white strips */
   paint_lines?: { width: number; side?: number; pts: V3[]; src?: string; /** round 7: line colour (default white) */ color?: string;
     /** round 11 (Buttonwillow crack seal): a specular sheen 0-1 (a lit standard material, roughness 1 - 0.8 gloss); absent = the flat Lambert paint */ gloss?: number }[];
@@ -85,7 +89,7 @@ export interface SceneryJson {
   cone_lines?: { spacing_m: number; pts: [number, number, number][]; src?: string; color?: string; size?: number; style?: 'cone' | 'delineator' }[];
   /** kinds: brake | corner | flagstand | oak | banner (ad board facing the track) | sign (on a wall at z) | gantry (two
    *  lattice towers at (x, y, z) and (x2, y2, z2) with cables across the track) */
-  landmarks: { kind: string; text: string; x: number; y: number; z: number; heading: number; h: number; w: number; x2?: number; y2?: number; z2?: number; color?: string; style?: string; src?: string;
+  landmarks: { kind: string; text: string; x: number; y: number; z: number; heading: number; h: number; w: number; x2?: number; y2?: number; z2?: number; color?: string; style?: string; src?: string; /** Mid-Ohio round 8: draw a sign on its track face only */ single?: boolean;
     /** wall-board signs: the panel's top above the ground (m), for the coverage gate */ top?: number;
     /** 'impact' (impact barrier block at a wall's nose): its length along `heading`; 'marshal' (round 8): the hut's
      *  depth along `heading` (absent: w x w) */ d?: number;
@@ -803,6 +807,20 @@ function buildBarriers(list: SceneryJson['barriers'], drawn?: (x: number, y: num
       for (const i of [0, P.length - 1]) {
         const e = [L[i], R[i]];
         concrete.add(foot(e), atTop(e, [top[i], top[i]]), cc);
+      }
+    } else if (b.kind === 'armco' && b.rails) {
+      // stacked W-beam (Mid-Ohio round 7: `rails` beams of 0.31 m stacked to the run's height h, in its `color`; the
+      // 2025-26 footage's red triple armco); opt-in per run, every run without `rails` is drawn as below
+      const mid = offsetLine(P, 0.05), cR = b.color ? new THREE.Color(b.color) : cRail, bh = 0.31;
+      for (let r = 0; r < b.rails; r++) {
+        const z1 = b.h - r * bh, z0 = z1 - bh, zm = (z0 + z1) / 2;
+        armco.add(up(P, z0), up(mid, zm), cR);
+        armco.add(up(mid, zm), up(P, z1), cR);
+        for (const i of [0, P.length - 1]) armco.add(up([P[i], mid[i]], z0), up([P[i], mid[i]], z1), cR);
+      }
+      const sy = b.h / 0.8;
+      for (let i = 0; i < P.length; i++) {
+        posts.push(new THREE.Matrix4().compose(v3(P[i][0], P[i][1], P[i][2] + b.h / 2 - 0.02), new THREE.Quaternion(), new THREE.Vector3(1, sy, 1)));
       }
     } else if (b.kind === 'armco') {
       // W-beam: top and bottom edges forward, the groove set back 5 cm
@@ -1551,7 +1569,15 @@ function boardTexture(kind: string, text: string): THREE.Texture {
       g.fillStyle = '#f4f4f2'; g.fillRect(0, 0, 256, 384);
       g.strokeStyle = '#111'; g.lineWidth = 14; g.strokeRect(7, 7, 242, 370);
       g.fillStyle = '#111'; g.textAlign = 'center'; g.textBaseline = 'middle';
-      g.font = `800 300px ${FONT}`; g.fillText(text, 128, 205);
+      if (text.length > 1) {
+        // Mid-Ohio round 7: a distance board's digits stacked top to bottom (the 300 / 200 / 100 boards on the fence, N837
+        // t029-t031, t059-t060); a one-digit board (Laguna's 3-2-1) as before
+        const n = text.length, step = 350 / n;
+        g.font = `800 ${Math.round(step * 1.05)}px ${FONT}`;
+        [...text].forEach((ch, i) => g.fillText(ch, 128, 17 + step * (i + 0.55)));
+      } else {
+        g.font = `800 300px ${FONT}`; g.fillText(text, 128, 205);
+      }
     } else {
       g.fillStyle = '#1b3f8f'; g.fillRect(0, 0, 256, 384);
       g.fillStyle = '#ffffff'; g.textAlign = 'center'; g.textBaseline = 'middle';
@@ -1924,7 +1950,8 @@ function buildLandmarks(list: SceneryJson['landmarks']): THREE.Group {
       // ad board facing the track (two posts) or a sign on a wall at z (no posts)
       const bottom = m.kind === 'banner' ? 0.25 : 0;
       const tex = bannerTexture([m.text], m.w, m.h, m.color, m.fg);
-      const face = new THREE.Mesh(new THREE.PlaneGeometry(m.w, m.h), new THREE.MeshLambertMaterial({ map: tex, side: THREE.DoubleSide }));
+      // Mid-Ohio round 8: `single` boards are drawn on their track face only (no mirrored text from behind); absent: both
+      const face = new THREE.Mesh(new THREE.PlaneGeometry(m.w, m.h), new THREE.MeshLambertMaterial({ map: tex, side: m.single ? THREE.FrontSide : THREE.DoubleSide }));
       face.position.set(0, bottom + m.h / 2, 0.04);
       g.add(face);
       if (m.kind === 'banner') {

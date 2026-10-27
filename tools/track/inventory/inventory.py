@@ -13,6 +13,19 @@ Inputs, all under tools/track/compare/<id>/inventory/ (tracked; the frames are n
   observations.jsonl    one row per line, written while stepping the video (2 s steps): {t, side, kind, attrs,
                         confidence, note}; rows with an explicit s instead of t (Street View, a second video) carry
                         {s, source, frame} and need no time map
+  extra_maps (optional, Mid-Ohio round 4): more videos (or segments of one compilation), each with its own time map
+                        [{name, video {id, url, title, date, camera}, anchors, observations, frames, frame_pattern,
+                        interp}]; their anchors need explicit s (or sf / corner), may start anywhere on the lap and run
+                        past L (a segment that starts in Thunder Valley crosses S/F at s = L); their rows' t must lie
+                        inside the segment's first..last anchor (no folding). Absent: the output is unchanged.
+  position_uncertainty (optional, Mid-Ohio round 5): {corroborate_over_m, src}. Every row then carries sigma_s_m, its
+                        map's positional uncertainty at the row: the larger leave-one-out residual of the two anchors
+                        that bracket the row's t (an end anchor has none: the other one; a map without inner anchors:
+                        null), with sigma_basis naming the map; a row with an explicit s takes the map of the video in
+                        its source at that t. Rows of a map whose largest |residual| exceeds corroborate_over_m carry
+                        placement 'corroborate' (the scenery stage places no precise endpoint from them alone: the
+                        skill's 0.7 rule, "where the map is +-40 m ... add an anchor before trusting the rows"); others
+                        'direct'. The residuals are an indicator, not a guaranteed bound. Absent: output unchanged.
 Outputs: tools/track/compare/<id>/inventory.json (rows: t, s, side, kind, attrs, confidence, frame, source, note; plus
 the anchors, their leave-one-out residuals and the frame list) and inventory.md (the readable table).
 
@@ -76,7 +89,8 @@ class TimeMap:
     the map is piecewise linear in the speed profile's own time (interp 'profile', default when a profile is given:
     the car slows into corners) or in t itself (interp 'linear')."""
 
-    def __init__(self, anchors, length, profile=None, spacing=1.0):
+    def __init__(self, anchors, length, profile=None, spacing=1.0, strict=False):
+        self.strict = strict   # a partial lap (a segment): no folding, a time outside the anchors is an error
         a = sorted(anchors, key=lambda q: q['t'])
         if len(a) < 2:
             raise ValueError('need at least two anchors')
@@ -112,6 +126,8 @@ class TimeMap:
     def fold(self, t):
         if self.t0 <= t <= self.t1:
             return t, 0
+        if self.strict:
+            raise ValueError(f't {t} outside the anchored segment {self.t0}..{self.t1}')
         k = math.floor((t - self.t0) / self.lap)
         return t - k * self.lap, k
 
@@ -161,6 +177,52 @@ class TimeMap:
                         'v_in': round((q['s'] - p['s']) / (q['t'] - p['t']), 1),
                         'v_out': round((r['s'] - q['s']) / (r['t'] - q['t']), 1)})
         return out
+
+
+def sigma_at(tm, t):
+    """The map's positional uncertainty at video time t (m): max |leave-one-out residual| of the bracketing anchors."""
+    res = {r['name']: abs(r['loo_residual_m']) for r in tm.residuals()}
+    if not res:
+        return None
+    a = tm.a
+    if t <= a[0]['t']:
+        pair = a[:2]
+    elif t >= a[-1]['t']:
+        pair = a[-2:]
+    else:
+        pair = next([p, q] for p, q in zip(a, a[1:]) if p['t'] <= t <= q['t'])
+    v = [res[x['name']] for x in pair if x['name'] in res]
+    return round(max(v), 1) if v else round(max(res.values()), 1)
+
+
+def add_uncertainty(rows, maps, cfg):
+    """position_uncertainty (module docstring): sigma_s_m, sigma_basis and placement on every row, in place."""
+    lim = float(cfg['corroborate_over_m'])
+    worst = {name: max([abs(r['loo_residual_m']) for r in tm.residuals()] or [0.0]) for name, (_, tm) in maps.items()}
+    by_video = {}
+    for name, (vid, _) in maps.items():
+        by_video.setdefault(vid, []).append(name)
+    for r in rows:
+        name = r.get('map', 'primary')
+        t = r['t']
+        if t is None:
+            src = r.get('source', '')
+            name, t = None, None
+            if src.startswith('onboard:') and '@' in src:
+                vid, tt = src[len('onboard:'):].split('@', 1)
+                cands = by_video.get(vid, [])
+                tt = float(tt)
+                inside = [c for c in cands if maps[c][1].a[0]['t'] <= tt <= maps[c][1].a[-1]['t']]
+                name = (inside or cands or [None])[0]
+                t = tt
+        if name is None:
+            r['sigma_s_m'] = None
+            r['sigma_basis'] = 'explicit s, no time map'
+            r['placement'] = 'corroborate'
+            continue
+        r['sigma_s_m'] = sigma_at(maps[name][1], t)
+        r['sigma_basis'] = f"time map {name}: bracketing anchors' leave-one-out residual"
+        r['placement'] = 'corroborate' if worst[name] > lim else 'direct'
 
 
 def anchors_from(src, track):
@@ -260,8 +322,51 @@ def build(track_id, root=ROOT, pkg=None):
             if out['frame'] and not os.path.exists(os.path.join(frames_dir, out['frame'])):
                 warn.append(f"{r['_where']}: frame {out['frame']} not in {frames_dir} (frames are local only)")
             rows.append(out)
+    extra = []
+    maps = {'primary': (video['id'], tm)}
+    for m in src.get('extra_maps', []):
+        q_anchors, _ = anchors_from(m, track)
+        m_prof = (prof or speed_profile(track)) if m.get('interp', 'profile') == 'profile' else None
+        mtm = TimeMap(q_anchors, L, m_prof, track['spacing_m'], strict=True)
+        maps[m['name']] = (m['video']['id'], mtm)
+        mdir = os.path.join(idir, m.get('frames', 'frames'))
+        n_rows = 0
+        for f in m.get('observations', []):
+            for r in load_rows(os.path.join(idir, f)):
+                errs += validate_row(r, r['_where'])
+                if errs and errs[-1].startswith(r['_where']):
+                    continue
+                if 't' not in r:
+                    errs.append(f"{r['_where']}: a row of extra map {m['name']} needs t")
+                    continue
+                try:
+                    s_ = mtm.s(r['t'])
+                except ValueError as e:
+                    errs.append(f"{r['_where']}: {e}")
+                    continue
+                out = {k: r[k] for k in ('side', 'kind', 'attrs', 'confidence') if k in r}
+                out.setdefault('attrs', {})
+                out['t'] = r['t']
+                out['s'] = round((s_ + float(out['attrs'].get('ahead_m', 0.0))) % L, 1)
+                out['source'] = r.get('source', f"onboard:{m['video']['id']}@{r['t']:.1f}")
+                out['frame'] = r.get('frame', m.get('frame_pattern', 't{t:03d}.jpg').format(t=int(round(r['t']))))
+                out['map'] = m['name']
+                out['scope'] = r.get('scope', 'lap')
+                if r.get('note'):
+                    out['note'] = r['note']
+                if out['frame'] and not os.path.exists(os.path.join(mdir, out['frame'])):
+                    warn.append(f"{r['_where']}: frame {out['frame']} not in {mdir} (frames are local only)")
+                rows.append(out)
+                n_rows += 1
+        extra.append({'name': m['name'], 'video': m['video'], 'interp': 'profile' if m_prof else 'linear',
+                      'anchors': [{k: a[k] for k in ('name', 't', 's') if k in a} for a in mtm.a],
+                      'anchor_residuals': mtm.residuals(), 'rows': n_rows,
+                      'covers_s': [round(mtm.a[0]['s'] % L, 1), round(mtm.a[-1]['s'] % L, 1)],
+                      'covers_t': [mtm.t0, mtm.t1]})
+    if src.get('position_uncertainty'):
+        add_uncertainty(rows, maps, src['position_uncertainty'])
     rows.sort(key=lambda q: (q['scope'], q['s'], q['side'], q['kind']))
-    frames = sorted({(q['t'], q['frame']) for q in rows if q['t'] is not None})
+    frames = sorted({(q['t'], q['frame']) for q in rows if q['t'] is not None and 'map' not in q})
     unmeasured = [q for q in rows if q['attrs'].get('h_method') == 'unmeasured']
     inv = {
         'track': track_id, 'length_m': round(L, 2),
@@ -275,6 +380,16 @@ def build(track_id, root=ROOT, pkg=None):
         'counts': count(rows),
         'unmeasured_heights': len(unmeasured),
     }
+    if extra:
+        inv['extra_maps'] = extra
+    if src.get('position_uncertainty'):
+        pu = dict(src['position_uncertainty'])
+        pu['maps'] = {name: {'max_abs_loo_residual_m': round(max([abs(r['loo_residual_m']) for r in t_.residuals()] or [0.0]), 1),
+                             'placement': ('corroborate' if max([abs(r['loo_residual_m']) for r in t_.residuals()] or [0.0])
+                                           > float(pu['corroborate_over_m']) else 'direct'),
+                             'rows': sum(1 for q in rows if q.get('sigma_basis', '').startswith(f'time map {name}:'))}
+                      for name, (_, t_) in maps.items()}
+        inv['position_uncertainty'] = pu
     return inv, tm, errs, warn
 
 
@@ -316,6 +431,32 @@ def markdown(inv):
         r = res.get(a['name'])
         L.append(f"| {a['name']} | {mmss(a['t'])} | {a['s']:.1f} | {r['loo_pred_s'] if r else '-'} | "
                  f"{r['loo_residual_m'] if r else '-'} | {r['loo_residual_linear_m'] if r else '-'} | {(str(r['v_in']) + ' / ' + str(r['v_out'])) if r else '-'} |")
+    for m in inv.get('extra_maps', []):
+        v = m['video']
+        L.append('')
+        L.append(f"### Time map: {m['name']} ({v.get('url', v['id'])}, {v.get('date', '')}; video {mmss(m['covers_t'][0])}-"
+                 f"{mmss(m['covers_t'][1])}, s {m['covers_s'][0]:.0f} -> {m['covers_s'][1]:.0f}; {m['rows']} rows; {m['interp']})")
+        L.append('')
+        L.append('| anchor | video t | track s (m) | leave-one-out predicted s | residual (m) | residual if linear in t (m) | speed in / out (m/s) |')
+        L.append('|---|---|---|---|---|---|---|')
+        res = {r['name']: r for r in m['anchor_residuals']}
+        for a in m['anchors']:
+            r = res.get(a['name'])
+            L.append(f"| {a['name']} | {mmss(a['t'])} | {a['s']:.1f} | {r['loo_pred_s'] if r else '-'} | "
+                     f"{r['loo_residual_m'] if r else '-'} | {r['loo_residual_linear_m'] if r else '-'} | {(str(r['v_in']) + ' / ' + str(r['v_out'])) if r else '-'} |")
+    pu = inv.get('position_uncertainty')
+    if pu:
+        L.append('')
+        L.append('## Positional uncertainty by time map')
+        L.append('')
+        L.append(f"Each row's sigma_s_m is the larger leave-one-out residual of the two anchors bracketing it (an indicator, "
+                 f"not a guaranteed bound). Rows of a map whose largest residual exceeds {pu['corroborate_over_m']} m are "
+                 f"'corroborate': the scenery stage places no precise endpoint from them alone ({pu.get('src', '')}).")
+        L.append('')
+        L.append('| time map | largest abs residual (m) | rows | placement |')
+        L.append('|---|---|---|---|')
+        for name, m in pu['maps'].items():
+            L.append(f"| {name} | {m['max_abs_loo_residual_m']} | {m['rows']} | {m['placement']} |")
     for scope, title in (('lap', 'Rows round the lap'), ('pit', 'Pit-lane rows')):
         rows = [r for r in inv['rows'] if r['scope'] == scope]
         if not rows:
@@ -323,13 +464,19 @@ def markdown(inv):
         L.append('')
         L.append(f'## {title} ({len(rows)})')
         L.append('')
-        L.append('| s (m) | t | side | kind | what | height | conf | source | note |')
-        L.append('|---|---|---|---|---|---|---|---|---|')
+        if pu:
+            L.append('| s (m) | t | side | kind | what | height | conf | sigma s (m) | placement | source | note |')
+            L.append('|---|---|---|---|---|---|---|---|---|---|---|')
+        else:
+            L.append('| s (m) | t | side | kind | what | height | conf | source | note |')
+            L.append('|---|---|---|---|---|---|---|---|---|')
         for r in rows:
             a = r['attrs']
             what = ', '.join(str(a[k]) for k in ('type', 'colour', 'raised') if k in a)
             h = f"{a['h_m']} m ({a.get('h_method')})" if 'h_m' in a else ''
-            L.append(f"| {r['s']:.0f} | {mmss(r['t'])} | {r['side']} | {r['kind']} | {what} | {h} | {r['confidence']} | "
+            unc = (f" {r.get('sigma_s_m') if r.get('sigma_s_m') is not None else '-'} | {r.get('placement', '')} |"
+                   if pu else '')
+            L.append(f"| {r['s']:.0f} | {mmss(r['t'])} | {r['side']} | {r['kind']} | {what} | {h} | {r['confidence']} |{unc} "
                      f"{r['source']} | {r.get('note', '').replace('|', '/')} |")
     L.append('')
     return '\n'.join(L)
@@ -361,6 +508,10 @@ def main():
     print('anchors (leave-one-out residual m, speed in/out m/s):')
     for r in inv['anchor_residuals']:
         print(f"  {r['name']:<10} t {r['t']:6.1f}  s {r['s']:7.1f}  residual {r['loo_residual_m']:+7.1f} (linear {r['loo_residual_linear_m']:+7.1f})  v {r['v_in']:5.1f} / {r['v_out']:5.1f}")
+    for m in inv.get('extra_maps', []):
+        print(f"{m['name']}: {m['rows']} rows, anchors (leave-one-out residual m, speed in/out m/s):")
+        for r in m['anchor_residuals']:
+            print(f"  {r['name']:<10} t {r['t']:6.1f}  s {r['s']:7.1f}  residual {r['loo_residual_m']:+7.1f} (linear {r['loo_residual_linear_m']:+7.1f})  v {r['v_in']:5.1f} / {r['v_out']:5.1f}")
     if args.check:
         return 0
     cdir = os.path.join(ROOT, 'tools', 'track', 'compare', args.track)

@@ -9,6 +9,10 @@ export interface SurfaceSample {
   /** Paved but off the course (round 14B: a part marked off_course, Sonoma's T9A escape road): counts as off for lap
    *  validity like dirt. Absent / false elsewhere. */
   offCourse?: boolean;
+  /** On a kerb band OUTSIDE the course edge (round 15, Buttonwillow: a package whose scenery `kerbs.inside` is false):
+   *  the track limit is the kerb's outside, so the track-limit tests count it as on the course. It changes nothing else
+   *  (grip, height, `paved`, `onTrack`). Absent / false elsewhere and on every package with inside kerbs. */
+  onKerbBand?: boolean;
   /** Off-pavement weight: 0 on pavement (track, pit lane, paved runoff), rising smoothly to 1 over the first
    *  SURFACE_GRIP_BLEND_M past the paved edge. Surfaces without it are treated as pavement (0). */
   dirt?: number;

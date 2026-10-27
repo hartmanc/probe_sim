@@ -367,8 +367,12 @@ def stage_geometry(cfg, out, no_logger):
     # -- provisional package on the first centre: racing line (start of the paint walk, logged line) and the pit lane
     v2dir = os.path.join(work, "v2")
     os.makedirs(v2dir, exist_ok=True)
-    prof_v2, res_v2 = V2.profile(C, hl, hr, dem_s, z0, cfg["repave_fixes"])
+    prof_v2, res_v2 = V2.profile(C, hl, hr, dem_s, z0, cfg["repave_fixes"], profile_gaps=cfg.get("profile_gaps"))
     hf_v2, nx, ny = V2.heightfield(box, dem, z0, C, hl, hr, res_v2)
+    if cfg.get("profile_gaps"):
+        import profile_gap
+        gap_wins = profile_gap.windows(C, cfg["profile_gaps"], cfg.enu)
+        hf_v2 = profile_gap.heightfield(hf_v2, box, B.HF_DX, C, hl, hr, prof_v2, gap_wins)
     T_v2 = track_dict(cfg, C, hl, hr, prof_v2, z0, 1.0, n, corners0, box, W, H, nx, ny, {"stage": "provisional"})
     T_v2["length_m"] = float(n)
     json.dump(T_v2, open(os.path.join(v2dir, "track.json"), "w"), separators=(",", ":"))
@@ -468,7 +472,7 @@ def stage_geometry(cfg, out, no_logger):
             for c in corners:
                 c["s"] = round(c["s"] * sp, 1)
         # -- profile at the paint-step edges (the spline and the straights re-evaluate it from each section's quadratic)
-        prof0, resurface = V2.profile(C1, hl1, hr1, dem_s, z0, cfg["repave_fixes"])
+        prof0, resurface = V2.profile(C1, hl1, hr1, dem_s, z0, cfg["repave_fixes"], profile_gaps=cfg.get("profile_gaps"))
         # -- edges: prior adjustments, shapes, spline runs, declared straights
         hl2, hr2 = hl1.copy(), hr1.copy()
         pcfg = cfg.get("prior", {})
@@ -562,7 +566,24 @@ def stage_geometry(cfg, out, no_logger):
         "profile": "DEM sigma 0.7 m + lidar ground returns + clean_profile + repave fixes at the paint-step edges, "
                    "re-evaluated at the fitted edges from each section's quadratic",
     }
+    # -- bank-scaling rule (config profile_bank, Mid-Ohio round 4): a documented reconstruction's banking change, the
+    # measured cross-section rotated about its inside edge over a declared interval; absent (every other track): unchanged
+    bank_rep, bank_q, bank_delta = [], [], None
+    if cfg.get("profile_bank"):
+        import profile_bank
+        bank_q = profile_bank.rules(C1, prof, hl3, hr3, cfg["profile_bank"], cfg.enu, B.FRACTIONS)
+        prof, bank_delta, bank_rep = profile_bank.apply_profile(prof, hl3, hr3, bank_q, B.FRACTIONS, log=log)
+        notes["profile_bank"] = {"rules": cfg["profile_bank"], "applied": bank_rep}
     T = track_dict(cfg, C1, hl3, hr3, prof, z0, sp, L1, corners, box, W, H, nx, ny, notes)
+    if cfg.get("profile_gaps"):
+        import profile_gap
+        wins = profile_gap.windows(C1, cfg["profile_gaps"], cfg.enu)
+        hf = profile_gap.heightfield(hf, box, B.HF_DX, C1, hl3, hr3, prof, wins)
+        notes["profile_gaps"] = cfg["profile_gaps"]
+    if bank_q:
+        hf, bank_hf = profile_bank.heightfield(hf, box, B.HF_DX, C1, hl3, hr3, bank_delta, bank_q, B.FRACTIONS)
+        log(f"     profile bank heightfield: {bank_hf}")
+        bank_rep = {"profile": bank_rep, "heightfield": bank_hf}
     # -- terrain override (config terrain_override, round 14A): inside a declared region the heightfield is one smooth
     # surface continuing the course as written to track.json (the physics' own arrays), robust to the lidar beyond it;
     # absent (every other track): the heightfield untouched. track.json is not changed by it.
@@ -584,6 +605,13 @@ def stage_geometry(cfg, out, no_logger):
     if lc.get("official_m"):
         rep.check("lap length", abs(L1 - lc["official_m"]) <= 0.01 * lc["official_m"],
                   f"{L1:.2f} m (official {lc['official_m']}; spacing {sp:.6f})")
+    if lc.get("osm_tol"):
+        # with no applicable official figure (official_m None, the Buttonwillow rule), the built centre against the raw
+        # stitched OSM loop of the config's loop_ways (Mid-Ohio round 4; absent: no check, every other track unchanged)
+        L_osm = float(np.linalg.norm(np.diff(np.r_[P, P[:1]], axis=0), axis=1).sum())
+        rep.check("lap length vs OSM loop", abs(L1 / L_osm - 1) <= lc["osm_tol"],
+                  f"{L1:.2f} m vs the raw OSM loop {L_osm:.2f} m ({(L1 / L_osm - 1) * 100:+.2f} %, limit "
+                  f"{lc['osm_tol'] * 100:.1f} %)")
     zc = prof[:, 3]
     rep.check("elevation range", lc["elev_min"] <= zc.max() - zc.min() <= lc["elev_max"], f"{zc.max() - zc.min():.1f} m (z0 {z0:.2f} NAVD88)")
     area = 0.5 * np.sum(C1[:, 0] * np.roll(C1[:, 1], -1) - np.roll(C1[:, 0], -1) * C1[:, 1])
@@ -667,6 +695,7 @@ def stage_geometry(cfg, out, no_logger):
               "recentre": fit["report"], "spline": spline_rep, "straights": str_rep, "gate": met,
               "over_12pct": [int(i) for i in np.nonzero(cs.max(1) > B.CROSS_SOFT)[0]], "fails": rep.fails,
               **({"terrain_override": over_rep} if over_rep else {}),
+              **({"profile_bank": bank_rep} if bank_rep else {}),
               "seconds": round(time.time() - t0, 1)}
     json.dump(report, open(os.path.join(work, "geometry_report.json"), "w"), indent=1, default=float)
     np.savez(os.path.join(work, "geometry_arrays.npz"), C_first=C, hl_first=hl, hr_first=hr, C=C1, hl_paint=hl1,
@@ -1256,7 +1285,7 @@ def fitted_method(cfg_raw, cfg, C0, hl0, hr0, C1, hl1, hr1, fit, trk, osm, pw, m
         c["s"] = round(c["s"] * sp, 1)
     for f in cf:
         rep.check(f, False, "no curvature peak of the corner's direction near its anchor")
-    prof0, resurface = V2.profile(Ccur, hlp, hrp, dem_s, z0, cfgw["repave_fixes"])
+    prof0, resurface = V2.profile(Ccur, hlp, hrp, dem_s, z0, cfgw["repave_fixes"], profile_gaps=cfgw.get("profile_gaps"))
     prof = V2.reprofile(prof0, hlp, hrp, hl3, hr3)
     for s_ in ("left", "right"):
         # the associated readings (station, owner reading or capture, residual) for diagnosis (work/, not the package)

@@ -38,6 +38,14 @@ export interface GrandstandJson {
   tower?: { t0: number; t1: number; d0: number; d1: number; z0: number; h: number; color: string; glass: string; roof: string };
   /** rear wall under the deck (ground to the floor) */
   rear?: { color: string };
+  /** Mid-Ohio round 7: drawn part self-lit (TERRACE_SELF_LIT) like the terraces: aluminium bleachers that face away from
+   *  the sun stay light; absent: plain Lambert */
+  self_lit?: boolean;
+  /** Mid-Ohio round 7: a roof over the rows (covered grandstand): d0..d1 from the front line (default 0 .. the top row
+   *  + 0.5 m), its underside at z0 (front) and z1 (back), colours, column pitch, an optional fascia band across the
+   *  front at z (a two-tier stand's middle deck); absent: no roof (every other track's grandstands unchanged) */
+  cover?: { z0: number; z1: number; d0?: number; d1?: number; color: string; fascia?: string; under?: string; post?: string;
+    posts?: number; band?: { z: number; h: number; color: string } };
 }
 
 /** Single-storey garage row: box l (along heading) x w, eaves at `eave`, ridge along the length at `ridge`
@@ -82,6 +90,21 @@ export interface BlockJson {
    *  ground (m), its glazing divided by wall-coloured mullions every mullions_m (m), and a railing round its own top
    *  edge (the open deck on the lower storey's roof) */
   base?: number; mullions_m?: number; deck_rail?: boolean;
+  /** Mid-Ohio round 8 (the control tower): a hip roof over the block's top, its eaves `overhang` m out, rising `rise` m
+   *  to a ridge of `ridge` m along l (0: a pyramid); absent: the flat roof */
+  hip?: { rise: number; overhang: number; color: string; ridge?: number; /** round 9: the eaves' height above the block's base (absent: its top) */ z?: number };
+  /** Mid-Ohio round 8: decks wrapping all four faces (floor slab `depth` m out at z above the block's base, a solid
+   *  railing `rail` m high in `color`); absent: none */
+  wrap_decks?: { z: number; depth: number; color: string; rail?: number; floor?: string }[];
+  /** Mid-Ohio round 9 (the control tower): corner columns from the ground to `z1`, standing `half` m from the centre on
+   *  both axes (a frame carrying the galleries and the roof), `w` m square, colour; absent: none */
+  columns?: { half: number; z1: number; w?: number; color: string };
+  /** Mid-Ohio round 9: a banner band round all four faces at `half` m from the centre, from z to z + h, typed names in turn
+   *  per panel of `panel` m (drawn by buildStructures with the label texture; the band's solid backing in `color`) */
+  banner?: { half: number; z: number; h: number; panel?: number; names: [string, string, string][]; color?: string };
+  /** Mid-Ohio round 9: an open crow's nest on the roof apex: a platform `w` m square at `z` (above the block's base),
+   *  railing, four legs down to the apex height `z0`, and a flag pole `pole` m above it */
+  nest?: { w: number; z0: number; z: number; rail?: number; pole?: number; color: string };
   /** discrete windows instead of the continuous band (Buttonwillow's tower, judge r5: a solid lower storey with a few
    *  windows): `w` wide every `pitch` m along each face from z0 to z1 (m above the block's base), on the faces listed
    *  (+1 / -1 long sides, +2 / -2 the ends; absent: all four); and doors (`at` along the face from its centre) */
@@ -124,7 +147,14 @@ export interface TerraceDressJson {
 
 /** every structure may carry solid outlines for the collision world (src/physics/collision.ts reads them like buildings) */
 export interface Collide { collide?: { footprint: V2[]; z: number; h: number }[] }
-export type StructureJson = (GrandstandJson | GarageJson | BlockJson | FuelJson | FenceJson | MastJson | PaintJson | BoardsJson | TerraceDressJson | ScoringTowerJson | CanopyJson) & Collide;
+/** Mid-Ohio round 9: the starter's stand: a cabin `w` x `d` on an open scaffold of four legs with cross braces to `legs`
+ *  m, the cabin's posts and windows to `cabin` m above that, a roof slab `roof` overhanging 0.4 m, a typed board under
+ *  the cabin (drawn by buildStructures) */
+export interface StarterStandJson {
+  type: 'starter_stand'; name?: string; src: string; c: V2; z: number; heading_deg: number; w: number; d: number; legs: number;
+  cabin: number; frame: string; roof: string; cabin_color?: string; board?: { text: string; bg: string; fg: string; h: number };
+}
+export type StructureJson = (GrandstandJson | GarageJson | BlockJson | FuelJson | FenceJson | MastJson | PaintJson | BoardsJson | TerraceDressJson | ScoringTowerJson | CanopyJson | StarterStandJson) & Collide;
 /** A terrace row: straight (a, b at height z), or, for a terrace declared by its measured footprint (Sonoma round 6), a
  *  polyline following the stand: `pts` [x, y, z, z_low, m] (tread height, the row below's height, metres along the front
  *  line) with `nrm` the uphill unit vector per vertex, and `k` the row number. */
@@ -293,6 +323,24 @@ export function grandstand(g: GrandstandJson, s: Soup): void {
       mastAt(s, f.p(t, d, dz), Su.lights.h, [3, 2], Math.atan2(-g.dir[1], -g.dir[0]), '#8c9196');
     }
   }
+  const Cv = g.cover;
+  if (Cv) {
+    // Mid-Ohio round 7: a roof over the rows (the covered grandstands of the pit straight), a slab from d0 to d1 sloping
+    // from z0 (front) to z1 (back) with a fascia band, on columns along the front and the back every `posts` m
+    const d0 = Cv.d0 ?? 0, d1 = Cv.d1 ?? dTop + 0.5, cR = rgb(Cv.color), cF = rgb(Cv.fascia ?? Cv.color, 0.85), cP = rgb(Cv.post ?? '#5d6166');
+    const th = 0.35;
+    s.quad(f.p(-0.3, d0, Cv.z0 + th), f.p(L + 0.3, d0, Cv.z0 + th), f.p(L + 0.3, d1, Cv.z1 + th), f.p(-0.3, d1, Cv.z1 + th), cR);   // top
+    s.quad(f.p(-0.3, d1, Cv.z1), f.p(L + 0.3, d1, Cv.z1), f.p(L + 0.3, d0, Cv.z0), f.p(-0.3, d0, Cv.z0), rgb(Cv.under ?? '#55585c'));  // underside
+    s.quad(f.p(-0.3, d0, Cv.z0), f.p(L + 0.3, d0, Cv.z0), f.p(L + 0.3, d0, Cv.z0 + th), f.p(-0.3, d0, Cv.z0 + th), cF);   // front fascia
+    s.quad(f.p(L + 0.3, d1, Cv.z1), f.p(-0.3, d1, Cv.z1), f.p(-0.3, d1, Cv.z1 + th), f.p(L + 0.3, d1, Cv.z1 + th), cF);   // back fascia
+    const pitch = Cv.posts ?? 8;
+    for (let t = 0; t <= L + 1e-6; t += Math.max(2, L / Math.max(1, Math.round(L / pitch)))) {
+      s.box(f, t - 0.12, t + 0.12, d0 + 0.1, d0 + 0.34, -0.3, Cv.z0, cP, { top: null });
+      s.box(f, t - 0.12, t + 0.12, d1 - 0.34, d1 - 0.1, -0.3, Cv.z1, cP, { top: null });
+    }
+    // a second, lower roof band across the front (the two-tier stand's middle deck fascia), optional
+    if (Cv.band) s.box(f, 0, L, d0 - 0.2, d0 + 0.2, Cv.band.z, Cv.band.z + Cv.band.h, rgb(Cv.band.color));
+  }
   const T = g.tower;
   if (T) {
     const cT = rgb(T.color), cG = rgb(T.glass);
@@ -434,6 +482,42 @@ export function block(b: BlockJson, s: Soup): void {
     else if (d.face === 2) s.quad(f.p(hl + e, a, 0), f.p(hl + e, c, 0), f.p(hl + e, c, d.h), f.p(hl + e, a, d.h), cD);
     else s.quad(f.p(-hl - e, c, 0), f.p(-hl - e, a, 0), f.p(-hl - e, a, d.h), f.p(-hl - e, c, d.h), cD);
   }
+  for (const dk of b.wrap_decks ?? []) {
+    const D = dk.depth, cF = rgb(dk.floor ?? '#8b8d90'), cRl = rgb(dk.color), rh = dk.rail ?? 1.0;
+    s.box(f, -hl - D, hl + D, -hw - D, hw + D, dk.z - 0.25, dk.z, cF, { bottom: true });
+    s.box(f, -hl - D, hl + D, -hw - D, -hw - D + 0.08, dk.z, dk.z + rh, cRl);
+    s.box(f, -hl - D, hl + D, hw + D - 0.08, hw + D, dk.z, dk.z + rh, cRl);
+    s.box(f, -hl - D, -hl - D + 0.08, -hw - D, hw + D, dk.z, dk.z + rh, cRl);
+    s.box(f, hl + D - 0.08, hl + D, -hw - D, hw + D, dk.z, dk.z + rh, cRl);
+  }
+  if (b.columns) {
+    const C = b.columns, cw = (C.w ?? 0.5) / 2, cC = rgb(C.color);
+    for (const t of [-C.half, C.half]) for (const d of [-C.half, C.half]) s.box(f, t - cw, t + cw, d - cw, d + cw, -0.5 - (b.base ?? 0), C.z1, cC);
+  }
+  if (b.banner) {
+    const Bn = b.banner, cB = rgb(Bn.color ?? '#1f3f8f'), e = 0.12;
+    s.box(f, -Bn.half, Bn.half, -Bn.half - e, -Bn.half, Bn.z, Bn.z + Bn.h, cB); s.box(f, -Bn.half, Bn.half, Bn.half, Bn.half + e, Bn.z, Bn.z + Bn.h, cB);
+    s.box(f, -Bn.half - e, -Bn.half, -Bn.half, Bn.half, Bn.z, Bn.z + Bn.h, cB); s.box(f, Bn.half, Bn.half + e, -Bn.half, Bn.half, Bn.z, Bn.z + Bn.h, cB);
+  }
+  if (b.nest) {
+    const N = b.nest, hw2 = N.w / 2, cN = rgb(N.color), rl = N.rail ?? 1.0;
+    for (const t of [-hw2, hw2]) for (const d of [-hw2, hw2]) s.box(f, t - 0.07, t + 0.07, d - 0.07, d + 0.07, N.z0 - 1.5, N.z, cN);
+    s.box(f, -hw2, hw2, -hw2, hw2, N.z - 0.12, N.z, cN);
+    for (const [a0, a1, d0, d1] of [[-hw2, hw2, -hw2, -hw2 + 0.05], [-hw2, hw2, hw2 - 0.05, hw2], [-hw2, -hw2 + 0.05, -hw2, hw2], [hw2 - 0.05, hw2, -hw2, hw2]]) {
+      s.box(f, a0, a1, d0, d1, N.z + rl - 0.06, N.z + rl, cN);
+      s.box(f, a0, a1, d0, d1, N.z + rl / 2 - 0.04, N.z + rl / 2, cN);
+    }
+    for (const t of [-hw2, hw2]) for (const d of [-hw2, hw2]) s.box(f, t - 0.04, t + 0.04, d - 0.04, d + 0.04, N.z, N.z + rl, cN);
+    if (N.pole) s.box(f, -0.05, 0.05, -0.05, 0.05, N.z, N.z + N.pole, rgb('#d8d8d8'));
+  }
+  if (b.hip) {
+    const o = b.hip.overhang, z0 = b.hip.z ?? b.h + (b.parapet ?? 0), z1 = z0 + b.hip.rise, cH = rgb(b.hip.color), cU = rgb(b.hip.color, 0.6);
+    const A = hl + o, B = hw + o, rl = Math.min(b.hip.ridge ?? 0, 2 * A) / 2;
+    const e0 = f.p(-A, -B, z0), e1 = f.p(A, -B, z0), e2 = f.p(A, B, z0), e3 = f.p(-A, B, z0), r0 = f.p(-rl, 0, z1), r1 = f.p(rl, 0, z1);
+    s.quad(e0, e1, r1, r0, rgb(b.hip.color, 0.92)); s.quad(e2, e3, r0, r1, rgb(b.hip.color, 0.86));
+    s.tri(e1, e2, r1, cH); s.tri(e3, e0, r0, rgb(b.hip.color, 0.8));
+    s.quad(e3, e2, e1, e0, cU);   // the soffit under the eaves
+  }
   if (b.deck_rail) {
     const cR = rgb('#5d6166'), zr = b.h + 1.0;
     s.box(f, -hl, hl, -hw, -hw + 0.06, zr - 0.05, zr, cR); s.box(f, -hl, hl, hw - 0.06, hw, zr - 0.05, zr, cR);
@@ -559,6 +643,23 @@ export function scoringTower(u: ScoringTowerJson, s: Soup): void {
   const zc = hd ? u.h - hd.h : u.h;
   s.box(f, -u.w / 2, u.w / 2, -u.d / 2, u.d / 2, z0, zc, rgb(u.color));
   if (hd) s.box(f, -hd.w / 2, hd.w / 2, -hd.d / 2, hd.d / 2, zc, u.h, rgb(hd.color));
+}
+
+export function starterStand(u: StarterStandJson, s: Soup): void {
+  const f = Frame.heading(u.c, u.z, (u.heading_deg * Math.PI) / 180);
+  const hw = u.w / 2, hd = u.d / 2, cF = rgb(u.frame), L = u.legs, cC = rgb(u.cabin_color ?? '#e6e4de'), cR = rgb(u.roof);
+  for (const t of [-hw + 0.2, hw - 0.2]) for (const d of [-hd + 0.2, hd - 0.2]) s.box(f, t - 0.09, t + 0.09, d - 0.09, d + 0.09, -0.3, L, cF);
+  // cross braces on the two long faces, every ~2 m
+  const nb = Math.max(1, Math.round(L / 2));
+  for (const d of [-hd + 0.2, hd - 0.2]) for (let k = 0; k < nb; k++) {
+    const z0 = (L * k) / nb, z1 = (L * (k + 1)) / nb;
+    s.quad(f.p(-hw + 0.2, d, z0), f.p(hw - 0.2, d, z1 - 0.08), f.p(hw - 0.2, d, z1), f.p(-hw + 0.2, d, z0 + 0.08), cF);
+    s.box(f, -hw + 0.2, hw - 0.2, d - 0.05, d + 0.05, z1 - 0.08, z1, cF);
+  }
+  s.box(f, -hw, hw, -hd, hd, L - 0.2, L, cF, { bottom: true });            // floor
+  s.box(f, -hw, hw, -hd, hd, L, L + 1.0, cC);                              // cabin lower wall
+  for (const t of [-hw + 0.1, 0, hw - 0.1]) for (const d of [-hd + 0.1, hd - 0.1]) s.box(f, t - 0.06, t + 0.06, d - 0.06, d + 0.06, L + 1.0, L + u.cabin, cF);
+  s.box(f, -hw - 0.4, hw + 0.4, -hd - 0.4, hd + 0.4, L + u.cabin, L + u.cabin + 0.25, cR, { bottom: true });
 }
 
 export function canopy(u: CanopyJson, s: Soup): void {
@@ -860,7 +961,9 @@ export function structureSoups(list: StructureJson[], terraces: TerraceJson[] = 
   for (const u of list) {
     const before = solid.tris + pnt.tris + fabric.tris + terr.tris;
     switch (u.type) {
-      case 'grandstand': grandstand(u, solid); break;
+      // Mid-Ohio round 7 (the T4 bleachers rendered dark: their rows face away from the sun, plain Lambert): `self_lit`
+      // draws a stand with the terraces' part-self-lit concrete; absent: the solid soup as before
+      case 'grandstand': grandstand(u, u.self_lit ? terr : solid); break;
       case 'garage': garage(u, solid); break;
       case 'block': block(u, solid); break;
       case 'fuel': fuel(u, solid); break;
@@ -869,6 +972,7 @@ export function structureSoups(list: StructureJson[], terraces: TerraceJson[] = 
       case 'paint': paint(u, pnt, ground); break;
       case 'boards': boards(u, solid); break;
       case 'scoring_tower': scoringTower(u, solid); break;
+      case 'starter_stand': starterStand(u, solid); break;
       case 'canopy': canopy(u, solid); break;
       case 'terrace_dress': { const t = terraces.find((x) => x.name === u.terrace); if (t) terraceDress(u, t, terr, ground); break; }
       default: break;
@@ -912,7 +1016,33 @@ export function buildStructures(list: StructureJson[], terraces: TerraceJson[] =
   const S = structureSoups(list, terraces, ground);
   if (label) {
     const mats = new Map<string, THREE.MeshLambertMaterial>();
+    const plane = (f: Frame, t: number, d: number, z: number, w: number, h: number, side: number, text: string, bg: string, fg: string) => {
+      const key = `${text}|${bg}|${fg}|${w.toFixed(1)}|${h}`;
+      if (!mats.has(key)) mats.set(key, new THREE.MeshLambertMaterial({ map: label(text, bg, fg, w, h) }));
+      const c = f.p(t, d, z);
+      const pl = new THREE.Mesh(new THREE.PlaneGeometry(w, h), mats.get(key)!);
+      pl.position.set(c[0], c[2], -c[1]);
+      const nx = f.ud[0] * side, ny = f.ud[1] * side;
+      pl.rotation.y = Math.atan2(nx, -ny);
+      grp.add(pl);
+    };
     for (const u of list) {
+      // Mid-Ohio round 9: a block's banner band (all four faces) and the starter stand's board, typed names
+      if (u.type === 'block' && u.banner) {
+        const Bn = u.banner, P = Bn.panel ?? 6, n = Math.max(1, Math.round((2 * Bn.half) / P)), pw = (2 * Bn.half) / n;
+        for (let face = 0; face < 4; face++) {
+          const hd = u.heading + (face * Math.PI) / 2;
+          const f = Frame.heading(u.c, u.z + (u.base ?? 0), hd);
+          for (let k = 0; k < n; k++) {
+            const [text, bg, fg] = Bn.names[(face * n + k) % Bn.names.length];
+            plane(f, -Bn.half + pw * (k + 0.5), -Bn.half - 0.14, Bn.z + Bn.h / 2, pw - 0.1, Bn.h, -1, text, bg, fg);
+          }
+        }
+      }
+      if (u.type === 'starter_stand' && u.board) {
+        const f = Frame.heading(u.c, u.z, (u.heading_deg * Math.PI) / 180), B = u.board;
+        for (const side of [1, -1]) plane(f, 0, side * (u.d / 2 + 0.06), u.legs - 0.2 - B.h / 2, u.w, B.h, side, B.text, B.bg, B.fg);
+      }
       if (u.type !== 'boards' || !u.names?.length) continue;
       for (const { f, l, dz, k } of boardPanels(u)) {
         const [text, bg, fg] = u.names[k % u.names.length];

@@ -1,0 +1,35 @@
+lap: complete  time 1:59.25  (profile 1:56.43, no reference laps)
+line tracking: max |lateral error| 0.94 m, wheel-off-track steps 290
+no reference laps (ghosts.json has none; --ref-ghosts <ghosts.json> of the same circuit gives them): sim only
+longest straight (T1 -> T2 Keyhole): sim max 134.9 km/h; flat-ground top speed 190.3 km/h
+
+corner minimum speeds (km/h), sim
+T1                 109.2 at 348 m
+T2 Keyhole          70.2 at 949 m
+T3                 141.2 at 1387 m
+T4                  70.2 at 1971 m
+T5 Madness          69.9 at 2119 m
+T6                  66.7 at 2296 m
+T7                  73.9 at 2328 m
+T8                 101.9 at 2462 m
+T9                  75.2 at 2660 m
+T10 Thunder Valle  115.1 at 2872 m
+T11                 90.8 at 3108 m
+T12 Carousel        67.1 at 3362 m
+T13                 72.6 at 3396 m
+
+straights: exit min -> max before braking (km/h), sim
+T1 -> T2 Keyhole              109->135
+T2 Keyhole -> T3              70->144
+T3 -> T4                      141->168
+T4 -> T5 Madness              70->95
+T5 Madness -> T6              70->104
+T6 -> T7                      67->81
+T7 -> T8                      74->108
+T8 -> T9                      102->118
+T9 -> T10 Thunder Valle       75->118
+T10 Thunder Valle -> T11      115->126
+T11 -> T12 Carousel           91->106
+T12 Carousel -> T13           67->84
+T13 -> T1                     73->133
+  sim: threshold (no lock) 0.914 g at pedal 0.75; peak decel in lap 0.88 g; peak lateral 1.36 g

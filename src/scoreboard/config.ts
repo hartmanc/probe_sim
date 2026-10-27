@@ -76,6 +76,9 @@ export interface TrackInfo {
   /** "Far off the track" for the lost-in-the-hills launch, m past the nearer track edge (absent = OFFTRACK_FAR_M, 40 m,
    *  src/physics/offtrack.ts). Only the player's car; outside the near heightfield always counts as far. */
   offTrackFarM?: number;
+  /** The Start menu's race line names the field (src/app/modes/race.ts raceMenuLabel): a track whose pace / identity are
+   *  another event's stand-in says so here (Mid-Ohio round 7); absent: 'the 2026 field' (its own). */
+  fieldLabel?: string;
   /** Work in progress (owner, 25 Oct 2026): the track ships in the bundle for its branch's previews and ?track= links
    *  but the Start menu does not offer it (src/app/track-choice.ts TRACK_IDS), so a publish can carry a circuit that is
    *  still being iterated without releasing it. */
@@ -114,6 +117,24 @@ export const TRACKS: Readonly<Record<string, TrackInfo>> = {
     // four wheels off 0.185 -> 0.033 (shiftGrip: off-road rejoins and grip slides; laneMargin 0.7: inside passes into the
     // T3 / T4 pinch; followScale 1.4); race time 771 -> 768 s mean
     ai: { followScale: 1.4, laneMargin: 0.7, shiftGrip: 1 } },
+  // Mid-Ohio, the Lemons 13-turn outer loop (round 7, 27 Oct 2026: stage 3 built from the evidence, every stage-3 gate
+  // ok; tools/track/compare/mid_ohio/round7.md). wip: not in the Start menu until the owner accepts it (its ?track= link
+  // loads it). The FIELD IS A STAND-IN: pace (and identity, absent here = the global file) are LAGUNA's field
+  // (cars/field/pace.json, cars/field/identity.json), not a Mid-Ohio calibration; the real field, the Lemons 2026
+  // Mid-West Crisis (results page in tools/track/tracks/mid_ohio/sources.json), is deferred. The Start menu's race line
+  // says so (fieldLabel). Rolling start 230 m before the last directed corner, T13 (s 3454 -> 3224), the skill's rule.
+  // OWNER QUESTION for the drive: the red / white kerbs are raised 5 cm (Sonoma's driven profile); their real height is not
+  // measured (no frame resolves it), so the 5 cm is a declaration, not a measurement (round7.md section 1).
+  mid_ohio: { dir: 'tracks/mid_ohio/', name: 'Mid-Ohio Sports Car Course', short: 'Mid-Ohio', length_m: 3597.492, pace: 'cars/field/pace.json',
+    fieldLabel: 'a stand-in field (Laguna\'s)', rev: '7dcbb9c278', wip: true,
+    // owner, 26 Oct 2026, after his round-9 drive: "I don't think the carousel is a good place to start the hot lap. I keep
+    // driving right off the track when the control is given to me. Coming onto the front straight might be better."
+    // The 230 m rule put the hand-over at s ~3224 inside the Carousel; now an explicit station at the T13 exit (T13 at
+    // s 3454), where the racing line's radius has opened to 218 m and is 600 m by s 3550 (round10.md)
+    // 26 Oct 2026 evening: s 3460, not 3500: at 3500 the launch handed over at s 3573 with two wheels beyond the left edge
+    // (the line at -5.0 m on a 6.1 m half-width, no kerb strip there to count as course); at 3460 it hands over at s 3534
+    // with all four on, on the exit onto the front straight (the owner: "coming onto the front straight might be better")
+    start: { s_m: 3460, speed: ROLLING_START_SPEED } },
 };
 /** The track when none is chosen (URL ?track=, Start menu). */
 export const DEFAULT_TRACK = 'laguna_seca';

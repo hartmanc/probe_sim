@@ -981,12 +981,16 @@ def barriers(trk, osm):
             rec = {"kind": kind, "h": 1.0 if kind == "concrete" else 0.75,
                    "fence": 3.0 if kind == "concrete" else 0.0, "pts": with_z(trk, run), "src": f"osm:{w['id']}"}
             if ov is not None:
-                rec.update({k: ov[k] for k in ("kind", "h", "fence", "color") if k in ov})
+                rec.update({k: ov[k] for k in ("kind", "h", "fence", "color", "rails") if k in ov})   # rails: round 7 (stacked armco)
                 rec["src"] = f"osm:{w['id']} ({ov['src']})"
                 log(f"OSM wall {w['id']}: {kind} -> {rec['kind']} h {rec['h']} fence {rec['fence']} by evidence override")
             out.append(rec)
+            if ov is not None:
+                # round 7 (Mid-Ohio): an evidence-overridden OSM wall can carry wall_boards by the name 'osm:<way id>'
+                # (registered only; nothing is written for it)
+                DECLARED_WALLS.setdefault(f"osm:{w['id']}", []).append((np.asarray(run, float).copy(), float(rec["h"]), np.zeros(len(run))))
             wall_pts.append(np.c_[run, i, lat, dout])
-    for k in set(ovr) - used:
+    for k in set(ovr) - used - {k_ for k_, v_ in ovr.items() if v_.get("osm_fence")}:
         raise SystemExit(f"osm_barrier_overrides: OSM wall {k} not found in the box")
     W = np.concatenate(wall_pts) if wall_pts else np.zeros((0, 5))
     # tyre walls in front of the outside barrier of the big stops
@@ -1138,6 +1142,8 @@ def barriers(trk, osm):
                 rec[key_] = dw[key_]
         if dw.get("stack"):
             rec["stack"] = int(dw["stack"])   # tyres per stack (round 7), from the evidence
+        if dw.get("rails"):
+            rec["rails"] = int(dw["rails"])   # Mid-Ohio round 7: stacked W-beams of an armco run (app); absent: one beam
         # round 14D (Sonoma T11, owner 25 Oct 2026): a deep tyre wall's rows (the app draws row k k x 0.6 m to the
         # polyline's left; absent: 2) and a thick wall's drawn width (absent: the app's 0.36 m); both from the evidence
         if dw.get("rows"):
@@ -1177,9 +1183,27 @@ def barriers(trk, osm):
                     kept.append(dict(b, pts=[list(map(float, q)) for q in P[a_:b2 + 1]]))
         out[:] = kept
     # catch fence round the paddock
+    fovr = {k: v for k, v in ovr.items() if v.get("osm_fence")}
     for w in osm.select(lambda t: t.get("barrier") == "fence", trk.box):
+        # round 7 (Mid-Ohio): an osm_barrier_overrides entry with osm_fence=True applies to an OSM barrier=fence way
+        # (drop, or fence height / colour from the footage; logged); absent: every OSM fence as before (2.4 m)
+        ov = fovr.get(str(w["id"]))
+        if ov is not None:
+            used.add(str(w["id"]))
+            if not ov.get("src"):
+                raise SystemExit(f"osm_barrier_overrides[{w['id']}]: no evidence (src) given")
+            if ov.get("drop"):
+                log(f"OSM fence {w['id']}: DROPPED by evidence override: {ov['src']}")
+                continue
         for run in polyline_runs(trk, w["xy"], step=3.0, max_out=400):
-            out.append({"kind": "fence", "h": 0.0, "fence": 2.4, "pts": with_z(trk, run), "src": f"osm:{w['id']}"})
+            rec = {"kind": "fence", "h": 0.0, "fence": 2.4, "pts": with_z(trk, run), "src": f"osm:{w['id']}"}
+            if ov is not None:
+                rec.update({k: ov[k] for k in ("h", "fence", "color") if k in ov})
+                rec["src"] = f"osm:{w['id']} ({ov['src']})"
+                log(f"OSM fence {w['id']}: fence {rec['fence']} m by evidence override")
+            out.append(rec)
+    for k in set(fovr) - used:
+        raise SystemExit(f"osm_barrier_overrides: OSM fence {k} not found in the box")
     tot = {}
     for b in out:
         P = np.array(b["pts"])
@@ -1231,6 +1255,12 @@ def kerbs_declared(trk):
             raise SystemExit(f"kerbs_declared '{k.get('name')}': unknown pattern {k['pattern']!r} (blocks | plain)")
         if k.get("off") is not None:
             rec["off"] = float(k["off"])
+        if k.get("width"):
+            rec["width"] = float(k["width"])   # round 7 (Mid-Ohio): the strip's measured band width; absent: the track's
+        if k.get("edge_line"):
+            rec["edge_line"] = True   # round 7 (Mid-Ohio): the white edge line runs on along this strip (edge_lines)
+        if k.get("profile"):
+            rec["profile"] = dict(k["profile"])   # round 7 (Mid-Ohio): a strip's own raised profile; absent: the track default
         if k.get("paint"):
             rec["paint"] = float(k["paint"])
         rec["src"] = (f"{k['name']}: " if k.get("name") else "") + k["src"] + (f"; colour: {k['colour_src']}" if k.get("colour_src") else "")
@@ -1403,6 +1433,12 @@ def closed_roads(trk, osm):
                     # its material in the app (asphalt = the circuit's road look, concrete = pale concrete); absent:
                     # the aerial photo's own colour, as before (20 Oct 2026, owner: "it's usable track, just not in use")
                     part["surface"] = road["surface"]
+                if road.get("tone"):
+                    # round 11: the road's measured asphalt tone for the apron look (scenery.json part `tone`; absent = the pale
+                    # default apron; the app reads it only on an apron part)
+                    if not road.get("tone_src"):
+                        raise SystemExit(f"closed road {road['name']}: tone needs its tone_src")
+                    part["tone"] = [round(float(v), 4) for v in road["tone"]]
                 # per-part overrides (config closed_roads[].part_overrides: [{near: (lat, lon), surface, src}], round 11):
                 # the part whose centre line passes within 25 m of `near` takes that surface (it was read nowhere until
                 # 22 Oct 2026, so the round-7e override was a no-op); an entry matching no part fails the stage
@@ -2575,7 +2611,9 @@ def edge_lines(trk, kerb, osm, gap=3, min_run=10):
     for side in (1, -1):
         on = np.ones(n, bool)
         for k in kerb:
-            if k["side"] == side:
+            # round 7 (Mid-Ohio): a strip with edge_line True keeps the white line along its inner face (the kerb lies
+            # beyond the edge and the captures show the line there); absent: broken through the kerb as before
+            if k["side"] == side and not k.get("edge_line"):
                 on[np.arange(k["s0"] - gap, k["s1"] + gap) % n] = False
         # (pit-lane merges keep the line: it is the painted blend line between pit exit and track)
         # contiguous runs on the closed loop
@@ -2694,6 +2732,9 @@ def wall_boards(trk):
                         "heading": rnd(math.atan2(n_[1], n_[0]), 3), "h": wb["h"], "w": rnd(w + 0.02, 2),
                         "color": cols[k % len(cols)], **({"fg": names[k % len(names)][2]} if names else {}),
                         "src": f"wall board on {wb['wall']} ({wb['src']})",
+                        # round 8 (Mid-Ohio): a board seen only from the track (single-sided: no mirrored text from behind,
+                        # e.g. the pit wall's banners seen from the lane); absent: double-sided as before
+                        **({"single": True} if wb.get("single") else {}),
                         # the top of a panel standing ON the wall (no `base`: boards on posts behind a wall are not
                         # part of its face), above the ground, for the coverage gate's wall heights (21 Oct 2026)
                         **({} if "base" in wb else {"top": rnd(wh + wb["h"], 2)})})
@@ -3018,6 +3059,38 @@ def declared_paint_lines(trk):
     return out
 
 
+def blend_line(trk, pit):
+    """The pit-exit blend line (config scenery.blend_line {paint_line: index into paint_lines_declared, side: 'inner' | 'outer'
+    (the ladder's line on the race edge or the one 0.8 m beyond it), label, src}, Mid-Ohio round 11): the polyline of one of the
+    declared ladder lines, in driving direction, with the side the pit exit lies on, for the runtime rule (src/physics/
+    blendline.ts: two wheels across it, strictly, are a black flag and an invalid lap). Absent: no `blend_line` key (every other
+    track unchanged)."""
+    bc = SC_CFG["blend_line"]
+    pl = SC_CFG["paint_lines_declared"][bc["paint_line"]]
+    P = _ll_line(pl["latlon"], 1.0)
+    t = np.gradient(P, axis=0); t /= np.linalg.norm(t, axis=1, keepdims=True)
+    half = (pl.get("double") or 0.0) / 2
+    off = {"inner": -half, "outer": half, "centre": 0.0}[bc.get("side", "inner")]
+    Q = P + np.c_[-t[:, 1], t[:, 0]] * off
+    # stations and lateral of the line against the course's left edge (a check, and the ledger's words)
+    kd = trk.kd
+    ds, ii = kd.query(Q)
+    lat = np.array([float((Q[k] - trk.C[i, :2]) @ trk.N[i]) - float(trk.hl[i]) for k, i in enumerate(ii)])
+    # the pit exit's side of the line: the nearest pit lane centre point to the line's middle, left (+1) or right (-1) of its direction
+    mid = Q[len(Q) // 2]
+    pc = np.array([c[:2] for p_ in pit["parts"] for c in p_["center"]])
+    nearest = pc[int(np.argmin(np.hypot(*(pc - mid).T)))]
+    k = len(Q) // 2
+    side = 1 if float(t[k, 0] * (nearest[1] - mid[1]) - t[k, 1] * (nearest[0] - mid[0])) > 0 else -1
+    if bc.get("pit_side") and (1 if bc["pit_side"] == "left" else -1) != side:
+        raise SystemExit(f"blend_line: the pit lane lies on the {'left' if side > 0 else 'right'} of the line, the config says {bc['pit_side']}")
+    s0, s1 = float(ii[0]) * trk.sp, float(ii[-1]) * trk.sp
+    log(f"blend line: {len(Q)} points, {float(np.sum(np.hypot(*np.diff(Q, axis=0).T))):.1f} m, stations {s0:.0f}-{s1:.0f}, "
+        f"{lat.min():+.2f}..{lat.max():+.2f} m beyond the left edge, pit side {'left' if side > 0 else 'right'}")
+    return {"pts": [[rnd(a, 2), rnd(b, 2)] for a, b in Q], "pit_side": side, "label": bc.get("label", "crossed the blend line"),
+            "s": [round(s0, 1), round(s1, 1)], "src": bc["src"]}
+
+
 def kerb_lines(trk):
     """Raised kerb strips off the lap (config scenery.kerb_lines, round 7b, Sonoma owner note 45): the painted kerbs round
     the closed roads' islands, measured on the captures as lat/lon lines (the kerb's centre); {latlon, width, colors
@@ -3060,6 +3133,15 @@ def landmarks(trk, T, brg):
         side = -1 if c["dir"] == "left" else 1
         for k, dist in ((3, 150), (2, 100), (1, 50)):
             out.append(board(trk, c["s"] - dist, side, 3.0, "brake", str(k), h=1.6, w=1.0))
+    # round 7 (Mid-Ohio): distance boards the footage shows (config scenery.brake_boards_declared [{side, s (track metres),
+    # off (m beyond the edge), text, h, w, src}]): one board each, where the frames show it; absent: none (no rule boards)
+    for bb in SC_CFG.get("brake_boards_declared", []):
+        if not bb.get("src"):
+            raise SystemExit(f"brake_boards_declared {bb.get('text')!r} at s {bb.get('s')}: no src")
+        rec_ = board(trk, int(round(bb["s"] / trk.sp)), 1 if bb["side"] == "left" else -1, float(bb.get("off", 3.0)), "brake",
+                     str(bb["text"]), h=bb.get("h", 1.6), w=bb.get("w", 1.0))
+        rec_["src"] = bb["src"]
+        out.append(rec_)
     # corner-number boards at turn-in, outside (config scenery.corner_boards False: none, e.g. Sonoma, where the 2026
     # onboard shows no turn boards)
     for t, c in (corners.items() if SC_CFG.get("corner_boards", True) else []):
@@ -3257,6 +3339,188 @@ def far_trees(trk, img, Zf, fmeta, n_max=7000):
     return T
 
 
+def far_canopy_cells(box, max_depth, cell=2.0):
+    """Round 10 (Mid-Ohio far tree lines): the 2019 EPT lidar beyond the near box, as 2 m grids (ground = lowest class-2
+    return, VEG = highest class-1 return, MULTI = share of the class-1 returns that are part of a multi-return pulse),
+    from the octree nodes down to `max_depth` only (a thinned cloud: the canopy needs 2 m cells, not the near box's full
+    density). Cached beside the other lidar files; the same dataset and the same nodes cache as lidar_points()."""
+    cache = cache_file("far_canopy_cells.npz", box)
+    x0, y0, x1, y1 = box
+    nx, ny = int(round((x1 - x0) / cell)), int(round((y1 - y0) / cell))
+    if os.path.exists(cache):
+        d = np.load(cache)
+        if np.allclose(d["box"], box) and int(d["max_depth"]) == int(max_depth):
+            return d["DEM"], d["VEG"], d["MULTI"], d["N1"]
+    import laspy
+
+    meta = json.loads(get(EPT + "ept.json", os.path.join(CACHE, "ept.json")))
+    b = meta["bounds"]
+    mx0, my0 = merc(x0, y0)
+    mx1, my1 = merc(x1, y1)
+    edir = os.path.join(CACHE, "ept")
+    os.makedirs(edir, exist_ok=True)
+
+    def hits(key):
+        d, x, y, _ = map(int, key.split("-"))
+        s = (b[3] - b[0]) / 2 ** d
+        a = (b[0] + x * s, b[1] + y * s, b[0] + (x + 1) * s, b[1] + (y + 1) * s)
+        return a[0] < mx1 and a[2] > mx0 and a[1] < my1 and a[3] > my0
+
+    keys, todo = [], ["0-0-0-0"]
+    while todo:
+        hk = todo.pop()
+        h = json.loads(get(EPT + f"ept-hierarchy/{hk}.json", os.path.join(edir, f"h_{hk}.json")))
+        for k, cnt in h.items():
+            if not hits(k):
+                continue
+            if cnt == -1:
+                todo.append(k)
+            elif cnt > 0 and int(k.split("-")[0]) <= max_depth:
+                keys.append(k)
+    log(f"far canopy: {len(keys)} EPT nodes (depth <= {max_depth}) intersect the far-lidar box")
+    DEM = np.full((ny, nx), np.inf, np.float32)
+    VEG = np.full((ny, nx), -np.inf, np.float32)
+    N1 = np.zeros((ny, nx), np.int32)
+    NM = np.zeros((ny, nx), np.int32)
+
+    def fetch(k):
+        data = get(EPT + f"ept-data/{k}.laz", os.path.join(edir, f"{k}.laz"))
+        las = laspy.read(io.BytesIO(data))
+        m = (las.x >= mx0) & (las.x <= mx1) & (las.y >= my0) & (las.y <= my1)
+        return (np.asarray(las.x)[m], np.asarray(las.y)[m], np.asarray(las.z)[m].astype(np.float32),
+                np.asarray(las.classification)[m], np.asarray(las.number_of_returns)[m])
+
+    with ThreadPoolExecutor(12) as ex:
+        for i, (mx, my, z, c, nr) in enumerate(ex.map(fetch, keys)):
+            x, y = merc_to_enu(mx, my)
+            ix = np.clip(((x - x0) / cell).astype(int), 0, nx - 1)
+            iy = np.clip(((y - y0) / cell).astype(int), 0, ny - 1)
+            g = c == 2
+            np.minimum.at(DEM, (iy[g], ix[g]), z[g])
+            v = c == 1
+            np.maximum.at(VEG, (iy[v], ix[v]), z[v])
+            np.add.at(N1, (iy[v], ix[v]), 1)
+            np.add.at(NM, (iy[v & (nr > 1)], ix[v & (nr > 1)]), 1)
+            if i % 100 == 0:
+                log(f"  {i}/{len(keys)} nodes")
+    empty = ~np.isfinite(DEM)
+    idx = ndi.distance_transform_edt(empty, return_distances=False, return_indices=True)
+    DEM = DEM[tuple(idx)]
+    VEG = np.where(np.isfinite(VEG), VEG, DEM)
+    MULTI = NM / np.maximum(N1, 1)
+    np.savez(cache, box=np.array(box), max_depth=max_depth, DEM=DEM, VEG=VEG, MULTI=MULTI.astype(np.float32), N1=N1)
+    return DEM, VEG, MULTI.astype(np.float32), N1
+
+
+def far_canopy(trk, Tf, Zf, fmeta):
+    """Round 10 (Mid-Ohio owner drive of round 9: the far tree lines on the horizon are missing; round10.md): opt-in
+    (config scenery.far_canopy). The far layer's NAIP blobs cannot see a continuous stand (their local-mean test is the
+    failure round 8 found for the near trees) and OpenStreetMap has no woodland within 600 m of the circuit; so
+      1. inside `box` (the lidar ring, outside the near box) the crowns are the 2019 lidar's own (the round-8 crown
+         method on 2 m cells of the thinned cloud) and the NAIP blobs there are dropped;
+      2. beyond `box` the OpenStreetMap woodland polygons are filled with crowns at the cover and the crown size the
+         lidar measures inside the polygons that lie within the ring (the frames show continuous lines there);
+      3. the NAIP blobs outside the box and outside the polygons stay as they were."""
+    cfg = SC_CFG.get("far_canopy")
+    if not cfg:
+        return Tf
+    from PIL import Image, ImageDraw
+
+    cell = 2.0
+    box = tuple(cfg["box"])
+    DEM, VEG, MULTI, N1 = far_canopy_cells(box, int(cfg.get("max_depth", 10)), cell)
+    ny, nx = DEM.shape
+    CHM = np.clip(VEG - DEM, 0, None)
+    veg = (CHM > 2.0) & (MULTI > float(cfg.get("multi_min", 0.18)))
+    veg = ndi.binary_opening(veg, iterations=1)
+    S = ndi.gaussian_filter(np.where(veg, CHM, 0), 1.0)
+    pk = int(cfg.get("peak_px", 7))
+    peaks = (S == ndi.maximum_filter(S, size=pk)) & (S > 3.0) & veg
+    pr, pc = np.nonzero(peaks)
+    marker = np.zeros((ny, nx), np.int32)
+    marker[pr, pc] = np.arange(1, len(pr) + 1)
+    dist, (ir, ic) = ndi.distance_transform_edt(marker == 0, return_indices=True)
+    owner = marker[ir, ic]
+    canopy = (CHM > 2.0) & (MULTI > 0.1) & (dist < 12 / cell * 1.0)
+    area = np.bincount(owner[canopy], minlength=len(pr) + 1)[1:] * cell * cell
+    hmax = ndi.maximum_filter(CHM, size=3)[pr, pc]
+    rad = np.clip(np.sqrt(area / np.pi), 1.2, 11.0)
+    x = box[0] + (pc + 0.5) * cell
+    y = box[1] + (pr + 0.5) * cell
+    tm = cfg.get("tree_min", {})
+    keep = (rad >= tm.get("radius", 2.0)) & (hmax >= tm.get("height", 5.0))
+    b = trk.box
+    outside_near = ~((x > b[0] + 10) & (x < b[2] - 10) & (y > b[1] + 10) & (y < b[3] - 10))
+    # calibration of the thinned cloud: its crowns inside the near box against the near trees the full cloud gave
+    nn = int((keep & ~outside_near).sum())
+    log(f"far canopy: {len(pr)} crown maxima, {int(keep.sum())} kept (radius >= {tm.get('radius', 2.0)} m, height >= {tm.get('height', 5.0)} m); "
+        f"{nn} inside the near box (calibration: the near box has its own full-density crowns)")
+    Lc = np.c_[x, y, 0 * x, hmax, rad][keep & outside_near]
+    Lc[:, 2] = ndi.map_coordinates(Zf, [(Lc[:, 1] - fmeta["y0"]) / FAR_DX, (Lc[:, 0] - fmeta["x0"]) / FAR_DX], order=1, mode="nearest")
+    # OSM woodland raster on the far grid (5 m, north up)
+    W_ = int(2 * FAR_HALF / FAR_ORTHO_PX)
+    im = Image.new("L", (W_, W_), 0)
+    dr = ImageDraw.Draw(im)
+    wood = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), cfg["osm_wood"])))
+
+    def ring_px(geom):
+        P = [bl.enu(g["lat"], g["lon"]) for g in geom]
+        return [((px + FAR_HALF) / FAR_ORTHO_PX, (FAR_HALF - py) / FAR_ORTHO_PX) for px, py in P]
+
+    n_poly = 0
+    for e in wood["elements"]:
+        if e["type"] == "way" and e.get("geometry"):
+            dr.polygon(ring_px(e["geometry"]), fill=1)
+            n_poly += 1
+    for e in wood["elements"]:
+        if e["type"] == "relation":
+            for m in e["members"]:
+                if m["type"] == "way" and m.get("geometry"):
+                    dr.polygon(ring_px(m["geometry"]), fill=1 if m["role"] == "outer" else 0)
+    osm = np.array(im, bool)
+    cx_ = -FAR_HALF + (np.arange(W_) + 0.5) * FAR_ORTHO_PX
+    GX, GY = np.meshgrid(cx_, cx_[::-1])
+    in_box = (GX >= box[0]) & (GX <= box[2]) & (GY >= box[1]) & (GY <= box[3])
+    in_near = ~(~((GX > b[0] + 10) & (GX < b[2] - 10) & (GY > b[1] + 10) & (GY < b[3] - 10)))
+    # measured inside the ring: the lidar crowns standing in OSM woodland there
+    lr, lc_ = ((FAR_HALF - Lc[:, 1]) / FAR_ORTHO_PX).astype(int), ((Lc[:, 0] + FAR_HALF) / FAR_ORTHO_PX).astype(int)
+    inwood = osm[np.clip(lr, 0, W_ - 1), np.clip(lc_, 0, W_ - 1)]
+    wood_area = float((osm & in_box & ~in_near).sum()) * FAR_ORTHO_PX ** 2
+    if inwood.sum() >= int(cfg.get("min_measured", 30)) and wood_area > 0:
+        cover = float((np.pi * Lc[inwood, 4] ** 2).sum()) / wood_area
+        src_ = f"measured: {int(inwood.sum())} lidar crowns in {wood_area / 1e4:.1f} ha of OSM woodland inside the ring"
+        pool = Lc[inwood]
+    else:
+        cover = float(cfg["fill_cover"])
+        src_ = "declared fill_cover (too little OSM woodland inside the ring to measure)"
+        pool = Lc
+    cover = min(cover, float(cfg.get("fill_cover_max", 0.75)))
+    rng = np.random.default_rng(int(cfg.get("seed", 10)))
+    rmean = float(np.sqrt((pool[:, 4] ** 2).mean()))
+    sp = rmean * math.sqrt(math.pi / cover)
+    fill_mask = osm & ~in_box
+    log(f"far canopy: OSM woodland {n_poly} ways, {int(osm.sum()) * FAR_ORTHO_PX ** 2 / 1e6:.2f} km2 in the far box, {int(fill_mask.sum()) * FAR_ORTHO_PX ** 2 / 1e6:.2f} km2 beyond the ring; "
+        f"crown cover {cover:.2f} ({src_}); fill spacing {sp:.1f} m, crown radius rms {rmean:.1f} m")
+    gx_, gy_ = np.meshgrid(np.arange(-FAR_HALF, FAR_HALF, sp), np.arange(-FAR_HALF, FAR_HALF, sp))
+    fx = (gx_ + rng.uniform(-0.5, 0.5, gx_.shape) * sp).ravel()
+    fy = (gy_ + rng.uniform(-0.5, 0.5, gy_.shape) * sp).ravel()
+    ok = (np.abs(fx) < FAR_HALF) & (np.abs(fy) < FAR_HALF)
+    fx, fy = fx[ok], fy[ok]
+    ok = fill_mask[((FAR_HALF - fy) / FAR_ORTHO_PX).astype(int), ((fx + FAR_HALF) / FAR_ORTHO_PX).astype(int)]
+    fx, fy = fx[ok], fy[ok]
+    pick = pool[rng.integers(0, len(pool), len(fx))]
+    Fc = np.c_[fx, fy, 0 * fx, pick[:, 3], pick[:, 4]]
+    Fc[:, 2] = ndi.map_coordinates(Zf, [(Fc[:, 1] - fmeta["y0"]) / FAR_DX, (Fc[:, 0] - fmeta["x0"]) / FAR_DX], order=1, mode="nearest")
+    # the NAIP blobs: dropped inside the ring and inside the polygons, kept elsewhere
+    ib = (Tf[:, 0] >= box[0]) & (Tf[:, 0] <= box[2]) & (Tf[:, 1] >= box[1]) & (Tf[:, 1] <= box[3])
+    iw = osm[np.clip(((FAR_HALF - Tf[:, 1]) / FAR_ORTHO_PX).astype(int), 0, W_ - 1), np.clip(((Tf[:, 0] + FAR_HALF) / FAR_ORTHO_PX).astype(int), 0, W_ - 1)]
+    kept = Tf[~ib & ~iw]
+    out = np.vstack([kept, Lc, Fc])
+    log(f"far canopy: far trees {len(Tf)} NAIP blobs -> {len(kept)} kept (dropped {int(ib.sum())} inside the ring, {int((~ib & iw).sum())} in OSM woodland) "
+        f"+ {len(Lc)} lidar crowns + {len(Fc)} OSM-woodland crowns = {len(out)}")
+    return out
+
+
 def preview(trk, T, Tf, bld, bar, kerb, brg, marks, path):
     from PIL import Image, ImageDraw
 
@@ -3440,6 +3704,7 @@ def main(cfg=None, out_dir=None):
     Zf, fmeta = far_terrain(trk)
     fimg = far_ortho()
     Tf = far_trees(trk, fimg, Zf, fmeta)
+    Tf = far_canopy(trk, Tf, Zf, fmeta)   # opt-in (config scenery.far_canopy), Mid-Ohio round 10
     Image.fromarray(bl.grade_ortho(fimg)).save(os.path.join(OUT, "far_ortho.jpg"), quality=78, optimize=True)
     Zf.tofile(os.path.join(OUT, "far_heightfield.bin"))
 
@@ -3489,7 +3754,10 @@ def main(cfg=None, out_dir=None):
         "buildings": bld,
         "bridges": brg,
         "barriers": bar,
-        "kerbs": {"width": SC_CFG.get("kerb", {}).get("width", KERB_W), "inside": True,
+        # round 7 (Mid-Ohio, owner's decision 2: the race edges are the asphalt-facing face of every kerb): config
+        # scenery.kerb.inside False puts every strip without its own `off` / `offs` in the band beyond the edge (physics
+        # kerbBandCentre, app buildKerbs, terrainGates read it); absent: True, every other track unchanged
+        "kerbs": {"width": SC_CFG.get("kerb", {}).get("width", KERB_W), "inside": bool(SC_CFG.get("kerb", {}).get("inside", True)),
                   "stripe_m": SC_CFG.get("kerb", {}).get("stripe_m", 2.0), "strips": kerb,
                   # per-track paint (config scenery.kerb.colors = [stripe, base]); absent: the app's red / white (Laguna)
                   **({"colors": SC_CFG["kerb"]["colors"]} if SC_CFG.get("kerb", {}).get("colors") else {}),
@@ -3501,6 +3769,7 @@ def main(cfg=None, out_dir=None):
         "pit_exit_cones": cones,
         **({"cone_lines": cone_lines} if cone_lines else {}),
         **({"paint_lines": plines} if plines else {}),
+        **({"blend_line": blend_line(trk, pit)} if SC_CFG.get("blend_line") else {}),
         **({"paved_areas": pareas} if pareas else {}),
         **({"ground_signs": ground_signs(trk)} if SC_CFG.get("ground_signs") else {}),
         **({"kerb_lines": kerb_lines(trk)} if SC_CFG.get("kerb_lines") else {}),
@@ -3558,6 +3827,19 @@ def main(cfg=None, out_dir=None):
             arr, share = season_tint(src_img, st_cfg, zone)
             Image.fromarray(arr).save(fp, quality=q, optimize=True)
             log(f"season tint on {f}: {share * 100:.1f} % of the pixels (mask mean), green {tuple(st_cfg.get('green', (0.38, 0.47, 0.24)))}")
+    gt_cfg = SC_CFG.get("grass_tone")
+    if gt_cfg:
+        # Mid-Ohio round 8 (owner's drive: "some grass is missing or is inexplicably dark or gray"): the NAIP's grass, dull
+        # and dark against the in-season tone, mapped to a measured target; on the published ground images only, after
+        # the season tint (absent: every other track unchanged)
+        for f, q in (("ortho.jpg", 84), ("far_ortho.jpg", 78)):
+            fp = os.path.join(OUT, f)
+            src_img = np.asarray(Image.open(fp).convert("RGB"))
+            o_ = trk.t["ortho"] if f == "ortho.jpg" else {"x0": -FAR_HALF, "x1": FAR_HALF}
+            vm = grass_verge_mask(trk, SC_CFG, sc, src_img.shape) if (f == "ortho.jpg" and gt_cfg.get("verge")) else None
+            arr, share, gain = grass_tone(src_img, dict(gt_cfg, mpp=(o_["x1"] - o_["x0"]) / src_img.shape[1]), G if f == "ortho.jpg" else None, vm)
+            Image.fromarray(arr).save(fp, quality=q, optimize=True)
+            log(f"grass tone on {f}: {share * 100:.1f} % of the pixels, luminance gain {gain:.2f}, target {tuple(gt_cfg['target'])} ({gt_cfg['src'][:80]})")
     if os.path.getsize(os.path.join(OUT, "ortho.jpg")) > 1.5e6:
         log("WARNING: ortho.jpg over 1.5 MB")
 
@@ -3960,6 +4242,110 @@ def season_zone_mask(trk, opt, shape):
         dr.polygon(tox(poly), fill=255)
         log(f"season tint zone {z['side']} s {z['s'][0]}-{z['s'][1]} m, {a}-{b} m beyond the edge: {z['src'][:90]}")
     return np.asarray(img, np.float32) / 255.0
+
+
+def grass_verge_mask(trk, sc_cfg, sc, shape):
+    """Verge band of the grass tone (config scenery.grass_tone.verge {band_m, fade_m, skip: [{side, s: (s0, s1), why}]}, Mid-Ohio
+    round 11): 1 on ground within band_m of the course edge on either side (outside the course, the pit lane and the paved
+    zones), fading to 0 over fade_m; the skipped runs (the pit side) are 0. Returns a float mask over ortho.jpg."""
+    from PIL import Image, ImageDraw
+    vopt = sc_cfg["grass_tone"]["verge"]
+    o = trk.t["ortho"]; H, W = shape[:2]; sx = (o["x1"] - o["x0"]) / W
+    tox = lambda P: [((p[0] - o["x0"]) / sx, (o["y1"] - p[1]) / sx) for p in P]  # noqa: E731
+    paved = Image.new("L", (W, H), 0); d = ImageDraw.Draw(paved)
+    d.polygon(tox(trk.L[:, :2]), fill=255); d.polygon(tox(trk.R[:, :2]), fill=0)
+    for grp in (sc.get("pit_lane"), sc.get("paved_zones")):
+        for pt in (grp or {}).get("parts", []):
+            if pt.get("n", 2) >= 2:
+                d.polygon(tox([q[:2] for q in pt["left"]] + [q[:2] for q in pt["right"]][::-1]), fill=255)
+    paved = np.asarray(paved) > 0
+    dist = ndi.distance_transform_edt(~paved) * sx
+    band, fade = float(vopt.get("band_m", 30.0)), float(vopt.get("fade_m", 5.0))
+    m = np.clip((band + fade - dist) / max(fade, 1e-6), 0, 1)
+    # skipped runs: the ground beside them is taken out by painting a polygon of 0 over the run's strip
+    skip = Image.new("L", (W, H), 0); ds = ImageDraw.Draw(skip)
+    C = trk.C[:, :2]; n = trk.n
+    for z in vopt.get("skip", []):
+        E = (trk.L if z["side"] == "left" else trk.R)[:, :2]
+        a, b = z["s"]
+        ks = [k % n for k in range(int(round(a / trk.sp)), int(round(b / trk.sp)) + (1 if b > a else 1 + n))]
+        nrm = np.array([(E[k] - C[k]) / max(np.linalg.norm(E[k] - C[k]), 1e-6) for k in ks])
+        poly = [E[k] - nrm[i] * 2.0 for i, k in enumerate(ks)] + [E[k] + nrm[i] * (band + fade + 2.0) for i, k in reversed(list(enumerate(ks)))]
+        ds.polygon(tox(poly), fill=255)
+        log(f"grass tone verge skip {z['side']} s {a}-{b}: {z.get('why', '')[:90]}")
+    m *= 1.0 - ndi.gaussian_filter((np.asarray(skip) > 0).astype(np.float32), 1.0)
+    return m.astype(np.float32)
+
+
+def grass_tone(img, opt, G=None, verge=None):
+    """Grass tone rule (config scenery.grass_tone {target: (r, g, b) 8-bit, the in-season grass measured on the clean
+    captures, chm_max (m, 1.0), strength (0..1, 1.0), src}, Mid-Ohio round 8). Grass pixels: green over red and blue (soft
+    over 1-5 grey levels), not sand (R - G under 6, soft), luminance 18..170, and, on the near ortho with the lidar grids G
+    (row 0 south, the ortho box), no canopy or roof over them (the 2019 class-1 surface under chm_max m above the DEM).
+    Each grass pixel takes the target hue at its own luminance times `gain` (the target's luminance over the grass
+    pixels' median), so the texture is kept and the median lands on the target; blended by the soft mask. Returns the
+    image, the mask's mean and the gain."""
+    im = img.astype(np.float32)
+    r, g, b = im[..., 0], im[..., 1], im[..., 2]
+    lum = 0.299 * r + 0.587 * g + 0.114 * b
+    m = np.clip((g - r - 1) / 4, 0, 1) * np.clip((g - b - 1) / 4, 0, 1) * np.clip((6 - (r - g)) / 4, 0, 1)
+    m *= np.clip((lum - 18) / 10, 0, 1) * np.clip((170 - lum) / 15, 0, 1)
+    if G is not None:
+        chm = np.nan_to_num(G["UNC"] - G["DEM"], nan=0.0)
+        H, W = lum.shape
+        rr = np.clip(((H - 1 - np.arange(H)) * chm.shape[0] / H).astype(int), 0, chm.shape[0] - 1)
+        cc = np.clip((np.arange(W) * chm.shape[1] / W).astype(int), 0, chm.shape[1] - 1)
+        canopy = (ndi.maximum_filter(chm, 3) > float(opt.get("chm_max", 1.0))).astype(np.float32)
+        canopy = ndi.gaussian_filter(canopy, 1.5)   # soft edges: the 1 m lidar cells must not print as squares
+        m *= 1.0 - np.clip(canopy[rr][:, cc] * 2.0, 0, 1)
+    if opt.get("mask_px"):
+        # the per-pixel class follows the source JPEG's 8-px blocks (a block a shade too neutral fails the green test and
+        # keeps its dark tone among lifted neighbours): the mask is taken over a neighbourhood
+        m = np.clip(ndi.gaussian_filter(m, float(opt["mask_px"])) * 1.6, 0, 1) * np.clip((lum - 12) / 10, 0, 1)
+    m *= float(opt.get("strength", 1.0))
+    m_base = m
+    w2 = None
+    vopt = opt.get("verge")
+    if verge is not None and vopt:
+        # Mid-Ohio round 11 (owner: "a lot of these brown / dark areas have been reintroduced; I mostly see green grass when
+        # looking at the Google satellite photos"): the verge band beside the course keeps the NAIP's shadowed and dulled
+        # grass (tree, armco and fence shadows, dull olive-brown that fails the green test above). Dark ground there, not
+        # tan or red (sand, dirt, kerb paint stay), under no canopy, takes the grass target at its own relative luminance
+        # with a floor (`k_min`: the shade of the in-season frames is a mid green, not near black)
+        w2 = np.clip((float(vopt.get("lum_max", 110)) - lum) / 15, 0, 1) * np.clip((lum - float(vopt.get("lum_min", 6))) / 6, 0, 1)
+        w2 *= np.clip((float(vopt.get("rg_max", 14)) - (r - g)) / 4, 0, 1)
+        if G is not None:
+            # the canopy test of the verge is the tall crowns only (`chm_max`, 3 m, no dilation): fences, armco and posts
+            # (1-2.5 m, modelled as barriers) leave their shadow strips to the tone
+            canopy_v = ndi.gaussian_filter((chm > float(vopt.get("chm_max", 3.0))).astype(np.float32), 1.0)
+            w2 *= 1.0 - np.clip(canopy_v[rr][:, cc] * 2.0, 0, 1)
+        if vopt.get("mask_px"):
+            w2 = np.clip(ndi.gaussian_filter(w2, float(vopt["mask_px"])) * 1.6, 0, 1) * (w2 > 0.02)
+        w2 = (w2 * verge * float(vopt.get("strength", 1.0))).astype(np.float32)
+        m = np.maximum(m, w2)
+    tr, tg, tb = (float(v) for v in opt["target"])
+    tl = 0.299 * tr + 0.587 * tg + 0.114 * tb
+    sel = m_base > 0.5
+    gain = float(tl / max(np.median(lum[sel]), 1.0)) if sel.any() else 1.0
+    if opt.get("local_m"):
+        # the gain per pixel from the grass's local mean luminance (a Gaussian of `local_m` m), so tiles of different
+        # acquisitions land on the same target instead of one global lift (round 8: the NAIP's south row is brighter)
+        H_, W_ = lum.shape
+        sig = float(opt["local_m"]) / float(opt.get("mpp", 0.6))
+        wsum = ndi.gaussian_filter(m_base, sig)
+        lmean = ndi.gaussian_filter(lum * m_base, sig) / np.maximum(wsum, 1e-3)
+        lmean = np.where(wsum > 0.05, lmean, tl / gain)
+        # the ortho is a JPEG at ~0.6 m/px: its 8-px blocks print as ~5 m squares once the grass is lifted, so the relative
+        # luminance is taken from a lightly smoothed image and its contrast eased (`contrast`, 1.0 = unchanged)
+        lum_s = ndi.gaussian_filter(lum, float(opt.get("deblock_px", 0.0))) if opt.get("deblock_px") else lum
+        k = np.power(np.maximum(lum_s, 1.0) / np.maximum(lmean, 1.0), float(opt.get("contrast", 1.0)))
+        if w2 is not None:
+            k = k * (1 - w2) + np.maximum(k, float(vopt.get("k_min", 0.6))) * w2
+    else:
+        k = lum * gain / tl
+    new = np.stack([tr * k, tg * k, tb * k], -1)
+    out = im * (1 - m[..., None]) + new * m[..., None]
+    return np.clip(out, 0, 255).astype(np.uint8), float(m.mean()), gain
 
 
 def season_tint(img, opt, zone=None):

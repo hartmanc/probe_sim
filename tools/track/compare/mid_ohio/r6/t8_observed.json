@@ -1,0 +1,23 @@
+{
+ "what": "Mid-Ohio round 6, T8: the real cars' lateral positions read from the frames (reference only, local). Offset = metres left (+) of the package centre, on the convention of ghosts.json. Read from the hood / roof camera frames: an edge, its kerb or its paint at a fraction of the frame width at the lowest visible road row, the camera taken as on the car's centreline (about 4 m of road ahead at that row: 95-100 deg lenses, ~8.7 m of frame width there). 'at the edge' = the edge or its kerb immediately alongside: the car centre ~1 m inside the edge. Uncertainty about +-1 m laterally; s from each video's time map (N837: speed-integrated from its T7 anchor, 1.6 m off at T9; 360 lap: profile map, residual <= 20 m, but every reading here sits on a landmark the capture places: the yellow left kerb s ~2451-2466, the right apex kerb s ~2505-2550, the yellow left exit kerb s ~2565-2610).",
+ "landmarks_on_capture": {"yellow_kerb_left_crest": [2451, 2466], "red_white_apex_kerb_right": [2505, 2550], "yellow_exit_kerb_left": [2565, 2610]},
+ "observations": [
+  {"car": "N837", "frame": "frames_n837/t086.jpg", "s": 2450, "offset_m": 3.5, "read": "left edge at 0.12 of the frame at the hood row; right edge out of view: left half, ~2 m from the left edge"},
+  {"car": "N837", "frame": "frames_n837/t087.jpg", "s": 2481, "offset_m": 4.5, "read": "yellow kerb at the bottom-left corner: at the left edge just past the crest"},
+  {"car": "N837", "frame": "frames_n837/t088.jpg", "s": 2512, "offset_m": -2.0, "read": "turning in: right edge at 0.84 at the hood row, left edge out of view: right of centre"},
+  {"car": "N837", "frame": "frames_n837/t089.jpg", "s": 2539, "offset_m": -5.2, "read": "red/white apex kerb from 0.62 at the hood row: right wheels at the kerb"},
+  {"car": "N837", "frame": "frames_n837/t090.jpg", "s": 2564, "offset_m": -0.5, "read": "left grass at 0.0-0.1, right edge ~0.95: about mid-road, drifting left"},
+  {"car": "N837", "frame": "frames_n837/t091.jpg", "s": 2589, "offset_m": 4.0, "read": "yellow exit kerb at 0.0-0.2 at the bottom: near the left edge"},
+  {"car": "360 lap (pace car)", "frame": "frames_360_half/h0188_ahead.jpg", "s": 2440, "offset_m": 4.0, "read": "left white line at the bottom-left corner: near the left edge before the crest"},
+  {"car": "360 lap (pace car)", "frame": "frames_360_half/h0190_ahead.jpg", "s": 2459, "offset_m": 4.8, "read": "yellow kerb immediately left: at the left edge on the crest"},
+  {"car": "360 lap (pace car)", "frame": "frames_360_half/h0191_ahead.jpg", "s": 2480, "offset_m": 4.0, "read": "left white line at the bottom-left corner: still left past the crest"},
+  {"car": "360 lap (pace car)", "frame": "frames_360_half/h0192_ahead.jpg", "s": 2495, "offset_m": 1.0, "read": "both edges in view, left nearer: turning in"},
+  {"car": "360 lap (pace car)", "frame": "frames_360_half/h0193_ahead.jpg", "s": 2510, "offset_m": -5.0, "read": "apex kerb from 0.55-0.65 at the bottom: right wheels at the kerb"},
+  {"car": "360 lap (pace car)", "frame": "frames_360_half/h0194_ahead.jpg", "s": 2524, "offset_m": -5.2, "read": "on the apex kerb"},
+  {"car": "360 lap (pace car)", "frame": "frames_360_half/h0195_ahead.jpg", "s": 2537, "offset_m": -3.0, "read": "right edge at ~0.9 at the bottom: leaving the kerb"},
+  {"car": "360 lap (pace car)", "frame": "frames_360_half/h0196_ahead.jpg", "s": 2551, "offset_m": 0.0, "read": "both edges symmetric: mid-road"},
+  {"car": "360 lap (pace car)", "frame": "frames_360_half/h0198_ahead.jpg", "s": 2582, "offset_m": 4.5, "read": "yellow exit kerb immediately left: at the left edge"},
+  {"car": "IndyCar (Andretti, Jul 2026, segment A)", "frame": "frames_indy/t058.jpg", "s": 2458, "offset_m": 5.0, "read": "yellow kerb immediately left (the map gives s 2420; the kerb places it): at the left edge on the crest"},
+  {"car": "IndyCar (Andretti, Jul 2026, segment A)", "frame": "frames_indy/t060.jpg", "s": null, "offset_m": null, "read": "not used: the map gives s 2520, the speed from t058 gives ~2560 with the T9 kerb ahead; t062 is the same picture (a stale frame)"}
+ ]
+}

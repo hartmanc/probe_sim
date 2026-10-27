@@ -165,7 +165,7 @@ const mainPage: MenuPage = {
     ...trackEntry(),
     { kind: 'action', id: 'hotlap', label: 'Hot lap', note: sim ? undefined : loadingNote(), disabled: !sim, run: () => startMode('hotlap') },
     // the field line: phones and tablets race the player's 40 pace neighbours (field-select.ts)
-    { kind: 'action', id: 'race', label: raceMenuLabel(location.search), note: sim ? (fieldTotal !== null ? fieldLine(fieldTotal, quality.device) : undefined) : loadingNote(), disabled: !sim, run: () => startMode('race') },
+    { kind: 'action', id: 'race', label: raceMenuLabel(location.search, TRACK.fieldLabel), note: sim ? (fieldTotal !== null ? fieldLine(fieldTotal, quality.device) : undefined) : loadingNote(), disabled: !sim, run: () => startMode('race') },
     { kind: 'submenu', id: 'howto', label: 'How to play', page: () => howtoPage({ rows: () => input.helpRows(), touch: quality.touch, raceLaps: LIMITS.raceLaps, fieldLine: () => (fieldTotal !== null ? fieldLine(fieldTotal, quality.device) : null) }) },
     ...(touch ? [{ kind: 'submenu', id: 'touch', label: 'Touch controls', page: () => touchPage(touch) } as MenuEntry] : []),
     ...(showControlsPanelRow() ? [{ kind: 'action', id: 'controls', label: 'Controls & calibration', run: () => controlsPanel.open() } as MenuEntry] : []),
@@ -358,6 +358,7 @@ function createSim(assets: Assets) {
   const wheelOff = (w: { onTrack: boolean; pos: [number, number, number] }) => {
     if (w.onTrack) return false;
     const smp = surface.sample(w.pos[0], w.pos[1]);
+    if (smp.onKerbBand) return false;       // round 15: a kerb band outside the edge is course (the limit is its outside)
     return !smp.paved || !!smp.offCourse;   // an off_course part (round 14B: an escape road) is paved but off
   };
   const world: World = buildWorld(track, heightfield, assets.ortho, Math.min(quality.maxAnisotropy, renderer.capabilities.getMaxAnisotropy()), assets.scenery,
@@ -456,6 +457,7 @@ function createSim(assets: Assets) {
     physics, track, timer, ghosts, ghostData: assets.ghosts, hud, input,
     get vehicle() { return veh(); },
     simTime: () => hsim.simTime,
+    blendFlags: () => ({ count: hsim.blendFlags, reason: hsim.lastBlendReason }),
     s: () => hsim.s,
     playerPos: () => car.root.position,
     rollingStart,

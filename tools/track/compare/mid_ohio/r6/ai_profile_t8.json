@@ -1,0 +1,376 @@
+{
+ "perf": {
+  "alat_g": 1.0505,
+  "abrake_g": 0.95
+ },
+ "corners": [
+  {
+   "name": "T7",
+   "apex": 2326.7,
+   "brake": 2241.7,
+   "dir": -1,
+   "vEntry": 29.845968364675098,
+   "vApex": 23.14723119098271,
+   "kPeak": 0.028365484918929987,
+   "grade": 0.00426288628421804,
+   "difficulty": 0.9366395356350387,
+   "passable": true
+  },
+  {
+   "name": "T8 Corkscrew",
+   "apex": 2523.7,
+   "brake": 2505.7,
+   "dir": -1,
+   "vEntry": 33.693941316943054,
+   "vApex": 30.10981286424328,
+   "kPeak": 0.011361671175606661,
+   "grade": -0.05020682714120774,
+   "difficulty": 0.7168979907241444,
+   "passable": false
+  },
+  {
+   "name": "T9",
+   "apex": 2646.8,
+   "brake": 2599.8,
+   "dir": -1,
+   "vEntry": 34.02758070356099,
+   "vApex": 22.018241196957252,
+   "kPeak": 0.02124677693876302,
+   "grade": 0.026247881448107774,
+   "difficulty": 0.7608592158905155,
+   "passable": true
+  }
+ ],
+ "T8_window_2460_2600": {
+  "ai": {
+   "min_kmh": 104.1,
+   "at_s": 2460
+  },
+  "ai_no_crest": {
+   "min_kmh": 103.1,
+   "at_s": 2460
+  }
+ },
+ "T9_window_2600_2700": {
+  "ai": {
+   "min_kmh": 80.2,
+   "at_s": 2655
+  },
+  "ai_no_crest": {
+   "min_kmh": 77.8,
+   "at_s": 2652
+  }
+ },
+ "rows": [
+  {
+   "s": 2380,
+   "v_ai_kmh": 95.3,
+   "v_ai_no_crest_kmh": 94.9,
+   "v_drive_target_kmh": 94.95,
+   "load_factor": 1.139,
+   "vcurv_per_km": 1.94,
+   "R_line_m": 86,
+   "grade_pct": 1.5
+  },
+  {
+   "s": 2390,
+   "v_ai_kmh": 96.4,
+   "v_ai_no_crest_kmh": 94.7,
+   "v_drive_target_kmh": 95.78,
+   "load_factor": 1.184,
+   "vcurv_per_km": 2.52,
+   "R_line_m": 71,
+   "grade_pct": 4
+  },
+  {
+   "s": 2400,
+   "v_ai_kmh": 97.1,
+   "v_ai_no_crest_kmh": 94.8,
+   "v_drive_target_kmh": 96.59,
+   "load_factor": 1.143,
+   "vcurv_per_km": 1.93,
+   "R_line_m": 82,
+   "grade_pct": 6.2
+  },
+  {
+   "s": 2410,
+   "v_ai_kmh": 98,
+   "v_ai_no_crest_kmh": 95.6,
+   "v_drive_target_kmh": 97.7,
+   "load_factor": 0.998,
+   "vcurv_per_km": -0.03,
+   "R_line_m": 111,
+   "grade_pct": 7.1
+  },
+  {
+   "s": 2420,
+   "v_ai_kmh": 99.1,
+   "v_ai_no_crest_kmh": 97,
+   "v_drive_target_kmh": 98.79,
+   "load_factor": 0.943,
+   "vcurv_per_km": -0.74,
+   "R_line_m": 146,
+   "grade_pct": 6.7
+  },
+  {
+   "s": 2430,
+   "v_ai_kmh": 100,
+   "v_ai_no_crest_kmh": 98.6,
+   "v_drive_target_kmh": 99.79,
+   "load_factor": 0.872,
+   "vcurv_per_km": -1.63,
+   "R_line_m": 184,
+   "grade_pct": 5.5
+  },
+  {
+   "s": 2440,
+   "v_ai_kmh": 101.1,
+   "v_ai_no_crest_kmh": 100,
+   "v_drive_target_kmh": 100.94,
+   "load_factor": 0.857,
+   "vcurv_per_km": -1.77,
+   "R_line_m": 234,
+   "grade_pct": 3.7
+  },
+  {
+   "s": 2450,
+   "v_ai_kmh": 102.4,
+   "v_ai_no_crest_kmh": 101.4,
+   "v_drive_target_kmh": 102.35,
+   "load_factor": 0.712,
+   "vcurv_per_km": -3.49,
+   "R_line_m": 322,
+   "grade_pct": 1.2
+  },
+  {
+   "s": 2460,
+   "v_ai_kmh": 104.1,
+   "v_ai_no_crest_kmh": 103.1,
+   "v_drive_target_kmh": 104.12,
+   "load_factor": 0.766,
+   "vcurv_per_km": -2.74,
+   "R_line_m": 552,
+   "grade_pct": -2.2
+  },
+  {
+   "s": 2470,
+   "v_ai_kmh": 106.2,
+   "v_ai_no_crest_kmh": 105.3,
+   "v_drive_target_kmh": 106.2,
+   "load_factor": 0.815,
+   "vcurv_per_km": -2.08,
+   "R_line_m": 2453,
+   "grade_pct": -4.6
+  },
+  {
+   "s": 2480,
+   "v_ai_kmh": 108.5,
+   "v_ai_no_crest_kmh": 107.6,
+   "v_drive_target_kmh": 108.49,
+   "load_factor": 0.928,
+   "vcurv_per_km": -0.78,
+   "R_line_m": 887,
+   "grade_pct": -6
+  },
+  {
+   "s": 2490,
+   "v_ai_kmh": 110.9,
+   "v_ai_no_crest_kmh": 110,
+   "v_drive_target_kmh": 110.83,
+   "load_factor": 1,
+   "vcurv_per_km": 0,
+   "R_line_m": 330,
+   "grade_pct": -6.3
+  },
+  {
+   "s": 2500,
+   "v_ai_kmh": 113,
+   "v_ai_no_crest_kmh": 112.1,
+   "v_drive_target_kmh": 112.98,
+   "load_factor": 1.001,
+   "vcurv_per_km": 0.01,
+   "R_line_m": 177,
+   "grade_pct": -6.4
+  },
+  {
+   "s": 2510,
+   "v_ai_kmh": 114.4,
+   "v_ai_no_crest_kmh": 109.6,
+   "v_drive_target_kmh": 114.72,
+   "load_factor": 1.024,
+   "vcurv_per_km": 0.24,
+   "R_line_m": 113,
+   "grade_pct": -6.1
+  },
+  {
+   "s": 2520,
+   "v_ai_kmh": 113.3,
+   "v_ai_no_crest_kmh": 106.7,
+   "v_drive_target_kmh": 113.36,
+   "load_factor": 1.149,
+   "vcurv_per_km": 1.48,
+   "R_line_m": 90,
+   "grade_pct": -5.4
+  },
+  {
+   "s": 2530,
+   "v_ai_kmh": 114,
+   "v_ai_no_crest_kmh": 106.9,
+   "v_drive_target_kmh": 113.59,
+   "load_factor": 1.199,
+   "vcurv_per_km": 1.94,
+   "R_line_m": 92,
+   "grade_pct": -3.4
+  },
+  {
+   "s": 2540,
+   "v_ai_kmh": 114.8,
+   "v_ai_no_crest_kmh": 107.9,
+   "v_drive_target_kmh": 114.46,
+   "load_factor": 1.099,
+   "vcurv_per_km": 0.95,
+   "R_line_m": 115,
+   "grade_pct": -2.1
+  },
+  {
+   "s": 2550,
+   "v_ai_kmh": 115.9,
+   "v_ai_no_crest_kmh": 109.2,
+   "v_drive_target_kmh": 115.59,
+   "load_factor": 1.06,
+   "vcurv_per_km": 0.57,
+   "R_line_m": 144,
+   "grade_pct": -1.2
+  },
+  {
+   "s": 2560,
+   "v_ai_kmh": 117.1,
+   "v_ai_no_crest_kmh": 110.5,
+   "v_drive_target_kmh": 116.78,
+   "load_factor": 0.997,
+   "vcurv_per_km": -0.03,
+   "R_line_m": 158,
+   "grade_pct": -1
+  },
+  {
+   "s": 2570,
+   "v_ai_kmh": 118.1,
+   "v_ai_no_crest_kmh": 111.9,
+   "v_drive_target_kmh": 117.97,
+   "load_factor": 1.031,
+   "vcurv_per_km": 0.28,
+   "R_line_m": 153,
+   "grade_pct": -1
+  },
+  {
+   "s": 2580,
+   "v_ai_kmh": 119.1,
+   "v_ai_no_crest_kmh": 113.1,
+   "v_drive_target_kmh": 119,
+   "load_factor": 1.005,
+   "vcurv_per_km": 0.04,
+   "R_line_m": 145,
+   "grade_pct": -0.7
+  },
+  {
+   "s": 2590,
+   "v_ai_kmh": 119.9,
+   "v_ai_no_crest_kmh": 114.1,
+   "v_drive_target_kmh": 118.45,
+   "load_factor": 1.028,
+   "vcurv_per_km": 0.25,
+   "R_line_m": 138,
+   "grade_pct": -0.7
+  },
+  {
+   "s": 2600,
+   "v_ai_kmh": 115.2,
+   "v_ai_no_crest_kmh": 111.4,
+   "v_drive_target_kmh": 111.68,
+   "load_factor": 1.051,
+   "vcurv_per_km": 0.49,
+   "R_line_m": 135,
+   "grade_pct": -0.1
+  },
+  {
+   "s": 2610,
+   "v_ai_kmh": 107.7,
+   "v_ai_no_crest_kmh": 103.2,
+   "v_drive_target_kmh": 103.22,
+   "load_factor": 1.052,
+   "vcurv_per_km": 0.57,
+   "R_line_m": 130,
+   "grade_pct": 0.1
+  },
+  {
+   "s": 2620,
+   "v_ai_kmh": 98.1,
+   "v_ai_no_crest_kmh": 93.6,
+   "v_drive_target_kmh": 93.6,
+   "load_factor": 1.066,
+   "vcurv_per_km": 0.88,
+   "R_line_m": 102,
+   "grade_pct": 1.1
+  },
+  {
+   "s": 2630,
+   "v_ai_kmh": 89.1,
+   "v_ai_no_crest_kmh": 84.8,
+   "v_drive_target_kmh": 84.8,
+   "load_factor": 1.127,
+   "vcurv_per_km": 2.03,
+   "R_line_m": 68,
+   "grade_pct": 2.3
+  },
+  {
+   "s": 2640,
+   "v_ai_kmh": 82.3,
+   "v_ai_no_crest_kmh": 79.2,
+   "v_drive_target_kmh": 79.29,
+   "load_factor": 1.097,
+   "vcurv_per_km": 1.82,
+   "R_line_m": 50,
+   "grade_pct": 4.5
+  },
+  {
+   "s": 2650,
+   "v_ai_kmh": 80.4,
+   "v_ai_no_crest_kmh": 77.8,
+   "v_drive_target_kmh": 78.02,
+   "load_factor": 1.05,
+   "vcurv_per_km": 0.98,
+   "R_line_m": 48,
+   "grade_pct": 6
+  },
+  {
+   "s": 2660,
+   "v_ai_kmh": 80.4,
+   "v_ai_no_crest_kmh": 78.2,
+   "v_drive_target_kmh": 78.4,
+   "load_factor": 1.001,
+   "vcurv_per_km": 0.03,
+   "R_line_m": 58,
+   "grade_pct": 6.4
+  },
+  {
+   "s": 2670,
+   "v_ai_kmh": 81.5,
+   "v_ai_no_crest_kmh": 79.4,
+   "v_drive_target_kmh": 79.71,
+   "load_factor": 0.967,
+   "vcurv_per_km": -0.63,
+   "R_line_m": 75,
+   "grade_pct": 6.1
+  },
+  {
+   "s": 2680,
+   "v_ai_kmh": 83.1,
+   "v_ai_no_crest_kmh": 81.3,
+   "v_drive_target_kmh": 81.58,
+   "load_factor": 0.914,
+   "vcurv_per_km": -1.58,
+   "R_line_m": 95,
+   "grade_pct": 5
+  }
+ ]
+}

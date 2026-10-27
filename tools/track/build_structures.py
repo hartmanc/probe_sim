@@ -111,6 +111,10 @@ def grandstand(trk, it):
     su = it.get("suites")
     dback = max(su["d1"] + su.get("back", {}).get("depth", 0), 0) if su else it["base"]["depth"] + it["rows"]["n"] * it["rows"]["depth"]
     htop = max(su["roof"][:3]) if su else it["rows"]["z0"] + it["rows"]["n"] * it["rows"]["rise"]
+    if it.get("cover"):
+        # Mid-Ohio round 7: a covered grandstand's roof is part of its collision box (absent: unchanged)
+        cv = it["cover"]
+        dback = max(dback, cv.get("d1", dback)); htop = max(htop, cv["z0"], cv["z1"]) + 0.35
     fp = [a, b, b + n * dback, a + n * dback]
     out["collide"] = [{"footprint": _poly(fp), "z": rnd(z), "h": rnd(htop, 1)}]
     log(f"structure grandstand '{it['name']}': front {L:.1f} m, {it['rows']['n']} rows, depth {dback:.1f} m, top {htop:.1f} m, "
@@ -247,8 +251,20 @@ def apply(trk, osm, sc, cfg):
             o, fp = grandstand(trk, it); out.append(o); outlines.append(fp)
         elif t in ("garage", "block", "fuel"):
             o, fp = boxlike(trk, osm, it); out.append(o); outlines.append(fp)
+            if isinstance(it.get("hip"), dict):   # round 10: Sonoma's fuel island declares hip as a height (a number), not the Mid-Ohio dict
+                # Mid-Ohio round 8: a hip-roofed block clears the trees under its eaves too (the lidar roof made crowns
+                # beside the control tower's shaft); absent: unchanged
+                pad = float(it["hip"].get("overhang", 0)) + max([float(d.get("depth", 0)) for d in it.get("wrap_decks", [])] + [0.0])
+                c_, hd_, l_, w_ = _rect(osm, it)
+                outlines.append(_corners(c_, hd_, l_, w_, pad))
         elif t == "mast":
             out += masts(trk, it)
+        elif t == "starter_stand":
+            # Mid-Ohio round 9: the starter's stand on its scaffold (app structures.ts starterStand); passed through with its
+            # centre in ENU and the ground there
+            p = _enu(it["at"])
+            out.append({k: v for k, v in it.items() if k not in ("at", "h_src")} | {"c": [rnd(p[0]), rnd(p[1])], "z": rnd(_ground(trk, p))})
+            log(f"structure starter stand '{it.get('name', '')}': {it['w']} x {it['d']} m on {it['legs']} m legs at ({p[0]:.1f}, {p[1]:.1f})")
         elif t == "scoring_tower":
             # round 6 (owner O1 / orchestrator F1): a slender scoring tower, column (+ optional head board) on a plinth
             p = _enu(it["at"])

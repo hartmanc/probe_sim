@@ -114,6 +114,7 @@ export function buildDirector(sim: RaceServices['sim'], field: FieldData, o: { s
     line: raceLine(a), surface: makeSurface(), makeSurface,
     probeJson: a.carJson, pace: field.pace as PaceJson, identity: field.identity ?? null,
     pitLane: pit ? { spacing_m: 1, ...pit } : null,
+    blendLine: a.scenery?.blend_line ?? null,
     collisionWorld: sim.collision,
     playerVehicle: sim.vehicle, playerSurface: sim.surface,
   }, { laps: o.laps, seed: o.seed, playerNumber: PLAYER_NUMBER, greenWindow: [5, 30], ...raceAiConfig(TRACK_ID),
@@ -321,9 +322,10 @@ export function fieldAudioHook(
 // ---------------------------------------------------------------- results helpers (unit-tested)
 
 /** The main-menu Race row: the configured lap count (`?laps=` included). */
-export function raceMenuLabel(search: string): string {
+export function raceMenuLabel(search: string, field?: string): string {
   const n = parseRaceOverrides(search).laps ?? RACE_LAPS;
-  return `Race · ${n} lap${n === 1 ? '' : 's'} vs the 2026 field`;
+  // `field` (TrackInfo.fieldLabel, Mid-Ohio round 7): a track racing a stand-in field says so; absent: the track's own field
+  return `Race · ${n} lap${n === 1 ? '' : 's'} vs ${field ?? 'the 2026 field'}`;
 }
 
 // ---------------------------------------------------------------- the mode

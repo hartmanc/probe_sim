@@ -10,6 +10,7 @@ import type { DriverInput, Surface, VehicleState } from '../types';
 import type { PitLaneJson } from '../track';
 import type { CollisionWorld } from '../collision';
 import { Vehicle } from '../vehicle';
+import { BlendLine, BlendLineWatch, BlendFlag, type BlendLineJson } from '../blendline';
 import { loadCarSpec, type CarSpec } from '../spec';
 import { CarCollider, type CarBody, type CarContactEvent } from '../cars';
 import type { RaceLine } from './line';
@@ -113,6 +114,8 @@ export interface RaceInputs {
   identity?: unknown | null;
   /** scenery.json pit_lane (the penalty box is on its first part); null → fallback box beside the front straight. */
   pitLane?: PitLaneJson | null;
+  /** scenery.json blend_line (Mid-Ohio round 11): two wheels across the pit-exit blend line are a black flag; absent = no rule. */
+  blendLine?: BlendLineJson | null;
   collisionWorld?: CollisionWorld | null;
   /** The player's Vehicle (the app's). Omit to let the director create one from probeJson. */
   playerVehicle?: Vehicle | null;
@@ -330,6 +333,7 @@ export class RaceDirector {
   /** What the app multiplies its frame dt by right now: FF_SCALE while a stop-and-go is fast-forwarded, else 1. */
   timeScale = 1;
   private offT = 0; private onT = 99; private offArmed = true;
+  private readonly blend: BlendFlag | null;
   private contactSeen = new Map<number, number>();
   private violationSeen = new Map<string, number>();
   private aheadOfPlayer: Int8Array;
@@ -343,6 +347,7 @@ export class RaceDirector {
     // the director's own queries get their own Surface when possible (sample() caches per instance)
     this.surface = inputs.makeSurface ? inputs.makeSurface() : inputs.surface;
     this.box = new PenaltyBox(inputs.pitLane ?? null, this.line);
+    this.blend = inputs.blendLine ? new BlendFlag(new BlendLineWatch(new BlendLine(inputs.blendLine))) : null;
     const ident = inputs.identity ? parseIdentity(inputs.identity) : new Map<string, IdentityCar>();
     const pace = inputs.pace;
     this.calibrationStale = pace.ai_version !== AI_VERSION || pace.cars.some((c) => !c.player && (!(c.scale! > 0) || (c.stints ?? []).some((s) => !(s.scale! > 0))));
@@ -461,7 +466,7 @@ export class RaceDirector {
     this.#greenAt = this.rng.range(g0, g1);
     this.phase = 'formation'; this.time = 0; this.stepIdx = 0; this.flagAt = NaN; this.results = null; this.yellowOn = false;
     this.pen = { count: 0, pending: [], serving: 0, deadlineU: Infinity, inBox: false, fastForward: false, lastReason: null, lastAt: -1e9, ejected: false };
-    this.offT = 0; this.onT = 99; this.offArmed = true; this.contactSeen.clear(); this.violationSeen.clear();
+    this.offT = 0; this.onT = 99; this.offArmed = true; this.contactSeen.clear(); this.violationSeen.clear(); this.blend?.reset();
     this.message = null; this.messageUntil = 0;
     const line = this.line, L = line.L;
     // grid (owner, 17 Oct 2026): a seeded shuffle, so every race and restart has a different start order (`?seed=`
@@ -752,11 +757,13 @@ export class RaceDirector {
     for (const w of st.wheels) {
       if (w.onTrack) { allOff = false; break; }
       const smp = this.surface.sample(w.pos[0], w.pos[1]);
-      if (smp.paved) { allOff = false; break; }
+      if (smp.paved || smp.onKerbBand) { allOff = false; break; }   // round 15: outside kerb bands are course
     }
     if (allOff) { this.offT += dt; this.onT = 0; } else { this.offT = 0; this.onT += dt; }
     if (this.onT >= 2) this.offArmed = true;
     if (allOff && this.offT >= 0.25 && this.offArmed) { this.offArmed = false; this.blackFlag('four wheels off'); }
+    // (b2) the pit-exit blend line (a package that declares one): two wheels across it, strictly, the same flag and penalty
+    if (this.blend && this.blend.update(st.pos[0], st.pos[1], st.wheels, dt)) this.blackFlag(this.blend.watch.line.label);
     // (c) passing under yellow: gaining a position on a running car during the formation / a yellow
     const noPass = this.phase === 'formation' || this.phase === 'yellow';
     const tr = this.traffic;

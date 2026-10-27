@@ -1,0 +1,11 @@
+{
+ "what": "N837 Catalyst overlay, lap 149: the DELTA readout against the overlay's SESSION BEST (1:53.71), read by eye from the local 1 s frames (inventory/frames_n837, every 3 s; reference only, not committed). LAST LAP shows 2:07.88 during lap 149; the completed lap reads 2:04.84 at t130.",
+ "session_best_s": 113.71,
+ "lap_s": 124.84,
+ "delta_s": {"7": 0.11, "10": 0.44, "13": 1.07, "16": 1.64, "19": 2.00, "22": 2.28, "25": 2.52, "28": 2.75, "31": 2.94,
+             "34": 3.22, "37": 3.26, "40": 3.56, "43": 3.76, "46": 3.86, "49": 3.94, "52": 4.02, "55": 4.07, "58": 4.13,
+             "61": 4.24, "64": 4.69, "67": 4.91, "70": 5.09, "73": 5.25, "76": 5.30, "79": 5.55, "82": 5.82, "85": 5.90,
+             "88": 6.03, "91": 6.66, "94": 7.29, "97": 7.62, "100": 7.78, "103": 8.05, "106": 8.60, "109": 9.32,
+             "112": 9.67, "115": 9.91, "118": 10.58, "121": 10.73, "124": 10.80, "127": 10.93},
+ "note": "keys are video t (s); lap 149 runs t 5.03 -> 129.87, so it ends 11.13 s off the session best (9.8 %); the loss is spread over the lap (about 0.09 s per s), faster than average at T1 (t10-16), T4 (t61-67), T8-T9 (t88-97: 1.59 s in 9 s), T11 (t103-109) and the Carousel (t115-118)"
+}

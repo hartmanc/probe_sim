@@ -1,0 +1,28 @@
+<!doctype html><meta charset="utf-8"><title>Original review marks</title>
+<style>body{font:18px/1.5 system-ui;margin:28px}button{padding:10px}</style>
+<h1>Original review marks</h1><p id="status">Reading saved marks. The original review is unchanged.</p>
+<button id="download">Download original marks</button><script>
+(() => {
+  const query = new URLSearchParams(location.search), target = query.get('target');
+  if (!["http://127.0.0.1:5198", "http://localhost:5198"].includes(target)) return;
+  const message = {type: 'probe-edge-review-transfer-v1', sourceKey: "probe-edge-review:d00f33a3bc8353a6ccf81eabd5ddf65ebf2ffc824433b08893cbfa6d54676aa4", nonce: query.get('nonce')};
+  try { message.documents = JSON.parse(localStorage.getItem(message.sourceKey) || '{}'); }
+  catch (error) { message.error = 'Original browser storage is unavailable'; }
+  const receiver = opener || (parent !== window ? parent : null);
+  const count = Object.values(message.documents || {}).reduce((n, doc) => n + (doc.strokes || []).length, 0);
+  document.getElementById('status').textContent = count ? 'Found ' + count + ' marks. Sending them to round two…' : 'No marks found at this address. The transfer will also try the alternate original address.';
+  document.getElementById('download').onclick = () => {
+    const url = URL.createObjectURL(new Blob([JSON.stringify(message.documents || {}, null, 2)], {type: 'application/json'}));
+    const a = document.createElement('a'); a.href = url; a.download = 'original-edge-marks.json'; a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
+  addEventListener('message', event => {
+    if (event.source !== receiver || event.origin !== target || !event.data ||
+        event.data.type !== 'probe-edge-review-transfer-ack' || event.data.nonce !== message.nonce) return;
+    document.getElementById('status').textContent = event.data.count ? 'Original marks delivered. You can return to round two.' : 'No marks were found. Use Download marks in the original review and Load original marks file in round two.';
+    if (event.data.count && opener) setTimeout(() => close(), 500);
+  });
+  if (receiver) receiver.postMessage(message, target);
+  else document.getElementById('status').textContent = 'Download original marks below, then use Load original marks file in round two.';
+})();
+</script>

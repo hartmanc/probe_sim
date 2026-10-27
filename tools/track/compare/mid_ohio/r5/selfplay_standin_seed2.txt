@@ -1,0 +1,22 @@
+
+=== self-play: 45 cars, 2 laps, 76.3 car-laps (green), race time 282 s
+(a) line when alone (>= 2 s with nobody within 30 m): rms 0.30 m, p95 0.58 m (187365 samples)   [target rms < 0.5]; with no deliberate offset: rms 0.30 p95 0.58; worst 3.15 m at s 265; instantaneous (any moment nobody within 30 m) rms 0.37 p95 0.61
+      T1            rms 0.62  p95 1.01  n 11960
+      T2            rms 0.34  p95 0.55  n 15489
+      T4            rms 0.38  p95 0.54  n 14757
+      T5            rms 0.27  p95 0.45  n 9651
+      T6            rms 0.28  p95 0.45  n 5890
+      T7            rms 0.13  p95 0.31  n 2083
+      T8 Corkscrew  rms 0.53  p95 0.98  n 2255
+      T9            rms 0.38  p95 0.66  n 3419
+      T11           rms 0.34  p95 0.57  n 3785
+      T12           rms 0.34  p95 0.56  n 10912
+      T13           rms 0.13  p95 0.28  n 1813
+(b) clearly faster (>3 %) behind a car: 176 situations, 119 reached a passable braking zone close, 76 set up on the inside, 124 completed; stuck median 14.9 s, p90 48.0 s; all green passes 175; pass attempts 371, ended {"corkscrew":27,"shut":55,"dropped":65,"blocked":101,"done":86,"timeout":23,"away":2}
+    by pace ratio: 0-0.85: 71/83 (86 %, stuck 13.8 s, not done {"unseen":4,"gap":2,"off":2,"end":4}), 0.85-0.92: 26/47 (55 %, stuck 21.3 s, not done {"gap":3,"unseen":10,"off":2,"end":6}), 0.92-0.97: 27/46 (59 %, stuck 11.9 s, not done {"unseen":16,"gap":1,"off":1,"end":1})
+(c) defensive moves: vs clearly faster 0, within 3 % 38, vs slower 0, nobody close 0   [vs clearly faster ~0]
+(d) contacts (>1 m/s, AI-AI, per pair per 1 s) 3 = 0.039 per car-lap (>3 m/s: 3) [<= 0.02]; four-off 5 (0 from mishaps) = 0.066 per car-lap, non-mishap 0.066; formation passes 0; recoveries 0
+(e) mishaps 0 = 0.0000 per car-lap (wide 0, spin 0); loss median - s [-..-]; by corner {}
+(f) cost 80.7 µs per step, 1.79 µs per car
+(g) pace: median best lap / drawn target 1.2653, last lap / target 1.2653; knobs followScale 1 laneMargin 1 shiftGrip 0
+(h) finishing order: 37 74 319 8 189 9 89 544 1 200 ... (45 cars)

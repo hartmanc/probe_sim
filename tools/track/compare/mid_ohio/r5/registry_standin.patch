@@ -1,0 +1,18 @@
+diff --git a/src/scoreboard/config.ts b/src/scoreboard/config.ts
+index 31bc5dc..7e6f829 100644
+--- a/src/scoreboard/config.ts
++++ b/src/scoreboard/config.ts
+@@ -114,6 +114,13 @@ export const TRACKS: Readonly<Record<string, TrackInfo>> = {
+     // four wheels off 0.185 -> 0.033 (shiftGrip: off-road rejoins and grip slides; laneMargin 0.7: inside passes into the
+     // T3 / T4 pinch; followScale 1.4); race time 771 -> 768 s mean
+     ai: { followScale: 1.4, laneMargin: 0.7, shiftGrip: 1 } },
++  // LOCAL STAND-IN (Mid-Ohio round 5, 26 Oct 2026; not for merge as it stands): stage 1 + 2 only (round-4 geometry, the
++  // no-logger racing line), registered so the race tools can drive it; wip, provisional rev over the files the local
++  // package has. The pace and identity are LAGUNA's field (a stand-in, not a Mid-Ohio calibration; the Mid-Ohio field is a
++  // later stage). Start on the pit straight ~97 m before the line (T13 apex at s 3454).
++  mid_ohio: { dir: 'tracks/mid_ohio/', name: 'Mid-Ohio Sports Car Course', short: 'Mid-Ohio', length_m: 3597.492, pace: 'cars/field/pace.json',
++    rev: '05d6072129', wip: true,
++    start: { s_m: 3500, speed: ROLLING_START_SPEED } },
+ };
+ /** The track when none is chosen (URL ?track=, Start menu). */
+ export const DEFAULT_TRACK = 'laguna_seca';

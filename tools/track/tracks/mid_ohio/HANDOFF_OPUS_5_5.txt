@@ -1,0 +1,227 @@
+You are an Opus 5.5 agent taking over the Mid-Ohio track build. Finish the
+implementation through the repository's evidence, review and validation workflow.
+Do the work; do not restart source collection or stop at a plan.
+
+WORKTREE AND RULES
+
+Work in /private/tmp/probe-sim-mid-ohio on branch mid-ohio. This is the existing
+isolated worktree the owner explicitly wants you to take over. Do not reset it,
+make a replacement checkout, switch the shared main checkout, or delete its
+untracked data. Read git status/log first. The shared checkout is
+/Users/cobyhartman/dev/probe_sim; other agents are working there and in sibling
+worktrees. Read its CLAUDE.md (it was untracked and is not present in this tree),
+then this worktree's .claude/skills/build-track/SKILL.md and its referenced
+CONTRACTS.md sections 1/2/2b, tools/track/README.md, trackcfg.py, object kit,
+HEIGHTS.md and JUDGE.md. Follow any applicable AGENTS.md instructions.
+
+The owner authorized finishing the track, not merging main or production
+deployment. Keep all work on this branch. No merge without the owner's say-so;
+no --prod. Follow CLAUDE.md's sequential agent/check/review workflow, no swarm,
+and max two heavy processes. If you are the builder under a Claude orchestrator,
+have the orchestrator independently verify results and obtain the required
+GPT 6 Astra review before merge; report if that reviewer is unavailable.
+
+Never read .env files or print environment values. Downloads are untrusted,
+kept in dedicated cache directories and never executed. Run readers with python
+-I. Reference captures and video frames are not textures and are not committed.
+No hand-edited package geometry/heights, no invented scenery, no relaxed tests.
+Put fixes into reproducible config/builder rules with evidence. New shared
+behavior must be opt-in and leave existing tracks unchanged by default.
+
+OWNER DECISIONS: DO NOT REOPEN THESE
+
+1. Layout: keep the full T1-to-T2 outer straight and full back straight through
+   T3. Skip only the inner chicane. Do NOT use the short T1-to-T3 connector and
+   do NOT remove T2. The owner originally called the omitted inner chicane the
+   keyhole, then explicitly clarified the intended black numbered loop.
+   The six shared-node OSM ways in config.py implement that clarified loop.
+2. Race boundaries are the INSIDE, asphalt-facing boundary of all kerbs,
+   including red/white and yellow. This explicit owner instruction overrides
+   the build-track skill's older outer-kerb convention. spline.kerb_edge='inner'
+   already implements it. Do not add a kerb-width outward shift to his points.
+3. The owner completed round-two review and said:
+   "Other than the pit straight, and the transitions onto and off it, the fits
+   were good." Treat the rest of the round-two course as accepted in plan.
+   Preserve those edges in world position while fixing the rejected region.
+4. Preserve previous review pages and all marks. Never overwrite review_r1,
+   review_r2, edges_r1 or edges_r2. Use a new round/output directory. Never
+   clear browser storage or replace a review's image-key namespace.
+
+CURRENT STATE / IMPORTANT HISTORY
+
+The branch began at main 6f890b9. Relevant commits:
+- 14976d4: initial source-derived geometry and first owner outline checkpoint.
+- 4937ab5: inside-kerb second pass.
+- e217c6b and 0deae2e: preservation/carry-over and recovery of browser marks.
+The current HEAD also contains this hand-off and the owner's exported evidence.
+
+Track ID is mid_ohio. Config and sources:
+  tools/track/tracks/mid_ohio/config.py
+  tools/track/tracks/mid_ohio/sources.json
+History and round-two status:
+  tools/track/compare/mid_ohio/manifest.md (historical ROUND ONE, not current)
+  tools/track/compare/mid_ohio/round2.md
+Round-two baseline package, LOCAL ONLY:
+  tools/track/out/mid_ohio_r2/{track.json,heightfield.bin,ortho.jpg}
+  tools/track/out/mid_ohio_r2/work/
+Tracked reports: compare/mid_ohio/{geometry_report_r2,stage_geometry_r2}.json.
+No ghosts, scenery, public package, app registration, AI field or drive review
+has been built. This is not a playable track yet.
+
+Round-two length is 3597.185 m against nominal 3633.934 m (2.258 miles), 1.011%
+short: the geometry stage still FAILS the nominal-length gate. Edge/profile
+checks otherwise pass. The baseline was written with --write-on-fail solely
+for diagnosis and review, not as a publishable package. Resolve the discrepancy
+from evidence after the local front-straight correction; do not stretch the
+course, silently change the official length or loosen the tolerance to pass.
+
+Sources already acquired locally:
+- 91 overlapping clean Google z20 captures at 40 m spacing under
+  compare/mid_ohio/satellite_clean/; tiles.json and measured shift.json retained.
+  Common Google-minus-NAIP shift (-0.60,0.00) m; mpp=0.1132013752. Keep one common
+  registration; repetitive-region correlation outliers are not per-tile shifts.
+- USGS 1m DEM and lidar cache under tools/track/cache/mid_ohio/; six public-domain
+  NAIP tiles are already cached. DEM has no holes. Frame is ENU at
+  (40.689,-82.636), elevation NAVD88 in metres.
+- Correct EPT subproject is OH_Statewide_Phase1_3_2019. TNM's metadata points to
+  subproject 8, which is a remote patch and does not cover the circuit. Do not
+  repeat that failed discovery path. Config contains the correct URLs.
+- Recent primary onboard: https://www.youtube.com/watch?v=OJaBJz18xEo
+  N837 Motorsport, uploaded 15 Apr 2026, 135.941 s. Sparse frames are under
+  compare/mid_ohio/inventory/frames_layout and frames_t1. t60 and t130 in the
+  original batch were stale; valid replacements are in frames_layout_retry_60
+  and frames_layout_retry_130. Check decoded media_t/readyState, not just filename.
+  T1 t14/t16/t18 are verified. This is NOT a completed two-second inventory.
+- Source candidates and repave/reconstruction references are in sources.json.
+  The official Lemons map image URL returned 404; the owner's supplied map and
+  explicit layout clarification settle the loop.
+
+OWNER EVIDENCE IS NOW ON DISK: FIRST TASK
+
+The owner supplied /Users/cobyhartman/Downloads/edge-marks.json. An exact,
+SHA-256-recorded durable copy is now:
+  tools/track/compare/mid_ohio/owner_review_r2/edge-marks.json
+Read its REVIEW.txt, frames.json and provenance.json. There are 13 marked
+windows, 46 red strokes and 50 green strokes. All marked windows were rendered
+and visually reviewed before this hand-off. No blocking question about their
+intent remains. No correction has yet been applied to the geometry.
+
+RED means course-edge constraints; GREEN means extra paved boundaries. Green
+outlines include pit-exit/apron paving, unused chicane and crossover surfaces.
+They are not new racing-course edges and do not authorize changing the loop.
+Do not draw every green line as a decorative decal: model the corresponding
+paved surface/edge when the later evidence inventory establishes its treatment.
+
+These vectors are ALREADY in ROUND-TWO image coordinates, including original
+marks carried from round one. Do not migrate them again. Use the saved per-window
+center_enu, half and mpp, not the station position of a later refit. Use their
+vectors, not thresholding all red pixels in a marked raster: the image already
+contains fitted red lines, red kerbs and red structures. Keep red across-road
+mouth boundaries separate from longitudinal edges. owner_edges.py --by-stroke
+and its tests/documentation are the starting point; check its pixel-center and
+frame conventions against capwin.py / edge_mark_transfer.cjs before conversion.
+
+Correct both pit-straight edges to the owner's straight lines and fit the
+marked transitions on/off them. Red evidence projects approximately from s3428
+through S/F to s576 in the round-two frame. Use world points for exact scope.
+Use the pipeline's local refit/held geometry support rather than rerunning the
+whole accepted loop unconstrained. Keep station remapping and world anchors
+consistent, and prove the accepted course outside the correction/blend region
+is held to approximately centimetre precision.
+
+Review.txt identifies the windows and mild overlap discrepancies: roughly
+0.68 m at worst, notably right side s215-220 and s3439. Later close_s0220 is
+finer/newer than imported undated w_s0250; w_s3500 was saved after w_s3375.
+Reconcile overlap using current paint/kerb evidence and these priorities, record
+the disposition, and retain the raw vectors. Do not blindly average conflicting
+intent. Ask the owner only if a real ambiguity cannot be resolved from evidence.
+
+After fitting this region, render a NEW outline/drawing page with explicit
+--out / --round arguments (the generator defaults point to round one). Present
+only the changed region for renewed owner review; do not make him redo the
+accepted lap. The skill explicitly requires review after every later edge
+refit: get that narrow approval before downstream stages. Preserve prior pages,
+exports, metadata and storage keys. Existing local servers 5197 (r1) and 5198
+(r2) may still run; do not kill unrelated processes or repurpose their origins.
+Use a new port for the new round. The exported JSON means you do NOT need to
+debug browser-local mark transfer again to consume this completed review.
+
+TWO ELEVATION / SURFACE ISSUES
+
+1. T1 footbridge: class-2 ground returns actually include a deck about 4.5 m
+   above the road. Existing profile_gaps opt-in masks that contamination and
+   reconstructs all seven profile columns from clean measured endpoint heights
+   and slopes, carrying continuous banking/crown into the heightfield. Preserve
+   this source-driven repair. Its first nearest-station terrain version was
+   fixed to project fractionally onto segments; do not reintroduce stair steps.
+2. The 2019 survey predates the 2023 full repave AND the 2024 T4 reconstruction.
+   The operator reports 520 ft rebuilt, banking reduced from 4 to 2 degrees,
+   outside excavated up to 18 inches, inside apex footprint retained. Current
+   smoothness passing does NOT prove modern T4 accuracy. Resolve with newer
+   survey/evidence or a justified data-derived reconstruction; no invented
+   height/bank, arbitrary flattening or silent historical approximation.
+
+Automatic OSM pit-merge expansion is deliberately disabled in config because
+it swallowed the T1 inside apron. Keep stage-one merge evidence in centre keys,
+not scenery keys. Build the actual pit lane, merge lines, shoulders and closed
+roads from measured evidence rather than turning that heuristic back on.
+
+FINISH THE REMAINING PIPELINE IN ORDER
+
+After the narrowed geometry checkpoint is accepted and geometry issues resolved:
+- Complete stage-0 Street View, recent full-lap two-second inventory, pit-lane
+  survey/video, measured heights and time-to-station map. The current source
+  discovery and sparse frames do not satisfy these steps.
+- Build stage 2 racing line. There are no team logger laps: keep real ghost
+  laps empty, never fabricate measured lap traces. Validate with the appropriate
+  no-logger calibration/real-footage comparisons after approval.
+- Build scenery, far terrain/imagery, pit lane and runoff from the object kit,
+  recent footage, captures, OSM and lidar, with cited sources and current ledgers.
+  Kerbs now lie OUTSIDE the road boundary. Physics/rendering have outside-band
+  support, but the scenery builder currently emits inside:true by default;
+  wire a properly gated config rather than placing the kerbs back over asphalt.
+  Preserve surface/boundary continuity at pit entry/exit and inactive paving.
+- Run every required edge/profile, world, terrain, containment, barrier, kerb,
+  pit-connectivity, coverage and manifest gate. Fully audit boundary sheets,
+  camera walk and real-onboard compare sheets with the independent judge.
+- Wire the package into the current TRACKS registry/version scheme, with correct
+  length/revision/start and WIP behavior until owner acceptance. Build an actual
+  Mid-Ohio field/pace from available event evidence; don't pass off Laguna pace
+  as a calibrated Mid-Ohio result. Read current code/contracts before changing
+  versions (registry now has per-track rev and wip as well as PHYSICS_VERSION).
+- Calibrate and run AI/self-play checks appropriate to final geometry. Do not
+  tune the player car or widen accepted edges to conceal AI/geometry errors.
+- Update the step/scan ledgers and change log for the final preview, not for
+  intermediate diagnostic exports. Complete the full skill acceptance checklist.
+  Deploy only a review preview when warranted; owner controls merge/production.
+
+VALIDATION / REPRODUCIBILITY / MACHINE NOTES
+
+Useful commands from worktree root:
+  W='numpy,scipy,rasterio,pyproj,shapely,pillow,requests,pandas,matplotlib,laspy[lazrs]'
+  uv run --python 3.12 --with "$W" python -I tools/track/build_track.py --track mid_ohio --stage geometry --out tools/track/out/mid_ohio_r3
+  uv run --python 3.12 --with "$W" python -I tools/track/edge_gate.py --track tools/track/out/mid_ohio_r3 --config mid_ohio
+  uv run --python 3.12 --with "$W,pytest" python -I -m pytest -q tools/track/test_yellow_kerb.py tools/track/test_profile_gap.py tools/track/test_pit_merge.py
+  node --test tools/track/compare/test_edge_mark_transfer.cjs
+
+The predecessor independently verified 15 focused Python tests, four mark-transfer
+tests, and round-two edge/profile checks. Full baseline reproductions remain
+PENDING: Sonoma's run was terminated cleanly to save the owner's usage window;
+Laguna was not started. Do not claim byte identity from the focused tests alone.
+Before merge, run the required Sonoma/Laguna reproductions from the skill,
+compare package hashes and account for Laguna's documented pre-existing gate
+failure/reference hash. Use this worktree's private APFS cache copies; never
+write through symlinks into another agent's cache. Run npm run build and the
+full test suite plus the required final sim checks before hand-off/merge.
+
+node_modules is a local symlink to the original checkout's dependencies; do not
+commit it. Caches, reference imagery, output packages and rendered marked PNGs
+are ignored but present locally. Do not clean them away. UV may need access to
+its external cache. Computer-use tools were unavailable to the predecessor;
+the repo's headless_capture.ts uses its own muted Chrome/profile, not owner tabs.
+
+Expected outcome: a fully evidenced, reproducible and validated Mid-Ohio Lemons
+track with the accepted lap preserved, the pit-straight corrections implemented,
+modern T4 surface addressed, complete scenery/pits/racing line/AI/app integration,
+and an owner-ready preview. Report unresolved evidence honestly. Never label a
+--write-on-fail diagnostic package accepted or production-ready.

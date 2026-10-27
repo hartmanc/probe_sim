@@ -1,0 +1,59 @@
+{
+ "coll": "edges",
+ "files": [
+  {
+   "path": "win/r3_s01_at3400.png"
+  },
+  {
+   "path": "win/r3_s02_at3470.png"
+  },
+  {
+   "path": "win/r3_s03_at3540.png"
+  },
+  {
+   "path": "win/r3_s04_at0000.png"
+  },
+  {
+   "path": "win/r3_s05_at0070.png"
+  },
+  {
+   "path": "win/r3_s06_at0140.png"
+  },
+  {
+   "path": "win/r3_s07_at0210.png"
+  },
+  {
+   "path": "win/r3_s08_at0280.png"
+  },
+  {
+   "path": "win/r3_s09_at0350.png"
+  },
+  {
+   "path": "win/r3_s10_at0420.png"
+  },
+  {
+   "path": "win/r3_s11_at0490.png"
+  },
+  {
+   "path": "win/r3_s12_at0560.png"
+  },
+  {
+   "path": "win/r3_s13_at0620.png"
+  }
+ ],
+ "windows": [
+  "r3_s01_at3400",
+  "r3_s02_at3470",
+  "r3_s03_at3540",
+  "r3_s04_at0000",
+  "r3_s05_at0070",
+  "r3_s06_at0140",
+  "r3_s07_at0210",
+  "r3_s08_at0280",
+  "r3_s09_at0350",
+  "r3_s10_at0420",
+  "r3_s11_at0490",
+  "r3_s12_at0560",
+  "r3_s13_at0620"
+ ]
+}

@@ -1,0 +1,27 @@
+// IndyCar compilation 9Drr1VkE1_U, segment A: roll-hoop camera, what it sees every 2 s inside the anchored range
+{"t": 16, "side": "left", "kind": "wall", "attrs": {"type": "pit wall", "colour": "white"}, "confidence": 0.7}
+{"t": 18, "side": "right", "kind": "wall", "attrs": {"type": "armco", "colour": "red"}, "confidence": 0.7}
+{"t": 20, "side": "ahead", "kind": "bridge", "attrs": {"type": "Firestone footbridge"}, "confidence": 0.7, "note": "passed at 19.2"}
+{"t": 22, "side": "right", "kind": "kerb", "attrs": {"type": "T1 exit kerb, yellow"}, "confidence": 0.7}
+{"t": 24, "side": "left", "kind": "wall", "attrs": {"type": "armco", "colour": "red"}, "confidence": 0.7}
+{"t": 26, "side": "left", "kind": "wall", "attrs": {"type": "armco", "colour": "red"}, "confidence": 0.7}
+{"t": 28, "side": "left", "kind": "sign", "attrs": {"type": "brake board"}, "confidence": 0.7}
+{"t": 30, "side": "right", "kind": "kerb", "attrs": {"type": "Keyhole kerb, red/white"}, "confidence": 0.7}
+{"t": 32, "side": "right", "kind": "kerb", "attrs": {"type": "Keyhole kerb, red/white"}, "confidence": 0.7}
+{"t": 34, "side": "left", "kind": "kerb", "attrs": {"type": "T2 exit kerb, yellow with red band"}, "confidence": 0.7}
+{"t": 36, "side": "left", "kind": "wall", "attrs": {"type": "armco", "colour": "red"}, "confidence": 0.7}
+{"t": 38, "side": "left", "kind": "wall", "attrs": {"type": "armco", "colour": "red"}, "confidence": 0.7}
+{"t": 40, "side": "left", "kind": "boards", "attrs": {"type": "sponsor boards"}, "confidence": 0.7}
+{"t": 42, "side": "left", "kind": "wall", "attrs": {"type": "armco", "colour": "red"}, "confidence": 0.7}
+{"t": 44, "side": "left", "kind": "wall", "attrs": {"type": "armco", "colour": "red"}, "confidence": 0.7}
+{"t": 46, "side": "right", "kind": "kerb", "attrs": {"type": "T4 apex kerb, red/white", "ahead_m": 42.1, "correction": [{"round": 7, "was": {"attrs.ahead_m": null}, "why": "round 7: station correction: the row's time-map station s 1911 (sigma 22.4 m, direct) lies off the kerb it shows; T4 apex kerb (red / white) s 1950-1984 on c20_s1880 / c20_s1920; the note says approach: seen ahead; ahead_m puts it at s ~1953"}]}, "confidence": 0.7, "note": "approach"}
+{"t": 48, "side": "left", "kind": "kerb", "attrs": {"type": "yellow kerb", "ahead_m": 25.9, "correction": [{"round": 7, "was": {"attrs.ahead_m": null}, "why": "round 7: station correction: the row's time-map station s 1989 (sigma 22.4 m, direct) lies off the kerb it shows; T4 exit kerb (yellow) begins at s ~2008-2013 on c20_s1920 / c20_s1960 (kerb_scan 2013); ahead_m puts it at s ~2015"}]}, "confidence": 0.7, "note": "T4 exit outside"}
+{"t": 48, "side": "right", "kind": "tower", "attrs": {"type": "scoring pylon"}, "confidence": 0.7}
+{"t": 50, "side": "left", "kind": "kerb", "attrs": {"type": "T5 kerb, red/white"}, "confidence": 0.7}
+{"t": 54, "side": "right", "kind": "kerb", "attrs": {"type": "red/white kerb", "ahead_m": 19.6, "correction": [{"round": 7, "was": {"attrs.ahead_m": null}, "why": "round 7: station correction: the row's time-map station s 2252 (sigma 22.4 m, direct) lies off the kerb it shows; T7 apex kerb (red / white) s 2269-2304 on c20_s2200 / c20_s2240; ahead_m puts it at s ~2272"}]}, "confidence": 0.7}
+{"t": 58, "side": "left", "kind": "kerb", "attrs": {"type": "yellow kerb"}, "confidence": 0.7}
+{"t": 60, "side": "right", "kind": "kerb", "attrs": {"type": "red/white kerb"}, "confidence": 0.7}
+{"t": 64, "side": "left", "kind": "wall", "attrs": {"type": "concrete wall", "colour": "white"}, "confidence": 0.7}
+{"t": 66, "side": "ahead", "kind": "bridge", "attrs": {"type": "PERMCO footbridge"}, "confidence": 0.7, "note": "passed at 66.8"}
+{"t": 12, "side": "right", "kind": "kerb", "attrs": {"type": "Carousel kerb, red/white", "ahead_m": -22.5, "correction": [{"round": 7, "was": {"attrs.ahead_m": null}, "why": "round 7: station correction: the row's time-map station s 3410 (sigma 13.1 m, direct) lies off the kerb it shows; Carousel apex kerb (red / white) s 3329-3389 on c20_s3280 / c20_s3320; no kerb on the right from 3390 to the pit straight kerb at 3513; ahead_m puts it at s ~3387"}]}, "confidence": 0.7}
+{"t": 12, "side": "left", "kind": "wall", "attrs": {"type": "concrete wall", "colour": "white"}, "confidence": 0.6, "note": "pit-entry side"}

@@ -1,0 +1,876 @@
+{
+ "track": "mid_ohio",
+ "shots": [
+  {
+   "file": "sim/sheet_01_T8_entry.jpg",
+   "s": 2498.7,
+   "side": "fwd",
+   "pos": [
+    169.621,
+    593.065,
+    -13.056
+   ],
+   "heading": 0.865340861678073,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_02_T8_apex.jpg",
+   "s": 2520.7,
+   "side": "fwd",
+   "pos": [
+    186.199,
+    607.373,
+    -14.303
+   ],
+   "heading": 0.5164186228696617,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_03_T8_exit.jpg",
+   "s": 2545.7,
+   "side": "fwd",
+   "pos": [
+    209.994,
+    614.509,
+    -15.01
+   ],
+   "heading": 0.11443745205651568,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_04_T4_entry.jpg",
+   "s": 1931.4,
+   "side": "fwd",
+   "pos": [
+    -201.511,
+    354.55,
+    -5.924
+   ],
+   "heading": 1.0122499817614306,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_05_T4_apex.jpg",
+   "s": 1961.4,
+   "side": "fwd",
+   "pos": [
+    -179.926,
+    374.767,
+    -6.706
+   ],
+   "heading": 0.4218281919527823,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_06_T4_exit.jpg",
+   "s": 2003.4,
+   "side": "fwd",
+   "pos": [
+    -138.966,
+    373.882,
+    -8.183
+   ],
+   "heading": -0.35967702326625417,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_07_T13_T1.jpg",
+   "s": 79.1,
+   "side": "fwd",
+   "pos": [
+    -17.23,
+    58.891,
+    0.706
+   ],
+   "heading": 3.0896005230862835,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_08_T1_entry.jpg",
+   "s": 277.2,
+   "side": "fwd",
+   "pos": [
+    -213.978,
+    57.988,
+    4.001
+   ],
+   "heading": -2.6863247367130967,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_09_T1_apex.jpg",
+   "s": 357.2,
+   "side": "fwd",
+   "pos": [
+    -267.176,
+    0.476,
+    4.944
+   ],
+   "heading": -1.902741738597614,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_10_T1_exit.jpg",
+   "s": 379.2,
+   "side": "fwd",
+   "pos": [
+    -271.094,
+    -21.113,
+    5.167
+   ],
+   "heading": -1.6285398704672847,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_11_T1_T2.jpg",
+   "s": 628.5,
+   "side": "fwd",
+   "pos": [
+    -266.131,
+    -270.187,
+    13.269
+   ],
+   "heading": -1.5393067392215527,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_12_T2_entry.jpg",
+   "s": 877.7,
+   "side": "fwd",
+   "pos": [
+    -253.374,
+    -518.951,
+    25.491
+   ],
+   "heading": -1.6067897774727797,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_13_T2_apex.jpg",
+   "s": 957.7,
+   "side": "fwd",
+   "pos": [
+    -306.519,
+    -567.398,
+    23.275
+   ],
+   "heading": 3.0552764339262977,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_14_T2_exit.jpg",
+   "s": 1027.7,
+   "side": "fwd",
+   "pos": [
+    -350.286,
+    -520.088,
+    20.295
+   ],
+   "heading": 1.6668850423122548,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_15_T2_T3.jpg",
+   "s": 1225.9,
+   "side": "fwd",
+   "pos": [
+    -356.959,
+    -322.074,
+    14.782
+   ],
+   "heading": 1.6072801306976001,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_16_T3_entry.jpg",
+   "s": 1424.0,
+   "side": "fwd",
+   "pos": [
+    -361.847,
+    -124.007,
+    8.713
+   ],
+   "heading": 1.5672980901904772,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_17_T3_apex.jpg",
+   "s": 1445.0,
+   "side": "fwd",
+   "pos": [
+    -361.231,
+    -103.005,
+    7.675
+   ],
+   "heading": 1.5082995987688645,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_18_T3_exit.jpg",
+   "s": 1507.0,
+   "side": "fwd",
+   "pos": [
+    -352.009,
+    -41.717,
+    5.013
+   ],
+   "heading": 1.3478181141567094,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_19_T3_T4.jpg",
+   "s": 1719.2,
+   "side": "fwd",
+   "pos": [
+    -280.502,
+    157.765,
+    -0.104
+   ],
+   "heading": 1.1982233454547846,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_20_T5_entry.jpg",
+   "s": 2070.5,
+   "side": "fwd",
+   "pos": [
+    -79.383,
+    343.52,
+    -7.823
+   ],
+   "heading": -0.29408962707322045,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_21_T5_apex.jpg",
+   "s": 2100.5,
+   "side": "fwd",
+   "pos": [
+    -49.9,
+    343.167,
+    -6.018
+   ],
+   "heading": 0.347916795749296,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_22_T5_exit.jpg",
+   "s": 2150.5,
+   "side": "fwd",
+   "pos": [
+    -22.326,
+    381.764,
+    -7.129
+   ],
+   "heading": 1.4515559807669787,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_23_T6_entry.jpg",
+   "s": 2253.6,
+   "side": "fwd",
+   "pos": [
+    -25.121,
+    484.701,
+    -14.636
+   ],
+   "heading": 1.4892528028053933,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_24_T6_apex.jpg",
+   "s": 2281.6,
+   "side": "fwd",
+   "pos": [
+    -14.968,
+    510.228,
+    -14.54
+   ],
+   "heading": 0.8175766526174165,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_25_T6_exit.jpg",
+   "s": 2308.6,
+   "side": "fwd",
+   "pos": [
+    8.882,
+    521.816,
+    -14.319
+   ],
+   "heading": 0.16338240280860855,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_26_T7_entry.jpg",
+   "s": 2366.7,
+   "side": "fwd",
+   "pos": [
+    66.655,
+    519.48,
+    -14.362
+   ],
+   "heading": -0.09158746775867281,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_27_T7_apex.jpg",
+   "s": 2386.7,
+   "side": "fwd",
+   "pos": [
+    86.554,
+    520.455,
+    -14.168
+   ],
+   "heading": 0.23018917353592758,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_28_T7_exit.jpg",
+   "s": 2408.7,
+   "side": "fwd",
+   "pos": [
+    106.431,
+    529.626,
+    -13.003
+   ],
+   "heading": 0.5909127948883838,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_29_T9_entry.jpg",
+   "s": 2621.8,
+   "side": "fwd",
+   "pos": [
+    285.992,
+    616.743,
+    -15.381
+   ],
+   "heading": -0.03824091322537433,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_30_T9_apex.jpg",
+   "s": 2642.8,
+   "side": "fwd",
+   "pos": [
+    306.225,
+    611.819,
+    -14.815
+   ],
+   "heading": -0.4946185773624331,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_31_T9_exit.jpg",
+   "s": 2674.8,
+   "side": "fwd",
+   "pos": [
+    326.459,
+    587.78,
+    -13.047
+   ],
+   "heading": -1.1606889079610958,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_32_T10_entry.jpg",
+   "s": 2905.0,
+   "side": "fwd",
+   "pos": [
+    334.5,
+    358.929,
+    -11.473
+   ],
+   "heading": -1.731878984231444,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_33_T10_apex.jpg",
+   "s": 2931.0,
+   "side": "fwd",
+   "pos": [
+    328.794,
+    333.566,
+    -10.571
+   ],
+   "heading": -1.8705810769230022,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_34_T10_exit.jpg",
+   "s": 2961.0,
+   "side": "fwd",
+   "pos": [
+    317.363,
+    305.844,
+    -9.477
+   ],
+   "heading": -2.0329915851243228,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_35_T11_entry.jpg",
+   "s": 3057.1,
+   "side": "fwd",
+   "pos": [
+    264.583,
+    225.791,
+    -4.629
+   ],
+   "heading": -2.1140867965953345,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_36_T11_apex.jpg",
+   "s": 3086.1,
+   "side": "fwd",
+   "pos": [
+    254.342,
+    198.86,
+    -3.309
+   ],
+   "heading": -1.7066504115259897,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_37_T11_exit.jpg",
+   "s": 3131.1,
+   "side": "fwd",
+   "pos": [
+    262.999,
+    155.329,
+    -1.422
+   ],
+   "heading": -1.1193296083865398,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_38_T12_entry.jpg",
+   "s": 3271.3,
+   "side": "fwd",
+   "pos": [
+    319.913,
+    29.463,
+    1.586
+   ],
+   "heading": -1.5830426528195494,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_39_T12_apex.jpg",
+   "s": 3351.3,
+   "side": "fwd",
+   "pos": [
+    273.408,
+    -28.396,
+    1.122
+   ],
+   "heading": -3.024089627584812,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_40_T12_exit.jpg",
+   "s": 3402.3,
+   "side": "fwd",
+   "pos": [
+    230.799,
+    -5.567,
+    0.308
+   ],
+   "heading": 2.150345109147974,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_41_T13_entry.jpg",
+   "s": 3433.4,
+   "side": "fwd",
+   "pos": [
+    216.146,
+    21.758,
+    -0.02
+   ],
+   "heading": 2.100075658915351,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_42_T13_apex.jpg",
+   "s": 3454.4,
+   "side": "fwd",
+   "pos": [
+    202.553,
+    37.586,
+    -0.704
+   ],
+   "heading": 2.505538800526808,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_43_T13_exit.jpg",
+   "s": 3478.4,
+   "side": "fwd",
+   "pos": [
+    180.472,
+    46.472,
+    -1.695
+   ],
+   "heading": 2.9596830150893263,
+   "yaw": 0,
+   "kind": "centre"
+  },
+  {
+   "file": "sim/sheet_01_T8_entry_line.jpg",
+   "s": 2498.7,
+   "side": "fwd",
+   "pos": [
+    172.4842534210736,
+    590.6264891277697,
+    null
+   ],
+   "heading": 0.865340861678073,
+   "yaw": 0,
+   "kind": "line -3.76 m"
+  },
+  {
+   "file": "sim/sheet_02_T8_apex_line.jpg",
+   "s": 2520.7,
+   "side": "fwd",
+   "pos": [
+    188.8748138981812,
+    602.6605342278996,
+    null
+   ],
+   "heading": 0.5164186228696617,
+   "yaw": 0,
+   "kind": "line -5.42 m"
+  },
+  {
+   "file": "sim/sheet_03_T8_exit_line.jpg",
+   "s": 2545.7,
+   "side": "fwd",
+   "pos": [
+    210.2937952136327,
+    611.9007160406928,
+    null
+   ],
+   "heading": 0.11443745205651568,
+   "yaw": 0,
+   "kind": "line -2.63 m"
+  },
+  {
+   "file": "sim/sheet_04_T4_entry_line.jpg",
+   "s": 1931.4,
+   "side": "fwd",
+   "pos": [
+    -199.9846364983353,
+    353.59613524247766,
+    null
+   ],
+   "heading": 1.0122499817614306,
+   "yaw": 0,
+   "kind": "line -1.80 m"
+  },
+  {
+   "file": "sim/sheet_05_T4_apex_line.jpg",
+   "s": 1961.4,
+   "side": "fwd",
+   "pos": [
+    -177.97257951555991,
+    370.4141399461501,
+    null
+   ],
+   "heading": 0.4218281919527823,
+   "yaw": 0,
+   "kind": "line -4.77 m"
+  },
+  {
+   "file": "sim/sheet_06_T4_exit_line.jpg",
+   "s": 2003.4,
+   "side": "fwd",
+   "pos": [
+    -140.31970552679448,
+    370.282046409582,
+    null
+   ],
+   "heading": -0.35967702326625417,
+   "yaw": 0,
+   "kind": "line -3.85 m"
+  },
+  {
+   "file": "sim/t8_walk_s2380_line.jpg",
+   "s": 2380,
+   "side": "fwd",
+   "pos": [
+    79.2242544396236,
+    523.8718870258522,
+    null
+   ],
+   "heading": 0.0923569869223439,
+   "yaw": 0,
+   "kind": "T8 walk, line +4.55 m"
+  },
+  {
+   "file": "sim/t8_walk_s2400_line.jpg",
+   "s": 2400,
+   "side": "fwd",
+   "pos": [
+    96.63766606919486,
+    529.0141719116855,
+    null
+   ],
+   "heading": 0.4763886206544278,
+   "yaw": 0,
+   "kind": "T8 walk, line +4.51 m"
+  },
+  {
+   "file": "sim/t8_walk_s2420_line.jpg",
+   "s": 2420,
+   "side": "fwd",
+   "pos": [
+    113.50917934275284,
+    538.453456295466,
+    null
+   ],
+   "heading": 0.6589398460683203,
+   "yaw": 0,
+   "kind": "T8 walk, line +2.95 m"
+  },
+  {
+   "file": "sim/t8_walk_s2440_line.jpg",
+   "s": 2440,
+   "side": "fwd",
+   "pos": [
+    129.35508814902846,
+    550.4813051094023,
+    null
+   ],
+   "heading": 0.7088430214266106,
+   "yaw": 0,
+   "kind": "T8 walk, line +2.28 m"
+  },
+  {
+   "file": "sim/t8_walk_s2460_line.jpg",
+   "s": 2460,
+   "side": "fwd",
+   "pos": [
+    144.0637851359916,
+    563.7083741434147,
+    null
+   ],
+   "heading": 0.8253344854183153,
+   "yaw": 0,
+   "kind": "T8 walk, line +1.72 m"
+  },
+  {
+   "file": "sim/t8_walk_s2480_line.jpg",
+   "s": 2480,
+   "side": "fwd",
+   "pos": [
+    158.50788666243258,
+    577.6389930592635,
+    null
+   ],
+   "heading": 0.925596323918298,
+   "yaw": 0,
+   "kind": "T8 walk, line -0.63 m"
+  },
+  {
+   "file": "sim/t8_walk_s2500_line.jpg",
+   "s": 2500,
+   "side": "fwd",
+   "pos": [
+    173.25839411987278,
+    591.2317848542203,
+    null
+   ],
+   "heading": 0.8557741312592427,
+   "yaw": 0,
+   "kind": "T8 walk, line -3.95 m"
+  },
+  {
+   "file": "sim/t8_walk_s2520_line.jpg",
+   "s": 2520,
+   "side": "fwd",
+   "pos": [
+    188.10837767359223,
+    602.2030761872093,
+    null
+   ],
+   "heading": 0.5363483849863997,
+   "yaw": 0,
+   "kind": "T8 walk, line -5.43 m"
+  },
+  {
+   "file": "sim/t8_walk_s2540_line.jpg",
+   "s": 2540,
+   "side": "fwd",
+   "pos": [
+    204.7087269107938,
+    610.0776006617615,
+    null
+   ],
+   "heading": 0.1819096385004526,
+   "yaw": 0,
+   "kind": "T8 walk, line -3.62 m"
+  },
+  {
+   "file": "sim/t8_walk_s2560_line.jpg",
+   "s": 2560,
+   "side": "fwd",
+   "pos": [
+    223.96736089407153,
+    615.4839285351783,
+    null
+   ],
+   "heading": 0.0334874766398606,
+   "yaw": 0,
+   "kind": "T8 walk, line +0.05 m"
+  },
+  {
+   "file": "sim/t8_walk_s2580_line.jpg",
+   "s": 2580,
+   "side": "fwd",
+   "pos": [
+    243.94758268619682,
+    618.3136417968087,
+    null
+   ],
+   "heading": 0.012493103118223072,
+   "yaw": 0,
+   "kind": "T8 walk, line +2.51 m"
+  },
+  {
+   "file": "sim/t4_entry_s1830_line.jpg",
+   "s": 1830,
+   "side": "fwd",
+   "pos": [
+    -244.4781173871528,
+    262.9408765569643,
+    null
+   ],
+   "heading": 1.1990124120873602,
+   "yaw": 0,
+   "kind": "T4 entry, line +4.64 m"
+  },
+  {
+   "file": "sim/t4_entry_s1840_line.jpg",
+   "s": 1840,
+   "side": "fwd",
+   "pos": [
+    -241.09841463814183,
+    272.3512178280511,
+    null
+   ],
+   "heading": 1.2014701843584161,
+   "yaw": 0,
+   "kind": "T4 entry, line +4.90 m"
+  },
+  {
+   "file": "sim/t4_entry_s1850_line.jpg",
+   "s": 1850,
+   "side": "fwd",
+   "pos": [
+    -237.64312751344835,
+    281.73584752124555,
+    null
+   ],
+   "heading": 1.203048502008327,
+   "yaw": 0,
+   "kind": "T4 entry, line +5.05 m"
+  },
+  {
+   "file": "sim/t4_entry_s1860_line.jpg",
+   "s": 1860,
+   "side": "fwd",
+   "pos": [
+    -234.0836718308202,
+    291.09405100478665,
+    null
+   ],
+   "heading": 1.2020262821975427,
+   "yaw": 0,
+   "kind": "T4 entry, line +5.10 m"
+  },
+  {
+   "file": "sim/t4_entry_s1870_line.jpg",
+   "s": 1870,
+   "side": "fwd",
+   "pos": [
+    -230.37870727912824,
+    300.4095723708183,
+    null
+   ],
+   "heading": 1.1984560636288732,
+   "yaw": 0,
+   "kind": "T4 entry, line +5.02 m"
+  },
+  {
+   "file": "sim/t4_entry_s1880_line.jpg",
+   "s": 1880,
+   "side": "fwd",
+   "pos": [
+    -226.46296451200223,
+    309.6426120957946,
+    null
+   ],
+   "heading": 1.1947436432694871,
+   "yaw": 0,
+   "kind": "T4 entry, line +4.75 m"
+  },
+  {
+   "file": "sim/t4_entry_s1890_line.jpg",
+   "s": 1890,
+   "side": "fwd",
+   "pos": [
+    -222.25771647406168,
+    318.7464646060846,
+    null
+   ],
+   "heading": 1.1933982672062302,
+   "yaw": 0,
+   "kind": "T4 entry, line +4.19 m"
+  }
+ ]
+}

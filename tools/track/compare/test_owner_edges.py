@@ -27,3 +27,73 @@ def test_synthetic_frame(tmp_path):
     assert len(L) > 50 and len(R) > 50
     assert np.allclose(L[:, 1], 5.0, atol=0.06) and np.allclose(R[:, 1], -4.0, atol=0.06)
     assert len(d['green_enu_xy']) > 20 and np.allclose(np.array(d['green_enu_xy'])[:, 1], 12.0, atol=0.2)
+
+
+def test_by_stroke_vector_origin():
+    """--by-stroke: a stroke along image row y px reads world y = cy + half - y * mpp with --vector-origin continuous (the
+    drawing page's canvas coordinates, as capwin draws / edge_mark_transfer.cjs projects), and half a pixel lower with the
+    default 'pixel' reading (Mid-Ohio round 3)"""
+    n = 400
+    C = np.c_[np.arange(n) - 200.0, np.zeros(n)]
+    track = {'center': C.tolist(), 'spacing_m': 1.0}
+    half, mpp = 30.0, 0.1
+    y_px = (half - 5.0) / mpp   # world y = 5.0 in continuous canvas coordinates
+    st = [{'c': 'red', 'kind': 'line', 'pts': [[20.0, y_px], [580.0, y_px]]}]
+    d0 = OE.run_strokes(st, 200.0, half, mpp, track, (0.0, 0.0), origin=0.0)
+    d5 = OE.run_strokes(st, 200.0, half, mpp, track, (0.0, 0.0))
+    L0 = np.array(d0['left_enu_xys']); L5 = np.array(d5['left_enu_xys'])
+    assert np.allclose(L0[:, 1], 5.0, atol=1e-6) and np.allclose(L5[:, 1], 5.0 - 0.5 * mpp, atol=1e-6)
+    assert d0['frame'].get('vector_origin') == 'continuous' and 'vector_origin' not in d5['frame']
+
+
+def _cli(tmp_path, frame, strokes, origin):
+    """owner_edges.py's command line on a synthetic package (a straight centre along +x) and one window"""
+    import json, subprocess
+    n = 400
+    pkg = tmp_path / 'pkg'; pkg.mkdir(exist_ok=True)
+    (pkg / 'track.json').write_text(json.dumps({'center': [[i - 200.0, 0.0, 0.0] for i in range(n)], 'spacing_m': 1.0}))
+    (tmp_path / 'frames.json').write_text(json.dumps({'win': frame}))
+    (tmp_path / 'strokes.json').write_text(json.dumps({'win': {'strokes': strokes}}))
+    out = tmp_path / 'out.json'
+    cmd = [sys.executable, '-I', os.path.join(HERE, 'owner_edges.py'), '--track', 't', '--by-stroke', '--frames', str(tmp_path / 'frames.json'),
+           '--window', 'win', '--strokes', str(tmp_path / 'strokes.json'), '--pkg', str(pkg), '--out', str(out)]
+    if origin:
+        cmd += ['--vector-origin', origin]
+    subprocess.run(cmd, check=True, capture_output=True)
+    return json.loads(out.read_text())
+
+
+def test_cli_frame_schemas_and_both_axes(tmp_path):
+    """--by-stroke --vector-origin continuous through the CLI and each frames schema the pipeline writes (Sonoma's
+    {centre, px}, the outline windows' {center_enu, half}, the round-3 checkpoint's {centre_enu, half, image_px} and
+    {centre_enu, image_px}): a stroke drawn in window image pixels comes back at its world point on BOTH axes (the
+    stroke's along-track ends in x, its lateral offset in y), within 1e-6 m; the default reading is half a pixel off on both"""
+    half, mpp, cx, cy = 30.0, 0.1, 3.3, -1.7
+    W = int(round(2 * half / mpp))
+    # a red stroke from world (cx - 20, cy + 5) to (cx + 20, cy + 5): image px = ((x - (cx - half)) / mpp, ((cy + half) - y) / mpp)
+    px = lambda x, y: [(x - (cx - half)) / mpp, ((cy + half) - y) / mpp]  # noqa: E731
+    strokes = [{'c': 'red', 'kind': 'line', 'pts': [px(cx - 20, cy + 5), px(cx + 20, cy + 5)]}]
+    for frame in ({'s': 200, 'mpp': mpp, 'centre': [cx, cy], 'px': W},
+                  {'s': 200, 'mpp': mpp, 'center_enu': [cx, cy], 'half': half},
+                  {'s': 200, 'mpp': mpp, 'centre_enu': [cx, cy], 'half': half, 'image_px': [W, W]},
+                  {'s': 200, 'mpp': mpp, 'centre_enu': [cx, cy], 'image_px': [W, W]}):
+        d = _cli(tmp_path, frame, strokes, 'continuous')
+        L = np.array(d['left_enu_xys'])
+        assert len(L) > 30
+        # lateral axis: every point at y = cy + 5 (the centre is y = 0, so the per-station median is the stroke itself)
+        assert np.allclose(L[:, 1], cy + 5, atol=1e-6)
+        # along-track axis: the stations covered are the stroke's x extent (nearest station, 1 m spacing)
+        assert L[:, 0].min() >= cx - 20 - 0.5 - 1e-6 and L[:, 0].max() <= cx + 20 + 0.5 + 1e-6
+        assert abs(L[:, 0].min() - (cx - 20)) <= 0.5 and abs(L[:, 0].max() - (cx + 20)) <= 0.5
+        assert d['frame']['vector_origin'] == 'continuous' and d['frame']['centre_enu'] == [round(cx, 3), round(cy, 3)]
+    # the default (pixel) reading: half a pixel right (x + mpp / 2) and down (y - mpp / 2)
+    d0 = _cli(tmp_path, {'s': 200, 'mpp': mpp, 'centre_enu': [cx, cy], 'half': half}, strokes, None)
+    assert np.allclose(np.array(d0['left_enu_xys'])[:, 1], cy + 5 - mpp / 2, atol=1e-6)
+    # x: a vertical stroke (across x = cx + 7) gives the x axis directly through its across samples' points
+    vs = [{'c': 'red', 'kind': 'line', 'pts': [px(cx + 7, cy + 3), px(cx + 7, cy + 9)]}]
+    dv = _cli(tmp_path, {'s': 200, 'mpp': mpp, 'centre_enu': [cx, cy], 'half': half}, vs, 'continuous')
+    xs = [p[0] for a_ in dv['across_enu'] for p in a_['pts_enu']]
+    assert xs and np.allclose(xs, cx + 7, atol=1e-3)
+    dv0 = _cli(tmp_path, {'s': 200, 'mpp': mpp, 'centre_enu': [cx, cy], 'half': half}, vs, None)
+    xs0 = [p[0] for a_ in dv0['across_enu'] for p in a_['pts_enu']]
+    assert np.allclose(xs0, cx + 7 + mpp / 2, atol=1e-3)

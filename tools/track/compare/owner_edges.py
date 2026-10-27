@@ -72,8 +72,11 @@ def stroke_band(strokes, size, colour, width=7):
     return np.asarray(im) > 0
 
 
-def run_strokes(strokes, s, half, mpp, track, centre, across_deg=35.0, step=0.25):
-    """--by-stroke: the edge points and the across lines from the stroke vectors (image pixels of the window)"""
+def run_strokes(strokes, s, half, mpp, track, centre, across_deg=35.0, step=0.25, origin=0.5):
+    """--by-stroke: the edge points and the across lines from the stroke vectors (image pixels of the window).
+    origin: the vector's offset added before scaling (0.5, the default: the pixel-index reading the PNG path uses;
+    0.0 = --vector-origin continuous: the drawing page's canvas coordinates, where image pixel i spans [i, i + 1) and
+    the window's left edge is 0, as capwin draws and edge_mark_transfer.cjs projects; Mid-Ohio round 3)"""
     C = np.array(track['center'])[:, :2]
     sp = track['spacing_m']
     t = np.roll(C, -1, 0) - np.roll(C, 1, 0); t /= np.linalg.norm(t, axis=1, keepdims=True)
@@ -85,7 +88,7 @@ def run_strokes(strokes, s, half, mpp, track, centre, across_deg=35.0, step=0.25
     cosmin = np.cos(np.radians(across_deg))
     for si, st in enumerate(strokes):
         P = np.array(st['pts'], float)
-        W = np.c_[cx - half + (P[:, 0] + 0.5) * mpp, cy + half - (P[:, 1] + 0.5) * mpp]
+        W = np.c_[cx - half + (P[:, 0] + origin) * mpp, cy + half - (P[:, 1] + origin) * mpp]
         if len(W) < 2:
             continue
         seg = np.linalg.norm(np.diff(W, axis=0), axis=1); u = np.r_[0, np.cumsum(seg)]
@@ -114,7 +117,8 @@ def run_strokes(strokes, s, half, mpp, track, centre, across_deg=35.0, step=0.25
     if len(G):
         cell = np.floor(G / 1.0).astype(int); _, idx = np.unique(cell, axis=0, return_index=True); G = G[np.sort(idx)]
     return {'frame': {'s': float(s), 'half': float(half), 'mpp': float(mpp), 'centre_enu': [round(float(cx), 3), round(float(cy), 3)],
-                      'image_px': [int(round(2 * half / mpp))] * 2, 'by_stroke': True, 'across_deg': across_deg},
+                      'image_px': [int(round(2 * half / mpp))] * 2, 'by_stroke': True, 'across_deg': across_deg,
+                      **({'vector_origin': 'continuous'} if origin == 0.0 else {})},
             'left_enu_xys': out['left'], 'right_enu_xys': out['right'],
             'green_enu_xy': [[round(float(x), 3), round(float(y), 3)] for x, y in G], 'across_enu': across}
 
@@ -147,6 +151,9 @@ def main():
     ap.add_argument('--png', help='the marked window (not with --by-stroke)')
     ap.add_argument('--by-stroke', action='store_true', help='read the strokes from --strokes vectors, not from the PNG')
     ap.add_argument('--across-deg', type=float, default=35.0)
+    ap.add_argument('--vector-origin', choices=['pixel', 'continuous'], default='pixel',
+                    help="--by-stroke: 'pixel' (default, +0.5 px as the PNG path) or 'continuous' (the drawing page's "
+                         "canvas coordinates, no half-pixel offset: capwin / edge_mark_transfer.cjs; Mid-Ohio round 3)")
     ap.add_argument('--s', type=float)
     ap.add_argument('--frames', help="the drawing page's frames.json (Sonoma round 14B): the window's centre, px and mpp")
     ap.add_argument('--window', help='the window name in --frames / --strokes')
@@ -161,11 +168,19 @@ def main():
     centre = None
     if a.frames:
         fr = json.load(open(a.frames))[a.window]
-        centre = tuple(fr['centre']); a.mpp = float(fr['mpp']); a.half = fr['px'] * a.mpp / 2; a.s = float(fr['s'])
+        a.mpp = float(fr['mpp']); a.s = float(fr['s'])
+        if 'centre' in fr:
+            centre = tuple(fr['centre']); a.half = fr['px'] * a.mpp / 2
+        else:
+            # the outline windows' own record (build_edge_review.py windows.json / owner_review frames.json: center_enu,
+            # half; the round-3 checkpoint's frames.json: centre_enu, half, image_px; Mid-Ohio round 3)
+            centre = tuple(fr['center_enu'] if 'center_enu' in fr else fr['centre_enu'])
+            a.half = float(fr['half']) if 'half' in fr else float(fr['image_px'][0]) * a.mpp / 2
     strokes = json.load(open(a.strokes))[a.window]['strokes'] if a.strokes else None
     d = {'track': a.track, 'src': a.src or f'owner drawing {os.path.basename(a.png or a.window)} (capwin --s {a.s} --half {a.half} --mpp {a.mpp})'}
     if a.by_stroke:
-        d.update(run_strokes(strokes, a.s, a.half, a.mpp, track, centre, a.across_deg))
+        d.update(run_strokes(strokes, a.s, a.half, a.mpp, track, centre, a.across_deg,
+                             origin=0.0 if a.vector_origin == 'continuous' else 0.5))
         print(f"{a.window}: {len(d['across_enu'])} across lines: " + ', '.join(f"stroke {x['stroke']} {len(x['pts_enu'])} pts" for x in d['across_enu']))
     else:
         d.update(run(a.png, a.s, a.half, a.mpp, track, centre, strokes))

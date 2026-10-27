@@ -49,6 +49,14 @@ export function createHotLap(ctx: ModeContext): GameMode {
     ctx.toast('BLACK FLAG · crossed the pit-exit cones');
   };
 
+  // the pit-exit blend line (scenery.json blend_line; HotlapSim invalidates the lap): the same black-flag words as the race
+  let blendSeen = 0;
+  const watchBlend = () => {
+    const b = ctx.blendFlags();
+    if (b.count > blendSeen) ctx.toast(`Black flag: ${b.reason ?? 'crossed the blend line'} (lap invalid)`);
+    blendSeen = b.count;
+  };
+
   const ghostsPage = (): MenuEntry[] => [
     ...ghosts.ghosts.map((g): MenuEntry => ({
       kind: 'toggle', id: `ghost:${g.lap.id}`, label: g.lap.label,
@@ -73,7 +81,7 @@ export function createHotLap(ctx: ModeContext): GameMode {
       timer.clearSession();
       hud.hideCorners();
       hud.setBanner(null);
-      blackFlags = 0; flagUntil = -1;
+      blackFlags = 0; flagUntil = -1; blendSeen = 0;
       cones?.clear();
       ctx.rollingStart({ launch: true });
     },
@@ -86,6 +94,7 @@ export function createHotLap(ctx: ModeContext): GameMode {
     },
     frame() {
       watchCones();
+      watchBlend();
       const tau = timer.started ? timer.current(ctx.simTime()) : null;
       ghosts.update(tau, ctx.playerPos());
     },

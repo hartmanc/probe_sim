@@ -1,0 +1,135 @@
+{
+ "window": {
+  "s": 2515,
+  "half_m": 85.0,
+  "mpp": 0.1
+ },
+ "legend": {
+  "red": "race edges (track.json)",
+  "white_dashed": "centre",
+  "cyan": "solver's line (ghosts.json)",
+  "orange": "smooth line through the real positions (360 lap, N837, IndyCar), held to the solver at T7 and T9",
+  "dots": "yellow N837, magenta 360 lap, green IndyCar"
+ },
+ "t8_min_radius_m": {
+  "centre": {
+   "s": 2522.0,
+   "R": 51.0
+  },
+  "solver": {
+   "s": 2523.0,
+   "R": 88.0
+  },
+  "real_fit": {
+   "s": 2566.0,
+   "R": 77.1
+  }
+ },
+ "offsets": [
+  {
+   "s": 2420,
+   "solver": 2.95,
+   "real_fit": 4.48
+  },
+  {
+   "s": 2430,
+   "solver": 2.46,
+   "real_fit": 4.44
+  },
+  {
+   "s": 2440,
+   "solver": 2.28,
+   "real_fit": 4.43
+  },
+  {
+   "s": 2450,
+   "solver": 2.14,
+   "real_fit": 4.45
+  },
+  {
+   "s": 2460,
+   "solver": 1.72,
+   "real_fit": 4.53
+  },
+  {
+   "s": 2470,
+   "solver": 0.79,
+   "real_fit": 4.52
+  },
+  {
+   "s": 2480,
+   "solver": -0.63,
+   "real_fit": 3.87
+  },
+  {
+   "s": 2490,
+   "solver": -2.33,
+   "real_fit": 2.1
+  },
+  {
+   "s": 2500,
+   "solver": -3.95,
+   "real_fit": -0.48
+  },
+  {
+   "s": 2510,
+   "solver": -5.08,
+   "real_fit": -3.04
+  },
+  {
+   "s": 2520,
+   "solver": -5.43,
+   "real_fit": -4.62
+  },
+  {
+   "s": 2530,
+   "solver": -4.92,
+   "real_fit": -4.87
+  },
+  {
+   "s": 2540,
+   "solver": -3.62,
+   "real_fit": -3.72
+  },
+  {
+   "s": 2550,
+   "solver": -1.82,
+   "real_fit": -1.38
+  },
+  {
+   "s": 2560,
+   "solver": 0.05,
+   "real_fit": 1.16
+  },
+  {
+   "s": 2570,
+   "solver": 1.57,
+   "real_fit": 2.85
+  },
+  {
+   "s": 2580,
+   "solver": 2.51,
+   "real_fit": 3.35
+  },
+  {
+   "s": 2590,
+   "solver": 2.75,
+   "real_fit": 2.9
+  },
+  {
+   "s": 2600,
+   "solver": 2.14,
+   "real_fit": 1.76
+  },
+  {
+   "s": 2610,
+   "solver": 0.65,
+   "real_fit": 0.2
+  },
+  {
+   "s": 2620,
+   "solver": -1.42,
+   "real_fit": -1.52
+  }
+ ]
+}

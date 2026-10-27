@@ -18,8 +18,22 @@ helper modules write to their own folder on import, so the few functions needed 
     section with each piece's time and speed, throttle and rpm from the lap each piece came from.
 The logger's distance frame (GPS centreline, 3558 m) is mapped onto the track's s by projecting the GPS centreline
 onto the track centre.
+
+Driver labels. The repository names the team's drivers only as "driver A".."driver D" (and Coby); the logger exports
+on disk keep whatever labels the team's analysis wrote. An optional, untracked alias file maps those labels onto the
+repository's labels before any lookup:
+
+    tools/ghosts/drivers.local.json      (git-ignored; never commit it)
+    {"aliases": {"sha256:<hex of the logger label, UTF-8>": "driver A", "<plain logger label>": "driver B", ...}}
+
+Keys are either the logger label itself or "sha256:" + the SHA-256 hex digest of it (so the file need not hold the
+label in clear). It applies to sections.pkl and official.pkl alike. Without the file (or with labels already equal to
+the config's) the builder matches labels exactly as before. A driver with clean logger sections but no official
+laps under the same label stops the build with a message naming the alias file, instead of a pandas traceback.
+The override path is the environment variable PROBE_GHOST_ALIASES (a file path), for a checkout that keeps it elsewhere.
 """
 
+import hashlib
 import json
 import os
 import sys
@@ -130,6 +144,35 @@ def solve(C, vtol=0.6, ltol=2.5, thrmin=80, use_lat=True):
     return best
 
 
+ALIAS_FILE = os.path.join(HERE, "drivers.local.json")
+
+
+def load_aliases(path=None):
+    """The optional local alias file (module docstring): {logger label or 'sha256:<hex>': repository label}."""
+    path = path or os.environ.get("PROBE_GHOST_ALIASES") or ALIAS_FILE
+    if not os.path.exists(path):
+        return {}, None
+    a = json.load(open(path))
+    a = a.get("aliases", a)
+    if not isinstance(a, dict) or not all(isinstance(k, str) and isinstance(v, str) for k, v in a.items()):
+        raise SystemExit(f"build_ghosts: {path}: expected {{\"aliases\": {{label or sha256:<hex>: driver label}}}}")
+    return a, path
+
+
+def alias_labels(labels, aliases):
+    """Map each logger label through the alias table (plain key first, then its sha256 key); unknown labels kept."""
+    if not aliases:
+        return labels
+
+    def one(x):
+        if not isinstance(x, str):
+            return x
+        if x in aliases:
+            return aliases[x]
+        return aliases.get("sha256:" + hashlib.sha256(x.encode("utf-8")).hexdigest(), x)
+    return labels.map(one)
+
+
 def load_logger():
     G = np.load(os.path.join(LAPS, "centreline.npy"))
     L = float(len(G))
@@ -137,8 +180,14 @@ def load_logger():
     J = [L if j is None else j for j in SECTIONS]  # defs.J
     TW, _ = pd.read_pickle(os.path.join(LAPS, "traces_warped.pkl"))
     X = pd.read_pickle(os.path.join(LAPS, "sections.pkl"))
+    aliases, apath = load_aliases()
+    if apath:
+        log(f"driver aliases: {len(aliases)} from {os.path.relpath(apath, ROOT)}")
+    X["driver"] = alias_labels(X["driver"], aliases)
     X["driver"] = X["driver"].replace({"16d7 pre-stop": "driver A"})
     _, OFFICIAL, MATCH = pd.read_pickle(os.path.join(LAPS, "official.pkl"))
+    OFFICIAL = OFFICIAL.copy()
+    OFFICIAL["driver"] = alias_labels(OFFICIAL["driver"], aliases)
     X = X.join(MATCH[["n", "official_s"]])
     X["logger_lapw"] = X.lapw
     FAC = X.official_s / X.lapw
@@ -298,6 +347,11 @@ def main():
             continue
         best = c.lapw.idxmin()
         stint = OFFICIAL[OFFICIAL.driver == name]
+        if not len(stint):
+            raise SystemExit(
+                f"build_ghosts: '{name}' has {len(c)} clean logger section row(s) but no official lap under that label "
+                f"in {os.path.join(LAPS, 'official.pkl')}; the logger labels differ from the config's logger_drivers. "
+                f"Map them in the untracked alias file {os.path.relpath(ALIAS_FILE, ROOT)} (see the module docstring).")
         ob = stint.loc[stint.lap_s.idxmin()]
         same = ob.n == X.loc[best, "n"]
         tr = TW[best]
@@ -307,7 +361,7 @@ def main():
         lap_time = float(X.loc[best, "official_s"])
         t_end = (np.interp(L, SE, t_raw) - t0) * FAC[best]
         laps.append({
-            "id": f"{name.lower()}_best", "driver": name, "kind": "real", "lap_time_s": round(lap_time, 3),
+            "id": f"{name.lower().replace(' ', '_')}_best", "driver": name, "kind": "real", "lap_time_s": round(lap_time, 3),
             "t": t, "v": on_grid(tr, "v"), "rpm": on_grid(tr, "rpm"), "thr": on_grid(tr, "thr"),
             "lat": on_grid(tr, "lat"), "t_end": t_end, "file": X.loc[best, "file"], "official_lap": int(X.loc[best, "n"]),
             "is_official_best": bool(same), "src": best,

@@ -2,7 +2,7 @@
 // First crossing starts timing. A lap is invalid if the car spent more than
 // 2 s continuously with all four wheels off track (still shown, greyed).
 
-export interface Lap { n: number; time: number; valid: boolean; speedTrace: Float32Array }
+export interface Lap { n: number; time: number; valid: boolean; speedTrace: Float32Array; /** why the lap is invalid when a rule other than the 2 s off-track limit made it so (the pit-exit blend line) */ reason?: string }
 
 const OFF_LIMIT_S = 2;
 export const TRACE_GRID_M = 2;
@@ -14,6 +14,8 @@ export class LapTimer {
   laps: Lap[] = [];
   best: Lap | null = null;
   currentValid = true;
+  /** the first rule other than off-track that made the current lap invalid (undefined: none) */
+  private invalidReason: string | undefined;
   offTime = 0;           // continuous fully-off-track time
   private prevS = -1;
   private prevT = 0;
@@ -29,8 +31,15 @@ export class LapTimer {
   }
 
   reset(): void {
-    this.started = false; this.prevS = -1; this.armed = false; this.offTime = 0; this.currentValid = true;
+    this.started = false; this.prevS = -1; this.armed = false; this.offTime = 0; this.currentValid = true; this.invalidReason = undefined;
     this.trace = this.newTrace();
+  }
+
+  /** Make the current lap invalid for a named rule (the first reason is kept). */
+  invalidate(reason: string): void {
+    if (!this.started) return;
+    this.currentValid = false;
+    if (this.invalidReason === undefined) this.invalidReason = reason;
   }
 
   /** reset() plus forget the session's laps and best (mode restart). */
@@ -59,7 +68,7 @@ export class LapTimer {
         if (!this.started) {
           this.started = true; event = 'start';
         } else if (this.armed) {
-          const lap: Lap = { n: this.lapNumber, time: tc - this.lapStart, valid: this.currentValid, speedTrace: this.trace };
+          const lap: Lap = { n: this.lapNumber, time: tc - this.lapStart, valid: this.currentValid, speedTrace: this.trace, ...(this.invalidReason !== undefined ? { reason: this.invalidReason } : {}) };
           this.laps.push(lap);
           if (lap.valid && (!this.best || lap.time < this.best.time)) this.best = lap;
           event = lap;
@@ -67,7 +76,7 @@ export class LapTimer {
           event = null; // crossed again without a lap (e.g. reversed over the line); restart the lap
         }
         if (event !== null || !this.armed) {
-          this.lapStart = tc; this.lapNumber = this.laps.length + 1; this.currentValid = true; this.offTime = 0; this.trace = this.newTrace();
+          this.lapStart = tc; this.lapNumber = this.laps.length + 1; this.currentValid = true; this.invalidReason = undefined; this.offTime = 0; this.trace = this.newTrace();
           if (event === null && this.started) event = 'start';
         }
         this.armed = false;

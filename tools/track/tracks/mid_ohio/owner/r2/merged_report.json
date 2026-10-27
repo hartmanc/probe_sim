@@ -1,0 +1,90 @@
+{
+ "windows": [
+  "close_s0220.json",
+  "close_s0320.json",
+  "w_s0000.json",
+  "w_s0125.json",
+  "w_s0250.json",
+  "w_s0375.json",
+  "w_s0500.json",
+  "w_s0625.json",
+  "w_s0750.json",
+  "w_s0875.json",
+  "w_s1250.json",
+  "w_s3375.json",
+  "w_s3500.json"
+ ],
+ "dropped_far": 0,
+ "tol": 0.3,
+ "fills": [],
+ "drops": {
+  "w_s0250:right:186:243": 58,
+  "w_s0125:left:189:200": 12,
+  "w_s0250:left:274:295": 22,
+  "w_s0375:left:311:323": 13,
+  "w_s0375:right:339:340": 2,
+  "w_s0500:right:427:475": 49,
+  "w_s0000:left:3519:3538": 19,
+  "w_s0000:right:3519:3524": 5,
+  "w_s3500:right:3431:3443": 13
+ },
+ "left": {
+  "stations": 712,
+  "of": 3595,
+  "by_window_count": {
+   "1": 405,
+   "2": 253,
+   "3": 54
+  },
+  "disagreements": 0,
+  "missing_runs": [
+   [
+    363,
+    390
+   ],
+   [
+    577,
+    3431
+   ]
+  ],
+  "disagree": []
+ },
+ "right": {
+  "stations": 722,
+  "of": 3595,
+  "by_window_count": {
+   "1": 479,
+   "2": 191,
+   "3": 52
+  },
+  "disagreements": 1,
+  "missing_runs": [
+   [
+    452,
+    475
+   ],
+   [
+    577,
+    3425
+   ]
+  ],
+  "disagree": [
+   {
+    "k": 268,
+    "s": 268.2,
+    "spread": 0.326,
+    "merged": 5.777,
+    "readings": {
+     "close_s0320": [
+      6.098,
+      1.0
+     ],
+     "w_s0250": [
+      5.772,
+      55.5
+     ]
+    }
+   }
+  ]
+ }
+}

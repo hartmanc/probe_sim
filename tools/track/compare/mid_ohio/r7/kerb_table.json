@@ -1,0 +1,433 @@
+[
+ {
+  "name": "T1 inside (apex) kerb",
+  "side": "left",
+  "s0": 299.0,
+  "s1": 348.5,
+  "colour": "red / white blocks",
+  "edge_line": false,
+  "profile": "raised 0.05 m",
+  "width": 1.65,
+  "off": 0.82,
+  "frames": [
+   "e25u_vjn1uM@32.0 (T1 inside kerb, red/white, flat; s 295, direct)",
+   "OJaBJz18xEo@16.0 (T1 inside kerb, red/white; s 339, direct)",
+   "9Drr1VkE1_U@90.0 (T1 kerb, red/white; s 341, corroborate)"
+  ],
+  "captures": [
+   "c20_s0240",
+   "c20_s0280"
+  ],
+  "forced": false
+ },
+ {
+  "name": "T2 (Keyhole) exit kerb",
+  "side": "left",
+  "s0": 1030.0,
+  "s1": 1101.5,
+  "colour": "yellow + red outer band (1.05 + 1.10 m)",
+  "edge_line": false,
+  "profile": "flat paint",
+  "width": 1.05,
+  "off": 0.53,
+  "frames": [
+   "9Drr1VkE1_U@102.0 (T2 exit kerb, yellow; s 1035, corroborate)",
+   "e25u_vjn1uM@54.0 (T2 exit kerb, yellow, flat; s 1044, direct)",
+   "9Drr1VkE1_U@34.0 (T2 exit kerb, yellow with red band; s 1050, direct)",
+   "OJaBJz18xEo@42.0 (T2 exit kerb, yellow with red band; s 1066, direct)",
+   "9Drr1VkE1_U@168.0 (T2 exit kerb, yellow; s 1074, corroborate)",
+   "e25u_vjn1uM@56.0 (yellow exit kerb ends; s 1101, direct)"
+  ],
+  "captures": [
+   "c20_s0960",
+   "c20_s1000",
+   "c20_s1040"
+  ]
+ },
+ {
+  "name": "T4 exit kerb",
+  "side": "left",
+  "s0": 2013.0,
+  "s1": 2042.0,
+  "colour": "yellow",
+  "edge_line": false,
+  "profile": "flat paint",
+  "width": 1.45,
+  "off": 0.72,
+  "frames": [
+   "9Drr1VkE1_U@48.0 (yellow kerb; s 1989, direct)",
+   "e25u_vjn1uM@78.0 (yellow kerb; s 1995, direct)"
+  ],
+  "captures": [
+   "c20_s1920",
+   "c20_s1960"
+  ]
+ },
+ {
+  "name": "T5 (Madness) apex kerb",
+  "side": "left",
+  "s0": 2087.0,
+  "s1": 2138.0,
+  "colour": "red / white blocks",
+  "edge_line": true,
+  "profile": "raised 0.05 m",
+  "width": 1.65,
+  "off": 0.82,
+  "frames": [
+   "9Drr1VkE1_U@184.0 (T5 kerb, red/white; s 2070, corroborate)",
+   "9Drr1VkE1_U@50.0 (T5 kerb, red/white; s 2082, direct)",
+   "e25u_vjn1uM@82.0 (T5 apex kerb, red/white; s 2100, direct)",
+   "OJaBJz18xEo@72.0 (T5 apex kerb, red/white; s 2105, direct)"
+  ],
+  "captures": [
+   "c20_s2040",
+   "c20_s2080"
+  ],
+  "forced": false
+ },
+ {
+  "name": "T7 exit / T8 approach kerb",
+  "side": "left",
+  "s0": 2351.5,
+  "s1": 2401.5,
+  "colour": "yellow",
+  "edge_line": false,
+  "profile": "flat paint",
+  "width": 1.55,
+  "off": 0.78,
+  "frames": [
+   "e25u_vjn1uM@92.0 (yellow kerb; s 2371, direct)",
+   "OJaBJz18xEo@84.0 (yellow kerb; s 2391, direct)",
+   "9Drr1VkE1_U@192.0 (yellow kerb; s 2407, corroborate)",
+   "9Drr1VkE1_U@58.0 (yellow kerb; s 2411, direct)"
+  ],
+  "captures": [
+   "c20_s2280",
+   "c20_s2320",
+   "c20_s2360"
+  ]
+ },
+ {
+  "name": "T8 crest kerb",
+  "side": "left",
+  "s0": 2446.5,
+  "s1": 2464.0,
+  "colour": "yellow",
+  "edge_line": true,
+  "profile": "flat paint",
+  "width": 1.15,
+  "off": 0.57,
+  "frames": [],
+  "captures": [
+   "c20_s2400"
+  ]
+ },
+ {
+  "name": "T8 exit kerb",
+  "side": "left",
+  "s0": 2578.0,
+  "s1": 2615.0,
+  "colour": "yellow",
+  "edge_line": true,
+  "profile": "flat paint",
+  "width": 1.35,
+  "off": 0.68,
+  "frames": [
+   "9Drr1VkE1_U@196.0 (yellow kerb; s 2603, corroborate)",
+   "OJaBJz18xEo@92.0 (yellow kerb; s 2610, direct)",
+   "e25u_vjn1uM@100.0 (yellow kerb; s 2616, direct)"
+  ],
+  "captures": [
+   "c20_s2520",
+   "c20_s2560"
+  ]
+ },
+ {
+  "name": "T9 exit kerb",
+  "side": "left",
+  "s0": 2727.0,
+  "s1": 2784.5,
+  "colour": "yellow + red outer band (0.85 + 0.60 m)",
+  "edge_line": false,
+  "profile": "flat paint",
+  "width": 0.85,
+  "off": 0.42,
+  "frames": [
+   "e25u_vjn1uM@104.0 (T9 exit kerb, yellow and red; s 2722, direct)",
+   "OJaBJz18xEo@98.0 (T9 exit kerb, yellow and red; s 2746, direct)"
+  ],
+  "captures": [
+   "c20_s2680",
+   "c20_s2720"
+  ]
+ },
+ {
+  "name": "T11 apex kerb",
+  "side": "left",
+  "s0": 3082.5,
+  "s1": 3114.0,
+  "colour": "red / white blocks",
+  "edge_line": true,
+  "profile": "raised 0.05 m",
+  "width": 1.65,
+  "off": 0.82,
+  "frames": [
+   "OJaBJz18xEo@110.0 (red/white kerb; s 3103, direct)",
+   "e25u_vjn1uM@114.0 (red/white kerb; s 3109, direct)"
+  ],
+  "captures": [
+   "c20_s3040",
+   "c20_s3080"
+  ],
+  "forced": false
+ },
+ {
+  "name": "T13 apex kerb",
+  "side": "left",
+  "s0": 3439.5,
+  "s1": 3474.5,
+  "colour": "red / white blocks",
+  "edge_line": true,
+  "profile": "raised 0.05 m",
+  "width": 1.65,
+  "off": 0.82,
+  "frames": [
+   "e25u_vjn1uM@126.0 (T13 kerb, red/white; s 3447, direct)",
+   "OJaBJz18xEo@126.0 (T13 kerb; s 3474, direct)"
+  ],
+  "captures": [
+   "c20_s3400"
+  ],
+  "forced": false
+ },
+ {
+  "side": "left",
+  "s0": 3595.0,
+  "s1": 2.5,
+  "rejected": "the S/F timing stripes and the pit-wall foot at the line (c20_s3560): no kerb; no inventory kerb row"
+ },
+ {
+  "name": "T1 exit kerb",
+  "side": "right",
+  "s0": 381.5,
+  "s1": 457.5,
+  "colour": "yellow + red outer band (1.15 + 1.00 m)",
+  "edge_line": false,
+  "profile": "flat paint",
+  "width": 1.15,
+  "off": 0.57,
+  "frames": [
+   "9Drr1VkE1_U@22.0 (T1 exit kerb, yellow; s 374, direct)",
+   "9Drr1VkE1_U@156.0 (T1 exit kerb, yellow; s 394, corroborate)",
+   "e25u_vjn1uM@36.0 (T1 exit kerb, yellow, flat (rumble strip); s 419, direct)",
+   "OJaBJz18xEo@20.0 (T1 exit kerb, yellow, with red outer band; s 440, direct)",
+   "9Drr1VkE1_U@92.0 (T1 exit kerb, yellow; s 447, corroborate)"
+  ],
+  "captures": [
+   "c20_s0320",
+   "c20_s0360"
+  ]
+ },
+ {
+  "name": "T2 (Keyhole) apex kerb",
+  "side": "right",
+  "s0": 871.5,
+  "s1": 1016.5,
+  "colour": "red / white blocks",
+  "edge_line": true,
+  "profile": "raised 0.05 m",
+  "width": 1.65,
+  "off": 0.82,
+  "frames": [
+   "9Drr1VkE1_U@98.0 (Keyhole kerb, red/white; s 890, corroborate)",
+   "9Drr1VkE1_U@30.0 (Keyhole kerb, red/white; s 902, direct)",
+   "OJaBJz18xEo@34.0 (Keyhole kerb, red/white; s 906, direct)",
+   "e25u_vjn1uM@48.0 (Keyhole kerb, red/white, long; s 912, direct)",
+   "9Drr1VkE1_U@164.0 (Keyhole kerb, red/white; s 930, corroborate)",
+   "OJaBJz18xEo@36.0 (Keyhole kerb, red/white; s 943, direct)",
+   "e25u_vjn1uM@50.0 (Keyhole kerb, red/white, long; s 958, direct)",
+   "9Drr1VkE1_U@100.0 (Keyhole kerb, red/white; s 966, corroborate)",
+   "9Drr1VkE1_U@32.0 (Keyhole kerb, red/white; s 974, direct)",
+   "9Drr1VkE1_U@166.0 (Keyhole kerb, red/white; s 998, corroborate)",
+   "e25u_vjn1uM@52.0 (Keyhole kerb, red/white, long; s 999, direct)",
+   "OJaBJz18xEo@40.0 (Keyhole kerb, red/white; s 1019, direct)"
+  ],
+  "captures": [
+   "c20_s0800",
+   "c20_s0840",
+   "c20_s0880",
+   "c20_s0920",
+   "c20_s0960"
+  ],
+  "forced": false
+ },
+ {
+  "name": "T4 apex kerb",
+  "side": "right",
+  "s0": 1950.5,
+  "s1": 1984.5,
+  "colour": "red / white blocks",
+  "edge_line": true,
+  "profile": "raised 0.05 m",
+  "width": 1.65,
+  "off": 0.82,
+  "frames": [
+   "e25u_vjn1uM@76.0 (T4 apex kerb, red/white (kept in the 2024 rebuild); s 1952, direct)",
+   "9Drr1VkE1_U@116.0 (T4 apex kerb, red/white; s 1955, corroborate)",
+   "OJaBJz18xEo@66.0 (T4 apex kerb, red/white; s 1973, direct)"
+  ],
+  "captures": [
+   "c20_s1880",
+   "c20_s1920"
+  ],
+  "forced": false
+ },
+ {
+  "name": "T6 kerb",
+  "side": "right",
+  "s0": 2150.5,
+  "s1": 2194.5,
+  "colour": "yellow",
+  "edge_line": true,
+  "profile": "flat paint",
+  "width": 1.15,
+  "off": 0.57,
+  "frames": [
+   "e25u_vjn1uM@84.0 (T6 kerb, yellow; s 2147, direct)",
+   "OJaBJz18xEo@76.0 (yellow kerb; s 2198, direct)"
+  ],
+  "captures": [
+   "c20_s2080",
+   "c20_s2120"
+  ]
+ },
+ {
+  "name": "T7 apex kerb",
+  "side": "right",
+  "s0": 2269.5,
+  "s1": 2304.5,
+  "colour": "red / white blocks",
+  "edge_line": true,
+  "profile": "raised 0.05 m",
+  "width": 1.65,
+  "off": 0.82,
+  "frames": [
+   "9Drr1VkE1_U@54.0 (red/white kerb; s 2252, direct)",
+   "OJaBJz18xEo@80.0 (red/white kerb; s 2295, direct)"
+  ],
+  "captures": [
+   "c20_s2200",
+   "c20_s2240"
+  ],
+  "forced": false
+ },
+ {
+  "name": "T8 apex kerb",
+  "side": "right",
+  "s0": 2505.5,
+  "s1": 2541.0,
+  "colour": "red / white blocks",
+  "edge_line": true,
+  "profile": "raised 0.05 m",
+  "width": 1.25,
+  "off": 0.62,
+  "frames": [
+   "OJaBJz18xEo@88.0 (red/white kerb; s 2504, direct)",
+   "9Drr1VkE1_U@60.0 (red/white kerb; s 2512, direct)"
+  ],
+  "captures": [
+   "c20_s2440",
+   "c20_s2480"
+  ],
+  "forced": true
+ },
+ {
+  "name": "T9 apex kerb",
+  "side": "right",
+  "s0": 2634.0,
+  "s1": 2681.0,
+  "colour": "red / white blocks",
+  "edge_line": true,
+  "profile": "raised 0.05 m",
+  "width": 1.45,
+  "off": 0.72,
+  "frames": [
+   "OJaBJz18xEo@94.0 (red/white kerb; s 2653, direct)",
+   "e25u_vjn1uM@102.0 (T9 apex kerb, red/white; s 2664, direct)"
+  ],
+  "captures": [
+   "c20_s2600",
+   "c20_s2640"
+  ],
+  "forced": false
+ },
+ {
+  "name": "T11 exit kerb",
+  "side": "right",
+  "s0": 3140.5,
+  "s1": 3203.0,
+  "colour": "yellow",
+  "edge_line": true,
+  "profile": "flat paint",
+  "width": 1.25,
+  "off": 0.62,
+  "frames": [
+   "OJaBJz18xEo@112.0 (yellow kerb; s 3149, direct)",
+   "e25u_vjn1uM@116.0 (yellow kerb; s 3172, direct)",
+   "OJaBJz18xEo@114.0 (yellow kerb; s 3204, direct)"
+  ],
+  "captures": [
+   "c20_s3080",
+   "c20_s3120",
+   "c20_s3160"
+  ]
+ },
+ {
+  "name": "T12 (Carousel) apex kerb",
+  "side": "right",
+  "s0": 3329.0,
+  "s1": 3389.5,
+  "colour": "red / white blocks",
+  "edge_line": true,
+  "profile": "raised 0.05 m",
+  "width": 1.65,
+  "off": 0.82,
+  "frames": [
+   "OJaBJz18xEo@120.0 (Carousel kerb, red/white; s 3341, direct)",
+   "e25u_vjn1uM@122.0 (Carousel kerb, red/white; s 3351, direct)",
+   "e25u_vjn1uM@16.0 (Carousel kerb, red/white; s 3372, direct)",
+   "OJaBJz18xEo@122.0 (red/white kerb; s 3378, direct)",
+   "e25u_vjn1uM@124.0 (red/white kerb; s 3395, direct)",
+   "9Drr1VkE1_U@82.0 (Carousel / T13 kerb, red/white; s 3408, corroborate)",
+   "9Drr1VkE1_U@12.0 (Carousel kerb, red/white; s 3410, direct)"
+  ],
+  "captures": [
+   "c20_s3280",
+   "c20_s3320"
+  ],
+  "forced": false
+ },
+ {
+  "name": "pit-straight kerb (T13 exit)",
+  "side": "right",
+  "s0": 3513.5,
+  "s1": 3575.0,
+  "colour": "yellow",
+  "edge_line": false,
+  "profile": "flat paint",
+  "width": 1.65,
+  "off": 0.82,
+  "frames": [
+   "9Drr1VkE1_U@148.0 (yellow kerb; s 3523, corroborate)",
+   "e25u_vjn1uM@22.0 (yellow kerb; s 3528, direct)",
+   "OJaBJz18xEo@128.0 (yellow kerb; s 3531, direct)",
+   "9Drr1VkE1_U@84.0 (yellow kerb; s 3544, corroborate)",
+   "e25u_vjn1uM@130.0 (yellow kerb; s 3557, direct)",
+   "OJaBJz18xEo@4.0 (yellow kerb; s 3559, direct)"
+  ],
+  "captures": [
+   "c20_s3480",
+   "c20_s3520"
+  ]
+ }
+]
