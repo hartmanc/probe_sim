@@ -8,7 +8,7 @@
  "padding_s": 0.05,
  "levels": {
   "off_minus_on_db": -6.0,
-  "on_rms_dbA": -29.31
+  "on_rms_dbA": -29.55
  },
  "bins": [
   {
@@ -318,48 +318,48 @@
    },
    "off": {
     "offset": 18.065313,
-    "duration": 1.115854,
-    "rpm": 3763.93,
+    "duration": 1.124854,
+    "rpm": 3733.82,
     "tier": "pitch-shifted",
-    "source": "pitch-shifted from the 4250 rpm bin (x0.882), src8 @ 67.14 s",
-    "seam_corr": 0.454,
-    "tick": 5.34
+    "source": "pitch-shifted from the 4250 rpm bin (x0.882), round three repair of the contaminated off loop; donor: src8 @ 67.14 s + src6 @ 10.91 s",
+    "seam_corr": 0.634,
+    "tick": 2.0
    }
   },
   {
    "rpm": 4000,
    "on": {
     "offset": 18.96575,
-    "duration": 1.135708,
-    "rpm": 4015.12,
-    "tier": "from-off",
-    "source": "the off-throttle 4250 rpm loop (x0.941), src8 @ 67.14 s",
-    "seam_corr": 0.381,
-    "tick": 4.98
+    "duration": 1.139958,
+    "rpm": 4000.15,
+    "tier": "pitch-shifted",
+    "source": "pitch-shifted from the 3500 rpm bin (x1.143), round three repair of the contaminated on loop; donor: src5 @ 414.14 s",
+    "seam_corr": 0.905,
+    "tick": 1.39
    },
    "off": {
-    "offset": 19.281167,
-    "duration": 1.135708,
-    "rpm": 4015.12,
+    "offset": 19.290167,
+    "duration": 1.140625,
+    "rpm": 3997.81,
     "tier": "pitch-shifted",
-    "source": "pitch-shifted from the 4250 rpm bin (x0.941), src8 @ 67.14 s",
-    "seam_corr": 0.381,
-    "tick": 4.98
+    "source": "pitch-shifted from the 4250 rpm bin (x0.941), round three repair of the contaminated off loop; donor: src8 @ 67.14 s + src6 @ 10.91 s",
+    "seam_corr": 0.701,
+    "tick": 2.15
    }
   },
   {
    "rpm": 4250,
    "on": {
-    "offset": 20.201458,
-    "duration": 1.128854,
-    "rpm": 4252.1,
-    "tier": "from-off",
-    "source": "the off-throttle 4250 rpm loop (x1.000), src8 @ 67.14 s",
-    "seam_corr": 0.357,
-    "tick": 3.93
+    "offset": 20.205708,
+    "duration": 1.129271,
+    "rpm": 4250.53,
+    "tier": "pitch-shifted",
+    "source": "pitch-shifted from the 3500 rpm bin (x1.214), round three repair of the contaminated on loop; donor: src5 @ 414.14 s",
+    "seam_corr": 0.905,
+    "tick": 1.44
    },
    "off": {
-    "offset": 20.516875,
+    "offset": 20.530792,
     "duration": 1.016458,
     "rpm": 4250.05,
     "tier": "sweep",
@@ -371,49 +371,49 @@
   {
    "rpm": 4500,
    "on": {
-    "offset": 21.430312,
-    "duration": 1.144979,
-    "rpm": 4506.63,
-    "tier": "from-off",
-    "source": "the off-throttle 4250 rpm loop (x1.059), src8 @ 67.14 s",
-    "seam_corr": 0.408,
-    "tick": 3.13
+    "offset": 21.434979,
+    "duration": 1.146479,
+    "rpm": 4500.74,
+    "tier": "pitch-shifted",
+    "source": "pitch-shifted from the 3500 rpm bin (x1.285), round three repair of the contaminated on loop; donor: src5 @ 414.14 s",
+    "seam_corr": 0.904,
+    "tick": 1.46
    },
    "off": {
-    "offset": 21.633333,
-    "duration": 1.144979,
-    "rpm": 4506.63,
+    "offset": 21.64725,
+    "duration": 1.140021,
+    "rpm": 4526.23,
     "tier": "pitch-shifted",
-    "source": "pitch-shifted from the 4250 rpm bin (x1.059), src8 @ 67.14 s",
-    "seam_corr": 0.408,
-    "tick": 3.13
+    "source": "pitch-shifted from the 4250 rpm bin (x1.059), round three repair of the contaminated off loop; donor: src8 @ 67.14 s + src6 @ 10.91 s",
+    "seam_corr": 0.653,
+    "tick": 2.27
    }
   },
   {
    "rpm": 4750,
    "on": {
-    "offset": 22.675292,
-    "duration": 1.1305,
-    "rpm": 4776.65,
-    "tier": "from-off",
-    "source": "the off-throttle 4250 rpm loop (x1.118), src8 @ 67.14 s",
-    "seam_corr": 0.38,
-    "tick": 3.36
+    "offset": 22.681458,
+    "duration": 1.132521,
+    "rpm": 4768.12,
+    "tier": "pitch-shifted",
+    "source": "pitch-shifted from the 3500 rpm bin (x1.357), round three repair of the contaminated on loop; donor: src5 @ 414.14 s",
+    "seam_corr": 0.824,
+    "tick": 1.46
    },
    "off": {
-    "offset": 22.878312,
-    "duration": 1.1305,
-    "rpm": 4776.65,
+    "offset": 22.887271,
+    "duration": 1.137646,
+    "rpm": 4746.64,
     "tier": "pitch-shifted",
-    "source": "pitch-shifted from the 4250 rpm bin (x1.118), src8 @ 67.14 s",
-    "seam_corr": 0.38,
-    "tick": 3.36
+    "source": "pitch-shifted from the 4250 rpm bin (x1.118), round three repair of the contaminated off loop; donor: src8 @ 67.14 s + src6 @ 10.91 s",
+    "seam_corr": 0.695,
+    "tick": 2.03
    }
   },
   {
    "rpm": 5000,
    "on": {
-    "offset": 23.905792,
+    "offset": 23.913979,
     "duration": 1.127854,
     "rpm": 5000.65,
     "tier": "pitch-shifted",
@@ -422,7 +422,7 @@
     "tick": 1.45
    },
    "off": {
-    "offset": 24.108812,
+    "offset": 24.124917,
     "duration": 1.125646,
     "rpm": 5010.46,
     "tier": "pitch-shifted",
@@ -610,20 +610,5 @@
    "octave_relabel": 1.0,
    "t1": 60.0
   }
- ],
- "fallback": {
-  "on": "engine_on.m4a",
-  "off": "engine_off.m4a",
-  "format": "m4a AAC-LC 96kbps 48 kHz mono (aac_at)",
-  "offset_s": 4e-07,
-  "offsets_s": {
-   "on": 4e-07,
-   "off": 3e-07
-  },
-  "priming_s": 0.044,
-  "lengths_s": {
-   "on": 25.194667,
-   "off": 25.386667
-  }
- }
+ ]
 }

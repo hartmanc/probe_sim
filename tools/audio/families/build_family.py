@@ -674,7 +674,9 @@ def write_family(fam: str, defs: dict, T: dict, final: dict, BINS: list, gap: fl
             p = final[load][B]
             lp = scaled[load][B] * g
             parts.append(np.concatenate([lp[-PAD:], lp, lp[:PAD]]))
-            if p["tier"] == "pitch-shifted":
+            if p.get("source_text"):  # repair_family.py: a kept bin's recorded source, or a repaired bin's description
+                srcs = p["source_text"]
+            elif p["tier"] == "pitch-shifted":
                 srcs = f"pitch-shifted from the {p['from_rpm']} rpm bin (x{p['ratio']:.3f}), {p['name']} @ {p['t']:.2f} s"
             elif p["tier"].startswith("from-"):
                 srcs = (f"the {p['from_load']}-throttle {p['from_rpm']} rpm loop{' darkened' if p['from_load'] == 'on' else ''} "
