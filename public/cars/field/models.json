@@ -6831,70 +6831,70 @@
    "number": "78",
    "id": "78_mo",
    "file": "models/78_mo.glb",
-   "tris": 10804,
-   "bytes": 557196,
+   "tris": 6670,
+   "bytes": 357088,
    "materials": 2,
-   "length_m": 3.992,
-   "width_m": 1.675,
-   "height_m": 1.225,
+   "length_m": 3.945,
+   "width_m": 1.68,
+   "height_m": 1.235,
    "bbox_m": [
-    3.967,
-    1.78,
-    1.245
+    3.917,
+    1.868,
+    1.21
    ],
    "wheelbase_m": 2.265,
-   "track_front_m": 1.41,
-   "track_rear_m": 1.43,
+   "track_front_m": 1.415,
+   "track_rear_m": 1.44,
    "tyre_radius_m": 0.293,
    "tyre_radius_rear_m": 0.293,
    "hubs": {
     "wheel_fl": [
-     0.705,
+     0.7075,
      0.293,
      1.1325
     ],
     "wheel_fr": [
-     -0.705,
+     -0.7075,
      0.293,
      1.1325
     ],
     "wheel_rl": [
-     0.715,
+     0.72,
      0.293,
      -1.1325
     ],
     "wheel_rr": [
-     -0.715,
+     -0.72,
      0.293,
      -1.1325
     ]
    },
    "team": "Four Idiots",
-   "car": "Mazda MX-5 Miata, hardtop (NA body)",
+   "car": "Mazda MX-5 Miata, hardtop (NB body)",
    "brake_lamps": [
     [
-     0.3285,
-     0.4241,
-     -1.8984,
+     0.3474,
+     0.4295,
+     -1.9674,
      0.06
     ],
     [
-     -0.3285,
-     0.4241,
-     -1.8976,
+     -0.3474,
+     0.4295,
+     -1.9674,
      0.06
     ]
    ],
    "brake_lamps_fallback": true,
    "import": {
     "method": "hubs_hint",
-    "scale": 0.5683814303638646,
-    "source_tris": 114755,
-    "model_length": 3.968,
-    "model_width": 1.785,
-    "model_height": 1.176,
-    "tris": 7998,
-    "file": "tools/cars/kit/downloads/711/model.glb"
+    "scale": 0.9925503943908852,
+    "source_tris": 16560,
+    "model_length": 3.917,
+    "model_width": 1.868,
+    "model_height": 1.18,
+    "tris": 3986,
+    "file": "tools/cars/kit/downloads/72/model.glb"
    }
   },
   {
