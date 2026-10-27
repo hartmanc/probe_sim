@@ -3828,8 +3828,8 @@ def owner_mouth_cones(trk):
             # track are shut off"): count (lo, hi) cones across the mouth, from one end of his red to the other, at the
             # onboard's spacing (the mouth's own `cone_spacing` with its `cone_spacing_src`, else `spacing`):
             # n = round(width / spacing) + 1 clamped to (lo, hi), evenly spread (spacing = width / (n - 1)); the line
-            # keeps his whole red (the containment gate's barrier) and runs 0.05 m past its end so the last cone stands
-            # on the end (the app places cones every spacing m from the start while d < length)
+            # keeps his whole red (the containment gate's barrier); the spacing is set on the stored line 2 cm short of its
+            # length so the last cone stands on the end (the app places cones every spacing m from the start while d < length)
             lo_, hi_ = (int(v) for v in oc["count"])
             if m.get("cone_spacing") is not None and not m.get("cone_spacing_src"):
                 raise SystemExit(f"owner mouth {m['side']} {m['lo']}-{m['hi']}: cone_spacing without cone_spacing_src")
@@ -3837,18 +3837,23 @@ def owner_mouth_cones(trk):
             W = float(np.hypot(*np.diff(P, axis=0).T).sum())
             ncone = int(min(hi_, max(lo_, round(W / want) + 1)))
             spacing = W / (ncone - 1)
-            d_ = P[-1] - P[-2]
-            P = np.vstack([P, P[-1] + d_ / max(1e-9, float(np.hypot(*d_))) * 0.05])
-            sp_note = (f"; {ncone} cones {spacing:.1f} m apart across his {W:.1f} m of red (the onboard's {want:g} m: "
+            sp_note = (f"; {ncone} cones {spacing:.1f} m apart across his {W:.1f} m of red, end to end (the onboard's {want:g} m: "
                        f"{m.get('cone_spacing_src') or oc.get('spacing_src', oc['style_src'])})")
             log(f"owner mouth cones {m['side']} {m['lo']}-{m['hi']}: {ncone} cones, {spacing:.2f} m apart over {W:.1f} m (wanted {want:g} m)")
         mid = P[len(P) // 2]
         caps = sorted(_clean_captures(), key=lambda t: np.hypot(t["x"] - mid[0], t["y"] - mid[1]))[:2]
-        out.append({"spacing_m": round(spacing, 4) if oc.get("count") else spacing, "pts": with_z(trk, P),
+        pts_ = with_z(trk, P)
+        if oc.get("count"):
+            # the spacing on the STORED line (its rounded points), 2 cm short of the end, so the last cone stands on it
+            Lst = float(sum(np.hypot(b_[0] - a_[0], b_[1] - a_[1]) for a_, b_ in zip(pts_[:-1], pts_[1:])))
+            spacing = np.floor((Lst - 0.02) / (ncone - 1) * 1e4) / 1e4
+        out.append({"spacing_m": float(spacing), "pts": pts_,
                     "src": f"{oc.get('label', 'owner round-10 mouth')} {m['side']} {m['lo']}-{m['hi']} ({m['kind']}): cones on his red, drawn on the outline window over "
                            f"{' / '.join(t['name'] for t in caps)} ({m['src'][:120]}); style: {oc['style_src']}{sp_note}",
                     **_cone_style(oc)})
         log(f"owner mouth cones {m['side']} stations {int(i[0]) % trk.n}-{int(i[-1]) % trk.n}: {len(P) * 0.5:.0f} m on his red")
+        if oc.get("count"):
+            log(f"   {ncone} cones at {spacing:.4f} m on the stored line")
     log(f"owner mouth cones: {len(out)} lines")
     return out, ranges
 
