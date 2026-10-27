@@ -29,14 +29,16 @@ export const CHANGELOG: ChangeEntry[] = [
   {
     version: '0.4.0', date: '', title: 'Ready for the paddock',
     items: [
-      'Buttonwillow Raceway Park in its Lemons configuration: the road and kerbs fitted to the owner’s own edge drawings over the 2026 imagery, the ground from lidar, the trackside from the September 2026 onboard. Race the Button Turrible 2026 field, the 100 cars that ran a lap, each modelled from its photos with the pace it ran there.',
-      'Mid-Ohio Sports Car Course, the 13-turn Lemons layout, with the Mid-West Crisis 2026 field: 85 cars from their photos, each with its own pace. A strict black flag for crossing the blend line at the pit exit. The pit lane is still rough; it gets its own round next.',
+      '**Buttonwillow Raceway Park** in its Lemons configuration: the road and kerbs fitted to the owner’s own edge drawings over the 2026 imagery, the ground from lidar, the trackside from the September 2026 onboard. Race the Button Turrible 2026 field, the 100 cars that ran a lap, each modelled from its photos with the pace it ran there.',
+      '**Mid-Ohio Sports Car Course**, the 13-turn Lemons layout, with the Mid-West Crisis 2026 field: 85 cars from their photos, each with its own pace. A strict black flag for crossing the blend line at the pit exit. The pit lane is still rough; it gets its own round next.',
       'Every AI car sounds like its engine: a sound family per car type, re-cut from CC BY recordings or the team’s own footage, with real idles and upshifts. The Credits page lists every source.',
       'Your scoreboard name is yours: the first device to post it claims it. To post as the same name on another device, get a transfer code in Scoreboard on this one and type it there. Times already on the boards stay.',
       'Race boards are off until the server can check a race the way it checks a hot lap. Hot-lap boards stay, every lap re-run on the server.',
       'Report a bug or ask for a feature from the Start menu: it files a public GitHub issue with the game version, the track and your device.',
       'Reports take pictures: paste a screenshot into the report, drop one on it or pick a file, up to three. They are public on GitHub with the issue.',
       'The Start menu says what this is: an unofficial fan project, not affiliated with 24 Hours of Lemons.',
+      'The Start menu carries the team’s name for the car, one word pixelated for now, and picks the circuit from a drop-down that loads nothing until you choose.',
+      'Sound when a session starts from a gamepad: any click, tap or key beforehand unlocks it, and the game asks for one if none happened.',
       'Phones and tablets race the 40 cars whose real pace is closest to the Probe’s, so the race around you is the real one and the phone keeps up. Computers race the whole field.',
       'How to play, and a Credits page with the data, software, models and engine-sound sources, the privacy note and how a team can ask to be left out.',
       'A plain message when the browser cannot run WebGL 2, and a reload button when the graphics drop out.',
@@ -50,7 +52,7 @@ export const CHANGELOG: ChangeEntry[] = [
   {
     version: '0.3.0', date: '2026-10-25', title: 'Sonoma Raceway',
     items: [
-      'Sonoma Raceway in its 24 Hours of Lemons layout: the road fitted to the painted lines in 2026 satellite imagery, the ground from USGS lidar, and the trackside built from the March 2026 onboard: walls at their real heights, catch fences, the deep tyre wall round the T11 hairpin, kerbs in their real colours, the pit lane with both walls, the hillside grandstands, the main grandstand and garages, marshal posts, the scoring tower, sponsor boards and painted logos. Unused roads are real pavement, coned off.',
+      '**Sonoma Raceway** in its 24 Hours of Lemons layout: the road fitted to the painted lines in 2026 satellite imagery, the ground from USGS lidar, and the trackside built from the March 2026 onboard: walls at their real heights, catch fences, the deep tyre wall round the T11 hairpin, kerbs in their real colours, the pit lane with both walls, the hillside grandstands, the main grandstand and garages, marshal posts, the scoring tower, sponsor boards and painted logos. Unused roads are real pavement, coned off.',
       'A track pipeline that builds a circuit from public data and recent video, with gates for containment, pit-lane connectivity, wall ends and coverage of everything the onboard shows, so the next circuits start at this level.',
       'Race at Sonoma against the field of the March 2026 Sears Pointless race (133 cars and you), each car modelled from its photos, with the pace it ran there.',
       'AI drivers: at Sonoma their lane changes are capped by spare grip and a passing car keeps a margin; on every track a driver no longer commits to a pass where the road takes the lane away at the apex, and tucks back in instead. Laguna’s lap pace is unchanged.',
@@ -148,6 +150,14 @@ function el<K extends keyof HTMLElementTagNameMap>(tag: K, cls?: string, text?: 
 }
 
 /** The change log as DOM (pure rendering of the entries). */
+/** An item's text with `**like this**` runs as emphasis (the circuit names, owner 27 Oct 2026: "bold or green the names
+ *  of the tracks"): bold in the menu's accent colour; the rest is plain text, never markup. */
+export function emphasised(li: HTMLElement, text: string): HTMLElement {
+  const runs = text.split('**');
+  runs.forEach((run, i) => { if (!run) return; li.append(i % 2 ? el('strong', 'cl-em', run) : document.createTextNode(run)); });
+  return li;
+}
+
 export function renderChangelog(entries: ChangeEntry[], box: HTMLElement, sha?: string): void {
   const parts: HTMLElement[] = [];
   for (const e of entries) {
@@ -157,7 +167,7 @@ export function renderChangelog(entries: ChangeEntry[], box: HTMLElement, sha?: 
     s.append(h);
     if (e.resets?.length) s.append(el('div', 'cl-reset', `Lap times reset: ${e.resets.join(', ')}`));
     const ul = el('ul', 'cl-items');
-    for (const it of e.items) ul.append(el('li', undefined, it));
+    for (const it of e.items) ul.append(emphasised(el('li'), it));
     s.append(ul);
     parts.push(s);
   }

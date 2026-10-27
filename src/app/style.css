@@ -381,6 +381,7 @@ html.touch .race-table { max-height: 40vh; }
 .credits::-webkit-scrollbar-thumb { background: #3a4652; border-radius: 8px; border: 2px solid #05070a; }
 .credits::-webkit-scrollbar-thumb:hover { background: #4d5c6b; }
 .credits .cr-section + .cr-section { margin-top: 14px; }
+.cl-em { font-weight: 700; color: var(--accent); }   /* the circuit names in What's new */
 .credits .cr-h { margin: 0 0 6px; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); position: sticky; top: -10px; background: #05070a; padding: 2px 0; }
 .credits .cr-intro { color: var(--muted); font-size: 12px; margin-bottom: 6px; }
 .credits .cr-group { padding: 4px 0 6px; border-top: 1px dashed #1d2733; }
