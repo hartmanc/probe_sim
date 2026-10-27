@@ -411,6 +411,13 @@ html.touch .credits { max-height: 44vh; font-size: 12px; }
   border: 2px solid #1d2733; border-radius: 8px; padding: 8px 10px; font: inherit; font-size: 14px; line-height: 1.4; user-select: text; }
 .feedback .fb-text:focus { outline: none; border-color: var(--accent); }
 .feedback .fb-count { color: var(--muted); font-size: 11px; text-align: right; }
+.feedback .fb-add { color: var(--muted); font-size: 13px; cursor: pointer; }
+.feedback .fb-add input { max-width: 100%; }
+.feedback .fb-pics { display: flex; gap: 8px; flex-wrap: wrap; }
+.feedback .fb-pic { position: relative; }
+.feedback .fb-pic img { display: block; height: 72px; max-width: 120px; object-fit: cover; border-radius: 4px; border: 1px solid #2a3340; }
+.feedback .fb-rm { position: absolute; top: -6px; right: -6px; width: 26px; height: 26px; border-radius: 50%; border: 1px solid #2a3340; background: #05070a; color: #e8eef5; cursor: pointer; font-size: 16px; line-height: 1; }
+.feedback .fb-rm:focus-visible { outline: 2px solid var(--accent); }
 .feedback .fb-note { color: var(--muted); font-size: 12px; }
 
 /* the GPU context was lost (index.ts showContextLost) */
