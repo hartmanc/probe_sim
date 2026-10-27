@@ -397,6 +397,10 @@ export class FieldCars {
     this.drawn = drawn;
   }
 
+  /** Adaptive quality (perf.ts): change the draw cap and the shadow casters between frames. */
+  setLimits(maxDrawn: number, shadowCasters: number): void { this.opts = { ...this.opts, maxDrawn, shadowCasters }; }
+  get limits(): Readonly<FieldCarsOptions> { return this.opts; }
+
   setVisible(on: boolean): void { this.group.visible = on; }
 
   dispose(): void {

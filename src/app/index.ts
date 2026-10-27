@@ -42,6 +42,7 @@ const setFieldAudioOn = (on: boolean) => {
   fieldAudioOn = on;
   try { if (on) localStorage.removeItem(FIELD_AUDIO_KEY); else localStorage.setItem(FIELD_AUDIO_KEY, '0'); } catch { /* no storage */ }
 };
+import { AdaptiveQuality, PerfOverlay, flags as perfFlags, perf, type AdaptLevel } from './perf';
 import { applyQuality, pixelRatioFor, quality, storeTierChoice, storedTierChoice, type ThinReport, type TierChoice } from './quality';
 import { SENSITIVITIES, TouchControls, tiltStatusText } from './touch';
 import { HotlapSim, LIMITS, type SimAssets, type SceneryLike, type InputType } from '../scoreboard';
@@ -642,8 +643,45 @@ function createSim(assets: Assets) {
     look.render(0, vehicle.state.speed);
   };
 
+  // ---- ?perf=1 overlay and adaptive quality (src/app/perf.ts, docs/performance.md); desktop tiers only
+  const fieldCarsNow = () => (mode()?.id === 'race' ? (mode() as unknown as { fieldCars: import('./field-cars').FieldCars | null }).fieldCars : null);
+  const directorNow = () => (mode()?.id === 'race' ? (mode() as unknown as { director: import('../physics/ai/race').RaceDirector | null }).director : null);
+  const overlay = perf.on ? new PerfOverlay() : null;
+  const adaptBase: AdaptLevel = {
+    shadowCasters: quality.shadows ? quality.aiShadowCasters : 0, maxDrawn: quality.maxAiCarsDrawn,
+    ratioCap: Math.round(pixelRatioFor(quality, window.devicePixelRatio, window.innerWidth, window.innerHeight) * 100) / 100,
+  };
+  const adaptive = perfFlags.adapt && quality.tier !== 'phone' ? new AdaptiveQuality(adaptBase, (l) => look.setRatioLimit(l.ratioCap)) : null;
+  /** The current adaptive level's draw cap and casters onto the field cars (a rebuilt race starts from the tier's numbers). */
+  const applyAdaptive = () => {
+    const fc = fieldCarsNow();
+    if (!adaptive || !fc) return;
+    const l = adaptive.current;
+    if (fc.limits.maxDrawn !== l.maxDrawn || fc.limits.shadowCasters !== l.shadowCasters) fc.setLimits(l.maxDrawn, l.shadowCasters);
+  };
+  const onInterval = (now: number, ms: number) => {
+    if (ms <= 0 || ms > 250) { adaptive?.reset(); return; }   // a hitch or a resume: not a rendering cost
+    adaptive?.frame(now, ms);
+    applyAdaptive();
+    overlay?.frame(now, ms, () => {
+      const fc = fieldCarsNow(), dir = directorNow();
+      return {
+        canvas: [renderer.domElement.width, renderer.domElement.height], ratio: look.pixelRatio,
+        drawn: fc?.drawn ?? 0, casters: fc?.limits.shadowCasters ?? 0, cars: dir ? dir.cars.length - 1 : 0,
+        level: adaptive ? `adapt L${adaptive.level}/${adaptive.ladder.length - 1}` : 'adapt off',
+        director: dir?.timing ?? null, lodFar: null,
+      };
+    });
+  };
+
   /** One rendered frame; called from the UI loop. paused: a menu / panel is open or the tab is hidden. */
   const frame = (now: number, actions: Action[], paused: boolean) => {
+    if (!perf.on) { frameInner(now, actions, paused); return; }
+    const t = performance.now();
+    frameInner(now, actions, paused);
+    if (!paused) { perf.frame += performance.now() - t; perf.frames++; }
+  };
+  const frameInner = (now: number, actions: Action[], paused: boolean) => {
     if (!running) return;
     pausedEl.classList.toggle('hidden', !document.hidden);
     if (paused) {
@@ -651,13 +689,18 @@ function createSim(assets: Assets) {
       if (dirty && !document.hidden) { dirty = false; render(); }
       return;
     }
+    const wasPausedNow = wasPaused;
     if (wasPaused) { wasPaused = false; last = now; loop.acc = 0; }
-    const dt = Math.min((now - last) / 1000, MAX_FRAME);
+    const rawMs = now - last;
+    const dt = Math.min(rawMs / 1000, MAX_FRAME);
     last = now;
+    if (adaptive || overlay) onInterval(now, wasPausedNow ? 0 : rawMs);
     for (const a of actions) handle(a);
     if (menu.isOpen) return; // 'menu' just opened the pause menu
     touch?.setManual(!hsim.autoShift);
+    const tAdv = perf.on ? performance.now() : 0;
     loop.advance(dt); // input is sampled inside, on the sim's 100 Hz grid
+    if (perf.on) perf.advance += performance.now() - tAdv;
     const vehicle = veh();
 
     const st = vehicle.state;
@@ -717,6 +760,7 @@ function createSim(assets: Assets) {
     world.follow(car.root.position, cams.camera);
     audio.update(st, hsim.input.throttle); // load follows st.throttleOut; the pedal arms the rev-limiter stutter
 
+    const tHud = perf.on ? performance.now() : 0;
     const mh = mode()?.hud() ?? { banner: null, timing: true, delta: null, showDelta: false };
     hud.setBanner(mh.banner);
     hud.update({
@@ -726,8 +770,11 @@ function createSim(assets: Assets) {
       offTrack: st.wheels.some(wheelOff), invalid: timer.started && !timer.currentValid,
       absActive: st.absActive, timing: mh.timing, showDelta: mh.showDelta,
     });
+    if (perf.on) perf.hud += performance.now() - tHud;
     marks.update(dt, cams.camera, renderer.domElement.height);
+    const tRen = perf.on ? performance.now() : 0;
     look.render(dt, st.speed);
+    if (perf.on) perf.render += performance.now() - tRen;
   };
 
   const setMode = (id: ModeId) => {
@@ -740,7 +787,7 @@ function createSim(assets: Assets) {
   // debug handle for console / automated checks
   (window as unknown as Record<string, unknown>).__sim = {
     get vehicle() { return veh(); }, timer, cams, input, hud, world, renderer, audio, surface, track: track as TrackJson, menu,
-    quality, touch, thinned, hotlap: hsim, loop, scoreboard: { client: scoreClient, ui: scoreUI },
+    quality, touch, thinned, hotlap: hsim, loop, adaptive, perf, scoreboard: { client: scoreClient, ui: scoreUI },
     get mode() { return modes.current; },
     setMode: (id: ModeId) => { setMode(id); menu.close(); },
     setCamera,

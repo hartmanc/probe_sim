@@ -24,6 +24,7 @@ import { RACE_BOARDS_PUBLIC, fmtLapTime, fmtMetres, setBoardContext, submitRace,
 import { LIMITS, TRACKS, resolveTrackId } from '../../scoreboard/config';
 import { TRACK, TRACK_ID } from '../track-choice';
 import { FieldAudio, familyFor, FIELD_VOICES_DESKTOP, FIELD_VOICES_PHONE, type FamilyIndex, type Layout } from '../audio-field';
+import { newDirectorTiming, parsePerfFlags, perf } from '../perf';
 import type { ConeLineLike, FieldAudioCar, FieldAudioHook, FieldAudioLike, FieldCarSound, GameMode, ModeContext, ModeHud, RaceServices } from './mode';
 
 /** 5 since 17 Oct 2026 (owner: 10 is a long time alone in a sim); the server validates against the same number. */
@@ -106,7 +107,7 @@ export function raceAiConfig(trackId: string): { followScale: number; laneMargin
 }
 
 /** Build the RaceDirector for the player's current HotlapSim car (call right after a rolling start). */
-export function buildDirector(sim: RaceServices['sim'], field: FieldData, o: { seed: number; laps: number; realGrid?: boolean }): RaceDirector {
+export function buildDirector(sim: RaceServices['sim'], field: FieldData, o: { seed: number; laps: number; realGrid?: boolean; playerAi?: boolean; lod?: boolean }): RaceDirector {
   const a = sim.assets;
   const makeSurface = surfaceFactory(a);
   const pit = a.scenery?.pit_lane ?? null;
@@ -119,7 +120,9 @@ export function buildDirector(sim: RaceServices['sim'], field: FieldData, o: { s
     playerVehicle: sim.vehicle, playerSurface: sim.surface,
   }, { laps: o.laps, seed: o.seed, playerNumber: PLAYER_NUMBER, greenWindow: [5, 30], ...raceAiConfig(TRACK_ID),
     // phones and tablets (a selected 40-car field): the real grid order; desktop keeps the seeded shuffle
-    ...(o.realGrid ? { gridOrder: 'real' as const } : {}) });
+    ...(o.realGrid ? { gridOrder: 'real' as const } : {}),
+    // ?playerai=1 (dev only, docs/performance.md): the player's car is AI-driven, the race is deterministic
+    ...(o.playerAi ? { playerAi: true } : {}) });
 }
 
 /** FieldCars inputs for every AI car of a director (colour from identity.json, size from its physics spec). */
@@ -354,6 +357,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
   const sv = ctx.race;
   const ov = parseRaceOverrides(sv?.search ?? '');
   const laps = ov.laps ?? RACE_LAPS;
+  const pf = parsePerfFlags(sv?.search ?? '');
   let seed = ov.seed ?? newSeed(deps.random);
   let d: RaceDirector | null = null;
   let field: FieldData | null = null;
@@ -391,8 +395,9 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
     ctx.rollingStart();                 // fresh Vehicle + Surface + timer; step counter 0
     sv.sim.record = false;              // races are not replayed
     const t0 = performance.now();
-    d = buildDirector(sv.sim, field, { seed, laps, realGrid: fieldSelected });
+    d = buildDirector(sv.sim, field, { seed, laps, realGrid: fieldSelected, playerAi: pf.playerAi });
     const dir = d;
+    if (perf.on) dir.timing = newDirectorTiming();
     sv.sim.stepVehicle = (di) => dir.step(STEP, di as DriverInput);
     console.info(`race: seed ${seed}, ${dir.cars.length} cars, ${laps} laps, built in ${(performance.now() - t0).toFixed(0)} ms${dir.calibrationStale ? ' (pace.json calibration is stale)' : ''}`);
     out = null; resultsWanted = false; submitState = 'idle';
@@ -543,7 +548,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
     return r ? resultRows(r, out) : standingsRows();
   };
   const submit = () => {
-    if (!d || submitState !== 'idle') return;
+    if (!d || submitState !== 'idle' || pf.playerAi) return;
     const res = raceResultFor(finalRows(), { seed, aiVersion: raceBoardVersion(R.AI_VERSION), finished: d.player.finished });
     if (!res) return;
     submitState = 'busy';
@@ -565,7 +570,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
       body: () => raceTable(rows, L(), d?.getResults() ? `CHEQUERED FLAG · ${TRACK.short.toUpperCase()} · 2026 LEMONS FIELD` : 'OUT OF THE RACE · ORDER WHEN YOU LEFT'),
       entries: (): MenuEntry[] => [
         // race boards are hidden until the server can replay a race (owner, 26 Oct 2026): no submit row meanwhile
-        ...(!RACE_BOARDS_PUBLIC ? [] : [{
+        ...(!RACE_BOARDS_PUBLIC || pf.playerAi ? [] : [{
           kind: 'action', id: 'raceSubmit', label: 'Submit to scoreboard',
           note: submitState === 'done' ? 'submitted' : submitState === 'busy' ? 'submitting…' : shortRace ? `${RACE_LAPS}-lap races only` : undefined,
           disabled: submitState !== 'idle' || shortRace || !me || !(me.metres > 0), run: submit,
@@ -656,9 +661,12 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
         outRaced = h.raced;
       }
       if (cone && !out && cone.update(st.pos[0], st.pos[1])) dir.reportViolation('pit_exit_cones');
+      const tH = perf.on ? performance.now() : 0;
       toasts(h, dir);
       if (dom) dom.update(raceHudView(h, { teamOf, metres: out ? outRaced : h.raced, out: out?.reason ?? null }));
+      if (perf.on) perf.hud += performance.now() - tH;
       if (marker) marker.visible = h.penalties.pending.length > 0;
+      const tP = perf.on ? performance.now() : 0;
       if (fieldCars) {
         const poses = dir.poses();
         fieldCars.update(poses.map((p) => p.state), dir.traffic.s, P.idx, dir.line.L, poses.map((p) => p.brake));
@@ -667,8 +675,11 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
           poses.forEach((p, i) => { if (i !== P.idx && Math.hypot(p.state.pos[0] - pp[0], p.state.pos[1] - pp[1]) < 160) ctx.marks!.car(i + 1, p.state, dt); });
         }
       }
+      if (perf.on) perf.poses += performance.now() - tP;
       if (thump > 0 && sv && now - lastThumpAt > 150) { sv.impact(thump); lastThumpAt = now; thump = 0; }
+      const tA = perf.on ? performance.now() : 0;
       updateAudio(dir, now);
+      if (perf.on) perf.audio += performance.now() - tA;
       // the results card: at the end, and again whenever something (the scoreboard prompt, the pause menu) closed it
       if ((h.phase === 'finished' || (out && resultsWanted)) && sv && deps.dom && !sv.menu.isOpen) showResults();
     },

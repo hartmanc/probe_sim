@@ -22,6 +22,21 @@ import { Rng, hashSeed } from './rng';
 /** v * v: the same bits as v ** 2 in V8, without relying on any engine's pow. */
 const sq = (v: number): number => v * v;
 
+/** Running totals (ms) of where `RaceDirector.step` spends its time; the app's ?perf=1 overlay sets `director.timing` and reads it. */
+export interface DirectorTiming {
+  steps: number;
+  /** AI driver updates */
+  control: number;
+  /** the player's vehicle step */
+  player: number;
+  /** AI vehicle steps */
+  aiPhysics: number;
+  /** car-vs-car contact resolution */
+  contacts: number;
+  /** traffic refresh, lap counting, flags, the player rules */
+  other: number;
+}
+
 export type RacePhase = 'formation' | 'green' | 'yellow' | 'chequered' | 'finished';
 export type RaceFlag = 'yellow' | 'green' | 'chequered' | 'black';
 
@@ -332,6 +347,8 @@ export class RaceDirector {
   private pen = { count: 0, pending: [] as number[], serving: 0, deadlineU: Infinity, inBox: false, fastForward: false, lastReason: null as string | null, lastAt: -1e9, ejected: false };
   /** What the app multiplies its frame dt by right now: FF_SCALE while a stop-and-go is fast-forwarded, else 1. */
   timeScale = 1;
+  /** Set (by ?perf=1) to collect per-group step timings; null = no timers run at all. */
+  timing: DirectorTiming | null = null;
   private offT = 0; private onT = 99; private offArmed = true;
   private readonly blend: BlendFlag | null;
   private contactSeen = new Map<number, number>();
@@ -539,6 +556,8 @@ export class RaceDirector {
    * car-vs-car contacts, lap counting, flags and the player rules.
    */
   step(dt: number, playerInput?: DriverInput | null): void {
+    const tm = this.timing;
+    let t0 = tm ? performance.now() : 0, t1 = 0, tp = 0;
     this.time += dt;
     this.stepIdx++;
     const phys = Math.max(1, this.config.aiPhysicsEvery | 0);
@@ -554,16 +573,27 @@ export class RaceDirector {
         }
       }
     }
+    if (tm) { t1 = performance.now(); tm.control += t1 - t0; t0 = t1; }
+    let pms = 0;
     for (const car of this.cars) {
-      if (car.isPlayer && !car.driver) { car.vehicle.step(this.pen.fastForward ? HOLD_INPUT : (playerInput ?? this.playerInputAi), car.surface, dt); continue; }
-      if (car.isPlayer || phys === 1) car.vehicle.step(car.driver!.input, car.surface, dt);
+      if (car.isPlayer) {
+        if (tm) tp = performance.now();
+        if (!car.driver) car.vehicle.step(this.pen.fastForward ? HOLD_INPUT : (playerInput ?? this.playerInputAi), car.surface, dt);
+        else car.vehicle.step(car.driver.input, car.surface, dt);
+        if (tm) pms = performance.now() - tp;
+        continue;
+      }
+      if (phys === 1) car.vehicle.step(car.driver!.input, car.surface, dt);
       else if ((this.stepIdx + car.idx) % phys === 0) car.vehicle.step(car.driver!.input, car.surface, dt * phys);
     }
+    if (tm) { t1 = performance.now(); tm.player += pms; tm.aiPhysics += t1 - t0 - pms; t0 = t1; }
     this.contactCount = this.collider.resolve(this.bodies, this.traffic.order, this.traffic.s, this.line.L);
     this.contacts = this.collider.events;
+    if (tm) { t1 = performance.now(); tm.contacts += t1 - t0; t0 = t1; }
     this.lastDt = dt;
     this.refreshTraffic(false);
     this.bookkeeping(dt);
+    if (tm) { tm.other += performance.now() - t0; tm.steps++; }
   }
 
   private refreshTraffic(init: boolean): void {

@@ -270,6 +270,8 @@ export class Look {
   readonly post: PostStack | null;
   readonly dyn: DynamicResolution | null;
   private w = 1; private h = 1;
+  /** adaptive quality (perf.ts): an upper bound on the pixel ratio, on top of the tier's budget */
+  private ratioLimit = Infinity;
   private time = 0;
 
   constructor(private readonly renderer: THREE.WebGLRenderer, private readonly world: World, private readonly camera: THREE.PerspectiveCamera,
@@ -304,11 +306,18 @@ export class Look {
   /** CSS-pixel viewport changed. */
   resize(w: number, h: number): void {
     this.w = w; this.h = h;
-    const cap = pixelRatioFor(this.q, window.devicePixelRatio, w, h);
+    const cap = Math.max(0.5, Math.min(pixelRatioFor(this.q, window.devicePixelRatio, w, h), this.ratioLimit));
     if (this.dyn) { this.dyn.max = cap; this.dyn.min = cap * DYN_MIN_FRACTION; this.dyn.ratio = Math.min(this.dyn.ratio, cap); }
     this.renderer.setPixelRatio(this.dyn ? this.dyn.ratio : cap);
     this.renderer.setSize(w, h);
     this.post?.composer.setSize(w, h, false);
+  }
+
+  /** Adaptive quality: cap the pixel ratio (Infinity: the tier's own cap) and re-fit the canvas now. */
+  setRatioLimit(r: number): void {
+    if (r === this.ratioLimit) return;
+    this.ratioLimit = r;
+    this.resize(this.w, this.h);
   }
 
   /** Current render pixel ratio (debug / tests). */
