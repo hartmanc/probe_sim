@@ -404,7 +404,7 @@
   },
   "989": {
    "title": "1968 Chevrolet C-10 pickup",
-   "author": "\u272e\ud835\udd80\ud835\udd93\ud835\udd8b\ud835\udd94\ud835\udd97\ud835\udd8c\ud835\udd8a\ud835\udd99\ud835\udd99\ud835\udd86\ud835\udd87\ud835\udd91\ud835\udd8a \ud835\udd79\ud835\udd86\ud835\udd92\ud835\udd8a\u272e (UnforgettableName)",
+   "author": "✮𝖀𝖓𝖋𝖔𝖗𝖌𝖊𝖙𝖙𝖆𝖇𝖑𝖊 𝕹𝖆𝖒𝖊✮ (UnforgettableName)",
    "licence": "CC-BY-NC-4.0",
    "licence_url": "http://creativecommons.org/licenses/by-nc/4.0/",
    "url": "https://sketchfab.com/3d-models/1968-chevrolet-c-10-pickup-056face816c04b05859610681ed02942",
@@ -621,7 +621,7 @@
   },
   "414": {
    "title": "BMW 2002ti",
-   "author": "Kemal \u00c7olak (colakart)",
+   "author": "Kemal Çolak (colakart)",
    "licence": "CC-BY-4.0",
    "licence_url": "http://creativecommons.org/licenses/by/4.0/",
    "url": "https://sketchfab.com/3d-models/bmw-2002ti-be22631374fd4cf086be3a6271cb6838",
@@ -629,7 +629,7 @@
   },
   "707": {
    "title": "BMW 2002ti",
-   "author": "Kemal \u00c7olak (colakart)",
+   "author": "Kemal Çolak (colakart)",
    "licence": "CC-BY-4.0",
    "licence_url": "http://creativecommons.org/licenses/by/4.0/",
    "url": "https://sketchfab.com/3d-models/bmw-2002ti-be22631374fd4cf086be3a6271cb6838",
@@ -1234,6 +1234,78 @@
    "licence": "CC-BY-4.0",
    "licence_url": "http://creativecommons.org/licenses/by/4.0/",
    "url": "https://sketchfab.com/3d-models/a7b458168b2945d89d2d5250c3c79c55",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "30": {
+   "title": "BMW E36 Coupe",
+   "author": "Ricy",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/bmw-e36-coupe-d637326e3fb24c5d910825e714e30f8d",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "256": {
+   "title": "BMW E36",
+   "author": "Danik Semyvol",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/bmw-e36-20e97631ea1f40c5ac4d6afa974858d8",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "240": {
+   "title": "BMW E36",
+   "author": "Danik Semyvol",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/bmw-e36-20e97631ea1f40c5ac4d6afa974858d8",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "57": {
+   "title": "Ford Mustang SSP 1987",
+   "author": "Kyaie (SusAmongus69)",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/ford-mustang-ssp-1987-e9b4a542dd85457f86cc490f6823107c",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "609": {
+   "title": "BMW M3 E46",
+   "author": "Lexyc16",
+   "licence": "CC-BY-NC-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by-nc/4.0/",
+   "url": "https://sketchfab.com/3d-models/bmw-m3-e46-a067132c75f5456daa4f60c4001337d7",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "187": {
+   "title": "Ford Probe GT 1993 (player car shell)",
+   "author": "Probe sim (tools/car/build_probe.py)",
+   "licence": "own work",
+   "licence_url": null,
+   "url": "public/cars/probe_gt/probe.glb",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "806": {
+   "title": "BMW M3 E46",
+   "author": "Lexyc16",
+   "licence": "CC-BY-NC-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by-nc/4.0/",
+   "url": "https://sketchfab.com/3d-models/bmw-m3-e46-a067132c75f5456daa4f60c4001337d7",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "82_mo": {
+   "title": "Ford Mustang SSP 1987",
+   "author": "Kyaie (SusAmongus69)",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/ford-mustang-ssp-1987-e9b4a542dd85457f86cc490f6823107c",
+   "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
+  },
+  "86_mo": {
+   "title": "Ford Mustang SSP 1987",
+   "author": "Kyaie (SusAmongus69)",
+   "licence": "CC-BY-4.0",
+   "licence_url": "http://creativecommons.org/licenses/by/4.0/",
+   "url": "https://sketchfab.com/3d-models/ford-mustang-ssp-1987-e9b4a542dd85457f86cc490f6823107c",
    "changes": "decimated, wheels removed and replaced, re-textured with the race livery, props added"
   }
  }
