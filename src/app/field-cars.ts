@@ -3,7 +3,7 @@
 // without one, a cheap placeholder (≈300 triangles built in code, the car's primary colour from identity.json,
 // its number on large contrasting boards with a team-colour band on the doors, roof and tail) stands in. Every car is simulated; only the
 // `maxDrawn` nearest by track distance are drawn (phone: quality.maxAiCarsDrawn = 20), and only the
-// `shadowCasters` nearest cast shadow-map shadows and hide their blob (desktop 12 inside the ±30 m sun box, phone 0). three.js frustum culling stays on.
+// `shadowCasters` nearest cast shadow-map shadows and hide their blob (desktop 8 inside the ±30 m sun box, phone 0). three.js frustum culling stays on.
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { CarRig } from './car';
@@ -307,6 +307,8 @@ export interface FieldCarsOptions {
   maxDrawn: number;
   /** nearest N cars cast shadows (0: none, phone) */
   shadowCasters: number;
+  /** a car casts only inside this distance of the player (the sun's shadow box half-size); beyond it it keeps its blob */
+  shadowRangeM?: number;
 }
 
 export class FieldCars {
@@ -391,7 +393,9 @@ export class FieldCars {
       drawn++;
       e.rig.pose(states[e.info.idx]);
       if (brakes) e.rig.setBrakeLights(brakes[e.info.idx] > 0.05);
-      const cast = r < this.opts.shadowCasters;
+      const ps = states[playerIdx];
+      const cast = r < this.opts.shadowCasters && (this.opts.shadowRangeM === undefined || !ps
+        || Math.hypot(states[e.info.idx].pos[0] - ps.pos[0], states[e.info.idx].pos[1] - ps.pos[1]) < this.opts.shadowRangeM);
       if (cast !== e.shadow) { e.shadow = cast; e.blob.visible = !cast; for (const m of e.meshes) m.castShadow = cast; }
     }
     this.drawn = drawn;

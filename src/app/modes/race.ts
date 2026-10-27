@@ -31,7 +31,7 @@ import type { ConeLineLike, FieldAudioCar, FieldAudioHook, FieldAudioLike, Field
 export const RACE_LAPS: number = LIMITS.raceLaps;
 export const PLAYER_NUMBER = '619';
 // AI shadows: quality.aiShadowCasters nearest AI cars cast shadow-map shadows inside the sun's ±quality.shadowBoxM box
-// (desktop 12 cars / ±30 m / 4096 px; phone and ?aishadows=0: none); the rest keep a contact-shadow blob (src/app/quality.ts).
+// (desktop 8 cars / ±30 m / 2048 px; phone and ?aishadows=0: none); the rest keep a contact-shadow blob (src/app/quality.ts).
 
 // ---------------------------------------------------------------- pure helpers (unit-tested)
 
@@ -405,7 +405,8 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
     posCandidate = 0; posSince = 0; thump = 0;
     cone?.clear();
     if (!fieldCars) {
-      fieldCars = new FieldCars({ maxDrawn: sv.quality.maxAiCarsDrawn, shadowCasters: sv.quality.shadows ? sv.quality.aiShadowCasters : 0 });
+      fieldCars = new FieldCars({ maxDrawn: sv.quality.maxAiCarsDrawn, shadowCasters: sv.quality.shadows ? sv.quality.aiShadowCasters : 0,
+        ...(sv.quality.shadowBoxM ? { shadowRangeM: sv.quality.shadowBoxM } : {}) });
       fieldCars.build(fieldCarInfos(dir));
       sv.scene.add(fieldCars.group);
     }

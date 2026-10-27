@@ -20,9 +20,9 @@ describe('tier', () => {
     expect(settingsFor('desktop', 'auto', false).maxAiCarsDrawn).toBe(45);
     expect(settingsFor('phone', 'auto', true).shadows).toBe(false);
   });
-  it('AI shadows: desktop 12 casters in a ±30 m / 4096 px box; phone and ?aishadows=0 keep the ±7 m / 1024 px player box', () => {
+  it('AI shadows: desktop 8 casters in a ±30 m / 2048 px box; phone and ?aishadows=0 keep the ±7 m / 1024 px player box', () => {
     const d = settingsFor('desktop', 'auto', false);
-    expect([d.aiShadowCasters, d.shadowBoxM, d.shadowMapSize]).toEqual([12, 30, 4096]);
+    expect([d.aiShadowCasters, d.shadowBoxM, d.shadowMapSize]).toEqual([8, 30, 2048]);
     const off = settingsFor('desktop', 'auto', false, { aiShadows: false });
     expect([off.aiShadowCasters, off.shadowBoxM, off.shadowMapSize]).toEqual([0, 7, 1024]);
     const p = settingsFor('phone', 'auto', true);
@@ -42,7 +42,10 @@ describe('pixel ratio', () => {
     expect(1366 * 1024 * r * r).toBeLessThanOrEqual(1.2e6 + 1);
   });
   it('desktop: ≤ 1.5 as before', () => {
-    expect(pixelRatioFor(desk, 2, 1920, 1080)).toBe(1.5);
+    expect(pixelRatioFor(desk, 2, 1920, 1080)).toBeCloseTo(Math.sqrt(3.5e6 / (1920 * 1080)), 6); // retina at 1.5 would be 4.7 MP: the budget wins
+    expect(pixelRatioFor(desk, 1, 1920, 1080)).toBe(1);
+    const k = pixelRatioFor(desk, 2, 3840, 2160); // a 4K display: the 3.5 MP budget
+    expect(3840 * 2160 * k * k).toBeLessThanOrEqual(3.5e6 + 1);
     expect(pixelRatioFor(desk, 1, 1920, 1080)).toBe(1);
   });
 });

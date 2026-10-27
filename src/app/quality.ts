@@ -40,16 +40,23 @@ export const TIER_KEY = 'probeSim.quality.tier.v1';
 /** AI shadows (desktop): the nearest AI_SHADOW_CASTERS cars cast real shadows inside a ±SHADOW_BOX_M box at SHADOW_MAP px,
  *  which keeps the player's shadow at the same texel density as the old ±7 m / 1024 px box (~70 px/m). `?aishadows=0`
  *  restores the small box and blobs for every AI car (owner, 17 Oct 2026: "open to not doing it if it hurts performance"). */
-export const AI_SHADOW_CASTERS = 12;
+export const AI_SHADOW_CASTERS = 8;
 export const SHADOW_BOX_M = 30;
-export const SHADOW_MAP = 4096;
+export const SHADOW_MAP = 2048;
 const PLAYER_BOX_M = 7, PLAYER_MAP = 1024;
+/** Pure: dev `?shadowbox=<5..60>` (half-size of the sun's shadow box, m); null = the tier's own. */
+export function shadowBoxFromUrl(search: string): number | undefined {
+  const v = Number(new URLSearchParams(search).get('shadowbox'));
+  return Number.isFinite(v) && v >= 5 && v <= 60 ? v : undefined;
+}
 /** Pure: `?aishadows=0` turns AI shadow casting off. */
 export function aiShadowsUrlOff(search: string): boolean {
   const v = new URLSearchParams(search).get('aishadows');
   return v === '0' || v === 'false';
 }
 export const PHONE_MAX_PIXELS = 1.2e6;
+/** Desktop pixel budget (perf round 1, 27 Oct 2026): a 4K display at ratio 1.5 would render 4.7 MP; this keeps it at 3.5. */
+export const DESKTOP_MAX_PIXELS = 3.5e6;
 const TREE_NEAR_M = 60;     // every tree within this of the centreline is kept on the phone tier
 const TREE_MID_M = 400;     // beyond: keep 1 in 2; beyond TREE_MID_M: 1 in 4
 
@@ -82,15 +89,15 @@ export function deviceClass(env: DeviceEnv): DeviceClass {
   return 'desktop';
 }
 
-export function settingsFor(tier: Tier, reason: QualitySettings['reason'], touch: boolean, opts: { aiShadows?: boolean; device?: DeviceClass } = {}): QualitySettings {
+export function settingsFor(tier: Tier, reason: QualitySettings['reason'], touch: boolean, opts: { aiShadows?: boolean; device?: DeviceClass; shadowBoxM?: number } = {}): QualitySettings {
   const device = opts.device ?? (tier === 'phone' ? 'phone' : 'desktop');
   if (tier === 'phone') {
     return { tier, device, reason, touch, maxAiCarsDrawn: 20, maxPixels: PHONE_MAX_PIXELS, maxPixelRatio: 1, shadows: false, maxAnisotropy: 2,
       aiShadowCasters: 0, shadowBoxM: PLAYER_BOX_M, shadowMapSize: PLAYER_MAP };
   }
   const ai = opts.aiShadows ?? true;
-  return { tier, device, reason, touch, maxAiCarsDrawn: 45, maxPixels: Infinity, maxPixelRatio: 1.5, shadows: true, maxAnisotropy: 16,
-    aiShadowCasters: ai ? AI_SHADOW_CASTERS : 0, shadowBoxM: ai ? SHADOW_BOX_M : PLAYER_BOX_M, shadowMapSize: ai ? SHADOW_MAP : PLAYER_MAP };
+  return { tier, device, reason, touch, maxAiCarsDrawn: 45, maxPixels: DESKTOP_MAX_PIXELS, maxPixelRatio: 1.5, shadows: true, maxAnisotropy: 16,
+    aiShadowCasters: ai ? AI_SHADOW_CASTERS : 0, shadowBoxM: ai ? (opts.shadowBoxM ?? SHADOW_BOX_M) : PLAYER_BOX_M, shadowMapSize: ai ? SHADOW_MAP : PLAYER_MAP };
 }
 
 /** Pure: device pixel ratio to render at for a CSS-pixel viewport. */
@@ -120,7 +127,7 @@ function detect(): QualitySettings {
   const coarse = !!window.matchMedia?.('(pointer: coarse)').matches || isIpad({ platform, maxTouchPoints });
   const r = pickTier({ coarse, maxTouchPoints, search: location.search, stored: readStored() });
   const device = deviceClass({ coarse, maxTouchPoints, search: location.search, platform, screenMin: Math.min(screen.width || 0, screen.height || 0) });
-  return settingsFor(r.tier, r.reason, r.touch, { aiShadows: !aiShadowsUrlOff(location.search), device });
+  return settingsFor(r.tier, r.reason, r.touch, { aiShadows: !aiShadowsUrlOff(location.search), device, shadowBoxM: shadowBoxFromUrl(location.search) });
 }
 
 /** The settings for this page load. */
