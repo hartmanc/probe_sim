@@ -1609,19 +1609,20 @@
   },
   {
    "side": "left",
-   "kind": "paint",
+   "kind": "kerb",
    "attrs": {
-    "type": "white painted blocks at the left edge",
+    "type": "flat painted kerb",
     "colour": "white",
+    "raised": false,
     "ahead_m": 40
    },
-   "confidence": 0.5,
+   "confidence": 0.7,
    "t": 96,
    "s": 2856.6,
    "source": "onboard:7QS2M-HGSI4@96.0",
    "frame": "t096.jpg",
    "scope": "lap",
-   "note": "where Lost Hill joins the drag strip"
+   "note": "the small white kerb on the inside of the drag-strip left kink after Phil Hill (round 16: was a paint row and a dropped kerb run)"
   },
   {
    "side": "left",
@@ -2052,11 +2053,19 @@
    "attrs": {
     "type": "flat painted kerb",
     "colour": "white / blue / red",
-    "raised": false
+    "raised": false,
+    "ahead_m": 15,
+    "correction": {
+     "round": "round 15, 26 Oct 2026",
+     "was": {
+      "ahead_m": null
+     },
+     "why": "t144 shows the T11 exit kerb beginning ahead on the right (its nearest blocks ~10-20 m beyond the hood; t146 is alongside it at s 4458); on the round-15 package, 6.8 m longer, the run starts at s 4428, 18 m past the row"
+    }
    },
    "confidence": 0.9,
    "t": 144,
-   "s": 4410.1,
+   "s": 4425.1,
    "source": "onboard:7QS2M-HGSI4@144.0",
    "frame": "t144.jpg",
    "scope": "lap",
@@ -2534,14 +2543,36 @@
    "frame": "pit_ucm/t1267000.jpg",
    "scope": "pit",
    "note": "a long low shade roof on posts behind the paddock-side wall west of the tower (also t1303000, and past the wall on the onboard t000)"
+  },
+  {
+   "side": "right",
+   "kind": "kerb",
+   "attrs": {
+    "type": "short flat painted kerb at the Sweeper's inner-loop rejoin, just past the mouth's white dashed line",
+    "colour": "red / white / blue",
+    "raised": false,
+    "added": true,
+    "correction": {
+     "round": "round 14, 26 Oct 2026 (the owner, q3 'add')",
+     "was": {},
+     "why": "added: the owner's answer of 26 Oct 2026; onboard dense frames t123100 / t123300 (round 13's finding)"
+    }
+   },
+   "confidence": 0.8,
+   "t": null,
+   "s": 3684.5,
+   "source": "onboard:7QS2M-HGSI4@123.2 (dense frames t123100-t123300, reference only)",
+   "frame": "",
+   "scope": "lap",
+   "note": "Sweeper exit kerb (right), package s 3679.5-3689.5"
   }
  ],
  "counts": {
-  "kerb": 38,
+  "kerb": 40,
   "cone_line": 28,
   "wall": 14,
   "station": 14,
-  "paint": 4,
+  "paint": 3,
   "building": 3,
   "runoff": 2,
   "tyre_wall": 1,

@@ -7,7 +7,7 @@
 // The advisory report prints per pass the lifted time, the largest air gap and the plain-road control.
 import { describe, expect, it } from 'vitest';
 import { TRACKS } from '../../scoreboard/config';
-import { gateCases, kerbTraversal, loadKerbPack } from './kerbprobe';
+import { crestCases, gateCases, kerbTraversal, loadKerbPack } from './kerbprobe';
 import carJson from '../../../public/cars/probe_gt/car.json';
 
 const probe = JSON.parse(JSON.stringify(carJson));
@@ -17,6 +17,16 @@ describe.each(Object.keys(TRACKS))('kerb traversal gate: %s', (id) => {
   const results = gateCases(pack).map((c) => kerbTraversal(pack, probe, c));
   it('no roll past 15 deg and no rollover at line speed, line +-1 m', () => {
     const bad = results.filter((r) => r.rolledOver || r.maxRollDeg > 15).map((r) => `${r.label}: ${r.maxRollDeg.toFixed(1)} deg`);
+    expect(bad).toEqual([]);
+  });
+  // round 15 (Buttonwillow, the owner's decision of 26 Oct 2026, item 18): the crest case, the player's car at the
+  // player's speed (the fastest ghost lap's, else the onboard's overlay speed at that station; not the AI line's) with
+  // its strip-side wheels 2 m past each raised strip's track-side edge: no rollover and no roll past 15 deg. A track with
+  // no player speed has no crest cases (printed).
+  const crest = pack.playerSpeed ? crestCases(pack).map((c) => kerbTraversal(pack, probe, c)) : [];
+  it('crest case: no roll past 15 deg and no rollover at the player\'s speed, 2 m onto each raised strip', () => {
+    console.log(`kerb crest cases ${id}: player speed ${pack.playerSpeedSrc}; ${crest.length} passes\n  ${crest.map((r) => `${r.label}: max roll ${r.maxRollDeg.toFixed(1)} deg${r.rolledOver ? ' ROLLED' : ''}, lifted ${r.kerbLiftMs} ms`).join('\n  ')}`);
+    const bad = crest.filter((r) => r.rolledOver || r.maxRollDeg > 15).map((r) => `${r.label}: ${r.maxRollDeg.toFixed(1)} deg`);
     expect(bad).toEqual([]);
   });
   // advisory (the owner's decision above): wheel lifts per pass, printed for the judge and the owner, never a failure

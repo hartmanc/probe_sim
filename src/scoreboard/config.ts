@@ -106,11 +106,10 @@ export const TRACKS: Readonly<Record<string, TrackInfo>> = {
   // files the package has. The pace file is Buttonwillow's own field (22 Oct 2026: tools/race/pace_track.ts --own, the
   // 100 cars of the Button Turrible 2026 race that ran a lap, each with its own stints; ids "<n>_bw" where the number
   // is a different Laguna car's). Package: round 12 (rev 52bf051dcc, 4699.187 m; round 10's geometry, round 11's scenery passing the merged gates, the paddock openings and strip).
-  // wip (owner, 25 Oct 2026, after his acceptance drive of round 13: "Buttonwillow needs more work to be production ready";
-  // the front-straight shoulder is dirt except the fish-mouth flares he outlined in green): not in the Start menu of a
-  // publish; the rounds continue on their branch and the flag goes when he accepts the track.
-  buttonwillow: { dir: 'tracks/buttonwillow/', name: 'Buttonwillow Raceway Park', short: 'Buttonwillow', length_m: 4699.187, pace: 'cars/field/buttonwillow/pace.json',
-    identity: 'cars/field/buttonwillow/identity.json', rev: '52bf051dcc', wip: true,
+  // accepted by the owner on 26 Oct 2026 after his round-15 drive ("Buttonwillow is fantastic") with the two kerbs of round 16:
+  // in the Start menu from 0.4.0 (the wip flag of 25 Oct removed)
+  buttonwillow: { dir: 'tracks/buttonwillow/', name: 'Buttonwillow Raceway Park', short: 'Buttonwillow', length_m: 4705.982, pace: 'cars/field/buttonwillow/pace.json',
+    identity: 'cars/field/buttonwillow/identity.json', rev: 'f2cc14f2ee',   // round 16 (two kerbs from the owner's drive: the small flat white kerb inside the drag-strip left kink after Phil Hill, the Star Mazda exit outside kerb raised to 6 cm; scenery only); round 15 (the race edges on the owner's red, the kerbs as bands outside them with the track limit at their outside, the measured 6 cm kerb default, 3-6 cones per closed mouth, the paddock bands undrawn); round 14 (scenery only: the front straight's dirt shoulder, the owner's fish mouths, the lane paved to his line with a dirt median, the kerb runs he placed; the review fixes)
     // on the front straight, ~115 m before the line (s 4580; the last corner T11 is at 4377)
     start: { s_m: 4580, speed: ROLLING_START_SPEED },
     // 24 Oct 2026, 100 cars, 4 laps, seeds 1-3 (tools/race/AI_READINESS.md): AI-AI contacts 0.058 -> 0.020 per car-lap,

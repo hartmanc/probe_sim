@@ -1499,7 +1499,9 @@ published rev 37991e53ab.
 - Front straight, config 4525-180: right (south asphalt end) read once, left PARALLEL at the dark / pale tone step
   (the asphalt_end detector read from 7 m inside the old edge): one width, 13.12 m (was 19.2 at 4540 to 15.8 at 160).
   The pale strip between it and the pit-wall K-rail: two runoff zones in the apron look ('front straight pale strip'
-  west / east, 7.5-8.5 / 5.6-8.0 m wide), K-rail unchanged; pit connectivity ok.
+  west / east, 7.5-8.5 / 5.6-8.0 m wide), K-rail unchanged; pit connectivity ok. **Round 14 (the owner, 25 Oct 2026:
+  "this left hand section is not paved, it's just dirt. The only paved sections should be the fishmouths that I outlined
+  in green"): both strips removed (the shoulder is dirt); the paving is his four mouths A, B, C, E (round14/LEDGER.md).**
 - Capture ruler checks: the automatic dark-band ruler (tools: /tmp ruler, the dark band against the road median + 18) is
   unreliable here (dirt and asphalt within 18 grey levels: 11-28 m readings): OPEN, to measure by eye on ruled windows.
 - The T4-T5 edge-gate exemption right widened 1370 -> 1365 (config), the same apron step (cw_1348.png) now reached at
@@ -1724,7 +1726,7 @@ Geometry unchanged from 8bf8602. Stage 3 every gate ok; kerb roll gate 6 / 6.
   | paved area | pit-in gore (pit part 0-25 m, both sides) | flat untextured slab, a hard tone step against the lane | OPEN (the 'lane' look tried rendered near-black; reverted to the lane tone) |
   | paved area | T2 concrete patch (583 R) | flat grey untextured slab | OPEN |
   | pit lane | right side ~175 m | a dark blotch on the ground beside the lane | OPEN |
-  | zone | front-straight pale strip west ~75 m | green-toned ground beside the K-rail (C11) | OPEN |
+  | zone | front-straight pale strip west ~75 m | green-toned ground beside the K-rail (C11) | OPEN (round 14: the zone is gone, the shoulder is dirt) |
   | zone | front-straight crossover left ~125 m | a yellow-tan NAIP patch left on the asphalt | OPEN (paint-over outline candidate) |
   | edge | left ~1900 (Dog Leg) | a dark brown ground patch, hard tone step | OPEN |
   | area | apron 2963-3025 R start | a lighter triangle where apron and road meet | OPEN |
@@ -1751,7 +1753,7 @@ Geometry unchanged from 8bf8602. Stage 3 every gate ok; kerb roll gate ok. Dog L
 | pit-in gore, flat slab | FIXED (kit): the paved-area branch ignored `look` and drew the flat cell mesh (the cause of the near-black slab in cp4, not the grading); now the toned apron shader with the lane tone (asphalt grain, the photo's light / dark): r8f_pit_in_gore |
 | T2 concrete patch, flat slab | FIXED (kit): `look='concrete'`, pale concrete tone with grain; its 1 m feather fades to the tan photo at the edge (it lies on the road): OPEN as a detail (r8f_T2_concrete_patch) |
 | pit lane right ~175 m dark blotch | ortho_paint_over (dark, 127 px) |
-| pale strip west ~75 m green ground | ortho_paint_over (`all=True`: the whole 12 m box to the ring median, 441 px) |
+| pale strip west ~75 m green ground | ortho_paint_over (`all=True`: the whole 12 m box to the ring median, 441 px); round 14: removed with the strip (on the dirt shoulder the flat box read as a slab; 1,105 ortho px back to the graded NAIP) |
 | crossover left ~125 m yellow-tan patch | ortho_paint_over (yellow, 5 px): the patch in the still persists: it is not in the ortho at that box; OPEN |
 | Dog Leg 1900 L dark brown patch | ortho_paint_over (dark, 158 px) |
 | apron 2963-3025 R start lighter triangle | OPEN: the apron clip / feather do not explain it (the triangle is the apron's own outline corner beyond the clip); needs the outline re-traced |

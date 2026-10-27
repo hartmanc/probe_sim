@@ -334,7 +334,7 @@ Sketchfab downloads (`kit/sketchfab_fetch.py`) read the token from `.env.local` 
 
 ```ts
 export interface SurfaceSample { z: number; nx: number; ny: number; nz: number; onTrack: boolean; mu: number;
-  paved?: boolean; offCourse?: boolean; dirt?: number; muPaved?: number }    // §4d
+  paved?: boolean; offCourse?: boolean; onKerbBand?: boolean; dirt?: number; muPaved?: number }    // §4d
 export interface Surface { sample(x: number, y: number): SurfaceSample }   // ground under world (x, y)
 
 export interface DriverInput {
@@ -419,6 +419,11 @@ with open differentials. `'awd'` is an open centre diff with a fixed torque spli
 - `SurfaceSample.offCourse` (round 14B): true on a paved part the track package marks `off_course` (Sonoma's T9A escape
   road): pavement for grip, but off the course for lap validity, like dirt (`wheelOff` in the app, `allOff` in the
   scoreboard). Absent / false everywhere else.
+- `SurfaceSample.onKerbBand` (round 15, Buttonwillow, 26 Oct 2026): true off the course within a kerb band that lies
+  OUTSIDE the edge (a package whose `scenery.json kerbs.inside` is false: the race edge is the kerb's asphalt side and
+  the track limit its outside). The track-limit tests count it as on the course (`wheelOff` in the app, `allOff` in the
+  scoreboard, the race's four-wheels-off black flag); grip, height, `paved` and `onTrack` are unchanged by it. Absent /
+  false on packages with inside kerbs (Laguna, Sonoma).
 - `createTrackSurface` options: `{ far, pitLane, muOnTrack (1.0), muOffTrack (OFF_PAVEMENT_MU = 0.72, was 0.6),
   gripBlend (1.0 m), roughness (DIRT_ROUGHNESS_M = 0.012 m, 0 disables), edgeBlend (SHOULDER_WIDTH_M = 5 m) }`.
   Exported constants: `OFF_PAVEMENT_MU`, `SURFACE_GRIP_BLEND_M`, `DIRT_ROUGHNESS_M`, `SHOULDER_WIDTH_M`.

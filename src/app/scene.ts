@@ -471,10 +471,19 @@ function pitStrand(part: PitPart, fractions: number[]): Strand {
       const c = part.center[i];
       const a = part.center[Math.max(0, i - 1)], b = part.center[Math.min(part.n - 1, i + 1)];
       const tx = b[0] - a[0], ty = b[1] - a[1], l = Math.hypot(tx, ty) || 1;
-      const L = part.left[i], R = part.right[i];
+      // Buttonwillow round 14 review: a part may draw narrower than it paves (draw_left / draw_right: the drawn edge
+      // points, e.g. a mouth's paving drawn up to the pit lane's edge where the lane draws its own paving); heights still
+      // come from the physics surface, so the drawing sits on the driven surface
+      const pd = part as PitPart & { draw_left?: number[][]; draw_right?: number[][] };
+      const L = pd.draw_left?.[i] ?? part.left[i], R = pd.draw_right?.[i] ?? part.right[i];
+      const nx = -ty / l, ny = tx / l;
+      // a drawn edge given (draw_*) is read signed across the section: a mouth whose centre lies on the course (its
+      // physics) draws from the course edge, both drawn edges then on one side of the centre
+      const hl = pd.draw_left ? (L[0] - c[0]) * nx + (L[1] - c[1]) * ny : Math.hypot(L[0] - c[0], L[1] - c[1]);
+      const hr = pd.draw_right ? -((R[0] - c[0]) * nx + (R[1] - c[1]) * ny) : Math.hypot(R[0] - c[0], R[1] - c[1]);
       return {
-        cx: c[0], cy: c[1], nx: -ty / l, ny: tx / l,
-        hl: Math.hypot(L[0] - c[0], L[1] - c[1]), hr: Math.hypot(R[0] - c[0], R[1] - c[1]),
+        cx: c[0], cy: c[1], nx, ny,
+        hl, hr,
         gapL: part.gap_left[i], gapR: part.gap_right[i],
       };
     },
@@ -841,10 +850,13 @@ export function buildWorld(track: TrackJson, hf: Float32Array, ortho: THREE.Text
   // ribbons: the track, then the pit-lane parts (scenery.json pit_lane)
   const pit = scenery?.json.pit_lane;
   const zones = scenery?.json.paved_zones;
+  // the zone parts that are drawn (round 14 review: `draw: false` marks a part that only paves, e.g. the pit lane's own
+  // paving at a mouth, which the lane already draws; the physics takes every part, src/app/index.ts)
+  const drawnZones = (zones?.parts ?? []).filter((p) => p.n >= 2 && (p as { draw?: boolean }).draw !== false);
   const strands: Strand[] = [
     trackStrand(track, (scenery?.json as { track_shoulder_cut?: { side: number; s0: number; s1: number }[] } | undefined)?.track_shoulder_cut ?? []),
     ...(pit?.parts ?? []).filter((p) => p.n >= 2).map((p) => pitStrand(p, pit!.fractions)),
-    ...(zones?.parts ?? []).filter((p) => p.n >= 2).map((p) => pitStrand(p, zones!.fractions)),
+    ...drawnZones.map((p) => pitStrand(p, zones!.fractions)),
   ];
   const grid = terrainGrid(track, hf, ground, strands);
   // barriers stand on the ground they were placed on (round 11, Sonoma owner note 65: "Weird sunken wall at T10"): their
@@ -889,16 +901,16 @@ export function buildWorld(track: TrackJson, hf: Float32Array, ortho: THREE.Text
   const nPit = (pit?.parts ?? []).filter((p) => p.n >= 2).length;
   // paved zones: a closed road with a declared surface takes the road material ('asphalt') or pale concrete; the rest
   // keep the aerial photo's colour (paved runoff, Laguna)
-  const zoneSurf = (zones?.parts ?? []).filter((p) => p.n >= 2).map((p) => p.surface);
-  const zoneOver = (zones?.parts ?? []).filter((p) => p.n >= 2).map((p) => p.over ?? 0);
+  const zoneSurf = drawnZones.map((p) => p.surface);
+  const zoneOver = drawnZones.map((p) => p.over ?? 0);
   // a closed road's measured asphalt tone (part `tone`, linear-ish RGB: Mid-Ohio round 11; absent = the pale default apron)
-  const zoneTone = (zones?.parts ?? []).filter((p) => p.n >= 2).map((p) => p.tone);
+  const zoneTone = drawnZones.map((p) => p.tone);
   secs.slice(1).forEach((sec, k) => {
     const surf = k >= nPit ? zoneSurf[k - nPit] : 'asphalt';
     const over = k >= nPit ? zoneOver[k - nPit] : 0;
     // judge r8 (cp6): a zone end standing on the dirt (scenery.json part feather_ends [start, end], the builder's
     // flags) fades its asphalt weight over its last 4 rows, so the paving does not end square-cut
-    const fe = k >= nPit ? (zones!.parts.filter((p) => p.n >= 2)[k - nPit] as { feather_ends?: [boolean, boolean] }).feather_ends : undefined;
+    const fe = k >= nPit ? (drawnZones[k - nPit] as { feather_ends?: [boolean, boolean] }).feather_ends : undefined;
     if (fe) {
       const K = sec.K, n = sec.n, rows = Math.min(4, Math.floor(n / 3));
       for (let r = 0; r < rows; r++) {

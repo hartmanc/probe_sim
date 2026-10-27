@@ -7,10 +7,11 @@ import { join } from 'node:path';
 import { conesOffSurface, containment, escapeRuns, exposedEnds, joinFaces, pitConnectivity, runGaps, sideBySide, signPlacement, tyreFaces, wallTops, type GateConfig } from './sceneryGates';
 import { terrainGates } from './terrainGates';
 import { groundMarksGate, MARKS_TOL } from './groundMarks';
+import { pavedCoverage } from './pavedCoverage';
 import { loadHeightfield } from '../../../src/physics/index';
 
 const dir = process.argv[2];
-const cfg: GateConfig & { pit_box_s?: number; openings?: { x: number; y: number; why: string }[]; cone_tol?: number; cones_exempt?: { src: string; why: string }[] } = process.argv[3] ? JSON.parse(readFileSync(process.argv[3], 'utf8')) : {};
+const cfg: GateConfig & { pit_box_s?: number; openings?: { x: number; y: number; why: string }[]; cone_tol?: number; cones_exempt?: { src: string; why: string }[]; paved_coverage?: { parts: string[]; step?: number; wall_clear?: number; edge_tol?: number } } = process.argv[3] ? JSON.parse(readFileSync(process.argv[3], 'utf8')) : {};
 const track = JSON.parse(readFileSync(join(dir, 'track.json'), 'utf8'));
 const sc = JSON.parse(readFileSync(join(dir, 'scenery.json'), 'utf8'));
 let fail = false;
@@ -125,6 +126,20 @@ console.log(`[${co.bad.length ? 'FAIL' : 'ok'}] cones off the surface: ${co.cone
 for (const b of co.bad.slice(0, 30)) console.log(`       cone on the surface: line ${b.line} s ${b.s} ${b.side}, ${b.depth.toFixed(2)} m inside: ${b.src}`);
 if (co.bad.length) fail = true;
 
+// Buttonwillow round 13 (Astra's review: drawn paddock paving with unpaved physics seams): config-gated, strict
+let pc: any = null;
+if (cfg.paved_coverage) {
+  pc = pavedCoverage(track, loadHeightfield(Uint8Array.from(readFileSync(join(dir, 'heightfield.bin'))).buffer), sc, cfg.paved_coverage);
+  const by = new Map<string, number>(); for (const h of pc.holes) by.set(h.part, (by.get(h.part) ?? 0) + 1);
+  console.log(`[${pc.holes.length || !pc.parts ? 'FAIL' : 'ok'}] paved coverage: ${pc.parts} parts (${cfg.paved_coverage.parts.join(', ')}), ${pc.samples} samples on a ${pc.step} m grid inside their drawn strips (round-13 check) `
+    + `(${pc.wallClear} m round the barriers and ${pc.onEdge} samples within ${pc.edgeTol} m of a drawn edge left out), ${pc.holes.length} unpaved in the physics` + (pc.parts ? '' : '; no part matched'));
+  if (pc.lane) console.log(`       the pit lane's drawn strip in the parts' box [${pc.lane.box.join(', ')}] (round 14): ${pc.lane.samples} samples, ${pc.lane.holes} unpaved (${pc.lane.onEdge} on an edge left out)`);
+  if (pc.also) console.log(`       also (${(cfg.paved_coverage.also ?? []).map((a: any) => a.parts.join(', ')).join('; ')}) in that box: ${pc.also.parts} parts, ${pc.also.samples} samples, ${pc.also.holes} unpaved`);
+  if (pc.outlines) console.log(`       the owner's outlines (${pc.outlines.polys}): ${pc.outlines.samples} samples off the course, ${pc.outlines.holes} unpaved (${pc.outlines.onEdge} on an edge left out)`);
+  for (const [k, v] of by) console.log(`       ${k}: ${v} unpaved, first at (${pc.holes.find((h: any) => h.part === k).x}, ${pc.holes.find((h: any) => h.part === k).y})`);
+  if (pc.holes.length || !pc.parts) fail = true;
+}
+
 console.log('GATES_JSON ' + JSON.stringify({ marks: { ...gm, bad: gm.bad.length }, terrain: { regions: tg.regions, joins: { ...tg.joins, bad: tg.joins.bad.length }, smooth: { ...tg.smooth, badD2: tg.smooth.badD2.length, badDev: tg.smooth.badDev.length }, kerbs: { ...tg.kerbs, bad: tg.kerbs.bad.length } }, runGaps: rg, containment: { escapes: c.escapes.length, runs, allowed: c.allowed.length, junctions: c.junctions },
-  pit: p, signs: g, ends: e, facings: sb, wallTops: wt, joins: jf, tyreFaces: tf, cones: co, fail }));
+  pit: p, signs: g, ends: e, facings: sb, wallTops: wt, joins: jf, tyreFaces: tf, cones: co, pavedCoverage: pc ? { ...pc, holes: pc.holes.length } : null, fail }));
 process.exit(fail ? 1 : 0);
