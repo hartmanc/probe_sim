@@ -39,7 +39,14 @@ def gated(f):
 # Provisional table (26 Oct 2026): families the owner passed by ear that still fail a gate. Each family + gate pair is a
 # strict xfail with its reason (an unexpected pass is reported, so the entry gets removed); nothing else is excused and
 # the gates themselves are unchanged. ohv_v6 and vintage_i6 are NOT here until the owner re-listens (round three).
-PROVISIONAL: dict = {}
+_OK = "owner passed by ear, 26 Oct 2026: OK in Engine Listening Room 2 (\"I am OK even with weaker sounds for now, so long as they don't sound terrible / like something other than an ICE\")"
+PROVISIONAL: dict = {
+    "modern_i4_stock": {"seam": _OK},
+    "twincam_i4_loud": {"seam": _OK},
+    "gm_sbc_v8": {"ratio": _OK, "seam": _OK},
+    "mini_supercharged_i4": {"idle": _OK, "seam": _OK},
+    "mazda_b_i4": {"ratio": _OK, "idle": _OK},
+}
 
 
 def marks(fam, gate):
