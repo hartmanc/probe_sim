@@ -29,9 +29,14 @@ export const CHANGELOG: ChangeEntry[] = [
   {
     version: '0.4.0', date: '', title: 'Ready for the paddock',
     items: [
+      'Buttonwillow Raceway Park in its Lemons configuration: the road and kerbs fitted to the owner’s own edge drawings over the 2026 imagery, the ground from lidar, the trackside from the September 2026 onboard. Race the Button Turrible 2026 field, the 100 cars that ran a lap, each modelled from its photos with the pace it ran there.',
+      'Mid-Ohio Sports Car Course, the 13-turn Lemons layout, with the Mid-West Crisis 2026 field: 85 cars from their photos, each with its own pace. A strict black flag for crossing the blend line at the pit exit. The pit lane is still rough; it gets its own round next.',
+      'Every AI car sounds like its engine: a sound family per car type, re-cut from CC BY recordings or the team’s own footage, with real idles and upshifts. The Credits page lists every source.',
       'Your scoreboard name is yours: the first device to post it claims it. To post as the same name on another device, get a transfer code in Scoreboard on this one and type it there. Times already on the boards stay.',
       'Race boards are off until the server can check a race the way it checks a hot lap. Hot-lap boards stay, every lap re-run on the server.',
       'Report a bug or ask for a feature from the Start menu: it files a public GitHub issue with the game version, the track and your device.',
+      'Reports take pictures: paste a screenshot into the report, drop one on it or pick a file, up to three. They are public on GitHub with the issue.',
+      'The Start menu says what this is: an unofficial fan project, not affiliated with 24 Hours of Lemons.',
       'Phones and tablets race the 40 cars whose real pace is closest to the Probe’s, so the race around you is the real one and the phone keeps up. Computers race the whole field.',
       'How to play, and a Credits page with the data, software, models and engine-sound sources, the privacy note and how a team can ask to be left out.',
       'A plain message when the browser cannot run WebGL 2, and a reload button when the graphics drop out.',
