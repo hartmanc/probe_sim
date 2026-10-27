@@ -32,7 +32,7 @@ import { ModeHost, type GameMode, type ModeContext, type ModeId } from './modes/
 import { createHotLap, ghostRefEntry, ghostRefOptions, HotlapLoop } from './modes/hotlap';
 import { createRace, fieldAudioHook, fieldAudioUrlOff, fieldVoicesFor, raceMenuLabel } from './modes/race';
 import { pitExitConeWatcher } from './scenery';
-import { creditsPage } from './credits';
+import { creditsPage, UNOFFICIAL_LINE } from './credits';
 import { APP_RELEASED, APP_VERSION, changelogPage, versionLine } from './changelog';
 /** AI engine sounds in a race (src/app/audio-field.ts): on by default; pause-menu toggle (persisted); ?fieldaudio=0 forces off. */
 const FIELD_AUDIO_URL_OFF = fieldAudioUrlOff(location.search);
@@ -150,6 +150,11 @@ const versionEl = document.createElement('div');
 versionEl.className = 'menu-version';
 versionEl.textContent = versionLine(APP_VERSION, GIT_SHA, APP_RELEASED);
 menu.extra.append(versionEl);
+// the affiliation line on the first screen (owner, 27 Oct 2026: label it before anyone presses Start; About repeats it)
+const unofficialEl = document.createElement('div');
+unofficialEl.className = 'menu-version';
+unofficialEl.textContent = UNOFFICIAL_LINE;
+menu.extra.append(unofficialEl);
 const progressBar = loadBox.querySelector('.progress > div') as HTMLDivElement;
 const loadLabel = loadBox.querySelector('.load-label') as HTMLDivElement;
 

@@ -38,11 +38,13 @@ export interface StaticSection { title: string; lines: (string | { text: string;
 
 export const ISSUES_URL = 'https://github.com/hartmanc/probe_sim/issues';
 export const CONTACT_EMAIL = 'cobylhartman@gmail.com';
+/** The affiliation line: on the Start menu under the version line, and first in About. */
+export const UNOFFICIAL_LINE = 'An unofficial fan project, not affiliated with 24 Hours of Lemons, the circuits or the teams shown.';
 
 export const ABOUT: StaticSection = {
   title: 'About',
   lines: [
-    'An unofficial fan project, not affiliated with 24 Hours of Lemons, the circuits or the teams shown.',
+    UNOFFICIAL_LINE,
     'Real teams: the cars, numbers, team names and paces come from public race results and photos. A team that would rather not appear is taken out on request: open an issue or write to the address below.',
     { text: 'GitHub issues: github.com/hartmanc/probe_sim/issues', url: ISSUES_URL },
     { text: CONTACT_EMAIL, url: `mailto:${CONTACT_EMAIL}` },
