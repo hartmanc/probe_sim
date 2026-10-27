@@ -606,3 +606,15 @@ The licence gate counts 12 engine.json files (13 families, one an alias).
 loudness). `classic_v8_lowrev` is held at -32.09 LAeq: at -30.39 its peak would be +0.7 dBFS. `bmw_m20_i6` was not re-rendered.
 
 **Not done**: new CC BY sources for `ohv_v6` / `vintage_i6` (downloads refused); no change to the game's audio chain, ShiftDrop or physics.
+
+## Round three b (27 Oct 2026): the owner's second listen
+
+`classic_v8_lowrev` OK, `vintage_i6` OK, `ohv_v6` "a scraping noise at 0:04 that recurs throughout ... otherwise OK".
+- `vintage_i6` joins `test_quality.PROVISIONAL` for its ratio gate ("owner passed by ear, 27 Oct 2026: OK"); nothing else changed.
+- `ohv_v6`: 0:04 is about 3900 rpm on throttle (the bins 3750-4250), and the clip crosses 4250-4500 in every gear. The 3250-4000 on
+  loops are an ordinary ladder (src0); the 4250 on (steady) and 4500 on (sweep) loops, both from the Taurus start-up clip (src14,
+  55-57 s), are a flat 0-15 kHz wash with no ladder, and the 4250 / 4500 off bins were their darkened copies. The 5-12 kHz std metric
+  did not flag them (1.2-1.8 dB): the cue was the spectrogram. Rebuilt: 4250 on / 4500 on from the 4000 on loop (x1.06 / x1.12), the
+  two off bins that loop darkened (all inside the ratio window; `repair_family.py` now takes an in-window donor first and `--maxdonor`).
+  Gates: unchanged from round three (ratio 7 fails, idle fails, speech 0; seam median 0.90 vs 0.84). The 4750-6000 bins
+  (pulsed band) are untouched and still listed as open. Only the `ohv_v6` clip was re-rendered (common loudness -30.39 LAeq).
