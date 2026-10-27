@@ -251,7 +251,7 @@ def apply(trk, osm, sc, cfg):
             o, fp = grandstand(trk, it); out.append(o); outlines.append(fp)
         elif t in ("garage", "block", "fuel"):
             o, fp = boxlike(trk, osm, it); out.append(o); outlines.append(fp)
-            if it.get("hip"):
+            if isinstance(it.get("hip"), dict):   # round 10: Sonoma's fuel island declares hip as a height (a number), not the Mid-Ohio dict
                 # Mid-Ohio round 8: a hip-roofed block clears the trees under its eaves too (the lidar roof made crowns
                 # beside the control tower's shaft); absent: unchanged
                 pad = float(it["hip"].get("overhang", 0)) + max([float(d.get("depth", 0)) for d in it.get("wrap_decks", [])] + [0.0])
