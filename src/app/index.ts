@@ -48,6 +48,7 @@ import { HotlapSim, LIMITS, type SimAssets, type SceneryLike, type InputType } f
 import { LAUNCH_S } from '../scoreboard/config';
 import { ScoreboardClient, buildHotlapSubmission, checkHotlap, hotlapBoard, offerCandidate, setBoardContext, fmtLapTime } from './scoreboard-client';
 import { ScoreboardUI } from './scoreboard-ui';
+import { TITLE_ACCESSIBLE_NAME, censoredTitleNodes } from './censor';
 import { TRACK, TRACK_ID, TRACK_IDS, urlForTrack } from './track-choice';
 import { TRACKS } from '../scoreboard/config';
 import { ROLLOVER_LINE, RolloverWatch } from './rollover';
@@ -66,7 +67,8 @@ if (!/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)) {
 // src/scoreboard/config.ts.
 const MAX_FRAME = 0.05;      // cap per rendered frame
 const GAME_OVER_DELAY_MS = 2500;        // space-launch easter egg: GAME OVER this long after the launch
-const TITLE = `Probe GT · ${TRACK.short}`;
+/** The in-game header's accessible name; the visible title is "The ▒▒▒▒ Probe Simulator" (censor.ts). The track is shown by the selector. */
+const TITLE = TITLE_ACCESSIBLE_NAME;
 
 const app = document.getElementById('app')!;
 // phone layout + touch controls (quality.ts): html.touch styles the HUD for a small landscape screen
@@ -165,15 +167,16 @@ const loadingNote = () => (noWebgl ? 'needs WebGL 2' : 'loading…');
 /** AI cars in this track's field (pace.json), for the Race row's field line; null until loaded. */
 let fieldTotal: number | null = null;
 
-/** Start-menu track choice: only when more than one track is registered (a pick reloads with ?track=<id>). */
+/** Start-menu track choice: only when more than one track is registered (a drop-down; a pick reloads with ?track=<id>, opening it loads nothing). */
 const trackEntry = (): MenuEntry[] => TRACK_IDS.length < 2 ? [] : [{
-  kind: 'choice', id: 'track', label: 'Track',
+  kind: 'select', id: 'track', label: 'Track',
   options: TRACK_IDS.map((id) => ({ value: id, label: TRACKS[id].short })),
   get: () => TRACK_ID, set: (v) => { if (v !== TRACK_ID) location.assign(urlForTrack(v)); },
 }];
 
 const mainPage: MenuPage = {
   title: TITLE,
+  titleNodes: () => censoredTitleNodes(),
   subtitle: '1993 Ford Probe GT · 24 Hours of Lemons #619',
   entries: (): MenuEntry[] => [
     ...trackEntry(),
