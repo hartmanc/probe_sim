@@ -82,7 +82,11 @@ steps, a 20 % miss rate walks the whole ladder and clean frames walk back up, 2.
 Level traces (`__sim.adaptive.level` once a second, default config, `?dynres=0`): **hot lap, 66 s: level 0 the whole time, no changes**
 (load 14-16: the other agent's runs were going, so this is stronger than idle). **Race (seed 8), 68 s at load 11-12, not idle**: 0 for 4 s,
 then down 1, 2, 3, 4 at 16 / 19 / 24 / 27 s, wavering 3-4 and reaching 5 at 60 s (`00001112222233344444444443334444444444433344444455555555554445555555`):
-the policy reacting to real CPU contention. **Idle race level trace: pending** (the machine was not idle when this was written).
+the policy reacting to real CPU contention. **Idle race level trace** (seed 8, defaults, `?dynres=0`, load 2.3-2.7 during it, under 4; one sample per second, 68 s):
+`00000000000000000000000000000000000000000000000000000000000011111111`: level 0 for the first 60 s (sim time 0-60, formation and the green
+flag), then one step to level 1 at 61 s (sim time about 65) that stayed. So the policy no longer steps on vsync jitter, but on this idle
+machine it still found more than 5 % of frames over 25 ms once, in the pack after the green; not investigated (a single step: AI shadow
+casters 8 -> 4).
 
 ## Physics in a worker: the toggle
 
