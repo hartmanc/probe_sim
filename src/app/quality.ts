@@ -42,7 +42,8 @@ export const TIER_KEY = 'probeSim.quality.tier.v1';
  *  which keeps the player's shadow at the same texel density as the old ±7 m / 1024 px box (~70 px/m). `?aishadows=0`
  *  restores the small box and blobs for every AI car (owner, 17 Oct 2026: "open to not doing it if it hurts performance"). */
 export const AI_SHADOW_CASTERS = 8;
-export const SHADOW_BOX_M = 30;
+/** ±15 m at 2048 px is the same ~68 px/m as the old ±30 m at 4096 px (perf round 1, 27 Oct 2026): the player's shadow keeps its density; AI cars beyond 15 m keep their blob. */
+export const SHADOW_BOX_M = 15;
 export const SHADOW_MAP = 2048;
 const PLAYER_BOX_M = 7, PLAYER_MAP = 1024;
 /** Pure: dev `?shadowbox=<5..60>` (half-size of the sun's shadow box, m); null = the tier's own. */

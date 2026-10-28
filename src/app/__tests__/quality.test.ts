@@ -20,9 +20,9 @@ describe('tier', () => {
     expect(settingsFor('desktop', 'auto', false).maxAiCarsDrawn).toBe(45);
     expect(settingsFor('phone', 'auto', true).shadows).toBe(false);
   });
-  it('AI shadows: desktop 8 casters in a ±30 m / 2048 px box; phone and ?aishadows=0 keep the ±7 m / 1024 px player box', () => {
+  it('AI shadows: desktop 8 casters in a ±15 m / 2048 px box (the old player shadow density); phone and ?aishadows=0 keep the ±7 m / 1024 px player box', () => {
     const d = settingsFor('desktop', 'auto', false);
-    expect([d.aiShadowCasters, d.shadowBoxM, d.shadowMapSize]).toEqual([8, 30, 2048]);
+    expect([d.aiShadowCasters, d.shadowBoxM, d.shadowMapSize]).toEqual([8, 15, 2048]);
     const off = settingsFor('desktop', 'auto', false, { aiShadows: false });
     expect([off.aiShadowCasters, off.shadowBoxM, off.shadowMapSize]).toEqual([0, 7, 1024]);
     const p = settingsFor('phone', 'auto', true);

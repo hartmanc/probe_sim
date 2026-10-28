@@ -3,7 +3,7 @@
 // without one, a cheap placeholder (≈300 triangles built in code, the car's primary colour from identity.json,
 // its number on large contrasting boards with a team-colour band on the doors, roof and tail) stands in. Every car is simulated; only the
 // `maxDrawn` nearest by track distance are drawn (phone: quality.maxAiCarsDrawn = 20), and only the
-// `shadowCasters` nearest cast shadow-map shadows and hide their blob (desktop 8 inside the ±30 m sun box, phone 0). three.js frustum culling stays on.
+// `shadowCasters` nearest cast shadow-map shadows and hide their blob (desktop 8 inside the ±15 m sun box, phone 0). three.js frustum culling stays on.
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { CarRig } from './car';

@@ -35,7 +35,7 @@ export { PLAYER_NUMBER };
 /** Physics LOD for far AI cars in the app (docs/performance.md): the `?lod=` switch overrides it. */
 export const LOD_DEFAULT = false;
 // AI shadows: quality.aiShadowCasters nearest AI cars cast shadow-map shadows inside the sun's ±quality.shadowBoxM box
-// (desktop 8 cars / ±30 m / 2048 px; phone and ?aishadows=0: none); the rest keep a contact-shadow blob (src/app/quality.ts).
+// (desktop 8 cars / ±15 m / 2048 px; phone and ?aishadows=0: none); the rest keep a contact-shadow blob (src/app/quality.ts).
 
 // ---------------------------------------------------------------- pure helpers (unit-tested)
 
