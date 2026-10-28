@@ -15,12 +15,13 @@ import type { VehicleState } from '../physics-types';
 const pub = fileURLToPath(new URL('../../../public/', import.meta.url));
 const readJson = (p: string) => JSON.parse(readFileSync(pub + p, 'utf8'));
 const field = { pace: readJson('cars/field/pace.json'), identity: readJson('cars/field/identity.json') };
-const B: HostBuild = { gen: 1, seed: 3, laps: 2, realGrid: false, playerAi: true, lod: false, ref: null, autoShift: true, abs: true, timing: false };
+const B: HostBuild = { gen: 1, seed: 3, laps: 2, realGrid: false, playerAi: true, lod: false, strengthPct: 100, ref: null, autoShift: true, abs: true, timing: false };
 
 function mainThreadRace(steps: number, o: Partial<HostBuild> = {}) {
+  const strengthPct = o.strengthPct ?? 100;
   const sim = new HotlapSim(lagunaAssets(), { record: false, autoShift: true });
   sim.setRef(null); sim.reset();
-  const dir = buildDirector(sim, { ...field, models: [], missing: [] } as unknown as FieldData, { seed: B.seed, laps: B.laps, trackId: 'laguna_seca', playerAi: true, ...(o.lod ? { lod: true } : {}) });
+  const dir = buildDirector(sim, { ...field, models: [], missing: [] } as unknown as FieldData, { seed: B.seed, laps: B.laps, trackId: 'laguna_seca', playerAi: true, strengthPct, ...(o.lod ? { lod: true } : {}) });
   sim.stepVehicle = (di) => dir.step(STEP, di as never);
   for (let i = 0; i < steps; i++) sim.step(() => ({ steer: 0, throttle: 0, brake: 0 }));
   return { sim, dir };
@@ -44,22 +45,28 @@ describe('state codec', () => {
 });
 
 describe('race host', () => {
-  it('on a fake clock it steps exactly the main-thread race (same bits, same contacts) and caps a stall at 50 ms', () => {
+  it.each([100, 105])('on a fake clock it steps exactly the main-thread race (same bits, same contacts) and caps a stall at 50 ms, AI strength %i %%', (strengthPct) => {
     const host = new RaceSimHost();
     host.init({ assets: lagunaAssets(), field, trackId: 'laguna_seca' });
-    host.build(B, 0);
+    host.build({ ...B, strengthPct }, 0);
     let t = 0;
     for (let k = 0; k < 120; k++) { t += 25; host.tick(t); }       // 3 s in 25 ms frames: 3000 steps
     expect(Math.abs(host.sim!.stepIndex - 3000)).toBeLessThanOrEqual(2);   // the float accumulator, as in the main loop
     const n = host.tick(t + 400); t += 400;
     expect(Math.abs(n - 50)).toBeLessThanOrEqual(1);               // a 400 ms stall: the main loop's 50 ms cap
-    const a = mainThreadRace(host.sim!.stepIndex);
+    const a = mainThreadRace(host.sim!.stepIndex, { strengthPct });
     expect(host.dir!.contactTotal).toBe(a.dir.contactTotal);
     for (let i = 0; i < a.dir.cars.length; i++) {
       expect(Array.from(host.dir!.cars[i].vehicle.state.pos)).toEqual(Array.from(a.dir.cars[i].vehicle.state.pos));
       expect(host.dir!.cars[i].U).toBe(a.dir.cars[i].U);
     }
     expect(host.dir!.time).toBe(a.dir.time);
+  }, 120000);
+
+  it('strength 105 really changes the race (the worker is not silently running 100 %)', () => {
+    const a = mainThreadRace(4000), b = mainThreadRace(4000, { strengthPct: 105 });
+    const diff = a.dir.cars.some((c, i) => c.vehicle.state.pos[0] !== b.dir.cars[i].vehicle.state.pos[0]);
+    expect(diff).toBe(true);
   }, 120000);
 
   it('a snapshot lands in the main thread director and HotlapSim; paused it does not step; recover moves the car', () => {
@@ -103,12 +110,12 @@ describe('worker client', () => {
     const sent: { type: string }[] = [];
     const fake: WorkerLike = { postMessage: (m) => sent.push(m as { type: string }), terminate: () => {}, onmessage: null, onerror: null };
     const c = new RaceWorkerClient(() => fake);
-    const g1 = c.build({ seed: 1, laps: 1, realGrid: false, playerAi: true, lod: false, ref: null, autoShift: true, abs: true, timing: false });
+    const g1 = c.build({ seed: 1, laps: 1, realGrid: false, playerAi: true, lod: false, strengthPct: 100, ref: null, autoShift: true, abs: true, timing: false });
     const snap = (gen: number, seq: number) => ({ data: { type: 'snap', gen, seq } }) as MessageEvent;
     fake.onmessage!(snap(g1, 1));
     expect(c.take(0)?.seq).toBe(1);
     expect(c.take(1)).toBeNull();
-    const g2 = c.build({ seed: 2, laps: 1, realGrid: false, playerAi: true, lod: false, ref: null, autoShift: true, abs: true, timing: false });
+    const g2 = c.build({ seed: 2, laps: 1, realGrid: false, playerAi: true, lod: false, strengthPct: 100, ref: null, autoShift: true, abs: true, timing: false });
     fake.onmessage!(snap(g1, 2));            // a late snapshot of race 1
     expect(c.take(0)).toBeNull();
     fake.onmessage!(snap(g2, 1));

@@ -277,6 +277,7 @@ describe('per-track AI race parameters (TRACKS[id].ai → RaceConfig)', () => {
     expect(raceAiConfig('sonoma')).toEqual({ followScale: 1.4, laneMargin: 0.85, shiftGrip: 1 });
     expect(raceAiConfig('laguna_seca')).toEqual({ followScale: 1, laneMargin: 1, shiftGrip: 0 });
     expect(raceAiConfig('buttonwillow')).toEqual({ followScale: 1.4, laneMargin: 0.7, shiftGrip: 1 });
+    expect(raceAiConfig('mid_ohio')).toEqual({ followScale: 1.8, laneMargin: 0.85, shiftGrip: 1 });
   });
 });
 

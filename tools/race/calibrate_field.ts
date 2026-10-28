@@ -1,7 +1,9 @@
 // Fit each AI car's pace scale so its clean solo lap equals the real target lap (pace.json), and one
 // scale per real stint (pace.json cars[].stints[]: the per-driver paces a race draws from).
 //
-//   npx tsx tools/race/calibrate_field.ts [--track <id>] [--only 711,619] [--workers 8] [--tol 0.002] [--dry]
+//   npx tsx tools/race/calibrate_field.ts [--track <id>] [--only 711,619] [--workers 8] [--tol 0.002] [--dry] [--pace <file>]
+//   --pace <file>: read and write THAT pace file instead of the track's public one (candidate files, AI round 1: tools/race/out/pace_q/<q>/<track>/pace.json);
+//   the identity lookup still follows the track id. The track's public file is then not touched.
 //
 // Identity: the track's own cars/field/<id>/identity.json (TRACKS[id].identity) when it exists, else the global one;
 // a car's row is found by its pace.json `id`, else its number (field.ts fieldKey), as in the app's race.
@@ -11,11 +13,13 @@
 // (TRACKS[id].pace; Laguna public/cars/field/pace.json) and prints a table. Bump AI_VERSION (src/physics/ai/field.ts) when the
 // driver or this procedure changes behaviour, then re-run.
 
-import { writeFileSync } from 'node:fs';
+import { writeFileSync, readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { cpus } from 'node:os';
 import { Worker, isMainThread, parentPort, workerData } from 'node:worker_threads';
 import { fileURLToPath } from 'node:url';
-import { loadTrackPack, loadProbeJson, loadPace, loadIdentity, pacePath, trackArg } from './load';
+import { loadTrackPack, loadProbeJson, loadIdentity, pacePath, trackArg } from './load';
+import type { PaceJson } from '../../src/physics/ai/field';
 import { runSolo } from '../../src/physics/ai/solo';
 import { AI_VERSION, PACE_MIN, PACE_MAX, describeAiCar, fieldKey, paceSplit, type PaceCar } from '../../src/physics/ai/field';
 
@@ -82,7 +86,8 @@ if (!isMainThread) {
   const nWorkers = Math.max(1, Number(arg('--workers') ?? Math.min(8, Math.max(1, cpus().length - 2))));
   const dry = argv.includes('--dry');
   const track = trackArg(argv);
-  const pace = loadPace(track);
+  const paceFile = arg('--pace') ? resolve(arg('--pace')!) : pacePath(track);
+  const pace: PaceJson = JSON.parse(readFileSync(paceFile, 'utf8'));
   const probeJson = loadProbeJson();
   const ident = loadIdentity(track);
   const cars = pace.cars.filter((c) => !only || only.includes(c.number));
@@ -141,5 +146,5 @@ if (!isMainThread) {
   console.log(`\nworst error ${worst.toFixed(2)} %, ${((performance.now() - t0) / 1000).toFixed(1)} s with ${nWorkers} workers`);
   pace.ai_version = AI_VERSION;
   pace.calibrated = { ai_version: AI_VERSION, date: new Date().toISOString().slice(0, 10), tolerance: tol };
-  if (!dry) { writeFileSync(pacePath(track), JSON.stringify(pace, null, 1) + '\n'); console.log(`wrote ${pacePath(track)}`); }
+  if (!dry) { writeFileSync(paceFile, JSON.stringify(pace, null, 1) + '\n'); console.log(`wrote ${paceFile}`); }
 }

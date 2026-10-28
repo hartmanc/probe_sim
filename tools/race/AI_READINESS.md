@@ -444,3 +444,33 @@ FIELD_TRACK=... (same three)  npx tsx tools/race/calibrate_field.ts --track mid_
   Probe at scale 1 on the Mid-Ohio package (rev ea1a07f8bd) 118.55 s. Fit errors: median 0.12 %, p95 0.19 %, worst
   0.40 %, none outside 0.5 %, none not converged. Scales: median 0.871, range 0.375 to 1.372 (21 fits under 0.6, the slow
   stints; 202 at or above 1.0).
+
+## 7. AI round 1 (27-28 Oct 2026, branch `ai-round-1`)
+
+Pace anchor, AI strength, the player's pace; Part D (racecraft against a close car) tried and dropped: src/physics/ai/NOTES.md
+"27 Oct 2026: round 1". Runs: `tools/race/out/r1/` (local; `sum.py <prefix>`). Bands, 4 laps, seeds 1-8, pooled per car-lap:
+
+| track | contacts main / A-C / +D | four-off main / A-C / +D | clearly-faster completed main / A-C / +D |
+|---|---|---|---|
+| Laguna | 0.027 / 0.027 / 0.034 | 0.094 / 0.094 / 0.076 | 69.3 / 69.3 / 70.3 % |
+| Sonoma | 0.028 / 0.028 / 0.027 | 0.011 / 0.011 / 0.010 | 59.2 / 59.2 / 59.2 % |
+| Buttonwillow | 0.015 / 0.015 / 0.017 | 0.009 / 0.005 / 0.008 | 63.7 / 65.2 / 63.1 % |
+| Mid-Ohio (no knobs) | 0.028 / 0.028 / 0.016 | 0.072 / 0.072 / 0.073 | 62.7 / 62.7 / 62.3 % |
+
+Player pass cost (`--player-scale 1.05`, 5 laps, seeds 1-8), AI cars passed per race / mean s within 20 m behind before the
+pass, A-C -> +D (all three D rules): Laguna 12.9 / 30.5 -> 14.5 / 30.2, Sonoma 11.1 / 29.8 -> 14.2 / 23.5, Buttonwillow 9.4 /
+33.5 -> 11.8 / 29.7, Mid-Ohio 7.2 / 30.8 -> 9.5 / 25.0.
+
+Mid-Ohio knob trials (A-C tree, 85 cars, 4 laps, seeds 1-4; followScale / laneMargin / shiftGrip):
+
+| trial | contacts (per seed) | four-off | clearly-faster completed | green passes | race time | best lap / target |
+|---|---|---|---|---|---|---|
+| none 1 / 1 / 0 | 0.029 (0.028 / 0.019 / 0.027 / 0.042) | 0.073 | 61.3 % | 2034 | 541 s | 1.187 |
+| 1.4 / 0.85 / 1 | 0.011 (0.010 / 0.010 / 0.010 / 0.016) | 0.008 | 66.6 % | 1345 | 543 s | 1.173 |
+| 1.4 / 0.7 / 1 | 0.007 (0.003 / 0.016 / 0.003 / 0.007) | 0.003 | 65.2 % | 1092 | 539 s | 1.180 |
+| 1 / 1 / 1 | 0.037 (0.039 / 0.026 / 0.031 / 0.052) | 0.016 | 66.0 % | 1414 | 529 s | 1.163 |
+| 1.4 / 1 / 0 | 0.008 (0.007 / 0.007 / 0.013 / 0.007) | 0.044 | 66.7 % | 1751 | 551 s | 1.190 |
+| **1.8 / 0.85 / 1 (kept)** | 0.012 (0.013 / 0.017 / 0.007 / 0.010) | 0.012 | 73.1 % | 1287 | 544 s | 1.184 |
+
+Kept the block that reaches <= 0.02 with the most clearly-faster completion; every block with shiftGrip 1 cuts all green
+passes by a third or more (1.4 / 1 / 0 keeps 86 % of them, at four-off 0.044).

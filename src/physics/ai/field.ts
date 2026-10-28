@@ -9,7 +9,7 @@
 // A car may name its model explicitly with `model_id` (pace row, else identity row; modelKey): a renumbered car reuses
 // its earlier model.
 
-import { cbrt as dcbrt, pow as dpow } from '../dmath';   // the AI computes like the physics: the same bits on every host and engine
+import { cbrt as dcbrt, exp as dexp, log as dlog, pow as dpow } from '../dmath';   // the AI computes like the physics: the same bits on every host and engine
 import { loadCarSpec, type CarSpec } from '../spec';
 import { Vehicle } from '../vehicle';
 import { createFlatSurface } from '../devtrack';
@@ -53,6 +53,12 @@ export interface PaceCar {
   resolved?: ResolvedCar;
   /** the car's real pit-to-pit stints (one driver each); a race draws one of them with `drawPace` */
   stints?: PaceStint[];
+  /**
+   * The car's solo lap against its pace scale, [scale, lap s] by rising scale with the lap falling (AI round 1, 27 Oct
+   * 2026; tools/race/pace_curve.ts: every calibration of this car, its own fit and its stints' at the four pace quantiles
+   * 0.5 / 0.35 / 0.25 / 0.15, made monotone). The AI strength setting reads it (strengthPace); absent = LAP_SCALE_SLOPE.
+   */
+  curve?: [number, number][];
 }
 
 /**
@@ -82,6 +88,73 @@ export interface DrawnPace {
   sigma: number;
   /** fitted scale for that pace, null when not calibrated (the director then estimates it) */
   scale: number | null;
+  /** the solo lap the calibration measured at that scale, null when not calibrated */
+  achievedLap: number | null;
+}
+
+/** The AI strength choices (player setting, AI round 1): every AI car's clean solo lap is its target / strength. 110 % is a
+ *  calibrated point of every stint (tools/race/pace_target_scale.ts + calibrate_field.ts, folded into PaceCar.curve), 105 %
+ *  between two calibrated points: solo laps on 6 cars per track (tools/race/strength_check.ts, 28 Oct 2026) within 0.92 %
+ *  at 105 %, at 110 % within 0.34 % except the cars at the caps (Buttonwillow #562 1.9 %, #420 1.0 %; PACE_MAX: Sonoma #747,
+ *  Mid-Ohio #372). Below 100 % the curves hold no calibrated point (95 % missed by up to 4.5 %): not offered. */
+export const AI_STRENGTHS: readonly number[] = [1, 1.05, 1.1];
+/** d ln(lap) / d ln(scale) for a car without a curve (the pooled median of the four fields' curves, tools/race/pace_curve.ts). */
+export const LAP_SCALE_SLOPE = -0.35;
+
+/** ln(lap) of a car's curve at ln(scale) `x`: piecewise linear in (ln scale, ln lap) between its points, beyond the
+ *  ends along the least-squares slope of all its points (never rising). */
+function curveLn(xs: Float64Array, ys: Float64Array, b: number, x: number): number {
+  const n = xs.length;
+  if (x <= xs[0]) return ys[0] + b * (x - xs[0]);
+  if (x >= xs[n - 1]) return ys[n - 1] + b * (x - xs[n - 1]);
+  let k = 1;
+  while (xs[k] < x) k++;
+  const f = (x - xs[k - 1]) / (xs[k] - xs[k - 1]);
+  return ys[k - 1] + f * (ys[k] - ys[k - 1]);
+}
+
+/**
+ * The AI strength map (AI round 1, Part B): the pace scale at which a car whose calibrated pace is `scale0` (its solo lap
+ * `lap0` there, built to `target0`) laps target0 / strength, from its lap(scale) curve (PaceCar.curve) anchored on its own
+ * point (the stint's offset from the car's curve is kept). Strength 1 returns the inputs bit for bit. The scale stays in
+ * [PACE_MIN, PACE_MAX]: a car whose curve cannot reach the lap inside that range gets the cap and the lap its curve gives
+ * there (`capped`), so it races at what the caps allow, and its pace hint (paceHint) is that lap.
+ */
+export function strengthPace(curve: readonly (readonly [number, number])[] | undefined, scale0: number, lap0: number, target0: number, strength: number):
+  { scale: number; lap: number; targetLap: number; capped: boolean } {
+  if (strength === 1) return { scale: scale0, lap: lap0, targetLap: target0, capped: false };
+  const T = target0 / strength;
+  let xs: Float64Array, ys: Float64Array, b = LAP_SCALE_SLOPE;
+  if (curve && curve.length >= 2) {
+    xs = Float64Array.from(curve, (p) => dlog(p[0])); ys = Float64Array.from(curve, (p) => dlog(p[1]));
+    const n = xs.length;
+    let mx = 0, my = 0;
+    for (let k = 0; k < n; k++) { mx += xs[k]; my += ys[k]; }
+    mx /= n; my /= n;
+    let sxy = 0, sxx = 0;
+    for (let k = 0; k < n; k++) { sxy += (xs[k] - mx) * (ys[k] - my); sxx += (xs[k] - mx) * (xs[k] - mx); }
+    b = sxx > 1e-12 ? Math.min(0, sxy / sxx) : LAP_SCALE_SLOPE;
+  } else { xs = Float64Array.of(dlog(scale0)); ys = Float64Array.of(dlog(lap0)); }
+  const off = dlog(lap0) - curveLn(xs, ys, b, dlog(scale0));
+  const want = dlog(T) - off;
+  let lo = dlog(PACE_MIN), hi = dlog(PACE_MAX);
+  if (curveLn(xs, ys, b, hi) > want) return { scale: PACE_MAX, lap: dexp(curveLn(xs, ys, b, hi) + off), targetLap: T, capped: true };
+  if (curveLn(xs, ys, b, lo) < want) return { scale: PACE_MIN, lap: dexp(curveLn(xs, ys, b, lo) + off), targetLap: T, capped: true };
+  for (let it = 0; it < 60; it++) { const m = 0.5 * (lo + hi); if (curveLn(xs, ys, b, m) > want) lo = m; else hi = m; }
+  const x = 0.5 * (lo + hi);
+  return { scale: dexp(x), lap: dexp(curveLn(xs, ys, b, x) + off), targetLap: T, capped: false };
+}
+
+/** A fit is converged when its solo lap is within this share of the target (calibrate_field.ts: max(tol, 0.005)). */
+export const FIT_TOL = 0.005;
+/**
+ * The pace hint other drivers read (Traffic.pace: the clearly-faster test, defending, pass planning) for a car built
+ * to `targetLap` whose calibrated solo lap is `achievedLap` (AI round 1, 27 Oct 2026): the target, except where the fit
+ * did not converge (a car at the caps cannot reach it): then the lap it can actually do, so it does not plan passes it
+ * cannot make and nobody waves it by as clearly faster.
+ */
+export function paceHint(targetLap: number, achievedLap: number | null | undefined): number {
+  return achievedLap != null && achievedLap > 0 && Math.abs(achievedLap / targetLap - 1) > FIT_TOL ? achievedLap : targetLap;
 }
 
 /**
@@ -91,10 +164,10 @@ export interface DrawnPace {
  */
 export function drawPace(c: PaceCar, seed: number): DrawnPace {
   const st = c.stints ?? [];
-  if (!st.length) return { stint: -1, of: 0, targetLap: c.targetLap, bestLap: c.bestLap, sigma: c.sigma, scale: c.scale && c.scale > 0 ? c.scale : null };
+  if (!st.length) return { stint: -1, of: 0, targetLap: c.targetLap, bestLap: c.bestLap, sigma: c.sigma, scale: c.scale && c.scale > 0 ? c.scale : null, achievedLap: c.scale && c.scale > 0 && c.achievedLap ? c.achievedLap : null };
   const k = new Rng(hashSeed(seed, `stint:${c.number}:v${AI_VERSION}`)).int(st.length);
   const s = st[k];
-  return { stint: k, of: st.length, targetLap: s.targetLap, bestLap: s.bestLap, sigma: s.sigma, scale: s.scale && s.scale > 0 ? s.scale : null };
+  return { stint: k, of: st.length, targetLap: s.targetLap, bestLap: s.bestLap, sigma: s.sigma, scale: s.scale && s.scale > 0 ? s.scale : null, achievedLap: s.scale && s.scale > 0 && s.achievedLap ? s.achievedLap : null };
 }
 
 export interface PaceJson {
@@ -103,6 +176,8 @@ export interface PaceJson {
   /** free-text notes on how the field was built (ids, cars left out) */
   notes?: string;
   track?: string;
+  /** Which statistic of the clean laps the targets are (tools/race/pace_rules.ts): the quantile `q`; 0.5 is the median. */
+  pace?: { stat: 'quantile'; q: number };
   /** Calibration metadata (written by calibrate_field.ts). */
   calibrated?: { ai_version: number; date?: string; tolerance?: number };
   cars: PaceCar[];

@@ -11,7 +11,7 @@ import * as THREE from 'three';
 import { race as R, createTrackSurface, type DriverInput, type Surface, type PitLaneJson } from '../../physics';
 import type { RaceDirector, RaceHud } from '../../physics/ai/race';
 import type { RaceLine } from '../../physics/ai/line';
-import type { PaceJson } from '../../physics/ai/field';
+import { AI_STRENGTHS, type PaceJson } from '../../physics/ai/field';
 import { STEP, type SimAssets } from '../../scoreboard';
 import { fmtTime } from '../hud';
 import type { MenuEntry, MenuPage } from '../menu';
@@ -62,8 +62,33 @@ export function newSeed(rand: () => number = Math.random): number {
 }
 
 /** The scoreboard payload for a finished race (`submitRace`). */
-/** The race board's AI-version slot also carries the lap count, so 5-lap distances never compete with old 10-lap ones. */
-export const raceBoardVersion = (aiVersion: number | string, laps = RACE_LAPS): string => `${aiVersion}-${laps}L`;
+/** The race board's AI-version slot also carries the lap count, so 5-lap distances never compete with old 10-lap ones, and
+ *  the AI strength when it is not 100 % (`-S<pct>`; AI round 1: race boards are closed, so no key changes at the default,
+ *  and a future board can tell a 110 % race from a 100 % one). */
+export const raceBoardVersion = (aiVersion: number | string, laps = RACE_LAPS, strengthPct = 100): string =>
+  `${aiVersion}-${laps}L${strengthPct === 100 ? '' : `-S${strengthPct}`}`;
+
+// ---- AI strength (player setting, AI round 1, 27 Oct 2026): every AI car's clean solo lap at its target / strength
+// (RaceConfig.strength, field.ts strengthPace). Stored like the Graphics choice, applied at the next race build.
+export const AI_STRENGTH_KEY = 'probeSim.aiStrength.v1';
+/** The choices, %; 100 = the calibrated field. */
+export const AI_STRENGTH_PCTS: readonly number[] = AI_STRENGTHS.map((s) => Math.round(s * 100));
+/** A stored / given value as one of the choices (anything else: 100). */
+export function parseAiStrength(raw: string | null | undefined): number {
+  const n = Number(raw);
+  return raw != null && AI_STRENGTH_PCTS.includes(n) ? n : 100;
+}
+type StorageLike = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
+const defaultStorage = (): StorageLike | null => { try { return typeof localStorage !== 'undefined' ? localStorage : null; } catch { return null; } };
+export function storedAiStrength(store: StorageLike | null = defaultStorage()): number {
+  try { return parseAiStrength(store?.getItem(AI_STRENGTH_KEY)); } catch { return 100; }
+}
+export function storeAiStrength(pct: number, store: StorageLike | null = defaultStorage()): void {
+  const v = parseAiStrength(String(pct));
+  try { if (v === 100) store?.removeItem(AI_STRENGTH_KEY); else store?.setItem(AI_STRENGTH_KEY, String(v)); } catch { /* no storage */ }
+}
+/** "AI 105 %" for the launch toast, the results and the pause menu. */
+export const aiStrengthLabel = (pct: number): string => `AI ${pct} %`;
 
 export function raceResultFor(rows: TableRow[], o: { seed: number; aiVersion: number | string; finished: boolean }): RaceResult | null {
   const me = rows.find((r) => r.player);
@@ -82,7 +107,7 @@ export function raceResultFor(rows: TableRow[], o: { seed: number; aiVersion: nu
 
 export { surfaceFactory, raceAiConfig };
 /** Build the RaceDirector for the player's current HotlapSim car (call right after a rolling start). */
-export function buildDirector(sim: RaceServices['sim'], field: FieldData, o: { seed: number; laps: number; realGrid?: boolean; playerAi?: boolean; lod?: boolean }): RaceDirector {
+export function buildDirector(sim: RaceServices['sim'], field: FieldData, o: { seed: number; laps: number; realGrid?: boolean; playerAi?: boolean; lod?: boolean; strengthPct?: number }): RaceDirector {
   return buildDirectorFor(sim, field, { ...o, trackId: TRACK_ID });
 }
 
@@ -298,6 +323,8 @@ export interface RaceDeps {
   loadField(): FieldData | Promise<FieldData>;
   loadModel(file: string): Promise<THREE.Object3D | null>;
   random(): number;
+  /** The AI strength setting, % (default: the stored choice, storedAiStrength); read at every race build. */
+  aiStrength?(): number;
   /** DOM available (HUD, menus); false in unit tests. */
   dom: boolean;
 }
@@ -306,6 +333,8 @@ const defaultDeps: RaceDeps = { loadField: loadFieldData, loadModel: loadFieldMo
 export type RaceMode = GameMode & {
   readonly director: RaceDirector | null;
   readonly seed: number;
+  /** the AI strength of the current race, % */
+  readonly strength: number;
   readonly laps: number;
   readonly fieldCars: FieldCars | null;
   readonly out: { reason: string; metres: number } | null;
@@ -322,6 +351,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
   const laps = ov.laps ?? RACE_LAPS;
   const pf = parsePerfFlags(sv?.search ?? '');
   let seed = ov.seed ?? newSeed(deps.random);
+  let strength = 100;   // the AI strength of the race built last (%)
   let d: RaceDirector | null = null;
   let field: FieldData | null = null;
   let fieldErr: string | null = null;
@@ -362,12 +392,13 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
     ctx.rollingStart();                 // fresh Vehicle + Surface + timer; step counter 0
     sv.sim.record = false;              // races are not replayed
     const t0 = performance.now();
-    d = buildDirector(sv.sim, field, { seed, laps, realGrid: fieldSelected, playerAi: pf.playerAi, lod: pf.lod ?? LOD_DEFAULT });
+    strength = parseAiStrength(String(deps.aiStrength ? deps.aiStrength() : storedAiStrength()));
+    d = buildDirector(sv.sim, field, { seed, laps, realGrid: fieldSelected, playerAi: pf.playerAi, lod: pf.lod ?? LOD_DEFAULT, strengthPct: strength });
     const dir = d;
     if (perf.on) dir.timing = newDirectorTiming();
     sv.sim.stepVehicle = (di) => dir.step(STEP, di as DriverInput);
     if (useWorker) startWorker(dir);
-    console.info(`race: seed ${seed}, ${dir.cars.length} cars, ${laps} laps, built in ${(performance.now() - t0).toFixed(0)} ms${dir.calibrationStale ? ' (pace.json calibration is stale)' : ''}`);
+    console.info(`race: seed ${seed}, ${dir.cars.length} cars, ${laps} laps, AI strength ${strength} %, built in ${(performance.now() - t0).toFixed(0)} ms${dir.calibrationStale ? ' (pace.json calibration is stale)' : ''}`);
     out = null; resultsWanted = false; submitState = 'idle';
     prev = { phase: 'formation', lapIdx: 0, count: 0, position: 0 };
     posCandidate = 0; posSince = 0; thump = 0;
@@ -381,8 +412,8 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
     fieldCars.setVisible(true);
     placeMarker(dir);
     loadModelsInBackground();
-    setBoardContext({ raceAiVersion: raceBoardVersion(R.AI_VERSION) });
-    ctx.hud.toast(`Formation lap · seed ${seed} · you start P${dir.player.grid}${wk ? ' · physics in a worker' : ''}`, 3000);
+    setBoardContext({ raceAiVersion: raceBoardVersion(R.AI_VERSION, RACE_LAPS, strength) });
+    ctx.hud.toast(`Formation lap · seed ${seed} · ${aiStrengthLabel(strength)} · you start P${dir.player.grid}${wk ? ' · physics in a worker' : ''}`, 3000);
   };
 
   /** ?worker=1: (re)start the worker's race alongside the director built here (static data stays on this thread). */
@@ -391,7 +422,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
     try {
       if (!wk) wk = new RaceWorkerClient();
       if (!wkInit) { wk.init(sv.sim.assets, { pace: field.pace, identity: field.identity }, TRACK_ID); wkInit = true; }
-      const gen = wk.build({ seed, laps, realGrid: fieldSelected, playerAi: pf.playerAi, lod: pf.lod ?? LOD_DEFAULT, ref: sv.sim.refId, autoShift: sv.sim.autoShift, abs: sv.sim.abs, timing: perf.on });
+      const gen = wk.build({ seed, laps, realGrid: fieldSelected, playerAi: pf.playerAi, lod: pf.lod ?? LOD_DEFAULT, strengthPct: strength, ref: sv.sim.refId, autoShift: sv.sim.autoShift, abs: sv.sim.abs, timing: perf.on });
       ms = newMirrorState(gen);
       const w = wk;
       installMirror(dir, sv.sim, ms, (k, detail) => w.violation(k, detail));
@@ -537,7 +568,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
   };
   const submit = () => {
     if (!d || submitState !== 'idle' || pf.playerAi) return;
-    const res = raceResultFor(finalRows(), { seed, aiVersion: raceBoardVersion(R.AI_VERSION), finished: d.player.finished });
+    const res = raceResultFor(finalRows(), { seed, aiVersion: raceBoardVersion(R.AI_VERSION, RACE_LAPS, strength), finished: d.player.finished });
     if (!res) return;
     submitState = 'busy';
     sv?.menu.refresh();
@@ -554,7 +585,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
     const shortRace = laps !== RACE_LAPS && !ov.devSubmit;
     return {
       title: 'RESULTS',
-      subtitle: `${laps} lap${laps === 1 ? '' : 's'} · seed ${seed}${me ? ` · P${me.position} of ${rows.length} · ${me.time != null ? `${me.laps} laps in ${fmtLapTime(me.time)}` : fmtMetres(me.metres, Math.max(0, me.laps), L())}` : ''}`,
+      subtitle: `${laps} lap${laps === 1 ? '' : 's'} · seed ${seed} · ${aiStrengthLabel(strength)}${me ? ` · P${me.position} of ${rows.length} · ${me.time != null ? `${me.laps} laps in ${fmtLapTime(me.time)}` : fmtMetres(me.metres, Math.max(0, me.laps), L())}` : ''}`,
       body: () => raceTable(rows, L(), d?.getResults() ? `CHEQUERED FLAG · ${TRACK.short.toUpperCase()} · 2026 LEMONS FIELD` : 'OUT OF THE RACE · ORDER WHEN YOU LEFT'),
       entries: (): MenuEntry[] => [
         // race boards are hidden until the server can replay a race (owner, 26 Oct 2026): no submit row meanwhile
@@ -576,7 +607,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
 
   const standingsPage = (): MenuPage => ({
     title: 'Standings',
-    subtitle: d ? `Lap ${d.hud().lap}/${laps} · seed ${seed}` : 'no race',
+    subtitle: d ? `Lap ${d.hud().lap}/${laps} · seed ${seed} · ${aiStrengthLabel(strength)}` : 'no race',
     body: () => (d ? (d.getResults() ? raceTable(finalRows(), L(), 'CLASSIFICATION AT THE FLAG') : raceTable(standingsRows(), L(), 'RUNNING ORDER')) : null),
     entries: () => [{ kind: 'back', id: 'back', label: 'Back' }],
   });
@@ -608,6 +639,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
     label: 'Race',
     get director() { return d; },
     get seed() { return seed; },
+    get strength() { return strength; },
     get laps() { return laps; },
     get fieldCars() { return fieldCars; },
     get out() { return out; },
@@ -690,7 +722,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
     pauseEntries(): MenuEntry[] {
       return [
         { kind: 'submenu', id: 'standings', label: 'Standings', disabled: !d, page: standingsPage },
-        { kind: 'action', id: 'seed', label: `Seed ${seed}`, note: `${laps} laps · ?seed=${seed} replays this grid`, disabled: true, run: () => {} },
+        { kind: 'action', id: 'seed', label: `Seed ${seed}`, note: `${laps} laps · ${aiStrengthLabel(strength)} · ?seed=${seed} replays this grid`, disabled: true, run: () => {} },
         ...(d?.getResults() ? [{ kind: 'action', id: 'results', label: 'Results', run: showResults } as MenuEntry] : []),
       ];
     },

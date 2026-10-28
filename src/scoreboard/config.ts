@@ -68,6 +68,10 @@ export interface TrackInfo {
   /** Per-track AI race parameters (RaceConfig): followScale multiplies the racing time headway, laneMargin the grip share of
    *  a pass lane's own path (absent = 1, Laguna), shiftGrip caps lane changes by the spare lateral grip (absent = 0 = off). */
   ai?: { followScale?: number; laneMargin?: number; shiftGrip?: number };
+  /** The AI Probe's solo lap at pace scale 1 on this track, s (calibrate_field.ts `--only 619 --dry`, AI_VERSION 8; AI round 1,
+   *  27 Oct 2026). The race's starting estimate of the human player's pace where the pace file has no row for #619
+   *  (RaceConfig.playerRefLap; with a row, its best lap). */
+  probeRefLap?: number;
   /** Revision of the published package: sha256 over the sha256 of track.json, heightfield.bin, ghosts.json, scenery.json
    *  and far_heightfield.bin (those the package has: one before its scenery stage has neither of the last two), first 10 hex (the registry test checks it), part of physicsVersion() and so
    *  of the board key: a rebuilt package opens its own boards without a global PHYSICS_VERSION bump. Laguna has none
@@ -89,12 +93,12 @@ export interface TrackInfo {
  *  entry here (built by tools/track/build_track.py, see the build-track skill) and a pace file of its own under
  *  cars/field/<id>/pace.json; Laguna's predates that and stays at cars/field/pace.json. */
 export const TRACKS: Readonly<Record<string, TrackInfo>> = {
-  laguna_seca: { dir: 'tracks/laguna_seca/', name: 'WeatherTech Raceway Laguna Seca', short: 'Laguna Seca', length_m: 3588.048, pace: 'cars/field/pace.json',
+  laguna_seca: { dir: 'tracks/laguna_seca/', name: 'WeatherTech Raceway Laguna Seca', short: 'Laguna Seca', length_m: 3588.048, pace: 'cars/field/pace.json', probeRefLap: 120.2,
     start: { beforeCorner: 'T11', m: ROLLING_START_BEFORE_LAST_CORNER_M, speed: ROLLING_START_SPEED } },
   // The pace file is Sonoma's own field (23 Oct 2026: tools/race/pace_track.ts --own, the Sears Pointless 2026 race,
   // MyLaps 11838772): the 133 cars of identity.json that ran a timed lap, each with its own stints; ids from
   // identity.json ("<n>_sp" where the number is a different Laguna / Buttonwillow car's, renumbered cars by the earlier id).
-  sonoma: { dir: 'tracks/sonoma/', name: 'Sonoma Raceway', short: 'Sonoma', length_m: 4105.328, pace: 'cars/field/sonoma/pace.json',
+  sonoma: { dir: 'tracks/sonoma/', name: 'Sonoma Raceway', short: 'Sonoma', length_m: 4105.328, pace: 'cars/field/sonoma/pace.json', probeRefLap: 143.4,
     identity: 'cars/field/sonoma/identity.json', rev: '3cf8227da0',   // round 14D (scenery only; round 14B's geometry, 6b766e08d6)
     // on the front straight, ~120 m before the line (230 m before the last corner, T12, was 26 m past the T11 apex)
     start: { s_m: 3975, speed: ROLLING_START_SPEED },
@@ -108,7 +112,7 @@ export const TRACKS: Readonly<Record<string, TrackInfo>> = {
   // is a different Laguna car's). Package: round 12 (rev 52bf051dcc, 4699.187 m; round 10's geometry, round 11's scenery passing the merged gates, the paddock openings and strip).
   // accepted by the owner on 26 Oct 2026 after his round-15 drive ("Buttonwillow is fantastic") with the two kerbs of round 16:
   // in the Start menu from 0.4.0 (the wip flag of 25 Oct removed)
-  buttonwillow: { dir: 'tracks/buttonwillow/', name: 'Buttonwillow Raceway Park', short: 'Buttonwillow', length_m: 4705.982, pace: 'cars/field/buttonwillow/pace.json',
+  buttonwillow: { dir: 'tracks/buttonwillow/', name: 'Buttonwillow Raceway Park', short: 'Buttonwillow', length_m: 4705.982, pace: 'cars/field/buttonwillow/pace.json', probeRefLap: 156.01,
     identity: 'cars/field/buttonwillow/identity.json', rev: 'edf66573a0',   // round 17 (27 Oct 2026, the owner's preview look: the round-8 'pit-in gore' paved area, a 22 x 30 m lat/lon box painted in the lane tone across the track and the pit-in lane, removed; the gore's real wedge outline is a follow-up); round 16 (two kerbs from the owner's drive: the small flat white kerb inside the drag-strip left kink after Phil Hill, the Star Mazda exit outside kerb raised to 6 cm; scenery only); round 15 (the race edges on the owner's red, the kerbs as bands outside them with the track limit at their outside, the measured 6 cm kerb default, 3-6 cones per closed mouth, the paddock bands undrawn); round 14 (scenery only: the front straight's dirt shoulder, the owner's fish mouths, the lane paved to his line with a dirt median, the kerb runs he placed; the review fixes)
     // on the front straight, ~115 m before the line (s 4580; the last corner T11 is at 4377)
     start: { s_m: 4580, speed: ROLLING_START_SPEED },
@@ -126,7 +130,7 @@ export const TRACKS: Readonly<Record<string, TrackInfo>> = {
   // T13 (s 3454 -> 3224), the skill's rule.
   // OWNER QUESTION for the drive: the red / white kerbs are raised 5 cm (Sonoma's driven profile); their real height is not
   // measured (no frame resolves it), so the 5 cm is a declaration, not a measurement (round7.md section 1).
-  mid_ohio: { dir: 'tracks/mid_ohio/', name: 'Mid-Ohio Sports Car Course', short: 'Mid-Ohio', length_m: 3597.492, pace: 'cars/field/mid_ohio/pace.json',
+  mid_ohio: { dir: 'tracks/mid_ohio/', name: 'Mid-Ohio Sports Car Course', short: 'Mid-Ohio', length_m: 3597.492, pace: 'cars/field/mid_ohio/pace.json', probeRefLap: 118.55,
     identity: 'cars/field/mid_ohio/identity.json', rev: '7dcbb9c278',   // accepted by the owner 27 Oct 2026 ("still has problems with the pit lane, but good enough to ship for a fan project"; the pit lane is issue-tracked for the next version)
     // owner, 26 Oct 2026, after his round-9 drive: "I don't think the carousel is a good place to start the hot lap. I keep
     // driving right off the track when the control is given to me. Coming onto the front straight might be better."
@@ -135,7 +139,11 @@ export const TRACKS: Readonly<Record<string, TrackInfo>> = {
     // 26 Oct 2026 evening: s 3460, not 3500: at 3500 the launch handed over at s 3573 with two wheels beyond the left edge
     // (the line at -5.0 m on a 6.1 m half-width, no kerb strip there to count as course); at 3460 it hands over at s 3534
     // with all four on, on the exit onto the front straight (the owner: "coming onto the front straight might be better")
-    start: { s_m: 3460, speed: ROLLING_START_SPEED } },
+    start: { s_m: 3460, speed: ROLLING_START_SPEED },
+    // AI round 1 (28 Oct 2026), 85 cars, 4 laps, seeds 1-4 (tools/race/AI_READINESS.md section 7): AI-AI contacts 0.029 ->
+    // 0.012 per car-lap, four wheels off 0.073 -> 0.012, clearly-faster passes completed 61.3 -> 73.1 % (the highest of the
+    // five trials; all green passes 2034 -> 1287), race time 541 -> 544 s
+    ai: { followScale: 1.8, laneMargin: 0.85, shiftGrip: 1 } },
 };
 /** The track when none is chosen (URL ?track=, Start menu). */
 export const DEFAULT_TRACK = 'laguna_seca';

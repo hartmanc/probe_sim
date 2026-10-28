@@ -41,7 +41,7 @@ export function raceAiConfig(trackId: string): { followScale: number; laneMargin
 }
 
 /** Build the RaceDirector for the player's current HotlapSim car (call right after a rolling start). */
-export function buildDirector(sim: HotlapSim, field: FieldData, o: { seed: number; laps: number; trackId: string; realGrid?: boolean; playerAi?: boolean; lod?: boolean }): RaceDirector {
+export function buildDirector(sim: HotlapSim, field: FieldData, o: { seed: number; laps: number; trackId: string; realGrid?: boolean; playerAi?: boolean; lod?: boolean; strengthPct?: number }): RaceDirector {
   const a = sim.assets;
   const makeSurface = surfaceFactory(a);
   const pit = a.scenery?.pit_lane ?? null;
@@ -52,7 +52,8 @@ export function buildDirector(sim: HotlapSim, field: FieldData, o: { seed: numbe
     blendLine: a.scenery?.blend_line ?? null,
     collisionWorld: sim.collision,
     playerVehicle: sim.vehicle, playerSurface: sim.surface,
-  }, { laps: o.laps, seed: o.seed, playerNumber: PLAYER_NUMBER, greenWindow: [5, 30], ...raceAiConfig(o.trackId),
+  }, { laps: o.laps, seed: o.seed, playerNumber: PLAYER_NUMBER, greenWindow: [5, 30], ...raceAiConfig(o.trackId), strength: (o.strengthPct ?? 100) / 100,
+    playerRefLap: TRACKS[resolveTrackId(o.trackId)].probeRefLap ?? Number.NaN,
     // phones and tablets (a selected 40-car field): the real grid order; desktop keeps the seeded shuffle
     ...(o.realGrid ? { gridOrder: 'real' as const } : {}),
     // ?playerai=1 (dev only, docs/performance.md): the player's car is AI-driven, the race is deterministic

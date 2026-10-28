@@ -1,13 +1,16 @@
 // Headless self-play: the whole field (player car driven by an AI) races N laps and the AI's racecraft is
 // measured: line tracking when alone, passing when clearly faster, defending by pace gap, rules
 // (contacts, four wheels off, formation passes), mishaps, and the per-step cost.
-//   npx tsx tools/race/selfplay.ts [--track <id>] [--laps 4] [--seed 1] [--max-ai N] [--pace path] [--mishap-rate 0.0002] [--follow-scale 1] [--lane-margin 1] [--shift-grip 0] [--no-kerbs] [--json out.json] [--quiet]
+//   npx tsx tools/race/selfplay.ts [--track <id>] [--laps 4] [--seed 1] [--max-ai N] [--pace path] [--mishap-rate 0.0002] [--follow-scale 1] [--lane-margin 1] [--shift-grip 0] [--player-scale s] [--strength 1] [--no-kerbs] [--json out.json] [--quiet]
+//   --player-scale s: the player's car (AI-driven) at pace scale s (the AI Probe: scale 1 = its solo lap, 120.2 s at Laguna) instead of
+//   its pace row's; its pace hint is its own solo lap at that scale (measured here, 2 laps). The report gains the player's finish.
 import { createTrackSurface, createCollisionWorld } from '../../src/physics/index';
 import { RaceDirector } from '../../src/physics/ai/race';
 import type { PaceJson } from '../../src/physics/ai/field';
 import { loadTrackPack, loadProbeJson, loadPace, loadIdentityJson, trackArg } from './load';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { runSelfplay, printReport } from './selfplay_metrics';
+import { runSolo } from '../../src/physics/ai/solo';
 import { TRACKS } from '../../src/scoreboard/config';
 
 const argv = process.argv.slice(2);
@@ -22,7 +25,12 @@ const followScale = argv.includes('--follow-scale') ? Number(arg('--follow-scale
 // --lane-margin / --shift-grip: try another value of the track's knob (trials; the registry keeps the chosen one)
 const laneMargin = argv.includes('--lane-margin') ? Number(arg('--lane-margin', '1')) : (TRACKS[track]?.ai?.laneMargin ?? 1);
 const shiftGrip = argv.includes('--shift-grip') ? Number(arg('--shift-grip', '0')) : (TRACKS[track]?.ai?.shiftGrip ?? 0);
+const strength = Number(arg('--strength', '1'));
 const pack = loadTrackPack(track);
+const playerScale = argv.includes('--player-scale') ? Number(arg('--player-scale', '1')) : Number.NaN;
+// the player's pace hint at that scale: the AI Probe's own solo lap (lap 2 of 2), as calibrate_field.ts measures it
+let playerLap = Number.NaN;
+if (playerScale > 0) { const r = runSolo(pack.line, pack.surface, loadProbeJson(), null, playerScale, 2); playerLap = r.laps[1]; console.log(`player: AI Probe at scale ${playerScale} laps ${playerLap?.toFixed(2)} s solo`); }
 // the track's own identity.json, else the global one (as the app)
 const identity = loadIdentityJson(track);
 const pace: PaceJson = pacePath ? JSON.parse(readFileSync(pacePath, 'utf8')) : loadPace(track);
@@ -31,7 +39,7 @@ const makeSurface = argv.includes('--no-kerbs') ? () => createTrackSurface(pack.
 const dir = new RaceDirector({
   line: pack.line, surface: pack.surface, makeSurface,
   probeJson: loadProbeJson(), pace, identity, pitLane: pack.scenery?.pit_lane ?? null, blendLine: pack.scenery?.blend_line ?? null, collisionWorld: createCollisionWorld(pack.scenery, pack.track),
-}, { laps, seed, playerAi: true, maxAi, followScale, laneMargin, shiftGrip, ...(mishapRate !== undefined ? { mishapRate } : {}) });
+}, { laps, seed, playerAi: true, maxAi, followScale, laneMargin, shiftGrip, ...(mishapRate !== undefined ? { mishapRate } : {}), ...(playerScale > 0 ? { playerScale, playerLap } : {}), strength });
 const m = runSelfplay(dir, makeSurface(), { log: !argv.includes('--quiet'), cones: pack.scenery?.pit_exit_cones ?? null });
 printReport(m);
 // race pace against the calibrated pace: each AI car's best and last lap over the target lap of the stint it drew
@@ -44,5 +52,12 @@ console.log(`(g) pace: median best lap / drawn target ${racePace.bestOverTarget}
 const order = dir.getResults()?.map((r) => r.number) ?? dir.cars.map((c, i) => ({ c, U: dir.traffic.U[i] })).sort((a, b) => b.U - a.U).map((r) => r.c.number);
 (m as unknown as { order: string[] }).order = order;
 console.log(`(h) finishing order: ${order.slice(0, 10).join(' ')}${order.length > 10 ? ' ...' : ''} (${order.length} cars)`);
+// the player's result (AI-driven): finishing position, AI cars ahead of it, best lap, laps done
+{
+  const P = dir.player, pos = order.indexOf(P.number) + 1;
+  const player = { scale: playerScale > 0 ? playerScale : P.paceScale, hint: +P.paceHint.toFixed(3), finish: pos, aiAhead: pos - 1, bestLap: Number.isFinite(P.bestLap) ? +P.bestLap.toFixed(3) : null, lapsDone: P.lapsDone };
+  console.log(`(i) player #${P.number}: scale ${player.scale}, hint ${player.hint} s, finish P${player.finish} (${player.aiAhead} AI cars ahead), best lap ${player.bestLap}, laps ${player.lapsDone}`);
+  (m as unknown as { player: typeof player }).player = player;
+}
 const out = arg('--json', '');
 if (out) writeFileSync(out, JSON.stringify(m, null, 1));

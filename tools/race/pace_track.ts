@@ -3,7 +3,7 @@
 // form of tools/race/pace_sonoma.ts (which stays as Sonoma's record; this tool reproduces its output).
 //
 //   npx tsx tools/race/pace_track.ts --track <id> --session <MyLaps session id> [--data tools/race/data/<id>] [--match]
-//       [--label <name in the notes>] [--when 'in March 2026'] [--source <the file's source line>]
+//       [--label <name in the notes>] [--when 'in March 2026'] [--source <the file's source line>] [--quantile <q>]
 //       writes public/cars/field/<id>/pace.json (TRACKS[id].pace), then: npx tsx tools/race/calibrate_field.ts --track <id>
 //   --match   (re)write <data>/match_laguna.json from the classification: a Laguna car is matched to an entrant of the
 //             circuit's race when the normalised team names are equal (lower case, letters and digits only); a team with
@@ -12,7 +12,7 @@
 //
 //
 //   npx tsx tools/race/pace_track.ts --track <id> --session <MyLaps session id> --own [--data tools/race/data/<id>]
-//       [--label <name>] [--source <the file's source line>]
+//       [--label <name>] [--source <the file's source line>] [--quantile <q>]
 //       The circuit's OWN field (Buttonwillow, 22 Oct 2026): every entrant of the session becomes a car with its own
 //       pace and stints under tools/race/pace.ts's rules (tools/race/pace_rules.ts: the official best is the 0.97 floor),
 //       aggression = aggressionFor(number, class) as pace.ts; an entrant with no lap in the session (a non-starter) is
@@ -26,14 +26,19 @@
 //
 // Inputs in <data>: sessions_<session>_classification.json and laps/posNNN.json (MyLaps / Speedhive event results
 // API, eventresults/sessions/<session>/classification and .../lapdata/<position>/laps), match_laguna.json.
-// Rules (tools/race/pace.ts): target = median of green non-pit laps after dropping those over 1.3 x the raw median;
+// --quantile <q> (both forms, default 0.5 = the median, which is every public pace file): the target of a car and of
+// each stint is the quantile q of its clean laps (tools/race/pace_rules.ts quantile; the outlier cuts still reference the
+// median). The median of a race stint already carries the real race's traffic and the sim adds its own on top (owner,
+// 27 Oct 2026: "They don't seem very fast, and I have no problem passing them."); a lower q anchors the solo lap nearer
+// the car's free pace. The header records pace: { stat: "quantile", q }.
+// Rules (tools/race/pace.ts): target = median (quantile q) of green non-pit laps after dropping those over 1.3 x the raw median;
 // stints between pit stops, out laps dropped, laps over 1.2 x the stint median or 1.3 x the car median or under
 // 0.97 x the best dropped, at least 5 laps. A car that did not race the circuit keeps a placeholder: its Laguna target x
 // the AI Probe's solo-lap ratio <id> / Laguna at scale 1, marked in `targetSource`.
 import { readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { loadTrackPack, loadProbeJson, loadPace, pacePath, trackArg, ROOT } from './load';
-import { carPace, parseLap as officialLap } from './pace_rules';
+import { carPace, quantile, parseLap as officialLap } from './pace_rules';
 import { aggressionFor } from '../../src/physics/ai/rng';
 import { runSolo } from '../../src/physics/ai/solo';
 import { TRACKS } from '../../src/scoreboard/config';
@@ -46,6 +51,8 @@ const SESSION = arg('session');
 if (!SESSION) throw new Error('--session <MyLaps session id> required');
 const DATA = resolve(ROOT, arg('data') ?? `tools/race/data/${TRACK}`);
 const MIN_STINT_LAPS = 5;
+const Q = arg('quantile') !== undefined ? Number(arg('quantile')) : 0.5;
+if (!(Q >= 0 && Q <= 1)) throw new Error('--quantile: a number from 0 to 1');
 const parseLap = (s: string) => s.split(':').map(Number).reduce((t, p) => t * 60 + p, 0);
 const median = (a: number[]) => { const b = [...a].sort((x, y) => x - y); const n = b.length; return n ? (n % 2 ? b[(n - 1) / 2] : 0.5 * (b[n / 2 - 1] + b[n / 2])) : NaN; };
 const robustSigma = (a: number[]) => { const m = median(a); return 1.4826 * median(a.map((t) => Math.abs(t - m))); };
@@ -93,7 +100,7 @@ function ownPace(nr: string) {
     if (run.length) {
       const sm = median(run);
       const keep = run.filter((t) => t <= 1.2 * sm && t <= 1.3 * m0 && t >= 0.97 * best);
-      if (keep.length >= MIN_STINT_LAPS) stints.push({ index: stints.length, laps: keep.length, firstLap: first, targetLap: +median(keep).toFixed(3), bestLap: +Math.min(...keep).toFixed(3), sigma: +robustSigma(keep).toFixed(3) });
+      if (keep.length >= MIN_STINT_LAPS) stints.push({ index: stints.length, laps: keep.length, firstLap: first, targetLap: +quantile(keep, Q).toFixed(3), bestLap: +Math.min(...keep).toFixed(3), sigma: +robustSigma(keep).toFixed(3) });
     }
     run = []; first = -1;
   };
@@ -104,7 +111,7 @@ function ownPace(nr: string) {
     if (l.ok) run.push(l.t);
   }
   flush();
-  return { targetLap: +median(clean).toFixed(3), bestLap: +best.toFixed(3), sigma: +robustSigma(clean).toFixed(3), greenLaps: clean.length, stints };
+  return { targetLap: +quantile(clean, Q).toFixed(3), bestLap: +best.toFixed(3), sigma: +robustSigma(clean).toFixed(3), greenLaps: clean.length, stints };
 }
 
 /** --own: the circuit's own field from its session (see the header). */
@@ -148,7 +155,7 @@ function ownField(): void {
     const pc = carPace(j.laps, officialLap(r.bestTime), (k, target) => {
       const old = keepScales && same ? p?.stints?.[k] : undefined;
       return old && old.targetLap === target && old.scale !== undefined ? { scale: old.scale, achievedLap: old.achievedLap } : null;
-    });
+    }, Q);
     out.push({
       id, ...(model_id ? { model_id } : {}), number, team: r.name, class: r.resultClass, grid: j.lapDataInfo.participantInfo.startPos, finish: r.position,
       classFinish: r.positionInClass, lapsCompleted: r.numberOfLaps,
@@ -193,6 +200,7 @@ function ownField(): void {
       + (dropped.length ? ` Also left out: ${dropped.map((n) => '#' + n).join(', ')}, entrants with no row in ${IDENT_REL} (dropped by the owner: no placeholder cars in the field).` : '')
       + (playerKept ? ` #${PLAYER} did not race this event: its reference row (player: true, never an AI car) is kept from the previous file.` : ''),
     track: TRACK,
+    pace: { stat: 'quantile', q: Q },
     cars: out,
   };
   mkdirSync(dirname(pacePath(TRACK)), { recursive: true });
@@ -232,6 +240,7 @@ const out: PaceJson = {
   source: arg('source') ?? `${real} cars from their own laps at ${label} (MyLaps session ${SESSION}; ${dirname(matchPath).replace(ROOT + '/', '')}/match_laguna.json), `
     + `${cars.length - real} as Laguna (session 12975608) x ${k.toFixed(4)} (AI Probe solo-lap ratio, placeholder); tools/race/pace_track.ts`,
   track: TRACK,
+  pace: { stat: 'quantile', q: Q },
   cars: cars as PaceJson['cars'],
 };
 mkdirSync(dirname(pacePath(TRACK)), { recursive: true });

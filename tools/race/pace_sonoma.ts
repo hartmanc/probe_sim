@@ -1,6 +1,6 @@
 // Sonoma field pace: the Laguna field (identity.json, the 45 cars of MyLaps session 12975608) on Sonoma.
 //
-//   npx tsx tools/race/pace_sonoma.ts            # writes public/cars/field/sonoma/pace.json, then: calibrate_field.ts --track sonoma
+//   npx tsx tools/race/pace_sonoma.ts [--quantile <q>]   # writes public/cars/field/sonoma/pace.json, then: calibrate_field.ts --track sonoma
 //
 // Cars that raced Sonoma's March 2026 Lemons race (tools/race/data/sonoma/match_laguna.json: matched by team and
 // transponder; 143 -> 685 is NOT a match) get their targets from that race's own laps (tools/race/data/sonoma/laps,
@@ -11,11 +11,19 @@
 import { readFileSync, writeFileSync, readdirSync, mkdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { loadTrackPack, loadProbeJson, loadPace, pacePath, ROOT } from './load';
+import { quantile } from './pace_rules';
 import { runSolo } from '../../src/physics/ai/solo';
 import { AI_VERSION, type PaceJson, type PaceStint } from '../../src/physics/ai/field';
 
 const DATA = resolve(ROOT, 'tools/race/data/sonoma');
 const MIN_STINT_LAPS = 5;
+// --quantile <q> (default 0.5 = the median, as the public files): the target of a car and of each stint is the quantile q
+// of its clean laps (tools/race/pace_rules.ts); a lower q anchors the solo lap nearer the car's free pace, since a race
+// stint's median already carries the real race's traffic and the sim adds its own (owner, 27 Oct 2026: "They don't seem
+// very fast, and I have no problem passing them."). The header records pace: { stat: "quantile", q }.
+const qi = process.argv.indexOf('--quantile');
+const Q = qi >= 0 ? Number(process.argv[qi + 1]) : 0.5;
+if (!(Q >= 0 && Q <= 1)) throw new Error('--quantile: a number from 0 to 1');
 const parseLap = (s: string) => s.split(':').map(Number).reduce((t, p) => t * 60 + p, 0);
 const median = (a: number[]) => { const b = [...a].sort((x, y) => x - y); const n = b.length; return n ? (n % 2 ? b[(n - 1) / 2] : 0.5 * (b[n / 2 - 1] + b[n / 2])) : NaN; };
 const robustSigma = (a: number[]) => { const m = median(a); return 1.4826 * median(a.map((t) => Math.abs(t - m))); };
@@ -44,7 +52,7 @@ function sonomaPace(nr: string) {
     if (run.length) {
       const sm = median(run);
       const keep = run.filter((t) => t <= 1.2 * sm && t <= 1.3 * m0 && t >= 0.97 * best);
-      if (keep.length >= MIN_STINT_LAPS) stints.push({ index: stints.length, laps: keep.length, firstLap: first, targetLap: +median(keep).toFixed(3), bestLap: +Math.min(...keep).toFixed(3), sigma: +robustSigma(keep).toFixed(3) });
+      if (keep.length >= MIN_STINT_LAPS) stints.push({ index: stints.length, laps: keep.length, firstLap: first, targetLap: +quantile(keep, Q).toFixed(3), bestLap: +Math.min(...keep).toFixed(3), sigma: +robustSigma(keep).toFixed(3) });
     }
     run = []; first = -1;
   };
@@ -55,7 +63,7 @@ function sonomaPace(nr: string) {
     if (l.ok) run.push(l.t);
   }
   flush();
-  return { targetLap: +median(clean).toFixed(3), bestLap: +best.toFixed(3), sigma: +robustSigma(clean).toFixed(3), greenLaps: clean.length, stints };
+  return { targetLap: +quantile(clean, Q).toFixed(3), bestLap: +best.toFixed(3), sigma: +robustSigma(clean).toFixed(3), greenLaps: clean.length, stints };
 }
 
 const probe = loadProbeJson();
@@ -81,6 +89,7 @@ const out: PaceJson = {
   source: `${real} cars from their own laps at Sonoma (MyLaps session 11838772, 21-22 Mar 2026; tools/race/data/sonoma/match_laguna.json), `
     + `${cars.length - real} as Laguna (session 12975608) x ${k.toFixed(4)} (AI Probe solo-lap ratio, placeholder); tools/race/pace_sonoma.ts`,
   track: 'sonoma',
+  pace: { stat: 'quantile', q: Q },
   cars: cars as PaceJson['cars'],
 };
 mkdirSync(dirname(pacePath('sonoma')), { recursive: true });
