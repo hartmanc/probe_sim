@@ -53,7 +53,7 @@ const SESSIONS: Record<string, { track: string; args: string[]; seedWithPublic?:
   'cars/field/mid_ohio/pace.json': { track: 'mid_ohio', args: ['tools/race/pace_track.ts', '--track', 'mid_ohio', '--session', '11926749', '--own'] },
 };
 const stripFit = (cars: any[]) => cars.map((c) => {
-  const { scale: _s, achievedLap: _a, resolved: _r, ...rest } = c;
+  const { scale: _s, achievedLap: _a, resolved: _r, curve: _c, ...rest } = c;   // (curve: fitted from the calibrations, tools/race/pace_curve.ts)
   return { ...rest, stints: (c.stints ?? []).map(({ scale: _s2, achievedLap: _a2, ...st }: any) => st) };
 });
 
