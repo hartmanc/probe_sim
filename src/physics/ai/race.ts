@@ -67,6 +67,17 @@ export interface RaceConfig {
   /** Use only the first N AI cars by grid (tests). Default all. */
   maxAi: number;
   /**
+   * Physics LOD (perf round 1): an AI car farther than `lodFarM` along the track from the player's car (either way, wrapped;
+   * hysteresis `lodHystM`) integrates at `lodEvery` x the dt of `aiPhysicsEvery` (250 Hz instead of 500), unless it is
+   * within `lodNearM` of a car that is itself within `lodFarM` of the player. Off by default (the app turns it on).
+   */
+  lod: boolean;
+  lodFarM: number;
+  lodHystM: number;
+  lodNearM: number;
+  /** the far cars' physics step in units of the base AI step (2: 4 ms against 2 ms) */
+  lodEvery: number;
+  /**
    * Loss-of-control probability per AI car per corner passage during green, before the corner difficulty
    * (RaceLine.corners, mean 1) and aggression (calm 0.6, normal 1, aggressive 1.5) factors. Never the player.
    */
@@ -100,7 +111,7 @@ export interface MishapEvent { t: number; idx: number; number: string; corner: s
 
 export const DEFAULT_RACE_CONFIG: RaceConfig = {
   laps: 10, seed: 1, ai_version: AI_VERSION, playerNumber: '619', greenWindow: [5, 30],
-  formationSpeed: 20, gridGap: 15, aiControlEvery: 2, aiPhysicsEvery: 2, aiWalls: true, playerAi: false, maxAi: Infinity,
+  formationSpeed: 20, gridGap: 15, aiControlEvery: 2, aiPhysicsEvery: 2, aiWalls: true, playerAi: false, maxAi: Infinity, lod: false, lodFarM: 300, lodHystM: 50, lodNearM: 40, lodEvery: 2,
   mishapRate: 0.0002,
   followScale: 1,
   laneMargin: 1,
@@ -324,6 +335,8 @@ export class RaceDirector {
   /** car-vs-car contacts this step (valid until the next step) */
   contacts: readonly CarContactEvent[] = [];
   contactCount = 0;
+  /** car-vs-car contact events since the race began (counted per step; the worker-identity proof compares it) */
+  contactTotal = 0;
   /** every AI loss of control so far, in order (tools / tests; not shown in the HUD) */
   readonly mishapLog: MishapEvent[] = [];
 
@@ -357,6 +370,13 @@ export class RaceDirector {
   private message: string | null = null; private messageUntil = 0;
   private hudObj: RaceHud | null = null;
   private poseCache: CarPose[] | null = null;
+  /** LOD state: the physics step each AI car runs at now (in physics steps: 2 or 4), when it last stepped, and how many are far */
+  private lodRate: Int8Array = new Int8Array(0);
+  private lodLast: Int32Array = new Int32Array(0);
+  private lodEl: Int8Array = new Int8Array(0);
+  private lodNext = 0;
+  /** AI cars at the far rate right now (0 with the LOD off) */
+  lodFar = 0;
 
   constructor(inputs: RaceInputs, config: Partial<RaceConfig> = {}) {
     this.config = { ...DEFAULT_RACE_CONFIG, ...config };
@@ -481,6 +501,7 @@ export class RaceDirector {
     for (const car of this.cars) this.redraw(car, seed);
     const [g0, g1] = this.config.greenWindow;
     this.#greenAt = this.rng.range(g0, g1);
+    this.lodRate = new Int8Array(0); this.lodNext = 0; this.lodFar = 0; this.contactTotal = 0;
     this.phase = 'formation'; this.time = 0; this.stepIdx = 0; this.flagAt = NaN; this.results = null; this.yellowOn = false;
     this.pen = { count: 0, pending: [], serving: 0, deadlineU: Infinity, inBox: false, fastForward: false, lastReason: null, lastAt: -1e9, ejected: false };
     this.offT = 0; this.onT = 99; this.offArmed = true; this.contactSeen.clear(); this.violationSeen.clear(); this.blend?.reset();
@@ -562,6 +583,7 @@ export class RaceDirector {
     this.stepIdx++;
     const phys = Math.max(1, this.config.aiPhysicsEvery | 0);
     const every = phys > 1 ? phys : Math.max(1, this.config.aiControlEvery | 0);
+    if (this.config.lod && phys > 1) { this.stepLod(dt, playerInput, phys, tm); return; }
     for (const car of this.cars) {
       const d = car.driver;
       if (!d) continue;
@@ -589,11 +611,91 @@ export class RaceDirector {
     if (tm) { t1 = performance.now(); tm.player += pms; tm.aiPhysics += t1 - t0 - pms; t0 = t1; }
     this.contactCount = this.collider.resolve(this.bodies, this.traffic.order, this.traffic.s, this.line.L);
     this.contacts = this.collider.events;
+    this.contactTotal += this.contactCount;
     if (tm) { t1 = performance.now(); tm.contacts += t1 - t0; t0 = t1; }
     this.lastDt = dt;
     this.refreshTraffic(false);
     this.bookkeeping(dt);
     if (tm) { tm.other += performance.now() - t0; tm.steps++; }
+  }
+
+  /**
+   * `step` with the physics LOD: each AI car steps at its own rate (the base `phys` steps, or `phys x lodEvery` when far from
+   * the player), always integrating the real time since its last step; the control update shares that cadence.
+   * Rates are re-evaluated every 50 steps from the last traffic refresh. With every car at the base rate this is the
+   * ordinary step, bit for bit.
+   */
+  private stepLod(dt: number, playerInput: DriverInput | null | undefined, phys: number, tm: DirectorTiming | null): void {
+    const n = this.cars.length;
+    if (this.lodRate.length !== n) { this.lodRate = new Int8Array(n).fill(phys); this.lodLast = new Int32Array(n).fill(-1); this.lodEl = new Int8Array(n); this.lodNext = 0; this.lodFar = 0; }
+    if (this.stepIdx >= this.lodNext) { this.lodNext = this.stepIdx + 50; this.lodRates(phys); }
+    let t0 = tm ? performance.now() : 0, t1 = 0, tp = 0;
+    const el = this.lodEl;
+    for (const car of this.cars) {
+      const i = car.idx, d = car.driver;
+      el[i] = 0;
+      if (!d) continue;
+      if (car.isPlayer) {   // a player driver (playerAi) updates on the base cadence, as in the ordinary step
+        if ((this.stepIdx + i) % phys === 0) d.update(dt * phys);
+        continue;
+      }
+      const rate = this.lodRate[i];
+      if ((this.stepIdx + i) % rate !== 0) continue;
+      const last = this.lodLast[i];
+      const e = last < 0 ? rate : Math.min(this.stepIdx - last, 2 * phys);
+      el[i] = e; this.lodLast[i] = this.stepIdx;
+      d.update(dt * e);
+      if (d.mishapCount !== car.mishaps) {
+        car.mishaps = d.mishapCount;
+        this.mishapLog.push({ t: this.time, idx: car.idx, number: car.number, corner: this.line.corners[d.lastMishapCorner]?.name ?? '?', kind: d.mishap ?? 'wide' });
+      }
+    }
+    if (tm) { t1 = performance.now(); tm.control += t1 - t0; t0 = t1; }
+    // the player's driver (playerAi) updates every `every` steps like the ordinary path
+    let pms = 0;
+    for (const car of this.cars) {
+      if (car.isPlayer) {
+        if (tm) tp = performance.now();
+        if (!car.driver) car.vehicle.step(this.pen.fastForward ? HOLD_INPUT : (playerInput ?? this.playerInputAi), car.surface, dt);
+        else car.vehicle.step(car.driver.input, car.surface, dt);
+        if (tm) pms = performance.now() - tp;
+      } else if (el[car.idx] > 0) car.vehicle.step(car.driver!.input, car.surface, dt * el[car.idx]);
+    }
+    if (tm) { t1 = performance.now(); tm.player += pms; tm.aiPhysics += t1 - t0 - pms; t0 = t1; }
+    this.contactCount = this.collider.resolve(this.bodies, this.traffic.order, this.traffic.s, this.line.L);
+    this.contacts = this.collider.events;
+    this.contactTotal += this.contactCount;
+    if (tm) { t1 = performance.now(); tm.contacts += t1 - t0; t0 = t1; }
+    this.lastDt = dt;
+    this.refreshTraffic(false);
+    this.bookkeeping(dt);
+    if (tm) { tm.other += performance.now() - t0; tm.steps++; }
+  }
+
+  /** The LOD's rate per AI car: far = beyond lodFarM of the player (stays far until inside lodFarM - lodHystM) and not near a near car. */
+  private lodRates(phys: number): void {
+    const c = this.config, L = this.line.L, s = this.traffic.s, ps = s[this.player.idx];
+    const far = phys * Math.max(1, c.lodEvery | 0);
+    const near: number[] = [];
+    const dist = new Float64Array(this.cars.length);
+    for (const car of this.cars) {
+      let d = Math.abs(s[car.idx] - ps); if (d > 0.5 * L) d = L - d;
+      dist[car.idx] = d;
+      const wasFar = this.lodRate[car.idx] === far && far !== phys;
+      if (car.isPlayer || d <= (wasFar ? c.lodFarM - c.lodHystM : c.lodFarM)) near.push(car.idx);
+    }
+    let nFar = 0;
+    for (const car of this.cars) {
+      const i = car.idx;
+      if (car.isPlayer) continue;
+      let isFar = !near.includes(i);
+      if (isFar) {
+        for (const j of near) { let d = Math.abs(s[i] - s[j]); if (d > 0.5 * L) d = L - d; if (d < c.lodNearM) { isFar = false; break; } }
+      }
+      this.lodRate[i] = isFar ? far : phys;
+      if (isFar) nFar++;
+    }
+    this.lodFar = nFar;
   }
 
   private refreshTraffic(init: boolean): void {
