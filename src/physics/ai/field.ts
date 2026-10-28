@@ -82,6 +82,20 @@ export interface DrawnPace {
   sigma: number;
   /** fitted scale for that pace, null when not calibrated (the director then estimates it) */
   scale: number | null;
+  /** the solo lap the calibration measured at that scale, null when not calibrated */
+  achievedLap: number | null;
+}
+
+/** A fit is converged when its solo lap is within this share of the target (calibrate_field.ts: max(tol, 0.005)). */
+export const FIT_TOL = 0.005;
+/**
+ * The pace hint other drivers read (Traffic.pace: the clearly-faster test, defending, pass planning) for a car built
+ * to `targetLap` whose calibrated solo lap is `achievedLap` (AI round 1, 27 Oct 2026): the target, except where the fit
+ * did not converge (a car at the caps cannot reach it): then the lap it can actually do, so it does not plan passes it
+ * cannot make and nobody waves it by as clearly faster.
+ */
+export function paceHint(targetLap: number, achievedLap: number | null | undefined): number {
+  return achievedLap != null && achievedLap > 0 && Math.abs(achievedLap / targetLap - 1) > FIT_TOL ? achievedLap : targetLap;
 }
 
 /**
@@ -91,10 +105,10 @@ export interface DrawnPace {
  */
 export function drawPace(c: PaceCar, seed: number): DrawnPace {
   const st = c.stints ?? [];
-  if (!st.length) return { stint: -1, of: 0, targetLap: c.targetLap, bestLap: c.bestLap, sigma: c.sigma, scale: c.scale && c.scale > 0 ? c.scale : null };
+  if (!st.length) return { stint: -1, of: 0, targetLap: c.targetLap, bestLap: c.bestLap, sigma: c.sigma, scale: c.scale && c.scale > 0 ? c.scale : null, achievedLap: c.scale && c.scale > 0 && c.achievedLap ? c.achievedLap : null };
   const k = new Rng(hashSeed(seed, `stint:${c.number}:v${AI_VERSION}`)).int(st.length);
   const s = st[k];
-  return { stint: k, of: st.length, targetLap: s.targetLap, bestLap: s.bestLap, sigma: s.sigma, scale: s.scale && s.scale > 0 ? s.scale : null };
+  return { stint: k, of: st.length, targetLap: s.targetLap, bestLap: s.bestLap, sigma: s.sigma, scale: s.scale && s.scale > 0 ? s.scale : null, achievedLap: s.scale && s.scale > 0 && s.achievedLap ? s.achievedLap : null };
 }
 
 export interface PaceJson {

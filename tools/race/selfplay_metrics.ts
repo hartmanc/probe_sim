@@ -40,6 +40,12 @@ export interface SelfplayMetrics {
    * whose heading is more than 1.3 rad off the track's (the spin mishap's own threshold), one event per car until it is
    * back within 0.3 rad for 3 s; "without a mishap" = no mishap active or in the 15 s before.
    */
+  /**
+   * (AI round 1, 27 Oct 2026) Player pass cost: the AI cars the player's car passed in green (the passesTotal rule: from
+   * behind to ahead within 50 m of a running car) and, per pass, the time it had spent within 20 m behind that car before
+   * (sampled every 0.1 s, the time since its last pass of that car); mean over the passes.
+   */
+  playerPass: { passes: number; meanBehind: number; behind: number[] };
   robust: { coneCrossings: { car: string; t: number; s: number; over: number; samples: number; inControl: boolean }[]; coneInControl: number;
     spins: { car: string; t: number; s: number; mishap: boolean }[]; spinsNoMishap: number };
 }
@@ -65,6 +71,7 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
   const prevS = new Float64Array(n);
   const ahead = new Int8Array(n * n);      // sign of U[i] - U[j] (formation and green order tracking)
   let formationPasses = 0, passesTotal = 0;
+  const pIdx = cars.findIndex((c) => c.isPlayer), behindT = new Float64Array(n), playerBehind: number[] = [];
   const passAt: number[] = [];
   let contacts = 0, hard = 0;
   const pairSeen = new Map<number, number>();
@@ -125,9 +132,10 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
         const now = tr.U[i] > tr.U[j] ? 1 : -1, k = i * n + j, was = ahead[k];
         ahead[k] = now;
         if (was === -1 && now === 1 && Math.abs(tr.U[i] - tr.U[j]) < 50 && !tr.off[j] && !tr.away[j] && tr.v[j] > 5 && !cars[j].driver?.needsRecovery) {
-          if (phase === 'formation') formationPasses++; else { passesTotal++; passAt.push(Math.round(tr.s[i])); }
+          if (phase === 'formation') formationPasses++; else { passesTotal++; passAt.push(Math.round(tr.s[i])); if (i === pIdx) { playerBehind.push(+behindT[j].toFixed(1)); behindT[j] = 0; } }
         }
       }
+      if (phase === 'green' && pIdx >= 0) for (let j = 0; j < n; j++) { const g = tr.U[j] - tr.U[pIdx]; if (j !== pIdx && g > 0 && g < 20) behindT[j] += 0.1; }
     }
     // ---- pit-exit cone crossings, every 20 ms in every phase (as ai_race.test.ts)
     if (cones && steps % 20 === 0) for (let i = 0; i < n; i++) {
@@ -271,6 +279,7 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
     rules: { contacts, contactsPerCarLap: contacts / Math.max(1e-9, carLaps), hardContacts: hard, fourOff, fourOffMishap, fourOffPerCarLap: fourOff / Math.max(1e-9, carLaps), fourOffNonMishapPerCarLap: (fourOff - fourOffMishap) / Math.max(1e-9, carLaps), formationPasses, recoveries: dir.recoveries, fourOffAt, contactAt, recoveryAt },
     mishaps: { total: totalM, perCarLap: totalM / Math.max(1e-9, carLaps), wide, spin, byCorner, lossMedian: median(ls), lossMin: ls.length ? Math.min(...ls) : NaN, lossMax: ls.length ? Math.max(...ls) : NaN, losses },
     cost: { usPerStep, usPerCar: usPerStep / n },
+    playerPass: { passes: playerBehind.length, meanBehind: playerBehind.length ? playerBehind.reduce((a, b) => a + b, 0) / playerBehind.length : NaN, behind: playerBehind },
     robust: { coneCrossings, coneInControl: coneCrossings.filter((c) => c.inControl).length, spins, spinsNoMishap: spins.filter((x) => !x.mishap).length },
   };
 }
@@ -291,5 +300,6 @@ export function printReport(m: SelfplayMetrics): void {
   console.log(`(e) mishaps ${mi.total} = ${f(mi.perCarLap, 4)} per car-lap (wide ${mi.wide}, spin ${mi.spin}); loss median ${f(mi.lossMedian, 1)} s [${f(mi.lossMin, 1)}..${f(mi.lossMax, 1)}]; by corner ${JSON.stringify(mi.byCorner)}`);
   const ro = m.robust;
   console.log(`(r) pit-exit cone crossings ${ro.coneCrossings.length} (in control ${ro.coneInControl})${ro.coneCrossings.length ? ': ' + ro.coneCrossings.map((c) => `#${c.car} t${c.t} s${c.s} +${c.over} m${c.inControl ? ' IN CONTROL' : ''}`).join(', ') : ''}; spins ${ro.spins.length} (without a mishap ${ro.spinsNoMishap})${ro.spins.length ? ': ' + ro.spins.map((x) => `#${x.car} t${x.t} s${x.s}${x.mishap ? ' (mishap)' : ''}`).join(', ') : ''}`);
+  console.log(`(p) player pass cost: passed ${m.playerPass.passes} AI cars, mean ${f(m.playerPass.meanBehind, 1)} s within 20 m behind a car before passing it`);
   console.log(`(f) cost ${f(m.cost.usPerStep, 1)} µs per step, ${f(m.cost.usPerCar)} µs per car`);
 }

@@ -484,7 +484,7 @@ export class AiDriver {
     if (green && (this.passPhase === 0 || this.passPhase === 2) && leadJ >= 0 && !this.offTrack && this.mishap === null) {
       const j = leadJ, vj = Math.max(0, tr.v[j]);
       const myPot = this.profAt(tr.s[j]) * pf;
-      const slower = tr.off[j] === 1 || myPot > PASS_ADV[this.params.aggression] * Math.max(1, vj) || tr.pace[j] > this.params.targetLap * 1.004;
+      const slower = tr.off[j] === 1 || myPot > PASS_ADV[this.params.aggression] * Math.max(1, vj) || tr.pace[j] > tr.pace[i] * 1.004;   // (my own hint, as the others read me: a capped car's achievable lap)
       if (leadGap < Math.max(ctl.minGap, 1.5 + headway * v) + 10 && slower) this.stuckTimer += dt; else this.stuckTimer = Math.max(0, this.stuckTimer - dt);
       const clearly = tr.pace[i] < CLEARLY_FASTER * tr.pace[j];
       // clearly faster; a car that is off / nearly stopped; or quicker on pace and stuck behind it (a car held up in a

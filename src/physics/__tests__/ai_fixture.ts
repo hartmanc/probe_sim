@@ -38,10 +38,10 @@ export function pack(): Pack {
   return cached;
 }
 
-export function director(cfg: Partial<RaceConfig> = {}, opts: { walls?: boolean; playerVehicle?: any } = {}): RaceDirector {
+export function director(cfg: Partial<RaceConfig> = {}, opts: { walls?: boolean; playerVehicle?: any; pace?: PaceJson } = {}): RaceDirector {
   const p = pack();
   return new RaceDirector({
-    line: p.line, surface: p.surface, makeSurface: p.makeSurface, probeJson: p.probeJson, pace: p.pace, identity: p.identity,
+    line: p.line, surface: p.surface, makeSurface: p.makeSurface, probeJson: p.probeJson, pace: opts.pace ?? p.pace, identity: p.identity,
     pitLane: p.scenery.pit_lane ?? null, collisionWorld: opts.walls === false ? null : createCollisionWorld(p.scenery, p.track),
     playerVehicle: opts.playerVehicle ?? null,
   }, cfg);

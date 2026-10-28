@@ -15,7 +15,7 @@ import { loadCarSpec, type CarSpec } from '../spec';
 import { CarCollider, type CarBody, type CarContactEvent } from '../cars';
 import type { RaceLine } from './line';
 import { AiDriver, type MishapKind } from './driver';
-import { AI_VERSION, resolveCarType, aiCarJson, buildSpeedProfile, measureCarPerf, parseIdentity, drawPace, fieldKey, modelKey, type CarPerf, type IdentityCar, type PaceCar, type PaceJson } from './field';
+import { AI_VERSION, resolveCarType, aiCarJson, buildSpeedProfile, measureCarPerf, parseIdentity, drawPace, paceHint, fieldKey, modelKey, type CarPerf, type IdentityCar, type PaceCar, type PaceJson } from './field';
 import { Traffic } from './traffic';
 import { Rng, hashSeed } from './rng';
 
@@ -78,6 +78,13 @@ export interface RaceConfig {
    * neighbours (src/app/field-select.ts) so the race around the player is the real one. 'shuffle' is the code path as before.
    */
   gridOrder: 'shuffle' | 'real';
+  /**
+   * Self-play only (`playerAi`): the AI-driven player's pace scale (tools/race/selfplay.ts --player-scale; the AI Probe:
+   * scale 1 = its solo lap, 120.2 s at Laguna) instead of its pace row's. NaN = the row's (default).
+   */
+  playerScale: number;
+  /** With `playerScale`: the player's pace hint (its solo lap at that scale), s. NaN = the row's target lap. */
+  playerLap: number;
 }
 
 /** One AI loss of control (director.mishapLog). */
@@ -91,6 +98,8 @@ export const DEFAULT_RACE_CONFIG: RaceConfig = {
   laneMargin: 1,
   gridOrder: 'shuffle',
   shiftGrip: 0,
+  playerScale: Number.NaN,
+  playerLap: Number.NaN,
 };
 
 export interface RaceInputs {
@@ -208,6 +217,8 @@ export interface RaceCar {
    * (-1 = car-level pace). Internal: never shown to the player.
    */
   paceTarget: number; paceSigma: number; paceScale: number; stint: number;
+  /** the pace the other drivers read for it (Traffic.pace; field.ts paceHint: the target, or the lap a capped car can do) */
+  paceHint: number;
   // race bookkeeping
   U: number; hint: number;
   lapStart: number; lastLap: number; bestLap: number;
@@ -384,7 +395,7 @@ export class RaceDirector {
       const car: RaceCar = {
         idx: this.cars.length, number: c.number, id: fieldKey(c), model: modelKey(c, id), team: c.team, cls: c.class, grid: c.grid, isPlayer, vehicle,
         surface: (isPlayer && inputs.playerSurface) || (inputs.makeSurface ? inputs.makeSurface() : inputs.surface), spec, driver, pace: c,
-        identity: id, tint: tintFor(c.number), paceTarget: dp.targetLap, paceSigma: dp.sigma, paceScale: dp.scale, stint: dp.stint,
+        identity: id, tint: tintFor(c.number), paceTarget: dp.targetLap, paceSigma: dp.sigma, paceScale: dp.scale, stint: dp.stint, paceHint: dp.hint,
         U: 0, hint: -1, lapStart: NaN, lastLap: NaN, bestLap: NaN, finishAt: NaN, lapsDone: 0, lapIdx: 0, lapStartGreen: false, greenU: NaN, finished: false, recoveries: 0, mishaps: 0,
       };
       this.cars.push(car);
@@ -395,7 +406,7 @@ export class RaceDirector {
     for (const car of this.cars) {
       const sp = car.spec;
       this.traffic.front[car.idx] = sp.hull.front; this.traffic.rear[car.idx] = -sp.hull.rear; this.traffic.hw[car.idx] = sp.hull.halfWidth;
-      this.traffic.pace[car.idx] = car.paceTarget;
+      this.traffic.pace[car.idx] = car.paceHint;
       this.bodies.push({ vehicle: car.vehicle, front: sp.hull.front, rear: sp.hull.rear, halfWidth: sp.hull.halfWidth });
       const aiDriven = !car.isPlayer || this.config.playerAi;
       if (aiDriven) car.driver = this.makeDriver(car);
@@ -410,11 +421,16 @@ export class RaceDirector {
     this.restart(this.config.seed);
   }
 
-  /** The pace a car races with: the player keeps its car-level pace; an AI car draws one of its real stints from the seed. */
-  private drawFor(c: PaceCar, isPlayer: boolean, seed: number): { targetLap: number; sigma: number; scale: number; stint: number } {
-    if (isPlayer) return { targetLap: c.targetLap, sigma: c.sigma, scale: c.scale && c.scale > 0 ? c.scale : 1, stint: -1 };
+  /** The pace a car races with: the player keeps its car-level pace (self-play: `playerScale`); an AI car draws one of its real
+   *  stints from the seed. `hint`: what the other drivers read (Traffic.pace, field.ts paceHint). */
+  private drawFor(c: PaceCar, isPlayer: boolean, seed: number): { targetLap: number; sigma: number; scale: number; stint: number; hint: number } {
+    if (isPlayer) {
+      const cfg = this.config;
+      if (cfg.playerAi && cfg.playerScale > 0) { const t = cfg.playerLap > 0 ? cfg.playerLap : c.targetLap; return { targetLap: t, sigma: c.sigma, scale: cfg.playerScale, stint: -1, hint: t }; }
+      return { targetLap: c.targetLap, sigma: c.sigma, scale: c.scale && c.scale > 0 ? c.scale : 1, stint: -1, hint: c.targetLap };
+    }
     const dp = drawPace(c, seed);
-    return { targetLap: dp.targetLap, sigma: dp.sigma, scale: dp.scale ?? REF_LAP / dp.targetLap, stint: dp.stint };
+    return { targetLap: dp.targetLap, sigma: dp.sigma, scale: dp.scale ?? REF_LAP / dp.targetLap, stint: dp.stint, hint: paceHint(dp.targetLap, dp.achievedLap) };
   }
 
   private makeDriver(car: RaceCar): AiDriver {
@@ -432,15 +448,15 @@ export class RaceDirector {
   private redraw(car: RaceCar, seed: number): void {
     if (car.isPlayer || !car.pace) return;
     const dp = this.drawFor(car.pace, false, seed);
-    if (dp.scale === car.paceScale && dp.targetLap === car.paceTarget && dp.sigma === car.paceSigma) return;
+    if (dp.scale === car.paceScale && dp.targetLap === car.paceTarget && dp.sigma === car.paceSigma && dp.hint === car.paceHint) return;
     const prep = this.prepare(this.probe, car.number, car.identity, dp.scale);
     car.spec = prep.spec;
     car.vehicle = new Vehicle(prep.spec, { autoShift: true });
     if (this.collisionWorld && this.config.aiWalls) car.vehicle.setCollisionWorld(this.collisionWorld);
     const sp = car.spec;
     this.bodies[car.idx] = { vehicle: car.vehicle, front: sp.hull.front, rear: sp.hull.rear, halfWidth: sp.hull.halfWidth };
-    car.paceTarget = dp.targetLap; car.paceSigma = dp.sigma; car.paceScale = dp.scale; car.stint = dp.stint;
-    this.traffic.pace[car.idx] = dp.targetLap;
+    car.paceTarget = dp.targetLap; car.paceSigma = dp.sigma; car.paceScale = dp.scale; car.stint = dp.stint; car.paceHint = dp.hint;
+    this.traffic.pace[car.idx] = dp.hint;
     car.driver = this.makeDriver(car);
     this.traffic.profile[car.idx] = car.driver.profile;
   }
