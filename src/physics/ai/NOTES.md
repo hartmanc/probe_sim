@@ -581,3 +581,62 @@ made the pace statistic a quantile and calibrated q 0.35 / 0.25 / 0.15 candidate
   shuffled grid the player's own laps are traffic-bound too, so neither finish nor pace position separates the scales.
 - No AI_VERSION bump: the solo path is unchanged (calibrate `--dry` on 4 cars per track: Laguna and Mid-Ohio identical, the rest
   refit within 0.25 s).
+
+## Traffic round (28 Oct 2026, branch `traffic-1`): matching the MyLaps passing data
+
+Owner: "realistically represent the Lemons field ... match data instead of going off my vibes." The yardstick is the 2026 MyLaps
+crossings of the four races (57 017 usable pairs, `tools/race/data/traffic/REPORT.md`, `curves.json`): a pair = attacker X
+crossing the line with Y on the road ahead within 10 s; outcome at X's next crossing; d = pace delta of the two stint refs
+(quantile 0.2), g = gap at the line.
+
+**Stage 0, the yardstick in the sim.** `RaceDirector.crossings` logs every line crossing (player included; `green` = the lap
+was raced under green, a cool-down lap after the flag is not; `pit` = the player in the penalty box on that lap; pushed in the
+crossing branch, no per-step cost). `tools/race/traffic_sim.ts` runs self-play races (as selfplay.ts, the player AI-driven)
+in worker processes, one stint per car = the whole race, ref = quantile 0.2 of its usable laps by `traffic_curves.ts`'s own
+rules (lap 1 excluded), pools, and compares cell for cell with `curves.json` (`--compare`), plus contacts, four-off, green
+passes per track. The data's laps are 120-190 s, the four tracks' sim laps 120-200 s: the seconds compare without scaling.
+`tools/race/solo_hash.ts` hashes the solo laps of 3 cars per track (gate G5); `selfplay_trace.ts --loss` splits every AI
+car's time over its own profile into free / following / passing / merging / off by pace quartile, corner phase, pass phase
+and speed limiter (and, with it, why pass-lane candidates are rejected).
+
+**Baseline** (round-1 code 27e81ce, 10 laps, seeds 1-8, all four tracks; `tools/race/out/traffic/baseline.{json,md}`),
+pooled, g < 2 s:
+
+| d | data | sim (n) |
+|---|---|---|
+| Y faster (floor) | 8.2 % | 17.2 % (8446) |
+| 0-1 % | 39.4 | 35.5 (2391) |
+| 1-3 % | 60.3 | 58.2 (3014) |
+| 3-8 % | 86.9 | 74.7 (3026) |
+| 8-15 % | 97.8 | 87.3 (890) |
+| > 15 % | 99.7 | 94.2 (379) |
+
+Gap curve (d >= 3 %), data / sim: 0-0.5 s 96 / 87, 0.5-1 91 / 80, 1-2 88 / 66, 2-3 88 / 60, 3-5 84 / 53, 5-8 77 / 57, 8-10 62 /
+38 %. Attacker's time lost per lap (g < 2 s), data / sim: stuck 2.5 / 2.8, 4.3 / 6.0, 8.4 / 11.5, 17.7 / 19.7 s (d 0-1, 1-3,
+3-8, 8-15 %); on the lap of the pass 1.9 / 4.0, 2.1 / 3.3, 2.9 / 5.7, 3.4 / 11.5 s. Per track (byD Yfaster..>15, sim / data):
+Laguna 18 35 42 62 85 97 / 7 37 52 82 98 100; Sonoma 25 46 61 74 84 93 / 9 43 60 87 97 100; Buttonwillow 15 38 59 74 88 92 / 9
+37 60 83 98 100; Mid-Ohio 8 24 57 81 95 90 / 7 37 62 90 99 100. Rules, seeds 1-8 per car-lap: contacts Laguna 0.0248, Sonoma
+0.0297, Buttonwillow 0.0166, Mid-Ohio 0.0128; four-off 0.0858 / 0.0104 / 0.0086 / 0.0104; green passes 4193 / 22490 / 10918 /
+6386; `defending.vsClearlyFaster` 3 / 14 / 4 / 5 over 8 seeds of 10 laps (the 2-lap test's 0 holds; long races do it).
+Pressure (Y's own time lost, data / sim): slow Y with a faster X near 3.6 / 3.1 s, far 2.4 / 0.4; any other Y with a close
+(not faster) X near 3.1 / 7.2 s. Aggression groups (against the sim's own curves): fastest quartile as attacker 0.97 (data 1.02).
+
+**Diagnosis.** The close bins (d < 3 %) are on the data pooled (Laguna 1-3 % 11 pp low). The sim diverges where a car is
+clearly faster: 3-8 % and 8-15 % 10-12 pp low on every track, the gap curve 20-30 pp low from 1 s out, the passing lap costs
+2-3 x the data's, and the floor is twice the data's. The floor is the same failure seen from the other side: when a slower X
+gets by a faster Y in the sim, Y lost a median 15.3 s on that lap (4.5 s when it was not passed; Sonoma seeds 1-6): the faster
+car was stuck, and the slower car went by it in a train pass. Where the time goes (`selfplay_trace.ts --loss`, Laguna seed 1
+5 laps / Sonoma seed 1 4 laps, s per car-lap over the car's own profile): the fastest quartile laps at 127 / 142 % of its solo
+target, 21 / 37 s of it in a pass in hand (half its race time is spent in phase 1 or 2) and 9 / 17 s following; inside the pass
+the loss is following the car being passed (6 / 11 s: held behind it at PASS_HEADWAY where the lanes pinch) and driving the pass
+lane (5 s: the lane's own speed and laneFactor); before the pass, following a clearly slower car while no lane qualifies (7 /
+11 s). The slower quartiles lose 10-24 s per lap following close and faster cars (the lap-1 jam of a shuffled grid is in it).
+Candidate lanes rejected while planning (Laguna): off the road 28 k, a passer's lane 11 k, the band to sweep occupied 8 k, lane
+occupied over the pass 6 k, shut by the road beside the car 5 k, accepted 1.1 k. That is AI round 1's "27 % of its pace to
+traffic": it is the clearly faster car's slow commit and slow pass, on the straights (half the loss) and into the heavy
+braking zones (Sonoma T2, T9a; Laguna T4, T10, T11).
+
+**Order of the steps by what the diagnosis says buys the most:** A (decisive passing: the 3-8 / 8-15 % cells, the gap curve, the
+passing-lap time, and the floor through it), then B (per-car aggression: the tiers set how early A commits), D (no lift on a
+straight: the passed car holds its speed), C (yield: look and predictability, little pass rate per the data), E (close
+racing, behind its switch: the d < 3 % cells are already on the data, so it must not move them).
