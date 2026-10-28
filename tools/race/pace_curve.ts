@@ -1,7 +1,7 @@
 // Per car, its solo lap against its pace scale (PaceCar.curve, AI round 1 Part B: the AI strength map, field.ts
 // strengthPace), from calibrations that already exist: every fitted scale of the car (its own fit and each stint's) in the
 // four pace-quantile files (tools/race/out/pace_q/<q>/<track>/pace.json, q = 0.5 / 0.35 / 0.25 / 0.15; 0.5 = the public
-// file as it was). Each fit is one measured point (scale, the solo lap the calibration ran at it). Points by rising scale,
+// file as it was) and, when present, the 110 % calibration (pace_q/s1.10/<track>/pace.json: every target / 1.10). Each fit is one measured point (scale, the solo lap the calibration ran at it). Points by rising scale,
 // made monotone (lap never rising with the scale: pool-adjacent-violators in ln-ln), thinned to >= 1 % apart in scale.
 // No new solo laps are run.
 //
@@ -13,6 +13,7 @@ import { pacePath, trackArg, ROOT } from './load';
 import type { PaceJson } from '../../src/physics/ai/field';
 
 const QS = ['0.5', '0.35', '0.25', '0.15'];
+const STRENGTH_DIRS = ['s1.10'];
 
 /** Monotone (ln lap non-increasing in ln scale) curve through measured [scale, lap] points, thinned to >= `gap` apart in ln scale. */
 export function fitCurve(points: [number, number][], gap = Math.log(1.01)): [number, number][] {
@@ -47,6 +48,9 @@ if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith
   const outFile = arg('--out') ? resolve(arg('--out')!) : pacePath(track);
   const files = QS.map((q) => resolve(dir, q, track, 'pace.json')).filter((f) => existsSync(f));
   if (files.length !== QS.length) { console.error(`missing quantile files under ${dir} for ${track}: have ${files.length}`); process.exit(1); }
+  // the strength calibrations (pace_target_scale.ts + calibrate_field.ts --pace): every target / 1.10, when present
+  for (const x of STRENGTH_DIRS) { const f = resolve(dir, x, track, 'pace.json'); if (existsSync(f)) files.push(f); }
+  console.log(`${track}: points from ${files.map((f) => f.split('/').slice(-3, -2)[0]).join(', ')}`);
   const byCar = new Map<string, [number, number][]>();
   for (const f of files) {
     const p: PaceJson = JSON.parse(readFileSync(f, 'utf8'));

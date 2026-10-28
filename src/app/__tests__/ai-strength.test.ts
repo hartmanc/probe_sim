@@ -5,10 +5,10 @@ import { AI_STRENGTH_KEY, AI_STRENGTH_PCTS, aiStrengthLabel, parseAiStrength, ra
 const mem = () => { const m = new Map<string, string>(); return { m, getItem: (k: string) => m.get(k) ?? null, setItem: (k: string, v: string) => void m.set(k, v), removeItem: (k: string) => void m.delete(k) }; };
 
 describe('AI strength setting', () => {
-  it('choices 100 and 105 % (the solo-verified range), anything else reads as 100', () => {
-    expect(AI_STRENGTH_PCTS).toEqual([100, 105]);
+  it('choices 100, 105 and 110 % (the solo-verified range), anything else reads as 100', () => {
+    expect(AI_STRENGTH_PCTS).toEqual([100, 105, 110]);
     for (const v of AI_STRENGTH_PCTS) expect(parseAiStrength(String(v))).toBe(v);
-    for (const v of [null, undefined, '', 'x', '101', '110', '90', '95', '0', '-5']) expect(parseAiStrength(v as string | null)).toBe(100);
+    for (const v of [null, undefined, '', 'x', '101', '120', '90', '95', '0', '-5']) expect(parseAiStrength(v as string | null)).toBe(100);
   });
   it('persists like the Graphics choice: the default is no key; a throwing storage reads 100', () => {
     const s = mem();
