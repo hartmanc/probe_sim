@@ -70,6 +70,11 @@ const PASS_ADV = [1.06, 1.04, 1.025];      // own target speed vs theirs needed 
 const DEFEND = [0.5, 0.8, 1.1];            // m of lateral move to cover the inside (light, by aggression)
 /** Target lap ratio below which a car is "clearly faster" (it goes for the pass; the car ahead does not defend). */
 export const CLEARLY_FASTER = 0.97;
+/** How a driver whose pace hint is `mine` classes a car whose hint is `theirs` (s per lap): 'faster' (clearly: it is let by,
+ *  never defended), 'close' (within 3 % either way: raced), 'slower' (clearly). */
+export function paceClass(mine: number, theirs: number): 'faster' | 'close' | 'slower' {
+  return theirs < CLEARLY_FASTER * mine ? 'faster' : mine < CLEARLY_FASTER * theirs ? 'slower' : 'close';
+}
 /** Loss-of-control factor by aggression tier (calm, normal, aggressive). */
 export const MISHAP_AGGRESSION = [0.6, 1, 1.5];
 /** Share of mishaps that are run-wide (the rest are spins). */

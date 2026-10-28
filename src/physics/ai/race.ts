@@ -15,7 +15,7 @@ import { loadCarSpec, type CarSpec } from '../spec';
 import { CarCollider, type CarBody, type CarContactEvent } from '../cars';
 import type { RaceLine } from './line';
 import { AiDriver, type MishapKind } from './driver';
-import { AI_VERSION, resolveCarType, aiCarJson, buildSpeedProfile, measureCarPerf, parseIdentity, drawPace, paceHint, fieldKey, modelKey, type CarPerf, type IdentityCar, type PaceCar, type PaceJson } from './field';
+import { AI_VERSION, resolveCarType, aiCarJson, buildSpeedProfile, measureCarPerf, parseIdentity, drawPace, paceHint, strengthPace, fieldKey, modelKey, type CarPerf, type IdentityCar, type PaceCar, type PaceJson } from './field';
 import { Traffic } from './traffic';
 import { Rng, hashSeed } from './rng';
 
@@ -85,6 +85,40 @@ export interface RaceConfig {
   playerScale: number;
   /** With `playerScale`: the player's pace hint (its solo lap at that scale), s. NaN = the row's target lap. */
   playerLap: number;
+  /**
+   * AI strength (player setting, AI round 1): every AI car is built to lap its drawn target / strength (field.ts
+   * strengthPace on its PaceCar.curve; 1 = the calibrated pace, bit for bit). Its pace hint, lap sigma and so the
+   * clearly-faster classes and the mishap model follow. Never the player's car.
+   */
+  strength: number;
+  /** The human player's starting pace estimate where the pace file has no row for the player (TRACKS[id].probeRefLap: the
+   *  AI Probe's solo lap at scale 1 on the track), s. NaN: 120. With a row, its bestLap. */
+  playerRefLap: number;
+}
+
+/** One completed green lap of the human player and what interrupted it (RaceDirector.playerPace). */
+export interface PlayerLapRecord { lap: number; off: boolean; penalty: boolean; contact: boolean }
+/** The live estimate of the human player's pace (AI round 1, Part C): the median of his last PLAYER_PACE_LAPS clean laps. */
+export const PLAYER_PACE_LAPS = 3;
+/** ... never quicker than PLAYER_PACE_MIN x and never slower than PLAYER_PACE_MAX x the start value. */
+export const PLAYER_PACE_MIN = 0.9, PLAYER_PACE_MAX = 1.3;
+/**
+ * The AI's model of the human player's pace (Traffic.pace of the player; the clearly-faster / close / clearly-slower classes
+ * about him): `start` (his pace row's best lap, else the track's Probe reference lap) until he completes a green lap that
+ * was not interrupted by an off (four wheels off the paved surface for 0.25 s), a penalty (a black flag issued or a
+ * stop-and-go served in it) or a contact at fault; then the median of his last three such laps (of one or two while he
+ * has fewer), held within [0.9, 1.3] x start.
+ */
+export function playerPaceEstimate(start: number, laps: readonly PlayerLapRecord[]): number {
+  const clean: number[] = [];
+  for (let k = laps.length - 1; k >= 0 && clean.length < PLAYER_PACE_LAPS; k--) {
+    const r = laps[k];
+    if (!r.off && !r.penalty && !r.contact && r.lap > 0 && Number.isFinite(r.lap)) clean.push(r.lap);
+  }
+  if (!clean.length) return start;
+  clean.sort((a, b) => a - b);
+  const n = clean.length, med = n % 2 ? clean[(n - 1) >> 1] : 0.5 * (clean[n / 2 - 1] + clean[n / 2]);
+  return Math.min(PLAYER_PACE_MAX * start, Math.max(PLAYER_PACE_MIN * start, med));
 }
 
 /** One AI loss of control (director.mishapLog). */
@@ -100,6 +134,8 @@ export const DEFAULT_RACE_CONFIG: RaceConfig = {
   shiftGrip: 0,
   playerScale: Number.NaN,
   playerLap: Number.NaN,
+  strength: 1,
+  playerRefLap: Number.NaN,
 };
 
 export interface RaceInputs {
@@ -346,6 +382,9 @@ export class RaceDirector {
   private offT = 0; private onT = 99; private offArmed = true;
   private readonly blend: BlendFlag | null;
   private contactSeen = new Map<number, number>();
+  /** the human player's completed green laps this race and what interrupted the lap in progress (playerPaceEstimate) */
+  private playerLaps: PlayerLapRecord[] = [];
+  private playerLapFlags = { off: false, penalty: false, contact: false };
   private violationSeen = new Map<string, number>();
   private aheadOfPlayer: Int8Array;
   private message: string | null = null; private messageUntil = 0;
@@ -373,7 +412,8 @@ export class RaceDirector {
       if (aiLeft-- > 0) entries.push(c);
     }
     if (!playerEntry) {
-      playerEntry = { number: this.config.playerNumber, team: 'Player', class: 'B', grid: entries.length + 1, finish: 0, lapsCompleted: 0, greenLaps: 0, targetLap: 128, bestLap: 120, sigma: 3, aggression: 1, player: true };
+      const ref = this.config.playerRefLap > 0 ? this.config.playerRefLap : 120;
+      playerEntry = { number: this.config.playerNumber, team: 'Player', class: 'B', grid: entries.length + 1, finish: 0, lapsCompleted: 0, greenLaps: 0, targetLap: 128, bestLap: ref, sigma: 3, aggression: 1, player: true };
       entries.push(playerEntry);
     }
     this.probe = probe;
@@ -427,10 +467,15 @@ export class RaceDirector {
     if (isPlayer) {
       const cfg = this.config;
       if (cfg.playerAi && cfg.playerScale > 0) { const t = cfg.playerLap > 0 ? cfg.playerLap : c.targetLap; return { targetLap: t, sigma: c.sigma, scale: cfg.playerScale, stint: -1, hint: t }; }
-      return { targetLap: c.targetLap, sigma: c.sigma, scale: c.scale && c.scale > 0 ? c.scale : 1, stint: -1, hint: c.targetLap };
+      // the human player: the AI's live model of his pace starts at his row's best lap (playerPaceEstimate); AI-driven
+      // (self-play, attract): his row's target, as the car is built to it
+      return { targetLap: c.targetLap, sigma: c.sigma, scale: c.scale && c.scale > 0 ? c.scale : 1, stint: -1, hint: cfg.playerAi ? c.targetLap : c.bestLap };
     }
     const dp = drawPace(c, seed);
-    return { targetLap: dp.targetLap, sigma: dp.sigma, scale: dp.scale ?? REF_LAP / dp.targetLap, stint: dp.stint, hint: paceHint(dp.targetLap, dp.achievedLap) };
+    const scale = dp.scale ?? REF_LAP / dp.targetLap, str = this.config.strength;
+    if (str === 1) return { targetLap: dp.targetLap, sigma: dp.sigma, scale, stint: dp.stint, hint: paceHint(dp.targetLap, dp.achievedLap) };
+    const r = strengthPace(c.curve, scale, dp.achievedLap ?? dp.targetLap, dp.targetLap, str);
+    return { targetLap: r.targetLap, sigma: dp.sigma / str, scale: r.scale, stint: dp.stint, hint: paceHint(r.targetLap, r.lap) };
   }
 
   private makeDriver(car: RaceCar): AiDriver {
@@ -519,6 +564,8 @@ export class RaceDirector {
       this.ringBin[car.idx].fill(-2147483648);
     }
     this.mishapLog.length = 0;
+    this.playerLaps = []; this.playerLapFlags = { off: false, penalty: false, contact: false };
+    if (!this.player.driver) this.traffic.pace[this.player.idx] = this.player.paceHint;
     this.refreshTraffic(true);
     for (const car of this.cars) this.aheadOfPlayer[car.idx] = car.U > this.player.U ? 1 : -1;
     this.applyControl();
@@ -632,10 +679,13 @@ export class RaceDirector {
         // crossed the start/finish line (race distance U is measured from it)
         const v = Math.max(1, car.vehicle.state.speed);
         const tc = t - (U - li * L) / v;
+        let done = Number.NaN;
         if (car.lapStartGreen && Number.isFinite(car.lapStart) && li === car.lapIdx + 1) {
           car.lastLap = tc - car.lapStart;
           if (!(car.bestLap <= car.lastLap)) car.bestLap = car.lastLap;
+          done = car.lastLap;
         }
+        if (car.isPlayer && !car.driver) this.playerLapDone(done);
         car.lapStart = tc;
         car.lapStartGreen = this.phase === 'green' || this.phase === 'yellow';
         car.lapIdx = li;
@@ -670,6 +720,20 @@ export class RaceDirector {
     }
     this.playerRules(dt);
   }
+
+  /** The human player crossed the line: a completed green lap (NaN: not one) updates the AI's model of his pace. */
+  private playerLapDone(lap: number): void {
+    const f = this.playerLapFlags;
+    if (Number.isFinite(lap) && (this.phase === 'green' || this.phase === 'chequered')) {
+      this.playerLaps.push({ lap, off: f.off, penalty: f.penalty, contact: f.contact });
+      const P = this.player;
+      this.traffic.pace[P.idx] = playerPaceEstimate(P.paceHint, this.playerLaps);
+    }
+    this.playerLapFlags = { off: false, penalty: false, contact: false };
+  }
+
+  /** The pace the AI cars read for the player now (Traffic.pace; for a human: playerPaceEstimate), s. */
+  get playerPace(): number { return this.traffic.pace[this.player.idx]; }
 
   /** Marshal reset: put a stuck / wrong-way AI car back on the racing line at its s, rolling slowly. */
   private recover(car: RaceCar): void {
@@ -735,6 +799,7 @@ export class RaceDirector {
 
   private blackFlag(reason: string): void {
     if (this.pen.ejected) return;
+    this.playerLapFlags.penalty = true;
     const p = this.pen;
     p.count++;
     p.lastReason = reason; p.lastAt = this.time;
@@ -763,10 +828,12 @@ export class RaceDirector {
       const other = ev.a === P.idx ? ev.b : ev.a;
       const last = this.contactSeen.get(other) ?? -1e9;
       this.contactSeen.set(other, this.time);
-      if (this.time - last < 2) continue;      // same contact (or a follow-up within 2 s)
       const mine = ev.a === P.idx ? ev.aApproach : ev.bApproach;
       const theirs = ev.a === P.idx ? ev.bApproach : ev.aApproach;
-      if (ev.closing > CONTACT_FAULT_CLOSING && mine > theirs + 0.5) this.blackFlag(`contact with #${this.cars[other].number}`);
+      const atFault = ev.closing > CONTACT_FAULT_CLOSING && mine > theirs + 0.5;
+      if (atFault) this.playerLapFlags.contact = true;   // (the lap does not count toward his pace, flagged or not)
+      if (this.time - last < 2) continue;      // same contact (or a follow-up within 2 s)
+      if (atFault) this.blackFlag(`contact with #${this.cars[other].number}`);
     }
     // (b) four wheels off the paved surface (sustained 0.25 s; re-armed after 2 s back on)
     let allOff = true;
@@ -776,6 +843,7 @@ export class RaceDirector {
       if (smp.paved || smp.onKerbBand) { allOff = false; break; }   // round 15: outside kerb bands are course
     }
     if (allOff) { this.offT += dt; this.onT = 0; } else { this.offT = 0; this.onT += dt; }
+    if (allOff && this.offT >= 0.25) this.playerLapFlags.off = true;
     if (this.onT >= 2) this.offArmed = true;
     if (allOff && this.offT >= 0.25 && this.offArmed) { this.offArmed = false; this.blackFlag('four wheels off'); }
     // (b2) the pit-exit blend line (a package that declares one): two wheels across it, strictly, the same flag and penalty
@@ -797,6 +865,7 @@ export class RaceDirector {
     if (pen.pending.length > 0) {
       const p = this.line.project(st.pos[0], st.pos[1], P.hint);
       pen.inBox = Math.abs(st.speed) < 3 && this.box.contains(st.pos[0], st.pos[1], p.s, p.lateral);
+      if (pen.inBox) this.playerLapFlags.penalty = true;
       if (pen.inBox && Math.abs(st.speed) < 0.5) {
         pen.serving -= dt;
         if (pen.serving <= 0) {

@@ -25,6 +25,7 @@ const followScale = argv.includes('--follow-scale') ? Number(arg('--follow-scale
 // --lane-margin / --shift-grip: try another value of the track's knob (trials; the registry keeps the chosen one)
 const laneMargin = argv.includes('--lane-margin') ? Number(arg('--lane-margin', '1')) : (TRACKS[track]?.ai?.laneMargin ?? 1);
 const shiftGrip = argv.includes('--shift-grip') ? Number(arg('--shift-grip', '0')) : (TRACKS[track]?.ai?.shiftGrip ?? 0);
+const strength = Number(arg('--strength', '1'));
 const pack = loadTrackPack(track);
 const playerScale = argv.includes('--player-scale') ? Number(arg('--player-scale', '1')) : Number.NaN;
 // the player's pace hint at that scale: the AI Probe's own solo lap (lap 2 of 2), as calibrate_field.ts measures it
@@ -38,7 +39,7 @@ const makeSurface = argv.includes('--no-kerbs') ? () => createTrackSurface(pack.
 const dir = new RaceDirector({
   line: pack.line, surface: pack.surface, makeSurface,
   probeJson: loadProbeJson(), pace, identity, pitLane: pack.scenery?.pit_lane ?? null, blendLine: pack.scenery?.blend_line ?? null, collisionWorld: createCollisionWorld(pack.scenery, pack.track),
-}, { laps, seed, playerAi: true, maxAi, followScale, laneMargin, shiftGrip, ...(mishapRate !== undefined ? { mishapRate } : {}), ...(playerScale > 0 ? { playerScale, playerLap } : {}) });
+}, { laps, seed, playerAi: true, maxAi, followScale, laneMargin, shiftGrip, ...(mishapRate !== undefined ? { mishapRate } : {}), ...(playerScale > 0 ? { playerScale, playerLap } : {}), strength });
 const m = runSelfplay(dir, makeSurface(), { log: !argv.includes('--quiet'), cones: pack.scenery?.pit_exit_cones ?? null });
 printReport(m);
 // race pace against the calibrated pace: each AI car's best and last lap over the target lap of the stint it drew
