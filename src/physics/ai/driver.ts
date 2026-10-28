@@ -65,6 +65,9 @@ export interface DriverControl {
 export type MishapKind = 'wide' | 'spin';
 
 const HEADWAY = [0.75, 0.55, 0.38];        // s, following time gap by aggression
+/** Black-flag hook (traffic round): the pass commit weighs a risk term (passRisk: 0 today); a lane whose risk exceeds
+ *  PASS_RISK_MAX is not taken and RISK_W x risk comes off its score. The AI black-flag round plugs the expected flag cost in. */
+const PASS_RISK_MAX = 1, RISK_W = 4;
 const STUCK_T = [3.0, 1.8, 1.0];
 const PASS_ADV = [1.06, 1.04, 1.025];      // own target speed vs theirs needed to pass at once
 const DEFEND = [0.5, 0.8, 1.1];            // m of lateral move to cover the inside (light, by aggression)
@@ -158,6 +161,9 @@ export function driverProfile(line: RaceLine, perf: CarPerf, prof: Float64Array)
 }
 
 export class AiDriver {
+  /** (tools) when set, planLane tallies why candidate lanes were rejected (selfplay_trace.ts --loss) */
+  static planWhy: Record<string, number> | null = null;
+  private static why(k: string): void { const W = AiDriver.planWhy; if (W) W[k] = (W[k] ?? 0) + 1; }
   readonly vehicle: Vehicle;
   readonly line: RaceLine;
   readonly perf: CarPerf;
@@ -1003,31 +1009,41 @@ export class AiDriver {
         const e = (k0 + side * m) * W;
         if (e === avoid) continue;
         if (mySide !== 0 && side !== mySide && !behind) continue;
-        if (this.passerIn(Math.min(e, eMe) - hwI - LANE_CLR, Math.max(e, eMe) + hwI + LANE_CLR)) continue;
+        if (this.passerIn(Math.min(e, eMe) - hwI - LANE_CLR, Math.max(e, eMe) + hwI + LANE_CLR)) { AiDriver.why('passer'); continue; }
         // the band I sweep through on the way there must be free now (j: following keeps me behind it)
-        if (Math.abs(e - eMe) > W * 0.5 && this.laneBlock(Math.min(e, eMe) - hwI - LANE_CLR, Math.max(e, eMe) + hwI + LANE_CLR, 1.5, v, 40, 40, j) < 1.5) continue;
+        if (Math.abs(e - eMe) > W * 0.5 && this.laneBlock(Math.min(e, eMe) - hwI - LANE_CLR, Math.max(e, eMe) + hwI + LANE_CLR, 1.5, v, 40, 40, j) < 1.5) { AiDriver.why('band'); continue; }
         let onRoad = true;
         for (let d = 0; d <= 30; d += 15) if (e < this.roadLo(s + d, hwI) - 0.3 || e > this.roadHi(s + d, hwI) + 0.3) { onRoad = false; break; }
-        if (!onRoad) continue;
+        if (!onRoad) { AiDriver.why('road'); continue; }
         const adv = this.laneSpeed(e, s, pf, 100) - vJ;
-        if (adv < MIN_ADV) continue;
+        if (adv < MIN_ADV) { AiDriver.why('adv'); continue; }
         const Tn = Math.min(PLAN_T, D / adv);
-        if (D / adv > PLAN_T_MAX) continue;
+        if (D / adv > PLAN_T_MAX) { AiDriver.why('long'); continue; }
         // no lane beside j where the road shuts it before I would be ahead of it: looked at over the occupancy horizon
         // Tn at my speed (the whole pass when it takes up to PLAN_T s; its first PLAN_T s otherwise), at most
         // PLAN_SHUT_MAX m, closing at the planned advantage or the speed difference now if larger. (Checking passes
         // longer than PLAN_T to their end, 24 Oct 2026: Sonoma contacts 0.022 -> 0.031, Laguna 0.033 -> 0.038 over
         // 8 seeds, 6 % fewer green passes on Sonoma: not kept.)
-        if (this.shutBeside(j, e, side, v, Math.max(adv, v - vj), v * Tn, true)) continue;
+        if (this.shutBeside(j, e, side, v, Math.max(adv, v - vj), v * Tn, true)) { AiDriver.why('shut'); continue; }
         // (projected at the speed I plan to pass at: a slower car further up that lane blocks it)
         const tFree = this.laneBlock(e - hwI - LANE_CLR, e + hwI + LANE_CLR, Tn + 2, Math.max(v, vJ + adv), 150, 60, j, e, true);
-        if (tFree < Tn + 0.5) continue;
-        const score = Math.min(12, tFree) + (inside !== 0 && side === inside ? 3 : 0) - m - 0.2 * Tn;
+        if (tFree < Tn + 0.5) { AiDriver.why('occupied'); continue; }
+        const risk = this.passRisk(j, e, side);
+        if (risk > PASS_RISK_MAX) { AiDriver.why('risk'); continue; }
+        AiDriver.why('ok');
+        const score = Math.min(12, tFree) + (inside !== 0 && side === inside ? 3 : 0) - m - 0.2 * Tn - RISK_W * risk;
         if (score > bestScore) { bestScore = score; best = e; this.planAdv = adv; }
       }
     }
     return best;
   }
+
+  /**
+   * The risk of committing to a pass on car j in lane e on `side` (traffic round; the hook for the AI black-flag round: an
+   * expected flag cost, e.g. from the contact-at-fault and four-off odds of this lane at this closing speed, against the time a
+   * pass gains). 0 today: the pass is held to the same corridor, alongside and pinch margins as before.
+   */
+  private passRisk(_j: number, _e: number, _side: number): number { return 0; }
 
   /** A pass in hand: progress, done (next car of a train, else back to the racing line), abort, the merge. */
   private passStep(dt: number, v: number, eMe: number, green: boolean, pf: number): void {

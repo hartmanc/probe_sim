@@ -51,7 +51,7 @@ async function runOne(): Promise<void> {
     track, seed, laps, set: sets, crossings: dir.crossings.map((c) => ({ ...c })),
     metrics: { carLaps: m.carLaps, contacts: r.contacts, contactsPerCarLap: r.contactsPerCarLap, fourOff: r.fourOff, fourOffPerCarLap: r.fourOffPerCarLap, fourOffNonMishapPerCarLap: r.fourOffNonMishapPerCarLap,
       passesTotal: m.passing.passesTotal, situations: m.passing.situations, completed: m.passing.completed, defending: m.defending, recoveries: r.recoveries, mishaps: m.mishaps.total,
-      contactAt: r.contactAt, fourOffAt: r.fourOffAt, yields: (m as unknown as { yields?: number }).yields },
+      contactAt: r.contactAt, fourOffAt: r.fourOffAt, yields: undefined },
   };
   const js = arg('--json', '');
   if (js) writeFileSync(js, JSON.stringify(out)); else console.log(JSON.stringify(out.metrics));

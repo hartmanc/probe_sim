@@ -10,6 +10,7 @@ import { loadTrackPack, loadProbeJson, loadPace, loadIdentityJson, trackArg } fr
 import { runSelfplay } from './selfplay_metrics';
 import { TRACKS } from '../../src/scoreboard/config';
 import { makeWhere } from './selfplay_where';
+import { AiDriver as AiDriverCls } from '../../src/physics/ai/driver';
 
 const argv = process.argv.slice(2);
 const arg = (k: string, d: string) => { const i = argv.indexOf(k); return i >= 0 ? argv[i + 1] : d; };
@@ -58,6 +59,7 @@ if (dcar) {
     detail.push(`${dir.time.toFixed(1)} s ${tr.s[di].toFixed(0)} v ${tr.v[di].toFixed(1)} e ${tr.e[di].toFixed(2)} sh ${d.shift.toFixed(2)} lim ${d.limiter} steer ${d.input.steer.toFixed(2)} thr ${d.input.throttle.toFixed(2)} brk ${d.input.brake.toFixed(2)} kCmd ${(d.kCmd * 1000).toFixed(1)} kLine ${(line.at(line.curv, tr.s[di]) * 1000).toFixed(1)} slipF ${Math.max(Math.abs(w[0].slipAngle), Math.abs(w[1].slipAngle)).toFixed(3)} slipR ${Math.max(Math.abs(w[2].slipAngle), Math.abs(w[3].slipAngle)).toFixed(3)} srR ${Math.min(w[2].slipRatio, w[3].slipRatio).toFixed(3)} yawRate ${st.angVel[2].toFixed(2)} cap ${d.steerCap.toFixed(2)}/${d.brakeCap.toFixed(2)}`);
   };
 }
+if (argv.includes('--loss')) (AiDriverCls as unknown as { planWhy: Record<string, number> | null }).planWhy = {};
 const m = runSelfplay(dir, makeSurface(), { log: false });
 if (argv.includes('--loss')) { lossReport(); process.exit(0); }
 function lossReport(): void {
@@ -79,7 +81,7 @@ function lossReport(): void {
       if (ds < 0 || ds > 80) continue;
       const exp = ds / Math.max(3, 0.5 * (a.vp + b.vp)), dt = b.t - a.t, c = cat(a);
       dist += ds; A.exp += exp; A.t += dt; A.loss[c] += dt - exp; A.time[c] += dt;
-      if (c !== 'free' && c !== 'off') { const key2 = `${['Q1 fast', 'Q2', 'Q3', 'Q4 slow'][q]} | ${c} ph${a.ph} ${a.lim}`; byLim.set(key2, (byLim.get(key2) ?? 0) + dt - exp); }
+      if (c !== 'free' && c !== 'off') { const key2 = `${['Q1 fast', 'Q2', 'Q3', 'Q4 slow'][q]} | ${c} ph${a.ph} ${a.lim}${a.lim === 'follow' ? (a.lead === a.pt ? ' (the car I pass)' : a.lead >= 0 && tr.pace[a.lead] > tr.pace[i] / 0.97 ? ' (a clearly slower car)' : ' (a close / faster car)') : ''}`; byLim.set(key2, (byLim.get(key2) ?? 0) + dt - exp); }
       if (c === 'following' || c === 'passing' || c === 'merge') { const key = `${['Q1 fast', 'Q2', 'Q3', 'Q4 slow'][q]} | ${where(a.s)}`; bySec.set(key, (bySec.get(key) ?? 0) + dt - exp); }
     }
     A.laps += dist / L;
@@ -94,6 +96,7 @@ function lossReport(): void {
   const lapsAll = acc.reduce((x, A) => x + A.laps, 0);
   console.log('top places of traffic loss (following + passing + merging), s per car-lap of the whole field:');
   for (const [k, v] of [...bySec].sort((a, b) => b[1] - a[1]).slice(0, 16)) console.log(`  ${(v / lapsAll).toFixed(3)}  ${k}`);
+  console.log(`pass plans: candidate lanes rejected / accepted ${JSON.stringify((AiDriverCls as unknown as { planWhy: unknown }).planWhy)}`);
   console.log('traffic loss by state (pass phase, speed limiter), s per car-lap of the quartile:');
   for (const [k, v] of [...byLim].sort((a, b) => b[1] - a[1]).slice(0, 24)) console.log(`  ${(v / acc[['Q1 fast', 'Q2', 'Q3', 'Q4 slow'].indexOf(k.split(' | ')[0])].laps).toFixed(2)}  ${k}`);
 }
