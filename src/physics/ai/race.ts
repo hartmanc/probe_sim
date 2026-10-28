@@ -147,6 +147,9 @@ export function playerPaceEstimate(start: number, laps: readonly PlayerLapRecord
   return Math.min(PLAYER_PACE_MAX * start, Math.max(PLAYER_PACE_MIN * start, med));
 }
 
+/** One line crossing (director.crossings). */
+export interface RaceCrossing { car: string; lapNr: number; t: number; lapTime: number; green: boolean; pit: boolean }
+
 /** One AI loss of control (director.mishapLog). */
 export interface MishapEvent { t: number; idx: number; number: string; corner: string; kind: MishapKind }
 
@@ -386,6 +389,15 @@ export class RaceDirector {
   contactTotal = 0;
   /** every AI loss of control so far, in order (tools / tests; not shown in the HUD) */
   readonly mishapLog: MishapEvent[] = [];
+  /**
+   * Every line crossing this race (traffic round, 28 Oct 2026; the player included), in the shape of the MyLaps crossings
+   * tools/race/traffic_curves.ts reads: lapNr = laps completed at that crossing, t = race time (director clock) of the crossing,
+   * lapTime = the lap it ended (NaN when it was not timed: the first crossing), green = the lap was raced wholly under green
+   * (a cool-down lap after the flag is not), pit = the car was in the penalty box on that lap (the player only). Pushed in the
+   * crossing branch: no per-step cost.
+   */
+  readonly crossings: RaceCrossing[] = [];
+  private playerLapPit = false;
 
   #greenAt = 0;            // never exposed before it happens
   private rng: Rng;
@@ -602,6 +614,7 @@ export class RaceDirector {
       this.ringBin[car.idx].fill(-2147483648);
     }
     this.mishapLog.length = 0;
+    this.crossings.length = 0; this.playerLapPit = false;
     this.playerLaps = []; this.playerLapFlags = { off: false, penalty: false, contact: false };
     if (!this.player.driver) this.traffic.pace[this.player.idx] = this.player.paceHint;
     this.refreshTraffic(true);
@@ -818,6 +831,11 @@ export class RaceDirector {
           done = car.lastLap;
         }
         if (car.isPlayer && !car.driver) this.playerLapDone(done);
+        {
+          const pit = car.isPlayer && this.playerLapPit;
+          if (car.isPlayer) this.playerLapPit = false;
+          this.crossings.push({ car: car.number, lapNr: li, t: tc, lapTime: done, green: car.lapStartGreen && Number.isFinite(done) && this.phase !== 'yellow' && !this.yellowOn, pit });
+        }
         car.lapStart = tc;
         car.lapStartGreen = this.phase === 'green' || this.phase === 'yellow';
         car.lapIdx = li;
@@ -997,7 +1015,7 @@ export class RaceDirector {
     if (pen.pending.length > 0) {
       const p = this.line.project(st.pos[0], st.pos[1], P.hint);
       pen.inBox = Math.abs(st.speed) < 3 && this.box.contains(st.pos[0], st.pos[1], p.s, p.lateral);
-      if (pen.inBox) this.playerLapFlags.penalty = true;
+      if (pen.inBox) { this.playerLapFlags.penalty = true; this.playerLapPit = true; }
       if (pen.inBox && Math.abs(st.speed) < 0.5) {
         pen.serving -= dt;
         if (pen.serving <= 0) {

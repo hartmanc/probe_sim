@@ -1,23 +1,36 @@
 // Where self-play rule events happen: bins contacts and four-offs from selfplay --json files by corner phase
 // (brake zone, entry to apex, exit to apex+120 m, straight) and by context.
 //   npx tsx tools/race/selfplay_where.ts --track <id> run1.json run2.json ...
+// makeWhere(line) is the same binning for other tools (selfplay_trace.ts --loss).
 import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import type { RaceLine } from '../../src/physics/ai/line';
 import { loadTrackPack, trackArg } from './load';
 
+/** The corner phase at station s: '<corner> brake' / '<corner> entry' (brake point to apex), '<corner> exit' (to 120 m past the
+ *  apex, before the next brake point), else 'straight'. */
+export function makeWhere(line: RaceLine): (s: number) => string {
+  const L = line.L, C = line.corners;
+  const fwd = (a: number, b: number) => { let d = b - a; while (d < 0) d += L; while (d >= L) d -= L; return d; };
+  return (s: number): string => {
+    for (const c of C) {
+      const span = fwd(c.brake, c.apex), u = fwd(c.brake, s);
+      if (u <= span) return `${c.name} ${u < fwd(c.brake, c.apex) * 0.5 ? 'brake' : 'entry'}`;
+      if (fwd(c.apex, s) <= 120 && fwd(c.apex, s) < fwd(c.apex, C[(C.indexOf(c) + 1) % C.length].brake)) return `${c.name} exit`;
+    }
+    return 'straight';
+  };
+}
+const isMain = !!process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+if (isMain) main();
+function main(): void {
 const argv = process.argv.slice(2);
 const track = trackArg(argv);
 const files = argv.filter((a, i) => a.endsWith('.json') && argv[i - 1] !== '--track');
 const { line } = loadTrackPack(track);
-const L = line.L, C = line.corners;
-const fwd = (a: number, b: number) => { let d = b - a; while (d < 0) d += L; while (d >= L) d -= L; return d; };
-export function where(s: number): string {
-  for (const c of C) {
-    const span = fwd(c.brake, c.apex), u = fwd(c.brake, s);
-    if (u <= span) return `${c.name} ${u < fwd(c.brake, c.apex) * 0.5 ? 'brake' : 'entry'}`;
-    if (fwd(c.apex, s) <= 120 && fwd(c.apex, s) < fwd(c.apex, C[(C.indexOf(c) + 1) % C.length].brake)) return `${c.name} exit`;
-  }
-  return 'straight';
-}
+const C = line.corners;
+const where = makeWhere(line);
 const tally = (m: Map<string, number>, k: string) => m.set(k, (m.get(k) ?? 0) + 1);
 const byC = new Map<string, number>(), byCctx = new Map<string, number>(), byF = new Map<string, number>(), byFctx = new Map<string, number>();
 let carLaps = 0, nC = 0, nF = 0;
@@ -33,3 +46,4 @@ console.log(`${files.length} runs, ${carLaps.toFixed(0)} car-laps; contacts ${nC
 console.log('corners: ' + C.map((c) => `${c.name} brake ${c.brake.toFixed(0)} apex ${c.apex.toFixed(0)} dir ${c.dir}${c.passable ? ' P' : ''}`).join('; '));
 show('contacts by place', byC); show('contacts by place | ctx', byCctx); show('four-off by place', byF); show('four-off by place | ctx', byFctx);
 if (argv.includes('--rows')) for (const r of rows) console.log(r);
+}

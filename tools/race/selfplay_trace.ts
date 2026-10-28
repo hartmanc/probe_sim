@@ -2,11 +2,14 @@
 // 3 s before each four-off / contact (lane offset e, shift, target, edges, speed vs profile, limiter, pass phase).
 //   npx tsx tools/race/selfplay_trace.ts --track <id> --seed N [--near s0-s1] [--kind four|contact] [--max 20] [--pre 3]
 //   [--summary: one classified line per event]  [--car NUM --from t0 --to t1: pedals / steering / slips of one car]
+//   [--loss: where the time goes (traffic round, 28 Oct 2026): every AI-driven car's time over its own profile (the solo lap's
+//    target speed) per 0.1 s, split free / following / passing / merging / off, by pace quartile and by corner phase]
 import { createCollisionWorld } from '../../src/physics/index';
 import { RaceDirector } from '../../src/physics/ai/race';
 import { loadTrackPack, loadProbeJson, loadPace, loadIdentityJson, trackArg } from './load';
 import { runSelfplay } from './selfplay_metrics';
 import { TRACKS } from '../../src/scoreboard/config';
+import { makeWhere } from './selfplay_where';
 
 const argv = process.argv.slice(2);
 const arg = (k: string, d: string) => { const i = argv.indexOf(k); return i >= 0 ? argv[i + 1] : d; };
@@ -26,7 +29,7 @@ const dir = new RaceDirector({
   laneMargin: argv.includes('--lane-margin') ? Number(arg('--lane-margin', '1')) : (TRACKS[track]?.ai?.laneMargin ?? 1),
   shiftGrip: argv.includes('--shift-grip') ? Number(arg('--shift-grip', '0')) : (TRACKS[track]?.ai?.shiftGrip ?? 0) });
 const line = dir.line, tr = dir.traffic, cars = dir.cars, n = cars.length;
-type Rec = { t: number; s: number; e: number; sh: number; eT: number; v: number; vp: number; lim: string; ph: number; pt: number; on: number; hL: number; hR: number; off: number; yaw: number; thr: number; brk: number; slR: number; lead: number };
+type Rec = { g: number; t: number; s: number; e: number; sh: number; eT: number; v: number; vp: number; lim: string; ph: number; pt: number; on: number; hL: number; hR: number; off: number; yaw: number; thr: number; brk: number; slR: number; lead: number };
 const hist: Rec[][] = cars.map(() => []);
 let k = 0;
 const step0 = dir.step.bind(dir);
@@ -38,7 +41,7 @@ const step0 = dir.step.bind(dir);
     const st = cars[i].vehicle.state, s = tr.s[i], o = line.at(line.off, s);
     const [qx, qy, qz, qw] = st.quat; const yaw = Math.atan2(2 * (qx * qy + qz * qw), 1 - 2 * (qy * qy + qz * qz));
     let herr = yaw - line.headingAt(s); while (herr > Math.PI) herr -= 2 * Math.PI; while (herr < -Math.PI) herr += 2 * Math.PI;
-    hist[i].push({ t: dir.time, s, e: tr.e[i], sh: d.shift, eT: tr.eT[i], v: tr.v[i], vp: line.at(d.profile, s), lim: d.limiter, ph: d.passPhase, pt: d.passTarget,
+    hist[i].push({ g: dir.phase === 'green' ? 1 : 0, t: dir.time, s, e: tr.e[i], sh: d.shift, eT: tr.eT[i], v: tr.v[i], vp: line.at(d.profile, s), lim: d.limiter, ph: d.passPhase, pt: d.passTarget,
       on: st.wheels.filter((w: any) => w.onTrack).length, hL: line.at(line.halfL, s) - o, hR: -line.at(line.halfR, s) - o, off: tr.off[i], yaw: herr, thr: d.input.throttle, brk: d.input.brake, slR: Math.max(Math.abs(st.wheels[2].slipAngle), Math.abs(st.wheels[3].slipAngle)), lead: d.leadIdx });
   }
 };
@@ -56,6 +59,44 @@ if (dcar) {
   };
 }
 const m = runSelfplay(dir, makeSurface(), { log: false });
+if (argv.includes('--loss')) { lossReport(); process.exit(0); }
+function lossReport(): void {
+  const where = makeWhere(line), L = line.L;
+  const cat = (r: Rec) => (r.off || r.on < 2 ? 'off' : r.ph === 1 || r.ph === 2 ? 'passing' : r.ph === 3 ? 'merge' : ['follow', 'pinch', 'alongside', 'passed'].includes(r.lim) ? 'following' : 'free');
+  const CATS = ['free', 'following', 'passing', 'merge', 'off'];
+  const ai = cars.map((c, i) => i).filter((i) => cars[i].driver);
+  const paces = ai.map((i) => tr.pace[i]).sort((a, b) => a - b);
+  const quart = (i: number) => Math.min(3, Math.floor(4 * paces.indexOf(tr.pace[i]) / paces.length));
+  const acc = [0, 1, 2, 3].map(() => ({ laps: 0, exp: 0, t: 0, loss: Object.fromEntries(CATS.map((c) => [c, 0])) as Record<string, number>, time: Object.fromEntries(CATS.map((c) => [c, 0])) as Record<string, number> }));
+  const bySec = new Map<string, number>(), byLim = new Map<string, number>();
+  for (const i of ai) {
+    const q = quart(i), A = acc[q], h = hist[i];
+    let dist = 0;
+    for (let k = 1; k < h.length; k++) {
+      const a = h[k - 1], b = h[k];
+      if (!a.g || !b.g) continue;
+      let ds = b.s - a.s; if (ds < -0.5 * L) ds += L;
+      if (ds < 0 || ds > 80) continue;
+      const exp = ds / Math.max(3, 0.5 * (a.vp + b.vp)), dt = b.t - a.t, c = cat(a);
+      dist += ds; A.exp += exp; A.t += dt; A.loss[c] += dt - exp; A.time[c] += dt;
+      if (c !== 'free' && c !== 'off') { const key2 = `${['Q1 fast', 'Q2', 'Q3', 'Q4 slow'][q]} | ${c} ph${a.ph} ${a.lim}`; byLim.set(key2, (byLim.get(key2) ?? 0) + dt - exp); }
+      if (c === 'following' || c === 'passing' || c === 'merge') { const key = `${['Q1 fast', 'Q2', 'Q3', 'Q4 slow'][q]} | ${where(a.s)}`; bySec.set(key, (bySec.get(key) ?? 0) + dt - exp); }
+    }
+    A.laps += dist / L;
+  }
+  console.log(`\n=== where the time goes (${track}, seed ${seed}, ${laps} laps): s per car-lap over the car's own profile (its solo target), by pace quartile`);
+  console.log('quartile | car-laps | profile lap s | lap s | ' + CATS.map((c) => `${c} loss (time share)`).join(' | ') + ' | traffic loss % of lap');
+  acc.forEach((A, q) => {
+    const per = (x: number) => (x / Math.max(1e-9, A.laps)).toFixed(2);
+    const traffic = A.loss.following + A.loss.passing + A.loss.merge;
+    console.log(`Q${q + 1} | ${A.laps.toFixed(1)} | ${per(A.exp)} | ${per(A.t)} | ${CATS.map((c) => `${per(A.loss[c])} (${(100 * A.time[c] / Math.max(1e-9, A.t)).toFixed(0)} %)`).join(' | ')} | ${(100 * traffic / Math.max(1e-9, A.exp)).toFixed(1)} %`);
+  });
+  const lapsAll = acc.reduce((x, A) => x + A.laps, 0);
+  console.log('top places of traffic loss (following + passing + merging), s per car-lap of the whole field:');
+  for (const [k, v] of [...bySec].sort((a, b) => b[1] - a[1]).slice(0, 16)) console.log(`  ${(v / lapsAll).toFixed(3)}  ${k}`);
+  console.log('traffic loss by state (pass phase, speed limiter), s per car-lap of the quartile:');
+  for (const [k, v] of [...byLim].sort((a, b) => b[1] - a[1]).slice(0, 24)) console.log(`  ${(v / acc[['Q1 fast', 'Q2', 'Q3', 'Q4 slow'].indexOf(k.split(' | ')[0])].laps).toFixed(2)}  ${k}`);
+}
 if (dcar) { console.log(detail.join('\n')); process.exit(0); }
 const idxOf = (num: string) => cars.findIndex((c) => c.number === num);
 const show = (i: number, t1: number, tag: string) => {
