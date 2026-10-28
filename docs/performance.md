@@ -18,7 +18,42 @@ and AI in a Web Worker.
 
 Graphics menu: Auto / Phone / **Balanced** / Desktop (the stored choice and `?phone=` work as before).
 
-## Measurements (read this first)
+## Measurements, quiet machine (27 Oct 2026, after the calibration job ended)
+
+Same rig, `npm run build` of HEAD served by `vite preview --port 4174`, Chrome window 1920 x 1080, Buttonwillow, `?dynres=0`, race samples at
+`?playerai=1&seed=8` (shuffled grid, the player in slot **7**; the phone field is the real grid order, so there the player is slot 37),
+battery 100 %, the 6 s sampler starting 3 s after the start (sim time about 8 s: the formation lap, so these are light-traffic numbers).
+The 1-minute load was **2.0-2.9 (under 4) at every run** (checked right after each).
+
+| run | fps | frame p95 ms | frames > 20 ms | JS p50 / p95 / max ms | worker busy | canvas | load |
+|---|---|---|---|---|---|---|---|
+| 1 hot lap, adaptive on (default) | 59.8 | 18.2 | 0 | 3.2 / 4.5 / 12.4 | - | 2400 x 907 (adapt level 4) | 2.1 |
+| 1b hot lap, `adapt=0` | 59.8 | 18.3 | 0 | 3.0 / 4.6 / 4.9 | - | 2880 x 1089 | 2.9 |
+| 2 race, desktop defaults (adaptive on) | 59.8 | 18.1 | 0 | 7.0 / 7.5 / 8.2 | - | 2880 x 1089 (level 3, 30 drawn) | 2.6 |
+| 3 race, `adapt=0` | 59.8 | 17.8 | 0 | 7.0 / 7.6 / 7.9 | - | 2880 x 1089 | 2.3 |
+| 4 race, Balanced | 59.8 | 17.7 | 0 | 7.0 / 7.8 / 9.0 | - | 2571 x 972 | 2.1 |
+| 5 race, `lod=1` (79 of 99 cars far) | 59.8 | 18.4 | 0 | 6.1 / 6.7 / 8.1 | - | 2880 x 1089 | 2.4 |
+| 6 race, `worker=1` | 59.8 | 17.9 | 0 | 3.2 / 3.9 / 4.5 | 30 % | 2880 x 1089 | 2.0 |
+| 7 race, `worker=1&lod=1` | 59.8 | 18.2 | 0 | 3.7 / 4.5 / 6.5 | 24 % | 2880 x 1089 | 2.1 |
+| 8 race, phone tier (41 cars) | 59.8 | 18.4 | 0 | 4.8 / 5.5 / 23.2 | - | 1781 x 673 | 2.0 |
+| 9 = run 3 with `perf=1` | 58.0 | 17.9 | 3 | 7.2 / 8.0 / 14.2 | - | 2880 x 1089 | 2.3 |
+| worst case, player at the back (seed 1, slot 64), default config | 59.8 | 18.0 | 0 | 7.4 / 8.3 / 12.4 | - | 2880 x 1089 (level 2) | 2.1 |
+
+Reading it: on the quiet machine every configuration holds 60 fps through the formation lap; the difference is main-thread JS: 7.0 ms
+per race frame (desktop), 6.1 with the LOD, 3.2 with the worker (3.7 with both: the worker + LOD pair is not cheaper on the main thread;
+the LOD's saving moves into the worker, whose busy share fell 30 -> 24 %), 4.8 for the phone field. The overlay's own cost is about
+0.2 ms of JS per frame (7.0 -> 7.2) plus a little DOM; three frames over 20 ms in its 6 s run. Not measured on the quiet machine: the
+pack at its worst (green flag, a bunched field), which is where the loaded runs showed the 14-19 ms.
+
+**Finding: the adaptive policy's 18 ms threshold sits on the vsync noise.** At a steady 60 fps the frame-interval p95 reads 17.7-18.4 ms
+(runs above), so the policy steps down (levels 2-4 reached in 9 s with no real load: hot lap 2400 x 907, 30 cars drawn) and only steps back up
+after 10 s under 14 ms, which a 60 Hz display never reads. Hold: `ADAPT_DOWN_MS` in `src/app/perf.ts`; a threshold of about 20 ms
+(or the p95 of frame work rather than the interval) would stop it. Left as the brief specified; the owner's call.
+
+Tests on the quiet machine: `npx vitest run` 93 files, **777 / 777 passed** (including `ai_behaviour`'s full-field test: the earlier failure
+was load only); `npm run test:e2e` 13 / 13; `npm run build` passes.
+
+## Measurements, loaded machine (read this first, then the quiet table above)
 
 Chrome on this M3 MacBook Air, plugged in (battery 100 %), Buttonwillow, 99-car field, window 1920 x 1080 (canvas CSS 1920 x 726,
 2880 x 1089 = 3.14 MP at ratio 1.5), race samples at `?playerai=1&seed=1&adapt=0&dynres=0`, sampled 6 s starting about 28 s
