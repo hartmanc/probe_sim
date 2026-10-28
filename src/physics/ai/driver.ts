@@ -67,7 +67,18 @@ export type MishapKind = 'wide' | 'spin';
 const HEADWAY = [0.75, 0.55, 0.38];        // s, following time gap by aggression
 const STUCK_T = [3.0, 1.8, 1.0];
 const PASS_ADV = [1.06, 1.04, 1.025];      // own target speed vs theirs needed to pass at once
-const DEFEND = [0.5, 0.8, 1.1];            // m of lateral move to cover the inside (light, by aggression)
+/** Defending against a CLOSE car (within 3 %, AI round 1 Part D): from the braking point of a passable corner, when the car
+ *  behind is within DEFEND_T s (by aggression) and not falling back, cover the inside: up to one lane (Traffic.laneW) toward
+ *  the inside edge, held through the apex; one move per corner, DEFEND_COOL s before the next. Never a clearly faster car
+ *  (the Lemons point-by), never under yellow. (Until 27 Oct 2026: a light 0.5 / 0.8 / 1.1 m move up to 120 m before the
+ *  braking point, any close car within ~1 s.) */
+const DEFEND_T = [0.6, 0.8, 1.0];
+/** m before a passable corner's braking point the cover may start (and m past it), at least DEFEND_LEAD_T s at my speed */
+const DEFEND_LEAD = 15, DEFEND_LEAD_T = 0.5, DEFEND_PAST = 5;
+const DEFEND_COOL = 2;
+/** s of being quicker than the car ahead on the day (my speed above its by QUICK_DV while following it) before a car within
+ *  3 % of its pace plans a pass on it (AI round 1 Part D; decays at a quarter of the rate) */
+const QUICK_T = 2, QUICK_DV = 0.2;
 /** Target lap ratio below which a car is "clearly faster" (it goes for the pass; the car ahead does not defend). */
 export const CLEARLY_FASTER = 0.97;
 /** How a driver whose pace hint is `mine` classes a car whose hint is `theirs` (s per lap): 'faster' (clearly: it is let by,
@@ -194,6 +205,8 @@ export class AiDriver {
   /** how the last pass attempt ended (tools): 'done' | 'dropped' | 'timeout' | 'stalled' | 'blocked' | 'off' | 'flag' | 'away' */
   passEnd = '';
   private passCool = 0;
+  /** time quicker than the car ahead on the day (QUICK_T) and which car that was */
+  private quickT = 0; private quickJ = -1;
   // defending: covering the inside of corner `defendCorner` (+1 left / -1 right; read by tools)
   defendSide = 0; private defendCorner = -1; private defendTimer = 0; private defendCool = 0;
   // loss of control (mishap): kind, phase, timers and draws; next corner whose braking point is ahead
@@ -233,7 +246,7 @@ export class AiDriver {
     this.passE = Number.NaN; this.passPhase = 0; this.planTimer = 0;
     this.defendSide = 0; this.defendCorner = -1; this.defendTimer = 0; this.offTrack = false;
     this.mishap = null; this.mPhase = 0; this.mT = 0; this.mCorner = -1; this.nextCorner = -1; this.onTimer = 0; this.offTimer = 0;
-    this.stuckTime = 0; this.needsRecovery = false; this.hint = -1; this.kCmd = 0; this.passCool = 0; this.traffic.passing[this.idx] = -1;
+    this.stuckTime = 0; this.needsRecovery = false; this.hint = -1; this.kCmd = 0; this.passCool = 0; this.quickT = 0; this.quickJ = -1; this.traffic.passing[this.idx] = -1;
   }
 
   private profAt(s: number): number { return this.line.at(this.profile, s); }
@@ -492,9 +505,14 @@ export class AiDriver {
       const slower = tr.off[j] === 1 || myPot > PASS_ADV[this.params.aggression] * Math.max(1, vj) || tr.pace[j] > tr.pace[i] * 1.004;   // (my own hint, as the others read me: a capped car's achievable lap)
       if (leadGap < Math.max(ctl.minGap, 1.5 + headway * v) + 10 && slower) this.stuckTimer += dt; else this.stuckTimer = Math.max(0, this.stuckTimer - dt);
       const clearly = tr.pace[i] < CLEARLY_FASTER * tr.pace[j];
+      // quicker on the day: following it and faster than it for QUICK_T s (AI round 1 Part D)
+      if (j !== this.quickJ) { this.quickJ = j; this.quickT = 0; }
+      this.quickT = v > vj + QUICK_DV ? this.quickT + dt : Math.max(0, this.quickT - 0.25 * dt);
+      const close = !clearly && CLEARLY_FASTER * tr.pace[i] <= tr.pace[j];   // within 3 %: I am not clearly slower either
       // clearly faster; a car that is off / nearly stopped; or quicker on pace and stuck behind it (a car held up in a
-      // train is not a reason: everybody behind it would pull out at once)
-      const want = clearly || tr.off[j] === 1 || vj < 0.5 * myPot || (tr.pace[i] < tr.pace[j] && this.stuckTimer > STUCK_T[this.params.aggression]);
+      // train is not a reason: everybody behind it would pull out at once); or within 3 % and quicker on the day
+      const want = clearly || tr.off[j] === 1 || vj < 0.5 * myPot || (tr.pace[i] < tr.pace[j] && this.stuckTimer > STUCK_T[this.params.aggression])
+        || (close && this.quickT >= QUICK_T);
       if (want && this.passCool <= 0 && this.planTimer <= 0 && leadGap < Math.max(30, 0.9 * v) && !this.noPassZone(s)) {
         this.planTimer = PLAN_EVERY;
         const e = this.planLane(j, v, pf, NaN);
@@ -505,27 +523,29 @@ export class AiDriver {
       }
     } else if (this.passPhase === 0) this.stuckTimer = Math.max(0, this.stuckTimer - dt);
 
-    // ---- defending (lightly): a car within 3 % of my pace, within ~1 s behind, approaching a passable
-    // corner: cover its inside once, hold it to the apex (no weaving). Never against a clearly faster car.
+    // ---- defending: a car within 3 % of my pace (close), within DEFEND_T s behind and not falling back, at the braking
+    // point of a passable corner: cover the inside once, hold it to the apex (no weaving). Never against a clearly faster car.
     this.defendCool = Math.max(0, this.defendCool - dt);
     if (green && this.passPhase === 0 && !this.offTrack && this.mishap === null) {
       if (this.defendSide !== 0) {
         this.defendTimer -= dt;
-        if (this.defendTimer <= 0 || this.ahead(s, cs[this.defendCorner].apex) < 0) { this.defendSide = 0; this.defendCorner = -1; this.defendCool = 2; }
+        if (this.defendTimer <= 0 || this.ahead(s, cs[this.defendCorner].apex) < 0) { this.defendSide = 0; this.defendCorner = -1; this.defendCool = DEFEND_COOL; }
       } else if (this.defendCool <= 0) {
         for (let k = 1; k < n; k++) {
           const j = order[(tr.rank[i] - k + n) % n];
           const d = -tr.ds(i, j);
-          if (d < 0 || d > Math.min(28, Math.max(10, v))) break;
+          if (d < 0 || d > DEFEND_T[this.params.aggression] * Math.max(5, tr.v[j]) + myRear + tr.front[j]) break;
           if (tr.away[j]) continue;
           // a car rejoining right behind me is passed over for the next one, unless it is clearly faster: then whoever
           // is behind it, covering the inside is a move against a clearly faster car (AI robustness round: seed 1's
           // full field defended against a within-3 % car 19 m back with a clearly faster one rejoining 5 m back)
           if (tr.off[j]) { if (tr.pace[j] < CLEARLY_FASTER * tr.pace[i]) break; continue; }
           const r = tr.pace[j] / tr.pace[i];
-          if (r >= CLEARLY_FASTER && r <= 1 / CLEARLY_FASTER && d > myRear + tr.front[j] + 1) {
-            const c = this.passableAhead(s, 120, 10);
-            if (c >= 0) { this.defendSide = cs[c].dir; this.defendCorner = c; this.defendTimer = 8; }
+          // close on pace, not alongside yet, not falling back; a car already committed to a pass on me keeps its lane (the
+          // lane reservation below): no cover across it
+          if (r >= CLEARLY_FASTER && r <= 1 / CLEARLY_FASTER && d > myRear + tr.front[j] + 1 && tr.v[j] > v - 0.3 && tr.passing[j] !== i) {
+            const c = this.passableAhead(s, Math.max(DEFEND_LEAD, DEFEND_LEAD_T * v), -DEFEND_PAST);
+            if (c >= 0 && c !== this.defendCorner) { this.defendSide = cs[c].dir; this.defendCorner = c; this.defendTimer = 8; }
           }
           break;
         }
@@ -537,7 +557,11 @@ export class AiDriver {
     const lineLook = line.at(line.off, sLook);
     if (this.passPhase === 1 || this.passPhase === 2) shiftWant = this.passE;
     else if (this.passPhase === 3) shiftWant = 0;
-    else if (this.defendSide !== 0) shiftWant = this.defendSide * DEFEND[this.params.aggression];
+    else if (this.defendSide !== 0) {
+      // cover the inside: up to one lane toward the inside edge at the look point (where the line already runs there, it covers)
+      const room = this.defendSide > 0 ? this.roadHi(sLook, hwI) : -this.roadLo(sLook, hwI);
+      shiftWant = this.defendSide * Math.max(0, Math.min(tr.laneW, room));
+    }
     if (!Number.isNaN(mishapLat)) shiftWant = mishapLat - lineLook;
     if (this.offTrack) {
       // rejoin: come back just inside the edge, the line ramps back in afterwards; wait at / beyond the edge until
@@ -589,7 +613,8 @@ export class AiDriver {
           }
           if (Math.abs(dl) < need) {
             push += side * (need - Math.abs(dl));
-            if (tr.passing[j] === i && d < 0 && d > -PINCH_OK * (myRear + tr.front[j])) passerSqueeze = true;
+            // (only a clearly faster passer: a close one is raced, the pinch guard decides where contact would follow)
+            if (tr.passing[j] === i && d < 0 && d > -PINCH_OK * (myRear + tr.front[j]) && tr.pace[j] < CLEARLY_FASTER * tr.pace[i]) passerSqueeze = true;
           }
         }
       }
@@ -634,7 +659,7 @@ export class AiDriver {
         }
       }
     }
-    // being passed: a car passing me alongside and converging → lift slightly (never a defence)
+    // being passed: a clearly faster car passing me alongside and converging → lift slightly (the point-by; never a defence)
     if (passerSqueeze && 0.97 * v < vCmd) { vCmd = 0.97 * v; this.limiter = 'passed'; aref = Math.min(aref, 0); }
     // rate-limited shift (faster when pushing away from contact)
     {
