@@ -299,7 +299,7 @@ export class Look {
     const post = (opts.post ?? true) && q.tier !== 'phone';
     this.post = post ? buildPost(renderer, scene, camera) : null;
     const cap = pixelRatioFor(q, window.devicePixelRatio, window.innerWidth, window.innerHeight);
-    this.dyn = post ? new DynamicResolution(cap * DYN_MIN_FRACTION, cap) : null;
+    this.dyn = post && !/[?&]dynres=0\b/.test(typeof location !== 'undefined' ? location.search : '') ? new DynamicResolution(cap * DYN_MIN_FRACTION, cap) : null;   // ?dynres=0: a fixed pixel ratio (measuring)
     this.resize(window.innerWidth, window.innerHeight);
   }
 
@@ -331,7 +331,7 @@ export class Look {
     this.post.speed.strength = clamp((Math.abs(speed) - SPEED_BLUR_FROM) / SPEED_BLUR_SPAN, 0, 1) * 0.9;
     // resize BEFORE drawing: a resized canvas is cleared to black, so it has to be redrawn in the same frame
     // (owner, 18 Oct 2026: "the lighting flickers / suddenly goes dark" — one black frame per resolution step)
-    const r = this.dyn!.sample(dt * 1000);
+    const r = this.dyn ? this.dyn.sample(dt * 1000) : null;
     if (r !== null) { this.renderer.setPixelRatio(r); this.post.composer.setSize(this.w, this.h, false); }
     this.post.composer.render(dt);
   }
