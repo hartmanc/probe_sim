@@ -42,7 +42,7 @@ const setFieldAudioOn = (on: boolean) => {
   fieldAudioOn = on;
   try { if (on) localStorage.removeItem(FIELD_AUDIO_KEY); else localStorage.setItem(FIELD_AUDIO_KEY, '0'); } catch { /* no storage */ }
 };
-import { AdaptiveQuality, PerfOverlay, flags as perfFlags, perf, type AdaptLevel } from './perf';
+import { AdaptiveQuality, PerfOverlay, flags as perfFlags, perf, storeWorker, storedWorker, workerChoice, type AdaptLevel } from './perf';
 import { applyQuality, pixelRatioFor, quality, storeTierChoice, storedTierChoice, type ThinReport, type TierChoice } from './quality';
 import { SENSITIVITIES, TouchControls, tiltStatusText } from './touch';
 import { HotlapSim, LIMITS, type SimAssets, type SceneryLike, type InputType } from '../scoreboard';
@@ -132,6 +132,13 @@ const graphicsEntry = (): MenuEntry => ({
   options: [{ value: 'auto', label: 'Auto' }, { value: 'phone', label: 'Phone' }, { value: 'balanced', label: 'Balanced' }, { value: 'desktop', label: 'Desktop' }],
   get: () => tierChoice, set: (v) => { tierChoice = v as TierChoice; storeTierChoice(tierChoice); },
 });
+/** Graphics: physics and AI in a Web Worker (experimental). Stored like the tier, applied at the next race build; ?worker=1|0 overrides it for one page load. */
+let workerOn = storedWorker();
+const workerEntry = (): MenuEntry => ({
+  kind: 'toggle', id: 'worker', label: 'Physics in a worker (experimental)',
+  note: perfFlags.worker !== null ? `${perfFlags.worker ? 'on' : 'off'} this page (?worker=)` : 'applies at the next race',
+  get: () => workerChoice(perfFlags.worker, workerOn), set: (on) => { workerOn = on; storeWorker(on); },
+});
 const reloadEntry = (): MenuEntry[] => tierChoice !== (quality.reason === 'forced' ? quality.tier : 'auto')
   ? [{ kind: 'action', id: 'reload', label: 'Reload to apply graphics', run: () => location.reload() }] : [];
 /** Controls & calibration is for pads and keys; hidden on a phone unless a pad is connected. */
@@ -183,12 +190,13 @@ const mainPage: MenuPage = {
     ...trackEntry(),
     { kind: 'action', id: 'hotlap', label: 'Hot lap', note: sim ? undefined : loadingNote(), disabled: !sim, run: () => startMode('hotlap') },
     // the field line: phones and tablets race the player's 40 pace neighbours (field-select.ts)
-    { kind: 'action', id: 'race', label: raceMenuLabel(location.search, TRACK.fieldLabel), note: sim ? (fieldTotal !== null ? fieldLine(fieldTotal, quality.device) : undefined) : loadingNote(), disabled: !sim, run: () => startMode('race') },
+    { kind: 'action', id: 'race', label: raceMenuLabel(location.search, TRACK.fieldLabel), note: sim ? (fieldTotal !== null ? fieldLine(fieldTotal, quality.device) + (workerChoice(perfFlags.worker, workerOn) ? ' · physics in a worker' : '') : undefined) : loadingNote(), disabled: !sim, run: () => startMode('race') },
     { kind: 'submenu', id: 'howto', label: 'How to play', page: () => howtoPage({ rows: () => input.helpRows(), touch: quality.touch, raceLaps: LIMITS.raceLaps, fieldLine: () => (fieldTotal !== null ? fieldLine(fieldTotal, quality.device) : null) }) },
     ...(touch ? [{ kind: 'submenu', id: 'touch', label: 'Touch controls', page: () => touchPage(touch) } as MenuEntry] : []),
     ...(showControlsPanelRow() ? [{ kind: 'action', id: 'controls', label: 'Controls & calibration', run: () => controlsPanel.open() } as MenuEntry] : []),
     ghostRefRow(),
     graphicsEntry(),
+    workerEntry(),
     ...reloadEntry(),
     scoreboardEntry(),
     { kind: 'submenu', id: 'whatsnew', label: "What's new", note: `v${APP_VERSION}`, page: () => changelogPage(GIT_SHA) },
@@ -196,7 +204,7 @@ const mainPage: MenuPage = {
     {
       kind: 'submenu', id: 'feedback', label: 'Report a bug / request a feature',
       page: () => feedbackPage({
-        version: APP_VERSION, sha: GIT_SHA, track: TRACK_ID, device: quality.device,
+        version: APP_VERSION, sha: GIT_SHA, track: TRACK_ID, device: quality.device + (workerChoice(perfFlags.worker, workerOn) ? '+worker' : ''),
         name: () => scoreClient.name, secret: () => scoreClient.secret,
         toast: (m, ms) => hud.toast(m, ms), refresh: () => menu.refresh(),
       }),
@@ -577,6 +585,7 @@ function createSim(assets: Assets) {
       ] : []),
       ...(showControlsPanelRow() ? [{ kind: 'action', id: 'controls', label: 'Controls & calibration', run: () => controlsPanel.open() } as MenuEntry] : []),
       graphicsEntry(),
+      workerEntry(),
       ...reloadEntry(),
       { kind: 'toggle', id: 'mute', label: 'Mute', get: () => audio.muted, set: (m) => audio.setMuted(m) },
       {
@@ -660,8 +669,13 @@ function createSim(assets: Assets) {
     const l = adaptive.current;
     if (fc.limits.maxDrawn !== l.maxDrawn || fc.limits.shadowCasters !== l.shadowCasters) fc.setLimits(l.maxDrawn, l.shadowCasters);
   };
+  let lastDirector: unknown = null;
   const onInterval = (now: number, ms: number) => {
-    if (ms <= 0 || ms > 250) { adaptive?.reset(); return; }   // a hitch or a resume: not a rendering cost
+    // a race build (a new director) or the tab / a menu coming back (ms 0): the hitch is real but not a load, no step for 3 s
+    const dir0 = directorNow();
+    if (dir0 !== lastDirector) { lastDirector = dir0; adaptive?.hold(now); }
+    if (ms <= 0) { adaptive?.hold(now); return; }
+    if (ms > 250) { adaptive?.reset(); return; }               // a hitch
     adaptive?.frame(now, ms);
     applyAdaptive();
     overlay?.frame(now, ms, () => {

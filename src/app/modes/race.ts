@@ -25,7 +25,7 @@ import { RACE_BOARDS_PUBLIC, fmtLapTime, fmtMetres, setBoardContext, submitRace,
 import { LIMITS, TRACKS, resolveTrackId } from '../../scoreboard/config';
 import { TRACK, TRACK_ID } from '../track-choice';
 import { FieldAudio, familyFor, FIELD_VOICES_DESKTOP, FIELD_VOICES_PHONE, type FamilyIndex, type Layout } from '../audio-field';
-import { newDirectorTiming, parsePerfFlags, perf } from '../perf';
+import { newDirectorTiming, parsePerfFlags, perf, storedWorker, workerChoice } from '../perf';
 import { RaceWorkerClient, applySnapshot, installMirror, newMirrorState, type MirrorState } from '../race-worker-client';
 import type { ConeLineLike, FieldAudioCar, FieldAudioHook, FieldAudioLike, FieldCarSound, GameMode, ModeContext, ModeHud, RaceServices } from './mode';
 
@@ -340,7 +340,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
   let cone: ConeLineLike | null = null;
   let disposed = false;
   // ?worker=1 (docs/performance.md): the physics and AI run in a Worker; this thread mirrors its snapshots
-  const useWorker = pf.worker && deps.dom && !!sv && typeof Worker !== 'undefined';
+  const useWorker = workerChoice(pf.worker, storedWorker()) && deps.dom && !!sv && typeof Worker !== 'undefined';
   let wk: RaceWorkerClient | null = null, wkInit = false;
   let ms: MirrorState | null = null;
   let modelsStarted = false;
@@ -382,7 +382,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
     placeMarker(dir);
     loadModelsInBackground();
     setBoardContext({ raceAiVersion: raceBoardVersion(R.AI_VERSION) });
-    ctx.hud.toast(`Formation lap · seed ${seed} · you start P${dir.player.grid}`, 3000);
+    ctx.hud.toast(`Formation lap · seed ${seed} · you start P${dir.player.grid}${wk ? ' · physics in a worker' : ''}`, 3000);
   };
 
   /** ?worker=1: (re)start the worker's race alongside the director built here (static data stays on this thread). */

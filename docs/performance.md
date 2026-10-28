@@ -14,7 +14,7 @@ and AI in a Web Worker.
 | `?dynres=0` | the older dynamic resolution (look.ts) off, fixed pixel ratio (measuring) |
 | `?shadowbox=<5..60>` | half-size (m) of the sun's shadow box (dev) |
 | `?lod=1` / `?lod=0` | physics LOD for far AI cars (default **off**, see option 3) |
-| `?worker=1` | physics and AI in a Web Worker (default **off**, see option 4) |
+| `?worker=1` / `?worker=0` | physics and AI in a Web Worker for this page load (default **off**; the Graphics-menu toggle stores the choice, see option 4) |
 
 Graphics menu: Auto / Phone / **Balanced** / Desktop (the stored choice and `?phone=` work as before).
 
@@ -45,13 +45,51 @@ the LOD's saving moves into the worker, whose busy share fell 30 -> 24 %), 4.8 f
 0.2 ms of JS per frame (7.0 -> 7.2) plus a little DOM; three frames over 20 ms in its 6 s run. Not measured on the quiet machine: the
 pack at its worst (green flag, a bunched field), which is where the loaded runs showed the 14-19 ms.
 
-**Finding: the adaptive policy's 18 ms threshold sits on the vsync noise.** At a steady 60 fps the frame-interval p95 reads 17.7-18.4 ms
-(runs above), so the policy steps down (levels 2-4 reached in 9 s with no real load: hot lap 2400 x 907, 30 cars drawn) and only steps back up
-after 10 s under 14 ms, which a 60 Hz display never reads. Hold: `ADAPT_DOWN_MS` in `src/app/perf.ts`; a threshold of about 20 ms
-(or the p95 of frame work rather than the interval) would stop it. Left as the brief specified; the owner's call.
+**Finding (fixed, see "Adaptive policy" below): the first policy's 18 ms p95 threshold sat on the vsync noise.** At a steady 60 fps the
+frame-interval p95 reads 17.7-18.4 ms, so it stepped down with no real load (levels 2-4 within 9 s) and never stepped back up.
 
-Tests on the quiet machine: `npx vitest run` 93 files, **777 / 777 passed** (including `ai_behaviour`'s full-field test: the earlier failure
+Tests on the quiet machine (before the policy change): `npx vitest run` 93 files, **777 / 777 passed** (including `ai_behaviour`'s full-field test: the earlier failure
 was load only); `npm run test:e2e` 13 / 13; `npm run build` passes.
+
+## The pack at its worst (quiet machine, 27 Oct 2026)
+
+Seed 1 (player slot **64**, P74-75 in the race), `?playerai=1&adapt=0&dynres=0`, 1920 x 1080, canvas 2880 x 1089, 6 s samples starting at the
+sim time shown (green flag from about 12 s). "Cars < 100 m" = AI cars within 100 m of track of the player.
+
+| run | sim t at start | cars < 100 m | fps | frame p95 ms | frames > 20 ms | JS p50 / p95 / max ms | worker busy | load |
+|---|---|---|---|---|---|---|---|---|
+| (a) desktop defaults, 40 s | 40.0 | 8 | 59.8 | 17.6 | 0 | 8.6 / 9.0 / 9.5 | - | 2.3 |
+| (a) desktop defaults, 70 s | 72.9 | 9 | 59.8 | 18.3 | 0 | 7.9 / 8.3 / 8.7 | - | 2.5 |
+| (b) `worker=1`, 40 s | 40.1 | 8 | 59.8 | 18.2 | 0 | 4.3 / 5.2 / 6.0 | 33 % | 3.4 |
+| (b) `worker=1`, 70 s | 72.5 | 9 | 59.8 | 18.3 | 0 | 3.5 / 4.6 / 5.5 | 35 % | 3.0 |
+| (c) `lod=1`, 40 s (62 cars far) | 40.0 | 7 | 59.8 | 18.0 | 0 | 7.4 / 8.3 / 18.2 | - | 2.5 |
+| (c) `lod=1`, 70 s (76 cars far) | 74.3 | 10 | 59.8 | 18.0 | 0 | 6.6 / 7.3 / 8.0 | - | 2.6 |
+
+(The 70 s samples started 72-74 s in: the sim time is read after the previous sample ended.) The pack is not heavy at this point of the
+race with the player this far back (8-10 cars within 100 m): the main thread carries 8-9 ms, the worker takes it down to 3.5-4.3 ms, the
+LOD saves about 1.2 ms. All hold 60 fps. **The LOD run is a different race**: `director.contactTotal` was 286 / 320 at the two samples
+against 0 without the LOD (the player is P75 against P74), i.e. a far car stepped at 250 Hz meets its neighbours differently; the
+self-play gate saw contacts inside the seed spread, but this seed shows the LOD touching more. One more reason it stays off.
+
+## Adaptive policy (changed 27 Oct 2026)
+
+It reacts to **missed frames**, not to the interval's p95: step down when more than 5 % of the frames in the last 2 s had an interval above
+25 ms (a missed vsync at 60 Hz reads about 33 ms; jitter reads 17-19), 3 s between steps; step back up one level after 10 s in which fewer
+than 1 % of the frames were above 20 ms; no step in the first 3 s after a race build or the tab / a menu coming back (frames in that window
+are ignored). Knobs: `ADAPT_MISS_FRAC` and `ADAPT_OK_FRAC` (and the 25 / 20 ms levels) in `src/app/perf.ts`. Tests: jitter at 60 Hz never
+steps, a 20 % miss rate walks the whole ladder and clean frames walk back up, 2.5 % misses do not step, the 3 s hold.
+
+Level traces (`__sim.adaptive.level` once a second, default config, `?dynres=0`): **hot lap, 66 s: level 0 the whole time, no changes**
+(load 14-16: the other agent's runs were going, so this is stronger than idle). **Race (seed 8), 68 s at load 11-12, not idle**: 0 for 4 s,
+then down 1, 2, 3, 4 at 16 / 19 / 24 / 27 s, wavering 3-4 and reaching 5 at 60 s (`00001112222233344444444443334444444444433344444455555555554445555555`):
+the policy reacting to real CPU contention. **Idle race level trace: pending** (the machine was not idle when this was written).
+
+## Physics in a worker: the toggle
+
+Graphics area of the Start menu (and the pause menu): "Physics in a worker (experimental)", off by default, stored in localStorage
+(`probeSim.worker.v1`), applied at the next race build. `?worker=1` / `?worker=0` override the stored choice for one page load (as `?phone=`
+does for the tier). The path that ran is in the formation-lap toast ("... · physics in a worker"), the Race row's note on the Start menu
+and the feedback report's `device` field (`desktop+worker`). Tests: `perf.test.ts` (stored choice, override, throwing storage).
 
 ## Measurements, loaded machine (read this first, then the quiet table above)
 
@@ -167,3 +205,7 @@ starts negative), so "530 m after 124 s" is the back of the pack at 18 m/s avera
 - The 4K / 4.7 MP case itself was not measured (this window is 1920 wide).
 - `ai_behaviour`'s "full field, 2 laps" test hits its 60 s timeout when the machine is loaded (it did on the untouched baseline too);
   it passes alone.
+
+Later run (policy + toggle, load 11 from the other agent's batch): `npx vitest run` 780 of 782 passed, the two failures being load
+timeouts (`ai_behaviour` full field, `replay` acceptance threshold; both passed on the quiet machine); `npm run test:e2e` 13 / 13;
+`npm run build` passes.
