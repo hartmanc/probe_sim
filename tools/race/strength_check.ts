@@ -54,11 +54,12 @@ if (!isMainThread) {
       const wk = new Worker(fileURLToPath(import.meta.url), { workerData: { track, jobs: mine }, execArgv: ['--import', 'tsx'] });
       wk.on('message', (m) => res.push(m)); wk.on('error', fail); wk.on('exit', () => { if (--live === 0) done(); });
     }
+    if (live === 0) done();
   });
   res.sort((a, b) => a.target - b.target || a.strength - b.strength);
   console.log('| track | car | target s | strength | scale | intended s | solo lap s | error % | capped |');
   console.log('|---|---|---|---|---|---|---|---|---|');
   for (const r of res) console.log(`| ${track} | ${r.number} | ${r.target.toFixed(2)} | ${Math.round(r.strength * 100)} % | ${r.scale.toFixed(4)} | ${r.intended.toFixed(2)} | ${Number.isFinite(r.lap) ? r.lap.toFixed(2) : 'off'} | ${((r.lap / r.intended - 1) * 100).toFixed(2)} | ${r.capped ? `yes (map ${r.predicted.toFixed(2)})` : ''} |`);
   const errs = res.filter((r) => !r.capped).map((r) => Math.abs(r.lap / r.intended - 1) * 100);
-  console.log(`worst |error| (uncapped) ${Math.max(...errs).toFixed(2)} %`);
+  if (errs.length) console.log(`worst |error| (uncapped) ${Math.max(...errs).toFixed(2)} %`);
 }

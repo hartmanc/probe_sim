@@ -41,7 +41,7 @@ test('strength map: 100 % is the calibrated pace bit for bit; monotonic; the lap
     const id = strengthPace(c.curve, s.scale, s.lap, s.target, 1);
     expect(id.scale).toBe(s.scale); expect(id.lap).toBe(s.lap); expect(id.targetLap).toBe(s.target); expect(id.capped).toBe(false);
     let prev = -Infinity;
-    for (const st of AI_STRENGTHS) {
+    for (const st of [0.9, 0.95, ...AI_STRENGTHS, 1.1]) {
       const r = strengthPace(c.curve, s.scale, s.lap, s.target, st);
       expect(r.scale).toBeGreaterThanOrEqual(prev);                    // stronger = a larger scale, never smaller
       prev = r.scale;

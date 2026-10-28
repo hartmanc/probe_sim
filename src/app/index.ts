@@ -129,7 +129,7 @@ let tierChoice: TierChoice = storedTierChoice();
 let aiStrengthPct = storedAiStrength();
 const aiStrengthEntry = (): MenuEntry => ({
   kind: 'choice', id: 'aiStrength', label: 'AI strength',
-  note: aiStrengthPct === 100 ? 'the real field\'s pace' : aiStrengthPct > 100 ? 'quicker than the real field' : 'slower than the real field',
+  note: aiStrengthPct === 100 ? 'the real field\'s pace' : `every AI car ${aiStrengthPct - 100} % quicker`,
   options: AI_STRENGTH_PCTS.map((v) => ({ value: String(v), label: `${v} %` })),
   get: () => String(aiStrengthPct), set: (v) => { aiStrengthPct = Number(v); storeAiStrength(aiStrengthPct); },
 });

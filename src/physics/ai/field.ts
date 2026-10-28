@@ -92,8 +92,11 @@ export interface DrawnPace {
   achievedLap: number | null;
 }
 
-/** The AI strength choices (player setting, AI round 1): every AI car's clean solo lap is its target / strength. */
-export const AI_STRENGTHS: readonly number[] = [0.9, 0.95, 1, 1.05, 1.1];
+/** The AI strength choices (player setting, AI round 1): every AI car's clean solo lap is its target / strength. The brief asked
+ *  for 90-110 %, else 95-105 %; solo laps on 6 cars per track (tools/race/strength_check.ts, 27 Oct 2026) hold 1 % at 105 %
+ *  (worst 0.92 % uncapped) but not at 95 % (up to 4.5 % slow: the curves hold no point slower than the median pace, so a
+ *  slower car is an extrapolation), 90 % (8.2 %) or 110 % (4.2 %): 100 and 105 only. The map itself takes any strength. */
+export const AI_STRENGTHS: readonly number[] = [1, 1.05];
 /** d ln(lap) / d ln(scale) for a car without a curve (the pooled median of the four fields' curves, tools/race/pace_curve.ts). */
 export const LAP_SCALE_SLOPE = -0.35;
 

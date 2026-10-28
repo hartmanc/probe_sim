@@ -11,7 +11,7 @@ import * as THREE from 'three';
 import { race as R, createTrackSurface, type DriverInput, type Surface, type PitLaneJson } from '../../physics';
 import type { RaceDirector, RaceHud } from '../../physics/ai/race';
 import type { RaceLine } from '../../physics/ai/line';
-import type { PaceJson } from '../../physics/ai/field';
+import { AI_STRENGTHS, type PaceJson } from '../../physics/ai/field';
 import { STEP, type SimAssets } from '../../scoreboard';
 import { fmtTime } from '../hud';
 import type { MenuEntry, MenuPage } from '../menu';
@@ -67,7 +67,7 @@ export const raceBoardVersion = (aiVersion: number | string, laps = RACE_LAPS, s
 // (RaceConfig.strength, field.ts strengthPace). Stored like the Graphics choice, applied at the next race build.
 export const AI_STRENGTH_KEY = 'probeSim.aiStrength.v1';
 /** The choices, %; 100 = the calibrated field. */
-export const AI_STRENGTH_PCTS: readonly number[] = [90, 95, 100, 105, 110];
+export const AI_STRENGTH_PCTS: readonly number[] = AI_STRENGTHS.map((s) => Math.round(s * 100));
 /** A stored / given value as one of the choices (anything else: 100). */
 export function parseAiStrength(raw: string | null | undefined): number {
   const n = Number(raw);
