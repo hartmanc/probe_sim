@@ -444,3 +444,18 @@ FIELD_TRACK=... (same three)  npx tsx tools/race/calibrate_field.ts --track mid_
   Probe at scale 1 on the Mid-Ohio package (rev ea1a07f8bd) 118.55 s. Fit errors: median 0.12 %, p95 0.19 %, worst
   0.40 %, none outside 0.5 %, none not converged. Scales: median 0.871, range 0.375 to 1.372 (21 fits under 0.6, the slow
   stints; 202 at or above 1.0).
+
+## 7. AI round 1 (27 Oct 2026, branch `ai-round-1`)
+
+Pace anchor, AI strength, the player's pace, racecraft against a close car: src/physics/ai/NOTES.md "27 Oct 2026: round 1".
+Runs: `tools/race/out/r1/` (local; `sum.py <prefix>` summarises). Pre-Part-D bands (q 0.5, 4 laps, seeds 1-8):
+
+| track | contacts / car-lap | four-off / car-lap | clearly-faster completed | median stuck (mean of seeds) | best lap / target |
+|---|---|---|---|---|---|
+| Laguna | 0.027 | 0.094 | 69.3 % | 14.1 s | 1.077-1.165 |
+| Sonoma | 0.028 | 0.011 | 59.2 % | 6.8 s | 1.227-1.294 |
+| Buttonwillow | 0.015 | 0.005 | 65.2 % | 21.3 s | 1.121-1.296 |
+| Mid-Ohio (no `ai` block) | 0.028 | 0.072 | 62.7 % | 17.1 s | 1.158-1.216 |
+
+Player pass cost before Part D (`--player-scale 1.05`, 5 laps, seeds 1-8): Laguna 12.9 passes per race, 30.5 s mean behind;
+Sonoma 11.1 / 29.8; Buttonwillow 9.4 / 33.5; Mid-Ohio 7.2 / 30.8. Post-D gates and Mid-Ohio knob trials: to follow.

@@ -139,6 +139,16 @@ bestLap, status 'running'|'ejected', player).
   stint's median already carries the real race's traffic and the sim adds its own, so the field ran slow (owner: "They
   don't seem very fast, and I have no problem passing them."). `calibrate_field.ts --pace <file>` calibrates a
   candidate file (tools/race/out/pace_q/<q>/<track>/pace.json) without touching the public one.
+  **The rule (AI round 1, 27 Oct 2026): q stays 0.5 on all four tracks** (the public files' targets and fits unchanged). The
+  gate (Laguna, 5 laps, whole field, shuffled grid, the AI Probe at scale 1 = 120.2 s, seeds 1-8; pick the largest q whose
+  mean finish is P5-7, the real result) passed no candidate: mean finish q 0.5 P18.5, 0.35 P22.75, 0.25 P22.1, 0.15 P20.6
+  (per seed in "27 Oct 2026: round 1"). The finish follows the shuffled grid (the player starts P29 on average over those
+  seeds), not the pace; the owner's call (orchestrator) was to keep 0.5 and report a grid-free pace position instead.
+- `cars[].curve` (AI round 1): the car's solo lap against its pace scale, [scale, lap] pairs by rising scale with the lap
+  falling, from every calibration of the car (its fit and its stints' at q 0.5 / 0.35 / 0.25 / 0.15), made monotone
+  (pool-adjacent-violators in ln-ln), thinned to 1 % apart: `npx tsx tools/race/pace_curve.ts --track <id>` (reads
+  tools/race/out/pace_q/<q>/<track>/pace.json; writes only `curve`). The AI strength setting (field.ts `strengthPace`)
+  reads it. Regenerate after any recalibration.
   Regenerate: `npx tsx tools/race/pace.ts` (keeps fitted scales), then
   `npx tsx tools/race/calibrate_field.ts`. Bump AI_VERSION whenever driver / car construction changes; the
   director sets `calibrationStale` when pace.json is older (it then estimates scale = 121.5 s / target).
@@ -511,3 +521,45 @@ Median best lap / drawn target per seed stays in the baseline's spread (Laguna 1
 1.18-1.29 vs 1.19-1.36, Buttonwillow 1.25-1.33 vs 1.23-1.34); line rms alone unchanged (0.25-0.40 m). Open: one Sonoma
 seed (7: 0.062) and one Buttonwillow seed (3: 0.026, one contact) sit above the baseline's worst seed although the pooled
 rates are flat or lower, and 9 + 9 unplanned spins remain (all from deeper slides at T4 / T10 Laguna, T2 / T10 Sonoma).
+
+## 27 Oct 2026: round 1 (branch `ai-round-1`): pace anchor, AI strength, the player's pace, racecraft against the player
+
+Owner: "they often don't follow the line. They don't seem very fast, and I have no problem passing them." Stage 1 (Sonnet)
+made the pace statistic a quantile and calibrated q 0.35 / 0.25 / 0.15 candidates (tools/race/out/pace_q/).
+
+- **Part A, the anchor: q stays 0.5.** Gate: Laguna, 5 laps, whole field, shuffled grid, the AI-driven Probe at scale 1
+  (`selfplay.ts --player-scale 1`, 120.2 s solo = the owner's real best 119.3), seeds 1-8, the largest q with a mean finish
+  in P5-7 (the real result). Finishes per seed 1-8: q 0.5: 9, 29, 11, 23, 30, 28, 15, 3 (mean 18.5); q 0.35: 13, 27, 12,
+  31, 40, 34, 14, 11 (22.75); q 0.25: 17, 31, 7, 28, 38, 34, 18, 4 (22.1); q 0.15: 14, 30, 12, 23, 32, 32, 17, 5 (20.6). No
+  candidate passes; the player's grid slots on those seeds are P24, 38, 22, 33, 43, 45, 20, 7 (mean 29): five laps from a
+  shuffled grid measure the grid, not the pace. At q 0.5 the quicker player does not finish better either: scale 1.05 mean
+  P18.4 (10, 26, 13, 23, 38, 24, 11, 2), scale 1.10 P18.25 (12, 28, 14, 18, 27, 30, 16, 1). Kept 0.5 (orchestrator); a
+  grid-free report measure, the player's pace position (1 + AI cars with a quicker mean / best lap over the race's completed
+  laps), is in the self-play JSON (`playerPace`).
+- **Part A.4:** a stint whose fit did not converge (|achieved / target - 1| > 0.5 %, a car at the caps) races with its
+  achievable lap as `Traffic.pace` (field.ts `paceHint`); the slower-car test reads the car's own hint.
+- **Part B, AI strength** (Start menu, under Race; stored like Graphics, `probeSim.aiStrength.v1`; read at each race build;
+  shown in the formation toast, results, standings and pause menu; `raceBoardVersion` adds `-S<pct>` off 100 %):
+  `RaceConfig.strength`, every AI car built at field.ts `strengthPace(curve, ...)`: the scale at which its curve laps target /
+  strength, anchored on the stint's own point; 100 % bit for bit; hint, sigma and so the classes and mishaps follow; never the
+  player. Solo check, 6 cars per track spread over the field (`tools/race/strength_check.ts`), worst error not at the caps:
+  90 % 4.2 / 3.2 / 8.2 / 3.3 % (Laguna / Sonoma / Buttonwillow / Mid-Ohio), 95 % 4.5 / 1.15 / 4.5 / 2.7 %, 105 % 0.73 / 0.16 /
+  0.64 / 0.92 %, 110 % 0.52 / 0.53 / 2.5 / 4.2 %. The curves hold no point slower than the median (slower is extrapolation)
+  and the quickest cars leave the grip range: choices 100 / 105 % for now; a 110 % calibration point per stint is the next
+  step. At PACE_MAX at 110 % (car-level / stints): Laguna 0 / 0, Sonoma 3 / 26 (#747 worst), Buttonwillow 0 / 0, Mid-Ohio 0 / 4.
+- **Part C, the player's pace** (`playerPaceEstimate`, race.ts): starts at the pace row's best lap (Laguna 119.3 s), without
+  a row at `TRACKS[id].probeRefLap` (the AI Probe at scale 1: 120.2 / 143.4 / 156.01 / 118.55 s); after each completed green
+  lap the median of his last three laps not interrupted by an off (four wheels off the paved surface 0.25 s), a penalty (a
+  black flag or a stop-and-go in it) or a contact at fault, within 0.9-1.3 x the start. `Traffic.pace[player]` reads it; the
+  AI-driven player keeps its drawn pace.
+- **Part D, racecraft against a close car** (`driver.ts`, every track): defend from the braking point of a passable corner
+  when a car within 3 % is within 0.6 / 0.8 / 1.0 s (by aggression) and not falling back, covering up to one lane toward the
+  inside, held to the apex, one move per corner, cool-down 2 s; never a clearly faster car, never under yellow, never across a
+  car already passing me. The 97 % lift only for a clearly faster passer (a close one is raced; the pinch guard decides
+  contact). A car within 3 % that is quicker on the day (its speed above the car ahead's for 2 s, decaying at a quarter rate)
+  plans a pass with the same gates. `ai_behaviour.test.ts` 7/7 unchanged thresholds.
+- **Before Part D (q 0.5, AI_VERSION 8, self-play 4 laps, seeds 1-8):** contacts per car-lap Laguna 0.027, Sonoma 0.028,
+  Buttonwillow 0.015, Mid-Ohio 0.028; four-off 0.094 / 0.011 / 0.005 / 0.072; clearly-faster completed 69.3 / 59.2 / 65.2 /
+  62.7 %. Player pass cost (scale 1.05, 5 laps, seeds 1-8): AI cars passed per race / mean s within 20 m behind before the
+  pass: Laguna 12.9 / 30.5, Sonoma 11.1 / 29.8, Buttonwillow 9.4 / 33.5, Mid-Ohio 7.2 / 30.8. After Part D: pending (the
+  gates, the Mid-Ohio knob trials, the 110 % calibration).
