@@ -640,3 +640,39 @@ braking zones (Sonoma T2, T9a; Laguna T4, T10, T11).
 passing-lap time, and the floor through it), then B (per-car aggression: the tiers set how early A commits), D (no lift on a
 straight: the passed car holds its speed), C (yield: look and predictability, little pass rate per the data), E (close
 racing, behind its switch: the d < 3 % cells are already on the data, so it must not move them).
+
+**The steps (screens: Laguna + Mid-Ohio, seeds 1-8, 10 laps, against the baseline's same runs; 16 seeds where a contact rate came
+within the 8-seed spread).** Seed noise first: the baseline itself, Laguna + Mid-Ohio pooled, reads 3-8 % 75.6 / 74.4 % and 8-15
+% 89.7 / 84.8 % on seeds 1-8 / 9-16 (16 seeds: 75.1 / 87.0 %), contacts per car-lap Laguna 0.0248 / 0.0276 (0.0262), Mid-Ohio
+0.0128 / 0.0095 (0.0112). A cell moves 3-5 pp between seed sets, so a step had to move it more than that. A variant with every
+step switched off reproduces the baseline bit for bit (Laguna seed 1: contacts, four-offs, passes, every crossing), so the
+screens compare like with like.
+
+| step (variant) | 3-8 % / 8-15 % (g < 2) | floor | contacts Laguna / Mid-Ohio | green passes L / MO | verdict |
+|---|---|---|---|---|---|
+| baseline | 75.6 / 89.7 | 10.5 | 0.0248 / 0.0128 | 4193 / 6386 | |
+| A1: plan from 1.0 / 1.3 / 1.6 s back by aggression (was 0.9 s), follow a clearly slower car at 0.6 / 0.45 / 0.32 s while waiting | 72.4 / 82.8 | 11.9 | 0.0261 / 0.0146 | 4411 / 7054 | dropped (G1 no better, G3) |
+| A2: a pass lane without laneFactor's flat 1.2 %/m in corners | 73.0 / 84.9 | 10.1 | 0.0360 / 0.0113 | 4235 / 6717 | dropped (G3) |
+| A3: abort a pass only 8 m further back than where it began (a pass planned 0.9 s = 35 m back was "dropped" by the 30 m rule at its first step: 324 of 820 attempts, Laguna seed 1) | 70.3 / 84.2 | 11.6 | 0.0331 / 0.0130 | 4157 / 7307 | dropped (G3); completed attempts 163 -> 190, stuck median 15.7 -> 13.1 s on Laguna seed 1, but the curves did not move |
+| A4: A3 + a clearly faster car level on the inside of the corner keeps its pass through the shut (the car beside gives way) | 72.2 / 84.3 | 11.7 | 0.0291 / 0.0146 | 4226 / 7428 | dropped (G1 no better, G3) |
+| B: aggression from the data tiers (Laguna 11, Sonoma 55, Buttonwillow 36, Mid-Ohio 33 cars moved; generators read curves.json, `--keep-layout` moved only `aggression`) | 73.5 / 83.4 | 11.8 | 0.0300 (16 seeds 0.0307 vs 0.0262) / 0.0099 | 4160 / 6585 | dropped (G3 Laguna on 16 seeds); the fastest quartile now passes 1.020 x its gap and pace (data 1.022, baseline 0.97) |
+| D: no 97 % lift for a passer alongside on a straight (corner only); the audit found no other lift, lane change or slow-down for a car behind on a straight (making room where the road pushes the passer's lane, the corridor, the pinch guard and the give-way are contact avoidance and stay) | 75.4 / 83.8 | 10.0 | 0.0282 (16 seeds 0.0272 vs 0.0262) / 0.0077 (16: 0.0090 vs 0.0112) | 16 seeds 8272 / 13493 (vs 8206 / 13385) | dropped by the letter (Laguna +0.001 on 16 seeds; Mid-Ohio better, four-off lower on both) |
+| C: yield as specified (slowest 10 % by target lap, 1-2 s seeded lag, one lane to the inside of the coming corner, slowest 3 % all lap, no lift) | 66.6 / 82.0 | 16.0 | 0.0414 / 0.0204 | 4637 / 10723 | dropped (G1, G3); slow car under pressure lost 3.9 s (data 3.6, baseline 2.3) |
+| C2: C with one side per yield episode and the slowest 3 % reacting with no lag instead of all lap | 70.9 / 83.5 | 15.8 | 0.0345 / 0.0233 | 4525 / 10434 | dropped (G1, G3) |
+| E: close racing on (one covering move to the inside lane per corner) | 72.4 / 84.7 | 11.0 | 0.0342 / 0.0121 | 4382 / 6752 | default OFF (G3 Laguna, beyond the spread on 8 seeds) |
+
+Reading: the clearly-faster cells are not limited by when a pass is committed or how fast the pass lane is, but by the lane model
+holding a pass where the lanes pinch (the shut rule, the pinch guard, the passed car's room) and by the trains a fast car meets
+every lap; loosening any of those raises contacts on Laguna first. The yield as specified moves slow cars across the racing line
+in front of cars that are already planning their pass (the inside is also where planLane prefers to pass): contacts double on
+Mid-Ohio. What the data asks for next (not done here): a pass held through the corner needs the passed car to know it earlier
+(its room-making look-ahead, 1 s today) than the pinch guard's 2 s; the 3 s look-ahead of 24 Oct failed the 2-lap test, a
+look-ahead for the passed car only was not tried.
+
+**Kept on the branch.** The yardstick (crossings, traffic_sim, solo_hash, the --loss trace and the plan-rejection tally), the
+black-flag hook and the close-racing switch (off). Racing behaviour at the defaults is the baseline's, bit for bit (solo hashes,
+and the four tracks' seed-1 races: every crossing identical), so the bands above stand.
+
+**Black-flag hook.** `driver.ts passRisk(j, e, side)` returns 0 today; planLane rejects a lane whose risk exceeds PASS_RISK_MAX = 1
+and takes RISK_W (4) x risk off its score. The AI black-flag round plugs in the expected flag cost of that commit (the
+contact-at-fault and four-off odds of the lane at this closing speed, from self-play) against the time the pass gains.
