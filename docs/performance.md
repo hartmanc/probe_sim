@@ -119,8 +119,10 @@ finishing order, the same hash of the whole results table (`7753e17`), the same 
 time (`c2631de1`), the same `director.contactTotal` (1808), the leader's time 112.02 s. Unit test: the host on a fake clock equals the
 main-thread race bit for bit (`race-worker.test.ts`). Not default until the owner drives it.
 
-Seen on the way: with `?playerai=1` on Buttonwillow the AI-driven player crawls (P74, 530 m after 124 s, 1808 contacts: the pack piles
-around it), so the rig measures a bunched pack, not a clean race.
+Seen on the way, and not a bug: with `?playerai=1` the player starts P74 of 100 on the grid, 1.8 km behind the line (race distance
+starts negative), so "530 m after 124 s" is the back of the pack at 18 m/s average (formation lap, then traffic); self-play puts
+#619 at P54-85 after 2 laps the same way, and the app-built director matches its grid neighbours
+(`src/app/__tests__/playerai.test.ts`). For a clean-air run use `?playerai=1` with a front grid slot, or read the pack's cost, as here.
 
 ## Not shipped / not done
 
