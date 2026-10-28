@@ -46,6 +46,12 @@ export interface SelfplayMetrics {
    * (sampled every 0.1 s, the time since its last pass of that car); mean over the passes.
    */
   playerPass: { passes: number; meanBehind: number; behind: number[] };
+  /**
+   * (AI round 1, report only) The player's pace position, independent of the grid: 1 + the AI cars whose mean lap over the
+   * race's completed green laps (lap 1 from the line after the green) is quicker than the player's mean lap; and the same
+   * with best laps. Cars with no completed lap are not counted.
+   */
+  playerPace: { meanPos: number; bestPos: number; playerMean: number; playerBest: number; laps: number; carsTimed: number };
   robust: { coneCrossings: { car: string; t: number; s: number; over: number; samples: number; inControl: boolean }[]; coneInControl: number;
     spins: { car: string; t: number; s: number; mishap: boolean }[]; spinsNoMishap: number };
 }
@@ -72,6 +78,7 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
   const ahead = new Int8Array(n * n);      // sign of U[i] - U[j] (formation and green order tracking)
   let formationPasses = 0, passesTotal = 0;
   const pIdx = cars.findIndex((c) => c.isPlayer), behindT = new Float64Array(n), playerBehind: number[] = [];
+  const lapsOf: number[][] = cars.map(() => []), lapsSeen = new Int32Array(n);
   const passAt: number[] = [];
   let contacts = 0, hard = 0;
   const pairSeen = new Map<number, number>();
@@ -150,6 +157,8 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
       } else if (s < cones.s0 || s > cones.s1) coneOpen[i] = -1;
     }
 
+    // completed laps (the director's lastLap at each new crossing that timed one)
+    for (let i = 0; i < n; i++) if (cars[i].lapsDone !== lapsSeen[i]) { lapsSeen[i] = cars[i].lapsDone; if (Number.isFinite(cars[i].lastLap) && cars[i].lastLap > 0 && lapsOf[i][lapsOf[i].length - 1] !== cars[i].lastLap) lapsOf[i].push(cars[i].lastLap); }
     if (phase !== 'green') continue;
     // ---- mishap log: time lost over the next 600 m vs the car's own profile
     const log = anyDir.mishapLog;
@@ -279,6 +288,14 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
     rules: { contacts, contactsPerCarLap: contacts / Math.max(1e-9, carLaps), hardContacts: hard, fourOff, fourOffMishap, fourOffPerCarLap: fourOff / Math.max(1e-9, carLaps), fourOffNonMishapPerCarLap: (fourOff - fourOffMishap) / Math.max(1e-9, carLaps), formationPasses, recoveries: dir.recoveries, fourOffAt, contactAt, recoveryAt },
     mishaps: { total: totalM, perCarLap: totalM / Math.max(1e-9, carLaps), wide, spin, byCorner, lossMedian: median(ls), lossMin: ls.length ? Math.min(...ls) : NaN, lossMax: ls.length ? Math.max(...ls) : NaN, losses },
     cost: { usPerStep, usPerCar: usPerStep / n },
+    playerPace: (() => {
+      const mean = (a: number[]) => a.reduce((x, y) => x + y, 0) / a.length;
+      const pl = pIdx >= 0 ? lapsOf[pIdx] : [];
+      const pm = pl.length ? mean(pl) : NaN, pb = pl.length ? Math.min(...pl) : NaN;
+      let mp = 1, bp = 1, timed = 0;
+      for (let i = 0; i < n; i++) { if (i === pIdx || !lapsOf[i].length) continue; timed++; if (mean(lapsOf[i]) < pm) mp++; if (Math.min(...lapsOf[i]) < pb) bp++; }
+      return { meanPos: mp, bestPos: bp, playerMean: +pm.toFixed(3), playerBest: +pb.toFixed(3), laps: pl.length, carsTimed: timed };
+    })(),
     playerPass: { passes: playerBehind.length, meanBehind: playerBehind.length ? playerBehind.reduce((a, b) => a + b, 0) / playerBehind.length : NaN, behind: playerBehind },
     robust: { coneCrossings, coneInControl: coneCrossings.filter((c) => c.inControl).length, spins, spinsNoMishap: spins.filter((x) => !x.mishap).length },
   };
@@ -300,6 +317,7 @@ export function printReport(m: SelfplayMetrics): void {
   console.log(`(e) mishaps ${mi.total} = ${f(mi.perCarLap, 4)} per car-lap (wide ${mi.wide}, spin ${mi.spin}); loss median ${f(mi.lossMedian, 1)} s [${f(mi.lossMin, 1)}..${f(mi.lossMax, 1)}]; by corner ${JSON.stringify(mi.byCorner)}`);
   const ro = m.robust;
   console.log(`(r) pit-exit cone crossings ${ro.coneCrossings.length} (in control ${ro.coneInControl})${ro.coneCrossings.length ? ': ' + ro.coneCrossings.map((c) => `#${c.car} t${c.t} s${c.s} +${c.over} m${c.inControl ? ' IN CONTROL' : ''}`).join(', ') : ''}; spins ${ro.spins.length} (without a mishap ${ro.spinsNoMishap})${ro.spins.length ? ': ' + ro.spins.map((x) => `#${x.car} t${x.t} s${x.s}${x.mishap ? ' (mishap)' : ''}`).join(', ') : ''}`);
+  console.log(`(q) player pace position (report): by mean lap P${m.playerPace.meanPos}, by best lap P${m.playerPace.bestPos} of ${m.playerPace.carsTimed + 1} (player mean ${f(m.playerPace.playerMean)} s, best ${f(m.playerPace.playerBest)} s over ${m.playerPace.laps} laps)`);
   console.log(`(p) player pass cost: passed ${m.playerPass.passes} AI cars, mean ${f(m.playerPass.meanBehind, 1)} s within 20 m behind a car before passing it`);
   console.log(`(f) cost ${f(m.cost.usPerStep, 1)} µs per step, ${f(m.cost.usPerCar)} µs per car`);
 }
