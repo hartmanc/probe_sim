@@ -174,6 +174,9 @@ export class HotlapLoop {
     return raw;
   };
 
+  /** The shift presses latched since the last sample, cleared (the race Worker takes them with each frame's input). */
+  takeShifts(): { up: boolean; down: boolean } { const r = { up: this.up, down: this.down }; this.up = false; this.down = false; return r; }
+
   shiftUp(): void { this.up = true; }
   shiftDown(): void { this.down = true; }
 

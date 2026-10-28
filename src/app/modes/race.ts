@@ -18,6 +18,7 @@ import type { MenuEntry, MenuPage } from '../menu';
 import { loadFieldData, loadFieldModel, type FieldData, type FieldModelInfo } from '../loader';
 import { FieldCars, identityColor, type FieldCarInfo } from '../field-cars';
 import { fieldCapFor, neighbourField } from '../field-select';
+import { PLAYER_NUMBER, buildDirector as buildDirectorFor, raceAiConfig, surfaceFactory } from '../race-build';
 import { RaceHudDom, raceHudView, raceTable, resultRows, rowStatus, type TableRow } from '../race-hud';
 export { rowStatus, type RowStatus } from '../race-hud';
 import { RACE_BOARDS_PUBLIC, fmtLapTime, fmtMetres, setBoardContext, submitRace, type RaceResult, type SubmitOutcome } from '../scoreboard-client';
@@ -25,11 +26,14 @@ import { LIMITS, TRACKS, resolveTrackId } from '../../scoreboard/config';
 import { TRACK, TRACK_ID } from '../track-choice';
 import { FieldAudio, familyFor, FIELD_VOICES_DESKTOP, FIELD_VOICES_PHONE, type FamilyIndex, type Layout } from '../audio-field';
 import { newDirectorTiming, parsePerfFlags, perf } from '../perf';
+import { RaceWorkerClient, applySnapshot, installMirror, newMirrorState, type MirrorState } from '../race-worker-client';
 import type { ConeLineLike, FieldAudioCar, FieldAudioHook, FieldAudioLike, FieldCarSound, GameMode, ModeContext, ModeHud, RaceServices } from './mode';
 
 /** 5 since 17 Oct 2026 (owner: 10 is a long time alone in a sim); the server validates against the same number. */
 export const RACE_LAPS: number = LIMITS.raceLaps;
-export const PLAYER_NUMBER = '619';
+export { PLAYER_NUMBER };
+/** Physics LOD for far AI cars in the app (docs/performance.md): the `?lod=` switch overrides it. */
+export const LOD_DEFAULT = false;
 // AI shadows: quality.aiShadowCasters nearest AI cars cast shadow-map shadows inside the sun's ±quality.shadowBoxM box
 // (desktop 8 cars / ±30 m / 2048 px; phone and ?aishadows=0: none); the rest keep a contact-shadow blob (src/app/quality.ts).
 
@@ -76,53 +80,10 @@ export function raceResultFor(rows: TableRow[], o: { seed: number; aiVersion: nu
   };
 }
 
-/** The physics surface factory for the race (same options as HotlapSim's private surface). */
-export function surfaceFactory(a: SimAssets): () => Surface {
-  const farGrid = a.scenery?.far?.heightfield;
-  const far = farGrid && a.farHeightfield
-    ? { heightfield: a.farHeightfield, x0: farGrid.x0, y0: farGrid.y0, dx: farGrid.dx, nx: farGrid.nx, ny: farGrid.ny } : null;
-  const pit = a.scenery?.pit_lane ?? null, zones = a.scenery?.paved_zones ?? null;
-  const pitLane: PitLaneJson | null = pit || zones
-    ? { spacing_m: 1, fractions: (pit ?? zones)!.fractions, parts: [...(pit?.parts ?? []), ...(zones?.parts ?? [])] }
-    : null;
-  return () => createTrackSurface(a.track, a.heightfield, { far, pitLane, sausages: a.scenery?.sausages ?? null, kerbs: a.scenery?.kerbs ?? null, terrainOverride: a.scenery?.terrain_override ?? null });
-}
-
-const lineCache = new WeakMap<object, RaceLine>();
-function raceLine(a: SimAssets): RaceLine {
-  let l = lineCache.get(a.track);
-  if (!l) {
-    l = new R.RaceLine(a.track, a.ghosts as unknown as ConstructorParameters<typeof R.RaceLine>[1], undefined, resolveTrackId(a.trackId));
-    const cones = (a.scenery as { pit_exit_cones?: { pts?: number[][] } | null } | null | undefined)?.pit_exit_cones;
-    if (cones?.pts?.length) l.restrictLeft(cones.pts);   // the AI keeps right of the pit-exit cones, as the player must
-    lineCache.set(a.track, l);
-  }
-  return l;
-}
-
-/** The per-track AI race parameters (TRACKS[id].ai) as RaceConfig fields; absent = Laguna's values (1, 1, 0). */
-export function raceAiConfig(trackId: string): { followScale: number; laneMargin: number; shiftGrip: number } {
-  const ai = TRACKS[resolveTrackId(trackId)].ai;
-  return { followScale: ai?.followScale ?? 1, laneMargin: ai?.laneMargin ?? 1, shiftGrip: ai?.shiftGrip ?? 0 };
-}
-
+export { surfaceFactory, raceAiConfig };
 /** Build the RaceDirector for the player's current HotlapSim car (call right after a rolling start). */
 export function buildDirector(sim: RaceServices['sim'], field: FieldData, o: { seed: number; laps: number; realGrid?: boolean; playerAi?: boolean; lod?: boolean }): RaceDirector {
-  const a = sim.assets;
-  const makeSurface = surfaceFactory(a);
-  const pit = a.scenery?.pit_lane ?? null;
-  return new R.RaceDirector({
-    line: raceLine(a), surface: makeSurface(), makeSurface,
-    probeJson: a.carJson, pace: field.pace as PaceJson, identity: field.identity ?? null,
-    pitLane: pit ? { spacing_m: 1, ...pit } : null,
-    blendLine: a.scenery?.blend_line ?? null,
-    collisionWorld: sim.collision,
-    playerVehicle: sim.vehicle, playerSurface: sim.surface,
-  }, { laps: o.laps, seed: o.seed, playerNumber: PLAYER_NUMBER, greenWindow: [5, 30], ...raceAiConfig(TRACK_ID),
-    // phones and tablets (a selected 40-car field): the real grid order; desktop keeps the seeded shuffle
-    ...(o.realGrid ? { gridOrder: 'real' as const } : {}),
-    // ?playerai=1 (dev only, docs/performance.md): the player's car is AI-driven, the race is deterministic
-    ...(o.playerAi ? { playerAi: true } : {}) });
+  return buildDirectorFor(sim, field, { ...o, trackId: TRACK_ID });
 }
 
 /** FieldCars inputs for every AI car of a director (colour from identity.json, size from its physics spec). */
@@ -348,6 +309,8 @@ export type RaceMode = GameMode & {
   readonly laps: number;
   readonly fieldCars: FieldCars | null;
   readonly out: { reason: string; metres: number } | null;
+  /** ?worker=1: the worker's mirror state (null on the main-thread path) */
+  readonly worker: MirrorState | null;
   /** The AI engine sounds (debug: FieldAudio, null while off / loading). */
   readonly fieldAudio: FieldAudioLike | null;
 };
@@ -376,6 +339,10 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
   let audioTriedAt = -Infinity, audioErr = false;
   let cone: ConeLineLike | null = null;
   let disposed = false;
+  // ?worker=1 (docs/performance.md): the physics and AI run in a Worker; this thread mirrors its snapshots
+  const useWorker = pf.worker && deps.dom && !!sv && typeof Worker !== 'undefined';
+  let wk: RaceWorkerClient | null = null, wkInit = false;
+  let ms: MirrorState | null = null;
   let modelsStarted = false;
   // per-race UI state
   let out: { reason: string; metres: number } | null = null;
@@ -395,10 +362,11 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
     ctx.rollingStart();                 // fresh Vehicle + Surface + timer; step counter 0
     sv.sim.record = false;              // races are not replayed
     const t0 = performance.now();
-    d = buildDirector(sv.sim, field, { seed, laps, realGrid: fieldSelected, playerAi: pf.playerAi });
+    d = buildDirector(sv.sim, field, { seed, laps, realGrid: fieldSelected, playerAi: pf.playerAi, lod: pf.lod ?? LOD_DEFAULT });
     const dir = d;
     if (perf.on) dir.timing = newDirectorTiming();
     sv.sim.stepVehicle = (di) => dir.step(STEP, di as DriverInput);
+    if (useWorker) startWorker(dir);
     console.info(`race: seed ${seed}, ${dir.cars.length} cars, ${laps} laps, built in ${(performance.now() - t0).toFixed(0)} ms${dir.calibrationStale ? ' (pace.json calibration is stale)' : ''}`);
     out = null; resultsWanted = false; submitState = 'idle';
     prev = { phase: 'formation', lapIdx: 0, count: 0, position: 0 };
@@ -415,6 +383,25 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
     loadModelsInBackground();
     setBoardContext({ raceAiVersion: raceBoardVersion(R.AI_VERSION) });
     ctx.hud.toast(`Formation lap · seed ${seed} · you start P${dir.player.grid}`, 3000);
+  };
+
+  /** ?worker=1: (re)start the worker's race alongside the director built here (static data stays on this thread). */
+  const startWorker = (dir: RaceDirector) => {
+    if (!sv || !field) return;
+    try {
+      if (!wk) wk = new RaceWorkerClient();
+      if (!wkInit) { wk.init(sv.sim.assets, { pace: field.pace, identity: field.identity }, TRACK_ID); wkInit = true; }
+      const gen = wk.build({ seed, laps, realGrid: fieldSelected, playerAi: pf.playerAi, lod: pf.lod ?? LOD_DEFAULT, ref: sv.sim.refId, autoShift: sv.sim.autoShift, abs: sv.sim.abs, timing: perf.on });
+      ms = newMirrorState(gen);
+      const w = wk;
+      installMirror(dir, sv.sim, ms, (k, detail) => w.violation(k, detail));
+      sv.sim.stepVehicle = () => { /* the worker steps the car */ };
+      console.info('race: physics and AI run in a Worker (?worker=1)');
+    } catch (e) {
+      // no Worker (or it failed to start): the main-thread race, which was just built
+      console.warn('race worker unavailable, stepping on the main thread:', e);
+      wk?.dispose(); wk = null; ms = null; wkInit = false;
+    }
   };
 
   /** Swap placeholders for real models one at a time, in the background (models.json order; see modelQueue). */
@@ -624,6 +611,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
     get laps() { return laps; },
     get fieldCars() { return fieldCars; },
     get out() { return out; },
+    get worker() { return ms; },
     get fieldAudio() { return fieldAudio?.audio ?? null; },
     start,
     restart() {
@@ -637,6 +625,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
       if (out) { hud.hideGameOver?.(); showResults(); return; }
       // in a race the car is recovered where it is rather than sent back to the start
       ctx.recoverAt(ctx.s());
+      wk?.recover(ctx.s());
       cone?.clear(); // a teleport is not a crossing
       ctx.toast('Recovered to the track');
     },
@@ -651,6 +640,18 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
         if (dist < 40) thump = Math.max(thump, ev.closing * (1 - dist / 40) * 0.6);
       }
     },
+    advance(dt) {
+      void dt;
+      if (!wk || !d || !ms || !sv) return false;
+      if (wk.failed) { console.warn('race worker failed:', wk.failed); wk.dispose(); wk = null; ms = null; wkInit = false; return false; }
+      const sh = ctx.takeShifts?.() ?? { up: false, down: false };
+      const i = ctx.input, sim = sv.sim;
+      wk.input({ steer: i.steer, throttle: i.throttle, brake: i.brake, handbrake: i.handbrake, up: sh.up, down: sh.down, autoShift: sim.autoShift, abs: sim.abs, ref: sim.refId });
+      const snap = wk.take(ms.lastSeq);
+      if (snap) { applySnapshot(snap, d, sim, ms); mode.step(0.001); }
+      return true;
+    },
+    setPaused(p) { if (wk && p) wk.setRunning(false); },
     onLap() { /* laps come from the director (race distance), not the hot-lap timer */ },
     frame(dt, now) {
       const dir = d;
@@ -695,7 +696,8 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
     },
     dispose() {
       disposed = true;
-      if (sv) { sv.sim.stepVehicle = null; sv.sim.record = true; }
+      if (sv) { sv.sim.stepVehicle = null; sv.sim.record = true; if (wk) delete (sv.sim as unknown as Record<string, unknown>).launchedOffTrack; }
+      wk?.dispose(); wk = null; ms = null;
       fieldCars?.dispose(); fieldCars = null;
       if (marker) { marker.removeFromParent(); marker = null; }
       fieldAudio?.dispose(); fieldAudio = null; audioFor = null;

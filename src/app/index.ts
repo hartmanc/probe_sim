@@ -505,6 +505,7 @@ function createSim(assets: Assets) {
     setScheduleLap,
     toast: (m) => hud.toast(m),
     // race mode (modes/race.ts, NOTES-race.md): the director steps the HotlapSim car; AI rigs go into the scene
+    takeShifts: () => loop.takeShifts(),
     race: {
       sim: hsim, scene: world.scene, menu, quality, search: location.search,
       mainMenu: () => showMainMenu(),
@@ -669,7 +670,7 @@ function createSim(assets: Assets) {
         canvas: [renderer.domElement.width, renderer.domElement.height], ratio: look.pixelRatio,
         drawn: fc?.drawn ?? 0, casters: fc?.limits.shadowCasters ?? 0, cars: dir ? dir.cars.length - 1 : 0,
         level: adaptive ? `adapt L${adaptive.level}/${adaptive.ladder.length - 1}` : 'adapt off',
-        director: dir?.timing ?? null, lodFar: null,
+        director: dir?.timing ?? null, lodFar: dir?.config.lod ? dir.lodFar : null,
       };
     });
   };
@@ -685,6 +686,7 @@ function createSim(assets: Assets) {
     if (!running) return;
     pausedEl.classList.toggle('hidden', !document.hidden);
     if (paused) {
+      mode()?.setPaused?.(true);
       wasPaused = true;
       if (dirty && !document.hidden) { dirty = false; render(); }
       return;
@@ -699,7 +701,7 @@ function createSim(assets: Assets) {
     if (menu.isOpen) return; // 'menu' just opened the pause menu
     touch?.setManual(!hsim.autoShift);
     const tAdv = perf.on ? performance.now() : 0;
-    loop.advance(dt); // input is sampled inside, on the sim's 100 Hz grid
+    if (!mode()?.advance?.(dt)) loop.advance(dt); // input is sampled inside, on the sim's 100 Hz grid (race Worker: the mode steps)
     if (perf.on) perf.advance += performance.now() - tAdv;
     const vehicle = veh();
 

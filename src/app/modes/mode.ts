@@ -107,6 +107,8 @@ export interface ModeContext {
   refs: RefController;
   hud: Hud;
   input: Input;
+  /** The shift presses latched since the last call (worker mode sends them with the input); absent in tests. */
+  takeShifts?(): { up: boolean; down: boolean };
   /** Sim time since the last start procedure / reset (s); stops while the car is launched. */
   simTime(): number;
   /** Pit-exit blend line violations of the player's car since the last reset and their words (HotlapSim; 0 / null on a package without the line). */
@@ -146,6 +148,10 @@ export interface GameMode {
   /** Once per rendered frame after the physics steps (ghosts, AI cars, banners). */
   frame(dt: number, now: number): void;
   hud(): ModeHud;
+  /** Worker mode (race, ?worker=1): the mode steps the physics itself this frame (returns true); the app then skips HotlapLoop.advance. */
+  advance?(dt: number): boolean;
+  /** The app is paused (menu, hidden tab): a mode whose physics runs elsewhere stops it. */
+  setPaused?(paused: boolean): void;
   /** Sim time scale for this frame (1 when absent): the race returns 10 while a stop-and-go is fast-forwarded. */
   timeScale?(): number;
   /** Mode-specific pause menu rows (inserted after ABS). */
