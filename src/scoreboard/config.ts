@@ -139,7 +139,11 @@ export const TRACKS: Readonly<Record<string, TrackInfo>> = {
     // 26 Oct 2026 evening: s 3460, not 3500: at 3500 the launch handed over at s 3573 with two wheels beyond the left edge
     // (the line at -5.0 m on a 6.1 m half-width, no kerb strip there to count as course); at 3460 it hands over at s 3534
     // with all four on, on the exit onto the front straight (the owner: "coming onto the front straight might be better")
-    start: { s_m: 3460, speed: ROLLING_START_SPEED } },
+    start: { s_m: 3460, speed: ROLLING_START_SPEED },
+    // AI round 1 (28 Oct 2026), 85 cars, 4 laps, seeds 1-4 (tools/race/AI_READINESS.md section 7): AI-AI contacts 0.029 ->
+    // 0.012 per car-lap, four wheels off 0.073 -> 0.012, clearly-faster passes completed 61.3 -> 73.1 % (the highest of the
+    // five trials; all green passes 2034 -> 1287), race time 541 -> 544 s
+    ai: { followScale: 1.8, laneMargin: 0.85, shiftGrip: 1 } },
 };
 /** The track when none is chosen (URL ?track=, Start menu). */
 export const DEFAULT_TRACK = 'laguna_seca';
