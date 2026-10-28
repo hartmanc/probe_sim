@@ -120,6 +120,13 @@ export interface RaceConfig {
   /** The human player's starting pace estimate where the pace file has no row for the player (TRACKS[id].probeRefLap: the
    *  AI Probe's solo lap at scale 1 on the track), s. NaN: 120. With a row, its bestLap. */
   playerRefLap: number;
+  /**
+   * Close racing between cars within 3 % of each other (traffic round, E; the app's ?closeracing=0|1): keep the inside, ONE
+   * early covering move (a full lane) to the inside before a braking zone against a close car within 1 s behind, then hold the
+   * line; none when it already has the inside, none twice for a corner, none into a passer's lane (driver.ts, defending). Off
+   * (default): the light DEFEND cover of before. Default off: it failed the contact gate (NOTES "Traffic round", E).
+   */
+  closeRacing: boolean;
 }
 
 /** One completed green lap of the human player and what interrupted it (RaceDirector.playerPace). */
@@ -165,6 +172,7 @@ export const DEFAULT_RACE_CONFIG: RaceConfig = {
   playerLap: Number.NaN,
   strength: 1,
   playerRefLap: Number.NaN,
+  closeRacing: false,
 };
 
 export interface RaceInputs {
@@ -639,6 +647,7 @@ export class RaceDirector {
       c.followScale = this.config.followScale;
       c.laneMargin = this.config.laneMargin;
       c.shiftGrip = this.config.shiftGrip;
+      c.closeRacing = this.config.closeRacing;
       c.mishapRate = this.phase === 'green' && !car.isPlayer && !car.finished ? this.config.mishapRate : 0;
       if (this.phase === 'formation') { c.speedCap = this.config.formationSpeed + 3; c.noPass = true; c.minGap = this.config.gridGap; c.paceFactor = 1; }
       else if (this.phase === 'yellow') { c.speedCap = this.config.formationSpeed * 1.25 + 3; c.noPass = true; c.minGap = 10; c.paceFactor = 1; }

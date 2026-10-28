@@ -51,6 +51,8 @@ export interface DriverControl {
   laneMargin: number;
   /** Lane changes held within the spare lateral grip, x this (per track, RaceConfig.shiftGrip; 0 = off, Laguna). */
   shiftGrip: number;
+  /** Close racing within 3 % (traffic round E, RaceConfig.closeRacing): one decisive covering move instead of the light DEFEND. */
+  closeRacing: boolean;
   /** Fraction of the target profile (cool-down lap after the flag: 0.6). */
   paceFactor: number;
   /** Per-lap pace noise on (race) or off (calibration). */
@@ -173,7 +175,7 @@ export class AiDriver {
   /** Target speed profile per station (m/s), from buildSpeedProfile. */
   profile: Float64Array;
   readonly input: DriverInput = { steer: 0, throttle: 0, brake: 0, shiftUp: false, shiftDown: false };
-  readonly ctl: DriverControl = { speedCap: Infinity, noPass: false, minGap: 0, followScale: 1, laneMargin: 1, shiftGrip: 0, paceFactor: 1, noise: true, mishapRate: 0 };
+  readonly ctl: DriverControl = { speedCap: Infinity, noPass: false, minGap: 0, followScale: 1, laneMargin: 1, shiftGrip: 0, closeRacing: false, paceFactor: 1, noise: true, mishapRate: 0 };
   readonly rng: Rng;
 
   // ---- state
@@ -202,6 +204,8 @@ export class AiDriver {
   private passCool = 0;
   // defending: covering the inside of corner `defendCorner` (+1 left / -1 right; read by tools)
   defendSide = 0; private defendCorner = -1; private defendTimer = 0; private defendCool = 0;
+  /** close racing (E): the corner I last covered (one move per corner) */
+  private coverCorner = -1;
   // loss of control (mishap): kind, phase, timers and draws; next corner whose braking point is ahead
   mishap: MishapKind | null = null; private mPhase = 0; private mT = 0; private mCorner = -1;
   private mOver = 1; private mOut = 0; private mHold = 0;
@@ -238,6 +242,7 @@ export class AiDriver {
     this.passTarget = -1; this.passSide = 0; this.passTimer = 0; this.stuckTimer = 0;
     this.passE = Number.NaN; this.passPhase = 0; this.planTimer = 0;
     this.defendSide = 0; this.defendCorner = -1; this.defendTimer = 0; this.offTrack = false;
+    this.coverCorner = -1;
     this.mishap = null; this.mPhase = 0; this.mT = 0; this.mCorner = -1; this.nextCorner = -1; this.onTimer = 0; this.offTimer = 0;
     this.stuckTime = 0; this.needsRecovery = false; this.hint = -1; this.kCmd = 0; this.passCool = 0; this.traffic.passing[this.idx] = -1;
   }
@@ -514,6 +519,7 @@ export class AiDriver {
     // ---- defending (lightly): a car within 3 % of my pace, within ~1 s behind, approaching a passable
     // corner: cover its inside once, hold it to the apex (no weaving). Never against a clearly faster car.
     this.defendCool = Math.max(0, this.defendCool - dt);
+    if (this.coverCorner >= 0 && this.ahead(s, cs[this.coverCorner].apex) < -100) this.coverCorner = -1;   // (E: that corner is behind me)
     if (green && this.passPhase === 0 && !this.offTrack && this.mishap === null) {
       if (this.defendSide !== 0) {
         this.defendTimer -= dt;
@@ -531,7 +537,15 @@ export class AiDriver {
           const r = tr.pace[j] / tr.pace[i];
           if (r >= CLEARLY_FASTER && r <= 1 / CLEARLY_FASTER && d > myRear + tr.front[j] + 1) {
             const c = this.passableAhead(s, 120, 10);
-            if (c >= 0) { this.defendSide = cs[c].dir; this.defendCorner = c; this.defendTimer = 8; }
+            if (c >= 0 && ctl.closeRacing) {
+              // close racing (E): ONE early move to the inside lane before the braking zone, then hold it to the apex; none
+              // when I already have the inside, none twice for a corner, none into a passer's lane
+              const dir = cs[c].dir, eC = dir * tr.laneW;
+              const have = eMe * dir >= 0.5 * tr.laneW;
+              if (!have && c !== this.coverCorner && !this.passerIn(Math.min(eC, eMe) - hwI - LANE_CLR, Math.max(eC, eMe) + hwI + LANE_CLR)) {
+                this.defendSide = dir; this.defendCorner = c; this.defendTimer = 8; this.coverCorner = c;
+              }
+            } else if (c >= 0) { this.defendSide = cs[c].dir; this.defendCorner = c; this.defendTimer = 8; }
           }
           break;
         }
@@ -543,7 +557,7 @@ export class AiDriver {
     const lineLook = line.at(line.off, sLook);
     if (this.passPhase === 1 || this.passPhase === 2) shiftWant = this.passE;
     else if (this.passPhase === 3) shiftWant = 0;
-    else if (this.defendSide !== 0) shiftWant = this.defendSide * DEFEND[this.params.aggression];
+    else if (this.defendSide !== 0) shiftWant = this.defendSide * (ctl.closeRacing ? tr.laneW : DEFEND[this.params.aggression]);
     if (!Number.isNaN(mishapLat)) shiftWant = mishapLat - lineLook;
     if (this.offTrack) {
       // rejoin: come back just inside the edge, the line ramps back in afterwards; wait at / beyond the edge until

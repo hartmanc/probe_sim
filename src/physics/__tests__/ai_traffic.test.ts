@@ -61,6 +61,31 @@ function seeded(rows: Parameters<typeof field>[0], cfg: Partial<RaceConfig>, a: 
   return d;
 }
 
+test('close racing on: one early covering move per corner against a close car, never against a clearly faster one', () => {
+  const rows = [{ number: 'T1', targetLap: 129, scale: 0.9 }, { number: 'T2', targetLap: 127.5, scale: 1.0, aggression: 2 as const }, { number: '619', targetLap: 170, scale: 0.4 }];
+  const d = seeded(rows, { laps: 3, mishapRate: 0, closeRacing: true }, 'T1', 'T2');
+  const t1 = d.cars.find((c) => c.number === 'T1')!;
+  // count T1's covering moves per (lap, corner)
+  const moves = new Map<string, number>();
+  let prev = 0, k = 0;
+  const step0 = d.step.bind(d);
+  (d as unknown as { step: typeof d.step }).step = (dt, inp) => {
+    step0(dt, inp);
+    if (++k % 10) return;
+    const ds = t1.driver!.defendSide;
+    if (ds !== 0 && prev === 0) {
+      const key = `${t1.lapIdx}:${(t1.driver as unknown as { defendCorner: number }).defendCorner}`;
+      moves.set(key, (moves.get(key) ?? 0) + 1);
+    }
+    prev = ds;
+  };
+  const m = runSelfplay(d, pack().makeSurface());
+  expect(m.defending.within3).toBeGreaterThanOrEqual(1);
+  expect(m.defending.vsClearlyFaster).toBe(0);
+  for (const n of moves.values()) expect(n).toBe(1);
+  expect(m.rules.contacts).toBe(0);
+}, 120000);
+
 test('decisive pass: a car 10 % quicker gets by within one lap of closing to 2 s (the data: 98 % at d 8-15 %), no contact, no defence', () => {
   const rows = [{ number: 'T1', targetLap: 140, scale: 0.5 }, { number: 'T2', targetLap: 125, scale: 1.0 }, { number: '619', targetLap: 170, scale: 0.4 }];
   const d = seeded(rows, { laps: 3, mishapRate: 0 }, 'T1', 'T2');

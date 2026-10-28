@@ -41,7 +41,7 @@ export function raceAiConfig(trackId: string): { followScale: number; laneMargin
 }
 
 /** Build the RaceDirector for the player's current HotlapSim car (call right after a rolling start). */
-export function buildDirector(sim: HotlapSim, field: FieldData, o: { seed: number; laps: number; trackId: string; realGrid?: boolean; playerAi?: boolean; lod?: boolean; strengthPct?: number }): RaceDirector {
+export function buildDirector(sim: HotlapSim, field: FieldData, o: { seed: number; laps: number; trackId: string; realGrid?: boolean; playerAi?: boolean; lod?: boolean; strengthPct?: number; closeRacing?: boolean | null }): RaceDirector {
   const a = sim.assets;
   const makeSurface = surfaceFactory(a);
   const pit = a.scenery?.pit_lane ?? null;
@@ -59,6 +59,8 @@ export function buildDirector(sim: HotlapSim, field: FieldData, o: { seed: numbe
     // ?playerai=1 (dev only, docs/performance.md): the player's car is AI-driven, the race is deterministic
     ...(o.playerAi ? { playerAi: true } : {}),
     // physics LOD for far AI cars (RaceConfig.lod): ?lod=1 / ?lod=0, else LOD_DEFAULT
-    ...(o.lod ? { lod: true } : {}) });
+    ...(o.lod ? { lod: true } : {}),
+    // close racing within 3 % (RaceConfig.closeRacing, traffic round): ?closeracing=0|1, else the RaceConfig default
+    ...(o.closeRacing != null ? { closeRacing: o.closeRacing } : {}) });
 }
 
