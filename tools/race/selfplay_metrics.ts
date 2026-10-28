@@ -45,7 +45,11 @@ export interface SelfplayMetrics {
    * behind to ahead within 50 m of a running car) and, per pass, the time it had spent within 20 m behind that car before
    * (sampled every 0.1 s, the time since its last pass of that car); mean over the passes.
    */
-  playerPass: { passes: number; meanBehind: number; behind: number[] };
+  playerPass: { passes: number; meanBehind: number; behind: number[];
+    /** split by the passed car's pace hint against the player's: within 3 % (the cars that defend) and all others */
+    close: { passes: number; meanBehind: number; behind: number[] }; others: { passes: number; meanBehind: number; behind: number[] };
+    /** new defensive moves by AI cars whose nearest car behind (within 30 m) is the player */
+    defendsVsPlayer: number };
   /**
    * (AI round 1, report only) The player's pace position, independent of the grid: 1 + the AI cars whose mean lap over the
    * race's completed green laps (lap 1 from the line after the green) is quicker than the player's mean lap; and the same
@@ -77,7 +81,8 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
   const prevS = new Float64Array(n);
   const ahead = new Int8Array(n * n);      // sign of U[i] - U[j] (formation and green order tracking)
   let formationPasses = 0, passesTotal = 0;
-  const pIdx = cars.findIndex((c) => c.isPlayer), behindT = new Float64Array(n), playerBehind: number[] = [];
+  const pIdx = cars.findIndex((c) => c.isPlayer), behindT = new Float64Array(n), playerBehind: number[] = [], closeBehind: number[] = [], otherBehind: number[] = [];
+  let defendsVsPlayer = 0;
   const lapsOf: number[][] = cars.map(() => []), lapsSeen = new Int32Array(n);
   const passAt: number[] = [];
   let contacts = 0, hard = 0;
@@ -139,7 +144,7 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
         const now = tr.U[i] > tr.U[j] ? 1 : -1, k = i * n + j, was = ahead[k];
         ahead[k] = now;
         if (was === -1 && now === 1 && Math.abs(tr.U[i] - tr.U[j]) < 50 && !tr.off[j] && !tr.away[j] && tr.v[j] > 5 && !cars[j].driver?.needsRecovery) {
-          if (phase === 'formation') formationPasses++; else { passesTotal++; passAt.push(Math.round(tr.s[i])); if (i === pIdx) { playerBehind.push(+behindT[j].toFixed(1)); behindT[j] = 0; } }
+          if (phase === 'formation') formationPasses++; else { passesTotal++; passAt.push(Math.round(tr.s[i])); if (i === pIdx) { const b = +behindT[j].toFixed(1), r = tr.pace[j] / tr.pace[pIdx]; playerBehind.push(b); (r >= CLEAR && r <= 1 / CLEAR ? closeBehind : otherBehind).push(b); behindT[j] = 0; } }
         }
       }
       if (phase === 'green' && pIdx >= 0) for (let j = 0; j < n; j++) { const g = tr.U[j] - tr.U[pIdx]; if (j !== pIdx && g > 0 && g < 20) behindT[j] += 0.1; }
@@ -201,6 +206,7 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
       // ---- (c) defending: a new defensive move, classified by the pace of the nearest car behind
       const ds = d.defendSide | 0;
       if (ds !== 0 && prevDefend[i] === 0) {
+        if (jB === pIdx && dB <= 30) defendsVsPlayer++;
         if (jB < 0 || dB > 30) defend.none++;
         else {
           const r = tr.pace[jB] / tr.pace[i];
@@ -296,7 +302,10 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
       for (let i = 0; i < n; i++) { if (i === pIdx || !lapsOf[i].length) continue; timed++; if (mean(lapsOf[i]) < pm) mp++; if (Math.min(...lapsOf[i]) < pb) bp++; }
       return { meanPos: mp, bestPos: bp, playerMean: +pm.toFixed(3), playerBest: +pb.toFixed(3), laps: pl.length, carsTimed: timed };
     })(),
-    playerPass: { passes: playerBehind.length, meanBehind: playerBehind.length ? playerBehind.reduce((a, b) => a + b, 0) / playerBehind.length : NaN, behind: playerBehind },
+    playerPass: (() => {
+      const g = (a: number[]) => ({ passes: a.length, meanBehind: a.length ? a.reduce((x, y) => x + y, 0) / a.length : NaN, behind: a });
+      return { ...g(playerBehind), close: g(closeBehind), others: g(otherBehind), defendsVsPlayer };
+    })(),
     robust: { coneCrossings, coneInControl: coneCrossings.filter((c) => c.inControl).length, spins, spinsNoMishap: spins.filter((x) => !x.mishap).length },
   };
 }
@@ -318,6 +327,7 @@ export function printReport(m: SelfplayMetrics): void {
   const ro = m.robust;
   console.log(`(r) pit-exit cone crossings ${ro.coneCrossings.length} (in control ${ro.coneInControl})${ro.coneCrossings.length ? ': ' + ro.coneCrossings.map((c) => `#${c.car} t${c.t} s${c.s} +${c.over} m${c.inControl ? ' IN CONTROL' : ''}`).join(', ') : ''}; spins ${ro.spins.length} (without a mishap ${ro.spinsNoMishap})${ro.spins.length ? ': ' + ro.spins.map((x) => `#${x.car} t${x.t} s${x.s}${x.mishap ? ' (mishap)' : ''}`).join(', ') : ''}`);
   console.log(`(q) player pace position (report): by mean lap P${m.playerPace.meanPos}, by best lap P${m.playerPace.bestPos} of ${m.playerPace.carsTimed + 1} (player mean ${f(m.playerPace.playerMean)} s, best ${f(m.playerPace.playerBest)} s over ${m.playerPace.laps} laps)`);
-  console.log(`(p) player pass cost: passed ${m.playerPass.passes} AI cars, mean ${f(m.playerPass.meanBehind, 1)} s within 20 m behind a car before passing it`);
+  const pp = m.playerPass;
+  console.log(`(p) player pass cost: passed ${pp.passes} AI cars, mean ${f(pp.meanBehind, 1)} s within 20 m behind a car before passing it; within 3 % of his pace ${pp.close.passes} (${f(pp.close.meanBehind, 1)} s), others ${pp.others.passes} (${f(pp.others.meanBehind, 1)} s); defensive moves against him ${pp.defendsVsPlayer}`);
   console.log(`(f) cost ${f(m.cost.usPerStep, 1)} µs per step, ${f(m.cost.usPerCar)} µs per car`);
 }
