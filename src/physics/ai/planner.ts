@@ -71,16 +71,17 @@ export const GRIP_W = 4;
 /** m: (C2 H2) a pass candidate holds its offset until my rear is this far clear of the passed car's front, then merges back to
  *  the line at the shift rate */
 export const MERGE_GAP = 3;
+/** (C2 H6) the road rule fires where the clamp moves my offset faster than this share of the shift rate (the car lags its
+ *  shift target: Laguna T11 / T10 / T4 track-out four-offs at 2.5-2.8 m/s of clamp against a 2.86 m/s shift rate) */
+export const ROAD_K = 0.6;
 /** (C2, tools: the screens' A/B) the C2 steps that are switches; the defaults are the kept ones */
-export const knobs = { h2: 0, grip: 0, tail: 0, h3: 0, h4: 0, h5: 0, h6: 0 };
+export const knobs = { h2: 1, grip: 0, tail: 1, h3: 0, h4: 1, h5: 0, h6: 1, roadk: ROAD_K, phw: 0.3 };
+/* (knobs.phw: H4's following headway behind a clearly slower car, s; 0.3 = the lane model's PASS_HEADWAY) */
 /** s: (C2 H2) the time lost at the end of the horizon behind a car in my band, at the rate it costs me there, carried on for
  *  this long (staying behind a slower car keeps costing after the horizon; a completed pass does not) */
 export const TAIL_T = 10;
 /** (C2, knobs.grip 2) the share of the lateral grip the line itself uses above which a lateral move is priced by the grip */
 export const GRIP_CORNER = 0.5;
-/** (C2 H6) the road rule fires where the clamp moves my offset faster than this share of the shift rate (the car lags its
- *  shift target: Laguna T11 / T10 / T4 track-out four-offs at 2.5-2.8 m/s of clamp against a 2.86 m/s shift rate) */
-export const ROAD_K = 0.6;
 /** s: (C2 H3) the hard window per neighbour: the time to reach it at the closing speed now, clamped */
 export const T_HARD_MIN = 1, T_HARD_MAX = 4;
 /** risk hook: s per unit of passRisk (0 today) */
@@ -262,7 +263,7 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
     }
     if (e !== eU && (eU * env.curv(sN) <= 0 || besideK >= 0)) {
       const dE = e - e1, rr = (dE < 0 ? -dE : dE) / PLAN_DT;
-      if (rr > (knobs.h6 ? ROAD_K : 1) * w.rate) {
+      if (rr > (knobs.h6 ? knobs.roadk : 1) * w.rate) {
         if (t <= (knobs.h5 && besideK < 0 ? T_HARD_MIN : T_HARD)) { w.culprit[c] = besideK >= 0 ? besideK : -2; w.why[c] = 3; return BIG + PLAN_N - m; }
         clr += CLR_W[aggr] * PLAN_DT; roadSoft += CLR_W[aggr] * PLAN_DT;
       }

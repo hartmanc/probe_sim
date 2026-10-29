@@ -522,7 +522,7 @@ export class AiDriver {
       // (on a pass, behind the car being passed where the road squeezes the lanes together: PASS_HEADWAY)
       // (C2 H4, the offset planner: a clearly slower car ahead is followed at PASS_HEADWAY, close enough to pass it)
       const press = offset && oKnobs.h4 && green && tr.pace[i] < CLEARLY_FASTER * tr.pace[leadJ];
-      const gd = ctl.minGap > 0 ? Math.max(0.6 * ctl.minGap, 0.3 * ctl.minGap + 0.6 * v) : 1.5 + ((this.passPhase === 1 && leadJ === this.passTarget) || press ? PASS_HEADWAY : headway) * v;
+      const gd = ctl.minGap > 0 ? Math.max(0.6 * ctl.minGap, 0.3 * ctl.minGap + 0.6 * v) : 1.5 + ((this.passPhase === 1 && leadJ === this.passTarget) ? PASS_HEADWAY : press ? oKnobs.phw : headway) * v;
       // speed that holds the gap (P on gap, small deadband) and a hard braking limit for the closing speed
       const ge = leadGap - gd;
       let vF = vj + (ctl.minGap > 0 ? 0.35 : 0.6) * (Math.abs(ge) < 1.5 ? 0 : ge - Math.sign(ge) * 1.5);
@@ -1180,7 +1180,7 @@ export class AiDriver {
     // me
     this.pS = s; this.pPf = pf; this.pHw = hwI;
     w.v = v; w.eCur = this.shift; w.eMeas = eMe; w.ePrev = this.oStar; w.rate = PASS_SHIFT * SHIFT_RATE;
-    w.hw = hwI; w.front = tr.front[i]; w.rear = tr.rear[i]; w.headway = oKnobs.h4 && na > 0 && tr.pace[i] < CLEARLY_FASTER * tr.pace[A[0]] ? PASS_HEADWAY : headway; w.aggr = this.params.aggression;
+    w.hw = hwI; w.front = tr.front[i]; w.rear = tr.rear[i]; w.headway = oKnobs.h4 && na > 0 && tr.pace[i] < CLEARLY_FASTER * tr.pace[A[0]] ? oKnobs.phw : headway; w.aggr = this.params.aggression;
     w.bMax = 0.85 * this.perf.abrake * G; w.aLat = this.perf.alat * G;
     w.ePref = this.defendSide !== 0 ? this.defendSide * (this.ctl.closeRacing ? tr.laneW : DEFEND[this.params.aggression]) : Number.NaN;
     // a clearly faster car (by its pace hint: the player's is his live estimate) within 25 m behind: hold, never toward it
