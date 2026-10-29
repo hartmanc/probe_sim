@@ -15,6 +15,7 @@ and AI in a Web Worker.
 | `?shadowbox=<5..60>` | half-size (m) of the sun's shadow box (dev) |
 | `?lod=1` / `?lod=0` | physics LOD for far AI cars (default **off**, see option 3) |
 | `?worker=1` / `?worker=0` | physics and AI in a Web Worker for this page load (default **off**; the Graphics-menu toggle stores the choice, see option 4) |
+| `?planner=lanes` / `?planner=offset` | the AI's traffic planner (`RaceConfig.planner`, C1, 28 Oct 2026): the lane model (default) or the continuous offset planner (`src/physics/ai/planner.ts`; `src/physics/ai/NOTES.md` "C1: the offset planner"); reaches the worker like `?closeracing=`. Also `selfplay.ts --planner offset`, `traffic_sim.ts --set planner=offset`, `solo_hash.ts --planner offset` |
 
 Graphics menu: Auto / Phone / **Balanced** / Desktop (the stored choice and `?phone=` work as before).
 

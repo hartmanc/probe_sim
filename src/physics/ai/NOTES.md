@@ -676,3 +676,89 @@ and the four tracks' seed-1 races: every crossing identical), so the bands above
 **Black-flag hook.** `driver.ts passRisk(j, e, side)` returns 0 today; planLane rejects a lane whose risk exceeds PASS_RISK_MAX = 1
 and takes RISK_W (4) x risk off its score. The AI black-flag round plugs in the expected flag cost of that commit (the
 contact-at-fault and four-off odds of the lane at this closing speed, from self-play) against the time the pass gains.
+
+## C1: the offset planner (28 Oct 2026, branch `planner-c1`)
+
+Owner: "I prefer to just try C now." The traffic round's diagnosis: the lane model needs a free LANE through the corner, and
+where the lanes pinch the car further back gives way, so clearly faster cars get by 10-12 points less often than the real field.
+C1 replaces the lane model's pass machinery with a continuous lateral offset chosen every tick against the other cars'
+projections (the rFactor 2 / AMS2 / iRacing shape), **behind a switch: `RaceConfig.planner` 'lanes' (default, the phone
+fallback, untouched) | 'offset'**; `?planner=offset` (race mode -> race-build -> the worker host), `selfplay.ts --planner
+offset`, `traffic_sim.ts --set planner=offset`, `solo_hash.ts --planner offset`, `selfplay_trace.ts --planner offset`.
+
+**Design (`planner.ts`, pure: PlanWork preallocated, PlanEnv; no transcendental, `Math.sqrt` only).** A plan every PLAN_EVERY
+0.2 s (staggered by car index) while a car is within 150 m ahead or 25 m behind (the 8 nearest by distance, ties by index);
+alone, e* = 0 and nothing is evaluated (the alone path is today's, bit for bit). Neighbours are projected as the lane model
+projects an occupant (span e / eT / 0.6 s drift clamped to the road where it will be, ± half width, + 0.8 m when off; speed from
+its own profile x how held up it is now, planLane's estimate; the human player at its speed now). Candidates: the current target,
+the racing line, a defending cover (light DEFEND within 3 %, the lane model's trigger), and 13 offsets 0.5 m apart around me,
+inside the corridor (the road minus PASS_EDGE, the line always in it). Each is the transition at PASS_SHIFT x SHIFT_RATE then
+held, clamped to the corridor, sampled every 0.25 s over 10 s. Costs (s): time lost against my race-line profile (laneFactor at
+the offset; the clamped path's own curvature as a grip speed; capped behind a car in my band at its speed and my headway);
+clearance below ALONG_CLR 0.7 m, steep by aggression (CLR_W 6 / 4 / 2.5); corridor edge; off the line 0.006 s/m/s while racing a
+car within 30 m, 0.04 when nobody is, 0.5 inside a no-pass window; damping 0.02 s/m; a reversal before the apex of the move
+while a car is within 20 m +2 s (one move); a lane change asking more than the lateral grip (v²κ + v·rate/Ld) 4 s per unit excess,
+moves away from the line only; a pass that does not progress or would take > PLAN_T_MAX 40 s 1.5 s; passRisk x 4 (0 today).
+Hard rules: 2 BIG for a move toward a clearly faster car within 25 m behind (any move when it is straight behind), never across
+a car within the sweep length, a move into the margin of a car my body overlaps now (overlap holds), from behind to ahead of a
+running car in a no-pass window (formation / yellow: e* = 0, single file); BIG + samples left (earlier is worse) within the
+first T_HARD 2.5 s for clearance below LANE_CLR 0.3 m, braking onto a car newly in my band beyond 0.85 x the brakes (room to
+its bumper), and the road clamping my offset on the OUTSIDE of a corner faster than the shift rate (turn-in / track-out);
+beyond 2.5 s those are steep costs. Selection: the minimum, ties to the current target, a new target held MIN_HOLD 1 s and
+better by HYST 0.5 / 0.35 / 0.25 s by aggression. When every candidate breaks a rule against a car right ahead / beside me, I
+give way to it (its speed - 1.5 m/s) until the next plan. In the driver (offset only): the pass start / passStep / planLane,
+the passer reserve and the pinch guard are off; a car my body overlaps and clear of me laterally is not followed; the give-way
+only when squeezed; the 97 % lift for a car alongside behind me and converging in a corner only; the controller (SHIFT_RATE,
+PASS_SHIFT, the grip limiter, the lane speed look-ahead, PASS_EDGE) treats a held e* as a pass lane.
+
+**What the first build needed (each found on traces, Laguna 6 seeds x 3 laps):** the far-horizon rules soft (they forced yields
+to cars 100 m away); the move back to the line exempt from the grip term; the outside-at-turn-in path (carried offsets clamped
+onto the line faster than a car can move: four-off 0.31 -> 0.10 per car-lap); graded infeasibility and a yield only to a car
+right ahead (a yield cascade took cars to 3-5 m/s on straights); the braking rule firing on the car I already follow, which
+replaced the target 200 times a car-lap (now 31; the lane model started about 4 passes a car-lap on the same run). AI_VERSION 8; no pace file touched.
+
+**A/B, Laguna + Mid-Ohio, seeds 1-8, 10 laps** (`tools/race/out/c1/{lanes,b1,v2,v3}.{md,json}`; the lanes run reproduces
+`baseline.json` exactly: every cell, contacts, passes):
+
+| run | Yf / 0-1 / 1-3 / 3-8 / 8-15 / >15 % (g < 2 s) | gap curve d >= 3 %, 0-0.5 .. 8-10 s | passing lap 3-8 / 8-15 s | contacts L / MO | four-off L / MO | green passes L / MO |
+|---|---|---|---|---|---|---|
+| data | 8.2 / 39.4 / 60.3 / 86.9 / 97.8 / 99.7 | 96 91 88 88 84 77 62 | 2.9 / 3.4 | | | |
+| lanes (= baseline) | 10.5 / 25.7 / 54.6 / 75.6 / 89.7 / 95.7 | 90 84 63 66 46 55 35 | 4.0 / 7.8 | 0.0248 / 0.0128 | 0.0858 / 0.0104 | 4193 / 6386 |
+| b1, first build | 8.5 / 22.3 / 53.2 / 71.1 / 79.9 / 88.7 | 91 79 65 54 62 72 50 | 3.6 / 10.7 | 0.0127 / 0.0116 | 0.0540 / 0.0064 | 3110 / 4987 |
+| **v2**, the outside-only road rule (kept) | 8.0 / 23.1 / 52.1 / 75.9 / 86.3 / 91.0 | 95 81 72 65 66 46 83 | 3.6 / 7.7 | 0.0226 / 0.0195 | 0.0607 / 0.0105 | 3034 / 5164 |
+| v3 = v2 + merge back in the projection once 30 m clear | 8.8 / 24.9 / 51.8 / 68.8 / 78.7 / 91.2 | 94 77 62 64 64 67 61 | 3.9 / 10.4 | 0.0206 / 0.0203 | 0.0589 / 0.0094 | 3221 / 5158 |
+
+(Pooled time lost on the passing lap here is Laguna + Mid-Ohio; the brief's 5.7 / 11.5 s is the four-track pool.)
+
+**Gates (v2, the tree as committed).** G1 FAIL: 3-8 % 75.9 (needs >= 81), 8-15 % 86.3 (>= 94); floor 8.0 (<= 10.5, pass);
+passing-lap loss 3.6 / 7.7 s (needs <= 2.7 / 5.2 against these runs: fail); d < 3 % cells 23.1 / 52.1 against 25.7 / 54.6 (within
+5, pass). G3: contacts Laguna 0.0226 (<= 0.0248, pass), Mid-Ohio 0.0195 (<= 0.0128; beyond the ±0.006 spread, so no 16-seed
+decision: FAIL); four-off 0.0607 / 0.0105 (<= 0.0858 / 0.0104: Laguna pass, Mid-Ohio level); green passes 3034 / 5164 (below
+4193 / 6386: FAIL). G4: suite green; `ai_behaviour` runs twice (describe.each lanes / offset, same thresholds): with the
+planner on, "within 3 %" makes no covering move (0, needs >= 1) and "full field, 2 laps" makes 111 situations and 97 passes
+(> 150 each; 63 % completed, > 15 % 85 %, contacts 0.013, no defending against a clearly faster car, no formation pass: those
+hold): both run as `test.fails` for 'offset' only, nothing loosened. Worker identity with `planner: 'offset'` added (the switch
+reaches every driver in the worker). Planner unit tests (`planner.test.ts`): pass a slow car, overlap holds, never across, no
+move toward a clearly faster car behind, no-pass window (and an off car passed freely), one move / hysteresis / reversal, alone
+= e* 0 with no plan evaluated. G5: solo hashes identical with the planner off and on (laguna 6b8f157f11f72166, sonoma
+288bd306e8620212, buttonwillow 4f81fe2cda1b3ef5, mid_ohio 6e6024a7c42062d5). G7: build green, e2e 13/13.
+
+**CPU** (`selfplay.ts --laps 2 --seed 1`, sequential, quiet machine): Sonoma 2.23 -> 2.36 µs per car-step (+5.8 %), Laguna 1.89 ->
+1.91 (+1 %). Nothing cut. The 0.1 s tick near a car was not tried (the budget went to the screens).
+
+**Reading.** The offset planner is safer per pass (b1 halved Laguna's contacts, four-offs down a third) and its passer keeps
+the lap of the pass close to the lanes' or better (3-8 % 3.6 s against 4.0), but it passes less: green passes -25 %, the 8-15
+% cell 3-10 points under the lanes. On the selfplay measure it completes more clearly-faster situations (Laguna 79.7 % against
+71.5 %), so what it loses is the encounters a lap at 1-5 s gaps (the gap curve) and the trains: a candidate is "move and hold",
+priced 10 s ahead against neighbours that are themselves projected as holding, and every conflict inside 2.5 s is a hard
+stop, so a car commits only when the whole pass looks clean; the road rule (v2) moved the 3-8 % cell from 71 to 76 and the
+8-15 % from 80 to 86 but put Mid-Ohio's contacts up (0.012 -> 0.020). The merge in the projection (v3) made things worse:
+with the return to the line priced as free, the line candidate behind the slow car stops losing against the pass. Not
+reached here, and the next things to try (C2).
+
+**C2 list.** Tuning on all four tracks and 16 seeds with the owner's drive notes; per-car aggression from the data tiers
+(HEADWAY, CLR_W, HYST already take it); the yield trait (dropped in the traffic round); the traffic read, a pick one corner
+ahead (which side of the slow car the next corner opens); candidates that end (a pass with its own merge, priced as the lane
+model's phase 2-3, not the v3 shortcut) and a two-move horizon; the hard window T_HARD per closing speed; the 0.1 s tick near a
+car; a covering move within 3 % that the "within 3 %" test sees; the passRisk / black-flag cost; the phone tier (it stays on
+the lane model).
