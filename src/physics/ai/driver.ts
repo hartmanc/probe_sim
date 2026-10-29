@@ -1263,7 +1263,7 @@ export class AiDriver {
     this.attackStep(s, v, w, na);
     if (this.oPhase === ATT_COMMIT) w.cfPassing = true;
     const prev = this.oStar;
-    if (oKnobs.p4 && this.oPhase === ATT_NONE && lineFree(w)) {
+    if (oKnobs.p4 && this.oPhase === ATT_NONE && Number.isNaN(w.ePref) && lineFree(w)) {   // (a cover within 3 % is planned)
       this.oStar = 0; this.oYield = -1; this.oMoveDir = 0; tr.oPass[i] = 0; tr.passing[i] = -1;
       return;
     }

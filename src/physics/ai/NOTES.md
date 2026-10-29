@@ -1036,3 +1036,137 @@ by design, the scales are new).
 **Tests left red by the new files** (not loosened): `ai_behaviour` "planner lanes: full field, 2 laps" (clearly faster big-ratio
 completed 0.714, needs > 0.72) and "planner offset: alone on track" (racing line rms 0.533 m, needs < 0.5; the first five cars
 of the new Laguna file). Both pass on the q 0.5 files (42d32fd).
+
+## C4 (29 Oct 2026, branch `planner-c4`): the Lemons pass for the offset planner
+
+Owner: "Do two and three". Everything is `planner: 'offset'` only; R1-R3 stay; the lane model, the pace files and AI_VERSION 8 are
+untouched. Results in `tools/race/out/c4/` (gitignored).
+
+**As built** (`planner.ts` `attackOverlap`, `bandTaken`, `attackNext`, `lineFree`; `driver.ts` `attackStep`; `Traffic.oAtt / oSide`).
+- **P1 early commit.** A car ahead slower by >= 3 % (or slower and followed for STUCK_T s, knob `slow`) within `tc` s of time gap,
+  the next braking point >= `dmin` m ahead (never into the Corkscrew): pick the inside of that corner (the outside when the car
+  ahead is `ins` m inside its line, when I am already out to one side, or when a third car is in that band where I reach the
+  braking point), then commit only if the plan's own projection of "move to the attack offset and hold it" (the lateral rate the
+  grip leaves, capped behind any car in my band, the road clamp) puts my nose `ovl` x my length past its tail before the braking
+  point (or the straight runs past the horizon). Committed, the attack offset is taken unless it breaks a hard rule. Staying
+  behind a clearly slower car is priced over the rest of the lap (d x lap time x the fraction left, at least `lapMin`).
+  Aggression scales `tc` (x 0.75 / 1 / 1.25) and `ovl` (x 1.2 / 1 / 0.8).
+- **P2 back out.** At the braking point without the overlap: the car attacked is followed wherever I am beside it (a relative lift
+  to its speed - `boDv`, not the braking limit's step: that was a brake test for the car behind), the plan prefers its line (tuck
+  in), re-plan past the apex.
+- **P3 hold.** With the overlap: the side is held (the target kept unless it breaks a rule) to the track-out; R1's lift is the lead
+  car's.
+- **P4 return.** No attack, nobody within `ret` 40 m ahead nor reached within `retT` 10 s, nobody beside or MERGE_GAP behind, no cover
+  within 3 % to make: the racing line, no plan. "Alone on track" 0.533 -> 0.448 m rms (a real test, passing).
+- **P5 trains.** The pick follows the car ahead's own attack side through, or takes the side its passer does not hold.
+- **P6 knobs.** `--set k.<name>=<v>` in `traffic_sim.ts` (in the run tag) and `selfplay.ts`; `--knob` still works; `setKnobs` throws on
+  an unknown name. 62 knobs, the table below.
+
+What the dev runs showed on the way (Laguna + Mid-Ohio seeds 1-3, 5 laps; transitions tallied by `AiDriver.attTally`): with an
+unhindered-profile feasibility estimate, 557 of 851 commits backed out 10-15 m short; the predicted gain is not there, because on the
+straights a 5-10 % faster car is 0-2 m/s faster than the car it attacks (median 0 m/s at profile speed, laterally out): the pace
+difference is in the corners, where R2 forbids the dive and R1 keeps the lead car on its line. Pricing the commit on the plan's own
+projection halved the doomed commits but the hold / back ratio stayed about 1 : 7. Not following the car attacked while partly
+beside it (passes 213 -> 326) put contacts at 0.050: reverted.
+
+**Screens** (Laguna + Mid-Ohio, seeds 1-8, 10 laps; four of six used; s3 was interrupted by the session restart and run again):
+
+| run | 0-1 / 1-3 / 3-8 / 8-15 / >15 % (g < 2), floor | gap 2-3 / 3-5 / 5-8 s | passing lap 0-1 / 1-3 / 3-8 / 8-15 s | contacts L / MO | four-off L / MO | green passes L / MO | wait median / p90 s |
+|---|---|---|---|---|---|---|---|
+| data | 39.4 / 60.3 / 86.9 / 97.8 / 99.7, 8.2 | 88 / 84 / 77 | 1.9 / 2.1 / 2.9 / 3.4 | | | | |
+| lanes (reanchor, 8 seeds) | 29.9 / 41.2 / 58.0 / 79.6 / 96.4, 16.0 (Laguna only) | | | 0.0400 / 0.0126 | 0.0601 / 0.0068 | 4224 / 6618 | 14.3 / 66 (Laguna) |
+| s1 the tree | 25.5 / 49.8 / 73.4 / 80.5 / 91.8, 8.7 | 40 / 51 / 60 | 3.6 / 2.5 / 3.6 / 10.1 | 0.0207 / 0.0129 | 0.0518 / 0.0171 | 2469 / 5740 | 18.8 / 90 |
+| s2 p2 = 0 (no back-out) | 25.2 / 51.3 / 77.9 / 86.0 / 91.4, 9.2 | 64 / 52 / 45 | 4.0 / 2.6 / 3.8 / 8.6 | 0.0114 / 0.0173 | 0.0650 / 0.0177 | 2823 / 6666 | 17.5 / 72 |
+| s3 ovl 0.25, bo -15 | 23.9 / 51.6 / 72.6 / 82.3 / 95.5, 9.9 | 53 / 52 / 51 | 2.6 / 2.9 / 4.1 / 9.6 | 0.0146 / 0.0178 | 0.0637 / 0.0196 | 2633 / 5973 | 18.3 / 84 |
+| s4 phw 0.5 (room for a run) | 23.4 / 52.2 / 67.1 / 72.4 / 90.5, 9.3 | 45 / 48 / 46 | 2.8 / 1.6 / 3.4 / 11.0 | 0.0259 / 0.0124 | 0.0574 / 0.0177 | 2381 / 4976 | 19.0 / 100 |
+
+(C3 s5 at the q 0.5 anchor for reference: 28.6 / 54.2 / 73.6 / 85.7 / 98.6; passing lap 8-15 % 7.1 s.)
+
+**Stopped** (the brief's rule): after the screens the passing-lap loss at 8-15 % is 8.6-11.0 s (over 4.9 in every screen), Mid-Ohio's
+contacts sit at or above the lanes (0.0124-0.0178 vs 0.0126) and its four-offs at 2.5-2.9 x; Laguna's green passes stay 33-44 % under
+the lanes. No change in hand is clearly the fix; no full evaluation run. The default stays `'lanes'`.
+
+**Eyesore** (Laguna seeds 1-8, 10 laps, `tools/race/out/c4/eyesore.py` on both run sets, the same method: race median / best green lap
+after lap 1 over the pace file's target, done waits as the attacker, net places per lap from the crossing order; its median and
+places differ from C3's script, the wait reproduces the reanchor's 12.9 / 49.9 s, 351 waits):
+
+| planner | cars | race median / best lap over target | wait per slower car, median / p90 | net places per lap |
+|---|---|---|---|---|
+| lanes | #711 | +29.5 / +8.0 s | 12.9 / 49.9 s (351) | 1.43 |
+| lanes | fastest quartile (12) | +30.6 / +11.3 s | 13.7 / 61.7 s | 0.97 |
+| offset C4 (s1) | #711 | +35.9 / +12.0 s | 12.8 / 61.5 s (260) | 1.58 |
+| offset C4 (s1) | fastest quartile | +32.6 / +11.7 s | 14.6 / 80.2 s | 0.77 |
+
+**Gates on the tree as committed.** G1-G3 not evaluated on four tracks (stopped); on the screens G1 fails (s1: 3-8 % -13.5, 8-15 %
+-17.4, gap bins -47 / -33 / -17), G2 fails (8-15 % passing lap 10.1 s), G3 fails on Mid-Ohio (four-offs; contacts level or above) and
+Laguna's green passes; Laguna's contacts (0.0207 vs 0.0400; old anchor 0.0262) and four-offs pass. G4: `npx vitest run` 829 passed,
+1 failed (the lanes "full field" big-ratio completion 0.714, the owner's open call, untouched) and 1 expected fail: the offset "full
+field, 2 laps" (seed 1: 78 situations, 57 green passes, > 150 each; 56 % completed, contacts 0, no defending against a clearly faster
+car) stays `test.fails`; "alone on track" and "within 3 %" are real and pass (P4 plans a cover within 3 %); unit tests for P1 (the
+commit on a straight with the overlap before a 200 m braking point, not a 30 m one; the plan takes it; the pick's taken band), P2 /
+P3 (the phases; tuck in; hold) and P4 (lineFree); the worker identity with `planner: 'offset'` passes. G5: solo hashes 8530e05a097e4a7d
+/ 4ac773bad171b7a2 / 19e2628dc499c20e / 71c58e0ef9e5bd32 with the planner on and off, AI_VERSION 8, pace files untouched. G6: Sonoma
+2.28 -> 2.51 µs per car-step (+10 %). G7: build green, e2e 13 / 13.
+
+**Reading.** The Lemons pass as built is safe (Laguna contacts half the lanes') but it cannot be made often enough: alongside by the
+braking point needs straight-line speed the field's clearly faster cars mostly do not have over the car ahead, and with the dive
+refused and the lead car holding its line the faster car backs out about seven times for each hold. Its waits are the lanes' at the
+median and longer at p90; #711 still laps 30-36 s over its target with either planner.
+
+**C5 list.** Where the 3-15 % cars actually gain (corner exit: pull out on the exit inside, which R2 allows, instead of the next
+corner's inside; a "run" from a gap opened before the corner, phw alone did not do it); a commit judged at turn-in instead of the
+braking point (R2's own point) with the overlap measured there; Mid-Ohio's four-offs (2.5 x the lanes' in every screen: where, which
+phase); the full field's situations (78 vs C3's 113 at seed 1: the field spreads less, or the trains hold); the knob search over the
+table below; per-car aggression from the data tiers; the phone tier stays on the lane model.
+
+**Knobs for the search** (C4 P6) (`planner.ts` `knobs`; `traffic_sim.ts --set k.<name>=<value>` (in the run tag) or `--knob <name>=<value>`;
+`selfplay.ts --set k.<name>=<value>`; an unknown name throws). Switches are 0 / 1; the defaults are the tree as committed.
+
+| knob | default | range | what it does |
+|---|---|---|---|
+| p1 | 1 | 0 / 1 | C4 P1: the early commit on a slower car ahead |
+| tc | 2 | 1-4 s | T_COMMIT: time gap (gap / v) within which a commit is considered |
+| tcAg | 0.25 | 0-0.5 | share of tc each aggression step adds (calm x 0.75, aggressive x 1.25) |
+| dmin | 60 | 30-150 m | D_MIN: the next braking point at least this far ahead to commit |
+| ovl | 0.5 | 0.2-0.8 | OVL_MIN: share of my length my nose must be past its tail at the braking point (hold, else back out) |
+| ovlAg | 0.2 | 0-0.4 | share of ovl each aggression step takes off (aggressive needs less) |
+| feas | 1 | 0 / 1 | commit only when the plan's projection of the attack gets the overlap before the braking point |
+| attw | 1 | 0.3-3 s/m | ATT_W: preference for the attack offset (P1), the held side (P3), its line when backing out (P2) |
+| attc | 0.9 | 0.5-1.5 m | edge-to-edge room the attack offset leaves to the car attacked |
+| ins | 0.5 | 0-1.5 m | the car ahead is "inside" beyond this off its line toward the corner: the pick goes outside |
+| att1 | 1 | 0 / 1 | committed, the attack offset is taken unless it breaks a hard rule (soft costs ignored) |
+| att2 | 0 | 0 / 1 | committed and clear of its band, the car attacked is not followed for the road's later squeeze (contacts: off) |
+| slow | 1 | 0 / 1 | a car slower on pace (within 3 %) followed for stk x STUCK_T s is attacked too |
+| stk | 1 | 0.5-3 | that stuck time, x the lane model's STUCK_T (3 / 1.8 / 1 s by aggression) |
+| tlap | 1 | 0 / 1 | staying behind a clearly slower car priced over the rest of the lap (d x lap time x fraction left) |
+| lapMin | 0.5 | 0-1 | the least lap fraction that tail prices (the front straight before the line still pays) |
+| p2 | 1 | 0 / 1 | P2: back out at the braking point without the overlap (follow it, tuck in, re-plan past the apex) |
+| bo | 0 | -30-30 m | m before the braking point at which the overlap is judged (negative: into the braking zone) |
+| boDv | 1.5 | 0-3 m/s | backing out from beside it: a relative lift to its speed minus this (0: the braking limit's step) |
+| p3 | 1 | 0 / 1 | P3: with the overlap, hold the side to the track-out |
+| p4 | 1 | 0 / 1 | P4: nobody near: the racing line, no plan |
+| ret | 40 | 20-80 m | P4: no car within this far ahead (and none beside or MERGE_GAP behind) |
+| retT | 10 | 0-10 s | P4: nor one I reach within ret in this time on its projection (0: off) |
+| p5 | 1 | 0 / 1 | P5: the pick follows the car ahead's own pass through, or takes the side its passer does not hold |
+| h2, tail, h4, h6, r1, r2, r3, gr, ctl, lift, room | 1 | 0 / 1 | C2 / C3 steps (NOTES "C2", "C3"): ending candidates, the tail, the commit margin + pressure headway, the passed car told, R1-R3, the GRIP cost at the grip rate, the controller at that rate, the alongside lift, room for an overlapping passer |
+| grip, h3, h5, fc, vt | 0 | 0 / 1 (grip 0-2) | C2 / C3 steps tried and not kept |
+| roadk | 0.6 | 0.4-1 | the road rule's share of the shift rate (without r3) |
+| phw | 0.3 | 0.2-0.55 s | headway behind a clearly slower car (the pressure position) |
+| hwK | 1 | 0.6-1.4 | the offset driver's racing headway x this |
+| tv | 4 | 2-6 s | R2: the vortex rule's hard window |
+| tailT | 10 | 5-90 s | the speed-ratio tail (C2) |
+| tHard | 2.5 | 1-4 s | T_HARD: the hard window of the projection's clearance / braking rules |
+| clrK | 1 | 0.5-2 | x CLR_W (6 / 4 / 2.5 by aggression): the clearance cost |
+| hystK | 1 | 0.5-2 | x HYST (0.5 / 0.35 / 0.25 s): the margin a new target must beat |
+| minHold | 1 | 0-2 s | MIN_HOLD: a new target is held this long |
+| alongClr | 0.7 | 0.5-1 m | ALONG_CLR: edge-to-edge clearance below which the steep clearance cost starts |
+| laneClr | 0.3 | 0.2-0.5 m | LANE_CLR: edge-to-edge clearance below which a conflict is hard |
+| mergeGap | 3 | 1-6 m | the passer merges back once its rear is this far clear of the passed car's front |
+| damp | 0.02 | 0-0.1 s/m | cost per m of change of the target |
+| revW | 2 | 0.5-4 s | reversing a move before the apex it was made for |
+| coverW | 2 | 0.5-4 s/m | the cover within 3 % |
+| lineW / lineFreeW | 0.006 / 0.04 | x 0.5-4 | s per m off the line per s, racing a car / nobody near on the projection |
+| zoneW | 0.5 | 0.2-1 | the same inside a no-pass window (the Corkscrew) |
+| corrW | 0.05 | 0-0.2 | s per s within 0.3 m of the corridor edge |
+| gripW | 4 | 1-8 | s per s per unit of lateral grip excess |
+| longW | 1.5 | 0.5-3 s | a pass that does not progress |
