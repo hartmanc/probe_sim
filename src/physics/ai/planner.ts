@@ -68,6 +68,11 @@ export const ZONE_W = 0.5;
  *  of the shift, v · rate / Ld (Ld = 3 + 0.25 v), over the grip, per unit of excess (a move is made where the grip allows it:
  *  before the corner, not in it) */
 export const GRIP_W = 4;
+/** m: (C2 H2) a pass candidate holds its offset until my rear is this far clear of the passed car's front, then merges back to
+ *  the line at the shift rate */
+export const MERGE_GAP = 3;
+/** (C2, tools: the screens' A/B) the C2 steps that are switches; the defaults are the kept ones */
+export const knobs = { h2: 0, grip: 0 };
 /** risk hook: s per unit of passRisk (0 today) */
 export const RISK_W = 4;
 
@@ -108,6 +113,9 @@ export class PlanWork {
   ePref = Number.NaN;
   /** a clearly faster car within 25 m behind: its side of me (+1 / -1), 2 straight behind me, 0 none */
   cfSide = 0;
+  /** (C2 H0) the nearest car ahead within 25 m is clearly slower than me: a move out of its band is a pass, not a block of the
+   *  clearly faster car behind me (straight behind me it does not freeze me; beside me, still no move toward it) */
+  cfPassing = false;
   // ---- neighbours (k < nN): positions m ahead of my station now, lateral span edges (half width included), per sample
   nN = 0;
   readonly X = new Float64Array(NB_MAX * S); readonly LO = new Float64Array(NB_MAX * S); readonly HI = new Float64Array(NB_MAX * S);
@@ -162,25 +170,42 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
   let cost = DAMP * Math.abs(dE);
   w.culprit[c] = -1; w.why[c] = 0;
   // no move toward a clearly faster car behind (it is let by: hold the line and the speed)
-  if (mv !== 0 && w.cfSide !== 0 && (w.cfSide === 2 || mv === w.cfSide)) { w.why[c] = 1; return 2 * BIG; }
+  if (mv !== 0 && w.cfSide !== 0 && (w.cfSide === 2 ? !w.cfPassing : mv === w.cfSide)) { w.why[c] = 1; return 2 * BIG; }
   // one move per corner approach
   const rev = mv !== 0 && w.moveOpen && w.moveDir !== 0 && mv === -w.moveDir ? REVERSE_W : 0;
   if (rev) cost += REVERSE_W;
   if (!Number.isNaN(w.ePref)) cost += PREF_W * Math.abs(eStar - w.ePref);
   cost += RISK_W * env.risk(eStar);
   const nN = w.nN, X = w.X, LO = w.LO, HI = w.HI;
-  // never across: a neighbour whose centre lies between where I am and where I go, within the sweep's length
+  // never across: a neighbour whose centre lies between where I am and where I go, within the sweep's length; from one side of
+  // it to the other (C2 H0: a car right ahead of me, its centre within my half width of mine, is not crossed by a move out from
+  // behind it, to either side)
   {
     const sw = Math.abs(eStar - eCur), sweep = w.v * sw / Math.max(0.1, w.rate);
     if (sw > MOVE_EPS) for (let k = 0; k < nN; k++) {
       if (w.nIgnore[k]) continue;
       const eq = w.nE[k], d = X[k * S];
       if ((eq - eCur) * (eStar - eq) <= 0) continue;
+      if (eq - eCur < hw && eCur - eq < hw) continue;
       if (d < sweep + w.front + w.nRear[k] && d > -(sweep + w.rear + w.nFront[k])) { w.culprit[c] = k; w.why[c] = 2; return 2 * BIG; }
     }
   }
   const T = PLAN_N * PLAN_DT;
   let sMe = 0, vMe = w.v, lost = 0, clr = 0, corr = 0, grip = 0, ePrevS = eCur, roadSoft = 0;
+  // (C2 H2) candidates that end: the car being passed (the nearest one not yet behind me, slower than me on the projection);
+  // a target out of its band is a pass of it: held until I am MERGE_GAP clear of it, then back to the line
+  let pk = -1;
+  for (let k = 0; k < nN; k++) {
+    if (w.nIgnore[k] || w.nOff[k]) continue;
+    const x0 = X[k * S];
+    if (x0 <= -(w.rear + w.nFront[k]) || (pk >= 0 && x0 >= X[pk * S])) continue;
+    if (X[k * S + PLAN_N] - x0 < w.v * T) pk = k;
+  }
+  let ends = false;
+  if (pk >= 0) { const o = pk * S; ends = (LO[o] - (eStar + hw) > (eStar - hw) - HI[o] ? LO[o] - (eStar + hw) : (eStar - hw) - HI[o]) >= FOLLOW_CLR; }
+  let eTgt = eStar, eUp = eCur;
+  // (the lateral motion at the last sample, and whether it was away from the line: the car moving toward its old target now)
+  let mvS = w.ePrev > eCur + 1e-9 ? 1 : w.ePrev < eCur - 1e-9 ? -1 : 0, awayS = (w.ePrev < 0 ? -w.ePrev : w.ePrev) > (eCur < 0 ? -eCur : eCur);
   // the path held so far (clamped offsets at the last two samples and the distance between them): its own curvature
   const lo0 = Math.min(0, env.lo(0)), hi0 = Math.max(0, env.hi(0));
   let e1 = eCur === 0 ? 0 : clampC(eCur, lo0, hi0), e2 = e1, d1 = 0;
@@ -196,8 +221,10 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
   }
   for (let m = 1; m <= PLAN_N; m++) {
     const t = m * PLAN_DT;
-    const de = eStar - eCur, r = w.rate * t;
-    const eU = eCur + (de > r ? r : de < -r ? -r : de);
+    if (ends && knobs.h2 && eTgt !== 0 && sMe - X[pk * S + m - 1] > w.rear + w.nFront[pk] + MERGE_GAP) eTgt = 0;
+    const de = eTgt - eUp, r = w.rate * PLAN_DT;
+    const eU = de > r ? eUp + r : de < -r ? eUp - r : eTgt;
+    eUp = eU;
     // my speed over the interval: my profile at my lane offset
     const vR = env.vRef(sMe);
     let vL = vR * (eU === 0 ? 1 : env.factor(eU, sMe));
@@ -235,11 +262,16 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
       for (let k = 0; k < nN; k++) { const r = X[k * S + m] - sN; if (r < LINE_NEAR && r > -LINE_NEAR) { racing = true; break; } }
       corr += (sN >= w.zoneLo && sMe <= w.zoneHi ? ZONE_W : racing ? LINE_W : LINE_FREE_W) * (e < 0 ? -e : e) * PLAN_DT;
     }
-    if (eU !== ePrevS && (eU < 0 ? -eU : eU) > (ePrevS < 0 ? -ePrevS : ePrevS)) {
-      // moving away from the line: the lateral grip the shift asks on top of the line's
-      const k = env.curv(sMe), kk = k < 0 ? -k : k, ld = 3 + 0.25 * vL;
-      const need = vL * vL * kk + vL * w.rate / ld;
-      if (need > w.aLat) grip += GRIP_W * (need / w.aLat - 1) * PLAN_DT;
+    {
+      const away = (eU < 0 ? -eU : eU) > (ePrevS < 0 ? -ePrevS : ePrevS), dirS = eU > ePrevS ? 1 : eU < ePrevS ? -1 : 0;
+      // moving away from the line: the lateral grip the shift asks on top of the line's (C2: only where the lateral motion starts
+      // or stops, knobs.grip 1: a steady lateral rate asks a heading, not a curvature; C1 priced every sample of the move)
+      if (knobs.grip ? dirS !== mvS && (dirS !== 0 ? away : awayS) : eU !== ePrevS && away) {
+        const k = env.curv(sMe), kk = k < 0 ? -k : k, ld = 3 + 0.25 * vL;
+        const need = vL * vL * kk + vL * w.rate / ld;
+        if (need > w.aLat) grip += GRIP_W * (need / w.aLat - 1) * PLAN_DT;
+      }
+      mvS = dirS; awayS = away;
     }
     ePrevS = eU;
     // a car ahead in my band: capped behind it (its speed, my headway); braking onto it within the margin
@@ -294,7 +326,7 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
     if (rel0 <= 0) continue;
     const clear = w.rear + w.nFront[k] + 1;
     if (relN <= -clear || relN > LONG_NEAR) continue;            // past it, or not near it at the end of the horizon
-    const o = k * S + PLAN_N, eEnd = eStar === 0 ? 0 : eStar;
+    const o = k * S + PLAN_N, eEnd = eUp;
     const sep = LO[o] - (eEnd + hw) > (eEnd - hw) - HI[o] ? LO[o] - (eEnd + hw) : (eEnd - hw) - HI[o];
     if (sep < FOLLOW_CLR) continue;                              // still behind it in its band: following, not passing
     const gain = rel0 - relN;

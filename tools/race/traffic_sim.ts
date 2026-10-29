@@ -29,7 +29,7 @@ export interface RunOut {
     situations: number; completed: number; defending: { vsClearlyFaster: number; within3: number; vsSlower: number; none: number }; recoveries: number; mishaps: number;
     contactAt: unknown[]; fourOffAt: unknown[]; yields?: number;
     /** (C2) the wait (positions only) and, with --why, what held the clearly faster car (offset planner plans, by reason) */
-    wait?: { n: number; done: number; median: number; p90: number; ended: Record<string, number>; durations: number[] }; why?: Record<string, number> };
+    wait?: { n: number; done: number; median: number; p90: number; ended: Record<string, number>; durations: number[]; losses?: number[] }; why?: Record<string, number> };
 }
 
 const parseSet = (kv: string[]): Record<string, number | boolean | string> => Object.fromEntries(kv.map((s) => { const [k, v] = s.split('='); return [k, v === 'true' ? true : v === 'false' ? false : Number.isNaN(Number(v)) ? v : Number(v)]; }));   // (a word stays a string: planner=offset)
@@ -47,6 +47,8 @@ async function runOne(): Promise<void> {
     line: pack.line, surface: pack.surface, makeSurface: pack.makeSurface, probeJson: loadProbeJson(), pace: loadPace(track), identity: loadIdentityJson(track),
     pitLane: pack.scenery?.pit_lane ?? null, blendLine: pack.scenery?.blend_line ?? null, collisionWorld: createCollisionWorld(pack.scenery, pack.track),
   }, { laps, seed, playerAi: true, followScale: ai.followScale ?? 1, laneMargin: ai.laneMargin ?? 1, shiftGrip: ai.shiftGrip ?? 0, ...parseSet(sets) });
+  const knobs = argv.flatMap((a, i) => (a === '--knob' ? [argv[i + 1]] : []));
+  if (knobs.length) { const P = await import('../../src/physics/ai/planner'); for (const kv of knobs) { const [k, v] = kv.split('='); (P.knobs as Record<string, number>)[k] = Number(v); } }
   const why: Record<string, number> = {};
   if (argv.includes('--why')) await whyHook(dir, why);
   const m = runSelfplay(dir, pack.makeSurface(), { log: false });
@@ -194,7 +196,7 @@ async function runSet(): Promise<void> {
     const launch = (): void => {
       if (next >= todo.length) return;
       const j = todo[next++];
-      const p = spawn(tsx, [fileURLToPath(import.meta.url), '--track', j.track, '--seed', String(j.seed), '--laps', String(laps), '--json', j.file, ...sets.flatMap((s) => ['--set', s]), ...(argv.includes('--why') ? ['--why'] : [])], { cwd: ROOT, stdio: ['ignore', 'ignore', 'inherit'] });
+      const p = spawn(tsx, [fileURLToPath(import.meta.url), '--track', j.track, '--seed', String(j.seed), '--laps', String(laps), '--json', j.file, ...sets.flatMap((s) => ['--set', s]), ...(argv.includes('--why') ? ['--why'] : []), ...argv.flatMap((a, i) => (a === '--knob' ? ['--knob', argv[i + 1]] : []))], { cwd: ROOT, stdio: ['ignore', 'ignore', 'inherit'] });
       p.on('exit', (code) => {
         if (code !== 0) { rej(new Error(`${j.track} seed ${j.seed} exited ${code}`)); return; }
         done++;
@@ -242,7 +244,7 @@ function report(runs: RunOut[], tracks: string[], laps: number, seeds: string): 
     perOut[t] = { pairs: P.pairs.length, carLaps: P.carLaps, contactsPerCarLap: P.contacts / P.carLaps, fourOffPerCarLap: P.fourOff / P.carLaps, fourOffNonMishapPerCarLap: P.fourOffNM / P.carLaps, passesTotal: P.passes, clearlyFasterCompleted: P.completed / P.situations, defendingVsClearlyFaster: P.vsCF, defendingWithin3: P.within3, seeds: P.seeds, curves: { byD: c.byD, byG: c.byG, lostByD: c.lostByD } };
   }
   // (C2) the wait (positions only) and what held the clearly faster car (--why runs)
-  L.push('', '## The wait (clearly faster car arriving within 25 m behind a running car; positions only)', '', '| track | waits | done | median s | p90 s | ended otherwise |', '|---|---|---|---|---|---|');
+  L.push('', '## The wait (clearly faster car arriving within 25 m behind a running car; positions only)', '', '| track | waits | done | median s | p90 s | time lost per done wait, median / p90 s | ended otherwise |', '|---|---|---|---|---|---|---|');
   const waitOut: Record<string, unknown> = {};
   for (const t of [...tracks, 'pooled']) {
     const rs = runs.filter((r) => (t === 'pooled' || r.track === t) && r.metrics.wait);
@@ -250,9 +252,10 @@ function report(runs: RunOut[], tracks: string[], laps: number, seeds: string): 
     const dur = rs.flatMap((r) => r.metrics.wait!.durations), ended: Record<string, number> = {};
     let nW = 0;
     for (const r of rs) { nW += r.metrics.wait!.n; for (const [k, v] of Object.entries(r.metrics.wait!.ended)) if (k !== 'done') ended[k] = (ended[k] ?? 0) + v; }
-    const med = quantile(dur, 0.5), p90 = quantile(dur, 0.9);
-    waitOut[t] = { n: nW, done: dur.length, median: med, p90, ended };
-    L.push(`| ${t} | ${nW} | ${dur.length} | ${f1(med)} | ${f1(p90)} | ${JSON.stringify(ended)} |`);
+    const med = quantile(dur, 0.5), p90 = quantile(dur, 0.9), ls = rs.flatMap((r) => r.metrics.wait!.losses ?? []);
+    const lm = ls.length ? quantile(ls, 0.5) : NaN, l90 = ls.length ? quantile(ls, 0.9) : NaN;
+    waitOut[t] = { n: nW, done: dur.length, median: med, p90, ended, lossMedian: lm, lossP90: l90 };
+    L.push(`| ${t} | ${nW} | ${dur.length} | ${f1(med)} | ${f1(p90)} | ${f1(lm)} / ${f1(l90)} | ${JSON.stringify(ended)} |`);
   }
   const whyAll: Record<string, number> = {};
   for (const r of runs) for (const [k, v] of Object.entries(r.metrics.why ?? {})) whyAll[k] = (whyAll[k] ?? 0) + v;

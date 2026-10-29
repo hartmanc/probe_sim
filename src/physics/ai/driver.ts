@@ -127,6 +127,8 @@ const PASS_EDGE = 0.5;     // m from the track edge (car side) a pass lane is cl
 /** m ahead in which a car in the racing lane delays the merge back (it was front + 7 m + 0.2 s: merging at 9-14 m/s
  *  closing onto a slower car 20 m ahead rear-ended it; the 1.5 s occupancy projection decides within this range) */
 const MERGE_AHEAD = 60;
+/** m/s: (C2 H1) a car whose lateral drift is below this (and whose target is where it is) holds its line */
+const STILL_VE = 0.3;
 const SHIFT_RATE = 2.2;                    // m/s lateral change of the target offset
 /** Lane changes within the spare lateral grip (per track, `ctl.shiftGrip`, 20 Oct 2026): the shift rate is capped at
  *  shiftGrip x a_spare x Ld / v (pure pursuit turns a shift rate r into ~ r / (v Ld) of path curvature on top of the
@@ -598,7 +600,7 @@ export class AiDriver {
     if (offset) {
       // the offset planner: a plan every PLAN_EVERY s while another car is within its horizon; alone, the racing line
       this.oTimer -= dt; this.oHeld += dt;
-      if (!green || this.offTrack || this.mishap !== null) { this.oStar = 0; this.oYield = -1; this.oMoveDir = 0; }
+      if (!green || this.offTrack || this.mishap !== null) { this.oStar = 0; this.oYield = -1; this.oMoveDir = 0; tr.oPass[i] = 0; }
       else if (this.oTimer <= 0) { this.oTimer += O_EVERY; if (this.oTimer < 0) this.oTimer = 0; this.planStep(v, eMe, pf, headway); }
       shiftWant = this.oStar;
       if (this.oYield >= 0) {
@@ -1140,7 +1142,7 @@ export class AiDriver {
       if (cf < 0 && !tr.off[q]) cf = q;
       B[nb] = q; BD[nb++] = d;
     }
-    if (na + nb === 0) { this.oStar = 0; this.oYield = -1; this.oMoveDir = 0; return; }
+    if (na + nb === 0) { this.oStar = 0; this.oYield = -1; this.oMoveDir = 0; tr.oPass[i] = 0; return; }
     // merge by distance (ties: the lower car index)
     let a = 0, b = 0, nN = 0;
     const S = PLAN_N + 1;
@@ -1149,7 +1151,11 @@ export class AiDriver {
       const q = takeA ? A[a] : B[b], rel0 = takeA ? AD[a++] : -BD[b++];
       const k = nN++;
       w.nIdx[k] = q; w.nFront[k] = tr.front[q]; w.nRear[k] = tr.rear[q]; w.nE[k] = tr.e[q]; w.nOff[k] = tr.off[q];
-      const hq = tr.hw[q], ext = hq + (tr.off[q] ? 0.8 : 0), sLo = this.spanLo(q), sHi = this.spanHi(q);
+      // (C2 H1, predictability: the passer commits because the car ahead holds its line) a car on its line and not moving (its
+      // target where it is, no lateral drift, not off, not itself passing) is projected as its line only: its half width, no
+      // target span, no drift widening; a car moving, off or passing keeps the widened band
+      const still = !tr.off[q] && !tr.oPass[q] && tr.passing[q] < 0 && Math.abs(tr.eT[q] - tr.e[q]) < MOVE_EPS && Math.abs(tr.ve[q]) < STILL_VE;
+      const hq = tr.hw[q], ext = hq + (tr.off[q] ? 0.8 : 0), sLo = still ? tr.e[q] : this.spanLo(q), sHi = still ? tr.e[q] : this.spanHi(q);
       // speed: its own profile, scaled by how held up it is now (planLane); off or without a profile: its speed now
       const vq0 = Math.max(0, tr.v[q]), pq = tr.profile[q], useP = pq !== null && !tr.off[q];
       const ratio = useP ? Math.min(1, vq0 / Math.max(1, line.at(pq!, tr.s[q]))) : 1;
@@ -1177,6 +1183,7 @@ export class AiDriver {
     w.ePref = this.defendSide !== 0 ? this.defendSide * (this.ctl.closeRacing ? tr.laneW : DEFEND[this.params.aggression]) : Number.NaN;
     // a clearly faster car (by its pace hint: the player's is his live estimate) within 25 m behind: hold, never toward it
     w.cfSide = 0;
+    w.cfPassing = na > 0 && AD[0] < PLAN_BEHIND && !tr.off[A[0]] && tr.pace[i] < CLEARLY_FASTER * tr.pace[A[0]];
     if (cf >= 0 && tr.pace[cf] < CLEARLY_FASTER * tr.pace[i]) w.cfSide = Math.abs(tr.e[cf] - eMe) < hwI + tr.hw[cf] ? 2 : tr.e[cf] > eMe ? 1 : -1;
     // the no-pass window (Laguna's Corkscrew: 120 m before its braking point to 90 m past the apex)
     w.zoneLo = Number.NaN; w.zoneHi = Number.NaN;
@@ -1202,6 +1209,7 @@ export class AiDriver {
       for (let k = 0; k < cs.length; k++) { const d = this.ahead(s, cs[k].apex); if (d > 0 && d < best) { best = d; this.oMoveApex = k; } }
     } else if (!w.moveOpen) this.oMoveDir = 0;
     this.oStar = e;
+    tr.oPass[i] = Math.abs(e) > MOVE_EPS && na > 0 && AD[0] < 30 ? 1 : 0;
   }
   private readonly nbA = new Int32Array(NB_MAX); private readonly nbB = new Int32Array(NB_MAX);
   private readonly nbAD = new Float64Array(NB_MAX); private readonly nbBD = new Float64Array(NB_MAX);

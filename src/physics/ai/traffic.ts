@@ -30,6 +30,8 @@ export class Traffic {
   readonly e: Float64Array; readonly eT: Float64Array;
   /** low-passed rate of e, m/s (a car drifting off its target, e.g. sliding wide, shows it here) */
   readonly ve: Float64Array;
+  /** (C2, the offset planner) 1: this car holds an offset off the racing line with a car within 30 m ahead (a pass in hand) */
+  readonly oPass: Uint8Array;
   /** lane spacing, m (>= widest car + 0.6 m; the director sets it from the field) */
   laneW = 2.6;
   /** each AI car's target speed profile per station (null for a human player): per-corner speed comparisons */
@@ -43,6 +45,7 @@ export class Traffic {
     this.front = new Float64Array(n); this.rear = new Float64Array(n); this.hw = new Float64Array(n);
     this.away = new Uint8Array(n); this.off = new Uint8Array(n); this.pace = new Float64Array(n);
     this.e = new Float64Array(n); this.eT = new Float64Array(n); this.ve = new Float64Array(n);
+    this.oPass = new Uint8Array(n);
     this.passing = new Int32Array(n).fill(-1); this.vlat = new Float64Array(n); this.profile = new Array(n).fill(null);
     this.order = new Int32Array(n); this.rank = new Int32Array(n);
     for (let i = 0; i < n; i++) this.order[i] = i;
