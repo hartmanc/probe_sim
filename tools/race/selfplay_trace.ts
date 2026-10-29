@@ -1,7 +1,7 @@
 // Self-play event traces: runs one seed exactly as selfplay.ts does, records every car every 0.1 s, and prints the
 // 3 s before each four-off / contact (lane offset e, shift, target, edges, speed vs profile, limiter, pass phase).
 //   npx tsx tools/race/selfplay_trace.ts --track <id> --seed N [--near s0-s1] [--kind four|contact] [--max 20] [--pre 3]
-//   [--summary: one classified line per event]  [--car NUM --from t0 --to t1: pedals / steering / slips of one car]
+//   [--planner lanes|offset] [--summary: one classified line per event]  [--car NUM --from t0 --to t1: pedals / steering / slips of one car]
 //   [--loss: where the time goes (traffic round, 28 Oct 2026): every AI-driven car's time over its own profile (the solo lap's
 //    target speed) per 0.1 s, split free / following / passing / merging / off, by pace quartile and by corner phase]
 import { createCollisionWorld } from '../../src/physics/index';
@@ -28,7 +28,8 @@ const dir = new RaceDirector({
   pitLane: pack.scenery?.pit_lane ?? null, collisionWorld: createCollisionWorld(pack.scenery, pack.track),
 }, { laps, seed, playerAi: true, followScale,
   laneMargin: argv.includes('--lane-margin') ? Number(arg('--lane-margin', '1')) : (TRACKS[track]?.ai?.laneMargin ?? 1),
-  shiftGrip: argv.includes('--shift-grip') ? Number(arg('--shift-grip', '0')) : (TRACKS[track]?.ai?.shiftGrip ?? 0) });
+  shiftGrip: argv.includes('--shift-grip') ? Number(arg('--shift-grip', '0')) : (TRACKS[track]?.ai?.shiftGrip ?? 0),
+  planner: arg('--planner', 'lanes') === 'offset' ? 'offset' : 'lanes' });
 const line = dir.line, tr = dir.traffic, cars = dir.cars, n = cars.length;
 type Rec = { g: number; t: number; s: number; e: number; sh: number; eT: number; v: number; vp: number; lim: string; ph: number; pt: number; on: number; hL: number; hR: number; off: number; yaw: number; thr: number; brk: number; slR: number; lead: number };
 const hist: Rec[][] = cars.map(() => []);

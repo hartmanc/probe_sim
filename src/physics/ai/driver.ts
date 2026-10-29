@@ -22,6 +22,7 @@ import type { RaceLine } from './line';
 import { accAt, bankedG, coastDecel, loadFactor, type CarPerf } from './field';
 import type { Traffic } from './traffic';
 import { Rng } from './rng';
+import { PlanWork, plan as planOffset, FOLLOW_CLR as FOLLOW_CLR_O, PLAN_EVERY as O_EVERY, PLAN_AHEAD, PLAN_BEHIND, NB_MAX, PLAN_DT, PLAN_N, BIG, MOVE_EPS, MIN_HOLD, type Planner, type PlanEnv } from './planner';
 
 const G = 9.81;
 
@@ -224,12 +225,40 @@ export class AiDriver {
   sliding = false;
   /** pure-pursuit path curvature commanded on the last tick, 1/m */
   private kCmd = 0;
+  // ---- C1, the offset planner (RaceConfig.planner 'offset'; planner.ts). The lane model's pass machinery is not used then.
+  /** which planner this driver races with (selected at construction; the lane model is the default) */
+  readonly planner: Planner;
+  /** the offset planner's target offset e* (m from the racing line, + left; 0 = the line) */
+  oStar = 0;
+  /** (tools) the offset planner's last cost and plans made */
+  oCost = 0; oPlans = 0; oMoves = 0;
+  private oTimer = 0; private oMoveDir = 0; private oMoveApex = -1; private oHeld = 0;
+  /** a car the plan could not keep clear of (every candidate broke a rule): I give way to it until the next plan (-1 none) */
+  private oYield = -1;
+  private readonly pw: PlanWork | null = null;
+  private readonly penv: PlanEnv | null = null;
+  private pS = 0; private pPf = 1; private pHw = 0;
   /** the vehicle's steering shaping (spec.steering): full lock at speed v = max(minSteer, maxSteer / (1 + (v/shapeV)²)), rad */
   private readonly lockMax: number; private readonly lockMin: number; private readonly lockV: number;
 
-  constructor(vehicle: Vehicle, line: RaceLine, perf: CarPerf, spec: CarSpec, profile: Float64Array, params: AiDriverParams, idx: number, traffic: Traffic) {
+  constructor(vehicle: Vehicle, line: RaceLine, perf: CarPerf, spec: CarSpec, profile: Float64Array, params: AiDriverParams, idx: number, traffic: Traffic, planner: Planner = 'lanes') {
     this.vehicle = vehicle; this.line = line; this.perf = perf; this.profile = driverProfile(line, perf, profile);
     this.params = params; this.idx = idx; this.traffic = traffic;
+    this.planner = planner;
+    if (planner === 'offset') {
+      this.pw = new PlanWork();
+      // my side of the plan (s = m ahead of my station at the plan): race-line speed, lane factor, corridor (PASS_EDGE from
+      // the edges as a pass lane is held, the racing line always in it)
+      this.penv = {
+        vRef: (x: number) => this.profAt(this.pS + x) * this.pPf,
+        factor: (e: number, x: number) => laneFactor(this.line, e, this.pS + x, true),
+        lo: (x: number) => this.roadLo(this.pS + x, this.pHw) + PASS_EDGE - 0.15,
+        hi: (x: number) => this.roadHi(this.pS + x, this.pHw) - PASS_EDGE + 0.15,
+        curv: (x: number) => this.line.at(this.line.curv, this.pS + x),
+        risk: (e: number) => this.passRisk(-1, e, e > 0 ? 1 : -1),
+      };
+    }
+    this.oTimer = (idx % 8) * O_EVERY / 8;
     this.rng = new Rng(params.seed);
     const np = NO_PASS_CORNERS[line.trackId] ?? [];
     this.corkscrew = line.corners.findIndex((c) => np.includes(c.turn));
@@ -245,6 +274,7 @@ export class AiDriver {
     this.coverCorner = -1;
     this.mishap = null; this.mPhase = 0; this.mT = 0; this.mCorner = -1; this.nextCorner = -1; this.onTimer = 0; this.offTimer = 0;
     this.stuckTime = 0; this.needsRecovery = false; this.hint = -1; this.kCmd = 0; this.passCool = 0; this.traffic.passing[this.idx] = -1;
+    this.oStar = 0; this.oTimer = (this.idx % 8) * O_EVERY / 8; this.oMoveDir = 0; this.oMoveApex = -1; this.oYield = -1;
   }
 
   private profAt(s: number): number { return this.line.at(this.profile, s); }
@@ -359,7 +389,9 @@ export class AiDriver {
     const sp = s + v * 0.12;
     // off the racing line: slower on the inside of a corner by its tighter radius (laneFactor); a little slower anywhere
     // when not in a pass lane (in one only in corners)
-    const offline = this.shift === 0 ? 1 : laneFactor(line, this.shift, sp, this.passPhase !== 0);
+    const offset = this.pw !== null;
+    // (the offset planner: an offset it holds is a lane of its own, as a pass lane)
+    const offline = this.shift === 0 ? 1 : laneFactor(line, this.shift, sp, offset ? this.oStar !== 0 : this.passPhase !== 0);
     const vProf = this.profAt(sp) * pf * offline;
     let vCmd = vProf;
     this.limiter = 'profile';
@@ -373,7 +405,7 @@ export class AiDriver {
     // (in a pass lane: the lane's own curvature, not the transient of a lane change, plus a small allowance; merging back
     // onto the line the full commanded curvature: corner-exit merges carried cars off at the Corkscrew)
     let kG = Math.abs(this.kCmd);
-    if (this.passPhase === 1 || this.passPhase === 2) { const kl = line.at(line.curv, sp); kG = Math.min(kG, Math.abs(kl) / Math.max(0.5, 1 - kl * this.shift) + 0.004); }
+    if (offset ? this.oStar !== 0 : this.passPhase === 1 || this.passPhase === 2) { const kl = line.at(line.curv, sp); kG = Math.min(kG, Math.abs(kl) / Math.max(0.5, 1 - kl * this.shift) + 0.004); }
     if (kG > 2e-3) {
       const vk = Math.sqrt(GRIP_LIMIT * bankedG(perf.alat, line, Math.min(line.N - 1, Math.floor(line.wrap(sp) / line.spacing)), v) * G / kG);
       if (vk < vCmd) { vCmd = Math.max(0.95 * v, vk); this.limiter = 'grip'; aref = Math.min(aref, 0); }
@@ -392,8 +424,8 @@ export class AiDriver {
     }
     // in a pass lane: the speed its own path allows (the lane clamped to the road, so where the road squeezes it the
     // car runs along the edge, tighter than the lane), looked ahead with a braking envelope
-    if (this.passPhase !== 0) {
-      const eL = this.passPhase === 3 ? 0 : this.passE;
+    if (offset ? this.oStar !== 0 : this.passPhase !== 0) {
+      const eL = offset ? this.oStar : this.passPhase === 3 ? 0 : this.passE;
       const b = 0.75 * BRAKE_MARGIN * perf.abrake * G, aG = ctl.laneMargin * CORNER_MARGIN * perf.alat * G;
       let ePrev = this.laneAt(s - 8, eL, hwI), e0 = this.laneAt(s, eL, hwI);
       for (let d = 0; d <= 48; d += 8) {
@@ -462,6 +494,9 @@ export class AiDriver {
       const sep = Math.max(jLo - mHi, mLo - jHi);
       const needF = hwI + tr.hw[j] + FOLLOW_CLR + this.yawClr(sj);
       if (sep >= needF) {
+        // (the offset planner: a car my body already overlaps along the track and clear of me laterally is beside me, not
+        // ahead: overlap holds, the corridor and the plan keep us apart)
+        if (offset && gap < 0) continue;
         // and where I would catch it (within 3 s), both lanes clamped to the road there: a lane the road squeezes
         // into mine is my lane by then
         const tc = Math.min(3, Math.max(0, gap) / Math.max(0.5, v - tr.v[j]));
@@ -497,7 +532,7 @@ export class AiDriver {
     // has nobody close ahead holds the pace speed itself
     if (ctl.minGap > 0 && (leadJ < 0 || leadGap > 60) && ctl.speedCap - 3 < vCmd) { vCmd = ctl.speedCap - 3; this.limiter = 'cap'; }
     // ---- start a pass on the car I am following in my lane: clearly faster, stuck behind a slower car, or it is off
-    if (green && (this.passPhase === 0 || this.passPhase === 2) && leadJ >= 0 && !this.offTrack && this.mishap === null) {
+    if (!offset && green && (this.passPhase === 0 || this.passPhase === 2) && leadJ >= 0 && !this.offTrack && this.mishap === null) {
       const j = leadJ, vj = Math.max(0, tr.v[j]);
       const myPot = this.profAt(tr.s[j]) * pf;
       const slower = tr.off[j] === 1 || myPot > PASS_ADV[this.params.aggression] * Math.max(1, vj) || tr.pace[j] > tr.pace[i] * 1.004;   // (my own hint, as the others read me: a capped car's achievable lap)
@@ -557,7 +592,20 @@ export class AiDriver {
     const lineLook = line.at(line.off, sLook);
     if (this.passPhase === 1 || this.passPhase === 2) shiftWant = this.passE;
     else if (this.passPhase === 3) shiftWant = 0;
-    else if (this.defendSide !== 0) shiftWant = this.defendSide * (ctl.closeRacing ? tr.laneW : DEFEND[this.params.aggression]);
+    else if (this.defendSide !== 0 && !offset) shiftWant = this.defendSide * (ctl.closeRacing ? tr.laneW : DEFEND[this.params.aggression]);
+    if (offset) {
+      // the offset planner: a plan every PLAN_EVERY s while another car is within its horizon; alone, the racing line
+      this.oTimer -= dt; this.oHeld += dt;
+      if (!green || this.offTrack || this.mishap !== null) { this.oStar = 0; this.oYield = -1; this.oMoveDir = 0; }
+      else if (this.oTimer <= 0) { this.oTimer += O_EVERY; if (this.oTimer < 0) this.oTimer = 0; this.planStep(v, eMe, pf, headway); }
+      shiftWant = this.oStar;
+      if (this.oYield >= 0) {
+        // every candidate broke a rule against this car, right in front of me or beside me: the car further back gives way
+        // (relative to it)
+        const j = this.oYield, dj = tr.ds(i, j);
+        if (dj > 0 && dj < myFront + tr.rear[j] + 10 && tr.v[j] > 4) { const vy = Math.max(3, tr.v[j] - 1.5); if (vy < vCmd) { vCmd = vy; this.limiter = 'yield'; aref = Math.min(aref, -0.3); } }
+      }
+    }
     if (!Number.isNaN(mishapLat)) shiftWant = mishapLat - lineLook;
     if (this.offTrack) {
       // rejoin: come back just inside the edge, the line ramps back in afterwards; wait at / beyond the edge until
@@ -610,13 +658,15 @@ export class AiDriver {
           if (Math.abs(dl) < need) {
             push += side * (need - Math.abs(dl));
             if (tr.passing[j] === i && d < 0 && d > -PINCH_OK * (myRear + tr.front[j])) passerSqueeze = true;
+            // (the offset planner: a car alongside behind me and converging, in a corner only; no lift on a straight)
+            if (offset && d < 0 && d > -(myRear + tr.front[j]) && Math.abs(line.at(line.curv, s)) * 170 > 1) passerSqueeze = true;
           }
         }
       }
     }
     // being passed: the lane of a car passing me (within 25 m behind, laterally clear of me) is reserved; I never drift
     // into it, also not while making room for another car passing me on the other side
-    for (let k = 1; k < n; k++) {
+    if (!offset) for (let k = 1; k < n; k++) {
       const j = order[(tr.rank[i] - k + n) % n];
       const d = -tr.ds(i, j);
       if (d < 0 || d > 25) break;
@@ -632,7 +682,8 @@ export class AiDriver {
     // line's sweep across the road between them, so in a corner a car one lane over read as "straight ahead" and was
     // left to following, which saw it in another lane: neither held the car back (24 Oct 2026, Sonoma T9A). Sampled
     // every 5 m: an apex shuts a lane over 10-15 m only, which 10 m steps could step over.)
-    for (let k = 1; k < n; k++) {
+    // (the offset planner: none; its clearance over the horizon, with the road clamping every car, and the yield instead)
+    if (!offset) for (let k = 1; k < n; k++) {
       const j = order[(tr.rank[i] + k) % n];
       const d = tr.ds(i, j);
       if (d < 0 || d > myFront + tr.rear[j] + 4 + 1.5 * Math.max(0, v - tr.v[j])) break;
@@ -659,7 +710,7 @@ export class AiDriver {
     // rate-limited shift (faster when pushing away from contact)
     {
       let tgt = shiftWant + push;
-      const mg = this.passPhase !== 0 ? PASS_EDGE : 0.15;   // a pass lane keeps a little more room to the edge
+      const mg = (offset ? this.oStar !== 0 : this.passPhase !== 0) ? PASS_EDGE : 0.15;   // a pass lane keeps a little more room to the edge
       const lo = -line.at(line.halfR, sLook) + hwI + mg - lineLook;
       let hi = line.at(line.halfL, sLook) - hwI - mg - lineLook;
       // a cone cap ahead (RaceLine.capL: a hard lane boundary) is approached with bounded lateral acceleration: the shift
@@ -689,14 +740,15 @@ export class AiDriver {
       const behindHi = corHi < Infinity && corHiD > 0 && corHiV > 4, behindLo = corLo > -Infinity && corLoD > 0 && corLoV > 4;
       let giveWay = squeezed && (behindHi || behindLo);
       const latP = lat + Math.max(-3, Math.min(3, tr.vlat[i])) * 0.4; // where I will be in 0.4 s
-      if (behindHi && Math.max(lat, latP) > corHi + GIVE_CLR) giveWay = true;
-      if (behindLo && Math.min(lat, latP) < corLo - GIVE_CLR) giveWay = true;
+      // (the offset planner: only when squeezed; a car alongside holds its side and the exit decides)
+      if (!offset && behindHi && Math.max(lat, latP) > corHi + GIVE_CLR) giveWay = true;
+      if (!offset && behindLo && Math.min(lat, latP) < corLo - GIVE_CLR) giveWay = true;
       const vGive = Math.max(3, (behindHi ? corHiV : corLoV) - 1.5); // relative to it: never a runaway lift
       if (giveWay && vGive < vCmd) { vCmd = vGive; this.limiter = 'alongside'; aref = Math.min(aref, -0.3); }
 
       this.shiftTarget = tgt;
       tr.eT[i] = tgt;
-      let rate = (push !== 0 || !Number.isNaN(mishapLat) ? 2 * SHIFT_RATE : this.offTrack ? 0.8 * SHIFT_RATE : this.passPhase !== 0 ? PASS_SHIFT * SHIFT_RATE : SHIFT_RATE) * dt;
+      let rate = (push !== 0 || !Number.isNaN(mishapLat) ? 2 * SHIFT_RATE : this.offTrack ? 0.8 * SHIFT_RATE : (offset ? this.oStar !== 0 : this.passPhase !== 0) ? PASS_SHIFT * SHIFT_RATE : SHIFT_RATE) * dt;
       if (ctl.shiftGrip > 0 && Number.isNaN(mishapLat) && !this.offTrack) {
         // within the spare lateral grip at the look point (a mishap or a rejoin keeps its own rate)
         const kl = Math.abs(line.at(line.curv, sLook)), aSp = Math.max(0.25 * perf.alat * G, perf.alat * G - v * v * kl);
@@ -1058,6 +1110,98 @@ export class AiDriver {
    * pass gains). 0 today: the pass is held to the same corridor, alongside and pinch margins as before.
    */
   private passRisk(_j: number, _e: number, _side: number): number { return 0; }
+
+  /**
+   * C1, the offset planner (planner.ts): the neighbours (the NB_MAX nearest within PLAN_AHEAD m ahead and PLAN_BEHIND m
+   * behind, by distance, ties by car index), each projected over the horizon as the lane model projects an occupant
+   * (laneBlock: its span e / eT / drift clamped to the road where it will be, ± its half width, + 0.8 m when off; planLane:
+   * its speed from its own profile scaled by how held up it is now; a car without a profile, the human player, at its speed
+   * now), then one plan. Alone (no neighbour): the racing line, nothing evaluated.
+   */
+  private planStep(v: number, eMe: number, pf: number, headway: number): void {
+    const tr = this.traffic, i = this.idx, n = tr.n, line = this.line, w = this.pw!, s = tr.s[i], hwI = tr.hw[i];
+    const A = this.nbA, B = this.nbB, AD = this.nbAD, BD = this.nbBD;
+    let na = 0, nb = 0;
+    for (let k = 1; k < n && na < NB_MAX; k++) {
+      const q = tr.order[(tr.rank[i] + k) % n];
+      const d = tr.ds(i, q);
+      if (d < 0 || d > PLAN_AHEAD) break;
+      if (tr.away[q]) continue;
+      A[na] = q; AD[na++] = d;
+    }
+    let cf = -1;
+    for (let k = 1; k < n && nb < NB_MAX; k++) {
+      const q = tr.order[(tr.rank[i] - k + n) % n];
+      const d = -tr.ds(i, q);
+      if (d < 0 || d > PLAN_BEHIND) break;
+      if (tr.away[q]) continue;
+      if (cf < 0 && !tr.off[q]) cf = q;
+      B[nb] = q; BD[nb++] = d;
+    }
+    if (na + nb === 0) { this.oStar = 0; this.oYield = -1; this.oMoveDir = 0; return; }
+    // merge by distance (ties: the lower car index)
+    let a = 0, b = 0, nN = 0;
+    const S = PLAN_N + 1;
+    while (nN < NB_MAX && (a < na || b < nb)) {
+      const takeA = b >= nb || (a < na && (AD[a] < BD[b] || (AD[a] === BD[b] && A[a] < B[b])));
+      const q = takeA ? A[a] : B[b], rel0 = takeA ? AD[a++] : -BD[b++];
+      const k = nN++;
+      w.nIdx[k] = q; w.nFront[k] = tr.front[q]; w.nRear[k] = tr.rear[q]; w.nE[k] = tr.e[q]; w.nOff[k] = tr.off[q];
+      const hq = tr.hw[q], ext = hq + (tr.off[q] ? 0.8 : 0), sLo = this.spanLo(q), sHi = this.spanHi(q);
+      // speed: its own profile, scaled by how held up it is now (planLane); off or without a profile: its speed now
+      const vq0 = Math.max(0, tr.v[q]), pq = tr.profile[q], useP = pq !== null && !tr.off[q];
+      const ratio = useP ? Math.min(1, vq0 / Math.max(1, line.at(pq!, tr.s[q]))) : 1;
+      let x = rel0, o = k * S;
+      for (let m = 0; m <= PLAN_N; m++, o++) {
+        if (m > 0) x += (useP ? line.at(pq!, s + x) * ratio : vq0) * PLAN_DT;
+        const sx = s + x;
+        const rLo = this.roadLo(sx, hq), rHi = this.roadHi(sx, hq);
+        w.X[o] = x;
+        w.LO[o] = Math.max(rLo, Math.min(rHi, sLo)) - ext;
+        w.HI[o] = Math.max(rLo, Math.min(rHi, sHi)) + ext;
+      }
+      // lateral now: following me in my band (its job), or alongside (it owns its side)
+      const o0 = k * S, sep = Math.max(w.LO[o0] - (eMe + hwI), (eMe - hwI) - w.HI[o0]);
+      w.nIgnore[k] = rel0 < 0 && sep < FOLLOW_CLR_O ? 1 : 0;
+      const over = rel0 < tr.front[i] + tr.rear[q] && rel0 > -(tr.rear[i] + tr.front[q]);
+      w.nOwn[k] = over && sep >= 0 ? (tr.e[q] > eMe ? 1 : -1) : 0;
+    }
+    w.nN = nN;
+    // me
+    this.pS = s; this.pPf = pf; this.pHw = hwI;
+    w.v = v; w.eCur = this.shift; w.eMeas = eMe; w.ePrev = this.oStar; w.rate = PASS_SHIFT * SHIFT_RATE;
+    w.hw = hwI; w.front = tr.front[i]; w.rear = tr.rear[i]; w.headway = headway; w.aggr = this.params.aggression;
+    w.bMax = 0.85 * this.perf.abrake * G; w.aLat = this.perf.alat * G;
+    w.ePref = this.defendSide !== 0 ? this.defendSide * (this.ctl.closeRacing ? tr.laneW : DEFEND[this.params.aggression]) : Number.NaN;
+    // a clearly faster car (by its pace hint: the player's is his live estimate) within 25 m behind: hold, never toward it
+    w.cfSide = 0;
+    if (cf >= 0 && tr.pace[cf] < CLEARLY_FASTER * tr.pace[i]) w.cfSide = Math.abs(tr.e[cf] - eMe) < hwI + tr.hw[cf] ? 2 : tr.e[cf] > eMe ? 1 : -1;
+    // the no-pass window (Laguna's Corkscrew: 120 m before its braking point to 90 m past the apex)
+    w.zoneLo = Number.NaN; w.zoneHi = Number.NaN;
+    if (this.corkscrew >= 0) {
+      const C = line.corners[this.corkscrew], hiZ = this.ahead(s, C.apex) + 90;
+      if (hiZ >= 0) { w.zoneLo = this.ahead(s, C.brake) - 120; w.zoneHi = hiZ; }
+    }
+    const cs = line.corners;
+    w.moveDir = this.oMoveDir; w.locked = this.oHeld < MIN_HOLD;
+    // (one move per corner approach while racing a car: one within 20 m of me, ahead or behind)
+    let near = false;
+    for (let k = 0; k < nN; k++) { const r = w.X[k * S]; if (!w.nIgnore[k] && r < 20 + tr.front[i] && r > -(20 + tr.rear[i])) { near = true; break; } }
+    w.moveOpen = near && this.oMoveApex >= 0 && this.ahead(s, cs[this.oMoveApex].apex) > 0;
+    const prev = this.oStar;
+    const e = planOffset(w, this.penv!);
+    this.oCost = w.bestCost; this.oPlans = w.evaluated;
+    this.oYield = w.bestCost >= BIG && w.bestCulprit >= 0 ? w.nIdx[w.bestCulprit] : -1;
+    if (Math.abs(e - prev) > MOVE_EPS) {
+      // a new move: its direction, held to the apex of the next corner
+      this.oMoveDir = e > prev ? 1 : -1; this.oMoveApex = -1; this.oMoves++; this.oHeld = 0;
+      let best = Infinity;
+      for (let k = 0; k < cs.length; k++) { const d = this.ahead(s, cs[k].apex); if (d > 0 && d < best) { best = d; this.oMoveApex = k; } }
+    } else if (!w.moveOpen) this.oMoveDir = 0;
+    this.oStar = e;
+  }
+  private readonly nbA = new Int32Array(NB_MAX); private readonly nbB = new Int32Array(NB_MAX);
+  private readonly nbAD = new Float64Array(NB_MAX); private readonly nbBD = new Float64Array(NB_MAX);
 
   /** A pass in hand: progress, done (next car of a train, else back to the racing line), abort, the merge. */
   private passStep(dt: number, v: number, eMe: number, green: boolean, pf: number): void {

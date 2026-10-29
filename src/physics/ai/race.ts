@@ -15,6 +15,7 @@ import { loadCarSpec, type CarSpec } from '../spec';
 import { CarCollider, type CarBody, type CarContactEvent } from '../cars';
 import type { RaceLine } from './line';
 import { AiDriver, type MishapKind } from './driver';
+import type { Planner } from './planner';
 import { AI_VERSION, resolveCarType, aiCarJson, buildSpeedProfile, measureCarPerf, parseIdentity, drawPace, paceHint, strengthPace, fieldKey, modelKey, type CarPerf, type IdentityCar, type PaceCar, type PaceJson } from './field';
 import { Traffic } from './traffic';
 import { Rng, hashSeed } from './rng';
@@ -127,6 +128,12 @@ export interface RaceConfig {
    * (default): the light DEFEND cover of before. Default off: it failed the contact gate (NOTES "Traffic round", E).
    */
   closeRacing: boolean;
+  /**
+   * The AI's traffic planner (C1, 28 Oct 2026; the app's ?planner=lanes|offset): 'lanes' (default; the lane model, NOTES
+   * "Racecraft (the lane model)") or 'offset' (planner.ts: a continuous lateral offset chosen every 0.2 s over a 10 s horizon
+   * against the other cars' projections; NOTES "C1: the offset planner"). Selected when each driver is built.
+   */
+  planner: Planner;
 }
 
 /** One completed green lap of the human player and what interrupted it (RaceDirector.playerPace). */
@@ -173,6 +180,7 @@ export const DEFAULT_RACE_CONFIG: RaceConfig = {
   strength: 1,
   playerRefLap: Number.NaN,
   closeRacing: false,
+  planner: 'lanes',
 };
 
 export interface RaceInputs {
@@ -540,7 +548,7 @@ export class RaceDirector {
     return new AiDriver(car.vehicle, this.line, prep.perf, car.spec, prep.profile, {
       number: car.number, scale: car.paceScale, targetLap: car.paceTarget, sigma: car.paceSigma,
       aggression: (car.pace?.aggression ?? 1) as 0 | 1 | 2, seed: 0,
-    }, car.idx, this.traffic);
+    }, car.idx, this.traffic, this.config.planner === 'offset' ? 'offset' : 'lanes');
   }
 
   /**

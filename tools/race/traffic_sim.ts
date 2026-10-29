@@ -30,7 +30,7 @@ export interface RunOut {
     contactAt: unknown[]; fourOffAt: unknown[]; yields?: number };
 }
 
-const parseSet = (kv: string[]): Record<string, number | boolean> => Object.fromEntries(kv.map((s) => { const [k, v] = s.split('='); return [k, v === 'true' ? true : v === 'false' ? false : Number(v)]; }));
+const parseSet = (kv: string[]): Record<string, number | boolean | string> => Object.fromEntries(kv.map((s) => { const [k, v] = s.split('='); return [k, v === 'true' ? true : v === 'false' ? false : Number.isNaN(Number(v)) ? v : Number(v)]; }));   // (a word stays a string: planner=offset)
 
 async function runOne(): Promise<void> {
   const { createCollisionWorld } = await import('../../src/physics/index');

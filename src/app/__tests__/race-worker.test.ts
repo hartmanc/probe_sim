@@ -21,7 +21,7 @@ function mainThreadRace(steps: number, o: Partial<HostBuild> = {}) {
   const strengthPct = o.strengthPct ?? 100;
   const sim = new HotlapSim(lagunaAssets(), { record: false, autoShift: true });
   sim.setRef(null); sim.reset();
-  const dir = buildDirector(sim, { ...field, models: [], missing: [] } as unknown as FieldData, { seed: B.seed, laps: B.laps, trackId: 'laguna_seca', playerAi: true, strengthPct, ...(o.lod ? { lod: true } : {}) });
+  const dir = buildDirector(sim, { ...field, models: [], missing: [] } as unknown as FieldData, { seed: B.seed, laps: B.laps, trackId: 'laguna_seca', playerAi: true, strengthPct, ...(o.lod ? { lod: true } : {}), ...(o.planner ? { planner: o.planner } : {}) });
   sim.stepVehicle = (di) => dir.step(STEP, di as never);
   for (let i = 0; i < steps; i++) sim.step(() => ({ steer: 0, throttle: 0, brake: 0 }));
   return { sim, dir };
@@ -45,16 +45,19 @@ describe('state codec', () => {
 });
 
 describe('race host', () => {
-  it.each([100, 105])('on a fake clock it steps exactly the main-thread race (same bits, same contacts) and caps a stall at 50 ms, AI strength %i %%', (strengthPct) => {
+  it.each([[100, 'lanes'], [105, 'lanes'], [100, 'offset']] as const)('on a fake clock it steps exactly the main-thread race (same bits, same contacts) and caps a stall at 50 ms, AI strength %i %%, planner %s', (strengthPct, planner) => {
     const host = new RaceSimHost();
     host.init({ assets: lagunaAssets(), field, trackId: 'laguna_seca' });
-    host.build({ ...B, strengthPct }, 0);
+    host.build({ ...B, strengthPct, planner }, 0);
+    // the switch reaches the worker's director and every AI driver (C1: ?planner=offset)
+    expect(host.dir!.config.planner).toBe(planner);
+    for (const c of host.dir!.cars) if (c.driver) expect(c.driver.planner).toBe(planner);
     let t = 0;
     for (let k = 0; k < 120; k++) { t += 25; host.tick(t); }       // 3 s in 25 ms frames: 3000 steps
     expect(Math.abs(host.sim!.stepIndex - 3000)).toBeLessThanOrEqual(2);   // the float accumulator, as in the main loop
     const n = host.tick(t + 400); t += 400;
     expect(Math.abs(n - 50)).toBeLessThanOrEqual(1);               // a 400 ms stall: the main loop's 50 ms cap
-    const a = mainThreadRace(host.sim!.stepIndex, { strengthPct });
+    const a = mainThreadRace(host.sim!.stepIndex, { strengthPct, planner });
     expect(host.dir!.contactTotal).toBe(a.dir.contactTotal);
     for (let i = 0; i < a.dir.cars.length; i++) {
       expect(Array.from(host.dir!.cars[i].vehicle.state.pos)).toEqual(Array.from(a.dir.cars[i].vehicle.state.pos));

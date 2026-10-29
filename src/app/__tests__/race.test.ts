@@ -131,6 +131,9 @@ describe('overrides and seeds', () => {
     expect(parseRaceOverrides('?laps=99&seed=abc')).toEqual({ seed: null, laps: null, devSubmit: false });
     expect(parseRaceOverrides('')).toEqual({ seed: null, laps: null, devSubmit: false });
     expect(parseRaceOverrides('?devsubmit=1').devSubmit).toBe(true);
+    expect(parseRaceOverrides('?planner=offset').planner).toBe('offset');
+    expect(parseRaceOverrides('?planner=lanes').planner).toBe('lanes');
+    expect(parseRaceOverrides('?planner=x').planner).toBeUndefined();
     expect(RACE_LAPS).toBe(5);
   });
   it('new seeds are positive integers', () => {

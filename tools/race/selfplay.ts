@@ -1,7 +1,7 @@
 // Headless self-play: the whole field (player car driven by an AI) races N laps and the AI's racecraft is
 // measured: line tracking when alone, passing when clearly faster, defending by pace gap, rules
 // (contacts, four wheels off, formation passes), mishaps, and the per-step cost.
-//   npx tsx tools/race/selfplay.ts [--track <id>] [--laps 4] [--seed 1] [--max-ai N] [--pace path] [--mishap-rate 0.0002] [--follow-scale 1] [--lane-margin 1] [--shift-grip 0] [--player-scale s] [--strength 1] [--no-kerbs] [--json out.json] [--quiet]
+//   npx tsx tools/race/selfplay.ts [--track <id>] [--laps 4] [--seed 1] [--max-ai N] [--pace path] [--mishap-rate 0.0002] [--follow-scale 1] [--lane-margin 1] [--shift-grip 0] [--player-scale s] [--strength 1] [--planner lanes|offset] [--no-kerbs] [--json out.json] [--quiet]
 //   --player-scale s: the player's car (AI-driven) at pace scale s (the AI Probe: scale 1 = its solo lap, 120.2 s at Laguna) instead of
 //   its pace row's; its pace hint is its own solo lap at that scale (measured here, 2 laps). The report gains the player's finish.
 import { createTrackSurface, createCollisionWorld } from '../../src/physics/index';
@@ -26,6 +26,7 @@ const followScale = argv.includes('--follow-scale') ? Number(arg('--follow-scale
 const laneMargin = argv.includes('--lane-margin') ? Number(arg('--lane-margin', '1')) : (TRACKS[track]?.ai?.laneMargin ?? 1);
 const shiftGrip = argv.includes('--shift-grip') ? Number(arg('--shift-grip', '0')) : (TRACKS[track]?.ai?.shiftGrip ?? 0);
 const strength = Number(arg('--strength', '1'));
+const planner = arg('--planner', 'lanes') === 'offset' ? 'offset' as const : 'lanes' as const;
 const pack = loadTrackPack(track);
 const playerScale = argv.includes('--player-scale') ? Number(arg('--player-scale', '1')) : Number.NaN;
 // the player's pace hint at that scale: the AI Probe's own solo lap (lap 2 of 2), as calibrate_field.ts measures it
@@ -39,7 +40,7 @@ const makeSurface = argv.includes('--no-kerbs') ? () => createTrackSurface(pack.
 const dir = new RaceDirector({
   line: pack.line, surface: pack.surface, makeSurface,
   probeJson: loadProbeJson(), pace, identity, pitLane: pack.scenery?.pit_lane ?? null, blendLine: pack.scenery?.blend_line ?? null, collisionWorld: createCollisionWorld(pack.scenery, pack.track),
-}, { laps, seed, playerAi: true, maxAi, followScale, laneMargin, shiftGrip, ...(mishapRate !== undefined ? { mishapRate } : {}), ...(playerScale > 0 ? { playerScale, playerLap } : {}), strength });
+}, { laps, seed, playerAi: true, maxAi, followScale, laneMargin, shiftGrip, ...(mishapRate !== undefined ? { mishapRate } : {}), ...(playerScale > 0 ? { playerScale, playerLap } : {}), strength, planner });
 const m = runSelfplay(dir, makeSurface(), { log: !argv.includes('--quiet'), cones: pack.scenery?.pit_exit_cones ?? null });
 printReport(m);
 // race pace against the calibrated pace: each AI car's best and last lap over the target lap of the stint it drew
