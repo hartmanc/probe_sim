@@ -798,3 +798,94 @@ its plans), then the grip cost into corners and the braking rule; the hard windo
 rule hold it less than 2 % each. Order of the steps: H0 (the two misfiring rules: never across means from one side of a car to
 the other, not out of its band; a clearly faster car behind me does not freeze a pass on a clearly slower car ahead) with H1
 (predictability) first, then the grip / commit (H4), then H3 + H5, then H2, then H6 on what the screens show.
+
+**Stage 2, the hypotheses** (`planner.ts` `knobs`, set per run with `traffic_sim.ts --knob k=v`; the kept ones are the defaults).
+H0 = the two misfiring rules of stage 1. Added on the way: **tail** (part of H2: the time lost behind a car in my band at the end
+of the horizon carried on TAIL_T 10 s; without it a pass of a 5 % slower car gains under 0.5 s in 10 s and any cost beats it),
+**H4's pressure headway** (a clearly slower car ahead is followed at PASS_HEADWAY 0.3 s, as the lane model's pass phase 1: at
+0.55 s the fast car sat 20 m back and a 5 % pass took 20 s, longer than the horizon), and in **H6** the passed car is told
+(Traffic.passing set by the offset passer, so the lane model's room-making look-ahead works for it) and the road rule fires on the
+inside too while a car is beside me there, at ROAD_K 0.6 of the shift rate. Screens: Laguna + Mid-Ohio, seeds 1-8, 10 laps
+(`tools/race/out/c2/s1..s5.{md,json}`); dev runs (Laguna or Mid-Ohio seeds 1-3, 5 laps, not screens) picked between variants.
+
+| screen | 3-8 / 8-15 % (g < 2) | floor / 0-1 / 1-3 % | gap 2-3 / 3-5 / 5-8 s | passing lap 3-8 / 8-15 s | contacts L / MO | four-off L / MO | green passes L / MO | verdict |
+|---|---|---|---|---|---|---|---|---|
+| lanes (= baseline) | 75.6 / 89.7 | 10.5 / 25.7 / 54.6 | 66 / 46 / 55 | 4.0 / 7.8 | 0.0248 / 0.0128 | 0.0858 / 0.0104 | 4193 / 6386 | |
+| C1 v2 | 75.9 / 86.3 | 8.0 / 23.1 / 52.1 | 65 / 66 / 46 | 3.6 / 7.7 | 0.0226 / 0.0195 | 0.0607 / 0.0105 | 3034 / 5164 | |
+| s1 H0 + H1 | 72.7 / 81.9 | 7.9 / 23.0 / 53.8 | 64 / 57 / 59 | 3.6 / 9.5 | 0.0193 / 0.0195 | 0.0637 / 0.0100 | 2932 / 5368 | kept (the rules were wrong; cells within noise) |
+| s2 + H2 (ending candidates) + tail | 70.5 / 87.7 | 10.2 / 24.1 / 47.8 | 63 / 63 / 56 | 3.6 / 8.1 | 0.0447 / 0.0176 | 0.1243 / 0.0229 | 2781 / 4689 | kept only with H4 (alone: Laguna contacts and four-offs up) |
+| s3 + H4 (commit margin, no min hold, pressure headway) | 78.5 / 95.2 | 6.2 / 23.6 / 49.6 | 74 / 75 / 59 | 4.7 / 7.2 | 0.0338 / 0.0422 | 0.1350 / 0.0379 | 2878 / 8439 | kept with H6 |
+| **s4 + H6** (the passed car told; inside road rule beside a car; ROAD_K 0.6) | **82.3 / 96.2** | 6.6 / 26.3 / 52.3 | 74 / 72 / 69 | 4.5 / 5.9 | 0.0258 / 0.0189 | 0.1089 / 0.0273 | 2945 / 8887 | **kept: the C2 tree** |
+| s5 = s4 + H3 (hard window by closing speed 1-4 s) + H5 (outside road rule a cost beyond 1 s) | 79.8 / 93.2 | 8.1 / 25.2 / 51.7 | 79 / 70 / 73 | 5.3 / 6.4 | 0.0265 / 0.0215 | 0.1661 / 0.0325 | 2865 / 8647 | reverted (switched off: four-offs up 50 % on Laguna, cells lower) |
+
+Dev runs, not screened: the grip term at the onset / stop of a lateral move only (Laguna four-off 0.08 -> 0.22) and only where the
+line uses > half the grip (contacts 0.015 -> 0.066): both off, the grip cost stays C1's; ROAD_K 0.4 and H4's headway 0.42 s: no
+change beyond the 3-seed noise. The sixth screen was not used. s4 is past the halfway rule (>= 81 / >= 94), so the full
+evaluation ran on it. H6's cause (Mid-Ohio, C1 v2 and s3): side contacts at turn-in (T2 s 800-1000, T1, T4 s 1940), the passer
+on the inside overlapping the rear of the car on the line while the road clamps the inside offset onto the line faster than a car
+moves sideways (8 m in 50 m at T2), the passed car learning of it from its corridor only (it lifts, 'passed'); C1 had exempted the
+inside from the road rule. The planner does not read the Mid-Ohio `ai:` knobs as knobs of its own: followScale scales the
+headway it is handed, laneMargin and shiftGrip act through roadLo / roadHi and the controller it shares with the lane model.
+
+**Full evaluation** (C2 tree at f672da1, all four tracks, seeds 1-16, 10 laps, `tools/race/out/c2/full_{offset,lanes}.{md,json}`;
+the lane model run on the same commit and seeds on all four tracks: Laguna 0.0262 and Mid-Ohio 0.0112 reproduce the traffic
+round's 16-seed numbers exactly). Pooled, g < 2 s, 43 284 pairs (offset) / 42 998 (lanes):
+
+| d | data | lanes | offset C2 |
+|---|---|---|---|
+| Y faster (floor) | 8.2 | 16.8 | 10.3 |
+| 0-1 % | 39.4 | 36.3 | 32.3 |
+| 1-3 % | 60.3 | 58.9 | 54.1 |
+| 3-8 % | 86.9 | 75.0 | 82.3 |
+| 8-15 % | 97.8 | 85.1 | 95.9 |
+| > 15 % | 99.7 | 94.3 | 99.2 |
+
+Gap curve (d >= 3 %, 0-0.5 .. 8-10 s): data 96 91 88 88 84 77 62; lanes 87 80 67 62 61 60 40; offset 95 87 75 74 77 66 59. Time lost
+(d 0-1 / 1-3 / 3-8 / 8-15 %), passing lap: data 1.9 / 2.1 / 2.9 / 3.4, lanes 3.8 / 3.2 / 5.9 / 12.5, offset 6.6 / 5.2 / 5.5 / 7.1 s;
+stuck: data 2.5 / 4.3 / 8.4 / 17.7, lanes 2.8 / 6.1 / 11.8 / 20.6, offset 5.1 / 7.3 / 11.5 / 16.2 s. The wait (positions only):
+median 13.7 -> 9.6 s, p90 73 -> 54 s, time lost per wait 3.5 -> 2.1 s; 68 % -> 86 % of waits end ahead.
+
+| track | byD Yf..>15 lanes | offset | gap curve offset | contacts lanes / offset | four-off lanes / offset | green passes lanes / offset |
+|---|---|---|---|---|---|---|
+| laguna_seca | 15 36 43 62 84 96 | 8 24 41 75 92 99 | 93 84 78 76 70 65 55 | 0.0262 / 0.0211 | 0.0784 / 0.1165 | 8206 / 5753 |
+| sonoma | 24 46 60 76 84 95 | 12 40 59 85 98 100 | 94 88 78 78 82 75 90 | 0.0312 / 0.0463 | 0.0106 / 0.0230 | 46121 / 53932 |
+| buttonwillow | 14 38 60 72 84 93 | 12 31 50 80 95 99 | 97 84 70 66 76 55 50 | 0.0184 / 0.0208 | 0.0089 / 0.0359 | 20930 / 21849 |
+| mid_ohio | 9 26 59 80 91 92 | 6 26 53 83 96 99 | 96 88 73 77 81 73 64 | 0.0112 / 0.0191 | 0.0094 / 0.0257 | 13385 / 17850 |
+
+(data per track, Yf..>15: Laguna 7 37 52 82 98 100, Sonoma 9 43 60 87 97 100, Buttonwillow 9 37 60 83 98 100, Mid-Ohio 7 37 62 90 99
+100.)
+
+**Gates (C2 tree).** G1 FAIL by two cells and two gap bins: 1-3 % 54.1 (-6.2, tolerance 6), gap 2-3 s 74 (-13.1), 5-8 s 66
+(-11.2); pass: 0-1 % (-7.1 within 8), 3-8 % (-4.6), 8-15 % (-1.9), > 15 % (-0.5), floor 10.3 (<= 12), gap 3-5 s (-6.6). G2 FAIL:
+passing-lap medians 6.6 / 5.2 / 5.5 / 7.1 s against 1.9 / 2.1 / 2.9 / 3.4 (tolerance max(35 %, 1.5 s): all four out), stuck 5.1 /
+7.3 / 11.5 vs 2.5 / 4.3 / 8.4 out, 16.2 vs 17.7 in. G3 FAIL: contacts Laguna 0.0211 <= 0.0262 pass; Sonoma 0.0463 vs 0.0312,
+Buttonwillow 0.0208 vs 0.0184, Mid-Ohio 0.0191 vs 0.0112 fail; four-off fails on all four (1.5-4 x); green passes >= lanes on
+Sonoma, Buttonwillow, Mid-Ohio, not Laguna (5753 vs 8206). G4: `npx vitest run` 826 passed + 1 expected fail (below). G5: solo
+hashes identical with the planner on and off (6b8f157f11f72166 / 288bd306e8620212 / 4f81fe2cda1b3ef5 / 6e6024a7c42062d5), AI_VERSION
+8, no pace file touched. G6: Sonoma 2.26 -> 2.42 µs per car-step (+7 %; `selfplay.ts --laps 2 --seed 1`). G7: build green, e2e
+13/13. The default stays 'lanes'.
+
+**Stage 3, the behaviour tests.** `passing.situations` and `completed` are counted from positions (a clearly faster car within
+40 m of the car directly ahead, real once within 20 m; done when 2 m ahead): the same for both planners, unchanged. `defending.
+within3` counts the lane model's defend decision (`defendSide`), which the offset planner computes too but only took as a 0.3 s/m
+preference: in the "within 3 %" case it counted 16 decisions with no move (0.00-0.42 m for 0.8). New, both planners:
+`defending.covers`, a lateral move of >= DEFEND[aggression] toward the inside of a passable corner (braking point within 120 m)
+with a car within 3 % and 1 s (30 m) behind, one per corner approach; the test reads it, threshold unchanged (>= 1). Lane model,
+full field seed 1 2 laps: within3 13, covers 22 (the position count also sees inside moves made for other reasons). The offset
+planner now makes the move: COVER_W 2 s/m on the cover (was PREF_W 0.3), and the case is a real test for 'offset'. The full field
+(2 laps): offset 165 situations (> 150 pass), 68 % completed, > 15 % 87 %, contacts 0.038, four-off 0.19, defending against a
+clearly faster car 1 (needs 0), green passes 119 (needs > 150): still `test.fails` for 'offset'. COVER_W came after the full
+evaluation; dev runs (seeds 1-3, 5 laps) put it within their noise (Laguna contacts 0.023 -> 0.017, Mid-Ohio 0.012 -> 0.014).
+
+**Reading.** The wait was the rules, then the horizon's arithmetic: a pass of a car 5 % slower gains under 0.5 s in a 10 s horizon
+from 20 m back, so the planner chose to follow almost every time. Pricing the staying behind past the horizon, following closer,
+committing at the aggressive margin and passes that end lifted the clearly-faster cells onto the data (3-8 % 75 -> 82, 8-15 % 85
+-> 96, floor 17 -> 10) and the gap curve by 10-16 points, but the passing lap now costs 5-7 s (the pressure pass is long and
+side by side) and contacts and four-offs rise wherever the passes rise (Sonoma, Mid-Ohio contacts +50-70 %; four-offs 1.5-4 x:
+Laguna T11 / T10 / T4 track-out, Mid-Ohio spins after side contacts). Not a default.
+
+**C3 list.** The four-offs and contacts of the pressure pass (track-out: the car lags its shift target; side by side at turn-in:
+the passed car needs the pass earlier than its corridor); the passing-lap time (a pass that commits from 0.3 s back on a straight
+and finishes, not a side-by-side through the next corner); the 1-3 % cell and the 2-3 / 5-8 s gap bins; the full field's green
+passes; the yield trait; the traffic-read pick (which side the next corner opens); per-car aggression from the data tiers; the
+passRisk / black-flag cost; the phone tier (stays on the lane model).
