@@ -37,9 +37,10 @@ test('corner difficulty table: mean 1, T11, T2 and the Corkscrew hardest', () =>
 });
 
 describe.each(['lanes', 'offset'] as const)('planner %s', (planner) => {
-  // C1 (28 Oct 2026): the offset planner does not meet two of these cases yet, at the same thresholds (NOTES "C1: the offset
-  // planner": within 3 % no covering move is made, 0 for >= 1; the full field makes 111 situations and 97 passes for > 150).
-  // They run as expected failures for 'offset' only, so the day C2 meets them they turn red and become ordinary tests again.
+  // C1 (28 Oct 2026): the offset planner did not meet two of these cases, at the same thresholds. C2 (NOTES "C2"): "within 3 %"
+  // now counts the covering move itself from positions (defending.covers, both planners) and the offset planner makes it (a real
+  // test again); the full field still makes too few green passes with the planner on (119 for > 150; situations 165 now pass),
+  // so it runs as an expected failure for 'offset' only, and turns red the day it is met.
   const c1Gap = planner === 'offset' ? test.fails : test;
   test('alone on track: racing line rms < 0.5 m', () => {
     const d = director({ planner, seed: 2, laps: 1, maxAi: 5, playerAi: true, gridGap: 300, greenWindow: [2, 3], mishapRate: 0 });
@@ -68,7 +69,7 @@ describe.each(['lanes', 'offset'] as const)('planner %s', (planner) => {
     expect(m.rules.contacts).toBe(0);
   }, 60000);
 
-  c1Gap('within 3 %: the slower car covers the inside (lightly), nobody defends against a clearly faster car', () => {
+  test('within 3 %: the slower car covers the inside (lightly), nobody defends against a clearly faster car', () => {
     // the grid is a seeded shuffle: take the first seed that starts T1 right ahead of T2
     const rows = [{ number: 'T1', targetLap: 129, scale: 0.9 }, { number: 'T2', targetLap: 127.5, scale: 1.0, aggression: 2 as const }, { number: '619', targetLap: 170, scale: 0.4 }];
     let d = field(rows, { planner, laps: 3, mishapRate: 0 });
@@ -78,7 +79,9 @@ describe.each(['lanes', 'offset'] as const)('planner %s', (planner) => {
       d = field(rows, { planner, laps: 3, mishapRate: 0, seed });
     }
     const m = runSelfplay(d, pack().makeSurface());
-    expect(m.defending.within3).toBeGreaterThanOrEqual(1);
+    // (C2) a covering move from positions (selfplay_metrics defending.covers: the lateral move itself, the same for both
+    // planners; defending.within3 counts the lane model's defend decision, which the offset planner only takes as a preference)
+    expect(m.defending.covers).toBeGreaterThanOrEqual(1);
     expect(m.defending.vsClearlyFaster).toBe(0);
     expect(m.rules.contacts).toBe(0);
   }, 60000);

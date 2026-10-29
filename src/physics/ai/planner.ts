@@ -53,6 +53,8 @@ export const LONG_NEAR = 30;
 export const CORR_W = 0.05, CORR_NEAR = 0.3;
 /** s per m away from a preferred offset (a light defending cover within 3 %) */
 export const PREF_W = 0.3;
+/** s per m away from the defending cover (C2: the cover is one move to the inside, then held; at PREF_W the plan never made it) */
+export const COVER_W = 2;
 /** m of change below which a target is "held" (no move for the one-move and no-defence rules) */
 export const MOVE_EPS = 0.25;
 /** s: the hard rules on the projection (clearance below LANE_CLR, braking onto a car in my band) hold over the first T_HARD s;
@@ -187,7 +189,7 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
   // one move per corner approach
   const rev = mv !== 0 && w.moveOpen && w.moveDir !== 0 && mv === -w.moveDir ? REVERSE_W : 0;
   if (rev) cost += REVERSE_W;
-  if (!Number.isNaN(w.ePref)) cost += PREF_W * Math.abs(eStar - w.ePref);
+  if (!Number.isNaN(w.ePref)) cost += COVER_W * Math.abs(eStar - w.ePref);
   cost += RISK_W * env.risk(eStar);
   const nN = w.nN, X = w.X, LO = w.LO, HI = w.HI;
   // never across: a neighbour whose centre lies between where I am and where I go, within the sweep's length; from one side of

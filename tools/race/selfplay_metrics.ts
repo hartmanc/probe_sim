@@ -8,6 +8,7 @@ const ALONE = 30;             // m: nobody this close ahead or behind = alone ..
 const ALONE_T = 2;            // s: ... for at least this long (clean air, not the moment an interaction ends)
 const CLEAR = 0.97;           // target lap ratio: clearly faster
 const HIST_BIN = 0.01, HIST_N = 2000;
+const DEFEND = [0.5, 0.8, 1.1];   // m (driver.ts DEFEND): a covering move's lateral size by aggression
 const WAIT_NEAR = 25;         // m: (C2) a clearly faster car arriving this close behind a running car starts a wait
 
 class Acc {
@@ -36,7 +37,11 @@ export interface SelfplayMetrics {
     passAt?: number[];
     /** completion by pace ratio (target lap of the faster / the slower): < 0.85, 0.85-0.92, 0.92-0.97 */
     byRatio: { lo: number; hi: number; fails?: string[]; situations: number; completed: number; medianStuck: number; open: Record<string, number> }[] };
-  defending: { vsClearlyFaster: number; within3: number; vsSlower: number; none: number };
+  defending: { vsClearlyFaster: number; within3: number; vsSlower: number; none: number;
+    /** (C2) covering moves from positions, the same for every planner: with a car within 3 % of my pace and within 1 s (and 30 m)
+     *  behind, approaching a passable corner (its braking point within 120 m ahead), my lane offset moves toward the corner's
+     *  inside by at least DEFEND[my aggression] before its apex; one per corner approach */
+    covers: number };
   rules: { contacts: number; contactsPerCarLap: number; hardContacts: number; fourOff: number; fourOffMishap: number; fourOffPerCarLap: number; fourOffNonMishapPerCarLap: number; formationPasses: number; recoveries: number; recoveryAt?: { s: number; t: number; car: string; phase: string }[]; fourOffAt: { s: number; t?: number; car: string; ctx: string }[]; contactAt: { s: number; t: number; a: string; b: string; closing: number; ctx: string; phase?: string; ds?: number; dl?: number }[] };
   mishaps: { total: number; perCarLap: number; wide: number; spin: number; byCorner: Record<string, number>; lossMedian: number; lossMin: number; lossMax: number; losses: { kind: string; corner: string; loss: number }[] };
   cost: { usPerStep: number; usPerCar: number };
@@ -83,7 +88,8 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
   const situations = new Map<number, Situation>();
   const closed: Situation[] = [];
   const waits = new Map<number, { i: number; j: number; base: number; t0: number; U0: number }>(), waitDur: number[] = [], waitLoss: number[] = [], waitEnd: Record<string, number> = {};
-  const defend = { vsClearlyFaster: 0, within3: 0, vsSlower: 0, none: 0 };
+  const defend = { vsClearlyFaster: 0, within3: 0, vsSlower: 0, none: 0, covers: 0 };
+  const coverC = new Int32Array(n).fill(-1), coverE0 = new Float64Array(n), coverDone = new Uint8Array(n);
   const prevDefend = new Int8Array(n);
   const prevPass = new Int32Array(n).fill(-1); const passEnds: Record<string, number> = {}; let passStarts = 0;
   const prevS = new Float64Array(n);
@@ -222,6 +228,20 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
         }
       }
       prevDefend[i] = ds;
+      // ---- (C2) a covering move, from positions
+      if (coverC[i] >= 0) {
+        const C = corners[coverC[i]];
+        let pa = s - C.apex; if (pa < -0.5 * L) pa += L; if (pa > 0.5 * L) pa -= L;
+        if (pa > 0 || busy) coverC[i] = -1;
+        else if (!coverDone[i] && (tr.e[i] - coverE0[i]) * C.dir >= DEFEND[(d as unknown as { params: { aggression: number } }).params.aggression]) { coverDone[i] = 1; defend.covers++; }
+      } else if (!busy && jB >= 0 && dB <= Math.min(30, Math.max(10, tr.v[i])) && !tr.off[jB]) {
+        const r = tr.pace[jB] / tr.pace[i];
+        if (r >= CLEAR && r <= 1 / CLEAR) for (let c = 0; c < corners.length; c++) {
+          const C = corners[c]; if (!C.passable) continue;
+          let u = C.brake - s; if (u < 0) u += L;
+          if (u <= 120) { coverC[i] = c; coverE0[i] = tr.e[i]; coverDone[i] = 0; break; }
+        }
+      }
       if (d.passTarget !== prevPass[i]) {
         if (prevPass[i] >= 0) { const k = (d as unknown as { passEnd: string }).passEnd || '?'; passEnds[k] = (passEnds[k] ?? 0) + 1; }
         if (d.passTarget >= 0) passStarts++;
