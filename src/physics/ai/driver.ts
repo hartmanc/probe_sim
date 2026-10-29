@@ -166,6 +166,8 @@ export function driverProfile(line: RaceLine, perf: CarPerf, prof: Float64Array)
 export class AiDriver {
   /** (tools) when set, planLane tallies why candidate lanes were rejected (selfplay_trace.ts --loss) */
   static planWhy: Record<string, number> | null = null;
+  /** (tools) called after every offset plan with the car index, the plan's work and the target before it (C2 diagnosis) */
+  static planHook: ((i: number, w: PlanWork, prev: number) => void) | null = null;
   private static why(k: string): void { const W = AiDriver.planWhy; if (W) W[k] = (W[k] ?? 0) + 1; }
   readonly vehicle: Vehicle;
   readonly line: RaceLine;
@@ -1191,6 +1193,7 @@ export class AiDriver {
     const prev = this.oStar;
     const e = planOffset(w, this.penv!);
     this.oCost = w.bestCost; this.oPlans = w.evaluated;
+    if (AiDriver.planHook) AiDriver.planHook(i, w, prev);
     this.oYield = w.bestCost >= BIG && w.bestCulprit >= 0 ? w.nIdx[w.bestCulprit] : -1;
     if (Math.abs(e - prev) > MOVE_EPS) {
       // a new move: its direction, held to the apex of the next corner

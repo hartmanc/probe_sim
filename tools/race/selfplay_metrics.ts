@@ -8,6 +8,7 @@ const ALONE = 30;             // m: nobody this close ahead or behind = alone ..
 const ALONE_T = 2;            // s: ... for at least this long (clean air, not the moment an interaction ends)
 const CLEAR = 0.97;           // target lap ratio: clearly faster
 const HIST_BIN = 0.01, HIST_N = 2000;
+const WAIT_NEAR = 25;         // m: (C2) a clearly faster car arriving this close behind a running car starts a wait
 
 class Acc {
   n = 0; sq = 0; hist = new Uint32Array(HIST_N);
@@ -25,6 +26,10 @@ export interface SelfplayMetrics {
   cars: number; laps: number; carLaps: number; raceTime: number;
   line: { instRms: number; instP95: number; why: Record<string, number>; rms: number; p95: number; samples: number; trackRms: number; trackP95: number; maxErr: number; worstAt: number; corners: { name: string; rms: number; p95: number; samples: number }[] };
   passing: { attempts: number; ends: Record<string, number>; situations: number; reachedBrakeZone: number; setUp: number; completed: number; medianStuck: number; p90Stuck: number; passesTotal: number;
+    /** (C2) the wait, from positions only (the same for every planner): a clearly faster car (pace hint >= 3 %) arriving within
+     *  WAIT_NEAR m behind a running car in green; the time from that arrival to its centre being ahead (done), or the
+     *  situation ending otherwise (dropped > 60 m back, the car ahead off / away, the race over) */
+    wait?: { n: number; done: number; median: number; p90: number; ended: Record<string, number>; durations: number[] };
     /** station of each green pass (the passing car's s when the order changed; sampled every 0.1 s) */
     passAt?: number[];
     /** completion by pace ratio (target lap of the faster / the slower): < 0.85, 0.85-0.92, 0.92-0.97 */
@@ -75,6 +80,7 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
   const why = new Map<string, number>();
   const situations = new Map<number, Situation>();
   const closed: Situation[] = [];
+  const waits = new Map<number, { i: number; j: number; base: number; t0: number }>(), waitDur: number[] = [], waitEnd: Record<string, number> = {};
   const defend = { vsClearlyFaster: 0, within3: 0, vsSlower: 0, none: 0 };
   const prevDefend = new Int8Array(n);
   const prevPass = new Int32Array(n).fill(-1); const passEnds: Record<string, number> = {}; let passStarts = 0;
@@ -227,6 +233,11 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
         sit.seen = t;
         if (dA < 20 && Number.isNaN(sit.tClose)) sit.tClose = t;
       }
+      // ---- (C2) the wait: positions only
+      if (jA >= 0 && dA < WAIT_NEAR && !busy && !tr.off[jA] && !tr.away[jA] && tr.v[jA] > 5 && tr.pace[i] < CLEAR * tr.pace[jA]) {
+        const key = i * 1000 + jA;
+        if (!waits.has(key)) waits.set(key, { i, j: jA, base: Math.round((tr.U[jA] - tr.U[i] - dA) / L) * L, t0: t });
+      }
       // ---- four wheels off (unpaved), sustained 0.25 s, re-armed after 2 s back on
       const st = cars[i].vehicle.state;
       let allOff = true;
@@ -264,12 +275,21 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
         }
       }
     }
+    for (const [key, w] of waits) {
+      const gap = tr.U[w.j] - tr.U[w.i] - w.base;
+      const end = gap < 0 ? 'done' : gap > 60 ? 'dropped' : tr.off[w.j] || tr.away[w.j] ? 'off' : '';
+      if (!end) continue;
+      waitEnd[end] = (waitEnd[end] ?? 0) + 1;
+      if (end === 'done') waitDur.push(t - w.t0);
+      waits.delete(key);
+    }
     for (let i = 0; i < n; i++) prevS[i] = tr.s[i];
     // marshal resets (stuck > 4 s / wrong way > 2.5 s): where (the car's station after the reset) and when
     for (let i = 0; i < n; i++) if (cars[i].recoveries !== prevRec[i]) { prevRec[i] = cars[i].recoveries; lastRecT[i] = dir.time; if (cars[i].driver) recoveryAt.push({ s: Math.round(tr.s[i]), t: +dir.time.toFixed(1), car: cars[i].number, phase: dir.phase }); }
     if (opts.log && steps % 60000 === 0) { const hh = dir.hud(); console.log(`t ${t.toFixed(0)} ${hh.phase} lap ${hh.lap} ${(ms * 1000 / steps / n).toFixed(2)} µs/car-step`); }
   }
   for (const s of situations.values()) { s.why = 'end'; closed.push(s); }
+  if (waits.size) waitEnd.end = (waitEnd.end ?? 0) + waits.size;
   let carLaps = 0;
   if (Ugreen) for (let i = 0; i < n; i++) if (cars[i].driver) carLaps += Math.max(0, tr.U[i] - Ugreen[i]) / L;
   const real = closed.filter((s) => !Number.isNaN(s.tClose));
@@ -284,6 +304,7 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
     cars: n, laps: dir.config.laps, carLaps, raceTime: dir.time,
     line: { instRms: inst.rms(), instP95: inst.pct(0.95), why: Object.fromEntries([...why].map(([k, v]) => [k, +(v / Math.max(1, all.n)).toFixed(4)])), rms: all.rms(), p95: all.pct(0.95), samples: all.n, trackRms: trk.rms(), trackP95: trk.pct(0.95), maxErr, worstAt, corners: corners.map((c, k) => ({ name: c.name, rms: cornerAcc[k].rms(), p95: cornerAcc[k].pct(0.95), samples: cornerAcc[k].n })) },
     passing: { attempts: passStarts, ends: passEnds, situations: real.length, reachedBrakeZone: real.filter((s) => s.brakeZone).length, setUp: real.filter((s) => s.setup).length, completed: real.filter((s) => s.done).length, medianStuck: median(stuck), p90Stuck: pctl(stuck, 0.9), passesTotal, passAt,
+      wait: { n: Object.values(waitEnd).reduce((a, b) => a + b, 0), done: waitDur.length, median: median(waitDur), p90: pctl(waitDur, 0.9), ended: waitEnd, durations: waitDur.map((x) => +x.toFixed(2)) },
       byRatio: [[0, 0.85], [0.85, 0.92], [0.92, CLEAR]].map(([lo, hi]) => {
         const g = real.filter((s) => { const r = tr.pace[s.i] / tr.pace[s.j]; return r >= lo && r < hi; });
         const open: Record<string, number> = {};

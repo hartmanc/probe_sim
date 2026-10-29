@@ -86,6 +86,9 @@ export interface PlanEnv {
 const S = PLAN_N + 1;
 /** the rules (PlanWork.why, tools): none, toward a clearly faster car, across, the road, braking, clearance, alongside, no-pass */
 export const WHY = ['', 'faster', 'across', 'road', 'brake', 'clear', 'own', 'nopass'] as const;
+/** (tools) the cost components of a candidate (PlanWork.comp): time lost, clearance (the soft road rule included), the soft road
+ *  rule alone, line / corridor / zone, grip, LONG, reversal, damping + preference + risk */
+export const COMP = ['lost', 'clear', 'road', 'line', 'grip', 'long', 'reverse', 'damp'] as const;
 /** (tools) when set, plan() tallies the rule the current target broke when it had to be replaced */
 export const planTally: { on: boolean; n: Float64Array } = { on: false, n: new Float64Array(WHY.length) };
 
@@ -122,6 +125,8 @@ export class PlanWork {
   readonly cand = new Float64Array(CAND_MAX); readonly cost = new Float64Array(CAND_MAX); readonly culprit = new Int32Array(CAND_MAX);
   /** the rule a candidate broke (WHY_*; 0 none) */
   readonly why = new Uint8Array(CAND_MAX);
+  /** (tools, filled only while planTally.on) a candidate's cost by component: COMP order */
+  readonly comp = new Float64Array(CAND_MAX * 8);
   // ---- out
   best = 0; bestCost = 0; bestCulprit = -1; evaluated = 0;
 }
@@ -159,7 +164,8 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
   // no move toward a clearly faster car behind (it is let by: hold the line and the speed)
   if (mv !== 0 && w.cfSide !== 0 && (w.cfSide === 2 || mv === w.cfSide)) { w.why[c] = 1; return 2 * BIG; }
   // one move per corner approach
-  if (mv !== 0 && w.moveOpen && w.moveDir !== 0 && mv === -w.moveDir) cost += REVERSE_W;
+  const rev = mv !== 0 && w.moveOpen && w.moveDir !== 0 && mv === -w.moveDir ? REVERSE_W : 0;
+  if (rev) cost += REVERSE_W;
   if (!Number.isNaN(w.ePref)) cost += PREF_W * Math.abs(eStar - w.ePref);
   cost += RISK_W * env.risk(eStar);
   const nN = w.nN, X = w.X, LO = w.LO, HI = w.HI;
@@ -174,7 +180,7 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
     }
   }
   const T = PLAN_N * PLAN_DT;
-  let sMe = 0, vMe = w.v, lost = 0, clr = 0, corr = 0, grip = 0, ePrevS = eCur;
+  let sMe = 0, vMe = w.v, lost = 0, clr = 0, corr = 0, grip = 0, ePrevS = eCur, roadSoft = 0;
   // the path held so far (clamped offsets at the last two samples and the distance between them): its own curvature
   const lo0 = Math.min(0, env.lo(0)), hi0 = Math.max(0, env.hi(0));
   let e1 = eCur === 0 ? 0 : clampC(eCur, lo0, hi0), e2 = e1, d1 = 0;
@@ -205,7 +211,7 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
       const dE = e - e1, rr = (dE < 0 ? -dE : dE) / PLAN_DT;
       if (rr > w.rate) {
         if (t <= T_HARD) { w.culprit[c] = -2; w.why[c] = 3; return BIG + PLAN_N - m; }
-        clr += CLR_W[aggr] * PLAN_DT;
+        clr += CLR_W[aggr] * PLAN_DT; roadSoft += CLR_W[aggr] * PLAN_DT;
       }
     }
     if (e !== 0 || e1 !== 0) {
@@ -293,6 +299,10 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
     if (sep < FOLLOW_CLR) continue;                              // still behind it in its band: following, not passing
     const gain = rel0 - relN;
     if (gain <= 0 || T + (relN + clear) * T / gain > PLAN_T_MAX) long = LONG_W;
+  }
+  if (planTally.on) {
+    const q = c * 8, C = w.comp;
+    C[q] = lost; C[q + 1] = clr; C[q + 2] = roadSoft; C[q + 3] = corr; C[q + 4] = grip; C[q + 5] = long; C[q + 6] = rev; C[q + 7] = cost - rev;
   }
   return cost + lost + clr + corr + grip + long;
 }

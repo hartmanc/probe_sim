@@ -762,3 +762,39 @@ ahead (which side of the slow car the next corner opens); candidates that end (a
 model's phase 2-3, not the v3 shortcut) and a two-move horizon; the hard window T_HARD per closing speed; the 0.1 s tick near a
 car; a covering move within 3 % that the "within 3 %" test sees; the passRisk / black-flag cost; the phone tier (it stays on
 the lane model).
+
+## C2 (28 Oct 2026, branch `planner-c1`): tuning the offset planner to the MyLaps passing data
+
+Owner: "Try C2." The lane model stays the default and untouched; everything below is `planner: 'offset'` only.
+
+**Stage 1, the wait (no behaviour change).** New measure, positions only and the same for both planners
+(`selfplay_metrics` `passing.wait`, reported by `traffic_sim.ts`): a clearly faster car (pace hint >= 3 %) arriving within 25 m
+behind a running car in green; the time from that arrival to its centre being ahead, or the wait ending otherwise (dropped
+> 60 m back, the car ahead off, the flag). And `traffic_sim.ts --why` (offset only): after every plan of a car whose nearest car
+ahead is clearly slower and within 25 m, the plan is tallied as alongside, pass (the chosen target is laterally clear of the slow
+car's projected band) or hold, and for a hold what kept the best candidate clear of that band from winning: a hard rule (WHY; on
+the car ahead or another car; that car still on its line or moving), no such candidate in the corridor, the min hold, the
+hysteresis, or the soft cost component (`planner.ts` COMP, filled only while `planTally.on`) by which it lost.
+
+Laguna seeds 1-3, 5 laps (`tools/race/out/c2/diag_{lanes,offset}.md`):
+
+| planner | waits | done | median s | p90 s | dropped / off / flag |
+|---|---|---|---|---|---|
+| lanes | 1318 | 961 | 13.8 | 59.8 | 259 / 48 / 50 |
+| offset (C1 v2) | 996 | 766 | 10.6 | 84.8 | 145 / 39 / 46 |
+
+What held the clearly faster car (offset, 153 k plans within 25 m behind a clearly slower car): pass 22.9 %, alongside 6.2 %,
+hold 70.9 %, of which: **hard 'faster' 13.1 %** (a clearly faster car within 25 m behind me forbids every move when it is straight
+behind: in a train the middle car freezes behind the slow car); **hard 'across' on the car ahead 14.3 %** (7.9 still, 6.4 moving:
+the never-across rule fires on the car I am following in its band whenever its centre is a few cm toward the side I pull out to,
+so a pull-out to that side is a "cross"); soft grip 10.4 % (the move asks more than the lateral grip: into corners); hard brake
+6.5 % (5.2 on the car ahead); soft clearance 6.6 %; no room in the corridor 3.9 %; soft line 3.9 %; the no-pass window 3.7 %
+(Corkscrew, by design); soft reversal 2.5 %; LONG 2.2 %; the hard road rule 0.7 % + soft 0.3 %; hard clearance 1.2 %; the
+hysteresis 0.9 %; the min hold 0.3 %. The projection band of the car ahead (eT span, drift) shows up as 'moving' in about a third
+of the hard holds on it.
+
+Reading: the fast car does not wait on the price of the pass but on two rules misfiring in the following position (27 % of
+its plans), then the grip cost into corners and the braking rule; the hard window, the hysteresis / hold and the outside road
+rule hold it less than 2 % each. Order of the steps: H0 (the two misfiring rules: never across means from one side of a car to
+the other, not out of its band; a clearly faster car behind me does not freeze a pass on a clearly slower car ahead) with H1
+(predictability) first, then the grip / commit (H4), then H3 + H5, then H2, then H6 on what the screens show.

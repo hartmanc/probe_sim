@@ -27,7 +27,9 @@ export interface RunOut {
   crossings: Crossing[];
   metrics: { carLaps: number; contacts: number; contactsPerCarLap: number; fourOff: number; fourOffPerCarLap: number; fourOffNonMishapPerCarLap: number; passesTotal: number;
     situations: number; completed: number; defending: { vsClearlyFaster: number; within3: number; vsSlower: number; none: number }; recoveries: number; mishaps: number;
-    contactAt: unknown[]; fourOffAt: unknown[]; yields?: number };
+    contactAt: unknown[]; fourOffAt: unknown[]; yields?: number;
+    /** (C2) the wait (positions only) and, with --why, what held the clearly faster car (offset planner plans, by reason) */
+    wait?: { n: number; done: number; median: number; p90: number; ended: Record<string, number>; durations: number[] }; why?: Record<string, number> };
 }
 
 const parseSet = (kv: string[]): Record<string, number | boolean | string> => Object.fromEntries(kv.map((s) => { const [k, v] = s.split('='); return [k, v === 'true' ? true : v === 'false' ? false : Number.isNaN(Number(v)) ? v : Number(v)]; }));   // (a word stays a string: planner=offset)
@@ -45,16 +47,65 @@ async function runOne(): Promise<void> {
     line: pack.line, surface: pack.surface, makeSurface: pack.makeSurface, probeJson: loadProbeJson(), pace: loadPace(track), identity: loadIdentityJson(track),
     pitLane: pack.scenery?.pit_lane ?? null, blendLine: pack.scenery?.blend_line ?? null, collisionWorld: createCollisionWorld(pack.scenery, pack.track),
   }, { laps, seed, playerAi: true, followScale: ai.followScale ?? 1, laneMargin: ai.laneMargin ?? 1, shiftGrip: ai.shiftGrip ?? 0, ...parseSet(sets) });
+  const why: Record<string, number> = {};
+  if (argv.includes('--why')) await whyHook(dir, why);
   const m = runSelfplay(dir, pack.makeSurface(), { log: false });
   const r = m.rules;
   const out: RunOut = {
     track, seed, laps, set: sets, crossings: dir.crossings.map((c) => ({ ...c })),
     metrics: { carLaps: m.carLaps, contacts: r.contacts, contactsPerCarLap: r.contactsPerCarLap, fourOff: r.fourOff, fourOffPerCarLap: r.fourOffPerCarLap, fourOffNonMishapPerCarLap: r.fourOffNonMishapPerCarLap,
       passesTotal: m.passing.passesTotal, situations: m.passing.situations, completed: m.passing.completed, defending: m.defending, recoveries: r.recoveries, mishaps: m.mishaps.total,
-      contactAt: r.contactAt, fourOffAt: r.fourOffAt, yields: undefined },
+      contactAt: r.contactAt, fourOffAt: r.fourOffAt, yields: undefined, wait: m.passing.wait, why: argv.includes('--why') ? why : undefined },
   };
   const js = arg('--json', '');
   if (js) writeFileSync(js, JSON.stringify(out)); else console.log(JSON.stringify(out.metrics));
+}
+
+/**
+ * (C2 diagnosis) What holds a clearly faster car: after every offset plan of a car whose nearest car ahead is clearly slower
+ * (pace hint >= 3 %) and within 25 m, tally the plan as 'alongside' (bodies overlap), 'pass' (the chosen target is laterally
+ * clear of the slow car's projected band) or 'hold: <reason>' — the best candidate clear of that band and what kept it from
+ * winning: a hard rule (WHY, on the car ahead / another car, still / moving), no such candidate in the corridor, the min hold,
+ * the hysteresis, or the soft cost component (COMP) by which it lost to the chosen target.
+ */
+async function whyHook(dir: { traffic: unknown }, why: Record<string, number>): Promise<void> {
+  const { AiDriver } = await import('../../src/physics/ai/driver');
+  const P = await import('../../src/physics/ai/planner');
+  const tr = dir.traffic as { pace: Float64Array; e: Float64Array; eT: Float64Array; ve: Float64Array; off: Uint8Array };
+  const S = P.PLAN_N + 1;
+  P.planTally.on = true;
+  const add = (k: string) => { why[k] = (why[k] ?? 0) + 1; };
+  AiDriver.planHook = (i, w) => {
+    let k = -1;
+    for (let q = 0; q < w.nN; q++) { const x = w.X[q * S]; if (x > -(w.rear + w.nFront[q]) && !w.nOff[q] && (k < 0 || x < w.X[k * S])) k = q; }
+    if (k < 0 || w.X[k * S] > 25) return;
+    const j = w.nIdx[k];
+    if (!(tr.pace[i] < 0.97 * tr.pace[j])) return;
+    if (w.X[k * S] <= w.front + w.nRear[k]) { add('alongside'); return; }
+    const lo = w.LO[k * S], hi = w.HI[k * S];
+    const sep = (e: number) => Math.max(lo - (e + w.hw), (e - w.hw) - hi);
+    if (sep(w.best) >= P.FOLLOW_CLR) { add('pass'); return; }
+    let cs = -1, ch = -1;
+    for (let c = 0; c < w.nC; c++) {
+      if (w.cand[c] === w.best && ch < 0) ch = c;
+      if (sep(w.cand[c]) >= P.FOLLOW_CLR && (cs < 0 || w.cost[c] < w.cost[cs])) cs = c;
+    }
+    if (cs < 0) { add('hold: no room'); return; }
+    if (w.cost[cs] >= P.BIG) {
+      const cu = w.culprit[cs], q = cu >= 0 ? w.nIdx[cu] : -1;
+      const moving = q >= 0 && (Math.abs(tr.eT[q] - tr.e[q]) > P.MOVE_EPS || Math.abs(tr.ve[q]) > 0.3 || tr.off[q]);
+      add(`hold: hard ${P.WHY[w.why[cs]]}${cu === -2 ? '' : cu === k ? ' / the car ahead' : ' / another car'}${q >= 0 ? (moving ? ' (moving)' : ' (still)') : ''}`);
+      return;
+    }
+    if (w.cost[cs] < w.cost[ch]) { add(w.locked ? 'hold: min hold' : 'hold: hysteresis'); return; }
+    let best = '', bd = -Infinity;
+    for (let m = 0; m < P.COMP.length; m++) {
+      let d = w.comp[cs * 8 + m] - w.comp[ch * 8 + m];
+      if (m === 1) d -= w.comp[cs * 8 + 2] - w.comp[ch * 8 + 2];
+      if (d > bd) { bd = d; best = P.COMP[m]; }
+    }
+    add(`hold: soft ${best}`);
+  };
 }
 
 /** One stint per car (the whole race): ref = quantile 0.2 of its usable laps (traffic_curves' rules: green, not lap 1, not after
@@ -143,7 +194,7 @@ async function runSet(): Promise<void> {
     const launch = (): void => {
       if (next >= todo.length) return;
       const j = todo[next++];
-      const p = spawn(tsx, [fileURLToPath(import.meta.url), '--track', j.track, '--seed', String(j.seed), '--laps', String(laps), '--json', j.file, ...sets.flatMap((s) => ['--set', s])], { cwd: ROOT, stdio: ['ignore', 'ignore', 'inherit'] });
+      const p = spawn(tsx, [fileURLToPath(import.meta.url), '--track', j.track, '--seed', String(j.seed), '--laps', String(laps), '--json', j.file, ...sets.flatMap((s) => ['--set', s]), ...(argv.includes('--why') ? ['--why'] : [])], { cwd: ROOT, stdio: ['ignore', 'ignore', 'inherit'] });
       p.on('exit', (code) => {
         if (code !== 0) { rej(new Error(`${j.track} seed ${j.seed} exited ${code}`)); return; }
         done++;
@@ -190,6 +241,26 @@ function report(runs: RunOut[], tracks: string[], laps: number, seeds: string): 
     L.push('', `## ${t} (${P.pairs.length} pairs)`, '', ...(d ? compareRows(c, d) : []));
     perOut[t] = { pairs: P.pairs.length, carLaps: P.carLaps, contactsPerCarLap: P.contacts / P.carLaps, fourOffPerCarLap: P.fourOff / P.carLaps, fourOffNonMishapPerCarLap: P.fourOffNM / P.carLaps, passesTotal: P.passes, clearlyFasterCompleted: P.completed / P.situations, defendingVsClearlyFaster: P.vsCF, defendingWithin3: P.within3, seeds: P.seeds, curves: { byD: c.byD, byG: c.byG, lostByD: c.lostByD } };
   }
+  // (C2) the wait (positions only) and what held the clearly faster car (--why runs)
+  L.push('', '## The wait (clearly faster car arriving within 25 m behind a running car; positions only)', '', '| track | waits | done | median s | p90 s | ended otherwise |', '|---|---|---|---|---|---|');
+  const waitOut: Record<string, unknown> = {};
+  for (const t of [...tracks, 'pooled']) {
+    const rs = runs.filter((r) => (t === 'pooled' || r.track === t) && r.metrics.wait);
+    if (!rs.length) continue;
+    const dur = rs.flatMap((r) => r.metrics.wait!.durations), ended: Record<string, number> = {};
+    let nW = 0;
+    for (const r of rs) { nW += r.metrics.wait!.n; for (const [k, v] of Object.entries(r.metrics.wait!.ended)) if (k !== 'done') ended[k] = (ended[k] ?? 0) + v; }
+    const med = quantile(dur, 0.5), p90 = quantile(dur, 0.9);
+    waitOut[t] = { n: nW, done: dur.length, median: med, p90, ended };
+    L.push(`| ${t} | ${nW} | ${dur.length} | ${f1(med)} | ${f1(p90)} | ${JSON.stringify(ended)} |`);
+  }
+  const whyAll: Record<string, number> = {};
+  for (const r of runs) for (const [k, v] of Object.entries(r.metrics.why ?? {})) whyAll[k] = (whyAll[k] ?? 0) + v;
+  const whyN = Object.values(whyAll).reduce((a, b) => a + b, 0);
+  if (whyN) {
+    L.push('', '## What held the clearly faster car (offset plans within 25 m behind a clearly slower car)', '', '| state | plans | share |', '|---|---|---|');
+    for (const [k, v] of Object.entries(whyAll).sort((a, b) => b[1] - a[1])) L.push(`| ${k} | ${v} | ${pct(v / whyN)} % |`);
+  }
   const md = L.join('\n');
   console.log(md);
   const save = arg('--save', '');
@@ -197,7 +268,7 @@ function report(runs: RunOut[], tracks: string[], laps: number, seeds: string): 
     const base = resolve(ROOT, save);
     mkdirSync(dirname(base), { recursive: true });
     writeFileSync(base + '.md', md + '\n');
-    writeFileSync(base + '.json', JSON.stringify({ tracks, seeds, laps, set: sets, gates: g, pooled: { pairs: all.length, byD: pooled.byD, byG: pooled.byG, lostByD: pooled.lostByD, pressure: pooled.pressure, groups: pooled.groups }, perTrack: perOut }, null, 1));
+    writeFileSync(base + '.json', JSON.stringify({ tracks, seeds, laps, set: sets, gates: g, pooled: { pairs: all.length, byD: pooled.byD, byG: pooled.byG, lostByD: pooled.lostByD, pressure: pooled.pressure, groups: pooled.groups }, perTrack: perOut, wait: waitOut, why: whyAll }, null, 1));
   }
 }
 
