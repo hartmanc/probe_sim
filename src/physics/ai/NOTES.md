@@ -538,7 +538,7 @@ made the pace statistic a quantile and calibrated q 0.35 / 0.25 / 0.15 candidate
   laps), is in the self-play JSON (`playerPace`).
 - **Part A.4:** a stint whose fit did not converge (|achieved / target - 1| > 0.5 %, a car at the caps) races with its
   achievable lap as `Traffic.pace` (field.ts `paceHint`); the slower-car test reads the car's own hint.
-- **Part B, AI strength** (Start menu, under Race; stored like Graphics, `probeSim.aiStrength.v1`; read at each race build;
+- **Part B, AI strength** (Start menu, under Race; the row was removed on the owner's call, 29 Oct 2026: the race build is at 100 % unless a caller passes `strengthPct`; `--strength` stays a tool switch, `RaceConfig.strengthPct`, `strengthPace` and the identity test at 105 % stay; stored like Graphics, `probeSim.aiStrength.v1`; read at each race build;
   shown in the formation toast, results, standings and pause menu; `raceBoardVersion` adds `-S<pct>` off 100 %):
   `RaceConfig.strength`, every AI car built at field.ts `strengthPace(curve, ...)`: the scale at which its curve laps target /
   strength, anchored on the stint's own point; 100 % bit for bit; hint, sigma and so the classes and mishaps follow; never the
@@ -984,3 +984,56 @@ the pull-out early enough to be alongside by the braking point, priced over the 
 traffic-read pick, which side the next corner opens); Mid-Ohio's T4 braking zone (a passer half a car over closing under braking:
 the braking rule on the car it leaves, the friction circle `fc` against a 16-seed run); the yield trait; the data aggression
 tiers; passRisk / black flags; the phone tier (stays on the lane model).
+
+## Pace anchor q 0.2 (29 Oct 2026, branch `reanchor`)
+
+Owner, 28 Oct: "solo pace should be closer to best lap pace. Median pace reflects traffic; it seems that we are double-penalizing."
+The four public pace files are regenerated at q 0.2 of each car's / stint's clean laps (the traffic yardstick's "free pace"), header
+`pace: { stat: "quantile", q: 0.2 }`; generators only (reproduced at q 0.5 first: identical `cars`; the Mid-Ohio #56 notes text and
+model_id are the known difference). `curve` carried over by car id from the q 0.5 files; every scale / `achievedLap` / `resolved`
+recalibrated (`calibrate_field.ts --workers 6`, tolerance 0.2 %). AI_VERSION 8. `pace_quantile.test.ts` reads each file's own q.
+
+| track | cars / stints | car / stint median target change | worst residual | cars / stints off by > 0.5 % before -> after | wall-clock |
+|---|---|---|---|---|---|
+| Laguna | 44 / 261 (+ #619 row) | -4.5 % / -1.9 % | 1.18 % | 0 / 0 -> 0 / 1 | 344 s |
+| Sonoma | 133 / 1056 | -4.7 % / -2.7 % | 2.61 % | 1 / 4 -> 1 / 17 | 1622 s |
+| Buttonwillow | 99 / 774 | -3.7 % / -2.4 % | 0.28 % | 2 / 60 -> 0 / 0 | 1363 s |
+| Mid-Ohio | 85 / 702 | -3.0 % / -1.9 % | 0.33 % | 0 / 0 -> 0 / 0 | 818 s |
+
+No car or stint sits at PACE_MAX (1.8) in either set; "off" is the cap measure of round 1 (|achieved / target - 1| > 0.5 %: the
+car cannot reach the target). Buttonwillow's 60 stints off in the median file were a stale fit (the file was calibrated before
+later changes), the fresh calibration reaches all. `aggression` unchanged on every car. Capped cars still race by `achievedLap`
+(field.ts `paceHint`, unchanged). The stint median moves less than the brief's -3 %: a stint's q 0.2 is nearer its median than
+the car-wide one (a stint is 5-30 laps from one driver).
+
+**Bands** (lane model, seeds 1-8, 10 laps, `traffic_sim.ts --workers 6 --compare`; before = the C2/C3 lanes numbers / baseline.md):
+
+| | before (q 0.5) | after (q 0.2) |
+|---|---|---|
+| contacts / car-lap Laguna / Sonoma / Buttonwillow / Mid-Ohio | 0.0248 / 0.0297 / 0.0166 / 0.0128 | **0.0400** / 0.0206 / 0.0113 / 0.0126 |
+| four-off / car-lap | 0.0858 / 0.0104 / 0.0086 / 0.0104 | 0.0601 / 0.0056 / 0.0086 / 0.0068 |
+| green passes | 4193 / 22490 / 10918 / 6386 | 4224 / 22542 / 10800 / 6618 |
+| clearly-faster completed | 71.5 / 61.0 / 68.0 / 76.7 % | 70.7 / 61.4 / 68.2 / 75.6 % |
+| pooled cell d 3-8 % / 8-15 % (g < 2 s) | 74.7 / 87.3 % (data 86.9 / 97.8) | 73.6 / 84.2 % |
+| pooled passing lap, d 3-8 % / 8-15 % | 5.7 / 11.5 s (data 2.9 / 3.4) | 5.2 / 13.4 s |
+| pooled wait of a clearly faster car (median / time lost per done wait) | not recorded | 13.5 s / 3.5 s (p90 19.7 s) |
+
+Laguna contacts rise by 0.015 per car-lap, beyond the +-0.006 spread (Sonoma and Buttonwillow fall, Mid-Ohio equal; Laguna four-offs
+fall by 0.026). Where: 133 contacts on 8 seeds, spread round the lap (no corner above 19), 48 of 133 in the following context
+(`line/follow/follow`), mean closing speed 4.5 m/s: the field is 4.5 % quicker at the car level and the AI-driven Probe is not, so
+more cars arrive from behind at the same trains (the passing situations are 715 against 640). Nothing tuned; reported.
+
+Self-play Laguna, 5 laps, seeds 1-8, the AI Probe at scale 1 (`--player-scale 1`): pace position by mean lap / by best lap
+P22.3 / P14.9 (seeds 1-8 mean: 19, 34, 31, 22, 26, 25, 18, 3 / 17, 33, 7, 4, 29, 10, 4, 15); q 0.5 (27 Oct, round 1): P14.6 / P13.5.
+Eyesore (#711, target 113.8 -> 111.8 s), Laguna seeds 1-8, 10 laps, lanes: race median lap / best over the new target +32.2 / +8.1 s
+(C3 NOTES at q 0.5: +27.9 / +11.8 s), wait per slower car 12.9 / 49.9 s (351 waits; was 10.9 / 46.1, 411), net places per lap 1.69
+(1.88); fastest quartile +32.4 / +11.3 s, wait 13.7 / 61.7 s, 1.30 (+27.9 / +10.1, 13.4 / 60.3, 1.26). Its median race lap is
+144.0 s against 141.7 s before: the faster target is paid back in traffic, not kept.
+
+**Solo hashes** (`solo_hash.ts`, planner lanes and offset identical): Laguna 8530e05a097e4a7d, Sonoma 4ac773bad171b7a2, Buttonwillow
+19e2628dc499c20e, Mid-Ohio 71c58e0ef9e5bd32 (were 6b8f157f11f72166 / 288bd306e8620212 / 4f81fe2cda1b3ef5 / 6e6024a7c42062d5; they change
+by design, the scales are new).
+
+**Tests left red by the new files** (not loosened): `ai_behaviour` "planner lanes: full field, 2 laps" (clearly faster big-ratio
+completed 0.714, needs > 0.72) and "planner offset: alone on track" (racing line rms 0.533 m, needs < 0.5; the first five cars
+of the new Laguna file). Both pass on the q 0.5 files (42d32fd).
