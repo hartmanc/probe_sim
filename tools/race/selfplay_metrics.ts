@@ -145,7 +145,7 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
         if (dir.phase === 'green') { contacts++; if (ev.closing > 3) hard++; {
           const da = drv(ev.a), db = drv(ev.b);
           const ctx = (da?.passTarget === ev.b || db?.passTarget === ev.a) ? 'pass' : (tr.off[ev.a] || tr.off[ev.b]) ? 'off' : (da?.passTarget ?? -1) >= 0 || (db?.passTarget ?? -1) >= 0 ? 'passing-other' : 'line';
-          contactAt.push({ s: Math.round(tr.s[ev.a]), t: +dir.time.toFixed(1), a: cars[ev.a].number, b: cars[ev.b].number, closing: +ev.closing.toFixed(2), ctx: ctx + '/' + ((da as unknown as { limiter: string })?.limiter ?? '') + '/' + ((db as unknown as { limiter: string })?.limiter ?? ''), phase: `${(da as unknown as { passPhase?: number })?.passPhase ?? '-'}${(db as unknown as { passPhase?: number })?.passPhase ?? '-'}`, ds: +tr.ds(ev.a, ev.b).toFixed(1), dl: +(tr.lat[ev.b] - tr.lat[ev.a]).toFixed(2) });
+          contactAt.push({ s: Math.round(tr.s[ev.a]), t: +dir.time.toFixed(1), a: cars[ev.a].number, b: cars[ev.b].number, closing: +ev.closing.toFixed(2), ctx: ctx + '/' + ((da as unknown as { limiter: string })?.limiter ?? '') + '/' + ((db as unknown as { limiter: string })?.limiter ?? ''), phase: `${(da as unknown as { passPhase?: number })?.passPhase ?? '-'}${(db as unknown as { passPhase?: number })?.passPhase ?? '-'}` + ((da as unknown as { planner?: string })?.planner === 'offset' ? `/o${(da as unknown as { oPhase: number }).oPhase}${(db as unknown as { oPhase?: number })?.oPhase ?? '-'}` : ''), ds: +tr.ds(ev.a, ev.b).toFixed(1), dl: +(tr.lat[ev.b] - tr.lat[ev.a]).toFixed(2) });
         } }
       }
     }

@@ -1,7 +1,7 @@
 // Headless self-play: the whole field (player car driven by an AI) races N laps and the AI's racecraft is
 // measured: line tracking when alone, passing when clearly faster, defending by pace gap, rules
 // (contacts, four wheels off, formation passes), mishaps, and the per-step cost.
-//   npx tsx tools/race/selfplay.ts [--track <id>] [--laps 4] [--seed 1] [--max-ai N] [--pace path] [--mishap-rate 0.0002] [--follow-scale 1] [--lane-margin 1] [--shift-grip 0] [--player-scale s] [--strength 1] [--planner lanes|offset] [--no-kerbs] [--json out.json] [--quiet]
+//   npx tsx tools/race/selfplay.ts [--track <id>] [--laps 4] [--seed 1] [--max-ai N] [--pace path] [--mishap-rate 0.0002] [--follow-scale 1] [--lane-margin 1] [--shift-grip 0] [--player-scale s] [--strength 1] [--planner lanes|offset] [--set k.<knob>=<v> ...] [--no-kerbs] [--json out.json] [--quiet]
 //   --player-scale s: the player's car (AI-driven) at pace scale s (the AI Probe: scale 1 = its solo lap, 120.2 s at Laguna) instead of
 //   its pace row's; its pace hint is its own solo lap at that scale (measured here, 2 laps). The report gains the player's finish.
 import { createTrackSurface, createCollisionWorld } from '../../src/physics/index';
@@ -12,6 +12,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { runSelfplay, printReport } from './selfplay_metrics';
 import { runSolo } from '../../src/physics/ai/solo';
 import { TRACKS } from '../../src/scoreboard/config';
+import { setKnobs } from '../../src/physics/ai/planner';
 
 const argv = process.argv.slice(2);
 const arg = (k: string, d: string) => { const i = argv.indexOf(k); return i >= 0 ? argv[i + 1] : d; };
@@ -27,6 +28,8 @@ const laneMargin = argv.includes('--lane-margin') ? Number(arg('--lane-margin', 
 const shiftGrip = argv.includes('--shift-grip') ? Number(arg('--shift-grip', '0')) : (TRACKS[track]?.ai?.shiftGrip ?? 0);
 const strength = Number(arg('--strength', '1'));
 const planner = arg('--planner', 'lanes') === 'offset' ? 'offset' as const : 'lanes' as const;
+// (C4) the offset planner's knobs (planner.ts `knobs`, NOTES "Knobs for the search"): --set k.<name>=<value> or --knob <name>=<value>
+setKnobs([...argv.flatMap((a, i) => (a === '--set' && argv[i + 1]?.startsWith('k.') ? [argv[i + 1].slice(2)] : [])), ...argv.flatMap((a, i) => (a === '--knob' ? [argv[i + 1]] : []))]);
 const pack = loadTrackPack(track);
 const playerScale = argv.includes('--player-scale') ? Number(arg('--player-scale', '1')) : Number.NaN;
 // the player's pace hint at that scale: the AI Probe's own solo lap (lap 2 of 2), as calibrate_field.ts measures it

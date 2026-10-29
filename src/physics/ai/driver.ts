@@ -22,7 +22,7 @@ import type { RaceLine } from './line';
 import { accAt, bankedG, coastDecel, loadFactor, type CarPerf } from './field';
 import type { Traffic } from './traffic';
 import { Rng } from './rng';
-import { knobs as oKnobs, PlanWork, plan as planOffset, FOLLOW_CLR as FOLLOW_CLR_O, PLAN_EVERY as O_EVERY, PLAN_AHEAD, PLAN_BEHIND, NB_MAX, PLAN_DT, PLAN_N, BIG, MOVE_EPS, MIN_HOLD, VORTEX_K, SHIFT_MIN as SHIFT_MIN_O, type Planner, type PlanEnv } from './planner';
+import { knobs as oKnobs, PlanWork, plan as planOffset, attackOverlap, bandTaken, attackNext, lineFree, ATT_NONE, ATT_COMMIT, ATT_HOLD, ATT_BACK, MERGE_GAP as MERGE_GAP_O, FOLLOW_CLR as FOLLOW_CLR_O, PLAN_EVERY as O_EVERY, PLAN_AHEAD, PLAN_BEHIND, NB_MAX, PLAN_DT, PLAN_N, BIG, MOVE_EPS, MIN_HOLD, VORTEX_K, WHY, SHIFT_MIN as SHIFT_MIN_O, type Planner, type PlanEnv } from './planner';
 
 const G = 9.81;
 
@@ -170,6 +170,9 @@ export class AiDriver {
   static planWhy: Record<string, number> | null = null;
   /** (tools) called after every offset plan with the car index, the plan's work and the target before it (C2 diagnosis) */
   static planHook: ((i: number, w: PlanWork, prev: number) => void) | null = null;
+  /** (tools, C4) when set, the attack's transitions are counted here (commit, hold, back, done, lost, ...) */
+  static attTally: Record<string, number> | null = null;
+  private attT(k: string): void { const T = AiDriver.attTally; if (T) T[k] = (T[k] ?? 0) + 1; }
   private static why(k: string): void { const W = AiDriver.planWhy; if (W) W[k] = (W[k] ?? 0) + 1; }
   readonly vehicle: Vehicle;
   readonly line: RaceLine;
@@ -239,6 +242,8 @@ export class AiDriver {
   private oTimer = 0; private oMoveDir = 0; private oMoveApex = -1; private oHeld = 0;
   /** (C3) another car was within the horizon at the last plan */
   private oNear = false;
+  /** (C4) the attack: its phase (planner.ts ATT_*), the car, the side and the corner it was made for */
+  oPhase = 0; oAtt = -1; oSide = 0; private oCorner = -1; private oStuck = 0;
   /** a car the plan could not keep clear of (every candidate broke a rule): I give way to it until the next plan (-1 none) */
   private oYield = -1;
   private readonly pw: PlanWork | null = null;
@@ -282,6 +287,12 @@ export class AiDriver {
     this.mishap = null; this.mPhase = 0; this.mT = 0; this.mCorner = -1; this.nextCorner = -1; this.onTimer = 0; this.offTimer = 0;
     this.stuckTime = 0; this.needsRecovery = false; this.hint = -1; this.kCmd = 0; this.passCool = 0; this.traffic.passing[this.idx] = -1;
     this.oStar = 0; this.oTimer = (this.idx % 8) * O_EVERY / 8; this.oMoveDir = 0; this.oMoveApex = -1; this.oYield = -1;
+    this.attackOff();
+  }
+  /** (C4) no attack in hand */
+  private attackOff(): void {
+    this.oPhase = ATT_NONE; this.oAtt = -1; this.oSide = 0; this.oCorner = -1; this.oStuck = 0;
+    if (this.pw !== null) { this.traffic.oAtt[this.idx] = -1; this.traffic.oSide[this.idx] = 0; }
   }
 
   private profAt(s: number): number { return this.line.at(this.profile, s); }
@@ -491,6 +502,8 @@ export class AiDriver {
       if (d < 0 || d > 130) break;
       if (tr.away[j] && !this.offTrack) continue;
       const gap = d - myFront - tr.rear[j];
+      // (C4 P2, the offset planner) backing out: the car I attacked is followed wherever I am beside it (lift, tuck in behind)
+      if (offset && this.oPhase === ATT_BACK && j === this.oAtt) { leadGap = gap; leadJ = j; break; }
       const sj = tr.s[j];
       const aimThere = Math.max(this.roadLo(sj, hwI), Math.min(this.roadHi(sj, hwI), eAim));
       const a = Math.min(1, d / (LD0 + LDK * v + 1));
@@ -506,6 +519,9 @@ export class AiDriver {
         // (the offset planner: a car my body already overlaps along the track and clear of me laterally is beside me, not
         // ahead: overlap holds, the corridor and the plan keep us apart)
         if (offset && gap < 0) continue;
+        // (C4 P1) committed on it and clear of its band now: not followed for where the road will squeeze us later (that is past
+        // the braking point, where the overlap decides: P2 backs out, P3 holds)
+        if (offset && this.oPhase === ATT_COMMIT && j === this.oAtt && oKnobs.att2) continue;
         // and where I would catch it (within 3 s), both lanes clamped to the road there: a lane the road squeezes
         // into mine is my lane by then
         const tc = Math.min(3, Math.max(0, gap) / Math.max(0.5, v - tr.v[j]));
@@ -536,6 +552,9 @@ export class AiDriver {
       const bm = 0.85 * perf.abrake * G;
       const vBrake = Math.sqrt(0.85 * vj * vj + 2 * bm * room);
       if (vBrake < vF) vF = vBrake;
+      // (C4 P2) backing out from beside it: a relative lift (its speed - boDv), not the braking limit's step (a brake test for the
+      // car behind me)
+      if (offset && this.oPhase === ATT_BACK && leadJ === this.oAtt && leadGap < 1 && oKnobs.boDv > 0) vF = Math.max(vF, vj - oKnobs.boDv);
       if (vF < vCmd) { vCmd = Math.max(0, vF); this.limiter = 'follow'; aref = Math.min(aref, Math.min(0, tr.a[leadJ])); }
     }
 
@@ -607,7 +626,7 @@ export class AiDriver {
     if (offset) {
       // the offset planner: a plan every PLAN_EVERY s while another car is within its horizon; alone, the racing line
       this.oTimer -= dt; this.oHeld += dt;
-      if (!green || this.offTrack || this.mishap !== null) { this.oStar = 0; this.oYield = -1; this.oMoveDir = 0; tr.oPass[i] = 0; tr.passing[i] = -1; }
+      if (!green || this.offTrack || this.mishap !== null) { this.oStar = 0; this.oYield = -1; this.oMoveDir = 0; tr.oPass[i] = 0; tr.passing[i] = -1; if (this.oPhase !== ATT_NONE) this.attackOff(); }
       else if (this.oTimer <= 0) { this.oTimer += O_EVERY; if (this.oTimer < 0) this.oTimer = 0; this.planStep(v, eMe, pf, headway); }
       shiftWant = this.oStar;
       if (this.oYield >= 0) {
@@ -1164,7 +1183,7 @@ export class AiDriver {
       B[nb] = q; BD[nb++] = d;
     }
     this.oNear = na + nb > 0;
-    if (na + nb === 0) { this.oStar = 0; this.oYield = -1; this.oMoveDir = 0; tr.oPass[i] = 0; tr.passing[i] = -1; return; }
+    if (na + nb === 0) { this.oStar = 0; this.oYield = -1; this.oMoveDir = 0; tr.oPass[i] = 0; tr.passing[i] = -1; if (this.oPhase !== ATT_NONE) this.attackOff(); return; }
     // merge by distance (ties: the lower car index)
     let a = 0, b = 0, nN = 0;
     const S = PLAN_N + 1;
@@ -1173,6 +1192,7 @@ export class AiDriver {
       const q = takeA ? A[a] : B[b], rel0 = takeA ? AD[a++] : -BD[b++];
       const k = nN++;
       w.nIdx[k] = q; w.nFront[k] = tr.front[q]; w.nRear[k] = tr.rear[q]; w.nE[k] = tr.e[q]; w.nOff[k] = tr.off[q];
+      w.nD[k] = tr.pace[q] > 0 ? 1 - tr.pace[i] / tr.pace[q] : 0;
       // (C2 H1, predictability: the passer commits because the car ahead holds its line) a car on its line and not moving (its
       // target where it is, no lateral drift, not off, not itself passing) is projected as its line only: its half width, no
       // target span, no drift widening; a car moving, off or passing keeps the widened band
@@ -1237,9 +1257,27 @@ export class AiDriver {
     let near = false;
     for (let k = 0; k < nN; k++) { const r = w.X[k * S]; if (!w.nIgnore[k] && r < 20 + tr.front[i] && r > -(20 + tr.rear[i])) { near = true; break; } }
     w.moveOpen = near && this.oMoveApex >= 0 && this.ahead(s, cs[this.oMoveApex].apex) > 0;
+    // (C4) the Lemons pass: the attack's phase and the offset it prefers; nobody near: the racing line (P4)
+    w.lapLeft = 0;
+    if (oKnobs.tlap && tr.pace[i] > 0) { const f = 1 - line.wrap(s) / line.L; w.lapLeft = tr.pace[i] * (f > oKnobs.lapMin ? f : oKnobs.lapMin); }
+    this.attackStep(s, v, w, na);
+    if (this.oPhase === ATT_COMMIT) w.cfPassing = true;
     const prev = this.oStar;
-    const e = planOffset(w, this.penv!);
+    if (oKnobs.p4 && this.oPhase === ATT_NONE && lineFree(w)) {
+      this.oStar = 0; this.oYield = -1; this.oMoveDir = 0; tr.oPass[i] = 0; tr.passing[i] = -1;
+      return;
+    }
+    let e = planOffset(w, this.penv!);
     this.oCost = w.bestCost; this.oPlans = w.evaluated;
+    // (C4 P1) committed: the attack offset is taken unless it breaks a hard rule (its soft costs past the braking point are moot:
+    // there the overlap decides, P2 / P3)
+    if (this.oPhase === ATT_COMMIT && oKnobs.att1) {
+      let ca = -1;
+      for (let c = 0; c < w.nC; c++) if (ca < 0 || Math.abs(w.cand[c] - w.eAtt) < Math.abs(w.cand[ca] - w.eAtt)) ca = c;
+      if (AiDriver.attTally) { const j = this.oAtt, sep = Math.abs(tr.e[i] - tr.e[j]) - hwI - tr.hw[j] >= FOLLOW_CLR_O; this.attT('lim ' + this.limiter + (sep ? ' out' : ' in') + (this.leadIdx === j ? ' lead=it' : '')); this.attT((this.limiter === 'profile' && sep ? 'po dv ' : 'dv ') + Math.round(v - tr.v[j])); if (this.limiter === 'profile' && sep) this.attT('po gap ' + Math.round((tr.ds(i, j) - tr.front[i] - tr.rear[j]) / 5) * 5); }
+      if (AiDriver.attTally) this.attT(Math.abs(e - w.cand[ca]) <= 0.3 ? 'plan takes it' : w.cost[ca] >= BIG ? 'plan refuses: ' + WHY[w.why[ca]] + (w.culprit[ca] >= 0 && w.nIdx[w.culprit[ca]] === this.oAtt ? ' (it)' : '') : 'override');
+      if (w.cost[ca] < BIG) { e = w.cand[ca]; w.best = e; w.bestCost = w.cost[ca]; w.bestCulprit = w.culprit[ca]; }
+    }
     if (AiDriver.planHook) AiDriver.planHook(i, w, prev);
     this.oYield = w.bestCost >= BIG && w.bestCulprit >= 0 ? w.nIdx[w.bestCulprit] : -1;
     if (Math.abs(e - prev) > MOVE_EPS) {
@@ -1258,6 +1296,84 @@ export class AiDriver {
       else if (nb > 0 && BD[0] < tr.rear[i] + tr.front[B[0]]) q = B[0];
       tr.passing[i] = q >= 0 && !tr.off[q] && Math.abs(e - tr.e[q]) >= hwI + tr.hw[q] + FOLLOW_CLR_O ? q : -1;
     }
+  }
+  /**
+   * (C4 P1-P3, P5) The Lemons pass (NOTES "C4"): a clearly slower car ahead within T_COMMIT s while the next braking point is at
+   * least D_MIN m ahead and my profile gets my nose OVL_MIN past its tail before it: commit to a side (the inside of that corner;
+   * the outside when the car ahead has the inside or a third car is in the inside band there; P5: the side of the car ahead's own
+   * pass, or the side its passer does not hold) and prefer that offset (w.eAtt). At the braking point: with the overlap, hold the
+   * side to the track-out (P3); without it, back out (P2: follow it, tuck in behind its line) until past the apex.
+   */
+  private attackStep(s: number, v: number, w: PlanWork, na: number): void {
+    const tr = this.traffic, i = this.idx, K = oKnobs, cs = this.line.corners;
+    w.eAtt = Number.NaN; w.attHold = false;
+    if (!K.p1) { if (this.oPhase !== ATT_NONE) this.attackOff(); return; }
+    const ag = this.params.aggression - 1, myLen = tr.front[i] + tr.rear[i];
+    const ovlM = K.ovl * (1 - K.ovlAg * ag) * myLen, hwI = tr.hw[i];
+    let kj = -1;
+    if (this.oPhase !== ATT_NONE) {
+      const j = this.oAtt, d = tr.ds(i, j);
+      for (let k = 0; k < w.nN; k++) if (w.nIdx[k] === j) { kj = k; break; }
+      if (kj < 0 || tr.away[j] || tr.off[j] || d > 60 || d < -(tr.rear[i] + tr.front[j] + MERGE_GAP_O)) { this.attT(d < 0 ? 'done' + this.oPhase : 'lost' + this.oPhase); this.attackOff(); }
+      else {
+        const C = cs[this.oCorner];
+        const nx = attackNext(this.oPhase, tr.front[i] + tr.rear[j] - d, ovlM, this.ahead(s, C.brake), this.ahead(s, C.apex), this.ahead(s, this.vTrackOut![this.oCorner]), v * O_EVERY);
+        if (nx !== this.oPhase) this.attT(this.oPhase + '>' + nx);
+        if (AiDriver.attTally && nx === ATT_BACK && this.oPhase === ATT_COMMIT) { const sep = Math.abs(tr.e[i] - tr.e[j]) - hwI - tr.hw[j]; this.attT(sep >= FOLLOW_CLR_O ? 'back: out' : Math.abs(this.oStar - tr.e[j]) - hwI - tr.hw[j] >= FOLLOW_CLR_O ? 'back: target out, car not' : 'back: target in'); this.attT('back ov ' + Math.round((tr.front[i] + tr.rear[j] - d) / 5) * 5); }
+        if (nx === ATT_NONE) this.attackOff(); else this.oPhase = nx;
+      }
+    }
+    if (this.oPhase === ATT_NONE && na > 0) {
+      const j = this.nbA[0], d = this.nbAD[0], gap = d - tr.front[i] - tr.rear[j];
+      for (let k = 0; k < w.nN; k++) if (w.nIdx[k] === j) { kj = k; break; }
+      const tC = K.tc * (1 + K.tcAg * ag);
+      // (C4 knobs.slow) a car slower on pace that I have been stuck behind for STUCK_T x stk s is attacked too (the lane model's
+      // rule for a car within 3 %)
+      const slower = tr.pace[i] < tr.pace[j];
+      if (slower && gap < 1.5 + HEADWAY[this.params.aggression] * v + 10) this.oStuck += O_EVERY; else this.oStuck = 0;
+      const want = tr.pace[i] < CLEARLY_FASTER * tr.pace[j] || (K.slow > 0 && slower && this.oStuck > K.stk * STUCK_T[this.params.aggression]);
+      if (kj >= 0 && !tr.off[j] && want && gap > 0 && gap <= tC * Math.max(10, v) && !this.noPassZone(s)) {
+        // the next braking point ahead
+        let c = -1, dB = Infinity;
+        for (let q = 0; q < cs.length; q++) { const x = this.ahead(s, cs[q].brake); if (x > 0 && x < dB) { dB = x; c = q; } }
+        if (c >= 0 && dB >= K.dmin && c !== this.corkscrew) {
+          const dir = cs[c].dir;
+          let side = tr.e[j] * dir > K.ins ? -dir : dir;
+          // (already out to one side of it: that side; crossing behind it is the never-across rule's)
+          const eMe0 = tr.e[i] - tr.e[j];
+          if (Math.abs(eMe0) > hwI) side = eMe0 > 0 ? 1 : -1;
+          if (K.p5) {
+            if (tr.oSide[j] !== 0) side = tr.oSide[j];                       // it is passing too: follow it through
+            else for (let k = 0; k < w.nN; k++) { const p = w.nIdx[k]; if (p !== j && tr.oAtt[p] === j && tr.oSide[p] !== 0) { side = -tr.oSide[p]; break; } }
+          }
+          for (let tryN = 0; tryN < 2; tryN++, side = -side) {
+            const e = this.attackE(j, side, dB);
+            if (Number.isNaN(e)) continue;
+            if (bandTaken(w, kj, e, dB)) continue;
+            if (K.feas && (attackOverlap(w, this.penv!, kj, e, dB) >= BIG || w.attOv < ovlM)) continue;
+            this.oPhase = ATT_COMMIT; this.oAtt = j; this.oSide = side; this.oCorner = c; this.attT(side === cs[c].dir ? 'commit in' : 'commit out');
+            break;
+          }
+        }
+      }
+    }
+    if (this.oPhase === ATT_NONE) { tr.oAtt[i] = -1; tr.oSide[i] = 0; return; }
+    tr.oAtt[i] = this.oAtt; tr.oSide[i] = this.oPhase === ATT_BACK ? 0 : this.oSide;
+    const j = this.oAtt;
+    if (this.oPhase === ATT_COMMIT) {
+      const e = this.attackE(j, this.oSide, Math.max(0, this.ahead(s, cs[this.oCorner].brake)));
+      w.eAtt = Number.isNaN(e) ? tr.e[j] + this.oSide * (hwI + tr.hw[j] + K.attc) : e;
+    } else if (this.oPhase === ATT_HOLD) { w.eAtt = this.oStar; w.attHold = true; }
+    else w.eAtt = tr.e[j];
+
+  }
+  /** (C4) the attack offset beside car j on a side, within my corridor here and at the braking point dB m ahead (NaN: no room) */
+  private attackE(j: number, side: number, dB: number): number {
+    const tr = this.traffic, i = this.idx, s = tr.s[i], hwI = tr.hw[i];
+    const e = tr.e[j] + side * (hwI + tr.hw[j] + oKnobs.attc);
+    const lo = Math.max(this.roadLo(s, hwI), this.roadLo(s + dB, hwI)) + PASS_EDGE - 0.15, hi = Math.min(this.roadHi(s, hwI), this.roadHi(s + dB, hwI)) - PASS_EDGE + 0.15;
+    const ec = e < lo ? lo : e > hi ? hi : e;
+    return Math.abs(ec - tr.e[j]) < hwI + tr.hw[j] + FOLLOW_CLR_O ? Number.NaN : ec;
   }
   private readonly nbA = new Int32Array(NB_MAX); private readonly nbB = new Int32Array(NB_MAX);
   private readonly nbAD = new Float64Array(NB_MAX); private readonly nbBD = new Float64Array(NB_MAX);

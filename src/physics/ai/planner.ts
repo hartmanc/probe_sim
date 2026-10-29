@@ -77,12 +77,30 @@ export const MERGE_GAP = 3;
  *  shift target: Laguna T11 / T10 / T4 track-out four-offs at 2.5-2.8 m/s of clamp against a 2.86 m/s shift rate) */
 export const ROAD_K = 0.6;
 /** (C2, tools: the screens' A/B) the C2 steps that are switches; the defaults are the kept ones */
-export const knobs = { h2: 1, grip: 0, tail: 1, h3: 0, h4: 1, h5: 0, h6: 1, roadk: ROAD_K, phw: 0.3, r1: 1, r2: 1, r3: 1, tv: 4, gr: 1, tailT: 10, ctl: 1, lift: 1, room: 1, fc: 0, vt: 0 };
+export const knobs = { h2: 1, grip: 0, tail: 1, h3: 0, h4: 1, h5: 0, h6: 1, roadk: ROAD_K, phw: 0.3, r1: 1, r2: 1, r3: 1, tv: 4, gr: 1, tailT: 10, ctl: 1, lift: 1, room: 1, fc: 0, vt: 0,
+  // (C4, the Lemons pass; NOTES "C4" and "Knobs for the search")
+  p1: 1, slow: 1, stk: 1, att1: 1, att2: 0, tc: 2, tcAg: 0.25, dmin: 60, ovl: 0.5, ovlAg: 0.2, attw: 1, attc: 0.9, ins: 0.5, feas: 1,
+  tlap: 1, lapMin: 0.5, p2: 1, bo: 0, boDv: 1.5, p3: 1, p4: 1, ret: 40, retT: 10, p5: 1 };
 /* (C3, knobs.r1 / r2 / r3: the vortex round's rules; knobs.tv: the vortex rule's hard window, s; knobs.gr 1: the GRIP cost at the
  * rate the plan moves at (R3's shiftRate, so a move the grip allows is not priced as one it does not); knobs.tailT: TAIL_T, s;
  * knobs.ctl 1: the controller moves a held offset at that rate too, driver.ts; knobs.lift 1: the alongside lift only for a car
  * alongside, not one in my wake, driver.ts; knobs.room 1: room made for a passer my body overlaps, driver.ts; knobs.fc 1: the
  * friction circle in shiftRate and the controller's rate; knobs.vt 1: the vortex rule in the projection's tier) */
+/* (C4 knobs) p1 1: the early commit on a clearly slower car ahead; tc: T_COMMIT, s of time gap (gap / v) within which it commits;
+ * tcAg: the share of tc each aggression step adds (calm 1 - tcAg, aggressive 1 + tcAg); dmin: D_MIN, m: the next braking point at
+ * least this far ahead; ovl: OVL_MIN, the share of my length my nose must be past its tail at the braking point; ovlAg: the share
+ * of ovl each aggression step takes off; attw: ATT_W, s per m away from the attack offset; attc: m edge to edge the attack offset
+ * keeps from the car ahead; ins: m to the inside of its line beyond which the car ahead "has the inside" (the pick goes outside);
+ * feas 1: commit only when the plan's own projection of the attack (attackOverlap) puts the overlap before the braking point
+ * (or the straight runs past the horizon); att1 1: committed, the attack offset is taken unless it breaks a hard rule; att2 1:
+ * committed and clear of its band, the car attacked is not followed for the road's squeeze past the braking point; tlap 1: staying behind a clearly slower car is
+ * priced over the rest of the lap (its pace delta x my lap time x the lap fraction left, at least lapMin of a lap); p2 1: back
+ * out at the braking point without the overlap (lift, follow it, tuck in, re-plan past the apex); bo: m before the braking point
+ * at which the overlap is judged; p3 1: with the overlap, hold the side to the track-out; p4 1: no car within ret m ahead and
+ * none overlapping: the racing line, no plan; p5 1: the pick reads the car ahead's own pass (follow it through) and its passer's
+ * side (taken) */
+/** (C4 P1-P3) the attack phases: none, committed (alongside by the braking point), holding the side, backing out */
+export const ATT_NONE = 0, ATT_COMMIT = 1, ATT_HOLD = 2, ATT_BACK = 3;
 /** (C3 R3) m/s: the least lateral rate of the shift the controller delivers (driver.ts SHIFT_RATE_MIN) */
 export const SHIFT_MIN = 0.8;
 /** (C3 R2) the share of a corner's peak curvature above which the racing line is "in the corner": turn-in where |κ| rises above
@@ -98,6 +116,8 @@ export const GRIP_CORNER = 0.5;
 export const T_HARD_MIN = 1, T_HARD_MAX = 4;
 /** risk hook: s per unit of passRisk (0 today) */
 export const RISK_W = 4;
+/** the clearly-faster pace ratio (driver.ts CLEARLY_FASTER) */
+const CF = 0.97;
 
 /** My side of the plan: my race-line speed, my lane speed factor and my corridor at s m ahead of my station. */
 export interface PlanEnv {
@@ -159,6 +179,14 @@ export class PlanWork {
   readonly vDir = new Int8Array(NB_MAX);
   /** (C3 R1) a passer told me it is passing me: my target is frozen (held; never moved for it) */
   frozen = false;
+  /** (C4) the attack offset preferred at ATT_W (NaN: none), and holding it (P3: the target held unless it breaks a rule) */
+  eAtt = Number.NaN; attHold = false;
+  /** (C4 tlap) per neighbour: its pace deficit to me, 1 - my pace / its pace (> 0: slower than me) */
+  readonly nD = new Float64Array(NB_MAX);
+  /** (C4 tlap) s: my lap time x the lap fraction left (at least knobs.lapMin of a lap) */
+  lapLeft = 0;
+  /** (C4 P1, attackOverlap) the neighbour attacked and the braking point (m ahead); out: my nose past its tail there, m */
+  attK = -1; attDB = 0; attOv = 0;
   // ---- candidates
   nC = 0;
   readonly cand = new Float64Array(CAND_MAX); readonly cost = new Float64Array(CAND_MAX); readonly culprit = new Int32Array(CAND_MAX);
@@ -198,6 +226,7 @@ export function candidates(w: PlanWork, env: PlanEnv): void {
   w.cand[0] = w.ePrev; w.nC = 1;
   addCand(w, 0, lo, hi);
   if (!Number.isNaN(w.ePref)) addCand(w, clampC(w.ePref, lo, hi), lo, hi);
+  if (!Number.isNaN(w.eAtt)) addCand(w, clampC(w.eAtt, lo, hi), lo, hi);
   const base = Math.round(2 * w.eMeas) / 2, h = (CAND_N - 1) >> 1;
   for (let k = -h; k <= h; k++) addCand(w, base + k * CAND_STEP, lo, hi);
 }
@@ -222,6 +251,7 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
   const rev = mv !== 0 && w.moveOpen && w.moveDir !== 0 && mv === -w.moveDir ? REVERSE_W : 0;
   if (rev) cost += REVERSE_W;
   if (!Number.isNaN(w.ePref)) cost += COVER_W * Math.abs(eStar - w.ePref);
+  if (!Number.isNaN(w.eAtt)) cost += knobs.attw * Math.abs(eStar - w.eAtt);
   cost += RISK_W * env.risk(eStar);
   const nN = w.nN, X = w.X, LO = w.LO, HI = w.HI;
   // (C3 R1) the cars behind me that do not overlap me now are invisible: no clearance, no across, no road rule beside them, no
@@ -255,7 +285,7 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
   }
   let ends = false;
   if (pk >= 0) { const o = pk * S; ends = (LO[o] - (eStar + hw) > (eStar - hw) - HI[o] ? LO[o] - (eStar + hw) : (eStar - hw) - HI[o]) >= FOLLOW_CLR; }
-  let eTgt = eStar, eUp = eCur, tailR = 0;
+  let eTgt = eStar, eUp = eCur, tailR = 0, tailLap = 0;
   // (the lateral motion at the last sample, and whether it was away from the line: the car moving toward its old target now)
   let mvS = w.ePrev > eCur + 1e-9 ? 1 : w.ePrev < eCur - 1e-9 ? -1 : 0, awayS = (w.ePrev < 0 ? -w.ePrev : w.ePrev) > (eCur < 0 ? -eCur : eCur);
   // the path held so far (clamped offsets at the last two samples and the distance between them): its own curvature
@@ -372,6 +402,8 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
       const cap = xq - (w.nRear[k] + w.front + 1.5 + hwy * (vq > 0 ? vq : 0));
       if (cap < sN) sN = cap > sMe ? cap : sMe;
       if (m === PLAN_N && vq < vR) { const r = 1 - (vq > 0 ? vq : 0) / (vR > 1 ? vR : 1); if (r > tailR) tailR = r; }
+      // (C4 tlap) behind a clearly slower car at the end of the horizon: the rest of the lap behind it
+      if (m === PLAN_N && knobs.tlap && w.nD[k] > 1 - CF) { const q = w.nD[k] * w.lapLeft; if (q > tailLap) tailLap = q; }
     }
     capOn = capNow;
     const dsMe = sN - sMe;
@@ -420,6 +452,8 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
       if (!w.nOff[k] && sN >= w.zoneLo && sMe <= w.zoneHi && X[o - 1] - sMe > 0 && rel <= 0) { w.culprit[c] = k; w.why[c] = 7; return 2 * BIG; }
     }
     vMe = dsMe / PLAN_DT;
+    // (C4 P1) the overlap with the car attacked when I reach the braking point
+    if (w.attK >= 0 && sN >= w.attDB && sMe < w.attDB) w.attOv = sN + w.front - (X[w.attK * S + m] - w.nRear[w.attK]);
     sMe = sN;
   }
   // a pass that does not progress, or would take longer than PLAN_T_MAX (the cars I started behind and am now beside)
@@ -436,7 +470,7 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
     const gain = rel0 - relN;
     if (gain <= 0 || T + (relN + clear) * T / gain > PLAN_T_MAX) long = LONG_W;
   }
-  if (knobs.tail) { lost += tailR * knobs.tailT; tailR = 0; }
+  if (knobs.tail) { const q = tailR * knobs.tailT; lost += q > tailLap ? q : tailLap; tailR = 0; }
   if (planTally.on) {
     const q = c * 8, C = w.comp;
     C[q] = lost; C[q + 1] = clr; C[q + 2] = roadSoft; C[q + 3] = corr; C[q + 4] = grip; C[q + 5] = long; C[q + 6] = rev; C[q + 7] = cost - rev;
@@ -463,6 +497,76 @@ export function plan(w: PlanWork, env: PlanEnv): number {
   if (bi !== 0 && w.cost[0] < BIG && ((w.locked && !fast) || w.cost[bi] > w.cost[0] - HYST[fast ? 2 : w.aggr])) bi = 0;
   // (C3 R1) told I am being passed: hold the target (never moved for the passer), unless holding breaks a rule
   if (bi !== 0 && w.frozen && w.cost[0] < BIG) bi = 0;
+  // (C4 P3) alongside at the braking point: hold the side through the corner, unless holding breaks a rule
+  if (bi !== 0 && w.attHold && w.cost[0] < BIG) bi = 0;
   w.best = w.cand[bi]; w.bestCost = w.cost[bi]; w.bestCulprit = w.culprit[bi];
   return w.best;
+}
+
+/**
+ * (C4 P1) The early commit's feasibility, on the plan's own projection: the candidate "move to eAtt and hold it" (the lateral
+ * move at the rate the grip leaves, capped behind any car in my band, the road clamping me) and where my nose is against the
+ * tail of neighbour k when I reach the braking point dB m ahead (m past its tail; +Infinity when the braking point lies beyond
+ * the horizon: a straight longer than it, checked again when it comes in). Returns the candidate's cost (>= BIG: a hard rule).
+ */
+export function attackOverlap(w: PlanWork, env: PlanEnv, k: number, eAtt: number, dB: number): number {
+  w.cand[0] = eAtt; w.nC = 1;
+  w.attK = k; w.attDB = dB; w.attOv = Number.POSITIVE_INFINITY;
+  const c = candidateCost(w, env, 0);
+  w.attK = -1;
+  return c;
+}
+
+/**
+ * (C4 P1 pick) Another neighbour than k in the attack band [eAtt ± (hw + LANE_CLR)] beside where I will be when I reach the
+ * braking point dB m ahead (at my present speed, the horizon's last sample at most): that side is taken.
+ */
+export function bandTaken(w: PlanWork, k: number, eAtt: number, dB: number): boolean {
+  const vv = w.v > 5 ? w.v : 5, m0 = Math.round(dB / vv / PLAN_DT), m = m0 < 0 ? 0 : m0 > PLAN_N ? PLAN_N : m0, sAt = dB < vv * PLAN_N * PLAN_DT ? dB : vv * PLAN_N * PLAN_DT;
+  for (let q = 0; q < w.nN; q++) {
+    if (q === k || w.nOff[q]) continue;
+    const o = q * S + m, rel = w.X[o] - sAt;
+    if (rel > w.front + w.nRear[q] + 3 || rel < -(w.rear + w.nFront[q] + 3)) continue;
+    if (w.HI[o] > eAtt - w.hw - LANE_CLR && w.LO[o] < eAtt + w.hw + LANE_CLR) return true;
+  }
+  return false;
+}
+
+/**
+ * (C4 P1-P3) The attack's next phase. ov: m my nose is past the tail of the car I attack (negative: behind it); dB / dAp / dOut:
+ * m to the braking point, apex and track-out of the corner the commit was made for; reach: m I cover before the next check.
+ * COMMIT: at the braking point (dB <= reach + knobs.bo) with the overlap, HOLD (P3); without it, BACK (P2). HOLD ends at the
+ * track-out, BACK past the apex (re-plan after the corner): NONE.
+ */
+export function attackNext(phase: number, ov: number, ovl: number, dB: number, dAp: number, dOut: number, reach: number): number {
+  if (phase === ATT_COMMIT) {
+    if (dB > reach + knobs.bo) return ATT_COMMIT;
+    return ov >= ovl && knobs.p3 ? ATT_HOLD : knobs.p2 ? ATT_BACK : ATT_NONE;
+  }
+  if (phase === ATT_HOLD) return dOut < 0 ? ATT_NONE : ATT_HOLD;
+  if (phase === ATT_BACK) return dAp < 0 ? ATT_NONE : ATT_BACK;
+  return ATT_NONE;
+}
+
+/** (C4 P4) Nobody within knobs.ret m ahead and nobody my body overlaps now (or MERGE_GAP behind my rear): the racing line, no plan. */
+export function lineFree(w: PlanWork): boolean {
+  for (let k = 0; k < w.nN; k++) {
+    const x = w.X[k * S];
+    if (x < knobs.ret + w.front + w.nRear[k] && x > -(w.rear + w.nFront[k] + MERGE_GAP)) return false;
+    // (knobs.retT: ... nor one I reach within ret m of in retT s at my speed now, on its projection)
+    if (knobs.retT > 0 && x > 0) {
+      const m = Math.min(PLAN_N, Math.round(knobs.retT / PLAN_DT));
+      if (w.X[k * S + m] - w.v * m * PLAN_DT < knobs.ret + w.front + w.nRear[k]) return false;
+    }
+  }
+  return true;
+}
+
+/** (tools) Set knobs from "name=value" strings; an unknown name throws (a typo must not run a screen on the defaults). */
+export function setKnobs(kvs: string[]): void {
+  for (const kv of kvs) {
+    const [k, v] = kv.split('=');
+    if (!(k in knobs) || !Number.isFinite(Number(v))) throw new Error(`planner knob ${kv}: unknown name or not a number`);
+    (knobs as Record<string, number>)[k] = Number(v);
+  }
 }

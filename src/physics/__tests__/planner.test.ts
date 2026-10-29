@@ -1,7 +1,7 @@
 // C1, the offset planner (src/physics/ai/planner.ts): its rules on synthetic neighbours (a straight, constant speeds), and alone
 // through the driver (the racing line, nothing evaluated).
 import { describe, expect, test } from 'vitest';
-import { PlanWork, plan, candidateCost, shiftRate, BIG, PLAN_DT, PLAN_N, REVERSE_W, SHIFT_MIN, type PlanEnv } from '../ai/planner';
+import { PlanWork, plan, candidateCost, shiftRate, attackOverlap, attackNext, lineFree, bandTaken, BIG, PLAN_DT, PLAN_N, REVERSE_W, SHIFT_MIN, ATT_NONE, ATT_COMMIT, ATT_HOLD, ATT_BACK, type PlanEnv } from '../ai/planner';
 import { director } from './ai_fixture';
 
 const S = PLAN_N + 1;
@@ -145,6 +145,73 @@ describe('offset planner (pure)', () => {
     car(h, 0, 140, -4, 30);
     h.cand[0] = 2; h.nC = 1;
     expect(candidateCost(h, right, 0)).toBeGreaterThanOrEqual(BIG);
+  });
+});
+
+describe('C4: the Lemons pass (pure)', () => {
+  const OVL = 2.2;   // half of a 4.4 m car
+  test('P1: on a straight, a clearly slower car ahead: the attack offset gets my nose half a car past its tail before a braking point 200 m ahead, not one 30 m ahead; the plan takes it', () => {
+    const w = work();
+    car(w, 0, 18, 0, 26);                                   // 18 m ahead (centre), 4 m/s slower, on the line
+    expect(attackOverlap(w, env, 0, 2.6, 200)).toBeLessThan(BIG);
+    expect(w.attOv).toBeGreaterThanOrEqual(OVL);
+    attackOverlap(w, env, 0, 2.6, 30);
+    expect(w.attOv).toBeLessThan(OVL);
+    // a straight longer than the horizon: no braking point in reach, the check is made again when it comes in
+    attackOverlap(w, env, 0, 2.6, 1e4);
+    expect(w.attOv).toBe(Number.POSITIVE_INFINITY);
+    // committed: the attack offset is preferred, and the plan moves there
+    const c = work();
+    car(c, 0, 18, 0, 26);
+    c.eAtt = 2.6;
+    expect(plan(c, env)).toBeCloseTo(2.6, 6);
+  });
+
+  test('P1 pick: a third car in the attack band where I reach the braking point takes that side', () => {
+    const w = work();
+    car(w, 0, 18, 0, 26);
+    expect(bandTaken(w, 0, 2.6, 60)).toBe(false);
+    car(w, 1, 40, 2.4, 24);                                 // in the left band, 40 m up the road (I reach 60 m in 2 s, it is at 88 m)
+    expect(bandTaken(w, 0, 2.6, 60)).toBe(false);
+    car(w, 1, 15, 2.4, 22);                                 // ... where I will be: at 59 m when I reach 60 m
+    expect(bandTaken(w, 0, 2.6, 60)).toBe(true);
+    expect(bandTaken(w, 0, -2.6, 60)).toBe(false);
+  });
+
+  test('P2 / P3: at the braking point without the overlap back out (then re-plan past the apex); with it hold the side to the track-out', () => {
+    // (ov: m my nose is past its tail; dB / dAp / dOut: m to the braking point, apex, track-out; reach: m to the next check)
+    expect(attackNext(ATT_COMMIT, -3, OVL, 120, 200, 260, 8)).toBe(ATT_COMMIT);       // still on the straight
+    expect(attackNext(ATT_COMMIT, -3, OVL, 5, 85, 145, 8)).toBe(ATT_BACK);           // at the braking point, not alongside
+    expect(attackNext(ATT_COMMIT, 1.5, OVL, 5, 85, 145, 8)).toBe(ATT_BACK);          // a nose in is not the overlap
+    expect(attackNext(ATT_COMMIT, 3, OVL, 5, 85, 145, 8)).toBe(ATT_HOLD);            // half a car alongside: hold
+    expect(attackNext(ATT_BACK, -6, OVL, -40, 30, 90, 8)).toBe(ATT_BACK);            // backing out until the apex
+    expect(attackNext(ATT_BACK, -12, OVL, -80, -2, 60, 8)).toBe(ATT_NONE);           // past it: re-plan
+    expect(attackNext(ATT_HOLD, 4, OVL, -80, -2, 60, 8)).toBe(ATT_HOLD);             // holding through the apex
+    expect(attackNext(ATT_HOLD, 6, OVL, -140, -60, -1, 8)).toBe(ATT_NONE);           // to the track-out
+    // backing out, the plan tucks in behind it (the preference: its line), once my nose is behind its tail
+    const b = work({ v: 28, ePrev: 2.6, eCur: 2.6, eMeas: 2.6 });
+    car(b, 0, 14, 0, 28);
+    b.eAtt = 0;
+    expect(Math.abs(plan(b, env))).toBeLessThan(0.3);
+    // holding: the side is kept although another target is cheaper
+    const h = work({ ePrev: 2.6, eCur: 2.6, eMeas: 2.6 });
+    car(h, 0, 1, 0, 29.5);                                 // alongside, its nose ahead of mine
+    h.eAtt = 2.6; h.attHold = true;
+    expect(plan(h, env)).toBeCloseTo(2.6, 6);
+  });
+
+  test('P4: nobody within ret m ahead (nor reached within retT s) and nobody beside me: the racing line, no plan', () => {
+    const w = work();
+    car(w, 0, 100, 0, 30);                                  // 100 m ahead at my speed
+    expect(lineFree(w)).toBe(true);
+    car(w, 0, 100, 0, 22);                                  // 100 m ahead, 8 m/s slower: within 40 m of it in 10 s
+    expect(lineFree(w)).toBe(false);
+    car(w, 0, 20, 0, 30);                                   // 20 m ahead
+    expect(lineFree(w)).toBe(false);
+    car(w, 0, -1, 2.2, 30);                                 // beside me
+    expect(lineFree(w)).toBe(false);
+    car(w, 0, -15, 0, 31);                                  // well behind me: the lead car holds its line (R1)
+    expect(lineFree(w)).toBe(true);
   });
 });
 

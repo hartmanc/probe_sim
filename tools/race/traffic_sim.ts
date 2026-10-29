@@ -5,6 +5,8 @@
 //   one race:  npx tsx tools/race/traffic_sim.ts --track <id> --laps 10 --seed S [--json out.json] [--set key=value ...]
 //   a set:     npx tsx tools/race/traffic_sim.ts --tracks all --seeds 1-8 --workers 6 [--laps 10] [--set key=value ...]
 //              [--runs <dir>] [--compare tools/race/data/traffic/curves.json] [--save tools/race/out/traffic/<name>]
+//   the offset planner's knobs (planner.ts `knobs`, NOTES "Knobs for the search"): --set k.<name>=<value> (e.g. --set planner=offset
+//   --set k.tc=2.5), or --knob <name>=<value> (not in the run tag)
 // A set runs each (track, seed) in its own process (`--workers` at a time), caches each race's JSON in --runs (default
 // tools/race/out/traffic/runs/<tag>, tag from the --set values and laps) and pools. One stint = the whole race; a car's ref =
 // quantile 0.2 of its usable laps by the module's own rules (green, not lap 1, <= 1.3 x its median); lap 1 is excluded by the
@@ -29,6 +31,8 @@ export interface RunOut {
     situations: number; completed: number; defending: { vsClearlyFaster: number; within3: number; vsSlower: number; none: number }; recoveries: number; mishaps: number;
     contactAt: unknown[]; fourOffAt: unknown[]; yields?: number;
     /** (C2) the wait (positions only) and, with --why, what held the clearly faster car (offset planner plans, by reason) */
+    /** (C4) the attack's transitions (offset planner) */
+    att?: Record<string, number>;
     wait?: { n: number; done: number; median: number; p90: number; ended: Record<string, number>; durations: number[]; losses?: number[] }; why?: Record<string, number> };
 }
 
@@ -46,10 +50,13 @@ async function runOne(): Promise<void> {
   const dir = new RaceDirector({
     line: pack.line, surface: pack.surface, makeSurface: pack.makeSurface, probeJson: loadProbeJson(), pace: loadPace(track), identity: loadIdentityJson(track),
     pitLane: pack.scenery?.pit_lane ?? null, blendLine: pack.scenery?.blend_line ?? null, collisionWorld: createCollisionWorld(pack.scenery, pack.track),
-  }, { laps, seed, playerAi: true, followScale: ai.followScale ?? 1, laneMargin: ai.laneMargin ?? 1, shiftGrip: ai.shiftGrip ?? 0, ...parseSet(sets) });
-  const knobs = argv.flatMap((a, i) => (a === '--knob' ? [argv[i + 1]] : []));
-  if (knobs.length) { const P = await import('../../src/physics/ai/planner'); for (const kv of knobs) { const [k, v] = kv.split('='); (P.knobs as Record<string, number>)[k] = Number(v); } }
+  }, { laps, seed, playerAi: true, followScale: ai.followScale ?? 1, laneMargin: ai.laneMargin ?? 1, shiftGrip: ai.shiftGrip ?? 0, ...parseSet(sets.filter((kv) => !kv.startsWith('k.'))) });
+  // (C4) the planner's knobs: `--set k.<name>=<value>` (in the run tag, so each setting caches apart) or `--knob <name>=<value>`
+  const knobs = [...sets.filter((kv) => kv.startsWith('k.')).map((kv) => kv.slice(2)), ...argv.flatMap((a, i) => (a === '--knob' ? [argv[i + 1]] : []))];
+  if (knobs.length) { const P = await import('../../src/physics/ai/planner'); P.setKnobs(knobs); }
   const why: Record<string, number> = {};
+  const att: Record<string, number> = {};
+  { const { AiDriver } = await import('../../src/physics/ai/driver'); AiDriver.attTally = att; }
   if (argv.includes('--why')) await whyHook(dir, why);
   const m = runSelfplay(dir, pack.makeSurface(), { log: false });
   const r = m.rules;
@@ -57,7 +64,7 @@ async function runOne(): Promise<void> {
     track, seed, laps, set: sets, crossings: dir.crossings.map((c) => ({ ...c })),
     metrics: { carLaps: m.carLaps, contacts: r.contacts, contactsPerCarLap: r.contactsPerCarLap, fourOff: r.fourOff, fourOffPerCarLap: r.fourOffPerCarLap, fourOffNonMishapPerCarLap: r.fourOffNonMishapPerCarLap,
       passesTotal: m.passing.passesTotal, situations: m.passing.situations, completed: m.passing.completed, defending: m.defending, recoveries: r.recoveries, mishaps: m.mishaps.total,
-      contactAt: r.contactAt, fourOffAt: r.fourOffAt, yields: undefined, wait: m.passing.wait, why: argv.includes('--why') ? why : undefined },
+      contactAt: r.contactAt, fourOffAt: r.fourOffAt, yields: undefined, wait: m.passing.wait, why: argv.includes('--why') ? why : undefined, att },
   };
   const js = arg('--json', '');
   if (js) writeFileSync(js, JSON.stringify(out)); else console.log(JSON.stringify(out.metrics));
