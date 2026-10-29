@@ -889,3 +889,98 @@ the passed car needs the pass earlier than its corridor); the passing-lap time (
 and finishes, not a side-by-side through the next corner); the 1-3 % cell and the 2-3 / 5-8 s gap bins; the full field's green
 passes; the yield trait; the traffic-read pick (which side the next corner opens); per-car aggression from the data tiers; the
 passRisk / black-flag cost; the phone tier (stays on the lane model).
+
+## C3 (29 Oct 2026, branch `planner-c1`): the vortex rule, lead cars that hold their line, the cost side
+
+Owner (28 Oct, evening, after driving C2): the offset AI is too deferential to traffic and makes more mistakes (the P1 car off
+Laguna T10 with #711 behind it); the "Vortex of Danger" rule: the lead car drives its line, the passer must be alongside by
+turn-in or back out. Everything below is `planner: 'offset'` only; the lane model is untouched (solo hashes, its runs). Knobs
+(planner.ts `knobs`, `traffic_sim.ts --knob k=v`): r1, r2, r3, tv, gr, ctl, lift, room, tailT, fc, vt.
+
+**As built.** **R1** (lead cars hold their line): a car behind me whose body does not overlap mine is invisible to my plan
+(`behindClear`: no clearance, never-across, road-beside, following / braking on the projection when it passes me, LONG, the
+'racing' line rate, the one-move rule) and to my corridor in the driver (the alongside loop skips it; no room-making look-ahead
+and no told lift for it). What remains: overlap holds (nOwn; the corridor; `room`: room made, as the lane model does, for a
+passer my body overlaps, where the road pushes its lane), the alongside lift in a corner only and only for a car alongside
+(`lift`: its nose past PINCH_OK of the overlap and laterally clear; a car in my wake whose front overlaps my rear got a brake
+test: Mid-Ohio's 'follow/passed' contacts), the no-defence rule (cfSide), the cover within 3 %. Told (Traffic.passing) = my
+target frozen (plan() keeps the current target unless it breaks a rule), except by a car within 3 % (the cover first: frozen,
+"within 3 %" made no covering move). **R2** (the passer's vortex): per neighbour ahead, the corner it drives next (driver
+`vortexCorners`: turn-in / track-out where |κ| of the corner's sign falls below VORTEX_K 0.3 of its peak, from the apex out;
+Laguna T2 46 / 102 m, T10 30 / 92 m, Mid-Ohio T4 50 / 44 m); a candidate on which my body comes to overlap it on its inside
+after its turn-in (before the apex), or on its outside after its apex (before its track-out), when I did not overlap it at its
+turn-in / apex, is refused: 2 BIG + samples left within knobs.tv 4 s, a clearance-weight cost beyond; no corner, no vortex. The
+first build (my body anywhere in the triangle behind it) held 34 % of the fast cars' plans and cut the 3-8 % cell to 53 (dev
+run, Laguna + Mid-Ohio seeds 1-3, 5 laps): rebuilt as the dive (arriving alongside), 5.6 % of the holds. **R3**: the plan moves
+at `shiftRate` (the grip the line leaves, a_lat - v²|κ|, times Ld / v; at most the pass rate, at least SHIFT_MIN 0.8 m/s) and
+the road rule fires where the clamp moves my offset faster than that rate (whoever I race); `ctl`: the controller moves a held
+offset at the same rate while another car is within the horizon (alone it is today's: the solo hashes); `gr`: the GRIP cost at
+that rate. Not kept (switches off): `fc` (the friction circle under braking in both) and `vt` (the vortex in the projection's
+tier, below a braking conflict): dev runs within noise, contacts up. **R4**: `tailT` (C2's TAIL_T 10 s; 90 s prices a lap
+behind a 5 % slower car at 4.5 s) tried, not kept.
+
+**Dev runs** (Laguna + Mid-Ohio, seeds 1-3, 10 laps; `tools/race/out/c3/d10_*`): s1 tree 3-8 / 8-15 % 68 / 77, contacts L / MO
+0.008 / 0.013, four-off 0.026 / 0.012; + gr alone 74 / 84, 0.025 / 0.021, 0.079 / 0.020 (moves into corners the controller then
+overdrives); + tailT 40 78 / 88, 0.033 / 0.027, 0.136 / 0.023; tailT 90 78 / 86, 0.026 / 0.028, 0.194 / 0.038; + gr + ctl 76 / 89,
+0.022 / 0.032, 0.015 / 0.018; + lift 72 / 82, 0.021 / 0.026; + room (= s3) 66 / 76, 0.005 / 0.011, 0.018 / 0.010; gr + ctl + lift +
+room (= s2) 77 / 90, 0.010 / 0.015, 0.033 / 0.021; + fc + vt 78 / 86, 0.018 / 0.025; fc alone 78 / 95, 0.017 / 0.023, 0.022 / 0.011;
+vt alone 77 / 90, 0.013 / 0.017. What held the fast car (s2 tree, `--why`): pass 37 %, soft clearance 8.7, alongside 6.6, the
+vortex 6.2, no room 6.1, reversal 5.5, grip 3.7, the road rule 2.8 + 1.9 + 1.2 + 2.3 (soft); no single cause.
+
+**Screens** (Laguna + Mid-Ohio, seeds 1-8, 10 laps, `tools/race/out/c3/s1..s5.{md,json}`; five of six used):
+
+| run | 0-1 / 1-3 / 3-8 / 8-15 / >15 % (g < 2), floor | gap 2-3 / 3-5 / 5-8 s | passing lap 0-1 / 1-3 / 3-8 / 8-15 s | contacts L / MO | four-off non-mishap L / MO | green passes L / MO | wait median / p90 s |
+|---|---|---|---|---|---|---|---|
+| data | 39.4 / 60.3 / 86.9 / 97.8 / 99.7, 8.2 | 88 / 84 / 77 | 1.9 / 2.1 / 2.9 / 3.4 | | | | |
+| lanes (C1 baseline) | 25.7 / 54.6 / 75.6 / 89.7 / 95.7, 10.5 | 66 / 46 / 55 | - / - / 4.0 / 7.8 | 0.0248 / 0.0128 | 0.0858 / 0.0104 (all) | 4193 / 6386 | |
+| C2 s4 (the C2 tree) | 26.3 / 52.3 / 82.3 / 96.2 / 99.0, 6.6 | 74 / 72 / 69 | 5.3 / 5.7 / 4.5 / 5.9 | 0.0258 / 0.0189 | 0.1089 / 0.0273 (all) | 2945 / 8887 | 11.5 / 52 |
+| s1 R1 + R2 + R3 | 24.0 / 51.0 / 71.2 / 78.6 / 95.4, 9.1 | 57 / 61 / 60 | 6.0 / 3.3 / 3.9 / 8.9 | 0.0095 / 0.0163 | 0.0212 / 0.0104 | 2450 / 5405 | 19.7 / 112 |
+| s2 + gr + ctl + lift + room | 24.3 / 56.2 / 75.5 / 86.7 / 96.2, 11.0 | 56 / 64 / 51 | 6.5 / 3.6 / 4.0 / 9.5 | 0.0125 / 0.0164 | 0.0280 / 0.0185 | 2619 / 6489 | 18.6 / 93 |
+| s3 s1 + lift + room | 24.7 / 50.9 / 68.4 / 75.9 / 94.0, 10.4 | 72 / 67 / 52 | 4.8 / 2.9 / 4.6 / 8.8 | 0.0053 / 0.0132 | 0.0174 / 0.0099 | 2277 / 5556 | 19.5 / 111 |
+| s4 s2 + tailT 90 (R4) | 27.6 / 54.3 / 80.7 / 90.6 / 98.5, 8.5 | 72 / 58 / 57 | 6.3 / 3.6 / 4.2 / 6.7 | 0.0196 / 0.0195 | 0.0833 / 0.0357 | 2723 / 7426 | 17.2 / 79 |
+| **s5 = s2 + the cover exception + alone untouched (the tree as committed)** | 28.6 / 54.2 / 73.6 / 85.7 / 98.6, 9.2 | 59 / 47 / 57 | 4.6 / 3.8 / 4.5 / 7.1 | 0.0125 / 0.0161 | 0.0274 / 0.0225 | 2482 / 6167 | 19.3 / 92 |
+
+Where the cost went: R1 took Laguna's four-offs from 0.11 to 0.02 per car-lap (the lead cars' track-out four-offs at T11 / T10 /
+T4 are gone: they were the room-making for a passer from up to 12 m back) and contacts from 0.026 to 0.005-0.013. Mid-Ohio's
+contacts stay 0.013-0.016 (lanes 0.0128): the T4 braking zone (1830-1970 m, 50 -> 21 m/s), a passer half a car over closing at 2-9
+m/s on the car ahead under braking ('follow/follow', 'follow/profile'), and the side contacts at the T4 / T2 apexes. The passing
+lap did not come down: 8-15 % 6.7-9.5 s in every screen (data 3.4), so the pass is not "close, alongside under braking, exit"
+yet: with the lead car no longer making room, the passer waits (median 19 s, p90 79-112 s against C2's 11.5 / 52).
+
+**Stopped** (the brief's rule): after the screens the passing lap still costs > 4.9 s (8-15 %: 7.1 s on the tree as committed, 6.7
+at best) and Mid-Ohio's contacts are above the lanes; no change in hand is clearly the fix (R4's commit buys the cells, 80.7 /
+90.6, with Laguna's four-offs back at the lanes' 0.083 and Mid-Ohio's at 3.4 x). No full evaluation; the default stays
+'lanes'.
+
+**Gates on the tree as committed (s5 and the suite).** G1 / G2 / G3: not evaluated on four tracks (stopped); on the screen G1
+fails (3-8 % -13.3, 8-15 % -12.2, gap 2-3 / 3-5 / 5-8 s -28 / -37 / -20), G2 fails (passing lap 4.6 / 3.8 / 4.5 / 7.1 s), G3 fails on
+Mid-Ohio (contacts 0.0161 vs 0.0128, four-off 0.0225 vs 0.0104) and on Laguna's green passes (2482 vs 4193); Laguna's contacts
+and four-offs pass. G4: `npx vitest run` 829 passed + 1 expected fail: the full field for 'offset' (seed 1, 2 laps: 113
+situations and 81 green passes, > 150 each; 70 % completed, > 15 % 52 / 53, contacts 0.075, no defending against a clearly faster
+car) stays `test.fails`; planner unit tests for R1 (two cars behind change no cost; overlap holds; told holds), R2 (the dive
+refused, backing out / in its wake / alongside by turn-in / a straight allowed, the exit vortex), R3 (the rate the grip leaves;
+the road clamp at the limit). G5: solo hashes identical with the planner on and off (6b8f157f11f72166 / 288bd306e8620212 /
+4f81fe2cda1b3ef5 / 6e6024a7c42062d5; the controller's rate first changed Laguna's and Buttonwillow's alone: now only while a car
+is within the horizon), AI_VERSION 8, no pace file touched. G6: Sonoma 2.24 -> 2.43 µs per car-step (+8.5 %). G7: build green,
+e2e 13/13.
+
+**R5, Eyesore** (Laguna seeds 1-8, 10 laps; `tools/race/out/c3/eyesore.{ts,md}`; the solo target is the pace file's target lap,
+#711 113.8 s; waits are the done waits of that car as the attacker; places gained per lap from the crossing order):
+
+| planner | cars | race median lap / race best lap over the target | wait per slower car, median / p90 | net places per lap |
+|---|---|---|---|---|
+| lanes | #711 | +27.9 / +11.8 s | 10.9 / 46.1 s (411 waits) | 1.88 |
+| lanes | fastest quartile (12) | +27.9 / +10.1 s | 13.4 / 60.3 s | 1.26 |
+| offset (s5) | #711 | +30.6 / +10.9 s | 12.4 / 67.8 s (283) | 1.79 |
+| offset (s5) | fastest quartile | +26.7 / +10.0 s | 14.2 / 88.0 s | 0.94 |
+
+Where Eyesore stands: in a race it laps 28-31 s over its own target with either planner (its best race lap still 11 s over),
+because it spends 11-12 s (p90 46-68 s) behind every slower car it catches; a human at the Probe's pace is not held like that,
+so the owner's reading holds on both planners: #711 will not lap faster than him until the wait is fixed. C3's offset tree waits
+longer than the lanes (p90 68 vs 46 s).
+
+**C4 list.** The pass itself (the passer has to make the pass the lead car no longer makes for it: a commit on the straight with
+the pull-out early enough to be alongside by the braking point, priced over the lap without the four-off cost s4 showed; the
+traffic-read pick, which side the next corner opens); Mid-Ohio's T4 braking zone (a passer half a car over closing under braking:
+the braking rule on the car it leaves, the friction circle `fc` against a 16-seed run); the yield trait; the data aggression
+tiers; passRisk / black flags; the phone tier (stays on the lane model).

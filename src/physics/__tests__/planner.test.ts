@@ -116,7 +116,7 @@ describe('offset planner (pure)', () => {
     const vortex = (w: PlanWork, k: number) => { w.vIn[k] = 40; w.vAp[k] = 100; w.vOut[k] = 160; w.vDir[k] = 1; };
     const behind = work({ v: 30 });
     car(behind, 0, 25, 0, 20); vortex(behind, 0);
-    expect(costOf(behind, 3)).toBeGreaterThanOrEqual(2 * BIG);   // a dive to its inside: alongside only after its turn-in
+    expect(costOf(behind, 3)).toBeGreaterThanOrEqual(BIG);       // a dive to its inside: alongside only after its turn-in (refused)
     expect(costOf(behind, 0)).toBeLessThan(BIG);                  // backing out: in behind it
     const wake = work({ v: 30 });
     car(wake, 0, 25, 0, 30); vortex(wake, 0);
@@ -131,7 +131,7 @@ describe('offset planner (pure)', () => {
     // the exit vortex: past its apex, behind it on its outside
     const exit = work({ v: 30 });
     car(exit, 0, 8, 0, 25); exit.vIn[0] = -40; exit.vAp[0] = 10; exit.vOut[0] = 150; exit.vDir[0] = 1;
-    expect(costOf(exit, -3)).toBeGreaterThanOrEqual(2 * BIG);
+    expect(costOf(exit, -3)).toBeGreaterThanOrEqual(BIG);
   });
 
   test('C3 R3: the plan moves at the rate the grip leaves, and the road clamping my outside offset faster than that is a hard rule', () => {

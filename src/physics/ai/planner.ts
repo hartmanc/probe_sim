@@ -77,11 +77,12 @@ export const MERGE_GAP = 3;
  *  shift target: Laguna T11 / T10 / T4 track-out four-offs at 2.5-2.8 m/s of clamp against a 2.86 m/s shift rate) */
 export const ROAD_K = 0.6;
 /** (C2, tools: the screens' A/B) the C2 steps that are switches; the defaults are the kept ones */
-export const knobs = { h2: 1, grip: 0, tail: 1, h3: 0, h4: 1, h5: 0, h6: 1, roadk: ROAD_K, phw: 0.3, r1: 1, r2: 1, r3: 1, tv: 4, gr: 1, tailT: 10, ctl: 1, lift: 1, room: 1 };
+export const knobs = { h2: 1, grip: 0, tail: 1, h3: 0, h4: 1, h5: 0, h6: 1, roadk: ROAD_K, phw: 0.3, r1: 1, r2: 1, r3: 1, tv: 4, gr: 1, tailT: 10, ctl: 1, lift: 1, room: 1, fc: 0, vt: 0 };
 /* (C3, knobs.r1 / r2 / r3: the vortex round's rules; knobs.tv: the vortex rule's hard window, s; knobs.gr 1: the GRIP cost at the
  * rate the plan moves at (R3's shiftRate, so a move the grip allows is not priced as one it does not); knobs.tailT: TAIL_T, s;
  * knobs.ctl 1: the controller moves a held offset at that rate too, driver.ts; knobs.lift 1: the alongside lift only for a car
- * alongside, not one in my wake, driver.ts; knobs.room 1: room made for a passer my body overlaps, driver.ts) */
+ * alongside, not one in my wake, driver.ts; knobs.room 1: room made for a passer my body overlaps, driver.ts; knobs.fc 1: the
+ * friction circle in shiftRate and the controller's rate; knobs.vt 1: the vortex rule in the projection's tier) */
 /** (C3 R3) m/s: the least lateral rate of the shift the controller delivers (driver.ts SHIFT_RATE_MIN) */
 export const SHIFT_MIN = 0.8;
 /** (C3 R2) the share of a corner's peak curvature above which the racing line is "in the corner": turn-in where |κ| rises above
@@ -172,9 +173,11 @@ export class PlanWork {
 /** (C3 R3) the lateral rate the controller delivers at speed v on a line of curvature k: the shift's pure-pursuit curvature
  *  v · rate / Ld (Ld = 3 + 0.25 v) within the grip the line leaves, a_lat - v²|k| (the GRIP cost's terms), never above the
  *  pass rate w.rate nor below SHIFT_MIN */
-export function shiftRate(w: PlanWork, v: number, k: number): number {
+export function shiftRate(w: PlanWork, v: number, k: number, decel = 0): number {
   if (!knobs.r3) return w.rate;
-  const vv = v > 5 ? v : 5, kk = k < 0 ? -k : k, r = (w.aLat - vv * vv * kk) * (3 + 0.25 * vv) / vv;
+  // (knobs.fc: braking at decel uses the tyres too, the friction circle: a_lat x √(1 - (decel / the brakes)²))
+  const bF = w.bMax / 0.85, u = knobs.fc && decel > 0 ? decel / bF : 0, aL = u > 0 ? w.aLat * Math.sqrt(u >= 1 ? 0 : 1 - u * u) : w.aLat;
+  const vv = v > 5 ? v : 5, kk = k < 0 ? -k : k, r = (aL - vv * vv * kk) * (3 + 0.25 * vv) / vv;
   return r > w.rate ? w.rate : r < SHIFT_MIN ? SHIFT_MIN : r;
 }
 
@@ -288,7 +291,7 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
   for (let m = 1; m <= PLAN_N; m++) {
     const t = m * PLAN_DT;
     if (ends && knobs.h2 && eTgt !== 0 && sMe - X[pk * S + m - 1] > w.rear + w.nFront[pk] + MERGE_GAP) eTgt = 0;
-    const rS = shiftRate(w, vMe, env.curv(sMe)), de = eTgt - eUp, r = rS * PLAN_DT;
+    const vR0 = env.vRef(sMe + vMe * PLAN_DT), rS = shiftRate(w, vMe, env.curv(sMe), (vMe - vR0) / PLAN_DT), de = eTgt - eUp, r = rS * PLAN_DT;
     const eU = de > r ? eUp + r : de < -r ? eUp - r : eTgt;
     eUp = eU;
     // my speed over the interval: my profile at my lane offset
@@ -390,7 +393,9 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
       if (xq <= w.vAp[k]) bad = (vSeenIn & b) !== 0 && !(vOvIn & b) && side * dir > 0;
       else if (xq <= w.vOut[k]) bad = (vSeenAp & b) !== 0 && !(vOvAp & b) && side * dir < 0;
       if (!bad) continue;
-      if (t <= knobs.tv) { w.culprit[c] = -3; w.why[c] = 8; return 2 * BIG + PLAN_N - m; }
+      // (knobs.vt 1: in the tier of the projection's conflicts, below a braking or clearance conflict at the same sample: when
+      // backing out behind it would hit it, staying out is the least bad)
+      if (t <= knobs.tv) { w.culprit[c] = -3; w.why[c] = 8; return (knobs.vt ? BIG + 0.25 : 2 * BIG) + PLAN_N - m; }
       clr += CLR_W[aggr] * PLAN_DT;
     }
     // clearance to every neighbour my body overlaps along the track

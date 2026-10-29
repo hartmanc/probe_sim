@@ -237,6 +237,8 @@ export class AiDriver {
   /** (tools) the offset planner's last cost and plans made */
   oCost = 0; oPlans = 0; oMoves = 0;
   private oTimer = 0; private oMoveDir = 0; private oMoveApex = -1; private oHeld = 0;
+  /** (C3) another car was within the horizon at the last plan */
+  private oNear = false;
   /** a car the plan could not keep clear of (every candidate broke a rule): I give way to it until the next plan (-1 none) */
   private oYield = -1;
   private readonly pw: PlanWork | null = null;
@@ -765,9 +767,12 @@ export class AiDriver {
       let rate = (push !== 0 || !Number.isNaN(mishapLat) ? 2 * SHIFT_RATE : this.offTrack ? 0.8 * SHIFT_RATE : (offset ? this.oStar !== 0 : this.passPhase !== 0) ? PASS_SHIFT * SHIFT_RATE : SHIFT_RATE) * dt;
       // (C3 R3, the offset planner: a held offset is moved at the rate the grip leaves, the rate the plan assumes (planner.ts
       // shiftRate, knobs.ctl); a push away from contact keeps its own rate)
-      if (offset && oKnobs.r3 && oKnobs.ctl && push === 0 && Number.isNaN(mishapLat) && !this.offTrack) {
+      // (only while another car is within the plan's horizon: alone, the controller is today's, bit for bit: the solo hashes)
+      if (offset && this.oNear && oKnobs.r3 && oKnobs.ctl && push === 0 && Number.isNaN(mishapLat) && !this.offTrack) {
         const kl = Math.abs(line.at(line.curv, sLook)), vv = Math.max(5, v);
-        rate = Math.min(rate, Math.max(SHIFT_MIN_O, (perf.alat * G - vv * vv * kl) * (LD0 + LDK * vv) / vv) * dt);
+        // (knobs.fc: braking for the speed asked, the friction circle)
+        const u = oKnobs.fc && aref < 0 ? Math.min(1, -aref / (perf.abrake * G)) : 0, aL = perf.alat * G * Math.sqrt(1 - u * u);
+        rate = Math.min(rate, Math.max(SHIFT_MIN_O, (aL - vv * vv * kl) * (LD0 + LDK * vv) / vv) * dt);
       }
       if (ctl.shiftGrip > 0 && Number.isNaN(mishapLat) && !this.offTrack) {
         // within the spare lateral grip at the look point (a mishap or a rejoin keeps its own rate)
@@ -1158,6 +1163,7 @@ export class AiDriver {
       if (cf < 0 && !tr.off[q]) cf = q;
       B[nb] = q; BD[nb++] = d;
     }
+    this.oNear = na + nb > 0;
     if (na + nb === 0) { this.oStar = 0; this.oYield = -1; this.oMoveDir = 0; tr.oPass[i] = 0; tr.passing[i] = -1; return; }
     // merge by distance (ties: the lower car index)
     let a = 0, b = 0, nN = 0;
@@ -1222,7 +1228,11 @@ export class AiDriver {
     w.moveDir = this.oMoveDir; w.locked = this.oHeld < MIN_HOLD;
     // (C3 R1) a passer behind me or beside me told me it is passing me: hold my target (the cover within 3 % excepted)
     w.frozen = false;
-    if (oKnobs.r1 && Number.isNaN(w.ePref)) for (let k = 0; k < nb; k++) if (tr.passing[B[k]] === i) { w.frozen = true; break; }
+    // (and not by a car within 3 % of my pace: against that one the one covering move, R1(d), comes first)
+    if (oKnobs.r1 && Number.isNaN(w.ePref)) for (let k = 0; k < nb; k++) {
+      const q = B[k];
+      if (tr.passing[q] === i && !(tr.pace[q] >= CLEARLY_FASTER * tr.pace[i] && tr.pace[q] <= tr.pace[i] / CLEARLY_FASTER)) { w.frozen = true; break; }
+    }
     // (one move per corner approach while racing a car: one within 20 m of me, ahead or behind)
     let near = false;
     for (let k = 0; k < nN; k++) { const r = w.X[k * S]; if (!w.nIgnore[k] && r < 20 + tr.front[i] && r > -(20 + tr.rear[i])) { near = true; break; } }
