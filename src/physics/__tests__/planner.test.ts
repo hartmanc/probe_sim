@@ -1,7 +1,7 @@
 // C1, the offset planner (src/physics/ai/planner.ts): its rules on synthetic neighbours (a straight, constant speeds), and alone
 // through the driver (the racing line, nothing evaluated).
 import { describe, expect, test } from 'vitest';
-import { PlanWork, plan, candidateCost, BIG, PLAN_DT, PLAN_N, REVERSE_W, type PlanEnv } from '../ai/planner';
+import { PlanWork, plan, candidateCost, shiftRate, BIG, PLAN_DT, PLAN_N, REVERSE_W, SHIFT_MIN, type PlanEnv } from '../ai/planner';
 import { director } from './ai_fixture';
 
 const S = PLAN_N + 1;
@@ -87,6 +87,64 @@ describe('offset planner (pure)', () => {
     const t = work({ ePrev: 0.5 });
     car(t, 0, 140, -4, 30);
     expect(plan(t, env)).toBe(0.5);
+  });
+
+  test('C3 R1: a car behind me that my body does not overlap changes nothing in my plan; told, I hold my target', () => {
+    for (const ePrev of [0, 1.5]) {
+      const a = work({ ePrev, eCur: ePrev, eMeas: ePrev }), b = work({ ePrev, eCur: ePrev, eMeas: ePrev });
+      car(a, 0, 25, 0, 24); car(b, 0, 25, 0, 24);   // a slower car ahead: a reason to move
+      car(b, 1, -6, 2.4, 36);                        // a faster car 6 m behind, on my left, coming up
+      car(b, 2, -12, -2.4, 36);                      // and one on my right
+      const ea = plan(a, env), eb = plan(b, env);
+      expect(eb).toBe(ea);
+      expect(b.bestCost).toBeCloseTo(a.bestCost, 9);
+      for (let c = 0; c < a.nC; c++) expect(b.cost[c]).toBeCloseTo(a.cost[c], 9);
+    }
+    // overlap still holds: the same car with its nose beside my rear owns its side
+    const o = work();
+    car(o, 0, 25, 0, 24); car(o, 1, -2, 2.0, 30, { own: 1 });
+    expect(costOf(o, 1.5)).toBeGreaterThanOrEqual(2 * BIG);
+    // told: the target is held (never moved for the passer)
+    const f = work({ frozen: true });
+    car(f, 0, 25, 0, 24);
+    expect(plan(f, env)).toBe(0);
+  });
+
+  test('C3 R2: inside a car\'s entry vortex without overlap at its turn-in is refused; alongside it is allowed; a straight has none', () => {
+    // a left-hander: the car ahead (on the line, 25 m ahead, 10 m/s slower) turns in 40 m ahead of me, apex at 100 m, track-out
+    // at 160 m
+    const vortex = (w: PlanWork, k: number) => { w.vIn[k] = 40; w.vAp[k] = 100; w.vOut[k] = 160; w.vDir[k] = 1; };
+    const behind = work({ v: 30 });
+    car(behind, 0, 25, 0, 20); vortex(behind, 0);
+    expect(costOf(behind, 3)).toBeGreaterThanOrEqual(2 * BIG);   // a dive to its inside: alongside only after its turn-in
+    expect(costOf(behind, 0)).toBeLessThan(BIG);                  // backing out: in behind it
+    const wake = work({ v: 30 });
+    car(wake, 0, 25, 0, 30); vortex(wake, 0);
+    expect(costOf(wake, 3)).toBeLessThan(BIG);                    // inside it but never alongside: no dive
+    const along = work({ v: 30, ePrev: 2.5, eCur: 2.5, eMeas: 2.5 });
+    car(along, 0, 1, 0, 28); vortex(along, 0);                    // alongside (overlapping) by its turn-in
+    along.vIn[0] = 5;
+    expect(costOf(along, 3)).toBeLessThan(BIG);
+    const straight = work({ v: 30 });
+    car(straight, 0, 25, 0, 20);                                  // no corner: pass anywhere
+    expect(costOf(straight, 3)).toBeLessThan(BIG);
+    // the exit vortex: past its apex, behind it on its outside
+    const exit = work({ v: 30 });
+    car(exit, 0, 8, 0, 25); exit.vIn[0] = -40; exit.vAp[0] = 10; exit.vOut[0] = 150; exit.vDir[0] = 1;
+    expect(costOf(exit, -3)).toBeGreaterThanOrEqual(2 * BIG);
+  });
+
+  test('C3 R3: the plan moves at the rate the grip leaves, and the road clamping my outside offset faster than that is a hard rule', () => {
+    const w = work();
+    expect(shiftRate(w, 30, 0)).toBeCloseTo(2.86, 6);              // a straight: the pass rate
+    expect(shiftRate(w, 30, 0.01)).toBe(SHIFT_MIN);                // at the grip limit (v²κ = a_lat): the least rate
+    expect(shiftRate(w, 30, 0.005)).toBeLessThan(2.86);
+    // a right-hander at the limit, held 2 m to its outside (left) while the road closes on it at 1.2 m/s (C2 passed it: < 0.6 x 2.86)
+    const right: PlanEnv = { ...env, curv: () => -0.01, hi: (s: number) => Math.max(0.2, Math.min(5, 3 - 0.04 * (s - 10))) };
+    const h = work({ ePrev: 2, eCur: 2, eMeas: 2 });
+    car(h, 0, 140, -4, 30);
+    h.cand[0] = 2; h.nC = 1;
+    expect(candidateCost(h, right, 0)).toBeGreaterThanOrEqual(BIG);
   });
 });
 

@@ -22,7 +22,7 @@ import type { RaceLine } from './line';
 import { accAt, bankedG, coastDecel, loadFactor, type CarPerf } from './field';
 import type { Traffic } from './traffic';
 import { Rng } from './rng';
-import { knobs as oKnobs, PlanWork, plan as planOffset, FOLLOW_CLR as FOLLOW_CLR_O, PLAN_EVERY as O_EVERY, PLAN_AHEAD, PLAN_BEHIND, NB_MAX, PLAN_DT, PLAN_N, BIG, MOVE_EPS, MIN_HOLD, type Planner, type PlanEnv } from './planner';
+import { knobs as oKnobs, PlanWork, plan as planOffset, FOLLOW_CLR as FOLLOW_CLR_O, PLAN_EVERY as O_EVERY, PLAN_AHEAD, PLAN_BEHIND, NB_MAX, PLAN_DT, PLAN_N, BIG, MOVE_EPS, MIN_HOLD, VORTEX_K, type Planner, type PlanEnv } from './planner';
 
 const G = 9.81;
 
@@ -262,6 +262,7 @@ export class AiDriver {
         risk: (e: number) => this.passRisk(-1, e, e > 0 ? 1 : -1),
       };
     }
+    if (planner === 'offset') { const vc = vortexCorners(line); this.vTurnIn = vc.turnIn; this.vTrackOut = vc.trackOut; }
     this.oTimer = (idx % 8) * O_EVERY / 8;
     this.rng = new Rng(params.seed);
     const np = NO_PASS_CORNERS[line.trackId] ?? [];
@@ -308,6 +309,8 @@ export class AiDriver {
     return this.ahead(s, c.brake) <= before && this.ahead(s, c.apex) >= -90;
   }
   private readonly corkscrew: number = -1;
+  /** (C3 R2, the offset planner) each corner's turn-in and track-out stations (vortexCorners) */
+  private readonly vTurnIn: Float64Array | null = null; private readonly vTrackOut: Float64Array | null = null;
 
   private passableAhead(s: number, maxD: number, minD = 0): number {
     const cs = this.line.corners;
@@ -642,7 +645,8 @@ export class AiDriver {
           if (dir > 0 ? (d < 0 || d > myFront + tr.rear[j] + 3) : (d > 0 || d < -(myRear + tr.front[j] + 12))) break;
           if (tr.away[j] && !this.offTrack) continue;
           const dl = lat - tr.lat[j];
-          if (dir < 0 && d < -(myRear + tr.front[j] + 1) && (Math.abs(dl) < hwI + tr.hw[j] + 0.1 || tr.passing[j] !== i)) continue;
+          // (C3 R1, the offset planner: a car behind me that my body does not overlap is not in my corridor, passing me or not)
+          if (dir < 0 && d < -(myRear + tr.front[j] + 1) && (offset && oKnobs.r1 ? true : Math.abs(dl) < hwI + tr.hw[j] + 0.1 || tr.passing[j] !== i)) continue;
           const need = hwI + tr.hw[j] + ALONG_CLR + yc;
           const side = dl >= 0 ? 1 : -1;
           // only cars actually beside me (a car straight ahead / behind is handled by following)
@@ -651,7 +655,8 @@ export class AiDriver {
           {
             // (a car passing me: where the road will push its lane over the next second, so I make room in time, but
             // never further than my own road allows there: beyond that it is a squeeze and the car further back yields)
-            const look = tr.passing[j] === i ? 1.0 * v : 0;
+            // (C3 R1, the offset planner: no room-making for a passer; overlap holds, the passer does the work)
+            const look = tr.passing[j] === i && !(offset && oKnobs.r1) ? 1.0 * v : 0;
             for (let x = 0; x <= look; x += Math.max(4, 0.5 * v)) {
               const sx = sLk + x;
               const eS = side > 0 ? this.spanHi(j) : this.spanLo(j);   // its edge toward me (target or drift)
@@ -663,7 +668,7 @@ export class AiDriver {
           }
           if (Math.abs(dl) < need) {
             push += side * (need - Math.abs(dl));
-            if (tr.passing[j] === i && d < 0 && d > -PINCH_OK * (myRear + tr.front[j])) passerSqueeze = true;
+            if (tr.passing[j] === i && d < 0 && d > -PINCH_OK * (myRear + tr.front[j]) && !(offset && oKnobs.r1)) passerSqueeze = true;
             // (the offset planner: a car alongside behind me and converging, in a corner only; no lift on a straight)
             if (offset && d < 0 && d > -(myRear + tr.front[j]) && Math.abs(line.at(line.curv, s)) * 170 > 1) passerSqueeze = true;
           }
@@ -1175,6 +1180,17 @@ export class AiDriver {
       w.nIgnore[k] = rel0 < 0 && sep < FOLLOW_CLR_O ? 1 : 0;
       const over = rel0 < tr.front[i] + tr.rear[q] && rel0 > -(tr.rear[i] + tr.front[q]);
       w.nOwn[k] = over && sep >= 0 ? (tr.e[q] > eMe ? 1 : -1) : 0;
+      // (C3 R2) the corner it drives next (the first whose track-out is still ahead of it): turn-in, apex, track-out
+      w.vDir[k] = 0;
+      if (this.vTurnIn !== null && rel0 > -(tr.rear[i] + tr.front[q]) && !tr.off[q]) {
+        const cs = line.corners, sq = tr.s[q];
+        let bo = Infinity, bk = -1;
+        for (let c = 0; c < cs.length; c++) { const dO = this.ahead(sq, this.vTrackOut![c]); if (dO > 0 && dO < bo) { bo = dO; bk = c; } }
+        if (bk >= 0) {
+          const C = cs[bk], lOut = this.ahead(C.apex, this.vTrackOut![bk]), lIn = this.ahead(this.vTurnIn![bk], C.apex);
+          w.vOut[k] = rel0 + bo; w.vAp[k] = w.vOut[k] - lOut; w.vIn[k] = w.vAp[k] - lIn; w.vDir[k] = C.dir;
+        }
+      }
     }
     w.nN = nN;
     // me
@@ -1195,6 +1211,9 @@ export class AiDriver {
     }
     const cs = line.corners;
     w.moveDir = this.oMoveDir; w.locked = this.oHeld < MIN_HOLD;
+    // (C3 R1) a passer behind me or beside me told me it is passing me: hold my target (the cover within 3 % excepted)
+    w.frozen = false;
+    if (oKnobs.r1 && Number.isNaN(w.ePref)) for (let k = 0; k < nb; k++) if (tr.passing[B[k]] === i) { w.frozen = true; break; }
     // (one move per corner approach while racing a car: one within 20 m of me, ahead or behind)
     let near = false;
     for (let k = 0; k < nN; k++) { const r = w.X[k * S]; if (!w.nIgnore[k] && r < 20 + tr.front[i] && r > -(20 + tr.rear[i])) { near = true; break; } }
@@ -1298,4 +1317,21 @@ export function laneFactor(line: RaceLine, e: number, s: number, lane: boolean):
   const ks = k * e;
   if (ks > 0) f = Math.min(f, Math.sqrt(Math.max(0.5, 1 - ks)));
   return f;
+}
+
+/**
+ * (C3 R2) Turn-in and track-out of every corner of the line, for the vortex of the offset planner: from the apex back to where
+ * the racing line's |curvature| (of the corner's sign) first falls below VORTEX_K x its peak near the apex, and forward to
+ * where it falls below it after the apex (within 200 m; at least 10 m each side).
+ */
+export function vortexCorners(line: RaceLine): { turnIn: Float64Array; trackOut: Float64Array } {
+  const cs = line.corners, turnIn = new Float64Array(cs.length), trackOut = new Float64Array(cs.length);
+  for (let c = 0; c < cs.length; c++) {
+    const C = cs[c], thr = VORTEX_K * C.kPeak;
+    let a = 10, b = 10;
+    while (a < 200 && line.at(line.curv, C.apex - a) * C.dir > thr) a += 2;
+    while (b < 200 && line.at(line.curv, C.apex + b) * C.dir > thr) b += 2;
+    turnIn[c] = line.wrap(C.apex - a); trackOut[c] = line.wrap(C.apex + b);
+  }
+  return { turnIn, trackOut };
 }

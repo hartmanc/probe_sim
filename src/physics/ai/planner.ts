@@ -77,7 +77,13 @@ export const MERGE_GAP = 3;
  *  shift target: Laguna T11 / T10 / T4 track-out four-offs at 2.5-2.8 m/s of clamp against a 2.86 m/s shift rate) */
 export const ROAD_K = 0.6;
 /** (C2, tools: the screens' A/B) the C2 steps that are switches; the defaults are the kept ones */
-export const knobs = { h2: 1, grip: 0, tail: 1, h3: 0, h4: 1, h5: 0, h6: 1, roadk: ROAD_K, phw: 0.3 };
+export const knobs = { h2: 1, grip: 0, tail: 1, h3: 0, h4: 1, h5: 0, h6: 1, roadk: ROAD_K, phw: 0.3, r1: 1, r2: 1, r3: 1, tv: 4 };
+/* (C3, knobs.r1 / r2 / r3: the vortex round's rules; knobs.tv: the vortex rule's hard window, s) */
+/** (C3 R3) m/s: the least lateral rate of the shift the controller delivers (driver.ts SHIFT_RATE_MIN) */
+export const SHIFT_MIN = 0.8;
+/** (C3 R2) the share of a corner's peak curvature above which the racing line is "in the corner": turn-in where |κ| rises above
+ *  it before the apex, track-out where it falls below it after the apex (driver.ts vortexCorners) */
+export const VORTEX_K = 0.3;
 /* (knobs.phw: H4's following headway behind a clearly slower car, s; 0.3 = the lane model's PASS_HEADWAY) */
 /** s: (C2 H2) the time lost at the end of the horizon behind a car in my band, at the rate it costs me there, carried on for
  *  this long (staying behind a slower car keeps costing after the horizon; a completed pass does not) */
@@ -103,7 +109,7 @@ export interface PlanEnv {
 
 const S = PLAN_N + 1;
 /** the rules (PlanWork.why, tools): none, toward a clearly faster car, across, the road, braking, clearance, alongside, no-pass */
-export const WHY = ['', 'faster', 'across', 'road', 'brake', 'clear', 'own', 'nopass'] as const;
+export const WHY = ['', 'faster', 'across', 'road', 'brake', 'clear', 'own', 'nopass', 'vortex'] as const;
 /** (tools) the cost components of a candidate (PlanWork.comp): time lost, clearance (the soft road rule included), the soft road
  *  rule alone, line / corridor / zone, grip, LONG, reversal, damping + preference + risk */
 export const COMP = ['lost', 'clear', 'road', 'line', 'grip', 'long', 'reverse', 'damp'] as const;
@@ -143,6 +149,12 @@ export class PlanWork {
   readonly nIdx = new Int32Array(NB_MAX);
   /** (C2 H3) the hard window per neighbour, s */
   readonly tHard = new Float64Array(NB_MAX);
+  /** (C3 R2) the corner each neighbour ahead drives next: its turn-in, apex and track-out stations (m ahead of my station now)
+   *  and its direction (+1 left-hander, -1 right-hander; 0: none, no vortex) */
+  readonly vIn = new Float64Array(NB_MAX); readonly vAp = new Float64Array(NB_MAX); readonly vOut = new Float64Array(NB_MAX);
+  readonly vDir = new Int8Array(NB_MAX);
+  /** (C3 R1) a passer told me it is passing me: my target is frozen (held; never moved for it) */
+  frozen = false;
   // ---- candidates
   nC = 0;
   readonly cand = new Float64Array(CAND_MAX); readonly cost = new Float64Array(CAND_MAX); readonly culprit = new Int32Array(CAND_MAX);
@@ -152,6 +164,20 @@ export class PlanWork {
   readonly comp = new Float64Array(CAND_MAX * 8);
   // ---- out
   best = 0; bestCost = 0; bestCulprit = -1; evaluated = 0;
+}
+
+/** (C3 R3) the lateral rate the controller delivers at speed v on a line of curvature k: the shift's pure-pursuit curvature
+ *  v · rate / Ld (Ld = 3 + 0.25 v) within the grip the line leaves, a_lat - v²|k| (the GRIP cost's terms), never above the
+ *  pass rate w.rate nor below SHIFT_MIN */
+export function shiftRate(w: PlanWork, v: number, k: number): number {
+  if (!knobs.r3) return w.rate;
+  const vv = v > 5 ? v : 5, kk = k < 0 ? -k : k, r = (w.aLat - vv * vv * kk) * (3 + 0.25 * vv) / vv;
+  return r > w.rate ? w.rate : r < SHIFT_MIN ? SHIFT_MIN : r;
+}
+
+/** (C3 R1) a neighbour behind me whose body does not overlap mine now: the lead car holds its line, invisible to my plan */
+export function behindClear(w: PlanWork, k: number): boolean {
+  return knobs.r1 === 1 && w.X[k * S] <= -(w.rear + w.nFront[k]);
 }
 
 /** Clamp e to the corridor [lo, hi] (the racing line always in it). */
@@ -192,13 +218,18 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
   if (!Number.isNaN(w.ePref)) cost += COVER_W * Math.abs(eStar - w.ePref);
   cost += RISK_W * env.risk(eStar);
   const nN = w.nN, X = w.X, LO = w.LO, HI = w.HI;
+  // (C3 R1) the cars behind me that do not overlap me now are invisible: no clearance, no across, no road rule beside them, no
+  // pass of them, no 'racing' line rate, no one-move rule (what remains against a car behind: the overlap rule, the cover,
+  // the no-defence rule, in the driver the alongside lift in a corner)
+  let inv = 0;
+  for (let k = 0; k < nN; k++) if (w.nIgnore[k] || behindClear(w, k)) inv |= 1 << k;
   // never across: a neighbour whose centre lies between where I am and where I go, within the sweep's length; from one side of
   // it to the other (C2 H0: a car right ahead of me, its centre within my half width of mine, is not crossed by a move out from
   // behind it, to either side)
   {
     const sw = Math.abs(eStar - eCur), sweep = w.v * sw / Math.max(0.1, w.rate);
     if (sw > MOVE_EPS) for (let k = 0; k < nN; k++) {
-      if (w.nIgnore[k]) continue;
+      if (inv & (1 << k)) continue;
       const eq = w.nE[k], d = X[k * S];
       if ((eq - eCur) * (eStar - eq) <= 0) continue;
       if (eq - eCur < hw && eCur - eq < hw) continue;
@@ -211,7 +242,7 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
   // a target out of its band is a pass of it: held until I am MERGE_GAP clear of it, then back to the line
   let pk = -1;
   for (let k = 0; k < nN; k++) {
-    if (w.nIgnore[k] || w.nOff[k]) continue;
+    if ((inv & (1 << k)) || w.nOff[k]) continue;
     const x0 = X[k * S];
     if (x0 <= -(w.rear + w.nFront[k]) || (pk >= 0 && x0 >= X[pk * S])) continue;
     if (X[k * S + PLAN_N] - x0 < w.v * T) pk = k;
@@ -234,6 +265,16 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
     w.tHard[k] = th < T_HARD_MIN ? T_HARD_MIN : th > T_HARD_MAX ? T_HARD_MAX : th;
   }
   // per neighbour: in my band ahead of me on the last sample (a car I already follow now is no new braking case)
+  // (C3 R2) the vortex of each neighbour ahead: bit k of vSeenIn / vSeenAp once it has reached its turn-in / apex on the
+  // projection, of vOvIn / vOvAp when my body overlapped it then (alongside by its turn-in: the move is allowed)
+  let vSeenIn = 0, vSeenAp = 0, vOvIn = 0, vOvAp = 0, vort = 0;
+  if (knobs.r2) for (let k = 0; k < nN; k++) {
+    if (!w.vDir[k] || w.nOff[k] || (inv & (1 << k))) continue;
+    vort |= 1 << k;
+    const x0 = X[k * S], ov = x0 < w.front + w.nRear[k] && x0 > -(w.rear + w.nFront[k]);
+    if (x0 >= w.vIn[k]) { vSeenIn |= 1 << k; if (ov) vOvIn |= 1 << k; }
+    if (x0 >= w.vAp[k]) { vSeenAp |= 1 << k; if (ov) vOvAp |= 1 << k; }
+  }
   let capOn = 0;
   for (let k = 0; k < nN; k++) {
     const o = k * S;
@@ -244,7 +285,7 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
   for (let m = 1; m <= PLAN_N; m++) {
     const t = m * PLAN_DT;
     if (ends && knobs.h2 && eTgt !== 0 && sMe - X[pk * S + m - 1] > w.rear + w.nFront[pk] + MERGE_GAP) eTgt = 0;
-    const de = eTgt - eUp, r = w.rate * PLAN_DT;
+    const rS = shiftRate(w, vMe, env.curv(sMe)), de = eTgt - eUp, r = rS * PLAN_DT;
     const eU = de > r ? eUp + r : de < -r ? eUp - r : eTgt;
     eUp = eU;
     // my speed over the interval: my profile at my lane offset
@@ -259,13 +300,15 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
     // (C2 H6: on the inside too while a car is beside me there: the clamp sweeps me into it at the turn-in, Mid-Ohio T1 / T2 / T4)
     let besideK = -1;
     if (e !== eU && knobs.h6 && eU * env.curv(sN) > 0) for (let k = 0; k < nN; k++) {
-      if (w.nIgnore[k]) continue;
+      if (inv & (1 << k)) continue;
       const rel = X[k * S + m] - sN;
       if (rel < w.front + w.nRear[k] + 3 && rel > -(w.rear + w.nFront[k] + 3)) { besideK = k; break; }
     }
     if (e !== eU && (eU * env.curv(sN) <= 0 || besideK >= 0)) {
       const dE = e - e1, rr = (dE < 0 ? -dE : dE) / PLAN_DT;
-      if (rr > (knobs.h6 ? knobs.roadk : 1) * w.rate) {
+      // (C3 R3: against the rate the controller delivers here, the grip the line leaves: the clamp at track-out is a hard rule
+      // for me whoever I race)
+      if (rr > (knobs.r3 ? rS : (knobs.h6 ? knobs.roadk : 1) * w.rate)) {
         if (t <= (knobs.h5 && besideK < 0 ? T_HARD_MIN : T_HARD)) { w.culprit[c] = besideK >= 0 ? besideK : -2; w.why[c] = 3; return BIG + PLAN_N - m; }
         clr += CLR_W[aggr] * PLAN_DT; roadSoft += CLR_W[aggr] * PLAN_DT;
       }
@@ -288,7 +331,7 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
     if (e !== 0 && (e - lo < CORR_NEAR || hi - e < CORR_NEAR)) corr += CORR_W * PLAN_DT;
     if (e !== 0) {
       let racing = false;
-      for (let k = 0; k < nN; k++) { const r = X[k * S + m] - sN; if (r < LINE_NEAR && r > -LINE_NEAR) { racing = true; break; } }
+      for (let k = 0; k < nN; k++) { if (knobs.r1 && (inv & (1 << k))) continue; const r = X[k * S + m] - sN; if (r < LINE_NEAR && r > -LINE_NEAR) { racing = true; break; } }
       corr += (sN >= w.zoneLo && sMe <= w.zoneHi ? ZONE_W : racing ? LINE_W : LINE_FREE_W) * (e < 0 ? -e : e) * PLAN_DT;
     }
     {
@@ -310,6 +353,7 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
     for (let k = 0; k < nN; k++) {
       const o = k * S + m, xq = X[o], xp = X[o - 1];
       if (xp - sMe <= w.front + w.nRear[k]) continue;           // not ahead of me (beside me: clearance below)
+      if (knobs.r1 && (inv & (1 << k)) && !w.nIgnore[k]) continue;   // (C3 R1: a car from behind that passes me on the projection)
       const sep = LO[o] - (e + hw) > (e - hw) - HI[o] ? LO[o] - (e + hw) : (e - hw) - HI[o];
       if (sep >= FOLLOW_CLR) continue;
       const vq = (xq - xp) / PLAN_DT;
@@ -326,9 +370,29 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
     capOn = capNow;
     const dsMe = sN - sMe;
     lost += PLAN_DT - dsMe / (vR > 1 ? vR : 1);
+    // (C3 R2) the passer's vortex: my body arriving alongside a neighbour inside its entry vortex (on its inside, after its
+    // turn-in, before the apex) or its exit vortex (on its outside, after its apex, before its track-out), when I was not
+    // alongside it at its turn-in (entry) / apex (exit): the dive it cannot see. The move is wrong (2 BIG within the window
+    // knobs.tv; a steep cost beyond: the projection is a guess). Behind it in its wake, or alongside by its turn-in: allowed.
+    if (vort) for (let k = 0; k < nN; k++) {
+      const b = 1 << k;
+      if (!(vort & b)) continue;
+      const o = k * S + m, xq = X[o], rel = xq - sN;
+      const ov = rel < w.front + w.nRear[k] && rel > -(w.rear + w.nFront[k]);
+      if (!(vSeenIn & b) && xq >= w.vIn[k]) { vSeenIn |= b; if (ov) vOvIn |= b; }
+      if (!(vSeenAp & b) && xq >= w.vAp[k]) { vSeenAp |= b; if (ov) vOvAp |= b; }
+      if (!ov) continue;
+      const dir = w.vDir[k], side = e - 0.5 * (LO[o] + HI[o]);
+      let bad = false;
+      if (xq <= w.vAp[k]) bad = (vSeenIn & b) !== 0 && !(vOvIn & b) && side * dir > 0;
+      else if (xq <= w.vOut[k]) bad = (vSeenAp & b) !== 0 && !(vOvAp & b) && side * dir < 0;
+      if (!bad) continue;
+      if (t <= knobs.tv) { w.culprit[c] = -3; w.why[c] = 8; return 2 * BIG + PLAN_N - m; }
+      clr += CLR_W[aggr] * PLAN_DT;
+    }
     // clearance to every neighbour my body overlaps along the track
     for (let k = 0; k < nN; k++) {
-      if (w.nIgnore[k]) continue;
+      if (inv & (1 << k)) continue;
       const o = k * S + m, rel = X[o] - sN;
       if (!(rel < w.front + w.nRear[k] + 1 && rel > -(w.rear + w.nFront[k] + 1))) continue;
       const cl = LO[o] - (e + hw) > (e - hw) - HI[o] ? LO[o] - (e + hw) : (e - hw) - HI[o];
@@ -353,7 +417,7 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
   // a pass that does not progress, or would take longer than PLAN_T_MAX (the cars I started behind and am now beside)
   let long = 0;
   for (let k = 0; k < nN; k++) {
-    if (w.nIgnore[k] || w.nOff[k]) continue;
+    if ((inv & (1 << k)) || w.nOff[k]) continue;
     const rel0 = X[k * S], relN = X[k * S + PLAN_N] - sMe;
     if (rel0 <= 0) continue;
     const clear = w.rear + w.nFront[k] + 1;
@@ -389,6 +453,8 @@ export function plan(w: PlanWork, env: PlanEnv): number {
   // (C2 H4) a clearly faster car behind a clearly slower one commits at the aggressive margin, without the min hold
   const fast = knobs.h4 && w.cfPassing;
   if (bi !== 0 && w.cost[0] < BIG && ((w.locked && !fast) || w.cost[bi] > w.cost[0] - HYST[fast ? 2 : w.aggr])) bi = 0;
+  // (C3 R1) told I am being passed: hold the target (never moved for the passer), unless holding breaks a rule
+  if (bi !== 0 && w.frozen && w.cost[0] < BIG) bi = 0;
   w.best = w.cand[bi]; w.bestCost = w.cost[bi]; w.bestCulprit = w.culprit[bi];
   return w.best;
 }
