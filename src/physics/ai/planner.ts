@@ -80,7 +80,10 @@ export const ROAD_K = 0.6;
 export const knobs = { h2: 1, grip: 0, tail: 1, h3: 0, h4: 1, h5: 0, h6: 1, roadk: ROAD_K, phw: 0.3, r1: 1, r2: 1, r3: 1, tv: 4, gr: 1, tailT: 10, ctl: 1, lift: 1, room: 1, fc: 0, vt: 0,
   // (C4, the Lemons pass; NOTES "C4" and "Knobs for the search")
   p1: 1, slow: 1, stk: 1, att1: 1, att2: 0, tc: 2, tcAg: 0.25, dmin: 60, ovl: 0.5, ovlAg: 0.2, attw: 1, attc: 0.9, ins: 0.5, feas: 1,
-  tlap: 1, lapMin: 0.5, p2: 1, bo: 0, boDv: 1.5, p3: 1, p4: 1, ret: 40, retT: 10, p5: 1 };
+  tlap: 1, lapMin: 0.5, p2: 1, bo: 0, boDv: 1.5, p3: 1, p4: 1, ret: 40, retT: 10, p5: 1,
+  // (C4 P6: the C1-C3 constants as knobs, defaults = the constants)
+  damp: DAMP, revW: REVERSE_W, coverW: COVER_W, clrK: 1, hystK: 1, minHold: MIN_HOLD, tHard: T_HARD, lineW: LINE_W, lineFreeW: LINE_FREE_W, zoneW: ZONE_W,
+  corrW: CORR_W, gripW: GRIP_W, longW: LONG_W, mergeGap: MERGE_GAP, alongClr: ALONG_CLR, laneClr: LANE_CLR, hwK: 1 };
 /* (C3, knobs.r1 / r2 / r3: the vortex round's rules; knobs.tv: the vortex rule's hard window, s; knobs.gr 1: the GRIP cost at the
  * rate the plan moves at (R3's shiftRate, so a move the grip allows is not priced as one it does not); knobs.tailT: TAIL_T, s;
  * knobs.ctl 1: the controller moves a held offset at that rate too, driver.ts; knobs.lift 1: the alongside lift only for a car
@@ -243,14 +246,14 @@ function addCand(w: PlanWork, e: number, lo: number, hi: number): void {
 export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
   const eStar = w.cand[c], eCur = w.eCur, hw = w.hw, aggr = w.aggr;
   const dE = eStar - w.ePrev, mv = dE > MOVE_EPS ? 1 : dE < -MOVE_EPS ? -1 : 0;
-  let cost = DAMP * Math.abs(dE);
+  let cost = knobs.damp * Math.abs(dE);
   w.culprit[c] = -1; w.why[c] = 0;
   // no move toward a clearly faster car behind (it is let by: hold the line and the speed)
   if (mv !== 0 && w.cfSide !== 0 && (w.cfSide === 2 ? !w.cfPassing : mv === w.cfSide)) { w.why[c] = 1; return 2 * BIG; }
   // one move per corner approach
-  const rev = mv !== 0 && w.moveOpen && w.moveDir !== 0 && mv === -w.moveDir ? REVERSE_W : 0;
-  if (rev) cost += REVERSE_W;
-  if (!Number.isNaN(w.ePref)) cost += COVER_W * Math.abs(eStar - w.ePref);
+  const rev = mv !== 0 && w.moveOpen && w.moveDir !== 0 && mv === -w.moveDir ? knobs.revW : 0;
+  if (rev) cost += knobs.revW;
+  if (!Number.isNaN(w.ePref)) cost += knobs.coverW * Math.abs(eStar - w.ePref);
   if (!Number.isNaN(w.eAtt)) cost += knobs.attw * Math.abs(eStar - w.eAtt);
   cost += RISK_W * env.risk(eStar);
   const nN = w.nN, X = w.X, LO = w.LO, HI = w.HI;
@@ -292,7 +295,7 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
   const lo0 = Math.min(0, env.lo(0)), hi0 = Math.max(0, env.hi(0));
   let e1 = eCur === 0 ? 0 : clampC(eCur, lo0, hi0), e2 = e1, d1 = 0;
   const aG = 0.97 * w.aLat;
-  const W = CLR_W[aggr], hwy = w.headway;
+  const W = CLR_W[aggr] * knobs.clrK, hwy = w.headway, ALONG = knobs.alongClr, LANE = knobs.laneClr, TH = knobs.tHard;
   // (C2 H3) per neighbour: the hard window, the time to reach it at the closing speed now (clamped T_HARD_MIN..T_HARD_MAX;
   // not closing: T_HARD_MIN)
   if (knobs.h3) for (let k = 0; k < nN; k++) {
@@ -320,7 +323,7 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
   }
   for (let m = 1; m <= PLAN_N; m++) {
     const t = m * PLAN_DT;
-    if (ends && knobs.h2 && eTgt !== 0 && sMe - X[pk * S + m - 1] > w.rear + w.nFront[pk] + MERGE_GAP) eTgt = 0;
+    if (ends && knobs.h2 && eTgt !== 0 && sMe - X[pk * S + m - 1] > w.rear + w.nFront[pk] + knobs.mergeGap) eTgt = 0;
     const vR0 = env.vRef(sMe + vMe * PLAN_DT), rS = shiftRate(w, vMe, env.curv(sMe), (vMe - vR0) / PLAN_DT), de = eTgt - eUp, r = rS * PLAN_DT;
     const eU = de > r ? eUp + r : de < -r ? eUp - r : eTgt;
     eUp = eU;
@@ -345,8 +348,8 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
       // (C3 R3: against the rate the controller delivers here, the grip the line leaves: the clamp at track-out is a hard rule
       // for me whoever I race)
       if (rr > (knobs.r3 ? rS : (knobs.h6 ? knobs.roadk : 1) * w.rate)) {
-        if (t <= (knobs.h5 && besideK < 0 ? T_HARD_MIN : T_HARD)) { w.culprit[c] = besideK >= 0 ? besideK : -2; w.why[c] = 3; return BIG + PLAN_N - m; }
-        clr += CLR_W[aggr] * PLAN_DT; roadSoft += CLR_W[aggr] * PLAN_DT;
+        if (t <= (knobs.h5 && besideK < 0 ? T_HARD_MIN : TH)) { w.culprit[c] = besideK >= 0 ? besideK : -2; w.why[c] = 3; return BIG + PLAN_N - m; }
+        clr += W * PLAN_DT; roadSoft += W * PLAN_DT;
       }
     }
     if (e !== 0 || e1 !== 0) {
@@ -364,11 +367,11 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
       d1 = d0;
     } else d1 = sN - sMe;
     e2 = e1; e1 = e;
-    if (e !== 0 && (e - lo < CORR_NEAR || hi - e < CORR_NEAR)) corr += CORR_W * PLAN_DT;
+    if (e !== 0 && (e - lo < CORR_NEAR || hi - e < CORR_NEAR)) corr += knobs.corrW * PLAN_DT;
     if (e !== 0) {
       let racing = false;
       for (let k = 0; k < nN; k++) { if (knobs.r1 && (inv & (1 << k))) continue; const r = X[k * S + m] - sN; if (r < LINE_NEAR && r > -LINE_NEAR) { racing = true; break; } }
-      corr += (sN >= w.zoneLo && sMe <= w.zoneHi ? ZONE_W : racing ? LINE_W : LINE_FREE_W) * (e < 0 ? -e : e) * PLAN_DT;
+      corr += (sN >= w.zoneLo && sMe <= w.zoneHi ? knobs.zoneW : racing ? knobs.lineW : knobs.lineFreeW) * (e < 0 ? -e : e) * PLAN_DT;
     }
     {
       const away = (eU < 0 ? -eU : eU) > (ePrevS < 0 ? -ePrevS : ePrevS), dirS = eU > ePrevS ? 1 : eU < ePrevS ? -1 : 0;
@@ -379,7 +382,7 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
       if (knobs.grip === 1 ? dirS !== mvS && (dirS !== 0 ? away : awayS) : eU !== ePrevS && away) {
         const k = env.curv(sMe), kk = k < 0 ? -k : k, ld = 3 + 0.25 * vL;
         const need = vL * vL * kk + vL * (knobs.gr ? rS : w.rate) / ld;
-        if (need > w.aLat && (knobs.grip !== 2 || vL * vL * kk > GRIP_CORNER * w.aLat)) grip += GRIP_W * (need / w.aLat - 1) * PLAN_DT;
+        if (need > w.aLat && (knobs.grip !== 2 || vL * vL * kk > GRIP_CORNER * w.aLat)) grip += knobs.gripW * (need / w.aLat - 1) * PLAN_DT;
       }
       mvS = dirS; awayS = away;
     }
@@ -396,7 +399,7 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
       if (!(capOn & (1 << k))) {
         // newly in my band in front of me: can I brake to its speed in the room to its bumper?
         const room = xq - (w.nRear[k] + w.front + 1) - sMe, dv2 = vMe * vMe - vq * vq;
-        if (t <= (knobs.h3 ? w.tHard[k] : T_HARD) && dv2 > 0 && (room <= 0.5 || dv2 / (2 * room) > w.bMax)) { w.culprit[c] = k; w.why[c] = 4; return BIG + PLAN_N - m + 0.5; }
+        if (t <= (knobs.h3 ? w.tHard[k] : TH) && dv2 > 0 && (room <= 0.5 || dv2 / (2 * room) > w.bMax)) { w.culprit[c] = k; w.why[c] = 4; return BIG + PLAN_N - m + 0.5; }
       }
       capNow |= 1 << k;
       const cap = xq - (w.nRear[k] + w.front + 1.5 + hwy * (vq > 0 ? vq : 0));
@@ -428,7 +431,7 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
       // (knobs.vt 1: in the tier of the projection's conflicts, below a braking or clearance conflict at the same sample: when
       // backing out behind it would hit it, staying out is the least bad)
       if (t <= knobs.tv) { w.culprit[c] = -3; w.why[c] = 8; return (knobs.vt ? BIG + 0.25 : 2 * BIG) + PLAN_N - m; }
-      clr += CLR_W[aggr] * PLAN_DT;
+      clr += W * PLAN_DT;
     }
     // clearance to every neighbour my body overlaps along the track
     for (let k = 0; k < nN; k++) {
@@ -437,15 +440,15 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
       if (!(rel < w.front + w.nRear[k] + 1 && rel > -(w.rear + w.nFront[k] + 1))) continue;
       const cl = LO[o] - (e + hw) > (e - hw) - HI[o] ? LO[o] - (e + hw) : (e - hw) - HI[o];
       // a car alongside now owns its side: no move toward it into its margin
-      if (cl < ALONG_CLR && mv !== 0 && w.nOwn[k] === mv) { w.culprit[c] = k; w.why[c] = 6; return 2 * BIG; }
-      if (cl < LANE_CLR) {
-        if (t <= (knobs.h3 ? w.tHard[k] : T_HARD)) { w.culprit[c] = k; w.why[c] = 5; return BIG + PLAN_N - m + 0.5; }
-        const q = 1 + (LANE_CLR - cl) / ALONG_CLR;
+      if (cl < ALONG && mv !== 0 && w.nOwn[k] === mv) { w.culprit[c] = k; w.why[c] = 6; return 2 * BIG; }
+      if (cl < LANE) {
+        if (t <= (knobs.h3 ? w.tHard[k] : TH)) { w.culprit[c] = k; w.why[c] = 5; return BIG + PLAN_N - m + 0.5; }
+        const q = 1 + (LANE - cl) / ALONG;
         clr += W * q * q * PLAN_DT;
         continue;
       }
-      if (cl < ALONG_CLR) {
-        const q = (ALONG_CLR - cl) / ALONG_CLR;
+      if (cl < ALONG) {
+        const q = (ALONG - cl) / ALONG;
         clr += W * q * q * PLAN_DT;
       }
       // no-pass window: from behind to ahead of a running car inside it
@@ -468,7 +471,7 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
     const sep = LO[o] - (eEnd + hw) > (eEnd - hw) - HI[o] ? LO[o] - (eEnd + hw) : (eEnd - hw) - HI[o];
     if (sep < FOLLOW_CLR) continue;                              // still behind it in its band: following, not passing
     const gain = rel0 - relN;
-    if (gain <= 0 || T + (relN + clear) * T / gain > PLAN_T_MAX) long = LONG_W;
+    if (gain <= 0 || T + (relN + clear) * T / gain > PLAN_T_MAX) long = knobs.longW;
   }
   if (knobs.tail) { const q = tailR * knobs.tailT; lost += q > tailLap ? q : tailLap; tailR = 0; }
   if (planTally.on) {
@@ -494,7 +497,7 @@ export function plan(w: PlanWork, env: PlanEnv): number {
   // commitment: a target is held MIN_HOLD s, and replaced only by one better by the margin (unless holding breaks a rule)
   // (C2 H4) a clearly faster car behind a clearly slower one commits at the aggressive margin, without the min hold
   const fast = knobs.h4 && w.cfPassing;
-  if (bi !== 0 && w.cost[0] < BIG && ((w.locked && !fast) || w.cost[bi] > w.cost[0] - HYST[fast ? 2 : w.aggr])) bi = 0;
+  if (bi !== 0 && w.cost[0] < BIG && ((w.locked && !fast) || w.cost[bi] > w.cost[0] - knobs.hystK * HYST[fast ? 2 : w.aggr])) bi = 0;
   // (C3 R1) told I am being passed: hold the target (never moved for the passer), unless holding breaks a rule
   if (bi !== 0 && w.frozen && w.cost[0] < BIG) bi = 0;
   // (C4 P3) alongside at the braking point: hold the side through the corner, unless holding breaks a rule
@@ -527,7 +530,7 @@ export function bandTaken(w: PlanWork, k: number, eAtt: number, dB: number): boo
     if (q === k || w.nOff[q]) continue;
     const o = q * S + m, rel = w.X[o] - sAt;
     if (rel > w.front + w.nRear[q] + 3 || rel < -(w.rear + w.nFront[q] + 3)) continue;
-    if (w.HI[o] > eAtt - w.hw - LANE_CLR && w.LO[o] < eAtt + w.hw + LANE_CLR) return true;
+    if (w.HI[o] > eAtt - w.hw - knobs.laneClr && w.LO[o] < eAtt + w.hw + knobs.laneClr) return true;
   }
   return false;
 }
@@ -552,7 +555,7 @@ export function attackNext(phase: number, ov: number, ovl: number, dB: number, d
 export function lineFree(w: PlanWork): boolean {
   for (let k = 0; k < w.nN; k++) {
     const x = w.X[k * S];
-    if (x < knobs.ret + w.front + w.nRear[k] && x > -(w.rear + w.nFront[k] + MERGE_GAP)) return false;
+    if (x < knobs.ret + w.front + w.nRear[k] && x > -(w.rear + w.nFront[k] + knobs.mergeGap)) return false;
     // (knobs.retT: ... nor one I reach within ret m of in retT s at my speed now, on its projection)
     if (knobs.retT > 0 && x > 0) {
       const m = Math.min(PLAN_N, Math.round(knobs.retT / PLAN_DT));

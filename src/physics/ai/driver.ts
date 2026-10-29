@@ -22,7 +22,7 @@ import type { RaceLine } from './line';
 import { accAt, bankedG, coastDecel, loadFactor, type CarPerf } from './field';
 import type { Traffic } from './traffic';
 import { Rng } from './rng';
-import { knobs as oKnobs, PlanWork, plan as planOffset, attackOverlap, bandTaken, attackNext, lineFree, ATT_NONE, ATT_COMMIT, ATT_HOLD, ATT_BACK, MERGE_GAP as MERGE_GAP_O, FOLLOW_CLR as FOLLOW_CLR_O, PLAN_EVERY as O_EVERY, PLAN_AHEAD, PLAN_BEHIND, NB_MAX, PLAN_DT, PLAN_N, BIG, MOVE_EPS, MIN_HOLD, VORTEX_K, WHY, SHIFT_MIN as SHIFT_MIN_O, type Planner, type PlanEnv } from './planner';
+import { knobs as oKnobs, PlanWork, plan as planOffset, attackOverlap, bandTaken, attackNext, lineFree, ATT_NONE, ATT_COMMIT, ATT_HOLD, ATT_BACK, FOLLOW_CLR as FOLLOW_CLR_O, PLAN_EVERY as O_EVERY, PLAN_AHEAD, PLAN_BEHIND, NB_MAX, PLAN_DT, PLAN_N, BIG, MOVE_EPS, VORTEX_K, WHY, SHIFT_MIN as SHIFT_MIN_O, type Planner, type PlanEnv } from './planner';
 
 const G = 9.81;
 
@@ -543,7 +543,7 @@ export class AiDriver {
       // (on a pass, behind the car being passed where the road squeezes the lanes together: PASS_HEADWAY)
       // (C2 H4, the offset planner: a clearly slower car ahead is followed at PASS_HEADWAY, close enough to pass it)
       const press = offset && oKnobs.h4 && green && tr.pace[i] < CLEARLY_FASTER * tr.pace[leadJ];
-      const gd = ctl.minGap > 0 ? Math.max(0.6 * ctl.minGap, 0.3 * ctl.minGap + 0.6 * v) : 1.5 + ((this.passPhase === 1 && leadJ === this.passTarget) ? PASS_HEADWAY : press ? oKnobs.phw : headway) * v;
+      const gd = ctl.minGap > 0 ? Math.max(0.6 * ctl.minGap, 0.3 * ctl.minGap + 0.6 * v) : 1.5 + ((this.passPhase === 1 && leadJ === this.passTarget) ? PASS_HEADWAY : press ? oKnobs.phw : offset ? headway * oKnobs.hwK : headway) * v;
       // speed that holds the gap (P on gap, small deadband) and a hard braking limit for the closing speed
       const ge = leadGap - gd;
       let vF = vj + (ctl.minGap > 0 ? 0.35 : 0.6) * (Math.abs(ge) < 1.5 ? 0 : ge - Math.sign(ge) * 1.5);
@@ -1231,7 +1231,7 @@ export class AiDriver {
     // me
     this.pS = s; this.pPf = pf; this.pHw = hwI;
     w.v = v; w.eCur = this.shift; w.eMeas = eMe; w.ePrev = this.oStar; w.rate = PASS_SHIFT * SHIFT_RATE;
-    w.hw = hwI; w.front = tr.front[i]; w.rear = tr.rear[i]; w.headway = oKnobs.h4 && na > 0 && tr.pace[i] < CLEARLY_FASTER * tr.pace[A[0]] ? oKnobs.phw : headway; w.aggr = this.params.aggression;
+    w.hw = hwI; w.front = tr.front[i]; w.rear = tr.rear[i]; w.headway = oKnobs.h4 && na > 0 && tr.pace[i] < CLEARLY_FASTER * tr.pace[A[0]] ? oKnobs.phw : headway * oKnobs.hwK; w.aggr = this.params.aggression;
     w.bMax = 0.85 * this.perf.abrake * G; w.aLat = this.perf.alat * G;
     w.ePref = this.defendSide !== 0 ? this.defendSide * (this.ctl.closeRacing ? tr.laneW : DEFEND[this.params.aggression]) : Number.NaN;
     // a clearly faster car (by its pace hint: the player's is his live estimate) within 25 m behind: hold, never toward it
@@ -1245,7 +1245,7 @@ export class AiDriver {
       if (hiZ >= 0) { w.zoneLo = this.ahead(s, C.brake) - 120; w.zoneHi = hiZ; }
     }
     const cs = line.corners;
-    w.moveDir = this.oMoveDir; w.locked = this.oHeld < MIN_HOLD;
+    w.moveDir = this.oMoveDir; w.locked = this.oHeld < oKnobs.minHold;
     // (C3 R1) a passer behind me or beside me told me it is passing me: hold my target (the cover within 3 % excepted)
     w.frozen = false;
     // (and not by a car within 3 % of my pace: against that one the one covering move, R1(d), comes first)
@@ -1274,7 +1274,6 @@ export class AiDriver {
     if (this.oPhase === ATT_COMMIT && oKnobs.att1) {
       let ca = -1;
       for (let c = 0; c < w.nC; c++) if (ca < 0 || Math.abs(w.cand[c] - w.eAtt) < Math.abs(w.cand[ca] - w.eAtt)) ca = c;
-      if (AiDriver.attTally) { const j = this.oAtt, sep = Math.abs(tr.e[i] - tr.e[j]) - hwI - tr.hw[j] >= FOLLOW_CLR_O; this.attT('lim ' + this.limiter + (sep ? ' out' : ' in') + (this.leadIdx === j ? ' lead=it' : '')); this.attT((this.limiter === 'profile' && sep ? 'po dv ' : 'dv ') + Math.round(v - tr.v[j])); if (this.limiter === 'profile' && sep) this.attT('po gap ' + Math.round((tr.ds(i, j) - tr.front[i] - tr.rear[j]) / 5) * 5); }
       if (AiDriver.attTally) this.attT(Math.abs(e - w.cand[ca]) <= 0.3 ? 'plan takes it' : w.cost[ca] >= BIG ? 'plan refuses: ' + WHY[w.why[ca]] + (w.culprit[ca] >= 0 && w.nIdx[w.culprit[ca]] === this.oAtt ? ' (it)' : '') : 'override');
       if (w.cost[ca] < BIG) { e = w.cand[ca]; w.best = e; w.bestCost = w.cost[ca]; w.bestCulprit = w.culprit[ca]; }
     }
@@ -1314,12 +1313,11 @@ export class AiDriver {
     if (this.oPhase !== ATT_NONE) {
       const j = this.oAtt, d = tr.ds(i, j);
       for (let k = 0; k < w.nN; k++) if (w.nIdx[k] === j) { kj = k; break; }
-      if (kj < 0 || tr.away[j] || tr.off[j] || d > 60 || d < -(tr.rear[i] + tr.front[j] + MERGE_GAP_O)) { this.attT(d < 0 ? 'done' + this.oPhase : 'lost' + this.oPhase); this.attackOff(); }
+      if (kj < 0 || tr.away[j] || tr.off[j] || d > 60 || d < -(tr.rear[i] + tr.front[j] + oKnobs.mergeGap)) { this.attT(d < 0 ? 'done' + this.oPhase : 'lost' + this.oPhase); this.attackOff(); }
       else {
         const C = cs[this.oCorner];
         const nx = attackNext(this.oPhase, tr.front[i] + tr.rear[j] - d, ovlM, this.ahead(s, C.brake), this.ahead(s, C.apex), this.ahead(s, this.vTrackOut![this.oCorner]), v * O_EVERY);
         if (nx !== this.oPhase) this.attT(this.oPhase + '>' + nx);
-        if (AiDriver.attTally && nx === ATT_BACK && this.oPhase === ATT_COMMIT) { const sep = Math.abs(tr.e[i] - tr.e[j]) - hwI - tr.hw[j]; this.attT(sep >= FOLLOW_CLR_O ? 'back: out' : Math.abs(this.oStar - tr.e[j]) - hwI - tr.hw[j] >= FOLLOW_CLR_O ? 'back: target out, car not' : 'back: target in'); this.attT('back ov ' + Math.round((tr.front[i] + tr.rear[j] - d) / 5) * 5); }
         if (nx === ATT_NONE) this.attackOff(); else this.oPhase = nx;
       }
     }
