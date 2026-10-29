@@ -12,7 +12,10 @@ import { TRACKS } from '../../src/scoreboard/config';
 import { makeWhere } from './selfplay_where';
 import { AiDriver as AiDriverCls } from '../../src/physics/ai/driver';
 
+import { knobs as plannerKnobs } from '../../src/physics/ai/planner';
 const argv = process.argv.slice(2);
+// (C2) --knob k=v: the offset planner's screen switches
+for (const kv of argv.flatMap((a, i) => (a === '--knob' ? [argv[i + 1]] : []))) { const [k, v] = kv.split('='); (plannerKnobs as Record<string, number>)[k] = Number(v); }
 const arg = (k: string, d: string) => { const i = argv.indexOf(k); return i >= 0 ? argv[i + 1] : d; };
 const seed = Number(arg('--seed', '1')), laps = Number(arg('--laps', '4'));
 const track = trackArg(argv);

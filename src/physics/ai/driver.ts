@@ -602,7 +602,7 @@ export class AiDriver {
     if (offset) {
       // the offset planner: a plan every PLAN_EVERY s while another car is within its horizon; alone, the racing line
       this.oTimer -= dt; this.oHeld += dt;
-      if (!green || this.offTrack || this.mishap !== null) { this.oStar = 0; this.oYield = -1; this.oMoveDir = 0; tr.oPass[i] = 0; }
+      if (!green || this.offTrack || this.mishap !== null) { this.oStar = 0; this.oYield = -1; this.oMoveDir = 0; tr.oPass[i] = 0; tr.passing[i] = -1; }
       else if (this.oTimer <= 0) { this.oTimer += O_EVERY; if (this.oTimer < 0) this.oTimer = 0; this.planStep(v, eMe, pf, headway); }
       shiftWant = this.oStar;
       if (this.oYield >= 0) {
@@ -869,7 +869,7 @@ export class AiDriver {
       this.input.brake = brake;
     }
     this.input.handbrake = false;
-    tr.passing[i] = this.passTarget;
+    if (!offset || !oKnobs.h6) tr.passing[i] = this.passTarget;   // (C2 H6: the offset planner sets it in planStep)
     // ---- spin: handbrake and full lock into the corner at turn-in, then lock everything up and stop
     if (this.mishap === 'spin' && this.mPhase >= 1) {
       const C = cs[this.mCorner];
@@ -1144,7 +1144,7 @@ export class AiDriver {
       if (cf < 0 && !tr.off[q]) cf = q;
       B[nb] = q; BD[nb++] = d;
     }
-    if (na + nb === 0) { this.oStar = 0; this.oYield = -1; this.oMoveDir = 0; tr.oPass[i] = 0; return; }
+    if (na + nb === 0) { this.oStar = 0; this.oYield = -1; this.oMoveDir = 0; tr.oPass[i] = 0; tr.passing[i] = -1; return; }
     // merge by distance (ties: the lower car index)
     let a = 0, b = 0, nN = 0;
     const S = PLAN_N + 1;
@@ -1212,6 +1212,14 @@ export class AiDriver {
     } else if (!w.moveOpen) this.oMoveDir = 0;
     this.oStar = e;
     tr.oPass[i] = Math.abs(e) > MOVE_EPS && na > 0 && AD[0] < 30 ? 1 : 0;
+    // (C2 H6) the car I am passing knows it (Traffic.passing, as the lane model's pass): the nearest car ahead within 25 m, or
+    // the one beside me, whose band my target is clear of; it makes room where the road will push my lane, in time
+    if (oKnobs.h6) {
+      let q = -1;
+      if (na > 0 && AD[0] < PLAN_BEHIND) q = A[0];
+      else if (nb > 0 && BD[0] < tr.rear[i] + tr.front[B[0]]) q = B[0];
+      tr.passing[i] = q >= 0 && !tr.off[q] && Math.abs(e - tr.e[q]) >= hwI + tr.hw[q] + FOLLOW_CLR_O ? q : -1;
+    }
   }
   private readonly nbA = new Int32Array(NB_MAX); private readonly nbB = new Int32Array(NB_MAX);
   private readonly nbAD = new Float64Array(NB_MAX); private readonly nbBD = new Float64Array(NB_MAX);

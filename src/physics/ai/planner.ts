@@ -72,12 +72,15 @@ export const GRIP_W = 4;
  *  the line at the shift rate */
 export const MERGE_GAP = 3;
 /** (C2, tools: the screens' A/B) the C2 steps that are switches; the defaults are the kept ones */
-export const knobs = { h2: 0, grip: 0, tail: 0, h3: 0, h4: 0, h5: 0 };
+export const knobs = { h2: 0, grip: 0, tail: 0, h3: 0, h4: 0, h5: 0, h6: 0 };
 /** s: (C2 H2) the time lost at the end of the horizon behind a car in my band, at the rate it costs me there, carried on for
  *  this long (staying behind a slower car keeps costing after the horizon; a completed pass does not) */
 export const TAIL_T = 10;
 /** (C2, knobs.grip 2) the share of the lateral grip the line itself uses above which a lateral move is priced by the grip */
 export const GRIP_CORNER = 0.5;
+/** (C2 H6) the road rule fires where the clamp moves my offset faster than this share of the shift rate (the car lags its
+ *  shift target: Laguna T11 / T10 / T4 track-out four-offs at 2.5-2.8 m/s of clamp against a 2.86 m/s shift rate) */
+export const ROAD_K = 0.6;
 /** s: (C2 H3) the hard window per neighbour: the time to reach it at the closing speed now, clamped */
 export const T_HARD_MIN = 1, T_HARD_MAX = 4;
 /** risk hook: s per unit of passRisk (0 today) */
@@ -250,10 +253,17 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
     // the road clamping my offset back faster than a car can move sideways (the line meeting the edge at turn-in or
     // track-out with me held off it on that side): a path I cannot drive
     // (on the outside only: the inside clamped to the edge at an apex is a tighter, slower arc, priced by the curvature below)
-    if (e !== eU && eU * env.curv(sN) <= 0) {
+    // (C2 H6: on the inside too while a car is beside me there: the clamp sweeps me into it at the turn-in, Mid-Ohio T1 / T2 / T4)
+    let besideK = -1;
+    if (e !== eU && knobs.h6 && eU * env.curv(sN) > 0) for (let k = 0; k < nN; k++) {
+      if (w.nIgnore[k]) continue;
+      const rel = X[k * S + m] - sN;
+      if (rel < w.front + w.nRear[k] + 3 && rel > -(w.rear + w.nFront[k] + 3)) { besideK = k; break; }
+    }
+    if (e !== eU && (eU * env.curv(sN) <= 0 || besideK >= 0)) {
       const dE = e - e1, rr = (dE < 0 ? -dE : dE) / PLAN_DT;
-      if (rr > w.rate) {
-        if (t <= (knobs.h5 ? T_HARD_MIN : T_HARD)) { w.culprit[c] = -2; w.why[c] = 3; return BIG + PLAN_N - m; }
+      if (rr > (knobs.h6 ? ROAD_K : 1) * w.rate) {
+        if (t <= (knobs.h5 && besideK < 0 ? T_HARD_MIN : T_HARD)) { w.culprit[c] = besideK >= 0 ? besideK : -2; w.why[c] = 3; return BIG + PLAN_N - m; }
         clr += CLR_W[aggr] * PLAN_DT; roadSoft += CLR_W[aggr] * PLAN_DT;
       }
     }
