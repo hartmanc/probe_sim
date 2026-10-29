@@ -30,7 +30,7 @@ import { CarAudio, audioParamsFromCarJson } from './audio';
 import { Menu, type MenuEntry, type MenuPage } from './menu';
 import { ModeHost, type GameMode, type ModeContext, type ModeId } from './modes/mode';
 import { createHotLap, ghostRefEntry, ghostRefOptions, HotlapLoop } from './modes/hotlap';
-import { AI_STRENGTH_PCTS, createRace, fieldAudioHook, fieldAudioUrlOff, fieldVoicesFor, raceMenuLabel, storeAiStrength, storedAiStrength } from './modes/race';
+import { createRace, fieldAudioHook, fieldAudioUrlOff, fieldVoicesFor, raceMenuLabel } from './modes/race';
 import { pitExitConeWatcher } from './scenery';
 import { creditsPage, UNOFFICIAL_LINE } from './credits';
 import { APP_RELEASED, APP_VERSION, changelogPage, versionLine } from './changelog';
@@ -126,14 +126,6 @@ const touchPage = (t: TouchControls): MenuPage => ({
   ],
 });
 let tierChoice: TierChoice = storedTierChoice();
-/** AI strength (AI round 1): stored like the Graphics choice; the next race build reads it (src/app/modes/race.ts). */
-let aiStrengthPct = storedAiStrength();
-const aiStrengthEntry = (): MenuEntry => ({
-  kind: 'choice', id: 'aiStrength', label: 'AI strength',
-  note: aiStrengthPct === 100 ? 'the real field\'s pace' : `every AI car ${aiStrengthPct - 100} % quicker`,
-  options: AI_STRENGTH_PCTS.map((v) => ({ value: String(v), label: `${v} %` })),
-  get: () => String(aiStrengthPct), set: (v) => { aiStrengthPct = Number(v); storeAiStrength(aiStrengthPct); },
-});
 const graphicsEntry = (): MenuEntry => ({
   kind: 'choice', id: 'graphics', label: 'Graphics',
   note: tierChoice === (quality.reason === 'forced' ? quality.tier : 'auto') ? `${quality.tier}${quality.reason === 'url' ? ' (URL)' : ''}` : 'reload to apply',
@@ -199,7 +191,6 @@ const mainPage: MenuPage = {
     { kind: 'action', id: 'hotlap', label: 'Hot lap', note: sim ? undefined : loadingNote(), disabled: !sim, run: () => startMode('hotlap') },
     // the field line: phones and tablets race the player's 40 pace neighbours (field-select.ts)
     { kind: 'action', id: 'race', label: raceMenuLabel(location.search, TRACK.fieldLabel), note: sim ? (fieldTotal !== null ? fieldLine(fieldTotal, quality.device) + (workerChoice(perfFlags.worker, workerOn) ? ' · physics in a worker' : '') : undefined) : loadingNote(), disabled: !sim, run: () => startMode('race') },
-    aiStrengthEntry(),
     { kind: 'submenu', id: 'howto', label: 'How to play', page: () => howtoPage({ rows: () => input.helpRows(), touch: quality.touch, raceLaps: LIMITS.raceLaps, fieldLine: () => (fieldTotal !== null ? fieldLine(fieldTotal, quality.device) : null) }) },
     ...(touch ? [{ kind: 'submenu', id: 'touch', label: 'Touch controls', page: () => touchPage(touch) } as MenuEntry] : []),
     ...(showControlsPanelRow() ? [{ kind: 'action', id: 'controls', label: 'Controls & calibration', run: () => controlsPanel.open() } as MenuEntry] : []),

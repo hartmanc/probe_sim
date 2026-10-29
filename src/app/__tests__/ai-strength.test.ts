@@ -1,5 +1,8 @@
 // AI strength setting (AI round 1, 27 Oct 2026): the stored choice (pure functions over a Storage), the board version string.
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { AI_STRENGTH_KEY, AI_STRENGTH_PCTS, aiStrengthLabel, parseAiStrength, raceBoardVersion, storeAiStrength, storedAiStrength } from '../modes/race';
 
 const mem = () => { const m = new Map<string, string>(); return { m, getItem: (k: string) => m.get(k) ?? null, setItem: (k: string, v: string) => void m.set(k, v), removeItem: (k: string) => void m.delete(k) }; };
@@ -28,5 +31,11 @@ describe('AI strength setting', () => {
     expect(raceBoardVersion(8, 5, 100)).toBe('8-5L');
     expect(raceBoardVersion(8, 5, 110)).toBe('8-5L-S110');
     expect(aiStrengthLabel(105)).toBe('AI 105 %');
+  });
+  it('the Start menu has no AI strength row (removed on the owner\'s call, 29 Oct 2026); the plumbing stays for the tools', () => {
+    const src = readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), '../index.ts'), 'utf8');
+    expect(src).not.toMatch(/aiStrength|AI strength|storedAiStrength|storeAiStrength|AI_STRENGTH/);
+    // the stored key of an earlier build is ignored: a race built with no explicit strength is built at 100 %
+    expect(readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), '../modes/race.ts'), 'utf8')).toMatch(/deps\.aiStrength \? deps\.aiStrength\(\) : 100\)/);
   });
 });

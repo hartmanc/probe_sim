@@ -329,7 +329,7 @@ export interface RaceDeps {
   loadField(): FieldData | Promise<FieldData>;
   loadModel(file: string): Promise<THREE.Object3D | null>;
   random(): number;
-  /** The AI strength setting, % (default: the stored choice, storedAiStrength); read at every race build. */
+  /** The AI strength, % (default 100: the menu row was removed on the owner's call, 29 Oct 2026; tools and tests pass it here); read at every race build. */
   aiStrength?(): number;
   /** DOM available (HUD, menus); false in unit tests. */
   dom: boolean;
@@ -398,7 +398,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
     ctx.rollingStart();                 // fresh Vehicle + Surface + timer; step counter 0
     sv.sim.record = false;              // races are not replayed
     const t0 = performance.now();
-    strength = parseAiStrength(String(deps.aiStrength ? deps.aiStrength() : storedAiStrength()));
+    strength = parseAiStrength(String(deps.aiStrength ? deps.aiStrength() : 100));
     d = buildDirector(sv.sim, field, { seed, laps, realGrid: fieldSelected, playerAi: pf.playerAi, lod: pf.lod ?? LOD_DEFAULT, strengthPct: strength, closeRacing: ov.closeRacing, planner: ov.planner });
     const dir = d;
     if (perf.on) dir.timing = newDirectorTiming();

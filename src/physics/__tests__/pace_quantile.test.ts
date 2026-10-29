@@ -44,7 +44,9 @@ describe('quantile', () => {
   });
 });
 
-// Regenerating each public file at q = 0.5 with its recorded command line gives the same `cars` (fitted fields aside).
+// Regenerating each public file at its own q (the header's `pace.q`; 0.2 since 29 Oct 2026, the free-pace anchor; it was 0.5 until
+// then) with its recorded command line gives the same `cars` (fitted fields aside). The header must name its statistic: the
+// test no longer assumes 0.5, so a public file regenerated at another q fails unless its header says so.
 const SESSIONS: Record<string, { track: string; args: string[]; seedWithPublic?: boolean }> = {
   'cars/field/pace.json': { track: 'laguna_seca', args: ['tools/race/pace.ts', '--track', 'laguna_seca'] },
   // Sonoma keeps the player's reference row "from the previous file" (#619 did not race): the regeneration starts from a copy
@@ -57,19 +59,22 @@ const stripFit = (cars: any[]) => cars.map((c) => {
   return { ...rest, stints: (c.stints ?? []).map(({ scale: _s2, achievedLap: _a2, ...st }: any) => st) };
 });
 
-describe('regenerating the public pace files at q = 0.5', () => {
+describe('regenerating the public pace files at their own q', () => {
   for (const [rel, { track, args, seedWithPublic }] of Object.entries(SESSIONS)) {
     test(rel, () => {
       const pub = JSON.parse(readFileSync(resolve(ROOT, 'public', rel), 'utf8'));
+      expect(pub.pace?.stat).toBe('quantile');
+      const q: number = pub.pace.q;
+      expect(q).toBeGreaterThan(0);
       const dir = mkdtempSync(resolve(tmpdir(), 'pace_q_'));
       const out = resolve(dir, track, 'pace.json');
       mkdirSync(dirname(out), { recursive: true });
       if (seedWithPublic) copyFileSync(resolve(ROOT, 'public', rel), out);
-      execFileSync(resolve(ROOT, 'node_modules/.bin/tsx'), [...args, '--source', pub.source, '--quantile', '0.5'], {
+      execFileSync(resolve(ROOT, 'node_modules/.bin/tsx'), [...args, '--source', pub.source, '--quantile', String(q)], {
         cwd: ROOT, env: { ...process.env, FIELD_TRACK: track, FIELD_PACE: out }, stdio: 'pipe',
       });
       const got = JSON.parse(readFileSync(out, 'utf8'));
-      expect(got.pace).toEqual({ stat: 'quantile', q: 0.5 });
+      expect(got.pace).toEqual({ stat: 'quantile', q });
       expect(got.cars.length).toBe(pub.cars.length);
       // Mid-Ohio's public file was re-id'd by hand (2b060d1: #56 156 -> 56_mo) after it was generated; the tool, reading the
       // identity row (id 56_mo, laguna_number 156), now also writes model_id "156" there, which the public file lacks
