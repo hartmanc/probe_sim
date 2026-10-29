@@ -1001,8 +1001,7 @@ recalibrated (`calibrate_field.ts --workers 6`, tolerance 0.2 %). AI_VERSION 8. 
 | Mid-Ohio | 85 / 702 | -3.0 % / -1.9 % | 0.33 % | 0 / 0 -> 0 / 0 | 818 s |
 
 No car or stint sits at PACE_MAX (1.8) in either set; "off" is the cap measure of round 1 (|achieved / target - 1| > 0.5 %: the
-car cannot reach the target). Buttonwillow's 60 stints off in the median file were a stale fit (the file was calibrated before
-later changes), the fresh calibration reaches all. `aggression` unchanged on every car. Capped cars still race by `achievedLap`
+car cannot reach the target). Buttonwillow's 60 stints off in the median file (worst 9.05 %) are not off in the fresh calibration (cause not investigated). `aggression` unchanged on every car. Capped cars still race by `achievedLap`
 (field.ts `paceHint`, unchanged). The stint median moves less than the brief's -3 %: a stint's q 0.2 is nearer its median than
 the car-wide one (a stint is 5-30 laps from one driver).
 
@@ -1021,7 +1020,7 @@ the car-wide one (a stint is 5-30 laps from one driver).
 Laguna contacts rise by 0.015 per car-lap, beyond the +-0.006 spread (Sonoma and Buttonwillow fall, Mid-Ohio equal; Laguna four-offs
 fall by 0.026). Where: 133 contacts on 8 seeds, spread round the lap (no corner above 19), 48 of 133 in the following context
 (`line/follow/follow`), mean closing speed 4.5 m/s: the field is 4.5 % quicker at the car level and the AI-driven Probe is not, so
-more cars arrive from behind at the same trains (the passing situations are 715 against 640). Nothing tuned; reported.
+more cars arrive from behind at the same trains. Nothing tuned; reported.
 
 Self-play Laguna, 5 laps, seeds 1-8, the AI Probe at scale 1 (`--player-scale 1`): pace position by mean lap / by best lap
 P22.3 / P14.9 (seeds 1-8 mean: 19, 34, 31, 22, 26, 25, 18, 3 / 17, 33, 7, 4, 29, 10, 4, 15); q 0.5 (27 Oct, round 1): P14.6 / P13.5.
