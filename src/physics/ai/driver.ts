@@ -22,7 +22,7 @@ import type { RaceLine } from './line';
 import { accAt, bankedG, coastDecel, loadFactor, type CarPerf } from './field';
 import type { Traffic } from './traffic';
 import { Rng } from './rng';
-import { knobs as oKnobs, PlanWork, plan as planOffset, FOLLOW_CLR as FOLLOW_CLR_O, PLAN_EVERY as O_EVERY, PLAN_AHEAD, PLAN_BEHIND, NB_MAX, PLAN_DT, PLAN_N, BIG, MOVE_EPS, MIN_HOLD, VORTEX_K, type Planner, type PlanEnv } from './planner';
+import { knobs as oKnobs, PlanWork, plan as planOffset, FOLLOW_CLR as FOLLOW_CLR_O, PLAN_EVERY as O_EVERY, PLAN_AHEAD, PLAN_BEHIND, NB_MAX, PLAN_DT, PLAN_N, BIG, MOVE_EPS, MIN_HOLD, VORTEX_K, SHIFT_MIN as SHIFT_MIN_O, type Planner, type PlanEnv } from './planner';
 
 const G = 9.81;
 
@@ -655,8 +655,9 @@ export class AiDriver {
           {
             // (a car passing me: where the road will push its lane over the next second, so I make room in time, but
             // never further than my own road allows there: beyond that it is a squeeze and the car further back yields)
-            // (C3 R1, the offset planner: no room-making for a passer; overlap holds, the passer does the work)
-            const look = tr.passing[j] === i && !(offset && oKnobs.r1) ? 1.0 * v : 0;
+            // (C3 R1, the offset planner: room is made only for a passer my body overlaps (the cars behind that do not are not in
+            // this loop): overlap holds, where the road will push its lane too; oKnobs.room 0: none at all)
+            const look = tr.passing[j] === i && !(offset && oKnobs.r1 && !oKnobs.room) ? 1.0 * v : 0;
             for (let x = 0; x <= look; x += Math.max(4, 0.5 * v)) {
               const sx = sLk + x;
               const eS = side > 0 ? this.spanHi(j) : this.spanLo(j);   // its edge toward me (target or drift)
@@ -670,7 +671,9 @@ export class AiDriver {
             push += side * (need - Math.abs(dl));
             if (tr.passing[j] === i && d < 0 && d > -PINCH_OK * (myRear + tr.front[j]) && !(offset && oKnobs.r1)) passerSqueeze = true;
             // (the offset planner: a car alongside behind me and converging, in a corner only; no lift on a straight)
-            if (offset && d < 0 && d > -(myRear + tr.front[j]) && Math.abs(line.at(line.curv, s)) * 170 > 1) passerSqueeze = true;
+            // (C3 R1: alongside = its nose past PINCH_OK of the overlap and laterally clear of my body, not a car in my wake whose
+            // front overlaps my rear: a lift in front of that is a brake test, oKnobs.lift)
+            if (offset && d < 0 && d > -(oKnobs.lift ? PINCH_OK : 1) * (myRear + tr.front[j]) && (!oKnobs.lift || Math.abs(dl) >= hwI + tr.hw[j]) && Math.abs(line.at(line.curv, s)) * 170 > 1) passerSqueeze = true;
           }
         }
       }
@@ -760,6 +763,12 @@ export class AiDriver {
       this.shiftTarget = tgt;
       tr.eT[i] = tgt;
       let rate = (push !== 0 || !Number.isNaN(mishapLat) ? 2 * SHIFT_RATE : this.offTrack ? 0.8 * SHIFT_RATE : (offset ? this.oStar !== 0 : this.passPhase !== 0) ? PASS_SHIFT * SHIFT_RATE : SHIFT_RATE) * dt;
+      // (C3 R3, the offset planner: a held offset is moved at the rate the grip leaves, the rate the plan assumes (planner.ts
+      // shiftRate, knobs.ctl); a push away from contact keeps its own rate)
+      if (offset && oKnobs.r3 && oKnobs.ctl && push === 0 && Number.isNaN(mishapLat) && !this.offTrack) {
+        const kl = Math.abs(line.at(line.curv, sLook)), vv = Math.max(5, v);
+        rate = Math.min(rate, Math.max(SHIFT_MIN_O, (perf.alat * G - vv * vv * kl) * (LD0 + LDK * vv) / vv) * dt);
+      }
       if (ctl.shiftGrip > 0 && Number.isNaN(mishapLat) && !this.offTrack) {
         // within the spare lateral grip at the look point (a mishap or a rejoin keeps its own rate)
         const kl = Math.abs(line.at(line.curv, sLook)), aSp = Math.max(0.25 * perf.alat * G, perf.alat * G - v * v * kl);

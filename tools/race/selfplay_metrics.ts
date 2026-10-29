@@ -31,6 +31,8 @@ export interface SelfplayMetrics {
      *  WAIT_NEAR m behind a running car in green; the time from that arrival to its centre being ahead (done), or the
      *  situation ending otherwise (dropped > 60 m back, the car ahead off / away, the race over) */
     wait?: { n: number; done: number; median: number; p90: number; ended: Record<string, number>; durations: number[];
+      /** (C3) the attacker (car number) of each done wait */
+      cars?: string[];
       /** per done wait: the attacker's time over its own profile across the distance it covered (s) */
       losses: number[]; lossMedian: number };
     /** station of each green pass (the passing car's s when the order changed; sampled every 0.1 s) */
@@ -87,7 +89,7 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
   const why = new Map<string, number>();
   const situations = new Map<number, Situation>();
   const closed: Situation[] = [];
-  const waits = new Map<number, { i: number; j: number; base: number; t0: number; U0: number }>(), waitDur: number[] = [], waitLoss: number[] = [], waitEnd: Record<string, number> = {};
+  const waits = new Map<number, { i: number; j: number; base: number; t0: number; U0: number }>(), waitDur: number[] = [], waitCar: string[] = [], waitLoss: number[] = [], waitEnd: Record<string, number> = {};
   const defend = { vsClearlyFaster: 0, within3: 0, vsSlower: 0, none: 0, covers: 0 };
   const coverC = new Int32Array(n).fill(-1), coverE0 = new Float64Array(n), coverDone = new Uint8Array(n);
   const prevDefend = new Int8Array(n);
@@ -302,7 +304,7 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
       const end = gap < 0 ? 'done' : gap > 60 ? 'dropped' : tr.off[w.j] || tr.away[w.j] ? 'off' : '';
       if (!end) continue;
       waitEnd[end] = (waitEnd[end] ?? 0) + 1;
-      if (end === 'done') { waitDur.push(t - w.t0); const pr = drv(w.i)?.profile; if (pr) waitLoss.push(t - w.t0 - expectedTime(pr, w.U0, tr.U[w.i] - w.U0)); }
+      if (end === 'done') { waitDur.push(t - w.t0); waitCar.push(cars[w.i].number); const pr = drv(w.i)?.profile; if (pr) waitLoss.push(t - w.t0 - expectedTime(pr, w.U0, tr.U[w.i] - w.U0)); }
       waits.delete(key);
     }
     for (let i = 0; i < n; i++) prevS[i] = tr.s[i];
@@ -326,7 +328,7 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
     cars: n, laps: dir.config.laps, carLaps, raceTime: dir.time,
     line: { instRms: inst.rms(), instP95: inst.pct(0.95), why: Object.fromEntries([...why].map(([k, v]) => [k, +(v / Math.max(1, all.n)).toFixed(4)])), rms: all.rms(), p95: all.pct(0.95), samples: all.n, trackRms: trk.rms(), trackP95: trk.pct(0.95), maxErr, worstAt, corners: corners.map((c, k) => ({ name: c.name, rms: cornerAcc[k].rms(), p95: cornerAcc[k].pct(0.95), samples: cornerAcc[k].n })) },
     passing: { attempts: passStarts, ends: passEnds, situations: real.length, reachedBrakeZone: real.filter((s) => s.brakeZone).length, setUp: real.filter((s) => s.setup).length, completed: real.filter((s) => s.done).length, medianStuck: median(stuck), p90Stuck: pctl(stuck, 0.9), passesTotal, passAt,
-      wait: { n: Object.values(waitEnd).reduce((a, b) => a + b, 0), done: waitDur.length, median: median(waitDur), p90: pctl(waitDur, 0.9), ended: waitEnd, durations: waitDur.map((x) => +x.toFixed(2)), losses: waitLoss.map((x) => +x.toFixed(2)), lossMedian: median(waitLoss) },
+      wait: { n: Object.values(waitEnd).reduce((a, b) => a + b, 0), done: waitDur.length, median: median(waitDur), p90: pctl(waitDur, 0.9), ended: waitEnd, durations: waitDur.map((x) => +x.toFixed(2)), cars: waitCar, losses: waitLoss.map((x) => +x.toFixed(2)), lossMedian: median(waitLoss) },
       byRatio: [[0, 0.85], [0.85, 0.92], [0.92, CLEAR]].map(([lo, hi]) => {
         const g = real.filter((s) => { const r = tr.pace[s.i] / tr.pace[s.j]; return r >= lo && r < hi; });
         const open: Record<string, number> = {};

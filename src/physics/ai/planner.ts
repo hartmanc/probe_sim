@@ -77,8 +77,11 @@ export const MERGE_GAP = 3;
  *  shift target: Laguna T11 / T10 / T4 track-out four-offs at 2.5-2.8 m/s of clamp against a 2.86 m/s shift rate) */
 export const ROAD_K = 0.6;
 /** (C2, tools: the screens' A/B) the C2 steps that are switches; the defaults are the kept ones */
-export const knobs = { h2: 1, grip: 0, tail: 1, h3: 0, h4: 1, h5: 0, h6: 1, roadk: ROAD_K, phw: 0.3, r1: 1, r2: 1, r3: 1, tv: 4 };
-/* (C3, knobs.r1 / r2 / r3: the vortex round's rules; knobs.tv: the vortex rule's hard window, s) */
+export const knobs = { h2: 1, grip: 0, tail: 1, h3: 0, h4: 1, h5: 0, h6: 1, roadk: ROAD_K, phw: 0.3, r1: 1, r2: 1, r3: 1, tv: 4, gr: 1, tailT: 10, ctl: 1, lift: 1, room: 1 };
+/* (C3, knobs.r1 / r2 / r3: the vortex round's rules; knobs.tv: the vortex rule's hard window, s; knobs.gr 1: the GRIP cost at the
+ * rate the plan moves at (R3's shiftRate, so a move the grip allows is not priced as one it does not); knobs.tailT: TAIL_T, s;
+ * knobs.ctl 1: the controller moves a held offset at that rate too, driver.ts; knobs.lift 1: the alongside lift only for a car
+ * alongside, not one in my wake, driver.ts; knobs.room 1: room made for a passer my body overlaps, driver.ts) */
 /** (C3 R3) m/s: the least lateral rate of the shift the controller delivers (driver.ts SHIFT_RATE_MIN) */
 export const SHIFT_MIN = 0.8;
 /** (C3 R2) the share of a corner's peak curvature above which the racing line is "in the corner": turn-in where |κ| rises above
@@ -342,7 +345,7 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
       // a corner; on a straight the shift is the controller's to rate-limit)
       if (knobs.grip === 1 ? dirS !== mvS && (dirS !== 0 ? away : awayS) : eU !== ePrevS && away) {
         const k = env.curv(sMe), kk = k < 0 ? -k : k, ld = 3 + 0.25 * vL;
-        const need = vL * vL * kk + vL * w.rate / ld;
+        const need = vL * vL * kk + vL * (knobs.gr ? rS : w.rate) / ld;
         if (need > w.aLat && (knobs.grip !== 2 || vL * vL * kk > GRIP_CORNER * w.aLat)) grip += GRIP_W * (need / w.aLat - 1) * PLAN_DT;
       }
       mvS = dirS; awayS = away;
@@ -428,7 +431,7 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
     const gain = rel0 - relN;
     if (gain <= 0 || T + (relN + clear) * T / gain > PLAN_T_MAX) long = LONG_W;
   }
-  if (knobs.tail) { lost += tailR * TAIL_T; tailR = 0; }
+  if (knobs.tail) { lost += tailR * knobs.tailT; tailR = 0; }
   if (planTally.on) {
     const q = c * 8, C = w.comp;
     C[q] = lost; C[q + 1] = clr; C[q + 2] = roadSoft; C[q + 3] = corr; C[q + 4] = grip; C[q + 5] = long; C[q + 6] = rev; C[q + 7] = cost - rev;
