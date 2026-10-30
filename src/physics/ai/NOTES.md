@@ -1170,3 +1170,105 @@ table below; per-car aggression from the data tiers; the phone tier stays on the
 | corrW | 0.05 | 0-0.2 | s per s within 0.3 m of the corridor edge |
 | gripW | 4 | 1-8 | s per s per unit of lateral grip excess |
 | longW | 1.5 | 0.5-3 s | a pass that does not progress |
+| t1 | 1 | 0 / 1 | (C5) the train pass: target the furthest car of the train I reach before the landing, decided at arrival |
+| vClose | 2 | 1-4 m/s | (C5) closing on the car ahead (my speed, or my profile at its station while the follow rule is not holding me) needed to judge the train pass |
+| tTrain | 1.5 | 0.5-3 s | (C5) time gap between consecutive cars of a train |
+| trMarg | 10 | 0-40 m | (C5) the landing is projected this far before the braking point |
+| ovlTI | 0.3 | 0-0.8 | (C5) share of my length my nose must be past the target's tail at its turn-in (else back out behind it) |
+| trainW | 1 | 0-2 | (C5) weight of the commit's lap pricing (sum of the train's pace deficits x the lap fraction left) |
+| t2 | 1 | 0 / 1 | (C5) committed: a hard rule on the attack offset, or the landing out of reach, aborts |
+| abSl | 1.5 | 0-3 m | (C5) slack below ovl before a commit aborts for reach (the braking point still needs ovl) |
+| abT | 1 | 0 / 1 | (C5) an abort before the braking point tucks in behind the slot's car, then frees the plan |
+| trCl | 1 | 0 / 1 | (C5) the train pass only when closing (no tc window, no stuck commit) |
+| trF | 1 | 0 / 1 | (C5) committed: a train car clear of my band is not followed for a squeeze before the braking point |
+| acrRel | 1 | 0 / 1 | (C5) train pass: never-across against a car wholly ahead at the closing speed's sweep |
+| ext | 0 | 0 / 1 | (C5) judge a landing beyond the horizon by carrying the overlap on at the closing speed |
+| pAcc | 1 | 0 / 1 | (C5) my projected speed rises at my full-throttle acceleration (C1-C4: the profile at once) |
+| nProj | 1 | 0 / 1 | (C5) neighbours accelerate toward their profile at nA (C1-C4: profile x ratio now) and are held behind the car ahead in their band |
+| nA | 2.5 | 1-4 m/s² | (C5) that acceleration |
+| capF | 1 | 0 / 1 | (C5) inside the headway on the projection I fall back at 0.9 of its speed (C1-C4: stood still) |
+
+## C5 (29-30 Oct 2026, branch `planner-c5`): the train pass, the attacker's intent
+
+Owner: "these faster cars blast by the trains and force their way back in by taking the inside line at the front of the train ...
+a lot at the pit straight at Buttonwillow." Everything is `planner: 'offset'` only; R1-R3 and P2-P4 stay; the lane model, `field.ts`,
+the pace files and AI_VERSION 8 are untouched. Results in `tools/race/out/c5/` (gitignored; `s0_c4`, `s1`, `s2`, `lanes_screen`, the dev
+runs, `eyesore.cjs`).
+
+**As built** (`planner.ts` `trainTarget`, `attOvK`, `nTrain`, `trainHold`; `driver.ts` `trainCommit`, `attackET`, `trainAbort`).
+- **T1** the target: closing on a clearly slower car ahead (or the stuck rule) within the horizon, the train is the run of cars ahead
+  within `tTrain` of each other; the attack offset clears every car of it (corridor judged where I land, not where I am); the
+  projection "move there and hold it" (no merge back after the first car) counts the cars whose tails my nose passes by `ovl` at the
+  braking point less `trMarg`; the furthest is the target. Inside first; the outside only when the inside has no room or a third car
+  holds it.
+- **T2** committed: the target only moves nearer; re-judged every plan; a hard rule on the attack offset (`brake`, `clear`, `road`,
+  `vortex`, ...) or the landing out of reach by more than `abSl` aborts: tuck in behind the nearest train car ahead of me (or beside
+  me); before the braking point the plan is free once tucked in (`abT`), at it P2's back-out to the apex. Staying behind is priced at
+  the train's summed deficits x the lap left; a train car clear of my band is not followed before the braking point (`trF`).
+- **T3** at the braking point the overlap (`ovl`) or back out; holding, at the target's turn-in `ovlTI` of overlap or back out behind it.
+- **T4** the decision is the first plan tick closing by `vClose` (`trCl`: only then); measured per commit (`AiDriver.attCommit`):
+  closing speed at commit median 2.0 / 2.2 m/s (Laguna / Buttonwillow, p90 6.4 / 7.3), the follow rule holding me at 21 / 26 % of
+  commits (the first build committed after the follow rule had spent the speed: median 0.5, 74 %).
+- **Projection fixes found on the way** (all offset plans): `pAcc` (my speed rose to the profile at once: a commit from behind a
+  slower car looked a car length or more better than it was), `nProj` (a car accelerating out of a corner was projected at its
+  profile x its low ratio now for the whole horizon: commits on a long straight predicted 50-240 m of overlap), `capF` (inside the
+  headway my projected position stood still for the rest of the horizon: overlaps of -200 to -5000 m), `ext 0` (a landing beyond
+  the horizon is not judged). With them the abort-for-reach share fell from about 1 in 2 commits to 2 in 5 and done-before-the-
+  braking-point rose from about 10 to 40 % (Laguna dev, seed 1, 5 laps, `AiDriver.attTally`); HOLD stays rare (2-7 per race).
+- **T6** `selfplay_metrics` `passing.train`: one car passing >= 2 distinct cars in green between two consecutive corner apexes,
+  by segment and by car; the pit straight is the segment that holds the start line (Buttonwillow `T11-T1`, Laguna `T11-T2`); the
+  straight-line delta at arrival and over the wait from `knob-search` 0d63378 (tools only, not its `field.ts`).
+
+**Screens** (Laguna + Buttonwillow, seeds 1-8, 10 laps; three of six used: s0 is the C4 tree as a baseline, `k.t1=0 k.pAcc=0
+k.nProj=0 k.capF=0`, which reproduces the knob search's offset share-0 Laguna row bit for bit; lanes at this commit reproduce
+the reanchor's 4224 / 10800 / 0.0400):
+
+| run | cells 0-1 / 1-3 / 3-8 / 8-15 / >15 % (g < 2), floor | gap 2-3 / 3-5 / 5-8 s | passing lap 0-1 / 1-3 / 3-8 / 8-15 s | contacts L / BW | four-off L / BW | green passes L / BW | train passes per race L / BW | BW pit straight per race | wait median / p90 L; BW | straight dv arrival L / BW (median); over the wait |
+|---|---|---|---|---|---|---|---|---|---|---|
+| data | 39.4 / 60.3 / 86.9 / 97.8 / 99.7, 8.2 | 88 / 84 / 77 | 1.9 / 2.1 / 2.9 / 3.4 | | | | | | | |
+| lanes | 37.1 / 56.6 / 65.2 / 82.0 / 95.3, 16.1 | 64 / 55 / 58 | 6.3 / 4.1 / 10.6 / 16.7 | 0.0400 / 0.0113 | 0.0601 / 0.0086 | 4224 / 10800 | 81.8 / 215.5 | 43.9 | 14.3 / 66; 22.2 / 96 | 3.4 / 5.3; 0.3 / 0.9 |
+| s0 C4 tree | 30.0 / 50.3 / 64.1 / 79.1 / 93.9, 12.7 | 40 / 52 / 44 | 5.8 / 4.5 / 9.0 / 14.2 | 0.0251 / 0.0228 | 0.0618 / 0.0218 | 2478 / 7663 | 39.9 / 119.3 | 20.4 | 15.4 / 80; 21.6 / 100 | 3.7 / 4.5; 0.2 / 0.4 |
+| **s1 C5 (the tree as committed)** | 27.0 / 49.4 / 57.1 / 78.4 / 91.0, 13.7 | 51 / 59 / 43 | 3.6 / 4.7 / 8.2 / 13.7 | 0.0115 / 0.0114 | 0.0559 / 0.0180 | 2617 / 6095 | 42.6 / 88.1 | 15.4 | 16.6 / 87; 28.4 / 137 | 4.2 / 3.8; 0.1 / 0.3 |
+| s2 s1 without pAcc, capF | 27.5 / 48.9 / 54.4 / 75.0 / 94.0, 14.1 | 55 / 53 / 65 | 6.2 / 5.7 / 10.8 / 14.2 | 0.0091 / 0.0140 | 0.0511 / 0.0177 | 2547 / 6841 | 44.0 / 127.9 | 21.0 | 17.8 / 92; 22.7 / 125 | 4.2 / 4.7; 0.1 / 0.3 |
+
+(Buttonwillow dev, seeds 1-3, 4 laps, green passes: C4 1380, the projection fixes alone without T1 1162, C5 1127, C5 without nProj
+1198: the fixes cost passes and halve contacts; T1 adds train passes, not passes.)
+
+**Stopped** (the brief's rule): after the screens Laguna's green passes are 2617 against the lanes' 4224 (62 %) and the 8-15 % cell is
+78.4 % against 92 %; no change in hand is clearly the fix (s2, the projection as C4 had it, is no better). No full evaluation; the
+default stays `'lanes'`.
+
+**Eyesore** (Laguna seeds 1-8, 10 laps; `tools/race/out/c5/eyesore.cjs`: race median / best green lap after lap 1 over the pace file's
+target, done waits as the attacker, net places per lap from the crossing order; its lanes waits reproduce the reanchor's 12.9 / 49.9 s,
+351 waits; its C4 row differs from C4's script):
+
+| planner | cars | race median / best lap over target | wait per slower car, median / p90 | net places per lap | #711 train passes per race |
+|---|---|---|---|---|---|
+| lanes | #711 | +32.2 / +8.1 s | 12.9 / 49.9 s (351) | 1.89 | 5.38 |
+| lanes | fastest quartile (12) | +32.4 / +11.3 s | 13.7 / 61.7 s | 1.22 | |
+| offset C4 (s0) | #711 | +39.4 / +11.9 s | 15.6 / 72.3 s (222) | 1.58 | 3.38 |
+| offset C4 (s0) | fastest quartile | +34.9 / +11.4 s | 14.1 / 76.7 s | 0.82 | |
+| offset C5 (s1) | #711 | +36.1 / +11.8 s | 13.3 / 75.1 s (243) | 1.74 | 3.63 |
+| offset C5 (s1) | fastest quartile | +34.3 / +11.2 s | 14.9 / 87.6 s | 0.95 | |
+
+**Gates on the tree as committed.** G1-G3 not evaluated on four tracks (stopped); on the screen pool G1 fails (s1: 3-8 % -29.8, 8-15 %
+-19.4, floor 13.7 %, gap bins -37 / -24 / -34), G2 fails (passing lap 3-8 / 8-15 % 8.2 / 13.7 s), G3 fails on green passes on both tracks
+(2617 vs 4224, 6095 vs 10800); contacts pass (0.0115 vs 0.0400, old anchor 0.0262; BW 0.0114 vs 0.0113, level), four-offs pass at
+Laguna (0.0559 vs 0.0601) and fail at Buttonwillow (0.0180 vs 0.0086). G4: `npx vitest run` 832 passed, 1 failed (the lanes "full field"
+big-ratio completion 0.714, the owner's open call, untouched), 1 expected fail: the offset "full field, 2 laps" (seed 1: 111 situations,
+84 green passes, > 150 each; 57 % completed; C4 78 / 57) stays `test.fails`; unit tests for T1 (the target is the furthest car of the
+train reached: the first, two, the front, the hold against the merge), T2 (a soft cost keeps the landing, a slower car in the attack lane
+is a hard abort), T3 (the turn-in overlap); the worker identity with `planner: 'offset'` passes. G5: solo hashes 8530e05a097e4a7d /
+4ac773bad171b7a2 / 19e2628dc499c20e / 71c58e0ef9e5bd32 with the planner lanes and offset, AI_VERSION 8, pace files untouched. G6: Sonoma
+(2 laps, seed 1) 2.56 -> 2.86 µs per car-step (+12 %). G7: build green, e2e 13 / 13.
+
+**Reading.** The arrival decision works (the commit is made at a median 2 m/s of closing, not after the follow rule), and with an
+honest projection the train pass is safe (contacts at half the C4 tree's on both tracks) but it lands rarely: a clearly faster car's
+straight-line advantage over the train (0.1-0.3 m/s over the wait, 4 m/s at arrival) gets it to the first car, seldom past the second,
+before the next braking point, and at the braking point the overlap is seldom there (HOLD 2-7 per race). The lanes' train passes (82 /
+216 per race, 44 on the Buttonwillow pit straight) are twice the offset's; not measured why, the likely part is that the lane
+model's lead cars make room and its passes complete in the braking zone and the corner, which R1-R2 forbid the offset planner. The owner's straight-line pass needs the power
+split (knob search: share 0.5 doubles the straight delta over the wait) more than another rule of engagement.
+
+**Next.** The power split with a recalibrated pace file (the train pass and the projection fixes are ready for it); then the screens
+again on this tree; Buttonwillow's four-offs (2 x the lanes' in every offset tree); the full field's passes (84 of 150).

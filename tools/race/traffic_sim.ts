@@ -59,7 +59,7 @@ async function runOne(): Promise<void> {
   const why: Record<string, number> = {};
   const att: Record<string, number> = {};
   const commits: number[][] = [];
-  { const { AiDriver } = await import('../../src/physics/ai/driver'); (AiDriver as unknown as { dbg: number }).dbg = argv.includes('--dbg') ? 30 : 0; AiDriver.attTally = att; (AiDriver as unknown as { attCommit: number[][] | null }).attCommit = commits; }
+  { const { AiDriver } = await import('../../src/physics/ai/driver'); AiDriver.attTally = att; (AiDriver as unknown as { attCommit: number[][] | null }).attCommit = commits; }
   if (argv.includes('--why')) await whyHook(dir, why);
   const m = runSelfplay(dir, pack.makeSurface(), { log: false });
   const r = m.rules;

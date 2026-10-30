@@ -632,7 +632,7 @@ export class AiDriver {
     else if (this.defendSide !== 0 && !offset) shiftWant = this.defendSide * (ctl.closeRacing ? tr.laneW : DEFEND[this.params.aggression]);
     if (offset) {
       // the offset planner: a plan every PLAN_EVERY s while another car is within its horizon; alone, the racing line
-      this.oTimer -= dt; this.oHeld += dt; this.tNow += dt;
+      this.oTimer -= dt; this.oHeld += dt;
       if (!green || this.offTrack || this.mishap !== null) { this.oStar = 0; this.oYield = -1; this.oMoveDir = 0; tr.oPass[i] = 0; tr.passing[i] = -1; if (this.oPhase !== ATT_NONE) this.attackOff(); }
       else if (this.oTimer <= 0) { this.oTimer += O_EVERY; if (this.oTimer < 0) this.oTimer = 0; this.planStep(v, eMe, pf, headway); }
       shiftWant = this.oStar;
@@ -1353,7 +1353,7 @@ export class AiDriver {
           const t = trainTarget(w, this.penv!, this.trK, nK, this.trTgt, this.oE, Math.max(1, this.ahead(s, C.brake) - K.trMarg), ovlM - K.abSl, true);
           if (!K.t2) { /* (no abort) */ }
           else if (t === -2) ab = 'abort hard ' + WHY[w.why[0]];
-          else if (t === -1) { ab = 'abort reach'; const D = AiDriver as unknown as { dbg?: number }; if ((D.dbg ?? 0) > 0) { D.dbg!--; const kt = this.wIdx(w, this.oAtt); console.log(JSON.stringify({ dt: +(this.tNow - this.dbgT0).toFixed(1), pred0: +this.dbgP0.toFixed(1), predNow: kt >= 0 ? +w.attOvK[kt].toFixed(1) : null, v: +v.toFixed(1), vProf: +this.profAt(s).toFixed(1), vT: +tr.v[this.oAtt].toFixed(1), lim: this.limiter, oStar: +this.oStar.toFixed(2), eMe: +(tr.e[i]).toFixed(2), eT: +tr.e[this.oAtt].toFixed(2), dB: +this.ahead(s, C.brake).toFixed(0), ds: +tr.ds(i, this.oAtt).toFixed(1), tgt: this.trTgt })); } }
+          else if (t === -1) ab = 'abort reach';
           else if (t !== this.trTgt) { this.trTgt = t; this.oAtt = this.trIdx[t]; this.attT('train nearer'); }
         }
         if (ab) { this.attT(ab); this.trainAbort(); }
@@ -1416,7 +1416,6 @@ export class AiDriver {
 
   }
   // ---- (C5) the train pass (NOTES "C5"): the target is the front of the train
-  private dbgT0 = 0; private dbgP0 = 0; private tNow = 0;
   private readonly trIdx = new Int32Array(NB_MAX); private trN = 0; private trTgt = -1; private trainOn = false; private oE = 0;
   private inTrain(j: number): boolean { for (let q = 0; q < this.trN; q++) if (this.trIdx[q] === j) return true; return false; }
   private wIdx(w: PlanWork, p: number): number { for (let k = 0; k < w.nN; k++) if (w.nIdx[k] === p) return k; return -1; }
@@ -1510,7 +1509,6 @@ export class AiDriver {
       if (tgt < 0) { if (tl) this.attT(tl + 'no landing'); break; }   // the side has room but no landing: no move
       this.oPhase = ATT_COMMIT; this.oAtt = this.trIdx[tgt]; this.oSide = side; this.oCorner = c; this.trainOn = true; this.trTgt = tgt; this.oE = e;
       this.attT((side === dir ? 'train in ' : 'train out ') + (tgt + 1));
-      this.dbgT0 = this.tNow; this.dbgP0 = w.attOvK[this.trK[tgt]];
       if (AiDriver.attCommit) AiDriver.attCommit.push([+(v - tr.v[j]).toFixed(2), +gap.toFixed(1), tgt + 1, this.limiter === 'follow' ? 1 : 0]);
       return;
     }
