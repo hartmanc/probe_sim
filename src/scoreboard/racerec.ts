@@ -2,9 +2,6 @@
 // inputs) -- the worker identity test proves it -- so the recording is those, plus two safeguards: the live lap times and
 // line-crossing times (the offline re-run must reproduce them exactly) and a once-a-second position snapshot of every car.
 // No personal data: no name, no device id, no secret. Pure TS (btoa / CompressionStream are web-standard and in Node).
-import type { RaceDirector } from '../physics/ai/race';
-import { getPowerShare } from '../physics/ai/field';
-import type { HotlapSim } from './sim';
 import type { InputTrace, TraceRow } from './types';
 
 export const REC_FORMAT = 1;
@@ -92,7 +89,7 @@ export interface RaceRecording {
   truncated?: { atStep: number };
 }
 
-// ---------------------------------------------------------------- the tap (drains a running sim + director)
+// ---------------------------------------------------------------- assembling
 
 /** What a RaceTap hands over since the last drain. All plain data (structured-clone safe for the Worker). */
 export interface RecChunk {
@@ -103,82 +100,6 @@ export interface RecChunk {
   reset: { pos: [number, number, number]; heading: number; speed: number };
 }
 
-/** Quantised snapshot of one director: station mod L (dm) and lane offset (dm, clamped). */
-export function snapshotOf(dir: RaceDirector): { s: Int32Array; e: Int8Array } {
-  const tr = dir.traffic, n = dir.cars.length, L10 = Math.round(dir.line.L * 10);
-  const s = new Int32Array(n), e = new Int8Array(n);
-  for (let i = 0; i < n; i++) {
-    const q = Math.round(tr.s[i] * 10);
-    s[i] = Number.isFinite(q) ? ((q % L10) + L10) % L10 : 0;
-    const w = Math.round(tr.e[i] * 10);
-    e[i] = Number.isFinite(w) ? Math.max(-127, Math.min(127, w)) : 0;
-  }
-  return { s, e };
-}
-
-/**
- * Collects what the inputs alone cannot say. The inputs themselves are the sim's own recorded trace (HotlapSim `record`), so
- * the rows are exactly the quantised samples the director consumed; the tap drains them with `drain`. It also logs the
- * between-step events and takes the position snapshot every SNAP_STEPS steps. Call `after()` once per physics step.
- */
-export class RaceTap {
-  private rowsFrom = 0;
-  private refsFrom = 0;
-  private events: RecEvent[] = [];
-  private snapS: Int32Array[] = [];
-  private snapE: Int8Array[] = [];
-  /** snapshots are skipped when positions in dm would not fit the Int16 deltas (a track over 6.5 km) */
-  readonly snapshots: boolean;
-  constructor(private readonly sim: HotlapSim, private readonly dir: RaceDirector) {
-    this.snapshots = Math.round(dir.line.L * 10) <= 65000;
-  }
-
-  /** The player was put back on the centreline at station s (before the next step). */
-  recover(s: number): void { this.events.push([this.sim.stepIndex, 0, s]); }
-  /** An app-side rule report reached the director (before the next step). */
-  violation(kind: string, detail?: string): void { this.events.push(detail === undefined ? [this.sim.stepIndex, 1, kind] : [this.sim.stepIndex, 1, kind, detail]); }
-
-  /** After each physics step. */
-  after(): void {
-    if (this.snapshots && this.sim.stepIndex % SNAP_STEPS === 0) {
-      const q = snapshotOf(this.dir);
-      this.snapS.push(q.s); this.snapE.push(q.e);
-    }
-  }
-
-  /** Everything new since the last drain (rows and refs are copied out of the sim). */
-  drain(): RecChunk {
-    const sim = this.sim;
-    const rows = sim.rowsFrom(this.rowsFrom), refs = sim.refsFrom(this.refsFrom);
-    this.rowsFrom += rows.length; this.refsFrom += refs.length;
-    const ch: RecChunk = { rows, refs, events: this.events, snapS: this.snapS, snapE: this.snapE, steps: sim.stepIndex, reset: sim.start };
-    this.events = []; this.snapS = []; this.snapE = [];
-    return ch;
-  }
-}
-
-/** The live safeguard data of a director (the worker host reads it from its own, the app from the one it stepped). */
-export function liveOf(dir: RaceDirector): RecLive {
-  const me = dir.player.number;
-  const lapTimes: number[] = [];
-  for (const c of dir.crossings) if (c.car === me && Number.isFinite(c.lapTime) && c.lapTime > 0) lapTimes.push(c.lapTime);
-  const res = dir.getResults();
-  return {
-    lapTimes,
-    crossings: dir.crossings.map((c) => ({ car: c.car, lapNr: c.lapNr, t: c.t })),
-    results: res ? res.map((r) => ({ number: r.number, laps: r.lapsCompleted, time: r.time, metres: r.metres })) : null,
-  };
-}
-
-/** The director's effective RaceConfig as plain JSON (NaN / Infinity -> null) plus the one global the AI reads (the power split). */
-export function configOf(dir: RaceDirector): Record<string, unknown> {
-  const out: Record<string, unknown> = {};
-  for (const [k, v] of Object.entries(dir.config as unknown as Record<string, unknown>)) out[k] = typeof v === 'number' && !Number.isFinite(v) ? null : v;
-  out.powerShare = getPowerShare();
-  return JSON.parse(JSON.stringify(out)) as Record<string, unknown>;
-}
-
-// ---------------------------------------------------------------- assembling
 
 /** Chunks from one or more drains (the Worker sends one at the end, the main-thread path drains once). */
 export class RecAssembler {
@@ -313,7 +234,7 @@ export function checkRecording(x: unknown, o: { maxSteps?: number; maxCars?: num
   if (sn !== null && sn !== undefined) {
     if (typeof sn !== 'object' || sn.everySeconds !== 1 || !Array.isArray(sn.cars) || sn.cars.length > maxCars || !sn.cars.every((c) => isStr(c, 16)) || !isInt(sn.L10) || sn.L10 <= 0 || sn.L10 > 65000
       || !isInt(sn.n) || sn.n < 0 || sn.n > 6000 || !Array.isArray(sn.s0) || sn.s0.length !== sn.cars.length || !sn.s0.every(isInt) || typeof sn.ds !== 'string' || typeof sn.e !== 'string') r.push('snapshot malformed');
-    else if (sn.e.length > Math.ceil((sn.n * sn.cars.length * 4) / 3) + 8 || sn.ds.length > Math.ceil((Math.max(0, sn.n - 1) * sn.cars.length * 2 * 4) / 3) + 8) r.push('snapshot longer than its declared size');
+    else if (sn.e.length !== 4 * Math.ceil((sn.n * sn.cars.length) / 3) || sn.ds.length !== 4 * Math.ceil((Math.max(0, sn.n - 1) * sn.cars.length * 2) / 3)) r.push('snapshot is not the size it declares');
   }
   if (rc.aborted !== undefined && rc.aborted !== true) r.push('aborted must be true or absent');
   if (rc.truncated !== undefined && (!rc.truncated || !isInt(rc.truncated.atStep))) r.push('truncated malformed');

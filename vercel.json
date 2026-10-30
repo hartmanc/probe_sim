@@ -10,6 +10,9 @@
     },
     "api/feedback.ts": {
       "maxDuration": 10
+    },
+    "api/races.ts": {
+      "maxDuration": 10
     }
   },
   "headers": [

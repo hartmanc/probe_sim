@@ -235,6 +235,7 @@ const lastSweep = new WeakMap<object, number>();
 export async function sweepStaleBoards(deps: HandlerDeps): Promise<string[]> {
   const expired: string[] = [];
   for (const key of await deps.store.boards()) {
+    if (key.startsWith('rr:')) continue;   // race recordings' day indexes (racehandler.ts), not a scoreboard
     const b = parseBoardKey(key);
     if (b?.mode === 'race') continue;   // race boards are hidden, not swept (their key carries the AI version)
     let stale = !b;

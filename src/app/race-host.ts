@@ -8,7 +8,8 @@ import type { RaceDirector, RaceHud, DirectorTiming } from '../physics/ai/race';
 import { buildDirector } from './race-build';
 import type { FieldData } from './loader';
 import { CAR64_STRIDE, CAR_STRIDE, packCar, packRace } from './race-snapshot';
-import { RaceTap, configOf, liveOf, type RecChunk, type RecLive } from '../scoreboard/racerec';
+import type { RecChunk, RecLive } from '../scoreboard/racerec';
+import { RaceTap, configOf, liveOf } from '../scoreboard/racetap';
 
 export const HOST_MAX_FRAME = 0.05;      // the main loop's cap per rendered frame (index.ts MAX_FRAME)
 

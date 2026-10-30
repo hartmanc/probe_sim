@@ -5,10 +5,8 @@ import type { RaceDirector } from '../physics/ai/race';
 import { race as R } from '../physics';
 import type { HotlapSim } from '../scoreboard';
 import { TRACKS } from '../scoreboard/config';
-import {
-  REC_MIN_ABORT_S, RaceTap, RecAssembler, buildRecording, configOf, liveOf, packRecording,
-  type RaceRecording, type RecBuild, type RecChunk, type RecLive,
-} from '../scoreboard/racerec';
+import { REC_MIN_ABORT_S, RecAssembler, buildRecording, packRecording, type RaceRecording, type RecBuild, type RecChunk, type RecLive } from '../scoreboard/racerec';
+import { RaceTap, configOf, liveOf } from '../scoreboard/racetap';
 import { apiBase } from './scoreboard-client';
 import type { RaceWorkerClient } from './race-worker-client';
 
