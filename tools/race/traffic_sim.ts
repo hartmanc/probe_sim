@@ -31,6 +31,8 @@ export interface RunOut {
   metrics: { carLaps: number; contacts: number; contactsPerCarLap: number; fourOff: number; fourOffPerCarLap: number; fourOffNonMishapPerCarLap: number; passesTotal: number;
     situations: number; completed: number; defending: { vsClearlyFaster: number; within3: number; vsSlower: number; none: number }; recoveries: number; mishaps: number;
     contactAt: unknown[]; fourOffAt: unknown[]; yields?: number;
+    /** (L1) corner passes, overlap at turn-in, the lane model's deferred shuts / holds / back-outs (selfplay_metrics passing.corner); contacts and four-offs by corner phase */
+    corner?: { passes: number; byPhase: Record<string, number>; overlapTI: number; defers: number; holds: number; backouts: number }; contactsByPhase?: Record<string, number>; fourOffByPhase?: Record<string, number>;
     /** (C2) the wait (positions only) and, with --why, what held the clearly faster car (offset planner plans, by reason) */
     /** (C4) the attack's transitions (offset planner) */
     att?: Record<string, number>;
@@ -54,7 +56,9 @@ async function runOne(): Promise<void> {
   const dir = new RaceDirector({
     line: pack.line, surface: pack.surface, makeSurface: pack.makeSurface, probeJson: loadProbeJson(), pace: loadPace(track), identity: loadIdentityJson(track),
     pitLane: pack.scenery?.pit_lane ?? null, blendLine: pack.scenery?.blend_line ?? null, collisionWorld: createCollisionWorld(pack.scenery, pack.track),
-  }, { laps, seed, playerAi: true, followScale: ai.followScale ?? 1, laneMargin: ai.laneMargin ?? 1, shiftGrip: ai.shiftGrip ?? 0, ...parseSet(sets.filter((kv) => !kv.startsWith('k.'))) });
+  }, { laps, seed, playerAi: true, followScale: ai.followScale ?? 1, laneMargin: ai.laneMargin ?? 1, shiftGrip: ai.shiftGrip ?? 0, ...parseSet(sets.filter((kv) => !kv.startsWith('k.') && !kv.startsWith('c.'))) });
+  // (L1) the corner-pass knobs (driver.ts cpKnobs): `--set c.<name>=<value>` (in the run tag); the switch itself is `--set cornerPass=1`
+  { const D = await import('../../src/physics/ai/driver'); D.setCpKnobs(sets.filter((kv) => kv.startsWith('c.')).map((kv) => kv.slice(2))); }
   // (C4) the planner's knobs: `--set k.<name>=<value>` (in the run tag, so each setting caches apart) or `--knob <name>=<value>`
   const knobs = [...sets.filter((kv) => kv.startsWith('k.')).map((kv) => kv.slice(2)), ...argv.flatMap((a, i) => (a === '--knob' ? [argv[i + 1]] : []))];
   if (knobs.length) { const P = await import('../../src/physics/ai/planner'); P.setKnobs(knobs); }
@@ -69,7 +73,7 @@ async function runOne(): Promise<void> {
     track, seed, laps, set: sets, crossings: dir.crossings.map((c) => ({ ...c })),
     metrics: { carLaps: m.carLaps, contacts: r.contacts, contactsPerCarLap: r.contactsPerCarLap, fourOff: r.fourOff, fourOffPerCarLap: r.fourOffPerCarLap, fourOffNonMishapPerCarLap: r.fourOffNonMishapPerCarLap,
       passesTotal: m.passing.passesTotal, situations: m.passing.situations, completed: m.passing.completed, defending: m.defending, recoveries: r.recoveries, mishaps: m.mishaps.total,
-      contactAt: r.contactAt, fourOffAt: r.fourOffAt, yields: undefined, wait: m.passing.wait, why: argv.includes('--why') ? why : undefined, att, train: m.passing.train, commits },
+      contactAt: r.contactAt, fourOffAt: r.fourOffAt, yields: undefined, wait: m.passing.wait, why: argv.includes('--why') ? why : undefined, att, train: m.passing.train, commits, corner: m.passing.corner, contactsByPhase: r.contactsByPhase, fourOffByPhase: r.fourOffByPhase },
   };
   const js = arg('--json', '');
   if (js) writeFileSync(js, JSON.stringify(out)); else console.log(JSON.stringify(out.metrics));
@@ -270,6 +274,23 @@ function report(runs: RunOut[], tracks: string[], laps: number, seeds: string): 
     trainOut[t] = { races: nR, passesPerRace: tp / nR, carsPerTrainPass: tp ? tc / tp : NaN, pitSeg: rs[0].metrics.train!.pitSeg, pitPerRace: pit / nR, bySeg: seg, commits: cm.length, commitDv: dv.length ? [quantile(dv, 0.5), quantile(dv, 0.9)] : null, commitGap: gp.length ? quantile(gp, 0.5) : NaN, targeted: nt.length ? nt.reduce((a, b) => a + b, 0) / nt.length : NaN, followLimited: cm.length ? lim / cm.length : NaN };
     L.push(`| ${t} | ${nR} | ${(tp / nR).toFixed(1)} | ${tp ? (tc / tp).toFixed(2) : '-'} | ${rs[0].metrics.train!.pitSeg}: ${(pit / nR).toFixed(1)} | ${top} | ${cm.length} | ${dv.length ? f1(quantile(dv, 0.5)) + ' / ' + f1(quantile(dv, 0.9)) : '-'} | ${gp.length ? f1(quantile(gp, 0.5)) : '-'} | ${nt.length ? (nt.reduce((a, b) => a + b, 0) / nt.length).toFixed(2) : '-'} | ${cm.length ? pct(lim / cm.length) : '-'} |`);
   }
+  // (L1) corner passes, overlap at turn-in, back-outs; contacts and four-offs by corner phase (per car-lap)
+  L.push('', '## Corner passes (L1)', '', '| track | races | corner passes per race (braking / entry / exit) | overlap at turn-in per race | deferred / held / backed out per race | contacts per car-lap: braking / entry / exit / straight | four-off per car-lap: braking / entry / exit / straight |', '|---|---|---|---|---|---|---|');
+  const cornerOut: Record<string, unknown> = {};
+  for (const t of tracks) {
+    const rs = runs.filter((r) => r.track === t && r.metrics.corner);
+    if (!rs.length) continue;
+    const nR = rs.length, cl = rs.reduce((a, r) => a + r.metrics.carLaps, 0);
+    const S = (f: (r: RunOut) => number) => rs.reduce((a, r) => a + f(r), 0);
+    const ph = (k: string, src: 'byPhase' | 'contactsByPhase' | 'fourOffByPhase') => S((r) => (src === 'byPhase' ? r.metrics.corner!.byPhase : r.metrics[src] ?? {})[k] ?? 0);
+    const PH = ['braking', 'entry', 'exit', 'straight'];
+    const o = { races: nR, carLaps: cl, passesPerRace: S((r) => r.metrics.corner!.passes) / nR, byPhasePerRace: Object.fromEntries(PH.slice(0, 3).map((k) => [k, ph(k, 'byPhase') / nR])),
+      overlapTIPerRace: S((r) => r.metrics.corner!.overlapTI) / nR, defersPerRace: S((r) => r.metrics.corner!.defers) / nR, holdsPerRace: S((r) => r.metrics.corner!.holds) / nR, backoutsPerRace: S((r) => r.metrics.corner!.backouts) / nR,
+      contactsByPhase: Object.fromEntries(PH.map((k) => [k, ph(k, 'contactsByPhase') / cl])), fourOffByPhase: Object.fromEntries(PH.map((k) => [k, ph(k, 'fourOffByPhase') / cl])) };
+    cornerOut[t] = o;
+    const f4 = (x: number) => x.toFixed(4);
+    L.push(`| ${t} | ${nR} | ${o.passesPerRace.toFixed(1)} (${PH.slice(0, 3).map((k) => o.byPhasePerRace[k].toFixed(1)).join(' / ')}) | ${o.overlapTIPerRace.toFixed(1)} | ${o.defersPerRace.toFixed(1)} / ${o.holdsPerRace.toFixed(1)} / ${o.backoutsPerRace.toFixed(1)} | ${PH.map((k) => f4(o.contactsByPhase[k])).join(' / ')} | ${PH.map((k) => f4(o.fourOffByPhase[k])).join(' / ')} |`);
+  }
   // (C2) the wait (positions only) and what held the clearly faster car (--why runs)
   L.push('', '## The wait (clearly faster car arriving within 25 m behind a running car; positions only)', '', '| track | waits | done | median s | p90 s | time lost per done wait, median / p90 s | ended otherwise |', '|---|---|---|---|---|---|---|');
   const waitOut: Record<string, unknown> = {};
@@ -301,7 +322,7 @@ function report(runs: RunOut[], tracks: string[], laps: number, seeds: string): 
     const base = resolve(ROOT, save);
     mkdirSync(dirname(base), { recursive: true });
     writeFileSync(base + '.md', md + '\n');
-    writeFileSync(base + '.json', JSON.stringify({ tracks, seeds, laps, set: sets, gates: g, pooled: { pairs: all.length, byD: pooled.byD, byG: pooled.byG, lostByD: pooled.lostByD, pressure: pooled.pressure, groups: pooled.groups }, perTrack: perOut, wait: waitOut, train: trainOut, why: whyAll }, null, 1));
+    writeFileSync(base + '.json', JSON.stringify({ tracks, seeds, laps, set: sets, gates: g, pooled: { pairs: all.length, byD: pooled.byD, byG: pooled.byG, lostByD: pooled.lostByD, pressure: pooled.pressure, groups: pooled.groups }, perTrack: perOut, wait: waitOut, train: trainOut, corner: cornerOut, why: whyAll }, null, 1));
   }
 }
 

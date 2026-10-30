@@ -1436,3 +1436,123 @@ shorter at the median.
 
 **Not done / judged.** The pace files' `curve` are the p = 0 fits. The offset planner's alone-on-track rms case stays red. `changelog.ts`
 untouched; nothing deployed.
+
+## L1: corner passes in the lane model (30 Oct 2026)
+
+Owner (30 Oct, morning): "it sounds like our model is not passing in corners, which isn't right. A class cars that are fighting for
+overall wins find and make passes asap." The rules agreed: alongside with overlap BEFORE the lead car turns in, then hold your side
+through the corner (the other car lifts, the exit decides); never arriving on the inside after turn-in (the dive); no overlap by
+turn-in: back out, tuck in, go again; brake later than normal when alongside to make the overlap stick. Everything is behind
+`RaceConfig.cornerPass` (default **off**; `?cornerpass=1`, `selfplay.ts --corner-pass`, `traffic_sim.ts --set cornerPass=1`, plumbed
+through race mode, race-build and the worker host), lane model only. Field: AI_VERSION 9, p = 0.75 (stage B). Results in
+`tools/race/out/l1/` (gitignored).
+
+**As built** (`driver.ts` `cpStep`, `cpPlanShut`, `shutStation`, `cornerNext`, `passProfile`; `Traffic.cpHold`; corners' turn-in /
+track-out from `vortexCorners`, cached per line).
+- **K1, the pinch rule by overlap.** A pass in hand whose lane the road shuts beside the passed car j inside j's next corner (turn-in -
+  `pre` 5 m to track-out + `win` 15 m), while j has not turned in and my nose is projected at least `ovlP` (0) of my length past its
+  tail at its turn-in at the closing speed now, is DEFERRED (cpState 1): the shut rule, the pinch guard and the squeeze-following
+  against j do not apply. At j's turn-in: my nose past its tail by `ovlTI` 0.3 of my length and laterally clear -> HOLD to the
+  track-out + win (cpState 2, `Traffic.cpHold`): no shut rule, no pinch guard, no GIVE_CLR margin rule against j (`gc`; a real squeeze
+  still gives way); j holds its line (the passer's lane reserved), makes room where the road pushes my lane onto it (unchanged) and
+  lifts to 97 % while I am beside and converging. Falling behind its tail during the hold backs out. After the track-out the shut
+  rule decides (the exit). Without the overlap -> BACK OUT (passEnd 'backout'): a lift to its speed - `boDv` 1.5 m/s while my gap is
+  under 1.5 m (following and the pinch guard against it also relative, `pg`), phase 2 (tuck in, merge), no new pass before that
+  corner's apex. Never the dive: a shut in a corner j has already turned in for is the old shut rule; planning (`cpPlanShut`) takes a
+  lane that shuts in j's next corner only when the projected overlap at its turn-in reaches ovlTI, any other shut as before
+  (shutBeside). A shut not in a corner window keeps the old rule and horizon.
+- **K2, late braking.** In a pass before j's turn-in with the overlap not yet made (`k2Set`), the speed target and the 'offline' /
+  'lane' braking envelopes use the profile braked at `bm` 0.92 (`driverProfile(..., brakeMargin)`, built lazily; normal 0.85); off the
+  moment the overlap is made, the pass ends or the turn-in passes. Grip limiter and slide rules unchanged. `k2p` 1 restricts it to
+  deferred passes (not used).
+- **K3, aggression.** `tools/race/aggression_tiers.ts`: a car with >= 20 opportunities in its event (`curves.json` `aggression`)
+  takes its tier (attacker 2, neutral 1, passive 0), every other car the seeded draw; `pace.ts` / `pace_track.ts` use it, the public
+  pace files took only the new `aggression` values (Laguna 11 of 45 cars changed, Sonoma 55 of 134, Buttonwillow 36 of 100, Mid-Ohio
+  33 of 85; `pace_quantile.test.ts` reproduces them). With the knob `k3` 1: the pass margin 0.88 / 0.92 / 0.95 (calm / normal /
+  aggressive, `bmCalm` / `bm` / `bmAggr`) and the planning reach x (1 + `reach` 0.25 x (aggression - 1)).
+- **K4** kept: the Corkscrew no-pass, formation / yellow single file, no defence against a clearly faster car, DEFEND, mishaps, the
+  player as any car.
+- **K5 metrics** (`selfplay_metrics` `passing.corner`, `rules.contactsByPhase` / `fourOffByPhase`; `traffic_sim` "Corner passes (L1)"):
+  corner passes (a green pass between a corner's braking point and its track-out, by phase), overlap at turn-in from positions (any
+  planner, switch on or off), the lane model's deferrals / holds / back-outs, contacts and four-offs by phase (braking: braking point
+  to turn-in; entry: turn-in to apex; exit: apex to track-out; straight).
+- Knobs (`cpKnobs`, `setCpKnobs`; `--set c.<name>=<value>`, in the run tag): ovlTI 0.3, ovlP 0, boDv 1.5, win 15, pre 5, gc 1, pg 1,
+  bm 0.92, bmCalm 0.88, bmAggr 0.95, k2 1, k2p 0, k3 0, reach 0.25.
+
+**Screens** (Laguna + Buttonwillow, seeds 1-8, 10 laps, `--workers 6`; four of six used; S0 reproduces stage B bit for bit):
+
+| run | cells 0-1 / 1-3 / 3-8 / 8-15 / >15 % (g < 2 s) | passing lap 0-1 / 1-3 / 3-8 / 8-15 s | contacts L / BW | four-off L / BW | green passes L / BW | wait median / p90 s L; BW |
+|---|---|---|---|---|---|---|
+| data | 39.4 / 60.3 / 86.9 / 97.8 / 99.7 | 1.9 / 2.1 / 2.9 / 3.4 | | | | |
+| S0 off | 33.0 / 62.0 / 70.0 / 83.0 / 96.0 | 3.5 / 2.1 / 8.0 / 13.0 | 0.0083 / 0.0080 | 0.0246 / 0.0028 | 4293 / 8866 | 10.9 / 67; 20.1 / 98 |
+| S1 on (K1 + K2) | 35.5 / 63.0 / 71.7 / 84.0 / 95.0 | 4.0 / 2.8 / 8.4 / 12.9 | 0.0116 / 0.0117 | 0.0282 / 0.0020 | 4250 / 8875 | 10.6 / 63; 19.1 / 98 |
+| S2 on, ovlP -0.5, bm 0.95, ovlTI 0.2 | 34.6 / 64.1 / 65.8 / 84.7 / 95.5 | 2.1 / 1.8 / 7.9 / 13.5 | 0.0102 / 0.0135 | 0.0284 / 0.0015 | 4311 / 8844 | 10.3 / 65; 19.3 / 94 |
+| S3 on + K3 (files + k3 1) | 31.7 / 63.2 / 74.1 / 84.6 / 96.0 | 2.8 / 1.9 / 6.0 / 13.7 | 0.0118 / 0.0103 | 0.0198 / 0.0015 | 4140 / 8605 | 10.2 / 63; 17.5 / 90 |
+
+Corner passes, overlap at turn-in and the lane model's own tallies, per race (Laguna; Buttonwillow):
+
+| run | corner passes (braking / entry / exit) | overlap at turn-in | deferred / held / backed out |
+|---|---|---|---|
+| S0 off | 160.0 (92.4 / 37.8 / 29.9); 395.6 (269.9 / 77.5 / 48.3) | 109; 243 | - |
+| S1 on | 161.9 (92.8 / 37.0 / 32.1); 395.4 (269.9 / 73.0 / 52.5) | 116; 276 | 393 / 31 / 60; 1237 / 74 / 159 |
+| S2 | 164.3 (93.6 / 38.3 / 32.4); 392.5 (266.3 / 74.9 / 51.4) | 114; 272 | 534 / 37 / 96; 1438 / 82 / 209 |
+| S3 | 154.6 (85.6 / 38.6 / 30.4); 378.0 (257.8 / 74.1 / 46.1) | 110; 266 | 396 / 32 / 61; 1204 / 73 / 152 |
+
+Contacts / four-offs per car-lap by phase (braking / entry / exit / straight), Laguna; Buttonwillow:
+
+| run | contacts | four-off |
+|---|---|---|
+| S0 off | 0.0006 / 0.0025 / 0.0052 / 0.0000; 0.0023 / 0.0027 / 0.0016 / 0.0015 | 0 / 0 / 0.0178 / 0.0068; 0 / 0.0009 / 0.0005 / 0.0013 |
+| S1 on | 0.0006 / 0.0058 / 0.0052 / 0.0000; 0.0019 / 0.0077 / 0.0012 / 0.0009 | 0 / 0 / 0.0190 / 0.0092; 0.0003 / 0.0008 / 0.0003 / 0.0007 |
+| S2 | 0.0006 / 0.0053 / 0.0043 / 0.0000; 0.0013 / 0.0090 / 0.0023 / 0.0009 | 0.0003 / 0 / 0.0173 / 0.0108; 0 / 0.0007 / 0.0003 / 0.0005 |
+| S3 | 0 / 0.0068 / 0.0043 / 0.0006; 0.0011 / 0.0069 / 0.0014 / 0.0009 | 0 / 0 / 0.0143 / 0.0056; 0 / 0.0004 / 0.0005 / 0.0005 |
+
+The switch moves the contacts into the entry phase (turn-in to apex: Laguna 0.0025 -> 0.0058-0.0068, Buttonwillow 0.0027 ->
+0.0069-0.0090): that is the held side-by-side the owner accepted ("spend a little"), at 1.3-1.7 x the switch-off total.
+
+**Eyesore** (Laguna seeds 1-8, 10 laps; #711, target = the pace file's target lap 111.8 s; race median / best green lap after lap 1 over
+it, done waits as the attacker, net places per lap from the crossing order; corner passes = the field's per race):
+
+| run | race median / best over target | wait median / p90 (n) | net places per lap | corner passes per race |
+|---|---|---|---|---|
+| S0 off | +29.7 / +6.4 s | 9.2 / 54.6 s (370) | 1.72 | 160.0 |
+| S1 on | +24.6 / +4.9 s | 7.1 / 47.5 s (386) | 1.87 | 161.9 |
+| S2 | +28.4 / +6.4 s | 8.2 / 47.9 s (371) | 1.79 | 164.3 |
+| S3 | +25.5 / +7.8 s | 7.8 / 41.1 s (418) | 1.74 | 154.6 |
+
+**Stopped** (the brief's rule): after the screens the two clearly-faster cells moved +1.7 / +1.0 (S1), -4.2 / +1.7 (S2), +4.1 / +1.6 (S3)
+pooled, never 5 points each, with contacts at 1.3-1.7 x the switch-off bands (inside main's historical ceilings). No full evaluation
+(four tracks x 16 seeds) was run, so G1-G3 have no verdict; on the screens G1 fails (S3: 3-8 % -12.8, 8-15 % -13.3) and G2 fails
+(passing lap 3-8 / 8-15 % 6.0 / 13.7 s vs 2.9 / 3.4). K3 stays: on S3 contacts and four-offs did not rise against S1 (contacts L
+0.0118 vs 0.0116, BW 0.0103 vs 0.0117; four-off 0.0198 / 0.0015 vs 0.0282 / 0.0020). **Pending:** the K3 pace files also change the
+lane model with the switch OFF (aggression drives headway, stuck time, pass advantage, DEFEND and the mishap rate); a switch-off screen
+at 77ff987 (Laguna + Buttonwillow, seeds 1-8) is being run by the orchestrator and its numbers go here.
+
+**G4 fails on the committed tree because of K3** (`npx vitest run --maxWorkers 2` at 77ff987 + NOTES: 848 passed, 2 failed, 1 expected
+fail; the file alone again: 16 passed, 2 failed): `ai_behaviour` "full field, 2 laps (lane model)" with the switch off AND on,
+`defending.vsClearlyFaster` 1 (must be 0, line 96; not loosened). On d7180d5 (K1-K2, the old aggression) both were green, so the K3
+pace files cause it: a car's new tier makes a covering move against a clearly faster car on the seed-1 Laguna grid. The offset "alone
+on track" case passes at 77ff987 (it failed before; same planner, the K3 aggression of the first Laguna cars). K3 is therefore to be
+reverted (77ff987) once the orchestrator's switch-off screen, which reads these pace files in this worktree, has finished; not reverted
+here so as not to change its inputs mid-run. `npm run build` green, `npm run test:e2e` 13 / 13.
+
+**Default: `cornerPass` OFF** (the stop rule; no gate evaluated on four tracks). Tests: `ai_behaviour` runs every lanes case with
+`cornerPass` on as well (same thresholds), `ai_cornerpass.test.ts` (K1: hold, back-out, the dive / planning; K2: the margin and its
+return), the worker identity with `cornerPass: true`, `?cornerpass=`. Solo hashes with the switch off and on: ebb24dae1e176f7b /
+3eb5792c20ad5bab / 93e77f310c6dd07c / fabad796e06795db (stage B's; `solo_hash.ts --corner-pass`), AI_VERSION 9. CPU not measured
+(the machine was not quiet). `changelog.ts` untouched.
+
+**Reading.** The mechanism works as specified (about 31 holds and 60 back-outs per Laguna race, 74 / 159 at Buttonwillow; overlaps at
+turn-in +6 % / +14 %), but corner passes per race do not move (160 -> 162 at Laguna, 396 -> 395 at Buttonwillow) and the passing lap
+of a 8-15 % faster car stays 13 s: corner overtakes are not what is holding the cells back. The deferred contests mostly end as
+back-outs (2 : 1), because at the passed car's turn-in the passer is closing at ~0-2 m/s: K2's later braking does not buy the overlap
+when both cars brake for the same corner on similar profiles. #711's race median comes 4-5 s closer to its target and its p90 wait
+falls 7-13 s with the switch on, so the waits shorten without the pooled cells moving.
+
+**Next.** Where the clearly faster car loses its time before the braking zone: the approach (it arrives 15-20 m behind and does not
+close on the straight; to be measured: how much of the 'passed lap' 8-13 s, against the data's 3 s, is time spent following before
+any pass is planned),
+the planning trigger (`leadGap < max(30, 0.9 v)` and the PLAN_T horizon) and the exit (a pass started at the track-out instead of the
+next corner); the switch-off screen with the K3 files; then decide K3 on its own.
+
+**K3 reverted (031ec67, 30 Oct 2026, orchestrator).** The data-tier aggression values in the pace files made one car defend against a clearly faster car in `ai_behaviour` "full field, 2 laps" (`defending.vsClearlyFaster` 1, the test needs 0, with the switch off and on; green on d7180d5). The test was not loosened; the files went back to the seeded draws. The switch-off screen with the K3 files was stopped unfinished as moot. S3's numbers above stand as the record of what the tiers did with the switch on (cells 74.1 / 84.6, contacts level, four-offs down, passes −3 %): worth a return once human race recordings say which cars attack.

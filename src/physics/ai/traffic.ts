@@ -34,6 +34,8 @@ export class Traffic {
   readonly oPass: Uint8Array;
   /** (C4, the offset planner) the car this car attacks (-1 none) and the side it commits to (+1 left / -1 right, 0 none) */
   readonly oAtt: Int32Array; readonly oSide: Int8Array;
+  /** (L1, RaceConfig.cornerPass) the car this car holds its side of through a corner (it had the overlap at that car's turn-in; -1 none) */
+  readonly cpHold: Int32Array;
   /** lane spacing, m (>= widest car + 0.6 m; the director sets it from the field) */
   laneW = 2.6;
   /** each AI car's target speed profile per station (null for a human player): per-corner speed comparisons */
@@ -49,6 +51,7 @@ export class Traffic {
     this.e = new Float64Array(n); this.eT = new Float64Array(n); this.ve = new Float64Array(n);
     this.oPass = new Uint8Array(n);
     this.oAtt = new Int32Array(n).fill(-1); this.oSide = new Int8Array(n);
+    this.cpHold = new Int32Array(n).fill(-1);
     this.passing = new Int32Array(n).fill(-1); this.vlat = new Float64Array(n); this.profile = new Array(n).fill(null);
     this.order = new Int32Array(n); this.rank = new Int32Array(n);
     for (let i = 0; i < n; i++) this.order[i] = i;

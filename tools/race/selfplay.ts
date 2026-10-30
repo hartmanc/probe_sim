@@ -1,7 +1,7 @@
 // Headless self-play: the whole field (player car driven by an AI) races N laps and the AI's racecraft is
 // measured: line tracking when alone, passing when clearly faster, defending by pace gap, rules
 // (contacts, four wheels off, formation passes), mishaps, and the per-step cost.
-//   npx tsx tools/race/selfplay.ts [--track <id>] [--laps 4] [--seed 1] [--max-ai N] [--pace path] [--mishap-rate 0.0002] [--follow-scale 1] [--lane-margin 1] [--shift-grip 0] [--player-scale s] [--strength 1] [--planner lanes|offset] [--set k.<knob>=<v> ...] [--no-kerbs] [--json out.json] [--quiet]
+//   npx tsx tools/race/selfplay.ts [--track <id>] [--laps 4] [--seed 1] [--max-ai N] [--pace path] [--mishap-rate 0.0002] [--follow-scale 1] [--lane-margin 1] [--shift-grip 0] [--player-scale s] [--strength 1] [--planner lanes|offset] [--corner-pass] [--set k.<knob>=<v> | c.<knob>=<v> ...] [--no-kerbs] [--json out.json] [--quiet]
 //   --player-scale s: the player's car (AI-driven) at pace scale s (the AI Probe: scale 1 = its solo lap, 120.2 s at Laguna) instead of
 //   its pace row's; its pace hint is its own solo lap at that scale (measured here, 2 laps). The report gains the player's finish.
 import { createTrackSurface, createCollisionWorld } from '../../src/physics/index';
@@ -14,6 +14,7 @@ import { runSolo } from '../../src/physics/ai/solo';
 import { TRACKS } from '../../src/scoreboard/config';
 import { setKnobs } from '../../src/physics/ai/planner';
 import { setPowerShare } from '../../src/physics/ai/field';
+import { setCpKnobs } from '../../src/physics/ai/driver';
 
 const argv = process.argv.slice(2);
 const arg = (k: string, d: string) => { const i = argv.indexOf(k); return i >= 0 ? argv[i + 1] : d; };
@@ -31,6 +32,9 @@ const strength = Number(arg('--strength', '1'));
 const planner = arg('--planner', 'lanes') === 'offset' ? 'offset' as const : 'lanes' as const;
 // (C4) the offset planner's knobs (planner.ts `knobs`, NOTES "Knobs for the search"): --set k.<name>=<value> or --knob <name>=<value>
 setKnobs([...argv.flatMap((a, i) => (a === '--set' && argv[i + 1]?.startsWith('k.') ? [argv[i + 1].slice(2)] : [])), ...argv.flatMap((a, i) => (a === '--knob' ? [argv[i + 1]] : []))]);
+// (L1) corner passes in the lane model (RaceConfig.cornerPass) and their knobs (driver.ts cpKnobs): --corner-pass, --set c.<name>=<value>
+const cornerPass = argv.includes('--corner-pass');
+setCpKnobs(argv.flatMap((a, i) => (a === '--set' && argv[i + 1]?.startsWith('c.') ? [argv[i + 1].slice(2)] : [])));
 if (argv.includes('--power-share')) setPowerShare(Number(arg('--power-share', '0')));   // before any car is built
 const pack = loadTrackPack(track);
 const playerScale = argv.includes('--player-scale') ? Number(arg('--player-scale', '1')) : Number.NaN;
@@ -45,7 +49,7 @@ const makeSurface = argv.includes('--no-kerbs') ? () => createTrackSurface(pack.
 const dir = new RaceDirector({
   line: pack.line, surface: pack.surface, makeSurface,
   probeJson: loadProbeJson(), pace, identity, pitLane: pack.scenery?.pit_lane ?? null, blendLine: pack.scenery?.blend_line ?? null, collisionWorld: createCollisionWorld(pack.scenery, pack.track),
-}, { laps, seed, playerAi: true, maxAi, followScale, laneMargin, shiftGrip, ...(mishapRate !== undefined ? { mishapRate } : {}), ...(playerScale > 0 ? { playerScale, playerLap } : {}), strength, planner });
+}, { laps, seed, playerAi: true, maxAi, followScale, laneMargin, shiftGrip, ...(mishapRate !== undefined ? { mishapRate } : {}), ...(playerScale > 0 ? { playerScale, playerLap } : {}), strength, planner, ...(cornerPass ? { cornerPass } : {}) });
 const m = runSelfplay(dir, makeSurface(), { log: !argv.includes('--quiet'), cones: pack.scenery?.pit_exit_cones ?? null });
 printReport(m);
 // race pace against the calibrated pace: each AI car's best and last lap over the target lap of the stint it drew
