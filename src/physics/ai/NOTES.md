@@ -1349,3 +1349,84 @@ cell >= 88 % on the pool, contacts offset <= lanes on both tracks.
 **Stopped** (the brief's rule): no stage B (no calibration, no AI_VERSION bump, no default change). To resume with the lane model at a
 share: `calibrate_field.ts --power-share <p>` and `traffic_sim.ts --power-share <p>` are in place; the default share would be
 `POWER_SHARE_DEFAULT` in `field.ts` with `AI_VERSION = 9` (stage B of the brief).
+
+### Stage B (30 Oct 2026): the calibrated field for the lane model at p = 0.75
+
+Ordered by the orchestrator after stage A (the rule failed for the offset planner; the lane model gained the most from the share:
+Laguna green passes 4224 -> 5073, train passes 82 -> 123, Buttonwillow pit straight 44 -> 84, contacts 0.040 -> 0.009, four-off 0.060 ->
+0.021). Default planner stays `'lanes'`; the offset planner is run for the record.
+
+**As built.** `POWER_SHARE_DEFAULT = 0.75` (`field.ts`, with the owner's words and the date); `AI_VERSION = 9` ("the calibrated pace
+scalar split p = 0.75 between grip and power across the whole range; AI version 5-8 had grip only inside the grip range"). The KWT_MAX
+150 kW/t ceiling now holds AFTER the pace power factor: `p3 = min(q, KWT_MAX x mass / effKw)` (`aiCarJson`, identity branch): a factor
+above 1 lifts a car only up to 150 kW/t, a car whose stock / floor power is already at the ceiling cannot be lifted at all and, if its
+lap needs more, stays capped and races by `achievedLap` as before (a car above the ceiling by stock power with q < 1 is still
+`min(stock, cap) x q`, as before). The Probe fallback branch (no identity row) is unchanged. `--power-share 0` reproduces the
+grip-only split (not AI version 8's cars: the ceiling rule differs for q > 1).
+
+**Calibration** (`calibrate_field.ts --workers 6`, tolerance 0.2 %, the q 0.2 targets unchanged; each car's `curve` kept: the strength
+curves are the p = 0 fits, so strength != 100 is approximate until re-curved):
+
+| track | worst residual (cars + stints) | cars / stints not converged | cars at the 150 kW/t ceiling (of the field) | wall-clock |
+|---|---|---|---|---|
+| Laguna | 0.20 % | 0 / 0 | 0 of 44 | 277 s |
+| Sonoma | 4.36 % (cars 2.53 %) | 3 / 41 | 6 of 133 | 1640 s |
+| Buttonwillow | 0.60 % | 0 / 1 | 0 of 99 | 1359 s |
+| Mid-Ohio | 3.53 % (cars 1.88 %) | 3 / 21 | 7 of 85 | 756 s |
+
+No car sits at PACE_MIN / PACE_MAX. The capped cars (Sonoma and Mid-Ohio, the swapped / heavy-power ones, scale 1.2-1.4 with power factor
+1.5-2.2 asked for and the ceiling refusing it) keep their `achievedLap`; before the ceiling rule they ran 243 / 180 kW/t.
+
+**Solo hashes (AI_VERSION 9, p = 0.75):** Laguna ebb24dae1e176f7b, Sonoma 3eb5792c20ad5bab, Buttonwillow 93e77f310c6dd07c, Mid-Ohio
+fabad796e06795db (were 8530e05a097e4a7d / 4ac773bad171b7a2 / 19e2628dc499c20e / 71c58e0ef9e5bd32).
+
+**Tests.** `npx vitest run`: 837 passed, 1 failed, 1 expected fail (839). No identity snapshot failed, so none was re-based
+(`pace_quantile.test.ts` reproduces the files). Changed fixture: `ai_traffic.test.ts` "close racing on" T1 scale 0.9 -> 0.934: at
+p = 0.75 scale 0.9 lapped 125.6 s against T2's 120.2 s (4.5 % apart, clearly faster, no covering move); 0.934 restores the 2.8 % gap
+the test had at p = 0 (123.6 / 120.2 s); thresholds untouched. Failing, not touched: `ai_behaviour` "planner offset: alone on track:
+racing line rms < 0.5 m" (0.545 m; the lanes' 0.247 m passes; the same case was 0.533 m on the q 0.2 files at reanchor and 0.463 here
+with the p = 0 fit, so it is the offset planner on the first five Laguna cars, not the share). The lanes "full field, 2 laps" guard now
+PASSES: clearly faster 137 / 181 completed (76 %), big-ratio 82 / 94 = 0.872 (needs > 0.72; 0.714 at p = 0), contacts 1, four-off 3,
+passes 169. The offset `test.fails` case still fails as expected: 160 situations, 112 completed (70 %), big-ratio 75 / 91, passes 123
+(needs > 150; was 111 situations / 84 passes at p = 0). `npm run build` green, `npm run test:e2e` 13 / 13.
+
+**Bands** (lane model, seeds 1-8, 10 laps, `traffic_sim.ts`; `tools/race/out/power/b_lanes`; q 0.2 = the reanchor's):
+
+| | q 0.2 field (p = 0, AI 8) | calibrated p = 0.75 (AI 9) |
+|---|---|---|
+| contacts / car-lap Laguna / Sonoma / Buttonwillow / Mid-Ohio | 0.0400 / 0.0206 / 0.0113 / 0.0126 | **0.0083** / 0.0175 / 0.0080 / 0.0037 |
+| four-off / car-lap | 0.0601 / 0.0056 / 0.0086 / 0.0068 | 0.0246 / 0.0037 / 0.0028 / 0.0027 |
+| green passes | 4224 / 22542 / 10800 / 6618 | 4293 / 20910 / 8866 / 9690 |
+| clearly-faster completed | 70.7 / 61.4 / 68.2 / 75.6 % | 78.4 / 63.3 / 73.2 / 81.0 % |
+| pooled cells 0-1 / 1-3 / 3-8 / 8-15 / >15 % (g < 2 s), floor | (34.4 / 61.2 / 73.6 / 84.2) | 35.5 / 60.0 / 74.1 / 84.5 / 94.2, floor 16.1 (data 39.4 / 60.3 / 86.9 / 97.8 / 99.7, 8.2) |
+| pooled passing lap 0-1 / 1-3 / 3-8 / 8-15 s | (5.2 at 3-8, 13.4 at 8-15) | 3.9 / 3.1 / 5.7 / 11.3 (data 1.9 / 2.1 / 2.9 / 3.4) |
+| wait of a clearly faster car, median / p90, Laguna / Sonoma / Buttonwillow / Mid-Ohio | pooled 13.5 / 19.7 s | 10.9 / 67; 7.1 / 66; 20.1 / 98; 9.7 / 58 s |
+| straight-line delta over the wait, median, pooled (arrival) | | 1.17 m/s (4.0) |
+| train passes per race Laguna / Sonoma / Buttonwillow / Mid-Ohio; Buttonwillow pit straight | (82 / - / 216 / -; 44) | 101 / 490 / 176 / 249; 61 |
+
+The cells moved little (3-8 % +0.5, 8-15 % +0.3 pp): the two clearly-faster cells are 12.8 and 13.3 pp under the data pooled (the gate
+asks 8), the floor is 16.1 % (data 8.2). Contacts fall at every track bar Sonoma (-15 %), Laguna's rise of the q 0.2 anchor is gone
+(0.0400 -> 0.0083). **The 16-seed evaluation was not run** (the cells are not within 8 points of the data).
+
+**Offset planner (C5 tree) on the calibrated field, Laguna + Buttonwillow, seeds 1-8** (`b_offset`; lanes in brackets):
+cells 0-1 / 1-3 / 3-8 / 8-15 / >15: 25.7 / 55.9 / 64.5 / 78.0 / 93.9, floor 11.0 (lanes on the same two tracks not re-pooled); contacts
+0.0060 / 0.0073 (0.0083 / 0.0080); four-off 0.0223 / 0.0029 (0.0246 / 0.0028); green passes 2879 / 5759 (4293 / 8866); train passes per
+race 57.8 / 88.2 (100.9 / 175.6), Buttonwillow pit straight 34.5 (61); wait median / p90 14.4 / 85 and 22.4 / 117 s; straight delta
+over the wait 0.25 / 0.58 m/s (0.85 / 1.44). The offset planner has fewer contacts than the lanes on both tracks, 67 % / 65 % of
+their passes.
+
+**Eyesore** (Laguna seeds 1-8, 10 laps, `eyesore.cjs`; q 0.2 lanes from the reanchor: #711 +32.2 / +8.1 s, wait 12.9 / 49.9 s (351),
+net places 1.89, fastest quartile +32.4 / +11.3 s, 13.7 / 61.7, 1.22; C5 offset: +36.1 / +11.8, 13.3 / 75.1 (243), 1.74):
+
+| planner | cars | race median / best lap over target | wait per slower car, median / p90 | net places per lap | #711 train passes per race |
+|---|---|---|---|---|---|
+| lanes | #711 | +34.6 / +7.4 s | 9.2 / 54.6 s (370) | 1.99 | 6.25 |
+| lanes | fastest quartile (12) | +28.0 / +7.1 s | 9.1 / 56.8 s | 1.36 | |
+| offset | #711 | +34.0 / +5.5 s | 10.0 / 69.8 s (263) | 1.87 | 4.75 |
+| offset | fastest quartile (12) | +34.0 / +7.6 s | 14.2 / 79.1 s | 1.16 | |
+
+#711's best green lap is now 7.4 s (lanes) over its target, 0.7 s closer than at p = 0; its median race lap is level; its waits are 29 %
+shorter at the median.
+
+**Not done / judged.** The pace files' `curve` are the p = 0 fits. The offset planner's alone-on-track rms case stays red. `changelog.ts`
+untouched; nothing deployed.
