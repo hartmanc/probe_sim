@@ -1,13 +1,14 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { GRIP_MAX, GRIP_MIN, getPowerShare, paceSplit, setPowerShare } from '../ai/field';
+import { GRIP_MAX, GRIP_MIN, POWER_SHARE_DEFAULT, getPowerShare, paceSplit, setPowerShare } from '../ai/field';
 
 // The power share p (30 Oct 2026): the share of the pace scalar that comes from power instead of grip.
 describe('power share', () => {
-  afterEach(() => setPowerShare(0));
+  afterEach(() => setPowerShare(POWER_SHARE_DEFAULT));
   const old = (scale: number) => {   // the grip-only split inside the grip range, power only beyond it
     const grip = Math.min(GRIP_MAX, Math.max(GRIP_MIN, scale));
     return { grip, power: scale < GRIP_MIN ? Math.pow(scale / GRIP_MIN, 3) : scale > GRIP_MAX ? Math.pow(scale / GRIP_MAX, 3) : 1 };
   };
+  it('the default is the calibrated share', () => { expect(getPowerShare()).toBe(POWER_SHARE_DEFAULT); expect(POWER_SHARE_DEFAULT).toBe(0.75); });
   it('p = 0 is the grip-only split', () => {
     setPowerShare(0);
     for (const s of [0.4, 0.55, 0.8, 1, 1.1, 1.3, 1.5]) {

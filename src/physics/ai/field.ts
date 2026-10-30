@@ -17,7 +17,7 @@ import type { RaceLine } from './line';
 import { Rng, hashSeed } from './rng';
 
 /** Bump whenever the AI driver or the calibration changes behaviour (pace.json scales are then stale). */
-export const AI_VERSION = 8; // 8: an understeering car (front slip > 2x its peak) unwinds the lock instead of holding full lock. 7: lateral mu capped at 1.20 (pace above it from power); profiles credit banking and the crest/dip load; driver margins 0.97 lateral / 0.85 braking, grip limiter at 1.5x, engine-braking blip for sliding RWD cars. 6: CG lowered with the fitted grip (T/2h >= 1.15 x lateral mu: quick cars rolled over at T2 on the painted-road track). 5: pace fit split into grip (corners) and power (straights): power follows the powertrain
+export const AI_VERSION = 9; // 9: the calibrated pace scalar split p = 0.75 between grip and power across the whole range (owner, 29 Oct 2026: "a real Lemons field has much of its spread in power, and those passes happen on the straight with no racecraft at all"); AI version 5-8 had grip only inside the grip range; the KWT_MAX 150 kW/t ceiling now holds after the power factor. 8: an understeering car (front slip > 2x its peak) unwinds the lock instead of holding full lock. 7: lateral mu capped at 1.20 (pace above it from power); profiles credit banking and the crest/dip load; driver margins 0.97 lateral / 0.85 braking, grip limiter at 1.5x, engine-braking blip for sliding RWD cars. 6: CG lowered with the fitted grip (T/2h >= 1.15 x lateral mu: quick cars rolled over at T2 on the painted-road track). 5: pace fit split into grip (corners) and power (straights): power follows the powertrain
 // 4: per-stint driver pace (each race draws one real stint per car), stint outlier rules
 // 3: #49 Mayflower re-specced as a Honda K24 swap (owner), recalibrated
 
@@ -403,12 +403,14 @@ export const KWT_MAX = 150;
  * scalar, which keeps the one-dimensional calibration fit.
  */
 /**
- * (Power split, 30 Oct 2026) The share p of the pace scalar that comes from power instead of grip. 0 = the split above, bit for
- * bit. With p > 0: grip 1 + (s - 1)(1 - p) clamped to GRIP_MIN..GRIP_MAX as before; power ((1 + (s - 1) p) x raw / grip)^3, raw being
+ * (Power split, 30 Oct 2026) The share p of the pace scalar that comes from power instead of grip. Default POWER_SHARE_DEFAULT;
+ * 0 = the grip-only split above, bit for bit. With p > 0: grip 1 + (s - 1)(1 - p) clamped to GRIP_MIN..GRIP_MAX as before; power ((1 + (s - 1) p) x raw / grip)^3, raw being
  * the unclamped grip, so what the clamp cut off still goes to power and lap time stays monotone in s. A module variable (not the
  * environment: the browser build reads this file); the tools set it with `--power-share`.
  */
-let powerShare = 0;
+/** The share of the calibrated pace scalar that is power (owner, 29 Oct 2026: "a real Lemons field has much of its spread in power, and those passes happen on the straight with no racecraft at all"; chosen 30 Oct 2026 for the lane model on the Laguna / Buttonwillow screen: green passes 4224 -> 5073, train passes 82 -> 123, contacts 0.040 -> 0.009 at 0.75 against 0). 0 reproduces AI version 8. */
+export const POWER_SHARE_DEFAULT = 0.75;
+let powerShare = POWER_SHARE_DEFAULT;
 export function setPowerShare(p: number): void { powerShare = Number.isFinite(p) ? Math.min(1, Math.max(0, p)) : 0; }
 export function getPowerShare(): number { return powerShare; }
 export function paceSplit(scale: number): { grip: number; power: number } {
@@ -476,7 +478,8 @@ export function aiCarJson(probeJson: any, identity: IdentityCar | null | undefin
   j.aero.frontalArea *= wr * hr;
   const { grip: p, power: q } = paceSplit(scale);
   // grip above 1 self-similar (p^2); below 1 it falls only linearly so slow cars stay drivable
-  const p2 = p >= 1 ? p * p : p, p3 = q;
+  const p2 = p >= 1 ? p * p : p;
+  let p3 = q;   // the power factor actually applied: q, held under the KWT_MAX ceiling below
   if (!type.probeFallback) {
     // ---- layout and balance
     j.drivetrain.layout = type.drive;
@@ -503,6 +506,9 @@ export function aiCarJson(probeJson: any, identity: IdentityCar | null | undefin
     // ... and a ceiling: above about 150 kW/t the AI driver cannot keep a rear-drive car straight on corner
     // exits (the 206 kW/t 1JZ Corona spun every lap), and a Lemons car rarely puts more than that down anyway
     const effKw = Math.min(Math.max(type.stockPowerKw, floorKw), KWT_MAX * j.mass / 1000);
+    // (power split, 30 Oct 2026) the ceiling is physical: it holds AFTER the pace power factor too, so a factor above 1 lifts the car
+    // only up to KWT_MAX kW/t (a car that then cannot reach its target stays capped and races by its achievedLap)
+    p3 = Math.min(q, (KWT_MAX * j.mass / 1000) / effKw);
     const tq0 = effKw / peak; // N·m at the shape's 1.0
     j.engine.torqueCurve = { rpm, torque: sh.tq.map((f) => +(f * tq0).toFixed(2)) };
     j.engine.revLimitRpm = rl + 100;

@@ -62,7 +62,8 @@ function seeded(rows: Parameters<typeof field>[0], cfg: Partial<RaceConfig>, a: 
 }
 
 test('close racing on: one early covering move per corner against a close car, never against a clearly faster one', () => {
-  const rows = [{ number: 'T1', targetLap: 129, scale: 0.9 }, { number: 'T2', targetLap: 127.5, scale: 1.0, aggression: 2 as const }, { number: '619', targetLap: 170, scale: 0.4 }];
+  // scale 0.934 (was 0.9 at power share 0): the same 2.8 % pace gap to T2 (lap 123.6 s against 120.2 s) at the calibrated power share 0.75 (30 Oct 2026)
+  const rows = [{ number: 'T1', targetLap: 129, scale: 0.934 }, { number: 'T2', targetLap: 127.5, scale: 1.0, aggression: 2 as const }, { number: '619', targetLap: 170, scale: 0.4 }];
   const d = seeded(rows, { laps: 3, mishapRate: 0, closeRacing: true }, 'T1', 'T2');
   const t1 = d.cars.find((c) => c.number === 'T1')!;
   // count T1's covering moves per (lap, corner)
