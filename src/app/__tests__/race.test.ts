@@ -134,6 +134,9 @@ describe('overrides and seeds', () => {
     expect(parseRaceOverrides('?planner=offset').planner).toBe('offset');
     expect(parseRaceOverrides('?planner=lanes').planner).toBe('lanes');
     expect(parseRaceOverrides('?planner=x').planner).toBeUndefined();
+    expect(parseRaceOverrides('?cornerpass=1').cornerPass).toBe(true);
+    expect(parseRaceOverrides('?cornerpass=0').cornerPass).toBe(false);
+    expect(parseRaceOverrides('').cornerPass).toBeUndefined();
     expect(RACE_LAPS).toBe(5);
   });
   it('new seeds are positive integers', () => {

@@ -2,6 +2,7 @@
 // Pure: steps a RaceDirector to the flag and samples every SAMPLE steps. Only the director.step calls are timed.
 import type { Surface } from '../../src/physics/types';
 import type { RaceDirector } from '../../src/physics/ai/race';
+import { vortexCorners } from '../../src/physics/ai/driver';
 
 const SAMPLE = 10;            // steps between samples (10 ms)
 const ALONE = 30;             // m: nobody this close ahead or behind = alone ...
@@ -10,6 +11,7 @@ const CLEAR = 0.97;           // target lap ratio: clearly faster
 const HIST_BIN = 0.01, HIST_N = 2000;
 const DEFEND = [0.5, 0.8, 1.1];   // m (driver.ts DEFEND): a covering move's lateral size by aggression
 const WAIT_NEAR = 25;         // m: (C2) a clearly faster car arriving this close behind a running car starts a wait
+const OVL_TI = 0.3;           // (L1) share of the passer's length its nose is past the tail of a car turning in: an overlap at turn-in
 
 class Acc {
   n = 0; sq = 0; hist = new Uint32Array(HIST_N);
@@ -43,6 +45,11 @@ export interface SelfplayMetrics {
      *  and the corner that ends it); cars = the cars passed in those; bySeg by segment "<corner>-<next corner>"; pit = those in the
      *  segment that holds the start line (s 0), named pitSeg */
     train?: { passes: number; cars: number; bySeg: Record<string, number>; pit: number; pitSeg: string; byCar: Record<string, number> };
+    /** (L1) corner passes: green passes (passesTotal) made between a corner's braking point and its track-out (driver.ts vortexCorners),
+     *  by phase; overlap at turn-in: a car crossing a corner's turn-in with another car's nose past its tail by OVL_TI x that car's length
+     *  and laterally clear of it (positions only, every planner); the lane model's own tallies with RaceConfig.cornerPass: deferred
+     *  shuts, holds (the overlap at turn-in), back-outs */
+    corner?: { passes: number; byPhase: Record<string, number>; overlapTI: number; defers: number; holds: number; backouts: number };
     /** completion by pace ratio (target lap of the faster / the slower): < 0.85, 0.85-0.92, 0.92-0.97 */
     byRatio: { lo: number; hi: number; fails?: string[]; situations: number; completed: number; medianStuck: number; open: Record<string, number> }[] };
   defending: { vsClearlyFaster: number; within3: number; vsSlower: number; none: number;
@@ -50,7 +57,9 @@ export interface SelfplayMetrics {
      *  behind, approaching a passable corner (its braking point within 120 m ahead), my lane offset moves toward the corner's
      *  inside by at least DEFEND[my aggression] before its apex; one per corner approach */
     covers: number };
-  rules: { contacts: number; contactsPerCarLap: number; hardContacts: number; fourOff: number; fourOffMishap: number; fourOffPerCarLap: number; fourOffNonMishapPerCarLap: number; formationPasses: number; recoveries: number; recoveryAt?: { s: number; t: number; car: string; phase: string }[]; fourOffAt: { s: number; t?: number; car: string; ctx: string }[]; contactAt: { s: number; t: number; a: string; b: string; closing: number; ctx: string; phase?: string; ds?: number; dl?: number }[] };
+  rules: { contacts: number; contactsPerCarLap: number; hardContacts: number; fourOff: number; fourOffMishap: number; fourOffPerCarLap: number; fourOffNonMishapPerCarLap: number; formationPasses: number; recoveries: number; recoveryAt?: { s: number; t: number; car: string; phase: string }[]; fourOffAt: { s: number; t?: number; car: string; ctx: string; cph?: string }[]; contactAt: { s: number; t: number; a: string; b: string; closing: number; ctx: string; phase?: string; ds?: number; dl?: number; cph?: string }[];
+    /** (L1) contacts and four-offs by the corner phase where they happened (braking / entry / exit / straight; cPhase) */
+    contactsByPhase?: Record<string, number>; fourOffByPhase?: Record<string, number> };
   mishaps: { total: number; perCarLap: number; wide: number; spin: number; byCorner: Record<string, number>; lossMedian: number; lossMin: number; lossMax: number; losses: { kind: string; corner: string; loss: number }[] };
   cost: { usPerStep: number; usPerCar: number };
   /**
@@ -114,10 +123,26 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
   const train = { passes: 0, cars: 0, bySeg: {} as Record<string, number>, pit: 0, pitSeg: segName(segOf(0)), byCar: {} as Record<string, number> };
   const segFlush = (i: number) => { if (segLen[i] >= 2) { train.passes++; train.cars += segLen[i]; const k = segName(segCur[i]); train.bySeg[k] = (train.bySeg[k] ?? 0) + 1; if (k === train.pitSeg) train.pit++; const cn = cars[i].number; train.byCar[cn] = (train.byCar[cn] ?? 0) + 1; } segLen[i] = 0; };
   let contacts = 0, hard = 0;
+  // (L1) corner phases: braking (braking point to turn-in), entry (turn-in to apex), exit (apex to track-out), else straight
+  const vc = vortexCorners(line);
+  const cPhase = (s: number): string => {
+    const fw = (a: number, b: number) => { let d = b - a; if (d < 0) d += L; return d; };   // m forward from a to b
+    for (let c = 0; c < nC; c++) {
+      const C = corners[c], ti = vc.turnIn[c], to = vc.trackOut[c];
+      const st = fw(C.brake, ti) <= 300 ? C.brake : ti;   // (a braking point after the turn-in: no braking phase)
+      const x = fw(st, s);
+      if (x > fw(st, to)) continue;
+      return x < fw(st, ti) ? 'braking' : x < fw(st, C.apex) ? 'entry' : 'exit';
+    }
+    return 'straight';
+  };
+  const cornerPh: Record<string, number> = {}, contactPh: Record<string, number> = {}, fourOffPh: Record<string, number> = {};
+  let cornerPasses = 0, overlapTI = 0;
+  const prevTI = new Float64Array(n).fill(NaN);
   const pairSeen = new Map<number, number>();
   const offT = new Float64Array(n), onT = new Float64Array(n).fill(99), armed = new Uint8Array(n).fill(1);
   let fourOff = 0, fourOffMishap = 0;
-  const fourOffAt: { s: number; t?: number; car: string; ctx: string }[] = [], contactAt: SelfplayMetrics['rules']['contactAt'] = [];
+  const fourOffAt: { s: number; t?: number; car: string; ctx: string; cph?: string }[] = [], contactAt: SelfplayMetrics['rules']['contactAt'] = [];
   let Ugreen: Float64Array | null = null;
   const prevRec = new Int32Array(n); const recoveryAt: { s: number; t: number; car: string; phase: string }[] = [];
   let tGreen = NaN;
@@ -157,7 +182,8 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
         if (dir.phase === 'green') { contacts++; if (ev.closing > 3) hard++; {
           const da = drv(ev.a), db = drv(ev.b);
           const ctx = (da?.passTarget === ev.b || db?.passTarget === ev.a) ? 'pass' : (tr.off[ev.a] || tr.off[ev.b]) ? 'off' : (da?.passTarget ?? -1) >= 0 || (db?.passTarget ?? -1) >= 0 ? 'passing-other' : 'line';
-          contactAt.push({ s: Math.round(tr.s[ev.a]), t: +dir.time.toFixed(1), a: cars[ev.a].number, b: cars[ev.b].number, closing: +ev.closing.toFixed(2), ctx: ctx + '/' + ((da as unknown as { limiter: string })?.limiter ?? '') + '/' + ((db as unknown as { limiter: string })?.limiter ?? ''), phase: `${(da as unknown as { passPhase?: number })?.passPhase ?? '-'}${(db as unknown as { passPhase?: number })?.passPhase ?? '-'}` + ((da as unknown as { planner?: string })?.planner === 'offset' ? `/o${(da as unknown as { oPhase: number }).oPhase}${(db as unknown as { oPhase?: number })?.oPhase ?? '-'}` : ''), ds: +tr.ds(ev.a, ev.b).toFixed(1), dl: +(tr.lat[ev.b] - tr.lat[ev.a]).toFixed(2) });
+          { const ph = cPhase(tr.s[ev.a]); contactPh[ph] = (contactPh[ph] ?? 0) + 1; }
+          contactAt.push({ cph: cPhase(tr.s[ev.a]), s: Math.round(tr.s[ev.a]), t: +dir.time.toFixed(1), a: cars[ev.a].number, b: cars[ev.b].number, closing: +ev.closing.toFixed(2), ctx: ctx + '/' + ((da as unknown as { limiter: string })?.limiter ?? '') + '/' + ((db as unknown as { limiter: string })?.limiter ?? ''), phase: `${(da as unknown as { passPhase?: number })?.passPhase ?? '-'}${(db as unknown as { passPhase?: number })?.passPhase ?? '-'}` + ((da as unknown as { planner?: string })?.planner === 'offset' ? `/o${(da as unknown as { oPhase: number }).oPhase}${(db as unknown as { oPhase?: number })?.oPhase ?? '-'}` : ''), ds: +tr.ds(ev.a, ev.b).toFixed(1), dl: +(tr.lat[ev.b] - tr.lat[ev.a]).toFixed(2) });
         } }
       }
     }
@@ -174,6 +200,7 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
         ahead[k] = now;
         if (was === -1 && now === 1 && Math.abs(tr.U[i] - tr.U[j]) < 50 && !tr.off[j] && !tr.away[j] && tr.v[j] > 5 && !cars[j].driver?.needsRecovery) {
           if (phase === 'formation') formationPasses++; else { passesTotal++; passAt.push(Math.round(tr.s[i]));
+            { const ph = cPhase(tr.s[i]); if (ph !== 'straight') { cornerPasses++; cornerPh[ph] = (cornerPh[ph] ?? 0) + 1; } }
             { let seen = false; for (let q = 0; q < segLen[i]; q++) if (segList[i * 8 + q] === j) seen = true; if (!seen && segLen[i] < 8) segList[i * 8 + segLen[i]++] = j; } if (i === pIdx) { const b = +behindT[j].toFixed(1), r = tr.pace[j] / tr.pace[pIdx]; playerBehind.push(b); (r >= CLEAR && r <= 1 / CLEAR ? closeBehind : otherBehind).push(b); behindT[j] = 0; } }
         }
       }
@@ -195,6 +222,25 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
     // completed laps (the director's lastLap at each new crossing that timed one)
     for (let i = 0; i < n; i++) if (cars[i].lapsDone !== lapsSeen[i]) { lapsSeen[i] = cars[i].lapsDone; if (Number.isFinite(cars[i].lastLap) && cars[i].lastLap > 0 && lapsOf[i][lapsOf[i].length - 1] !== cars[i].lastLap) lapsOf[i].push(cars[i].lastLap); }
     if (phase !== 'green') continue;
+    // ---- (L1) overlap at turn-in: a car crossing a corner's turn-in with another's nose past its tail by OVL_TI of that car's length
+    for (let j = 0; j < n; j++) {
+      const sj = tr.s[j], p = prevTI[j];
+      prevTI[j] = sj;
+      if (Number.isNaN(p) || tr.off[j] || tr.away[j]) continue;
+      for (let c = 0; c < nC; c++) {
+        const ti = vc.turnIn[c];
+        let a = ti - p; if (a < -0.5 * L) a += L; else if (a >= 0.5 * L) a -= L;
+        let b = ti - sj; if (b < -0.5 * L) b += L; else if (b >= 0.5 * L) b -= L;
+        if (!(a > 0 && b <= 0)) continue;
+        for (let k = 1; k < n; k++) {
+          const q = tr.order[(tr.rank[j] - k + n) % n], dq = tr.ds(j, q);
+          if (dq > 0 || dq < -12) break;
+          if (tr.off[q] || tr.away[q]) continue;
+          const ov = (tr.front[q] + tr.rear[j] + dq) / (tr.front[q] + tr.rear[q]);
+          if (ov >= OVL_TI && Math.abs(tr.lat[q] - tr.lat[j]) >= tr.hw[q] + tr.hw[j]) { overlapTI++; break; }
+        }
+      }
+    }
     // ---- mishap log: time lost over the next 600 m vs the car's own profile
     const log = anyDir.mishapLog;
     if (log && log.length > lastMishapLen) {
@@ -286,7 +332,7 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
       const h = SAMPLE * dt;
       if (allOff) { offT[i] += h; onT[i] = 0; } else { offT[i] = 0; onT[i] += h; }
       if (onT[i] >= 2) armed[i] = 1;
-      if (allOff && offT[i] >= 0.25 && armed[i]) { armed[i] = 0; fourOff++; fourOffAt.push({ s: Math.round(s), t: +t.toFixed(1), car: cars[i].number, ctx: (d.passTarget >= 0 ? 'pass' : d.defendSide ? 'defend' : dA < ALONE || dB < ALONE ? 'traffic' : 'alone') + '/' + ((d as unknown as { passPhase?: number }).passPhase ?? '-') + '/' + ((d as unknown as { limiter: string }).limiter) }); if (t - lastMishapT[i] < 15 || d.mishapActive) fourOffMishap++; }
+      if (allOff && offT[i] >= 0.25 && armed[i]) { armed[i] = 0; fourOff++; { const ph = cPhase(s); fourOffPh[ph] = (fourOffPh[ph] ?? 0) + 1; } fourOffAt.push({ cph: cPhase(s), s: Math.round(s), t: +t.toFixed(1), car: cars[i].number, ctx: (d.passTarget >= 0 ? 'pass' : d.defendSide ? 'defend' : dA < ALONE || dB < ALONE ? 'traffic' : 'alone') + '/' + ((d as unknown as { passPhase?: number }).passPhase ?? '-') + '/' + ((d as unknown as { limiter: string }).limiter) }); if (t - lastMishapT[i] < 15 || d.mishapActive) fourOffMishap++; }
       // ---- robustness: pit-exit cone crossings (every 20 ms) and spins
       const calm = !d.mishapActive && t - lastMishapT[i] >= 15;
       {
@@ -345,6 +391,7 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
     cars: n, laps: dir.config.laps, carLaps, raceTime: dir.time,
     line: { instRms: inst.rms(), instP95: inst.pct(0.95), why: Object.fromEntries([...why].map(([k, v]) => [k, +(v / Math.max(1, all.n)).toFixed(4)])), rms: all.rms(), p95: all.pct(0.95), samples: all.n, trackRms: trk.rms(), trackP95: trk.pct(0.95), maxErr, worstAt, corners: corners.map((c, k) => ({ name: c.name, rms: cornerAcc[k].rms(), p95: cornerAcc[k].pct(0.95), samples: cornerAcc[k].n })) },
     passing: { attempts: passStarts, ends: passEnds, situations: real.length, reachedBrakeZone: real.filter((s) => s.brakeZone).length, setUp: real.filter((s) => s.setup).length, completed: real.filter((s) => s.done).length, medianStuck: median(stuck), p90Stuck: pctl(stuck, 0.9), passesTotal, passAt, train,
+      corner: (() => { const D = cars.map((c) => c.driver as unknown as { cpDefers?: number; cpHolds?: number; cpBackouts?: number } | null); const sum = (k: 'cpDefers' | 'cpHolds' | 'cpBackouts') => D.reduce((a, d) => a + (d?.[k] ?? 0), 0); return { passes: cornerPasses, byPhase: cornerPh, overlapTI, defers: sum('cpDefers'), holds: sum('cpHolds'), backouts: sum('cpBackouts') }; })(),
       wait: { n: Object.values(waitEnd).reduce((a, b) => a + b, 0), done: waitDur.length, median: median(waitDur), p90: pctl(waitDur, 0.9), ended: waitEnd, durations: waitDur.map((x) => +x.toFixed(2)), cars: waitCar, losses: waitLoss.map((x) => +x.toFixed(2)), dvArrive, dvSteps, lossMedian: median(waitLoss) },
       byRatio: [[0, 0.85], [0.85, 0.92], [0.92, CLEAR]].map(([lo, hi]) => {
         const g = real.filter((s) => { const r = tr.pace[s.i] / tr.pace[s.j]; return r >= lo && r < hi; });
@@ -353,7 +400,7 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
         return { lo, hi, fails: g.filter((s) => !s.done).map((s) => `${cars[s.i].number}>${cars[s.j].number} ${s.why} t${s.tClose.toFixed(0)}-${s.seen.toFixed(0)}`), situations: g.length, completed: g.filter((s) => s.done).length, medianStuck: median(g.filter((s) => s.done).map((s) => s.tDone - s.tClose)), open };
       }) },
     defending: defend,
-    rules: { contacts, contactsPerCarLap: contacts / Math.max(1e-9, carLaps), hardContacts: hard, fourOff, fourOffMishap, fourOffPerCarLap: fourOff / Math.max(1e-9, carLaps), fourOffNonMishapPerCarLap: (fourOff - fourOffMishap) / Math.max(1e-9, carLaps), formationPasses, recoveries: dir.recoveries, fourOffAt, contactAt, recoveryAt },
+    rules: { contacts, contactsPerCarLap: contacts / Math.max(1e-9, carLaps), hardContacts: hard, fourOff, fourOffMishap, fourOffPerCarLap: fourOff / Math.max(1e-9, carLaps), fourOffNonMishapPerCarLap: (fourOff - fourOffMishap) / Math.max(1e-9, carLaps), formationPasses, recoveries: dir.recoveries, fourOffAt, contactAt, recoveryAt, contactsByPhase: contactPh, fourOffByPhase: fourOffPh },
     mishaps: { total: totalM, perCarLap: totalM / Math.max(1e-9, carLaps), wide, spin, byCorner, lossMedian: median(ls), lossMin: ls.length ? Math.min(...ls) : NaN, lossMax: ls.length ? Math.max(...ls) : NaN, losses },
     cost: { usPerStep, usPerCar: usPerStep / n },
     playerPace: (() => {

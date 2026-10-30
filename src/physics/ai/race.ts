@@ -129,6 +129,13 @@ export interface RaceConfig {
    */
   closeRacing: boolean;
   /**
+   * Corner passes in the lane model (L1, 30 Oct 2026; the app's ?cornerpass=0|1; NOTES "L1: corner passes in the lane model"): a
+   * pass whose lane the road shuts in the passed car's next corner is decided at its turn-in by the overlap (keep the lane through
+   * the corner, the passed car lifts; or back out), and a passer brakes later until it has the overlap (driver.ts cpStep, K1 / K2).
+   * The offset planner ignores it.
+   */
+  cornerPass: boolean;
+  /**
    * The AI's traffic planner (C1, 28 Oct 2026; the app's ?planner=lanes|offset): 'lanes' (default; the lane model, NOTES
    * "Racecraft (the lane model)") or 'offset' (planner.ts: a continuous lateral offset chosen every 0.2 s over a 10 s horizon
    * against the other cars' projections; NOTES "C1: the offset planner"). Selected when each driver is built.
@@ -180,6 +187,7 @@ export const DEFAULT_RACE_CONFIG: RaceConfig = {
   strength: 1,
   playerRefLap: Number.NaN,
   closeRacing: false,
+  cornerPass: false,
   planner: 'lanes',
 };
 
@@ -656,6 +664,7 @@ export class RaceDirector {
       c.laneMargin = this.config.laneMargin;
       c.shiftGrip = this.config.shiftGrip;
       c.closeRacing = this.config.closeRacing;
+      c.cornerPass = !!this.config.cornerPass;
       c.mishapRate = this.phase === 'green' && !car.isPlayer && !car.finished ? this.config.mishapRate : 0;
       if (this.phase === 'formation') { c.speedCap = this.config.formationSpeed + 3; c.noPass = true; c.minGap = this.config.gridGap; c.paceFactor = 1; }
       else if (this.phase === 'yellow') { c.speedCap = this.config.formationSpeed * 1.25 + 3; c.noPass = true; c.minGap = 10; c.paceFactor = 1; }

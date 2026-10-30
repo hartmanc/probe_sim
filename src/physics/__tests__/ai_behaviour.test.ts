@@ -36,14 +36,15 @@ test('corner difficulty table: mean 1, T11, T2 and the Corkscrew hardest', () =>
   expect(top).toEqual(['T11', 'T2', 'T8 Corkscrew'].sort());
 });
 
-describe.each(['lanes', 'offset'] as const)('planner %s', (planner) => {
+// (L1, 30 Oct 2026) the lane model also runs with RaceConfig.cornerPass on (corner passes: K1 / K2), the same thresholds
+describe.each([['lanes', false], ['offset', false], ['lanes', true]] as const)('planner %s, cornerPass %s', (planner, cornerPass) => {
   // C1 (28 Oct 2026): the offset planner did not meet two of these cases, at the same thresholds. C2 (NOTES "C2"): "within 3 %"
   // now counts the covering move itself from positions (defending.covers, both planners) and the offset planner makes it (a real
   // test again); the full field still makes too few green passes with the planner on (119 for > 150; situations 165 now pass),
   // so it runs as an expected failure for 'offset' only, and turns red the day it is met.
   const c1Gap = planner === 'offset' ? test.fails : test;
   test('alone on track: racing line rms < 0.5 m', () => {
-    const d = director({ planner, seed: 2, laps: 1, maxAi: 5, playerAi: true, gridGap: 300, greenWindow: [2, 3], mishapRate: 0 });
+    const d = director({ planner, cornerPass, seed: 2, laps: 1, maxAi: 5, playerAi: true, gridGap: 300, greenWindow: [2, 3], mishapRate: 0 });
     const m = runSelfplay(d, pack().makeSurface());
     expect(m.line.samples).toBeGreaterThan(20000);
     expect(m.line.rms).toBeLessThan(0.5);
@@ -54,11 +55,11 @@ describe.each(['lanes', 'offset'] as const)('planner %s', (planner) => {
     // T1 (2:20) leads, T2 (2:05, > 3 % quicker, with the grip to match) starts right behind it; the player car is far slower, last
     // (the grid is a seeded shuffle hashed with AI_VERSION: take the first seed that starts T2 right behind T1, as below)
     const rows = [{ number: 'T1', targetLap: 140, scale: 0.5 }, { number: 'T2', targetLap: 125, scale: 1.0 }, { number: '619', targetLap: 170, scale: 0.4 }];
-    let d = field(rows, { planner, laps: 3, mishapRate: 0 });
+    let d = field(rows, { planner, cornerPass, laps: 3, mishapRate: 0 });
     for (let seed = 2; seed < 40; seed++) {
       const g = (n: string) => d.cars.find((c) => c.number === n)!.grid;
       if (g('T2') === g('T1') + 1) break;
-      d = field(rows, { planner, laps: 3, mishapRate: 0, seed });
+      d = field(rows, { planner, cornerPass, laps: 3, mishapRate: 0, seed });
     }
     const m = runSelfplay(d, pack().makeSurface());
     const t1 = d.cars.find((c) => c.number === 'T1')!, t2 = d.cars.find((c) => c.number === 'T2')!;
@@ -72,11 +73,11 @@ describe.each(['lanes', 'offset'] as const)('planner %s', (planner) => {
   test('within 3 %: the slower car covers the inside (lightly), nobody defends against a clearly faster car', () => {
     // the grid is a seeded shuffle: take the first seed that starts T1 right ahead of T2
     const rows = [{ number: 'T1', targetLap: 129, scale: 0.9 }, { number: 'T2', targetLap: 127.5, scale: 1.0, aggression: 2 as const }, { number: '619', targetLap: 170, scale: 0.4 }];
-    let d = field(rows, { planner, laps: 3, mishapRate: 0 });
+    let d = field(rows, { planner, cornerPass, laps: 3, mishapRate: 0 });
     for (let seed = 2; seed < 40; seed++) {
       const g = (n: string) => d.cars.find((c) => c.number === n)!.grid;
       if (g('T2') === g('T1') + 1) break;
-      d = field(rows, { planner, laps: 3, mishapRate: 0, seed });
+      d = field(rows, { planner, cornerPass, laps: 3, mishapRate: 0, seed });
     }
     const m = runSelfplay(d, pack().makeSurface());
     // (C2) a covering move from positions (selfplay_metrics defending.covers: the lateral move itself, the same for both
@@ -87,7 +88,7 @@ describe.each(['lanes', 'offset'] as const)('planner %s', (planner) => {
   }, 60000);
 
   c1Gap('full field, 2 laps (lane model): clearly faster cars get by, few contacts, no formation passes, no defending against them', () => {
-    const d = director({ planner, seed: 1, laps: 2, playerAi: true, mishapRate: 0 });
+    const d = director({ planner, cornerPass, seed: 1, laps: 2, playerAi: true, mishapRate: 0 });
     const m = runSelfplay(d, pack().makeSurface());
     const p = m.passing, done = p.completed / p.situations, big = p.byRatio[0];
     console.log(`2-lap field: clearly faster ${p.completed}/${p.situations} completed (${(100 * done).toFixed(0)} %, stuck median ${p.medianStuck.toFixed(1)} s; > 15 % quicker ${big.completed}/${big.situations}), contacts ${m.rules.contacts} (${m.rules.contactsPerCarLap.toFixed(3)}/car-lap), four-off ${m.rules.fourOff}, passes ${p.passesTotal}, defend ${JSON.stringify(m.defending)}`);
@@ -106,7 +107,7 @@ describe.each(['lanes', 'offset'] as const)('planner %s', (planner) => {
 
   test('mishaps: seeded per corner, both kinds, never the player, none without noise, reproducible', () => {
     const run = (seed: number) => {
-      const d = director({ planner, seed, laps: 1, maxAi: 6, playerAi: true, gridGap: 150, greenWindow: [2, 3], mishapRate: 0.15 });
+      const d = director({ planner, cornerPass, seed, laps: 1, maxAi: 6, playerAi: true, gridGap: 150, greenWindow: [2, 3], mishapRate: 0.15 });
       while (d.phase !== 'chequered' && d.time < 260) d.step(0.001);
       return d;
     };
@@ -118,7 +119,7 @@ describe.each(['lanes', 'offset'] as const)('planner %s', (planner) => {
     for (const d of [a, b, c]) for (const e of d.mishapLog) expect(d.cars[e.idx].isPlayer).toBe(false);
     for (const d of [a, b, c]) expect(d.cars.reduce((s, car) => s + car.mishaps, 0)).toBe(d.mishaps);
     // without pace noise (calibration / solo laps) a driver never loses control
-    const q = director({ planner, seed: 7, laps: 1, maxAi: 6, playerAi: true, gridGap: 150, greenWindow: [2, 3], mishapRate: 0.2 });
+    const q = director({ planner, cornerPass, seed: 7, laps: 1, maxAi: 6, playerAi: true, gridGap: 150, greenWindow: [2, 3], mishapRate: 0.2 });
     while (q.phase === 'formation') q.step(0.001);
     for (const car of q.cars) if (car.driver) car.driver.ctl.noise = false;
     while (q.time < 60) q.step(0.001);
@@ -126,7 +127,7 @@ describe.each(['lanes', 'offset'] as const)('planner %s', (planner) => {
   }, 60000);
 
   test('mishap rate and kinds match the model (high rate, 6 cars, 2 laps)', () => {
-    const d = director({ planner, seed: 3, laps: 2, maxAi: 6, playerAi: true, gridGap: 150, greenWindow: [2, 3], mishapRate: 0.04 });
+    const d = director({ planner, cornerPass, seed: 3, laps: 2, maxAi: 6, playerAi: true, gridGap: 150, greenWindow: [2, 3], mishapRate: 0.04 });
     const m = runSelfplay(d, pack().makeSurface());
     // expected: rate × Σ difficulty (= corners per lap) × aggression factor per car-lap
     const aggr = [0.6, 1, 1.5];

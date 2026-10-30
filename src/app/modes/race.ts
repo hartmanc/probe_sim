@@ -48,6 +48,8 @@ export interface RaceOverrides {
   devSubmit: boolean;
   /** ?closeracing=0|1: close racing between AI cars within 3 % (RaceConfig.closeRacing); absent = the default. */
   closeRacing?: boolean;
+  /** ?cornerpass=0|1: corner passes in the lane model (RaceConfig.cornerPass, L1); absent = the default. */
+  cornerPass?: boolean;
   /** ?planner=lanes|offset: the AI's traffic planner (RaceConfig.planner, C1); absent = the default (the lane model). */
   planner?: 'lanes' | 'offset';
 }
@@ -59,6 +61,7 @@ export function parseRaceOverrides(search: string): RaceOverrides {
   const n = lapsRaw !== null ? Math.round(Number(lapsRaw)) : NaN;
   return { seed, laps: Number.isFinite(n) && n >= 1 && n <= RACE_LAPS ? n : null, devSubmit: q.get('devsubmit') === '1',
     ...(q.get('closeracing') === '1' ? { closeRacing: true } : q.get('closeracing') === '0' ? { closeRacing: false } : {}),
+    ...(q.get('cornerpass') === '1' ? { cornerPass: true } : q.get('cornerpass') === '0' ? { cornerPass: false } : {}),
     ...(q.get('planner') === 'offset' || q.get('planner') === 'lanes' ? { planner: q.get('planner') as 'lanes' | 'offset' } : {}) };
 }
 
@@ -113,7 +116,7 @@ export function raceResultFor(rows: TableRow[], o: { seed: number; aiVersion: nu
 
 export { surfaceFactory, raceAiConfig };
 /** Build the RaceDirector for the player's current HotlapSim car (call right after a rolling start). */
-export function buildDirector(sim: RaceServices['sim'], field: FieldData, o: { seed: number; laps: number; realGrid?: boolean; playerAi?: boolean; lod?: boolean; strengthPct?: number; closeRacing?: boolean | null; planner?: 'lanes' | 'offset' | null }): RaceDirector {
+export function buildDirector(sim: RaceServices['sim'], field: FieldData, o: { seed: number; laps: number; realGrid?: boolean; playerAi?: boolean; lod?: boolean; strengthPct?: number; closeRacing?: boolean | null; cornerPass?: boolean | null; planner?: 'lanes' | 'offset' | null }): RaceDirector {
   return buildDirectorFor(sim, field, { ...o, trackId: TRACK_ID });
 }
 
@@ -399,7 +402,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
     sv.sim.record = false;              // races are not replayed
     const t0 = performance.now();
     strength = parseAiStrength(String(deps.aiStrength ? deps.aiStrength() : 100));
-    d = buildDirector(sv.sim, field, { seed, laps, realGrid: fieldSelected, playerAi: pf.playerAi, lod: pf.lod ?? LOD_DEFAULT, strengthPct: strength, closeRacing: ov.closeRacing, planner: ov.planner });
+    d = buildDirector(sv.sim, field, { seed, laps, realGrid: fieldSelected, playerAi: pf.playerAi, lod: pf.lod ?? LOD_DEFAULT, strengthPct: strength, closeRacing: ov.closeRacing, cornerPass: ov.cornerPass, planner: ov.planner });
     const dir = d;
     if (perf.on) dir.timing = newDirectorTiming();
     sv.sim.stepVehicle = (di) => dir.step(STEP, di as DriverInput);
@@ -428,7 +431,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
     try {
       if (!wk) wk = new RaceWorkerClient();
       if (!wkInit) { wk.init(sv.sim.assets, { pace: field.pace, identity: field.identity }, TRACK_ID); wkInit = true; }
-      const gen = wk.build({ seed, laps, realGrid: fieldSelected, playerAi: pf.playerAi, lod: pf.lod ?? LOD_DEFAULT, strengthPct: strength, closeRacing: ov.closeRacing, planner: ov.planner, ref: sv.sim.refId, autoShift: sv.sim.autoShift, abs: sv.sim.abs, timing: perf.on });
+      const gen = wk.build({ seed, laps, realGrid: fieldSelected, playerAi: pf.playerAi, lod: pf.lod ?? LOD_DEFAULT, strengthPct: strength, closeRacing: ov.closeRacing, cornerPass: ov.cornerPass, planner: ov.planner, ref: sv.sim.refId, autoShift: sv.sim.autoShift, abs: sv.sim.abs, timing: perf.on });
       ms = newMirrorState(gen);
       const w = wk;
       installMirror(dir, sv.sim, ms, (k, detail) => w.violation(k, detail));

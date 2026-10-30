@@ -12,7 +12,7 @@ import { CAR64_STRIDE, CAR_STRIDE, packCar, packRace } from './race-snapshot';
 export const HOST_MAX_FRAME = 0.05;      // the main loop's cap per rendered frame (index.ts MAX_FRAME)
 
 export interface HostInit { assets: SimAssets; field: { pace: unknown; identity: unknown }; trackId: string }
-export interface HostBuild { gen: number; seed: number; laps: number; realGrid: boolean; playerAi: boolean; lod: boolean; strengthPct: number; closeRacing?: boolean | null; planner?: 'lanes' | 'offset' | null; ref: string | null; autoShift: boolean; abs: boolean; timing: boolean }
+export interface HostBuild { gen: number; seed: number; laps: number; realGrid: boolean; playerAi: boolean; lod: boolean; strengthPct: number; closeRacing?: boolean | null; cornerPass?: boolean | null; planner?: 'lanes' | 'offset' | null; ref: string | null; autoShift: boolean; abs: boolean; timing: boolean }
 export interface HostInput { steer: number; throttle: number; brake: number; handbrake: boolean; up: boolean; down: boolean; autoShift: boolean; abs: boolean; ref: string | null }
 
 /** One snapshot message. `f32` / `f64` are transferred; the rest is a small structured clone. */
@@ -63,7 +63,7 @@ export class RaceSimHost {
     sim.reset();                       // ctx.rollingStart(): fresh Vehicle + Surface, step counter 0
     sim.record = false;
     const field = { pace: init.field.pace, identity: init.field.identity, models: [], missing: [] } as unknown as FieldData;
-    const dir = buildDirector(sim, field, { seed: m.seed, laps: m.laps, trackId: init.trackId, realGrid: m.realGrid, playerAi: m.playerAi, lod: m.lod, strengthPct: m.strengthPct, closeRacing: m.closeRacing ?? null, planner: m.planner ?? null });
+    const dir = buildDirector(sim, field, { seed: m.seed, laps: m.laps, trackId: init.trackId, realGrid: m.realGrid, playerAi: m.playerAi, lod: m.lod, strengthPct: m.strengthPct, closeRacing: m.closeRacing ?? null, cornerPass: m.cornerPass ?? null, planner: m.planner ?? null });
     this.timing = m.timing ? { steps: 0, control: 0, player: 0, aiPhysics: 0, contacts: 0, other: 0 } : null;
     dir.timing = this.timing;
     sim.stepVehicle = (di) => dir.step(STEP, di as Parameters<RaceDirector['step']>[1]);

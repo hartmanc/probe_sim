@@ -54,6 +54,8 @@ export interface DriverControl {
   shiftGrip: number;
   /** Close racing within 3 % (traffic round E, RaceConfig.closeRacing): one decisive covering move instead of the light DEFEND. */
   closeRacing: boolean;
+  /** L1 (RaceConfig.cornerPass): corner passes in the lane model, the pinch rule by overlap at turn-in (K1) and late braking in a pass (K2). */
+  cornerPass: boolean;
   /** Fraction of the target profile (cool-down lap after the flag: 0.6). */
   paceFactor: number;
   /** Per-lap pace noise on (race) or off (calibration). */
@@ -124,6 +126,35 @@ const PASS_HEADWAY = 0.3;  // s: following the car I am passing (held in behind 
 const PASS_T_MAX = 30;     // s: give up a pass after this long
 const PASS_SHIFT = 1.3;    // lane changes for a pass: x the shift rate
 const PASS_EDGE = 0.5;     // m from the track edge (car side) a pass lane is clamped to
+/**
+ * L1 (30 Oct 2026, NOTES "L1: corner passes in the lane model"; RaceConfig.cornerPass, the lane model only). Knobs (setCpKnobs;
+ * traffic_sim.ts / selfplay.ts --set c.<name>=<value>):
+ * ovlTI: share of my length my nose must be past the passed car's tail at its turn-in to keep my lane through the corner (K1);
+ * ovlP: a shut in that corner is deferred to the turn-in only when my nose is projected this share of my length past its tail there
+ * at the closing speed now (a contest; else the shut rule as before);
+ * boDv: backing out, a lift to the passed car's speed minus this (m/s); win / pre: m past the track-out / before the turn-in in which
+ * a shut of the pass lane belongs to that corner (deferred to its turn-in); gc: 1 = a held passer is exempt from the GIVE_CLR
+ * margin rule against the car it holds beside (a real squeeze still gives way); pg: 1 = the pinch guard against the car I backed
+ * out from lifts by boDv at most; bm: the braking margin of a pass before the passed car's turn-in until the overlap (K2; the
+ * normal BRAKE_MARGIN 0.85); bmCalm / bmAggr: (K3) the same for calm / aggressive drivers when k3 = 1; k2: 1 = K2 on; k2p: 1 = K2
+ * only for a pass whose lane shuts in that corner (0: any pass with a lane in hand); k3: 1 = K3, the margin and the planning
+ * reach by aggression; reach: (K3) planning reach x (1 + reach x (aggression - 1)).
+ */
+export const cpKnobs = { ovlTI: 0.3, ovlP: 0, boDv: 1.5, win: 15, pre: 5, gc: 1, pg: 1, bm: 0.92, bmCalm: 0.88, bmAggr: 0.95, k2: 1, k2p: 0, k3: 0, reach: 0.25 };
+export function setCpKnobs(kv: readonly string[]): void {
+  for (const s of kv) {
+    const [k, v] = s.split('=');
+    if (!(k in cpKnobs)) throw new Error(`unknown corner-pass knob ${k}`);
+    (cpKnobs as Record<string, number>)[k] = Number(v);
+  }
+}
+/** (L1) each corner's turn-in and track-out (vortexCorners), once per line */
+const CP_CORNERS = new WeakMap<RaceLine, { turnIn: Float64Array; trackOut: Float64Array }>();
+function cpCorners(line: RaceLine): { turnIn: Float64Array; trackOut: Float64Array } {
+  let c = CP_CORNERS.get(line);
+  if (!c) { c = vortexCorners(line); CP_CORNERS.set(line, c); }
+  return c;
+}
 /** m ahead in which a car in the racing lane delays the merge back (it was front + 7 m + 0.2 s: merging at 9-14 m/s
  *  closing onto a slower car 20 m ahead rear-ended it; the 1.5 s occupancy projection decides within this range) */
 const MERGE_AHEAD = 60;
@@ -145,7 +176,7 @@ export const NO_PASS_CORNERS: Readonly<Record<string, readonly string[]>> = { la
  * corner speeds at CORNER_MARGIN of the lateral grip and braking at BRAKE_MARGIN of the car's braking
  * (combined with cornering on the friction ellipse), so the car stays on its line at the limit.
  */
-export function driverProfile(line: RaceLine, perf: CarPerf, prof: Float64Array): Float64Array {
+export function driverProfile(line: RaceLine, perf: CarPerf, prof: Float64Array, brakeMargin = BRAKE_MARGIN): Float64Array {
   const N = line.N, curv = line.curv, grade = line.grade, ds = line.ds;
   const out = Float64Array.from(prof);
   const alat = CORNER_MARGIN * perf.alat;
@@ -158,7 +189,7 @@ export function driverProfile(line: RaceLine, perf: CarPerf, prof: Float64Array)
   for (let k = 2 * N; k > 0; k--) {
     const j = k % N, i = (j - 1 + N) % N, v = out[j];
     const u = Math.min(1, (v * v * Math.abs(curv[j])) / (bankedG(perf.alat, line, j, v) * G));
-    const d = BRAKE_MARGIN * perf.abrake * G * loadFactor(line, j, v) * Math.sqrt(Math.max(0, 1 - u * u)) + G * grade[i];
+    const d = brakeMargin * perf.abrake * G * loadFactor(line, j, v) * Math.sqrt(Math.max(0, 1 - u * u)) + G * grade[i];
     const vp = Math.sqrt(Math.max(0, v * v + 2 * Math.max(0.5, d) * ds[i]));
     if (vp < out[i]) out[i] = vp;
   }
@@ -175,6 +206,8 @@ export class AiDriver {
   /** (tools, C5 T4) when set, one row per train-pass commit: closing speed on the car ahead (m/s), gap to it (m), cars targeted,
    *  1 when the follow rule was limiting me at that moment */
   static attCommit: number[][] | null = null;
+  /** (tools, L1) when set, one row per turn-in decision: 1 hold / 0 back out, overlap share, gap d (m), my speed - its speed (m/s), my e, its e, my limiter */
+  static cpTrace: (number | string)[][] | null = null;
   private attT(k: string): void { const T = AiDriver.attTally; if (T) T[k] = (T[k] ?? 0) + 1; }
   private static why(k: string): void { const W = AiDriver.planWhy; if (W) W[k] = (W[k] ?? 0) + 1; }
   readonly vehicle: Vehicle;
@@ -186,7 +219,7 @@ export class AiDriver {
   /** Target speed profile per station (m/s), from buildSpeedProfile. */
   profile: Float64Array;
   readonly input: DriverInput = { steer: 0, throttle: 0, brake: 0, shiftUp: false, shiftDown: false };
-  readonly ctl: DriverControl = { speedCap: Infinity, noPass: false, minGap: 0, followScale: 1, laneMargin: 1, shiftGrip: 0, closeRacing: false, paceFactor: 1, noise: true, mishapRate: 0 };
+  readonly ctl: DriverControl = { speedCap: Infinity, noPass: false, minGap: 0, followScale: 1, laneMargin: 1, shiftGrip: 0, closeRacing: false, cornerPass: false, paceFactor: 1, noise: true, mishapRate: 0 };
   readonly rng: Rng;
 
   // ---- state
@@ -213,6 +246,13 @@ export class AiDriver {
   /** how the last pass attempt ended (tools): 'done' | 'dropped' | 'timeout' | 'stalled' | 'blocked' | 'off' | 'flag' | 'away' */
   passEnd = '';
   private passCool = 0;
+  // ---- L1 (ctl.cornerPass, the lane model): the corner of a pass whose lane shuts in it (cpC), cpState 0 none, 1 deferred to the
+  // passed car's turn-in, 2 held through the corner (overlap at turn-in); backing out from boJ, no new pass before boC's apex;
+  // k2On: late braking (K2) on the next tick; tallies (tools)
+  cpState = 0; cpC = -1; boJ = -1; boC = -1; k2On = false;
+  cpHolds = 0; cpBackouts = 0; cpDefers = 0;
+  private shR = 0;
+  private readonly baseProf: Float64Array; private profPass: Float64Array | null = null; private profPassM = 0;
   // defending: covering the inside of corner `defendCorner` (+1 left / -1 right; read by tools)
   defendSide = 0; private defendCorner = -1; private defendTimer = 0; private defendCool = 0;
   /** close racing (E): the corner I last covered (one move per corner) */
@@ -256,7 +296,7 @@ export class AiDriver {
   private readonly lockMax: number; private readonly lockMin: number; private readonly lockV: number;
 
   constructor(vehicle: Vehicle, line: RaceLine, perf: CarPerf, spec: CarSpec, profile: Float64Array, params: AiDriverParams, idx: number, traffic: Traffic, planner: Planner = 'lanes') {
-    this.vehicle = vehicle; this.line = line; this.perf = perf; this.profile = driverProfile(line, perf, profile);
+    this.vehicle = vehicle; this.line = line; this.perf = perf; this.profile = driverProfile(line, perf, profile); this.baseProf = profile;
     this.params = params; this.idx = idx; this.traffic = traffic;
     this.planner = planner;
     if (planner === 'offset') {
@@ -290,6 +330,7 @@ export class AiDriver {
     this.coverCorner = -1;
     this.mishap = null; this.mPhase = 0; this.mT = 0; this.mCorner = -1; this.nextCorner = -1; this.onTimer = 0; this.offTimer = 0;
     this.stuckTime = 0; this.needsRecovery = false; this.hint = -1; this.kCmd = 0; this.passCool = 0; this.traffic.passing[this.idx] = -1;
+    this.cpState = 0; this.cpC = -1; this.boJ = -1; this.boC = -1; this.k2On = false; this.traffic.cpHold[this.idx] = -1;
     this.oStar = 0; this.oTimer = (this.idx % 8) * O_EVERY / 8; this.oMoveDir = 0; this.oMoveApex = -1; this.oYield = -1;
     this.attackOff();
   }
@@ -416,12 +457,14 @@ export class AiDriver {
     const offset = this.pw !== null;
     // (the offset planner: an offset it holds is a lane of its own, as a pass lane)
     const offline = this.shift === 0 ? 1 : laneFactor(line, this.shift, sp, offset ? this.oStar !== 0 : this.passPhase !== 0);
-    const vProf = this.profAt(sp) * pf * offline;
+    // (L1 K2) late braking in a pass: the profile braked at the pass margin (decided on the last tick)
+    const k2 = this.k2On, prof = k2 ? this.passProfile() : this.profile, bmE = k2 ? this.profPassM : BRAKE_MARGIN;
+    const vProf = line.at(prof, sp) * pf * offline;
     let vCmd = vProf;
     this.limiter = 'profile';
     let aref = 0;
     {
-      const v2 = this.profAt(sp + 2) * pf * offline;
+      const v2 = line.at(prof, sp + 2) * pf * offline;
       aref = (v2 * v2 - vProf * vProf) / 4;
     }
     if (ctl.speedCap < vCmd) { vCmd = ctl.speedCap; this.limiter = 'cap'; }
@@ -437,7 +480,7 @@ export class AiDriver {
     // held off the line on the inside of a corner coming up: brake in time for its tighter radius
     if (Math.abs(this.shiftTarget) > 0.5 || Math.abs(this.shift) > 0.5) {
       const sh = Math.abs(this.shiftTarget) > Math.abs(this.shift) ? this.shiftTarget : this.shift;
-      const b = 0.75 * BRAKE_MARGIN * perf.abrake * G;
+      const b = 0.75 * bmE * perf.abrake * G;
       for (let d = 8; d <= 48; d += 8) {
         const ks = line.at(line.curv, s + d) * sh;
         if (ks <= 0.02) continue;
@@ -450,7 +493,7 @@ export class AiDriver {
     // car runs along the edge, tighter than the lane), looked ahead with a braking envelope
     if (offset ? this.oStar !== 0 : this.passPhase !== 0) {
       const eL = offset ? this.oStar : this.passPhase === 3 ? 0 : this.passE;
-      const b = 0.75 * BRAKE_MARGIN * perf.abrake * G, aG = ctl.laneMargin * CORNER_MARGIN * perf.alat * G;
+      const b = 0.75 * bmE * perf.abrake * G, aG = ctl.laneMargin * CORNER_MARGIN * perf.alat * G;
       let ePrev = this.laneAt(s - 8, eL, hwI), e0 = this.laneAt(s, eL, hwI);
       for (let d = 0; d <= 48; d += 8) {
         const x = s + d, eNext = this.laneAt(x + 8, eL, hwI), k = line.at(line.curv, x);
@@ -497,6 +540,9 @@ export class AiDriver {
     this.planTimer -= dt;
     this.passCool = Math.max(0, this.passCool - dt);
     if (this.passPhase !== 0) this.passStep(dt, v, eMe, green, pf);
+    if (this.passPhase !== 1) { this.cpState = 0; this.cpC = -1; this.k2On = false; }
+    // (L1) backing out: no new pass before that corner's apex
+    if (this.boC >= 0 && (!green || this.offTrack || this.ahead(s, cs[this.boC].apex) < 0)) { this.boC = -1; this.boJ = -1; }
     // where I am heading in lane coordinates: the pass lane, the racing line on the way back, else last tick's target
     const eAim = this.passPhase === 1 || this.passPhase === 2 ? this.passE : this.passPhase === 3 ? 0 : this.shiftTarget;
     // walk ahead along the order: the nearest car in my lane (its span overlaps the band I sweep through to reach it)
@@ -526,6 +572,9 @@ export class AiDriver {
         // (C4 P1) committed on it and clear of its band now: not followed for where the road will squeeze us later (that is past
         // the braking point, where the overlap decides: P2 backs out, P3 holds)
         if (offset && this.oPhase === ATT_COMMIT && j === this.oAtt && oKnobs.att2) continue;
+        // (L1 K1) a pass whose lane shuts in the passed car's next corner, deferred to its turn-in or held through the corner: it is
+        // not followed for where the road will squeeze us there (the overlap at its turn-in decides)
+        if (this.cpState !== 0 && j === this.passTarget) continue;
         // and where I would catch it (within 3 s), both lanes clamped to the road there: a lane the road squeezes
         // into mine is my lane by then
         const tc = Math.min(3, Math.max(0, gap) / Math.max(0.5, v - tr.v[j]));
@@ -562,6 +611,8 @@ export class AiDriver {
       // (C4 P2) backing out from beside it: a relative lift (its speed - boDv), not the braking limit's step (a brake test for the
       // car behind me)
       if (offset && this.oPhase === ATT_BACK && leadJ === this.oAtt && leadGap < 1 && oKnobs.boDv > 0) vF = Math.max(vF, vj - oKnobs.boDv);
+      // (L1 K1) backing out from beside it: the same relative lift
+      if (leadJ === this.boJ && leadGap < 1) vF = Math.max(vF, vj - cpKnobs.boDv);
       if (vF < vCmd) { vCmd = Math.max(0, vF); this.limiter = 'follow'; aref = Math.min(aref, Math.min(0, tr.a[leadJ])); }
     }
 
@@ -578,7 +629,9 @@ export class AiDriver {
       // clearly faster; a car that is off / nearly stopped; or quicker on pace and stuck behind it (a car held up in a
       // train is not a reason: everybody behind it would pull out at once)
       const want = clearly || tr.off[j] === 1 || vj < 0.5 * myPot || (tr.pace[i] < tr.pace[j] && this.stuckTimer > STUCK_T[this.params.aggression]);
-      if (want && this.passCool <= 0 && this.planTimer <= 0 && leadGap < Math.max(30, 0.9 * v) && !this.noPassZone(s)) {
+      // (L1 K3) the planning reach by aggression
+      const reach = ctl.cornerPass && cpKnobs.k3 ? 1 + cpKnobs.reach * (this.params.aggression - 1) : 1;
+      if (want && this.passCool <= 0 && this.planTimer <= 0 && leadGap < reach * Math.max(30, 0.9 * v) && !this.noPassZone(s) && this.boC < 0) {
         this.planTimer = PLAN_EVERY;
         const e = this.planLane(j, v, pf, NaN);
         if (!Number.isNaN(e)) {
@@ -658,7 +711,7 @@ export class AiDriver {
     }
     // alongside: cars overlapping in s bound my lateral corridor (a lane's width apart, never steer into them)
     let push = 0;
-    let corLo = -Infinity, corHi = Infinity, corLoD = 0, corHiD = 0, corLoV = 0, corHiV = 0;
+    let corLo = -Infinity, corHi = Infinity, corLoD = 0, corHiD = 0, corLoV = 0, corHiV = 0, corLoJ = -1, corHiJ = -1;
     let passerSqueeze = false;
     // (and in lane coordinates at the look point: where its lane, clamped to the road there, will put it)
     let corLoE = -Infinity, corHiE = Infinity;
@@ -679,7 +732,7 @@ export class AiDriver {
           const side = dl >= 0 ? 1 : -1;
           // only cars actually beside me (a car straight ahead / behind is handled by following)
           if (Math.abs(dl) < hwI + tr.hw[j] - 0.2 && Math.abs(d) > 0.6 * (myFront + tr.rear[j])) continue;
-          if (side > 0) { if (tr.lat[j] + need > corLo) { corLo = tr.lat[j] + need; corLoD = d; corLoV = tr.v[j]; } } else if (tr.lat[j] - need < corHi) { corHi = tr.lat[j] - need; corHiD = d; corHiV = tr.v[j]; }
+          if (side > 0) { if (tr.lat[j] + need > corLo) { corLo = tr.lat[j] + need; corLoD = d; corLoV = tr.v[j]; corLoJ = j; } } else if (tr.lat[j] - need < corHi) { corHi = tr.lat[j] - need; corHiD = d; corHiV = tr.v[j]; corHiJ = j; }
           {
             // (a car passing me: where the road will push its lane over the next second, so I make room in time, but
             // never further than my own road allows there: beyond that it is a squeeze and the car further back yields)
@@ -698,6 +751,8 @@ export class AiDriver {
           if (Math.abs(dl) < need) {
             push += side * (need - Math.abs(dl));
             if (tr.passing[j] === i && d < 0 && d > -PINCH_OK * (myRear + tr.front[j]) && !(offset && oKnobs.r1)) passerSqueeze = true;
+            // (L1 K1) a passer holding its side of me through the corner (it had the overlap at my turn-in)
+            if (tr.cpHold[j] === i && d < 0) passerSqueeze = true;
             // (the offset planner: a car alongside behind me and converging, in a corner only; no lift on a straight)
             // (C3 R1: alongside = its nose past PINCH_OK of the overlap and laterally clear of my body, not a car in my wake whose
             // front overlaps my rear: a lift in front of that is a brake test, oKnobs.lift)
@@ -733,6 +788,8 @@ export class AiDriver {
       if (Math.abs(eMe - tr.e[j]) < hwI + tr.hw[j] - 0.2) continue;     // straight ahead: following handles it
       // alongside on a pass: it makes room (passStep gives the pass up first where the road shuts my lane beside it)
       if (j === this.passTarget && d < PINCH_OK * (myFront + tr.rear[j])) continue;
+      // (L1 K1) a pass deferred to its turn-in or held through its corner: the overlap at the turn-in decides, not the pinch
+      if (j === this.passTarget && this.cpState !== 0) continue;
       const need = hwI + tr.hw[j] + 0.3 + this.yawClr(s + 0.5 * v), ej = tr.eT[j], hwJ = tr.hw[j];
       const ePlan = this.passPhase === 1 || this.passPhase === 2 ? this.passE : this.passPhase === 3 ? 0 : this.shiftTarget;
       const dist = Math.max(12, PINCH_T * v);
@@ -741,7 +798,8 @@ export class AiDriver {
         const me = Math.max(this.roadLo(sx, hwI), Math.min(this.roadHi(sx, hwI), ePlan));
         const it = Math.max(this.roadLo(sx, hwJ), Math.min(this.roadHi(sx, hwJ), ej));
         if (Math.abs(me - it) < need && (me - it) * (eMe - tr.e[j]) >= 0) {
-          const vp = Math.max(0.5 * tr.v[j], tr.v[j] - 4);
+          // (L1 K1) the car I backed out from: a relative lift (no brake test for the car behind me)
+          const vp = j === this.boJ && cpKnobs.pg ? Math.max(0, tr.v[j] - cpKnobs.boDv) : Math.max(0.5 * tr.v[j], tr.v[j] - 4);
           if (vp < vCmd) { vCmd = vp; this.limiter = 'pinch'; aref = Math.min(aref, -1); }
           break;
         }
@@ -783,8 +841,10 @@ export class AiDriver {
       let giveWay = squeezed && (behindHi || behindLo);
       const latP = lat + Math.max(-3, Math.min(3, tr.vlat[i])) * 0.4; // where I will be in 0.4 s
       // (the offset planner: only when squeezed; a car alongside holds its side and the exit decides)
-      if (!offset && behindHi && Math.max(lat, latP) > corHi + GIVE_CLR) giveWay = true;
-      if (!offset && behindLo && Math.min(lat, latP) < corLo - GIVE_CLR) giveWay = true;
+      // (L1 K1: not against the car a held passer keeps its side of; a real squeeze still gives way)
+      const heldJ = this.cpState === 2 && cpKnobs.gc ? this.passTarget : -2;
+      if (!offset && behindHi && Math.max(lat, latP) > corHi + GIVE_CLR && corHiJ !== heldJ) giveWay = true;
+      if (!offset && behindLo && Math.min(lat, latP) < corLo - GIVE_CLR && corLoJ !== heldJ) giveWay = true;
       const vGive = Math.max(3, (behindHi ? corHiV : corLoV) - 1.5); // relative to it: never a runaway lift
       if (giveWay && vGive < vCmd) { vCmd = vGive; this.limiter = 'alongside'; aref = Math.min(aref, -0.3); }
 
@@ -915,6 +975,7 @@ export class AiDriver {
     }
     this.input.handbrake = false;
     if (!offset || !oKnobs.h6) tr.passing[i] = this.passTarget;   // (C2 H6: the offset planner sets it in planStep)
+    tr.cpHold[i] = this.cpState === 2 ? this.passTarget : -1;
     // ---- spin: handbrake and full lock into the corner at turn-in, then lock everything up and stop
     if (this.mishap === 'spin' && this.mPhase >= 1) {
       const C = cs[this.mCorner];
@@ -1029,6 +1090,120 @@ export class AiDriver {
     return false;
   }
 
+  /** (L1) The first station (m ahead of me, within dist) where my lane e on `side` of car j and j's lane, both clamped to the road,
+   *  come closer than the pinch guard's clearance (as shutBeside); this.shR = where I am relative to j when I get there. -1: none,
+   *  or j stopped / off, or I am already ahead of it. */
+  private shutStation(j: number, e: number, side: number, v: number, dv: number, dist: number): number {
+    const tr = this.traffic, i = this.idx, s = tr.s[i], hwI = tr.hw[i], hwJ = tr.hw[j];
+    if (tr.v[j] < 4 || tr.off[j]) return -1;
+    const len = tr.front[i] + tr.rear[j], d = tr.ds(i, j);
+    if (d < -PINCH_OK * len) return -1;
+    const need = hwI + hwJ + 0.3 + this.yawClr(s + 0.5 * v);
+    for (let x = 0; x <= dist; x += 5) {
+      const sx = s + x;
+      const me = this.laneAt(sx, e, hwI);
+      const it = Math.max(this.roadLo(sx, hwJ), Math.min(this.roadHi(sx, hwJ), tr.eT[j]));
+      if (side * (me - it) < need) { this.shR = d - Math.max(0, dv) * x / Math.max(1, v); return x; }
+    }
+    return -1;
+  }
+
+  /** (L1) The corner car j drives next: the first whose track-out is ahead of station sj (-1: none). */
+  private cornerNext(sj: number): number {
+    const T = cpCorners(this.line), n = T.trackOut.length;
+    let best = Infinity, c = -1;
+    for (let k = 0; k < n; k++) { let d = this.ahead(sj, T.trackOut[k]); if (d <= 0) d += this.line.L; if (d < best) { best = d; c = k; } }
+    return c;
+  }
+
+  /** (L1) Station x m ahead of me lies in corner c's window: from its turn-in - pre to its track-out + win. */
+  private inCorner(x: number, c: number): boolean {
+    const T = cpCorners(this.line), sx = this.traffic.s[this.idx] + x;
+    return c >= 0 && this.ahead(T.turnIn[c], sx) >= -cpKnobs.pre && this.ahead(sx, T.trackOut[c]) >= -cpKnobs.win;
+  }
+
+  /** (L1 K2) the driver profile braked at the pass margin (cached per margin) */
+  private passProfile(): Float64Array {
+    const K = cpKnobs, m = K.k3 ? [K.bmCalm, K.bm, K.bmAggr][this.params.aggression] : K.bm;
+    if (this.profPass === null || this.profPassM !== m) { this.profPass = driverProfile(this.line, this.perf, this.baseProf, m); this.profPassM = m; }
+    return this.profPass;
+  }
+
+  /**
+   * (L1 K1, ctl.cornerPass) The pinch rule by overlap at turn-in for a pass in hand on car j (passStep phase 1, in place of the
+   * shut rule). A shut of my lane beside j inside j's next corner (turn-in - pre to track-out + win) while j has not turned in is
+   * deferred (cpState 1: no pinch guard, no squeeze-following against j; K2's late braking). When j reaches its turn-in: my nose past
+   * its tail by ovlTI x my length, and laterally clear of it, keeps my lane through the corner (cpState 2, Traffic.cpHold: j holds
+   * its line, makes room where the road pushes my lane onto it and lifts to 97 % alongside; no shut rule until its track-out +
+   * win, then the exit decides by the shut rule); without it I back out ('backout': a lift to its speed - boDv, tuck in, no new
+   * pass before that corner's apex). Any other shut (j already turned in: the dive; or not in a corner) is the shut rule as before.
+   * Returns the end reason or ''.
+   */
+  private cpStep(j: number, v: number): string {
+    const tr = this.traffic, i = this.idx, K = cpKnobs, T = cpCorners(this.line), s = tr.s[i], sj = tr.s[j];
+    const d = tr.ds(i, j), len = tr.front[i] + tr.rear[j], myLen = tr.front[i] + tr.rear[i];
+    const ovl = (tr.front[i] + tr.rear[j] - d) / myLen;
+    this.k2On = false;
+    if (this.cpState === 2) {
+      if (ovl < 0) {   // fell back behind it in the corner: no overlap, back out
+        this.cpBackouts++; this.boJ = j; this.boC = this.cpC; this.cpState = 0; this.cpC = -1;
+        return 'backout';
+      }
+      if (this.ahead(sj, T.trackOut[this.cpC]) > -K.win) return '';
+      this.cpState = 0; this.cpC = -1;   // past the track-out: the exit decides (the shut rule)
+    }
+    const cj = this.cornerNext(sj), tiJ = cj >= 0 ? this.ahead(sj, T.turnIn[cj]) : -Infinity;
+    const dist0 = Math.max(12, PINCH_T * v);
+    let dist = dist0;
+    if (cj >= 0 && (tiJ > 0 || this.cpState === 1)) dist = Math.min(PLAN_SHUT_MAX, Math.max(dist0, this.ahead(s, T.trackOut[cj]) + K.win));
+    let x = this.shutStation(j, this.passE, this.passSide, v, v - tr.v[j], dist);
+    if (x >= 0 && this.shR <= -PINCH_OK * len) x = -1;   // ahead of it by then
+    if (x < 0) { this.cpState = 0; this.cpC = -1; this.k2Set(cj, tiJ, ovl, false); return ''; }
+    if (this.inCorner(x, cj)) {
+      // (a contest only: my nose projected at least ovlP of my length past its tail at its turn-in at the closing speed now)
+      const dTI = d - Math.max(0, v - tr.v[j]) * Math.max(0, tiJ) / Math.max(1, tr.v[j]);
+      if (tiJ > 0 && (this.cpState === 1 || (tr.front[i] + tr.rear[j] - dTI) / myLen >= K.ovlP)) {
+        if (this.cpState !== 1) this.cpDefers++;
+        this.cpState = 1; this.cpC = cj; this.k2Set(cj, tiJ, ovl, true);
+        return '';
+      }
+      if (this.cpState === 1 && this.cpC === cj) {
+        // j turns in: the overlap decides
+        if (AiDriver.cpTrace) AiDriver.cpTrace.push([ovl >= K.ovlTI ? 1 : 0, +ovl.toFixed(2), +d.toFixed(1), +(v - tr.v[j]).toFixed(2), +tr.e[i].toFixed(2), +tr.e[j].toFixed(2), this.limiter, this.line.corners[cj].name]);
+        if (ovl >= K.ovlTI && Math.abs(tr.e[i] - tr.e[j]) >= tr.hw[i] + tr.hw[j]) { this.cpState = 2; this.cpHolds++; return ''; }
+        this.cpBackouts++; this.boJ = j; this.boC = cj; this.cpState = 0; this.cpC = -1;
+        return 'backout';
+      }
+    }
+    // not a corner's shut deferred to its turn-in (j turned in already: no dive; or not in a corner): the shut rule, its horizon
+    this.cpState = 0; this.cpC = -1;
+    this.k2Set(cj, tiJ, ovl, false);
+    return x <= dist0 && this.shR < len + 1 ? 'shut' : '';
+  }
+  /** (L1 K2) late braking on the next tick: a pass in hand before the passed car's turn-in, the overlap not yet made */
+  private k2Set(cj: number, tiJ: number, ovl: number, shut: boolean): void {
+    const K = cpKnobs;
+    this.k2On = K.k2 === 1 && cj >= 0 && tiJ > 0 && ovl < K.ovlTI && (shut || !K.k2p) && !this.noPassZone(this.traffic.s[this.idx]);
+  }
+
+  /** (L1 K1, planning with ctl.cornerPass) a lane the road shuts beside j before I am ahead of it is no lane (shutBeside), except
+   *  a shut inside j's next corner that j has not turned in for, when my projected overlap at its turn-in reaches ovlTI. */
+  private cpPlanShut(j: number, e: number, side: number, v: number, dv: number, look: number): boolean {
+    const tr = this.traffic, i = this.idx, T = cpCorners(this.line), sj = tr.s[j];
+    const len = tr.front[i] + tr.rear[j], myLen = tr.front[i] + tr.rear[i];
+    const cj = this.cornerNext(sj), tiJ = cj >= 0 ? this.ahead(sj, T.turnIn[cj]) : -Infinity;
+    const dist0 = Math.min(PLAN_SHUT_MAX, Math.max(12, PINCH_T * v, look));
+    let dist = dist0;
+    if (cj >= 0 && tiJ > 0) dist = Math.min(PLAN_SHUT_MAX, Math.max(dist, this.ahead(tr.s[i], T.trackOut[cj]) + cpKnobs.win));
+    const x = this.shutStation(j, e, side, v, dv, dist);
+    if (x < 0 || this.shR <= -PINCH_OK * len) return false;
+    if (tiJ > 0 && this.inCorner(x, cj)) {
+      const dTI = tr.ds(i, j) - Math.max(0, dv) * tiJ / Math.max(1, tr.v[j]);
+      return (tr.front[i] + tr.rear[j] - dTI) / myLen < cpKnobs.ovlTI;
+    }
+    return x <= dist0;
+  }
+
   /** Braking cushion (m) a car at vq behind me needs when I am in its lane in front of it at vMe. */
   private cushB(vq: number, vMe: number): number { return 2 + 0.2 * vq + 0.8 * Math.max(0, vq - vMe); }
 
@@ -1141,7 +1316,7 @@ export class AiDriver {
         // PLAN_SHUT_MAX m, closing at the planned advantage or the speed difference now if larger. (Checking passes
         // longer than PLAN_T to their end, 24 Oct 2026: Sonoma contacts 0.022 -> 0.031, Laguna 0.033 -> 0.038 over
         // 8 seeds, 6 % fewer green passes on Sonoma: not kept.)
-        if (this.shutBeside(j, e, side, v, Math.max(adv, v - vj), v * Tn, true)) { AiDriver.why('shut'); continue; }
+        if (this.ctl.cornerPass ? this.cpPlanShut(j, e, side, v, Math.max(adv, v - vj), v * Tn) : this.shutBeside(j, e, side, v, Math.max(adv, v - vj), v * Tn, true)) { AiDriver.why('shut'); continue; }
         // (projected at the speed I plan to pass at: a slower car further up that lane blocks it)
         const tFree = this.laneBlock(e - hwI - LANE_CLR, e + hwI + LANE_CLR, Tn + 2, Math.max(v, vJ + adv), 150, 60, j, e, true);
         if (tFree < Tn + 0.5) { AiDriver.why('occupied'); continue; }
@@ -1542,6 +1717,7 @@ export class AiDriver {
       else if (this.noPassZone(tr.s[i]) && d > 0) end = 'corkscrew';   // still behind it: give it up, merge back
       // the road shuts my lane beside it before I am ahead: give it up and tuck in behind it (the pinch guard no longer
       // exempts it, so I drop back; the merge waits until its lane is free around me)
+      else if (this.ctl.cornerPass) end = this.cpStep(j, v);
       else if (this.shutBeside(j, this.passE, this.passSide, v, v - tr.v[j])) end = 'shut';
       if (end) { this.passEnd = end; this.passCool = 1.5; this.passPhase = 2; this.passTarget = -1; this.stuckTimer = 0; return; }
       if (d < -(tr.rear[i] + tr.front[j] + 1)) {
@@ -1558,7 +1734,7 @@ export class AiDriver {
           if (tr.v[c] < v - 0.3 || tr.pace[c] > tr.pace[i] / CLEARLY_FASTER || tr.off[c]) q = c;
           break;
         }
-        if (q >= 0) { this.passTarget = q; this.passTimer = 0; }
+        if (q >= 0) { this.passTarget = q; this.passTimer = 0; this.cpState = 0; this.cpC = -1; this.k2On = false; }
         else { this.passPhase = 2; this.passTarget = -1; }
         return;
       }
