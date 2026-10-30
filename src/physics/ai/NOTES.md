@@ -1556,3 +1556,290 @@ the planning trigger (`leadGap < max(30, 0.9 v)` and the PLAN_T horizon) and the
 next corner); the switch-off screen with the K3 files; then decide K3 on its own.
 
 **K3 reverted (031ec67, 30 Oct 2026, orchestrator).** The data-tier aggression values in the pace files made one car defend against a clearly faster car in `ai_behaviour` "full field, 2 laps" (`defending.vsClearlyFaster` 1, the test needs 0, with the switch off and on; green on d7180d5). The test was not loosened; the files went back to the seeded draws. The switch-off screen with the K3 files was stopped unfinished as moot. S3's numbers above stand as the record of what the tiers did with the switch on (cells 74.1 / 84.6, contacts level, four-offs down, passes −3 %): worth a return once human race recordings say which cars attack.
+
+## Jams (30 Oct 2026, branch `release-041`): measurement only, no behaviour change
+
+Owner, after a Sonoma race on the release candidate: "There were a couple traffic jams that don't happen in a real Lemons race."
+His recording (`race_sonoma_253220505`, 5 laps, 133 AI cars) re-runs with the live lap times, crossings and once-a-second snapshots
+exact (only the build sha differs: recorded adc5471, this tree 0cf176a, `--force`). Nothing in the driver, planner, field, pace files
+or tests changed.
+
+**Tools.** `tools/race/jams_core.ts` (`JamTracker`: read only, sampled at 10 Hz, brake maxima per physics step), `replay_race.ts
+--jams` (a "Jams" section in the race report), `tools/race/jams_selfplay.ts --track T --seed S --laps N` (the self-play race as
+`traffic_sim` builds it, `playerai`), `tools/race/jams_laps.ts` (slow-lap shares, real and sim), `tools/race/jams_render.ts` (re-render
+saved results), `tools/race/jams_report.ts` (the tables below).
+
+**Definitions.**
+- Slow lap: green, not a pit lap, not an out lap, not lap 1, and over k x the car's own median lap (the outlier rule of
+  `traffic_curves.ts`, k = 1.3 there), or over k x the median of its own stint (the laps between two pit laps; the real cars change
+  drivers, so a whole-race median mixes drivers). The real laps hold incidents, off-track moments and (p99.9 columns) timing
+  artefacts: that is the real field's slow-lap rate, not its jam rate. The sim has no yellow, few mishaps, no driver change.
+- Jammed: an AI car on a straight or a corner exit (the pass table's phase labels, `selfplay_where.makeWhere`) at under 50 % of its
+  own profile speed at its station, with no mishap, off or recovery of its own, in green; samples at 10 Hz. Episode: consecutive
+  jammed samples of one car, gaps up to 1 s joined. The first 40 s of green (the rolling start) are counted apart.
+- Queue and head: from a jammed car, follow its `leadIdx` while its limiter is `follow` (the car it is actually capped by, not the
+  nearest car within 25 m: the follow gap is 1.5 m + headway x v, often more than 25 m); the first car not capped by one is the HEAD.
+  Queue size = jammed cars sharing a head in one sample. Head state from the driver's own labels, first match: the player; off /
+  recovering (`tr.off`, `offTrack`, `needsRecovery`); mishap slow phase; rejoin; pinch (limiter `pinch`); making room (limiter
+  `alongside` or `passed`, or a lane shift of more than 0.5 m while braking); passing a car (`passPhase` not 0; the limiter is
+  given); grip / lane / offline / cap; `profile`: "alone, slow on its own profile (accelerating)" under 80 % of the profile, else
+  "free, on its own pace (a slower car ahead of faster ones)" (the head is at its own speed; the followers' profiles are faster).
+- Worst episodes ranked by duration x peak queue size.
+- Brake shockwave: an AI brake input of 0.9 or more (rising edge, maximum over the 10 steps of a sample) on a straight or a corner
+  exit; its reason is the driver's limiter (follow limiter split by what the lead is doing). Shockwave length = cars within 250 m
+  behind, not braking (under 0.3) at the time, that brake at 0.5 or more on a straight or an exit within the next 3 s.
+- Sim sets: `traffic_sim.ts --tracks all --seeds 1-8 --laps 10 --workers 4` (switch defaults), runs in
+  `tools/race/out/traffic/runs/l10` (not committed); jam self-play: seed 1, 10 laps, one race per track.
+
+#### 1 and 2. Slow laps, real against sim
+
+#### Laps slower than k x the car's own median lap (whole race)
+
+Real (MyLaps), per event:
+
+| | cars | usable car-laps | > 1.05 x median | > 1.1 x median | > 1.2 x median | > 1.3 x median | > 1.5 x median |
+|---|---|---|---|---|---|---|---|
+| Laguna Seca (Oct 2026) | 45 | 5190 | 19.65 % (1020) | 8.86 % (460) | 2.27 % (118) | 0.54 % (28) | 0.08 % (4) |
+| Sonoma (Mar 2026) | 137 | 20981 | 28.06 % (5888) | 18.26 % (3832) | 8.38 % (1758) | 3.92 % (823) | 1.41 % (296) |
+| Buttonwillow (Sep 2026) | 100 | 17356 | 18.97 % (3292) | 8.63 % (1497) | 2.91 % (505) | 1.44 % (250) | 0.86 % (149) |
+| Mid-Ohio (Apr 2026) | 87 | 20638 | 18.45 % (3808) | 7.75 % (1600) | 2.03 % (418) | 1.25 % (257) | 0.81 % (167) |
+
+Sim (traffic_sim, lane model, switch defaults, 10 laps), per track, pooled over the seeds:
+
+| | car-races | usable car-laps | > 1.05 x median | > 1.1 x median | > 1.2 x median | > 1.3 x median | > 1.5 x median |
+|---|---|---|---|---|---|---|---|
+| buttonwillow | 800 | 6228 | 9.31 % (580) | 1.20 % (75) | 0.00 % (0) | 0.00 % (0) | 0.00 % (0) |
+| laguna_seca | 360 | 2660 | 25.86 % (688) | 16.17 % (430) | 3.31 % (88) | 0.19 % (5) | 0.00 % (0) |
+| mid_ohio | 688 | 5182 | 8.82 % (457) | 1.10 % (57) | 0.00 % (0) | 0.00 % (0) | 0.00 % (0) |
+| sonoma | 1072 | 8219 | 17.01 % (1398) | 4.57 % (376) | 0.17 % (14) | 0.00 % (0) | 0.00 % (0) |
+
+Quantiles of lap time over the reference lap (real, then sim):
+
+| lap / reference lap | median | p90 | p95 | p99 | p99.9 |
+|---|---|---|---|---|---|
+| Laguna Seca (Oct 2026) | 0.997 | 1.093 | 1.138 | 1.259 | 1.419 |
+| Sonoma (Mar 2026) | 0.994 | 1.176 | 1.270 | 1.600 | 11.271 |
+| Buttonwillow (Sep 2026) | 0.996 | 1.089 | 1.145 | 1.387 | 248.113 |
+| Mid-Ohio (Apr 2026) | 0.996 | 1.085 | 1.129 | 1.381 | 10.247 |
+| sim buttonwillow | 1.000 | 1.047 | 1.066 | 1.103 | 1.150 |
+| sim laguna_seca | 1.000 | 1.144 | 1.184 | 1.258 | 1.319 |
+| sim mid_ohio | 1.000 | 1.047 | 1.064 | 1.102 | 1.145 |
+| sim sonoma | 1.001 | 1.072 | 1.097 | 1.152 | 1.212 |
+
+Per-seed share over 1.3 x (min / median / max):
+
+- buttonwillow: 0.00 / 0.00 / 0.00 % over 8 seeds
+- laguna_seca: 0.00 / 0.00 / 0.61 % over 8 seeds
+- mid_ohio: 0.00 / 0.00 / 0.00 % over 8 seeds
+- sonoma: 0.00 / 0.00 / 0.00 % over 8 seeds
+
+#### Laps slower than k x the median of the lap's own stint (laps between two pit laps)
+
+Real (MyLaps), per event:
+
+| | cars | usable car-laps | > 1.05 x median | > 1.1 x median | > 1.2 x median | > 1.3 x median | > 1.5 x median |
+|---|---|---|---|---|---|---|---|
+| Laguna Seca (Oct 2026) | 45 | 5190 | 10.33 % (536) | 3.14 % (163) | 0.37 % (19) | 0.12 % (6) | 0.08 % (4) |
+| Sonoma (Mar 2026) | 137 | 20981 | 24.57 % (5155) | 15.79 % (3312) | 7.20 % (1511) | 3.32 % (697) | 1.21 % (253) |
+| Buttonwillow (Sep 2026) | 100 | 17356 | 13.47 % (2337) | 5.38 % (933) | 1.83 % (318) | 1.08 % (187) | 0.82 % (142) |
+| Mid-Ohio (Apr 2026) | 87 | 20638 | 13.28 % (2740) | 5.28 % (1090) | 1.54 % (317) | 1.01 % (208) | 0.77 % (158) |
+
+Sim (traffic_sim, lane model, switch defaults, 10 laps), per track, pooled over the seeds:
+
+| | car-races | usable car-laps | > 1.05 x median | > 1.1 x median | > 1.2 x median | > 1.3 x median | > 1.5 x median |
+|---|---|---|---|---|---|---|---|
+| buttonwillow | 800 | 6228 | 9.31 % (580) | 1.20 % (75) | 0.00 % (0) | 0.00 % (0) | 0.00 % (0) |
+| laguna_seca | 360 | 2660 | 25.86 % (688) | 16.17 % (430) | 3.31 % (88) | 0.19 % (5) | 0.00 % (0) |
+| mid_ohio | 688 | 5182 | 8.82 % (457) | 1.10 % (57) | 0.00 % (0) | 0.00 % (0) | 0.00 % (0) |
+| sonoma | 1072 | 8219 | 17.01 % (1398) | 4.57 % (376) | 0.17 % (14) | 0.00 % (0) | 0.00 % (0) |
+
+Quantiles of lap time over the reference lap (real, then sim):
+
+| lap / reference lap | median | p90 | p95 | p99 | p99.9 |
+|---|---|---|---|---|---|
+| Laguna Seca (Oct 2026) | 0.999 | 1.051 | 1.079 | 1.145 | 1.313 |
+| Sonoma (Mar 2026) | 0.998 | 1.157 | 1.246 | 1.555 | 11.539 |
+| Buttonwillow (Sep 2026) | 0.998 | 1.065 | 1.105 | 1.327 | 240.023 |
+| Mid-Ohio (Apr 2026) | 0.998 | 1.064 | 1.104 | 1.303 | 9.792 |
+| sim buttonwillow | 1.000 | 1.047 | 1.066 | 1.103 | 1.150 |
+| sim laguna_seca | 1.000 | 1.144 | 1.184 | 1.258 | 1.319 |
+| sim mid_ohio | 1.000 | 1.047 | 1.064 | 1.102 | 1.145 |
+| sim sonoma | 1.001 | 1.072 | 1.097 | 1.152 | 1.212 |
+
+Per-seed share over 1.3 x (min / median / max):
+
+- buttonwillow: 0.00 / 0.00 / 0.00 % over 8 seeds
+- laguna_seca: 0.00 / 0.00 / 0.61 % over 8 seeds
+- mid_ohio: 0.00 / 0.00 / 0.00 % over 8 seeds
+- sonoma: 0.00 / 0.00 / 0.00 % over 8 seeds
+
+
+#### 3. Jams by race
+
+Jammed = an AI car on a straight or a corner exit at under 50 % of its own profile speed there, no mishap / off / recovery of its own, in green. Everything but the "first 40 s" row is after the first 40 s of green.
+
+| | owner Sonoma 5 laps | Sonoma self-play | Laguna self-play | Buttonwillow self-play | Mid-Ohio self-play |
+|---|---|---|---|---|---|
+| AI cars | 133 | 134 | 45 | 100 | 86 |
+| laps by the leader | 5.0 | 10.0 | 10.0 | 10.0 | 10.0 |
+| jam car-seconds per race lap | 212.1 | 217.0 | 102.6 | 126.5 | 379.4 |
+| jam car-seconds per car-lap | 1.59 | 1.62 | 2.28 | 1.27 | 4.41 |
+| share of all car-time, % | 1.01 | 0.98 | 1.68 | 0.73 | 3.42 |
+| first 40 s of green: jam car-seconds (largest queue) | 683.0 (31) | 620.7 (32) | 9.5 (3) | 422.1 (35) | 276.2 (17) |
+| episodes per car-lap | 1.08 | 1.05 | 0.62 | 0.90 | 1.93 |
+| episodes of 3 s or more | 88 | 168 | 113 | 124 | 466 |
+| episode duration median / p90 / max, s | 1.1 / 3.2 / 7.8 | 1.1 / 3.1 / 13.6 | 2.0 / 9.2 / 22.4 | 0.9 / 3.5 / 9.0 | 1.8 / 5.0 / 11.6 |
+| queue size median / p90 / max | 1.0 / 2.0 / 6 | 1.0 / 3.0 / 8 | 1.0 / 3.0 / 8 | 1.0 / 3.0 / 7 | 1.0 / 4.0 / 9 |
+| samples with a queue of 3 or more, % | 9.9 | 10.3 | 15.5 | 15.8 | 25.8 |
+| episode-seconds on lap 1 after the start window (share of all episode-seconds, %) | 228.0 (21.8) | 297.6 (13.9) | 152.8 (14.7) | 501.6 (39.1) | 275.4 (7.2) |
+| episode-seconds per lap on laps 2+ | 204.8 | 205.2 | 98.2 | 86.8 | 396.4 |
+| car-seconds whose chain runs through a passing car, % | 79.5 | 76.2 | 41.6 | 66.7 | 79.5 |
+
+Head of the queue (the first car on the follow chain not itself capped by the car ahead): share of the jam car-seconds, %:
+
+| | owner Sonoma 5 laps | Sonoma self-play | Laguna self-play | Buttonwillow self-play | Mid-Ohio self-play |
+|---|---|---|---|---|---|
+| passing a car (limiter lane) | 16.5 | 20.8 | 1.3 | 49.2 | 26.6 |
+| free, on its own pace (a slower car ahead of faster ones) | 19.3 | 14.8 | 51.4 | 8.6 | 20.0 |
+| making room for a passer (give-way / lift) | 14.8 | 13.8 | 15.4 | 10.5 | 9.8 |
+| alone, slow on its own profile (accelerating) | 11.2 | 13.3 | 7.9 | 8.2 | 16.1 |
+| passing a car (limiter profile) | 11.2 | 12.0 | 14.6 | 4.5 | 12.9 |
+| pinch give-way | 13.7 | 11.5 | 6.9 | 10.1 | 7.7 |
+| grip limiter | 7.5 | 6.3 | 0.4 | 4.9 | 5.6 |
+| off: stopped / spun / recovering | 1.2 | 3.5 | 1.9 | 1.7 | 0.0 |
+| passing a car (limiter grip) | 1.9 | 2.8 | 0.1 | 2.1 | 1.3 |
+| the player | 2.1 | 0.0 | 0.0 | 0.0 | 0.0 |
+| making room (lane shift while braking) | 0.2 | 0.6 | 0.1 | 0.0 | 0.1 |
+| passing a car (limiter offline) | 0.3 | 0.4 | 0.0 | 0.1 | 0.0 |
+| lane / off-line speed limit | 0.0 | 0.1 | 0.0 | 0.2 | 0.0 |
+| mishap slow phase (run wide) | 0.0 | 0.1 | 0.0 | 0.0 | 0.0 |
+
+Top five 100 m stations (car-seconds per lap, place):
+
+| | owner Sonoma 5 laps | Sonoma self-play | Laguna self-play | Buttonwillow self-play | Mid-Ohio self-play |
+|---|---|---|---|---|---|
+| 1 | 2900-3000 m, straight after T9: 50.97 | 2000-2100 m, straight after T6: 50.32 | 2200-2300 m, straight after T6: 44.37 | 400-500 m, straight after T1: 35.71 | 700-800 m, straight after T1: 103.58 |
+| 2 | 2000-2100 m, straight after T6: 35.97 | 2900-3000 m, straight after T9: 43.18 | 2100-2200 m, straight after T6: 17.92 | 1700-1800 m, straight after T5: 14.91 | 1700-1800 m, straight after T2: 57.29 |
+| 3 | 3500-3600 m, straight after T10: 25.42 | 3500-3600 m, straight after T10: 20.01 | 100-200 m, straight after T11: 9.78 | 500-600 m, straight after T1: 12.97 | 3000-3100 m, straight after T9: 37.93 |
+| 4 | 200-300 m, T1 exit: 19.52 | 200-300 m, T1 exit: 16.61 | 2300-2400 m, straight after T6: 6.27 | 3700-3800 m, straight after T9: 11.35 | 1800-1900 m, straight after T2: 32.77 |
+| 5 | 2800-2900 m, straight after T9: 15.74 | 900-1000 m, straight after T3a: 11.37 | 200-300 m, straight after T11: 5.93 | 900-1000 m, straight after T2: 10.70 | 2900-3000 m, straight after T9: 31.92 |
+
+Ten worst episodes (duration x peak queue), one line each: t s / lap / car / station / place / s long / peak queue / head and its state / how it ended:
+
+**owner Sonoma 5 laps**
+
+- 107.4 s, lap 1, #16, s 2863 (straight), 7.8 s, queue 5, head #53 (pinch give-way); reached T9a brake
+- 103.7 s, lap 1, #327, s 2866 (straight), 7.1 s, queue 5, head #343 (passing a car (limiter grip)); reached T10 brake
+- 68.5 s, lap 1, #21, s 2861 (straight), 6.5 s, queue 5, head #0 (passing a car (limiter lane)); reached T9a brake
+- 80.8 s, lap 1, #37, s 2832 (straight), 6.4 s, queue 5, head #39 (free, on its own pace (a slower car ahead of faster ones)); reached T9a brake
+- 66.2 s, lap 1, #544, s 2867 (straight), 5.2 s, queue 6, head #49 (making room for a passer (give-way / lift)); reached T9a brake
+- 618.8 s, lap 4, #37, s 2846 (straight), 6.2 s, queue 5, head #26 (alone, slow on its own profile (accelerating)); reached T9a brake
+- 388.0 s, lap 3, #78, s 722 (T3 exit), 5.1 s, queue 6, head #59 (pinch give-way); speed recovered (limiter follow, in a pass)
+- 66.9 s, lap 1, #707, s 2862 (straight), 5.0 s, queue 6, head #49 (making room for a passer (give-way / lift)); reached T9a brake
+- 80.2 s, lap 1, #355, s 2850 (straight), 5.9 s, queue 5, head #919 (grip limiter); reached T9a brake
+- 63.9 s, lap 1, #25, s 2878 (straight), 4.9 s, queue 6, head #321 (pinch give-way); reached T9a brake
+
+**Sonoma self-play**
+
+- 1035.9 s, lap 6, #32, s 1571 (T6 exit), 13.6 s, queue 7, head #100 (off: stopped / spun / recovering); speed recovered (limiter follow, in a pass)
+- 1034.2 s, lap 6, #420, s 1577 (T6 exit), 10.5 s, queue 7, head #100 (off: stopped / spun / recovering); speed recovered (limiter profile, in a pass)
+- 64.2 s, lap 1, #199, s 2819 (straight), 10.4 s, queue 7, head #680 (making room for a passer (give-way / lift)); reached T10 brake
+- 1053.5 s, lap 6, #144, s 1685 (T6 exit), 11.4 s, queue 6, head #444 (alone, slow on its own profile (accelerating)); speed recovered (limiter follow, in a pass)
+- 65.3 s, lap 1, #888, s 2807 (straight), 9.6 s, queue 7, head #18 (pinch give-way); reached T9a brake
+- 89.1 s, lap 1, #916, s 2853 (straight), 8.3 s, queue 8, head #750 (alone, slow on its own profile (accelerating)); reached T9a brake
+- 1050.4 s, lap 6, #3, s 1661 (T6 exit), 10.3 s, queue 6, head #3 (making room for a passer (give-way / lift)); speed recovered (limiter follow, in a pass)
+- 63.9 s, lap 1, #989, s 2828 (straight), 8.7 s, queue 7, head #680 (making room for a passer (give-way / lift)); reached T9a brake
+- 1070.3 s, lap 6, #747, s 1942 (straight), 7.4 s, queue 8, head #747 (making room for a passer (give-way / lift)); reached T7 brake
+- 1050.1 s, lap 6, #203, s 1673 (T6 exit), 9.7 s, queue 6, head #43 (alone, slow on its own profile (accelerating)); speed recovered (limiter follow)
+
+**Laguna self-play**
+
+- 760.8 s, lap 5, #83, s 2106 (straight), 17.9 s, queue 8, head #20 (free, on its own pace (a slower car ahead of faster ones)); reached T8 Corkscrew brake
+- 757.1 s, lap 5, #711, s 2093 (straight), 17.4 s, queue 8, head #711 (making room for a passer (give-way / lift)); reached T8 Corkscrew brake
+- 759.9 s, lap 5, #156, s 2112 (straight), 17.2 s, queue 8, head #20 (free, on its own pace (a slower car ahead of faster ones)); reached T8 Corkscrew brake
+- 756.8 s, lap 5, #105, s 2119 (straight), 16.7 s, queue 8, head #105 (making room for a passer (give-way / lift)); reached T8 Corkscrew brake
+- 759.3 s, lap 5, #906, s 2129 (straight), 16.2 s, queue 8, head #143 (passing a car (limiter profile)); reached T8 Corkscrew brake
+- 1142.2 s, lap 8, #74, s 2061 (T6 exit), 14.5 s, queue 7, head #49 (off: stopped / spun / recovering); speed recovered (limiter follow, in a pass)
+- 1144.9 s, lap 8, #200, s 2124 (straight), 14.0 s, queue 7, head #20 (free, on its own pace (a slower car ahead of faster ones)); reached T8 Corkscrew brake
+- 894.3 s, lap 6, #619, s 2183 (straight), 13.5 s, queue 7, head #202 (free, on its own pace (a slower car ahead of faster ones)); reached T8 Corkscrew brake
+- 565.1 s, lap 4, #74, s 2109 (straight), 15.5 s, queue 6, head #74 (making room for a passer (give-way / lift)); reached T8 Corkscrew brake
+- 949.0 s, lap 6, #100, s 2069 (T6 exit), 22.4 s, queue 4, head #785 (making room for a passer (give-way / lift)); reached T8 Corkscrew brake
+
+**Buttonwillow self-play**
+
+- 125.0 s, lap 1, #562, s 431 (straight), 9.0 s, queue 7, head #1 (pinch give-way); reached T2 brake
+- 127.0 s, lap 1, #316, s 439 (straight), 8.1 s, queue 7, head #1 (pinch give-way); reached T2 brake
+- 128.6 s, lap 1, #245, s 430 (straight), 8.0 s, queue 7, head #963 (making room for a passer (give-way / lift)); reached T2 brake
+- 90.4 s, lap 1, #888, s 423 (straight), 7.3 s, queue 7, head #801 (pinch give-way); reached T2 brake
+- 94.4 s, lap 1, #48, s 430 (straight), 7.3 s, queue 7, head #801 (passing a car (limiter lane)); reached T2 brake
+- 87.6 s, lap 1, #544, s 418 (straight), 7.1 s, queue 7, head #717 (passing a car (limiter lane)); reached T2 brake
+- 90.4 s, lap 1, #50, s 437 (straight), 7.1 s, queue 7, head #801 (pinch give-way); reached T2 brake
+- 92.6 s, lap 1, #858, s 434 (straight), 6.6 s, queue 7, head #414 (passing a car (limiter lane)); reached T2 brake
+- 139.1 s, lap 1, #11, s 429 (straight), 7.4 s, queue 6, head #98 (making room for a passer (give-way / lift)); reached T2 brake
+- 1136.3 s, lap 6, #325, s 3837 (T10 exit), 7.4 s, queue 6, head #702 (alone, slow on its own profile (accelerating)); speed recovered (limiter lane, in a pass)
+
+**Mid-Ohio self-play**
+
+- 1025.7 s, lap 8, #112, s 667 (straight), 10.0 s, queue 8, head #217 (passing a car (limiter lane)); reached T2 brake
+- 1326.0 s, lap 10, #256, s 670 (straight), 9.5 s, queue 8, head #132 (grip limiter); reached T2 brake
+- 1322.9 s, lap 9, #690, s 633 (straight), 9.4 s, queue 8, head #132 (pinch give-way); reached T2 brake
+- 1244.0 s, lap 8, #132, s 2857 (straight), 10.6 s, queue 7, head #124 (alone, slow on its own profile (accelerating)); reached T11 brake
+- 668.2 s, lap 5, #814, s 699 (straight), 8.9 s, queue 8, head #12 (pinch give-way); reached T2 brake
+- 1018.4 s, lap 8, #82, s 644 (straight), 8.9 s, queue 8, head #888 (alone, slow on its own profile (accelerating)); reached T2 brake
+- 1243.1 s, lap 8, #814, s 2874 (straight), 10.1 s, queue 7, head #124 (alone, slow on its own profile (accelerating)); reached T11 brake
+- 958.2 s, lap 7, #30, s 637 (straight), 9.8 s, queue 7, head #240 (making room for a passer (give-way / lift)); reached T2 brake
+- 1025.5 s, lap 8, #64, s 676 (straight), 8.5 s, queue 8, head #217 (passing a car (limiter lane)); reached T2 brake
+- 1215.8 s, lap 9, #97, s 1608 (straight), 8.5 s, queue 8, head #2 (alone, slow on its own profile (accelerating)); speed recovered (limiter follow, in a pass)
+
+#### 4. AI brake applications of 0.9 or more outside a braking zone (straight or corner exit): count per race lap / mean shockwave
+
+Shockwave = cars within 250 m behind, not braking at the time, that brake at 0.5 or more on a straight or exit within the next 3 s.
+
+| | owner Sonoma 5 laps | Sonoma self-play | Laguna self-play | Buttonwillow self-play | Mid-Ohio self-play |
+|---|---|---|---|---|---|
+| follow limiter: lead is passing | 200.83 / 1.47 (max 10) | 174.10 / 1.05 (max 11) | 17.10 / 0.50 (max 6) | 173.61 / 1.10 (max 6) | 136.90 / 0.96 (max 6) |
+| follow limiter: lead moving | 154.22 / 1.44 (max 8) | 145.90 / 1.11 (max 8) | 18.70 / 0.57 (max 5) | 81.61 / 1.31 (max 6) | 115.40 / 1.11 (max 7) |
+| making room for a passer | 72.01 / 1.58 (max 10) | 66.00 / 1.17 (max 8) | 26.40 / 0.69 (max 5) | 26.10 / 1.06 (max 6) | 42.00 / 0.97 (max 6) |
+| pinch guard | 43.01 / 1.37 (max 6) | 34.70 / 1.20 (max 7) | 15.00 / 0.60 (max 7) | 45.30 / 1.41 (max 6) | 37.30 / 1.30 (max 7) |
+| lane / off-line limit | 23.40 / 1.44 (max 5) | 28.80 / 1.27 (max 6) | 0.10 / 0.00 (max 0) | 51.30 / 1.38 (max 6) | 3.50 / 1.23 (max 3) |
+| profile (corner approach outside the label) | 19.80 / 1.25 (max 8) | 20.70 / 0.99 (max 7) | 3.50 / 0.60 (max 4) | 6.50 / 0.89 (max 5) | 10.60 / 0.79 (max 6) |
+| follow limiter: lead braking (shockwave) | 11.40 / 1.65 (max 5) | 10.30 / 0.92 (max 6) | 0.60 / 0.33 (max 1) | 4.70 / 1.62 (max 6) | 3.20 / 0.88 (max 4) |
+| mishap / off | 9.60 / 0.67 (max 4) | 11.30 / 0.92 (max 4) | 1.10 / 0.27 (max 2) | 0.70 / 1.29 (max 4) | - |
+| follow limiter: lead off / mishap | 3.00 / 0.40 (max 4) | 9.60 / 0.89 (max 6) | 0.10 / 2.00 (max 2) | 0.50 / 1.80 (max 4) | 0.40 / 1.25 (max 5) |
+| follow limiter: lead is the player | 4.20 / 1.43 (max 3) | - | - | - | - |
+| follow limiter: lead stopped | 0.60 / 3.33 (max 5) | 0.80 / 1.50 (max 6) | - | - | - |
+| grip limiter | 0.40 / 1.00 (max 2) | - | - | - | - |
+| all | 542.48 / 1.44 | 502.21 / 1.09 | 82.60 / 0.59 | 390.33 / 1.22 | 349.31 / 1.04 |
+
+#### Reading
+
+1. Slow laps: the sim has no big-loss laps (nothing over 1.3 x on three tracks, 0.19 % on Laguna, 8 seeds) where the real field has
+   0.5-3.9 % over 1.3 x and 0.1-1.4 % over 1.5 x; the real tail is incidents, not queues. At 1.05 x the three big tracks sit
+   under the real field (per stint: Buttonwillow, Mid-Ohio 9 % against 13 %, Sonoma 17 % against 25 %), and Laguna's sim is above
+   its real field at 1.05 x and 1.1 x (26 % / 16 % against 10 % / 3.1 % per stint). So lap times do not show the owner's jams: they are
+   local, a few seconds long, and do not add up to lost laps.
+2. The owner's race is not worse than the AI-only race: 1.59 jam car-seconds per car-lap against 1.62 for Sonoma self-play (212 and
+   217 per race lap); the player is the head of 2.1 % of the jam car-seconds. Mid-Ohio self-play is the jammiest (4.41 per car-lap,
+   queues of 3 or more in 26 % of samples), Buttonwillow the least (1.27).
+3. Where: the stretch before a braking zone. The top stations are the straight after T9 and after T6 at Sonoma (then T10, the T1
+   exit), after T6 at Laguna, after T1 and T2 at Mid-Ohio; 8 of the 10 worst episodes of the owner's race are on lap 1 (63-108 s) and 9 are on the
+   T9 straight (s 2830-2880), and most end at "reached the braking zone". The rolling start is the biggest single jam: 620-680 jam
+   car-seconds in the first 40 s of green at Sonoma (queues of 31-32), 422 at Buttonwillow (35), against 212 per lap afterwards.
+4. What starts them, by head state (owner's race, share of jam car-seconds): a car in a pass 30 % (lane-speed limit 16.5 %, profile
+   11.2 %, grip 1.9 %), a slower car on its own pace ahead of faster ones 19 %, a car making room for a passer (give-way / lift)
+   15 %, the pinch guard 14 %, a car still accelerating on its own profile 11 %, the grip limiter 7.5 %, the player 2 %, a car
+   off / recovering 1 %. 76-80 % of the jam car-seconds at Sonoma and Mid-Ohio sit on a follow chain that runs through a car that is
+   itself passing another (42 % at Laguna, 67 % at Buttonwillow): the jam is the passing, the cars behind a pass wait for it.
+5. Brake shockwaves are short: 0.9+ brake applications outside a braking zone run at 540 per lap in the owner's race (500 Sonoma
+   self-play), 65 % of them "follow limiter: the lead is passing / moving", 13 % making room for a passer; the mean cars behind that
+   brake within 3 s is 1.4 (owner) and 1.1 (Sonoma self-play) overall and 1.0-1.65 by reason, median 1, so these are single-car
+   brakes, not waves. The 57 applications behind a car that was itself braking give 1.65. The longest shockwaves (10-11 cars) come
+   from "lead is passing" and "making room for a passer" at Sonoma.
+
+**Could not measure.** The real field's within-lap queues (MyLaps has one crossing per lap; no position data), so "jams that do not
+happen in a real race" has no real number here, only the lap-level slow-lap shares, which mix incidents with traffic. The share of
+the real slow laps that is traffic rather than incident. Self-play is one seed per track (no spread); the owner's race is one
+recording. Samples are 10 Hz, so a jam shorter than 0.2 s and a brake shorter than 0.1 s are missed or merged. The head state of an
+episode is the state at its first sample (it can change during the episode); "jam" at 50 % of the profile speed is a threshold
+chosen here, not the owner's, and it counts a fast car held at the pace of a slower one as jammed (19 % of the owner's jam
+car-seconds have such a head).

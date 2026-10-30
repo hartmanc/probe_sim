@@ -3,6 +3,7 @@
 import type { Analysis, PassRow, CheckReport } from './replay_core';
 import { curves, D_BINS, G_BINS, wilson, type Curves, type Pair } from './traffic_curves';
 import { median, quantile } from './pace_rules';
+import { jamsMd } from './jams_core';
 
 const f1 = (x: number | null | undefined): string => (x === null || x === undefined || !Number.isFinite(x) ? '-' : x.toFixed(1));
 const f2 = (x: number | null | undefined): string => (x === null || x === undefined || !Number.isFinite(x) ? '-' : x.toFixed(2));
@@ -41,6 +42,7 @@ export function raceMd(name: string, check: CheckReport, a: Analysis): string {
   L.push('', '## Four wheels off', '', '| t s | where |', '|---|---|');
   for (const c of a.fourOffs) L.push(`| ${f1(c.t)} | ${c.where} (s ${c.s}) |`);
   if (!a.fourOffs.length) L.push('| (none) |');
+  if (a.jams) L.push('', jamsMd(a.jams, name));
   return L.join('\n') + '\n';
 }
 

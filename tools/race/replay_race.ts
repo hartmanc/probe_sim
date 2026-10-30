@@ -2,6 +2,7 @@
 //   npx tsx tools/race/replay_race.ts <recording.json[.gz]> [more files] [--force] [--out <dir>]
 //   npx tsx tools/race/replay_race.ts --dir <dir of recordings> [--rerun] [--force] [--out <dir>]     (+ the aggregate, filtered on evidence:
 //     --min-laps N (default the race's laps) --max-fouroff-per-lap 0.5 --max-contacts-per-lap 0.5 --max-lap-spread 1.25 --aborted (keep aborted ones))
+//   add --jams: the jam section (tools/race/jams_core.ts: where the field queues, what the head of each queue is doing, the brake shockwaves)
 //   npx tsx tools/race/replay_race.ts --fetch <id> --url https://<host>/api/races                     (fetch token from env RACES_FETCH_TOKEN)
 //   npx tsx tools/race/replay_race.ts --fetch-day 2026-10-30 --url https://<host>/api/races            (saves the day's recordings to <out>/recordings)
 // A recording is refused when its AI version or build sha is not this tree's (--force runs it and reports the mismatch), then the
@@ -38,7 +39,7 @@ function readRecording(path: string): RaceRecording | null {
 
 async function replayOne(rec: RaceRecording, currentSha: string): Promise<ReplayResult> {
   const assets = await loadSimAssets(rec.trackId, 'probe_gt');
-  return replayRecording(rec, { assets, pace: loadPace(rec.trackId), identity: loadIdentityJson(rec.trackId), currentSha, force, analyse: true });
+  return replayRecording(rec, { assets, pace: loadPace(rec.trackId), identity: loadIdentityJson(rec.trackId), currentSha, force, analyse: true, jams: has('--jams') });
 }
 
 async function tokenFetch(url: string): Promise<Response> {

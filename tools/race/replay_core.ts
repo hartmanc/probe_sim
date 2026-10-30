@@ -19,6 +19,7 @@ import { makeWhere } from './selfplay_where';
 import { median } from './pace_rules';
 import { pairsWithDrops, type Pair } from './traffic_curves';
 import { simRefs } from './traffic_sim';
+import { JamTracker, type JamsResult } from './jams_core';
 
 // ---------------------------------------------------------------- results
 
@@ -74,6 +75,8 @@ export interface Analysis {
   };
   crossings: RaceCrossing[];
   pairs: Pair[];
+  /** the jam measurement (`--jams`, tools/race/jams_core.ts) */
+  jams?: JamsResult;
 }
 export interface ReplayResult { check: CheckReport; analysis: Analysis | null; steps: number; wallS: number }
 
@@ -86,6 +89,8 @@ export interface ReplayOptions {
   /** go on although the version, build or config differ */
   force?: boolean;
   analyse?: boolean;
+  /** measure the jams too (jams_core.ts; read only) */
+  jams?: boolean;
   /** stop after this many physics steps (tests) */
   maxSteps?: number;
 }
@@ -123,7 +128,7 @@ export function replayRecording(rec: RaceRecording, o: ReplayOptions): ReplayRes
   if (!check.config && !o.force) return refuse(`refused: ${check.mismatches.join('; ')}`);
 
   const tap = new RaceTap(sim, dir);
-  const an = o.analyse ? new Analyzer(sim, dir, rec) : null;
+  const an = o.analyse ? new Analyzer(sim, dir, rec, !!o.jams) : null;
   const rows = rec.inputs.rows, refs = rec.inputs.ref, events = rec.events;
   const limit = Math.min(rec.truncated?.atStep ?? rec.inputs.steps, o.maxSteps ?? Infinity, rec.inputs.steps);
   let ri = 0, fi = 0, ei = 0;
@@ -226,8 +231,10 @@ class Analyzer {
   private fourOffs: Analysis['fourOffs'] = [];
   private offFor = 0; private offFired = false;
   private readonly L: number;
+  private readonly jt: JamTracker | null;
 
-  constructor(private readonly sim: HotlapSim, private readonly dir: RaceDirector, private readonly rec: RaceRecording) {
+  constructor(private readonly sim: HotlapSim, private readonly dir: RaceDirector, private readonly rec: RaceRecording, jams = false) {
+    this.jt = jams ? new JamTracker(dir, rec.trackId) : null;
     this.tr = dir.traffic; this.cars = dir.cars; this.n = dir.cars.length; this.P = dir.player.idx; this.L = dir.line.L;
     this.where = makeWhere(dir.line);
     this.ring = new Float32Array((WIN + 1) * this.n * F);
@@ -248,6 +255,7 @@ class Analyzer {
       this.contacts.push({ t: r2(dir.time), car: this.cars[other].number, closing: r2(ev.closing), s: Math.round(tr.s[P]), where: this.where(tr.s[P]) });
     }
     if (this.sim.stepIndex % TICK === 0) this.tick();
+    this.jt?.afterStep(this.sim.stepIndex);
   }
 
   /** Where the AI car is in the lane model: lifting (being passed), making room, in a pass, following, alone. */
@@ -372,7 +380,7 @@ class Analyzer {
     const res = this.dir.getResults();
     return {
       trackId: this.rec.trackId, seed: this.rec.seed, raceLaps: this.rec.laps, aborted: !!this.rec.aborted, steps,
-      passes, waits: this.waits, contacts: this.contacts, fourOffs: this.fourOffs, playerLaps: laps, crossings: cr, pairs,
+      passes, waits: this.waits, contacts: this.contacts, fourOffs: this.fourOffs, playerLaps: laps, crossings: cr, pairs, ...(this.jt ? { jams: this.jt.finish() } : {}),
       summary: {
         playerBest: mine, fieldMedianBest: bests.length ? r2(median(bests)) : null, rankByBest: mine === null ? null : bests.indexOf(mine) + 1, cars: this.n,
         passesMade: passes.filter((p) => p.kind === 'made').length, passesReceived: passes.filter((p) => p.kind === 'received').length,
