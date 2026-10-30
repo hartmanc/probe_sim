@@ -13,7 +13,7 @@ function rec(rows = 3000, over: Partial<RaceRecording> = {}): RaceRecording {
     config: { playerNumber: '619' },
     inputs: { v: 1, physics: 'p', track: 'laguna_seca', car: 'probe_gt', hz: 100, dt: 0.001, reset: { pos: [0, 0, 0], heading: 0, speed: 0 }, ref: [[0, null]], rows: r, steps: rows * 10 },
     events: [], live: { lapTimes: [100, 101], crossings: [{ car: '619', lapNr: 0, t: 5 }, { car: '619', lapNr: 1, t: 105 }, { car: '619', lapNr: 2, t: 206 }, { car: '12', lapNr: 1, t: 99 }], results: null },
-    snapshot: null, owner: false, started: '2026-10-30T00:00:00.000Z', durationS: rows * 0.01, ...over,
+    snapshot: null, started: '2026-10-30T00:00:00.000Z', durationS: rows * 0.01, ...over,
   };
 }
 

@@ -1,8 +1,8 @@
 // Vercel Function: race recordings (docs/races.md).
 //   POST /api/races  (a RaceRecording as JSON or gzip)  -> 204
-//   GET  /api/races?day=YYYY-MM-DD | ?id=<id>            -> the owner's listing / one recording (header X-Owner-Token)
-// Storage: the scoreboard's store (Upstash Redis when its env is set, else in-memory). The owner token is RACES_OWNER_TOKEN (env;
-// unset: nobody is the owner and the GET side answers 403).
+//   GET  /api/races?day=YYYY-MM-DD | ?id=<id>            -> the replay tool's listing / one recording (header X-Fetch-Token)
+// Storage: the scoreboard's store (Upstash Redis when its env is set, else in-memory). The fetch token is RACES_FETCH_TOKEN (env;
+// unset: the GET side answers 403).
 import { installResolveHook } from './_lib/resolve-hook.js';
 
 installResolveHook();
@@ -19,7 +19,7 @@ function getHandler(): Promise<Handler> {
     const store = storeFromEnv(process.env);
     const allowedOrigins = (process.env.SCOREBOARD_ALLOWED_ORIGINS ?? '').split(',').map((s) => s.trim()).filter(Boolean);
     return (req: Request) => handleRaces(req, {
-      store, allowedOrigins, ownerToken: process.env.RACES_OWNER_TOKEN || undefined,
+      store, allowedOrigins, fetchToken: process.env.RACES_FETCH_TOKEN || undefined,
       log: (m) => console.log(`[races] ${m}`),
     });
   })();

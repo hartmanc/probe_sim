@@ -27,7 +27,7 @@ import { TRACK, TRACK_ID } from '../track-choice';
 import { FieldAudio, familyFor, FIELD_VOICES_DESKTOP, FIELD_VOICES_PHONE, type FamilyIndex, type Layout } from '../audio-field';
 import { newDirectorTiming, parsePerfFlags, perf, storedWorker, workerChoice } from '../perf';
 import { RaceWorkerClient, applySnapshot, installMirror, newMirrorState, type MirrorState } from '../race-worker-client';
-import { RaceCapture, downloadRecording, ownerToken, parseRecordMode, uploadRecording } from '../race-record';
+import { RaceCapture, downloadRecording, parseRecordMode, uploadRecording } from '../race-record';
 import type { RaceRecording } from '../../scoreboard/racerec';
 import type { ConeLineLike, FieldAudioCar, FieldAudioHook, FieldAudioLike, FieldCarSound, GameMode, ModeContext, ModeHud, RaceServices } from './mode';
 
@@ -405,7 +405,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
       if (!rec) return;
       lastRec = rec;
       if (recMode === 'download') sv?.menu.refresh();
-      if (!pf.playerAi) void uploadRecording(rec, { token: ownerToken() });
+      if (!pf.playerAi) void uploadRecording(rec);
     }, (e) => console.info('race recording failed:', e));
   };
 
@@ -430,7 +430,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
     if (useWorker) startWorker(dir);
     if (recOn) {
       capture = new RaceCapture({
-        dir, sim: sv.sim, trackId: TRACK_ID, owner: ownerToken() !== null, worker: wk ? { client: wk, gen: wk.generation } : null,
+        dir, sim: sv.sim, trackId: TRACK_ID, worker: wk ? { client: wk, gen: wk.generation } : null,
         build: { seed, laps, realGrid: fieldSelected, playerAi: pf.playerAi, lod: pf.lod ?? LOD_DEFAULT, strengthPct: strength, closeRacing: ov.closeRacing ?? null, planner: ov.planner ?? null,
           fieldCap: fieldSelected ? Math.max(0, d.cars.length - 1) : null, ref: sv.sim.refId, autoShift: sv.sim.autoShift, abs: sv.sim.abs },
       });
@@ -631,7 +631,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
           note: submitState === 'done' ? 'submitted' : submitState === 'busy' ? 'submitting…' : shortRace ? `${RACE_LAPS}-lap races only` : undefined,
           disabled: submitState !== 'idle' || shortRace || !me || !(me.metres > 0), run: submit,
         } as MenuEntry]),
-        // ?record=download: the race's recording as a file, for the owner's own machine
+        // ?record=download: the race's recording as a file, as a file
         ...(recMode === 'download' ? [{ kind: 'action', id: 'raceRecording', label: 'Download the recording', note: lastRec ? undefined : 'not ready', disabled: !lastRec, run: () => { if (lastRec) downloadRecording(lastRec); } } as MenuEntry] : []),
         { kind: 'action', id: 'raceAgain', label: 'Race again (new seed)', run: () => { mode.restart(); sv?.menu.close(); } },
         { kind: 'action', id: 'raceMain', label: 'Main menu', run: () => { resultsWanted = false; sv?.mainMenu(); } },

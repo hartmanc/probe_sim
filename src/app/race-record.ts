@@ -17,25 +17,6 @@ export function parseRecordMode(search: string): RecordMode {
   return v === '0' || v === 'off' || v === 'false' ? 'off' : v === 'download' ? 'download' : 'on';
 }
 
-/** The owner token (owner, 30 Oct 2026): a long random string only the owner knows; the server compares it with RACES_OWNER_TOKEN.
- *  `#owner=<token>` stores it on this device and is then cleared from the address bar. It is a hash fragment on purpose: the browser
- *  never sends it to the server, so it cannot land in a request log (a `?owner=` query would). It is never part of a recording. */
-export const LS_OWNER_TOKEN = 'probe-sim.owner.token';
-type StorageLike = Pick<Storage, 'getItem' | 'setItem'>;
-const defaultStorage = (): StorageLike | null => { try { return typeof localStorage !== 'undefined' ? localStorage : null; } catch { return null; } };
-const defaultHash = (): string => (typeof location !== 'undefined' ? location.hash : '');
-const clearHash = (): void => { try { if (typeof history !== 'undefined' && typeof location !== 'undefined') history.replaceState(null, '', location.pathname + location.search); } catch { /* no history */ } };
-export function ownerToken(hash: string = defaultHash(), store: StorageLike | null = defaultStorage(), clear: () => void = clearHash): string | null {
-  const ok = (t: string | null | undefined): t is string => !!t && /^[A-Za-z0-9_-]{16,128}$/.test(t);
-  const given = hash.startsWith('#') ? new URLSearchParams(hash.slice(1)).get('owner') : null;   // the fragment only
-  if (given !== null) clear();   // whatever it held, the address bar is cleaned
-  try {
-    if (ok(given)) { store?.setItem(LS_OWNER_TOKEN, given); return given; }
-    const have = store?.getItem(LS_OWNER_TOKEN);
-    return ok(have) ? have : null;
-  } catch { return ok(given) ? given : null; }
-}
-
 /** `/api/races` beside wherever the scoreboard API is (same `?api=` rule as the scoreboard). */
 export function racesUrl(base: string = apiBase()): string { return base.replace(/\/scores$/, '/races'); }
 
@@ -43,7 +24,7 @@ export function racesUrl(base: string = apiBase()): string { return base.replace
 export const buildSha = (): string => (typeof __GIT_SHA__ !== 'undefined' ? __GIT_SHA__ : '');
 
 export interface CaptureOptions {
-  dir: RaceDirector; sim: HotlapSim; trackId: string; build: RecBuild; owner: boolean;
+  dir: RaceDirector; sim: HotlapSim; trackId: string; build: RecBuild;
   /** the Worker that steps this race (race generation `gen`), or null on the main-thread path */
   worker?: { client: Pick<RaceWorkerClient, 'flushRec'>; gen: number } | null;
 }
@@ -82,7 +63,7 @@ export class RaceCapture {
       const o = this.o;
       return buildRecording({
         trackId: o.trackId, fieldId: TRACKS[o.trackId]?.pace ?? '', seed: o.build.seed, laps: o.build.laps, aiVersion: String(R.AI_VERSION), buildSha: buildSha(),
-        physics: sim.physics, build: o.build, config: d.config, cars: d.cars, L: d.L, carId: sim.assets.carId, owner: o.owner, started: this.started, durationS, aborted,
+        physics: sim.physics, build: o.build, config: d.config, cars: d.cars, L: d.L, carId: sim.assets.carId, started: this.started, durationS, aborted,
       }, new RecAssembler().add(d.chunk), d.live);
     });
     return this.result;
@@ -91,12 +72,11 @@ export class RaceCapture {
 
 type FetchFn = (input: string, init?: RequestInit) => Promise<Response>;
 /** Pack (gzip, within REC_MAX_BYTES, cut if need be) and POST once. Silent to the player: a console line on failure. */
-export async function uploadRecording(rec: RaceRecording, o: { url?: string; token?: string | null; fetchFn?: FetchFn } = {}): Promise<boolean> {
+export async function uploadRecording(rec: RaceRecording, o: { url?: string; fetchFn?: FetchFn } = {}): Promise<boolean> {
   try {
     const packed = await packRecording(rec);
     if (!packed) { console.info('race recording: too large to send, dropped'); return false; }
     const headers: Record<string, string> = { 'Content-Type': packed.gzip ? 'application/gzip' : 'application/json' };
-    if (o.token) headers['X-Owner-Token'] = o.token;
     const res = await (o.fetchFn ?? ((u, i) => fetch(u, i)))(o.url ?? racesUrl(), { method: 'POST', headers, body: packed.body as BodyInit });
     if (!res.ok && res.status !== 204) { console.info(`race recording: not accepted (HTTP ${res.status})`); return false; }
     return true;
@@ -106,7 +86,7 @@ export async function uploadRecording(rec: RaceRecording, o: { url?: string; tok
   }
 }
 
-/** `?record=download`: the recording as a file (an <a download> on a Blob URL; for the owner's own machine). */
+/** `?record=download`: the recording as a file (an <a download> on a Blob URL). */
 export function downloadRecording(rec: RaceRecording): void {
   const url = URL.createObjectURL(new Blob([JSON.stringify(toWire(rec))], { type: 'application/json' }));
   const a = document.createElement('a');

@@ -80,8 +80,6 @@ export interface RaceRecording {
   events: RecEvent[];
   live: RecLive;
   snapshot: RecSnapshot | null;
-  /** the owner token was present (the server verifies it; this flag is only the client's claim) */
-  owner: boolean;
   started: string;
   durationS: number;
   aborted?: true;
@@ -124,7 +122,7 @@ export class RecAssembler {
 export interface RecMeta {
   trackId: string; fieldId: string; seed: number; laps: number; aiVersion: string; buildSha: string; physics: string;
   build: RecBuild; config: Record<string, unknown>; cars: string[]; L: number; carId: string;
-  owner: boolean; started: string; durationS: number; aborted: boolean;
+  started: string; durationS: number; aborted: boolean;
 }
 
 export function buildRecording(meta: RecMeta, a: RecAssembler, live: RecLive): RaceRecording {
@@ -136,7 +134,7 @@ export function buildRecording(meta: RecMeta, a: RecAssembler, live: RecLive): R
   return {
     v: REC_FORMAT, trackId: meta.trackId, fieldId: meta.fieldId, seed: meta.seed, laps: meta.laps, aiVersion: meta.aiVersion, buildSha: meta.buildSha,
     physics: meta.physics, build: meta.build, config: meta.config, inputs, events: a.events, live, snapshot,
-    owner: meta.owner, started: meta.started, durationS: Math.round(meta.durationS * 10) / 10, ...(meta.aborted ? { aborted: true as const } : {}),
+    started: meta.started, durationS: Math.round(meta.durationS * 10) / 10, ...(meta.aborted ? { aborted: true as const } : {}),
   };
 }
 
@@ -197,7 +195,6 @@ export function checkRecording(x: unknown, o: { maxSteps?: number; maxCars?: num
   for (const k of ['trackId', 'fieldId', 'aiVersion', 'buildSha', 'physics', 'started'] as const) if (!isStr(rc[k], 96)) r.push(`${k} must be a short string`);
   if (!isInt(rc.seed) || rc.seed < 0 || rc.seed > 4294967295) r.push('seed must be a uint32');
   if (!isInt(rc.laps) || rc.laps < 1 || rc.laps > 10) r.push('laps must be 1..10');
-  if (typeof rc.owner !== 'boolean') r.push('owner must be a boolean');
   if (!isNum(rc.durationS) || rc.durationS < 0 || rc.durationS > 6000) r.push('durationS out of range');
   const b = rc.build;
   if (!b || typeof b !== 'object' || !isInt(b.seed) || !isInt(b.laps) || typeof b.realGrid !== 'boolean' || typeof b.playerAi !== 'boolean' || typeof b.lod !== 'boolean' || !isNum(b.strengthPct)

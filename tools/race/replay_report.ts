@@ -1,5 +1,5 @@
 // The reports of tools/race/replay_race.ts: one race as markdown, and the aggregate over a directory of re-runs (human attacker
-// against the AI attackers in the same races, the owner's recordings apart from the public's). Pure: strings in, strings out.
+// against the AI attackers in the same races, over the recordings that pass the evidence filters). Pure: strings in, strings out.
 import type { Analysis, PassRow, CheckReport } from './replay_core';
 import { curves, D_BINS, G_BINS, wilson, type Curves, type Pair } from './traffic_curves';
 import { median, quantile } from './pace_rules';
@@ -15,7 +15,7 @@ const atPass = (p: PassRow) => p.other.find((s) => s.dt === 0) ?? p.other[p.othe
 export function raceMd(name: string, check: CheckReport, a: Analysis): string {
   const L: string[] = [];
   L.push(`# ${name}`, '');
-  L.push(`${a.trackId} · seed ${a.seed} · ${a.raceLaps} laps · ${a.owner ? 'owner' : 'public'}${a.aborted ? ' · aborted' : ''} · ${a.steps} steps (${(a.steps / 1000).toFixed(0)} s)`);
+  L.push(`${a.trackId} · seed ${a.seed} · ${a.raceLaps} laps${a.aborted ? ' · aborted' : ''} · ${a.steps} steps (${(a.steps / 1000).toFixed(0)} s)`);
   L.push('', `**Check: ${check.ok ? 'passed' : 'FAILED'}** (config ${check.config ? 'ok' : 'differs'}, live lap times and crossings ${check.live ? 'ok' : 'differ'}, snapshots ${check.snapshot === null ? 'none' : check.snapshot ? 'ok' : 'differ'})`);
   for (const m of check.mismatches) L.push(`- mismatch: ${m}`);
   for (const m of check.problems) L.push(`- ${m}`);
@@ -103,10 +103,48 @@ function yardstick(human: Pair[], ai: Pair[]): string {
   return L.join('\n');
 }
 
-export function aggregateMd(files: RaceFile[], title = 'Race recordings, aggregate'): string {
-  const ok = files.filter((f) => f.check.ok), flagged = files.filter((f) => !f.check.ok);
-  const L: string[] = [`# ${title}`, '', `${files.length} recordings re-run; ${ok.length} reproduced exactly, ${flagged.length} flagged and left out of the numbers.`, ''];
-  if (flagged.length) { L.push('Flagged:', ''); for (const f of flagged) L.push(`- ${f.name}: ${f.check.problems[0] ?? f.check.mismatches[0] ?? 'differs'}`); L.push(''); }
-  L.push(...group(ok.filter((f) => f.analysis.owner), 'Owner'), '', ...group(ok.filter((f) => !f.analysis.owner), 'Public'), '', ...group(ok, 'All'));
+/** What a recording must show to count in the aggregate. Evidence only: nothing here knows who drove. */
+export interface AggFilters {
+  /** laps the player must have completed (default: the race's full lap count) */
+  minLaps?: number;
+  /** four wheels off, per completed lap, at most */
+  maxFourOffPerLap: number;
+  /** contacts with the player, per completed lap, at most */
+  maxContactsPerLap: number;
+  /** the player's slowest lap over his median lap, at most (a lap with a stop or a long off is not his racing) */
+  maxLapSpread: number;
+  /** keep recordings that ended before the flag */
+  aborted: boolean;
+}
+export const DEFAULT_FILTERS: AggFilters = { maxFourOffPerLap: 0.5, maxContactsPerLap: 0.5, maxLapSpread: 1.25, aborted: false };
+
+/** The first filter a race fails, or null. Order: check, aborted, laps, four-offs, contacts, lap spread. */
+export function whyExcluded(f: RaceFile, o: AggFilters): { filter: string; reason: string } | null {
+  const a = f.analysis, laps = a.playerLaps.length;
+  if (!f.check.ok) return { filter: 'check', reason: f.check.problems[0] ?? f.check.mismatches[0] ?? 'the re-run differs' };
+  if (a.aborted && !o.aborted) return { filter: '--aborted', reason: 'ended before the flag' };
+  const need = o.minLaps ?? a.raceLaps;
+  if (laps < need) return { filter: '--min-laps', reason: `${laps} of ${need} laps completed` };
+  const fo = a.fourOffs.length / Math.max(1, laps);
+  if (fo > o.maxFourOffPerLap) return { filter: '--max-fouroff-per-lap', reason: `${a.fourOffs.length} four-offs in ${laps} laps (${f2(fo)} per lap)` };
+  const ct = a.contacts.length / Math.max(1, laps);
+  if (ct > o.maxContactsPerLap) return { filter: '--max-contacts-per-lap', reason: `${a.contacts.length} contacts in ${laps} laps (${f2(ct)} per lap)` };
+  if (laps >= 2) {
+    const t = a.playerLaps.map((l) => l.time), med = median(t), worst = Math.max(...t);
+    if (worst > o.maxLapSpread * med) return { filter: '--max-lap-spread', reason: `slowest lap ${f1(worst)} s over ${o.maxLapSpread} x his median ${f1(med)} s` };
+  }
+  return null;
+}
+
+export function aggregateMd(files: RaceFile[], filters: Partial<AggFilters> = {}, title = 'Race recordings, aggregate'): string {
+  const o: AggFilters = { ...DEFAULT_FILTERS, ...filters };
+  const kept: RaceFile[] = [], out: { f: RaceFile; filter: string; reason: string }[] = [];
+  for (const f of files) { const w = whyExcluded(f, o); if (w) out.push({ f, ...w }); else kept.push(f); }
+  const L: string[] = [`# ${title}`, '', `${files.length} recordings re-run; ${kept.length} kept for the numbers below.`, '',
+    `Filters (evidence only; each removes the recordings that fail it and were not removed by an earlier one): re-run check; \`--aborted\` ${o.aborted ? 'kept' : 'excluded'}; \`--min-laps\` ${o.minLaps ?? "the race's full lap count"}; \`--max-fouroff-per-lap\` ${o.maxFourOffPerLap}; \`--max-contacts-per-lap\` ${o.maxContactsPerLap}; \`--max-lap-spread\` ${o.maxLapSpread} x the player's median lap.`, '',
+    '| filter | removed |', '|---|---|'];
+  for (const k of ['check', '--aborted', '--min-laps', '--max-fouroff-per-lap', '--max-contacts-per-lap', '--max-lap-spread']) L.push(`| ${k} | ${out.filter((x) => x.filter === k).length} |`);
+  if (out.length) { L.push('', 'Excluded:', ''); for (const x of out) L.push(`- ${x.f.name}: ${x.filter}: ${x.reason}`); }
+  L.push('', ...group(kept, 'Kept'));
   return L.join('\n') + '\n';
 }

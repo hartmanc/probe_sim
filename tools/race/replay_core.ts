@@ -61,7 +61,7 @@ export interface PassRow {
   other: CarSample[]; player: CarSample[];
 }
 export interface Analysis {
-  trackId: string; seed: number; raceLaps: number; owner: boolean; aborted: boolean; steps: number;
+  trackId: string; seed: number; raceLaps: number; aborted: boolean; steps: number;
   passes: PassRow[];
   waits: { car: string; t0: number; dur: number; ended: string; paceRatio: number }[];
   contacts: { t: number; car: string; closing: number; s: number; where: string }[];
@@ -371,7 +371,7 @@ class Analyzer {
     const bests = [...best.values()].sort((a, b) => a - b), mine = best.get(me) ?? null;
     const res = this.dir.getResults();
     return {
-      trackId: this.rec.trackId, seed: this.rec.seed, raceLaps: this.rec.laps, owner: this.rec.owner, aborted: !!this.rec.aborted, steps,
+      trackId: this.rec.trackId, seed: this.rec.seed, raceLaps: this.rec.laps, aborted: !!this.rec.aborted, steps,
       passes, waits: this.waits, contacts: this.contacts, fourOffs: this.fourOffs, playerLaps: laps, crossings: cr, pairs,
       summary: {
         playerBest: mine, fieldMedianBest: bests.length ? r2(median(bests)) : null, rankByBest: mine === null ? null : bests.indexOf(mine) + 1, cars: this.n,

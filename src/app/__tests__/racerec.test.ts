@@ -29,7 +29,7 @@ async function record(o: { playerAi: boolean; steps: number; laps?: number; even
   const seed = o.seed ?? 11, laps = o.laps ?? 1;
   const dir = buildDirector(sim, field, { seed, laps, trackId: 'laguna_seca', playerAi: o.playerAi, realGrid: true });
   sim.stepVehicle = (di) => dir.step(STEP, di as never);
-  const cap = new RaceCapture({ dir, sim, trackId: 'laguna_seca', owner: false, worker: null,
+  const cap = new RaceCapture({ dir, sim, trackId: 'laguna_seca', worker: null,
     build: { seed, laps, realGrid: true, playerAi: o.playerAi, lod: false, strengthPct: 100, closeRacing: null, planner: null, fieldCap: CAP, ref: sim.refId, autoShift: true, abs: sim.abs } });
   const drive = o.playerAi ? () => ({ steer: 0, throttle: 0, brake: 0 }) : autopilot(sim, 0.8);
   while (sim.stepIndex < o.steps && !(dir.getResults() && !dir.hud().resultsPending)) {
@@ -64,11 +64,25 @@ describe('race recording and offline re-run', () => {
     expect(a.passes.length).toBeGreaterThan(0);
     const p = a.passes[0];
     expect(p.other.length).toBe(101); expect(p.player.length).toBe(101);
-    // the reports: a table per race and the aggregate (the owner's and the public's apart)
+    // the reports: a table per race and the aggregate with its evidence filters
     const md = raceMd('fixture', r.check, a);
     expect(md).toContain('**Check: passed**'); expect(md).toMatch(/\| made \|/);
-    const agg = aggregateMd([{ name: 'fixture', check: r.check, analysis: a }, { name: 'owner', check: r.check, analysis: { ...a, owner: true } }]);
-    expect(agg).toMatch(/### Owner: 1 race, \d+ passes made/); expect(agg).toMatch(/### Public: 1 race/); expect(agg).toContain('Yardstick cells');
+    const f = { name: 'fixture', check: r.check, analysis: a };
+    const agg = aggregateMd([f], { minLaps: 1 });
+    expect(agg).toContain('Yardstick cells'); expect(agg).toMatch(/### Kept: 1 race/);
+    // the player completes one lap of the two raced here, so the default (the full lap count) excludes it with its reason; the others are copies that fail one filter each
+    const short = { ...f, name: 'short', analysis: { ...a, playerLaps: [] } };
+    const ab = { ...f, name: 'aborted', analysis: { ...a, aborted: true } };
+    const foul = { ...f, name: 'foul', analysis: { ...a, fourOffs: a.playerLaps.map(() => ({ t: 1, s: 1, where: 'x' })).concat(a.playerLaps.map(() => ({ t: 1, s: 1, where: 'x' }))) } };
+    const bad = { ...f, name: 'bad', check: { ...r.check, ok: false, problems: ['live data differs: x'] } };
+    const aggMd = aggregateMd([f, short, ab, foul, bad], { minLaps: 1 });
+    expect(aggMd).toContain('1 kept'); expect(aggMd).toMatch(/- short: --min-laps: 0 of 1 laps completed/); expect(aggMd).toMatch(/- aborted: --aborted: ended before the flag/);
+    expect(aggMd).toMatch(/- foul: --max-fouroff-per-lap/); expect(aggMd).toMatch(/- bad: check: live data differs/);
+    expect(aggMd).toMatch(/\| --min-laps \| 1 \|/);
+    expect(aggregateMd([f])).toMatch(/- fixture: --min-laps: 1 of 2 laps completed/);
+    expect(aggregateMd([ab], { aborted: true, minLaps: 1 })).toContain('1 kept');
+    expect(aggregateMd([short], { minLaps: 0 })).toContain('1 kept');
+    expect(aggMd).not.toMatch(/Owner|Public/);
     if (process.env.RACEREC_OUT) writeFileSync(process.env.RACEREC_OUT, JSON.stringify(toWire(rec)));   // for trying tools/race/replay_race.ts by hand
   }, 300_000);
 
@@ -115,7 +129,7 @@ describe('race recording and offline re-run', () => {
     expect(fl.chunk.events.map((e) => e[1])).toEqual([0, 1]);
     const rec = buildRecording({ trackId: 'laguna_seca', fieldId: 'cars/field/pace.json', seed: B.seed, laps: B.laps, aiVersion: String(host.dir!.config.ai_version), buildSha: '', physics: sim.physics,
       build: { seed: B.seed, laps: B.laps, realGrid: true, playerAi: false, lod: false, strengthPct: 100, closeRacing: null, planner: null, fieldCap: CAP, ref: null, autoShift: true, abs: true },
-      config: fl.config, cars: fl.cars, L: fl.L, carId: 'probe_gt', owner: false, started: '2026-10-30T00:00:00.000Z', durationS: fl.chunk.steps * 0.001, aborted: true }, new RecAssembler().add(fl.chunk), fl.live);
+      config: fl.config, cars: fl.cars, L: fl.L, carId: 'probe_gt', started: '2026-10-30T00:00:00.000Z', durationS: fl.chunk.steps * 0.001, aborted: true }, new RecAssembler().add(fl.chunk), fl.live);
     const r = replay(rec, { analyse: false });
     expect(r.check.problems).toEqual([]);
     expect(r.check.ok).toBe(true);
