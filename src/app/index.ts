@@ -42,7 +42,7 @@ const setFieldAudioOn = (on: boolean) => {
   fieldAudioOn = on;
   try { if (on) localStorage.removeItem(FIELD_AUDIO_KEY); else localStorage.setItem(FIELD_AUDIO_KEY, '0'); } catch { /* no storage */ }
 };
-import { AdaptiveQuality, PerfOverlay, flags as perfFlags, perf, storeWorker, storedWorker, workerChoice, type AdaptLevel } from './perf';
+import { AdaptiveQuality, PerfOverlay, flags as perfFlags, perf, workerChoice, type AdaptLevel } from './perf';
 import { applyQuality, pixelRatioFor, quality, storeTierChoice, storedTierChoice, type ThinReport, type TierChoice } from './quality';
 import { SENSITIVITIES, TouchControls, tiltStatusText } from './touch';
 import { HotlapSim, LIMITS, type SimAssets, type SceneryLike, type InputType } from '../scoreboard';
@@ -132,13 +132,10 @@ const graphicsEntry = (): MenuEntry => ({
   options: [{ value: 'auto', label: 'Auto' }, { value: 'phone', label: 'Phone' }, { value: 'balanced', label: 'Balanced' }, { value: 'desktop', label: 'Desktop' }],
   get: () => tierChoice, set: (v) => { tierChoice = v as TierChoice; storeTierChoice(tierChoice); },
 });
-/** Graphics: physics and AI in a Web Worker (experimental). Stored like the tier, applied at the next race build; ?worker=1|0 overrides it for one page load. */
-let workerOn = storedWorker();
-const workerEntry = (): MenuEntry => ({
-  kind: 'toggle', id: 'worker', label: 'Physics in a worker (experimental)',
-  note: perfFlags.worker !== null ? `${perfFlags.worker ? 'on' : 'off'} this page (?worker=)` : 'applies at the next race',
-  get: () => workerChoice(perfFlags.worker, workerOn), set: (on) => { workerOn = on; storeWorker(on); },
-});
+/** Physics and AI in a Web Worker: a measurement path only (`?worker=1` for one page load, docs/performance.md). The Graphics-menu
+ *  toggle that stored the choice was removed before anyone used it (owner, 30 Oct 2026: nothing experimental ships to players;
+ *  the game runs its physics on the main thread, one way for everyone). A choice stored by 0.4.1 is ignored. */
+const workerOn = false;
 const reloadEntry = (): MenuEntry[] => tierChoice !== (quality.reason === 'forced' ? quality.tier : 'auto')
   ? [{ kind: 'action', id: 'reload', label: 'Reload to apply graphics', run: () => location.reload() }] : [];
 /** Controls & calibration is for pads and keys; hidden on a phone unless a pad is connected. */
@@ -196,7 +193,6 @@ const mainPage: MenuPage = {
     ...(showControlsPanelRow() ? [{ kind: 'action', id: 'controls', label: 'Controls & calibration', run: () => controlsPanel.open() } as MenuEntry] : []),
     ghostRefRow(),
     graphicsEntry(),
-    workerEntry(),
     ...reloadEntry(),
     scoreboardEntry(),
     { kind: 'submenu', id: 'whatsnew', label: "What's new", note: `v${APP_VERSION}`, page: () => changelogPage(GIT_SHA) },
@@ -585,7 +581,6 @@ function createSim(assets: Assets) {
       ] : []),
       ...(showControlsPanelRow() ? [{ kind: 'action', id: 'controls', label: 'Controls & calibration', run: () => controlsPanel.open() } as MenuEntry] : []),
       graphicsEntry(),
-      workerEntry(),
       ...reloadEntry(),
       { kind: 'toggle', id: 'mute', label: 'Mute', get: () => audio.muted, set: (m) => audio.setMuted(m) },
       {
