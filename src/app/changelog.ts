@@ -27,7 +27,7 @@ export interface ChangeEntry {
 /** Newest first. Add a new entry at the top and mirror its version in package.json. */
 export const CHANGELOG: ChangeEntry[] = [
   {
-    version: '0.4.1', date: '', title: 'The field gets its power back',
+    version: '0.4.1', date: '2026-10-30', title: 'The field gets its power back',
     items: [
       'The AI field runs at each car’s clean-air pace instead of its traffic-laden race median, and the calibration now gives most of a car’s pace to its engine rather than its tyres. Faster cars pull away on the straights, pass trains the way the real ones do, and the field makes far fewer contacts: at Laguna Seca about one fifth as many car-to-car touches as before.',
       'The AI strength setting is gone: the field is the real one, at its real pace.',
