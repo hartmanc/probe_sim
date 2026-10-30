@@ -34,7 +34,7 @@ export interface RunOut {
     /** (C4) the attack's transitions (offset planner) */
     att?: Record<string, number>;
     /** (C5 T6) train passes (selfplay_metrics passing.train); (C5 T4) per commit of the offset planner: closing speed m/s, gap m, cars targeted, limited by the follow rule then (1 / 0) */
-    train?: { passes: number; cars: number; bySeg: Record<string, number>; pit: number; pitSeg: string }; commits?: number[][];
+    train?: { passes: number; cars: number; bySeg: Record<string, number>; pit: number; pitSeg: string; byCar?: Record<string, number> }; commits?: number[][];
     wait?: { n: number; done: number; median: number; p90: number; ended: Record<string, number>; durations: number[]; losses?: number[]; dvArrive?: number[]; dvSteps?: number[] }; why?: Record<string, number> };
 }
 

@@ -85,7 +85,7 @@ export const knobs = { h2: 1, grip: 0, tail: 1, h3: 0, h4: 1, h5: 0, h6: 1, road
   damp: DAMP, revW: REVERSE_W, coverW: COVER_W, clrK: 1, hystK: 1, minHold: MIN_HOLD, tHard: T_HARD, lineW: LINE_W, lineFreeW: LINE_FREE_W, zoneW: ZONE_W,
   corrW: CORR_W, gripW: GRIP_W, longW: LONG_W, mergeGap: MERGE_GAP, alongClr: ALONG_CLR, laneClr: LANE_CLR, hwK: 1,
   // (C5, the train pass; NOTES "C5")
-  t1: 1, vClose: 2, tTrain: 1.5, trMarg: 10, ovlTI: 0.3, trainW: 1, t2: 1, trF: 1, acrRel: 1, abSl: 0, pAcc: 1, nProj: 1, nA: 2.5 };
+  t1: 1, vClose: 2, tTrain: 1.5, trMarg: 10, ovlTI: 0.3, trainW: 1, t2: 1, trF: 1, acrRel: 1, abSl: 1.5, pAcc: 1, nProj: 1, nA: 2.5, abT: 1, trCl: 1, capF: 1, ext: 0 };
 /* (C5 knobs) t1 1: the train pass (T1-T4): the target is the furthest car of the train ahead I get my nose ovl past before the
  * braking point less trMarg, decided at arrival; vClose: m/s my speed (or my profile at its station) must exceed the car ahead's
  * to look as far as the horizon (else tc's window); tTrain: s, the time gap between consecutive cars of a train; trMarg: m before
@@ -99,7 +99,10 @@ export const knobs = { h2: 1, grip: 0, tail: 1, h3: 0, h4: 1, h5: 0, h6: 1, road
  * speed now at my full-throttle acceleration (C1-C4: the profile's speed at once, which made a commit from behind a slower car
  * look a car length or more better than it was); nProj 1: a neighbour's projected speed rises from its speed now toward its
  * profile at nA m/s² (C1-C4 scaled its profile by its ratio now), and a car in the band of the car directly ahead of it is held
- * behind that car (driver.ts planStep) */
+ * behind that car (driver.ts planStep); abT 1: an abort before the braking point tucks in behind the slot's car and then frees the
+ * plan (at the braking point: P2's back-out to the apex); trCl 1: the train pass is judged only when closing (vClose), no tc window
+ * and no stuck commit; capF 1: on the projection, inside the headway behind a car in my band I fall back at 0.9 of its speed (C1-C4:
+ * stood still); ext 0: the landing is judged only once it lies within the horizon (1: carried on at the closing speed beyond it) */
 /* (C3, knobs.r1 / r2 / r3: the vortex round's rules; knobs.tv: the vortex rule's hard window, s; knobs.gr 1: the GRIP cost at the
  * rate the plan moves at (R3's shiftRate, so a move the grip allows is not priced as one it does not); knobs.tailT: TAIL_T, s;
  * knobs.ctl 1: the controller moves a held offset at that rate too, driver.ts; knobs.lift 1: the alongside lift only for a car
@@ -216,6 +219,8 @@ export class PlanWork {
   /** (C5 T2) the train pass in hand (or being judged): the attack offset is held to the landing (no merge back after the first
    *  car), and staying behind is priced for every car of the train */
   trainHold = false;
+  /** (C5) out: the landing point fell within the horizon on the last attackOverlap (else attOvK is carried on, a guess) */
+  attIn = false;
   // ---- candidates
   nC = 0;
   readonly cand = new Float64Array(CAND_MAX); readonly cost = new Float64Array(CAND_MAX); readonly culprit = new Int32Array(CAND_MAX);
@@ -436,7 +441,9 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
       }
       capNow |= 1 << k;
       const cap = xq - (w.nRear[k] + w.front + 1.5 + hwy * (vq > 0 ? vq : 0));
-      if (cap < sN) sN = cap > sMe ? cap : sMe;
+      // (C5 knobs.capF: inside the headway I fall back to it at 0.9 of its speed, not stop dead: the C1 cap held my projected
+      // position still for the rest of the horizon behind a car I was closer to than the headway)
+      if (cap < sN) { const fl = knobs.capF ? sMe + 0.9 * (vq > 0 ? vq : 0) * PLAN_DT : sMe; sN = cap > fl ? cap : fl < sN ? fl : sN; }
       if (m === PLAN_N && vq < vR) { const r = 1 - (vq > 0 ? vq : 0) / (vR > 1 ? vR : 1); if (r > tailR) tailR = r; }
       // (C4 tlap) behind a clearly slower car at the end of the horizon: the rest of the lap behind it
       if (m === PLAN_N && knobs.tlap && w.nD[k] > 1 - CF) { const q = w.nD[k] * w.lapLeft; if (q > tailLap) tailLap = q; }
@@ -492,7 +499,7 @@ export function candidateCost(w: PlanWork, env: PlanEnv, c: number): number {
     if (w.attK >= 0 && sN >= w.attDB && sMe < w.attDB) {
       w.attOv = sN + w.front - (X[w.attK * S + m] - w.nRear[w.attK]);
       for (let k = 0; k < nN; k++) w.attOvK[k] = sN + w.front - (X[k * S + m] - w.nRear[k]);
-      attHit = true;
+      attHit = true; w.attIn = true;
     }
     sMe = sN;
   }
@@ -564,7 +571,7 @@ export function plan(w: PlanWork, env: PlanEnv): number {
  */
 export function attackOverlap(w: PlanWork, env: PlanEnv, k: number, eAtt: number, dB: number): number {
   w.cand[0] = eAtt; w.nC = 1;
-  w.attK = k; w.attDB = dB; w.attOv = Number.POSITIVE_INFINITY; w.attOvK.fill(Number.NEGATIVE_INFINITY);
+  w.attK = k; w.attDB = dB; w.attOv = Number.POSITIVE_INFINITY; w.attOvK.fill(Number.NEGATIVE_INFINITY); w.attIn = false;
   const c = candidateCost(w, env, 0);
   w.attK = -1;
   return c;
@@ -573,11 +580,11 @@ export function attackOverlap(w: PlanWork, env: PlanEnv, k: number, eAtt: number
 /**
  * (C5 T1 / T2) The train pass on the plan's own projection: "move to eAtt clear of the whole train and hold it" (trainHold: no
  * merge back after the first car; judged as a pass, not a block of a faster car behind), and where my nose is against each car of
- * the train at the landing point dChk m ahead. ks[0..nK) are the train's neighbour indices in order from the car ahead (-1: passed
- * or not a neighbour). Returns the furthest q <= upTo whose tail my nose passes by ovlM (the target), -1 when none (no landing),
+ * the train at the landing point dChk m ahead. ks[0..nK) are the train's neighbour indices in order from the car ahead (-1: not a
+ * neighbour; a car passed already counts by its overlap). Returns the furthest q <= upTo whose tail my nose passes by ovlM (the target), -1 when none (no landing),
  * -2 when the move breaks a hard rule (w.why[0] says which).
  */
-export function trainTarget(w: PlanWork, env: PlanEnv, ks: Int32Array, nK: number, upTo: number, eAtt: number, dChk: number, ovlM: number): number {
+export function trainTarget(w: PlanWork, env: PlanEnv, ks: Int32Array, nK: number, upTo: number, eAtt: number, dChk: number, ovlM: number, held = false): number {
   const cfp = w.cfPassing, th = w.trainHold, ea = w.eAtt;
   w.trainHold = true; w.eAtt = eAtt; w.cfPassing = true;
   let k0 = -1;
@@ -585,6 +592,8 @@ export function trainTarget(w: PlanWork, env: PlanEnv, ks: Int32Array, nK: numbe
   const c = k0 >= 0 ? attackOverlap(w, env, k0, eAtt, dChk) : 2 * BIG;
   w.trainHold = th; w.eAtt = ea; w.cfPassing = cfp;
   if (c >= BIG) return -2;
+  // (knobs.ext 0: a landing beyond the horizon is not judged: no commit yet; a commit in hand keeps its target)
+  if (!w.attIn && !knobs.ext) return held ? upTo : -1;
   let t = -1;
   for (let q = 0; q <= upTo && q < nK; q++) if (ks[q] >= 0 && w.attOvK[ks[q]] >= ovlM) t = q;
   return t;

@@ -42,7 +42,7 @@ export interface SelfplayMetrics {
     /** (C5 T6) train passes: an attacker passing >= 2 distinct cars in green between two consecutive corner apexes (one straight
      *  and the corner that ends it); cars = the cars passed in those; bySeg by segment "<corner>-<next corner>"; pit = those in the
      *  segment that holds the start line (s 0), named pitSeg */
-    train?: { passes: number; cars: number; bySeg: Record<string, number>; pit: number; pitSeg: string };
+    train?: { passes: number; cars: number; bySeg: Record<string, number>; pit: number; pitSeg: string; byCar: Record<string, number> };
     /** completion by pace ratio (target lap of the faster / the slower): < 0.85, 0.85-0.92, 0.92-0.97 */
     byRatio: { lo: number; hi: number; fails?: string[]; situations: number; completed: number; medianStuck: number; open: Record<string, number> }[] };
   defending: { vsClearlyFaster: number; within3: number; vsSlower: number; none: number;
@@ -111,8 +111,8 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
   const nC = corners.length, segOf = (s: number) => { let c = nC - 1; for (let q = 0; q < nC; q++) if (corners[q].apex <= s) c = q; return c; };
   const segName = (c: number) => nC ? `${corners[c].name}-${corners[(c + 1) % nC].name}` : '-';
   const segCur = new Int32Array(n).fill(-1), segLen = new Int32Array(n), segList = new Int32Array(n * 8);
-  const train = { passes: 0, cars: 0, bySeg: {} as Record<string, number>, pit: 0, pitSeg: segName(segOf(0)) };
-  const segFlush = (i: number) => { if (segLen[i] >= 2) { train.passes++; train.cars += segLen[i]; const k = segName(segCur[i]); train.bySeg[k] = (train.bySeg[k] ?? 0) + 1; if (k === train.pitSeg) train.pit++; } segLen[i] = 0; };
+  const train = { passes: 0, cars: 0, bySeg: {} as Record<string, number>, pit: 0, pitSeg: segName(segOf(0)), byCar: {} as Record<string, number> };
+  const segFlush = (i: number) => { if (segLen[i] >= 2) { train.passes++; train.cars += segLen[i]; const k = segName(segCur[i]); train.bySeg[k] = (train.bySeg[k] ?? 0) + 1; if (k === train.pitSeg) train.pit++; const cn = cars[i].number; train.byCar[cn] = (train.byCar[cn] ?? 0) + 1; } segLen[i] = 0; };
   let contacts = 0, hard = 0;
   const pairSeen = new Map<number, number>();
   const offT = new Float64Array(n), onT = new Float64Array(n).fill(99), armed = new Uint8Array(n).fill(1);

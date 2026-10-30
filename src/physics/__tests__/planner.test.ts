@@ -1,7 +1,7 @@
 // C1, the offset planner (src/physics/ai/planner.ts): its rules on synthetic neighbours (a straight, constant speeds), and alone
 // through the driver (the racing line, nothing evaluated).
 import { describe, expect, test } from 'vitest';
-import { PlanWork, plan, candidateCost, shiftRate, attackOverlap, attackNext, lineFree, bandTaken, trainTarget, BIG, PLAN_DT, PLAN_N, REVERSE_W, SHIFT_MIN, ATT_NONE, ATT_COMMIT, ATT_HOLD, ATT_BACK, type PlanEnv } from '../ai/planner';
+import { PlanWork, plan, candidateCost, shiftRate, attackOverlap, attackNext, lineFree, bandTaken, trainTarget, setKnobs, BIG, PLAN_DT, PLAN_N, REVERSE_W, SHIFT_MIN, ATT_NONE, ATT_COMMIT, ATT_HOLD, ATT_BACK, type PlanEnv } from '../ai/planner';
 import { director } from './ai_fixture';
 
 const S = PLAN_N + 1;
@@ -229,21 +229,24 @@ describe('C5: the train pass (pure)', () => {
     expect(trainTarget(w, env, ks, 3, 2, 2.6, 20, OVL)).toBe(-1);       // a braking point 20 m ahead: no landing
     expect(trainTarget(w, env, ks, 3, 2, 2.6, 150, OVL)).toBe(0);       // 150 m: the first car only
     expect(trainTarget(w, env, ks, 3, 2, 2.6, 240, OVL)).toBe(1);       // 240 m: two of them
-    expect(trainTarget(w, env, ks, 3, 2, 2.6, 400, OVL)).toBe(2);       // beyond the horizon, carried on at the closing speed: all three
+    expect(trainTarget(w, env, ks, 3, 2, 2.6, 400, OVL)).toBe(-1);      // beyond the horizon: not judged yet (ext 0) ...
+    setKnobs(['ext=1']);
+    expect(trainTarget(w, env, ks, 3, 2, 2.6, 400, OVL)).toBe(2);       // ... or carried on at the closing speed: all three
     expect(w.attOvK[2]).toBeGreaterThan(20);
-    // the target never moves further out than the one committed to (upTo), and a passed car (-1) is not counted
+    // the target never moves further out than the one committed to (upTo)
     expect(trainTarget(w, env, ks, 3, 1, 2.6, 400, OVL)).toBe(1);
     // without the hold (the C2 pass that merges back after the first car) the projection tucks in behind the second one
     w.trainHold = false; w.eAtt = Number.NaN;
     attackOverlap(w, env, 0, 2.6, 400);
     expect(w.attOvK[2]).toBeLessThan(OVL);
+    setKnobs(['ext=0']);
   });
 
   test('T2: committed, the attack offset holds under a soft cost and the commit aborts under a hard rule (a car moving into my lane ahead)', () => {
     // soft: the corridor's edge 0.2 m from the attack offset (a corridor cost every sample): still a landing
     const envN: PlanEnv = { ...env, hi: () => 2.8 };
     const a = train();
-    expect(trainTarget(a.w, envN, a.ks, 3, 2, 2.6, 400, OVL)).toBe(2);
+    expect(trainTarget(a.w, envN, a.ks, 3, 2, 2.6, 240, OVL)).toBe(1);
     a.w.cand[0] = 2.6; a.w.nC = 1; a.w.trainHold = true; a.w.eAtt = 2.6;
     const soft = candidateCost(a.w, envN, 0);
     expect(soft).toBeGreaterThan(0); expect(soft).toBeLessThan(BIG);

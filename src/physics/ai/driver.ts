@@ -295,7 +295,7 @@ export class AiDriver {
   }
   /** (C4) no attack in hand */
   private attackOff(): void {
-    this.oPhase = ATT_NONE; this.oAtt = -1; this.oSide = 0; this.oCorner = -1; this.oStuck = 0; this.trainOn = false; this.trN = 0;
+    this.oPhase = ATT_NONE; this.oAtt = -1; this.oSide = 0; this.oCorner = -1; this.oStuck = 0; this.trainOn = false; this.trN = 0; this.oTuck = false;
     if (this.pw !== null) { this.traffic.oAtt[this.idx] = -1; this.traffic.oSide[this.idx] = 0; }
   }
 
@@ -1350,13 +1350,14 @@ export class AiDriver {
           const e = this.attackET(this.oSide, Math.max(0, this.ahead(s, C.brake)));
           if (!Number.isNaN(e)) this.oE = e;
           const nK = this.trainKs(w);
-          const t = trainTarget(w, this.penv!, this.trK, nK, this.trTgt, this.oE, Math.max(1, this.ahead(s, C.brake) - K.trMarg), ovlM - K.abSl);
+          const t = trainTarget(w, this.penv!, this.trK, nK, this.trTgt, this.oE, Math.max(1, this.ahead(s, C.brake) - K.trMarg), ovlM - K.abSl, true);
           if (!K.t2) { /* (no abort) */ }
           else if (t === -2) ab = 'abort hard ' + WHY[w.why[0]];
           else if (t === -1) { ab = 'abort reach'; const D = AiDriver as unknown as { dbg?: number }; if ((D.dbg ?? 0) > 0) { D.dbg!--; const kt = this.wIdx(w, this.oAtt); console.log(JSON.stringify({ dt: +(this.tNow - this.dbgT0).toFixed(1), pred0: +this.dbgP0.toFixed(1), predNow: kt >= 0 ? +w.attOvK[kt].toFixed(1) : null, v: +v.toFixed(1), vProf: +this.profAt(s).toFixed(1), vT: +tr.v[this.oAtt].toFixed(1), lim: this.limiter, oStar: +this.oStar.toFixed(2), eMe: +(tr.e[i]).toFixed(2), eT: +tr.e[this.oAtt].toFixed(2), dB: +this.ahead(s, C.brake).toFixed(0), ds: +tr.ds(i, this.oAtt).toFixed(1), tgt: this.trTgt })); } }
           else if (t !== this.trTgt) { this.trTgt = t; this.oAtt = this.trIdx[t]; this.attT('train nearer'); }
         }
         if (ab) { this.attT(ab); this.trainAbort(); }
+        else if (this.oTuck && this.oPhase === ATT_BACK && Math.abs(tr.e[i] - tr.e[this.oAtt]) < tr.hw[i] + tr.hw[this.oAtt]) { this.attT('tucked'); this.attackOff(); }
         else {
           const jj = this.oAtt, dd = tr.ds(i, jj);
           const nx = attackNext(this.oPhase, tr.front[i] + tr.rear[jj] - dd, ovlM, this.ahead(s, C.brake), this.ahead(s, C.apex), this.ahead(s, this.vTrackOut![this.oCorner]), v * O_EVERY,
@@ -1421,10 +1422,10 @@ export class AiDriver {
   private wIdx(w: PlanWork, p: number): number { for (let k = 0; k < w.nN; k++) if (w.nIdx[k] === p) return k; return -1; }
   private trainMark(w: PlanWork): void { for (let k = 0; k < w.nN; k++) w.nTrain[k] = this.inTrain(w.nIdx[k]) ? 1 : 0; }
   private readonly trK = new Int32Array(NB_MAX);
-  /** the train's neighbour indices in w, in order (-1: passed, or not a neighbour now) */
+  /** the train's neighbour indices in w, in order (-1: not a neighbour now) */
   private trainKs(w: PlanWork): number {
     const tr = this.traffic, i = this.idx;
-    for (let q = 0; q < this.trN; q++) { const p = this.trIdx[q]; this.trK[q] = tr.ds(i, p) > -(tr.rear[i] + tr.front[p]) ? this.wIdx(w, p) : -1; }
+    for (let q = 0; q < this.trN; q++) this.trK[q] = this.wIdx(w, this.trIdx[q]);
     return this.trN;
   }
   /** (C5 T1) the attack offset on a side clear of every car of the train not yet passed, within my corridor here and at the
@@ -1460,8 +1461,13 @@ export class AiDriver {
       if (d > -(tr.rear[i] + tr.front[p]) && d < bd && !tr.off[p] && !tr.away[p]) { bd = d; best = p; }
     }
     if (best < 0) { this.attackOff(); return; }
+    // (knobs.abT: an abort before the braking point tucks in, then the plan is free again; at the braking point it is P2's back-out
+    // to the apex)
+    const C = this.line.corners[this.oCorner];
+    this.oTuck = oKnobs.abT > 0 && this.ahead(tr.s[i], C.brake) > tr.v[i] * O_EVERY + oKnobs.bo;
     this.oAtt = best; this.oPhase = ATT_BACK; this.trainOn = false;
   }
+  private oTuck = false;
   /**
    * (C5 T1 / T4) At arrival (the first plan with the car ahead clearly slower, within the horizon and me closing on it by
    * knobs.vClose, or my profile at its station saying I will be; else within tc as C4): the train is the run of cars ahead within
@@ -1477,8 +1483,9 @@ export class AiDriver {
     if (slower && gap < 1.5 + HEADWAY[this.params.aggression] * v + 10) this.oStuck += O_EVERY; else this.oStuck = 0;
     const want = tr.pace[i] < CLEARLY_FASTER * tr.pace[j] || (K.slow > 0 && slower && this.oStuck > K.stk * STUCK_T[this.params.aggression]);
     if (kj < 0 || tr.off[j] || !want || gap <= 0 || this.noPassZone(s)) return;
-    const closing = Math.max(v, this.profAt(tr.s[j])) - tr.v[j] >= K.vClose;
-    if (gap > (closing ? PLAN_AHEAD : K.tc * (1 + K.tcAg * ag) * Math.max(10, v))) return;
+    // (closing now, or not held by the follow rule and my profile at its station above its speed by vClose)
+    const closing = v - tr.v[j] >= K.vClose || (this.limiter !== 'follow' && this.profAt(tr.s[j]) - tr.v[j] >= K.vClose);
+    if ((K.trCl && !closing) || gap > (closing ? PLAN_AHEAD : K.tc * (1 + K.tcAg * ag) * Math.max(10, v))) return;
     let c = -1, dB = Infinity;
     for (let q = 0; q < cs.length; q++) { const x = this.ahead(s, cs[q].brake); if (x > 0 && x < dB) { dB = x; c = q; } }
     const tl = AiDriver.attTally !== null && closing ? 'arr ' : '';
