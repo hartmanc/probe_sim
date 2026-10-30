@@ -1548,3 +1548,5 @@ close on the straight; to be measured: how much of the 'passed lap' 8-13 s, agai
 any pass is planned),
 the planning trigger (`leadGap < max(30, 0.9 v)` and the PLAN_T horizon) and the exit (a pass started at the track-out instead of the
 next corner); the switch-off screen with the K3 files; then decide K3 on its own.
+
+**K3 reverted (031ec67, 30 Oct 2026, orchestrator).** The data-tier aggression values in the pace files made one car defend against a clearly faster car in `ai_behaviour` "full field, 2 laps" (`defending.vsClearlyFaster` 1, the test needs 0, with the switch off and on; green on d7180d5). The test was not loosened; the files went back to the seeded draws. The switch-off screen with the K3 files was stopped unfinished as moot. S3's numbers above stand as the record of what the tiers did with the switch on (cells 74.1 / 84.6, contacts level, four-offs down, passes −3 %): worth a return once human race recordings say which cars attack.
