@@ -19,7 +19,7 @@ import { loadFieldData, loadFieldModel, type FieldData, type FieldModelInfo } fr
 import { FieldCars, identityColor, type FieldCarInfo } from '../field-cars';
 import { fieldCapFor, neighbourField } from '../field-select';
 import { PLAYER_NUMBER, buildDirector as buildDirectorFor, raceAiConfig, surfaceFactory } from '../race-build';
-import { RaceHudDom, raceHudView, raceTable, resultRows, rowStatus, type TableRow } from '../race-hud';
+import { RaceHudDom, raceHudView, raceTable, resultRows, rowStatus, fmtPenaltyS, penaltyNote, type TableRow } from '../race-hud';
 export { rowStatus, type RowStatus } from '../race-hud';
 import { RACE_BOARDS_PUBLIC, fmtLapTime, fmtMetres, setBoardContext, submitRace, type RaceResult, type SubmitOutcome } from '../scoreboard-client';
 import { LIMITS, TRACKS, resolveTrackId } from '../../scoreboard/config';
@@ -384,6 +384,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
   let out: { reason: string; metres: number } | null = null;
   let outRaced = 0;   // the live counter's value when the player went out (display only)
   let resultsWanted = false;
+  let penaltyToasted = false;
   let submitState: 'idle' | 'busy' | 'done' = 'idle';
   let prev = { phase: '', lapIdx: 0, count: 0, position: 0 };
   let posCandidate = 0, posSince = 0;
@@ -405,7 +406,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
     sv.sim.stepVehicle = (di) => dir.step(STEP, di as DriverInput);
     if (useWorker) startWorker(dir);
     console.info(`race: seed ${seed}, ${dir.cars.length} cars, ${laps} laps, AI strength ${strength} %, built in ${(performance.now() - t0).toFixed(0)} ms${dir.calibrationStale ? ' (pace.json calibration is stale)' : ''}`);
-    out = null; resultsWanted = false; submitState = 'idle';
+    out = null; resultsWanted = false; submitState = 'idle'; penaltyToasted = false;
     prev = { phase: 'formation', lapIdx: 0, count: 0, position: 0 };
     posCandidate = 0; posSince = 0; thump = 0;
     cone?.clear();
@@ -591,7 +592,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
     const shortRace = laps !== RACE_LAPS && !ov.devSubmit;
     return {
       title: 'RESULTS',
-      subtitle: `${laps} lap${laps === 1 ? '' : 's'} · seed ${seed} · ${aiStrengthLabel(strength)}${me ? ` · P${me.position} of ${rows.length} · ${me.time != null ? `${me.laps} laps in ${fmtLapTime(me.time)}` : fmtMetres(me.metres, Math.max(0, me.laps), L())}` : ''}`,
+      subtitle: `${laps} lap${laps === 1 ? '' : 's'} · seed ${seed} · ${aiStrengthLabel(strength)}${me ? ` · P${me.position} of ${rows.length} · ${me.time != null ? `${me.laps} laps in ${fmtLapTime(me.time)}${penaltyNote(me.penaltyS)}` : fmtMetres(me.metres, Math.max(0, me.laps), L())}` : ''}`,
       body: () => raceTable(rows, L(), d?.getResults() ? `CHEQUERED FLAG · ${TRACK.short.toUpperCase()} · 2026 LEMONS FIELD` : 'OUT OF THE RACE · ORDER WHEN YOU LEFT'),
       entries: (): MenuEntry[] => [
         // race boards are hidden until the server can replay a race (owner, 26 Oct 2026): no submit row meanwhile
@@ -623,6 +624,12 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
     const P = dir.player;
     if (prev.phase === 'formation' && h.phase === 'green') hud.toast('GREEN FLAG — race!', 2500);
     if (prev.phase !== 'chequered' && h.phase === 'chequered') hud.toast(`Chequered flag · P${h.position}`, 3000);
+    // a stop-and-go still pending at the flag counts against the time (owner, 30 Oct 2026): said once
+    if (h.resultsPending && !penaltyToasted) {
+      penaltyToasted = true;
+      const add = h.penalties.servingRemaining + h.penalties.pending.slice(1).reduce((a, b) => a + b, 0);
+      hud.toast(`Unserved stop-and-go: ${fmtPenaltyS(add)} s added to your time`, 5000);
+    }
     const li = Math.floor(Math.max(0, P.U) / dir.line.L);
     if (li > prev.lapIdx && h.phase !== 'formation') {
       hud.toast(`Lap ${li}/${laps} done${Number.isFinite(P.lastLap) ? ` · ${fmtTime(P.lastLap)}` : ''} · P${h.position}`, 2500);
@@ -721,7 +728,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
       updateAudio(dir, now);
       if (perf.on) perf.audio += performance.now() - tA;
       // the results card: at the end, and again whenever something (the scoreboard prompt, the pause menu) closed it
-      if ((h.phase === 'finished' || (out && resultsWanted)) && sv && deps.dom && !sv.menu.isOpen) showResults();
+      if (((h.phase === 'finished' && !h.resultsPending) || (out && resultsWanted)) && sv && deps.dom && !sv.menu.isOpen) showResults();
     },
     hud(): ModeHud { return { banner: fieldErr && !d ? `Race · ${fieldErr}` : null, timing: false, delta: null, showDelta: false }; },
     timeScale() { return d?.timeScale ?? 1; },

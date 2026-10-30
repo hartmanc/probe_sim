@@ -241,6 +241,8 @@ export interface ResultRow {
   time: number | null;
   status: 'running' | 'ejected';
   player: boolean;
+  /** the player's unserved stop-and-go seconds added to `time` at the flag (30 Oct 2026); absent / 0 for everyone else */
+  penaltyS?: number;
 }
 export interface RaceHud {
   phase: RacePhase;
@@ -259,6 +261,9 @@ export interface RaceHud {
   /** short text for a banner ("BLACK FLAG: contact — warning", "GREEN GREEN GREEN", ...) */
   message: string | null;
   results: ResultRow[] | null;
+  /** the player crossed the line with stop-and-go time unserved: the classification is still settling until the race clock
+   *  passes his penalised time (cars crossing before it go ahead of him); the app holds the results card for it */
+  resultsPending: boolean;
 }
 /** For the engine-sound stream: what kind of engine this car has (rpm / gear / throttleOut come from `state`). */
 export interface EngineInfo { layout: string; cylinders: number; redline: number; shiftRpm: number; turbo: boolean; exhaustNote: string | null; drive: string }
@@ -424,6 +429,12 @@ export class RaceDirector {
   private collisionWorld: CollisionWorld | null;
   private flagAt = NaN;
   private results: ResultRow[] | null = null;
+  /** the classification as frozen at the flag (distance); the penalised one is rebuilt from it */
+  private baseResults: ResultRow[] | null = null;
+  private baseCars: RaceCar[] = [];
+  /** unserved stop-and-go seconds taken at the player's crossing of the last line (0: none); counted against his time */
+  private penExtra = 0;
+  private resultsSettled = true;
   private ring: Float64Array[] = [];
   private ringBin: Int32Array[] = [];
   private readonly ringN: number;
@@ -591,7 +602,7 @@ export class RaceDirector {
     const [g0, g1] = this.config.greenWindow;
     this.#greenAt = this.rng.range(g0, g1);
     this.lodRate = new Int8Array(0); this.lodNext = 0; this.lodFar = 0; this.contactTotal = 0;
-    this.phase = 'formation'; this.time = 0; this.stepIdx = 0; this.flagAt = NaN; this.results = null; this.yellowOn = false;
+    this.phase = 'formation'; this.time = 0; this.stepIdx = 0; this.flagAt = NaN; this.results = null; this.baseResults = null; this.penExtra = 0; this.resultsSettled = true; this.yellowOn = false;
     this.pen = { count: 0, pending: [], serving: 0, deadlineU: Infinity, inBox: false, fastForward: false, lastReason: null, lastAt: -1e9, ejected: false };
     this.offT = 0; this.onT = 99; this.offArmed = true; this.contactSeen.clear(); this.violationSeen.clear(); this.blend?.reset();
     this.message = null; this.messageUntil = 0;
@@ -857,7 +868,10 @@ export class RaceDirector {
         car.lapStartGreen = this.phase === 'green' || this.phase === 'yellow';
         car.lapIdx = li;
         car.lapsDone = Math.max(0, li);
-        if (li >= this.config.laps && !Number.isFinite(car.finishAt)) car.finishAt = tc - this.#greenAt;
+        if (li >= this.config.laps && !Number.isFinite(car.finishAt)) {
+          car.finishAt = tc - this.#greenAt;
+          if (car.isPlayer) this.takeUnserved();
+        }
         if ((this.phase === 'chequered' || this.phase === 'finished') && !car.finished) {
           car.finished = true;
           if (car.driver) { car.driver.ctl.paceFactor = 0.6; car.driver.ctl.mishapRate = 0; }
@@ -875,6 +889,7 @@ export class RaceDirector {
         this.phase = 'chequered';
         this.flagAt = t;
         this.results = this.buildResults();
+        this.baseResults = this.results;
         for (const c of this.cars) if (c.U >= this.config.laps * L) { c.finished = true; }
         this.applyControl();
         this.say('CHEQUERED FLAG', 6);
@@ -885,7 +900,45 @@ export class RaceDirector {
       // the player crosses the line or is ejected
       if (p.finished || this.pen.ejected || t - this.flagAt > FINISH_GRACE_S) { this.phase = 'finished'; this.applyControl(); }
     }
+    this.settleResults();
     this.playerRules(dt);
+  }
+
+  /** The player took the flag (his last line): stop-and-go time still unserved counts against his result (owner, 30 Oct 2026):
+   *  the remainder of the one being served plus the queued ones. Ejected: nothing (he is classified short). */
+  private takeUnserved(): void {
+    const pen = this.pen;
+    this.penExtra = pen.ejected || !pen.pending.length ? 0 : Math.max(0, pen.serving) + pen.pending.slice(1).reduce((a, b) => a + b, 0);
+    if (this.penExtra > 0) this.resultsSettled = false;
+  }
+
+  /**
+   * With unserved time, the classification is rebuilt every step until the race clock passes the player's penalised time
+   * (finish + unserved): cars that completed the laps by then are ordered by time, the player at his penalised one;
+   * the rest keep their place by distance at the flag. Without any unserved time `results` stays as frozen at the flag.
+   */
+  private settleResults(): void {
+    if (this.resultsSettled || !this.baseResults || !(this.penExtra > 0)) return;
+    const P = this.player;
+    if (!Number.isFinite(P.finishAt)) return;
+    const raceT = this.time - this.#greenAt, Tp = P.finishAt + this.penExtra, L = this.line.L, N = this.config.laps;
+    const eff = (c: RaceCar) => (c.isPlayer ? Tp : c.finishAt);
+    const done = this.cars.filter((c) => Number.isFinite(c.finishAt) && eff(c) <= Tp).sort((a, b) => eff(a) - eff(b) || a.grid - b.grid);
+    const inDone = new Set(done);
+    const base = new Map(this.baseCars.map((c, k) => [c, this.baseResults![k]]));
+    const rows: ResultRow[] = [];
+    for (const c of done) {
+      const b = base.get(c)!;
+      rows.push({
+        ...b, position: rows.length + 1,
+        metres: b.lapsCompleted >= N ? b.metres : +(N * L).toFixed(1), laps: b.lapsCompleted >= N ? b.laps : N, lapsCompleted: Math.max(N, b.lapsCompleted),
+        bestLap: Number.isFinite(c.bestLap) ? +c.bestLap.toFixed(3) : b.bestLap,
+        time: +eff(c).toFixed(3), ...(c.isPlayer ? { penaltyS: +this.penExtra.toFixed(3) } : {}),
+      });
+    }
+    this.baseCars.forEach((c, k) => { if (!inDone.has(c)) rows.push({ ...this.baseResults![k], position: rows.length + 1 }); });
+    this.results = rows;
+    if (raceT >= Tp) this.resultsSettled = true;
   }
 
   /** The human player crossed the line: a completed green lap (NaN: not one) updates the AI's model of his pace. */
@@ -987,7 +1040,8 @@ export class RaceDirector {
 
   private playerRules(dt: number): void {
     const P = this.player, st = P.vehicle.state, pen = this.pen;
-    if (pen.ejected || this.phase === 'finished') { pen.fastForward = false; this.timeScale = 1; return; }
+    // after the flag nothing is served and nothing ejects (30 Oct 2026): the unserved time is added to the result instead
+    if (pen.ejected || this.phase === 'finished' || Number.isFinite(P.finishAt)) { pen.fastForward = false; this.timeScale = 1; return; }
     // (a) contact where the player closed on the other car
     for (let k = 0; k < this.contactCount; k++) {
       const ev = this.contacts[k];
@@ -1062,7 +1116,8 @@ export class RaceDirector {
 
   private buildResults(): ResultRow[] {
     const L = this.line.L;
-    return this.order().map((c, k) => ({
+    this.baseCars = this.order();
+    return this.baseCars.map((c, k) => ({
       position: k + 1, number: c.number, team: c.team, class: c.cls,
       metres: +Math.max(0, c.U).toFixed(1), laps: +(Math.max(0, c.U) / L).toFixed(3),
       lapsCompleted: Math.max(0, Math.floor(c.U / L)),
@@ -1108,6 +1163,7 @@ export class RaceDirector {
     };
     hud.message = this.time < this.messageUntil ? this.message : null;
     hud.results = this.results;
+    hud.resultsPending = !this.resultsSettled;
     return hud;
   }
 

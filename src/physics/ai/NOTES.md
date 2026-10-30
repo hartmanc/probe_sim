@@ -118,6 +118,12 @@ bestLap, status 'running'|'ejected', player).
   served within 2 laps of race distance after it was issued (or after the previous one was served) →
   ejected (result = distance so far). Without pit-lane data the box is the 250 m before the line, off the
   racing surface. `director.penalize(reason)` issues a flag from app-side rules.
+- Unserved at the flag (30 Oct 2026): at the player's crossing of the last line, the remainder of the stop-and-go being
+  served plus the queued ones (`penExtra`) count against him; nothing is served or ejected after it. His row's `time` =
+  finish + unserved (`penaltyS` carries the seconds), and `results` is rebuilt each step until the race clock passes
+  that time: cars that completed the laps by then are ordered by time (he goes behind one that crossed inside his
+  penalty), the rest keep distance at the flag. `hud.resultsPending` holds the app's results card meanwhile. No
+  pending time = the classification frozen at the flag, unchanged. Ejection and AI cars unchanged.
 - The player's DriverInput is untouched by the director (no speed limiting); ejection only marks the
   result and HUD — the app decides whether to park the car.
 

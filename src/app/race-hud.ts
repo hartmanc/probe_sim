@@ -144,7 +144,17 @@ export interface TableRow {
   metres: number; laps: number; status: string; player: boolean; bestLap?: number | null;
   /** race time to complete all laps, s (finishers only) */
   time?: number | null;
+  /** unserved stop-and-go seconds added to `time` (the player, owner 30 Oct 2026) */
+  penaltyS?: number;
 }
+
+/** Unserved stop-and-go seconds as the screens write them: "60", "20.4". */
+export const fmtPenaltyS = (s: number): string => String(+s.toFixed(1));
+/** The status cell: "finished", and "finished +60 s" for a player carrying unserved stop-and-go time. */
+export const statusText = (r: Pick<TableRow, 'status' | 'penaltyS'>): string =>
+  r.penaltyS && r.penaltyS > 0 ? `${r.status} +${fmtPenaltyS(r.penaltyS)} s` : r.status;
+/** The results header's note after the time, '' when nothing was added. */
+export const penaltyNote = (s: number | undefined): string => (s && s > 0 ? ` · ${fmtPenaltyS(s)} s unserved stop-and-go added` : '');
 
 export type RowStatus = 'running' | 'finished' | 'out' | 'ejected';
 /**
@@ -165,7 +175,7 @@ export function resultRows(rows: ResultRow[], out: { metres: number } | null): T
     metres: r.player && out ? out.metres : r.metres,
     laps: r.player && out ? -1 : r.lapsCompleted,
     status: rowStatus({ player: r.player, out: !!out, ejected: r.status === 'ejected', flagged: true }),
-    player: r.player, bestLap: r.bestLap, time: r.time,
+    player: r.player, bestLap: r.bestLap, time: r.time, ...(r.penaltyS ? { penaltyS: r.penaltyS } : {}),
   }));
 }
 
@@ -184,7 +194,7 @@ export function raceTable(rows: TableRow[], trackLength: number, caption: string
       el('span', 'rt-pos', String(r.position)), el('span', 'rt-num', r.number),
       el('span', 'rt-team', `${r.team}${r.player ? ' (you)' : ''}`),
       el('span', 'rt-dist', r.time != null && laps > 0 ? `${laps}L ${fmtLapTime(r.time)}` : fmtMetres(Math.max(0, r.metres), Math.max(0, laps), trackLength)),
-      el('span', `rt-st st-${r.status}`, r.status),
+      el('span', `rt-st st-${r.status}`, statusText(r)),
     );
     box.append(row);
     if (r.player) me = row;

@@ -148,3 +148,93 @@ test('passing under yellow during the formation → black flag', () => {
   expect(h.penalties.count).toBeGreaterThanOrEqual(1);
   expect(h.penalties.lastReason).toMatch(/passing under yellow/);
 });
+
+// ---- unserved stop-and-go at the flag counts against the result (owner, 30 Oct 2026)
+
+/** A 1-lap race with the player 20 m short of the line at speed, `pending` queued (serving = its first), the others far behind. */
+function nearFlag(seed: number, pending: number[], serving?: number): RaceDirector {
+  const d = director({ seed, maxAi: 2, laps: 1, greenWindow: [0.01, 0.02] }, { walls: false });
+  run(d, 0.1);
+  expect(d.phase).toBe('green');
+  const pen = (d as any).pen;
+  pen.pending = [...pending]; pen.serving = serving ?? pending[0] ?? 0; pen.deadlineU = 1e9; pen.count = 2;
+  const P = d.player, L = d.line.L;
+  place(d, P, L - 20, d.line.at(d.line.off, L - 20), 30);
+  P.U = L - 20; d.traffic.s[P.idx] = L - 20; d.traffic.U[P.idx] = L - 20; P.lapIdx = 0;
+  return d;
+}
+const ais = (d: RaceDirector) => d.cars.filter((c) => !c.isPlayer);
+
+test('a stop-and-go pending at the flag is added to the player time and he goes behind a car that crosses inside it', () => {
+  const d = nearFlag(11, [60]);
+  run(d, 1.5, input({}));
+  const P = d.player;
+  expect(Number.isFinite(P.finishAt)).toBe(true);
+  expect(d.phase === 'chequered' || d.phase === 'finished').toBe(true);
+  expect(d.hud().resultsPending).toBe(true);
+  const [inside, outside] = ais(d);
+  inside.finishAt = P.finishAt + 30;                       // crosses 30 s after him: inside his 60 s
+  outside.finishAt = P.finishAt + 90;                      // after it: stays behind
+  run(d, 61, input({}));
+  expect(d.hud().resultsPending).toBe(false);
+  const r = d.getResults()!;
+  expect(r.map((x) => x.number)).toEqual([inside.number, P.number, outside.number]);
+  const me = r[1];
+  expect(me.position).toBe(2);
+  expect(me.time).toBeCloseTo(P.finishAt + 60, 2);
+  expect(me.penaltyS).toBeCloseTo(60, 6);
+  expect(me.lapsCompleted).toBe(1);
+  expect(r[0]).toMatchObject({ lapsCompleted: 1, time: +(P.finishAt + 30).toFixed(3) });
+  expect(r[2].lapsCompleted).toBe(0);                      // fewer laps: behind by distance as before
+  expect(d.hud().penalties.pending).toEqual([60]);         // the HUD line stays; nothing is served after the flag
+  expect(d.hud().penalties.ejected).toBe(false);
+});
+
+test('a stop-and-go being served with 20 s left at the flag adds the 20 s (and queued ones)', () => {
+  const d = nearFlag(12, [60, 180], 20);
+  run(d, 1.5, input({}));
+  const P = d.player;
+  const [inside] = ais(d);
+  inside.finishAt = P.finishAt + 220;                      // 20 + 180 = 200 added: 220 is outside
+  run(d, 1, input({}));
+  expect(d.hud().penalties.servingRemaining).toBeCloseTo(20, 6); // the clock does not run after the flag
+  run(d, 201, input({}));
+  const me = d.getResults()!.find((x) => x.player)!;
+  expect(me.penaltyS).toBeCloseTo(200, 6);
+  expect(me.time).toBeCloseTo(P.finishAt + 200, 2);
+  expect(me.position).toBe(1);
+}, 60_000);
+
+test('a plain 20 s remainder is exactly 20 s', () => {
+  const d = nearFlag(13, [60], 20);
+  run(d, 1.5, input({}));
+  const P = d.player;
+  run(d, 21, input({}));
+  const me = d.getResults()!.find((x) => x.player)!;
+  expect(me.penaltyS).toBeCloseTo(20, 6);
+  expect(me.time).toBeCloseTo(P.finishAt + 20, 2);
+});
+
+test('no pending penalty: the classification is the one frozen at the flag, with no wait (bit for bit)', () => {
+  const d = nearFlag(14, []);
+  run(d, 1.5, input({}));
+  const P = d.player;
+  const frozen = JSON.stringify(d.getResults());
+  expect(d.hud().resultsPending).toBe(false);
+  const r = d.getResults()!;
+  expect(r[0]).toMatchObject({ player: true, position: 1, lapsCompleted: 1, time: +P.finishAt.toFixed(3) });
+  expect(r[0].penaltyS).toBeUndefined();
+  ais(d)[0].finishAt = P.finishAt + 5;
+  run(d, 10, input({}));
+  expect(JSON.stringify(d.getResults())).toBe(frozen);
+});
+
+test('ejection is unchanged: an ejected player is classified short with no seconds added', () => {
+  const d = nearFlag(15, [60]);
+  d.penalize('x'); d.penalize('y'); d.penalize('z');      // 5th flag
+  expect(d.hud().penalties.ejected).toBe(true);
+  run(d, 1.5, input({}));
+  expect(d.hud().resultsPending).toBe(false);
+  expect((d as any).penExtra).toBe(0);                     // ejected: no flag for him, nothing added
+  expect((d.getResults() ?? []).find((x) => x.player)?.penaltyS).toBeUndefined();
+});

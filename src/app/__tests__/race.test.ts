@@ -13,7 +13,7 @@ import { GLOBAL_IDENTITY, loadIdentityWithFallback, normaliseModelRows, type Fie
 import { describeAiCar, fieldKey, modelKey, parseIdentity, resolveCarType, type PaceJson } from '../../physics/ai/field';
 import { TRACKS } from '../../scoreboard/config';
 import { FieldCars, buildPlaceholderCar, identityColor, selectDrawn, triangleCount, PROBE_DIMS, type FieldCarInfo } from '../field-cars';
-import { raceHudView, resultRows } from '../race-hud';
+import { raceHudView, resultRows, statusText, penaltyNote } from '../race-hud';
 import type { RaceHud, ResultRow } from '../../physics/ai/race';
 import { ScoreboardClient, setBoardContext, submitRace, type KV } from '../scoreboard-client';
 import type { VehicleState } from '../physics-types';
@@ -204,7 +204,7 @@ describe('race HUD mapping', () => {
     gapAhead: { number: '711', seconds: 1.234, metres: 40 }, gapBehind: { number: '20', seconds: 0.8, metres: 20 },
     lastLap: 128.5, bestLap: 127.25,
     penalties: { count: 0, pending: [], servingRemaining: 0, inBox: false, fastForward: false, lapsToServe: null, lastReason: null, lastAt: -1e9, ejected: false },
-    message: null, results: null,
+    message: null, results: null, resultsPending: false,
   });
   const info = { teamOf: (n: string) => (n === '711' ? 'Eyesore Racing' : 'NSF Racing'), metres: 7400, out: null };
   it('green running: no banner, position, lap, gaps with team names, metres', () => {
@@ -240,6 +240,21 @@ describe('race HUD mapping', () => {
     expect(e.flagTitle).toBe('BLACK FLAG · EJECTED');
     const o = raceHudView(base(), { ...info, out: 'Launched into space' });
     expect([o.flag, o.flagTitle]).toEqual(['black', 'OUT OF THE RACE']);
+  });
+});
+
+describe('unserved stop-and-go on the results (30 Oct 2026)', () => {
+  const me: ResultRow = { position: 2, number: '619', team: 'Probe', class: 'B', metres: 18_000, laps: 5, lapsCompleted: 5, bestLap: 121, time: 757.403, status: 'running', player: true, penaltyS: 60 };
+  it('the status cell, the header note and the scoreboard time carry the added seconds', () => {
+    const [r] = resultRows([me], null);
+    expect(statusText(r)).toBe('finished +60 s');
+    expect(statusText({ status: 'finished', penaltyS: 20.4 })).toBe('finished +20.4 s');
+    expect(statusText({ status: 'finished' })).toBe('finished');
+    expect(penaltyNote(60)).toBe(' · 60 s unserved stop-and-go added');
+    expect(penaltyNote(undefined)).toBe('');
+    expect(penaltyNote(0)).toBe('');
+    // the race record stores the penalised time (the row's time is already finish + unserved)
+    expect(raceResultFor([r], { seed: 1, aiVersion: 2, finished: true })).toMatchObject({ finished: true, time: 757.403 });
   });
 });
 
