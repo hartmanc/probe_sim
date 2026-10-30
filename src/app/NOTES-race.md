@@ -140,3 +140,17 @@ Debug: `__sim.mode.director` (RaceDirector), `__sim.mode.fieldCars`, `__sim.mode
   rows for pads and keys.
 - Tests: src/app/__tests__/race-polish.test.ts (credits, label, statuses, boards) and the "race field-audio hook" block
   in audio-field.test.ts (OfflineAudioContext-style fake: rpm_scale, bus output, missing-family retry, bad index).
+
+## Race recordings (30 Oct 2026, branch `race-telemetry`; docs/races.md)
+
+- Every race is recorded as seed + build + config + the sim's own quantised 100 Hz rows (`sim.record` is now ON in a race, it was off), the
+  between-step events the rows cannot carry (the player's recovery, the pit-exit cone report) and two safeguards (live lap times and
+  crossings, a 1 Hz position snapshot of every car). `race-record.ts` `RaceCapture` owns one race's recording; `modes/race.ts` builds it at the
+  flag / ejection / restart / menu exit and uploads it once (`/api/races`, silent on failure). The main-thread path watches the sim with a
+  `RaceTap` (`scoreboard/racetap.ts`: `after()` per physics step from `mode.step`); in the Worker path the host has its own tap (the inputs the
+  director consumed live there), the main thread asks for the data with a `flush` message (`RaceWorkerClient.flushRec`, one `rec` reply by
+  generation, not the lossy latest-snapshot channel) and the Worker is stopped only after the reply (dispose waits up to 4 s).
+- Recovery and the cone report happen at frame boundaries on the main thread but at the Worker's own step in the Worker path, so each side logs
+  them at its own `sim.stepIndex`; the offline re-run applies them just before that step. Anything else that touches the sim or director between steps
+  must be logged the same way or the re-run diverges (the check catches it).
+- `?record=0` off, `?record=download` adds the file to the results card; `?playerai=1` races are not uploaded.

@@ -4,7 +4,7 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { handleRaces, RACES, type RaceRecDeps } from '../../src/scoreboard/racehandler';
 import { sweepStaleBoards } from '../../src/scoreboard/handler';
 import { MemoryStore } from '../../src/scoreboard/store';
-import { REC_MAX_BYTES, gzipText, type RaceRecording } from '../../src/scoreboard/racerec';
+import { REC_MAX_BYTES, fromWire, gzipText, toWire, type RaceRecording } from '../../src/scoreboard/racerec';
 
 const ORIGIN = 'https://probe.example', TOKEN = 'owner-token-0123456789abcdef-xyz';
 const sample = (over: Partial<RaceRecording> = {}): RaceRecording => ({
@@ -42,6 +42,18 @@ describe('POST /api/races', () => {
     expect((await get({ ...deps, ownerToken: undefined }, '?day=2026-10-30')).status).toBe(403);   // no token configured: nobody is the owner
     expect((await get(deps, '?id=nope')).status).toBe(400);
     expect((await get(deps, '?id=2026-10-30-000000000000')).status).toBe(404);
+  });
+
+  it('takes the wire form (rows as deltas) and returns it for the offline tool to unpack', async () => {
+    const deps = mk();
+    const z = (await gzipText(JSON.stringify(toWire(sample({ seed: 9 })))))!;
+    expect((await post(deps, z as BodyInit, { 'content-type': 'application/gzip' })).status).toBe(204);
+    const id = ((await (await get(deps, '?day=2026-10-30')).json()) as { recordings: { id: string }[] }).recordings[0].id;
+    const back = fromWire(await (await get(deps, `?id=${id}`)).json()) as RaceRecording;
+    expect(back.seed).toBe(9); expect(back.inputs.rows).toEqual(sample().inputs.rows);
+    // a delta array that is not whole rows is a 422, not a crash
+    const bad = { ...toWire(sample()) as object, inputs: { ...(toWire(sample()) as { inputs: object }).inputs, d: [1, 2, 3] } };
+    expect((await post(deps, JSON.stringify(bad), { 'content-type': 'application/json' })).status).toBe(422);
   });
 
   it('the owner flag is the server\'s: a claim without the token is dropped, the token makes it true', async () => {

@@ -241,6 +241,50 @@ export function checkRecording(x: unknown, o: { maxSteps?: number; maxCars?: num
   return r;
 }
 
+// ---------------------------------------------------------------- the wire form of the rows
+
+/**
+ * On the wire (the upload, the stored body, a downloaded file) the input rows are one flat int array `inputs.d` of 5 numbers per
+ * row: [(step - previous step) / 10, steer - previous steer, throttle - previous throttle, brake - previous brake, flags] (the
+ * first row against zeros). The same rows, 2-5 x smaller after gzip (a 5-lap race of smooth hands: 139 KB -> 29 KB). In memory,
+ * and for checkRecording and the re-run, they are the hot-lap trace's `rows` tuples.
+ */
+export function deltaRows(rows: TraceRow[]): number[] {
+  const d: number[] = [];
+  let p: TraceRow = [0, 0, 0, 0, 0];
+  for (const r of rows) { d.push((r[0] - p[0]) / 10, r[1] - p[1], r[2] - p[2], r[3] - p[3], r[4]); p = r; }
+  return d;
+}
+/** The tuples back from `deltaRows` (null when `d` is not a whole number of rows of integers). */
+export function undeltaRows(d: unknown, maxRows = 200_000): TraceRow[] | null {
+  if (!Array.isArray(d) || d.length % 5 !== 0 || d.length > 5 * maxRows) return null;
+  const rows: TraceRow[] = [];
+  let p: TraceRow = [0, 0, 0, 0, 0];
+  for (let i = 0; i < d.length; i += 5) {
+    const a = d[i], b = d[i + 1], c = d[i + 2], e = d[i + 3], f = d[i + 4];
+    if (![a, b, c, e, f].every((x) => Number.isInteger(x))) return null;
+    p = [p[0] + a * 10, p[1] + b, p[2] + c, p[3] + e, f];
+    rows.push(p);
+  }
+  return rows;
+}
+/** A recording as it goes over the wire: `inputs.rows` replaced by `inputs.d`. */
+export function toWire(rec: RaceRecording): unknown {
+  const { rows, ...rest } = rec.inputs;
+  return { ...rec, inputs: { ...rest, d: deltaRows(rows) } };
+}
+/** A parsed body back to the in-memory form: `inputs.d` unpacked into `inputs.rows` (a body that already has `rows`, or that is not a
+ *  recording, passes through; a malformed `d` leaves `rows` missing for checkRecording to refuse). */
+export function fromWire(x: unknown): unknown {
+  if (!x || typeof x !== 'object' || Array.isArray(x)) return x;
+  const rec = x as { inputs?: { rows?: unknown; d?: unknown } };
+  const inp = rec.inputs;
+  if (!inp || typeof inp !== 'object' || inp.rows !== undefined || inp.d === undefined) return x;
+  const { d, ...rest } = inp;
+  const rows = undeltaRows(d);
+  return { ...rec, inputs: rows ? { ...rest, rows } : { ...rest } };
+}
+
 // ---------------------------------------------------------------- compression and the size cap
 
 /** gzip a string; null where CompressionStream does not exist (old Safari). */
@@ -285,7 +329,7 @@ export interface Packed { body: Uint8Array | string; gzip: boolean; truncated: b
  */
 export async function packRecording(rec: RaceRecording, cap = REC_MAX_BYTES): Promise<Packed | null> {
   const attempt = async (r: RaceRecording): Promise<Packed | null> => {
-    const text = JSON.stringify(r), z = await gzipText(text);
+    const text = JSON.stringify(toWire(r)), z = await gzipText(text);
     const body: Uint8Array | string = z ?? text, bytes = z ? z.byteLength : text.length;
     return bytes <= cap ? { body, gzip: !!z, truncated: !!r.truncated, bytes } : null;
   };

@@ -1,6 +1,6 @@
 // Race recordings (docs/races.md): a short race is recorded exactly as the app does it (RaceCapture over the sim the director
 // steps), re-run offline (tools/race/replay_core.ts) and must come out identical; a tampered input stream must not.
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { HotlapSim, STEP } from '../../scoreboard';
@@ -11,8 +11,9 @@ import { neighbourField } from '../field-select';
 import { RaceCapture } from '../race-record';
 import { RaceSimHost, type HostBuild } from '../race-host';
 import type { FieldData } from '../loader';
-import { RecAssembler, buildRecording, type RaceRecording } from '../../scoreboard/racerec';
+import { RecAssembler, buildRecording, toWire, type RaceRecording } from '../../scoreboard/racerec';
 import { replayRecording } from '../../../tools/race/replay_core';
+import { aggregateMd, raceMd } from '../../../tools/race/replay_report';
 
 const pub = fileURLToPath(new URL('../../../public/', import.meta.url));
 const readJson = (p: string) => JSON.parse(readFileSync(pub + p, 'utf8'));
@@ -63,8 +64,12 @@ describe('race recording and offline re-run', () => {
     expect(a.passes.length).toBeGreaterThan(0);
     const p = a.passes[0];
     expect(p.other.length).toBe(101); expect(p.player.length).toBe(101);
-    // eslint-disable-next-line no-console
-    console.log('PASS ROW', JSON.stringify({ ...p, other: p.other.filter((_, i) => i % 25 === 0), player: p.player.filter((_, i) => i % 25 === 0) }));
+    // the reports: a table per race and the aggregate (the owner's and the public's apart)
+    const md = raceMd('fixture', r.check, a);
+    expect(md).toContain('**Check: passed**'); expect(md).toMatch(/\| made \|/);
+    const agg = aggregateMd([{ name: 'fixture', check: r.check, analysis: a }, { name: 'owner', check: r.check, analysis: { ...a, owner: true } }]);
+    expect(agg).toMatch(/### Owner: 1 race, \d+ passes made/); expect(agg).toMatch(/### Public: 1 race/); expect(agg).toContain('Yardstick cells');
+    if (process.env.RACEREC_OUT) writeFileSync(process.env.RACEREC_OUT, JSON.stringify(toWire(rec)));   // for trying tools/race/replay_race.ts by hand
   }, 300_000);
 
   it('a driven race with a recovery and a cone report re-runs identically; a tampered input stream fails the check', async () => {

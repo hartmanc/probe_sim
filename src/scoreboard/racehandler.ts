@@ -4,7 +4,7 @@
 // The public can only post. A recording is data for tuning the AI: no name, no device id, no secret (racerec.ts).
 import { LIMITS, TRACKS } from './config';
 import { clientIp, originAllowed } from './http';
-import { REC_MAX_BYTES, REC_MAX_JSON_BYTES, checkRecording, gzipText, gunzipCapped, readBytesCapped, b64decode, b64encode, type RaceRecording } from './racerec';
+import { REC_MAX_BYTES, REC_MAX_JSON_BYTES, checkRecording, fromWire, gzipText, gunzipCapped, readBytesCapped, b64decode, b64encode, type RaceRecording } from './racerec';
 import { sha256Hex } from './owner';
 import type { ScoreStore } from './store';
 
@@ -71,10 +71,10 @@ async function post(req: Request, deps: RaceRecDeps): Promise<Response> {
   if (text === null) return fail(400, 'body is not gzip, or unpacks past the size limit');
   let body: unknown;
   try { body = JSON.parse(text); } catch { return fail(400, 'body is not valid JSON'); }
-  const reasons = checkRecording(body);
-  if (!reasons.length && !Object.hasOwn(TRACKS, (body as RaceRecording).trackId)) reasons.push('trackId is not a known track');
+  const rec = fromWire(body) as RaceRecording;   // the wire form carries the rows as deltas (racerec.ts toWire)
+  const reasons = checkRecording(rec);
+  if (!reasons.length && !Object.hasOwn(TRACKS, rec.trackId)) reasons.push('trackId is not a known track');
   if (reasons.length) return fail(422, 'recording rejected', reasons.slice(0, 8));
-  const rec = body as RaceRecording;
   const owner = await isOwner(req, deps);
   const now = (deps.now ?? Date.now)(), at = new Date(now).toISOString(), day = at.slice(0, 10), id = randomId(day);
   // stored gzipped (base64) whatever the client sent: a recording is a few hundred KB at most, Upstash's request limit is not generous

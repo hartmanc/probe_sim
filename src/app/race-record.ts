@@ -5,7 +5,7 @@ import type { RaceDirector } from '../physics/ai/race';
 import { race as R } from '../physics';
 import type { HotlapSim } from '../scoreboard';
 import { TRACKS } from '../scoreboard/config';
-import { REC_MIN_ABORT_S, RecAssembler, buildRecording, packRecording, type RaceRecording, type RecBuild, type RecChunk, type RecLive } from '../scoreboard/racerec';
+import { REC_MIN_ABORT_S, RecAssembler, buildRecording, packRecording, toWire, type RaceRecording, type RecBuild, type RecChunk, type RecLive } from '../scoreboard/racerec';
 import { RaceTap, configOf, liveOf } from '../scoreboard/racetap';
 import { apiBase } from './scoreboard-client';
 import type { RaceWorkerClient } from './race-worker-client';
@@ -104,7 +104,7 @@ export async function uploadRecording(rec: RaceRecording, o: { url?: string; tok
 
 /** `?record=download`: the recording as a file (an <a download> on a Blob URL; for the owner's own machine). */
 export function downloadRecording(rec: RaceRecording): void {
-  const url = URL.createObjectURL(new Blob([JSON.stringify(rec)], { type: 'application/json' }));
+  const url = URL.createObjectURL(new Blob([JSON.stringify(toWire(rec))], { type: 'application/json' }));
   const a = document.createElement('a');
   a.href = url; a.download = `race_${rec.trackId}_${rec.seed}${rec.aborted ? '_aborted' : ''}.json`;
   document.body.appendChild(a); a.click(); a.remove();

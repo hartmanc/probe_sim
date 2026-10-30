@@ -1,6 +1,6 @@
 // Race recording format helpers (src/scoreboard/racerec.ts): the snapshot codec, the structural check, the size cap and truncation.
 import { describe, expect, it } from 'vitest';
-import { REC_MAX_BYTES, checkRecording, cutRecording, decodeSnapshot, encodeSnapshot, gunzipCapped, gzipText, packRecording, type RaceRecording } from '../racerec';
+import { REC_MAX_BYTES, checkRecording, cutRecording, decodeSnapshot, deltaRows, encodeSnapshot, fromWire, gunzipCapped, gzipText, packRecording, toWire, undeltaRows, type RaceRecording } from '../racerec';
 
 function rec(rows = 3000, over: Partial<RaceRecording> = {}): RaceRecording {
   const r: RaceRecording['inputs']['rows'] = [];
@@ -46,18 +46,38 @@ describe('checkRecording', () => {
   });
 });
 
+describe('the wire form of the rows', () => {
+  it('round-trips exactly, is smaller after gzip for smooth hands, and a malformed array is left for the check to refuse', async () => {
+    const r = rec(10);
+    expect(undeltaRows(deltaRows(r.inputs.rows))).toEqual(r.inputs.rows);
+    expect(fromWire(toWire(r))).toEqual(r);
+    expect(fromWire(r)).toBe(r);                                           // already in memory form: passes through
+    // smooth steering and pedals (a sine, a few thousandths per sample), 60 s
+    const rows: RaceRecording['inputs']['rows'] = [];
+    for (let i = 0; i < 6000; i++) rows.push([i * 10, Math.round(600 * Math.sin(i / 150)), Math.round(500 + 400 * Math.sin(i / 90)), i % 700 < 60 ? Math.round(300 * Math.sin((i % 700) / 19)) : 0, 24]);
+    const smooth = rec(0); smooth.inputs.rows = rows; smooth.inputs.steps = 60_000;
+    const tup = (await gzipText(JSON.stringify(smooth)))!.byteLength, wire = (await gzipText(JSON.stringify(toWire(smooth))))!.byteLength;
+    expect(wire).toBeLessThan(tup / 2);
+    const bad = fromWire({ ...toWire(r) as object, inputs: { ...(toWire(r) as { inputs: object }).inputs, d: [1, 2, 3] } }) as RaceRecording;
+    expect(bad.inputs.rows).toBeUndefined();
+    expect(checkRecording(bad).join()).toMatch(/inputs.rows malformed/);
+    expect(undeltaRows([1, 0, 0, 0, 0.5])).toBeNull();
+    expect(undeltaRows(new Array(5 * 300_000).fill(0))).toBeNull();
+  });
+});
+
 describe('packRecording', () => {
   it('gzips under the cap; a recording over it loses its snapshot, then its tail (marked truncated)', async () => {
     const small = rec(500);
     const p = (await packRecording(small))!;
     expect(p.gzip).toBe(true); expect(p.truncated).toBe(false);
-    expect(await gunzipCapped(p.body as Uint8Array, 1e8)).toBe(JSON.stringify(small));
+    expect(fromWire(JSON.parse((await gunzipCapped(p.body as Uint8Array, 1e8))!))).toEqual(small);          // the wire form carries the rows as deltas
     expect(await gunzipCapped(p.body as Uint8Array, 100)).toBeNull();                       // past the output cap
     // 60 000 random rows (a 600 s race with busy hands) do not fit 20 KB: cut at a step, live data cut with it
     const big = rec(20000);
     const cut = (await packRecording(big, 20_000))!;
     expect(cut.bytes).toBeLessThanOrEqual(20_000); expect(cut.truncated).toBe(true);
-    const back = JSON.parse((await gunzipCapped(cut.body as Uint8Array, 1e8))!) as RaceRecording;
+    const back = fromWire(JSON.parse((await gunzipCapped(cut.body as Uint8Array, 1e8))!)) as RaceRecording;
     expect(back.truncated!.atStep).toBeLessThan(200_000); expect(back.inputs.steps).toBe(back.truncated!.atStep);
     expect(Math.max(...back.inputs.rows.map((r) => r[0]))).toBeLessThan(back.inputs.steps);
     expect(checkRecording(back)).toEqual([]);
