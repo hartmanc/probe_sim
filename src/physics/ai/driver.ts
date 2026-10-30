@@ -22,7 +22,7 @@ import type { RaceLine } from './line';
 import { accAt, bankedG, coastDecel, loadFactor, type CarPerf } from './field';
 import type { Traffic } from './traffic';
 import { Rng } from './rng';
-import { knobs as oKnobs, PlanWork, plan as planOffset, attackOverlap, bandTaken, attackNext, lineFree, ATT_NONE, ATT_COMMIT, ATT_HOLD, ATT_BACK, FOLLOW_CLR as FOLLOW_CLR_O, PLAN_EVERY as O_EVERY, PLAN_AHEAD, PLAN_BEHIND, NB_MAX, PLAN_DT, PLAN_N, BIG, MOVE_EPS, VORTEX_K, WHY, SHIFT_MIN as SHIFT_MIN_O, type Planner, type PlanEnv } from './planner';
+import { knobs as oKnobs, PlanWork, plan as planOffset, attackOverlap, trainTarget, bandTaken, attackNext, lineFree, ATT_NONE, ATT_COMMIT, ATT_HOLD, ATT_BACK, FOLLOW_CLR as FOLLOW_CLR_O, PLAN_EVERY as O_EVERY, PLAN_AHEAD, PLAN_BEHIND, NB_MAX, PLAN_DT, PLAN_N, BIG, MOVE_EPS, VORTEX_K, WHY, SHIFT_MIN as SHIFT_MIN_O, type Planner, type PlanEnv } from './planner';
 
 const G = 9.81;
 
@@ -172,6 +172,9 @@ export class AiDriver {
   static planHook: ((i: number, w: PlanWork, prev: number) => void) | null = null;
   /** (tools, C4) when set, the attack's transitions are counted here (commit, hold, back, done, lost, ...) */
   static attTally: Record<string, number> | null = null;
+  /** (tools, C5 T4) when set, one row per train-pass commit: closing speed on the car ahead (m/s), gap to it (m), cars targeted,
+   *  1 when the follow rule was limiting me at that moment */
+  static attCommit: number[][] | null = null;
   private attT(k: string): void { const T = AiDriver.attTally; if (T) T[k] = (T[k] ?? 0) + 1; }
   private static why(k: string): void { const W = AiDriver.planWhy; if (W) W[k] = (W[k] ?? 0) + 1; }
   readonly vehicle: Vehicle;
@@ -267,6 +270,7 @@ export class AiDriver {
         hi: (x: number) => this.roadHi(this.pS + x, this.pHw) - PASS_EDGE + 0.15,
         curv: (x: number) => this.line.at(this.line.curv, this.pS + x),
         risk: (e: number) => this.passRisk(-1, e, e > 0 ? 1 : -1),
+        acc: (v: number) => 0.9 * accAt(this.perf, v),
       };
     }
     if (planner === 'offset') { const vc = vortexCorners(line); this.vTurnIn = vc.turnIn; this.vTrackOut = vc.trackOut; }
@@ -291,7 +295,7 @@ export class AiDriver {
   }
   /** (C4) no attack in hand */
   private attackOff(): void {
-    this.oPhase = ATT_NONE; this.oAtt = -1; this.oSide = 0; this.oCorner = -1; this.oStuck = 0;
+    this.oPhase = ATT_NONE; this.oAtt = -1; this.oSide = 0; this.oCorner = -1; this.oStuck = 0; this.trainOn = false; this.trN = 0;
     if (this.pw !== null) { this.traffic.oAtt[this.idx] = -1; this.traffic.oSide[this.idx] = 0; }
   }
 
@@ -526,6 +530,9 @@ export class AiDriver {
         // into mine is my lane by then
         const tc = Math.min(3, Math.max(0, gap) / Math.max(0.5, v - tr.v[j]));
         const sm = sj + Math.max(0, tr.v[j]) * tc;
+        // (C5 T2) the train pass committed: a car of the train clear of my band now is not followed for a squeeze before the
+        // braking point (there the landing decides: hold, or tuck in)
+        if (offset && this.oPhase === ATT_COMMIT && this.trainOn && oKnobs.trF && this.inTrain(j) && this.ahead(s, sm) < this.ahead(s, this.line.corners[this.oCorner].brake)) continue;
         const me = Math.max(this.roadLo(sm, hwI), Math.min(this.roadHi(sm, hwI), eAim));
         const itLo = Math.max(this.roadLo(sm, tr.hw[j]), Math.min(this.roadHi(sm, tr.hw[j]), jLo)), itHi = Math.max(this.roadLo(sm, tr.hw[j]), Math.min(this.roadHi(sm, tr.hw[j]), jHi));
         if (Math.max(itLo - me, me - itHi) >= needF) continue;
@@ -625,7 +632,7 @@ export class AiDriver {
     else if (this.defendSide !== 0 && !offset) shiftWant = this.defendSide * (ctl.closeRacing ? tr.laneW : DEFEND[this.params.aggression]);
     if (offset) {
       // the offset planner: a plan every PLAN_EVERY s while another car is within its horizon; alone, the racing line
-      this.oTimer -= dt; this.oHeld += dt;
+      this.oTimer -= dt; this.oHeld += dt; this.tNow += dt;
       if (!green || this.offTrack || this.mishap !== null) { this.oStar = 0; this.oYield = -1; this.oMoveDir = 0; tr.oPass[i] = 0; tr.passing[i] = -1; if (this.oPhase !== ATT_NONE) this.attackOff(); }
       else if (this.oTimer <= 0) { this.oTimer += O_EVERY; if (this.oTimer < 0) this.oTimer = 0; this.planStep(v, eMe, pf, headway); }
       shiftWant = this.oStar;
@@ -1182,7 +1189,7 @@ export class AiDriver {
       if (cf < 0 && !tr.off[q]) cf = q;
       B[nb] = q; BD[nb++] = d;
     }
-    this.oNear = na + nb > 0;
+    this.oNear = na + nb > 0; this.nbN = na;
     if (na + nb === 0) { this.oStar = 0; this.oYield = -1; this.oMoveDir = 0; tr.oPass[i] = 0; tr.passing[i] = -1; if (this.oPhase !== ATT_NONE) this.attackOff(); return; }
     // merge by distance (ties: the lower car index)
     let a = 0, b = 0, nN = 0;
@@ -1201,9 +1208,13 @@ export class AiDriver {
       // speed: its own profile, scaled by how held up it is now (planLane); off or without a profile: its speed now
       const vq0 = Math.max(0, tr.v[q]), pq = tr.profile[q], useP = pq !== null && !tr.off[q];
       const ratio = useP ? Math.min(1, vq0 / Math.max(1, line.at(pq!, tr.s[q]))) : 1;
-      let x = rel0, o = k * S;
+      let x = rel0, o = k * S, vq = vq0;
+      // (C5 knobs.nProj) its speed rises from its speed now toward its profile at knobs.nA m/s² (the C1 projection scaled its whole
+      // profile by its ratio now: a car accelerating out of a corner was projected slow for the whole straight)
+      const nP = oKnobs.nProj && useP;
       for (let m = 0; m <= PLAN_N; m++, o++) {
-        if (m > 0) x += (useP ? line.at(pq!, s + x) * ratio : vq0) * PLAN_DT;
+        if (m > 0 && nP) { const vp = line.at(pq!, s + x); vq += oKnobs.nA * PLAN_DT; if (vq > vp) vq = vp; x += vq * PLAN_DT; }
+        else if (m > 0) x += (useP ? line.at(pq!, s + x) * ratio : vq0) * PLAN_DT;
         const sx = s + x;
         const rLo = this.roadLo(sx, hq), rHi = this.roadHi(sx, hq);
         w.X[o] = x;
@@ -1228,6 +1239,21 @@ export class AiDriver {
       }
     }
     w.nN = nN;
+    // (C5 knobs.nProj) a car in the band of the car directly ahead of it is held behind it on the projection (a train moves at its
+    // leader's pace), the furthest first
+    if (oKnobs.nProj) {
+      const done = this.nbDone; done.fill(0);
+      for (let it = 0; it < nN; it++) {
+        let k = -1;
+        for (let q = 0; q < nN; q++) if (!done[q] && (k < 0 || w.X[q * S] > w.X[k * S])) k = q;
+        done[k] = 1;
+        if (w.X[k * S] <= 0) continue;
+        const q = w.nIdx[k], p = tr.order[(tr.rank[q] + 1) % n], kp = this.wIdx(w, p);
+        if (kp < 0 || w.X[kp * S] <= w.X[k * S] || tr.off[p] || Math.abs(tr.e[p] - tr.e[q]) >= tr.hw[p] + tr.hw[q] + FOLLOW_CLR_O) continue;
+        const gq = tr.rear[p] + tr.front[q] + 1.5;
+        for (let m = 1; m <= PLAN_N; m++) { const lim = w.X[kp * S + m] - gq, o = k * S + m; if (w.X[o] > lim) w.X[o] = lim > w.X[o - 1] ? lim : w.X[o - 1]; }
+      }
+    }
     // me
     this.pS = s; this.pPf = pf; this.pHw = hwI;
     w.v = v; w.eCur = this.shift; w.eMeas = eMe; w.ePrev = this.oStar; w.rate = PASS_SHIFT * SHIFT_RATE;
@@ -1305,7 +1331,7 @@ export class AiDriver {
    */
   private attackStep(s: number, v: number, w: PlanWork, na: number): void {
     const tr = this.traffic, i = this.idx, K = oKnobs, cs = this.line.corners;
-    w.eAtt = Number.NaN; w.attHold = false;
+    w.eAtt = Number.NaN; w.attHold = false; w.trainHold = false; w.nTrain.fill(0);
     if (!K.p1) { if (this.oPhase !== ATT_NONE) this.attackOff(); return; }
     const ag = this.params.aggression - 1, myLen = tr.front[i] + tr.rear[i];
     const ovlM = K.ovl * (1 - K.ovlAg * ag) * myLen, hwI = tr.hw[i];
@@ -1313,15 +1339,37 @@ export class AiDriver {
     if (this.oPhase !== ATT_NONE) {
       const j = this.oAtt, d = tr.ds(i, j);
       for (let k = 0; k < w.nN; k++) if (w.nIdx[k] === j) { kj = k; break; }
-      if (kj < 0 || tr.away[j] || tr.off[j] || d > 60 || d < -(tr.rear[i] + tr.front[j] + oKnobs.mergeGap)) { this.attT(d < 0 ? 'done' + this.oPhase : 'lost' + this.oPhase); this.attackOff(); }
+      if (kj < 0 || tr.away[j] || tr.off[j] || d > (this.trainOn ? PLAN_AHEAD : 60) || d < -(tr.rear[i] + tr.front[j] + oKnobs.mergeGap)) { this.attT(d < 0 ? 'done' + this.oPhase : 'lost' + this.oPhase); this.attackOff(); }
       else {
         const C = cs[this.oCorner];
-        const nx = attackNext(this.oPhase, tr.front[i] + tr.rear[j] - d, ovlM, this.ahead(s, C.brake), this.ahead(s, C.apex), this.ahead(s, this.vTrackOut![this.oCorner]), v * O_EVERY);
-        if (nx !== this.oPhase) this.attT(this.oPhase + '>' + nx);
-        if (nx === ATT_NONE) this.attackOff(); else this.oPhase = nx;
+        let ab = '';
+        if (this.trainOn && this.oPhase === ATT_COMMIT) {
+          // (C5 T2) committed on the train: the landing re-judged on the projection every plan; a hard rule on the attack offset
+          // or the target out of reach (and no nearer car of the train in reach) aborts; the target only ever moves nearer
+          this.trainMark(w);
+          const e = this.attackET(this.oSide, Math.max(0, this.ahead(s, C.brake)));
+          if (!Number.isNaN(e)) this.oE = e;
+          const nK = this.trainKs(w);
+          const t = trainTarget(w, this.penv!, this.trK, nK, this.trTgt, this.oE, Math.max(1, this.ahead(s, C.brake) - K.trMarg), ovlM - K.abSl);
+          if (!K.t2) { /* (no abort) */ }
+          else if (t === -2) ab = 'abort hard ' + WHY[w.why[0]];
+          else if (t === -1) { ab = 'abort reach'; const D = AiDriver as unknown as { dbg?: number }; if ((D.dbg ?? 0) > 0) { D.dbg!--; const kt = this.wIdx(w, this.oAtt); console.log(JSON.stringify({ dt: +(this.tNow - this.dbgT0).toFixed(1), pred0: +this.dbgP0.toFixed(1), predNow: kt >= 0 ? +w.attOvK[kt].toFixed(1) : null, v: +v.toFixed(1), vProf: +this.profAt(s).toFixed(1), vT: +tr.v[this.oAtt].toFixed(1), lim: this.limiter, oStar: +this.oStar.toFixed(2), eMe: +(tr.e[i]).toFixed(2), eT: +tr.e[this.oAtt].toFixed(2), dB: +this.ahead(s, C.brake).toFixed(0), ds: +tr.ds(i, this.oAtt).toFixed(1), tgt: this.trTgt })); } }
+          else if (t !== this.trTgt) { this.trTgt = t; this.oAtt = this.trIdx[t]; this.attT('train nearer'); }
+        }
+        if (ab) { this.attT(ab); this.trainAbort(); }
+        else {
+          const jj = this.oAtt, dd = tr.ds(i, jj);
+          const nx = attackNext(this.oPhase, tr.front[i] + tr.rear[jj] - dd, ovlM, this.ahead(s, C.brake), this.ahead(s, C.apex), this.ahead(s, this.vTrackOut![this.oCorner]), v * O_EVERY,
+            this.trainOn ? this.ahead(s, this.vTurnIn![this.oCorner]) : Number.NaN, K.ovlTI * myLen);
+          if (nx !== this.oPhase) this.attT(this.oPhase + '>' + nx);
+          if (nx === ATT_NONE) this.attackOff();
+          else if (nx === ATT_BACK && this.trainOn) { this.trainAbort(); }
+          else this.oPhase = nx;
+        }
       }
     }
-    if (this.oPhase === ATT_NONE && na > 0) {
+    if (this.oPhase === ATT_NONE && na > 0 && K.t1) this.trainCommit(s, v, w, ovlM);
+    else if (this.oPhase === ATT_NONE && na > 0) {
       const j = this.nbA[0], d = this.nbAD[0], gap = d - tr.front[i] - tr.rear[j];
       for (let k = 0; k < w.nN; k++) if (w.nIdx[k] === j) { kj = k; break; }
       const tC = K.tc * (1 + K.tcAg * ag);
@@ -1358,12 +1406,108 @@ export class AiDriver {
     if (this.oPhase === ATT_NONE) { tr.oAtt[i] = -1; tr.oSide[i] = 0; return; }
     tr.oAtt[i] = this.oAtt; tr.oSide[i] = this.oPhase === ATT_BACK ? 0 : this.oSide;
     const j = this.oAtt;
-    if (this.oPhase === ATT_COMMIT) {
+    if (this.oPhase === ATT_COMMIT && this.trainOn) { this.trainMark(w); w.eAtt = this.oE; w.trainHold = true; }
+    else if (this.oPhase === ATT_COMMIT) {
       const e = this.attackE(j, this.oSide, Math.max(0, this.ahead(s, cs[this.oCorner].brake)));
       w.eAtt = Number.isNaN(e) ? tr.e[j] + this.oSide * (hwI + tr.hw[j] + K.attc) : e;
     } else if (this.oPhase === ATT_HOLD) { w.eAtt = this.oStar; w.attHold = true; }
     else w.eAtt = tr.e[j];
 
+  }
+  // ---- (C5) the train pass (NOTES "C5"): the target is the front of the train
+  private dbgT0 = 0; private dbgP0 = 0; private tNow = 0;
+  private readonly trIdx = new Int32Array(NB_MAX); private trN = 0; private trTgt = -1; private trainOn = false; private oE = 0;
+  private inTrain(j: number): boolean { for (let q = 0; q < this.trN; q++) if (this.trIdx[q] === j) return true; return false; }
+  private wIdx(w: PlanWork, p: number): number { for (let k = 0; k < w.nN; k++) if (w.nIdx[k] === p) return k; return -1; }
+  private trainMark(w: PlanWork): void { for (let k = 0; k < w.nN; k++) w.nTrain[k] = this.inTrain(w.nIdx[k]) ? 1 : 0; }
+  private readonly trK = new Int32Array(NB_MAX);
+  /** the train's neighbour indices in w, in order (-1: passed, or not a neighbour now) */
+  private trainKs(w: PlanWork): number {
+    const tr = this.traffic, i = this.idx;
+    for (let q = 0; q < this.trN; q++) { const p = this.trIdx[q]; this.trK[q] = tr.ds(i, p) > -(tr.rear[i] + tr.front[p]) ? this.wIdx(w, p) : -1; }
+    return this.trN;
+  }
+  /** (C5 T1) the attack offset on a side clear of every car of the train not yet passed, within my corridor here and at the
+   *  braking point dB m ahead (NaN: no room, or nobody left to pass) */
+  private attackET(side: number, dB: number): number {
+    const tr = this.traffic, i = this.idx, s = tr.s[i], hwI = tr.hw[i];
+    let e = side > 0 ? -Infinity : Infinity, any = false;
+    for (let q = 0; q < this.trN; q++) {
+      const p = this.trIdx[q];
+      if (tr.ds(i, p) <= -(tr.rear[i] + tr.front[p])) continue;
+      any = true;
+      const b = side > 0 ? Math.max(tr.e[p], tr.eT[p]) + tr.hw[p] : Math.min(tr.e[p], tr.eT[p]) - tr.hw[p];
+      e = side > 0 ? Math.max(e, b) : Math.min(e, b);
+    }
+    if (!any) return Number.NaN;
+    e += side * (hwI + oKnobs.attc);
+    // (the corridor where I land: on the way the road clamps the offset, the plan's projection and the controller alike)
+    const lo = this.roadLo(s + dB, hwI) + PASS_EDGE - 0.15, hi = this.roadHi(s + dB, hwI) - PASS_EDGE + 0.15;
+    const ec = e < lo ? lo : e > hi ? hi : e;
+    for (let q = 0; q < this.trN; q++) {
+      const p = this.trIdx[q];
+      if (tr.ds(i, p) <= -(tr.rear[i] + tr.front[p])) continue;
+      if (Math.abs(ec - tr.e[p]) < hwI + tr.hw[p] + FOLLOW_CLR_O) return Number.NaN;
+    }
+    return ec;
+  }
+  /** (C5 T2 / T3) abort: tuck in behind the nearest car of the train ahead of me (or beside me), P2's back-out on it */
+  private trainAbort(): void {
+    const tr = this.traffic, i = this.idx;
+    let best = -1, bd = Infinity;
+    for (let q = 0; q < this.trN; q++) {
+      const p = this.trIdx[q], d = tr.ds(i, p);
+      if (d > -(tr.rear[i] + tr.front[p]) && d < bd && !tr.off[p] && !tr.away[p]) { bd = d; best = p; }
+    }
+    if (best < 0) { this.attackOff(); return; }
+    this.oAtt = best; this.oPhase = ATT_BACK; this.trainOn = false;
+  }
+  /**
+   * (C5 T1 / T4) At arrival (the first plan with the car ahead clearly slower, within the horizon and me closing on it by
+   * knobs.vClose, or my profile at its station saying I will be; else within tc as C4): the train is the run of cars ahead within
+   * knobs.tTrain s of each other; on the inside of the next corner (the other side only when the inside has no room or a third
+   * car holds that band), the projection of "move to the attack offset clear of the whole train and hold it" counts the cars
+   * whose tails my nose passes by ovl before the braking point less knobs.trMarg; the furthest of them is the target.
+   */
+  private trainCommit(s: number, v: number, w: PlanWork, ovlM: number): void {
+    const tr = this.traffic, i = this.idx, K = oKnobs, cs = this.line.corners, hwI = tr.hw[i];
+    const j = this.nbA[0], d = this.nbAD[0], gap = d - tr.front[i] - tr.rear[j];
+    const kj = this.wIdx(w, j), ag = this.params.aggression - 1;
+    const slower = tr.pace[i] < tr.pace[j];
+    if (slower && gap < 1.5 + HEADWAY[this.params.aggression] * v + 10) this.oStuck += O_EVERY; else this.oStuck = 0;
+    const want = tr.pace[i] < CLEARLY_FASTER * tr.pace[j] || (K.slow > 0 && slower && this.oStuck > K.stk * STUCK_T[this.params.aggression]);
+    if (kj < 0 || tr.off[j] || !want || gap <= 0 || this.noPassZone(s)) return;
+    const closing = Math.max(v, this.profAt(tr.s[j])) - tr.v[j] >= K.vClose;
+    if (gap > (closing ? PLAN_AHEAD : K.tc * (1 + K.tcAg * ag) * Math.max(10, v))) return;
+    let c = -1, dB = Infinity;
+    for (let q = 0; q < cs.length; q++) { const x = this.ahead(s, cs[q].brake); if (x > 0 && x < dB) { dB = x; c = q; } }
+    const tl = AiDriver.attTally !== null && closing ? 'arr ' : '';
+    if (c < 0 || dB < K.dmin || c === this.corkscrew) { if (tl) this.attT(tl + 'no straight'); return; }
+    // the train: the run of cars ahead within tTrain s of each other (the neighbours ahead, by distance)
+    this.trN = 0; this.trIdx[this.trN++] = j;
+    for (let k = 1; k < this.nbA.length && k < this.nbN; k++) {
+      const p = this.nbA[k], pp = this.nbA[k - 1];
+      if (tr.off[p] || this.wIdx(w, p) < 0) break;
+      const tg = (this.nbAD[k] - this.nbAD[k - 1] - tr.rear[pp] - tr.front[p]) / Math.max(5, tr.v[pp]);
+      if (tg > K.tTrain) break;
+      this.trIdx[this.trN++] = p;
+    }
+    this.trainMark(w);
+    const dir = cs[c].dir, eMe0 = tr.e[i] - tr.e[j];
+    const first = Math.abs(eMe0) > hwI ? (eMe0 > 0 ? 1 : -1) : dir;
+    for (let tryN = 0, side = first; tryN < 2; tryN++, side = -side) {
+      const e = this.attackET(side, dB);
+      if (Number.isNaN(e) || bandTaken(w, kj, e, dB, true)) { if (tl) this.attT(tl + 'side ' + tryN + (Number.isNaN(e) ? ' no room' : ' taken')); continue; }          // no room on that side: the other one
+      const tgt = trainTarget(w, this.penv!, this.trK, this.trainKs(w), this.trN - 1, e, Math.max(1, dB - K.trMarg), ovlM);
+      if (tgt === -2) { if (tl) this.attT(tl + 'side ' + tryN + ' hard ' + WHY[w.why[0]]); continue; }
+      if (tgt < 0) { if (tl) this.attT(tl + 'no landing'); break; }   // the side has room but no landing: no move
+      this.oPhase = ATT_COMMIT; this.oAtt = this.trIdx[tgt]; this.oSide = side; this.oCorner = c; this.trainOn = true; this.trTgt = tgt; this.oE = e;
+      this.attT((side === dir ? 'train in ' : 'train out ') + (tgt + 1));
+      this.dbgT0 = this.tNow; this.dbgP0 = w.attOvK[this.trK[tgt]];
+      if (AiDriver.attCommit) AiDriver.attCommit.push([+(v - tr.v[j]).toFixed(2), +gap.toFixed(1), tgt + 1, this.limiter === 'follow' ? 1 : 0]);
+      return;
+    }
+    this.trN = 0;
   }
   /** (C4) the attack offset beside car j on a side, within my corridor here and at the braking point dB m ahead (NaN: no room) */
   private attackE(j: number, side: number, dB: number): number {
@@ -1373,7 +1517,8 @@ export class AiDriver {
     const ec = e < lo ? lo : e > hi ? hi : e;
     return Math.abs(ec - tr.e[j]) < hwI + tr.hw[j] + FOLLOW_CLR_O ? Number.NaN : ec;
   }
-  private readonly nbA = new Int32Array(NB_MAX); private readonly nbB = new Int32Array(NB_MAX);
+  private readonly nbDone = new Uint8Array(NB_MAX);
+  private readonly nbA = new Int32Array(NB_MAX); private readonly nbB = new Int32Array(NB_MAX); private nbN = 0;
   private readonly nbAD = new Float64Array(NB_MAX); private readonly nbBD = new Float64Array(NB_MAX);
 
   /** A pass in hand: progress, done (next car of a train, else back to the racing line), abort, the merge. */

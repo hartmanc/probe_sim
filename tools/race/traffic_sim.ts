@@ -33,7 +33,9 @@ export interface RunOut {
     /** (C2) the wait (positions only) and, with --why, what held the clearly faster car (offset planner plans, by reason) */
     /** (C4) the attack's transitions (offset planner) */
     att?: Record<string, number>;
-    wait?: { n: number; done: number; median: number; p90: number; ended: Record<string, number>; durations: number[]; losses?: number[] }; why?: Record<string, number> };
+    /** (C5 T6) train passes (selfplay_metrics passing.train); (C5 T4) per commit of the offset planner: closing speed m/s, gap m, cars targeted, limited by the follow rule then (1 / 0) */
+    train?: { passes: number; cars: number; bySeg: Record<string, number>; pit: number; pitSeg: string }; commits?: number[][];
+    wait?: { n: number; done: number; median: number; p90: number; ended: Record<string, number>; durations: number[]; losses?: number[]; dvArrive?: number[]; dvSteps?: number[] }; why?: Record<string, number> };
 }
 
 const parseSet = (kv: string[]): Record<string, number | boolean | string> => Object.fromEntries(kv.map((s) => { const [k, v] = s.split('='); return [k, v === 'true' ? true : v === 'false' ? false : Number.isNaN(Number(v)) ? v : Number(v)]; }));   // (a word stays a string: planner=offset)
@@ -56,7 +58,8 @@ async function runOne(): Promise<void> {
   if (knobs.length) { const P = await import('../../src/physics/ai/planner'); P.setKnobs(knobs); }
   const why: Record<string, number> = {};
   const att: Record<string, number> = {};
-  { const { AiDriver } = await import('../../src/physics/ai/driver'); AiDriver.attTally = att; }
+  const commits: number[][] = [];
+  { const { AiDriver } = await import('../../src/physics/ai/driver'); (AiDriver as unknown as { dbg: number }).dbg = argv.includes('--dbg') ? 30 : 0; AiDriver.attTally = att; (AiDriver as unknown as { attCommit: number[][] | null }).attCommit = commits; }
   if (argv.includes('--why')) await whyHook(dir, why);
   const m = runSelfplay(dir, pack.makeSurface(), { log: false });
   const r = m.rules;
@@ -64,7 +67,7 @@ async function runOne(): Promise<void> {
     track, seed, laps, set: sets, crossings: dir.crossings.map((c) => ({ ...c })),
     metrics: { carLaps: m.carLaps, contacts: r.contacts, contactsPerCarLap: r.contactsPerCarLap, fourOff: r.fourOff, fourOffPerCarLap: r.fourOffPerCarLap, fourOffNonMishapPerCarLap: r.fourOffNonMishapPerCarLap,
       passesTotal: m.passing.passesTotal, situations: m.passing.situations, completed: m.passing.completed, defending: m.defending, recoveries: r.recoveries, mishaps: m.mishaps.total,
-      contactAt: r.contactAt, fourOffAt: r.fourOffAt, yields: undefined, wait: m.passing.wait, why: argv.includes('--why') ? why : undefined, att },
+      contactAt: r.contactAt, fourOffAt: r.fourOffAt, yields: undefined, wait: m.passing.wait, why: argv.includes('--why') ? why : undefined, att, train: m.passing.train, commits },
   };
   const js = arg('--json', '');
   if (js) writeFileSync(js, JSON.stringify(out)); else console.log(JSON.stringify(out.metrics));
@@ -250,6 +253,21 @@ function report(runs: RunOut[], tracks: string[], laps: number, seeds: string): 
     L.push('', `## ${t} (${P.pairs.length} pairs)`, '', ...(d ? compareRows(c, d) : []));
     perOut[t] = { pairs: P.pairs.length, carLaps: P.carLaps, contactsPerCarLap: P.contacts / P.carLaps, fourOffPerCarLap: P.fourOff / P.carLaps, fourOffNonMishapPerCarLap: P.fourOffNM / P.carLaps, passesTotal: P.passes, clearlyFasterCompleted: P.completed / P.situations, defendingVsClearlyFaster: P.vsCF, defendingWithin3: P.within3, seeds: P.seeds, curves: { byD: c.byD, byG: c.byG, lostByD: c.lostByD } };
   }
+  // (C5 T6) train passes (>= 2 cars passed by one car between two consecutive corner apexes) and (T4) the commits
+  L.push('', '## Train passes (one car passing >= 2 cars between two consecutive corner apexes) and the commits (offset)', '', '| track | races | train passes per race | cars per train pass | pit-straight segment: per race | top segments (per race) | commits | commit closing speed median / p90 m/s | gap median m | cars targeted mean | follow-limited at commit % |', '|---|---|---|---|---|---|---|---|---|---|---|');
+  const trainOut: Record<string, unknown> = {};
+  for (const t of tracks) {
+    const rs = runs.filter((r) => r.track === t && r.metrics.train);
+    if (!rs.length) continue;
+    const nR = rs.length, tp = rs.reduce((a, r) => a + r.metrics.train!.passes, 0), tc = rs.reduce((a, r) => a + r.metrics.train!.cars, 0), pit = rs.reduce((a, r) => a + r.metrics.train!.pit, 0);
+    const seg: Record<string, number> = {};
+    for (const r of rs) for (const [k, v] of Object.entries(r.metrics.train!.bySeg)) seg[k] = (seg[k] ?? 0) + v;
+    const top = Object.entries(seg).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([k, v]) => `${k} ${(v / nR).toFixed(1)}`).join(', ');
+    const cm = rs.flatMap((r) => r.metrics.commits ?? []);
+    const dv = cm.map((c) => c[0]), gp = cm.map((c) => c[1]), nt = cm.map((c) => c[2]), lim = cm.filter((c) => c[3] === 1).length;
+    trainOut[t] = { races: nR, passesPerRace: tp / nR, carsPerTrainPass: tp ? tc / tp : NaN, pitSeg: rs[0].metrics.train!.pitSeg, pitPerRace: pit / nR, bySeg: seg, commits: cm.length, commitDv: dv.length ? [quantile(dv, 0.5), quantile(dv, 0.9)] : null, commitGap: gp.length ? quantile(gp, 0.5) : NaN, targeted: nt.length ? nt.reduce((a, b) => a + b, 0) / nt.length : NaN, followLimited: cm.length ? lim / cm.length : NaN };
+    L.push(`| ${t} | ${nR} | ${(tp / nR).toFixed(1)} | ${tp ? (tc / tp).toFixed(2) : '-'} | ${rs[0].metrics.train!.pitSeg}: ${(pit / nR).toFixed(1)} | ${top} | ${cm.length} | ${dv.length ? f1(quantile(dv, 0.5)) + ' / ' + f1(quantile(dv, 0.9)) : '-'} | ${gp.length ? f1(quantile(gp, 0.5)) : '-'} | ${nt.length ? (nt.reduce((a, b) => a + b, 0) / nt.length).toFixed(2) : '-'} | ${cm.length ? pct(lim / cm.length) : '-'} |`);
+  }
   // (C2) the wait (positions only) and what held the clearly faster car (--why runs)
   L.push('', '## The wait (clearly faster car arriving within 25 m behind a running car; positions only)', '', '| track | waits | done | median s | p90 s | time lost per done wait, median / p90 s | ended otherwise |', '|---|---|---|---|---|---|---|');
   const waitOut: Record<string, unknown> = {};
@@ -261,9 +279,12 @@ function report(runs: RunOut[], tracks: string[], laps: number, seeds: string): 
     for (const r of rs) { nW += r.metrics.wait!.n; for (const [k, v] of Object.entries(r.metrics.wait!.ended)) if (k !== 'done') ended[k] = (ended[k] ?? 0) + v; }
     const med = quantile(dur, 0.5), p90 = quantile(dur, 0.9), ls = rs.flatMap((r) => r.metrics.wait!.losses ?? []);
     const lm = ls.length ? quantile(ls, 0.5) : NaN, l90 = ls.length ? quantile(ls, 0.9) : NaN;
-    waitOut[t] = { n: nW, done: dur.length, median: med, p90, ended, lossMedian: lm, lossP90: l90 };
+    const dva = rs.flatMap((r) => r.metrics.wait!.dvArrive ?? []), dvs = rs.flatMap((r) => r.metrics.wait!.dvSteps ?? []);
+    waitOut[t] = { n: nW, done: dur.length, median: med, p90, ended, lossMedian: lm, lossP90: l90, straightDvArrive: { n: dva.length, median: dva.length ? quantile(dva, 0.5) : NaN, p90: dva.length ? quantile(dva, 0.9) : NaN }, straightDvSteps: { n: dvs.length, median: dvs.length ? quantile(dvs, 0.5) : NaN, p90: dvs.length ? quantile(dvs, 0.9) : NaN } };
     L.push(`| ${t} | ${nW} | ${dur.length} | ${f1(med)} | ${f1(p90)} | ${f1(lm)} / ${f1(l90)} | ${JSON.stringify(ended)} |`);
   }
+  L.push('', 'Straight-line speed delta, attacker minus car ahead, m/s (|kappa| < 0.003 at both): at arrival median / p90 (n); over the wait steps median / p90 (n)', '');
+  for (const [t, w] of Object.entries(waitOut) as [string, { straightDvArrive: { n: number; median: number; p90: number }; straightDvSteps: { n: number; median: number; p90: number } }][]) L.push(`- ${t}: ${f1(w.straightDvArrive.median)} / ${f1(w.straightDvArrive.p90)} (${w.straightDvArrive.n}); ${f1(w.straightDvSteps.median)} / ${f1(w.straightDvSteps.p90)} (${w.straightDvSteps.n})`);
   const whyAll: Record<string, number> = {};
   for (const r of runs) for (const [k, v] of Object.entries(r.metrics.why ?? {})) whyAll[k] = (whyAll[k] ?? 0) + v;
   const whyN = Object.values(whyAll).reduce((a, b) => a + b, 0);
@@ -278,7 +299,7 @@ function report(runs: RunOut[], tracks: string[], laps: number, seeds: string): 
     const base = resolve(ROOT, save);
     mkdirSync(dirname(base), { recursive: true });
     writeFileSync(base + '.md', md + '\n');
-    writeFileSync(base + '.json', JSON.stringify({ tracks, seeds, laps, set: sets, gates: g, pooled: { pairs: all.length, byD: pooled.byD, byG: pooled.byG, lostByD: pooled.lostByD, pressure: pooled.pressure, groups: pooled.groups }, perTrack: perOut, wait: waitOut, why: whyAll }, null, 1));
+    writeFileSync(base + '.json', JSON.stringify({ tracks, seeds, laps, set: sets, gates: g, pooled: { pairs: all.length, byD: pooled.byD, byG: pooled.byG, lostByD: pooled.lostByD, pressure: pooled.pressure, groups: pooled.groups }, perTrack: perOut, wait: waitOut, train: trainOut, why: whyAll }, null, 1));
   }
 }
 

@@ -1,7 +1,7 @@
 // C1, the offset planner (src/physics/ai/planner.ts): its rules on synthetic neighbours (a straight, constant speeds), and alone
 // through the driver (the racing line, nothing evaluated).
 import { describe, expect, test } from 'vitest';
-import { PlanWork, plan, candidateCost, shiftRate, attackOverlap, attackNext, lineFree, bandTaken, BIG, PLAN_DT, PLAN_N, REVERSE_W, SHIFT_MIN, ATT_NONE, ATT_COMMIT, ATT_HOLD, ATT_BACK, type PlanEnv } from '../ai/planner';
+import { PlanWork, plan, candidateCost, shiftRate, attackOverlap, attackNext, lineFree, bandTaken, trainTarget, BIG, PLAN_DT, PLAN_N, REVERSE_W, SHIFT_MIN, ATT_NONE, ATT_COMMIT, ATT_HOLD, ATT_BACK, type PlanEnv } from '../ai/planner';
 import { director } from './ai_fixture';
 
 const S = PLAN_N + 1;
@@ -212,6 +212,55 @@ describe('C4: the Lemons pass (pure)', () => {
     expect(lineFree(w)).toBe(false);
     car(w, 0, -15, 0, 31);                                  // well behind me: the lead car holds its line (R1)
     expect(lineFree(w)).toBe(true);
+  });
+});
+
+describe('C5: the train pass (pure)', () => {
+  const OVL = 2.2;
+  /** a train of three cars on the line at 26 m/s, 20 / 28 / 36 m ahead (about 0.14 s apart); me at 30 m/s, the pressure headway */
+  function train(): { w: PlanWork; ks: Int32Array } {
+    const w = work({ headway: 0.3 });
+    car(w, 0, 20, 0, 26); car(w, 1, 28, 0, 26); car(w, 2, 36, 0, 26);
+    w.nTrain[0] = 1; w.nTrain[1] = 1; w.nTrain[2] = 1;
+    return { w, ks: Int32Array.from([0, 1, 2]) };
+  }
+  test('T1: the target is the furthest car of the train my nose passes by ovl before the landing: the front of it on a long straight', () => {
+    const { w, ks } = train();
+    expect(trainTarget(w, env, ks, 3, 2, 2.6, 20, OVL)).toBe(-1);       // a braking point 20 m ahead: no landing
+    expect(trainTarget(w, env, ks, 3, 2, 2.6, 150, OVL)).toBe(0);       // 150 m: the first car only
+    expect(trainTarget(w, env, ks, 3, 2, 2.6, 240, OVL)).toBe(1);       // 240 m: two of them
+    expect(trainTarget(w, env, ks, 3, 2, 2.6, 400, OVL)).toBe(2);       // beyond the horizon, carried on at the closing speed: all three
+    expect(w.attOvK[2]).toBeGreaterThan(20);
+    // the target never moves further out than the one committed to (upTo), and a passed car (-1) is not counted
+    expect(trainTarget(w, env, ks, 3, 1, 2.6, 400, OVL)).toBe(1);
+    // without the hold (the C2 pass that merges back after the first car) the projection tucks in behind the second one
+    w.trainHold = false; w.eAtt = Number.NaN;
+    attackOverlap(w, env, 0, 2.6, 400);
+    expect(w.attOvK[2]).toBeLessThan(OVL);
+  });
+
+  test('T2: committed, the attack offset holds under a soft cost and the commit aborts under a hard rule (a car moving into my lane ahead)', () => {
+    // soft: the corridor's edge 0.2 m from the attack offset (a corridor cost every sample): still a landing
+    const envN: PlanEnv = { ...env, hi: () => 2.8 };
+    const a = train();
+    expect(trainTarget(a.w, envN, a.ks, 3, 2, 2.6, 400, OVL)).toBe(2);
+    a.w.cand[0] = 2.6; a.w.nC = 1; a.w.trainHold = true; a.w.eAtt = 2.6;
+    const soft = candidateCost(a.w, envN, 0);
+    expect(soft).toBeGreaterThan(0); expect(soft).toBeLessThan(BIG);
+    // hard: a much slower car in the attack lane 18 m ahead: I cannot brake to it in the room
+    const b = train();
+    car(b.w, 3, 18, 2.6, 15);
+    expect(trainTarget(b.w, env, b.ks, 3, 2, 2.6, 400, OVL)).toBe(-2);
+  });
+
+  test('T3: the landing needs the overlap at the target\'s turn-in: without it back out behind it, with it hold the side', () => {
+    // (dTi: m to its turn-in; ovlTi: m of my nose past its tail needed there)
+    expect(attackNext(ATT_HOLD, 1, OVL, -10, 60, 120, 8, 5, 1.32)).toBe(ATT_BACK);
+    expect(attackNext(ATT_HOLD, 3, OVL, -10, 60, 120, 8, 5, 1.32)).toBe(ATT_HOLD);
+    expect(attackNext(ATT_HOLD, 1, OVL, -10, 60, 120, 8, 30, 1.32)).toBe(ATT_HOLD);   // not at the turn-in yet
+    expect(attackNext(ATT_HOLD, 1, OVL, -10, 60, 120, 8)).toBe(ATT_HOLD);              // C4 (no turn-in check)
+    // and the braking point still needs ovl: a nose in is no landing
+    expect(attackNext(ATT_COMMIT, 1.5, OVL, 5, 85, 145, 8, 40, 1.32)).toBe(ATT_BACK);
   });
 });
 

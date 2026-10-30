@@ -31,12 +31,18 @@ export interface SelfplayMetrics {
      *  WAIT_NEAR m behind a running car in green; the time from that arrival to its centre being ahead (done), or the
      *  situation ending otherwise (dropped > 60 m back, the car ahead off / away, the race over) */
     wait?: { n: number; done: number; median: number; p90: number; ended: Record<string, number>; durations: number[];
+      /** (knob search) speed delta attacker - car ahead (m/s) on straights (|kappa| < 0.003 at both) at the arrival, and per wait step */
+      dvArrive?: number[]; dvSteps?: number[];
       /** (C3) the attacker (car number) of each done wait */
       cars?: string[];
       /** per done wait: the attacker's time over its own profile across the distance it covered (s) */
       losses: number[]; lossMedian: number };
     /** station of each green pass (the passing car's s when the order changed; sampled every 0.1 s) */
     passAt?: number[];
+    /** (C5 T6) train passes: an attacker passing >= 2 distinct cars in green between two consecutive corner apexes (one straight
+     *  and the corner that ends it); cars = the cars passed in those; bySeg by segment "<corner>-<next corner>"; pit = those in the
+     *  segment that holds the start line (s 0), named pitSeg */
+    train?: { passes: number; cars: number; bySeg: Record<string, number>; pit: number; pitSeg: string };
     /** completion by pace ratio (target lap of the faster / the slower): < 0.85, 0.85-0.92, 0.92-0.97 */
     byRatio: { lo: number; hi: number; fails?: string[]; situations: number; completed: number; medianStuck: number; open: Record<string, number> }[] };
   defending: { vsClearlyFaster: number; within3: number; vsSlower: number; none: number;
@@ -89,7 +95,7 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
   const why = new Map<string, number>();
   const situations = new Map<number, Situation>();
   const closed: Situation[] = [];
-  const waits = new Map<number, { i: number; j: number; base: number; t0: number; U0: number }>(), waitDur: number[] = [], waitCar: string[] = [], waitLoss: number[] = [], waitEnd: Record<string, number> = {};
+  const waits = new Map<number, { i: number; j: number; base: number; t0: number; U0: number }>(), waitDur: number[] = [], waitCar: string[] = [], waitLoss: number[] = [], dvArrive: number[] = [], dvSteps: number[] = [], waitEnd: Record<string, number> = {};
   const defend = { vsClearlyFaster: 0, within3: 0, vsSlower: 0, none: 0, covers: 0 };
   const coverC = new Int32Array(n).fill(-1), coverE0 = new Float64Array(n), coverDone = new Uint8Array(n);
   const prevDefend = new Int8Array(n);
@@ -101,6 +107,12 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
   let defendsVsPlayer = 0;
   const lapsOf: number[][] = cars.map(() => []), lapsSeen = new Int32Array(n);
   const passAt: number[] = [];
+  // (C5 T6) train passes: per car the segment (index of the last corner apex passed) and the distinct cars passed in it
+  const nC = corners.length, segOf = (s: number) => { let c = nC - 1; for (let q = 0; q < nC; q++) if (corners[q].apex <= s) c = q; return c; };
+  const segName = (c: number) => nC ? `${corners[c].name}-${corners[(c + 1) % nC].name}` : '-';
+  const segCur = new Int32Array(n).fill(-1), segLen = new Int32Array(n), segList = new Int32Array(n * 8);
+  const train = { passes: 0, cars: 0, bySeg: {} as Record<string, number>, pit: 0, pitSeg: segName(segOf(0)) };
+  const segFlush = (i: number) => { if (segLen[i] >= 2) { train.passes++; train.cars += segLen[i]; const k = segName(segCur[i]); train.bySeg[k] = (train.bySeg[k] ?? 0) + 1; if (k === train.pitSeg) train.pit++; } segLen[i] = 0; };
   let contacts = 0, hard = 0;
   const pairSeen = new Map<number, number>();
   const offT = new Float64Array(n), onT = new Float64Array(n).fill(99), armed = new Uint8Array(n).fill(1);
@@ -155,12 +167,14 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
     if (phase === 'green' && !Ugreen) { Ugreen = Float64Array.from(tr.U); tGreen = t; for (let i = 0; i < n; i++) prevS[i] = tr.s[i]; }
     // ---- order changes (formation passes; total passes during green)
     if (steps % 100 === 0 && (phase === 'formation' || phase === 'green')) {
+      for (let i = 0; i < n; i++) { const c = segOf(tr.s[i]); if (c !== segCur[i]) { segFlush(i); segCur[i] = c; } }
       for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
         if (i === j) continue;
         const now = tr.U[i] > tr.U[j] ? 1 : -1, k = i * n + j, was = ahead[k];
         ahead[k] = now;
         if (was === -1 && now === 1 && Math.abs(tr.U[i] - tr.U[j]) < 50 && !tr.off[j] && !tr.away[j] && tr.v[j] > 5 && !cars[j].driver?.needsRecovery) {
-          if (phase === 'formation') formationPasses++; else { passesTotal++; passAt.push(Math.round(tr.s[i])); if (i === pIdx) { const b = +behindT[j].toFixed(1), r = tr.pace[j] / tr.pace[pIdx]; playerBehind.push(b); (r >= CLEAR && r <= 1 / CLEAR ? closeBehind : otherBehind).push(b); behindT[j] = 0; } }
+          if (phase === 'formation') formationPasses++; else { passesTotal++; passAt.push(Math.round(tr.s[i]));
+            { let seen = false; for (let q = 0; q < segLen[i]; q++) if (segList[i * 8 + q] === j) seen = true; if (!seen && segLen[i] < 8) segList[i * 8 + segLen[i]++] = j; } if (i === pIdx) { const b = +behindT[j].toFixed(1), r = tr.pace[j] / tr.pace[pIdx]; playerBehind.push(b); (r >= CLEAR && r <= 1 / CLEAR ? closeBehind : otherBehind).push(b); behindT[j] = 0; } }
         }
       }
       if (phase === 'green' && pIdx >= 0) for (let j = 0; j < n; j++) { const g = tr.U[j] - tr.U[pIdx]; if (j !== pIdx && g > 0 && g < 20) behindT[j] += 0.1; }
@@ -260,7 +274,9 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
       // ---- (C2) the wait: positions only
       if (jA >= 0 && dA < WAIT_NEAR && !busy && !tr.off[jA] && !tr.away[jA] && tr.v[jA] > 5 && tr.pace[i] < CLEAR * tr.pace[jA]) {
         const key = i * 1000 + jA;
-        if (!waits.has(key)) waits.set(key, { i, j: jA, base: Math.round((tr.U[jA] - tr.U[i] - dA) / L) * L, t0: t, U0: tr.U[i] });
+        const straight = Math.abs(line.at(line.curv, tr.s[i])) < 0.003 && Math.abs(line.at(line.curv, tr.s[jA])) < 0.003;
+        if (!waits.has(key)) { waits.set(key, { i, j: jA, base: Math.round((tr.U[jA] - tr.U[i] - dA) / L) * L, t0: t, U0: tr.U[i] }); if (straight) dvArrive.push(+(tr.v[i] - tr.v[jA]).toFixed(2)); }
+        if (straight) dvSteps.push(+(tr.v[i] - tr.v[jA]).toFixed(2));
       }
       // ---- four wheels off (unpaved), sustained 0.25 s, re-armed after 2 s back on
       const st = cars[i].vehicle.state;
@@ -313,6 +329,7 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
     if (opts.log && steps % 60000 === 0) { const hh = dir.hud(); console.log(`t ${t.toFixed(0)} ${hh.phase} lap ${hh.lap} ${(ms * 1000 / steps / n).toFixed(2)} µs/car-step`); }
   }
   for (const s of situations.values()) { s.why = 'end'; closed.push(s); }
+  for (let i = 0; i < n; i++) segFlush(i);
   if (waits.size) waitEnd.end = (waitEnd.end ?? 0) + waits.size;
   let carLaps = 0;
   if (Ugreen) for (let i = 0; i < n; i++) if (cars[i].driver) carLaps += Math.max(0, tr.U[i] - Ugreen[i]) / L;
@@ -327,8 +344,8 @@ export function runSelfplay(dir: RaceDirector, surface: Surface, opts: { log?: b
   return {
     cars: n, laps: dir.config.laps, carLaps, raceTime: dir.time,
     line: { instRms: inst.rms(), instP95: inst.pct(0.95), why: Object.fromEntries([...why].map(([k, v]) => [k, +(v / Math.max(1, all.n)).toFixed(4)])), rms: all.rms(), p95: all.pct(0.95), samples: all.n, trackRms: trk.rms(), trackP95: trk.pct(0.95), maxErr, worstAt, corners: corners.map((c, k) => ({ name: c.name, rms: cornerAcc[k].rms(), p95: cornerAcc[k].pct(0.95), samples: cornerAcc[k].n })) },
-    passing: { attempts: passStarts, ends: passEnds, situations: real.length, reachedBrakeZone: real.filter((s) => s.brakeZone).length, setUp: real.filter((s) => s.setup).length, completed: real.filter((s) => s.done).length, medianStuck: median(stuck), p90Stuck: pctl(stuck, 0.9), passesTotal, passAt,
-      wait: { n: Object.values(waitEnd).reduce((a, b) => a + b, 0), done: waitDur.length, median: median(waitDur), p90: pctl(waitDur, 0.9), ended: waitEnd, durations: waitDur.map((x) => +x.toFixed(2)), cars: waitCar, losses: waitLoss.map((x) => +x.toFixed(2)), lossMedian: median(waitLoss) },
+    passing: { attempts: passStarts, ends: passEnds, situations: real.length, reachedBrakeZone: real.filter((s) => s.brakeZone).length, setUp: real.filter((s) => s.setup).length, completed: real.filter((s) => s.done).length, medianStuck: median(stuck), p90Stuck: pctl(stuck, 0.9), passesTotal, passAt, train,
+      wait: { n: Object.values(waitEnd).reduce((a, b) => a + b, 0), done: waitDur.length, median: median(waitDur), p90: pctl(waitDur, 0.9), ended: waitEnd, durations: waitDur.map((x) => +x.toFixed(2)), cars: waitCar, losses: waitLoss.map((x) => +x.toFixed(2)), dvArrive, dvSteps, lossMedian: median(waitLoss) },
       byRatio: [[0, 0.85], [0.85, 0.92], [0.92, CLEAR]].map(([lo, hi]) => {
         const g = real.filter((s) => { const r = tr.pace[s.i] / tr.pace[s.j]; return r >= lo && r < hi; });
         const open: Record<string, number> = {};
