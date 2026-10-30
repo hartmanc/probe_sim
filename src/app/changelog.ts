@@ -27,6 +27,19 @@ export interface ChangeEntry {
 /** Newest first. Add a new entry at the top and mirror its version in package.json. */
 export const CHANGELOG: ChangeEntry[] = [
   {
+    version: '0.4.1', date: '', title: 'The field gets its power back',
+    items: [
+      'The AI field runs at each car’s clean-air pace instead of its traffic-laden race median, and the calibration now gives most of a car’s pace to its engine rather than its tyres. Faster cars pull away on the straights, pass trains the way the real ones do, and the field makes far fewer contacts: at Laguna Seca about one fifth as many car-to-car touches as before.',
+      'The AI strength setting is gone: the field is the real one, at its real pace.',
+      'The AI judges your pace from the laps you actually drive, not from the team’s race record, so the cars that race you are the ones close to your pace.',
+      'An unserved stop-and-go penalty counts at the flag: its seconds are added to your race time, cars that crossed inside that window are classified ahead of you, and the results screen says so. The results card waits for the classification to settle after your flag when a penalty is pending.',
+      'Races are recorded, as the seed and the controls you pressed, so the AI can be tuned by re-running real races against it. No name or device details are kept; the Credits privacy note says what is stored, and ?record=0 switches it off.',
+      'Mid-Ohio’s AI drivers were retuned: fewer contacts and four-offs in the field around you.',
+      'Graphics: adaptive quality on computers steps the picture down when the frame rate dips and back up when it recovers; a Balanced tier between Full and Phone; shadow maps and the pixel budget trimmed so a 4K display renders at a sensible size; an experimental option to run the physics in a worker thread, off by default.',
+      'Two experimental AI switches for research, off by default and not part of the game: an alternative continuous-offset planner (?planner=offset) and corner passes with overlap before turn-in in the standard planner (?cornerpass=1). Both are measured against the real Lemons passing data in the notes.',
+    ],
+  },
+  {
     version: '0.4.0', date: '2026-10-27', title: 'Ready for the paddock',
     items: [
       '**Buttonwillow Raceway Park** in its Lemons configuration: the road and kerbs fitted to the owner’s own edge drawings over the 2026 imagery, the ground from lidar, the trackside from the September 2026 onboard. Race the Button Turrible 2026 field, the 100 cars that ran a lap, each modelled from its photos with the pace it ran there.',
