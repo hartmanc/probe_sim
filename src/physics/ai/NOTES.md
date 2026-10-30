@@ -1272,3 +1272,80 @@ split (knob search: share 0.5 doubles the straight delta over the wait) more tha
 
 **Next.** The power split with a recalibrated pace file (the train pass and the projection fixes are ready for it); then the screens
 again on this tree; Buttonwillow's four-offs (2 x the lanes' in every offset tree); the full field's passes (84 of 150).
+
+## Power split (30 Oct 2026, branch `power-split`): stage A, the test on the C5 tree
+
+Owner: "A real Lemons field has much of its spread in power, and those passes happen on the straight with no racecraft at all." Brief:
+port the knob search's share p (0.5 of the pace scalar in power) as a proper option, run the C5 screen pool with it for both planners,
+and calibrate the field at the winning share only if the offset planner beats the lane model at the same share. **Stage A ran;
+stage B did not (the rule failed at p = 0.5 and at p = 0.75).** `AI_VERSION` stays 8, the pace files and the default share (0) are
+untouched.
+
+**As built.** `field.ts`: `setPowerShare(p)` / `getPowerShare()` (a module variable, default 0, clamped to 0..1; no `process.env`, the
+browser build reads this file) and the `paceSplit` mapping of knob-search 0d63378 (grip `1 + (s - 1)(1 - p)` clamped to
+[GRIP_MIN, GRIP_MAX]; power `((1 + (s - 1) p) x raw / grip)^3`, raw = the unclamped grip). p = 0 takes the old branch: solo hashes
+8530e05a097e4a7d / 4ac773bad171b7a2 / 19e2628dc499c20e / 71c58e0ef9e5bd32 reproduce with the planner lanes and offset. `--power-share <p>`
+on `selfplay.ts`, `traffic_sim.ts` (forwarded to its per-race processes and in the default run tag as `_p<p>`), `solo_hash.ts`,
+`calibrate_field.ts` (to its worker threads through `workerData`); `power_share.test.ts` (4 tests: p = 0 is the old split, the p = 0.5
+mapping, the clamp's remainder goes to power and the product stays monotone, the share is clamped). `tools/race/power_table.py` builds
+the table below from the saved sets (`tools/race/out/power/`, gitignored).
+
+**KWT_MAX.** The 150 kW/t cap is applied to the stock / floor power (`effKw`) BEFORE the pace factor; the factor then multiplies the
+torque curve (`field.ts` `j.engine.torqueCurve.torque * p3`), so a power factor above 1 takes a car past 150 kW/t. At the p = 0 fits
+the peak power-to-weight over the pace-file cars is: Laguna 0 of 44 cars over 150 (max 150), Sonoma 4 of 133 (max 243), Buttonwillow
+0 of 99 (150), Mid-Ohio 6 of 85 (180). At p = 0.5 with the same (uncalibrated) scales: Laguna 0 (max 138), Sonoma 5 (267),
+Buttonwillow 0 (134), Mid-Ohio 6 (191); at p = 0.75: 0 / 5 / 0 / 7. Power below 1 (most of the field) lowers it, so on the screen
+tracks nobody exceeds the cap at either share; the cars over it are the Sonoma / Mid-Ohio ones the p = 0 fit already sent beyond
+GRIP_MAX (calibration at the new share will move them; not changed).
+
+**The screen** (Laguna + Buttonwillow, seeds 1-8, 10 laps, the C5 screen pool; p = 0 rows are C5's `lanes_screen` / `s1`, reproduced
+by this tree at p = 0; `tools/race/out/power/p<p>_<planner>`; wall-clock for the 16 races on 6 workers: offset about 65 min, lanes
+about 55 min). Landings = the commit survived to the braking point with the overlap (HOLD phase entered, `AiDriver.attTally` `1>2`),
+per race; "done" = commits that ended with the car ahead passed, of all train commits (`train in / out`); both are the offset planner's
+own tally.
+
+| run | cells 0-1 / 1-3 / 3-8 / 8-15 / >15 % (g < 2), floor | passing lap loss 0-1 / 1-3 / 3-8 / 8-15 s | contacts L / BW | four-off L / BW | green passes L / BW | train passes per race L / BW | BW pit straight per race | landings per race L / BW (done / commits per race L / BW) | wait median / p90 s, L; BW | straight dv arrival L / BW; over the wait L / BW (m/s, median) |
+|---|---|---|---|---|---|---|---|---|---|---|
+| data | 39.4 / 60.3 / 86.9 / 97.8 / 99.7, 8.2 | 1.9 / 2.1 / 2.9 / 3.4 | | | | | | | | |
+| lanes p=0 | 37.1 / 56.6 / 65.2 / 82.0 / 95.3, 16.1 | 6.3 / 4.1 / 10.6 / 16.7 | 0.0400 / 0.0113 | 0.0601 / 0.0086 | 4224 / 10800 | 81.8 / 215.5 | 43.9 | | 14.3 / 66; 22.2 / 96 | 3.4 / 5.3; 0.30 / 0.93 |
+| offset p=0 | 27.0 / 49.4 / 57.1 / 78.4 / 91.0, 13.7 | 3.6 / 4.7 / 8.2 / 13.7 | 0.0115 / 0.0114 | 0.0559 / 0.0180 | 2617 / 6095 | 42.6 / 88.1 | 15.4 | 23.1 / 17.9 (136 / 201 of 321 / 648) | 16.6 / 87; 28.4 / 137 | 4.2 / 3.8; 0.06 / 0.27 |
+| lanes p=0.5 | 32.0 / 62.3 / 69.9 / 85.2 / 95.7, 12.1 | 3.4 / 3.1 / 8.2 / 15.1 | 0.0092 / 0.0086 | 0.0316 / 0.0030 | 3851 / 7794 | 79.6 / 146.5 | 44.2 | | 12.7 / 70; 22.6 / 103 | 3.6 / 4.9; 0.70 / 1.34 |
+| offset p=0.5 | 22.6 / 55.6 / 66.4 / 80.7 / 93.2, 8.3 | 2.5 / 1.9 / 7.0 / 12.0 | 0.0065 / 0.0095 | 0.0299 / 0.0031 | 2617 / 4884 | 47.6 / 64.1 | 22.1 | 24.9 / 13.1 (152 / 258 of 341 / 689) | 17.0 / 95; 26.2 / 137 | 4.3 / 4.0; 0.23 / 0.47 |
+| lanes p=0.75 | 37.8 / 52.3 / 67.3 / 82.2 / 97.1, 18.1 | 11.8 / 10.4 / 13.2 / 16.9 | 0.0093 / 0.0068 | 0.0211 / 0.0023 | 5073 / 12918 | 123.2 / 288.0 | 84.1 | | 7.9 / 57; 15.8 / 79 | 4.2 / 4.8; 0.84 / 1.31 |
+| offset p=0.75 | 30.3 / 52.0 / 64.9 / 81.8 / 93.7, 13.8 | 11.5 / 6.8 / 11.2 / 16.7 | 0.0055 / 0.0104 | 0.0220 / 0.0035 | 3841 / 8918 | 84.4 / 165.1 | 59.5 | 28.5 / 17.8 (209 / 423 of 395 / 1057) | 9.5 / 74; 20.2 / 106 | 5.0 / 4.9; 0.25 / 0.50 |
+
+(Gap bins and the per-track cells are in `tools/race/out/power/p*_*.md`.)
+
+**The decision rule** (offset against the lane model at the SAME share, same seeds): Laguna green passes offset >= lanes, the 8-15 %
+cell >= 88 % on the pool, contacts offset <= lanes on both tracks.
+
+| share | Laguna green passes offset vs lanes | 8-15 % cell, offset (lanes) | contacts L offset vs lanes | contacts BW offset vs lanes | rule |
+|---|---|---|---|---|---|
+| 0.5 | 2617 vs 3851: no | 80.7 (85.2): no | 0.0065 vs 0.0092: yes | 0.0095 vs 0.0086: no | not met |
+| 0.75 | 3841 vs 5073: no | 81.8 (82.2): no | 0.0055 vs 0.0093: yes | 0.0104 vs 0.0068: no | not met |
+
+**Reading (mine, for the owner's morning).**
+- The share does what the knob search said for the lane model and for the straight: the straight-line delta over the wait at Laguna goes
+  0.06 -> 0.23 -> 0.25 m/s for the offset planner (0 -> 0.5 -> 0.75) and 0.30 -> 0.70 -> 0.84 for the lanes; at Buttonwillow
+  0.27 -> 0.47 -> 0.50 and 0.93 -> 1.34 -> 1.31. The waits fall (offset Laguna median 16.6 -> 17.0 -> 9.5 s, lanes 14.3 -> 12.7 -> 7.9 s) and the
+  field spreads: the floor (a clearly faster pair NOT passed within a lap) falls at p = 0.5 and rises again at 0.75 for both planners.
+- The offset planner gains more than the lane model from the power (green passes x1.47 / x1.46 for 0 -> 0.75 at Laguna / Buttonwillow against
+  the lanes' x1.20 / x1.20; offset / lanes passes 62 / 56 % at p = 0, 68 / 63 % at 0.5, 76 / 69 % at 0.75), and the Buttonwillow pit
+  straight train passes of the offset planner go 15.4 -> 22.1 -> 59.5 per race (the lanes' 43.9 -> 44.2 -> 84.1), but it still trails the
+  lane model on every pass count, and the landings per race do not move with the share (23 / 25 / 29 at Laguna): the commit is
+  made at the same rate and survives to the braking point at the same rate; what the extra speed buys is more commits that END
+  with the car ahead passed (done / commits 42 % -> 45 % -> 53 % at Laguna, 31 % -> 37 % -> 40 % at Buttonwillow).
+- The calibration is not in these numbers: the pace files are the p = 0 fits, so at p > 0 each car runs a different lap than its target
+  (the share moves power and grip together with the scalar; not re-fitted in stage A, the brief's order). The "cells" and the
+  passes are therefore a measure of the planner at a changed field, not of a calibrated one.
+- Contacts and four-offs fall for BOTH planners at p = 0.5 (lanes Laguna contacts 0.0400 -> 0.0092, four-off 0.0601 -> 0.0316) and again at 0.75:
+  the knob search's finding (a 4 x fall of contacts at Laguna) holds on the lane model, which would be a reason for the share on its
+  own (owner's call, not tested for the lane model at the calibrated field).
+- What fails: the offset's 8-15 % cell is 0.4-4.5 pp under the lanes' at the same share and 6-7 pp under the 88 % bar (80.7 / 81.8; the
+  lanes themselves are at 85.2 / 82.2, so the bar is above what the lane model reaches on the uncalibrated field too); the Buttonwillow contacts
+  are level with the lanes' at p = 0 (0.0114 vs 0.0113) and above them at both shares (0.0095 vs 0.0086, 0.0104 vs 0.0068); the Laguna
+  green passes stay 24-32 % under the lanes'. No third share was tried.
+
+**Stopped** (the brief's rule): no stage B (no calibration, no AI_VERSION bump, no default change). To resume with the lane model at a
+share: `calibrate_field.ts --power-share <p>` and `traffic_sim.ts --power-share <p>` are in place; the default share would be
+`POWER_SHARE_DEFAULT` in `field.ts` with `AI_VERSION = 9` (stage B of the brief).

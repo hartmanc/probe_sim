@@ -402,8 +402,22 @@ export const KWT_MAX = 150;
  * only moves (cubically) once grip alone cannot reach the lap. Lap time falls monotonically with the
  * scalar, which keeps the one-dimensional calibration fit.
  */
+/**
+ * (Power split, 30 Oct 2026) The share p of the pace scalar that comes from power instead of grip. 0 = the split above, bit for
+ * bit. With p > 0: grip 1 + (s - 1)(1 - p) clamped to GRIP_MIN..GRIP_MAX as before; power ((1 + (s - 1) p) x raw / grip)^3, raw being
+ * the unclamped grip, so what the clamp cut off still goes to power and lap time stays monotone in s. A module variable (not the
+ * environment: the browser build reads this file); the tools set it with `--power-share`.
+ */
+let powerShare = 0;
+export function setPowerShare(p: number): void { powerShare = Number.isFinite(p) ? Math.min(1, Math.max(0, p)) : 0; }
+export function getPowerShare(): number { return powerShare; }
 export function paceSplit(scale: number): { grip: number; power: number } {
   const s = Math.min(PACE_MAX, Math.max(PACE_MIN, scale));
+  if (powerShare > 0) {
+    const raw = 1 + (s - 1) * (1 - powerShare);
+    const grip = Math.min(GRIP_MAX, Math.max(GRIP_MIN, raw));
+    return { grip, power: dpow((1 + (s - 1) * powerShare) * (raw / grip), 3) };
+  }
   const grip = Math.min(GRIP_MAX, Math.max(GRIP_MIN, s));
   const power = s < GRIP_MIN ? dpow(s / GRIP_MIN, 3) : s > GRIP_MAX ? dpow(s / GRIP_MAX, 3) : 1;
   return { grip, power };

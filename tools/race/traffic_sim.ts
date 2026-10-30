@@ -21,6 +21,7 @@ import { median, quantile } from './pace_rules';
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const argv = process.argv.slice(2);
 const arg = (k: string, d: string) => { const i = argv.indexOf(k); return i >= 0 ? argv[i + 1] : d; };
+const powerShareArg = argv.includes('--power-share') ? Number(argv[argv.indexOf('--power-share') + 1]) : undefined;   // (power split) the share of the pace scalar in power; absent = field.ts's default
 const sets = argv.flatMap((a, i) => (a === '--set' ? [argv[i + 1]] : []));
 export const ALL_TRACKS = ['laguna_seca', 'sonoma', 'buttonwillow', 'mid_ohio'];
 
@@ -43,6 +44,7 @@ const parseSet = (kv: string[]): Record<string, number | boolean | string> => Ob
 async function runOne(): Promise<void> {
   const { createCollisionWorld } = await import('../../src/physics/index');
   const { RaceDirector } = await import('../../src/physics/ai/race');
+  if (powerShareArg !== undefined) (await import('../../src/physics/ai/field')).setPowerShare(powerShareArg);   // before any car is built
   const { loadTrackPack, loadProbeJson, loadPace, loadIdentityJson, trackArg } = await import('./load');
   const { runSelfplay } = await import('./selfplay_metrics');
   const { TRACKS } = await import('../../src/scoreboard/config');
@@ -188,7 +190,7 @@ async function runSet(): Promise<void> {
   const tracks = arg('--tracks', 'all') === 'all' ? ALL_TRACKS : arg('--tracks', '').split(',');
   const [s0, s1] = arg('--seeds', '1-8').split('-').map(Number);
   const laps = Number(arg('--laps', '10')), workers = Number(arg('--workers', '6'));
-  const tag = arg('--tag', `l${laps}` + (sets.length ? '_' + sets.join('_').replace(/[^a-zA-Z0-9.=_-]/g, '') : ''));
+  const tag = arg('--tag', `l${laps}` + (powerShareArg !== undefined ? `_p${powerShareArg}` : '') + (sets.length ? '_' + sets.join('_').replace(/[^a-zA-Z0-9.=_-]/g, '') : ''));
   const runsDir = resolve(ROOT, arg('--runs', `tools/race/out/traffic/runs/${tag}`));
   mkdirSync(runsDir, { recursive: true });
   const jobs: { track: string; seed: number; file: string }[] = [];
@@ -206,7 +208,7 @@ async function runSet(): Promise<void> {
     const launch = (): void => {
       if (next >= todo.length) return;
       const j = todo[next++];
-      const p = spawn(tsx, [fileURLToPath(import.meta.url), '--track', j.track, '--seed', String(j.seed), '--laps', String(laps), '--json', j.file, ...sets.flatMap((s) => ['--set', s]), ...(argv.includes('--why') ? ['--why'] : []), ...argv.flatMap((a, i) => (a === '--knob' ? ['--knob', argv[i + 1]] : []))], { cwd: ROOT, stdio: ['ignore', 'ignore', 'inherit'] });
+      const p = spawn(tsx, [fileURLToPath(import.meta.url), '--track', j.track, '--seed', String(j.seed), '--laps', String(laps), '--json', j.file, ...sets.flatMap((s) => ['--set', s]), ...(powerShareArg !== undefined ? ['--power-share', String(powerShareArg)] : []), ...(argv.includes('--why') ? ['--why'] : []), ...argv.flatMap((a, i) => (a === '--knob' ? ['--knob', argv[i + 1]] : []))], { cwd: ROOT, stdio: ['ignore', 'ignore', 'inherit'] });
       p.on('exit', (code) => {
         if (code !== 0) { rej(new Error(`${j.track} seed ${j.seed} exited ${code}`)); return; }
         done++;

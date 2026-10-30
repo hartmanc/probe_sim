@@ -4,13 +4,14 @@
 //   npx tsx tools/race/solo_hash.ts [--tracks laguna_seca,sonoma,buttonwillow,mid_ohio] [--planner lanes|offset]
 import { createHash } from 'node:crypto';
 import { runSolo } from '../../src/physics/ai/solo';
-import { parseIdentity, fieldKey, AI_VERSION } from '../../src/physics/ai/field';
+import { parseIdentity, fieldKey, AI_VERSION, setPowerShare } from '../../src/physics/ai/field';
 import { loadTrackPack, loadProbeJson, loadPace, loadIdentityJson } from './load';
 
 const argv = process.argv.slice(2);
 const i = argv.indexOf('--tracks');
 const tracks = i >= 0 ? argv[i + 1].split(',') : ['laguna_seca', 'sonoma', 'buttonwillow', 'mid_ohio'];
 const planner = argv.includes('--planner') && argv[argv.indexOf('--planner') + 1] === 'offset' ? 'offset' : 'lanes';
+if (argv.includes('--power-share')) setPowerShare(Number(argv[argv.indexOf('--power-share') + 1]));
 console.log(`AI_VERSION ${AI_VERSION}, planner ${planner}`);
 for (const t of tracks) {
   const pack = loadTrackPack(t), pace = loadPace(t), idj = loadIdentityJson(t);

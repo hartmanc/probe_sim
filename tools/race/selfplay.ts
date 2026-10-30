@@ -13,6 +13,7 @@ import { runSelfplay, printReport } from './selfplay_metrics';
 import { runSolo } from '../../src/physics/ai/solo';
 import { TRACKS } from '../../src/scoreboard/config';
 import { setKnobs } from '../../src/physics/ai/planner';
+import { setPowerShare } from '../../src/physics/ai/field';
 
 const argv = process.argv.slice(2);
 const arg = (k: string, d: string) => { const i = argv.indexOf(k); return i >= 0 ? argv[i + 1] : d; };
@@ -30,6 +31,7 @@ const strength = Number(arg('--strength', '1'));
 const planner = arg('--planner', 'lanes') === 'offset' ? 'offset' as const : 'lanes' as const;
 // (C4) the offset planner's knobs (planner.ts `knobs`, NOTES "Knobs for the search"): --set k.<name>=<value> or --knob <name>=<value>
 setKnobs([...argv.flatMap((a, i) => (a === '--set' && argv[i + 1]?.startsWith('k.') ? [argv[i + 1].slice(2)] : [])), ...argv.flatMap((a, i) => (a === '--knob' ? [argv[i + 1]] : []))]);
+if (argv.includes('--power-share')) setPowerShare(Number(arg('--power-share', '0')));   // before any car is built
 const pack = loadTrackPack(track);
 const playerScale = argv.includes('--player-scale') ? Number(arg('--player-scale', '1')) : Number.NaN;
 // the player's pace hint at that scale: the AI Probe's own solo lap (lap 2 of 2), as calibrate_field.ts measures it

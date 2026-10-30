@@ -1,7 +1,7 @@
 // Fit each AI car's pace scale so its clean solo lap equals the real target lap (pace.json), and one
 // scale per real stint (pace.json cars[].stints[]: the per-driver paces a race draws from).
 //
-//   npx tsx tools/race/calibrate_field.ts [--track <id>] [--only 711,619] [--workers 8] [--tol 0.002] [--dry] [--pace <file>]
+//   npx tsx tools/race/calibrate_field.ts [--track <id>] [--only 711,619] [--workers 8] [--tol 0.002] [--dry] [--pace <file>] [--power-share <p>]
 //   --pace <file>: read and write THAT pace file instead of the track's public one (candidate files, AI round 1: tools/race/out/pace_q/<q>/<track>/pace.json);
 //   the identity lookup still follows the track id. The track's public file is then not touched.
 //
@@ -21,7 +21,7 @@ import { fileURLToPath } from 'node:url';
 import { loadTrackPack, loadProbeJson, loadIdentity, pacePath, trackArg } from './load';
 import type { PaceJson } from '../../src/physics/ai/field';
 import { runSolo } from '../../src/physics/ai/solo';
-import { AI_VERSION, PACE_MIN, PACE_MAX, describeAiCar, fieldKey, paceSplit, type PaceCar } from '../../src/physics/ai/field';
+import { AI_VERSION, PACE_MIN, PACE_MAX, describeAiCar, fieldKey, paceSplit, setPowerShare, type PaceCar } from '../../src/physics/ai/field';
 
 // number: the car (the player's #619 runs without identity); key: its identity row (pace.json `id`, else the number)
 interface Job { id: string; number: string; key: string; target: number; guess: number; tol: number }
@@ -75,6 +75,7 @@ function makeEval(track: string) {
 }
 
 if (!isMainThread) {
+  if (workerData.powerShare !== undefined) setPowerShare(workerData.powerShare);
   const evalFor = makeEval(workerData.track);
   const jobs: Job[] = workerData.jobs;
   for (const job of jobs) parentPort!.postMessage(fitOne(job, evalFor(job.number, job.key)));
@@ -86,6 +87,8 @@ if (!isMainThread) {
   const nWorkers = Math.max(1, Number(arg('--workers') ?? Math.min(8, Math.max(1, cpus().length - 2))));
   const dry = argv.includes('--dry');
   const track = trackArg(argv);
+  const powerShare = arg('--power-share') !== undefined ? Number(arg('--power-share')) : undefined;   // default: field.ts's
+  if (powerShare !== undefined) setPowerShare(powerShare);
   const paceFile = arg('--pace') ? resolve(arg('--pace')!) : pacePath(track);
   const pace: PaceJson = JSON.parse(readFileSync(paceFile, 'utf8'));
   const probeJson = loadProbeJson();
@@ -112,7 +115,7 @@ if (!isMainThread) {
       const mine = jobs.filter((_, k) => k % nWorkers === w);
       if (!mine.length) continue;
       live++;
-      const wk = new Worker(fileURLToPath(import.meta.url), { workerData: { jobs: mine, track }, execArgv: ['--import', 'tsx'] });
+      const wk = new Worker(fileURLToPath(import.meta.url), { workerData: { jobs: mine, track, powerShare }, execArgv: ['--import', 'tsx'] });
       wk.on('message', (f: Fit) => { fits.set(f.id, f); process.stderr.write(`  #${f.id.padEnd(6)} scale ${f.scale.toFixed(4)} lap ${f.lap.toFixed(2)} (${f.evals} evals)\n`); });
       wk.on('error', fail);
       wk.on('exit', () => { if (--live === 0) done(); });
