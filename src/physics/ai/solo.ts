@@ -21,7 +21,7 @@ export interface SoloResult {
  * crossing of s = 0. Control tick every `ctlEvery` physics steps of `dt`.
  */
 export function runSolo(line: RaceLine, surface: Surface, probeJson: any, identity: IdentityCar | null, scale: number,
-  laps: number, opts: { dt?: number; ctlEvery?: number; planner?: 'lanes' | 'offset'; maxTime?: number; profile?: ProfileOptions; onRecovery?: (s: number, t: number, speed: number) => void } = {}): SoloResult {
+  laps: number, opts: { dt?: number; ctlEvery?: number; planner?: 'lanes' | 'offset'; cornerPass?: boolean; maxTime?: number; profile?: ProfileOptions; onRecovery?: (s: number, t: number, speed: number) => void } = {}): SoloResult {
   const dt = opts.dt ?? 0.001, every = opts.ctlEvery ?? 2;
   const spec = buildAiSpec(probeJson, identity, scale);
   const perf = measureCarPerf(spec);
@@ -31,6 +31,7 @@ export function runSolo(line: RaceLine, surface: Surface, probeJson: any, identi
   tr.front[0] = spec.hull.front; tr.rear[0] = -spec.hull.rear; tr.hw[0] = spec.hull.halfWidth; tr.pace[0] = 120;
   const drv = new AiDriver(car, line, perf, spec, profile, { number: 'solo', scale, targetLap: 120, sigma: 0, aggression: 1, seed: 1 }, 0, tr, opts.planner ?? 'lanes');
   drv.ctl.noise = false;
+  if (opts.cornerPass) drv.ctl.cornerPass = true;   // (L1) the corner-pass switch: alone it must not move a bit (G5)
   // start on the run down to T11, gently: a fresh vehicle launched at 30 m/s into the hairpin spun the powerful RWD cars
   const s0 = line.L - 520;
   const pos = new Float64Array(2);
