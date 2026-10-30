@@ -23,7 +23,7 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { aggressionFor } from '../../src/physics/ai/rng';
+import { aggressionData } from './aggression_tiers';
 import { AI_VERSION, type PaceCar, type PaceJson } from '../../src/physics/ai/field';
 import { carPace, parseLap } from './pace_rules';
 import { pacePath, trackArg } from './load';
@@ -68,7 +68,7 @@ for (const r of cls.rows) {
     targetLap: pc.targetLap,
     bestLap: pc.bestLap,
     sigma: pc.sigma,
-    aggression: aggressionFor(number, r.resultClass),
+    aggression: aggressionData(TRACK, number, r.resultClass),   // (L1 K3) the data tier, else the seeded draw
     ...(number === PLAYER ? { player: true } : {}),
     ...(keepScales && p?.scale !== undefined && p.targetLap === pc.targetLap ? { scale: p.scale, achievedLap: p.achievedLap } : {}),
     stints: pc.stints,

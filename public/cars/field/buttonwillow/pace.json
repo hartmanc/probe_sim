@@ -21,7 +21,7 @@
    "targetLap": 156.41,
    "bestLap": 151.354,
    "sigma": 6.965,
-   "aggression": 2,
+   "aggression": 0,
    "stints": [
     {
      "index": 0,
@@ -376,7 +376,7 @@
    "targetLap": 159.413,
    "bestLap": 152.62,
    "sigma": 9.854,
-   "aggression": 2,
+   "aggression": 0,
    "stints": [
     {
      "index": 0,
@@ -1168,7 +1168,7 @@
    "targetLap": 145.677,
    "bestLap": 138.614,
    "sigma": 6.058,
-   "aggression": 0,
+   "aggression": 1,
    "stints": [
     {
      "index": 0,
@@ -1867,7 +1867,7 @@
    "targetLap": 155.744,
    "bestLap": 145.4,
    "sigma": 12.199,
-   "aggression": 0,
+   "aggression": 1,
    "stints": [
     {
      "index": 0,
@@ -3034,7 +3034,7 @@
    "targetLap": 144.334,
    "bestLap": 138.232,
    "sigma": 5.331,
-   "aggression": 1,
+   "aggression": 2,
    "stints": [
     {
      "index": 0,
@@ -3254,7 +3254,7 @@
    "targetLap": 152.228,
    "bestLap": 142.25,
    "sigma": 7.664,
-   "aggression": 2,
+   "aggression": 1,
    "stints": [
     {
      "index": 0,
@@ -3466,7 +3466,7 @@
    "targetLap": 146.489,
    "bestLap": 138.226,
    "sigma": 7.473,
-   "aggression": 0,
+   "aggression": 1,
    "stints": [
     {
      "index": 0,
@@ -3698,7 +3698,7 @@
    "targetLap": 157.758,
    "bestLap": 150.159,
    "sigma": 10.51,
-   "aggression": 2,
+   "aggression": 0,
    "stints": [
     {
      "index": 0,
@@ -3956,7 +3956,7 @@
    "targetLap": 158.913,
    "bestLap": 151.772,
    "sigma": 6.475,
-   "aggression": 2,
+   "aggression": 1,
    "stints": [
     {
      "index": 0,
@@ -5404,7 +5404,7 @@
    "targetLap": 153.672,
    "bestLap": 143.575,
    "sigma": 13.203,
-   "aggression": 1,
+   "aggression": 0,
    "stints": [
     {
      "index": 0,
@@ -5616,7 +5616,7 @@
    "targetLap": 150.63,
    "bestLap": 141.985,
    "sigma": 7.594,
-   "aggression": 0,
+   "aggression": 1,
    "stints": [
     {
      "index": 0,
@@ -5928,7 +5928,7 @@
    "targetLap": 159.127,
    "bestLap": 150.23,
    "sigma": 7.653,
-   "aggression": 1,
+   "aggression": 0,
    "stints": [
     {
      "index": 0,
@@ -6128,7 +6128,7 @@
    "targetLap": 148.408,
    "bestLap": 143.189,
    "sigma": 6.243,
-   "aggression": 1,
+   "aggression": 2,
    "stints": [
     {
      "index": 0,
@@ -6989,7 +6989,7 @@
    "targetLap": 154.551,
    "bestLap": 143.895,
    "sigma": 10.692,
-   "aggression": 1,
+   "aggression": 0,
    "stints": [
     {
      "index": 0,
@@ -7724,7 +7724,7 @@
    "targetLap": 141.869,
    "bestLap": 136.857,
    "sigma": 5.731,
-   "aggression": 1,
+   "aggression": 2,
    "stints": [
     {
      "index": 0,
@@ -8170,7 +8170,7 @@
    "targetLap": 154.322,
    "bestLap": 146.397,
    "sigma": 8.546,
-   "aggression": 1,
+   "aggression": 0,
    "stints": [
     {
      "index": 0,
@@ -8866,7 +8866,7 @@
    "targetLap": 150.511,
    "bestLap": 140.084,
    "sigma": 6.707,
-   "aggression": 0,
+   "aggression": 2,
    "stints": [
     {
      "index": 0,
@@ -9002,7 +9002,7 @@
    "targetLap": 145.155,
    "bestLap": 137.823,
    "sigma": 6.257,
-   "aggression": 1,
+   "aggression": 2,
    "stints": [
     {
      "index": 0,
@@ -9242,7 +9242,7 @@
    "targetLap": 150.616,
    "bestLap": 139.357,
    "sigma": 6.543,
-   "aggression": 2,
+   "aggression": 1,
    "stints": [
     {
      "index": 0,
@@ -10331,7 +10331,7 @@
    "targetLap": 152,
    "bestLap": 142.835,
    "sigma": 8.598,
-   "aggression": 2,
+   "aggression": 1,
    "stints": [
     {
      "index": 0,
@@ -11395,7 +11395,7 @@
    "targetLap": 161.656,
    "bestLap": 156.282,
    "sigma": 6.418,
-   "aggression": 2,
+   "aggression": 0,
    "stints": [
     {
      "index": 0,
@@ -11872,7 +11872,7 @@
    "targetLap": 156.891,
    "bestLap": 148,
    "sigma": 8.869,
-   "aggression": 2,
+   "aggression": 1,
    "stints": [
     {
      "index": 0,
@@ -12325,7 +12325,7 @@
    "targetLap": 151.555,
    "bestLap": 142.695,
    "sigma": 10.845,
-   "aggression": 1,
+   "aggression": 0,
    "stints": [
     {
      "index": 0,
@@ -13244,7 +13244,7 @@
    "targetLap": 158.066,
    "bestLap": 152.001,
    "sigma": 10.492,
-   "aggression": 1,
+   "aggression": 0,
    "stints": [
     {
      "index": 0,
@@ -13965,7 +13965,7 @@
    "targetLap": 154.531,
    "bestLap": 143.489,
    "sigma": 8.343,
-   "aggression": 1,
+   "aggression": 0,
    "stints": [
     {
      "index": 0,
@@ -14201,7 +14201,7 @@
    "targetLap": 156.275,
    "bestLap": 150.098,
    "sigma": 5.975,
-   "aggression": 1,
+   "aggression": 0,
    "stints": [
     {
      "index": 0,
@@ -14436,7 +14436,7 @@
    "targetLap": 145.557,
    "bestLap": 135.91,
    "sigma": 6.811,
-   "aggression": 1,
+   "aggression": 0,
    "stints": [
     {
      "index": 0,
@@ -14824,7 +14824,7 @@
    "targetLap": 153.218,
    "bestLap": 143.406,
    "sigma": 11.094,
-   "aggression": 1,
+   "aggression": 0,
    "stints": [
     {
      "index": 0,
@@ -15462,7 +15462,7 @@
    "targetLap": 154.913,
    "bestLap": 149.506,
    "sigma": 5.321,
-   "aggression": 0,
+   "aggression": 1,
    "stints": [
     {
      "index": 0,
@@ -15646,7 +15646,7 @@
    "targetLap": 156.066,
    "bestLap": 143.643,
    "sigma": 8.446,
-   "aggression": 2,
+   "aggression": 1,
    "stints": [
     {
      "index": 0,
@@ -16652,7 +16652,7 @@
    "targetLap": 152.981,
    "bestLap": 144.692,
    "sigma": 7.021,
-   "aggression": 2,
+   "aggression": 1,
    "stints": [
     {
      "index": 0,
@@ -16862,7 +16862,7 @@
    "targetLap": 146.459,
    "bestLap": 135.926,
    "sigma": 6.336,
-   "aggression": 2,
+   "aggression": 1,
    "stints": [
     {
      "index": 0,
@@ -17344,7 +17344,7 @@
    "targetLap": 153.945,
    "bestLap": 144.923,
    "sigma": 7.666,
-   "aggression": 2,
+   "aggression": 1,
    "stints": [
     {
      "index": 0,
@@ -18484,7 +18484,7 @@
    "targetLap": 146.495,
    "bestLap": 135.34,
    "sigma": 8.126,
-   "aggression": 1,
+   "aggression": 2,
    "stints": [
     {
      "index": 0,
@@ -19538,7 +19538,7 @@
    "targetLap": 157.467,
    "bestLap": 149.945,
    "sigma": 14.306,
-   "aggression": 1,
+   "aggression": 0,
    "stints": [
     {
      "index": 0,
@@ -20902,7 +20902,7 @@
    "targetLap": 149.939,
    "bestLap": 141.414,
    "sigma": 8.609,
-   "aggression": 1,
+   "aggression": 0,
    "stints": [
     {
      "index": 0,

@@ -204,7 +204,7 @@
    "targetLap": 121.479,
    "bestLap": 112.619,
    "sigma": 12.165,
-   "aggression": 2,
+   "aggression": 1,
    "stints": [
     {
      "index": 0,
@@ -737,7 +737,7 @@
    "targetLap": 115.637,
    "bestLap": 111.061,
    "sigma": 4.963,
-   "aggression": 2,
+   "aggression": 1,
    "stints": [
     {
      "index": 0,
@@ -1109,7 +1109,7 @@
    "targetLap": 113.191,
    "bestLap": 109.158,
    "sigma": 7.01,
-   "aggression": 1,
+   "aggression": 0,
    "stints": [
     {
      "index": 0,
@@ -2064,7 +2064,7 @@
    "targetLap": 112.001,
    "bestLap": 106.525,
    "sigma": 3.656,
-   "aggression": 1,
+   "aggression": 2,
    "stints": [
     {
      "index": 0,
@@ -2473,7 +2473,7 @@
    "targetLap": 124.306,
    "bestLap": 117.497,
    "sigma": 10.996,
-   "aggression": 1,
+   "aggression": 0,
    "stints": [
     {
      "index": 0,
@@ -2947,7 +2947,7 @@
    "targetLap": 126.674,
    "bestLap": 120.03,
    "sigma": 7.451,
-   "aggression": 0,
+   "aggression": 1,
    "stints": [
     {
      "index": 0,
@@ -3307,7 +3307,7 @@
    "targetLap": 122.779,
    "bestLap": 117.157,
    "sigma": 4.766,
-   "aggression": 1,
+   "aggression": 2,
    "stints": [
     {
      "index": 0,
@@ -3656,7 +3656,7 @@
    "targetLap": 118.933,
    "bestLap": 113.908,
    "sigma": 5.496,
-   "aggression": 1,
+   "aggression": 2,
    "stints": [
     {
      "index": 0,
@@ -4419,7 +4419,7 @@
    "targetLap": 131.368,
    "bestLap": 125.46,
    "sigma": 6.526,
-   "aggression": 1,
+   "aggression": 0,
    "stints": [
     {
      "index": 0,
@@ -4875,7 +4875,7 @@
    "targetLap": 125.926,
    "bestLap": 119.477,
    "sigma": 5.99,
-   "aggression": 1,
+   "aggression": 0,
    "stints": [
     {
      "index": 0,
@@ -8162,7 +8162,7 @@
    "targetLap": 115.17,
    "bestLap": 108.622,
    "sigma": 12.84,
-   "aggression": 2,
+   "aggression": 0,
    "stints": [
     {
      "index": 0,

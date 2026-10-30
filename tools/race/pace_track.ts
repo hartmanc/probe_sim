@@ -15,7 +15,7 @@
 //       [--label <name>] [--source <the file's source line>] [--quantile <q>]
 //       The circuit's OWN field (Buttonwillow, 22 Oct 2026): every entrant of the session becomes a car with its own
 //       pace and stints under tools/race/pace.ts's rules (tools/race/pace_rules.ts: the official best is the 0.97 floor),
-//       aggression = aggressionFor(number, class) as pace.ts; an entrant with no lap in the session (a non-starter) is
+//       aggression = aggressionData(track, number, class) as pace.ts (L1 K3: the data tier, else aggressionFor); an entrant with no lap in the session (a non-starter) is
 //       left out and named in `source` (Buttonwillow: #89, #6, #43, #101, #222); the player's car (#619) keeps a reference row
 //       (`player: true`, its real grid slot, never an AI car) as in Laguna's file. Every car carries `id`: its number,
 //       except a number that belongs to a DIFFERENT Laguna car (public/cars/field/pace.json numbers, not `same` in
@@ -39,7 +39,7 @@ import { readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync } from 
 import { resolve, dirname } from 'node:path';
 import { loadTrackPack, loadProbeJson, loadPace, pacePath, trackArg, ROOT } from './load';
 import { carPace, quantile, parseLap as officialLap } from './pace_rules';
-import { aggressionFor } from '../../src/physics/ai/rng';
+import { aggressionData } from './aggression_tiers';
 import { runSolo } from '../../src/physics/ai/solo';
 import { TRACKS } from '../../src/scoreboard/config';
 import { AI_VERSION, type PaceCar, type PaceJson, type PaceStint } from '../../src/physics/ai/field';
@@ -160,7 +160,7 @@ function ownField(): void {
       id, ...(model_id ? { model_id } : {}), number, team: r.name, class: r.resultClass, grid: j.lapDataInfo.participantInfo.startPos, finish: r.position,
       classFinish: r.positionInClass, lapsCompleted: r.numberOfLaps,
       greenLaps: pc.greenLaps, targetLap: pc.targetLap, bestLap: pc.bestLap, sigma: pc.sigma,
-      aggression: aggressionFor(number, r.resultClass),
+      aggression: aggressionData(TRACK, number, r.resultClass),   // (L1 K3) the data tier, else the seeded draw
       ...(number === PLAYER ? { player: true } : {}),
       ...(keepScales && same && p?.scale !== undefined && p.targetLap === pc.targetLap ? { scale: p.scale, achievedLap: p.achievedLap } : {}),
       stints: pc.stints,
