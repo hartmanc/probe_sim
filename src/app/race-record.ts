@@ -18,13 +18,17 @@ export function parseRecordMode(search: string): RecordMode {
 }
 
 /** The owner token (owner, 30 Oct 2026): a long random string only the owner knows; the server compares it with RACES_OWNER_TOKEN.
- *  `?owner=<token>` stores it on this device (and is taken out of the address bar); it is never part of a recording. */
+ *  `#owner=<token>` stores it on this device and is then cleared from the address bar. It is a hash fragment on purpose: the browser
+ *  never sends it to the server, so it cannot land in a request log (a `?owner=` query would). It is never part of a recording. */
 export const LS_OWNER_TOKEN = 'probe-sim.owner.token';
 type StorageLike = Pick<Storage, 'getItem' | 'setItem'>;
 const defaultStorage = (): StorageLike | null => { try { return typeof localStorage !== 'undefined' ? localStorage : null; } catch { return null; } };
-export function ownerToken(search: string, store: StorageLike | null = defaultStorage()): string | null {
+const defaultHash = (): string => (typeof location !== 'undefined' ? location.hash : '');
+const clearHash = (): void => { try { if (typeof history !== 'undefined' && typeof location !== 'undefined') history.replaceState(null, '', location.pathname + location.search); } catch { /* no history */ } };
+export function ownerToken(hash: string = defaultHash(), store: StorageLike | null = defaultStorage(), clear: () => void = clearHash): string | null {
   const ok = (t: string | null | undefined): t is string => !!t && /^[A-Za-z0-9_-]{16,128}$/.test(t);
-  const given = new URLSearchParams(search).get('owner');
+  const given = hash.startsWith('#') ? new URLSearchParams(hash.slice(1)).get('owner') : null;   // the fragment only
+  if (given !== null) clear();   // whatever it held, the address bar is cleaned
   try {
     if (ok(given)) { store?.setItem(LS_OWNER_TOKEN, given); return given; }
     const have = store?.getItem(LS_OWNER_TOKEN);

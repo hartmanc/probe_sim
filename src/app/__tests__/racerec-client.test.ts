@@ -16,15 +16,21 @@ describe('?record=', () => {
 });
 
 describe('owner token', () => {
-  it('?owner= stores a well-formed token, a stored one is used, junk is not', () => {
+  it('#owner= stores a well-formed token and clears the hash, a stored one is used, junk is not; a query string is ignored', () => {
     const s = mem();
-    expect(ownerToken('', s)).toBeNull();
-    expect(ownerToken('?owner=short', s)).toBeNull();
-    expect(ownerToken(`?owner=${TOKEN}`, s)).toBe(TOKEN);
+    let cleared = 0;
+    const clear = () => { cleared++; };
+    expect(ownerToken('', s, clear)).toBeNull();
+    expect(cleared).toBe(0);
+    expect(ownerToken('#owner=short', s, clear)).toBeNull();
+    expect(cleared).toBe(1);
+    expect(ownerToken(`#owner=${TOKEN}`, s, clear)).toBe(TOKEN);
+    expect(cleared).toBe(2);
     expect(s.m.get(LS_OWNER_TOKEN)).toBe(TOKEN);
-    expect(ownerToken('', s)).toBe(TOKEN);
-    expect(ownerToken('', null)).toBeNull();
-    expect(ownerToken(`?owner=${TOKEN}`, { getItem: () => { throw new Error('private'); }, setItem: () => { throw new Error('private'); } })).toBe(TOKEN);
+    expect(ownerToken('', s, clear)).toBe(TOKEN);
+    expect(ownerToken(`?owner=${TOKEN}`, mem(), clear)).toBeNull();      // never read from the query string
+    expect(ownerToken('', null, clear)).toBeNull();
+    expect(ownerToken(`#owner=${TOKEN}`, { getItem: () => { throw new Error('private'); }, setItem: () => { throw new Error('private'); } }, clear)).toBe(TOKEN);
   });
 });
 

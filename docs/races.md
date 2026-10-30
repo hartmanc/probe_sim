@@ -43,7 +43,7 @@ step, `truncated.atStep`); one that still does not fit is dropped. See "Size" be
   `?id=<id>` returns the recording JSON. No public GET. 240 GETs per IP per 10 min.
 - The owner token is the environment variable `RACES_OWNER_TOKEN` (16+ characters of `A-Za-z0-9_-`; set in Vercel, never printed; unset =
   nobody is the owner, `GET` answers `403`, every recording is public). The client sends it only when this device has it: open the site
-  once with `?owner=<token>` (stored in `localStorage` as `probe-sim.owner.token`, not in the recording). The server compares hashes and
+  once with `#owner=<token>` (a hash fragment, which the browser never sends to the server, so it stays out of request logs; it is stored in `localStorage` as `probe-sim.owner.token` and cleared from the address bar, and is not in the recording). The server compares hashes and
   sets `owner` itself; a client's claim without the token is dropped.
 
 ## The offline tool (`tools/race/replay_race.ts`)

@@ -405,7 +405,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
       if (!rec) return;
       lastRec = rec;
       if (recMode === 'download') sv?.menu.refresh();
-      if (!pf.playerAi) void uploadRecording(rec, { token: ownerToken(sv?.search ?? '') });
+      if (!pf.playerAi) void uploadRecording(rec, { token: ownerToken() });
     }, (e) => console.info('race recording failed:', e));
   };
 
@@ -430,7 +430,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
     if (useWorker) startWorker(dir);
     if (recOn) {
       capture = new RaceCapture({
-        dir, sim: sv.sim, trackId: TRACK_ID, owner: ownerToken(sv.search ?? '') !== null, worker: wk ? { client: wk, gen: wk.generation } : null,
+        dir, sim: sv.sim, trackId: TRACK_ID, owner: ownerToken() !== null, worker: wk ? { client: wk, gen: wk.generation } : null,
         build: { seed, laps, realGrid: fieldSelected, playerAi: pf.playerAi, lod: pf.lod ?? LOD_DEFAULT, strengthPct: strength, closeRacing: ov.closeRacing ?? null, planner: ov.planner ?? null,
           fieldCap: fieldSelected ? Math.max(0, d.cars.length - 1) : null, ref: sv.sim.refId, autoShift: sv.sim.autoShift, abs: sv.sim.abs },
       });
