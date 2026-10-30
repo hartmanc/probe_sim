@@ -1405,7 +1405,7 @@ passes 169. The offset `test.fails` case still fails as expected: 160 situations
 | train passes per race Laguna / Sonoma / Buttonwillow / Mid-Ohio; Buttonwillow pit straight | (82 / - / 216 / -; 44) | 101 / 490 / 176 / 249; 61 |
 
 The cells moved little (3-8 % +0.5, 8-15 % +0.3 pp): the two clearly-faster cells are 12.8 and 13.3 pp under the data pooled (the gate
-asks 8), the floor is 16.1 % (data 8.2). Contacts fall at every track bar Sonoma (-15 %), Laguna's rise of the q 0.2 anchor is gone
+asks 8), the floor is 16.1 % (data 8.2). Contacts fall at every track (Sonoma least, -15 %); Laguna's rise at the q 0.2 anchor is gone
 (0.0400 -> 0.0083). **The 16-seed evaluation was not run** (the cells are not within 8 points of the data).
 
 **Offset planner (C5 tree) on the calibrated field, Laguna + Buttonwillow, seeds 1-8** (`b_offset`; lanes in brackets):
