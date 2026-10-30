@@ -8,12 +8,21 @@ import type { RaceDirector, RaceHud, DirectorTiming } from '../physics/ai/race';
 import { buildDirector } from './race-build';
 import type { FieldData } from './loader';
 import { CAR64_STRIDE, CAR_STRIDE, packCar, packRace } from './race-snapshot';
+import { RaceTap, configOf, liveOf, type RecChunk, type RecLive } from '../scoreboard/racerec';
 
 export const HOST_MAX_FRAME = 0.05;      // the main loop's cap per rendered frame (index.ts MAX_FRAME)
 
 export interface HostInit { assets: SimAssets; field: { pace: unknown; identity: unknown }; trackId: string }
-export interface HostBuild { gen: number; seed: number; laps: number; realGrid: boolean; playerAi: boolean; lod: boolean; strengthPct: number; closeRacing?: boolean | null; planner?: 'lanes' | 'offset' | null; ref: string | null; autoShift: boolean; abs: boolean; timing: boolean }
+export interface HostBuild { gen: number; seed: number; laps: number; realGrid: boolean; playerAi: boolean; lod: boolean; strengthPct: number; closeRacing?: boolean | null; planner?: 'lanes' | 'offset' | null; ref: string | null; autoShift: boolean; abs: boolean; timing: boolean;
+  /** keep a race recording (src/scoreboard/racerec.ts): the sim records its inputs and a RaceTap logs events and snapshots */
+  record?: boolean;
+  /** the phone / tablet field selection (field-select.ts), passed on to the director's pace file by the caller; informative here */
+  fieldCap?: number | null }
 export interface HostInput { steer: number; throttle: number; brake: number; handbrake: boolean; up: boolean; down: boolean; autoShift: boolean; abs: boolean; ref: string | null }
+
+/** The recording drained at a flush (the Worker's own director is the one that stepped): the chunk since the last flush, the live
+ *  safeguard data and the effective config. `steps` in the chunk is the sim step the data ends at. */
+export interface HostRec { type: 'rec'; gen: number; chunk: RecChunk; live: RecLive; config: Record<string, unknown>; time: number; cars: string[]; L: number }
 
 /** One snapshot message. `f32` / `f64` are transferred; the rest is a small structured clone. */
 export interface HostSnapshot {
@@ -47,6 +56,7 @@ export class RaceSimHost {
   private busy = 0;
   private spanStart = 0;
   private timing: DirectorTiming | null = null;
+  private tap: RaceTap | null = null;
 
   init(m: HostInit): void {
     this.init_ = m;
@@ -61,13 +71,14 @@ export class RaceSimHost {
     sim.autoShift = m.autoShift; sim.abs = m.abs; sim.setRef(m.ref);
     sim.launchUntil = 0;
     sim.reset();                       // ctx.rollingStart(): fresh Vehicle + Surface, step counter 0
-    sim.record = false;
+    sim.record = !!m.record;           // the recording's inputs are the sim's own quantised samples
     const field = { pace: init.field.pace, identity: init.field.identity, models: [], missing: [] } as unknown as FieldData;
     const dir = buildDirector(sim, field, { seed: m.seed, laps: m.laps, trackId: init.trackId, realGrid: m.realGrid, playerAi: m.playerAi, lod: m.lod, strengthPct: m.strengthPct, closeRacing: m.closeRacing ?? null, planner: m.planner ?? null });
     this.timing = m.timing ? { steps: 0, control: 0, player: 0, aiPhysics: 0, contacts: 0, other: 0 } : null;
     dir.timing = this.timing;
     sim.stepVehicle = (di) => dir.step(STEP, di as Parameters<RaceDirector['step']>[1]);
     this.dir = dir;
+    this.tap = m.record ? new RaceTap(sim, dir) : null;
     this.acc = 0; this.last = now; this.contacts = []; this.up = false; this.down = false;
     this.busy = 0; this.spanStart = now;
     this.running = true;
@@ -92,10 +103,18 @@ export class RaceSimHost {
     if (!sim) return;
     const L = sim.assets.track.length_m;
     const p = lineToWorld(sim.assets.track, () => 0, ((s % L) + L) % L);
+    this.tap?.recover(s);
     sim.vehicle.reset([p.pos[0], p.pos[1], p.pos[2]], p.heading, 0);
   }
 
-  violation(kind: string, detail?: string): void { this.dir?.reportViolation(kind, detail); }
+  violation(kind: string, detail?: string): void { this.tap?.violation(kind, detail); this.dir?.reportViolation(kind, detail); }
+
+  /** The recording so far (rows, events and snapshots since the last flush, the live data now), or null when this race is not recorded. */
+  flush(): HostRec | null {
+    const sim = this.sim, dir = this.dir, tap = this.tap;
+    if (!sim || !dir || !tap) return null;
+    return { type: 'rec', gen: this.gen, chunk: tap.drain(), live: liveOf(dir), config: configOf(dir), time: dir.time, cars: dir.cars.map((c) => c.number), L: dir.line.L };
+  }
 
   private readonly sample = (): RawInput => {
     const r = this.inp;
@@ -115,6 +134,7 @@ export class RaceSimHost {
     let n = 0;
     while (this.acc >= STEP) {
       sim.step(this.sample);
+      this.tap?.after();
       this.acc -= STEP; n++;
       for (let k = 0; k < dir.contactCount; k++) {
         const ev = dir.contacts[k];

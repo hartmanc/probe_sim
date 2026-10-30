@@ -347,6 +347,13 @@ export class HotlapSim {
     return !!st.launched && st.launchedAt === this.offTrackLaunchAt;
   }
 
+  /** Race recordings (src/scoreboard/racerec.ts): the rows and reference changes recorded from index `fromRow` / `fromRef` on
+   *  (copies), for a recorder that drains the sim as the race goes. Read-only: nothing here steps or changes the sim. */
+  rowsFrom(fromRow: number): TraceRow[] { return this.rows.slice(fromRow).map((r) => [...r] as TraceRow); }
+  refsFrom(fromRef: number): [number, string | null][] { return this.refs.slice(fromRef).map((r) => [r[0], r[1]] as [number, string | null]); }
+  get rowCount(): number { return this.rows.length; }
+  get refCount(): number { return this.refs.length; }
+
   /** The trace recorded since the last reset (a copy; call it when the lap you want to submit completes). */
   trace(): InputTrace {
     const a = this.assets;

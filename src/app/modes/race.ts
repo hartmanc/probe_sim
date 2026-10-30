@@ -27,6 +27,8 @@ import { TRACK, TRACK_ID } from '../track-choice';
 import { FieldAudio, familyFor, FIELD_VOICES_DESKTOP, FIELD_VOICES_PHONE, type FamilyIndex, type Layout } from '../audio-field';
 import { newDirectorTiming, parsePerfFlags, perf, storedWorker, workerChoice } from '../perf';
 import { RaceWorkerClient, applySnapshot, installMirror, newMirrorState, type MirrorState } from '../race-worker-client';
+import { RaceCapture, downloadRecording, ownerToken, parseRecordMode, uploadRecording } from '../race-record';
+import type { RaceRecording } from '../../scoreboard/racerec';
 import type { ConeLineLike, FieldAudioCar, FieldAudioHook, FieldAudioLike, FieldCarSound, GameMode, ModeContext, ModeHud, RaceServices } from './mode';
 
 /** 5 since 17 Oct 2026 (owner: 10 is a long time alone in a sim); the server validates against the same number. */
@@ -389,6 +391,23 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
   let prev = { phase: '', lapIdx: 0, count: 0, position: 0 };
   let posCandidate = 0, posSince = 0;
   let thump = 0, lastThumpAt = -1;
+  // race recordings (docs/races.md): every race is kept as its seed and the player's inputs and sent once, silently
+  const recMode = parseRecordMode(sv?.search ?? '');
+  let recOn = false;                       // this race is recorded
+  let capture: RaceCapture | null = null;
+  let lastRec: RaceRecording | null = null;
+
+  /** Build the recording of the race that is ending (the flag, the player's ejection, the menu or a restart) and send it, once. */
+  const endCapture = (aborted: boolean): void => {
+    const c = capture;
+    if (!c || c.done) return;
+    void c.finish(aborted).then((rec) => {
+      if (!rec) return;
+      lastRec = rec;
+      if (recMode === 'download') sv?.menu.refresh();
+      if (!pf.playerAi) void uploadRecording(rec, { token: ownerToken(sv?.search ?? '') });
+    }, (e) => console.info('race recording failed:', e));
+  };
 
   const teamOf = (num: string) => d?.cars.find((c) => c.number === num)?.team ?? '';
   const L = () => d?.line.L ?? ctx.track.length_m;
@@ -396,8 +415,12 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
   // ---- build / rebuild the race
   const build = () => {
     if (!sv || !field || disposed) return;
+    endCapture(true);                   // a race restarted before its flag: what was driven is still a recording (read before the sim resets)
+    capture = null; lastRec = null;
     ctx.rollingStart();                 // fresh Vehicle + Surface + timer; step counter 0
-    sv.sim.record = false;              // races are not replayed
+    // the recording's inputs are the sim's own quantised samples (a race is deterministic from them); recording off: nothing is kept
+    recOn = recMode !== 'off' && (!pf.playerAi || recMode === 'download');
+    sv.sim.record = recOn;
     const t0 = performance.now();
     strength = parseAiStrength(String(deps.aiStrength ? deps.aiStrength() : 100));
     d = buildDirector(sv.sim, field, { seed, laps, realGrid: fieldSelected, playerAi: pf.playerAi, lod: pf.lod ?? LOD_DEFAULT, strengthPct: strength, closeRacing: ov.closeRacing, planner: ov.planner });
@@ -405,6 +428,13 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
     if (perf.on) dir.timing = newDirectorTiming();
     sv.sim.stepVehicle = (di) => dir.step(STEP, di as DriverInput);
     if (useWorker) startWorker(dir);
+    if (recOn) {
+      capture = new RaceCapture({
+        dir, sim: sv.sim, trackId: TRACK_ID, owner: ownerToken(sv.search ?? '') !== null, worker: wk ? { client: wk, gen: wk.generation } : null,
+        build: { seed, laps, realGrid: fieldSelected, playerAi: pf.playerAi, lod: pf.lod ?? LOD_DEFAULT, strengthPct: strength, closeRacing: ov.closeRacing ?? null, planner: ov.planner ?? null,
+          fieldCap: fieldSelected ? Math.max(0, d.cars.length - 1) : null, ref: sv.sim.refId, autoShift: sv.sim.autoShift, abs: sv.sim.abs },
+      });
+    }
     console.info(`race: seed ${seed}, ${dir.cars.length} cars, ${laps} laps, AI strength ${strength} %, built in ${(performance.now() - t0).toFixed(0)} ms${dir.calibrationStale ? ' (pace.json calibration is stale)' : ''}`);
     out = null; resultsWanted = false; submitState = 'idle'; penaltyToasted = false;
     prev = { phase: 'formation', lapIdx: 0, count: 0, position: 0 };
@@ -429,7 +459,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
     try {
       if (!wk) wk = new RaceWorkerClient();
       if (!wkInit) { wk.init(sv.sim.assets, { pace: field.pace, identity: field.identity }, TRACK_ID); wkInit = true; }
-      const gen = wk.build({ seed, laps, realGrid: fieldSelected, playerAi: pf.playerAi, lod: pf.lod ?? LOD_DEFAULT, strengthPct: strength, closeRacing: ov.closeRacing, planner: ov.planner, ref: sv.sim.refId, autoShift: sv.sim.autoShift, abs: sv.sim.abs, timing: perf.on });
+      const gen = wk.build({ seed, laps, realGrid: fieldSelected, playerAi: pf.playerAi, lod: pf.lod ?? LOD_DEFAULT, strengthPct: strength, closeRacing: ov.closeRacing, planner: ov.planner, ref: sv.sim.refId, autoShift: sv.sim.autoShift, abs: sv.sim.abs, timing: perf.on, record: recOn });
       ms = newMirrorState(gen);
       const w = wk;
       installMirror(dir, sv.sim, ms, (k, detail) => w.violation(k, detail));
@@ -601,6 +631,8 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
           note: submitState === 'done' ? 'submitted' : submitState === 'busy' ? 'submitting…' : shortRace ? `${RACE_LAPS}-lap races only` : undefined,
           disabled: submitState !== 'idle' || shortRace || !me || !(me.metres > 0), run: submit,
         } as MenuEntry]),
+        // ?record=download: the race's recording as a file, for the owner's own machine
+        ...(recMode === 'download' ? [{ kind: 'action', id: 'raceRecording', label: 'Download the recording', note: lastRec ? undefined : 'not ready', disabled: !lastRec, run: () => { if (lastRec) downloadRecording(lastRec); } } as MenuEntry] : []),
         { kind: 'action', id: 'raceAgain', label: 'Race again (new seed)', run: () => { mode.restart(); sv?.menu.close(); } },
         { kind: 'action', id: 'raceMain', label: 'Main menu', run: () => { resultsWanted = false; sv?.mainMenu(); } },
       ],
@@ -669,6 +701,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
       // out of the race (space launch): the race is over for the player → the results card
       if (out) { hud.hideGameOver?.(); showResults(); return; }
       // in a race the car is recovered where it is rather than sent back to the start
+      capture?.recover(ctx.s());          // a between-step event the inputs do not carry: logged at this step for the offline re-run
       ctx.recoverAt(ctx.s());
       wk?.recover(ctx.s());
       cone?.clear(); // a teleport is not a crossing
@@ -676,6 +709,7 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
     },
     step() {
       if (!d) return;
+      capture?.after();                   // the position snapshot, once per sim second (main-thread path)
       // other cars' contacts near the player: a distant thump
       const P = d.player, pp = P.vehicle.state.pos;
       for (let k = 0; k < d.contactCount; k++) {
@@ -707,7 +741,9 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
         out = { reason: sv?.sim.launchedOffTrack ? 'Lost in the hills' : 'Launched into space', metres: Math.max(0, P.U) };
         outRaced = h.raced;
       }
-      if (cone && !out && cone.update(st.pos[0], st.pos[1])) dir.reportViolation('pit_exit_cones');
+      if (cone && !out && cone.update(st.pos[0], st.pos[1])) { capture?.violation('pit_exit_cones'); dir.reportViolation('pit_exit_cones'); }
+      // the recording is finished at the flag (once the penalty is settled) or when the player is out; a quit or a restart ends it too
+      if (capture && !capture.done) { if (h.phase === 'finished' && !h.resultsPending) endCapture(false); else if (out) endCapture(true); }
       const tH = perf.on ? performance.now() : 0;
       toasts(h, dir);
       if (dom) dom.update(raceHudView(h, { teamOf, metres: out ? outRaced : h.raced, out: out?.reason ?? null }));
@@ -741,8 +777,12 @@ export function createRace(ctx: ModeContext, deps: RaceDeps = defaultDeps): Race
     },
     dispose() {
       disposed = true;
+      if (!capture?.done) endCapture(true);   // leaving the race: what was driven is sent as an aborted recording
       if (sv) { sv.sim.stepVehicle = null; sv.sim.record = true; if (wk) delete (sv.sim as unknown as Record<string, unknown>).launchedOffTrack; }
-      wk?.dispose(); wk = null; ms = null;
+      { const w = wk, c = capture; wk = null; ms = null;
+        // the Worker is asked for the recording before it is stopped (it answers within a frame or two)
+        if (w && c && !c.done) void c.finish(true).then(() => w.dispose(), () => w.dispose()); else w?.dispose(); }
+      capture = null;
       fieldCars?.dispose(); fieldCars = null;
       if (marker) { marker.removeFromParent(); marker = null; }
       fieldAudio?.dispose(); fieldAudio = null; audioFor = null;

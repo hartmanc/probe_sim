@@ -6,7 +6,7 @@ import type { RaceDirector, RaceHud } from '../physics/ai/race';
 import type { HotlapSim, SimAssets } from '../scoreboard';
 import type { CarContactEvent } from '../physics/cars';
 import { CAR64_STRIDE, CAR_STRIDE, unpackCar, unpackRace, type CarRace } from './race-snapshot';
-import type { HostBuild, HostInit, HostInput, HostSnapshot } from './race-host';
+import type { HostBuild, HostInit, HostInput, HostRec, HostSnapshot } from './race-host';
 
 /** What the mirror remembers between snapshots. */
 export interface MirrorState {
@@ -77,6 +77,7 @@ export class RaceWorkerClient {
   private running = false;
   ready = false;
   failed: string | null = null;
+  private recWaiters = new Map<number, (r: HostRec | null) => void>();
 
   constructor(make: () => WorkerLike = () => new Worker(new URL('./race-worker.ts', import.meta.url), { type: 'module' }) as unknown as WorkerLike) {
     this.w = make();
@@ -84,6 +85,10 @@ export class RaceWorkerClient {
       const m = e.data as { type: string; gen?: number };
       if (m.type === 'ready') this.ready = true;
       else if (m.type === 'snap' && m.gen === this.gen) this.latest = e.data as HostSnapshot;   // a snapshot of an earlier race is dropped
+      else if (m.type === 'rec') {
+        const w = this.recWaiters.get(m.gen ?? -1);
+        if (w) { this.recWaiters.delete(m.gen ?? -1); w((e.data as { none?: boolean }).none ? null : (e.data as HostRec)); }
+      }
     };
     this.w.onerror = (e) => { this.failed = e.message || 'worker error'; };
   }
@@ -102,6 +107,14 @@ export class RaceWorkerClient {
   setRunning(on: boolean): void { if (on === this.running) return; this.running = on; this.w.postMessage({ type: 'run', on }); }
   recover(s: number): void { this.w.postMessage({ type: 'recover', s }); }
   violation(kind: string, detail?: string): void { this.w.postMessage({ type: 'violation', kind, detail }); }
+  /** Ask the worker for the race recording so far (race generation `gen`, the current one by default); null when it is not recorded, answers late or never. Messages are handled in order, so a flush sent before the next 'build' sees the race it was asked about. */
+  flushRec(gen: number = this.gen, timeoutMs = 4000): Promise<HostRec | null> {
+    return new Promise((resolve) => {
+      const t = setTimeout(() => { if (this.recWaiters.delete(gen)) resolve(null); }, timeoutMs);
+      this.recWaiters.set(gen, (r) => { clearTimeout(t); resolve(r); });
+      this.w.postMessage({ type: 'flush' });
+    });
+  }
   /** The newest snapshot not yet applied (null when none new). */
   take(lastSeq: number): HostSnapshot | null { const s = this.latest; return s && s.seq !== lastSeq ? s : null; }
   dispose(): void { this.w.onmessage = null; this.w.terminate(); }

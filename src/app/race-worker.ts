@@ -6,6 +6,7 @@ type In =
   | ({ type: 'build' } & HostBuild)
   | ({ type: 'input' } & HostInput)
   | { type: 'run'; on: boolean }
+  | { type: 'flush' }
   | { type: 'recover'; s: number }
   | { type: 'violation'; kind: string; detail?: string };
 
@@ -38,5 +39,6 @@ ctx.onmessage = (e) => {
     case 'run': host.setRunning(m.on, now); break;
     case 'recover': host.recover(m.s); break;
     case 'violation': host.violation(m.kind, m.detail); break;
+    case 'flush': ctx.postMessage(host.flush() ?? { type: 'rec', gen: host.gen, none: true }); break;
   }
 };
