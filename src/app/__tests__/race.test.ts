@@ -64,7 +64,7 @@ describe('race mode with the real data files', () => {
     expect(d.cars.length).toBe(45);
     expect(d.player.vehicle).toBe(sim.vehicle);           // the app's car, not a copy
     expect(d.player.surface).toBe(sim.surface);
-    expect(sim.record).toBe(false);
+    expect(sim.record).toBe(true);                        // a race is recorded (docs/races.md): the sim keeps the quantised samples the director consumes
     expect(sim.stepVehicle).toBeTypeOf('function');
     const h0 = d.hud();
     expect(h0.phase).toBe('formation');
@@ -100,6 +100,15 @@ describe('race mode with the real data files', () => {
     expect(sim.stepVehicle).toBeNull();
     expect(sim.record).toBe(true);
     expect(scene.getObjectByName('field_cars')).toBeUndefined();
+  }, 60000);
+
+  it('?record=0 keeps nothing: the sim does not record, and the hot lap gets its recording back on dispose', () => {
+    const { sim, race } = harness('?seed=42&laps=2&record=0');
+    race.start();
+    expect(race.director).toBeTruthy();
+    expect(sim.record).toBe(false);
+    race.dispose();
+    expect(sim.record).toBe(true);
   }, 60000);
 
   it('app-side violations (pit-exit cones) black-flag with the escalation and a 2 s debounce', () => {
