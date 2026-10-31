@@ -151,8 +151,6 @@ export class CarViewer {
   private pointers = new Map<number, { x: number; y: number }>();
   private pinch = 0;
   private lastT = 0;
-  // models this page parsed itself (freed when paged away)
-  private owned = new Map<string, THREE.Object3D>();
   // sound
   private fa: FieldAudio | null = null;
   private engine: { id: number; t0: number; idle: number; family: string; snd: { trim: number; muffler: number; rpmScale: number }; redline: number; blips: Blip[]; last: number } | null = null;
@@ -311,14 +309,50 @@ export class CarViewer {
 
   private modelFile(key: string): FieldModelInfo | undefined { return this.data?.models.get(key); }
 
+  /**
+   * Models by file. An entry is created when a car is shown or prefetched; `tpl` stays undefined while the load is pending.
+   * `mine`: this page parsed it (nobody else had it cached), so this page frees it. An entry is never freed while it is
+   * pending or inside the window (the shown car and its two neighbours); a pending one out of the window is freed when it lands.
+   */
+  private ents = new Map<string, { p: Promise<THREE.Object3D | null>; tpl?: THREE.Object3D | null; mine: boolean }>();
+  private windowFiles = new Set<string>();
+
   private getTemplate(key: string): Promise<THREE.Object3D | null> {
     if (key === PROBE_KEY && !this.modelFile(key)) return Promise.resolve(this.d.probeModel);
     const m = this.modelFile(key);
     if (!m) return Promise.resolve(null);
-    if (!this.owned.has(m.file) && !fieldModelCached(m.file)) {
-      return loadFieldModel(m.file).then((t) => { if (t) this.owned.set(m.file, t); return t; });
+    let e = this.ents.get(m.file);
+    if (!e) {
+      const ent: { p: Promise<THREE.Object3D | null>; tpl?: THREE.Object3D | null; mine: boolean } = { p: Promise.resolve(null), mine: !fieldModelCached(m.file) };
+      ent.p = this.loadWithRetry(key, m.file).then((t) => { ent.tpl = t; this.sweep(); return t; });
+      this.ents.set(m.file, ent);
+      e = ent;
     }
-    return loadFieldModel(m.file);
+    return e.p;
+  }
+
+  /** One retry: a null (fetch or parse failed) is dropped from the loader's cache first so the second try fetches again. */
+  private async loadWithRetry(key: string, file: string): Promise<THREE.Object3D | null> {
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      try {
+        const t = await loadFieldModel(file);
+        if (t) return t;
+        console.warn(`[viewer] model ${key} (${file}) attempt ${attempt}: the loader returned nothing (fetch or parse failed)`);
+      } catch (err) {
+        console.warn(`[viewer] model ${key} (${file}) attempt ${attempt} failed:`, err);
+      }
+      releaseFieldModel(file);
+    }
+    return null;
+  }
+
+  /** Free the entries outside the window that are not pending. */
+  private sweep(): void {
+    for (const [file, e] of [...this.ents]) {
+      if (this.windowFiles.has(file) || e.tpl === undefined) continue;
+      this.ents.delete(file);
+      if (e.mine && e.tpl) { disposeTree(e.tpl); releaseFieldModel(file); }
+    }
   }
 
   private show(i: number): void {
@@ -332,21 +366,22 @@ export class CarViewer {
     this.loadingEl.textContent = 'Loading…';
     this.loadingEl.classList.remove('hidden');
     this.renderCard(cardFor(car, i, data.cars.length, data.total, creditFor(data.credits, car.key), data.photos[car.key], data.classes));
+    // the window first (so nothing it needs is swept), then the loads
+    const n = data.cars.length;
+    const keys = [i, (i + 1) % n, (i - 1 + n) % n].map((k) => data.cars[k].key);
+    this.windowFiles = new Set(keys.map((k) => this.modelFile(k)?.file).filter((f): f is string => !!f));
     this.getTemplate(car.key).then((tpl) => {
       if (my !== this.token || !this.opened) return;
       if (!tpl) { this.loadingEl.textContent = 'This model did not load.'; return; }
       this.buildRig(car, tpl);
       this.loadingEl.classList.add('hidden');
       void this.startEngine(car, my);
-    }).catch(() => { if (my === this.token) this.loadingEl.textContent = 'This model did not load.'; });
-    // prefetch the neighbours, free what fell out of the window
-    const n = data.cars.length;
-    const win = new Set([i, (i + 1) % n, (i - 1 + n) % n].map((k) => data.cars[k].key));
-    for (const k of win) if (k !== car.key) void this.getTemplate(k);
-    for (const [file, tpl] of [...this.owned]) {
-      const keep = [...win].some((k) => this.modelFile(k)?.file === file);
-      if (!keep) { this.owned.delete(file); disposeTree(tpl); releaseFieldModel(file); }
-    }
+    }).catch((err) => {
+      console.warn(`[viewer] showing ${car.key} failed:`, err);
+      if (my === this.token) this.loadingEl.textContent = 'This model did not load.';
+    });
+    for (const k of keys) if (k !== car.key) void this.getTemplate(k);
+    this.sweep();
   }
 
   private buildRig(car: ViewerCar, tpl: THREE.Object3D): void {
@@ -388,8 +423,8 @@ export class CarViewer {
   }
 
   private freeAll(): void {
-    for (const [file, tpl] of this.owned) { disposeTree(tpl); releaseFieldModel(file); }
-    this.owned.clear();
+    this.windowFiles.clear();
+    this.sweep();   // anything still pending is freed when it lands
   }
 
   // ------------------------------------------------------------ card
