@@ -479,3 +479,21 @@ html.touch .credits { max-height: 44vh; font-size: 12px; }
 .menu-card.menu-two { width: min(940px, 100%); }
 .menu-list.two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
 .menu-col { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+
+/* ---- the Cars page on a phone (landscape < 500 px high, or portrait < 500 px wide): a strip along the bottom, "More" opens the sheet */
+.cv-strip, .cv-close { display: none; }
+.cv-compact .cv-strip { display: flex; position: absolute; left: 0; right: 0; bottom: 0; align-items: center; gap: 10px; box-sizing: border-box; padding: 6px calc(var(--sar, 0px) + 10px) calc(var(--sab, 0px) + 6px) calc(var(--sal, 0px) + 10px); background: rgba(10, 13, 18, 0.88); border-top: 1px solid var(--panel-border); }
+.cv-lines { flex: 1; min-width: 0; }
+.cv-sl1 { font-size: 13px; font-weight: 700; line-height: 1.25; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cv-sl2 { font-size: 12px; line-height: 1.25; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cv-portrait .cv-sl1, .cv-portrait .cv-sl2 { white-space: normal; }
+.cv-more { flex: none; min-height: 40px; padding: 6px 16px; border-radius: 10px; border: 1px solid var(--panel-border); background: var(--panel); color: var(--accent); font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
+.cv-compact .cv-card { display: none; }
+.cv-compact .cv-card.open { display: block; position: fixed; inset: calc(var(--sat, 0px) + 6px) calc(var(--sar, 0px) + 8px) calc(var(--sab, 0px) + 6px) calc(var(--sal, 0px) + 8px); width: auto; max-height: none; z-index: 12; background: rgb(10, 13, 18); padding: 10px 14px; }
+.cv-compact .cv-card.open .cv-close { display: block; position: sticky; top: 0; float: right; min-height: 40px; padding: 6px 16px; border-radius: 10px; border: 1px solid var(--panel-border); background: var(--panel); color: var(--text); font: inherit; font-weight: 700; cursor: pointer; }
+.cv-compact .cv-arrow { width: 64px; height: 120px; top: 28%; opacity: 0.85; }
+.cv-compact .cv-awards { top: calc(var(--sat, 0px) + 50px); right: calc(var(--sar, 0px) + 74px); max-width: 55vw; }
+.cv-compact .cv-award { font-size: 11px; padding: 1px 6px 1px 4px; gap: 4px; border-radius: 12px; max-width: none; white-space: nowrap; }
+.cv-compact .cv-hint { display: none; }
+.cv-hint.flash { display: block !important; left: 50%; right: auto; bottom: 90px; transform: translateX(-50%); max-width: 90%; text-align: center; padding: 8px 14px; border-radius: 10px; background: var(--panel); color: var(--text); font-size: 14px; }
+.cv-compact .cv-hint.flash { display: block !important; }

@@ -19,7 +19,7 @@ import type { World } from './scene';
 import type { CarReport } from './feedback';
 import type { TrackJson } from './physics-types';
 import {
-  SETTLE_END, makeBlip, cardFor, creditFor, fitPlane, seatOffset, engineAt, classSizes, fieldSize, indexByNumber, safeUrl, viewerOrder,
+  SETTLE_END, makeBlip, cardFor, classifyGesture, creditFor, fitPlane, stripLines, type PointerSample, seatOffset, engineAt, classSizes, fieldSize, indexByNumber, safeUrl, viewerOrder,
   type AwardEntry, type Blip, type Card, type CreditRow, type IdentityRow, type PhotoRow, type ViewerCar,
 } from './car-viewer-data';
 
@@ -40,6 +40,7 @@ const EVENT_TITLES: Record<string, string> = {
 const FOV = 38;
 const AUTO_TURN_S = 20, AUTO_RESUME_MS = 4000;
 const PROBE_KEY = '619';
+const HINT_KEY = 'probeSim.cars.swipeHint.v1';
 const DEFAULT_DIST = 7.5, DEFAULT_TARGET_Y = 0.7;
 /** The page's engine sound is off (owner, 31 Oct 2026); `?viewersound=1` turns the scripted cold start and warm-up back on for listening. */
 export const VIEWER_SOUND: boolean = typeof location !== 'undefined' && new URLSearchParams(location.search).get('viewersound') === '1';
@@ -179,23 +180,53 @@ export class CarViewer {
     prev.setAttribute('aria-label', 'Previous car'); next.setAttribute('aria-label', 'Next car');
     prev.addEventListener('click', () => this.step(-1));
     next.addEventListener('click', () => this.step(1));
-    this.root.append(top, prev, next, this.awardsEl, this.card, this.loadingEl, this.typedEl, this.hintEl);
+    this.root.append(top, prev, next, this.awardsEl, this.stripEl, this.card, this.loadingEl, this.typedEl, this.hintEl);
     d.app.appendChild(this.root);
     d.world.scene.add(this.group);
     this.group.visible = false;
     const cv = d.renderer.domElement;
     cv.addEventListener('pointerdown', (e) => this.pDown(e));
     cv.addEventListener('pointermove', (e) => this.pMove(e));
-    const up = (e: PointerEvent) => { this.pointers.delete(e.pointerId); this.pinch = 0; };
+    const up = (e: PointerEvent) => { this.endGesture(e); this.pointers.delete(e.pointerId); this.pinch = 0; };
     cv.addEventListener('pointerup', up);
     cv.addEventListener('pointercancel', up);
     cv.addEventListener('wheel', (e) => { if (!this.opened) return; e.preventDefault(); this.dolly(Math.exp(e.deltaY * 0.001)); }, { passive: false });
   }
 
   private paused = false;
+  private compact = false;
+  private stripEl = el('div', 'cv-strip');
+  private stripH = 0;
+  private gesture: { tracks: Map<number, PointerSample[]>; az: number; el: number; multi: boolean; touch: boolean } | null = null;
+  private onResize = () => this.applyLayout();
   private cur: { car: ViewerCar; card: Card } | null = null;
   /** Open and in use: false while the report page is on top. */
   get isOpen(): boolean { return this.opened && !this.paused; }
+
+  private get touch(): boolean { return document.documentElement.classList.contains('touch'); }
+
+  /** Phone layout: a short landscape or a narrow portrait touch screen gets the strip and the "More" sheet, the car framed above it. */
+  private applyLayout(): void {
+    const compact = this.touch && (window.innerHeight < 500 || window.innerWidth < 500);
+    this.compact = compact;
+    this.root.classList.toggle('cv-compact', compact);
+    this.root.classList.toggle('cv-portrait', compact && window.innerWidth < window.innerHeight);
+    if (!compact) this.card.classList.remove('open');
+    if (this.cur) this.renderCard(this.cur.card);
+    this.stripH = compact ? this.stripEl.offsetHeight : 0;
+  }
+
+  /** The first time on a touch device: how to change car, for about 3 s (stored once per device). */
+  private flashHint(): void {
+    if (!this.touch) return;
+    let seen = false;
+    try { seen = window.localStorage.getItem(HINT_KEY) === '1'; } catch { /* storage unavailable: show it */ }
+    if (seen) { this.hintEl.classList.add('hidden'); return; }
+    try { window.localStorage.setItem(HINT_KEY, '1'); } catch { /* ignore */ }
+    this.hintEl.classList.remove('hidden');
+    this.hintEl.classList.add('flash');
+    setTimeout(() => { this.hintEl.classList.remove('flash'); this.hintEl.classList.add('hidden'); }, 3000);
+  }
 
   /** The report page takes the screen (the scene stays on the canvas behind it). */
   pause(): void {
@@ -237,11 +268,14 @@ export class CarViewer {
       setTimeout(() => { if (this.opened && d.audio.suspended) d.toast('Press any key or tap the screen for sound', 5000); }, 700);
       d.audio.hush();
     }
-    this.hintEl.textContent = document.documentElement.classList.contains('touch')
-      ? 'Drag to orbit · pinch to zoom · arrows for the next car'
+    this.hintEl.textContent = this.touch
+      ? 'Swipe to change car · drag to turn it · pinch to zoom'
       : 'Left / right: cars · right stick or drag: orbit · triggers, wheel: zoom · type a number · A / Enter: report an issue · Esc: back';
     this.buildStage();
     window.addEventListener('keydown', this.onKey);
+    window.addEventListener('resize', this.onResize);
+    this.applyLayout();
+    this.flashHint();
     this.lastT = performance.now();
     this.loadingEl.classList.remove('hidden');
     this.titleEl.textContent = `Cars · ${EVENT_TITLES[d.trackId] ?? d.trackShort}`;
@@ -262,6 +296,9 @@ export class CarViewer {
     const d = this.d;
     this.token++;
     window.removeEventListener('keydown', this.onKey);
+    window.removeEventListener('resize', this.onResize);
+    d.cams.camera.clearViewOffset();
+    this.card.classList.remove('open');
     this.stopEngine(true);
     this.fa?.dispose(); this.fa = null;
     this.dropRig();
@@ -496,10 +533,18 @@ export class CarViewer {
 
   private renderCard(c: Card): void {
     const k = this.card;
+    const [l1, l2] = stripLines(c);
+    const sl1 = el('div', 'cv-sl1', l1), sl2 = el('div', 'cv-sl2', l2);
+    const more = el('button', 'cv-more', 'More'); more.type = 'button';
+    more.addEventListener('click', () => this.card.classList.add('open'));
+    const lines = el('div', 'cv-lines'); lines.append(sl1, sl2);
+    this.stripEl.replaceChildren(lines, more);
+    const closeBtn = el('button', 'cv-close', 'Close'); closeBtn.type = 'button';
+    closeBtn.addEventListener('click', () => this.card.classList.remove('open'));
     const num = el('div', 'cv-num', `#${c.number}`);
     const team = el('div', 'cv-team', c.team);
     const car = el('div', 'cv-car', c.car + (c.cls ? `  ·  Class ${c.cls}` : ''));
-    const parts: Node[] = [num, team, car];
+    const parts: Node[] = [closeBtn, num, team, car];
     const stats = el('div', 'cv-stats');
     for (const [l, v] of [['Overall', c.overall], ['Class', c.classRank], ['Laps', c.laps], ['Fastest', c.fastest]] as const) {
       const s = el('div', 'cv-stat'); s.append(el('span', 'cv-sl', l), el('span', 'cv-sv', v)); stats.append(s);
@@ -527,7 +572,8 @@ export class CarViewer {
     second.append(rb);
     parts.push(second);
     k.replaceChildren(...parts);
-    this.awardsEl.replaceChildren(...c.awards.map((a) => { const b = el('div', 'cv-award'); b.append(trophy(), el('span', undefined, a)); return b; }));
+    const shown = this.compact ? c.awards.slice(0, 1) : c.awards;
+    this.awardsEl.replaceChildren(...shown.map((a) => { const b = el('div', 'cv-award'); b.append(trophy(), el('span', undefined, this.compact && c.awards.length > 1 ? `${a} +${c.awards.length - 1}` : a)); return b; }));
     this.posEl.textContent = c.position;
   }
 
@@ -615,9 +661,29 @@ export class CarViewer {
   private pDown(e: PointerEvent): void {
     if (!this.isOpen || (e.pointerType === 'mouse' && e.button !== 0)) return;
     this.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (e.pointerType !== 'mouse') {
+      const g = this.gesture ?? (this.gesture = { tracks: new Map(), az: this.az, el: this.el, multi: false, touch: true });
+      g.tracks.set(e.pointerId, [{ t: e.timeStamp, x: e.clientX, y: e.clientY }]);
+      if (g.tracks.size > 1) g.multi = true;
+    }
     try { (e.target as Element).setPointerCapture(e.pointerId); } catch { /* not capturable */ }
     this.lastInputAt = performance.now();
     this.pinch = this.pointers.size === 2 ? this.pinchDist() : 0;
+  }
+  /** A finger lifted: a quick horizontal flick pages (and undoes the little orbit it made on the way). */
+  private endGesture(e: PointerEvent): void {
+    const g = this.gesture;
+    if (!g || !g.tracks.has(e.pointerId)) return;
+    const last = g.tracks.get(e.pointerId)!;
+    last.push({ t: e.timeStamp, x: e.clientX, y: e.clientY });
+    const result = g.multi ? 'orbit' : classifyGesture([...g.tracks.values()]);
+    if (this.pointers.size <= 1) {
+      this.gesture = null;
+      if (result !== 'orbit' && this.isOpen && e.type === 'pointerup') {
+        this.az = g.az; this.el = g.el;
+        this.step(result === 'next' ? 1 : -1);
+      }
+    }
   }
   private pinchDist(): number { const [a, b] = [...this.pointers.values()]; return Math.hypot(a.x - b.x, a.y - b.y); }
   private pMove(e: PointerEvent): void {
@@ -625,6 +691,7 @@ export class CarViewer {
     if (!p || !this.opened) return;
     const dx = e.clientX - p.x, dy = e.clientY - p.y;
     p.x = e.clientX; p.y = e.clientY;
+    this.gesture?.tracks.get(e.pointerId)?.push({ t: e.timeStamp, x: e.clientX, y: e.clientY });
     this.lastInputAt = performance.now();
     if (this.pointers.size >= 2) {
       const dist = this.pinchDist();
@@ -693,6 +760,11 @@ export class CarViewer {
     const ce = Math.cos(this.el);
     cam.position.set(c.x + dist * Math.sin(this.az) * ce, c.y + this.targetY + dist * Math.sin(this.el), c.z + dist * Math.cos(this.az) * ce);
     cam.lookAt(c.x, c.y + this.targetY, c.z);
+    // phone: the car sits in the clear area above the strip (a view offset keeps the constant camera distance)
+    if (this.compact && this.stripH > 0) {
+      const w = window.innerWidth, h = window.innerHeight;
+      cam.setViewOffset(w, h, 0, Math.round(this.stripH / 2), w, h);
+    } else if (cam.view?.enabled) cam.clearViewOffset();
     d.world.follow(this.rig?.rig.root.position ?? c, cam);
     this.tickEngine();
     if (!document.hidden) d.look.render(dt, 0);
