@@ -184,3 +184,26 @@ export function engineAt(t: number, idle: number, blips: readonly Blip[]): Engin
 export function makeBlip(after: number, rand: () => number): Blip {
   return { t0: after + 0.5 + rand(), peak: PEAK_MIN + (PEAK_MAX - PEAK_MIN) * rand(), rise: 0.12 + 0.35 * rand(), fall: 0.25 + 0.9 * rand() };
 }
+
+// ---------------------------------------------------------------- parking on a cambered road
+
+export interface PlaneFit { a: number; b: number; c: number; residuals: number[] }
+/**
+ * Least-squares plane z = a + b·u + c·v through points [u, v, z] (u forward, v left, metres; the car's origin is (0, 0)).
+ * residuals[i] = z_i − plane(u_i, v_i). Needs at least three points that are not in a line.
+ */
+export function fitPlane(pts: readonly (readonly [number, number, number])[]): PlaneFit {
+  let n = 0, su = 0, sv = 0, sz = 0, suu = 0, suv = 0, svv = 0, suz = 0, svz = 0;
+  for (const [u, v, z] of pts) { n++; su += u; sv += v; sz += z; suu += u * u; suv += u * v; svv += v * v; suz += u * z; svz += v * z; }
+  // normal equations [n su sv; su suu suv; sv suv svv] [a b c]ᵀ = [sz suz svz]ᵀ, solved by Cramer's rule
+  const det = (m: number[][]) => m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) - m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0]) + m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0]);
+  const A = [[n, su, sv], [su, suu, suv], [sv, suv, svv]];
+  const d = det(A);
+  if (Math.abs(d) < 1e-12) return { a: n ? sz / n : 0, b: 0, c: 0, residuals: pts.map(([, , z]) => z - (n ? sz / n : 0)) };
+  const col = (k: number) => A.map((row, i) => row.map((x, j) => (j === k ? [sz, suz, svz][i] : x)));
+  const a = det(col(0)) / d, b = det(col(1)) / d, c = det(col(2)) / d;
+  return { a, b, c, residuals: pts.map(([u, v, z]) => z - (a + b * u + c * v)) };
+}
+
+/** How far the car's plane is lifted (m) so its lowest wheel contact is exactly on the surface: the smallest residual. */
+export const seatOffset = (fit: PlaneFit): number => Math.min(...fit.residuals);

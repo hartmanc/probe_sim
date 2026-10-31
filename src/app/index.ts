@@ -803,6 +803,7 @@ function createSim(assets: Assets) {
       return { pos: [p.pos[0], p.pos[1], surface.sample(p.pos[0], p.pos[1]).z], heading: p.heading };
     },
     // a pristine copy: the player's CarRig moves assets.carModel's wheels into its own pivots
+    ground: (x, y) => surface.sample(x, y).z,
     probeModel: ghostTemplate, shadows: quality.shadows,
     hide: () => [car.root, ghosts.group],
     toast: (m, ms) => hud.toast(m, ms),

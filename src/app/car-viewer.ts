@@ -6,7 +6,7 @@
 // player's car and the ghosts for the track stage. Models come through loadFieldModel and prepareCarMaterials, as the
 // race loads them; one at a time, the neighbours prefetched, what is paged away freed (only what this page loaded).
 import * as THREE from 'three';
-import { CarRig } from './car';
+import { CarRig, bodyQuatToThree, enuToThree } from './car';
 import type { CameraRig } from './cameras';
 import type { CarAudio } from './audio';
 import { FieldAudio, type FieldCar } from './audio-field';
@@ -18,7 +18,7 @@ import { carSound, parseSoundIndex, type FieldSoundIndex } from './modes/race';
 import type { World } from './scene';
 import type { TrackJson } from './physics-types';
 import {
-  SETTLE_END, makeBlip, cardFor, creditFor, engineAt, classSizes, fieldSize, indexByNumber, safeUrl, viewerOrder,
+  SETTLE_END, makeBlip, cardFor, creditFor, fitPlane, seatOffset, engineAt, classSizes, fieldSize, indexByNumber, safeUrl, viewerOrder,
   type AwardEntry, type Blip, type Card, type CreditRow, type IdentityRow, type PhotoRow, type ViewerCar,
 } from './car-viewer-data';
 
@@ -58,6 +58,8 @@ export interface ViewerDeps {
   /** The game's own Probe model (the #619 row has no field model). */
   probeModel: THREE.Object3D;
   shadows: boolean;
+  /** Surface height (ENU z) at ENU (x, y): the track stage seats the car on the road's camber and crown. */
+  ground: (x: number, y: number) => number;
   /** Objects to hide on either stage (the player's car, the ghosts). */
   hide: () => THREE.Object3D[];
   toast(m: string, ms?: number): void;
@@ -402,6 +404,7 @@ export class CarViewer {
     const rig = new CarRig(clone, { tyreRadius: r, physicsRadius: r, castShadow: this.d.shadows });
     const p = this.d.parking();
     rig.poseSimple(p.pos, p.heading, 0);
+    if (this.d.stage === 'track') this.seatOnRoad(rig, p);
     if (m?.brake_lamps?.length) rig.addBrakeLamps(m.brake_lamps, { alwaysOn: !!m.brake_lamps_fallback });
     this.group.add(rig.root);
     rig.root.updateMatrixWorld(true);
@@ -411,6 +414,31 @@ export class CarViewer {
     this.baseDist = Math.max(5.2, Math.min(10, Math.max(size.x, size.z, size.y * 2.2) * 1.55));
     this.box = box;
     this.rig = { rig, key: car.key, shared, tpl };
+  }
+
+  /**
+   * Track stage: fit a plane through the road height under the four tyre contacts, tilt the car to it (pitch and roll)
+   * and lower it until its lowest contact is exactly on the surface. Re-done for each car (wheelbase, track, tyre radius differ).
+   */
+  private seatOnRoad(rig: CarRig, p: { pos: [number, number, number]; heading: number }): void {
+    const f = [Math.cos(p.heading), Math.sin(p.heading)], l = [-Math.sin(p.heading), Math.cos(p.heading)];
+    // contacts in the car's frame: model x is left, z is forward; the hub rest pose less the tyre radius
+    const pts: [number, number, number][] = rig.wheels.map((w) => {
+      const u = w.rest.z, v = w.rest.x;
+      return [u, v, this.d.ground(p.pos[0] + u * f[0] + v * l[0], p.pos[1] + u * f[1] + v * l[1])];
+    });
+    if (pts.some((q) => !isFinite(q[2]))) return;
+    const fit = fitPlane(pts);
+    const cy = rig.wheels.reduce((a, w) => a + (w.rest.y - rig.tyreRadius), 0) / 4;   // contact height in the model frame
+    const N = new THREE.Vector3(-fit.b * f[0] - fit.c * l[0], -fit.b * f[1] - fit.c * l[1], 1).normalize();
+    const F = new THREE.Vector3(f[0], f[1], 0);
+    F.addScaledVector(N, -F.dot(N)).normalize();
+    const L = new THREE.Vector3().crossVectors(N, F);
+    const q = new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(F, L, N));
+    bodyQuatToThree([q.x, q.y, q.z, q.w], rig.root.quaternion);
+    const base = new THREE.Vector3(p.pos[0], p.pos[1], fit.a + seatOffset(fit)).addScaledVector(N, -cy);
+    enuToThree([base.x, base.y, base.z], rig.root.position);
+    rig.root.updateMatrixWorld(true);
   }
 
   private dropRig(): void {

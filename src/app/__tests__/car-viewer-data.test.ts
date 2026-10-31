@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  awardClass, cardFor, classSizes, creditFor, engineAt, fieldSize, indexByNumber, lapText, makeBlip, ordinal, safeUrl, viewerOrder,
+  awardClass, cardFor, classSizes, fitPlane, seatOffset, creditFor, engineAt, fieldSize, indexByNumber, lapText, makeBlip, ordinal, safeUrl, viewerOrder,
   CRANK_END, REV_RPM, SETTLE_END, type AwardEntry, type IdentityRow,
 } from '../car-viewer-data';
 
@@ -112,5 +112,21 @@ describe('scripted engine', () => {
     expect([lo.peak, hi.peak]).toEqual([2000, 4000]);
     let n = 0; const r = () => ((n = (n * 7 + 3) % 11) / 11);
     expect(makeBlip(0, r)).not.toEqual(makeBlip(0, r));
+  });
+});
+
+describe('parking on a cambered road', () => {
+  it('fits a plane through four contacts and seats the lowest one on the surface', () => {
+    // 2.6 m wheelbase, 1.5 m track; the road rises 2 % to the front and 3 % to the left
+    const z = (u: number, v: number) => 10 + 0.02 * u + 0.03 * v;
+    const pts: [number, number, number][] = [[1.3, 0.75, z(1.3, 0.75)], [1.3, -0.75, z(1.3, -0.75)], [-1.3, 0.75, z(-1.3, 0.75)], [-1.3, -0.75, z(-1.3, -0.75)]];
+    const f = fitPlane(pts);
+    expect([f.a, f.b, f.c].map((x) => +x.toFixed(6))).toEqual([10, 0.02, 0.03]);
+    expect(Math.max(...f.residuals.map(Math.abs))).toBeLessThan(1e-9);
+    // a bump under one wheel: that plane is lifted by the smallest residual, so the lowest wheel just touches
+    const bumpy = fitPlane([[1.3, 0.75, 10.05], [1.3, -0.75, 10], [-1.3, 0.75, 10], [-1.3, -0.75, 10]]);
+    const off = seatOffset(bumpy);
+    expect(Math.min(...bumpy.residuals.map((r) => r - off))).toBeCloseTo(0, 12);
+    expect(off).toBeLessThan(0);
   });
 });
