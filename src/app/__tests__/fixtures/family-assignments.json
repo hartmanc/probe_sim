@@ -473,12 +473,12 @@
     "engine": "Chrysler 2.2 I4"
    },
    "34": {
-    "family": "modern_i4_stock",
-    "trim": 1.04,
+    "family": "sohc_i4_loud",
+    "trim": 1.0267,
     "muffler": 0.1,
-    "rpm_scale": 0.75,
-    "redline": 6000,
-    "engine": "Suzuki G10 1.0 I3"
+    "rpm_scale": 1,
+    "redline": 6300,
+    "engine": "VW EA827 1.8 I4"
    },
    "37": {
     "family": "bmw_m20_i6",
@@ -734,7 +734,7 @@
     "muffler": 0.1,
     "rpm_scale": 1,
     "redline": 7000,
-    "engine": "Mazda BP 1.8 I4"
+    "engine": "Mazda BP 1.8 I4 turbo"
    },
    "759": {
     "family": "classic_v8_lowrev",
