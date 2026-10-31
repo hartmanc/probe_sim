@@ -30,6 +30,7 @@ export const CHANGELOG: ChangeEntry[] = [
     version: '0.4.3', date: '', title: 'Cars',
     items: [
       'A new Cars page on the main menu: look at the field’s cars one at a time, with their awards, results and the photos each model was detailed from.',
+      'Laguna field fixes: #34 KnoxVegas rebuilt as the Golf Mk2 it is, #59’s roof straw droops rearward, the rebuilt drivers wear helmet visors, and the right-hand-drive cars (#1 and #67) seat their drivers on the right.',
     ],
   },
   {
