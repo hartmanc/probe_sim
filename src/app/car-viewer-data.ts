@@ -104,7 +104,14 @@ export function fieldSize(identity: readonly IdentityRow[]): number {
   return Math.max(identity.length, ...identity.map((r) => (typeof r.finish === 'number' ? r.finish : 0)));
 }
 
-export function cardFor(car: ViewerCar, index: number, count: number, total: number, credit: CreditRow | null | undefined, photos: readonly PhotoRow[] | undefined): Card {
+/** Cars per class in the entry list (identity rows). */
+export function classSizes(identity: readonly IdentityRow[]): Record<string, number> {
+  const n: Record<string, number> = {};
+  for (const r of identity) if (typeof r.class === 'string' && r.class) n[r.class] = (n[r.class] ?? 0) + 1;
+  return n;
+}
+
+export function cardFor(car: ViewerCar, index: number, count: number, total: number, credit: CreditRow | null | undefined, photos: readonly PhotoRow[] | undefined, classes: Record<string, number> = {}): Card {
   const r = car.row;
   const name = [r.year, r.make, r.model].filter((x) => x !== undefined && x !== null && x !== '').join(' ');
   const cls = typeof r.class === 'string' ? r.class : '';
@@ -119,7 +126,7 @@ export function cardFor(car: ViewerCar, index: number, count: number, total: num
     cls,
     awards: car.awards,
     overall: hasFinish ? `P${r.finish} of ${total}` : '–',
-    classRank: hasCf && cls ? `${ordinal(r.class_finish as number)} in ${cls}` : '–',
+    classRank: hasCf && cls ? `P${r.class_finish} of ${classes[cls] ?? '?'} in ${cls}` : '–',
     laps: typeof r.laps === 'number' ? String(r.laps) : '–',
     fastest: lapText(r.best_lap_s),
     model: c

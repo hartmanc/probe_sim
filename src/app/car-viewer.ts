@@ -18,7 +18,7 @@ import { carSound, parseSoundIndex, type FieldSoundIndex } from './modes/race';
 import type { World } from './scene';
 import type { TrackJson } from './physics-types';
 import {
-  SETTLE_END, makeBlip, cardFor, creditFor, engineAt, fieldSize, indexByNumber, safeUrl, viewerOrder,
+  SETTLE_END, makeBlip, cardFor, creditFor, engineAt, classSizes, fieldSize, indexByNumber, safeUrl, viewerOrder,
   type AwardEntry, type Blip, type Card, type CreditRow, type IdentityRow, type PhotoRow, type ViewerCar,
 } from './car-viewer-data';
 
@@ -69,6 +69,7 @@ interface ViewerData {
   cars: ViewerCar[];
   skipped: number;
   total: number;
+  classes: Record<string, number>;
   models: Map<string, FieldModelInfo>;
   photos: Record<string, PhotoRow[]>;
   credits: unknown;
@@ -256,7 +257,7 @@ export class CarViewer {
     const models = new Map<string, FieldModelInfo>(f.models.map((m) => [m.id, m]));
     const { cars, skipped } = viewerOrder(identity, Array.isArray(awards) ? awards : [], (k) => models.has(k) || k === PROBE_KEY);
     return {
-      identity, cars, skipped, total: fieldSize(identity), models, photos: photos ?? {}, credits: credits?.cars ?? {},
+      identity, cars, skipped, total: fieldSize(identity), classes: classSizes(identity), models, photos: photos ?? {}, credits: credits?.cars ?? {},
       sound: parseSoundIndex(soundRaw), title: EVENT_TITLES[this.d.trackId] ?? this.d.trackShort,
     };
   }
@@ -330,7 +331,7 @@ export class CarViewer {
     this.dropRig();
     this.loadingEl.textContent = 'Loading…';
     this.loadingEl.classList.remove('hidden');
-    this.renderCard(cardFor(car, i, data.cars.length, data.total, creditFor(data.credits, car.key), data.photos[car.key]));
+    this.renderCard(cardFor(car, i, data.cars.length, data.total, creditFor(data.credits, car.key), data.photos[car.key], data.classes));
     this.getTemplate(car.key).then((tpl) => {
       if (my !== this.token || !this.opened) return;
       if (!tpl) { this.loadingEl.textContent = 'This model did not load.'; return; }

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  awardClass, cardFor, creditFor, engineAt, fieldSize, indexByNumber, lapText, makeBlip, ordinal, safeUrl, viewerOrder,
+  awardClass, cardFor, classSizes, creditFor, engineAt, fieldSize, indexByNumber, lapText, makeBlip, ordinal, safeUrl, viewerOrder,
   CRANK_END, REV_RPM, SETTLE_END, type AwardEntry, type IdentityRow,
 } from '../car-viewer-data';
 
@@ -66,8 +66,8 @@ describe('card text', () => {
   it('builds the card', () => {
     const { cars } = viewerOrder(field, [], () => true);
     const c = cardFor(cars[6], 6, 7, fieldSize(field), { title: 'Probe', author: 'A', licence: 'CC-BY-4.0', licence_url: 'https://x/l', url: 'https://x/m', changes: 'recoloured' },
-      [{ file: 'a.jpg', page_url: 'https://p/1' }, { file: 'owner_b.jpg', owner: true }, { file: 'c.jpg', page_url: 'https://p/2' }]);
-    expect(c).toMatchObject({ position: '7 / 7', number: '619', car: '1994 Mazda Miata', overall: 'P7 of 7', classRank: '7th in A', laps: '93', fastest: '1:47.000' });
+      [{ file: 'a.jpg', page_url: 'https://p/1' }, { file: 'owner_b.jpg', owner: true }, { file: 'c.jpg', page_url: 'https://p/2' }], classSizes(field));
+    expect(c).toMatchObject({ position: '7 / 7', number: '619', car: '1994 Mazda Miata', overall: 'P7 of 7', classRank: 'P7 of 7 in A', laps: '93', fastest: '1:47.000' });
     expect(c.model).toMatchObject({ text: 'Model', title: 'Probe', titleUrl: 'https://x/m', licence: 'CC-BY-4.0' });
     expect(c.photos).toEqual([{ n: 1, url: 'https://p/1' }, { n: 2, url: 'https://p/2' }]);
     expect(c.ownerPhotos).toBe(1);
