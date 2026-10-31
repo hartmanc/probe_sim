@@ -135,3 +135,55 @@ describe('select entry (the Track drop-down)', () => {
     expect(m.page.title).toBe('Root');
   });
 });
+
+describe('menu model: two columns', () => {
+  const act = (id: string, col: 0 | 1, extra: Partial<MenuEntry> = {}): MenuEntry => ({ kind: 'action', id, label: id, col, run: () => {}, ...extra } as MenuEntry);
+  const choice = (id: string, col: 0 | 1): MenuEntry => ({ kind: 'choice', id, label: id, col, options: [{ value: 'a', label: 'A' }, { value: 'b', label: 'B' }], get: () => st[id] ?? 'a', set: (v) => { st[id] = v; } });
+  let st: Record<string, string> = {};
+  // left: track (choice), hotlap, race, ghost (choice), cars; right: howto, controls, graphics (choice), scoreboard, whatsnew, credits, feedback
+  const list = (): MenuEntry[] => [
+    choice('track', 0), act('hotlap', 0), act('race', 0), choice('ghost', 0), act('cars', 0),
+    act('howto', 1), act('controls', 1), choice('graphics', 1), act('scoreboard', 1), act('whatsnew', 1), act('credits', 1), act('feedback', 1),
+  ];
+  const model = (cols = true) => { st = {}; const m = new MenuModel({ title: '', entries: list }); m.columns = cols; return m; };
+  const to = (m: MenuModel, id: string) => { for (let k = 0; k < 20 && m.current?.id !== id; k++) m.nav('down'); expect(m.current?.id).toBe(id); };
+
+  it('up and down wrap inside the column', () => {
+    const m = model();
+    to(m, 'cars');
+    m.nav('down'); expect(m.current?.id).toBe('track');   // wrapped inside the left column
+    m.nav('up'); expect(m.current?.id).toBe('cars');
+  });
+  it('left and right on a non-value row jump to the other column at the nearest row', () => {
+    const m = model();
+    to(m, 'hotlap');                                            // left row 1
+    expect(m.nav('right')).toBe('moved'); expect(m.current?.id).toBe('controls');   // right row 1
+    expect(m.nav('left')).toBe('moved'); expect(m.current?.id).toBe('hotlap');
+    to(m, 'cars');                                              // left row 4
+    m.nav('right'); expect(m.current?.id).toBe('whatsnew');     // right row 4
+    to(m, 'feedback');                                          // right row 6, the left column has 5 rows: clamped to its last
+    m.nav('left'); expect(m.current?.id).toBe('cars');
+  });
+  it('value rows (a choice) keep left and right for their values', () => {
+    const m = model();
+    expect(m.current?.id).toBe('track');
+    m.nav('right'); expect(m.current?.id).toBe('track'); expect(st.track).toBe('b');
+    to(m, 'ghost'); m.nav('left'); expect(m.current?.id).toBe('ghost'); expect(st.ghost).toBe('b');
+  });
+  it('a disabled row is skipped when jumping, and the focus survives a submenu round trip', () => {
+    st = {};
+    const es = list().map((e) => (e.id === 'controls' ? { ...e, disabled: true } : e)) as MenuEntry[];
+    const sub: MenuPage = { title: 'S', entries: () => [{ kind: 'back', id: 'back', label: 'Back' }] };
+    es[8] = { kind: 'submenu', id: 'scoreboard', label: 's', col: 1, page: () => sub };
+    const m = new MenuModel({ title: '', entries: () => es }); m.columns = true;
+    to(m, 'hotlap'); m.nav('right');
+    expect(m.current?.id).toBe('howto');                        // the nearest selectable row (controls is disabled)
+    to(m, 'scoreboard'); m.nav('select'); m.nav('select');      // open and back
+    expect(m.current?.id).toBe('scoreboard');
+  });
+  it('one column (a narrow screen): the old behaviour, one cycle over the whole list; left/right do nothing on actions', () => {
+    const m = model(false);
+    to(m, 'cars'); m.nav('down'); expect(m.current?.id).toBe('howto');
+    expect(m.nav('right')).toBe('none'); expect(m.current?.id).toBe('howto');
+  });
+});

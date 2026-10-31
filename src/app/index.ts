@@ -192,26 +192,32 @@ const mainPage: MenuPage = {
   title: TITLE,
   titleNodes: () => censoredTitleNodes(),
   subtitle: '1993 Ford Probe GT · 24 Hours of Lemons #619',
-  entries: (): MenuEntry[] => [
+  // two columns on a wide screen (menu.ts `col`): the left group is the game, the right one the rest; still one list
+  entries: (): MenuEntry[] => {
+    const left: MenuEntry[] = [
     ...trackEntry(),
     { kind: 'action', id: 'hotlap', label: 'Hot lap', note: sim ? undefined : loadingNote(), disabled: !sim, run: () => startMode('hotlap') },
     // the field line: phones and tablets race the player's 40 pace neighbours (field-select.ts)
     { kind: 'action', id: 'race', label: raceMenuLabel(location.search, TRACK.fieldLabel), note: sim ? (fieldTotal !== null ? fieldLine(fieldTotal, quality.device) + (workerChoice(perfFlags.worker, workerOn) ? ' · physics in a worker' : '') : undefined) : loadingNote(), disabled: !sim, run: () => startMode('race') },
+    ghostRefRow(),
+    { kind: 'action', id: 'cars', label: 'Cars', note: sim ? 'the field' : 'loading…', disabled: !sim, run: () => sim?.viewer.open() },
+    ];
+    const right: MenuEntry[] = [
     { kind: 'submenu', id: 'howto', label: 'How to play', page: () => howtoPage({ rows: () => input.helpRows(), touch: quality.touch, raceLaps: LIMITS.raceLaps, fieldLine: () => (fieldTotal !== null ? fieldLine(fieldTotal, quality.device) : null) }) },
     ...(touch ? [{ kind: 'submenu', id: 'touch', label: 'Touch controls', page: () => touchPage(touch) } as MenuEntry] : []),
     ...(showControlsPanelRow() ? [{ kind: 'action', id: 'controls', label: 'Controls & calibration', run: () => controlsPanel.open() } as MenuEntry] : []),
-    ghostRefRow(),
     graphicsEntry(),
     ...reloadEntry(),
     scoreboardEntry(),
-    { kind: 'action', id: 'cars', label: 'Cars', note: sim ? 'the field' : 'loading…', disabled: !sim, run: () => sim?.viewer.open() },
     { kind: 'submenu', id: 'whatsnew', label: "What's new", note: `v${APP_VERSION}`, page: () => changelogPage(GIT_SHA) },
     { kind: 'submenu', id: 'credits', label: 'Credits', page: creditsPage },
     {
       kind: 'submenu', id: 'feedback', label: 'Report a bug / request a feature',
       page: () => feedbackPage(feedbackOpts()),
     },
-  ],
+    ];
+    return [...left.map((e) => ({ ...e, col: 0 as const })), ...right.map((e) => ({ ...e, col: 1 as const }))];
+  },
 };
 
 function showMainMenu(): void {
