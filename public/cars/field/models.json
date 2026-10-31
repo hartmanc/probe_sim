@@ -217,8 +217,8 @@
    "number": "1",
    "id": "1",
    "file": "models/1.glb",
-   "tris": 10506,
-   "bytes": 625372,
+   "tris": 10522,
+   "bytes": 625948,
    "materials": 2,
    "length_m": 3.039,
    "width_m": 1.41,
@@ -3508,61 +3508,75 @@
    "number": "34",
    "id": "34",
    "file": "models/34.glb",
-   "tris": 9820,
-   "bytes": 576200,
+   "tris": 10577,
+   "bytes": 538508,
    "materials": 3,
-   "length_m": 3.645,
-   "width_m": 1.575,
-   "height_m": 1.35,
+   "length_m": 3.985,
+   "width_m": 1.665,
+   "height_m": 1.415,
    "bbox_m": [
-    3.775,
-    1.789,
-    1.57
+    4.278,
+    1.886,
+    1.76
    ],
-   "wheelbase_m": 2.265,
-   "track_front_m": 1.37,
-   "track_rear_m": 1.36,
-   "tyre_radius_m": 0.285,
-   "tyre_radius_rear_m": 0.285,
+   "wheelbase_m": 2.475,
+   "track_front_m": 1.413,
+   "track_rear_m": 1.422,
+   "tyre_radius_m": 0.307,
+   "tyre_radius_rear_m": 0.307,
    "hubs": {
     "wheel_fl": [
-     0.685,
-     0.285,
-     1.1325
+     0.7065,
+     0.307,
+     1.2375
     ],
     "wheel_fr": [
-     -0.685,
-     0.285,
-     1.1325
+     -0.7065,
+     0.307,
+     1.2375
     ],
     "wheel_rl": [
-     0.68,
-     0.285,
-     -1.1325
+     0.711,
+     0.307,
+     -1.2375
     ],
     "wheel_rr": [
-     -0.68,
-     0.285,
-     -1.1325
+     -0.711,
+     0.307,
+     -1.2375
     ]
    },
    "team": "KnoxVegas LowBallerssss",
-   "car": "1990 Geo Metro 3-door hatch (Mercedes nose)",
+   "car": "1988 Volkswagen Golf Mk2 3-door hatch (Mercedes nose)",
    "brake_lamps": [
     [
-     0.58,
-     0.78,
-     -1.7705,
-     0.13
+     0.635,
+     0.8,
+     -1.8591,
+     0.135
     ],
     [
-     -0.58,
-     0.78,
-     -1.7705,
-     0.13
+     -0.635,
+     0.8,
+     -1.8588,
+     0.135
     ]
    ],
-   "brake_lamps_fallback": false
+   "brake_lamps_fallback": false,
+   "import": {
+    "method": "named wheel parts",
+    "scale": 0.641948824701787,
+    "source_tris": 15128,
+    "model_track": 1.47,
+    "model_tyre_radius": 0.317,
+    "hub_z_front": 0.307,
+    "hub_z_rear": 0.307,
+    "model_length": 4.014,
+    "model_width": 1.886,
+    "model_height": 1.392,
+    "tris": 6883,
+    "file": "tools/cars/kit/downloads/34/model.glb"
+   }
   },
   {
    "number": "35",
@@ -5707,8 +5721,8 @@
    "number": "59",
    "id": "59",
    "file": "models/59.glb",
-   "tris": 9526,
-   "bytes": 485660,
+   "tris": 9542,
+   "bytes": 486236,
    "materials": 3,
    "length_m": 3.985,
    "width_m": 1.665,
@@ -6265,8 +6279,8 @@
    "number": "67",
    "id": "67",
    "file": "models/67.glb",
-   "tris": 10244,
-   "bytes": 590580,
+   "tris": 10260,
+   "bytes": 591156,
    "materials": 3,
    "length_m": 4.141,
    "width_m": 1.64,

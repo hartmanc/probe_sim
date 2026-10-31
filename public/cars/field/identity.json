@@ -1812,52 +1812,54 @@
     "class_finish": 9,
     "laps": 129,
     "best_lap_s": 119.222,
-    "make": "Geo",
-    "model": "Metro (Mercedes face)",
-    "generation": "2nd gen (1989-94)",
-    "year": 1990,
+    "make": "Volkswagen",
+    "model": "Golf Mk2 3-door (Mercedes nose)",
+    "generation": "Mk2 (1983-92; US 1985-92)",
+    "year": 1988,
     "body": "hatch",
-    "confidence": "low",
-    "evidence": "Prior awards: Knoxvegas Lowballers ran '1990 Geo Metro SVT' and '1988 Mercedes 560SL'; photos: small 3-door hatch wearing a Mercedes grille, Gulf-style orange/black",
+    "confidence": "medium",
+    "evidence": "Owner video stills, Laguna Oct 2026 (owner_still_17/18/19): wide horizontal tail lamps below the hatch opening with a flat plate panel between them, a large trapezoid rear quarter window behind a long door, a thick forward-slanting C-pillar and a long flat roof = the Golf Mk2 3-door; owner_IMG_4449 (true side): door 0.43 x wheelbase (Golf Mk2 3-door 0.48, Metro 0.57), B-pillar to rear hub 0.40 x wheelbase (Golf 0.34, Metro 0.26), roof 0.56 x wheelbase (Golf 0.57 stock, lowered; Metro 0.60). Team history (Knoxvegas Lowballers ran a 1990 Geo Metro) had pointed at a Metro. Year not identified (1988 = mid-run guess)",
     "dims": {
-      "wheelbase_m": 2.25,
-      "length_m": 3.79,
-      "width_m": 1.59,
-      "height_m": 1.35,
-      "track_m": 1.37,
-      "mass_kg": 750,
-      "power_kw": 41,
-      "source": "https://en.wikipedia.org/wiki/Suzuki_Cultus",
-      "verified_this_run": false,
+      "wheelbase_m": 2.475,
+      "length_m": 3.985,
+      "width_m": 1.665,
+      "height_m": 1.415,
+      "track_m": 1.413,
+      "mass_kg": 920,
+      "power_kw": 63,
+      "source": "https://en.wikipedia.org/wiki/Volkswagen_Golf_Mk2",
+      "verified_this_run": true,
       "note": "stock dimensions of the base model; body add-ons (roof props, wings) not included"
     },
     "engine": {
-      "family": "Suzuki G10 1.0 I3",
-      "cylinders": 3,
-      "layout": "I3",
-      "displacement_l": 1.0,
+      "family": "VW EA827 1.8 I4",
+      "cylinders": 4,
+      "layout": "I4",
+      "displacement_l": 1.8,
       "aspiration": "NA",
-      "redline_rpm": 6000,
-      "stock_power_kw": 41,
+      "redline_rpm": 6300,
+      "stock_power_kw": 63,
       "exhaust_note": "loud open",
       "confidence": "low",
-      "evidence": "G10 three-cylinder (unless swapped)"
+      "evidence": "Stock VW 1.8 8v (EA827) assumed; the hatch glass is replaced by black mesh, which with the team's mid-engined Metro history may mean a mid-mounted engine: unknown"
     },
     "colors": {
-      "primary": "#1a1a1a",
-      "secondary": "#f07020",
+      "primary": "#1a1a18",
+      "secondary": "#e8501e",
       "accents": [
-        "#f0d020"
+        "#d8c690",
+        "#39d353",
+        "#e0b020"
       ]
     },
     "numbers": {
-      "color": "black on orange/yellow",
+      "color": "white on a cream box (right door), red (left door)",
       "boards": [
         "door"
       ]
     },
-    "livery": "Black front, orange rear, Gulf-like stripes, Mercedes grille grafted on, big wing",
-    "theme": "Mini-Mercedes / 'AMG' joke on a Metro",
+    "livery": "Two sides: right = black front half, orange rear half, cream diagonal stripe, whale-in-oval and 'Trouble' script on the quarter; left = black front, green Monster-style claw with drips on the door, yellow-to-orange rear with a dark olive diagonal. Bolt-on Mercedes W202-style grille and star, light-grey box bumper, roof wing with green KNOXVEGAS endplates, black mesh in place of the hatch glass",
+    "theme": "Mini-Mercedes / 'AMG' joke on a VW Golf",
     "photos": [
       "IMG_8297.jpg",
       "IMG_8427.jpg",
