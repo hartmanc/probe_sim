@@ -5,10 +5,16 @@
 import type { MenuEntry, MenuPage } from './menu';
 import { lastError } from './errors';
 
+export type FeedbackKind = 'bug' | 'feature' | 'car';
+/** The car a Cars-page report is about (kind `car`): goes into the context so every report identifies the car. */
+export interface CarReport { id: string; number: string; team: string; car: string; event: string; cls: string; credit: string }
 export interface FeedbackPayload {
-  kind: 'bug' | 'feature';
+  kind: FeedbackKind;
   description: string;
-  context: { version: string; sha: string; track: string; device: string; ua: string; screen: string; error?: string };
+  context: {
+    version: string; sha: string; track: string; device: string; ua: string; screen: string; error?: string;
+    carId?: string; carNumber?: string; carTeam?: string; car?: string; event?: string; carClass?: string; modelCredit?: string;
+  };
   name?: string;
   secret?: string;
   images?: PictureUpload[];
@@ -109,13 +115,15 @@ async function canvasEncode(file: File, maxSide: number, quality: number): Promi
 
 /** Pure: the request body. */
 export function buildFeedback(a: {
-  kind: 'bug' | 'feature'; description: string; version: string; sha: string; track: string; device: string;
+  kind: FeedbackKind; description: string; version: string; sha: string; track: string; device: string;
+  car?: CarReport;
   ua: string; screen: string; error: string | null; name: string | null; secret: string | undefined; images?: PictureUpload[];
 }): FeedbackPayload {
   return {
     kind: a.kind,
     description: a.description.trim().slice(0, MAX_DESCRIPTION),
-    context: { version: a.version, sha: a.sha, track: a.track, device: a.device, ua: a.ua.slice(0, 300), screen: a.screen, ...(a.error ? { error: a.error } : {}) },
+    context: { version: a.version, sha: a.sha, track: a.track, device: a.device, ua: a.ua.slice(0, 300), screen: a.screen, ...(a.error ? { error: a.error } : {}),
+      ...(a.kind === 'car' && a.car ? { carId: a.car.id, carNumber: a.car.number, carTeam: a.car.team, car: a.car.car, event: a.car.event, carClass: a.car.cls, modelCredit: a.car.credit } : {}) },
     ...(a.name && a.secret ? { name: a.name, secret: a.secret } : {}),
     ...(a.images?.length ? { images: a.images.slice(0, MAX_PICTURES) } : {}),
   };
@@ -130,6 +138,8 @@ export interface FeedbackPageOptions {
   secret(): string | undefined;
   toast(msg: string, ms?: number): void;
   refresh(): void;
+  /** A report about one car from the Cars page: kind `car`, a read-only context block, an empty description. */
+  car?: CarReport;
   fetch?: (url: string, init: RequestInit) => Promise<Response>;
   /** test hook: the canvas step */
   encode?: JpegEncoder;
@@ -149,6 +159,8 @@ let area: HTMLTextAreaElement | null = null;
 let count: HTMLElement | null = null;
 let strip: HTMLElement | null = null;
 let picCount: HTMLElement | null = null;
+let ctxBox: HTMLElement | null = null;
+let ctxKey = '';
 let pics: Pic[] = [];
 let busy = 0;
 let notify: (m: string, ms?: number) => void = () => {};
@@ -187,6 +199,7 @@ async function addFiles(files: File[]): Promise<void> {
 
 export function feedbackPage(o: FeedbackPageOptions): MenuPage {
   let kind: 'bug' | 'feature' = 'bug';
+  const car = o.car;
   let state: 'idle' | 'sending' | 'sent' = 'idle';
   if (!box) {
     box = el('div', 'feedback');
@@ -220,11 +233,18 @@ export function feedbackPage(o: FeedbackPageOptions): MenuPage {
       const files = [...(e.dataTransfer?.files ?? [])].filter((f) => f.type.startsWith('image/'));
       if (files.length) { e.preventDefault(); void addFiles(files); }
     });
-    box.append(area, count, add, strip, picCount, el('div', 'fb-note', 'The report, your scoreboard name and the pictures are public on GitHub. Please do not include personal details.'));
+    ctxBox = el('pre', 'fb-ctx hidden');   // the car context: shown, never editable
+    box.append(ctxBox, area, count, add, strip, picCount, el('div', 'fb-note', 'The report, your scoreboard name and the pictures are public on GitHub. Please do not include personal details.'));
     renderPics();
   }
   notify = o.toast; encoder = o.encode;
   const b = box, a = area!, cnt = count!;
+  // a car report starts empty for each car; the context lists what is sent with it
+  const key = car ? `car:${car.id}` : 'menu';
+  if (key !== ctxKey) { ctxKey = key; a.value = ''; }
+  a.placeholder = car ? 'What is wrong with this car: the model, the livery, the sides, props, numbers…' : 'What happened, where on the track, what you expected. Or the feature you would like.';
+  ctxBox!.classList.toggle('hidden', !car);
+  ctxBox!.textContent = car ? `Car #${car.number} ${car.team}\n${car.car} · class ${car.cls || '–'}\n${car.event} (${o.track})\nid ${car.id}\nModel: ${car.credit}\nv${o.version}${o.sha ? ` · ${o.sha}` : ''}` : '';
   cnt.textContent = `${a.value.length} / ${MAX_DESCRIPTION}`;
   const send = () => {
     if (state === 'sending') return;
@@ -232,7 +252,7 @@ export function feedbackPage(o: FeedbackPageOptions): MenuPage {
     if (!text) { o.toast('Type a description first'); a.focus(); return; }
     state = 'sending'; o.refresh();
     const body = buildFeedback({
-      kind, description: text, version: o.version, sha: o.sha, track: o.track, device: o.device,
+      kind: car ? 'car' : kind, ...(car ? { car } : {}), description: text, version: o.version, sha: o.sha, track: o.track, device: o.device,
       ua: navigator.userAgent, screen: `${screen.width}x${screen.height}@${window.devicePixelRatio || 1} (${innerWidth}x${innerHeight})`,
       error: lastError(), name: o.name(), secret: o.secret(), images: pics.map((p) => p.pic),
     });
@@ -250,11 +270,11 @@ export function feedbackPage(o: FeedbackPageOptions): MenuPage {
       .finally(() => o.refresh());
   };
   return {
-    title: 'Report a bug / request a feature',
-    subtitle: `Files a public GitHub issue · v${o.version}${o.sha ? ` · ${o.sha}` : ''} · ${o.name() ? `as ${o.name()}` : 'anonymous'}`,
+    title: car ? 'Report a car issue' : 'Report a bug / request a feature',
+    subtitle: `${car ? `Car #${car.number} · ` : ''}Files a public GitHub issue · v${o.version}${o.sha ? ` · ${o.sha}` : ''} · ${o.name() ? `as ${o.name()}` : 'anonymous'}`,
     body: () => b,
     entries: (): MenuEntry[] => [
-      { kind: 'choice', id: 'fbKind', label: 'Type', options: [{ value: 'bug', label: 'Bug' }, { value: 'feature', label: 'Feature' }], get: () => kind, set: (v) => { kind = v as 'bug' | 'feature'; } },
+      ...(car ? [] : [{ kind: 'choice', id: 'fbKind', label: 'Type', options: [{ value: 'bug', label: 'Bug' }, { value: 'feature', label: 'Feature' }], get: () => kind, set: (v: string) => { kind = v as 'bug' | 'feature'; } } as MenuEntry]),
       { kind: 'action', id: 'fbSend', label: state === 'sent' ? 'Sent · send another' : 'Send', note: state === 'sending' ? 'sending…' : undefined, disabled: state === 'sending', run: () => { if (state === 'sent') state = 'idle'; send(); } },
       { kind: 'back', id: 'back', label: 'Back' },
     ],

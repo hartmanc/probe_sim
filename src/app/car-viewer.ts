@@ -16,6 +16,7 @@ import type { Look } from './look';
 import type { Menu, NavEvent } from './menu';
 import { carSound, parseSoundIndex, type FieldSoundIndex } from './modes/race';
 import type { World } from './scene';
+import type { CarReport } from './feedback';
 import type { TrackJson } from './physics-types';
 import {
   SETTLE_END, makeBlip, cardFor, creditFor, fitPlane, seatOffset, engineAt, classSizes, fieldSize, indexByNumber, safeUrl, viewerOrder,
@@ -66,6 +67,8 @@ export interface ViewerDeps {
   /** Objects to hide on either stage (the player's car, the ghosts). */
   hide: () => THREE.Object3D[];
   toast(m: string, ms?: number): void;
+  /** Open the in-game report page (kind car) for the shown car; the app calls pause() now and resume() when it ends. */
+  report(car: CarReport): void;
   onClose(): void;
 }
 
@@ -189,7 +192,34 @@ export class CarViewer {
     cv.addEventListener('wheel', (e) => { if (!this.opened) return; e.preventDefault(); this.dolly(Math.exp(e.deltaY * 0.001)); }, { passive: false });
   }
 
-  get isOpen(): boolean { return this.opened; }
+  private paused = false;
+  private cur: { car: ViewerCar; card: Card } | null = null;
+  /** Open and in use: false while the report page is on top. */
+  get isOpen(): boolean { return this.opened && !this.paused; }
+
+  /** The report page takes the screen (the scene stays on the canvas behind it). */
+  pause(): void {
+    if (!this.opened) return;
+    this.paused = true;
+    this.root.classList.add('hidden');
+    this.pointers.clear();
+  }
+  resume(): void {
+    if (!this.opened || !this.paused) return;
+    this.paused = false;
+    this.root.classList.remove('hidden');
+    this.d.menu.root.classList.add('cv-hide');
+    this.lastT = performance.now();
+  }
+
+  /** The shown car's report: its card plus the event and the model credit. */
+  report(): void {
+    const cur = this.cur, data = this.data;
+    if (!this.isOpen || !cur || !data) return;
+    const m = cur.card.model;
+    const credit = m.title || m.author ? `${m.title ?? 'model'}${m.author ? ` by ${m.author}` : ''}${m.licence ? `, ${m.licence}` : ''}${m.titleUrl ? ` (${m.titleUrl})` : ''}` : m.text;
+    this.d.report({ id: cur.car.key, number: cur.card.number, team: cur.card.team, car: cur.card.car, event: data.title, cls: cur.card.cls, credit });
+  }
   /** For the console / tests. */
   get state() { return { index: this.index, key: this.lastKey, count: this.data?.cars.length ?? 0, skipped: this.data?.skipped ?? 0, stage: this.d.stage }; }
 
@@ -209,7 +239,7 @@ export class CarViewer {
     }
     this.hintEl.textContent = document.documentElement.classList.contains('touch')
       ? 'Drag to orbit · pinch to zoom · arrows for the next car'
-      : 'Left / right: cars · right stick or drag: orbit · triggers, wheel: zoom · type a number · Esc: back';
+      : 'Left / right: cars · right stick or drag: orbit · triggers, wheel: zoom · type a number · A / Enter: report an issue · Esc: back';
     this.buildStage();
     window.addEventListener('keydown', this.onKey);
     this.lastT = performance.now();
@@ -372,7 +402,9 @@ export class CarViewer {
     this.dropRig();
     this.loadingEl.textContent = 'Loading…';
     this.loadingEl.classList.remove('hidden');
-    this.renderCard(cardFor(car, i, data.cars.length, data.total, creditFor(data.credits, car.key), data.photos[car.key], data.classes));
+    const card0 = cardFor(car, i, data.cars.length, data.total, creditFor(data.credits, car.key), data.photos[car.key], data.classes);
+    this.cur = { car, card: card0 };
+    this.renderCard(card0);
     // the window first (so nothing it needs is swept), then the loads
     const n = data.cars.length;
     const keys = [i, (i + 1) % n, (i - 1 + n) % n].map((k) => data.cars[k].key);
@@ -489,6 +521,10 @@ export class CarViewer {
       if (c.ownerPhotos) ph.append(`${c.photos.length ? ' ' : ''}+ owner's photo${c.ownerPhotos > 1 ? 's' : ''}`);
       second.append(ph);
     }
+    const rb = el('button', 'cv-report', 'Issue with this car? Let us know!');
+    rb.type = 'button';
+    rb.addEventListener('click', () => this.report());
+    second.append(rb);
     parts.push(second);
     k.replaceChildren(...parts);
     this.awardsEl.replaceChildren(...c.awards.map((a) => { const b = el('div', 'cv-award'); b.append(trophy(), el('span', undefined, a)); return b; }));
@@ -539,6 +575,7 @@ export class CarViewer {
   // ------------------------------------------------------------ input
 
   private key(e: KeyboardEvent): void {
+    if (this.paused) return;
     if (e.ctrlKey || e.metaKey || e.altKey) return;
     const dig = /^[0-9]$/.test(e.key) ? e.key : null;
     if (dig !== null) {
@@ -558,13 +595,14 @@ export class CarViewer {
 
   /** NavEvents from the pad / keys (the main menu's own routing is bypassed while the page is open). */
   nav(ev: NavEvent): void {
-    if (!this.opened) return;
+    if (!this.isOpen) return;
     switch (ev) {
       case 'left': this.step(-1); break;
       case 'right': this.step(1); break;
       case 'up': this.dolly(0.85); break;
       case 'down': this.dolly(1 / 0.85); break;
       case 'back': case 'menu': this.close(); break;
+      case 'select': this.report(); break;
       default: break;
     }
   }
@@ -575,7 +613,7 @@ export class CarViewer {
   }
 
   private pDown(e: PointerEvent): void {
-    if (!this.opened || (e.pointerType === 'mouse' && e.button !== 0)) return;
+    if (!this.isOpen || (e.pointerType === 'mouse' && e.button !== 0)) return;
     this.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
     try { (e.target as Element).setPointerCapture(e.pointerId); } catch { /* not capturable */ }
     this.lastInputAt = performance.now();

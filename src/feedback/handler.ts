@@ -33,10 +33,15 @@ export const FEEDBACK = {
   imageBranch: 'feedback-images',
 } as const;
 
-export type FeedbackKind = 'bug' | 'feature';
+/** `car`: a report about one field car from the Cars page (owner, 31 Oct 2026); filed with `car-kit` (and `bug`). */
+export type FeedbackKind = 'bug' | 'feature' | 'car';
 
 /** What the game attaches (all optional strings; each capped). */
-export interface FeedbackContext { version?: string; sha?: string; track?: string; device?: string; ua?: string; screen?: string; error?: string }
+export interface FeedbackContext {
+  version?: string; sha?: string; track?: string; device?: string; ua?: string; screen?: string; error?: string;
+  /** a car report (kind `car`): which car, event and model credit the Cars page showed */
+  carId?: string; carNumber?: string; carTeam?: string; car?: string; event?: string; carClass?: string; modelCredit?: string;
+}
 export interface FeedbackImageIn { name?: string; type: string; data: string }
 export interface FeedbackImage { type: 'image/jpeg' | 'image/png'; data: string; bytes: number }
 export interface FeedbackRequest { kind: FeedbackKind; description: string; context?: FeedbackContext; name?: string; secret?: string }
@@ -73,7 +78,7 @@ export async function readCapped(req: Request, max: number): Promise<string | nu
   return new TextDecoder().decode(all);
 }
 
-const CAPS: Record<keyof FeedbackContext, number> = { version: 20, sha: 12, track: 32, device: 16, ua: 300, screen: 32, error: 1500 };
+const CAPS: Record<keyof FeedbackContext, number> = { version: 20, sha: 12, track: 32, device: 16, ua: 300, screen: 32, error: 1500, carId: 24, carNumber: 8, carTeam: 80, car: 80, event: 64, carClass: 4, modelCredit: 300 };
 
 /** Strip control and format characters (keeping newlines when asked), and break code fences. */
 export function clean(s: string, keepNewlines = false): string {
@@ -87,8 +92,8 @@ export function parseFeedback(body: unknown): { ok: true; value: FeedbackRequest
   if (!body || typeof body !== 'object' || Array.isArray(body)) return { ok: false, reasons: ['body must be a JSON object'] };
   const b = body as Record<string, unknown>;
   const r: string[] = [];
-  const kind = b.kind === 'bug' || b.kind === 'feature' ? b.kind : null;
-  if (!kind) r.push('kind must be bug or feature');
+  const kind = b.kind === 'bug' || b.kind === 'feature' || b.kind === 'car' ? b.kind : null;
+  if (!kind) r.push('kind must be bug, feature or car');
   const d = typeof b.description === 'string' ? clean(b.description, true) : '';
   if (!d) r.push('describe the bug or the feature');
   else if ([...d].length > FEEDBACK.maxDescription) r.push(`the description is limited to ${FEEDBACK.maxDescription} characters`);
@@ -99,6 +104,7 @@ export function parseFeedback(body: unknown): { ok: true; value: FeedbackRequest
       if (typeof c[k] === 'string') { const v = clean(c[k] as string, k === 'error').slice(0, CAPS[k]); if (v) context[k] = v; }
     }
   }
+  if (kind === 'car' && !(context.carNumber && context.carId)) r.push('a car report must say which car');
   if (r.length) return { ok: false, reasons: r };
   return { ok: true, value: { kind: kind!, description: d, context, ...(typeof b.name === 'string' ? { name: b.name } : {}), ...(typeof b.secret === 'string' ? { secret: b.secret } : {}) } };
 }
@@ -136,11 +142,14 @@ const fence = (s: string) => `~~~text\n${s}\n~~~`;
 /** The issue: title from the first line, the description and the context in code blocks (nothing user-typed renders). */
 export function issueFor(f: FeedbackRequest, who: string, pics?: { urls: string[]; failed: number; failStatus?: number | string }): { title: string; body: string; labels: string[] } {
   const first = clean(f.description.split('\n')[0]).replace(/@/g, '(at)').replace(/[<>[\]]/g, '');
-  const title = `[${f.kind}] ${[...first].length > 70 ? [...first].slice(0, 69).join('') + '…' : first}`;
   const c = f.context ?? {};
+  const short = [...first].length > 70 ? [...first].slice(0, 69).join('') + '…' : first;
+  const safe = (t: string | undefined) => clean(t ?? '').replace(/@/g, '(at)').replace(/[<>[\]]/g, '');
+  // a car report: "Car #<number> <team> (<event>): <first words>", built here from the validated context
+  const title = f.kind === 'car' ? `Car #${safe(c.carNumber)} ${safe(c.carTeam)} (${safe(c.event)}): ${short}` : `[${f.kind}] ${short}`;
   const ctx = (Object.keys(CAPS) as (keyof FeedbackContext)[]).filter((k) => k !== 'error' && c[k]).map((k) => `${k}: ${c[k]}`).join('\n');
   const body = [
-    `Filed from the game (${f.kind === 'bug' ? 'bug report' : 'feature request'}).`,
+    `Filed from the game (${f.kind === 'bug' ? 'bug report' : f.kind === 'car' ? 'car report from the Cars page' : 'feature request'}).`,
     '',
     'Scoreboard name:',
     fence(who),
@@ -154,7 +163,7 @@ export function issueFor(f: FeedbackRequest, who: string, pics?: { urls: string[
     ...(pics?.urls.length ? ['', '## Pictures', '', ...pics.urls.map((u, i) => `![picture ${i + 1}](${u})`)] : []),
     ...(pics?.failed ? ['', `_${pics.failed} picture(s) could not be uploaded (HTTP ${pics.failStatus ?? '?'})_`] : []),
   ].join('\n');
-  return { title, body, labels: ['from-game', f.kind] };
+  return { title, body, labels: f.kind === 'car' ? ['from-game', 'car-kit', 'bug'] : ['from-game', f.kind] };
 }
 
 const HEADERS = { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' };

@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import './style.css';
 import { inject as injectAnalytics } from '@vercel/analytics';
 import { installErrorCapture, recordError } from './errors';
-import { feedbackPage } from './feedback';
+import { feedbackPage, type CarReport } from './feedback';
 import { howtoPage } from './howto';
 import { aiCount, fieldLine } from './field-select';
 import { loadFieldData } from './loader';
@@ -180,6 +180,14 @@ const trackEntry = (): MenuEntry[] => TRACK_IDS.length < 2 ? [] : [{
   get: () => TRACK_ID, set: (v) => { if (v !== TRACK_ID) location.assign(urlForTrack(v)); },
 }];
 
+/** The in-game report page's options (the menu's row and the Cars page's button share them). */
+const feedbackOpts = (car?: CarReport) => ({
+  version: APP_VERSION, sha: GIT_SHA, track: TRACK_ID, device: quality.device + (workerChoice(perfFlags.worker, workerOn) ? '+worker' : ''),
+  name: () => scoreClient.name, secret: () => scoreClient.secret,
+  toast: (m: string, ms?: number) => hud.toast(m, ms), refresh: () => menu.refresh(),
+  ...(car ? { car } : {}),
+});
+
 const mainPage: MenuPage = {
   title: TITLE,
   titleNodes: () => censoredTitleNodes(),
@@ -201,11 +209,7 @@ const mainPage: MenuPage = {
     { kind: 'submenu', id: 'credits', label: 'Credits', page: creditsPage },
     {
       kind: 'submenu', id: 'feedback', label: 'Report a bug / request a feature',
-      page: () => feedbackPage({
-        version: APP_VERSION, sha: GIT_SHA, track: TRACK_ID, device: quality.device + (workerChoice(perfFlags.worker, workerOn) ? '+worker' : ''),
-        name: () => scoreClient.name, secret: () => scoreClient.secret,
-        toast: (m, ms) => hud.toast(m, ms), refresh: () => menu.refresh(),
-      }),
+      page: () => feedbackPage(feedbackOpts()),
     },
   ],
 };
@@ -807,6 +811,22 @@ function createSim(assets: Assets) {
     probeModel: ghostTemplate, shadows: quality.shadows,
     hide: () => [car.root, ghosts.group],
     toast: (m, ms) => hud.toast(m, ms),
+    // the Cars page's report button: the same feedback page, kind car; Back (or Esc / B) returns to the page
+    report: (rep) => {
+      viewer.pause();
+      menu.root.classList.remove('cv-hide');
+      hud.hideHelp();
+      menu.show(feedbackPage(feedbackOpts(rep)), {
+        closable: true, variant: 'pause',
+        onClose: () => {
+          showMainMenu();
+          const i = menu.state?.entries.findIndex((e) => e.id === 'cars') ?? -1;
+          if (i >= 0) menu.state!.focus(i);
+          menu.refresh();
+          viewer.resume();
+        },
+      });
+    },
     onClose: () => { dirty = true; render(); menu.refresh(); },
   });
 

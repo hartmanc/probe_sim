@@ -472,3 +472,5 @@ html.touch .credits { max-height: 44vh; font-size: 12px; }
   .cv-arrow { width: 46px; height: 60px; }
   .cv-top { top: calc(var(--sat, 0px) + 6px); left: calc(var(--sal, 0px) + 8px); right: calc(var(--sar, 0px) + 8px); }
 }
+.feedback .fb-ctx { margin: 0 0 6px; padding: 7px 10px; border-radius: 6px; border: 1px solid #2a3340; background: rgba(255,255,255,0.04); color: var(--muted); font: 12px/1.4 ui-monospace, Menlo, monospace; white-space: pre-wrap; user-select: none; -webkit-user-select: none; }
+.cv-report { display: block; margin-top: 6px; padding: 4px 0; border: 0; background: none; color: #8ec5ff; font: inherit; text-decoration: underline; cursor: pointer; text-align: left; }

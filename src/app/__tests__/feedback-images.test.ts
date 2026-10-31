@@ -72,4 +72,13 @@ describe('preparePicture (encoder injected)', () => {
     expect(buildFeedback(base).images).toBeUndefined();
     expect(buildFeedback({ ...base, images: [pic, pic, pic, pic] }).images).toHaveLength(3);
   });
+  test('a car report carries the car in its context and nothing for other kinds', () => {
+    const base = { description: ' wheels float ', version: '0.4.3', sha: 'abc', track: 'sonoma', device: 'desktop', ua: '', screen: '', error: null, name: null, secret: undefined };
+    const car = { id: '135', number: '135', team: 'Skid Games', car: '1994 BMW 325is', event: 'Sears Pointless, Sonoma, Mar 2026', cls: 'A', credit: 'Built for the sim' };
+    const p = buildFeedback({ ...base, kind: 'car', car });
+    expect(p.kind).toBe('car');
+    expect(p.description).toBe('wheels float');
+    expect(p.context).toMatchObject({ carId: '135', carNumber: '135', carTeam: 'Skid Games', car: '1994 BMW 325is', event: 'Sears Pointless, Sonoma, Mar 2026', carClass: 'A', modelCredit: 'Built for the sim', version: '0.4.3', track: 'sonoma' });
+    expect(buildFeedback({ ...base, kind: 'bug', car }).context.carId).toBeUndefined();
+  });
 });

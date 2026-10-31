@@ -9,11 +9,14 @@ Start menu → **Report a bug / request a feature** (`src/app/feedback.ts`) send
 `POST /api/feedback` with JSON:
 
 ```ts
-{ kind: 'bug' | 'feature', description: string,
-  context?: { version, sha, track, device /* phone | tablet | desktop */, ua, screen, error /* last uncaught error */ },
+{ kind: 'bug' | 'feature' | 'car', description: string,
+  context?: { version, sha, track, device /* phone | tablet | desktop */, ua, screen, error /* last uncaught error */,
+    carId, carNumber, carTeam, car, event, carClass, modelCredit /* kind car only */ },
   name?: string, secret?: string,    // the scoreboard name and device secret, only when this device has a name
   images?: [{ name, type: 'image/jpeg', data: /* base64 */ }] }   // up to 3 pictures, see below
 ```
+
+`kind: 'car'` (31 Oct 2026, the Cars page's "Issue with this car? Let us know!"): needs `context.carId` and `carNumber`; the issue is titled `Car #<number> <team> (<event>): <first line>` (built here from the validated context), labelled `from-game`, `car-kit` and `bug`, and lists the car context in the Context block. No new env var.
 
 The issue: title `[bug] <first line>` or `[feature] <first line>` (70 characters, `@` written `(at)`); body with the
 scoreboard name (only when the device secret owns that name, `src/scoreboard/owner.ts`; otherwise `anonymous`), the
