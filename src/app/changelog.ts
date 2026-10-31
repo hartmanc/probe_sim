@@ -27,6 +27,12 @@ export interface ChangeEntry {
 /** Newest first. Add a new entry at the top and mirror its version in package.json. */
 export const CHANGELOG: ChangeEntry[] = [
   {
+    version: '0.4.3', date: '', title: 'Cars',
+    items: [
+      'A new Cars page on the main menu: look at the field’s cars one at a time, with their awards, results and the photos each model was detailed from.',
+    ],
+  },
+  {
     version: '0.4.2', date: '2026-10-30', title: 'One way to run the physics',
     items: [
       'The “physics in a worker (experimental)” option is gone from the Graphics menu, removed before anyone needed to try it. The game runs its physics on the main thread, the same way for everyone. Nothing experimental is offered in the menus; the research switches live only in the notes.',

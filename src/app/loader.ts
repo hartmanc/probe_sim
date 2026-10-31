@@ -245,6 +245,11 @@ export function loadFieldData(): Promise<FieldData> {
 
 const fieldModels = new Map<string, Promise<THREE.Object3D | null>>();
 
+/** Is this glb already parsed (or being parsed) in the cache? The Cars page frees only what it loaded itself. */
+export const fieldModelCached = (file: string): boolean => fieldModels.has(file);
+/** Drop a glb from the cache so a later load parses it again (the Cars page, after it disposed the scene). */
+export const releaseFieldModel = (file: string): void => { fieldModels.delete(file); };
+
 /**
  * A field car's glb (models.json `file`, relative to cars/field/), parsed once; resolves null when it is
  * missing or fails to parse (the caller keeps its placeholder). Callers clone the returned scene.

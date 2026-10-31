@@ -52,6 +52,7 @@ import { ScoreboardUI } from './scoreboard-ui';
 import { TITLE_ACCESSIBLE_NAME, censoredTitleNodes } from './censor';
 import { TRACK, TRACK_ID, TRACK_IDS, urlForTrack } from './track-choice';
 import { TRACKS } from '../scoreboard/config';
+import { CarViewer, stageFromUrl } from './car-viewer';
 import { ROLLOVER_LINE, RolloverWatch } from './rollover';
 import { LOST_IN_HILLS_LINE } from './offtrack';
 
@@ -195,6 +196,7 @@ const mainPage: MenuPage = {
     graphicsEntry(),
     ...reloadEntry(),
     scoreboardEntry(),
+    { kind: 'action', id: 'cars', label: 'Cars', note: sim ? 'the field' : 'loading…', disabled: !sim, run: () => sim?.viewer.open() },
     { kind: 'submenu', id: 'whatsnew', label: "What's new", note: `v${APP_VERSION}`, page: () => changelogPage(GIT_SHA) },
     { kind: 'submenu', id: 'credits', label: 'Credits', page: creditsPage },
     {
@@ -249,6 +251,7 @@ function uiTick(now: number): void {
   requestAnimationFrame(uiTick);
   const editing = scoreUI.editorOpen;
   const blocked = menu.isOpen || controlsPanel.isOpen || editing;
+  const viewing = !!sim?.viewer.isOpen;   // the Cars page: the main menu stays open underneath, hidden
   input.navMode = blocked;
   for (const n of input.consumeNotices()) hud.toast(n);
   const actions = input.consumeActions();
@@ -261,6 +264,9 @@ function uiTick(now: number): void {
   } else if (controlsPanel.isOpen) {
     for (const a of actions) if (a === 'menu') controlsPanel.close(); else sharedAction(a);
     for (const n of navs) if (n === 'back') controlsPanel.close();
+  } else if (viewing) {
+    for (const a of actions) if (a === 'menu') sim!.viewer.close(); else if (a === 'mute') sharedAction(a);
+    for (const n of navs) sim!.viewer.nav(n);
   } else if (menu.isOpen) {
     // the new-best prompt only closes on Submit / Skip (Start would 'select' on a non-closable card)
     for (const a of actions) if (a === 'menu') { if (!scoreUI.promptOpen) menu.nav('menu'); } else sharedAction(a);
@@ -276,9 +282,9 @@ function uiTick(now: number): void {
   if (portrait && sim?.running && !menu.isOpen && !controlsPanel.isOpen && !editing) sim.openPause();
   touch?.setVisible(!!sim?.running && !menu.isOpen && !controlsPanel.isOpen && !editing && !portrait);
 
-  const paused = menu.isOpen || controlsPanel.isOpen || editing || document.hidden || portrait;
+  const paused = (menu.isOpen && !viewing) || controlsPanel.isOpen || editing || document.hidden || portrait;
   // no mouse cursor over the game while driving (it comes back on any pointer move, and in menus)
-  document.body.style.cursor = !paused && sim?.running && performance.now() - lastPointerMoveAt > CURSOR_HIDE_MS ? 'none' : '';
+  document.body.style.cursor = !paused && !viewing && sim?.running && performance.now() - lastPointerMoveAt > CURSOR_HIDE_MS ? 'none' : '';
   if (paused !== uiPaused) {
     uiPaused = paused;
     if (paused) audio.suspend(); else audio.resume();
@@ -686,6 +692,7 @@ function createSim(assets: Assets) {
 
   /** One rendered frame; called from the UI loop. paused: a menu / panel is open or the tab is hidden. */
   const frame = (now: number, actions: Action[], paused: boolean) => {
+    if (viewer.isOpen) { viewer.frame(now); return; }
     if (!perf.on) { frameInner(now, actions, paused); return; }
     const t = performance.now();
     frameInner(now, actions, paused);
@@ -788,6 +795,19 @@ function createSim(assets: Assets) {
     if (perf.on) perf.render += performance.now() - tRen;
   };
 
+  // ---- the Cars page (car-viewer.ts): the field's cars one at a time; ?stage=studio|track
+  const viewer = new CarViewer({
+    app, trackId: TRACK_ID, trackShort: TRACK.short, stage: stageFromUrl(location.search), world, look, cams, renderer, menu, input, audio, track: track as TrackJson,
+    parking: () => {
+      const p = physics.lineToWorld(track, () => 0, 8);
+      return { pos: [p.pos[0], p.pos[1], surface.sample(p.pos[0], p.pos[1]).z], heading: p.heading };
+    },
+    probeModel: assets.carModel, shadows: quality.shadows,
+    hide: () => [car.root, ghosts.group],
+    toast: (m, ms) => hud.toast(m, ms),
+    onClose: () => { dirty = true; render(); menu.refresh(); },
+  });
+
   const setMode = (id: ModeId) => {
     modes.set(id);
     running = true;
@@ -798,7 +818,7 @@ function createSim(assets: Assets) {
   // debug handle for console / automated checks
   (window as unknown as Record<string, unknown>).__sim = {
     get vehicle() { return veh(); }, timer, cams, input, hud, world, renderer, audio, surface, track: track as TrackJson, menu,
-    quality, touch, thinned, hotlap: hsim, loop, adaptive, perf, scoreboard: { client: scoreClient, ui: scoreUI },
+    viewer, quality, touch, thinned, hotlap: hsim, loop, adaptive, perf, scoreboard: { client: scoreClient, ui: scoreUI },
     get mode() { return modes.current; },
     setMode: (id: ModeId) => { setMode(id); menu.close(); },
     setCamera,
@@ -806,6 +826,7 @@ function createSim(assets: Assets) {
 
   return {
     frame,
+    viewer,
     setMode,
     get running() { return running; },
     trackLength: track.length_m,

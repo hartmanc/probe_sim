@@ -463,6 +463,13 @@ export class CarAudio {
     return this.fieldGain;
   }
 
+  /** Silence the player's own voices (engine, tyres, wind) while the Cars page plays the field's engines on the same bus. */
+  hush(): void {
+    if (!this.ctx) return;
+    const t = this.ctx.currentTime;
+    for (const g of [this.engineLevel, this.scrubGain, this.skidGain, this.skidNoiseGain, this.rumbleGain, this.gravelGain, this.dirtLowGain, this.sprayGain, this.sprayGrit, this.windGain]) g?.gain.setTargetAtTime(0, t, 0.05);
+  }
+
   setMuted(m: boolean): void {
     this.muted = m;
     if (this.ctx) this.master.gain.setTargetAtTime(m ? 0 : 0.9, this.ctx.currentTime, 0.05);
