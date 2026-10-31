@@ -146,15 +146,16 @@ export interface EngineFrame { rpm: number; throttle: number }
 /** Cold start: crank to CRANK_END, catch, one rev to REV_RPM, settle to idle by SETTLE_END (s from showing the car). */
 export const CRANK_END = 1.0, CATCH_END = 1.3, REV_UP_END = 1.9, REV_HOLD_END = 2.1, SETTLE_END = 3.2;
 export const REV_RPM = 3000, CRANK_RPM = 220;
-export const BLIP_S = 0.9, BLIP_RPM = 1500;
+/** Warming up after the cold start: throttle blips of random size, with short idle gaps (owner, 31 Oct 2026). */
+export const PEAK_MIN = 2000, PEAK_MAX = 4000;
+export interface Blip { t0: number; peak: number; rise: number; fall: number }
 const clamp01 = (x: number) => Math.max(0, Math.min(1, x));
 const smooth = (x: number) => { const t = clamp01(x); return t * t * (3 - 2 * t); };
 
 /**
- * The rpm and throttle at time t for a car idling at `idle` rpm. `blips` are the start times (s) of throttle blips
- * after the cold start (each lasts BLIP_S: up to idle + BLIP_RPM, back down).
+ * The rpm and throttle at time t for a car idling at `idle` rpm. `blips` are the throttle blips after the cold start.
  */
-export function engineAt(t: number, idle: number, blips: readonly number[]): EngineFrame {
+export function engineAt(t: number, idle: number, blips: readonly Blip[]): EngineFrame {
   if (t < 0) return { rpm: 0, throttle: 0 };
   if (t < CRANK_END) return { rpm: CRANK_RPM * (0.55 + 0.45 * smooth(t / 0.3)) * (1 + 0.12 * Math.sin(t * 38)), throttle: 0 };
   if (t < CATCH_END) { const u = smooth((t - CRANK_END) / (CATCH_END - CRANK_END)); return { rpm: CRANK_RPM + (1400 - CRANK_RPM) * u, throttle: 0.55 }; }
@@ -162,14 +163,17 @@ export function engineAt(t: number, idle: number, blips: readonly number[]): Eng
   if (t < REV_HOLD_END) return { rpm: REV_RPM, throttle: 0.85 };
   if (t < SETTLE_END) { const u = smooth((t - REV_HOLD_END) / (SETTLE_END - REV_HOLD_END)); return { rpm: REV_RPM + (idle - REV_RPM) * u, throttle: 0 }; }
   for (const b of blips) {
-    const d = t - b;
-    if (d >= 0 && d < BLIP_S) {
-      const up = smooth(d / 0.22), down = d < 0.3 ? 0 : smooth((d - 0.3) / (BLIP_S - 0.3));
-      return { rpm: idle + BLIP_RPM * up * (1 - down), throttle: d < 0.3 ? 0.7 : 0 };
+    const d = t - b.t0;
+    if (d >= 0 && d < b.rise + b.fall) {
+      const up = smooth(d / b.rise), down = d < b.rise ? 0 : smooth((d - b.rise) / b.fall);
+      const k = up * (1 - down);
+      return { rpm: idle + (b.peak - idle) * k, throttle: d < b.rise ? 0.4 + 0.5 * up : 0 };
     }
   }
   return { rpm: idle, throttle: 0.06 };
 }
 
-/** The next blip start after `from` (s): 4 to 9 s later; `rand` is 0..1. */
-export function nextBlip(from: number, rand: number): number { return from + 4 + 5 * clamp01(rand); }
+/** The blip that starts 1 to 3 s after `after` (the end of the last one): peak 2,000 to 4,000 rpm, its own rise and fall. `rand` gives 0..1. */
+export function makeBlip(after: number, rand: () => number): Blip {
+  return { t0: after + 1 + 2 * rand(), peak: PEAK_MIN + (PEAK_MAX - PEAK_MIN) * rand(), rise: 0.12 + 0.35 * rand(), fall: 0.25 + 0.9 * rand() };
+}

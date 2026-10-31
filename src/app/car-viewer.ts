@@ -18,8 +18,8 @@ import { carSound, parseSoundIndex, type FieldSoundIndex } from './modes/race';
 import type { World } from './scene';
 import type { TrackJson } from './physics-types';
 import {
-  SETTLE_END, cardFor, creditFor, engineAt, fieldSize, indexByNumber, nextBlip, safeUrl, viewerOrder,
-  type AwardEntry, type Card, type CreditRow, type IdentityRow, type PhotoRow, type ViewerCar,
+  SETTLE_END, makeBlip, cardFor, creditFor, engineAt, fieldSize, indexByNumber, safeUrl, viewerOrder,
+  type AwardEntry, type Blip, type Card, type CreditRow, type IdentityRow, type PhotoRow, type ViewerCar,
 } from './car-viewer-data';
 
 export type StageKind = 'studio' | 'track';
@@ -133,6 +133,7 @@ export class CarViewer {
   // camera
   private az = 0; private el = 0.22; private zoom = 1;
   private baseDist = 6.5; private targetY = 0.6;
+  private box: THREE.Box3 | null = null;
   private lastInputAt = -Infinity;
   private pointers = new Map<number, { x: number; y: number }>();
   private pinch = 0;
@@ -141,7 +142,7 @@ export class CarViewer {
   private owned = new Map<string, THREE.Object3D>();
   // sound
   private fa: FieldAudio | null = null;
-  private engine: { id: number; t0: number; idle: number; family: string; snd: { trim: number; muffler: number; rpmScale: number }; redline: number; blips: number[]; nextAt: number } | null = null;
+  private engine: { id: number; t0: number; idle: number; family: string; snd: { trim: number; muffler: number; rpmScale: number }; redline: number; blips: Blip[]; last: number } | null = null;
   private typed = ''; private typedAt = 0;
   private padPrev: boolean[] = [];
   private onKey = (e: KeyboardEvent) => this.key(e);
@@ -339,6 +340,15 @@ export class CarViewer {
     const shared = tpl === this.d.probeModel;
     const clone = tpl.clone(true);
     if (!shared) prepareCarMaterials(clone);
+    // the page's own double-sided copies of the materials (the field models are single-sided: from inside the body the
+    // panels vanish); the shared race materials are never touched
+    const copies = new Map<THREE.Material, THREE.Material>();
+    clone.traverse((o) => {
+      const mesh = o as THREE.Mesh;
+      if (!mesh.isMesh) return;
+      const own = (m: THREE.Material) => { let c = copies.get(m); if (!c) { c = m.clone(); c.side = THREE.DoubleSide; copies.set(m, c); } return c; };
+      mesh.material = Array.isArray(mesh.material) ? mesh.material.map(own) : own(mesh.material);
+    });
     const m = this.modelFile(car.key);
     const r = m?.tyre_radius_m;
     const rig = new CarRig(clone, { tyreRadius: r, physicsRadius: r, castShadow: this.d.shadows });
@@ -351,6 +361,7 @@ export class CarViewer {
     const size = box.getSize(new THREE.Vector3());
     this.targetY = Math.max(0.45, Math.min(1.1, size.y * 0.45));
     this.baseDist = Math.max(5.2, Math.min(10, Math.max(size.x, size.z, size.y * 2.2) * 1.55));
+    this.box = box;
     this.rig = { rig, key: car.key, shared, tpl };
   }
 
@@ -360,8 +371,7 @@ export class CarViewer {
     this.rig = null;
     r.rig.root.removeFromParent();
     if (r.shared) return;
-    const base = r.tpl ? materialsOf(r.tpl) : new Set<THREE.Material>();
-    for (const m of materialsOf(r.rig.root)) if (!base.has(m)) disposeMaterial(m, false); // the clone's own (upgraded paint, glass)
+    for (const m of materialsOf(r.rig.root)) disposeMaterial(m, false); // the page's own copies (textures stay with the template)
   }
 
   private freeAll(): void {
@@ -424,7 +434,7 @@ export class CarViewer {
       if (token !== this.token || !this.opened) return;
       const fam = data.sound.families[snd.family] ?? data.sound.families[data.sound.default];
       const redline = id.redline_rpm ?? fam?.redline ?? 6500;
-      this.engine = { id: token, t0: performance.now() / 1000, idle: (fam?.idle ?? 800) / snd.rpmScale, family: snd.family, snd, redline, blips: [], nextAt: SETTLE_END + nextBlip(0, Math.random()) };
+      this.engine = { id: token, t0: performance.now() / 1000, idle: (fam?.idle ?? 800) / snd.rpmScale, family: snd.family, snd, redline, blips: [makeBlip(SETTLE_END, Math.random)], last: 0 };
     } catch (e) { console.warn('cars page: engine sound', e); }
   }
 
@@ -438,7 +448,8 @@ export class CarViewer {
     const e = this.engine, fa = this.fa;
     if (!e || !fa) return;
     const t = performance.now() / 1000 - e.t0;
-    if (t > e.nextAt) { e.blips.push(e.nextAt); if (e.blips.length > 3) e.blips.shift(); e.nextAt = nextBlip(e.nextAt, Math.random()); }
+    const tail = e.blips[e.blips.length - 1];
+    if (t > tail.t0 - 0.5) { e.blips.push(makeBlip(tail.t0 + tail.rise + tail.fall, Math.random)); if (e.blips.length > 4) e.blips.shift(); }
     const f = engineAt(t, e.idle, e.blips);
     const car: FieldCar = {
       id: e.id, pos: [0, 0, 0], vel: [0, 0, 0], rpm: f.rpm * e.snd.rpmScale, throttle: f.throttle, redline: e.redline * e.snd.rpmScale,
@@ -538,12 +549,31 @@ export class CarViewer {
     if (this.typed && now - this.typedAt > 1500) { this.typed = ''; this.typedEl.classList.add('hidden'); }
 
     // orbit camera; the pitch never takes it under the floor
-    const dist = Math.max(2.2, Math.min(22, this.baseDist * this.zoom));
-    const elMin = Math.asin(Math.max(-1, Math.min(1, (0.3 - this.targetY) / dist)));
-    this.el = Math.max(elMin, Math.min(1.35, this.el));
+    const c = this.stagePos;
+    const ty = c.y + this.targetY;
+    // the closest zoom keeps the camera 0.4 m outside the model's box along the view direction, and the pitch keeps it above the floor
+    const dirv = new THREE.Vector3();
+    const distFor = (el: number): number => {
+      const want = Math.max(2.2, Math.min(22, this.baseDist * this.zoom));
+      if (!this.box) return want;
+      dirv.set(Math.sin(this.az) * Math.cos(el), Math.sin(el), Math.cos(this.az) * Math.cos(el));
+      const o = [c.x, ty, c.z], dd = [dirv.x, dirv.y, dirv.z], lo = [this.box.min.x, this.box.min.y, this.box.min.z], hi = [this.box.max.x, this.box.max.y, this.box.max.z];
+      let exit = Infinity;
+      for (let k = 0; k < 3; k++) {
+        if (dd[k] > 1e-6) exit = Math.min(exit, (hi[k] - o[k]) / dd[k]);
+        else if (dd[k] < -1e-6) exit = Math.min(exit, (lo[k] - o[k]) / dd[k]);
+      }
+      return Math.max(want, Math.max(0, exit) + 0.4);
+    };
+    this.el = Math.min(1.35, this.el);
+    let dist = distFor(this.el);
+    for (let k = 0; k < 4; k++) {
+      const elMin = Math.asin(Math.max(-1, Math.min(1, (0.3 - this.targetY) / dist)));
+      if (this.el >= elMin) break;
+      this.el = elMin; dist = distFor(this.el);
+    }
     const cam = d.cams.camera;
     if (cam.fov !== FOV || cam.far !== 4000) { cam.fov = FOV; cam.near = 0.05; cam.far = 4000; cam.updateProjectionMatrix(); }
-    const c = this.stagePos;
     const ce = Math.cos(this.el);
     cam.position.set(c.x + dist * Math.sin(this.az) * ce, c.y + this.targetY + dist * Math.sin(this.el), c.z + dist * Math.cos(this.az) * ce);
     cam.lookAt(c.x, c.y + this.targetY, c.z);

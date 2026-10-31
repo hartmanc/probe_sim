@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  awardClass, cardFor, creditFor, engineAt, fieldSize, indexByNumber, lapText, nextBlip, ordinal, safeUrl, viewerOrder,
+  awardClass, cardFor, creditFor, engineAt, fieldSize, indexByNumber, lapText, makeBlip, ordinal, safeUrl, viewerOrder,
   CRANK_END, REV_RPM, SETTLE_END, type AwardEntry, type IdentityRow,
 } from '../car-viewer-data';
 
@@ -101,13 +101,16 @@ describe('scripted engine', () => {
     expect(engineAt(20, 800, []).rpm).toBe(800);
   });
   it('blips lift the rpm and come back', () => {
-    const blips = [10];
-    expect(engineAt(10.25, 800, blips).rpm).toBeGreaterThan(2000);
-    expect(engineAt(10.25, 800, blips).throttle).toBeGreaterThan(0.5);
+    const blips = [{ t0: 10, peak: 3000, rise: 0.2, fall: 0.6 }];
+    expect(engineAt(10.2, 800, blips).rpm).toBeCloseTo(3000, 5);
+    expect(engineAt(10.1, 800, blips).throttle).toBeGreaterThan(0.4);
     expect(engineAt(11.5, 800, blips).rpm).toBe(800);
   });
-  it('the next blip is 4 to 9 s away', () => {
-    expect(nextBlip(10, 0)).toBe(14);
-    expect(nextBlip(10, 1)).toBe(19);
+  it('random blips start 1 to 3 s after the last, peak 2000 to 4000, and differ', () => {
+    const lo = makeBlip(10, () => 0), hi = makeBlip(10, () => 1);
+    expect([lo.t0, hi.t0]).toEqual([11, 13]);
+    expect([lo.peak, hi.peak]).toEqual([2000, 4000]);
+    let n = 0; const r = () => ((n = (n * 7 + 3) % 11) / 11);
+    expect(makeBlip(0, r)).not.toEqual(makeBlip(0, r));
   });
 });
