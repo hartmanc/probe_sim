@@ -173,7 +173,7 @@ export function engineAt(t: number, idle: number, blips: readonly Blip[]): Engin
   return { rpm: idle, throttle: 0.06 };
 }
 
-/** The blip that starts 1 to 3 s after `after` (the end of the last one): peak 2,000 to 4,000 rpm, its own rise and fall. `rand` gives 0..1. */
+/** The blip that starts 0.5 to 1.5 s after `after` (the end of the last one): peak 2,000 to 4,000 rpm, its own rise and fall. `rand` gives 0..1. */
 export function makeBlip(after: number, rand: () => number): Blip {
-  return { t0: after + 1 + 2 * rand(), peak: PEAK_MIN + (PEAK_MAX - PEAK_MIN) * rand(), rise: 0.12 + 0.35 * rand(), fall: 0.25 + 0.9 * rand() };
+  return { t0: after + 0.5 + rand(), peak: PEAK_MIN + (PEAK_MAX - PEAK_MIN) * rand(), rise: 0.12 + 0.35 * rand(), fall: 0.25 + 0.9 * rand() };
 }

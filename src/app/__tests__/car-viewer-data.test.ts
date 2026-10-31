@@ -106,9 +106,9 @@ describe('scripted engine', () => {
     expect(engineAt(10.1, 800, blips).throttle).toBeGreaterThan(0.4);
     expect(engineAt(11.5, 800, blips).rpm).toBe(800);
   });
-  it('random blips start 1 to 3 s after the last, peak 2000 to 4000, and differ', () => {
+  it('random blips start 0.5 to 1.5 s after the end of the last, peak 2000 to 4000, and differ', () => {
     const lo = makeBlip(10, () => 0), hi = makeBlip(10, () => 1);
-    expect([lo.t0, hi.t0]).toEqual([11, 13]);
+    expect([lo.t0, hi.t0]).toEqual([10.5, 11.5]);
     expect([lo.peak, hi.peak]).toEqual([2000, 4000]);
     let n = 0; const r = () => ((n = (n * 7 + 3) % 11) / 11);
     expect(makeBlip(0, r)).not.toEqual(makeBlip(0, r));
