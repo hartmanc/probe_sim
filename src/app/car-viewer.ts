@@ -39,6 +39,7 @@ const EVENT_TITLES: Record<string, string> = {
 const FOV = 38;
 const AUTO_TURN_S = 20, AUTO_RESUME_MS = 4000;
 const PROBE_KEY = '619';
+const DEFAULT_DIST = 7.5, DEFAULT_TARGET_Y = 0.7;
 /** The page's engine sound is off (owner, 31 Oct 2026); `?viewersound=1` turns the scripted cold start and warm-up back on for listening. */
 export const VIEWER_SOUND: boolean = typeof location !== 'undefined' && new URLSearchParams(location.search).get('viewersound') === '1';
 
@@ -413,9 +414,9 @@ export class CarViewer {
     this.group.add(rig.root);
     rig.root.updateMatrixWorld(true);
     const box = new THREE.Box3().setFromObject(rig.root);
-    const size = box.getSize(new THREE.Vector3());
-    this.targetY = Math.max(0.45, Math.min(1.1, size.y * 0.45));
-    this.baseDist = Math.max(5.2, Math.min(10, Math.max(size.x, size.z, size.y * 2.2) * 1.55));
+    // the same default camera for every car, so sizes compare (a Mini looks small next to a wagon)
+    this.targetY = DEFAULT_TARGET_Y;
+    this.baseDist = DEFAULT_DIST;
     this.box = box;
     this.rig = { rig, key: car.key, shared, tpl };
   }
