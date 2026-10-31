@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  awardClass, cardFor, classSizes, fitPlane, seatOffset, creditFor, engineAt, fieldSize, indexByNumber, lapText, makeBlip, ordinal, safeUrl, viewerOrder,
+  awardClass, cardFor, classifyGesture, stripLines, classSizes, fitPlane, seatOffset, creditFor, engineAt, fieldSize, indexByNumber, lapText, makeBlip, ordinal, safeUrl, viewerOrder,
   CRANK_END, REV_RPM, SETTLE_END, type AwardEntry, type IdentityRow,
 } from '../car-viewer-data';
 
@@ -128,5 +128,31 @@ describe('parking on a cambered road', () => {
     const off = seatOffset(bumpy);
     expect(Math.min(...bumpy.residuals.map((r) => r - off))).toBeCloseTo(0, 12);
     expect(off).toBeLessThan(0);
+  });
+});
+
+describe('touch gestures', () => {
+  const track = (pts: [number, number, number][]) => pts.map(([t, x, y]) => ({ t, x, y }));
+  it('a quick horizontal flick pages: left is next, right is previous', () => {
+    expect(classifyGesture([track([[0, 300, 200], [60, 270, 204], [120, 230, 205]])])).toBe('next');
+    expect(classifyGesture([track([[0, 100, 200], [80, 150, 198], [160, 190, 200]])])).toBe('prev');
+  });
+  it('a short very fast flick counts by speed', () => {
+    expect(classifyGesture([track([[0, 300, 200], [40, 265, 200]])])).toBe('next');
+  });
+  it('a slow drag orbits, however far', () => {
+    expect(classifyGesture([track([[0, 100, 200], [400, 160, 200], [900, 260, 200]])])).toBe('orbit');
+  });
+  it('a diagonal drag orbits, a tap does not page', () => {
+    expect(classifyGesture([track([[0, 100, 100], [100, 170, 160]])])).toBe('orbit');
+    expect(classifyGesture([track([[0, 100, 100], [30, 104, 101]])])).toBe('orbit');
+  });
+  it('two fingers (a pinch) never page', () => {
+    expect(classifyGesture([track([[0, 100, 200], [100, 40, 200]]), track([[0, 300, 200], [100, 360, 200]])])).toBe('orbit');
+  });
+  it('the strip lines for a phone', () => {
+    const [l1, l2] = stripLines({ number: '20', team: 'NSF Racing', car: '1985 Chrysler LeBaron Town & Country wagon', cls: 'C', overall: 'P33 of 45', classRank: 'P16 of 27 in C', laps: '116', fastest: '2:38.495' });
+    expect(l1).toBe('#20 NSF Racing · 1985 Chrysler LeBaron Town & Country wagon · Class C');
+    expect(l2).toBe('P33 of 45 · P16 of 27 in C · 116 laps · 2:38.495');
   });
 });

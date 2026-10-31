@@ -207,3 +207,33 @@ export function fitPlane(pts: readonly (readonly [number, number, number])[]): P
 
 /** How far the car's plane is lifted (m) so its lowest wheel contact is exactly on the surface: the smallest residual. */
 export const seatOffset = (fit: PlaneFit): number => Math.min(...fit.residuals);
+
+// ---------------------------------------------------------------- touch gestures
+
+export interface PointerSample { t: number; x: number; y: number }
+/** A flick pages: at least FLICK_PX of travel within FLICK_MS, or at least FLICK_FAST_PX at FLICK_SPEED px/ms or more; mostly horizontal. */
+export const FLICK_PX = 50, FLICK_MS = 350, FLICK_FAST_PX = 30, FLICK_SPEED = 0.6, FLICK_RATIO = 2;
+
+/**
+ * What a finished touch gesture was. `tracks` holds one list of samples per finger that was down. A second finger
+ * (a pinch) is never a swipe. One finger: a quick, mostly horizontal flick is a swipe (left = next car, right = previous);
+ * a slow or diagonal drag is the orbit.
+ */
+export function classifyGesture(tracks: readonly (readonly PointerSample[])[]): 'orbit' | 'next' | 'prev' {
+  if (tracks.length !== 1 || tracks[0].length < 2) return 'orbit';
+  const s = tracks[0], a = s[0], b = s[s.length - 1];
+  const dx = b.x - a.x, dy = b.y - a.y, dt = Math.max(1, b.t - a.t), adx = Math.abs(dx);
+  if (adx < Math.abs(dy) * FLICK_RATIO) return 'orbit';
+  const quick = adx >= FLICK_PX && dt <= FLICK_MS;
+  const fast = adx >= FLICK_FAST_PX && adx / dt >= FLICK_SPEED;
+  if (!quick && !fast) return 'orbit';
+  return dx < 0 ? 'next' : 'prev';
+}
+
+/** The compact (phone) card: line 1 and line 2 of the strip. */
+export function stripLines(c: Pick<Card, 'number' | 'team' | 'car' | 'cls' | 'overall' | 'classRank' | 'laps' | 'fastest'>): [string, string] {
+  return [
+    `#${c.number} ${c.team} · ${c.car}${c.cls ? ` · Class ${c.cls}` : ''}`,
+    [c.overall, c.classRank, `${c.laps} laps`, c.fastest].join(' · '),
+  ];
+}
