@@ -90,6 +90,17 @@ function el<K extends keyof HTMLElementTagNameMap>(tag: K, cls?: string, text?: 
   if (text != null) e.textContent = text;
   return e;
 }
+/** A trophy (cup, two handles, stem and base) as inline SVG, filled with the badge's text colour. */
+function trophy(): SVGElement {
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('viewBox', '0 0 24 24'); svg.setAttribute('aria-hidden', 'true'); svg.setAttribute('class', 'cv-trophy');
+  const path = document.createElementNS(NS, 'path');
+  path.setAttribute('fill', 'currentColor');
+  path.setAttribute('d', 'M7 3h10v6a5 5 0 0 1-10 0V3zM7 5H3v2a4 4 0 0 0 4 4V9.2A2 2 0 0 1 5 7V6.5h2V5zm10 0h4v2a4 4 0 0 1-4 4V9.2A2 2 0 0 0 19 7V6.5h-2V5zM11 14h2v3h-2zM8 18h8v3H8z');
+  svg.append(path);
+  return svg;
+}
 function link(href: string, text: string): HTMLAnchorElement {
   const a = el('a', undefined, text);
   a.href = href; a.target = '_blank'; a.rel = 'noopener noreferrer';
@@ -118,6 +129,7 @@ export class CarViewer {
   private card = el('div', 'cv-card');
   private loadingEl = el('div', 'cv-loading', 'Loading…');
   private typedEl = el('div', 'cv-typed hidden');
+  private awardsEl = el('div', 'cv-awards');
   private hintEl = el('div', 'cv-hint');
   private opened = false;
   private data: ViewerData | null = null;
@@ -160,7 +172,7 @@ export class CarViewer {
     prev.setAttribute('aria-label', 'Previous car'); next.setAttribute('aria-label', 'Next car');
     prev.addEventListener('click', () => this.step(-1));
     next.addEventListener('click', () => this.step(1));
-    this.root.append(top, prev, next, this.card, this.loadingEl, this.typedEl, this.hintEl);
+    this.root.append(top, prev, next, this.awardsEl, this.card, this.loadingEl, this.typedEl, this.hintEl);
     d.app.appendChild(this.root);
     d.world.scene.add(this.group);
     this.group.visible = false;
@@ -387,11 +399,6 @@ export class CarViewer {
     const team = el('div', 'cv-team', c.team);
     const car = el('div', 'cv-car', c.car + (c.cls ? `  ·  Class ${c.cls}` : ''));
     const parts: Node[] = [num, team, car];
-    if (c.awards.length) {
-      const aw = el('div', 'cv-awards');
-      for (const a of c.awards) aw.append(el('span', 'cv-award', a));
-      parts.push(aw);
-    }
     const stats = el('div', 'cv-stats');
     for (const [l, v] of [['Overall', c.overall], ['Class', c.classRank], ['Laps', c.laps], ['Fastest', c.fastest]] as const) {
       const s = el('div', 'cv-stat'); s.append(el('span', 'cv-sl', l), el('span', 'cv-sv', v)); stats.append(s);
@@ -415,6 +422,7 @@ export class CarViewer {
     }
     parts.push(second);
     k.replaceChildren(...parts);
+    this.awardsEl.replaceChildren(...c.awards.map((a) => { const b = el('div', 'cv-award'); b.append(trophy(), el('span', undefined, a)); return b; }));
     this.posEl.textContent = c.position;
   }
 
