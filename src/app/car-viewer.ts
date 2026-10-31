@@ -39,6 +39,8 @@ const EVENT_TITLES: Record<string, string> = {
 const FOV = 38;
 const AUTO_TURN_S = 20, AUTO_RESUME_MS = 4000;
 const PROBE_KEY = '619';
+/** The page's engine sound is off (owner, 31 Oct 2026); `?viewersound=1` turns the scripted cold start and warm-up back on for listening. */
+export const VIEWER_SOUND: boolean = typeof location !== 'undefined' && new URLSearchParams(location.search).get('viewersound') === '1';
 
 export interface ViewerDeps {
   app: HTMLElement;
@@ -199,9 +201,11 @@ export class CarViewer {
     d.menu.root.classList.add('cv-hide');
     this.root.classList.remove('hidden');
     d.input.lookInNav = true;
-    void d.audio.start();
-    setTimeout(() => { if (this.opened && d.audio.suspended) d.toast('Press any key or tap the screen for sound', 5000); }, 700);
-    d.audio.hush();
+    if (VIEWER_SOUND) {
+      void d.audio.start();
+      setTimeout(() => { if (this.opened && d.audio.suspended) d.toast('Press any key or tap the screen for sound', 5000); }, 700);
+      d.audio.hush();
+    }
     this.hintEl.textContent = document.documentElement.classList.contains('touch')
       ? 'Drag to orbit · pinch to zoom · arrows for the next car'
       : 'Left / right: cars · right stick or drag: orbit · triggers, wheel: zoom · type a number · Esc: back';
@@ -493,6 +497,7 @@ export class CarViewer {
   // ------------------------------------------------------------ sound
 
   private async startEngine(car: ViewerCar, token: number): Promise<void> {
+    if (!VIEWER_SOUND) return;
     const d = this.d, data = this.data!;
     const ctx = d.audio.context, bus = d.audio.fieldBus();
     if (!ctx || !bus || !data.sound) return;
@@ -513,7 +518,7 @@ export class CarViewer {
   private stopEngine(now: boolean): void {
     this.engine = null;
     if (this.fa) this.fa.update({ pos: [-3, 0, 0], vel: [0, 0, 0] }, []);
-    if (now) this.d.audio.hush();
+    if (now && VIEWER_SOUND) this.d.audio.hush();
   }
 
   private tickEngine(): void {
