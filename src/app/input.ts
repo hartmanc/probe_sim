@@ -86,6 +86,8 @@ export class Input {
   padKind: PadKind | null = null;
   /** Set by the app while a menu / panel is open: driving actions stop, navigation events flow. */
   navMode = false;
+  /** The Cars page: the look stick (and look keys) still report in navMode, as orbit rates. */
+  lookInNav = false;
   readonly tracker = new SourceTracker();
   /** Pad-only results, for the controls panel test strip. */
   padSteer = 0; steerRaw = 0;
@@ -547,7 +549,7 @@ export class Input {
     this.throttle = Math.max(0, Math.min(1, throttle));
     this.brake = Math.max(0, Math.min(1, brake));
     this.handbrake = hb;
-    const off = this.suspended || this.navMode || !!this.capture;
+    const off = this.suspended || (this.navMode && !this.lookInNav) || !!this.capture;
     if (off) this.latch.clear();
     this.lookX = off ? 0 : Math.max(-1, Math.min(1, lookX));
     this.lookY = off ? 0 : Math.max(-1, Math.min(1, lookY));

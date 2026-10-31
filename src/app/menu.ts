@@ -14,6 +14,8 @@ interface EntryBase {
   disabled?: boolean;
   /** Small text after the label, e.g. "coming soon". */
   note?: string;
+  /** Column on a wide screen (0 left, 1 right) for a page laid out in two; the list stays ONE list, left group first. */
+  col?: 0 | 1;
 }
 export interface ActionEntry extends EntryBase { kind: 'action'; run(): void }
 export interface ToggleEntry extends EntryBase { kind: 'toggle'; get(): boolean; set(on: boolean): void }
@@ -61,6 +63,8 @@ function selectPage(e: SelectEntry): MenuPage {
  */
 export class MenuModel {
   private stack: { page: MenuPage; index: number }[] = [];
+  /** The view lays this page out in two columns (set by Menu.render on a wide screen): up/down stay in a column, left/right on a non-value row jump to the other. */
+  columns = false;
 
   constructor(root: MenuPage, readonly closable = false) { this.reset(root); }
 
@@ -89,13 +93,45 @@ export class MenuModel {
     }
   }
 
+  /** The indices of one column's rows, in order (a row without `col` is in column 0). */
+  private column(c: 0 | 1): number[] {
+    const out: number[] = [];
+    this.entries.forEach((e, i) => { if ((e.col ?? 0) === c) out.push(i); });
+    return out;
+  }
+  private get twoColumns(): boolean { return this.columns && this.entries.some((e) => e.col === 1); }
+
   move(dir: 1 | -1): NavResult {
     const es = this.entries, t = this.top;
-    for (let k = 1; k <= es.length; k++) {
-      const i = ((t.index + dir * k) % es.length + es.length) % es.length;
+    // in two columns the cursor cycles within its own column
+    const pool = this.twoColumns ? this.column(es[t.index]?.col ?? 0) : es.map((_, i) => i);
+    const at = pool.indexOf(t.index);
+    for (let k = 1; k <= pool.length; k++) {
+      const i = pool[(((at < 0 ? 0 : at) + dir * k) % pool.length + pool.length) % pool.length];
       if (selectable(es[i])) { const moved = i !== t.index; t.index = i; return moved ? 'moved' : 'none'; }
     }
     return 'none';
+  }
+
+  /** Two columns: jump to the other column at the nearest row (same row position, clamped, then the closest selectable one). */
+  jump(): NavResult {
+    if (!this.twoColumns) return 'none';
+    const es = this.entries, t = this.top;
+    const from = (es[t.index]?.col ?? 0) as 0 | 1;
+    const mine = this.column(from), other = this.column(from === 0 ? 1 : 0);
+    if (!other.length) return 'none';
+    const row = Math.min(mine.indexOf(t.index), other.length - 1);
+    let best = -1, bestD = Infinity;
+    other.forEach((idx, r) => { if (selectable(es[idx]) && (Math.abs(r - row) < bestD)) { bestD = Math.abs(r - row); best = idx; } });
+    if (best < 0) return 'none';
+    t.index = best;
+    return 'moved';
+  }
+
+  /** A row whose left/right set a value (a choice, a drop-down, a toggle): those keys stay with it. */
+  private get onValueRow(): boolean {
+    const e = this.current;
+    return !!e && (e.kind === 'choice' || e.kind === 'select' || e.kind === 'toggle');
   }
 
   /** Put the cursor on row i (mouse hover / click). */
@@ -145,8 +181,8 @@ export class MenuModel {
     switch (ev) {
       case 'up': return this.move(-1);
       case 'down': return this.move(1);
-      case 'left': return this.adjust(-1);
-      case 'right': return this.adjust(1);
+      case 'left': return this.twoColumns && !this.onValueRow ? this.jump() : this.adjust(-1);
+      case 'right': return this.twoColumns && !this.onValueRow ? this.jump() : this.adjust(1);
       case 'select': return this.select();
       case 'back': return this.back();
       case 'menu': return this.closable ? 'close' : this.select(); // Start: close the pause menu, or pick on the main menu
@@ -192,6 +228,9 @@ function el<K extends keyof HTMLElementTagNameMap>(tag: K, cls?: string, text?: 
   return e;
 }
 
+/** A page with column attributes is laid out in two from this viewport width up; narrower, one column in list order. */
+export const TWO_COLUMN_QUERY = '(min-width: 860px)';
+
 export interface MenuHints { select: string; back: string; menu: string }
 
 export interface MenuOptions {
@@ -225,6 +264,12 @@ export class Menu {
     // a click on the dimmed backdrop of the pause menu resumes
     this.root.addEventListener('click', (e) => { if (e.target === this.root && this.opts.closable) this.close(); });
     parent.appendChild(this.root);
+    // crossing the two-column width re-lays the page out (and tells the model)
+    if (typeof window !== 'undefined' && window.matchMedia) {
+      const mq = window.matchMedia(TWO_COLUMN_QUERY);
+      const again = () => { if (this.isOpen) this.refresh(); };
+      if (mq.addEventListener) mq.addEventListener('change', again); else (mq as MediaQueryList).addListener?.(again);
+    }
   }
 
   get isOpen(): boolean { return !this.root.classList.contains('hidden'); }
@@ -313,6 +358,8 @@ export class Menu {
     this.bodyEl.replaceChildren(...(body ? [body] : []));
     this.bodyEl.classList.toggle('hidden', !body);
     const rows: HTMLElement[] = [];
+    const two = m.entries.some((e) => e.col === 1) && typeof window !== 'undefined' && !!window.matchMedia && window.matchMedia(TWO_COLUMN_QUERY).matches;
+    m.columns = two;
     m.entries.forEach((e, i) => {
       const isSelect = e.kind === 'select';
       const row = (isSelect ? el('div', 'menu-row menu-select-row') : el('button', 'menu-row')) as HTMLElement;
@@ -366,7 +413,13 @@ export class Menu {
       });
       rows.push(row);
     });
-    this.list.replaceChildren(...rows);
+    this.card.classList.toggle('menu-two', two);
+    this.list.classList.toggle('two', two);
+    if (two) {
+      const cols = [el('div', 'menu-col'), el('div', 'menu-col')];
+      rows.forEach((r, i) => cols[m.entries[i].col === 1 ? 1 : 0].append(r));
+      this.list.replaceChildren(...cols);
+    } else this.list.replaceChildren(...rows);
     rows[m.index]?.scrollIntoView?.({ block: 'nearest' }); // tall pages (the scoreboard) on small screens
     this.hintText = this.hintLine();
     this.footer.textContent = this.hintText;

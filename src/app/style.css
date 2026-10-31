@@ -431,3 +431,51 @@ html.touch .credits { max-height: 44vh; font-size: 12px; }
 .context-lost { position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
   background: rgba(5, 7, 10, 0.92); color: #e8eef5; font-size: 16px; text-align: center; padding: 24px; }
 .context-lost button { font: inherit; font-weight: 800; padding: 10px 26px; border-radius: 8px; border: 0; background: var(--accent); color: #05070a; cursor: pointer; }
+
+/* ---- the Cars page (car-viewer.ts): an overlay on the 3D view; only its controls take the pointer */
+.menu.cv-hide { display: none; }
+.cv { position: absolute; inset: 0; z-index: 11; pointer-events: none; color: var(--text); user-select: none; -webkit-user-select: none; }
+.cv > * { pointer-events: auto; }
+.cv-top { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; align-items: center; gap: 12px; pointer-events: none; }
+.cv-top > * { pointer-events: auto; }
+.cv-back { min-height: 40px; padding: 6px 14px; border-radius: 10px; border: 1px solid var(--panel-border); background: var(--panel); color: var(--text); font: inherit; font-size: 16px; font-weight: 600; cursor: pointer; }
+.cv-head { display: flex; flex-direction: column; gap: 2px; padding: 4px 12px; border-radius: 10px; background: var(--panel); pointer-events: none; min-width: 0; }
+.cv-title { font-size: 15px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cv-pos { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.cv-arrow { position: absolute; top: 42%; width: 52px; height: 72px; border-radius: 12px; border: 1px solid var(--panel-border); background: var(--panel); color: var(--accent); font-size: 38px; line-height: 1; cursor: pointer; }
+.cv-prev { left: 10px; } .cv-next { right: 10px; }
+.cv-card { position: absolute; left: 10px; bottom: 10px; width: min(380px, calc(100% - 20px)); max-height: 56%; overflow: auto; box-sizing: border-box; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--panel-border); background: rgba(10, 13, 18, 0.82); }
+.cv-num { font-size: 26px; font-weight: 800; line-height: 1.1; color: var(--accent); }
+.cv-team { font-size: 17px; font-weight: 700; }
+.cv-car { font-size: 14px; color: var(--muted); margin-top: 1px; }
+/* the award badges: their own block at the top right, under the title line, clear of the paging arrow */
+.cv-awards { position: absolute; top: 62px; right: 74px; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; max-width: calc(100% - 160px); max-height: calc(100% - 80px); overflow: hidden; pointer-events: none; }
+.cv-award { display: flex; align-items: center; gap: 16px; padding: 10px 28px 10px 20px; max-width: 45vw; box-sizing: border-box; border-radius: 16px; background: rgb(10, 13, 18); border: 1px solid var(--panel-border); color: var(--accent); font-size: 34px; line-height: 1.12; font-weight: 700; text-align: right; }
+.cv-trophy { width: 1.3em; height: 1.3em; flex: none; }
+.cv-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 14px; margin-top: 8px; }
+.cv-stat { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; }
+.cv-sl { color: var(--muted); } .cv-sv { font-weight: 600; font-variant-numeric: tabular-nums; }
+.cv-second { margin-top: 9px; padding-top: 7px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 11.5px; color: var(--muted); line-height: 1.4; }
+.cv-second a { color: #8ec5ff; }
+.cv-changes { opacity: 0.85; }
+.cv-loading { position: absolute; left: 50%; top: 45%; transform: translate(-50%, -50%); padding: 8px 16px; border-radius: 10px; background: var(--panel); color: var(--muted); pointer-events: none; }
+.cv-typed { position: absolute; right: 74px; top: 12px; padding: 6px 12px; border-radius: 10px; background: var(--panel); font-size: 20px; font-weight: 700; color: var(--accent); pointer-events: none; }
+.cv-hint { position: absolute; right: 10px; bottom: 10px; max-width: calc(100% - 420px); text-align: right; font-size: 12px; color: var(--muted); text-shadow: 0 1px 3px rgba(0,0,0,0.8); pointer-events: none; }
+@media (max-height: 500px), (max-width: 700px) {
+  .cv-card { width: min(300px, 46%); padding: 7px 10px; bottom: calc(var(--sab, 0px) + 6px); left: calc(var(--sal, 0px) + 8px); max-height: 62%; }
+  .cv-num { font-size: 20px; } .cv-team { font-size: 14px; } .cv-car { font-size: 12px; }
+  .cv-stats { gap: 2px 10px; margin-top: 5px; } .cv-stat { font-size: 12px; }
+  .cv-awards { top: calc(var(--sat, 0px) + 50px); right: calc(var(--sar, 0px) + 62px); gap: 3px; max-width: calc(100% - 340px); }
+  .cv-award { font-size: 11px; line-height: 1.2; padding: 1px 6px 1px 4px; gap: 4px; border-radius: 12px; max-width: none; }
+  .cv-second { font-size: 10.5px; margin-top: 5px; padding-top: 4px; }
+  .cv-hint { display: none; }
+  .cv-arrow { width: 46px; height: 60px; }
+  .cv-top { top: calc(var(--sat, 0px) + 6px); left: calc(var(--sal, 0px) + 8px); right: calc(var(--sar, 0px) + 8px); }
+}
+.feedback .fb-ctx { margin: 0 0 6px; padding: 7px 10px; border-radius: 6px; border: 1px solid #2a3340; background: rgba(255,255,255,0.04); color: var(--muted); font: 12px/1.4 ui-monospace, Menlo, monospace; white-space: pre-wrap; user-select: none; -webkit-user-select: none; }
+.cv-report { display: block; margin-top: 6px; padding: 4px 0; border: 0; background: none; color: #8ec5ff; font: inherit; text-decoration: underline; cursor: pointer; text-align: left; }
+
+/* the main menu in two columns on a wide screen (menu.ts: entries carry `col`); narrower, one column in list order */
+.menu-card.menu-two { width: min(940px, 100%); }
+.menu-list.two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+.menu-col { display: flex; flex-direction: column; gap: 6px; min-width: 0; }

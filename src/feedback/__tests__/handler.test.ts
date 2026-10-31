@@ -117,4 +117,24 @@ describe('feedback function', () => {
     expect((await handleFeedback(req, d)).status).toBe(413);
     expect(sent).toHaveLength(0);
   });
+
+  test('a car report (kind car) is filed with car-kit, a server-built title and the car in the context', async () => {
+    const { d, sent } = deps();
+    const car = { carId: '711', carNumber: '711', carTeam: 'Eyesore Racing', car: '1994 Mazda MX-5 Miata', event: 'Twenty Ridiculous Years, Laguna Seca, Oct 2026', carClass: 'A', modelCredit: 'Mazda by Someone, CC-BY-4.0 (https://x.test/m)' };
+    const r = await handleFeedback(post({ kind: 'car', description: 'The rear wing is on the wrong way round.\nSee the roof.', context: { ...ctx, ...car } }), d);
+    expect(r.status).toBe(200);
+    expect(sent[0].body.labels).toEqual(['from-game', 'car-kit', 'bug']);
+    expect(sent[0].body.title).toBe('Car #711 Eyesore Racing (Twenty Ridiculous Years, Laguna Seca, Oct 2026): The rear wing is on the wrong way round.');
+    for (const t of ['carId: 711', 'carNumber: 711', 'carTeam: Eyesore Racing', 'car: 1994 Mazda MX-5 Miata', 'carClass: A', 'modelCredit: Mazda by Someone', 'version: 0.4.0']) expect(sent[0].body.body).toContain(t);
+    expect(sent[0].body.body).toContain('car report from the Cars page');
+  });
+
+  test('a car report must name the car, and nothing in its title can mention anyone', async () => {
+    const { d, sent } = deps();
+    expect((await handleFeedback(post({ kind: 'car', description: 'wheels', context: ctx }, { 'x-forwarded-for': '10.0.1.1' }), d)).status).toBe(422);
+    const p = parseFeedback({ kind: 'car', description: 'x', context: { carId: '1', carNumber: '1', carTeam: '@owner [x]', event: '<b>e</b>' } });
+    expect(p.ok).toBe(true);
+    if (p.ok) expect(issueFor(p.value, 'anonymous').title).toBe('Car #1 (at)owner x (be/b): x');
+    expect(sent).toHaveLength(0);
+  });
 });
