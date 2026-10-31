@@ -802,7 +802,8 @@ function createSim(assets: Assets) {
       const p = physics.lineToWorld(track, () => 0, 8);
       return { pos: [p.pos[0], p.pos[1], surface.sample(p.pos[0], p.pos[1]).z], heading: p.heading };
     },
-    probeModel: ghostTemplate,   // a pristine copy: the player's CarRig moves assets.carModel's wheels into its own pivots shadows: quality.shadows,
+    // a pristine copy: the player's CarRig moves assets.carModel's wheels into its own pivots
+    probeModel: ghostTemplate, shadows: quality.shadows,
     hide: () => [car.root, ghosts.group],
     toast: (m, ms) => hud.toast(m, ms),
     onClose: () => { dirty = true; render(); menu.refresh(); },
