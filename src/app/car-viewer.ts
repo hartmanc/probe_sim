@@ -23,9 +23,9 @@ import {
 } from './car-viewer-data';
 
 export type StageKind = 'studio' | 'track';
-/** `?stage=studio|track` (default studio). */
+/** `?stage=studio|track` (default track: the car parked on the start/finish straight; studio is the neutral floor). */
 export function stageFromUrl(search: string): StageKind {
-  return new URLSearchParams(search).get('stage') === 'track' ? 'track' : 'studio';
+  return new URLSearchParams(search).get('stage') === 'studio' ? 'studio' : 'track';
 }
 
 /** The event each field belongs to, for the page title. */
