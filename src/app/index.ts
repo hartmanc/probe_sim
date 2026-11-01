@@ -6,7 +6,7 @@ import './style.css';
 import { inject as injectAnalytics } from '@vercel/analytics';
 import { installErrorCapture, recordError } from './errors';
 import { installPortraitWatcher } from './orientation';
-import { throttled } from './load-progress';
+import { loadIsSlow, throttled } from './load-progress';
 import { feedbackPage, type CarReport } from './feedback';
 import { howtoPage } from './howto';
 import { aiCount, fieldLine } from './field-select';
@@ -14,7 +14,7 @@ import { loadFieldData } from './loader';
 import { NO_WEBGL2_MESSAGE, CONTEXT_LOST_MESSAGE, webgl2Available } from './webgl';
 import { physics, usingStub } from './physics-loader';
 import type { GhostLap, Surface, TrackJson, VehicleLike } from './physics-types';
-import { loadAssets, type Assets } from './loader';
+import { loadAssets, outstandingLoads, type Assets } from './loader';
 import { buildWorld, type World } from './scene';
 import { Look, postUrlOff, sunFromUrl } from './look';
 import { upgradeCarMaterials } from './car-materials';
@@ -345,11 +345,22 @@ async function boot(): Promise<void> {
   let assets: Assets;
   try {
     // the bar and the label repaint at most every 100 ms (bytes arrive far more often); the last value is always delivered
-    const paint = throttled<{ f: number; label: string }>(({ f, label }) => {
+    // a file in flight shows "0.4 of 1.7 MB" (a stalled stream reads differently from a slow one), the stage percentage after it
+    let shown = '', lastF = -1, lastChange = performance.now(), warned = false;
+    const paint = throttled<{ f: number; label: string; detail?: string }>(({ f, label, detail }) => {
       progressBar.style.width = `${Math.round(f * 100)}%`;
-      loadLabel.textContent = `Loading ${label}… ${Math.round(f * 100)}%`;
+      shown = `Loading ${label}… ${detail ?? `${Math.round(f * 100)}%`}`;
+      loadLabel.textContent = shown;
     }, 100);
-    assets = await loadAssets((f, label) => paint.push({ f, label }));
+    // no movement for 20 s: say so in the label and once in the console, no reload prompt
+    const slowTimer = setInterval(() => {
+      if (!loadIsSlow(lastChange, performance.now())) return;
+      loadLabel.textContent = `${shown} (slow connection; still loading)`;
+      if (!warned) { warned = true; console.warn(`[loader] no progress for 20 s; waiting for ${outstandingLoads().join('; ') || 'the last stage'}`); }
+    }, 1000);
+    try {
+      assets = await loadAssets((f, label, detail) => { if (f !== lastF) { lastF = f; lastChange = performance.now(); warned = false; } paint.push({ f, label, detail }); });
+    } finally { clearInterval(slowTimer); }
     paint.flush();
   } catch (e) {
     loadLabel.className = 'load-label err';

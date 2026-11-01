@@ -14,7 +14,11 @@ import { buildFallbackCar } from './car';
 import { synthesizeGhosts } from './ghosts';
 import type { SceneryAssets, SceneryJson } from './scenery';
 import { TRACK } from './track-choice';
-import { LoadProgress } from './load-progress';
+import { LoadProgress, mbReadout, streamBytes } from './load-progress';
+
+let currentProgress: LoadProgress | null = null;
+/** What the load is still waiting for (the slow-connection console line). */
+export const outstandingLoads = (): string[] => currentProgress?.outstanding() ?? [];
 
 export interface Assets {
   track: TrackJson;
@@ -32,9 +36,9 @@ export interface Assets {
 const TRACK_DIR = TRACK.dir;
 const CAR_DIR = 'cars/probe_gt/';
 
-async function fetchOk(url: string): Promise<Response | null> {
+async function fetchOk(url: string, signal?: AbortSignal): Promise<Response | null> {
   try {
-    const r = await fetch(url);
+    const r = await fetch(url, signal ? { signal } : undefined);
     if (!r.ok) return null;
     const ct = r.headers.get('content-type') ?? '';
     if (ct.includes('text/html')) return null; // dev-server SPA fallback
@@ -44,32 +48,9 @@ async function fetchOk(url: string): Promise<Response | null> {
   }
 }
 
-/**
- * A file's bytes through a streaming reader, reporting bytes received against Content-Length (0 when the header is missing).
- * null on a missing file (as fetchOk). Falls back to arrayBuffer() where the body is not streamable.
- */
-async function fetchBytes(url: string, onBytes?: (got: number, total: number) => void): Promise<{ buf: ArrayBuffer; type: string } | null> {
-  const r = await fetchOk(url);
-  if (!r) return null;
-  const type = r.headers.get('content-type') ?? '';
-  const total = Number(r.headers.get('content-length')) || 0;
-  try {
-    if (!r.body?.getReader) { const buf = await r.arrayBuffer(); onBytes?.(buf.byteLength, total); return { buf, type }; }
-    const reader = r.body.getReader();
-    const chunks: Uint8Array[] = [];
-    let got = 0;
-    onBytes?.(0, total);
-    for (;;) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      chunks.push(value); got += value.byteLength;
-      onBytes?.(got, total);
-    }
-    const out = new Uint8Array(got);
-    let o = 0;
-    for (const c of chunks) { out.set(c, o); o += c.byteLength; }
-    return { buf: out.buffer, type };
-  } catch { return null; }
+/** A file's bytes with byte counts that cannot hang or silently turn into "missing" (load-progress.ts streamBytes); null only for a real 404. */
+function fetchBytes(url: string, onBytes?: (got: number, total: number) => void): Promise<{ buf: ArrayBuffer; type: string } | null> {
+  return streamBytes(url, { open: (signal) => fetchOk(url, signal), onBytes, log: (m) => console.warn(m) });
 }
 
 /** An image through fetchBytes and a blob URL, so its bytes are counted (TextureLoader has no byte progress for images). */
@@ -86,14 +67,14 @@ async function fetchJson<T>(url: string): Promise<T | null> {
   try { return (await r.json()) as T; } catch { return null; }
 }
 
-export async function loadAssets(onProgress: (frac: number, label: string) => void): Promise<Assets> {
+export async function loadAssets(onProgress: (frac: number, label: string, detail?: string) => void): Promise<Assets> {
   const fallbacks: string[] = [];
   const forceDev = new URLSearchParams(location.search).get('devtrack') === '1';
   const weights = { track: 0.12, hf: 0.12, ortho: 0.2, ghosts: 0.04, spec: 0.02, glb: 0.35, scenery: 0.15 };
   // real progress: bytes of the big files inside each stage's weight (load-progress.ts); a stage without a Content-Length ticks when it ends
-  const lp = new LoadProgress(Object.entries(weights).map(([id, weight]) => ({ id, weight })));
+  const lp = currentProgress = new LoadProgress(Object.entries(weights).map(([id, weight]) => ({ id, weight })));
   const tick = (id: keyof typeof weights, label: string) => { lp.end(id); onProgress(lp.fraction(), label); };
-  const counted = (id: keyof typeof weights, file: string, label: string) => (got: number, total: number) => { lp.bytes(id, file, got, total); onProgress(lp.fraction(), label); };
+  const counted = (id: keyof typeof weights, file: string, label: string) => (got: number, total: number) => { lp.bytes(id, file, got, total); onProgress(lp.fraction(), label, got < total || !total ? mbReadout(got, total) : undefined); };
 
   // ---- track + heightfield
   let track = forceDev ? null : await fetchJson<TrackJson>(TRACK_DIR + 'track.json');
