@@ -19,7 +19,7 @@ import type { World } from './scene';
 import type { CarReport } from './feedback';
 import type { TrackJson } from './physics-types';
 import {
-  SETTLE_END, makeBlip, cardFor, classifyGesture, creditFor, fitPlane, stripLines, type PointerSample, seatOffset, engineAt, classSizes, fieldSize, indexByNumber, safeUrl, viewerOrder,
+  SETTLE_END, makeBlip, cardFor, classifyGesture, clearAreaShift, viewDistance, creditFor, fitPlane, stripLines, type PointerSample, seatOffset, engineAt, classSizes, fieldSize, indexByNumber, safeUrl, viewerOrder,
   type AwardEntry, type Blip, type Card, type CreditRow, type IdentityRow, type PhotoRow, type ViewerCar,
 } from './car-viewer-data';
 
@@ -40,6 +40,9 @@ const EVENT_TITLES: Record<string, string> = {
 const FOV = 38;
 const AUTO_TURN_S = 20, AUTO_RESUME_MS = 4000;
 const PROBE_KEY = '619';
+/** Chevron width on a phone (px), and whether a swipe has already worked this session (the chevrons then fade). */
+const CHEV_W = 28;
+let swipedThisSession = false;
 const HINT_KEY = 'probeSim.cars.swipeHint.v1';
 const DEFAULT_DIST = 7.5, DEFAULT_TARGET_Y = 0.7;
 /** The page's engine sound is off (owner, 31 Oct 2026); `?viewersound=1` turns the scripted cold start and warm-up back on for listening. */
@@ -169,6 +172,7 @@ export class CarViewer {
 
   constructor(private d: ViewerDeps) {
     const top = el('div', 'cv-top');
+    this.topEl = top;
     const back = el('button', 'cv-back', '‹ Back');
     back.type = 'button';
     back.addEventListener('click', () => this.close());
@@ -197,6 +201,8 @@ export class CarViewer {
   private compact = false;
   private stripEl = el('div', 'cv-strip');
   private stripH = 0;
+  private titleH = 0;
+  private topEl: HTMLElement | null = null;
   private gesture: { tracks: Map<number, PointerSample[]>; az: number; el: number; multi: boolean; touch: boolean } | null = null;
   private onResize = () => this.applyLayout();
   private cur: { car: ViewerCar; card: Card } | null = null;
@@ -210,10 +216,19 @@ export class CarViewer {
     const compact = this.touch && (window.innerHeight < 500 || window.innerWidth < 500);
     this.compact = compact;
     this.root.classList.toggle('cv-compact', compact);
+    this.root.classList.toggle('cv-swiped', swipedThisSession);
     this.root.classList.toggle('cv-portrait', compact && window.innerWidth < window.innerHeight);
     if (!compact) this.card.classList.remove('open');
     if (this.cur) this.renderCard(this.cur.card);
-    this.stripH = compact ? this.stripEl.offsetHeight : 0;
+    this.measure();
+  }
+
+  /** Heights of the strip (bottom) and the title row (top): the clear area is what is between them. */
+  private measure(): void {
+    this.stripH = this.compact ? this.stripEl.offsetHeight : 0;
+    this.titleH = this.compact && this.topEl ? Math.ceil(this.topEl.getBoundingClientRect().bottom) : 0;
+    this.root.style.setProperty('--cv-top', `${this.titleH}px`);
+    this.root.style.setProperty('--cv-strip', `${this.stripH}px`);
   }
 
   /** The first time on a touch device: how to change car, for about 3 s (stored once per device). */
@@ -534,7 +549,13 @@ export class CarViewer {
   private renderCard(c: Card): void {
     const k = this.card;
     const [l1, l2] = stripLines(c);
-    const sl1 = el('div', 'cv-sl1', l1), sl2 = el('div', 'cv-sl2', l2);
+    const sl1 = el('div', 'cv-sl1', l1), sl2 = el('div', 'cv-sl2');
+    if (c.awards.length) {
+      const aw = el('span', 'cv-sa');
+      aw.append(trophy(), el('span', undefined, c.awards[0] + (c.awards.length > 1 ? ` +${c.awards.length - 1}` : '')));
+      sl2.append(aw);
+    }
+    sl2.append(el('span', 'cv-sr', l2));
     const more = el('button', 'cv-more', 'More'); more.type = 'button';
     more.addEventListener('click', () => this.card.classList.add('open'));
     const lines = el('div', 'cv-lines'); lines.append(sl1, sl2);
@@ -544,7 +565,12 @@ export class CarViewer {
     const num = el('div', 'cv-num', `#${c.number}`);
     const team = el('div', 'cv-team', c.team);
     const car = el('div', 'cv-car', c.car + (c.cls ? `  ·  Class ${c.cls}` : ''));
-    const parts: Node[] = [closeBtn, num, team, car];
+    const parts: Node[] = [closeBtn, el('div', 'cv-event', this.data?.title ?? ''), num, team, car];
+    if (c.awards.length) {
+      const all = el('div', 'cv-sheet-awards');
+      for (const a of c.awards) { const b = el('div', 'cv-award'); b.append(trophy(), el('span', undefined, a)); all.append(b); }
+      parts.push(all);
+    }
     const stats = el('div', 'cv-stats');
     for (const [l, v] of [['Overall', c.overall], ['Class', c.classRank], ['Laps', c.laps], ['Fastest', c.fastest]] as const) {
       const s = el('div', 'cv-stat'); s.append(el('span', 'cv-sl', l), el('span', 'cv-sv', v)); stats.append(s);
@@ -572,9 +598,9 @@ export class CarViewer {
     second.append(rb);
     parts.push(second);
     k.replaceChildren(...parts);
-    const shown = this.compact ? c.awards.slice(0, 1) : c.awards;
-    this.awardsEl.replaceChildren(...shown.map((a) => { const b = el('div', 'cv-award'); b.append(trophy(), el('span', undefined, this.compact && c.awards.length > 1 ? `${a} +${c.awards.length - 1}` : a)); return b; }));
+    this.awardsEl.replaceChildren(...c.awards.map((a) => { const b = el('div', 'cv-award'); b.append(trophy(), el('span', undefined, a)); return b; }));
     this.posEl.textContent = c.position;
+    if (this.compact) this.measure();
   }
 
   // ------------------------------------------------------------ sound
@@ -681,6 +707,7 @@ export class CarViewer {
       this.gesture = null;
       if (result !== 'orbit' && this.isOpen && e.type === 'pointerup') {
         this.az = g.az; this.el = g.el;
+        swipedThisSession = true; this.root.classList.add('cv-swiped');
         this.step(result === 'next' ? 1 : -1);
       }
     }
@@ -734,6 +761,8 @@ export class CarViewer {
     // orbit camera; the pitch never takes it under the floor
     const c = this.stagePos;
     const ty = c.y + this.targetY;
+    // phone: the distance follows the viewport (the reference silhouette fills the clear area), the same for every car
+    if (this.compact) this.baseDist = viewDistance(true, window.innerWidth, window.innerHeight, this.stripH, this.titleH, CHEV_W);
     // the closest zoom keeps the camera 0.4 m outside the model's box along the view direction, and the pitch keeps it above the floor
     const dirv = new THREE.Vector3();
     const distFor = (el: number): number => {
@@ -763,7 +792,7 @@ export class CarViewer {
     // phone: the car sits in the clear area above the strip (a view offset keeps the constant camera distance)
     if (this.compact && this.stripH > 0) {
       const w = window.innerWidth, h = window.innerHeight;
-      cam.setViewOffset(w, h, 0, Math.round(this.stripH / 2), w, h);
+      cam.setViewOffset(w, h, 0, Math.round(clearAreaShift(this.stripH, this.titleH)), w, h);
     } else if (cam.view?.enabled) cam.clearViewOffset();
     d.world.follow(this.rig?.rig.root.position ?? c, cam);
     this.tickEngine();

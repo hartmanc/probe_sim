@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  awardClass, cardFor, classifyGesture, stripLines, classSizes, fitPlane, seatOffset, creditFor, engineAt, fieldSize, indexByNumber, lapText, makeBlip, ordinal, safeUrl, viewerOrder,
+  awardClass, cardFor, viewDistance, clearAreaShift, classifyGesture, stripLines, classSizes, fitPlane, seatOffset, creditFor, engineAt, fieldSize, indexByNumber, lapText, makeBlip, ordinal, safeUrl, viewerOrder,
   CRANK_END, REV_RPM, SETTLE_END, type AwardEntry, type IdentityRow,
 } from '../car-viewer-data';
 
@@ -154,5 +154,28 @@ describe('touch gestures', () => {
     const [l1, l2] = stripLines({ number: '20', team: 'NSF Racing', car: '1985 Chrysler LeBaron Town & Country wagon', cls: 'C', overall: 'P33 of 45', classRank: 'P16 of 27 in C', laps: '116', fastest: '2:38.495' });
     expect(l1).toBe('#20 NSF Racing · 1985 Chrysler LeBaron Town & Country wagon · Class C');
     expect(l2).toBe('P33 of 45 · P16 of 27 in C · 116 laps · 2:38.495');
+  });
+});
+
+describe('the camera distance on a phone', () => {
+  it('desktop and tablet keep 7.5 m', () => {
+    expect(viewDistance(false, 1280, 720, 0, 0, 0)).toBe(7.5);
+    expect(viewDistance(false, 844, 390, 56, 50, 28)).toBe(7.5);
+  });
+  it('a phone fits the 4.6 x 1.8 m silhouette to 80 % of the clear area', () => {
+    const a = viewDistance(true, 844, 316, 56, 50, 28), b = viewDistance(true, 844, 390, 56, 50, 28);
+    expect(a).toBeCloseTo(4.92, 1);
+    expect(b).toBeCloseTo(4.49, 1);
+    expect(a).toBeGreaterThan(b);          // less clear height: further back
+    expect(a).toBeLessThan(7.5);           // and much closer than the desktop default
+  });
+  it('a wide silhouette limit: a narrow, tall viewport is fitted by its width', () => {
+    const d = viewDistance(true, 390, 844, 90, 50, 28);
+    const t = Math.tan((38 * Math.PI) / 360);
+    expect(4.6 / (2 * d * t * (390 / 844))).toBeLessThanOrEqual(0.8 * ((390 - 56) / 390) + 1e-9);
+  });
+  it('the car is centred in the clear area: shift by half the difference of strip and title', () => {
+    expect(clearAreaShift(56, 50)).toBe(3);
+    expect(clearAreaShift(40, 60)).toBe(-10);
   });
 });

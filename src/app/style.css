@@ -497,3 +497,20 @@ html.touch .credits { max-height: 44vh; font-size: 12px; }
 .cv-compact .cv-hint { display: none; }
 .cv-hint.flash { display: block !important; left: 50%; right: auto; bottom: 90px; transform: translateX(-50%); max-width: 90%; text-align: center; padding: 8px 14px; border-radius: 10px; background: var(--panel); color: var(--text); font-size: 14px; }
 .cv-compact .cv-hint.flash { display: block !important; }
+
+/* ---- phone pass 2: the car fills the clear area; slim chrome; the award goes into the strip's second line */
+.cv-compact .cv-title, .cv-compact .cv-awards { display: none; }
+.cv-compact .cv-head { padding: 2px 10px; }
+.cv-compact .cv-pos { font-size: 13px; color: var(--text); }
+.cv-compact .cv-arrow { top: var(--cv-top, 50px); bottom: var(--cv-strip, 56px); height: auto; width: 28px; padding: 0; border: 0; background: none; border-radius: 0; font-size: 34px; color: var(--text); opacity: 0.6; transition: opacity 0.6s; }
+.cv-compact .cv-prev { left: calc(var(--sal, 0px) + 0px); } .cv-compact .cv-next { right: calc(var(--sar, 0px) + 0px); }
+.cv-compact.cv-swiped .cv-arrow { opacity: 0; }
+.cv-sl2 { display: flex; align-items: center; gap: 6px; }
+.cv-sa { flex: none; max-width: 55%; display: flex; align-items: center; gap: 4px; color: var(--accent); font-weight: 700; overflow: hidden; }
+.cv-sa span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cv-sa .cv-trophy { width: 1.2em; height: 1.2em; flex: none; }
+.cv-sr { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cv-event, .cv-sheet-awards { display: none; }
+.cv-compact .cv-card.open .cv-event { display: block; color: var(--muted); font-size: 13px; margin-bottom: 4px; }
+.cv-compact .cv-card.open .cv-sheet-awards { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+.cv-compact .cv-card.open .cv-sheet-awards .cv-award { font-size: 12px; padding: 2px 8px 2px 6px; gap: 5px; border-radius: 12px; max-width: none; }

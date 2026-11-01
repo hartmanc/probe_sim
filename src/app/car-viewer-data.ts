@@ -237,3 +237,27 @@ export function stripLines(c: Pick<Card, 'number' | 'team' | 'car' | 'cls' | 'ov
     [c.overall, c.classRank, `${c.laps} laps`, c.fastest].join(' · '),
   ];
 }
+
+// ---------------------------------------------------------------- the camera distance on a phone
+
+export const DESKTOP_DISTANCE = 7.5;
+/** The reference silhouette (m): a car's length and height; it should fill COMPACT_FILL of the clear area (the same for every car, so sizes compare). */
+export const REF_LENGTH = 4.6, REF_HEIGHT = 1.8, COMPACT_FILL = 0.8, VIEW_FOV_DEG = 38;
+
+/**
+ * The default camera distance. Not compact: the constant 7.5 m. Compact (a phone): the distance at which the reference
+ * silhouette (4.6 m long, 1.8 m high) fills 80 % of the clear area, the screen between the title block (top), the strip
+ * (bottom) and the chevrons (left and right). The distance follows the viewport only, never the car. The larger of the
+ * width fit and the height fit, so the silhouette fits both ways.
+ */
+export function viewDistance(compact: boolean, w: number, h: number, stripH: number, titleH: number, chevW: number): number {
+  if (!compact) return DESKTOP_DISTANCE;
+  const t = Math.tan((VIEW_FOV_DEG * Math.PI) / 360);              // half the view height at distance 1
+  const clearH = Math.max(40, h - stripH - titleH), clearW = Math.max(40, w - 2 * chevW);
+  const dH = REF_HEIGHT / (COMPACT_FILL * (clearH / h) * 2 * t);
+  const dW = REF_LENGTH / (COMPACT_FILL * (clearW / w) * 2 * t * (w / h));
+  return Math.max(dH, dW);
+}
+
+/** Pixels the image must move up (negative: down) so the car sits in the clear area's centre rather than the viewport's. */
+export const clearAreaShift = (stripH: number, titleH: number): number => (stripH - titleH) / 2;
