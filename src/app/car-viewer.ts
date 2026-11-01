@@ -13,13 +13,14 @@ import { FieldAudio, type FieldCar } from './audio-field';
 import { prepareCarMaterials } from './field-cars';
 import { fieldModelCached, loadFieldData, loadFieldModel, releaseFieldModel, type FieldModelInfo } from './loader';
 import type { Look } from './look';
+import { PLAYER_BOX_M, PLAYER_MAP, VIEWER_PHONE, viewerProfile, type QualitySettings, type ViewerProfile } from './quality';
 import type { Menu, NavEvent } from './menu';
 import { carSound, parseSoundIndex, type FieldSoundIndex } from './modes/race';
 import type { World } from './scene';
 import type { CarReport } from './feedback';
 import type { TrackJson } from './physics-types';
 import {
-  SETTLE_END, makeBlip, cardFor, classifyGesture, creditFor, fitPlane, stripLines, type PointerSample, seatOffset, engineAt, classSizes, fieldSize, indexByNumber, safeUrl, viewerOrder,
+  SETTLE_END, makeBlip, cardFor, classifyGesture, DEFAULT_ELEVATION, relativeYawDeg, viewFit, creditFor, fitPlane, stripLines, type PointerSample, seatOffset, engineAt, classSizes, fieldSize, indexByNumber, safeUrl, viewerOrder,
   type AwardEntry, type Blip, type Card, type CreditRow, type IdentityRow, type PhotoRow, type ViewerCar,
 } from './car-viewer-data';
 
@@ -40,6 +41,12 @@ const EVENT_TITLES: Record<string, string> = {
 const FOV = 38;
 const AUTO_TURN_S = 20, AUTO_RESUME_MS = 4000;
 const PROBE_KEY = '619';
+/** Chevron width on a phone (px), and whether a swipe has already worked this session (the chevrons then fade). */
+const CHEV_W = 28;
+const FIT_TAU_S = 0.25;
+let swipedThisSession = false;
+/** The viewer's post stack was dropped this session because frames ran slow (phone tier). */
+let postDropped = false;
 const HINT_KEY = 'probeSim.cars.swipeHint.v1';
 const DEFAULT_DIST = 7.5, DEFAULT_TARGET_Y = 0.7;
 /** The page's engine sound is off (owner, 31 Oct 2026); `?viewersound=1` turns the scripted cold start and warm-up back on for listening. */
@@ -63,6 +70,8 @@ export interface ViewerDeps {
   /** The game's own Probe model (the #619 row has no field model). */
   probeModel: THREE.Object3D;
   shadows: boolean;
+  /** the tier's settings: the phone tier runs the better viewer profile while the page is open (quality.ts viewerProfile) */
+  quality: Pick<QualitySettings, 'tier' | 'maxPixels' | 'maxPixelRatio' | 'shadows' | 'maxAnisotropy'>;
   /** Surface height (ENU z) at ENU (x, y): the track stage seats the car on the road's camber and crown. */
   ground: (x: number, y: number) => number;
   /** Objects to hide on either stage (the player's car, the ghosts). */
@@ -142,6 +151,11 @@ export class CarViewer {
   private awardsEl = el('div', 'cv-awards');
   private hintEl = el('div', 'cv-hint');
   private opened = false;
+  private profile: ViewerProfile | null = null;
+  private upgraded = false;
+  private ownTex: THREE.Texture[] = [];
+  private lastRenderAt = 0;
+  private slowFrames = 0;
   private data: ViewerData | null = null;
   private dataP: Promise<ViewerData> | null = null;
   private index = 0;
@@ -169,6 +183,7 @@ export class CarViewer {
 
   constructor(private d: ViewerDeps) {
     const top = el('div', 'cv-top');
+    this.topEl = top;
     const back = el('button', 'cv-back', '‹ Back');
     back.type = 'button';
     back.addEventListener('click', () => this.close());
@@ -197,11 +212,43 @@ export class CarViewer {
   private compact = false;
   private stripEl = el('div', 'cv-strip');
   private stripH = 0;
+  private titleH = 0;
+  private shiftPx = 0;
+  private carAz = 0;
+  private fitSnap = true;
+  private topEl: HTMLElement | null = null;
   private gesture: { tracks: Map<number, PointerSample[]>; az: number; el: number; multi: boolean; touch: boolean } | null = null;
   private onResize = () => this.applyLayout();
   private cur: { car: ViewerCar; card: Card } | null = null;
   /** Open and in use: false while the report page is on top. */
   get isOpen(): boolean { return this.opened && !this.paused; }
+
+  /** The phone tier's viewer profile (quality.ts viewerProfile): a bigger pixel budget, the car's shadow, the post stack, anisotropy on the car's own textures, 30 fps. */
+  private applyProfile(): void {
+    const d = this.d;
+    this.profile = viewerProfile(d.quality, window.devicePixelRatio, window.innerWidth, window.innerHeight);
+    this.upgraded = d.quality.tier === 'phone';
+    this.slowFrames = 0; this.lastRenderAt = 0;
+    if (!this.upgraded) return;
+    d.look.setBudget({ maxPixels: VIEWER_PHONE.maxPixels, maxPixelRatio: VIEWER_PHONE.maxPixelRatio });
+    d.renderer.shadowMap.enabled = true;
+    const sun = d.world.sun, sc = sun.shadow.camera;
+    sc.left = -PLAYER_BOX_M; sc.right = PLAYER_BOX_M; sc.top = PLAYER_BOX_M; sc.bottom = -PLAYER_BOX_M; sc.updateProjectionMatrix();
+    if (sun.shadow.mapSize.x !== PLAYER_MAP) { sun.shadow.mapSize.set(PLAYER_MAP, PLAYER_MAP); sun.shadow.map?.dispose(); sun.shadow.map = null; }
+    sun.castShadow = true;
+    if (!postDropped) d.look.setViewerPost(true);
+  }
+
+  /** Hand the phone tier back exactly as it was (the race and the hot lap never see the viewer's profile). */
+  private restoreProfile(): void {
+    const d = this.d;
+    if (!this.upgraded) return;
+    d.look.setViewerPost(false);
+    d.look.setBudget(null);
+    d.world.sun.castShadow = d.quality.shadows;
+    d.renderer.shadowMap.enabled = d.quality.shadows;
+    this.upgraded = false;
+  }
 
   private get touch(): boolean { return document.documentElement.classList.contains('touch'); }
 
@@ -210,10 +257,20 @@ export class CarViewer {
     const compact = this.touch && (window.innerHeight < 500 || window.innerWidth < 500);
     this.compact = compact;
     this.root.classList.toggle('cv-compact', compact);
+    this.root.classList.toggle('cv-swiped', swipedThisSession);
     this.root.classList.toggle('cv-portrait', compact && window.innerWidth < window.innerHeight);
     if (!compact) this.card.classList.remove('open');
     if (this.cur) this.renderCard(this.cur.card);
-    this.stripH = compact ? this.stripEl.offsetHeight : 0;
+    this.measure();
+    this.fitSnap = true;
+  }
+
+  /** Heights of the strip (bottom) and the title row (top): the clear area is what is between them. */
+  private measure(): void {
+    this.stripH = this.compact ? this.stripEl.offsetHeight : 0;
+    this.titleH = this.compact && this.topEl ? Math.ceil(this.topEl.getBoundingClientRect().bottom) : 0;
+    this.root.style.setProperty('--cv-top', `${this.titleH}px`);
+    this.root.style.setProperty('--cv-strip', `${this.stripH}px`);
   }
 
   /** The first time on a touch device: how to change car, for about 3 s (stored once per device). */
@@ -271,6 +328,7 @@ export class CarViewer {
     this.hintEl.textContent = this.touch
       ? 'Swipe to change car · drag to turn it · pinch to zoom'
       : 'Left / right: cars · right stick or drag: orbit · triggers, wheel: zoom · type a number · A / Enter: report an issue · Esc: back';
+    this.applyProfile();
     this.buildStage();
     window.addEventListener('keydown', this.onKey);
     window.addEventListener('resize', this.onResize);
@@ -299,6 +357,7 @@ export class CarViewer {
     window.removeEventListener('resize', this.onResize);
     d.cams.camera.clearViewOffset();
     this.card.classList.remove('open');
+    this.restoreProfile();
     this.stopEngine(true);
     this.fa?.dispose(); this.fa = null;
     this.dropRig();
@@ -369,8 +428,9 @@ export class CarViewer {
     cam.fov = FOV; cam.near = 0.05; cam.far = 4000; cam.updateProjectionMatrix();
     // three-quarter front view to start
     // ENU heading h points along (cos h, sin h): three (x, z) = (cos h, -sin h)
-    this.az = Math.atan2(Math.cos(p.heading), -Math.sin(p.heading)) + 0.75;
-    this.el = 0.2; this.zoom = 1; this.lastInputAt = -Infinity;
+    this.carAz = Math.atan2(Math.cos(p.heading), -Math.sin(p.heading));
+    this.az = this.carAz + 0.75;
+    this.el = DEFAULT_ELEVATION; this.zoom = 1; this.lastInputAt = -Infinity;
   }
 
   // ------------------------------------------------------------ cars
@@ -470,12 +530,24 @@ export class CarViewer {
     clone.traverse((o) => {
       const mesh = o as THREE.Mesh;
       if (!mesh.isMesh) return;
-      const own = (m: THREE.Material) => { let c = copies.get(m); if (!c) { c = m.clone(); c.side = THREE.DoubleSide; copies.set(m, c); } return c; };
+      const own = (m: THREE.Material) => {
+        let c = copies.get(m);
+        if (!c) {
+          c = m.clone(); c.side = THREE.DoubleSide; copies.set(m, c);
+          if (this.upgraded) {   // phone viewer: sharper textures, on this car's own copies only (the shared race textures are not touched)
+            const aniso = Math.min(this.profile?.anisotropy ?? 1, this.d.renderer.capabilities.getMaxAnisotropy());
+            for (const [k, v] of Object.entries(c)) {
+              if (v && (v as THREE.Texture).isTexture) { const t = (v as THREE.Texture).clone(); t.anisotropy = aniso; t.needsUpdate = true; (c as unknown as Record<string, unknown>)[k] = t; this.ownTex.push(t); }
+            }
+          }
+        }
+        return c;
+      };
       mesh.material = Array.isArray(mesh.material) ? mesh.material.map(own) : own(mesh.material);
     });
     const m = this.modelFile(car.key);
     const r = m?.tyre_radius_m;
-    const rig = new CarRig(clone, { tyreRadius: r, physicsRadius: r, castShadow: this.d.shadows });
+    const rig = new CarRig(clone, { tyreRadius: r, physicsRadius: r, castShadow: this.d.shadows || this.upgraded });
     const p = this.d.parking();
     rig.poseSimple(p.pos, p.heading, 0);
     if (this.d.stage === 'track') this.seatOnRoad(rig, p);
@@ -520,8 +592,9 @@ export class CarViewer {
     if (!r) return;
     this.rig = null;
     r.rig.root.removeFromParent();
-    if (r.shared) return;
-    for (const m of materialsOf(r.rig.root)) disposeMaterial(m, false); // the page's own copies (textures stay with the template)
+    for (const m of materialsOf(r.rig.root)) disposeMaterial(m, false);
+    for (const t of this.ownTex) t.dispose();
+    this.ownTex = []; // the page's own copies (textures stay with the template)
   }
 
   private freeAll(): void {
@@ -534,7 +607,13 @@ export class CarViewer {
   private renderCard(c: Card): void {
     const k = this.card;
     const [l1, l2] = stripLines(c);
-    const sl1 = el('div', 'cv-sl1', l1), sl2 = el('div', 'cv-sl2', l2);
+    const sl1 = el('div', 'cv-sl1', l1), sl2 = el('div', 'cv-sl2');
+    if (c.awards.length) {
+      const aw = el('span', 'cv-sa');
+      aw.append(trophy(), el('span', undefined, c.awards[0] + (c.awards.length > 1 ? ` +${c.awards.length - 1}` : '')));
+      sl2.append(aw);
+    }
+    sl2.append(el('span', 'cv-sr', l2));
     const more = el('button', 'cv-more', 'More'); more.type = 'button';
     more.addEventListener('click', () => this.card.classList.add('open'));
     const lines = el('div', 'cv-lines'); lines.append(sl1, sl2);
@@ -544,7 +623,12 @@ export class CarViewer {
     const num = el('div', 'cv-num', `#${c.number}`);
     const team = el('div', 'cv-team', c.team);
     const car = el('div', 'cv-car', c.car + (c.cls ? `  ·  Class ${c.cls}` : ''));
-    const parts: Node[] = [closeBtn, num, team, car];
+    const parts: Node[] = [closeBtn, el('div', 'cv-event', this.data?.title ?? ''), num, team, car];
+    if (c.awards.length) {
+      const all = el('div', 'cv-sheet-awards');
+      for (const a of c.awards) { const b = el('div', 'cv-award'); b.append(trophy(), el('span', undefined, a)); all.append(b); }
+      parts.push(all);
+    }
     const stats = el('div', 'cv-stats');
     for (const [l, v] of [['Overall', c.overall], ['Class', c.classRank], ['Laps', c.laps], ['Fastest', c.fastest]] as const) {
       const s = el('div', 'cv-stat'); s.append(el('span', 'cv-sl', l), el('span', 'cv-sv', v)); stats.append(s);
@@ -572,9 +656,9 @@ export class CarViewer {
     second.append(rb);
     parts.push(second);
     k.replaceChildren(...parts);
-    const shown = this.compact ? c.awards.slice(0, 1) : c.awards;
-    this.awardsEl.replaceChildren(...shown.map((a) => { const b = el('div', 'cv-award'); b.append(trophy(), el('span', undefined, this.compact && c.awards.length > 1 ? `${a} +${c.awards.length - 1}` : a)); return b; }));
+    this.awardsEl.replaceChildren(...c.awards.map((a) => { const b = el('div', 'cv-award'); b.append(trophy(), el('span', undefined, a)); return b; }));
     this.posEl.textContent = c.position;
+    if (this.compact) this.measure();
   }
 
   // ------------------------------------------------------------ sound
@@ -681,6 +765,7 @@ export class CarViewer {
       this.gesture = null;
       if (result !== 'orbit' && this.isOpen && e.type === 'pointerup') {
         this.az = g.az; this.el = g.el;
+        swipedThisSession = true; this.root.classList.add('cv-swiped');
         this.step(result === 'next' ? 1 : -1);
       }
     }
@@ -719,9 +804,12 @@ export class CarViewer {
   frame(now: number): void {
     if (!this.opened) return;
     const d = this.d;
+    this.pollPad();
+    // phone viewer: 30 fps (skip every other frame; the time since the last drawn frame is the dt) so the phone stays cool
+    const cap = this.upgraded ? this.profile?.fpsCap ?? 0 : 0;
+    if (cap && this.lastRenderAt && now - this.lastRenderAt < 1000 / cap - 4) return;
     const dt = Math.min(0.05, Math.max(0, (now - this.lastT) / 1000));
     this.lastT = now;
-    this.pollPad();
     const inp = d.input;
     // the look stick orbits (rate), the triggers zoom
     const sx = inp.lookX, sy = inp.lookY;
@@ -734,6 +822,16 @@ export class CarViewer {
     // orbit camera; the pitch never takes it under the floor
     const c = this.stagePos;
     const ty = c.y + this.targetY;
+    // phone: the distance follows the viewport (the reference silhouette fills the clear area), the same for every car
+    // phone: fit the projected reference box at the CURRENT pose (yaw and elevation, the drag changes them too), smoothed
+    // with a 0.25 s time constant so the auto-rotation and a drag breathe without jumps; the same for every car at a given angle
+    if (this.compact) {
+      const f = viewFit(true, window.innerWidth, window.innerHeight, this.stripH, this.titleH, CHEV_W, relativeYawDeg(this.az, this.carAz), Math.max(0, Math.min(1.35, this.el)));
+      const k = this.fitSnap ? 1 : 1 - Math.exp(-dt / FIT_TAU_S);
+      this.fitSnap = false;
+      this.baseDist += (f.distance - this.baseDist) * k;
+      this.shiftPx += (f.shiftPx - this.shiftPx) * k;
+    }
     // the closest zoom keeps the camera 0.4 m outside the model's box along the view direction, and the pitch keeps it above the floor
     const dirv = new THREE.Vector3();
     const distFor = (el: number): number => {
@@ -763,10 +861,19 @@ export class CarViewer {
     // phone: the car sits in the clear area above the strip (a view offset keeps the constant camera distance)
     if (this.compact && this.stripH > 0) {
       const w = window.innerWidth, h = window.innerHeight;
-      cam.setViewOffset(w, h, 0, Math.round(this.stripH / 2), w, h);
+      cam.setViewOffset(w, h, 0, Math.round(this.shiftPx), w, h);
     } else if (cam.view?.enabled) cam.clearViewOffset();
     d.world.follow(this.rig?.rig.root.position ?? c, cam);
     this.tickEngine();
     if (!document.hidden) d.look.render(dt, 0);
+    // fallback: frames slower than 40 ms for 30 in a row drop the post stack for the rest of the session (the rest of the profile stays)
+    if (this.upgraded && d.look.viewerPostOn) {
+      this.slowFrames = this.lastRenderAt && now - this.lastRenderAt > 40 ? this.slowFrames + 1 : 0;
+      if (this.slowFrames >= 30) {
+        postDropped = true; d.look.setViewerPost(false); this.slowFrames = 0;
+        console.warn('[viewer] frame time over 40 ms for 30 frames: post stack off for the rest of this session');
+      }
+    }
+    this.lastRenderAt = now;
   }
 }

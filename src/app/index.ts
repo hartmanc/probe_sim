@@ -5,6 +5,8 @@ import * as THREE from 'three';
 import './style.css';
 import { inject as injectAnalytics } from '@vercel/analytics';
 import { installErrorCapture, recordError } from './errors';
+import { installPortraitWatcher } from './orientation';
+import { loadIsSlow, throttled } from './load-progress';
 import { feedbackPage, type CarReport } from './feedback';
 import { howtoPage } from './howto';
 import { aiCount, fieldLine } from './field-select';
@@ -12,7 +14,7 @@ import { loadFieldData } from './loader';
 import { NO_WEBGL2_MESSAGE, CONTEXT_LOST_MESSAGE, webgl2Available } from './webgl';
 import { physics, usingStub } from './physics-loader';
 import type { GhostLap, Surface, TrackJson, VehicleLike } from './physics-types';
-import { loadAssets, type Assets } from './loader';
+import { loadAssets, outstandingLoads, type Assets } from './loader';
 import { buildWorld, type World } from './scene';
 import { Look, postUrlOff, sunFromUrl } from './look';
 import { upgradeCarMaterials } from './car-materials';
@@ -58,6 +60,8 @@ import { LOST_IN_HILLS_LINE } from './offtrack';
 
 // the last uncaught error, for the report button (errors.ts); first thing, before anything can throw
 installErrorCapture();
+installPortraitWatcher();   // html.portrait from JS (orientation.ts), not the media query alone
+
 // Vercel Web Analytics (owner, 26 Oct 2026): cookie-free page views; same-origin /_vercel/insights script on Vercel. Not on
 // a local preview / dev server, where that script does not exist.
 if (!/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)) {
@@ -152,6 +156,7 @@ const loadBox = document.createElement('div');
 loadBox.className = 'menu-load';
 loadBox.innerHTML = `<div class="progress"><div></div></div><div class="load-label">Loading…</div>`;
 menu.extra.append(loadBox);
+document.getElementById('splash')?.remove();   // the static first-paint splash (index.html) hands over to the real load box
 // the release and the build's commit (What's new has the history)
 const GIT_SHA = typeof __GIT_SHA__ === 'string' ? __GIT_SHA__ : '';
 const versionEl = document.createElement('div');
@@ -339,10 +344,24 @@ async function boot(): Promise<void> {
   if (!webgl2Available()) { showNoWebgl(NO_WEBGL2_MESSAGE); return; }
   let assets: Assets;
   try {
-    assets = await loadAssets((f, label) => {
+    // the bar and the label repaint at most every 100 ms (bytes arrive far more often); the last value is always delivered
+    // a file in flight shows "0.4 of 1.7 MB" (a stalled stream reads differently from a slow one), the stage percentage after it
+    let shown = '', lastF = -1, lastChange = performance.now(), warned = false;
+    const paint = throttled<{ f: number; label: string; detail?: string }>(({ f, label, detail }) => {
       progressBar.style.width = `${Math.round(f * 100)}%`;
-      loadLabel.textContent = `Loading ${label}… ${Math.round(f * 100)}%`;
-    });
+      shown = `Loading ${label}… ${detail ?? `${Math.round(f * 100)}%`}`;
+      loadLabel.textContent = shown;
+    }, 100);
+    // no movement for 20 s: say so in the label and once in the console, no reload prompt
+    const slowTimer = setInterval(() => {
+      if (!loadIsSlow(lastChange, performance.now())) return;
+      loadLabel.textContent = `${shown} (slow connection; still loading)`;
+      if (!warned) { warned = true; console.warn(`[loader] no progress for 20 s; waiting for ${outstandingLoads().join('; ') || 'the last stage'}`); }
+    }, 1000);
+    try {
+      assets = await loadAssets((f, label, detail) => { if (f !== lastF) { lastF = f; lastChange = performance.now(); warned = false; } paint.push({ f, label, detail }); });
+    } finally { clearInterval(slowTimer); }
+    paint.flush();
   } catch (e) {
     loadLabel.className = 'load-label err';
     loadLabel.textContent = `Failed to load: ${String((e as Error)?.stack ?? e)}`;
@@ -361,6 +380,7 @@ async function boot(): Promise<void> {
   if (menu.isOpen && menu.variant === 'main' && menu.state?.depth === 1) menu.state.focus(0); // Hot lap is now pickable
   menu.refresh();
   sim.renderOnce();
+  document.documentElement.classList.add('ready');   // the first frame is drawn: the rotate overlay may now show (style.css)
 }
 
 // ---------------------------------------------------------------- sim
@@ -814,7 +834,7 @@ function createSim(assets: Assets) {
     },
     // a pristine copy: the player's CarRig moves assets.carModel's wheels into its own pivots
     ground: (x, y) => surface.sample(x, y).z,
-    probeModel: ghostTemplate, shadows: quality.shadows,
+    probeModel: ghostTemplate, shadows: quality.shadows, quality,
     hide: () => [car.root, ghosts.group],
     toast: (m, ms) => hud.toast(m, ms),
     // the Cars page's report button: the same feedback page, kind car; Back (or Esc / B) returns to the page

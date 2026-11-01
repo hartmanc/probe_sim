@@ -150,7 +150,13 @@ canvas.view { display: block; width: 100%; height: 100%; }
 .menu-pause .menu-extra { display: none; }
 .menu-load { display: flex; flex-direction: column; align-items: center; gap: 8px; }
 .menu-load .progress { width: min(320px, 100%); height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
-.menu-load .progress > div { height: 100%; width: 0; background: var(--accent); transition: width 0.15s; }
+.menu-load .progress { position: relative; }
+/* the fill is its own compositing layer (an iPhone showed the label moving and the fill not repainting); a minimum width so the shimmer is there from the start */
+.menu-load .progress > div { position: relative; overflow: hidden; height: 100%; width: 0; min-width: 8px; background: var(--accent); transition: width 0.15s; transform: translateZ(0); will-change: width; }
+/* a translucent highlight sweeps along the filled part, so the bar is alive between byte updates */
+.menu-load .progress > div::after { content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 60%; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.65), rgba(255,255,255,0)); animation: bar-shimmer 1.2s linear infinite; }
+@keyframes bar-shimmer { from { transform: translateX(-100%); } to { transform: translateX(180%); } }
+@media (prefers-reduced-motion: reduce) { .menu-load .progress > div::after { animation: none; display: none; } }
 .menu-load.done .progress { display: none; }
 .menu-load .load-label { color: var(--muted); font-size: 13px; text-align: center; }
 .menu-load .err { color: var(--bad); white-space: pre-wrap; text-align: left; max-width: 600px; }
@@ -281,9 +287,9 @@ html.touch .menu-extra { margin-top: 8px; }
 
 /* ---- rotate overlay (touch devices held in portrait; the app pauses) */
 .rotate-overlay { display: none; }
-@media (orientation: portrait) {
-  html.touch .rotate-overlay { position: fixed; inset: 0; z-index: 60; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; background: #0b0e12; color: var(--text); text-align: center; padding: 24px; }
-}
+/* html.portrait is set from JS (orientation.ts: screen.orientation, window.orientation, the media query, the window's shape; held 300 ms)
+   and html.ready once the app has drawn its first frame, so the overlay never covers the splash or the load box */
+html.touch.portrait.ready .rotate-overlay { position: fixed; inset: 0; z-index: 60; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; background: #0b0e12; color: var(--text); text-align: center; padding: 24px; }
 .rotate-icon { font-size: 64px; color: var(--accent); animation: rotate-hint 1.8s ease-in-out infinite; }
 .rotate-text { font-size: 18px; font-weight: 700; }
 @keyframes rotate-hint { 0%, 20% { transform: rotate(0deg); } 60%, 100% { transform: rotate(-90deg); } }
@@ -497,3 +503,29 @@ html.touch .credits { max-height: 44vh; font-size: 12px; }
 .cv-compact .cv-hint { display: none; }
 .cv-hint.flash { display: block !important; left: 50%; right: auto; bottom: 90px; transform: translateX(-50%); max-width: 90%; text-align: center; padding: 8px 14px; border-radius: 10px; background: var(--panel); color: var(--text); font-size: 14px; }
 .cv-compact .cv-hint.flash { display: block !important; }
+
+/* ---- phone pass 2: the car fills the clear area; slim chrome; the award goes into the strip's second line */
+.cv-compact .cv-title, .cv-compact .cv-awards { display: none; }
+.cv-compact .cv-head { padding: 2px 10px; }
+.cv-compact .cv-pos { font-size: 13px; color: var(--text); }
+.cv-compact .cv-arrow { top: var(--cv-top, 50px); bottom: var(--cv-strip, 56px); height: auto; width: 28px; padding: 0; border: 0; background: none; border-radius: 0; font-size: 34px; color: var(--text); opacity: 0.6; transition: opacity 0.6s; }
+.cv-compact .cv-prev { left: calc(var(--sal, 0px) + 0px); } .cv-compact .cv-next { right: calc(var(--sar, 0px) + 0px); }
+.cv-compact.cv-swiped .cv-arrow { opacity: 0; }
+.cv-sl2 { display: flex; align-items: center; gap: 6px; }
+.cv-sa { flex: none; max-width: 55%; display: flex; align-items: center; gap: 4px; color: var(--accent); font-weight: 700; overflow: hidden; }
+.cv-sa span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cv-sa .cv-trophy { width: 1.2em; height: 1.2em; flex: none; }
+.cv-sr { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cv-event, .cv-sheet-awards { display: none; }
+.cv-compact .cv-card.open .cv-event { display: block; color: var(--muted); font-size: 13px; margin-bottom: 4px; }
+.cv-compact .cv-card.open .cv-sheet-awards { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+.cv-compact .cv-card.open .cv-sheet-awards .cv-award { font-size: 12px; padding: 2px 8px 2px 6px; gap: 5px; border-radius: 12px; max-width: none; }
+
+/* ---- first paint (index.html #splash): the title, a line and an indeterminate bar on the app's dark background */
+.splash { position: fixed; inset: 0; z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: #0b0e12; color: #eef1f5; text-align: center; padding: 16px; box-sizing: border-box; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
+.splash-title { font-size: 28px; font-weight: 700; letter-spacing: 0.02em; }
+.splash-line { font-size: 14px; color: #9aa4b2; }
+.splash-bar { width: min(240px, 60vw); height: 4px; border-radius: 2px; background: rgba(255,255,255,0.1); overflow: hidden; }
+.splash-bar > div { width: 40%; height: 100%; background: #f2c230; border-radius: 2px; animation: splash-slide 1.2s ease-in-out infinite; }
+@keyframes splash-slide { 0% { transform: translateX(-100%); } 100% { transform: translateX(250%); } }
+@media (max-height: 500px) { .splash-title { font-size: 22px; } .splash { gap: 8px; } }

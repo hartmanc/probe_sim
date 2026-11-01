@@ -25,7 +25,7 @@
   - mode banner left of the pause button
   - status line and help hidden
   - corner table as a card after a lap, closed by a tap or after 12 s
-- **Portrait.** A full-screen "Rotate your phone" overlay (CSS `orientation: portrait`). While driving, the pause menu opens and audio is suspended.
+- **Portrait.** A full-screen "Rotate your phone" overlay (html.portrait, set from JS by orientation.ts after a 300 ms hold, and html.ready; not the media query alone). While driving, the pause menu opens and audio is suspended.
 - **Page.** The viewport has `viewport-fit=cover`, no zoom, and `apple-mobile-web-app-capable` with `black-translucent` status bar metas. The manifest (`display: standalone`, `orientation: landscape`) has icons 512/192/180 (619 on green).
   - `touch-action: none` and `overscroll-behavior: none` prevent pull-to-refresh and double-tap zoom.
   - Text selection and the long-press callout are off. Menu cards still scroll vertically.

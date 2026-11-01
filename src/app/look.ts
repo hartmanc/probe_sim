@@ -273,6 +273,9 @@ export class Look {
   /** adaptive quality (perf.ts): an upper bound on the pixel ratio, on top of the tier's budget */
   private ratioLimit = Infinity;
   private time = 0;
+  /** the Cars page's own post stack on the phone tier (built while it is open) and its pixel budget */
+  private viewerPost: PostStack | null = null;
+  private budget: Pick<QualitySettings, 'maxPixels' | 'maxPixelRatio'> | null = null;
 
   constructor(private readonly renderer: THREE.WebGLRenderer, private readonly world: World, private readonly camera: THREE.PerspectiveCamera,
     private readonly q: QualitySettings, opts: LookOptions = {}) {
@@ -306,12 +309,26 @@ export class Look {
   /** CSS-pixel viewport changed. */
   resize(w: number, h: number): void {
     this.w = w; this.h = h;
-    const cap = Math.max(0.5, Math.min(pixelRatioFor(this.q, window.devicePixelRatio, w, h), this.ratioLimit));
+    const cap = Math.max(0.5, Math.min(pixelRatioFor(this.budget ?? this.q, window.devicePixelRatio, w, h), this.ratioLimit));
     if (this.dyn) { this.dyn.max = cap; this.dyn.min = cap * DYN_MIN_FRACTION; this.dyn.ratio = Math.min(this.dyn.ratio, cap); }
     this.renderer.setPixelRatio(this.dyn ? this.dyn.ratio : cap);
     this.renderer.setSize(w, h);
     this.post?.composer.setSize(w, h, false);
+    this.viewerPost?.composer.setSize(w, h, false);
   }
+
+  /** The Cars page on the phone tier: a bigger pixel budget (null: the tier's own), re-fitted now. */
+  setBudget(b: Pick<QualitySettings, 'maxPixels' | 'maxPixelRatio'> | null): void {
+    this.budget = b;
+    this.resize(this.w, this.h);
+  }
+
+  /** The Cars page on the phone tier: build or free a post stack that only this page uses. */
+  setViewerPost(on: boolean): void {
+    if (on && !this.viewerPost && !this.post) { this.viewerPost = buildPost(this.renderer, this.world.scene, this.camera); this.viewerPost.composer.setSize(this.w, this.h, false); }
+    else if (!on && this.viewerPost) { this.viewerPost.dispose(); this.viewerPost = null; }
+  }
+  get viewerPostOn(): boolean { return !!this.viewerPost; }
 
   /** Adaptive quality: cap the pixel ratio (Infinity: the tier's own cap) and re-fit the canvas now. */
   setRatioLimit(r: number): void {
@@ -327,7 +344,11 @@ export class Look {
   render(dt: number, speed = 0): void {
     this.time += dt;
     this.sky.material.uniforms.time.value = this.time;
-    if (!this.post) { this.renderer.render(this.world.scene, this.camera); return; }
+    if (!this.post) {
+      if (this.viewerPost) { this.viewerPost.speed.strength = 0; this.viewerPost.composer.render(dt); return; }
+      this.renderer.render(this.world.scene, this.camera);
+      return;
+    }
     this.post.speed.strength = clamp((Math.abs(speed) - SPEED_BLUR_FROM) / SPEED_BLUR_SPAN, 0, 1) * 0.9;
     // resize BEFORE drawing: a resized canvas is cleared to black, so it has to be redrawn in the same frame
     // (owner, 18 Oct 2026: "the lighting flickers / suddenly goes dark" — one black frame per resolution step)

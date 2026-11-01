@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  awardClass, cardFor, classifyGesture, stripLines, classSizes, fitPlane, seatOffset, creditFor, engineAt, fieldSize, indexByNumber, lapText, makeBlip, ordinal, safeUrl, viewerOrder,
+  awardClass, cardFor, viewFit, projectBox, relativeYawDeg, DEFAULT_ELEVATION, clearAreaShift, classifyGesture, stripLines, classSizes, fitPlane, seatOffset, creditFor, engineAt, fieldSize, indexByNumber, lapText, makeBlip, ordinal, safeUrl, viewerOrder,
   CRANK_END, REV_RPM, SETTLE_END, type AwardEntry, type IdentityRow,
 } from '../car-viewer-data';
 
@@ -154,5 +154,50 @@ describe('touch gestures', () => {
     const [l1, l2] = stripLines({ number: '20', team: 'NSF Racing', car: '1985 Chrysler LeBaron Town & Country wagon', cls: 'C', overall: 'P33 of 45', classRank: 'P16 of 27 in C', laps: '116', fastest: '2:38.495' });
     expect(l1).toBe('#20 NSF Racing · 1985 Chrysler LeBaron Town & Country wagon · Class C');
     expect(l2).toBe('P33 of 45 · P16 of 27 in C · 116 laps · 2:38.495');
+  });
+});
+
+describe('the camera fit on a phone', () => {
+  const STRIP = 56, TITLE = 50, CHEV = 28;
+  it('desktop and tablet keep 7.5 m and no shift', () => {
+    expect(viewFit(false, 1280, 720, 0, 0, 0)).toEqual({ distance: 7.5, shiftPx: 0 });
+    expect(viewFit(false, 844, 390, STRIP, TITLE, CHEV, 90)).toEqual({ distance: 7.5, shiftPx: 0 });
+  });
+  for (const [w, h] of [[844, 316], [844, 390]]) {
+    it(`${w}x${h}: at every angle the box is inside the clear area with 4 % to spare and fills it`, () => {
+      const clearH = h - STRIP - TITLE, clearW = w - 2 * CHEV;
+      for (const yaw of [0, 30, 45, 60, 90]) {
+        const f = viewFit(true, w, h, STRIP, TITLE, CHEV, yaw);
+        const e = projectBox(f.distance, DEFAULT_ELEVATION, yaw, w / h);
+        const top = h / 2 - (e.y1 * h) / 2 - f.shiftPx, bottom = h / 2 - (e.y0 * h) / 2 - f.shiftPx;
+        expect(top).toBeGreaterThanOrEqual(TITLE + 0.04 * clearH);
+        expect(bottom).toBeLessThanOrEqual(h - STRIP - 0.04 * clearH);
+        const bw = ((e.x1 - e.x0) * w) / 2, bh = ((e.y1 - e.y0) * h) / 2;
+        expect(bw).toBeLessThanOrEqual(0.85 * clearW + 1e-6);
+        expect(bh).toBeLessThanOrEqual(0.78 * clearH + 1e-6);
+        expect(bh >= 0.7 * clearH || bw >= 0.8 * clearW).toBe(true);   // the car is actually big
+      }
+    });
+  }
+  it('is continuous in the angle and nearer the more side-on it is', () => {
+    const a = viewFit(true, 844, 316, STRIP, TITLE, CHEV, 44).distance, b = viewFit(true, 844, 316, STRIP, TITLE, CHEV, 46).distance;
+    expect(Math.abs(a - b) / a).toBeLessThan(0.03);
+    expect(viewFit(true, 844, 316, STRIP, TITLE, CHEV, 0).distance).not.toBeCloseTo(viewFit(true, 844, 316, STRIP, TITLE, CHEV, 90).distance, 1);
+  });
+  it('the relative yaw: 0 side-on, 90 end-on, folded over the car being symmetric', () => {
+    expect(relativeYawDeg(Math.PI / 2, 0)).toBeCloseTo(0, 6);
+    expect(relativeYawDeg(0, 0)).toBeCloseTo(90, 6);
+    expect(relativeYawDeg(Math.PI, 0)).toBeCloseTo(90, 6);
+    expect(relativeYawDeg(-Math.PI / 2, 0)).toBeCloseTo(0, 6);
+    expect(relativeYawDeg(0.75, 0)).toBeCloseTo(47.0, 0);
+  });
+  it('a narrow tall viewport is fitted by its width', () => {
+    const f = viewFit(true, 390, 844, 90, 50, CHEV, 0);
+    const e = projectBox(f.distance, DEFAULT_ELEVATION, 0, 390 / 844);
+    expect(((e.x1 - e.x0) * 390) / 2).toBeLessThanOrEqual(0.85 * (390 - 2 * CHEV) + 1e-6);
+  });
+  it('the clear-area shift stays available', () => {
+    expect(clearAreaShift(56, 50)).toBe(3);
+    expect(clearAreaShift(40, 60)).toBe(-10);
   });
 });

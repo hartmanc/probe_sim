@@ -32,7 +32,14 @@
     <meta name="twitter:image:alt" content="The Ford Probe GT racing the Lemons field at Sonoma, rendered in the game" />
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <!-- first paint: shown from the stylesheet before the bundle runs; the app removes it when it mounts its own load box -->
+      <div class="splash" id="splash" role="status">
+        <div class="splash-title">The ▒▒▒▒ Probe Simulator</div>
+        <div class="splash-line">Loading the circuit…</div>
+        <div class="splash-bar"><div></div></div>
+      </div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
