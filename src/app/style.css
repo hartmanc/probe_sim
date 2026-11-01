@@ -150,7 +150,13 @@ canvas.view { display: block; width: 100%; height: 100%; }
 .menu-pause .menu-extra { display: none; }
 .menu-load { display: flex; flex-direction: column; align-items: center; gap: 8px; }
 .menu-load .progress { width: min(320px, 100%); height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
-.menu-load .progress > div { height: 100%; width: 0; background: var(--accent); transition: width 0.15s; }
+.menu-load .progress { position: relative; }
+/* the fill is its own compositing layer (an iPhone showed the label moving and the fill not repainting); a minimum width so the shimmer is there from the start */
+.menu-load .progress > div { position: relative; overflow: hidden; height: 100%; width: 0; min-width: 8px; background: var(--accent); transition: width 0.15s; transform: translateZ(0); will-change: width; }
+/* a translucent highlight sweeps along the filled part, so the bar is alive between byte updates */
+.menu-load .progress > div::after { content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 60%; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.65), rgba(255,255,255,0)); animation: bar-shimmer 1.2s linear infinite; }
+@keyframes bar-shimmer { from { transform: translateX(-100%); } to { transform: translateX(180%); } }
+@media (prefers-reduced-motion: reduce) { .menu-load .progress > div::after { animation: none; display: none; } }
 .menu-load.done .progress { display: none; }
 .menu-load .load-label { color: var(--muted); font-size: 13px; text-align: center; }
 .menu-load .err { color: var(--bad); white-space: pre-wrap; text-align: left; max-width: 600px; }

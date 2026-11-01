@@ -14,6 +14,7 @@ import { buildFallbackCar } from './car';
 import { synthesizeGhosts } from './ghosts';
 import type { SceneryAssets, SceneryJson } from './scenery';
 import { TRACK } from './track-choice';
+import { LoadProgress } from './load-progress';
 
 export interface Assets {
   track: TrackJson;
@@ -43,6 +44,42 @@ async function fetchOk(url: string): Promise<Response | null> {
   }
 }
 
+/**
+ * A file's bytes through a streaming reader, reporting bytes received against Content-Length (0 when the header is missing).
+ * null on a missing file (as fetchOk). Falls back to arrayBuffer() where the body is not streamable.
+ */
+async function fetchBytes(url: string, onBytes?: (got: number, total: number) => void): Promise<{ buf: ArrayBuffer; type: string } | null> {
+  const r = await fetchOk(url);
+  if (!r) return null;
+  const type = r.headers.get('content-type') ?? '';
+  const total = Number(r.headers.get('content-length')) || 0;
+  try {
+    if (!r.body?.getReader) { const buf = await r.arrayBuffer(); onBytes?.(buf.byteLength, total); return { buf, type }; }
+    const reader = r.body.getReader();
+    const chunks: Uint8Array[] = [];
+    let got = 0;
+    onBytes?.(0, total);
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      chunks.push(value); got += value.byteLength;
+      onBytes?.(got, total);
+    }
+    const out = new Uint8Array(got);
+    let o = 0;
+    for (const c of chunks) { out.set(c, o); o += c.byteLength; }
+    return { buf: out.buffer, type };
+  } catch { return null; }
+}
+
+/** An image through fetchBytes and a blob URL, so its bytes are counted (TextureLoader has no byte progress for images). */
+async function loadTexture(url: string, onBytes: (got: number, total: number) => void): Promise<THREE.Texture> {
+  const f = await fetchBytes(url, onBytes);
+  if (!f) throw new Error(`${url}: not found`);
+  const blobUrl = URL.createObjectURL(new Blob([f.buf], { type: f.type || 'image/jpeg' }));
+  try { return await new THREE.TextureLoader().loadAsync(blobUrl); } finally { URL.revokeObjectURL(blobUrl); }
+}
+
 async function fetchJson<T>(url: string): Promise<T | null> {
   const r = await fetchOk(url);
   if (!r) return null;
@@ -53,9 +90,10 @@ export async function loadAssets(onProgress: (frac: number, label: string) => vo
   const fallbacks: string[] = [];
   const forceDev = new URLSearchParams(location.search).get('devtrack') === '1';
   const weights = { track: 0.12, hf: 0.12, ortho: 0.2, ghosts: 0.04, spec: 0.02, glb: 0.35, scenery: 0.15 };
-  let done = 0;
-  const glbFrac = { v: 0 };
-  const tick = (w: number, label: string) => { done += w; onProgress(Math.min(1, done + glbFrac.v * weights.glb), label); };
+  // real progress: bytes of the big files inside each stage's weight (load-progress.ts); a stage without a Content-Length ticks when it ends
+  const lp = new LoadProgress(Object.entries(weights).map(([id, weight]) => ({ id, weight })));
+  const tick = (id: keyof typeof weights, label: string) => { lp.end(id); onProgress(lp.fraction(), label); };
+  const counted = (id: keyof typeof weights, file: string, label: string) => (got: number, total: number) => { lp.bytes(id, file, got, total); onProgress(lp.fraction(), label); };
 
   // ---- track + heightfield
   let track = forceDev ? null : await fetchJson<TrackJson>(TRACK_DIR + 'track.json');
@@ -66,31 +104,31 @@ export async function loadAssets(onProgress: (frac: number, label: string) => vo
     track = dev.track; heightfield = dev.heightfield; isDev = true;
     fallbacks.push('track (synthetic oval)');
   }
-  tick(weights.track, 'track');
+  tick('track', 'track');
   if (!heightfield) {
-    const r = await fetchOk(TRACK_DIR + (track.heightfield?.file ?? 'heightfield.bin'));
+    const r = await fetchBytes(TRACK_DIR + (track.heightfield?.file ?? 'heightfield.bin'), counted('hf', 'heightfield', 'heightfield'));
     const hf = track.heightfield;
     if (r) {
-      const buf = await r.arrayBuffer();
+      const buf = r.buf;
       if (buf.byteLength >= hf.nx * hf.ny * 4) heightfield = new Float32Array(buf, 0, hf.nx * hf.ny);
     }
     if (!heightfield) { heightfield = makeFlatHeightfield(track); fallbacks.push('heightfield (flat)'); }
   }
-  tick(weights.hf, 'heightfield');
+  tick('hf', 'heightfield');
   const t = track;
 
   // ---- the rest in parallel
   const orthoP = (async () => {
     let tex: THREE.Texture | null = null;
     if (!isDev) {
-      try { tex = await new THREE.TextureLoader().loadAsync(TRACK_DIR + (t.ortho?.file ?? 'ortho.jpg')); } catch { tex = null; }
+      try { tex = await loadTexture(TRACK_DIR + (t.ortho?.file ?? 'ortho.jpg'), counted('ortho', 'ortho', 'aerial imagery')); } catch { tex = null; }
     }
     if (!tex) {
       tex = new THREE.CanvasTexture(makeOrthoCanvas(t));
       if (!isDev) fallbacks.push('ortho (procedural)');
     }
     tex.colorSpace = THREE.SRGBColorSpace;
-    tick(weights.ortho, 'aerial imagery');
+    tick('ortho', 'aerial imagery');
     return tex;
   })();
   const ghostsP = (async () => {
@@ -101,22 +139,21 @@ export async function loadAssets(onProgress: (frac: number, label: string) => vo
       g = synthesizeGhosts(t);
       if (!isDev) fallbacks.push('ghosts (synthetic)');
     }
-    tick(weights.ghosts, 'ghosts');
+    tick('ghosts', 'ghosts');
     return g;
   })();
   const specP = (async () => {
     const j = await fetchJson<unknown>(CAR_DIR + 'car.json');
     if (j == null) fallbacks.push('car.json (stub defaults)');
-    tick(weights.spec, 'car spec');
+    tick('spec', 'car spec');
     return j ?? {};
   })();
   const glbP = (async () => {
     let model: THREE.Object3D | null = null;
-    const head = await fetchOk(CAR_DIR + 'probe.glb');
+    const head = await fetchBytes(CAR_DIR + 'probe.glb', counted('glb', 'probe.glb', 'car model'));
     if (head) {
       try {
-        const buf = await head.arrayBuffer();
-        glbFrac.v = 0.7; onProgress(done + glbFrac.v * weights.glb, 'car model');
+        const buf = head.buf;
         const gltf = await new GLTFLoader().parseAsync(buf, CAR_DIR);
         model = gltf.scene;
       } catch (e) {
@@ -124,37 +161,36 @@ export async function loadAssets(onProgress: (frac: number, label: string) => vo
       }
     }
     if (!model) { model = buildFallbackCar(); fallbacks.push('car model (box on wheels)'); }
-    glbFrac.v = 0;
-    tick(weights.glb, 'car model');
+    tick('glb', 'car model');
     return model;
   })();
 
   const sceneryP = (async (): Promise<SceneryAssets | null> => {
-    if (isDev) { tick(weights.scenery, 'scenery'); return null; }
+    if (isDev) { tick('scenery', 'scenery'); return null; }
     const json = await fetchJson<SceneryJson>(TRACK_DIR + 'scenery.json');
-    if (!json) { fallbacks.push('scenery (none)'); tick(weights.scenery, 'scenery'); return null; }
+    if (!json) { fallbacks.push('scenery (none)'); tick('scenery', 'scenery'); return null; }
     let farHeightfield: Float32Array | null = null;
     let farOrtho: THREE.Texture | null = null;
     const far = json.far;
     await Promise.all([
       (async () => {
         if (!far?.heightfield) return;
-        const r = await fetchOk(TRACK_DIR + far.heightfield.file);
+        const r = await fetchBytes(TRACK_DIR + far.heightfield.file, counted('scenery', 'far.heightfield', 'scenery'));
         if (!r) return;
-        const buf = await r.arrayBuffer();
+        const buf = r.buf;
         const n = far.heightfield.nx * far.heightfield.ny;
         if (buf.byteLength >= n * 4) farHeightfield = new Float32Array(buf, 0, n);
       })(),
       (async () => {
         if (!far?.ortho) return;
         try {
-          farOrtho = await new THREE.TextureLoader().loadAsync(TRACK_DIR + far.ortho.file);
+          farOrtho = await loadTexture(TRACK_DIR + far.ortho.file, counted('scenery', 'far.ortho', 'scenery'));
           farOrtho.colorSpace = THREE.SRGBColorSpace;
         } catch { farOrtho = null; }
       })(),
     ]);
     if (far?.heightfield && !farHeightfield) fallbacks.push('far terrain (none)');
-    tick(weights.scenery, 'scenery');
+    tick('scenery', 'scenery');
     return { json, farHeightfield, farOrtho };
   })();
 

@@ -6,6 +6,7 @@ import './style.css';
 import { inject as injectAnalytics } from '@vercel/analytics';
 import { installErrorCapture, recordError } from './errors';
 import { installPortraitWatcher } from './orientation';
+import { throttled } from './load-progress';
 import { feedbackPage, type CarReport } from './feedback';
 import { howtoPage } from './howto';
 import { aiCount, fieldLine } from './field-select';
@@ -343,10 +344,13 @@ async function boot(): Promise<void> {
   if (!webgl2Available()) { showNoWebgl(NO_WEBGL2_MESSAGE); return; }
   let assets: Assets;
   try {
-    assets = await loadAssets((f, label) => {
+    // the bar and the label repaint at most every 100 ms (bytes arrive far more often); the last value is always delivered
+    const paint = throttled<{ f: number; label: string }>(({ f, label }) => {
       progressBar.style.width = `${Math.round(f * 100)}%`;
       loadLabel.textContent = `Loading ${label}… ${Math.round(f * 100)}%`;
-    });
+    }, 100);
+    assets = await loadAssets((f, label) => paint.push({ f, label }));
+    paint.flush();
   } catch (e) {
     loadLabel.className = 'load-label err';
     loadLabel.textContent = `Failed to load: ${String((e as Error)?.stack ?? e)}`;
