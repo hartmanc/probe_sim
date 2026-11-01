@@ -245,8 +245,7 @@ export const DESKTOP_DISTANCE = 7.5;
 export const REF_LENGTH = 4.6, REF_HEIGHT = 1.8, REF_WIDTH = 1.8, VIEW_FOV_DEG = 38;
 /** The orbit elevation (rad) the page opens with, and the share of the clear area the projected box may take. */
 export const DEFAULT_ELEVATION = 0.2;
-export const FIT_HEIGHT = 0.72, FIT_WIDTH = 0.85;
-export const FIT_YAWS_DEG = [0, 45, 90] as const;
+export const FIT_HEIGHT = 0.78, FIT_WIDTH = 0.85;
 
 /** The reference box seen from a camera at distance d, elevation el, looking at its centre; yaw turns the box (0 side-on, 90 end-on). NDC extents (y up). */
 export function projectBox(d: number, el: number, yawDeg: number, aspect: number): { x0: number; x1: number; y0: number; y1: number } {
@@ -268,31 +267,29 @@ export function projectBox(d: number, el: number, yawDeg: number, aspect: number
 }
 
 /**
- * The default camera on a phone. Not compact: the constant 7.5 m, no shift. Compact: the nearest distance at which the
- * reference box (4.6 x 1.8 x 1.8 m), seen through the opening elevation at yaw 0, 45 and 90 degrees (side-on to end-on),
- * is at most 72 % of the clear height and 85 % of the clear width (the clear area lies between the title row on top, the
- * strip below and the chevrons at the sides), and `shiftPx`, how far the image must move up so the middle of the box's
- * height range sits at the centre of the clear area. Depends on the viewport only, never on the car.
+ * The camera on a phone, fitted to the current pose. Not compact: the constant 7.5 m, no shift. Compact: the nearest
+ * distance at which the reference box (4.6 x 1.8 x 1.8 m), seen at this yaw (0 side-on .. 90 end-on) and elevation, is at
+ * most 78 % of the clear height and 85 % of the clear width (the clear area lies between the title row on top, the strip
+ * below and the chevrons at the sides), and `shiftPx`, how far the image must move up so the middle of the projected
+ * box's height sits at the centre of the clear area. Depends on the viewport and the pose only, never on the car.
  */
-export function viewFit(compact: boolean, w: number, h: number, stripH: number, titleH: number, chevW: number, elevation = DEFAULT_ELEVATION): { distance: number; shiftPx: number } {
+export function viewFit(compact: boolean, w: number, h: number, stripH: number, titleH: number, chevW: number, yawDeg = 0, elevation = DEFAULT_ELEVATION): { distance: number; shiftPx: number } {
   if (!compact) return { distance: DESKTOP_DISTANCE, shiftPx: 0 };
   const clearH = Math.max(40, h - stripH - titleH), clearW = Math.max(40, w - 2 * chevW);
   const aspect = w / h;
-  const union = (d: number) => {
-    let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
-    for (const yaw of FIT_YAWS_DEG) { const e = projectBox(d, elevation, yaw, aspect); x0 = Math.min(x0, e.x0); x1 = Math.max(x1, e.x1); y0 = Math.min(y0, e.y0); y1 = Math.max(y1, e.y1); }
-    return { x0, x1, y0, y1 };
-  };
-  const fits = (d: number) => { const u = union(d); return ((u.y1 - u.y0) * h) / 2 <= FIT_HEIGHT * clearH && ((u.x1 - u.x0) * w) / 2 <= FIT_WIDTH * clearW; };
+  const fits = (d: number) => { const e = projectBox(d, elevation, yawDeg, aspect); return ((e.y1 - e.y0) * h) / 2 <= FIT_HEIGHT * clearH && ((e.x1 - e.x0) * w) / 2 <= FIT_WIDTH * clearW; };
   let lo = 2, hi = 40;
   for (let k = 0; k < 40; k++) { const m = (lo + hi) / 2; if (fits(m)) hi = m; else lo = m; }
-  const u = union(hi), mid = (u.y0 + u.y1) / 2;
-  const boxMidPx = h / 2 - (mid * h) / 2, clearMidPx = titleH + clearH / 2;
-  return { distance: hi, shiftPx: boxMidPx - clearMidPx };
+  const e = projectBox(hi, elevation, yawDeg, aspect), mid = (e.y0 + e.y1) / 2;
+  return { distance: hi, shiftPx: (h / 2 - (mid * h) / 2) - (titleH + clearH / 2) };
 }
 
-export const viewDistance = (compact: boolean, w: number, h: number, stripH: number, titleH: number, chevW: number, elevation = DEFAULT_ELEVATION): number =>
-  viewFit(compact, w, h, stripH, titleH, chevW, elevation).distance;
+/** The box's yaw (0 side-on .. 90 end-on) for a camera at orbit azimuth `az` around a car whose nose points at azimuth `carAz` (rad). */
+export function relativeYawDeg(az: number, carAz: number): number {
+  let d = (((az - carAz) * 180) / Math.PI - 90) % 180;
+  if (d < 0) d += 180;
+  return d > 90 ? 180 - d : d;
+}
 
 /** Pixels the image must move up (negative: down) so the car sits in the clear area's centre rather than the viewport's. */
 export const clearAreaShift = (stripH: number, titleH: number): number => (stripH - titleH) / 2;

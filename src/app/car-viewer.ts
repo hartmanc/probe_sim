@@ -19,7 +19,7 @@ import type { World } from './scene';
 import type { CarReport } from './feedback';
 import type { TrackJson } from './physics-types';
 import {
-  SETTLE_END, makeBlip, cardFor, classifyGesture, DEFAULT_ELEVATION, viewFit, creditFor, fitPlane, stripLines, type PointerSample, seatOffset, engineAt, classSizes, fieldSize, indexByNumber, safeUrl, viewerOrder,
+  SETTLE_END, makeBlip, cardFor, classifyGesture, DEFAULT_ELEVATION, relativeYawDeg, viewFit, creditFor, fitPlane, stripLines, type PointerSample, seatOffset, engineAt, classSizes, fieldSize, indexByNumber, safeUrl, viewerOrder,
   type AwardEntry, type Blip, type Card, type CreditRow, type IdentityRow, type PhotoRow, type ViewerCar,
 } from './car-viewer-data';
 
@@ -42,6 +42,7 @@ const AUTO_TURN_S = 20, AUTO_RESUME_MS = 4000;
 const PROBE_KEY = '619';
 /** Chevron width on a phone (px), and whether a swipe has already worked this session (the chevrons then fade). */
 const CHEV_W = 28;
+const FIT_TAU_S = 0.25;
 let swipedThisSession = false;
 const HINT_KEY = 'probeSim.cars.swipeHint.v1';
 const DEFAULT_DIST = 7.5, DEFAULT_TARGET_Y = 0.7;
@@ -203,6 +204,8 @@ export class CarViewer {
   private stripH = 0;
   private titleH = 0;
   private shiftPx = 0;
+  private carAz = 0;
+  private fitSnap = true;
   private topEl: HTMLElement | null = null;
   private gesture: { tracks: Map<number, PointerSample[]>; az: number; el: number; multi: boolean; touch: boolean } | null = null;
   private onResize = () => this.applyLayout();
@@ -222,6 +225,7 @@ export class CarViewer {
     if (!compact) this.card.classList.remove('open');
     if (this.cur) this.renderCard(this.cur.card);
     this.measure();
+    this.fitSnap = true;
   }
 
   /** Heights of the strip (bottom) and the title row (top): the clear area is what is between them. */
@@ -385,7 +389,8 @@ export class CarViewer {
     cam.fov = FOV; cam.near = 0.05; cam.far = 4000; cam.updateProjectionMatrix();
     // three-quarter front view to start
     // ENU heading h points along (cos h, sin h): three (x, z) = (cos h, -sin h)
-    this.az = Math.atan2(Math.cos(p.heading), -Math.sin(p.heading)) + 0.75;
+    this.carAz = Math.atan2(Math.cos(p.heading), -Math.sin(p.heading));
+    this.az = this.carAz + 0.75;
     this.el = DEFAULT_ELEVATION; this.zoom = 1; this.lastInputAt = -Infinity;
   }
 
@@ -763,7 +768,15 @@ export class CarViewer {
     const c = this.stagePos;
     const ty = c.y + this.targetY;
     // phone: the distance follows the viewport (the reference silhouette fills the clear area), the same for every car
-    if (this.compact) { const f = viewFit(true, window.innerWidth, window.innerHeight, this.stripH, this.titleH, CHEV_W); this.baseDist = f.distance; this.shiftPx = f.shiftPx; }
+    // phone: fit the projected reference box at the CURRENT pose (yaw and elevation, the drag changes them too), smoothed
+    // with a 0.25 s time constant so the auto-rotation and a drag breathe without jumps; the same for every car at a given angle
+    if (this.compact) {
+      const f = viewFit(true, window.innerWidth, window.innerHeight, this.stripH, this.titleH, CHEV_W, relativeYawDeg(this.az, this.carAz), Math.max(0, Math.min(1.35, this.el)));
+      const k = this.fitSnap ? 1 : 1 - Math.exp(-dt / FIT_TAU_S);
+      this.fitSnap = false;
+      this.baseDist += (f.distance - this.baseDist) * k;
+      this.shiftPx += (f.shiftPx - this.shiftPx) * k;
+    }
     // the closest zoom keeps the camera 0.4 m outside the model's box along the view direction, and the pitch keeps it above the floor
     const dirv = new THREE.Vector3();
     const distFor = (el: number): number => {
