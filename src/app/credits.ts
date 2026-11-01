@@ -40,11 +40,14 @@ export const ISSUES_URL = 'https://github.com/hartmanc/probe_sim/issues';
 export const CONTACT_EMAIL = 'cobylhartman@gmail.com';
 /** The affiliation line: on the Start menu under the version line, and first in About. */
 export const UNOFFICIAL_LINE = 'An unofficial fan project, not affiliated with 24 Hours of Lemons, the circuits or the teams shown.';
+/** The trademark notice (owner, 1 Nov 2026): second in About, and in the README's Licence section. */
+export const TRADEMARK_LINE = 'The 24 Hours of Lemons name, logos and the names of its races and awards are trademarks and property of their owner, as are the circuits, the teams and their liveries, and the car makers’ marks. They appear here only to describe the real events and cars the game depicts; nothing here grants any right to them.';
 
 export const ABOUT: StaticSection = {
   title: 'About',
   lines: [
     UNOFFICIAL_LINE,
+    TRADEMARK_LINE,
     'Real teams: the cars, numbers, team names and paces come from public race results and photos. A team that would rather not appear is taken out on request: open an issue or write to the address below.',
     { text: 'GitHub issues: github.com/hartmanc/probe_sim/issues', url: ISSUES_URL },
     { text: CONTACT_EMAIL, url: `mailto:${CONTACT_EMAIL}` },
