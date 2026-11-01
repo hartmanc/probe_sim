@@ -18,3 +18,13 @@ An unofficial fan project, not affiliated with 24 Hours of Lemons, the circuits 
 
 Run: `npm install && npm run dev`, then open http://localhost:5173.
 Build a static site: `npm run build` (output in `dist/`, relative paths, works on GitHub Pages).
+
+## Licence
+
+The code in this repository is released under the MIT License (`LICENSE`).
+
+The game assets are not. `public/cars`, `public/audio` and `public/tracks` carry their own notices, listed on the
+game's Credits page and in `public/cars/field/credits.json` and `public/audio/families/credits.json`: the field's car
+models derive from CC BY and CC BY-NC work (the CC BY-NC-SA ones are shared under the same licence as changed here), the
+engine sounds from CC BY recordings, the track outlines from OpenStreetMap data (ODbL), and the Probe #619 model, livery
+and sounds belong to the team. The non-commercial statement on the Credits page applies to the game as a whole.
