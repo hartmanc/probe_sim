@@ -41,10 +41,9 @@ const EVENT_TITLES: Record<string, string> = {
 const FOV = 38;
 const AUTO_TURN_S = 20, AUTO_RESUME_MS = 4000;
 const PROBE_KEY = '619';
-/** Chevron width on a phone (px), and whether a swipe has already worked this session (the chevrons then fade). */
+/** Chevron width on a phone (px); the thin glyphs stay for the whole session (owner, 1 Nov 2026). */
 const CHEV_W = 28;
 const FIT_TAU_S = 0.25;
-let swipedThisSession = false;
 /** The viewer's post stack was dropped this session because frames ran slow (phone tier). */
 let postDropped = false;
 const HINT_KEY = 'probeSim.cars.swipeHint.v1';
@@ -151,6 +150,8 @@ export class CarViewer {
   private awardsEl = el('div', 'cv-awards');
   private hintEl = el('div', 'cv-hint');
   private opened = false;
+  /** the stage is built and the profile applied (finishOpen ran) */
+  private staged = false;
   private profile: ViewerProfile | null = null;
   private upgraded = false;
   private ownTex: THREE.Texture[] = [];
@@ -257,7 +258,6 @@ export class CarViewer {
     const compact = this.touch && (window.innerHeight < 500 || window.innerWidth < 500);
     this.compact = compact;
     this.root.classList.toggle('cv-compact', compact);
-    this.root.classList.toggle('cv-swiped', swipedThisSession);
     this.root.classList.toggle('cv-portrait', compact && window.innerWidth < window.innerHeight);
     if (!compact) this.card.classList.remove('open');
     if (this.cur) this.renderCard(this.cur.card);
@@ -317,9 +317,22 @@ export class CarViewer {
     if (this.opened) return;
     this.opened = true;
     const d = this.d;
+    // the click handler stays cheap: only the page's frame goes up here (the dark background, the title, the back button,
+    // the arrows, "Loading…"); the stage, the profile and the car follow in finishOpen after the first paint
     d.menu.root.classList.add('cv-hide');
+    this.root.classList.add('cv-opening');
     this.root.classList.remove('hidden');
     d.input.lookInNav = true;
+    this.loadingEl.classList.remove('hidden');
+    this.titleEl.textContent = `Cars · ${EVENT_TITLES[d.trackId] ?? d.trackShort}`;
+    this.dataP ??= this.loadData();   // starts the fetches only
+    requestAnimationFrame(() => setTimeout(() => this.finishOpen(), 0));
+  }
+
+  /** The heavy half of open(): the viewer profile, the stage, the layout, the first car. Runs after the first paint. */
+  private finishOpen(): void {
+    if (!this.opened || this.staged) return;
+    const d = this.d;
     if (VIEWER_SOUND) {
       void d.audio.start();
       setTimeout(() => { if (this.opened && d.audio.suspended) d.toast('Press any key or tap the screen for sound', 5000); }, 700);
@@ -335,10 +348,9 @@ export class CarViewer {
     this.applyLayout();
     this.flashHint();
     this.lastT = performance.now();
-    this.loadingEl.classList.remove('hidden');
-    this.titleEl.textContent = `Cars · ${EVENT_TITLES[d.trackId] ?? d.trackShort}`;
-    this.dataP ??= this.loadData();
-    void this.dataP.then((data) => {
+    this.staged = true;
+    this.root.classList.remove('cv-opening');
+    void this.dataP!.then((data) => {
       if (!this.opened) return;
       this.data = data;
       this.titleEl.textContent = `Cars · ${data.title}`;
@@ -351,6 +363,8 @@ export class CarViewer {
   close(): void {
     if (!this.opened) return;
     this.opened = false;
+    this.staged = false;
+    this.root.classList.remove('cv-opening');
     const d = this.d;
     this.token++;
     window.removeEventListener('keydown', this.onKey);
@@ -765,7 +779,6 @@ export class CarViewer {
       this.gesture = null;
       if (result !== 'orbit' && this.isOpen && e.type === 'pointerup') {
         this.az = g.az; this.el = g.el;
-        swipedThisSession = true; this.root.classList.add('cv-swiped');
         this.step(result === 'next' ? 1 : -1);
       }
     }
@@ -802,7 +815,7 @@ export class CarViewer {
 
   /** One rendered frame (called from the sim's frame while the page is open). */
   frame(now: number): void {
-    if (!this.opened) return;
+    if (!this.opened || !this.staged) return;
     const d = this.d;
     this.pollPad();
     // phone viewer: 30 fps (skip every other frame; the time since the last drawn frame is the dt) so the phone stays cool
