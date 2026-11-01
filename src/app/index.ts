@@ -819,7 +819,7 @@ function createSim(assets: Assets) {
     },
     // a pristine copy: the player's CarRig moves assets.carModel's wheels into its own pivots
     ground: (x, y) => surface.sample(x, y).z,
-    probeModel: ghostTemplate, shadows: quality.shadows,
+    probeModel: ghostTemplate, shadows: quality.shadows, quality,
     hide: () => [car.root, ghosts.group],
     toast: (m, ms) => hud.toast(m, ms),
     // the Cars page's report button: the same feedback page, kind car; Back (or Esc / B) returns to the page

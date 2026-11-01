@@ -45,7 +45,7 @@ export const AI_SHADOW_CASTERS = 8;
 /** ±15 m at 2048 px is the same ~68 px/m as the old ±30 m at 4096 px (perf round 1, 27 Oct 2026): the player's shadow keeps its density; AI cars beyond 15 m keep their blob. */
 export const SHADOW_BOX_M = 15;
 export const SHADOW_MAP = 2048;
-const PLAYER_BOX_M = 7, PLAYER_MAP = 1024;
+export const PLAYER_BOX_M = 7, PLAYER_MAP = 1024;
 /** Pure: dev `?shadowbox=<5..60>` (half-size of the sun's shadow box, m); null = the tier's own. */
 export function shadowBoxFromUrl(search: string): number | undefined {
   const v = Number(new URLSearchParams(search).get('shadowbox'));
@@ -106,6 +106,30 @@ export function settingsFor(tier: Tier, reason: QualitySettings['reason'], touch
   }
   return { tier, device, reason, touch, maxAiCarsDrawn: 45, maxPixels: DESKTOP_MAX_PIXELS, maxPixelRatio: 1.5, shadows: true, maxAnisotropy: 16,
     aiShadowCasters: ai ? AI_SHADOW_CASTERS : 0, shadowBoxM: ai ? (opts.shadowBoxM ?? SHADOW_BOX_M) : PLAYER_BOX_M, shadowMapSize: ai ? SHADOW_MAP : PLAYER_MAP };
+}
+
+/** What the Cars page renders with (owner, 1 Nov 2026: "improve the graphics just for the car viewer on mobile"). */
+export interface ViewerProfile {
+  /** pixel ratio to render at */
+  ratio: number;
+  shadows: boolean;
+  anisotropy: number;
+  /** the post stack (bloom, tone mapping, grade, SMAA) */
+  post: boolean;
+  /** frames per second cap (0 = none) */
+  fpsCap: number;
+}
+/** The phone tier's viewer profile: ratio up to 2 within the Balanced pixel budget, the car's shadow, anisotropy 16, the post stack, 30 fps. */
+export const VIEWER_PHONE = { maxPixelRatio: 2, maxPixels: BALANCED.maxPixels, anisotropy: 16, fpsCap: 30 } as const;
+/**
+ * Pure: the profile the Cars page runs with. The phone tier gets the better one (one static car is cheap; the cap keeps the
+ * phone cool); every other tier keeps its own settings (desktop: post on, no cap).
+ */
+export function viewerProfile(q: Pick<QualitySettings, 'tier' | 'maxPixels' | 'maxPixelRatio' | 'shadows' | 'maxAnisotropy'>, dpr: number, w: number, h: number): ViewerProfile {
+  if (q.tier === 'phone') {
+    return { ratio: pixelRatioFor({ maxPixels: VIEWER_PHONE.maxPixels, maxPixelRatio: VIEWER_PHONE.maxPixelRatio }, dpr, w, h), shadows: true, anisotropy: VIEWER_PHONE.anisotropy, post: true, fpsCap: VIEWER_PHONE.fpsCap };
+  }
+  return { ratio: pixelRatioFor(q, dpr, w, h), shadows: q.shadows, anisotropy: q.maxAnisotropy, post: q.tier === 'desktop' || q.tier === 'balanced', fpsCap: 0 };
 }
 
 /** Pure: device pixel ratio to render at for a CSS-pixel viewport. */
