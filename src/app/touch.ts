@@ -11,6 +11,8 @@
 // The pure parts (zones, pedal and slider mapping, tilt maths, the tilt permission state machine) are exported
 // and unit-tested in __tests__/touch.test.ts; the TouchControls class is the DOM layer.
 
+import { isPortrait } from './orientation';
+
 export type TouchZone = 'brake' | 'throttle' | 'steer' | null;
 export type SteerMode = 'tilt' | 'slider';
 export type TouchAction = 'shiftUp' | 'shiftDown' | 'menu';
@@ -203,7 +205,6 @@ export class TouchControls {
   private shiftUp = el('button', 'tc-btn tc-shift tc-up', '+');
   private pauseBtn = el('button', 'tc-btn tc-pause');
   readonly rotate = el('div', 'rotate-overlay');
-  private portraitMq: MediaQueryList | null = null;
 
   constructor(parent: HTMLElement) {
     const W = window as unknown as { DeviceOrientationEvent?: DOEWithPermission };
@@ -257,7 +258,6 @@ export class TouchControls {
     window.addEventListener('deviceorientation', (e) => this.onOrientation(e));
     if (this.tilt === 'granted') this.armSilentTimeout();
 
-    this.portraitMq = window.matchMedia?.('(orientation: portrait)') ?? null;
     this.applyClasses();
   }
 
@@ -268,7 +268,7 @@ export class TouchControls {
   /** A finger is on a pedal / the slider. */
   get engaged(): boolean { return this.ptrs.size > 0; }
   /** Portrait on a touch device: the app pauses and shows the rotate overlay (CSS). */
-  get portrait(): boolean { return !!this.portraitMq?.matches; }
+  get portrait(): boolean { return isPortrait(); }
   get isVisible(): boolean { return this.visible; }
 
   onChange(fn: () => void): void { this.listeners.add(fn); }

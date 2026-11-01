@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import './style.css';
 import { inject as injectAnalytics } from '@vercel/analytics';
 import { installErrorCapture, recordError } from './errors';
+import { installPortraitWatcher } from './orientation';
 import { feedbackPage, type CarReport } from './feedback';
 import { howtoPage } from './howto';
 import { aiCount, fieldLine } from './field-select';
@@ -58,6 +59,8 @@ import { LOST_IN_HILLS_LINE } from './offtrack';
 
 // the last uncaught error, for the report button (errors.ts); first thing, before anything can throw
 installErrorCapture();
+installPortraitWatcher();   // html.portrait from JS (orientation.ts), not the media query alone
+
 // Vercel Web Analytics (owner, 26 Oct 2026): cookie-free page views; same-origin /_vercel/insights script on Vercel. Not on
 // a local preview / dev server, where that script does not exist.
 if (!/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)) {
@@ -152,6 +155,7 @@ const loadBox = document.createElement('div');
 loadBox.className = 'menu-load';
 loadBox.innerHTML = `<div class="progress"><div></div></div><div class="load-label">Loading…</div>`;
 menu.extra.append(loadBox);
+document.getElementById('splash')?.remove();   // the static first-paint splash (index.html) hands over to the real load box
 // the release and the build's commit (What's new has the history)
 const GIT_SHA = typeof __GIT_SHA__ === 'string' ? __GIT_SHA__ : '';
 const versionEl = document.createElement('div');
@@ -361,6 +365,7 @@ async function boot(): Promise<void> {
   if (menu.isOpen && menu.variant === 'main' && menu.state?.depth === 1) menu.state.focus(0); // Hot lap is now pickable
   menu.refresh();
   sim.renderOnce();
+  document.documentElement.classList.add('ready');   // the first frame is drawn: the rotate overlay may now show (style.css)
 }
 
 // ---------------------------------------------------------------- sim
