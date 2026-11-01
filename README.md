@@ -28,3 +28,9 @@ game's Credits page and in `public/cars/field/credits.json` and `public/audio/fa
 models derive from CC BY and CC BY-NC work (the CC BY-NC-SA ones are shared under the same licence as changed here), the
 engine sounds from CC BY recordings, the track outlines from OpenStreetMap data (ODbL), and the Probe #619 model, livery
 and sounds belong to the team. The non-commercial statement on the Credits page applies to the game as a whole.
+
+24 Hours of Lemons, its name, logos and the names of its races and awards are trademarks and property of their owner;
+the same goes for the circuits (WeatherTech Raceway Laguna Seca, Sonoma Raceway, Buttonwillow Raceway Park, Mid-Ohio
+Sports Car Course), the teams and their liveries, and the car makers' marks. They appear here only to describe the real
+events and cars the game depicts. This is an unofficial fan project with no affiliation with or endorsement from any of
+them, and nothing in this repository or its licence grants any right to those names or marks.
