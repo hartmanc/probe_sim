@@ -510,7 +510,6 @@ html.touch .credits { max-height: 44vh; font-size: 12px; }
 .cv-compact .cv-pos { font-size: 13px; color: var(--text); }
 .cv-compact .cv-arrow { top: var(--cv-top, 50px); bottom: var(--cv-strip, 56px); height: auto; width: 28px; padding: 0; border: 0; background: none; border-radius: 0; font-size: 34px; color: var(--text); opacity: 0.6; transition: opacity 0.6s; }
 .cv-compact .cv-prev { left: calc(var(--sal, 0px) + 0px); } .cv-compact .cv-next { right: calc(var(--sar, 0px) + 0px); }
-.cv-compact.cv-swiped .cv-arrow { opacity: 0; }
 .cv-sl2 { display: flex; align-items: center; gap: 6px; }
 .cv-sa { flex: none; max-width: 55%; display: flex; align-items: center; gap: 4px; color: var(--accent); font-weight: 700; overflow: hidden; }
 .cv-sa span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -529,3 +528,6 @@ html.touch .credits { max-height: 44vh; font-size: 12px; }
 .splash-bar > div { width: 40%; height: 100%; background: #f2c230; border-radius: 2px; animation: splash-slide 1.2s ease-in-out infinite; }
 @keyframes splash-slide { 0% { transform: translateX(-100%); } 100% { transform: translateX(250%); } }
 @media (max-height: 500px) { .splash-title { font-size: 22px; } .splash { gap: 8px; } }
+
+/* the Cars page's first paint (open(): the click handler only puts this frame up, the stage follows) */
+.cv.cv-opening { background: #0b0e12; }

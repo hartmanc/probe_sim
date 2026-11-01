@@ -233,11 +233,13 @@ function showMainMenu(): void {
 /** Menu pick (a user gesture): start audio, switch mode, drive. */
 function startMode(id: ModeId): void {
   if (!sim) return;
-  void audio.start(); // synchronously inside the tap / click: unlocks the AudioContext on iOS
+  // synchronously inside the tap / click: unlocks the AudioContext on iOS. A throw here (Safari refusing a context, a missing
+  // Web Audio feature) must never swallow the tap: the mode starts either way, without sound.
+  try { void audio.start().catch((e) => recordError(e, 'audio')); } catch (e) { recordError(e, 'audio'); }
   // a start from the gamepad is no gesture to the browser's autoplay rule: if the context is still suspended shortly
   // after, ask for one (the gesture listener at the bottom resumes it); a click, tap or key beforehand primes it instead
   setTimeout(() => { if (audio.suspended) hud.toast('Press any key or tap the screen for sound', 5000); }, 700);
-  if (touch) { touch.requestTilt(); touch.recentre(); } // tilt permission prompt needs this gesture too
+  try { if (touch) { touch.requestTilt(); touch.recentre(); } } catch (e) { recordError(e, 'tilt'); } // tilt permission prompt needs this gesture too
   sim.setMode(id);
   menu.close();
 }
@@ -374,13 +376,27 @@ async function boot(): Promise<void> {
     showNoWebgl(`${NO_WEBGL2_MESSAGE} (${String((e as Error)?.message ?? e).slice(0, 200)})`);
     return;
   }
-  void loadFieldData().then((f) => { fieldTotal = f.pace ? aiCount(f.pace, '619') : null; menu.refresh(); }).catch(() => {});
-  loadLabel.textContent = assets.fallbacks.length ? `Using stand-ins: ${assets.fallbacks.join(', ')}` : 'Ready';
-  loadBox.classList.add('done');
-  if (menu.isOpen && menu.variant === 'main' && menu.state?.depth === 1) menu.state.focus(0); // Hot lap is now pickable
-  menu.refresh();
-  sim.renderOnce();
-  document.documentElement.classList.add('ready');   // the first frame is drawn: the rotate overlay may now show (style.css)
+  // whatever happens below, the rows must come alive and the rotate overlay may show: refresh and `ready` run in the finally,
+  // and an error is shown in the load label instead of leaving a menu that looks loaded and does nothing (Safari, slow first load)
+  try {
+    void loadFieldData().then((f) => { fieldTotal = f.pace ? aiCount(f.pace, '619') : null; menu.refresh(); }).catch((e) => recordError(e, 'field'));
+    loadLabel.textContent = assets.fallbacks.length ? `Using stand-ins: ${assets.fallbacks.join(', ')}` : 'Ready';
+    if (menu.isOpen && menu.variant === 'main' && menu.state?.depth === 1) menu.state.focus(0); // Hot lap is now pickable
+  } catch (e) {
+    recordError(e, 'boot');
+    loadLabel.className = 'load-label err';
+    loadLabel.textContent = `Started with an error: ${String((e as Error)?.message ?? e).slice(0, 200)}`;
+  } finally {
+    loadBox.classList.add('done');
+    menu.refresh();
+  }
+  try { sim.renderOnce(); } catch (e) {
+    recordError(e, 'render');
+    loadLabel.className = 'load-label err';
+    loadLabel.textContent = `The first frame failed: ${String((e as Error)?.message ?? e).slice(0, 200)}`;
+  } finally {
+    document.documentElement.classList.add('ready');   // the overlay may now show (style.css); the menu works either way
+  }
 }
 
 // ---------------------------------------------------------------- sim
