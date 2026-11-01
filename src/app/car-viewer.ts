@@ -19,7 +19,7 @@ import type { World } from './scene';
 import type { CarReport } from './feedback';
 import type { TrackJson } from './physics-types';
 import {
-  SETTLE_END, makeBlip, cardFor, classifyGesture, clearAreaShift, viewDistance, creditFor, fitPlane, stripLines, type PointerSample, seatOffset, engineAt, classSizes, fieldSize, indexByNumber, safeUrl, viewerOrder,
+  SETTLE_END, makeBlip, cardFor, classifyGesture, DEFAULT_ELEVATION, viewFit, creditFor, fitPlane, stripLines, type PointerSample, seatOffset, engineAt, classSizes, fieldSize, indexByNumber, safeUrl, viewerOrder,
   type AwardEntry, type Blip, type Card, type CreditRow, type IdentityRow, type PhotoRow, type ViewerCar,
 } from './car-viewer-data';
 
@@ -202,6 +202,7 @@ export class CarViewer {
   private stripEl = el('div', 'cv-strip');
   private stripH = 0;
   private titleH = 0;
+  private shiftPx = 0;
   private topEl: HTMLElement | null = null;
   private gesture: { tracks: Map<number, PointerSample[]>; az: number; el: number; multi: boolean; touch: boolean } | null = null;
   private onResize = () => this.applyLayout();
@@ -385,7 +386,7 @@ export class CarViewer {
     // three-quarter front view to start
     // ENU heading h points along (cos h, sin h): three (x, z) = (cos h, -sin h)
     this.az = Math.atan2(Math.cos(p.heading), -Math.sin(p.heading)) + 0.75;
-    this.el = 0.2; this.zoom = 1; this.lastInputAt = -Infinity;
+    this.el = DEFAULT_ELEVATION; this.zoom = 1; this.lastInputAt = -Infinity;
   }
 
   // ------------------------------------------------------------ cars
@@ -762,7 +763,7 @@ export class CarViewer {
     const c = this.stagePos;
     const ty = c.y + this.targetY;
     // phone: the distance follows the viewport (the reference silhouette fills the clear area), the same for every car
-    if (this.compact) this.baseDist = viewDistance(true, window.innerWidth, window.innerHeight, this.stripH, this.titleH, CHEV_W);
+    if (this.compact) { const f = viewFit(true, window.innerWidth, window.innerHeight, this.stripH, this.titleH, CHEV_W); this.baseDist = f.distance; this.shiftPx = f.shiftPx; }
     // the closest zoom keeps the camera 0.4 m outside the model's box along the view direction, and the pitch keeps it above the floor
     const dirv = new THREE.Vector3();
     const distFor = (el: number): number => {
@@ -792,7 +793,7 @@ export class CarViewer {
     // phone: the car sits in the clear area above the strip (a view offset keeps the constant camera distance)
     if (this.compact && this.stripH > 0) {
       const w = window.innerWidth, h = window.innerHeight;
-      cam.setViewOffset(w, h, 0, Math.round(clearAreaShift(this.stripH, this.titleH)), w, h);
+      cam.setViewOffset(w, h, 0, Math.round(this.shiftPx), w, h);
     } else if (cam.view?.enabled) cam.clearViewOffset();
     d.world.follow(this.rig?.rig.root.position ?? c, cam);
     this.tickEngine();

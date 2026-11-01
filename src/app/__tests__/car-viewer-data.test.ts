@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  awardClass, cardFor, viewDistance, clearAreaShift, classifyGesture, stripLines, classSizes, fitPlane, seatOffset, creditFor, engineAt, fieldSize, indexByNumber, lapText, makeBlip, ordinal, safeUrl, viewerOrder,
+  awardClass, cardFor, viewDistance, viewFit, projectBox, DEFAULT_ELEVATION, clearAreaShift, classifyGesture, stripLines, classSizes, fitPlane, seatOffset, creditFor, engineAt, fieldSize, indexByNumber, lapText, makeBlip, ordinal, safeUrl, viewerOrder,
   CRANK_END, REV_RPM, SETTLE_END, type AwardEntry, type IdentityRow,
 } from '../car-viewer-data';
 
@@ -158,23 +158,37 @@ describe('touch gestures', () => {
 });
 
 describe('the camera distance on a phone', () => {
+  const STRIP = 56, TITLE = 50, CHEV = 28;
   it('desktop and tablet keep 7.5 m', () => {
     expect(viewDistance(false, 1280, 720, 0, 0, 0)).toBe(7.5);
-    expect(viewDistance(false, 844, 390, 56, 50, 28)).toBe(7.5);
+    expect(viewDistance(false, 844, 390, STRIP, TITLE, CHEV)).toBe(7.5);
+    expect(viewFit(false, 1280, 720, 0, 0, 0).shiftPx).toBe(0);
   });
-  it('a phone fits the 4.6 x 1.8 m silhouette to 80 % of the clear area', () => {
-    const a = viewDistance(true, 844, 316, 56, 50, 28), b = viewDistance(true, 844, 390, 56, 50, 28);
-    expect(a).toBeCloseTo(4.92, 1);
-    expect(b).toBeCloseTo(4.49, 1);
-    expect(a).toBeGreaterThan(b);          // less clear height: further back
-    expect(a).toBeLessThan(7.5);           // and much closer than the desktop default
+  it('the taller screen allows a nearer camera', () => {
+    const a = viewDistance(true, 844, 316, STRIP, TITLE, CHEV), b = viewDistance(true, 844, 390, STRIP, TITLE, CHEV);
+    expect(a).toBeGreaterThan(2);
+    expect(b).toBeLessThan(a);
   });
-  it('a wide silhouette limit: a narrow, tall viewport is fitted by its width', () => {
-    const d = viewDistance(true, 390, 844, 90, 50, 28);
-    const t = Math.tan((38 * Math.PI) / 360);
-    expect(4.6 / (2 * d * t * (390 / 844))).toBeLessThanOrEqual(0.8 * ((390 - 56) / 390) + 1e-9);
+  for (const [w, h] of [[844, 316], [844, 390]]) {
+    it(`${w}x${h}: side-on, 45 degrees and end-on all stay clear of the counter row and the strip by 4 % of the clear height`, () => {
+      const f = viewFit(true, w, h, STRIP, TITLE, CHEV);
+      const clearH = h - STRIP - TITLE;
+      for (const yaw of [0, 45, 90]) {
+        const e = projectBox(f.distance, DEFAULT_ELEVATION, yaw, w / h);
+        const top = h / 2 - (e.y1 * h) / 2 - f.shiftPx, bottom = h / 2 - (e.y0 * h) / 2 - f.shiftPx;
+        expect(top).toBeGreaterThanOrEqual(TITLE + 0.04 * clearH);
+        expect(bottom).toBeLessThanOrEqual(h - STRIP - 0.04 * clearH);
+        expect(((e.x1 - e.x0) * w) / 2).toBeLessThanOrEqual(0.85 * (w - 2 * CHEV) + 1e-6);
+        expect(((e.y1 - e.y0) * h) / 2).toBeLessThanOrEqual(0.72 * clearH + 1e-6);
+      }
+    });
+  }
+  it('a narrow tall viewport is fitted by its width', () => {
+    const d = viewDistance(true, 390, 844, 90, 50, CHEV);
+    const worst = Math.max(...[0, 45, 90].map((y) => { const e = projectBox(d, DEFAULT_ELEVATION, y, 390 / 844); return ((e.x1 - e.x0) * 390) / 2; }));
+    expect(worst).toBeLessThanOrEqual(0.85 * (390 - 2 * CHEV) + 1e-6);
   });
-  it('the car is centred in the clear area: shift by half the difference of strip and title', () => {
+  it('the clear-area shift stays available', () => {
     expect(clearAreaShift(56, 50)).toBe(3);
     expect(clearAreaShift(40, 60)).toBe(-10);
   });

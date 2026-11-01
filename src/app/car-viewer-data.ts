@@ -241,23 +241,58 @@ export function stripLines(c: Pick<Card, 'number' | 'team' | 'car' | 'cls' | 'ov
 // ---------------------------------------------------------------- the camera distance on a phone
 
 export const DESKTOP_DISTANCE = 7.5;
-/** The reference silhouette (m): a car's length and height; it should fill COMPACT_FILL of the clear area (the same for every car, so sizes compare). */
-export const REF_LENGTH = 4.6, REF_HEIGHT = 1.8, COMPACT_FILL = 0.8, VIEW_FOV_DEG = 38;
+/** The reference box (m): a car's length, height and width, centred on the target; it is the same for every car, so sizes compare. */
+export const REF_LENGTH = 4.6, REF_HEIGHT = 1.8, REF_WIDTH = 1.8, VIEW_FOV_DEG = 38;
+/** The orbit elevation (rad) the page opens with, and the share of the clear area the projected box may take. */
+export const DEFAULT_ELEVATION = 0.2;
+export const FIT_HEIGHT = 0.72, FIT_WIDTH = 0.85;
+export const FIT_YAWS_DEG = [0, 45, 90] as const;
+
+/** The reference box seen from a camera at distance d, elevation el, looking at its centre; yaw turns the box (0 side-on, 90 end-on). NDC extents (y up). */
+export function projectBox(d: number, el: number, yawDeg: number, aspect: number): { x0: number; x1: number; y0: number; y1: number } {
+  const t = Math.tan((VIEW_FOV_DEG * Math.PI) / 360);
+  const cy = Math.cos(yawDeg * Math.PI / 180), sy = Math.sin(yawDeg * Math.PI / 180);
+  const C = [0, d * Math.sin(el), d * Math.cos(el)];            // camera (azimuth 0), target at the origin
+  const F = [-C[0] / d, -C[1] / d, -C[2] / d];
+  const R = [1, 0, 0];                                            // F x up, normalised: along +x for azimuth 0
+  const U = [R[1] * F[2] - R[2] * F[1], R[2] * F[0] - R[0] * F[2], R[0] * F[1] - R[1] * F[0]];
+  let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+  for (const a of [-1, 1]) for (const b of [-1, 1]) for (const c of [-1, 1]) {
+    const lx = a * REF_LENGTH / 2, ly = b * REF_HEIGHT / 2, lz = c * REF_WIDTH / 2;
+    const P = [lx * cy + lz * sy, ly, -lx * sy + lz * cy];
+    const z = (P[0] - C[0]) * F[0] + (P[1] - C[1]) * F[1] + (P[2] - C[2]) * F[2];
+    const x = (P[0] * R[0] + P[1] * R[1] + P[2] * R[2]) / z / (t * aspect), y = (P[0] * U[0] + P[1] * U[1] + P[2] * U[2]) / z / t;
+    x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y);
+  }
+  return { x0, x1, y0, y1 };
+}
 
 /**
- * The default camera distance. Not compact: the constant 7.5 m. Compact (a phone): the distance at which the reference
- * silhouette (4.6 m long, 1.8 m high) fills 80 % of the clear area, the screen between the title block (top), the strip
- * (bottom) and the chevrons (left and right). The distance follows the viewport only, never the car. The larger of the
- * width fit and the height fit, so the silhouette fits both ways.
+ * The default camera on a phone. Not compact: the constant 7.5 m, no shift. Compact: the nearest distance at which the
+ * reference box (4.6 x 1.8 x 1.8 m), seen through the opening elevation at yaw 0, 45 and 90 degrees (side-on to end-on),
+ * is at most 72 % of the clear height and 85 % of the clear width (the clear area lies between the title row on top, the
+ * strip below and the chevrons at the sides), and `shiftPx`, how far the image must move up so the middle of the box's
+ * height range sits at the centre of the clear area. Depends on the viewport only, never on the car.
  */
-export function viewDistance(compact: boolean, w: number, h: number, stripH: number, titleH: number, chevW: number): number {
-  if (!compact) return DESKTOP_DISTANCE;
-  const t = Math.tan((VIEW_FOV_DEG * Math.PI) / 360);              // half the view height at distance 1
+export function viewFit(compact: boolean, w: number, h: number, stripH: number, titleH: number, chevW: number, elevation = DEFAULT_ELEVATION): { distance: number; shiftPx: number } {
+  if (!compact) return { distance: DESKTOP_DISTANCE, shiftPx: 0 };
   const clearH = Math.max(40, h - stripH - titleH), clearW = Math.max(40, w - 2 * chevW);
-  const dH = REF_HEIGHT / (COMPACT_FILL * (clearH / h) * 2 * t);
-  const dW = REF_LENGTH / (COMPACT_FILL * (clearW / w) * 2 * t * (w / h));
-  return Math.max(dH, dW);
+  const aspect = w / h;
+  const union = (d: number) => {
+    let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+    for (const yaw of FIT_YAWS_DEG) { const e = projectBox(d, elevation, yaw, aspect); x0 = Math.min(x0, e.x0); x1 = Math.max(x1, e.x1); y0 = Math.min(y0, e.y0); y1 = Math.max(y1, e.y1); }
+    return { x0, x1, y0, y1 };
+  };
+  const fits = (d: number) => { const u = union(d); return ((u.y1 - u.y0) * h) / 2 <= FIT_HEIGHT * clearH && ((u.x1 - u.x0) * w) / 2 <= FIT_WIDTH * clearW; };
+  let lo = 2, hi = 40;
+  for (let k = 0; k < 40; k++) { const m = (lo + hi) / 2; if (fits(m)) hi = m; else lo = m; }
+  const u = union(hi), mid = (u.y0 + u.y1) / 2;
+  const boxMidPx = h / 2 - (mid * h) / 2, clearMidPx = titleH + clearH / 2;
+  return { distance: hi, shiftPx: boxMidPx - clearMidPx };
 }
+
+export const viewDistance = (compact: boolean, w: number, h: number, stripH: number, titleH: number, chevW: number, elevation = DEFAULT_ELEVATION): number =>
+  viewFit(compact, w, h, stripH, titleH, chevW, elevation).distance;
 
 /** Pixels the image must move up (negative: down) so the car sits in the clear area's centre rather than the viewport's. */
 export const clearAreaShift = (stripH: number, titleH: number): number => (stripH - titleH) / 2;
